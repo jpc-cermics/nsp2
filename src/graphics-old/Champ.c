@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 static double min_of_doubles_old (const double *x,int n);
 static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double *x, double *y, 
@@ -125,7 +125,7 @@ static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double
   
   if ( ng_flag == FALSE ) 
     {
-      update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
+      update_frame_bounds_old(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
       /* Storing values if using the Record driver */
       if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
 	{
@@ -242,15 +242,15 @@ static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double
       na=2*j;
     }
   /* Drawing axes */
-  if ( ng_flag == FALSE ) axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+  if ( ng_flag == FALSE ) axis_draw_old(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
 				    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
   /* Drawing the arrows */
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   if ( colored ==0) 
     Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,&cpat,0);
   else
     Xgc->graphic_engine->drawarrows(Xgc,xm,ym,na,arsize,zm,1);
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
 }
 
 /*----------------------------------

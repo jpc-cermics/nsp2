@@ -27,24 +27,24 @@
 #include <stdio.h>
 
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 #include "nsp/interf.h"
 #include "Plo3dObj.h"
 
 extern Stack SciStack; 
 
 #ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
+extern Gengine GL_gengine_old;
 #endif 
 
 /* This is to be fixed 3D primitives are to be added 
  * in the graphic_engines.
  */
 extern void nsp_obj3d_draw_near_box_segments_old(BCG *Xgc,Plot3dBox *B);
-extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
-extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
-extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
-extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+extern void fillpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p); 
+extern void fillpolylines3D_old_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
+extern void drawpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
+extern void drawsegments3D_old(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 
 static  int nsp_obj3d_orientation_old(int x[], int y[], int n);
@@ -259,10 +259,10 @@ extern void nsp_draw_3d_obj_old( BCG *Xgc,void *Lo,double *theta,double *alpha,c
   int flagx;
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       nsp_draw_3d_obj_ogl(Xgc,Lo,theta,alpha,legend,flag,ebox,with_mesh1,with_box,box_color,box_style);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return; 
     }
 #endif
@@ -290,9 +290,9 @@ extern void nsp_draw_3d_obj_old( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 
 #ifdef WITH_GTKGLEXT 
   /* transmit info to opengl pretending we are doing 2d !!! */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
     }
 #endif
 
@@ -458,7 +458,7 @@ static Plot3dBox* make_box_old(BCG *Xgc,double Box[], GBoolean with_ticks, BoxSt
   B->coord[21] = xmin; B->coord[22] = ymax; B->coord[23] = zmax; //8
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       /* in open_gl we do not want to change coordinates */
       apply_transforms_old(Xgc,coord,B->coord, B->pos, lim, 8);
@@ -476,7 +476,7 @@ static Plot3dBox* make_box_old(BCG *Xgc,double Box[], GBoolean with_ticks, BoxSt
       build_ticks_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->ticks_pos = malloc(2*(B->nb_xyz_ticks)*sizeof(VisionPos));
 #ifdef WITH_GTKGLEXT 
-      if ( Xgc->graphic_engine != &GL_gengine ) 
+      if ( Xgc->graphic_engine != &GL_gengine_old ) 
 #endif	
 	apply_transforms_old(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks)); 
     }
@@ -485,7 +485,7 @@ static Plot3dBox* make_box_old(BCG *Xgc,double Box[], GBoolean with_ticks, BoxSt
       build_box_others_segment(B, xmin, xmax, ymin, ymax, zmin, zmax);
       B->others_pos = malloc(4*(B->nb_xyz_ticks)*sizeof(VisionPos));
 #ifdef WITH_GTKGLEXT 
-      if ( Xgc->graphic_engine != &GL_gengine ) 
+      if ( Xgc->graphic_engine != &GL_gengine_old ) 
 #endif	
 	apply_transforms_old(Xgc, B->others_coord,B->others_coord, B->others_pos, lim, 4*(B->nb_xyz_ticks));
     }      
@@ -776,7 +776,7 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   char buf[60];
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
       /* we move to 2d scale */
@@ -810,11 +810,11 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   xt = XScale(xt);
   yt = YScale(yt);
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       draw_justified_string(Xgc,buf, xt, yt, xj, yj);
-      nsp_ogl_set_3dview(Xgc);
+      nsp_ogl_set_old_3dview(Xgc);
       return ;
     }
 #endif 
@@ -1196,18 +1196,18 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
       if ( display_mode == FLAT  )
 	{
 	  color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q->nb_levels)];
-	  fillpolylines3D(Xgc, x, y,z, &color, np, m);
+	  fillpolylines3D_old(Xgc, x, y,z, &color, np, m);
 	  if ( Q->with_mesh )
-	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
+	    fillpolylines3D_old(Xgc, x, y,z, &zero, np, m);	  
 	}
       else
 	{
 	  for (i = 0 ; i < m ; i++) 
 	    colors[i] = -Q->fill[zone(v[i], Q->vmin, Q->vmax, Q->nb_levels)];
 	  /* colors are given by cvect of size (*p) times (*q) */
-	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
+	  fillpolylines3D_old_shade(Xgc,x,y,z,colors, np,m);
 	  if ( Q->with_mesh )
-	    fillpolylines3D(Xgc, x, y,z, &zero, np, m);	  
+	    fillpolylines3D_old(Xgc, x, y,z, &zero, np, m);	  
 	}
     }
 #endif
@@ -1287,7 +1287,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
        *  np : number of polygone(s) =1 here
        */
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
-      fillpolylines3D(Xgc, x, y, z, &color, np, m);
+      fillpolylines3D_old(Xgc, x, y, z, &color, np, m);
     }
 #endif
 }
@@ -1298,7 +1298,7 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j)
   int x[4], y[4], i, numpt,np=1, m=4;
   const int *current_vertex;
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       double xd[4],yd[4],zd[4];
       current_vertex = &(B->face[4*j]);
@@ -1310,7 +1310,7 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j)
 	  zd[i] = B->coord[3*numpt+2];
 	}
       Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
-      fillpolylines3D(Xgc, xd, yd,zd, &B->color, np, m);
+      fillpolylines3D_old(Xgc, xd, yd,zd, &B->color, np, m);
       return;
     }
 #endif
@@ -1353,7 +1353,7 @@ static void draw_polyline_ogl(BCG *Xgc,void *Ob)
       x[1] = L->coord[3*j+3];
       y[1] = L->coord[3*j+4];
       z[1] = L->coord[3*j+5];
-      drawsegments3D(Xgc, x, y ,z, n, &color, flag);
+      drawsegments3D_old(Xgc, x, y ,z, n, &color, flag);
     }
 #endif
 }
@@ -1362,7 +1362,7 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
 {
   int x[2], y[2], n=2, flag=0;
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       double xd[2], yd[2],zd[2];
       int n=2, flag=0;
@@ -1372,7 +1372,7 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
       xd[1] = coord[3*ib];
       yd[1] = coord[3*ib+1];
       zd[1] = coord[3*ib+2];
-      drawsegments3D(Xgc, xd, yd ,zd, n, &color, flag);
+      drawsegments3D_old(Xgc, xd, yd ,zd, n, &color, flag);
       return; 
     }
 #endif
@@ -1387,7 +1387,7 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
 {
   int x[2], y[2], n=2, flag=0;
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       double x[2], y[2], z[2]; 
       int n=2, flag=0;
@@ -1397,7 +1397,7 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
       x[1] = coord[6*ns+3];
       y[1] = coord[6*ns+4];
       z[1] = coord[6*ns+5];
-      drawsegments3D(Xgc, x, y ,z, n, &color, flag);
+      drawsegments3D_old(Xgc, x, y ,z, n, &color, flag);
       return;
     }
 #endif
@@ -1473,10 +1473,10 @@ static void draw_justified_string3d_ogl(BCG *Xgc,String3d *V, int xj, int yj)
   apply_transforms_old(Xgc,Tcoord,V->coord,V->pos,lim,1); 
   Tcoord[0] = XScale(Tcoord[0]);
   Tcoord[1] = YScale(Tcoord[1]);
-  nsp_ogl_set_2dview(Xgc);
+  nsp_ogl_set_old_2dview(Xgc);
   Xgc->graphic_engine->xset_font(Xgc,V->font_type,V->font_size);
   draw_justified_string(Xgc,V->str,Tcoord[0],Tcoord[1], xj, yj);
-  nsp_ogl_set_3dview(Xgc);
+  nsp_ogl_set_old_3dview(Xgc);
 #endif 
 }
 

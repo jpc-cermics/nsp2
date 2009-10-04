@@ -1038,7 +1038,7 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
     }
   gdk_gl_drawable_gl_begin(Xgc->private->gldrawable,Xgc->private->glcontext);
   glClear(GL_DEPTH_BUFFER_BIT);
-  nsp_ogl_set_view(Xgc);
+  nsp_ogl_set_old_view(Xgc);
   return TRUE;
 }
 
@@ -1147,7 +1147,7 @@ static void examine_gl_config_attrib (GdkGLConfig *glconfig)
  *
  */
 
-void afficher_repere(float ox, float oy, float oz)
+void afficher_repere_old(float ox, float oy, float oz)
 {
   printf("Afficher_repere\n");
   glBegin(GL_LINES);
@@ -1163,7 +1163,7 @@ void afficher_repere(float ox, float oy, float oz)
   glEnd();
 }
 
-int use_camera(BCG *Xgc)
+int use_camera_old(BCG *Xgc)
 {
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
@@ -1189,7 +1189,7 @@ int use_camera(BCG *Xgc)
 }
 
 
-void change_camera(BCG *Xgc,const double *val)
+void change_camera_old(BCG *Xgc,const double *val)
 {
 #if 1
   Xgc->private->camera.position.x=*val;val++;
@@ -1215,20 +1215,20 @@ void change_camera(BCG *Xgc,const double *val)
  * 3d view.
  */
 
-void nsp_ogl_set_view(BCG *Xgc)
+void nsp_ogl_set_old_view(BCG *Xgc)
 {
   /* xset_background(Xgc,Xgc->NumBackground+1); */
   if ( Xgc->scales->scale_flag3d == 0 ) /* XXX */
     {
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
     }
   else 
     {
-      nsp_ogl_set_3dview(Xgc);
+      nsp_ogl_set_old_3dview(Xgc);
     }
 }
 
-void nsp_ogl_set_2dview(BCG *Xgc)
+void nsp_ogl_set_old_2dview(BCG *Xgc)
 {
   glViewport (0,  0, Xgc->private->drawing->allocation.width, 
 	      Xgc->private->drawing->allocation.height);
@@ -1248,7 +1248,7 @@ void nsp_ogl_set_2dview(BCG *Xgc)
   glDisable(GL_DEPTH_TEST);
 }
 
-void nsp_ogl_set_3dview(BCG *Xgc)
+void nsp_ogl_set_old_3dview(BCG *Xgc)
 {
   /* double xs,ys; */
   double theta = Xgc->scales->theta;
@@ -1324,7 +1324,7 @@ static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double
   glEnd();
 }
 
-void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
+void drawsegments3D_old(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
 {
   int dash,color,i;
   DRAW_CHECK;
@@ -1348,7 +1348,7 @@ void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, i
 
 
 
-void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag)
+void fillpolyline2D_shade_old(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
@@ -1366,7 +1366,7 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int clos
 }
 
 /**
- * fillpolylines3D_shade: 
+ * fillpolylines3D_old_shade: 
  * @Xgc: 
  * @vectsx: 
  * @vectsy: 
@@ -1381,7 +1381,7 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int clos
 
 static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,int *colors, int n,int closeflag) ;
 
-void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, 
+void fillpolylines3D_old_shade(BCG *Xgc,double *vectsx, double *vectsy, 
 			   double *vectsz, int *fillvect,int n, int p)
 {
   int dash,color,i;
@@ -1455,7 +1455,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 
 
 /**
- * fillpolylines3D:
+ * fillpolylines3D_old:
  * @Xgc: 
  * @vectsx: 
  * @vectsy: 
@@ -1469,7 +1469,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
  **/
 
 
-void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
+void fillpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {
   int dash,color,i;
   DRAW_CHECK;
@@ -1544,7 +1544,7 @@ static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
   printf("To be done drawpolymark3D \n");
 }
 
-void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
+void drawpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
 { 
   int symb[2],dash,color,i,close;
   /* store the current values */

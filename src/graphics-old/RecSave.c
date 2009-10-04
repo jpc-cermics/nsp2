@@ -24,8 +24,8 @@
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
-#include "nsp/graphics/Rec.h"
+#include "nsp/graphics-old/Graphics.h"
+#include "nsp/graphics-old/Rec.h"
 
 static int save_D  (XDR *xdrs,double x);
 static int save_LI (XDR *xdrs,int ix);
@@ -1018,7 +1018,7 @@ static Save_Table save_table [] ={
 #endif
 #endif 
 
-int tape_save(BCG *Xgc,const char *fname1, int winnumber)
+int tape_old_save(BCG *Xgc,const char *fname1, int winnumber)
 {
   char fname[128]; /* FIXME */
   FILE *F ;

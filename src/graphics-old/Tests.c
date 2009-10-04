@@ -28,7 +28,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 #define XN2D 63
 #define NCURVES2D  3
@@ -62,10 +62,10 @@ static void test2DD(BCG *Xgc)
 	  Frect[i]=Wrect[i];
 	}
       Wrect[0]=Wrect[1]=Wrect[2]=Wrect[3]=0.5;
-      setscale2d(Xgc,Wrect,Frect,"nn");
-      nsp_plot2d(Xgc,x,y,&n1,&n2,style,"021"," ",4,brect,aaint);
+      setscale2d_old(Xgc,Wrect,Frect,"nn");
+      nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"021"," ",4,brect,aaint);
       Wrect[0]=Wrect[1]=0;Wrect[2]=Wrect[3]=1.0;
-      setscale2d(Xgc,Wrect,Frect,"nn");
+      setscale2d_old(Xgc,Wrect,Frect,"nn");
     }
 }
 
@@ -91,7 +91,7 @@ static void test2D(BCG *Xgc)
   n1=NCURVES2DD;n2=XN2DD;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=1.0;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"011"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"011"," ",4,brect,aaint);
 }
 
 #define XN2D2 200
@@ -545,7 +545,7 @@ static void testPrim(BCG *Xgc)
   style[0]= -1;
   n1=NCURVESP;n2=XMP;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"022"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"022"," ",4,brect,aaint);
   corps(Xgc);
 }
 
@@ -720,13 +720,13 @@ static void testMarks(BCG *Xgc)
   style[0]=1;style[1]=1;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=1.0;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"021"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"021"," ",4,brect,aaint);
   n1=2,nn1=10;
   Xgc->graphic_engine->scale->xset_mark(Xgc,n1,nn1);
   n1=1,n2=1;
   x[0]=0;y[0]=0;
   style[0] = -4;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"001"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"001"," ",4,brect,aaint);
 }
 
 
@@ -762,7 +762,7 @@ static void fixbounds(BCG *Xgc, double xmin,     double xmax,     double ymin,  
   style[0]= -1;
   n1=NCU;n2=NF;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"022"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"022"," ",4,brect,aaint);
 }
   
 static void testPoly(BCG *Xgc)
@@ -772,7 +772,7 @@ static void testPoly(BCG *Xgc)
   brect[0]= -5.0;brect[2]=35.0;
   brect[1]= -5.0;brect[3]=35.0;
   style[0]= -1;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"010"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"010"," ",4,brect,aaint);
   polycorps(Xgc);
 }
 

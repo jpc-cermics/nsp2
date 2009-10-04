@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
-/* #include "nsp/graphics/PloEch.h" */
+#include "nsp/graphics-old/Graphics.h"
+/* #include "nsp/graphics-old/PloEch.h" */
 
 static void Plo2d4RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
 /*--------------------------------------------------------------------
@@ -45,7 +45,7 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/
-  update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
@@ -67,13 +67,13 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 
       /** Draw Axis or only rectangle **/
     }
-  axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
   
   if ( n != 0 ) 
     {
       /** Drawing the curves **/
-      frame_clip_on(Xgc);
+      frame_clip_on_old(Xgc);
       
       nn2=2*(*n2)-1;
       arsize1= Xgc->scales->WIRect1[2]/70.0;
@@ -87,11 +87,11 @@ int nsp_plot2d_4(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 	  Xgc->graphic_engine->drawarrows(Xgc,&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,arsize ,&lstyle,0);
 	  
 	}
-      frame_clip_off(Xgc);
+      frame_clip_off_old(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
 	{
-	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
+	  nsp_legends_old(Xgc,legend_pos,*n1,style,legend,"@"); 
 	}
     }
   return(0);

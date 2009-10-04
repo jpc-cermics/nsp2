@@ -27,13 +27,13 @@
 #include <stdio.h>
 #include <gdk/gdk.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 #include "nsp/gsort-p.h"
 
 #ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
+extern Gengine GL_gengine_old;
 #define PERIGL
-#include "nsp/graphics/periGtk.h"
+#include "nsp/graphics-old/periGtk.h"
 #endif 
 
 /* like GEOX or GEOY in PloEch.h but we keep values in xx1 and yy1 for finite check */ 
@@ -105,10 +105,10 @@ static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin
 /* FIXME 
  */
 
-extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
-extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
-extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
-extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+extern void fillpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
+extern void fillpolylines3D_old_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);
+extern void drawpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p);
+extern void drawsegments3D_old(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 #ifdef  WITH_GTKGLEXT 
 extern void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 #endif
@@ -153,10 +153,10 @@ extern void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       plot3dg_ogl(Xgc,"plot3d",DPoints_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return 0;
     }
 #endif
@@ -171,10 +171,10 @@ int nsp_plot3d(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double 
 int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       plot3dg_ogl(Xgc,"plot3d1",DPoints1_ogl,x,y,z,p,q,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return 0;
     }
 #endif 
@@ -189,10 +189,10 @@ int nsp_plot3d_1(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, doubl
 int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       fac3dg_ogl(Xgc,"fac3d",0,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return(0);
     }
 #endif
@@ -207,10 +207,10 @@ int nsp_plot_fac3d(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p,
 int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       fac3dg_ogl(Xgc,"fac3d1",1,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return(0);
     }
 #endif
@@ -225,10 +225,10 @@ int nsp_plot_fac3d_1(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
 int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       fac3dg_ogl(Xgc,"fac3d2",2,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return(0);
     }
 #endif 
@@ -243,10 +243,10 @@ int nsp_plot_fac3d_2(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *
 int nsp_plot_fac3d_3(BCG *Xgc,double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       fac3dg_ogl(Xgc,"fac3d3",3,x,y,z,cvect,p,q,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return(0);
     }
 #endif 
@@ -479,7 +479,7 @@ void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double 
 	}
       Xgc->graphic_engine->clearwindow(Xgc);    
       /* redraw 3d with new bbox */
-      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
+      tape_old_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
     }
 }
 
@@ -776,10 +776,10 @@ int nsp_param3d(BCG *Xgc,double *x, double *y, double *z, int *n, double *teta, 
   double zmin,zmax; /* unused */
   
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       nsp_param3d_ogl(Xgc,x,y,z,n,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return 0;
     }
 #endif
@@ -868,10 +868,10 @@ int nsp_param3d_1(BCG *Xgc,double *x, double *y, double *z, int *m, int *n, int 
   double zmin,zmax; /* unused */
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       nsp_param3d_1_ogl(Xgc,x,y,z,m,n,iflag,colors,teta,alpha,legend,flag,bbox);
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
       return 1;
     }
 #endif
@@ -1081,10 +1081,10 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
     {
       /* get current window size */
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-      /* FIXME: getscale2d is useless here just use 
+      /* FIXME: getscale2d_old is useless here just use 
        * WRect[i] <-> Xgc->scales->subwin_rect[i];
        */
-      getscale2d(Xgc,WRect,FRect,logf,ARect);
+      getscale2d_old(Xgc,WRect,FRect,logf,ARect);
       wmax=linint((double)wdim[0] * WRect[2]);
       hmax=linint((double)wdim[1] * WRect[3]); 
     }
@@ -1122,7 +1122,7 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
   if (flag !=0 && Xgc->scales->scale_3drot_flag  == 0 )
     {
       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
-      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      set_scale_old(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
       Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
       /* this is used by opengl for zmin zmax and depth */
       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
@@ -1132,9 +1132,9 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
   /* end of code added by es */
 #ifdef WITH_GTKGLEXT 
   /* transmit info to opengl */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
-      nsp_ogl_set_3dview(Xgc);
+      nsp_ogl_set_old_3dview(Xgc);
     }
 #endif
 
@@ -1276,7 +1276,7 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
   box->xind[5]=ind2;
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
       for (i=0; i < 6 ; i++)
 	{
@@ -1291,7 +1291,7 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
       dash = Xgc->graphic_engine->xset_dash(Xgc,1);
       
       if (flag >=3){
-	drawpolylines3D(Xgc,box->xh,box->yh,box->zh,dvect,n,p);
+	drawpolylines3D_old(Xgc,box->xh,box->yh,box->zh,dvect,n,p);
       }
       pat = Xgc->graphic_engine->xset_pattern(Xgc,dvect[0]);
       if (flag >=3) 
@@ -1304,14 +1304,14 @@ void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag)
 	   * but it should be better to have a 3D function. 
 	   */
 
-	  nsp_ogl_set_2dview(Xgc);
+	  nsp_ogl_set_old_2dview(Xgc);
 	  for (i=0; i < 6 ; i++)
 	    {
 	      box->ix[i]=XScale(box->x[box->xind[i]]);
 	      box->iy[i]=YScale(box->y[box->xind[i]]);
 	    }
 	  AxesStrings(Xgc,flag,box,legend);
-	  nsp_ogl_set_3dview(Xgc);
+	  nsp_ogl_set_old_3dview(Xgc);
 	}
       Xgc->graphic_engine->xset_pattern(Xgc,pat);
       Xgc->graphic_engine->xset_dash(Xgc,dash);
@@ -1629,7 +1629,7 @@ void I3dRotation(BCG *Xgc)
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,bbox[4];
   /* FIXME */
-  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
+  if ( tape_old_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
       /* XXX continue for new graphics  */
@@ -1641,7 +1641,7 @@ void I3dRotation(BCG *Xgc)
     }
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  nsp_set_cursor(Xgc,GDK_EXCHANGE);
+  nsp_set_cursor_old(Xgc,GDK_EXCHANGE);
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
   theta0 = theta = Xgc->scales->theta ;
   alpha0 = alpha = Xgc->scales->alpha ;
@@ -1670,7 +1670,7 @@ void I3dRotation(BCG *Xgc)
       else 
 	{
 	  /* just changes the angles in recorded plots */
-	  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+	  tape_old_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
 	  /* immediate redraw */
 	  Xgc->graphic_engine->force_redraw(Xgc);
 	}
@@ -1678,10 +1678,10 @@ void I3dRotation(BCG *Xgc)
       x=xc;
       y=yc;
     }
-  nsp_set_cursor(Xgc,-1);
+  nsp_set_cursor_old(Xgc,-1);
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
-  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+  tape_old_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 
@@ -1704,7 +1704,7 @@ static void dbox(BCG *Xgc,double theta,double alpha)
   SetEch3d1(Xgc,&box,Xgc->scales->bbox1,theta,alpha,Xgc->scales->metric3d);
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     nsp_plot_box3d_ogl(Xgc,&box);
   else
     nsp_plot_box3d(Xgc,&box);
@@ -1942,23 +1942,23 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
 		zl+= z[(*p)*i+k];
 	      fill[0]=inint((whiteid-1)*((zl/(*p))-zmin)/(zmax-zmin))+1;
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      fillpolylines3D(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
+	      fillpolylines3D_old(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
 	    }
 	  else if ( iflag == 2) 
 	    {
 	      /* colors are given by cvect */
 	      fill[0]= cvect[i];
 	      if ( flag[0] < 0 ) fill[0]=-fill[0];
-	      fillpolylines3D(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
+	      fillpolylines3D_old(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
 	    }
 	  else if (iflag ==3) 
 	    { 
 	      /* colors are given by cvect of size (*p) times (*q) */
-	      fillpolylines3D_shade(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,cvect+(*p)*i, npoly,polysize-1);
+	      fillpolylines3D_old_shade(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,cvect+(*p)*i, npoly,polysize-1);
 	    }
 	  else
 	    {
-	      fillpolylines3D(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
+	      fillpolylines3D_old(Xgc,x+(*p)*i,y+(*p)*i,z+(*p)*i,fill,npoly,polysize-1);
 	    }
 	}
     } 
@@ -2069,7 +2069,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
 				 x,y,z,i,j,npolyok,p,dc,fg1,(k==1) ? TRUE : FALSE );
 	    }
 	  if ( npolyok != 0) 
-	    fillpolylines3D(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
+	    fillpolylines3D_old(Xgc,polyx,polyy,polyz,fill,npolyok,polysize);
 	}
     }
   glDisable(GL_CULL_FACE);
@@ -2160,7 +2160,7 @@ void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style)
   x[3]=box->x_r[Indices[2]];y[3]=box->y_r[Indices[2]];z[3]=box->z_r[Indices[2]];
   x[5]=box->x_r[Indices[3]];y[5]=box->y_r[Indices[3]];z[5]=box->z_r[Indices[3]];
   lstyle = Xgc->graphic_engine->xset_dash(Xgc,1);
-  drawsegments3D(Xgc,x,y,z,nsegs,&style,iflag);
+  drawsegments3D_old(Xgc,x,y,z,nsegs,&style,iflag);
   Xgc->graphic_engine->xset_dash(Xgc,lstyle);
 }
 
@@ -2214,7 +2214,7 @@ static int nsp_param3d_ogl(BCG *Xgc,double *x, double *y, double *z, int *n, dou
 	  nel++;
 	}
       if ( nel > 0 ) 
-	drawpolylines3D(Xgc,x+init,y+init,z+init,style,1,nel);
+	drawpolylines3D_old(Xgc,x+init,y+init,z+init,style,1,nel);
       init = j+1;
       if ( init >= (*n)) break;
     }
@@ -2284,7 +2284,7 @@ static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, i
 	      if ( finite(x[j]) ==0 || finite(y[j])==0 || finite(z[j]) == 0) break;
 	      nel++;
 	    }
-	  if ( nel > 0 ) drawpolylines3D(Xgc,x+init,y+init,z+init,style,1,nel);
+	  if ( nel > 0 ) drawpolylines3D_old(Xgc,x+init,y+init,z+init,style,1,nel);
 	  init = j+1;
 	  if ( init >= (*m)) break;
 	}

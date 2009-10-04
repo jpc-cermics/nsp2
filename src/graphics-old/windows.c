@@ -23,14 +23,14 @@
  * delegated to private member of winxgc  
  *--------------------------------------------------------------------------*/
 
-#include "nsp/graphics/Graphics.h" 
+#include "nsp/graphics-old/Graphics.h" 
 
 #ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
+extern Gengine GL_gengine_old;
 #endif 
 
-extern int window_list_check_top(BCG *,void *) ;
-extern int window_list_check_drawing(BCG *dd,void *win);
+extern int window_list_check_top_old(BCG *,void *) ;
+extern int window_list_check_drawing_old(BCG *dd,void *win);
 
 
 /**
@@ -57,15 +57,15 @@ static WindowList *The_List  = (WindowList *) NULL;
 static int set_window_scale(int win,window_scale_list *scale);
 static window_scale_list *check_subwin_wcscale( window_scale_list *listptr, double subwin_rect[4]);
 static window_scale_list *new_wcscale ( window_scale_list *val);
-static WindowList  *window_list_search_w_int(WindowList *listptr, int i);
-static int window_list_search_topelevel_int(WindowList *,void *,int);
+static WindowList  *window_list_search_old_w_int(WindowList *listptr, int i);
+static int window_list_search_old_topelevel_int(WindowList *,void *,int);
 static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
-static int window_list_search_from_drawing__(WindowList *listptr,void *win);
+static int window_list_search_old_from_drawing__(WindowList *listptr,void *win);
 
 /**
- * check_graphic_window
+ * check_graphic_window_old
  * 
  * returns the BCG structure associated to 
  * the current graphic window. If no current graphic 
@@ -74,27 +74,27 @@ static int window_list_search_from_drawing__(WindowList *listptr,void *win);
  * Return value: the current BCG to be used 
  **/
 
-extern Gengine Gtk_gengine; /* XXXXX */
+extern Gengine Gtk_gengine_old; /* XXXXX */
 
-BCG *check_graphic_window(void)
+BCG *check_graphic_window_old(void)
 {
-  BCG *loc =  window_list_get_first();
+  BCG *loc =  window_list_get_first_old();
   if ( loc == NULL ) 
     {
 #ifdef THREAD_VERSION
       gdk_threads_enter();
 #endif
-      Gtk_gengine.xset_curwin(0,TRUE);
+      Gtk_gengine_old.xset_curwin(0,TRUE);
 #ifdef THREAD_VERSION
       gdk_threads_leave();
 #endif
     }
-  return  window_list_get_first();
+  return  window_list_get_first_old();
 } 
 
 
 /**
- * set_graphic_window:
+ * set_graphic_window_old:
  * @num: an integer 
  * 
  * The current graphic window is set to window @num 
@@ -103,15 +103,15 @@ BCG *check_graphic_window(void)
  * Return value: the new graphic context associated to window @num.
  **/
 
-BCG *set_graphic_window(int num) 
+BCG *set_graphic_window_old(int num) 
 {
-  Gtk_gengine.xset_curwin(Max(0,num),TRUE);
-  return  window_list_get_first();
+  Gtk_gengine_old.xset_curwin(Max(0,num),TRUE);
+  return  window_list_get_first_old();
 }
 
 
 /**
- * window_list_new:
+ * window_list_new_old:
  * @private: extra information for #BCG 
  * 
  * Creates a new graphix context. The scales are also 
@@ -120,21 +120,21 @@ BCG *set_graphic_window(int num)
  * Return value: a new graphic context 
  **/
 
-BCG *window_list_new(void *private)
+BCG *window_list_new_old(void *private)
 {
   WindowList *loc =  (WindowList *) MALLOC (sizeof(WindowList));
   if ( loc == NULL) 
     {
-      Sciprintf("window_list_new_entry_int: running out of memory\n");
+      Sciprintf("window_list_new: running out of memory\n");
       return NULL;
     }
   else 
     { 
       loc->winxgc.scales = NULL;
-      if ( xgc_add_default_scale(&loc->winxgc) == FAIL)
+      if ( xgc_add_default_scale_old(&loc->winxgc) == FAIL)
 	{
 	  FREE(loc);
-	  Sciprintf("window_list_new_entry_int: running out of memory\n");
+	  Sciprintf("window_list_new: running out of memory\n");
 	  return NULL;
 	}
       loc->winxgc.private = private ;
@@ -153,7 +153,7 @@ BCG *window_list_new(void *private)
 }
 
 /**
- * window_list_win_to_front:
+ * window_list_win_to_front_old:
  * @win: 
  * 
  * move the graphic context associated to window @win to the front of 
@@ -162,9 +162,9 @@ BCG *window_list_new(void *private)
  * 
  **/
 
-BCG * window_list_win_to_front(int win)
+BCG * window_list_win_to_front_old(int win)
 { 
-  WindowList *loc  =  window_list_search_w_int(The_List,win);
+  WindowList *loc  =  window_list_search_old_w_int(The_List,win);
   if ( loc != NULL) 
     {
       if ( loc->prev != NULL) 
@@ -182,7 +182,7 @@ BCG * window_list_win_to_front(int win)
 }
 
 /**
- * window_list_remove:
+ * window_list_remove_old:
  * @num: 
  * 
  * Free the entry in window list for window number @num. 
@@ -191,7 +191,7 @@ BCG * window_list_win_to_front(int win)
  * 
  **/
 
-void window_list_remove(int num)
+void window_list_remove_old(int num)
 {
   WindowList *L1= The_List ;
   window_scale_list *loc;
@@ -226,7 +226,7 @@ void window_list_remove(int num)
 }
 
 /**
- * window_list_search:
+ * window_list_search_old:
  * @winnum: 
  * 
  * Search a graphic context for window @winnum 
@@ -235,14 +235,14 @@ void window_list_remove(int num)
  * Return value: %NULL or a graphic context 
  **/
 
-BCG *window_list_search(int winnum)
+BCG *window_list_search_old(int winnum)
 { 
-  WindowList *loc = window_list_search_w_int(The_List,(Max(0,winnum)));
+  WindowList *loc = window_list_search_old_w_int(The_List,(Max(0,winnum)));
   if ( loc == NULL) return NULL;
   return  &(loc->winxgc);
 }
 
-static WindowList  *window_list_search_w_int(WindowList *listptr, int i)
+static WindowList  *window_list_search_old_w_int(WindowList *listptr, int i)
 {
   while ( listptr != NULL)
     {
@@ -253,7 +253,7 @@ static WindowList  *window_list_search_w_int(WindowList *listptr, int i)
 }
 
 /**
- * window_list_search_from_drawing
+ * window_list_search_old_from_drawing
  * @win: address of the drawing widget of a graphic window
  * 
  * Search a graphic context for a window described by its 
@@ -264,21 +264,21 @@ static WindowList  *window_list_search_w_int(WindowList *listptr, int i)
  * Return value: an integer 
  **/
 
-int window_list_search_from_drawing(void *win)
+int window_list_search_old_from_drawing(void *win)
 { 
-  return window_list_search_from_drawing__(The_List,win);
+  return window_list_search_old_from_drawing__(The_List,win);
 }
 
-static int window_list_search_from_drawing__(WindowList *listptr,void *win)
+static int window_list_search_old_from_drawing__(WindowList *listptr,void *win)
 {
   if (listptr == (WindowList  *) NULL) return -1;
-  if ( window_list_check_drawing(&listptr->winxgc,win) == TRUE) 
+  if ( window_list_check_drawing_old(&listptr->winxgc,win) == TRUE) 
     return listptr->winxgc.CurWindow;
-  return window_list_search_from_drawing__((WindowList *) listptr->next,win);
+  return window_list_search_old_from_drawing__((WindowList *) listptr->next,win);
 }
 
 /**
- * window_list_search_toplevel:
+ * window_list_search_old_toplevel:
  * @win: a void pointer  
  * 
  * returns the number of graphic windows which share
@@ -287,12 +287,12 @@ static int window_list_search_from_drawing__(WindowList *listptr,void *win)
  * Return value: an integer 
  **/
 
-int window_list_search_toplevel(void *win)
+int window_list_search_old_toplevel(void *win)
 { 
-  return window_list_search_topelevel_int(The_List,win,0);
+  return window_list_search_old_topelevel_int(The_List,win,0);
 }
 
-static int window_list_search_topelevel_int(WindowList *listptr,void *win, int count)
+static int window_list_search_old_topelevel_int(WindowList *listptr,void *win, int count)
 {
   if (listptr == (WindowList  *) NULL)
     {
@@ -300,14 +300,14 @@ static int window_list_search_topelevel_int(WindowList *listptr,void *win, int c
     }
   else 
     { 
-      if ( window_list_check_top(&listptr->winxgc,win) == TRUE) count++;
-      return window_list_search_topelevel_int((WindowList *) listptr->next,win,count);
+      if ( window_list_check_top_old(&listptr->winxgc,win) == TRUE) count++;
+      return window_list_search_old_topelevel_int((WindowList *) listptr->next,win,count);
     }
 }
 
 
 /**
- * window_list_get_first:
+ * window_list_get_first_old:
  * @void: 
  * 
  * returns the first graphic context found in the window list 
@@ -315,14 +315,14 @@ static int window_list_search_topelevel_int(WindowList *listptr,void *win, int c
  * Return value: %NULL or a graphic context 
  **/
 
-BCG *window_list_get_first(void)
+BCG *window_list_get_first_old(void)
 {
   return ( The_List == (WindowList *) NULL) ?  (BCG *) 0 :  &(The_List->winxgc);
 }
 
 
 /**
- * window_list_get_ids:
+ * window_list_get_ids_old:
  * @Num: int pointer 
  * @Ids: pointer to an array of integers 
  * @flag: 0 or 1 
@@ -335,7 +335,7 @@ BCG *window_list_get_first(void)
  * 
  **/
 
-void window_list_get_ids(int *Num, int *Ids, int flag)
+void window_list_get_ids_old(int *Num, int *Ids, int flag)
 {
   WindowList *listptr = The_List;
   *Num = 0;
@@ -360,7 +360,7 @@ void window_list_get_ids(int *Num, int *Ids, int flag)
 
 
 /**
- * window_list_get_max_id:
+ * window_list_get_max_id_old:
  * 
  * returns the highest id of graphic windows or -1 if no 
  * graphic windows.
@@ -368,7 +368,7 @@ void window_list_get_ids(int *Num, int *Ids, int flag)
  * Returns: an integer 
  **/
 
-int window_list_get_max_id(void)
+int window_list_get_max_id_old(void)
 {
   WindowList *listptr = The_List;
   int Num = -1;
@@ -419,13 +419,13 @@ static window_scale_list  default_scale =
 
 
 /**
- * set_window_scale_with_default:
+ * set_window_scale_with_default_old:
  * @win: an integer 
  * 
  * fills the current scale of window @win with default values.
  **/
 
-void set_window_scale_with_default(int win) 
+void set_window_scale_with_default_old(int win) 
 { 
   set_window_scale(win,&default_scale);
 } 
@@ -433,7 +433,7 @@ void set_window_scale_with_default(int win)
 
 
 /**
- * move_subwindow_scale_to_front:
+ * move_subwindow_scale_to_front_old:
  * @Xgc: a graphic context 
  * @subwin: a pointer to an array of doubles specifying a subwindows.
  * 
@@ -447,7 +447,7 @@ void set_window_scale_with_default(int win)
  * Returns: %OK or %FAIL
  **/
 
-int move_subwindow_scale_to_front(BCG *Xgc,double *subwin)
+int move_subwindow_scale_to_front_old(BCG *Xgc,double *subwin)
 { 
   window_scale_list *loc;
   if ( Xgc == NULL) return FAIL;
@@ -502,7 +502,7 @@ static int xgc_add_scale(BCG *Xgc,window_scale_list *scale)
 
 
 /**
- * xgc_add_default_scale:
+ * xgc_add_default_scale_old:
  * @Xgc:  a graphic context 
  * 
  * adds a copy of default scale at the begining of the window scale list 
@@ -511,13 +511,13 @@ static int xgc_add_scale(BCG *Xgc,window_scale_list *scale)
  * Returns: %OK or %FAIL.
  **/
 
-int xgc_add_default_scale(BCG *Xgc)
+int xgc_add_default_scale_old(BCG *Xgc)
 {
   return xgc_add_scale(Xgc,&default_scale);
 }
 
 /**
- * xgc_reset_scales_to_default:
+ * xgc_reset_scales_to_default_old:
  * @Xgc:  a graphic context 
  * 
  * remove the scales in the graphic context @Xgc and 
@@ -526,7 +526,7 @@ int xgc_add_default_scale(BCG *Xgc)
  * Returns: %OK or %FAIL.
  **/
 
-int xgc_reset_scales_to_default(BCG *Xgc)
+int xgc_reset_scales_to_default_old(BCG *Xgc)
 {
   window_scale_list *loc = Xgc->scales;
   while ( loc != NULL)
@@ -537,7 +537,7 @@ int xgc_reset_scales_to_default(BCG *Xgc)
     }
   Xgc->scales = NULL;
   /* now reinsert default scale */
-  return xgc_add_default_scale(Xgc);
+  return xgc_add_default_scale_old(Xgc);
 }
 
 
@@ -558,7 +558,7 @@ int xgc_reset_scales_to_default(BCG *Xgc)
 static int set_window_scale(int win,window_scale_list *scale)
 { 
   window_scale_list *loc;
-  BCG * winxgc = window_list_search(win);
+  BCG * winxgc = window_list_search_old(win);
   if ( winxgc == NULL) return FAIL;
   if ( winxgc->scales ==  NULL)
     {
@@ -670,18 +670,18 @@ static int same_subwin( double lsubwin_rect[4],double subwin_rect[4])
  *-------------------------------------------------------------*/
 
 /**
- * window_scale_delete:
+ * window_scale_delete_old:
  * @win: an integer 
  * 
  * delete the scales associated to window @win. 
  * 
  **/
 
-void window_scale_delete(int win)
+void window_scale_delete_old(int win)
 { 
 
   window_scale_list *loc;
-  BCG * winxgc = window_list_search(win);
+  BCG * winxgc = window_list_search_old(win);
   if ( winxgc == NULL) return ; 
   if ( winxgc->scales ==  NULL) return ;
   loc = winxgc->scales ;
@@ -741,7 +741,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
 
 
 /**
- * show_scales:
+ * show_scales_old:
  * @Xgc: a graphic context 
  * 
  * display on the current output stream the subwindows 
@@ -749,7 +749,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
  * 
  **/
 
-void show_scales(BCG *Xgc)
+void show_scales_old(BCG *Xgc)
 {
   window_scale_list *loc;
   if ( Xgc == NULL ||  Xgc->scales ==  NULL) 
@@ -769,7 +769,7 @@ void show_scales(BCG *Xgc)
 }
 
 /**
- * setscale2d:
+ * setscale2d_old:
  * @Xgc: a graphic context 
  * @WRect: 
  * @FRect: 
@@ -788,7 +788,7 @@ void show_scales(BCG *Xgc)
  * Return value: unused.
  **/
 
-int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
+int setscale2d_old(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 {
   static int aaint[]={2,10,2,10};
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Ech(Xgc,WRect,FRect,logscale);
@@ -802,18 +802,18 @@ int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
       FRect[1]=log10(FRect[1]);
       FRect[3]=log10(FRect[3]);
     }
-  set_scale(Xgc,"tttftf",WRect,FRect,aaint,logscale,NULL);
+  set_scale_old(Xgc,"tttftf",WRect,FRect,aaint,logscale,NULL);
   return(0);
 }
 
 
 /*-------------------------------------------
- * setscale2d 
+ * setscale2d_old 
  *  
  *-------------------------------------------*/
 
 /**
- * Nsetscale2d:
+ * Nsetscale2d_old:
  * @Xgc: a graphic context 
  * @WRect: subwindow 
  * @FRect: scales 
@@ -840,7 +840,7 @@ int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
  * Returns: 0 
  **/
 
-int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *logscale)
+int Nsetscale2d_old(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *logscale)
 {
   /* if some arguments are null pointer we set them to 
    * the corresponding current_scale value. 
@@ -855,7 +855,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
       /* a subwindow is specified 
        * try to get its scale values as default values 
        */
-      if (  move_subwindow_scale_to_front(Xgc,WRect) == FAIL)
+      if (  move_subwindow_scale_to_front_old(Xgc,WRect) == FAIL)
 	{
 	  /* new subwindow */
 	  if ( xgc_add_scale(Xgc,&default_scale)== FAIL)   return 0;
@@ -897,12 +897,12 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
     }
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     nsp_gengine_record_old.store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
-  set_scale(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
+  set_scale_old(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
   return(0);
 }
 
 /**
- * getscale2d:
+ * getscale2d_old:
  * @Xgc: 
  * @WRect: 
  * @FREct: 
@@ -914,7 +914,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
  * Returns: 0 
  **/
 
-int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double ARect[4])
+int getscale2d_old(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double ARect[4])
 {
   int i;
   static double ten=10.0;
@@ -941,7 +941,7 @@ int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double AR
 
 
 /**
- * set_scale:
+ * set_scale_old:
  * @Xgc: a graphic context 
  * @flag: flag to indicate which arguments to use 
  * @subwin: subwindow specification
@@ -961,7 +961,7 @@ int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double AR
  * 
  **/
 
-void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4],
+void set_scale_old(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4],
 	       int aaint[4], char logflag[2],   double axis_values[4])
 {
   char wdim_changed= 'f',subwin_changed='f';
@@ -984,7 +984,7 @@ void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4]
       if ( ! same_subwin( subwin,Xgc->scales->subwin_rect)) 
 	{
 	  subwin_changed='t' ;
-	  if ( move_subwindow_scale_to_front(Xgc,subwin)==FAIL);
+	  if ( move_subwindow_scale_to_front_old(Xgc,subwin)==FAIL);
 	  if ( xgc_add_scale(Xgc,&default_scale)== FAIL)
 	    return;
 	}
@@ -1068,9 +1068,9 @@ void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4]
       Xgc->scales->WIRect1[3] = Abs(YScale( Xgc->scales->frect[3]) -  YScale( Xgc->scales->frect[1]));
 #ifdef WITH_GTKGLEXT 
       /* transmit info to opengl */
-      if ( Xgc->graphic_engine == &GL_gengine ) 
+      if ( Xgc->graphic_engine == &GL_gengine_old ) 
 	{
-	  nsp_ogl_set_view(Xgc);
+	  nsp_ogl_set_old_view(Xgc);
 	}
 #endif
 
@@ -1098,48 +1098,49 @@ void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4]
 
 
 /**
- * get_cwindow_dims:
+ * get_cwindow_dims_old:
  * @wdims: an integer pointer 
  * 
  * get dimensions of the current graphic window.
  *
  **/
 
-void get_cwindow_dims( int *wdims)
+void get_cwindow_dims_old( int *wdims)
 {
-  BCG *Xgc = check_graphic_window();
+  BCG *Xgc = check_graphic_window_old();
   Xgc->graphic_engine->xget_windowdim(Xgc,wdims,wdims+1);
 }
 
 /**
- * frame_clip_on:
+ * frame_clip_on_old:
  * @Xgc:  graphic context #BCG
  * 
  * use current scale to set the clipping rectangle 
  * 
  **/
 
-void frame_clip_on(BCG *Xgc)
+void frame_clip_on_old(BCG *Xgc)
 {
   Xgc->graphic_engine->xset_clip(Xgc,Xgc->scales->WIRect1);
 }
 
 /**
- * frame_clip_off:
+ * frame_clip_off_old:
  * @Xgc:  graphic context #BCG
  * 
  * unset clipping.
  * 
  **/
 
-void frame_clip_off(BCG *Xgc)
+void frame_clip_off_old(BCG *Xgc)
 {
   Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
 
+
 /**
- * window_list_check_queue:
+ * window_list_check_queue_old:
  * @Xgc:  graphic context #BCG
  * @ev: a #nsp_gwin_event
  * 
@@ -1152,7 +1153,7 @@ void frame_clip_off(BCG *Xgc)
  * Returns: %OK or %FAIL.
  **/
 
-int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
+int window_list_check_queue_old(BCG *Xgc,nsp_gwin_event *ev)
 {
   WindowList *L1= The_List ;
   if ( Xgc == NULL )
@@ -1160,9 +1161,9 @@ int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
       /* search the whole list */
       while ( L1 != (WindowList *) NULL)
 	{
-	  if ( nsp_queue_empty(&L1->winxgc.queue) == FALSE )
+	  if ( nsp_queue_empty_old(&L1->winxgc.queue) == FALSE )
 	    {
-	      *ev= nsp_dequeue(&L1->winxgc.queue);
+	      *ev= nsp_dequeue_old(&L1->winxgc.queue);
 	      return OK;
 	    }
 	  L1 = (WindowList *) L1->next;
@@ -1170,9 +1171,9 @@ int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
     }
   else
     {
-      if ( nsp_queue_empty(&Xgc->queue) == FALSE ) 
+      if ( nsp_queue_empty_old(&Xgc->queue) == FALSE ) 
 	{
-	  *ev= nsp_dequeue(&Xgc->queue);
+	  *ev= nsp_dequeue_old(&Xgc->queue);
 	  return OK;
 	}
     }
@@ -1180,7 +1181,7 @@ int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
 }
 
 /**
- * window_list_clear_queue:
+ * window_list_clear_queue_old:
  * @Xgc: graphic context #BCG
  * 
  * clears the event queues of the window 
@@ -1189,7 +1190,7 @@ int window_list_check_queue(BCG *Xgc,nsp_gwin_event *ev)
  * 
  **/
 
-void window_list_clear_queue(BCG *Xgc)
+void window_list_clear_queue_old(BCG *Xgc)
 {
   WindowList *L1= The_List ;
   if ( Xgc == NULL )
@@ -1197,12 +1198,13 @@ void window_list_clear_queue(BCG *Xgc)
       /* clear all queues */
       while ( L1 != (WindowList *) NULL)
 	{
-	  nsp_clear_queue(&L1->winxgc.queue);
+	  nsp_clear_queue_old(&L1->winxgc.queue);
 	  L1 = (WindowList *) L1->next;
 	}
     }
   else
     {
-      nsp_clear_queue(&Xgc->queue);
+      nsp_clear_queue_old(&Xgc->queue);
     }
 }
+

@@ -24,8 +24,8 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
-/* #include "nsp/graphics/PloEch.h" */
+#include "nsp/graphics-old/Graphics.h"
+/* #include "nsp/graphics-old/PloEch.h" */
 
 
 static void Plo2d3RealToPixel (BCG *Xgc,int *n1, int *n2, double *x, double *y, int *xm, int *ym, char *xf);
@@ -50,7 +50,7 @@ int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
   if ( CheckxfParam(xf)== 1) return(0);
 
   /** Boundaries of the frame **/
-  update_frame_bounds(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,xf,x,y,n1,n2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
@@ -73,13 +73,13 @@ int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
       
       /** Draw Axis or only rectangle **/
     }
-  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
   
   if ( n != 0 ) 
     {
       /** Drawing the curves **/
-      frame_clip_on(Xgc);
+      frame_clip_on_old(Xgc);
       /** to get the default dash **/
       for ( j = 0 ; j < (*n1) ; j++)
 	{
@@ -88,11 +88,11 @@ int nsp_plot2d_3(BCG *Xgc,char *xf,double x[],double y[],int *n1,int *n2,int sty
 	  lstyle = (style[j] < 0) ?  -style[j] : style[j];
 	  Xgc->graphic_engine->drawsegments(Xgc,&xm[2*(*n2)*j],&ym[2*(*n2)*j],nn2,&lstyle,iflag);
 	}
-      frame_clip_off(Xgc);
+      frame_clip_off_old(Xgc);
       /** Drawing the Legends **/
       if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
 	{
-	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
+	  nsp_legends_old(Xgc,legend_pos,*n1,style,legend,"@"); 
 	}
     }
   return(0);

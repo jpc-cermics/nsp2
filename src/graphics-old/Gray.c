@@ -29,7 +29,7 @@
 #include <math.h>
 #include <string.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 /* functions used by the modified version : */
 
@@ -52,7 +52,7 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
   xx[0]=Mini(x,nx);xx[1]=Maxi(x,nx);
   yy[0]=Mini(y,ny);yy[1]=Maxi(y,ny);
   /* Boundaries of the frame **/
-  update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
   /* Allocation **/
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
@@ -67,14 +67,14 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
     }      
 
   /* Draw Axis or only rectangle */
-  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
     /* Drawing the curves */
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   for ( j =0 ; j < (nx) ; j++)	 xm[j]= XScale(x[j]);
   for ( j =0 ; j < (ny) ; j++)	 ym[j]= YScale(y[j]); 
   Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,z,nx,ny,remap,colminmax,zminmax,NULL);
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
   Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   return(0);
 }
@@ -107,8 +107,8 @@ static int nsp_draw_matrix_zmoy(BCG *Xgc,double *x, double *y, double *z, int nx
 
 #if 1
 /* FIXME */
-extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag);
-extern Gengine GL_gengine;
+extern void fillpolyline2D_shade_old(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag);
+extern Gengine GL_gengine_old;
 #endif 
 
 static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, int nx, int ny, char *strflag,
@@ -121,7 +121,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
   yy[0]=Mini(y,ny);yy[1]=Maxi(y,ny);
 
   /* Boundaries of the frame */
-  update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   /* FIXME: need one more flag */
@@ -141,11 +141,11 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
     for ( j = 0 ; j < ny  ; j++) 
       {
 	double xp=x[i],yp=y[j];
-	scale_f2i(Xgc,&xp,&yp,xm+i+nx*j,ym+i+nx*j,1);
+	scale_f2i_old(Xgc,&xp,&yp,xm+i+nx*j,ym+i+nx*j,1);
       }
 
   /* Fec code */
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   {
     int nz;
     int whiteid;
@@ -258,7 +258,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
      */
 
 #ifdef  WITH_GTKGLEXT 
-    if (  Xgc->graphic_engine == &GL_gengine ) 
+    if (  Xgc->graphic_engine == &GL_gengine_old ) 
       {
 	for ( i = 0 ; i < nx -1 ; i++ )
 	  for ( j = 0 ; j < ny -1 ; j++) 
@@ -271,7 +271,7 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
 		  xp[k]= xm[pos[k]];
 		  yp[k]= ym[pos[k]];
 		}
-	      fillpolyline2D_shade(Xgc,xp,yp,colors,4,1);
+	      fillpolyline2D_shade_old(Xgc,xp,yp,colors,4,1);
 	    }
       }
     else 
@@ -348,10 +348,10 @@ static int nsp_draw_matrix_shade(BCG *Xgc,double *x, double *y, double *func, in
   }
 
 
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
 
   /* Draw Axis or only rectangle **/
-  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
 
   return(0);
@@ -418,7 +418,7 @@ int nsp_draw_matrix_1_old(BCG *Xgc,double *z, int nr, int nc, char *strflag, dou
   int *xm,*ym,j;
 
   /* Boundaries of the frame **/
-  update_frame_bounds(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,"gnn",xx,yy,&nn1,&nn2,aaint,strflag,brect);
 
   /* If Record is on **/
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
@@ -434,14 +434,14 @@ int nsp_draw_matrix_1_old(BCG *Xgc,double *z, int nr, int nc, char *strflag, dou
     }      
 
   /* Draw Axis or only rectangle **/
-  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
   /* Drawing the curves **/
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   for ( j =0 ; j < (nc+1) ; j++) xm[j]= XScale(j+0.5);
   for ( j =0 ; j < (nr+1) ; j++) ym[j]= YScale((nr -j+0.5));
   Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,z,nr,nc,remap,colminmax,zminmax);
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
   Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
   return(0);
 }
@@ -473,7 +473,7 @@ int nsp_draw_matrix_2_old(BCG *Xgc,double *z,int nr, int nc, double *xrect,
     nsp_gengine_record_old.store_Gray2(Xgc,z,nr,nc,xrect,remap,colminmax,zminmax);
 
   /* Boundaries of the frame **/
-  scale_f2i(Xgc,xx,yy,xx1,yy1,2);
+  scale_f2i_old(Xgc,xx,yy,xx1,yy1,2);
   xm = graphic_alloc(0,nc+1,sizeof(int));
   ym = graphic_alloc(1,nr+1,sizeof(int));
   if ( xm == 0 || ym == 0 )
@@ -485,9 +485,9 @@ int nsp_draw_matrix_2_old(BCG *Xgc,double *z,int nr, int nc, double *xrect,
     xm[j]= (int) (( xx1[1]*j + xx1[0]*(nc-j) )/((double) nc));
   for ( j =0 ; j < (nr+1) ; j++)	 
     ym[j]= (int) (( yy1[0]*j + yy1[1]*(nr-j) )/((double) nr));
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   Xgc->graphic_engine->fill_grid_rectangles1(Xgc,xm,ym,z,nr,nc,remap,colminmax,zminmax);
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
   return(0);
 }
 
@@ -522,7 +522,7 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
   int i,*xm,*ym,j,k, n1=1;
 
   /* Boundaries of the frame */
-  update_frame_bounds(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,"gnn",x,y,&n1,Nnode,aaint,strflag,brect);
 
   /* Storing values if using the Record driver */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
@@ -539,10 +539,10 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
       return 0;
     }      
   
-  scale_f2i(Xgc,x,y,xm,ym,*Nnode);
+  scale_f2i_old(Xgc,x,y,xm,ym,*Nnode);
 
   /* Fec code */
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   {
     /*
      *	 beginning of the code modified by Bruno 01/02/2001  
@@ -646,7 +646,7 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
      *     into its differents zones (polygons) by the function PaintTriangle   
      */
 #if 0 
-    if (  Xgc->graphic_engine == &GL_gengine ) 
+    if (  Xgc->graphic_engine == &GL_gengine_old ) 
       {
 	for ( j = 0 ; j < *Ntr ; j++) 
 	  {
@@ -662,7 +662,7 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
 	    };
 	    if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
 	      {
-		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+		fillpolyline2D_shade_old(Xgc,isx,isy,ii,3,1); 
 	      }     
 	    /* call the "painting" function */
 	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
@@ -706,17 +706,17 @@ int nsp_fec_old(BCG *Xgc,double *x, double *y, double *triangles, double *func, 
    *                     end of the modified code
    */
 
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
 
   /* Draw Axis or only rectangle */
-  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
 
   /* Drawing the Legends */
   if ((int)strlen(strflag) >=1  && strflag[0] == '1')
     {
       int style = -1;
-      nsp_legends(Xgc,legend_ur,1,&style,legend,"@"); 
+      nsp_legends_old(Xgc,legend_ur,1,&style,legend,"@"); 
     }
   return(0);
 }

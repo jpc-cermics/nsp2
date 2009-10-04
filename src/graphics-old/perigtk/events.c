@@ -43,7 +43,7 @@ static void setpopupname(BCG *Xgc,char *string)
 }
 
 
-extern GTK_locator_info nsp_event_info;
+extern GTK_locator_info nsp_event_info_old;
 
 /* event handler for "button-press-event".
  */
@@ -67,19 +67,19 @@ static gboolean locator_button_press(GtkWidget *widget,
       Sciprintf("A Shift-press\n");
     }
 
-  if ( nsp_event_info.sci_click_activated == FALSE ) 
+  if ( nsp_event_info_old.sci_click_activated == FALSE ) 
     {
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,event->state,0,0};
-      nsp_enqueue(&gc->queue,&ev);
+      nsp_enqueue_old(&gc->queue,&ev);
     }
   else 
     {
-      nsp_event_info.ok = 1; 
-      nsp_event_info.win=  gc->CurWindow; 
-      nsp_event_info.x = event->x; 
-      nsp_event_info.y = event->y; 
-      nsp_event_info.button = id;
-      nsp_event_info.mask = event->state ;
+      nsp_event_info_old.ok = 1; 
+      nsp_event_info_old.win=  gc->CurWindow; 
+      nsp_event_info_old.x = event->x; 
+      nsp_event_info_old.y = event->y; 
+      nsp_event_info_old.button = id;
+      nsp_event_info_old.mask = event->state ;
       gtk_main_quit();
     }
   return TRUE;
@@ -92,23 +92,23 @@ static gboolean locator_button_release(GtkWidget *widget,
 				       GdkEventButton *event,
 				       BCG *gc)
 {
-  if ( nsp_event_info.sci_click_activated == FALSE ) 
+  if ( nsp_event_info_old.sci_click_activated == FALSE ) 
     {
       /* here we are not in an xclick or xgetmouse 
        * thus we have to store events in queue.
        */
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,event->button-6 ,event->state,0,1};
-      nsp_enqueue(&gc->queue,&ev);
+      nsp_enqueue_old(&gc->queue,&ev);
     }
   else 
     {
-      if ( nsp_event_info.getrelease == TRUE ) 
+      if ( nsp_event_info_old.getrelease == TRUE ) 
 	{
-	  nsp_event_info.ok =1 ; 
-	  nsp_event_info.win=  gc->CurWindow; 
-	  nsp_event_info.x = event->x;  nsp_event_info.y = event->y;
-	  nsp_event_info.button = event->button -6;
-	  nsp_event_info.mask = event->state;
+	  nsp_event_info_old.ok =1 ; 
+	  nsp_event_info_old.win=  gc->CurWindow; 
+	  nsp_event_info_old.x = event->x;  nsp_event_info_old.y = event->y;
+	  nsp_event_info_old.button = event->button -6;
+	  nsp_event_info_old.mask = event->state;
 	  gtk_main_quit();
 	}
     }
@@ -139,33 +139,33 @@ static gboolean locator_button_motion(GtkWidget *widget,
     {
       x= event->x; y = event->y;
     }
-  if ( nsp_event_info.sci_click_activated == FALSE )
+  if ( nsp_event_info_old.sci_click_activated == FALSE )
     {
       /* here we are not in an xclick or xgetmouse 
        * thus we have to store events in queue.
        */
       nsp_gwin_event ev={ gc->CurWindow,x, y,-1 ,event->state,1,0},evlast;
-      if ( nsp_queue_empty(&gc->queue)== FALSE ) 
+      if ( nsp_queue_empty_old(&gc->queue)== FALSE ) 
 	{
 	  /* to not keep multi motion events */
-	  evlast = nsp_peekqueue(&gc->queue);
+	  evlast = nsp_peekqueue_old(&gc->queue);
 	  if (evlast.motion == TRUE )
 	    {
-	      evlast = nsp_dequeue(&gc->queue);
+	      evlast = nsp_dequeue_old(&gc->queue);
 	    }
 	}
-      nsp_enqueue(&gc->queue,&ev);
+      nsp_enqueue_old(&gc->queue,&ev);
     }
   else 
     {
       /* here we are inside a xclick or xgetmouse */
-      if ( nsp_event_info.getmotion == TRUE ) 
+      if ( nsp_event_info_old.getmotion == TRUE ) 
 	{
-	  nsp_event_info.ok =1 ;  
-	  nsp_event_info.win=  gc->CurWindow; 
-	  nsp_event_info.x = x;  nsp_event_info.y = y;
-	  nsp_event_info.button = -1;
-	  nsp_event_info.mask = event->state;
+	  nsp_event_info_old.ok =1 ;  
+	  nsp_event_info_old.win=  gc->CurWindow; 
+	  nsp_event_info_old.x = x;  nsp_event_info_old.y = y;
+	  nsp_event_info_old.button = -1;
+	  nsp_event_info_old.mask = event->state;
 	  gtk_main_quit();
 	}
     }
@@ -179,16 +179,16 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   gint x,y; 
   GdkModifierType state;
   
-  if (nsp_event_info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
+  if (nsp_event_info_old.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
     {
       /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
       if ( event->state != GDK_CONTROL_MASK && event->state != GDK_MOD1_MASK ) 
 	{
 	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-	  nsp_event_info.x=x ; nsp_event_info.y=y;
-	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; 
-	  nsp_event_info.button = event->keyval;
-	  nsp_event_info.mask = event->state;
+	  nsp_event_info_old.x=x ; nsp_event_info_old.y=y;
+	  nsp_event_info_old.ok =1 ;  nsp_event_info_old.win=  gc->CurWindow; 
+	  nsp_event_info_old.button = event->keyval;
+	  nsp_event_info_old.mask = event->state;
 	  gtk_main_quit();
 	}
     }
@@ -196,7 +196,7 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
     {
       gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
       nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
-      nsp_enqueue(&gc->queue,&ev);
+      nsp_enqueue_old(&gc->queue,&ev);
     }
   return FALSE; /* also want other handlers to be activated */
 }
@@ -222,11 +222,11 @@ static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
 
 static gint timeout_test (BCG *gc)
 {
-  if ( dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
+  if ( dequeue_nsp_command(nsp_event_info_old.str,nsp_event_info_old.lstr) == OK)
     {
-      nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
-      nsp_event_info.mask = 0;
-      nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
+      nsp_event_info_old.ok = 1 ; nsp_event_info_old.x = 0 ; nsp_event_info_old.y =0 ; nsp_event_info_old.button =  -2;
+      nsp_event_info_old.mask = 0;
+      nsp_event_info_old.win = (gc == NULL) ? 0 : gc->CurWindow;
       gtk_main_quit();
     }
   return TRUE;
@@ -277,7 +277,7 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
       int i;
       for (i=0; i < wincount ; i++ ) 
 	{
-	  BCG *bcg =  window_list_search(i);
+	  BCG *bcg =  window_list_search_old(i);
 	  if ( bcg  != NULL)
 	    {
 	      cursor =  ( flag == 0 ) ? bcg->private->ccursor : bcg->private->gcursor;
@@ -325,7 +325,7 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   if ( win == -1 ) 
     {
       /* we will check all the graphic windows */
-      wincount = window_list_get_max_id()+1;
+      wincount = window_list_get_max_id_old()+1;
     }
   else 
     {
@@ -345,7 +345,7 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
       nsp_gwin_event ev ={0};
       while (1)
 	{
-	  if ( window_list_check_queue((win == -1 ) ? NULL: Xgc,&ev) == OK) 
+	  if ( window_list_check_queue_old((win == -1 ) ? NULL: Xgc,&ev) == OK) 
 	    {
 	      ok = TRUE ;
 	      *iwin = ev.win; *x1 = ev.x ; *yy1 = ev.y ; 
@@ -369,26 +369,26 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 	}
     }
 
-  if ( iflag == FALSE ) window_list_clear_queue((win == -1 ) ? NULL: Xgc);
+  if ( iflag == FALSE ) window_list_clear_queue_old((win == -1 ) ? NULL: Xgc);
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,1);
   
   /* save info in local variable  */
-  rec_info = nsp_event_info;
+  rec_info = nsp_event_info_old;
   /* set info */ 
-  nsp_event_info.ok = 0 ; 
-  nsp_event_info.getrelease = getrelease ; 
-  nsp_event_info.getmotion   = getmotion ;
-  nsp_event_info.getmen     = (lstr == 0) ? FALSE : TRUE; 
-  nsp_event_info.getkey     = getkey;
-  nsp_event_info.sci_click_activated = TRUE ;
+  nsp_event_info_old.ok = 0 ; 
+  nsp_event_info_old.getrelease = getrelease ; 
+  nsp_event_info_old.getmotion   = getmotion ;
+  nsp_event_info_old.getmen     = (lstr == 0) ? FALSE : TRUE; 
+  nsp_event_info_old.getkey     = getkey;
+  nsp_event_info_old.sci_click_activated = TRUE ;
 
-  if ( nsp_event_info.getmen == TRUE ) 
+  if ( nsp_event_info_old.getmen == TRUE ) 
     {
       /*  Check soft menu activation during xclick */ 
-      nsp_event_info.timer = g_timeout_add(100, (GSourceFunc) timeout_test, Xgc);
-      nsp_event_info.str   = str;
-      nsp_event_info.lstr  = lstr; /* on entry it gives the size of str buffer */
+      nsp_event_info_old.timer = g_timeout_add(100, (GSourceFunc) timeout_test, Xgc);
+      nsp_event_info_old.str   = str;
+      nsp_event_info_old.lstr  = lstr; /* on entry it gives the size of str buffer */
     }
   
 #ifdef WITH_TK
@@ -399,10 +399,10 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
     {
       gtk_main();
       /* be sure that gtk_main_quit was activated by proper event */
-      if ( nsp_event_info.ok == 1 ) 
+      if ( nsp_event_info_old.ok == 1 ) 
 	{
 	  if ( win == -1 ) break;
-	  if ( nsp_event_info.win == win  ) break;
+	  if ( nsp_event_info_old.win == win  ) break;
 	}
     }
 
@@ -410,18 +410,18 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
   g_source_remove(timer_tk);
 #endif
 
-  *x1 = nsp_event_info.x;
-  *yy1 = nsp_event_info.y;
-  *ibutton = nsp_event_info.button;
-  *imask = nsp_event_info.mask;
-  *iwin = nsp_event_info.win;
+  *x1 = nsp_event_info_old.x;
+  *yy1 = nsp_event_info_old.y;
+  *ibutton = nsp_event_info_old.button;
+  *imask = nsp_event_info_old.mask;
+  *iwin = nsp_event_info_old.win;
 
-  /* Sciprintf("xfound %d %d %d\n",nsp_event_info.x,nsp_event_info.y,nsp_event_info.button);   */
+  /* Sciprintf("xfound %d %d %d\n",nsp_event_info_old.x,nsp_event_info_old.y,nsp_event_info_old.button);   */
   /* remove timer if it was set by us */ 
-  if ( nsp_event_info.getmen == TRUE )  g_source_remove (nsp_event_info.timer);
+  if ( nsp_event_info_old.getmen == TRUE )  g_source_remove (nsp_event_info_old.timer);
 
   /* take care of recursive calls i.e restore info  */
-  nsp_event_info = rec_info ; 
+  nsp_event_info_old = rec_info ; 
 
   if ( change_cursor ) nsp_change_cursor(Xgc,win,wincount,0);
   
@@ -448,7 +448,7 @@ static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iw
 #endif
 
 #ifdef PERIGTK
-void nsp_pause(int sec_time,int events)
+void nsp_pause_old(int sec_time,int events)
 {
   if ( sec_time == 0 )
     {
@@ -492,10 +492,10 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
     {
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
     }
-  if ( nsp_event_info.sci_click_activated == TRUE ) 
+  if ( nsp_event_info_old.sci_click_activated == TRUE ) 
     {
-      nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = 0 ;  nsp_event_info.y = 0;
-      nsp_event_info.button = -100;
+      nsp_event_info_old.ok =1 ;  nsp_event_info_old.win=  gc->CurWindow; nsp_event_info_old.x = 0 ;  nsp_event_info_old.y = 0;
+      nsp_event_info_old.button = -100;
       delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
@@ -514,10 +514,10 @@ static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *
       xinfo(gc,"Cannot destroy window while acquiring zoom rectangle ");
       return TRUE;
     }
-  if ( nsp_event_info.sci_click_activated == TRUE ) 
+  if ( nsp_event_info_old.sci_click_activated == TRUE ) 
     {
-      nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = 0 ;  nsp_event_info.y = 0;
-      nsp_event_info.button = -100;
+      nsp_event_info_old.ok =1 ;  nsp_event_info_old.win=  gc->CurWindow; nsp_event_info_old.x = 0 ;  nsp_event_info_old.y = 0;
+      nsp_event_info_old.button = -100;
       delete_window(gc,gc->CurWindow);
       gtk_main_quit();
     }
@@ -550,12 +550,12 @@ static void xinfo(BCG *Xgc,char *format,...)
 
 
 #ifdef PERIGTK
-int window_list_check_top(BCG *dd,void *win) 
+int window_list_check_top_old(BCG *dd,void *win) 
 {
   return dd->private->window == (GtkWidget *) win ;
 }
 
-int window_list_check_drawing(BCG *dd,void *win) 
+int window_list_check_drawing_old(BCG *dd,void *win) 
 {
   return dd->private->drawing == (GtkWidget *) win ;
 }
@@ -572,10 +572,10 @@ static void delete_window(BCG *dd,int intnum)
   int top_count;
   if ( dd == NULL) 
     {
-      if ((winxgc = window_list_search(intnum)) == NULL) return;
+      if ((winxgc = window_list_search_old(intnum)) == NULL) return;
     }
   /* be sure to clear the recorded graphics */
-  nsp_gr_erase(intnum);
+  dd->actions->erase(dd);/* nsp_gr_erase(intnum); */
 
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) 
@@ -605,7 +605,7 @@ static void delete_window(BCG *dd,int intnum)
       g_object_unref(G_OBJECT(winxgc->private->pixmap));
     }
   /* destroy top level window if it is not shared by other graphics  */
-  top_count = window_list_search_toplevel(winxgc->private->window); 
+  top_count = window_list_search_old_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
     {
       if ( winxgc->private->window != NULL) 
@@ -638,7 +638,7 @@ static void delete_window(BCG *dd,int intnum)
   nsp_fonts_finalize(winxgc);
   FREE(winxgc->private);
   /* remove current window from window list */
-  window_list_remove(intnum);
+  window_list_remove_old(intnum);
 }
 
 
@@ -772,7 +772,7 @@ target_drag_data_received  (GtkWidget          *widget,
 		  ids[col-2] = g_value_get_double(&value);
 		  g_value_unset(&value);
 		}
-	      winnum = window_list_search_from_drawing(widget);
+	      winnum = window_list_search_old_from_drawing(widget);
 	      if ( winnum == -1 )
 		{
 		  gtk_drag_finish (context, FALSE, FALSE, time);
@@ -781,12 +781,9 @@ target_drag_data_received  (GtkWidget          *widget,
 	      /* Sciprintf("You have draged a block from palette [%d,%d] to window %d\n",
 	       *  ids[0],ids[1],winnum);
 	       */
-	      Xgc = window_list_search(winnum);
+	      Xgc = window_list_search_old(winnum);
 	      gdk_window_get_pointer (Xgc->private->drawing->window, &x1, &y1, &state);
-	      if ( nsp_new_graphics() == TRUE) 
-		nsp_get_point_axes(Xgc,x1,y1,pt);
-	      else
-		scale_i2f(Xgc,pt,pt+1,&x1,&y1,1);
+	      scale_i2f_old(Xgc,pt,pt+1,&x1,&y1,1);
 	      /* Sciprintf("PlaceDropped_info([%5.3f,%5.3f],[%d,%d],[%d,%d],%d,%d,%d)\n",
 	       * pt[0],pt[1],x,y,x1,y1,ids[0],ids[1],winnum);
 	       */

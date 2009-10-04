@@ -26,7 +26,7 @@
 #include <math.h>
 #include <gdk/gdk.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 #if 0 
 static void zoom_rect (BCG *Xgc,double,double,double,double);
@@ -39,7 +39,7 @@ static void zoom_rect (BCG *Xgc,double,double,double,double);
  * to set the plot region to a specified rectangle 
  * --------------------------------------------------------------------------*/
 
-void scale_f2wrect(BCG *Xgc,const double x[],double x1[])
+void scale_f2wrect_old(BCG *Xgc,const double x[],double x1[])
 {
   int i=0;
   if ( Xgc->scales->logflag[0] == 'n' ) 
@@ -80,7 +80,7 @@ void scale_f2wrect(BCG *Xgc,const double x[],double x1[])
  *    lstr    : unused (Fortran/C) 
  * --------------------------------------------------------------------------*/
 
-void scale_f2i(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int n)
+void scale_f2i_old(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int n)
 {
   double xd,yd;
   int i;
@@ -132,7 +132,7 @@ void scale_f2i(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int 
     }
 }
 
-void scale_i2f(BCG *Xgc, double x[], double y[],const int x1[],const int y1[],int n)
+void scale_i2f_old(BCG *Xgc, double x[], double y[],const int x1[],const int y1[],int n)
 {
   int i;
   if (Xgc->scales->logflag[0] == 'n') 
@@ -151,7 +151,7 @@ void scale_i2f(BCG *Xgc, double x[], double y[],const int x1[],const int y1[],in
  * Note that it cannot work in logarithmic scale 
  *--------------------------------------------------------------------*/
 
-void length_scale_f2i(BCG *Xgc,const double *x,const double *y, int *x1, int *y1, int n)
+void length_scale_f2i_old(BCG *Xgc,const double *x,const double *y, int *x1, int *y1, int n)
 {
   int i;
   for ( i=0 ; i < n ; i++)
@@ -161,7 +161,7 @@ void length_scale_f2i(BCG *Xgc,const double *x,const double *y, int *x1, int *y1
     }
 }
 
-void length_scale_i2f(BCG *Xgc,double *x, double *y, const int *x1, const int *y1, int n)
+void length_scale_i2f_old(BCG *Xgc,double *x, double *y, const int *x1, const int *y1, int n)
 {
   int i;
   for ( i=0 ; i < n ; i++)
@@ -175,7 +175,7 @@ void length_scale_i2f(BCG *Xgc,double *x, double *y, const int *x1, const int *y
  * scale conversions 
  */
 
-void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
+void rect2d_f2i_old(BCG *Xgc,const double x[],int x1[], int n)
 {
   int i;
   /** double to int (pixel) direction **/
@@ -206,7 +206,7 @@ void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
     }
 } 
   
- void rect2d_i2f(BCG *Xgc,double x[],const  int x1[], int n)
+ void rect2d_i2f_old(BCG *Xgc,double x[],const  int x1[], int n)
 {
   int i;
   for ( i=0 ; i < n ; i=i+4)
@@ -244,7 +244,7 @@ void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n)
 
 /** meme chose mais pour transformer des ellipses **/
 
-void ellipse2d(BCG *Xgc,double *x, int *x1, int *n, char *dir)
+void ellipse2d_old(BCG *Xgc,double *x, int *x1, int *n, char *dir)
 {
   int i;
   if (strcmp("f2i",dir)==0) 
@@ -281,7 +281,7 @@ void ellipse2d(BCG *Xgc,double *x, int *x1, int *n, char *dir)
  
 /* meme chose mais pour axis */
 
-void axis2d(BCG *Xgc,double *alpha, double *initpoint, double *size, int *initpoint1, double *size1)
+void axis2d_old(BCG *Xgc,double *alpha, double *initpoint, double *size, int *initpoint1, double *size1)
 {
   double sina ,cosa;
   double xx,yy,scl;
@@ -352,7 +352,7 @@ static void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox, int *ibbox)
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
-  scale_i2f(Xgc,&x0,&y0,&ix0,&iy0,1);
+  scale_i2f_old(Xgc,&x0,&y0,&ix0,&iy0,1);
   x=x0;y=y0;
   ix=ix0;iy=iy0;
   ibutton=-1;
@@ -365,7 +365,7 @@ static void zoom_get_rectangle_noxor(BCG *Xgc,double *bbox, int *ibbox)
       Xgc->graphic_engine->xset_recording(Xgc,TRUE);
       Xgc->graphic_engine->force_redraw(Xgc);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,FALSE,FALSE);
-      scale_i2f(Xgc,&xl,&yl,&ixl,&iyl,1);
+      scale_i2f_old(Xgc,&xl,&yl,&ixl,&iyl,1);
       x=xl;y=yl;
       ix=ixl;iy=iyl;
     }
@@ -415,9 +415,9 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   Xgc->graphic_engine->xset_thickness(Xgc,1);
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
-  nsp_set_cursor(Xgc,GDK_TOP_LEFT_CORNER );
+  nsp_set_cursor_old(Xgc,GDK_TOP_LEFT_CORNER );
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
-  scale_i2f(Xgc,&x0,&y0,&ix0,&iy0,1);
+  scale_i2f_old(Xgc,&x0,&y0,&ix0,&iy0,1);
   x=x0;y=y0;
   ix=ix0;iy=iy0;
   ibutton=-1;
@@ -425,15 +425,15 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
     {
       double rect[4]= {Min(x0,x),Max(y0,y),Abs(x0-x),Abs(y0-y)};
       Xgc->graphic_engine->clearwindow(Xgc);    
-      rect2d_f2i(Xgc,rect,Xgc->zrect,1);
+      rect2d_f2i_old(Xgc,rect,Xgc->zrect,1);
       Xgc->graphic_engine->force_redraw(Xgc);
-      nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
+      nsp_set_cursor_old(Xgc,GDK_BOTTOM_RIGHT_CORNER);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,TRUE,FALSE);
-      scale_i2f(Xgc,&xl,&yl,&ixl,&iyl,1);
+      scale_i2f_old(Xgc,&xl,&yl,&ixl,&iyl,1);
       x=xl;y=yl;
       ix=ixl;iy=iyl;
     }
-  nsp_set_cursor(Xgc,-1);
+  nsp_set_cursor_old(Xgc,-1);
   /* Back to the default driver which must be Rec and redraw the recorded
    * graphics with the new scales 
    */
@@ -482,7 +482,7 @@ static void zoom_get_rectangle_std(BCG *Xgc,double *bbox, int *ibbox)
   /** XXXXXX : a regler pour Win32 in = 6 **/
   Xgc->graphic_engine->scale->xset_alufunction1(Xgc,6);
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
-  scale_i2f(Xgc,&x0,&y0,&ix0,&iy0,1);
+  scale_i2f_old(Xgc,&x0,&y0,&ix0,&iy0,1);
   x=x0;y=y0;
   ix=ix0;iy=iy0;
   ibutton=-1;
@@ -492,7 +492,7 @@ static void zoom_get_rectangle_std(BCG *Xgc,double *bbox, int *ibbox)
       zoom_rect(Xgc,x0,y0,x,y);
       if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,FALSE,FALSE);
-      scale_i2f(Xgc,&xl,&yl,&ixl,&iyl,1);
+      scale_i2f_old(Xgc,&xl,&yl,&ixl,&iyl,1);
       /* effacement du rectangle */
       zoom_rect(Xgc,x0,y0,x,y);
       if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
@@ -525,7 +525,7 @@ static void zoom_get_rectangle_std(BCG *Xgc,double *bbox, int *ibbox)
 }
 #endif 
 
-void zoom(BCG *Xgc)
+void zoom_old(BCG *Xgc)
 {
   int aaint[]={2,10,2,10},flag[]={1,0,0} ;
   if ( Xgc == NULL) return ;
@@ -540,11 +540,11 @@ void zoom(BCG *Xgc)
       int ibbox[4];
       zoom_get_rectangle(Xgc,bbox,ibbox);
       Xgc->graphic_engine->clearwindow(Xgc);    
-      tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
+      tape_old_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
     }
 }
 
-void unzoom(BCG *Xgc)
+void unzoom_old(BCG *Xgc)
 {
   if ( Xgc == NULL) return ;
   if ( Xgc->record_flag != TRUE )
@@ -555,7 +555,7 @@ void unzoom(BCG *Xgc)
   else 
     {
       Xgc->graphic_engine->clearwindow(Xgc);
-      tape_replay_undo_scale(Xgc,Xgc->CurWindow);
+      tape_old_replay_undo_scale(Xgc,Xgc->CurWindow);
     }
 }
 

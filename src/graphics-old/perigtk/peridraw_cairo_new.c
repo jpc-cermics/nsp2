@@ -1023,9 +1023,9 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 #include <cairo-ps.h>
 #include <cairo-svg.h>
 
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,char *driver,char option);
+static int nsp_cairo_export_old_mix(BCG *Xgc,int win_num,int colored,const char *bufname,const char *driver,char option);
 
-int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char *driver,char option)
+int nsp_cairo_export_old(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option)
 {
   /* default is to follow the window size */
   int width = Xgc->CWindowWidth; 
@@ -1034,14 +1034,14 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
   cairo_surface_t *surface;
   cairo_t *cr, *cr_current;
 
-  if ( Xgc->graphic_engine != &Cairo_gengine ) 
+  if ( Xgc->graphic_engine != &Cairo_gengine_old ) 
     {
 #if 0
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
 #else 
       /* we are trying to export with cairo a non cairo window */
-      return nsp_cairo_export_mix(Xgc,win_num,colored,bufname,driver,option);
+      return nsp_cairo_export_old_mix(Xgc,win_num,colored,bufname,driver,option);
 #endif 
     }
   if ( strcmp(driver,"cairo-pdf")==0 ) 
@@ -1092,25 +1092,25 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char 
 /* the nex function is used by the print menu 
  */
 
-int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
+int nsp_cairo_print_old(int win_num,cairo_t *cr, int width,int height)
 {
-  BCG *Xgc = window_list_search(win_num);
+  BCG *Xgc = window_list_search_old(win_num);
   int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
   /* we must create a cairo Xgc with a file-surface */
   cwin =  Xgc->graphic_engine->xget_curwin();
   /* create a new graphic with cairo */
-  win= Cairo_gengine.initgraphic("void",&v1,NULL,NULL,NULL,NULL,'k',cr);
+  win= Cairo_gengine_old.initgraphic("void",&v1,NULL,NULL,NULL,NULL,'k',cr);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
-  if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
+  if (win == -1 || ( Xgc1 = window_list_search_old(win)) == NULL)
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
     }
   Xgc1->CWindowWidth= width;
   Xgc1->CWindowHeight=  height;
-  tape_replay_mix(Xgc1,Xgc,win_num);
+  tape_old_replay_mix(Xgc1,Xgc,win_num);
   if ( Xgc1 != Xgc ) 
     {
       /* delete the localy created <<window>> 
@@ -1118,7 +1118,8 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
        * delete the window is erased 
        */
       Xgc1->private->cairo_cr = NULL;
-      nsp_gr_delete(win);
+      /* nsp_gr_delete(win); */
+      Xgc1->actions->delete(Xgc1);
     }
   return OK;
 }
@@ -1128,8 +1129,8 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
  */
 
 
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
-				char *driver,char option)
+static int nsp_cairo_export_old_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
+				const char *driver,char option)
 {
   int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
@@ -1164,10 +1165,10 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   /* we must create a cairo Xgc with a file-surface */
   cwin =  Xgc->graphic_engine->xget_curwin();
   /* create a new graphic with cairo */
-  win= Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr);
+  win= Cairo_gengine_old.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
-  if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
+  if (win == -1 || ( Xgc1 = window_list_search_old(win)) == NULL)
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
@@ -1175,7 +1176,7 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   Xgc1->CWindowWidth=   Xgc->CWindowWidth;
   Xgc1->CWindowHeight=  Xgc->CWindowHeight;
   Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
-  tape_replay_mix(Xgc1,Xgc,win_num);
+  tape_old_replay_mix(Xgc1,Xgc,win_num);
   cairo_show_page (cr);
   if ( strcmp(driver,"cairo-png")==0 )
     cairo_surface_write_to_png (surface,bufname);
@@ -1185,7 +1186,8 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   if ( Xgc1 != Xgc ) 
     {
       /* delete the localy created <<window>> */
-      nsp_gr_delete(win);
+      /* nsp_gr_delete(win); */
+      Xgc1->actions->delete(Xgc1);
     }
   return OK;
 }

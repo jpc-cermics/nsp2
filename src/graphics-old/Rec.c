@@ -40,16 +40,12 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
-#include "nsp/graphics/Rec_private.h"
+#include "nsp/graphics-old/Graphics.h"
+#include "nsp/graphics-old/Rec_private.h"
 #include "nsp/graphic.h" 
 
 #define RECORD_PRIVATE 
-#include "nsp/graphics/record_old.h"
-
-extern void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, double alpha,int *pt);
-extern void nsp_figure_unzoom(NspGraphic *Obj);
-extern void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj, int *bbox1);
+#include "nsp/graphics-old/record_old.h"
 
 /* exported structure 
  */
@@ -1161,7 +1157,7 @@ static void ostore_Ech(BCG *Xgc,double *WRect, double *FRect, char *logflag)
 static void replay_Ech(BCG *Xgc,void *theplot)
 {
   struct rec_scale *plch = theplot;
-  setscale2d(Xgc,plch->Wrect,plch->Frect,plch->logflag);
+  setscale2d_old(Xgc,plch->Wrect,plch->Frect,plch->logflag);
 }
 
 
@@ -1204,7 +1200,7 @@ static void ostore_NEch(BCG *Xgc,char *flag, double *WRect, double *ARect, doubl
 static void replay_NEch(BCG *Xgc,void *theplot)
 {
   struct rec_nscale *plch = theplot;
-  set_scale(Xgc,plch->flag,plch->Wrect,plch->Frect,NULL,plch->logflag,plch->Arect);
+  set_scale_old(Xgc,plch->flag,plch->Wrect,plch->Frect,NULL,plch->logflag,plch->Arect);
 }
 
 
@@ -1432,7 +1428,7 @@ static void replay_Grid(BCG *Xgc,void *theplot)
 {
   struct rec_xgrid *plch;
   plch= (struct rec_xgrid *)theplot;
-  nsp_plot_grid(Xgc,&(plch->style));
+  nsp_plot_grid_old(Xgc,&(plch->style));
 }
 
 
@@ -2346,7 +2342,7 @@ static int MaybeCopyVect3dPLI(int iflag, int **nx,const int *x, int l)
  *      [2] the scale flag is reset to zero (for preventing auto scale to use it) 
  *---------------------------------------------------------------------------*/
 
-void tape_clean_plots(BCG *Xgc,int winnumber)
+void tape_old_clean_plots(BCG *Xgc,int winnumber)
 {
   int flag = FAIL;
   list_plot *list = Xgc->plots,* list1 ;
@@ -2368,7 +2364,7 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
   /* nothing to do if window was not present */
   if ( flag == FAIL ) return ;
   /* reset scales to default */ 
-  xgc_reset_scales_to_default(Xgc);
+  xgc_reset_scales_to_default_old(Xgc);
 }
 
 
@@ -2380,7 +2376,7 @@ void tape_clean_plots(BCG *Xgc,int winnumber)
  * iflag[3] sert a dire s'il faut ou pas changer bbox 
  *---------------------------------------------------------------------------*/
 
-void tape_new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, 
+void tape_old_new_angles_plots(BCG *Xgc, int winnumber, double *theta, double *alpha, 
 		      int *iflag, int *flag, double *bbox, int *pt)
 {
   list_plot *list = Xgc->plots ;
@@ -2486,9 +2482,10 @@ static void new_angles_Param3D1(BCG *Xgc,void *plot, double *theta, double *alph
 
 static void new_angles_graphic_object(BCG *Xgc,void *plot, double *theta, double *alpha, int *iflag, int *flag, double *bbox,int *pt)
 {
+  /*
   struct rec_object *lplot= plot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  nsp_figure_change3d_orientation(Xgc,G,*theta,*alpha,pt);
+   nsp_figure_change3d_orientation(Xgc,G,*theta,*alpha,pt); */
 }
 
 
@@ -2653,7 +2650,7 @@ static void scale_change_Ech(BCG *Xgc,void *plot, int *flag, double *bbox, int *
 	   */
 	  flag[0]=1;
 	  /* localy change the scale */
-	  set_scale(Xgc,"tttftf",theplot->Wrect,theplot->Frect,NULL,theplot->logflag,NULL);
+	  set_scale_old(Xgc,"tttftf",theplot->Wrect,theplot->Frect,NULL,theplot->logflag,NULL);
 	  bbox[0] = XPixel2Double(bbox1[0]);
 	  bbox[1] = YPixel2Double(bbox1[1]);
 	  bbox[2] = XPixel2Double(bbox1[2]);
@@ -2714,7 +2711,7 @@ static void scale_change_NEch(BCG *Xgc,void *plot, int *flag, double *bbox, int 
 	      && theplot->Wrect[1]*wdim[1] <= bbox1[1] && (theplot->Wrect[1]+theplot->Wrect[3])*wdim[1] >= bbox1[3] )
 	    {
 	      /** we extract the associated scale **/
-	      move_subwindow_scale_to_front(Xgc,theplot->Wrect);
+	      move_subwindow_scale_to_front_old(Xgc,theplot->Wrect);
 	      /* get_window_scale(Xgc,theplot->Wrect); */
 	      /* bbox1 is inside the subwindow 
 	       * we must change bbox to the subwindow scale 
@@ -2984,9 +2981,10 @@ static void scale_change_3dobj(BCG *Xgc,void *plot, int *flag, double *b1, int *
 static void scale_change_graphic_object(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
 					int undo, int *bbox1, double *subwin, int win_num)
 {
+  /*
   struct rec_object *lplot= plot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  nsp_figure_zoom(Xgc,G,bbox1);
+   nsp_figure_zoom(Xgc,G,bbox1); */
 }
 
 
@@ -3143,16 +3141,17 @@ static void unscale_3dobj(void *plot)
 
 static void unscale_graphic_object(void *plot)
 {
+  /*
   struct rec_object *lplot= plot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  nsp_figure_unzoom(G);
+   nsp_figure_unzoom(G); */
 }
 
 /*-------------------------------------------------------
  * checks if recorded list contains 3d graphics 
  *-------------------------------------------------------*/
 
-int tape_check_recorded_3D(BCG *Xgc,int winnumber)
+int tape_old_check_recorded_3D(BCG *Xgc,int winnumber)
 {
   list_plot *list = Xgc->plots ;
   if ( Xgc->record_flag == FALSE ) return FAIL ;
@@ -3187,10 +3186,10 @@ int tape_check_recorded_3D(BCG *Xgc,int winnumber)
  *  restore scales (unzoom) and redraw stored graphics 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_undo_scale(BCG *Xgc,int winnumber)
+void tape_old_replay_undo_scale(BCG *Xgc,int winnumber)
 { 
   unscale_plots(Xgc,winnumber);
-  tape_replay(Xgc,winnumber);
+  tape_old_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -3199,7 +3198,7 @@ void tape_replay_undo_scale(BCG *Xgc,int winnumber)
  * the problem is a bit complex if we have many subwindows 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double *bbox, 
+void tape_old_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double *bbox, 
 			   int *ibbox)
 { 
   /* get the bounding box in pixel */
@@ -3216,7 +3215,7 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double 
       bbox1[3]= YDouble2Pixel(bbox[3]);
       scale_change_plots(Xgc,winnumber,flag,bbox,aaint,NULL,1,bbox1,NULL);
     }
-  tape_replay(Xgc,winnumber);
+  tape_old_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -3224,14 +3223,14 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double 
  * used for automatic scales 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, double *bbox,char *strflag)
+void tape_old_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, double *bbox,char *strflag)
 { 
   /* here we want to change (bbox,aaint,strfag) but only for recorded graphics 
    * which are on the same subwin as the current one 
    * and we do not want this operation to be undone ==> undo =0 
    */
   scale_change_plots(Xgc,winnumber,flag,bbox,aaint,strflag,0,NULL,Xgc->scales->subwin_rect);
-  tape_replay(Xgc,winnumber);
+  tape_old_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -3239,10 +3238,10 @@ void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, doub
  *  then redraw recorded graphics 
  *---------------------------------------------------------------------------*/
 
-void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
+void tape_old_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
 { 
-  tape_new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox,NULL);
-  tape_replay(Xgc,winnumber);
+  tape_old_new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox,NULL);
+  tape_old_replay(Xgc,winnumber);
 }
 
 /*---------------------------------------------------------------------
@@ -3250,7 +3249,7 @@ void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double 
  * in the window (or file) described by Xgc
  *---------------------------------------------------------------------------*/
 
-void tape_replay(BCG *Xgc,int winnumber)
+void tape_old_replay(BCG *Xgc,int winnumber)
 { 
   double WRect[]={0,0,1,1};
   list_plot *list;
@@ -3259,7 +3258,7 @@ void tape_replay(BCG *Xgc,int winnumber)
   Xgc->record_flag = FALSE; /* be sure not to record during replay */
   list = Xgc->plots ;
   /* be sure that scales are back to default ? */
-  move_subwindow_scale_to_front(Xgc,WRect);
+  move_subwindow_scale_to_front_old(Xgc,WRect);
   while (list)
     {
       if ( list->theplot != NULL) 
@@ -3267,7 +3266,7 @@ void tape_replay(BCG *Xgc,int winnumber)
       list =list->next;
     }
   /* Is there a replay handler */
-  nsp_gr_handler(Xgc,winnumber);
+  nsp_gr_old_handler(Xgc,winnumber);
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 
@@ -3275,7 +3274,7 @@ void tape_replay(BCG *Xgc,int winnumber)
  * Xgc1 is used for list of recorded graphics.
  */
 
-void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
+void tape_old_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
 { 
   list_plot *list;
   if ( Xgc == NULL ) return ;
@@ -3289,7 +3288,7 @@ void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
       list =list->next;
     }
   /* Is there a replay handler */
-  nsp_gr_handler(Xgc,winnumber);
+  nsp_gr_old_handler(Xgc,winnumber);
   Xgc->record_flag = TRUE; /* be sure to set back record_flg to its proper stat */
 }
 
@@ -3299,7 +3298,7 @@ void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
  * search a graphic object in the recorded objects 
  */
 
-NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber)
+NspObject * tape_old_search_graphic_object(BCG *Xgc,int winnumber)
 { 
   list_plot *list;
   if ( Xgc == NULL ) return NULL ;
@@ -3468,7 +3467,7 @@ static void ostore_graphic_object(BCG *Xgc,void *vobj)
  * 
  */
 
-void store_graphic_object(BCG *Xgc,void *vobj)
+void tape_old_store_graphic_object(BCG *Xgc,void *vobj)
 {
   NspObject *obj_cp;
   struct rec_object *lplot= MALLOC(sizeof(struct rec_object));

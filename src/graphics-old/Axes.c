@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 static double  x_convert (char xy_type,const double x[] ,int i);
 static double  y_convert (char xy_type,const double x[] ,int i);
@@ -38,7 +38,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color);
 
 /**
- * axis_draw:
+ * axis_draw_old:
  * @Xgc: a graphic context 
  * @mode: axis drawing mode
  * @scale: axis scale mode
@@ -53,7 +53,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
  *
  */
 
-void axis_draw(BCG *Xgc,char mode, char scale, int grid_color)
+void axis_draw_old(BCG *Xgc,char mode, char scale, int grid_color)
 {
   /* using foreground to draw axis */
   int old_dash,pat, fg;

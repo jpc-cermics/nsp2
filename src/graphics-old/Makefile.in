@@ -36,61 +36,61 @@ Format.o: Format.c
 
 #--- dependencies generated with gcc ----
 
-Xcall1.o: new_graphics.h ../include/nsp/graphics/Graphics.h \
+Xcall1.o: new_graphics.h ../include/nsp/graphics-old/Graphics.h \
 
 Actions.o: Actions.c ../include/nsp/math.h \
   ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/machine.h ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
+  ../include/nsp/graphics-old/perigen.h \
   ../include/nsp/command.h
 
 Alloc.o: Alloc.c ../include/nsp/math.h \
   ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/machine.h ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Axes.o: Axes.c ../include/nsp/math.h \
   ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/machine.h ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Champ.o: Champ.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
-clip.o: clip.c ../include/nsp/graphics/Graphics.h \
+clip.o: clip.c ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h ../include/nsp/sciio.h \
   ../include/nsp/math.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Contour.o: Contour.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 dsearch.o: dsearch.c ../include/nsp/matrix-in.h \
   ../include/nsp/interf.h ../include/nsp/object.h \
@@ -109,8 +109,8 @@ dsearch.o: dsearch.c ../include/nsp/matrix-in.h \
   ../include/nsp/hash.h ../include/nsp/function.h \
   ../include/nsp/ivect.h ../include/nsp/mod.h \
   ../include/nsp/me.h ../include/nsp/lmo.h \
-  ../include/nsp/rect.h ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h ../include/nsp/block.h \
+  ../include/nsp/rect.h ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h ../include/nsp/block.h \
   ../include/nsp/gframe.h ../include/nsp/grint.h \
   ../include/nsp/connector.h ../include/nsp/link.h \
   ../include/nsp/none.h ../include/nsp/type.h \
@@ -127,11 +127,11 @@ dsearch.o: dsearch.c ../include/nsp/matrix-in.h \
 Format.o: Format.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Graphics-IN.o: new_graphics.h Graphics-IN.c ../include/nsp/matrix-in.h \
   ../include/nsp/interf.h ../include/nsp/object.h \
@@ -150,8 +150,8 @@ Graphics-IN.o: new_graphics.h Graphics-IN.c ../include/nsp/matrix-in.h \
   ../include/nsp/hash.h ../include/nsp/function.h \
   ../include/nsp/ivect.h ../include/nsp/mod.h \
   ../include/nsp/me.h ../include/nsp/lmo.h \
-  ../include/nsp/rect.h ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h ../include/nsp/block.h \
+  ../include/nsp/rect.h ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h ../include/nsp/block.h \
   ../include/nsp/gframe.h ../include/nsp/grint.h \
   ../include/nsp/connector.h ../include/nsp/link.h \
   ../include/nsp/none.h ../include/nsp/type.h \
@@ -168,30 +168,30 @@ Graphics-IN.o: new_graphics.h Graphics-IN.c ../include/nsp/matrix-in.h \
 Gray.o: Gray.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Math.o: Math.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 periCairoNew.o: periCairoNew.c periGtkstd.c \
   ../include/nsp/math.h ../include/nsp/machine.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periGtk.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/periGtk.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/command.h perigtk/events.c perigtk/init.c \
   perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
 
@@ -200,10 +200,10 @@ periGtk.o: periGtk.c periGtkstd.c \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periGtk.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/periGtk.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/command.h perigtk/events.c perigtk/init.c \
   perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
 
@@ -212,10 +212,10 @@ periGL.o: periGL.c periGtkstd.c \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periGtk.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/periGtk.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/command.h perigtk/events.c perigtk/init.c \
   perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
 
@@ -225,37 +225,37 @@ periFig.o: periFig.c ../include/nsp/sciio.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periFig.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/periFig.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/math.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/command.h \
   ../include/nsp/math.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periGtk.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/periGtk.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/command.h perigtk/events.c perigtk/init.c \
   perigtk/fonts_pango_ft2_gl.c perigtk/peridraw_gl.c \
   ../include/nsp/math.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periGtk.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h \
+  ../include/nsp/graphics-old/periGtk.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h \
   ../include/nsp/command.h perigtk/events.c perigtk/init.c \
   perigtk/fonts_pango_gdk.c perigtk/peridraw_gdk.c perigtk/points.c
 
@@ -264,51 +264,51 @@ periPos.o: periPos.c ../include/nsp/sciio.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/periPos.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/version.h ../include/nsp/graphics/color.h 
+  ../include/nsp/graphics-old/periPos.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/version.h ../include/nsp/graphics-old/color.h 
 
 Plo2d1.o: Plo2d1.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Plo2d2.o: Plo2d2.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Plo2d3.o: Plo2d3.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Plo2d4.o: Plo2d4.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
 Plo2d.o: Plo2d.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
@@ -337,18 +337,18 @@ Plo2d.o: Plo2d.c ../include/nsp/math.h \
   ../include/nsp/curve.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
+  ../include/nsp/graphics-old/perigen.h \
   ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
+  ../include/nsp/graphics-old/perigen.h \
   ../include/nsp/gsort-p.h ../include/nsp/string.h \
   ../include/nsp/object.h ../include/nsp/index.h \
   ../include/nsp/object-inlined.h ../include/nsp/hobj.h \
@@ -370,17 +370,17 @@ Plo2d.o: Plo2d.c ../include/nsp/math.h \
   ../include/nsp/classb.h ../include/nsp/classaref.h \
   ../include/nsp/classbref.h ../include/nsp/cells.h \
   ../include/nsp/matint.h ../include/nsp/serial.h \
-  ../include/nsp/bhash.h ../include/nsp/graphics/periGtk.h \
-  ../include/nsp/graphics/Graphics.h
+  ../include/nsp/bhash.h ../include/nsp/graphics-old/periGtk.h \
+  ../include/nsp/graphics-old/Graphics.h
 
 Plo3dObj.o: Plo3dObj.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h ../include/nsp/interf.h \
+  ../include/nsp/graphics-old/perigen.h ../include/nsp/interf.h \
   ../include/nsp/object.h ../include/nsp/string.h \
   ../include/nsp/index.h ../include/nsp/object-inlined.h \
   ../include/nsp/hobj.h ../include/nsp/file.h \
@@ -404,13 +404,13 @@ Plo3dObj.o: Plo3dObj.c ../include/nsp/math.h \
 
 Rec.o: Rec.c ../include/nsp/math.h ../include/nsp/machine.h \
   ../include/nsp/config.h ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/graphics/Rec_private.h \
-  ../include/nsp/graphics/Rec.h ../include/nsp/object.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/graphics-old/Rec_private.h \
+  ../include/nsp/graphics-old/Rec.h ../include/nsp/object.h \
   ../include/nsp/string.h ../include/nsp/index.h \
   ../include/nsp/object-inlined.h ../include/nsp/hobj.h \
   ../include/nsp/file.h ../include/nsp/xdr.h \
@@ -436,12 +436,12 @@ Rec.o: Rec.c ../include/nsp/math.h ../include/nsp/machine.h \
 RecLoad.o: RecLoad.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h ../include/nsp/xdr.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/graphics/Rec.h ../include/nsp/object.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/graphics-old/Rec.h ../include/nsp/object.h \
   ../include/nsp/string.h ../include/nsp/index.h \
   ../include/nsp/object-inlined.h ../include/nsp/hobj.h \
   ../include/nsp/file.h ../include/nsp/matrix.h \
@@ -465,12 +465,12 @@ RecLoad.o: RecLoad.c ../include/nsp/math.h \
 RecSave.o: RecSave.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
-  ../include/nsp/graphics/Rec.h ../include/nsp/object.h \
+  ../include/nsp/graphics-old/perigen.h \
+  ../include/nsp/graphics-old/Rec.h ../include/nsp/object.h \
   ../include/nsp/string.h ../include/nsp/index.h \
   ../include/nsp/object-inlined.h ../include/nsp/hobj.h \
   ../include/nsp/file.h ../include/nsp/xdr.h \
@@ -495,19 +495,19 @@ RecSave.o: RecSave.c ../include/nsp/math.h \
 Tests.o: Tests.c ../include/nsp/math.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h \
-  ../include/nsp/graphics/Graphics.h \
+  ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h
+  ../include/nsp/graphics-old/perigen.h
 
-windows.o: windows.c ../include/nsp/graphics/Graphics.h \
+windows.o: windows.c ../include/nsp/graphics-old/Graphics.h \
   ../include/nsp/machine.h ../include/nsp/config.h \
   ../include/nsp/package_undef.h ../include/nsp/sciio.h \
   ../include/nsp/math.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
   ../include/nsp/plisttoken.h \
-  ../include/nsp/graphics/perigen.h \
+  ../include/nsp/graphics-old/perigen.h \
   ../include/nsp/config.h \
   ../include/nsp/package_undef.h ../include/nsp/sciio.h \
   ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
@@ -524,8 +524,8 @@ windows.o: windows.c ../include/nsp/graphics/Graphics.h \
   ../include/nsp/function.h ../include/nsp/ivect.h \
   ../include/nsp/mod.h ../include/nsp/me.h \
   ../include/nsp/lmo.h ../include/nsp/rect.h \
-  ../include/nsp/graphics/Graphics.h \
-  ../include/nsp/graphics/perigen.h ../include/nsp/block.h \
+  ../include/nsp/graphics-old/Graphics.h \
+  ../include/nsp/graphics-old/perigen.h ../include/nsp/block.h \
   ../include/nsp/gframe.h ../include/nsp/grint.h \
   ../include/nsp/connector.h ../include/nsp/link.h \
   ../include/nsp/none.h ../include/nsp/type.h \

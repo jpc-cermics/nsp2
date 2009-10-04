@@ -30,7 +30,7 @@
 #include "nsp/bmatrix-in.h"
 #include "../interp/Eval.h"
 
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 #include "nsp/gsort-p.h"
 
 #define CLOSED_LEFT 0

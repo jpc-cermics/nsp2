@@ -50,24 +50,24 @@ static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *
  */
 
 #ifdef PERIGL 
-#define nsp_graphic_new nsp_graphic_new_gl
+#define nsp_graphic_new_old nsp_graphic_new_gl_old
 #endif 
 #ifdef PERICAIRO 
-#define nsp_graphic_new nsp_graphic_new_cairo
+#define nsp_graphic_new_old nsp_graphic_new_cairo_old
 #endif 
 
-int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+int nsp_graphic_new_old(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
-  return  nsp_get_win_counter()-1;
+  return  nsp_get_win_counter_old()-1;
 }
 
 #ifdef PERIGTK 
 /* this should be  moved in windows: keep track of window ids
  */
 static int EntryCounter = 0;
-int nsp_get_win_counter() { return EntryCounter;};
-void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
+int nsp_get_win_counter_old() { return EntryCounter;};
+void nsp_set_win_counter_old(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
 #endif 
 
 static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
@@ -79,7 +79,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   GdkColor black={0,65535,65535,65535};
   BCG *NewXgc ;
   /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX */
-  int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
+  int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter_old();
   gui_private *private ; 
   if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
     {
@@ -127,7 +127,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   private->cairo_cr = NULL;
 #endif 
 
-  if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
+  if (( NewXgc = window_list_new_old(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
       return -1;
@@ -139,14 +139,16 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   NewXgc->last_plot = NULL;
   /* the graphic engine associated to this graphic window */  
 #ifdef PERIGL 
-  NewXgc->graphic_engine = &GL_gengine ;
+  NewXgc->graphic_engine = &GL_gengine_old ;
 #else 
 #ifdef PERICAIRO 
-  NewXgc->graphic_engine = &Cairo_gengine;
+  NewXgc->graphic_engine = &Cairo_gengine_old;
 #else   
-  NewXgc->graphic_engine = &Gtk_gengine;
+  NewXgc->graphic_engine = &Gtk_gengine_old;
 #endif 
 #endif 
+  NewXgc->actions = &nsp_gc_actions_old;
+
   start_sci_gtk(); /* be sure that gtk is started */
 
   if (first == 0)
@@ -229,7 +231,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 #if defined(PERIGL) && !defined(PERIGLGTK) 
   NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
 #endif 
-
+  
   nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
   
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
@@ -239,8 +241,8 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
   NewXgc->graphic_engine->xset_wresize(NewXgc,1);
   /* now initialize the scale list : already performed in window_list_new */
-  /* NewXgc->scales = NULL; xgc_add_default_scale(NewXgc);*/
-  nsp_set_win_counter(WinNum);
+  /* NewXgc->scales = NULL; xgc_add_default_scale_old(NewXgc);*/
+  nsp_set_win_counter_old(WinNum);
   gdk_flush();
   return WinNum;
 }
@@ -344,7 +346,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
     }
 
   /* gtk_widget_show (vbox); */
-
+  
   dd->private->vbox =  gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
 

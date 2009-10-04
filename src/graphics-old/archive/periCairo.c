@@ -111,7 +111,7 @@ extern void start_sci_gtk();
  * A définir sans doute ailleurs XXXXX
  *---------------------------------------------------------*/
 
-Gengine * nsp_gengine = &Gtk_gengine ;
+Gengine * nsp_gengine = &Gtk_gengine_old ;
 
 /* 
  * force expose events to be executed 
@@ -426,24 +426,24 @@ static int xset_curwin(int intnum,int set_menu)
 {
   /* the current graphic context */
   int old;
-  BCG *bcgk= window_list_get_first(),*new=NULL;
+  BCG *bcgk= window_list_get_first_old(),*new=NULL;
   if ( bcgk == (BCG *) 0 ) 
     {
       /** First entry or no more graphic window **/
       initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL);
       /** send info to menu **/
-      new = window_list_get_first();
+      new = window_list_get_first_old();
       old = -1;
     }
   else 
     {
       if ( bcgk->CurWindow != intnum )
 	{
-	  BCG *new= window_list_win_to_front(intnum);
+	  BCG *new= window_list_win_to_front_old(intnum);
 	  if ( new == NULL) 
 	    {
 	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL);
-	      new = window_list_get_first();
+	      new = window_list_get_first_old();
 	    }
 	  old =  bcgk->CurWindow ;
 	}
@@ -475,7 +475,7 @@ static int xset_curwin(int intnum,int set_menu)
  
 static int xget_curwin(void)
 {
-  BCG *Xgc= window_list_get_first();
+  BCG *Xgc= window_list_get_first_old();
   return  ( Xgc == NULL) ? -1 : Xgc->CurWindow;
 }
 
@@ -1323,7 +1323,7 @@ static void xset_fpf_def(BCG *Xgc)
  * window_list management 
  *-------------------------------------------------------------------------*/
 
-int window_list_check_top(BCG *dd,void *win) 
+int window_list_check_top_old(BCG *dd,void *win) 
 {
   return dd->private->window == (GtkWidget *) win ;
 }
@@ -1334,7 +1334,7 @@ static void delete_window(BCG *dd,int intnum)
   int top_count;
   if ( dd == NULL) 
     {
-      if ((winxgc = window_list_search(intnum)) == NULL) return;
+      if ((winxgc = window_list_search_old(intnum)) == NULL) return;
     }
   /* be sure to clear the recorded graphics */
   scig_erase(intnum);
@@ -1352,7 +1352,7 @@ static void delete_window(BCG *dd,int intnum)
   /* backing store private->pixmap */
   if (winxgc->private->pixmap != NULL)  gdk_pixmap_unref(winxgc->private->pixmap);
   /* destroy top level window if it is not shared by other graphics  */
-  top_count = window_list_search_toplevel(winxgc->private->window); 
+  top_count = window_list_search_old_toplevel(winxgc->private->window); 
   if ( top_count <= 1) 
     {
       gtk_widget_destroy(winxgc->private->window);
@@ -1382,7 +1382,7 @@ static void delete_window(BCG *dd,int intnum)
   g_object_unref(winxgc->private->item_factory);
   FREE(winxgc->private);
   /* remove current window from window list */
-  window_list_remove(intnum);
+  window_list_remove_old(intnum);
 }
 
 /********************************************
@@ -1437,12 +1437,12 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  *  to come back to the default graphic state}
  *---------------------------------------------------------*/
 
-extern void nsp_initialize_gc( BCG *Xgc ) ;
+extern void nsp_initialize_gc_old( BCG *Xgc ) ;
 
 
 static void xset_default(BCG *Xgc)
 {
-  nsp_initialize_gc(Xgc);
+  nsp_initialize_gc_old(Xgc);
 }
 
 /*---------------------------------------------------------------------
@@ -1976,12 +1976,12 @@ static void scig_deconnect_handlers(BCG *winxgc)
  *
  */
 
-GdkImage* nsp_get_image(BCG *Xgc) 
+GdkImage* nsp_get_image_old(BCG *Xgc) 
 {
   return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
 
-GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
+GdkPixbuf* nsp_get_pixbuf_old(BCG *Xgc) 
 {
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
 				      gdk_colormap_get_system(),

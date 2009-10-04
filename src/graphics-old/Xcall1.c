@@ -30,11 +30,11 @@
 #include <stdio.h>
 #include <math.h>
 #include <gdk/gdk.h>
+#include "nsp/graphics-old/Graphics.h" 
 #include "nsp/math.h"
 #include "nsp/sciio.h"
 #include "nsp/object.h"
 #include "nsp/gtk/gobject.h"
-#include "nsp/graphics/Graphics.h" 
 #include "new_graphics.h"
 
 /* extern Gengine *nsp_gengine ;*/ /* XXXXX */
@@ -109,7 +109,7 @@ static  driver_s_draw_pixbuf draw_pixbuf_1;
 static  driver_s_draw_pixbuf_from_file draw_pixbuf_from_file_1;
 
 
-Gengine1 nsp_gengine1={
+Gengine1 nsp_gengine1_old ={
   drawarc_1,
   fillarcs_1,
   drawarcs_1,
@@ -180,7 +180,7 @@ Gengine1 nsp_gengine1={
  * graphic context initialization 
  *------------------------------------------------*/
 
-void nsp_initialize_gc( BCG *Xgc ) 
+void nsp_initialize_gc_old( BCG *Xgc ) 
 { 
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
@@ -207,7 +207,7 @@ void nsp_initialize_gc( BCG *Xgc )
 static void initialize_gc_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_initialize_gc(Xgc);
-  nsp_initialize_gc(Xgc);
+  nsp_initialize_gc_old(Xgc);
 }
 
 
@@ -230,7 +230,7 @@ static void xset_clipping_p_1(BCG *Xgc,double x,double y,double w,double h)
 static void xset_clipgrf_1(BCG *Xgc)
 {
   if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_clipgrf(Xgc);
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
 }
 
 static void xset_unclip_1(BCG *Xgc)
@@ -250,8 +250,8 @@ static void xset_clip_1(BCG *Xgc,double x[])
 {
   /* and clipping is special its args are floats **/
   int ix[4];
-  scale_f2i(Xgc,x,x+1,ix,ix+1,1);
-  length_scale_f2i(Xgc,x+2,x+3,ix+2,ix+3,1);
+  scale_f2i_old(Xgc,x,x+1,ix,ix+1,1);
+  length_scale_f2i_old(Xgc,x+2,x+3,ix+2,ix+3,1);
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_clip(Xgc,x);
   Xgc->graphic_engine->xset_clip(Xgc,ix);
 }
@@ -292,7 +292,7 @@ static void xset_default_colormap_1(BCG *Xgc)
 static void xset_default_1(BCG *Xgc) 
 {
   /* no record XXX A FAIRE */
-  nsp_initialize_gc(Xgc);
+  nsp_initialize_gc_old(Xgc);
 }
 
 static void xset_font_size_1(BCG *Xgc,int val)
@@ -437,7 +437,7 @@ static void xset_fpf_def_1(BCG *Xgc)
 static void drawarc_1(BCG *Xgc,double arc[])
 { 
   int iarc[6];
-  rect2d_f2i(Xgc,arc,iarc,4);
+  rect2d_f2i_old(Xgc,arc,iarc,4);
   iarc[4]=(int) arc[4];
   iarc[5]=(int) arc[5];
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_drawarc_1(Xgc,arc);
@@ -453,7 +453,7 @@ static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
   int *xm=NULL,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err  ==   1) return;
-  ellipse2d(Xgc,vects,xm,(n2=6*n,&n2),"f2i");
+  ellipse2d_old(Xgc,vects,xm,(n2=6*n,&n2),"f2i");
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_fillarcs_1(Xgc,vects,fillvect,n);
   Xgc->graphic_engine->fillarcs(Xgc,xm,fillvect,n);
 }
@@ -467,7 +467,7 @@ static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
   int *xm=NULL,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err  ==   1) return;
-  ellipse2d(Xgc,vects,xm,(n2=6*(n),&n2),"f2i");
+  ellipse2d_old(Xgc,vects,xm,(n2=6*(n),&n2),"f2i");
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_drawarcs_1(Xgc,vects,style,n);
   Xgc->graphic_engine->drawarcs(Xgc,xm,style,n);
 }
@@ -480,7 +480,7 @@ static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n);
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_fillpolyline_1(Xgc,vx,vy,n,closeflag);
   Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,n,closeflag);
 }
@@ -494,7 +494,7 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
   int *xm=NULL,*ym=NULL,err=0,ias,ias1;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n);
   /* is as < 0 --> not set */
   if ( as < 0.0 ) 
     {
@@ -511,7 +511,7 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
       as = Mnorm/5.0;
     }
   /* we assume here that ias is given using the x scale */
-  length_scale_f2i (Xgc,&as,&as,&ias,&ias1,1);
+  length_scale_f2i_old(Xgc,&as,&as,&ias,&ias1,1);
   if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_drawarrows_1(Xgc,vx,vy,n,as,style,iflag);
   ias=10*ias;
   Xgc->graphic_engine->drawarrows(Xgc,xm,ym,n,ias,style,iflag);
@@ -526,7 +526,7 @@ static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, d
   int initpoint1[2],alpha1;
   double size1[3];
   alpha1=inint( *alpha);
-  axis2d(Xgc,alpha,initpoint,size,initpoint1,size1);  
+  axis2d_old(Xgc,alpha,initpoint,size,initpoint1,size1);  
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_drawaxis_1(Xgc,alpha,nsteps,initpoint,size);
   Xgc->graphic_engine->drawaxis(Xgc,alpha1,nsteps,initpoint1,size1);
 }
@@ -539,7 +539,7 @@ static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
   int x1,yy1,w1,h1;
   x1 = XDouble2Pixel(x);
   yy1 = YDouble2Pixel(y);
-  length_scale_f2i (Xgc,&w,&h,&w1,&h1,1);
+  length_scale_f2i_old (Xgc,&w,&h,&w1,&h1,1);
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_cleararea_1(Xgc,x,y,w,h);
   Xgc->graphic_engine->cleararea(Xgc,x1,yy1,w1,h1);
 }
@@ -550,8 +550,9 @@ static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 static void xclick_1(BCG *Xgc,char *str,int *ibutton,int *imask, double *x, double *y, int iflag,int motion,int release,int key, int istr)
 { 
   int x1,yy1,n=1;
+
   Xgc->graphic_engine->xclick(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key,istr);
-  scale_i2f(Xgc,x,y,&x1,&yy1,n);
+  scale_i2f_old(Xgc,x,y,&x1,&yy1,n);
 }
 /*-----------------------------------------------------------------------------
  *  click_any
@@ -562,8 +563,8 @@ static void xclick_any_1(BCG *Xgc,char *str, int *ibutton,int *imask, double *x,
   int x1,y1;
   Xgc->graphic_engine->xclick_any(Xgc,str,ibutton,imask,&x1,&y1,iwin,iflag,motion,release,key,istr);
   if (*ibutton>=0){
-    BCG *Xgc_win =window_list_search(*iwin);
-    scale_i2f(Xgc_win,x,y,&x1,&y1,1);
+    BCG *Xgc_win =window_list_search_old(*iwin);
+    scale_i2f_old(Xgc_win,x,y,&x1,&y1,1);
   }
 }
 
@@ -575,7 +576,7 @@ static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, int *imask,double *x, 
 { 
   int x1,yy1;
   Xgc->graphic_engine->xgetmouse(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key);
-  scale_i2f(Xgc,x,y,&x1,&yy1,1);
+  scale_i2f_old(Xgc,x,y,&x1,&yy1,1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -585,7 +586,7 @@ static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, int *imask,double *x, 
 static void fillarc_1(BCG *Xgc, double arc[])
 { 
   int iarc[6],n2=4;
-  rect2d_f2i(Xgc,arc,iarc,n2);
+  rect2d_f2i_old(Xgc,arc,iarc,n2);
   iarc[4]=(int) arc[4];
   iarc[5]=(int) arc[5];
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_fillarc_1(Xgc,arc);
@@ -599,7 +600,7 @@ static void fillarc_1(BCG *Xgc, double arc[])
 static void fillrectangle_1(BCG *Xgc,double rect[])
 { 
   int irect[4],n2=4;
-  rect2d_f2i(Xgc,rect,irect,n2);
+  rect2d_f2i_old(Xgc,rect,irect,n2);
   if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_fillrectangle_1(Xgc,rect);
   Xgc->graphic_engine->fillrectangle(Xgc,irect);
 }
@@ -614,7 +615,7 @@ static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closefla
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n);
   if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_drawpolyline_1(Xgc,vx,vy,n,closeflag);
   Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,n,closeflag);
 }
@@ -628,10 +629,10 @@ static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n);
   /** and clipping is special its args are floats **/
-  scale_f2i(Xgc,clip_rect,clip_rect+1,ix,ix+1,1);
-  length_scale_f2i(Xgc,clip_rect+2,clip_rect+3,ix+2,ix+3,1);
+  scale_f2i_old(Xgc,clip_rect,clip_rect+1,ix,ix+1,1);
+  length_scale_f2i_old(Xgc,clip_rect+2,clip_rect+3,ix+2,ix+3,1);
   /* 
      if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_drawpolyline_1(Xgc,vx,vy,n,closeflag);
   */
@@ -651,7 +652,7 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
   int *xm=NULL,*ym=NULL,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n*p);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n*p);
 
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_fillpolylines_1(Xgc,vx,vy,fillvect,n,p,v1);
 
@@ -673,7 +674,7 @@ static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n);
   if (Xgc->record_flag == TRUE)  nsp_gengine_record_old.store_drawpolymark_1(Xgc,vx,vy,n);
   Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,n);
 
@@ -688,7 +689,7 @@ static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,doubl
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,x,y,xm,ym,n);
+  scale_f2i_old(Xgc,x,y,xm,ym,n);
   if (Xgc->record_flag == TRUE) 
     nsp_gengine_record_old.store_displaynumbers_1(Xgc,x,y,n,flag,z,alpha);
   Xgc->graphic_engine->displaynumbers(Xgc,xm,ym,n,flag,z,alpha);
@@ -703,7 +704,7 @@ static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,(n)*(p),&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n*p);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n*p);
   if (Xgc->record_flag == TRUE) 
     nsp_gengine_record_old.store_drawpolylines_1(Xgc,vx,vy,drawvect,n,p);
   Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,drawvect,n,p);
@@ -715,7 +716,7 @@ static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n
 static void drawrectangle_1(BCG *Xgc,double rect[])
 {
   int xm[4],n2=4;
-  rect2d_f2i(Xgc,rect,xm,n2);
+  rect2d_f2i_old(Xgc,rect,xm,n2);
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_drawrectangle_1(Xgc,rect);
   Xgc->graphic_engine->drawrectangle(Xgc,xm);
 }
@@ -728,7 +729,7 @@ static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
   int *xm=NULL,err=0;
   Myalloc1(&xm,4*(n),&err);
   if (err  ==   1) return;
-  rect2d_f2i(Xgc,vects,xm,4*(n));
+  rect2d_f2i_old(Xgc,vects,xm,4*(n));
   if (Xgc->record_flag == TRUE) 
     nsp_gengine_record_old.store_drawrectangles_1(Xgc,vects,fillvect,n);
   Xgc->graphic_engine->drawrectangles(Xgc,xm,fillvect,n);
@@ -743,7 +744,7 @@ static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, in
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i_old(Xgc,vx,vy,xm,ym,n);
   if (Xgc->record_flag == TRUE) 
     nsp_gengine_record_old.store_drawsegments_1(Xgc,vx,vy,n,style,iflag);
   Xgc->graphic_engine->drawsegments(Xgc,xm,ym,n,style,iflag);
@@ -895,8 +896,8 @@ static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rec
   x1 = XDouble2Pixel(x);
   yy1 = YDouble2Pixel(y);
   Xgc->graphic_engine->boundingbox(Xgc,string,x1,yy1,rect1);
-  scale_i2f(Xgc,rect,rect+1,rect1,rect1+1,1);
-  length_scale_i2f(Xgc,rect+2,rect+3,rect1+2,rect1+3,1);
+  scale_i2f_old(Xgc,rect,rect+1,rect1,rect1+1,1);
+  length_scale_i2f_old(Xgc,rect+2,rect+3,rect1+2,rect1+3,1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -913,7 +914,7 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
   if (Xgc->record_flag == TRUE) nsp_gengine_record_old.store_xstringb_1(Xgc,str,fflag,xd,yd,wd,hd);
   x = XDouble2Pixel(*xd);
   y = YDouble2Pixel(*yd);
-  length_scale_f2i(Xgc,wd,hd,&wbox,&hbox,1);
+  length_scale_f2i_old(Xgc,wd,hd,&wbox,&hbox,1);
   Xgc->graphic_engine->xget_font(Xgc,fontid);
   size = FONTMAXSIZE;
   w = wbox +1;
@@ -986,8 +987,8 @@ static void draw_pixbuf_1(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,
 { 
   GdkPixbuf *pixbuf=GDK_PIXBUF(((NspGObject *) pix)->obj);
   int idest_x,idest_y,iw,ih;
-  scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
-  length_scale_f2i(Xgc,&w,&h,&iw,&ih,1);
+  scale_f2i_old(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  length_scale_f2i_old(Xgc,&w,&h,&iw,&ih,1);
   if (Xgc->record_flag == TRUE)
     nsp_gengine_record_old.store_pixbuf(Xgc,pix,  src_x, src_y,dest_x,dest_y, w, h);
   Xgc->graphic_engine->draw_pixbuf(Xgc,pixbuf, src_x, src_y,idest_x,idest_y, iw, ih);
@@ -998,8 +999,8 @@ static void draw_pixbuf_from_file_1(BCG *Xgc,const char *fname,int src_x,int src
 				    double dest_y,double w,double  h)
 { 
   int idest_x,idest_y,iw,ih;
-  scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
-  length_scale_f2i(Xgc,&w,&h,&iw,&ih,1);
+  scale_f2i_old(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  length_scale_f2i_old(Xgc,&w,&h,&iw,&ih,1);
   if (Xgc->record_flag == TRUE)
     nsp_gengine_record_old.store_pixbuf_from_file(Xgc,fname,  src_x, src_y,dest_x,dest_y, w, h);
   Xgc->graphic_engine->draw_pixbuf_from_file(Xgc,fname, src_x, src_y,idest_x,idest_y, iw, ih);

@@ -26,8 +26,8 @@
 #include <stdlib.h>
 #include "nsp/math.h"
 #include "nsp/xdr.h"
-#include "nsp/graphics/Graphics.h"
-#include "nsp/graphics/Rec.h"
+#include "nsp/graphics-old/Graphics.h"
+#include "nsp/graphics-old/Rec.h"
 
 #define assert(ex) {if (!(ex)){ sciprint("Graphic load_/Save Error \r\n");return(0);}}
 
@@ -64,7 +64,7 @@ static int load_clipgrf (BCG *Xgc) ;
 static int load_alufunction1 (BCG *Xgc) ;
 static int load_background (BCG *Xgc) ;
 static int load_unclip (BCG *Xgc) ;
-static int load_test (BCG *Xgc) ;
+/* static int load_test (BCG *Xgc) ; */
 static int load_clip (BCG *Xgc) ;
 static int load_pattern (BCG *Xgc) ;
 static int load_font_size (BCG *Xgc) ;
@@ -147,6 +147,7 @@ static int load_unclip(BCG *Xgc)
   return 1;
 }
 
+#if 0
 static int load_test(BCG *Xgc)
 {
   struct rec_void *lplot  = MALLOC(sizeof(struct rec_void));
@@ -155,7 +156,7 @@ static int load_test(BCG *Xgc)
   nsp_gengine_record_old.store_record(Xgc,lplot->code,lplot);
   return 1;
 }
-
+#endif 
 
 static int load_clip(BCG *Xgc)
 {
@@ -1314,7 +1315,7 @@ static Load_Table load_table [] ={
 #endif
 #endif 
 
-int tape_load(BCG *Xgc,const char *fname1)
+int tape_old_load(BCG *Xgc,const char *fname1)
 {
   XDR xdrs[1];
   int type,record;

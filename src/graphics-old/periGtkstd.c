@@ -31,9 +31,9 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h" 
 #include "nsp/math.h"
-#include "nsp/graphics/periGtk.h"
+#include "nsp/graphics-old/periGtk.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-old/color.h"
 #include "nsp/command.h"
 
 /*
@@ -76,7 +76,7 @@
 #endif 
 
 #ifdef PERIGTK
-GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
+GTK_locator_info nsp_event_info_old = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 #endif 
 
 /**
@@ -532,24 +532,24 @@ static int xset_curwin(int intnum,int set_menu)
 {
   /* the current graphic context */
   int old;
-  BCG *bcgk= window_list_get_first(),*new=NULL;
+  BCG *bcgk= window_list_get_first_old(),*new=NULL;
   if ( bcgk == (BCG *) 0 ) 
     {
       /* First entry or no more graphic window */
       initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL);
       /* send info to menu */
-      new = window_list_get_first();
+      new = window_list_get_first_old();
       old = -1;
     }
   else 
     {
       if ( bcgk->CurWindow != intnum )
 	{
-	  BCG *new= window_list_win_to_front(intnum);
+	  BCG *new= window_list_win_to_front_old(intnum);
 	  if ( new == NULL) 
 	    {
 	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL);
-	      new = window_list_get_first();
+	      new = window_list_get_first_old();
 	    }
 	  old =  bcgk->CurWindow ;
 	}
@@ -587,7 +587,7 @@ static int xset_curwin(int intnum,int set_menu)
  
 static int xget_curwin(void)
 {
-  BCG *Xgc= window_list_get_first();
+  BCG *Xgc= window_list_get_first_old();
   return  ( Xgc == NULL) ? -1 : Xgc->CurWindow;
 }
 
@@ -1045,9 +1045,9 @@ static void xset_default_colormap(BCG *Xgc)
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL) 
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
   for (i = 0; i < m; i++) {
-    Xgc->private->colors[i].red = (default_colors[3*i] << 8);
-    Xgc->private->colors[i].green = (default_colors[3*i+1] << 8);
-    Xgc->private->colors[i].blue = (default_colors[3*i+2] << 8);
+    Xgc->private->colors[i].red = (default_colors_old[3*i] << 8);
+    Xgc->private->colors[i].green = (default_colors_old[3*i+1] << 8);
+    Xgc->private->colors[i].blue = (default_colors_old[3*i+2] << 8);
     if ( Xgc->private->colormap != NULL) 
       gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
   }
@@ -1456,16 +1456,16 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  */
 
 /**
- * nsp_initialize_gc:
+ * nsp_initialize_gc_old:
  * @Xgc: a #BCG  
  * 
  * 
  **/
-extern void nsp_initialize_gc( BCG *Xgc ) ;
+extern void nsp_initialize_gc_old( BCG *Xgc ) ;
 
 static void xset_default(BCG *Xgc)
 {
-  nsp_initialize_gc(Xgc);
+  nsp_initialize_gc_old(Xgc);
 }
 
 
@@ -1759,12 +1759,12 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 #ifdef PERICAIRO
       if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
       dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
-      nsp_gr_resize(dd->CurWindow);
+      dd->actions->resize(dd);
       /* cairo_destroy (dd->private->cairo_cr);
 	 dd->private->cairo_cr = NULL;
       */
 #else 
-      nsp_gr_resize(dd->CurWindow);
+      dd->actions->resize(dd);
 #endif 
       dd->private->in_expose= FALSE;
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
@@ -1778,7 +1778,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
-	  nsp_gr_replay(dd->CurWindow);
+	  dd->actions->replay(dd);	  
 	  dd->private->in_expose= FALSE;
 	}
       else 
@@ -1830,9 +1830,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
       /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
       glClear(GL_DEPTH_BUFFER_BIT);
-      nsp_ogl_set_view(dd);
+      nsp_ogl_set_old_view(dd);
       dd->private->in_expose= TRUE;
-      nsp_gr_resize(dd->CurWindow);
+      dd->actions->resize(dd);
       dd->private->in_expose= FALSE;
       /* Swap buffers or flush */
       if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
@@ -1852,11 +1852,11 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  /* just redraw if we have recorded stuffs */
 	  /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
 	  glClear(GL_DEPTH_BUFFER_BIT);
-	  nsp_ogl_set_view(dd);
+	  nsp_ogl_set_old_view(dd);
 	  dd->private->draw = FALSE;
 	  /* need to redraw */
 	  dd->private->in_expose= TRUE;
-	  nsp_gr_replay(dd->CurWindow);
+	  dd->actions->replay(dd);	  
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
 	  dd->private->in_expose= FALSE;
@@ -1927,7 +1927,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
       dd->private->in_expose= TRUE;
       dd->private->gl_only = TRUE;
-      nsp_gr_resize(dd->CurWindow);
+      dd->actions->resize(dd);
       dd->private->in_expose= FALSE;
       gdk_gl_drawable_gl_end (dd->private->gldrawable);
       glFlush ();
@@ -1946,7 +1946,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  dd->private->gl_only = TRUE;
-	  nsp_gr_replay(dd->CurWindow);
+	  dd->actions->replay(dd);
 	  dd->private->in_expose= FALSE;
 	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
 	}
@@ -1974,7 +1974,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 
 
 /**
- * nsp_get_image:
+ * nsp_get_image_old:
  * @Xgc: a #BCG  
  * 
  * get drawable as an image 
@@ -1983,14 +1983,14 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
  **/
 
 #if defined(PERIGTK)
-GdkImage* nsp_get_image(BCG *Xgc) 
+GdkImage* nsp_get_image_old(BCG *Xgc) 
 {
   return gdk_drawable_get_image(Xgc->private->drawable,0,0,Xgc->CWindowWidth,Xgc->CWindowHeight);
 }
 #endif 
 
 /**
- * nsp_get_pixbuf:
+ * nsp_get_pixbuf_old:
  * @Xgc: a #BCG  
  * 
  * 
@@ -1999,7 +1999,7 @@ GdkImage* nsp_get_image(BCG *Xgc)
  **/
 
 #if defined(PERIGTK)
-GdkPixbuf* nsp_get_pixbuf(BCG *Xgc) 
+GdkPixbuf* nsp_get_pixbuf_old(BCG *Xgc) 
 {
   return gdk_pixbuf_get_from_drawable(NULL,Xgc->private->drawable,
 				      gdk_drawable_get_colormap(Xgc->private->drawable),
@@ -2051,7 +2051,7 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
 #ifdef PERIGTK
 /* for all drivers */
 
-void nsp_set_cursor(BCG *Xgc,int id)
+void nsp_set_cursor_old(BCG *Xgc,int id)
 {
   GdkCursor *cursor;
   if ( id == -1 ) 

@@ -23,17 +23,17 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 #ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
+extern Gengine GL_gengine_old;
 #endif 
 
 static void gr_rescale_old(char *logf, double *FRectI, int *Xdec, int *Ydec, int *xnax, int *ynax);
 
 
 /*--------------------------------------------------------------------
- *  nsp_plot2d(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
+ *  nsp_plot2d_old(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
  *  
  *  Draw *n1 curves of *n2 points each
  *  (x[i+(*n2)*j] ,y[i+(*n2)*j]) Double values giving the point
@@ -71,7 +71,7 @@ static void gr_rescale_old(char *logf, double *FRectI, int *Xdec, int *Ydec, int
  *
  *--------------------------------------------------------------------------*/
   
-int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
+int nsp_plot2d_old(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 	       const char *legend,int legend_pos,double brect[],int aaint[])
 {
   int n;
@@ -80,7 +80,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
   /* Storing values if using the Record driver */
   /* Boundaries of the frame */
   
-  update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
     nsp_gengine_record_old.store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
@@ -97,21 +97,21 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
 	  return 0;
 	}      
       /* Real to Pixel values */
-      scale_f2i(Xgc,x,y,xm,ym,n);
+      scale_f2i_old(Xgc,x,y,xm,ym,n);
       /* Drawing axes **/
     }
-  axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+  axis_draw_old(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
 	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
   /* Drawing the curves */
   if ( n != 0 ) 
     {
-      frame_clip_on(Xgc);
+      frame_clip_on_old(Xgc);
       Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
-      frame_clip_off(Xgc);
+      frame_clip_off_old(Xgc);
       /* Drawing the Legends */
       if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
 	{
-	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
+	  nsp_legends_old(Xgc,legend_pos,*n1,style,legend,"@"); 
 	}
     }
   
@@ -128,7 +128,7 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
  *  since the grid does not start at frect boundaries
  *--------------------------------------------------------------------*/
 
-int nsp_plot_grid(BCG *Xgc, int *style)
+int nsp_plot_grid_old(BCG *Xgc, int *style)
 {
   int closeflag=0,n=2,vx[2],vy[2],i,j;
   double vxd[2],vyd[2],step;
@@ -144,11 +144,11 @@ int nsp_plot_grid(BCG *Xgc, int *style)
       vyd[0]=Xgc->scales->frect[1]; vyd[1]=Xgc->scales->frect[3];
       if (Xgc->scales->logflag[1] == 'l') { vyd[0]= exp10(vyd[0]); vyd[1]=exp10(vyd[1]);}
       vxd[0]=vxd[1]= exp10((double)Xgc->scales->xtics[2])*(Xgc->scales->xtics[0] + i*step);
-      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+      scale_f2i_old(Xgc,vxd,vyd,vx,vy,2);
       if ( vxd[0] != Xgc->scales->frect[0] && vxd[0] != Xgc->scales->frect[2]) 
 	{
 	  if (Xgc->scales->logflag[0] == 'l') { vxd[0]=vxd[1]= exp10(vxd[0]);}
-	  scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	  scale_f2i_old(Xgc,vxd,vyd,vx,vy,2);
 	  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	}
       /* subgrid if log axis */
@@ -158,7 +158,7 @@ int nsp_plot_grid(BCG *Xgc, int *style)
 	  for (j= 1; j < 10 ; j++)
 	    {
 	      vxd[0]=vxd[1]= xi*j;
-	      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	      scale_f2i_old(Xgc,vxd,vyd,vx,vy,2);
 	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
@@ -176,7 +176,7 @@ int nsp_plot_grid(BCG *Xgc, int *style)
       if ( vyd[0] != Xgc->scales->frect[1] && vyd[0] != Xgc->scales->frect[3]) 
 	{
 	  if (Xgc->scales->logflag[1] == 'l') { vyd[0]=vyd[1]= exp10(vyd[0]);}
-	  scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	  scale_f2i_old(Xgc,vxd,vyd,vx,vy,2);
 	  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	} 
       if (i < Xgc->scales->ytics[3]&& Xgc->scales->logflag[1] == 'l') 
@@ -185,7 +185,7 @@ int nsp_plot_grid(BCG *Xgc, int *style)
 	  for (j= 1; j < 10 ; j++)
 	    {
 	      vyd[0]=vyd[1]= xi*j;
-	      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+	      scale_f2i_old(Xgc,vxd,vyd,vx,vy,2);
 	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
 	    }
 	}
@@ -194,7 +194,7 @@ int nsp_plot_grid(BCG *Xgc, int *style)
   return(0);
 }
 
-int nsp_plot_polar_grid(BCG *Xgc, int *style)
+int nsp_plot_polar_grid_old(BCG *Xgc, int *style)
 {
   double Rmax;
   int i,pat,Narc=5,un=1;
@@ -202,7 +202,7 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Grid(Xgc,style);
   /* changes dash style if necessary */
   pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
-  frame_clip_on(Xgc);
+  frame_clip_on_old(Xgc);
   /* first the circles */
   Rmax= Abs(Xgc->scales->frect[0]);
   for (i=0; i < 4 ; i++) Rmax=Max(Rmax,Abs(Xgc->scales->frect[i]));
@@ -212,7 +212,7 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
       double r= (Rmax/(Narc-1))*i;
       double arc[]={-r,r,2*r,2*r,0,360*64.0};
       int iarc[6];
-      ellipse2d(Xgc,arc,iarc,&un,"f2i");
+      ellipse2d_old(Xgc,arc,iarc,&un,"f2i");
       Xgc->graphic_engine->drawarc(Xgc,iarc); 
     }
   /* then the rays */
@@ -221,11 +221,11 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
       double vxd[]={0,Rmax*cos(M_PI*i/6.0)};
       double vyd[]={0,Rmax*sin(M_PI*i/6.0)};
       int vx[2],vy[2];
-      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
+      scale_f2i_old(Xgc,vxd,vyd,vx,vy,2);
       Xgc->graphic_engine->displaystring(Xgc,"xxx",vx[1],vy[1],0,0.0); 
       Xgc->graphic_engine->drawsegments(Xgc,vx,vy,2,style,0); 
     }
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
   Xgc->graphic_engine->xset_pattern(Xgc,pat);
   return(0);
 }
@@ -234,7 +234,7 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
 
 
 /*---------------------------------------------------------------------
- * update_frame_bounds : 
+ * update_frame_bounds_old : 
  *  modify according to strflag the current scales 
  *  Xgc->scales->using given data 
  *  output : FRect,aaint,strflag are modified 
@@ -245,7 +245,7 @@ int nsp_plot_polar_grid(BCG *Xgc, int *style)
  *   after the first call for this purpose.
  *----------------------------------------------------*/
 
-void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
+void update_frame_bounds_old(BCG *Xgc, int cflag, char *xf, double *x,double *y,
 			 int *n1, int *n2, int *aaint,char *strflag, double FRect[4])
 {
   double FRect1[4];
@@ -328,7 +328,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
     }
 
   /* switch strflag so as to use now FRect   */
-  plot2d_strf_change('d',strflag);
+  plot2d_strf_change_old('d',strflag);
   
   /* we also need to redraw if other graphics are not in the same  mode */
   if ( redraw == 0 &&  Xgc->scales->scale_flag ) 
@@ -374,7 +374,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       hx=xmax-xmin;
       hy=ymax-ymin;
-      getscale2d(Xgc,WRect,FRect1,logscale,ARect);
+      getscale2d_old(Xgc,WRect,FRect1,logscale,ARect);
       wdim[0]=linint((double)wdim[0] * (WRect[2]*(1.0-ARect[0]-ARect[1])));  /* add corrections for margins */
       wdim[1]=linint((double)wdim[1] * (WRect[3]*(1.0-ARect[2]-ARect[3])));  /* add corrections for margins */
       if ( hx/(double)wdim[0]  <hy/(double) wdim[1] ) 
@@ -467,7 +467,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
   
   /* Update the current scale */
 
-  set_scale(Xgc,"tftttf",NULL,FRect1,aaint,xf+1,NULL);
+  set_scale_old(Xgc,"tftttf",NULL,FRect1,aaint,xf+1,NULL);
 
   /* store information about graduation in xtics */
   
@@ -526,26 +526,26 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       else 
 	{
 	  Xgc->graphic_engine->clearwindow(Xgc);    
-	  tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect,strflag);
+	  tape_old_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect,strflag);
 	}
     }
 
 #ifdef WITH_GTKGLEXT 
   /* transmit info to opengl */
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
     }
 #endif
 
 }
 
 /*----------------------------------------------------
- * plot2d_brect_from_data:
+ * plot2d_brect_from_data_old:
  *  compute FRect from data if necessary 
  *----------------------------------------------------*/
 
-void plot2d_brect_from_data(BCG *Xgc,int cflag, char *xf, double *x,double *y,
+void plot2d_brect_from_data_old(BCG *Xgc,int cflag, char *xf, double *x,double *y,
 			    int *n1, int *n2, int *aaint, char *strflag, double FRect[4])
 {
   double xmin,xmax,ymin,ymax;
@@ -578,7 +578,7 @@ void plot2d_brect_from_data(BCG *Xgc,int cflag, char *xf, double *x,double *y,
  * switch strf flag up or down 
  */
 
-void plot2d_strf_change(char c, char *strf)
+void plot2d_strf_change_old(char c, char *strf)
 {
   if ( c == 'u') 
     {
@@ -619,7 +619,7 @@ void plot2d_strf_change(char c, char *strf)
 static void nsp_legends_box(BCG *Xgc,int n1,const int *style,char * legend,int box[4],int get_box,
 			    double xoffset,double yoffset,int pat,int fg,const char *sep);
 
-void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * legend,const char *sep)
+void nsp_legends_old(BCG *Xgc,legends_pos pos,int n1,const int *style,const char * legend,const char *sep)
 {
   int rect[4],box[4],xx=0,yy=0;
   char *loc;
@@ -777,172 +777,6 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
       Xgc->graphic_engine->drawrectangle(Xgc,box);
     }
 }
-
-/* a new version with objects 
- * 
- *  nsp_plot2d_obj(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
- *  
- *  Draw *n1 curves of *n2 points each
- *  (x[i+(*n2)*j] ,y[i+(*n2)*j]) Double values giving the point
- *  position of point i of curve j (i=0,*n2-1 j=0,*n1-1)
- *
- *  style[*n1]-> give the style to use for each curve 
- *     if style is positive --> a mark is used (mark id = style[i])
- *     if style is strictly negative --> a dashed line is used 
- *        (dash id = abs(style[i])
- *     if there's only one curve, style can be of type style[0]=style,
- *     style[1]=pos ( pos in [1,6]) 
- *     pos give the legend position (1 to 6) (this can be iteresting
- *     if you want to superpose curves with different legends by 
- *     calling plot2d more than one time.
- *
- *  strflag[3] is a string
- *  
- *     if strflag[0] == '1' then legends are added 
- *        legend = "leg1@leg2@....@legn"; gives the legend for each curve
- *	else no legend
- *
- *     if strflag[1] == '1' then  the values of brect are used to fix 
- *        the drawing boundaries :  brect[]= <xmin,ymin,xmax,ymax>;
- *	if strflag[1] == '2' then the values  are computed from data
- *	else if strflag[1]=='0' the previous values 
- *                (previous call or defaut values) are used 
- *
- *     if  strflag[2] == '1' ->then an axis is added
- *        the number of intervals 
- *        is specified by the vector aaint[4] of ints 
- *	   <aaint[0],aaint[1]> specifies the x-axis number of  points 
- *	   <aaint[2],aaint[3]> same for y-axis
- *     if  strflag[2] == '2' -> no axis, only a box around the curves
- *     else no box and no axis 
- *
- */
-
-#include <gtk/gtk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/axes.h> 
-#include <nsp/curve.h> 
-
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
-extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
-
-int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
-		   const char *legend,int legend_pos,int mode,double brect[],int aaint[])
-{
-  const char *l_c = legend, *l_n;
-  char *curve_l;
-  char c;
-  double frect[4],xmin,xmax,ymin,ymax;
-  int i;
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return FAIL;
-
-  axe->obj->lpos = legend_pos;
-
-  /* compute brect if not given */
-  switch (strflag[1])
-    {
-    case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
-      frect[0]=brect[0];frect[1]=brect[1];frect[2]=brect[2];frect[3]=brect[3];
-      break;
-    case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
-      if ( strlen(logflag) < 1) c='g' ; else c=logflag[0];
-      switch ( c )
-	{
-	case 'e' : xmin= 1.0 ; xmax = (*n2);break;
-	case 'o' : xmax= Maxi(x,(*n2)); xmin= Mini(x,(*n2)); break;
-	case 'g' :
-	default: xmax= Maxi(x, (*n1)*(*n2)); xmin= Mini(x, (*n1)*(*n2)); break;
-	}
-      ymin=  Mini(y, (*n1)*(*n2)); ymax=  Maxi(y, (*n1)*(*n2));
-      /* back to default values for  x=[] and y = [] */
-      if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;} 
-      if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;} 
-      frect[0]=xmin;frect[1]=ymin;frect[2]=xmax;frect[3]=ymax;
-      break;
-    }
-  
-  if (strflag[1] == '7' || strflag[1] == '8' )
-    {
-      frect[0] = Min(frect[0], axe->obj->frect->R[0]);
-      frect[2] = Max(frect[2], axe->obj->frect->R[2]);
-      frect[1] = Min(frect[1], axe->obj->frect->R[1]);
-      frect[3] = Max(frect[3], axe->obj->frect->R[3]);
-    }
-
-  /* set the axes frect 
-   * note that this is also performed below 
-   */
-  
-  switch (strflag[1])
-    {
-    case '0': break;
-    default: memcpy(axe->obj->frect->R,frect,4*sizeof(double)); break;
-    }
-  
-
-  /* create a set of curves and insert them in axe */
-  for ( i = 0 ; i < *n1 ; i++) 
-    {
-      int mark=-1,k;
-      NspCurve *curve;
-      NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
-      if ( Pts == NULL) return FAIL;
-      /* XXX: we should have to keep the log flags */
-      /* get x-values */
-      switch ( logflag[0] )
-	{
-	case 'e' : /* No X-value given by the user */
-	  for ( k=0 ; k < (*n2) ; k++)  Pts->R[k] = k+1.0;
-	  break ;
-	case 'o' : /* same X for all_curves */
-	  memcpy(Pts->R, x, (*n2)*sizeof(double));
-	  break;
-	case 'g' :
-	default: /* x are given for each curves */
-	  memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
-	  break;
-	}
-      memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
-      if ( style[i] <= 0 ) mark = -style[i];
-      /* get legend for curve i*/
-      l_n = l_c; while ( *l_n != '@' && *l_n != '\0') l_n++;
-      if ( l_n > l_c )
-	{
-	  curve_l = new_nsp_string_n(l_n-l_c +1);
-	  if ( curve_l != NULL) 
-	    {
-	      strncpy(curve_l,l_c,l_n-l_c+1);
-	      curve_l[l_n-l_c]='\0';
-	    }
-	}
-      else
-	{
-	  curve_l = NULL;
-	}
-      l_c = ( *l_n == '@') ? l_n+1: l_n;
-      /* "mark", "width", "style", "color", "mode", "Pts", legend */
-      curve= nsp_curve_create("curve",mark,0,0,
-			      ( style[i] > 0 ) ?  style[i] : -1, 
-			      mode,Pts,curve_l,NULL);
-      /* insert the new curve */
-      if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
-	return FAIL;
-    }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
-  /* updates the axes scale information */
-  nsp_strf_axes(Xgc, axe , frect, strflag[1]);
-  
-  axe->obj->axes = ( strlen(strflag) >= 2) ? strflag[2] -60 : 1;
-  axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
-  axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
-  
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
-  return OK;
-}
-
 
 
 /*

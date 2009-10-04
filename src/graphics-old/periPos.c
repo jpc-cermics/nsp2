@@ -28,9 +28,9 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h"
 #include "nsp/math.h"
-#include "nsp/graphics/periPos.h"
+#include "nsp/graphics-old/periPos.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-old/color.h"
 #include "../system/files.h" /* FSIZE */
 
 extern char *nsp_getenv (const char *name);
@@ -301,10 +301,13 @@ static int xget_absourel(BCG *Xgc)
 
 /** All the possibilities : Read The X11 manual to get more informations **/
 
-struct alinfo { 
+typedef struct _alinfo { 
   char *name;
   char id;
-  char *info;} AluStrucPos[] =
+  char *info;
+} alinfo ;
+
+static alinfo  AluStrucPos[] =
     { 
       {"GXclear" ,GXclear," 0 "},
       {"GXand" ,GXand," src AND dst "},
@@ -653,7 +656,7 @@ static void xset_colormap(BCG *Xgc,int m,int n, double *colors)
 static void xset_default_colormap(BCG *Xgc)
 {
   int   m = DEFAULTNUMCOLORS;
-  xset_colormap_gen(Xgc,m,3,default_colors,WriteColorRGBDef,check_colors_def);
+  xset_colormap_gen(Xgc,m,3,default_colors_old,WriteColorRGBDef,check_colors_def);
 }
 
 
@@ -873,16 +876,17 @@ static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double 
   FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
 }
 
+#if 0 
+static double bsizePos[6][4]= 
+  {{ 0.0,-7.0,4.63,9.0  },  /* normalement inutilise ici avec les modifs suivantes */
+   { 0.0,-9.0,5.74,12.0 },          
+   { 0.0,-11.0,6.74,14.0},
+   { 0.0,-12.0,7.79,15.0},
+   {0.0, -15.0,9.72,19.0 },
+   {0.0,-20.0,13.41,26.0}};
+#endif 
 
-double bsizePos[6][4]= {{ 0.0,-7.0,4.63,9.0  },  /* normalement inutilise ici avec les modifs suivantes */
-			{ 0.0,-9.0,5.74,12.0 },          
-			{ 0.0,-11.0,6.74,14.0},
-			{ 0.0,-12.0,7.79,15.0},
-			{0.0, -15.0,9.72,19.0 },
-			{0.0,-20.0,13.41,26.0}};
-
-
-/*** ajouts q&d en attendant mieux.... Bruno (le 24 Nov 2002) ***/
+/* ajouts q&d en attendant mieux.... Bruno (le 24 Nov 2002) */
 
 struct posfont  /* a data type for handling a postscript font in scilab */
 {
@@ -1392,7 +1396,7 @@ static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double 
   static int EntryCounter = 0;
   int fnum;
   BCG *Xgc = &ScilabGCPos; 
-  Xgc->graphic_engine = &Pos_gengine ; /* the graphic engine associated to this graphic window */
+  Xgc->graphic_engine = &Pos_gengine_old ; /* the graphic engine associated to this graphic window */
 
   if (EntryCounter >= 1) xendgraphic(Xgc);/* XXXX */
   strncpy(string1,string,256);
@@ -1452,7 +1456,7 @@ static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double 
 
   Xgc->graphic_engine->scale->initialize_gc(Xgc);
   Xgc->scales = NULL;
-  xgc_add_default_scale(Xgc);
+  xgc_add_default_scale_old(Xgc);
   Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
   return EntryCounter;
@@ -1473,7 +1477,7 @@ static void xinfo(BCG *Xgc,char *format,...) {}
 
 static void xset_default(BCG *Xgc)
 {
-  nsp_initialize_gc(Xgc);
+  nsp_initialize_gc_old(Xgc);
 }
 
 
@@ -1715,7 +1719,7 @@ static void xget_mark(BCG *Xgc,int *symb)
   symb[1] = Xgc->CurHardSymbSize ;
 }
 
-char symb_listPos[] = {
+static char symb_listPos[] = {
   /*
     0x2e : . alors que 0xb7 est un o plein trop gros 
     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/

@@ -31,10 +31,10 @@
 #include <gtk/gtk.h>
 #include "nsp/sciio.h"
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
-#include "nsp/graphics/perigen.h"
+#include "nsp/graphics-old/Graphics.h"
+#include "nsp/graphics-old/perigen.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-old/color.h"
 #include "nsp/command.h"
 
 
@@ -55,7 +55,7 @@ static driver_draw_pixbuf draw_pixbuf_gen;
 static driver_draw_pixbuf_from_file draw_pixbuf_from_file_gen; 
 static driver_xset_test xset_test;
 
-nsp_gengine_generic nsp_peri_generic = {
+nsp_gengine_generic nsp_peri_generic_old = {
   fill_grid_rectangles_gen,
   fill_grid_rectangles1_gen,
   drawarrows_gen,
@@ -73,6 +73,11 @@ nsp_gengine_generic nsp_peri_generic = {
   draw_pixbuf_from_file_gen,
   xset_test
 };
+
+static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, 
+			     double *zmax,double *coeff, const int *colminmax,
+			     const double *zminmax,const double z[],int zn);
+
 
 /**
  * fill_grid_rectangles1_gen:
@@ -203,7 +208,7 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 /*
  */
 
-void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
+static void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
 		      const int *colminmax,const double *zminmax,const double z[],int zn)
 {
   *colmin=1;
@@ -647,7 +652,7 @@ static void   xset_test(BCG *Xgc)
   brect[0]=brect[1]=0;brect[2]=brect[3]=10.0;
   keep= Xgc->record_flag;
   Xgc->record_flag = FALSE;
-  nsp_plot2d(Xgc,x,y,&n1,&n2,style,"011"," ",4,brect,aaint);
+  nsp_plot2d_old(Xgc,x,y,&n1,&n2,style,"011"," ",4,brect,aaint);
   sprintf(str,"count=%d",count);
   count++;
   Xgc->graphic_engine->scale->displaystring(Xgc,str,5,5,0,0);

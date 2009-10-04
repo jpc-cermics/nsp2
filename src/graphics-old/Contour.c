@@ -24,15 +24,15 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 #ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
+extern Gengine GL_gengine_old;
 #define PERIGL
-#include "nsp/graphics/periGtk.h"
+#include "nsp/graphics-old/periGtk.h"
 #endif 
 
-extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,
+extern void drawpolylines3D_old(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,
 			    int *drawvect,int n, int p);
 
 typedef void (level_f) (BCG *Xgc,int ival, double Cont, double xncont,
@@ -219,8 +219,8 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
     case 0: 
       /* 3D geometry with projection on the surface */
 #ifdef WITH_GTKGLEXT 
-      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_ogl : Contstore_; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
+      func =  ( Xgc->graphic_engine == &GL_gengine_old ) ? Contstore_ogl : Contstore_; 
+      draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis;
       break;
 #else 
       func=Contstore_; break;  
@@ -228,8 +228,8 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
     case 1: 
       /* 3D geometry with projection on a fixed z level  */
 #ifdef WITH_GTKGLEXT 
-      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_1_ogl : Contstore_1; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
+      func =  ( Xgc->graphic_engine == &GL_gengine_old ) ? Contstore_1_ogl : Contstore_1; 
+      draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis;
       break;
 #else 
       func=Contstore_1; break;  
@@ -250,10 +250,10 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
       double FRect[4];
       static int aaint[4] = {2,10,2,10};
       FRect[0]=x[0];FRect[1]= y[0];FRect[2]=x[*n1-1];FRect[3]= y[*n2-1];
-      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      set_scale_old(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
       /* Drawing axes */
-      axis_draw(Xgc,'1','1',-1);
-      frame_clip_on(Xgc);
+      axis_draw_old(Xgc,'1','1',-1);
+      frame_clip_on_old(Xgc);
     }
   else
     {
@@ -313,12 +313,12 @@ int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int
       else 
 	draw_axis(Xgc,&box,'D',fg);
     }
-  frame_clip_off(Xgc);
+  frame_clip_off_old(Xgc);
 
 #ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
+  if ( Xgc->graphic_engine == &GL_gengine_old ) 
     {
-      nsp_ogl_set_2dview(Xgc);
+      nsp_ogl_set_old_2dview(Xgc);
     }
 #endif
   return(0);
@@ -343,8 +343,8 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
     case 0: 
       /* 3D geometry with projection on the surface */
 #ifdef WITH_GTKGLEXT 
-      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_ogl : Contstore_; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
+      func =  ( Xgc->graphic_engine == &GL_gengine_old ) ? Contstore_ogl : Contstore_; 
+      draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis;
       break;
 #else 
       func=Contstore_; break;  
@@ -352,8 +352,8 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
     case 1: 
       /* 3D geometry with projection on a fixed z level  */
 #ifdef WITH_GTKGLEXT 
-      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_1_ogl : Contstore_1; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
+      func =  ( Xgc->graphic_engine == &GL_gengine_old ) ? Contstore_1_ogl : Contstore_1; 
+      draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis;
       break;
 #else 
       func=Contstore_1; break;  
@@ -433,7 +433,7 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   double *zconst, zmin,zmax;
 
   /* Boundaries of the frame */
-  update_frame_bounds(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
+  update_frame_bounds_old(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
 
   /* If Record is on */
   if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE && strcmp(name,"contour2")==0 ) 
@@ -445,9 +445,9 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
   /* Scales */
   if (strcmp(name,"contour2")==0 )
     {
-      axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
+      axis_draw_old(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
 		(strlen(strflag) >= 2) ? strflag[1] : '6',-1);
-      frame_clip_on(Xgc);
+      frame_clip_on_old(Xgc);
     }
   if (*flagnz==0)
     {
@@ -467,44 +467,7 @@ static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y
       contourI(Xgc,func,x,y,z,zz,N,style,&err);
     }
 
-  if (strcmp(name,"contour2")==0 )frame_clip_off(Xgc);
-  return(0);
-}
-
-
-/* NEW: function used by the contour object 
- *      for drawing itself.
- */
-
-int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz,  double *zz, int *style)
-{
-  int err=0,i;
-  int N[3]= {n1, n2, nz}; 
-  
-  frame_clip_on(Xgc);/* XXX sans doute inutile car fait par l'axe */
-  
-  if ( zz == NULL )
-    {
-      double *zconst;
-      double zmin,zmax;
-      zmin=(double) Mini(z,n1*(n2)); 
-      zmax=(double) Maxi(z,n1*(n2));
-      /* we draw nz level curves */
-      if ((zconst = graphic_alloc(6,nz,sizeof(double)))== 0) 
-	{
-	  sciprint("Running out of memory\r\n");
-	  return 0;
-	}
-      for ( i =0 ; i < nz ; i++) 
-	zconst[i]=zmin + (i+1)*(zmax-zmin)/(nz+1);
-      contourI(Xgc,Contstore_2,x,y,z,zconst,N,style,&err);
-    }
-  else
-    {
-      N[0]= n1;N[1]= n2;N[2]= nz;
-      contourI(Xgc,Contstore_2,x,y,z,zz,N,style,&err);
-    }
-  frame_clip_off(Xgc);
+  if (strcmp(name,"contour2")==0 )frame_clip_off_old(Xgc);
   return(0);
 }
 
@@ -778,7 +741,7 @@ static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq
   else 
     {
 #ifdef WITH_GTKGLEXT 
-      if ( Xgc->graphic_engine == &GL_gengine 
+      if ( Xgc->graphic_engine == &GL_gengine_old 
 	   && ( func== Contstore_ogl || func==Contstore_1_ogl ))
 	ContourTrace_ogl(Xgc,Cont,style);
       else
@@ -1018,12 +981,12 @@ static void ContourTrace_ogl(BCG *Xgc,double Cont, int style)
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
   if (uc)
     {
-      drawpolylines3D(Xgc,xdcont,ydcont,zdcont,&style,1,cont_size);
+      drawpolylines3D_old(Xgc,xdcont,ydcont,zdcont,&style,1,cont_size);
     }
   else {
     int st=0;
     old = Xgc->graphic_engine->xset_dash(Xgc,style);
-    drawpolylines3D(Xgc,xdcont,ydcont,zdcont,&st,1,cont_size);
+    drawpolylines3D_old(Xgc,xdcont,ydcont,zdcont,&st,1,cont_size);
     Xgc->graphic_engine->xset_dash(Xgc,old);
   }
 
@@ -1040,14 +1003,14 @@ static void ContourTrace_ogl(BCG *Xgc,double Cont, int style)
    * here and use 2d graphics 
    * but it should be better to have a 3D function. 
    */
-  nsp_ogl_set_2dview(Xgc);
+  nsp_ogl_set_old_2dview(Xgc);
   xd=xdcont[cont_size / 2];
   yd=ydcont[cont_size / 2];
   zd=zdcont[cont_size / 2];
   x = XScale(TRX(xd,yd,zd));
   y = YScale(TRY(xd,yd,zd));
   Xgc->graphic_engine->displaystring(Xgc,str, x,y,flag,angle);
-  nsp_ogl_set_3dview(Xgc);
+  nsp_ogl_set_old_3dview(Xgc);
 }
 
 #endif 
