@@ -50,13 +50,13 @@ static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *
  */
 
 #ifdef PERIGL 
-#define nsp_graphic_new nsp_graphic_new_gl
+#define nsp_graphic_new_new nsp_graphic_new_gl_new
 #endif 
 #ifdef PERICAIRO 
-#define nsp_graphic_new nsp_graphic_new_cairo
+#define nsp_graphic_new_new nsp_graphic_new_cairo_new
 #endif 
 
-int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
+int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
   nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
   return  nsp_get_win_counter()-1;
@@ -147,6 +147,8 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   NewXgc->graphic_engine = &Gtk_gengine;
 #endif 
 #endif 
+  NewXgc->actions = &nsp_gc_actions;
+
   start_sci_gtk(); /* be sure that gtk is started */
 
   if (first == 0)
@@ -229,7 +231,8 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 #if defined(PERIGL) && !defined(PERIGLGTK) 
   NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
 #endif 
-
+  
+  
   nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
   
   NewXgc->graphic_engine->scale->initialize_gc(NewXgc);

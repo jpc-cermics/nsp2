@@ -33,7 +33,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 extern double nsp_dlamch (char *cmach);
 

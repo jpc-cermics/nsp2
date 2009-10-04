@@ -23,7 +23,7 @@
  * delegated to private member of winxgc  
  *--------------------------------------------------------------------------*/
 
-#include "nsp/graphics/Graphics.h" 
+#include "nsp/graphics-new/Graphics.h" 
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -76,7 +76,7 @@ static int window_list_search_from_drawing__(WindowList *listptr,void *win);
 
 extern Gengine Gtk_gengine; /* XXXXX */
 
-BCG *check_graphic_window(void)
+BCG *check_graphic_window_new(void)
 {
   BCG *loc =  window_list_get_first();
   if ( loc == NULL ) 
@@ -103,7 +103,7 @@ BCG *check_graphic_window(void)
  * Return value: the new graphic context associated to window @num.
  **/
 
-BCG *set_graphic_window(int num) 
+BCG *set_graphic_window_new(int num) 
 {
   Gtk_gengine.xset_curwin(Max(0,num),TRUE);
   return  window_list_get_first();
@@ -235,7 +235,7 @@ void window_list_remove(int num)
  * Return value: %NULL or a graphic context 
  **/
 
-BCG *window_list_search(int winnum)
+BCG *window_list_search_new(int winnum)
 { 
   WindowList *loc = window_list_search_w_int(The_List,(Max(0,winnum)));
   if ( loc == NULL) return NULL;
@@ -791,7 +791,7 @@ void show_scales(BCG *Xgc)
 int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
 {
   static int aaint[]={2,10,2,10};
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Ech(Xgc,WRect,FRect,logscale);
+
   if (logscale[0]=='l') 
     {
       FRect[0]=log10(FRect[0]);
@@ -895,8 +895,7 @@ int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *l
 	  FRect[3]=log10(FRect[3]);
 	}
     }
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    nsp_gengine_record_old.store_NEch(Xgc,flag,WRect,ARect,FRect,logscale);
+
   set_scale(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
   return(0);
 }
@@ -1206,3 +1205,4 @@ void window_list_clear_queue(BCG *Xgc)
       nsp_clear_queue(&Xgc->queue);
     }
 }
+

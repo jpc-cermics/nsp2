@@ -1023,9 +1023,9 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
 #include <cairo-ps.h>
 #include <cairo-svg.h>
 
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,char *driver,char option);
+static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,const char *driver,char option);
 
-int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,char *driver,char option)
+int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option)
 {
   /* default is to follow the window size */
   int width = Xgc->CWindowWidth; 
@@ -1118,7 +1118,9 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
        * delete the window is erased 
        */
       Xgc1->private->cairo_cr = NULL;
-      nsp_gr_delete(win);
+      /* nsp_gr_delete(win); */
+      Xgc1->actions->delete(Xgc1);
+      
     }
   return OK;
 }
@@ -1129,7 +1131,7 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
 
 
 static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
-				char *driver,char option)
+				const char *driver,char option)
 {
   int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
@@ -1185,7 +1187,9 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   if ( Xgc1 != Xgc ) 
     {
       /* delete the localy created <<window>> */
-      nsp_gr_delete(win);
+      /* nsp_gr_delete(win); */
+      Xgc1->actions->delete(Xgc1);
+
     }
   return OK;
 }

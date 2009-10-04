@@ -26,7 +26,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 static double  x_convert (char xy_type,const double x[] ,int i);
 static double  y_convert (char xy_type,const double x[] ,int i);
@@ -221,14 +221,6 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
  *            if 1 the segment is drawn 
  *   grid_color: -1 or the color of an axis to be added.
  *-------------------------------------------------------------*/
-
-
-void nsp_axis_old(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
-{
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    nsp_gengine_record_old.store_SciAxis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag);
-  Sci_Axis(Xgc,pos,xy_type,x,nx,y,ny,str,subtics,format,fontsize,textcolor,ticscolor,logflag,seg_flag,grid_color);
-}
 
 
 static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 

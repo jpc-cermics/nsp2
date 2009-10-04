@@ -21,7 +21,7 @@
  *--------------------------------------------------------------------------*/
 
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 double Mini(const double vect[], int n)
 {

@@ -29,7 +29,7 @@
  * FIXME: a remetre ds periFig.c 
  *----------------------------------------------------------*/
 
-#include "nsp/graphics/Graphics.h" 
+#include "nsp/graphics-new/Graphics.h" 
 
 static void draw_clipped(BCG *Xgc,int j, int *vx, int *vy, int xleft,int xright,int ybot,int ytop);
 

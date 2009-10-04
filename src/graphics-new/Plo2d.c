@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
@@ -74,52 +74,9 @@ static void gr_rescale_old(char *logf, double *FRectI, int *Xdec, int *Ydec, int
 int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *strflag,
 	       const char *legend,int legend_pos,double brect[],int aaint[])
 {
-  int n;
-  int *xm=NULL,*ym=NULL;
-
-  /* Storing values if using the Record driver */
-  /* Boundaries of the frame */
-  
-  update_frame_bounds(Xgc,0,"gnn",x,y,n1,n2,aaint,strflag,brect);
-
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    nsp_gengine_record_old.store_Plot1(Xgc,"gnn",x,y,n1,n2,style,strflag,legend,legend_pos,brect,aaint);
-
-  /* Allocation */
-  n = (*n1)*(*n2) ; 
-  if ( n != 0 ) 
-    {
-      xm = graphic_alloc(0,n,sizeof(int));
-      ym = graphic_alloc(1,n,sizeof(int));
-      if ( xm == 0 || ym == 0) 
-	{
-	  sciprint("Running out of memory \n");
-	  return 0;
-	}      
-      /* Real to Pixel values */
-      scale_f2i(Xgc,x,y,xm,ym,n);
-      /* Drawing axes **/
-    }
-  axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
-	    (strlen(strflag) >= 2) ? strflag[1] : '6',-1);
-  /* Drawing the curves */
-  if ( n != 0 ) 
-    {
-      frame_clip_on(Xgc);
-      Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,style,*n1,*n2);
-      frame_clip_off(Xgc);
-      /* Drawing the Legends */
-      if ((int)strlen(strflag) >=1  && strflag[0] == '1' && legend_pos >= 0 && legend != NULL)
-	{
-	  nsp_legends(Xgc,legend_pos,*n1,style,legend,"@"); 
-	}
-    }
-  
-  /* my_gl_main (0,NULL); */
-
-  return(0);
+  Scierror("XXX To be emulated in new graphics \n");
+  return 0;
 }
-
 
 /*--------------------------------------------------------------------
  * add a grid to a 2D plot
@@ -128,107 +85,6 @@ int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,int style[],char *
  *  since the grid does not start at frect boundaries
  *--------------------------------------------------------------------*/
 
-int nsp_plot_grid(BCG *Xgc, int *style)
-{
-  int closeflag=0,n=2,vx[2],vy[2],i,j;
-  double vxd[2],vyd[2],step;
-  int pat;
-  /* Recording command */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Grid(Xgc,style);
-  /* changes dash style if necessary */
-  pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
-  /*  x-axis grid (i.e vertical lines ) */
-  step = (Xgc->scales->xtics[1]-Xgc->scales->xtics[0])/Xgc->scales->xtics[3];
-  for ( i=0 ; i <= Xgc->scales->xtics[3]; i++)
-    {
-      vyd[0]=Xgc->scales->frect[1]; vyd[1]=Xgc->scales->frect[3];
-      if (Xgc->scales->logflag[1] == 'l') { vyd[0]= exp10(vyd[0]); vyd[1]=exp10(vyd[1]);}
-      vxd[0]=vxd[1]= exp10((double)Xgc->scales->xtics[2])*(Xgc->scales->xtics[0] + i*step);
-      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-      if ( vxd[0] != Xgc->scales->frect[0] && vxd[0] != Xgc->scales->frect[2]) 
-	{
-	  if (Xgc->scales->logflag[0] == 'l') { vxd[0]=vxd[1]= exp10(vxd[0]);}
-	  scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-	  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-	}
-      /* subgrid if log axis */
-      if (i < Xgc->scales->xtics[3] && Xgc->scales->logflag[0] == 'l') 
-	{
-	  double xi = exp10(exp10((double)Xgc->scales->xtics[2])*(Xgc->scales->xtics[0] + (i)*step));
-	  for (j= 1; j < 10 ; j++)
-	    {
-	      vxd[0]=vxd[1]= xi*j;
-	      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-	    }
-	}
-    }
-  /* y-axis grid (i.e horizontal lines ) */
-  step = (Xgc->scales->ytics[1]-Xgc->scales->ytics[0])/Xgc->scales->ytics[3];
-  for ( i=0 ; i <= Xgc->scales->ytics[3]; i++)
-    {
-      /* xmin and xmax for horizontal lines */
-      vxd[0]=Xgc->scales->frect[0]; vxd[1]=Xgc->scales->frect[2];
-      if (Xgc->scales->logflag[0] == 'l') { vxd[0]=exp10(vxd[0]);vxd[1]=exp10(vxd[1]);}
-      /* */
-      vyd[0]=vyd[1]= exp10((double)Xgc->scales->ytics[2])*(Xgc->scales->ytics[0] + i*step);
-      /* draw horizontal lines if they do not match a contour */
-      if ( vyd[0] != Xgc->scales->frect[1] && vyd[0] != Xgc->scales->frect[3]) 
-	{
-	  if (Xgc->scales->logflag[1] == 'l') { vyd[0]=vyd[1]= exp10(vyd[0]);}
-	  scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-	  Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-	} 
-      if (i < Xgc->scales->ytics[3]&& Xgc->scales->logflag[1] == 'l') 
-	{
-	  double xi = exp10(exp10((double)Xgc->scales->ytics[2])*(Xgc->scales->ytics[0] + (i)*step));
-	  for (j= 1; j < 10 ; j++)
-	    {
-	      vyd[0]=vyd[1]= xi*j;
-	      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-	      Xgc->graphic_engine->drawpolyline(Xgc, vx, vy,n,closeflag);
-	    }
-	}
-    }
-  Xgc->graphic_engine->xset_pattern(Xgc,pat);
-  return(0);
-}
-
-int nsp_plot_polar_grid(BCG *Xgc, int *style)
-{
-  double Rmax;
-  int i,pat,Narc=5,un=1;
-  /* Recording command */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) nsp_gengine_record_old.store_Grid(Xgc,style);
-  /* changes dash style if necessary */
-  pat = Xgc->graphic_engine->xset_pattern(Xgc,*style);
-  frame_clip_on(Xgc);
-  /* first the circles */
-  Rmax= Abs(Xgc->scales->frect[0]);
-  for (i=0; i < 4 ; i++) Rmax=Max(Rmax,Abs(Xgc->scales->frect[i]));
-  Narc=5;
-  for (i=0; i < Narc ; i++)
-    {
-      double r= (Rmax/(Narc-1))*i;
-      double arc[]={-r,r,2*r,2*r,0,360*64.0};
-      int iarc[6];
-      ellipse2d(Xgc,arc,iarc,&un,"f2i");
-      Xgc->graphic_engine->drawarc(Xgc,iarc); 
-    }
-  /* then the rays */
-  for (i=0; i < 12 ; i++) 
-    {
-      double vxd[]={0,Rmax*cos(M_PI*i/6.0)};
-      double vyd[]={0,Rmax*sin(M_PI*i/6.0)};
-      int vx[2],vy[2];
-      scale_f2i(Xgc,vxd,vyd,vx,vy,2);
-      Xgc->graphic_engine->displaystring(Xgc,"xxx",vx[1],vy[1],0,0.0); 
-      Xgc->graphic_engine->drawsegments(Xgc,vx,vy,2,style,0); 
-    }
-  frame_clip_off(Xgc);
-  Xgc->graphic_engine->xset_pattern(Xgc,pat);
-  return(0);
-}
 
 
 

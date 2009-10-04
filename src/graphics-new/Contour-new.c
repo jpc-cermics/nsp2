@@ -24,12 +24,12 @@
 #include <stdio.h>
 #include <math.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #define PERIGL
-#include "nsp/graphics/periGtk.h"
+#include "nsp/graphics-new/periGtk.h"
 #endif 
 
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,
@@ -40,11 +40,6 @@ typedef void (level_f) (BCG *Xgc,int ival, double Cont, double xncont,
 typedef void (*ptr_level_f) (BCG *Xgc,int ival, double Cont, double xncont,
 			     double yncont);
 
-static int 
-Contour2D (BCG *Xgc,ptr_level_f,char *,double *x,double *y,double *z,int *n1,
-	   int *n2,int *flagnz,int *nz,double *zz,
-	   int *style,char *strflag,char *legend,double *brect,
-	   int *aaint);
 
 static void 
 contourI (BCG *Xgc,ptr_level_f,double *, double *, double *,
@@ -64,7 +59,6 @@ static void ContourTrace (BCG *Xgc,double Cont, int style);
 static level_f Contstore_, Contstore_1, Contstore_2, GContstore_2;
 
 #ifdef WITH_GTKGLEXT 
-extern void DrawAxis_ogl(BCG *Xgc, const nsp_box_3d *box, char flag, int style);
 static void ContourTrace_ogl(BCG *Xgc,double Cont, int style);
 static level_f Contstore_ogl,Contstore_1_ogl ;
 #endif 
@@ -161,180 +155,12 @@ static double ZC=0.0;
 static char   ContNumFormat[100];
 
 
-/**
- * nsp_gcontour:
- * @Xgc: 
- * @x: 
- * @y: 
- * @z: 
- * @n1: 
- * @n2: 
- * @flagnz: 
- * @nz: 
- * @zz: 
- * @teta: 
- * @alpha: 
- * @legend: 
- * @flag: 
- * @bbox: 
- * @zlev: 
- * @lstr: 
- * 
- * Draw level curves for a function f(x,y) which values 
- * at points x(i),y(j) are given by z(i,j)
- * - z is a (n1,n2) matrix 
- * - x is a (1,n1) matrix 
- * - y is a (1,n2) matrix 
- * - x,y,z are stored as one dimensionnal array in C 
- * - if *flagnz =0 
- * -   then  nz is an int pointer to the number of level curves. 
- *     else  zz is an array which gives th requested level values.
- *            (and nz is the size of thos array)
- * Computed from min and max of z
- * Exemple Contour(1:5,1:10,rand(5,10),5);
- * 
- * 
- * Return value: unused 
- **/
-
-int nsp_gcontour(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, 
-		int *nz, double *zz, double *teta, double *alpha, char *legend, int *flag, 
-		double *bbox, double *zlev, int lstr)
-{
-  double *zconst;
-  nsp_box_3d box;
-  int err=0, fg;
-  void (*func) (BCG *Xgc,int, double,double,double);
-  void (*draw_axis) (BCG *Xgc, const nsp_box_3d *box, char flag, int style);
-  double zmin,zmax;
-  int N[3],i;
-  
-  draw_axis = DrawAxis;
-  ZC=*zlev;
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE) 
-    nsp_gengine_record_old.store_Contour(Xgc,x,y,z,n1,n2,flagnz,nz,zz,teta,alpha,legend,flag,bbox,zlev);
-
-  switch (flag[0])
-    {
-    case 0: 
-      /* 3D geometry with projection on the surface */
-#ifdef WITH_GTKGLEXT 
-      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_ogl : Contstore_; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
-      break;
-#else 
-      func=Contstore_; break;  
-#endif 
-    case 1: 
-      /* 3D geometry with projection on a fixed z level  */
-#ifdef WITH_GTKGLEXT 
-      func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_1_ogl : Contstore_1; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
-      break;
-#else 
-      func=Contstore_1; break;  
-#endif 
-    case 2: 
-      /* 2D geometry */
-      func=Contstore_2; break; 
-    default:
-      /* 2D geometry */
-      func=Contstore_2; break; 
-    }
-  zmin=(double) Mini(z,*n1*(*n2)); 
-  zmax=(double) Maxi(z,*n1*(*n2));
-  
-  if (flag[0] == 2)
-    {
-      /* Contour on a 2D plot */
-      double FRect[4];
-      static int aaint[4] = {2,10,2,10};
-      FRect[0]=x[0];FRect[1]= y[0];FRect[2]=x[*n1-1];FRect[3]= y[*n2-1];
-      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
-      /* Drawing axes */
-      axis_draw(Xgc,'1','1',-1);
-      frame_clip_on(Xgc);
-    }
-  else
-    {
-      /* Contour on a 3D plot */
-      if (flag[1]!=0 && flag[1]!=1 && flag[1]!=3 && flag[1]!=5)
-	{
-	  bbox[0]=x[0];bbox[1]=x[*n1-1];
-	  bbox[2]=y[0];bbox[3]=y[*n2-1];
-	  bbox[4]=zmin;bbox[5]=zmax;
-	  if (flag[0] == 1) 
-	    {
-	      bbox[4]=Min(bbox[4],ZC);bbox[5]=Max(bbox[5],ZC);
-	    }
-	}
-      if ( flag[1] !=0)
-	SetEch3d1(Xgc,&box,bbox,*teta,*alpha,(long)(flag[1]+1)/2);
-      else
-	SetEch3d1(Xgc,&box,bbox,*teta,*alpha,0L);
-      /* compute the convex box */
-      /* ainsi que les triedres caches ou non */
-      Convex_Box(Xgc,&box,legend,flag[2]);
-      /* Le triedre cach\'e */
-      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
-	{
-	  /* cache=InsideD[0]; */
-	  if (flag[2] >=2 ) draw_axis(Xgc,&box,'D',HIDDENFRAMECOLOR);
-	}
-      else 
-	{
-	  /* cache=InsideU[0]-4; */
-	  if (flag[2] >=2 ) draw_axis(Xgc,&box,'U',HIDDENFRAMECOLOR);
-	}
-    }
-  if (*flagnz == 0)
-    {
-      if ((zconst = graphic_alloc(6,(*nz),sizeof(double)))== 0) 
-	{
-	  sciprint("Running out of memory\r\n");
-	  return 0;
-	}
-      for ( i =0 ; i < *nz ; i++) 
-	zconst[i]=zmin + (i+1)*(zmax-zmin)/(*nz+1);
-      N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(Xgc,func,x,y,z,zconst,N,(int *) 0,&err);
-    }
-  else
-    {
-      N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(Xgc,func,x,y,z,zz,N,(int *) 0,&err);
-    }
-  fg = Xgc->graphic_engine->xget_foreground(Xgc);
-  if (flag[0]!=2 &&  flag[2] >=3 )
-    {
-      /* Le triedre que l'on doit voir */
-      if (box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
-	draw_axis(Xgc,&box,'U',fg);
-      else 
-	draw_axis(Xgc,&box,'D',fg);
-    }
-  frame_clip_off(Xgc);
-
-#ifdef WITH_GTKGLEXT 
-  if ( Xgc->graphic_engine == &GL_gengine ) 
-    {
-      nsp_ogl_set_2dview(Xgc);
-    }
-#endif
-  return(0);
-}
-
-
-int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz, double *zz, 
+int nsp_contour3d_draw_new(BCG *Xgc,double *x, double *y, double *z, int n1, int n2, int nz, double *zz, 
 		       int flag, double zlev)
 {
   double *zconst;
   int err=0, N[3],i;
   void (*func) (BCG *Xgc,int, double,double,double);
-  void (*draw_axis) (BCG *Xgc, const nsp_box_3d *box, char flag, int style);
-
-  
-  draw_axis = DrawAxis;
   ZC=zlev;
 
   switch ( flag)
@@ -344,7 +170,6 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
       /* 3D geometry with projection on the surface */
 #ifdef WITH_GTKGLEXT 
       func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_ogl : Contstore_; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
       break;
 #else 
       func=Contstore_; break;  
@@ -353,7 +178,6 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
       /* 3D geometry with projection on a fixed z level  */
 #ifdef WITH_GTKGLEXT 
       func =  ( Xgc->graphic_engine == &GL_gengine ) ? Contstore_1_ogl : Contstore_1; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine ) ?  DrawAxis_ogl :  DrawAxis;
       break;
 #else 
       func=Contstore_1; break;  
@@ -386,91 +210,6 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
     }
   return(0);
 }
-
-
-/**
- * nsp_contour2:
- * @Xgc: 
- * @x: 
- * @y: 
- * @z: 
- * @n1: 
- * @n2: 
- * @flagnz: 
- * @nz: 
- * @zz: 
- * @style: 
- * @strflag: 
- * @legend: 
- * @brect: 
- * @aaint: 
- * 
- * Draw level curves for a function f(x,y) which values 
- * at points x(i),y(j) are given by z(i,j)
- * - z is a (n1,n2) matrix 
- * - x is a (1,n1) matrix 
- * - y is a (1,n2) matrix 
- * - x,y,z are stored as one dimensionnal array in C 
- * - if *flagnz =0 
- * -   then  nz is an int pointer to the number of level curves. 
- *     else  zz is an array which gives th requested level values.
- *            (and nz is the size of thos array)
- * Computed from min and max of z
- * 
- * Return value: unused 
- **/
-
-int nsp_contour2(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
-{
-  Contour2D(Xgc,Contstore_2,"contour2",x,y,z,n1,n2,flagnz,nz,zz,style,strflag,
-	    legend,brect,aaint);
-  return 0;
-}
-
-static int Contour2D(BCG *Xgc,ptr_level_f func, char *name, double *x, double *y, double *z, int *n1, int *n2, int *flagnz, int *nz, double *zz, int *style, char *strflag, char *legend, double *brect, int *aaint)
-{
-  int err=0, N[3],i;
-  double *zconst, zmin,zmax;
-
-  /* Boundaries of the frame */
-  update_frame_bounds(Xgc,1,"gnn",x,y,n1,n2,aaint,strflag,brect);
-
-  /* If Record is on */
-  if (Xgc->graphic_engine->xget_recording(Xgc) == TRUE && strcmp(name,"contour2")==0 ) 
-    nsp_gengine_record_old.store_Contour2D(Xgc,x,y,z,n1,n2,flagnz,nz,zz,style,strflag,legend,brect,aaint);
-
-  zmin=(double) Mini(z,*n1*(*n2)); 
-  zmax=(double) Maxi(z,*n1*(*n2));
-
-  /* Scales */
-  if (strcmp(name,"contour2")==0 )
-    {
-      axis_draw(Xgc,(strlen(strflag) >= 3) ? strflag[2] : '1', 
-		(strlen(strflag) >= 2) ? strflag[1] : '6',-1);
-      frame_clip_on(Xgc);
-    }
-  if (*flagnz==0)
-    {
-      if ((zconst = graphic_alloc(6,(*nz),sizeof(double)))== 0) 
-	{
-	  sciprint("Running out of memory\r\n");
-	  return 0;
-	}
-      for ( i =0 ; i < *nz ; i++) 
-	zconst[i]=zmin + (i+1)*(zmax-zmin)/(*nz+1);
-      N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(Xgc,func,x,y,z,zconst,N,style,&err);
-    }
-  else
-    {
-      N[0]= *n1;N[1]= *n2;N[2]= *nz;
-      contourI(Xgc,func,x,y,z,zz,N,style,&err);
-    }
-
-  if (strcmp(name,"contour2")==0 )frame_clip_off(Xgc);
-  return(0);
-}
-
 
 /* NEW: function used by the contour object 
  *      for drawing itself.
@@ -527,8 +266,8 @@ int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
  * Return value: 
  **/
 
-int nsp_contour_if(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2,
-		   int *flagnz, int *nz, double *zz, int *style)
+int nsp_contour_if_new(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2,
+		       int *flagnz, int *nz, double *zz, int *style)
 {
   int err=0, N[3],i;
   double *zconst, zmin,zmax;
@@ -1064,7 +803,7 @@ static int last=-1;
 static int count=0; 
 
 /**
- * nsp_get_level_curves:
+ * nsp_get_level_curves_new:
  * @x: 
  * @y: 
  * @mm: 
@@ -1076,7 +815,7 @@ static int count=0;
  * Return value: 
  **/
 
-int nsp_get_level_curves(double **x, double **y, int *mm, int *n)
+int nsp_get_level_curves_new(double **x, double **y, int *mm, int *n)
 {
   *x = Gxcont;
   *y = Gycont;

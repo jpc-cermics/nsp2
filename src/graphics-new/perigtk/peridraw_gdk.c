@@ -759,7 +759,7 @@ static void nsp_gtk_set_color(BCG *Xgc,int col)
  *
  */
 #ifndef WITH_CAIRO 
-int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,char *driver,char option)
+int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,const char *driver,char option)
 {
   return FAIL;
 }

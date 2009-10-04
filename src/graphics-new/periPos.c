@@ -28,9 +28,9 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h"
 #include "nsp/math.h"
-#include "nsp/graphics/periPos.h"
+#include "nsp/graphics-new/periPos.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-new/color.h"
 #include "../system/files.h" /* FSIZE */
 
 extern char *nsp_getenv (const char *name);
@@ -301,10 +301,13 @@ static int xget_absourel(BCG *Xgc)
 
 /** All the possibilities : Read The X11 manual to get more informations **/
 
-struct alinfo { 
+typedef struct _alinfo { 
   char *name;
   char id;
-  char *info;} AluStrucPos[] =
+  char *info;
+} alinfo ;
+
+static alinfo  AluStrucPos[] =
     { 
       {"GXclear" ,GXclear," 0 "},
       {"GXand" ,GXand," src AND dst "},
@@ -873,16 +876,17 @@ static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double 
   FPRINTF((file,"\n%%Latex:\\myput{%d}{%d}{%d}{%s}",x,def_height*prec_fact - yn, fontsizePos(Xgc), string));
 }
 
+#if 0 
+static double bsizePos[6][4]= 
+  {{ 0.0,-7.0,4.63,9.0  },  /* normalement inutilise ici avec les modifs suivantes */
+   { 0.0,-9.0,5.74,12.0 },          
+   { 0.0,-11.0,6.74,14.0},
+   { 0.0,-12.0,7.79,15.0},
+   {0.0, -15.0,9.72,19.0 },
+   {0.0,-20.0,13.41,26.0}};
+#endif 
 
-double bsizePos[6][4]= {{ 0.0,-7.0,4.63,9.0  },  /* normalement inutilise ici avec les modifs suivantes */
-			{ 0.0,-9.0,5.74,12.0 },          
-			{ 0.0,-11.0,6.74,14.0},
-			{ 0.0,-12.0,7.79,15.0},
-			{0.0, -15.0,9.72,19.0 },
-			{0.0,-20.0,13.41,26.0}};
-
-
-/*** ajouts q&d en attendant mieux.... Bruno (le 24 Nov 2002) ***/
+/* ajouts q&d en attendant mieux.... Bruno (le 24 Nov 2002) */
 
 struct posfont  /* a data type for handling a postscript font in scilab */
 {
@@ -1715,7 +1719,7 @@ static void xget_mark(BCG *Xgc,int *symb)
   symb[1] = Xgc->CurHardSymbSize ;
 }
 
-char symb_listPos[] = {
+static char symb_listPos[] = {
   /*
     0x2e : . alors que 0xb7 est un o plein trop gros 
     ., +,X,*,diamond(filled),diamond,triangle up,triangle down,trefle,circle*/

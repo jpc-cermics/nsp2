@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 static double min_of_doubles_old (const double *x,int n);
 static void nsp_draw_vfield_generic_old(BCG *Xgc,char *name, int colored, double *x, double *y, 

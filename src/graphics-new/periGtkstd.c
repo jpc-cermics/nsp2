@@ -31,9 +31,9 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h" 
 #include "nsp/math.h"
-#include "nsp/graphics/periGtk.h"
+#include "nsp/graphics-new/periGtk.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
 
 /*
@@ -1759,12 +1759,14 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 #ifdef PERICAIRO
       if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
       dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
-      nsp_gr_resize(dd->CurWindow);
+      /* nsp_gr_resize(dd->CurWindow); */
+      dd->actions->resize(dd);
       /* cairo_destroy (dd->private->cairo_cr);
 	 dd->private->cairo_cr = NULL;
       */
 #else 
-      nsp_gr_resize(dd->CurWindow);
+      /* nsp_gr_resize(dd->CurWindow); */
+      dd->actions->resize(dd);
 #endif 
       dd->private->in_expose= FALSE;
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
@@ -1778,7 +1780,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
-	  nsp_gr_replay(dd->CurWindow);
+	  /* nsp_gr_replay(dd->CurWindow); */
+	  dd->graphic_engine->clearwindow(dd);
+	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
 	  dd->private->in_expose= FALSE;
 	}
       else 
@@ -1832,7 +1836,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       glClear(GL_DEPTH_BUFFER_BIT);
       nsp_ogl_set_view(dd);
       dd->private->in_expose= TRUE;
-      nsp_gr_resize(dd->CurWindow);
+      /* nsp_gr_resize(dd->CurWindow); */
+      dd->actions->resize(dd);
       dd->private->in_expose= FALSE;
       /* Swap buffers or flush */
       if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
@@ -1856,7 +1861,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->draw = FALSE;
 	  /* need to redraw */
 	  dd->private->in_expose= TRUE;
-	  nsp_gr_replay(dd->CurWindow);
+	  /* nsp_gr_replay(dd->CurWindow); */
+	  dd->graphic_engine->clearwindow(dd);
+	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
 	  dd->private->in_expose= FALSE;
@@ -1927,7 +1934,8 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
       dd->private->in_expose= TRUE;
       dd->private->gl_only = TRUE;
-      nsp_gr_resize(dd->CurWindow);
+      /* nsp_gr_resize(dd->CurWindow); */
+      dd->actions->resize(dd);
       dd->private->in_expose= FALSE;
       gdk_gl_drawable_gl_end (dd->private->gldrawable);
       glFlush ();
@@ -1946,7 +1954,9 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  dd->private->gl_only = TRUE;
-	  nsp_gr_replay(dd->CurWindow);
+	  /* nsp_gr_replay(dd->CurWindow); */
+	  dd->graphic_engine->clearwindow(dd);
+	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
 	  dd->private->in_expose= FALSE;
 	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
 	}

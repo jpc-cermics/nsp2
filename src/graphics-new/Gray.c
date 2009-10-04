@@ -29,7 +29,7 @@
 #include <math.h>
 #include <string.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 /* functions used by the modified version : */
 

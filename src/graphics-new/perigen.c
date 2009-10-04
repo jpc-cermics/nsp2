@@ -31,10 +31,10 @@
 #include <gtk/gtk.h>
 #include "nsp/sciio.h"
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
-#include "nsp/graphics/perigen.h"
+#include "nsp/graphics-new/Graphics.h"
+#include "nsp/graphics-new/perigen.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
 
 
@@ -73,6 +73,7 @@ nsp_gengine_generic nsp_peri_generic = {
   draw_pixbuf_from_file_gen,
   xset_test
 };
+
 
 /**
  * fill_grid_rectangles1_gen:
@@ -203,7 +204,8 @@ static void fill_grid_rectangles_gen(BCG *Xgc,const int x[],const int y[],const 
 /*
  */
 
-void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin, double *zmax,double *coeff,
+void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
+		      double *zmax,double *coeff,
 		      const int *colminmax,const double *zminmax,const double z[],int zn)
 {
   *colmin=1;

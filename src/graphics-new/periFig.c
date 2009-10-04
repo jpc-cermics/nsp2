@@ -29,9 +29,9 @@
 #define PERI_PRIVATE 1
 #include "nsp/sciio.h"
 #include "nsp/math.h"
-#include "nsp/graphics/periFig.h"
+#include "nsp/graphics-new/periFig.h"
 #include "nsp/version.h"
-#include "nsp/graphics/color.h"
+#include "nsp/graphics-new/color.h"
 
 #define WHITE 7
 #define BLACK 0
@@ -346,28 +346,30 @@ static void xset_alufunction(BCG *Xgc,char *string)
 
 /* All the possibilities : Read The X11 manual to get more informations **/
 
-struct alinfo { 
+typedef struct _alinfo { 
   char *name;
   char id;
-  char *info;} AluStrucXfig_[] =
-    { 
-      {"GXclear" ,GXclear," 0 "},
-      {"GXand" ,GXand," src AND dst "},
-      {"GXandReverse" ,GXandReverse," src AND NOT dst "},
-      {"GXcopy" ,GXcopy," src "},
-      {"GXandInverted" ,GXandInverted," NOT src AND dst "},
-      {"GXnoop" ,GXnoop," dst "},
-      {"GXxor" ,GXxor," src XOR dst "},
-      {"GXor" ,GXor," src OR dst "},
-      {"GXnor" ,GXnor," NOT src AND NOT dst "},
-      {"GXequiv" ,GXequiv," NOT src XOR dst "},
-      {"GXinvert" ,GXinvert," NOT dst "},
-      {"GXorReverse" ,GXorReverse," src OR NOT dst "},
-      {"GXcopyInverted" ,GXcopyInverted," NOT src "},
-      {"GXorInverted" ,GXorInverted," NOT src OR dst "},
-      {"GXnand" ,GXnand," NOT src OR NOT dst "},
-      {"GXset" ,GXset," 1 "}
-    };
+  char *info;} alinfo;
+
+static alinfo AluStrucXfig_[] =
+  { 
+    {"GXclear" ,GXclear," 0 "},
+    {"GXand" ,GXand," src AND dst "},
+    {"GXandReverse" ,GXandReverse," src AND NOT dst "},
+    {"GXcopy" ,GXcopy," src "},
+    {"GXandInverted" ,GXandInverted," NOT src AND dst "},
+    {"GXnoop" ,GXnoop," dst "},
+    {"GXxor" ,GXxor," src XOR dst "},
+    {"GXor" ,GXor," src OR dst "},
+    {"GXnor" ,GXnor," NOT src AND NOT dst "},
+    {"GXequiv" ,GXequiv," NOT src XOR dst "},
+    {"GXinvert" ,GXinvert," NOT dst "},
+    {"GXorReverse" ,GXorReverse," src OR NOT dst "},
+    {"GXcopyInverted" ,GXcopyInverted," NOT src "},
+    {"GXorInverted" ,GXorInverted," NOT src OR dst "},
+    {"GXnand" ,GXnand," NOT src OR NOT dst "},
+    {"GXset" ,GXset," 1 "}
+  };
 
 void idfromname(char *name1, int *num)
 {
@@ -894,12 +896,12 @@ static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double 
     }
 }
 
-int bsizeXfig_[6][4]= {{ 0,-7,463,9  },
-		       { 0,-9,574,12 },
-		       { 0,-11,674,14},
-		       { 0,-12,779,15},
-		       {0, -15,972,19 },
-		       {0,-20,1341,26}};
+static int bsizeXfig_[6][4]= {{ 0,-7,463,9  },
+			      { 0,-9,574,12 },
+			      { 0,-11,674,14},
+			      { 0,-12,779,15},
+			      {0, -15,972,19 },
+			      {0,-20,1341,26}};
 
 /* To get the bounding rectangle of a string **/
 
@@ -919,7 +921,7 @@ void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
 **/
 
 
-int symb_xw[FONTMAXSIZE][SYMBOLNUMBER]={
+static int symb_xw[FONTMAXSIZE][SYMBOLNUMBER]={
   {15,75,60,90,90,90,90,90,90,90},
   {30,75,75,105,75,105,105,105,75,105},
   {15,75,75,135,90,135,135,135,105,135},
@@ -928,7 +930,7 @@ int symb_xw[FONTMAXSIZE][SYMBOLNUMBER]={
   {45,150,150,255,195,270,255,270,195,255}
 };
 
-int symb_yh[FONTMAXSIZE][SYMBOLNUMBER]={
+static int symb_yh[FONTMAXSIZE][SYMBOLNUMBER]={
   {30,75,75,90,90,90,90,90,90,90},
   {30,90,90,120,105,105,105,105,105,105},
   {45,105,105,150,90,110,120,135,110,135},
@@ -1151,14 +1153,6 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 /*  Old definition no more used  because it allows only full ellipse */
 
-void drawarc_old(BCG *Xgc,int arc[])
-{ 
-  int fvect;
-  /* fvect set to tell that we only want to draw not to fill  */
-  fvect = Xgc->IDLastPattern + 2  ;
-  fillarcs(Xgc,arc,&fvect,1);
-}
-
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
@@ -1182,11 +1176,7 @@ static void drawarc(BCG *Xgc,int arc[])
 
 /* Old definition commented out because it allows only full ellipse */
 
-void fillarc_old(BCG *Xgc, int arc[])
-{ 
-  int cpat= xget_pattern(Xgc);
-  fillarcs(Xgc,arc,&cpat,1);
-}
+
 
 static void fillarc( BCG *Xgc,int arc[])
 { 

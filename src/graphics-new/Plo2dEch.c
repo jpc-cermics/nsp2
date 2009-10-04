@@ -26,7 +26,7 @@
 #include <math.h>
 #include <gdk/gdk.h>
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 #if 0 
 static void zoom_rect (BCG *Xgc,double,double,double,double);

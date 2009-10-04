@@ -27,7 +27,7 @@
 
 #include <string.h> /* in case of dbmalloc use */
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 
 /*--------------------------------------------
  * void graphic_alloc_info() 
