@@ -1,7 +1,7 @@
 SHELL = /bin/sh
 SCIDIR=../..
 
-LIBRARY = graphics.a
+LIBRARY = graphics-new.a
 
 # periGif.o 
 
