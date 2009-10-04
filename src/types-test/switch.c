@@ -138,7 +138,7 @@ extern OpGrTab Graphics_func[];
 
 void nsp_switch_graphics(void)
 {
-  int i=0, gr_new,gr_old,k;
+  int i=0, gr_new=-1,gr_old=-1,k;
   while (1) 
     {
       /* interfaces */
@@ -155,6 +155,8 @@ void nsp_switch_graphics(void)
 	}
       i++;
     }
+  if ( gr_new == -1 || gr_old == -1 ) return;
+
   use_new_graphics = ! (use_new_graphics);
 
 
