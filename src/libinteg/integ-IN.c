@@ -26,8 +26,7 @@
 #include "integ.h"
 
 
-
-/*-----------------------------------------------------------
+/*
  * ode interface
  * Authors:  Jean-Philippe Chancelier, Bruno Pincon. 
  *
@@ -37,8 +36,7 @@
  * we could use the possibility to transmit this information 
  * thought y or neq but since lsoda is already non reentrant 
  * this is not really a priority ! 
- *-----------------------------------------------------------*/
-
+ */
 
 typedef struct _ode_data ode_data;
  
@@ -660,14 +658,20 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 	  
 	  t0 = tout;
 	  
-	  if ( ierode_1.iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
-                                         /* and an error has already been "sent" */
-	    goto err;                    /* may be something better could be done like the following */
-
+	  if ( ierode_1.iero == 1 )  
+	    {
+	      /* the interpretor has failed to eval the rhs func or its jacobian
+	       * and an error has already been "sent" 
+	       * may be something better could be done like the following 
+	       */
+	      goto err;                    
+	    }
+	  
 	  if ( istate < 0  )
 	    {
-	      if ( lhs < 2 ) /* no ier variable at output => generate an error */
+	      if ( lhs < 2 ) 
 		{
+		  /* no ier variable at output => generate an error */
 		  if ( warn ) /* error messages have been already displayed */
 		    {
 		      Scierror("Error: %s: integration fails (see previous messages)\n",NspFname(stack));
@@ -679,10 +683,9 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		      goto err;
 		    }
 		}
-	      else           /* ier is present => return what have been computed */
+	      else    
 		{
-		  /* 		  if ( ! warn ) */
-		  /* 		    Sciprintf("Warning: %s: integration fails to reach t=%g\n",NspFname(stack),tout); */
+		  /* ier is present => return what have been computed */
 		  nsp_matrix_resize (res, res->m, i-1);  
 		  break;
 		}
@@ -690,9 +693,11 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 	  memcpy(res->R+neq*i, y0->R, neq*sizeof(double));
 	}
     }
-  else  /* task == 2 or 3: the solution is output at each time step taken */
-        /* by the solver with a slight difference for the last step */
+  else  
     {
+      /* task == 2 or 3: the solution is output at each time step taken
+       * by the solver with a slight difference for the last step 
+       */
       double tout = time->R[time->mn-1];
       double dir = tout-t0 > 0 ? 1.0 : -1.0;
       int itask = tcrit_given ? 5 : 2; 
@@ -712,14 +717,20 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
 		       ode_d.c_jac, &mf, (void *) ode_d.args);
 	  
-	  if ( ierode_1.iero == 1 )   /* the interpretor has failed to eval the rhs func or its jacobian */
-                                         /* and an error has already been "sent" */
-	    goto err;                    /* may be something better could be done like for istate < 0  */
+	  if ( ierode_1.iero == 1 )
+	    {
+	      /* the interpretor has failed to eval the rhs func or its jacobian 
+	       * and an error has already been "sent" 
+	       * may be something better could be done like for istate < 0  
+	       */
+	      goto err;
+	    }
 
 	  if ( istate < 0  )
 	    {
-	      if ( lhs < 3 )  /* no ier variable at output => generate an error */
+	      if ( lhs < 3 )
 		{
+		  /* no ier variable at output => generate an error */
 		  if ( warn ) /* error messages have been already displayed */
 		    {
 		      Scierror("Error: %s: integration fails (see previous messages)\n",NspFname(stack));
@@ -731,16 +742,16 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		      goto err;
 		    }
 		}
-	      else           /* ier is present => return what have been computed */
+	      else
 		{
-		  /* 		  if ( ! warn ) */
-		  /* 		    Sciprintf("Warning: %s: integration fails after t=%g\n",NspFname(stack),tt->R[i-1]); */
+		  /* ier is present => return what have been computed */
 		  break;
 		}
 	    }
 
-	  if ( i >= outsize)  /* needs to enlarge the arrays tt and res */
+	  if ( i >= outsize) 
 	    {
+	      /* needs to enlarge the arrays tt and res */
 	      outsize *=2;
 	      if ( nsp_matrix_resize(res, neq, outsize) == FAIL ) goto err;
 	      if ( nsp_matrix_resize(tt, 1, outsize) == FAIL ) goto err;
@@ -754,9 +765,11 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
       nsp_matrix_resize(res, neq, i); 
       nsp_matrix_resize(tt, 1, i); 
 
-      if ( task == 3  &&  istate >= 0 ) /* if itask==3 and if integration is completed (istate >= 0) do an interpolation */ 
-                                        /*  between tlast-h and tlast to obtain the final output exactly at tout */
+      if ( task == 3  &&  istate >= 0 )
 	{
+	  /* if itask==3 and if integration is completed (istate >= 0) do an interpolation 
+	   *  between tlast-h and tlast to obtain the final output exactly at tout 
+	   */
 	  itask = tcrit_given ? 4 : 1; 
 	  if ( method == ode_default )
 	    C2F(lsoda)(ode_d.c_func, &neq, y0->R, &t0, &tout, &itol, &rtol, atol,
@@ -767,8 +780,9 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 		       &itask, &istate, &iopt, rwork, &rwork_size, iwork, &iwork_size, 
 		       ode_d.c_jac, &mf, (void *) ode_d.args);
 
-	  if ( istate < 0 )   /* this should not occur (?) only an interpolation is needed...  */
+	  if ( istate < 0 )  
 	    {
+	      /* this should not occur (?) only an interpolation is needed...  */
 	      Scierror("Error: istate=%d in %s\n",istate,NspFname(stack));
 	      goto err;
 	    }
@@ -779,7 +793,6 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 
   FREE(rwork); FREE(iwork);
   ode_clean(&ode_d);
-
 
   /* FIXME: better control of lhs */
   if ( task == 1 )
@@ -792,8 +805,9 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
 	    return RET_BUG;
 	}
     }
-  else  /* for task =2|3, at least 2 output arguments should be returned... */
+  else 
     {
+      /* for task =2|3, at least 2 output arguments should be returned... */
       MoveObj(stack,1,(NspObject *) res);
       MoveObj(stack,2,(NspObject *) tt);
       if ( lhs >= 3 )
@@ -895,8 +909,9 @@ static int int_ode_dopri5(Stack stack, NspObject *f, NspObject *args, NspMatrix 
 			&op_h0, rtol, atol, itol, op_mxstep, op_nstiff, safe, beta, fac1, fac2,  
 			task, warn, res->R, tt->R, op_mxstep+1, &noutrel);
 
-  if ( status != COMPLETED  && ((task == 1  &&  lhs < 2) || (task != 1  &&  lhs < 3 )) )  /* no ier variable at output => generate an error */
+  if ( status != COMPLETED  && ((task == 1  &&  lhs < 2) || (task != 1  &&  lhs < 3 )) ) 
     {
+      /* no ier variable at output => generate an error */
       if ( warn ) /* error messages have been already displayed */
 	Scierror("Error: %s: integration fails (see previous messages)\n",NspFname(stack));
       else
@@ -924,8 +939,9 @@ static int int_ode_dopri5(Stack stack, NspObject *f, NspObject *args, NspMatrix 
 	    return RET_BUG;
 	}
     }
-  else  /* for task =2|3, at least 2 output arguments should be returned... */
+  else  
     {
+      /* for task =2|3, at least 2 output arguments should be returned... */
       MoveObj(stack,1,(NspObject *) res);
       MoveObj(stack,2,(NspObject *) tt);
       if ( lhs >= 3 )
@@ -1123,7 +1139,8 @@ static int intg_func(const double *x, double *y, int *n)
     }
   intg->x->mn = mn_save;   intg->x->m = m_save; 
 
-  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == *n) 
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' 
+      &&  ((NspMatrix *) nsp_ret)->mn == *n) 
     {
       for ( k = 0 ; k < *n ; k++ )
 	y[k] = ((NspMatrix *) (nsp_ret))->R[k];
@@ -1260,16 +1277,22 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     }
 
 
-  if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
-                              /* the function to integrate at a point */
-
+  if ( stat != 0 ) 
+    {
+      /* a problem occurs when the interpretor has evaluated 
+       * the function to integrate at a point 
+       */
+      goto err; 
+    }
   if ( ier == 6 )
     {
       Scierror("Error:  intg: tolerance too stringent\n");
       goto err;
     }
-  else if ( ier != 0 && lhs < 3 )  /* display a warning */
-    Sciprintf("\n Warning => intg: requested precision not reached (ier = %d)\n",ier);
+  else if ( ier != 0 && lhs < 3 )
+    {
+      Sciprintf("Warning: intg: requested precision not reached (ier = %d)\n",ier);
+    }
 
   intg_clean(&intg_d);
   FREE(rwork); FREE(iwork);
@@ -1343,19 +1366,22 @@ static int int2d_prepare(NspObject *f, NspObject *args, int2d_data *obj, Boolean
 
   if ( vect_flag )
     {
-      if ( iclose )  /* lmq1 integration formulae 46/3 points  */
+      if ( iclose )  
 	{
+	  /* lmq1 integration formulae 46/3 points  */
 	  if ((obj->x = nsp_matrix_create("x",'r',46,1))== NULL) return FAIL;
 	  if ((obj->y = nsp_matrix_create("y",'r',46,1))== NULL) return FAIL;
 	}
-      else           /* lmq0 integration formulae 28/3 points  */
+      else           
 	{
+	  /* lmq0 integration formulae 28/3 points  */
 	  if ((obj->x = nsp_matrix_create("x",'r',28,1))== NULL) return FAIL;
 	  if ((obj->y = nsp_matrix_create("y",'r',28,1))== NULL) return FAIL;
 	}
     }
-  else              /* scalar evaluation (so no distinction between lmq0 and lmq1) */
+  else              
     {
+      /* scalar evaluation (so no distinction between lmq0 and lmq1) */
       if ((obj->x = nsp_matrix_create("x",'r',1,1))== NULL) return FAIL;
       if ((obj->y = nsp_matrix_create("y",'r',1,1))== NULL) return FAIL;
     }
@@ -1413,7 +1439,8 @@ static int int2d_func(const double *x, const double *y, double *z, int *n)
       return -1;
     }
 
-  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' &&  ((NspMatrix *) nsp_ret)->mn == *n) 
+  if (nret ==1 && IsMat(nsp_ret) && ((NspMatrix *) nsp_ret)->rc_type == 'r' 
+      &&  ((NspMatrix *) nsp_ret)->mn == *n) 
     {
       for ( k = 0 ; k < *n ; k++ )
 	z[k] = ((NspMatrix *) (nsp_ret))->R[k];
@@ -1501,6 +1528,7 @@ static int make_triangles(double a, double b, double c, double d, NspMatrix **XX
  * 
  * Return value: number of returned arguments.
  **/
+
 int int_int2d(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT, *xx=NULLMAT, *yy=NULLMAT;
@@ -1535,14 +1563,16 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
       on_triangles = FALSE;
       if ( make_triangles(x->R[0],x->R[1], y->R[0], y->R[1], &xx, &yy) == FAIL )
 	{
-	  Scierror("%s: first and second arguments don't define a rectangle (or a memory problem is occured)\n",NspFname(stack));
+	  Scierror("%s: first and second arguments do not define a rectangle (or a memory problem occured)\n",
+		   NspFname(stack));
 	  return RET_BUG;
 	}
       x = xx; y = yy;
     }
   else if ( x->m != 3 || x->n < 1 )
     {
-      Scierror("%s: first and second arguments should be of length 2 or of size 3 x n (n>=1)\n",NspFname(stack));
+      Scierror("%s: first and second arguments should be of length 2 or of size 3 x n (n>=1)\n",
+	       NspFname(stack));
       return RET_BUG;
     }
 
@@ -1578,12 +1608,17 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   nsp_twodq(int2d_func, &(x->n), x->R, y->R, &tol, &iclose, &limit, &meval, 
 	     res->R, &er_estim, &nu, &nd, &neval, &iflag, rwork, iwork, &vect_flag, &stat);
 
-  if ( stat != 0 ) goto err;  /* a problem occurs when the interpretor has evaluated */
-                              /* the function to integrate  */
-
-  if ( iflag != 0 && lhs < 3 )  /* display a warning */
+  if ( stat != 0 ) 
     {
-      Sciprintf("\n Warning => int2d: requested precision not reached (ier = %d)\n", iflag);
+      /* a problem occurs when the interpretor has evaluated 
+       * the function to integrate  
+       */
+      goto err;  
+               
+    }
+  if ( iflag != 0 && lhs < 3 ) 
+    {
+      Sciprintf("Warning: int2d, requested precision not reached (ier = %d)\n", iflag);
     }
 
   int2d_clean(&int2d_d);
@@ -1682,6 +1717,7 @@ static int int3d_prepare(NspObject *f, NspObject *args, int3d_data *obj, Boolean
  * 
  * clean after integration 
  **/
+
 static void int3d_clean(int3d_data *obj)
 {
   if ( obj->args != NULL) nsp_object_destroy(&(obj->args));
@@ -1689,7 +1725,6 @@ static void int3d_clean(int3d_data *obj)
   nsp_matrix_destroy(obj->x);
   nsp_matrix_destroy(obj->y);
   nsp_matrix_destroy(obj->z);
-
   /* ici */
 }
 
@@ -1704,6 +1739,7 @@ static void int3d_clean(int3d_data *obj)
  * Return value: 1 (eval is successuf) or 0 (fail has failed)
  * 
  **/
+
 static int int3d_func(const double *x, const double *y, const double *z, double *val, int *n, void *param)
 {
   int3d_data *int3d = &int3d_d;
@@ -1802,6 +1838,7 @@ static int make_tetrahedra(double a, double b, double c, double d, double e, dou
  * 
  * Return value: number of returned arguments.
  **/
+
 int int_int3d(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *res=NULLMAT, *x=NULLMAT, *y=NULLMAT, *z=NULLMAT, *xx=NULLMAT, *yy=NULLMAT, *zz=NULLMAT;
@@ -1833,7 +1870,8 @@ int int_int3d(Stack stack, int rhs, int opt, int lhs)
       on_tetrahedra = FALSE;
       if ( make_tetrahedra(x->R[0],x->R[1], y->R[0], y->R[1], z->R[0], z->R[1], &xx, &yy, &zz) == FAIL )
 	{
-	  Scierror("%s: three first arguments don't define a parallelepiped (or a memory problem occured)\n",NspFname(stack));
+	  Scierror("%s: three first arguments don't define a parallelepiped (or a memory problem occured)\n",
+		   NspFname(stack));
 	  return RET_BUG;
 	}
       x = xx; y = yy, z = zz;
@@ -1864,11 +1902,12 @@ int int_int3d(Stack stack, int rhs, int opt, int lhs)
 
   if ( stat <= 1 ) 
     {
-      /* a problem occurs when the interpretor has evaluated the */
-      /* function to integrate (stat is 0 or 1) or a malloc fails */
-      /* (stat is 1) likely due to to large limit parameter. */
-      /* In case stat= 0 or 1 the interpretor should have */
-      /* already displayed an error message. */
+      /* a problem occurs when the interpretor has evaluated the 
+       * function to integrate (stat is 0 or 1) or a malloc fails 
+       * (stat is 1) likely due to to large limit parameter. 
+       * In case stat= 0 or 1 the interpretor should have 
+       * already displayed an error message. 
+       */
       if ( stat == -1 )
 	Scierror("%s: running out of memory (limit parameter is likely to be too large)\n",NspFname(stack));
       goto err;
@@ -1883,8 +1922,11 @@ int int_int3d(Stack stack, int rhs, int opt, int lhs)
     ier = 0;
 
   int3d_clean(&int3d_d);
-  if ( ! on_tetrahedra )  /* destroy the tetrahedra associated to the parallelepiped */ 
-    { nsp_matrix_destroy(xx);nsp_matrix_destroy(yy);nsp_matrix_destroy(zz); }
+  if ( ! on_tetrahedra ) 
+    { 
+      /* destroy the tetrahedra associated to the parallelepiped */ 
+      nsp_matrix_destroy(xx);nsp_matrix_destroy(yy);nsp_matrix_destroy(zz);
+    }
 
   if ( nsp_move_double(stack,1, Ia) == FAIL )
     goto err;
