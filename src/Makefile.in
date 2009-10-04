@@ -3,12 +3,12 @@ SHELL = /bin/sh
 include ../Makefile.incl
 
 SCIDIRS = zcalelm objects interp functions gtk2 \
-	system graphics menus gtksci gzvt2 modules gobjects types-test \
+	system graphics-old graphics-new menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
 	libscicos libminpack liboptim @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@
 
 ALLSCIDIRS = zcalelm objects interp functions gtk2 \
-	system graphics menus gtksci gzvt2 modules gobjects types-test \
+	system graphics-old graphics-new  menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
 	libblas liblapack liboptim libscicos libxdr libsndfile libumfpack libpvm libminpack libportaudio
 
