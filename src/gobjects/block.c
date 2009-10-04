@@ -19,12 +19,11 @@
 
 
 #define  Block_Private 
+#include "nsp/graphics-old/Graphics.h"
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "nsp/graphics/Graphics.h"
-
 #include "nsp/parse.h"
 
 /*
@@ -873,7 +872,7 @@ void block_draw(NspBlock *B)
   switch (draw_script)
     {
     case 0: 
-      Xgc1 = window_list_get_first(); 
+      Xgc1 = window_list_get_first_old(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"Matplot1(rand(10,10)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1]-B->obj->r[3],
 	      B->obj->r[0]+B->obj->r[2],B->obj->r[1]);
@@ -881,7 +880,7 @@ void block_draw(NspBlock *B)
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
     case 1: 
-      Xgc1 = window_list_get_first(); 
+      Xgc1 = window_list_get_first_old(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_vanne([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
@@ -898,14 +897,14 @@ void block_draw(NspBlock *B)
 					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
     case 3: 
-      Xgc1 = window_list_get_first(); 
+      Xgc1 = window_list_get_first_old(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_plot3d([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
     case 4: 
-      Xgc1 = window_list_get_first(); 
+      Xgc1 = window_list_get_first_old(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_gtk_logo([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);

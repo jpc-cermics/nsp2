@@ -14,7 +14,7 @@
 #include <nsp/spolyhedron.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
-#include "../graphics/Plo3dObj.h"
+#include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
 
@@ -823,7 +823,7 @@ int _wrap_contour3d_attach(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj, t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  store_graphic_object(Xgc, pl);
+  tape_store_graphic_object(Xgc, pl);
   return 0;
 }
 
@@ -986,7 +986,7 @@ int nsp_check_contour3d(BCG *Xgc, NspContour3d *P)
   return OK;
 }
 
-extern int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, 
+extern int nsp_contour3d_draw_new(BCG *Xgc,double *x, double *y, double *z, 
 			      int n1, int n2, int nz, double *zz, 
 			      int flag, double zlev);
 
@@ -1008,7 +1008,7 @@ static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j)
       nz = Q->zz->mn;
     }
 
-  nsp_contour3d_draw(Xgc,Q->x->R,Q->y->R,Q->z->R,Q->x->mn,Q->y->mn,nz, zz,Q->flag,Q->zlev);
+  nsp_contour3d_draw_new(Xgc,Q->x->R,Q->y->R,Q->z->R,Q->x->mn,Q->y->mn,nz, zz,Q->flag,Q->zlev);
 }
 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob)

@@ -792,7 +792,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj, t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  store_graphic_object(Xgc, pl);
+  tape_store_graphic_object(Xgc, pl);
   return 0;
 }
 
@@ -892,13 +892,13 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	  if ( P->obj->fill_color != -1 ) 
 	    {
 	      ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-	      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->fill_color);
+	      Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
 	    }
 	  /* fill */
 	  Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
 	  /* reset color */
 	  if ( P->obj->fill_color != -1 ) 
-	    Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+	    Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
 	}
       /* draw polyline */
       if ( P->obj->color != -2 ) 
@@ -907,18 +907,18 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	  if ( P->obj->thickness != -1 ) 	
 	    {
 	      cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
-	      Xgc->graphic_engine->scale->xset_thickness(Xgc,P->obj->thickness);
+	      Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
 	    }
 	  if ( P->obj->color != -1 ) 
 	    {
 	      ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-	      Xgc->graphic_engine->scale->xset_pattern(Xgc,P->obj->color);
+	      Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
 	    }
 	  Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,P->obj->x->mn,P->obj->close);
 	  if ( P->obj->thickness != -1 ) 
-	    Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
+	    Xgc->graphic_engine->xset_thickness(Xgc,cthick);
 	  if ( P->obj->color != -1 )
-	    Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
+	    Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
 	}
       /* draw polymark */
       if ( P->obj->mark != -2 ) 
@@ -928,11 +928,11 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
 	    {
 	      Xgc->graphic_engine->xget_mark(Xgc,xmark); 
 	      cmark=xmark[0];
-	      Xgc->graphic_engine->scale->xset_mark(Xgc, P->obj->mark,xmark[1]);
+	      Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
 	    }
 	  Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
 	  if ( P->obj->mark != -1 ) 
-	    Xgc->graphic_engine->scale->xset_mark(Xgc,cmark,xmark[1]);
+	    Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);
 	}
     }
 }

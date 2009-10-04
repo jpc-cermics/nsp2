@@ -9,7 +9,7 @@ LIBRARY = nsp.a
 # are only usefull for gtk version < 2.3.5
 # to correct a gtk bug (see configure.in)
 
-OBJSC =	click.o command.o  io.o \
+OBJSC =	command.o  io.o \
 	menus.o  x_main.o \
 	about.o queue.o @HELP_OBJS@ @GTKPLUGBUG@ \
 	testtext1.o testtext.o @RC_FILE@

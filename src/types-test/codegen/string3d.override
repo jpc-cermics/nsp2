@@ -2,10 +2,10 @@
 %%
 include  String3d
 
-#include "../graphics/Plo3dObj.h"
+#include "../graphics-new/Plo3dObj.h"
 /* inserted at the end of public part of include file */
 extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
@@ -82,7 +82,7 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj, t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  store_graphic_object(Xgc, pl);
+  tape_store_graphic_object(Xgc, pl);
   return 0;
 }
 

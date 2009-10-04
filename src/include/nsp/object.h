@@ -339,6 +339,7 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
  *  objects 
  */
 
+#include "nsp/graphics-new/Graphics.h"
 #include "nsp/hobj.h"
 #include "nsp/plisttoken.h"
 #include "nsp/file.h"
@@ -425,7 +426,9 @@ extern void nsp_object_destroy_name(NspObject *ob);
 extern const char *nsp_get_short_string_from_id(int id);
 
 
-#endif /*  NSP_TYPE_OBJECT  */
+
+
+#endif /*  NSP_INC_TYPE_OBJECT  */
 
 
 

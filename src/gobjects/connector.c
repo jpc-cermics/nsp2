@@ -23,7 +23,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/grint.h" /* interface definition */
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 /*
  * NspConnector inherits from NspObject and implements GRint 
@@ -646,7 +646,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
 #include <math.h>
 
 #include "nsp/object.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 /*
  * implementation of the GRint interface 

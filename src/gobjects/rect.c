@@ -18,12 +18,11 @@
  */
 
 #define  Rect_Private 
+#include <nsp/graphics-old/Graphics.h>
 #include "nsp/object.h"
-
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include <nsp/graphics/Graphics.h>
 
 /* graphic rectangle 
  * NspRect inherits from NspObject 
@@ -360,7 +359,7 @@ int int_grcreate(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  Xgc= check_graphic_window();
+  Xgc= check_graphic_window_old();
   if ( back <= 0 )  back  = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( color <= 0 ) color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( thickness < 0 ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
@@ -541,7 +540,7 @@ void RectDraw(NspRect *R)
 {
   BCG *Xgc;
   int cpat, cwidth;
-  Xgc=check_graphic_window();
+  Xgc=check_graphic_window_old();
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   Xgc->graphic_engine->xset_pattern(Xgc,R->background);

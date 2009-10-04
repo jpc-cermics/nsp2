@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include "nsp/machine.h"
 #include "nsp/math.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-new/Graphics.h"
 #include "nsp/object.h"
 #include <nsp/gtk/gtkcombobox.h>
 

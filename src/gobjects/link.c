@@ -23,8 +23,9 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/grint.h" /* interface definition */
-#include "nsp/graphics/Graphics.h"
 #include "nsp/matint.h"
+#include "nsp/graphics-old/Graphics.h"
+
 
 static void link_unlock( NspLink *L,int lp) ;
 
@@ -679,14 +680,6 @@ void link_draw(NspLink *L)
   if ( L->obj->show == FALSE ) return ;
 
   Xgc=L->obj->frame->Xgc;
-
-
-  if (Xgc->record_flag == TRUE)  
-    Sciprintf("recod true \n");
-  else
-    Sciprintf("recod false  \n");
-
-
 
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);

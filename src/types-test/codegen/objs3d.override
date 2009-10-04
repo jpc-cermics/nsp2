@@ -5,7 +5,7 @@ include Objs3d
 /* inserted at the end of public part of include file */
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
-#include "../graphics/Plo3dObj.h"
+#include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
@@ -41,6 +41,12 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
 static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
 static void nsp_obj3d_free_box(Plot3dBox *B);
 static void nsp_obj3d_dsortc(double x[], int *n, int p[]);
+static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
+				     double *z, int *p, int *q, double *teta,
+				     double *alpha,const char *legend, int *flag,
+				     double *bbox,double *zmin,
+				     double *zmax,nsp_plot3d_type type3d);
+static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag);
 
 %%
 headers
@@ -87,7 +93,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj, t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  store_graphic_object(Xgc, pl);
+  tape_store_graphic_object(Xgc, pl);
   return 0;
 }
 
@@ -1374,4 +1380,330 @@ static void nsp_obj3d_dsortc(double x[], int *n, int p[])
 	    { POP_segment(ia,ib); }
 	}
     }
+}
+
+
+
+static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double *z, int *p, int *q, 
+			      double *teta, double *alpha,const char *legend, int *flag, double *bbox,double *zmin,
+			      double *zmax,nsp_plot3d_type type3d)
+{
+  int redraw = FALSE;
+  int i;
+  if (*flag!=0 && *flag!=1 && *flag!=3 && *flag!=5 && *flag != 7 )
+    {
+      switch (type3d) 
+	{
+	case plot3d_t :
+	  bbox[0]=x[0];bbox[1]=x[*p-1];
+	  bbox[2]=y[0];bbox[3]=y[*q-1];
+	  *zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+	  *zmax=bbox[5]=(double) Maxi(z,*p*(*q));
+	  break;
+	case facettes_t: 
+	  bbox[0]=(double) Mini(x,*p*(*q));
+	  bbox[1]=(double) Maxi(x,*p*(*q));
+	  bbox[2]=(double) Mini(y,*p*(*q)); 
+	  bbox[3]=(double) Maxi(y,*p*(*q));
+	  *zmin=bbox[4]=(double) Mini(z,*p*(*q)); 
+	  *zmax=bbox[5]=(double) Maxi(z,*p*(*q));
+	  break;
+	case param3d_t: 
+	  bbox[0]=(double) Mini(x,*p);bbox[1]=(double) Maxi(x,*p);
+	  bbox[2]=(double) Mini(y,*p);bbox[3]=(double) Maxi(y,*p);
+	  bbox[4]=(double) Mini(z,*p);bbox[5]=(double) Maxi(z,*p);
+	  break;
+	}
+    }
+  if ( *flag==1 || *flag==3 || *flag==5 || *flag == 7 ) 
+    {
+      *zmin=bbox[4];
+      *zmax=bbox[5];
+    }
+
+  if ( Xgc->scales->scale_flag3d != 0 ) 
+    {
+      if (*flag == 7 || *flag == 8 )
+	{
+	  for ( i= 0 ; i < 6 ; i +=2 ) bbox[i]=Min(Xgc->scales->bbox1[i],bbox[i]);
+	  for ( i= 1 ; i < 6 ; i +=2 ) bbox[i]=Max(Xgc->scales->bbox1[i],bbox[i]);
+	  *zmin=bbox[4];
+	  *zmax=bbox[5];
+
+	  if ( bbox[0] < Xgc->scales->bbox1[0] 
+	       || bbox[1] > Xgc->scales->bbox1[1] 
+	       || bbox[2] < Xgc->scales->bbox1[2] 
+	       || bbox[3] > Xgc->scales->bbox1[3] 
+	       || bbox[4] < Xgc->scales->bbox1[4] 
+	       || bbox[5] > Xgc->scales->bbox1[5] )
+	    redraw = TRUE;
+	  /* changing flag to the mode used by other recorded 3d plots */
+	  *flag=2*Xgc->scales->metric3d;
+	  if ( Xgc->scales->theta != *teta ||  Xgc->scales->alpha != *alpha ) 
+	    redraw = TRUE;
+	}
+
+    }
+  else 
+    {
+      if (*flag == 7 || *flag == 8 )
+	{
+	  /* we have used a superpose mode and there's no previous 
+	   * 3d graphics, we switch to default 
+	   */
+	  *flag= 1;
+	}
+    }
+  /* switch to mode with ebox to accelerate replot */
+  if ( *flag==2 || *flag==4 || *flag==6 || *flag == 8 ) 
+    (*flag)--;
+
+  /* Redraw other graphics */
+  if ( redraw == TRUE )
+    {
+      /* just change bbox not flag */
+      static int iflag[]={0,0,0,1};
+      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
+	{
+	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
+	  return;
+	}
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      /* redraw 3d with new bbox */
+      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
+    }
+}
+
+
+
+/*-------------------------------------------------------------------
+ * functions for 3D scales 
+ * flag = 0: use current scale 
+ * flag = 1: standard scale (the graphic is expanded).
+ * flag = 2: iso mode but scale is such that it can contain the 
+ *           sphere circumscribing the box
+ * flag = 3: iso mode (the graphic is expanded).
+ *-------------------------------------------------------------------*/
+
+static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag)
+{
+  double xmmin=0.0,ymmax=1.0,xmmax=1.0,ymmin=0.0,FRect[4],WRect[4],ARect[4];
+  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1;
+  double cost,sint,cosa,sina;
+  int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
+  char logf[2];
+
+  Xgc->scales->scale_flag3d = 1;
+  Xgc->scales->alpha = Alpha;
+  Xgc->scales->theta = Teta;
+  cost=cos((Teta)*M_PI/180.0);
+  sint=sin((Teta)*M_PI/180.0);
+  cosa=cos((Alpha)*M_PI/180.0);
+  sina=sin((Alpha)*M_PI/180.0);
+  Xgc->scales->m[0][0]= -sint    ;    Xgc->scales->m[0][1]= cost      ;    Xgc->scales->m[0][2]= 0;
+  Xgc->scales->m[1][0]= -cost*cosa;   Xgc->scales->m[1][1]= -sint*cosa;    Xgc->scales->m[1][2]= sina;
+  Xgc->scales->m[2][0]=  cost*sina;   Xgc->scales->m[2][1]= sint*sina;     Xgc->scales->m[2][2]= cosa;
+
+  /* in (xbox[8],ybox[8],zbox[8]) are stored the coordinates of the bounding box 
+   * which contains the surface stored clockwise (one level then the other)
+   *       Z
+   *       |
+   *      4 ----- 5        
+   *       /    /|         
+   *     7----6  |__________ Y         
+   *      | 0 | / 1        
+   *     3----- 2          
+   *    /
+   *    X
+   */
+  for (ib=0;ib<6 ;ib++) 
+    { 
+      if (flag==0) 
+	box->bbox[ib]=Xgc->scales->bbox1[ib];
+      else 
+	box->bbox[ib]=Xgc->scales->bbox1[ib]=bbox[ib];
+    }
+
+  Xgc->scales->c[0]=( box->bbox[0]+box->bbox[1])/2.0;
+  Xgc->scales->c[1]=( box->bbox[2]+box->bbox[3])/2.0; 
+  Xgc->scales->c[2]=( box->bbox[4]+box->bbox[5])/2.0;
+  
+  box->x_r[0]=box->bbox[0]; box->y_r[0]=box->bbox[2];  box->z_r[0]=box->bbox[4];
+  box->x_r[1]=box->bbox[0]; box->y_r[1]=box->bbox[3];  box->z_r[1]=box->bbox[4];
+  box->x_r[2]=box->bbox[1]; box->y_r[2]=box->bbox[3];  box->z_r[2]=box->bbox[4];
+  box->x_r[3]=box->bbox[1]; box->y_r[3]=box->bbox[2];  box->z_r[3]=box->bbox[4];
+  box->x_r[4]=box->bbox[0]; box->y_r[4]=box->bbox[2];  box->z_r[4]=box->bbox[5];
+  box->x_r[5]=box->bbox[0]; box->y_r[5]=box->bbox[3];  box->z_r[5]=box->bbox[5];
+  box->x_r[6]=box->bbox[1]; box->y_r[6]=box->bbox[3];  box->z_r[6]=box->bbox[5];
+  box->x_r[7]=box->bbox[1]; box->y_r[7]=box->bbox[2];  box->z_r[7]=box->bbox[5];
+
+  for ( i = 0 ; i < 8 ; i++) 
+    {
+      box->x[i]=TRX(box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->y[i]=TRY(box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->z[i]=TRZ(box->x_r[i],box->y_r[i],box->z_r[i]);
+    }
+
+  /* Calcul des echelles en fonction de la taille du dessin **/
+  if ( flag == 1 || flag == 3 )
+    {
+      xmmin=  (double) Mini(box->x,8L);xmmax= (double) Maxi(box->x,8L);
+      ymmax=  (double) - Mini(box->y,8L);
+      ymmin=  (double) - Maxi(box->y,8L);
+    }
+  
+  /* code added by es: isoview scaling */
+  if ( flag == 2 || flag == 3 )
+    {
+      /* get current window size */
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      /* FIXME: getscale2d is useless here just use 
+       * WRect[i] <-> Xgc->scales->subwin_rect[i];
+       */
+      getscale2d(Xgc,WRect,FRect,logf,ARect);
+      wmax=linint((double)wdim[0] * WRect[2]);
+      hmax=linint((double)wdim[1] * WRect[3]); 
+    }
+  if ( flag == 2 )
+    {
+      /* radius and center of the sphere circumscribing the box */
+      dx=box->bbox[1]-box->bbox[0]; dy=box->bbox[3]-box->bbox[2]; dz=box->bbox[5]-box->bbox[4];
+      R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
+      xo= (double) (box->x[0]+box->x[6])/2 ;
+      yo= (double) (box->y[0]+box->y[6])/2 ;
+      zo= (double) (box->z[0]+box->z[6])/2 ;
+      xmmin=  (double) xo - R ;
+      xmmax=  (double) xo + R ;
+      ymmax=  (double) -yo + R ;
+      ymmin=  (double) -yo - R ;
+    }
+  if (flag==2 || flag==3)
+    {
+      /* adjust limits (code adapted from Plo2d.c & Stephane's patch) */
+      hx=xmmax-xmmin;
+      hy=ymmax-ymmin;
+      if ( hx/(double)wmax  < hy/(double)hmax ) 
+        {
+          hx1=wmax*hy/hmax;
+          xmmin=xmmin-(hx1-hx)/2.0;
+          xmmax=xmmax+(hx1-hx)/2.0;
+        }
+      else 
+        {
+          hy1=hmax*hx/wmax;
+          ymmin=ymmin-(hy1-hy)/2.0;
+          ymmax=ymmax+(hy1-hy)/2.0;
+        }
+    }
+  if (flag !=0 && Xgc->scales->scale_3drot_flag  == 0 )
+    {
+      FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
+      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
+      /* this is used by opengl for zmin zmax and depth */
+      Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
+      Xgc->scales->zfrect[1]= (double) Maxi(box->z,8L);
+    }
+  
+  /* end of code added by es */
+#ifdef WITH_GTKGLEXT 
+  /* transmit info to opengl */
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_3dview(Xgc);
+    }
+#endif
+}
+
+int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
+{
+  int j;
+  for ( j =0 ; j < (*n) ; j++)	 
+    {
+      double x1,y1;
+      x1=TRX(x[j],y[j],z[j]);
+      y1=TRY(x[j],y[j],z[j]);
+      z[j]=TRZ(x[j],y[j],z[j]);
+      x[j]=x1;
+      y[j]=y1;
+    }
+  return(0);
+}
+
+
+/*
+ *
+ * Interactive change of view angle 
+ * with full redraw when the mouse moves 
+ * The process is initiated by a click and 
+ * stopped when the mouse is released 
+ */
+
+/* #define ROTATION_NORESCALE */
+
+void nsp_3d_rotation(BCG *Xgc)
+{
+  int box_only = FALSE;
+  double theta,alpha, theta_dir;
+  int flag[3],pixmode,pt[2];
+  int iflag[]={0,0,0,0};
+  int xc,yc;
+  double theta0,alpha0;
+  int ibutton,imask,iwait=FALSE,istr=0;
+  double x0,y0,x,y,bbox[4];
+  /* FIXME */
+  if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
+    {
+      Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
+      /* XXX continue for new graphics  */
+    }
+  if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
+    {
+      Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
+      return;
+    }
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  nsp_set_cursor(Xgc,GDK_EXCHANGE);
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
+  theta0 = theta = Xgc->scales->theta ;
+  alpha0 = alpha = Xgc->scales->alpha ;
+  pt[0]=x0 = x = xc;
+  pt[1]=y0 = y = yc;
+  ibutton=-1;
+  while ( ibutton == -1 ) 
+    {
+      /* */
+      theta_dir= ( sin(M_PI*alpha0/180.0) >= 0.0 ) ? 1.0 : -1.0;
+      alpha= alpha0 - (y-y0)/2.0;
+      theta= theta0 - theta_dir*(x-x0)/2.0;
+      x0=x;y0=y;alpha0=alpha;theta0=theta;
+#ifdef ROTATION_NORESCALE
+      Xgc->scales->scale_3drot_flag = 1;
+#endif 
+      Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta); 
+      if ( box_only == TRUE) 
+	{
+	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+	  Xgc->graphic_engine->clearwindow(Xgc);    
+	  /* dbox(Xgc,theta,alpha); */
+	  if ( pixmode == 1) Xgc->graphic_engine->xset_show(Xgc);
+	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
+	}
+      else 
+	{
+	  /* just changes the angles in recorded plots */
+	  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+	  /* immediate redraw */
+	  Xgc->graphic_engine->force_redraw(Xgc);
+	}
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
+      x=xc;
+      y=yc;
+    }
+  nsp_set_cursor(Xgc,-1);
+  Xgc->scales->scale_3drot_flag = 0;
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
+  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+  Xgc->graphic_engine->force_redraw(Xgc);
 }

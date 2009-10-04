@@ -23,12 +23,11 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-
+#include "nsp/graphics-new/Graphics.h"
 #include "nsp/interf.h"
 #include "nsp/stack.h" 
 #include "nsp/menus.h" 
 #include "../system/files.h"
-#include "nsp/graphics/Graphics.h"
 #include "nsp/gtksci.h"
 
 /*

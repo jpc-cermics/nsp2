@@ -23,7 +23,8 @@
 
 #include <math.h>
 #include "nsp/machine.h"
-#include "nsp/graphics/Graphics.h" 
+#include "../graphics-new/new_graphics.h"
+#include "nsp/graphics-old/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
@@ -46,18 +47,18 @@ extern double atanh(double x);
 BCG *scicos_set_win(int wid,int *oldwid)
 {
   BCG *Xgc;
-  if ((Xgc = window_list_get_first()) != NULL)
+  if ((Xgc = window_list_get_first_old()) != NULL)
     {
       *oldwid = Xgc->graphic_engine->xget_curwin();
       if ( *oldwid != wid) 
 	{
 	  Xgc->graphic_engine->xset_curwin(Max(wid,0),TRUE);
-	  Xgc =  window_list_get_first();
+	  Xgc =  window_list_get_first_old();
 	}
     }
   else 
     {
-      Xgc= set_graphic_window(Max(wid,0));
+      Xgc= set_graphic_window_old(Max(wid,0));
     }
   return Xgc;
 }
@@ -1528,7 +1529,7 @@ void scicos_bouncexy_block(scicos_block *block,int flag)
     rect[1] = ymin;
     rect[2] = xmax;
     rect[3] = ymax;
-    nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "030", buf,0, rect, nax);
+    nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "030", buf,0, rect, nax);
     /*     draw new point */
     i__1 = nu;
     for (i__ = 1; i__ <= i__1; ++i__) {
@@ -1570,18 +1571,18 @@ void scicos_bouncexy_block(scicos_block *block,int flag)
     Xgc = scicos_set_win(wid,&cur);
     Xgc->graphic_engine->xset_recording(Xgc,FALSE);
     on = 1;
-    Xgc->graphic_engine->scale->xset_pixmapOn(Xgc,on);
+    Xgc->graphic_engine->xset_pixmapOn(Xgc,on);
     rect[0] = xmin;
     rect[1] = ymin;
     rect[2] = xmax;
     rect[3] = ymax;
-    Xgc->graphic_engine->scale->xset_usecolor(Xgc,c__1);
-    Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
+    Xgc->graphic_engine->xset_usecolor(Xgc,c__1);
+    Xgc->graphic_engine->xset_alufunction1(Xgc,c__3);
     Xgc->graphic_engine->clearwindow(Xgc);
     Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
     Xgc->graphic_engine->xset_thickness(Xgc,c__1);
-    Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-    nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "030", buf,0, rect, nax);
+    Xgc->graphic_engine->xset_dash(Xgc,c__0);
+    nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "030", buf,0, rect, nax);
     zz[0] = xmin;
     zz[1] = xmin;
     zz[2] = xmax;
@@ -1614,7 +1615,6 @@ typedef struct _cscope_rpar cscope_rpar ;
 struct _cscope_rpar {
   double dt,ymin,ymax,per;};
 
-/* #define NEW_GRAPHICS */
 
 #ifdef NEW_GRAPHICS 
 
@@ -1791,7 +1791,7 @@ void scicos_cscope_block(scicos_block *block,int flag)
 	rect[2] = csr->per * (n1 + 2);
 	rect[3] = csr->ymax;
 	Xgc->graphic_engine->scale->xset_dash(Xgc,0);
-	nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1,"011","",0, rect, nax);
+	nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1,"011","",0, rect, nax);
       }
       t = tsave;
     } 
@@ -1823,13 +1823,13 @@ void scicos_cscope_block(scicos_block *block,int flag)
       rect[1] = csr->ymin;
       rect[2] = csr->per * (n1 + 2);
       rect[3] = csr->ymax;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,csi->color_flag);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,3);
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,0);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","",0, rect, nax);
+      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","",0, rect, nax);
       str = block->label ;
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
@@ -1880,6 +1880,9 @@ struct _cmscope_rpar {
 
 void scicos_cmscope_block(scicos_block *block,int flag)
 {
+#ifdef NEW_GRAPHICS 
+
+#else 
   char *str;
   BCG *Xgc;
   /* used to decode parameters by name */
@@ -1902,6 +1905,7 @@ void scicos_cmscope_block(scicos_block *block,int flag)
   --rpar;
 
   wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
+
 
   if (flag == 2) {
     z__=*block->work; 
@@ -1957,7 +1961,7 @@ void scicos_cmscope_block(scicos_block *block,int flag)
 	  rect[3] = rpar[(kwid << 1) + 2];
 	  frect[1] = (kwid - 1) * (1. / csi->nwid);
 	  frect[3] = 1. / csi->nwid;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
 	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	  /*     loop on input port elements */
 	  for (i__ = 1; i__ <= ipar[kwid + 7] ; ++i__) {
@@ -1991,8 +1995,8 @@ void scicos_cmscope_block(scicos_block *block,int flag)
 	  rect[3] = rpar[(kwid << 1) + 2];
 	  frect[1] = (kwid - 1) * (1. / csi->nwid);
 	  frect[3] = 1. / csi->nwid;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	  nsp_plot2d(Xgc,rect,&rect[1],&c__1, &c__1, &c_n1, "011","xlines",0, rect, nax);
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
+	  nsp_plot2d_old(Xgc,rect,&rect[1],&c__1, &c__1, &c_n1, "011","xlines",0, rect, nax);
 	}
     }
     t = tsave;
@@ -2035,8 +2039,8 @@ void scicos_cmscope_block(scicos_block *block,int flag)
 	  rect[3] = rpar[(kwid << 1) + 2];
 	  frect[1] = (kwid - 1) * (1. / csi->nwid);
 	  frect[3] = 1. / csi->nwid;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","",0, rect, nax);
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
+	  nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","",0, rect, nax);
 	}
       z__[1] = 0.;
       z__[2] = t;
@@ -2068,7 +2072,7 @@ void scicos_cmscope_block(scicos_block *block,int flag)
 	  frect[1] = (kwid - 1) * (1. /csi->nwid);
 	  frect[2] = 1.;
 	  frect[3] = 1. / csi->nwid;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
 	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	  /*     loop on input port elements */
 	  for (i__ = 1; i__ <=  ipar[kwid + 7]; ++i__) {
@@ -2079,6 +2083,8 @@ void scicos_cmscope_block(scicos_block *block,int flag)
 	}
       scicos_free(*block->work);
     }
+  #endif 
+
 }
   
 

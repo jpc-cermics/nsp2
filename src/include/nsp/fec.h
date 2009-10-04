@@ -95,7 +95,7 @@ extern int nsp_fec_xdr_save(XDR  *xdrs, NspFec *M);
 #line 4 "codegen/fec.override"
 
 extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
 extern void PermutOfSort (const int *tab, int *perm);

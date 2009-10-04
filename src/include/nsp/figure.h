@@ -102,7 +102,7 @@ extern int nsp_figure_xdr_save(XDR  *xdrs, NspFigure *M);
 
 extern BCG *nsp_check_graphic_context(void);
 extern NspFigure *nsp_get_figure(BCG *Xgc);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern NspFigure *nsp_check_for_figure(BCG *Xgc);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);

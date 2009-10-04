@@ -18,12 +18,11 @@
  */
 
 #define  GFrame_Private 
+#include "nsp/graphics-old/Graphics.h"
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "../graphics/new_graphics.h"
-#include "nsp/graphics/Graphics.h"
 #include "gridblock.h" 
 
 typedef enum _list_move_action list_move_action; 
@@ -443,8 +442,8 @@ static int int_nsp_gframe_create(Stack stack, int rhs, int opt, int lhs)
   if ( GetScalarInt(stack,3,&winid) == FAIL) return RET_BUG;
   if (winid != -1) 
     {
-      Xgc =  window_list_search(winid);
-      if ( Xgc == NULL ) Xgc= check_graphic_window();
+      Xgc =  window_list_search_old(winid);
+      if ( Xgc == NULL ) Xgc= check_graphic_window_old();
     }
   
   if(( H = nsp_gframe_create(NVOID,Xgc,TRUE,scale->R,r->R,NULL)) == NULLGFRAME) return RET_BUG;
@@ -947,7 +946,7 @@ static int int_meth_gf_attach_to_window(void *self,Stack stack, int rhs, int opt
   CheckRhs(1,1);
   CheckLhs(-1,0);
   if ( GetScalarInt(stack,1,&winid) == FAIL) return RET_BUG;
-  Xgc =  window_list_search(winid);
+  Xgc =  window_list_search_old(winid);
   if ( Xgc == NULL ) 
     {
       Scierror("Error: Graphic window %d does not exists\n",winid);
@@ -1105,10 +1104,15 @@ void nspgframe_draw(nspgframe *gf)
   Cell *C = gf->objs->first;
   if ( Xgc == NULL) return;
   /* using current values */
-  Nsetscale2d(Xgc,NULL,NULL,gf->scale,"nn");
+  Nsetscale2d_old(Xgc,NULL,NULL,gf->scale,"nn");
   if ( gf->top ) Xgc->graphic_engine->clearwindow(Xgc);
 
   record = Xgc->graphic_engine->xget_recording(Xgc);
+  if (Xgc->record_flag == TRUE)  
+    Sciprintf("recod true \n");
+  else
+    Sciprintf("recod false  \n");
+
 #ifdef NEW_GRAPHICS 
   Xgc->graphic_engine->xset_recording(Xgc,FALSE);
 #endif 
@@ -1152,7 +1156,7 @@ void nsp_gframe_draw(NspGFrame *R)
  **/
 
 extern BCG ScilabGCPos ; /* Postscript */
-extern Gengine Pos_gengine;
+extern Gengine Pos_gengine_old;
 
 void nsp_gframe_tops(NspGFrame *R,char *fname)
 {
@@ -1162,7 +1166,7 @@ void nsp_gframe_tops(NspGFrame *R,char *fname)
   if ( Xgc == NULL) return;
   R->obj->Xgc->graphic_engine->xget_windowdim(R->obj->Xgc,wdim,wdim+1);
   wdim_p = wdim;
-  ScilabGCPos.graphic_engine = &Pos_gengine;
+  ScilabGCPos.graphic_engine = &Pos_gengine_old;
   ScilabGCPos.graphic_engine->initgraphic(fname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,'k',NULL);
   if (colored == TRUE ) 
     ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,un);

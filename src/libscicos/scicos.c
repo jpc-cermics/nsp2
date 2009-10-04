@@ -26,7 +26,7 @@
 
 #include "nsp/machine.h"
 #include "../functions/linking.h"
-#include "nsp/graphics/Graphics.h" 
+#include "nsp/graphics-old/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 

@@ -12,7 +12,7 @@
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 #include "nsp/gframe.h" 
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 /*
  * NspLink inherits from NspObject 

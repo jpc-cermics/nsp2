@@ -53,6 +53,7 @@ extern  sci_interface  mex_Interf  ;extern  interface_info  mex_Interf_Info  ;
 extern  sci_interface  Interf_Interf  ;extern  interface_info  Interf_Interf_Info  ;
 extern  sci_interface  Datas_Interf ;extern  interface_info  Datas_Interf_Info ;
 extern  sci_interface  Graphics_Interf ;extern  interface_info  Graphics_Interf_Info ;
+extern  sci_interface  GraphicsOld_Interf ;extern  interface_info  GraphicsOld_Interf_Info ;
 extern  sci_interface  None_Interf ;extern  interface_info  None_Interf_Info ;
 extern  sci_interface  Menus_Interf ;extern  interface_info  Menus_Interf_Info ;
 extern  sci_interface  Hobj_Interf ;extern  interface_info  Hobj_Interf_Info ;
@@ -135,7 +136,7 @@ extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info 
 extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info ;
 #endif 
 
-#define WITH_GRAPHIC_OBJECTS 
+#define WITH_GRAPHIC_OBJECTS   
 #ifdef  WITH_GRAPHIC_OBJECTS 
 extern sci_interface Arrows_Interf;extern interface_info Arrows_Interf_Info;
 extern sci_interface Axes_Interf;extern interface_info Axes_Interf_Info;
@@ -188,7 +189,8 @@ InterfTab Interfaces[]={
   {mex_Interf,mex_Interf_Info},
   {Interf_Interf,Interf_Interf_Info},
   {Datas_Interf,Datas_Interf_Info},
-  {Graphics_Interf,Graphics_Interf_Info},
+  {Graphics_Interf,Graphics_Interf_Info},  
+  {GraphicsOld_Interf,GraphicsOld_Interf_Info},
   {Menus_Interf,Menus_Interf_Info},
   {Hobj_Interf,Hobj_Interf_Info},
   {Rect_Interf,Rect_Interf_Info},

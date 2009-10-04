@@ -13,7 +13,7 @@
 #include "nsp/object.h"
 #include "nsp/matrix.h"
 #include "nsp/smatrix.h"
-#include "nsp/graphics/Graphics.h"
+#include "nsp/graphics-old/Graphics.h"
 
 /**
  * NspGFrame:

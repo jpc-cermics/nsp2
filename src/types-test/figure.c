@@ -2051,7 +2051,7 @@ static int nsp_figure_connect(NspFigure *F)
       /* delete window F->obj->id and reconnect */
       Sciprintf("\tFigure %d already connected\n",F->obj->id);
       Sciprintf("\tdeleting window %d\n",F->obj->id);
-      nsp_gr_delete(F->obj->id);
+      Xgc->actions->delete(Xgc);
      }
   
   if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
@@ -2114,11 +2114,11 @@ static int nsp_figure_connect(NspFigure *F)
       return FAIL;
     }
 
-  Xgc->graphic_engine->scale->xset_wresize(Xgc,F->obj->wresize);
+  Xgc->graphic_engine->xset_wresize(Xgc,F->obj->wresize);
   
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
     Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
-  store_graphic_object(Xgc,NSP_OBJECT(F));
+  tape_store_graphic_object(Xgc,NSP_OBJECT(F));
   /* 
      F->obj->ref_count++;
      ((NspGraphic *) F)->obj->ref_count++;
@@ -2133,7 +2133,8 @@ static int nsp_figure_connect(NspFigure *F)
 
 static int nsp_figure_unconnect(NspFigure *F)
 {
-  nsp_gr_delete(F->obj->id); 
+  BCG *Xgc =  window_list_search(F->obj->id);
+  if ( Xgc != NULL)  Xgc->actions->delete(Xgc);
   return OK ;
 }
 
@@ -2298,7 +2299,7 @@ NspFigure *nsp_check_for_figure(BCG *Xgc)
       F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
-      store_graphic_object(Xgc,NSP_OBJECT(F));
+      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   return F;
@@ -2324,7 +2325,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
       F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
-      store_graphic_object(Xgc,NSP_OBJECT(F));
+      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
       created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
@@ -2393,7 +2394,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
       F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
-      store_graphic_object(Xgc,NSP_OBJECT(F));
+      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
       created = TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
@@ -2455,7 +2456,7 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
       F = nsp_create_default_figure(Xgc->CurWindow);
       if ( F == NULL) return NULL;
       /* insert in Xgc */
-      store_graphic_object(Xgc,NSP_OBJECT(F));
+      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
       created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
@@ -2802,4 +2803,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2806 "figure.c"
+#line 2807 "figure.c"

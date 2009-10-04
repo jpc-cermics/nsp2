@@ -13,7 +13,7 @@
 #include <nsp/polyhedron.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
-#include "../graphics/Plo3dObj.h"
+#include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
 #line 20 "spolyhedron.c"
@@ -1021,7 +1021,7 @@ int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj, t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  store_graphic_object(Xgc, pl);
+  tape_store_graphic_object(Xgc, pl);
   return 0;
 }
 

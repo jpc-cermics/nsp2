@@ -92,10 +92,10 @@ extern int nsp_string3d_xdr_save(XDR  *xdrs, NspString3d *M);
 
 #line 4 "codegen/string3d.override"
 
-#include "../graphics/Plo3dObj.h"
+#include "../graphics-new/Plo3dObj.h"
 /* inserted at the end of public part of include file */
 extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 

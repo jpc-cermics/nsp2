@@ -26,13 +26,13 @@
 #include <math.h>
 #include "nsp/machine.h"
 #include "nsp/math.h" 
-#include "nsp/graphics/Graphics.h" 
+#include "nsp/graphics-old/Graphics.h" 
 #include "nsp/object.h" 
 #include "nsp/blas.h" 
 #include "nsp/matutil.h" 
 #include "../librand/grand.h" /* rand_ranf() */
 #include "../system/files.h" /*  FSIZE */
-
+#include "../graphics-old/new_graphics.h"
 #include "scicos/scicos.h"
 #include "scicos/blocks.h"
 
@@ -276,6 +276,10 @@ int scicos_dsslti_block(scicos_args_F0)
 
 int scicos_evscpe_block(scicos_args_F0)
 {
+#ifdef NEW_GRAPHICS 
+
+#else 
+
   /* ipar=[win_num, ipar(2) = 0/1 color flag,  ipar(3:10) = color */
   /*     ipar(nipar-3:nipar-2) = window position */
   /*     ipar(nipar-1:nipar)= window position */
@@ -317,7 +321,7 @@ int scicos_evscpe_block(scicos_args_F0)
 	  rect[0] = per * (z__[1] - 1.);
 	  rect[2] = per * z__[1];
 	  Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
+	  nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
 	}
       xx[0] = *t;      xx[1] = *t;
       yy[0] = 0.;      yy[1] = .8;
@@ -347,7 +351,7 @@ int scicos_evscpe_block(scicos_args_F0)
       Xgc = scicos_set_win(wid,&cur);
       rect[0] = per * (n1 + 1);
       rect[2] = per * (n1 + 2);
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
       iwp = *nipar - 3;
       if (ipar[iwp] >= 0)
 	{
@@ -363,13 +367,15 @@ int scicos_evscpe_block(scicos_args_F0)
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
+      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output", 0, rect, nax);
       str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
       nsp_check_gtk_events ();
       z__[1] = 0.;
     }
+  return 0;
+#endif 
   return 0;
 }			
 
@@ -1057,6 +1063,12 @@ int scicos_min_block(scicos_args_F0)
 
 int scicos_mscope_block(scicos_args_F0)
 {
+
+#ifdef NEW_GRAPHICS 
+
+#else 
+
+
   static int c__1 = 1;
   static int c__0 = 0;
   static int c_n1 = -1;
@@ -1187,7 +1199,7 @@ int scicos_mscope_block(scicos_args_F0)
 	      frect[1] = (kwid - 1) * (1. / nwid);
 	      frect[2] = 1.;
 	      frect[3] = 1. / nwid;
-	      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
 	      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	      /*     loop on input port elements */
 	      i__2 = ipar[kwid + 7];
@@ -1231,8 +1243,8 @@ int scicos_mscope_block(scicos_args_F0)
 	      frect[1] = (kwid - 1) * (1. / nwid);
 	      frect[2] = 1.;
 	      frect[3] = 1. / nwid;
-	      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+	      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
+	      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 			 0, rect, nax);
 	    }
 	}
@@ -1283,8 +1295,8 @@ int scicos_mscope_block(scicos_args_F0)
 	  frect[1] = (kwid - 1) * (1. / nwid);
 	  frect[2] = 1.;
 	  frect[3] = 1. / nwid;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
+	  nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		     0, rect, nax);
 	}
 
@@ -1324,7 +1336,7 @@ int scicos_mscope_block(scicos_args_F0)
 	  frect[1] = (kwid - 1) * (1. / nwid);
 	  frect[2] = 1.;
 	  frect[3] = 1. / nwid;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
 	  Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
 	  /*     loop on input port elements */
 	  i__2 = ipar[kwid + 7];
@@ -1338,6 +1350,8 @@ int scicos_mscope_block(scicos_args_F0)
 	}
       Xgc->graphic_engine->xset_recording(Xgc,record);
     }
+
+#endif 
   return 0;
 }		
 
@@ -1648,6 +1662,11 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	      double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15, int *nuy15,double *uy16, int *nuy16, 
 	      double *uy17, int *nuy17, double *uy18, int *nuy18)
 {
+
+#ifdef NEW_GRAPHICS 
+
+#else 
+
   BCG *Xgc;
   int nax[]={2,10,2,10};
   static int c__1 = 1;
@@ -1790,7 +1809,7 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	  rect[2] = per * (n1 + 2);
 	  rect[3] = ymax;
 	  Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+	  nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		     0, rect, nax);
 	}
       *t = tsave;
@@ -1824,13 +1843,13 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
       rect[1] = ymin;
       rect[2] = per * (n1 + 2);
       rect[3] = ymax;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
       str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
@@ -1858,6 +1877,7 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	}
       Xgc->graphic_engine->scale->xset_unclip(Xgc);
     }
+#endif 
   return 0;
 }			
 
@@ -1867,6 +1887,13 @@ scicos_scope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 
 int scicos_scopxy_block(scicos_args_F0)
 {
+
+#ifdef NEW_GRAPHICS 
+
+#else 
+
+
+
   BCG *Xgc;
   static int c__1 = 1;
   static int c__2 = 2;
@@ -1958,7 +1985,7 @@ int scicos_scopxy_block(scicos_args_F0)
 	  rect[1] = ymin;
 	  rect[2] = xmax;
 	  rect[3] = ymax;
-	  Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+	  Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
 	  z__[1] = 0.;
 	}
     }
@@ -1990,7 +2017,7 @@ int scicos_scopxy_block(scicos_args_F0)
       rect[1] = ymin;
       rect[2] = xmax;
       rect[3] = ymax;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       Xgc->graphic_engine->clearwindow(Xgc);
@@ -1998,7 +2025,7 @@ int scicos_scopxy_block(scicos_args_F0)
       Xgc->graphic_engine->xset_thickness(Xgc,c__1);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
       str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
@@ -2025,12 +2052,18 @@ int scicos_scopxy_block(scicos_args_F0)
       Xgc = scicos_set_win(wid,&cur);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
     }
+#endif 
   return 0;
 }
 
 
 int scicos_scoxy_block(scicos_args_F0)
 {
+
+#ifdef NEW_GRAPHICS 
+
+#else 
+
   BCG *Xgc;
   char *str;
   static int c__1 = 1;
@@ -2135,7 +2168,7 @@ int scicos_scoxy_block(scicos_args_F0)
       rect[1] = ymin;
       rect[2] = xmax;
       rect[3] = ymax;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       Xgc->graphic_engine->clearwindow(Xgc);
@@ -2146,7 +2179,7 @@ int scicos_scoxy_block(scicos_args_F0)
       str = scicos_getlabel (Scicos->params.curblk);
       if ( str != NULL && strlen(str) != 0 && strcmp(str," ") != 0 ) 
 	Xgc->graphic_engine->setpopupname(Xgc,str);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
       Xgc->graphic_engine->xset_thickness(Xgc,ipar[5]);
       nsp_check_gtk_events ();
@@ -2172,7 +2205,10 @@ int scicos_scoxy_block(scicos_args_F0)
       z__[1] = 0.;
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
     }
+
+#endif 
   return 0;
+
 }			
 
 /*     Selector block */
@@ -2930,6 +2966,9 @@ extern int scicos_getgeom(double *);
 
 static void block_draw_rect_1(BCG *Xgc,double r[],double percent)
 {
+#ifndef NEW_GRAPHICS 
+
+
   int alumode;
   static int in=6;
   double w = r[2]*percent;
@@ -2941,10 +2980,13 @@ static void block_draw_rect_1(BCG *Xgc,double r[],double percent)
   Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
   if ( alumode != in ) 
     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+#endif 
+
 }
 
 static void block_draw_rect_2(BCG *Xgc,double r[],double percent)
 {
+#ifndef NEW_GRAPHICS 
   int alumode;
   /* int flag =0;  double ang=0.0;  char foo[24]; */
   static int in=6;
@@ -2961,11 +3003,14 @@ static void block_draw_rect_2(BCG *Xgc,double r[],double percent)
 
   if ( alumode != in ) 
     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+#endif 
+
 }
 
 
 static void block_draw_rect_3(BCG *Xgc,double r[],double percent)
 {
+#ifndef NEW_GRAPHICS 
   int alumode;
   int flag =0;  double ang=0.0;  char foo[24];
   static int in=6;
@@ -2978,6 +3023,8 @@ static void block_draw_rect_3(BCG *Xgc,double r[],double percent)
   Xgc->graphic_engine->scale->displaystring(Xgc,foo,x,y,flag,ang);
   if ( alumode != in ) 
     Xgc->graphic_engine->scale->xset_alufunction1(Xgc,alumode);
+#endif 
+
 }
 
 
@@ -2997,6 +3044,7 @@ static int set_slider_color(BCG *Xgc, int color)
   if ( cur != color ) 
     Xgc->graphic_engine->xset_pattern(Xgc,color);
   return cur ;
+
 }
 
 /*----------------------------------------------------
@@ -3316,7 +3364,7 @@ int scicos_affdraw (BCG *Xgc,const int fontd[],const int form[],const double *va
   Xgc->graphic_engine->scale->displaystring(Xgc,buf,x,y,flag,angle);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  if ( pixmode == 1) Xgc->graphic_engine->scale->xset_show(Xgc);
+  if ( pixmode == 1) Xgc->graphic_engine->xset_show(Xgc);
   return 0;
 } 
 
@@ -4374,6 +4422,9 @@ scicos_fscope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	       double *uy13, int *nuy13, double *uy14, int *nuy14, double *uy15,
 	       int *nuy15,double *uy16, int *nuy16, double *uy17, int *nuy17, double *uy18, int *nuy18)
 {
+
+#ifndef NEW_GRAPHICS 
+
   BCG *Xgc;
   static int c__0 = 0;
   static int c__1 = 1;
@@ -4507,7 +4558,7 @@ scicos_fscope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	  rect[2] = per * (n1 + 2);
 	  rect[3] = ymax;
 	  Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-	  nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+	  nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		     0, rect, nax);
 	}
       *t = tsave;
@@ -4546,13 +4597,13 @@ scicos_fscope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
       rect[1] = ymin;
       rect[2] = per * (n1 + 2);
       rect[3] = ymax;
-      Nsetscale2d(Xgc,frect,NULL,rect,"nn");
+      Nsetscale2d_old(Xgc,frect,NULL,rect,"nn");
       Xgc->graphic_engine->scale->xset_usecolor(Xgc,ipar[2]);
       Xgc->graphic_engine->scale->xset_alufunction1(Xgc,c__3);
       Xgc->graphic_engine->clearwindow(Xgc);
       Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
       Xgc->graphic_engine->scale->xset_dash(Xgc,c__0);
-      nsp_plot2d(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
+      nsp_plot2d_old(Xgc,rect, &rect[1],&c__1, &c__1, &c_n1, "011","t@ @input and output",
 		 0, rect, nax);
       z__[1] = 0.;
       z__[2] = *t;
@@ -4581,6 +4632,8 @@ scicos_fscope_block (int *flag__, int *nevprt, double *t, double *xd, double *x,
 	}
       Xgc->graphic_engine->xset_recording(Xgc,record);
     }
+#endif 
+
   return 0;
 }			
 

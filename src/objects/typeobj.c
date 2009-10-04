@@ -568,8 +568,10 @@ extern void *  new_type_string3d(type_mode mode);
 extern void *  new_type_surf(type_mode mode);
 extern void *  new_type_vfield(type_mode mode);
 
+#define  WITH_GRAPHIC_OBJECTS 
 static void graphic_types_register(void) 
 {
+#ifdef  WITH_GRAPHIC_OBJECTS 
   new_type_arrows(T_BASE);
   new_type_axes(T_BASE);
   new_type_box3d(T_BASE);
@@ -593,6 +595,7 @@ static void graphic_types_register(void)
   new_type_string3d(T_BASE);
   new_type_surf(T_BASE);
   new_type_vfield(T_BASE);
+#endif 
 }
 
 

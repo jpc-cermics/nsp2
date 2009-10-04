@@ -35,7 +35,7 @@ Makefile.amk	: Makefile
 
 blocks.c: ../include/nsp/machine.h
 blocks.c: ../include/nsp/math.h 
-blocks.c: ../include/nsp/graphics/Graphics.h 
+blocks.c: ../include/nsp/graphics-old/Graphics.h 
 blocks.c: ../include/nsp/object.h 
 blocks.c: ../include/nsp/blas.h 
 blocks.c: ../include/nsp/matutil.h 
@@ -47,7 +47,7 @@ blocks.c: ../interp/LibsTab.h
 blocks.c: ../include/nsp/gtk/gobject.h
 
 blocks_new.c: ../include/nsp/machine.h
-blocks_new.c: ../include/nsp/graphics/Graphics.h 
+blocks_new.c: ../include/nsp/graphics-old/Graphics.h 
 blocks_new.c: ../include/nsp/object.h 
 blocks_new.c: ../include/nsp/blas.h 
 blocks_new.c: ../include/nsp/matutil.h 
@@ -76,7 +76,7 @@ sciblk2.c: ../include/scicos/scicos.h
 
 scicos.c: ../include/nsp/machine.h
 scicos.c: ../functions/linking.h
-scicos.c: ../include/nsp/graphics/Graphics.h 
+scicos.c: ../include/nsp/graphics-old/Graphics.h 
 scicos.c: ../include/nsp/object.h 
 scicos.c: ../include/nsp/blas.h 
 scicos.c: ../include/nsp/matutil.h 

@@ -115,7 +115,7 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern BCG *nsp_check_graphic_context(void);
-extern void store_graphic_object(BCG *Xgc,NspObject *obj);
+extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);

@@ -103,7 +103,7 @@ extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 /* inserted at the end of public part of include file */
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
-#include "../graphics/Plo3dObj.h"
+#include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
@@ -153,7 +153,13 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
 static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
 static void nsp_obj3d_free_box(Plot3dBox *B);
 static void nsp_obj3d_dsortc(double x[], int *n, int p[]);
+static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
+				     double *z, int *p, int *q, double *teta,
+				     double *alpha,const char *legend, int *flag,
+				     double *bbox,double *zmin,
+				     double *zmax,nsp_plot3d_type type3d);
+static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag);
 
-#line 158 "./objs3d.h"
+#line 164 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 
