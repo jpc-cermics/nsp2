@@ -49,9 +49,12 @@ extern void nsp_gr_unzoom (int );
 /* windows.c */
 
 extern BCG *check_graphic_window(void);
+extern BCG *check_graphic_window_new(void);
 extern BCG * window_list_get_first();
 extern BCG *window_list_search(int winnum);
+extern BCG *window_list_search_new(int winnum);
 extern BCG *set_graphic_window(int num) ;
+extern BCG *set_graphic_window_new(int num) ;
 extern int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],
 		       char *logscale);
 extern int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,

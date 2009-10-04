@@ -408,7 +408,7 @@ NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree
   if ((Xgc = window_list_get_first()) != NULL) 
     Xgc->graphic_engine->xset_curwin(Max(win,0),TRUE);
   else 
-    Xgc= set_graphic_window(Max(win,0));
+    Xgc= set_graphic_window_new(Max(win,0));
 
   /*
    * Gc of new window 

@@ -2043,7 +2043,7 @@ static int nsp_figure_connect(NspFigure *F)
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   BCG *Xgc;
   
-  Xgc = window_list_search(F->obj->id);
+  Xgc = window_list_search_new(F->obj->id);
   if ( Xgc != NULL) 
     {
       NspFigure *F1=nsp_get_figure(Xgc);
@@ -2107,7 +2107,7 @@ static int nsp_figure_connect(NspFigure *F)
 	( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
 	'e',NULL);
   /* check ! */
-  Xgc = window_list_search(F->obj->id);
+  Xgc = window_list_search_new(F->obj->id);
   if ( Xgc == NULL) 
     {
       Sciprintf("failed to connect figure\n");
@@ -2133,7 +2133,7 @@ static int nsp_figure_connect(NspFigure *F)
 
 static int nsp_figure_unconnect(NspFigure *F)
 {
-  BCG *Xgc =  window_list_search(F->obj->id);
+  BCG *Xgc =  window_list_search_new(F->obj->id);
   if ( Xgc != NULL)  Xgc->actions->delete(Xgc);
   return OK ;
 }
@@ -2226,7 +2226,7 @@ void nsp_figure_force_redraw(nsp_figure *F)
   BCG *Xgc;
   if ( F == NULL) return ;
   if ( F->draw_now== FALSE) return;
-  Xgc = window_list_search(F->id);
+  Xgc = window_list_search_new(F->id);
   if ( Xgc == NULL) return;
   Xgc->graphic_engine->force_redraw(Xgc);
 }

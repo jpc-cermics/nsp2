@@ -2395,7 +2395,7 @@ BCG *nsp_check_graphic_context(void)
   if ( nsp_current_bcg != NULL ) 
     return nsp_current_bcg; /* Postscript or Xfig */
   else
-    return check_graphic_window(); /* a graphic window */
+    return check_graphic_window_new(); /* a graphic window */
 } 
 
 
@@ -3240,7 +3240,7 @@ static int int_xclear(Stack stack, int rhs, int opt, int lhs)
       for (ix = 0 ; ix < l1->mn ; ++ix) 
 	{
 	  int wid = l1->R[ix];
-	  if (( Xgc=window_list_search(wid)) != NULL) 
+	  if (( Xgc=window_list_search_new(wid)) != NULL) 
 	    {
 	      Xgc->graphic_engine->clearwindow(Xgc);
 	      if ( val == TRUE ) Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
@@ -3296,7 +3296,7 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
     {
       /* win=window_id was given */
       win = Max(win,0);
-      Xgc = window_list_search(win);
+      Xgc = window_list_search_new(win);
       if ( Xgc == NULL ) 
 	{
 	  Scierror("%s:window %d does not exists\n",NspFname(stack),win);
@@ -3342,7 +3342,7 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
       if (button>=0)
 	{
 	  NspGraphic *G; 
-	  BCG *Xgc_win =window_list_search(iw);
+	  BCG *Xgc_win =window_list_search_new(iw);
 	  G= nsp_get_point_axes(Xgc_win,ixrep,iyrep,drep+1);
 	}
 #else 
@@ -4680,7 +4680,7 @@ static int int_xselect(Stack stack, int rhs, int opt, int lhs)
     {
       if (GetScalarInt(stack,1,&win_id) == FAIL) return RET_BUG;
       win_id = Max(0,win_id);
-      if ((Xgc=window_list_search(win_id)) != NULL) 
+      if ((Xgc=window_list_search_new(win_id)) != NULL) 
 	{
 	  Xgc->graphic_engine->xset_curwin(win_id,TRUE);
 	  Xgc->graphic_engine->xselgraphic(Xgc);
@@ -4688,7 +4688,7 @@ static int int_xselect(Stack stack, int rhs, int opt, int lhs)
       else 
 	{
 	  /* create a graphic window */
-	  Xgc= set_graphic_window(win_id);
+	  Xgc= set_graphic_window_new(win_id);
 	  Xgc->graphic_engine->xselgraphic(Xgc);
 	}
     }
@@ -4944,7 +4944,7 @@ static int int_xset(Stack stack, int rhs, int opt, int lhs)
       if ((Xgc = window_list_get_first()) != NULL) 
 	Xgc->graphic_engine->xset_curwin(Max(val,0),TRUE);
       else 
-	Xgc= set_graphic_window(Max(val,0));
+	Xgc= set_graphic_window_new(Max(val,0));
       break;
     case xset_wpdim:
       CheckRhs(3,3);
@@ -6166,11 +6166,11 @@ static int int_xsave(Stack stack, int rhs, int opt, int lhs)
   if (rhs == 2) 
     { 
       if (GetScalarInt(stack,2,&wid) == FAIL) return RET_BUG;
-      if (( Xgc=window_list_search(wid)) == NULL) return 0;
+      if (( Xgc=window_list_search_new(wid)) == NULL) return 0;
     }
   else 
     {
-      Xgc = check_graphic_window();
+      Xgc = check_graphic_window_new();
       wid = Xgc->CurWindow;
     }
   tape_save(Xgc,str,wid);
@@ -6192,9 +6192,9 @@ static int int_xload(Stack stack, int rhs, int opt, int lhs)
   if (rhs == 2) 
     { 
       if (GetScalarInt(stack,2,&wid) == FAIL) return RET_BUG;
-      Xgc = set_graphic_window(Max(0,wid));
+      Xgc = set_graphic_window_new(Max(0,wid));
     }
-  Xgc=check_graphic_window();
+  Xgc=check_graphic_window_new();
   tape_load(Xgc,str);
   return 0;
 }
