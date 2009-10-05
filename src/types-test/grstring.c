@@ -169,7 +169,7 @@ static int nsp_grstring_size(NspGrstring *Mat, int flag)
  * type as string 
  */
 
-static char grstring_type_name[]="NspGrstring";
+static char grstring_type_name[]="Grstring";
 static char grstring_short_type_name[]="grstring";
 
 static char *nsp_grstring_type_as_string(void)

@@ -174,7 +174,7 @@ static int nsp_graphic_size(NspGraphic *Mat, int flag)
  * type as string 
  */
 
-static char graphic_type_name[]="NspGraphic";
+static char graphic_type_name[]="Graphic";
 static char graphic_short_type_name[]="graphic";
 
 static char *nsp_graphic_type_as_string(void)

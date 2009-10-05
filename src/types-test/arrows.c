@@ -170,7 +170,7 @@ static int nsp_arrows_size(NspArrows *Mat, int flag)
  * type as string 
  */
 
-static char arrows_type_name[]="NspArrows";
+static char arrows_type_name[]="Arrows";
 static char arrows_short_type_name[]="arrows";
 
 static char *nsp_arrows_type_as_string(void)

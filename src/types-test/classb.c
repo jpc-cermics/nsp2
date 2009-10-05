@@ -154,7 +154,7 @@ static int nsp_classb_size(NspClassB *Mat, int flag)
  * type as string 
  */
 
-static char classb_type_name[]="NspClassB";
+static char classb_type_name[]="ClassB";
 static char classb_short_type_name[]="classb";
 
 static char *nsp_classb_type_as_string(void)

@@ -172,7 +172,7 @@ static int nsp_fec_size(NspFec *Mat, int flag)
  * type as string 
  */
 
-static char fec_type_name[]="NspFec";
+static char fec_type_name[]="Fec";
 static char fec_short_type_name[]="fec";
 
 static char *nsp_fec_type_as_string(void)

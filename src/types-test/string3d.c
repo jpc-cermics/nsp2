@@ -174,7 +174,7 @@ static int nsp_string3d_size(NspString3d *Mat, int flag)
  * type as string 
  */
 
-static char string3d_type_name[]="NspString3d";
+static char string3d_type_name[]="String3d";
 static char string3d_short_type_name[]="string3d";
 
 static char *nsp_string3d_type_as_string(void)

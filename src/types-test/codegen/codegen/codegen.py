@@ -197,7 +197,7 @@ class Wrapper:
               ' * type as string \n'  \
               ' */\n'  \
               '\n'  \
-              'static char %(typename_dc)s_type_name[]="%(typename)s";\n'  \
+              'static char %(typename_dc)s_type_name[]="%(typename_nn)s";\n'  \
               'static char %(typename_dc)s_short_type_name[]="%(typename_dc)s";\n'  \
               '\n'  \
               'static char *nsp_%(typename_dc)s_type_as_string(void)\n'  \

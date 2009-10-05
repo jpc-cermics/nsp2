@@ -155,7 +155,7 @@ static int nsp_groot_size(NspGRoot *Mat, int flag)
  * type as string 
  */
 
-static char groot_type_name[]="NspGRoot";
+static char groot_type_name[]="GRoot";
 static char groot_short_type_name[]="groot";
 
 static char *nsp_groot_type_as_string(void)

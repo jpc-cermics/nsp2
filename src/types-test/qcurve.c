@@ -168,7 +168,7 @@ static int nsp_qcurve_size(NspQcurve *Mat, int flag)
  * type as string 
  */
 
-static char qcurve_type_name[]="NspQcurve";
+static char qcurve_type_name[]="Qcurve";
 static char qcurve_short_type_name[]="qcurve";
 
 static char *nsp_qcurve_type_as_string(void)

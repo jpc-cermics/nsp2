@@ -167,7 +167,7 @@ static int nsp_curve_size(NspCurve *Mat, int flag)
  * type as string 
  */
 
-static char curve_type_name[]="NspCurve";
+static char curve_type_name[]="Curve";
 static char curve_short_type_name[]="curve";
 
 static char *nsp_curve_type_as_string(void)

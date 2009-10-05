@@ -170,7 +170,7 @@ static int nsp_grarc_size(NspGrArc *Mat, int flag)
  * type as string 
  */
 
-static char grarc_type_name[]="NspGrArc";
+static char grarc_type_name[]="GrArc";
 static char grarc_short_type_name[]="grarc";
 
 static char *nsp_grarc_type_as_string(void)

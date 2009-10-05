@@ -169,7 +169,7 @@ static int nsp_segments_size(NspSegments *Mat, int flag)
  * type as string 
  */
 
-static char segments_type_name[]="NspSegments";
+static char segments_type_name[]="Segments";
 static char segments_short_type_name[]="segments";
 
 static char *nsp_segments_type_as_string(void)

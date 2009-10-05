@@ -169,7 +169,7 @@ static int nsp_grrect_size(NspGrRect *Mat, int flag)
  * type as string 
  */
 
-static char grrect_type_name[]="NspGrRect";
+static char grrect_type_name[]="GrRect";
 static char grrect_short_type_name[]="grrect";
 
 static char *nsp_grrect_type_as_string(void)

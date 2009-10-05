@@ -172,7 +172,7 @@ static int nsp_axes_size(NspAxes *Mat, int flag)
  * type as string 
  */
 
-static char axes_type_name[]="NspAxes";
+static char axes_type_name[]="Axes";
 static char axes_short_type_name[]="axes";
 
 static char *nsp_axes_type_as_string(void)

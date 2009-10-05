@@ -169,7 +169,7 @@ static int nsp_vfield_size(NspVField *Mat, int flag)
  * type as string 
  */
 
-static char vfield_type_name[]="NspVField";
+static char vfield_type_name[]="VField";
 static char vfield_short_type_name[]="vfield";
 
 static char *nsp_vfield_type_as_string(void)

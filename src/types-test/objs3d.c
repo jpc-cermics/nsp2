@@ -172,7 +172,7 @@ static int nsp_objs3d_size(NspObjs3d *Mat, int flag)
  * type as string 
  */
 
-static char objs3d_type_name[]="NspObjs3d";
+static char objs3d_type_name[]="Objs3d";
 static char objs3d_short_type_name[]="objs3d";
 
 static char *nsp_objs3d_type_as_string(void)

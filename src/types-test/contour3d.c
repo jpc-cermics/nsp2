@@ -177,7 +177,7 @@ static int nsp_contour3d_size(NspContour3d *Mat, int flag)
  * type as string 
  */
 
-static char contour3d_type_name[]="NspContour3d";
+static char contour3d_type_name[]="Contour3d";
 static char contour3d_short_type_name[]="contour3d";
 
 static char *nsp_contour3d_type_as_string(void)

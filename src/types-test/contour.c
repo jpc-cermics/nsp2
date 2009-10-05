@@ -173,7 +173,7 @@ static int nsp_contour_size(NspContour *Mat, int flag)
  * type as string 
  */
 
-static char contour_type_name[]="NspContour";
+static char contour_type_name[]="Contour";
 static char contour_short_type_name[]="contour";
 
 static char *nsp_contour_type_as_string(void)

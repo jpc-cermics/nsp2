@@ -152,7 +152,7 @@ static int nsp_classbref_size(NspClassBRef *Mat, int flag)
  * type as string 
  */
 
-static char classbref_type_name[]="NspClassBRef";
+static char classbref_type_name[]="ClassBRef";
 static char classbref_short_type_name[]="classbref";
 
 static char *nsp_classbref_type_as_string(void)

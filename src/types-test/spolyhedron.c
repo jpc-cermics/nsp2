@@ -175,7 +175,7 @@ static int nsp_spolyhedron_size(NspSPolyhedron *Mat, int flag)
  * type as string 
  */
 
-static char spolyhedron_type_name[]="NspSPolyhedron";
+static char spolyhedron_type_name[]="SPolyhedron";
 static char spolyhedron_short_type_name[]="spolyhedron";
 
 static char *nsp_spolyhedron_type_as_string(void)

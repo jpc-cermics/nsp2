@@ -165,7 +165,7 @@ static int nsp_figure_size(NspFigure *Mat, int flag)
  * type as string 
  */
 
-static char figure_type_name[]="NspFigure";
+static char figure_type_name[]="Figure";
 static char figure_short_type_name[]="figure";
 
 static char *nsp_figure_type_as_string(void)
@@ -1156,7 +1156,7 @@ static int nsp_figuredata_size(NspFigureData *Mat, int flag)
  * type as string 
  */
 
-static char figuredata_type_name[]="NspFigureData";
+static char figuredata_type_name[]="FigureData";
 static char figuredata_short_type_name[]="figuredata";
 
 static char *nsp_figuredata_type_as_string(void)

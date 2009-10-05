@@ -176,7 +176,7 @@ static int nsp_polyline3d_size(NspPolyline3d *Mat, int flag)
  * type as string 
  */
 
-static char polyline3d_type_name[]="NspPolyline3d";
+static char polyline3d_type_name[]="Polyline3d";
 static char polyline3d_short_type_name[]="polyline3d";
 
 static char *nsp_polyline3d_type_as_string(void)

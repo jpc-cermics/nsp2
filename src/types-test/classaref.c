@@ -152,7 +152,7 @@ static int nsp_classaref_size(NspClassARef *Mat, int flag)
  * type as string 
  */
 
-static char classaref_type_name[]="NspClassARef";
+static char classaref_type_name[]="ClassARef";
 static char classaref_short_type_name[]="classaref";
 
 static char *nsp_classaref_type_as_string(void)

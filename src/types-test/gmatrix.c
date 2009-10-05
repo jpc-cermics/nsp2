@@ -172,7 +172,7 @@ static int nsp_gmatrix_size(NspGMatrix *Mat, int flag)
  * type as string 
  */
 
-static char gmatrix_type_name[]="NspGMatrix";
+static char gmatrix_type_name[]="GMatrix";
 static char gmatrix_short_type_name[]="gmatrix";
 
 static char *nsp_gmatrix_type_as_string(void)

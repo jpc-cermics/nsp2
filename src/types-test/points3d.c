@@ -179,7 +179,7 @@ static int nsp_points3d_size(NspPoints3d *Mat, int flag)
  * type as string 
  */
 
-static char points3d_type_name[]="NspPoints3d";
+static char points3d_type_name[]="Points3d";
 static char points3d_short_type_name[]="points3d";
 
 static char *nsp_points3d_type_as_string(void)

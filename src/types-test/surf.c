@@ -169,7 +169,7 @@ static int nsp_surf_size(NspSurf *Mat, int flag)
  * type as string 
  */
 
-static char surf_type_name[]="NspSurf";
+static char surf_type_name[]="Surf";
 static char surf_short_type_name[]="surf";
 
 static char *nsp_surf_type_as_string(void)

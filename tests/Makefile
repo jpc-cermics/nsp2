@@ -7,6 +7,7 @@ TESTS= \
 	addinter.dia \
 	cells.dia \
 	class.dia \
+	classref.dia \
 	concat.dia \
 	delete_op-nsp.dia \
 	dsearch.dia \

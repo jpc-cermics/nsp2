@@ -169,7 +169,7 @@ static int nsp_polyline_size(NspPolyline *Mat, int flag)
  * type as string 
  */
 
-static char polyline_type_name[]="NspPolyline";
+static char polyline_type_name[]="Polyline";
 static char polyline_short_type_name[]="polyline";
 
 static char *nsp_polyline_type_as_string(void)

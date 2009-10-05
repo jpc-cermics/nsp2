@@ -171,7 +171,7 @@ static int nsp_compound_size(NspCompound *Mat, int flag)
  * type as string 
  */
 
-static char compound_type_name[]="NspCompound";
+static char compound_type_name[]="Compound";
 static char compound_short_type_name[]="compound";
 
 static char *nsp_compound_type_as_string(void)

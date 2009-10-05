@@ -170,7 +170,7 @@ static int nsp_box3d_size(NspBox3d *Mat, int flag)
  * type as string 
  */
 
-static char box3d_type_name[]="NspBox3d";
+static char box3d_type_name[]="Box3d";
 static char box3d_short_type_name[]="box3d";
 
 static char *nsp_box3d_type_as_string(void)
