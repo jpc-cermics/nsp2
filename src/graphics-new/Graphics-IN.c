@@ -7354,8 +7354,6 @@ static OpTab GraphicsUtil_func[]={
   {"feval",int_feval}, /* FIXME: en construction */
   {"bsearch", int_bsearch},
   {"help" ,int_gtkhelp},
-  {"scicos_draw3D", int_scicos_draw3D},
-  {"scicos_lock_draw", int_lock_draw},
   {"switch_graphics",int_switch_graphics},
   {"new_graphics",int_new_graphics},
 #ifdef TEST_EVENT_BOX_THREAD
@@ -7465,6 +7463,8 @@ OpGrTab Graphics_func[]={
   {NAMES("xtape"),int_xtape},
   {NAMES("xtest_graphic"), int_xtest},
   {NAMES("xtitle"),int_xtitle},
+  {NAMES("scicos_draw3D"), int_scicos_draw3D},
+  {NAMES("scicos_lock_draw"), int_lock_draw},
   {(char *) 0,(char *) 0, NULL}
 };
 
