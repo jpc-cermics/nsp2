@@ -109,7 +109,7 @@ esac
 
 echo Cleaning files...
 find -type d -name autom4te.cache -print0 | xargs -0 rm -rf \;
-
+rm config/ltmain.sh 
 
 for coin in  configure.in
 do 
@@ -144,7 +144,7 @@ do
       fi
       # old versions of libtoolize do not copy libtool.m4 
       if test -f  config/libtool.m4 ; then
-          echo "OK for libtool.m4"
+          echo "using config/libtool.m4"
       else 
 	  echo "Putting libtool.m4 to config/"
 	  cp `aclocal --print-ac-dir`/libtool.m4  config/
