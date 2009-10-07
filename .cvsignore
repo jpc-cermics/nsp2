@@ -4,3 +4,4 @@ config.log
 config.status
 Makefile Makefile.incl Path.incl configure
 libtool
+aclocal.m4
