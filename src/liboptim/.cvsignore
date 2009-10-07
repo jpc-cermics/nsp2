@@ -1,3 +1,5 @@
 *.d
 .archive_target
 .nsp_history
+Makefile.mak
+
