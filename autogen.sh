@@ -142,6 +142,13 @@ do
 	  echo "Running libtoolize --force --copy"
 	  libtoolize --force --copy
       fi
+      # old versions of libtoolize do not copy libtool.m4 
+      if test -f  config/libtool.m4 ; then
+          echo "OK for libtool.m4"
+      else 
+	  echo "Putting libtool.m4 to config/"
+	  cp `aclocal --print-ac-dir`/libtool.m4  config/
+      fi 
       echo "Running aclocal $aclocalinclude ..."
       aclocal $aclocalinclude
       if grep "^A[CM]_CONFIG_HEADER" configure.in >/dev/null; then
