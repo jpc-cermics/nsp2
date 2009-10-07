@@ -104,6 +104,8 @@ int nsp_graphic_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
     return nsp_graphic_new_old(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 }
 
+
+#ifdef WITH_GTKGLEXT 
 int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 			double *viewport_pos,int *wpos)
 {
@@ -112,7 +114,9 @@ int nsp_graphic_new_gl(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdi
   else
     return nsp_graphic_new_gl_old(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 }
+#endif 
 
+#ifdef WITH_CAIRO
 int nsp_graphic_new_cairo(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,
 			double *viewport_pos,int *wpos)
 {
@@ -121,6 +125,7 @@ int nsp_graphic_new_cairo(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *w
   else
     return nsp_graphic_new_cairo_old(win,box,v2,wdim,wpdim,viewport_pos,wpos);
 }
+#endif 
 
 
 /*
