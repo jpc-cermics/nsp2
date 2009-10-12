@@ -552,7 +552,7 @@ extern void *  new_type_contour(type_mode mode);
 extern void *  new_type_curve(type_mode mode);
 extern void *  new_type_figure(type_mode mode);
 extern void *  new_type_gmatrix(type_mode mode);
-extern void *  new_type_graphic(type_mode mode);
+/* extern void *  new_type_graphic(type_mode mode); */
 extern void *  new_type_grarc(type_mode mode);
 extern void *  new_type_groot(type_mode mode);
 extern void *  new_type_grrect(type_mode mode);

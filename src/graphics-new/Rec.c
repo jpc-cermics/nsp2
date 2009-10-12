@@ -25,7 +25,7 @@
 #include <math.h>
 #include "nsp/math.h"
 #include "nsp/graphics-new/Graphics.h"
-#include "nsp/graphic.h" 
+#include "nsp/object.h"
 
 extern void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,
 					    double theta, double alpha,int *pt);
