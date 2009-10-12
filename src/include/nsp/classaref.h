@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspClassARef NspClassARef ;
-typedef struct _NspTypeNspClassARef NspTypeNspClassARef ;
+typedef struct _NspTypeClassARef NspTypeClassARef ;
 
 #line 22 "./classaref.h"
 
-struct _NspTypeNspClassARef {
+struct _NspTypeClassARef {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -41,17 +41,17 @@ struct _nsp_classaref {
 struct _NspClassARef {
   /*< private >*/
   NspObject father;
-  NspTypeNspClassARef*type;
+  NspTypeClassARef*type;
   /*< public >*/
   nsp_classaref *obj;
 };
 
 extern int nsp_type_classaref_id;
-extern NspTypeNspClassARef *nsp_type_classaref;
+extern NspTypeClassARef *nsp_type_classaref;
 
 /* type instances for object */
 
-NspTypeNspClassARef *new_type_classaref(type_mode mode);
+NspTypeClassARef *new_type_classaref(type_mode mode);
 
 /* instance for NspClassARef */
 
@@ -74,25 +74,25 @@ extern void nsp_classaref_destroy(NspClassARef *H);
 extern int nsp_classaref_info(NspClassARef *H, int indent,const char *name, int rec_level);
 extern int nsp_classaref_print(NspClassARef *H, int indent,const char *name, int rec_level);
 extern int nsp_classaref_latex(NspClassARef *H, int indent,const char *name, int rec_level);
-extern NspClassARef *nsp_classaref_object (NspObject *O); 
-extern int IsClassARefObj (Stack stack, int i); 
+extern NspClassARef *nsp_classaref_object (NspObject *O);
+extern int IsClassARefObj (Stack stack, int i);
 extern int IsClassARef(NspObject *O);
-extern NspClassARef *GetClassARefCopy (Stack stack, int i); 
-extern NspClassARef *GetClassARef (Stack stack, int i); 
+extern NspClassARef *GetClassARefCopy (Stack stack, int i);
+extern NspClassARef *GetClassARef (Stack stack, int i);
 extern int nsp_classaref_create_partial(NspClassARef *H);
 extern void nsp_classaref_destroy_partial(NspClassARef *H);
 extern NspClassARef * nsp_classaref_copy_partial(NspClassARef *H,NspClassARef *self);
 extern NspClassARef * nsp_classaref_full_copy_partial(NspClassARef *H,NspClassARef *self);
 extern NspClassARef * nsp_classaref_full_copy(NspClassARef *self);
 extern int nsp_classaref_check_values(NspClassARef *H);
-extern int int_classaref_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_classaref_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassARef *nsp_classaref_xdr_load_partial(XDR *xdrs, NspClassARef *M);
 extern int nsp_classaref_xdr_save(XDR  *xdrs, NspClassARef *M);
 
 #endif /* NSP_INC_NspClassARef */ 
 
 #ifdef NspClassARef_Private 
-static int init_classaref(NspClassARef *o,NspTypeNspClassARef *type);
+static int init_classaref(NspClassARef *o,NspTypeClassARef *type);
 static int nsp_classaref_size(NspClassARef *Mat, int flag);
 static char *nsp_classaref_type_as_string(void);
 static char *nsp_classaref_type_short_string(NspObject *v);

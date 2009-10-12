@@ -32,32 +32,32 @@
  */
 
 int nsp_type_polyline3d_id=0;
-NspTypeNspPolyline3d *nsp_type_polyline3d=NULL;
+NspTypePolyline3d *nsp_type_polyline3d=NULL;
 
 /*
  * Type object for NspPolyline3d 
- * all the instance of NspTypeNspPolyline3d share the same id. 
- * nsp_type_polyline3d: is an instance of NspTypeNspPolyline3d 
+ * all the instance of NspTypePolyline3d share the same id. 
+ * nsp_type_polyline3d: is an instance of NspTypePolyline3d 
  *    used for objects of NspPolyline3d type (i.e built with new_polyline3d) 
  * other instances are used for derived classes 
  */
-NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
+NspTypePolyline3d *new_type_polyline3d(type_mode mode)
 {
-  NspTypeNspPolyline3d *type= NULL;
+  NspTypePolyline3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_polyline3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_polyline3d;
     }
-  if ((type =  malloc(sizeof(NspTypeNspPolyline3d))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypePolyline3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = polyline3d_attrs ; 
+  type->attrs = polyline3d_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = polyline3d_get_methods; 
+  type->methods = polyline3d_get_methods;
   type->new = (new_func *) new_polyline3d;
 
   
@@ -66,16 +66,16 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
   
   /* object methods redefined for polyline3d */ 
 
-  top->pr = (print_func *) nsp_polyline3d_print;                  
+  top->pr = (print_func *) nsp_polyline3d_print;
   top->dealloc = (dealloc_func *) nsp_polyline3d_destroy;
-  top->copy  =  (copy_func *) nsp_polyline3d_copy;                 
-  top->size  = (size_func *) nsp_polyline3d_size;                
-  top->s_type =  (s_type_func *) nsp_polyline3d_type_as_string;  
+  top->copy  =  (copy_func *) nsp_polyline3d_copy;
+  top->size  = (size_func *) nsp_polyline3d_size;
+  top->s_type =  (s_type_func *) nsp_polyline3d_type_as_string;
   top->sh_type = (sh_type_func *) nsp_polyline3d_type_short_string;
-  top->info = (info_func *) nsp_polyline3d_info ;                  
+  top->info = (info_func *) nsp_polyline3d_info;
   /* top->is_true = (is_true_func  *) nsp_polyline3d_is_true; */
   /* top->loop =(loop_func *) nsp_polyline3d_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_polyline3d_object;
   top->eq  = (eq_func *) nsp_polyline3d_eq;
   top->neq  = (eq_func *) nsp_polyline3d_neq;
@@ -88,21 +88,21 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
       
   type->init = (init_func *) init_polyline3d;
 
-#line 73 "codegen/polyline3d.override"
+#line 43 "codegen/polyline3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_polyline3d;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_polyline3d ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_polyline3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_polyline3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_polyline3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline3d_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline3d;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline3d ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline3d  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline3d  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline3d  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyline3d */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_polyline3d_zmean;
-  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_polyline3d_n_faces;
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_polyline3d_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_polyline3d_n_faces;
 
 #line 108 "polyline3d.c"
   /* 
@@ -115,7 +115,7 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspPolyline3d called nsp_type_polyline3d
+       * an instance of NspTypePolyline3d called nsp_type_polyline3d
        */
       type->id =  nsp_type_polyline3d_id = nsp_new_type_id();
       nsp_type_polyline3d = type;
@@ -134,11 +134,11 @@ NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_polyline3d(NspPolyline3d *Obj,NspTypeNspPolyline3d *type)
+static int init_polyline3d(NspPolyline3d *Obj,NspTypePolyline3d *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -151,7 +151,7 @@ static int init_polyline3d(NspPolyline3d *Obj,NspTypeNspPolyline3d *type)
 
 NspPolyline3d *new_polyline3d() 
 {
-  NspPolyline3d *loc; 
+  NspPolyline3d *loc;
   /* type must exists */
   nsp_type_polyline3d = new_type_polyline3d(T_BASE);
   if ( (loc = malloc(sizeof(NspPolyline3d)))== NULLPOLYLINE3D) return loc;
@@ -226,7 +226,7 @@ int nsp_polyline3d_xdr_save(XDR *xdrs, NspPolyline3d *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_polyline3d)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_polyline3d)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcolor)) == FAIL) return FAIL;

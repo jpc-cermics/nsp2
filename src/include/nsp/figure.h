@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspFigure NspFigure ;
-typedef struct _NspTypeNspFigure NspTypeNspFigure ;
+typedef struct _NspTypeFigure NspTypeFigure ;
 
 #line 22 "./figure.h"
 
-struct _NspTypeNspFigure {
+struct _NspTypeFigure {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -46,17 +46,17 @@ struct _nsp_figure {
 struct _NspFigure {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspFigure*type;
+  NspTypeFigure*type;
   /*< public >*/
   nsp_figure *obj;
 };
 
 extern int nsp_type_figure_id;
-extern NspTypeNspFigure *nsp_type_figure;
+extern NspTypeFigure *nsp_type_figure;
 
 /* type instances for graphic */
 
-NspTypeNspFigure *new_type_figure(type_mode mode);
+NspTypeFigure *new_type_figure(type_mode mode);
 
 /* instance for NspFigure */
 
@@ -79,18 +79,18 @@ extern void nsp_figure_destroy(NspFigure *H);
 extern int nsp_figure_info(NspFigure *H, int indent,const char *name, int rec_level);
 extern int nsp_figure_print(NspFigure *H, int indent,const char *name, int rec_level);
 extern int nsp_figure_latex(NspFigure *H, int indent,const char *name, int rec_level);
-extern NspFigure *nsp_figure_object (NspObject *O); 
-extern int IsFigureObj (Stack stack, int i); 
+extern NspFigure *nsp_figure_object (NspObject *O);
+extern int IsFigureObj (Stack stack, int i);
 extern int IsFigure(NspObject *O);
-extern NspFigure *GetFigureCopy (Stack stack, int i); 
-extern NspFigure *GetFigure (Stack stack, int i); 
+extern NspFigure *GetFigureCopy (Stack stack, int i);
+extern NspFigure *GetFigure (Stack stack, int i);
 extern int nsp_figure_create_partial(NspFigure *H);
 extern void nsp_figure_destroy_partial(NspFigure *H);
 extern NspFigure * nsp_figure_copy_partial(NspFigure *H,NspFigure *self);
 extern NspFigure * nsp_figure_full_copy_partial(NspFigure *H,NspFigure *self);
 extern NspFigure * nsp_figure_full_copy(NspFigure *self);
 extern int nsp_figure_check_values(NspFigure *H);
-extern int int_figure_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_figure_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFigure *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M);
 extern int nsp_figure_xdr_save(XDR  *xdrs, NspFigure *M);
 
@@ -119,7 +119,7 @@ extern void nsp_figure_force_redraw(nsp_figure *F);
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
-static int init_figure(NspFigure *o,NspTypeNspFigure *type);
+static int init_figure(NspFigure *o,NspTypeFigure *type);
 static int nsp_figure_size(NspFigure *Mat, int flag);
 static char *nsp_figure_type_as_string(void);
 static char *nsp_figure_type_short_string(NspObject *v);

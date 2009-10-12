@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspBox3d NspBox3d ;
-typedef struct _NspTypeNspBox3d NspTypeNspBox3d ;
+typedef struct _NspTypeBox3d NspTypeBox3d ;
 
 #line 22 "./box3d.h"
 
-struct _NspTypeNspBox3d {
+struct _NspTypeBox3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -42,17 +42,17 @@ struct _nsp_box3d {
 struct _NspBox3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspBox3d*type;
+  NspTypeBox3d*type;
   /*< public >*/
   nsp_box3d *obj;
 };
 
 extern int nsp_type_box3d_id;
-extern NspTypeNspBox3d *nsp_type_box3d;
+extern NspTypeBox3d *nsp_type_box3d;
 
 /* type instances for graphic */
 
-NspTypeNspBox3d *new_type_box3d(type_mode mode);
+NspTypeBox3d *new_type_box3d(type_mode mode);
 
 /* instance for NspBox3d */
 
@@ -75,18 +75,18 @@ extern void nsp_box3d_destroy(NspBox3d *H);
 extern int nsp_box3d_info(NspBox3d *H, int indent,const char *name, int rec_level);
 extern int nsp_box3d_print(NspBox3d *H, int indent,const char *name, int rec_level);
 extern int nsp_box3d_latex(NspBox3d *H, int indent,const char *name, int rec_level);
-extern NspBox3d *nsp_box3d_object (NspObject *O); 
-extern int IsBox3dObj (Stack stack, int i); 
+extern NspBox3d *nsp_box3d_object (NspObject *O);
+extern int IsBox3dObj (Stack stack, int i);
 extern int IsBox3d(NspObject *O);
-extern NspBox3d *GetBox3dCopy (Stack stack, int i); 
-extern NspBox3d *GetBox3d (Stack stack, int i); 
+extern NspBox3d *GetBox3dCopy (Stack stack, int i);
+extern NspBox3d *GetBox3d (Stack stack, int i);
 extern int nsp_box3d_create_partial(NspBox3d *H);
 extern void nsp_box3d_destroy_partial(NspBox3d *H);
 extern NspBox3d * nsp_box3d_copy_partial(NspBox3d *H,NspBox3d *self);
 extern NspBox3d * nsp_box3d_full_copy_partial(NspBox3d *H,NspBox3d *self);
 extern NspBox3d * nsp_box3d_full_copy(NspBox3d *self);
 extern int nsp_box3d_check_values(NspBox3d *H);
-extern int int_box3d_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_box3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspBox3d *nsp_box3d_xdr_load_partial(XDR *xdrs, NspBox3d *M);
 extern int nsp_box3d_xdr_save(XDR  *xdrs, NspBox3d *M);
 
@@ -98,7 +98,7 @@ extern int nsp_box3d_xdr_save(XDR  *xdrs, NspBox3d *M);
 #endif /* NSP_INC_NspBox3d */ 
 
 #ifdef NspBox3d_Private 
-static int init_box3d(NspBox3d *o,NspTypeNspBox3d *type);
+static int init_box3d(NspBox3d *o,NspTypeBox3d *type);
 static int nsp_box3d_size(NspBox3d *Mat, int flag);
 static char *nsp_box3d_type_as_string(void);
 static char *nsp_box3d_type_short_string(NspObject *v);

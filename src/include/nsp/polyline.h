@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspPolyline NspPolyline ;
-typedef struct _NspTypeNspPolyline NspTypeNspPolyline ;
+typedef struct _NspTypePolyline NspTypePolyline ;
 
 #line 22 "./polyline.h"
 
-struct _NspTypeNspPolyline {
+struct _NspTypePolyline {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -44,17 +44,17 @@ struct _nsp_polyline {
 struct _NspPolyline {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspPolyline*type;
+  NspTypePolyline*type;
   /*< public >*/
   nsp_polyline *obj;
 };
 
 extern int nsp_type_polyline_id;
-extern NspTypeNspPolyline *nsp_type_polyline;
+extern NspTypePolyline *nsp_type_polyline;
 
 /* type instances for graphic */
 
-NspTypeNspPolyline *new_type_polyline(type_mode mode);
+NspTypePolyline *new_type_polyline(type_mode mode);
 
 /* instance for NspPolyline */
 
@@ -77,18 +77,18 @@ extern void nsp_polyline_destroy(NspPolyline *H);
 extern int nsp_polyline_info(NspPolyline *H, int indent,const char *name, int rec_level);
 extern int nsp_polyline_print(NspPolyline *H, int indent,const char *name, int rec_level);
 extern int nsp_polyline_latex(NspPolyline *H, int indent,const char *name, int rec_level);
-extern NspPolyline *nsp_polyline_object (NspObject *O); 
-extern int IsPolylineObj (Stack stack, int i); 
+extern NspPolyline *nsp_polyline_object (NspObject *O);
+extern int IsPolylineObj (Stack stack, int i);
 extern int IsPolyline(NspObject *O);
-extern NspPolyline *GetPolylineCopy (Stack stack, int i); 
-extern NspPolyline *GetPolyline (Stack stack, int i); 
+extern NspPolyline *GetPolylineCopy (Stack stack, int i);
+extern NspPolyline *GetPolyline (Stack stack, int i);
 extern int nsp_polyline_create_partial(NspPolyline *H);
 extern void nsp_polyline_destroy_partial(NspPolyline *H);
 extern NspPolyline * nsp_polyline_copy_partial(NspPolyline *H,NspPolyline *self);
 extern NspPolyline * nsp_polyline_full_copy_partial(NspPolyline *H,NspPolyline *self);
 extern NspPolyline * nsp_polyline_full_copy(NspPolyline *self);
 extern int nsp_polyline_check_values(NspPolyline *H);
-extern int int_polyline_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_polyline_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M);
 extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 
@@ -100,7 +100,7 @@ extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 #endif /* NSP_INC_NspPolyline */ 
 
 #ifdef NspPolyline_Private 
-static int init_polyline(NspPolyline *o,NspTypeNspPolyline *type);
+static int init_polyline(NspPolyline *o,NspTypePolyline *type);
 static int nsp_polyline_size(NspPolyline *Mat, int flag);
 static char *nsp_polyline_type_as_string(void);
 static char *nsp_polyline_type_short_string(NspObject *v);

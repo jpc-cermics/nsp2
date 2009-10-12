@@ -29,15 +29,15 @@ override-type Polyline
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_polyline;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_polyline ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyline */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

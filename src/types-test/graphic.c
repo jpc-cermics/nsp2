@@ -28,32 +28,32 @@
  */
 
 int nsp_type_graphic_id=0;
-NspTypeNspGraphic *nsp_type_graphic=NULL;
+NspTypeGraphic *nsp_type_graphic=NULL;
 
 /*
  * Type object for NspGraphic 
- * all the instance of NspTypeNspGraphic share the same id. 
- * nsp_type_graphic: is an instance of NspTypeNspGraphic 
+ * all the instance of NspTypeGraphic share the same id. 
+ * nsp_type_graphic: is an instance of NspTypeGraphic 
  *    used for objects of NspGraphic type (i.e built with new_graphic) 
  * other instances are used for derived classes 
  */
-NspTypeNspGraphic *new_type_graphic(type_mode mode)
+NspTypeGraphic *new_type_graphic(type_mode mode)
 {
-  NspTypeNspGraphic *type= NULL;
+  NspTypeGraphic *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_graphic != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_graphic;
     }
-  if ((type =  malloc(sizeof(NspTypeNspGraphic))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGraphic))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = graphic_attrs ; 
+  type->attrs = graphic_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = graphic_get_methods; 
+  type->methods = graphic_get_methods;
   type->new = (new_func *) new_graphic;
 
   
@@ -62,16 +62,16 @@ NspTypeNspGraphic *new_type_graphic(type_mode mode)
   
   /* object methods redefined for graphic */ 
 
-  top->pr = (print_func *) nsp_graphic_print;                  
+  top->pr = (print_func *) nsp_graphic_print;
   top->dealloc = (dealloc_func *) nsp_graphic_destroy;
-  top->copy  =  (copy_func *) nsp_graphic_copy;                 
-  top->size  = (size_func *) nsp_graphic_size;                
-  top->s_type =  (s_type_func *) nsp_graphic_type_as_string;  
+  top->copy  =  (copy_func *) nsp_graphic_copy;
+  top->size  = (size_func *) nsp_graphic_size;
+  top->s_type =  (s_type_func *) nsp_graphic_type_as_string;
   top->sh_type = (sh_type_func *) nsp_graphic_type_short_string;
-  top->info = (info_func *) nsp_graphic_info ;                  
+  top->info = (info_func *) nsp_graphic_info;
   /* top->is_true = (is_true_func  *) nsp_graphic_is_true; */
   /* top->loop =(loop_func *) nsp_graphic_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_graphic_object;
   top->eq  = (eq_func *) nsp_graphic_eq;
   top->neq  = (eq_func *) nsp_graphic_neq;
@@ -113,7 +113,7 @@ NspTypeNspGraphic *new_type_graphic(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspGraphic called nsp_type_graphic
+       * an instance of NspTypeGraphic called nsp_type_graphic
        */
       type->id =  nsp_type_graphic_id = nsp_new_type_id();
       nsp_type_graphic = type;
@@ -132,11 +132,11 @@ NspTypeNspGraphic *new_type_graphic(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_graphic(NspGraphic *Obj,NspTypeNspGraphic *type)
+static int init_graphic(NspGraphic *Obj,NspTypeGraphic *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -149,7 +149,7 @@ static int init_graphic(NspGraphic *Obj,NspTypeNspGraphic *type)
 
 NspGraphic *new_graphic() 
 {
-  NspGraphic *loc; 
+  NspGraphic *loc;
   /* type must exists */
   nsp_type_graphic = new_type_graphic(T_BASE);
   if ( (loc = malloc(sizeof(NspGraphic)))== NULLGRAPHIC) return loc;
@@ -219,7 +219,7 @@ int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_graphic)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_graphic)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->hidden) == FAIL) return FAIL;
   return OK;

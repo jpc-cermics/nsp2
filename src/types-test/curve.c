@@ -28,32 +28,32 @@
  */
 
 int nsp_type_curve_id=0;
-NspTypeNspCurve *nsp_type_curve=NULL;
+NspTypeCurve *nsp_type_curve=NULL;
 
 /*
  * Type object for NspCurve 
- * all the instance of NspTypeNspCurve share the same id. 
- * nsp_type_curve: is an instance of NspTypeNspCurve 
+ * all the instance of NspTypeCurve share the same id. 
+ * nsp_type_curve: is an instance of NspTypeCurve 
  *    used for objects of NspCurve type (i.e built with new_curve) 
  * other instances are used for derived classes 
  */
-NspTypeNspCurve *new_type_curve(type_mode mode)
+NspTypeCurve *new_type_curve(type_mode mode)
 {
-  NspTypeNspCurve *type= NULL;
+  NspTypeCurve *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_curve != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_curve;
     }
-  if ((type =  malloc(sizeof(NspTypeNspCurve))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeCurve))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = curve_attrs ; 
+  type->attrs = curve_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = curve_get_methods; 
+  type->methods = curve_get_methods;
   type->new = (new_func *) new_curve;
 
   
@@ -62,16 +62,16 @@ NspTypeNspCurve *new_type_curve(type_mode mode)
   
   /* object methods redefined for curve */ 
 
-  top->pr = (print_func *) nsp_curve_print;                  
+  top->pr = (print_func *) nsp_curve_print;
   top->dealloc = (dealloc_func *) nsp_curve_destroy;
-  top->copy  =  (copy_func *) nsp_curve_copy;                 
-  top->size  = (size_func *) nsp_curve_size;                
-  top->s_type =  (s_type_func *) nsp_curve_type_as_string;  
+  top->copy  =  (copy_func *) nsp_curve_copy;
+  top->size  = (size_func *) nsp_curve_size;
+  top->s_type =  (s_type_func *) nsp_curve_type_as_string;
   top->sh_type = (sh_type_func *) nsp_curve_type_short_string;
-  top->info = (info_func *) nsp_curve_info ;                  
+  top->info = (info_func *) nsp_curve_info;
   /* top->is_true = (is_true_func  *) nsp_curve_is_true; */
   /* top->loop =(loop_func *) nsp_curve_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_curve_object;
   top->eq  = (eq_func *) nsp_curve_eq;
   top->neq  = (eq_func *) nsp_curve_neq;
@@ -86,14 +86,14 @@ NspTypeNspCurve *new_type_curve(type_mode mode)
 
 #line 30 "codegen/curve.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_curve;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_curve ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_curve  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_curve;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_curve ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_curve  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_curve  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Curve */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 99 "curve.c"
   /* 
@@ -106,7 +106,7 @@ NspTypeNspCurve *new_type_curve(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspCurve called nsp_type_curve
+       * an instance of NspTypeCurve called nsp_type_curve
        */
       type->id =  nsp_type_curve_id = nsp_new_type_id();
       nsp_type_curve = type;
@@ -125,11 +125,11 @@ NspTypeNspCurve *new_type_curve(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_curve(NspCurve *Obj,NspTypeNspCurve *type)
+static int init_curve(NspCurve *Obj,NspTypeCurve *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -142,7 +142,7 @@ static int init_curve(NspCurve *Obj,NspTypeNspCurve *type)
 
 NspCurve *new_curve() 
 {
-  NspCurve *loc; 
+  NspCurve *loc;
   /* type must exists */
   nsp_type_curve = new_type_curve(T_BASE);
   if ( (loc = malloc(sizeof(NspCurve)))== NULLCURVE) return loc;
@@ -217,7 +217,7 @@ int nsp_curve_xdr_save(XDR *xdrs, NspCurve *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_curve)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_curve)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->width) == FAIL) return FAIL;

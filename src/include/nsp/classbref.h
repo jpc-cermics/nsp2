@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspClassBRef NspClassBRef ;
-typedef struct _NspTypeNspClassBRef NspTypeNspClassBRef ;
+typedef struct _NspTypeClassBRef NspTypeClassBRef ;
 
 #line 22 "./classbref.h"
 
-struct _NspTypeNspClassBRef {
+struct _NspTypeClassBRef {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -39,17 +39,17 @@ struct _nsp_classbref {
 struct _NspClassBRef {
   /*< private >*/
   NspClassARef father;
-  NspTypeNspClassBRef*type;
+  NspTypeClassBRef*type;
   /*< public >*/
   nsp_classbref *obj;
 };
 
 extern int nsp_type_classbref_id;
-extern NspTypeNspClassBRef *nsp_type_classbref;
+extern NspTypeClassBRef *nsp_type_classbref;
 
 /* type instances for classaref */
 
-NspTypeNspClassBRef *new_type_classbref(type_mode mode);
+NspTypeClassBRef *new_type_classbref(type_mode mode);
 
 /* instance for NspClassBRef */
 
@@ -72,25 +72,25 @@ extern void nsp_classbref_destroy(NspClassBRef *H);
 extern int nsp_classbref_info(NspClassBRef *H, int indent,const char *name, int rec_level);
 extern int nsp_classbref_print(NspClassBRef *H, int indent,const char *name, int rec_level);
 extern int nsp_classbref_latex(NspClassBRef *H, int indent,const char *name, int rec_level);
-extern NspClassBRef *nsp_classbref_object (NspObject *O); 
-extern int IsClassBRefObj (Stack stack, int i); 
+extern NspClassBRef *nsp_classbref_object (NspObject *O);
+extern int IsClassBRefObj (Stack stack, int i);
 extern int IsClassBRef(NspObject *O);
-extern NspClassBRef *GetClassBRefCopy (Stack stack, int i); 
-extern NspClassBRef *GetClassBRef (Stack stack, int i); 
+extern NspClassBRef *GetClassBRefCopy (Stack stack, int i);
+extern NspClassBRef *GetClassBRef (Stack stack, int i);
 extern int nsp_classbref_create_partial(NspClassBRef *H);
 extern void nsp_classbref_destroy_partial(NspClassBRef *H);
 extern NspClassBRef * nsp_classbref_copy_partial(NspClassBRef *H,NspClassBRef *self);
 extern NspClassBRef * nsp_classbref_full_copy_partial(NspClassBRef *H,NspClassBRef *self);
 extern NspClassBRef * nsp_classbref_full_copy(NspClassBRef *self);
 extern int nsp_classbref_check_values(NspClassBRef *H);
-extern int int_classbref_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_classbref_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassBRef *nsp_classbref_xdr_load_partial(XDR *xdrs, NspClassBRef *M);
 extern int nsp_classbref_xdr_save(XDR  *xdrs, NspClassBRef *M);
 
 #endif /* NSP_INC_NspClassBRef */ 
 
 #ifdef NspClassBRef_Private 
-static int init_classbref(NspClassBRef *o,NspTypeNspClassBRef *type);
+static int init_classbref(NspClassBRef *o,NspTypeClassBRef *type);
 static int nsp_classbref_size(NspClassBRef *Mat, int flag);
 static char *nsp_classbref_type_as_string(void);
 static char *nsp_classbref_type_short_string(NspObject *v);

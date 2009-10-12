@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspQcurve NspQcurve ;
-typedef struct _NspTypeNspQcurve NspTypeNspQcurve ;
+typedef struct _NspTypeQcurve NspTypeQcurve ;
 
 #line 22 "./qcurve.h"
 
-struct _NspTypeNspQcurve {
+struct _NspTypeQcurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -45,17 +45,17 @@ struct _nsp_qcurve {
 struct _NspQcurve {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspQcurve*type;
+  NspTypeQcurve*type;
   /*< public >*/
   nsp_qcurve *obj;
 };
 
 extern int nsp_type_qcurve_id;
-extern NspTypeNspQcurve *nsp_type_qcurve;
+extern NspTypeQcurve *nsp_type_qcurve;
 
 /* type instances for graphic */
 
-NspTypeNspQcurve *new_type_qcurve(type_mode mode);
+NspTypeQcurve *new_type_qcurve(type_mode mode);
 
 /* instance for NspQcurve */
 
@@ -78,18 +78,18 @@ extern void nsp_qcurve_destroy(NspQcurve *H);
 extern int nsp_qcurve_info(NspQcurve *H, int indent,const char *name, int rec_level);
 extern int nsp_qcurve_print(NspQcurve *H, int indent,const char *name, int rec_level);
 extern int nsp_qcurve_latex(NspQcurve *H, int indent,const char *name, int rec_level);
-extern NspQcurve *nsp_qcurve_object (NspObject *O); 
-extern int IsQcurveObj (Stack stack, int i); 
+extern NspQcurve *nsp_qcurve_object (NspObject *O);
+extern int IsQcurveObj (Stack stack, int i);
 extern int IsQcurve(NspObject *O);
-extern NspQcurve *GetQcurveCopy (Stack stack, int i); 
-extern NspQcurve *GetQcurve (Stack stack, int i); 
+extern NspQcurve *GetQcurveCopy (Stack stack, int i);
+extern NspQcurve *GetQcurve (Stack stack, int i);
 extern int nsp_qcurve_create_partial(NspQcurve *H);
 extern void nsp_qcurve_destroy_partial(NspQcurve *H);
 extern NspQcurve * nsp_qcurve_copy_partial(NspQcurve *H,NspQcurve *self);
 extern NspQcurve * nsp_qcurve_full_copy_partial(NspQcurve *H,NspQcurve *self);
 extern NspQcurve * nsp_qcurve_full_copy(NspQcurve *self);
 extern int nsp_qcurve_check_values(NspQcurve *H);
-extern int int_qcurve_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_qcurve_create(Stack stack, int rhs, int opt, int lhs);
 extern NspQcurve *nsp_qcurve_xdr_load_partial(XDR *xdrs, NspQcurve *M);
 extern int nsp_qcurve_xdr_save(XDR  *xdrs, NspQcurve *M);
 
@@ -106,7 +106,7 @@ extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 #endif /* NSP_INC_NspQcurve */ 
 
 #ifdef NspQcurve_Private 
-static int init_qcurve(NspQcurve *o,NspTypeNspQcurve *type);
+static int init_qcurve(NspQcurve *o,NspTypeQcurve *type);
 static int nsp_qcurve_size(NspQcurve *Mat, int flag);
 static char *nsp_qcurve_type_as_string(void);
 static char *nsp_qcurve_type_short_string(NspObject *v);

@@ -27,32 +27,32 @@
  */
 
 int nsp_type_grrect_id=0;
-NspTypeNspGrRect *nsp_type_grrect=NULL;
+NspTypeGrRect *nsp_type_grrect=NULL;
 
 /*
  * Type object for NspGrRect 
- * all the instance of NspTypeNspGrRect share the same id. 
- * nsp_type_grrect: is an instance of NspTypeNspGrRect 
+ * all the instance of NspTypeGrRect share the same id. 
+ * nsp_type_grrect: is an instance of NspTypeGrRect 
  *    used for objects of NspGrRect type (i.e built with new_grrect) 
  * other instances are used for derived classes 
  */
-NspTypeNspGrRect *new_type_grrect(type_mode mode)
+NspTypeGrRect *new_type_grrect(type_mode mode)
 {
-  NspTypeNspGrRect *type= NULL;
+  NspTypeGrRect *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_grrect != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_grrect;
     }
-  if ((type =  malloc(sizeof(NspTypeNspGrRect))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGrRect))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = grrect_attrs ; 
+  type->attrs = grrect_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = grrect_get_methods; 
+  type->methods = grrect_get_methods;
   type->new = (new_func *) new_grrect;
 
   
@@ -61,16 +61,16 @@ NspTypeNspGrRect *new_type_grrect(type_mode mode)
   
   /* object methods redefined for grrect */ 
 
-  top->pr = (print_func *) nsp_grrect_print;                  
+  top->pr = (print_func *) nsp_grrect_print;
   top->dealloc = (dealloc_func *) nsp_grrect_destroy;
-  top->copy  =  (copy_func *) nsp_grrect_copy;                 
-  top->size  = (size_func *) nsp_grrect_size;                
-  top->s_type =  (s_type_func *) nsp_grrect_type_as_string;  
+  top->copy  =  (copy_func *) nsp_grrect_copy;
+  top->size  = (size_func *) nsp_grrect_size;
+  top->s_type =  (s_type_func *) nsp_grrect_type_as_string;
   top->sh_type = (sh_type_func *) nsp_grrect_type_short_string;
-  top->info = (info_func *) nsp_grrect_info ;                  
+  top->info = (info_func *) nsp_grrect_info;
   /* top->is_true = (is_true_func  *) nsp_grrect_is_true; */
   /* top->loop =(loop_func *) nsp_grrect_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_grrect_object;
   top->eq  = (eq_func *) nsp_grrect_eq;
   top->neq  = (eq_func *) nsp_grrect_neq;
@@ -87,15 +87,15 @@ NspTypeNspGrRect *new_type_grrect(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grrect;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grrect ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grrect;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grrect ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
   /* next method are defined in NspGraphic and need not be changed here for GrRect */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 101 "grrect.c"
   /* 
@@ -108,7 +108,7 @@ NspTypeNspGrRect *new_type_grrect(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspGrRect called nsp_type_grrect
+       * an instance of NspTypeGrRect called nsp_type_grrect
        */
       type->id =  nsp_type_grrect_id = nsp_new_type_id();
       nsp_type_grrect = type;
@@ -127,11 +127,11 @@ NspTypeNspGrRect *new_type_grrect(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_grrect(NspGrRect *Obj,NspTypeNspGrRect *type)
+static int init_grrect(NspGrRect *Obj,NspTypeGrRect *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -144,7 +144,7 @@ static int init_grrect(NspGrRect *Obj,NspTypeNspGrRect *type)
 
 NspGrRect *new_grrect() 
 {
-  NspGrRect *loc; 
+  NspGrRect *loc;
   /* type must exists */
   nsp_type_grrect = new_type_grrect(T_BASE);
   if ( (loc = malloc(sizeof(NspGrRect)))== NULLGRRECT) return loc;
@@ -219,7 +219,7 @@ int nsp_grrect_xdr_save(XDR *xdrs, NspGrRect *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grrect)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grrect)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->x) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->y) == FAIL) return FAIL;

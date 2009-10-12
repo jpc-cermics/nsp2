@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspGRoot NspGRoot ;
-typedef struct _NspTypeNspGRoot NspTypeNspGRoot ;
+typedef struct _NspTypeGRoot NspTypeGRoot ;
 
 #line 22 "./groot.h"
 
-struct _NspTypeNspGRoot {
+struct _NspTypeGRoot {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -37,17 +37,17 @@ struct _nsp_groot {
 struct _NspGRoot {
   /*< private >*/
   NspObject father;
-  NspTypeNspGRoot*type;
+  NspTypeGRoot*type;
   /*< public >*/
   nsp_groot *obj;
 };
 
 extern int nsp_type_groot_id;
-extern NspTypeNspGRoot *nsp_type_groot;
+extern NspTypeGRoot *nsp_type_groot;
 
 /* type instances for object */
 
-NspTypeNspGRoot *new_type_groot(type_mode mode);
+NspTypeGRoot *new_type_groot(type_mode mode);
 
 /* instance for NspGRoot */
 
@@ -70,25 +70,25 @@ extern void nsp_groot_destroy(NspGRoot *H);
 extern int nsp_groot_info(NspGRoot *H, int indent,const char *name, int rec_level);
 extern int nsp_groot_print(NspGRoot *H, int indent,const char *name, int rec_level);
 extern int nsp_groot_latex(NspGRoot *H, int indent,const char *name, int rec_level);
-extern NspGRoot *nsp_groot_object (NspObject *O); 
-extern int IsGRootObj (Stack stack, int i); 
+extern NspGRoot *nsp_groot_object (NspObject *O);
+extern int IsGRootObj (Stack stack, int i);
 extern int IsGRoot(NspObject *O);
-extern NspGRoot *GetGRootCopy (Stack stack, int i); 
-extern NspGRoot *GetGRoot (Stack stack, int i); 
+extern NspGRoot *GetGRootCopy (Stack stack, int i);
+extern NspGRoot *GetGRoot (Stack stack, int i);
 extern int nsp_groot_create_partial(NspGRoot *H);
 extern void nsp_groot_destroy_partial(NspGRoot *H);
 extern NspGRoot * nsp_groot_copy_partial(NspGRoot *H,NspGRoot *self);
 extern NspGRoot * nsp_groot_full_copy_partial(NspGRoot *H,NspGRoot *self);
 extern NspGRoot * nsp_groot_full_copy(NspGRoot *self);
 extern int nsp_groot_check_values(NspGRoot *H);
-extern int int_groot_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_groot_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGRoot *nsp_groot_xdr_load_partial(XDR *xdrs, NspGRoot *M);
 extern int nsp_groot_xdr_save(XDR  *xdrs, NspGRoot *M);
 
 #endif /* NSP_INC_NspGRoot */ 
 
 #ifdef NspGRoot_Private 
-static int init_groot(NspGRoot *o,NspTypeNspGRoot *type);
+static int init_groot(NspGRoot *o,NspTypeGRoot *type);
 static int nsp_groot_size(NspGRoot *Mat, int flag);
 static char *nsp_groot_type_as_string(void);
 static char *nsp_groot_type_short_string(NspObject *v);

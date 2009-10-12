@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspPolyhedron NspPolyhedron ;
-typedef struct _NspTypeNspPolyhedron NspTypeNspPolyhedron ;
+typedef struct _NspTypePolyhedron NspTypePolyhedron ;
 
 #line 22 "./polyhedron.h"
 
-struct _NspTypeNspPolyhedron {
+struct _NspTypePolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -43,17 +43,17 @@ struct _nsp_polyhedron {
 struct _NspPolyhedron {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspPolyhedron*type;
+  NspTypePolyhedron*type;
   /*< public >*/
   nsp_polyhedron *obj;
 };
 
 extern int nsp_type_polyhedron_id;
-extern NspTypeNspPolyhedron *nsp_type_polyhedron;
+extern NspTypePolyhedron *nsp_type_polyhedron;
 
 /* type instances for graphic */
 
-NspTypeNspPolyhedron *new_type_polyhedron(type_mode mode);
+NspTypePolyhedron *new_type_polyhedron(type_mode mode);
 
 /* instance for NspPolyhedron */
 
@@ -76,18 +76,18 @@ extern void nsp_polyhedron_destroy(NspPolyhedron *H);
 extern int nsp_polyhedron_info(NspPolyhedron *H, int indent,const char *name, int rec_level);
 extern int nsp_polyhedron_print(NspPolyhedron *H, int indent,const char *name, int rec_level);
 extern int nsp_polyhedron_latex(NspPolyhedron *H, int indent,const char *name, int rec_level);
-extern NspPolyhedron *nsp_polyhedron_object (NspObject *O); 
-extern int IsPolyhedronObj (Stack stack, int i); 
+extern NspPolyhedron *nsp_polyhedron_object (NspObject *O);
+extern int IsPolyhedronObj (Stack stack, int i);
 extern int IsPolyhedron(NspObject *O);
-extern NspPolyhedron *GetPolyhedronCopy (Stack stack, int i); 
-extern NspPolyhedron *GetPolyhedron (Stack stack, int i); 
+extern NspPolyhedron *GetPolyhedronCopy (Stack stack, int i);
+extern NspPolyhedron *GetPolyhedron (Stack stack, int i);
 extern int nsp_polyhedron_create_partial(NspPolyhedron *H);
 extern void nsp_polyhedron_destroy_partial(NspPolyhedron *H);
 extern NspPolyhedron * nsp_polyhedron_copy_partial(NspPolyhedron *H,NspPolyhedron *self);
 extern NspPolyhedron * nsp_polyhedron_full_copy_partial(NspPolyhedron *H,NspPolyhedron *self);
 extern NspPolyhedron * nsp_polyhedron_full_copy(NspPolyhedron *self);
 extern int nsp_polyhedron_check_values(NspPolyhedron *H);
-extern int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyhedron *nsp_polyhedron_xdr_load_partial(XDR *xdrs, NspPolyhedron *M);
 extern int nsp_polyhedron_xdr_save(XDR  *xdrs, NspPolyhedron *M);
 
@@ -99,7 +99,7 @@ extern int nsp_polyhedron_xdr_save(XDR  *xdrs, NspPolyhedron *M);
 #endif /* NSP_INC_NspPolyhedron */ 
 
 #ifdef NspPolyhedron_Private 
-static int init_polyhedron(NspPolyhedron *o,NspTypeNspPolyhedron *type);
+static int init_polyhedron(NspPolyhedron *o,NspTypePolyhedron *type);
 static int nsp_polyhedron_size(NspPolyhedron *Mat, int flag);
 static char *nsp_polyhedron_type_as_string(void);
 static char *nsp_polyhedron_type_short_string(NspObject *v);

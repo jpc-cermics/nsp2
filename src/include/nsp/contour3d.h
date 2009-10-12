@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspContour3d NspContour3d ;
-typedef struct _NspTypeNspContour3d NspTypeNspContour3d ;
+typedef struct _NspTypeContour3d NspTypeContour3d ;
 
 #line 22 "./contour3d.h"
 
-struct _NspTypeNspContour3d {
+struct _NspTypeContour3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -42,17 +42,17 @@ struct _nsp_contour3d {
 struct _NspContour3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspContour3d*type;
+  NspTypeContour3d*type;
   /*< public >*/
   nsp_contour3d *obj;
 };
 
 extern int nsp_type_contour3d_id;
-extern NspTypeNspContour3d *nsp_type_contour3d;
+extern NspTypeContour3d *nsp_type_contour3d;
 
 /* type instances for graphic */
 
-NspTypeNspContour3d *new_type_contour3d(type_mode mode);
+NspTypeContour3d *new_type_contour3d(type_mode mode);
 
 /* instance for NspContour3d */
 
@@ -75,18 +75,18 @@ extern void nsp_contour3d_destroy(NspContour3d *H);
 extern int nsp_contour3d_info(NspContour3d *H, int indent,const char *name, int rec_level);
 extern int nsp_contour3d_print(NspContour3d *H, int indent,const char *name, int rec_level);
 extern int nsp_contour3d_latex(NspContour3d *H, int indent,const char *name, int rec_level);
-extern NspContour3d *nsp_contour3d_object (NspObject *O); 
-extern int IsContour3dObj (Stack stack, int i); 
+extern NspContour3d *nsp_contour3d_object (NspObject *O);
+extern int IsContour3dObj (Stack stack, int i);
 extern int IsContour3d(NspObject *O);
-extern NspContour3d *GetContour3dCopy (Stack stack, int i); 
-extern NspContour3d *GetContour3d (Stack stack, int i); 
+extern NspContour3d *GetContour3dCopy (Stack stack, int i);
+extern NspContour3d *GetContour3d (Stack stack, int i);
 extern int nsp_contour3d_create_partial(NspContour3d *H);
 extern void nsp_contour3d_destroy_partial(NspContour3d *H);
 extern NspContour3d * nsp_contour3d_copy_partial(NspContour3d *H,NspContour3d *self);
 extern NspContour3d * nsp_contour3d_full_copy_partial(NspContour3d *H,NspContour3d *self);
 extern NspContour3d * nsp_contour3d_full_copy(NspContour3d *self);
 extern int nsp_contour3d_check_values(NspContour3d *H);
-extern int int_contour3d_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_contour3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspContour3d *nsp_contour3d_xdr_load_partial(XDR *xdrs, NspContour3d *M);
 extern int nsp_contour3d_xdr_save(XDR  *xdrs, NspContour3d *M);
 
@@ -98,7 +98,7 @@ extern int nsp_contour3d_xdr_save(XDR  *xdrs, NspContour3d *M);
 #endif /* NSP_INC_NspContour3d */ 
 
 #ifdef NspContour3d_Private 
-static int init_contour3d(NspContour3d *o,NspTypeNspContour3d *type);
+static int init_contour3d(NspContour3d *o,NspTypeContour3d *type);
 static int nsp_contour3d_size(NspContour3d *Mat, int flag);
 static char *nsp_contour3d_type_as_string(void);
 static char *nsp_contour3d_type_short_string(NspObject *v);

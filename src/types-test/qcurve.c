@@ -29,32 +29,32 @@
  */
 
 int nsp_type_qcurve_id=0;
-NspTypeNspQcurve *nsp_type_qcurve=NULL;
+NspTypeQcurve *nsp_type_qcurve=NULL;
 
 /*
  * Type object for NspQcurve 
- * all the instance of NspTypeNspQcurve share the same id. 
- * nsp_type_qcurve: is an instance of NspTypeNspQcurve 
+ * all the instance of NspTypeQcurve share the same id. 
+ * nsp_type_qcurve: is an instance of NspTypeQcurve 
  *    used for objects of NspQcurve type (i.e built with new_qcurve) 
  * other instances are used for derived classes 
  */
-NspTypeNspQcurve *new_type_qcurve(type_mode mode)
+NspTypeQcurve *new_type_qcurve(type_mode mode)
 {
-  NspTypeNspQcurve *type= NULL;
+  NspTypeQcurve *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_qcurve != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_qcurve;
     }
-  if ((type =  malloc(sizeof(NspTypeNspQcurve))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeQcurve))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = qcurve_attrs ; 
+  type->attrs = qcurve_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = qcurve_get_methods; 
+  type->methods = qcurve_get_methods;
   type->new = (new_func *) new_qcurve;
 
   
@@ -63,16 +63,16 @@ NspTypeNspQcurve *new_type_qcurve(type_mode mode)
   
   /* object methods redefined for qcurve */ 
 
-  top->pr = (print_func *) nsp_qcurve_print;                  
+  top->pr = (print_func *) nsp_qcurve_print;
   top->dealloc = (dealloc_func *) nsp_qcurve_destroy;
-  top->copy  =  (copy_func *) nsp_qcurve_copy;                 
-  top->size  = (size_func *) nsp_qcurve_size;                
-  top->s_type =  (s_type_func *) nsp_qcurve_type_as_string;  
+  top->copy  =  (copy_func *) nsp_qcurve_copy;
+  top->size  = (size_func *) nsp_qcurve_size;
+  top->s_type =  (s_type_func *) nsp_qcurve_type_as_string;
   top->sh_type = (sh_type_func *) nsp_qcurve_type_short_string;
-  top->info = (info_func *) nsp_qcurve_info ;                  
+  top->info = (info_func *) nsp_qcurve_info;
   /* top->is_true = (is_true_func  *) nsp_qcurve_is_true; */
   /* top->loop =(loop_func *) nsp_qcurve_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_qcurve_object;
   top->eq  = (eq_func *) nsp_qcurve_eq;
   top->neq  = (eq_func *) nsp_qcurve_neq;
@@ -87,14 +87,14 @@ NspTypeNspQcurve *new_type_qcurve(type_mode mode)
 
 #line 42 "codegen/qcurve.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_qcurve;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_qcurve  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_qcurve  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_qcurve  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_qcurve;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_qcurve  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_qcurve  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_qcurve  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Qqcurve */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 100 "qcurve.c"
   /* 
@@ -107,7 +107,7 @@ NspTypeNspQcurve *new_type_qcurve(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspQcurve called nsp_type_qcurve
+       * an instance of NspTypeQcurve called nsp_type_qcurve
        */
       type->id =  nsp_type_qcurve_id = nsp_new_type_id();
       nsp_type_qcurve = type;
@@ -126,11 +126,11 @@ NspTypeNspQcurve *new_type_qcurve(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_qcurve(NspQcurve *Obj,NspTypeNspQcurve *type)
+static int init_qcurve(NspQcurve *Obj,NspTypeQcurve *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -143,7 +143,7 @@ static int init_qcurve(NspQcurve *Obj,NspTypeNspQcurve *type)
 
 NspQcurve *new_qcurve() 
 {
-  NspQcurve *loc; 
+  NspQcurve *loc;
   /* type must exists */
   nsp_type_qcurve = new_type_qcurve(T_BASE);
   if ( (loc = malloc(sizeof(NspQcurve)))== NULLQCURVE) return loc;
@@ -220,7 +220,7 @@ int nsp_qcurve_xdr_save(XDR *xdrs, NspQcurve *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_qcurve)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_qcurve)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->width) == FAIL) return FAIL;

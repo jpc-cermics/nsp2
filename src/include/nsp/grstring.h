@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspGrstring NspGrstring ;
-typedef struct _NspTypeNspGrstring NspTypeNspGrstring ;
+typedef struct _NspTypeGrstring NspTypeGrstring ;
 
 #line 22 "./grstring.h"
 
-struct _NspTypeNspGrstring {
+struct _NspTypeGrstring {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -45,17 +45,17 @@ struct _nsp_grstring {
 struct _NspGrstring {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspGrstring*type;
+  NspTypeGrstring*type;
   /*< public >*/
   nsp_grstring *obj;
 };
 
 extern int nsp_type_grstring_id;
-extern NspTypeNspGrstring *nsp_type_grstring;
+extern NspTypeGrstring *nsp_type_grstring;
 
 /* type instances for graphic */
 
-NspTypeNspGrstring *new_type_grstring(type_mode mode);
+NspTypeGrstring *new_type_grstring(type_mode mode);
 
 /* instance for NspGrstring */
 
@@ -78,18 +78,18 @@ extern void nsp_grstring_destroy(NspGrstring *H);
 extern int nsp_grstring_info(NspGrstring *H, int indent,const char *name, int rec_level);
 extern int nsp_grstring_print(NspGrstring *H, int indent,const char *name, int rec_level);
 extern int nsp_grstring_latex(NspGrstring *H, int indent,const char *name, int rec_level);
-extern NspGrstring *nsp_grstring_object (NspObject *O); 
-extern int IsGrstringObj (Stack stack, int i); 
+extern NspGrstring *nsp_grstring_object (NspObject *O);
+extern int IsGrstringObj (Stack stack, int i);
 extern int IsGrstring(NspObject *O);
-extern NspGrstring *GetGrstringCopy (Stack stack, int i); 
-extern NspGrstring *GetGrstring (Stack stack, int i); 
+extern NspGrstring *GetGrstringCopy (Stack stack, int i);
+extern NspGrstring *GetGrstring (Stack stack, int i);
 extern int nsp_grstring_create_partial(NspGrstring *H);
 extern void nsp_grstring_destroy_partial(NspGrstring *H);
 extern NspGrstring * nsp_grstring_copy_partial(NspGrstring *H,NspGrstring *self);
 extern NspGrstring * nsp_grstring_full_copy_partial(NspGrstring *H,NspGrstring *self);
 extern NspGrstring * nsp_grstring_full_copy(NspGrstring *self);
 extern int nsp_grstring_check_values(NspGrstring *H);
-extern int int_grstring_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_grstring_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrstring *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M);
 extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
@@ -101,7 +101,7 @@ extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 #endif /* NSP_INC_NspGrstring */ 
 
 #ifdef NspGrstring_Private 
-static int init_grstring(NspGrstring *o,NspTypeNspGrstring *type);
+static int init_grstring(NspGrstring *o,NspTypeGrstring *type);
 static int nsp_grstring_size(NspGrstring *Mat, int flag);
 static char *nsp_grstring_type_as_string(void);
 static char *nsp_grstring_type_short_string(NspObject *v);

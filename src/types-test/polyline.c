@@ -27,32 +27,32 @@
  */
 
 int nsp_type_polyline_id=0;
-NspTypeNspPolyline *nsp_type_polyline=NULL;
+NspTypePolyline *nsp_type_polyline=NULL;
 
 /*
  * Type object for NspPolyline 
- * all the instance of NspTypeNspPolyline share the same id. 
- * nsp_type_polyline: is an instance of NspTypeNspPolyline 
+ * all the instance of NspTypePolyline share the same id. 
+ * nsp_type_polyline: is an instance of NspTypePolyline 
  *    used for objects of NspPolyline type (i.e built with new_polyline) 
  * other instances are used for derived classes 
  */
-NspTypeNspPolyline *new_type_polyline(type_mode mode)
+NspTypePolyline *new_type_polyline(type_mode mode)
 {
-  NspTypeNspPolyline *type= NULL;
+  NspTypePolyline *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_polyline != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_polyline;
     }
-  if ((type =  malloc(sizeof(NspTypeNspPolyline))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypePolyline))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = polyline_attrs ; 
+  type->attrs = polyline_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = polyline_get_methods; 
+  type->methods = polyline_get_methods;
   type->new = (new_func *) new_polyline;
 
   
@@ -61,16 +61,16 @@ NspTypeNspPolyline *new_type_polyline(type_mode mode)
   
   /* object methods redefined for polyline */ 
 
-  top->pr = (print_func *) nsp_polyline_print;                  
+  top->pr = (print_func *) nsp_polyline_print;
   top->dealloc = (dealloc_func *) nsp_polyline_destroy;
-  top->copy  =  (copy_func *) nsp_polyline_copy;                 
-  top->size  = (size_func *) nsp_polyline_size;                
-  top->s_type =  (s_type_func *) nsp_polyline_type_as_string;  
+  top->copy  =  (copy_func *) nsp_polyline_copy;
+  top->size  = (size_func *) nsp_polyline_size;
+  top->s_type =  (s_type_func *) nsp_polyline_type_as_string;
   top->sh_type = (sh_type_func *) nsp_polyline_type_short_string;
-  top->info = (info_func *) nsp_polyline_info ;                  
+  top->info = (info_func *) nsp_polyline_info;
   /* top->is_true = (is_true_func  *) nsp_polyline_is_true; */
   /* top->loop =(loop_func *) nsp_polyline_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_polyline_object;
   top->eq  = (eq_func *) nsp_polyline_eq;
   top->neq  = (eq_func *) nsp_polyline_neq;
@@ -87,15 +87,15 @@ NspTypeNspPolyline *new_type_polyline(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_polyline;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_polyline ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_polyline  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_polyline_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Polyline */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 101 "polyline.c"
   /* 
@@ -108,7 +108,7 @@ NspTypeNspPolyline *new_type_polyline(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspPolyline called nsp_type_polyline
+       * an instance of NspTypePolyline called nsp_type_polyline
        */
       type->id =  nsp_type_polyline_id = nsp_new_type_id();
       nsp_type_polyline = type;
@@ -127,11 +127,11 @@ NspTypeNspPolyline *new_type_polyline(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_polyline(NspPolyline *Obj,NspTypeNspPolyline *type)
+static int init_polyline(NspPolyline *Obj,NspTypePolyline *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -144,7 +144,7 @@ static int init_polyline(NspPolyline *Obj,NspTypeNspPolyline *type)
 
 NspPolyline *new_polyline() 
 {
-  NspPolyline *loc; 
+  NspPolyline *loc;
   /* type must exists */
   nsp_type_polyline = new_type_polyline(T_BASE);
   if ( (loc = malloc(sizeof(NspPolyline)))== NULLPOLYLINE) return loc;
@@ -220,7 +220,7 @@ int nsp_polyline_xdr_save(XDR *xdrs, NspPolyline *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_polyline)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_polyline)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;

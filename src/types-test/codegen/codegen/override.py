@@ -25,6 +25,7 @@ class Overrides:
         self.override_include = {}
         self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
+        self.override_implements = {} # inserted verbatim for implemented interfaces 
         self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
@@ -98,10 +99,18 @@ class Overrides:
             slot = words[1]
             self.override_type[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'override-implements':
+            # override code for all the implemented interfaces 
+            type = words[1]
+            self.override_implements[type] = rest
+            slot = '%s_implements' % ( type )
+            self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override_destroy_prelim':
             slot = words[1]
             self.override_destroy[slot] = rest
-            self.startlines[slot] = (startline + 1, filename)
+            # take care to use a different name as in type override 
+            stn = 'destroy_%s' % slot
+            self.startlines[stn] = (startline + 1, filename)
         elif words[0] == 'include':
             # we add '.include' to the slot for unicity
             slot = words[1]+'.include' # 
@@ -179,6 +188,10 @@ class Overrides:
         return self.override_type.has_key(slot)
     def get_override_type(self,slot):
         return self.override_type[slot]
+    def part_implements_is_overriden(self, slot):
+        return self.override_implements.has_key(slot)
+    def get_override_implements(self,slot):
+        return self.override_implements[slot]
     def part_destroy_is_overriden(self, slot):
         return self.override_destroy.has_key(slot)
     def get_override_destroy(self,slot):

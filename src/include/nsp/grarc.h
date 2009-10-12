@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspGrArc NspGrArc ;
-typedef struct _NspTypeNspGrArc NspTypeNspGrArc ;
+typedef struct _NspTypeGrArc NspTypeGrArc ;
 
 #line 22 "./grarc.h"
 
-struct _NspTypeNspGrArc {
+struct _NspTypeGrArc {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -45,17 +45,17 @@ struct _nsp_grarc {
 struct _NspGrArc {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspGrArc*type;
+  NspTypeGrArc*type;
   /*< public >*/
   nsp_grarc *obj;
 };
 
 extern int nsp_type_grarc_id;
-extern NspTypeNspGrArc *nsp_type_grarc;
+extern NspTypeGrArc *nsp_type_grarc;
 
 /* type instances for graphic */
 
-NspTypeNspGrArc *new_type_grarc(type_mode mode);
+NspTypeGrArc *new_type_grarc(type_mode mode);
 
 /* instance for NspGrArc */
 
@@ -78,18 +78,18 @@ extern void nsp_grarc_destroy(NspGrArc *H);
 extern int nsp_grarc_info(NspGrArc *H, int indent,const char *name, int rec_level);
 extern int nsp_grarc_print(NspGrArc *H, int indent,const char *name, int rec_level);
 extern int nsp_grarc_latex(NspGrArc *H, int indent,const char *name, int rec_level);
-extern NspGrArc *nsp_grarc_object (NspObject *O); 
-extern int IsGrArcObj (Stack stack, int i); 
+extern NspGrArc *nsp_grarc_object (NspObject *O);
+extern int IsGrArcObj (Stack stack, int i);
 extern int IsGrArc(NspObject *O);
-extern NspGrArc *GetGrArcCopy (Stack stack, int i); 
-extern NspGrArc *GetGrArc (Stack stack, int i); 
+extern NspGrArc *GetGrArcCopy (Stack stack, int i);
+extern NspGrArc *GetGrArc (Stack stack, int i);
 extern int nsp_grarc_create_partial(NspGrArc *H);
 extern void nsp_grarc_destroy_partial(NspGrArc *H);
 extern NspGrArc * nsp_grarc_copy_partial(NspGrArc *H,NspGrArc *self);
 extern NspGrArc * nsp_grarc_full_copy_partial(NspGrArc *H,NspGrArc *self);
 extern NspGrArc * nsp_grarc_full_copy(NspGrArc *self);
 extern int nsp_grarc_check_values(NspGrArc *H);
-extern int int_grarc_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_grarc_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrArc *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M);
 extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
@@ -101,7 +101,7 @@ extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 #endif /* NSP_INC_NspGrArc */ 
 
 #ifdef NspGrArc_Private 
-static int init_grarc(NspGrArc *o,NspTypeNspGrArc *type);
+static int init_grarc(NspGrArc *o,NspTypeGrArc *type);
 static int nsp_grarc_size(NspGrArc *Mat, int flag);
 static char *nsp_grarc_type_as_string(void);
 static char *nsp_grarc_type_short_string(NspObject *v);

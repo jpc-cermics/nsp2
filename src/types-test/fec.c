@@ -33,32 +33,32 @@ extern Gengine GL_gengine;
  */
 
 int nsp_type_fec_id=0;
-NspTypeNspFec *nsp_type_fec=NULL;
+NspTypeFec *nsp_type_fec=NULL;
 
 /*
  * Type object for NspFec 
- * all the instance of NspTypeNspFec share the same id. 
- * nsp_type_fec: is an instance of NspTypeNspFec 
+ * all the instance of NspTypeFec share the same id. 
+ * nsp_type_fec: is an instance of NspTypeFec 
  *    used for objects of NspFec type (i.e built with new_fec) 
  * other instances are used for derived classes 
  */
-NspTypeNspFec *new_type_fec(type_mode mode)
+NspTypeFec *new_type_fec(type_mode mode)
 {
-  NspTypeNspFec *type= NULL;
+  NspTypeFec *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_fec != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_fec;
     }
-  if ((type =  malloc(sizeof(NspTypeNspFec))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeFec))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = fec_attrs ; 
+  type->attrs = fec_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = fec_get_methods; 
+  type->methods = fec_get_methods;
   type->new = (new_func *) new_fec;
 
   
@@ -67,16 +67,16 @@ NspTypeNspFec *new_type_fec(type_mode mode)
   
   /* object methods redefined for fec */ 
 
-  top->pr = (print_func *) nsp_fec_print;                  
+  top->pr = (print_func *) nsp_fec_print;
   top->dealloc = (dealloc_func *) nsp_fec_destroy;
-  top->copy  =  (copy_func *) nsp_fec_copy;                 
-  top->size  = (size_func *) nsp_fec_size;                
-  top->s_type =  (s_type_func *) nsp_fec_type_as_string;  
+  top->copy  =  (copy_func *) nsp_fec_copy;
+  top->size  = (size_func *) nsp_fec_size;
+  top->s_type =  (s_type_func *) nsp_fec_type_as_string;
   top->sh_type = (sh_type_func *) nsp_fec_type_short_string;
-  top->info = (info_func *) nsp_fec_info ;                  
+  top->info = (info_func *) nsp_fec_info;
   /* top->is_true = (is_true_func  *) nsp_fec_is_true; */
   /* top->loop =(loop_func *) nsp_fec_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_fec_object;
   top->eq  = (eq_func *) nsp_fec_eq;
   top->neq  = (eq_func *) nsp_fec_neq;
@@ -91,14 +91,14 @@ NspTypeNspFec *new_type_fec(type_mode mode)
 
 #line 48 "codegen/fec.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_fec;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_fec ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_fec  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_fec  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_fec  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Fec */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 104 "fec.c"
   /* 
@@ -111,7 +111,7 @@ NspTypeNspFec *new_type_fec(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspFec called nsp_type_fec
+       * an instance of NspTypeFec called nsp_type_fec
        */
       type->id =  nsp_type_fec_id = nsp_new_type_id();
       nsp_type_fec = type;
@@ -130,11 +130,11 @@ NspTypeNspFec *new_type_fec(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_fec(NspFec *Obj,NspTypeNspFec *type)
+static int init_fec(NspFec *Obj,NspTypeFec *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -147,7 +147,7 @@ static int init_fec(NspFec *Obj,NspTypeNspFec *type)
 
 NspFec *new_fec() 
 {
-  NspFec *loc; 
+  NspFec *loc;
   /* type must exists */
   nsp_type_fec = new_type_fec(T_BASE);
   if ( (loc = malloc(sizeof(NspFec)))== NULLFEC) return loc;
@@ -223,7 +223,7 @@ int nsp_fec_xdr_save(XDR *xdrs, NspFec *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_fec)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_fec)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;

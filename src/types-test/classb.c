@@ -25,32 +25,32 @@
  */
 
 int nsp_type_classb_id=0;
-NspTypeNspClassB *nsp_type_classb=NULL;
+NspTypeClassB *nsp_type_classb=NULL;
 
 /*
  * Type object for NspClassB 
- * all the instance of NspTypeNspClassB share the same id. 
- * nsp_type_classb: is an instance of NspTypeNspClassB 
+ * all the instance of NspTypeClassB share the same id. 
+ * nsp_type_classb: is an instance of NspTypeClassB 
  *    used for objects of NspClassB type (i.e built with new_classb) 
  * other instances are used for derived classes 
  */
-NspTypeNspClassB *new_type_classb(type_mode mode)
+NspTypeClassB *new_type_classb(type_mode mode)
 {
-  NspTypeNspClassB *type= NULL;
+  NspTypeClassB *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classb != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classb;
     }
-  if ((type =  malloc(sizeof(NspTypeNspClassB))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeClassB))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_classa(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = classb_attrs ; 
+  type->attrs = classb_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = classb_get_methods; 
+  type->methods = classb_get_methods;
   type->new = (new_func *) new_classb;
 
   
@@ -59,16 +59,16 @@ NspTypeNspClassB *new_type_classb(type_mode mode)
   
   /* object methods redefined for classb */ 
 
-  top->pr = (print_func *) nsp_classb_print;                  
+  top->pr = (print_func *) nsp_classb_print;
   top->dealloc = (dealloc_func *) nsp_classb_destroy;
-  top->copy  =  (copy_func *) nsp_classb_copy;                 
-  top->size  = (size_func *) nsp_classb_size;                
-  top->s_type =  (s_type_func *) nsp_classb_type_as_string;  
+  top->copy  =  (copy_func *) nsp_classb_copy;
+  top->size  = (size_func *) nsp_classb_size;
+  top->s_type =  (s_type_func *) nsp_classb_type_as_string;
   top->sh_type = (sh_type_func *) nsp_classb_type_short_string;
-  top->info = (info_func *) nsp_classb_info ;                  
+  top->info = (info_func *) nsp_classb_info;
   /* top->is_true = (is_true_func  *) nsp_classb_is_true; */
   /* top->loop =(loop_func *) nsp_classb_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_classb_object;
   top->eq  = (eq_func *) nsp_classb_eq;
   top->neq  = (eq_func *) nsp_classb_neq;
@@ -91,7 +91,7 @@ NspTypeNspClassB *new_type_classb(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspClassB called nsp_type_classb
+       * an instance of NspTypeClassB called nsp_type_classb
        */
       type->id =  nsp_type_classb_id = nsp_new_type_id();
       nsp_type_classb = type;
@@ -110,11 +110,11 @@ NspTypeNspClassB *new_type_classb(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_classb(NspClassB *Obj,NspTypeNspClassB *type)
+static int init_classb(NspClassB *Obj,NspTypeClassB *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->clb_color = 0;
@@ -129,7 +129,7 @@ static int init_classb(NspClassB *Obj,NspTypeNspClassB *type)
 
 NspClassB *new_classb() 
 {
-  NspClassB *loc; 
+  NspClassB *loc;
   /* type must exists */
   nsp_type_classb = new_type_classb(T_BASE);
   if ( (loc = malloc(sizeof(NspClassB)))== NULLCLASSB) return loc;
@@ -199,7 +199,7 @@ int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classb)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classb)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->clb_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->clb_thickness) == FAIL) return FAIL;

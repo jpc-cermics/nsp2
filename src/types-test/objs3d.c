@@ -33,32 +33,32 @@ extern Gengine GL_gengine;
  */
 
 int nsp_type_objs3d_id=0;
-NspTypeNspObjs3d *nsp_type_objs3d=NULL;
+NspTypeObjs3d *nsp_type_objs3d=NULL;
 
 /*
  * Type object for NspObjs3d 
- * all the instance of NspTypeNspObjs3d share the same id. 
- * nsp_type_objs3d: is an instance of NspTypeNspObjs3d 
+ * all the instance of NspTypeObjs3d share the same id. 
+ * nsp_type_objs3d: is an instance of NspTypeObjs3d 
  *    used for objects of NspObjs3d type (i.e built with new_objs3d) 
  * other instances are used for derived classes 
  */
-NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
+NspTypeObjs3d *new_type_objs3d(type_mode mode)
 {
-  NspTypeNspObjs3d *type= NULL;
+  NspTypeObjs3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_objs3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_objs3d;
     }
-  if ((type =  malloc(sizeof(NspTypeNspObjs3d))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeObjs3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = objs3d_attrs ; 
+  type->attrs = objs3d_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = objs3d_get_methods; 
+  type->methods = objs3d_get_methods;
   type->new = (new_func *) new_objs3d;
 
   
@@ -67,16 +67,16 @@ NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
   
   /* object methods redefined for objs3d */ 
 
-  top->pr = (print_func *) nsp_objs3d_print;                  
+  top->pr = (print_func *) nsp_objs3d_print;
   top->dealloc = (dealloc_func *) nsp_objs3d_destroy;
-  top->copy  =  (copy_func *) nsp_objs3d_copy;                 
-  top->size  = (size_func *) nsp_objs3d_size;                
-  top->s_type =  (s_type_func *) nsp_objs3d_type_as_string;  
+  top->copy  =  (copy_func *) nsp_objs3d_copy;
+  top->size  = (size_func *) nsp_objs3d_size;
+  top->s_type =  (s_type_func *) nsp_objs3d_type_as_string;
   top->sh_type = (sh_type_func *) nsp_objs3d_type_short_string;
-  top->info = (info_func *) nsp_objs3d_info ;                  
+  top->info = (info_func *) nsp_objs3d_info;
   /* top->is_true = (is_true_func  *) nsp_objs3d_is_true; */
   /* top->loop =(loop_func *) nsp_objs3d_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_objs3d_object;
   top->eq  = (eq_func *) nsp_objs3d_eq;
   top->neq  = (eq_func *) nsp_objs3d_neq;
@@ -91,15 +91,15 @@ NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
 
 #line 69 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_objs3d;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
 #line 104 "objs3d.c"
   /* 
    * NspObjs3d interfaces can be added here 
@@ -111,7 +111,7 @@ NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspObjs3d called nsp_type_objs3d
+       * an instance of NspTypeObjs3d called nsp_type_objs3d
        */
       type->id =  nsp_type_objs3d_id = nsp_new_type_id();
       nsp_type_objs3d = type;
@@ -130,11 +130,11 @@ NspTypeNspObjs3d *new_type_objs3d(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_objs3d(NspObjs3d *Obj,NspTypeNspObjs3d *type)
+static int init_objs3d(NspObjs3d *Obj,NspTypeObjs3d *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -147,7 +147,7 @@ static int init_objs3d(NspObjs3d *Obj,NspTypeNspObjs3d *type)
 
 NspObjs3d *new_objs3d() 
 {
-  NspObjs3d *loc; 
+  NspObjs3d *loc;
   /* type must exists */
   nsp_type_objs3d = new_type_objs3d(T_BASE);
   if ( (loc = malloc(sizeof(NspObjs3d)))== NULLOBJS3D) return loc;
@@ -229,7 +229,7 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_objs3d)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_objs3d)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->rho) == FAIL) return FAIL;

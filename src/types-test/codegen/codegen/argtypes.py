@@ -1389,6 +1389,47 @@ class PointerArg(ArgType):
             info.attrcodeafter.append('  /* nspg_pointer_new handles NULL checking */\n' +
                                   '  return nspg_pointer_new(' + self.typecode + ', &ret);')
 
+    def attr_free_fields(self,pname, varname,byref):
+	"""used to free allocated fields  """
+        return  ''
+            
+    def attr_write_save(self,pname, varname,byref, pdef , psize, pcheck):
+        return ''
+
+    def attr_write_load(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        return '  %s->%s = NULL;\n'  % (varname,pname)
+    
+    def attr_write_copy(self, pname, left_varname,right_varname,byref, pdef , psize, pcheck):
+	"""used when a variable is to be copied """
+        if right_varname:
+            return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
+        else:
+            return '  %s->%s = %s;\n' % (left_varname,pname,pname)
+
+    def attr_write_info(self,pname, varname,byref):
+	"""used when a field is to be reloaded """
+        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+
+    def attr_write_print(self,pname, varname,byref,print_mode, pdef , psize, pcheck):
+        """used when a field is to be printed """
+        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+
+    def attr_write_init(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        return  '  %s->%s = NULL;\n' % (varname,pname)
+
+    def attr_equal_fields(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( A->%s != loc->%s) return FALSE;\n' % (pname,pname)
+
+    def attr_write_defval(self,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        # str = '  %s->%s = NULL;\n' % (varname,pname);    
+        str = ''
+        return str
 
 class AtomArg(IntArg):
     atom = ('  if ( nsp_gdk_atom_from_object(nsp_%(name)s,&%(name)s)==FAIL) return RET_BUG;\n')

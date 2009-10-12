@@ -25,32 +25,32 @@
  */
 
 int nsp_type_classbref_id=0;
-NspTypeNspClassBRef *nsp_type_classbref=NULL;
+NspTypeClassBRef *nsp_type_classbref=NULL;
 
 /*
  * Type object for NspClassBRef 
- * all the instance of NspTypeNspClassBRef share the same id. 
- * nsp_type_classbref: is an instance of NspTypeNspClassBRef 
+ * all the instance of NspTypeClassBRef share the same id. 
+ * nsp_type_classbref: is an instance of NspTypeClassBRef 
  *    used for objects of NspClassBRef type (i.e built with new_classbref) 
  * other instances are used for derived classes 
  */
-NspTypeNspClassBRef *new_type_classbref(type_mode mode)
+NspTypeClassBRef *new_type_classbref(type_mode mode)
 {
-  NspTypeNspClassBRef *type= NULL;
+  NspTypeClassBRef *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classbref != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classbref;
     }
-  if ((type =  malloc(sizeof(NspTypeNspClassBRef))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeClassBRef))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_classaref(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = classbref_attrs ; 
+  type->attrs = classbref_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = classbref_get_methods; 
+  type->methods = classbref_get_methods;
   type->new = (new_func *) new_classbref;
 
   
@@ -59,16 +59,16 @@ NspTypeNspClassBRef *new_type_classbref(type_mode mode)
   
   /* object methods redefined for classbref */ 
 
-  top->pr = (print_func *) nsp_classbref_print;                  
+  top->pr = (print_func *) nsp_classbref_print;
   top->dealloc = (dealloc_func *) nsp_classbref_destroy;
-  top->copy  =  (copy_func *) nsp_classbref_copy;                 
-  top->size  = (size_func *) nsp_classbref_size;                
-  top->s_type =  (s_type_func *) nsp_classbref_type_as_string;  
+  top->copy  =  (copy_func *) nsp_classbref_copy;
+  top->size  = (size_func *) nsp_classbref_size;
+  top->s_type =  (s_type_func *) nsp_classbref_type_as_string;
   top->sh_type = (sh_type_func *) nsp_classbref_type_short_string;
-  top->info = (info_func *) nsp_classbref_info ;                  
+  top->info = (info_func *) nsp_classbref_info;
   /* top->is_true = (is_true_func  *) nsp_classbref_is_true; */
   /* top->loop =(loop_func *) nsp_classbref_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_classbref_object;
   top->eq  = (eq_func *) nsp_classbref_eq;
   top->neq  = (eq_func *) nsp_classbref_neq;
@@ -91,7 +91,7 @@ NspTypeNspClassBRef *new_type_classbref(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspClassBRef called nsp_type_classbref
+       * an instance of NspTypeClassBRef called nsp_type_classbref
        */
       type->id =  nsp_type_classbref_id = nsp_new_type_id();
       nsp_type_classbref = type;
@@ -110,11 +110,11 @@ NspTypeNspClassBRef *new_type_classbref(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_classbref(NspClassBRef *Obj,NspTypeNspClassBRef *type)
+static int init_classbref(NspClassBRef *Obj,NspTypeClassBRef *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -127,7 +127,7 @@ static int init_classbref(NspClassBRef *Obj,NspTypeNspClassBRef *type)
 
 NspClassBRef *new_classbref() 
 {
-  NspClassBRef *loc; 
+  NspClassBRef *loc;
   /* type must exists */
   nsp_type_classbref = new_type_classbref(T_BASE);
   if ( (loc = malloc(sizeof(NspClassBRef)))== NULLCLASSBREF) return loc;
@@ -198,7 +198,7 @@ int nsp_classbref_xdr_save(XDR *xdrs, NspClassBRef *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classbref)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classbref)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clb_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clb_thickness) == FAIL) return FAIL;

@@ -59,15 +59,15 @@ Init portion
 %%
 override-type  Axes
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_axes;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_axes ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_axes  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */

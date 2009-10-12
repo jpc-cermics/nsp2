@@ -38,15 +38,15 @@ Init portion
 %%
 override-type Compound
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_compound;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_compound ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_compound  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_compound;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_compound ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_compound  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */

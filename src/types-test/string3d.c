@@ -31,32 +31,32 @@ extern Gengine GL_gengine;
  */
 
 int nsp_type_string3d_id=0;
-NspTypeNspString3d *nsp_type_string3d=NULL;
+NspTypeString3d *nsp_type_string3d=NULL;
 
 /*
  * Type object for NspString3d 
- * all the instance of NspTypeNspString3d share the same id. 
- * nsp_type_string3d: is an instance of NspTypeNspString3d 
+ * all the instance of NspTypeString3d share the same id. 
+ * nsp_type_string3d: is an instance of NspTypeString3d 
  *    used for objects of NspString3d type (i.e built with new_string3d) 
  * other instances are used for derived classes 
  */
-NspTypeNspString3d *new_type_string3d(type_mode mode)
+NspTypeString3d *new_type_string3d(type_mode mode)
 {
-  NspTypeNspString3d *type= NULL;
+  NspTypeString3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_string3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_string3d;
     }
-  if ((type =  malloc(sizeof(NspTypeNspString3d))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeString3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = string3d_attrs ; 
+  type->attrs = string3d_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = string3d_get_methods; 
+  type->methods = string3d_get_methods;
   type->new = (new_func *) new_string3d;
 
   
@@ -65,16 +65,16 @@ NspTypeNspString3d *new_type_string3d(type_mode mode)
   
   /* object methods redefined for string3d */ 
 
-  top->pr = (print_func *) nsp_string3d_print;                  
+  top->pr = (print_func *) nsp_string3d_print;
   top->dealloc = (dealloc_func *) nsp_string3d_destroy;
-  top->copy  =  (copy_func *) nsp_string3d_copy;                 
-  top->size  = (size_func *) nsp_string3d_size;                
-  top->s_type =  (s_type_func *) nsp_string3d_type_as_string;  
+  top->copy  =  (copy_func *) nsp_string3d_copy;
+  top->size  = (size_func *) nsp_string3d_size;
+  top->s_type =  (s_type_func *) nsp_string3d_type_as_string;
   top->sh_type = (sh_type_func *) nsp_string3d_type_short_string;
-  top->info = (info_func *) nsp_string3d_info ;                  
+  top->info = (info_func *) nsp_string3d_info;
   /* top->is_true = (is_true_func  *) nsp_string3d_is_true; */
   /* top->loop =(loop_func *) nsp_string3d_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_string3d_object;
   top->eq  = (eq_func *) nsp_string3d_eq;
   top->neq  = (eq_func *) nsp_string3d_neq;
@@ -87,21 +87,21 @@ NspTypeNspString3d *new_type_string3d(type_mode mode)
       
   type->init = (init_func *) init_string3d;
 
-#line 73 "codegen/string3d.override"
+#line 44 "codegen/string3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_string3d;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_string3d ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_string3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_string3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_string3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_string3d_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_string3d;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_string3d ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_string3d  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_string3d  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_string3d  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_string3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for String3d */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
-  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
 #line 106 "string3d.c"
   /* 
    * NspString3d interfaces can be added here 
@@ -113,7 +113,7 @@ NspTypeNspString3d *new_type_string3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspString3d called nsp_type_string3d
+       * an instance of NspTypeString3d called nsp_type_string3d
        */
       type->id =  nsp_type_string3d_id = nsp_new_type_id();
       nsp_type_string3d = type;
@@ -132,11 +132,11 @@ NspTypeNspString3d *new_type_string3d(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_string3d(NspString3d *Obj,NspTypeNspString3d *type)
+static int init_string3d(NspString3d *Obj,NspTypeString3d *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -149,7 +149,7 @@ static int init_string3d(NspString3d *Obj,NspTypeNspString3d *type)
 
 NspString3d *new_string3d() 
 {
-  NspString3d *loc; 
+  NspString3d *loc;
   /* type must exists */
   nsp_type_string3d = new_type_string3d(T_BASE);
   if ( (loc = malloc(sizeof(NspString3d)))== NULLSTRING3D) return loc;
@@ -226,7 +226,7 @@ int nsp_string3d_xdr_save(XDR *xdrs, NspString3d *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_string3d)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_string3d)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->str) == FAIL) return FAIL;

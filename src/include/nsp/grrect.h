@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspGrRect NspGrRect ;
-typedef struct _NspTypeNspGrRect NspTypeNspGrRect ;
+typedef struct _NspTypeGrRect NspTypeGrRect ;
 
 #line 22 "./grrect.h"
 
-struct _NspTypeNspGrRect {
+struct _NspTypeGrRect {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -43,17 +43,17 @@ struct _nsp_grrect {
 struct _NspGrRect {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspGrRect*type;
+  NspTypeGrRect*type;
   /*< public >*/
   nsp_grrect *obj;
 };
 
 extern int nsp_type_grrect_id;
-extern NspTypeNspGrRect *nsp_type_grrect;
+extern NspTypeGrRect *nsp_type_grrect;
 
 /* type instances for graphic */
 
-NspTypeNspGrRect *new_type_grrect(type_mode mode);
+NspTypeGrRect *new_type_grrect(type_mode mode);
 
 /* instance for NspGrRect */
 
@@ -76,18 +76,18 @@ extern void nsp_grrect_destroy(NspGrRect *H);
 extern int nsp_grrect_info(NspGrRect *H, int indent,const char *name, int rec_level);
 extern int nsp_grrect_print(NspGrRect *H, int indent,const char *name, int rec_level);
 extern int nsp_grrect_latex(NspGrRect *H, int indent,const char *name, int rec_level);
-extern NspGrRect *nsp_grrect_object (NspObject *O); 
-extern int IsGrRectObj (Stack stack, int i); 
+extern NspGrRect *nsp_grrect_object (NspObject *O);
+extern int IsGrRectObj (Stack stack, int i);
 extern int IsGrRect(NspObject *O);
-extern NspGrRect *GetGrRectCopy (Stack stack, int i); 
-extern NspGrRect *GetGrRect (Stack stack, int i); 
+extern NspGrRect *GetGrRectCopy (Stack stack, int i);
+extern NspGrRect *GetGrRect (Stack stack, int i);
 extern int nsp_grrect_create_partial(NspGrRect *H);
 extern void nsp_grrect_destroy_partial(NspGrRect *H);
 extern NspGrRect * nsp_grrect_copy_partial(NspGrRect *H,NspGrRect *self);
 extern NspGrRect * nsp_grrect_full_copy_partial(NspGrRect *H,NspGrRect *self);
 extern NspGrRect * nsp_grrect_full_copy(NspGrRect *self);
 extern int nsp_grrect_check_values(NspGrRect *H);
-extern int int_grrect_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_grrect_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrRect *nsp_grrect_xdr_load_partial(XDR *xdrs, NspGrRect *M);
 extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 
@@ -99,7 +99,7 @@ extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 #endif /* NSP_INC_NspGrRect */ 
 
 #ifdef NspGrRect_Private 
-static int init_grrect(NspGrRect *o,NspTypeNspGrRect *type);
+static int init_grrect(NspGrRect *o,NspTypeGrRect *type);
 static int nsp_grrect_size(NspGrRect *Mat, int flag);
 static char *nsp_grrect_type_as_string(void);
 static char *nsp_grrect_type_short_string(NspObject *v);

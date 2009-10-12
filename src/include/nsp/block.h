@@ -15,6 +15,8 @@
 #include "nsp/grint.h" /* interface definition */
 #include "nsp/graphics-old/Graphics.h"
 
+#include "nsp/graphic.h"
+
 /**
  * NspBlock:
  * @obj: a #nsp_block pointer 
@@ -85,9 +87,11 @@ struct _nsp_block {
   int ref_count;
 };
 
+
+
 struct _NspBlock {
   /*< private >*/
-  NspObject father; 
+  NspGraphic father;
   NspTypeBlock *type; 
   /*< public >*/
   nsp_block *obj;
@@ -112,23 +116,32 @@ extern NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickne
 
 #endif 
 
-#ifdef Block_Private /* Block_Private */
+#ifdef NspBlock_Private /* Block_Private */
 static int init_block(NspBlock *ob,NspTypeBlock *type);
-static int block_size(NspBlock *Mat, int flag);
-static char *block_type_as_string(void);
-static char *block_type_short_string(NspObject *v);
-static int block_eq(NspBlock *A, NspObject *B);
-static int block_neq(NspBlock *A, NspObject *B);
-static int block_xdr_save(XDR  *xdrs, NspBlock *M);
-static NspBlock  *block_xdr_load(XDR  *F);
+static int nsp_block_size(NspBlock *Mat, int flag);
+static char *nsp_block_type_as_string(void);
+static char *nsp_block_type_short_string(NspObject *v);
+static int nsp_block_eq(NspBlock *A, NspObject *B);
+static int nsp_block_neq(NspBlock *A, NspObject *B);
+static int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
+static NspBlock  *nsp_block_xdr_load(XDR  *F);
 static AttrTab block_attrs[];
-static NspBlock *block_object (NspObject *O); 
-static NspBlock *block_copy (NspBlock *H); 
-static void block_destroy (NspBlock *H); 
-static int block_info (NspBlock *H, int indent,char *name, int rec_level); 
-static int block_print (NspBlock *H, int indent,char *name, int rec_level); 
+static NspBlock *nsp_block_object (NspObject *O); 
+static NspBlock *nsp_block_copy (NspBlock *H); 
+static void nsp_block_destroy (NspBlock *H); 
+static int nsp_block_info (NspBlock *H, int indent,char *name, int rec_level); 
+static int nsp_block_print (NspBlock *H, int indent,char *name, int rec_level); 
+static int nsp_block_latex (NspBlock *H, int indent,char *name, int rec_level); 
 static NspMethods *block_get_methods(void);
 static int int_block_create( Stack stack, int rhs, int opt, int lhs); 
+static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
+
+/* set of method for parent class graphic  */
+static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_block(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_block(BCG *Xgc,NspGraphic *o,double *alpha);
+static int nsp_getbounds_block(BCG *Xgc,NspGraphic *o,double *bounds);
 
 /* set of methods for implementing Grint */
 static int block_get_hilited (NspBlock *B); 

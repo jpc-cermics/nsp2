@@ -16,7 +16,7 @@
  */
 
 typedef struct _NspGraphic NspGraphic ;
-typedef struct _NspTypeNspGraphic NspTypeNspGraphic ;
+typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
 #line 48 "codegen/graphic.override"
@@ -35,7 +35,7 @@ typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 
 #line 37 "./graphic.h"
 
-struct _NspTypeNspGraphic {
+struct _NspTypeGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -68,17 +68,17 @@ struct _nsp_graphic {
 struct _NspGraphic {
   /*< private >*/
   NspObject father;
-  NspTypeNspGraphic*type;
+  NspTypeGraphic*type;
   /*< public >*/
   nsp_graphic *obj;
 };
 
 extern int nsp_type_graphic_id;
-extern NspTypeNspGraphic *nsp_type_graphic;
+extern NspTypeGraphic *nsp_type_graphic;
 
 /* type instances for object */
 
-NspTypeNspGraphic *new_type_graphic(type_mode mode);
+NspTypeGraphic *new_type_graphic(type_mode mode);
 
 /* instance for NspGraphic */
 
@@ -101,18 +101,18 @@ extern void nsp_graphic_destroy(NspGraphic *H);
 extern int nsp_graphic_info(NspGraphic *H, int indent,const char *name, int rec_level);
 extern int nsp_graphic_print(NspGraphic *H, int indent,const char *name, int rec_level);
 extern int nsp_graphic_latex(NspGraphic *H, int indent,const char *name, int rec_level);
-extern NspGraphic *nsp_graphic_object (NspObject *O); 
-extern int IsGraphicObj (Stack stack, int i); 
+extern NspGraphic *nsp_graphic_object (NspObject *O);
+extern int IsGraphicObj (Stack stack, int i);
 extern int IsGraphic(NspObject *O);
-extern NspGraphic *GetGraphicCopy (Stack stack, int i); 
-extern NspGraphic *GetGraphic (Stack stack, int i); 
+extern NspGraphic *GetGraphicCopy (Stack stack, int i);
+extern NspGraphic *GetGraphic (Stack stack, int i);
 extern int nsp_graphic_create_partial(NspGraphic *H);
 extern void nsp_graphic_destroy_partial(NspGraphic *H);
 extern NspGraphic * nsp_graphic_copy_partial(NspGraphic *H,NspGraphic *self);
 extern NspGraphic * nsp_graphic_full_copy_partial(NspGraphic *H,NspGraphic *self);
 extern NspGraphic * nsp_graphic_full_copy(NspGraphic *self);
 extern int nsp_graphic_check_values(NspGraphic *H);
-extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);
 extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
@@ -124,7 +124,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
-static int init_graphic(NspGraphic *o,NspTypeNspGraphic *type);
+static int init_graphic(NspGraphic *o,NspTypeGraphic *type);
 static int nsp_graphic_size(NspGraphic *Mat, int flag);
 static char *nsp_graphic_type_as_string(void);
 static char *nsp_graphic_type_short_string(NspObject *v);

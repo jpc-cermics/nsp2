@@ -31,32 +31,32 @@
  */
 
 int nsp_type_figure_id=0;
-NspTypeNspFigure *nsp_type_figure=NULL;
+NspTypeFigure *nsp_type_figure=NULL;
 
 /*
  * Type object for NspFigure 
- * all the instance of NspTypeNspFigure share the same id. 
- * nsp_type_figure: is an instance of NspTypeNspFigure 
+ * all the instance of NspTypeFigure share the same id. 
+ * nsp_type_figure: is an instance of NspTypeFigure 
  *    used for objects of NspFigure type (i.e built with new_figure) 
  * other instances are used for derived classes 
  */
-NspTypeNspFigure *new_type_figure(type_mode mode)
+NspTypeFigure *new_type_figure(type_mode mode)
 {
-  NspTypeNspFigure *type= NULL;
+  NspTypeFigure *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_figure != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_figure;
     }
-  if ((type =  malloc(sizeof(NspTypeNspFigure))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeFigure))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = figure_attrs ; 
+  type->attrs = figure_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = figure_get_methods; 
+  type->methods = figure_get_methods;
   type->new = (new_func *) new_figure;
 
   
@@ -65,16 +65,16 @@ NspTypeNspFigure *new_type_figure(type_mode mode)
   
   /* object methods redefined for figure */ 
 
-  top->pr = (print_func *) nsp_figure_print;                  
+  top->pr = (print_func *) nsp_figure_print;
   top->dealloc = (dealloc_func *) nsp_figure_destroy;
-  top->copy  =  (copy_func *) nsp_figure_copy;                 
-  top->size  = (size_func *) nsp_figure_size;                
-  top->s_type =  (s_type_func *) nsp_figure_type_as_string;  
+  top->copy  =  (copy_func *) nsp_figure_copy;
+  top->size  = (size_func *) nsp_figure_size;
+  top->s_type =  (s_type_func *) nsp_figure_type_as_string;
   top->sh_type = (sh_type_func *) nsp_figure_type_short_string;
-  top->info = (info_func *) nsp_figure_info ;                  
+  top->info = (info_func *) nsp_figure_info;
   /* top->is_true = (is_true_func  *) nsp_figure_is_true; */
   /* top->loop =(loop_func *) nsp_figure_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_figure_object;
   top->eq  = (eq_func *) nsp_figure_eq;
   top->neq  = (eq_func *) nsp_figure_neq;
@@ -87,11 +87,11 @@ NspTypeNspFigure *new_type_figure(type_mode mode)
       
   type->init = (init_func *) init_figure;
 
-#line 72 "codegen/figure.override"
+#line 61 "codegen/figure.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_figure;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
 #line 97 "figure.c"
   /* 
@@ -104,7 +104,7 @@ NspTypeNspFigure *new_type_figure(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspFigure called nsp_type_figure
+       * an instance of NspTypeFigure called nsp_type_figure
        */
       type->id =  nsp_type_figure_id = nsp_new_type_id();
       nsp_type_figure = type;
@@ -123,11 +123,11 @@ NspTypeNspFigure *new_type_figure(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_figure(NspFigure *Obj,NspTypeNspFigure *type)
+static int init_figure(NspFigure *Obj,NspTypeFigure *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -140,7 +140,7 @@ static int init_figure(NspFigure *Obj,NspTypeNspFigure *type)
 
 NspFigure *new_figure() 
 {
-  NspFigure *loc; 
+  NspFigure *loc;
   /* type must exists */
   nsp_type_figure = new_type_figure(T_BASE);
   if ( (loc = malloc(sizeof(NspFigure)))== NULLFIGURE) return loc;
@@ -218,7 +218,7 @@ int nsp_figure_xdr_save(XDR *xdrs, NspFigure *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_figure)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_figure)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->fname) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->driver) == FAIL) return FAIL;
@@ -1013,32 +1013,32 @@ static AttrTab figure_attrs[] = {
  */
 
 int nsp_type_figuredata_id=0;
-NspTypeNspFigureData *nsp_type_figuredata=NULL;
+NspTypeFigureData *nsp_type_figuredata=NULL;
 
 /*
  * Type object for NspFigureData 
- * all the instance of NspTypeNspFigureData share the same id. 
- * nsp_type_figuredata: is an instance of NspTypeNspFigureData 
+ * all the instance of NspTypeFigureData share the same id. 
+ * nsp_type_figuredata: is an instance of NspTypeFigureData 
  *    used for objects of NspFigureData type (i.e built with new_figuredata) 
  * other instances are used for derived classes 
  */
-NspTypeNspFigureData *new_type_figuredata(type_mode mode)
+NspTypeFigureData *new_type_figuredata(type_mode mode)
 {
-  NspTypeNspFigureData *type= NULL;
+  NspTypeFigureData *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_figuredata != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_figuredata;
     }
-  if ((type =  malloc(sizeof(NspTypeNspFigureData))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeFigureData))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = figuredata_attrs ; 
+  type->attrs = figuredata_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = figuredata_get_methods; 
+  type->methods = figuredata_get_methods;
   type->new = (new_func *) new_figuredata;
 
   
@@ -1047,16 +1047,16 @@ NspTypeNspFigureData *new_type_figuredata(type_mode mode)
   
   /* object methods redefined for figuredata */ 
 
-  top->pr = (print_func *) nsp_figuredata_print;                  
+  top->pr = (print_func *) nsp_figuredata_print;
   top->dealloc = (dealloc_func *) nsp_figuredata_destroy;
-  top->copy  =  (copy_func *) nsp_figuredata_copy;                 
-  top->size  = (size_func *) nsp_figuredata_size;                
-  top->s_type =  (s_type_func *) nsp_figuredata_type_as_string;  
+  top->copy  =  (copy_func *) nsp_figuredata_copy;
+  top->size  = (size_func *) nsp_figuredata_size;
+  top->s_type =  (s_type_func *) nsp_figuredata_type_as_string;
   top->sh_type = (sh_type_func *) nsp_figuredata_type_short_string;
-  top->info = (info_func *) nsp_figuredata_info ;                  
+  top->info = (info_func *) nsp_figuredata_info;
   /* top->is_true = (is_true_func  *) nsp_figuredata_is_true; */
   /* top->loop =(loop_func *) nsp_figuredata_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_figuredata_object;
   top->eq  = (eq_func *) nsp_figuredata_eq;
   top->neq  = (eq_func *) nsp_figuredata_neq;
@@ -1079,7 +1079,7 @@ NspTypeNspFigureData *new_type_figuredata(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspFigureData called nsp_type_figuredata
+       * an instance of NspTypeFigureData called nsp_type_figuredata
        */
       type->id =  nsp_type_figuredata_id = nsp_new_type_id();
       nsp_type_figuredata = type;
@@ -1098,11 +1098,11 @@ NspTypeNspFigureData *new_type_figuredata(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_figuredata(NspFigureData *Obj,NspTypeNspFigureData *type)
+static int init_figuredata(NspFigureData *Obj,NspTypeFigureData *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->color = 1;
@@ -1131,7 +1131,7 @@ static int init_figuredata(NspFigureData *Obj,NspTypeNspFigureData *type)
 
 NspFigureData *new_figuredata() 
 {
-  NspFigureData *loc; 
+  NspFigureData *loc;
   /* type must exists */
   nsp_type_figuredata = new_type_figuredata(T_BASE);
   if ( (loc = malloc(sizeof(NspFigureData)))== NULLFIGUREDATA) return loc;
@@ -1215,7 +1215,7 @@ int nsp_figuredata_xdr_save(XDR *xdrs, NspFigureData *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_figuredata)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_figuredata)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->background) == FAIL) return FAIL;

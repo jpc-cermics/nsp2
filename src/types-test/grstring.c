@@ -27,32 +27,32 @@
  */
 
 int nsp_type_grstring_id=0;
-NspTypeNspGrstring *nsp_type_grstring=NULL;
+NspTypeGrstring *nsp_type_grstring=NULL;
 
 /*
  * Type object for NspGrstring 
- * all the instance of NspTypeNspGrstring share the same id. 
- * nsp_type_grstring: is an instance of NspTypeNspGrstring 
+ * all the instance of NspTypeGrstring share the same id. 
+ * nsp_type_grstring: is an instance of NspTypeGrstring 
  *    used for objects of NspGrstring type (i.e built with new_grstring) 
  * other instances are used for derived classes 
  */
-NspTypeNspGrstring *new_type_grstring(type_mode mode)
+NspTypeGrstring *new_type_grstring(type_mode mode)
 {
-  NspTypeNspGrstring *type= NULL;
+  NspTypeGrstring *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_grstring != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_grstring;
     }
-  if ((type =  malloc(sizeof(NspTypeNspGrstring))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGrstring))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = grstring_attrs ; 
+  type->attrs = grstring_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = grstring_get_methods; 
+  type->methods = grstring_get_methods;
   type->new = (new_func *) new_grstring;
 
   
@@ -61,16 +61,16 @@ NspTypeNspGrstring *new_type_grstring(type_mode mode)
   
   /* object methods redefined for grstring */ 
 
-  top->pr = (print_func *) nsp_grstring_print;                  
+  top->pr = (print_func *) nsp_grstring_print;
   top->dealloc = (dealloc_func *) nsp_grstring_destroy;
-  top->copy  =  (copy_func *) nsp_grstring_copy;                 
-  top->size  = (size_func *) nsp_grstring_size;                
-  top->s_type =  (s_type_func *) nsp_grstring_type_as_string;  
+  top->copy  =  (copy_func *) nsp_grstring_copy;
+  top->size  = (size_func *) nsp_grstring_size;
+  top->s_type =  (s_type_func *) nsp_grstring_type_as_string;
   top->sh_type = (sh_type_func *) nsp_grstring_type_short_string;
-  top->info = (info_func *) nsp_grstring_info ;                  
+  top->info = (info_func *) nsp_grstring_info;
   /* top->is_true = (is_true_func  *) nsp_grstring_is_true; */
   /* top->loop =(loop_func *) nsp_grstring_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_grstring_object;
   top->eq  = (eq_func *) nsp_grstring_eq;
   top->neq  = (eq_func *) nsp_grstring_neq;
@@ -87,15 +87,15 @@ NspTypeNspGrstring *new_type_grstring(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grstring;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grstring ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grstring;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grstring ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 101 "grstring.c"
   /* 
@@ -108,7 +108,7 @@ NspTypeNspGrstring *new_type_grstring(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspGrstring called nsp_type_grstring
+       * an instance of NspTypeGrstring called nsp_type_grstring
        */
       type->id =  nsp_type_grstring_id = nsp_new_type_id();
       nsp_type_grstring = type;
@@ -127,11 +127,11 @@ NspTypeNspGrstring *new_type_grstring(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_grstring(NspGrstring *Obj,NspTypeNspGrstring *type)
+static int init_grstring(NspGrstring *Obj,NspTypeGrstring *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -144,7 +144,7 @@ static int init_grstring(NspGrstring *Obj,NspTypeNspGrstring *type)
 
 NspGrstring *new_grstring() 
 {
-  NspGrstring *loc; 
+  NspGrstring *loc;
   /* type must exists */
   nsp_type_grstring = new_type_grstring(T_BASE);
   if ( (loc = malloc(sizeof(NspGrstring)))== NULLGRSTRING) return loc;
@@ -221,7 +221,7 @@ int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grstring)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_grstring)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->x) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->y) == FAIL) return FAIL;

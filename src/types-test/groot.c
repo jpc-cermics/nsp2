@@ -28,32 +28,32 @@
  */
 
 int nsp_type_groot_id=0;
-NspTypeNspGRoot *nsp_type_groot=NULL;
+NspTypeGRoot *nsp_type_groot=NULL;
 
 /*
  * Type object for NspGRoot 
- * all the instance of NspTypeNspGRoot share the same id. 
- * nsp_type_groot: is an instance of NspTypeNspGRoot 
+ * all the instance of NspTypeGRoot share the same id. 
+ * nsp_type_groot: is an instance of NspTypeGRoot 
  *    used for objects of NspGRoot type (i.e built with new_groot) 
  * other instances are used for derived classes 
  */
-NspTypeNspGRoot *new_type_groot(type_mode mode)
+NspTypeGRoot *new_type_groot(type_mode mode)
 {
-  NspTypeNspGRoot *type= NULL;
+  NspTypeGRoot *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_groot != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_groot;
     }
-  if ((type =  malloc(sizeof(NspTypeNspGRoot))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeGRoot))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = groot_attrs ; 
+  type->attrs = groot_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = groot_get_methods; 
+  type->methods = groot_get_methods;
   type->new = (new_func *) new_groot;
 
   
@@ -62,16 +62,16 @@ NspTypeNspGRoot *new_type_groot(type_mode mode)
   
   /* object methods redefined for groot */ 
 
-  top->pr = (print_func *) nsp_groot_print;                  
+  top->pr = (print_func *) nsp_groot_print;
   top->dealloc = (dealloc_func *) nsp_groot_destroy;
-  top->copy  =  (copy_func *) nsp_groot_copy;                 
-  top->size  = (size_func *) nsp_groot_size;                
-  top->s_type =  (s_type_func *) nsp_groot_type_as_string;  
+  top->copy  =  (copy_func *) nsp_groot_copy;
+  top->size  = (size_func *) nsp_groot_size;
+  top->s_type =  (s_type_func *) nsp_groot_type_as_string;
   top->sh_type = (sh_type_func *) nsp_groot_type_short_string;
-  top->info = (info_func *) nsp_groot_info ;                  
+  top->info = (info_func *) nsp_groot_info;
   /* top->is_true = (is_true_func  *) nsp_groot_is_true; */
   /* top->loop =(loop_func *) nsp_groot_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_groot_object;
   top->eq  = (eq_func *) nsp_groot_eq;
   top->neq  = (eq_func *) nsp_groot_neq;
@@ -94,7 +94,7 @@ NspTypeNspGRoot *new_type_groot(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspGRoot called nsp_type_groot
+       * an instance of NspTypeGRoot called nsp_type_groot
        */
       type->id =  nsp_type_groot_id = nsp_new_type_id();
       nsp_type_groot = type;
@@ -113,11 +113,11 @@ NspTypeNspGRoot *new_type_groot(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_groot(NspGRoot *Obj,NspTypeNspGRoot *type)
+static int init_groot(NspGRoot *Obj,NspTypeGRoot *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -130,7 +130,7 @@ static int init_groot(NspGRoot *Obj,NspTypeNspGRoot *type)
 
 NspGRoot *new_groot() 
 {
-  NspGRoot *loc; 
+  NspGRoot *loc;
   /* type must exists */
   nsp_type_groot = new_type_groot(T_BASE);
   if ( (loc = malloc(sizeof(NspGRoot)))== NULLGROOT) return loc;
@@ -199,7 +199,7 @@ int nsp_groot_xdr_save(XDR *xdrs, NspGRoot *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_groot)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_groot)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->figures)) == FAIL) return FAIL;
   return OK;

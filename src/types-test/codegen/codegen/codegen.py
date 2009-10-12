@@ -62,54 +62,55 @@ class Wrapper:
               '#include <nsp/interf.h>\n'  \
               '\n'  \
               '/* \n' \
-              ' * %(typename)s inherits from %(parent)s \n' \
+              ' * %(typename)s inherits from %(parent)s \n%(implements)s' \
               ' */\n' \
               '\n' \
               'int nsp_type_%(typename_dc)s_id=0;\n' \
-              'NspType%(typename)s *nsp_type_%(typename_dc)s=NULL;\n' \
+              'NspType%(typename_nn)s *nsp_type_%(typename_dc)s=NULL;\n' \
               '\n' \
               '/*\n' \
               ' * Type object for %(typename)s \n' \
-              ' * all the instance of NspType%(typename)s share the same id. \n' \
-              ' * nsp_type_%(typename_dc)s: is an instance of NspType%(typename)s \n' \
+              ' * all the instance of NspType%(typename_nn)s share the same id. \n' \
+              ' * nsp_type_%(typename_dc)s: is an instance of NspType%(typename_nn)s \n' \
               ' *    used for objects of %(typename)s type (i.e built with new_%(typename_dc)s) \n' \
               ' * other instances are used for derived classes \n' \
               ' */\n' \
-              'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
-              '{\n'  \
-              '  NspType%(typename)s *type= NULL;\n'  \
+              'NspType%(typename_nn)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
+              '{\n'  
+    type_tmpl_1_0_1 = \
+              '  NspType%(typename_nn)s *type= NULL;\n'  \
               '  NspTypeObject *top;\n'  \
-              '  if (  nsp_type_%(typename_dc)s != 0 && mode == T_BASE ) \n'  \
+              '  if (  nsp_type_%(typename_dc)s != 0 && mode == T_BASE )\n'  \
               '    {\n'  \
               '      /* initialization performed and T_BASE requested */\n'  \
               '      return nsp_type_%(typename_dc)s;\n'  \
               '    }\n'  \
-              '  if ((type =  malloc(sizeof(NspType%(typename)s))) == NULL) return NULL;\n'  \
+              '  if (( type =  malloc(sizeof(NspType%(typename_nn)s))) == NULL) return NULL;\n'  \
               '  type->interface = NULL;\n'  \
               '  type->surtype = (NspTypeBase *) new_type_%(parent_dc)s(T_DERIVED);\n'  \
               '  if ( type->surtype == NULL) return NULL;\n'  \
-              '  type->attrs = %(typename_dc)s_attrs ; \n' \
+              '  type->attrs = %(typename_dc)s_attrs;\n' \
               '  type->get_attrs = (attrs_func *) %(tp_getattr)s;\n'  \
               '  type->set_attrs = (attrs_func *) %(tp_setattr)s;\n'  \
-              '  type->methods = %(typename_dc)s_get_methods; \n'  \
+              '  type->methods = %(typename_dc)s_get_methods;\n'  \
               '  type->new = (new_func *) new_%(typename_dc)s;\n'  \
               '\n'  \
-              '  \n'  \
+              '\n'  \
               '  top = NSP_TYPE_OBJECT(type->surtype);\n'  \
               '  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);\n'  \
-              '  \n'  \
+              '\n'  \
               '  /* object methods redefined for %(typename_dc)s */ \n'  \
               '\n'  \
-              '  top->pr = (print_func *) nsp_%(typename_dc)s_print;                  \n' \
+              '  top->pr = (print_func *) nsp_%(typename_dc)s_print;\n' \
               '  top->dealloc = (dealloc_func *) nsp_%(typename_dc)s_destroy;\n' \
-              '  top->copy  =  (copy_func *) nsp_%(typename_dc)s_copy;                 \n' \
-              '  top->size  = (size_func *) nsp_%(typename_dc)s_size;                \n' \
-              '  top->s_type =  (s_type_func *) nsp_%(typename_dc)s_type_as_string;  \n' \
+              '  top->copy  =  (copy_func *) nsp_%(typename_dc)s_copy;\n' \
+              '  top->size  = (size_func *) nsp_%(typename_dc)s_size;\n' \
+              '  top->s_type =  (s_type_func *) nsp_%(typename_dc)s_type_as_string;\n' \
               '  top->sh_type = (sh_type_func *) nsp_%(typename_dc)s_type_short_string;\n' \
-              '  top->info = (info_func *) nsp_%(typename_dc)s_info ;                  \n' \
+              '  top->info = (info_func *) nsp_%(typename_dc)s_info;\n' \
               '  /* top->is_true = (is_true_func  *) nsp_%(typename_dc)s_is_true; */\n' \
               '  /* top->loop =(loop_func *) nsp_%(typename_dc)s_loop;*/\n' \
-              '  top->path_extract = (path_func *)  object_path_extract; \n' \
+              '  top->path_extract = (path_func *)  object_path_extract;\n' \
               '  top->get_from_obj = (get_from_obj_func *) nsp_%(typename_dc)s_object;\n' \
               '  top->eq  = (eq_func *) nsp_%(typename_dc)s_eq;\n' \
               '  top->neq  = (eq_func *) nsp_%(typename_dc)s_neq;\n' \
@@ -117,13 +118,13 @@ class Wrapper:
               '  top->load  = (load_func *) nsp_%(typename_dc)s_xdr_load;\n' \
               '  top->create = (create_func*) int_%(typename_dc)s_create;\n' \
               '  top->latex = (print_func *) nsp_%(typename_dc)s_latex;\n' \
-              '  \n'  \
+              '\n'  \
               '  /* specific methods for %(typename_dc)s */\n'  \
-              '      \n'  \
+              '\n'  \
               '  type->init = (init_func *) init_%(typename_dc)s;\n'  \
               '\n'  \
 
-    type_tmpl_1_0_1 = \
+    type_tmpl_1_0_2 = \
               '  /* \n' \
               '   * %(typename)s interfaces can be added here \n' \
               '   * type->interface = (NspTypeBase *) new_type_b();\n' \
@@ -136,7 +137,7 @@ class Wrapper:
               '    {\n'  \
               '      /* \n'  \
               '       * the first time we get here we initialize the type id and\n'  \
-              '       * an instance of NspType%(typename)s called nsp_type_%(typename_dc)s\n'  \
+              '       * an instance of NspType%(typename_nn)s called nsp_type_%(typename_dc)s\n'  \
               '       */\n'  \
               '      type->id =  nsp_type_%(typename_dc)s_id = nsp_new_type_id();\n'  \
               '      nsp_type_%(typename_dc)s = type;\n'  \
@@ -145,8 +146,8 @@ class Wrapper:
               '    }\n'  \
               '  else \n'  \
               '    {\n' \
-              '       type->id = nsp_type_%(typename_dc)s_id;\n'  \
-              '       return type;\n'  \
+              '      type->id = nsp_type_%(typename_dc)s_id;\n'  \
+              '      return type;\n'  \
               '    }\n' \
               '}\n'  \
               '\n'  \
@@ -155,11 +156,11 @@ class Wrapper:
               ' * locally and by calling initializer on parent class \n'  \
               ' */\n'  \
               '\n'  \
-              'static int init_%(typename_dc)s(%(typename)s *Obj,NspType%(typename)s *type)\n'  \
+              'static int init_%(typename_dc)s(%(typename)s *Obj,NspType%(typename_nn)s *type)\n'  \
               '{\n'  \
-              '  /* jump the first surtype */ \n'  \
+              '  /* initialize the surtype */ \n'  \
               '  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;\n'  \
-              '  Obj->type = type; \n'  \
+              '  Obj->type = type;\n'  \
               '  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;\n'  \
               '  /* specific */\n'  \
               '%(fields_init)s' \
@@ -172,7 +173,7 @@ class Wrapper:
               '\n'  \
               '%(typename)s *new_%(typename_dc)s() \n'  \
               '{\n'  \
-              '  %(typename)s *loc; \n'  \
+              '  %(typename)s *loc;\n'  \
               '  /* type must exists */\n'  \
               '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n'  \
               '  if ( (loc = malloc(sizeof(%(typename)s)))== NULL%(typename_uc)s) return loc;\n'  \
@@ -242,7 +243,7 @@ class Wrapper:
               '  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/\n' \
               '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ \n ' \
               '  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;\n' \
-              '  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_%(typename_dc)s)) == FAIL) return FAIL; \n' \
+              '  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_%(typename_dc)s)) == FAIL) return FAIL;\n' \
               '  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;\n' \
               '%(fields_save)s' \
               '  return OK;\n' \
@@ -434,11 +435,11 @@ class Wrapper:
         ' */\n' \
         '\n' \
         'typedef struct _%(typename)s %(typename)s ;\n' \
-        'typedef struct _NspType%(typename)s NspType%(typename)s ;\n' \
+        'typedef struct _NspType%(typename_nn)s NspType%(typename_nn)s ;\n' \
         '\n' 
     type_header_2 = \
         '\n' \
-        'struct _NspType%(typename)s {\n' \
+        'struct _NspType%(typename_nn)s {\n' \
         '  /*< private >*/\n' \
         '  NSP_TYPE_OBJECT__\n' \
         '  /*< public >*/\n' 
@@ -449,17 +450,17 @@ class Wrapper:
         'struct _%(typename)s {\n' \
         '  /*< private >*/\n' \
         '  Nsp%(parent)s father;\n' \
-        '  NspType%(typename)s*type;\n' \
+        '  NspType%(typename_nn)s*type;\n' \
         '  /*< public >*/\n' \
         '  %(fields)s' \
         '};\n' \
         '\n' \
         'extern int nsp_type_%(typename_dc)s_id;\n' \
-        'extern NspType%(typename)s *nsp_type_%(typename_dc)s;\n' \
+        'extern NspType%(typename_nn)s *nsp_type_%(typename_dc)s;\n' \
         '\n' \
         '/* type instances for %(parent_dc)s */\n' \
         '\n' \
-        'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode);\n' \
+        'NspType%(typename_nn)s *new_type_%(typename_dc)s(type_mode mode);\n' \
         '\n' \
         '/* instance for %(typename)s */\n' \
         '\n' \
@@ -482,18 +483,18 @@ class Wrapper:
         'extern int nsp_%(typename_dc)s_info(%(typename)s *H, int indent,const char *name, int rec_level);\n' \
         'extern int nsp_%(typename_dc)s_print(%(typename)s *H, int indent,const char *name, int rec_level);\n' \
         'extern int nsp_%(typename_dc)s_latex(%(typename)s *H, int indent,const char *name, int rec_level);\n' \
-        'extern %(typename)s *nsp_%(typename_dc)s_object (NspObject *O); \n' \
-        'extern int Is%(typename_nn)sObj (Stack stack, int i); \n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_object (NspObject *O);\n' \
+        'extern int Is%(typename_nn)sObj (Stack stack, int i);\n' \
         'extern int Is%(typename_nn)s(NspObject *O);\n' \
-        'extern %(typename)s *Get%(typename_nn)sCopy (Stack stack, int i); \n' \
-        'extern %(typename)s *Get%(typename_nn)s (Stack stack, int i); \n' \
+        'extern %(typename)s *Get%(typename_nn)sCopy (Stack stack, int i);\n' \
+        'extern %(typename)s *Get%(typename_nn)s (Stack stack, int i);\n' \
         'extern int nsp_%(typename_dc)s_create_partial(%(typename)s *H);\n' \
         'extern void nsp_%(typename_dc)s_destroy_partial(%(typename)s *H);\n' \
         'extern %(typename)s * nsp_%(typename_dc)s_copy_partial(%(typename)s *H,%(typename)s *self);\n' \
         'extern %(typename)s * nsp_%(typename_dc)s_full_copy_partial(%(typename)s *H,%(typename)s *self);\n' \
         'extern %(typename)s * nsp_%(typename_dc)s_full_copy(%(typename)s *self);\n' \
         'extern int nsp_%(typename_dc)s_check_values(%(typename)s *H);\n' \
-        'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs); \n' \
+        'extern int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);\n' \
         'extern %(typename)s *nsp_%(typename_dc)s_xdr_load_partial(XDR *xdrs, %(typename)s *M);\n' \
         'extern int nsp_%(typename_dc)s_xdr_save(XDR  *xdrs, %(typename)s *M);\n' \
         '\n' 
@@ -501,7 +502,7 @@ class Wrapper:
     type_header_31 = \
         '#endif /* NSP_INC_%(typename)s */ \n\n' \
         '#ifdef %(typename)s_Private \n' \
-        'static int init_%(typename_dc)s(%(typename)s *o,NspType%(typename)s *type);\n' \
+        'static int init_%(typename_dc)s(%(typename)s *o,NspType%(typename_nn)s *type);\n' \
         'static int nsp_%(typename_dc)s_size(%(typename)s *Mat, int flag);\n' \
         'static char *nsp_%(typename_dc)s_type_as_string(void);\n' \
         'static char *nsp_%(typename_dc)s_type_short_string(NspObject *v);\n' \
@@ -645,21 +646,46 @@ class Wrapper:
                     substdict[slot] = substdict[slot+'_def']
                 else:
                     substdict[slot] = '0'
+        # insert the comment for implements in dictionary 
+        str = ''
+        substdict['implements'] = ''
+        if len(self.objinfo.implements) != 0 :
+            str = ' * and implements '
+            for interf in self.objinfo.implements:
+                str = '%s %s' % (str, interf )
+            str = str + '\n'
+            substdict['implements'] = str 
         # insert the type defintion 
         self.fp.write(self.type_tmpl_1_0 % substdict)
+        # insert declaration for implemented interfaces 
+        if len(self.objinfo.implements) != 0 :
+            for interf in self.objinfo.implements:
+                self.fp.write('  NspType%s *t_%s;\n' % (interf,string.lower(interf)));
+        self.fp.write(self.type_tmpl_1_0_1 % substdict)
+        # insert type override code 
         if self.overrides.part_type_is_overriden(typename_nn):
             lineno, filename = self.overrides.getstartline(typename_nn)
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_type(typename_nn))
             self.fp.resetline()
 
-        self.fp.write(self.type_tmpl_1_0_1 % substdict)
+        self.fp.write(self.type_tmpl_1_0_2 % substdict)
         # insert the implemented interfaces
         if len(self.objinfo.implements) != 0 :
             ti = 'type->interface'
             for interf in self.objinfo.implements:
-                self.fp.write('  %s =  (NspTypeBase *) new_type_%s(T_DERIVED);\n' % (ti,string.lower(interf)));
+                l_interf = string.lower(interf);
+                self.fp.write('  t_%s = new_type_%s(T_DERIVED);\n' % (l_interf,l_interf))
+                self.fp.write('  %s = (NspTypeBase *) t_%s;\n' % (ti,l_interf))
+                #self.fp.write('  nsp_initialize_interface_%s(t_%s);\n' % (l_interf,l_interf))
                 ti = ti + '->interface'
+        # insert override code for implemented interfaces 
+        if self.overrides.part_implements_is_overriden(typename_nn):
+            slot = '%s_implements' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_implements(typename_nn))
+            self.fp.resetline()
         # insert fields related code in subst dictionary
         # fields_copy: used in create function 
         substdict['fields_copy'] = self.build_copy_fields('H','')
@@ -721,7 +747,8 @@ class Wrapper:
         self.fp.write(self.type_tmpl_delete % substdict)
 
         if self.overrides.part_destroy_is_overriden(typename_nn):
-            lineno, filename = self.overrides.getstartline(typename_nn)
+            stn = 'destroy_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_destroy(typename_nn))
             self.fp.resetline()

@@ -32,32 +32,32 @@ extern Gengine GL_gengine;
  */
 
 int nsp_type_compound_id=0;
-NspTypeNspCompound *nsp_type_compound=NULL;
+NspTypeCompound *nsp_type_compound=NULL;
 
 /*
  * Type object for NspCompound 
- * all the instance of NspTypeNspCompound share the same id. 
- * nsp_type_compound: is an instance of NspTypeNspCompound 
+ * all the instance of NspTypeCompound share the same id. 
+ * nsp_type_compound: is an instance of NspTypeCompound 
  *    used for objects of NspCompound type (i.e built with new_compound) 
  * other instances are used for derived classes 
  */
-NspTypeNspCompound *new_type_compound(type_mode mode)
+NspTypeCompound *new_type_compound(type_mode mode)
 {
-  NspTypeNspCompound *type= NULL;
+  NspTypeCompound *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_compound != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_compound;
     }
-  if ((type =  malloc(sizeof(NspTypeNspCompound))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeCompound))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = compound_attrs ; 
+  type->attrs = compound_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = compound_get_methods; 
+  type->methods = compound_get_methods;
   type->new = (new_func *) new_compound;
 
   
@@ -66,16 +66,16 @@ NspTypeNspCompound *new_type_compound(type_mode mode)
   
   /* object methods redefined for compound */ 
 
-  top->pr = (print_func *) nsp_compound_print;                  
+  top->pr = (print_func *) nsp_compound_print;
   top->dealloc = (dealloc_func *) nsp_compound_destroy;
-  top->copy  =  (copy_func *) nsp_compound_copy;                 
-  top->size  = (size_func *) nsp_compound_size;                
-  top->s_type =  (s_type_func *) nsp_compound_type_as_string;  
+  top->copy  =  (copy_func *) nsp_compound_copy;
+  top->size  = (size_func *) nsp_compound_size;
+  top->s_type =  (s_type_func *) nsp_compound_type_as_string;
   top->sh_type = (sh_type_func *) nsp_compound_type_short_string;
-  top->info = (info_func *) nsp_compound_info ;                  
+  top->info = (info_func *) nsp_compound_info;
   /* top->is_true = (is_true_func  *) nsp_compound_is_true; */
   /* top->loop =(loop_func *) nsp_compound_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_compound_object;
   top->eq  = (eq_func *) nsp_compound_eq;
   top->neq  = (eq_func *) nsp_compound_neq;
@@ -90,15 +90,15 @@ NspTypeNspCompound *new_type_compound(type_mode mode)
 
 #line 40 "codegen/compound.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_compound;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_compound ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_compound  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_compound;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_compound ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_compound  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
 #line 103 "compound.c"
   /* 
    * NspCompound interfaces can be added here 
@@ -110,7 +110,7 @@ NspTypeNspCompound *new_type_compound(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspCompound called nsp_type_compound
+       * an instance of NspTypeCompound called nsp_type_compound
        */
       type->id =  nsp_type_compound_id = nsp_new_type_id();
       nsp_type_compound = type;
@@ -129,11 +129,11 @@ NspTypeNspCompound *new_type_compound(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_compound(NspCompound *Obj,NspTypeNspCompound *type)
+static int init_compound(NspCompound *Obj,NspTypeCompound *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -146,7 +146,7 @@ static int init_compound(NspCompound *Obj,NspTypeNspCompound *type)
 
 NspCompound *new_compound() 
 {
-  NspCompound *loc; 
+  NspCompound *loc;
   /* type must exists */
   nsp_type_compound = new_type_compound(T_BASE);
   if ( (loc = malloc(sizeof(NspCompound)))== NULLCOMPOUND) return loc;
@@ -216,7 +216,7 @@ int nsp_compound_xdr_save(XDR *xdrs, NspCompound *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_compound)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_compound)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;

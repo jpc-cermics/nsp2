@@ -30,32 +30,32 @@
  */
 
 int nsp_type_vfield_id=0;
-NspTypeNspVField *nsp_type_vfield=NULL;
+NspTypeVField *nsp_type_vfield=NULL;
 
 /*
  * Type object for NspVField 
- * all the instance of NspTypeNspVField share the same id. 
- * nsp_type_vfield: is an instance of NspTypeNspVField 
+ * all the instance of NspTypeVField share the same id. 
+ * nsp_type_vfield: is an instance of NspTypeVField 
  *    used for objects of NspVField type (i.e built with new_vfield) 
  * other instances are used for derived classes 
  */
-NspTypeNspVField *new_type_vfield(type_mode mode)
+NspTypeVField *new_type_vfield(type_mode mode)
 {
-  NspTypeNspVField *type= NULL;
+  NspTypeVField *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_vfield != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_vfield;
     }
-  if ((type =  malloc(sizeof(NspTypeNspVField))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeVField))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = vfield_attrs ; 
+  type->attrs = vfield_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = vfield_get_methods; 
+  type->methods = vfield_get_methods;
   type->new = (new_func *) new_vfield;
 
   
@@ -64,16 +64,16 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
   
   /* object methods redefined for vfield */ 
 
-  top->pr = (print_func *) nsp_vfield_print;                  
+  top->pr = (print_func *) nsp_vfield_print;
   top->dealloc = (dealloc_func *) nsp_vfield_destroy;
-  top->copy  =  (copy_func *) nsp_vfield_copy;                 
-  top->size  = (size_func *) nsp_vfield_size;                
-  top->s_type =  (s_type_func *) nsp_vfield_type_as_string;  
+  top->copy  =  (copy_func *) nsp_vfield_copy;
+  top->size  = (size_func *) nsp_vfield_size;
+  top->s_type =  (s_type_func *) nsp_vfield_type_as_string;
   top->sh_type = (sh_type_func *) nsp_vfield_type_short_string;
-  top->info = (info_func *) nsp_vfield_info ;                  
+  top->info = (info_func *) nsp_vfield_info;
   /* top->is_true = (is_true_func  *) nsp_vfield_is_true; */
   /* top->loop =(loop_func *) nsp_vfield_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_vfield_object;
   top->eq  = (eq_func *) nsp_vfield_eq;
   top->neq  = (eq_func *) nsp_vfield_neq;
@@ -88,14 +88,14 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
 
 #line 36 "codegen/vfield.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_vfield;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_vfield ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 101 "vfield.c"
   /* 
@@ -108,7 +108,7 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspVField called nsp_type_vfield
+       * an instance of NspTypeVField called nsp_type_vfield
        */
       type->id =  nsp_type_vfield_id = nsp_new_type_id();
       nsp_type_vfield = type;
@@ -127,11 +127,11 @@ NspTypeNspVField *new_type_vfield(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_vfield(NspVField *Obj,NspTypeNspVField *type)
+static int init_vfield(NspVField *Obj,NspTypeVField *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -144,7 +144,7 @@ static int init_vfield(NspVField *Obj,NspTypeNspVField *type)
 
 NspVField *new_vfield() 
 {
-  NspVField *loc; 
+  NspVField *loc;
   /* type must exists */
   nsp_type_vfield = new_type_vfield(T_BASE);
   if ( (loc = malloc(sizeof(NspVField)))== NULLVFIELD) return loc;
@@ -217,7 +217,7 @@ int nsp_vfield_xdr_save(XDR *xdrs, NspVField *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_vfield)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_vfield)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->fx)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->fy)) == FAIL) return FAIL;

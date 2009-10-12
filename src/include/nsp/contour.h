@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspContour NspContour ;
-typedef struct _NspTypeNspContour NspTypeNspContour ;
+typedef struct _NspTypeContour NspTypeContour ;
 
 #line 22 "./contour.h"
 
-struct _NspTypeNspContour {
+struct _NspTypeContour {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -42,17 +42,17 @@ struct _nsp_contour {
 struct _NspContour {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspContour*type;
+  NspTypeContour*type;
   /*< public >*/
   nsp_contour *obj;
 };
 
 extern int nsp_type_contour_id;
-extern NspTypeNspContour *nsp_type_contour;
+extern NspTypeContour *nsp_type_contour;
 
 /* type instances for graphic */
 
-NspTypeNspContour *new_type_contour(type_mode mode);
+NspTypeContour *new_type_contour(type_mode mode);
 
 /* instance for NspContour */
 
@@ -75,18 +75,18 @@ extern void nsp_contour_destroy(NspContour *H);
 extern int nsp_contour_info(NspContour *H, int indent,const char *name, int rec_level);
 extern int nsp_contour_print(NspContour *H, int indent,const char *name, int rec_level);
 extern int nsp_contour_latex(NspContour *H, int indent,const char *name, int rec_level);
-extern NspContour *nsp_contour_object (NspObject *O); 
-extern int IsContourObj (Stack stack, int i); 
+extern NspContour *nsp_contour_object (NspObject *O);
+extern int IsContourObj (Stack stack, int i);
 extern int IsContour(NspObject *O);
-extern NspContour *GetContourCopy (Stack stack, int i); 
-extern NspContour *GetContour (Stack stack, int i); 
+extern NspContour *GetContourCopy (Stack stack, int i);
+extern NspContour *GetContour (Stack stack, int i);
 extern int nsp_contour_create_partial(NspContour *H);
 extern void nsp_contour_destroy_partial(NspContour *H);
 extern NspContour * nsp_contour_copy_partial(NspContour *H,NspContour *self);
 extern NspContour * nsp_contour_full_copy_partial(NspContour *H,NspContour *self);
 extern NspContour * nsp_contour_full_copy(NspContour *self);
 extern int nsp_contour_check_values(NspContour *H);
-extern int int_contour_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_contour_create(Stack stack, int rhs, int opt, int lhs);
 extern NspContour *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M);
 extern int nsp_contour_xdr_save(XDR  *xdrs, NspContour *M);
 
@@ -101,7 +101,7 @@ extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, i
 #endif /* NSP_INC_NspContour */ 
 
 #ifdef NspContour_Private 
-static int init_contour(NspContour *o,NspTypeNspContour *type);
+static int init_contour(NspContour *o,NspTypeContour *type);
 static int nsp_contour_size(NspContour *Mat, int flag);
 static char *nsp_contour_type_as_string(void);
 static char *nsp_contour_type_short_string(NspObject *v);

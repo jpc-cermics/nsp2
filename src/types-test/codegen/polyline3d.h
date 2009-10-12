@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspPolyline3d NspPolyline3d ;
-typedef struct _NspTypeNspPolyline3d NspTypeNspPolyline3d ;
+typedef struct _NspTypePolyline3d NspTypePolyline3d ;
 
 #line 22 "./polyline3d.h"
 
-struct _NspTypeNspPolyline3d {
+struct _NspTypePolyline3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -40,17 +40,17 @@ struct _nsp_polyline3d {
 struct _NspPolyline3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspPolyline3d*type;
+  NspTypePolyline3d*type;
   /*< public >*/
   nsp_polyline3d *obj;
 };
 
 extern int nsp_type_polyline3d_id;
-extern NspTypeNspPolyline3d *nsp_type_polyline3d;
+extern NspTypePolyline3d *nsp_type_polyline3d;
 
 /* type instances for graphic */
 
-NspTypeNspPolyline3d *new_type_polyline3d(type_mode mode);
+NspTypePolyline3d *new_type_polyline3d(type_mode mode);
 
 /* instance for NspPolyline3d */
 
@@ -73,18 +73,18 @@ extern void nsp_polyline3d_destroy(NspPolyline3d *H);
 extern int nsp_polyline3d_info(NspPolyline3d *H, int indent,const char *name, int rec_level);
 extern int nsp_polyline3d_print(NspPolyline3d *H, int indent,const char *name, int rec_level);
 extern int nsp_polyline3d_latex(NspPolyline3d *H, int indent,const char *name, int rec_level);
-extern NspPolyline3d *nsp_polyline3d_object (NspObject *O); 
-extern int IsPolyline3dObj (Stack stack, int i); 
+extern NspPolyline3d *nsp_polyline3d_object (NspObject *O);
+extern int IsPolyline3dObj (Stack stack, int i);
 extern int IsPolyline3d(NspObject *O);
-extern NspPolyline3d *GetPolyline3dCopy (Stack stack, int i); 
-extern NspPolyline3d *GetPolyline3d (Stack stack, int i); 
+extern NspPolyline3d *GetPolyline3dCopy (Stack stack, int i);
+extern NspPolyline3d *GetPolyline3d (Stack stack, int i);
 extern int nsp_polyline3d_create_partial(NspPolyline3d *H);
 extern void nsp_polyline3d_destroy_partial(NspPolyline3d *H);
 extern NspPolyline3d * nsp_polyline3d_copy_partial(NspPolyline3d *H,NspPolyline3d *self);
 extern NspPolyline3d * nsp_polyline3d_full_copy_partial(NspPolyline3d *H,NspPolyline3d *self);
 extern NspPolyline3d * nsp_polyline3d_full_copy(NspPolyline3d *self);
 extern int nsp_polyline3d_check_values(NspPolyline3d *H);
-extern int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline3d *nsp_polyline3d_xdr_load_partial(XDR *xdrs, NspPolyline3d *M);
 extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 
@@ -97,7 +97,7 @@ extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *s
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
-static int init_polyline3d(NspPolyline3d *o,NspTypeNspPolyline3d *type);
+static int init_polyline3d(NspPolyline3d *o,NspTypePolyline3d *type);
 static int nsp_polyline3d_size(NspPolyline3d *Mat, int flag);
 static char *nsp_polyline3d_type_as_string(void);
 static char *nsp_polyline3d_type_short_string(NspObject *v);

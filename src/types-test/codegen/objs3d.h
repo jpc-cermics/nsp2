@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspObjs3d NspObjs3d ;
-typedef struct _NspTypeNspObjs3d NspTypeNspObjs3d ;
+typedef struct _NspTypeObjs3d NspTypeObjs3d ;
 
 #line 22 "./objs3d.h"
 
-struct _NspTypeNspObjs3d {
+struct _NspTypeObjs3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -50,17 +50,17 @@ struct _nsp_objs3d {
 struct _NspObjs3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspObjs3d*type;
+  NspTypeObjs3d*type;
   /*< public >*/
   nsp_objs3d *obj;
 };
 
 extern int nsp_type_objs3d_id;
-extern NspTypeNspObjs3d *nsp_type_objs3d;
+extern NspTypeObjs3d *nsp_type_objs3d;
 
 /* type instances for graphic */
 
-NspTypeNspObjs3d *new_type_objs3d(type_mode mode);
+NspTypeObjs3d *new_type_objs3d(type_mode mode);
 
 /* instance for NspObjs3d */
 
@@ -83,18 +83,18 @@ extern void nsp_objs3d_destroy(NspObjs3d *H);
 extern int nsp_objs3d_info(NspObjs3d *H, int indent,const char *name, int rec_level);
 extern int nsp_objs3d_print(NspObjs3d *H, int indent,const char *name, int rec_level);
 extern int nsp_objs3d_latex(NspObjs3d *H, int indent,const char *name, int rec_level);
-extern NspObjs3d *nsp_objs3d_object (NspObject *O); 
-extern int IsObjs3dObj (Stack stack, int i); 
+extern NspObjs3d *nsp_objs3d_object (NspObject *O);
+extern int IsObjs3dObj (Stack stack, int i);
 extern int IsObjs3d(NspObject *O);
-extern NspObjs3d *GetObjs3dCopy (Stack stack, int i); 
-extern NspObjs3d *GetObjs3d (Stack stack, int i); 
+extern NspObjs3d *GetObjs3dCopy (Stack stack, int i);
+extern NspObjs3d *GetObjs3d (Stack stack, int i);
 extern int nsp_objs3d_create_partial(NspObjs3d *H);
 extern void nsp_objs3d_destroy_partial(NspObjs3d *H);
 extern NspObjs3d * nsp_objs3d_copy_partial(NspObjs3d *H,NspObjs3d *self);
 extern NspObjs3d * nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self);
 extern NspObjs3d * nsp_objs3d_full_copy(NspObjs3d *self);
 extern int nsp_objs3d_check_values(NspObjs3d *H);
-extern int int_objs3d_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspObjs3d *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M);
 extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 
@@ -122,7 +122,7 @@ extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *s
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
-static int init_objs3d(NspObjs3d *o,NspTypeNspObjs3d *type);
+static int init_objs3d(NspObjs3d *o,NspTypeObjs3d *type);
 static int nsp_objs3d_size(NspObjs3d *Mat, int flag);
 static char *nsp_objs3d_type_as_string(void);
 static char *nsp_objs3d_type_short_string(NspObject *v);

@@ -30,15 +30,15 @@ override-type Segments
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_segments;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_segments ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_segments  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_segments;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_segments ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_segments  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Segments */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

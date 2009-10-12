@@ -25,32 +25,32 @@
  */
 
 int nsp_type_classaref_id=0;
-NspTypeNspClassARef *nsp_type_classaref=NULL;
+NspTypeClassARef *nsp_type_classaref=NULL;
 
 /*
  * Type object for NspClassARef 
- * all the instance of NspTypeNspClassARef share the same id. 
- * nsp_type_classaref: is an instance of NspTypeNspClassARef 
+ * all the instance of NspTypeClassARef share the same id. 
+ * nsp_type_classaref: is an instance of NspTypeClassARef 
  *    used for objects of NspClassARef type (i.e built with new_classaref) 
  * other instances are used for derived classes 
  */
-NspTypeNspClassARef *new_type_classaref(type_mode mode)
+NspTypeClassARef *new_type_classaref(type_mode mode)
 {
-  NspTypeNspClassARef *type= NULL;
+  NspTypeClassARef *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_classaref != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classaref;
     }
-  if ((type =  malloc(sizeof(NspTypeNspClassARef))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeClassARef))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = classaref_attrs ; 
+  type->attrs = classaref_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = classaref_get_methods; 
+  type->methods = classaref_get_methods;
   type->new = (new_func *) new_classaref;
 
   
@@ -59,16 +59,16 @@ NspTypeNspClassARef *new_type_classaref(type_mode mode)
   
   /* object methods redefined for classaref */ 
 
-  top->pr = (print_func *) nsp_classaref_print;                  
+  top->pr = (print_func *) nsp_classaref_print;
   top->dealloc = (dealloc_func *) nsp_classaref_destroy;
-  top->copy  =  (copy_func *) nsp_classaref_copy;                 
-  top->size  = (size_func *) nsp_classaref_size;                
-  top->s_type =  (s_type_func *) nsp_classaref_type_as_string;  
+  top->copy  =  (copy_func *) nsp_classaref_copy;
+  top->size  = (size_func *) nsp_classaref_size;
+  top->s_type =  (s_type_func *) nsp_classaref_type_as_string;
   top->sh_type = (sh_type_func *) nsp_classaref_type_short_string;
-  top->info = (info_func *) nsp_classaref_info ;                  
+  top->info = (info_func *) nsp_classaref_info;
   /* top->is_true = (is_true_func  *) nsp_classaref_is_true; */
   /* top->loop =(loop_func *) nsp_classaref_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_classaref_object;
   top->eq  = (eq_func *) nsp_classaref_eq;
   top->neq  = (eq_func *) nsp_classaref_neq;
@@ -91,7 +91,7 @@ NspTypeNspClassARef *new_type_classaref(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspClassARef called nsp_type_classaref
+       * an instance of NspTypeClassARef called nsp_type_classaref
        */
       type->id =  nsp_type_classaref_id = nsp_new_type_id();
       nsp_type_classaref = type;
@@ -110,11 +110,11 @@ NspTypeNspClassARef *new_type_classaref(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_classaref(NspClassARef *Obj,NspTypeNspClassARef *type)
+static int init_classaref(NspClassARef *Obj,NspTypeClassARef *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -127,7 +127,7 @@ static int init_classaref(NspClassARef *Obj,NspTypeNspClassARef *type)
 
 NspClassARef *new_classaref() 
 {
-  NspClassARef *loc; 
+  NspClassARef *loc;
   /* type must exists */
   nsp_type_classaref = new_type_classaref(T_BASE);
   if ( (loc = malloc(sizeof(NspClassARef)))== NULLCLASSAREF) return loc;
@@ -200,7 +200,7 @@ int nsp_classaref_xdr_save(XDR *xdrs, NspClassARef *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classaref)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classaref)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->cla_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->cla_thickness) == FAIL) return FAIL;

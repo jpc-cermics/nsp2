@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspClassA NspClassA ;
-typedef struct _NspTypeNspClassA NspTypeNspClassA ;
+typedef struct _NspTypeClassA NspTypeClassA ;
 
 #line 22 "./classa.h"
 
-struct _NspTypeNspClassA {
+struct _NspTypeClassA {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -31,7 +31,7 @@ struct _NspTypeNspClassA {
 struct _NspClassA {
   /*< private >*/
   NspObject father;
-  NspTypeNspClassA*type;
+  NspTypeClassA*type;
   /*< public >*/
     int cla_color;
   int cla_thickness;
@@ -41,11 +41,11 @@ struct _NspClassA {
 };
 
 extern int nsp_type_classa_id;
-extern NspTypeNspClassA *nsp_type_classa;
+extern NspTypeClassA *nsp_type_classa;
 
 /* type instances for object */
 
-NspTypeNspClassA *new_type_classa(type_mode mode);
+NspTypeClassA *new_type_classa(type_mode mode);
 
 /* instance for NspClassA */
 
@@ -68,18 +68,18 @@ extern void nsp_classa_destroy(NspClassA *H);
 extern int nsp_classa_info(NspClassA *H, int indent,const char *name, int rec_level);
 extern int nsp_classa_print(NspClassA *H, int indent,const char *name, int rec_level);
 extern int nsp_classa_latex(NspClassA *H, int indent,const char *name, int rec_level);
-extern NspClassA *nsp_classa_object (NspObject *O); 
-extern int IsClassAObj (Stack stack, int i); 
+extern NspClassA *nsp_classa_object (NspObject *O);
+extern int IsClassAObj (Stack stack, int i);
 extern int IsClassA(NspObject *O);
-extern NspClassA *GetClassACopy (Stack stack, int i); 
-extern NspClassA *GetClassA (Stack stack, int i); 
+extern NspClassA *GetClassACopy (Stack stack, int i);
+extern NspClassA *GetClassA (Stack stack, int i);
 extern int nsp_classa_create_partial(NspClassA *H);
 extern void nsp_classa_destroy_partial(NspClassA *H);
 extern NspClassA * nsp_classa_copy_partial(NspClassA *H,NspClassA *self);
 extern NspClassA * nsp_classa_full_copy_partial(NspClassA *H,NspClassA *self);
 extern NspClassA * nsp_classa_full_copy(NspClassA *self);
 extern int nsp_classa_check_values(NspClassA *H);
-extern int int_classa_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_classa_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassA *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M);
 extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 
@@ -93,7 +93,7 @@ extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 #endif /* NSP_INC_NspClassA */ 
 
 #ifdef NspClassA_Private 
-static int init_classa(NspClassA *o,NspTypeNspClassA *type);
+static int init_classa(NspClassA *o,NspTypeClassA *type);
 static int nsp_classa_size(NspClassA *Mat, int flag);
 static char *nsp_classa_type_as_string(void);
 static char *nsp_classa_type_short_string(NspObject *v);

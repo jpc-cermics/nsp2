@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspCompound NspCompound ;
-typedef struct _NspTypeNspCompound NspTypeNspCompound ;
+typedef struct _NspTypeCompound NspTypeCompound ;
 
 #line 22 "./compound.h"
 
-struct _NspTypeNspCompound {
+struct _NspTypeCompound {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -38,17 +38,17 @@ struct _nsp_compound {
 struct _NspCompound {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspCompound*type;
+  NspTypeCompound*type;
   /*< public >*/
   nsp_compound *obj;
 };
 
 extern int nsp_type_compound_id;
-extern NspTypeNspCompound *nsp_type_compound;
+extern NspTypeCompound *nsp_type_compound;
 
 /* type instances for graphic */
 
-NspTypeNspCompound *new_type_compound(type_mode mode);
+NspTypeCompound *new_type_compound(type_mode mode);
 
 /* instance for NspCompound */
 
@@ -71,18 +71,18 @@ extern void nsp_compound_destroy(NspCompound *H);
 extern int nsp_compound_info(NspCompound *H, int indent,const char *name, int rec_level);
 extern int nsp_compound_print(NspCompound *H, int indent,const char *name, int rec_level);
 extern int nsp_compound_latex(NspCompound *H, int indent,const char *name, int rec_level);
-extern NspCompound *nsp_compound_object (NspObject *O); 
-extern int IsCompoundObj (Stack stack, int i); 
+extern NspCompound *nsp_compound_object (NspObject *O);
+extern int IsCompoundObj (Stack stack, int i);
 extern int IsCompound(NspObject *O);
-extern NspCompound *GetCompoundCopy (Stack stack, int i); 
-extern NspCompound *GetCompound (Stack stack, int i); 
+extern NspCompound *GetCompoundCopy (Stack stack, int i);
+extern NspCompound *GetCompound (Stack stack, int i);
 extern int nsp_compound_create_partial(NspCompound *H);
 extern void nsp_compound_destroy_partial(NspCompound *H);
 extern NspCompound * nsp_compound_copy_partial(NspCompound *H,NspCompound *self);
 extern NspCompound * nsp_compound_full_copy_partial(NspCompound *H,NspCompound *self);
 extern NspCompound * nsp_compound_full_copy(NspCompound *self);
 extern int nsp_compound_check_values(NspCompound *H);
-extern int int_compound_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_compound_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCompound *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M);
 extern int nsp_compound_xdr_save(XDR  *xdrs, NspCompound *M);
 
@@ -95,7 +95,7 @@ extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
 #endif /* NSP_INC_NspCompound */ 
 
 #ifdef NspCompound_Private 
-static int init_compound(NspCompound *o,NspTypeNspCompound *type);
+static int init_compound(NspCompound *o,NspTypeCompound *type);
 static int nsp_compound_size(NspCompound *Mat, int flag);
 static char *nsp_compound_type_as_string(void);
 static char *nsp_compound_type_short_string(NspObject *v);

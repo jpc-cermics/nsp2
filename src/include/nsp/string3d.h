@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspString3d NspString3d ;
-typedef struct _NspTypeNspString3d NspTypeNspString3d ;
+typedef struct _NspTypeString3d NspTypeString3d ;
 
 #line 22 "./string3d.h"
 
-struct _NspTypeNspString3d {
+struct _NspTypeString3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -42,17 +42,17 @@ struct _nsp_string3d {
 struct _NspString3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspString3d*type;
+  NspTypeString3d*type;
   /*< public >*/
   nsp_string3d *obj;
 };
 
 extern int nsp_type_string3d_id;
-extern NspTypeNspString3d *nsp_type_string3d;
+extern NspTypeString3d *nsp_type_string3d;
 
 /* type instances for graphic */
 
-NspTypeNspString3d *new_type_string3d(type_mode mode);
+NspTypeString3d *new_type_string3d(type_mode mode);
 
 /* instance for NspString3d */
 
@@ -75,18 +75,18 @@ extern void nsp_string3d_destroy(NspString3d *H);
 extern int nsp_string3d_info(NspString3d *H, int indent,const char *name, int rec_level);
 extern int nsp_string3d_print(NspString3d *H, int indent,const char *name, int rec_level);
 extern int nsp_string3d_latex(NspString3d *H, int indent,const char *name, int rec_level);
-extern NspString3d *nsp_string3d_object (NspObject *O); 
-extern int IsString3dObj (Stack stack, int i); 
+extern NspString3d *nsp_string3d_object (NspObject *O);
+extern int IsString3dObj (Stack stack, int i);
 extern int IsString3d(NspObject *O);
-extern NspString3d *GetString3dCopy (Stack stack, int i); 
-extern NspString3d *GetString3d (Stack stack, int i); 
+extern NspString3d *GetString3dCopy (Stack stack, int i);
+extern NspString3d *GetString3d (Stack stack, int i);
 extern int nsp_string3d_create_partial(NspString3d *H);
 extern void nsp_string3d_destroy_partial(NspString3d *H);
 extern NspString3d * nsp_string3d_copy_partial(NspString3d *H,NspString3d *self);
 extern NspString3d * nsp_string3d_full_copy_partial(NspString3d *H,NspString3d *self);
 extern NspString3d * nsp_string3d_full_copy(NspString3d *self);
 extern int nsp_string3d_check_values(NspString3d *H);
-extern int int_string3d_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_string3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspString3d *nsp_string3d_xdr_load_partial(XDR *xdrs, NspString3d *M);
 extern int nsp_string3d_xdr_save(XDR  *xdrs, NspString3d *M);
 
@@ -104,7 +104,7 @@ extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, Vision
 #endif /* NSP_INC_NspString3d */ 
 
 #ifdef NspString3d_Private 
-static int init_string3d(NspString3d *o,NspTypeNspString3d *type);
+static int init_string3d(NspString3d *o,NspTypeString3d *type);
 static int nsp_string3d_size(NspString3d *Mat, int flag);
 static char *nsp_string3d_type_as_string(void);
 static char *nsp_string3d_type_short_string(NspObject *v);

@@ -34,14 +34,14 @@ Init portion
 %%
 override-type  VField
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_vfield;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_vfield ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_vfield;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_vfield ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_vfield  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_vfield  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_vfield  ;
   /* next method are defined in NspGraphic and need not be chnaged here for GMatrix */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

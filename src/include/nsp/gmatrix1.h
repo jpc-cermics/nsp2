@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspGMatrix1 NspGMatrix1 ;
-typedef struct _NspTypeNspGMatrix1 NspTypeNspGMatrix1 ;
+typedef struct _NspTypeGMatrix1 NspTypeGMatrix1 ;
 
 #line 22 "./gmatrix1.h"
 
-struct _NspTypeNspGMatrix1 {
+struct _NspTypeGMatrix1 {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -44,17 +44,17 @@ struct _nsp_gmatrix1 {
 struct _NspGMatrix1 {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspGMatrix1*type;
+  NspTypeGMatrix1*type;
   /*< public >*/
   nsp_gmatrix1 *obj;
 };
 
 extern int nsp_type_gmatrix1_id;
-extern NspTypeNspGMatrix1 *nsp_type_gmatrix1;
+extern NspTypeGMatrix1 *nsp_type_gmatrix1;
 
 /* type instances for graphic */
 
-NspTypeNspGMatrix1 *new_type_gmatrix1(type_mode mode);
+NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode);
 
 /* instance for NspGMatrix1 */
 
@@ -77,18 +77,18 @@ extern void nsp_gmatrix1_destroy(NspGMatrix1 *H);
 extern int nsp_gmatrix1_info(NspGMatrix1 *H, int indent,const char *name, int rec_level);
 extern int nsp_gmatrix1_print(NspGMatrix1 *H, int indent,const char *name, int rec_level);
 extern int nsp_gmatrix1_latex(NspGMatrix1 *H, int indent,const char *name, int rec_level);
-extern NspGMatrix1 *nsp_gmatrix1_object (NspObject *O); 
-extern int IsGMatrix1Obj (Stack stack, int i); 
+extern NspGMatrix1 *nsp_gmatrix1_object (NspObject *O);
+extern int IsGMatrix1Obj (Stack stack, int i);
 extern int IsGMatrix1(NspObject *O);
-extern NspGMatrix1 *GetGMatrix1Copy (Stack stack, int i); 
-extern NspGMatrix1 *GetGMatrix1 (Stack stack, int i); 
+extern NspGMatrix1 *GetGMatrix1Copy (Stack stack, int i);
+extern NspGMatrix1 *GetGMatrix1 (Stack stack, int i);
 extern int nsp_gmatrix1_create_partial(NspGMatrix1 *H);
 extern void nsp_gmatrix1_destroy_partial(NspGMatrix1 *H);
 extern NspGMatrix1 * nsp_gmatrix1_copy_partial(NspGMatrix1 *H,NspGMatrix1 *self);
 extern NspGMatrix1 * nsp_gmatrix1_full_copy_partial(NspGMatrix1 *H,NspGMatrix1 *self);
 extern NspGMatrix1 * nsp_gmatrix1_full_copy(NspGMatrix1 *self);
 extern int nsp_gmatrix1_check_values(NspGMatrix1 *H);
-extern int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix1 *nsp_gmatrix1_xdr_load_partial(XDR *xdrs, NspGMatrix1 *M);
 extern int nsp_gmatrix1_xdr_save(XDR  *xdrs, NspGMatrix1 *M);
 
@@ -106,7 +106,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 #endif /* NSP_INC_NspGMatrix1 */ 
 
 #ifdef NspGMatrix1_Private 
-static int init_gmatrix1(NspGMatrix1 *o,NspTypeNspGMatrix1 *type);
+static int init_gmatrix1(NspGMatrix1 *o,NspTypeGMatrix1 *type);
 static int nsp_gmatrix1_size(NspGMatrix1 *Mat, int flag);
 static char *nsp_gmatrix1_type_as_string(void);
 static char *nsp_gmatrix1_type_short_string(NspObject *v);

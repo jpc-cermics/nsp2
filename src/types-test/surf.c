@@ -27,32 +27,32 @@
  */
 
 int nsp_type_surf_id=0;
-NspTypeNspSurf *nsp_type_surf=NULL;
+NspTypeSurf *nsp_type_surf=NULL;
 
 /*
  * Type object for NspSurf 
- * all the instance of NspTypeNspSurf share the same id. 
- * nsp_type_surf: is an instance of NspTypeNspSurf 
+ * all the instance of NspTypeSurf share the same id. 
+ * nsp_type_surf: is an instance of NspTypeSurf 
  *    used for objects of NspSurf type (i.e built with new_surf) 
  * other instances are used for derived classes 
  */
-NspTypeNspSurf *new_type_surf(type_mode mode)
+NspTypeSurf *new_type_surf(type_mode mode)
 {
-  NspTypeNspSurf *type= NULL;
+  NspTypeSurf *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_surf != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_surf;
     }
-  if ((type =  malloc(sizeof(NspTypeNspSurf))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeSurf))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = surf_attrs ; 
+  type->attrs = surf_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = surf_get_methods; 
+  type->methods = surf_get_methods;
   type->new = (new_func *) new_surf;
 
   
@@ -61,16 +61,16 @@ NspTypeNspSurf *new_type_surf(type_mode mode)
   
   /* object methods redefined for surf */ 
 
-  top->pr = (print_func *) nsp_surf_print;                  
+  top->pr = (print_func *) nsp_surf_print;
   top->dealloc = (dealloc_func *) nsp_surf_destroy;
-  top->copy  =  (copy_func *) nsp_surf_copy;                 
-  top->size  = (size_func *) nsp_surf_size;                
-  top->s_type =  (s_type_func *) nsp_surf_type_as_string;  
+  top->copy  =  (copy_func *) nsp_surf_copy;
+  top->size  = (size_func *) nsp_surf_size;
+  top->s_type =  (s_type_func *) nsp_surf_type_as_string;
   top->sh_type = (sh_type_func *) nsp_surf_type_short_string;
-  top->info = (info_func *) nsp_surf_info ;                  
+  top->info = (info_func *) nsp_surf_info;
   /* top->is_true = (is_true_func  *) nsp_surf_is_true; */
   /* top->loop =(loop_func *) nsp_surf_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_surf_object;
   top->eq  = (eq_func *) nsp_surf_eq;
   top->neq  = (eq_func *) nsp_surf_neq;
@@ -87,15 +87,15 @@ NspTypeNspSurf *new_type_surf(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_surf;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_surf ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_surf  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_surf  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_surf  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_surf_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_surf;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_surf ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_surf  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_surf  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_surf  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_surf_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Surf */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 101 "surf.c"
   /* 
@@ -108,7 +108,7 @@ NspTypeNspSurf *new_type_surf(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspSurf called nsp_type_surf
+       * an instance of NspTypeSurf called nsp_type_surf
        */
       type->id =  nsp_type_surf_id = nsp_new_type_id();
       nsp_type_surf = type;
@@ -127,11 +127,11 @@ NspTypeNspSurf *new_type_surf(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_surf(NspSurf *Obj,NspTypeNspSurf *type)
+static int init_surf(NspSurf *Obj,NspTypeSurf *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -144,7 +144,7 @@ static int init_surf(NspSurf *Obj,NspTypeNspSurf *type)
 
 NspSurf *new_surf() 
 {
-  NspSurf *loc; 
+  NspSurf *loc;
   /* type must exists */
   nsp_type_surf = new_type_surf(T_BASE);
   if ( (loc = malloc(sizeof(NspSurf)))== NULLSURF) return loc;
@@ -220,7 +220,7 @@ int nsp_surf_xdr_save(XDR *xdrs, NspSurf *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_surf)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_surf)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;

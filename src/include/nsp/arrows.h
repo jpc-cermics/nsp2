@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspArrows NspArrows ;
-typedef struct _NspTypeNspArrows NspTypeNspArrows ;
+typedef struct _NspTypeArrows NspTypeArrows ;
 
 #line 22 "./arrows.h"
 
-struct _NspTypeNspArrows {
+struct _NspTypeArrows {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -40,17 +40,17 @@ struct _nsp_arrows {
 struct _NspArrows {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspArrows*type;
+  NspTypeArrows*type;
   /*< public >*/
   nsp_arrows *obj;
 };
 
 extern int nsp_type_arrows_id;
-extern NspTypeNspArrows *nsp_type_arrows;
+extern NspTypeArrows *nsp_type_arrows;
 
 /* type instances for graphic */
 
-NspTypeNspArrows *new_type_arrows(type_mode mode);
+NspTypeArrows *new_type_arrows(type_mode mode);
 
 /* instance for NspArrows */
 
@@ -73,18 +73,18 @@ extern void nsp_arrows_destroy(NspArrows *H);
 extern int nsp_arrows_info(NspArrows *H, int indent,const char *name, int rec_level);
 extern int nsp_arrows_print(NspArrows *H, int indent,const char *name, int rec_level);
 extern int nsp_arrows_latex(NspArrows *H, int indent,const char *name, int rec_level);
-extern NspArrows *nsp_arrows_object (NspObject *O); 
-extern int IsArrowsObj (Stack stack, int i); 
+extern NspArrows *nsp_arrows_object (NspObject *O);
+extern int IsArrowsObj (Stack stack, int i);
 extern int IsArrows(NspObject *O);
-extern NspArrows *GetArrowsCopy (Stack stack, int i); 
-extern NspArrows *GetArrows (Stack stack, int i); 
+extern NspArrows *GetArrowsCopy (Stack stack, int i);
+extern NspArrows *GetArrows (Stack stack, int i);
 extern int nsp_arrows_create_partial(NspArrows *H);
 extern void nsp_arrows_destroy_partial(NspArrows *H);
 extern NspArrows * nsp_arrows_copy_partial(NspArrows *H,NspArrows *self);
 extern NspArrows * nsp_arrows_full_copy_partial(NspArrows *H,NspArrows *self);
 extern NspArrows * nsp_arrows_full_copy(NspArrows *self);
 extern int nsp_arrows_check_values(NspArrows *H);
-extern int int_arrows_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_arrows_create(Stack stack, int rhs, int opt, int lhs);
 extern NspArrows *nsp_arrows_xdr_load_partial(XDR *xdrs, NspArrows *M);
 extern int nsp_arrows_xdr_save(XDR  *xdrs, NspArrows *M);
 
@@ -96,7 +96,7 @@ extern int nsp_arrows_xdr_save(XDR  *xdrs, NspArrows *M);
 #endif /* NSP_INC_NspArrows */ 
 
 #ifdef NspArrows_Private 
-static int init_arrows(NspArrows *o,NspTypeNspArrows *type);
+static int init_arrows(NspArrows *o,NspTypeArrows *type);
 static int nsp_arrows_size(NspArrows *Mat, int flag);
 static char *nsp_arrows_type_as_string(void);
 static char *nsp_arrows_type_short_string(NspObject *v);

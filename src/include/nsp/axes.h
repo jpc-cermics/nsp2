@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspAxes NspAxes ;
-typedef struct _NspTypeNspAxes NspTypeNspAxes ;
+typedef struct _NspTypeAxes NspTypeAxes ;
 
 #line 22 "./axes.h"
 
-struct _NspTypeNspAxes {
+struct _NspTypeAxes {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -57,17 +57,17 @@ struct _nsp_axes {
 struct _NspAxes {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspAxes*type;
+  NspTypeAxes*type;
   /*< public >*/
   nsp_axes *obj;
 };
 
 extern int nsp_type_axes_id;
-extern NspTypeNspAxes *nsp_type_axes;
+extern NspTypeAxes *nsp_type_axes;
 
 /* type instances for graphic */
 
-NspTypeNspAxes *new_type_axes(type_mode mode);
+NspTypeAxes *new_type_axes(type_mode mode);
 
 /* instance for NspAxes */
 
@@ -90,18 +90,18 @@ extern void nsp_axes_destroy(NspAxes *H);
 extern int nsp_axes_info(NspAxes *H, int indent,const char *name, int rec_level);
 extern int nsp_axes_print(NspAxes *H, int indent,const char *name, int rec_level);
 extern int nsp_axes_latex(NspAxes *H, int indent,const char *name, int rec_level);
-extern NspAxes *nsp_axes_object (NspObject *O); 
-extern int IsAxesObj (Stack stack, int i); 
+extern NspAxes *nsp_axes_object (NspObject *O);
+extern int IsAxesObj (Stack stack, int i);
 extern int IsAxes(NspObject *O);
-extern NspAxes *GetAxesCopy (Stack stack, int i); 
-extern NspAxes *GetAxes (Stack stack, int i); 
+extern NspAxes *GetAxesCopy (Stack stack, int i);
+extern NspAxes *GetAxes (Stack stack, int i);
 extern int nsp_axes_create_partial(NspAxes *H);
 extern void nsp_axes_destroy_partial(NspAxes *H);
 extern NspAxes * nsp_axes_copy_partial(NspAxes *H,NspAxes *self);
 extern NspAxes * nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self);
 extern NspAxes * nsp_axes_full_copy(NspAxes *self);
 extern int nsp_axes_check_values(NspAxes *H);
-extern int int_axes_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_axes_create(Stack stack, int rhs, int opt, int lhs);
 extern NspAxes *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M);
 extern int nsp_axes_xdr_save(XDR  *xdrs, NspAxes *M);
 
@@ -131,7 +131,7 @@ extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
-static int init_axes(NspAxes *o,NspTypeNspAxes *type);
+static int init_axes(NspAxes *o,NspTypeAxes *type);
 static int nsp_axes_size(NspAxes *Mat, int flag);
 static char *nsp_axes_type_as_string(void);
 static char *nsp_axes_type_short_string(NspObject *v);

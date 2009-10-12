@@ -28,32 +28,32 @@
  */
 
 int nsp_type_arrows_id=0;
-NspTypeNspArrows *nsp_type_arrows=NULL;
+NspTypeArrows *nsp_type_arrows=NULL;
 
 /*
  * Type object for NspArrows 
- * all the instance of NspTypeNspArrows share the same id. 
- * nsp_type_arrows: is an instance of NspTypeNspArrows 
+ * all the instance of NspTypeArrows share the same id. 
+ * nsp_type_arrows: is an instance of NspTypeArrows 
  *    used for objects of NspArrows type (i.e built with new_arrows) 
  * other instances are used for derived classes 
  */
-NspTypeNspArrows *new_type_arrows(type_mode mode)
+NspTypeArrows *new_type_arrows(type_mode mode)
 {
-  NspTypeNspArrows *type= NULL;
+  NspTypeArrows *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_arrows != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_arrows;
     }
-  if ((type =  malloc(sizeof(NspTypeNspArrows))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeArrows))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = arrows_attrs ; 
+  type->attrs = arrows_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = arrows_get_methods; 
+  type->methods = arrows_get_methods;
   type->new = (new_func *) new_arrows;
 
   
@@ -62,16 +62,16 @@ NspTypeNspArrows *new_type_arrows(type_mode mode)
   
   /* object methods redefined for arrows */ 
 
-  top->pr = (print_func *) nsp_arrows_print;                  
+  top->pr = (print_func *) nsp_arrows_print;
   top->dealloc = (dealloc_func *) nsp_arrows_destroy;
-  top->copy  =  (copy_func *) nsp_arrows_copy;                 
-  top->size  = (size_func *) nsp_arrows_size;                
-  top->s_type =  (s_type_func *) nsp_arrows_type_as_string;  
+  top->copy  =  (copy_func *) nsp_arrows_copy;
+  top->size  = (size_func *) nsp_arrows_size;
+  top->s_type =  (s_type_func *) nsp_arrows_type_as_string;
   top->sh_type = (sh_type_func *) nsp_arrows_type_short_string;
-  top->info = (info_func *) nsp_arrows_info ;                  
+  top->info = (info_func *) nsp_arrows_info;
   /* top->is_true = (is_true_func  *) nsp_arrows_is_true; */
   /* top->loop =(loop_func *) nsp_arrows_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_arrows_object;
   top->eq  = (eq_func *) nsp_arrows_eq;
   top->neq  = (eq_func *) nsp_arrows_neq;
@@ -88,15 +88,15 @@ NspTypeNspArrows *new_type_arrows(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_arrows;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_arrows ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_arrows  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_arrows  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_arrows_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_arrows;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_arrows ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_arrows  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_arrows  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_arrows_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Arrows */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 102 "arrows.c"
   /* 
@@ -109,7 +109,7 @@ NspTypeNspArrows *new_type_arrows(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspArrows called nsp_type_arrows
+       * an instance of NspTypeArrows called nsp_type_arrows
        */
       type->id =  nsp_type_arrows_id = nsp_new_type_id();
       nsp_type_arrows = type;
@@ -128,11 +128,11 @@ NspTypeNspArrows *new_type_arrows(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_arrows(NspArrows *Obj,NspTypeNspArrows *type)
+static int init_arrows(NspArrows *Obj,NspTypeArrows *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -145,7 +145,7 @@ static int init_arrows(NspArrows *Obj,NspTypeNspArrows *type)
 
 NspArrows *new_arrows() 
 {
-  NspArrows *loc; 
+  NspArrows *loc;
   /* type must exists */
   nsp_type_arrows = new_type_arrows(T_BASE);
   if ( (loc = malloc(sizeof(NspArrows)))== NULLARROWS) return loc;
@@ -217,7 +217,7 @@ int nsp_arrows_xdr_save(XDR *xdrs, NspArrows *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_arrows)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_arrows)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;

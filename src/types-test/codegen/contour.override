@@ -38,14 +38,14 @@ Init portion
 %%
 override-type Contour
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_contour  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_contour  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_contour;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_contour ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_contour  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_contour  ;
   /* next method are defined in NspGraphic and need not be changed here for Contour */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspCurve NspCurve ;
-typedef struct _NspTypeNspCurve NspTypeNspCurve ;
+typedef struct _NspTypeCurve NspTypeCurve ;
 
 #line 22 "./curve.h"
 
-struct _NspTypeNspCurve {
+struct _NspTypeCurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -43,17 +43,17 @@ struct _nsp_curve {
 struct _NspCurve {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspCurve*type;
+  NspTypeCurve*type;
   /*< public >*/
   nsp_curve *obj;
 };
 
 extern int nsp_type_curve_id;
-extern NspTypeNspCurve *nsp_type_curve;
+extern NspTypeCurve *nsp_type_curve;
 
 /* type instances for graphic */
 
-NspTypeNspCurve *new_type_curve(type_mode mode);
+NspTypeCurve *new_type_curve(type_mode mode);
 
 /* instance for NspCurve */
 
@@ -76,18 +76,18 @@ extern void nsp_curve_destroy(NspCurve *H);
 extern int nsp_curve_info(NspCurve *H, int indent,const char *name, int rec_level);
 extern int nsp_curve_print(NspCurve *H, int indent,const char *name, int rec_level);
 extern int nsp_curve_latex(NspCurve *H, int indent,const char *name, int rec_level);
-extern NspCurve *nsp_curve_object (NspObject *O); 
-extern int IsCurveObj (Stack stack, int i); 
+extern NspCurve *nsp_curve_object (NspObject *O);
+extern int IsCurveObj (Stack stack, int i);
 extern int IsCurve(NspObject *O);
-extern NspCurve *GetCurveCopy (Stack stack, int i); 
-extern NspCurve *GetCurve (Stack stack, int i); 
+extern NspCurve *GetCurveCopy (Stack stack, int i);
+extern NspCurve *GetCurve (Stack stack, int i);
 extern int nsp_curve_create_partial(NspCurve *H);
 extern void nsp_curve_destroy_partial(NspCurve *H);
 extern NspCurve * nsp_curve_copy_partial(NspCurve *H,NspCurve *self);
 extern NspCurve * nsp_curve_full_copy_partial(NspCurve *H,NspCurve *self);
 extern NspCurve * nsp_curve_full_copy(NspCurve *self);
 extern int nsp_curve_check_values(NspCurve *H);
-extern int int_curve_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_curve_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCurve *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M);
 extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 
@@ -99,7 +99,7 @@ extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 #endif /* NSP_INC_NspCurve */ 
 
 #ifdef NspCurve_Private 
-static int init_curve(NspCurve *o,NspTypeNspCurve *type);
+static int init_curve(NspCurve *o,NspTypeCurve *type);
 static int nsp_curve_size(NspCurve *Mat, int flag);
 static char *nsp_curve_type_as_string(void);
 static char *nsp_curve_type_short_string(NspObject *v);

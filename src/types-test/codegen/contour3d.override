@@ -41,17 +41,17 @@ override-type Contour3d
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_contour3d;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_contour3d ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_contour3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_contour3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_contour3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_contour3d_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_contour3d;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_contour3d ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_contour3d  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_contour3d  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_contour3d  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_contour3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Contour3d */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_contour3d_zmean;
-  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_contour3d_n_faces;
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_contour3d_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_contour3d_n_faces;
 
 %%
 modulename atk
@@ -68,7 +68,6 @@ override_int_create_final
 %%
 override_destroy_prelim Contour3d 
   /* verbatim in destroy */
-  
 %%
 override contour3d_attach kwargs
 int _wrap_contour3d_attach(Stack stack, int rhs, int opt, int lhs)

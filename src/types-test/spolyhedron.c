@@ -31,32 +31,32 @@
  */
 
 int nsp_type_spolyhedron_id=0;
-NspTypeNspSPolyhedron *nsp_type_spolyhedron=NULL;
+NspTypeSPolyhedron *nsp_type_spolyhedron=NULL;
 
 /*
  * Type object for NspSPolyhedron 
- * all the instance of NspTypeNspSPolyhedron share the same id. 
- * nsp_type_spolyhedron: is an instance of NspTypeNspSPolyhedron 
+ * all the instance of NspTypeSPolyhedron share the same id. 
+ * nsp_type_spolyhedron: is an instance of NspTypeSPolyhedron 
  *    used for objects of NspSPolyhedron type (i.e built with new_spolyhedron) 
  * other instances are used for derived classes 
  */
-NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
+NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
 {
-  NspTypeNspSPolyhedron *type= NULL;
+  NspTypeSPolyhedron *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_spolyhedron != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_spolyhedron;
     }
-  if ((type =  malloc(sizeof(NspTypeNspSPolyhedron))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeSPolyhedron))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = spolyhedron_attrs ; 
+  type->attrs = spolyhedron_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = spolyhedron_get_methods; 
+  type->methods = spolyhedron_get_methods;
   type->new = (new_func *) new_spolyhedron;
 
   
@@ -65,16 +65,16 @@ NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
   
   /* object methods redefined for spolyhedron */ 
 
-  top->pr = (print_func *) nsp_spolyhedron_print;                  
+  top->pr = (print_func *) nsp_spolyhedron_print;
   top->dealloc = (dealloc_func *) nsp_spolyhedron_destroy;
-  top->copy  =  (copy_func *) nsp_spolyhedron_copy;                 
-  top->size  = (size_func *) nsp_spolyhedron_size;                
-  top->s_type =  (s_type_func *) nsp_spolyhedron_type_as_string;  
+  top->copy  =  (copy_func *) nsp_spolyhedron_copy;
+  top->size  = (size_func *) nsp_spolyhedron_size;
+  top->s_type =  (s_type_func *) nsp_spolyhedron_type_as_string;
   top->sh_type = (sh_type_func *) nsp_spolyhedron_type_short_string;
-  top->info = (info_func *) nsp_spolyhedron_info ;                  
+  top->info = (info_func *) nsp_spolyhedron_info;
   /* top->is_true = (is_true_func  *) nsp_spolyhedron_is_true; */
   /* top->loop =(loop_func *) nsp_spolyhedron_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_spolyhedron_object;
   top->eq  = (eq_func *) nsp_spolyhedron_eq;
   top->neq  = (eq_func *) nsp_spolyhedron_neq;
@@ -87,21 +87,21 @@ NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
       
   type->init = (init_func *) init_spolyhedron;
 
-#line 73 "codegen/spolyhedron.override"
+#line 44 "codegen/spolyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_spolyhedron;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_spolyhedron ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_spolyhedron  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_spolyhedron  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_spolyhedron  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_spolyhedron_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_spolyhedron;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_spolyhedron ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_spolyhedron  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_spolyhedron  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_spolyhedron  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_spolyhedron_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for SPolyhedron */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_spolyhedron_zmean;
-  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_spolyhedron_n_faces;
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_spolyhedron_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_spolyhedron_n_faces;
 
 #line 107 "spolyhedron.c"
   /* 
@@ -114,7 +114,7 @@ NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspSPolyhedron called nsp_type_spolyhedron
+       * an instance of NspTypeSPolyhedron called nsp_type_spolyhedron
        */
       type->id =  nsp_type_spolyhedron_id = nsp_new_type_id();
       nsp_type_spolyhedron = type;
@@ -133,11 +133,11 @@ NspTypeNspSPolyhedron *new_type_spolyhedron(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_spolyhedron(NspSPolyhedron *Obj,NspTypeNspSPolyhedron *type)
+static int init_spolyhedron(NspSPolyhedron *Obj,NspTypeSPolyhedron *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -150,7 +150,7 @@ static int init_spolyhedron(NspSPolyhedron *Obj,NspTypeNspSPolyhedron *type)
 
 NspSPolyhedron *new_spolyhedron() 
 {
-  NspSPolyhedron *loc; 
+  NspSPolyhedron *loc;
   /* type must exists */
   nsp_type_spolyhedron = new_type_spolyhedron(T_BASE);
   if ( (loc = malloc(sizeof(NspSPolyhedron)))== NULLSPOLYHEDRON) return loc;
@@ -244,7 +244,7 @@ int nsp_spolyhedron_xdr_save(XDR *xdrs, NspSPolyhedron *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_spolyhedron)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_spolyhedron)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mface)) == FAIL) return FAIL;

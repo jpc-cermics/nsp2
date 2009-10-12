@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspFec NspFec ;
-typedef struct _NspTypeNspFec NspTypeNspFec ;
+typedef struct _NspTypeFec NspTypeFec ;
 
 #line 22 "./fec.h"
 
-struct _NspTypeNspFec {
+struct _NspTypeFec {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -44,17 +44,17 @@ struct _nsp_fec {
 struct _NspFec {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspFec*type;
+  NspTypeFec*type;
   /*< public >*/
   nsp_fec *obj;
 };
 
 extern int nsp_type_fec_id;
-extern NspTypeNspFec *nsp_type_fec;
+extern NspTypeFec *nsp_type_fec;
 
 /* type instances for graphic */
 
-NspTypeNspFec *new_type_fec(type_mode mode);
+NspTypeFec *new_type_fec(type_mode mode);
 
 /* instance for NspFec */
 
@@ -77,18 +77,18 @@ extern void nsp_fec_destroy(NspFec *H);
 extern int nsp_fec_info(NspFec *H, int indent,const char *name, int rec_level);
 extern int nsp_fec_print(NspFec *H, int indent,const char *name, int rec_level);
 extern int nsp_fec_latex(NspFec *H, int indent,const char *name, int rec_level);
-extern NspFec *nsp_fec_object (NspObject *O); 
-extern int IsFecObj (Stack stack, int i); 
+extern NspFec *nsp_fec_object (NspObject *O);
+extern int IsFecObj (Stack stack, int i);
 extern int IsFec(NspObject *O);
-extern NspFec *GetFecCopy (Stack stack, int i); 
-extern NspFec *GetFec (Stack stack, int i); 
+extern NspFec *GetFecCopy (Stack stack, int i);
+extern NspFec *GetFec (Stack stack, int i);
 extern int nsp_fec_create_partial(NspFec *H);
 extern void nsp_fec_destroy_partial(NspFec *H);
 extern NspFec * nsp_fec_copy_partial(NspFec *H,NspFec *self);
 extern NspFec * nsp_fec_full_copy_partial(NspFec *H,NspFec *self);
 extern NspFec * nsp_fec_full_copy(NspFec *self);
 extern int nsp_fec_check_values(NspFec *H);
-extern int int_fec_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_fec_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFec *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M);
 extern int nsp_fec_xdr_save(XDR  *xdrs, NspFec *M);
 
@@ -111,7 +111,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
-static int init_fec(NspFec *o,NspTypeNspFec *type);
+static int init_fec(NspFec *o,NspTypeFec *type);
 static int nsp_fec_size(NspFec *Mat, int flag);
 static char *nsp_fec_type_as_string(void);
 static char *nsp_fec_type_short_string(NspObject *v);

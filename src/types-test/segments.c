@@ -27,32 +27,32 @@
  */
 
 int nsp_type_segments_id=0;
-NspTypeNspSegments *nsp_type_segments=NULL;
+NspTypeSegments *nsp_type_segments=NULL;
 
 /*
  * Type object for NspSegments 
- * all the instance of NspTypeNspSegments share the same id. 
- * nsp_type_segments: is an instance of NspTypeNspSegments 
+ * all the instance of NspTypeSegments share the same id. 
+ * nsp_type_segments: is an instance of NspTypeSegments 
  *    used for objects of NspSegments type (i.e built with new_segments) 
  * other instances are used for derived classes 
  */
-NspTypeNspSegments *new_type_segments(type_mode mode)
+NspTypeSegments *new_type_segments(type_mode mode)
 {
-  NspTypeNspSegments *type= NULL;
+  NspTypeSegments *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_segments != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_segments;
     }
-  if ((type =  malloc(sizeof(NspTypeNspSegments))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeSegments))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = segments_attrs ; 
+  type->attrs = segments_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = segments_get_methods; 
+  type->methods = segments_get_methods;
   type->new = (new_func *) new_segments;
 
   
@@ -61,16 +61,16 @@ NspTypeNspSegments *new_type_segments(type_mode mode)
   
   /* object methods redefined for segments */ 
 
-  top->pr = (print_func *) nsp_segments_print;                  
+  top->pr = (print_func *) nsp_segments_print;
   top->dealloc = (dealloc_func *) nsp_segments_destroy;
-  top->copy  =  (copy_func *) nsp_segments_copy;                 
-  top->size  = (size_func *) nsp_segments_size;                
-  top->s_type =  (s_type_func *) nsp_segments_type_as_string;  
+  top->copy  =  (copy_func *) nsp_segments_copy;
+  top->size  = (size_func *) nsp_segments_size;
+  top->s_type =  (s_type_func *) nsp_segments_type_as_string;
   top->sh_type = (sh_type_func *) nsp_segments_type_short_string;
-  top->info = (info_func *) nsp_segments_info ;                  
+  top->info = (info_func *) nsp_segments_info;
   /* top->is_true = (is_true_func  *) nsp_segments_is_true; */
   /* top->loop =(loop_func *) nsp_segments_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_segments_object;
   top->eq  = (eq_func *) nsp_segments_eq;
   top->neq  = (eq_func *) nsp_segments_neq;
@@ -87,15 +87,15 @@ NspTypeNspSegments *new_type_segments(type_mode mode)
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_segments;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_segments ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_segments  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_segments;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_segments ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_segments  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_segments  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_segments_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Segments */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 #line 101 "segments.c"
   /* 
@@ -108,7 +108,7 @@ NspTypeNspSegments *new_type_segments(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspSegments called nsp_type_segments
+       * an instance of NspTypeSegments called nsp_type_segments
        */
       type->id =  nsp_type_segments_id = nsp_new_type_id();
       nsp_type_segments = type;
@@ -127,11 +127,11 @@ NspTypeNspSegments *new_type_segments(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_segments(NspSegments *Obj,NspTypeNspSegments *type)
+static int init_segments(NspSegments *Obj,NspTypeSegments *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -144,7 +144,7 @@ static int init_segments(NspSegments *Obj,NspTypeNspSegments *type)
 
 NspSegments *new_segments() 
 {
-  NspSegments *loc; 
+  NspSegments *loc;
   /* type must exists */
   nsp_type_segments = new_type_segments(T_BASE);
   if ( (loc = malloc(sizeof(NspSegments)))== NULLSEGMENTS) return loc;
@@ -215,7 +215,7 @@ int nsp_segments_xdr_save(XDR *xdrs, NspSegments *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_segments)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_segments)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->y)) == FAIL) return FAIL;

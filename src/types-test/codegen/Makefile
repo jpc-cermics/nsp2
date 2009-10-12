@@ -226,4 +226,11 @@ clean ::
 	    --prefix Compound compound.defs) > $*.c \
 	&& cp compound.h ../../include/nsp 
 
+../block.c : block.defs  block.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --register ./block-req.defs \
+	    --override block.override \
+	    --prefix Block block.defs) > $*.c 
+
+
 

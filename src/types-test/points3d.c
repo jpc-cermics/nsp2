@@ -35,32 +35,32 @@ extern Gengine GL_gengine;
  */
 
 int nsp_type_points3d_id=0;
-NspTypeNspPoints3d *nsp_type_points3d=NULL;
+NspTypePoints3d *nsp_type_points3d=NULL;
 
 /*
  * Type object for NspPoints3d 
- * all the instance of NspTypeNspPoints3d share the same id. 
- * nsp_type_points3d: is an instance of NspTypeNspPoints3d 
+ * all the instance of NspTypePoints3d share the same id. 
+ * nsp_type_points3d: is an instance of NspTypePoints3d 
  *    used for objects of NspPoints3d type (i.e built with new_points3d) 
  * other instances are used for derived classes 
  */
-NspTypeNspPoints3d *new_type_points3d(type_mode mode)
+NspTypePoints3d *new_type_points3d(type_mode mode)
 {
-  NspTypeNspPoints3d *type= NULL;
+  NspTypePoints3d *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_points3d != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_points3d;
     }
-  if ((type =  malloc(sizeof(NspTypeNspPoints3d))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypePoints3d))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = points3d_attrs ; 
+  type->attrs = points3d_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = points3d_get_methods; 
+  type->methods = points3d_get_methods;
   type->new = (new_func *) new_points3d;
 
   
@@ -69,16 +69,16 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
   
   /* object methods redefined for points3d */ 
 
-  top->pr = (print_func *) nsp_points3d_print;                  
+  top->pr = (print_func *) nsp_points3d_print;
   top->dealloc = (dealloc_func *) nsp_points3d_destroy;
-  top->copy  =  (copy_func *) nsp_points3d_copy;                 
-  top->size  = (size_func *) nsp_points3d_size;                
-  top->s_type =  (s_type_func *) nsp_points3d_type_as_string;  
+  top->copy  =  (copy_func *) nsp_points3d_copy;
+  top->size  = (size_func *) nsp_points3d_size;
+  top->s_type =  (s_type_func *) nsp_points3d_type_as_string;
   top->sh_type = (sh_type_func *) nsp_points3d_type_short_string;
-  top->info = (info_func *) nsp_points3d_info ;                  
+  top->info = (info_func *) nsp_points3d_info;
   /* top->is_true = (is_true_func  *) nsp_points3d_is_true; */
   /* top->loop =(loop_func *) nsp_points3d_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_points3d_object;
   top->eq  = (eq_func *) nsp_points3d_eq;
   top->neq  = (eq_func *) nsp_points3d_neq;
@@ -91,21 +91,21 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
       
   type->init = (init_func *) init_points3d;
 
-#line 80 "codegen/points3d.override"
+#line 50 "codegen/points3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_points3d;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_points3d ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_points3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_points3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_points3d  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_points3d_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_points3d;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_points3d ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_points3d  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_points3d  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_points3d  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_points3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Points3d */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
-  ((NspTypeNspGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
-  ((NspTypeNspGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->zmean = nsp_points3d_zmean;
+  ((NspTypeGraphic *) type->surtype)->n_faces = nsp_points3d_n_faces;
 
 #line 111 "points3d.c"
   /* 
@@ -118,7 +118,7 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspPoints3d called nsp_type_points3d
+       * an instance of NspTypePoints3d called nsp_type_points3d
        */
       type->id =  nsp_type_points3d_id = nsp_new_type_id();
       nsp_type_points3d = type;
@@ -137,11 +137,11 @@ NspTypeNspPoints3d *new_type_points3d(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_points3d(NspPoints3d *Obj,NspTypeNspPoints3d *type)
+static int init_points3d(NspPoints3d *Obj,NspTypePoints3d *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -154,7 +154,7 @@ static int init_points3d(NspPoints3d *Obj,NspTypeNspPoints3d *type)
 
 NspPoints3d *new_points3d() 
 {
-  NspPoints3d *loc; 
+  NspPoints3d *loc;
   /* type must exists */
   nsp_type_points3d = new_type_points3d(T_BASE);
   if ( (loc = malloc(sizeof(NspPoints3d)))== NULLPOINTS3D) return loc;
@@ -231,7 +231,7 @@ int nsp_points3d_xdr_save(XDR *xdrs, NspPoints3d *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_points3d)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_points3d)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;

@@ -33,32 +33,32 @@ extern Gengine GL_gengine;
  */
 
 int nsp_type_axes_id=0;
-NspTypeNspAxes *nsp_type_axes=NULL;
+NspTypeAxes *nsp_type_axes=NULL;
 
 /*
  * Type object for NspAxes 
- * all the instance of NspTypeNspAxes share the same id. 
- * nsp_type_axes: is an instance of NspTypeNspAxes 
+ * all the instance of NspTypeAxes share the same id. 
+ * nsp_type_axes: is an instance of NspTypeAxes 
  *    used for objects of NspAxes type (i.e built with new_axes) 
  * other instances are used for derived classes 
  */
-NspTypeNspAxes *new_type_axes(type_mode mode)
+NspTypeAxes *new_type_axes(type_mode mode)
 {
-  NspTypeNspAxes *type= NULL;
+  NspTypeAxes *type= NULL;
   NspTypeObject *top;
   if (  nsp_type_axes != 0 && mode == T_BASE ) 
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_axes;
     }
-  if ((type =  malloc(sizeof(NspTypeNspAxes))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeAxes))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = axes_attrs ; 
+  type->attrs = axes_attrs;
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
-  type->methods = axes_get_methods; 
+  type->methods = axes_get_methods;
   type->new = (new_func *) new_axes;
 
   
@@ -67,16 +67,16 @@ NspTypeNspAxes *new_type_axes(type_mode mode)
   
   /* object methods redefined for axes */ 
 
-  top->pr = (print_func *) nsp_axes_print;                  
+  top->pr = (print_func *) nsp_axes_print;
   top->dealloc = (dealloc_func *) nsp_axes_destroy;
-  top->copy  =  (copy_func *) nsp_axes_copy;                 
-  top->size  = (size_func *) nsp_axes_size;                
-  top->s_type =  (s_type_func *) nsp_axes_type_as_string;  
+  top->copy  =  (copy_func *) nsp_axes_copy;
+  top->size  = (size_func *) nsp_axes_size;
+  top->s_type =  (s_type_func *) nsp_axes_type_as_string;
   top->sh_type = (sh_type_func *) nsp_axes_type_short_string;
-  top->info = (info_func *) nsp_axes_info ;                  
+  top->info = (info_func *) nsp_axes_info;
   /* top->is_true = (is_true_func  *) nsp_axes_is_true; */
   /* top->loop =(loop_func *) nsp_axes_loop;*/
-  top->path_extract = (path_func *)  object_path_extract; 
+  top->path_extract = (path_func *)  object_path_extract;
   top->get_from_obj = (get_from_obj_func *) nsp_axes_object;
   top->eq  = (eq_func *) nsp_axes_eq;
   top->neq  = (eq_func *) nsp_axes_neq;
@@ -91,15 +91,15 @@ NspTypeNspAxes *new_type_axes(type_mode mode)
 
 #line 61 "codegen/axes.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_axes;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_axes ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_axes  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
 #line 104 "axes.c"
   /* 
    * NspAxes interfaces can be added here 
@@ -111,7 +111,7 @@ NspTypeNspAxes *new_type_axes(type_mode mode)
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeNspAxes called nsp_type_axes
+       * an instance of NspTypeAxes called nsp_type_axes
        */
       type->id =  nsp_type_axes_id = nsp_new_type_id();
       nsp_type_axes = type;
@@ -130,11 +130,11 @@ NspTypeNspAxes *new_type_axes(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_axes(NspAxes *Obj,NspTypeNspAxes *type)
+static int init_axes(NspAxes *Obj,NspTypeAxes *type)
 {
-  /* jump the first surtype */ 
+  /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
-  Obj->type = type; 
+  Obj->type = type;
   NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
   Obj->obj = NULL;
@@ -147,7 +147,7 @@ static int init_axes(NspAxes *Obj,NspTypeNspAxes *type)
 
 NspAxes *new_axes() 
 {
-  NspAxes *loc; 
+  NspAxes *loc;
   /* type must exists */
   nsp_type_axes = new_type_axes(T_BASE);
   if ( (loc = malloc(sizeof(NspAxes)))== NULLAXES) return loc;
@@ -236,7 +236,7 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
    if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_axes)) == FAIL) return FAIL; 
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_axes)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->wrect)) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->rho) == FAIL) return FAIL;

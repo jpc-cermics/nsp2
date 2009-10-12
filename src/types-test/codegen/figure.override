@@ -59,9 +59,9 @@ Init portion
 %%
 override-type Figure
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_figure;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
-  ((NspTypeNspGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
 %%
 ignore-glob

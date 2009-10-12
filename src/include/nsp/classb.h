@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspClassB NspClassB ;
-typedef struct _NspTypeNspClassB NspTypeNspClassB ;
+typedef struct _NspTypeClassB NspTypeClassB ;
 
 #line 22 "./classb.h"
 
-struct _NspTypeNspClassB {
+struct _NspTypeClassB {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -31,7 +31,7 @@ struct _NspTypeNspClassB {
 struct _NspClassB {
   /*< private >*/
   NspClassA father;
-  NspTypeNspClassB*type;
+  NspTypeClassB*type;
   /*< public >*/
     int clb_color;
   int clb_thickness;
@@ -39,11 +39,11 @@ struct _NspClassB {
 };
 
 extern int nsp_type_classb_id;
-extern NspTypeNspClassB *nsp_type_classb;
+extern NspTypeClassB *nsp_type_classb;
 
 /* type instances for classa */
 
-NspTypeNspClassB *new_type_classb(type_mode mode);
+NspTypeClassB *new_type_classb(type_mode mode);
 
 /* instance for NspClassB */
 
@@ -66,25 +66,25 @@ extern void nsp_classb_destroy(NspClassB *H);
 extern int nsp_classb_info(NspClassB *H, int indent,const char *name, int rec_level);
 extern int nsp_classb_print(NspClassB *H, int indent,const char *name, int rec_level);
 extern int nsp_classb_latex(NspClassB *H, int indent,const char *name, int rec_level);
-extern NspClassB *nsp_classb_object (NspObject *O); 
-extern int IsClassBObj (Stack stack, int i); 
+extern NspClassB *nsp_classb_object (NspObject *O);
+extern int IsClassBObj (Stack stack, int i);
 extern int IsClassB(NspObject *O);
-extern NspClassB *GetClassBCopy (Stack stack, int i); 
-extern NspClassB *GetClassB (Stack stack, int i); 
+extern NspClassB *GetClassBCopy (Stack stack, int i);
+extern NspClassB *GetClassB (Stack stack, int i);
 extern int nsp_classb_create_partial(NspClassB *H);
 extern void nsp_classb_destroy_partial(NspClassB *H);
 extern NspClassB * nsp_classb_copy_partial(NspClassB *H,NspClassB *self);
 extern NspClassB * nsp_classb_full_copy_partial(NspClassB *H,NspClassB *self);
 extern NspClassB * nsp_classb_full_copy(NspClassB *self);
 extern int nsp_classb_check_values(NspClassB *H);
-extern int int_classb_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_classb_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassB *nsp_classb_xdr_load_partial(XDR *xdrs, NspClassB *M);
 extern int nsp_classb_xdr_save(XDR  *xdrs, NspClassB *M);
 
 #endif /* NSP_INC_NspClassB */ 
 
 #ifdef NspClassB_Private 
-static int init_classb(NspClassB *o,NspTypeNspClassB *type);
+static int init_classb(NspClassB *o,NspTypeClassB *type);
 static int nsp_classb_size(NspClassB *Mat, int flag);
 static char *nsp_classb_type_as_string(void);
 static char *nsp_classb_type_short_string(NspObject *v);

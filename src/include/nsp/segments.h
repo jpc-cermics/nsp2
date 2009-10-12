@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspSegments NspSegments ;
-typedef struct _NspTypeNspSegments NspTypeNspSegments ;
+typedef struct _NspTypeSegments NspTypeSegments ;
 
 #line 22 "./segments.h"
 
-struct _NspTypeNspSegments {
+struct _NspTypeSegments {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -39,17 +39,17 @@ struct _nsp_segments {
 struct _NspSegments {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspSegments*type;
+  NspTypeSegments*type;
   /*< public >*/
   nsp_segments *obj;
 };
 
 extern int nsp_type_segments_id;
-extern NspTypeNspSegments *nsp_type_segments;
+extern NspTypeSegments *nsp_type_segments;
 
 /* type instances for graphic */
 
-NspTypeNspSegments *new_type_segments(type_mode mode);
+NspTypeSegments *new_type_segments(type_mode mode);
 
 /* instance for NspSegments */
 
@@ -72,18 +72,18 @@ extern void nsp_segments_destroy(NspSegments *H);
 extern int nsp_segments_info(NspSegments *H, int indent,const char *name, int rec_level);
 extern int nsp_segments_print(NspSegments *H, int indent,const char *name, int rec_level);
 extern int nsp_segments_latex(NspSegments *H, int indent,const char *name, int rec_level);
-extern NspSegments *nsp_segments_object (NspObject *O); 
-extern int IsSegmentsObj (Stack stack, int i); 
+extern NspSegments *nsp_segments_object (NspObject *O);
+extern int IsSegmentsObj (Stack stack, int i);
 extern int IsSegments(NspObject *O);
-extern NspSegments *GetSegmentsCopy (Stack stack, int i); 
-extern NspSegments *GetSegments (Stack stack, int i); 
+extern NspSegments *GetSegmentsCopy (Stack stack, int i);
+extern NspSegments *GetSegments (Stack stack, int i);
 extern int nsp_segments_create_partial(NspSegments *H);
 extern void nsp_segments_destroy_partial(NspSegments *H);
 extern NspSegments * nsp_segments_copy_partial(NspSegments *H,NspSegments *self);
 extern NspSegments * nsp_segments_full_copy_partial(NspSegments *H,NspSegments *self);
 extern NspSegments * nsp_segments_full_copy(NspSegments *self);
 extern int nsp_segments_check_values(NspSegments *H);
-extern int int_segments_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_segments_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSegments *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M);
 extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 
@@ -95,7 +95,7 @@ extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 #endif /* NSP_INC_NspSegments */ 
 
 #ifdef NspSegments_Private 
-static int init_segments(NspSegments *o,NspTypeNspSegments *type);
+static int init_segments(NspSegments *o,NspTypeSegments *type);
 static int nsp_segments_size(NspSegments *Mat, int flag);
 static char *nsp_segments_type_as_string(void);
 static char *nsp_segments_type_short_string(NspObject *v);

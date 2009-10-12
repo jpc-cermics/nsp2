@@ -29,15 +29,15 @@ override-type Grstring
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_grstring;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_grstring ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
-  ((NspTypeNspGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grstring;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grstring ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

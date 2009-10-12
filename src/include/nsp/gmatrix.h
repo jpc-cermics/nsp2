@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspGMatrix NspGMatrix ;
-typedef struct _NspTypeNspGMatrix NspTypeNspGMatrix ;
+typedef struct _NspTypeGMatrix NspTypeGMatrix ;
 
 #line 22 "./gmatrix.h"
 
-struct _NspTypeNspGMatrix {
+struct _NspTypeGMatrix {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -41,17 +41,17 @@ struct _nsp_gmatrix {
 struct _NspGMatrix {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspGMatrix*type;
+  NspTypeGMatrix*type;
   /*< public >*/
   nsp_gmatrix *obj;
 };
 
 extern int nsp_type_gmatrix_id;
-extern NspTypeNspGMatrix *nsp_type_gmatrix;
+extern NspTypeGMatrix *nsp_type_gmatrix;
 
 /* type instances for graphic */
 
-NspTypeNspGMatrix *new_type_gmatrix(type_mode mode);
+NspTypeGMatrix *new_type_gmatrix(type_mode mode);
 
 /* instance for NspGMatrix */
 
@@ -74,18 +74,18 @@ extern void nsp_gmatrix_destroy(NspGMatrix *H);
 extern int nsp_gmatrix_info(NspGMatrix *H, int indent,const char *name, int rec_level);
 extern int nsp_gmatrix_print(NspGMatrix *H, int indent,const char *name, int rec_level);
 extern int nsp_gmatrix_latex(NspGMatrix *H, int indent,const char *name, int rec_level);
-extern NspGMatrix *nsp_gmatrix_object (NspObject *O); 
-extern int IsGMatrixObj (Stack stack, int i); 
+extern NspGMatrix *nsp_gmatrix_object (NspObject *O);
+extern int IsGMatrixObj (Stack stack, int i);
 extern int IsGMatrix(NspObject *O);
-extern NspGMatrix *GetGMatrixCopy (Stack stack, int i); 
-extern NspGMatrix *GetGMatrix (Stack stack, int i); 
+extern NspGMatrix *GetGMatrixCopy (Stack stack, int i);
+extern NspGMatrix *GetGMatrix (Stack stack, int i);
 extern int nsp_gmatrix_create_partial(NspGMatrix *H);
 extern void nsp_gmatrix_destroy_partial(NspGMatrix *H);
 extern NspGMatrix * nsp_gmatrix_copy_partial(NspGMatrix *H,NspGMatrix *self);
 extern NspGMatrix * nsp_gmatrix_full_copy_partial(NspGMatrix *H,NspGMatrix *self);
 extern NspGMatrix * nsp_gmatrix_full_copy(NspGMatrix *self);
 extern int nsp_gmatrix_check_values(NspGMatrix *H);
-extern int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M);
 extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 
@@ -97,7 +97,7 @@ extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 #endif /* NSP_INC_NspGMatrix */ 
 
 #ifdef NspGMatrix_Private 
-static int init_gmatrix(NspGMatrix *o,NspTypeNspGMatrix *type);
+static int init_gmatrix(NspGMatrix *o,NspTypeGMatrix *type);
 static int nsp_gmatrix_size(NspGMatrix *Mat, int flag);
 static char *nsp_gmatrix_type_as_string(void);
 static char *nsp_gmatrix_type_short_string(NspObject *v);

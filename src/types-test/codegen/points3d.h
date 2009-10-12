@@ -16,11 +16,11 @@
  */
 
 typedef struct _NspPoints3d NspPoints3d ;
-typedef struct _NspTypeNspPoints3d NspTypeNspPoints3d ;
+typedef struct _NspTypePoints3d NspTypePoints3d ;
 
 #line 22 "./points3d.h"
 
-struct _NspTypeNspPoints3d {
+struct _NspTypePoints3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
@@ -42,17 +42,17 @@ struct _nsp_points3d {
 struct _NspPoints3d {
   /*< private >*/
   NspGraphic father;
-  NspTypeNspPoints3d*type;
+  NspTypePoints3d*type;
   /*< public >*/
   nsp_points3d *obj;
 };
 
 extern int nsp_type_points3d_id;
-extern NspTypeNspPoints3d *nsp_type_points3d;
+extern NspTypePoints3d *nsp_type_points3d;
 
 /* type instances for graphic */
 
-NspTypeNspPoints3d *new_type_points3d(type_mode mode);
+NspTypePoints3d *new_type_points3d(type_mode mode);
 
 /* instance for NspPoints3d */
 
@@ -75,18 +75,18 @@ extern void nsp_points3d_destroy(NspPoints3d *H);
 extern int nsp_points3d_info(NspPoints3d *H, int indent,const char *name, int rec_level);
 extern int nsp_points3d_print(NspPoints3d *H, int indent,const char *name, int rec_level);
 extern int nsp_points3d_latex(NspPoints3d *H, int indent,const char *name, int rec_level);
-extern NspPoints3d *nsp_points3d_object (NspObject *O); 
-extern int IsPoints3dObj (Stack stack, int i); 
+extern NspPoints3d *nsp_points3d_object (NspObject *O);
+extern int IsPoints3dObj (Stack stack, int i);
 extern int IsPoints3d(NspObject *O);
-extern NspPoints3d *GetPoints3dCopy (Stack stack, int i); 
-extern NspPoints3d *GetPoints3d (Stack stack, int i); 
+extern NspPoints3d *GetPoints3dCopy (Stack stack, int i);
+extern NspPoints3d *GetPoints3d (Stack stack, int i);
 extern int nsp_points3d_create_partial(NspPoints3d *H);
 extern void nsp_points3d_destroy_partial(NspPoints3d *H);
 extern NspPoints3d * nsp_points3d_copy_partial(NspPoints3d *H,NspPoints3d *self);
 extern NspPoints3d * nsp_points3d_full_copy_partial(NspPoints3d *H,NspPoints3d *self);
 extern NspPoints3d * nsp_points3d_full_copy(NspPoints3d *self);
 extern int nsp_points3d_check_values(NspPoints3d *H);
-extern int int_points3d_create(Stack stack, int rhs, int opt, int lhs); 
+extern int int_points3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPoints3d *nsp_points3d_xdr_load_partial(XDR *xdrs, NspPoints3d *M);
 extern int nsp_points3d_xdr_save(XDR  *xdrs, NspPoints3d *M);
 
@@ -104,7 +104,7 @@ extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos 
 #endif /* NSP_INC_NspPoints3d */ 
 
 #ifdef NspPoints3d_Private 
-static int init_points3d(NspPoints3d *o,NspTypeNspPoints3d *type);
+static int init_points3d(NspPoints3d *o,NspTypePoints3d *type);
 static int nsp_points3d_size(NspPoints3d *Mat, int flag);
 static char *nsp_points3d_type_as_string(void);
 static char *nsp_points3d_type_short_string(NspObject *v);

@@ -40,14 +40,14 @@ Init portion
 %%
 override-type Qcurve
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_qcurve;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_qcurve  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_qcurve  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_qcurve  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_qcurve;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_qcurve  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_qcurve  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_qcurve  ;
   /* next method are defined in NspGraphic and need not be chnaged here for Qqcurve */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
 %%
 modulename atk

@@ -15,7 +15,7 @@
  */
 
 typedef NspClassA NspClassC ;
-typedef NspTypeNspClassA NspTypeClassC ;
+typedef NspTypeClassA NspTypeClassC ;
 
 extern int nsp_type_classc_id;
 extern NspTypeClassC *nsp_type_classc;
