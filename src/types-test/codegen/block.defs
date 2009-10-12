@@ -1,0 +1,38 @@
+;; -*- scheme -*-
+
+(define-objectref Block
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "NspBlock")
+  (implements "GRint")
+  (fields
+    '("nspgframe*" "frame" "hidden" ) 
+    '("void*" "object_sid" "hidden")
+    '("double[]" "r" "hidden" "{0,0,0,0}" "4" )   
+    '("int" "color")
+    '("int" "thickness")
+    '("int" "background")
+    '("int" "n_locks" "hidden" ) 
+    '("grb_lock*" "locks" "hidden" ) 
+    '("int" "hilited") 
+    '("int"  "show")   
+  )
+  (gtype-id "Block")
+)
+
+;; just for the name, the code is overwritten 
+
+(define-function extractelts_block
+  (c-name "nsp_extractelts_block")
+  (return-type "none")
+)
+(define-function setrowscols_block
+  (c-name "nsp_setrowscols_block")
+  (return-type "none")
+)
+
+
+
+
+
+

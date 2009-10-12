@@ -1,0 +1,28 @@
+
+;; -*- scheme -*-
+;; the following code is only usefull to 
+;; make nspgframe and grb_lock known 
+;; as fields for a block. 
+
+(define-pointer nspgframe 
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "nspgframe")
+  (gtype-id "nspgframe")
+)
+
+
+(define-pointer grb_lock 
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "grb_lock")
+  (gtype-id "grb_lock")
+)
+
+
+
+
+
+
+
+
