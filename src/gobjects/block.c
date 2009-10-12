@@ -341,7 +341,6 @@ static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   if ((H  = nsp_block_create_void(name,(NspTypeBase *) nsp_type_block))== NULLBLOCK) return H;
   if ((H  = nsp_block_xdr_load_partial(xdrs,H))== NULLBLOCK) return H;
   if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
-#line 316 "block.c"
   return H;
 }
 
@@ -449,7 +448,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
-static NspBlock *block_create_void(char *name,NspTypeBase *type)
+static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
 {
  NspBlock *H  = (type == NULL) ? new_block() : type->new();
  if ( H ==  NULLBLOCK)
@@ -457,11 +456,37 @@ static NspBlock *block_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLBLOCK;
   }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) 
    return NULLBLOCK;
  NSP_OBJECT(H)->ret_pos = -1 ;
- H->obj = NULL;
  return H;
+}
+
+int nsp_block_create_partial(NspBlock *H)
+{
+  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if((H->obj = calloc(1,sizeof(nsp_block)))== NULL ) return FAIL;
+  H->obj->ref_count=1;
+  H->obj->frame = NULL;
+  H->obj->object_sid = NULL;
+  {
+    double x_def[4]={0,0,0,0};
+    memcpy(H->obj->r,x_def,4*sizeof(double));
+  }
+  H->obj->color = 0;
+  H->obj->thickness = 0;
+  H->obj->background = 0;
+  H->obj->n_locks = 0;
+  H->obj->locks = NULL;
+  H->obj->hilited = 0;
+  H->obj->show = 0;
+  return OK;
+}
+
+int nsp_block_check_values(NspBlock *H)
+{
+  nsp_graphic_check_values((NspGraphic *) H);
+  return OK;
 }
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
@@ -510,7 +535,7 @@ NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickness,int 
 NspBlock *block_create(char *name,double *rect,int color,int thickness,int background,
 		       NspTypeBase *type )
 {
-  NspBlock *H  = block_create_void(name,type);
+  NspBlock *H  = nsp_block_create_void(name,type);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
   if ( nsp_block_create(H,rect,color,thickness,background) == NULL) return NULLBLOCK;
   return H;
@@ -522,7 +547,7 @@ NspBlock *block_create(char *name,double *rect,int color,int thickness,int backg
 
 NspBlock *nsp_block_copy(NspBlock *self)
 {
-  NspBlock *H  =block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
+  NspBlock *H  = nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
   H->obj = self->obj;
   self->obj->ref_count++;
@@ -814,12 +839,12 @@ void Block_Interf_Info(int i, char **fname, function (**f))
 
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  NspBlock *P = (NspBlock *) Obj;
+  /* NspBlock *P = (NspBlock *) Obj; */
 }
 
 static void nsp_translate_block(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
-  NspBlock *P = (NspBlock *) Obj;
+  /* NspBlock *P = (NspBlock *) Obj;*/
 }
 
 static void nsp_rotate_block(BCG *Xgc,NspGraphic *Obj,double *R)
@@ -829,7 +854,7 @@ static void nsp_rotate_block(BCG *Xgc,NspGraphic *Obj,double *R)
 
 static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
 {
-  NspBlock *P = (NspBlock *) Obj;
+  /*   NspBlock *P = (NspBlock *) Obj; */
 }
 
 /* compute in bounds the enclosing rectangle of block 
@@ -838,7 +863,7 @@ static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
 
 static int nsp_getbounds_block (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  NspBlock *P = (NspBlock *) Obj;
+  /* NspBlock *P = (NspBlock *) Obj; */
   return TRUE;
 }
 

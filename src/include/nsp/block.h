@@ -111,6 +111,7 @@ extern NspBlock *GetBlock (Stack stack, int i);
 extern int IsBlock (NspObject *O); 
 extern NspBlock *block_create(char *name,double rect[],int color,int thickness,int background, NspTypeBase *type );
 extern NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickness,int background);
+extern int nsp_block_check_values(NspBlock *H);
 
 #define NULLBLOCK (NspBlock*) 0
 
