@@ -17,8 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-
-#define  Block_Private 
+#define  NspBlock_Private 
 #include "nsp/graphics-old/Graphics.h"
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
@@ -26,33 +25,40 @@
 #include "nsp/matutil.h"
 #include "nsp/parse.h"
 
-/*
- * NspBlock inherits from NspObject and implements GRint. 
- * It is used to define a scicos basic block. 
+/* 
+ * NspBlock inherits from Graphic 
+ * and implements  GRint
  */
 
 int nsp_type_block_id=0;
 NspTypeBlock *nsp_type_block=NULL;
 
+/*
+ * Type object for NspBlock 
+ * all the instance of NspTypeBlock share the same id. 
+ * nsp_type_block: is an instance of NspTypeBlock 
+ *    used for objects of NspBlock type (i.e built with new_block) 
+ * other instances are used for derived classes 
+ */
 NspTypeBlock *new_type_block(type_mode mode)
 {
-  NspTypeBlock *type = NULL;
+  NspTypeGRint *t_grint;
+  NspTypeBlock *type= NULL;
   NspTypeObject *top;
-  NspTypeGRint *gri;
 
-  if ( nsp_type_block != 0 && mode == T_BASE )
+  if (  nsp_type_block != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_block;
     }
   if (( type =  malloc(sizeof(NspTypeBlock))) == NULL) return NULL;
   type->interface = NULL;
-  type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
+  type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs =  block_attrs ;
-  type->get_attrs = (attrs_func *) int_get_attribute; 
-  type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods =  block_get_methods; 
+  type->attrs = block_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = block_get_methods;
   type->new = (new_func *) new_block;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -60,68 +66,83 @@ NspTypeBlock *new_type_block(type_mode mode)
 
   /* object methods redefined for block */ 
 
-  top->pr = (print_func *) block_print;                    
-  top->dealloc = (dealloc_func *) block_destroy;            
-  top->copy  =  (copy_func *) block_copy;                   
-  top->size  = (size_func *) block_size;                  
-  top->s_type =  (s_type_func *) block_type_as_string;    
-  top->sh_type = (sh_type_func *) block_type_short_string;
-  top->info = (info_func *) block_info;                    
-  /* top->is_true = (is_true_func  *) BlockIsTrue;           */
-  /* top->loop =(loop_func *) block_loop; */
-  top->path_extract =    (path_func *)  object_path_extract ;       
-  top->get_from_obj = (get_from_obj_func *) block_object  ;  
-  top->eq  = (eq_func *) block_eq;
-  top->neq  = (eq_func *) block_neq;
-  top->save  = (save_func *) block_xdr_save;
-  top->load  = (load_func *) block_xdr_load;
+  top->pr = (print_func *) nsp_block_print;
+  top->dealloc = (dealloc_func *) nsp_block_destroy;
+  top->copy  =  (copy_func *) nsp_block_copy;
+  top->size  = (size_func *) nsp_block_size;
+  top->s_type =  (s_type_func *) nsp_block_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_block_type_short_string;
+  top->info = (info_func *) nsp_block_info;
+  /* top->is_true = (is_true_func  *) nsp_block_is_true; */
+  /* top->loop =(loop_func *) nsp_block_loop;*/
+  top->path_extract = (path_func *)  object_path_extract;
+  top->get_from_obj = (get_from_obj_func *) nsp_block_object;
+  top->eq  = (eq_func *) nsp_block_eq;
+  top->neq  = (eq_func *) nsp_block_neq;
+  top->save  = (save_func *) nsp_block_xdr_save;
+  top->load  = (load_func *) nsp_block_xdr_load;
   top->create = (create_func*) int_block_create;
+  top->latex = (print_func *) nsp_block_latex;
 
   /* specific methods for block */
 
-  type->init =  (init_func *) init_block;
+  type->init = (init_func *) init_block;
 
-  /* Block implement grint interface */
+  /* inserted verbatim in the type definition */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_block  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_block  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_block  ;
+  /* next method are defined in NspGraphic and need not be changed here for Block */
+  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
+  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-  gri = new_type_grint(T_DERIVED);
-  type->interface = (NspTypeBase *) gri;
-  
-  gri->get_hilited 	=(gr_get_hilited *) block_get_hilited;
-  gri->set_hilited 	=(gr_set_hilited *) block_set_hilited;
-  gri->get_show    	=(gr_get_show *) block_get_show;
-  gri->set_show		=(gr_set_show *) block_set_show;
-  gri->draw    		=(gr_draw *) block_draw;
-  gri->translate 	=(gr_translate *) block_translate;
-  gri->set_pos  	=(gr_set_pos *) block_set_pos;
-  gri->get_pos  	=(gr_get_pos *) block_get_pos;
-  gri->get_rect  	=(gr_get_rect *) block_get_rect;
-  gri->resize 		=(gr_resize *) block_resize;
-  gri->update_locks 	=(gr_update_locks *) block_update_locks;
-  gri->contains_pt 	=(gr_contains_pt *) block_contains_pt;
-  gri->control_near_pt 	=(gr_control_near_pt *) block_control_near_pt;
-  gri->lock_near_pt 	=(gr_lock_near_pt *) block_lock_near_pt;
-  gri->move_control_init=(gr_move_control_init *) block_move_control_init;
-  gri->move_control 	=(gr_move_control *) block_move_control;
+  /* 
+   * NspBlock interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  t_grint = new_type_grint(T_DERIVED);
+  type->interface = (NspTypeBase *) t_grint;
 
-  gri->get_number_of_locks =(gr_get_number_of_locks *) block_get_number_of_locks;
-  gri->get_number_of_ports =(gr_get_number_of_ports *) block_get_number_of_ports;
-  gri->get_lock_connection =(gr_get_lock_connection *) block_get_lock_connection;
-  gri->get_lock_pos =(gr_get_lock_pos *) block_get_lock_pos;
-  gri->get_lock_dir =(gr_get_lock_dir *) block_get_lock_dir;
-  gri->set_lock_connection =(gr_set_lock_connection *) block_set_lock_connection;
-  gri->unset_lock_connection =(gr_unset_lock_connection *) block_unset_lock_connection;
-  gri->is_lock_connectable =(gr_is_lock_connectable *) block_is_lock_connectable;
-  gri->is_lock_connected =(gr_is_lock_connected *) block_is_lock_connected;
-  gri->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
-  gri->full_copy =(gr_full_copy *) block_full_copy;
-  gri->unlock =(gr_unlock *) block_unlock;
-  gri->set_frame =(gr_set_frame *) block_set_frame;
-  
+  t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
+  t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
+  t_grint->get_show    	=(gr_get_show *) block_get_show;
+  t_grint->set_show		=(gr_set_show *) block_set_show;
+  t_grint->draw    		=(gr_draw *) block_draw;
+  t_grint->translate 	=(gr_translate *) block_translate;
+  t_grint->set_pos  	=(gr_set_pos *) block_set_pos;
+  t_grint->get_pos  	=(gr_get_pos *) block_get_pos;
+  t_grint->get_rect  	=(gr_get_rect *) block_get_rect;
+  t_grint->resize 		=(gr_resize *) block_resize;
+  t_grint->update_locks 	=(gr_update_locks *) block_update_locks;
+  t_grint->contains_pt 	=(gr_contains_pt *) block_contains_pt;
+  t_grint->control_near_pt 	=(gr_control_near_pt *) block_control_near_pt;
+  t_grint->lock_near_pt 	=(gr_lock_near_pt *) block_lock_near_pt;
+  t_grint->move_control_init=(gr_move_control_init *) block_move_control_init;
+  t_grint->move_control 	=(gr_move_control *) block_move_control;
+
+  t_grint->get_number_of_locks =(gr_get_number_of_locks *) block_get_number_of_locks;
+  t_grint->get_number_of_ports =(gr_get_number_of_ports *) block_get_number_of_ports;
+  t_grint->get_lock_connection =(gr_get_lock_connection *) block_get_lock_connection;
+  t_grint->get_lock_pos =(gr_get_lock_pos *) block_get_lock_pos;
+  t_grint->get_lock_dir =(gr_get_lock_dir *) block_get_lock_dir;
+  t_grint->set_lock_connection =(gr_set_lock_connection *) block_set_lock_connection;
+  t_grint->unset_lock_connection =(gr_unset_lock_connection *) block_unset_lock_connection;
+  t_grint->is_lock_connectable =(gr_is_lock_connectable *) block_is_lock_connectable;
+  t_grint->is_lock_connected =(gr_is_lock_connected *) block_is_lock_connected;
+  t_grint->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
+  t_grint->full_copy =(gr_full_copy *) block_full_copy;
+  t_grint->unlock =(gr_unlock *) block_unlock;
+  t_grint->set_frame =(gr_set_frame *) block_set_frame;
+
   if ( nsp_type_block_id == 0 ) 
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeMatrix called nsp_type_block
+       * an instance of NspTypeBlock called nsp_type_block
        */
       type->id =  nsp_type_block_id = nsp_new_type_id();
       nsp_type_block = type;
@@ -136,27 +157,28 @@ NspTypeBlock *new_type_block(type_mode mode)
 }
 
 /*
- * initialize Block instances 
+ * initialize NspBlock instances 
  * locally and by calling initializer on parent class 
  */
 
-static int init_block(NspBlock *o,NspTypeBlock *type)
+static int init_block(NspBlock *Obj,NspTypeBlock *type)
 {
-  /* to be done always */ 
-  if ( type->surtype->init(&o->father,type->surtype) == FAIL) return FAIL;
-  o->type = type; 
-  NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
   /* specific */
+  Obj->obj = NULL;
   return OK;
 }
 
 /*
- * new instance of Block 
+ * new instance of NspBlock 
  */
 
 NspBlock *new_block() 
 {
-  NspBlock *loc; 
+  NspBlock *loc;
   /* type must exists */
   nsp_type_block = new_type_block(T_BASE);
   if ( (loc = malloc(sizeof(NspBlock)))== NULLBLOCK) return loc;
@@ -166,14 +188,14 @@ NspBlock *new_block()
 }
 
 /*----------------------------------------------
- * Object method redefined for Block 
+ * Object method redefined for NspBlock 
  *-----------------------------------------------*/
 
- /*
-  * size 
-  */
+/*
+ * size 
+ */
 
-static int block_size(NspBlock *Mat, int flag)
+static int nsp_block_size(NspBlock *Mat, int flag)
 {
   return 0;
 }
@@ -185,39 +207,60 @@ static int block_size(NspBlock *Mat, int flag)
 static char block_type_name[]="Block";
 static char block_short_type_name[]="gbl";
 
-static char *block_type_as_string(void)
+static char *nsp_block_type_as_string(void)
 {
   return(block_type_name);
 }
 
-static char *block_type_short_string(NspObject *v)
+static char *nsp_block_type_short_string(NspObject *v)
 {
   return(block_short_type_name);
 }
 
-/* used in for x=y where y is a Block */
+/*
+ * A == B 
+ */
 
-static int block_eq(NspBlock *A, NspObject *B)
+static int nsp_block_eq(NspBlock *A, NspObject *B)
 {
+  NspBlock *loc = (NspBlock *) B;
   if ( check_cast(B,nsp_type_block_id) == FALSE) return FALSE ;
-  if ( A->obj == ((NspBlock *) B)->obj ) return TRUE ;
-  return FALSE;
+  if ( A->obj == loc->obj ) return TRUE;
+  if ( A->obj->frame != loc->obj->frame) return FALSE;
+  if ( A->obj->object_sid != loc->obj->object_sid) return FALSE;
+  {
+    int i;
+    for ( i = 0 ; i < 4 ; i++ )
+      if ( A->obj->r[i] != loc->obj->r[i] ) return FALSE;
+  }
+  if ( A->obj->color != loc->obj->color) return FALSE;
+  if ( A->obj->thickness != loc->obj->thickness) return FALSE;
+  if ( A->obj->background != loc->obj->background) return FALSE;
+  if ( A->obj->n_locks != loc->obj->n_locks) return FALSE;
+  if ( A->obj->locks != loc->obj->locks) return FALSE;
+  if ( A->obj->hilited != loc->obj->hilited) return FALSE;
+  if ( A->obj->show != loc->obj->show) return FALSE;
+  return TRUE;
 }
 
-static int block_neq(NspBlock *A, NspObject *B)
+/*
+ * A != B 
+ */
+
+static int nsp_block_neq(NspBlock *A, NspObject *B)
 {
-  return block_eq(A,B)== TRUE ? FALSE : TRUE ;
+  return ( nsp_block_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
 
 /*
  * save 
  */
 
-
-static int block_xdr_save(XDR  *xdrs, NspBlock *M)
+static int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M)
 {
   int i;
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_block)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   /* the block */
   if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(M)) == FAIL) return FAIL;
@@ -238,6 +281,8 @@ static int block_xdr_save(XDR  *xdrs, NspBlock *M)
       if ( nsp_xdr_save_i(xdrs,lock->port.lock) == FAIL) return FAIL;
       if ( nsp_xdr_save_i(xdrs,lock->port.port) == FAIL) return FAIL;
     }
+  /* the upper class */
+  if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
 
@@ -245,21 +290,18 @@ static int block_xdr_save(XDR  *xdrs, NspBlock *M)
  * load 
  */
 
-static NspBlock  *block_xdr_load(XDR  *xdrs)
+NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
 {
-  double r[4];
-  int i,id,color,thickness,background;
-  NspBlock *M=NULLBLOCK;
-  static char name[NAME_MAXL];
-  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBLOCK;
-  /* the block */
+  int fid,id,i;
+  char name[NAME_MAXL];
+  if ((M->obj = calloc(1,sizeof(nsp_block))) == NULL) return NULL;
+  M->obj->ref_count=1;
+
   if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLBLOCK;
-  if ( nsp_xdr_load_array_d(xdrs,r,4) == FAIL) return NULLBLOCK;
-  if ( nsp_xdr_load_i(xdrs,&color) == FAIL) return NULLBLOCK;
-  if ( nsp_xdr_load_i(xdrs,&thickness) == FAIL) return NULLBLOCK;
-  if ( nsp_xdr_load_i(xdrs,&background) == FAIL) return NULLBLOCK;
-  if (( M = block_create(name,r,color,thickness,background,NULL)) == NULLBLOCK)
-    return NULLBLOCK;
+  if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->color) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->thickness) == FAIL) return NULLBLOCK;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->background) == FAIL) return NULLBLOCK;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
   /* the lock points */
   if ( nsp_xdr_load_i(xdrs,&M->obj->n_locks) == FAIL) return NULLBLOCK;
@@ -279,12 +321,37 @@ static NspBlock  *block_xdr_load(XDR  *xdrs)
       if ( nsp_xdr_load_i(xdrs,&lock->port.lock) == FAIL) return NULLBLOCK;
       if ( nsp_xdr_load_i(xdrs,&lock->port.port) == FAIL) return NULLBLOCK;
     }
-  return M;
+  
+  /* the upper class */
+  if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
+  if ( fid == nsp_dynamic_id)
+    {
+     if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
+    }
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
+  if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
+ return M;
 }
 
-static void block_destroy(NspBlock *H)
+static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
 {
-  nsp_object_destroy_name(NSP_OBJECT(H));
+  NspBlock *H = NULL;
+  char name[NAME_MAXL];
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBLOCK;
+  if ((H  = nsp_block_create_void(name,(NspTypeBase *) nsp_type_block))== NULLBLOCK) return H;
+  if ((H  = nsp_block_xdr_load_partial(xdrs,H))== NULLBLOCK) return H;
+  if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
+#line 316 "block.c"
+  return H;
+}
+
+/*
+ * delete 
+ */
+
+void nsp_block_destroy_partial(NspBlock *H)
+{
+  nsp_graphic_destroy_partial((NspGraphic *) H);
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
@@ -296,11 +363,20 @@ static void block_destroy(NspBlock *H)
      FREE(H->obj->locks);
      FREE(H->obj);
    }
+}
+
+void nsp_block_destroy(NspBlock *H)
+{
+  nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_block_destroy_partial(H);
   FREE(H);
 }
 
+/*
+ * info 
+ */
 
-static int block_info(NspBlock *H, int indent,char *name,int rec_level)
+static int nsp_block_info(NspBlock *H, int indent,char *name,int rec_level)
 {
   int i;
   if ( H == NULLBLOCK) 
@@ -310,13 +386,19 @@ static int block_info(NspBlock *H, int indent,char *name,int rec_level)
     }
   for ( i=0 ; i < indent ; i++) Sciprintf(" ");
   Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
-	    block_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
+	    nsp_block_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
   return TRUE;
 }
 
-static int block_print(NspBlock *H, int indent,char *name, int rec_level)
+static int nsp_block_print(NspBlock *H, int indent,char *name, int rec_level)
 {
-  block_info(H,indent,NULL,0);
+  nsp_block_info(H,indent,NULL,0);
+  return TRUE;
+}
+
+static int nsp_block_latex(NspBlock *H, int indent,char *name, int rec_level)
+{
+  nsp_block_info(H,indent,NULL,0);
   return TRUE;
 }
 
@@ -326,7 +408,7 @@ static int block_print(NspBlock *H, int indent,char *name, int rec_level)
  * Note that some of these functions could become MACROS XXXXX 
  *-----------------------------------------------------*/
 
-NspBlock *block_object(NspObject *O)
+NspBlock *nsp_block_object(NspObject *O)
 {
   /* Follow pointer */
   HOBJ_GET_OBJECT(O,NULL);
@@ -356,7 +438,7 @@ NspBlock  *GetBlockCopy(Stack stack, int i)
 NspBlock  *GetBlock(Stack stack, int i)
 {
   NspBlock *M;
-  if (( M = block_object(NthObj(i))) == NULLBLOCK)
+  if (( M = nsp_block_object(NthObj(i))) == NULLBLOCK)
      ArgMessage(stack,i);
   return M;
 }
@@ -438,7 +520,7 @@ NspBlock *block_create(char *name,double *rect,int color,int thickness,int backg
  * copy for gobject derived class  
  */
 
-NspBlock *block_copy(NspBlock *self)
+NspBlock *nsp_block_copy(NspBlock *self)
 {
   NspBlock *H  =block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
@@ -723,6 +805,41 @@ void Block_Interf_Info(int i, char **fname, function (**f))
 {
   *fname = Block_func[i].name;
   *f = Block_func[i].fonc;
+}
+
+/* methods for the graphic class 
+ *
+ *
+ */
+
+static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  NspBlock *P = (NspBlock *) Obj;
+}
+
+static void nsp_translate_block(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  NspBlock *P = (NspBlock *) Obj;
+}
+
+static void nsp_rotate_block(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  
+}
+
+static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  NspBlock *P = (NspBlock *) Obj;
+}
+
+/* compute in bounds the enclosing rectangle of block 
+ *
+ */
+
+static int nsp_getbounds_block (BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  NspBlock *P = (NspBlock *) Obj;
+  return TRUE;
 }
 
 
