@@ -22,6 +22,7 @@ static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 headers
+#include <nsp/object.h>
 #include <nsp/contour3d.h>
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>

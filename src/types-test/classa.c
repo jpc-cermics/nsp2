@@ -3,14 +3,12 @@
 /* generated file */
 
 
-#include <nsp/object.h>
-#include <gtk/gtk.h>
 
 
 
 #line 18 "codegen/classa.override"
 
-#line 14 "classa.c"
+#line 12 "classa.c"
 
 /* ----------- NspClassA ----------- */
 
@@ -238,7 +236,7 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 
 #line 34 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 242 "classa.c"
+#line 240 "classa.c"
   return H;
 }
 
@@ -250,8 +248,8 @@ void nsp_classa_destroy_partial(NspClassA *H)
 {
 #line 37 "codegen/classa.override"
   /* verbatim in destroy */
-#line 254 "classa.c"
-#line 255 "classa.c"
+#line 252 "classa.c"
+#line 253 "classa.c"
   nsp_matrix_destroy(H->cla_val);
   nsp_bmatrix_destroy(H->cla_bval);
   nsp_list_destroy(H->cla_lval);
@@ -494,7 +492,7 @@ NspClassA *nsp_classa_copy(NspClassA *self)
   return H;
 }
 /*
- * full copy for gobject derived class  
+ * full copy for gobject derived class
  */
 
 NspClassA *nsp_classa_full_copy(NspClassA *self)
@@ -503,7 +501,7 @@ NspClassA *nsp_classa_full_copy(NspClassA *self)
 
 #line 34 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 507 "classa.c"
+#line 505 "classa.c"
   return H;
 }
 
@@ -525,11 +523,14 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
 
 #line 34 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 529 "classa.c"
+#line 527 "classa.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 40 "codegen/classa.override"
 static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -539,7 +540,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 543 "classa.c"
+#line 544 "classa.c"
 
 
 #line 50 "codegen/classa.override"
@@ -551,7 +552,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 555 "classa.c"
+#line 556 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -685,7 +686,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 689 "classa.c"
+#line 690 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
@@ -737,7 +738,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 741 "classa.c"
+#line 742 "classa.c"
 
 
 #line 60 "codegen/classa.override"
@@ -745,7 +746,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 749 "classa.c"
+#line 750 "classa.c"
 
 
 /*----------------------------------------------------
@@ -776,4 +777,4 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
   *f = ClassA_func[i].fonc;
 }
 
-#line 780 "classa.c"
+#line 781 "classa.c"

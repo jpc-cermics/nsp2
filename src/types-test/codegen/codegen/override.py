@@ -26,12 +26,13 @@ class Overrides:
         self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
         self.override_save_load = {} # override the save load for a class 
+        self.override_intcreate = {} # override the create interface code
         self.override_implements = {} # inserted verbatim for implemented interfaces 
         self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
         self.override_destroy_prelim = '' # inserted verbatim before standard destroy
-        self.override_int_create_final = '' # inserted verbatim in int_xx_create 
+        self.override_int_create_final = '' # inserted verbatim in  create/load/full_copy
         self.init = ''
         self.last = ''
         self.imports = []
@@ -111,6 +112,12 @@ class Overrides:
             type = words[1]
             self.override_save_load[type] = rest
             slot = '%s_save_load' % ( type )
+            self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'override-intcreate':
+            # override code for all the implemented interfaces 
+            type = words[1]
+            self.override_intcreate[type] = rest
+            slot = '%s_intcreate' % ( type )
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override_destroy_prelim':
             slot = words[1]
@@ -203,6 +210,10 @@ class Overrides:
         return self.override_save_load.has_key(slot)
     def get_override_save_load(self,slot):
         return self.override_save_load[slot]
+    def part_intcreate_is_overriden(self, slot):
+        return self.override_intcreate.has_key(slot)
+    def get_override_intcreate(self,slot):
+        return self.override_intcreate[slot]
     def part_destroy_is_overriden(self, slot):
         return self.override_destroy.has_key(slot)
     def get_override_destroy(self,slot):

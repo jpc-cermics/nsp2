@@ -3,8 +3,6 @@
 /* generated file */
 
 
-#include <nsp/object.h>
-#include <gtk/gtk.h>
 
 
 
@@ -18,7 +16,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 22 "gmatrix1.c"
+#line 20 "gmatrix1.c"
 
 /* ----------- NspGMatrix1 ----------- */
 
@@ -100,7 +98,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 104 "gmatrix1.c"
+#line 102 "gmatrix1.c"
   /* 
    * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -273,7 +271,7 @@ static NspGMatrix1  *nsp_gmatrix1_xdr_load(XDR *xdrs)
   if ((H  = nsp_gmatrix1_create_void(name,(NspTypeBase *) nsp_type_gmatrix1))== NULLGMATRIX1) return H;
   if ((H  = nsp_gmatrix1_xdr_load_partial(xdrs,H))== NULLGMATRIX1) return H;
   if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
-#line 277 "gmatrix1.c"
+#line 275 "gmatrix1.c"
   return H;
 }
 
@@ -287,7 +285,7 @@ void nsp_gmatrix1_destroy_partial(NspGMatrix1 *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 291 "gmatrix1.c"
+#line 289 "gmatrix1.c"
     nsp_matrix_destroy(H->obj->data);
     nsp_matrix_destroy(H->obj->colminmax);
     nsp_matrix_destroy(H->obj->zminmax);
@@ -574,7 +572,7 @@ NspGMatrix1 *nsp_gmatrix1_copy(NspGMatrix1 *self)
   return H;
 }
 /*
- * full copy for gobject derived class  
+ * full copy for gobject derived class
  */
 
 NspGMatrix1 *nsp_gmatrix1_full_copy_partial(NspGMatrix1 *H,NspGMatrix1 *self)
@@ -628,7 +626,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX1;
   if ( nsp_gmatrix1_full_copy_partial(H,self)== NULL) return NULLGMATRIX1;
-#line 632 "gmatrix1.c"
+#line 630 "gmatrix1.c"
   return H;
 }
 
@@ -648,11 +646,14 @@ int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return RET_BUG;
-#line 652 "gmatrix1.c"
+#line 650 "gmatrix1.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *gmatrix1_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
@@ -895,7 +896,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 899 "gmatrix1.c"
+#line 900 "gmatrix1.c"
 
 
 #line 75 "codegen/gmatrix1.override"
@@ -907,7 +908,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 911 "gmatrix1.c"
+#line 912 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -1539,4 +1540,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1543 "gmatrix1.c"
+#line 1544 "gmatrix1.c"

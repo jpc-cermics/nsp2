@@ -786,10 +786,21 @@ class Wrapper:
         self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
         self.fp.resetline()
         self.fp.write(self.type_tmpl_copy_2 % substdict)
-        substdict['ret']= 'RET_BUG'
-        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-        self.fp.resetline()
-        self.fp.write(self.type_tmpl_copy_last % substdict)
+
+        # write the int_create inteface 
+        if self.overrides.part_intcreate_is_overriden(typename_nn):
+            slot = '%s_intcreate' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_intcreate(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_create % substdict)
+            substdict['ret']= 'RET_BUG'
+            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+            self.fp.resetline()
+            self.fp.write(self.type_tmpl_create_last % substdict)
+
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
@@ -818,8 +829,13 @@ class Wrapper:
         self.fhp.write(self.type_header_4 %substdict)
 
         self.fhp.close() 
-        
+
         substdict['tp_init'] = self.write_constructor()
+
+        self.fp.write( '/*-------------------------------------------\n')
+        self.fp.write( ' * Methods\n')
+        self.fp.write( ' *-------------------------------------------*/\n')
+
         substdict['tp_methods'] = self.write_methods()
         substdict['tp_getset'] = self.write_getsets()
 
@@ -1690,7 +1706,7 @@ class NspObjectWrapper(Wrapper):
         '  return H;\n' \
         '}\n'  \
         '/*\n'  \
-        ' * full copy for gobject derived class  \n'  \
+        ' * full copy for gobject derived class\n'  \
         ' */\n'  \
         '\n'  \
         '%(fields_full_copy_partial_code)s' \
@@ -1703,7 +1719,8 @@ class NspObjectWrapper(Wrapper):
         ' * wrappers for the %(typename)s\n'  \
         ' * i.e functions at Nsp level \n'  \
         ' *-------------------------------------------------------------------*/\n'  \
-        '\n'  \
+        '\n'  
+    type_tmpl_create = \
         'int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs)\n'  \
         '{\n'  \
         '  %(typename)s *H;\n'  \
@@ -1715,7 +1732,7 @@ class NspObjectWrapper(Wrapper):
         '%(fields_from_attributes)s' \
         ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return RET_BUG;\n' 
 
-    type_tmpl_copy_last = \
+    type_tmpl_create_last = \
         '  MoveObj(stack,1,(NspObject  *) H);\n'  \
         '  return 1;\n'  \
         '} \n'  \
@@ -1810,8 +1827,8 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write('/* -*- Mode: C -*- */\n\n')
     fp.write('/* generated file */\n')
     fp.write('\n\n')
-    fp.write('#include <nsp/object.h>\n')
-    fp.write('#include <gtk/gtk.h>\n')
+    #fp.write('#include <nsp/object.h>\n')
+    #fp.write('#include <gtk/gtk.h>\n')
     for module, pyname, cname in overrides.get_imports():
         fp.write('#include "%s.h"\n' % string.lower(cname))
     fp.write('\n\n')

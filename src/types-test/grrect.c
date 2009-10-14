@@ -3,8 +3,6 @@
 /* generated file */
 
 
-#include <nsp/object.h>
-#include <gtk/gtk.h>
 
 
 
@@ -12,7 +10,7 @@
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 16 "grrect.c"
+#line 14 "grrect.c"
 
 /* ----------- NspGrRect ----------- */
 
@@ -97,7 +95,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 101 "grrect.c"
+#line 99 "grrect.c"
   /* 
    * NspGrRect interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -267,7 +265,7 @@ static NspGrRect  *nsp_grrect_xdr_load(XDR *xdrs)
   if ((H  = nsp_grrect_create_void(name,(NspTypeBase *) nsp_type_grrect))== NULLGRRECT) return H;
   if ((H  = nsp_grrect_xdr_load_partial(xdrs,H))== NULLGRRECT) return H;
   if ( nsp_grrect_check_values(H) == FAIL) return NULLGRRECT;
-#line 271 "grrect.c"
+#line 269 "grrect.c"
   return H;
 }
 
@@ -281,7 +279,7 @@ void nsp_grrect_destroy_partial(NspGrRect *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 285 "grrect.c"
+#line 283 "grrect.c"
     FREE(H->obj);
    }
 }
@@ -498,7 +496,7 @@ NspGrRect *nsp_grrect_copy(NspGrRect *self)
   return H;
 }
 /*
- * full copy for gobject derived class  
+ * full copy for gobject derived class
  */
 
 NspGrRect *nsp_grrect_full_copy_partial(NspGrRect *H,NspGrRect *self)
@@ -521,7 +519,7 @@ NspGrRect *nsp_grrect_full_copy(NspGrRect *self)
   if ( H ==  NULLGRRECT) return NULLGRRECT;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRRECT;
   if ( nsp_grrect_full_copy_partial(H,self)== NULL) return NULLGRRECT;
-#line 525 "grrect.c"
+#line 523 "grrect.c"
   return H;
 }
 
@@ -541,11 +539,14 @@ int int_grrect_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grrect_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grrect_check_values(H) == FAIL) return RET_BUG;
-#line 545 "grrect.c"
+#line 543 "grrect.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static int _wrap_nsp_grrect_full_copy(NspGrRect *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspGrRect *ret;
@@ -721,7 +722,7 @@ int _wrap_grrect_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 725 "grrect.c"
+#line 726 "grrect.c"
 
 
 #line 66 "codegen/grrect.override"
@@ -733,7 +734,7 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 737 "grrect.c"
+#line 738 "grrect.c"
 
 
 #line 76 "codegen/grrect.override"
@@ -746,7 +747,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 750 "grrect.c"
+#line 751 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -865,4 +866,4 @@ static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 869 "grrect.c"
+#line 870 "grrect.c"

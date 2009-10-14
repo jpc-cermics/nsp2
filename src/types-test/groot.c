@@ -3,8 +3,6 @@
 /* generated file */
 
 
-#include <nsp/object.h>
-#include <gtk/gtk.h>
 
 
 
@@ -13,7 +11,7 @@
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
-#line 17 "groot.c"
+#line 15 "groot.c"
 
 /* ----------- NspGRoot ----------- */
 
@@ -225,7 +223,7 @@ static NspGRoot  *nsp_groot_xdr_load(XDR *xdrs)
   if ((H  = nsp_groot_create_void(name,(NspTypeBase *) nsp_type_groot))== NULLGROOT) return H;
   if ((H  = nsp_groot_xdr_load_partial(xdrs,H))== NULLGROOT) return H;
   if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
-#line 229 "groot.c"
+#line 227 "groot.c"
   return H;
 }
 
@@ -238,7 +236,7 @@ void nsp_groot_destroy_partial(NspGRoot *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 242 "groot.c"
+#line 240 "groot.c"
     nsp_list_destroy(H->obj->figures);
     FREE(H->obj);
    }
@@ -436,7 +434,7 @@ NspGRoot *nsp_groot_copy(NspGRoot *self)
   return H;
 }
 /*
- * full copy for gobject derived class  
+ * full copy for gobject derived class
  */
 
 NspGRoot *nsp_groot_full_copy_partial(NspGRoot *H,NspGRoot *self)
@@ -457,7 +455,7 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
   NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
   if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
-#line 461 "groot.c"
+#line 459 "groot.c"
   return H;
 }
 
@@ -477,11 +475,14 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
-#line 481 "groot.c"
+#line 479 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *groot_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
@@ -554,4 +555,4 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 #line 27 "codegen/groot.override"
 
 
-#line 558 "groot.c"
+#line 559 "groot.c"

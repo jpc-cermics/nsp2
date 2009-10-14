@@ -3,14 +3,12 @@
 /* generated file */
 
 
-#include <nsp/object.h>
-#include <gtk/gtk.h>
 
 
 
 #line 4 "codegen/classb.override"
 
-#line 14 "classb.c"
+#line 12 "classb.c"
 
 /* ----------- NspClassB ----------- */
 
@@ -237,7 +235,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
   if ((H  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return H;
   if ((H  = nsp_classb_xdr_load_partial(xdrs,H))== NULLCLASSB) return H;
   if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
-#line 241 "classb.c"
+#line 239 "classb.c"
   return H;
 }
 
@@ -248,7 +246,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 void nsp_classb_destroy_partial(NspClassB *H)
 {
   nsp_classa_destroy_partial((NspClassA *) H);
-#line 252 "classb.c"
+#line 250 "classb.c"
   nsp_matrix_destroy(H->clb_val);
 }
 
@@ -457,13 +455,13 @@ NspClassB *nsp_classb_copy(NspClassB *self)
   return H;
 }
 /*
- * full copy for gobject derived class  
+ * full copy for gobject derived class
  */
 
 NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
   NspClassB *H = nsp_classb_copy(self);
-#line 467 "classb.c"
+#line 465 "classb.c"
   return H;
 }
 
@@ -482,11 +480,14 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
-#line 486 "classb.c"
+#line 484 "classb.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 #line 19 "codegen/classb.override"
 static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -496,7 +497,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 500 "classb.c"
+#line 501 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -507,7 +508,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 511 "classb.c"
+#line 512 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -621,4 +622,4 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *f = ClassB_func[i].fonc;
 }
 
-#line 625 "classb.c"
+#line 626 "classb.c"

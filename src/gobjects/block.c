@@ -18,7 +18,6 @@
  */
 
 #define  NspBlock_Private 
-#include "nsp/graphics-old/Graphics.h"
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
@@ -474,12 +473,12 @@ NspBlock   *nsp_block_object(NspObject *O)
 
 int IsBlockObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_block_id);
+  return nsp_object_type(NthObj(i),nsp_type_block_id);
 }
 
 int IsBlock(NspObject *O)
 {
-  return nsp_object_type(O , nsp_type_block_id);
+  return nsp_object_type(O,nsp_type_block_id);
 }
 
 NspBlock  *GetBlockCopy(Stack stack, int i)
@@ -545,7 +544,7 @@ int nsp_block_check_values(NspBlock *H)
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
 
-NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,int show,NspTypeBase *type)
+NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,gboolean show,NspTypeBase *type)
 {
   double pt[2];
   int i;
@@ -651,29 +650,6 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
-
-static int int_block_create(Stack stack, int rhs, int opt, int lhs)
-{
-  NspBlock *H;
-  double *val=NULL;
-  int back=-1,color=-1,thickness=-1;
-
-  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
-		      { "color",s_int,NULLOBJ,-1},
-		      { "thickness",s_int,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  CheckRhs(1,7);
-
-  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_block_create(NVOID,NULL,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
-     == NULLBLOCK) return RET_BUG;
-  MoveObj(stack,1,(NspObject  *) H);
-  return 1;
-} 
-
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 {
   NspMatrix *M1;
@@ -700,7 +676,132 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
   return OK;
 }
 
+static int int_block_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspBlock *H;
+  double *val=NULL;
+  int back=-1,color=-1,thickness=-1;
 
+  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
+		      { "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckRhs(1,7);
+
+  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
+  if(( H = nsp_block_create(NVOID,NULL,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
+     == NULLBLOCK) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+/*------------------------------------------------------
+ * methods
+ *------------------------------------------------------*/
+
+/* draw */
+
+static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  block_draw(self);
+  return 0;
+}
+
+/* translate */
+
+static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,M,2);
+  block_translate(self,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+/* set_position */
+
+static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,M,2);
+  block_set_pos(self,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+/* resize */ 
+
+static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,M,2);
+  block_resize(self,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+/* fix a lock point position 
+ * in relative coordinates 
+ */
+
+static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int lock;
+  NspMatrix *M;
+  CheckRhs(2,2);
+  CheckLhs(-1,1);
+  if ( GetScalarInt(stack,1,&lock) == FAIL) return RET_BUG;
+  if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,M,2);
+  block_set_lock_pos_rel(self,lock,M->R);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+/*
+ * reset the locks pos
+ */
+
+static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((Pt= GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  if ( Pt->m != 3 ) 
+    {
+      Scierror("Error: wrong dimensions should have 3 rows\n");
+      return RET_BUG;
+    }
+  if ( block_set_locks(self,Pt) == FAIL) return RET_BUG;
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+
+static NspMethods block_methods[] = {
+  { "translate", _wrap_block_translate},
+  { "set_pos", _wrap_block_set_pos},
+  { "resize",   _wrap_block_resize},
+  { "draw",   _wrap_block_draw},
+  { "set_lock_pos", _wrap_block_set_lock_pos},
+  { "set_locks_pos", _wrap_block_set_locks_pos},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *block_get_methods(void) { return block_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -803,124 +904,6 @@ static AttrTab block_attrs[] = {
   { NULL,NULL,NULL,NULL,NULL },
 };
 
-/*------------------------------------------------------
- * methods
- *------------------------------------------------------*/
-
-/* draw */
-
-static int int_gblock_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  CheckRhs(0,0);
-  block_draw(self);
-  return 0;
-}
-
-/* translate */
-
-static int int_gblock_translate(void  *self,Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *M;
-  CheckRhs(1,1);
-  CheckLhs(0,1);
-  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(NspFname(stack),1,M,2);
-  block_translate(self,M->R);
-  MoveObj(stack,1,self);
-  return 1;
-}
-
-/* set_position */
-
-static int int_gblock_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *M;
-  CheckRhs(1,1);
-  CheckLhs(0,1);
-  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(NspFname(stack),1,M,2);
-  block_set_pos(self,M->R);
-  MoveObj(stack,1,self);
-  return 1;
-}
-
-/* resize */ 
-
-static int int_gblock_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *M;
-  CheckRhs(1,1);
-  CheckLhs(-1,1);
-  if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  CheckLength(NspFname(stack),1,M,2);
-  block_resize(self,M->R);
-  MoveObj(stack,1,self);
-  return 1;
-}
-
-/* fix a lock point position 
- * in relative coordinates 
- */
-
-static int int_gblock_set_lock_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  int lock;
-  NspMatrix *M;
-  CheckRhs(2,2);
-  CheckLhs(-1,1);
-  if ( GetScalarInt(stack,1,&lock) == FAIL) return RET_BUG;
-  if ((M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckLength(NspFname(stack),1,M,2);
-  block_set_lock_pos_rel(self,lock,M->R);
-  MoveObj(stack,1,self);
-  return 1;
-}
-
-/*
- * reset the locks pos
- */
-
-static int int_gblock_set_locks_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  NspMatrix *Pt;
-  CheckRhs(1,1);
-  CheckLhs(-1,1);
-  if ((Pt= GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ( Pt->m != 3 ) 
-    {
-      Scierror("Error: wrong dimensions should have 3 rows\n");
-      return RET_BUG;
-    }
-  if ( block_set_locks(self,Pt) == FAIL) return RET_BUG;
-  MoveObj(stack,1,self);
-  return 1;
-}
-
-
-int int_gblock_test(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject *obj;
-  CheckRhs(0,0);
-  CheckLhs(-1,1);
-  if ((obj = nsp_create_object_from_double(NVOID,89))==NULLOBJ) 
-    return RET_BUG;
-  MoveObj(stack,1,obj);
-  return 1;
-}
-
-
-static NspMethods block_methods[] = {
-  { "translate", int_gblock_translate},
-  { "set_pos", int_gblock_set_pos},
-  { "resize",   int_gblock_resize},
-  { "draw",   int_gblock_draw},
-  { "set_lock_pos", int_gblock_set_lock_pos},
-  { "set_locks_pos", int_gblock_set_locks_pos},
-  { "test",int_gblock_test},
-  { (char *) 0, NULL}
-};
-
-static NspMethods *block_get_methods(void) { return block_methods;};
 
 /*-------------------------------------------
  * functions 
@@ -975,10 +958,12 @@ void Block_Interf_Info(int i, char **fname, function (**f))
  *
  */
 
+/* see below 
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-  /* NspBlock *P = (NspBlock *) Obj; */
+
 }
+*/
 
 static void nsp_translate_block(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
@@ -1001,7 +986,8 @@ static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
 
 static int nsp_getbounds_block (BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
-  /* NspBlock *P = (NspBlock *) Obj; */
+  NspBlock *B = (NspBlock *) Obj;
+  block_get_rect(B,bounds);
   return TRUE;
 }
 
@@ -1126,32 +1112,31 @@ static void draw_3d(BCG *Xgc,double r[]);
 
 void block_draw(NspBlock *B)
 {
+  Sciprintf("Error: to be updated with nsp_draw_block\n");
+}
+
+static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  BCG *Xgc1;
+  NspBlock *B = (NspBlock *) Obj;
   /* take care of the fact that str1 must be writable */
   char str1[] = "my\nblock";
-  BCG *Xgc,*Xgc1;
   char str[256];
   double loc[4];
   int cpat, cwidth,i, draw_script, fill=FALSE;
-  /* only draw block which are in a frame */
-  if ( B->obj->frame == NULL) 
-    {
-      Sciprintf("trying to draw a unframed block");
-      return;
-    }
+  
   /* check the show attribute */
   if ( B->obj->show == FALSE ) return ;
-
-  Xgc=B->obj->frame->Xgc;
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-
+  
   /* first draw inside */
   /* just a test we draw a Matrix inside the block */
-  draw_script = 1;
+  draw_script = 2;
   switch (draw_script)
     {
     case 0: 
-      Xgc1 = window_list_get_first_old(); 
+      Xgc1 = window_list_get_first(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"Matplot1(rand(10,10)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1]-B->obj->r[3],
 	      B->obj->r[0]+B->obj->r[2],B->obj->r[1]);
@@ -1159,7 +1144,7 @@ void block_draw(NspBlock *B)
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
     case 1: 
-      Xgc1 = window_list_get_first_old(); 
+      Xgc1 = window_list_get_first(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_vanne([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
@@ -1176,14 +1161,14 @@ void block_draw(NspBlock *B)
 					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
       break;
     case 3: 
-      Xgc1 = window_list_get_first_old(); 
+      Xgc1 = window_list_get_first(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_plot3d([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
       break;
     case 4: 
-      Xgc1 = window_list_get_first_old(); 
+      Xgc1 = window_list_get_first(); 
       if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
       sprintf(str,"draw_gtk_logo([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
       nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);

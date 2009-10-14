@@ -27,6 +27,7 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 
 %%
 headers
+#include <nsp/object.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
 #include <nsp/figuredata.h> 

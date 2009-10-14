@@ -17,7 +17,6 @@ static int nsp_getbounds_block(BCG *Xgc,NspGraphic *o,double *bounds);
 %%
 headers
 
-#include "nsp/graphics-old/Graphics.h"
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
@@ -173,7 +172,58 @@ static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
+%%
+override-intcreate Block 
 
+/* override the default int_create */
+
+
+static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
+{
+  NspMatrix *M1;
+  int i;
+  static double l[4];
+  switch ( rhs - opt ) 
+    {
+    case 1 :
+      if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
+      CheckLength(NspFname(stack),1,M1,4);
+      *val = M1->R;
+      break;
+    case 4 :
+      for ( i = 1 ; i <= 4 ; i++) 
+	{
+	  if (GetScalarDouble(stack,i,l+i-1) == FAIL) return FAIL;
+	}
+      *val = l;
+      break;
+    default :
+      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",NspFname(stack),rhs-opt);
+      return FAIL;
+    }
+  return OK;
+}
+
+static int int_block_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspBlock *H;
+  double *val=NULL;
+  int back=-1,color=-1,thickness=-1;
+
+  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
+		      { "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckRhs(1,7);
+
+  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
+  if(( H = nsp_block_create(NVOID,NULL,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
+     == NULLBLOCK) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
 
 
 %%

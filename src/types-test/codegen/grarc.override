@@ -17,6 +17,7 @@ static int nsp_getbounds_grarc(BCG *Xgc,NspGraphic *o,double *bounds);
 
 %%
 headers
+#include <nsp/object.h>
 #include <nsp/grarc.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 

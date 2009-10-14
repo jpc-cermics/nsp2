@@ -25,6 +25,7 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 headers
+#include <nsp/object.h>
 #include <nsp/polyline3d.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 

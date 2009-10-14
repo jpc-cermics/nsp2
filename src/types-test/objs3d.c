@@ -3,12 +3,12 @@
 /* generated file */
 
 
-#include <nsp/object.h>
-#include <gtk/gtk.h>
 
 
 
 #line 53 "codegen/objs3d.override"
+#include <gtk/gtk.h>
+#include <nsp/object.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/curve.h>
@@ -89,7 +89,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 69 "codegen/objs3d.override"
+#line 71 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -622,7 +622,7 @@ NspObjs3d *nsp_objs3d_copy(NspObjs3d *self)
   return H;
 }
 /*
- * full copy for gobject derived class  
+ * full copy for gobject derived class
  */
 
 NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
@@ -707,6 +707,9 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
 static NspMethods *objs3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
@@ -741,7 +744,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 103 "codegen/objs3d.override"
+#line 105 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -756,7 +759,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 760 "objs3d.c"
+#line 763 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -865,7 +868,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 119 "codegen/objs3d.override"
+#line 121 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -922,7 +925,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 926 "objs3d.c"
+#line 929 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1072,7 +1075,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 89 "codegen/objs3d.override"
+#line 91 "codegen/objs3d.override"
 int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -1085,10 +1088,10 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1089 "objs3d.c"
+#line 1092 "objs3d.c"
 
 
-#line 177 "codegen/objs3d.override"
+#line 179 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1097,10 +1100,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1101 "objs3d.c"
+#line 1104 "objs3d.c"
 
 
-#line 187 "codegen/objs3d.override"
+#line 189 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1109,7 +1112,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1113 "objs3d.c"
+#line 1116 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1141,7 +1144,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 197 "codegen/objs3d.override"
+#line 199 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -2656,4 +2659,4 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 
-#line 2660 "objs3d.c"
+#line 2663 "objs3d.c"
