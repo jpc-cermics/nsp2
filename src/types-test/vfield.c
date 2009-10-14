@@ -384,7 +384,7 @@ int nsp_vfield_latex(NspVField *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspVField objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspVField   *nsp_vfield_object(NspObject *O)
@@ -400,7 +400,7 @@ NspVField   *nsp_vfield_object(NspObject *O)
 
 int IsVFieldObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_vfield_id);
+  return nsp_object_type(NthObj(i),nsp_type_vfield_id);
 }
 
 int IsVField(NspObject *O)
@@ -599,7 +599,7 @@ static NspMethods *vfield_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_vfield_get_fx(void *self,char *attr)
+static NspObject *_wrap_vfield_get_fx(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -607,7 +607,7 @@ static NspObject *_wrap_vfield_get_fx(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_vfield_get_obj_fx(void *self,char *attr, int *copy)
+static NspObject *_wrap_vfield_get_obj_fx(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -616,7 +616,7 @@ static NspObject *_wrap_vfield_get_obj_fx(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_vfield_set_fx(void *self, char *attr, NspObject *O)
+static int _wrap_vfield_set_fx(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *fx;
 
@@ -628,7 +628,7 @@ static int _wrap_vfield_set_fx(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_vfield_get_fy(void *self,char *attr)
+static NspObject *_wrap_vfield_get_fy(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -636,7 +636,7 @@ static NspObject *_wrap_vfield_get_fy(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_vfield_get_obj_fy(void *self,char *attr, int *copy)
+static NspObject *_wrap_vfield_get_obj_fy(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -645,7 +645,7 @@ static NspObject *_wrap_vfield_get_obj_fy(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_vfield_set_fy(void *self, char *attr, NspObject *O)
+static int _wrap_vfield_set_fy(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *fy;
 
@@ -657,7 +657,7 @@ static int _wrap_vfield_set_fy(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_vfield_get_x(void *self,char *attr)
+static NspObject *_wrap_vfield_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -665,7 +665,7 @@ static NspObject *_wrap_vfield_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_vfield_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_vfield_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -674,7 +674,7 @@ static NspObject *_wrap_vfield_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_vfield_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_vfield_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -686,7 +686,7 @@ static int _wrap_vfield_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_vfield_get_y(void *self,char *attr)
+static NspObject *_wrap_vfield_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -694,7 +694,7 @@ static NspObject *_wrap_vfield_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_vfield_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_vfield_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -703,7 +703,7 @@ static NspObject *_wrap_vfield_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_vfield_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_vfield_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -715,7 +715,7 @@ static int _wrap_vfield_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_vfield_get_colored(void *self,char *attr)
+static NspObject *_wrap_vfield_get_colored(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -725,7 +725,7 @@ static NspObject *_wrap_vfield_get_colored(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_vfield_set_colored(void *self, char *attr, NspObject *O)
+static int _wrap_vfield_set_colored(void *self,const char *attr, NspObject *O)
 {
   int colored;
 
@@ -798,20 +798,6 @@ void VField_Interf_Info(int i, char **fname, function (**f))
   *fname = VField_func[i].name;
   *f = VField_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-VField_register_classes(NspObject *d)
-{
-
-#line 31 "codegen/vfield.override"
-
-Init portion 
-
-
-#line 812 "vfield.c"
-  nspgobject_register_class(d, "NspVField", VField, &NspNspVField_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 77 "codegen/vfield.override"
 
@@ -1058,4 +1044,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1062 "vfield.c"
+#line 1048 "vfield.c"

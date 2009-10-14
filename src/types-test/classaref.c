@@ -355,7 +355,7 @@ int nsp_classaref_latex(NspClassARef *M, int indent,const char *name, int rec_le
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspClassARef objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspClassARef   *nsp_classaref_object(NspObject *O)
@@ -371,7 +371,7 @@ NspClassARef   *nsp_classaref_object(NspObject *O)
 
 int IsClassARefObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_classaref_id);
+  return nsp_object_type(NthObj(i),nsp_type_classaref_id);
 }
 
 int IsClassARef(NspObject *O)
@@ -586,7 +586,7 @@ static NspMethods *classaref_get_methods(void) { return classaref_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_classaref_get_cla_color(void *self,char *attr)
+static NspObject *_wrap_classaref_get_cla_color(void *self,const char *attr)
 {
   int ret;
 
@@ -594,7 +594,7 @@ static NspObject *_wrap_classaref_get_cla_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classaref_set_cla_color(void *self, char *attr, NspObject *O)
+static int _wrap_classaref_set_cla_color(void *self,const char *attr, NspObject *O)
 {
   int cla_color;
 
@@ -603,7 +603,7 @@ static int _wrap_classaref_set_cla_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classaref_get_cla_thickness(void *self,char *attr)
+static NspObject *_wrap_classaref_get_cla_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -611,7 +611,7 @@ static NspObject *_wrap_classaref_get_cla_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classaref_set_cla_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_classaref_set_cla_thickness(void *self,const char *attr, NspObject *O)
 {
   int cla_thickness;
 
@@ -620,7 +620,7 @@ static int _wrap_classaref_set_cla_thickness(void *self, char *attr, NspObject *
   return OK;
 }
 
-static NspObject *_wrap_classaref_get_cla_val(void *self,char *attr)
+static NspObject *_wrap_classaref_get_cla_val(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -628,7 +628,7 @@ static NspObject *_wrap_classaref_get_cla_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classaref_get_obj_cla_val(void *self,char *attr, int *copy)
+static NspObject *_wrap_classaref_get_obj_cla_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -637,7 +637,7 @@ static NspObject *_wrap_classaref_get_obj_cla_val(void *self,char *attr, int *co
   return (NspObject *) ret;
 }
 
-static int _wrap_classaref_set_cla_val(void *self, char *attr, NspObject *O)
+static int _wrap_classaref_set_cla_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *cla_val;
 
@@ -649,7 +649,7 @@ static int _wrap_classaref_set_cla_val(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classaref_get_cla_bval(void *self,char *attr)
+static NspObject *_wrap_classaref_get_cla_bval(void *self,const char *attr)
 {
   NspBMatrix *ret;
 
@@ -657,7 +657,7 @@ static NspObject *_wrap_classaref_get_cla_bval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classaref_get_obj_cla_bval(void *self,char *attr, int *copy)
+static NspObject *_wrap_classaref_get_obj_cla_bval(void *self,const char *attr, int *copy)
 {
   NspBMatrix *ret;
 
@@ -666,7 +666,7 @@ static NspObject *_wrap_classaref_get_obj_cla_bval(void *self,char *attr, int *c
   return (NspObject *) ret;
 }
 
-static int _wrap_classaref_set_cla_bval(void *self, char *attr, NspObject *O)
+static int _wrap_classaref_set_cla_bval(void *self,const char *attr, NspObject *O)
 {
   NspBMatrix *cla_bval;
 
@@ -678,7 +678,7 @@ static int _wrap_classaref_set_cla_bval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classaref_get_cla_lval(void *self,char *attr)
+static NspObject *_wrap_classaref_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
 
@@ -686,7 +686,7 @@ static NspObject *_wrap_classaref_get_cla_lval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classaref_get_obj_cla_lval(void *self,char *attr, int *copy)
+static NspObject *_wrap_classaref_get_obj_cla_lval(void *self,const char *attr, int *copy)
 {
   NspList *ret;
 
@@ -695,7 +695,7 @@ static NspObject *_wrap_classaref_get_obj_cla_lval(void *self,char *attr, int *c
   return (NspObject *) ret;
 }
 
-static int _wrap_classaref_set_cla_lval(void *self, char *attr, NspObject *O)
+static int _wrap_classaref_set_cla_lval(void *self,const char *attr, NspObject *O)
 {
   NspList *cla_lval;
 
@@ -776,19 +776,5 @@ void ClassARef_Interf_Info(int i, char **fname, function (**f))
   *fname = ClassARef_func[i].name;
   *f = ClassARef_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-ClassARef_register_classes(NspObject *d)
-{
 
-#line 7 "codegen/classaref.override"
-
-/ * init code  * /
-
-
-#line 790 "classaref.c"
-  nspgobject_register_class(d, "NspClassARef", ClassARef, &NspNspClassARef_Type, Nsp_BuildValue("(O)", &NspObject_Type));
-}
-*/
-
-#line 795 "classaref.c"
+#line 781 "classaref.c"

@@ -342,7 +342,7 @@ int nsp_classbref_latex(NspClassBRef *M, int indent,const char *name, int rec_le
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspClassBRef objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspClassBRef   *nsp_classbref_object(NspObject *O)
@@ -358,7 +358,7 @@ NspClassBRef   *nsp_classbref_object(NspObject *O)
 
 int IsClassBRefObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_classbref_id);
+  return nsp_object_type(NthObj(i),nsp_type_classbref_id);
 }
 
 int IsClassBRef(NspObject *O)
@@ -547,7 +547,7 @@ static NspMethods *classbref_get_methods(void) { return classbref_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_classbref_get_clb_color(void *self,char *attr)
+static NspObject *_wrap_classbref_get_clb_color(void *self,const char *attr)
 {
   int ret;
 
@@ -555,7 +555,7 @@ static NspObject *_wrap_classbref_get_clb_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classbref_set_clb_color(void *self, char *attr, NspObject *O)
+static int _wrap_classbref_set_clb_color(void *self,const char *attr, NspObject *O)
 {
   int clb_color;
 
@@ -564,7 +564,7 @@ static int _wrap_classbref_set_clb_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classbref_get_clb_thickness(void *self,char *attr)
+static NspObject *_wrap_classbref_get_clb_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -572,7 +572,7 @@ static NspObject *_wrap_classbref_get_clb_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classbref_set_clb_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_classbref_set_clb_thickness(void *self,const char *attr, NspObject *O)
 {
   int clb_thickness;
 
@@ -581,7 +581,7 @@ static int _wrap_classbref_set_clb_thickness(void *self, char *attr, NspObject *
   return OK;
 }
 
-static NspObject *_wrap_classbref_get_clb_val(void *self,char *attr)
+static NspObject *_wrap_classbref_get_clb_val(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -589,7 +589,7 @@ static NspObject *_wrap_classbref_get_clb_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classbref_get_obj_clb_val(void *self,char *attr, int *copy)
+static NspObject *_wrap_classbref_get_obj_clb_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -598,7 +598,7 @@ static NspObject *_wrap_classbref_get_obj_clb_val(void *self,char *attr, int *co
   return (NspObject *) ret;
 }
 
-static int _wrap_classbref_set_clb_val(void *self, char *attr, NspObject *O)
+static int _wrap_classbref_set_clb_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *clb_val;
 
@@ -646,19 +646,5 @@ void ClassBRef_Interf_Info(int i, char **fname, function (**f))
   *fname = ClassBRef_func[i].name;
   *f = ClassBRef_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-ClassBRef_register_classes(NspObject *d)
-{
 
-#line 7 "codegen/classbref.override"
-
-/ * init * /
-
-
-#line 660 "classbref.c"
-  nspgobject_register_class(d, "NspClassBRef", ClassBRef, &NspNspClassBRef_Type, Nsp_BuildValue("(O)", &NspClassARef_Type));
-}
-*/
-
-#line 665 "classbref.c"
+#line 651 "classbref.c"

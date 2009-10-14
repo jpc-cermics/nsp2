@@ -417,7 +417,7 @@ int nsp_fec_latex(NspFec *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspFec objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspFec   *nsp_fec_object(NspObject *O)
@@ -433,7 +433,7 @@ NspFec   *nsp_fec_object(NspObject *O)
 
 int IsFecObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_fec_id);
+  return nsp_object_type(NthObj(i),nsp_type_fec_id);
 }
 
 int IsFec(NspObject *O)
@@ -674,7 +674,7 @@ static NspMethods *fec_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_fec_get_x(void *self,char *attr)
+static NspObject *_wrap_fec_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -682,7 +682,7 @@ static NspObject *_wrap_fec_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -691,7 +691,7 @@ static NspObject *_wrap_fec_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -703,7 +703,7 @@ static int _wrap_fec_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_y(void *self,char *attr)
+static NspObject *_wrap_fec_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -711,7 +711,7 @@ static NspObject *_wrap_fec_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -720,7 +720,7 @@ static NspObject *_wrap_fec_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -732,7 +732,7 @@ static int _wrap_fec_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_triangles(void *self,char *attr)
+static NspObject *_wrap_fec_get_triangles(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -740,7 +740,7 @@ static NspObject *_wrap_fec_get_triangles(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_triangles(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_triangles(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -749,7 +749,7 @@ static NspObject *_wrap_fec_get_obj_triangles(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_triangles(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_triangles(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *triangles;
 
@@ -761,7 +761,7 @@ static int _wrap_fec_set_triangles(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_func(void *self,char *attr)
+static NspObject *_wrap_fec_get_func(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -769,7 +769,7 @@ static NspObject *_wrap_fec_get_func(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_func(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_func(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -778,7 +778,7 @@ static NspObject *_wrap_fec_get_obj_func(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_func(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_func(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *func;
 
@@ -790,7 +790,7 @@ static int _wrap_fec_set_func(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_colminmax(void *self,char *attr)
+static NspObject *_wrap_fec_get_colminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -798,7 +798,7 @@ static NspObject *_wrap_fec_get_colminmax(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_colminmax(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_colminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -807,7 +807,7 @@ static NspObject *_wrap_fec_get_obj_colminmax(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_colminmax(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_colminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colminmax;
 
@@ -819,7 +819,7 @@ static int _wrap_fec_set_colminmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_zminmax(void *self,char *attr)
+static NspObject *_wrap_fec_get_zminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -827,7 +827,7 @@ static NspObject *_wrap_fec_get_zminmax(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_zminmax(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_zminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -836,7 +836,7 @@ static NspObject *_wrap_fec_get_obj_zminmax(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_zminmax(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_zminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *zminmax;
 
@@ -848,7 +848,7 @@ static int _wrap_fec_set_zminmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_draw(void *self,char *attr)
+static NspObject *_wrap_fec_get_draw(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -858,7 +858,7 @@ static NspObject *_wrap_fec_get_draw(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_fec_set_draw(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_draw(void *self,const char *attr, NspObject *O)
 {
   int draw;
 
@@ -867,7 +867,7 @@ static int _wrap_fec_set_draw(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_colout(void *self,char *attr)
+static NspObject *_wrap_fec_get_colout(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -875,7 +875,7 @@ static NspObject *_wrap_fec_get_colout(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_fec_get_obj_colout(void *self,char *attr, int *copy)
+static NspObject *_wrap_fec_get_obj_colout(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -884,7 +884,7 @@ static NspObject *_wrap_fec_get_obj_colout(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_fec_set_colout(void *self, char *attr, NspObject *O)
+static int _wrap_fec_set_colout(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colout;
 
@@ -963,20 +963,6 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *fname = Fec_func[i].name;
   *f = Fec_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Fec_register_classes(NspObject *d)
-{
-
-#line 43 "codegen/fec.override"
-
-Init portion 
-
-
-#line 977 "fec.c"
-  nspgobject_register_class(d, "NspFec", Fec, &NspNspFec_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 89 "codegen/fec.override"
 
@@ -1253,4 +1239,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1257 "fec.c"
+#line 1243 "fec.c"

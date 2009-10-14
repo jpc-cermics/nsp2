@@ -42,7 +42,7 @@ Init portion
 %%
 override-type String3d
   /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
+   * here we override the method of its father class i.e Graphic
    */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_string3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_string3d ;

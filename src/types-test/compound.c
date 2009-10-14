@@ -359,7 +359,7 @@ int nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_leve
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspCompound objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspCompound   *nsp_compound_object(NspObject *O)
@@ -375,7 +375,7 @@ NspCompound   *nsp_compound_object(NspObject *O)
 
 int IsCompoundObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_compound_id);
+  return nsp_object_type(NthObj(i),nsp_type_compound_id);
 }
 
 int IsCompound(NspObject *O)
@@ -599,7 +599,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 
 
 #line 602 "compound.c"
-static NspObject *_wrap_compound_get_children(void *self,char *attr)
+static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
 
@@ -684,20 +684,6 @@ void Compound_Interf_Info(int i, char **fname, function (**f))
   *fname = Compound_func[i].name;
   *f = Compound_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Compound_register_classes(NspObject *d)
-{
-
-#line 35 "codegen/compound.override"
-
-Init portion 
-
-
-#line 698 "compound.c"
-  nspgobject_register_class(d, "NspCompound", Compound, &NspNspCompound_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 179 "codegen/compound.override"
 
@@ -876,4 +862,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 880 "compound.c"
+#line 866 "compound.c"

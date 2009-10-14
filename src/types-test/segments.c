@@ -369,7 +369,7 @@ int nsp_segments_latex(NspSegments *M, int indent,const char *name, int rec_leve
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspSegments objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspSegments   *nsp_segments_object(NspObject *O)
@@ -385,7 +385,7 @@ NspSegments   *nsp_segments_object(NspObject *O)
 
 int IsSegmentsObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_segments_id);
+  return nsp_object_type(NthObj(i),nsp_type_segments_id);
 }
 
 int IsSegments(NspObject *O)
@@ -582,7 +582,7 @@ static NspMethods *segments_get_methods(void) { return segments_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_segments_get_x(void *self,char *attr)
+static NspObject *_wrap_segments_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -590,7 +590,7 @@ static NspObject *_wrap_segments_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_segments_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_segments_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -599,7 +599,7 @@ static NspObject *_wrap_segments_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_segments_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_segments_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -611,7 +611,7 @@ static int _wrap_segments_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_segments_get_y(void *self,char *attr)
+static NspObject *_wrap_segments_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -619,7 +619,7 @@ static NspObject *_wrap_segments_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_segments_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_segments_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -628,7 +628,7 @@ static NspObject *_wrap_segments_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_segments_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_segments_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -640,7 +640,7 @@ static int _wrap_segments_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_segments_get_color(void *self,char *attr)
+static NspObject *_wrap_segments_get_color(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -648,7 +648,7 @@ static NspObject *_wrap_segments_get_color(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_segments_get_obj_color(void *self,char *attr, int *copy)
+static NspObject *_wrap_segments_get_obj_color(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -657,7 +657,7 @@ static NspObject *_wrap_segments_get_obj_color(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_segments_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_segments_set_color(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *color;
 
@@ -750,20 +750,6 @@ void Segments_Interf_Info(int i, char **fname, function (**f))
   *fname = Segments_func[i].name;
   *f = Segments_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Segments_register_classes(NspObject *d)
-{
-
-#line 25 "codegen/segments.override"
-
-Init portion 
-
-
-#line 764 "segments.c"
-  nspgobject_register_class(d, "NspSegments", Segments, &NspNspSegments_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 89 "codegen/segments.override"
 
@@ -869,4 +855,4 @@ static int nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 873 "segments.c"
+#line 859 "segments.c"

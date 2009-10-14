@@ -378,7 +378,7 @@ int nsp_curve_latex(NspCurve *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspCurve objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspCurve   *nsp_curve_object(NspObject *O)
@@ -394,7 +394,7 @@ NspCurve   *nsp_curve_object(NspObject *O)
 
 int IsCurveObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_curve_id);
+  return nsp_object_type(NthObj(i),nsp_type_curve_id);
 }
 
 int IsCurve(NspObject *O)
@@ -571,7 +571,7 @@ static NspMethods *curve_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_curve_get_mark(void *self,char *attr)
+static NspObject *_wrap_curve_get_mark(void *self,const char *attr)
 {
   int ret;
 
@@ -579,7 +579,7 @@ static NspObject *_wrap_curve_get_mark(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_curve_set_mark(void *self, char *attr, NspObject *O)
+static int _wrap_curve_set_mark(void *self,const char *attr, NspObject *O)
 {
   int mark;
 
@@ -588,7 +588,7 @@ static int _wrap_curve_set_mark(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_curve_get_width(void *self,char *attr)
+static NspObject *_wrap_curve_get_width(void *self,const char *attr)
 {
   int ret;
 
@@ -596,7 +596,7 @@ static NspObject *_wrap_curve_get_width(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_curve_set_width(void *self, char *attr, NspObject *O)
+static int _wrap_curve_set_width(void *self,const char *attr, NspObject *O)
 {
   int width;
 
@@ -605,7 +605,7 @@ static int _wrap_curve_set_width(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_curve_get_style(void *self,char *attr)
+static NspObject *_wrap_curve_get_style(void *self,const char *attr)
 {
   int ret;
 
@@ -613,7 +613,7 @@ static NspObject *_wrap_curve_get_style(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_curve_set_style(void *self, char *attr, NspObject *O)
+static int _wrap_curve_set_style(void *self,const char *attr, NspObject *O)
 {
   int style;
 
@@ -622,7 +622,7 @@ static int _wrap_curve_set_style(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_curve_get_color(void *self,char *attr)
+static NspObject *_wrap_curve_get_color(void *self,const char *attr)
 {
   int ret;
 
@@ -630,7 +630,7 @@ static NspObject *_wrap_curve_get_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_curve_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
 
@@ -654,7 +654,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 }
 
 #line 657 "curve.c"
-static NspObject *_wrap_curve_get_mode(void *self,char *attr)
+static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
 {
   int ret;
 
@@ -692,7 +692,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
 }
 
 #line 695 "curve.c"
-static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
+static NspObject *_wrap_curve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -700,7 +700,7 @@ static NspObject *_wrap_curve_get_Pts(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static int _wrap_curve_set_Pts(void *self, char *attr, NspObject *O)
+static int _wrap_curve_set_Pts(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Pts;
 
@@ -712,7 +712,7 @@ static int _wrap_curve_set_Pts(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_curve_get_legend(void *self,char *attr)
+static NspObject *_wrap_curve_get_legend(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -722,7 +722,7 @@ static NspObject *_wrap_curve_get_legend(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_curve_set_legend(void *self, char *attr, NspObject *O)
+static int _wrap_curve_set_legend(void *self,const char *attr, NspObject *O)
 {
   char *legend;
 
@@ -816,20 +816,6 @@ void Curve_Interf_Info(int i, char **fname, function (**f))
   *fname = Curve_func[i].name;
   *f = Curve_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Curve_register_classes(NspObject *d)
-{
-
-#line 25 "codegen/curve.override"
-
-Init portion 
-
-
-#line 830 "curve.c"
-  nspgobject_register_class(d, "NspCurve", Curve, &NspNspCurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 129 "codegen/curve.override"
 
@@ -1012,4 +998,4 @@ static int nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1016 "curve.c"
+#line 1002 "curve.c"

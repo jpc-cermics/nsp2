@@ -405,7 +405,7 @@ int nsp_contour3d_latex(NspContour3d *M, int indent,const char *name, int rec_le
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspContour3d objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspContour3d   *nsp_contour3d_object(NspObject *O)
@@ -421,7 +421,7 @@ NspContour3d   *nsp_contour3d_object(NspObject *O)
 
 int IsContour3dObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_contour3d_id);
+  return nsp_object_type(NthObj(i),nsp_type_contour3d_id);
 }
 
 int IsContour3d(NspObject *O)
@@ -648,7 +648,7 @@ static NspMethods *contour3d_get_methods(void) { return contour3d_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_contour3d_get_x(void *self,char *attr)
+static NspObject *_wrap_contour3d_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -656,7 +656,7 @@ static NspObject *_wrap_contour3d_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour3d_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour3d_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -665,7 +665,7 @@ static NspObject *_wrap_contour3d_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour3d_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_contour3d_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -677,7 +677,7 @@ static int _wrap_contour3d_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour3d_get_y(void *self,char *attr)
+static NspObject *_wrap_contour3d_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -685,7 +685,7 @@ static NspObject *_wrap_contour3d_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour3d_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour3d_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -694,7 +694,7 @@ static NspObject *_wrap_contour3d_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour3d_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_contour3d_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -706,7 +706,7 @@ static int _wrap_contour3d_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour3d_get_z(void *self,char *attr)
+static NspObject *_wrap_contour3d_get_z(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -714,7 +714,7 @@ static NspObject *_wrap_contour3d_get_z(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour3d_get_obj_z(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour3d_get_obj_z(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -723,7 +723,7 @@ static NspObject *_wrap_contour3d_get_obj_z(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour3d_set_z(void *self, char *attr, NspObject *O)
+static int _wrap_contour3d_set_z(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *z;
 
@@ -735,7 +735,7 @@ static int _wrap_contour3d_set_z(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour3d_get_zz(void *self,char *attr)
+static NspObject *_wrap_contour3d_get_zz(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -743,7 +743,7 @@ static NspObject *_wrap_contour3d_get_zz(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour3d_get_obj_zz(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour3d_get_obj_zz(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -752,7 +752,7 @@ static NspObject *_wrap_contour3d_get_obj_zz(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour3d_set_zz(void *self, char *attr, NspObject *O)
+static int _wrap_contour3d_set_zz(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *zz;
 
@@ -764,7 +764,7 @@ static int _wrap_contour3d_set_zz(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour3d_get_flag(void *self,char *attr)
+static NspObject *_wrap_contour3d_get_flag(void *self,const char *attr)
 {
   int ret;
 
@@ -772,7 +772,7 @@ static NspObject *_wrap_contour3d_get_flag(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_contour3d_set_flag(void *self, char *attr, NspObject *O)
+static int _wrap_contour3d_set_flag(void *self,const char *attr, NspObject *O)
 {
   int flag;
 
@@ -781,7 +781,7 @@ static int _wrap_contour3d_set_flag(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour3d_get_zlev(void *self,char *attr)
+static NspObject *_wrap_contour3d_get_zlev(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -791,7 +791,7 @@ static NspObject *_wrap_contour3d_get_zlev(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_contour3d_set_zlev(void *self, char *attr, NspObject *O)
+static int _wrap_contour3d_set_zlev(void *self,const char *attr, NspObject *O)
 {
   double zlev;
 
@@ -883,20 +883,6 @@ void Contour3d_Interf_Info(int i, char **fname, function (**f))
   *fname = Contour3d_func[i].name;
   *f = Contour3d_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Contour3d_register_classes(NspObject *d)
-{
-
-#line 36 "codegen/contour3d.override"
-
-Init portion 
-
-
-#line 897 "contour3d.c"
-  nspgobject_register_class(d, "NspContour3d", Contour3d, &NspNspContour3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 108 "codegen/contour3d.override"
 
@@ -1047,4 +1033,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1051 "contour3d.c"
+#line 1037 "contour3d.c"

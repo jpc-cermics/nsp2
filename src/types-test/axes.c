@@ -479,7 +479,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspAxes objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspAxes   *nsp_axes_object(NspObject *O)
@@ -495,7 +495,7 @@ NspAxes   *nsp_axes_object(NspObject *O)
 
 int IsAxesObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_axes_id);
+  return nsp_object_type(NthObj(i),nsp_type_axes_id);
 }
 
 int IsAxes(NspObject *O)
@@ -795,7 +795,7 @@ static NspMethods *axes_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_axes_get_wrect(void *self,char *attr)
+static NspObject *_wrap_axes_get_wrect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -803,7 +803,7 @@ static NspObject *_wrap_axes_get_wrect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_axes_get_obj_wrect(void *self,char *attr, int *copy)
+static NspObject *_wrap_axes_get_obj_wrect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -812,7 +812,7 @@ static NspObject *_wrap_axes_get_obj_wrect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_axes_set_wrect(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *wrect;
 
@@ -840,7 +840,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 }
 
 #line 843 "axes.c"
-static NspObject *_wrap_axes_get_rho(void *self,char *attr)
+static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -850,7 +850,7 @@ static NspObject *_wrap_axes_get_rho(void *self,char *attr)
   return nsp_ret;
 }
 
-static NspObject *_wrap_axes_get_top(void *self,char *attr)
+static NspObject *_wrap_axes_get_top(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -860,7 +860,7 @@ static NspObject *_wrap_axes_get_top(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_top(void *self,const char *attr, NspObject *O)
 {
   int top;
 
@@ -869,7 +869,7 @@ static int _wrap_axes_set_top(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_arect(void *self,char *attr)
+static NspObject *_wrap_axes_get_arect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -877,7 +877,7 @@ static NspObject *_wrap_axes_get_arect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_axes_get_obj_arect(void *self,char *attr, int *copy)
+static NspObject *_wrap_axes_get_obj_arect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -886,7 +886,7 @@ static NspObject *_wrap_axes_get_obj_arect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_axes_set_arect(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_arect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *arect;
 
@@ -898,7 +898,7 @@ static int _wrap_axes_set_arect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_frect(void *self,char *attr)
+static NspObject *_wrap_axes_get_frect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -906,7 +906,7 @@ static NspObject *_wrap_axes_get_frect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_axes_get_obj_frect(void *self,char *attr, int *copy)
+static NspObject *_wrap_axes_get_obj_frect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -915,7 +915,7 @@ static NspObject *_wrap_axes_get_obj_frect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_frect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *frect;
 
@@ -927,7 +927,7 @@ static int _wrap_axes_set_frect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_title(void *self,char *attr)
+static NspObject *_wrap_axes_get_title(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -937,7 +937,7 @@ static NspObject *_wrap_axes_get_title(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_title(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_title(void *self,const char *attr, NspObject *O)
 {
   char *title;
 
@@ -948,7 +948,7 @@ static int _wrap_axes_set_title(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_x(void *self,char *attr)
+static NspObject *_wrap_axes_get_x(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -958,7 +958,7 @@ static NspObject *_wrap_axes_get_x(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_x(void *self,const char *attr, NspObject *O)
 {
   char *x;
 
@@ -969,7 +969,7 @@ static int _wrap_axes_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_y(void *self,char *attr)
+static NspObject *_wrap_axes_get_y(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -979,7 +979,7 @@ static NspObject *_wrap_axes_get_y(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
 {
   char *y;
 
@@ -1048,7 +1048,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 
 
 #line 1051 "axes.c"
-static NspObject *_wrap_axes_get_children(void *self,char *attr)
+static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
 
@@ -1056,7 +1056,7 @@ static NspObject *_wrap_axes_get_children(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_axes_get_fixed(void *self,char *attr)
+static NspObject *_wrap_axes_get_fixed(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1066,7 +1066,7 @@ static NspObject *_wrap_axes_get_fixed(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_fixed(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_fixed(void *self,const char *attr, NspObject *O)
 {
   int fixed;
 
@@ -1075,7 +1075,7 @@ static int _wrap_axes_set_fixed(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_iso(void *self,char *attr)
+static NspObject *_wrap_axes_get_iso(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1085,7 +1085,7 @@ static NspObject *_wrap_axes_get_iso(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_iso(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_iso(void *self,const char *attr, NspObject *O)
 {
   int iso;
 
@@ -1094,7 +1094,7 @@ static int _wrap_axes_set_iso(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_auto_axis(void *self,char *attr)
+static NspObject *_wrap_axes_get_auto_axis(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1104,7 +1104,7 @@ static NspObject *_wrap_axes_get_auto_axis(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_auto_axis(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_auto_axis(void *self,const char *attr, NspObject *O)
 {
   int auto_axis;
 
@@ -1113,7 +1113,7 @@ static int _wrap_axes_set_auto_axis(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_grid(void *self,char *attr)
+static NspObject *_wrap_axes_get_grid(void *self,const char *attr)
 {
   int ret;
 
@@ -1121,7 +1121,7 @@ static NspObject *_wrap_axes_get_grid(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_axes_set_grid(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_grid(void *self,const char *attr, NspObject *O)
 {
   int grid;
 
@@ -1130,7 +1130,7 @@ static int _wrap_axes_set_grid(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_axes(void *self,char *attr)
+static NspObject *_wrap_axes_get_axes(void *self,const char *attr)
 {
   int ret;
 
@@ -1138,7 +1138,7 @@ static NspObject *_wrap_axes_get_axes(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_axes_set_axes(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_axes(void *self,const char *attr, NspObject *O)
 {
   int axes;
 
@@ -1147,7 +1147,7 @@ static int _wrap_axes_set_axes(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_xlog(void *self,char *attr)
+static NspObject *_wrap_axes_get_xlog(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1157,7 +1157,7 @@ static NspObject *_wrap_axes_get_xlog(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_xlog(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_xlog(void *self,const char *attr, NspObject *O)
 {
   int xlog;
 
@@ -1166,7 +1166,7 @@ static int _wrap_axes_set_xlog(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_ylog(void *self,char *attr)
+static NspObject *_wrap_axes_get_ylog(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1176,7 +1176,7 @@ static NspObject *_wrap_axes_get_ylog(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_ylog(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_ylog(void *self,const char *attr, NspObject *O)
 {
   int ylog;
 
@@ -1185,7 +1185,7 @@ static int _wrap_axes_set_ylog(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_lpos(void *self,char *attr)
+static NspObject *_wrap_axes_get_lpos(void *self,const char *attr)
 {
   int ret;
 
@@ -1193,7 +1193,7 @@ static NspObject *_wrap_axes_get_lpos(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_axes_set_lpos(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_lpos(void *self,const char *attr, NspObject *O)
 {
   int lpos;
 
@@ -1202,7 +1202,7 @@ static int _wrap_axes_set_lpos(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_axes_get_zoom(void *self,char *attr)
+static NspObject *_wrap_axes_get_zoom(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1212,7 +1212,7 @@ static NspObject *_wrap_axes_get_zoom(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_axes_set_zoom(void *self, char *attr, NspObject *O)
+static int _wrap_axes_set_zoom(void *self,const char *attr, NspObject *O)
 {
   int zoom;
 
@@ -1315,20 +1315,6 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *fname = Axes_func[i].name;
   *f = Axes_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Axes_register_classes(NspObject *d)
-{
-
-#line 56 "codegen/axes.override"
-
-Init portion 
-
-
-#line 1329 "axes.c"
-  nspgobject_register_class(d, "NspAxes", Axes, &NspNspAxes_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 189 "codegen/axes.override"
 
@@ -2042,4 +2028,4 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
     
 
 
-#line 2046 "axes.c"
+#line 2032 "axes.c"

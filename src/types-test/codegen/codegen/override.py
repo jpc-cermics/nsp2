@@ -25,6 +25,7 @@ class Overrides:
         self.override_include = {}
         self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
+        self.override_save_load = {} # override the save load for a class 
         self.override_implements = {} # inserted verbatim for implemented interfaces 
         self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
@@ -104,6 +105,12 @@ class Overrides:
             type = words[1]
             self.override_implements[type] = rest
             slot = '%s_implements' % ( type )
+            self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'override-save-load':
+            # override code for all the implemented interfaces 
+            type = words[1]
+            self.override_save_load[type] = rest
+            slot = '%s_save_load' % ( type )
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override_destroy_prelim':
             slot = words[1]
@@ -192,6 +199,10 @@ class Overrides:
         return self.override_implements.has_key(slot)
     def get_override_implements(self,slot):
         return self.override_implements[slot]
+    def part_save_load_is_overriden(self, slot):
+        return self.override_save_load.has_key(slot)
+    def get_override_save_load(self,slot):
+        return self.override_save_load[slot]
     def part_destroy_is_overriden(self, slot):
         return self.override_destroy.has_key(slot)
     def get_override_destroy(self,slot):

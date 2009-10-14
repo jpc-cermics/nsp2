@@ -339,7 +339,7 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGraphic objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspGraphic   *nsp_graphic_object(NspObject *O)
@@ -355,7 +355,7 @@ NspGraphic   *nsp_graphic_object(NspObject *O)
 
 int IsGraphicObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_graphic_id);
+  return nsp_object_type(NthObj(i),nsp_type_graphic_id);
 }
 
 int IsGraphic(NspObject *O)
@@ -564,7 +564,7 @@ static NspMethods *graphic_get_methods(void) { return graphic_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_graphic_get_hidden(void *self,char *attr)
+static NspObject *_wrap_graphic_get_hidden(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -574,7 +574,7 @@ static NspObject *_wrap_graphic_get_hidden(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_graphic_set_hidden(void *self, char *attr, NspObject *O)
+static int _wrap_graphic_set_hidden(void *self,const char *attr, NspObject *O)
 {
   int hidden;
 
@@ -617,20 +617,6 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *fname = Graphic_func[i].name;
   *f = Graphic_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Graphic_register_classes(NspObject *d)
-{
-
-#line 20 "codegen/graphic.override"
-
-GLURP 
-
-
-#line 631 "graphic.c"
-  nspgobject_register_class(d, "NspGraphic", Graphic, &NspNspGraphic_Type, Nsp_BuildValue("(O)", &NspObject_Type));
-}
-*/
 
 #line 133 "codegen/graphic.override"
 
@@ -813,4 +799,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 817 "graphic.c"
+#line 803 "graphic.c"

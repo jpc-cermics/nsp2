@@ -399,7 +399,7 @@ int nsp_surf_latex(NspSurf *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspSurf objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspSurf   *nsp_surf_object(NspObject *O)
@@ -415,7 +415,7 @@ NspSurf   *nsp_surf_object(NspObject *O)
 
 int IsSurfObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_surf_id);
+  return nsp_object_type(NthObj(i),nsp_type_surf_id);
 }
 
 int IsSurf(NspObject *O)
@@ -638,7 +638,7 @@ static NspMethods *surf_get_methods(void) { return surf_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_surf_get_x(void *self,char *attr)
+static NspObject *_wrap_surf_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -646,7 +646,7 @@ static NspObject *_wrap_surf_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_surf_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_surf_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -655,7 +655,7 @@ static NspObject *_wrap_surf_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_surf_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -667,7 +667,7 @@ static int _wrap_surf_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_y(void *self,char *attr)
+static NspObject *_wrap_surf_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -675,7 +675,7 @@ static NspObject *_wrap_surf_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_surf_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_surf_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -684,7 +684,7 @@ static NspObject *_wrap_surf_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_surf_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -696,7 +696,7 @@ static int _wrap_surf_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_z(void *self,char *attr)
+static NspObject *_wrap_surf_get_z(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -704,7 +704,7 @@ static NspObject *_wrap_surf_get_z(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_surf_get_obj_z(void *self,char *attr, int *copy)
+static NspObject *_wrap_surf_get_obj_z(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -713,7 +713,7 @@ static NspObject *_wrap_surf_get_obj_z(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_surf_set_z(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_z(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *z;
 
@@ -725,7 +725,7 @@ static int _wrap_surf_set_z(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_colors(void *self,char *attr)
+static NspObject *_wrap_surf_get_colors(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -733,7 +733,7 @@ static NspObject *_wrap_surf_get_colors(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_surf_get_obj_colors(void *self,char *attr, int *copy)
+static NspObject *_wrap_surf_get_obj_colors(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -742,7 +742,7 @@ static NspObject *_wrap_surf_get_obj_colors(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_surf_set_colors(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_colors(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colors;
 
@@ -754,7 +754,7 @@ static int _wrap_surf_set_colors(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_mesh(void *self,char *attr)
+static NspObject *_wrap_surf_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -764,7 +764,7 @@ static NspObject *_wrap_surf_get_mesh(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_surf_set_mesh(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_mesh(void *self,const char *attr, NspObject *O)
 {
   int mesh;
 
@@ -773,7 +773,7 @@ static int _wrap_surf_set_mesh(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_zcolor(void *self,char *attr)
+static NspObject *_wrap_surf_get_zcolor(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -783,7 +783,7 @@ static NspObject *_wrap_surf_get_zcolor(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_surf_set_zcolor(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_zcolor(void *self,const char *attr, NspObject *O)
 {
   int zcolor;
 
@@ -792,7 +792,7 @@ static int _wrap_surf_set_zcolor(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_mesh_color(void *self,char *attr)
+static NspObject *_wrap_surf_get_mesh_color(void *self,const char *attr)
 {
   int ret;
 
@@ -800,7 +800,7 @@ static NspObject *_wrap_surf_get_mesh_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_surf_set_mesh_color(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_mesh_color(void *self,const char *attr, NspObject *O)
 {
   int mesh_color;
 
@@ -809,7 +809,7 @@ static int _wrap_surf_set_mesh_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_surf_get_face_color(void *self,char *attr)
+static NspObject *_wrap_surf_get_face_color(void *self,const char *attr)
 {
   int ret;
 
@@ -817,7 +817,7 @@ static NspObject *_wrap_surf_get_face_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_surf_set_face_color(void *self, char *attr, NspObject *O)
+static int _wrap_surf_set_face_color(void *self,const char *attr, NspObject *O)
 {
   int face_color;
 
@@ -911,20 +911,6 @@ void Surf_Interf_Info(int i, char **fname, function (**f))
   *fname = Surf_func[i].name;
   *f = Surf_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Surf_register_classes(NspObject *d)
-{
-
-#line 24 "codegen/surf.override"
-
-Init portion 
-
-
-#line 925 "surf.c"
-  nspgobject_register_class(d, "NspSurf", Surf, &NspNspSurf_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 87 "codegen/surf.override"
 
@@ -1006,4 +992,4 @@ static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1010 "surf.c"
+#line 996 "surf.c"

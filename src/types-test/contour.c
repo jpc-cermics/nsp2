@@ -398,7 +398,7 @@ int nsp_contour_latex(NspContour *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspContour objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspContour   *nsp_contour_object(NspObject *O)
@@ -414,7 +414,7 @@ NspContour   *nsp_contour_object(NspObject *O)
 
 int IsContourObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_contour_id);
+  return nsp_object_type(NthObj(i),nsp_type_contour_id);
 }
 
 int IsContour(NspObject *O)
@@ -627,7 +627,7 @@ static NspMethods *contour_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_contour_get_z(void *self,char *attr)
+static NspObject *_wrap_contour_get_z(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -635,7 +635,7 @@ static NspObject *_wrap_contour_get_z(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour_get_obj_z(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour_get_obj_z(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -644,7 +644,7 @@ static NspObject *_wrap_contour_get_obj_z(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour_set_z(void *self, char *attr, NspObject *O)
+static int _wrap_contour_set_z(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *z;
 
@@ -656,7 +656,7 @@ static int _wrap_contour_set_z(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour_get_x(void *self,char *attr)
+static NspObject *_wrap_contour_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -664,7 +664,7 @@ static NspObject *_wrap_contour_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -673,7 +673,7 @@ static NspObject *_wrap_contour_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_contour_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -685,7 +685,7 @@ static int _wrap_contour_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour_get_y(void *self,char *attr)
+static NspObject *_wrap_contour_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -693,7 +693,7 @@ static NspObject *_wrap_contour_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -702,7 +702,7 @@ static NspObject *_wrap_contour_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_contour_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -714,7 +714,7 @@ static int _wrap_contour_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour_get_levels(void *self,char *attr)
+static NspObject *_wrap_contour_get_levels(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -722,7 +722,7 @@ static NspObject *_wrap_contour_get_levels(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour_get_obj_levels(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour_get_obj_levels(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -731,7 +731,7 @@ static NspObject *_wrap_contour_get_obj_levels(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour_set_levels(void *self, char *attr, NspObject *O)
+static int _wrap_contour_set_levels(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *levels;
 
@@ -743,7 +743,7 @@ static int _wrap_contour_set_levels(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour_get_nlevels(void *self,char *attr)
+static NspObject *_wrap_contour_get_nlevels(void *self,const char *attr)
 {
   int ret;
 
@@ -751,7 +751,7 @@ static NspObject *_wrap_contour_get_nlevels(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_contour_set_nlevels(void *self, char *attr, NspObject *O)
+static int _wrap_contour_set_nlevels(void *self,const char *attr, NspObject *O)
 {
   int nlevels;
 
@@ -760,7 +760,7 @@ static int _wrap_contour_set_nlevels(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_contour_get_style(void *self,char *attr)
+static NspObject *_wrap_contour_get_style(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -768,7 +768,7 @@ static NspObject *_wrap_contour_get_style(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_contour_get_obj_style(void *self,char *attr, int *copy)
+static NspObject *_wrap_contour_get_obj_style(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -777,7 +777,7 @@ static NspObject *_wrap_contour_get_obj_style(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_contour_set_style(void *self, char *attr, NspObject *O)
+static int _wrap_contour_set_style(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *style;
 
@@ -854,20 +854,6 @@ void Contour_Interf_Info(int i, char **fname, function (**f))
   *fname = Contour_func[i].name;
   *f = Contour_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Contour_register_classes(NspObject *d)
-{
-
-#line 35 "codegen/contour.override"
-
-Init portion 
-
-
-#line 868 "contour.c"
-  nspgobject_register_class(d, "NspContour", Contour, &NspNspContour_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 81 "codegen/contour.override"
 
@@ -939,4 +925,4 @@ static int nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 
 
-#line 943 "contour.c"
+#line 929 "contour.c"

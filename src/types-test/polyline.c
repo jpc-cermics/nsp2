@@ -389,7 +389,7 @@ int nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_leve
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPolyline objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspPolyline   *nsp_polyline_object(NspObject *O)
@@ -405,7 +405,7 @@ NspPolyline   *nsp_polyline_object(NspObject *O)
 
 int IsPolylineObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_polyline_id);
+  return nsp_object_type(NthObj(i),nsp_type_polyline_id);
 }
 
 int IsPolyline(NspObject *O)
@@ -606,7 +606,7 @@ static NspMethods *polyline_get_methods(void) { return polyline_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_polyline_get_x(void *self,char *attr)
+static NspObject *_wrap_polyline_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -614,7 +614,7 @@ static NspObject *_wrap_polyline_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_polyline_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_polyline_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -623,7 +623,7 @@ static NspObject *_wrap_polyline_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_polyline_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -635,7 +635,7 @@ static int _wrap_polyline_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_y(void *self,char *attr)
+static NspObject *_wrap_polyline_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -643,7 +643,7 @@ static NspObject *_wrap_polyline_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_polyline_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_polyline_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -652,7 +652,7 @@ static NspObject *_wrap_polyline_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_polyline_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -664,7 +664,7 @@ static int _wrap_polyline_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_close(void *self,char *attr)
+static NspObject *_wrap_polyline_get_close(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -674,7 +674,7 @@ static NspObject *_wrap_polyline_get_close(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_polyline_set_close(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_close(void *self,const char *attr, NspObject *O)
 {
   int close;
 
@@ -683,7 +683,7 @@ static int _wrap_polyline_set_close(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_color(void *self,char *attr)
+static NspObject *_wrap_polyline_get_color(void *self,const char *attr)
 {
   int ret;
 
@@ -691,7 +691,7 @@ static NspObject *_wrap_polyline_get_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
 
@@ -700,7 +700,7 @@ static int _wrap_polyline_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_mark(void *self,char *attr)
+static NspObject *_wrap_polyline_get_mark(void *self,const char *attr)
 {
   int ret;
 
@@ -708,7 +708,7 @@ static NspObject *_wrap_polyline_get_mark(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_polyline_set_mark(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_mark(void *self,const char *attr, NspObject *O)
 {
   int mark;
 
@@ -717,7 +717,7 @@ static int _wrap_polyline_set_mark(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_mark_size(void *self,char *attr)
+static NspObject *_wrap_polyline_get_mark_size(void *self,const char *attr)
 {
   int ret;
 
@@ -725,7 +725,7 @@ static NspObject *_wrap_polyline_get_mark_size(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_polyline_set_mark_size(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_mark_size(void *self,const char *attr, NspObject *O)
 {
   int mark_size;
 
@@ -734,7 +734,7 @@ static int _wrap_polyline_set_mark_size(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_fill_color(void *self,char *attr)
+static NspObject *_wrap_polyline_get_fill_color(void *self,const char *attr)
 {
   int ret;
 
@@ -742,7 +742,7 @@ static NspObject *_wrap_polyline_get_fill_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_polyline_set_fill_color(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_fill_color(void *self,const char *attr, NspObject *O)
 {
   int fill_color;
 
@@ -751,7 +751,7 @@ static int _wrap_polyline_set_fill_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_polyline_get_thickness(void *self,char *attr)
+static NspObject *_wrap_polyline_get_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -759,7 +759,7 @@ static NspObject *_wrap_polyline_get_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_polyline_set_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_polyline_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
 
@@ -853,20 +853,6 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
   *fname = Polyline_func[i].name;
   *f = Polyline_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Polyline_register_classes(NspObject *d)
-{
-
-#line 24 "codegen/polyline.override"
-
-Init portion 
-
-
-#line 867 "polyline.c"
-  nspgobject_register_class(d, "NspPolyline", Polyline, &NspNspPolyline_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 87 "codegen/polyline.override"
 
@@ -1010,4 +996,4 @@ static int nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1014 "polyline.c"
+#line 1000 "polyline.c"

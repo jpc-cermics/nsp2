@@ -237,7 +237,9 @@ class Wrapper:
               '/*\n' \
               ' * save \n' \
               ' */\n' \
-              '\n' \
+              '\n' 
+
+    type_tmpl_save = \
               'int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, %(typename)s *M)\n' \
               '{\n' \
               '  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/\n' \
@@ -359,7 +361,7 @@ class Wrapper:
               '/*-----------------------------------------------------\n'  \
               ' * a set of functions used when writing interfaces \n'  \
               ' * for %(typename)s objects \n'  \
-              ' * Note that some of these functions could become MACROS \n'  \
+              ' * Note that some of these functions could become MACROS\n'  \
               ' *-----------------------------------------------------*/\n'  \
               '\n'  \
               '%(typename)s   *nsp_%(typename_dc)s_object(NspObject *O)\n'  \
@@ -375,7 +377,7 @@ class Wrapper:
               '\n'  \
               'int Is%(typename_nn)sObj(Stack stack, int i)\n'  \
               '{\n'  \
-              '  return %(interface_2)s(NthObj(i) , nsp_type_%(typename_dc)s_id);\n'  \
+              '  return %(interface_2)s(NthObj(i),nsp_type_%(typename_dc)s_id);\n'  \
               '}\n'  \
               '\n'  \
               'int Is%(typename_nn)s(NspObject *O)\n'  \
@@ -520,7 +522,7 @@ class Wrapper:
     slots_list = ['tp_getattr', 'tp_setattr' ]
 
     getter_tmpl = \
-        'static NspObject *%(funcname)s(void *self,char *attr)\n' \
+        'static NspObject *%(funcname)s(void *self,const char *attr)\n' \
         '{\n' \
         '%(varlist)s' \
         '  ret = %(field)s;\n' \
@@ -528,7 +530,7 @@ class Wrapper:
         '}\n\n'
 
     getterobj_tmpl = \
-        'static NspObject *%(funcname)s(void *self,char *attr, int *copy)\n' \
+        'static NspObject *%(funcname)s(void *self,const char *attr, int *copy)\n' \
         '{\n' \
         '%(varlist)s' \
         '  *copy = FALSE;\n'\
@@ -537,7 +539,7 @@ class Wrapper:
         '}\n\n'
 
     setter_tmpl = \
-        'static int %(funcname)s(void *self, char *attr, NspObject *O)\n' \
+        'static int %(funcname)s(void *self,const char *attr, NspObject *O)\n' \
         '{\n' \
         '%(varlist)s' \
         '%(attr_set_code)s' \
@@ -692,6 +694,7 @@ class Wrapper:
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_implements(typename_nn))
             self.fp.resetline()
+
         # insert fields related code in subst dictionary
         # fields_copy: used in create function 
         substdict['fields_copy'] = self.build_copy_fields('H','')
@@ -743,13 +746,25 @@ class Wrapper:
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_1 % substdict)
         self.fp.write(self.type_tmpl_1_1_1 % substdict)
-        # insert the code for load 
-        self.fp.write(self.type_tmpl_load_1 % substdict)
-        substdict['ret']= 'NULL'
-        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-        self.fp.resetline()
-        self.fp.write(self.type_tmpl_load_2 % substdict)
-        # 
+
+        # insert override code for save_load 
+        if self.overrides.part_save_load_is_overriden(typename_nn):
+            slot = '%s_save_load' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_save_load(typename_nn))
+            self.fp.resetline()
+        else:
+            # insert the code for save
+            self.fp.write(self.type_tmpl_save % substdict)
+            # insert the code for load 
+            self.fp.write(self.type_tmpl_load_1 % substdict)
+            substdict['ret']= 'NULL'
+            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+            self.fp.resetline()
+            self.fp.write(self.type_tmpl_load_2 % substdict)
+
+        # destroy code 
         self.fp.write(self.type_tmpl_delete % substdict)
 
         if self.overrides.part_destroy_is_overriden(typename_nn):
@@ -1316,11 +1331,12 @@ class Wrapper:
     def write_methods(self):
         methods = []
         for meth in self.parser.find_methods(self.objinfo):
-
+            # take care that method names refer to the c_name 
             if self.overrides.is_ignored(meth.c_name):
                 continue
 
             meth_name1 = self.objinfo.name + '.' + meth.c_name
+            #self.fp.write('XXX dans write_methods pour %s\n' % meth_name1)
 
             try:
                 methflags = 'METH_VARARGS'
@@ -1836,64 +1852,65 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
 
     write_enums(parser, prefix, fp)
 
-    fp.write('/* intialise stuff extension classes */\n')
-    fp.write('/* void\n' + prefix + '_register_classes(NspObject *d)\n{\n')
-    imports = overrides.get_imports()[:]
-    if imports:
-        bymod = {}
-        for module, pyname, cname in imports:
-            bymod.setdefault(module, []).append((pyname, cname))
-        fp.write('  NspObject *module;\n\n')
-        for module in bymod:
-            fp.write('  if ((module = PyImport_ImportModule("%s")) != NULL) {\n' % module)
-            fp.write('      NspObject *moddict = PyModule_GetDict(module);\n\n')
-            for pyname, cname in bymod[module]:
-                fp.write('      _%s = (PyTypeObject *)PyDict_GetItemString(moddict, "%s");\n' % (cname, pyname))
-            fp.write('  } else {\n')
-            fp.write('      Py_FatalError("could not import %s");\n' %module)
-            fp.write('      return;\n')
-            fp.write('  }\n')
-        fp.write('\n')
-    fp.write(overrides.get_init() + '\n')
-    fp.resetline()
+#     fp.write('/* intialise stuff extension classes */\n')
+#     fp.write('/* void\n' + prefix + '_register_classes(NspObject *d)\n{\n')
+#     imports = overrides.get_imports()[:]
+#     if imports:
+#         bymod = {}
+#         for module, pyname, cname in imports:
+#             bymod.setdefault(module, []).append((pyname, cname))
+#         fp.write('  NspObject *module;\n\n')
+#         for module in bymod:
+#             fp.write('  if ((module = PyImport_ImportModule("%s")) != NULL) {\n' % module)
+#             fp.write('      NspObject *moddict = PyModule_GetDict(module);\n\n')
+#             for pyname, cname in bymod[module]:
+#                 fp.write('      _%s = (PyTypeObject *)PyDict_GetItemString(moddict, "%s");\n' % (cname, pyname))
+#             fp.write('  } else {\n')
+#             fp.write('      Py_FatalError("could not import %s");\n' %module)
+#             fp.write('      return;\n')
+#             fp.write('  }\n')
+#         fp.write('\n')
+#     fp.write(overrides.get_init() + '\n')
+#     fp.resetline()
 
-    for boxed in parser.boxes:
-        fp.write('  nspg_register_boxed(d, "' + boxed.name +
-                 '", ' + boxed.typecode + ', &Nsp' + boxed.c_name + '_Type);\n')
-    for pointer in parser.pointers:
-        fp.write('  nspg_register_pointer(d, "' + pointer.name +
-                 '", ' + pointer.typecode + ', &Nsp' + pointer.c_name + '_Type);\n')
-    for interface in parser.interfaces:
-        fp.write('  nspg_register_interface(d, "' + interface.name +
-                 '", '+ interface.typecode + ', &Nsp' + interface.c_name +
-                 '_Type);\n')
-    objects = parser.objects[:]
-    pos = 0
-    while pos < len(objects):
-        parent = objects[pos].parent
-        for i in range(pos+1, len(objects)):
-            if objects[i].c_name == parent:
-                objects.insert(i+1, objects[pos])
-                del objects[pos]
-                break
-        else:
-            pos = pos + 1
-    for obj in objects:
-        bases = []
-        if obj.parent != None:
-            bases.append(obj.parent)
-        bases = bases + obj.implements
-        if bases:
-            fp.write('  nspgobject_register_class(d, "' + obj.c_name +
-                     '", ' + obj.typecode + ', &Nsp' + obj.c_name +
-                     '_Type, Nsp_BuildValue("(' + 'O' * len(bases) + ')", ' +
-                     string.join(map(lambda s: '&Nsp'+s+'_Type', bases), ', ') +
-                     '));\n')
-        else:
-            fp.write('  nspgobject_register_class(d, "' + obj.c_name +
-                     '", ' + obj.typecode + ', &Nsp' + obj.c_name +
-                     '_Type, NULL);\n')
-    fp.write('}\n*/\n')
+#     for boxed in parser.boxes:
+#         fp.write('  nspg_register_boxed(d, "' + boxed.name +
+#                  '", ' + boxed.typecode + ', &Nsp' + boxed.c_name + '_Type);\n')
+#     for pointer in parser.pointers:
+#         fp.write('  nspg_register_pointer(d, "' + pointer.name +
+#                  '", ' + pointer.typecode + ', &Nsp' + pointer.c_name + '_Type);\n')
+#     for interface in parser.interfaces:
+#         fp.write('  nspg_register_interface(d, "' + interface.name +
+#                  '", '+ interface.typecode + ', &Nsp' + interface.c_name +
+#                  '_Type);\n')
+#     objects = parser.objects[:]
+#     pos = 0
+#     while pos < len(objects):
+#         parent = objects[pos].parent
+#         for i in range(pos+1, len(objects)):
+#             if objects[i].c_name == parent:
+#                 objects.insert(i+1, objects[pos])
+#                 del objects[pos]
+#                 break
+#         else:
+#             pos = pos + 1
+#     for obj in objects:
+#         bases = []
+#         if obj.parent != None:
+#             bases.append(obj.parent)
+#         bases = bases + obj.implements
+#         if bases:
+#             fp.write('  nspgobject_register_class(d, "' + obj.c_name +
+#                      '", ' + obj.typecode + ', &Nsp' + obj.c_name +
+#                      '_Type, Nsp_BuildValue("(' + 'O' * len(bases) + ')", ' +
+#                      string.join(map(lambda s: '&Nsp'+s+'_Type', bases), ', ') +
+#                      '));\n')
+#         else:
+#             fp.write('  nspgobject_register_class(d, "' + obj.c_name +
+#                      '", ' + obj.typecode + ', &Nsp' + obj.c_name +
+#                      '_Type, NULL);\n')
+#     fp.write('}\n*/\n')
+
     # code added verbatim at the end 
     fp.write(overrides.get_last() + '\n')
     fp.resetline()

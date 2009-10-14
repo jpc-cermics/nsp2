@@ -387,7 +387,7 @@ int nsp_gmatrix_latex(NspGMatrix *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGMatrix objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspGMatrix   *nsp_gmatrix_object(NspObject *O)
@@ -403,7 +403,7 @@ NspGMatrix   *nsp_gmatrix_object(NspObject *O)
 
 int IsGMatrixObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_gmatrix_id);
+  return nsp_object_type(NthObj(i),nsp_type_gmatrix_id);
 }
 
 int IsGMatrix(NspObject *O)
@@ -603,7 +603,7 @@ static NspMethods *gmatrix_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_gmatrix_get_data(void *self,char *attr)
+static NspObject *_wrap_gmatrix_get_data(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -611,7 +611,7 @@ static NspObject *_wrap_gmatrix_get_data(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_gmatrix_get_obj_data(void *self,char *attr, int *copy)
+static NspObject *_wrap_gmatrix_get_obj_data(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -620,7 +620,7 @@ static NspObject *_wrap_gmatrix_get_obj_data(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_gmatrix_set_data(void *self, char *attr, NspObject *O)
+static int _wrap_gmatrix_set_data(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *data;
 
@@ -632,7 +632,7 @@ static int _wrap_gmatrix_set_data(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_gmatrix_get_rect(void *self,char *attr)
+static NspObject *_wrap_gmatrix_get_rect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -640,7 +640,7 @@ static NspObject *_wrap_gmatrix_get_rect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_gmatrix_get_obj_rect(void *self,char *attr, int *copy)
+static NspObject *_wrap_gmatrix_get_obj_rect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -649,7 +649,7 @@ static NspObject *_wrap_gmatrix_get_obj_rect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_gmatrix_set_rect(void *self, char *attr, NspObject *O)
+static int _wrap_gmatrix_set_rect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *rect;
 
@@ -661,7 +661,7 @@ static int _wrap_gmatrix_set_rect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_gmatrix_get_remap(void *self,char *attr)
+static NspObject *_wrap_gmatrix_get_remap(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -671,7 +671,7 @@ static NspObject *_wrap_gmatrix_get_remap(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_gmatrix_set_remap(void *self, char *attr, NspObject *O)
+static int _wrap_gmatrix_set_remap(void *self,const char *attr, NspObject *O)
 {
   int remap;
 
@@ -680,7 +680,7 @@ static int _wrap_gmatrix_set_remap(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_gmatrix_get_colminmax(void *self,char *attr)
+static NspObject *_wrap_gmatrix_get_colminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -688,7 +688,7 @@ static NspObject *_wrap_gmatrix_get_colminmax(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_gmatrix_get_obj_colminmax(void *self,char *attr, int *copy)
+static NspObject *_wrap_gmatrix_get_obj_colminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -697,7 +697,7 @@ static NspObject *_wrap_gmatrix_get_obj_colminmax(void *self,char *attr, int *co
   return (NspObject *) ret;
 }
 
-static int _wrap_gmatrix_set_colminmax(void *self, char *attr, NspObject *O)
+static int _wrap_gmatrix_set_colminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colminmax;
 
@@ -709,7 +709,7 @@ static int _wrap_gmatrix_set_colminmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_gmatrix_get_zminmax(void *self,char *attr)
+static NspObject *_wrap_gmatrix_get_zminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -717,7 +717,7 @@ static NspObject *_wrap_gmatrix_get_zminmax(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_gmatrix_get_obj_zminmax(void *self,char *attr, int *copy)
+static NspObject *_wrap_gmatrix_get_obj_zminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -726,7 +726,7 @@ static NspObject *_wrap_gmatrix_get_obj_zminmax(void *self,char *attr, int *copy
   return (NspObject *) ret;
 }
 
-static int _wrap_gmatrix_set_zminmax(void *self, char *attr, NspObject *O)
+static int _wrap_gmatrix_set_zminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *zminmax;
 
@@ -802,20 +802,6 @@ void GMatrix_Interf_Info(int i, char **fname, function (**f))
   *fname = GMatrix_func[i].name;
   *f = GMatrix_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-GMatrix_register_classes(NspObject *d)
-{
-
-#line 30 "codegen/gmatrix.override"
-
-Init portion 
-
-
-#line 816 "gmatrix.c"
-  nspgobject_register_class(d, "NspGMatrix", GMatrix, &NspNspGMatrix_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 75 "codegen/gmatrix.override"
 
@@ -943,4 +929,4 @@ static int nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 947 "gmatrix.c"
+#line 933 "gmatrix.c"

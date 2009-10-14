@@ -385,7 +385,7 @@ int nsp_grarc_latex(NspGrArc *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGrArc objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspGrArc   *nsp_grarc_object(NspObject *O)
@@ -401,7 +401,7 @@ NspGrArc   *nsp_grarc_object(NspObject *O)
 
 int IsGrArcObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_grarc_id);
+  return nsp_object_type(NthObj(i),nsp_type_grarc_id);
 }
 
 int IsGrArc(NspObject *O)
@@ -583,7 +583,7 @@ static NspMethods *grarc_get_methods(void) { return grarc_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_grarc_get_x(void *self,char *attr)
+static NspObject *_wrap_grarc_get_x(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -593,7 +593,7 @@ static NspObject *_wrap_grarc_get_x(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grarc_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_x(void *self,const char *attr, NspObject *O)
 {
   double x;
 
@@ -602,7 +602,7 @@ static int _wrap_grarc_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_y(void *self,char *attr)
+static NspObject *_wrap_grarc_get_y(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -612,7 +612,7 @@ static NspObject *_wrap_grarc_get_y(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grarc_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_y(void *self,const char *attr, NspObject *O)
 {
   double y;
 
@@ -621,7 +621,7 @@ static int _wrap_grarc_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_w(void *self,char *attr)
+static NspObject *_wrap_grarc_get_w(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -631,7 +631,7 @@ static NspObject *_wrap_grarc_get_w(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grarc_set_w(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_w(void *self,const char *attr, NspObject *O)
 {
   double w;
 
@@ -640,7 +640,7 @@ static int _wrap_grarc_set_w(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_h(void *self,char *attr)
+static NspObject *_wrap_grarc_get_h(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -650,7 +650,7 @@ static NspObject *_wrap_grarc_get_h(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grarc_set_h(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_h(void *self,const char *attr, NspObject *O)
 {
   double h;
 
@@ -659,7 +659,7 @@ static int _wrap_grarc_set_h(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_a1(void *self,char *attr)
+static NspObject *_wrap_grarc_get_a1(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -669,7 +669,7 @@ static NspObject *_wrap_grarc_get_a1(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grarc_set_a1(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_a1(void *self,const char *attr, NspObject *O)
 {
   double a1;
 
@@ -678,7 +678,7 @@ static int _wrap_grarc_set_a1(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_a2(void *self,char *attr)
+static NspObject *_wrap_grarc_get_a2(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -688,7 +688,7 @@ static NspObject *_wrap_grarc_get_a2(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grarc_set_a2(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_a2(void *self,const char *attr, NspObject *O)
 {
   double a2;
 
@@ -697,7 +697,7 @@ static int _wrap_grarc_set_a2(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_fill_color(void *self,char *attr)
+static NspObject *_wrap_grarc_get_fill_color(void *self,const char *attr)
 {
   int ret;
 
@@ -705,7 +705,7 @@ static NspObject *_wrap_grarc_get_fill_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grarc_set_fill_color(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_fill_color(void *self,const char *attr, NspObject *O)
 {
   int fill_color;
 
@@ -714,7 +714,7 @@ static int _wrap_grarc_set_fill_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_thickness(void *self,char *attr)
+static NspObject *_wrap_grarc_get_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -722,7 +722,7 @@ static NspObject *_wrap_grarc_get_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grarc_set_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
 
@@ -731,7 +731,7 @@ static int _wrap_grarc_set_thickness(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grarc_get_color(void *self,char *attr)
+static NspObject *_wrap_grarc_get_color(void *self,const char *attr)
 {
   int ret;
 
@@ -739,7 +739,7 @@ static NspObject *_wrap_grarc_get_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grarc_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_grarc_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
 
@@ -833,20 +833,6 @@ void GrArc_Interf_Info(int i, char **fname, function (**f))
   *fname = GrArc_func[i].name;
   *f = GrArc_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-GrArc_register_classes(NspObject *d)
-{
-
-#line 26 "codegen/grarc.override"
-
-Init portion 
-
-
-#line 847 "grarc.c"
-  nspgobject_register_class(d, "NspGrArc", GrArc, &NspNspGrArc_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 88 "codegen/grarc.override"
 
@@ -939,4 +925,4 @@ static int nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 943 "grarc.c"
+#line 929 "grarc.c"

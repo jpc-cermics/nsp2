@@ -390,7 +390,7 @@ int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_leve
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGrstring objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspGrstring   *nsp_grstring_object(NspObject *O)
@@ -406,7 +406,7 @@ NspGrstring   *nsp_grstring_object(NspObject *O)
 
 int IsGrstringObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_grstring_id);
+  return nsp_object_type(NthObj(i),nsp_type_grstring_id);
 }
 
 int IsGrstring(NspObject *O)
@@ -603,7 +603,7 @@ static NspMethods *grstring_get_methods(void) { return grstring_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_grstring_get_x(void *self,char *attr)
+static NspObject *_wrap_grstring_get_x(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -613,7 +613,7 @@ static NspObject *_wrap_grstring_get_x(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grstring_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_x(void *self,const char *attr, NspObject *O)
 {
   double x;
 
@@ -622,7 +622,7 @@ static int _wrap_grstring_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_y(void *self,char *attr)
+static NspObject *_wrap_grstring_get_y(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -632,7 +632,7 @@ static NspObject *_wrap_grstring_get_y(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grstring_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_y(void *self,const char *attr, NspObject *O)
 {
   double y;
 
@@ -641,7 +641,7 @@ static int _wrap_grstring_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_font(void *self,char *attr)
+static NspObject *_wrap_grstring_get_font(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -651,7 +651,7 @@ static NspObject *_wrap_grstring_get_font(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grstring_set_font(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_font(void *self,const char *attr, NspObject *O)
 {
   char *font;
 
@@ -662,7 +662,7 @@ static int _wrap_grstring_set_font(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_text(void *self,char *attr)
+static NspObject *_wrap_grstring_get_text(void *self,const char *attr)
 {
   NspSMatrix *ret;
 
@@ -670,7 +670,7 @@ static NspObject *_wrap_grstring_get_text(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_grstring_get_obj_text(void *self,char *attr, int *copy)
+static NspObject *_wrap_grstring_get_obj_text(void *self,const char *attr, int *copy)
 {
   NspSMatrix *ret;
 
@@ -679,7 +679,7 @@ static NspObject *_wrap_grstring_get_obj_text(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_grstring_set_text(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_text(void *self,const char *attr, NspObject *O)
 {
   NspSMatrix *text;
 
@@ -691,7 +691,7 @@ static int _wrap_grstring_set_text(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_position(void *self,char *attr)
+static NspObject *_wrap_grstring_get_position(void *self,const char *attr)
 {
   int ret;
 
@@ -699,7 +699,7 @@ static NspObject *_wrap_grstring_get_position(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grstring_set_position(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_position(void *self,const char *attr, NspObject *O)
 {
   int position;
 
@@ -708,7 +708,7 @@ static int _wrap_grstring_set_position(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_angle(void *self,char *attr)
+static NspObject *_wrap_grstring_get_angle(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -718,7 +718,7 @@ static NspObject *_wrap_grstring_get_angle(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grstring_set_angle(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_angle(void *self,const char *attr, NspObject *O)
 {
   double angle;
 
@@ -727,7 +727,7 @@ static int _wrap_grstring_set_angle(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_w(void *self,char *attr)
+static NspObject *_wrap_grstring_get_w(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -737,7 +737,7 @@ static NspObject *_wrap_grstring_get_w(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grstring_set_w(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_w(void *self,const char *attr, NspObject *O)
 {
   double w;
 
@@ -746,7 +746,7 @@ static int _wrap_grstring_set_w(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_h(void *self,char *attr)
+static NspObject *_wrap_grstring_get_h(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -756,7 +756,7 @@ static NspObject *_wrap_grstring_get_h(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grstring_set_h(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_h(void *self,const char *attr, NspObject *O)
 {
   double h;
 
@@ -765,7 +765,7 @@ static int _wrap_grstring_set_h(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_fill(void *self,char *attr)
+static NspObject *_wrap_grstring_get_fill(void *self,const char *attr)
 {
   int ret;
 
@@ -773,7 +773,7 @@ static NspObject *_wrap_grstring_get_fill(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grstring_set_fill(void *self, char *attr, NspObject *O)
+static int _wrap_grstring_set_fill(void *self,const char *attr, NspObject *O)
 {
   int fill;
 
@@ -867,20 +867,6 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
   *fname = Grstring_func[i].name;
   *f = Grstring_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Grstring_register_classes(NspObject *d)
-{
-
-#line 24 "codegen/grstring.override"
-
-Init portion 
-
-
-#line 881 "grstring.c"
-  nspgobject_register_class(d, "NspGrstring", Grstring, &NspNspGrstring_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 86 "codegen/grstring.override"
 
@@ -988,4 +974,4 @@ static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 992 "grstring.c"
+#line 978 "grstring.c"

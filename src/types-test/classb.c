@@ -336,7 +336,7 @@ int nsp_classb_latex(NspClassB *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspClassB objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspClassB   *nsp_classb_object(NspObject *O)
@@ -352,7 +352,7 @@ NspClassB   *nsp_classb_object(NspObject *O)
 
 int IsClassBObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_classb_id);
+  return nsp_object_type(NthObj(i),nsp_type_classb_id);
 }
 
 int IsClassB(NspObject *O)
@@ -521,7 +521,7 @@ static NspMethods *classb_get_methods(void) { return classb_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_classb_get_clb_color(void *self,char *attr)
+static NspObject *_wrap_classb_get_clb_color(void *self,const char *attr)
 {
   int ret;
 
@@ -529,7 +529,7 @@ static NspObject *_wrap_classb_get_clb_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classb_set_clb_color(void *self, char *attr, NspObject *O)
+static int _wrap_classb_set_clb_color(void *self,const char *attr, NspObject *O)
 {
   int clb_color;
 
@@ -538,7 +538,7 @@ static int _wrap_classb_set_clb_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classb_get_clb_thickness(void *self,char *attr)
+static NspObject *_wrap_classb_get_clb_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -546,7 +546,7 @@ static NspObject *_wrap_classb_get_clb_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classb_set_clb_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_classb_set_clb_thickness(void *self,const char *attr, NspObject *O)
 {
   int clb_thickness;
 
@@ -555,7 +555,7 @@ static int _wrap_classb_set_clb_thickness(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classb_get_clb_val(void *self,char *attr)
+static NspObject *_wrap_classb_get_clb_val(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -563,7 +563,7 @@ static NspObject *_wrap_classb_get_clb_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classb_get_obj_clb_val(void *self,char *attr, int *copy)
+static NspObject *_wrap_classb_get_obj_clb_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -572,7 +572,7 @@ static NspObject *_wrap_classb_get_obj_clb_val(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_classb_set_clb_val(void *self, char *attr, NspObject *O)
+static int _wrap_classb_set_clb_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *clb_val;
 
@@ -620,19 +620,5 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *fname = ClassB_func[i].name;
   *f = ClassB_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-ClassB_register_classes(NspObject *d)
-{
 
-#line 7 "codegen/classb.override"
-
-/ * init * /
-
-
-#line 634 "classb.c"
-  nspgobject_register_class(d, "NspClassB", ClassB, &NspNspClassB_Type, Nsp_BuildValue("(O)", &NspClassA_Type));
-}
-*/
-
-#line 639 "classb.c"
+#line 625 "classb.c"

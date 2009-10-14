@@ -453,7 +453,7 @@ int nsp_spolyhedron_latex(NspSPolyhedron *M, int indent,const char *name, int re
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspSPolyhedron objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspSPolyhedron   *nsp_spolyhedron_object(NspObject *O)
@@ -469,7 +469,7 @@ NspSPolyhedron   *nsp_spolyhedron_object(NspObject *O)
 
 int IsSPolyhedronObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_spolyhedron_id);
+  return nsp_object_type(NthObj(i),nsp_type_spolyhedron_id);
 }
 
 int IsSPolyhedron(NspObject *O)
@@ -727,7 +727,7 @@ static NspMethods *spolyhedron_get_methods(void) { return spolyhedron_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_spolyhedron_get_Mcoord(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -735,7 +735,7 @@ static NspObject *_wrap_spolyhedron_get_Mcoord(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_spolyhedron_get_obj_Mcoord(void *self,char *attr, int *copy)
+static NspObject *_wrap_spolyhedron_get_obj_Mcoord(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -744,7 +744,7 @@ static NspObject *_wrap_spolyhedron_get_obj_Mcoord(void *self,char *attr, int *c
   return (NspObject *) ret;
 }
 
-static int _wrap_spolyhedron_set_Mcoord(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcoord;
 
@@ -756,7 +756,7 @@ static int _wrap_spolyhedron_set_Mcoord(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_Mface(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_Mface(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -764,7 +764,7 @@ static NspObject *_wrap_spolyhedron_get_Mface(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_spolyhedron_get_obj_Mface(void *self,char *attr, int *copy)
+static NspObject *_wrap_spolyhedron_get_obj_Mface(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -773,7 +773,7 @@ static NspObject *_wrap_spolyhedron_get_obj_Mface(void *self,char *attr, int *co
   return (NspObject *) ret;
 }
 
-static int _wrap_spolyhedron_set_Mface(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_Mface(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mface;
 
@@ -785,7 +785,7 @@ static int _wrap_spolyhedron_set_Mface(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_Mval(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_Mval(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -793,7 +793,7 @@ static NspObject *_wrap_spolyhedron_get_Mval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_spolyhedron_get_obj_Mval(void *self,char *attr, int *copy)
+static NspObject *_wrap_spolyhedron_get_obj_Mval(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -802,7 +802,7 @@ static NspObject *_wrap_spolyhedron_get_obj_Mval(void *self,char *attr, int *cop
   return (NspObject *) ret;
 }
 
-static int _wrap_spolyhedron_set_Mval(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_Mval(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mval;
 
@@ -814,7 +814,7 @@ static int _wrap_spolyhedron_set_Mval(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_vmin(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_vmin(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -824,7 +824,7 @@ static NspObject *_wrap_spolyhedron_get_vmin(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_spolyhedron_set_vmin(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_vmin(void *self,const char *attr, NspObject *O)
 {
   double vmin;
 
@@ -833,7 +833,7 @@ static int _wrap_spolyhedron_set_vmin(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_vmax(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_vmax(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -843,7 +843,7 @@ static NspObject *_wrap_spolyhedron_get_vmax(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_spolyhedron_set_vmax(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_vmax(void *self,const char *attr, NspObject *O)
 {
   double vmax;
 
@@ -852,7 +852,7 @@ static int _wrap_spolyhedron_set_vmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_colmin(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_colmin(void *self,const char *attr)
 {
   int ret;
 
@@ -860,7 +860,7 @@ static NspObject *_wrap_spolyhedron_get_colmin(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_spolyhedron_set_colmin(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_colmin(void *self,const char *attr, NspObject *O)
 {
   int colmin;
 
@@ -869,7 +869,7 @@ static int _wrap_spolyhedron_set_colmin(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_colmax(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_colmax(void *self,const char *attr)
 {
   int ret;
 
@@ -877,7 +877,7 @@ static NspObject *_wrap_spolyhedron_get_colmax(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_spolyhedron_set_colmax(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_colmax(void *self,const char *attr, NspObject *O)
 {
   int colmax;
 
@@ -886,7 +886,7 @@ static int _wrap_spolyhedron_set_colmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_coloutmin(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_coloutmin(void *self,const char *attr)
 {
   int ret;
 
@@ -894,7 +894,7 @@ static NspObject *_wrap_spolyhedron_get_coloutmin(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_spolyhedron_set_coloutmin(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_coloutmin(void *self,const char *attr, NspObject *O)
 {
   int coloutmin;
 
@@ -903,7 +903,7 @@ static int _wrap_spolyhedron_set_coloutmin(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_coloutmax(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_coloutmax(void *self,const char *attr)
 {
   int ret;
 
@@ -911,7 +911,7 @@ static NspObject *_wrap_spolyhedron_get_coloutmax(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_spolyhedron_set_coloutmax(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_coloutmax(void *self,const char *attr, NspObject *O)
 {
   int coloutmax;
 
@@ -920,7 +920,7 @@ static int _wrap_spolyhedron_set_coloutmax(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_mesh(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -930,7 +930,7 @@ static NspObject *_wrap_spolyhedron_get_mesh(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_spolyhedron_set_mesh(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_mesh(void *self,const char *attr, NspObject *O)
 {
   int mesh;
 
@@ -939,7 +939,7 @@ static int _wrap_spolyhedron_set_mesh(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_back_color(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_back_color(void *self,const char *attr)
 {
   int ret;
 
@@ -947,7 +947,7 @@ static NspObject *_wrap_spolyhedron_get_back_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_spolyhedron_set_back_color(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_back_color(void *self,const char *attr, NspObject *O)
 {
   int back_color;
 
@@ -956,7 +956,7 @@ static int _wrap_spolyhedron_set_back_color(void *self, char *attr, NspObject *O
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_shade(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_shade(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -966,7 +966,7 @@ static NspObject *_wrap_spolyhedron_get_shade(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_spolyhedron_set_shade(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_shade(void *self,const char *attr, NspObject *O)
 {
   int shade;
 
@@ -975,7 +975,7 @@ static int _wrap_spolyhedron_set_shade(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_spolyhedron_get_coldef(void *self,char *attr)
+static NspObject *_wrap_spolyhedron_get_coldef(void *self,const char *attr)
 {
   int ret;
 
@@ -983,7 +983,7 @@ static NspObject *_wrap_spolyhedron_get_coldef(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_spolyhedron_set_coldef(void *self, char *attr, NspObject *O)
+static int _wrap_spolyhedron_set_coldef(void *self,const char *attr, NspObject *O)
 {
   int coldef;
 
@@ -1082,20 +1082,6 @@ void SPolyhedron_Interf_Info(int i, char **fname, function (**f))
   *fname = SPolyhedron_func[i].name;
   *f = SPolyhedron_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-SPolyhedron_register_classes(NspObject *d)
-{
-
-#line 39 "codegen/spolyhedron.override"
-
-Init portion 
-
-
-#line 1096 "spolyhedron.c"
-  nspgobject_register_class(d, "NspSPolyhedron", SPolyhedron, &NspNspSPolyhedron_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 113 "codegen/spolyhedron.override"
 
@@ -1807,4 +1793,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1811 "spolyhedron.c"
+#line 1797 "spolyhedron.c"

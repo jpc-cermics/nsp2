@@ -392,7 +392,7 @@ int nsp_points3d_latex(NspPoints3d *M, int indent,const char *name, int rec_leve
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspPoints3d objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspPoints3d   *nsp_points3d_object(NspObject *O)
@@ -408,7 +408,7 @@ NspPoints3d   *nsp_points3d_object(NspObject *O)
 
 int IsPoints3dObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_points3d_id);
+  return nsp_object_type(NthObj(i),nsp_type_points3d_id);
 }
 
 int IsPoints3d(NspObject *O)
@@ -605,7 +605,7 @@ static NspMethods *points3d_get_methods(void) { return points3d_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_points3d_get_Mcoord(void *self,char *attr)
+static NspObject *_wrap_points3d_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -613,7 +613,7 @@ static NspObject *_wrap_points3d_get_Mcoord(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_points3d_get_obj_Mcoord(void *self,char *attr, int *copy)
+static NspObject *_wrap_points3d_get_obj_Mcoord(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -622,7 +622,7 @@ static NspObject *_wrap_points3d_get_obj_Mcoord(void *self,char *attr, int *copy
   return (NspObject *) ret;
 }
 
-static int _wrap_points3d_set_Mcoord(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcoord;
 
@@ -634,7 +634,7 @@ static int _wrap_points3d_set_Mcoord(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_points3d_get_color(void *self,char *attr)
+static NspObject *_wrap_points3d_get_color(void *self,const char *attr)
 {
   int ret;
 
@@ -642,7 +642,7 @@ static NspObject *_wrap_points3d_get_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_points3d_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
 
@@ -651,7 +651,7 @@ static int _wrap_points3d_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_points3d_get_mark_type(void *self,char *attr)
+static NspObject *_wrap_points3d_get_mark_type(void *self,const char *attr)
 {
   int ret;
 
@@ -659,7 +659,7 @@ static NspObject *_wrap_points3d_get_mark_type(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_points3d_set_mark_type(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_mark_type(void *self,const char *attr, NspObject *O)
 {
   int mark_type;
 
@@ -668,7 +668,7 @@ static int _wrap_points3d_set_mark_type(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_points3d_get_mark_size(void *self,char *attr)
+static NspObject *_wrap_points3d_get_mark_size(void *self,const char *attr)
 {
   int ret;
 
@@ -676,7 +676,7 @@ static NspObject *_wrap_points3d_get_mark_size(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_points3d_set_mark_size(void *self, char *attr, NspObject *O)
+static int _wrap_points3d_set_mark_size(void *self,const char *attr, NspObject *O)
 {
   int mark_size;
 
@@ -765,20 +765,6 @@ void Points3d_Interf_Info(int i, char **fname, function (**f))
   *fname = Points3d_func[i].name;
   *f = Points3d_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Points3d_register_classes(NspObject *d)
-{
-
-#line 45 "codegen/points3d.override"
-
-Init portion 
-
-
-#line 779 "points3d.c"
-  nspgobject_register_class(d, "NspPoints3d", Points3d, &NspNspPoints3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 119 "codegen/points3d.override"
 
@@ -978,4 +964,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 982 "points3d.c"
+#line 968 "points3d.c"

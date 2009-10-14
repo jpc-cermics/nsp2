@@ -374,7 +374,7 @@ int nsp_grrect_latex(NspGrRect *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGrRect objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspGrRect   *nsp_grrect_object(NspObject *O)
@@ -390,7 +390,7 @@ NspGrRect   *nsp_grrect_object(NspObject *O)
 
 int IsGrRectObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_grrect_id);
+  return nsp_object_type(NthObj(i),nsp_type_grrect_id);
 }
 
 int IsGrRect(NspObject *O)
@@ -566,7 +566,7 @@ static NspMethods *grrect_get_methods(void) { return grrect_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_grrect_get_x(void *self,char *attr)
+static NspObject *_wrap_grrect_get_x(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -576,7 +576,7 @@ static NspObject *_wrap_grrect_get_x(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grrect_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_x(void *self,const char *attr, NspObject *O)
 {
   double x;
 
@@ -585,7 +585,7 @@ static int _wrap_grrect_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grrect_get_y(void *self,char *attr)
+static NspObject *_wrap_grrect_get_y(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -595,7 +595,7 @@ static NspObject *_wrap_grrect_get_y(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grrect_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_y(void *self,const char *attr, NspObject *O)
 {
   double y;
 
@@ -604,7 +604,7 @@ static int _wrap_grrect_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grrect_get_w(void *self,char *attr)
+static NspObject *_wrap_grrect_get_w(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -614,7 +614,7 @@ static NspObject *_wrap_grrect_get_w(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grrect_set_w(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_w(void *self,const char *attr, NspObject *O)
 {
   double w;
 
@@ -623,7 +623,7 @@ static int _wrap_grrect_set_w(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grrect_get_h(void *self,char *attr)
+static NspObject *_wrap_grrect_get_h(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -633,7 +633,7 @@ static NspObject *_wrap_grrect_get_h(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_grrect_set_h(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_h(void *self,const char *attr, NspObject *O)
 {
   double h;
 
@@ -642,7 +642,7 @@ static int _wrap_grrect_set_h(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grrect_get_fill_color(void *self,char *attr)
+static NspObject *_wrap_grrect_get_fill_color(void *self,const char *attr)
 {
   int ret;
 
@@ -650,7 +650,7 @@ static NspObject *_wrap_grrect_get_fill_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grrect_set_fill_color(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_fill_color(void *self,const char *attr, NspObject *O)
 {
   int fill_color;
 
@@ -659,7 +659,7 @@ static int _wrap_grrect_set_fill_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grrect_get_thickness(void *self,char *attr)
+static NspObject *_wrap_grrect_get_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -667,7 +667,7 @@ static NspObject *_wrap_grrect_get_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grrect_set_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
 
@@ -676,7 +676,7 @@ static int _wrap_grrect_set_thickness(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grrect_get_color(void *self,char *attr)
+static NspObject *_wrap_grrect_get_color(void *self,const char *attr)
 {
   int ret;
 
@@ -684,7 +684,7 @@ static NspObject *_wrap_grrect_get_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_grrect_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_grrect_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
 
@@ -777,20 +777,6 @@ void GrRect_Interf_Info(int i, char **fname, function (**f))
   *fname = GrRect_func[i].name;
   *f = GrRect_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-GrRect_register_classes(NspObject *d)
-{
-
-#line 24 "codegen/grrect.override"
-
-Init portion 
-
-
-#line 791 "grrect.c"
-  nspgobject_register_class(d, "NspGrRect", GrRect, &NspNspGrRect_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 87 "codegen/grrect.override"
 
@@ -879,4 +865,4 @@ static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 883 "grrect.c"
+#line 869 "grrect.c"

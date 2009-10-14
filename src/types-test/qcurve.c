@@ -385,7 +385,7 @@ int nsp_qcurve_latex(NspQcurve *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspQcurve objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspQcurve   *nsp_qcurve_object(NspObject *O)
@@ -401,7 +401,7 @@ NspQcurve   *nsp_qcurve_object(NspObject *O)
 
 int IsQcurveObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_qcurve_id);
+  return nsp_object_type(NthObj(i),nsp_type_qcurve_id);
 }
 
 int IsQcurve(NspObject *O)
@@ -607,7 +607,7 @@ static NspMethods *qcurve_get_methods(void) { return qcurve_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_qcurve_get_mark(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_mark(void *self,const char *attr)
 {
   int ret;
 
@@ -615,7 +615,7 @@ static NspObject *_wrap_qcurve_get_mark(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_qcurve_set_mark(void *self, char *attr, NspObject *O)
+static int _wrap_qcurve_set_mark(void *self,const char *attr, NspObject *O)
 {
   int mark;
 
@@ -624,7 +624,7 @@ static int _wrap_qcurve_set_mark(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_qcurve_get_width(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_width(void *self,const char *attr)
 {
   int ret;
 
@@ -632,7 +632,7 @@ static NspObject *_wrap_qcurve_get_width(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_qcurve_set_width(void *self, char *attr, NspObject *O)
+static int _wrap_qcurve_set_width(void *self,const char *attr, NspObject *O)
 {
   int width;
 
@@ -641,7 +641,7 @@ static int _wrap_qcurve_set_width(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_qcurve_get_style(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_style(void *self,const char *attr)
 {
   int ret;
 
@@ -649,7 +649,7 @@ static NspObject *_wrap_qcurve_get_style(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_qcurve_set_style(void *self, char *attr, NspObject *O)
+static int _wrap_qcurve_set_style(void *self,const char *attr, NspObject *O)
 {
   int style;
 
@@ -658,7 +658,7 @@ static int _wrap_qcurve_set_style(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_qcurve_get_color(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_color(void *self,const char *attr)
 {
   int ret;
 
@@ -666,7 +666,7 @@ static NspObject *_wrap_qcurve_get_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_qcurve_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_qcurve_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
 
@@ -690,7 +690,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
 }
 
 #line 693 "qcurve.c"
-static NspObject *_wrap_qcurve_get_mode(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
 {
   int ret;
 
@@ -728,7 +728,7 @@ static int _wrap_qcurve_set_obj_Pts(void *self,NspObject *val)
 }
 
 #line 731 "qcurve.c"
-static NspObject *_wrap_qcurve_get_Pts(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -736,7 +736,7 @@ static NspObject *_wrap_qcurve_get_Pts(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static int _wrap_qcurve_set_Pts(void *self, char *attr, NspObject *O)
+static int _wrap_qcurve_set_Pts(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Pts;
 
@@ -748,7 +748,7 @@ static int _wrap_qcurve_set_Pts(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_qcurve_get_legend(void *self,char *attr)
+static NspObject *_wrap_qcurve_get_legend(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -758,7 +758,7 @@ static NspObject *_wrap_qcurve_get_legend(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_qcurve_set_legend(void *self, char *attr, NspObject *O)
+static int _wrap_qcurve_set_legend(void *self,const char *attr, NspObject *O)
 {
   char *legend;
 
@@ -859,20 +859,6 @@ void Qcurve_Interf_Info(int i, char **fname, function (**f))
   *fname = Qcurve_func[i].name;
   *f = Qcurve_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Qcurve_register_classes(NspObject *d)
-{
-
-#line 37 "codegen/qcurve.override"
-
-Init portion 
-
-
-#line 873 "qcurve.c"
-  nspgobject_register_class(d, "NspQcurve", Qcurve, &NspNspQcurve_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 141 "codegen/qcurve.override"
 
@@ -1212,4 +1198,4 @@ static void oscillo_test()
 
      
 
-#line 1216 "qcurve.c"
+#line 1202 "qcurve.c"

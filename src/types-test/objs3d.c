@@ -441,7 +441,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspObjs3d objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspObjs3d   *nsp_objs3d_object(NspObject *O)
@@ -457,7 +457,7 @@ NspObjs3d   *nsp_objs3d_object(NspObject *O)
 
 int IsObjs3dObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_objs3d_id);
+  return nsp_object_type(NthObj(i),nsp_type_objs3d_id);
 }
 
 int IsObjs3d(NspObject *O)
@@ -712,7 +712,7 @@ static NspMethods *objs3d_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_objs3d_get_wrect(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_wrect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -720,7 +720,7 @@ static NspObject *_wrap_objs3d_get_wrect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_objs3d_get_obj_wrect(void *self,char *attr, int *copy)
+static NspObject *_wrap_objs3d_get_obj_wrect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -729,7 +729,7 @@ static NspObject *_wrap_objs3d_get_obj_wrect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_objs3d_set_wrect(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *wrect;
 
@@ -757,7 +757,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 }
 
 #line 760 "objs3d.c"
-static NspObject *_wrap_objs3d_get_rho(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -767,7 +767,7 @@ static NspObject *_wrap_objs3d_get_rho(void *self,char *attr)
   return nsp_ret;
 }
 
-static NspObject *_wrap_objs3d_get_top(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_top(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -777,7 +777,7 @@ static NspObject *_wrap_objs3d_get_top(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_objs3d_set_top(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_top(void *self,const char *attr, NspObject *O)
 {
   int top;
 
@@ -786,7 +786,7 @@ static int _wrap_objs3d_set_top(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_arect(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_arect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -794,7 +794,7 @@ static NspObject *_wrap_objs3d_get_arect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_objs3d_get_obj_arect(void *self,char *attr, int *copy)
+static NspObject *_wrap_objs3d_get_obj_arect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -803,7 +803,7 @@ static NspObject *_wrap_objs3d_get_obj_arect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_objs3d_set_arect(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_arect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *arect;
 
@@ -815,7 +815,7 @@ static int _wrap_objs3d_set_arect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_frect(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_frect(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -823,7 +823,7 @@ static NspObject *_wrap_objs3d_get_frect(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_objs3d_get_obj_frect(void *self,char *attr, int *copy)
+static NspObject *_wrap_objs3d_get_obj_frect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -832,7 +832,7 @@ static NspObject *_wrap_objs3d_get_obj_frect(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_objs3d_set_frect(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_frect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *frect;
 
@@ -844,7 +844,7 @@ static int _wrap_objs3d_set_frect(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_title(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_title(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
@@ -854,7 +854,7 @@ static NspObject *_wrap_objs3d_get_title(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_objs3d_set_title(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
 {
   char *title;
 
@@ -923,7 +923,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 
 
 #line 926 "objs3d.c"
-static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
 
@@ -931,7 +931,7 @@ static NspObject *_wrap_objs3d_get_children(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_objs3d_get_colormap(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_colormap(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -939,7 +939,7 @@ static NspObject *_wrap_objs3d_get_colormap(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_objs3d_get_obj_colormap(void *self,char *attr, int *copy)
+static NspObject *_wrap_objs3d_get_obj_colormap(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -948,7 +948,7 @@ static NspObject *_wrap_objs3d_get_obj_colormap(void *self,char *attr, int *copy
   return (NspObject *) ret;
 }
 
-static int _wrap_objs3d_set_colormap(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_colormap(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colormap;
 
@@ -960,7 +960,7 @@ static int _wrap_objs3d_set_colormap(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_alpha(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_alpha(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -970,7 +970,7 @@ static NspObject *_wrap_objs3d_get_alpha(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_objs3d_set_alpha(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_alpha(void *self,const char *attr, NspObject *O)
 {
   double alpha;
 
@@ -979,7 +979,7 @@ static int _wrap_objs3d_set_alpha(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_theta(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_theta(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -989,7 +989,7 @@ static NspObject *_wrap_objs3d_get_theta(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_objs3d_set_theta(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_theta(void *self,const char *attr, NspObject *O)
 {
   double theta;
 
@@ -998,7 +998,7 @@ static int _wrap_objs3d_set_theta(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_with_box(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_with_box(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
@@ -1008,7 +1008,7 @@ static NspObject *_wrap_objs3d_get_with_box(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_objs3d_set_with_box(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_with_box(void *self,const char *attr, NspObject *O)
 {
   int with_box;
 
@@ -1017,7 +1017,7 @@ static int _wrap_objs3d_set_with_box(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_box_color(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_box_color(void *self,const char *attr)
 {
   int ret;
 
@@ -1025,7 +1025,7 @@ static NspObject *_wrap_objs3d_get_box_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_objs3d_set_box_color(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_box_color(void *self,const char *attr, NspObject *O)
 {
   int box_color;
 
@@ -1034,7 +1034,7 @@ static int _wrap_objs3d_set_box_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_objs3d_get_box_style(void *self,char *attr)
+static NspObject *_wrap_objs3d_get_box_style(void *self,const char *attr)
 {
   int ret;
 
@@ -1042,7 +1042,7 @@ static NspObject *_wrap_objs3d_get_box_style(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_objs3d_set_box_style(void *self, char *attr, NspObject *O)
+static int _wrap_objs3d_set_box_style(void *self,const char *attr, NspObject *O)
 {
   int box_style;
 
@@ -1140,20 +1140,6 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *fname = Objs3d_func[i].name;
   *f = Objs3d_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Objs3d_register_classes(NspObject *d)
-{
-
-#line 64 "codegen/objs3d.override"
-
-Init portion 
-
-
-#line 1154 "objs3d.c"
-  nspgobject_register_class(d, "NspObjs3d", Objs3d, &NspNspObjs3d_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 197 "codegen/objs3d.override"
 
@@ -2670,4 +2656,4 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 
-#line 2674 "objs3d.c"
+#line 2660 "objs3d.c"

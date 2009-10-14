@@ -375,7 +375,7 @@ int nsp_arrows_latex(NspArrows *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspArrows objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspArrows   *nsp_arrows_object(NspObject *O)
@@ -391,7 +391,7 @@ NspArrows   *nsp_arrows_object(NspObject *O)
 
 int IsArrowsObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_arrows_id);
+  return nsp_object_type(NthObj(i),nsp_type_arrows_id);
 }
 
 int IsArrows(NspObject *O)
@@ -591,7 +591,7 @@ static NspMethods *arrows_get_methods(void) { return arrows_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_arrows_get_x(void *self,char *attr)
+static NspObject *_wrap_arrows_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -599,7 +599,7 @@ static NspObject *_wrap_arrows_get_x(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_arrows_get_obj_x(void *self,char *attr, int *copy)
+static NspObject *_wrap_arrows_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -608,7 +608,7 @@ static NspObject *_wrap_arrows_get_obj_x(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_arrows_set_x(void *self, char *attr, NspObject *O)
+static int _wrap_arrows_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
 
@@ -620,7 +620,7 @@ static int _wrap_arrows_set_x(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_arrows_get_y(void *self,char *attr)
+static NspObject *_wrap_arrows_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -628,7 +628,7 @@ static NspObject *_wrap_arrows_get_y(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_arrows_get_obj_y(void *self,char *attr, int *copy)
+static NspObject *_wrap_arrows_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -637,7 +637,7 @@ static NspObject *_wrap_arrows_get_obj_y(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_arrows_set_y(void *self, char *attr, NspObject *O)
+static int _wrap_arrows_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
 
@@ -649,7 +649,7 @@ static int _wrap_arrows_set_y(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_arrows_get_color(void *self,char *attr)
+static NspObject *_wrap_arrows_get_color(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -657,7 +657,7 @@ static NspObject *_wrap_arrows_get_color(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_arrows_get_obj_color(void *self,char *attr, int *copy)
+static NspObject *_wrap_arrows_get_obj_color(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -666,7 +666,7 @@ static NspObject *_wrap_arrows_get_obj_color(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_arrows_set_color(void *self, char *attr, NspObject *O)
+static int _wrap_arrows_set_color(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *color;
 
@@ -678,7 +678,7 @@ static int _wrap_arrows_set_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_arrows_get_arsize(void *self,char *attr)
+static NspObject *_wrap_arrows_get_arsize(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
@@ -688,7 +688,7 @@ static NspObject *_wrap_arrows_get_arsize(void *self,char *attr)
   return nsp_ret;
 }
 
-static int _wrap_arrows_set_arsize(void *self, char *attr, NspObject *O)
+static int _wrap_arrows_set_arsize(void *self,const char *attr, NspObject *O)
 {
   double arsize;
 
@@ -777,20 +777,6 @@ void Arrows_Interf_Info(int i, char **fname, function (**f))
   *fname = Arrows_func[i].name;
   *f = Arrows_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-Arrows_register_classes(NspObject *d)
-{
-
-#line 26 "codegen/arrows.override"
-
-Init portion 
-
-
-#line 791 "arrows.c"
-  nspgobject_register_class(d, "NspArrows", Arrows, &NspNspArrows_Type, Nsp_BuildValue("(O)", &NspGraphic_Type));
-}
-*/
 
 #line 88 "codegen/arrows.override"
 
@@ -896,4 +882,4 @@ static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 900 "arrows.c"
+#line 886 "arrows.c"

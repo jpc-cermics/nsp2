@@ -322,7 +322,7 @@ int nsp_groot_latex(NspGRoot *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspGRoot objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspGRoot   *nsp_groot_object(NspObject *O)
@@ -338,7 +338,7 @@ NspGRoot   *nsp_groot_object(NspObject *O)
 
 int IsGRootObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_groot_id);
+  return nsp_object_type(NthObj(i),nsp_type_groot_id);
 }
 
 int IsGRoot(NspObject *O)
@@ -487,7 +487,7 @@ static NspMethods *groot_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_groot_get_figures(void *self,char *attr)
+static NspObject *_wrap_groot_get_figures(void *self,const char *attr)
 {
   NspList *ret;
 
@@ -495,7 +495,7 @@ static NspObject *_wrap_groot_get_figures(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_groot_get_obj_figures(void *self,char *attr, int *copy)
+static NspObject *_wrap_groot_get_obj_figures(void *self,const char *attr, int *copy)
 {
   NspList *ret;
 
@@ -504,7 +504,7 @@ static NspObject *_wrap_groot_get_obj_figures(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_groot_set_figures(void *self, char *attr, NspObject *O)
+static int _wrap_groot_set_figures(void *self,const char *attr, NspObject *O)
 {
   NspList *figures;
 
@@ -550,22 +550,8 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
   *fname = GRoot_func[i].name;
   *f = GRoot_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-GRoot_register_classes(NspObject *d)
-{
-
-#line 10 "codegen/groot.override"
-
-Init portion 
-
-
-#line 564 "groot.c"
-  nspgobject_register_class(d, "NspGRoot", GRoot, &NspNspGRoot_Type, Nsp_BuildValue("(O)", &NspObject_Type));
-}
-*/
 
 #line 27 "codegen/groot.override"
 
 
-#line 572 "groot.c"
+#line 558 "groot.c"

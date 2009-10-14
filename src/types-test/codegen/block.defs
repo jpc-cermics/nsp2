@@ -14,8 +14,8 @@
     '("int" "background")
     '("int" "n_locks" "hidden" ) 
     '("grb_lock*" "locks" "hidden" ) 
-    '("gboolean" "hilited") 
-    '("gboolean"  "show")   
+    '("gboolean" "hilited" "std" "FALSE") 
+    '("gboolean"  "show" "std" "TRUE")   
   )
   (gtype-id "Block")
 )
@@ -31,8 +31,41 @@
   (return-type "none")
 )
 
+;; just to give a name the code is overriden 
+;; 
 
+(define-method translate
+  (of-object "Block")
+  (c-name "block_translate")
+  (return-type "int")
+  )
 
+(define-method set_pos
+  (of-object "Block")
+  (c-name "block_set_pos")
+  (return-type "int")
+  )
 
+(define-method resize
+  (of-object "Block")
+  (c-name "block_resize")
+  (return-type "int")
+  )
 
+(define-method draw
+  (of-object "Block")
+  (c-name "block_draw")
+  (return-type "int")
+  )
 
+(define-method set_lock_pos
+  (of-object "Block")
+  (c-name "block_set_lock_pos")
+  (return-type "int")
+  )
+
+(define-method set_locks_pos
+  (of-object "Block")
+  (c-name "block_set_locks_pos")
+  (return-type "int")
+  )

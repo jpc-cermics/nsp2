@@ -351,7 +351,7 @@ int nsp_classa_latex(NspClassA *M, int indent,const char *name, int rec_level)
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
  * for NspClassA objects 
- * Note that some of these functions could become MACROS 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
 NspClassA   *nsp_classa_object(NspObject *O)
@@ -367,7 +367,7 @@ NspClassA   *nsp_classa_object(NspObject *O)
 
 int IsClassAObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i) , nsp_type_classa_id);
+  return nsp_object_type(NthObj(i),nsp_type_classa_id);
 }
 
 int IsClassA(NspObject *O)
@@ -565,7 +565,7 @@ static NspMethods *classa_get_methods(void) { return classa_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_classa_get_cla_color(void *self,char *attr)
+static NspObject *_wrap_classa_get_cla_color(void *self,const char *attr)
 {
   int ret;
 
@@ -573,7 +573,7 @@ static NspObject *_wrap_classa_get_cla_color(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classa_set_cla_color(void *self, char *attr, NspObject *O)
+static int _wrap_classa_set_cla_color(void *self,const char *attr, NspObject *O)
 {
   int cla_color;
 
@@ -582,7 +582,7 @@ static int _wrap_classa_set_cla_color(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classa_get_cla_thickness(void *self,char *attr)
+static NspObject *_wrap_classa_get_cla_thickness(void *self,const char *attr)
 {
   int ret;
 
@@ -590,7 +590,7 @@ static NspObject *_wrap_classa_get_cla_thickness(void *self,char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-static int _wrap_classa_set_cla_thickness(void *self, char *attr, NspObject *O)
+static int _wrap_classa_set_cla_thickness(void *self,const char *attr, NspObject *O)
 {
   int cla_thickness;
 
@@ -599,7 +599,7 @@ static int _wrap_classa_set_cla_thickness(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classa_get_cla_val(void *self,char *attr)
+static NspObject *_wrap_classa_get_cla_val(void *self,const char *attr)
 {
   NspMatrix *ret;
 
@@ -607,7 +607,7 @@ static NspObject *_wrap_classa_get_cla_val(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classa_get_obj_cla_val(void *self,char *attr, int *copy)
+static NspObject *_wrap_classa_get_obj_cla_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
 
@@ -616,7 +616,7 @@ static NspObject *_wrap_classa_get_obj_cla_val(void *self,char *attr, int *copy)
   return (NspObject *) ret;
 }
 
-static int _wrap_classa_set_cla_val(void *self, char *attr, NspObject *O)
+static int _wrap_classa_set_cla_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *cla_val;
 
@@ -628,7 +628,7 @@ static int _wrap_classa_set_cla_val(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_classa_get_cla_bval(void *self,char *attr)
+static NspObject *_wrap_classa_get_cla_bval(void *self,const char *attr)
 {
   NspBMatrix *ret;
 
@@ -636,7 +636,7 @@ static NspObject *_wrap_classa_get_cla_bval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static NspObject *_wrap_classa_get_obj_cla_bval(void *self,char *attr, int *copy)
+static NspObject *_wrap_classa_get_obj_cla_bval(void *self,const char *attr, int *copy)
 {
   NspBMatrix *ret;
 
@@ -645,7 +645,7 @@ static NspObject *_wrap_classa_get_obj_cla_bval(void *self,char *attr, int *copy
   return (NspObject *) ret;
 }
 
-static int _wrap_classa_set_cla_bval(void *self, char *attr, NspObject *O)
+static int _wrap_classa_set_cla_bval(void *self,const char *attr, NspObject *O)
 {
   NspBMatrix *cla_bval;
 
@@ -686,7 +686,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 
 
 #line 689 "classa.c"
-static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
+static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
 
@@ -694,7 +694,7 @@ static NspObject *_wrap_classa_get_cla_lval(void *self,char *attr)
   return (NspObject *) ret;
 }
 
-static int _wrap_classa_set_cla_lval(void *self, char *attr, NspObject *O)
+static int _wrap_classa_set_cla_lval(void *self,const char *attr, NspObject *O)
 {
   NspList *cla_lval;
 
@@ -775,19 +775,5 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
   *fname = ClassA_func[i].name;
   *f = ClassA_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-ClassA_register_classes(NspObject *d)
-{
 
-#line 21 "codegen/classa.override"
-
-/ * init code  * /
-
-
-#line 789 "classa.c"
-  nspgobject_register_class(d, "NspClassA", ClassA, &NspNspClassA_Type, Nsp_BuildValue("(O)", &NspObject_Type));
-}
-*/
-
-#line 794 "classa.c"
+#line 780 "classa.c"
