@@ -41,7 +41,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
 {
   NspTypeCurve *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_curve != 0 && mode == T_BASE ) 
+  if (  nsp_type_curve != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_curve;
@@ -56,10 +56,10 @@ NspTypeCurve *new_type_curve(type_mode mode)
   type->methods = curve_get_methods;
   type->new = (new_func *) new_curve;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for curve */ 
 
   top->pr = (print_func *) nsp_curve_print;
@@ -79,9 +79,9 @@ NspTypeCurve *new_type_curve(type_mode mode)
   top->load  = (load_func *) nsp_curve_xdr_load;
   top->create = (create_func*) int_curve_create;
   top->latex = (print_func *) nsp_curve_latex;
-  
+
   /* specific methods for curve */
-      
+
   type->init = (init_func *) init_curve;
 
 #line 30 "codegen/curve.override"
@@ -115,8 +115,8 @@ NspTypeCurve *new_type_curve(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_curve_id;
-       return type;
+      type->id = nsp_type_curve_id;
+      return type;
     }
 }
 
@@ -216,7 +216,7 @@ int nsp_curve_xdr_save(XDR *xdrs, NspCurve *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_curve)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
@@ -417,9 +417,9 @@ NspCurve  *GetCurve(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspCurve instance 
  *-----------------------------------------------------*/
 
 static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type)

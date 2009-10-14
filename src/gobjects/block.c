@@ -205,7 +205,7 @@ static int nsp_block_size(NspBlock *Mat, int flag)
  */
 
 static char block_type_name[]="Block";
-static char block_short_type_name[]="gbl";
+static char block_short_type_name[]="block";
 
 static char *nsp_block_type_as_string(void)
 {
@@ -375,47 +375,101 @@ void nsp_block_destroy(NspBlock *H)
  * info 
  */
 
-static int nsp_block_info(NspBlock *H, int indent,char *name,int rec_level)
+static int nsp_block_info(NspBlock *M,int indent,const char *name,int rec_level)
 {
-  int i;
-  if ( H == NULLBLOCK) 
+  const char *pname;
+  if ( M == NULLBLOCK) 
     {
-      Sciprintf("Null Pointer Block \n");
-      return TRUE;;
+      Sciprintf("Null Pointer NspBlock \n");
+      return TRUE;
     }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t=\t\t%s (1) [0x%d,count=%d]\n",NSP_OBJECT(H)->name,
-	    nsp_block_type_short_string(NSP_OBJECT(H)), H->obj,H->obj->ref_count );
+  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
+             nsp_block_type_short_string(NSP_OBJECT(M)));
   return TRUE;
 }
 
-static int nsp_block_print(NspBlock *H, int indent,char *name, int rec_level)
+/*
+ * print 
+ */
+
+int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
 {
-  nsp_block_info(H,indent,NULL,0);
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( M == NULLBLOCK) 
+    {
+      Sciprintf("Null Pointer NspBlock \n");
+      return TRUE;
+    }
+  if (user_pref.pr_as_read_syntax) 
+    { 
+      Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
+    } 
+  else 
+    { 
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+        {
+          nsp_block_info(M,indent,pname,rec_level);
+          return TRUE;
+        }
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"frame=%xl\n",M->obj->frame);
+  Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
+  if ( nsp_print_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"n_locks=%d\n",M->obj->n_locks);
+  Sciprintf1(indent+2,"locks=%xl\n",M->obj->locks);
+  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
+  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
+      Sciprintf1(indent+1,"}\n");
+    }
   return TRUE;
 }
 
-static int nsp_block_latex(NspBlock *H, int indent,char *name, int rec_level)
+/*
+ * latex print 
+ */
+
+int nsp_block_latex(NspBlock *M, int indent,const char *name, int rec_level)
 {
-  nsp_block_info(H,indent,NULL,0);
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)));
+  Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"frame=%xl\n",M->obj->frame);
+  Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
+  if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"n_locks=%d\n",M->obj->n_locks);
+  Sciprintf1(indent+2,"locks=%xl\n",M->obj->locks);
+  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
+  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+1,"}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
 }
-
 /*-----------------------------------------------------
  * a set of functions used when writing interfaces 
- * for ClassA objects 
- * Note that some of these functions could become MACROS XXXXX 
+ * for NspBlock objects 
+ * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-NspBlock *nsp_block_object(NspObject *O)
+NspBlock   *nsp_block_object(NspObject *O)
 {
   /* Follow pointer */
-  HOBJ_GET_OBJECT(O,NULL);
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast(O,nsp_type_block_id) == TRUE) return ((NspBlock *) O);
+  if ( check_cast (O,nsp_type_block_id) == TRUE ) return ((NspBlock *) O);
   else 
-    Scierror("Error:\tArgument should be a %s\n",type_get_name(nsp_type_block));
-  return(NULL);
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_block));
+  return NULL;
 }
 
 int IsBlockObj(Stack stack, int i)
@@ -445,7 +499,7 @@ NspBlock  *GetBlock(Stack stack, int i)
 /*-----------------------------------------------------
  * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassA instance 
+ * create a NspBlock instance 
  *-----------------------------------------------------*/
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -456,8 +510,7 @@ static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
    Sciprintf("No more memory\n");
    return NULLBLOCK;
   }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) 
-   return NULLBLOCK;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLBLOCK;
  NSP_OBJECT(H)->ret_pos = -1 ;
  return H;
 }
@@ -478,8 +531,8 @@ int nsp_block_create_partial(NspBlock *H)
   H->obj->background = 0;
   H->obj->n_locks = 0;
   H->obj->locks = NULL;
-  H->obj->hilited = 0;
-  H->obj->show = 0;
+  H->obj->hilited = FALSE;
+  H->obj->show = TRUE;
   return OK;
 }
 
@@ -492,21 +545,23 @@ int nsp_block_check_values(NspBlock *H)
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
 
-NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickness,int background) 
+NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,int show,NspTypeBase *type)
 {
   double pt[2];
   int i;
-  if ((H->obj = malloc(sizeof(nsp_block))) == NULL) return NULL;
-  H->obj->ref_count=1;
-  H->obj->frame = NULL; 
-  /* fields */
-  if ( rect != NULL)
-    for ( i=0; i < 4 ; i++) H->obj->r[i]= rect[i];
-  H->obj->color = color;
-  H->obj->thickness = thickness;
-  H->obj->background = background;
-  H->obj->hilited = FALSE ; 
-  H->obj->show = TRUE   ; 
+  NspBlock *H  = nsp_block_create_void(name,type);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_block_create_partial(H) == FAIL) return NULLBLOCK;
+  H->obj->frame = frame;
+  H->obj->object_sid = object_sid;
+  memcpy(H->obj->r,r,4*sizeof(double));
+  H->obj->color=color;
+  H->obj->thickness=thickness;
+  H->obj->background=background;
+  H->obj->n_locks=n_locks;
+  H->obj->locks = locks;
+  H->obj->hilited=hilited;
+  H->obj->show=show;
   /* initial lock points */
   H->obj->n_locks = 4 ;
   if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
@@ -528,35 +583,72 @@ NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickness,int 
   block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
   block_set_lock_pos_rel(H,2,(pt[0]=0.0,pt[1]=0.5,pt));
   block_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
+  if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
   return H;
 }
 
-
-NspBlock *block_create(char *name,double *rect,int color,int thickness,int background,
-		       NspTypeBase *type )
+NspBlock *nsp_block_create_default(char *name)
 {
-  NspBlock *H  = nsp_block_create_void(name,type);
-  if ( H ==  NULLBLOCK) return NULLBLOCK;
-  if ( nsp_block_create(H,rect,color,thickness,background) == NULL) return NULLBLOCK;
-  return H;
+ NspBlock *H  = nsp_block_create_void(name,NULL);
+ if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_block_create_partial(H) == FAIL) return NULLBLOCK;
+ if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
+ return H;
 }
 
 /*
  * copy for gobject derived class  
  */
 
+NspBlock *nsp_block_copy_partial(NspBlock *H,NspBlock *self)
+{
+  H->obj = self->obj; self->obj->ref_count++;
+  return H;
+}
+
 NspBlock *nsp_block_copy(NspBlock *self)
 {
-  NspBlock *H  = nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
+  NspBlock *H  =nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
-  H->obj = self->obj;
-  self->obj->ref_count++;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
+  if ( nsp_block_copy_partial(H,self)== NULL) return NULLBLOCK;
+
+  return H;
+}
+
+/*
+ * full copy for gobject derived class
+ */
+
+NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_block))) == NULL) return NULLBLOCK;
+  H->obj->ref_count=1;
+  H->obj->frame = self->obj->frame;
+  H->obj->object_sid = self->obj->object_sid;
+  memcpy(H->obj->r,self->obj->r,4*sizeof(double));
+  H->obj->color=self->obj->color;
+  H->obj->thickness=self->obj->thickness;
+  H->obj->background=self->obj->background;
+  H->obj->n_locks=self->obj->n_locks;
+  H->obj->locks = self->obj->locks;
+  H->obj->hilited=self->obj->hilited;
+  H->obj->show=self->obj->show;
+  return H;
+}
+
+NspBlock *nsp_block_full_copy(NspBlock *self)
+{
+  NspBlock *H  =nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
+  if ( nsp_block_full_copy_partial(H,self)== NULL) return NULLBLOCK;
   return H;
 }
 
 /*-------------------------------------------------------------------
- * constructor at nsp level 
- * %types.Block(...) or %types.Block.new[]
+ * wrappers for the NspBlock
+ * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
@@ -576,7 +668,8 @@ static int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = block_create(NVOID,val,color,thickness,back,NULL)) == NULLBLOCK) return RET_BUG;
+  if(( H = nsp_block_create(NVOID,NULL,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
+     == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -607,85 +700,107 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
   return OK;
 }
 
-/*------------------------------------------------------
- * attributes  (set/get methods) 
- *------------------------------------------------------*/
 
-static NspObject * int_gblock_get_color(void *Hv,const char *attr)
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static NspObject *_wrap_block_get_color(void *self,const char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->obj->color);
+  int ret;
+
+  ret = ((NspBlock *) self)->obj->color;
+  return nsp_new_double_obj((double) ret);
 }
 
-static int int_gblock_set_color(void *Hv,const  char *attr, NspObject *O)
+static int _wrap_block_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-  if (  IntScalar(O,&color) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->obj->color = color;
-  return OK ;
+
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->color= color;
+  return OK;
 }
 
-static NspObject * int_gblock_get_thickness(void *Hv,const char *attr)
+static NspObject *_wrap_block_get_thickness(void *self,const char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->obj->thickness);
+  int ret;
+
+  ret = ((NspBlock *) self)->obj->thickness;
+  return nsp_new_double_obj((double) ret);
 }
-                                                                                                      
-static int int_gblock_set_thickness(void *Hv,const  char *attr, NspObject *O)
+
+static int _wrap_block_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-  if (  IntScalar(O,&thickness) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->obj->thickness = thickness;
-  return OK ;
+
+  if ( IntScalar(O,&thickness) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->thickness= thickness;
+  return OK;
 }
 
-static NspObject * int_gblock_get_background(void *Hv,const char *attr)
+static NspObject *_wrap_block_get_background(void *self,const char *attr)
 {
-  return nsp_create_object_from_double(NVOID,((NspBlock *) Hv)->obj->background);
+  int ret;
+
+  ret = ((NspBlock *) self)->obj->background;
+  return nsp_new_double_obj((double) ret);
 }
-                                                                                                      
-static int int_gblock_set_background(void *Hv,const  char *attr, NspObject *O)
+
+static int _wrap_block_set_background(void *self,const char *attr, NspObject *O)
 {
   int background;
-  if (  IntScalar(O,&background) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->obj->background = background;
-  return OK ;
+
+  if ( IntScalar(O,&background) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->background= background;
+  return OK;
 }
 
-static NspObject * int_gblock_get_hilited(void *Hv,const char *attr)
+static NspObject *_wrap_block_get_hilited(void *self,const char *attr)
 {
-  return nsp_new_boolean_obj(((NspBlock *) Hv)->obj->hilited);
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspBlock *) self)->obj->hilited;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
 }
-                                                                                                      
-static int int_gblock_set_hilited(void *Hv,const  char *attr, NspObject *O)
+
+static int _wrap_block_set_hilited(void *self,const char *attr, NspObject *O)
 {
   int hilited;
-  if (  BoolScalar(O,&hilited) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->obj->hilited = hilited;
-  return OK ;
+
+  if ( BoolScalar(O,&hilited) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->hilited= hilited;
+  return OK;
 }
 
-static NspObject * int_gblock_get_show(void *Hv,const char *attr)
+static NspObject *_wrap_block_get_show(void *self,const char *attr)
 {
-  return nsp_new_boolean_obj(((NspBlock *) Hv)->obj->show);
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspBlock *) self)->obj->show;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
 }
-                                                                                                      
-static int int_gblock_set_show(void *Hv,const  char *attr, NspObject *O)
+
+static int _wrap_block_set_show(void *self,const char *attr, NspObject *O)
 {
   int show;
-  if (  BoolScalar(O,&show) == FAIL) return FAIL;
-  ((NspBlock *)Hv)->obj->show = show;
-  return OK ;
+
+  if ( BoolScalar(O,&show) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->show= show;
+  return OK;
 }
 
-
-
-
 static AttrTab block_attrs[] = {
-  { "color",        int_gblock_get_color ,     int_gblock_set_color ,     NULL,NULL },
-  { "background",    int_gblock_get_background,  int_gblock_set_background,  NULL,NULL },
-  { "thickness",    int_gblock_get_thickness,  int_gblock_set_thickness,  NULL,NULL },
-  { "hilited",   int_gblock_get_hilited, int_gblock_set_hilited, NULL,NULL },
-  { "show",   int_gblock_get_show, int_gblock_set_show, NULL,NULL },
-  { (char *) 0, NULL, NULL,NULL}
+  { "color", (attr_get_function *)_wrap_block_get_color, (attr_set_function *)_wrap_block_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "thickness", (attr_get_function *)_wrap_block_get_thickness, (attr_set_function *)_wrap_block_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "background", (attr_get_function *)_wrap_block_get_background, (attr_set_function *)_wrap_block_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "hilited", (attr_get_function *)_wrap_block_get_hilited, (attr_set_function *)_wrap_block_set_hilited,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "show", (attr_get_function *)_wrap_block_get_show, (attr_set_function *)_wrap_block_set_show,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
 };
 
 /*------------------------------------------------------
@@ -807,13 +922,34 @@ static NspMethods block_methods[] = {
 
 static NspMethods *block_get_methods(void) { return block_methods;};
 
-/*------------------------------------------------------
- *  Interface 
- *---------------------------------------------------*/
+/*-------------------------------------------
+ * functions 
+ *-------------------------------------------*/
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
 
 static OpTab Block_func[]={
-  {"setrowscols_gbl",int_set_attributes}, 
-  {(char *) 0, NULL}
+  {"extractelts_block", _wrap_nsp_extractelts_block},
+  {"setrowscols_block", _wrap_nsp_setrowscols_block},
+  { "block_create", int_block_create},
+  { NULL, NULL}
 };
 
 /* call ith function in the Block interface */
@@ -831,6 +967,8 @@ void Block_Interf_Info(int i, char **fname, function (**f))
   *fname = Block_func[i].name;
   *f = Block_func[i].fonc;
 }
+
+/* inserted verbatim at the end */
 
 /* methods for the graphic class 
  *
@@ -866,7 +1004,6 @@ static int nsp_getbounds_block (BCG *Xgc,NspGraphic *Obj,double *bounds)
   /* NspBlock *P = (NspBlock *) Obj; */
   return TRUE;
 }
-
 
 /*
  * implementation of the GRint interface 
@@ -1632,7 +1769,7 @@ static NspBlock * block_full_copy( NspBlock *B)
 {
   int i;
   NspBlock *M=NULLBLOCK;
-  if (( M = block_create(NVOID,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,NULL))
+  if (( M = nsp_block_create(NVOID,NULL,NULL,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,0,NULL,FALSE,TRUE,NULL))
       == NULLBLOCK) return NULLBLOCK;
   /* keep old address */
   M->obj->object_sid = B;

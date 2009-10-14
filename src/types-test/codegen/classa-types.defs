@@ -4,6 +4,8 @@
   (in-module "ClassA")
   (parent "Object")
   (c-name "NspClassA")
+  ;;(implements "Foo")
+  ;;(implements "Goo")
   (fields
    ;; "hidden" can be used if the field is to be excluded 
    ;; from the get/set table 

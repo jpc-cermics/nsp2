@@ -390,7 +390,8 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
   if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
   B = (NspBlock *) H;
   /* create the part from father */
-  if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
+  if(( B = nsp_block_create(NVOID,NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL))
+      == NULL) return NULLGRIDBLOCK;
   /* create the own part */
   if ((Gf = nsp_gframe_create("gf",NULL,TRUE,gf_scale,gf_rect,NULL)) == NULL) return NULLGRIDBLOCK;
   Gf->obj->top = FALSE;
@@ -405,11 +406,11 @@ NspGridBlock *gridblock_create(char *name,double *rect,int color,int thickness,i
     double rect[]={0,100,25,25};
     double rect1[]={50,50,25,25};
     NspBlock *B;
-    B=block_create("fe",rect,color,thickness,background,NULL);
+    B = nsp_block_create("fe",NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
     if ( B == NULLBLOCK) return NULLGRIDBLOCK;
     B->obj->frame = H->obj;
     nsp_list_end_insert(H->obj->objs,(NspObject  *) B);
-    B=block_create("fe",rect1,color,thickness,background,NULL);
+    B = nsp_block_create("fe",NULL,NULL,rect1,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
     if ( B == NULLBLOCK) return NULLGRIDBLOCK;
     B->obj->frame = H->obj;
     nsp_list_end_insert(H->obj->objs,(NspObject  *) B);
@@ -432,7 +433,8 @@ NspGridBlock *gridblock_create_from_nsp_gframe(char *name,double *rect,int color
   if ( H ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
   B = (NspBlock *) H;
   /* create the part from father */
-  if ( nsp_block_create(B,rect,color,thickness,background) == NULL) return NULLGRIDBLOCK;
+  if(( B = nsp_block_create(NVOID,NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL))
+      == NULL) return NULLGRIDBLOCK;
   /* create the own part */
   if ((Gf = nsp_gframe_full_copy(F))== NULLGFRAME) return NULLGRIDBLOCK; 
   Gf->obj->top = FALSE; /* not a top frame */
@@ -645,7 +647,10 @@ static NspGridBlock * gridblock_full_copy( NspGridBlock *B)
   if ( Bnew ==  NULLGRIDBLOCK) return NULLGRIDBLOCK;
   Blnew = (NspBlock *) Bnew;
   /* create the part from father */
-  if ( nsp_block_create(Blnew, Bl->obj->r,Bl->obj->color, Bl->obj->thickness,Bl->obj->background) == NULL) 
+  if(( Blnew = nsp_block_create(NVOID,NULL,NULL, Bl->obj->r,Bl->obj->color,
+				Bl->obj->thickness,Bl->obj->background,
+				0,NULL,FALSE,TRUE,NULL))
+     == NULL) 
     return NULLGRIDBLOCK;
   /* create the own part */
   if ((Bnew->obj = nspgframe_full_copy(B->obj,FALSE))  == NULL) 

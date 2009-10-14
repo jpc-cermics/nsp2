@@ -46,7 +46,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 {
   NspTypeFec *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_fec != 0 && mode == T_BASE ) 
+  if (  nsp_type_fec != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_fec;
@@ -61,10 +61,10 @@ NspTypeFec *new_type_fec(type_mode mode)
   type->methods = fec_get_methods;
   type->new = (new_func *) new_fec;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for fec */ 
 
   top->pr = (print_func *) nsp_fec_print;
@@ -84,9 +84,9 @@ NspTypeFec *new_type_fec(type_mode mode)
   top->load  = (load_func *) nsp_fec_xdr_load;
   top->create = (create_func*) int_fec_create;
   top->latex = (print_func *) nsp_fec_latex;
-  
+
   /* specific methods for fec */
-      
+
   type->init = (init_func *) init_fec;
 
 #line 48 "codegen/fec.override"
@@ -120,8 +120,8 @@ NspTypeFec *new_type_fec(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_fec_id;
-       return type;
+      type->id = nsp_type_fec_id;
+      return type;
     }
 }
 
@@ -222,7 +222,7 @@ int nsp_fec_xdr_save(XDR *xdrs, NspFec *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_fec)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
@@ -456,9 +456,9 @@ NspFec  *GetFec(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspFec instance 
  *-----------------------------------------------------*/
 
 static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type)

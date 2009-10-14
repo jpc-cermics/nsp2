@@ -241,7 +241,7 @@ class Wrapper:
               'int nsp_%(typename_dc)s_xdr_save(XDR *xdrs, %(typename)s *M)\n' \
               '{\n' \
               '  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/\n' \
-              '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ \n ' \
+              '  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ \n' \
               '  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;\n' \
               '  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_%(typename_dc)s)) == FAIL) return FAIL;\n' \
               '  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;\n' \
@@ -627,9 +627,9 @@ class Wrapper:
         substdict['tp_getattr_def'] = 'int_get_attribute';
         substdict['tp_setattr_def'] = 'int_set_attribute';
 
+
         # check if some slots are overriden and add them in substdict
         # tp_setattr and tp_getattr 
-        # this can be used to change the tp_setattr and tp_getattr functions.
 
         for slot in self.slots_list:
             if substdict.has_key(slot) and substdict[slot] != '0':
@@ -646,6 +646,10 @@ class Wrapper:
                     substdict[slot] = substdict[slot+'_def']
                 else:
                     substdict[slot] = '0'
+
+        # this can be used to change the tp_setattr and tp_getattr functions.
+        # if self.objinfo.is_interface == 't' :
+
         # insert the comment for implements in dictionary 
         str = ''
         substdict['implements'] = ''
@@ -655,7 +659,9 @@ class Wrapper:
                 str = '%s %s' % (str, interf )
             str = str + '\n'
             substdict['implements'] = str 
+
         # insert the type defintion 
+
         self.fp.write(self.type_tmpl_1_0 % substdict)
         # insert declaration for implemented interfaces 
         if len(self.objinfo.implements) != 0 :
@@ -1586,7 +1592,7 @@ class NspObjectWrapper(Wrapper):
         '%(codeafter)s\n' \
         '  nsp_type_%(typename_dc)s = new_type_%(typename_dc)s(T_BASE);\n' \
         '%(aftercreate)s' \
-        '  nsp_ret = (NspObject *) ZZZgobject_create(NVOID,ret,(NspTypeBase *) nsp_type_%(typename_dc)s );\n ' \
+        '  nsp_ret = (NspObject *) ZZZgobject_create(NVOID,ret,(NspTypeBase *) nsp_type_%(typename_dc)s );\n' \
         '  if ( nsp_ret == NULL) return RET_BUG;\n' \
         '  MoveObj(stack,1,nsp_ret);\n' \
         '  return 1;\n' \
@@ -1603,10 +1609,10 @@ class NspObjectWrapper(Wrapper):
         '}\n\n'
 
     type_tmpl_copy_1 = \
-        '/*-----------------------------------------------------\n ' \
+        '/*-----------------------------------------------------\n' \
         ' * constructor \n' \
         ' * if type is non NULL it is a subtype which can be used to \n' \
-        ' * create a NspClassB instance \n' \
+        ' * create a %(typename)s instance \n' \
         ' *-----------------------------------------------------*/\n' \
         '\n' \
         'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type)\n' \

@@ -38,7 +38,7 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
 {
   NspTypeClassBRef *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_classbref != 0 && mode == T_BASE ) 
+  if (  nsp_type_classbref != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classbref;
@@ -53,10 +53,10 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
   type->methods = classbref_get_methods;
   type->new = (new_func *) new_classbref;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for classbref */ 
 
   top->pr = (print_func *) nsp_classbref_print;
@@ -76,9 +76,9 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
   top->load  = (load_func *) nsp_classbref_xdr_load;
   top->create = (create_func*) int_classbref_create;
   top->latex = (print_func *) nsp_classbref_latex;
-  
+
   /* specific methods for classbref */
-      
+
   type->init = (init_func *) init_classbref;
 
   /* 
@@ -100,8 +100,8 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_classbref_id;
-       return type;
+      type->id = nsp_type_classbref_id;
+      return type;
     }
 }
 
@@ -197,7 +197,7 @@ int nsp_classbref_xdr_save(XDR *xdrs, NspClassBRef *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classbref)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clb_color) == FAIL) return FAIL;
@@ -381,9 +381,9 @@ NspClassBRef  *GetClassBRef(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspClassBRef instance 
  *-----------------------------------------------------*/
 
 static NspClassBRef *nsp_classbref_create_void(char *name,NspTypeBase *type)

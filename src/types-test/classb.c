@@ -38,7 +38,7 @@ NspTypeClassB *new_type_classb(type_mode mode)
 {
   NspTypeClassB *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_classb != 0 && mode == T_BASE ) 
+  if (  nsp_type_classb != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_classb;
@@ -53,10 +53,10 @@ NspTypeClassB *new_type_classb(type_mode mode)
   type->methods = classb_get_methods;
   type->new = (new_func *) new_classb;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for classb */ 
 
   top->pr = (print_func *) nsp_classb_print;
@@ -76,9 +76,9 @@ NspTypeClassB *new_type_classb(type_mode mode)
   top->load  = (load_func *) nsp_classb_xdr_load;
   top->create = (create_func*) int_classb_create;
   top->latex = (print_func *) nsp_classb_latex;
-  
+
   /* specific methods for classb */
-      
+
   type->init = (init_func *) init_classb;
 
   /* 
@@ -100,8 +100,8 @@ NspTypeClassB *new_type_classb(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_classb_id;
-       return type;
+      type->id = nsp_type_classb_id;
+      return type;
     }
 }
 
@@ -198,7 +198,7 @@ int nsp_classb_xdr_save(XDR *xdrs, NspClassB *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_classb)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->clb_color) == FAIL) return FAIL;
@@ -375,7 +375,7 @@ NspClassB  *GetClassB(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
  * create a NspClassB instance 
  *-----------------------------------------------------*/

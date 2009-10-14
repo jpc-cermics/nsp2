@@ -46,7 +46,7 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
 {
   NspTypeContour3d *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_contour3d != 0 && mode == T_BASE ) 
+  if (  nsp_type_contour3d != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_contour3d;
@@ -61,10 +61,10 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
   type->methods = contour3d_get_methods;
   type->new = (new_func *) new_contour3d;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for contour3d */ 
 
   top->pr = (print_func *) nsp_contour3d_print;
@@ -84,9 +84,9 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
   top->load  = (load_func *) nsp_contour3d_xdr_load;
   top->create = (create_func*) int_contour3d_create;
   top->latex = (print_func *) nsp_contour3d_latex;
-  
+
   /* specific methods for contour3d */
-      
+
   type->init = (init_func *) init_contour3d;
 
 #line 41 "codegen/contour3d.override"
@@ -125,8 +125,8 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_contour3d_id;
-       return type;
+      type->id = nsp_type_contour3d_id;
+      return type;
     }
 }
 
@@ -225,7 +225,7 @@ int nsp_contour3d_xdr_save(XDR *xdrs, NspContour3d *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_contour3d)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
@@ -444,9 +444,9 @@ NspContour3d  *GetContour3d(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspContour3d instance 
  *-----------------------------------------------------*/
 
 static NspContour3d *nsp_contour3d_create_void(char *name,NspTypeBase *type)

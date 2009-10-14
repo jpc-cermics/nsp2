@@ -2241,7 +2241,7 @@ NspObject * nsp_gframe_create_new_block(NspGFrame *F)
   NspBlock *B;
   /* unhilite all */
   nsp_gframe_unhilite_objs(F,FALSE);
-  B=block_create("fe",rect,color,thickness,background,NULL);
+  B = nsp_block_create("fe",NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
   B->obj->frame = F->obj;
   B->obj->hilited = TRUE;

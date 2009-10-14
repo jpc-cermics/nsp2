@@ -234,3 +234,11 @@ clean ::
 
 
 
+../interface.c : interface.defs codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	   	 \
+	    --prefix Interface interface.defs) > $*.c 
+
+
+
+

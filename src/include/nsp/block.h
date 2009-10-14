@@ -110,7 +110,8 @@ extern NspBlock *GetBlockCopy (Stack stack, int i);
 extern NspBlock *GetBlock (Stack stack, int i); 
 extern int IsBlock (NspObject *O); 
 extern NspBlock *block_create(char *name,double rect[],int color,int thickness,int background, NspTypeBase *type );
-extern NspBlock *nsp_block_create(NspBlock *H,double *rect,int color,int thickness,int background);
+extern NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,int show,NspTypeBase *type);
+
 extern int nsp_block_check_values(NspBlock *H);
 
 #define NULLBLOCK (NspBlock*) 0
@@ -130,9 +131,9 @@ static AttrTab block_attrs[];
 static NspBlock *nsp_block_object (NspObject *O); 
 static NspBlock *nsp_block_copy (NspBlock *H); 
 static void nsp_block_destroy (NspBlock *H); 
-static int nsp_block_info (NspBlock *H, int indent,char *name, int rec_level); 
-static int nsp_block_print (NspBlock *H, int indent,char *name, int rec_level); 
-static int nsp_block_latex (NspBlock *H, int indent,char *name, int rec_level); 
+static int nsp_block_info (NspBlock *H, int indent,const char *name, int rec_level); 
+static int nsp_block_print (NspBlock *H, int indent,const char *name, int rec_level); 
+static int nsp_block_latex (NspBlock *H, int indent,const char *name, int rec_level); 
 static NspMethods *block_get_methods(void);
 static int int_block_create( Stack stack, int rhs, int opt, int lhs); 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);

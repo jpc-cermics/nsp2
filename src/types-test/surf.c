@@ -40,7 +40,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
 {
   NspTypeSurf *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_surf != 0 && mode == T_BASE ) 
+  if (  nsp_type_surf != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_surf;
@@ -55,10 +55,10 @@ NspTypeSurf *new_type_surf(type_mode mode)
   type->methods = surf_get_methods;
   type->new = (new_func *) new_surf;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for surf */ 
 
   top->pr = (print_func *) nsp_surf_print;
@@ -78,9 +78,9 @@ NspTypeSurf *new_type_surf(type_mode mode)
   top->load  = (load_func *) nsp_surf_xdr_load;
   top->create = (create_func*) int_surf_create;
   top->latex = (print_func *) nsp_surf_latex;
-  
+
   /* specific methods for surf */
-      
+
   type->init = (init_func *) init_surf;
 
 #line 29 "codegen/surf.override"
@@ -117,8 +117,8 @@ NspTypeSurf *new_type_surf(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_surf_id;
-       return type;
+      type->id = nsp_type_surf_id;
+      return type;
     }
 }
 
@@ -219,7 +219,7 @@ int nsp_surf_xdr_save(XDR *xdrs, NspSurf *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_surf)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->x)) == FAIL) return FAIL;
@@ -438,9 +438,9 @@ NspSurf  *GetSurf(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspSurf instance 
  *-----------------------------------------------------*/
 
 static NspSurf *nsp_surf_create_void(char *name,NspTypeBase *type)

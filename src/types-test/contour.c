@@ -47,7 +47,7 @@ NspTypeContour *new_type_contour(type_mode mode)
 {
   NspTypeContour *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_contour != 0 && mode == T_BASE ) 
+  if (  nsp_type_contour != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_contour;
@@ -62,10 +62,10 @@ NspTypeContour *new_type_contour(type_mode mode)
   type->methods = contour_get_methods;
   type->new = (new_func *) new_contour;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for contour */ 
 
   top->pr = (print_func *) nsp_contour_print;
@@ -85,9 +85,9 @@ NspTypeContour *new_type_contour(type_mode mode)
   top->load  = (load_func *) nsp_contour_xdr_load;
   top->create = (create_func*) int_contour_create;
   top->latex = (print_func *) nsp_contour_latex;
-  
+
   /* specific methods for contour */
-      
+
   type->init = (init_func *) init_contour;
 
 #line 40 "codegen/contour.override"
@@ -121,8 +121,8 @@ NspTypeContour *new_type_contour(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_contour_id;
-       return type;
+      type->id = nsp_type_contour_id;
+      return type;
     }
 }
 
@@ -221,7 +221,7 @@ int nsp_contour_xdr_save(XDR *xdrs, NspContour *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_contour)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->z)) == FAIL) return FAIL;
@@ -437,9 +437,9 @@ NspContour  *GetContour(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspContour instance 
  *-----------------------------------------------------*/
 
 static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type)

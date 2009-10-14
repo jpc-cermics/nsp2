@@ -43,7 +43,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
 {
   NspTypeVField *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_vfield != 0 && mode == T_BASE ) 
+  if (  nsp_type_vfield != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
       return nsp_type_vfield;
@@ -58,10 +58,10 @@ NspTypeVField *new_type_vfield(type_mode mode)
   type->methods = vfield_get_methods;
   type->new = (new_func *) new_vfield;
 
-  
+
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
-  
+
   /* object methods redefined for vfield */ 
 
   top->pr = (print_func *) nsp_vfield_print;
@@ -81,9 +81,9 @@ NspTypeVField *new_type_vfield(type_mode mode)
   top->load  = (load_func *) nsp_vfield_xdr_load;
   top->create = (create_func*) int_vfield_create;
   top->latex = (print_func *) nsp_vfield_latex;
-  
+
   /* specific methods for vfield */
-      
+
   type->init = (init_func *) init_vfield;
 
 #line 36 "codegen/vfield.override"
@@ -117,8 +117,8 @@ NspTypeVField *new_type_vfield(type_mode mode)
     }
   else 
     {
-       type->id = nsp_type_vfield_id;
-       return type;
+      type->id = nsp_type_vfield_id;
+      return type;
     }
 }
 
@@ -216,7 +216,7 @@ int nsp_vfield_xdr_save(XDR *xdrs, NspVField *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
-   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_vfield)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->fx)) == FAIL) return FAIL;
@@ -423,9 +423,9 @@ NspVField  *GetVField(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
+ * constructor 
  * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * create a NspVField instance 
  *-----------------------------------------------------*/
 
 static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type)

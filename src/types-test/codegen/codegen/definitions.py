@@ -21,6 +21,7 @@ class ObjectDef(Definition):
 	self.c_name = None
         self.typecode = None
         self.byref = None
+        self.is_interface = None
 	self.fields = []
         self.implements = []
 	for arg in args:
@@ -101,6 +102,7 @@ class ObjectRefDef(ObjectDef):
 	self.c_name = None
         self.typecode = None
         self.byref = 't'
+        self.is_interface = None
 	self.fields = []
         self.implements = []
 	for arg in args:
@@ -177,6 +179,8 @@ class InterfaceDef(Definition):
         # en attendant que les interfaces soient propres 
         self.parent = 'GObject'
         self.typecode = None
+        self.byref = None
+        self.is_interface = 't'
 	self.fields = []
         self.implements = []
 	for arg in args:

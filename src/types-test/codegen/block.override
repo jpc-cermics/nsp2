@@ -33,11 +33,11 @@ Init portion
 %%
 override-type Block
   /* inserted verbatim in the type definition */
-  ((NspTypeNspGraphic *) type->surtype)->draw = nsp_draw_block;
-  ((NspTypeNspGraphic *) type->surtype)->translate =nsp_translate_block ;
-  ((NspTypeNspGraphic *) type->surtype)->rotate =nsp_rotate_block  ;
-  ((NspTypeNspGraphic *) type->surtype)->scale =nsp_scale_block  ;
-  ((NspTypeNspGraphic *) type->surtype)->bounds =nsp_getbounds_block  ;
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_block  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_block  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_block  ;
   /* next method are defined in NspGraphic and need not be changed here for Block */
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
