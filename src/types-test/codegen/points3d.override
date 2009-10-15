@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include  Points3d
+include-public  Points3d
 
 #include "../graphics-new/Plo3dObj.h"
 /* inserted at the end of public part of include file */
@@ -11,7 +11,7 @@ extern void nsp_figure_force_redraw( nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 %%
-include_private  Points3d
+include-private  Points3d
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_points3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_points3d(BCG *Xgc,NspGraphic *o,double *R);

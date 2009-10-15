@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  Segments
+include-public  Segments
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  Segments
+include-private  Segments
 
 /* inserted in the private part of include file */
 

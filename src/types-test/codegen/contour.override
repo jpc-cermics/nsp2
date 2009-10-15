@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include Contour
+include-public Contour
 
 extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
 			    int *flagnz, int *nz, double *zz, int *style);
@@ -8,7 +8,7 @@ extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, i
 /* inserted at the end of public part of include file */
 
 %%
-include_private Contour
+include-private Contour
 
 /* inserted in the private part of include file */
 

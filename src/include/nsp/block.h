@@ -1,21 +1,20 @@
-#ifndef NSP_INC_Block
-#define NSP_INC_Block
+/* -*- Mode: C -*- */
+#ifndef NSP_INC_NspBlock
+#define NSP_INC_NspBlock
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
-  
-/* block: graphic bloc for scicos  */
 
-#include <stdio.h>   /* for file declaration **/
+#line 4 "codegen/block.override"
+/* inserted at the start of include file */
+
+#include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 #include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
-#include "nsp/graphics-old/Graphics.h"
-
-#include "nsp/graphic.h"
 
 /**
  * NspBlock:
@@ -24,15 +23,6 @@
  * inherits from #NspObject and implements Grint. 
  * Used for graphic blocks for a C implementation of scicos.
  */
-
-typedef struct _NspBlock NspBlock;
-
-typedef struct _NspTypeBlock NspTypeBlock;
-
-struct _NspTypeBlock { 
-  NSP_TYPE_OBJECT__ 
-  /*< public >*/
-};
 
 /**
  * grb_lock: 
@@ -71,28 +61,48 @@ struct b_lock {
  * used for storing information for a graphic block.
  */
 
-typedef struct _nsp_block nsp_block;
 
+#line 66 "./block.h"
+/* NspBlock */
+
+#include <nsp/graphic.h>
+
+/*
+ * NspBlock inherits from Graphic
+ */
+
+typedef struct _NspBlock NspBlock ;
+typedef struct _NspTypeBlock NspTypeBlock ;
+
+#line 78 "./block.h"
+
+struct _NspTypeBlock {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+ 
+#line 85 "./block.h"
+};
+
+typedef struct _nsp_block nsp_block;
 struct _nsp_block {
-  nspgframe *frame;/* a block must be in a frame to be drawn */
-  void *object_sid;
-  double r[4]; 		
+  nspgframe* frame;
+  void* object_sid;
+  double r[4];
   int color;
   int thickness;
   int background;
-  int n_locks ; /* number of lock points */
-  grb_lock *locks; 
-  int hilited ; 
-  int show    ;   
+  int n_locks;
+  grb_lock* locks;
+  gboolean hilited;
+  gboolean show;
   int ref_count;
 };
-
-
 
 struct _NspBlock {
   /*< private >*/
   NspGraphic father;
-  NspTypeBlock *type; 
+  NspTypeBlock*type;
   /*< public >*/
   nsp_block *obj;
 };
@@ -100,43 +110,66 @@ struct _NspBlock {
 extern int nsp_type_block_id;
 extern NspTypeBlock *nsp_type_block;
 
+/* type instances for graphic */
+
 NspTypeBlock *new_type_block(type_mode mode);
+
+/* instance for NspBlock */
+
 NspBlock *new_block();
 
+/*
+ * Object methods redefined for block 
+ */
 
-/* extern NspBlock *block_object(NspObject *O);  */
-extern int IsBlockObj (Stack stack, int i); 
-extern NspBlock *GetBlockCopy (Stack stack, int i); 
-extern NspBlock *GetBlock (Stack stack, int i); 
-extern int IsBlock (NspObject *O); 
-extern NspBlock *block_create(char *name,double rect[],int color,int thickness,int background, NspTypeBase *type );
-extern NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,int show,NspTypeBase *type);
-
-extern int nsp_block_check_values(NspBlock *H);
 
 #define NULLBLOCK (NspBlock*) 0
 
-#endif 
+extern NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspBlock *nsp_block_create_default(char *name);
 
-#ifdef NspBlock_Private /* Block_Private */
-static int init_block(NspBlock *ob,NspTypeBlock *type);
+/* from NspBlockObj.c */
+
+extern NspBlock *nsp_block_copy(NspBlock *H);
+extern void nsp_block_destroy(NspBlock *H);
+extern int nsp_block_info(NspBlock *H, int indent,const char *name, int rec_level);
+extern int nsp_block_print(NspBlock *H, int indent,const char *name, int rec_level);
+extern int nsp_block_latex(NspBlock *H, int indent,const char *name, int rec_level);
+extern NspBlock *nsp_block_object (NspObject *O);
+extern int IsBlockObj (Stack stack, int i);
+extern int IsBlock(NspObject *O);
+extern NspBlock *GetBlockCopy (Stack stack, int i);
+extern NspBlock *GetBlock (Stack stack, int i);
+extern int nsp_block_create_partial(NspBlock *H);
+extern void nsp_block_destroy_partial(NspBlock *H);
+extern NspBlock * nsp_block_copy_partial(NspBlock *H,NspBlock *self);
+extern NspBlock * nsp_block_full_copy_partial(NspBlock *H,NspBlock *self);
+extern NspBlock * nsp_block_full_copy(NspBlock *self);
+extern int nsp_block_check_values(NspBlock *H);
+extern int int_block_create(Stack stack, int rhs, int opt, int lhs);
+extern NspBlock *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M);
+extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
+
+#line 60 "codegen/block.override"
+
+/* inserted at the end of public part of include file */
+
+#line 158 "./block.h"
+#endif /* NSP_INC_NspBlock */ 
+
+#ifdef NspBlock_Private 
+static int init_block(NspBlock *o,NspTypeBlock *type);
 static int nsp_block_size(NspBlock *Mat, int flag);
 static char *nsp_block_type_as_string(void);
 static char *nsp_block_type_short_string(NspObject *v);
 static int nsp_block_eq(NspBlock *A, NspObject *B);
 static int nsp_block_neq(NspBlock *A, NspObject *B);
-static int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
-static NspBlock  *nsp_block_xdr_load(XDR  *F);
+static NspBlock *nsp_block_xdr_load(XDR *xdrs);
 static AttrTab block_attrs[];
-static NspBlock *nsp_block_object (NspObject *O); 
-static NspBlock *nsp_block_copy (NspBlock *H); 
-static void nsp_block_destroy (NspBlock *H); 
-static int nsp_block_info (NspBlock *H, int indent,const char *name, int rec_level); 
-static int nsp_block_print (NspBlock *H, int indent,const char *name, int rec_level); 
-static int nsp_block_latex (NspBlock *H, int indent,const char *name, int rec_level); 
 static NspMethods *block_get_methods(void);
-static int int_block_create( Stack stack, int rhs, int opt, int lhs); 
+/* static int int_block_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
+#line 65 "codegen/block.override"
 
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
@@ -181,7 +214,6 @@ static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
 static void block_set_frame( NspBlock *B, NspGFrame *Gf);
 
-#endif 
-
-
+#line 218 "./block.h"
+#endif /* NspBlock_Private */
 

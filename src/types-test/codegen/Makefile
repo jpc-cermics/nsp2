@@ -229,6 +229,7 @@ clean ::
 ../block.c : block.defs  block.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --register ./block-req.defs \
+	    --register ./graphic-types.defs \
 	    --override block.override \
 	    --prefix Block block.defs) > $*.c 
 

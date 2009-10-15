@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include Graphic
+include-public Graphic
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private Graphic
+include-private Graphic
 
 /* inserted in the private part of include file */
 

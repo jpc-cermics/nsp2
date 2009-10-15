@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include Qcurve
+include-public Qcurve
 
 /* inserted at the end of public part of include file */
 
@@ -10,7 +10,7 @@ extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 
 
 %%
-include_private Qcurve
+include-private Qcurve
 
 /* inserted in the private part of include file */
 static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data);

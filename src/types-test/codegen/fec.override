@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include Fec
+include-public Fec
 
 extern BCG *nsp_check_graphic_context(void);
 extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
@@ -16,7 +16,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 /* inserted at the end of public part of include file */
 
 %%
-include_private Fec
+include-private Fec
 
 /* inserted in the private part of include file */
 

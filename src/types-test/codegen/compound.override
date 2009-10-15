@@ -1,12 +1,12 @@
 /* -*- Mode: C -*- */
 %%
-include Compound
+include-public Compound
 
 /* inserted at the end of public part of include file */
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
 %%
-include_private Compound
+include-private Compound
 
 /* inserted in the private part of include file */
 

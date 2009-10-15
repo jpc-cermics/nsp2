@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include Arrows
+include-public Arrows
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private Arrows
+include-private Arrows
 
 /* inserted in the private part of include file */
 

@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  SPolyhedron
+include-public  SPolyhedron
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  SPolyhedron
+include-private  SPolyhedron
 
 /* inserted in the private part of include file */
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);

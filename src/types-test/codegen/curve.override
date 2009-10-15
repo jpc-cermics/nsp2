@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include Curve
+include-public Curve
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private Curve
+include-private Curve
 
 /* inserted in the private part of include file */
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data);

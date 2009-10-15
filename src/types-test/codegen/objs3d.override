@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include Objs3d
+include-public Objs3d
 
 /* inserted at the end of public part of include file */
 #include <nsp/spolyhedron.h>
@@ -21,7 +21,7 @@ extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *s
 
 
 %%
-include_private Objs3d
+include-private Objs3d
 
 /* inserted in the private part of include file */
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data);

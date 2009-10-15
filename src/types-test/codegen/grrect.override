@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include GrRect
+include-public GrRect
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private GrRect
+include-private GrRect
 
 /* inserted in the private part of include file */
 static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data);

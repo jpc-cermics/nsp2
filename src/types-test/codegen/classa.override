@@ -1,13 +1,13 @@
 /* -*- Mode: C -*- */
 %%
-include ClassA
+include-public ClassA
 
 /* inserted at the end of public part of include file
  * of classa.h
  */
 
 %%
-include_private ClassA
+include-private ClassA
 
 /* inserted in the private part of include file
  * of classa.h

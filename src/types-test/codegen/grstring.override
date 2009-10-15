@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  Grstring
+include-public  Grstring
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  Grstring
+include-private  Grstring
 
 /* inserted in the private part of include file */
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data);

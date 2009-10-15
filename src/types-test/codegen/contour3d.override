@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  Contour3d
+include-public  Contour3d
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  Contour3d
+include-private  Contour3d
 
 /* inserted in the private part of include file */
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data);

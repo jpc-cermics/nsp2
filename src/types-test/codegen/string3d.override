@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include  String3d
+include-public  String3d
 
 #include "../graphics-new/Plo3dObj.h"
 /* inserted at the end of public part of include file */
@@ -11,7 +11,7 @@ extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, Vision
 
 
 %%
-include_private  String3d
+include-private  String3d
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_string3d(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_string3d(BCG *Xgc,NspGraphic *o,double *R);

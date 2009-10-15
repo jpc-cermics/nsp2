@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  Polyhedron
+include-public  Polyhedron
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  Polyhedron
+include-private  Polyhedron
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
 static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);

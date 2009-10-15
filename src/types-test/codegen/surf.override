@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  Surf
+include-public  Surf
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  Surf
+include-private  Surf
 
 /* inserted in the private part of include file */
 static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data);

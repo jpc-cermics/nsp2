@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include Figure
+include-public Figure
 
 /* inserted at the end of public part of include file
  * of figure.h
@@ -22,7 +22,7 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
 %%
-include_private Figure
+include-private Figure
 
 /* inserted in the private part of include file
  * of classa.h

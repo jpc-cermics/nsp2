@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include GrArc
+include-public GrArc
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private GrArc
+include-private GrArc
 
 /* inserted in the private part of include file */
 

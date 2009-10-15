@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  Polyline
+include-public  Polyline
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  Polyline
+include-private  Polyline
 
 /* inserted in the private part of include file */
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data);

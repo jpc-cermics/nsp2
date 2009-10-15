@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 %%
-include GMatrix1
+include-public GMatrix1
 
 /* inserted at the end of public part of include file */
 
@@ -11,7 +11,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 			     double z,int inda, int indb,  int *xint, int *yint);
 
 %%
-include_private GMatrix1
+include-private GMatrix1
 
 /* inserted in the private part of include file */
 

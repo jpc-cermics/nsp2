@@ -816,6 +816,14 @@ class Wrapper:
         outheadername = './' + string.lower(self.objinfo.name) + '.h'
         self.fhp = FileOutput(open(outheadername, "w"),outheadername)
         self.fhp.write(self.type_header_01 %substdict)
+        # include start code from override 
+        hname = self.objinfo.name+'.include_start'
+        if self.overrides.include_start_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_start_override(hname))
+            self.fhp.resetline()
+        # 
         self.fhp.write(self.type_header_1 %substdict)
         self.fhp.write('%(internal_methods_proto)s' %substdict)
         self.fhp.resetline()
@@ -824,11 +832,11 @@ class Wrapper:
         self.fhp.resetline()
         self.fhp.write(self.type_header_3 %substdict)
         # insert part from .override 
-        hname = self.objinfo.name+'.include'
-        if self.overrides.include_is_overriden(hname):
+        hname = self.objinfo.name+'.include_public'
+        if self.overrides.include_public_is_overriden(hname):
             lineno, filename = self.overrides.getstartline(hname)
             self.fhp.setline(lineno,'codegen/'+ filename)
-            self.fhp.write(self.overrides.include_override(hname))
+            self.fhp.write(self.overrides.include_public_override(hname))
             self.fhp.resetline()
         self.fhp.write(self.type_header_31 %substdict)
         hname = self.objinfo.name+'.include_private'

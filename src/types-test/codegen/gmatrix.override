@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include  GMatrix
+include-public  GMatrix
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private  GMatrix
+include-private  GMatrix
 
 /* inserted in the private part of include file */
 static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data);

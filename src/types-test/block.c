@@ -1,113 +1,30 @@
 /* -*- Mode: C -*- */
-%%
-include-start Block 
-/* inserted at the start of include file */
 
-#include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
-#include "nsp/gframe.h"
-#include "nsp/grint.h" /* interface definition */
-
-/**
- * NspBlock:
- * @obj: a #nsp_block pointer 
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
- * inherits from #NspObject and implements Grint. 
- * Used for graphic blocks for a C implementation of scicos.
- */
-
-/**
- * grb_lock: 
- *  @port: a #gr_port. 
- *  @pt: position of the lock point in the frame
- *  @ptr: relative position of the lock point in the block
- *  @type: type of the lock point.
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- * used for storing information about lock points of a block. 
- * 
- */
-
-typedef struct b_lock grb_lock ; 
-
-struct b_lock {
-  gr_port port;  /* Only one port */
-  double pt[2]; /* lock position in the frame*/
-  double ptr[2]; /* lock position (relative position in the block)*/
-  int type ; /* type of the lock point */
-};
-
-/**
- * nsp_block: 
- * @frame: a block must be in a frame to be drawn 
- * @object_sid: 
- * @r: the block enclosing rectangle 
- * @color: color of the block
- * @thickness: thickness of the enclosing rectangle 
- * @background: color of the background
- * @n_locks:  number of lock points 
- * @locks: array of lock points 
- * @hilited: is block hilited 
- * @show: is block to be visible 
- * @ref_count: a reference counter.
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
  *
- * used for storing information for a graphic block.
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 
-%%
-include-public  Block
 
-/* inserted at the end of public part of include file */
 
-%%
-include-private  Block
 
-/* set of method for parent class graphic  */
-static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_block(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_block(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_block(BCG *Xgc,NspGraphic *o,double *bounds);
-
-/* set of methods for implementing Grint */
-static int block_get_hilited (NspBlock *B); 
-static void block_set_hilited (NspBlock *B, int val); 
-static int block_get_show (NspBlock *B); 
-static void block_set_show (NspBlock *B, int val); 
-static void block_draw (NspBlock *R); 
-static int block_translate (NspBlock *R, const double *pt); 
-static int block_set_pos (NspBlock *R, const double *pt); 
-static void block_get_pos (NspBlock *R, double *pt); 
-static void block_get_rect (NspBlock *R, double *r); 
-static void block_resize (NspBlock *R, const double *size); 
-static void block_update_locks (NspBlock *R); 
-static int block_contains_pt (const NspBlock *B, const double *pt); 
-static int block_control_near_pt (const NspBlock *B, const double *pt, int *cp); 
-static int block_lock_near_pt (const NspBlock *B, double *pt, int *cp); 
-static void block_move_control_init( NspBlock *B,int cp,double ptc[2]);
-static void block_move_control (NspGFrame *F,NspBlock *B, const double *pt, int cp,double ptc[2]); 
-
-static int block_get_number_of_locks(const NspBlock *B) ;
-static int block_get_number_of_ports(const NspBlock *B,int lp) ;
-static int block_get_lock_connection(const NspBlock *B,int i,int port, gr_port *p );
-static void block_get_lock_pos(const NspBlock *B,int i,double pt[]);
-static lock_dir block_get_lock_dir(const NspBlock *B,int i);
-
-static int block_set_lock_connection(NspBlock *B,int i,int prt,const gr_port *p);
-static void block_unset_lock_connection(NspBlock *B,int i,int port);
-static int block_is_lock_connectable(NspBlock *B,int i);
-static int block_is_lock_connected(NspBlock *B,int i);
-static void block_set_lock_pos(NspBlock *B, int i,const double pt[],int keep_angle,lock_dir dir);
-static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
-
-static void block_unlock( NspBlock *B,int lp) ;
-static int block_set_locks(NspBlock *B,NspMatrix *Pt);
-static NspBlock * block_full_copy( NspBlock *B);
-static void block_set_frame( NspBlock *B, NspGFrame *Gf);
-
-%%
-headers
+#line 111 "codegen/block.override"
 
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
@@ -116,13 +33,80 @@ headers
 #include "nsp/parse.h"
 
 
-%%
-init 
+#line 37 "block.c"
 
-Init portion 
+/* ----------- NspBlock ----------- */
 
-%%
-override-type Block
+
+#define  NspBlock_Private 
+#include <nsp/object.h>
+#include <nsp/block.h>
+#include <nsp/interf.h>
+
+/* 
+ * NspBlock inherits from Graphic 
+ * and implements  GRint
+ */
+
+int nsp_type_block_id=0;
+NspTypeBlock *nsp_type_block=NULL;
+
+/*
+ * Type object for NspBlock 
+ * all the instance of NspTypeBlock share the same id. 
+ * nsp_type_block: is an instance of NspTypeBlock 
+ *    used for objects of NspBlock type (i.e built with new_block) 
+ * other instances are used for derived classes 
+ */
+NspTypeBlock *new_type_block(type_mode mode)
+{
+  NspTypeGRint *t_grint;
+  NspTypeBlock *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_block != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_block;
+    }
+  if (( type =  malloc(sizeof(NspTypeBlock))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_graphic(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = block_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = block_get_methods;
+  type->new = (new_func *) new_block;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for block */ 
+
+  top->pr = (print_func *) nsp_block_print;
+  top->dealloc = (dealloc_func *) nsp_block_destroy;
+  top->copy  =  (copy_func *) nsp_block_copy;
+  top->size  = (size_func *) nsp_block_size;
+  top->s_type =  (s_type_func *) nsp_block_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_block_type_short_string;
+  top->info = (info_func *) nsp_block_info;
+  /* top->is_true = (is_true_func  *) nsp_block_is_true; */
+  /* top->loop =(loop_func *) nsp_block_loop;*/
+  top->path_extract = (path_func *)  object_path_extract;
+  top->get_from_obj = (get_from_obj_func *) nsp_block_object;
+  top->eq  = (eq_func *) nsp_block_eq;
+  top->neq  = (eq_func *) nsp_block_neq;
+  top->save  = (save_func *) nsp_block_xdr_save;
+  top->load  = (load_func *) nsp_block_xdr_load;
+  top->create = (create_func*) int_block_create;
+  top->latex = (print_func *) nsp_block_latex;
+
+  /* specific methods for block */
+
+  type->init = (init_func *) init_block;
+
+#line 126 "codegen/block.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
@@ -133,8 +117,16 @@ override-type Block
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-%%
-override-implements Block 
+#line 121 "block.c"
+  /* 
+   * NspBlock interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  t_grint = new_type_grint(T_DERIVED);
+  type->interface = (NspTypeBase *) t_grint;
+#line 138 "codegen/block.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
@@ -167,8 +159,125 @@ override-implements Block
   t_grint->unlock =(gr_unlock *) block_unlock;
   t_grint->set_frame =(gr_set_frame *) block_set_frame;
 
-%%
-override-save-load Block 
+#line 163 "block.c"
+  if ( nsp_type_block_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeBlock called nsp_type_block
+       */
+      type->id =  nsp_type_block_id = nsp_new_type_id();
+      nsp_type_block = type;
+      if ( nsp_register_type(nsp_type_block) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_block(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_block_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspBlock instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_block(NspBlock *Obj,NspTypeBlock *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  Obj->obj = NULL;
+  return OK;
+}
+
+/*
+ * new instance of NspBlock 
+ */
+
+NspBlock *new_block() 
+{
+  NspBlock *loc;
+  /* type must exists */
+  nsp_type_block = new_type_block(T_BASE);
+  if ( (loc = malloc(sizeof(NspBlock)))== NULLBLOCK) return loc;
+  /* initialize object */
+  if ( init_block(loc,nsp_type_block) == FAIL) return NULLBLOCK;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspBlock 
+ *-----------------------------------------------*/
+/*
+ * size 
+ */
+
+static int nsp_block_size(NspBlock *Mat, int flag)
+{
+  return 0;
+}
+
+/*
+ * type as string 
+ */
+
+static char block_type_name[]="Block";
+static char block_short_type_name[]="block";
+
+static char *nsp_block_type_as_string(void)
+{
+  return(block_type_name);
+}
+
+static char *nsp_block_type_short_string(NspObject *v)
+{
+  return(block_short_type_name);
+}
+
+/*
+ * A == B 
+ */
+
+static int nsp_block_eq(NspBlock *A, NspObject *B)
+{
+  NspBlock *loc = (NspBlock *) B;
+  if ( check_cast(B,nsp_type_block_id) == FALSE) return FALSE ;
+  if ( A->obj == loc->obj ) return TRUE;
+  if ( A->obj->frame != loc->obj->frame) return FALSE;
+  if ( A->obj->object_sid != loc->obj->object_sid) return FALSE;
+  {
+    int i;
+    for ( i = 0 ; i < 4 ; i++ )
+      if ( A->obj->r[i] != loc->obj->r[i] ) return FALSE;
+  }
+  if ( A->obj->color != loc->obj->color) return FALSE;
+  if ( A->obj->thickness != loc->obj->thickness) return FALSE;
+  if ( A->obj->background != loc->obj->background) return FALSE;
+  if ( A->obj->n_locks != loc->obj->n_locks) return FALSE;
+  if ( A->obj->locks != loc->obj->locks) return FALSE;
+  if ( A->obj->hilited != loc->obj->hilited) return FALSE;
+  if ( A->obj->show != loc->obj->show) return FALSE;
+  return TRUE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_block_neq(NspBlock *A, NspObject *B)
+{
+  return ( nsp_block_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+/*
+ * save 
+ */
+
+#line 172 "codegen/block.override"
 
 /* code used to override the save/load functions */
 
@@ -264,8 +373,169 @@ NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
-%%
-override-create Block 
+#line 377 "block.c"
+/*
+ * delete 
+ */
+
+void nsp_block_destroy_partial(NspBlock *H)
+{
+  nsp_graphic_destroy_partial((NspGraphic *) H);
+  H->obj->ref_count--;
+  if ( H->obj->ref_count == 0 )
+   {
+#line 366 "codegen/block.override"
+  /* verbatim in destroy */
+     int i;
+     for ( i = 0 ; i <  H->obj->n_locks ;i++)
+       {
+	 block_unlock(H,i);
+       }
+     FREE(H->obj->locks);
+
+#line 397 "block.c"
+    FREE(H->obj);
+   }
+}
+
+void nsp_block_destroy(NspBlock *H)
+{
+  nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_block_destroy_partial(H);
+  FREE(H);
+}
+
+/*
+ * info 
+ */
+
+int nsp_block_info(NspBlock *M,int indent,const char *name,int rec_level)
+{
+  const char *pname;
+  if ( M == NULLBLOCK) 
+    {
+      Sciprintf("Null Pointer NspBlock \n");
+      return TRUE;
+    }
+  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  Sciprintf1(indent,"%s\t=\t\t%s\n", (pname==NULL) ? "" : pname,
+             nsp_block_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
+
+/*
+ * print 
+ */
+
+int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( M == NULLBLOCK) 
+    {
+      Sciprintf("Null Pointer NspBlock \n");
+      return TRUE;
+    }
+  if (user_pref.pr_as_read_syntax) 
+    { 
+      Sciprintf1(indent,"%s=TO_BE_DONE();\n",pname);
+    } 
+  else 
+    { 
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+        {
+          nsp_block_info(M,indent,pname,rec_level);
+          return TRUE;
+        }
+      Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"frame=%xl\n",M->obj->frame);
+  Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
+  if ( nsp_print_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"n_locks=%d\n",M->obj->n_locks);
+  Sciprintf1(indent+2,"locks=%xl\n",M->obj->locks);
+  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
+  nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
+      Sciprintf1(indent+1,"}\n");
+    }
+  return TRUE;
+}
+
+/*
+ * latex print 
+ */
+
+int nsp_block_latex(NspBlock *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)));
+  Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"frame=%xl\n",M->obj->frame);
+  Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
+  if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
+  Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
+  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
+  Sciprintf1(indent+2,"n_locks=%d\n",M->obj->n_locks);
+  Sciprintf1(indent+2,"locks=%xl\n",M->obj->locks);
+  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
+  nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
+  Sciprintf1(indent+1,"}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
+}
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspBlock objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspBlock   *nsp_block_object(NspObject *O)
+{
+  /* Follow pointer */
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /* Check type */
+  if ( check_cast (O,nsp_type_block_id) == TRUE ) return ((NspBlock *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_block));
+  return NULL;
+}
+
+int IsBlockObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_block_id);
+}
+
+int IsBlock(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_block_id);
+}
+
+NspBlock  *GetBlockCopy(Stack stack, int i)
+{
+  if (  GetBlock(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspBlock  *GetBlock(Stack stack, int i)
+{
+  NspBlock *M;
+  if (( M = nsp_block_object(NthObj(i))) == NULLBLOCK)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*-----------------------------------------------------
+ * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspBlock instance 
+ *-----------------------------------------------------*/
+#line 269 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -361,18 +631,63 @@ NspBlock *nsp_block_create_default(char *name)
  if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
  return H;
 }
-%%
-override_destroy_prelim Block
-  /* verbatim in destroy */
-     int i;
-     for ( i = 0 ; i <  H->obj->n_locks ;i++)
-       {
-	 block_unlock(H,i);
-       }
-     FREE(H->obj->locks);
+#line 635 "block.c"
+/*
+ * copy for gobject derived class  
+ */
 
-%%
-override-intcreate Block 
+NspBlock *nsp_block_copy_partial(NspBlock *H,NspBlock *self)
+{
+  H->obj = self->obj; self->obj->ref_count++;
+  return H;
+}
+
+NspBlock *nsp_block_copy(NspBlock *self)
+{
+  NspBlock *H  =nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_graphic_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
+  if ( nsp_block_copy_partial(H,self)== NULL) return NULLBLOCK;
+
+  return H;
+}
+/*
+ * full copy for gobject derived class
+ */
+
+NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
+{
+  if ((H->obj = calloc(1,sizeof(nsp_block))) == NULL) return NULLBLOCK;
+  H->obj->ref_count=1;
+  H->obj->frame = self->obj->frame;
+  H->obj->object_sid = self->obj->object_sid;
+  memcpy(H->obj->r,self->obj->r,4*sizeof(double));
+  H->obj->color=self->obj->color;
+  H->obj->thickness=self->obj->thickness;
+  H->obj->background=self->obj->background;
+  H->obj->n_locks=self->obj->n_locks;
+  H->obj->locks = self->obj->locks;
+  H->obj->hilited=self->obj->hilited;
+  H->obj->show=self->obj->show;
+  return H;
+}
+
+NspBlock *nsp_block_full_copy(NspBlock *self)
+{
+  NspBlock *H  =nsp_block_create_void(NVOID,(NspTypeBase *) nsp_type_block);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
+  if ( nsp_block_full_copy_partial(H,self)== NULL) return NULLBLOCK;
+#line 682 "block.c"
+  return H;
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the NspBlock
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+#line 376 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -425,49 +740,11 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-%%
-modulename atk
-/* %%  import gobject.GObject as GObject */
-
-%%
-ignore-glob
-  *_get_type
-
-%%
-override nsp_extractelts_block kwargs
-
-extern function int_nspgraphic_extract;
-
-int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs) 
-{
-  return int_nspgraphic_extract(stack,rhs,opt,lhs);
-}
-
-%%
-override nsp_setrowscols_block kwargs
-
-extern function int_graphic_set_attribute;
-
-int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs) 
-{
-  return int_graphic_set_attribute(stack,rhs,opt,lhs);
-}
-
-
-%%
-override Block.block_draw kwargs
-
-/* draw */
-
-static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  CheckRhs(0,0);
-  block_draw(self);
-  return 0;
-}
-
-%%
-override Block.block_translate kwargs
+#line 744 "block.c"
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+#line 471 "codegen/block.override"
 
 /* translate */
 
@@ -483,8 +760,10 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-%%
-override Block.block_set_pos kwargs
+#line 764 "block.c"
+
+
+#line 488 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -499,8 +778,10 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-%%
-override Block.block_resize kwargs
+#line 782 "block.c"
+
+
+#line 504 "codegen/block.override"
 /* resize */ 
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -515,8 +796,24 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-%%
-override Block.block_set_lock_pos kwargs
+#line 800 "block.c"
+
+
+#line 459 "codegen/block.override"
+
+/* draw */
+
+static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  block_draw(self);
+  return 0;
+}
+
+#line 814 "block.c"
+
+
+#line 520 "codegen/block.override"
 
 /* fix a lock point position 
  * in relative coordinates 
@@ -536,8 +833,10 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-%%
-override Block.block_set_locks_pos kwargs
+#line 837 "block.c"
+
+
+#line 541 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -560,8 +859,180 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
 }
 
 
-%%
-last
+#line 863 "block.c"
+
+
+static NspMethods block_methods[] = {
+  {"translate",(nsp_method *) _wrap_block_translate},
+  {"set_pos",(nsp_method *) _wrap_block_set_pos},
+  {"resize",(nsp_method *) _wrap_block_resize},
+  {"draw",(nsp_method *) _wrap_block_draw},
+  {"set_lock_pos",(nsp_method *) _wrap_block_set_lock_pos},
+  {"set_locks_pos",(nsp_method *) _wrap_block_set_locks_pos},
+  { NULL, NULL}
+};
+
+static NspMethods *block_get_methods(void) { return block_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static NspObject *_wrap_block_get_color(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspBlock *) self)->obj->color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_block_set_color(void *self,const char *attr, NspObject *O)
+{
+  int color;
+
+  if ( IntScalar(O,&color) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->color= color;
+  return OK;
+}
+
+static NspObject *_wrap_block_get_thickness(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspBlock *) self)->obj->thickness;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_block_set_thickness(void *self,const char *attr, NspObject *O)
+{
+  int thickness;
+
+  if ( IntScalar(O,&thickness) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->thickness= thickness;
+  return OK;
+}
+
+static NspObject *_wrap_block_get_background(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspBlock *) self)->obj->background;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_block_set_background(void *self,const char *attr, NspObject *O)
+{
+  int background;
+
+  if ( IntScalar(O,&background) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->background= background;
+  return OK;
+}
+
+static NspObject *_wrap_block_get_hilited(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspBlock *) self)->obj->hilited;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_block_set_hilited(void *self,const char *attr, NspObject *O)
+{
+  int hilited;
+
+  if ( BoolScalar(O,&hilited) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->hilited= hilited;
+  return OK;
+}
+
+static NspObject *_wrap_block_get_show(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspBlock *) self)->obj->show;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_block_set_show(void *self,const char *attr, NspObject *O)
+{
+  int show;
+
+  if ( BoolScalar(O,&show) == FAIL) return FAIL;
+  ((NspBlock *) self)->obj->show= show;
+  return OK;
+}
+
+static AttrTab block_attrs[] = {
+  { "color", (attr_get_function *)_wrap_block_get_color, (attr_set_function *)_wrap_block_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "thickness", (attr_get_function *)_wrap_block_get_thickness, (attr_set_function *)_wrap_block_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "background", (attr_get_function *)_wrap_block_get_background, (attr_set_function *)_wrap_block_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "hilited", (attr_get_function *)_wrap_block_get_hilited, (attr_set_function *)_wrap_block_set_hilited,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "show", (attr_get_function *)_wrap_block_get_show, (attr_set_function *)_wrap_block_set_show,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
+};
+
+
+/*-------------------------------------------
+ * functions 
+ *-------------------------------------------*/
+#line 438 "codegen/block.override"
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+#line 992 "block.c"
+
+
+#line 448 "codegen/block.override"
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+#line 1005 "block.c"
+
+
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
+
+static OpTab Block_func[]={
+  {"extractelts_block", _wrap_nsp_extractelts_block},
+  {"setrowscols_block", _wrap_nsp_setrowscols_block},
+  { "block_create", int_block_create},
+  { NULL, NULL}
+};
+
+/* call ith function in the Block interface */
+
+int Block_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(Block_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/* used to walk through the interface table 
+    (for adding or removing functions) */
+
+void Block_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = Block_func[i].name;
+  *f = Block_func[i].fonc;
+}
+
+#line 565 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -1383,3 +1854,5 @@ static NspBlock * block_full_copy( NspBlock *B)
   return M;
 }
 
+
+#line 1859 "block.c"

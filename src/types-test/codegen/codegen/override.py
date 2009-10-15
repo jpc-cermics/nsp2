@@ -22,7 +22,8 @@ class Overrides:
         self.override_attrs = {}
         self.override_slots = {}
         self.headers = ''
-        self.override_include = {}
+        self.override_include_start = {}
+        self.override_include_public = {}
         self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
         self.override_save_load = {} # override the save load for a class 
@@ -136,12 +137,17 @@ class Overrides:
             # take care to use a different name as in type override 
             stn = 'destroy_%s' % slot
             self.startlines[stn] = (startline + 1, filename)
-        elif words[0] == 'include':
+        elif words[0] == 'include-public':
             # we add '.include' to the slot for unicity
-            slot = words[1]+'.include' # 
-            self.override_include[slot] = rest
+            slot = words[1]+'.include_public' # 
+            self.override_include_public[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
-        elif words[0] == 'include_private':
+        elif words[0] == 'include-start':
+            # we add '.include' to the slot for unicity
+            slot = words[1]+'.include_start' # 
+            self.override_include_start[slot] = rest
+            self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'include-private':
             # we add '.include' to the slot for unicity
             slot = words[1]+'.include_private' # 
             self.override_include_private[slot] = rest
@@ -197,10 +203,14 @@ class Overrides:
         return self.override_slots.has_key(slot)
     def slot_override(self, slot):
         return self.override_slots[slot]
-    def include_is_overriden(self, slot):
-        return self.override_include.has_key(slot)
-    def include_override(self, slot):
-        return self.override_include[slot]
+    def include_public_is_overriden(self, slot):
+        return self.override_include_public.has_key(slot)
+    def include_public_override(self, slot):
+        return self.override_include_public[slot]
+    def include_start_is_overriden(self, slot):
+        return self.override_include_start.has_key(slot)
+    def include_start_override(self, slot):
+        return self.override_include_start[slot]
     def include_private_is_overriden(self, slot):
         return self.override_include_private.has_key(slot)
     def include_private_override(self, slot):

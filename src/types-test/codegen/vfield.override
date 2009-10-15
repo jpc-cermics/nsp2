@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include   VField
+include-public  VField
 
 /* inserted at the end of public part of include file */
 
 %%
-include_private   VField
+include-private   VField
 
 /* inserted in the private part of include file */
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
