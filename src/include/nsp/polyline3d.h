@@ -57,8 +57,8 @@ NspTypePolyline3d *new_type_polyline3d(type_mode mode);
 NspPolyline3d *new_polyline3d();
 
 /*
-* Object methods redefined for polyline3d 
-*/
+ * Object methods redefined for polyline3d 
+ */
 
 
 #define NULLPOLYLINE3D (NspPolyline3d*) 0

@@ -26,16 +26,18 @@ class Overrides:
         self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
         self.override_save_load = {} # override the save load for a class 
+        self.override_create = {} # override the create for a class 
         self.override_intcreate = {} # override the create interface code
         self.override_implements = {} # inserted verbatim for implemented interfaces 
         self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
-        self.override_destroy_prelim = '' # inserted verbatim before standard destroy
         self.override_int_create_final = '' # inserted verbatim in  create/load/full_copy
         self.init = ''
         self.last = ''
         self.imports = []
+        self.copyright = ''
+
 	if filename: self.handle_file(filename)
 
     def handle_file(self, filename):
@@ -97,6 +99,9 @@ class Overrides:
         elif words[0] == 'headers':
             self.headers = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.headers, startline + 1, filename, rest)
+        elif words[0] == 'copyright':
+            self.copyright = '#line %d "codegen/%s"\n%s' % \
+                           ( startline + 1, filename, rest)
         elif words[0] == 'override-type':
             slot = words[1]
             self.override_type[slot] = rest
@@ -112,6 +117,12 @@ class Overrides:
             type = words[1]
             self.override_save_load[type] = rest
             slot = '%s_save_load' % ( type )
+            self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'override-create':
+            # override code for all the implemented interfaces 
+            type = words[1]
+            self.override_create[type] = rest
+            slot = '%s_create' % ( type )
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override-intcreate':
             # override code for all the implemented interfaces 
@@ -210,6 +221,10 @@ class Overrides:
         return self.override_save_load.has_key(slot)
     def get_override_save_load(self,slot):
         return self.override_save_load[slot]
+    def part_create_is_overriden(self, slot):
+        return self.override_create.has_key(slot)
+    def get_override_create(self,slot):
+        return self.override_create[slot]
     def part_intcreate_is_overriden(self, slot):
         return self.override_intcreate.has_key(slot)
     def get_override_intcreate(self,slot):
@@ -224,3 +239,6 @@ class Overrides:
         return self.last
     def get_imports(self):
         return self.imports
+    def get_copyright(self):
+        return self.copyright
+

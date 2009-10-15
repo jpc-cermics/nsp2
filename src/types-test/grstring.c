@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -10,7 +28,7 @@
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 14 "grstring.c"
+#line 32 "grstring.c"
 
 /* ----------- NspGrstring ----------- */
 
@@ -95,7 +113,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 99 "grstring.c"
+#line 117 "grstring.c"
   /* 
    * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -271,7 +289,7 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
   if ((H  = nsp_grstring_create_void(name,(NspTypeBase *) nsp_type_grstring))== NULLGRSTRING) return H;
   if ((H  = nsp_grstring_xdr_load_partial(xdrs,H))== NULLGRSTRING) return H;
   if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
-#line 275 "grstring.c"
+#line 293 "grstring.c"
   return H;
 }
 
@@ -285,7 +303,6 @@ void nsp_grstring_destroy_partial(NspGrstring *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 289 "grstring.c"
   nsp_string_destroy(&(H->obj->font));
     nsp_smatrix_destroy(H->obj->text);
     FREE(H->obj);
@@ -556,7 +573,7 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_full_copy_partial(H,self)== NULL) return NULLGRSTRING;
-#line 560 "grstring.c"
+#line 577 "grstring.c"
   return H;
 }
 
@@ -576,7 +593,7 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grstring_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
-#line 580 "grstring.c"
+#line 597 "grstring.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -812,7 +829,7 @@ int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 816 "grstring.c"
+#line 833 "grstring.c"
 
 
 #line 65 "codegen/grstring.override"
@@ -824,7 +841,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 828 "grstring.c"
+#line 845 "grstring.c"
 
 
 #line 75 "codegen/grstring.override"
@@ -837,7 +854,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 841 "grstring.c"
+#line 858 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -975,4 +992,4 @@ static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 979 "grstring.c"
+#line 996 "grstring.c"

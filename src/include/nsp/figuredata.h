@@ -64,8 +64,8 @@ NspTypeFigureData *new_type_figuredata(type_mode mode);
 NspFigureData *new_figuredata();
 
 /*
-* Object methods redefined for figuredata 
-*/
+ * Object methods redefined for figuredata 
+ */
 
 
 #define NULLFIGUREDATA (NspFigureData*) 0

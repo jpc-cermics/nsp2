@@ -59,8 +59,8 @@ NspTypeString3d *new_type_string3d(type_mode mode);
 NspString3d *new_string3d();
 
 /*
-* Object methods redefined for string3d 
-*/
+ * Object methods redefined for string3d 
+ */
 
 
 #define NULLSTRING3D (NspString3d*) 0

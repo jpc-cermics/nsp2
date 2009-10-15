@@ -54,6 +54,7 @@ class FileOutput:
 class Wrapper:
     var_loc1 = 'H'
     var_loc2 = 'Q'
+
     type_tmpl_1_0 = \
               '\n'  \
               '#define  %(typename)s_Private \n'  \
@@ -469,8 +470,8 @@ class Wrapper:
         '%(typename)s *new_%(typename_dc)s();\n' \
         '\n' \
         '/*\n' \
-        '* Object methods redefined for %(typename_dc)s \n' \
-        '*/\n' \
+        ' * Object methods redefined for %(typename_dc)s \n' \
+        ' */\n' \
         '\n' \
         '\n' \
         '#define NULL%(typename_uc)s (%(typename)s*) 0\n' \
@@ -721,7 +722,6 @@ class Wrapper:
         substdict['fields_defval'] = self.build_defval_fields('H')
         substdict['fields_free1'] = self.build_fields_free1('H')
         substdict['fields_free2'] = self.build_fields_free2('H')
-        substdict['destroy_prelim'] = self.build_destroy_premil('H')
         substdict['fields_equal'] = self.build_equal_fields('H')
         substdict['create_partial'] = self.build_create_partial('H')
         substdict['copy_partial'] = self.build_copy_partial('H')
@@ -774,13 +774,24 @@ class Wrapper:
             self.fp.write(self.overrides.get_override_destroy(typename_nn))
             self.fp.resetline()
 
-        self.fp.write('%(destroy_prelim)s' %substdict)
-        self.fp.resetline()
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
-        # insert the end of type defintion 
+        # insert the end of type definition 
         # i.e a set of functions used for writing interfaces 
         self.fp.write(self.type_tmpl_interface_util % substdict)
-        # object copy and interface for creation
+        # code for create 
+
+        self.fp.write(self.type_tmpl_create_header % substdict)
+        if self.overrides.part_create_is_overriden(typename_nn):
+            slot = '%s_create' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_create(typename_nn))
+            self.fp.resetline()
+        else:
+            # insert the code for create
+            self.fp.write(self.type_tmpl_create % substdict)
+
+        # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
         substdict['ret']= 'NULL'
         self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
@@ -795,11 +806,11 @@ class Wrapper:
             self.fp.write(self.overrides.get_override_intcreate(typename_nn))
             self.fp.resetline()
         else:
-            self.fp.write(self.type_tmpl_create % substdict)
+            self.fp.write(self.type_tmpl_intcreate % substdict)
             substdict['ret']= 'RET_BUG'
             self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
             self.fp.resetline()
-            self.fp.write(self.type_tmpl_create_last % substdict)
+            self.fp.write(self.type_tmpl_intcreate_last % substdict)
 
         # write a header file for class object
         outheadername = './' + string.lower(self.objinfo.name) + '.h'
@@ -829,7 +840,7 @@ class Wrapper:
         self.fhp.write(self.type_header_4 %substdict)
 
         self.fhp.close() 
-
+        
         substdict['tp_init'] = self.write_constructor()
 
         self.fp.write( '/*-------------------------------------------\n')
@@ -1142,13 +1153,6 @@ class Wrapper:
         if self.byref == 't':
             str = str + '    FREE(%s);\n   }\n'  % (varname)
         return str
-
-
-    def build_destroy_premil(self,varname):
-        # code to be called before the standard 
-        # destroy code. By defaut this code is 
-        # empty but can be filled in override code 
-        return  self.overrides.override_destroy_prelim
 
     def build_int_create_final(self,varname):
         # code to be called before returning in the _create 
@@ -1640,12 +1644,13 @@ class NspObjectWrapper(Wrapper):
         '%(codeafter)s\n' \
         '}\n\n'
 
-    type_tmpl_copy_1 = \
+    type_tmpl_create_header = \
         '/*-----------------------------------------------------\n' \
         ' * constructor \n' \
         ' * if type is non NULL it is a subtype which can be used to \n' \
         ' * create a %(typename)s instance \n' \
-        ' *-----------------------------------------------------*/\n' \
+        ' *-----------------------------------------------------*/\n' 
+    type_tmpl_create = \
         '\n' \
         'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type)\n' \
         '{\n' \
@@ -1688,7 +1693,8 @@ class NspObjectWrapper(Wrapper):
         ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' \
         ' return H;\n' \
         '}\n' \
-        '\n' \
+        '\n' 
+    type_tmpl_copy_1 = \
         '/*\n'  \
         ' * copy for gobject derived class  \n'  \
         ' */\n'  \
@@ -1720,7 +1726,7 @@ class NspObjectWrapper(Wrapper):
         ' * i.e functions at Nsp level \n'  \
         ' *-------------------------------------------------------------------*/\n'  \
         '\n'  
-    type_tmpl_create = \
+    type_tmpl_intcreate = \
         'int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs)\n'  \
         '{\n'  \
         '  %(typename)s *H;\n'  \
@@ -1732,7 +1738,7 @@ class NspObjectWrapper(Wrapper):
         '%(fields_from_attributes)s' \
         ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return RET_BUG;\n' 
 
-    type_tmpl_create_last = \
+    type_tmpl_intcreate_last = \
         '  MoveObj(stack,1,(NspObject  *) H);\n'  \
         '  return 1;\n'  \
         '} \n'  \
@@ -1825,7 +1831,35 @@ def write_enums(parser, prefix, fp=sys.stdout):
 
 def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write('/* -*- Mode: C -*- */\n\n')
-    fp.write('/* generated file */\n')
+    fp.write('/* This file is generated, please do not edit */\n')
+
+    fp.write('/* Nsp\n') 
+    tag = overrides.get_copyright()
+    if tag == '' :
+        tag = ' * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics\n'
+        fp.write( tag) 
+    else:
+        fp.write( tag) 
+        fp.resetline()
+
+    type_tmpl_copyright = \
+        ' *\n' \
+        ' * This library is free software; you can redistribute it and/or\n' \
+        ' * modify it under the terms of the GNU General Public\n' \
+        ' * License as published by the Free Software Foundation; either\n' \
+        ' * version 2 of the License, or (at your option) any later version.\n' \
+        ' *\n' \
+        ' * This library is distributed in the hope that it will be useful,\n' \
+        ' * but WITHOUT ANY WARRANTY; without even the implied warranty of\n' \
+        ' * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n' \
+        ' * General Public License for more details.\n' \
+        ' *\n' \
+        ' * You should have received a copy of the GNU General Public\n' \
+        ' * License along with this library; if not, write to the\n' \
+        ' * Free Software Foundation, Inc., 59 Temple Place - Suite 330,\n' \
+        ' * Boston, MA 02111-1307, USA.\n' \
+        ' */\n' 
+    fp.write( type_tmpl_copyright) 
     fp.write('\n\n')
     #fp.write('#include <nsp/object.h>\n')
     #fp.write('#include <gtk/gtk.h>\n')

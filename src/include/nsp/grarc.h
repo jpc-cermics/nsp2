@@ -62,8 +62,8 @@ NspTypeGrArc *new_type_grarc(type_mode mode);
 NspGrArc *new_grarc();
 
 /*
-* Object methods redefined for grarc 
-*/
+ * Object methods redefined for grarc 
+ */
 
 
 #define NULLGRARC (NspGrArc*) 0

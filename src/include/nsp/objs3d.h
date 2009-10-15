@@ -67,8 +67,8 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode);
 NspObjs3d *new_objs3d();
 
 /*
-* Object methods redefined for objs3d 
-*/
+ * Object methods redefined for objs3d 
+ */
 
 
 #define NULLOBJS3D (NspObjs3d*) 0

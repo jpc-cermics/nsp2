@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -11,7 +29,7 @@
 #include <nsp/figure.h> 
 #include <nsp/box3d.h>
 
-#line 15 "box3d.c"
+#line 33 "box3d.c"
 
 /* ----------- NspBox3d ----------- */
 
@@ -96,7 +114,7 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 100 "box3d.c"
+#line 118 "box3d.c"
   /* 
    * NspBox3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -263,7 +281,7 @@ static NspBox3d  *nsp_box3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_box3d_create_void(name,(NspTypeBase *) nsp_type_box3d))== NULLBOX3D) return H;
   if ((H  = nsp_box3d_xdr_load_partial(xdrs,H))== NULLBOX3D) return H;
   if ( nsp_box3d_check_values(H) == FAIL) return NULLBOX3D;
-#line 267 "box3d.c"
+#line 285 "box3d.c"
   return H;
 }
 
@@ -277,7 +295,6 @@ void nsp_box3d_destroy_partial(NspBox3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 281 "box3d.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -560,7 +577,7 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
   if ( H ==  NULLBOX3D) return NULLBOX3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_full_copy_partial(H,self)== NULL) return NULLBOX3D;
-#line 564 "box3d.c"
+#line 581 "box3d.c"
   return H;
 }
 
@@ -580,7 +597,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_box3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_box3d_check_values(H) == FAIL) return RET_BUG;
-#line 584 "box3d.c"
+#line 601 "box3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -774,7 +791,7 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 778 "box3d.c"
+#line 795 "box3d.c"
 
 
 #line 67 "codegen/box3d.override"
@@ -786,7 +803,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 790 "box3d.c"
+#line 807 "box3d.c"
 
 
 #line 77 "codegen/box3d.override"
@@ -799,7 +816,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 803 "box3d.c"
+#line 820 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -880,4 +897,4 @@ static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 884 "box3d.c"
+#line 901 "box3d.c"

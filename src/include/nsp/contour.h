@@ -59,8 +59,8 @@ NspTypeContour *new_type_contour(type_mode mode);
 NspContour *new_contour();
 
 /*
-* Object methods redefined for contour 
-*/
+ * Object methods redefined for contour 
+ */
 
 
 #define NULLCONTOUR (NspContour*) 0

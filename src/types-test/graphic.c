@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -11,7 +29,7 @@
 #include <nsp/figure.h>
 #include "../interp/Eval.h"
 
-#line 15 "graphic.c"
+#line 33 "graphic.c"
 
 /* ----------- NspGraphic ----------- */
 
@@ -100,7 +118,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->zmean = NULL; 
   type->n_faces = NULL;
 
-#line 104 "graphic.c"
+#line 122 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -243,7 +261,7 @@ static NspGraphic  *nsp_graphic_xdr_load(XDR *xdrs)
   if ((H  = nsp_graphic_create_void(name,(NspTypeBase *) nsp_type_graphic))== NULLGRAPHIC) return H;
   if ((H  = nsp_graphic_xdr_load_partial(xdrs,H))== NULLGRAPHIC) return H;
   if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
-#line 247 "graphic.c"
+#line 265 "graphic.c"
   return H;
 }
 
@@ -256,7 +274,6 @@ void nsp_graphic_destroy_partial(NspGraphic *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 260 "graphic.c"
     FREE(H->obj);
    }
 }
@@ -465,7 +482,7 @@ NspGraphic *nsp_graphic_full_copy(NspGraphic *self)
   NspGraphic *H  =nsp_graphic_create_void(NVOID,(NspTypeBase *) nsp_type_graphic);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_full_copy_partial(H,self)== NULL) return NULLGRAPHIC;
-#line 469 "graphic.c"
+#line 486 "graphic.c"
   return H;
 }
 
@@ -485,7 +502,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_graphic_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_graphic_check_values(H) == FAIL) return RET_BUG;
-#line 489 "graphic.c"
+#line 506 "graphic.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -507,7 +524,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 511 "graphic.c"
+#line 528 "graphic.c"
 
 
 #line 97 "codegen/graphic.override"
@@ -522,7 +539,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 526 "graphic.c"
+#line 543 "graphic.c"
 
 
 #line 110 "codegen/graphic.override"
@@ -536,7 +553,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 540 "graphic.c"
+#line 557 "graphic.c"
 
 
 #line 122 "codegen/graphic.override"
@@ -549,7 +566,7 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 553 "graphic.c"
+#line 570 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -800,4 +817,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 804 "graphic.c"
+#line 821 "graphic.c"

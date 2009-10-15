@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -16,7 +34,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 20 "fec.c"
+#line 38 "fec.c"
 
 /* ----------- NspFec ----------- */
 
@@ -98,7 +116,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 102 "fec.c"
+#line 120 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -271,7 +289,7 @@ static NspFec  *nsp_fec_xdr_load(XDR *xdrs)
   if ((H  = nsp_fec_create_void(name,(NspTypeBase *) nsp_type_fec))== NULLFEC) return H;
   if ((H  = nsp_fec_xdr_load_partial(xdrs,H))== NULLFEC) return H;
   if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
-#line 275 "fec.c"
+#line 293 "fec.c"
   return H;
 }
 
@@ -285,7 +303,6 @@ void nsp_fec_destroy_partial(NspFec *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 289 "fec.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->triangles);
@@ -642,7 +659,7 @@ NspFec *nsp_fec_full_copy(NspFec *self)
   if ( H ==  NULLFEC) return NULLFEC;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFEC;
   if ( nsp_fec_full_copy_partial(H,self)== NULL) return NULLFEC;
-#line 646 "fec.c"
+#line 663 "fec.c"
   return H;
 }
 
@@ -662,7 +679,7 @@ int int_fec_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_fec_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_fec_check_values(H) == FAIL) return RET_BUG;
-#line 666 "fec.c"
+#line 683 "fec.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -922,7 +939,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 926 "fec.c"
+#line 943 "fec.c"
 
 
 #line 79 "codegen/fec.override"
@@ -934,7 +951,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 938 "fec.c"
+#line 955 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1240,4 +1257,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1244 "fec.c"
+#line 1261 "fec.c"

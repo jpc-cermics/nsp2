@@ -50,8 +50,8 @@ NspTypeClassB *new_type_classb(type_mode mode);
 NspClassB *new_classb();
 
 /*
-* Object methods redefined for classb 
-*/
+ * Object methods redefined for classb 
+ */
 
 
 #define NULLCLASSB (NspClassB*) 0

@@ -74,8 +74,8 @@ NspTypeAxes *new_type_axes(type_mode mode);
 NspAxes *new_axes();
 
 /*
-* Object methods redefined for axes 
-*/
+ * Object methods redefined for axes 
+ */
 
 
 #define NULLAXES (NspAxes*) 0

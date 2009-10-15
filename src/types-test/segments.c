@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -10,7 +28,7 @@
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 14 "segments.c"
+#line 32 "segments.c"
 
 /* ----------- NspSegments ----------- */
 
@@ -95,7 +113,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 99 "segments.c"
+#line 117 "segments.c"
   /* 
    * NspSegments interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -253,7 +271,7 @@ static NspSegments  *nsp_segments_xdr_load(XDR *xdrs)
   if ((H  = nsp_segments_create_void(name,(NspTypeBase *) nsp_type_segments))== NULLSEGMENTS) return H;
   if ((H  = nsp_segments_xdr_load_partial(xdrs,H))== NULLSEGMENTS) return H;
   if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
-#line 257 "segments.c"
+#line 275 "segments.c"
   return H;
 }
 
@@ -267,7 +285,6 @@ void nsp_segments_destroy_partial(NspSegments *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 271 "segments.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->color);
@@ -535,7 +552,7 @@ NspSegments *nsp_segments_full_copy(NspSegments *self)
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSEGMENTS;
   if ( nsp_segments_full_copy_partial(H,self)== NULL) return NULLSEGMENTS;
-#line 539 "segments.c"
+#line 556 "segments.c"
   return H;
 }
 
@@ -555,7 +572,7 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_segments_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_segments_check_values(H) == FAIL) return RET_BUG;
-#line 559 "segments.c"
+#line 576 "segments.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -695,7 +712,7 @@ int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#line 699 "segments.c"
+#line 716 "segments.c"
 
 
 #line 68 "codegen/segments.override"
@@ -707,7 +724,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 711 "segments.c"
+#line 728 "segments.c"
 
 
 #line 78 "codegen/segments.override"
@@ -720,7 +737,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 724 "segments.c"
+#line 741 "segments.c"
 
 
 /*----------------------------------------------------
@@ -856,4 +873,4 @@ static int nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 860 "segments.c"
+#line 877 "segments.c"

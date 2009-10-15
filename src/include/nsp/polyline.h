@@ -61,8 +61,8 @@ NspTypePolyline *new_type_polyline(type_mode mode);
 NspPolyline *new_polyline();
 
 /*
-* Object methods redefined for polyline 
-*/
+ * Object methods redefined for polyline 
+ */
 
 
 #define NULLPOLYLINE (NspPolyline*) 0

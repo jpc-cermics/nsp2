@@ -62,8 +62,8 @@ NspTypeQcurve *new_type_qcurve(type_mode mode);
 NspQcurve *new_qcurve();
 
 /*
-* Object methods redefined for qcurve 
-*/
+ * Object methods redefined for qcurve 
+ */
 
 
 #define NULLQCURVE (NspQcurve*) 0

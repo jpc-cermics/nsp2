@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -10,7 +28,7 @@
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 14 "surf.c"
+#line 32 "surf.c"
 
 /* ----------- NspSurf ----------- */
 
@@ -95,7 +113,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 99 "surf.c"
+#line 117 "surf.c"
   /* 
    * NspSurf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -268,7 +286,7 @@ static NspSurf  *nsp_surf_xdr_load(XDR *xdrs)
   if ((H  = nsp_surf_create_void(name,(NspTypeBase *) nsp_type_surf))== NULLSURF) return H;
   if ((H  = nsp_surf_xdr_load_partial(xdrs,H))== NULLSURF) return H;
   if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
-#line 272 "surf.c"
+#line 290 "surf.c"
   return H;
 }
 
@@ -282,7 +300,6 @@ void nsp_surf_destroy_partial(NspSurf *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 286 "surf.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -591,7 +608,7 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
   if ( H ==  NULLSURF) return NULLSURF;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSURF;
   if ( nsp_surf_full_copy_partial(H,self)== NULL) return NULLSURF;
-#line 595 "surf.c"
+#line 612 "surf.c"
   return H;
 }
 
@@ -611,7 +628,7 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_surf_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_surf_check_values(H) == FAIL) return RET_BUG;
-#line 615 "surf.c"
+#line 632 "surf.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -856,7 +873,7 @@ int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 860 "surf.c"
+#line 877 "surf.c"
 
 
 #line 66 "codegen/surf.override"
@@ -868,7 +885,7 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 872 "surf.c"
+#line 889 "surf.c"
 
 
 #line 76 "codegen/surf.override"
@@ -881,7 +898,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 885 "surf.c"
+#line 902 "surf.c"
 
 
 /*----------------------------------------------------
@@ -993,4 +1010,4 @@ static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 997 "surf.c"
+#line 1014 "surf.c"

@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -8,7 +26,7 @@
 
 #line 4 "codegen/classbref.override"
 
-#line 12 "classbref.c"
+#line 30 "classbref.c"
 
 /* ----------- NspClassBRef ----------- */
 
@@ -236,7 +254,7 @@ static NspClassBRef  *nsp_classbref_xdr_load(XDR *xdrs)
   if ((H  = nsp_classbref_create_void(name,(NspTypeBase *) nsp_type_classbref))== NULLCLASSBREF) return H;
   if ((H  = nsp_classbref_xdr_load_partial(xdrs,H))== NULLCLASSBREF) return H;
   if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
-#line 240 "classbref.c"
+#line 258 "classbref.c"
   return H;
 }
 
@@ -250,7 +268,6 @@ void nsp_classbref_destroy_partial(NspClassBRef *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 254 "classbref.c"
     nsp_matrix_destroy(H->obj->clb_val);
     FREE(H->obj);
    }
@@ -486,7 +503,7 @@ NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
   if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_full_copy_partial(H,self)== NULL) return NULLCLASSBREF;
-#line 490 "classbref.c"
+#line 507 "classbref.c"
   return H;
 }
 
@@ -506,7 +523,7 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
-#line 510 "classbref.c"
+#line 527 "classbref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -523,7 +540,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 527 "classbref.c"
+#line 544 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -534,7 +551,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 538 "classbref.c"
+#line 555 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -648,4 +665,4 @@ void ClassBRef_Interf_Info(int i, char **fname, function (**f))
   *f = ClassBRef_func[i].fonc;
 }
 
-#line 652 "classbref.c"
+#line 669 "classbref.c"

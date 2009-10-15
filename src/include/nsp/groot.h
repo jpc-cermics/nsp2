@@ -54,8 +54,8 @@ NspTypeGRoot *new_type_groot(type_mode mode);
 NspGRoot *new_groot();
 
 /*
-* Object methods redefined for groot 
-*/
+ * Object methods redefined for groot 
+ */
 
 
 #define NULLGROOT (NspGRoot*) 0

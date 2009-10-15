@@ -56,8 +56,8 @@ NspTypeSegments *new_type_segments(type_mode mode);
 NspSegments *new_segments();
 
 /*
-* Object methods redefined for segments 
-*/
+ * Object methods redefined for segments 
+ */
 
 
 #define NULLSEGMENTS (NspSegments*) 0

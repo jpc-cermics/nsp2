@@ -85,8 +85,8 @@ NspTypeGraphic *new_type_graphic(type_mode mode);
 NspGraphic *new_graphic();
 
 /*
-* Object methods redefined for graphic 
-*/
+ * Object methods redefined for graphic 
+ */
 
 
 #define NULLGRAPHIC (NspGraphic*) 0

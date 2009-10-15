@@ -61,8 +61,8 @@ NspTypeSurf *new_type_surf(type_mode mode);
 NspSurf *new_surf();
 
 /*
-* Object methods redefined for surf 
-*/
+ * Object methods redefined for surf 
+ */
 
 
 #define NULLSURF (NspSurf*) 0

@@ -63,8 +63,8 @@ NspTypeFigure *new_type_figure(type_mode mode);
 NspFigure *new_figure();
 
 /*
-* Object methods redefined for figure 
-*/
+ * Object methods redefined for figure 
+ */
 
 
 #define NULLFIGURE (NspFigure*) 0

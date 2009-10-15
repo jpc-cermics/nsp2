@@ -59,8 +59,8 @@ NspTypePoints3d *new_type_points3d(type_mode mode);
 NspPoints3d *new_points3d();
 
 /*
-* Object methods redefined for points3d 
-*/
+ * Object methods redefined for points3d 
+ */
 
 
 #define NULLPOINTS3D (NspPoints3d*) 0

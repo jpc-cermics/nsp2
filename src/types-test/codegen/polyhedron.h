@@ -60,8 +60,8 @@ NspTypePolyhedron *new_type_polyhedron(type_mode mode);
 NspPolyhedron *new_polyhedron();
 
 /*
-* Object methods redefined for polyhedron 
-*/
+ * Object methods redefined for polyhedron 
+ */
 
 
 #define NULLPOLYHEDRON (NspPolyhedron*) 0

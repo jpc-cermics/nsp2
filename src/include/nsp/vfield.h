@@ -58,8 +58,8 @@ NspTypeVField *new_type_vfield(type_mode mode);
 NspVField *new_vfield();
 
 /*
-* Object methods redefined for vfield 
-*/
+ * Object methods redefined for vfield 
+ */
 
 
 #define NULLVFIELD (NspVField*) 0

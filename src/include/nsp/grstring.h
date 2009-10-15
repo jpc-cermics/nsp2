@@ -62,8 +62,8 @@ NspTypeGrstring *new_type_grstring(type_mode mode);
 NspGrstring *new_grstring();
 
 /*
-* Object methods redefined for grstring 
-*/
+ * Object methods redefined for grstring 
+ */
 
 
 #define NULLGRSTRING (NspGrstring*) 0

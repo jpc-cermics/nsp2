@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -14,7 +32,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 18 "string3d.c"
+#line 36 "string3d.c"
 
 /* ----------- NspString3d ----------- */
 
@@ -100,7 +118,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
-#line 104 "string3d.c"
+#line 122 "string3d.c"
   /* 
    * NspString3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -271,7 +289,7 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 275 "string3d.c"
+#line 293 "string3d.c"
   return H;
 }
 
@@ -289,8 +307,7 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 293 "string3d.c"
-#line 294 "string3d.c"
+#line 311 "string3d.c"
     nsp_matrix_destroy(H->obj->Mcoord);
   nsp_string_destroy(&(H->obj->str));
     FREE(H->obj->pos);
@@ -554,7 +571,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 558 "string3d.c"
+#line 575 "string3d.c"
   return H;
 }
 
@@ -579,7 +596,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 583 "string3d.c"
+#line 600 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -716,7 +733,7 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 720 "string3d.c"
+#line 737 "string3d.c"
 
 
 #line 92 "codegen/string3d.override"
@@ -728,7 +745,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 732 "string3d.c"
+#line 749 "string3d.c"
 
 
 #line 102 "codegen/string3d.override"
@@ -741,7 +758,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 745 "string3d.c"
+#line 762 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -985,4 +1002,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 989 "string3d.c"
+#line 1006 "string3d.c"

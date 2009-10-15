@@ -58,8 +58,8 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode);
 NspGMatrix *new_gmatrix();
 
 /*
-* Object methods redefined for gmatrix 
-*/
+ * Object methods redefined for gmatrix 
+ */
 
 
 #define NULLGMATRIX (NspGMatrix*) 0

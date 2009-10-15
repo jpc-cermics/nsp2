@@ -61,8 +61,8 @@ NspTypeFec *new_type_fec(type_mode mode);
 NspFec *new_fec();
 
 /*
-* Object methods redefined for fec 
-*/
+ * Object methods redefined for fec 
+ */
 
 
 #define NULLFEC (NspFec*) 0

@@ -59,8 +59,8 @@ NspTypeBox3d *new_type_box3d(type_mode mode);
 NspBox3d *new_box3d();
 
 /*
-* Object methods redefined for box3d 
-*/
+ * Object methods redefined for box3d 
+ */
 
 
 #define NULLBOX3D (NspBox3d*) 0

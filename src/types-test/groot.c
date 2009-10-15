@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -11,7 +29,7 @@
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
-#line 15 "groot.c"
+#line 33 "groot.c"
 
 /* ----------- NspGRoot ----------- */
 
@@ -223,7 +241,7 @@ static NspGRoot  *nsp_groot_xdr_load(XDR *xdrs)
   if ((H  = nsp_groot_create_void(name,(NspTypeBase *) nsp_type_groot))== NULLGROOT) return H;
   if ((H  = nsp_groot_xdr_load_partial(xdrs,H))== NULLGROOT) return H;
   if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
-#line 227 "groot.c"
+#line 245 "groot.c"
   return H;
 }
 
@@ -236,7 +254,6 @@ void nsp_groot_destroy_partial(NspGRoot *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 240 "groot.c"
     nsp_list_destroy(H->obj->figures);
     FREE(H->obj);
    }
@@ -455,7 +472,7 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
   NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
   if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
-#line 459 "groot.c"
+#line 476 "groot.c"
   return H;
 }
 
@@ -475,7 +492,7 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
-#line 479 "groot.c"
+#line 496 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -555,4 +572,4 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 #line 27 "codegen/groot.override"
 
 
-#line 559 "groot.c"
+#line 576 "groot.c"

@@ -59,8 +59,8 @@ NspTypeContour3d *new_type_contour3d(type_mode mode);
 NspContour3d *new_contour3d();
 
 /*
-* Object methods redefined for contour3d 
-*/
+ * Object methods redefined for contour3d 
+ */
 
 
 #define NULLCONTOUR3D (NspContour3d*) 0

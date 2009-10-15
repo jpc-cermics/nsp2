@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -17,7 +35,7 @@
 #include <nsp/grcommon.h>
 
 
-#line 21 "contour3d.c"
+#line 39 "contour3d.c"
 
 /* ----------- NspContour3d ----------- */
 
@@ -104,7 +122,7 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_contour3d_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_contour3d_n_faces;
 
-#line 108 "contour3d.c"
+#line 126 "contour3d.c"
   /* 
    * NspContour3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -276,7 +294,7 @@ static NspContour3d  *nsp_contour3d_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return NULL; 
 
-#line 280 "contour3d.c"
+#line 298 "contour3d.c"
   return H;
 }
 
@@ -292,8 +310,7 @@ void nsp_contour3d_destroy_partial(NspContour3d *H)
    {
 #line 71 "codegen/contour3d.override"
   /* verbatim in destroy */
-#line 296 "contour3d.c"
-#line 297 "contour3d.c"
+#line 314 "contour3d.c"
     nsp_matrix_destroy(H->obj->x);
     nsp_matrix_destroy(H->obj->y);
     nsp_matrix_destroy(H->obj->z);
@@ -597,7 +614,7 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return NULL; 
 
-#line 601 "contour3d.c"
+#line 618 "contour3d.c"
   return H;
 }
 
@@ -622,7 +639,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return RET_BUG; 
 
-#line 626 "contour3d.c"
+#line 643 "contour3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -830,7 +847,7 @@ int _wrap_contour3d_attach(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#line 834 "contour3d.c"
+#line 851 "contour3d.c"
 
 
 #line 89 "codegen/contour3d.override"
@@ -842,7 +859,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 846 "contour3d.c"
+#line 863 "contour3d.c"
 
 
 #line 99 "codegen/contour3d.override"
@@ -854,7 +871,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 858 "contour3d.c"
+#line 875 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -1035,4 +1052,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1039 "contour3d.c"
+#line 1056 "contour3d.c"

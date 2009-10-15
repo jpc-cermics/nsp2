@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -8,7 +26,7 @@
 
 #line 4 "codegen/classb.override"
 
-#line 12 "classb.c"
+#line 30 "classb.c"
 
 /* ----------- NspClassB ----------- */
 
@@ -235,7 +253,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
   if ((H  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return H;
   if ((H  = nsp_classb_xdr_load_partial(xdrs,H))== NULLCLASSB) return H;
   if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
-#line 239 "classb.c"
+#line 257 "classb.c"
   return H;
 }
 
@@ -246,7 +264,6 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
 void nsp_classb_destroy_partial(NspClassB *H)
 {
   nsp_classa_destroy_partial((NspClassA *) H);
-#line 250 "classb.c"
   nsp_matrix_destroy(H->clb_val);
 }
 
@@ -461,7 +478,7 @@ NspClassB *nsp_classb_copy(NspClassB *self)
 NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
   NspClassB *H = nsp_classb_copy(self);
-#line 465 "classb.c"
+#line 482 "classb.c"
   return H;
 }
 
@@ -480,7 +497,7 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
-#line 484 "classb.c"
+#line 501 "classb.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -497,7 +514,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 501 "classb.c"
+#line 518 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -508,7 +525,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 512 "classb.c"
+#line 529 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -622,4 +639,4 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *f = ClassB_func[i].fonc;
 }
 
-#line 626 "classb.c"
+#line 643 "classb.c"

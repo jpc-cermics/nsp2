@@ -55,8 +55,8 @@ NspTypeCompound *new_type_compound(type_mode mode);
 NspCompound *new_compound();
 
 /*
-* Object methods redefined for compound 
-*/
+ * Object methods redefined for compound 
+ */
 
 
 #define NULLCOMPOUND (NspCompound*) 0

@@ -56,8 +56,8 @@ NspTypeClassBRef *new_type_classbref(type_mode mode);
 NspClassBRef *new_classbref();
 
 /*
-* Object methods redefined for classbref 
-*/
+ * Object methods redefined for classbref 
+ */
 
 
 #define NULLCLASSBREF (NspClassBRef*) 0

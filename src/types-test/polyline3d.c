@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -16,7 +34,7 @@
 #include <nsp/spolyhedron.h>
 #include <nsp/grcommon.h>
 
-#line 20 "polyline3d.c"
+#line 38 "polyline3d.c"
 
 /* ----------- NspPolyline3d ----------- */
 
@@ -103,7 +121,7 @@ NspTypePolyline3d *new_type_polyline3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_polyline3d_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_polyline3d_n_faces;
 
-#line 107 "polyline3d.c"
+#line 125 "polyline3d.c"
   /* 
    * NspPolyline3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -268,7 +286,7 @@ static NspPolyline3d  *nsp_polyline3d_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 272 "polyline3d.c"
+#line 290 "polyline3d.c"
   return H;
 }
 
@@ -286,8 +304,7 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 290 "polyline3d.c"
-#line 291 "polyline3d.c"
+#line 308 "polyline3d.c"
     nsp_matrix_destroy(H->obj->Mcoord);
     nsp_matrix_destroy(H->obj->Mcolor);
     FREE(H->obj->pos);
@@ -551,7 +568,7 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 555 "polyline3d.c"
+#line 572 "polyline3d.c"
   return H;
 }
 
@@ -576,7 +593,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
-#line 580 "polyline3d.c"
+#line 597 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -685,7 +702,7 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 689 "polyline3d.c"
+#line 706 "polyline3d.c"
 
 
 #line 93 "codegen/polyline3d.override"
@@ -697,7 +714,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 701 "polyline3d.c"
+#line 718 "polyline3d.c"
 
 
 #line 103 "codegen/polyline3d.override"
@@ -710,7 +727,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 714 "polyline3d.c"
+#line 731 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -930,4 +947,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 934 "polyline3d.c"
+#line 951 "polyline3d.c"

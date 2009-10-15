@@ -52,8 +52,8 @@ NspTypeClassA *new_type_classa(type_mode mode);
 NspClassA *new_classa();
 
 /*
-* Object methods redefined for classa 
-*/
+ * Object methods redefined for classa 
+ */
 
 
 #define NULLCLASSA (NspClassA*) 0

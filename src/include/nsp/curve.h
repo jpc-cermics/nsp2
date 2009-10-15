@@ -60,8 +60,8 @@ NspTypeCurve *new_type_curve(type_mode mode);
 NspCurve *new_curve();
 
 /*
-* Object methods redefined for curve 
-*/
+ * Object methods redefined for curve 
+ */
 
 
 #define NULLCURVE (NspCurve*) 0

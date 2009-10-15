@@ -60,8 +60,8 @@ NspTypeGrRect *new_type_grrect(type_mode mode);
 NspGrRect *new_grrect();
 
 /*
-* Object methods redefined for grrect 
-*/
+ * Object methods redefined for grrect 
+ */
 
 
 #define NULLGRRECT (NspGrRect*) 0

@@ -1,6 +1,24 @@
 /* -*- Mode: C -*- */
 
-/* generated file */
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
 
 
 
@@ -8,7 +26,7 @@
 
 #line 4 "codegen/classaref.override"
 
-#line 12 "classaref.c"
+#line 30 "classaref.c"
 
 /* ----------- NspClassARef ----------- */
 
@@ -235,7 +253,7 @@ static NspClassARef  *nsp_classaref_xdr_load(XDR *xdrs)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 239 "classaref.c"
+#line 257 "classaref.c"
   return H;
 }
 
@@ -250,8 +268,7 @@ void nsp_classaref_destroy_partial(NspClassARef *H)
    {
 #line 23 "codegen/classaref.override"
   /* verbatim in destroy */
-#line 254 "classaref.c"
-#line 255 "classaref.c"
+#line 272 "classaref.c"
     nsp_matrix_destroy(H->obj->cla_val);
     nsp_bmatrix_destroy(H->obj->cla_bval);
     nsp_list_destroy(H->obj->cla_lval);
@@ -524,7 +541,7 @@ NspClassARef *nsp_classaref_full_copy(NspClassARef *self)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 528 "classaref.c"
+#line 545 "classaref.c"
   return H;
 }
 
@@ -547,7 +564,7 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 551 "classaref.c"
+#line 568 "classaref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -564,7 +581,7 @@ static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int 
   self->obj->cla_color = color;
   return 0;
 }
-#line 568 "classaref.c"
+#line 585 "classaref.c"
 
 
 #line 36 "codegen/classaref.override"
@@ -573,7 +590,7 @@ static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int op
   Sciprintf("color: %d\n",self->obj->cla_color);
   return 0;
 }
-#line 577 "classaref.c"
+#line 594 "classaref.c"
 
 
 static NspMethods classaref_methods[] = {
@@ -739,7 +756,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 743 "classaref.c"
+#line 760 "classaref.c"
 
 
 #line 43 "codegen/classaref.override"
@@ -747,7 +764,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 751 "classaref.c"
+#line 768 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -778,4 +795,4 @@ void ClassARef_Interf_Info(int i, char **fname, function (**f))
   *f = ClassARef_func[i].fonc;
 }
 
-#line 782 "classaref.c"
+#line 799 "classaref.c"

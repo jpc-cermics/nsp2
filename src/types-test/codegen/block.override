@@ -173,6 +173,113 @@ static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
 }
 
 %%
+override-create Block 
+/* override the code for block creation */
+
+static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
+{
+ NspBlock *H  = (type == NULL) ? new_block() : type->new();
+ if ( H ==  NULLBLOCK)
+  {
+   Sciprintf("No more memory\n");
+   return NULLBLOCK;
+  }
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLBLOCK;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ return H;
+}
+
+int nsp_block_create_partial(NspBlock *H)
+{
+  if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
+  if((H->obj = calloc(1,sizeof(nsp_block)))== NULL ) return FAIL;
+  H->obj->ref_count=1;
+  H->obj->frame = NULL;
+  H->obj->object_sid = NULL;
+  {
+    double x_def[4]={0,0,0,0};
+    memcpy(H->obj->r,x_def,4*sizeof(double));
+  }
+  H->obj->color = 0;
+  H->obj->thickness = 0;
+  H->obj->background = 0;
+  H->obj->n_locks = 0;
+  H->obj->locks = NULL;
+  H->obj->hilited = FALSE;
+  H->obj->show = TRUE;
+  return OK;
+}
+
+int nsp_block_check_values(NspBlock *H)
+{
+  nsp_graphic_check_values((NspGraphic *) H);
+  return OK;
+}
+
+static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
+static int lock_color=10;
+
+NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,gboolean show,NspTypeBase *type)
+{
+  double pt[2];
+  int i;
+  NspBlock *H  = nsp_block_create_void(name,type);
+  if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_block_create_partial(H) == FAIL) return NULLBLOCK;
+  H->obj->frame = frame;
+  H->obj->object_sid = object_sid;
+  memcpy(H->obj->r,r,4*sizeof(double));
+  H->obj->color=color;
+  H->obj->thickness=thickness;
+  H->obj->background=background;
+  H->obj->n_locks=n_locks;
+  H->obj->locks = locks;
+  H->obj->hilited=hilited;
+  H->obj->show=show;
+  /* initial lock points */
+  H->obj->n_locks = 4 ;
+  if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
+  for (i=0; i < H->obj->n_locks ; i++) 
+    {
+      H->obj->locks[i].port.object_id = NULL; 
+      H->obj->locks[i].port.object_sid = NULL; 
+    }
+  /* fix the relative position of the four initial locks */
+
+  /* 
+   * move the lock pos to the triangle head XXX !! 
+   */
+  H->obj->locks[0].type = LD_NORTH | L_EVIN ;
+  H->obj->locks[1].type = LD_SOUTH | L_EVOUT ;
+  H->obj->locks[2].type = LD_WEST | L_IN ;
+  H->obj->locks[3].type = LD_EAST | L_OUT ;
+  block_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=0,pt));
+  block_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
+  block_set_lock_pos_rel(H,2,(pt[0]=0.0,pt[1]=0.5,pt));
+  block_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
+  if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
+  return H;
+}
+
+NspBlock *nsp_block_create_default(char *name)
+{
+ NspBlock *H  = nsp_block_create_void(name,NULL);
+ if ( H ==  NULLBLOCK) return NULLBLOCK;
+  if ( nsp_block_create_partial(H) == FAIL) return NULLBLOCK;
+ if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
+ return H;
+}
+%%
+override_destroy_prelim Block
+  /* verbatim in destroy */
+     int i;
+     for ( i = 0 ; i <  H->obj->n_locks ;i++)
+       {
+	 block_unlock(H,i);
+       }
+     FREE(H->obj->locks);
+
+%%
 override-intcreate Block 
 
 /* override the default int_create */

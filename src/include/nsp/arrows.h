@@ -57,8 +57,8 @@ NspTypeArrows *new_type_arrows(type_mode mode);
 NspArrows *new_arrows();
 
 /*
-* Object methods redefined for arrows 
-*/
+ * Object methods redefined for arrows 
+ */
 
 
 #define NULLARROWS (NspArrows*) 0

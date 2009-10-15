@@ -58,8 +58,8 @@ NspTypeClassARef *new_type_classaref(type_mode mode);
 NspClassARef *new_classaref();
 
 /*
-* Object methods redefined for classaref 
-*/
+ * Object methods redefined for classaref 
+ */
 
 
 #define NULLCLASSAREF (NspClassARef*) 0
