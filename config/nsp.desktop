@@ -7,7 +7,7 @@ Exec=/usr/bin/nsp
 Icon=/usr/lib/nsp/config/tumbi48.png
 Terminal=false
 Type=Application
-Categories=Development;Math;Science;
+Categories=Education;Science;Math;
 StartupNotify=false
 
 
