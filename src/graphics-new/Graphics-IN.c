@@ -7346,7 +7346,6 @@ static OpTab GraphicsUtil_func[]={
   {"TCL_CreateSlave", 	int_tcl_CreateSlave},
   {"TCL_ExistInterp", 	int_tcl_ExistInterp},
 #endif 
-
   {"ode",int_ode}, /* FIXME: en construction */
   {"intg",int_intg}, /* FIXME: en construction */
   {"int2d",int_int2d}, /* FIXME: en construction */
@@ -7357,8 +7356,9 @@ static OpTab GraphicsUtil_func[]={
   {"switch_graphics",int_switch_graphics},
   {"new_graphics",int_new_graphics},
 #ifdef TEST_EVENT_BOX_THREAD
-  {"gtk_test_loop" int_gtk_loop},
+  {"gtk_test_loop", int_gtk_loop},
 #endif 
+  {(char *) 0, NULL}
 };
 
 int GraphicsUtil_Interf(int i, Stack stack, int rhs, int opt, int lhs)
@@ -7465,7 +7465,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xtitle"),int_xtitle},
   {NAMES("scicos_draw3D"), int_scicos_draw3D},
   {NAMES("scicos_lock_draw"), int_lock_draw},
-  {(char *) 0,(char *) 0, NULL}
+  {(char *) 0, NULL}
 };
 
 int Graphics_Interf(int i, Stack stack, int rhs, int opt, int lhs)
