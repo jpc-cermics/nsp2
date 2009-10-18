@@ -7037,7 +7037,7 @@ OpGrTab GraphicsOld_func[]={
   {NAMES("scicos_lock_draw" ),int_lock_draw},
   {NAMES("xtest_graphic" ), int_xtest},
   {NAMES("xcursor" ), int_xcursor},
-  {(char *) 0,(char *) 0, NULL}
+  {(char *) 0, NULL}
 };
 
 int GraphicsOld_Interf(int i, Stack stack, int rhs, int opt, int lhs)
