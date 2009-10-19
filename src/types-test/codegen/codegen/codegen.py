@@ -1236,7 +1236,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            if opt != 'hidden' :
+            if opt != 'zz_hidden' :
                 str = str + handler.attr_write_save(ftype,fname,varname,self.byref, pdef , psize, pcheck)
         father = self.objinfo.parent
         if father != 'Object':
@@ -1310,7 +1310,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            if opt != 'hidden' :
+            if opt != 'zz_hidden' :
                 str = str + handler.attr_write_load(ftype,fname,varname,self.byref, pdef, psize, pcheck)
 
         if father != 'Object':

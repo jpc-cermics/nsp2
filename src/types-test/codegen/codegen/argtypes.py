@@ -601,14 +601,14 @@ class DoublePointerArg(ArgType):
 
     def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
         str = '  if (nsp_xdr_save_i(xdrs, %s->%s_length) == FAIL) return FAIL;\n' % (varname,pname)
-        str = str + '  if (nsp_xdr_save_array_i(xdrs, %s->%s, %s->%s_length) == FAIL) return FAIL;\n' % (varname,pname,varname,pname)
+        str = str + '  if (nsp_xdr_save_array_d(xdrs, %s->%s, %s->%s_length) == FAIL) return FAIL;\n' % (varname,pname,varname,pname)
         return str
 
     def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
         str= '  if (nsp_xdr_load_i(xdrs,&(%s->%s_length)) == FAIL) return NULL;\n'  % (varname,pname)
         str= str + '  if ((%s->%s = malloc(%s->%s_length*sizeof(double)))== NULL) return NULL;\n' % (varname,pname,varname,pname)
-        str= str + '  if (nsp_xdr_load_array_i(xdrs,%s->%s,%s->%s_length) == FAIL) return NULL;\n'  % (varname,pname,varname,pname)
+        str= str + '  if (nsp_xdr_load_array_d(xdrs,%s->%s,%s->%s_length) == FAIL) return NULL;\n'  % (varname,pname,varname,pname)
         return str 
 
     def attr_write_create_call(self, ftype,fname,opt,pdef,psize,pcheck,flag):
@@ -1513,11 +1513,15 @@ class StructArg(ArgType):
         
     def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be reloaded """
+        lname = 'n_'+ pname
         if byref == 't' :
             pname = 'obj->'+pname
+            lname = 'obj->'+lname
         if ptype[-1] == '*':
             ptype1 = ptype.rstrip('*');
-            return '  if ( nsp_load_%s(xdrs,M->%s,M) == FAIL ) return NULL;\n' % (ptype1,pname)
+            str = '  if (( M->%s = malloc(M->%s*sizeof(%s))) == NULL )\n ' % (pname,lname,ptype1) 
+            str = str + '    return NULL;\n'
+            return str + '  if ( nsp_load_%s(xdrs,M->%s,M) == FAIL ) return NULL;\n' % (ptype1,pname)
         else:
             return '  if ( nsp_load_%s(xdrs,&M->%s,M) == FAIL ) return NULL;\n' % (ptype,pname)
         
@@ -1535,13 +1539,15 @@ class StructArg(ArgType):
     def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be printed """
         pname1=pname
+        # varname here already contains ->obj 
+        vn = varname.rstrip('->obj');
         if byref == 't' :
             pname = 'obj->'+pname
         if ptype[-1] == '*':
             ptype1 = ptype.rstrip('*');
-            return  '  nsp_print_%s(indent+2,%s->%s,%s);\n' % (ptype1,varname,pname,varname)
+            return  '  nsp_print_%s(indent+2,%s->%s,%s);\n' % (ptype1,vn,pname,vn)
         else:
-            return  '  nsp_print_%s(indent+2,&%s->%s,%s);\n' % (ptype,varname,pname,varname)
+            return  '  nsp_print_%s(indent+2,&%s->%s,%s);\n' % (ptype,vn,pname,vn)
 
     def attr_write_init(self,ptype, pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """
