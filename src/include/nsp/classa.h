@@ -7,6 +7,15 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/classa.override"
+
+typedef struct _hfoo hfoo;
+struct _hfoo {
+  int a;
+  double *val;
+};
+
+#line 19 "./classa.h"
 /* NspClassA */
 
 #include <nsp/object.h>
@@ -18,14 +27,14 @@
 typedef struct _NspClassA NspClassA ;
 typedef struct _NspTypeClassA NspTypeClassA ;
 
-#line 22 "./classa.h"
+#line 31 "./classa.h"
 
 struct _NspTypeClassA {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./classa.h"
+#line 38 "./classa.h"
 };
 
 struct _NspClassA {
@@ -83,13 +92,13 @@ extern int int_classa_create(Stack stack, int rhs, int opt, int lhs);
 extern NspClassA *nsp_classa_xdr_load_partial(XDR *xdrs, NspClassA *M);
 extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
 
-#line 4 "codegen/classa.override"
+#line 13 "codegen/classa.override"
 
 /* inserted at the end of public part of include file
  * of classa.h
  */
 
-#line 93 "./classa.h"
+#line 102 "./classa.h"
 #endif /* NSP_INC_NspClassA */ 
 
 #ifdef NspClassA_Private 
@@ -104,12 +113,12 @@ static AttrTab classa_attrs[];
 static NspMethods *classa_get_methods(void);
 /* static int int_classa_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspClassA *nsp_classa_create_void(char *name,NspTypeBase *type);
-#line 11 "codegen/classa.override"
+#line 20 "codegen/classa.override"
 
 /* inserted in the private part of include file
  * of classa.h
  */
 
-#line 114 "./classa.h"
+#line 123 "./classa.h"
 #endif /* NspClassA_Private */
 

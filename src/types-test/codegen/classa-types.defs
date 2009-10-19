@@ -1,5 +1,16 @@
 ;; -*- scheme -*-
 
+(define-struct hfoo
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "hfoo")
+  (fields
+   '("int" "a" )
+   '("NspMatrix*" "val")
+   )
+  (gtype-id "hfoo")
+)
+
 (define-object ClassA
   (in-module "ClassA")
   (parent "Object")
@@ -15,12 +26,20 @@
    '("NspMatrix*" "cla_val")
    '("NspBMatrix*" "cla_bval")
    '("NspList*" "cla_lval")
+   ;;'("hfoo*" "zz" "hidden")
+   ;;'("hfoo" "xx" "hidden" )
    ;; a double array of fixed size 
    ;; ("double[]" "name" "std"|"hidden "default-init" "size: an integer" "check_val: code to check the set" )   
    ;; '("double[]" "xxdaf" "std" "{8,9,10}" "5" "check_val" )   
    )
   (gtype-id "ClassA")
 )
+
+
+
+
+
+
 
 
 

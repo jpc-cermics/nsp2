@@ -1,5 +1,14 @@
 /* -*- Mode: C -*- */
 %%
+include-start ClassA
+
+typedef struct _hfoo hfoo;
+struct _hfoo {
+  int a;
+  double *val;
+};
+
+%%
 include-public ClassA
 
 /* inserted at the end of public part of include file

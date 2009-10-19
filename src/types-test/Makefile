@@ -8,7 +8,8 @@ GRAPHICS= figure.o axes.o polyline.o curve.o graphic.o groot.o gmatrix.o \
 	vfield.o contour.o grarc.o grrect.o arrows.o segments.o surf.o \
 	box3d.o objs3d.o points3d.o polyhedron.o polyline3d.o spolyhedron.o \
 	string3d.o grstring.o compound.o gmatrix1.o fec.o qcurve.o contour3d.o \
-	block.o
+	block.o 
+
 
 OBJSC = classa.o classb.o classc.o classaref.o classbref.o \
 	clip.o Math.o gr_alloc.o Format.o dsearch.o \

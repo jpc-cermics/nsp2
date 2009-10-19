@@ -876,6 +876,234 @@ class Wrapper:
             else:
                 substdict[slot] = '0'
 
+
+    def write_struct(self):
+        # for struct fields which are not embeded in Nsp class
+        self.fp.write('\n/* ----------- ' + self.objinfo.c_name + ' ----------- */\n\n')
+        substdict = self.get_initial_class_substdict()
+        # name used for local variables
+        substdict['var_loc1'] = self.var_loc1
+        substdict['var_loc2'] = self.var_loc2
+
+        if self.overrides.modulename:
+            classname = '%s.%s' % (self.overrides.modulename,self.objinfo.name)
+        else:
+            classname = self.objinfo.name
+
+        substdict['classname'] = classname 
+        typename = self.objinfo.c_name
+        typename_nn = self.objinfo.name
+        substdict['typecode'] =  self.objinfo.typecode
+        substdict['typename'] =  typename
+        # typename but not the c_name 
+        substdict['typename_nn'] =  typename_nn
+        substdict['typename_dc'] = string.lower(self.objinfo.name)
+        substdict['typename_uc'] = string.upper(self.objinfo.name)
+        substdict['parent'] = self.objinfo.parent
+        substdict['parent_dc'] = string.lower(self.objinfo.parent)
+        substdict['tp_getattr_def'] = 'int_get_attribute';
+        substdict['tp_setattr_def'] = 'int_set_attribute';
+
+        # check if some slots are overriden and add them in substdict
+        # tp_setattr and tp_getattr 
+        
+        for slot in self.slots_list:
+            if substdict.has_key(slot) and substdict[slot] != '0':
+                continue
+            slotname = '%s.%s' % (self.objinfo.c_name, slot)
+            slotfunc = '_wrap_%s_%s' % (self.get_lower_c_name(), slot)
+            if slot[:6] == 'tp_as_':
+                slotfunc = '&' + slotfunc
+            if self.overrides.slot_is_overriden(slotname):
+                substdict[slot] = slotfunc
+                self.fp.write('static int %s(Stack stack, int rhs, int opt, int lhs);\n' %substdict[slot]);
+            else:
+                if substdict.has_key(slot+'_def'): 
+                    substdict[slot] = substdict[slot+'_def']
+                else:
+                    substdict[slot] = '0'
+
+        # this can be used to change the tp_setattr and tp_getattr functions.
+        # if self.objinfo.is_interface == 't' :
+        str = ''
+        substdict['implements'] = ''
+        # insert fields related code in subst dictionary
+        # fields_copy: used in create function 
+        substdict['fields_copy'] = self.build_copy_fields('H','')
+        # for create default
+        substdict['fields_copy_default'] = self.build_copy_fields_default('H')
+        # fields_copy: used in copy function 
+        substdict['fields_copy_self'] = self.build_copy_fields('H','self')
+        # fields_copy: used in full copy function 
+        substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self')
+        # give the sequence of parameters to be inserted in _create function
+        substdict['fields_list'] = self.build_list_fields('')
+        # unused 
+        substdict['fields_call'] = self.build_list_fields('call')
+        # for the save function 
+        substdict['fields_save'] = self.build_save_fields('M')
+        # for the load function 
+        substdict['fields_load'] = self.build_load_fields('M')
+        substdict['fields_info'] = self.build_info_fields('M')
+        substdict['fields_print'] = self.build_print_fields('M','print')
+        substdict['fields_latex'] = self.build_print_fields('M','latex')
+        substdict['fields_init'] = self.build_init_fields('Obj')
+        # used in int_xxx_create interface 
+        substdict['fields_from_attributes'] = self.build_fields_from_attributes('H')
+        substdict['fields_defval'] = self.build_defval_fields('H')
+        substdict['fields_free1'] = self.build_fields_free1('H')
+        substdict['fields_free2'] = self.build_fields_free2('H')
+        substdict['fields_equal'] = self.build_equal_fields('H')
+        substdict['create_partial'] = self.build_create_partial('H')
+        substdict['copy_partial'] = self.build_copy_partial('H')
+        substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
+        # used to insert verbatim code in int_xxx_create
+        # just before returning object 
+        substdict['int_create_final'] = self.build_int_create_final('H')
+        # fields for declaration 
+        substdict['fields'] = self.build_fields()
+        # methods to be inserted in the class declaration 
+        substdict['internal_methods'] = self.build_internal_methods()
+        # prototypes for the class methods 
+        substdict['internal_methods_proto'] = self.build_internal_methods_protos()
+        substdict['fields_ref'] = self.build_fields_ref()
+        if self.byref != 't' :
+            substdict['ref_count']= ''
+            substdict['ref_count_ref']= ''
+        else:
+            # if we are a by ref object print the ref counter 
+            substdict['ref_count']= '(nref=%d)'
+            substdict['ref_count_ref']= ',M->obj->ref_count'
+        # insert the end of type defintion 
+        # insert override code for save_load 
+        if self.overrides.part_save_load_is_overriden(typename_nn):
+            slot = '%s_save_load' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_save_load(typename_nn))
+            self.fp.resetline()
+        else:
+            # insert the code for save
+            self.fp.write(self.type_tmpl_save % substdict)
+            # insert the code for load 
+            self.fp.write(self.type_tmpl_load_1 % substdict)
+            substdict['ret']= 'NULL'
+            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+            self.fp.resetline()
+            self.fp.write(self.type_tmpl_load_2 % substdict)
+
+        # destroy code 
+        self.fp.write(self.type_tmpl_delete % substdict)
+
+        if self.overrides.part_destroy_is_overriden(typename_nn):
+            stn = 'destroy_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_destroy(typename_nn))
+            self.fp.resetline()
+
+        self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
+        # insert the end of type definition 
+        # i.e a set of functions used for writing interfaces 
+        self.fp.write(self.type_tmpl_interface_util % substdict)
+        # code for create 
+
+        self.fp.write(self.type_tmpl_create_header % substdict)
+        if self.overrides.part_create_is_overriden(typename_nn):
+            slot = '%s_create' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_create(typename_nn))
+            self.fp.resetline()
+        else:
+            # insert the code for create
+            self.fp.write(self.type_tmpl_create % substdict)
+
+        # code for copy 
+        self.fp.write(self.type_tmpl_copy_1 % substdict)
+        substdict['ret']= 'NULL'
+        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+        self.fp.resetline()
+        self.fp.write(self.type_tmpl_copy_2 % substdict)
+
+        # write the int_create inteface 
+        if self.overrides.part_intcreate_is_overriden(typename_nn):
+            slot = '%s_intcreate' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_intcreate(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_intcreate % substdict)
+            substdict['ret']= 'RET_BUG'
+            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
+            self.fp.resetline()
+            self.fp.write(self.type_tmpl_intcreate_last % substdict)
+
+        # write a header file for class object
+        outheadername = './' + string.lower(self.objinfo.name) + '.h'
+        self.fhp = FileOutput(open(outheadername, "w"),outheadername)
+        self.fhp.write(self.type_header_01 %substdict)
+        # include start code from override 
+        hname = self.objinfo.name+'.include_start'
+        if self.overrides.include_start_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_start_override(hname))
+            self.fhp.resetline()
+        # 
+        self.fhp.write(self.type_header_1 %substdict)
+        self.fhp.write('%(internal_methods_proto)s' %substdict)
+        self.fhp.resetline()
+        self.fhp.write(self.type_header_2 %substdict)
+        self.fhp.write(' %(internal_methods)s\n' %substdict)
+        self.fhp.resetline()
+        self.fhp.write(self.type_header_3 %substdict)
+        # insert part from .override 
+        hname = self.objinfo.name+'.include_public'
+        if self.overrides.include_public_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_public_override(hname))
+            self.fhp.resetline()
+        self.fhp.write(self.type_header_31 %substdict)
+        hname = self.objinfo.name+'.include_private'
+        if self.overrides.include_private_is_overriden(hname):
+            lineno, filename = self.overrides.getstartline(hname)
+            self.fhp.setline(lineno,'codegen/'+ filename)
+            self.fhp.write(self.overrides.include_private_override(hname))
+            self.fhp.resetline()
+        self.fhp.write(self.type_header_4 %substdict)
+
+        self.fhp.close() 
+        
+        substdict['tp_init'] = self.write_constructor()
+
+        self.fp.write( '/*-------------------------------------------\n')
+        self.fp.write( ' * Methods\n')
+        self.fp.write( ' *-------------------------------------------*/\n')
+
+        substdict['tp_methods'] = self.write_methods()
+        substdict['tp_getset'] = self.write_getsets()
+
+        # handle slots ...
+        for slot in self.slots_list:
+            #if substdict.has_key(slot) and substdict[slot] != '0':
+            #    continue
+            slotname = '%s.%s' % (self.objinfo.c_name, slot)
+            slotfunc = '_wrap_%s_%s' % (self.get_lower_c_name(), slot)
+            if slot[:6] == 'tp_as_':
+                slotfunc = '&' + slotfunc
+            if self.overrides.slot_is_overriden(slotname):
+                lineno, filename = self.overrides.getstartline(slotname)
+                self.fp.setline(lineno,'codegen/'+ filename)
+                self.fp.write(self.overrides.slot_override(slotname))
+                self.fp.resetline()
+                self.fp.write('\n\n')
+                substdict[slot] = slotfunc
+            else:
+                substdict[slot] = '0'
+
     def build_fields(self):
         if self.byref == 't' :
             str =  'nsp_%s *obj;\n' % string.lower(self.objinfo.name)
@@ -951,7 +1179,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref, pdef , psize, pcheck)
+            str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,self.byref, pdef , psize, pcheck)
         return str
 
     def build_copy_fields_default(self,left_varname):
@@ -992,7 +1220,7 @@ class Wrapper:
         if self.objinfo.fields:
             for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
                 handler = argtypes.matcher.get(ftype)
-                str = str + handler.attr_write_copy( fname,left_varname,right_varname,self.byref,pdef,psize,pcheck)
+                str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,self.byref,pdef,psize,pcheck)
         str = str + '  return H;\n' \
             '}\n\n'  
         return str
@@ -1009,7 +1237,7 @@ class Wrapper:
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             if opt != 'hidden' :
-                str = str + handler.attr_write_save( fname,varname,self.byref, pdef , psize, pcheck)
+                str = str + handler.attr_write_save(ftype,fname,varname,self.byref, pdef , psize, pcheck)
         father = self.objinfo.parent
         if father != 'Object':
             str = str + '  if ( nsp_%s_xdr_save(xdrs, (%s *) M)== FAIL) return FAIL;\n' % (string.lower(father),'Nsp'+father)
@@ -1027,7 +1255,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_info( fname,varname,self.byref)
+            str = str + handler.attr_write_info(ftype, fname,varname,self.byref)
         return str
 
     def build_print_fields(self,varname,print_mode):
@@ -1044,7 +1272,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_print( fname,varname,self.byref,print_mode, pdef , psize, pcheck)
+            str = str + handler.attr_write_print(ftype, fname,varname,self.byref,print_mode, pdef , psize, pcheck)
         if father != 'Object':
             str = str + '  nsp_%s_%s((%s *) M,indent+2,NULL,rec_level);\n'  % (string.lower(father),print_mode,'Nsp'+father)
         return str
@@ -1061,7 +1289,7 @@ class Wrapper:
             return str 
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_init( fname,varname, self.byref, pdef, psize, pcheck )
+            str = str + handler.attr_write_init(ftype, fname,varname, self.byref, pdef, psize, pcheck )
         return str 
     
     def build_load_fields(self,varname):
@@ -1083,7 +1311,7 @@ class Wrapper:
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             if opt != 'hidden' :
-                str = str + handler.attr_write_load( fname,varname,self.byref, pdef, psize, pcheck)
+                str = str + handler.attr_write_load(ftype,fname,varname,self.byref, pdef, psize, pcheck)
 
         if father != 'Object':
             str = str + '  if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;\n'
@@ -1108,7 +1336,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            # str = str + handler.attr_check_null( fname,varname,self.byref)
+            # str = str + handler.attr_check_null(ftype, fname,varname,self.byref)
         return str
 
     def build_defval_fields(self,varname):
@@ -1124,7 +1352,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str +  handler.attr_write_defval( fname,varname,self.byref, pdef , psize, pcheck)
+            str = str +  handler.attr_write_defval(ftype,fname,varname,self.byref, pdef , psize, pcheck)
         if father != 'Object':
             str = str + '  nsp_%s_check_values((%s *) H);\n'  % (string.lower(father),'Nsp'+father)
         return str
@@ -1157,7 +1385,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_free_fields( fname,varname,self.byref)
+            str = str + handler.attr_free_fields(ftype,fname,varname,self.byref)
         if self.byref == 't':
             str = str + '    FREE(%s);\n   }\n'  % (varname)
         return str
@@ -1183,7 +1411,7 @@ class Wrapper:
                 return str 
             for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
                 handler = argtypes.matcher.get(ftype)
-                str = str + handler.attr_write_init( fname,varname+'->obj', self.byref, pdef, psize, pcheck )
+                str = str + handler.attr_write_init(ftype,fname,varname+'->obj', self.byref, pdef, psize, pcheck )
         return str
             
     def build_copy_partial(self,varname):
@@ -1234,7 +1462,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_equal_fields( fname,varname,self.byref, pdef, psize, pcheck)
+            str = str + handler.attr_equal_fields(ftype,fname,varname,self.byref, pdef, psize, pcheck)
         return str
 
     def write_function_wrapper(self, function_obj, template,
@@ -1892,7 +2120,7 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
         wrapper = NspInterfaceWrapper(parser, interface, overrides, fp)
         wrapper.write_class()
         fp.write('\n')
-
+        
     for obj in parser.objects:
         if obj.byref == 't':
             wrapper = NspObjectWrapper(parser, obj, overrides, fp,obj.byref)
@@ -1905,10 +2133,26 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
                              { 'name':  constructor,
                                'cname': '_wrap_' + constructor })
         fp.write('\n')
-    #   
+
+    # structs 
+    # voir si on veut generer du code pour cela XXX
+
+#     for obj in parser.structs:
+#         wrapper = NspObjectWrapper(parser, obj, overrides, fp, 'f')
+#         wrapper.write_struct()
+#         constructor = wrapper.constructor_func
+#         if constructor != '':
+#             functions.append(wrapper.funcdef_tmpl %
+#                              { 'name':  constructor,
+#                                'cname': '_wrap_' + constructor })
+#         fp.write('\n')
+
+    # functions 
+    # 
     wrapper = Wrapper(parser, None, overrides, fp)
     wrapper.write_functions(prefix,functions)
 
+    # enums 
     write_enums(parser, prefix, fp)
 
 #     fp.write('/* intialise stuff extension classes */\n')
@@ -1982,6 +2226,8 @@ def register_types(parser):
         argtypes.matcher.register_boxed(boxed.c_name, boxed.typecode)
     for pointer in parser.pointers:
         argtypes.matcher.register_pointer(pointer.c_name, pointer.typecode)
+    for struct in parser.structs:
+        argtypes.matcher.register_struct(struct.c_name, struct.typecode)
     for obj in parser.objects:
         argtypes.matcher.register_object(obj.c_name,obj.name, obj.parent, obj.typecode)
     for enum in parser.enums:

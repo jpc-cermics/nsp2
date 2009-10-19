@@ -234,6 +234,13 @@ clean ::
 	    --prefix Block block.defs) > $*.c \
 	&& mv block.h ../../include/nsp 
 
+../diagram.c : diagram.defs  diagram.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --register ./graphic-types.defs \
+	    --override diagram.override \
+	    --prefix Diagram diagram.defs) > $*.c \
+	&& mv diagram.h ../../include/nsp 
+
 ../interface.c : interface.defs codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	   	 \
