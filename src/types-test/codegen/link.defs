@@ -1,0 +1,82 @@
+;; -*- scheme -*-
+
+(define-objectref Link
+  (in-module "Link")
+  (parent "Graphic")
+  (c-name "NspLink")
+  (implements "GRint")
+  (fields
+   '("nspgframe*" "frame" "hidden" ) 
+   '("void*" "object_sid" "hidden")
+   '("int" "color")
+   '("int" "thickness")
+   '("int" "background")
+   '("NspMatrix*" "poly")
+   '("grl_lock" "lock1" "hidden" ) 
+   '("grl_lock" "lock2" "hidden" ) 
+   '("gboolean" "hilited" "std" "FALSE") 
+   '("gboolean"  "show" "std" "TRUE")   
+  )
+  (gtype-id "Link")
+)
+
+(define-struct grl_lock 
+  (in-module "Link")
+  (parent "Graphic")
+  (c-name "grl_lock")
+  (gtype-id "grl_lock")
+)
+
+(define-pointer nspgframe 
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "nspgframe")
+  (gtype-id "nspgframe")
+)
+
+
+;; just for the name, the code is overwritten 
+
+(define-function extractelts_lock
+  (c-name "nsp_extractelts_lock")
+  (return-type "none")
+)
+(define-function setrowscols_lock
+  (c-name "nsp_setrowscols_lock")
+  (return-type "none")
+)
+
+;; just to give a name the code is overriden 
+;; 
+
+(define-method translate
+  (of-object "Link")
+  (c-name "link_translate")
+  (return-type "int")
+  )
+
+(define-method set_pos
+  (of-object "Link")
+  (c-name "link_set_pos")
+  (return-type "int")
+  )
+
+(define-method resize
+  (of-object "Link")
+  (c-name "link_resize")
+  (return-type "int")
+  )
+
+(define-method draw
+  (of-object "Link")
+  (c-name "link_draw")
+  (return-type "int")
+  )
+
+(define-method connect
+  (of-object "Link")
+  (c-name "link_connect")
+  (return-type "int")
+  )
+
+

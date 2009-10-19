@@ -22,7 +22,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
-	../fec.c  ../contour3d.c ../block.c 
+	../fec.c  ../contour3d.c ../block.c ../link.c
 
 all:: $(ALL)
 	cd ../; make all
@@ -233,6 +233,13 @@ clean ::
 	    --override block.override \
 	    --prefix Block block.defs) > $*.c \
 	&& mv block.h ../../include/nsp 
+
+../link.c : link.defs  link.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --register ./graphic-types.defs \
+	    --override link.override \
+	    --prefix Link link.defs) > $*.c \
+	&& mv link.h ../../include/nsp 
 
 ../diagram.c : diagram.defs  diagram.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \

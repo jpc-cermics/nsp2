@@ -86,22 +86,30 @@ extern NspLink *link_create(char *name,NspMatrix *D,int color,int thickness, Nsp
 #endif
 
 
-#ifdef Link_Private 
+#ifdef NspLink_Private 
 static int init_link(NspLink *ob,NspTypeLink *type);
-static int link_size(NspLink *Mat, int flag);
-static char *link_type_as_string(void);
-static char *link_type_short_string(NspObject *v);
-static int link_eq(NspLink *A, NspObject *B);
-static int link_neq(NspLink *A, NspObject *B);
-static int link_xdr_save(XDR  *F, NspLink *M);
-static NspLink  *link_xdr_load(XDR  *F);
+static int nsp_link_size(NspLink *Mat, int flag);
+static char *nsp_link_type_as_string(void);
+static char *nsp_link_type_short_string(NspObject *v);
+static int nsp_link_eq(NspLink *A, NspObject *B);
+static int nsp_link_neq(NspLink *A, NspObject *B);
+static int nsp_link_xdr_save(XDR  *F, NspLink *M);
+static NspLink  *nsp_link_xdr_load(XDR  *F);
 static AttrTab link_attrs[];
-static NspLink *link_object (NspObject *O); 
-static NspLink *link_copy (NspLink *H); 
-static void link_destroy (NspLink *H); 
-static int link_info (NspLink *H, int indent,char *name, int rec_level); 
-static int link_print (NspLink *H, int indent,char *name, int rec_level); 
+static NspLink *nsp_link_object (NspObject *O); 
+static NspLink *nsp_link_copy (NspLink *H); 
+static void nsp_link_destroy (NspLink *H); 
+static int nsp_link_info (NspLink *H, int indent,char *name, int rec_level); 
+static int nsp_link_print (NspLink *H, int indent,char *name, int rec_level); 
+static int nsp_link_latex (NspLink *H, int indent,char *name, int rec_level); 
 static NspMethods *link_get_methods(void);
+
+/* set of method for parent class graphic  */
+static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_link(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_link(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_link(BCG *Xgc,NspGraphic *o,double *alpha);
+static int nsp_getbounds_link(BCG *Xgc,NspGraphic *o,double *bounds);
 
 static int link_get_hilited (NspLink *B); 
 static void link_set_hilited (NspLink *B, int val); 
@@ -135,5 +143,6 @@ static NspLink * link_full_copy( NspLink *L);
 
 static int int_link_create(Stack stack, int rhs, int opt, int lhs);
 static void link_set_frame( NspBlock *B, NspGFrame *Gf);
+static void link_unlock( NspLink *L,int lp) ;
 
 #endif /* Link_Private */
