@@ -12,12 +12,12 @@
 )
 
 
-(define-pointer grb_lock 
-  (in-module "Block")
-  (parent "Graphic")
-  (c-name "grb_lock")
-  (gtype-id "grb_lock")
-)
+;; (define-pointer grb_lock 
+;;   (in-module "Block")
+;;   (parent "Graphic")
+;;   (c-name "grb_lock")
+;;   (gtype-id "grb_lock")
+;; )
 
 
 

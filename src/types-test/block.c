@@ -24,7 +24,7 @@
 
 
 
-#line 111 "codegen/block.override"
+#line 122 "codegen/block.override"
 
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
@@ -106,7 +106,7 @@ NspTypeBlock *new_type_block(type_mode mode)
 
   type->init = (init_func *) init_block;
 
-#line 126 "codegen/block.override"
+#line 137 "codegen/block.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
@@ -126,7 +126,7 @@ NspTypeBlock *new_type_block(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 138 "codegen/block.override"
+#line 149 "codegen/block.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
@@ -277,7 +277,7 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
-#line 172 "codegen/block.override"
+#line 183 "codegen/block.override"
 
 /* code used to override the save/load functions */
 
@@ -285,31 +285,20 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
-int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M)
+int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
 {
-  int i;
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_block)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  /* the block */
   if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(M)) == FAIL) return FAIL;
   if ( nsp_xdr_save_array_d(xdrs,M->obj->r,4) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->color) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->thickness) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
-  /* the lock points */
   if ( nsp_xdr_save_i(xdrs,M->obj->n_locks) == FAIL) return FAIL;
-  for ( i = 0 ; i < M->obj->n_locks ; i++) 
-    {
-      grb_lock *lock= M->obj->locks+i;
-      if ( nsp_xdr_save_array_d(xdrs,lock->pt,2) == FAIL) return FAIL;
-      if ( nsp_xdr_save_array_d(xdrs,lock->ptr,2) == FAIL) return FAIL;
-      if ( nsp_xdr_save_i(xdrs,lock->type) == FAIL) return FAIL;
-      /* the port */
-      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(lock->port.object_id)) == FAIL) return FAIL;
-      if ( nsp_xdr_save_i(xdrs,lock->port.lock) == FAIL) return FAIL;
-      if ( nsp_xdr_save_i(xdrs,lock->port.port) == FAIL) return FAIL;
-    }
+  if ( nsp_save_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return FAIL;
   /* the upper class */
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
@@ -321,7 +310,7 @@ int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M)
 
 NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
 {
-  int fid,id,i;
+  int fid,id;
   char name[NAME_MAXL];
   if ((M->obj = calloc(1,sizeof(nsp_block))) == NULL) return NULL;
   M->obj->ref_count=1;
@@ -337,21 +326,7 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
   if ( M->obj->locks != NULL) FREE(M->obj->locks);
   if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) 
     return NULLBLOCK;
-  for ( i = 0 ; i < M->obj->n_locks ; i++) 
-    {
-      grb_lock *lock= M->obj->locks+i;
-      if ( nsp_xdr_load_array_d(xdrs,lock->pt,2) == FAIL) return NULLBLOCK;
-      if ( nsp_xdr_load_array_d(xdrs,lock->ptr,2) == FAIL) return NULLBLOCK;
-      if ( nsp_xdr_load_i(xdrs,&lock->type) == FAIL) return NULLBLOCK;
-      /* the port */
-      lock->port.object_id = NULLOBJ;
-      if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLBLOCK;
-      lock->port.object_sid = NSP_INT_TO_POINTER(id);
-      if ( nsp_xdr_load_i(xdrs,&lock->port.lock) == FAIL) return NULLBLOCK;
-      if ( nsp_xdr_load_i(xdrs,&lock->port.port) == FAIL) return NULLBLOCK;
-    }
-  
-  /* the upper class */
+  if ( nsp_load_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -373,7 +348,7 @@ NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
-#line 377 "block.c"
+#line 352 "block.c"
 /*
  * delete 
  */
@@ -384,16 +359,7 @@ void nsp_block_destroy_partial(NspBlock *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 366 "codegen/block.override"
-  /* verbatim in destroy */
-     int i;
-     for ( i = 0 ; i <  H->obj->n_locks ;i++)
-       {
-	 block_unlock(H,i);
-       }
-     FREE(H->obj->locks);
-
-#line 397 "block.c"
+  nsp_destroy_grb_lock(H->obj->locks,H);FREE(H->obj->locks);
     FREE(H->obj);
    }
 }
@@ -455,7 +421,7 @@ int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"background=%d\n",M->obj->background);
   Sciprintf1(indent+2,"n_locks=%d\n",M->obj->n_locks);
-  Sciprintf1(indent+2,"locks=%xl\n",M->obj->locks);
+  nsp_print_grb_lock(indent+2,M->obj->locks,M);
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -481,7 +447,7 @@ int nsp_block_latex(NspBlock *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"background=%d\n",M->obj->background);
   Sciprintf1(indent+2,"n_locks=%d\n",M->obj->n_locks);
-  Sciprintf1(indent+2,"locks=%xl\n",M->obj->locks);
+  nsp_print_grb_lock(indent+2,M->obj->locks,M);
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -535,7 +501,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspBlock instance 
  *-----------------------------------------------------*/
-#line 269 "codegen/block.override"
+#line 255 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -574,12 +540,11 @@ int nsp_block_create_partial(NspBlock *H)
 
 int nsp_block_check_values(NspBlock *H)
 {
+  if ( nsp_check_grb_lock(H->obj->locks,H) == FAIL ) return FAIL;
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
-static int lock_color=10;
 
 NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,gboolean show,NspTypeBase *type)
 {
@@ -631,7 +596,8 @@ NspBlock *nsp_block_create_default(char *name)
  if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
  return H;
 }
-#line 635 "block.c"
+
+#line 601 "block.c"
 /*
  * copy for gobject derived class  
  */
@@ -678,7 +644,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
   if ( H ==  NULLBLOCK) return NULLBLOCK;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
   if ( nsp_block_full_copy_partial(H,self)== NULL) return NULLBLOCK;
-#line 682 "block.c"
+#line 648 "block.c"
   return H;
 }
 
@@ -687,7 +653,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 376 "codegen/block.override"
+#line 356 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -740,11 +706,11 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 744 "block.c"
+#line 710 "block.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 471 "codegen/block.override"
+#line 451 "codegen/block.override"
 
 /* translate */
 
@@ -760,10 +726,10 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-#line 764 "block.c"
+#line 730 "block.c"
 
 
-#line 488 "codegen/block.override"
+#line 468 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -778,10 +744,10 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 782 "block.c"
+#line 748 "block.c"
 
 
-#line 504 "codegen/block.override"
+#line 484 "codegen/block.override"
 /* resize */ 
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -796,10 +762,10 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 800 "block.c"
+#line 766 "block.c"
 
 
-#line 459 "codegen/block.override"
+#line 439 "codegen/block.override"
 
 /* draw */
 
@@ -810,10 +776,10 @@ static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 814 "block.c"
+#line 780 "block.c"
 
 
-#line 520 "codegen/block.override"
+#line 500 "codegen/block.override"
 
 /* fix a lock point position 
  * in relative coordinates 
@@ -833,10 +799,10 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-#line 837 "block.c"
+#line 803 "block.c"
 
 
-#line 541 "codegen/block.override"
+#line 521 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -859,7 +825,7 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
 }
 
 
-#line 863 "block.c"
+#line 829 "block.c"
 
 
 static NspMethods block_methods[] = {
@@ -979,7 +945,7 @@ static AttrTab block_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 438 "codegen/block.override"
+#line 418 "codegen/block.override"
 
 extern function int_nspgraphic_extract;
 
@@ -988,10 +954,10 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 992 "block.c"
+#line 958 "block.c"
 
 
-#line 448 "codegen/block.override"
+#line 428 "codegen/block.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1001,7 +967,7 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1005 "block.c"
+#line 971 "block.c"
 
 
 /*----------------------------------------------------
@@ -1032,7 +998,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
   *f = Block_func[i].fonc;
 }
 
-#line 565 "codegen/block.override"
+#line 545 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -1855,4 +1821,68 @@ static NspBlock * block_full_copy( NspBlock *B)
 }
 
 
-#line 1859 "block.c"
+/* requested for grb_lock
+ *
+ */
+
+static void  nsp_destroy_grb_lock(grb_lock *locks,NspBlock *H)
+{
+  int i;
+  for ( i = 0 ; i <  H->obj->n_locks ;i++)
+    {
+      block_unlock(H,i);
+    }
+}
+
+static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
+{
+  int i;
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      grb_lock *lock= M->obj->locks+i;
+      if ( nsp_xdr_save_array_d(xdrs,lock->pt,2) == FAIL) return FAIL;
+      if ( nsp_xdr_save_array_d(xdrs,lock->ptr,2) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->type) == FAIL) return FAIL;
+      /* the port */
+      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(lock->port.object_id)) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->port.lock) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,lock->port.port) == FAIL) return FAIL;
+    }
+  return OK;
+}
+
+  
+static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
+{
+  int i,id;
+  if ( M->obj->locks != NULL) FREE(M->obj->locks);
+  
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      grb_lock *lock= M->obj->locks+i;
+      if ( nsp_xdr_load_array_d(xdrs,lock->pt,2) == FAIL) return FAIL;
+      if ( nsp_xdr_load_array_d(xdrs,lock->ptr,2) == FAIL) return FAIL;
+      if ( nsp_xdr_load_i(xdrs,&lock->type) == FAIL) return FAIL;
+      /* the port */
+      lock->port.object_id = NULLOBJ;
+      if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  FAIL;
+      lock->port.object_sid = NSP_INT_TO_POINTER(id);
+      if ( nsp_xdr_load_i(xdrs,&lock->port.lock) == FAIL) return FAIL;
+      if ( nsp_xdr_load_i(xdrs,&lock->port.port) == FAIL) return FAIL;
+    }
+  return OK;
+}
+
+static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M)
+{
+  return OK;
+}
+
+static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M)
+{
+  return OK;
+}
+
+
+
+#line 1889 "block.c"

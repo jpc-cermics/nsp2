@@ -171,6 +171,9 @@ static NspMethods *block_get_methods(void);
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
 #line 65 "codegen/block.override"
 
+static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
+static int lock_color=10;
+
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
@@ -214,6 +217,14 @@ static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
 static void block_set_frame( NspBlock *B, NspGFrame *Gf);
 
-#line 218 "./block.h"
+/* requested for grb_lock */
+
+static void nsp_destroy_grb_lock(grb_lock *locks,NspBlock *H);
+static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
+static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
+static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
+static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
+
+#line 229 "./block.h"
 #endif /* NspBlock_Private */
 

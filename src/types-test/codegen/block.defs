@@ -20,6 +20,15 @@
   (gtype-id "Block")
 )
 
+(define-struct grb_lock 
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "grb_lock")
+  (gtype-id "grb_lock")
+)
+
+
+
 ;; just for the name, the code is overwritten 
 
 (define-function extractelts_block
