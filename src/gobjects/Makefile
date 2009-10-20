@@ -5,7 +5,6 @@ SCIDIR1=..\..
 LIBRARY = nsp.a 
 
 OBJSC = rect.o \
-	link.o  \
 	grint.o \
 	frame.o \
 	connector.o \

@@ -8,7 +8,6 @@ SCIDIR1=..\..
 LIBRARY = nsp.lib 
 
 OBJSC = rect.obj \
-	link.obj  \
 	grint.obj \
 	frame.obj \
 	connector.obj \

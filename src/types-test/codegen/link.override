@@ -111,6 +111,7 @@ static int nsp_load_grl_lock(XDR *xdrs,grl_lock *locks,NspLink *M);
 static int nsp_print_grl_lock(int indent,grl_lock *locks,NspLink *M);
 static int nsp_check_grl_lock(grl_lock *locks,NspLink *M);
 static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
+static void nsp_init_grl_lock(grl_lock *locks);
 
 %%
 headers
@@ -267,15 +268,12 @@ int nsp_link_create_partial(NspLink *H)
   H->obj->ref_count=1;
   H->obj->frame = NULL;
   H->obj->object_sid = NULL;
-  {
-    double x_def[4]={0,0,0,0};
-    memcpy(H->obj->r,x_def,4*sizeof(double));
-  }
   H->obj->color = 0;
   H->obj->thickness = 0;
   H->obj->background = 0;
-  H->obj->n_locks = 0;
-  H->obj->locks = NULL;
+  H->obj->poly = NULLMAT;
+  nsp_init_grl_lock(&H->obj->lock1);
+  nsp_init_grl_lock(&H->obj->lock2);
   H->obj->hilited = FALSE;
   H->obj->show = TRUE;
   return OK;
@@ -283,50 +281,38 @@ int nsp_link_create_partial(NspLink *H)
 
 int nsp_link_check_values(NspLink *H)
 {
-  if ( nsp_check_grl_lock(H->obj->locks,H) == FAIL ) return FAIL;
+  if ( H->obj->poly == NULLMAT) 
+    {
+      if (( H->obj->poly = nsp_matrix_create("poly",'r',0,0)) == NULLMAT)
+	return FAIL;
+    }
+  if ( nsp_check_grl_lock(&H->obj->lock1,H) == FAIL ) return FAIL;
+  if ( nsp_check_grl_lock(&H->obj->lock2,H) == FAIL ) return FAIL;
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-
-NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grl_lock* locks,int hilited,gboolean show,NspTypeBase *type)
+NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type)
 {
-  double pt[2];
-  int i;
-  NspLink *H  = nsp_link_create_void(name,type);
-  if ( H ==  NULLLINK) return NULLLINK;
+ NspLink *H  = nsp_link_create_void(name,type);
+ if ( H ==  NULLLINK) return NULLLINK;
   if ( nsp_link_create_partial(H) == FAIL) return NULLLINK;
   H->obj->frame = frame;
   H->obj->object_sid = object_sid;
-  memcpy(H->obj->r,r,4*sizeof(double));
   H->obj->color=color;
   H->obj->thickness=thickness;
   H->obj->background=background;
-  H->obj->n_locks=n_locks;
-  H->obj->locks = locks;
+  if ( poly != NULL) 
+    {
+      if (( H->obj->poly = nsp_matrix_copy(poly))== NULLMAT) return NULLLINK;
+      if (nsp_object_set_name(NSP_OBJECT(H->obj->poly),"lpt") == FAIL) return NULLLINK;
+    }
+  H->obj->lock1 = lock1;
+  H->obj->lock2 = lock2;
+  H->obj->lock1.port.object_id = NULL;
+  H->obj->lock2.port.object_id = NULL;
   H->obj->hilited=hilited;
   H->obj->show=show;
-  /* initial lock points */
-  H->obj->n_locks = 4 ;
-  if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grl_lock))) == NULL ) return NULLLINK;
-  for (i=0; i < H->obj->n_locks ; i++) 
-    {
-      H->obj->locks[i].port.object_id = NULL; 
-      H->obj->locks[i].port.object_sid = NULL; 
-    }
-  /* fix the relative position of the four initial locks */
-
-  /* 
-   * move the lock pos to the triangle head XXX !! 
-   */
-  H->obj->locks[0].type = LD_NORTH | L_EVIN ;
-  H->obj->locks[1].type = LD_SOUTH | L_EVOUT ;
-  H->obj->locks[2].type = LD_WEST | L_IN ;
-  H->obj->locks[3].type = LD_EAST | L_OUT ;
-  link_set_lock_pos_rel(H,0,(pt[0]=0.5,pt[1]=0,pt));
-  link_set_lock_pos_rel(H,1,(pt[0]=0.5,pt[1]=1,pt));
-  link_set_lock_pos_rel(H,2,(pt[0]=0.0,pt[1]=0.5,pt));
-  link_set_lock_pos_rel(H,3,(pt[0]=1,pt[1]=0.5,pt));
   if ( nsp_link_check_values(H) == FAIL) return NULLLINK;
   return H;
 }
@@ -349,50 +335,23 @@ override-intcreate Link
 
 /* override the default int_create */
 
-
-static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
-{
-  NspMatrix *M1;
-  int i;
-  static double l[4];
-  switch ( rhs - opt ) 
-    {
-    case 1 :
-      if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-      CheckLength(NspFname(stack),1,M1,4);
-      *val = M1->R;
-      break;
-    case 4 :
-      for ( i = 1 ; i <= 4 ; i++) 
-	{
-	  if (GetScalarDouble(stack,i,l+i-1) == FAIL) return FAIL;
-	}
-      *val = l;
-      break;
-    default :
-      Scierror("%s: wrong number of rhs argumens (%d), rhs must be 1 or 4\r\n",NspFname(stack),rhs-opt);
-      return FAIL;
-    }
-  return OK;
-}
-
 int int_link_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspLink *H;
-  double *val=NULL;
-  int back=-1,color=-1,thickness=-1;
-
-  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
-		      { "color",s_int,NULLOBJ,-1},
+  NspMatrix *M1;
+  int color=-1,thickness=-1;
+  grl_lock l;
+  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
 		      { "thickness",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   CheckRhs(1,7);
 
-  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_link_create(NVOID,NULL,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
-     == NULLLINK) return RET_BUG;
+  if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
+  CheckCols(NspFname(stack),1,M1,2);
+  if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
+  if(( H = nsp_link_create(NVOID,NULL,NULL,color,thickness,0,M1,l,l,FALSE,TRUE,NULL)) 
+    == NULLLINK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -493,7 +452,9 @@ static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs
 %%
 override Link.link_connect kwargs
 
-static int _wrap_link_set_lock_pos(void  *self, Stack stack, int rhs, int opt, int lhs)
+static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj_port);
+
+static int _wrap_link_connect(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   int lock,lock_dest;
   NspBlock *L;
@@ -1449,7 +1410,12 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 static NspLink  *link_full_copy(NspLink *L)
 {
   NspLink *L1=NULLLINK;
-  if (( L1 = nsp_link_create(NVOID,L->obj->poly,L->obj->color,L->obj->thickness,NULL)) == NULLLINK) return NULLLINK;
+
+  extern NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type);
+
+  if (( L1 = nsp_link_create(NVOID,NULL,NULL,L->obj->color,L->obj->thickness,L->obj->background,
+			     L->obj->poly,L1->obj->lock1,L1->obj->lock2,L1->obj->hilited,
+			     L1->obj->show,    NULL)) == NULLLINK) return NULLLINK;
   L1->obj->object_sid = L;
   /* the lock points */
   L1->obj->lock1 = L->obj->lock1;
@@ -1558,5 +1524,11 @@ static int nsp_check_grl_lock(grl_lock *locks,NspLink *M)
 {
   return OK;
 }
+
+static void nsp_init_grl_lock(grl_lock *locks)
+{
+  
+}
+
 
 

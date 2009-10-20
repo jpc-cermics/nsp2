@@ -35,17 +35,6 @@
 )
 
 
-;; just for the name, the code is overwritten 
-
-(define-function extractelts_lock
-  (c-name "nsp_extractelts_lock")
-  (return-type "none")
-)
-(define-function setrowscols_lock
-  (c-name "nsp_setrowscols_lock")
-  (return-type "none")
-)
-
 ;; just to give a name the code is overriden 
 ;; 
 

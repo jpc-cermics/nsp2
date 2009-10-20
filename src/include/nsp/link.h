@@ -219,7 +219,8 @@ static int nsp_load_grl_lock(XDR *xdrs,grl_lock *locks,NspLink *M);
 static int nsp_print_grl_lock(int indent,grl_lock *locks,NspLink *M);
 static int nsp_check_grl_lock(grl_lock *locks,NspLink *M);
 static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
+static void nsp_init_grl_lock(grl_lock *locks);
 
-#line 224 "./link.h"
+#line 225 "./link.h"
 #endif /* NspLink_Private */
 
