@@ -1,0 +1,2511 @@
+/* -*- Mode: C -*- */
+%%
+include-public Diagram
+
+/* inserted at the end of public part of include file */
+extern NspDiagram *nsp_figure_get_axe_elts_as_diagram(char *name,NspFigure *F);
+/* extern NspGFrame *diagram_object(NspObject *O);  */
+extern int IsGFrameObj (Stack stack, int i); 
+extern NspGFrame *GetGFrameCopy (Stack stack, int i); 
+extern NspGFrame *GetGFrame (Stack stack, int i); 
+extern int IsGFrame (NspObject *O); 
+
+/* extern NspObject *diagram_path_extract (NspDiagram *H,int n, NspObject **Objs);  */
+extern void nsp_diagram_draw (NspDiagram *R); 
+extern int nsp_diagram_select_obj (NspDiagram *R, const double *pt, NspObject **Objs,NspObject *exclude); 
+extern int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
+extern int nsp_diagram_select_and_move (NspDiagram *R, const double *pt, int mask); 
+extern int nsp_diagram_select_and_hilite(NspDiagram *R,const double pt[2]);
+extern int nsp_diagram_select_and_toggle_hilite(NspDiagram *R,const double pt[2]);
+extern int nsp_diagram_move_obj (NspDiagram *R,NspObject *O, const double *pt, int stop, int cp,move_action  action ); 
+extern void nsp_diagram_unhilite_objs (NspDiagram *R, int draw); 
+extern void nsp_diagram_delete_hilited (NspDiagram *R); 
+extern NspObject* nsp_diagram_create_new_block(NspDiagram *R);
+extern NspObject* nsp_diagram_create_new_connector(NspDiagram *R);
+extern NspObject* nsp_diagram_create_new_link(NspDiagram *F);
+extern NspObject * nsp_diagram_create_new_gridblock(NspDiagram *F, int flag);
+extern int nsp_diagram_create_new_rect(NspDiagram *F);
+extern int  nsp_diagram_hilite_near_pt(NspDiagram *R,const double pt[2]);
+
+extern void nsp_diagram_locks_update(NspDiagram *R,NspObject *O);
+extern int nsp_diagram_select_and_split(NspDiagram *R,const double pt[2]);
+extern int nsp_diagram_select_link_and_add_control(NspDiagram *R,const double pt[2]);
+extern int nsp_diagram_select_link_and_remove_control(NspDiagram *R,const double pt[2]);
+
+extern NspObject * nsp_diagram_get_hilited(NspDiagram *R) ;
+extern void nsp_diagram_set_frame_field(NspDiagram *F);
+extern NspDiagram *nsp_diagram_full_copy( NspDiagram *F);
+extern NspDiagram *nsp_diagram_from_nspdiagram(char *name,BCG *Xgc, nsp_diagram *gf);
+extern void nsp_diagram_destroy (NspDiagram *H); 
+extern NspList *nsp_diagram_get_hilited_list(nsp_diagram *gf, int full_copy);
+extern int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double pt[2], int *click);
+extern int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int stop,int cp,
+				     move_action action, int *click);
+extern NspDiagram *nsp_diagram_hilited_full_copy( NspDiagram *F);
+
+%%
+include-private Diagram
+
+/* inserted in the private part of include file */
+
+static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_diagram(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_diagram(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_diagram(BCG *Xgc,NspGraphic *o,double *alpha);
+static int nsp_getbounds_diagram(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
+static void nsp_diagram_link_figure(NspGraphic *G, void *F);
+static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
+static NspList *nsp_diagram_children(NspGraphic *Obj);
+typedef enum _list_move_action list_move_action; 
+enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
+static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action);
+static void nspdiagram_recompute_pointers(nsp_diagram *gf);
+static void nsp_diagram_list_recompute_pointers(NspList *L);
+
+static int init_diagram(NspDiagram *ob,NspTypeDiagram *type);
+static int nsp_diagram_size(NspDiagram *Mat, int flag);
+static char *nsp_diagram_type_as_string(void);
+static char *nsp_diagram_type_short_string(NspObject *v);
+static int nsp_diagram_eq(NspDiagram *A, NspObject *B);
+static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
+static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
+static NspObject *nsp_diagram_path_extract(NspDiagram *H,int n, NspObject **Objs, int *copy);
+static AttrTab nsp_diagram_attrs[];
+static NspMethods *nsp_diagram_get_methods(void);
+static int int_nsp_diagram_create(Stack stack, int rhs, int opt, int lhs);
+/* static void nspdiagram_recompute_pointers(nsp_diagram *gf); */
+static void nsp_diagram_list_recompute_pointers(NspList *L);
+static void nspdiagram_set_frame_field(nsp_diagram *gf);
+static void *nspdiagram_get_adress(NspList *L,void *old );
+static nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only);
+
+%%
+headers
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h>
+#include <nsp/curve.h>
+
+#ifdef  WITH_GTKGLEXT 
+extern Gengine GL_gengine;
+#endif 
+
+%%
+init 
+
+Init portion 
+
+%%
+override-type Diagram
+  /* inserted verbatim in the type definition */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_diagram;
+  ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_diagram ;
+  ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_diagram  ;
+  ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_diagram  ;
+  ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_diagram  ;
+  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_diagram_full_copy ;
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_diagram_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_diagram_unlink_figure; 
+  ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_diagram_children ;
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override diagram_attach kwargs
+int _wrap_diagram_attach(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject  *pl = NULL;
+  BCG *Xgc;
+  int_types T[] = {obj, t_end} ;
+  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
+  Xgc=nsp_check_graphic_context();
+  tape_store_graphic_object(Xgc, pl);
+  return 0;
+}
+
+%%
+override-attr Diagram.rho 
+/* override set rho */
+static int _wrap_diagram_set_rho(void *self, char *attr, NspObject *O)
+{
+  double rho;
+  if ( DoubleScalar(O,&rho) == FAIL) return FAIL;
+
+  if ( ((NspDiagram *) self)->obj->rho != rho) 
+    {
+      ((NspDiagram *) self)->obj->rho = rho;
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+    }
+  return OK;
+}
+
+%%
+override-attr Diagram.children
+
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
+
+static NspObject *_wrap_diagram_get_obj_children(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspDiagram *) self)->obj->children);
+  return (NspObject *) ret;
+}
+
+/* in this function we can check that val is correct before 
+ * setting the field with val. return FAIL if val is incorrect.
+ */
+
+static int _wrap_diagram_set_obj_children(void *self,NspObject *val)
+{
+  if ( ! IsList(val) ) return FAIL;
+  if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
+  if (((NspDiagram *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspDiagram *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspDiagram *) self)->obj->children);
+    }
+  ((NspDiagram *) self)->obj->children =  (NspList *) val;
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+  nsp_diagram_compute_inside_bounds(NULL,self);
+  return OK;
+}
+
+static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
+{
+  NspList *children;
+  if ( ! IsList(O) ) return FAIL;
+  if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
+  if (((NspDiagram *) self)->obj->children != NULL ) 
+    {
+      if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+	nsp_list_unlink_figure(((NspDiagram *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(((NspDiagram *) self)->obj->children);
+    }
+  ((NspDiagram *) self)->obj->children= children;
+  if ( ((NspGraphic *) self)->obj->Fig != NULL) 
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+  nsp_diagram_compute_inside_bounds(NULL,self);
+  return OK;
+}
+
+
+%%
+override nsp_extractelts_diagram kwargs
+
+extern function int_nspgraphic_extract;
+
+int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_nspgraphic_extract(stack,rhs,opt,lhs);
+}
+
+%%
+override nsp_setrowscols_diagram kwargs
+
+extern function int_graphic_set_attribute;
+
+int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs) 
+{
+  return int_graphic_set_attribute(stack,rhs,opt,lhs);
+}
+
+
+%%
+override Diagram.diagram_draw
+/* draw */
+
+static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  nsp_diagram_draw(self);
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+%%
+override Diagram.diagram_select_and_move
+
+/* select_and_move select current unhilite others and move current */
+
+static int _wrap_diagram_select_and_move(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_diagram_select_and_move(((NspDiagram *) self),pt->R, 0);
+  return 0;
+}
+
+%%
+override Diagram.diagram_select_and_move_list
+
+/* select_and_move_list: select current and move all hilited in group */
+
+static int _wrap_diagram_select_and_move_list(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_diagram_select_and_move(((NspDiagram *) self),pt->R, 1);
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_select_and_hilite
+/* select_and_hilite */
+
+static int _wrap_diagram_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  NspObject *bool;
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  rep= nsp_diagram_select_and_hilite(((NspDiagram *) self),pt->R);
+  if ((bool = nsp_create_boolean_object(NVOID,(rep == OK) ? TRUE : FALSE))
+      == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,bool);
+  return 1;
+}
+
+
+%%
+override Diagram.diagram_select_and_toggle_hilite
+
+static int _wrap_diagram_select_and_toggle_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  NspObject *bool;
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  rep= nsp_diagram_select_and_toggle_hilite(((NspDiagram *) self),pt->R);
+  if ((bool = nsp_create_boolean_object(NVOID,(rep == OK) ? TRUE : FALSE))
+      == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,bool);
+  return 1;
+}
+
+
+%%
+override Diagram.diagram_select_and_split
+/* split link */
+
+static int _wrap_diagram_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_diagram_select_and_split(((NspDiagram *) self),pt->R);
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_select_link_and_add_control
+/* split link */
+
+static int _wrap_diagram_select_link_and_add_control(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_diagram_select_link_and_add_control(((NspDiagram *) self),pt->R);
+  return 0;
+}
+
+
+
+%%
+override Diagram.diagram_select_link_and_remove_control
+/* shorten link */
+static int _wrap_diagram_select_link_and_remove_control(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_diagram_select_link_and_remove_control(((NspDiagram *) self),pt->R);
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_hilite_near_pt
+
+static int _wrap_diagram_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(-1,1);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  nsp_diagram_hilite_near_pt(((NspDiagram *) self),pt->R);
+  return 0;
+}
+
+%%
+override Diagram.diagram_new_block
+
+static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = nsp_diagram_create_new_block(((NspDiagram *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
+
+%%
+override Diagram.diagram_new_gridblock
+/* a super block 
+ */
+
+static int _wrap_diagram_new_gridblock(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = nsp_diagram_create_new_gridblock(((NspDiagram *) self),TRUE))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
+%%
+override Diagram.diagram_new_gridblock_from_selection
+
+static int _wrap_diagram_new_gridblock_from_selection(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = nsp_diagram_create_new_gridblock(((NspDiagram *) self),FALSE))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
+
+%%
+override Diagram.diagram_new_connector
+
+static int _wrap_diagram_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj = nsp_diagram_create_new_connector(((NspDiagram *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
+%%
+override Diagram.diagram_new_rect
+
+static int _wrap_diagram_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  nsp_diagram_create_new_rect(((NspDiagram *) self));
+  return 0;
+}
+
+%%
+override Diagram.diagram_new_link
+
+static int _wrap_diagram_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj;
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  if ((obj =   nsp_diagram_create_new_link(((NspDiagram *) self)))== NULL) return RET_BUG;
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,obj);
+  return 1;
+}
+
+%%
+override Diagram.diagram_delete_hilited
+
+static int _wrap_diagram_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(-1,1);
+  nsp_diagram_delete_hilited(((NspDiagram *) self));
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_get_selection
+/* get the first hilited object */
+
+static int _wrap_diagram_get_selection(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj,*bool;
+  CheckRhs(0,0);
+  CheckLhs(2,2);
+  if ((obj = nsp_diagram_get_hilited(((NspDiagram *) self)))== NULL) 
+    {
+      if ((bool = nsp_create_boolean_object(NVOID,FALSE)));
+      MoveObj(stack,1,bool);
+      if ((bool = nsp_create_boolean_object(NVOID,FALSE)));
+      MoveObj(stack,2,bool);
+      return 2;
+    }
+  /* since obj is kept on the frame we must return a copy */
+  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+  if ((bool = nsp_create_boolean_object(NVOID,TRUE)));
+  MoveObj(stack,1,bool);
+  MoveObj(stack,2,obj);
+  return 2;
+}
+
+
+
+%%
+override Diagram.diagram_get_selection_copy
+/* get a full copy of the first hilited object */
+static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *obj,*bool;
+  NspTypeGRint *bf;
+  CheckRhs(0,0);
+  CheckLhs(2,2);
+  if ((obj = nsp_diagram_get_hilited(((NspDiagram *) self)))== NULL) 
+    {
+      if ((bool = nsp_create_boolean_object(NVOID,FALSE)));
+      MoveObj(stack,1,bool);
+      if ((bool = nsp_create_boolean_object(NVOID,FALSE)));
+      MoveObj(stack,2,bool);
+      return 2;
+    }
+  /* we want here a full copy 
+   * we assume that obj implements grint interface 
+   */
+  bf = GR_INT(obj->basetype->interface);
+  if ((obj = bf->full_copy(obj))== NULLOBJ)  return RET_BUG;
+  if ((bool = nsp_create_boolean_object(NVOID,TRUE)));
+  MoveObj(stack,1,bool);
+  MoveObj(stack,2,obj);
+  return 2;
+}
+
+
+%%
+override Diagram.diagram_get_selection_as_diagram
+/* get the hilited objects as a list with or without full copy */
+
+static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rhs, int opt, int lhs) 
+{
+  NspDiagram *obj;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((obj =nsp_diagram_hilited_full_copy((NspDiagram *) self)) == NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(obj));
+  return 1;
+}
+
+
+%%
+override Diagram.diagram_insert
+/* insert an object in a frame. 
+ *
+ */
+
+static int _wrap_diagram_insert(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspBlock  *B; 
+  NspLink *L;
+  NspConnector *C;
+  NspObject *obj=NULL;
+  int flag = TRUE;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ( IsBlockObj(stack,1) )
+    { 
+      if ((B=GetBlockCopy(stack,1)) == NULLBLOCK) return RET_BUG;
+      /* B->obj->frame = ((NspDiagram *) self)->obj; */
+      obj = NSP_OBJECT(B);
+    }
+  else if ( IsLinkObj(stack,1))
+    { 
+      if ((L=GetLinkCopy(stack,1)) == NULLLINK) return RET_BUG;
+      /* L->obj->frame = ((NspDiagram *) self)->obj; */
+      obj = NSP_OBJECT(L);
+      flag = FALSE;
+    }
+  else if ( IsConnectorObj(stack,1))
+    { 
+      if ((C=GetConnectorCopy(stack,1)) == NULLCONNECTOR) return RET_BUG;
+      /* C->obj->frame = ((NspDiagram *) self)->obj; */
+      obj = NSP_OBJECT(C);
+    }
+
+  if (nsp_object_set_name(obj,"lel") == FAIL) return RET_BUG;
+  if ( flag ) 
+    {
+      if (nsp_list_end_insert(((NspDiagram *) self)->obj->children,obj) == FAIL ) return RET_BUG;
+    }
+  else 
+    {
+      if (nsp_list_insert(((NspDiagram *) self)->obj->children,obj,0) == FAIL ) return RET_BUG;
+    }
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_insert_diagram
+/* used for the paste of a multiselection 
+ * insert a list of objects which are in a diagram. 
+ */
+
+static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspTypeGRint *bf;
+  NspObject *Obj;
+  NspMatrix *pt;
+  int rep,click;
+  double pt1[2]= {5,-10};
+  NspDiagram *F = self;
+  Cell *C;
+  NspDiagram *GF;
+  CheckRhs(2,2);
+  CheckLhs(-1,0);
+  if ((GF=GetDiagram(stack,1)) == NULLDIAGRAM ) return RET_BUG;
+  if ((pt = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),2,pt,2);
+  /* now we loop on objects and insert them 
+   * this could be turned into a new function 
+   */
+  if ((GF = nsp_diagram_full_copy(GF))== NULLDIAGRAM)   return RET_BUG;
+  /* 
+   * pt is the mouse position 
+   * we have to translate or move the upper-left rectangle enclosing the 
+   * selection to pt. Thus we need to now this enclosing rectangle.
+   * XXX: we start here by using the first object position as a position 
+   */
+  Obj = nsp_list_get_element(GF->obj->children,1);
+  if ( Obj != NULLOBJ ) 
+    {
+      double pt2[2];
+      bf = GR_INT(Obj->basetype->interface);
+      bf->get_pos(Obj,pt2);
+      pt1[0] = pt->R[0]-pt2[0];
+      pt1[1] = pt->R[1]-pt2[1];
+    }
+  nsp_diagram_list_obj_action(GF,GF->obj->children,pt1,L_TRANSLATE);
+  nsp_diagram_list_obj_action(GF,GF->obj->children,pt1, L_LOCK_UPDATE);
+  /* unselect the objects */
+  nsp_diagram_unhilite_objs(F,FALSE);
+  /* insert each object 
+   * 
+   */
+  C = GF->obj->children->first; 
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* set the frame field of each object */
+	  /* NspBlock *B = (NspBlock *) C->O;  */
+	  /* B->obj->frame = F->obj; */
+	  /* hilite inserted */
+	  bf = GR_INT(C->O->basetype->interface);
+	  bf->set_hilited(C->O,TRUE);
+	  /* add the object */
+	  if ( nsp_list_end_insert(F->obj->children,C->O) == FAIL )
+	    return RET_BUG; 
+	  C->O= NULLOBJ;
+	}
+      C = C->next ;
+    }
+  /* we can now destroy GF */
+  nsp_diagram_destroy(GF);
+  /* and we can enter a move_selection */
+  rep = nsp_diagram_select_and_move_list(F,NULLOBJ,pt->R,&click);
+  nsp_diagram_draw(F);
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_attach_to_window
+/* connect a diagram to a physical window 
+ *
+ */
+
+static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc;
+  int winid;
+  CheckRhs(1,1);
+  CheckLhs(-1,0);
+  if ( GetScalarInt(stack,1,&winid) == FAIL) return RET_BUG;
+  Xgc =  window_list_search(winid);
+  if ( Xgc == NULL ) 
+    {
+      Scierror("Error: Graphic window %d does not exists\n",winid);
+      return RET_BUG;
+    }
+  /* ((NspDiagram *) self)->obj->Xgc = Xgc; */
+  /* ((NspDiagram *) self)->obj->top = TRUE; */
+  return 0;
+}
+
+%%
+override Diagram.diagram_full_copy
+
+static int _wrap_diagram_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspDiagram *F;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((F = nsp_diagram_full_copy((NspDiagram *) self))== NULLDIAGRAM) 
+    {
+      Scierror("Error: copy failed\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(F));
+  return 1;
+}
+
+
+
+%%
+override Diagram.diagram_tops
+/* XXX */
+extern void nsp_diagram_tops(NspDiagram *R,char *fname);
+
+static int _wrap_diagram_tops(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int rep=1,color=-1;
+  char *filename= NULL, *mode = NULL;
+  static char *Table[] = {"d", "l", "n", "p", "k", NULL};
+  int_types T[] = {string, new_opts, t_end} ;
+  nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
+		      { "mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&filename,&opts,&color,&mode) == FAIL) return RET_BUG;
+  if ( mode != NULL) 
+    {
+      rep = is_string_in_array(mode,Table,1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack,mode,Table,"optional argument mode");
+	  return RET_BUG;
+	}
+    }
+  /* XXXXXXXXX nsp_diagram_tops(self,filename); */
+  return 0;
+}
+
+
+%%
+override Diagram.diagram_get_nobjs
+
+static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int length;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  length =nsp_list_length( ((NspDiagram *) self)->obj->children);
+  if ( nsp_move_double(stack,1,(double) length) == FAIL)  return RET_BUG;
+  return 1;
+}
+
+
+%%
+override Diagram.diagram_check_pointer
+/* check if we are over an object */
+
+static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int k, hilited = FALSE;
+  NspObject *Obj;
+  NspMatrix *pt;
+  CheckRhs(1,1);
+  CheckLhs(0,2);
+  if ((pt = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
+  CheckLength(NspFname(stack),1,pt,2);
+  k = nsp_diagram_select_obj(((NspDiagram *) self),pt->R,&Obj,NULL);
+  if ( k !=0 )
+    {
+      NspTypeGRint *bf = GR_INT(Obj->basetype->interface);
+      hilited= bf->get_hilited(Obj);
+    }
+  if ( nsp_move_boolean(stack,1, ( k== 0) ? FALSE : TRUE) == FAIL)  return RET_BUG;
+  if ( lhs == 2 ) 
+    {
+      if ( nsp_move_boolean(stack,2, hilited) == FAIL)  return RET_BUG;
+    }
+  return Max(lhs,1);
+}
+
+%%
+last
+
+/* inserted verbatim at the end */
+
+static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  NspDiagram *P = (NspDiagram *) Obj;
+  NspList *L = P->obj->children;
+  Cell *cloc = L->first;
+  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  /* draw elements */
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->draw(Xgc,G,NULL);
+	}
+      cloc = cloc->next;
+    }
+}
+
+/* compute the bounds of the set of objects countained in the 
+ * diagram. This function is to be called when contained 
+ * objects are changed.
+ */
+
+static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
+{
+  double l_bounds[4],bounds[4];
+  Cell *cloc;
+  NspList *L;
+  NspDiagram *P = (NspDiagram *) Obj;
+  L = P->obj->children;
+  cloc = L->first ;
+  if ( cloc == NULLCELL) 
+    {
+      bounds[0]=bounds[1]=0;
+      bounds[2]=bounds[3]=0;
+      return;
+    }
+  
+  bounds[0]=bounds[1]=LARGEST_REAL;
+  bounds[2]=bounds[3]=-LARGEST_REAL;
+
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->bounds(Xgc,G,l_bounds);
+	  if ( l_bounds[0] < bounds[0] ) 
+	    bounds[0]= l_bounds[0];
+	  if (  l_bounds[2] > bounds[2])
+	    bounds[2]= l_bounds[2];
+	  if ( l_bounds[1] < bounds[1] ) 
+	    bounds[1]= l_bounds[1];
+	  if (  l_bounds[3] > bounds[3])
+	    bounds[3]= l_bounds[3];
+	}
+      cloc = cloc->next;
+    }
+  memcpy(P->obj->bounds->R,bounds,4*sizeof(double));
+}
+
+/* Note that the bounds should be changed here
+ */
+
+static void nsp_translate_diagram(BCG *Xgc,NspGraphic *Obj,double *tr)
+{
+  int draw_now;
+  NspDiagram *P = (NspDiagram *) Obj;
+  NspList *L=  P->obj->children;
+  Cell *cloc =  L->first ;
+  /* just in case we inihibit the draw during the 
+   * while 
+   */
+  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
+  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->translate(Xgc,G,tr);
+	}
+      cloc = cloc->next;
+    }
+  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_rotate_diagram(BCG *Xgc,NspGraphic *Obj,double *R)
+{
+  int draw_now;
+  NspDiagram *P = (NspDiagram *) Obj;
+  NspList *L=  P->obj->children;
+  Cell *cloc =  L->first ;
+  /* just in case we inihibit the draw during the 
+   * while 
+   */
+  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
+  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->rotate(Xgc,G,R);
+	}
+      cloc = cloc->next;
+    }
+  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+static void nsp_scale_diagram(BCG *Xgc,NspGraphic *Obj,double *alpha)
+{
+  int draw_now;
+  NspDiagram *P = (NspDiagram *) Obj;
+  NspList *L=  P->obj->children;
+  Cell *cloc =  L->first ;
+  /* just in case we inihibit the draw during the 
+   * while 
+   */
+  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
+  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspGraphic *G= (NspGraphic *) cloc->O;
+	  G->type->scale(Xgc,G,alpha);
+	}
+      cloc = cloc->next;
+    }
+  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
+  nsp_figure_force_redraw(Obj->obj->Fig);
+}
+
+/* compute in bounds the enclosing rectangle of diagram 
+ *
+ */
+
+static int nsp_getbounds_diagram(BCG *Xgc,NspGraphic *Obj,double *bounds)
+{
+  NspDiagram *P = (NspDiagram *) Obj;
+  /* XXX should not be always computed */
+  nsp_diagram_compute_inside_bounds(Xgc,Obj);
+  memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+  return TRUE;
+}
+
+static void nsp_diagram_link_figure(NspGraphic *G, void *F)
+{
+  /* link toplevel */
+  nsp_graphic_link_figure(G, ((NspFigure *) F)->obj);
+  /* link children */
+  nsp_list_link_figure(((NspDiagram *) G)->obj->children,F);
+}
+
+
+static void nsp_diagram_unlink_figure(NspGraphic *G, void *F)
+{
+  /* link toplevel */
+  nsp_graphic_unlink_figure(G,   ((NspFigure *) F)->obj);
+  /* link children */
+  nsp_list_unlink_figure(((NspDiagram *) G)->obj->children,F);
+}
+
+static NspList *nsp_diagram_children(NspGraphic *Obj)
+{
+  return  ((NspDiagram *) Obj)->obj->children;
+}
+
+
+/*********************************************************************
+ * Diagram Object in Scilab : a graphic Diagram
+ *********************************************************************/
+
+static int pixmap = FALSE ; /* XXXXX */
+
+void nspdiagram_draw(nsp_diagram *gf)
+{
+#if 0
+  int record;
+  BCG *Xgc = gf->Xgc;
+  Cell *C = gf->children->first;
+  if ( Xgc == NULL) return;
+  /* using current values */
+  Nsetscale2dx(Xgc,NULL,NULL,gf->scale,"nn");
+  if ( gf->top ) Xgc->graphic_engine->clearwindow(Xgc);
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  if (Xgc->record_flag == TRUE)  
+    Sciprintf("recod true \n");
+  else
+    Sciprintf("recod false  \n");
+
+#ifdef NEW_GRAPHICS 
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+#endif 
+
+  /* 
+   * XXX A Diagram could be casted info a Rect 
+   * for drawing its boundaries 
+   */
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* assuming all objects here implements grint */
+	  GR_INT(C->O->basetype->interface)->draw(C->O);
+	}
+      C = C->next ;
+    }
+  if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
+#endif 
+
+}  
+
+/**
+ * nsp_diagram_draw:
+ * @R: a graphic frame  
+ * 
+ * draw the objects contained in frame @R.
+ * 
+ **/
+
+void nsp_diagram_draw(NspDiagram *R)
+{
+  nspdiagram_draw(R->obj);
+}
+
+/**
+ * nsp_diagram_draw:
+ * @R: a graphic frame  
+ * 
+ * draw the objects contained in frame @R.
+ * 
+ **/
+
+extern BCG ScilabGCPos ; /* Postscript */
+extern Gengine Pos_gengine_old;
+
+void nsp_diagram_tops(NspDiagram *R,char *fname)
+{
+#if 0
+  int wdim[2],*wdim_p=NULL;
+  int zero=0,un=1,colored=TRUE;
+  BCG *Xgc = R->obj->Xgc;
+  if ( Xgc == NULL) return;
+  R->obj->Xgc->graphic_engine->xget_windowdim(R->obj->Xgc,wdim,wdim+1);
+  wdim_p = wdim;
+  ScilabGCPos.graphic_engine = &Pos_gengine_old;
+  ScilabGCPos.graphic_engine->initgraphic(fname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,'k',NULL);
+  if (colored == TRUE ) 
+    ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,un);
+  else
+    ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,zero);
+  R->obj->Xgc = &ScilabGCPos;
+  nsp_diagram_draw(R);
+  ScilabGCPos.graphic_engine->xend(&ScilabGCPos);
+  R->obj->Xgc = Xgc;
+#endif 
+
+}
+
+
+/**
+ * nsp_diagram_select_obj:
+ * @R: a graphic frame  
+ * @pt: point coordinates.
+ * @Objs: an array of objects.
+ * @exclude: an object to be excluded from search.
+ * 
+ * selects the first object of @R which contains the point @pt and returns 
+ * the result in @Objs. @exclude can be used to exclude an object from the search.
+ * 
+ * Return value: 0 or the position of the object found in the list.
+ *
+ **/
+
+int nsp_diagram_select_obj(NspDiagram *R,const double pt[2], NspObject **Objs, NspObject *exclude) 
+{
+  int count = 1;
+  Cell *C = R->obj->children->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ && C->O != exclude )
+	{
+	  /* cast to a BlockFType */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  if ( bf->contains_pt(C->O,pt) ) 
+	    {
+	      *Objs = C->O;
+	      return count;
+	    }
+	}
+      C = C->next ;
+      count++;
+    }
+  return 0;
+}
+
+
+/**
+ * nsp_diagram_select_lock:
+ * @F: a graphic frame  
+ * @pt: point coordinates.
+ * @O: an object 
+ * @cp: lock point id 
+ * @lock_c: is lock connectable.
+ *
+ * If @pt is close enough to an object lock point, then the object is 
+ * returned in @O, the lock point id in @cp and the connectable status in @lock_c.
+ *  
+ * return value: a non null integer in case of success
+ **/
+
+
+int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) 
+{
+  int count = 1;
+  Cell *C = F->obj->children->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* cast to a BlockFType */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  if ( bf->lock_near_pt(C->O,pt,cp) == TRUE ) 
+	    {
+	      *O = C->O;
+	      *lock_c = bf->is_lock_connectable(C->O,*cp);
+	      return count;
+	    }
+	}
+      C = C->next ;
+      count++;
+    }
+  return 0;
+}
+
+/*
+ * set the frame field for all objects 
+ * Note that all object can be casted to block for accessing that field
+ * XXXX this should be turned into o GR_INT method 
+ **/
+
+void nsp_diagram_set_frame_field(NspDiagram *F)
+{
+  nspdiagram_set_frame_field(F->obj);
+}
+
+static void nspdiagram_set_frame_field(nsp_diagram *gf)
+{
+  int count = 1;
+  Cell *C = gf->children->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* 
+	     NspBlock *B = (NspBlock *) C->O; 
+	     B->obj->frame = gf;
+	  */
+	}
+      C = C->next ;
+      count++;
+    }
+}
+
+/**
+ * nsp_diagram_get_adress:
+ * @F: a #NspDiagram 
+ * @old: a void pointer 
+ * 
+ * This function is used to get the new adress in @F of an 
+ * object which was previouly stored at adress @old. The old 
+ * adresses are stored in objects in the field @sid. 
+ * This is used when performing full copy of objects to restore 
+ * new crossed references in the copy. If the new adress is not 
+ * found then %NULL is returned. This can happen if a full copy 
+ * was performed but on a subset of the objects (for example 
+ * just the hilited objects), then in the full copy reference 
+ * unfound objects are to be set to %NULL. Thus %NULL can 
+ * be a correct answer. 
+ * 
+ * Returns: a pointer as a void pointer 
+ **/
+
+void *nsp_diagram_get_adress(NspDiagram *F,void *old )
+{
+  return nspdiagram_get_adress(F->obj->children,old);
+}
+
+/**
+ * nspdiagram_get_adress:
+ * @L: a #NspList
+ * @old: a void pointer 
+ * 
+ * This function is used to get the new adress in @L of an 
+ * object which was previouly stored at adress @old. The old 
+ * adresses are stored in objects in the field @sid. 
+ * This is used when performing full copy of objects to restore 
+ * new crossed references in the copy. The list @L must contains 
+ * objects implementing grint interface
+ * 
+ * 
+ * Returns: a pointer as a void pointer 
+ **/
+
+static void *nspdiagram_get_adress(NspList *L,void *old )
+{
+  int count = 1;
+  Cell *C = L->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  NspBlock *B = (NspBlock *) C->O; 
+	  if ( B->obj->object_sid  == old) 
+	    return C->O;
+	}
+      C = C->next ;
+      count++;
+    }
+  return NULL;
+}
+
+
+/**
+ * nsp_diagram_locks_set_show:
+ * @F:  a #NspDiagram 
+ * @O: a #NspObject 
+ * @val: a flag as an integer
+ * 
+ * sets the show attribute to value @val for all the objects which 
+ * are connected to object @O by lock connections.
+ **/
+
+static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
+{
+  NspTypeGRint *bf = GR_INT(O->basetype->interface);
+  int   n = bf->get_number_of_locks(O), i;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( bf->is_lock_connected(O,i) == TRUE) 
+	{
+	  int np = bf->get_number_of_ports(O,i);
+	  int j;
+	  for ( j= 0 ; j < np ; j++) 
+	    {
+	      gr_port p;
+	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
+		{
+		  NspObject *O1 = p.object_id; 
+		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
+		  bf1->set_show(O1,val);
+		}
+	    }
+	}
+    }
+}
+
+
+static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],double *rect)
+{
+#if 0
+  int th,pixmode,color,style,fg;
+  int ibutton=-1,imask,iwait=FALSE;
+  double x,y;
+  BCG *Xgc = R->obj->Xgc;
+  if ( Xgc == NULL ) return; 
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  th = Xgc->graphic_engine->xget_thickness(Xgc);
+  color= Xgc->graphic_engine->xget_pattern(Xgc);
+  style = Xgc->graphic_engine->xget_dash(Xgc);
+  fg    = Xgc->graphic_engine->xget_foreground(Xgc);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  x=pt[0];y=pt[1];
+  while ( ibutton == -1 ) 
+    {
+      int ok_changed; 
+      Cell *C;
+      rect[0]= Min(pt[0],x);
+      rect[1]= Max(pt[1],y);
+      rect[2]= Abs(pt[0]-x);
+      rect[3]= Abs(pt[1]-y);
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&x, &y,iwait,TRUE,TRUE,FALSE);
+      /* hilite objects which are contained in bbox 
+       */ 
+      C = R->obj->children->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ )
+	    {
+	      double o_rect[4]; 
+	      NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	      bf->get_rect(C->O,o_rect);
+	      /* check if rect is inside rect */
+	      if ( o_rect[0] >= rect[0] && o_rect[1] <= rect[1] 
+		   && o_rect[0]+o_rect[2] <= rect[0]+rect[2] 
+		   && o_rect[1]-o_rect[3] >= rect[1]-rect[3]  ) 
+		{
+		  ok_changed  = TRUE;
+		  bf->set_hilited(C->O,TRUE);
+		}
+	      else 
+		{
+		  bf->set_hilited(C->O,FALSE);
+		}
+	    }
+	  C = C->next ;
+	}
+      nsp_diagram_draw(R);
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+    }
+  Xgc->graphic_engine->xset_thickness(Xgc,th);
+  Xgc->graphic_engine->xset_dash(Xgc,style);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
+  Xgc->graphic_engine->xinfo(Xgc," ");
+  nsp_diagram_draw(R);
+#endif 
+}
+
+/**
+ * nsp_diagram_select_and_move:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and move it with the mouse.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
+{
+  int k1, cp;
+  NspTypeGRint *bf;
+  NspObject *O;
+  int k = nsp_diagram_select_obj(R,pt,&O,NULL);
+  if ( k==0 )
+    {
+      double bbox[4];
+      /* acquire a rectangle and hilite objects inside */
+      nsp_diagram_unhilite_objs(R,TRUE);
+      nsp_diagram_zoom_get_rectangle(R,pt,bbox);
+      return OK;
+    }
+  bf = GR_INT(O->basetype->interface);
+  /* are we inside a control point ? */
+  k1 = bf->control_near_pt(O,pt,&cp);
+  /* is the object already hilited */
+  if ( bf->get_hilited(O) == TRUE || mask == 1 ) 
+    {
+      if ( k1 == FALSE ) 
+	{
+	  int rep,click;
+	  /* we enter a move selection 
+	   */
+	  rep = nsp_diagram_select_and_move_list(R,O, pt,&click);
+	  if ( rep == -100) return OK;
+	  if ( click == TRUE && mask == 0 ) 
+	    {
+	      /* it was a click not a move */
+	      nsp_diagram_unhilite_objs(R,FALSE); 
+	      bf->set_hilited(O,TRUE);
+	      nsp_diagram_draw(R);
+	    }
+	  return OK;
+	}
+      /* here we keep the selection active but we continue 
+       * here with a MOVE_CONTROL
+       */
+    }
+  else 
+    {
+      /* here the object is newly selected thus we have 
+       * to unhilite others except if we are in a shift move 
+       */
+      nsp_diagram_unhilite_objs(R,FALSE); 
+    }
+  /* hide the moving object and its locked objects */
+  bf->set_show(O,FALSE);
+  if ( IsBlock(O)|| IsConnector(O) )  nsp_diagram_locks_set_show(R,O,FALSE);
+  bf->set_hilited(O,TRUE);
+  /* global draw of all but the moving object and linked objects 
+   * we could here record the state to redraw faster 
+   * since during the move this part will be kept constant.
+   */
+  nsp_diagram_draw(R);
+  /*  */
+  bf->set_show(O,TRUE);
+  if ( IsBlock(O) || IsConnector(O) )  nsp_diagram_locks_set_show(R,O,TRUE);
+  if ( k1 == FALSE ) 
+    {
+      if ( nsp_diagram_move_obj(R,O, pt, -5,cp,MOVE ) == -100) 
+	return OK;
+    }
+  else
+    {
+      if ( nsp_diagram_move_obj(R,O, pt, -5,cp,MOVE_CONTROL ) == -100) 
+	return OK;
+    }
+  nsp_diagram_draw(R);
+  return OK;
+}
+
+
+/**
+ * nsp_diagram_get_hilited_list:
+ * @gf: a #nsp_diagram 
+ * @full_copy: %TRUE for a full copy.
+ * 
+ * returns in a list a copy of the hilited objects of #nsp_diagram.
+ * Depending on the parameter @full_copy, we perform a copy or a full copy.
+ * Note that when a full copy is performed cross-references within the copy 
+ * are updated.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+NspList *nsp_diagram_get_hilited_list(nsp_diagram *gf, int full_copy)
+{
+  NspObject *obj=NULL;
+  NspList *Loc;
+  Cell *cloc= gf->children->first ;
+  if ( (Loc = nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
+	  if ( bf->get_hilited(cloc->O) == TRUE) 
+	    {
+	      if ( full_copy == TRUE ) 
+		{
+		  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  goto err;
+		  if ( nsp_object_set_name(obj,"lel") == FAIL)goto err;
+
+		}
+	      else
+		{
+		  if ((obj=nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
+		}
+	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  /* update the cross references in the copy */
+  nsp_diagram_list_recompute_pointers(Loc); 
+  return Loc;
+ err:
+  nsp_list_destroy(Loc);
+  return NULLLIST;
+} 
+
+
+/**
+ * nsp_diagram_select_and_move_list:
+ * @R: a #NspDiagram 
+ * @Obj: a #NspObject (which was selected to move the selection)
+ * @pt: a point position
+ * @click: %TRUE or %FALSE 
+ * 
+ * move a selection with the mouse (hilited blocks). @pt is the initial mouse position. 
+ * and @Obj the object which was selected to initialize the move. @Obj can be NULL.
+ * We return in @click a boolean which is %TRUE if the list of object was in fact unmoved
+ *  (press-release at the same position)
+ * 
+ * Return value: %OK or %FAIL XXXXX A revoir
+ **/
+
+int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double pt[2], int *click)
+{
+  int rep, cp=0; /* cp unused */
+  NspTypeGRint *bf;
+  NspList *L;
+  if ( Obj != NULLOBJ) 
+    {
+      bf = GR_INT(Obj->basetype->interface);
+      /* hide the moving object and its locked objects */
+      bf->set_show(Obj,FALSE);
+      if ( IsBlock(Obj)|| IsConnector(Obj) )  nsp_diagram_locks_set_show(R,Obj,FALSE);
+      /* nsp_diagram_unhilite_objs(R,FALSE); */
+      bf->set_hilited(Obj,TRUE);
+      /* global draw of all but the moving object and linked objects 
+       * we could here record the state to redraw faster 
+       * since during the move this part will be kept constant.
+       */
+      nsp_diagram_draw(R);
+      /* */
+      bf->set_show(Obj,TRUE);
+      if ( IsBlock(Obj) || IsConnector(Obj) )  nsp_diagram_locks_set_show(R,Obj,TRUE);
+    }
+  L= nsp_diagram_get_hilited_list(R->obj,FALSE);
+  if ( L== NULLLIST) return OK;
+  rep = nsp_diagram_move_list_obj(R,L, pt, -5,cp,MOVE, click );
+  nsp_list_destroy(L);
+  if ( rep == -100) return rep;
+  nsp_diagram_draw(R);
+  return OK;
+}
+
+
+/**
+ * nsp_diagram_select_and_hilite:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and hilite the object. Other hilite objects are 
+ * unhilited.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_diagram_select_and_hilite(NspDiagram *R,const double pt[2])
+{
+  NspTypeGRint *bf;
+  NspObject *O;
+  int k = nsp_diagram_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  bf = GR_INT(O->basetype->interface);
+  nsp_diagram_unhilite_objs(R,FALSE);
+  bf->set_hilited(O,TRUE);
+  return OK;
+}
+
+
+/**
+ * nsp_diagram_select_and_toggle_hilite:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and changes its hilite status the object.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_diagram_select_and_toggle_hilite(NspDiagram *R,const double pt[2])
+{
+  NspTypeGRint *bf;
+  NspObject *O;
+  int k = nsp_diagram_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  bf = GR_INT(O->basetype->interface);
+  if ( bf->get_hilited(O) == TRUE) 
+    bf->set_hilited(O,FALSE);
+  else 
+    bf->set_hilited(O,TRUE);
+  return OK;
+}
+
+
+
+/**
+ * nsp_diagram_select_and_split:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and if this object is a link the link is splited.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_diagram_select_and_split(NspDiagram *R,const double pt[2])
+{
+  int rep=OK;
+  NspObject *Ob;
+  int k = nsp_diagram_select_obj(R,pt,&Ob,NULL);
+  if ( k==0 ) return FAIL;
+  if ( IsLink(Ob) ) 
+    {
+      NspLink *link;
+      rep= link_split(R,(NspLink *) Ob,&link,pt);
+      nsp_diagram_draw(R);
+    }
+  return rep;
+}
+
+/**
+ * nsp_diagram_select_link_and_add_control:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * selects the  object which is near the point @pt 
+ * and if this object is a link a control point is added to the link.
+ * 
+ * Return value: %OK or %FAIL
+ * FIXME: are we also supposed to highlight the link ? 
+ **/
+
+int nsp_diagram_select_link_and_add_control(NspDiagram *R,const double pt[2])
+{
+  int rep=OK;
+  NspObject *O;
+  int k = nsp_diagram_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  if ( IsLink(O) ) 
+    {
+      rep= link_add_control((NspLink *)O,pt);
+      nsp_diagram_draw(R);
+    }
+  return rep;
+}
+
+/**
+ * nsp_diagram_select_link_and_remove_control:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * selects the object which is near the point @pt 
+ * and if this object is a link a control point is added to the link.
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_diagram_select_link_and_remove_control(NspDiagram *R,const double pt[2])
+{
+  int rep=OK;
+  NspObject *O;
+  int k = nsp_diagram_select_obj(R,pt,&O,NULL);
+  if ( k==0 ) return FAIL;
+  if ( IsLink(O) ) 
+    {
+      rep= link_remove_control((NspLink *)O,pt);
+      nsp_diagram_draw(R);
+    }
+  return rep;
+}
+
+/**
+ * nsp_diagram_hilite_near_pt:
+ * @R: a #NspDiagram 
+ * @pt: a point position 
+ * 
+ * highlights the object which is near the point @pt.
+ * 
+ * Return value: 
+ **/
+
+int  nsp_diagram_hilite_near_pt(NspDiagram *R,const double pt[2])
+{
+  NspObject *O;
+  int k = nsp_diagram_select_obj(R,pt,&O,NULL);
+  if ( k==0 )
+    {
+      nsp_diagram_unhilite_objs(R,TRUE);
+    }
+  else 
+    {
+      NspTypeGRint *bf = GR_INT(O->basetype->interface);
+      nsp_diagram_unhilite_objs(R,FALSE);
+      bf->set_hilited(O,TRUE);
+      nsp_diagram_draw(R);
+    }
+  return OK;
+}
+
+/**
+ * nsp_diagram_locks_draw:
+ * @R: a #NspDiagram 
+ * @O: a #NspObject. 
+ * 
+ * calls the draw method on the objects which are connected
+ * to object @O by lock points.
+ **/
+
+static void nsp_diagram_locks_draw(NspDiagram *R,NspObject *O)
+{
+  NspTypeGRint *bf = GR_INT(O->basetype->interface);
+  int   n = bf->get_number_of_locks(O), i;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( bf->is_lock_connected(O,i) == TRUE) 
+	{
+	  int np = bf->get_number_of_ports(O,i);
+	  int j;
+	  /* Scierror("XXX diagram_locks_draw lock= %d ports=%d\n",i,np); */
+	  for ( j= 0 ; j < np ; j++) 
+	    {
+	      gr_port p;
+	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
+		{
+		  NspObject *O1 = p.object_id; 
+		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
+		  bf1->draw(O1);
+		}
+	    }
+	}
+    }
+}
+
+
+/**
+ * nsp_diagram_locks_update:
+ * @R: a #NspDiagram 
+ * @O: a #NspObject. 
+ *
+ * Updates the position of the control points of 
+ * objects which are locked to object @O. 
+ * this is usefull when moving  block to update links 
+ * positions.
+ * 
+ **/
+
+void nsp_diagram_locks_update(NspDiagram *R,NspObject *O)
+{
+  NspTypeGRint *bf = GR_INT(O->basetype->interface);
+  int   n = bf->get_number_of_locks(O), i;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( bf->is_lock_connected(O,i) == TRUE) 
+	{
+	  int np = bf->get_number_of_ports(O,i);
+	  int j;
+	  for ( j= 0 ; j < np ; j++) 
+	    {
+	      gr_port p;
+	      lock_dir dir;
+	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
+		{
+		  NspObject *O1 = p.object_id; 
+		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
+		  double pt[2];
+		  bf->get_lock_pos(O,i,pt);
+		  /* updates links acordingly and try to keep 
+		   * prefered direction 
+		   */
+		  dir = bf->get_lock_dir(O,i);		  
+		  bf1->set_lock_pos(O1,p.lock,pt,TRUE,dir);
+		}
+	    }
+	}
+    }
+
+}
+
+/**
+ * nspdiagram_recompute_obj_pointers:
+ * @gf: a #nsp_diagram 
+ * @O: a #NspObject
+ * 
+ * This function updates the cross references to other objects 
+ * for object @O. Object @O contains in the sid field the old 
+ * adresses of objects to be searched. And the new adresses are 
+ * used to update the id field. 
+ * 
+ **/
+
+static void nspdiagram_recompute_obj_pointers(NspList *L,NspObject *O)
+{
+  NspTypeGRint *bf = GR_INT(O->basetype->interface);
+  int   n = bf->get_number_of_locks(O), i;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      int np = bf->get_number_of_ports(O,i);
+      int j;
+      for ( j= 0 ; j < np ; j++) 
+	{
+	  gr_port p;
+	  if ( bf->get_lock_connection(O,i,j,&p)== OK ) 
+	    {
+	      if ( p.object_sid != NULL) 
+		{
+		  void *new= nspdiagram_get_adress(L,p.object_sid );
+		  p.object_id = new;
+		  p.object_sid = NULL;
+		  /* A uniformiser */
+		  bf->set_lock_connection(O,i,j,&p);
+		}
+	    }
+	}
+    }
+}
+
+/**
+ * nspdiagram_recompute_obj_pointers:
+ * @gf: a #nsp_diagram 
+ * 
+ * This function updates all the cross references contained 
+ * in objects stored in @gf. This is used after a full copy
+ * and works even if only a subset of @gf was full copied.
+ * 
+ **/
+
+static void nspdiagram_recompute_pointers(nsp_diagram *gf)
+{
+  nsp_diagram_list_recompute_pointers(gf->children);
+}
+
+/**
+ * nsp_diagram_list_recompute_obj_pointers:
+ * @L: a #NspList 
+ * 
+ * This function updates all the cross references contained 
+ * in objects stored in @L. Note that cross references refering 
+ * to objects not in @L are set to NULL. Thus this function can 
+ * be used when a full copy of a subset of a #nsp_diagram is done.
+ *
+ **/
+
+static void nsp_diagram_list_recompute_pointers(NspList *L)
+{
+  int count = 1;
+  Cell *C = L->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  nspdiagram_recompute_obj_pointers(L,C->O);
+	}
+      C = C->next ;
+      count++;
+    }
+}
+
+
+
+
+/**
+ * nsp_diagram_move_obj:
+ * @F: : a #NspDiagram 
+ * @O: the #NspObject to be moved. 
+ * @pt: the initial position of the mouse.
+ * @stop: an integer giving the mouse code to accept for ending the move 
+ * @cp: the id of the control point to be moved
+ * @action: %MOVE or %MOVE_CONTROL
+ * 
+ * 
+ * 
+ * Return value: 
+ **/
+
+int nsp_diagram_move_obj(NspDiagram *F,NspObject *O,const double pt[2],int stop,int cp,move_action action)
+{
+  int record,rep;
+  BCG *Xgc = F->obj->Xgc;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  int wstop = 0, ibutton,imask, iwait=FALSE;
+  double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
+  NspTypeGRint *bf = GR_INT(O->basetype->interface);
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+  
+  if ( action == MOVE_CONTROL) 
+    {
+      bf->move_control_init(O,cp,ptwork);
+    }
+  /*
+   * mpt is the mouse position, 
+   * ptwork is the control point position 
+   */
+
+  while ( wstop==0 ) 
+    {
+      /* draw the frame 
+       * we could here record and use a fixed part.
+       */
+      nsp_diagram_draw(F);
+      if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+      /* get new mouse position */
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      if ( ibutton == -100 ) 
+	{
+	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
+	  return ibutton;
+	}
+      if ( ibutton == stop ) wstop= 1;
+      Xgc->graphic_engine->xinfo(Xgc,"ibutton=%d",ibutton);
+      /* clear block shape using redraw */
+      /* if ( pixmap ) Xgc->graphic_engine->xset_show(); */
+      /* move object */
+      switch ( action ) 
+	{
+	case MOVE : 
+	  rep= bf->translate(O,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
+	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
+	  break;
+	case MOVE_CONTROL :
+	  bf->move_control(F,O,mpt,cp, ptwork);
+	}
+      /* update locks positions for objects locked to objects  */ 
+      nsp_diagram_locks_update(F,O);
+      pt1[0] = mpt[0];
+      pt1[1] = mpt[1];
+    }
+  if ( IsLink(O)) link_check(F,(NspLink *)O);
+
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
+  return ibutton;
+}
+
+/**
+ * nsp_diagram_move_list_obj:
+ * @F: : a #NspDiagram 
+ * @L: the #NspList of Objects to be moved. 
+ * @pt: the initial position of the mouse.
+ * @stop: an integer giving the mouse code to accept for ending the move 
+ * @cp: the id of the control point to be moved
+ * @action: %MOVE
+ * @click: %TRUE or %FALSE 
+ * 
+ * move a list of objects, The only action for a list of objects is %MOVE
+ * (%MOVE_CONTROL has no sense). We return in @click a boolean which is %TRUE 
+ * if the list of object was in fact unmove (press-release at the same position)
+ * 
+ * Return value: an integer 
+ **/
+
+/* utiliy function */ 
+
+
+static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action)
+{
+  int rep = OK;
+  Cell *C = L->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* cast to a BlockFType */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  switch ( action )
+	    {
+	    case L_DRAW : 
+	      if ( IsBlock(C->O)  || IsConnector(C->O))
+		{
+		  bf->draw(C->O);
+		  if ( IsBlock(C->O)  || IsConnector(C->O))  nsp_diagram_locks_draw(F,C->O);
+		}
+	      break;
+	    case L_TRANSLATE : 
+	      rep= bf->translate(C->O,pt);
+	      if ( rep == FAIL) return rep;
+	      break;
+	    case L_LOCK_UPDATE:
+	      if ( IsBlock(C->O)  || IsConnector(C->O))
+		nsp_diagram_locks_update(F,C->O);
+	      break;
+	    case L_LINK_CHECK:
+	      if ( IsLink(C->O)) link_check(F,(NspLink *) (C->O));
+	      break;
+	    }
+	}
+      C = C->next ;
+    }
+  return OK;
+}
+
+int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int stop,int cp,move_action action, int *click)
+{
+  int record,rep;
+  BCG *Xgc = F->obj->Xgc;
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  int wstop = 0, ibutton,imask, iwait=FALSE;
+  double mpt[2],pt1[2]= {pt[0],pt[1]};
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+
+  if ( action == MOVE_CONTROL) 
+    {
+      /* nothing to do */
+    }
+  /*
+   * mpt is the mouse position, 
+   * ptwork is the control point position 
+   */
+
+  while ( wstop==0 ) 
+    {
+      /* draw the frame 
+       * we could here record and use a fixed part.
+       */
+      nsp_diagram_draw(F);
+      if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+      /* get new mouse position */
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      if ( ibutton == -100 ) 
+	{
+	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
+	  return ibutton;
+	}
+      if ( ibutton == stop ) wstop= 1;
+      Xgc->graphic_engine->xinfo(Xgc,"ibutton=%d",ibutton);
+      /* clear block shape using redraw */
+      /* if ( pixmap ) Xgc->graphic_engine->xset_show(); */
+      /* move object */
+      switch ( action ) 
+	{
+	case MOVE : 
+	  rep=  nsp_diagram_list_obj_action(F,L,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1),L_TRANSLATE);
+	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
+	  break;
+	case MOVE_CONTROL :
+	  /* unused */
+	  break;
+	}
+      /* update locks positions for objects locked to objects  */ 
+      nsp_diagram_list_obj_action(F,L,pt, L_LOCK_UPDATE);
+      pt1[0] = mpt[0];
+      pt1[1] = mpt[1];
+    }
+  /* was it a click ? */
+  *click =  ( pt1[0]== pt[0] && pt1[1] == pt[1] ) ? TRUE : FALSE;
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
+  /* we return the last activated button code */
+  return ibutton;
+}
+
+
+
+/**
+ * nsp_diagram_unhilite_objs:
+ * @R:  a #NspDiagram 
+ * @draw: an integer 
+ * 
+ * unhighlight the highlighted objects of @R if 
+ * @draw is equal to %TRUE the objects are redrawn.
+ * 
+ **/
+
+void nsp_diagram_unhilite_objs(NspDiagram *R,int draw )
+{
+  int ok = FALSE;
+  Cell *C = R->obj->children->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* cast to a BlockFType */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  if ( bf->get_hilited(C->O) == TRUE) 
+	    {
+	      bf->set_hilited(C->O,FALSE);
+	      ok = TRUE;
+	    }
+	}
+      C = C->next ;
+    }
+  if ( ok == TRUE && draw == TRUE )  nsp_diagram_draw(R);
+}
+
+/**
+ * nsp_diagram_delete_hilited:
+ * @R: : a #NspDiagram 
+ * 
+ * delete hilited objects of @F.
+ **/
+
+void nsp_diagram_delete_hilited(NspDiagram *R) 
+{
+  Cell *C = R->obj->children->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* grint interface */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  if ( bf->get_hilited(C->O) == TRUE ) 
+	    {
+	      nsp_object_destroy(&C->O);
+	      C->O = NULLOBJ;
+	    }
+	}
+      C = C->next ;
+    }
+  /* 
+   * here we must compact the list which can have holes 
+   * but it implies that lock number are to be properly updated 
+   * FIXME ? 
+   */
+}
+/**
+ * nsp_diagram_get_hilited:
+ * @R: : a #NspDiagram 
+ * 
+ * return the first hilited object of the list of objects 
+ * contained in @R.
+ * 
+ **/
+
+NspObject * nsp_diagram_get_hilited(NspDiagram *R) 
+{
+  Cell *C = R->obj->children->first;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  /* grint interface */
+	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
+	  if ( bf->get_hilited(C->O) == TRUE ) 
+	    {
+	      return C->O;
+	    }
+	}
+      C = C->next ;
+    }
+  return NULL;
+}
+
+/**
+ * nsp_diagram_create_new_block:
+ * @F: a #NspDiagram 
+ * 
+ * creates a new block which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE.
+ **/
+
+NspObject * nsp_diagram_create_new_block(NspDiagram *F)
+{
+  int color=4,thickness=1, background=9,rep;
+  double rect[]={0,100,10,10}, pt[]={0,100};
+  NspBlock *B;
+  /* unhilite all */
+  nsp_diagram_unhilite_objs(F,FALSE);
+  B = nsp_block_create("fe",NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
+  if ( B == NULLBLOCK) return NULLOBJ;
+  /* B->obj->frame = F->obj; */
+  B->obj->hilited = TRUE;
+  if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
+  rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
+  if ( rep== -100 )  return NULLOBJ;
+  /* XXXX block_draw(B); */
+  if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
+  return NSP_OBJECT(B);
+}
+
+/**
+ * nsp_diagram_create_new_gridblock:
+ * @F: a #NspDiagram 
+ * 
+ * creates a new super block which is positioned interactively and 
+ * inserted in @F. The super block is filled with current hilited objects 
+ * which are then removed from the frame 
+ * 
+ * Return value: %OK or %FALSE.
+ **/
+
+NspObject * nsp_diagram_create_new_gridblock(NspDiagram *F, int flag )
+{
+#if 0 
+  /* XXXX à revoir */
+  NspDiagram *F1;
+  int color=4,thickness=1, background=9,rep;
+  double rect[]={0,100,10,10}, pt[]={0,100};
+  NspGridBlock *B;
+  /* create the gridblock */
+  if ( flag == TRUE) 
+    {
+      /* empty super block */
+      B=gridblock_create("fe",rect,color,thickness,background,NULL);
+      if ( B == NULLGRIDBLOCK) return NULLOBJ;
+    }
+  else 
+    {
+      if ((F1 = nsp_diagram_hilited_full_copy(F)) == NULLDIAGRAM) return NULLOBJ;
+      B=gridblock_create_from_nsp_diagram("fe",rect,color,thickness,background,F1);
+      nsp_diagram_destroy(F1);
+      if ( B == NULLGRIDBLOCK) return NULLOBJ;
+      /* unhilite all */
+      nsp_diagram_delete_hilited(F);
+    }
+  ((NspBlock *)B)->obj->frame = F->obj;
+  ((NspBlock *)B)->obj->hilited = TRUE;
+  B->obj->Xgc = F->obj->Xgc;
+  if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
+  rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
+  if ( rep== -100 )  return NULLOBJ;
+  /* XXXX block_draw(B); */
+  if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
+  return NSP_OBJECT(B);
+#else
+  return NULL;
+#endif 
+}
+
+
+/**
+ * nsp_diagram_create_new_connector:
+ * @F: a #NspDiagram 
+ * 
+ * create a new connector which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE
+ **/
+
+NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
+{
+  int color=4,thickness=1, background=9,rep;
+  double rect[]={0,100,4,4}, pt[]={0,100};
+  NspConnector *B;
+  /* unhilite all */
+  nsp_diagram_unhilite_objs(F,FALSE);
+  B=connector_create("fe",rect,color,thickness,background,NULL);
+  if ( B == NULL) return NULLOBJ;
+  B->obj->frame = F->obj;
+  B->obj->hilited = TRUE;
+  if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
+  rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
+  if ( rep== -100 )  return NULLOBJ;
+  /* XXXX block_draw(B); */
+  if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
+  return NSP_OBJECT(B);
+}
+
+/**
+ * nsp_diagram_create_new_rect:
+ * @F: a #NspDiagram 
+ * 
+ * create a new rectangle which is positioned interactively and 
+ * inserted in @F.
+ * 
+ * Return value: %OK or %FALSE
+ **/
+
+int nsp_diagram_create_new_rect(NspDiagram *F)
+{
+  int color=4,thickness=1, background=9,rep;
+  double rect[]={0,100,4,4}, pt[]={0,100};
+  NspRect *B;
+  /* unhilite all */
+  nsp_diagram_unhilite_objs(F,FALSE);
+  B=rect_create("fe",F->obj->Xgc,rect,color,thickness,background,NULL);
+  if ( B == NULL) return FAIL;
+  if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return FAIL;
+  rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
+  if ( rep== -100 )  return FAIL;
+  /* XXXX block_draw(B); */
+  if ( pixmap ) F->obj->Xgc->graphic_engine->xset_show(F->obj->Xgc);
+  return OK;
+}
+
+
+/**
+ * nsp_diagram_create_new_link:
+ * @F: a #NspDiagram 
+ * 
+ * Interactively creates a new link (#NspLink) and inserts 
+ * the link in object @F.
+ * 
+ * Return value: %FAIL or %OK.
+ *
+ **/
+
+static double lock_size=1;
+
+NspObject * nsp_diagram_create_new_link(NspDiagram *F)
+{
+  BCG *Xgc= F->obj->Xgc;
+  NspObject *Ob;
+  int cp1,record;
+  double mpt[2],pt[2];
+  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, imask, iwait=FALSE;
+  int color=4,thickness=1,hvfactor,count=0;
+  NspLink *L;
+  NspTypeGRint *bf;
+  /* unhilite all */
+  nsp_diagram_unhilite_objs(F,FALSE);
+  hvfactor=lock_size*2;/* magnetism toward horizontal and vertical line  */
+  Xgc->graphic_engine->xinfo(Xgc,"Enter polyline, Right click to stop");
+
+  record = Xgc->graphic_engine->xget_recording(Xgc);
+  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
+  
+  /* prepare a link with 1 points */
+  L= link_create_n("fe",1,color,thickness);
+  L->obj->frame = F->obj;
+
+  bf = GR_INT(((NspObject *) L)->basetype->interface);
+
+  if ( L == NULLLINK) return NULLOBJ;
+  L->obj->hilited = TRUE;
+  L->obj->poly->R[0]=mpt[0];
+  L->obj->poly->R[1]=mpt[0];
+  while ( wstop==0 ) 
+    {
+      nsp_diagram_draw(F);
+      /* draw the link */
+      bf->draw(L);
+      if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+      /* get new mouse position */
+      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      if ( ibutton == -100 ) 
+	{
+	  /* we stop : window was killed */
+	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+	  Xgc->graphic_engine->xset_recording(Xgc,record);
+	  return NULLOBJ;
+	}
+      if ( ibutton == stop ) 
+	{
+	  /* here we stop with a right click 
+	   */
+	  if (  count >= 2  ) 
+	    {
+	      double *x = L->obj->poly->R, *y = L->obj->poly->R + L->obj->poly->m;
+	      /* try to improve angles before quit */
+	      /*  magnetism toward horizontal or vertival lines */
+	      if ( Abs( x[count] - x[count-1] ) < hvfactor ) x[count-1] = x[count];
+	      if ( Abs( y[count] - y[count-1] ) < hvfactor ) y[count-1] = y[count];
+	    }              
+	}
+      /* clear link shape using redraw */
+      /* bf->draw(L); */
+      
+      if ( ibutton == stop ) 
+	{
+	  break; 
+	}
+      else if ( ibutton == 0 ) 
+	{
+	  /* this is a left click click 
+	   * If the left click is near a lock point we stop 
+	   * 
+	   */
+	  int lock_c, rep;
+	  /* are we near a lock point ? if true mpt is changed  */
+	  pt[0]=mpt[0]; pt[1]=mpt[1];
+	  rep = nsp_diagram_select_lock(F,mpt, &Ob, &cp1,&lock_c) ;
+	  /* link_check will check if the lock point is already in use */
+	  if ( rep != 0 )
+	    {
+	      /* set last point to lock position and stop if it's not the first point*/
+	      L->obj->poly->R[count]= mpt[0];
+	      L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
+	      if ( count != 0) 
+		{
+		  if ( count >= 2 ) 
+		    {
+		      double *x = L->obj->poly->R, *y = L->obj->poly->R + L->obj->poly->m;
+		      /* try to improve angles before quit */
+		      /*  magnetism toward horizontal or vertival lines */
+		      if ( Abs( x[count] - x[count-1] ) < hvfactor ) x[count-1] = x[count];
+		      if ( Abs( y[count] - y[count-1] ) < hvfactor ) y[count-1] = y[count];
+		    }		  
+		  /* we have finished */
+		  break;
+		}
+	    }
+	  if ( nsp_matrix_add_rows(L->obj->poly,1)== FAIL ) return NULLOBJ;	  
+	  count ++;
+	  L->obj->poly->R[count]= mpt[0];
+	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
+	}
+      else 
+	{
+	  int lock_c;
+	  /* just moving */
+	  /* are we near a lock point ? if true mpt is changed  */
+	  int rep = nsp_diagram_select_lock(F,mpt, &Ob, &cp1,&lock_c) ;
+	  if ( rep == 0 && count != 0 ) 
+	    {
+	      /*  try to keep horizontal and vertical lines */
+	      if ( Abs( L->obj->poly->R[count-1] - mpt[0]) < hvfactor ) mpt[0]=L->obj->poly->R[count-1];
+	      if ( Abs( L->obj->poly->R[count-1+L->obj->poly->m] - mpt[1]) < hvfactor ) 
+		mpt[1]=L->obj->poly->R[count-1+L->obj->poly->m];
+	    }              
+	  L->obj->poly->R[count]= mpt[0];
+	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
+	}
+    }
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  /* insert link in frame 
+   * at the start 
+   */
+  if (nsp_list_insert(F->obj->children,(NspObject  *) L,0) == FAIL) return NULLOBJ;
+  /* check if first and last points are locked 
+   * if true update locks 
+   */
+  mpt[0]=L->obj->poly->R[0];
+  mpt[1]=L->obj->poly->R[L->obj->poly->m];
+  link_lock_update(F,L,0,mpt);
+  mpt[0]=L->obj->poly->R[L->obj->poly->m-1];
+  mpt[1]=L->obj->poly->R[2*L->obj->poly->m-1];
+  link_lock_update(F,L,1,mpt);
+  link_check(F,L);
+  bf->draw(L);
+  if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
+  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
+  Xgc->graphic_engine->xset_recording(Xgc,record);
+  return NSP_OBJECT(L);
+}
+
+
+/**
+ * nsp_diagram_full_copy:
+ * @F: a #NspDiagram
+ * 
+ * Make a full copy of a @F. Since @F contains 
+ * a list of objects which are themselves objects with 
+ * references, the full copy must be performed on these
+ * objects and cross references are to be updates.
+ * 
+ * Returns: a new #NspDiagram or %NULLDIAGRAM
+ **/
+
+static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
+
+NspDiagram *nsp_diagram_full_copy( NspDiagram *F)
+{
+  NspDiagram *H  = nsp_diagram_create_void(NVOID,NULL);
+  if ( H ==  NULLDIAGRAM ) return NULLDIAGRAM;
+  if ((H->obj = nspdiagram_full_copy(F->obj,FALSE))  == NULL) return NULLDIAGRAM;
+  return H;
+}
+
+/**
+ * nsp_diagram_hilited_full_copy:
+ * @F: a #NspDiagram
+ * 
+ * Make a full copy of a @F but only for hilited objects. 
+ * Since @F contains a list of objects which are themselves objects with 
+ * references, the full copy must be performed on these
+ * objects and cross references are to be updates.
+ * 
+ * Returns: a new #NspDiagram or %NULLDIAGRAM
+ **/
+
+NspDiagram *nsp_diagram_hilited_full_copy( NspDiagram *F)
+{
+  NspDiagram *H  = nsp_diagram_create_void(NVOID,NULL);
+  if ( H ==  NULLDIAGRAM ) return NULLDIAGRAM;
+  if ((H->obj = nspdiagram_full_copy(F->obj,TRUE))  == NULL) return NULLDIAGRAM;
+  return H;
+}
+
+/**
+ * nspdiagram_full_copy:
+ * @gf: a #nsp_diagram 
+ * @hilited_only: %TRUE or %FALSE
+ * 
+ * Make a full copy of a @gf. Since @gf contains 
+ * a list of objects which are themselves objects with 
+ * references, the full copy must be performed on these
+ * objects and cross references are to be updates.
+ * If @hilited_only is %TRUE, only hilited objects are copied.
+ * 
+ * Returns: a new #nsp_diagram or %NULL 
+ **/
+
+nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only)
+{
+  /* int i; */
+  nsp_diagram *loc; 
+  if ((loc = malloc(sizeof(nsp_diagram))) == NULL) return NULL;
+  loc->ref_count=1;
+  if ((loc->children = nsp_diagram_list_full_copy(gf->children, hilited_only))== NULL) 
+    return NULL;
+  /* restore lost pointers 
+   */
+  nspdiagram_set_frame_field(loc);
+  /*
+   * restore interconnections 
+   */
+  nspdiagram_recompute_pointers(loc);
+  /* copy scales 
+   *
+   */
+  /* 
+     for ( i=0; i < 4 ; i++) loc->r[i]=gf->r[i];
+     for ( i=0; i < 4 ; i++) loc->scale[i]=gf->scale[i];
+     loc->Xgc = gf->Xgc;
+     loc->top = gf->top;
+  */
+  return loc;
+}
+
+/**
+ * nsp_diagram_list_full_copy:
+ * @L: a #NspList 
+ * @hilited_only: %TRUE or %FALSE
+ * 
+ * Make a full copy of a list of objects which all 
+ * implements the Grint interface and are all to be full copied. 
+ * Note that, after the copy the cross references in the objects 
+ * are wrong and are to be restored by nspdiagram_recompute_pointers(). 
+ * If @hilited_only is %TRUE, only hilited objects are copied.
+ * 
+ * Returns: a new #NspList
+ **/
+
+static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only) 
+{
+  NspObject *obj=NULL;
+  NspList *Loc;
+  Cell *cloc;
+  if ( (Loc = nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      if ( cloc->O != NULLOBJ ) 
+	{
+	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
+	  if ( hilited_only == FALSE || bf->get_hilited(cloc->O) == TRUE) 
+	    {
+	      if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
+	      if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
+	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
+	    }
+	}
+      cloc = cloc->next;
+    }
+  return Loc;
+ err:
+  nsp_list_destroy(Loc);
+  return NULLLIST;
+} 
+
+

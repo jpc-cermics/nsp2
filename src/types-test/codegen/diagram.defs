@@ -1,0 +1,169 @@
+;; -*- scheme -*-
+
+(define-objectref Diagram
+  (in-module "Diagram")
+  (parent "Graphic")
+  (c-name "NspDiagram")
+  (fields
+   '("NspMatrix*" "bounds" "hidden" "{0}" "4");; bounds of objects contained in the diagram
+   '("NspList*" "children") ;; list of graphic object in the diagram
+   )
+  (gtype-id "Diagram")
+)
+
+;; overriden 
+
+(define-function diagram_attach
+  (c-name "diagram_attach")
+  (return-type "gboolean")
+  (parameters
+    '("int" "x")
+  )
+)
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_diagram
+  (c-name "nsp_extractelts_diagram")
+  (return-type "none")
+)
+
+(define-function setrowscols_diagram
+  (c-name "nsp_setrowscols_diagram")
+  (return-type "none")
+)
+
+;; methods in diagram all are overriden 
+
+(define-method draw   
+  (of-object "Diagram") 
+  (c-name "diagram_draw") 
+  (return-type "none")
+)
+(define-method tops   
+  (of-object "Diagram") 
+  (c-name "diagram_tops") 
+  (return-type "none")
+)
+(define-method new_link    
+  (of-object "Diagram") 
+  (c-name "diagram_new_link") 
+  (return-type "none")
+)
+(define-method new_block    
+  (of-object "Diagram") 
+  (c-name "diagram_new_block") 
+  (return-type "none")
+)
+(define-method new_gridblock    
+  (of-object "Diagram") 
+  (c-name "diagram_new_gridblock") 
+  (return-type "none")
+)
+(define-method new_gridblock_from_selection   
+  (of-object "Diagram") 
+  (c-name "diagram_new_gridblock_from_selection") 
+  (return-type "none")
+)
+(define-method new_connector    
+  (of-object "Diagram") 
+  (c-name "diagram_new_connector") 
+  (return-type "none")
+)
+(define-method new_rect    
+  (of-object "Diagram") 
+  (c-name "diagram_new_rect") 
+  (return-type "none")
+)
+(define-method hilite_near_pt    
+  (of-object "Diagram") 
+  (c-name "diagram_hilite_near_pt") 
+  (return-type "none")
+)
+(define-method select_and_move   
+  (of-object "Diagram") 
+  (c-name "diagram_select_and_move") 
+  (return-type "none")
+)
+(define-method select_and_move_list   
+  (of-object "Diagram") 
+  (c-name "diagram_select_and_move_list") 
+  (return-type "none")
+)
+(define-method select_and_hilite   
+  (of-object "Diagram") 
+  (c-name "diagram_select_and_hilite") 
+  (return-type "none")
+)
+(define-method select_and_toggle_hilite   
+  (of-object "Diagram") 
+  (c-name "diagram_select_and_toggle_hilite") 
+  (return-type "none")
+)
+(define-method select_and_split   
+  (of-object "Diagram") 
+  (c-name "diagram_select_and_split") 
+  (return-type "none")
+)
+(define-method select_link_and_add_control   
+  (of-object "Diagram") 
+  (c-name "diagram_select_link_and_add_control") 
+  (return-type "none")
+)
+(define-method select_link_and_remove_control   
+  (of-object "Diagram") 
+  (c-name "diagram_select_link_and_remove_control") 
+  (return-type "none")
+)
+(define-method delete_hilited    
+  (of-object "Diagram") 
+  (c-name "diagram_delete_hilited") 
+  (return-type "none")
+)
+(define-method insert   
+  (of-object "Diagram") 
+  (c-name "diagram_insert") 
+  (return-type "none")
+)
+(define-method insert_diagram
+  (of-object "Diagram") 
+  (c-name "diagram_insert_diagram") 
+  (return-type "none")
+)
+(define-method get_selection   
+  (of-object "Diagram") 
+  (c-name "diagram_get_selection") 
+  (return-type "none")
+)
+(define-method get_selection_copy   
+  (of-object "Diagram") 
+  (c-name "diagram_get_selection_copy") 
+  (return-type "none")
+)
+(define-method get_selection_as_diagram
+  (of-object "Diagram") 
+  (c-name "diagram_get_selection_as_diagram") 
+  (return-type "none")
+)
+(define-method attach_to_window   
+  (of-object "Diagram") 
+  (c-name "diagram_attach_to_window") 
+  (return-type "none")
+)
+(define-method check_pointer   
+  (of-object "Diagram") 
+  (c-name "diagram_check_pointer") 
+  (return-type "none")
+)
+(define-method full_copy   
+  (of-object "Diagram") 
+  (c-name "diagram_full_copy") 
+  (return-type "none")
+)
+(define-method get_nobjs   
+  (of-object "Diagram") 
+  (c-name "diagram_get_nobjs") 
+  (return-type "none")
+)
+
+
