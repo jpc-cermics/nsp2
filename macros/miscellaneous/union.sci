@@ -43,7 +43,7 @@ function [c,ka,kb] = union(a,b)
     error(" both arg must be of the same type")
   end
   
-  if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" then
+  if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" || type_a == "IMat" then
     row_flag = size(a,1)==1 & size(b,1)==1
     a.redim[-1,1]; b.redim[-1,1]
     n = size(a,"*")
@@ -60,7 +60,7 @@ function [c,ka,kb] = union(a,b)
       end
     end
   else
-    error("union not implemented for "+type_x)
+    error("union not implemented for "+type_a)
   end
 endfunction
 
