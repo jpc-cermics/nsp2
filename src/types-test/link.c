@@ -1600,7 +1600,10 @@ void link_check(NspGFrame *F,NspLink *L)
 		      double rect[]={pt[0]-lock_size,pt[1]+lock_size,lock_size*3,lock_size*3}; 
 		      NspConnector *C;
 		      gr_port p;
-		      C=connector_create("fe",rect,color,thickness,background,NULL);
+		      gr_lock l;
+		      C= nsp_connector_create("fe",NULL,NULL,
+					      rect,color,thickness,background,
+					      l,FALSE,TRUE,NULL);
 		      if ( C == NULL) return;
 		      /* herits the frame graphic context */
 		      C->obj->frame = F->obj;
@@ -2001,4 +2004,4 @@ static void nsp_init_grl_lock(grl_lock *locks)
 
 
 
-#line 2005 "link.c"
+#line 2008 "link.c"
