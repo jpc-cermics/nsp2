@@ -87,16 +87,17 @@ extern NspDiagram *nsp_diagram_xdr_load_partial(XDR *xdrs, NspDiagram *M);
 extern int nsp_diagram_xdr_save(XDR  *xdrs, NspDiagram *M);
 
 #line 4 "codegen/diagram.override"
+typedef enum { MOVE, MOVE_CONTROL } move_action ;
+typedef enum _list_move_action list_move_action; 
+enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 
 /* inserted at the end of public part of include file */
 extern NspDiagram *nsp_figure_get_axe_elts_as_diagram(char *name,NspFigure *F);
-/* extern NspGFrame *diagram_object(NspObject *O);  */
-extern int IsGFrameObj (Stack stack, int i); 
-extern NspGFrame *GetGFrameCopy (Stack stack, int i); 
-extern NspGFrame *GetGFrame (Stack stack, int i); 
-extern int IsGFrame (NspObject *O); 
-
-/* extern NspObject *diagram_path_extract (NspDiagram *H,int n, NspObject **Objs);  */
+/* extern NspDiagram *diagram_object(NspObject *O);  */
+extern int IsDiagramObj (Stack stack, int i); 
+extern NspDiagram *GetDiagramCopy (Stack stack, int i); 
+extern NspDiagram *GetDiagram (Stack stack, int i); 
+extern int IsDiagram (NspObject *O); 
 extern void nsp_diagram_draw (NspDiagram *R); 
 extern int nsp_diagram_select_obj (NspDiagram *R, const double *pt, NspObject **Objs,NspObject *exclude); 
 extern int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
@@ -136,7 +137,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
 
-#line 140 "./diagram.h"
+#line 141 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -151,7 +152,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
-#line 55 "codegen/diagram.override"
+#line 56 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -164,8 +165,6 @@ static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
 static void nsp_diagram_link_figure(NspGraphic *G, void *F);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
-typedef enum _list_move_action list_move_action; 
-enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action);
 static void nspdiagram_recompute_pointers(nsp_diagram *gf);
 static void nsp_diagram_list_recompute_pointers(NspList *L);
@@ -177,16 +176,13 @@ static char *nsp_diagram_type_short_string(NspObject *v);
 static int nsp_diagram_eq(NspDiagram *A, NspObject *B);
 static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
 static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
-static NspObject *nsp_diagram_path_extract(NspDiagram *H,int n, NspObject **Objs, int *copy);
 static AttrTab nsp_diagram_attrs[];
-static NspMethods *nsp_diagram_get_methods(void);
-static int int_nsp_diagram_create(Stack stack, int rhs, int opt, int lhs);
 /* static void nspdiagram_recompute_pointers(nsp_diagram *gf); */
 static void nsp_diagram_list_recompute_pointers(NspList *L);
 static void nspdiagram_set_frame_field(nsp_diagram *gf);
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only);
 
-#line 191 "./diagram.h"
+#line 187 "./diagram.h"
 #endif /* NspDiagram_Private */
 

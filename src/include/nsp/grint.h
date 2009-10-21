@@ -40,8 +40,7 @@ typedef int gr_contains_pt (const void *B, const double *pt);
 typedef int gr_control_near_pt (const void *B, const double *pt, int *cp); 
 typedef int gr_lock_near_pt (const void *B, const double *pt, int *cp); 
 typedef void gr_move_control_init (void *B,  int cp,double ptc[2]); 
-typedef void gr_move_control (NspGFrame *F,void *B, const double *pt, int cp,double ptc[2]); 
-
+typedef void gr_move_control (void *F,void *B, const double *pt, int cp,double ptc[2]); 
 
 typedef struct _gr_port gr_port;
 

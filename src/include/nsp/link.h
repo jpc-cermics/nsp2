@@ -13,7 +13,6 @@
 #include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
-#include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -59,7 +58,7 @@ struct _grl_lock {
  */
 
 
-#line 63 "./link.h"
+#line 62 "./link.h"
 /* NspLink */
 
 #include <nsp/graphic.h>
@@ -71,19 +70,18 @@ struct _grl_lock {
 typedef struct _NspLink NspLink ;
 typedef struct _NspTypeLink NspTypeLink ;
 
-#line 75 "./link.h"
+#line 74 "./link.h"
 
 struct _NspTypeLink {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 82 "./link.h"
+#line 81 "./link.h"
 };
 
 typedef struct _nsp_link nsp_link;
 struct _nsp_link {
-  nspgframe* frame;
   void* object_sid;
   int color;
   int thickness;
@@ -122,7 +120,7 @@ NspLink *new_link();
 
 #define NULLLINK (NspLink*) 0
 
-extern NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type);
 extern NspLink *nsp_link_create_default(char *name);
 
 /* from NspLinkObj.c */
@@ -147,11 +145,11 @@ extern int int_link_create(Stack stack, int rhs, int opt, int lhs);
 extern NspLink *nsp_link_xdr_load_partial(XDR *xdrs, NspLink *M);
 extern int nsp_link_xdr_save(XDR  *xdrs, NspLink *M);
 
-#line 57 "codegen/link.override"
+#line 56 "codegen/link.override"
 
 /* inserted at the end of public part of include file */
 
-#line 155 "./link.h"
+#line 153 "./link.h"
 #endif /* NSP_INC_NspLink */ 
 
 #ifdef NspLink_Private 
@@ -166,7 +164,7 @@ static AttrTab link_attrs[];
 static NspMethods *link_get_methods(void);
 /* static int int_link_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspLink *nsp_link_create_void(char *name,NspTypeBase *type);
-#line 62 "codegen/link.override"
+#line 61 "codegen/link.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
@@ -194,7 +192,7 @@ static int link_contains_pt (const NspLink *B, const double *pt);
 static int link_control_near_pt (const NspLink *B, const double *pt, int *cp); 
 static int link_lock_near_pt (const NspLink *B,const double *pt, int *cp); 
 static void link_move_control_init( NspLink *B,int cp,double ptc[2]);
-static void link_move_control (NspGFrame *F,NspLink *B, const double *pt, int cp,double ptc[2]); 
+static void link_move_control (void *F,NspLink *B, const double *pt, int cp,double ptc[2]); 
 
 static int link_get_number_of_locks(const NspLink *B) ;
 static int link_get_number_of_ports(const NspLink *B,int lp) ;
@@ -209,7 +207,6 @@ static int link_is_lock_connected(NspLink *B,int i);
 static void link_set_lock_pos(NspLink *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void link_unlock( NspLink *B,int lp) ;
 static NspLink * link_full_copy( NspLink *B);
-static void link_set_frame( NspLink *B, NspGFrame *Gf);
 
 /* requested for grl_lock */
 
@@ -221,6 +218,6 @@ static int nsp_check_grl_lock(grl_lock *locks,NspLink *M);
 static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
 
-#line 225 "./link.h"
+#line 222 "./link.h"
 #endif /* NspLink_Private */
 

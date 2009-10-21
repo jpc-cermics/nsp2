@@ -24,16 +24,21 @@
 
 
 
-#line 118 "codegen/link.override"
+#line 116 "codegen/link.override"
 
-#include "nsp/object.h"
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/connector.h"
+#include "nsp/figuredata.h"
+#include "nsp/figure.h"
+#include "nsp/diagram.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/parse.h"
 
 
-#line 37 "link.c"
+#line 42 "link.c"
 
 /* ----------- NspLink ----------- */
 
@@ -106,7 +111,7 @@ NspTypeLink *new_type_link(type_mode mode)
 
   type->init = (init_func *) init_link;
 
-#line 133 "codegen/link.override"
+#line 136 "codegen/link.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_link;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_link ;
@@ -117,7 +122,7 @@ NspTypeLink *new_type_link(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 121 "link.c"
+#line 126 "link.c"
   /* 
    * NspLink interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -126,7 +131,7 @@ NspTypeLink *new_type_link(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 145 "codegen/link.override"
+#line 148 "codegen/link.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) link_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) link_set_hilited;
@@ -157,9 +162,8 @@ NspTypeLink *new_type_link(type_mode mode)
   t_grint->set_lock_pos =(gr_set_lock_pos *) link_set_lock_pos;
   t_grint->full_copy =(gr_full_copy *) link_full_copy;
   t_grint->unlock =(gr_unlock *) link_unlock;
-  t_grint->set_frame =(gr_set_frame *) link_set_frame;
 
-#line 163 "link.c"
+#line 167 "link.c"
   if ( nsp_type_link_id == 0 ) 
     {
       /* 
@@ -247,7 +251,6 @@ static int nsp_link_eq(NspLink *A, NspObject *B)
   NspLink *loc = (NspLink *) B;
   if ( check_cast(B,nsp_type_link_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( A->obj->frame != loc->obj->frame) return FALSE;
   if ( A->obj->object_sid != loc->obj->object_sid) return FALSE;
   if ( A->obj->color != loc->obj->color) return FALSE;
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
@@ -273,7 +276,7 @@ static int nsp_link_neq(NspLink *A, NspObject *B)
  * save 
  */
 
-#line 179 "codegen/link.override"
+#line 181 "codegen/link.override"
 
 /*
  * save 
@@ -342,7 +345,7 @@ static NspLink  *nsp_link_xdr_load(XDR *xdrs)
 
 
 
-#line 346 "link.c"
+#line 349 "link.c"
 /*
  * delete 
  */
@@ -410,7 +413,6 @@ int nsp_link_print(NspLink *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"frame=%xl\n",M->obj->frame);
   Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
@@ -438,7 +440,6 @@ int nsp_link_latex(NspLink *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_link_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"frame=%xl\n",M->obj->frame);
   Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
@@ -501,7 +502,7 @@ NspLink  *GetLink(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspLink instance 
  *-----------------------------------------------------*/
-#line 249 "codegen/link.override"
+#line 251 "codegen/link.override"
 /* override the code for link creation */
 
 static NspLink *nsp_link_create_void(char *name,NspTypeBase *type)
@@ -522,7 +523,6 @@ int nsp_link_create_partial(NspLink *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_link)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->frame = NULL;
   H->obj->object_sid = NULL;
   H->obj->color = 0;
   H->obj->thickness = 0;
@@ -548,12 +548,11 @@ int nsp_link_check_values(NspLink *H)
   return OK;
 }
 
-NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type)
+NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type)
 {
  NspLink *H  = nsp_link_create_void(name,type);
  if ( H ==  NULLLINK) return NULLLINK;
   if ( nsp_link_create_partial(H) == FAIL) return NULLLINK;
-  H->obj->frame = frame;
   H->obj->object_sid = object_sid;
   H->obj->color=color;
   H->obj->thickness=thickness;
@@ -582,7 +581,7 @@ NspLink *nsp_link_create_default(char *name)
  return H;
 }
 
-#line 586 "link.c"
+#line 585 "link.c"
 /*
  * copy for gobject derived class  
  */
@@ -610,7 +609,6 @@ NspLink *nsp_link_full_copy_partial(NspLink *H,NspLink *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_link))) == NULL) return NULLLINK;
   H->obj->ref_count=1;
-  H->obj->frame = self->obj->frame;
   H->obj->object_sid = self->obj->object_sid;
   H->obj->color=self->obj->color;
   H->obj->thickness=self->obj->thickness;
@@ -634,7 +632,7 @@ NspLink *nsp_link_full_copy(NspLink *self)
   if ( H ==  NULLLINK) return NULLLINK;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLLINK;
   if ( nsp_link_full_copy_partial(H,self)== NULL) return NULLLINK;
-#line 638 "link.c"
+#line 636 "link.c"
   return H;
 }
 
@@ -662,14 +660,14 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
   if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
   CheckCols(NspFname(stack),1,M1,2);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_link_create(NVOID,NULL,NULL,color,thickness,0,M1,l,l,FALSE,TRUE,NULL)) 
+  if(( H = nsp_link_create(NVOID,NULL,color,thickness,0,M1,l,l,FALSE,TRUE,NULL)) 
     == NULLLINK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
 
-#line 673 "link.c"
+#line 671 "link.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -690,7 +688,7 @@ static int _wrap_link_translate(void  *self,Stack stack, int rhs, int opt, int l
 
 }
 
-#line 694 "link.c"
+#line 692 "link.c"
 
 
 #line 421 "codegen/link.override"
@@ -709,7 +707,7 @@ static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs
 
 }
 
-#line 713 "link.c"
+#line 711 "link.c"
 
 
 #line 438 "codegen/link.override"
@@ -727,7 +725,7 @@ static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
-#line 731 "link.c"
+#line 729 "link.c"
 
 
 #line 391 "codegen/link.override"
@@ -741,7 +739,7 @@ static int _wrap_link_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 745 "link.c"
+#line 743 "link.c"
 
 
 #line 454 "codegen/link.override"
@@ -762,7 +760,7 @@ static int _wrap_link_connect(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 766 "link.c"
+#line 764 "link.c"
 
 
 static NspMethods link_methods[] = {
@@ -988,7 +986,6 @@ NspLink *link_create_n(char *name,int n,int color,int thickness)
   if ( H ==  NULLLINK) return NULLLINK;
   if ((H->obj = malloc(sizeof(nsp_link))) == NULL) return NULL;
   H->obj->ref_count=1;
-  H->obj->frame = NULL; 
   /* fields */
   if (( H->obj->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
   /* need a name here to be able to save object */
@@ -1030,10 +1027,9 @@ void link_draw(NspLink *L)
   double loc[4];
   int cpat, cwidth;
   /* only draw block which are in a frame */
-  if ( L->obj->frame == NULL) return;
   if ( L->obj->show == FALSE ) return ;
 
-  Xgc=L->obj->frame->Xgc;
+  Xgc = NULL; /* XXXXXX */
 
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
@@ -1263,10 +1259,10 @@ void link_move_control_init( NspLink *B,int cp,double pt[2])
  * link_get_number: unused 
  */
 
-int link_get_number(NspGFrame *F, NspLink *B) 
+int link_get_number(NspDiagram *F, NspLink *B) 
 {
   int count = 1;
-  Cell *C = F->obj->objs->first;
+  Cell *C = F->obj->children->first;
   while ( C != NULLCELL) 
     {
       if ( C->O == (NspObject  *) B) return count;
@@ -1298,19 +1294,6 @@ static void link_unlock( NspLink *L,int lp)
 
 
 /**
- * link_set_frame:
- * @Gf: a #NspGFrame 
- * 
- * attach the link frame reference to @GF
- **/
-
-static void link_set_frame( NspLink *B, NspGFrame *Gf)
-{
-  B->obj->frame = Gf->obj;
-}
-
-
-/**
  * link_lock: 
  * @F: a graphic frame  
  * @L: a link 
@@ -1326,7 +1309,7 @@ static void link_set_frame( NspLink *B, NspGFrame *Gf)
  * 
  **/
 
-static void link_lock(NspGFrame *F, NspLink *L,int lp,gr_port *p)
+static void link_lock(NspDiagram *F, NspLink *L,int lp,gr_port *p)
 {
   int port;
   NspObject *O1;
@@ -1355,11 +1338,11 @@ static void link_lock(NspGFrame *F, NspLink *L,int lp,gr_port *p)
  * 
  **/
 
-void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2]) 
+void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]) 
 {
   int lock_c;
   /* double pt[]={ptnew[0],ptnew[1]};*/
-  if ( F != NULLGFRAME) 
+  if ( F != NULLDIAGRAM) 
     {
       NspObject *Ob;
       int cp1;
@@ -1393,7 +1376,7 @@ void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2])
  * 
  **/
 
-void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,double ptc[2])
+void link_move_control(void *F, NspLink *L,const double mpt[2], int cp,double ptc[2])
 {
   double ptb[2],ptn[2];
   /* move a control point : here the point cp of the polyline */
@@ -1444,7 +1427,7 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
 
 /**
  * link_split:
- * @F: a #NspGFrame 
+ * @F: a #NspDiagram 
  * @L: a link 
  * @L1: a pointer to a link 
  * @pt: a point.
@@ -1456,7 +1439,7 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
  * Return value: %OK or %FAIL
  **/
 
-int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
+int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2])
 {
   int kmin,i,n,n1;
   gr_port p;
@@ -1466,7 +1449,6 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
   /* for proj to end of link */
   n1 = L->obj->poly->m-kmin;
   if ((*L1= link_create_n("fe",n1,L->obj->color,L->obj->thickness))==NULL) return FAIL;
-  (*L1)->obj->frame = F->obj;
   (*L1)->obj->poly->R[0]=proj[0];
   (*L1)->obj->poly->R[n1]=proj[1];
   for ( i=1; i < n1 ; i++) 
@@ -1490,7 +1472,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
       link_lock(F,(*L1),1,&p); 
     }
   /* add L1 in the frame at start */ 
-  if (nsp_list_insert(F->obj->objs,(NspObject  *) (*L1),0) == FAIL) return FAIL;
+  if (nsp_list_insert(F->obj->children,(NspObject  *) (*L1),0) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1550,7 +1532,7 @@ int link_remove_control(NspLink *L,const double pt[2])
  * 
  **/
 
-void link_check(NspGFrame *F,NspLink *L)
+void link_check(NspDiagram *F,NspLink *L)
 {
   NspObject *obj;
   double pt[2];
@@ -1601,13 +1583,12 @@ void link_check(NspGFrame *F,NspLink *L)
 		      NspConnector *C;
 		      gr_port p;
 		      gr_lock l;
-		      C= nsp_connector_create("fe",NULL,NULL,
+		      C= nsp_connector_create("fe",NULL,
 					      rect,color,thickness,background,
 					      l,FALSE,TRUE,NULL);
 		      if ( C == NULL) return;
 		      /* herits the frame graphic context */
-		      C->obj->frame = F->obj;
-		      if (nsp_list_end_insert(F->obj->objs,NSP_OBJECT(C)) == FAIL) return ; 
+		      if (nsp_list_end_insert(F->obj->children,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 
@@ -1881,10 +1862,7 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 static NspLink  *link_full_copy(NspLink *L)
 {
   NspLink *L1=NULLLINK;
-
-  extern NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type);
-
-  if (( L1 = nsp_link_create(NVOID,NULL,NULL,L->obj->color,L->obj->thickness,L->obj->background,
+  if (( L1 = nsp_link_create(NVOID,NULL,L->obj->color,L->obj->thickness,L->obj->background,
 			     L->obj->poly,L1->obj->lock1,L1->obj->lock2,L1->obj->hilited,
 			     L1->obj->show,    NULL)) == NULLLINK) return NULLLINK;
   L1->obj->object_sid = L;
@@ -2004,4 +1982,4 @@ static void nsp_init_grl_lock(grl_lock *locks)
 
 
 
-#line 2008 "link.c"
+#line 1986 "link.c"

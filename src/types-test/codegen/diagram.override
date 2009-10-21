@@ -1,16 +1,17 @@
 /* -*- Mode: C -*- */
 %%
 include-public Diagram
+typedef enum { MOVE, MOVE_CONTROL } move_action ;
+typedef enum _list_move_action list_move_action; 
+enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 
 /* inserted at the end of public part of include file */
 extern NspDiagram *nsp_figure_get_axe_elts_as_diagram(char *name,NspFigure *F);
-/* extern NspGFrame *diagram_object(NspObject *O);  */
-extern int IsGFrameObj (Stack stack, int i); 
-extern NspGFrame *GetGFrameCopy (Stack stack, int i); 
-extern NspGFrame *GetGFrame (Stack stack, int i); 
-extern int IsGFrame (NspObject *O); 
-
-/* extern NspObject *diagram_path_extract (NspDiagram *H,int n, NspObject **Objs);  */
+/* extern NspDiagram *diagram_object(NspObject *O);  */
+extern int IsDiagramObj (Stack stack, int i); 
+extern NspDiagram *GetDiagramCopy (Stack stack, int i); 
+extern NspDiagram *GetDiagram (Stack stack, int i); 
+extern int IsDiagram (NspObject *O); 
 extern void nsp_diagram_draw (NspDiagram *R); 
 extern int nsp_diagram_select_obj (NspDiagram *R, const double *pt, NspObject **Objs,NspObject *exclude); 
 extern int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
@@ -64,8 +65,6 @@ static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
 static void nsp_diagram_link_figure(NspGraphic *G, void *F);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
-typedef enum _list_move_action list_move_action; 
-enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action);
 static void nspdiagram_recompute_pointers(nsp_diagram *gf);
 static void nsp_diagram_list_recompute_pointers(NspList *L);
@@ -77,10 +76,7 @@ static char *nsp_diagram_type_short_string(NspObject *v);
 static int nsp_diagram_eq(NspDiagram *A, NspObject *B);
 static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
 static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
-static NspObject *nsp_diagram_path_extract(NspDiagram *H,int n, NspObject **Objs, int *copy);
 static AttrTab nsp_diagram_attrs[];
-static NspMethods *nsp_diagram_get_methods(void);
-static int int_nsp_diagram_create(Stack stack, int rhs, int opt, int lhs);
 /* static void nspdiagram_recompute_pointers(nsp_diagram *gf); */
 static void nsp_diagram_list_recompute_pointers(NspList *L);
 static void nspdiagram_set_frame_field(nsp_diagram *gf);
@@ -89,13 +85,13 @@ static nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only);
 
 %%
 headers
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/curve.h>
 
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/connector.h"
+#include "nsp/figuredata.h"
+#include "nsp/figure.h"
+#include "nsp/diagram.h"
 
 %%
 init 
@@ -447,7 +443,7 @@ static int _wrap_diagram_new_rect(void *self,Stack stack, int rhs, int opt, int 
 {
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  nsp_diagram_create_new_rect(((NspDiagram *) self));
+  /* nsp_diagram_create_new_rect(((NspDiagram *) self)); */
   return 0;
 }
 
@@ -2122,7 +2118,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F)
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B = nsp_block_create("fe",NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
+  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
   /* B->obj->frame = F->obj; */
   B->obj->hilited = TRUE;
@@ -2204,10 +2200,9 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   gr_lock l;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B=nsp_connector_create("fe",NULL,NULL,rect,color,thickness,background,l,
+  B=nsp_connector_create("fe",NULL,rect,color,thickness,background,l,
 			 FALSE,TRUE,NULL);
   if ( B == NULL) return NULLOBJ;
-  B->obj->frame = F->obj;
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
@@ -2227,7 +2222,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
  * 
  * Return value: %OK or %FALSE
  **/
-
+#if 0 
 int nsp_diagram_create_new_rect(NspDiagram *F)
 {
   int color=4,thickness=1, background=9,rep;
@@ -2246,7 +2241,7 @@ int nsp_diagram_create_new_rect(NspDiagram *F)
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return OK;
 }
-
+#endif 
 
 /**
  * nsp_diagram_create_new_link:
@@ -2281,8 +2276,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
-  L->obj->frame = F->obj;
-
   bf = GR_INT(((NspObject *) L)->basetype->interface);
 
   if ( L == NULLLINK) return NULLOBJ;

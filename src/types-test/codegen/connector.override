@@ -7,7 +7,6 @@ include-start Connector
 #include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
-#include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -66,7 +65,7 @@ static int connector_contains_pt (const NspConnector *B, const double *pt);
 static int connector_control_near_pt (const NspConnector *B, const double *pt, int *cp); 
 static int connector_lock_near_pt (const NspConnector *B, double *pt, int *cp); 
 static void connector_move_control_init( NspConnector *B,int cp,double ptc[2]);
-static void connector_move_control (NspGFrame *F,NspConnector *B, const double *pt, int cp,double ptc[2]); 
+static void connector_move_control (void *F,NspConnector *B, const double *pt, int cp,double ptc[2]); 
 
 static int connector_get_number_of_locks(const NspConnector *B) ;
 static int connector_get_number_of_ports(const NspConnector *B,int lp) ;
@@ -81,7 +80,6 @@ static int connector_is_lock_connected(const NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
 static NspConnector * connector_full_copy( NspConnector *B);
-static void connector_set_frame( NspConnector *B, NspGFrame *Gf);
 
 /* requested for grl_lock */
 
@@ -152,7 +150,6 @@ override-implements Connector
   t_grint->set_lock_pos =(gr_set_lock_pos *) connector_set_lock_pos;
   t_grint->full_copy =(gr_full_copy *) connector_full_copy;
   t_grint->unlock =(gr_unlock *) connector_unlock;
-  t_grint->set_frame =(gr_set_frame *) connector_set_frame;
 
 %%
 override-save-load Connector 
@@ -244,7 +241,6 @@ int nsp_connector_create_partial(NspConnector *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_connector)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->frame = NULL;
   H->obj->object_sid = NULL;
   {
     double x_def[4]={0,0,0,0};
@@ -266,12 +262,11 @@ int nsp_connector_check_values(NspConnector *H)
   return OK;
 }
 
-NspConnector *nsp_connector_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type)
+NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type)
 {
  NspConnector *H  = nsp_connector_create_void(name,type);
  if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
   if ( nsp_connector_create_partial(H) == FAIL) return NULLCONNECTOR;
-  H->obj->frame = frame;
   H->obj->object_sid = object_sid;
   memcpy(H->obj->r,r,4*sizeof(double));
   H->obj->color=color;
@@ -319,7 +314,7 @@ int int_connector_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_connector_create(NVOID,NULL,NULL,val,color,thickness,back,l,FALSE,TRUE,NULL)) == NULLCONNECTOR) return RET_BUG;
+  if(( H = nsp_connector_create(NVOID,NULL,val,color,thickness,back,l,FALSE,TRUE,NULL)) == NULLCONNECTOR) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -566,9 +561,8 @@ void connector_draw(NspConnector *B)
   double loc[6];
   int cpat, cwidth,locked,lockid=0;
   /* only draw block which are in a frame */
-  if ( B->obj->frame == NULL) return;
   if ( B->obj->show == FALSE ) return ;
-  Xgc=B->obj->frame->Xgc;
+  /* Xgc=B->obj->frame->Xgc; */
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
 
@@ -799,7 +793,7 @@ void connector_move_control_init( NspConnector *B,int cp,double ptc[2])
  * for connectors) is moved. 
  **/
 
-void connector_move_control(NspGFrame *F, NspConnector *B,const double mpt[2], int cp,double ptc[2])
+void connector_move_control(void *F, NspConnector *B,const double mpt[2], int cp,double ptc[2])
 {
   ptc[0]  =  Max(  mpt[0] - B->obj->r[0] ,0);
   ptc[1]  =  Max(  B->obj->r[1] -mpt[1] ,0);
@@ -1082,18 +1076,6 @@ static void connector_unlock( NspConnector *B,int lp)
 }
 
 
-/**
- * connector_set_frame:
- * @Gf: a #NspGFrame 
- * 
- * attach the connector frame reference to @GF
- **/
-
-static void connector_set_frame( NspConnector *B, NspGFrame *Gf)
-{
-  B->obj->frame = Gf->obj;
-}
-
 
 /*
  */
@@ -1103,7 +1085,7 @@ static NspConnector  *connector_full_copy(NspConnector *C)
   gr_lock l;
   int i;
   NspConnector *C1=NULLCONNECTOR;
-  if (( C1 = nsp_connector_create(NVOID,NULL,NULL,
+  if (( C1 = nsp_connector_create(NVOID,NULL,
 				  C->obj->r,C->obj->color,C->obj->thickness,C->obj->background,
 				  l,FALSE,TRUE,NULL))
     == NULLCONNECTOR) return NULLCONNECTOR;

@@ -6,7 +6,6 @@ include-start Block
 #include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
-#include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -89,7 +88,7 @@ static int block_contains_pt (const NspBlock *B, const double *pt);
 static int block_control_near_pt (const NspBlock *B, const double *pt, int *cp); 
 static int block_lock_near_pt (const NspBlock *B, double *pt, int *cp); 
 static void block_move_control_init( NspBlock *B,int cp,double ptc[2]);
-static void block_move_control (NspGFrame *F,NspBlock *B, const double *pt, int cp,double ptc[2]); 
+static void block_move_control (void *F,NspBlock *B, const double *pt, int cp,double ptc[2]); 
 
 static int block_get_number_of_locks(const NspBlock *B) ;
 static int block_get_number_of_ports(const NspBlock *B,int lp) ;
@@ -107,7 +106,6 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
-static void block_set_frame( NspBlock *B, NspGFrame *Gf);
 
 /* requested for grb_lock */
 
@@ -120,7 +118,11 @@ static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
 %%
 headers
 
-#include "nsp/object.h"
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/figuredata.h"
+#include "nsp/figure.h"
+#include "nsp/diagram.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
@@ -176,7 +178,6 @@ override-implements Block
   t_grint->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
   t_grint->full_copy =(gr_full_copy *) block_full_copy;
   t_grint->unlock =(gr_unlock *) block_unlock;
-  t_grint->set_frame =(gr_set_frame *) block_set_frame;
 
 %%
 override-save-load Block 
@@ -272,7 +273,6 @@ int nsp_block_create_partial(NspBlock *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_block)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->frame = NULL;
   H->obj->object_sid = NULL;
   {
     double x_def[4]={0,0,0,0};
@@ -296,14 +296,13 @@ int nsp_block_check_values(NspBlock *H)
 }
 
 
-NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,gboolean show,NspTypeBase *type)
+NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,gboolean show,NspTypeBase *type)
 {
   double pt[2];
   int i;
   NspBlock *H  = nsp_block_create_void(name,type);
   if ( H ==  NULLBLOCK) return NULLBLOCK;
   if ( nsp_block_create_partial(H) == FAIL) return NULLBLOCK;
-  H->obj->frame = frame;
   H->obj->object_sid = object_sid;
   memcpy(H->obj->r,r,4*sizeof(double));
   H->obj->color=color;
@@ -398,7 +397,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_block_create(NVOID,NULL,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
+  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0,NULL,FALSE,TRUE,NULL))
      == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -1011,7 +1010,7 @@ void block_move_control_init( NspBlock *B,int cp,double ptc[2])
  * @mpt gives the mouse position where the control point is to be moved.translation vector which is to be applied to the control point.
  **/
 
-void block_move_control(NspGFrame *F, NspBlock *B,const double mpt[2], int cp,double ptc[2])
+void block_move_control(void *F, NspBlock *B,const double mpt[2], int cp,double ptc[2])
 {
   ptc[0]  =  Max(  mpt[0] - B->obj->r[0] ,0);
   ptc[1]  =  Max(  B->obj->r[1] -mpt[1] ,0);
@@ -1320,17 +1319,6 @@ static void block_unlock( NspBlock *B,int lp)
   block_unset_lock_connection(B,lp,0);
 }
 
-/**
- * block_set_frame:
- * @Gf: a #NspGFrame 
- * 
- * attach the block frame reference to @GF
- **/
-
-static void block_set_frame( NspBlock *B, NspGFrame *Gf)
-{
-  B->obj->frame = Gf->obj;
-}
 
 
 /**
@@ -1346,7 +1334,7 @@ static NspBlock * block_full_copy( NspBlock *B)
 {
   int i;
   NspBlock *M=NULLBLOCK;
-  if (( M = nsp_block_create(NVOID,NULL,NULL,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,0,NULL,FALSE,TRUE,NULL))
+  if (( M = nsp_block_create(NVOID,NULL,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,0,NULL,FALSE,TRUE,NULL))
       == NULLBLOCK) return NULLBLOCK;
   /* keep old address */
   M->obj->object_sid = B;

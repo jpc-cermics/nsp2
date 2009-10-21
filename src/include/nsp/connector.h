@@ -14,7 +14,6 @@
 #include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
-#include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -39,7 +38,7 @@ struct _gr_lock {
 
 
 
-#line 43 "./connector.h"
+#line 42 "./connector.h"
 /* NspConnector */
 
 #include <nsp/graphic.h>
@@ -51,19 +50,18 @@ struct _gr_lock {
 typedef struct _NspConnector NspConnector ;
 typedef struct _NspTypeConnector NspTypeConnector ;
 
-#line 55 "./connector.h"
+#line 54 "./connector.h"
 
 struct _NspTypeConnector {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 62 "./connector.h"
+#line 61 "./connector.h"
 };
 
 typedef struct _nsp_connector nsp_connector;
 struct _nsp_connector {
-  nspgframe* frame;
   void* object_sid;
   double r[4];
   int color;
@@ -101,7 +99,7 @@ NspConnector *new_connector();
 
 #define NULLCONNECTOR (NspConnector*) 0
 
-extern NspConnector *nsp_connector_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type);
 extern NspConnector *nsp_connector_create_default(char *name);
 
 /* from NspConnectorObj.c */
@@ -126,11 +124,11 @@ extern int int_connector_create(Stack stack, int rhs, int opt, int lhs);
 extern NspConnector *nsp_connector_xdr_load_partial(XDR *xdrs, NspConnector *M);
 extern int nsp_connector_xdr_save(XDR  *xdrs, NspConnector *M);
 
-#line 37 "codegen/connector.override"
+#line 36 "codegen/connector.override"
 
 /* inserted at the end of public part of include file */
 
-#line 134 "./connector.h"
+#line 132 "./connector.h"
 #endif /* NSP_INC_NspConnector */ 
 
 #ifdef NspConnector_Private 
@@ -145,7 +143,7 @@ static AttrTab connector_attrs[];
 static NspMethods *connector_get_methods(void);
 /* static int int_connector_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspConnector *nsp_connector_create_void(char *name,NspTypeBase *type);
-#line 42 "codegen/connector.override"
+#line 41 "codegen/connector.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
@@ -173,7 +171,7 @@ static int connector_contains_pt (const NspConnector *B, const double *pt);
 static int connector_control_near_pt (const NspConnector *B, const double *pt, int *cp); 
 static int connector_lock_near_pt (const NspConnector *B, double *pt, int *cp); 
 static void connector_move_control_init( NspConnector *B,int cp,double ptc[2]);
-static void connector_move_control (NspGFrame *F,NspConnector *B, const double *pt, int cp,double ptc[2]); 
+static void connector_move_control (void *F,NspConnector *B, const double *pt, int cp,double ptc[2]); 
 
 static int connector_get_number_of_locks(const NspConnector *B) ;
 static int connector_get_number_of_ports(const NspConnector *B,int lp) ;
@@ -188,7 +186,6 @@ static int connector_is_lock_connected(const NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
 static NspConnector * connector_full_copy( NspConnector *B);
-static void connector_set_frame( NspConnector *B, NspGFrame *Gf);
 
 /* requested for grl_lock */
 
@@ -200,6 +197,6 @@ static int nsp_check_gr_lock(gr_lock *locks,NspConnector *M);
 static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 
-#line 204 "./connector.h"
+#line 201 "./connector.h"
 #endif /* NspConnector_Private */
 

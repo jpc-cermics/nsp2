@@ -6,7 +6,6 @@
   (c-name "NspLink")
   (implements "GRint")
   (fields
-   '("nspgframe*" "frame" "hidden" ) 
    '("void*" "object_sid" "hidden")
    '("int" "color")
    '("int" "thickness")
@@ -26,14 +25,6 @@
   (c-name "grl_lock")
   (gtype-id "grl_lock")
 )
-
-(define-pointer nspgframe 
-  (in-module "Block")
-  (parent "Graphic")
-  (c-name "nspgframe")
-  (gtype-id "nspgframe")
-)
-
 
 ;; just to give a name the code is overriden 
 ;; 

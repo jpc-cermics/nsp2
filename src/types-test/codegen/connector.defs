@@ -6,7 +6,6 @@
   (c-name "NspConnector")
   (implements "GRint")
   (fields
-   '("nspgframe*" "frame" "hidden" ) 
    '("void*" "object_sid" "hidden")
    '("double[]" "r" "hidden" "{0,0,0,0}" "4" )   
    '("int" "color")
@@ -25,14 +24,6 @@
   (c-name "gr_lock")
   (gtype-id "gr_lock")
 )
-
-(define-pointer nspgframe 
-  (in-module "Block")
-  (parent "Graphic")
-  (c-name "nspgframe")
-  (gtype-id "nspgframe")
-)
-
 
 ;; just to give a name the code is overriden 
 ;; 

@@ -13,7 +13,6 @@
 #include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
-#include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -62,7 +61,7 @@ struct b_lock {
  */
 
 
-#line 66 "./block.h"
+#line 65 "./block.h"
 /* NspBlock */
 
 #include <nsp/graphic.h>
@@ -74,19 +73,18 @@ struct b_lock {
 typedef struct _NspBlock NspBlock ;
 typedef struct _NspTypeBlock NspTypeBlock ;
 
-#line 78 "./block.h"
+#line 77 "./block.h"
 
 struct _NspTypeBlock {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 85 "./block.h"
+#line 84 "./block.h"
 };
 
 typedef struct _nsp_block nsp_block;
 struct _nsp_block {
-  nspgframe* frame;
   void* object_sid;
   double r[4];
   int color;
@@ -125,7 +123,7 @@ NspBlock *new_block();
 
 #define NULLBLOCK (NspBlock*) 0
 
-extern NspBlock *nsp_block_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,gboolean hilited,gboolean show,NspTypeBase *type);
 extern NspBlock *nsp_block_create_default(char *name);
 
 /* from NspBlockObj.c */
@@ -150,11 +148,11 @@ extern int int_block_create(Stack stack, int rhs, int opt, int lhs);
 extern NspBlock *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M);
 extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
 
-#line 60 "codegen/block.override"
+#line 59 "codegen/block.override"
 
 /* inserted at the end of public part of include file */
 
-#line 158 "./block.h"
+#line 156 "./block.h"
 #endif /* NSP_INC_NspBlock */ 
 
 #ifdef NspBlock_Private 
@@ -169,7 +167,7 @@ static AttrTab block_attrs[];
 static NspMethods *block_get_methods(void);
 /* static int int_block_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
-#line 65 "codegen/block.override"
+#line 64 "codegen/block.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
@@ -197,7 +195,7 @@ static int block_contains_pt (const NspBlock *B, const double *pt);
 static int block_control_near_pt (const NspBlock *B, const double *pt, int *cp); 
 static int block_lock_near_pt (const NspBlock *B, double *pt, int *cp); 
 static void block_move_control_init( NspBlock *B,int cp,double ptc[2]);
-static void block_move_control (NspGFrame *F,NspBlock *B, const double *pt, int cp,double ptc[2]); 
+static void block_move_control (void *F,NspBlock *B, const double *pt, int cp,double ptc[2]); 
 
 static int block_get_number_of_locks(const NspBlock *B) ;
 static int block_get_number_of_ports(const NspBlock *B,int lp) ;
@@ -215,7 +213,6 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
 static NspBlock * block_full_copy( NspBlock *B);
-static void block_set_frame( NspBlock *B, NspGFrame *Gf);
 
 /* requested for grb_lock */
 
@@ -225,6 +222,6 @@ static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
 static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
 
-#line 229 "./block.h"
+#line 226 "./block.h"
 #endif /* NspBlock_Private */
 

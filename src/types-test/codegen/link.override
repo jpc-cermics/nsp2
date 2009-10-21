@@ -6,7 +6,6 @@ include-start Link
 #include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
-#include "nsp/gframe.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -86,7 +85,7 @@ static int link_contains_pt (const NspLink *B, const double *pt);
 static int link_control_near_pt (const NspLink *B, const double *pt, int *cp); 
 static int link_lock_near_pt (const NspLink *B,const double *pt, int *cp); 
 static void link_move_control_init( NspLink *B,int cp,double ptc[2]);
-static void link_move_control (NspGFrame *F,NspLink *B, const double *pt, int cp,double ptc[2]); 
+static void link_move_control (void *F,NspLink *B, const double *pt, int cp,double ptc[2]); 
 
 static int link_get_number_of_locks(const NspLink *B) ;
 static int link_get_number_of_ports(const NspLink *B,int lp) ;
@@ -101,7 +100,6 @@ static int link_is_lock_connected(NspLink *B,int i);
 static void link_set_lock_pos(NspLink *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void link_unlock( NspLink *B,int lp) ;
 static NspLink * link_full_copy( NspLink *B);
-static void link_set_frame( NspLink *B, NspGFrame *Gf);
 
 /* requested for grl_lock */
 
@@ -116,7 +114,12 @@ static void nsp_init_grl_lock(grl_lock *locks);
 %%
 headers
 
-#include "nsp/object.h"
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/connector.h"
+#include "nsp/figuredata.h"
+#include "nsp/figure.h"
+#include "nsp/diagram.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
@@ -172,7 +175,6 @@ override-implements Link
   t_grint->set_lock_pos =(gr_set_lock_pos *) link_set_lock_pos;
   t_grint->full_copy =(gr_full_copy *) link_full_copy;
   t_grint->unlock =(gr_unlock *) link_unlock;
-  t_grint->set_frame =(gr_set_frame *) link_set_frame;
 
 %%
 override-save-load Link 
@@ -266,7 +268,6 @@ int nsp_link_create_partial(NspLink *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_link)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->frame = NULL;
   H->obj->object_sid = NULL;
   H->obj->color = 0;
   H->obj->thickness = 0;
@@ -292,12 +293,11 @@ int nsp_link_check_values(NspLink *H)
   return OK;
 }
 
-NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type)
+NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type)
 {
  NspLink *H  = nsp_link_create_void(name,type);
  if ( H ==  NULLLINK) return NULLLINK;
   if ( nsp_link_create_partial(H) == FAIL) return NULLLINK;
-  H->obj->frame = frame;
   H->obj->object_sid = object_sid;
   H->obj->color=color;
   H->obj->thickness=thickness;
@@ -350,7 +350,7 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
   if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
   CheckCols(NspFname(stack),1,M1,2);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_link_create(NVOID,NULL,NULL,color,thickness,0,M1,l,l,FALSE,TRUE,NULL)) 
+  if(( H = nsp_link_create(NVOID,NULL,color,thickness,0,M1,l,l,FALSE,TRUE,NULL)) 
     == NULLLINK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -520,7 +520,6 @@ NspLink *link_create_n(char *name,int n,int color,int thickness)
   if ( H ==  NULLLINK) return NULLLINK;
   if ((H->obj = malloc(sizeof(nsp_link))) == NULL) return NULL;
   H->obj->ref_count=1;
-  H->obj->frame = NULL; 
   /* fields */
   if (( H->obj->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
   /* need a name here to be able to save object */
@@ -562,10 +561,9 @@ void link_draw(NspLink *L)
   double loc[4];
   int cpat, cwidth;
   /* only draw block which are in a frame */
-  if ( L->obj->frame == NULL) return;
   if ( L->obj->show == FALSE ) return ;
 
-  Xgc=L->obj->frame->Xgc;
+  Xgc = NULL; /* XXXXXX */
 
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
@@ -795,10 +793,10 @@ void link_move_control_init( NspLink *B,int cp,double pt[2])
  * link_get_number: unused 
  */
 
-int link_get_number(NspGFrame *F, NspLink *B) 
+int link_get_number(NspDiagram *F, NspLink *B) 
 {
   int count = 1;
-  Cell *C = F->obj->objs->first;
+  Cell *C = F->obj->children->first;
   while ( C != NULLCELL) 
     {
       if ( C->O == (NspObject  *) B) return count;
@@ -830,19 +828,6 @@ static void link_unlock( NspLink *L,int lp)
 
 
 /**
- * link_set_frame:
- * @Gf: a #NspGFrame 
- * 
- * attach the link frame reference to @GF
- **/
-
-static void link_set_frame( NspLink *B, NspGFrame *Gf)
-{
-  B->obj->frame = Gf->obj;
-}
-
-
-/**
  * link_lock: 
  * @F: a graphic frame  
  * @L: a link 
@@ -858,7 +843,7 @@ static void link_set_frame( NspLink *B, NspGFrame *Gf)
  * 
  **/
 
-static void link_lock(NspGFrame *F, NspLink *L,int lp,gr_port *p)
+static void link_lock(NspDiagram *F, NspLink *L,int lp,gr_port *p)
 {
   int port;
   NspObject *O1;
@@ -887,11 +872,11 @@ static void link_lock(NspGFrame *F, NspLink *L,int lp,gr_port *p)
  * 
  **/
 
-void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2]) 
+void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]) 
 {
   int lock_c;
   /* double pt[]={ptnew[0],ptnew[1]};*/
-  if ( F != NULLGFRAME) 
+  if ( F != NULLDIAGRAM) 
     {
       NspObject *Ob;
       int cp1;
@@ -925,7 +910,7 @@ void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2])
  * 
  **/
 
-void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,double ptc[2])
+void link_move_control(void *F, NspLink *L,const double mpt[2], int cp,double ptc[2])
 {
   double ptb[2],ptn[2];
   /* move a control point : here the point cp of the polyline */
@@ -976,7 +961,7 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
 
 /**
  * link_split:
- * @F: a #NspGFrame 
+ * @F: a #NspDiagram 
  * @L: a link 
  * @L1: a pointer to a link 
  * @pt: a point.
@@ -988,7 +973,7 @@ void link_move_control(NspGFrame *F, NspLink *L,const double mpt[2], int cp,doub
  * Return value: %OK or %FAIL
  **/
 
-int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
+int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2])
 {
   int kmin,i,n,n1;
   gr_port p;
@@ -998,7 +983,6 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
   /* for proj to end of link */
   n1 = L->obj->poly->m-kmin;
   if ((*L1= link_create_n("fe",n1,L->obj->color,L->obj->thickness))==NULL) return FAIL;
-  (*L1)->obj->frame = F->obj;
   (*L1)->obj->poly->R[0]=proj[0];
   (*L1)->obj->poly->R[n1]=proj[1];
   for ( i=1; i < n1 ; i++) 
@@ -1022,7 +1006,7 @@ int link_split(NspGFrame *F,NspLink *L,NspLink **L1,const double pt[2])
       link_lock(F,(*L1),1,&p); 
     }
   /* add L1 in the frame at start */ 
-  if (nsp_list_insert(F->obj->objs,(NspObject  *) (*L1),0) == FAIL) return FAIL;
+  if (nsp_list_insert(F->obj->children,(NspObject  *) (*L1),0) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1082,7 +1066,7 @@ int link_remove_control(NspLink *L,const double pt[2])
  * 
  **/
 
-void link_check(NspGFrame *F,NspLink *L)
+void link_check(NspDiagram *F,NspLink *L)
 {
   NspObject *obj;
   double pt[2];
@@ -1133,13 +1117,12 @@ void link_check(NspGFrame *F,NspLink *L)
 		      NspConnector *C;
 		      gr_port p;
 		      gr_lock l;
-		      C= nsp_connector_create("fe",NULL,NULL,
+		      C= nsp_connector_create("fe",NULL,
 					      rect,color,thickness,background,
 					      l,FALSE,TRUE,NULL);
 		      if ( C == NULL) return;
 		      /* herits the frame graphic context */
-		      C->obj->frame = F->obj;
-		      if (nsp_list_end_insert(F->obj->objs,NSP_OBJECT(C)) == FAIL) return ; 
+		      if (nsp_list_end_insert(F->obj->children,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 
@@ -1413,10 +1396,7 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 static NspLink  *link_full_copy(NspLink *L)
 {
   NspLink *L1=NULLLINK;
-
-  extern NspLink *nsp_link_create(char *name,nspgframe* frame,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type);
-
-  if (( L1 = nsp_link_create(NVOID,NULL,NULL,L->obj->color,L->obj->thickness,L->obj->background,
+  if (( L1 = nsp_link_create(NVOID,NULL,L->obj->color,L->obj->thickness,L->obj->background,
 			     L->obj->poly,L1->obj->lock1,L1->obj->lock2,L1->obj->hilited,
 			     L1->obj->show,    NULL)) == NULLLINK) return NULLLINK;
   L1->obj->object_sid = L;

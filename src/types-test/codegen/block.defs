@@ -6,7 +6,6 @@
   (c-name "NspBlock")
   (implements "GRint")
   (fields
-   '("nspgframe*" "frame" "hidden" ) 
    '("void*" "object_sid" "hidden")
    '("double[]" "r" "hidden" "{0,0,0,0}" "4" )   
    '("int" "color")

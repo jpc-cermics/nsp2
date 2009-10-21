@@ -24,14 +24,14 @@
 
 
 
-#line 92 "codegen/diagram.override"
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/curve.h>
+#line 88 "codegen/diagram.override"
 
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/connector.h"
+#include "nsp/figuredata.h"
+#include "nsp/figure.h"
+#include "nsp/diagram.h"
 
 #line 37 "diagram.c"
 
@@ -104,7 +104,7 @@ NspTypeDiagram *new_type_diagram(type_mode mode)
 
   type->init = (init_func *) init_diagram;
 
-#line 107 "codegen/diagram.override"
+#line 103 "codegen/diagram.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_diagram;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_diagram ;
@@ -556,7 +556,7 @@ int int_diagram_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 233 "codegen/diagram.override"
+#line 229 "codegen/diagram.override"
 /* draw */
 
 static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -570,7 +570,7 @@ static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lh
 #line 571 "diagram.c"
 
 
-#line 719 "codegen/diagram.override"
+#line 715 "codegen/diagram.override"
 /* XXX */
 extern void nsp_diagram_tops(NspDiagram *R,char *fname);
 
@@ -601,7 +601,7 @@ static int _wrap_diagram_tops(void *self,Stack stack, int rhs, int opt, int lhs)
 #line 602 "diagram.c"
 
 
-#line 456 "codegen/diagram.override"
+#line 452 "codegen/diagram.override"
 
 static int _wrap_diagram_new_link(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -618,7 +618,7 @@ static int _wrap_diagram_new_link(void *self,Stack stack, int rhs, int opt, int 
 #line 619 "diagram.c"
 
 
-#line 381 "codegen/diagram.override"
+#line 377 "codegen/diagram.override"
 
 static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -636,7 +636,7 @@ static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int
 #line 637 "diagram.c"
 
 
-#line 397 "codegen/diagram.override"
+#line 393 "codegen/diagram.override"
 /* a super block 
  */
 
@@ -655,7 +655,7 @@ static int _wrap_diagram_new_gridblock(void *self,Stack stack, int rhs, int opt,
 #line 656 "diagram.c"
 
 
-#line 414 "codegen/diagram.override"
+#line 410 "codegen/diagram.override"
 
 static int _wrap_diagram_new_gridblock_from_selection(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -673,7 +673,7 @@ static int _wrap_diagram_new_gridblock_from_selection(void *self,Stack stack, in
 #line 674 "diagram.c"
 
 
-#line 430 "codegen/diagram.override"
+#line 426 "codegen/diagram.override"
 
 static int _wrap_diagram_new_connector(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -690,20 +690,20 @@ static int _wrap_diagram_new_connector(void *self,Stack stack, int rhs, int opt,
 #line 691 "diagram.c"
 
 
-#line 445 "codegen/diagram.override"
+#line 441 "codegen/diagram.override"
 
 static int _wrap_diagram_new_rect(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  nsp_diagram_create_new_rect(((NspDiagram *) self));
+  /* nsp_diagram_create_new_rect(((NspDiagram *) self)); */
   return 0;
 }
 
 #line 704 "diagram.c"
 
 
-#line 367 "codegen/diagram.override"
+#line 363 "codegen/diagram.override"
 
 static int _wrap_diagram_hilite_near_pt(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -719,7 +719,7 @@ static int _wrap_diagram_hilite_near_pt(void *self,Stack stack, int rhs, int opt
 #line 720 "diagram.c"
 
 
-#line 245 "codegen/diagram.override"
+#line 241 "codegen/diagram.override"
 
 /* select_and_move select current unhilite others and move current */
 
@@ -737,7 +737,7 @@ static int _wrap_diagram_select_and_move(void *self,Stack stack, int rhs, int op
 #line 738 "diagram.c"
 
 
-#line 261 "codegen/diagram.override"
+#line 257 "codegen/diagram.override"
 
 /* select_and_move_list: select current and move all hilited in group */
 
@@ -756,7 +756,7 @@ static int _wrap_diagram_select_and_move_list(void *self,Stack stack, int rhs, i
 #line 757 "diagram.c"
 
 
-#line 278 "codegen/diagram.override"
+#line 274 "codegen/diagram.override"
 /* select_and_hilite */
 
 static int _wrap_diagram_select_and_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -779,7 +779,7 @@ static int _wrap_diagram_select_and_hilite(void *self,Stack stack, int rhs, int 
 #line 780 "diagram.c"
 
 
-#line 299 "codegen/diagram.override"
+#line 295 "codegen/diagram.override"
 
 static int _wrap_diagram_select_and_toggle_hilite(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -801,7 +801,7 @@ static int _wrap_diagram_select_and_toggle_hilite(void *self,Stack stack, int rh
 #line 802 "diagram.c"
 
 
-#line 319 "codegen/diagram.override"
+#line 315 "codegen/diagram.override"
 /* split link */
 
 static int _wrap_diagram_select_and_split(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -819,7 +819,7 @@ static int _wrap_diagram_select_and_split(void *self,Stack stack, int rhs, int o
 #line 820 "diagram.c"
 
 
-#line 335 "codegen/diagram.override"
+#line 331 "codegen/diagram.override"
 /* split link */
 
 static int _wrap_diagram_select_link_and_add_control(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -838,7 +838,7 @@ static int _wrap_diagram_select_link_and_add_control(void *self,Stack stack, int
 #line 839 "diagram.c"
 
 
-#line 352 "codegen/diagram.override"
+#line 348 "codegen/diagram.override"
 /* shorten link */
 static int _wrap_diagram_select_link_and_remove_control(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -855,7 +855,7 @@ static int _wrap_diagram_select_link_and_remove_control(void *self,Stack stack, 
 #line 856 "diagram.c"
 
 
-#line 471 "codegen/diagram.override"
+#line 467 "codegen/diagram.override"
 
 static int _wrap_diagram_delete_hilited(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -869,7 +869,7 @@ static int _wrap_diagram_delete_hilited(void *self,Stack stack, int rhs, int opt
 #line 870 "diagram.c"
 
 
-#line 554 "codegen/diagram.override"
+#line 550 "codegen/diagram.override"
 /* insert an object in a frame. 
  *
  */
@@ -919,7 +919,7 @@ static int _wrap_diagram_insert(void *self,Stack stack, int rhs, int opt, int lh
 #line 920 "diagram.c"
 
 
-#line 602 "codegen/diagram.override"
+#line 598 "codegen/diagram.override"
 /* used for the paste of a multiselection 
  * insert a list of objects which are in a diagram. 
  */
@@ -995,7 +995,7 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
 #line 996 "diagram.c"
 
 
-#line 483 "codegen/diagram.override"
+#line 479 "codegen/diagram.override"
 /* get the first hilited object */
 
 static int _wrap_diagram_get_selection(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -1024,7 +1024,7 @@ static int _wrap_diagram_get_selection(void *self,Stack stack, int rhs, int opt,
 #line 1025 "diagram.c"
 
 
-#line 510 "codegen/diagram.override"
+#line 506 "codegen/diagram.override"
 /* get a full copy of the first hilited object */
 static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1055,7 +1055,7 @@ static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int
 #line 1056 "diagram.c"
 
 
-#line 539 "codegen/diagram.override"
+#line 535 "codegen/diagram.override"
 /* get the hilited objects as a list with or without full copy */
 
 static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rhs, int opt, int lhs) 
@@ -1072,7 +1072,7 @@ static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rh
 #line 1073 "diagram.c"
 
 
-#line 676 "codegen/diagram.override"
+#line 672 "codegen/diagram.override"
 /* connect a diagram to a physical window 
  *
  */
@@ -1098,7 +1098,7 @@ static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int o
 #line 1099 "diagram.c"
 
 
-#line 762 "codegen/diagram.override"
+#line 758 "codegen/diagram.override"
 /* check if we are over an object */
 
 static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -1127,7 +1127,7 @@ static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt,
 #line 1128 "diagram.c"
 
 
-#line 700 "codegen/diagram.override"
+#line 696 "codegen/diagram.override"
 
 static int _wrap_diagram_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1148,7 +1148,7 @@ static int _wrap_diagram_full_copy(void *self,Stack stack, int rhs, int opt, int
 #line 1149 "diagram.c"
 
 
-#line 748 "codegen/diagram.override"
+#line 744 "codegen/diagram.override"
 
 static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1199,7 +1199,7 @@ static NspMethods *diagram_get_methods(void) { return diagram_methods;};
  * Attributes
  *-------------------------------------------*/
 
-#line 156 "codegen/diagram.override"
+#line 152 "codegen/diagram.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1272,7 +1272,7 @@ static AttrTab diagram_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 127 "codegen/diagram.override"
+#line 123 "codegen/diagram.override"
 int _wrap_diagram_attach(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject  *pl = NULL;
@@ -1287,7 +1287,7 @@ int _wrap_diagram_attach(Stack stack, int rhs, int opt, int lhs)
 #line 1288 "diagram.c"
 
 
-#line 212 "codegen/diagram.override"
+#line 208 "codegen/diagram.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1299,7 +1299,7 @@ int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs)
 #line 1300 "diagram.c"
 
 
-#line 222 "codegen/diagram.override"
+#line 218 "codegen/diagram.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1341,7 +1341,7 @@ void Diagram_Interf_Info(int i, char **fname, function (**f))
   *f = Diagram_func[i].fonc;
 }
 
-#line 789 "codegen/diagram.override"
+#line 785 "codegen/diagram.override"
 
 /* inserted verbatim at the end */
 
@@ -2678,7 +2678,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F)
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B = nsp_block_create("fe",NULL,NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
+  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
   /* B->obj->frame = F->obj; */
   B->obj->hilited = TRUE;
@@ -2760,10 +2760,9 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   gr_lock l;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B=nsp_connector_create("fe",NULL,NULL,rect,color,thickness,background,l,
+  B=nsp_connector_create("fe",NULL,rect,color,thickness,background,l,
 			 FALSE,TRUE,NULL);
   if ( B == NULL) return NULLOBJ;
-  B->obj->frame = F->obj;
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
@@ -2783,7 +2782,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
  * 
  * Return value: %OK or %FALSE
  **/
-
+#if 0 
 int nsp_diagram_create_new_rect(NspDiagram *F)
 {
   int color=4,thickness=1, background=9,rep;
@@ -2802,7 +2801,7 @@ int nsp_diagram_create_new_rect(NspDiagram *F)
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return OK;
 }
-
+#endif 
 
 /**
  * nsp_diagram_create_new_link:
@@ -2837,8 +2836,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
-  L->obj->frame = F->obj;
-
   bf = GR_INT(((NspObject *) L)->basetype->interface);
 
   if ( L == NULLLINK) return NULLOBJ;
@@ -3081,4 +3078,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 3085 "diagram.c"
+#line 3082 "diagram.c"

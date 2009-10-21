@@ -359,11 +359,13 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 #include "nsp/mod.h" 
 #include "nsp/me.h" 
 #include "nsp/lmo.h" 
+/*
 #include "nsp/rect.h" 
 #include "nsp/block.h" 
 #include "nsp/connector.h" 
-#include "nsp/gframe.h" 
 #include "nsp/link.h" 
+#include "nsp/diagram.h" 
+*/
 #include "nsp/none.h" 
 #include "nsp/type.h" 
 #include "nsp/module.h"
