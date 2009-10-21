@@ -2678,7 +2678,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F)
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL);
+  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
   /* B->obj->frame = F->obj; */
   B->obj->hilited = TRUE;

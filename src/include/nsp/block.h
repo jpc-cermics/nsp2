@@ -94,6 +94,7 @@ struct _nsp_block {
   grb_lock* locks;
   gboolean hilited;
   gboolean show;
+  NspGraphic* icon;
   int ref_count;
 };
 
@@ -123,7 +124,7 @@ NspBlock *new_block();
 
 #define NULLBLOCK (NspBlock*) 0
 
-extern NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,gboolean hilited,gboolean show,NspGraphic* icon,NspTypeBase *type);
 extern NspBlock *nsp_block_create_default(char *name);
 
 /* from NspBlockObj.c */
@@ -152,7 +153,7 @@ extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
 
 /* inserted at the end of public part of include file */
 
-#line 156 "./block.h"
+#line 157 "./block.h"
 #endif /* NSP_INC_NspBlock */ 
 
 #ifdef NspBlock_Private 
@@ -222,6 +223,6 @@ static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
 static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
 
-#line 226 "./block.h"
+#line 227 "./block.h"
 #endif /* NspBlock_Private */
 

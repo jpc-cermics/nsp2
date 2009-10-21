@@ -15,6 +15,7 @@
    '("grb_lock*" "locks" "hidden" ) 
    '("gboolean" "hilited" "std" "FALSE") 
    '("gboolean"  "show" "std" "TRUE")   
+   '("NspGraphic*" "icon" "std") 
   )
   (gtype-id "Block")
 )
