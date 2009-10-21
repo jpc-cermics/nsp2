@@ -59,7 +59,7 @@ extern  sci_interface  None_Interf ;extern  interface_info  None_Interf_Info ;
 extern  sci_interface  Menus_Interf ;extern  interface_info  Menus_Interf_Info ;
 extern  sci_interface  Hobj_Interf ;extern  interface_info  Hobj_Interf_Info ;
 extern  sci_interface  Rect_Interf ;extern  interface_info  Rect_Interf_Info ;
-extern  sci_interface  GFrame_Interf ;extern  interface_info  GFrame_Interf_Info ;
+extern  sci_interface  Diagram_Interf ;extern  interface_info  Diagram_Interf_Info ;
 extern  sci_interface  Block_Interf ;extern  interface_info  Block_Interf_Info ;
 extern  sci_interface  Link_Interf ;extern  interface_info  Link_Interf_Info ;
 extern  sci_interface  ClassA_Interf ;extern  interface_info  ClassA_Interf_Info ;
@@ -196,7 +196,7 @@ InterfTab Interfaces[]={
   {Menus_Interf,Menus_Interf_Info},
   {Hobj_Interf,Hobj_Interf_Info},
   {Rect_Interf,Rect_Interf_Info},
-  {GFrame_Interf,GFrame_Interf_Info},
+  {Diagram_Interf,Diagram_Interf_Info},
   {Block_Interf,Block_Interf_Info},
   {Link_Interf,Link_Interf_Info},
   {ClassA_Interf,ClassA_Interf_Info},

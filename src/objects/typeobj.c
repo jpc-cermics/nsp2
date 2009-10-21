@@ -520,7 +520,7 @@ void primitive_types_register(void)
   new_type_rect(T_BASE);
   new_type_block(T_BASE);
   new_type_link(T_BASE);
-  new_type_gframe(T_BASE);
+  new_type_diagram(T_BASE);
   /* initialize nsp gtk objects types */
   nsp_init_gtk_types(); 
   /* cells */

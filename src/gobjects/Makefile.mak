@@ -9,10 +9,6 @@ LIBRARY = nsp.lib
 
 OBJSC = rect.obj \
 	grint.obj \
-	frame.obj \
-	connector.obj \
-	gport.obj \
-	block1.obj 
 
 OBJSF=
 

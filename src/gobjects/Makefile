@@ -6,10 +6,6 @@ LIBRARY = nsp.a
 
 OBJSC = rect.o \
 	grint.o \
-	frame.o \
-	connector.o \
-	gport.o \
-	block1.o 
 
 OBJSF=
 

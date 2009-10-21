@@ -895,7 +895,7 @@ void link_lock_update(NspGFrame *F, NspLink *L,int lp,double ptnew[2])
     {
       NspObject *Ob;
       int cp1;
-      int rep = nsp_gframe_select_lock(F,ptnew, &Ob, &cp1,&lock_c) ;
+      int rep = nsp_diagram_select_lock(F,ptnew, &Ob, &cp1,&lock_c) ;
       if ( rep != 0 ) 
 	{
 	  if ( lock_c == TRUE)
@@ -1094,7 +1094,7 @@ void link_check(NspGFrame *F,NspLink *L)
     {
       link_get_lock_pos(L,i,pt);
       /* checks if pt is a lock point of */
-      if ( nsp_gframe_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
+      if ( nsp_diagram_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
 	{
 	  /* pt is near a lock point */ 
 	  if ( link_is_lock_connected(L,i)== FALSE) 
@@ -1116,7 +1116,7 @@ void link_check(NspGFrame *F,NspLink *L)
 	    }
 	}
       /* checks if lock point is over a link */
-      if ( nsp_gframe_select_obj(F,pt,&obj,(NspObject *)L) != 0) 
+      if ( nsp_diagram_select_obj(F,pt,&obj,(NspObject *)L) != 0) 
 	{
 	  if ( link_is_lock_connected(L,i)== FALSE) 
 	    {
@@ -1147,7 +1147,7 @@ void link_check(NspGFrame *F,NspLink *L)
 		      link_lock(F,(NspLink *)obj,1,&p); 
 		      link_lock(F,link,0,&p); 
 		      link_lock(F,L,i,&p); 
-		      nsp_gframe_locks_update(F,NSP_OBJECT(C));/* align the locks */
+		      nsp_diagram_locks_update(F,NSP_OBJECT(C));/* align the locks */
 		      GR_INT(((NspObject *)C)->basetype->interface)->draw(C);
 
 		    }
@@ -1163,7 +1163,7 @@ void link_check(NspGFrame *F,NspLink *L)
     {
       pt[0]= L->obj->poly->R[i]; 
       pt[1]= L->obj->poly->R[i+L->obj->poly->m]; 
-      if ( nsp_gframe_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
+      if ( nsp_diagram_select_lock(F,pt,&obj,&cp,&lock_c) != 0) 
 	{
 	  L->obj->poly->R[i]+= 2*lock_size;
 	}

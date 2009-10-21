@@ -22,7 +22,9 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../grrect.c ../grarc.c ../arrows.c ../segments.c ../surf.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
-	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c 
+	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
+	../diagram.c
+
 
 all:: $(ALL)
 	cd ../; make all
