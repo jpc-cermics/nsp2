@@ -331,7 +331,7 @@ static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
 static void nsp_compound_link_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G, ((NspFigure *) F)->obj);
+  nsp_graphic_link_figure(G, F);
   /* link children */
   nsp_list_link_figure(((NspCompound *) G)->obj->children,F);
 }
@@ -340,7 +340,7 @@ static void nsp_compound_link_figure(NspGraphic *G, void *F)
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_unlink_figure(G,   ((NspFigure *) F)->obj);
+  nsp_graphic_unlink_figure(G,  F);
   /* link children */
   nsp_list_unlink_figure(((NspCompound *) G)->obj->children,F);
 }

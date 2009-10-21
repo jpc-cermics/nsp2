@@ -569,11 +569,24 @@ static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,
 #line 570 "graphic.c"
 
 
+#line 133 "codegen/graphic.override"
+static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  self->type->unlink_figure(self, self->obj->Fig);
+  return 0;
+}
+
+#line 582 "graphic.c"
+
+
 static NspMethods graphic_methods[] = {
   {"translate",(nsp_method *) _wrap_graphic_translate},
   {"scale",(nsp_method *) _wrap_graphic_scale},
   {"rotate",(nsp_method *) _wrap_graphic_rotate},
   {"full_copy",(nsp_method *) _wrap_graphic_full_copy},
+  {"unlink",(nsp_method *) _wrap_graphic_unlink},
   { NULL, NULL}
 };
 
@@ -636,7 +649,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 133 "codegen/graphic.override"
+#line 143 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -817,4 +830,4 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 821 "graphic.c"
+#line 834 "graphic.c"

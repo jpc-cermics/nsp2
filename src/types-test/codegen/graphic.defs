@@ -35,3 +35,12 @@
   (return-type "NspGraphic")
   )
 
+;; unlink given graphic from a figure 
+
+(define-method unlink
+  (of-object "Graphic")
+  (c-name "graphic_unlink")
+  (return-type "NspGraphic")
+  )
+
+
