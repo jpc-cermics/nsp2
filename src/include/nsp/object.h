@@ -366,6 +366,7 @@ extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 #include "nsp/link.h" 
 #include "nsp/diagram.h" 
 */
+#include "nsp/graphic.h" 
 #include "nsp/none.h" 
 #include "nsp/type.h" 
 #include "nsp/module.h"
