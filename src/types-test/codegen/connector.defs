@@ -1,0 +1,64 @@
+;; -*- scheme -*-
+
+(define-objectref Connector
+  (in-module "Connector")
+  (parent "Graphic")
+  (c-name "NspConnector")
+  (implements "GRint")
+  (fields
+   '("nspgframe*" "frame" "hidden" ) 
+   '("void*" "object_sid" "hidden")
+   '("double[]" "r" "hidden" "{0,0,0,0}" "4" )   
+   '("int" "color")
+   '("int" "thickness")
+   '("int" "background")
+   '("gr_lock" "lock" "hidden" ) 
+   '("gboolean" "hilited" "std" "FALSE") 
+   '("gboolean"  "show" "std" "TRUE")   
+  )
+  (gtype-id "Connector")
+)
+
+(define-struct gr_lock 
+  (in-module "Connector")
+  (parent "Graphic")
+  (c-name "gr_lock")
+  (gtype-id "gr_lock")
+)
+
+(define-pointer nspgframe 
+  (in-module "Block")
+  (parent "Graphic")
+  (c-name "nspgframe")
+  (gtype-id "nspgframe")
+)
+
+
+;; just to give a name the code is overriden 
+;; 
+
+(define-method translate
+  (of-object "Connector")
+  (c-name "connector_translate")
+  (return-type "int")
+  )
+
+(define-method set_pos
+  (of-object "Connector")
+  (c-name "connector_set_pos")
+  (return-type "int")
+  )
+
+(define-method resize
+  (of-object "Connector")
+  (c-name "connector_resize")
+  (return-type "int")
+  )
+
+(define-method draw
+  (of-object "Connector")
+  (c-name "connector_draw")
+  (return-type "int")
+  )
+
+

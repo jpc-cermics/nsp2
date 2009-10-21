@@ -1,38 +1,33 @@
-#ifndef NSP_INC_Connector
-#define NSP_INC_Connector
+/* -*- Mode: C -*- */
+#ifndef NSP_INC_NspConnector
+#define NSP_INC_NspConnector
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2009) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#include <stdio.h>   /* for file declaration **/
+#line 4 "codegen/connector.override"
+
+/* inserted at the start of include file */
+
+#include <stdio.h>   /* for file declaration */
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 #include "nsp/gframe.h"
-#include "nsp/grint.h"
+#include "nsp/grint.h" /* interface definition */
 
 /**
  * NspConnector:
  * @obj: pointer to a #nsp_connector
  *
  * NspConnector inherits from NspObject 
- * and implements GRint. It is used to make connection 
- * between links in a scicos block diagram.
+ * and implements GRint. It is used for 
+ * multiple link connections. A connector 
+ * has just one lock point where many links can be locked 
  */
 
-typedef struct _NspConnector NspConnector;
-typedef struct _NspTypeConnector NspTypeConnector;
-
-struct _NspTypeConnector { 
-  NSP_TYPE_OBJECT__ 
-  /*< public >*/
-}; 
-
-
-
 typedef struct _gr_lock gr_lock ; 
-
 struct _gr_lock {
   int n_ports ;
   int fixed ;   /* flag: if fixed == TRUE the number of ports cannot be changed 
@@ -42,25 +37,48 @@ struct _gr_lock {
   double pt[2]; /* lock position */
 };
 
-typedef struct _nsp_connector nsp_connector;
 
+
+#line 43 "./connector.h"
+/* NspConnector */
+
+#include <nsp/graphic.h>
+
+/*
+ * NspConnector inherits from Graphic
+ */
+
+typedef struct _NspConnector NspConnector ;
+typedef struct _NspTypeConnector NspTypeConnector ;
+
+#line 55 "./connector.h"
+
+struct _NspTypeConnector {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+ 
+#line 62 "./connector.h"
+};
+
+typedef struct _nsp_connector nsp_connector;
 struct _nsp_connector {
-  nspgframe *frame; /* a link must be in a frame to be drawn */
-  void *object_sid;
+  nspgframe* frame;
+  void* object_sid;
   double r[4];
-  int color; 
+  int color;
   int thickness;
   int background;
-  gr_lock lock; /* Only one lock point for a connector */
-  int hilited ; 
-  int show    ;   
+  gr_lock lock;
+  gboolean hilited;
+  gboolean show;
   int ref_count;
 };
 
 struct _NspConnector {
   /*< private >*/
-  NspObject father; 
-  NspTypeConnector *type; 
+  NspGraphic father;
+  NspTypeConnector*type;
   /*< public >*/
   nsp_connector *obj;
 };
@@ -68,39 +86,76 @@ struct _NspConnector {
 extern int nsp_type_connector_id;
 extern NspTypeConnector *nsp_type_connector;
 
+/* type instances for graphic */
+
 NspTypeConnector *new_type_connector(type_mode mode);
+
+/* instance for NspConnector */
+
 NspConnector *new_connector();
+
+/*
+ * Object methods redefined for connector 
+ */
 
 
 #define NULLCONNECTOR (NspConnector*) 0
 
-extern NspConnector *connector_object(NspObject *O); 
-extern int IsConnectorObj (Stack stack, int i); 
-extern NspConnector *GetConnectorCopy (Stack stack, int i); 
-extern NspConnector *GetConnector (Stack stack, int i); 
-extern int IsConnector (NspObject *O); 
-extern NspConnector *connector_create(char *name,double rect[],int color,int thickness,int background,
-				      NspTypeBase *type );
+extern NspConnector *nsp_connector_create(char *name,nspgframe* frame,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspConnector *nsp_connector_create_default(char *name);
 
+/* from NspConnectorObj.c */
 
-#endif
+extern NspConnector *nsp_connector_copy(NspConnector *H);
+extern void nsp_connector_destroy(NspConnector *H);
+extern int nsp_connector_info(NspConnector *H, int indent,const char *name, int rec_level);
+extern int nsp_connector_print(NspConnector *H, int indent,const char *name, int rec_level);
+extern int nsp_connector_latex(NspConnector *H, int indent,const char *name, int rec_level);
+extern NspConnector *nsp_connector_object (NspObject *O);
+extern int IsConnectorObj (Stack stack, int i);
+extern int IsConnector(NspObject *O);
+extern NspConnector *GetConnectorCopy (Stack stack, int i);
+extern NspConnector *GetConnector (Stack stack, int i);
+extern int nsp_connector_create_partial(NspConnector *H);
+extern void nsp_connector_destroy_partial(NspConnector *H);
+extern NspConnector * nsp_connector_copy_partial(NspConnector *H,NspConnector *self);
+extern NspConnector * nsp_connector_full_copy_partial(NspConnector *H,NspConnector *self);
+extern NspConnector * nsp_connector_full_copy(NspConnector *self);
+extern int nsp_connector_check_values(NspConnector *H);
+extern int int_connector_create(Stack stack, int rhs, int opt, int lhs);
+extern NspConnector *nsp_connector_xdr_load_partial(XDR *xdrs, NspConnector *M);
+extern int nsp_connector_xdr_save(XDR  *xdrs, NspConnector *M);
 
-#ifdef Connector_Private 
-static int init_connector(NspConnector *ob,NspTypeConnector *type);
-static int connector_size(NspConnector *Mat, int flag);
-static char *connector_type_as_string(void);
-static char *connector_type_short_string(NspObject *v);
-static int connector_eq(NspConnector *A, NspObject *B);
-static int connector_neq(NspConnector *A, NspObject *B);
-static int connector_xdr_save(XDR *xdrs, NspConnector *M);
-static NspConnector  *connector_xdr_load(XDR  *F);
+#line 37 "codegen/connector.override"
+
+/* inserted at the end of public part of include file */
+
+#line 134 "./connector.h"
+#endif /* NSP_INC_NspConnector */ 
+
+#ifdef NspConnector_Private 
+static int init_connector(NspConnector *o,NspTypeConnector *type);
+static int nsp_connector_size(NspConnector *Mat, int flag);
+static char *nsp_connector_type_as_string(void);
+static char *nsp_connector_type_short_string(NspObject *v);
+static int nsp_connector_eq(NspConnector *A, NspObject *B);
+static int nsp_connector_neq(NspConnector *A, NspObject *B);
+static NspConnector *nsp_connector_xdr_load(XDR *xdrs);
 static AttrTab connector_attrs[];
-static NspConnector *connector_copy (NspConnector *H); 
-static void connector_destroy (NspConnector *H); 
-static int connector_info (NspConnector *H, int indent,char *name, int rec_level); 
-static int connector_print (NspConnector *H, int indent,char *name, int rec_level); 
 static NspMethods *connector_get_methods(void);
-static int int_connector_create( Stack stack, int rhs, int opt, int lhs);
+/* static int int_connector_create(Stack stack, int rhs, int opt, int lhs);*/ 
+static NspConnector *nsp_connector_create_void(char *name,NspTypeBase *type);
+#line 42 "codegen/connector.override"
+
+static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
+static int lock_color=10;
+
+/* set of method for parent class graphic  */
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_translate_connector(BCG *Xgc,NspGraphic *o,double *tr);
+static void nsp_rotate_connector(BCG *Xgc,NspGraphic *o,double *R);
+static void nsp_scale_connector(BCG *Xgc,NspGraphic *o,double *alpha);
+static int nsp_getbounds_connector(BCG *Xgc,NspGraphic *o,double *bounds);
 
 /* set of methods for implementing Grint */
 static int connector_get_hilited (NspConnector *B); 
@@ -125,13 +180,26 @@ static int connector_get_number_of_ports(const NspConnector *B,int lp) ;
 static int connector_get_lock_connection(const NspConnector *B,int i,int port, gr_port *p );
 static void connector_get_lock_pos(const NspConnector *B,int i,double pt[]);
 static lock_dir connector_get_lock_dir(const NspConnector *B,int i);
+
 static int connector_set_lock_connection(NspConnector *B,int i,int prt,const gr_port *p);
 static void connector_unset_lock_connection(NspConnector *B,int i,int port);
 static int connector_is_lock_connectable(NspConnector *B,int i);
 static int connector_is_lock_connected(const NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
-static NspConnector * connector_full_copy( NspConnector *C);
-static void connector_set_frame( NspBlock *B, NspGFrame *Gf);
+static NspConnector * connector_full_copy( NspConnector *B);
+static void connector_set_frame( NspConnector *B, NspGFrame *Gf);
 
-#endif /* Connector_Private */
+/* requested for grl_lock */
+
+static void nsp_destroy_gr_lock(gr_lock *locks,NspConnector *H);
+static int nsp_save_gr_lock(XDR *xdrs,gr_lock *locks,NspConnector *M);
+static int nsp_load_gr_lock(XDR *xdrs,gr_lock *locks,NspConnector *M);
+static int nsp_print_gr_lock(int indent,gr_lock *locks,NspConnector *M);
+static int nsp_check_gr_lock(gr_lock *locks,NspConnector *M);
+static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
+static void nsp_init_gr_lock(gr_lock *locks);
+
+#line 204 "./connector.h"
+#endif /* NspConnector_Private */
+
