@@ -20,6 +20,7 @@
 #define  Rect_Private 
 #include <nsp/graphics-old/Graphics.h>
 #include "nsp/object.h"
+#include "nsp/rect.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
