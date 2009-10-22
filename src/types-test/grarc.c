@@ -785,21 +785,6 @@ static AttrTab grarc_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 55 "codegen/grarc.override"
-int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 800 "grarc.c"
-
-
-#line 68 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -808,10 +793,10 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 812 "grarc.c"
+#line 797 "grarc.c"
 
 
-#line 78 "codegen/grarc.override"
+#line 65 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -821,7 +806,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 825 "grarc.c"
+#line 810 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -830,7 +815,6 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab GrArc_func[]={
-  {"grarc_attach", _wrap_grarc_attach},
   {"extractelts_grarc", _wrap_nsp_extractelts_grarc},
   {"setrowscols_grarc", _wrap_nsp_setrowscols_grarc},
   { "grarc_create", int_grarc_create},
@@ -853,7 +837,7 @@ void GrArc_Interf_Info(int i, char **fname, function (**f))
   *f = GrArc_func[i].fonc;
 }
 
-#line 89 "codegen/grarc.override"
+#line 76 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 
@@ -944,4 +928,4 @@ static int nsp_getbounds_grarc(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 948 "grarc.c"
+#line 932 "grarc.c"

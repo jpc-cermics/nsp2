@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function grstring_attach
-  (c-name "grstring_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 (define-method full_copy 
   (of-object "Grstring")
   (c-name "nsp_grstring_full_copy")

@@ -563,7 +563,7 @@ static NspMethods *compound_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-#line 102 "codegen/compound.override"
+#line 90 "codegen/compound.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -636,22 +636,7 @@ static AttrTab compound_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 60 "codegen/compound.override"
-int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 652 "compound.c"
-
-
-#line 158 "codegen/compound.override"
+#line 146 "codegen/compound.override"
 
 extern function int_nspgraphic_extract;
 
@@ -660,10 +645,10 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 664 "compound.c"
+#line 649 "compound.c"
 
 
-#line 168 "codegen/compound.override"
+#line 156 "codegen/compound.override"
 
 extern function int_graphic_set_attribute;
 
@@ -673,7 +658,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 677 "compound.c"
+#line 662 "compound.c"
 
 
 /*----------------------------------------------------
@@ -682,7 +667,6 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Compound_func[]={
-  {"compound_attach", _wrap_compound_attach},
   {"extractelts_compound", _wrap_nsp_extractelts_compound},
   {"setrowscols_compound", _wrap_nsp_setrowscols_compound},
   { "compound_create", int_compound_create},
@@ -705,7 +689,7 @@ void Compound_Interf_Info(int i, char **fname, function (**f))
   *f = Compound_func[i].fonc;
 }
 
-#line 179 "codegen/compound.override"
+#line 167 "codegen/compound.override"
 
 /* inserted verbatim at the end */
 
@@ -882,4 +866,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 886 "compound.c"
+#line 870 "compound.c"

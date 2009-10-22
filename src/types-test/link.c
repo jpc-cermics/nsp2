@@ -941,11 +941,12 @@ void Link_Interf_Info(int i, char **fname, function (**f))
 /* inserted verbatim at the end */
 
 
-
+/* 
 static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   
 }
+*/
 
 static void nsp_translate_link(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
@@ -1017,21 +1018,21 @@ void link_set_show(NspLink *B,int val) {  B->obj->show = val; }
  * Draw 
  **************************************************/
 
-/* static double lock_size=1;
-   static int lock_color=10;
-*/
 static int link_unconnected_color=10;
 
-void link_draw(NspLink *L)
+
+void link_draw(NspLink *B)
 {
-  BCG *Xgc;
+  Sciprintf("Error: to be updated with nsp_draw_block\n");
+}
+
+static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  NspLink *L = (NspLink *) Obj;
   double loc[4];
   int cpat, cwidth;
   /* only draw block which are in a frame */
   if ( L->obj->show == FALSE ) return ;
-
-  Xgc = NULL; /* XXXXXX */
-
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   /* draw polyline */
@@ -1983,4 +1984,4 @@ static void nsp_init_grl_lock(grl_lock *locks)
 
 
 
-#line 1987 "link.c"
+#line 1988 "link.c"

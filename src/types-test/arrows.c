@@ -731,21 +731,6 @@ static AttrTab arrows_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 54 "codegen/arrows.override"
-int _wrap_arrows_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 746 "arrows.c"
-
-
-#line 67 "codegen/arrows.override"
 
 extern function int_nspgraphic_extract;
 
@@ -754,10 +739,10 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 758 "arrows.c"
+#line 743 "arrows.c"
 
 
-#line 77 "codegen/arrows.override"
+#line 64 "codegen/arrows.override"
 
 extern function int_graphic_set_attribute;
 
@@ -767,7 +752,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 771 "arrows.c"
+#line 756 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -776,7 +761,6 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Arrows_func[]={
-  {"arrows_attach", _wrap_arrows_attach},
   {"extractelts_arrows", _wrap_nsp_extractelts_arrows},
   {"setrowscols_arrows", _wrap_nsp_setrowscols_arrows},
   { "arrows_create", int_arrows_create},
@@ -799,7 +783,7 @@ void Arrows_Interf_Info(int i, char **fname, function (**f))
   *f = Arrows_func[i].fonc;
 }
 
-#line 88 "codegen/arrows.override"
+#line 75 "codegen/arrows.override"
 
 /* inserted verbatim at the end */
 
@@ -903,4 +887,4 @@ static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 907 "arrows.c"
+#line 891 "arrows.c"

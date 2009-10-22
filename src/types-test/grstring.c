@@ -819,21 +819,6 @@ static AttrTab grstring_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 52 "codegen/grstring.override"
-int _wrap_grstring_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 834 "grstring.c"
-
-
-#line 65 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -842,10 +827,10 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 846 "grstring.c"
+#line 831 "grstring.c"
 
 
-#line 75 "codegen/grstring.override"
+#line 62 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -855,7 +840,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 859 "grstring.c"
+#line 844 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -864,7 +849,6 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Grstring_func[]={
-  {"grstring_attach", _wrap_grstring_attach},
   {"extractelts_grstring", _wrap_nsp_extractelts_grstring},
   {"setrowscols_grstring", _wrap_nsp_setrowscols_grstring},
   { "grstring_create", int_grstring_create},
@@ -887,7 +871,7 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
   *f = Grstring_func[i].fonc;
 }
 
-#line 86 "codegen/grstring.override"
+#line 73 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 
@@ -993,4 +977,4 @@ static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 997 "grstring.c"
+#line 981 "grstring.c"

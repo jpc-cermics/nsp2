@@ -722,22 +722,6 @@ static AttrTab string3d_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 78 "codegen/string3d.override"
-int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-#line 738 "string3d.c"
-
-
-#line 92 "codegen/string3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -746,10 +730,10 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 750 "string3d.c"
+#line 734 "string3d.c"
 
 
-#line 102 "codegen/string3d.override"
+#line 88 "codegen/string3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -759,7 +743,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 763 "string3d.c"
+#line 747 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -768,7 +752,6 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab String3d_func[]={
-  {"string3d_attach", _wrap_string3d_attach},
   {"extractelts_string3d", _wrap_nsp_extractelts_string3d},
   {"setrowscols_string3d", _wrap_nsp_setrowscols_string3d},
   { "string3d_create", int_string3d_create},
@@ -791,7 +774,7 @@ void String3d_Interf_Info(int i, char **fname, function (**f))
   *f = String3d_func[i].fonc;
 }
 
-#line 113 "codegen/string3d.override"
+#line 99 "codegen/string3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1003,4 +986,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1007 "string3d.c"
+#line 990 "string3d.c"

@@ -831,21 +831,6 @@ static AttrTab polyhedron_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 75 "codegen/polyhedron.override"
-int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 846 "polyhedron.c"
-
-
-#line 88 "codegen/polyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -854,10 +839,10 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 858 "polyhedron.c"
+#line 843 "polyhedron.c"
 
 
-#line 98 "codegen/polyhedron.override"
+#line 85 "codegen/polyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -866,10 +851,10 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 870 "polyhedron.c"
+#line 855 "polyhedron.c"
 
 
-#line 108 "codegen/polyhedron.override"
+#line 95 "codegen/polyhedron.override"
 
 int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_coord */
 {
@@ -884,10 +869,10 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
   return 1;
 }
 
-#line 888 "polyhedron.c"
+#line 873 "polyhedron.c"
 
 
-#line 124 "codegen/polyhedron.override"
+#line 111 "codegen/polyhedron.override"
 
 int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_face */
 {
@@ -900,10 +885,10 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   return 1;
 }
 
-#line 904 "polyhedron.c"
+#line 889 "polyhedron.c"
 
 
-#line 138 "codegen/polyhedron.override"
+#line 125 "codegen/polyhedron.override"
 
 int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
 {
@@ -941,7 +926,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,0);
 }
 
-#line 945 "polyhedron.c"
+#line 930 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -950,7 +935,6 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Polyhedron_func[]={
-  {"polyhedron_attach", _wrap_polyhedron_attach},
   {"extractelts_polyhedron", _wrap_nsp_extractelts_polyhedron},
   {"setrowscols_polyhedron", _wrap_nsp_setrowscols_polyhedron},
   {"surf_to_coords", _wrap_nsp_surf_to_coords},
@@ -976,7 +960,7 @@ void Polyhedron_Interf_Info(int i, char **fname, function (**f))
   *f = Polyhedron_func[i].fonc;
 }
 
-#line 177 "codegen/polyhedron.override"
+#line 164 "codegen/polyhedron.override"
 
 /* function called when draw is needed 
  * data can be NULL and when non null 
@@ -1562,4 +1546,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1566 "polyhedron.c"
+#line 1550 "polyhedron.c"

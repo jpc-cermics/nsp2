@@ -890,11 +890,12 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
  *
  */
 
-
+/*
 static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 {
 
 }
+*/
 
 static void nsp_translate_connector(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
@@ -980,7 +981,12 @@ void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; }
 
 void connector_draw(NspConnector *B)
 {
-  BCG *Xgc;
+  Sciprintf("Error: to be updated with nsp_draw_block\n");
+}
+
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  NspConnector *B = (NspConnector *) Obj;
   double loc[6];
   int cpat, cwidth,locked,lockid=0;
   /* only draw block which are in a frame */
@@ -1607,4 +1613,4 @@ static void nsp_init_gr_lock(gr_lock *lock)
 
 
 
-#line 1611 "connector.c"
+#line 1617 "connector.c"

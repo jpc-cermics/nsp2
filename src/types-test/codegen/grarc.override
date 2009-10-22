@@ -51,19 +51,6 @@ ignore-glob
   *_get_type
 
 %%
-override grarc_attach kwargs
-int _wrap_grarc_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-%%
 override nsp_extractelts_grarc kwargs
 
 extern function int_nspgraphic_extract;

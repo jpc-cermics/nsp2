@@ -701,24 +701,7 @@ static AttrTab segments_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/segments.override"
-int _wrap_segments_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-
-#line 719 "segments.c"
-
-
-#line 68 "codegen/segments.override"
+#line 54 "codegen/segments.override"
 
 extern function int_nspgraphic_extract;
 
@@ -727,10 +710,10 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 731 "segments.c"
+#line 714 "segments.c"
 
 
-#line 78 "codegen/segments.override"
+#line 64 "codegen/segments.override"
 
 extern function int_graphic_set_attribute;
 
@@ -740,7 +723,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 744 "segments.c"
+#line 727 "segments.c"
 
 
 /*----------------------------------------------------
@@ -749,7 +732,6 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Segments_func[]={
-  {"segments_attach", _wrap_segments_attach},
   {"extractelts_segments", _wrap_nsp_extractelts_segments},
   {"setrowscols_segments", _wrap_nsp_setrowscols_segments},
   { "segments_create", int_segments_create},
@@ -772,7 +754,7 @@ void Segments_Interf_Info(int i, char **fname, function (**f))
   *f = Segments_func[i].fonc;
 }
 
-#line 89 "codegen/segments.override"
+#line 75 "codegen/segments.override"
 
 /* inserted verbatim at the end */
 
@@ -876,4 +858,4 @@ static int nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 880 "segments.c"
+#line 862 "segments.c"

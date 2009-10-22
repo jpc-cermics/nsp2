@@ -570,7 +570,7 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
   *f = GRoot_func[i].fonc;
 }
 
-#line 27 "codegen/groot.override"
+#line 19 "codegen/groot.override"
 
 
 #line 577 "groot.c"

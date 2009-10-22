@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function qcurve_attach
-  (c-name "qcurve_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_qcurve

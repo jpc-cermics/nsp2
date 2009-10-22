@@ -805,22 +805,6 @@ static AttrTab polyline_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 52 "codegen/polyline.override"
-int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-#line 821 "polyline.c"
-
-
-#line 66 "codegen/polyline.override"
 
 extern function int_nspgraphic_extract;
 
@@ -829,10 +813,10 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 833 "polyline.c"
+#line 817 "polyline.c"
 
 
-#line 76 "codegen/polyline.override"
+#line 62 "codegen/polyline.override"
 
 extern function int_graphic_set_attribute;
 
@@ -842,7 +826,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 846 "polyline.c"
+#line 830 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -851,7 +835,6 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Polyline_func[]={
-  {"polyline_attach", _wrap_polyline_attach},
   {"extractelts_polyline", _wrap_nsp_extractelts_polyline},
   {"setrowscols_polyline", _wrap_nsp_setrowscols_polyline},
   { "polyline_create", int_polyline_create},
@@ -874,7 +857,7 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
   *f = Polyline_func[i].fonc;
 }
 
-#line 87 "codegen/polyline.override"
+#line 73 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -1016,4 +999,4 @@ static int nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1020 "polyline.c"
+#line 1003 "polyline.c"

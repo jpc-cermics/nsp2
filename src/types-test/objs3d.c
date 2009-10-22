@@ -767,7 +767,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 105 "codegen/objs3d.override"
+#line 91 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -891,7 +891,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 121 "codegen/objs3d.override"
+#line 107 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1098,23 +1098,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 91 "codegen/objs3d.override"
-int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-#line 1115 "objs3d.c"
-
-
-#line 179 "codegen/objs3d.override"
+#line 165 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1123,10 +1107,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1127 "objs3d.c"
+#line 1111 "objs3d.c"
 
 
-#line 189 "codegen/objs3d.override"
+#line 175 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1135,7 +1119,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1139 "objs3d.c"
+#line 1123 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1144,7 +1128,6 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Objs3d_func[]={
-  {"objs3d_attach", _wrap_objs3d_attach},
   {"extractelts_objs3d", _wrap_nsp_extractelts_objs3d},
   {"setrowscols_objs3d", _wrap_nsp_setrowscols_objs3d},
   { "objs3d_create", int_objs3d_create},
@@ -1167,7 +1150,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 199 "codegen/objs3d.override"
+#line 185 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -2682,4 +2665,4 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 
-#line 2686 "objs3d.c"
+#line 2669 "objs3d.c"

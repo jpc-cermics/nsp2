@@ -4,15 +4,6 @@
 
 ;; overriden 
 
-(define-function objs3d_attach
-  (c-name "objs3d_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_objs3d

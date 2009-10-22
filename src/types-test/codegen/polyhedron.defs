@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function polyhedron_attach
-  (c-name "polyhedron_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 (define-method full_copy 
   (of-object "Polyhedron")
   (c-name "nsp_polyhedron_full_copy")

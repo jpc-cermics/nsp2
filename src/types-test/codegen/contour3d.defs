@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function contour3d_attach
-  (c-name "contour3d_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 (define-method full_copy 
   (of-object "Contour3d")
   (c-name "nsp_contour3d_full_copy")

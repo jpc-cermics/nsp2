@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function grarc_attach
-  (c-name "grarc_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 (define-method full_copy 
   (of-object "GrArc")
   (c-name "nsp_grarc_full_copy")

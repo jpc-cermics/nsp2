@@ -726,23 +726,7 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/grrect.override"
-int _wrap_grrect_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-#line 743 "grrect.c"
-
-
-#line 66 "codegen/grrect.override"
+#line 53 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -751,10 +735,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 755 "grrect.c"
+#line 739 "grrect.c"
 
 
-#line 76 "codegen/grrect.override"
+#line 63 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -764,7 +748,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 768 "grrect.c"
+#line 752 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -773,7 +757,6 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab GrRect_func[]={
-  {"grrect_attach", _wrap_grrect_attach},
   {"extractelts_grrect", _wrap_nsp_extractelts_grrect},
   {"setrowscols_grrect", _wrap_nsp_setrowscols_grrect},
   { "grrect_create", int_grrect_create},
@@ -796,7 +779,7 @@ void GrRect_Interf_Info(int i, char **fname, function (**f))
   *f = GrRect_func[i].fonc;
 }
 
-#line 87 "codegen/grrect.override"
+#line 74 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -883,4 +866,4 @@ static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 887 "grrect.c"
+#line 870 "grrect.c"

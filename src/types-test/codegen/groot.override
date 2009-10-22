@@ -15,13 +15,5 @@ ignore-glob
   *_get_type
 
 %%
-override groot_attach kwargs
-
-int _wrap_groot_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  return 0;
-}
-
-%%
 last
 

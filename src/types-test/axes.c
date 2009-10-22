@@ -849,7 +849,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 94 "codegen/axes.override"
+#line 81 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -1015,7 +1015,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 110 "codegen/axes.override"
+#line 97 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1272,22 +1272,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 81 "codegen/axes.override"
-int _wrap_axes_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 1288 "axes.c"
-
-
-#line 168 "codegen/axes.override"
+#line 155 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1296,10 +1281,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1300 "axes.c"
+#line 1285 "axes.c"
 
 
-#line 178 "codegen/axes.override"
+#line 165 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1309,7 +1294,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1313 "axes.c"
+#line 1298 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1318,7 +1303,6 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Axes_func[]={
-  {"axes_attach", _wrap_axes_attach},
   {"extractelts_axes", _wrap_nsp_extractelts_axes},
   {"setrowscols_axes", _wrap_nsp_setrowscols_axes},
   { "axes_create", int_axes_create},
@@ -1341,7 +1325,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 189 "codegen/axes.override"
+#line 176 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -2053,4 +2037,4 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
     
 
 
-#line 2057 "axes.c"
+#line 2041 "axes.c"

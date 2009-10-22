@@ -4,15 +4,6 @@
 
 ;; overriden 
 
-(define-function axes_attach
-  (c-name "axes_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_axes

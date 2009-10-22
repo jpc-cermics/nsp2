@@ -1036,23 +1036,6 @@ static AttrTab spolyhedron_attrs[] = {
  * functions 
  *-------------------------------------------*/
 #line 79 "codegen/spolyhedron.override"
-int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-
-#line 1053 "spolyhedron.c"
-
-
-#line 94 "codegen/spolyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1061,10 +1044,10 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1065 "spolyhedron.c"
+#line 1048 "spolyhedron.c"
 
 
-#line 104 "codegen/spolyhedron.override"
+#line 89 "codegen/spolyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1073,7 +1056,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1077 "spolyhedron.c"
+#line 1060 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1082,7 +1065,6 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab SPolyhedron_func[]={
-  {"spolyhedron_attach", _wrap_spolyhedron_attach},
   {"extractelts_spolyhedron", _wrap_nsp_extractelts_spolyhedron},
   {"setrowscols_spolyhedron", _wrap_nsp_setrowscols_spolyhedron},
   { "spolyhedron_create", int_spolyhedron_create},
@@ -1105,7 +1087,7 @@ void SPolyhedron_Interf_Info(int i, char **fname, function (**f))
   *f = SPolyhedron_func[i].fonc;
 }
 
-#line 114 "codegen/spolyhedron.override"
+#line 99 "codegen/spolyhedron.override"
 
 /* inserted verbatim at the end */
 
@@ -1815,4 +1797,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1819 "spolyhedron.c"
+#line 1801 "spolyhedron.c"

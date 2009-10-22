@@ -864,23 +864,7 @@ static AttrTab surf_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/surf.override"
-int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-#line 881 "surf.c"
-
-
-#line 66 "codegen/surf.override"
+#line 53 "codegen/surf.override"
 
 extern function int_nspgraphic_extract;
 
@@ -889,10 +873,10 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 893 "surf.c"
+#line 877 "surf.c"
 
 
-#line 76 "codegen/surf.override"
+#line 63 "codegen/surf.override"
 
 extern function int_graphic_set_attribute;
 
@@ -902,7 +886,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 906 "surf.c"
+#line 890 "surf.c"
 
 
 /*----------------------------------------------------
@@ -911,7 +895,6 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Surf_func[]={
-  {"surf_attach", _wrap_surf_attach},
   {"extractelts_surf", _wrap_nsp_extractelts_surf},
   {"setrowscols_surf", _wrap_nsp_setrowscols_surf},
   { "surf_create", int_surf_create},
@@ -934,7 +917,7 @@ void Surf_Interf_Info(int i, char **fname, function (**f))
   *f = Surf_func[i].fonc;
 }
 
-#line 87 "codegen/surf.override"
+#line 74 "codegen/surf.override"
 
 /* inserted verbatim at the end */
 
@@ -1014,4 +997,4 @@ static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1018 "surf.c"
+#line 1001 "surf.c"

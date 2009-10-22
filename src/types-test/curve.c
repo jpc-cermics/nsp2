@@ -659,7 +659,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 64 "codegen/curve.override"
+#line 51 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -682,7 +682,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 79 "codegen/curve.override"
+#line 66 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -768,22 +768,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 51 "codegen/curve.override"
-int _wrap_curve_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-#line 784 "curve.c"
-
-
-#line 109 "codegen/curve.override"
+#line 96 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -792,10 +777,10 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 796 "curve.c"
+#line 781 "curve.c"
 
 
-#line 119 "codegen/curve.override"
+#line 106 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -805,7 +790,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 809 "curve.c"
+#line 794 "curve.c"
 
 
 /*----------------------------------------------------
@@ -814,7 +799,6 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Curve_func[]={
-  {"curve_attach", _wrap_curve_attach},
   {"extractelts_curve", _wrap_nsp_extractelts_curve},
   {"setrowscols_curve", _wrap_nsp_setrowscols_curve},
   { "curve_create", int_curve_create},
@@ -837,7 +821,7 @@ void Curve_Interf_Info(int i, char **fname, function (**f))
   *f = Curve_func[i].fonc;
 }
 
-#line 130 "codegen/curve.override"
+#line 117 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -1018,4 +1002,4 @@ static int nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1022 "curve.c"
+#line 1006 "curve.c"

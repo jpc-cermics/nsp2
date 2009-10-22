@@ -310,7 +310,8 @@ void nsp_contour3d_destroy_partial(NspContour3d *H)
    {
 #line 71 "codegen/contour3d.override"
   /* verbatim in destroy */
-#line 314 "contour3d.c"
+
+#line 315 "contour3d.c"
     if ( H->obj->x != NULL ) 
       nsp_matrix_destroy(H->obj->x);
     if ( H->obj->y != NULL ) 
@@ -618,7 +619,7 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return NULL; 
 
-#line 622 "contour3d.c"
+#line 623 "contour3d.c"
   return H;
 }
 
@@ -643,7 +644,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return RET_BUG; 
 
-#line 647 "contour3d.c"
+#line 648 "contour3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -837,24 +838,7 @@ static AttrTab contour3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 74 "codegen/contour3d.override"
-int _wrap_contour3d_attach(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject  *pl = NULL;
-  BCG *Xgc;
-  int_types T[] = {obj, t_end} ;
-  if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
-  return 0;
-}
-
-
-
-#line 855 "contour3d.c"
-
-
-#line 89 "codegen/contour3d.override"
+#line 75 "codegen/contour3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -863,10 +847,10 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 867 "contour3d.c"
+#line 851 "contour3d.c"
 
 
-#line 99 "codegen/contour3d.override"
+#line 85 "codegen/contour3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -875,7 +859,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 879 "contour3d.c"
+#line 863 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -884,7 +868,6 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Contour3d_func[]={
-  {"contour3d_attach", _wrap_contour3d_attach},
   {"extractelts_contour3d", _wrap_nsp_extractelts_contour3d},
   {"setrowscols_contour3d", _wrap_nsp_setrowscols_contour3d},
   { "contour3d_create", int_contour3d_create},
@@ -907,7 +890,7 @@ void Contour3d_Interf_Info(int i, char **fname, function (**f))
   *f = Contour3d_func[i].fonc;
 }
 
-#line 109 "codegen/contour3d.override"
+#line 95 "codegen/contour3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1056,4 +1039,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1060 "contour3d.c"
+#line 1043 "contour3d.c"

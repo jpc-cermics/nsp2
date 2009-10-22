@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function grrect_attach
-  (c-name "grrect_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 (define-method full_copy 
   (of-object "GrRect")
   (c-name "nsp_grrect_full_copy")

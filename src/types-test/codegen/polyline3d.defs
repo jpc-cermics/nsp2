@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function polyline3d_attach
-  (c-name "polyline3d_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 (define-method full_copy 
   (of-object "Polyline3d")
   (c-name "nsp_polyline3d_full_copy")

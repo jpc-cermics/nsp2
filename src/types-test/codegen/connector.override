@@ -467,11 +467,12 @@ last
  *
  */
 
-
+/*
 static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 {
 
 }
+*/
 
 static void nsp_translate_connector(BCG *Xgc,NspGraphic *Obj,double *tr)
 {
@@ -557,7 +558,12 @@ void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; }
 
 void connector_draw(NspConnector *B)
 {
-  BCG *Xgc;
+  Sciprintf("Error: to be updated with nsp_draw_block\n");
+}
+
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
+{
+  NspConnector *B = (NspConnector *) Obj;
   double loc[6];
   int cpat, cwidth,locked,lockid=0;
   /* only draw block which are in a frame */

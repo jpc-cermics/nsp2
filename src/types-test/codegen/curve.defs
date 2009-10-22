@@ -4,14 +4,6 @@
 
 ;; overriden 
 
-(define-function curve_attach
-  (c-name "curve_attach")
-  (return-type "gboolean")
-  (parameters
-    '("int" "x")
-  )
-)
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_curve
