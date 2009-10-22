@@ -311,10 +311,14 @@ void nsp_contour3d_destroy_partial(NspContour3d *H)
 #line 71 "codegen/contour3d.override"
   /* verbatim in destroy */
 #line 314 "contour3d.c"
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
-    nsp_matrix_destroy(H->obj->z);
-    nsp_matrix_destroy(H->obj->zz);
+    if ( H->obj->x != NULL ) 
+      nsp_matrix_destroy(H->obj->x);
+    if ( H->obj->y != NULL ) 
+      nsp_matrix_destroy(H->obj->y);
+    if ( H->obj->z != NULL ) 
+      nsp_matrix_destroy(H->obj->z);
+    if ( H->obj->zz != NULL ) 
+      nsp_matrix_destroy(H->obj->zz);
     FREE(H->obj);
    }
 }
@@ -614,7 +618,7 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return NULL; 
 
-#line 618 "contour3d.c"
+#line 622 "contour3d.c"
   return H;
 }
 
@@ -639,7 +643,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return RET_BUG; 
 
-#line 643 "contour3d.c"
+#line 647 "contour3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -847,7 +851,7 @@ int _wrap_contour3d_attach(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#line 851 "contour3d.c"
+#line 855 "contour3d.c"
 
 
 #line 89 "codegen/contour3d.override"
@@ -859,7 +863,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 863 "contour3d.c"
+#line 867 "contour3d.c"
 
 
 #line 99 "codegen/contour3d.override"
@@ -871,7 +875,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 875 "contour3d.c"
+#line 879 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -1052,4 +1056,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1056 "contour3d.c"
+#line 1060 "contour3d.c"

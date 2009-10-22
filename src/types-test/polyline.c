@@ -300,8 +300,10 @@ void nsp_polyline_destroy_partial(NspPolyline *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
+    if ( H->obj->x != NULL ) 
+      nsp_matrix_destroy(H->obj->x);
+    if ( H->obj->y != NULL ) 
+      nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
    }
 }
@@ -576,7 +578,7 @@ NspPolyline *nsp_polyline_full_copy(NspPolyline *self)
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE;
   if ( nsp_polyline_full_copy_partial(H,self)== NULL) return NULLPOLYLINE;
-#line 580 "polyline.c"
+#line 582 "polyline.c"
   return H;
 }
 
@@ -596,7 +598,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline_check_values(H) == FAIL) return RET_BUG;
-#line 600 "polyline.c"
+#line 602 "polyline.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -815,7 +817,7 @@ int _wrap_polyline_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 819 "polyline.c"
+#line 821 "polyline.c"
 
 
 #line 66 "codegen/polyline.override"
@@ -827,7 +829,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 831 "polyline.c"
+#line 833 "polyline.c"
 
 
 #line 76 "codegen/polyline.override"
@@ -840,7 +842,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 844 "polyline.c"
+#line 846 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -1014,4 +1016,4 @@ static int nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1018 "polyline.c"
+#line 1020 "polyline.c"

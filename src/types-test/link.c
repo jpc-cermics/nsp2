@@ -356,7 +356,8 @@ void nsp_link_destroy_partial(NspLink *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->poly);
+    if ( H->obj->poly != NULL ) 
+      nsp_matrix_destroy(H->obj->poly);
   nsp_destroy_grl_lock(&H->obj->lock1,H); 
   nsp_destroy_grl_lock(&H->obj->lock2,H); 
     FREE(H->obj);
@@ -581,7 +582,7 @@ NspLink *nsp_link_create_default(char *name)
  return H;
 }
 
-#line 585 "link.c"
+#line 586 "link.c"
 /*
  * copy for gobject derived class  
  */
@@ -632,7 +633,7 @@ NspLink *nsp_link_full_copy(NspLink *self)
   if ( H ==  NULLLINK) return NULLLINK;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLLINK;
   if ( nsp_link_full_copy_partial(H,self)== NULL) return NULLLINK;
-#line 636 "link.c"
+#line 637 "link.c"
   return H;
 }
 
@@ -667,7 +668,7 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 671 "link.c"
+#line 672 "link.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -688,7 +689,7 @@ static int _wrap_link_translate(void  *self,Stack stack, int rhs, int opt, int l
 
 }
 
-#line 692 "link.c"
+#line 693 "link.c"
 
 
 #line 421 "codegen/link.override"
@@ -707,7 +708,7 @@ static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs
 
 }
 
-#line 711 "link.c"
+#line 712 "link.c"
 
 
 #line 438 "codegen/link.override"
@@ -725,7 +726,7 @@ static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
-#line 729 "link.c"
+#line 730 "link.c"
 
 
 #line 391 "codegen/link.override"
@@ -739,7 +740,7 @@ static int _wrap_link_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 743 "link.c"
+#line 744 "link.c"
 
 
 #line 454 "codegen/link.override"
@@ -760,7 +761,7 @@ static int _wrap_link_connect(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 764 "link.c"
+#line 765 "link.c"
 
 
 static NspMethods link_methods[] = {
@@ -1982,4 +1983,4 @@ static void nsp_init_grl_lock(grl_lock *locks)
 
 
 
-#line 1986 "link.c"
+#line 1987 "link.c"

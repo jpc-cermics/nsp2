@@ -308,7 +308,8 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
 #line 311 "string3d.c"
-    nsp_matrix_destroy(H->obj->Mcoord);
+    if ( H->obj->Mcoord != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcoord);
   nsp_string_destroy(&(H->obj->str));
     FREE(H->obj->pos);
     FREE(H->obj);
@@ -571,7 +572,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 575 "string3d.c"
+#line 576 "string3d.c"
   return H;
 }
 
@@ -596,7 +597,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 600 "string3d.c"
+#line 601 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -733,7 +734,7 @@ int _wrap_string3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 737 "string3d.c"
+#line 738 "string3d.c"
 
 
 #line 92 "codegen/string3d.override"
@@ -745,7 +746,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 749 "string3d.c"
+#line 750 "string3d.c"
 
 
 #line 102 "codegen/string3d.override"
@@ -758,7 +759,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 762 "string3d.c"
+#line 763 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -1002,4 +1003,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 1006 "string3d.c"
+#line 1007 "string3d.c"

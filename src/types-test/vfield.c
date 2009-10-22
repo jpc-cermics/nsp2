@@ -291,10 +291,14 @@ void nsp_vfield_destroy_partial(NspVField *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->fx);
-    nsp_matrix_destroy(H->obj->fy);
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
+    if ( H->obj->fx != NULL ) 
+      nsp_matrix_destroy(H->obj->fx);
+    if ( H->obj->fy != NULL ) 
+      nsp_matrix_destroy(H->obj->fy);
+    if ( H->obj->x != NULL ) 
+      nsp_matrix_destroy(H->obj->x);
+    if ( H->obj->y != NULL ) 
+      nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
    }
 }
@@ -584,7 +588,7 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
   if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
-#line 588 "vfield.c"
+#line 592 "vfield.c"
   return H;
 }
 
@@ -604,7 +608,7 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-#line 608 "vfield.c"
+#line 612 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -774,7 +778,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 778 "vfield.c"
+#line 782 "vfield.c"
 
 
 #line 67 "codegen/vfield.override"
@@ -786,7 +790,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 790 "vfield.c"
+#line 794 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -1062,4 +1066,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1066 "vfield.c"
+#line 1070 "vfield.c"

@@ -303,12 +303,18 @@ void nsp_gmatrix1_destroy_partial(NspGMatrix1 *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->data);
-    nsp_matrix_destroy(H->obj->colminmax);
-    nsp_matrix_destroy(H->obj->zminmax);
-    nsp_matrix_destroy(H->obj->colout);
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
+    if ( H->obj->data != NULL ) 
+      nsp_matrix_destroy(H->obj->data);
+    if ( H->obj->colminmax != NULL ) 
+      nsp_matrix_destroy(H->obj->colminmax);
+    if ( H->obj->zminmax != NULL ) 
+      nsp_matrix_destroy(H->obj->zminmax);
+    if ( H->obj->colout != NULL ) 
+      nsp_matrix_destroy(H->obj->colout);
+    if ( H->obj->x != NULL ) 
+      nsp_matrix_destroy(H->obj->x);
+    if ( H->obj->y != NULL ) 
+      nsp_matrix_destroy(H->obj->y);
     FREE(H->obj);
    }
 }
@@ -643,7 +649,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX1;
   if ( nsp_gmatrix1_full_copy_partial(H,self)== NULL) return NULLGMATRIX1;
-#line 647 "gmatrix1.c"
+#line 653 "gmatrix1.c"
   return H;
 }
 
@@ -663,7 +669,7 @@ int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return RET_BUG;
-#line 667 "gmatrix1.c"
+#line 673 "gmatrix1.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -913,7 +919,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 917 "gmatrix1.c"
+#line 923 "gmatrix1.c"
 
 
 #line 75 "codegen/gmatrix1.override"
@@ -925,7 +931,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 929 "gmatrix1.c"
+#line 935 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -1557,4 +1563,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1561 "gmatrix1.c"
+#line 1567 "gmatrix1.c"

@@ -313,10 +313,14 @@ void nsp_polyhedron_destroy_partial(NspPolyhedron *H)
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
 #line 316 "polyhedron.c"
-    nsp_matrix_destroy(H->obj->Mcoord);
-    nsp_matrix_destroy(H->obj->Mface);
-    nsp_matrix_destroy(H->obj->Mcolor);
-    nsp_matrix_destroy(H->obj->Mback_color);
+    if ( H->obj->Mcoord != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcoord);
+    if ( H->obj->Mface != NULL ) 
+      nsp_matrix_destroy(H->obj->Mface);
+    if ( H->obj->Mcolor != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcolor);
+    if ( H->obj->Mback_color != NULL ) 
+      nsp_matrix_destroy(H->obj->Mback_color);
     FREE(H->obj->pos);
     FREE(H->obj);
    }
@@ -625,7 +629,7 @@ NspPolyhedron *nsp_polyhedron_full_copy(NspPolyhedron *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return NULL; 
 
-#line 629 "polyhedron.c"
+#line 633 "polyhedron.c"
   return H;
 }
 
@@ -650,7 +654,7 @@ int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return RET_BUG; 
 
-#line 654 "polyhedron.c"
+#line 658 "polyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -838,7 +842,7 @@ int _wrap_polyhedron_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 842 "polyhedron.c"
+#line 846 "polyhedron.c"
 
 
 #line 88 "codegen/polyhedron.override"
@@ -850,7 +854,7 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 854 "polyhedron.c"
+#line 858 "polyhedron.c"
 
 
 #line 98 "codegen/polyhedron.override"
@@ -862,7 +866,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 866 "polyhedron.c"
+#line 870 "polyhedron.c"
 
 
 #line 108 "codegen/polyhedron.override"
@@ -880,7 +884,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
   return 1;
 }
 
-#line 884 "polyhedron.c"
+#line 888 "polyhedron.c"
 
 
 #line 124 "codegen/polyhedron.override"
@@ -896,7 +900,7 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   return 1;
 }
 
-#line 900 "polyhedron.c"
+#line 904 "polyhedron.c"
 
 
 #line 138 "codegen/polyhedron.override"
@@ -937,7 +941,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,0);
 }
 
-#line 941 "polyhedron.c"
+#line 945 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1558,4 +1562,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1562 "polyhedron.c"
+#line 1566 "polyhedron.c"

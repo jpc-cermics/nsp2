@@ -300,10 +300,14 @@ void nsp_surf_destroy_partial(NspSurf *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
-    nsp_matrix_destroy(H->obj->z);
-    nsp_matrix_destroy(H->obj->colors);
+    if ( H->obj->x != NULL ) 
+      nsp_matrix_destroy(H->obj->x);
+    if ( H->obj->y != NULL ) 
+      nsp_matrix_destroy(H->obj->y);
+    if ( H->obj->z != NULL ) 
+      nsp_matrix_destroy(H->obj->z);
+    if ( H->obj->colors != NULL ) 
+      nsp_matrix_destroy(H->obj->colors);
     FREE(H->obj);
    }
 }
@@ -608,7 +612,7 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
   if ( H ==  NULLSURF) return NULLSURF;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSURF;
   if ( nsp_surf_full_copy_partial(H,self)== NULL) return NULLSURF;
-#line 612 "surf.c"
+#line 616 "surf.c"
   return H;
 }
 
@@ -628,7 +632,7 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_surf_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_surf_check_values(H) == FAIL) return RET_BUG;
-#line 632 "surf.c"
+#line 636 "surf.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -873,7 +877,7 @@ int _wrap_surf_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 877 "surf.c"
+#line 881 "surf.c"
 
 
 #line 66 "codegen/surf.override"
@@ -885,7 +889,7 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 889 "surf.c"
+#line 893 "surf.c"
 
 
 #line 76 "codegen/surf.override"
@@ -898,7 +902,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 902 "surf.c"
+#line 906 "surf.c"
 
 
 /*----------------------------------------------------
@@ -1010,4 +1014,4 @@ static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1014 "surf.c"
+#line 1018 "surf.c"

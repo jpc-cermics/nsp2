@@ -267,9 +267,12 @@ void nsp_classa_destroy_partial(NspClassA *H)
 #line 46 "codegen/classa.override"
   /* verbatim in destroy */
 #line 270 "classa.c"
-  nsp_matrix_destroy(H->cla_val);
-  nsp_bmatrix_destroy(H->cla_bval);
-  nsp_list_destroy(H->cla_lval);
+  if ( H->cla_val != NULL ) 
+    nsp_matrix_destroy(H->cla_val);
+  if ( H->cla_bval != NULL ) 
+    nsp_bmatrix_destroy(H->cla_bval);
+  if ( H->cla_lval != NULL ) 
+    nsp_list_destroy(H->cla_lval);
 }
 
 void nsp_classa_destroy(NspClassA *H)
@@ -518,7 +521,7 @@ NspClassA *nsp_classa_full_copy(NspClassA *self)
 
 #line 43 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 522 "classa.c"
+#line 525 "classa.c"
   return H;
 }
 
@@ -540,7 +543,7 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
 
 #line 43 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 544 "classa.c"
+#line 547 "classa.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -557,7 +560,7 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 561 "classa.c"
+#line 564 "classa.c"
 
 
 #line 59 "codegen/classa.override"
@@ -569,7 +572,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 573 "classa.c"
+#line 576 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -703,7 +706,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 707 "classa.c"
+#line 710 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
@@ -755,7 +758,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 759 "classa.c"
+#line 762 "classa.c"
 
 
 #line 69 "codegen/classa.override"
@@ -763,7 +766,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 767 "classa.c"
+#line 770 "classa.c"
 
 
 /*----------------------------------------------------
@@ -794,4 +797,4 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
   *f = ClassA_func[i].fonc;
 }
 
-#line 798 "classa.c"
+#line 801 "classa.c"

@@ -282,8 +282,10 @@ void nsp_compound_destroy_partial(NspCompound *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->bounds);
-    nsp_list_destroy(H->obj->children);
+    if ( H->obj->bounds != NULL ) 
+      nsp_matrix_destroy(H->obj->bounds);
+    if ( H->obj->children != NULL ) 
+      nsp_list_destroy(H->obj->children);
     FREE(H->obj);
    }
 }
@@ -528,7 +530,7 @@ NspCompound *nsp_compound_full_copy(NspCompound *self)
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCOMPOUND;
   if ( nsp_compound_full_copy_partial(H,self)== NULL) return NULLCOMPOUND;
-#line 532 "compound.c"
+#line 534 "compound.c"
   return H;
 }
 
@@ -548,7 +550,7 @@ int int_compound_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_compound_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_compound_check_values(H) == FAIL) return RET_BUG;
-#line 552 "compound.c"
+#line 554 "compound.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -616,7 +618,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 620 "compound.c"
+#line 622 "compound.c"
 static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -646,7 +648,7 @@ int _wrap_compound_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 650 "compound.c"
+#line 652 "compound.c"
 
 
 #line 158 "codegen/compound.override"
@@ -658,7 +660,7 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 662 "compound.c"
+#line 664 "compound.c"
 
 
 #line 168 "codegen/compound.override"
@@ -671,7 +673,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 675 "compound.c"
+#line 677 "compound.c"
 
 
 /*----------------------------------------------------
@@ -880,4 +882,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 884 "compound.c"
+#line 886 "compound.c"

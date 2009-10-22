@@ -313,7 +313,8 @@ void nsp_points3d_destroy_partial(NspPoints3d *H)
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
 #line 316 "points3d.c"
-    nsp_matrix_destroy(H->obj->Mcoord);
+    if ( H->obj->Mcoord != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcoord);
     FREE(H->obj->pos);
     FREE(H->obj);
    }
@@ -570,7 +571,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
-#line 574 "points3d.c"
+#line 575 "points3d.c"
   return H;
 }
 
@@ -595,7 +596,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
 
-#line 599 "points3d.c"
+#line 600 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -727,7 +728,7 @@ int _wrap_points3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 731 "points3d.c"
+#line 732 "points3d.c"
 
 
 #line 98 "codegen/points3d.override"
@@ -739,7 +740,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 743 "points3d.c"
+#line 744 "points3d.c"
 
 
 #line 108 "codegen/points3d.override"
@@ -752,7 +753,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 756 "points3d.c"
+#line 757 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -982,4 +983,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 986 "points3d.c"
+#line 987 "points3d.c"

@@ -254,7 +254,8 @@ void nsp_groot_destroy_partial(NspGRoot *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_list_destroy(H->obj->figures);
+    if ( H->obj->figures != NULL ) 
+      nsp_list_destroy(H->obj->figures);
     FREE(H->obj);
    }
 }
@@ -472,7 +473,7 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
   NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
   if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
-#line 476 "groot.c"
+#line 477 "groot.c"
   return H;
 }
 
@@ -492,7 +493,7 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
-#line 496 "groot.c"
+#line 497 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -572,4 +573,4 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 #line 27 "codegen/groot.override"
 
 
-#line 576 "groot.c"
+#line 577 "groot.c"

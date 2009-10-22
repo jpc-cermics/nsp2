@@ -321,13 +321,19 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->wrect);
-    nsp_matrix_destroy(H->obj->bounds);
-    nsp_matrix_destroy(H->obj->arect);
-    nsp_matrix_destroy(H->obj->frect);
+    if ( H->obj->wrect != NULL ) 
+      nsp_matrix_destroy(H->obj->wrect);
+    if ( H->obj->bounds != NULL ) 
+      nsp_matrix_destroy(H->obj->bounds);
+    if ( H->obj->arect != NULL ) 
+      nsp_matrix_destroy(H->obj->arect);
+    if ( H->obj->frect != NULL ) 
+      nsp_matrix_destroy(H->obj->frect);
   nsp_string_destroy(&(H->obj->title));
-    nsp_list_destroy(H->obj->children);
-    nsp_matrix_destroy(H->obj->colormap);
+    if ( H->obj->children != NULL ) 
+      nsp_list_destroy(H->obj->children);
+    if ( H->obj->colormap != NULL ) 
+      nsp_matrix_destroy(H->obj->colormap);
     FREE(H->obj);
    }
 }
@@ -699,7 +705,7 @@ NspObjs3d *nsp_objs3d_full_copy(NspObjs3d *self)
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLOBJS3D;
   if ( nsp_objs3d_full_copy_partial(H,self)== NULL) return NULLOBJS3D;
-#line 703 "objs3d.c"
+#line 709 "objs3d.c"
   return H;
 }
 
@@ -719,7 +725,7 @@ int int_objs3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_objs3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_objs3d_check_values(H) == FAIL) return RET_BUG;
-#line 723 "objs3d.c"
+#line 729 "objs3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -776,7 +782,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 780 "objs3d.c"
+#line 786 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -942,7 +948,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 946 "objs3d.c"
+#line 952 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1105,7 +1111,7 @@ int _wrap_objs3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1109 "objs3d.c"
+#line 1115 "objs3d.c"
 
 
 #line 179 "codegen/objs3d.override"
@@ -1117,7 +1123,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1121 "objs3d.c"
+#line 1127 "objs3d.c"
 
 
 #line 189 "codegen/objs3d.override"
@@ -1129,7 +1135,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1133 "objs3d.c"
+#line 1139 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -2676,4 +2682,4 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->graphic_engine->force_redraw(Xgc);
 }
 
-#line 2680 "objs3d.c"
+#line 2686 "objs3d.c"

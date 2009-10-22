@@ -305,8 +305,10 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
 #line 308 "polyline3d.c"
-    nsp_matrix_destroy(H->obj->Mcoord);
-    nsp_matrix_destroy(H->obj->Mcolor);
+    if ( H->obj->Mcoord != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcoord);
+    if ( H->obj->Mcolor != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcolor);
     FREE(H->obj->pos);
     FREE(H->obj);
    }
@@ -568,7 +570,7 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 572 "polyline3d.c"
+#line 574 "polyline3d.c"
   return H;
 }
 
@@ -593,7 +595,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
-#line 597 "polyline3d.c"
+#line 599 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -702,7 +704,7 @@ int _wrap_polyline3d_attach(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 706 "polyline3d.c"
+#line 708 "polyline3d.c"
 
 
 #line 93 "codegen/polyline3d.override"
@@ -714,7 +716,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 718 "polyline3d.c"
+#line 720 "polyline3d.c"
 
 
 #line 103 "codegen/polyline3d.override"
@@ -727,7 +729,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 731 "polyline3d.c"
+#line 733 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -947,4 +949,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 951 "polyline3d.c"
+#line 953 "polyline3d.c"

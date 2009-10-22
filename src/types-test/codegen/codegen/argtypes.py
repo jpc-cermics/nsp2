@@ -1161,7 +1161,9 @@ class ObjectArg(ArgType):
             str = '  ' 
         else:
             str = ''
-        return  str + ' nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname)
+        str = str + '  if (%s->%s != NULL)\n' % (varname,pname)
+        #return  str + '    nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname)
+        return  str + '    nsp_object_destroy((NspObject **)&%s->%s);\n' % (varname,pname)
 
     def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be printed """
@@ -1498,7 +1500,8 @@ class StructArg(ArgType):
             pname = 'obj->'+pname
         if ptype[-1] == '*':
             ptype1 = ptype.rstrip('*');
-            return '  nsp_destroy_%s(H->%s,H);FREE(H->%s);\n' % (ptype1,pname,pname)
+            str = '  if (H->%s != NULL)\n' % (pname)
+            return str + '    { nsp_destroy_%s(H->%s,H);FREE(H->%s);}\n' % (ptype1,pname,pname)
         else:
             return '  nsp_destroy_%s(&H->%s,H); \n' % (ptype,pname)
         
@@ -1885,10 +1888,11 @@ class NspGenericArg(ArgType):
     def attr_free_fields(self,ptype,pname, varname,byref):
 	"""used to free allocated fields  """
         if byref == 't':
-            str = '  ' 
+            ind = '  ' 
         else:
-            str = ''
-        return  str + '  nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname)
+            ind = ''
+        str = ind + ('  if ( %s->%s != NULL ) \n' % (varname,pname))
+        return str + ind + ('    nsp_%s_destroy(%s->%s);\n' % (string.lower(self.name),varname,pname))
 
     def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """

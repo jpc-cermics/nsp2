@@ -295,9 +295,12 @@ void nsp_box3d_destroy_partial(NspBox3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    nsp_matrix_destroy(H->obj->x);
-    nsp_matrix_destroy(H->obj->y);
-    nsp_matrix_destroy(H->obj->z);
+    if ( H->obj->x != NULL ) 
+      nsp_matrix_destroy(H->obj->x);
+    if ( H->obj->y != NULL ) 
+      nsp_matrix_destroy(H->obj->y);
+    if ( H->obj->z != NULL ) 
+      nsp_matrix_destroy(H->obj->z);
     FREE(H->obj);
    }
 }
@@ -577,7 +580,7 @@ NspBox3d *nsp_box3d_full_copy(NspBox3d *self)
   if ( H ==  NULLBOX3D) return NULLBOX3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBOX3D;
   if ( nsp_box3d_full_copy_partial(H,self)== NULL) return NULLBOX3D;
-#line 581 "box3d.c"
+#line 584 "box3d.c"
   return H;
 }
 
@@ -597,7 +600,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_box3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_box3d_check_values(H) == FAIL) return RET_BUG;
-#line 601 "box3d.c"
+#line 604 "box3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -791,7 +794,7 @@ int _wrap_box3d_attach(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 795 "box3d.c"
+#line 798 "box3d.c"
 
 
 #line 67 "codegen/box3d.override"
@@ -803,7 +806,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 807 "box3d.c"
+#line 810 "box3d.c"
 
 
 #line 77 "codegen/box3d.override"
@@ -816,7 +819,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 820 "box3d.c"
+#line 823 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -897,4 +900,4 @@ static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 901 "box3d.c"
+#line 904 "box3d.c"

@@ -269,9 +269,12 @@ void nsp_classaref_destroy_partial(NspClassARef *H)
 #line 23 "codegen/classaref.override"
   /* verbatim in destroy */
 #line 272 "classaref.c"
-    nsp_matrix_destroy(H->obj->cla_val);
-    nsp_bmatrix_destroy(H->obj->cla_bval);
-    nsp_list_destroy(H->obj->cla_lval);
+    if ( H->obj->cla_val != NULL ) 
+      nsp_matrix_destroy(H->obj->cla_val);
+    if ( H->obj->cla_bval != NULL ) 
+      nsp_bmatrix_destroy(H->obj->cla_bval);
+    if ( H->obj->cla_lval != NULL ) 
+      nsp_list_destroy(H->obj->cla_lval);
     FREE(H->obj);
    }
 }
@@ -541,7 +544,7 @@ NspClassARef *nsp_classaref_full_copy(NspClassARef *self)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 545 "classaref.c"
+#line 548 "classaref.c"
   return H;
 }
 
@@ -564,7 +567,7 @@ int int_classaref_create(Stack stack, int rhs, int opt, int lhs)
 
 #line 20 "codegen/classaref.override"
   /* verbatim in create interface  */
-#line 568 "classaref.c"
+#line 571 "classaref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -581,7 +584,7 @@ static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int 
   self->obj->cla_color = color;
   return 0;
 }
-#line 585 "classaref.c"
+#line 588 "classaref.c"
 
 
 #line 36 "codegen/classaref.override"
@@ -590,7 +593,7 @@ static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int op
   Sciprintf("color: %d\n",self->obj->cla_color);
   return 0;
 }
-#line 594 "classaref.c"
+#line 597 "classaref.c"
 
 
 static NspMethods classaref_methods[] = {
@@ -756,7 +759,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 760 "classaref.c"
+#line 763 "classaref.c"
 
 
 #line 43 "codegen/classaref.override"
@@ -764,7 +767,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 768 "classaref.c"
+#line 771 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -795,4 +798,4 @@ void ClassARef_Interf_Info(int i, char **fname, function (**f))
   *f = ClassARef_func[i].fonc;
 }
 
-#line 799 "classaref.c"
+#line 802 "classaref.c"

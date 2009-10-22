@@ -345,9 +345,12 @@ void nsp_spolyhedron_destroy_partial(NspSPolyhedron *H)
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
 #line 348 "spolyhedron.c"
-    nsp_matrix_destroy(H->obj->Mcoord);
-    nsp_matrix_destroy(H->obj->Mface);
-    nsp_matrix_destroy(H->obj->Mval);
+    if ( H->obj->Mcoord != NULL ) 
+      nsp_matrix_destroy(H->obj->Mcoord);
+    if ( H->obj->Mface != NULL ) 
+      nsp_matrix_destroy(H->obj->Mface);
+    if ( H->obj->Mval != NULL ) 
+      nsp_matrix_destroy(H->obj->Mval);
     FREE(H->obj->pos);
     FREE(H->obj->fill);
     FREE(H->obj->vlevel);
@@ -693,7 +696,7 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 697 "spolyhedron.c"
+#line 700 "spolyhedron.c"
   return H;
 }
 
@@ -718,7 +721,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return RET_BUG; 
 
-#line 722 "spolyhedron.c"
+#line 725 "spolyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -1046,7 +1049,7 @@ int _wrap_spolyhedron_attach(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#line 1050 "spolyhedron.c"
+#line 1053 "spolyhedron.c"
 
 
 #line 94 "codegen/spolyhedron.override"
@@ -1058,7 +1061,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1062 "spolyhedron.c"
+#line 1065 "spolyhedron.c"
 
 
 #line 104 "codegen/spolyhedron.override"
@@ -1070,7 +1073,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1074 "spolyhedron.c"
+#line 1077 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1812,4 +1815,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1816 "spolyhedron.c"
+#line 1819 "spolyhedron.c"

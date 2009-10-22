@@ -307,11 +307,16 @@ void nsp_figure_destroy_partial(NspFigure *H)
 #line 308 "figure.c"
   nsp_string_destroy(&(H->obj->fname));
   nsp_string_destroy(&(H->obj->driver));
-    nsp_matrix_destroy(H->obj->dims);
-    nsp_matrix_destroy(H->obj->viewport_dims);
-    nsp_matrix_destroy(H->obj->position);
-    nsp_list_destroy(H->obj->children);
-   nsp_figuredata_destroy(H->obj->gc);
+    if ( H->obj->dims != NULL ) 
+      nsp_matrix_destroy(H->obj->dims);
+    if ( H->obj->viewport_dims != NULL ) 
+      nsp_matrix_destroy(H->obj->viewport_dims);
+    if ( H->obj->position != NULL ) 
+      nsp_matrix_destroy(H->obj->position);
+    if ( H->obj->children != NULL ) 
+      nsp_list_destroy(H->obj->children);
+    if (H->obj->gc != NULL)
+    nsp_object_destroy((NspObject **)&H->obj->gc);
     FREE(H->obj);
    }
 }
@@ -649,7 +654,7 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
-#line 653 "figure.c"
+#line 658 "figure.c"
   return H;
 }
 
@@ -669,7 +674,7 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figure_check_values(H) == FAIL) return RET_BUG;
-#line 673 "figure.c"
+#line 678 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -711,7 +716,7 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 715 "figure.c"
+#line 720 "figure.c"
 
 
 #line 166 "codegen/figure.override"
@@ -723,7 +728,7 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 }
 
 
-#line 727 "figure.c"
+#line 732 "figure.c"
 
 
 #line 176 "codegen/figure.override"
@@ -736,7 +741,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   return 1;
 }
 
-#line 740 "figure.c"
+#line 745 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
@@ -974,7 +979,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 978 "figure.c"
+#line 983 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1289,7 +1294,7 @@ static NspFigureData  *nsp_figuredata_xdr_load(XDR *xdrs)
   if ((H  = nsp_figuredata_create_void(name,(NspTypeBase *) nsp_type_figuredata))== NULLFIGUREDATA) return H;
   if ((H  = nsp_figuredata_xdr_load_partial(xdrs,H))== NULLFIGUREDATA) return H;
   if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
-#line 1293 "figure.c"
+#line 1298 "figure.c"
   return H;
 }
 
@@ -1299,7 +1304,8 @@ static NspFigureData  *nsp_figuredata_xdr_load(XDR *xdrs)
 
 void nsp_figuredata_destroy_partial(NspFigureData *H)
 {
-  nsp_matrix_destroy(H->colormap);
+  if ( H->colormap != NULL ) 
+    nsp_matrix_destroy(H->colormap);
 }
 
 void nsp_figuredata_destroy(NspFigureData *H)
@@ -1565,7 +1571,7 @@ NspFigureData *nsp_figuredata_copy(NspFigureData *self)
 NspFigureData *nsp_figuredata_full_copy(NspFigureData *self)
 {
   NspFigureData *H = nsp_figuredata_copy(self);
-#line 1569 "figure.c"
+#line 1575 "figure.c"
   return H;
 }
 
@@ -1584,7 +1590,7 @@ int int_figuredata_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figuredata_check_values(H) == FAIL) return RET_BUG;
-#line 1588 "figure.c"
+#line 1594 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -1954,7 +1960,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1958 "figure.c"
+#line 1964 "figure.c"
 
 
 #line 145 "codegen/figure.override"
@@ -1966,7 +1972,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1970 "figure.c"
+#line 1976 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2808,4 +2814,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2812 "figure.c"
+#line 2818 "figure.c"
