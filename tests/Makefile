@@ -63,7 +63,8 @@ TESTS= \
 	ode.dia \
 	find.dia \
 	global.dia \
-	matops.dia
+	matops.dia \
+	min_max_minmax_int.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
