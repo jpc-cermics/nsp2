@@ -1095,27 +1095,27 @@ static NspIMatrix *MatMaxiMini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, in
 	    return NULLIMAT; 
 	  if ( M->mn > 0 )
 	    for ( j= 0 ; j < A->m ; j++) 
-	      (*Imax)->R[j] = (*F)(A->mn,A,j,M,j,1);
+	      (*Imax)->R[j] = (*F)(A->n,A,j,M,j,inc);
 	}
       else
 	if ( M->mn > 0 )
-	  for ( j= 0 ; j < A->m ; j++) (*F)(A->mn,A,j,M,j,inc);
+	  for ( j= 0 ; j < A->m ; j++) (*F)(A->n,A,j,M,j,inc);
       break;
     }
   return M;
 }
 
 
-int nsp_iarray_maxi(int n,NspIMatrix *A, int off1, NspIMatrix  *amax,int off2,int incr)
+int nsp_iarray_maxi(int n, NspIMatrix *A, int off1, NspIMatrix  *amax, int off2, int incr)
 {
   nsp_int_union xx; 
-  int imax=0,i;
+  int imax=1,i, i1;
 #define IMAT_MAX(name,type,arg) xx.name = A->name[off1];	\
-  for ( i= 0 ; i < n ; i+= incr)				\
-    if ( A->name[i+off1] > xx.name )				\
+  for ( i=2, i1=off1+incr ; i <= n ; i++, i1+=incr)		\
+    if ( A->name[i1] > xx.name )				\
       {								\
-	xx.name =A->name[i+off1] ;				\
-	imax = i+1;						\
+	xx.name =A->name[i1] ;  				\
+	imax = i;						\
       }								\
   amax->name[off2]=xx.name;					\
   break;
@@ -1150,16 +1150,16 @@ NspIMatrix *nsp_imatrix_maxi(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int 
  */
 
 
-int nsp_iarray_mini(int n,NspIMatrix *A, int off1,NspIMatrix *amin,int off2,int incr)
+int nsp_iarray_mini(int n, NspIMatrix *A, int off1, NspIMatrix *amin, int off2, int incr)
 {
   nsp_int_union xx; 
-  int imax=0,i;
+  int imax=1,i, i1;
 #define IMAT_MAX(name,type,arg) xx.name = A->name[off1];	\
-  for ( i= 0 ; i < n ; i+= incr)		\
-    if ( A->name[i+off1] < xx.name )		\
+  for ( i=2, i1=off1+incr ; i <= n ; i++, i1+=incr)	       	\
+    if ( A->name[i1] < xx.name )		\
       {						\
-	xx.name =A->name[i+off1] ;		\
-	imax = i+1;				\
+	xx.name = A->name[i1];   		\
+	imax = i;				\
       }						\
   amin->name[off2]=xx.name;			\
   break;
@@ -1186,40 +1186,94 @@ NspIMatrix *nsp_imatrix_mini(NspIMatrix *A, int dim_flag, NspMatrix **Imax, int 
 }
 
 
-/* 
- *  compute the min and max of a vector taking care of Nan.
- *  Note : it is difficult to use the the minmax algorithm 
- *  (which compares first A[i] and A[i+1] before comparing 
- *  one to the current minimum and the other to the current 
- *  maximum) because it mail fails if there are Nan components.
+/*
+ *  compute the min and max of a vector
  */
+#define ALGO_BASIC   /* to choose among the basic algo and the 3n/2 algo  */ 
+                     /* but basic is faster than 3n/2... */
 
-static void VIMiniMaxi(int n,NspIMatrix *A,int aof, int incr,NspIMatrix *Amin,int aminof,
-		       NspIMatrix *Amax,int amaxof,  int *Imin, int *Imax)
+#ifdef ALGO_BASIC
+
+static void VIMiniMaxi(int n, NspIMatrix *A, int aof, int incr,NspIMatrix *Amin, int aminof,
+		       NspIMatrix *Amax, int amaxof, int *Imin, int *Imax)
 {
-  int i, imin, imax;
-  imin = imax = 1; 
-#define IMAT_MAX(name,type,arg)							\
-  Amin->name[amaxof] = Amax->name[aminof] = A->name[0+aof];		\
-  for ( i=0  ; i < n ; i += incr)					\
-    {									\
-      if ( A->name[i+aof] < Amin->name[aminof] )			\
-	{								\
-	  Amin->name[aminof] = A->name[i+aof];				\
-	  imin = i;							\
-	}								\
-      else if ( A->name[i+aof] > Amax->name[amaxof] )			\
-	{								\
-	  Amax->name[amaxof] = A->name[i+aof];				\
-	  imax = i;							\
-	}								\
-    }									\
+  int i, i1, imin, imax;
+  imin = imax = 1;
+#define IMAT_MAX(name,type,arg)						\
+  {                                                                     \
+    type vmin, vmax;                    				\
+    vmin = vmax = A->name[aof];		                                \
+    for ( i=2, i1=aof+incr ; i <= n ; i++, i1+= incr)			\
+      {									\
+	if ( A->name[i1] < vmin )                       		\
+	  {								\
+	    vmin = A->name[i1]; imin = i;				\
+	  }								\
+	else if ( A->name[i1] > vmax )					\
+	  {								\
+	    vmax = A->name[i1]; imax = i;				\
+	  }								\
+      }	                                                                \
+    Amin->name[aminof] = vmin; Amax->name[amaxof] = vmax;		\
+  }                                                                     \
   break;					
   NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
-
 #undef IMAT_MAX
 
+  *Imax = imax; *Imin = imin;
 }
+
+#else
+
+/* 
+ *  compute the min and max of a vector with the 3n/2 algorithm
+ */
+
+static void VIMiniMaxi(int n, NspIMatrix *A, int aof, int incr,NspIMatrix *Amin, int aminof,
+		       NspIMatrix *Amax, int amaxof, int *Imin, int *Imax)
+{
+  int i, i1, is, i1s, imin, imax;
+  imin = imax = 1;
+  is = (n % 2 == 0) ? 1 : 2;
+  i1s = (n % 2 == 0) ? aof : aof+incr;
+#define IMAT_MAX(name,type,arg)						\
+  {                                                                     \
+    type vmin, vmax, first, second;      				\
+    vmin = vmax = A->name[aof];		                                \
+    for ( i=is, i1=i1s ; i <= n ; i+=2, i1+= 2*incr)			\
+      {									\
+	if ( (first=A->name[i1]) < (second=A->name[i1+incr]) )		\
+	  {								\
+	    if ( first < vmin )						\
+	      {								\
+		vmin = first; imin = i;   				\
+	      }								\
+	    if ( second > vmax )					\
+	      {								\
+		vmax = second; imax = i+1;        			\
+	      }								\
+	  }								\
+	else								\
+	  {								\
+	    if ( first > vmax )						\
+	      {								\
+		vmax = first; imax = i;   				\
+	      }								\
+	    if ( second < vmin )					\
+	      {								\
+		vmin = second; imin = i+1;        			\
+	      }								\
+	  }								\
+      }	                                                                \
+    Amin->name[aminof] = vmin; Amax->name[amaxof] = vmax;		\
+  }                                                                     \
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_MAX,"");
+#undef IMAT_MAX
+
+  *Imax = imax; *Imin = imin;
+}
+#endif
 
 /**
  * nsp_imatrix_minmax:
