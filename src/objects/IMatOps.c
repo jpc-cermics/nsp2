@@ -274,7 +274,7 @@ int nsp_imatrix_dadd(NspIMatrix *Mat1, NspIMatrix *Mat2)
       return FAIL;
     }
 
-  if (SameDim(Mat1,Mat2)== FAIL)
+  if ( ! SameDim(Mat1,Mat2) )
     {
       Scierror("Error:\tArguments must have the same size\n");
       return(FAIL);
@@ -384,7 +384,7 @@ int nsp_imatrix_dsub(NspIMatrix *Mat1, NspIMatrix *Mat2)
       return FAIL;
     }
 
-  if (SameDim(Mat1,Mat2)== FAIL)
+  if ( ! SameDim(Mat1,Mat2) )
     {
       Scierror("Error:\tArguments must have the same size\n");
       return(FAIL);
