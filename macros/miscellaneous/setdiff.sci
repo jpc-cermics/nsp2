@@ -46,8 +46,12 @@ function [c,ka] = setdiff(a,b)
   if type_a ~= type(b,"string") then
     error(" both argument must be of the same type")
   end
+
+  if type_a == "IMat" && a.itype[] ~= b.itype[] then
+    error(" both argument must be of the same integer type")
+  end
   
-  if type_a == "Mat" || type_a == "SMat" then
+  if type_a == "Mat" || type_a == "SMat" || type_a == "IMat" then
     if size(a,"*") == 0 then
       c = a; ka = []; return
     elseif size(b,"*") == 0 then

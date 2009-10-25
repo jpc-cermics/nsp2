@@ -45,8 +45,12 @@ function [c,ka,kb] = intersect(a,b)
    if type_a ~= type(b,"string") then
       error(" both arg must be of same type")
    end
+
+  if type_a == "IMat" && a.itype[] ~= b.itype[] then
+    error(" both argument must be of the same integer type")
+  end
    
-   if type_a == "Mat" | type_a == "SMat" then
+   if type_a == "Mat" || type_a == "SMat" || type_a == "IMat" then
       na = size(a,"*")
       nb = size(b,"*")      
       if na == 0 || nb == 0 then
