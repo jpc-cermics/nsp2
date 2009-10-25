@@ -24,7 +24,7 @@
 
 
 
-#line 116 "codegen/link.override"
+#line 117 "codegen/link.override"
 
 #include "nsp/link.h"
 #include "nsp/block.h"
@@ -112,7 +112,7 @@ NspTypeLink *new_type_link(type_mode mode)
 
   type->init = (init_func *) init_link;
 
-#line 136 "codegen/link.override"
+#line 137 "codegen/link.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_link;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_link ;
@@ -132,7 +132,7 @@ NspTypeLink *new_type_link(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 148 "codegen/link.override"
+#line 149 "codegen/link.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) link_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) link_set_hilited;
@@ -277,7 +277,7 @@ static int nsp_link_neq(NspLink *A, NspObject *B)
  * save 
  */
 
-#line 181 "codegen/link.override"
+#line 182 "codegen/link.override"
 
 /*
  * save 
@@ -504,7 +504,7 @@ NspLink  *GetLink(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspLink instance 
  *-----------------------------------------------------*/
-#line 251 "codegen/link.override"
+#line 252 "codegen/link.override"
 /* override the code for link creation */
 
 static NspLink *nsp_link_create_void(char *name,NspTypeBase *type)
@@ -621,8 +621,8 @@ NspLink *nsp_link_full_copy_partial(NspLink *H,NspLink *self)
     {
       if ((H->obj->poly = (NspMatrix *) nsp_object_full_copy_and_name("poly",NSP_OBJECT(self->obj->poly))) == NULLMAT) return NULL;
     }
-  H->obj->lock1 = self->obj->lock1;
-  H->obj->lock2 = self->obj->lock2;
+  if( nsp_grl_lock_full_copy(&H->obj->lock1,&self->obj->lock1,self)== FAIL) return NULL;
+  if( nsp_grl_lock_full_copy(&H->obj->lock2,&self->obj->lock2,self)== FAIL) return NULL;
   H->obj->hilited=self->obj->hilited;
   H->obj->show=self->obj->show;
   return H;
@@ -642,7 +642,7 @@ NspLink *nsp_link_full_copy(NspLink *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 335 "codegen/link.override"
+#line 336 "codegen/link.override"
 
 /* override the default int_create */
 
@@ -672,7 +672,7 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 403 "codegen/link.override"
+#line 404 "codegen/link.override"
 
 /* translate */
 
@@ -692,7 +692,7 @@ static int _wrap_link_translate(void  *self,Stack stack, int rhs, int opt, int l
 #line 693 "link.c"
 
 
-#line 421 "codegen/link.override"
+#line 422 "codegen/link.override"
 /* set_position */
 
 static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -711,7 +711,7 @@ static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs
 #line 712 "link.c"
 
 
-#line 438 "codegen/link.override"
+#line 439 "codegen/link.override"
 /* resize */ 
 
 static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -729,7 +729,7 @@ static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs
 #line 730 "link.c"
 
 
-#line 391 "codegen/link.override"
+#line 392 "codegen/link.override"
 
 /* draw */
 
@@ -743,7 +743,7 @@ static int _wrap_link_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 #line 744 "link.c"
 
 
-#line 454 "codegen/link.override"
+#line 455 "codegen/link.override"
 
 static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj_port);
 
@@ -936,7 +936,7 @@ void Link_Interf_Info(int i, char **fname, function (**f))
   *f = Link_func[i].fonc;
 }
 
-#line 473 "codegen/link.override"
+#line 474 "codegen/link.override"
 
 /* inserted verbatim at the end */
 
@@ -1974,7 +1974,12 @@ static void nsp_init_grl_lock(grl_lock *locks)
   
 }
 
+static int  nsp_grl_lock_full_copy(grl_lock *lc,grl_lock *l,NspLink *L)
+{
+  *lc = *l;
+  lc->port.object_id = NULLOBJ;
+  lc->port.object_sid = l->port.object_id;
+  return OK;
+}
 
-
-
-#line 1981 "link.c"
+#line 1986 "link.c"

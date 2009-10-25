@@ -196,7 +196,8 @@ static int nsp_print_gr_lock(int indent,gr_lock *locks,NspConnector *M);
 static int nsp_check_gr_lock(gr_lock *locks,NspConnector *M);
 static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
+static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M);
 
-#line 201 "./connector.h"
+#line 202 "./connector.h"
 #endif /* NspConnector_Private */
 

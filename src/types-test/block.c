@@ -24,7 +24,7 @@
 
 
 
-#line 120 "codegen/block.override"
+#line 121 "codegen/block.override"
 
 #include "nsp/link.h"
 #include "nsp/block.h"
@@ -111,7 +111,7 @@ NspTypeBlock *new_type_block(type_mode mode)
 
   type->init = (init_func *) init_block;
 
-#line 139 "codegen/block.override"
+#line 140 "codegen/block.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
@@ -131,7 +131,7 @@ NspTypeBlock *new_type_block(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 151 "codegen/block.override"
+#line 152 "codegen/block.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
@@ -281,7 +281,7 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
-#line 184 "codegen/block.override"
+#line 185 "codegen/block.override"
 
 /* code used to override the save/load functions */
 
@@ -514,7 +514,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspBlock instance 
  *-----------------------------------------------------*/
-#line 258 "codegen/block.override"
+#line 259 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -644,7 +644,7 @@ NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
   H->obj->thickness=self->obj->thickness;
   H->obj->background=self->obj->background;
   H->obj->n_locks=self->obj->n_locks;
-  H->obj->locks = self->obj->locks;
+  if ((H->obj->locks = nsp_hgrb_lock_full_copy(self->obj->locks,self))==NULL) return NULL;
   H->obj->hilited=self->obj->hilited;
   H->obj->show=self->obj->show;
   if ( self->obj->icon == NULL )
@@ -670,7 +670,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 359 "codegen/block.override"
+#line 360 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -728,7 +728,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 455 "codegen/block.override"
+#line 456 "codegen/block.override"
 
 /* translate */
 
@@ -747,7 +747,7 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
 #line 748 "block.c"
 
 
-#line 472 "codegen/block.override"
+#line 473 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -765,7 +765,7 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
 #line 766 "block.c"
 
 
-#line 488 "codegen/block.override"
+#line 489 "codegen/block.override"
 /* resize */ 
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -783,7 +783,7 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
 #line 784 "block.c"
 
 
-#line 443 "codegen/block.override"
+#line 444 "codegen/block.override"
 
 /* draw */
 
@@ -797,7 +797,7 @@ static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 #line 798 "block.c"
 
 
-#line 504 "codegen/block.override"
+#line 505 "codegen/block.override"
 
 /* fix a lock point position 
  * in relative coordinates 
@@ -820,7 +820,7 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
 #line 821 "block.c"
 
 
-#line 525 "codegen/block.override"
+#line 526 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -984,7 +984,7 @@ static AttrTab block_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 422 "codegen/block.override"
+#line 423 "codegen/block.override"
 
 extern function int_nspgraphic_extract;
 
@@ -996,7 +996,7 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
 #line 997 "block.c"
 
 
-#line 432 "codegen/block.override"
+#line 433 "codegen/block.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1037,7 +1037,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
   *f = Block_func[i].fonc;
 }
 
-#line 549 "codegen/block.override"
+#line 550 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -1911,6 +1911,19 @@ static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M)
   return OK;
 }
 
+static grb_lock * nsp_hgrb_lock_full_copy(grb_lock *gl,NspBlock *M)
+{
+  int i;
+  grb_lock *gl1;
+  if (( gl1 = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULL;
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      gl1[i]= M->obj->locks[i];
+      gl1[i].port.object_id = NULLOBJ;
+      gl1[i].port.object_sid = M->obj->locks[i].port.object_id;
+    }
+  return gl1;
 
+}
 
-#line 1917 "block.c"
+#line 1930 "block.c"

@@ -114,6 +114,7 @@ static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
 static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
 static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
+static grb_lock * nsp_hgrb_lock_full_copy(grb_lock *gl,NspBlock *M);
 
 %%
 headers
@@ -1419,4 +1420,17 @@ static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M)
   return OK;
 }
 
+static grb_lock * nsp_hgrb_lock_full_copy(grb_lock *gl,NspBlock *M)
+{
+  int i;
+  grb_lock *gl1;
+  if (( gl1 = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULL;
+  for ( i = 0 ; i < M->obj->n_locks ; i++) 
+    {
+      gl1[i]= M->obj->locks[i];
+      gl1[i].port.object_id = NULLOBJ;
+      gl1[i].port.object_sid = M->obj->locks[i].port.object_id;
+    }
+  return gl1;
 
+}

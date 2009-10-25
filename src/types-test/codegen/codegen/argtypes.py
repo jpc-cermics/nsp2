@@ -1531,8 +1531,22 @@ class StructArg(ArgType):
     def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
-            return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
+            # used in copy functions 
+            if f_copy_name == 'nsp_object_full_copy':
+                if ptype[-1] == '*':
+                    ptype1 = ptype.rstrip('*');
+                    vn = right_varname.rstrip('->obj');
+                    return '  if ((%s->%s = nsp_h%s_full_copy(%s->%s,%s))==NULL) return NULL;\n' \
+                        % (left_varname,pname,ptype1,right_varname,pname,vn)
+                else:
+                    vn = right_varname.rstrip('->obj');
+                    return '  if( nsp_%s_full_copy(&%s->%s,&%s->%s,%s)== FAIL) return NULL;\n' \
+                        % (ptype,left_varname,pname,right_varname,pname,vn)
+                    
+            else:
+                return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
         else:
+            # used in create function
             return '  %s->%s = %s;\n' % (left_varname,pname,pname)
 
     def attr_write_info(self,ptype,pname, varname,byref):

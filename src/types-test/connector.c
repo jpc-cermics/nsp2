@@ -24,7 +24,7 @@
 
 
 
-#line 96 "codegen/connector.override"
+#line 97 "codegen/connector.override"
 
 #include "nsp/object.h"
 #include "nsp/pr-output.h" 
@@ -107,7 +107,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
 
   type->init = (init_func *) init_connector;
 
-#line 111 "codegen/connector.override"
+#line 112 "codegen/connector.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_connector;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_connector ;
@@ -127,7 +127,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 123 "codegen/connector.override"
+#line 124 "codegen/connector.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) connector_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) connector_set_hilited;
@@ -275,7 +275,7 @@ static int nsp_connector_neq(NspConnector *A, NspObject *B)
  * save 
  */
 
-#line 156 "codegen/connector.override"
+#line 157 "codegen/connector.override"
 
 /*
  * save 
@@ -490,7 +490,7 @@ NspConnector  *GetConnector(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspConnector instance 
  *-----------------------------------------------------*/
-#line 223 "codegen/connector.override"
+#line 224 "codegen/connector.override"
 /* override the code for connector creation */
 
 
@@ -593,7 +593,7 @@ NspConnector *nsp_connector_full_copy_partial(NspConnector *H,NspConnector *self
   H->obj->color=self->obj->color;
   H->obj->thickness=self->obj->thickness;
   H->obj->background=self->obj->background;
-  H->obj->lock = self->obj->lock;
+  if( nsp_gr_lock_full_copy(&H->obj->lock,&self->obj->lock,self)== FAIL) return NULL;
   H->obj->hilited=self->obj->hilited;
   H->obj->show=self->obj->show;
   return H;
@@ -613,7 +613,7 @@ NspConnector *nsp_connector_full_copy(NspConnector *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 298 "codegen/connector.override"
+#line 299 "codegen/connector.override"
 
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
@@ -671,7 +671,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 394 "codegen/connector.override"
+#line 395 "codegen/connector.override"
 
 /* translate */
 
@@ -691,7 +691,7 @@ static int _wrap_connector_translate(void  *self,Stack stack, int rhs, int opt, 
 #line 692 "connector.c"
 
 
-#line 412 "codegen/connector.override"
+#line 413 "codegen/connector.override"
 /* set_position */
 
 static int _wrap_connector_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -710,7 +710,7 @@ static int _wrap_connector_set_pos(void  *self,Stack stack, int rhs, int opt, in
 #line 711 "connector.c"
 
 
-#line 429 "codegen/connector.override"
+#line 430 "codegen/connector.override"
 /* resize */ 
 
 static int _wrap_connector_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -728,7 +728,7 @@ static int _wrap_connector_resize(void  *self, Stack stack, int rhs, int opt, in
 #line 729 "connector.c"
 
 
-#line 382 "codegen/connector.override"
+#line 383 "codegen/connector.override"
 
 /* draw */
 
@@ -883,7 +883,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
   *f = Connector_func[i].fonc;
 }
 
-#line 464 "codegen/connector.override"
+#line 465 "codegen/connector.override"
 
 /* methods for the graphic class 
  *
@@ -1610,7 +1610,20 @@ static void nsp_init_gr_lock(gr_lock *lock)
   lock->ports = NULL; 
 }
 
+static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M)
+{
+  int i;
+  lock_c->n_ports = lock->n_ports;
+  lock_c->fixed = lock->fixed;
+  if (( lock_c->ports = malloc(lock_c->n_ports*sizeof(gr_port))) == NULL)
+    return FAIL;
+  for ( i = 0 ; i < lock_c->n_ports  ; i++) 
+    {
+      lock_c->ports[i]= lock->ports[i];
+      lock_c->ports[i].object_id = NULLOBJ;
+      lock_c->ports[i].object_sid = lock->ports[i].object_id ;
+    }
+  return OK;
+}
 
-
-
-#line 1617 "connector.c"
+#line 1630 "connector.c"

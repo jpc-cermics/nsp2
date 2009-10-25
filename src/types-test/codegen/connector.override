@@ -90,6 +90,7 @@ static int nsp_print_gr_lock(int indent,gr_lock *locks,NspConnector *M);
 static int nsp_check_gr_lock(gr_lock *locks,NspConnector *M);
 static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
+static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M);
 
 %%
 headers
@@ -1187,5 +1188,18 @@ static void nsp_init_gr_lock(gr_lock *lock)
   lock->ports = NULL; 
 }
 
-
-
+static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M)
+{
+  int i;
+  lock_c->n_ports = lock->n_ports;
+  lock_c->fixed = lock->fixed;
+  if (( lock_c->ports = malloc(lock_c->n_ports*sizeof(gr_port))) == NULL)
+    return FAIL;
+  for ( i = 0 ; i < lock_c->n_ports  ; i++) 
+    {
+      lock_c->ports[i]= lock->ports[i];
+      lock_c->ports[i].object_id = NULLOBJ;
+      lock_c->ports[i].object_sid = lock->ports[i].object_id ;
+    }
+  return OK;
+}
