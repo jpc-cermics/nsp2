@@ -30,8 +30,9 @@
 #include "nsp/bmatrix-in.h"
 #include "../interp/Eval.h"
 
-#include "nsp/graphics-new/Graphics.h"
+/* #include "nsp/graphics/Graphics.h" */
 #include "nsp/gsort-p.h"
+#include "nsp/imatrix.h"
 
 #define CLOSED_LEFT 0
 #define CLOSED_RIGHT 1
@@ -48,6 +49,11 @@ void nsp_bsearchc_for_strings(char **x, int m, char **val, int n,
 void nsp_bsearchd_for_strings(char **x, int m, char **val, int n,
 			      int *indx, int *occ, int *info);
 
+void nsp_bsearchc_for_IMat(const NspIMatrix *x, const NspIMatrix *val,
+			   int indx[], int occ[], int *info, int interval_flag);
+
+void nsp_bsearchd_for_IMat(const NspIMatrix *x, const NspIMatrix *val,
+			   int indx[], int occ[], int *info);
 
 /*
  * bsearch interface  
@@ -64,17 +70,18 @@ void nsp_bsearchd_for_strings(char **x, int m, char **val, int n,
 
 int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 {
-  int info, m_occ, n_occ, m_x, n_x, mn_val, i, flagstr;
-  char *interval_type=NULL,*match_type=NULL;
+  int info, m_occ, n_occ, m_x, n_x, mn_val, i;
+  char *interval_type=NULL,*match_type=NULL, *ind_type=NULL;
   int interval_flag = CLOSED_LEFT; 
-  char match_flag='i';
-  Boolean assume_sorted = FALSE;
+  char match_flag='i', type_flag='d';
+  Boolean assume_sorted = FALSE, in_order = TRUE;
   nsp_option opts[] ={{ "interval",string,NULLOBJ,-1},
 		      { "match",string,NULLOBJ,-1},
 		      { "assume_sorted",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspMatrix *x=NULLMAT, *val=NULLMAT, *ind=NULLMAT, *occ=NULLMAT;
   NspSMatrix *xstr=NULLSMAT, *valstr=NULLSMAT;
+  NspIMatrix *xi=NULLIMAT, *vali=NULLIMAT;
 
   CheckStdRhs(2,2);
   CheckLhs(0,3);
@@ -84,7 +91,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       if ( (x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
       if ( (val=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
       CheckVector(NspFname(stack),2,val);
-      flagstr = 0; m_x = x->m; n_x = x->n;
+      type_flag = 'd'; m_x = x->m; n_x = x->n;
       m_occ = val->m;  n_occ = val->n; mn_val = val->mn;
     }
   else if ( IsSMatObj(stack,1) ) 
@@ -92,16 +99,29 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       if ( (xstr=GetSMat(stack,1)) == NULLSMAT ) return RET_BUG;
       if ( (valstr=GetSMat(stack,2)) == NULLSMAT ) return RET_BUG;
       CheckVector(NspFname(stack),2,valstr);
-      flagstr = 1; m_x = xstr->m; n_x = xstr->n;
+      type_flag = 's'; m_x = xstr->m; n_x = xstr->n;
       m_occ = valstr->m; n_occ = valstr->n; mn_val = valstr->mn;
+    }
+  else if ( IsIMatObj(stack,1) ) 
+    {
+      if ( (xi=GetIMat(stack,1)) == NULLIMAT ) return RET_BUG;
+      if ( (vali=GetIMat(stack,2)) == NULLIMAT ) return RET_BUG;
+      CheckVector(NspFname(stack),2,vali);
+      if ( xi->itype != vali->itype ) 
+	{
+	  Scierror("Error: arguments must have the same integer type in function %s\n",NspFname(stack));
+	  return RET_BUG;
+	}
+      type_flag = 'i'; m_x = xi->m; n_x = xi->n;
+      m_occ = vali->m;  n_occ = vali->n; mn_val = vali->mn;
     }
   else
     {
-      Scierror("Error: first argument must be of type real or string in function %s\n",NspFname(stack));
+      Scierror("Error: first argument must be of type real, integer or string in function %s\n",NspFname(stack));
       return RET_BUG;
     }
 
-  if ( get_optional_args(stack, rhs, opt, opts, &interval_type, &match_type, &assume_sorted) == FAIL) 
+  if ( get_optional_args(stack, rhs, opt, opts, &interval_type, &match_type, &assume_sorted, &ind_type) == FAIL) 
     return RET_BUG;
 
   if ( match_type != NULL )
@@ -143,27 +163,35 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 
   if ( ! assume_sorted )      /* Check that val is increasing */
     {
-      if ( flagstr == 0 )
+      if ( type_flag == 'd' )
 	{
-	  for ( i = 0 ; i < mn_val-1 ; i++ ) 
-	    if ( ! ( val->R[i] < val->R[i+1]) )
-	      {
-		Scierror("Error: second argument in function %s\n",NspFname(stack));
-		Scierror("\tis not strictly increasing \n");
-		return RET_BUG;
-	      }
+	  for ( i = 0 ; i < mn_val-1 && in_order ; i++ ) 
+	    in_order = val->R[i] < val->R[i+1];
 	}
-      else
+      else if ( type_flag == 's' )
 	{
-	  for ( i = 0 ; i < mn_val-1 ; i++ ) 
+	  for ( i = 0 ; i < mn_val-1 && in_order ; i++ ) 
 	    if ( strcmp(valstr->S[i],valstr->S[i+1]) >= 0 )
-	      {
-		Scierror("Error: second argument in function %s\n",NspFname(stack));
-		Scierror("\tis not strictly increasing \n");
-		return RET_BUG;
-	      }
+	      in_order = FALSE;
+	}
+      else if ( type_flag == 'i' )
+	{
+#define IMAT_ORDER_TEST(name,type,arg)                     \
+          for ( i = 0 ; i < mn_val-1 && in_order ; i++ )   \
+	    in_order = vali->name[i] < vali->name[i+1];        \
+          break;                    
+          NSP_ITYPE_SWITCH(vali->itype,IMAT_ORDER_TEST,"");
+#undef IMAT_ORDER_TEST
+	}
+
+      if ( ! in_order )
+	{
+	  Scierror("Error: second argument in function %s\n",NspFname(stack));
+	  Scierror("\tis not strictly increasing \n");
+	  return RET_BUG;
 	}
     }
+
 
   if ( match_flag == 'i' ) 
     {
@@ -182,19 +210,28 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( flagstr == 0 )
+  if ( type_flag == 'd' )
     {
       if ( match_flag == 'i' ) 
 	nsp_bsearchc(x->R,x->mn,val->R,val->mn-1,ind->I,occ->I,&info,interval_flag);
       else 
 	nsp_bsearchd(x->R,x->mn,val->R,val->mn,ind->I,occ->I,&info);
     }
-  else
+
+  else if ( type_flag == 's' )
     {
       if ( match_flag == 'i' ) 
 	nsp_bsearchc_for_strings(xstr->S,xstr->mn,valstr->S,mn_val-1,ind->I,occ->I,&info,interval_flag);
       else 
 	nsp_bsearchd_for_strings(xstr->S,xstr->mn,valstr->S,mn_val,ind->I,occ->I,&info);
+    }
+
+  else if ( type_flag == 'i' )
+    {
+      if ( match_flag == 'i' ) 
+	nsp_bsearchc_for_IMat(xi, vali, ind->I, occ->I, &info, interval_flag);
+      else 
+	nsp_bsearchd_for_IMat(xi, vali, ind->I, occ->I, &info);
     }
 
   ind->convert = 'i'; /* occ is filed with integers */
@@ -442,3 +479,117 @@ void nsp_bsearchd_for_strings(char **x, int m, char **val, int n,
 
 
 
+
+/*     PURPOSE 
+ *        val[0:n] being an array (with strict increasing order and n >=1) 
+ *        representing n intervals, this routine, by the mean of a 
+ *        binary search, computes : 
+ *
+ *           a/ for each x[i] its interval number stored in indx[i] : 
+ *                  I(j) = [val[j-1], val[j] )  j=1,...,n-1 
+ *                  I(n) = [val[n-1], val[n] ]
+ *               indx[i] = 0 if  x[i] is not in [val(1),val(n+1)] 
+ *
+ *           b/ the number of points falling in the interval j : 
+ *
+ *              occ[j] = # { x[i] such that x[i] in I(j) } 
+ *
+ *     PARAMETERS 
+ *        inputs : 
+ *           x         IMat array 
+ *           val       IMat array (val[0] < val[1] < ....< Val[n]) 
+ *           x and val should be of same integer type
+ *        outputs 
+ *           indx[m] int array 
+ *           occ[n]  int array 
+ *           info    int (number of x[i] not in [val[0], val[n]]) 
+ *
+ *     AUTHOR 
+ *        Bruno Pincon 
+ */
+
+void nsp_bsearchc_for_IMat(const NspIMatrix *x, const NspIMatrix *val,
+		  int indx[], int occ[], int *info, int interval_flag)
+{
+  int  i, j, j1, j2;
+  int m=x->mn, n=val->mn-1;
+ 
+  for (j = 0; j < n; j++ ) occ[j]= 0;
+  *info = 0;
+
+#define IMAT_BSEARCHC(name,type,arg)                                    \
+  for (i = 0; i < m ; i++ )						\
+    {									\
+       if (val->name[0] <= x->name[i] && x->name[i] <= val->name[n])    \
+         {                                                              \
+	   /* x[i] in [val(0),val(n)]: find j such that x[i] in I(j) */ \
+	    j1 = 0; j2 = n;						\
+	    if (interval_flag == CLOSED_LEFT )				\
+	      while(j2 - j1 > 1)					\
+		{							\
+		  j = (j1 + j2) / 2;					\
+		  if (x->name[i] < val->name[j]) j2 = j; else j1 = j;	\
+		}							\
+	    else   /* (interval_flag == CLOSED_RIGHT ) */		\
+	      while(j2 - j1 > 1)					\
+		{							\
+		  j = (j1 + j2) / 2;					\
+		  if (x->name[i] > val->name[j]) j1 = j; else j2 = j;	\
+		}							\
+	    ++occ[j1]; indx[i] = j2;					\
+	  }								\
+       else   /* x[i] is not in [val(0), val(n)] */			\
+	  {								\
+	    ++(*info); indx[i] = 0;					\
+	  }								\
+    }									\
+  break;
+  NSP_ITYPE_SWITCH(x->itype,IMAT_BSEARCHC,"");
+#undef IMAT_BSEARCHC
+}
+
+
+void nsp_bsearchd_for_IMat(const NspIMatrix *x, const NspIMatrix *val,
+		  int indx[], int occ[], int *info)
+{
+  int  i, j, j1, j2;
+  int m=x->mn, n=val->mn;
+ 
+  for (j = 0; j < n; j++ ) occ[j]= 0;
+  *info = 0;
+
+#define IMAT_BSEARCHD(name,type,arg)                                    \
+  for (i = 0 ; i < m ; i++)                                             \
+    {                                                                   \
+      if (val->name[0] <= x->name[i] && x->name[i] <= val->name[n-1])   \
+	{                                                               \
+	  /* find j such that x[i] = val[j] by a binary search */       \
+	  j1 = 0;                                                       \
+	  j2 = n-1;                                                     \
+	  while(j2 - j1 > 1)                                            \
+	    {                                                           \
+	      j = (j1 + j2) / 2;                                        \
+	      if (x->name[i] < val->name[j]) j2 = j; else j1 = j;       \
+	    }                                                           \
+	  if (x->name[i] == val->name[j1])                              \
+	    {                                                           \
+	      ++occ[j1]; indx[i] = j1+1;                                \
+	    }                                                           \
+	  else if (x->name[i] == val->name[j2]) /* (note: this case may happen only for j2=n-1) */ \
+	    {                                                           \
+	      ++occ[j2]; indx[i] = j2+1;                                \
+	    }                                                           \
+	  else  /* x[i] is not in {val(1), val(2),..., val(n)} */       \
+	    {                                                           \
+	      ++(*info); indx[i] = 0;                                   \
+	    }                                                           \
+	}                                                               \
+      else    /* x[i] is not in {val[0], val[1],..., val[n-1]} */       \
+	{                                                               \
+	  ++(*info); indx[i] = 0;                                       \
+	}                                                               \
+    }                                                                   \
+  break;
+  NSP_ITYPE_SWITCH(x->itype,IMAT_BSEARCHD,"");
+#undef IMAT_BSEARCHD
+} 
