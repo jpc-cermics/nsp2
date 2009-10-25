@@ -60,6 +60,7 @@ static NspMethods *object_get_methods(void);
 static int int_object_create(Stack stack, int rhs, int opt, int lhs);
 static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level);
 static int nsp_object_as_index_def(NspObject * M, index_vector *index);
+static NspObject *nsp_object_full_copy_def(NspObject * M);
 
 /*
  * base object : NspObject 
@@ -111,6 +112,7 @@ NspTypeObject *new_type_object(type_mode mode)
   type->load = (load_func *) nsp_object_load_def;
   type->latex = (print_func *) nsp_object_latex_def;
   type->as_index  = (get_index_vector_func *) nsp_object_as_index_def;
+  type->full_copy = (copy_func *) nsp_object_full_copy_def; 
 
   if ( nsp_type_object_id == 0 ) 
     {
@@ -485,6 +487,23 @@ static int nsp_object_as_index_def(NspObject * M, index_vector *index)
   return FAIL;
 }
 
+
+/**
+ * nsp_object_full_copy_def:
+ * @M: an object 
+ * 
+ * make a full copy of given object
+ *
+ * Return value: %TRUE or %FALSE 
+ **/
+
+static NspObject *nsp_object_full_copy_def(NspObject * M)
+{
+  Scierror("Error: full_copy not implemented for object of type %s\n",M->type->s_type());
+  return NULL;
+}
+
+
 /*------------------------------------------------------
  * methods 
  *------------------------------------------------------*/
@@ -825,7 +844,33 @@ static int int_meth_object_get_methods(void *ob,Stack stack, int rhs, int opt, i
 }
 
 
+
+/**
+ * int_meth_object_full_copy:
+ * @ob: a nsp object 
+ * @stack: evaluation stack 
+ * @rhs: an integer 
+ * @opt: an integer 
+ * @lhs: an integer 
+ * 
+ * This interface is called when the full_copy method and 
+ * returns a full copy of the object @ob.
+ *
+ * 
+ * Returns: 1 or %RET_BUG.
+ **/
+
+static int int_meth_object_full_copy(void *ob,Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj=ob,*Obj1;
+  CheckRhs(0,0);
+  if ((Obj1 = Obj->type->full_copy(Obj))== NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(Obj1));
+  return 1;
+}
+
 static NspMethods object_methods[] = {
+  { "full_copy", int_meth_object_full_copy},
   { "set",  int_meth_object_set_attributes}, /* set attribute of object the get is given by . */
   { "get",  int_meth_object_get_attributes},  /* get attribute is also given by . */
   { "get_name", int_meth_object_get_name},

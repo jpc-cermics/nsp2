@@ -11,8 +11,8 @@ extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern BCG *nsp_check_graphic_context(void);
 extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern void nsp_list_link_figure(NspList *L, nsp_figure  *F);
+extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
@@ -64,7 +64,6 @@ override-type  Axes
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_axes  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_axes  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_axes  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_axes_full_copy ;
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
@@ -634,7 +633,7 @@ static int nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
 static void nsp_axes_link_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G, ((NspFigure *) F)->obj);
+  nsp_graphic_link_figure(G, F);
   /* link children */
   nsp_list_link_figure(((NspAxes *) G)->obj->children,F);
 }
@@ -643,7 +642,7 @@ static void nsp_axes_link_figure(NspGraphic *G, void *F)
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_unlink_figure(G,  ((NspFigure *) F)->obj);
+  nsp_graphic_unlink_figure(G,F);
   /* link children */
   nsp_list_unlink_figure(((NspAxes *) G)->obj->children,F);
 }

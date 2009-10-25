@@ -90,7 +90,7 @@ NspTypeMaxpMatrix *new_type_mpmatrix(type_mode mode)
   top->neq  = (eq_func *) mpmatrix_neq;
   top->save  = (save_func *) mpmatrix_xdr_save;
   top->load  = (load_func *) mpmatrix_xdr_load;
-
+  top->full_copy  =  (copy_func *) nsp_mpmatrix_copy;                   
   /* specific methods for matrix */
       
   type->init = (init_func *) init_mpmatrix;

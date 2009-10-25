@@ -43,7 +43,6 @@ override-type Compound
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_compound  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
@@ -318,7 +317,7 @@ static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 static void nsp_compound_link_figure(NspGraphic *G, void *F)
 {
-  /* link toplevel */
+  /* link toplevel, take care to use nsp_graphic field */
   nsp_graphic_link_figure(G, F);
   /* link children */
   nsp_list_link_figure(((NspCompound *) G)->obj->children,F);

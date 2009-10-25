@@ -101,6 +101,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   top->load  = (load_func *) nsp_connector_xdr_load;
   top->create = (create_func*) int_connector_create;
   top->latex = (print_func *) nsp_connector_latex;
+  top->full_copy = (copy_func *) nsp_connector_full_copy;
 
   /* specific methods for connector */
 
@@ -117,7 +118,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->connector_figure = nsp_graphic_connector_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unconnector_figure = nsp_graphic_unconnector_figure; */ 
 
-#line 121 "connector.c"
+#line 122 "connector.c"
   /* 
    * NspConnector interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -158,7 +159,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   t_grint->full_copy =(gr_full_copy *) connector_full_copy;
   t_grint->unlock =(gr_unlock *) connector_unlock;
 
-#line 162 "connector.c"
+#line 163 "connector.c"
   if ( nsp_type_connector_id == 0 ) 
     {
       /* 
@@ -340,7 +341,7 @@ static NspConnector  *nsp_connector_xdr_load(XDR *xdrs)
 
 
 
-#line 344 "connector.c"
+#line 345 "connector.c"
 /*
  * delete 
  */
@@ -542,7 +543,7 @@ NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int col
   H->obj->color=color;
   H->obj->thickness=thickness;
   H->obj->background=background;
-  H->obj->lock = lock;
+  /* H->obj->lock = lock; */
   H->obj->hilited=hilited;
   H->obj->show=show;
  if ( nsp_connector_check_values(H) == FAIL) return NULLCONNECTOR;
@@ -559,7 +560,7 @@ NspConnector *nsp_connector_create_default(char *name)
  return H;
 }
 
-#line 563 "connector.c"
+#line 564 "connector.c"
 /*
  * copy for gobject derived class  
  */
@@ -604,7 +605,6 @@ NspConnector *nsp_connector_full_copy(NspConnector *self)
   if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONNECTOR;
   if ( nsp_connector_full_copy_partial(H,self)== NULL) return NULLCONNECTOR;
-#line 608 "connector.c"
   return H;
 }
 

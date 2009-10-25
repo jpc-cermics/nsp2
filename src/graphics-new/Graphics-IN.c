@@ -63,7 +63,6 @@ extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,do
 extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
 extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n, int *colors, int ncol, int cmap_ncol );
 
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
 extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);

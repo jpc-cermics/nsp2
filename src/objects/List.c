@@ -171,6 +171,7 @@ void nsp_list_destroy_bis(NspList *l)
     }
 } 
 
+
 /**
  *nsp_list_copy:
  * @L: a #NspList 
@@ -195,7 +196,7 @@ NspList*nsp_list_copy(NspList *L)
 	Oloc = NULLOBJ;
       else 
 	{
-	  if ((Oloc =nsp_object_copy_with_name(cloc->O))== NULLOBJ) return NULLLIST;
+	  if ((Oloc = nsp_object_copy_with_name(cloc->O))== NULLOBJ) return NULLLIST;
 	}
       if ((cloc1 =nsp_cell_create(Oloc))== NULLCELL) return NULLLIST;
       if ( cloc->prev == NULLCELL) 
@@ -215,6 +216,54 @@ NspList*nsp_list_copy(NspList *L)
   /* eventuellement copier current et icurrent */
   return Loc;
 } 
+
+/**
+ *nsp_list_full_copy:
+ * @L: a #NspList 
+ * 
+ * returns a full copy of the #NspList @L.
+ * Elements inside the list are copied too
+ * 
+ * 
+ * Return value: a new #NspList or %NULLLIST 
+ **/
+
+NspList*nsp_list_full_copy(NspList *L)
+{
+  NspList *Loc;
+  Cell *cloc,*cloc1=NULLCELL,*cloc2=NULLCELL;
+  if ( (Loc=nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
+  cloc = L->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      NspObject *Oloc;
+      if ( cloc->O == NULLOBJ ) 
+	Oloc = NULLOBJ;
+      else 
+	{
+	  if ((Oloc =nsp_object_full_copy(cloc->O))== NULLOBJ) return NULLLIST;
+	  if (nsp_object_set_name(Oloc,nsp_object_get_name(cloc->O)) == FAIL)
+	    return NULLLIST;
+	}
+      if ((cloc1 =nsp_cell_create(Oloc))== NULLCELL) return NULLLIST;
+      if ( cloc->prev == NULLCELL) 
+	{
+	  Loc->first = cloc1;
+	}
+      else 
+	{
+	  cloc1->prev = cloc2;
+	  cloc2->next = cloc1;
+	}
+      cloc2= cloc1;
+      cloc = cloc->next;
+    }
+  Loc->nel = L->nel;
+  Loc->last = cloc1;
+  /* eventuellement copier current et icurrent */
+  return Loc;
+} 
+
 
 /**
  *nsp_list_extract:

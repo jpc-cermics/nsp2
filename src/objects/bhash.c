@@ -85,6 +85,7 @@ NspTypeBHash *new_type_bhash(type_mode mode)
   top->neq  = (eq_func *) bhash_neq;
   top->save  = (save_func *) bhash_xdr_save;
   top->load  = (load_func *) bhash_xdr_load;
+  top->full_copy  =  (copy_func *) nsp_bhash_copy;                   
 
   /* specific methods for bhash */
 

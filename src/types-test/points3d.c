@@ -102,6 +102,7 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
   top->load  = (load_func *) nsp_points3d_xdr_load;
   top->create = (create_func*) int_points3d_create;
   top->latex = (print_func *) nsp_points3d_latex;
+  top->full_copy = (copy_func *) nsp_points3d_full_copy;
 
   /* specific methods for points3d */
 
@@ -116,7 +117,6 @@ NspTypePoints3d *new_type_points3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_points3d  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_points3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_points3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_points3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Points3d */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
@@ -290,7 +290,7 @@ static NspPoints3d  *nsp_points3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_points3d_xdr_load_partial(xdrs,H))== NULLPOINTS3D) return H;
   if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
 
-#line 75 "codegen/points3d.override"
+#line 74 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
@@ -308,7 +308,7 @@ void nsp_points3d_destroy_partial(NspPoints3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 80 "codegen/points3d.override"
+#line 79 "codegen/points3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
@@ -549,7 +549,7 @@ NspPoints3d *nsp_points3d_full_copy_partial(NspPoints3d *H,NspPoints3d *self)
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   H->obj->Mcoord_l = self->obj->Mcoord_l;
   H->obj->color=self->obj->color;
@@ -568,7 +568,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOINTS3D;
   if ( nsp_points3d_full_copy_partial(H,self)== NULL) return NULLPOINTS3D;
 
-#line 75 "codegen/points3d.override"
+#line 74 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
@@ -593,7 +593,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_points3d_check_values(H) == FAIL) return RET_BUG;
 
-#line 75 "codegen/points3d.override"
+#line 74 "codegen/points3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
 
@@ -717,7 +717,7 @@ static AttrTab points3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 86 "codegen/points3d.override"
+#line 85 "codegen/points3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -729,7 +729,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
 #line 730 "points3d.c"
 
 
-#line 96 "codegen/points3d.override"
+#line 95 "codegen/points3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -770,7 +770,7 @@ void Points3d_Interf_Info(int i, char **fname, function (**f))
   *f = Points3d_func[i].fonc;
 }
 
-#line 107 "codegen/points3d.override"
+#line 106 "codegen/points3d.override"
 
 /* inserted verbatim at the end */
 

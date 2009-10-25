@@ -80,6 +80,7 @@ NspTypeSpRowMatrix *new_type_sprowmatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_sprowmatrix_xdr_save;
   top->load  = (load_func *)nsp_sprowmatrix_xdr_load;
+  top->full_copy  =  (copy_func *)nsp_sprowmatrix_copy;                   /* copy object */  
 
   /* specific methods for spmatrix */
   type->init = (init_func *) init_sprowmatrix;

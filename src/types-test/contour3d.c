@@ -101,6 +101,7 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
   top->load  = (load_func *) nsp_contour3d_xdr_load;
   top->create = (create_func*) int_contour3d_create;
   top->latex = (print_func *) nsp_contour3d_latex;
+  top->full_copy = (copy_func *) nsp_contour3d_full_copy;
 
   /* specific methods for contour3d */
 
@@ -115,7 +116,6 @@ NspTypeContour3d *new_type_contour3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_contour3d  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_contour3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_contour3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_contour3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Contour3d */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
@@ -290,7 +290,7 @@ static NspContour3d  *nsp_contour3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_contour3d_xdr_load_partial(xdrs,H))== NULLCONTOUR3D) return H;
   if ( nsp_contour3d_check_values(H) == FAIL) return NULLCONTOUR3D;
 
-#line 66 "codegen/contour3d.override"
+#line 65 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return NULL; 
 
@@ -308,7 +308,7 @@ void nsp_contour3d_destroy_partial(NspContour3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 71 "codegen/contour3d.override"
+#line 70 "codegen/contour3d.override"
   /* verbatim in destroy */
 
 #line 315 "contour3d.c"
@@ -583,25 +583,25 @@ NspContour3d *nsp_contour3d_full_copy_partial(NspContour3d *H,NspContour3d *self
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->z == NULL )
     { H->obj->z = NULL;}
   else
     {
-      if ((H->obj->z = (NspMatrix *) nsp_object_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
+      if ((H->obj->z = (NspMatrix *) nsp_object_full_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
     }
   if ( self->obj->zz == NULL )
     { H->obj->zz = NULL;}
   else
     {
-      if ((H->obj->zz = (NspMatrix *) nsp_object_copy_and_name("zz",NSP_OBJECT(self->obj->zz))) == NULLMAT) return NULL;
+      if ((H->obj->zz = (NspMatrix *) nsp_object_full_copy_and_name("zz",NSP_OBJECT(self->obj->zz))) == NULLMAT) return NULL;
     }
   H->obj->flag=self->obj->flag;
   H->obj->zlev=self->obj->zlev;
@@ -615,7 +615,7 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR3D;
   if ( nsp_contour3d_full_copy_partial(H,self)== NULL) return NULLCONTOUR3D;
 
-#line 66 "codegen/contour3d.override"
+#line 65 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return NULL; 
 
@@ -640,7 +640,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour3d_check_values(H) == FAIL) return RET_BUG;
 
-#line 66 "codegen/contour3d.override"
+#line 65 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(NULL,H)== FAIL) return RET_BUG; 
 
@@ -838,7 +838,7 @@ static AttrTab contour3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 75 "codegen/contour3d.override"
+#line 74 "codegen/contour3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -850,7 +850,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
 #line 851 "contour3d.c"
 
 
-#line 85 "codegen/contour3d.override"
+#line 84 "codegen/contour3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -890,7 +890,7 @@ void Contour3d_Interf_Info(int i, char **fname, function (**f))
   *f = Contour3d_func[i].fonc;
 }
 
-#line 95 "codegen/contour3d.override"
+#line 94 "codegen/contour3d.override"
 
 /* inserted verbatim at the end */
 

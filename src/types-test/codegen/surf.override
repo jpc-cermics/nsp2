@@ -34,7 +34,6 @@ override-type Surf
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_surf  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_surf  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_surf  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_surf_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Surf */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 

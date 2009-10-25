@@ -107,8 +107,8 @@ extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 #include <nsp/grcommon.h>
 
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern void nsp_list_link_figure(NspList *L, nsp_figure *F);
+extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);

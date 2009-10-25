@@ -96,6 +96,7 @@ NspTypeQcurve *new_type_qcurve(type_mode mode)
   top->load  = (load_func *) nsp_qcurve_xdr_load;
   top->create = (create_func*) int_qcurve_create;
   top->latex = (print_func *) nsp_qcurve_latex;
+  top->full_copy = (copy_func *) nsp_qcurve_full_copy;
 
   /* specific methods for qcurve */
 
@@ -112,7 +113,7 @@ NspTypeQcurve *new_type_qcurve(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 116 "qcurve.c"
+#line 117 "qcurve.c"
   /* 
    * NspQcurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -284,7 +285,6 @@ static NspQcurve  *nsp_qcurve_xdr_load(XDR *xdrs)
   if ((H  = nsp_qcurve_create_void(name,(NspTypeBase *) nsp_type_qcurve))== NULLQCURVE) return H;
   if ((H  = nsp_qcurve_xdr_load_partial(xdrs,H))== NULLQCURVE) return H;
   if ( nsp_qcurve_check_values(H) == FAIL) return NULLQCURVE;
-#line 288 "qcurve.c"
   return H;
 }
 
@@ -556,7 +556,7 @@ NspQcurve *nsp_qcurve_full_copy_partial(NspQcurve *H,NspQcurve *self)
     { H->obj->Pts = NULL;}
   else
     {
-      if ((H->obj->Pts = (NspMatrix *) nsp_object_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
+      if ((H->obj->Pts = (NspMatrix *) nsp_object_full_copy_and_name("Pts",NSP_OBJECT(self->obj->Pts))) == NULLMAT) return NULL;
     }
   if ((H->obj->legend = nsp_string_copy(self->obj->legend)) == NULL) return NULL;
   H->obj->start=self->obj->start;
@@ -570,7 +570,6 @@ NspQcurve *nsp_qcurve_full_copy(NspQcurve *self)
   if ( H ==  NULLQCURVE) return NULLQCURVE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLQCURVE;
   if ( nsp_qcurve_full_copy_partial(H,self)== NULL) return NULLQCURVE;
-#line 574 "qcurve.c"
   return H;
 }
 
@@ -590,7 +589,6 @@ int int_qcurve_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_qcurve_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_qcurve_check_values(H) == FAIL) return RET_BUG;
-#line 594 "qcurve.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -708,7 +706,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 712 "qcurve.c"
+#line 710 "qcurve.c"
 static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -746,7 +744,7 @@ static int _wrap_qcurve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 750 "qcurve.c"
+#line 748 "qcurve.c"
 static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -812,7 +810,7 @@ int _wrap_nsp_extractelts_qcurve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 816 "qcurve.c"
+#line 814 "qcurve.c"
 
 
 #line 117 "codegen/qcurve.override"
@@ -825,7 +823,7 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 829 "qcurve.c"
+#line 827 "qcurve.c"
 
 
 int _wrap_oscillo_test(Stack stack, int rhs, int opt, int lhs) /* oscillo */
@@ -1201,4 +1199,4 @@ static void oscillo_test()
 
      
 
-#line 1205 "qcurve.c"
+#line 1203 "qcurve.c"

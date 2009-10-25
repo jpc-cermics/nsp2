@@ -14,8 +14,8 @@ extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern void nsp_figure_force_redraw(nsp_figure *F);
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern void nsp_list_link_figure(NspList *L, nsp_figure *F);
+extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
@@ -60,7 +60,6 @@ Init portion
 override-type Figure
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_figure_full_copy ;
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
 
 %%
@@ -329,7 +328,7 @@ static int nsp_figure_unconnect(NspFigure *F)
 
 /* utilities */
 
-void nsp_list_link_figure(NspList *L, NspFigure *F)
+void nsp_list_link_figure(NspList *L, nsp_figure *F)
 {
   Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
@@ -343,7 +342,7 @@ void nsp_list_link_figure(NspList *L, NspFigure *F)
     }
 }
 
-void nsp_list_unlink_figure(NspList *L, NspFigure *F)
+void nsp_list_unlink_figure(NspList *L, nsp_figure *F)
 {
   Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
@@ -387,13 +386,13 @@ int nsp_list_check_figure(NspList *L, nsp_figure *F)
 
 static void nsp_figure_children_link_figure(NspFigure *F)
 {
-  nsp_list_link_figure(F->obj->children,F);
+  nsp_list_link_figure(F->obj->children, F->obj);
 }
 
 
 static void nsp_figure_children_unlink_figure(NspFigure *F)
 {
-  nsp_list_unlink_figure(F->obj->children,F);
+  nsp_list_unlink_figure(F->obj->children,F->obj);
 }
 
 
@@ -862,7 +861,7 @@ NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
   if ( (A =(NspAxes *) nsp_list_get_element(F->obj->children,1)) ==  NULL )
     return NULL;
   if ( IsAxes(NSP_OBJECT(A)) == FALSE) return NULL;
-  nsp_list_unlink_figure(A->obj->children,F);
+  nsp_list_unlink_figure(A->obj->children,F->obj);
   /* swap respective children */
   L = C->obj->children;
   C->obj->children = A->obj->children;
@@ -930,7 +929,7 @@ static int nsp_figure_start_compound(NspFigure *F)
       return FAIL;
     }
   /* set figure informations in axe */
-  ((NspGraphic *) axe)->type->link_figure((NspGraphic *) axe,F);
+  ((NspGraphic *) axe)->type->link_figure((NspGraphic *) axe,F->obj);
   return OK;
 }
 
@@ -950,7 +949,7 @@ static int nsp_list_delete_graphic_obj(NspFigure *F,NspList *L, NspGraphic *Obj)
 	  NspGraphic *G1= (NspGraphic *) Loc->O;
 	  if ( G1->obj == Obj->obj ) 
 	    {
-	      G1->type->unlink_figure(G1,F);
+	      G1->type->unlink_figure(G1,F->obj);
 	      nsp_remove_cell_from_list(L, Loc);
 	      L->icurrent = 0;
 	      L->current = NULLCELL;

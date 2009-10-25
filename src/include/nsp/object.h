@@ -106,7 +106,7 @@ struct _NspTypeObject {
   create_func *create;	      	      /* creates a new object  */ 
   print_func *latex;                  /* print in latex syntax */
   get_index_vector_func *as_index;    /* check if object can be used as index vector */
-
+  copy_func *full_copy ;              /* full_copy object */  
 };
 
 
@@ -394,9 +394,11 @@ extern NspObject *nsp_object_xdr_load(XDR *F);
 extern void nsp_object_destroy(NspObject **O); 
 extern void nsp_void_object_destroy(NspObject **O); 
 extern NspObject *nsp_object_copy(const NspObject *O); 
+extern NspObject *nsp_object_full_copy(const NspObject *O);
 extern int nsp_object_get_size(const NspObject *O, int j); 
 extern NspObject *nsp_object_copy_with_name(NspObject *O); 
 extern NspObject *nsp_object_copy_and_name(const char *name, NspObject *O); 
+extern NspObject *nsp_object_full_copy_and_name(const char *name, NspObject *O);
 extern char *nsp_object_type_as_string(const NspObject *O); 
 extern char *nsp_object_type_short( NspObject *O); 
 extern int nsp_object_type(const NspObject *O, NspTypeId id); 

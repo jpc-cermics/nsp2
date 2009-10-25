@@ -95,6 +95,7 @@ NspTypeGRoot *new_type_groot(type_mode mode)
   top->load  = (load_func *) nsp_groot_xdr_load;
   top->create = (create_func*) int_groot_create;
   top->latex = (print_func *) nsp_groot_latex;
+  top->full_copy = (copy_func *) nsp_groot_full_copy;
 
   /* specific methods for groot */
 
@@ -241,7 +242,6 @@ static NspGRoot  *nsp_groot_xdr_load(XDR *xdrs)
   if ((H  = nsp_groot_create_void(name,(NspTypeBase *) nsp_type_groot))== NULLGROOT) return H;
   if ((H  = nsp_groot_xdr_load_partial(xdrs,H))== NULLGROOT) return H;
   if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
-#line 245 "groot.c"
   return H;
 }
 
@@ -463,7 +463,7 @@ NspGRoot *nsp_groot_full_copy_partial(NspGRoot *H,NspGRoot *self)
     { H->obj->figures = NULL;}
   else
     {
-      if ((H->obj->figures = (NspList *) nsp_object_copy_and_name("figures",NSP_OBJECT(self->obj->figures))) == NULLLIST) return NULL;
+      if ((H->obj->figures = (NspList *) nsp_object_full_copy_and_name("figures",NSP_OBJECT(self->obj->figures))) == NULLLIST) return NULL;
     }
   return H;
 }
@@ -473,7 +473,6 @@ NspGRoot *nsp_groot_full_copy(NspGRoot *self)
   NspGRoot *H  =nsp_groot_create_void(NVOID,(NspTypeBase *) nsp_type_groot);
   if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_full_copy_partial(H,self)== NULL) return NULLGROOT;
-#line 477 "groot.c"
   return H;
 }
 
@@ -493,7 +492,6 @@ int int_groot_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_groot_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_groot_check_values(H) == FAIL) return RET_BUG;
-#line 497 "groot.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -573,4 +571,4 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 #line 19 "codegen/groot.override"
 
 
-#line 577 "groot.c"
+#line 575 "groot.c"

@@ -101,6 +101,7 @@ NspTypeContour *new_type_contour(type_mode mode)
   top->load  = (load_func *) nsp_contour_xdr_load;
   top->create = (create_func*) int_contour_create;
   top->latex = (print_func *) nsp_contour_latex;
+  top->full_copy = (copy_func *) nsp_contour_full_copy;
 
   /* specific methods for contour */
 
@@ -117,7 +118,7 @@ NspTypeContour *new_type_contour(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 121 "contour.c"
+#line 122 "contour.c"
   /* 
    * NspContour interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -284,7 +285,6 @@ static NspContour  *nsp_contour_xdr_load(XDR *xdrs)
   if ((H  = nsp_contour_create_void(name,(NspTypeBase *) nsp_type_contour))== NULLCONTOUR) return H;
   if ((H  = nsp_contour_xdr_load_partial(xdrs,H))== NULLCONTOUR) return H;
   if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
-#line 288 "contour.c"
   return H;
 }
 
@@ -581,32 +581,32 @@ NspContour *nsp_contour_full_copy_partial(NspContour *H,NspContour *self)
     { H->obj->z = NULL;}
   else
     {
-      if ((H->obj->z = (NspMatrix *) nsp_object_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
+      if ((H->obj->z = (NspMatrix *) nsp_object_full_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
     }
   if ( self->obj->x == NULL )
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->levels == NULL )
     { H->obj->levels = NULL;}
   else
     {
-      if ((H->obj->levels = (NspMatrix *) nsp_object_copy_and_name("levels",NSP_OBJECT(self->obj->levels))) == NULLMAT) return NULL;
+      if ((H->obj->levels = (NspMatrix *) nsp_object_full_copy_and_name("levels",NSP_OBJECT(self->obj->levels))) == NULLMAT) return NULL;
     }
   H->obj->nlevels=self->obj->nlevels;
   if ( self->obj->style == NULL )
     { H->obj->style = NULL;}
   else
     {
-      if ((H->obj->style = (NspMatrix *) nsp_object_copy_and_name("style",NSP_OBJECT(self->obj->style))) == NULLMAT) return NULL;
+      if ((H->obj->style = (NspMatrix *) nsp_object_full_copy_and_name("style",NSP_OBJECT(self->obj->style))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -617,7 +617,6 @@ NspContour *nsp_contour_full_copy(NspContour *self)
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR;
   if ( nsp_contour_full_copy_partial(H,self)== NULL) return NULLCONTOUR;
-#line 621 "contour.c"
   return H;
 }
 
@@ -637,7 +636,6 @@ int int_contour_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_contour_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour_check_values(H) == FAIL) return RET_BUG;
-#line 641 "contour.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -835,7 +833,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 839 "contour.c"
+#line 837 "contour.c"
 
 
 #line 71 "codegen/contour.override"
@@ -847,7 +845,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 851 "contour.c"
+#line 849 "contour.c"
 
 
 /*----------------------------------------------------
@@ -948,4 +946,4 @@ static int nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 
 
-#line 952 "contour.c"
+#line 950 "contour.c"

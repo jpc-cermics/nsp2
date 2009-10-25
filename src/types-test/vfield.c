@@ -97,6 +97,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
   top->load  = (load_func *) nsp_vfield_xdr_load;
   top->create = (create_func*) int_vfield_create;
   top->latex = (print_func *) nsp_vfield_latex;
+  top->full_copy = (copy_func *) nsp_vfield_full_copy;
 
   /* specific methods for vfield */
 
@@ -113,7 +114,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 117 "vfield.c"
+#line 118 "vfield.c"
   /* 
    * NspVField interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -277,7 +278,6 @@ static NspVField  *nsp_vfield_xdr_load(XDR *xdrs)
   if ((H  = nsp_vfield_create_void(name,(NspTypeBase *) nsp_type_vfield))== NULLVFIELD) return H;
   if ((H  = nsp_vfield_xdr_load_partial(xdrs,H))== NULLVFIELD) return H;
   if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
-#line 281 "vfield.c"
   return H;
 }
 
@@ -558,25 +558,25 @@ NspVField *nsp_vfield_full_copy_partial(NspVField *H,NspVField *self)
     { H->obj->fx = NULL;}
   else
     {
-      if ((H->obj->fx = (NspMatrix *) nsp_object_copy_and_name("fx",NSP_OBJECT(self->obj->fx))) == NULLMAT) return NULL;
+      if ((H->obj->fx = (NspMatrix *) nsp_object_full_copy_and_name("fx",NSP_OBJECT(self->obj->fx))) == NULLMAT) return NULL;
     }
   if ( self->obj->fy == NULL )
     { H->obj->fy = NULL;}
   else
     {
-      if ((H->obj->fy = (NspMatrix *) nsp_object_copy_and_name("fy",NSP_OBJECT(self->obj->fy))) == NULLMAT) return NULL;
+      if ((H->obj->fy = (NspMatrix *) nsp_object_full_copy_and_name("fy",NSP_OBJECT(self->obj->fy))) == NULLMAT) return NULL;
     }
   if ( self->obj->x == NULL )
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   H->obj->colored=self->obj->colored;
   return H;
@@ -588,7 +588,6 @@ NspVField *nsp_vfield_full_copy(NspVField *self)
   if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLVFIELD;
   if ( nsp_vfield_full_copy_partial(H,self)== NULL) return NULLVFIELD;
-#line 592 "vfield.c"
   return H;
 }
 
@@ -608,7 +607,6 @@ int int_vfield_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_vfield_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_vfield_check_values(H) == FAIL) return RET_BUG;
-#line 612 "vfield.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -778,7 +776,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 782 "vfield.c"
+#line 780 "vfield.c"
 
 
 #line 67 "codegen/vfield.override"
@@ -790,7 +788,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 794 "vfield.c"
+#line 792 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -1066,4 +1064,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1070 "vfield.c"
+#line 1068 "vfield.c"

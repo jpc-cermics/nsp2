@@ -85,6 +85,7 @@ NspTypeType *new_type_type(type_mode mode)
   top->neq  = (eq_func *) type_neq;
   top->save  = (save_func *) type_xdr_save;
   top->load  = (load_func *) type_xdr_load;
+  top->full_copy  =  (copy_func *) type_copy;                   
 
   /* specific methods for type */
       

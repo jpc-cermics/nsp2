@@ -93,6 +93,7 @@ NspTypeHobj *new_type_hobj(type_mode mode)
   top->neq  = (eq_func *)nsp_hobj_neq;                      /* non-equality check */
   top->save  = (save_func *)nsp_hobj_xdr_save;
   top->load  = NULL;
+  top->full_copy  =  (copy_func *)nsp_hobj_copy;                   /* copy object */  
 
   /* specific methods for hobj */
       

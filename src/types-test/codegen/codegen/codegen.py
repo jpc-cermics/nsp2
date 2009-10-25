@@ -119,6 +119,7 @@ class Wrapper:
               '  top->load  = (load_func *) nsp_%(typename_dc)s_xdr_load;\n' \
               '  top->create = (create_func*) int_%(typename_dc)s_create;\n' \
               '  top->latex = (print_func *) nsp_%(typename_dc)s_latex;\n' \
+              '  top->full_copy = (copy_func *) nsp_%(typename_dc)s_full_copy;\n' \
               '\n'  \
               '  /* specific methods for %(typename_dc)s */\n'  \
               '\n'  \
@@ -401,22 +402,6 @@ class Wrapper:
               '}\n'  \
               '\n'  
 
-    type_tmpl_copy = \
-              '/*\n'  \
-              ' * copy \n'  \
-              ' */\n'  \
-              '\n'  \
-              '%(typename)s *nsp_%(typename_dc)s_copy(%(typename)s *self)\n'  \
-              '{\n'  \
-              '  return %(parent_dc)s_create(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
-              '}\n'  \
-              '\n'  \
-              '/*-------------------------------------------------------------------\n'  \
-              ' * wrappers for the %(typename)s\n'  \
-              ' * i.e functions at Nsp level \n'  \
-              ' *-------------------------------------------------------------------*/\n'  \
-              '\n'  \
-
     # This is the part used for the generation of the header associated to the class
     # 
     type_header_01 = \
@@ -698,13 +683,14 @@ class Wrapper:
 
         # insert fields related code in subst dictionary
         # fields_copy: used in create function 
-        substdict['fields_copy'] = self.build_copy_fields('H','')
+        substdict['fields_copy'] = self.build_copy_fields('H','','nsp_object_copy')
         # for create default
         substdict['fields_copy_default'] = self.build_copy_fields_default('H')
         # fields_copy: used in copy function 
-        substdict['fields_copy_self'] = self.build_copy_fields('H','self')
+        substdict['fields_copy_self'] = self.build_copy_fields('H','self','nsp_object_copy')
+        substdict['fields_full_copy_self'] = self.build_copy_fields('H','self','nsp_object_full_copy')
         # fields_copy: used in full copy function 
-        substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self')
+        substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self','nsp_object_full_copy')
         # give the sequence of parameters to be inserted in _create function
         substdict['fields_list'] = self.build_list_fields('')
         # unused 
@@ -724,7 +710,8 @@ class Wrapper:
         substdict['fields_free2'] = self.build_fields_free2('H')
         substdict['fields_equal'] = self.build_equal_fields('H')
         substdict['create_partial'] = self.build_create_partial('H')
-        substdict['copy_partial'] = self.build_copy_partial('H')
+        substdict['copy_partial'] = self.build_copy_partial('H','')
+        substdict['full_copy_partial'] = self.build_copy_partial('H','full_')
         substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
         # used to insert verbatim code in int_xxx_create
         # just before returning object 
@@ -760,8 +747,10 @@ class Wrapper:
             # insert the code for load 
             self.fp.write(self.type_tmpl_load_1 % substdict)
             substdict['ret']= 'NULL'
-            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-            self.fp.resetline()
+            str = ( '%(int_create_final)s' % substdict) %substdict 
+            if str != '':
+                self.fp.write( str ) 
+                self.fp.resetline()
             self.fp.write(self.type_tmpl_load_2 % substdict)
 
         # destroy code 
@@ -794,8 +783,10 @@ class Wrapper:
         # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
         substdict['ret']= 'NULL'
-        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-        self.fp.resetline()
+        str = ( '%(int_create_final)s' % substdict) %substdict 
+        if str != '':
+            self.fp.write( str ) 
+            self.fp.resetline()
         self.fp.write(self.type_tmpl_copy_2 % substdict)
 
         # write the int_create inteface 
@@ -808,8 +799,10 @@ class Wrapper:
         else:
             self.fp.write(self.type_tmpl_intcreate % substdict)
             substdict['ret']= 'RET_BUG'
-            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-            self.fp.resetline()
+            str = ( '%(int_create_final)s' % substdict) %substdict 
+            if str != '':
+                self.fp.write( str ) 
+                self.fp.resetline()
             self.fp.write(self.type_tmpl_intcreate_last % substdict)
 
         # write a header file for class object
@@ -929,13 +922,14 @@ class Wrapper:
         substdict['implements'] = ''
         # insert fields related code in subst dictionary
         # fields_copy: used in create function 
-        substdict['fields_copy'] = self.build_copy_fields('H','')
+        substdict['fields_copy'] = self.build_copy_fields('H','','nsp_object_copy')
         # for create default
         substdict['fields_copy_default'] = self.build_copy_fields_default('H')
         # fields_copy: used in copy function 
-        substdict['fields_copy_self'] = self.build_copy_fields('H','self')
+        substdict['fields_copy_self'] = self.build_copy_fields('H','self','nsp_object_copy')
+        substdict['fields_full_copy_self'] = self.build_copy_fields('H','self','nsp_object_full_copy')
         # fields_copy: used in full copy function 
-        substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self')
+        substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self','nsp_object_copy')
         # give the sequence of parameters to be inserted in _create function
         substdict['fields_list'] = self.build_list_fields('')
         # unused 
@@ -955,7 +949,8 @@ class Wrapper:
         substdict['fields_free2'] = self.build_fields_free2('H')
         substdict['fields_equal'] = self.build_equal_fields('H')
         substdict['create_partial'] = self.build_create_partial('H')
-        substdict['copy_partial'] = self.build_copy_partial('H')
+        substdict['copy_partial'] = self.build_copy_partial('H','')
+        substdict['full_copy_partial'] = self.build_copy_partial('H','full_')
         substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
         # used to insert verbatim code in int_xxx_create
         # just before returning object 
@@ -988,8 +983,10 @@ class Wrapper:
             # insert the code for load 
             self.fp.write(self.type_tmpl_load_1 % substdict)
             substdict['ret']= 'NULL'
-            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-            self.fp.resetline()
+            str = ( '%(int_create_final)s' % substdict) %substdict 
+            if str != '':
+                self.fp.write( str ) 
+                self.fp.resetline()
             self.fp.write(self.type_tmpl_load_2 % substdict)
 
         # destroy code 
@@ -1022,8 +1019,10 @@ class Wrapper:
         # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
         substdict['ret']= 'NULL'
-        self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-        self.fp.resetline()
+        str = ( '%(int_create_final)s' % substdict) %substdict 
+        if str != '':
+            self.fp.write( str ) 
+            self.fp.resetline()
         self.fp.write(self.type_tmpl_copy_2 % substdict)
 
         # write the int_create inteface 
@@ -1036,8 +1035,10 @@ class Wrapper:
         else:
             self.fp.write(self.type_tmpl_intcreate % substdict)
             substdict['ret']= 'RET_BUG'
-            self.fp.write( ( '%(int_create_final)s' % substdict)%substdict)
-            self.fp.resetline()
+            str = ( '%(int_create_final)s' % substdict) %substdict 
+            if str != '':
+                self.fp.write( str ) 
+                self.fp.resetline()
             self.fp.write(self.type_tmpl_intcreate_last % substdict)
 
         # write a header file for class object
@@ -1154,12 +1155,14 @@ class Wrapper:
         return str
 
 
-    def build_copy_fields(self,left_varname,right_varname):
+    def build_copy_fields(self,left_varname,right_varname,f_copy_name):
         # used in copy function and in create function 
         # when right_varname == 'self' we are in copy function and else 
         # in create function. 
         # if full is 't' then we make a full copy even if we are in
         # 'self' mode 
+        # f_copy_name is the name of the function used to copy objects
+        # i.e nsp_object_copy or nsp_object_full_copy
         lower_name = self.get_lower_name()
         # no overrides for the whole function.  If no fields, don't write a func
         str = ''
@@ -1179,9 +1182,10 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,self.byref, pdef , psize, pcheck)
+            str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,f_copy_name,self.byref, pdef , psize, pcheck)
         return str
-
+    
+    
     def build_copy_fields_default(self,left_varname):
         # used in copy function and in create function 
         # when right_varname == 'self' we are in copy function and else 
@@ -1200,12 +1204,18 @@ class Wrapper:
         return str
 
 
-    def build_fields_full_copy_partial_code(self,substdic, left_varname,right_varname):
+    def build_fields_full_copy_partial_code(self,substdic, left_varname,right_varname,f_copy_name):
         # generate a full_copy_partial function which is useful 
         # for full_copy of byref objects.
         lower_name = self.get_lower_name()
         if self.byref != 't':
-            return ''
+            # if object is not by reference then full copy is similar to copy 
+            # except that the full_copy object functions should be used
+            return '%(typename)s *nsp_%(typename_dc)s_full_copy_partial(%(typename)s *H,%(typename)s *self)\n'  \
+                '{\n'  \
+                '%(fields_full_copy_self)s' \
+                '  return H;\n' \
+                '}\n\n'  % substdic 
         right_varname = right_varname + '->obj'
         # no overrides for the whole function.  If no fields, don't write a func
         str = '%(typename)s *nsp_%(typename_dc)s_full_copy_partial(%(typename)s *H,%(typename)s *self)\n' \
@@ -1220,7 +1230,7 @@ class Wrapper:
         if self.objinfo.fields:
             for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
                 handler = argtypes.matcher.get(ftype)
-                str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,self.byref,pdef,psize,pcheck)
+                str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,f_copy_name,self.byref,pdef,psize,pcheck)
         str = str + '  return H;\n' \
             '}\n\n'  
         return str
@@ -1414,16 +1424,16 @@ class Wrapper:
                 str = str + handler.attr_write_init(ftype,fname,varname+'->obj', self.byref, pdef, psize, pcheck )
         return str
             
-    def build_copy_partial(self,varname):
+    def build_copy_partial(self,varname,full):
         # no overrides for the whole function.  If no fields, don't write a func
         lower_name = self.get_lower_name()
         str = '' 
         father = self.objinfo.parent
         if father != 'Object':
-            str = '  if ( nsp_%s_copy_partial((%s *) H,(%s *) self ) == NULL) return NULL%s;\n' \
-                % (string.lower(father),'Nsp'+father,'Nsp'+father,string.upper(lower_name))
-        str = str + '  if ( nsp_%s_copy_partial(H,self)== NULL) return NULL%s;\n' \
-            % (lower_name,string.upper(lower_name)) 
+            str = '  if ( nsp_%s_%scopy_partial((%s *) H,(%s *) self ) == NULL) return NULL%s;\n' \
+                % (string.lower(father),full,'Nsp'+father,'Nsp'+father,string.upper(lower_name))
+        str = str + '  if ( nsp_%s_%scopy_partial(H,self)== NULL) return NULL%s;\n' \
+            % (lower_name,full,string.upper(lower_name)) 
         return str
 
 
@@ -1432,11 +1442,15 @@ class Wrapper:
         # at the end we insert a part which can be inserted from override 
         # override_int_create_final 
         if self.byref != 't' :
-            # here full_copy is just a copy 
+            # here full_copy is similar to copy except that full_copy_partial 
+            # is used
             str = '%(typename)s *nsp_%(typename_dc)s_full_copy(%(typename)s *self)\n'  \
                 '{\n'  \
-                '  %(typename)s *H = nsp_%(typename_dc)s_copy(self);\n' % substdict 
-            return str 
+                '  %(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
+                '  if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
+                '%(full_copy_partial)s\n'   % substdict 
+            return str
+        
         str = '%(typename)s *nsp_%(typename_dc)s_full_copy(%(typename)s *self)\n'  \
             '{\n'  \
             '  %(typename)s *H  =nsp_%(typename_dc)s_create_void(NVOID,(NspTypeBase *) nsp_type_%(typename_dc)s);\n'  \
@@ -1962,6 +1976,7 @@ class NspObjectWrapper(Wrapper):
         ' * i.e functions at Nsp level \n'  \
         ' *-------------------------------------------------------------------*/\n'  \
         '\n'  
+
     type_tmpl_intcreate = \
         'int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs)\n'  \
         '{\n'  \

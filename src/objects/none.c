@@ -76,7 +76,7 @@ NspTypeNone *new_type_none(type_mode mode)
   top->neq  = (eq_func *) nsp_none_neq;
   top->save  = (save_func *) nsp_none_xdr_save;
   top->load  = (load_func *) nsp_none_xdr_load;
-
+  top->full_copy  =  (copy_func *) nsp_none_copy;                   
   /* specific methods for none */
       
   type->init = (init_func *) nsp_init_none;

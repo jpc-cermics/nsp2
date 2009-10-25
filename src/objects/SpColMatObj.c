@@ -78,6 +78,8 @@ NspTypeSpColMatrix *new_type_spcolmatrix(type_mode mode)
   top->save  = (save_func *)nsp_spcolmatrix_xdr_save;
   top->load  = (load_func *)nsp_spcolmatrix_xdr_load;
 
+  top->full_copy  =  (copy_func *)nsp_spcolmatrix_copy;                   /* copy object */  
+
   /* specific methods for spcolmatrix */
   type->init = (init_func *) init_spcolmatrix;
   /* 

@@ -79,6 +79,22 @@ NspObject *nsp_object_copy(const NspObject *O)
   return O->type->copy(O);
 }
 
+/**
+ *nsp_object_full_copy:
+ * @O: a pointer to a #NspObject 
+ * 
+ * Returns a new #NspObject which contains a full copy of Object @O
+ * with name set to NVOID 
+ * 
+ * Return value: a new #NspObject or %NULLOBJ
+ **/
+
+NspObject *nsp_object_full_copy(const NspObject *O)
+{
+  return O->type->full_copy(O);
+}
+
+
 
 /**
  *nsp_object_get_size:
@@ -141,6 +157,30 @@ NspObject *nsp_object_copy_and_name(const char *name, NspObject *O)
     }
   return l;
 }
+
+/**
+ *nsp_object_full_copy_and_name:
+ * @name: string for the name to give to the copy 
+ * @O: object to be copied a #NspObject pointer 
+ *
+ * returns a copy of object @O with name given by @name.
+ * 
+ * 
+ * Return value:  a new #NspObject or %NULLOBJ
+ **/
+
+NspObject *nsp_object_full_copy_and_name(const char *name, NspObject *O)
+{
+  NspObject *l;
+  if ( ( l =nsp_object_full_copy(O)) == NULLOBJ ) return NULLOBJ;
+  if (nsp_object_set_name(l,name) == FAIL)
+    {
+      nsp_object_destroy(&l);
+      return(NULLOBJ);
+    }
+  return l;
+}
+
 
 /**
  *nsp_object_type_as_string:

@@ -100,6 +100,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   top->load  = (load_func *) nsp_gmatrix1_xdr_load;
   top->create = (create_func*) int_gmatrix1_create;
   top->latex = (print_func *) nsp_gmatrix1_latex;
+  top->full_copy = (copy_func *) nsp_gmatrix1_full_copy;
 
   /* specific methods for gmatrix1 */
 
@@ -116,7 +117,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 120 "gmatrix1.c"
+#line 121 "gmatrix1.c"
   /* 
    * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -289,7 +290,6 @@ static NspGMatrix1  *nsp_gmatrix1_xdr_load(XDR *xdrs)
   if ((H  = nsp_gmatrix1_create_void(name,(NspTypeBase *) nsp_type_gmatrix1))== NULLGMATRIX1) return H;
   if ((H  = nsp_gmatrix1_xdr_load_partial(xdrs,H))== NULLGMATRIX1) return H;
   if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
-#line 293 "gmatrix1.c"
   return H;
 }
 
@@ -606,7 +606,7 @@ NspGMatrix1 *nsp_gmatrix1_full_copy_partial(NspGMatrix1 *H,NspGMatrix1 *self)
     { H->obj->data = NULL;}
   else
     {
-      if ((H->obj->data = (NspMatrix *) nsp_object_copy_and_name("data",NSP_OBJECT(self->obj->data))) == NULLMAT) return NULL;
+      if ((H->obj->data = (NspMatrix *) nsp_object_full_copy_and_name("data",NSP_OBJECT(self->obj->data))) == NULLMAT) return NULL;
     }
   H->obj->remap=self->obj->remap;
   H->obj->shade=self->obj->shade;
@@ -614,31 +614,31 @@ NspGMatrix1 *nsp_gmatrix1_full_copy_partial(NspGMatrix1 *H,NspGMatrix1 *self)
     { H->obj->colminmax = NULL;}
   else
     {
-      if ((H->obj->colminmax = (NspMatrix *) nsp_object_copy_and_name("colminmax",NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
+      if ((H->obj->colminmax = (NspMatrix *) nsp_object_full_copy_and_name("colminmax",NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
     }
   if ( self->obj->zminmax == NULL )
     { H->obj->zminmax = NULL;}
   else
     {
-      if ((H->obj->zminmax = (NspMatrix *) nsp_object_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
+      if ((H->obj->zminmax = (NspMatrix *) nsp_object_full_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
     }
   if ( self->obj->colout == NULL )
     { H->obj->colout = NULL;}
   else
     {
-      if ((H->obj->colout = (NspMatrix *) nsp_object_copy_and_name("colout",NSP_OBJECT(self->obj->colout))) == NULLMAT) return NULL;
+      if ((H->obj->colout = (NspMatrix *) nsp_object_full_copy_and_name("colout",NSP_OBJECT(self->obj->colout))) == NULLMAT) return NULL;
     }
   if ( self->obj->x == NULL )
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -649,7 +649,6 @@ NspGMatrix1 *nsp_gmatrix1_full_copy(NspGMatrix1 *self)
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX1;
   if ( nsp_gmatrix1_full_copy_partial(H,self)== NULL) return NULLGMATRIX1;
-#line 653 "gmatrix1.c"
   return H;
 }
 
@@ -669,7 +668,6 @@ int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix1_check_values(H) == FAIL) return RET_BUG;
-#line 673 "gmatrix1.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -919,7 +917,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 923 "gmatrix1.c"
+#line 921 "gmatrix1.c"
 
 
 #line 75 "codegen/gmatrix1.override"
@@ -931,7 +929,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 935 "gmatrix1.c"
+#line 933 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -1563,4 +1561,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1567 "gmatrix1.c"
+#line 1565 "gmatrix1.c"

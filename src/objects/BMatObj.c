@@ -96,7 +96,7 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
   top->load  = (load_func *) bmatrix_xdr_load;
   top->latex = (print_func *) nsp_bmatrix_latex_print;
   top->as_index  = (get_index_vector_func *) nsp_bmatrix_as_index;
-  
+  top->full_copy  =  (copy_func *)nsp_bmatrix_copy;                   
   /* specific methods for bmatrix */
 
   type->init = (init_func *) init_bmatrix;

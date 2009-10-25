@@ -98,6 +98,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   top->load  = (load_func *) nsp_string3d_xdr_load;
   top->create = (create_func*) int_string3d_create;
   top->latex = (print_func *) nsp_string3d_latex;
+  top->full_copy = (copy_func *) nsp_string3d_full_copy;
 
   /* specific methods for string3d */
 
@@ -112,7 +113,6 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_string3d  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_string3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_string3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_string3d_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for String3d */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
@@ -285,7 +285,7 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   if ((H  = nsp_string3d_xdr_load_partial(xdrs,H))== NULLSTRING3D) return H;
   if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
 
-#line 68 "codegen/string3d.override"
+#line 67 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
@@ -303,7 +303,7 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 73 "codegen/string3d.override"
+#line 72 "codegen/string3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
@@ -549,7 +549,7 @@ NspString3d *nsp_string3d_full_copy_partial(NspString3d *H,NspString3d *self)
     { H->obj->Mcoord = NULL;}
   else
     {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
+      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
     }
   H->obj->Mcoord_l = self->obj->Mcoord_l;
   if ((H->obj->str = nsp_string_copy(self->obj->str)) == NULL) return NULL;
@@ -568,7 +568,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSTRING3D;
   if ( nsp_string3d_full_copy_partial(H,self)== NULL) return NULLSTRING3D;
 
-#line 68 "codegen/string3d.override"
+#line 67 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
@@ -593,7 +593,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_string3d_check_values(H) == FAIL) return RET_BUG;
 
-#line 68 "codegen/string3d.override"
+#line 67 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
@@ -721,7 +721,7 @@ static AttrTab string3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 78 "codegen/string3d.override"
+#line 77 "codegen/string3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -733,7 +733,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
 #line 734 "string3d.c"
 
 
-#line 88 "codegen/string3d.override"
+#line 87 "codegen/string3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -774,7 +774,7 @@ void String3d_Interf_Info(int i, char **fname, function (**f))
   *f = String3d_func[i].fonc;
 }
 
-#line 99 "codegen/string3d.override"
+#line 98 "codegen/string3d.override"
 
 /* inserted verbatim at the end */
 

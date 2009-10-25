@@ -36,7 +36,6 @@ override_internal_methods
   rotate_func *rotate;
   scale_func *scale;
   bounds_func *bounds;
-  full_copy_func *full_copy;
   link_figure_func *link_figure;
   unlink_figure_func *unlink_figure;
   children_func *children;
@@ -51,7 +50,6 @@ typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
 typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
 typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
 typedef int bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
-typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
@@ -70,7 +68,6 @@ override-type Graphic
   type->rotate = NULL;
   type->scale = NULL;
   type->bounds = NULL;
-  type->full_copy = NULL; 
   type->link_figure = nsp_graphic_link_figure;
   type->unlink_figure = nsp_graphic_unlink_figure;
   type->children = NULL;
@@ -118,17 +115,6 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
 }
 
 %%
-override graphic_full_copy kwargs
-static int _wrap_graphic_full_copy(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspGraphic *ret;
-  CheckRhs(0,0);
-  ret = self->type->full_copy(self);
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-%%
 override graphic_unlink kwargs
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -144,6 +130,15 @@ last
 /* verbatim at the end */
 /* default methods in graphic */
 
+/**
+ * nsp_graphic_link_figure:
+ * @G: a #NspGraphic object 
+ * @F: a void pointer which is to be a #nsp_figure 
+ * 
+ * set the Fig field of @G.
+ * 
+ **/
+
 void nsp_graphic_link_figure(NspGraphic *G,void *F)
 {
   nsp_figure *Fi = F;
@@ -156,6 +151,17 @@ void nsp_graphic_link_figure(NspGraphic *G,void *F)
       G->obj->Fig = Fi;
     }
 }
+
+
+/**
+ * nsp_graphic_unlink_figure:
+ * @G: a #NspGraphic object 
+ * @F: a void pointer which is to be a #nsp_figure 
+ *
+ * if @G Fig field is equal to @F then Fig field 
+ * if set to %NULL.
+ * 
+ **/
 
 void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
 {

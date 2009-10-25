@@ -79,6 +79,8 @@ NspTypePList *new_type_plist(type_mode mode)
   top->save  = (save_func *) NspPListXdrSave;
   top->load  = (load_func *) NspPListXdrLoad;
 
+  top->full_copy  =  (copy_func *) NspPListCopy;                   /* copy object */  
+
   /* specific methods for plist */
   type->init = (init_func *) init_plist;
   /* 

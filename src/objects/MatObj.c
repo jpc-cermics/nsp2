@@ -117,6 +117,7 @@ new_type_matrix (type_mode mode)
   top->load = (load_func *) matrix_xdr_load;
   top->latex = (print_func *) nsp_matrix_latex_print;
   top->as_index  = (get_index_vector_func *) nsp_matrix_as_index;
+  top->full_copy = (copy_func *) nsp_matrix_copy;
 
   /* specific methods for matrix */
 

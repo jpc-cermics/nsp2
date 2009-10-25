@@ -9,8 +9,8 @@ include-public Objs3d
 #include <nsp/grcommon.h>
 
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
-extern void nsp_list_unlink_figure(NspList *L, NspFigure *F);
+extern void nsp_list_link_figure(NspList *L, nsp_figure *F);
+extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
@@ -74,7 +74,6 @@ override-type Objs3d
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_objs3d  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_objs3d  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_objs3d  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_objs3d_full_copy ;
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
@@ -357,8 +356,8 @@ static int nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 static void nsp_objs3d_link_figure(NspGraphic *G, void *F)
 {
-  /* link toplevel */
-  nsp_graphic_link_figure(G,  ((NspFigure *) F)->obj);
+  /* link toplevel, take care to use nsp_graphic field */
+  nsp_graphic_link_figure(G, F);
   /* link children */
   nsp_list_link_figure(((NspObjs3d *) G)->obj->children,F);
 }
@@ -367,7 +366,7 @@ static void nsp_objs3d_link_figure(NspGraphic *G, void *F)
 static void nsp_objs3d_unlink_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_unlink_figure(G,   ((NspFigure *) F)->obj);
+  nsp_graphic_unlink_figure(G, F);
   /* link children */
   nsp_list_unlink_figure(((NspObjs3d *) G)->obj->children,F);
 }

@@ -34,7 +34,6 @@ override-type GrRect
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
   /* next method are defined in NspGraphic and need not be changed here for GrRect */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 

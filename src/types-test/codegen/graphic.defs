@@ -29,12 +29,6 @@
   )
 )
 
-(define-method full_copy
-  (of-object "Graphic")
-  (c-name "graphic_full_copy")
-  (return-type "NspGraphic")
-  )
-
 ;; unlink given graphic from a figure 
 
 (define-method unlink

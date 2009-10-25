@@ -92,6 +92,7 @@ NspTypeClassB *new_type_classb(type_mode mode)
   top->load  = (load_func *) nsp_classb_xdr_load;
   top->create = (create_func*) int_classb_create;
   top->latex = (print_func *) nsp_classb_latex;
+  top->full_copy = (copy_func *) nsp_classb_full_copy;
 
   /* specific methods for classb */
 
@@ -253,7 +254,6 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
   if ((H  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return H;
   if ((H  = nsp_classb_xdr_load_partial(xdrs,H))== NULLCLASSB) return H;
   if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
-#line 257 "classb.c"
   return H;
 }
 
@@ -476,10 +476,26 @@ NspClassB *nsp_classb_copy(NspClassB *self)
  * full copy for gobject derived class
  */
 
+NspClassB *nsp_classb_full_copy_partial(NspClassB *H,NspClassB *self)
+{
+  H->clb_color=self->clb_color;
+  H->clb_thickness=self->clb_thickness;
+  if ( self->clb_val == NULL )
+    { H->clb_val = NULL;}
+  else
+    {
+      if ((H->clb_val = (NspMatrix *) nsp_object_full_copy_and_name("clb_val",NSP_OBJECT(self->clb_val))) == NULLMAT) return NULL;
+    }
+  return H;
+}
+
 NspClassB *nsp_classb_full_copy(NspClassB *self)
 {
-  NspClassB *H = nsp_classb_copy(self);
-#line 483 "classb.c"
+  NspClassB *H  =nsp_classb_create_void(NVOID,(NspTypeBase *) nsp_type_classb);
+  if ( H ==  NULLCLASSB) return NULLCLASSB;
+  if ( nsp_classa_full_copy_partial((NspClassA *) H,(NspClassA *) self ) == NULL) return NULLCLASSB;
+  if ( nsp_classb_full_copy_partial(H,self)== NULL) return NULLCLASSB;
+
   return H;
 }
 
@@ -498,7 +514,6 @@ int int_classb_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classb_check_values(H) == FAIL) return RET_BUG;
-#line 502 "classb.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -515,7 +530,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 519 "classb.c"
+#line 534 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -526,7 +541,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 530 "classb.c"
+#line 545 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -640,4 +655,4 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *f = ClassB_func[i].fonc;
 }
 
-#line 644 "classb.c"
+#line 659 "classb.c"

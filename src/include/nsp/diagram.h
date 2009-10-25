@@ -92,6 +92,7 @@ typedef enum _list_move_action list_move_action;
 enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 
 /* inserted at the end of public part of include file */
+extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
 extern NspDiagram *nsp_figure_get_axe_elts_as_diagram(char *name,NspFigure *F);
 /* extern NspDiagram *diagram_object(NspObject *O);  */
 extern int IsDiagramObj (Stack stack, int i); 
@@ -137,7 +138,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
 
-#line 141 "./diagram.h"
+#line 142 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -152,7 +153,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
-#line 56 "codegen/diagram.override"
+#line 57 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -183,6 +184,6 @@ static void nspdiagram_set_frame_field(nsp_diagram *gf);
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only);
 
-#line 187 "./diagram.h"
+#line 188 "./diagram.h"
 #endif /* NspDiagram_Private */
 

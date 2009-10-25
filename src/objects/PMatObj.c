@@ -80,6 +80,7 @@ NspTypePMatrix *new_type_pmatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_pmatrix_xdr_save;
   top->load  = (load_func *)nsp_pmatrix_xdr_load;
+  top->full_copy  =  (copy_func *)nsp_pmatrix_copy;                   /* copy object */  
 
   /* specific methods for pmatrix */
   type->init = (init_func *) init_pmatrix;

@@ -50,7 +50,6 @@ override-type SPolyhedron
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_spolyhedron  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_spolyhedron  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_spolyhedron  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_spolyhedron_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for SPolyhedron */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 

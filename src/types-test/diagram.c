@@ -24,7 +24,7 @@
 
 
 
-#line 88 "codegen/diagram.override"
+#line 89 "codegen/diagram.override"
 
 #include "nsp/link.h"
 #include "nsp/block.h"
@@ -99,19 +99,19 @@ NspTypeDiagram *new_type_diagram(type_mode mode)
   top->load  = (load_func *) nsp_diagram_xdr_load;
   top->create = (create_func*) int_diagram_create;
   top->latex = (print_func *) nsp_diagram_latex;
+  top->full_copy = (copy_func *) nsp_diagram_full_copy;
 
   /* specific methods for diagram */
 
   type->init = (init_func *) init_diagram;
 
-#line 103 "codegen/diagram.override"
+#line 104 "codegen/diagram.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_diagram;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_diagram ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_diagram  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_diagram  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_diagram  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_diagram_full_copy ;
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_diagram_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_diagram_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_diagram_children ;
@@ -268,7 +268,6 @@ static NspDiagram  *nsp_diagram_xdr_load(XDR *xdrs)
   if ((H  = nsp_diagram_create_void(name,(NspTypeBase *) nsp_type_diagram))== NULLDIAGRAM) return H;
   if ((H  = nsp_diagram_xdr_load_partial(xdrs,H))== NULLDIAGRAM) return H;
   if ( nsp_diagram_check_values(H) == FAIL) return NULLDIAGRAM;
-#line 272 "diagram.c"
   return H;
 }
 
@@ -513,13 +512,13 @@ NspDiagram *nsp_diagram_full_copy_partial(NspDiagram *H,NspDiagram *self)
     { H->obj->bounds = NULL;}
   else
     {
-      if ((H->obj->bounds = (NspMatrix *) nsp_object_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
     }
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   return H;
 }
@@ -530,7 +529,6 @@ NspDiagram *nsp_diagram_full_copy(NspDiagram *self)
   if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLDIAGRAM;
   if ( nsp_diagram_full_copy_partial(H,self)== NULL) return NULLDIAGRAM;
-#line 534 "diagram.c"
   return H;
 }
 
@@ -550,7 +548,6 @@ int int_diagram_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_diagram_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_diagram_check_values(H) == FAIL) return RET_BUG;
-#line 554 "diagram.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -569,7 +566,7 @@ static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 573 "diagram.c"
+#line 570 "diagram.c"
 
 
 #line 703 "codegen/diagram.override"
@@ -600,7 +597,7 @@ static int _wrap_diagram_tops(void *self,Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 604 "diagram.c"
+#line 601 "diagram.c"
 
 
 #line 440 "codegen/diagram.override"
@@ -617,7 +614,7 @@ static int _wrap_diagram_new_link(void *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-#line 621 "diagram.c"
+#line 618 "diagram.c"
 
 
 #line 365 "codegen/diagram.override"
@@ -635,7 +632,7 @@ static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int
 }
 
 
-#line 639 "diagram.c"
+#line 636 "diagram.c"
 
 
 #line 381 "codegen/diagram.override"
@@ -654,7 +651,7 @@ static int _wrap_diagram_new_gridblock(void *self,Stack stack, int rhs, int opt,
   return 1;
 }
 
-#line 658 "diagram.c"
+#line 655 "diagram.c"
 
 
 #line 398 "codegen/diagram.override"
@@ -672,7 +669,7 @@ static int _wrap_diagram_new_gridblock_from_selection(void *self,Stack stack, in
 }
 
 
-#line 676 "diagram.c"
+#line 673 "diagram.c"
 
 
 #line 414 "codegen/diagram.override"
@@ -689,7 +686,7 @@ static int _wrap_diagram_new_connector(void *self,Stack stack, int rhs, int opt,
   return 1;
 }
 
-#line 693 "diagram.c"
+#line 690 "diagram.c"
 
 
 #line 429 "codegen/diagram.override"
@@ -702,7 +699,7 @@ static int _wrap_diagram_new_rect(void *self,Stack stack, int rhs, int opt, int 
   return 0;
 }
 
-#line 706 "diagram.c"
+#line 703 "diagram.c"
 
 
 #line 351 "codegen/diagram.override"
@@ -718,7 +715,7 @@ static int _wrap_diagram_hilite_near_pt(void *self,Stack stack, int rhs, int opt
   return 0;
 }
 
-#line 722 "diagram.c"
+#line 719 "diagram.c"
 
 
 #line 229 "codegen/diagram.override"
@@ -736,7 +733,7 @@ static int _wrap_diagram_select_and_move(void *self,Stack stack, int rhs, int op
   return 0;
 }
 
-#line 740 "diagram.c"
+#line 737 "diagram.c"
 
 
 #line 245 "codegen/diagram.override"
@@ -755,7 +752,7 @@ static int _wrap_diagram_select_and_move_list(void *self,Stack stack, int rhs, i
 }
 
 
-#line 759 "diagram.c"
+#line 756 "diagram.c"
 
 
 #line 262 "codegen/diagram.override"
@@ -778,7 +775,7 @@ static int _wrap_diagram_select_and_hilite(void *self,Stack stack, int rhs, int 
 }
 
 
-#line 782 "diagram.c"
+#line 779 "diagram.c"
 
 
 #line 283 "codegen/diagram.override"
@@ -800,7 +797,7 @@ static int _wrap_diagram_select_and_toggle_hilite(void *self,Stack stack, int rh
 }
 
 
-#line 804 "diagram.c"
+#line 801 "diagram.c"
 
 
 #line 303 "codegen/diagram.override"
@@ -818,7 +815,7 @@ static int _wrap_diagram_select_and_split(void *self,Stack stack, int rhs, int o
 }
 
 
-#line 822 "diagram.c"
+#line 819 "diagram.c"
 
 
 #line 319 "codegen/diagram.override"
@@ -837,7 +834,7 @@ static int _wrap_diagram_select_link_and_add_control(void *self,Stack stack, int
 
 
 
-#line 841 "diagram.c"
+#line 838 "diagram.c"
 
 
 #line 336 "codegen/diagram.override"
@@ -854,7 +851,7 @@ static int _wrap_diagram_select_link_and_remove_control(void *self,Stack stack, 
 }
 
 
-#line 858 "diagram.c"
+#line 855 "diagram.c"
 
 
 #line 455 "codegen/diagram.override"
@@ -868,7 +865,7 @@ static int _wrap_diagram_delete_hilited(void *self,Stack stack, int rhs, int opt
 }
 
 
-#line 872 "diagram.c"
+#line 869 "diagram.c"
 
 
 #line 538 "codegen/diagram.override"
@@ -918,7 +915,7 @@ static int _wrap_diagram_insert(void *self,Stack stack, int rhs, int opt, int lh
 }
 
 
-#line 922 "diagram.c"
+#line 919 "diagram.c"
 
 
 #line 586 "codegen/diagram.override"
@@ -994,7 +991,7 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
 }
 
 
-#line 998 "diagram.c"
+#line 995 "diagram.c"
 
 
 #line 467 "codegen/diagram.override"
@@ -1023,7 +1020,7 @@ static int _wrap_diagram_get_selection(void *self,Stack stack, int rhs, int opt,
 
 
 
-#line 1027 "diagram.c"
+#line 1024 "diagram.c"
 
 
 #line 494 "codegen/diagram.override"
@@ -1054,7 +1051,7 @@ static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int
 }
 
 
-#line 1058 "diagram.c"
+#line 1055 "diagram.c"
 
 
 #line 523 "codegen/diagram.override"
@@ -1071,7 +1068,7 @@ static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rh
 }
 
 
-#line 1075 "diagram.c"
+#line 1072 "diagram.c"
 
 
 #line 660 "codegen/diagram.override"
@@ -1097,7 +1094,7 @@ static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int o
   return 0;
 }
 
-#line 1101 "diagram.c"
+#line 1098 "diagram.c"
 
 
 #line 746 "codegen/diagram.override"
@@ -1126,7 +1123,7 @@ static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt,
   return Max(lhs,1);
 }
 
-#line 1130 "diagram.c"
+#line 1127 "diagram.c"
 
 
 #line 684 "codegen/diagram.override"
@@ -1147,7 +1144,7 @@ static int _wrap_diagram_full_copy(void *self,Stack stack, int rhs, int opt, int
 
 
 
-#line 1151 "diagram.c"
+#line 1148 "diagram.c"
 
 
 #line 732 "codegen/diagram.override"
@@ -1163,7 +1160,7 @@ static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int
 }
 
 
-#line 1167 "diagram.c"
+#line 1164 "diagram.c"
 
 
 static NspMethods diagram_methods[] = {
@@ -1256,7 +1253,7 @@ static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1260 "diagram.c"
+#line 1257 "diagram.c"
 static NspObject *_wrap_diagram_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1283,7 +1280,7 @@ int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1287 "diagram.c"
+#line 1284 "diagram.c"
 
 
 #line 206 "codegen/diagram.override"
@@ -1296,7 +1293,7 @@ int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1300 "diagram.c"
+#line 1297 "diagram.c"
 
 
 /*----------------------------------------------------
@@ -1474,16 +1471,25 @@ static void nsp_scale_diagram(BCG *Xgc,NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_diagram(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   NspDiagram *P = (NspDiagram *) Obj;
-  /* XXX should not be always computed */
-  nsp_diagram_compute_inside_bounds(Xgc,Obj);
-  memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+  if ( 0 )
+    {
+      nsp_diagram_compute_inside_bounds(Xgc,Obj);
+      memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+    }
+  else
+    {
+      bounds[0]=0;/* xmin */
+      bounds[1]=0;/* ymin */
+      bounds[2]=200;/* xmax */
+      bounds[3]=200;/* ymax */
+    }
   return TRUE;
 }
 
 static void nsp_diagram_link_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G, ((NspFigure *) F)->obj);
+  nsp_graphic_link_figure(G, F);
   /* link children */
   nsp_list_link_figure(((NspDiagram *) G)->obj->children,F);
 }
@@ -1492,7 +1498,7 @@ static void nsp_diagram_link_figure(NspGraphic *G, void *F)
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F)
 {
   /* link toplevel */
-  nsp_graphic_unlink_figure(G,   ((NspFigure *) F)->obj);
+  nsp_graphic_unlink_figure(G, F);
   /* link children */
   nsp_list_unlink_figure(((NspDiagram *) G)->obj->children,F);
 }
@@ -1509,46 +1515,6 @@ static NspList *nsp_diagram_children(NspGraphic *Obj)
 
 static int pixmap = FALSE ; /* XXXXX */
 
-void nspdiagram_draw(nsp_diagram *gf)
-{
-#if 0
-  int record;
-  BCG *Xgc = gf->Xgc;
-  Cell *C = gf->children->first;
-  if ( Xgc == NULL) return;
-  /* using current values */
-  Nsetscale2dx(Xgc,NULL,NULL,gf->scale,"nn");
-  if ( gf->top ) Xgc->graphic_engine->clearwindow(Xgc);
-
-  record = Xgc->graphic_engine->xget_recording(Xgc);
-  if (Xgc->record_flag == TRUE)  
-    Sciprintf("recod true \n");
-  else
-    Sciprintf("recod false  \n");
-
-#ifdef NEW_GRAPHICS 
-  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-#endif 
-
-  /* 
-   * XXX A Diagram could be casted info a Rect 
-   * for drawing its boundaries 
-   */
-  while ( C != NULLCELL) 
-    {
-      if ( C->O != NULLOBJ )
-	{
-	  /* assuming all objects here implements grint */
-	  GR_INT(C->O->basetype->interface)->draw(C->O);
-	}
-      C = C->next ;
-    }
-  if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
-  Xgc->graphic_engine->xset_recording(Xgc,record);
-#endif 
-
-}  
-
 /**
  * nsp_diagram_draw:
  * @R: a graphic frame  
@@ -1557,9 +1523,10 @@ void nspdiagram_draw(nsp_diagram *gf)
  * 
  **/
 
-void nsp_diagram_draw(NspDiagram *R)
+void nsp_diagram_draw(NspDiagram *D)
 {
-  nspdiagram_draw(R->obj);
+  nsp_figure *Fig = (((NspGraphic *) D)->obj->Fig);
+  nsp_figure_force_redraw(Fig);
 }
 
 /**
@@ -2373,18 +2340,16 @@ static void nsp_diagram_list_recompute_pointers(NspList *L)
  * Return value: 
  **/
 
-int nsp_diagram_move_obj(NspDiagram *F,NspObject *O,const double pt[2],int stop,int cp,move_action action)
+int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,int cp,move_action action)
 {
-  int record,rep;
-  BCG *Xgc= window_list_search_new(((NspFigure *) (((NspGraphic *) F)->obj->Fig))->obj->id); 
-  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  int ix,iy;
+  int rep;
+  nsp_figure *Fig = (((NspGraphic *) D)->obj->Fig);
+  BCG *Xgc= window_list_search_new( Fig->id); 
   int wstop = 0, ibutton,imask, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
 
-  record = Xgc->graphic_engine->xget_recording(Xgc);
-  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-  
   if ( action == MOVE_CONTROL) 
     {
       bf->move_control_init(O,cp,ptwork);
@@ -2393,20 +2358,24 @@ int nsp_diagram_move_obj(NspDiagram *F,NspObject *O,const double pt[2],int stop,
    * mpt is the mouse position, 
    * ptwork is the control point position 
    */
-
+  
   while ( wstop==0 ) 
     {
       /* draw the frame 
        * we could here record and use a fixed part.
        */
-      nsp_diagram_draw(F);
+      nsp_diagram_draw(D);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
-      /* get new mouse position */
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      /* get new mouse position 
+       * XXX this code should be simplified not to search 
+       * each time for an axes and changing the scales 
+       * i.e nsp_get_point_axes should not be used all times 
+       * or its returned argument could be used 
+       */
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
+      nsp_get_point_axes(Xgc,ix,iy,mpt);
       if ( ibutton == -100 ) 
 	{
-	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-	  Xgc->graphic_engine->xset_recording(Xgc,record);
 	  return ibutton;
 	}
       if ( ibutton == stop ) wstop= 1;
@@ -2421,17 +2390,15 @@ int nsp_diagram_move_obj(NspDiagram *F,NspObject *O,const double pt[2],int stop,
 	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
 	  break;
 	case MOVE_CONTROL :
-	  bf->move_control(F,O,mpt,cp, ptwork);
+	  bf->move_control(D,O,mpt,cp, ptwork);
 	}
       /* update locks positions for objects locked to objects  */ 
-      nsp_diagram_locks_update(F,O);
+      nsp_diagram_locks_update(D,O);
       pt1[0] = mpt[0];
       pt1[1] = mpt[1];
     }
-  if ( IsLink(O)) link_check(F,(NspLink *)O);
+  if ( IsLink(O)) link_check(D,(NspLink *)O);
 
-  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-  Xgc->graphic_engine->xset_recording(Xgc,record);
   return ibutton;
 }
 
@@ -2494,14 +2461,10 @@ static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[
 
 int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int stop,int cp,move_action action, int *click)
 {
-  int record,rep;
-  BCG *Xgc= window_list_search_new(((NspFigure *) (((NspGraphic *) F)->obj->Fig))->obj->id); 
-  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  int rep,ix,iy;
+  BCG *Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
   int wstop = 0, ibutton,imask, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]};
-
-  record = Xgc->graphic_engine->xget_recording(Xgc);
-  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
 
   if ( action == MOVE_CONTROL) 
     {
@@ -2520,11 +2483,10 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
       nsp_diagram_draw(F);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
+      nsp_get_point_axes(Xgc,ix,iy,mpt);
       if ( ibutton == -100 ) 
 	{
-	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-	  Xgc->graphic_engine->xset_recording(Xgc,record);
 	  return ibutton;
 	}
       if ( ibutton == stop ) wstop= 1;
@@ -2549,8 +2511,6 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
     }
   /* was it a click ? */
   *click =  ( pt1[0]== pt[0] && pt1[1] == pt[1] ) ? TRUE : FALSE;
-  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-  Xgc->graphic_engine->xset_recording(Xgc,record);
   /* we return the last activated button code */
   return ibutton;
 }
@@ -2661,18 +2621,21 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F)
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,10,10}, pt[]={0,100};
   NspBlock *B;
+  NspGraphic *G;
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
   B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
-  /* B->obj->frame = F->obj; */
   B->obj->hilited = TRUE;
+  G = (NspGraphic *) B;
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig);
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
-  Xgc= window_list_search_new(((NspFigure *) (((NspGraphic *) F)->obj->Fig))->obj->id); 
+  Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
+  
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return NSP_OBJECT(B);
 }
@@ -2742,6 +2705,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   int color=4,thickness=1, background=9,rep;
   double rect[]={0,100,4,4}, pt[]={0,100};
   NspConnector *B;
+  NspGraphic *G;
   BCG *Xgc;
   gr_lock l;
   /* unhilite all */
@@ -2751,10 +2715,12 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   if ( B == NULL) return NULLOBJ;
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
+  G = (NspGraphic *) B;
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig);
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
-  Xgc= window_list_search_new(((NspFigure *) (((NspGraphic *) F)->obj->Fig))->obj->id); 
+  Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return NSP_OBJECT(B);
 }
@@ -2777,7 +2743,8 @@ int nsp_diagram_create_new_rect(NspDiagram *F)
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  Xgc= window_list_search_new(((NspFigure *) (((NspGraphic *) F)->obj->Fig))->obj->id); 
+  Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
+
   B=rect_create("fe",Xgc,rect,color,thickness,background,NULL);
   if ( B == NULL) return FAIL;
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return FAIL;
@@ -2804,11 +2771,13 @@ static double lock_size=1;
 
 NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 {
-  BCG *Xgc= window_list_search_new(((NspFigure *) (((NspGraphic *) F)->obj->Fig))->obj->id); 
+  NspGraphic *G;
+  int ix,iy;
+  BCG *Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
   NspObject *Ob;
-  int cp1,record;
+  int cp1;
   double mpt[2],pt[2];
-  int alumode = Xgc->graphic_engine->xget_alufunction(Xgc), wstop = 0,stop=2, ibutton, imask, iwait=FALSE;
+  int wstop = 0,stop=2, ibutton, imask, iwait=FALSE;
   int color=4,thickness=1,hvfactor,count=0;
   NspLink *L;
   NspTypeGRint *bf;
@@ -2817,8 +2786,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   hvfactor=lock_size*2;/* magnetism toward horizontal and vertical line  */
   Xgc->graphic_engine->xinfo(Xgc,"Enter polyline, Right click to stop");
 
-  record = Xgc->graphic_engine->xget_recording(Xgc);
-  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
   
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
@@ -2830,17 +2797,17 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   L->obj->poly->R[1]=mpt[0];
   while ( wstop==0 ) 
     {
+      NspGraphic *G= (NspGraphic *) L;
       nsp_diagram_draw(F);
       /* draw the link */
-      bf->draw(L);
+      G->type->draw(Xgc,G,NULL);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,mpt,mpt+1,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
+      nsp_get_point_axes(Xgc,ix,iy,mpt);
       if ( ibutton == -100 ) 
 	{
 	  /* we stop : window was killed */
-	  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-	  Xgc->graphic_engine->xset_recording(Xgc,record);
 	  return NULLOBJ;
 	}
       if ( ibutton == stop ) 
@@ -2915,7 +2882,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
 	}
     }
-  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
   /* insert link in frame 
    * at the start 
    */
@@ -2923,6 +2889,9 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   /* check if first and last points are locked 
    * if true update locks 
    */
+  G = (NspGraphic *) L;
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig);
+
   mpt[0]=L->obj->poly->R[0];
   mpt[1]=L->obj->poly->R[L->obj->poly->m];
   link_lock_update(F,L,0,mpt);
@@ -2930,10 +2899,8 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   mpt[1]=L->obj->poly->R[2*L->obj->poly->m-1];
   link_lock_update(F,L,1,mpt);
   link_check(F,L);
-  bf->draw(L);
+  nsp_diagram_draw(F);
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
-  Xgc->graphic_engine->xset_alufunction1(Xgc,alumode);
-  Xgc->graphic_engine->xset_recording(Xgc,record);
   return NSP_OBJECT(L);
 }
 
@@ -3064,4 +3031,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 3068 "diagram.c"
+#line 3035 "diagram.c"

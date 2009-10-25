@@ -94,6 +94,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   top->load  = (load_func *) nsp_grrect_xdr_load;
   top->create = (create_func*) int_grrect_create;
   top->latex = (print_func *) nsp_grrect_latex;
+  top->full_copy = (copy_func *) nsp_grrect_full_copy;
 
   /* specific methods for grrect */
 
@@ -108,7 +109,6 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grrect  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grrect  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grrect_full_copy ;
   /* next method are defined in NspGraphic and need not be changed here for GrRect */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
@@ -283,7 +283,6 @@ static NspGrRect  *nsp_grrect_xdr_load(XDR *xdrs)
   if ((H  = nsp_grrect_create_void(name,(NspTypeBase *) nsp_type_grrect))== NULLGRRECT) return H;
   if ((H  = nsp_grrect_xdr_load_partial(xdrs,H))== NULLGRRECT) return H;
   if ( nsp_grrect_check_values(H) == FAIL) return NULLGRRECT;
-#line 287 "grrect.c"
   return H;
 }
 
@@ -536,7 +535,6 @@ NspGrRect *nsp_grrect_full_copy(NspGrRect *self)
   if ( H ==  NULLGRRECT) return NULLGRRECT;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRRECT;
   if ( nsp_grrect_full_copy_partial(H,self)== NULL) return NULLGRRECT;
-#line 540 "grrect.c"
   return H;
 }
 
@@ -556,7 +554,6 @@ int int_grrect_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grrect_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grrect_check_values(H) == FAIL) return RET_BUG;
-#line 560 "grrect.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -726,7 +723,7 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/grrect.override"
+#line 52 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -735,10 +732,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 739 "grrect.c"
+#line 736 "grrect.c"
 
 
-#line 63 "codegen/grrect.override"
+#line 62 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -748,7 +745,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 752 "grrect.c"
+#line 749 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -779,7 +776,7 @@ void GrRect_Interf_Info(int i, char **fname, function (**f))
   *f = GrRect_func[i].fonc;
 }
 
-#line 74 "codegen/grrect.override"
+#line 73 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -866,4 +863,4 @@ static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 870 "grrect.c"
+#line 867 "grrect.c"

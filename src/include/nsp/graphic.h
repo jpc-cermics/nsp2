@@ -19,21 +19,20 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 48 "codegen/graphic.override"
+#line 47 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
 typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
 typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
 typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
 typedef int bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
-typedef NspGraphic *full_copy_func(NspGraphic *Obj);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
 typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 
-#line 37 "./graphic.h"
+#line 36 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
@@ -47,7 +46,6 @@ struct _NspTypeGraphic {
   rotate_func *rotate;
   scale_func *scale;
   bounds_func *bounds;
-  full_copy_func *full_copy;
   link_figure_func *link_figure;
   unlink_figure_func *unlink_figure;
   children_func *children;
@@ -55,7 +53,7 @@ struct _NspTypeGraphic {
 n_faces_func *n_faces;
 
 
-#line 59 "./graphic.h"
+#line 57 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
@@ -120,7 +118,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
 /* inserted at the end of public part of include file */
 
-#line 124 "./graphic.h"
+#line 122 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -139,6 +137,6 @@ static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-#line 143 "./graphic.h"
+#line 141 "./graphic.h"
 #endif /* NspGraphic_Private */
 

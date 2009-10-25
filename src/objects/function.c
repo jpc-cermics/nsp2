@@ -91,6 +91,7 @@ NspTypeFunction *new_type_function(type_mode mode)
   top->save  = (save_func *) function_xdr_save;
   top->load  = (load_func *) function_xdr_load;
   /* top->create = (create_func*) int_f_create; */
+  top->full_copy  =  (copy_func *) function_copy;                   
 
   /* specific methods for function */
       

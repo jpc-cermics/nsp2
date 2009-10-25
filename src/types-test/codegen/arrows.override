@@ -36,8 +36,7 @@ override-type Arrows
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_arrows  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_arrows  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_arrows_full_copy ;
-  /* next method are defined in NspGraphic and need not be chnaged here for Arrows */
+  /* next method are defined in NspGraphic and need not be changed here for Arrows */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 

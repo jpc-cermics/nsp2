@@ -105,6 +105,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   top->load  = (load_func *) nsp_block_xdr_load;
   top->create = (create_func*) int_block_create;
   top->latex = (print_func *) nsp_block_latex;
+  top->full_copy = (copy_func *) nsp_block_full_copy;
 
   /* specific methods for block */
 
@@ -121,7 +122,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 125 "block.c"
+#line 126 "block.c"
   /* 
    * NspBlock interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -162,7 +163,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   t_grint->full_copy =(gr_full_copy *) block_full_copy;
   t_grint->unlock =(gr_unlock *) block_unlock;
 
-#line 166 "block.c"
+#line 167 "block.c"
   if ( nsp_type_block_id == 0 ) 
     {
       /* 
@@ -353,7 +354,7 @@ NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
-#line 357 "block.c"
+#line 358 "block.c"
 /*
  * delete 
  */
@@ -609,7 +610,7 @@ NspBlock *nsp_block_create_default(char *name)
  return H;
 }
 
-#line 613 "block.c"
+#line 614 "block.c"
 /*
  * copy for gobject derived class  
  */
@@ -650,7 +651,7 @@ NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
     { H->obj->icon = NULL;}
   else
     {
-      if ((H->obj->icon = (NspGraphic *) nsp_object_copy_and_name("icon",NSP_OBJECT(self->obj->icon))) == NULL) return NULL;
+      if ((H->obj->icon = (NspGraphic *) nsp_object_full_copy_and_name("icon",NSP_OBJECT(self->obj->icon))) == NULL) return NULL;
     }
   return H;
 }
@@ -661,7 +662,6 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
   if ( H ==  NULLBLOCK) return NULLBLOCK;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLBLOCK;
   if ( nsp_block_full_copy_partial(H,self)== NULL) return NULLBLOCK;
-#line 665 "block.c"
   return H;
 }
 

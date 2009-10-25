@@ -680,7 +680,6 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 #include <nsp/axes.h> 
 #include <nsp/curve.h> 
 
-extern void nsp_list_link_figure(NspList *L, NspFigure *F);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
 

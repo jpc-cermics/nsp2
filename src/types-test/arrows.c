@@ -95,6 +95,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
   top->load  = (load_func *) nsp_arrows_xdr_load;
   top->create = (create_func*) int_arrows_create;
   top->latex = (print_func *) nsp_arrows_latex;
+  top->full_copy = (copy_func *) nsp_arrows_full_copy;
 
   /* specific methods for arrows */
 
@@ -109,8 +110,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_arrows  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_arrows  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_arrows_full_copy ;
-  /* next method are defined in NspGraphic and need not be chnaged here for Arrows */
+  /* next method are defined in NspGraphic and need not be changed here for Arrows */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
@@ -275,7 +275,6 @@ static NspArrows  *nsp_arrows_xdr_load(XDR *xdrs)
   if ((H  = nsp_arrows_create_void(name,(NspTypeBase *) nsp_type_arrows))== NULLARROWS) return H;
   if ((H  = nsp_arrows_xdr_load_partial(xdrs,H))== NULLARROWS) return H;
   if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
-#line 279 "arrows.c"
   return H;
 }
 
@@ -540,19 +539,19 @@ NspArrows *nsp_arrows_full_copy_partial(NspArrows *H,NspArrows *self)
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->color == NULL )
     { H->obj->color = NULL;}
   else
     {
-      if ((H->obj->color = (NspMatrix *) nsp_object_copy_and_name("color",NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
+      if ((H->obj->color = (NspMatrix *) nsp_object_full_copy_and_name("color",NSP_OBJECT(self->obj->color))) == NULLMAT) return NULL;
     }
   H->obj->arsize=self->obj->arsize;
   return H;
@@ -564,7 +563,6 @@ NspArrows *nsp_arrows_full_copy(NspArrows *self)
   if ( H ==  NULLARROWS) return NULLARROWS;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLARROWS;
   if ( nsp_arrows_full_copy_partial(H,self)== NULL) return NULLARROWS;
-#line 568 "arrows.c"
   return H;
 }
 
@@ -584,7 +582,6 @@ int int_arrows_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_arrows_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_arrows_check_values(H) == FAIL) return RET_BUG;
-#line 588 "arrows.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -730,7 +727,7 @@ static AttrTab arrows_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 54 "codegen/arrows.override"
+#line 53 "codegen/arrows.override"
 
 extern function int_nspgraphic_extract;
 
@@ -739,10 +736,10 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 743 "arrows.c"
+#line 740 "arrows.c"
 
 
-#line 64 "codegen/arrows.override"
+#line 63 "codegen/arrows.override"
 
 extern function int_graphic_set_attribute;
 
@@ -752,7 +749,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 756 "arrows.c"
+#line 753 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -783,7 +780,7 @@ void Arrows_Interf_Info(int i, char **fname, function (**f))
   *f = Arrows_func[i].fonc;
 }
 
-#line 75 "codegen/arrows.override"
+#line 74 "codegen/arrows.override"
 
 /* inserted verbatim at the end */
 
@@ -887,4 +884,4 @@ static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 891 "arrows.c"
+#line 888 "arrows.c"

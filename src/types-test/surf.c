@@ -94,6 +94,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
   top->load  = (load_func *) nsp_surf_xdr_load;
   top->create = (create_func*) int_surf_create;
   top->latex = (print_func *) nsp_surf_latex;
+  top->full_copy = (copy_func *) nsp_surf_full_copy;
 
   /* specific methods for surf */
 
@@ -108,7 +109,6 @@ NspTypeSurf *new_type_surf(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_surf  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_surf  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_surf  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_surf_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Surf */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
@@ -286,7 +286,6 @@ static NspSurf  *nsp_surf_xdr_load(XDR *xdrs)
   if ((H  = nsp_surf_create_void(name,(NspTypeBase *) nsp_type_surf))== NULLSURF) return H;
   if ((H  = nsp_surf_xdr_load_partial(xdrs,H))== NULLSURF) return H;
   if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
-#line 290 "surf.c"
   return H;
 }
 
@@ -579,25 +578,25 @@ NspSurf *nsp_surf_full_copy_partial(NspSurf *H,NspSurf *self)
     { H->obj->x = NULL;}
   else
     {
-      if ((H->obj->x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
+      if ((H->obj->x = (NspMatrix *) nsp_object_full_copy_and_name("x",NSP_OBJECT(self->obj->x))) == NULLMAT) return NULL;
     }
   if ( self->obj->y == NULL )
     { H->obj->y = NULL;}
   else
     {
-      if ((H->obj->y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
+      if ((H->obj->y = (NspMatrix *) nsp_object_full_copy_and_name("y",NSP_OBJECT(self->obj->y))) == NULLMAT) return NULL;
     }
   if ( self->obj->z == NULL )
     { H->obj->z = NULL;}
   else
     {
-      if ((H->obj->z = (NspMatrix *) nsp_object_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
+      if ((H->obj->z = (NspMatrix *) nsp_object_full_copy_and_name("z",NSP_OBJECT(self->obj->z))) == NULLMAT) return NULL;
     }
   if ( self->obj->colors == NULL )
     { H->obj->colors = NULL;}
   else
     {
-      if ((H->obj->colors = (NspMatrix *) nsp_object_copy_and_name("colors",NSP_OBJECT(self->obj->colors))) == NULLMAT) return NULL;
+      if ((H->obj->colors = (NspMatrix *) nsp_object_full_copy_and_name("colors",NSP_OBJECT(self->obj->colors))) == NULLMAT) return NULL;
     }
   H->obj->mesh=self->obj->mesh;
   H->obj->zcolor=self->obj->zcolor;
@@ -612,7 +611,6 @@ NspSurf *nsp_surf_full_copy(NspSurf *self)
   if ( H ==  NULLSURF) return NULLSURF;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSURF;
   if ( nsp_surf_full_copy_partial(H,self)== NULL) return NULLSURF;
-#line 616 "surf.c"
   return H;
 }
 
@@ -632,7 +630,6 @@ int int_surf_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_surf_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_surf_check_values(H) == FAIL) return RET_BUG;
-#line 636 "surf.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -864,7 +861,7 @@ static AttrTab surf_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/surf.override"
+#line 52 "codegen/surf.override"
 
 extern function int_nspgraphic_extract;
 
@@ -873,10 +870,10 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 877 "surf.c"
+#line 874 "surf.c"
 
 
-#line 63 "codegen/surf.override"
+#line 62 "codegen/surf.override"
 
 extern function int_graphic_set_attribute;
 
@@ -886,7 +883,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 890 "surf.c"
+#line 887 "surf.c"
 
 
 /*----------------------------------------------------
@@ -917,7 +914,7 @@ void Surf_Interf_Info(int i, char **fname, function (**f))
   *f = Surf_func[i].fonc;
 }
 
-#line 74 "codegen/surf.override"
+#line 73 "codegen/surf.override"
 
 /* inserted verbatim at the end */
 
@@ -997,4 +994,4 @@ static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1001 "surf.c"
+#line 998 "surf.c"

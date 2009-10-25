@@ -99,6 +99,7 @@ NspTypeCompound *new_type_compound(type_mode mode)
   top->load  = (load_func *) nsp_compound_xdr_load;
   top->create = (create_func*) int_compound_create;
   top->latex = (print_func *) nsp_compound_latex;
+  top->full_copy = (copy_func *) nsp_compound_full_copy;
 
   /* specific methods for compound */
 
@@ -111,7 +112,6 @@ NspTypeCompound *new_type_compound(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_compound  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_compound  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_compound  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_compound_full_copy ;
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_compound_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_compound_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_compound_children ;
@@ -268,7 +268,6 @@ static NspCompound  *nsp_compound_xdr_load(XDR *xdrs)
   if ((H  = nsp_compound_create_void(name,(NspTypeBase *) nsp_type_compound))== NULLCOMPOUND) return H;
   if ((H  = nsp_compound_xdr_load_partial(xdrs,H))== NULLCOMPOUND) return H;
   if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
-#line 272 "compound.c"
   return H;
 }
 
@@ -513,13 +512,13 @@ NspCompound *nsp_compound_full_copy_partial(NspCompound *H,NspCompound *self)
     { H->obj->bounds = NULL;}
   else
     {
-      if ((H->obj->bounds = (NspMatrix *) nsp_object_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds))) == NULLMAT) return NULL;
     }
   if ( self->obj->children == NULL )
     { H->obj->children = NULL;}
   else
     {
-      if ((H->obj->children = (NspList *) nsp_object_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
+      if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
   return H;
 }
@@ -530,7 +529,6 @@ NspCompound *nsp_compound_full_copy(NspCompound *self)
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCOMPOUND;
   if ( nsp_compound_full_copy_partial(H,self)== NULL) return NULLCOMPOUND;
-#line 534 "compound.c"
   return H;
 }
 
@@ -550,7 +548,6 @@ int int_compound_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_compound_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_compound_check_values(H) == FAIL) return RET_BUG;
-#line 554 "compound.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -563,7 +560,7 @@ static NspMethods *compound_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-#line 90 "codegen/compound.override"
+#line 89 "codegen/compound.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -618,7 +615,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 622 "compound.c"
+#line 619 "compound.c"
 static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -636,7 +633,7 @@ static AttrTab compound_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 146 "codegen/compound.override"
+#line 145 "codegen/compound.override"
 
 extern function int_nspgraphic_extract;
 
@@ -645,10 +642,10 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 649 "compound.c"
+#line 646 "compound.c"
 
 
-#line 156 "codegen/compound.override"
+#line 155 "codegen/compound.override"
 
 extern function int_graphic_set_attribute;
 
@@ -658,7 +655,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 662 "compound.c"
+#line 659 "compound.c"
 
 
 /*----------------------------------------------------
@@ -689,7 +686,7 @@ void Compound_Interf_Info(int i, char **fname, function (**f))
   *f = Compound_func[i].fonc;
 }
 
-#line 167 "codegen/compound.override"
+#line 166 "codegen/compound.override"
 
 /* inserted verbatim at the end */
 
@@ -844,7 +841,7 @@ static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
 
 static void nsp_compound_link_figure(NspGraphic *G, void *F)
 {
-  /* link toplevel */
+  /* link toplevel, take care to use nsp_graphic field */
   nsp_graphic_link_figure(G, F);
   /* link children */
   nsp_list_link_figure(((NspCompound *) G)->obj->children,F);
@@ -866,4 +863,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 870 "compound.c"
+#line 867 "compound.c"

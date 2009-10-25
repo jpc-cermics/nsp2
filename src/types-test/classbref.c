@@ -92,6 +92,7 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
   top->load  = (load_func *) nsp_classbref_xdr_load;
   top->create = (create_func*) int_classbref_create;
   top->latex = (print_func *) nsp_classbref_latex;
+  top->full_copy = (copy_func *) nsp_classbref_full_copy;
 
   /* specific methods for classbref */
 
@@ -254,7 +255,6 @@ static NspClassBRef  *nsp_classbref_xdr_load(XDR *xdrs)
   if ((H  = nsp_classbref_create_void(name,(NspTypeBase *) nsp_type_classbref))== NULLCLASSBREF) return H;
   if ((H  = nsp_classbref_xdr_load_partial(xdrs,H))== NULLCLASSBREF) return H;
   if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
-#line 258 "classbref.c"
   return H;
 }
 
@@ -493,7 +493,7 @@ NspClassBRef *nsp_classbref_full_copy_partial(NspClassBRef *H,NspClassBRef *self
     { H->obj->clb_val = NULL;}
   else
     {
-      if ((H->obj->clb_val = (NspMatrix *) nsp_object_copy_and_name("clb_val",NSP_OBJECT(self->obj->clb_val))) == NULLMAT) return NULL;
+      if ((H->obj->clb_val = (NspMatrix *) nsp_object_full_copy_and_name("clb_val",NSP_OBJECT(self->obj->clb_val))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -504,7 +504,6 @@ NspClassBRef *nsp_classbref_full_copy(NspClassBRef *self)
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
   if ( nsp_classaref_full_copy_partial((NspClassARef *) H,(NspClassARef *) self ) == NULL) return NULLCLASSBREF;
   if ( nsp_classbref_full_copy_partial(H,self)== NULL) return NULLCLASSBREF;
-#line 508 "classbref.c"
   return H;
 }
 
@@ -524,7 +523,6 @@ int int_classbref_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_classbref_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classbref_check_values(H) == FAIL) return RET_BUG;
-#line 528 "classbref.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -541,7 +539,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 545 "classbref.c"
+#line 543 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -552,7 +550,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 556 "classbref.c"
+#line 554 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -666,4 +664,4 @@ void ClassBRef_Interf_Info(int i, char **fname, function (**f))
   *f = ClassBRef_func[i].fonc;
 }
 
-#line 670 "classbref.c"
+#line 668 "classbref.c"

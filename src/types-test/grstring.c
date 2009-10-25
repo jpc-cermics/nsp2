@@ -94,6 +94,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   top->load  = (load_func *) nsp_grstring_xdr_load;
   top->create = (create_func*) int_grstring_create;
   top->latex = (print_func *) nsp_grstring_latex;
+  top->full_copy = (copy_func *) nsp_grstring_full_copy;
 
   /* specific methods for grstring */
 
@@ -108,7 +109,6 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_grstring  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_grstring  ;
-  ((NspTypeGraphic *) type->surtype)->full_copy = (full_copy_func *) nsp_grstring_full_copy ;
   /* next method are defined in NspGraphic and need not be chnaged here for Grstring */
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
@@ -289,7 +289,6 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
   if ((H  = nsp_grstring_create_void(name,(NspTypeBase *) nsp_type_grstring))== NULLGRSTRING) return H;
   if ((H  = nsp_grstring_xdr_load_partial(xdrs,H))== NULLGRSTRING) return H;
   if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
-#line 293 "grstring.c"
   return H;
 }
 
@@ -558,7 +557,7 @@ NspGrstring *nsp_grstring_full_copy_partial(NspGrstring *H,NspGrstring *self)
     { H->obj->text = NULL;}
   else
     {
-      if ((H->obj->text = (NspSMatrix *) nsp_object_copy_and_name("text",NSP_OBJECT(self->obj->text))) == NULLSMAT) return NULL;
+      if ((H->obj->text = (NspSMatrix *) nsp_object_full_copy_and_name("text",NSP_OBJECT(self->obj->text))) == NULLSMAT) return NULL;
     }
   H->obj->position=self->obj->position;
   H->obj->angle=self->obj->angle;
@@ -574,7 +573,6 @@ NspGrstring *nsp_grstring_full_copy(NspGrstring *self)
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGRSTRING;
   if ( nsp_grstring_full_copy_partial(H,self)== NULL) return NULLGRSTRING;
-#line 578 "grstring.c"
   return H;
 }
 
@@ -594,7 +592,6 @@ int int_grstring_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_grstring_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_grstring_check_values(H) == FAIL) return RET_BUG;
-#line 598 "grstring.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -818,7 +815,7 @@ static AttrTab grstring_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/grstring.override"
+#line 51 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -827,10 +824,10 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 831 "grstring.c"
+#line 828 "grstring.c"
 
 
-#line 62 "codegen/grstring.override"
+#line 61 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -840,7 +837,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 844 "grstring.c"
+#line 841 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -871,7 +868,7 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
   *f = Grstring_func[i].fonc;
 }
 
-#line 73 "codegen/grstring.override"
+#line 72 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 
@@ -977,4 +974,4 @@ static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 981 "grstring.c"
+#line 978 "grstring.c"

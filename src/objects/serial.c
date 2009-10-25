@@ -79,6 +79,7 @@ NspTypeSerial *new_type_serial(type_mode mode)
   top->neq  = (eq_func *) nsp_serial_neq;
   top->save  = (save_func *) nsp_serial_xdr_save;
   top->load  = (load_func *) nsp_serial_xdr_load;
+  top->full_copy  =  (copy_func *) nsp_serial_copy;                   
 
   /* specific methods for serial */
       

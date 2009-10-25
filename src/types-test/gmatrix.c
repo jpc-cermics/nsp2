@@ -100,6 +100,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   top->load  = (load_func *) nsp_gmatrix_xdr_load;
   top->create = (create_func*) int_gmatrix_create;
   top->latex = (print_func *) nsp_gmatrix_latex;
+  top->full_copy = (copy_func *) nsp_gmatrix_full_copy;
 
   /* specific methods for gmatrix */
 
@@ -116,7 +117,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 120 "gmatrix.c"
+#line 121 "gmatrix.c"
   /* 
    * NspGMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -280,7 +281,6 @@ static NspGMatrix  *nsp_gmatrix_xdr_load(XDR *xdrs)
   if ((H  = nsp_gmatrix_create_void(name,(NspTypeBase *) nsp_type_gmatrix))== NULLGMATRIX) return H;
   if ((H  = nsp_gmatrix_xdr_load_partial(xdrs,H))== NULLGMATRIX) return H;
   if ( nsp_gmatrix_check_values(H) == FAIL) return NULLGMATRIX;
-#line 284 "gmatrix.c"
   return H;
 }
 
@@ -562,26 +562,26 @@ NspGMatrix *nsp_gmatrix_full_copy_partial(NspGMatrix *H,NspGMatrix *self)
     { H->obj->data = NULL;}
   else
     {
-      if ((H->obj->data = (NspMatrix *) nsp_object_copy_and_name("data",NSP_OBJECT(self->obj->data))) == NULLMAT) return NULL;
+      if ((H->obj->data = (NspMatrix *) nsp_object_full_copy_and_name("data",NSP_OBJECT(self->obj->data))) == NULLMAT) return NULL;
     }
   if ( self->obj->rect == NULL )
     { H->obj->rect = NULL;}
   else
     {
-      if ((H->obj->rect = (NspMatrix *) nsp_object_copy_and_name("rect",NSP_OBJECT(self->obj->rect))) == NULLMAT) return NULL;
+      if ((H->obj->rect = (NspMatrix *) nsp_object_full_copy_and_name("rect",NSP_OBJECT(self->obj->rect))) == NULLMAT) return NULL;
     }
   H->obj->remap=self->obj->remap;
   if ( self->obj->colminmax == NULL )
     { H->obj->colminmax = NULL;}
   else
     {
-      if ((H->obj->colminmax = (NspMatrix *) nsp_object_copy_and_name("colminmax",NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
+      if ((H->obj->colminmax = (NspMatrix *) nsp_object_full_copy_and_name("colminmax",NSP_OBJECT(self->obj->colminmax))) == NULLMAT) return NULL;
     }
   if ( self->obj->zminmax == NULL )
     { H->obj->zminmax = NULL;}
   else
     {
-      if ((H->obj->zminmax = (NspMatrix *) nsp_object_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
+      if ((H->obj->zminmax = (NspMatrix *) nsp_object_full_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
     }
   return H;
 }
@@ -592,7 +592,6 @@ NspGMatrix *nsp_gmatrix_full_copy(NspGMatrix *self)
   if ( H ==  NULLGMATRIX) return NULLGMATRIX;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLGMATRIX;
   if ( nsp_gmatrix_full_copy_partial(H,self)== NULL) return NULLGMATRIX;
-#line 596 "gmatrix.c"
   return H;
 }
 
@@ -612,7 +611,6 @@ int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_gmatrix_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_gmatrix_check_values(H) == FAIL) return RET_BUG;
-#line 616 "gmatrix.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -782,7 +780,7 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 786 "gmatrix.c"
+#line 784 "gmatrix.c"
 
 
 #line 65 "codegen/gmatrix.override"
@@ -794,7 +792,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 798 "gmatrix.c"
+#line 796 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -951,4 +949,4 @@ static int nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 955 "gmatrix.c"
+#line 953 "gmatrix.c"

@@ -106,6 +106,7 @@ NspTypeLink *new_type_link(type_mode mode)
   top->load  = (load_func *) nsp_link_xdr_load;
   top->create = (create_func*) int_link_create;
   top->latex = (print_func *) nsp_link_latex;
+  top->full_copy = (copy_func *) nsp_link_full_copy;
 
   /* specific methods for link */
 
@@ -122,7 +123,7 @@ NspTypeLink *new_type_link(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 126 "link.c"
+#line 127 "link.c"
   /* 
    * NspLink interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -163,7 +164,7 @@ NspTypeLink *new_type_link(type_mode mode)
   t_grint->full_copy =(gr_full_copy *) link_full_copy;
   t_grint->unlock =(gr_unlock *) link_unlock;
 
-#line 167 "link.c"
+#line 168 "link.c"
   if ( nsp_type_link_id == 0 ) 
     {
       /* 
@@ -345,7 +346,7 @@ static NspLink  *nsp_link_xdr_load(XDR *xdrs)
 
 
 
-#line 349 "link.c"
+#line 350 "link.c"
 /*
  * delete 
  */
@@ -582,7 +583,7 @@ NspLink *nsp_link_create_default(char *name)
  return H;
 }
 
-#line 586 "link.c"
+#line 587 "link.c"
 /*
  * copy for gobject derived class  
  */
@@ -618,7 +619,7 @@ NspLink *nsp_link_full_copy_partial(NspLink *H,NspLink *self)
     { H->obj->poly = NULL;}
   else
     {
-      if ((H->obj->poly = (NspMatrix *) nsp_object_copy_and_name("poly",NSP_OBJECT(self->obj->poly))) == NULLMAT) return NULL;
+      if ((H->obj->poly = (NspMatrix *) nsp_object_full_copy_and_name("poly",NSP_OBJECT(self->obj->poly))) == NULLMAT) return NULL;
     }
   H->obj->lock1 = self->obj->lock1;
   H->obj->lock2 = self->obj->lock2;
@@ -633,7 +634,6 @@ NspLink *nsp_link_full_copy(NspLink *self)
   if ( H ==  NULLLINK) return NULLLINK;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLLINK;
   if ( nsp_link_full_copy_partial(H,self)== NULL) return NULLLINK;
-#line 637 "link.c"
   return H;
 }
 
@@ -984,21 +984,14 @@ static void dist_2_polyline(const NspMatrix *poly,const double pt[2],
 
 NspLink *link_create_n(char *name,int n,int color,int thickness)
 {
-  NspLink *H  = nsp_link_create_void(name,NULL);
-  if ( H ==  NULLLINK) return NULLLINK;
-  if ((H->obj = malloc(sizeof(nsp_link))) == NULL) return NULL;
-  H->obj->ref_count=1;
-  /* fields */
-  if (( H->obj->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
-  /* need a name here to be able to save object */
-  if (nsp_object_set_name(NSP_OBJECT(H->obj->poly),"lpt") == FAIL) return NULLLINK;
-  H->obj->color = color;
-  H->obj->thickness = thickness;
-  H->obj->hilited = FALSE ; 
-  H->obj->show = TRUE   ; 
-  H->obj->lock1.port.object_id = NULL;
-  H->obj->lock2.port.object_id = NULL;
-  return H;
+  NspMatrix *P;
+  grl_lock l;
+  NspLink *L;
+  if ((P =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
+  if (nsp_object_set_name(NSP_OBJECT(P),"lpt") == FAIL) return NULLLINK;  
+  if(( L = nsp_link_create(name,NULL,color,thickness,0,P,l,l,FALSE,TRUE,NULL)) 
+     == NULLLINK) return NULLLINK;
+  return L;
 }
 
 /*---------------------------------------------------------
@@ -1984,4 +1977,4 @@ static void nsp_init_grl_lock(grl_lock *locks)
 
 
 
-#line 1988 "link.c"
+#line 1981 "link.c"

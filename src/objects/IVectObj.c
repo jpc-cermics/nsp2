@@ -89,7 +89,7 @@ NspTypeIVect *new_type_ivect(type_mode mode)
   top->save  = (save_func *)nsp_ivect_xdr_save;
   top->load  = (load_func *)nsp_ivect_xdr_load;
   top->as_index  = (get_index_vector_func *) nsp_ivect_as_index;
-
+  top->full_copy  =  (copy_func *)nsp_ivect_copy;           
   /* specific methods for ivect */
   type->init = (init_func *) init_ivect;
   /* 

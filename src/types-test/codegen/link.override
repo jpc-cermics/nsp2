@@ -517,21 +517,14 @@ static void dist_2_polyline(const NspMatrix *poly,const double pt[2],
 
 NspLink *link_create_n(char *name,int n,int color,int thickness)
 {
-  NspLink *H  = nsp_link_create_void(name,NULL);
-  if ( H ==  NULLLINK) return NULLLINK;
-  if ((H->obj = malloc(sizeof(nsp_link))) == NULL) return NULL;
-  H->obj->ref_count=1;
-  /* fields */
-  if (( H->obj->poly =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
-  /* need a name here to be able to save object */
-  if (nsp_object_set_name(NSP_OBJECT(H->obj->poly),"lpt") == FAIL) return NULLLINK;
-  H->obj->color = color;
-  H->obj->thickness = thickness;
-  H->obj->hilited = FALSE ; 
-  H->obj->show = TRUE   ; 
-  H->obj->lock1.port.object_id = NULL;
-  H->obj->lock2.port.object_id = NULL;
-  return H;
+  NspMatrix *P;
+  grl_lock l;
+  NspLink *L;
+  if ((P =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
+  if (nsp_object_set_name(NSP_OBJECT(P),"lpt") == FAIL) return NULLLINK;  
+  if(( L = nsp_link_create(name,NULL,color,thickness,0,P,l,l,FALSE,TRUE,NULL)) 
+     == NULLLINK) return NULLLINK;
+  return L;
 }
 
 /*---------------------------------------------------------
