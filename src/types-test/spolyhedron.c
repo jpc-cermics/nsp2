@@ -729,22 +729,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_spolyhedron_full_copy(NspSPolyhedron *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspSPolyhedron *ret;
-
-  ret = nsp_spolyhedron_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods spolyhedron_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_spolyhedron_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *spolyhedron_get_methods(void) { return spolyhedron_methods;};
+static NspMethods *spolyhedron_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -1044,7 +1029,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1048 "spolyhedron.c"
+#line 1033 "spolyhedron.c"
 
 
 #line 88 "codegen/spolyhedron.override"
@@ -1056,7 +1041,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1060 "spolyhedron.c"
+#line 1045 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1797,4 +1782,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1801 "spolyhedron.c"
+#line 1786 "spolyhedron.c"

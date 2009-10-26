@@ -605,22 +605,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_string3d_full_copy(NspString3d *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspString3d *ret;
-
-  ret = nsp_string3d_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods string3d_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_string3d_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *string3d_get_methods(void) { return string3d_methods;};
+static NspMethods *string3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -730,7 +715,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 734 "string3d.c"
+#line 719 "string3d.c"
 
 
 #line 87 "codegen/string3d.override"
@@ -743,7 +728,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 747 "string3d.c"
+#line 732 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -986,4 +971,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 990 "string3d.c"
+#line 975 "string3d.c"

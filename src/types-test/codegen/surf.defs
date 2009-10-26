@@ -2,16 +2,6 @@
 
 (include "surf-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Surf")
-  (c-name "nsp_surf_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspSurf")
-)
-
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_surf

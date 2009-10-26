@@ -2,15 +2,6 @@
 
 (include "grarc-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "GrArc")
-  (c-name "nsp_grarc_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspGrArc")
-)
-
 
 ;; just for the name, the code is overriten 
 

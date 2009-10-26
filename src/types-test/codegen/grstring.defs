@@ -2,15 +2,6 @@
 
 (include "grstring-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Grstring")
-  (c-name "nsp_grstring_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspGrstring")
-)
-
 
 ;; just for the name, the code is overriten 
 

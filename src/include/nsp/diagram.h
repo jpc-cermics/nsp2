@@ -121,7 +121,6 @@ extern int nsp_diagram_select_link_and_add_control(NspDiagram *R,const double pt
 extern int nsp_diagram_select_link_and_remove_control(NspDiagram *R,const double pt[2]);
 
 extern NspObject * nsp_diagram_get_hilited(NspDiagram *R) ;
-extern void nsp_diagram_set_frame_field(NspDiagram *F);
 extern NspDiagram *nsp_diagram_full_copy( NspDiagram *F);
 extern NspDiagram *nsp_diagram_from_nspdiagram(char *name,BCG *Xgc, nsp_diagram *gf);
 extern void nsp_diagram_destroy (NspDiagram *H); 
@@ -138,7 +137,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
 
-#line 142 "./diagram.h"
+#line 141 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -153,7 +152,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
-#line 57 "codegen/diagram.override"
+#line 56 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -166,7 +165,8 @@ static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
 static void nsp_diagram_link_figure(NspGraphic *G, void *F);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
-static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action);
+static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],
+				       list_move_action action);
 static void nspdiagram_recompute_pointers(nsp_diagram *gf);
 static void nsp_diagram_list_recompute_pointers(NspList *L);
 
@@ -178,12 +178,9 @@ static int nsp_diagram_eq(NspDiagram *A, NspObject *B);
 static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
 static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
 static AttrTab nsp_diagram_attrs[];
-/* static void nspdiagram_recompute_pointers(nsp_diagram *gf); */
-static void nsp_diagram_list_recompute_pointers(NspList *L);
-static void nspdiagram_set_frame_field(nsp_diagram *gf);
 static void *nspdiagram_get_adress(NspList *L,void *old );
-static nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only);
+static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 188 "./diagram.h"
+#line 185 "./diagram.h"
 #endif /* NspDiagram_Private */
 

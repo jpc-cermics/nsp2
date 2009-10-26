@@ -213,7 +213,6 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 
 static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
-static NspBlock * block_full_copy( NspBlock *B);
 
 /* requested for grb_lock */
 
@@ -224,6 +223,6 @@ static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
 static grb_lock * nsp_hgrb_lock_full_copy(grb_lock *gl,NspBlock *M);
 
-#line 228 "./block.h"
+#line 227 "./block.h"
 #endif /* NspBlock_Private */
 

@@ -2,15 +2,6 @@
 
 (include "arrows-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Arrows")
-  (c-name "nsp_arrows_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspArrows")
-)
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_arrows

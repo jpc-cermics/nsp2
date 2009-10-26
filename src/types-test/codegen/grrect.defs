@@ -2,15 +2,6 @@
 
 (include "grrect-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "GrRect")
-  (c-name "nsp_grrect_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspGrRect")
-)
-
 
 ;; just for the name, the code is overriten 
 

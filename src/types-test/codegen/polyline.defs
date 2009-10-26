@@ -2,15 +2,6 @@
 
 (include "polyline-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Polyline")
-  (c-name "nsp_polyline_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspPolyline")
-)
-
 
 ;; just for the name, the code is overriten 
 

@@ -589,22 +589,7 @@ int int_arrows_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_arrows_full_copy(NspArrows *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspArrows *ret;
-
-  ret = nsp_arrows_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods arrows_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_arrows_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *arrows_get_methods(void) { return arrows_methods;};
+static NspMethods *arrows_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -736,7 +721,7 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 740 "arrows.c"
+#line 725 "arrows.c"
 
 
 #line 63 "codegen/arrows.override"
@@ -749,7 +734,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 753 "arrows.c"
+#line 738 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -884,4 +869,4 @@ static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 888 "arrows.c"
+#line 873 "arrows.c"

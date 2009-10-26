@@ -662,22 +662,7 @@ int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_polyhedron_full_copy(NspPolyhedron *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspPolyhedron *ret;
-
-  ret = nsp_polyhedron_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods polyhedron_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_polyhedron_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *polyhedron_get_methods(void) { return polyhedron_methods;};
+static NspMethods *polyhedron_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -839,7 +824,7 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 843 "polyhedron.c"
+#line 828 "polyhedron.c"
 
 
 #line 84 "codegen/polyhedron.override"
@@ -851,7 +836,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 855 "polyhedron.c"
+#line 840 "polyhedron.c"
 
 
 #line 94 "codegen/polyhedron.override"
@@ -869,7 +854,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
   return 1;
 }
 
-#line 873 "polyhedron.c"
+#line 858 "polyhedron.c"
 
 
 #line 110 "codegen/polyhedron.override"
@@ -885,7 +870,7 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   return 1;
 }
 
-#line 889 "polyhedron.c"
+#line 874 "polyhedron.c"
 
 
 #line 124 "codegen/polyhedron.override"
@@ -926,7 +911,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,0);
 }
 
-#line 930 "polyhedron.c"
+#line 915 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1546,4 +1531,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1550 "polyhedron.c"
+#line 1535 "polyhedron.c"

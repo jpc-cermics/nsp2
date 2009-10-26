@@ -2,16 +2,6 @@
 
 (include "segments-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Segments")
-  (c-name "nsp_segments_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspSegments")
-)
-
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_segments

@@ -652,22 +652,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_contour3d_full_copy(NspContour3d *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspContour3d *ret;
-
-  ret = nsp_contour3d_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods contour3d_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_contour3d_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *contour3d_get_methods(void) { return contour3d_methods;};
+static NspMethods *contour3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -847,7 +832,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 851 "contour3d.c"
+#line 836 "contour3d.c"
 
 
 #line 84 "codegen/contour3d.override"
@@ -859,7 +844,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 863 "contour3d.c"
+#line 848 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -1039,4 +1024,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1043 "contour3d.c"
+#line 1028 "contour3d.c"

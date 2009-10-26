@@ -605,22 +605,7 @@ int int_box3d_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_box3d_full_copy(NspBox3d *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspBox3d *ret;
-
-  ret = nsp_box3d_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods box3d_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_box3d_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *box3d_get_methods(void) { return box3d_methods;};
+static NspMethods *box3d_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -788,7 +773,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 792 "box3d.c"
+#line 777 "box3d.c"
 
 
 #line 63 "codegen/box3d.override"
@@ -801,7 +786,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 805 "box3d.c"
+#line 790 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -881,4 +866,4 @@ static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 885 "box3d.c"
+#line 870 "box3d.c"

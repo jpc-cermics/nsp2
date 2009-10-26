@@ -580,22 +580,7 @@ int int_segments_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_segments_full_copy(NspSegments *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspSegments *ret;
-
-  ret = nsp_segments_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods segments_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_segments_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *segments_get_methods(void) { return segments_methods;};
+static NspMethods *segments_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -707,7 +692,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 711 "segments.c"
+#line 696 "segments.c"
 
 
 #line 63 "codegen/segments.override"
@@ -720,7 +705,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 724 "segments.c"
+#line 709 "segments.c"
 
 
 /*----------------------------------------------------
@@ -855,4 +840,4 @@ static int nsp_getbounds_segments(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 859 "segments.c"
+#line 844 "segments.c"

@@ -35,7 +35,6 @@ extern int nsp_diagram_select_link_and_add_control(NspDiagram *R,const double pt
 extern int nsp_diagram_select_link_and_remove_control(NspDiagram *R,const double pt[2]);
 
 extern NspObject * nsp_diagram_get_hilited(NspDiagram *R) ;
-extern void nsp_diagram_set_frame_field(NspDiagram *F);
 extern NspDiagram *nsp_diagram_full_copy( NspDiagram *F);
 extern NspDiagram *nsp_diagram_from_nspdiagram(char *name,BCG *Xgc, nsp_diagram *gf);
 extern void nsp_diagram_destroy (NspDiagram *H); 
@@ -66,7 +65,8 @@ static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
 static void nsp_diagram_link_figure(NspGraphic *G, void *F);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
-static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action);
+static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],
+				       list_move_action action);
 static void nspdiagram_recompute_pointers(nsp_diagram *gf);
 static void nsp_diagram_list_recompute_pointers(NspList *L);
 
@@ -78,11 +78,8 @@ static int nsp_diagram_eq(NspDiagram *A, NspObject *B);
 static int nsp_diagram_neq(NspDiagram *A, NspObject *B);
 static NspDiagram  *nsp_diagram_xdr_load(XDR  *F);
 static AttrTab nsp_diagram_attrs[];
-/* static void nspdiagram_recompute_pointers(nsp_diagram *gf); */
-static void nsp_diagram_list_recompute_pointers(NspList *L);
-static void nspdiagram_set_frame_field(nsp_diagram *gf);
 static void *nspdiagram_get_adress(NspList *L,void *old );
-static nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only);
+static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
 %%
 headers
@@ -110,6 +107,12 @@ override-type Diagram
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_diagram_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_diagram_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_diagram_children ;
+
+%%
+override_int_create_final
+  /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+  nspdiagram_recompute_pointers(H->obj);
+
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */
@@ -679,24 +682,6 @@ static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int o
   return 0;
 }
 
-%%
-override Diagram.diagram_full_copy
-
-static int _wrap_diagram_full_copy(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  NspDiagram *F;
-  CheckRhs(0,0);
-  CheckLhs(0,1);
-  if ((F = nsp_diagram_full_copy((NspDiagram *) self))== NULLDIAGRAM) 
-    {
-      Scierror("Error: copy failed\n");
-      return RET_BUG;
-    }
-  MoveObj(stack,1,NSP_OBJECT(F));
-  return 1;
-}
-
-
 
 %%
 override Diagram.diagram_tops
@@ -1084,34 +1069,6 @@ int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, 
   return 0;
 }
 
-/*
- * set the frame field for all objects 
- * Note that all object can be casted to block for accessing that field
- * XXXX this should be turned into o GR_INT method 
- **/
-
-void nsp_diagram_set_frame_field(NspDiagram *F)
-{
-  nspdiagram_set_frame_field(F->obj);
-}
-
-static void nspdiagram_set_frame_field(nsp_diagram *gf)
-{
-  int count = 1;
-  Cell *C = gf->children->first;
-  while ( C != NULLCELL) 
-    {
-      if ( C->O != NULLOBJ )
-	{
-	  /* 
-	     NspBlock *B = (NspBlock *) C->O; 
-	     B->obj->frame = gf;
-	  */
-	}
-      C = C->next ;
-      count++;
-    }
-}
 
 /**
  * nsp_diagram_get_adress:
@@ -2351,28 +2308,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 
 
 /**
- * nsp_diagram_full_copy:
- * @F: a #NspDiagram
- * 
- * Make a full copy of a @F. Since @F contains 
- * a list of objects which are themselves objects with 
- * references, the full copy must be performed on these
- * objects and cross references are to be updates.
- * 
- * Returns: a new #NspDiagram or %NULLDIAGRAM
- **/
-
-static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
-
-NspDiagram *zz_nsp_diagram_full_copy( NspDiagram *F)
-{
-  NspDiagram *H  = nsp_diagram_create_void(NVOID,NULL);
-  if ( H ==  NULLDIAGRAM ) return NULLDIAGRAM;
-  if ((H->obj = nspdiagram_full_copy(F->obj,FALSE))  == NULL) return NULLDIAGRAM;
-  return H;
-}
-
-/**
  * nsp_diagram_hilited_full_copy:
  * @F: a #NspDiagram
  * 
@@ -2384,53 +2319,34 @@ NspDiagram *zz_nsp_diagram_full_copy( NspDiagram *F)
  * Returns: a new #NspDiagram or %NULLDIAGRAM
  **/
 
-NspDiagram *nsp_diagram_hilited_full_copy( NspDiagram *F)
+static NspDiagram *nsp_diagram_hilited_full_copy_partial(NspDiagram *H,NspDiagram *self)
 {
-  NspDiagram *H  = nsp_diagram_create_void(NVOID,NULL);
-  if ( H ==  NULLDIAGRAM ) return NULLDIAGRAM;
-  if ((H->obj = nspdiagram_full_copy(F->obj,TRUE))  == NULL) return NULLDIAGRAM;
+  if ((H->obj = calloc(1,sizeof(nsp_diagram))) == NULL) return NULLDIAGRAM;
+  H->obj->ref_count=1;
+  if ( self->obj->bounds == NULL )
+    { H->obj->bounds = NULL;}
+  else
+    {
+      if ((H->obj->bounds = (NspMatrix *) nsp_object_full_copy_and_name("bounds",NSP_OBJECT(self->obj->bounds)))
+	  == NULLMAT) return NULL;
+    }
+  H->obj->children =  self->obj->children;
+  if ( H->obj->children != NULL) 
+    {
+      H->obj->children = nsp_diagram_list_full_copy(H->obj->children, TRUE);
+      if (  H->obj->children == NULL) return NULL;
+    }
   return H;
 }
 
-/**
- * nspdiagram_full_copy:
- * @gf: a #nsp_diagram 
- * @hilited_only: %TRUE or %FALSE
- * 
- * Make a full copy of a @gf. Since @gf contains 
- * a list of objects which are themselves objects with 
- * references, the full copy must be performed on these
- * objects and cross references are to be updates.
- * If @hilited_only is %TRUE, only hilited objects are copied.
- * 
- * Returns: a new #nsp_diagram or %NULL 
- **/
-
-nsp_diagram *nspdiagram_full_copy(nsp_diagram *gf,int hilited_only)
+NspDiagram *nsp_diagram_hilited_full_copy(NspDiagram *self)
 {
-  /* int i; */
-  nsp_diagram *loc; 
-  if ((loc = malloc(sizeof(nsp_diagram))) == NULL) return NULL;
-  loc->ref_count=1;
-  if ((loc->children = nsp_diagram_list_full_copy(gf->children, hilited_only))== NULL) 
-    return NULL;
-  /* restore lost pointers 
-   */
-  nspdiagram_set_frame_field(loc);
-  /*
-   * restore interconnections 
-   */
-  nspdiagram_recompute_pointers(loc);
-  /* copy scales 
-   *
-   */
-  /* 
-     for ( i=0; i < 4 ; i++) loc->r[i]=gf->r[i];
-     for ( i=0; i < 4 ; i++) loc->scale[i]=gf->scale[i];
-     loc->Xgc = gf->Xgc;
-     loc->top = gf->top;
-  */
-  return loc;
+  NspDiagram *H  =nsp_diagram_create_void(NVOID,(NspTypeBase *) nsp_type_diagram);
+  if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
+  if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLDIAGRAM;
+  if ( nsp_diagram_hilited_full_copy_partial(H,self)== NULL) return NULLDIAGRAM;
+  nspdiagram_recompute_pointers(H->obj);
+  return H;
 }
 
 /**

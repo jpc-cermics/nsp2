@@ -1,6 +1,10 @@
 // test program for a scicos-like editor 
 // this works with objects of src/gobjects 
 
+// XXXX 
+// lenght et size pour un diagram doivent donner 
+// le nbre d'objets stockes.
+
 function w=create_object_menu (win,xc,yc)
 // midle button menu construction 
 // version where selection is a list 
@@ -108,7 +112,7 @@ function objet_menuitem_response(w,args)
 // when an object menu is activated 
 //  
   global('GF');
-  // printf("Menu item [%d] activated for win=%d\n",args(1),args($));
+  printf("Menu item [%d] activated for win=%d\n",args(1),args($));
   win='win'+string(args($))
   select args(1) 
    case 1 then  
@@ -125,16 +129,16 @@ function objet_menuitem_response(w,args)
     GF(win).select_link_and_remove_control[[args(2),args(3)]];
    case 4 then 
     // copy selection into the clipboard 
+    // Note that get_selection_as_diagram returns a full copy.
     L= GF(win).get_selection_as_diagram[];
-    // pause 
-    if ~isempty(L) then GF('clipboard') = list(L.copy[]); 
+    if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
     else x_message('No selection');end 
    case 5 then 
     // paste selection 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
 	L= GF('clipboard')(1);
-	GF(win).insert_gframe[L,[args(2),args(3)]];
+	GF(win).insert_diagram[L,[args(2),args(3)]];
 	//x_message('Paste multiple');
       else 
 	x_message('Clipboard is empty');end 
@@ -241,7 +245,7 @@ function menuitem_response(w,args)
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
 	L= GF('clipboard')(1);
-	GF(win).insert_gframe[L,[args(2),args(3)]];
+	GF(win).insert_diagram[L,[args(2),args(3)]];
       else 
 	x_message('Clipboard is empty');end 
     end
@@ -263,8 +267,7 @@ function menuitem_response(w,args)
    case 9 then 
     // copy selection into the clipboard 
     L= GF(win).get_selection_as_diagram[];
-    // pause 
-    if ~isempty(L) then GF('clipboard') = list(L.copy[]); 
+    if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
     else x_message('No selection');end 
   end
   GF(win).draw[]

@@ -206,7 +206,6 @@ static int link_is_lock_connectable(NspLink *B,int i);
 static int link_is_lock_connected(NspLink *B,int i);
 static void link_set_lock_pos(NspLink *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void link_unlock( NspLink *B,int lp) ;
-static NspLink * link_full_copy( NspLink *B);
 
 /* requested for grl_lock */
 
@@ -219,6 +218,6 @@ static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
 static int nsp_grl_lock_full_copy(grl_lock *lc,grl_lock *l,NspLink *L);
 
-#line 223 "./link.h"
+#line 222 "./link.h"
 #endif /* NspLink_Private */
 

@@ -2,15 +2,6 @@
 
 (include "polyhedron-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Polyhedron")
-  (c-name "nsp_polyhedron_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspPolyhedron")
-)
-
 
 ;; just for the name, the code is overriten 
 

@@ -185,7 +185,6 @@ static int connector_is_lock_connectable(NspConnector *B,int i);
 static int connector_is_lock_connected(const NspConnector *B,int i);
 static void connector_set_lock_pos(NspConnector *B, int i,const double pt[],int keep_angle,lock_dir dir);
 static void connector_unlock( NspConnector *B,int lp) ;
-static NspConnector * connector_full_copy( NspConnector *B);
 
 /* requested for grl_lock */
 
@@ -198,6 +197,6 @@ static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M);
 
-#line 202 "./connector.h"
+#line 201 "./connector.h"
 #endif /* NspConnector_Private */
 

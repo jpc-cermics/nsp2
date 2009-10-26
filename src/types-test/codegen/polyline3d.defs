@@ -2,16 +2,6 @@
 
 (include "polyline3d-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "Polyline3d")
-  (c-name "nsp_polyline3d_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspPolyline3d")
-)
-
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_polyline3d

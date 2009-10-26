@@ -105,7 +105,6 @@ static void block_set_lock_pos_rel(NspBlock *B, int i,const double pt[]);
 
 static void block_unlock( NspBlock *B,int lp) ;
 static int block_set_locks(NspBlock *B,NspMatrix *Pt);
-static NspBlock * block_full_copy( NspBlock *B);
 
 /* requested for grb_lock */
 
@@ -177,7 +176,7 @@ override-implements Block
   t_grint->is_lock_connectable =(gr_is_lock_connectable *) block_is_lock_connectable;
   t_grint->is_lock_connected =(gr_is_lock_connected *) block_is_lock_connected;
   t_grint->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
-  t_grint->full_copy =(gr_full_copy *) block_full_copy;
+  t_grint->full_copy =(gr_full_copy *) nsp_block_full_copy;
   t_grint->unlock =(gr_unlock *) block_unlock;
 
 %%
@@ -1325,37 +1324,6 @@ static void block_unlock( NspBlock *B,int lp)
   block_unset_lock_connection(B,lp,0);
 }
 
-
-
-/**
- * block_full_copy:
- * @B: a #NspBlock 
- * 
- * returns a full copy of a a #NspBlock object. 
- * 
- * Returns: a new #NspBlock  or %NULLBLOCK
- **/
-
-static NspBlock * block_full_copy( NspBlock *B)
-{
-  int i;
-  NspBlock *M=NULLBLOCK;
-  if (( M = nsp_block_create(NVOID,NULL,B->obj->r,B->obj->color,B->obj->thickness,B->obj->background,0,NULL,FALSE,TRUE,NULL,NULL))
-      == NULLBLOCK) return NULLBLOCK;
-  /* keep old address */
-  M->obj->object_sid = B;
-  /* the lock points */
-  if ( M->obj->locks != NULL) FREE(M->obj->locks);
-  M->obj->n_locks =   B->obj->n_locks;
-  if (( M->obj->locks = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
-  for ( i = 0 ; i < M->obj->n_locks ; i++) 
-    {
-      M->obj->locks[i]= B->obj->locks[i];
-      M->obj->locks[i].port.object_id = NULLOBJ;
-      M->obj->locks[i].port.object_sid = B->obj->locks[i].port.object_id;
-    }
-  return M;
-}
 
 
 /* requested for grb_lock

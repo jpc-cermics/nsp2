@@ -603,22 +603,7 @@ int int_polyline_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static int _wrap_nsp_polyline_full_copy(NspPolyline *self,Stack stack,int rhs,int opt,int lhs)
-{
-  NspPolyline *ret;
-
-  ret = nsp_polyline_full_copy(self);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-static NspMethods polyline_methods[] = {
-  {"full_copy",(nsp_method *) _wrap_nsp_polyline_full_copy},
-  { NULL, NULL}
-};
-
-static NspMethods *polyline_get_methods(void) { return polyline_methods;};
+static NspMethods *polyline_get_methods(void) { return NULL;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -810,7 +795,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 814 "polyline.c"
+#line 799 "polyline.c"
 
 
 #line 61 "codegen/polyline.override"
@@ -823,7 +808,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 827 "polyline.c"
+#line 812 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -996,4 +981,4 @@ static int nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1000 "polyline.c"
+#line 985 "polyline.c"

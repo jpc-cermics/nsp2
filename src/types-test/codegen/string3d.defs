@@ -2,15 +2,6 @@
 
 (include "string3d-types.defs")
 
-;; overriden 
-
-(define-method full_copy 
-  (of-object "String3d")
-  (c-name "nsp_string3d_full_copy")
-  ;; (return-type "NspObject*")
-  (return-type "NspString3d")
-)
-
 
 ;; just for the name, the code is overriten 
 
