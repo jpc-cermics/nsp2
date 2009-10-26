@@ -588,7 +588,7 @@ static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lh
 #line 589 "diagram.c"
 
 
-#line 688 "codegen/diagram.override"
+#line 686 "codegen/diagram.override"
 /* XXX */
 extern void nsp_diagram_tops(NspDiagram *R,char *fname);
 
@@ -1108,16 +1108,14 @@ static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int o
       Scierror("Error: Graphic window %d does not exists\n",winid);
       return RET_BUG;
     }
-  /* ((NspDiagram *) self)->obj->Xgc = Xgc; */
-  /* ((NspDiagram *) self)->obj->top = TRUE; */
   return 0;
 }
 
 
-#line 1118 "diagram.c"
+#line 1116 "diagram.c"
 
 
-#line 731 "codegen/diagram.override"
+#line 729 "codegen/diagram.override"
 /* check if we are over an object */
 
 static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -1143,10 +1141,10 @@ static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt,
   return Max(lhs,1);
 }
 
-#line 1147 "diagram.c"
+#line 1145 "diagram.c"
 
 
-#line 717 "codegen/diagram.override"
+#line 715 "codegen/diagram.override"
 
 static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1159,7 +1157,7 @@ static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int
 }
 
 
-#line 1163 "diagram.c"
+#line 1161 "diagram.c"
 
 
 static NspMethods diagram_methods[] = {
@@ -1251,7 +1249,7 @@ static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1255 "diagram.c"
+#line 1253 "diagram.c"
 static NspObject *_wrap_diagram_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1278,7 +1276,7 @@ int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1282 "diagram.c"
+#line 1280 "diagram.c"
 
 
 #line 209 "codegen/diagram.override"
@@ -1291,7 +1289,7 @@ int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1295 "diagram.c"
+#line 1293 "diagram.c"
 
 
 /*----------------------------------------------------
@@ -1322,7 +1320,7 @@ void Diagram_Interf_Info(int i, char **fname, function (**f))
   *f = Diagram_func[i].fonc;
 }
 
-#line 758 "codegen/diagram.override"
+#line 756 "codegen/diagram.override"
 
 /* inserted verbatim at the end */
 
@@ -2960,4 +2958,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2964 "diagram.c"
+#line 2962 "diagram.c"

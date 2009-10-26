@@ -221,7 +221,7 @@ static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
 static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M);
 static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
-static grb_lock * nsp_hgrb_lock_full_copy(grb_lock *gl,NspBlock *M);
+static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 
 #line 227 "./block.h"
 #endif /* NspBlock_Private */

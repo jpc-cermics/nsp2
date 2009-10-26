@@ -644,7 +644,7 @@ NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
   H->obj->thickness=self->obj->thickness;
   H->obj->background=self->obj->background;
   H->obj->n_locks=self->obj->n_locks;
-  if ((H->obj->locks = nsp_hgrb_lock_full_copy(self->obj->locks,self))==NULL) return NULL;
+  if( nsp_grb_lock_full_copy(H,H->obj->locks,self)== FAIL) return NULL;
   H->obj->hilited=self->obj->hilited;
   H->obj->show=self->obj->show;
   if ( self->obj->icon == NULL )
@@ -1880,19 +1880,21 @@ static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M)
   return OK;
 }
 
-static grb_lock * nsp_hgrb_lock_full_copy(grb_lock *gl,NspBlock *M)
+static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 {
   int i;
   grb_lock *gl1;
-  if (( gl1 = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULL;
+  if (( gl1 = malloc(M->obj->n_locks*sizeof(grb_lock))) == NULL ) return FAIL;
   for ( i = 0 ; i < M->obj->n_locks ; i++) 
     {
       gl1[i]= M->obj->locks[i];
       gl1[i].port.object_id = NULLOBJ;
       gl1[i].port.object_sid = M->obj->locks[i].port.object_id;
     }
-  return gl1;
-
+  C->obj->locks= gl1;
+  /* trick: we use  this function to also update the object_sid value */
+  C->obj->object_sid = M;
+  return OK;
 }
 
-#line 1899 "block.c"
+#line 1901 "block.c"

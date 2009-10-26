@@ -1534,15 +1534,15 @@ class StructArg(ArgType):
             # used in copy functions 
             if f_copy_name == 'nsp_object_full_copy':
                 if ptype[-1] == '*':
+                    tag = ''
                     ptype1 = ptype.rstrip('*');
-                    vn = right_varname.rstrip('->obj');
-                    return '  if ((%s->%s = nsp_h%s_full_copy(%s->%s,%s))==NULL) return NULL;\n' \
-                        % (left_varname,pname,ptype1,right_varname,pname,vn)
                 else:
-                    vn = right_varname.rstrip('->obj');
-                    return '  if( nsp_%s_full_copy(&%s->%s,&%s->%s,%s)== FAIL) return NULL;\n' \
-                        % (ptype,left_varname,pname,right_varname,pname,vn)
-                    
+                    tag = '&'
+                    ptype1 = ptype
+                vn = right_varname.rstrip('->obj');
+                vl = left_varname.rstrip('->obj');
+                return '  if( nsp_%s_full_copy(%s,%s%s->%s,%s)== FAIL) return NULL;\n' \
+                    % (ptype1,vl,tag,left_varname,pname,vn)
             else:
                 return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
         else:

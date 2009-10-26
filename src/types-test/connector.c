@@ -593,7 +593,7 @@ NspConnector *nsp_connector_full_copy_partial(NspConnector *H,NspConnector *self
   H->obj->color=self->obj->color;
   H->obj->thickness=self->obj->thickness;
   H->obj->background=self->obj->background;
-  if( nsp_gr_lock_full_copy(&H->obj->lock,&self->obj->lock,self)== FAIL) return NULL;
+  if( nsp_gr_lock_full_copy(H,&H->obj->lock,self)== FAIL) return NULL;
   H->obj->hilited=self->obj->hilited;
   H->obj->show=self->obj->show;
   return H;
@@ -1584,8 +1584,11 @@ static void nsp_init_gr_lock(gr_lock *lock)
   lock->ports = NULL; 
 }
 
-static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M)
+
+
+static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M)
 {
+  gr_lock *lock = &M->obj->lock;
   int i;
   lock_c->n_ports = lock->n_ports;
   lock_c->fixed = lock->fixed;
@@ -1597,7 +1600,10 @@ static int nsp_gr_lock_full_copy(gr_lock *lock_c,gr_lock *lock,NspConnector *M)
       lock_c->ports[i].object_id = NULLOBJ;
       lock_c->ports[i].object_sid = lock->ports[i].object_id ;
     }
+
+  /* trick: we use  this function to also update the object_sid value */
+  C->obj->object_sid = M;
   return OK;
 }
 
-#line 1604 "connector.c"
+#line 1610 "connector.c"

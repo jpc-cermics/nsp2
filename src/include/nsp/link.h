@@ -216,7 +216,7 @@ static int nsp_print_grl_lock(int indent,grl_lock *locks,NspLink *M);
 static int nsp_check_grl_lock(grl_lock *locks,NspLink *M);
 static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
-static int nsp_grl_lock_full_copy(grl_lock *lc,grl_lock *l,NspLink *L);
+static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
 #line 222 "./link.h"
 #endif /* NspLink_Private */

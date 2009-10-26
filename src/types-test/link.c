@@ -621,8 +621,8 @@ NspLink *nsp_link_full_copy_partial(NspLink *H,NspLink *self)
     {
       if ((H->obj->poly = (NspMatrix *) nsp_object_full_copy_and_name("poly",NSP_OBJECT(self->obj->poly))) == NULLMAT) return NULL;
     }
-  if( nsp_grl_lock_full_copy(&H->obj->lock1,&self->obj->lock1,self)== FAIL) return NULL;
-  if( nsp_grl_lock_full_copy(&H->obj->lock2,&self->obj->lock2,self)== FAIL) return NULL;
+  if( nsp_grl_lock_full_copy(H,&H->obj->lock1,self)== FAIL) return NULL;
+  if( nsp_grl_lock_full_copy(H,&H->obj->lock2,self)== FAIL) return NULL;
   H->obj->hilited=self->obj->hilited;
   H->obj->show=self->obj->show;
   return H;
@@ -1953,12 +1953,16 @@ static void nsp_init_grl_lock(grl_lock *locks)
   
 }
 
-static int  nsp_grl_lock_full_copy(grl_lock *lc,grl_lock *l,NspLink *L)
+static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
 {
-  *lc = *l;
-  lc->port.object_id = NULLOBJ;
-  lc->port.object_sid = l->port.object_id;
+  grl_lock *Ll = ( &C->obj->lock1 == Cl ) ?  &L->obj->lock1: &L->obj->lock2;
+  *Cl = *Ll;
+  Cl->port.object_id = NULLOBJ;
+  Cl->port.object_sid = Ll->port.object_id;
+  /* trick */
+  /* trick: we use  this function to also update the object_sid value */
+  C->obj->object_sid = L;
   return OK;
 }
 
-#line 1965 "link.c"
+#line 1969 "link.c"

@@ -677,8 +677,6 @@ static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int o
       Scierror("Error: Graphic window %d does not exists\n",winid);
       return RET_BUG;
     }
-  /* ((NspDiagram *) self)->obj->Xgc = Xgc; */
-  /* ((NspDiagram *) self)->obj->top = TRUE; */
   return 0;
 }
 
