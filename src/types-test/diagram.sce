@@ -314,6 +314,10 @@ function my_eventhandler(win,x,y,ibut,imask)
   global('gr_objects');
   global('GF');
   global('count');
+  global('poo');
+  //if isempty(poo) then poo=1;end
+  //printf("in event handler %d\n",poo);
+  //poo= poo+1;
   // keys are described in src/gtk2/codegen/keysyms.sce
   // mask in gdk-types.defs are accessible in GDK hash table.
   // shift-mask GDK.SHIFT_MASK 

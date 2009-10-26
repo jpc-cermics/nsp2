@@ -2753,16 +2753,18 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   nsp_diagram_unhilite_objs(F,FALSE);
   hvfactor=lock_size*2;/* magnetism toward horizontal and vertical line  */
   Xgc->graphic_engine->xinfo(Xgc,"Enter polyline, Right click to stop");
-
   
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
   bf = GR_INT(((NspObject *) L)->basetype->interface);
-
   if ( L == NULLLINK) return NULLOBJ;
   L->obj->hilited = TRUE;
   L->obj->poly->R[0]=mpt[0];
   L->obj->poly->R[1]=mpt[0];
+  /* insert link in diagram at the start 
+   */
+  if (nsp_list_insert(F->obj->children,(NspObject  *) L,0) == FAIL) return NULLOBJ;
+  
   while ( wstop==0 ) 
     {
       NspGraphic *G= (NspGraphic *) L;
@@ -2850,10 +2852,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
 	}
     }
-  /* insert link in frame 
-   * at the start 
-   */
-  if (nsp_list_insert(F->obj->children,(NspObject  *) L,0) == FAIL) return NULLOBJ;
   /* check if first and last points are locked 
    * if true update locks 
    */
@@ -2958,4 +2956,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2962 "diagram.c"
+#line 2960 "diagram.c"
