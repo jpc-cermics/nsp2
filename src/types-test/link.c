@@ -1565,11 +1565,11 @@ void link_check(NspDiagram *F,NspLink *L)
 	{
 	  if ( link_is_lock_connected(L,i)== FALSE) 
 	    {
-	      Scierror("Link lock point [%5.2f,%5.2f]is over an object \n",pt[0],pt[1]);
+	      /* Scierror("Link lock point [%5.2f,%5.2f]is over an object \n",pt[0],pt[1]);*/
 	      if ( (obj != (NspObject *) L) && IsLink(obj))
 		{
 		  NspLink *link;
-		  Scierror("I split the link \n");
+		  /* Scierror("I split the link \n");*/
 		  if ( link_split(F,(NspLink *)obj,&link,pt) == OK)
 		    {
 		      /* create a connector */
@@ -1582,7 +1582,6 @@ void link_check(NspDiagram *F,NspLink *L)
 					      rect,color,thickness,background,
 					      l,FALSE,TRUE,NULL);
 		      if ( C == NULL) return;
-		      /* herits the frame graphic context */
 		      if (nsp_list_end_insert(F->obj->children,NSP_OBJECT(C)) == FAIL) return ; 
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
@@ -1591,7 +1590,7 @@ void link_check(NspDiagram *F,NspLink *L)
 		      link_lock(F,(NspLink *)obj,1,&p); 
 		      link_lock(F,link,0,&p); 
 		      link_lock(F,L,i,&p); 
-		      nsp_diagram_locks_update(F,NSP_OBJECT(C));/* align the locks */
+		      nsp_diagram_locks_update(F,NSP_OBJECT(C)); /* align the locks */
 		      GR_INT(((NspObject *)C)->basetype->interface)->draw(C);
 
 		    }
@@ -1965,4 +1964,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1969 "link.c"
+#line 1968 "link.c"

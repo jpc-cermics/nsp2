@@ -273,6 +273,7 @@ NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int col
   H->obj->thickness=thickness;
   H->obj->background=background;
   /* H->obj->lock = lock; */
+  connector_update_locks(H);
   H->obj->hilited=hilited;
   H->obj->show=show;
  if ( nsp_connector_check_values(H) == FAIL) return NULLCONNECTOR;
