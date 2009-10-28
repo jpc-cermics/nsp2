@@ -1732,11 +1732,11 @@ static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 
 static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],double *rect)
 {
-#if 0
-  int th,pixmode,color,style,fg;
+  int th,pixmode,color,style,fg,ix,iy;
   int ibutton=-1,imask,iwait=FALSE;
-  double x,y;
-  BCG *Xgc = R->obj->Xgc;
+  double mpt[2],x,y;
+  nsp_figure *Fig = (((NspGraphic *) R)->obj->Fig);
+  BCG *Xgc= window_list_search_new( Fig->id); 
   if ( Xgc == NULL ) return; 
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
@@ -1756,7 +1756,9 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
       rect[1]= Max(pt[1],y);
       rect[2]= Abs(pt[0]-x);
       rect[3]= Abs(pt[1]-y);
-      Xgc->graphic_engine->scale->xgetmouse(Xgc,"one",&ibutton,&imask,&x, &y,iwait,TRUE,TRUE,FALSE);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix, &iy,iwait,TRUE,TRUE,FALSE);
+      nsp_get_point_axes(Xgc,ix,iy,mpt);
+      x=mpt[0];y=mpt[1];
       /* hilite objects which are contained in bbox 
        */ 
       C = R->obj->children->first;
@@ -1791,7 +1793,6 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
   nsp_diagram_draw(R);
-#endif 
 }
 
 /**
@@ -2956,4 +2957,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2960 "diagram.c"
+#line 2961 "diagram.c"
