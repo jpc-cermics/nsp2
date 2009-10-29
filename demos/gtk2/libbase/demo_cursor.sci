@@ -35,7 +35,7 @@ function demo_cursor()
     c = iand(c,254);  // 0xfe
     printf("valeur de c %d\n",c);  
     cursor = gdkcursor_new(c) 
-    widget.window.set_cursor[cursor];
+    widget.window.set_cursor[cursor=cursor];
     // IL faut implementer la methode name XXXXXXXX 
     // cur_name.set_text(cursor.name)
     // args(2).set_text[cursor.name]
