@@ -23,8 +23,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
-	../diagram.c
-
+	../diagram.c ../grimage.c
 
 all:: $(ALL)
 	cd ../; make all
@@ -256,6 +255,13 @@ clean ::
 	    --override connector.override \
 	    --prefix Connector connector.defs) > $*.c \
 	&& mv connector.h ../../include/nsp 
+
+../grimage.c : grimage.defs grimage-types.defs grimage.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --register ./graphic-types.defs \
+	    --override grimage.override \
+	    --prefix GrImage grimage.defs) > $*.c \
+	&& mv grimage.h ../../include/nsp 
 
 ../interface.c : interface.defs codegen/*.py
 	($(PYTHON) codegen/codegen.py \

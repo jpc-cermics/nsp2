@@ -173,6 +173,8 @@ static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
 
+static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
+
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
@@ -223,6 +225,6 @@ static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
 static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 
-#line 227 "./block.h"
+#line 229 "./block.h"
 #endif /* NspBlock_Private */
 

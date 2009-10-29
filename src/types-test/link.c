@@ -1501,16 +1501,15 @@ int link_add_control(NspLink *L,const double pt[2])
 /** 
  * link_remove_control_point: 
  * 
- * XXXX 
- * 
  */
 
 int link_remove_control(NspLink *L,const double pt[2])
 {
-  int cp;
+  int cp=0;
   index_vector index = {&cp, cp+1,cp+1,1, FALSE,0};
   if ( link_control_near_pt(L,pt,&cp) == FALSE ) return OK;
   if ( cp == 0 || cp == L->obj->poly->m -1 ) return OK;
+  index.min = index.max = cp+1;
   /* remove point in matrix */
   return nsp_matint_delete_rows( (NspObject *) (L->obj->poly), &index);
 }
@@ -1964,4 +1963,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1968 "link.c"
+#line 1967 "link.c"

@@ -5,6 +5,37 @@
 // lenght et size pour un diagram doivent donner 
 // le nbre d'objets stockes.
 
+function C=draw_vanne()
+  if ~new_graphics() then 
+    switch_graphics();
+  end
+  win=xget('window');
+  xset('window',30);
+  xrect(0,0,10,10);
+  F=get_current_figure();
+  F.draw_latter[];
+  F.start_compound[];
+  // test function for block drawing 
+  orig=[0,0]
+  sz=[10,10];
+  // take car that for Opengl 
+  // polygone are to be convex when filled 
+  //xfpolys(orig(1)+[0;5;7;3;5;10;10;0;0]*sz(1)/10,...
+  //      orig(2)+[4;2;7;7;2;0;4;0;4]*sz(2)/10,15);
+  // thus we draw 3 polygons.
+  xfpolys(orig(1)+[5,5,5;10,7,0;10,3,0]*sz(1)/10,...
+	  orig(2)+[2,2,2;4,7,0;0,7,4]*sz(2)/10,[15,15,15]);
+  
+  xfarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
+	 15)
+  xarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
+	1);
+  xset('font',2,6);
+  xstringb(orig(1),orig(2),'String',sz(1),sz(2));
+  C=F.end_compound[];
+  C.unlink[];
+endfunction;
+
 function w=create_object_menu (win,xc,yc)
 // midle button menu construction 
 // version where selection is a list 
@@ -273,43 +304,6 @@ function menuitem_response(w,args)
   GF(win).draw[]
 endfunction
 
-function w=create_menu (depth, length, tearoff)
-// provisoire 
-  if depth < 1 ;  w=[] ;return; end 
-  menu = gtkmenu_new ();
-  if tearoff then 
-    menuitem = gtktearoffmenuitem_new ();
-    menu.append[  menuitem]
-    menuitem.show[];
-  end
-  menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
-  menu.append[menuitem]
-  menuitem.show[];
-    
-  for i = 1:length 
-    buf = sprintf("radio menu item %2d - %d", depth,i);
-    if i==1 then 
-      menuitem = gtkradiomenuitem_new(label=buf);
-      group = menuitem;
-    else
-      menuitem = gtkradiomenuitem_new(group=group,label=buf);
-    end
-    // callback 
-    menuitem.connect["activate",menuitem_response,list(buf)];
-    menu.append[menuitem]
-    menuitem.show[];
-    if i == 3 then menuitem.set_sensitive[%f]; end 
-    if i == 4 then menuitem.set_inconsistent[ %f]; end 
-    if i < 3 then 
-      if depth > 1 then 
-	menuitem.set_submenu[create_menu(depth - 1,5,%t)];
-      end
-    end
-  end
-  w=menu;
-endfunction 
-
-
 function my_eventhandler(win,x,y,ibut,imask)
   global('gr_objects');
   global('GF');
@@ -358,8 +352,6 @@ function my_eventhandler(win,x,y,ibut,imask)
     [xc,yc]=xchange(x,y,'i2f')
     popup_m=create_object_menu (win)
     popup_m.popup[button=2,activate_time=0]; //event.time]; 
-    //popup_menu=create_menu(2,8,%f); 
-    //popup_menu.popup[button=3,activate_time=0]; //event.time]; 
   elseif ibut==3 then 
     // a double click 
     x_message('double click');
@@ -386,26 +378,6 @@ function my_eventhandler(win,x,y,ibut,imask)
 endfunction
 
 // plusieurs fonctions de test pour draw_vanne 
-
-function draw_vanne(rect)
-// test function for block drawing 
-  orig=[rect(1),rect(2)-rect(4)];
-  sz=[rect(3),rect(4)];
-  // take car that for Opengl 
-  // polygone are to be convex when filled 
-  //xfpolys(orig(1)+[0;5;7;3;5;10;10;0;0]*sz(1)/10,...
-  //      orig(2)+[4;2;7;7;2;0;4;0;4]*sz(2)/10,15);
-  // thus we draw 3 polygons.
-  xfpolys(orig(1)+[5,5,5;10,7,0;10,3,0]*sz(1)/10,...
-	  orig(2)+[2,2,2;4,7,0;0,7,4]*sz(2)/10,[15,15,15]);
-  
-  xfarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
-	 15)
-  xarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
-	1);
-  xset('font',2,6);
-  xstringb(orig(1),orig(2),'String',sz(1),sz(2));
-endfunction;
 
 function draw_plot3d(rect)
 // test function for block drawing 
@@ -475,7 +447,7 @@ if ~new_graphics() then
   switch_graphics();
 end
 
-xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
+xinit(name='My diagram',opengl=%f,dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);
@@ -492,6 +464,8 @@ cu = curve_create(Pts=[x',y'],color=3,width=2);
 A.children($+1)=cu ;
 F.draw_now[];
 
+//C=draw_vanne();
+//A.children($+1)= C;
 
 
 if %t then 

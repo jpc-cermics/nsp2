@@ -738,10 +738,13 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+extern function int_grimage_create;
+
 static OpTab GrRect_func[]={
   {"extractelts_grrect", _wrap_nsp_extractelts_grrect},
   {"setrowscols_grrect", _wrap_nsp_setrowscols_grrect},
   { "grrect_create", int_grrect_create},
+  { "grimage_create", int_grimage_create},
   { NULL, NULL}
 };
 

@@ -498,7 +498,6 @@ override Diagram.diagram_get_selection_copy
 static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj,*bool;
-  NspTypeGRint *bf;
   CheckRhs(0,0);
   CheckLhs(2,2);
   if ((obj = nsp_diagram_get_hilited(((NspDiagram *) self)))== NULL) 
@@ -509,11 +508,7 @@ static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int
       MoveObj(stack,2,bool);
       return 2;
     }
-  /* we want here a full copy 
-   * we assume that obj implements grint interface 
-   */
-  bf = GR_INT(obj->basetype->interface);
-  if ((obj = bf->full_copy(obj))== NULLOBJ)  return RET_BUG;
+  if ((obj = nsp_object_full_copy(obj))== NULLOBJ)  return RET_BUG;
   if ((bool = nsp_create_boolean_object(NVOID,TRUE)));
   MoveObj(stack,1,bool);
   MoveObj(stack,2,obj);
@@ -1340,13 +1335,12 @@ NspList *nsp_diagram_get_hilited_list(nsp_diagram *gf, int full_copy)
 	    {
 	      if ( full_copy == TRUE ) 
 		{
-		  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  goto err;
-		  if ( nsp_object_set_name(obj,"lel") == FAIL)goto err;
-
+		  if ((obj = nsp_object_full_copy_and_name("lel",cloc->O)) == NULLOBJ)
+		      goto err;
 		}
 	      else
 		{
-		  if ((obj=nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
+		  if ((obj= nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
 		}
 	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
 	    }
@@ -2374,7 +2368,8 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
 	  if ( hilited_only == FALSE || bf->get_hilited(cloc->O) == TRUE) 
 	    {
-	      if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
+	      if ((obj = nsp_object_full_copy_and_name(nsp_object_get_name(cloc->O),cloc->O))
+		  == NULLOBJ )  goto err;
 	      if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
 	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
 	    }

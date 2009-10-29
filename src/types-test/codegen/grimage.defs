@@ -1,0 +1,16 @@
+;; -*- scheme -*-
+
+(include "grimage-types.defs")
+
+
+;; just for the name, the code is overriten 
+
+(define-function extractelts_grimage
+  (c-name "nsp_extractelts_grimage")
+  (return-type "none")
+)
+(define-function setrowscols_grimage
+  (c-name "nsp_setrowscols_grimage")
+  (return-type "none")
+)
+

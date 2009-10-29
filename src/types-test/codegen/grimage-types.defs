@@ -1,0 +1,23 @@
+;; -*- scheme -*-
+
+(define-objectref GrImage
+  (in-module "GrImage")
+  (parent "Graphic")
+  (c-name "NspGrImage")
+  (fields
+    '("double" "x")
+    '("double" "y")
+    '("double" "w")
+    '("double" "h")
+    '("gboolean" "border")
+    '("int" "thickness")
+    '("char*" "fname" ) 
+    '("void*" "image" "hidden" "NULL")
+    '("int" "color" "std" "-1")
+    )
+  (gtype-id "GrImage")
+)
+
+
+
+

@@ -453,7 +453,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
 			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_HINT_MASK 
+			| GDK_POINTER_MOTION_HINT_MASK
 			/* get all motions */
 			| GDK_POINTER_MOTION_MASK 
 			/* get motion when pressed buttons move*/

@@ -64,12 +64,22 @@ static gboolean locator_button_press(GtkWidget *widget,
 
   if ( event->state & GDK_SHIFT_MASK) 
     {
-      Sciprintf("A Shift-press\n");
+      /* 
+       * Sciprintf("A Shift-press\n");
+       */
     }
+  /*
+  static int count=0;
+  fprintf(stderr,"A press is activated %d\n",count++);
+  */
 
   if ( nsp_event_info.sci_click_activated == FALSE ) 
     {
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,event->state,0,0};
+      /* 
+      static int count=0;
+      fprintf(stderr,"Add press in queue %d\n",count++); 
+      */
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
@@ -131,7 +141,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
       x= event->x;y=event->y;
       gdk_event_request_motions(event);
 #else
-	  GdkModifierType state;
+      GdkModifierType state;
       gdk_window_get_pointer (event->window, &x, &y, &state);
 #endif
     }

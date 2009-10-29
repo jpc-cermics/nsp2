@@ -65,6 +65,8 @@ include-private  Block
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
 
+static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
+
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
@@ -728,16 +730,29 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
   
   /* first draw inside */
   /* just a test we draw a Matrix inside the block */
-  draw_script = 2;
+  draw_script = 0;
   switch (draw_script)
     {
     case 0: 
-      Xgc1 = window_list_get_first(); 
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
-      sprintf(str,"Matplot1(rand(10,10)*32,[%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1]-B->obj->r[3],
-	      B->obj->r[0]+B->obj->r[2],B->obj->r[1]);
-      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
+      if ( B->obj->icon == NULL ) 
+	{
+	  if ( nsp_block_create_icon(Xgc,B) == FAIL) 
+	    Xgc->graphic_engine->xinfo(Xgc,"failed to create icon");
+	}
+      if ( B->obj->icon != NULL ) 
+	{
+	  B->obj->icon->type->draw(Xgc, B->obj->icon,NULL);
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,8);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
+	  /* drawing a string */
+	  Xgc->graphic_engine->xset_pattern(Xgc,0);
+	  loc[0] = B->obj->r[1] - B->obj->r[3];
+	  Xgc->graphic_engine->scale->xstringb(Xgc,"No icon",&fill,
+					       B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+	}
       break;
     case 1: 
       Xgc1 = window_list_get_first(); 
@@ -831,7 +846,7 @@ static void draw_3d(BCG *Xgc,double r[])
 
 
 /**
- * block_tranlate:
+ * block_translate:
  * @B: a block 
  * @tr: translation vector 
  * 
@@ -1404,3 +1419,41 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
   C->obj->object_sid = M;
   return OK;
 }
+
+
+/* execute a function which should return a 
+ * compounf giving the block icon 
+ */
+
+static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
+{
+  NspObject *targs[]={NULL};
+  NspObject *nsp_ret[1];
+  int nret = 1,nargs = 0,i;
+  
+  if ( nsp_gtk_eval_function_by_name("draw_vanne",targs,nargs,nsp_ret,&nret)== FAIL)
+    {
+      goto stop;
+    }
+  if ( nret != 1)
+    {
+      goto stop;
+    }
+  if ( IsGraphic(nsp_ret[0])) 
+    {
+      /* XXX we could free icon if it is already set.
+       */
+      if (nsp_object_set_name(nsp_ret[0],"icon") == FAIL) goto stop;
+      B->obj->icon = (NspGraphic *) nsp_ret[0];
+    }
+  else 
+    {
+      goto stop;
+    }
+  nsp_graphic_link_figure(B->obj->icon,((NspGraphic *) B)->obj->Fig);
+  return OK;
+ stop: 
+  for( i= 0 ; i < nret ; i++) nsp_void_object_destroy(&nsp_ret[i]);
+  return FAIL;
+}
+

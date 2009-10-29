@@ -588,7 +588,7 @@ static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lh
 #line 589 "diagram.c"
 
 
-#line 686 "codegen/diagram.override"
+#line 681 "codegen/diagram.override"
 /* XXX */
 extern void nsp_diagram_tops(NspDiagram *R,char *fname);
 
@@ -887,7 +887,7 @@ static int _wrap_diagram_delete_hilited(void *self,Stack stack, int rhs, int opt
 #line 888 "diagram.c"
 
 
-#line 541 "codegen/diagram.override"
+#line 536 "codegen/diagram.override"
 /* insert an object in a frame. 
  *
  */
@@ -937,7 +937,7 @@ static int _wrap_diagram_insert(void *self,Stack stack, int rhs, int opt, int lh
 #line 938 "diagram.c"
 
 
-#line 589 "codegen/diagram.override"
+#line 584 "codegen/diagram.override"
 /* used for the paste of a multiselection 
  * insert a list of objects which are in a diagram. 
  */
@@ -1047,7 +1047,6 @@ static int _wrap_diagram_get_selection(void *self,Stack stack, int rhs, int opt,
 static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *obj,*bool;
-  NspTypeGRint *bf;
   CheckRhs(0,0);
   CheckLhs(2,2);
   if ((obj = nsp_diagram_get_hilited(((NspDiagram *) self)))== NULL) 
@@ -1058,11 +1057,7 @@ static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int
       MoveObj(stack,2,bool);
       return 2;
     }
-  /* we want here a full copy 
-   * we assume that obj implements grint interface 
-   */
-  bf = GR_INT(obj->basetype->interface);
-  if ((obj = bf->full_copy(obj))== NULLOBJ)  return RET_BUG;
+  if ((obj = nsp_object_full_copy(obj))== NULLOBJ)  return RET_BUG;
   if ((bool = nsp_create_boolean_object(NVOID,TRUE)));
   MoveObj(stack,1,bool);
   MoveObj(stack,2,obj);
@@ -1070,10 +1065,10 @@ static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int
 }
 
 
-#line 1074 "diagram.c"
+#line 1069 "diagram.c"
 
 
-#line 526 "codegen/diagram.override"
+#line 521 "codegen/diagram.override"
 /* get the hilited objects as a list with or without full copy */
 
 static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rhs, int opt, int lhs) 
@@ -1087,10 +1082,10 @@ static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rh
 }
 
 
-#line 1091 "diagram.c"
+#line 1086 "diagram.c"
 
 
-#line 663 "codegen/diagram.override"
+#line 658 "codegen/diagram.override"
 /* connect a diagram to a physical window 
  *
  */
@@ -1112,10 +1107,10 @@ static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int o
 }
 
 
-#line 1116 "diagram.c"
+#line 1111 "diagram.c"
 
 
-#line 729 "codegen/diagram.override"
+#line 724 "codegen/diagram.override"
 /* check if we are over an object */
 
 static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -1141,10 +1136,10 @@ static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt,
   return Max(lhs,1);
 }
 
-#line 1145 "diagram.c"
+#line 1140 "diagram.c"
 
 
-#line 715 "codegen/diagram.override"
+#line 710 "codegen/diagram.override"
 
 static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1157,7 +1152,7 @@ static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int
 }
 
 
-#line 1161 "diagram.c"
+#line 1156 "diagram.c"
 
 
 static NspMethods diagram_methods[] = {
@@ -1249,7 +1244,7 @@ static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1253 "diagram.c"
+#line 1248 "diagram.c"
 static NspObject *_wrap_diagram_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1276,7 +1271,7 @@ int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1280 "diagram.c"
+#line 1275 "diagram.c"
 
 
 #line 209 "codegen/diagram.override"
@@ -1289,7 +1284,7 @@ int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1293 "diagram.c"
+#line 1288 "diagram.c"
 
 
 /*----------------------------------------------------
@@ -1320,7 +1315,7 @@ void Diagram_Interf_Info(int i, char **fname, function (**f))
   *f = Diagram_func[i].fonc;
 }
 
-#line 756 "codegen/diagram.override"
+#line 751 "codegen/diagram.override"
 
 /* inserted verbatim at the end */
 
@@ -1908,13 +1903,12 @@ NspList *nsp_diagram_get_hilited_list(nsp_diagram *gf, int full_copy)
 	    {
 	      if ( full_copy == TRUE ) 
 		{
-		  if ((obj = bf->full_copy(cloc->O))== NULLOBJ)  goto err;
-		  if ( nsp_object_set_name(obj,"lel") == FAIL)goto err;
-
+		  if ((obj = nsp_object_full_copy_and_name("lel",cloc->O)) == NULLOBJ)
+		      goto err;
 		}
 	      else
 		{
-		  if ((obj=nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
+		  if ((obj= nsp_object_copy_with_name(cloc->O)) == NULLOBJ)  goto err;
 		}
 	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
 	    }
@@ -2942,7 +2936,8 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 	  NspTypeGRint *bf= GR_INT(cloc->O->basetype->interface);
 	  if ( hilited_only == FALSE || bf->get_hilited(cloc->O) == TRUE) 
 	    {
-	      if ( (obj = bf->full_copy(cloc->O)) == NULLOBJ )  goto err;
+	      if ((obj = nsp_object_full_copy_and_name(nsp_object_get_name(cloc->O),cloc->O))
+		  == NULLOBJ )  goto err;
 	      if ( nsp_object_set_name(obj,nsp_object_get_name(cloc->O)) == FAIL ) goto err;
 	      if ( nsp_list_end_insert(Loc, obj) == FAIL ) goto err;
 	    }
@@ -2957,4 +2952,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2961 "diagram.c"
+#line 2956 "diagram.c"
