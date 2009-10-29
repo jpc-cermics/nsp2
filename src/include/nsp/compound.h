@@ -111,11 +111,11 @@ static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type);
 /* inserted in the private part of include file */
 
 static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_compound(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_compound(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_compound(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *o,double *bounds);
-static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_compound(NspGraphic *o,const double *tr);
+static void nsp_rotate_compound(NspGraphic *o,double *R);
+static void nsp_scale_compound(NspGraphic *o,double *alpha);
+static int nsp_getbounds_compound(NspGraphic *o,double *bounds);
+static void nsp_compound_compute_inside_bounds(NspGraphic *Obj);
 static void nsp_compound_link_figure(NspGraphic *G, void *F);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_compound_children(NspGraphic *Obj);

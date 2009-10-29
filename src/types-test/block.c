@@ -1053,17 +1053,17 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 */
 
-static void nsp_translate_block(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_block(NspGraphic *Obj,const double *tr)
 {
   /* NspBlock *P = (NspBlock *) Obj;*/
 }
 
-static void nsp_rotate_block(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_block(NspGraphic *Obj,double *R)
 {
   
 }
 
-static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_block(NspGraphic *Obj,double *alpha)
 {
   /*   NspBlock *P = (NspBlock *) Obj; */
 }
@@ -1072,7 +1072,7 @@ static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_block (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_block (NspGraphic *Obj,double *bounds)
 {
   NspBlock *B = (NspBlock *) Obj;
   block_get_rect(B,bounds);
@@ -1351,7 +1351,7 @@ int block_translate(NspBlock *B,const double tr[2])
   B->obj->r[0] += tr[0] ;
   B->obj->r[1] += tr[1] ;
   block_update_locks(B);
-  if ( Icon != NULL) Icon->type->translate(NULL,Icon,tr);
+  if ( Icon != NULL) Icon->type->translate(Icon,tr);
   return OK;
 }
 
@@ -1386,10 +1386,12 @@ void block_get_rect(NspBlock *B, double r[4])
 
 void block_resize(NspBlock *B,const double size[2])
 {
+  /*
   double sz[2];
   NspGraphic *Icon = (NspGraphic *) B->obj->icon;
   sz[0] = Max(size[0],3*lock_size)/B->obj->r[2];
   sz[1] = Max(size[1],3*lock_size)/B->obj->r[3];
+  */
   B->obj->r[2] = Max(size[0],3*lock_size) ;
   B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change to XXXXX */
@@ -1954,7 +1956,7 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   /* we should also scale */
   tr[0]= B->obj->r[0];
   tr[1]= B->obj->r[1] - B->obj->r[3];
-  G->type->translate(NULL,G,tr);
+  G->type->translate(G,tr);
   return OK;
  stop: 
   for( i= 0 ; i < nret ; i++) nsp_void_object_destroy(&nsp_ret[i]);
@@ -1962,4 +1964,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1966 "block.c"
+#line 1968 "block.c"

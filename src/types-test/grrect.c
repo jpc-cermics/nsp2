@@ -738,13 +738,10 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-extern function int_grimage_create;
-
 static OpTab GrRect_func[]={
   {"extractelts_grrect", _wrap_nsp_extractelts_grrect},
   {"setrowscols_grrect", _wrap_nsp_setrowscols_grrect},
   { "grrect_create", int_grrect_create},
-  { "grimage_create", int_grimage_create},
   { NULL, NULL}
 };
 
@@ -809,7 +806,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
-static void nsp_translate_grrect(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   P->obj->x += tr[0];
@@ -817,7 +814,7 @@ static void nsp_translate_grrect(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_grrect(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_grrect(NspGraphic *Obj,double *R)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   double x1;
@@ -828,7 +825,7 @@ static void nsp_rotate_grrect(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_grrect(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_grrect(NspGraphic *Obj,double *alpha)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   P->obj->x *= alpha[0];
@@ -840,7 +837,7 @@ static void nsp_scale_grrect(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   bounds[0]=P->obj->x;/* xmin */

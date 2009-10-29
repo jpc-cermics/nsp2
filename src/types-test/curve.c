@@ -924,7 +924,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_curve(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_curve(NspGraphic *Obj,const double *tr)
 {
   int i; 
   NspCurve *P = (NspCurve *) Obj;
@@ -938,7 +938,7 @@ static void nsp_translate_curve(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_curve(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_curve(NspGraphic *Obj,double *R)
 {
   int i;
   NspCurve *P = (NspCurve *) Obj;
@@ -954,7 +954,7 @@ static void nsp_rotate_curve(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_curve(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_curve(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspCurve *P = (NspCurve *) Obj;
@@ -972,7 +972,7 @@ static void nsp_scale_curve(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_curve(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
 {
   int i;
   NspCurve *P = (NspCurve *) Obj;

@@ -948,17 +948,17 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 */
 
-static void nsp_translate_link(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_link(NspGraphic *Obj,const double *tr)
 {
   /* NspLink *P = (NspLink *) Obj;*/
 }
 
-static void nsp_rotate_link(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_link(NspGraphic *Obj,double *R)
 {
   
 }
 
-static void nsp_scale_link(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_link(NspGraphic *Obj,double *alpha)
 {
   /*   NspLink *P = (NspLink *) Obj; */
 }
@@ -967,7 +967,7 @@ static void nsp_scale_link(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_link (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_link (NspGraphic *Obj,double *bounds)
 {
   NspLink *B = (NspLink *) Obj;
   link_get_rect(B,bounds);

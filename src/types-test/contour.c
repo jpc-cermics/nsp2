@@ -894,7 +894,7 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
-static void nsp_translate_contour(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_contour(NspGraphic *Obj,const double *tr)
 {
   NspContour *P = (NspContour *) Obj;
   int i;
@@ -905,13 +905,13 @@ static void nsp_translate_contour(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_contour(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_contour(NspGraphic *Obj,double *R)
 {
   Sciprintf("we should get a double here for alpha\n");
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_contour(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_contour(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspContour *P = (NspContour *) Obj;
@@ -926,7 +926,7 @@ static void nsp_scale_contour(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_contour (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 {
   NspContour *P = (NspContour *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */

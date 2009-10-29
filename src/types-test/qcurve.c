@@ -930,7 +930,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_qcurve(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_qcurve(NspGraphic *Obj,const double *tr)
 {
   int i; 
   NspQcurve *P = (NspQcurve *) Obj;
@@ -944,7 +944,7 @@ static void nsp_translate_qcurve(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_qcurve(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_qcurve(NspGraphic *Obj,double *R)
 {
   int i;
   NspQcurve *P = (NspQcurve *) Obj;
@@ -960,7 +960,7 @@ static void nsp_rotate_qcurve(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_qcurve(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_qcurve(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspQcurve *P = (NspQcurve *) Obj;
@@ -978,7 +978,7 @@ static void nsp_scale_qcurve(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_qcurve(NspGraphic *Obj,double *bounds)
 {
   int pos,max;
   NspQcurve *C = (NspQcurve *) Obj;

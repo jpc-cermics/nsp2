@@ -113,13 +113,13 @@ static NspContour3d *nsp_contour3d_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_contour3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_contour3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_contour3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_contour3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_contour3d(NspGraphic *o,const double *tr);
+static void nsp_rotate_contour3d(NspGraphic *o,double *R);
+static void nsp_scale_contour3d(NspGraphic *o,double *alpha);
+static int nsp_getbounds_contour3d(NspGraphic *o,double *bounds);
 static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj);
-static int nsp_check_contour3d(BCG *Xgc,NspContour3d *P);
+static int nsp_check_contour3d(NspContour3d *P);
 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);

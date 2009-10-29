@@ -36,44 +36,7 @@
 #include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
 
-/*
- * macro used in each drawing primitive. 
- *  Xgc->record_flag == TRUE if we are recording graphics 
- *  Xgc->private->in_expose == TRUE if the call is from an expose_event 
- *  Xgc->CurPixmapStatus == 0 if we are not using an extra pixmap 
- *  Xgc->private->draw = TRUE we have something to draw 
- */
-
-#define DRAW_CHECK_PERIGTK						\
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
-    nsp_gtk_invalidate(Xgc);
-
-#define DRAW_CHECK_PERIGLGTK						\
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0 )	\
-    {  nsp_gtk_invalidate(Xgc);						\
-      if (Xgc->record_flag == TRUE) {Xgc->private->draw = TRUE;return;} \
-    }
-
-#define DRAW_CHECK_PERICAIRO						\
-  if ( Xgc->private->cairo_cr == NULL) return;				\
-  if ( Xgc->private->in_expose == FALSE && Xgc->CurPixmapStatus == 0	\
-       && Xgc->private->drawing != NULL) nsp_gtk_invalidate(Xgc); 
-
-#ifdef PERIGL
-#ifdef PERIGLGTK 
-#define DRAW_CHECK DRAW_CHECK_PERIGLGTK
-#else 
-#define DRAW_CHECK DRAW_CHECK_PERIGTK
-#endif 
-#endif 
-
-#ifdef PERICAIRO 
-#define DRAW_CHECK DRAW_CHECK_PERICAIRO
-#endif 
-
-#ifdef PERIGTK
-#define DRAW_CHECK DRAW_CHECK_PERIGTK
-#endif 
+#define DRAW_CHECK 
 
 #ifdef PERIGTK
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
@@ -99,7 +62,6 @@ static void force_affichage(BCG *Xgc)
  * force_redraw:
  * @Xgc: a #BCG 
  * 
- * 
  * force an expose_event with draw set to TRUE
  **/
 
@@ -107,7 +69,10 @@ static void force_redraw(BCG *Xgc)
 {
   nsp_gtk_invalidate(Xgc);
   Xgc->private->draw = TRUE;
-  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+  /*
+   *
+   * gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+   */
 }
 
 /*---------------------------------------------------------
@@ -1734,7 +1699,10 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  /* {static int count = 0; xinfo(dd,"Expose event %d",count++);} */
+#ifdef DEBUG_EXPOSE
+  static int count = 0;
+  fprintf(stderr,"Expose event %d resize=%d\n",count,dd->private->resize);
+#endif 
   if(dd->private->resize != 0) 
     { 
       /* here we execute an expose and it works also when CurPixmapStatus == 1.
@@ -1762,21 +1730,20 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       /* nsp_gr_resize(dd->CurWindow); */
       dd->actions->resize(dd);
       /* cairo_destroy (dd->private->cairo_cr);
-	 dd->private->cairo_cr = NULL;
-      */
+       * dd->private->cairo_cr = NULL;
+       */
 #else 
       /* nsp_gr_resize(dd->CurWindow); */
       dd->actions->resize(dd);
 #endif 
       dd->private->in_expose= FALSE;
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
-		      dd->CWindowWidth, dd->CWindowHeight);
+			dd->CWindowWidth, dd->CWindowHeight);
     }
   else 
     {
       if ( dd->private->draw == TRUE ) 
 	{
-	  /* {static int count = 0; printf("Expose event with draw %d\n",count++);} */
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
@@ -1787,16 +1754,26 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	}
       else 
 	{
-	  /* static int count = 0; printf("Expose event without draw %d\n",count++); */
 	}
 
       if (event  != NULL) 
-	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
-			event->area.x, event->area.y, event->area.x, event->area.y,
-			event->area.width, event->area.height);
+	{
+#ifdef DEBUG_EXPOSE
+	  fprintf(stderr,"draw=%d, with area %d %d %d %d\n", 
+		  dd->private->draw,
+		  event->area.x, event->area.y,
+		  event->area.width, event->area.height);
+#endif 
+	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+			    event->area.x, event->area.y, event->area.x, event->area.y,
+			    event->area.width, event->area.height);
+	}
       else 
-	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
-			dd->CWindowWidth, dd->CWindowHeight);
+	{
+	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+			    0,0,0,0,
+			    dd->CWindowWidth, dd->CWindowHeight);
+	}
       /* if a zrect exists then add it on graphics  */
       if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	{

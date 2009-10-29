@@ -114,10 +114,10 @@ static NspGrRect *nsp_grrect_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_grrect(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_grrect(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_grrect(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_grrect(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_grrect(NspGraphic *o,const double *tr);
+static void nsp_rotate_grrect(NspGraphic *o,double *R);
+static void nsp_scale_grrect(NspGraphic *o,double *alpha);
+static int nsp_getbounds_grrect(NspGraphic *o,double *bounds);
 
 #line 123 "./grrect.h"
 #endif /* NspGrRect_Private */

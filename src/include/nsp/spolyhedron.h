@@ -124,10 +124,10 @@ static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type)
 
 /* inserted in the private part of include file */
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_spolyhedron(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_spolyhedron(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_spolyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_spolyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_spolyhedron(NspGraphic *o,const double *tr);
+static void nsp_rotate_spolyhedron(NspGraphic *o,double *R);
+static void nsp_scale_spolyhedron(NspGraphic *o,double *alpha);
+static int nsp_getbounds_spolyhedron(NspGraphic *o,double *bounds);
 static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_spolyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_spolyhedron(BCG *Xgc,NspSPolyhedron *P);

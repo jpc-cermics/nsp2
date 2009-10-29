@@ -121,10 +121,10 @@ static NspQcurve *nsp_qcurve_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_qcurve(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_qcurve(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_qcurve(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_qcurve(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
+static void nsp_rotate_qcurve(NspGraphic *o,double *R);
+static void nsp_scale_qcurve(NspGraphic *o,double *alpha);
+static int nsp_getbounds_qcurve(NspGraphic *o,double *bounds);
 static void nsp_qcurve_addPts(NspQcurve *C,NspMatrix *Pts);
 static void nsp_qcurve_addpt(NspQcurve *C,double *x,double *y,int n);
 static void nsp_qcurve_clear(NspQcurve *C);

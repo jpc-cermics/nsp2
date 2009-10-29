@@ -57,11 +57,11 @@ include-private Diagram
 /* inserted in the private part of include file */
 
 static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_diagram(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_diagram(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_diagram(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_diagram(BCG *Xgc,NspGraphic *o,double *bounds);
-static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj);
+static void nsp_translate_diagram(NspGraphic *o,const double *tr);
+static void nsp_rotate_diagram(NspGraphic *o,double *R);
+static void nsp_scale_diagram(NspGraphic *o,double *alpha);
+static int nsp_getbounds_diagram(NspGraphic *o,double *bounds);
+static void nsp_diagram_compute_inside_bounds(NspGraphic *Obj);
 static void nsp_diagram_link_figure(NspGraphic *G, void *F);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
@@ -84,6 +84,7 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 %%
 headers
 
+#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"
@@ -171,7 +172,7 @@ static int _wrap_diagram_set_obj_children(void *self,NspObject *val)
   ((NspDiagram *) self)->obj->children =  (NspList *) val;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
-  nsp_diagram_compute_inside_bounds(NULL,self);
+  nsp_diagram_compute_inside_bounds(self);
   return OK;
 }
 
@@ -189,7 +190,7 @@ static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
   ((NspDiagram *) self)->obj->children= children;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
-  nsp_diagram_compute_inside_bounds(NULL,self);
+  nsp_diagram_compute_inside_bounds(self);
   return OK;
 }
 
@@ -654,29 +655,6 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
 
 
 %%
-override Diagram.diagram_attach_to_window
-/* connect a diagram to a physical window 
- *
- */
-
-static int _wrap_diagram_attach_to_window(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int winid;
-  CheckRhs(1,1);
-  CheckLhs(-1,0);
-  if ( GetScalarInt(stack,1,&winid) == FAIL) return RET_BUG;
-  Xgc =  window_list_search_new(winid);
-  if ( Xgc == NULL ) 
-    {
-      Scierror("Error: Graphic window %d does not exists\n",winid);
-      return RET_BUG;
-    }
-  return 0;
-}
-
-
-%%
 override Diagram.diagram_tops
 /* XXX */
 extern void nsp_diagram_tops(NspDiagram *R,char *fname);
@@ -774,7 +752,7 @@ static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data)
  * objects are changed.
  */
 
-static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
+static void nsp_diagram_compute_inside_bounds(NspGraphic *Obj)
 {
   double l_bounds[4],bounds[4];
   Cell *cloc;
@@ -797,7 +775,7 @@ static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->bounds(Xgc,G,l_bounds);
+	  G->type->bounds(G,l_bounds);
 	  if ( l_bounds[0] < bounds[0] ) 
 	    bounds[0]= l_bounds[0];
 	  if (  l_bounds[2] > bounds[2])
@@ -815,7 +793,7 @@ static void nsp_diagram_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
 /* Note that the bounds should be changed here
  */
 
-static void nsp_translate_diagram(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_diagram(NspGraphic *Obj,const double *tr)
 {
   int draw_now;
   NspDiagram *P = (NspDiagram *) Obj;
@@ -831,7 +809,7 @@ static void nsp_translate_diagram(BCG *Xgc,NspGraphic *Obj,double *tr)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->translate(Xgc,G,tr);
+	  G->type->translate(G,tr);
 	}
       cloc = cloc->next;
     }
@@ -839,7 +817,7 @@ static void nsp_translate_diagram(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_diagram(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_diagram(NspGraphic *Obj,double *R)
 {
   int draw_now;
   NspDiagram *P = (NspDiagram *) Obj;
@@ -855,7 +833,7 @@ static void nsp_rotate_diagram(BCG *Xgc,NspGraphic *Obj,double *R)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->rotate(Xgc,G,R);
+	  G->type->rotate(G,R);
 	}
       cloc = cloc->next;
     }
@@ -863,7 +841,7 @@ static void nsp_rotate_diagram(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_diagram(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_diagram(NspGraphic *Obj,double *alpha)
 {
   int draw_now;
   NspDiagram *P = (NspDiagram *) Obj;
@@ -879,7 +857,7 @@ static void nsp_scale_diagram(BCG *Xgc,NspGraphic *Obj,double *alpha)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->scale(Xgc,G,alpha);
+	  G->type->scale(G,alpha);
 	}
       cloc = cloc->next;
     }
@@ -891,12 +869,12 @@ static void nsp_scale_diagram(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_diagram(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_diagram(NspGraphic *Obj,double *bounds)
 {
   NspDiagram *P = (NspDiagram *) Obj;
   if ( 0 )
     {
-      nsp_diagram_compute_inside_bounds(Xgc,Obj);
+      nsp_diagram_compute_inside_bounds(Obj);
       memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
     }
   else
@@ -1163,7 +1141,7 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
   int ibutton=-1,imask,iwait=FALSE;
   double mpt[2],x,y;
   nsp_figure *Fig = (((NspGraphic *) R)->obj->Fig);
-  BCG *Xgc= window_list_search_new( Fig->id); 
+  BCG *Xgc= Fig->Xgc; /*  window_list_search_new( Fig->id);  */
   if ( Xgc == NULL ) return; 
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
@@ -1183,6 +1161,7 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
       rect[1]= Max(pt[1],y);
       rect[2]= Abs(pt[0]-x);
       rect[3]= Abs(pt[1]-y);
+      nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix, &iy,iwait,TRUE,TRUE,FALSE);
       nsp_get_point_axes(Xgc,ix,iy,mpt);
       x=mpt[0];y=mpt[1];
@@ -1211,9 +1190,12 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
 	    }
 	  C = C->next ;
 	}
+      rect2d_f2i(Xgc,rect,Xgc->zrect,1);
       nsp_diagram_draw(R);
-      Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
     }
+  nsp_set_cursor(Xgc,-1);
+  /* disable zrect */
+  Xgc->zrect[2]=   Xgc->zrect[3]=0;
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
@@ -1740,20 +1722,30 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
   int ix,iy;
   int rep;
   nsp_figure *Fig = (((NspGraphic *) D)->obj->Fig);
-  BCG *Xgc= window_list_search_new( Fig->id); 
+  BCG *Xgc= Fig->Xgc; /*  window_list_search_new( Fig->id);  */
   int wstop = 0, ibutton,imask, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
 
-  if ( action == MOVE_CONTROL) 
+  switch ( action ) 
     {
+    case MOVE : 
+      nsp_set_cursor(Xgc,GDK_FLEUR);
+      break;
+    case MOVE_CONTROL :
+      if ( IsBlock(O) )
+	nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
+      else 
+	nsp_set_cursor(Xgc,GDK_FLEUR);
       bf->move_control_init(O,cp,ptwork);
+      break;
     }
+  
+
   /*
    * mpt is the mouse position, 
    * ptwork is the control point position 
    */
-  
   while ( wstop==0 ) 
     {
       /* draw the frame 
@@ -1792,6 +1784,7 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
       pt1[0] = mpt[0];
       pt1[1] = mpt[1];
     }
+  nsp_set_cursor(Xgc,-1);
   if ( IsLink(O)) link_check(D,(NspLink *)O);
 
   return ibutton;
@@ -1838,7 +1831,11 @@ static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[
 	      break;
 	    case L_TRANSLATE : 
 	      rep= bf->translate(C->O,pt);
-	      if ( rep == FAIL) return rep;
+	      if ( rep == FAIL) 
+		{
+		  return rep;
+		}
+
 	      break;
 	    case L_LOCK_UPDATE:
 	      if ( IsBlock(C->O)  || IsConnector(C->O))
@@ -1857,9 +1854,11 @@ static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[
 int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int stop,int cp,move_action action, int *click)
 {
   int rep,ix,iy;
-  BCG *Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
+  BCG *Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc; 
   int wstop = 0, ibutton,imask, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]};
+
+  nsp_set_cursor(Xgc,GDK_FLEUR);
 
   if ( action == MOVE_CONTROL) 
     {
@@ -1907,6 +1906,9 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
   /* was it a click ? */
   *click =  ( pt1[0]== pt[0] && pt1[1] == pt[1] ) ? TRUE : FALSE;
   /* we return the last activated button code */
+
+  nsp_set_cursor(Xgc,-1);
+
   return ibutton;
 }
 
@@ -2029,8 +2031,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F)
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
-  Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
-  
+  Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc; 
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return NSP_OBJECT(B);
 }
@@ -2115,7 +2116,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
-  Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
+  Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc; 
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return NSP_OBJECT(B);
 }
@@ -2138,7 +2139,7 @@ int nsp_diagram_create_new_rect(NspDiagram *F)
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
+  Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc;
 
   B=rect_create("fe",Xgc,rect,color,thickness,background,NULL);
   if ( B == NULL) return FAIL;
@@ -2168,7 +2169,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 {
   NspGraphic *G;
   int ix,iy;
-  BCG *Xgc= window_list_search_new(((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->id); 
+  BCG *Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc;
   NspObject *Ob;
   int cp1;
   double mpt[2],pt[2];

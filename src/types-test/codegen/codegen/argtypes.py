@@ -2206,7 +2206,6 @@ class VoidPointerArg(ArgType):
         str = ''
         return str
 
-
 class ArgMatcher:
     def __init__(self):
 	self.argtypes = {}

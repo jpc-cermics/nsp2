@@ -112,10 +112,10 @@ static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_vfield(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_vfield(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_vfield(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_vfield(NspGraphic *o,const double *tr);
+static void nsp_rotate_vfield(NspGraphic *o,double *R);
+static void nsp_scale_vfield(NspGraphic *o,double *alpha);
+static int nsp_getbounds_vfield(NspGraphic *o,double *bounds);
 static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double *y, 
 			     double *fx, double *fy, int n1, int n2,char *strflag, 
 			     double *brect, double *arfact);

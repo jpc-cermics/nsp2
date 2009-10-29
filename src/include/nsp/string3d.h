@@ -117,10 +117,10 @@ static NspMethods *string3d_get_methods(void);
 static NspString3d *nsp_string3d_create_void(char *name,NspTypeBase *type);
 #line 15 "codegen/string3d.override"
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_string3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_string3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_string3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_string3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_string3d(NspGraphic *o,const double *tr);
+static void nsp_rotate_string3d(NspGraphic *o,double *R);
+static void nsp_scale_string3d(NspGraphic *o,double *alpha);
+static int nsp_getbounds_string3d(NspGraphic *o,double *bounds);
 static void nsp_string3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_string3d(NspString3d *P);

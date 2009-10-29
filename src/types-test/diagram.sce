@@ -9,7 +9,7 @@ function C=draw_vanne()
   if ~new_graphics() then 
     switch_graphics();
   end
-  new_win=%f 
+  new_win=%t
   
   if new_win then 
     win=xget('window');

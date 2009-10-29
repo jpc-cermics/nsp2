@@ -906,7 +906,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
 
 
 
-static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_gmatrix(NspGraphic *Obj,const double *tr)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   P->obj->rect->R[0] += tr[0];
@@ -916,14 +916,14 @@ static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_gmatrix(NspGraphic *Obj,double *R)
 {
   /* NspGMatrix *P = (NspGMatrix *) Obj; */
   Sciprintf("we should get a double here for alpha\n");
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_gmatrix(NspGraphic *Obj,double *alpha)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   P->obj->rect->R[0] *= alpha[0];
@@ -937,7 +937,7 @@ static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_gmatrix (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */

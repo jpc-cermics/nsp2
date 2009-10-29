@@ -985,18 +985,18 @@ static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
-static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_polyhedron(NspGraphic *Obj,const double *tr)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 
 }
 
-static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_polyhedron(NspGraphic *Obj,double *R)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_polyhedron(NspGraphic *Obj,double *alpha)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
@@ -1007,7 +1007,7 @@ static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *Obj,double *alpha)
 
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
-static int nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_polyhedron(NspGraphic *Obj,double *bounds)
 {
   /* this should be stored in a cache and recomputed when necessary only */
   int i;

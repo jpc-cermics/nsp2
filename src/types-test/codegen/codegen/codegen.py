@@ -693,8 +693,6 @@ class Wrapper:
         substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self','nsp_object_full_copy')
         # give the sequence of parameters to be inserted in _create function
         substdict['fields_list'] = self.build_list_fields('')
-        # unused 
-        substdict['fields_call'] = self.build_list_fields('call')
         # for the save function 
         substdict['fields_save'] = self.build_save_fields('M')
         # for the load function 
@@ -932,8 +930,6 @@ class Wrapper:
         substdict['fields_full_copy_partial_code'] = self.build_fields_full_copy_partial_code(substdict,'H','self','nsp_object_copy')
         # give the sequence of parameters to be inserted in _create function
         substdict['fields_list'] = self.build_list_fields('')
-        # unused 
-        substdict['fields_call'] = self.build_list_fields('call')
         # for the save function 
         substdict['fields_save'] = self.build_save_fields('M')
         # for the load function 
@@ -1150,7 +1146,8 @@ class Wrapper:
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
             if str:
-                str = str + ',' 
+                if str[-1] != ',':
+                    str = str + ',' 
             str = str + handler.attr_write_create_call(ftype,fname,opt,pdef,psize,pcheck,flag) 
         return str
 

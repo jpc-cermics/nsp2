@@ -952,18 +952,18 @@ static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, void *data)
   */
 }
 
-static void nsp_translate_surf(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_surf(NspGraphic *Obj,const double *tr)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 
 }
 
-static void nsp_rotate_surf(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_surf(NspGraphic *Obj,double *R)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_surf(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_surf(NspGraphic *Obj,double *alpha)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
@@ -972,7 +972,7 @@ static void nsp_scale_surf(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_surf(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_surf(NspGraphic *Obj,double *bounds)
 {
   bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
   return FALSE;

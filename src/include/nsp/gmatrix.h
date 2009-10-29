@@ -112,10 +112,10 @@ static NspGMatrix *nsp_gmatrix_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_gmatrix(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_gmatrix(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_gmatrix(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_gmatrix(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_gmatrix(NspGraphic *o,const double *tr);
+static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
+static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);
+static int nsp_getbounds_gmatrix(NspGraphic *o,double *bounds);
 
 #line 121 "./gmatrix.h"
 #endif /* NspGMatrix_Private */

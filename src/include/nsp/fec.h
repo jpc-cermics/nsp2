@@ -127,10 +127,10 @@ static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type);
 /* inserted in the private part of include file */
 
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_fec(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_fec(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_fec(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_fec(NspGraphic *o,const double *tr);
+static void nsp_rotate_fec(NspGraphic *o,double *R);
+static void nsp_scale_fec(NspGraphic *o,double *alpha);
+static int nsp_getbounds_fec(NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
 #line 137 "./fec.h"

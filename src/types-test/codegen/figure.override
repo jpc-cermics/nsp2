@@ -230,8 +230,15 @@ static int nsp_figure_connect(NspFigure *F)
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   BCG *Xgc;
-  
+
+  if (F->obj->Xgc != NULL ) 
+    {
+      /* Figure is already connected */
+      return OK;
+    }
+#if 0
   Xgc = window_list_search_new(F->obj->id);
+
   if ( Xgc != NULL) 
     {
       NspFigure *F1=nsp_get_figure(Xgc);
@@ -241,7 +248,8 @@ static int nsp_figure_connect(NspFigure *F)
       Sciprintf("\tdeleting window %d\n",F->obj->id);
       Xgc->actions->delete(Xgc);
      }
-  
+ #endif
+ 
   if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
     { 
       wdim[0] = F->obj->dims->R[0];
@@ -254,7 +262,7 @@ static int nsp_figure_connect(NspFigure *F)
       wpdim[1] = F->obj->viewport_dims->R[1];
     }
 
-  /* A FAIRE c'est les offset du viewport */
+  /* A FAIRE c'est les offsets du viewport */
   /* 
      if (viewport != NULL && viewport->mn != 2 ) 
      {
@@ -287,13 +295,15 @@ static int nsp_figure_connect(NspFigure *F)
     }
   else 
     initg = Gtk_gengine.initgraphic;
-  v1 = F->obj->id;
-  initg("",&v1, 
-	(F->obj->dims != NULL  && F->obj->dims->mn == 2 ) ? wdim :NULL, 
-	(F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
-	NULL, 
-	( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
-	'e',NULL);
+  v1 = -1; 
+  F->obj->id=
+    initg("",&v1, 
+	  (F->obj->dims != NULL  && F->obj->dims->mn == 2 ) ? wdim :NULL, 
+	  (F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
+	  NULL, 
+	  ( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
+	  'e',NULL);
+  
   /* check ! */
   Xgc = window_list_search_new(F->obj->id);
   if ( Xgc == NULL) 
@@ -301,6 +311,7 @@ static int nsp_figure_connect(NspFigure *F)
       Sciprintf("failed to connect figure\n");
       return FAIL;
     }
+  F->obj->Xgc = Xgc;
 
   Xgc->graphic_engine->xset_wresize(Xgc,F->obj->wresize);
   
@@ -321,8 +332,9 @@ static int nsp_figure_connect(NspFigure *F)
 
 static int nsp_figure_unconnect(NspFigure *F)
 {
-  BCG *Xgc =  window_list_search_new(F->obj->id);
+  BCG *Xgc =  F->obj->Xgc;
   if ( Xgc != NULL)  Xgc->actions->delete(Xgc);
+  F->obj->Xgc = NULL;
   return OK ;
 }
 
@@ -461,10 +473,9 @@ static NspAxes *nsp_get_current_axes(void)
   return nsp_current_axes;
 }
 
-NspFigure *nsp_create_default_figure(int n)
+static NspFigure *nsp_create_default_figure(BCG *Xgc)
 {
-  NspFigure *fig;
-
+  NspFigure *Fig;
   char *name,*driver;
   /* take care that nsp_figure_create won't allocate its fields 
    * we have to make the copies here 
@@ -473,8 +484,11 @@ NspFigure *nsp_create_default_figure(int n)
     return NULL;
   if (( driver =new_nsp_string("Gtk")) == NULLSTRING)
     return NULL;
-  fig = nsp_figure_create("fig",name,driver,n,NULL,NULL,TRUE,NULL,NULL,TRUE,NULL,NULL);
-  return fig;
+  Fig = nsp_figure_create("fig",name,driver,Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,
+			  TRUE,NULL,Xgc,NULL);
+  /* insert in Xgc */
+  if ( Fig != NULL)  tape_store_graphic_object(Xgc,NSP_OBJECT(Fig));
+  return Fig;
 }
 
 
@@ -484,10 +498,8 @@ NspFigure *nsp_check_for_figure(BCG *Xgc)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_create_default_figure(Xgc->CurWindow);
+      F = nsp_create_default_figure(Xgc);
       if ( F == NULL) return NULL;
-      /* insert in Xgc */
-      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
   return F;
@@ -510,10 +522,8 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_create_default_figure(Xgc->CurWindow);
+      F = nsp_create_default_figure(Xgc);
       if ( F == NULL) return NULL;
-      /* insert in Xgc */
-      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
       created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
@@ -579,10 +589,8 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_create_default_figure(Xgc->CurWindow);
+      F = nsp_create_default_figure(Xgc);
       if ( F == NULL) return NULL;
-      /* insert in Xgc */
-      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
       created = TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
@@ -641,10 +649,8 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
-      F = nsp_create_default_figure(Xgc->CurWindow);
+      F = nsp_create_default_figure(Xgc);
       if ( F == NULL) return NULL;
-      /* insert in Xgc */
-      tape_store_graphic_object(Xgc,NSP_OBJECT(F));
       created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;

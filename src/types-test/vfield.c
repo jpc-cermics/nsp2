@@ -837,7 +837,7 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
-static void nsp_translate_vfield(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_vfield(NspGraphic *Obj,const double *tr)
 {
   NspVField *P = (NspVField *) Obj;
   int i;
@@ -848,14 +848,14 @@ static void nsp_translate_vfield(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_vfield(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_vfield(NspGraphic *Obj,double *R)
 {
   /* NspVField *P = (NspVField *) Obj; */
   Sciprintf("we should get a double here for alpha\n");
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_vfield(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_vfield(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspVField *P = (NspVField *) Obj;
@@ -870,7 +870,7 @@ static void nsp_scale_vfield(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_vfield (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_vfield (NspGraphic *Obj,double *bounds)
 {
   NspVField *P = (NspVField *) Obj;
   if (  P->obj->x->mn == 0 || P->obj->y->mn == 0) return FALSE;

@@ -46,10 +46,10 @@ n_faces_func *n_faces;
 override_internal_methods_protos
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
-typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
-typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
-typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
-typedef int bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
+typedef void translate_func(NspGraphic *Obj,const double *tr);
+typedef void rotate_func(NspGraphic *Obj,double *R);
+typedef void scale_func(NspGraphic *Obj,double *alpha);
+typedef int bounds_func(NspGraphic *Obj,double *bounds);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
@@ -85,7 +85,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   NspMatrix *tr;
   if ( GetArgs(stack,rhs,opt,T,&tr) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,tr,2);
-  self->type->translate(NULL,self, tr->R);
+  self->type->translate(self, tr->R);
   return 0;
 }
 
@@ -98,7 +98,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
 
   if ( GetArgs(stack,rhs,opt,T,&sc) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,sc,2);
-  self->type->scale(NULL,self, sc->R);
+  self->type->scale(self, sc->R);
   return 0;
 }
 
@@ -110,7 +110,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   NspMatrix *R;
   if ( GetArgs(stack,rhs,opt,T,&R) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,R,2);
-  self->type->rotate(NULL,self, R->R);
+  self->type->rotate(self, R->R);
   return 0;
 }
 

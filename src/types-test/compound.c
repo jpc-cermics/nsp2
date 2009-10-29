@@ -592,7 +592,7 @@ static int _wrap_compound_set_obj_children(void *self,NspObject *val)
   ((NspCompound *) self)->obj->children =  (NspList *) val;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
-  nsp_compound_compute_inside_bounds(NULL,self);
+  nsp_compound_compute_inside_bounds(self);
   return OK;
 }
 
@@ -610,7 +610,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
   ((NspCompound *) self)->obj->children= children;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
-  nsp_compound_compute_inside_bounds(NULL,self);
+  nsp_compound_compute_inside_bounds(self);
   return OK;
 }
 
@@ -713,7 +713,7 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data)
  * objects are changed.
  */
 
-static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
+static void nsp_compound_compute_inside_bounds(NspGraphic *Obj)
 {
   double l_bounds[4],bounds[4];
   Cell *cloc;
@@ -736,7 +736,7 @@ static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->bounds(Xgc,G,l_bounds);
+	  G->type->bounds(G,l_bounds);
 	  if ( l_bounds[0] < bounds[0] ) 
 	    bounds[0]= l_bounds[0];
 	  if (  l_bounds[2] > bounds[2])
@@ -754,7 +754,7 @@ static void nsp_compound_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj)
 /* Note that the bounds should be changed here
  */
 
-static void nsp_translate_compound(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_compound(NspGraphic *Obj,const double *tr)
 {
   int draw_now;
   NspCompound *P = (NspCompound *) Obj;
@@ -770,7 +770,7 @@ static void nsp_translate_compound(BCG *Xgc,NspGraphic *Obj,double *tr)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->translate(Xgc,G,tr);
+	  G->type->translate(G,tr);
 	}
       cloc = cloc->next;
     }
@@ -778,7 +778,7 @@ static void nsp_translate_compound(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_compound(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_compound(NspGraphic *Obj,double *R)
 {
   int draw_now;
   NspCompound *P = (NspCompound *) Obj;
@@ -794,7 +794,7 @@ static void nsp_rotate_compound(BCG *Xgc,NspGraphic *Obj,double *R)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->rotate(Xgc,G,R);
+	  G->type->rotate(G,R);
 	}
       cloc = cloc->next;
     }
@@ -802,7 +802,7 @@ static void nsp_rotate_compound(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_compound(NspGraphic *Obj,double *alpha)
 {
   int draw_now;
   NspCompound *P = (NspCompound *) Obj;
@@ -818,7 +818,7 @@ static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->scale(Xgc,G,alpha);
+	  G->type->scale(G,alpha);
 	}
       cloc = cloc->next;
     }
@@ -830,11 +830,11 @@ static void nsp_scale_compound(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_compound(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_compound(NspGraphic *Obj,double *bounds)
 {
   NspCompound *P = (NspCompound *) Obj;
   /* XXX should not be always computed */
-  nsp_compound_compute_inside_bounds(Xgc,Obj);
+  nsp_compound_compute_inside_bounds(Obj);
   memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
   return TRUE;
 }

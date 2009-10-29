@@ -840,18 +840,18 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data)
   */
 }
 
-static void nsp_translate_box3d(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_box3d(NspGraphic *Obj,const double *tr)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 
 }
 
-static void nsp_rotate_box3d(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_box3d(NspGraphic *Obj,double *R)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_box3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_box3d(NspGraphic *Obj,double *alpha)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
@@ -860,7 +860,7 @@ static void nsp_scale_box3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 {
   return FALSE;
 }

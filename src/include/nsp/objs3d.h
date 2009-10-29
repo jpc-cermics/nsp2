@@ -137,10 +137,10 @@ static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_objs3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_objs3d(NspGraphic *o,const double *tr);
+static void nsp_rotate_objs3d(NspGraphic *o,double *R);
+static void nsp_scale_objs3d(NspGraphic *o,double *alpha);
+static int nsp_getbounds_objs3d(NspGraphic *o,double *bounds);
 static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
 static void nsp_objs3d_link_figure(NspGraphic *G, void *F);
 static void nsp_objs3d_unlink_figure(NspGraphic *G, void *F);

@@ -9,13 +9,13 @@ include-private  Contour3d
 
 /* inserted in the private part of include file */
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_contour3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_contour3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_contour3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_contour3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_contour3d(NspGraphic *o,const double *tr);
+static void nsp_rotate_contour3d(NspGraphic *o,double *R);
+static void nsp_scale_contour3d(NspGraphic *o,double *alpha);
+static int nsp_getbounds_contour3d(NspGraphic *o,double *bounds);
 static void nsp_contour3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj);
-static int nsp_check_contour3d(BCG *Xgc,NspContour3d *P);
+static int nsp_check_contour3d(NspContour3d *P);
 
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
@@ -63,7 +63,7 @@ ignore-glob
 %%
 override_int_create_final 
   /* verbatim in create/load/copy interface  */
-  if ( nsp_check_contour3d(NULL,H)== FAIL) return %(ret)s; 
+  if ( nsp_check_contour3d(H)== FAIL) return %(ret)s; 
 
 %%
 override_destroy_prelim Contour3d 
@@ -97,7 +97,7 @@ last
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   if ( Obj->obj->hidden == TRUE ) return ;
-  nsp_check_contour3d(Xgc,(NspContour3d *) Obj);
+  nsp_check_contour3d((NspContour3d *) Obj);
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -122,18 +122,18 @@ static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
-static void nsp_translate_contour3d(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_contour3d(NspGraphic *Obj,const double *tr)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 
 }
 
-static void nsp_rotate_contour3d(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_contour3d(NspGraphic *Obj,double *R)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_contour3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_contour3d(NspGraphic *Obj,double *alpha)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
@@ -144,13 +144,13 @@ static void nsp_scale_contour3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
 
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
-static int nsp_getbounds_contour3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_contour3d(NspGraphic *Obj,double *bounds)
 {
   /* this should be stored in a cache and recomputed when necessary 
    *
    */
   nsp_contour3d *Q= ((NspContour3d *) Obj)->obj;
-  nsp_check_contour3d(Xgc,(NspContour3d *) Obj);
+  nsp_check_contour3d((NspContour3d *) Obj);
   nsp_gr_bounds_min_max(Q->x->mn,Q->x->R,1,&bounds[0],&bounds[1]);
   nsp_gr_bounds_min_max(Q->y->mn,Q->y->R,1,&bounds[2],&bounds[3]);
   nsp_gr_bounds_min_max(Q->z->mn,Q->z->R,1,&bounds[4],&bounds[5]);
@@ -159,7 +159,7 @@ static int nsp_getbounds_contour3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-int nsp_check_contour3d(BCG *Xgc, NspContour3d *P)
+int nsp_check_contour3d( NspContour3d *P)
 {
   nsp_contour3d *Q = P->obj;
 

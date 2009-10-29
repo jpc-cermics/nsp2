@@ -117,10 +117,10 @@ static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type);
 /* inserted in the private part of include file */
 
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_contour(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_contour(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_contour(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_contour(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_contour(NspGraphic *o,const double *tr);
+static void nsp_rotate_contour(NspGraphic *o,double *R);
+static void nsp_scale_contour(NspGraphic *o,double *alpha);
+static int nsp_getbounds_contour(NspGraphic *o,double *bounds);
 
 #line 126 "./contour.h"
 #endif /* NspContour_Private */

@@ -915,7 +915,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_grstring(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_grstring(NspGraphic *Obj,const double *tr)
 {
   NspGrstring *P = (NspGrstring *) Obj;
   P->obj->x += tr[0];
@@ -924,7 +924,7 @@ static void nsp_translate_grstring(BCG *Xgc,NspGraphic *Obj,double *tr)
 
 }
 
-static void nsp_rotate_grstring(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
 {
   NspGrstring *P = (NspGrstring *) Obj;
   double x1;
@@ -935,7 +935,7 @@ static void nsp_rotate_grstring(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_grstring(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
 {
   NspGrstring *P = (NspGrstring *) Obj;
   P->obj->x *= alpha[0];
@@ -947,7 +947,7 @@ static void nsp_scale_grstring(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_grstring(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 {
   return FALSE;
   /* NspGrstring *P = (NspGrstring *) Obj; */

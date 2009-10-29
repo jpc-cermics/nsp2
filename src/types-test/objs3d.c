@@ -1267,7 +1267,7 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->type->bounds(Xgc,G,l_bounds) == TRUE )
+	  if ( G->type->bounds(G,l_bounds) == TRUE )
 	    for ( i = 0 ; i < 3 ; i++) 
 	      {
 		if ( l_bounds[2*i] < bounds[2*i] )   bounds[2*i]= l_bounds[2*i];
@@ -1278,7 +1278,7 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
     }
 }
 
-static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_objs3d(NspGraphic *Obj,const double *tr)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( P->obj->top == TRUE) return ;
@@ -1288,7 +1288,7 @@ static void nsp_translate_objs3d(BCG *Xgc,NspGraphic *Obj,double *tr)
 
 }
 
-static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_objs3d(NspGraphic *Obj,double *R)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( P->obj->top == TRUE) return ;
@@ -1296,7 +1296,7 @@ static void nsp_rotate_objs3d(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_objs3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_objs3d(NspGraphic *Obj,double *alpha)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( P->obj->top == TRUE) return ;
@@ -1309,7 +1309,7 @@ static void nsp_scale_objs3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_objs3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_objs3d(NspGraphic *Obj,double *bounds)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( P->obj->top == TRUE) return FALSE;

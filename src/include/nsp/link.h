@@ -171,10 +171,10 @@ static int lock_color=10;
 
 /* set of method for parent class graphic  */
 static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_link(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_link(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_link(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_link(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_link(NspGraphic *o,const double *tr);
+static void nsp_rotate_link(NspGraphic *o,double *R);
+static void nsp_scale_link(NspGraphic *o,double *alpha);
+static int nsp_getbounds_link(NspGraphic *o,double *bounds);
 
 /* set of methods for implementing Grint */
 static int link_get_hilited (NspLink *B); 

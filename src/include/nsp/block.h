@@ -177,10 +177,10 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
 
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_block(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_block(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_block(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_block(NspGraphic *o,const double *tr);
+static void nsp_rotate_block(NspGraphic *o,double *R);
+static void nsp_scale_block(NspGraphic *o,double *alpha);
+static int nsp_getbounds_block(NspGraphic *o,double *bounds);
 
 /* set of methods for implementing Grint */
 static int block_get_hilited (NspBlock *B); 

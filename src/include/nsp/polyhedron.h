@@ -112,10 +112,10 @@ static NspMethods *polyhedron_get_methods(void);
 static NspPolyhedron *nsp_polyhedron_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/polyhedron.override"
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_polyhedron(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_polyhedron(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_polyhedron(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_polyhedron(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_polyhedron(NspGraphic *o,const double *tr);
+static void nsp_rotate_polyhedron(NspGraphic *o,double *R);
+static void nsp_scale_polyhedron(NspGraphic *o,double *alpha);
+static int nsp_getbounds_polyhedron(NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyhedron(NspPolyhedron *P);

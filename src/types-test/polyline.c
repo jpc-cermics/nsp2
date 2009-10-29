@@ -908,7 +908,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_polyline(NspGraphic *Obj,const double *tr)
 {
   int i; 
   NspPolyline *P = (NspPolyline *) Obj;
@@ -922,7 +922,7 @@ static void nsp_translate_polyline(BCG *Xgc,NspGraphic *Obj,double *tr)
 
 }
 
-static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_polyline(NspGraphic *Obj,double *R)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
@@ -937,7 +937,7 @@ static void nsp_rotate_polyline(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_polyline(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
@@ -954,7 +954,7 @@ static void nsp_scale_polyline(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_polyline(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 {
   int i;
   NspPolyline *P = (NspPolyline *) Obj;

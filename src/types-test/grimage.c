@@ -841,7 +841,7 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
-static void nsp_translate_grimage(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_grimage(NspGraphic *Obj,const double *tr)
 {
   NspGrImage *P = (NspGrImage *) Obj;
   P->obj->x += tr[0];
@@ -849,7 +849,7 @@ static void nsp_translate_grimage(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_grimage(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_grimage(NspGraphic *Obj,double *R)
 {
   NspGrImage *P = (NspGrImage *) Obj;
   double x1;
@@ -860,7 +860,7 @@ static void nsp_rotate_grimage(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_grimage(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_grimage(NspGraphic *Obj,double *alpha)
 {
   NspGrImage *P = (NspGrImage *) Obj;
   P->obj->x *= alpha[0];
@@ -872,7 +872,7 @@ static void nsp_scale_grimage(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_grimage(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 {
   NspGrImage *P = (NspGrImage *) Obj;
   bounds[0]=P->obj->x;/* xmin */

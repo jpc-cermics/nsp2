@@ -795,18 +795,18 @@ static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_string3d(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_string3d(NspGraphic *Obj,const double *tr)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 
 }
 
-static void nsp_rotate_string3d(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_string3d(NspGraphic *Obj,double *R)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_string3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_string3d(NspGraphic *Obj,double *alpha)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
@@ -816,7 +816,7 @@ static void nsp_scale_string3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  */
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 
-static int nsp_getbounds_string3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_string3d(NspGraphic *Obj,double *bounds)
 {
   int i;
   /* this should be stored in a cache and recomputed when necessary 

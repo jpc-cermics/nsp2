@@ -69,10 +69,10 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
 
 /* set of method for parent class graphic  */
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_block(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_block(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_block(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_block(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_block(NspGraphic *o,const double *tr);
+static void nsp_rotate_block(NspGraphic *o,double *R);
+static void nsp_scale_block(NspGraphic *o,double *alpha);
+static int nsp_getbounds_block(NspGraphic *o,double *bounds);
 
 /* set of methods for implementing Grint */
 static int block_get_hilited (NspBlock *B); 
@@ -563,17 +563,17 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 */
 
-static void nsp_translate_block(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_block(NspGraphic *Obj,const double *tr)
 {
   /* NspBlock *P = (NspBlock *) Obj;*/
 }
 
-static void nsp_rotate_block(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_block(NspGraphic *Obj,double *R)
 {
   
 }
 
-static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_block(NspGraphic *Obj,double *alpha)
 {
   /*   NspBlock *P = (NspBlock *) Obj; */
 }
@@ -582,7 +582,7 @@ static void nsp_scale_block(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_block (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_block (NspGraphic *Obj,double *bounds)
 {
   NspBlock *B = (NspBlock *) Obj;
   block_get_rect(B,bounds);
@@ -861,7 +861,7 @@ int block_translate(NspBlock *B,const double tr[2])
   B->obj->r[0] += tr[0] ;
   B->obj->r[1] += tr[1] ;
   block_update_locks(B);
-  if ( Icon != NULL) Icon->type->translate(NULL,Icon,tr);
+  if ( Icon != NULL) Icon->type->translate(Icon,tr);
   return OK;
 }
 
@@ -1466,7 +1466,7 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   /* we should also scale */
   tr[0]= B->obj->r[0];
   tr[1]= B->obj->r[1] - B->obj->r[3];
-  G->type->translate(NULL,G,tr);
+  G->type->translate(G,tr);
   return OK;
  stop: 
   for( i= 0 ; i < nret ; i++) nsp_void_object_destroy(&nsp_ret[i]);

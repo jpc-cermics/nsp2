@@ -40,6 +40,7 @@ struct _nsp_figure {
   NspList* children;
   gboolean draw_now;
   NspFigureData* gc;
+  void* Xgc;
   int ref_count;
 };
 
@@ -69,7 +70,7 @@ NspFigure *new_figure();
 
 #define NULLFIGURE (NspFigure*) 0
 
-extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,NspTypeBase *type);
+extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type);
 extern NspFigure *nsp_figure_create_default(char *name);
 
 /* from NspFigureObj.c */
@@ -115,7 +116,7 @@ extern void nsp_graphic_link_figure(NspGraphic *G, void *F);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_force_redraw(nsp_figure *F);
 
-#line 119 "./figure.h"
+#line 120 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -150,6 +151,6 @@ static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 
-#line 154 "./figure.h"
+#line 155 "./figure.h"
 #endif /* NspFigure_Private */
 

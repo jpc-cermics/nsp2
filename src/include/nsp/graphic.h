@@ -22,10 +22,10 @@ typedef struct _NspTypeGraphic NspTypeGraphic ;
 #line 47 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
-typedef void translate_func(BCG *Xgc,NspGraphic *Obj,double *tr);
-typedef void rotate_func(BCG *Xgc,NspGraphic *Obj,double *R);
-typedef void scale_func(BCG *Xgc,NspGraphic *Obj,double *alpha);
-typedef int bounds_func(BCG *Xgc,NspGraphic *Obj,double *bounds);
+typedef void translate_func(NspGraphic *Obj,const double *tr);
+typedef void rotate_func(NspGraphic *Obj,double *R);
+typedef void scale_func(NspGraphic *Obj,double *alpha);
+typedef int bounds_func(NspGraphic *Obj,double *bounds);
 typedef void link_figure_func(NspGraphic *Obj,void *F);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);

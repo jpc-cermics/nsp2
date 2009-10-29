@@ -16,6 +16,7 @@
    '("NspList*" "children")
    '("gboolean" "draw_now" "hidden" "TRUE");;
    '("NspFigureData*" "gc" )
+   '("void*" "Xgc" "hidden" "NULL")
    )
   (gtype-id "Figure")
 )

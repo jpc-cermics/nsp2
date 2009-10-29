@@ -114,10 +114,10 @@ static NspBox3d *nsp_box3d_create_void(char *name,NspTypeBase *type);
 /* inserted in the private part of include file */
 
 static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_box3d(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_box3d(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_box3d(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_box3d(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_box3d(NspGraphic *o,const double *tr);
+static void nsp_rotate_box3d(NspGraphic *o,double *R);
+static void nsp_scale_box3d(NspGraphic *o,double *alpha);
+static int nsp_getbounds_box3d(NspGraphic *o,double *bounds);
 
 #line 123 "./box3d.h"
 #endif /* NspBox3d_Private */

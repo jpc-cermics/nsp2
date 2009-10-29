@@ -796,7 +796,7 @@ static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_arrows(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_arrows(NspGraphic *Obj,const double *tr)
 {
   int i; 
   NspArrows *P = (NspArrows *) Obj;
@@ -810,7 +810,7 @@ static void nsp_translate_arrows(BCG *Xgc,NspGraphic *Obj,double *tr)
 
 }
 
-static void nsp_rotate_arrows(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_arrows(NspGraphic *Obj,double *R)
 {
   int i;
   NspArrows *P = (NspArrows *) Obj;
@@ -825,7 +825,7 @@ static void nsp_rotate_arrows(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_arrows(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_arrows(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspArrows *P = (NspArrows *) Obj;
@@ -842,7 +842,7 @@ static void nsp_scale_arrows(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_arrows(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_arrows(NspGraphic *Obj,double *bounds)
 {
   int i;
   NspArrows *P = (NspArrows *) Obj;

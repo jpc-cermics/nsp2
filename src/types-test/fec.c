@@ -991,7 +991,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_translate_fec(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
 {
   int i;
   NspFec *P = (NspFec *) Obj;
@@ -1007,12 +1007,12 @@ static void nsp_translate_fec(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_fec(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_fec(NspGraphic *Obj,double *R)
 {
   /* nsp_figure_force_redraw(Obj->obj->Fig); */
 }
 
-static void nsp_scale_fec(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspFec *P = (NspFec *) Obj;
@@ -1032,7 +1032,7 @@ static void nsp_scale_fec(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 {
   NspFec *P = (NspFec *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */

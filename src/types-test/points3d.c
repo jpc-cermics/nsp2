@@ -791,18 +791,18 @@ static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data)
     }
 }
 
-static void nsp_translate_points3d(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_points3d(NspGraphic *Obj,const double *tr)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 
 }
 
-static void nsp_rotate_points3d(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_points3d(NspGraphic *Obj,double *R)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_points3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_points3d(NspGraphic *Obj,double *alpha)
 {
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
@@ -812,7 +812,7 @@ static void nsp_scale_points3d(BCG *Xgc,NspGraphic *Obj,double *alpha)
  */
 
 
-static int nsp_getbounds_points3d(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_points3d(NspGraphic *Obj,double *bounds)
 {
   int i;
   /* this should be stored in a cache and recomputed when necessary 

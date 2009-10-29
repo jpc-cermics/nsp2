@@ -1579,7 +1579,7 @@ static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *boun
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->type->bounds(Xgc,G,l_bounds) == TRUE ) 
+	  if ( G->type->bounds(G,l_bounds) == TRUE ) 
 	    {
 	      if ( l_bounds[0] < bounds[0] ) 
 		bounds[0]= l_bounds[0];
@@ -1735,7 +1735,7 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
 }
 
 
-static void nsp_translate_axes(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_axes(NspGraphic *Obj,const double *tr)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
@@ -1745,7 +1745,7 @@ static void nsp_translate_axes(BCG *Xgc,NspGraphic *Obj,double *tr)
 
 }
 
-static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_axes(NspGraphic *Obj,double *R)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
@@ -1753,7 +1753,7 @@ static void nsp_rotate_axes(BCG *Xgc,NspGraphic *Obj,double *R)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
@@ -1766,7 +1766,7 @@ static void nsp_scale_axes(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_axes(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_axes(NspGraphic *Obj,double *bounds)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return FALSE;

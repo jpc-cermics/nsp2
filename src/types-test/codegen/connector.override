@@ -44,10 +44,10 @@ static int lock_color=10;
 
 /* set of method for parent class graphic  */
 static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_connector(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_connector(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_connector(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_connector(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_connector(NspGraphic *o,const double *tr);
+static void nsp_rotate_connector(NspGraphic *o,double *R);
+static void nsp_scale_connector(NspGraphic *o,double *alpha);
+static int nsp_getbounds_connector(NspGraphic *o,double *bounds);
 
 /* set of methods for implementing Grint */
 static int connector_get_hilited (NspConnector *B); 
@@ -212,7 +212,6 @@ static NspConnector  *nsp_connector_xdr_load(XDR *xdrs)
   if ((H  = nsp_connector_create_void(name,(NspTypeBase *) nsp_type_connector))== NULLCONNECTOR) return H;
   if ((H  = nsp_connector_xdr_load_partial(xdrs,H))== NULLCONNECTOR) return H;
   if ( nsp_connector_check_values(H) == FAIL) return NULLCONNECTOR;
-#line 329 "connector.c"
   return H;
 }
 
@@ -475,17 +474,17 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 */
 
-static void nsp_translate_connector(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_connector(NspGraphic *Obj,const double *tr)
 {
   /* NspBlock *P = (NspBlock *) Obj;*/
 }
 
-static void nsp_rotate_connector(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_connector(NspGraphic *Obj,double *R)
 {
   
 }
 
-static void nsp_scale_connector(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_connector(NspGraphic *Obj,double *alpha)
 {
   /*   NspBlock *P = (NspBlock *) Obj; */
 }
@@ -494,7 +493,7 @@ static void nsp_scale_connector(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_connector (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_connector (NspGraphic *Obj,double *bounds)
 {
   NspConnector *B = (NspConnector *) Obj;
   connector_get_rect(B,bounds);

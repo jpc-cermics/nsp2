@@ -21,10 +21,10 @@ include-private Fec
 /* inserted in the private part of include file */
 
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
-static void nsp_translate_fec(BCG *Xgc,NspGraphic *o,double *tr);
-static void nsp_rotate_fec(BCG *Xgc,NspGraphic *o,double *R);
-static void nsp_scale_fec(BCG *Xgc,NspGraphic *o,double *alpha);
-static int nsp_getbounds_fec(BCG *Xgc,NspGraphic *o,double *bounds);
+static void nsp_translate_fec(NspGraphic *o,const double *tr);
+static void nsp_rotate_fec(NspGraphic *o,double *R);
+static void nsp_scale_fec(NspGraphic *o,double *alpha);
+static int nsp_getbounds_fec(NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
 %%
@@ -89,7 +89,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_translate_fec(BCG *Xgc,NspGraphic *Obj,double *tr)
+static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
 {
   int i;
   NspFec *P = (NspFec *) Obj;
@@ -105,12 +105,12 @@ static void nsp_translate_fec(BCG *Xgc,NspGraphic *Obj,double *tr)
   nsp_figure_force_redraw(Obj->obj->Fig);
 }
 
-static void nsp_rotate_fec(BCG *Xgc,NspGraphic *Obj,double *R)
+static void nsp_rotate_fec(NspGraphic *Obj,double *R)
 {
   /* nsp_figure_force_redraw(Obj->obj->Fig); */
 }
 
-static void nsp_scale_fec(BCG *Xgc,NspGraphic *Obj,double *alpha)
+static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspFec *P = (NspFec *) Obj;
@@ -130,7 +130,7 @@ static void nsp_scale_fec(BCG *Xgc,NspGraphic *Obj,double *alpha)
  *
  */
 
-static int nsp_getbounds_fec (BCG *Xgc,NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 {
   NspFec *P = (NspFec *) Obj;
   /* get the bound in parent i.e given by wrect : upper-left w,h */

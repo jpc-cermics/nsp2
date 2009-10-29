@@ -517,7 +517,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   NspMatrix *tr;
   if ( GetArgs(stack,rhs,opt,T,&tr) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,tr,2);
-  self->type->translate(NULL,self, tr->R);
+  self->type->translate(self, tr->R);
   return 0;
 }
 
@@ -532,7 +532,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
 
   if ( GetArgs(stack,rhs,opt,T,&sc) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,sc,2);
-  self->type->scale(NULL,self, sc->R);
+  self->type->scale(self, sc->R);
   return 0;
 }
 
@@ -546,7 +546,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   NspMatrix *R;
   if ( GetArgs(stack,rhs,opt,T,&R) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,R,2);
-  self->type->rotate(NULL,self, R->R);
+  self->type->rotate(self, R->R);
   return 0;
 }
 

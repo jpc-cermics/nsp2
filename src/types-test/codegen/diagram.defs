@@ -137,11 +137,7 @@
   (c-name "diagram_get_selection_as_diagram") 
   (return-type "none")
 )
-(define-method attach_to_window   
-  (of-object "Diagram") 
-  (c-name "diagram_attach_to_window") 
-  (return-type "none")
-)
+
 (define-method check_pointer   
   (of-object "Diagram") 
   (c-name "diagram_check_pointer") 
