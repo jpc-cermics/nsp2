@@ -9,9 +9,14 @@ function C=draw_vanne()
   if ~new_graphics() then 
     switch_graphics();
   end
-  win=xget('window');
-  xset('window',30);
-  xrect(0,0,10,10);
+  new_win=%f 
+  
+  if new_win then 
+    win=xget('window');
+    xset('window',30);
+    xrect(0,0,10,10);
+  end
+  
   F=get_current_figure();
   F.draw_latter[];
   F.start_compound[];
@@ -33,6 +38,10 @@ function C=draw_vanne()
   xset('font',2,6);
   xstringb(orig(1),orig(2),'String',sz(1),sz(2));
   C=F.end_compound[];
+  if new_win then 
+    xset('window',win);
+  end
+  C= C.full_copy[];
   C.unlink[];
 endfunction;
 

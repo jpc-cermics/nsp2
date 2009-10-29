@@ -857,9 +857,11 @@ static void draw_3d(BCG *Xgc,double r[])
 
 int block_translate(NspBlock *B,const double tr[2])
 {
+  NspGraphic *Icon = (NspGraphic *) B->obj->icon;
   B->obj->r[0] += tr[0] ;
   B->obj->r[1] += tr[1] ;
   block_update_locks(B);
+  if ( Icon != NULL) Icon->type->translate(NULL,Icon,tr);
   return OK;
 }
 
@@ -894,11 +896,17 @@ void block_get_rect(NspBlock *B, double r[4])
 
 void block_resize(NspBlock *B,const double size[2])
 {
-  /* double pt[2]; */
+  /*
+  double sz[2];
+  NspGraphic *Icon = (NspGraphic *) B->obj->icon;
+  sz[0] = Max(size[0],3*lock_size)/B->obj->r[2];
+  sz[1] = Max(size[1],3*lock_size)/B->obj->r[3];
+  */
   B->obj->r[2] = Max(size[0],3*lock_size) ;
   B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change to XXXXX */
   block_update_locks(B);
+  /* if ( Icon != NULL) Icon->type->scale(NULL,Icon,sz); */
 }
 
 
@@ -1427,6 +1435,8 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 {
+  double tr[2];
+  NspGraphic *G;
   NspObject *targs[]={NULL};
   NspObject *nsp_ret[1];
   int nret = 1,nargs = 0,i;
@@ -1445,12 +1455,18 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
        */
       if (nsp_object_set_name(nsp_ret[0],"icon") == FAIL) goto stop;
       B->obj->icon = (NspGraphic *) nsp_ret[0];
+      G =  (NspGraphic *) B->obj->icon;
     }
   else 
     {
       goto stop;
     }
-  nsp_graphic_link_figure(B->obj->icon,((NspGraphic *) B)->obj->Fig);
+  G =  (NspGraphic *) B->obj->icon;
+  G->type->link_figure(G, ((NspGraphic *) B)->obj->Fig);
+  /* we should also scale */
+  tr[0]= B->obj->r[0];
+  tr[1]= B->obj->r[1] - B->obj->r[3];
+  G->type->translate(NULL,G,tr);
   return OK;
  stop: 
   for( i= 0 ; i < nret ; i++) nsp_void_object_destroy(&nsp_ret[i]);
