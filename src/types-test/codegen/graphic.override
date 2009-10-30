@@ -40,7 +40,7 @@ override_internal_methods
   unlink_figure_func *unlink_figure;
   children_func *children;
   zmean_func *zmean; 
-n_faces_func *n_faces;
+  n_faces_func *n_faces;
 
 %%
 override_internal_methods_protos

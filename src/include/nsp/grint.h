@@ -30,7 +30,6 @@ typedef void gr_set_hilited (void *B, int val);
 typedef int gr_get_show (void *B); 
 typedef void gr_set_show (void *B, int val); 
 typedef void gr_draw (void *R); 
-typedef int gr_translate (void *R, const double *pt); 
 typedef int gr_set_pos (void *R, const double *pt); 
 typedef void gr_get_pos (void *R, double *pt); 
 typedef void gr_get_rect (void *R, double *r); 
@@ -76,7 +75,6 @@ struct _NspTypeGRint {
   gr_get_show *get_show ;		     
   gr_set_show *set_show ;		     
   gr_draw *draw ;			     
-  gr_translate *translate ;		     
   gr_set_pos *set_pos ;		     
   gr_get_pos *get_pos ;		     
   gr_get_rect *get_rect ;		     

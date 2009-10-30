@@ -161,7 +161,6 @@ static void connector_set_hilited (NspConnector *B, int val);
 static int connector_get_show (NspConnector *B); 
 static void connector_set_show (NspConnector *B, int val); 
 static void connector_draw (NspConnector *R); 
-static int connector_translate (NspConnector *R, const double *pt); 
 static int connector_set_pos (NspConnector *R, const double *pt); 
 static void connector_get_pos (NspConnector *R, double *pt); 
 static void connector_get_rect (NspConnector *R, double *r); 
@@ -197,6 +196,6 @@ static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M);
 
-#line 201 "./connector.h"
+#line 200 "./connector.h"
 #endif /* NspConnector_Private */
 

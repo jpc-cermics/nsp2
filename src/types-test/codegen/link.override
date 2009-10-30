@@ -75,7 +75,6 @@ static void link_set_hilited (NspLink *B, int val);
 static int link_get_show (NspLink *B); 
 static void link_set_show (NspLink *B, int val); 
 static void link_draw (NspLink *R); 
-static int link_translate (NspLink *R, const double *pt); 
 static int link_set_pos (NspLink *R, const double *pt); 
 static void link_get_pos (NspLink *R, double *pt); 
 static void link_get_rect (NspLink *R, double *r); 
@@ -151,7 +150,6 @@ override-implements Link
   t_grint->get_show    	=(gr_get_show *) link_get_show;
   t_grint->set_show		=(gr_set_show *) link_set_show;
   t_grint->draw    		=(gr_draw *) link_draw;
-  t_grint->translate 	=(gr_translate *) link_translate;
   t_grint->set_pos  	=(gr_set_pos *) link_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) link_get_pos;
   t_grint->get_rect  	=(gr_get_rect *) link_get_rect;
@@ -410,7 +408,7 @@ static int _wrap_link_translate(void  *self,Stack stack, int rhs, int opt, int l
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,M,2);
-  link_translate(self,M->R);
+  nsp_translate_link(self,M->R);
   MoveObj(stack,1,self);
   return 1;
 
@@ -483,7 +481,17 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_translate_link(NspGraphic *Obj,const double *tr)
 {
-  /* NspLink *P = (NspLink *) Obj;*/
+  NspLink *L = (NspLink *) Obj;
+  int i,m= L->obj->poly->m,min=0,max=m;
+  double *x= L->obj->poly->R, *y = x + m; 
+  /* cannot translate locked link */
+  if ( link_is_lock_connected(L,0) ) min=1;
+  if ( link_is_lock_connected(L,1) ) max=m-1;
+  for ( i= min ; i < max ; i++) 
+    {
+      x[i] += tr[0] ;
+      y[i] += tr[1] ;
+    }
 }
 
 static void nsp_rotate_link(NspGraphic *Obj,double *R)
@@ -605,21 +613,6 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 /* XXXXX */
 extern int nsp_message_(char *message,char **buttons,int n_buttons);
 
-int link_translate(NspLink *L,const double pt[2])
-{
-  int i,m= L->obj->poly->m,min=0,max=m;
-  double *x= L->obj->poly->R, *y = x + m; 
-  /* cannot translate locked link */
-  if ( link_is_lock_connected(L,0) ) min=1;
-  if ( link_is_lock_connected(L,1) ) max=m-1;
-  for ( i= min ; i < max ; i++) 
-    {
-      x[i] += pt[0] ;
-      y[i] += pt[1] ;
-    }
-  return OK;
-}
-
 int link_set_pos(NspLink *L,const double pt[2])
 {
   double tr[2];
@@ -627,7 +620,8 @@ int link_set_pos(NspLink *L,const double pt[2])
   double *x= L->obj->poly->R, *y = x + m; 
   tr[0]=pt[0]-x[m/2];
   tr[1]=pt[1]-y[m/2];
-  return link_translate(L,tr);
+  nsp_translate_link((NspGraphic *) L,tr);
+  return OK;
 }
 
 void link_get_pos(NspLink *L, double pt[2])

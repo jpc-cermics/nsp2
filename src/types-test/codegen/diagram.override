@@ -1717,7 +1717,8 @@ static void nsp_diagram_list_recompute_pointers(NspList *L)
  * Return value: 
  **/
 
-int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,int cp,move_action action)
+int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
+			 int cp,move_action action)
 {
   int ix,iy;
   int rep;
@@ -1726,7 +1727,7 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
   int wstop = 0, ibutton,imask, iwait=FALSE;
   double mpt[2],pt1[2]= {pt[0],pt[1]},ptwork[2];
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
-
+  NspGraphic *G;
   switch ( action ) 
     {
     case MOVE : 
@@ -1773,7 +1774,9 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
       switch ( action ) 
 	{
 	case MOVE : 
-	  rep= bf->translate(O,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
+	  G = (NspGraphic *) O;
+	  G->type->translate(G,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
+	  rep = OK; /* translate was returning an int in previous version */
 	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
 	  break;
 	case MOVE_CONTROL :
@@ -1830,7 +1833,8 @@ static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[
 		}
 	      break;
 	    case L_TRANSLATE : 
-	      rep= bf->translate(C->O,pt);
+	      ((NspGraphic *) C->O)->type->translate((NspGraphic *) C->O,pt);
+	      rep= OK;
 	      if ( rep == FAIL) 
 		{
 		  return rep;
@@ -2195,10 +2199,8 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   
   while ( wstop==0 ) 
     {
-      NspGraphic *G= (NspGraphic *) L;
       nsp_diagram_draw(F);
       /* draw the link */
-      G->type->draw(Xgc,G,NULL);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
@@ -2237,7 +2239,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	  int lock_c, rep;
 	  /* are we near a lock point ? if true mpt is changed  */
 	  pt[0]=mpt[0]; pt[1]=mpt[1];
-	  rep = nsp_diagram_select_lock(F,mpt, &Ob, &cp1,&lock_c) ;
+	  rep = nsp_diagram_select_lock(F,mpt, &Ob, &cp1,&lock_c);
 	  /* link_check will check if the lock point is already in use */
 	  if ( rep != 0 )
 	    {

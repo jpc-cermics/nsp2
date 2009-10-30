@@ -24,7 +24,7 @@
 
 
 
-#line 116 "codegen/link.override"
+#line 115 "codegen/link.override"
 
 #include "nsp/link.h"
 #include "nsp/block.h"
@@ -112,7 +112,7 @@ NspTypeLink *new_type_link(type_mode mode)
 
   type->init = (init_func *) init_link;
 
-#line 136 "codegen/link.override"
+#line 135 "codegen/link.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_link;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_link ;
@@ -132,14 +132,13 @@ NspTypeLink *new_type_link(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 148 "codegen/link.override"
+#line 147 "codegen/link.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) link_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) link_set_hilited;
   t_grint->get_show    	=(gr_get_show *) link_get_show;
   t_grint->set_show		=(gr_set_show *) link_set_show;
   t_grint->draw    		=(gr_draw *) link_draw;
-  t_grint->translate 	=(gr_translate *) link_translate;
   t_grint->set_pos  	=(gr_set_pos *) link_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) link_get_pos;
   t_grint->get_rect  	=(gr_get_rect *) link_get_rect;
@@ -164,7 +163,7 @@ NspTypeLink *new_type_link(type_mode mode)
   t_grint->full_copy =(gr_full_copy *) nsp_link_full_copy;
   t_grint->unlock =(gr_unlock *) link_unlock;
 
-#line 168 "link.c"
+#line 167 "link.c"
   if ( nsp_type_link_id == 0 ) 
     {
       /* 
@@ -277,7 +276,7 @@ static int nsp_link_neq(NspLink *A, NspObject *B)
  * save 
  */
 
-#line 181 "codegen/link.override"
+#line 179 "codegen/link.override"
 
 /*
  * save 
@@ -346,7 +345,7 @@ static NspLink  *nsp_link_xdr_load(XDR *xdrs)
 
 
 
-#line 350 "link.c"
+#line 349 "link.c"
 /*
  * delete 
  */
@@ -504,7 +503,7 @@ NspLink  *GetLink(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspLink instance 
  *-----------------------------------------------------*/
-#line 251 "codegen/link.override"
+#line 249 "codegen/link.override"
 /* override the code for link creation */
 
 static NspLink *nsp_link_create_void(char *name,NspTypeBase *type)
@@ -583,7 +582,7 @@ NspLink *nsp_link_create_default(char *name)
  return H;
 }
 
-#line 587 "link.c"
+#line 586 "link.c"
 /*
  * copy for gobject derived class  
  */
@@ -642,7 +641,7 @@ NspLink *nsp_link_full_copy(NspLink *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 335 "codegen/link.override"
+#line 333 "codegen/link.override"
 
 /* override the default int_create */
 
@@ -668,11 +667,11 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 672 "link.c"
+#line 671 "link.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 403 "codegen/link.override"
+#line 401 "codegen/link.override"
 
 /* translate */
 
@@ -683,16 +682,16 @@ static int _wrap_link_translate(void  *self,Stack stack, int rhs, int opt, int l
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,M,2);
-  link_translate(self,M->R);
+  nsp_translate_link(self,M->R);
   MoveObj(stack,1,self);
   return 1;
 
 }
 
-#line 693 "link.c"
+#line 692 "link.c"
 
 
-#line 421 "codegen/link.override"
+#line 419 "codegen/link.override"
 /* set_position */
 
 static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -708,10 +707,10 @@ static int _wrap_link_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs
 
 }
 
-#line 712 "link.c"
+#line 711 "link.c"
 
 
-#line 438 "codegen/link.override"
+#line 436 "codegen/link.override"
 /* resize */ 
 
 static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -726,10 +725,10 @@ static int _wrap_link_resize(void  *self, Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
-#line 730 "link.c"
+#line 729 "link.c"
 
 
-#line 391 "codegen/link.override"
+#line 389 "codegen/link.override"
 
 /* draw */
 
@@ -740,10 +739,10 @@ static int _wrap_link_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-#line 744 "link.c"
+#line 743 "link.c"
 
 
-#line 454 "codegen/link.override"
+#line 452 "codegen/link.override"
 
 static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj_port);
 
@@ -761,7 +760,7 @@ static int _wrap_link_connect(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 765 "link.c"
+#line 764 "link.c"
 
 
 static NspMethods link_methods[] = {
@@ -936,7 +935,7 @@ void Link_Interf_Info(int i, char **fname, function (**f))
   *f = Link_func[i].fonc;
 }
 
-#line 473 "codegen/link.override"
+#line 471 "codegen/link.override"
 
 /* inserted verbatim at the end */
 
@@ -950,7 +949,17 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_translate_link(NspGraphic *Obj,const double *tr)
 {
-  /* NspLink *P = (NspLink *) Obj;*/
+  NspLink *L = (NspLink *) Obj;
+  int i,m= L->obj->poly->m,min=0,max=m;
+  double *x= L->obj->poly->R, *y = x + m; 
+  /* cannot translate locked link */
+  if ( link_is_lock_connected(L,0) ) min=1;
+  if ( link_is_lock_connected(L,1) ) max=m-1;
+  for ( i= min ; i < max ; i++) 
+    {
+      x[i] += tr[0] ;
+      y[i] += tr[1] ;
+    }
 }
 
 static void nsp_rotate_link(NspGraphic *Obj,double *R)
@@ -1072,21 +1081,6 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 /* XXXXX */
 extern int nsp_message_(char *message,char **buttons,int n_buttons);
 
-int link_translate(NspLink *L,const double pt[2])
-{
-  int i,m= L->obj->poly->m,min=0,max=m;
-  double *x= L->obj->poly->R, *y = x + m; 
-  /* cannot translate locked link */
-  if ( link_is_lock_connected(L,0) ) min=1;
-  if ( link_is_lock_connected(L,1) ) max=m-1;
-  for ( i= min ; i < max ; i++) 
-    {
-      x[i] += pt[0] ;
-      y[i] += pt[1] ;
-    }
-  return OK;
-}
-
 int link_set_pos(NspLink *L,const double pt[2])
 {
   double tr[2];
@@ -1094,7 +1088,8 @@ int link_set_pos(NspLink *L,const double pt[2])
   double *x= L->obj->poly->R, *y = x + m; 
   tr[0]=pt[0]-x[m/2];
   tr[1]=pt[1]-y[m/2];
-  return link_translate(L,tr);
+  nsp_translate_link((NspGraphic *) L,tr);
+  return OK;
 }
 
 void link_get_pos(NspLink *L, double pt[2])
@@ -1963,4 +1958,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1967 "link.c"
+#line 1962 "link.c"

@@ -80,7 +80,6 @@ static void block_set_hilited (NspBlock *B, int val);
 static int block_get_show (NspBlock *B); 
 static void block_set_show (NspBlock *B, int val); 
 static void block_draw (NspBlock *R); 
-static int block_translate (NspBlock *R, const double *pt); 
 static int block_set_pos (NspBlock *R, const double *pt); 
 static void block_get_pos (NspBlock *R, double *pt); 
 static void block_get_rect (NspBlock *R, double *r); 
@@ -156,7 +155,6 @@ override-implements Block
   t_grint->get_show    	=(gr_get_show *) block_get_show;
   t_grint->set_show		=(gr_set_show *) block_set_show;
   t_grint->draw    		=(gr_draw *) block_draw;
-  t_grint->translate 	=(gr_translate *) block_translate;
   t_grint->set_pos  	=(gr_set_pos *) block_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) block_get_pos;
   t_grint->get_rect  	=(gr_get_rect *) block_get_rect;
@@ -464,7 +462,7 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,M,2);
-  block_translate(self,M->R);
+  nsp_translate_block(self,M->R);
   MoveObj(stack,1,self);
   return 1;
 }
@@ -562,10 +560,24 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 
 }
 */
+/**
+ * nsp_block_translate:
+ * @B: a #NspBlock
+ * @tr: translation vector 
+ * 
+ * Tranlates the block origin (upper left point) using the 
+ * value of vector @tr. 
+ *
+ **/
 
 static void nsp_translate_block(NspGraphic *Obj,const double *tr)
 {
-  /* NspBlock *P = (NspBlock *) Obj;*/
+  NspBlock *B = (NspBlock *) Obj;
+  NspGraphic *Icon = (NspGraphic *) B->obj->icon;
+  B->obj->r[0] += tr[0] ;
+  B->obj->r[1] += tr[1] ;
+  block_update_locks(B);
+  if ( Icon != NULL) Icon->type->translate(Icon,tr);
 }
 
 static void nsp_rotate_block(NspGraphic *Obj,double *R)
@@ -845,25 +857,6 @@ static void draw_3d(BCG *Xgc,double r[])
 }
 
 
-/**
- * block_translate:
- * @B: a block 
- * @tr: translation vector 
- * 
- * Tranlates the block origin (upper left point) using the 
- * value of vector @tr. 
- *
- **/
-
-int block_translate(NspBlock *B,const double tr[2])
-{
-  NspGraphic *Icon = (NspGraphic *) B->obj->icon;
-  B->obj->r[0] += tr[0] ;
-  B->obj->r[1] += tr[1] ;
-  block_update_locks(B);
-  if ( Icon != NULL) Icon->type->translate(Icon,tr);
-  return OK;
-}
 
 int block_set_pos(NspBlock *B,const double tr[2])
 {

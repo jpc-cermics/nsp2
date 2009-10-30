@@ -50,7 +50,7 @@ struct _NspTypeGraphic {
   unlink_figure_func *unlink_figure;
   children_func *children;
   zmean_func *zmean; 
-n_faces_func *n_faces;
+  n_faces_func *n_faces;
 
 
 #line 57 "./graphic.h"

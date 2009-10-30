@@ -355,7 +355,7 @@ static void force_affichage(BCG *Xgc);
 static void draw_mark(BCG *Xgc,int *x, int *y);
 static void pixmap_clear_rect(BCG *Xgc,int x,int y,int w,int h);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
-static void SciClick(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iwin,int iflag,
+static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,int *iwin,int iflag,
 		     int getmotion, int getrelease,int getkey,char *str, int lstr);
 static void scig_deconnect_handlers(BCG *winxgc);
 static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win,GtkWidget *box,

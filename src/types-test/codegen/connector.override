@@ -55,7 +55,6 @@ static void connector_set_hilited (NspConnector *B, int val);
 static int connector_get_show (NspConnector *B); 
 static void connector_set_show (NspConnector *B, int val); 
 static void connector_draw (NspConnector *R); 
-static int connector_translate (NspConnector *R, const double *pt); 
 static int connector_set_pos (NspConnector *R, const double *pt); 
 static void connector_get_pos (NspConnector *R, double *pt); 
 static void connector_get_rect (NspConnector *R, double *r); 
@@ -126,7 +125,6 @@ override-implements Connector
   t_grint->get_show    	=(gr_get_show *) connector_get_show;
   t_grint->set_show		=(gr_set_show *) connector_set_show;
   t_grint->draw    		=(gr_draw *) connector_draw;
-  t_grint->translate 	=(gr_translate *) connector_translate;
   t_grint->set_pos  	=(gr_set_pos *) connector_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) connector_get_pos;
   t_grint->get_rect  	=(gr_get_rect *) connector_get_rect;
@@ -401,7 +399,7 @@ static int _wrap_connector_translate(void  *self,Stack stack, int rhs, int opt, 
   CheckLhs(0,1);
   if ((M = GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),1,M,2);
-  connector_translate(self,M->R);
+  nsp_translate_connector(self,M->R);
   MoveObj(stack,1,self);
   return 1;
 
@@ -474,9 +472,22 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 */
 
+/**
+ * connector_tranlate:
+ * @B: a connector 
+ * @pt: 
+ * 
+ * Tranlates the connector origin (upper left point) using the 
+ * value of vector @pt. 
+ *
+ **/
+
 static void nsp_translate_connector(NspGraphic *Obj,const double *tr)
 {
-  /* NspBlock *P = (NspBlock *) Obj;*/
+  NspConnector *B = (NspConnector *) Obj;
+  B->obj->r[0] += tr[0] ;
+  B->obj->r[1] += tr[1] ;
+  connector_update_locks(B);
 }
 
 static void nsp_rotate_connector(NspGraphic *Obj,double *R)
@@ -627,23 +638,6 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
   Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 
-/**
- * connector_tranlate:
- * @B: a connector 
- * @pt: 
- * 
- * Tranlates the connector origin (upper left point) using the 
- * value of vector @pt. 
- *
- **/
-
-int connector_translate(NspConnector *B,const double pt[2])
-{
-  B->obj->r[0] += pt[0] ;
-  B->obj->r[1] += pt[1] ;
-  connector_update_locks(B);
-  return OK;
-}
 
 int connector_set_pos(NspConnector *B,const double pt[2])
 {
