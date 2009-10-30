@@ -581,7 +581,7 @@ int int_diagram_create(Stack stack, int rhs, int opt, int lhs)
 static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
-  nsp_diagram_draw(self);
+  nsp_redraw_diagram(self);
   MoveObj(stack,1,self);
   return 1;
 }
@@ -1006,7 +1006,7 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
   nsp_diagram_destroy(GF);
   /* and we can enter a move_selection */
   rep = nsp_diagram_select_and_move_list(F,NULLOBJ,pt->R,&click);
-  nsp_diagram_draw(F);
+  nsp_redraw_diagram(F);
   return 0;
 }
 
@@ -1482,21 +1482,21 @@ static NspList *nsp_diagram_children(NspGraphic *Obj)
 static int pixmap = FALSE ; /* XXXXX */
 
 /**
- * nsp_diagram_draw:
+ * nsp_redraw_diagram:
  * @R: a graphic frame  
  * 
  * draw the objects contained in frame @R.
  * 
  **/
 
-void nsp_diagram_draw(NspDiagram *D)
+void nsp_redraw_diagram(NspDiagram *D)
 {
   nsp_figure *Fig = (((NspGraphic *) D)->obj->Fig);
   nsp_figure_force_redraw(Fig);
 }
 
 /**
- * nsp_diagram_draw:
+ * nsp_redraw_diagram:
  * @R: a graphic frame  
  * 
  * draw the objects contained in frame @R.
@@ -1522,7 +1522,7 @@ void nsp_diagram_tops(NspDiagram *R,char *fname)
   else
     ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,zero);
   R->obj->Xgc = &ScilabGCPos;
-  nsp_diagram_draw(R);
+  nsp_redraw_diagram(R);
   ScilabGCPos.graphic_engine->xend(&ScilabGCPos);
   R->obj->Xgc = Xgc;
 #endif 
@@ -1737,13 +1737,12 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
 	{
 	  if ( C->O != NULLOBJ )
 	    {
-	      double o_rect[4]; 
 	      NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
-	      bf->get_rect(C->O,o_rect);
-	      /* check if rect is inside rect */
-	      if ( o_rect[0] >= rect[0] && o_rect[1] <= rect[1] 
-		   && o_rect[0]+o_rect[2] <= rect[0]+rect[2] 
-		   && o_rect[1]-o_rect[3] >= rect[1]-rect[3]  ) 
+	      double o_rect[4]; 
+	      NspGraphic *G = (NspGraphic *) C->O;
+	      if ( G->type->bounds(G,o_rect) == TRUE 
+		   && o_rect[0] >= rect[0]  && o_rect[2] <= rect[0]+rect[2] 
+		   && o_rect[1] >= rect[1]-rect[3] && o_rect[3] <= rect[1] )
 		{
 		  ok_changed  = TRUE;
 		  bf->set_hilited(C->O,TRUE);
@@ -1756,7 +1755,7 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
 	  C = C->next ;
 	}
       rect2d_f2i(Xgc,rect,Xgc->zrect,1);
-      nsp_diagram_draw(R);
+      nsp_redraw_diagram(R);
     }
   nsp_set_cursor(Xgc,-1);
   /* disable zrect */
@@ -1766,7 +1765,7 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
   Xgc->graphic_engine->xset_pattern(Xgc,color);
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
-  nsp_diagram_draw(R);
+  nsp_redraw_diagram(R);
 }
 
 /**
@@ -1812,7 +1811,7 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
 	      /* it was a click not a move */
 	      nsp_diagram_unhilite_objs(R,FALSE); 
 	      bf->set_hilited(O,TRUE);
-	      nsp_diagram_draw(R);
+	      nsp_redraw_diagram(R);
 	    }
 	  return OK;
 	}
@@ -1835,7 +1834,7 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
    * we could here record the state to redraw faster 
    * since during the move this part will be kept constant.
    */
-  nsp_diagram_draw(R);
+  nsp_redraw_diagram(R);
   /*  */
   bf->set_show(O,TRUE);
   if ( IsBlock(O) || IsConnector(O) )  nsp_diagram_locks_set_show(R,O,TRUE);
@@ -1849,7 +1848,7 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
       if ( nsp_diagram_move_obj(R,O, pt, -5,cp,MOVE_CONTROL ) == -100) 
 	return OK;
     }
-  nsp_diagram_draw(R);
+  nsp_redraw_diagram(R);
   return OK;
 }
 
@@ -1935,7 +1934,7 @@ int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double p
        * we could here record the state to redraw faster 
        * since during the move this part will be kept constant.
        */
-      nsp_diagram_draw(R);
+      nsp_redraw_diagram(R);
       /* */
       bf->set_show(Obj,TRUE);
       if ( IsBlock(Obj) || IsConnector(Obj) )  nsp_diagram_locks_set_show(R,Obj,TRUE);
@@ -1945,7 +1944,7 @@ int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double p
   rep = nsp_diagram_move_list_obj(R,L, pt, -5,cp,MOVE, click );
   nsp_list_destroy(L);
   if ( rep == -100) return rep;
-  nsp_diagram_draw(R);
+  nsp_redraw_diagram(R);
   return OK;
 }
 
@@ -2023,7 +2022,7 @@ int nsp_diagram_select_and_split(NspDiagram *R,const double pt[2])
     {
       NspLink *link;
       rep= link_split(R,(NspLink *) Ob,&link,pt);
-      nsp_diagram_draw(R);
+      nsp_redraw_diagram(R);
     }
   return rep;
 }
@@ -2049,7 +2048,7 @@ int nsp_diagram_select_link_and_add_control(NspDiagram *R,const double pt[2])
   if ( IsLink(O) ) 
     {
       rep= link_add_control((NspLink *)O,pt);
-      nsp_diagram_draw(R);
+      nsp_redraw_diagram(R);
     }
   return rep;
 }
@@ -2074,7 +2073,7 @@ int nsp_diagram_select_link_and_remove_control(NspDiagram *R,const double pt[2])
   if ( IsLink(O) ) 
     {
       rep= link_remove_control((NspLink *)O,pt);
-      nsp_diagram_draw(R);
+      nsp_redraw_diagram(R);
     }
   return rep;
 }
@@ -2102,7 +2101,7 @@ int  nsp_diagram_hilite_near_pt(NspDiagram *R,const double pt[2])
       NspTypeGRint *bf = GR_INT(O->basetype->interface);
       nsp_diagram_unhilite_objs(R,FALSE);
       bf->set_hilited(O,TRUE);
-      nsp_diagram_draw(R);
+      nsp_redraw_diagram(R);
     }
   return OK;
 }
@@ -2132,9 +2131,8 @@ static void nsp_diagram_locks_draw(NspDiagram *R,NspObject *O)
 	      gr_port p;
 	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
 		{
-		  NspObject *O1 = p.object_id; 
-		  NspTypeGRint *bf1 = GR_INT(O1->basetype->interface);
-		  bf1->draw(O1);
+		  NspGraphic *G = (NspGraphic *) p.object_id ;
+		  G->type->draw(G->obj->Fig,G,NULL);
 		}
 	    }
 	}
@@ -2317,7 +2315,7 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
       /* draw the frame 
        * we could here record and use a fixed part.
        */
-      nsp_diagram_draw(D);
+      nsp_redraw_diagram(D);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position 
        * XXX this code should be simplified not to search 
@@ -2375,9 +2373,6 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
  * Return value: an integer 
  **/
 
-/* utiliy function */ 
-
-
 static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],list_move_action action)
 {
   int rep = OK;
@@ -2386,15 +2381,14 @@ static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[
     {
       if ( C->O != NULLOBJ )
 	{
-	  /* cast to a BlockFType */
-	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
 	  switch ( action )
 	    {
 	    case L_DRAW : 
 	      if ( IsBlock(C->O)  || IsConnector(C->O))
 		{
-		  bf->draw(C->O);
-		  if ( IsBlock(C->O)  || IsConnector(C->O))  nsp_diagram_locks_draw(F,C->O);
+		  NspGraphic *G = (NspGraphic *) C->O;
+		  G->type->draw(G->obj->Fig,G,NULL);
+		  nsp_diagram_locks_draw(F,C->O);
 		}
 	      break;
 	    case L_TRANSLATE : 
@@ -2443,7 +2437,7 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
       /* draw the frame 
        * we could here record and use a fixed part.
        */
-      nsp_diagram_draw(F);
+      nsp_redraw_diagram(F);
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
@@ -2511,7 +2505,7 @@ void nsp_diagram_unhilite_objs(NspDiagram *R,int draw )
 	}
       C = C->next ;
     }
-  if ( ok == TRUE && draw == TRUE )  nsp_diagram_draw(R);
+  if ( ok == TRUE && draw == TRUE )  nsp_redraw_diagram(R);
 }
 
 /**
@@ -2764,7 +2758,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   
   while ( wstop==0 ) 
     {
-      nsp_diagram_draw(F);
+      nsp_redraw_diagram(F);
       /* draw the link */
       if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
       /* get new mouse position */
@@ -2860,7 +2854,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   mpt[1]=L->obj->poly->R[2*L->obj->poly->m-1];
   link_lock_update(F,L,1,mpt);
   link_check(F,L);
-  nsp_diagram_draw(F);
+  nsp_redraw_diagram(F);
   if ( pixmap ) Xgc->graphic_engine->xset_show(Xgc);
   return NSP_OBJECT(L);
 }
@@ -2952,4 +2946,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2956 "diagram.c"
+#line 2950 "diagram.c"

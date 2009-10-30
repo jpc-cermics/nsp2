@@ -24,7 +24,7 @@
 
 
 
-#line 121 "codegen/block.override"
+#line 122 "codegen/block.override"
 
 #include "nsp/link.h"
 #include "nsp/block.h"
@@ -111,7 +111,7 @@ NspTypeBlock *new_type_block(type_mode mode)
 
   type->init = (init_func *) init_block;
 
-#line 140 "codegen/block.override"
+#line 141 "codegen/block.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
@@ -131,16 +131,14 @@ NspTypeBlock *new_type_block(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 152 "codegen/block.override"
+#line 153 "codegen/block.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
   t_grint->get_show    	=(gr_get_show *) block_get_show;
   t_grint->set_show		=(gr_set_show *) block_set_show;
-  t_grint->draw    		=(gr_draw *) block_draw;
   t_grint->set_pos  	=(gr_set_pos *) block_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) block_get_pos;
-  t_grint->get_rect  	=(gr_get_rect *) block_get_rect;
   t_grint->resize 		=(gr_resize *) block_resize;
   t_grint->update_locks 	=(gr_update_locks *) block_update_locks;
   t_grint->contains_pt 	=(gr_contains_pt *) block_contains_pt;
@@ -159,10 +157,9 @@ NspTypeBlock *new_type_block(type_mode mode)
   t_grint->is_lock_connectable =(gr_is_lock_connectable *) block_is_lock_connectable;
   t_grint->is_lock_connected =(gr_is_lock_connected *) block_is_lock_connected;
   t_grint->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
-  t_grint->full_copy =(gr_full_copy *) nsp_block_full_copy;
   t_grint->unlock =(gr_unlock *) block_unlock;
 
-#line 166 "block.c"
+#line 163 "block.c"
   if ( nsp_type_block_id == 0 ) 
     {
       /* 
@@ -280,7 +277,7 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
-#line 184 "codegen/block.override"
+#line 182 "codegen/block.override"
 
 /* code used to override the save/load functions */
 
@@ -353,7 +350,7 @@ NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
-#line 357 "block.c"
+#line 354 "block.c"
 /*
  * delete 
  */
@@ -513,7 +510,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspBlock instance 
  *-----------------------------------------------------*/
-#line 258 "codegen/block.override"
+#line 256 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -609,7 +606,7 @@ NspBlock *nsp_block_create_default(char *name)
  return H;
 }
 
-#line 613 "block.c"
+#line 610 "block.c"
 /*
  * copy for gobject derived class  
  */
@@ -669,7 +666,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 359 "codegen/block.override"
+#line 357 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -723,11 +720,11 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 727 "block.c"
+#line 724 "block.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 455 "codegen/block.override"
+#line 454 "codegen/block.override"
 
 /* translate */
 
@@ -743,10 +740,10 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-#line 747 "block.c"
+#line 744 "block.c"
 
 
-#line 472 "codegen/block.override"
+#line 471 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -761,10 +758,10 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 765 "block.c"
+#line 762 "block.c"
 
 
-#line 488 "codegen/block.override"
+#line 487 "codegen/block.override"
 /* resize */ 
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -779,24 +776,25 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 783 "block.c"
+#line 780 "block.c"
 
 
-#line 443 "codegen/block.override"
+#line 441 "codegen/block.override"
 
 /* draw */
 
 static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  block_draw(self);
+  nsp_draw_block(Fig->Xgc, self, NULL);
   return 0;
 }
 
-#line 797 "block.c"
+#line 795 "block.c"
 
 
-#line 504 "codegen/block.override"
+#line 503 "codegen/block.override"
 
 /* fix a lock point position 
  * in relative coordinates 
@@ -816,10 +814,10 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-#line 820 "block.c"
+#line 818 "block.c"
 
 
-#line 525 "codegen/block.override"
+#line 524 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -842,7 +840,7 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
 }
 
 
-#line 846 "block.c"
+#line 844 "block.c"
 
 
 static NspMethods block_methods[] = {
@@ -983,7 +981,7 @@ static AttrTab block_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 422 "codegen/block.override"
+#line 420 "codegen/block.override"
 
 extern function int_nspgraphic_extract;
 
@@ -992,10 +990,10 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 996 "block.c"
+#line 994 "block.c"
 
 
-#line 432 "codegen/block.override"
+#line 430 "codegen/block.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1005,7 +1003,7 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1009 "block.c"
+#line 1007 "block.c"
 
 
 /*----------------------------------------------------
@@ -1036,7 +1034,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
   *f = Block_func[i].fonc;
 }
 
-#line 549 "codegen/block.override"
+#line 548 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -1044,13 +1042,117 @@ void Block_Interf_Info(int i, char **fname, function (**f))
  *
  *
  */
+static void draw_3d(BCG *Xgc,double r[]);
 
-/* see below 
+
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 {
-
+  NspBlock *B = (NspBlock *) Obj;
+  /* take care of the fact that str1 must be writable */
+  char str1[] = "my\nblock";
+  double loc[4];
+  int cpat, cwidth,i, draw_script, fill=FALSE;
+  
+  /* check the show attribute */
+  if ( B->obj->show == FALSE ) return ;
+  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+  cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
+  
+  /* first draw the block icon */
+  draw_script = 0;
+  switch (draw_script)
+    {
+    case 0: 
+      if ( B->obj->icon == NULL ) 
+	{
+	  if ( nsp_block_create_icon(Xgc,B) == FAIL) 
+	    Xgc->graphic_engine->xinfo(Xgc,"failed to create icon");
+	}
+      if ( B->obj->icon != NULL ) 
+	{
+	  B->obj->icon->type->draw(Xgc, B->obj->icon,NULL);
+	}
+      else
+	{
+	  /* No icon available we used a default string 
+	   *
+	   */
+	  Xgc->graphic_engine->xset_pattern(Xgc,8);
+	  Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
+	  /* drawing a string */
+	  Xgc->graphic_engine->xset_pattern(Xgc,0);
+	  loc[0] = B->obj->r[1] - B->obj->r[3];
+	  Xgc->graphic_engine->scale->xstringb(Xgc,"No icon",&fill,
+					       B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+	}
+      break;
+    case 2:
+      /*
+       * simple icon with just a string 
+       */
+      /* filling with white */
+      Xgc->graphic_engine->xset_pattern(Xgc,8);
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
+      /* drawing a string */
+      Xgc->graphic_engine->xset_pattern(Xgc,0);
+      loc[0] = B->obj->r[1] - B->obj->r[3];
+      Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
+					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+      break;
+    }
+  /* draw frame rectangle */
+  Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
+  draw_3d(Xgc,B->obj->r);
+  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
+  /* add the control points if block is hilited */ 
+  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+  if ( B->obj->hilited == TRUE ) 
+    {
+      loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+      loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+    }
+  for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
+    {
+      int locked,type;
+      if ( block_is_lock_connected(B,i)== TRUE)
+	{
+	  locked = TRUE;
+	  Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+	}
+      else 
+	{
+	  locked = FALSE;
+	  Xgc->graphic_engine->xset_pattern(Xgc,1); 
+	}
+      block_get_lock_pos(B,i,loc);
+      /* need a method here ? */
+      type = B->obj->locks[i].type;
+      lock_draw(Xgc,loc,type & LOCK_DIR_FLAG ,type &LOCK_TYPE_FLAG ,locked);
+      /* loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
+       *  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+       */
+    }
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
-*/
+
+static void draw_3d(BCG *Xgc,double r[])
+{
+  int npt=4;
+  double size3d=0.5;
+  double x[]={r[0],r[0],r[0]- size3d,r[0]-size3d};
+  double y[]={r[1],r[1]-r[3],r[1]-r[3]-size3d,r[1]-size3d};
+  double x1[]={r[0],r[0]+r[2],r[0]+r[2]- size3d,r[0]-size3d};
+  double y1[]={r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d};
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,x1,y1,npt,TRUE);
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,x1,y1,npt,TRUE);
+  
+}
+
 /**
  * nsp_block_translate:
  * @B: a #NspBlock
@@ -1088,7 +1190,10 @@ static void nsp_scale_block(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_block (NspGraphic *Obj,double *bounds)
 {
   NspBlock *B = (NspBlock *) Obj;
-  block_get_rect(B,bounds);
+  bounds[0]=B->obj->r[0];/* xmin */
+  bounds[1]=B->obj->r[1]-B->obj->r[3];/* ymin */
+  bounds[2]=B->obj->r[0]+B->obj->r[2];/* xmax */
+  bounds[3]=B->obj->r[1];/* ymax */
   return TRUE;
 }
 
@@ -1201,154 +1306,6 @@ static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int
 }
 
 
-/**
- * block_draw:
- * @B: a block 
- *
- * Draws a block given the current graphic driver. 
- *
- **/
-
-static void draw_3d(BCG *Xgc,double r[]);
-
-void block_draw(NspBlock *B)
-{
-  Sciprintf("Error: to be updated with nsp_draw_block\n");
-}
-
-static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
-{
-  BCG *Xgc1;
-  NspBlock *B = (NspBlock *) Obj;
-  /* take care of the fact that str1 must be writable */
-  char str1[] = "my\nblock";
-  char str[256];
-  double loc[4];
-  int cpat, cwidth,i, draw_script, fill=FALSE;
-  
-  /* check the show attribute */
-  if ( B->obj->show == FALSE ) return ;
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-  cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-  
-  /* first draw inside */
-  /* just a test we draw a Matrix inside the block */
-  draw_script = 0;
-  switch (draw_script)
-    {
-    case 0: 
-      if ( B->obj->icon == NULL ) 
-	{
-	  if ( nsp_block_create_icon(Xgc,B) == FAIL) 
-	    Xgc->graphic_engine->xinfo(Xgc,"failed to create icon");
-	}
-      if ( B->obj->icon != NULL ) 
-	{
-	  B->obj->icon->type->draw(Xgc, B->obj->icon,NULL);
-	}
-      else
-	{
-	  Xgc->graphic_engine->xset_pattern(Xgc,8);
-	  Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
-	  /* drawing a string */
-	  Xgc->graphic_engine->xset_pattern(Xgc,0);
-	  loc[0] = B->obj->r[1] - B->obj->r[3];
-	  Xgc->graphic_engine->scale->xstringb(Xgc,"No icon",&fill,
-					       B->obj->r,loc,B->obj->r+2,B->obj->r+3);
-	}
-      break;
-    case 1: 
-      Xgc1 = window_list_get_first(); 
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
-      sprintf(str,"draw_vanne([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
-      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
-      break;
-    case 2:
-      /* filling with white */
-      Xgc->graphic_engine->xset_pattern(Xgc,8);
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
-      /* drawing a string */
-      Xgc->graphic_engine->xset_pattern(Xgc,0);
-      loc[0] = B->obj->r[1] - B->obj->r[3];
-      Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
-					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
-      break;
-    case 3: 
-      Xgc1 = window_list_get_first(); 
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
-      sprintf(str,"draw_plot3d([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
-      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
-      break;
-    case 4: 
-      Xgc1 = window_list_get_first(); 
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,TRUE);
-      sprintf(str,"draw_gtk_logo([%5.2f,%5.2f,%5.2f,%5.2f]);",B->obj->r[0],B->obj->r[1],B->obj->r[2],B->obj->r[3]);
-      nsp_parse_eval_from_string(str,FALSE,FALSE,FALSE,TRUE);
-      if (Xgc1 != Xgc ) Xgc->graphic_engine->xset_curwin(Xgc1->CurWindow,TRUE);
-      break;
-    default: 
-      /* fill rectangle */
-      Xgc->graphic_engine->xset_pattern(Xgc,B->obj->background);
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
-      break;
-    }
-  /* draw frame rectangle */
-  Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
-  draw_3d(Xgc,B->obj->r);
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
-  /* add the control points if block is hilited */ 
-  Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-  if ( B->obj->hilited == TRUE ) 
-    {
-      loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-      loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-    }
-  for ( i=0 ; i < B->obj->n_locks  ; i++ ) 
-    {
-      int locked,type;
-      if ( block_is_lock_connected(B,i)== TRUE)
-	{
-	  locked = TRUE;
-	  Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
-	}
-      else 
-	{
-	  locked = FALSE;
-	  Xgc->graphic_engine->xset_pattern(Xgc,1); 
-	}
-      block_get_lock_pos(B,i,loc);
-      /* need a method here ? */
-      type = B->obj->locks[i].type;
-      lock_draw(Xgc,loc,type & LOCK_DIR_FLAG ,type &LOCK_TYPE_FLAG ,locked);
-      /* loc[0] += -1; loc[1] += 1;loc[2]=loc[3]= lock_size;
-       *  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
-       */
-    }
-  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
-}
-
-static void draw_3d(BCG *Xgc,double r[])
-{
-  int npt=4;
-  double size3d=0.5;
-  double x[]={r[0],r[0],r[0]- size3d,r[0]-size3d};
-  double y[]={r[1],r[1]-r[3],r[1]-r[3]-size3d,r[1]-size3d};
-  double x1[]={r[0],r[0]+r[2],r[0]+r[2]- size3d,r[0]-size3d};
-  double y1[]={r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d};
-  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
-  Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
-  Xgc->graphic_engine->scale->fillpolyline(Xgc,x1,y1,npt,TRUE);
-  Xgc->graphic_engine->scale->drawpolyline(Xgc,x1,y1,npt,TRUE);
-  
-}
-
-
-
 int block_set_pos(NspBlock *B,const double tr[2])
 {
   B->obj->r[0] = tr[0] ;
@@ -1362,12 +1319,6 @@ void block_get_pos(NspBlock *B, double tr[2])
   tr[0] = B->obj->r[0]; 
   tr[1] = B->obj->r[1];
 }
-
-void block_get_rect(NspBlock *B, double r[4])
-{
-  memcpy(r,B->obj->r, 4*sizeof(double));
-}
-
 
 /**
  * block_resize: 
@@ -1958,4 +1909,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1962 "block.c"
+#line 1913 "block.c"

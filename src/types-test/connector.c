@@ -24,16 +24,20 @@
 
 
 
-#line 95 "codegen/connector.override"
+#line 93 "codegen/connector.override"
 
-#include "nsp/object.h"
+#include "nsp/link.h"
+#include "nsp/block.h"
+#include "nsp/connector.h"
+#include "nsp/figuredata.h"
+#include "nsp/figure.h"
+#include "nsp/diagram.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/parse.h"
 
-
-#line 37 "connector.c"
+#line 41 "connector.c"
 
 /* ----------- NspConnector ----------- */
 
@@ -107,7 +111,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
 
   type->init = (init_func *) init_connector;
 
-#line 110 "codegen/connector.override"
+#line 112 "codegen/connector.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_connector;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_connector ;
@@ -118,7 +122,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->connector_figure = nsp_graphic_connector_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unconnector_figure = nsp_graphic_unconnector_figure; */ 
 
-#line 122 "connector.c"
+#line 126 "connector.c"
   /* 
    * NspConnector interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -127,16 +131,14 @@ NspTypeConnector *new_type_connector(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 122 "codegen/connector.override"
+#line 124 "codegen/connector.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) connector_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) connector_set_hilited;
   t_grint->get_show    	=(gr_get_show *) connector_get_show;
   t_grint->set_show		=(gr_set_show *) connector_set_show;
-  t_grint->draw    		=(gr_draw *) connector_draw;
   t_grint->set_pos  	=(gr_set_pos *) connector_set_pos;
   t_grint->get_pos  	=(gr_get_pos *) connector_get_pos;
-  t_grint->get_rect  	=(gr_get_rect *) connector_get_rect;
   t_grint->resize 		=(gr_resize *) connector_resize;
   t_grint->update_locks 	=(gr_update_locks *) connector_update_locks;
   t_grint->contains_pt 	=(gr_contains_pt *) connector_contains_pt;
@@ -155,10 +157,9 @@ NspTypeConnector *new_type_connector(type_mode mode)
   t_grint->is_lock_connectable =(gr_is_lock_connectable *) connector_is_lock_connectable;
   t_grint->is_lock_connected =(gr_is_lock_connected *) connector_is_lock_connected;
   t_grint->set_lock_pos =(gr_set_lock_pos *) connector_set_lock_pos;
-  t_grint->full_copy =(gr_full_copy *) nsp_connector_full_copy;
   t_grint->unlock =(gr_unlock *) connector_unlock;
 
-#line 162 "connector.c"
+#line 163 "connector.c"
   if ( nsp_type_connector_id == 0 ) 
     {
       /* 
@@ -274,7 +275,7 @@ static int nsp_connector_neq(NspConnector *A, NspObject *B)
  * save 
  */
 
-#line 154 "codegen/connector.override"
+#line 153 "codegen/connector.override"
 
 /*
  * save 
@@ -339,7 +340,7 @@ static NspConnector  *nsp_connector_xdr_load(XDR *xdrs)
 
 
 
-#line 343 "connector.c"
+#line 344 "connector.c"
 /*
  * delete 
  */
@@ -488,7 +489,7 @@ NspConnector  *GetConnector(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspConnector instance 
  *-----------------------------------------------------*/
-#line 220 "codegen/connector.override"
+#line 219 "codegen/connector.override"
 /* override the code for connector creation */
 
 
@@ -559,7 +560,7 @@ NspConnector *nsp_connector_create_default(char *name)
  return H;
 }
 
-#line 563 "connector.c"
+#line 564 "connector.c"
 /*
  * copy for gobject derived class  
  */
@@ -612,7 +613,7 @@ NspConnector *nsp_connector_full_copy(NspConnector *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 296 "codegen/connector.override"
+#line 295 "codegen/connector.override"
 
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
@@ -666,7 +667,7 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 
 
-#line 670 "connector.c"
+#line 671 "connector.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -687,7 +688,7 @@ static int _wrap_connector_translate(void  *self,Stack stack, int rhs, int opt, 
 
 }
 
-#line 691 "connector.c"
+#line 692 "connector.c"
 
 
 #line 410 "codegen/connector.override"
@@ -706,7 +707,7 @@ static int _wrap_connector_set_pos(void  *self,Stack stack, int rhs, int opt, in
 
 }
 
-#line 710 "connector.c"
+#line 711 "connector.c"
 
 
 #line 427 "codegen/connector.override"
@@ -724,21 +725,22 @@ static int _wrap_connector_resize(void  *self, Stack stack, int rhs, int opt, in
   return 1;
 }
 
-#line 728 "connector.c"
+#line 729 "connector.c"
 
 
-#line 380 "codegen/connector.override"
+#line 379 "codegen/connector.override"
 
 /* draw */
 
 static int _wrap_connector_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  connector_draw(self);
+  nsp_draw_connector(Fig->Xgc, self, NULL);
   return 0;
 }
 
-#line 742 "connector.c"
+#line 744 "connector.c"
 
 
 static NspMethods connector_methods[] = {
@@ -889,113 +891,6 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
  *
  */
 
-/*
-static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
-{
-
-}
-*/
-
-/**
- * connector_tranlate:
- * @B: a connector 
- * @pt: 
- * 
- * Tranlates the connector origin (upper left point) using the 
- * value of vector @pt. 
- *
- **/
-
-static void nsp_translate_connector(NspGraphic *Obj,const double *tr)
-{
-  NspConnector *B = (NspConnector *) Obj;
-  B->obj->r[0] += tr[0] ;
-  B->obj->r[1] += tr[1] ;
-  connector_update_locks(B);
-}
-
-static void nsp_rotate_connector(NspGraphic *Obj,double *R)
-{
-  
-}
-
-static void nsp_scale_connector(NspGraphic *Obj,double *alpha)
-{
-  /*   NspBlock *P = (NspBlock *) Obj; */
-}
-
-/* compute in bounds the enclosing rectangle of connector 
- *
- */
-
-static int nsp_getbounds_connector (NspGraphic *Obj,double *bounds)
-{
-  NspConnector *B = (NspConnector *) Obj;
-  connector_get_rect(B,bounds);
-  return TRUE;
-}
-
-/*
- * implementation of the GRint interface 
- * for a connector 
- */ 
-
-/**
- * connector_get_hilited:
- * @B: a connector 
- *
- * Returns: the value of the hilited attribute of object @B.
- *
- **/
-
-int connector_get_hilited(NspConnector *B) {  return B->obj->hilited; } 
-
-/**
- * connector_set_hilited:
- * @B: a connector 
- * @val: %True or %False. 
- * 
- * Sets the hilited status of the connector @B.
- *
- **/
-
-void connector_set_hilited(NspConnector *B,int val) {  B->obj->hilited = val; } 
-
-/**
- * connector_get_show:
- * @B: a connector 
- * @val:  %True or %False. 
- * 
- * Returns: the value of the show attribute of object @B.
- *
- **/
-
-int connector_get_show(NspConnector *B) {  return B->obj->show; } 
-
-/**
- * connector_set_show:
- * @B: a connector 
- *
- * Sets the show status of the given Connector.
- *
- **/
-
-void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; } 
-
-/**
- * connector_draw:
- * @B: a connector 
- *
- * Draws the connector given as argument using the current graphic driver 
- *
- **/
-
-
-void connector_draw(NspConnector *B)
-{
-  Sciprintf("Error: to be updated with nsp_draw_block\n");
-}
-
 static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   NspConnector *B = (NspConnector *) Obj;
@@ -1063,6 +958,96 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 }
 
 
+/**
+ * connector_tranlate:
+ * @B: a connector 
+ * @pt: 
+ * 
+ * Tranlates the connector origin (upper left point) using the 
+ * value of vector @pt. 
+ *
+ **/
+
+static void nsp_translate_connector(NspGraphic *Obj,const double *tr)
+{
+  NspConnector *B = (NspConnector *) Obj;
+  B->obj->r[0] += tr[0] ;
+  B->obj->r[1] += tr[1] ;
+  connector_update_locks(B);
+}
+
+static void nsp_rotate_connector(NspGraphic *Obj,double *R)
+{
+  
+}
+
+static void nsp_scale_connector(NspGraphic *Obj,double *alpha)
+{
+  /*   NspBlock *P = (NspBlock *) Obj; */
+}
+
+/* compute in bounds the enclosing rectangle of connector 
+ *
+ */
+
+static int nsp_getbounds_connector (NspGraphic *Obj,double *bounds)
+{
+  NspConnector *B = (NspConnector *) Obj;
+  bounds[0]=B->obj->r[0];/* xmin */
+  bounds[1]=B->obj->r[1]-B->obj->r[3];/* ymin */
+  bounds[2]=B->obj->r[0]+B->obj->r[2];/* xmax */
+  bounds[3]=B->obj->r[1];/* ymax */
+  return TRUE;
+}
+
+/*
+ * implementation of the GRint interface 
+ * for a connector 
+ */ 
+
+/**
+ * connector_get_hilited:
+ * @B: a connector 
+ *
+ * Returns: the value of the hilited attribute of object @B.
+ *
+ **/
+
+int connector_get_hilited(NspConnector *B) {  return B->obj->hilited; } 
+
+/**
+ * connector_set_hilited:
+ * @B: a connector 
+ * @val: %True or %False. 
+ * 
+ * Sets the hilited status of the connector @B.
+ *
+ **/
+
+void connector_set_hilited(NspConnector *B,int val) {  B->obj->hilited = val; } 
+
+/**
+ * connector_get_show:
+ * @B: a connector 
+ * @val:  %True or %False. 
+ * 
+ * Returns: the value of the show attribute of object @B.
+ *
+ **/
+
+int connector_get_show(NspConnector *B) {  return B->obj->show; } 
+
+/**
+ * connector_set_show:
+ * @B: a connector 
+ *
+ * Sets the show status of the given Connector.
+ *
+ **/
+
+void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; } 
+
+
 int connector_set_pos(NspConnector *B,const double pt[2])
 {
   B->obj->r[0] = pt[0] ;
@@ -1077,10 +1062,6 @@ void connector_get_pos(NspConnector *B, double pt[2])
   pt[1]= B->obj->r[1];
 }
 
-void connector_get_rect(NspConnector *B, double r[4])
-{
-  memcpy(r,B->obj->r, 4*sizeof(double));
-}
 
 /**
  * connector_resize: 
@@ -1601,4 +1582,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1605 "connector.c"
+#line 1586 "connector.c"

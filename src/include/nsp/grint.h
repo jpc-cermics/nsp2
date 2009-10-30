@@ -29,10 +29,8 @@ typedef int gr_get_hilited (void *B);
 typedef void gr_set_hilited (void *B, int val); 
 typedef int gr_get_show (void *B); 
 typedef void gr_set_show (void *B, int val); 
-typedef void gr_draw (void *R); 
 typedef int gr_set_pos (void *R, const double *pt); 
 typedef void gr_get_pos (void *R, double *pt); 
-typedef void gr_get_rect (void *R, double *r); 
 typedef void gr_resize (void *R, const double *size); 
 typedef void gr_update_locks (void *R); 
 typedef int gr_contains_pt (const void *B, const double *pt); 
@@ -74,10 +72,8 @@ struct _NspTypeGRint {
   gr_set_hilited *set_hilited ;		     
   gr_get_show *get_show ;		     
   gr_set_show *set_show ;		     
-  gr_draw *draw ;			     
   gr_set_pos *set_pos ;		     
   gr_get_pos *get_pos ;		     
-  gr_get_rect *get_rect ;		     
   gr_resize *resize ;			     
   gr_update_locks *update_locks ;	     
   gr_contains_pt *contains_pt ;		     
@@ -96,9 +92,7 @@ struct _NspTypeGRint {
   gr_is_lock_connectable * is_lock_connectable;
   gr_is_lock_connected * is_lock_connected;
   gr_set_lock_pos * set_lock_pos;
-  gr_full_copy * full_copy;
   gr_unlock *unlock ; 
-  gr_set_frame *set_frame;
 };
 
 

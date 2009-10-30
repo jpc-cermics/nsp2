@@ -99,7 +99,7 @@ extern int IsDiagramObj (Stack stack, int i);
 extern NspDiagram *GetDiagramCopy (Stack stack, int i); 
 extern NspDiagram *GetDiagram (Stack stack, int i); 
 extern int IsDiagram (NspObject *O); 
-extern void nsp_diagram_draw (NspDiagram *R); 
+extern void nsp_redraw_diagram (NspDiagram *R); 
 extern int nsp_diagram_select_obj (NspDiagram *R, const double *pt, NspObject **Objs,NspObject *exclude); 
 extern int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
 extern int nsp_diagram_select_and_move (NspDiagram *R, const double *pt, int mask); 

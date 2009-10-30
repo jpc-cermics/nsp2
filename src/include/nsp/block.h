@@ -187,10 +187,8 @@ static int block_get_hilited (NspBlock *B);
 static void block_set_hilited (NspBlock *B, int val); 
 static int block_get_show (NspBlock *B); 
 static void block_set_show (NspBlock *B, int val); 
-static void block_draw (NspBlock *R); 
 static int block_set_pos (NspBlock *R, const double *pt); 
 static void block_get_pos (NspBlock *R, double *pt); 
-static void block_get_rect (NspBlock *R, double *r); 
 static void block_resize (NspBlock *R, const double *size); 
 static void block_update_locks (NspBlock *R); 
 static int block_contains_pt (const NspBlock *B, const double *pt); 
@@ -224,6 +222,9 @@ static int nsp_print_grb_lock(int indent,grb_lock *locks,NspBlock *M);
 static int nsp_check_grb_lock(grb_lock *locks,NspBlock *M);
 static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 
-#line 228 "./block.h"
+/* local */
+static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
+
+#line 229 "./block.h"
 #endif /* NspBlock_Private */
 
