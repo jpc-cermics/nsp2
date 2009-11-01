@@ -909,18 +909,18 @@ static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_translate_contour3d(NspGraphic *Obj,const double *tr)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 
 }
 
 static void nsp_rotate_contour3d(NspGraphic *Obj,double *R)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 }
 
 static void nsp_scale_contour3d(NspGraphic *Obj,double *alpha)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 }
 
 /* compute in bounds the enclosing rectangle of contour3d 

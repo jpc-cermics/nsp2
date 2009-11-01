@@ -24,7 +24,7 @@
 
 
 
-#line 14 "codegen/graphic.override"
+#line 15 "codegen/graphic.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/axes.h>
@@ -102,7 +102,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
   type->init = (init_func *) init_graphic;
 
-#line 62 "codegen/graphic.override"
+#line 63 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
@@ -514,7 +514,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 80 "codegen/graphic.override"
+#line 81 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -531,7 +531,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
 #line 532 "graphic.c"
 
 
-#line 95 "codegen/graphic.override"
+#line 96 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -546,7 +546,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
 #line 547 "graphic.c"
 
 
-#line 108 "codegen/graphic.override"
+#line 109 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -560,7 +560,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
 #line 561 "graphic.c"
 
 
-#line 120 "codegen/graphic.override"
+#line 121 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -639,7 +639,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 130 "codegen/graphic.override"
+#line 131 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -836,7 +836,7 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 /* invalidate the drawing region associated to a graphic object. 
  * This function is to be called when the 
  * graphic object has changed and need to be drawn.
- * XXX: a finir en passant les rectangles 
+ * 
  */
 
 void nsp_graphic_invalidate(NspGraphic *G)
@@ -845,22 +845,25 @@ void nsp_graphic_invalidate(NspGraphic *G)
   nsp_figure *F = G->obj->Fig;
   nsp_axes *A = G->obj->Axe;
   BCG *Xgc = F->Xgc;
-  if ( F == NULL) return ;
+  if ( F == NULL ||  Xgc == NULL) return ;
   if ( F->draw_now== FALSE) return;
-  if ( Xgc == NULL) return;
+  if ( G->obj->hidden == TRUE ) return;
   if ( G->type->bounds(G,bounds)== TRUE) 
     {
+      gint rect[4]; /* like a GdkRectangle */
       int xmin,xmax,ymin,ymax;
       scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
       scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
-      Xgc->graphic_engine->force_redraw(Xgc);
+      rect[0]=xmin-10;rect[1]=ymax-10;rect[2]=xmax-xmin+20;rect[3]=ymin-ymax+20;
+      /* fprintf(stderr,"invalidate [%d,%d,%d,%d]\n",rect[0],rect[1],rect[2],rect[3]);*/
+      Xgc->graphic_engine->force_redraw(Xgc,rect);
     }
   else
     {
       /* a full window force redraw or nothing ? */
-      Xgc->graphic_engine->force_redraw(Xgc);
+      Xgc->graphic_engine->force_redraw(Xgc,NULL);
     }
 }
 
 
-#line 867 "graphic.c"
+#line 870 "graphic.c"

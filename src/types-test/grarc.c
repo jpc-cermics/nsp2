@@ -870,29 +870,31 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
 static void nsp_translate_grarc(NspGraphic *Obj,const double *tr)
 {
   NspGrArc *P = (NspGrArc *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->x += tr[0];
   P->obj->y += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_grarc(NspGraphic *Obj,double *R)
 {
   NspGrArc *P = (NspGrArc *) Obj;
   double x1;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
   P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
   P->obj->x = x1;
   /* Il faut aussi changer l'angle */
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_grarc(NspGraphic *Obj,double *alpha)
 {
   NspGrArc *P = (NspGrArc *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->x *= alpha[0];
   P->obj->y *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of grarc 
@@ -910,4 +912,4 @@ static int nsp_getbounds_grarc(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 914 "grarc.c"
+#line 916 "grarc.c"

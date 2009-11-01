@@ -701,7 +701,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   if ( ((NspQcurve *) self)->obj->mode !=  mode)
     {
       ((NspQcurve *) self)->obj->mode =  mode;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
     }
   return OK;
 }
@@ -936,12 +936,13 @@ static void nsp_translate_qcurve(NspGraphic *Obj,const double *tr)
   NspQcurve *P = (NspQcurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < M->m ; i++) 
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_qcurve(NspGraphic *Obj,double *R)
@@ -950,6 +951,7 @@ static void nsp_rotate_qcurve(NspGraphic *Obj,double *R)
   NspQcurve *P = (NspQcurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m,x1,y1;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < M->m ; i++) 
     {
       x1 = R[0]*(*x) -R[1]*(*y);
@@ -957,7 +959,7 @@ static void nsp_rotate_qcurve(NspGraphic *Obj,double *R)
       *(x++) =x1;
       *(y++) =y1;
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_qcurve(NspGraphic *Obj,double *alpha)
@@ -971,7 +973,7 @@ static void nsp_scale_qcurve(NspGraphic *Obj,double *alpha)
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 }
 
 /* compute in bounds the enclosing rectangle of qcurve 
@@ -1167,7 +1169,7 @@ NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree
   nsp_strf_axes(Xgc, axe , NULL, '2');
   axe->obj->iso = FALSE;
   axe->obj->fixed = FALSE;
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   if ( Lc != NULL) *Lc = axe->obj->children;
   return ((NspGraphic *) axe)->obj->Fig;
 }
@@ -1199,4 +1201,4 @@ static void oscillo_test()
 
      
 
-#line 1203 "qcurve.c"
+#line 1205 "qcurve.c"

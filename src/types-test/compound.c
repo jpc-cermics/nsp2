@@ -756,15 +756,11 @@ static void nsp_compound_compute_inside_bounds(NspGraphic *Obj)
 
 static void nsp_translate_compound(NspGraphic *Obj,const double *tr)
 {
-  int draw_now;
   NspCompound *P = (NspCompound *) Obj;
   NspList *L=  P->obj->children;
   Cell *cloc =  L->first ;
-  /* just in case we inihibit the draw during the 
-   * while 
-   */
-  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
-  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
+  /* XXX */
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -774,21 +770,15 @@ static void nsp_translate_compound(NspGraphic *Obj,const double *tr)
 	}
       cloc = cloc->next;
     }
-  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_compound(NspGraphic *Obj,double *R)
 {
-  int draw_now;
   NspCompound *P = (NspCompound *) Obj;
   NspList *L=  P->obj->children;
   Cell *cloc =  L->first ;
-  /* just in case we inihibit the draw during the 
-   * while 
-   */
-  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
-  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -798,21 +788,15 @@ static void nsp_rotate_compound(NspGraphic *Obj,double *R)
 	}
       cloc = cloc->next;
     }
-  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_compound(NspGraphic *Obj,double *alpha)
 {
-  int draw_now;
   NspCompound *P = (NspCompound *) Obj;
   NspList *L=  P->obj->children;
   Cell *cloc =  L->first ;
-  /* just in case we inihibit the draw during the 
-   * while 
-   */
-  draw_now = ((nsp_figure *) Obj->obj->Fig)->draw_now;
-  ((nsp_figure *) Obj->obj->Fig)->draw_now =  FALSE;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -822,8 +806,7 @@ static void nsp_scale_compound(NspGraphic *Obj,double *alpha)
 	}
       cloc = cloc->next;
     }
-  ((nsp_figure *) Obj->obj->Fig)->draw_now = draw_now;
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of compound 
@@ -863,4 +846,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 867 "compound.c"
+#line 850 "compound.c"

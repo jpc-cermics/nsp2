@@ -971,9 +971,11 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
 static void nsp_translate_connector(NspGraphic *Obj,const double *tr)
 {
   NspConnector *B = (NspConnector *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   B->obj->r[0] += tr[0] ;
   B->obj->r[1] += tr[1] ;
   connector_update_locks(B);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_connector(NspGraphic *Obj,double *R)
@@ -1582,4 +1584,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1586 "connector.c"
+#line 1588 "connector.c"

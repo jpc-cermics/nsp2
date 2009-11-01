@@ -65,14 +65,22 @@ static void force_affichage(BCG *Xgc)
  * force an expose_event with draw set to TRUE
  **/
 
-static void force_redraw(BCG *Xgc)
+static void force_redraw(BCG *Xgc,void *rect)
 {
-  nsp_gtk_invalidate(Xgc);
   Xgc->private->draw = TRUE;
+  if ( rect == NULL ) 
+    {
+      nsp_gtk_invalidate(Xgc);
+    }
+  else
+    {
+      /* rect should be similar to a  GdkRectangle */
+      gdk_window_invalidate_rect(Xgc->private->drawing->window,rect, FALSE);
+     }
   /*
-   *
    * gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
    */
+
 }
 
 /*---------------------------------------------------------
@@ -1742,12 +1750,23 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     }
   else 
     {
+#ifdef DEBUG_EXPOSE
+      if ( event != NULL) 
+	fprintf(stderr,"draw=%s, with area %d %d %d %d\n", 
+		dd->private->draw == TRUE ? "T":"F",
+		event->area.x, event->area.y,
+		event->area.width, event->area.height);
+      else 
+	fprintf(stderr,"draw=%s, with full area %d %d %d %d\n", 
+		dd->private->draw == TRUE ? "T":"F",0,0,
+		dd->CWindowWidth, dd->CWindowHeight);
+#endif 
+	  
       if ( dd->private->draw == TRUE ) 
 	{
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
-	  /* nsp_gr_replay(dd->CurWindow); */
 	  dd->graphic_engine->clearwindow(dd);
 	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
 	  dd->private->in_expose= FALSE;
@@ -1755,22 +1774,21 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       else 
 	{
 	}
-
+      
       if (event  != NULL) 
 	{
-#ifdef DEBUG_EXPOSE
-	  fprintf(stderr,"draw=%d, with area %d %d %d %d\n", 
-		  dd->private->draw,
-		  event->area.x, event->area.y,
-		  event->area.width, event->area.height);
-#endif 
-	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
+			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
+	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			     event->area.x, event->area.y, 
+			     event->area.width, event->area.height);
 	}
       else 
 	{
-	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
+			    dd->private->pixmap,
 			    0,0,0,0,
 			    dd->CWindowWidth, dd->CWindowHeight);
 	}

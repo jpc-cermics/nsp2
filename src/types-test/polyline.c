@@ -913,13 +913,13 @@ static void nsp_translate_polyline(NspGraphic *Obj,const double *tr)
   int i; 
   NspPolyline *P = (NspPolyline *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_polyline(NspGraphic *Obj,double *R)
@@ -927,6 +927,7 @@ static void nsp_rotate_polyline(NspGraphic *Obj,double *R)
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
   double *x= P->obj->x->R,*y= P->obj->y->R,x1,y1;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       x1 = R[0]*(*x) -R[1]*(*y);
@@ -934,7 +935,7 @@ static void nsp_rotate_polyline(NspGraphic *Obj,double *R)
       *(x++) =x1;
       *(y++) =y1;
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_polyline(NspGraphic *Obj,double *alpha)
@@ -942,12 +943,13 @@ static void nsp_scale_polyline(NspGraphic *Obj,double *alpha)
   int i;
   NspPolyline *P = (NspPolyline *) Obj;
   double *x= P->obj->x->R,*y= P->obj->y->R;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of polyline 
@@ -981,4 +983,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 985 "polyline.c"
+#line 987 "polyline.c"

@@ -991,6 +991,7 @@ static void nsp_translate_link(NspGraphic *Obj,const double *tr)
   NspLink *L = (NspLink *) Obj;
   int i,m= L->obj->poly->m,min=0,max=m;
   double *x= L->obj->poly->R, *y = x + m; 
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   /* cannot translate locked link */
   if ( link_is_lock_connected(L,0) ) min=1;
   if ( link_is_lock_connected(L,1) ) max=m-1;
@@ -999,6 +1000,7 @@ static void nsp_translate_link(NspGraphic *Obj,const double *tr)
       x[i] += tr[0] ;
       y[i] += tr[1] ;
     }
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_link(NspGraphic *Obj,double *R)
@@ -1946,4 +1948,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1950 "link.c"
+#line 1952 "link.c"

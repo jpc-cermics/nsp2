@@ -918,29 +918,31 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
 static void nsp_translate_grstring(NspGraphic *Obj,const double *tr)
 {
   NspGrstring *P = (NspGrstring *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->x += tr[0];
   P->obj->y += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
 {
   NspGrstring *P = (NspGrstring *) Obj;
   double x1;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
   P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
   P->obj->x = x1;
   /* Il faut aussi changer l'angle */
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
 {
   NspGrstring *P = (NspGrstring *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->x *= alpha[0];
   P->obj->y *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of grstring 
@@ -949,14 +951,14 @@ static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
 
 static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 {
-  return FALSE;
-  /* NspGrstring *P = (NspGrstring *) Obj; */
-  bounds[0]= bounds[1] = bounds[2]= bounds[3]=0;
-  /*   bounds[0]=*x;/\* xmin *\/ */
-  /*   bounds[1]=*y;/\* ymin *\/ */
-  /*   bounds[2]=*x;/\* xmax *\/ */
-  /*   bounds[3]=*y;/\* ymax *\/ */
+  /* XXX */
+  NspGrstring *P = (NspGrstring *) Obj;
+  bounds[0]= P->obj->x;/* xmin */ 
+  bounds[1]= P->obj->y;/* ymin */ 
+  bounds[2]= P->obj->x+P->obj->w;/* xmax */ 
+  bounds[3]= P->obj->y+P->obj->h;/* ymax */ 
+  return TRUE;
 }
 
 
-#line 963 "grstring.c"
+#line 965 "grstring.c"

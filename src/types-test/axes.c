@@ -24,7 +24,7 @@
 
 
 
-#line 68 "codegen/axes.override"
+#line 65 "codegen/axes.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/objs3d.h>
@@ -106,7 +106,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 84 "codegen/axes.override"
+#line 81 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -854,7 +854,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 103 "codegen/axes.override"
+#line 100 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -864,7 +864,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspAxes *) self)->obj->rho != rho) 
     {
       ((NspAxes *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
     }
   return OK;
 }
@@ -1020,7 +1020,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 119 "codegen/axes.override"
+#line 116 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1277,7 +1277,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 177 "codegen/axes.override"
+#line 174 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1289,7 +1289,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 #line 1290 "axes.c"
 
 
-#line 187 "codegen/axes.override"
+#line 184 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1330,7 +1330,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 198 "codegen/axes.override"
+#line 195 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1460,9 +1460,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
  *
  */
 
-void nsp_axes_i2f(BCG *Xgc,NspAxes *P,int x,int y,double pt[2])
+void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2])
 {
-  scale_i2f(&P->obj->scale,pt,pt+1,&x,&y,1);
+  scale_i2f(&A->scale,pt,pt+1,&x,&y,1);
 }
 
 /* draw legends from information contained in axe 
@@ -1694,10 +1694,11 @@ static void nsp_translate_axes(NspGraphic *Obj,const double *tr)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
+  if (((NspGraphic *) Obj)->obj->hidden == FALSE)
+    nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_axes(NspGraphic *Obj,double *R)
@@ -1705,7 +1706,7 @@ static void nsp_rotate_axes(NspGraphic *Obj,double *R)
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
   Sciprintf("we should get a double here for rho\n");
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
@@ -1714,7 +1715,7 @@ static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[2] *= alpha[0];
   P->obj->wrect->R[3] *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of axes 
@@ -1841,8 +1842,8 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
       NspAxes *A = (NspAxes *) Obj1;
       double pt1[2],pt2[2];
       /* Sciprintf("Found an axes to be zoomed\n"); */
-      nsp_axes_i2f(Xgc,A,box[0],box[1], pt1);
-      nsp_axes_i2f(Xgc,A,box[2],box[3], pt2);
+      nsp_axes_i2f(A->obj,box[0],box[1], pt1);
+      nsp_axes_i2f(A->obj,box[2],box[3], pt2);
       A->obj->zoom=TRUE;
       A->obj->zrect->R[0]=pt1[0]; /* xmin */
       A->obj->zrect->R[1]=pt2[1]; /* ymin */
@@ -2024,4 +2025,4 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
   nsp_scale_default(scale);
 }
 
-#line 2028 "axes.c"
+#line 2029 "axes.c"

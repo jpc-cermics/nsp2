@@ -24,7 +24,7 @@
 
 
 
-#line 32 "codegen/fec.override"
+#line 29 "codegen/fec.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -106,7 +106,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 48 "codegen/fec.override"
+#line 45 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -935,7 +935,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 69 "codegen/fec.override"
+#line 66 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -947,7 +947,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
 #line 948 "fec.c"
 
 
-#line 79 "codegen/fec.override"
+#line 76 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -987,7 +987,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 89 "codegen/fec.override"
+#line 86 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -996,6 +996,7 @@ static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
   int i;
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) += tr[0];
@@ -1004,12 +1005,12 @@ static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
     {
       *(y++) += tr[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_fec(NspGraphic *Obj,double *R)
 {
-  /* nsp_figure_force_redraw(Obj->obj->Fig); */
+  /* nsp_figure_force_redraw(Obj->obj->Fig,NULL); */
 }
 
 static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
@@ -1017,6 +1018,7 @@ static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
   int i;
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) *= alpha[0];
@@ -1025,7 +1027,7 @@ static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
     {
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of fec 
@@ -1262,4 +1264,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1266 "fec.c"
+#line 1268 "fec.c"

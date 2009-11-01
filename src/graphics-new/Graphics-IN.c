@@ -529,7 +529,7 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,vf_func func,int c
     nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
     /* updates the axes scale information */
     nsp_strf_axes(Xgc, axe , R, strf[1]);
-    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   }
 #else 
   (*func)(Xgc,x->R,y->R,fx->R,fy->R,&fx->m,&fx->n,strf,R, &arfact);
@@ -665,7 +665,7 @@ static int int_contour( Stack stack, int rhs, int opt, int lhs)
       nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
       /* updates the axes scale information */
       nsp_strf_axes(Xgc, axe , NULL, '2');
-      nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+      nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
     }
   else 
     {
@@ -684,7 +684,7 @@ static int int_contour( Stack stack, int rhs, int opt, int lhs)
       if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) vf )== FAIL) 
 	return RET_BUG;
       nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig, objs3d->obj);
-      nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+      nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig,NULL);
     }
   return 0;
 #else 
@@ -844,7 +844,7 @@ static int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
     nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
     /* updates the axes scale information */
     nsp_strf_axes(Xgc, axe , rect, strf[1]);
-    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   }
 #else 
   (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,Mistyle->I,strf,leg,rect,nax);
@@ -974,7 +974,7 @@ int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *s
 	return RET_BUG;
     }
   nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig,objs3d->obj);
-  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig,NULL);
   return 0;
 } 
 #endif
@@ -1430,7 +1430,7 @@ int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, dou
   if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
     return FAIL;
   nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig,objs3d->obj);
-  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig,NULL);
   return OK;
 }
 
@@ -1459,7 +1459,7 @@ int nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *
   if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
     return FAIL;
   nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig,objs3d->obj);
-  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig,NULL);
   return OK;
 }
 
@@ -1485,7 +1485,7 @@ int nsp_plot_fac3d1_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int 
   if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
     return FAIL;
   nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig,objs3d->obj);
-  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig,NULL);
   return OK;
 }
 
@@ -1536,7 +1536,7 @@ int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, do
   if ( nsp_list_end_insert( objs3d->obj->children,(NspObject *) pol )== FAIL)
     return FAIL;
   nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig,objs3d->obj);
-  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) objs3d)->obj->Fig,NULL);
   return OK;
 }
 
@@ -2088,7 +2088,7 @@ static int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe ,rect, strf[1]);
   
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
 #else 
   nsp_draw_matrix_old(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
 		      (Mcolminmax == NULL) ? NULL : Mcolminmax->I,
@@ -2188,7 +2188,7 @@ static int int_matplot(Stack stack, int rhs, int opt, int lhs)
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe ,rect, strf[1]);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
 #else 
   nsp_draw_matrix_1_old(Xgc,z->R,z->m,z->n,strf,rect,nax,remap,
 			(Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
@@ -2279,7 +2279,7 @@ static int int_matplot1(Stack stack, int rhs, int opt, int lhs)
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe , NULL, '2');
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
 #else 
   nsp_draw_matrix_2_old(Xgc,M->R, M->m,M->n,Rect->R,remap,
 			(Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
@@ -2430,7 +2430,7 @@ static int int_xarc(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) arc )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -2594,7 +2594,7 @@ static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
 	return RET_BUG;
     }
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -2729,7 +2729,7 @@ static int int_xarrows(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 }
 
@@ -2826,7 +2826,7 @@ static int int_xsegs(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 }
 
@@ -2905,7 +2905,7 @@ static int int_xaxis(Stack stack, int rhs, int opt, int lhs)
  *   [x1,y1,rect]=xchange(x,y,dir)
  *-----------------------------------------------------------*/
 
-static int int_xchange(Stack stack, int rhs, int opt, int lhs)
+static int int_xchange_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int i;
@@ -3079,7 +3079,7 @@ static int int_xrect(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -3169,7 +3169,7 @@ static int int_xfrect(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -3425,7 +3425,7 @@ static int int_xgrid(Stack stack, int rhs, int opt, int lhs)
     NspAxes *axe;
     if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
     axe->obj->grid = style;
-    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   }
 #else 
   nsp_plot_grid_old(Xgc,&style);
@@ -3474,7 +3474,7 @@ static int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 }
 
@@ -3592,7 +3592,7 @@ static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 	return FAIL;
     }
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -4420,7 +4420,7 @@ static int int_xpoly(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 }
 
@@ -4625,7 +4625,7 @@ static int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 }
 
@@ -5360,7 +5360,7 @@ static int int_xstring(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
     return RET_BUG;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -5472,7 +5472,7 @@ static int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 	    case 1: ((NspObjs3d *) Obj)->obj->title = str;break;
 	    }
 	}
-    nsp_figure_force_redraw(((NspGraphic *) Obj)->obj->Fig);
+    nsp_figure_force_redraw(((NspGraphic *) Obj)->obj->Fig,NULL);
   }
 #else 
   for ( narg = 1 ; narg <= rhs ; narg++) 
@@ -5545,7 +5545,7 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
     return RET_BUG;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return 0;
 } 
 
@@ -6091,7 +6091,7 @@ static int int_fec(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) fec )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
 #else 
   nsp_fec_old(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,
 	  (Mzminmax == NULL) ? NULL : Mzminmax->R,
@@ -6998,7 +6998,7 @@ static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL) return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return OK;
 }
 
@@ -7116,7 +7116,7 @@ static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir d
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
     return FAIL;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return OK;
 #else 
   if ( typ == SL_SQP ) 
@@ -7408,7 +7408,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xarcs"),int_xarcs},
   {NAMES("xarrows"),int_xarrows},
   {NAMES("xaxis"),int_xaxis},
-  {NAMES("xchange"),int_xchange},
+  {NAMES("xchange"),int_xchange_new},
   {NAMES("xclea"),int_xclea},
   {NAMES("xclear"),int_xclear},
   {NAMES("xclick"),int_xclick},

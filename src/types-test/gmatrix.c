@@ -909,28 +909,30 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
 static void nsp_translate_gmatrix(NspGraphic *Obj,const double *tr)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->rect->R[0] += tr[0];
   P->obj->rect->R[2] += tr[0];
   P->obj->rect->R[1] += tr[1];
   P->obj->rect->R[3] += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_gmatrix(NspGraphic *Obj,double *R)
 {
   /* NspGMatrix *P = (NspGMatrix *) Obj; */
   Sciprintf("we should get a double here for alpha\n");
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_gmatrix(NspGraphic *Obj,double *alpha)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->rect->R[0] *= alpha[0];
   P->obj->rect->R[2] *= alpha[0];
   P->obj->rect->R[3] *= alpha[1];
   P->obj->rect->R[1] *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of gmatrix 
@@ -949,4 +951,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
 }
 
 
-#line 953 "gmatrix.c"
+#line 955 "gmatrix.c"

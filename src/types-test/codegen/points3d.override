@@ -7,7 +7,6 @@ include-public  Points3d
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 extern BCG *nsp_check_graphic_context(void);
 extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_figure_force_redraw( nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 %%
@@ -140,18 +139,18 @@ static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_translate_points3d(NspGraphic *Obj,const double *tr)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 
 }
 
 static void nsp_rotate_points3d(NspGraphic *Obj,double *R)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 }
 
 static void nsp_scale_points3d(NspGraphic *Obj,double *alpha)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 }
 
 /* compute in bounds the enclosing rectangle of points3d 

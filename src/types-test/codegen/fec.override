@@ -4,14 +4,11 @@ include-public Fec
 
 extern BCG *nsp_check_graphic_context(void);
 extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_figure_force_redraw(nsp_figure *F);
-
 extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
-
 
 /* inserted at the end of public part of include file */
 
@@ -94,6 +91,7 @@ static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
   int i;
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) += tr[0];
@@ -102,12 +100,12 @@ static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
     {
       *(y++) += tr[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_fec(NspGraphic *Obj,double *R)
 {
-  /* nsp_figure_force_redraw(Obj->obj->Fig); */
+  /* nsp_figure_force_redraw(Obj->obj->Fig,NULL); */
 }
 
 static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
@@ -115,6 +113,7 @@ static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
   int i;
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) *= alpha[0];
@@ -123,7 +122,7 @@ static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
     {
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of fec 

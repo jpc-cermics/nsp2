@@ -47,6 +47,7 @@ Actions.o: Actions.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/graphics-new/driver.h \
   ../../src/include/nsp/graphics-new/actions.h \
   ../../src/include/nsp/command.h
+
 Axes.o: Axes.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/machine.h ../../src/include/nsp/config.h \
   ../../src/include/nsp/package_undef.h \
@@ -68,6 +69,7 @@ Axes.o: Axes.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/graphics-new/scale.h \
   ../../src/include/nsp/graphics-new/actions.h \
   ../../src/include/nsp/graphics-new/driver.h
+
 Contour-new.o: Contour-new.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/machine.h ../../src/include/nsp/config.h \
   ../../src/include/nsp/package_undef.h \
@@ -81,6 +83,7 @@ Contour-new.o: Contour-new.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/graphics-new/driver.h \
   ../../src/include/nsp/graphics-new/periGtk.h \
   ../../src/include/nsp/graphics-new/Graphics.h
+
 Graphics-IN.o: Graphics-IN.c \
   ../../src/include/nsp/graphics-new/Graphics.h \
   ../../src/include/nsp/machine.h ../../src/include/nsp/config.h \
@@ -131,6 +134,7 @@ Graphics-IN.o: Graphics-IN.c \
   ../../src/include/nsp/fec.h ../../src/include/nsp/contour.h \
   ../../src/include/nsp/contour3d.h ../../src/include/nsp/gtk/gdkimage.h \
   ../../src/include/nsp/gtk/gdkpixbuf.h
+
 periCairoNew.o: periCairoNew.c periGtkstd.c \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/config.h ../../src/include/nsp/package_undef.h \
@@ -145,8 +149,70 @@ periCairoNew.o: periCairoNew.c periGtkstd.c \
   ../../src/include/nsp/graphics-new/driver.h \
   ../../src/include/nsp/version.h \
   ../../src/include/nsp/graphics-new/color.h \
-  ../../src/include/nsp/command.h perigtk/events.c perigtk/init.c \
-  perigtk/fonts_pango_cairo.c perigtk/peridraw_cairo_new.c
+  ../../src/include/nsp/command.h \
+  perigtk/events.c \
+  perigtk/fonts_gdk.c \
+  perigtk/fonts_pango_cairo.c \
+  perigtk/fonts_pango_ft2_gl.c \
+  perigtk/fonts_pango_gdk.c \
+  perigtk/init.c \
+  perigtk/peridraw_cairo_new.c \
+  perigtk/peridraw_gdk.c \
+  perigtk/peridraw_gl.c \
+  perigtk/points.c 
+
+periGL.o: periGL.c periGtkstd.c \
+  ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
+  ../../src/include/nsp/config.h ../../src/include/nsp/package_undef.h \
+  ../../src/include/nsp/user-prefs.h ../../src/include/nsp/tokenizer.h \
+  ../../src/include/nsp/plisttoken.h \
+  ../../src/include/nsp/graphics-new/periGtk.h \
+  ../../src/include/nsp/graphics-new/Graphics.h \
+  ../../src/include/nsp/machine.h \
+  ../../src/include/nsp/graphics-new/perigen.h \
+  ../../src/include/nsp/graphics-new/scale.h \
+  ../../src/include/nsp/graphics-new/actions.h \
+  ../../src/include/nsp/graphics-new/driver.h \
+  ../../src/include/nsp/version.h \
+  ../../src/include/nsp/graphics-new/color.h \
+  ../../src/include/nsp/command.h \
+  perigtk/events.c \
+  perigtk/fonts_gdk.c \
+  perigtk/fonts_pango_cairo.c \
+  perigtk/fonts_pango_ft2_gl.c \
+  perigtk/fonts_pango_gdk.c \
+  perigtk/init.c \
+  perigtk/peridraw_cairo_new.c \
+  perigtk/peridraw_gdk.c \
+  perigtk/peridraw_gl.c \
+  perigtk/points.c 
+
+periGtk.o: periGtk.c periGtkstd.c \
+  ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
+  ../../src/include/nsp/config.h ../../src/include/nsp/package_undef.h \
+  ../../src/include/nsp/user-prefs.h ../../src/include/nsp/tokenizer.h \
+  ../../src/include/nsp/plisttoken.h \
+  ../../src/include/nsp/graphics-new/periGtk.h \
+  ../../src/include/nsp/graphics-new/Graphics.h \
+  ../../src/include/nsp/machine.h \
+  ../../src/include/nsp/graphics-new/perigen.h \
+  ../../src/include/nsp/graphics-new/scale.h \
+  ../../src/include/nsp/graphics-new/actions.h \
+  ../../src/include/nsp/graphics-new/driver.h \
+  ../../src/include/nsp/version.h \
+  ../../src/include/nsp/graphics-new/color.h \
+  ../../src/include/nsp/command.h \
+  perigtk/events.c \
+  perigtk/fonts_gdk.c \
+  perigtk/fonts_pango_cairo.c \
+  perigtk/fonts_pango_ft2_gl.c \
+  perigtk/fonts_pango_gdk.c \
+  perigtk/init.c \
+  perigtk/peridraw_cairo_new.c \
+  perigtk/peridraw_gdk.c \
+  perigtk/peridraw_gl.c \
+  perigtk/points.c 
+
 periFig.o: periFig.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/config.h ../../src/include/nsp/package_undef.h \
@@ -343,3 +409,5 @@ windows.o: windows.c ../../src/include/nsp/graphics-new/Graphics.h \
   ../../src/include/nsp/matint.h ../../src/include/nsp/serial.h \
   ../../src/include/nsp/bhash.h ../../src/include/nsp/gtk/gobject.h \
   ../../src/include/nsp/graphics-new/scale.h
+
+

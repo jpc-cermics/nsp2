@@ -1167,10 +1167,12 @@ static void nsp_translate_block(NspGraphic *Obj,const double *tr)
 {
   NspBlock *B = (NspBlock *) Obj;
   NspGraphic *Icon = (NspGraphic *) B->obj->icon;
+  nsp_graphic_invalidate((NspGraphic *) B);
   B->obj->r[0] += tr[0] ;
   B->obj->r[1] += tr[1] ;
   block_update_locks(B);
   if ( Icon != NULL) Icon->type->translate(Icon,tr);
+  nsp_graphic_invalidate((NspGraphic *) B);
 }
 
 static void nsp_rotate_block(NspGraphic *Obj,double *R)
@@ -1342,6 +1344,7 @@ void block_resize(NspBlock *B,const double size[2])
   /* if resized the lock relative positions should change to XXXXX */
   block_update_locks(B);
   /* if ( Icon != NULL) Icon->type->scale(NULL,Icon,sz); */
+  nsp_graphic_invalidate((NspGraphic *) B);
 }
 
 
@@ -1909,4 +1912,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1913 "block.c"
+#line 1916 "block.c"

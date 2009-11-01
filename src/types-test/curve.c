@@ -666,7 +666,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   if ( ((NspCurve *) self)->obj->mode !=  mode)
     {
       ((NspCurve *) self)->obj->mode =  mode;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
     }
   return OK;
 }
@@ -930,12 +930,14 @@ static void nsp_translate_curve(NspGraphic *Obj,const double *tr)
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < M->m ; i++) 
     {
       *(x++) += tr[0];
       *(y++) += tr[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+
 }
 
 static void nsp_rotate_curve(NspGraphic *Obj,double *R)
@@ -944,6 +946,7 @@ static void nsp_rotate_curve(NspGraphic *Obj,double *R)
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m,x1,y1;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < M->m ; i++) 
     {
       x1 = R[0]*(*x) -R[1]*(*y);
@@ -951,7 +954,7 @@ static void nsp_rotate_curve(NspGraphic *Obj,double *R)
       *(x++) =x1;
       *(y++) =y1;
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_curve(NspGraphic *Obj,double *alpha)
@@ -960,12 +963,13 @@ static void nsp_scale_curve(NspGraphic *Obj,double *alpha)
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < M->m ; i++) 
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of curve 
@@ -1000,4 +1004,4 @@ static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1004 "curve.c"
+#line 1008 "curve.c"

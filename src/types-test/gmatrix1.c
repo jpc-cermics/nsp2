@@ -993,6 +993,7 @@ static void nsp_translate_gmatrix1(NspGraphic *Obj,const double *tr)
   int i;
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) += tr[0];
@@ -1001,12 +1002,12 @@ static void nsp_translate_gmatrix1(NspGraphic *Obj,const double *tr)
     {
       *(y++) += tr[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_gmatrix1(NspGraphic *Obj,double *R)
 {
-  /* nsp_figure_force_redraw(Obj->obj->Fig); */
+  /* nsp_figure_force_redraw(Obj->obj->Fig,NULL); */
 }
 
 static void nsp_scale_gmatrix1(NspGraphic *Obj,double *alpha)
@@ -1022,7 +1023,7 @@ static void nsp_scale_gmatrix1(NspGraphic *Obj,double *alpha)
     {
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
 }
 
 /* compute in bounds the enclosing rectangle of gmatrix1 
@@ -1561,4 +1562,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1565 "gmatrix1.c"
+#line 1566 "gmatrix1.c"

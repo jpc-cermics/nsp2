@@ -898,28 +898,31 @@ static void nsp_translate_contour(NspGraphic *Obj,const double *tr)
 {
   NspContour *P = (NspContour *) Obj;
   int i;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i = 0 ; i < P->obj->x->mn ; i++) 
     P->obj->x->R[i] += tr[0];
   for ( i = 0 ; i < P->obj->y->mn ; i++) 
     P->obj->x->R[i] += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_contour(NspGraphic *Obj,double *R)
 {
   Sciprintf("we should get a double here for alpha\n");
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_contour(NspGraphic *Obj,double *alpha)
 {
   int i;
   NspContour *P = (NspContour *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i = 0 ; i < P->obj->x->mn ; i++) 
     P->obj->x->R[i] *= alpha[0];
   for ( i = 0 ; i < P->obj->y->mn ; i++) 
     P->obj->x->R[i] *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+
 }
 
 /* compute in bounds the enclosing rectangle of contour 
@@ -946,4 +949,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 950 "contour.c"
+#line 953 "contour.c"

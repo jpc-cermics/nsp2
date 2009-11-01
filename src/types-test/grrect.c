@@ -809,28 +809,31 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
 static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
 {
   NspGrRect *P = (NspGrRect *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->x += tr[0];
   P->obj->y += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_grrect(NspGraphic *Obj,double *R)
 {
   NspGrRect *P = (NspGrRect *) Obj;
   double x1;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
   P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
   P->obj->x = x1;
   /* Il faut aussi changer l'angle */
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_grrect(NspGraphic *Obj,double *alpha)
 {
   NspGrRect *P = (NspGrRect *) Obj;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->x *= alpha[0];
   P->obj->y *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of grrect 
@@ -848,4 +851,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 852 "grrect.c"
+#line 855 "grrect.c"

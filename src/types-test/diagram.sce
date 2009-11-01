@@ -46,7 +46,7 @@ function C=draw_vanne()
   xdel(30);
 endfunction;
 
-function w=create_object_menu (win,xc,yc)
+function w=create_object_menu (win,x,y)
 // midle button menu construction 
 // version where selection is a list 
     
@@ -55,9 +55,9 @@ function w=create_object_menu (win,xc,yc)
   
   // check if pointer is over an object 
   
-  [k,hilited] = GF(winid).check_pointer[[xc,yc]]; 
+  [k,hilited] = GF(winid).check_pointer[[x,y]]; 
   if k == %f then 
-    w=create_right_menu (win,xc,yc)
+    w=create_right_menu (win,x,y)
     return 
   end
 
@@ -68,7 +68,7 @@ function w=create_object_menu (win,xc,yc)
   // others then continue 
   
   if ~hilited  then 
-    rep=GF(s_win).select_and_hilite[[xc,yc]];
+    rep=GF(s_win).select_and_hilite[[x,y]];
     GF(s_win).draw[];
   end
     
@@ -107,18 +107,18 @@ function w=create_object_menu (win,xc,yc)
   //
   if name == 'Link' then 
     menuitem = gtkmenuitem_new(label="add control point");
-    menuitem.connect["activate",objet_menuitem_response,list(2,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(2,x,y,win)];
     menu.append[menuitem]
     menuitem.show[];
     //
     menuitem = gtkmenuitem_new(label="remove control point");
-    menuitem.connect["activate",objet_menuitem_response,list(3,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(3,x,y,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
   if name == 'GridBlock' then 
     menuitem = gtkmenuitem_new(label="edit super block");
-    menuitem.connect["activate",objet_menuitem_response,list(6,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(6,x,y,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
@@ -128,7 +128,7 @@ function w=create_object_menu (win,xc,yc)
   if  L.get_nobjs[]==0 then 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",objet_menuitem_response,list(4,xc,yc,win)];
+  menuitem.connect["activate",objet_menuitem_response,list(4,x,y,win)];
   menu.append[menuitem]
   menuitem.show[];
   // sensitive or not 
@@ -140,7 +140,7 @@ function w=create_object_menu (win,xc,yc)
       // nothing to paste 
       menuitem.set_sensitive[%f];
     end
-    menuitem.connect["activate",objet_menuitem_response,list(5,xc,yc,win)];
+    menuitem.connect["activate",objet_menuitem_response,list(5,x,y,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
@@ -221,7 +221,7 @@ function menu=create_right_menu (win,xc,yc)
     // BUG: mnemonic and label are not active ?
     // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
     menuitem = gtkmenuitem_new(label=tags(i));
-    menuitem.connect["activate",menuitem_response,list(i,win)];
+    menuitem.connect["activate",menuitem_response,list(i,xc,yc,win)];
     menu.append[menuitem]
     menuitem.show[];
   end
@@ -269,7 +269,6 @@ function menu=create_right_menu (win,xc,yc)
   menuitem.show[];
 endfunction 
 
-
 function menuitem_response(w,args) 
 // right button menu activation 
   global('GF');
@@ -277,7 +276,7 @@ function menuitem_response(w,args)
   win='win'+string(args($));
   select args(1) 
    case 1 then  GF(win).new_link[];
-   case 2 then  GF(win).new_block[];
+   case 2 then  GF(win).new_block[[args(2),args(3)]];
    case 3 then  GF(win).new_connector[] ;
    case 4 then  GF(win).new_gridblock[] ;
    case 5 then  GF(win).new_gridblock_from_selection[] ;
@@ -336,31 +335,26 @@ function my_eventhandler(win,x,y,ibut,imask)
   if ibut == -100 then 
     printf('window killed ')
   elseif ibut==-1 then 
-    [xc,yc]=xchange(x,y,'i2f')
-    xinfo('Mouse position is ('+string(xc)+','+string(yc)+')')
+    xinfo('Mouse position is ('+string(x)+','+string(y)+')')
   elseif ibut==0 then 
     // left press 
     if iand(imask,GDK.SHIFT_MASK) 
       // add to selection and move the whole stuff 
-      [xc,yc]=xchange(x,y,'i2f')
-      GF(winid).select_and_move_list[[xc,yc]];
+      GF(winid).select_and_move_list[[x,y]];
     elseif iand(imask,GDK.CONTROL_MASK) 
 	// toggle the selection 
 	// printf("control -press \n");
-	[xc,yc]=xchange(x,y,'i2f')
-	GF(winid).select_and_toggle_hilite[[xc,yc]];
+	GF(winid).select_and_toggle_hilite[[x,y]];
 	GF(winid).draw[];
     else
       // select the new, unhilite others and move selected 
-      [xc,yc]=xchange(x,y,'i2f')
-      GF(winid).select_and_move[[xc,yc]];
+      GF(winid).select_and_move[[x,y]];
     end
   elseif ibut==1 then 
     // midle press 
   elseif ibut==2 then 
     // right press
-    [xc,yc]=xchange(x,y,'i2f')
-    popup_m=create_object_menu (win)
+    popup_m=create_object_menu (win,x,y)
     popup_m.popup[button=2,activate_time=0]; //event.time]; 
   elseif ibut==3 then 
     // a double click 

@@ -794,7 +794,7 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
   axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
   
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig);
+  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
   return OK;
 }
 

@@ -24,16 +24,13 @@ include-public Axes
  */
 
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
-extern void nsp_axes_i2f(BCG *Xgc,NspAxes *Obj,int x,int y,double pt[2]);
+extern void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2]);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern BCG *nsp_check_graphic_context(void);
 extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
-extern void nsp_figure_force_redraw(nsp_figure *F);
 extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
-
-
 
 
 %%
@@ -109,7 +106,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspAxes *) self)->obj->rho != rho) 
     {
       ((NspAxes *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
     }
   return OK;
 }
@@ -324,9 +321,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
  *
  */
 
-void nsp_axes_i2f(BCG *Xgc,NspAxes *P,int x,int y,double pt[2])
+void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2])
 {
-  scale_i2f(&P->obj->scale,pt,pt+1,&x,&y,1);
+  scale_i2f(&A->scale,pt,pt+1,&x,&y,1);
 }
 
 /* draw legends from information contained in axe 
@@ -558,10 +555,11 @@ static void nsp_translate_axes(NspGraphic *Obj,const double *tr)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
+  if (((NspGraphic *) Obj)->obj->hidden == FALSE)
+    nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_axes(NspGraphic *Obj,double *R)
@@ -569,7 +567,7 @@ static void nsp_rotate_axes(NspGraphic *Obj,double *R)
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
   Sciprintf("we should get a double here for rho\n");
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
@@ -578,7 +576,7 @@ static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[2] *= alpha[0];
   P->obj->wrect->R[3] *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of axes 
@@ -705,8 +703,8 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
       NspAxes *A = (NspAxes *) Obj1;
       double pt1[2],pt2[2];
       /* Sciprintf("Found an axes to be zoomed\n"); */
-      nsp_axes_i2f(Xgc,A,box[0],box[1], pt1);
-      nsp_axes_i2f(Xgc,A,box[2],box[3], pt2);
+      nsp_axes_i2f(A->obj,box[0],box[1], pt1);
+      nsp_axes_i2f(A->obj,box[2],box[3], pt2);
       A->obj->zoom=TRUE;
       A->obj->zrect->R[0]=pt1[0]; /* xmin */
       A->obj->zrect->R[1]=pt2[1]; /* ymin */

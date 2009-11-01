@@ -159,7 +159,7 @@ static void clearwindow(BCG *Xgc) {}
 
 static void xpause(int sec_time,int events) {}
 
-static void force_redraw(BCG *Xgc) {};
+static void force_redraw(BCG *Xgc,void *rect) {};
 
 
 /*-----------------------------------------------------------------

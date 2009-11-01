@@ -122,7 +122,7 @@ typedef int driver_xget_recording(BCG *Xgc);
 typedef void driver_xset_recording(BCG *Xgc, int val);
 typedef void driver_xset_win_protect(BCG *Xgc,int val);
 typedef void driver_delete_window(BCG *gc,int wid);/* delete window: use gc is non null or wid as window number */
-typedef void driver_force_redraw(BCG *gc);
+typedef void driver_force_redraw(BCG *gc,void *rect);
 typedef void driver_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height);
 typedef void driver_draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y,int dest_x,
 					  int dest_y,int width,int height);

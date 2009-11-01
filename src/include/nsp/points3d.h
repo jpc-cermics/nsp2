@@ -97,10 +97,9 @@ extern int nsp_points3d_xdr_save(XDR  *xdrs, NspPoints3d *M);
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 extern BCG *nsp_check_graphic_context(void);
 extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
-extern void nsp_figure_force_redraw( nsp_figure *F);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
-#line 104 "./points3d.h"
+#line 103 "./points3d.h"
 #endif /* NSP_INC_NspPoints3d */ 
 
 #ifdef NspPoints3d_Private 
@@ -115,7 +114,7 @@ static AttrTab points3d_attrs[];
 static NspMethods *points3d_get_methods(void);
 /* static int int_points3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPoints3d *nsp_points3d_create_void(char *name,NspTypeBase *type);
-#line 15 "codegen/points3d.override"
+#line 14 "codegen/points3d.override"
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_points3d(NspGraphic *o,double *R);
@@ -131,6 +130,6 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 135 "./points3d.h"
+#line 134 "./points3d.h"
 #endif /* NspPoints3d_Private */
 

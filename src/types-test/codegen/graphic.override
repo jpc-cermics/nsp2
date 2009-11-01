@@ -3,6 +3,7 @@
 include-public Graphic
 
 /* inserted at the end of public part of include file */
+extern void nsp_graphic_invalidate(NspGraphic *G);
 
 %%
 include-private Graphic
@@ -323,7 +324,7 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
 /* invalidate the drawing region associated to a graphic object. 
  * This function is to be called when the 
  * graphic object has changed and need to be drawn.
- * XXX: a finir en passant les rectangles 
+ * 
  */
 
 void nsp_graphic_invalidate(NspGraphic *G)
@@ -332,20 +333,23 @@ void nsp_graphic_invalidate(NspGraphic *G)
   nsp_figure *F = G->obj->Fig;
   nsp_axes *A = G->obj->Axe;
   BCG *Xgc = F->Xgc;
-  if ( F == NULL) return ;
+  if ( F == NULL ||  Xgc == NULL) return ;
   if ( F->draw_now== FALSE) return;
-  if ( Xgc == NULL) return;
+  if ( G->obj->hidden == TRUE ) return;
   if ( G->type->bounds(G,bounds)== TRUE) 
     {
+      gint rect[4]; /* like a GdkRectangle */
       int xmin,xmax,ymin,ymax;
       scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
       scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
-      Xgc->graphic_engine->force_redraw(Xgc);
+      rect[0]=xmin-10;rect[1]=ymax-10;rect[2]=xmax-xmin+20;rect[3]=ymin-ymax+20;
+      /* fprintf(stderr,"invalidate [%d,%d,%d,%d]\n",rect[0],rect[1],rect[2],rect[3]);*/
+      Xgc->graphic_engine->force_redraw(Xgc,rect);
     }
   else
     {
       /* a full window force redraw or nothing ? */
-      Xgc->graphic_engine->force_redraw(Xgc);
+      Xgc->graphic_engine->force_redraw(Xgc,NULL);
     }
 }
 
