@@ -1363,6 +1363,7 @@ void link_move_control(void *F, NspLink *L,const double mpt[2], int cp,double pt
   int n = L->obj->poly->m;
   double *xp= L->obj->poly->R;
   double *yp= L->obj->poly->R + n;
+  nsp_graphic_invalidate((NspGraphic *) L);
   /* 
    * ptc is where we should move ptc but due to magnetism 
    * it can be different.
@@ -1402,6 +1403,7 @@ void link_move_control(void *F, NspLink *L,const double mpt[2], int cp,double pt
     }
   xp[cp]=ptc[0];
   yp[cp]=ptc[1];
+  nsp_graphic_invalidate((NspGraphic *) L);
   
 }
 
@@ -1948,4 +1950,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1952 "link.c"
+#line 1954 "link.c"
