@@ -150,8 +150,8 @@ static void xset_clip_1(BCG *Xgc,double x[])
 {
   /* and clipping is special its args are floats **/
   int ix[4];
-  scale_f2i(Xgc,x,x+1,ix,ix+1,1);
-  length_scale_f2i(Xgc,x+2,x+3,ix+2,ix+3,1);
+  scale_f2i(Xgc->scales,x,x+1,ix,ix+1,1);
+  length_scale_f2i(Xgc->scales,x+2,x+3,ix+2,ix+3,1);
   Xgc->graphic_engine->xset_clip(Xgc,ix);
 }
 
@@ -187,7 +187,7 @@ static void xset_mark_size_1(BCG *Xgc,int val)
 static void drawarc_1(BCG *Xgc,double arc[])
 { 
   int iarc[6];
-  rect2d_f2i(Xgc,arc,iarc,4);
+  rect2d_f2i(Xgc->scales,arc,iarc,4);
   iarc[4]=(int) arc[4];
   iarc[5]=(int) arc[5];
   Xgc->graphic_engine->drawarc(Xgc,iarc);
@@ -198,7 +198,7 @@ static void fillarcs_1(BCG *Xgc,double vects[],int fillvect[], int n)
   int *xm=NULL,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err  ==   1) return;
-  ellipse2d(Xgc,vects,xm,(n2=6*n,&n2),"f2i");
+  ellipse2d(Xgc->scales,vects,xm,(n2=6*n,&n2),"f2i");
   Xgc->graphic_engine->fillarcs(Xgc,xm,fillvect,n);
 }
 
@@ -207,7 +207,7 @@ static void drawarcs_1(BCG *Xgc,double vects[], int style[], int n)
   int *xm=NULL,err=0,n2;
   Myalloc1(&xm,6*n,&err);
   if (err  ==   1) return;
-  ellipse2d(Xgc,vects,xm,(n2=6*(n),&n2),"f2i");
+  ellipse2d(Xgc->scales,vects,xm,(n2=6*(n),&n2),"f2i");
   Xgc->graphic_engine->drawarcs(Xgc,xm,style,n);
 }
 
@@ -216,7 +216,7 @@ static void fillpolyline_1(BCG *Xgc,double *vx, double *vy,int n,int closeflag)
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   Xgc->graphic_engine->fillpolyline(Xgc,xm,ym,n,closeflag);
 }
 
@@ -226,7 +226,7 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
   int *xm=NULL,*ym=NULL,err=0,ias,ias1;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   /* is as < 0 --> not set */
   if ( as < 0.0 ) 
     {
@@ -243,7 +243,7 @@ static void drawarrows_1(BCG *Xgc,double vx[],double vy[],int n,double as, int s
       as = Mnorm/5.0;
     }
   /* we assume here that ias is given using the x scale */
-  length_scale_f2i (Xgc,&as,&as,&ias,&ias1,1);
+  length_scale_f2i (Xgc->scales,&as,&as,&ias,&ias1,1);
   ias=10*ias;
   Xgc->graphic_engine->drawarrows(Xgc,xm,ym,n,ias,style,iflag);
 }
@@ -254,7 +254,7 @@ static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, d
   int initpoint1[2],alpha1;
   double size1[3];
   alpha1=inint( *alpha);
-  axis2d(Xgc,alpha,initpoint,size,initpoint1,size1);  
+  axis2d(Xgc->scales,alpha,initpoint,size,initpoint1,size1);  
   Xgc->graphic_engine->drawaxis(Xgc,alpha1,nsteps,initpoint1,size1);
 }
 
@@ -262,9 +262,9 @@ static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, d
 static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
 {
   int x1,yy1,w1,h1;
-  x1 = XDouble2Pixel(x);
-  yy1 = YDouble2Pixel(y);
-  length_scale_f2i (Xgc,&w,&h,&w1,&h1,1);
+  x1 = XDouble2Pixel(Xgc->scales,x);
+  yy1 = YDouble2Pixel(Xgc->scales,y);
+  length_scale_f2i (Xgc->scales,&w,&h,&w1,&h1,1);
   Xgc->graphic_engine->cleararea(Xgc,x1,yy1,w1,h1);
 }
 
@@ -274,7 +274,7 @@ static void xclick_1(BCG *Xgc,char *str,int *ibutton,int *imask, double *x, doub
   int x1,yy1,n=1;
 
   Xgc->graphic_engine->xclick(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key,istr);
-  scale_i2f(Xgc,x,y,&x1,&yy1,n);
+  scale_i2f(Xgc->scales,x,y,&x1,&yy1,n);
 }
 
 static void xclick_any_1(BCG *Xgc,char *str, int *ibutton,int *imask, double *x, double *y, int *iwin,int iflag,int motion,int release,int key,int istr)
@@ -283,7 +283,7 @@ static void xclick_any_1(BCG *Xgc,char *str, int *ibutton,int *imask, double *x,
   Xgc->graphic_engine->xclick_any(Xgc,str,ibutton,imask,&x1,&y1,iwin,iflag,motion,release,key,istr);
   if (*ibutton>=0){
     BCG *Xgc_win =window_list_search(*iwin);
-    scale_i2f(Xgc_win,x,y,&x1,&y1,1);
+    scale_i2f(Xgc_win->scales,x,y,&x1,&y1,1);
   }
 }
 
@@ -291,13 +291,13 @@ static void xgetmouse_1(BCG *Xgc,char *str, int *ibutton, int *imask,double *x, 
 { 
   int x1,yy1;
   Xgc->graphic_engine->xgetmouse(Xgc,str,ibutton,imask,&x1,&yy1,iflag,motion,release,key);
-  scale_i2f(Xgc,x,y,&x1,&yy1,1);
+  scale_i2f(Xgc->scales,x,y,&x1,&yy1,1);
 }
 
 static void fillarc_1(BCG *Xgc, double arc[])
 { 
   int iarc[6],n2=4;
-  rect2d_f2i(Xgc,arc,iarc,n2);
+  rect2d_f2i(Xgc->scales,arc,iarc,n2);
   iarc[4]=(int) arc[4];
   iarc[5]=(int) arc[5];
   Xgc->graphic_engine->fillarc(Xgc,iarc);
@@ -307,7 +307,7 @@ static void fillarc_1(BCG *Xgc, double arc[])
 static void fillrectangle_1(BCG *Xgc,double rect[])
 { 
   int irect[4],n2=4;
-  rect2d_f2i(Xgc,rect,irect,n2);
+  rect2d_f2i(Xgc->scales,rect,irect,n2);
   Xgc->graphic_engine->fillrectangle(Xgc,irect);
 }
 
@@ -317,7 +317,7 @@ static void drawpolyline_1(BCG *Xgc, double *vx, double *vy ,int n, int closefla
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,n,closeflag);
 }
 
@@ -330,10 +330,10 @@ static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   /** and clipping is special its args are floats **/
-  scale_f2i(Xgc,clip_rect,clip_rect+1,ix,ix+1,1);
-  length_scale_f2i(Xgc,clip_rect+2,clip_rect+3,ix+2,ix+3,1);
+  scale_f2i(Xgc->scales,clip_rect,clip_rect+1,ix,ix+1,1);
+  length_scale_f2i(Xgc->scales,clip_rect+2,clip_rect+3,ix+2,ix+3,1);
   /* xxleft, int xxright, int yybot, int yytop)*/
   cb[0]=ix[0];cb[1]=ix[0]+ix[2];cb[2]=ix[1];cb[3]=ix[1]+ix[3];
   Xgc->graphic_engine->drawpolyline_clip(Xgc,xm,ym,n,cb,closeflag);
@@ -346,7 +346,7 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
   int *xm=NULL,*ym=NULL,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n*p);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n*p);
   if (v1 == 2) {
     for (i=0 ; i< (n) ;i++) nsp_shade(Xgc,&xm[(p)*i],&ym[(p)*i],&fillvect[(p)*i],p,0);
   }
@@ -508,7 +508,7 @@ static void drawpolymark_1(BCG *Xgc,double *vx, double *vy,int n)
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,n);
 
 }
@@ -519,7 +519,7 @@ static void displaynumbers_1(BCG *Xgc,double *x, double *y,int n, int flag,doubl
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,x,y,xm,ym,n);
+  scale_f2i(Xgc->scales,x,y,xm,ym,n);
   Xgc->graphic_engine->displaynumbers(Xgc,xm,ym,n,flag,z,alpha);
 }
 
@@ -529,7 +529,7 @@ static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,(n)*(p),&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n*p);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n*p);
   Xgc->graphic_engine->drawpolylines(Xgc,xm,ym,drawvect,n,p);
 }
 
@@ -537,7 +537,7 @@ static void drawpolylines_1(BCG *Xgc,double *vx, double *vy, int *drawvect,int n
 static void drawrectangle_1(BCG *Xgc,double rect[])
 {
   int xm[4],n2=4;
-  rect2d_f2i(Xgc,rect,xm,n2);
+  rect2d_f2i(Xgc->scales,rect,xm,n2);
   Xgc->graphic_engine->drawrectangle(Xgc,xm);
 }
 
@@ -546,7 +546,7 @@ static void drawrectangles_1(BCG *Xgc,double vects[],int fillvect[], int n)
   int *xm=NULL,err=0;
   Myalloc1(&xm,4*(n),&err);
   if (err  ==   1) return;
-  rect2d_f2i(Xgc,vects,xm,4*(n));
+  rect2d_f2i(Xgc->scales,vects,xm,4*(n));
   Xgc->graphic_engine->drawrectangles(Xgc,xm,fillvect,n);
 }
 
@@ -555,7 +555,7 @@ static void drawsegments_1(BCG *Xgc,double *vx, double *vy,int n, int *style, in
   int *xm=NULL,*ym=NULL,err=0;
   Myalloc(&xm,&ym,n,&err);
   if (err  ==   1) return;
-  scale_f2i(Xgc,vx,vy,xm,ym,n);
+  scale_f2i(Xgc->scales,vx,vy,xm,ym,n);
   Xgc->graphic_engine->drawsegments(Xgc,xm,ym,n,style,iflag);
 }
 
@@ -564,8 +564,8 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
 {
   int w,h,ix1,iy1;;
   double xd1,yd1;
-  xd1 = XDouble2Pixel_d(x);
-  yd1 = YDouble2Pixel_d(y);
+  xd1 = XDouble2Pixel_d(Xgc->scales,x);
+  yd1 = YDouble2Pixel_d(Xgc->scales,y);
   Xgc->graphic_engine->xget_windowdim(Xgc,&w,&h);
   ix1 = (xd1 > int16max ) ? int16max :  ((xd1 < - int16max) ? - int16max : inint(xd1));
   iy1 = (yd1 > int16max ) ? int16max :  ((yd1 < - int16max) ? - int16max : inint(yd1));
@@ -685,11 +685,11 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
 static void boundingbox_1(BCG *Xgc,char *string, double x, double y, double *rect)
 { 
   int x1,yy1,rect1[4];
-  x1 = XDouble2Pixel(x);
-  yy1 = YDouble2Pixel(y);
+  x1 = XDouble2Pixel(Xgc->scales,x);
+  yy1 = YDouble2Pixel(Xgc->scales,y);
   Xgc->graphic_engine->boundingbox(Xgc,string,x1,yy1,rect1);
-  scale_i2f(Xgc,rect,rect+1,rect1,rect1+1,1);
-  length_scale_i2f(Xgc,rect+2,rect+3,rect1+2,rect1+3,1);
+  scale_i2f(Xgc->scales,rect,rect+1,rect1,rect1+1,1);
+  length_scale_i2f(Xgc->scales,rect+2,rect+3,rect1+2,rect1+3,1);
 }
 
 /*-----------------------------------------------------------------------------
@@ -703,9 +703,9 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
 {
   int x,y,w,h,wbox,hbox,size;
   int fontid[2];
-  x = XDouble2Pixel(*xd);
-  y = YDouble2Pixel(*yd);
-  length_scale_f2i(Xgc,wd,hd,&wbox,&hbox,1);
+  x = XDouble2Pixel(Xgc->scales,*xd);
+  y = YDouble2Pixel(Xgc->scales,*yd);
+  length_scale_f2i(Xgc->scales,wd,hd,&wbox,&hbox,1);
   Xgc->graphic_engine->xget_font(Xgc,fontid);
   size = FONTMAXSIZE;
   w = wbox +1;
@@ -778,8 +778,8 @@ static void draw_pixbuf_1(BCG *Xgc,void *pix,int src_x,int src_y,double dest_x,
 { 
   GdkPixbuf *pixbuf=GDK_PIXBUF(((NspGObject *) pix)->obj);
   int idest_x,idest_y,iw,ih;
-  scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
-  length_scale_f2i(Xgc,&w,&h,&iw,&ih,1);
+  scale_f2i(Xgc->scales,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  length_scale_f2i(Xgc->scales,&w,&h,&iw,&ih,1);
   Xgc->graphic_engine->draw_pixbuf(Xgc,pixbuf, src_x, src_y,idest_x,idest_y, iw, ih);
   
 }
@@ -788,8 +788,8 @@ static void draw_pixbuf_from_file_1(BCG *Xgc,const char *fname,int src_x,int src
 				    double dest_y,double w,double  h)
 { 
   int idest_x,idest_y,iw,ih;
-  scale_f2i(Xgc,&dest_x,&dest_y,&idest_x,&idest_y,1);
-  length_scale_f2i(Xgc,&w,&h,&iw,&ih,1);
+  scale_f2i(Xgc->scales,&dest_x,&dest_y,&idest_x,&idest_y,1);
+  length_scale_f2i(Xgc->scales,&w,&h,&iw,&ih,1);
   Xgc->graphic_engine->draw_pixbuf_from_file(Xgc,fname, src_x, src_y,idest_x,idest_y, iw, ih);
   
 }

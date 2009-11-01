@@ -162,7 +162,7 @@ static void nsp_rotate_diagram(NspGraphic *o,double *R);
 static void nsp_scale_diagram(NspGraphic *o,double *alpha);
 static int nsp_getbounds_diagram(NspGraphic *o,double *bounds);
 static void nsp_diagram_compute_inside_bounds(NspGraphic *Obj);
-static void nsp_diagram_link_figure(NspGraphic *G, void *F);
+static void nsp_diagram_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
 static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],

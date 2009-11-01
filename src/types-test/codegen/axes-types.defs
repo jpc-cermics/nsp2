@@ -28,10 +28,18 @@
     '("NspMatrix*" "rect" "hidden" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
     '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
     '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
+    '("nsp_gcscale" "scale" "hidden") 
     )
   (gtype-id "Axes")
 )
 
+;; defined in graphics-new 
 
+(define-struct nsp_gcscale
+  (in-module "Axes")
+  (parent "Graphic")
+  (c-name "nsp_gcscale")
+  (gtype-id "nsp_gcscale")
+)
 
 

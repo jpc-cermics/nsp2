@@ -333,8 +333,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   for (i = 0 ; i < m ; i++)
     {
       numpt = current_vertex[i]-1;
-      x[i] = XScale(Q_coord[numpt]);
-      y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
+      x[i] = XScale(Xgc->scales,Q_coord[numpt]);
+      y[i] = YScale(Xgc->scales,Q_coord[numpt+Q_nb_coords]);
       val_mean += (one_face_color) ? Q_val[j] : Q_val[numpt];
     }
 

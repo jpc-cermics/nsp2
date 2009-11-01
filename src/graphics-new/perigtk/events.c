@@ -795,7 +795,7 @@ target_drag_data_received  (GtkWidget          *widget,
 	      if ( nsp_new_graphics() == TRUE) 
 		nsp_get_point_axes(Xgc,x1,y1,pt);
 	      else
-		scale_i2f(Xgc,pt,pt+1,&x1,&y1,1);
+		scale_i2f(Xgc->scales,pt,pt+1,&x1,&y1,1);
 	      /* Sciprintf("PlaceDropped_info([%5.3f,%5.3f],[%d,%d],[%d,%d],%d,%d,%d)\n",
 	       * pt[0],pt[1],x,y,x1,y1,ids[0],ids[1],winnum);
 	       */

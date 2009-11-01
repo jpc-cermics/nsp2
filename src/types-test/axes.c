@@ -24,7 +24,7 @@
 
 
 
-#line 45 "codegen/axes.override"
+#line 68 "codegen/axes.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/objs3d.h>
@@ -106,7 +106,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 61 "codegen/axes.override"
+#line 84 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -231,6 +231,7 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->rect)->type->eq(A->obj->rect,loc->obj->rect) == FALSE ) return FALSE;
   if ( A->obj->zoom != loc->obj->zoom) return FALSE;
   if ( NSP_OBJECT(A->obj->zrect)->type->eq(A->obj->zrect,loc->obj->zrect) == FALSE ) return FALSE;
+  if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   return TRUE;
 }
 
@@ -352,6 +353,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
       nsp_matrix_destroy(H->obj->rect);
     if ( H->obj->zrect != NULL ) 
       nsp_matrix_destroy(H->obj->zrect);
+  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
     FREE(H->obj);
    }
 }
@@ -441,6 +443,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   if ( M->obj->zrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->zrect),indent+2,"zrect",rec_level+1)== FALSE ) return FALSE ;
     }
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -492,6 +495,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   if ( M->obj->zrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zrect),indent+2,"zrect",rec_level+1)== FALSE ) return FALSE ;
     }
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -583,6 +587,7 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->rect = NULLMAT;
   H->obj->zoom = FALSE;
   H->obj->zrect = NULLMAT;
+  nsp_init_nsp_gcscale(&H->obj->scale);
   return OK;
 }
 
@@ -650,11 +655,12 @@ int nsp_axes_check_values(NspAxes *H)
        return FAIL;
       memcpy(H->obj->zrect->R,x_def,4*sizeof(double));
   }
+  if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,NspTypeBase *type)
 {
  NspAxes *H  = nsp_axes_create_void(name,type);
  if ( H ==  NULLAXES) return NULLAXES;
@@ -680,6 +686,7 @@ NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,Nsp
   H->obj->rect= rect;
   H->obj->zoom=zoom;
   H->obj->zrect= zrect;
+  H->obj->scale = scale;
  if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
  return H;
 }
@@ -777,6 +784,7 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     {
       if ((H->obj->zrect = (NspMatrix *) nsp_object_full_copy_and_name("zrect",NSP_OBJECT(self->obj->zrect))) == NULLMAT) return NULL;
     }
+  if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   return H;
 }
 
@@ -846,7 +854,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 80 "codegen/axes.override"
+#line 103 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -861,7 +869,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 865 "axes.c"
+#line 873 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1012,7 +1020,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 96 "codegen/axes.override"
+#line 119 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1045,7 +1053,7 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
   ((NspAxes *) self)->obj->children =  (NspList *) val;
   nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj );
   return OK;
 }
 
@@ -1064,12 +1072,12 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
   ((NspAxes *) self)->obj->children= children;
   nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj);
   return OK;
 }
 
 
-#line 1073 "axes.c"
+#line 1081 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1269,7 +1277,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 154 "codegen/axes.override"
+#line 177 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1278,10 +1286,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1282 "axes.c"
+#line 1290 "axes.c"
 
 
-#line 164 "codegen/axes.override"
+#line 187 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1291,7 +1299,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1295 "axes.c"
+#line 1303 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1322,7 +1330,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 175 "codegen/axes.override"
+#line 198 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1408,6 +1416,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 			       P->obj->iso,
 			       P->obj->auto_axis,
 			       xf);
+  /* save the scales */
+  P->obj->scale = *Xgc->scales;
 
   axis_draw(Xgc,'1', 
 	    (P->obj->auto_axis) ? '5': '1',
@@ -1452,63 +1462,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 
 void nsp_axes_i2f(BCG *Xgc,NspAxes *P,int x,int y,double pt[2])
 {
-  char xf[]="onn";
-  double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
-  char logscale[2];
-  int aaint[4]={10,2,10,2};
-  /* we change the scale according to the axes */
-  getscale2d(Xgc,WRect,FRect,logscale,ARect);
-  if ( P->obj->top == TRUE ) 
-    {
-      /* This is a top level axes, wrect gives the axes position in the 
-       * enclosing graphic window. 
-       */
-      set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
-      wrect1= P->obj->wrect->R;
-    }
-  else 
-    {
-      /* wrect->R is [left,up,w,h] 
-       * we need to compute wrect->R in term on window/proportions 
-       */
-      WRect1[0]= ARect[0]+(1-ARect[0]-ARect[2])*(P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
-      WRect1[1]= ARect[1]+(1-ARect[1]-ARect[3])*(1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]));
-      WRect1[2]= (1-ARect[0]-ARect[2])*(P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
-      WRect1[3]= (1-ARect[1]-ARect[3])*(P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
-      wrect1 = WRect1;
-      Xgc->scales->cosa= cos( P->obj->rho);
-      Xgc->scales->sina= sin( P->obj->rho);
-    }
-  /* we directly change the default scale because we do not want 
-   * to register all the scales that will be generated by set_scale 
-   * thus we use T in flag[1].
-   */
-  if ( FALSE ) 
-    {
-      nsp_axes_compute_inside_bounds(Xgc,(NspGraphic *) P,inside_bounds);
-      memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
-    }
-
-  if ( P->obj->xlog == TRUE ) xf[1]= 'l';
-  if ( P->obj->ylog == TRUE ) xf[2]= 'l';
-
-  nsp_axes_update_frame_bounds(Xgc,wrect1,
-			       P->obj->frect->R,
-			       P->obj->arect->R,
-			       aaint,
-			       P->obj->iso,
-			       P->obj->auto_axis,
-			       xf);
-  scale_i2f(Xgc,pt,pt+1,&x,&y,1);
-  /* scale back */
-  set_scale(Xgc,"fTtfft",WRect,FRect,NULL,NULL,ARect);
-  if (  P->obj->top != TRUE )
-    {
-      Xgc->scales->cosa=1.0;
-      Xgc->scales->sina=0.0;
-    }
+  scale_i2f(&P->obj->scale,pt,pt+1,&x,&y,1);
 }
-
 
 /* draw legends from information contained in axe 
  */
@@ -1781,12 +1736,12 @@ static int nsp_getbounds_axes(NspGraphic *Obj,double *bounds)
 
 
 
-static void nsp_axes_link_figure(NspGraphic *G, void *F)
+static void nsp_axes_link_figure(NspGraphic *G, void *F, void *A)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G, F);
+  nsp_graphic_link_figure(G, F, ((NspAxes *) G)->obj);
   /* link children */
-  nsp_list_link_figure(((NspAxes *) G)->obj->children,F);
+  nsp_list_link_figure(((NspAxes *) G)->obj->children,F, ((NspAxes *) G)->obj);
 }
 
 
@@ -2031,7 +1986,42 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
     }
 }
 
-    
+
+/* requested for nsp_gcscale
+ *
+ */
+
+static void  nsp_destroy_nsp_gcscale(nsp_gcscale *scales,NspAxes *H)
+{
+  return;
+}
 
 
-#line 2038 "axes.c"
+static int nsp_print_nsp_gcscale(int indent,nsp_gcscale *locks,NspAxes *M)
+{
+  return OK;
+}
+
+static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspAxes *M)
+{
+  return OK;
+}
+
+static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *scale,NspAxes *M)
+{
+  C->obj->scale = *scale;
+  return OK;
+}
+
+static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
+{
+  /* XXX */
+  return TRUE; 
+}
+
+static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
+{
+  nsp_scale_default(scale);
+}
+
+#line 2028 "axes.c"

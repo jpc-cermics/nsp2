@@ -16,6 +16,7 @@ typedef struct nsp_gengine Gengine;    /* drawing */
 #include "scale.h" 
 #include "actions.h"
 #include "driver.h" 
+#include "gcscale.h" 
 
 /*---------------------------------------------------------------------------
  *  graphic engine data 
@@ -34,43 +35,7 @@ typedef struct _listplot {
   struct _listplot   *previous;
 } list_plot ;
 
-
-/* structure for storing scale informations associated to a graphic window */
-
-typedef struct wcscalelist 
-{
-  int    scale_flag ;                   /* zero when this is a default scale */
-  int    scale_flag3d ;                 /* set to != 0 when 3d scales are active */
-  int  scale_3drot_flag;                /* test */
-  int    wdim[2];                       /* currend windo dim in pixels */
-  double subwin_rect[4];                /* subwindow specification */
-  double frect[4];                      /* bounds in the <<real>> space: xmin,ymin,xmax,ymax */
-  double zfrect[2];                     /* zmin,zmax after transformation for plot3d */
-  double axis[4];                       /* position of the axis rectangle */
-                                        /* = [mfact_xl, mfact_xr,mfact_yu,mfact_yd]; */
-  double xtics[4],ytics[4];             /* [xmin,ymin,nint] or [kmin,kmax,ar,nint]           */
-  char   strflag;                       /* the default mode used by stored graphics: 
-					 * supposed to be 1 or 3 or 5 
-					 */
-  /* XXXX : c'est redondant avec aaint et quelquefois avec frect ? */
-  double Wxofset1,Wyofset1,Wscx1,Wscy1; /* ofsets and scale factor for pixel<->double transf.*/
-  char logflag[2];                      /* are we using logscale */
-  int WIRect1[4];                       /* frame bounds in pixel */
-  int Waaint1[4];                       /* tics and subtics numbers: [xint,xsubint,yint,ysubint] */
-  double m[3][3];                       /* 3d geometric transformation */
-  double bbox1[6];                      /* 3d bounds */
-  double c[3] ;                          /* center of 3d box */
-  double alpha,theta;                   /* polar coordinates of visualization point */
-  int metric3d;                         /* added by es - metric mode  for 3d -> 2d */
-  double cosa,sina;                     /* test ! */
-  struct wcscalelist *next;             /* points to next one */
-  struct wcscalelist *prev;             /* points to previous one */
-  
-} window_scale_list;
-
-
 extern void window_scale_delete(int win);
-
 
 /*
  * a queue for storing mouse events in drivers 
@@ -206,50 +171,49 @@ typedef struct _nsp_box_3d {
  * Current geometric transformation : from double to pixel 
  */
 
+#define XScale_d(Scale,x)    ( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1) 
+#define XLogScale_d(Scale,x) ( Scale->Wscx1*(log10(x) -Scale->frect[0]) + Scale->Wxofset1)
+#define YScale_d(Scale,y)    ( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1)
+#define YLogScale_d(Scale,y) ( Scale->Wscy1*(-log10(y)+Scale->frect[3]) + Scale->Wyofset1)
 
-#define XScale_d(x)    ( Xgc->scales->Wscx1*((x) -Xgc->scales->frect[0]) + Xgc->scales->Wxofset1) 
-#define XLogScale_d(x) ( Xgc->scales->Wscx1*(log10(x) -Xgc->scales->frect[0]) + Xgc->scales->Wxofset1)
-#define YScale_d(y)    ( Xgc->scales->Wscy1*(-(y)+Xgc->scales->frect[3]) + Xgc->scales->Wyofset1)
-#define YLogScale_d(y) ( Xgc->scales->Wscy1*(-log10(y)+Xgc->scales->frect[3]) + Xgc->scales->Wyofset1)
-
-#define XScaleR_d(x,y)   ((Xgc->scales->cosa==1.0) ? ( Xgc->scales->Wscx1*((x) -Xgc->scales->frect[0]) + Xgc->scales->Wxofset1) : \
-			  ( Xgc->scales->cosa*Xgc->scales->Wscx1*((x) -Xgc->scales->frect[0]) - Xgc->scales->sina*Xgc->scales->Wscy1*(-(y)+Xgc->scales->frect[3])) + Xgc->scales->Wxofset1) 
-#define YScaleR_d(x,y)   ((Xgc->scales->cosa==1.0) ? ( Xgc->scales->Wscy1*(-(y)+Xgc->scales->frect[3]) + Xgc->scales->Wyofset1): \
-			  ( Xgc->scales->sina*Xgc->scales->Wscx1*((x) -Xgc->scales->frect[0]) + Xgc->scales->cosa*Xgc->scales->Wscy1*(-(y)+Xgc->scales->frect[3])) + Xgc->scales->Wyofset1)
+#define XScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? ( Scale->Wscx1*((x) -Scale->frect[0]) + Scale->Wxofset1) : \
+			  ( Scale->cosa*Scale->Wscx1*((x) -Scale->frect[0]) - Scale->sina*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wxofset1) 
+#define YScaleR_d(Scale,x,y) ((Scale->cosa==1.0) ? ( Scale->Wscy1*(-(y)+Scale->frect[3]) + Scale->Wyofset1): \
+			  ( Scale->sina*Scale->Wscx1*((x) -Scale->frect[0]) + Scale->cosa*Scale->Wscy1*(-(y)+Scale->frect[3])) + Scale->Wyofset1)
 
 
-#define XScale(x)    inint( XScale_d(x) )
-#define XLogScale(x) inint( XLogScale_d(x))
-#define YScale(y)    inint( YScale_d(y)   )
-#define YLogScale(y) inint( YLogScale_d(y))
+#define XScale(Scale,x)    inint( XScale_d(Scale,x) )
+#define XLogScale(Scale,x) inint( XLogScale_d(Scale,x))
+#define YScale(Scale,y)    inint( YScale_d(Scale,y)   )
+#define YLogScale(Scale,y) inint( YLogScale_d(Scale,y))
 
-#define XDouble2Pixel_d(x) ((Xgc->scales->logflag[0] == 'n') ? ( XScale_d(x)) : ( XLogScale_d(x)))
-#define YDouble2Pixel_d(y) ((Xgc->scales->logflag[1] == 'n') ? ( YScale_d(y)) : ( YLogScale_d(y)))
+#define XDouble2Pixel_d(Scale,x) ((Scale->logflag[0] == 'n') ? ( XScale_d(Scale,x)) : ( XLogScale_d(Scale,x)))
+#define YDouble2Pixel_d(Scale,y) ((Scale->logflag[1] == 'n') ? ( YScale_d(Scale,y)) : ( YLogScale_d(Scale,y)))
 
-#define XDouble2Pixel(x) ((Xgc->scales->logflag[0] == 'n') ? ( XScale_d(x)) : ( XLogScale_d(x)))
-#define YDouble2Pixel(y) ((Xgc->scales->logflag[1] == 'n') ? ( YScale_d(y)) : ( YLogScale_d(y)))
+#define XDouble2Pixel(Scale,x) ((Scale->logflag[0] == 'n') ? ( XScale_d(Scale,x)) : ( XLogScale_d(Scale,x)))
+#define YDouble2Pixel(Scale,y) ((Scale->logflag[1] == 'n') ? ( YScale_d(Scale,y)) : ( YLogScale_d(Scale,y)))
 
 /*
  * Current geometric transformation : from pixel to double 
  */
 
-#define XPi2R(x)  Xgc->scales->frect[0] + (1.0/Xgc->scales->Wscx1)*((x) - Xgc->scales->Wxofset1)
-#define YPi2R(y)  Xgc->scales->frect[3] - (1.0/Xgc->scales->Wscy1)*((y) - Xgc->scales->Wyofset1)
-#define XPi2LogR(x)  exp10( XPi2R(x))
-#define YPi2LogR(y)  exp10( YPi2R(y))
-#define XPixel2Double(x)  (( Xgc->scales->logflag[0] == 'l') ? XPi2LogR(x) : XPi2R(x))
-#define YPixel2Double(y)  (( Xgc->scales->logflag[1] == 'l') ? YPi2LogR(y) : YPi2R(y))
+#define XPi2R(Scale,x)  Scale->frect[0] + (1.0/Scale->Wscx1)*((x) - Scale->Wxofset1)
+#define YPi2R(Scale,y)  Scale->frect[3] - (1.0/Scale->Wscy1)*((y) - Scale->Wyofset1)
+#define XPi2LogR(Scale,x)  exp10( XPi2R(Scale,x))
+#define YPi2LogR(Scale,y)  exp10( YPi2R(y))
+#define XPixel2Double(Scale,x)  (( Scale->logflag[0] == 'l') ? XPi2LogR(Scale,x) : XPi2R(Scale,x))
+#define YPixel2Double(Scale,y)  (( Scale->logflag[1] == 'l') ? YPi2LogR(Scale,y) : YPi2R(Scale,y))
 
 /*
  * Current geometric transformation : 3D plots 
  */
 
-#define TRX(x1,y1,z1) ( Xgc->scales->m[0][0]*(x1-Xgc->scales->c[0]) +Xgc->scales->m[0][1]*(y1-Xgc->scales->c[1]) +Xgc->scales->m[0][2]*(z1-Xgc->scales->c[2]))
-#define TRY(x1,y1,z1) ( Xgc->scales->m[1][0]*(x1-Xgc->scales->c[0]) +Xgc->scales->m[1][1]*(y1-Xgc->scales->c[1]) +Xgc->scales->m[1][2]*(z1-Xgc->scales->c[2]))
-#define TRZ(x1,y1,z1) ( Xgc->scales->m[2][0]*(x1-Xgc->scales->c[0]) +Xgc->scales->m[2][1]*(y1-Xgc->scales->c[1]) +Xgc->scales->m[2][2]*(z1-Xgc->scales->c[2]))
-#define GEOX(x1,y1,z1)  XScale(TRX(x1,y1,z1))
-#define GEOY(x1,y1,z1)  YScale(TRY(x1,y1,z1))
-#define GEOZ(x1,y1,z1)  TRZ(x1,y1,z1)
+#define TRX(Scale,x1,y1,z1) ( Scale->m[0][0]*(x1-Scale->c[0]) +Scale->m[0][1]*(y1-Scale->c[1]) +Scale->m[0][2]*(z1-Scale->c[2]))
+#define TRY(Scale,x1,y1,z1) ( Scale->m[1][0]*(x1-Scale->c[0]) +Scale->m[1][1]*(y1-Scale->c[1]) +Scale->m[1][2]*(z1-Scale->c[2]))
+#define TRZ(Scale,x1,y1,z1) ( Scale->m[2][0]*(x1-Scale->c[0]) +Scale->m[2][1]*(y1-Scale->c[1]) +Scale->m[2][2]*(z1-Scale->c[2]))
+#define GEOX(Scale,x1,y1,z1)  XScale(Scale,TRX(Scale,x1,y1,z1))
+#define GEOY(Scale,x1,y1,z1)  YScale(Scale,TRY(Scale,x1,y1,z1))
+#define GEOZ(Scale,x1,y1,z1)  TRZ(Scale,x1,y1,z1)
 
 extern void show_scales( BCG *Xgc);
 

@@ -930,8 +930,8 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   for ( i = 0 ; i < n1 ; i++)
     for ( j =0 ; j < n2 ; j++)
       {
-	xm[2*(i +(n1)*j)]= XScale(x[i]);
-	ym[2*(i +(n1)*j)]= YScale(y[j]);
+	xm[2*(i +(n1)*j)]= XScale(Xgc->scales,x[i]);
+	ym[2*(i +(n1)*j)]= YScale(Xgc->scales,y[j]);
       }
   /* Scaling */
   nx=min_of_doubles(x,n1)*Xgc->scales->Wscx1;

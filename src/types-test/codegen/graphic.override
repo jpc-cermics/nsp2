@@ -13,6 +13,7 @@ include-private Graphic
 headers
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
+#include <nsp/axes.h>
 #include "../interp/Eval.h"
 
 %%
@@ -50,7 +51,7 @@ typedef void translate_func(NspGraphic *Obj,const double *tr);
 typedef void rotate_func(NspGraphic *Obj,double *R);
 typedef void scale_func(NspGraphic *Obj,double *alpha);
 typedef int bounds_func(NspGraphic *Obj,double *bounds);
-typedef void link_figure_func(NspGraphic *Obj,void *F);
+typedef void link_figure_func(NspGraphic *Obj,void *F, void *A);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
 typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
@@ -139,16 +140,13 @@ last
  * 
  **/
 
-void nsp_graphic_link_figure(NspGraphic *G,void *F)
+void nsp_graphic_link_figure(NspGraphic *G,void *F, void *A)
 {
   nsp_figure *Fi = F;
   if ( G->obj->Fig == NULL ) 
     {
-      /* 
-      Fi->obj->ref_count++;
-      ((NspGraphic *) Fi)->obj->ref_count++;
-      */
       G->obj->Fig = Fi;
+      G->obj->Axe = A;
     }
 }
 
@@ -168,11 +166,8 @@ void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
   /* NspFigure *Fi = F;*/
   if ( G->obj->Fig == F ) 
     {
-      /* 
-      Fi->obj->ref_count--;
-      ((NspGraphic *) Fi)->obj->ref_count--;
-      */
       G->obj->Fig = NULL ;
+      G->obj->Axe = NULL;	
     }
 }
 
@@ -323,5 +318,34 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_set_attribute_util(Gr,Gr->basetype,name,Obj) == FAIL) return RET_BUG;
   NSP_OBJECT(Gr)->ret_pos = 1;
   return 1;
+}
+
+/* invalidate the drawing region associated to a graphic object. 
+ * This function is to be called when the 
+ * graphic object has changed and need to be drawn.
+ * XXX: a finir en passant les rectangles 
+ */
+
+void nsp_graphic_invalidate(NspGraphic *G)
+{
+  double bounds[4];/* xmin,ymin,xmax, ymax */
+  nsp_figure *F = G->obj->Fig;
+  nsp_axes *A = G->obj->Axe;
+  BCG *Xgc = F->Xgc;
+  if ( F == NULL) return ;
+  if ( F->draw_now== FALSE) return;
+  if ( Xgc == NULL) return;
+  if ( G->type->bounds(G,bounds)== TRUE) 
+    {
+      int xmin,xmax,ymin,ymax;
+      scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
+      scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
+      Xgc->graphic_engine->force_redraw(Xgc);
+    }
+  else
+    {
+      /* a full window force redraw or nothing ? */
+      Xgc->graphic_engine->force_redraw(Xgc);
+    }
 }
 

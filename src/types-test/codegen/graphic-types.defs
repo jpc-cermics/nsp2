@@ -5,10 +5,10 @@
   (parent "Object")
   (c-name "NspGraphic")
   (fields
-    ;; '("int" "id" "hidden" "-1");; id of the graphic window when a graphic window is used 
-    '("Boolean" "hidden" "std" "FALSE" );; id of the graphic window when a graphic window is used 
-    '("void*" "Fig" "hidden" "NULL");; 
-    )
+   '("Boolean" "hidden" "std" "FALSE" );; id of the graphic window when a graphic window is used 
+   '("void*" "Fig" "hidden" "NULL");; take care that this is a nsp_figure 
+   '("void*" "Axe" "hidden" "NULL");; take care that this is a nsp_axes
+   )
   (gtype-id "Graphic")
 )
 

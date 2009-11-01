@@ -683,7 +683,7 @@ G_Contstore_(int ival, int xncont, int yncont)
 static void
 Contstore_(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
-  G_Contstore_(ival,GEOX(xncont,yncont,Cont),GEOY(xncont,yncont,Cont));
+  G_Contstore_(ival,GEOX(Xgc->scales,xncont,yncont,Cont),GEOY(Xgc->scales,xncont,yncont,Cont));
 }
 
 
@@ -696,7 +696,7 @@ Contstore_(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 static void
 Contstore_1(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
-  G_Contstore_(ival,GEOX(xncont,yncont,ZC),GEOY(xncont,yncont,ZC));
+  G_Contstore_(ival,GEOX(Xgc->scales,xncont,yncont,ZC),GEOY(Xgc->scales,xncont,yncont,ZC));
 }
 
 /*
@@ -708,7 +708,7 @@ Contstore_1(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 static void
 Contstore_2(BCG *Xgc,int ival, double Cont, double xncont, double yncont)
 {
-  G_Contstore_(ival,XScale(xncont),YScale(yncont));
+  G_Contstore_(ival,XScale(Xgc->scales,xncont),YScale(Xgc->scales,yncont));
 }
 
 /* 
@@ -783,8 +783,8 @@ static void ContourTrace_ogl(BCG *Xgc,double Cont, int style)
   xd=xdcont[cont_size / 2];
   yd=ydcont[cont_size / 2];
   zd=zdcont[cont_size / 2];
-  x = XScale(TRX(xd,yd,zd));
-  y = YScale(TRY(xd,yd,zd));
+  x = XScale(Xgc->scales,TRX(Xgc->scales,xd,yd,zd));
+  y = YScale(Xgc->scales,TRY(Xgc->scales,xd,yd,zd));
   Xgc->graphic_engine->displaystring(Xgc,str, x,y,flag,angle);
   nsp_ogl_set_3dview(Xgc);
 }

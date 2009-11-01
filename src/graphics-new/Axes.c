@@ -313,11 +313,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	{
 	  /* the horizontal segment */
 	  xd = x_convert(xy_type, x , 0);
-	  vx[0] =  inint(XScaleR_d(xd,y[0]));
-	  ym[0] = vy[0] =  inint(YScaleR_d(xd,y[0]));
+	  vx[0] =  inint(XScaleR_d(Xgc->scales,xd,y[0]));
+	  ym[0] = vy[0] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));
 	  xd = x_convert(xy_type, x , Nx-1);
-	  vx[1] =  inint(XScaleR_d(xd,y[0]));
-	  vy[1] =  inint(YScaleR_d(xd,y[0]));
+	  vx[1] =  inint(XScaleR_d(Xgc->scales,xd,y[0]));
+	  vy[1] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -350,8 +350,8 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  Xgc->graphic_engine->boundingbox(Xgc,foo,xx,yy,rect);
 	  
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
-	  vx[0] =  inint(XScaleR_d(vxx,y[0]));
-	  vy[0] =  inint(YScaleR_d(vxx,y[0]));
+	  vx[0] =  inint(XScaleR_d(Xgc->scales,vxx,y[0]));
+	  vy[0] =  inint(YScaleR_d(Xgc->scales,vxx,y[0]));
 	  if ( pos == 'd' ) 
 	    {
 	      /* if d_barlength is > 0: ticks are going up and string are displayed 
@@ -359,29 +359,29 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	       */
 	      xd = vxx; 
 	      yd = y[0] + d_barlength;
-	      vx[1]= inint(XScaleR_d(xd,yd));
-	      vy[1]= inint(YScaleR_d(xd,yd));
+	      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+	      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
 	      if ( d_barlength > 0 ) 
 		yd = y[0] - str_offset - rect[3]/Xgc->scales->Wscy1; 
 	      else
 		yd = y[0] - str_offset + d_barlength - rect[3]/Xgc->scales->Wscy1; 
-	      posi[0] = inint(XScaleR_d(xd,yd));
-	      posi[1] = inint(YScaleR_d(xd,yd));
+	      posi[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
+	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
 	  else 
 	    { 
 	      xd = vxx; 
 	      yd = y[0] - d_barlength;
-	      vx[1]= inint(XScaleR_d(xd,yd));
-	      vy[1]= inint(YScaleR_d(xd,yd));
+	      vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+	      vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	      xd = vxx - (rect[2]/2.0/Xgc->scales->Wscx1);
 	      if ( d_barlength > 0 ) 
 		yd = y[0] + str_offset;
 	      else
 		yd = y[0] + str_offset - d_barlength;
-	      posi[0] = inint(XScaleR_d(xd,yd));
-	      posi[1] = inint(YScaleR_d(xd,yd));
+	      posi[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
+	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
 	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
@@ -405,11 +405,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      for ( j = 1 ; j < subtics; j++) 
 		{
 		  xd = vxx+dx*j;
-		  vx[0] = inint(XScaleR_d(xd,y[0]));
-		  vy[0] = inint(YScaleR_d(xd,y[0]));
+		  vx[0] = inint(XScaleR_d(Xgc->scales,xd,y[0]));
+		  vy[0] = inint(YScaleR_d(Xgc->scales,xd,y[0]));
 		  yd = (pos == 'd') ? y[0] + d_barlength/2.0 : y[0] - d_barlength/2.0;
-		  vx[1]= inint(XScaleR_d(xd,yd));
-		  vy[1]= inint(YScaleR_d(xd,yd));
+		  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+		  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
@@ -431,11 +431,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	{
 	  /* the vertical segment */
 	  yd = y_convert(xy_type, y , 0);
-	  vx[0] =  inint(XScaleR_d(x[0],yd));
-	  vy[0] =  inint(YScaleR_d(x[0],yd));
+	  vx[0] =  inint(XScaleR_d(Xgc->scales,x[0],yd));
+	  vy[0] =  inint(YScaleR_d(Xgc->scales,x[0],yd));
 	  yd = y_convert(xy_type, y , Ny-1);
-	  vx[1] =  inint(XScaleR_d(x[0],yd));
-	  vy[1] = xm[0]= inint(YScaleR_d(x[0],yd));
+	  vx[1] =  inint(XScaleR_d(Xgc->scales,x[0],yd));
+	  vy[1] = xm[0]= inint(YScaleR_d(Xgc->scales,x[0],yd));
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
 	  Xgc->graphic_engine->drawsegments(Xgc,vx, vy, ns,&style,iflag);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -466,33 +466,33 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
 	  
-	  vx[0] = inint(XScaleR_d(x[0],vxx));
-	  vy[0] = inint(YScaleR_d(x[0],vxx));
+	  vx[0] = inint(XScaleR_d(Xgc->scales,x[0],vxx));
+	  vy[0] = inint(YScaleR_d(Xgc->scales,x[0],vxx));
 	  if ( pos == 'r' ) 
 	    {
 	      xd = x[0] - d_barlength;
-	      vx[1] = inint(XScaleR_d(xd,vxx));
-	      vy[1] = inint(YScaleR_d(xd,vxx));
+	      vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
+	      vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
 	      if ( d_barlength > 0) 
 		xd = x[0] + str_offset;
 	      else 
 		xd = x[0] - d_barlength + str_offset;
 	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
-	      posi[0]= inint(XScaleR_d(xd,yd));
-	      posi[1]= inint(YScaleR_d(xd,yd));
+	      posi[0]= inint(XScaleR_d(Xgc->scales,xd,yd));
+	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
 	  else 
 	    { 
 	      xd = x[0] + d_barlength;
-	      vx[1] = inint(XScaleR_d(xd,vxx));
-	      vy[1] = inint(YScaleR_d(xd,vxx));
+	      vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
+	      vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
 	      if ( d_barlength > 0) 
 		xd = x[0] - str_offset - rect[2]/Xgc->scales->Wscx1;
 	      else 
 		xd = x[0] + d_barlength -str_offset - rect[2]/Xgc->scales->Wscx1;
 	      yd = vxx - rect[3]/2.0/Xgc->scales->Wscy1;
-	      posi[0]= inint(XScaleR_d(xd,yd));
-	      posi[1]= inint(YScaleR_d(xd,yd));
+	      posi[0]= inint(XScaleR_d(Xgc->scales,xd,yd));
+	      posi[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
 
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
@@ -519,11 +519,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 		{
 		  yd= vxx+dy*j;
 		  xd= x[0];
-		  vx[0] = inint(XScaleR_d(xd,yd));
-		  vy[0] = inint(YScaleR_d(xd,yd));
+		  vx[0] = inint(XScaleR_d(Xgc->scales,xd,yd));
+		  vy[0] = inint(YScaleR_d(Xgc->scales,xd,yd));
 		  xd = ( pos == 'r' ) ? x[0] -d_barlength/2.0: x[0] +d_barlength/2.0;
-		  vx[1]= inint(XScaleR_d(xd,yd));
-		  vy[1]= inint(YScaleR_d(xd,yd));
+		  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+		  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 		  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 		}
 	    }
@@ -591,12 +591,12 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
 	{ 
 	  vxx = x_convert(xy_type,x,i);
 	  /* tick is computed in vx,vy and string is displayed at posi[0],posi[1] position */
-	  vx[0] =  inint(XScaleR_d(vxx,y[0]));
-	  vy[0] =  inint(YScaleR_d(vxx,y[0]));
+	  vx[0] =  inint(XScaleR_d(Xgc->scales,vxx,y[0]));
+	  vy[0] =  inint(YScaleR_d(Xgc->scales,vxx,y[0]));
 	  xd = vxx; 
 	  yd = y[0] + d_barlength;
-	  vx[1]= inint(XScaleR_d(xd,yd));
-	  vy[1]= inint(YScaleR_d(xd,yd));
+	  vx[1]= inint(XScaleR_d(Xgc->scales,xd,yd));
+	  vy[1]= inint(YScaleR_d(Xgc->scales,xd,yd));
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -610,11 +610,11 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
       for (i=0 ; i < Ny ; i++)
 	{ 
 	  vxx = y_convert(xy_type,y,i);
-	  vx[0] = inint(XScaleR_d(x[0],vxx));
-	  vy[0] = inint(YScaleR_d(x[0],vxx));
+	  vx[0] = inint(XScaleR_d(Xgc->scales,x[0],vxx));
+	  vy[0] = inint(YScaleR_d(Xgc->scales,x[0],vxx));
 	  xd = x[0] + d_barlength;
-	  vx[1] = inint(XScaleR_d(xd,vxx));
-	  vy[1] = inint(YScaleR_d(xd,vxx));
+	  vx[1] = inint(XScaleR_d(Xgc->scales,xd,vxx));
+	  vy[1] = inint(YScaleR_d(Xgc->scales,xd,vxx));
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,grid_color);
 	  Xgc->graphic_engine->drawsegments(Xgc, vx, vy, ns,&style,iflag);
 	  if ( grid_color != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);

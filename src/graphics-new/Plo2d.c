@@ -786,7 +786,7 @@ int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
 	return FAIL;
     }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe , frect, strflag[1]);
   

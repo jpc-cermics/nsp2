@@ -99,7 +99,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
   if  (  Xgc->scales->cosa==1.0 ) 
     {
       /* Boundaries of the matrix rectangle in pixel */
-      scale_f2i(Xgc,xx,yy,xx1,yy1,2);
+      scale_f2i(Xgc->scales,xx,yy,xx1,yy1,2);
       xm = graphic_alloc(0,P->obj->data->n+1,sizeof(int));
       ym = graphic_alloc(1,P->obj->data->m+1,sizeof(int));
       if ( xm == 0 || ym == 0 )

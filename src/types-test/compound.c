@@ -591,7 +591,7 @@ static int _wrap_compound_set_obj_children(void *self,NspObject *val)
     }
   ((NspCompound *) self)->obj->children =  (NspList *) val;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspGraphic *) self)->obj->Axe);
   nsp_compound_compute_inside_bounds(self);
   return OK;
 }
@@ -609,7 +609,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
     }
   ((NspCompound *) self)->obj->children= children;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspGraphic *) self)->obj->Axe);
   nsp_compound_compute_inside_bounds(self);
   return OK;
 }
@@ -839,12 +839,12 @@ static int nsp_getbounds_compound(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-static void nsp_compound_link_figure(NspGraphic *G, void *F)
+static void nsp_compound_link_figure(NspGraphic *G, void *F, void *A)
 {
   /* link toplevel, take care to use nsp_graphic field */
-  nsp_graphic_link_figure(G, F);
+  nsp_graphic_link_figure(G, F,A);
   /* link children */
-  nsp_list_link_figure(((NspCompound *) G)->obj->children,F);
+  nsp_list_link_figure(((NspCompound *) G)->obj->children,F,A);
 }
 
 

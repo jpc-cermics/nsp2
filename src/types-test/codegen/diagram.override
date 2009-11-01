@@ -62,7 +62,7 @@ static void nsp_rotate_diagram(NspGraphic *o,double *R);
 static void nsp_scale_diagram(NspGraphic *o,double *alpha);
 static int nsp_getbounds_diagram(NspGraphic *o,double *bounds);
 static void nsp_diagram_compute_inside_bounds(NspGraphic *Obj);
-static void nsp_diagram_link_figure(NspGraphic *G, void *F);
+static void nsp_diagram_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_diagram_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_diagram_children(NspGraphic *Obj);
 static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[2],
@@ -161,35 +161,39 @@ static NspObject *_wrap_diagram_get_obj_children(void *self,char *attr, int *cop
 
 static int _wrap_diagram_set_obj_children(void *self,NspObject *val)
 {
+  NspDiagram *D = self;
   if ( ! IsList(val) ) return FAIL;
   if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
-  if (((NspDiagram *) self)->obj->children != NULL ) 
+  if (D->obj->children != NULL ) 
     {
       if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-	nsp_list_unlink_figure(((NspDiagram *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
-      nsp_list_destroy(((NspDiagram *) self)->obj->children);
+	nsp_list_unlink_figure(D->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(D->obj->children);
     }
-  ((NspDiagram *) self)->obj->children =  (NspList *) val;
+  D->obj->children =  (NspList *) val;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,
+			 ((NspGraphic *) self)->obj->Axe);
   nsp_diagram_compute_inside_bounds(self);
   return OK;
 }
 
 static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
 {
+  NspDiagram *D = self;
   NspList *children;
   if ( ! IsList(O) ) return FAIL;
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
-  if (((NspDiagram *) self)->obj->children != NULL ) 
+  if (D->obj->children != NULL ) 
     {
       if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-	nsp_list_unlink_figure(((NspDiagram *) self)->obj->children,((NspGraphic *) self)->obj->Fig);
-      nsp_list_destroy(((NspDiagram *) self)->obj->children);
+	nsp_list_unlink_figure(D->obj->children,((NspGraphic *) self)->obj->Fig);
+      nsp_list_destroy(D->obj->children);
     }
-  ((NspDiagram *) self)->obj->children= children;
+  D->obj->children= children;
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,
+			 ((NspGraphic *) self)->obj->Axe);
   nsp_diagram_compute_inside_bounds(self);
   return OK;
 }
@@ -887,12 +891,12 @@ static int nsp_getbounds_diagram(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-static void nsp_diagram_link_figure(NspGraphic *G, void *F)
+static void nsp_diagram_link_figure(NspGraphic *G, void *F, void *A)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G, F);
+  nsp_graphic_link_figure(G, F, A);
   /* link children */
-  nsp_list_link_figure(((NspDiagram *) G)->obj->children,F);
+  nsp_list_link_figure(((NspDiagram *) G)->obj->children,F,A);
 }
 
 
@@ -1189,7 +1193,7 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
 	    }
 	  C = C->next ;
 	}
-      rect2d_f2i(Xgc,rect,Xgc->zrect,1);
+      rect2d_f2i(Xgc->scales,rect,Xgc->zrect,1);
       nsp_redraw_diagram(R);
     }
   nsp_set_cursor(Xgc,-1);
@@ -2024,7 +2028,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F)
   if ( B == NULLBLOCK) return NULLOBJ;
   B->obj->hilited = TRUE;
   G = (NspGraphic *) B;
-  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig);
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
@@ -2110,7 +2114,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   B->obj->hilited = TRUE;
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   G = (NspGraphic *) B;
-  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig);
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
@@ -2280,7 +2284,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
    * if true update locks 
    */
   G = (NspGraphic *) L;
-  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig);
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
 
   mpt[0]=L->obj->poly->R[0];
   mpt[1]=L->obj->poly->R[L->obj->poly->m];

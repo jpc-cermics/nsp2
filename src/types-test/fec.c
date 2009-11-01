@@ -1079,7 +1079,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data)
       return;
     }      
   
-  scale_f2i(Xgc,x,y,xm,ym,Nnode);
+  scale_f2i(Xgc->scales,x,y,xm,ym,Nnode);
 
   /* Fec code */
   {

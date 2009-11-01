@@ -320,10 +320,10 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double 
     }
   else
     {
-      bbox1[0]= XDouble2Pixel(bbox[0]);
-      bbox1[1]= YDouble2Pixel(bbox[1]);
-      bbox1[2]= XDouble2Pixel(bbox[2]);
-      bbox1[3]= YDouble2Pixel(bbox[3]);
+      bbox1[0]= XDouble2Pixel(Xgc->scales,bbox[0]);
+      bbox1[1]= YDouble2Pixel(Xgc->scales,bbox[1]);
+      bbox1[2]= XDouble2Pixel(Xgc->scales,bbox[2]);
+      bbox1[3]= YDouble2Pixel(Xgc->scales,bbox[3]);
       scale_change_plots(Xgc,winnumber,flag,bbox,aaint,NULL,1,bbox1,NULL);
     }
   tape_replay(Xgc,winnumber);

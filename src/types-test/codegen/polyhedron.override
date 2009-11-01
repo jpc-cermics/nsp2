@@ -342,8 +342,8 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
     {
       double z;
       numpt = current_vertex[i]-1;
-      x[i] = XScale(Q_coord[numpt]);
-      y[i] = YScale(Q_coord[numpt+Q_nb_coords]);
+      x[i] = XScale(Xgc->scales,Q_coord[numpt]);
+      y[i] = YScale(Xgc->scales,Q_coord[numpt+Q_nb_coords]);
       z = Q_coord[numpt+2*Q_nb_coords];
       if ( ISNAN(z) || isinf(z)) return;
     }

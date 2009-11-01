@@ -24,7 +24,7 @@
 
 
 
-#line 53 "codegen/objs3d.override"
+#line 51 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 #include <nsp/object.h>
 #include <nsp/figuredata.h> 
@@ -108,7 +108,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 71 "codegen/objs3d.override"
+#line 69 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -764,7 +764,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 90 "codegen/objs3d.override"
+#line 88 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -888,7 +888,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 106 "codegen/objs3d.override"
+#line 104 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -921,7 +921,7 @@ static int _wrap_objs3d_set_obj_children(void *self,NspObject *val)
   ((NspObjs3d *) self)->obj->children =  (NspList *) val;
   nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspObjs3d *) self)->obj);
   return OK;
 }
 
@@ -940,7 +940,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
   ((NspObjs3d *) self)->obj->children= children;
   nsp_objs3d_compute_inside_bounds(NULL,self,inside_bounds);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
-    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig);
+    nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig, ((NspObjs3d *) self)->obj);
   return OK;
 }
 
@@ -1095,7 +1095,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 164 "codegen/objs3d.override"
+#line 162 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1107,7 +1107,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1108 "objs3d.c"
 
 
-#line 174 "codegen/objs3d.override"
+#line 172 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1147,7 +1147,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 184 "codegen/objs3d.override"
+#line 182 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1321,12 +1321,12 @@ static int nsp_getbounds_objs3d(NspGraphic *Obj,double *bounds)
   return FALSE;
 }
 
-static void nsp_objs3d_link_figure(NspGraphic *G, void *F)
+static void nsp_objs3d_link_figure(NspGraphic *G, void *F, void *A)
 {
   /* link toplevel, take care to use nsp_graphic field */
-  nsp_graphic_link_figure(G, F);
+  nsp_graphic_link_figure(G, F, ((NspObjs3d *) G)->obj);
   /* link children */
-  nsp_list_link_figure(((NspObjs3d *) G)->obj->children,F);
+  nsp_list_link_figure(((NspObjs3d *) G)->obj->children,F,  ((NspObjs3d *) G)->obj);
 }
 
 
@@ -1592,9 +1592,9 @@ void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos po
        */
       double v[3];
       v[0] = M[i];v[1] = M[i+1]; v[2] = M[i+2]; 
-      Coord[i]   = TRX(v[0],v[1],v[2]);
-      Coord[i+1] = TRY(v[0],v[1],v[2]);
-      Coord[i+2] = TRZ(v[0],v[1],v[2]);
+      Coord[i]   = TRX(Xgc->scales,v[0],v[1],v[2]);
+      Coord[i+1] = TRY(Xgc->scales,v[0],v[1],v[2]);
+      Coord[i+2] = TRZ(Xgc->scales,v[0],v[1],v[2]);
       if ( Coord[i+2] < lim[2] )  
 	{
 	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
@@ -1631,9 +1631,9 @@ void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos
        */
       double v[3];
       v[0] = M[i];v[1] = M[i+ncoord]; v[2] = M[i+2*ncoord]; 
-      Coord[i]   = TRX(v[0],v[1],v[2]);
-      Coord[i+ncoord] = TRY(v[0],v[1],v[2]);
-      Coord[i+2*ncoord] = TRZ(v[0],v[1],v[2]);
+      Coord[i]   = TRX(Xgc->scales,v[0],v[1],v[2]);
+      Coord[i+ncoord] = TRY(Xgc->scales,v[0],v[1],v[2]);
+      Coord[i+2*ncoord] = TRZ(Xgc->scales,v[0],v[1],v[2]);
       if ( Coord[i+2*ncoord] < lim[2] )  
 	{
 	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
@@ -2090,8 +2090,8 @@ static void draw_tick(BCG *Xgc,Plot3dBox *B,double val,const double coord[])
   else
     { xj = CENTER; yj = DOWN; }
   sprintf(buf, "%g", val);
-  xt = XScale(xt);
-  yt = YScale(yt);
+  xt = XScale(Xgc->scales,xt);
+  yt = YScale(Xgc->scales,yt);
 #ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -2151,10 +2151,10 @@ static void draw_segment(BCG *Xgc,double coord[], int ia, int ib, int color)
       return; 
     }
 #endif
-  x[0] = XScale(coord[3*ia]);
-  y[0] = YScale(coord[3*ia+1]);
-  x[1] = XScale(coord[3*ib]);
-  y[1] = YScale(coord[3*ib+1]);
+  x[0] = XScale(Xgc->scales,coord[3*ia]);
+  y[0] = YScale(Xgc->scales,coord[3*ia+1]);
+  x[1] = XScale(Xgc->scales,coord[3*ib]);
+  y[1] = YScale(Xgc->scales,coord[3*ib+1]);
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
 }
 
@@ -2176,10 +2176,10 @@ static void draw_segment_bis(BCG *Xgc,double coord[], int ns, int color)
       return;
     }
 #endif
-  x[0] = XScale(coord[6*ns]);
-  y[0] = YScale(coord[6*ns+1]);
-  x[1] = XScale(coord[6*ns+3]);
-  y[1] = YScale(coord[6*ns+4]);
+  x[0] = XScale(Xgc->scales,coord[6*ns]);
+  y[0] = YScale(Xgc->scales,coord[6*ns+1]);
+  x[1] = XScale(Xgc->scales,coord[6*ns+3]);
+  y[1] = YScale(Xgc->scales,coord[6*ns+4]);
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
 }
 
@@ -2226,8 +2226,8 @@ static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j)
   for (i = 0 ; i < 4 ; i++)
     {
       numpt = current_vertex[i];
-      x[i] = XScale(B->coord[3*numpt]);
-      y[i] = YScale(B->coord[3*numpt+1]);
+      x[i] = XScale(Xgc->scales,B->coord[3*numpt]);
+      y[i] = YScale(Xgc->scales,B->coord[3*numpt+1]);
     }
   Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   Xgc->graphic_engine->fillpolylines(Xgc, x, y,&B->color, np, m);
@@ -2493,9 +2493,9 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
 
   for ( i = 0 ; i < 8 ; i++) 
     {
-      box->x[i]=TRX(box->x_r[i],box->y_r[i],box->z_r[i]);
-      box->y[i]=TRY(box->x_r[i],box->y_r[i],box->z_r[i]);
-      box->z[i]=TRZ(box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->x[i]=TRX(Xgc->scales,box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->y[i]=TRY(Xgc->scales,box->x_r[i],box->y_r[i],box->z_r[i]);
+      box->z[i]=TRZ(Xgc->scales,box->x_r[i],box->y_r[i],box->z_r[i]);
     }
 
   /* Calcul des echelles en fonction de la taille du dessin **/
@@ -2575,9 +2575,9 @@ int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
   for ( j =0 ; j < (*n) ; j++)	 
     {
       double x1,y1;
-      x1=TRX(x[j],y[j],z[j]);
-      y1=TRY(x[j],y[j],z[j]);
-      z[j]=TRZ(x[j],y[j],z[j]);
+      x1=TRX(Xgc->scales,x[j],y[j],z[j]);
+      y1=TRY(Xgc->scales,x[j],y[j],z[j]);
+      z[j]=TRZ(Xgc->scales,x[j],y[j],z[j]);
       x[j]=x1;
       y[j]=y1;
     }

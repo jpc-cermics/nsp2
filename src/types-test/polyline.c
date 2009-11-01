@@ -855,7 +855,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
       xm= graphic_alloc(6,P->obj->x->mn,sizeof(int));
       ym= graphic_alloc(7,P->obj->x->mn,sizeof(int));
       if ( xm  ==  0 || ym  ==  0 ) return;
-      scale_f2i(Xgc,P->obj->x->R,P->obj->y->R,xm,ym,P->obj->x->mn);
+      scale_f2i(Xgc->scales,P->obj->x->R,P->obj->y->R,xm,ym,P->obj->x->mn);
       /* fill polyline */
       if ( P->obj->fill_color != -2 )
 	{

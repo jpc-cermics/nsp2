@@ -878,8 +878,8 @@ static void draw_justified_string3d(BCG *Xgc,NspGraphic *Obj, int xj, int yj)
   fontid[0]= ( V->font_type < 0 ) ? current_fontid[0] : V->font_type;
   fontid[1]= ( V->font_size < 0 ) ? current_fontid[1] : V->font_size;
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
-  x = XScale(V_coord[0]);
-  y = YScale(V_coord[1]);
+  x = XScale(Xgc->scales,V_coord[0]);
+  y = YScale(Xgc->scales,V_coord[1]);
   draw_justified_string(Xgc,V->str,x,y, xj, yj);
   Xgc->graphic_engine->xset_font(Xgc,current_fontid[0],current_fontid[1]);
 }
@@ -917,8 +917,8 @@ static void draw_justified_string3d_ogl(BCG *Xgc,void *Obj, int xj, int yj)
   double *S_coord = S->Mcoord->R;
 
   apply_transforms_new(Xgc,Tcoord,S_coord,S->pos,lim,1); 
-  Tcoord[0] = XScale(Tcoord[0]);
-  Tcoord[1] = YScale(Tcoord[1]);
+  Tcoord[0] = XScale(Xgc->scales,Tcoord[0]);
+  Tcoord[1] = YScale(Xgc->scales,Tcoord[1]);
   nsp_ogl_set_2dview(Xgc);
   Xgc->graphic_engine->xget_font(Xgc,current_fontid);
   fontid[0]= ( S->font_type < 0 ) ? current_fontid[0] : S->font_type;

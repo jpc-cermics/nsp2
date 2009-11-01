@@ -1304,8 +1304,8 @@ void nsp_ogl_set_3dview(BCG *Xgc)
      -2*R,2*R);
   */
   glLoadIdentity();
-  glOrtho(XPi2R(0),XPi2R(Xgc->scales->wdim[0]),
-	  YPi2R(Xgc->scales->wdim[1]),YPi2R(0),
+  glOrtho(XPi2R(Xgc->scales,0),XPi2R(Xgc->scales,Xgc->scales->wdim[0]),
+	  YPi2R(Xgc->scales,Xgc->scales->wdim[1]),YPi2R(Xgc->scales,0),
 	  -2*R,2*R);
   glMatrixMode(GL_MODELVIEW);
   glEnable(GL_DEPTH_TEST);

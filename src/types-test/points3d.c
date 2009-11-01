@@ -860,8 +860,8 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   double * V_coord = ((NspMatrix *) V->Mcoord_l)->R;
   int V_nb_coords = V->Mcoord->m;
   int x, y; 
-  x = XScale(V_coord[j]);
-  y = YScale(V_coord[j+V_nb_coords]);
+  x = XScale(Xgc->scales,V_coord[j]);
+  y = YScale(Xgc->scales,V_coord[j+V_nb_coords]);
   Xgc->graphic_engine->xget_mark(Xgc,current_mark);
   mark[0]= ( V->mark_type < 0 ) ? current_mark[0] : V->mark_type;
   mark[1]= ( V->mark_size < 0 ) ? current_mark[1] : V->mark_size;

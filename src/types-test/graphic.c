@@ -27,9 +27,10 @@
 #line 14 "codegen/graphic.override"
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
+#include <nsp/axes.h>
 #include "../interp/Eval.h"
 
-#line 33 "graphic.c"
+#line 34 "graphic.c"
 
 /* ----------- NspGraphic ----------- */
 
@@ -101,7 +102,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
   type->init = (init_func *) init_graphic;
 
-#line 61 "codegen/graphic.override"
+#line 62 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
@@ -118,7 +119,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->zmean = NULL; 
   type->n_faces = NULL;
 
-#line 122 "graphic.c"
+#line 123 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -214,6 +215,7 @@ static int nsp_graphic_eq(NspGraphic *A, NspObject *B)
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->hidden != loc->obj->hidden) return FALSE;
   if ( A->obj->Fig != loc->obj->Fig) return FALSE;
+  if ( A->obj->Axe != loc->obj->Axe) return FALSE;
   return TRUE;
 }
 
@@ -329,6 +331,7 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hidden	= %s\n", ( M->obj->hidden == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Fig=%xl\n",M->obj->Fig);
+  Sciprintf1(indent+2,"Axe=%xl\n",M->obj->Axe);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -346,6 +349,7 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hidden	= %s\n", ( M->obj->hidden == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Fig=%xl\n",M->obj->Fig);
+  Sciprintf1(indent+2,"Axe=%xl\n",M->obj->Axe);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -416,6 +420,7 @@ int nsp_graphic_create_partial(NspGraphic *H)
   H->obj->ref_count=1;
   H->obj->hidden = FALSE;
   H->obj->Fig = NULL;
+  H->obj->Axe = NULL;
   return OK;
 }
 
@@ -424,13 +429,14 @@ int nsp_graphic_check_values(NspGraphic *H)
   return OK;
 }
 
-NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,NspTypeBase *type)
+NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,void* Axe,NspTypeBase *type)
 {
  NspGraphic *H  = nsp_graphic_create_void(name,type);
  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
   H->obj->hidden=hidden;
   H->obj->Fig = Fig;
+  H->obj->Axe = Axe;
  if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
  return H;
 }
@@ -473,6 +479,7 @@ NspGraphic *nsp_graphic_full_copy_partial(NspGraphic *H,NspGraphic *self)
   H->obj->ref_count=1;
   H->obj->hidden=self->obj->hidden;
   H->obj->Fig = self->obj->Fig;
+  H->obj->Axe = self->obj->Axe;
   return H;
 }
 
@@ -507,7 +514,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 79 "codegen/graphic.override"
+#line 80 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -521,10 +528,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 525 "graphic.c"
+#line 532 "graphic.c"
 
 
-#line 94 "codegen/graphic.override"
+#line 95 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -536,10 +543,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 540 "graphic.c"
+#line 547 "graphic.c"
 
 
-#line 107 "codegen/graphic.override"
+#line 108 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -550,10 +557,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 554 "graphic.c"
+#line 561 "graphic.c"
 
 
-#line 119 "codegen/graphic.override"
+#line 120 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -562,7 +569,7 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 566 "graphic.c"
+#line 573 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -632,7 +639,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 129 "codegen/graphic.override"
+#line 130 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -646,16 +653,13 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
  * 
  **/
 
-void nsp_graphic_link_figure(NspGraphic *G,void *F)
+void nsp_graphic_link_figure(NspGraphic *G,void *F, void *A)
 {
   nsp_figure *Fi = F;
   if ( G->obj->Fig == NULL ) 
     {
-      /* 
-      Fi->obj->ref_count++;
-      ((NspGraphic *) Fi)->obj->ref_count++;
-      */
       G->obj->Fig = Fi;
+      G->obj->Axe = A;
     }
 }
 
@@ -675,11 +679,8 @@ void nsp_graphic_unlink_figure(NspGraphic *G, void *F)
   /* NspFigure *Fi = F;*/
   if ( G->obj->Fig == F ) 
     {
-      /* 
-      Fi->obj->ref_count--;
-      ((NspGraphic *) Fi)->obj->ref_count--;
-      */
       G->obj->Fig = NULL ;
+      G->obj->Axe = NULL;	
     }
 }
 
@@ -832,5 +833,34 @@ int int_graphic_set_attribute(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* invalidate the drawing region associated to a graphic object. 
+ * This function is to be called when the 
+ * graphic object has changed and need to be drawn.
+ * XXX: a finir en passant les rectangles 
+ */
 
-#line 837 "graphic.c"
+void nsp_graphic_invalidate(NspGraphic *G)
+{
+  double bounds[4];/* xmin,ymin,xmax, ymax */
+  nsp_figure *F = G->obj->Fig;
+  nsp_axes *A = G->obj->Axe;
+  BCG *Xgc = F->Xgc;
+  if ( F == NULL) return ;
+  if ( F->draw_now== FALSE) return;
+  if ( Xgc == NULL) return;
+  if ( G->type->bounds(G,bounds)== TRUE) 
+    {
+      int xmin,xmax,ymin,ymax;
+      scale_f2i(&A->scale,bounds,bounds+1,&xmin,&ymin,1);
+      scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
+      Xgc->graphic_engine->force_redraw(Xgc);
+    }
+  else
+    {
+      /* a full window force redraw or nothing ? */
+      Xgc->graphic_engine->force_redraw(Xgc);
+    }
+}
+
+
+#line 867 "graphic.c"

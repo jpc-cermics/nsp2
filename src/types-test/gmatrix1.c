@@ -1085,8 +1085,8 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
       return ;
     }      
   /* Drawing the curves */
-  for ( j =0 ; j < P->obj->x->mn ; j++)	 xm[j]= XScale(P->obj->x->R[j]);
-  for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(P->obj->y->R[j]); 
+  for ( j =0 ; j < P->obj->x->mn ; j++)	 xm[j]= XScale(Xgc->scales,P->obj->x->R[j]);
+  for ( j =0 ; j < P->obj->y->mn ; j++)	 ym[j]= YScale(Xgc->scales,P->obj->y->R[j]); 
 
   Xgc->graphic_engine->fill_grid_rectangles(Xgc,xm,ym,P->obj->data->R,
 					    P->obj->data->m, 
@@ -1182,7 +1182,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
     for ( j = 0 ; j < ny  ; j++) 
       {
 	double xp=P->obj->x->R[i],yp=P->obj->y->R[j];
-	scale_f2i(Xgc,&xp,&yp,xm+i+nx*j,ym+i+nx*j,1);
+	scale_f2i(Xgc->scales,&xp,&yp,xm+i+nx*j,ym+i+nx*j,1);
       }
 
   /* Fec code */

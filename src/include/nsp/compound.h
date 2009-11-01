@@ -116,7 +116,7 @@ static void nsp_rotate_compound(NspGraphic *o,double *R);
 static void nsp_scale_compound(NspGraphic *o,double *alpha);
 static int nsp_getbounds_compound(NspGraphic *o,double *bounds);
 static void nsp_compound_compute_inside_bounds(NspGraphic *Obj);
-static void nsp_compound_link_figure(NspGraphic *G, void *F);
+static void nsp_compound_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_compound_children(NspGraphic *Obj);
 

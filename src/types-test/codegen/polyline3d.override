@@ -207,10 +207,10 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
   int *L_color = L->Mcolor->I;
   int L_nb_coords = L->Mcoord->m;
   int x[2], y[2], color, n=2, flag=0;
-  x[0] = XScale(L_coord[j]);
-  y[0] = YScale(L_coord[j+L_nb_coords]);
-  x[1] = XScale(L_coord[j+1]);
-  y[1] = YScale(L_coord[j+1+L_nb_coords]);
+  x[0] = XScale(Xgc->scales,L_coord[j]);
+  y[0] = YScale(Xgc->scales,L_coord[j+L_nb_coords]);
+  x[1] = XScale(Xgc->scales,L_coord[j+1]);
+  y[1] = YScale(Xgc->scales,L_coord[j+1+L_nb_coords]);
   color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
 }

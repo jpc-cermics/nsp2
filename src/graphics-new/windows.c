@@ -55,13 +55,13 @@ struct  _window_list
 static WindowList *The_List  = (WindowList *) NULL; 
 
 static int set_window_scale(int win,window_scale_list *scale);
-static window_scale_list *check_subwin_wcscale( window_scale_list *listptr, double subwin_rect[4]);
+static window_scale_list *check_subwin_wcscale( window_scale_list *listptr,const double subwin_rect[4]);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static WindowList  *window_list_search_w_int(WindowList *listptr, int i);
 static int window_list_search_topelevel_int(WindowList *,void *,int);
 static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static window_scale_list *new_wcscale ( window_scale_list *val);
-static int same_subwin (double lsubwin_rect[4],double subwin_rect[4]);
+static int same_subwin(const double lsubwin_rect[4],const double subwin_rect[4]);
 static int window_list_search_from_drawing__(WindowList *listptr,void *win);
 
 /**
@@ -447,7 +447,7 @@ void set_window_scale_with_default(int win)
  * Returns: %OK or %FAIL
  **/
 
-int move_subwindow_scale_to_front(BCG *Xgc,double *subwin)
+int move_subwindow_scale_to_front(BCG *Xgc,const double *subwin)
 { 
   window_scale_list *loc;
   if ( Xgc == NULL) return FAIL;
@@ -637,7 +637,7 @@ static window_scale_list *new_wcscale(window_scale_list *val)
  * Returns: %NULL or a #window_scale_list
  **/
 
-static window_scale_list *check_subwin_wcscale( window_scale_list *listptr, double subwin_rect[4])
+static window_scale_list *check_subwin_wcscale( window_scale_list *listptr,const double subwin_rect[4])
 {
   int count = 0;
   window_scale_list *listptr1 = listptr;
@@ -654,7 +654,7 @@ static window_scale_list *check_subwin_wcscale( window_scale_list *listptr, doub
   return NULL;
 }
 
-static int same_subwin( double lsubwin_rect[4],double subwin_rect[4])
+static int same_subwin(const double lsubwin_rect[4],const double subwin_rect[4])
 {
   if ( Abs(lsubwin_rect[0] - subwin_rect[0]) < 1.e-8
        && Abs(lsubwin_rect[1] - subwin_rect[1]) < 1.e-8
@@ -664,10 +664,6 @@ static int same_subwin( double lsubwin_rect[4],double subwin_rect[4])
   else 
     return 0;
 }
-
-/*------------------------------------------------------------
- * delete the scales associated to window i 
- *-------------------------------------------------------------*/
 
 /**
  * window_scale_delete:
@@ -739,6 +735,35 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->sina = s2->sina;
 }
 
+/**
+ * nsp_scale_copy:
+ * @scale1: a #nsp_gcscale
+ * @scale2: a #nsp_gcscale
+ * 
+ * Uses @scale2 to update @scale1 
+ * 
+ **/
+
+void nsp_scale_copy(nsp_gcscale *scale1,nsp_gcscale *scale2)
+{
+  scale_copy(scale1,scale2);
+}
+
+/**
+ * nsp_scale_default:
+ * @scale1: a #nsp_gcscale
+ * 
+ * Uses default_scale to update @scale1 
+ * 
+ **/
+
+void nsp_scale_default(nsp_gcscale *scale1)
+{
+  scale_copy(scale1,&default_scale);
+}
+
+
+
 
 /**
  * show_scales:
@@ -767,50 +792,6 @@ void show_scales(BCG *Xgc)
       loc = loc->next;
     }
 }
-
-/**
- * setscale2d:
- * @Xgc: a graphic context 
- * @WRect: 
- * @FRect: 
- * @logscale: 
- * 
- * SHOULD NOT BE USED.
- * 
- * uses @WRect,@FRect,@logscale to update the graphic scales 
- * contained in @Xgc. @WRect gives the subwindow to use 
- * @FRect gives the bounds. 
- * @WRect=[<x-upperleft>,<y-upperleft>,largeur,hauteur]
- * example WRect=[0,0,1.0,1.0] we use all the window 
- *         WRect=[0.5,0.5,0.5,0.5] we use the down right 
- *         quarter of the window 
- *
- * Return value: unused.
- **/
-
-int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale)
-{
-  static int aaint[]={2,10,2,10};
-
-  if (logscale[0]=='l') 
-    {
-      FRect[0]=log10(FRect[0]);
-      FRect[2]=log10(FRect[2]);
-    }
-  if (logscale[1]=='l') 
-    {
-      FRect[1]=log10(FRect[1]);
-      FRect[3]=log10(FRect[3]);
-    }
-  set_scale(Xgc,"tttftf",WRect,FRect,aaint,logscale,NULL);
-  return(0);
-}
-
-
-/*-------------------------------------------
- * setscale2d 
- *  
- *-------------------------------------------*/
 
 /**
  * Nsetscale2d:
@@ -960,8 +941,8 @@ int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double AR
  * 
  **/
 
-void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4],
-	       int aaint[4], char logflag[2],   double axis_values[4])
+void set_scale(BCG *Xgc,const char flag[6],const double subwin[4],const double frame_values[4],
+	       const int aaint[4],const char logflag[2],const double axis_values[4])
 {
   char wdim_changed= 'f',subwin_changed='f';
   char frame_values_changed='f',aaint_changed='f';
@@ -988,7 +969,7 @@ void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4]
 	    return;
 	}
     }
-
+  
   if ( flag[0] == 't'  ) 
     {
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
@@ -1061,10 +1042,10 @@ void set_scale(BCG *Xgc,  char flag[6],double  subwin[4],double  frame_values[4]
       val = Abs(Xgc->scales->frect[1]- Xgc->scales->frect[3]);
       Xgc->scales->Wscy1 = (val <=SMDOUBLE) ? Xgc->scales->Wscy1/SMDOUBLE : Xgc->scales->Wscy1/val;
 
-      Xgc->scales->WIRect1[0] = XScale( Xgc->scales->frect[0]);
-      Xgc->scales->WIRect1[1] = YScale( Xgc->scales->frect[3]);
-      Xgc->scales->WIRect1[2] = Abs(XScale( Xgc->scales->frect[2]) -  XScale( Xgc->scales->frect[0]));
-      Xgc->scales->WIRect1[3] = Abs(YScale( Xgc->scales->frect[3]) -  YScale( Xgc->scales->frect[1]));
+      Xgc->scales->WIRect1[0] = XScale(Xgc->scales, Xgc->scales->frect[0]);
+      Xgc->scales->WIRect1[1] = YScale(Xgc->scales, Xgc->scales->frect[3]);
+      Xgc->scales->WIRect1[2] = Abs(XScale(Xgc->scales, Xgc->scales->frect[2]) -  XScale(Xgc->scales, Xgc->scales->frect[0]));
+      Xgc->scales->WIRect1[3] = Abs(YScale(Xgc->scales, Xgc->scales->frect[3]) -  YScale(Xgc->scales, Xgc->scales->frect[1]));
 #ifdef WITH_GTKGLEXT 
       /* transmit info to opengl */
       if ( Xgc->graphic_engine == &GL_gengine ) 

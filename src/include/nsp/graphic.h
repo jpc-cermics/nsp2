@@ -19,14 +19,14 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 47 "codegen/graphic.override"
+#line 48 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
 typedef void rotate_func(NspGraphic *Obj,double *R);
 typedef void scale_func(NspGraphic *Obj,double *alpha);
 typedef int bounds_func(NspGraphic *Obj,double *bounds);
-typedef void link_figure_func(NspGraphic *Obj,void *F);
+typedef void link_figure_func(NspGraphic *Obj,void *F, void *A);
 typedef void unlink_figure_func(NspGraphic *Obj,void *F);
 typedef NspList *children_func(NspGraphic *Obj);
 typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
@@ -39,7 +39,7 @@ struct _NspTypeGraphic {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 33 "codegen/graphic.override"
+#line 34 "codegen/graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
@@ -60,6 +60,7 @@ typedef struct _nsp_graphic nsp_graphic;
 struct _nsp_graphic {
   Boolean hidden;
   void* Fig;
+  void* Axe;
   int ref_count;
 };
 
@@ -89,7 +90,7 @@ NspGraphic *new_graphic();
 
 #define NULLGRAPHIC (NspGraphic*) 0
 
-extern NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,NspTypeBase *type);
+extern NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,void* Axe,NspTypeBase *type);
 extern NspGraphic *nsp_graphic_create_default(char *name);
 
 /* from NspGraphicObj.c */
@@ -118,7 +119,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
 /* inserted at the end of public part of include file */
 
-#line 122 "./graphic.h"
+#line 123 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -137,6 +138,6 @@ static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-#line 141 "./graphic.h"
+#line 142 "./graphic.h"
 #endif /* NspGraphic_Private */
 

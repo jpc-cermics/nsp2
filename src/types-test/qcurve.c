@@ -1162,7 +1162,7 @@ NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree
       if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
 	return NULL;
     }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig);
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig,((NspGraphic *) axe)->obj);
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe , NULL, '2');
   axe->obj->iso = FALSE;

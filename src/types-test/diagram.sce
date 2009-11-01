@@ -43,6 +43,7 @@ function C=draw_vanne()
   end
   C= C.full_copy[];
   C.unlink[];
+  xdel(30);
 endfunction;
 
 function w=create_object_menu (win,xc,yc)

@@ -1407,7 +1407,7 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
       goto stop;
     }
   G =  (NspGraphic *) B->obj->icon;
-  G->type->link_figure(G, ((NspGraphic *) B)->obj->Fig);
+  G->type->link_figure(G, ((NspGraphic *) B)->obj->Fig,((NspGraphic *) B)->obj->Axe );
   /* we should also scale */
   tr[0]= B->obj->r[0];
   tr[1]= B->obj->r[1] - B->obj->r[3];

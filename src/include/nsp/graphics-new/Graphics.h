@@ -69,12 +69,11 @@ extern int nsp_get_win_counter(void);
 extern void nsp_set_win_counter(int n);
 extern void frame_clip_on(BCG *Xgc);
 extern void frame_clip_off(BCG *Xgc);
-extern void set_scale(BCG *Xgc, char flag[6],double  subwin[4],
-		      double frame_values[4],int aaint[4],
-		      char logflag[2], double axis_values[4]) ; 
+extern void set_scale(BCG *Xgc,const char flag[6],const double subwin[4],const double frame_values[4],
+		      const int aaint[4],const char logflag[2],const double axis_values[4]);
 extern int xgc_add_default_scale(BCG *Xgc);
 extern int xgc_reset_scales_to_default(BCG *Xgc);
-extern int move_subwindow_scale_to_front(BCG *Xgc,double *subwin);
+extern int move_subwindow_scale_to_front(BCG *Xgc,const double *subwin);
 extern int setscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale);
 
 /* periXXX */
@@ -148,8 +147,6 @@ extern void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const c
 
 /* Plo2dEch.c */
 
-extern void scale_i2f(BCG *Xgc, double x[], double y[],const int x1[],const int y1[],int n);
-extern void scale_f2i(BCG *Xgc,const double x[],const double y[],int x1[],int y1[],int n);
 extern int graduate  (double *,double *,double *,double *,int *,int *,int *,
 		      int *,int *); 
 extern void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,
@@ -157,16 +154,19 @@ extern void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,
 				char *strflag,double FRect[4]);
 extern void plot2d_strf_change(char c, char *strf);
 
-extern void length_scale_i2f(BCG *Xgc,double *x, double *y, const int *x1, const int *y1, int n);
-extern void length_scale_f2i(BCG *Xgc,const double *x,const double *y, int *x1, int *y1, int n);
-extern void scale_f2wrect(BCG *Xgc,const double x[],double x1[]);
+extern void ellipse2d(nsp_gcscale *,double *,int *,int *,char *); 
+extern void axis2d  (nsp_gcscale *scales,double *,double *,double *,int *,double *); 
+extern void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n);
+extern void scale_i2f(nsp_gcscale *scales, double x[], double y[],const int x1[],const int y1[],int n);
+extern void scale_f2i(nsp_gcscale *scales,const double x[],const double y[],int x1[],int y1[],int n);
+extern void length_scale_i2f(nsp_gcscale *scales,double *x, double *y, const int *x1, const int *y1, int n);
+extern void length_scale_f2i(nsp_gcscale *scales,const double *x,const double *y, int *x1, int *y1, int n);
+extern void scale_f2wrect(nsp_gcscale *scales,const double x[],double x1[]);
+
 extern void Gr_Rescale_new  (char *,double *,int *,int *,int *,int *); 
 
 extern void zoom  (BCG *Xgc); 
 extern void unzoom  (BCG *Xgc);
-extern void ellipse2d  (BCG *,double *,int *,int *,char *); 
-extern void axis2d  (BCG *Xgc,double *,double *,double *,int *,double *); 
-extern void rect2d_f2i(BCG *Xgc,const double x[],int x1[], int n);
 
 /* Plo3d.c */
 
