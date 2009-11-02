@@ -844,8 +844,9 @@ void nsp_graphic_invalidate(NspGraphic *G)
   double bounds[4];/* xmin,ymin,xmax, ymax */
   nsp_figure *F = G->obj->Fig;
   nsp_axes *A = G->obj->Axe;
-  BCG *Xgc = F->Xgc;
-  if ( F == NULL ||  Xgc == NULL) return ;
+  BCG *Xgc;
+  if ( F == NULL ) return ;
+  if ((Xgc= F->Xgc) == NULL) return ;
   if ( F->draw_now== FALSE) return;
   if ( G->obj->hidden == TRUE ) return;
   if ( G->type->bounds(G,bounds)== TRUE) 
@@ -866,4 +867,4 @@ void nsp_graphic_invalidate(NspGraphic *G)
 }
 
 
-#line 870 "graphic.c"
+#line 871 "graphic.c"

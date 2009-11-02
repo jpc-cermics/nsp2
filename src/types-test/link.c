@@ -1423,6 +1423,7 @@ void link_move_control(void *F, NspLink *L,const double mpt[2], int cp,double pt
 
 int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2])
 {
+  NspGraphic *G;
   int kmin,i,n,n1;
   gr_port p;
   double proj[2], pmin,dmin;
@@ -1455,6 +1456,8 @@ int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2])
     }
   /* add L1 in the frame at start */ 
   if (nsp_list_insert(F->obj->children,(NspObject  *) (*L1),0) == FAIL) return FAIL;
+  G = (NspGraphic *) (*L1);
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   return OK;
 }
 
@@ -1516,6 +1519,7 @@ int link_remove_control(NspLink *L,const double pt[2])
 
 void link_check(NspDiagram *F,NspLink *L)
 {
+  NspGraphic *G=NULL;
   NspObject *obj;
   double pt[2];
   int i,cp,lock_c;
@@ -1570,6 +1574,9 @@ void link_check(NspDiagram *F,NspLink *L)
 					      l,FALSE,TRUE,NULL);
 		      if ( C == NULL) return;
 		      if (nsp_list_end_insert(F->obj->children,NSP_OBJECT(C)) == FAIL) return ; 
+		      G = (NspGraphic *) C;
+		      G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,
+					   ((NspGraphic *) F)->obj->Axe);
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 
@@ -1950,4 +1957,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1954 "link.c"
+#line 1961 "link.c"

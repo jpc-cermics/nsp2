@@ -1744,7 +1744,7 @@ static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],double *rect)
 {
   nsp_axes *axe;
-  int th,pixmode,color,style,fg,ix,iy;
+  int th,color,style,fg,ix,iy;
   int ibutton=-1,imask,iwait=FALSE;
   double mpt[2],x,y;
   nsp_figure *Fig = (((NspGraphic *) R)->obj->Fig);
@@ -2152,15 +2152,15 @@ int  nsp_diagram_hilite_near_pt(NspDiagram *R,const double pt[2])
 }
 
 /**
- * nsp_diagram_locks_draw:
+ * nsp_diagram_locks_invalidate:
  * @R: a #NspDiagram 
  * @O: a #NspObject. 
  * 
- * calls the draw method on the objects which are connected
+ * calls the invalidate method on the objects which are connected
  * to object @O by lock points.
  **/
 
-static void nsp_diagram_locks_draw(NspDiagram *R,NspObject *O)
+static void nsp_diagram_locks_invalidate(NspDiagram *R,NspObject *O)
 {
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
   int   n = bf->get_number_of_locks(O), i;
@@ -2177,7 +2177,8 @@ static void nsp_diagram_locks_draw(NspDiagram *R,NspObject *O)
 	      if ( bf->get_lock_connection(O,i,j,&p)== OK && p.object_id != NULL) 
 		{
 		  NspGraphic *G = (NspGraphic *) p.object_id ;
-		  G->type->draw(G->obj->Fig,G,NULL);
+		  nsp_graphic_invalidate(G);
+		  /* G->type->draw(G->obj->Fig,G,NULL); */
 		}
 	    }
 	}
@@ -2352,7 +2353,8 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
 
   /* invalidate the moving object */
   nsp_graphic_invalidate((NspGraphic *) O);
-            
+  nsp_diagram_locks_invalidate(D,O);
+
   /*
    * mpt is the mouse position, 
    * ptwork is the control point position 
@@ -2378,11 +2380,13 @@ int nsp_diagram_move_obj(NspDiagram *D,NspObject *O,const double pt[2],int stop,
 	case MOVE : 
 	  G = (NspGraphic *) O;
 	  G->type->translate(G,(pt1[0]= mpt[0] -pt1[0],pt1[1]=mpt[1] -pt1[1],pt1));
+	  nsp_diagram_locks_invalidate(D,(NspObject *)G);
 	  rep = OK; /* translate was returning an int in previous version */
 	  if ( rep == FAIL) wstop=1; /* quit untranslatable objects */
 	  break;
 	case MOVE_CONTROL :
 	  bf->move_control(D,O,mpt,cp, ptwork);
+	  nsp_diagram_locks_invalidate(D,O);
 	}
       /* update locks positions for objects locked to objects  */ 
       nsp_diagram_locks_update(D,O);
@@ -2422,12 +2426,13 @@ static int nsp_diagram_list_obj_action(NspDiagram *F,NspList *L,const double pt[
 	{
 	  switch ( action )
 	    {
-	    case L_DRAW : 
+	    case L_INVALIDATE : 
 	      if ( IsBlock(C->O)  || IsConnector(C->O))
 		{
 		  NspGraphic *G = (NspGraphic *) C->O;
-		  G->type->draw(G->obj->Fig,G,NULL);
-		  nsp_diagram_locks_draw(F,C->O);
+		  nsp_graphic_invalidate(G);
+		  /*   G->type->draw(G->obj->Fig,G,NULL); */
+		  nsp_diagram_locks_invalidate(F,C->O);
 		}
 	      break;
 	    case L_TRANSLATE : 
@@ -2470,13 +2475,15 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
    * mpt is the mouse position, 
    * ptwork is the control point position 
    */
+  /* invalidate the moving list */
+  nsp_diagram_list_obj_action(F,L,pt,L_INVALIDATE);
 
   while ( wstop==0 ) 
     {
       /* draw the frame 
        * we could here record and use a fixed part.
        */
-      nsp_redraw_diagram(F);
+      /* nsp_redraw_diagram(F); */
       /* get new mouse position */
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
       nsp_axes_i2f(((NspGraphic *) F)->obj->Axe,ix,iy,mpt);
@@ -2501,6 +2508,10 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
 	}
       /* update locks positions for objects locked to objects  */ 
       nsp_diagram_list_obj_action(F,L,pt, L_LOCK_UPDATE);
+      /* invalidate the moving list 
+       * note that invalidate was also performed by L_TRANSLATE
+       */
+      nsp_diagram_list_obj_action(F,L,pt,L_INVALIDATE);
       pt1[0] = mpt[0];
       pt1[1] = mpt[1];
     }
@@ -2979,4 +2990,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2983 "diagram.c"
+#line 2994 "diagram.c"

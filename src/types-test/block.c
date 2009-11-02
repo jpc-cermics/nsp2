@@ -1173,7 +1173,7 @@ static void nsp_translate_block(NspGraphic *Obj,const double *tr)
   block_update_locks(B);
   if ( Icon != NULL) Icon->type->translate(Icon,tr);
   nsp_graphic_invalidate((NspGraphic *) B);
-}
+ }
 
 static void nsp_rotate_block(NspGraphic *Obj,double *R)
 {

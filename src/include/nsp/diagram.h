@@ -89,7 +89,7 @@ extern int nsp_diagram_xdr_save(XDR  *xdrs, NspDiagram *M);
 #line 4 "codegen/diagram.override"
 typedef enum { MOVE, MOVE_CONTROL } move_action ;
 typedef enum _list_move_action list_move_action; 
-enum _list_move_action {  L_DRAW,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
+enum _list_move_action {  L_INVALIDATE,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
 
 /* inserted at the end of public part of include file */
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
