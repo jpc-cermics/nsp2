@@ -62,6 +62,7 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/objs3d.h>
@@ -200,6 +201,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  GdkRectangle *r = data;
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
@@ -208,7 +210,34 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  /*
+   * check if we are in the draw zone 
+   */
+  if ( data != NULL) 
+    {
+      if ( P->obj->top == TRUE ) 
+	{
+	  GdkRectangle r1;
+	  int wdim[2];
+	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+	  r1.x=P->obj->wrect->R[0]*wdim[0];
+	  r1.y=P->obj->wrect->R[1]*wdim[1];
+	  r1.width=P->obj->wrect->R[2]*wdim[0];
+	  r1.height=P->obj->wrect->R[3]*wdim[1];
+	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
+	    {
+	      Sciprintf("No need to draw \n");
+	      return;
+	    }
+	}
+      else
+	{
+	  Sciprintf("draw axes for non to level to be done \n");
+	}
+    }
+
   /* draw elements */
+
   L = P->obj->children;
   cloc = L->first ;
   /* we change the scale according to the axes */
@@ -290,7 +319,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,NULL);
+	  G->type->draw(Xgc,G,data);
 	}
       cloc = cloc->next;
     }

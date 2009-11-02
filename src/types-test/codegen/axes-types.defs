@@ -25,7 +25,7 @@
     '("gboolean" "xlog" "std" "FALSE");; log scale on x 
     '("gboolean" "ylog" "std" "FALSE");; log scale on y
     '("int"      "lpos" "std" "1" );; where legends are drawn
-    '("NspMatrix*" "rect" "hidden" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
+    '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
     '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
     '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
     '("nsp_gcscale" "scale" "hidden") 

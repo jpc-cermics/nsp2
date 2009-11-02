@@ -25,6 +25,7 @@
 
 
 #line 65 "codegen/axes.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/objs3d.h>
@@ -34,7 +35,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 38 "axes.c"
+#line 39 "axes.c"
 
 /* ----------- NspAxes ----------- */
 
@@ -106,7 +107,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 81 "codegen/axes.override"
+#line 82 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -116,7 +117,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
-#line 120 "axes.c"
+#line 121 "axes.c"
   /* 
    * NspAxes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -272,6 +273,7 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_save_i(xdrs, M->obj->xlog) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->ylog) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->lpos) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->rect)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->zoom) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
@@ -304,6 +306,7 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->xlog) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->ylog) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->lpos) == FAIL) return NULL;
+  if ((M->obj->rect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->zoom) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
@@ -854,7 +857,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 100 "codegen/axes.override"
+#line 101 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -869,7 +872,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 873 "axes.c"
+#line 876 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1020,7 +1023,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 116 "codegen/axes.override"
+#line 117 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1077,7 +1080,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1081 "axes.c"
+#line 1084 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1232,6 +1235,35 @@ static int _wrap_axes_set_lpos(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_axes_get_rect(void *self,const char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspAxes *) self)->obj->rect;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_axes_get_obj_rect(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspAxes *) self)->obj->rect);
+  return (NspObject *) ret;
+}
+
+static int _wrap_axes_set_rect(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *rect;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((rect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspAxes *) self)->obj->rect != NULL ) 
+    nsp_matrix_destroy(((NspAxes *) self)->obj->rect);
+  ((NspAxes *) self)->obj->rect= rect;
+  return OK;
+}
+
 static NspObject *_wrap_axes_get_zoom(void *self,const char *attr)
 {
   int ret;
@@ -1269,6 +1301,7 @@ static AttrTab axes_attrs[] = {
   { "xlog", (attr_get_function *)_wrap_axes_get_xlog, (attr_set_function *)_wrap_axes_set_xlog,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "ylog", (attr_get_function *)_wrap_axes_get_ylog, (attr_set_function *)_wrap_axes_set_ylog,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "lpos", (attr_get_function *)_wrap_axes_get_lpos, (attr_set_function *)_wrap_axes_set_lpos,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "rect", (attr_get_function *)_wrap_axes_get_rect, (attr_set_function *)_wrap_axes_set_rect,(attr_get_object_function *)_wrap_axes_get_obj_rect, (attr_set_object_function *)int_set_object_failed },
   { "zoom", (attr_get_function *)_wrap_axes_get_zoom, (attr_set_function *)_wrap_axes_set_zoom,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
@@ -1277,7 +1310,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 174 "codegen/axes.override"
+#line 175 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1286,10 +1319,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1290 "axes.c"
+#line 1323 "axes.c"
 
 
-#line 184 "codegen/axes.override"
+#line 185 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1299,7 +1332,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1303 "axes.c"
+#line 1336 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1330,7 +1363,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 195 "codegen/axes.override"
+#line 196 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1339,6 +1372,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  GdkRectangle *r = data;
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
@@ -1347,7 +1381,34 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  /*
+   * check if we are in the draw zone 
+   */
+  if ( data != NULL) 
+    {
+      if ( P->obj->top == TRUE ) 
+	{
+	  GdkRectangle r1;
+	  int wdim[2];
+	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+	  r1.x=P->obj->wrect->R[0]*wdim[0];
+	  r1.y=P->obj->wrect->R[1]*wdim[1];
+	  r1.width=P->obj->wrect->R[2]*wdim[0];
+	  r1.height=P->obj->wrect->R[3]*wdim[1];
+	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
+	    {
+	      Sciprintf("No need to draw \n");
+	      return;
+	    }
+	}
+      else
+	{
+	  Sciprintf("draw axes for non to level to be done \n");
+	}
+    }
+
   /* draw elements */
+
   L = P->obj->children;
   cloc = L->first ;
   /* we change the scale according to the axes */
@@ -1429,7 +1490,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,NULL);
+	  G->type->draw(Xgc,G,data);
 	}
       cloc = cloc->next;
     }
@@ -2025,4 +2086,4 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
   nsp_scale_default(scale);
 }
 
-#line 2029 "axes.c"
+#line 2090 "axes.c"

@@ -452,7 +452,7 @@ if ~new_graphics() then
 end
 
 xinit(name='My diagram',cairo=%f,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
-xset('recording',0)
+//xset('recording',0)
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);
 win=0;

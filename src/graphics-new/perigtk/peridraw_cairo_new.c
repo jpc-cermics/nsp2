@@ -1079,7 +1079,7 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
     Xgc->graphic_engine->xset_usecolor(Xgc,1);
   else
     Xgc->graphic_engine->xset_usecolor(Xgc,0);
-  Xgc->graphic_engine->tape_replay(Xgc,win_num);
+  Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
   Xgc->private->cairo_cr = cr_current;
   Xgc->graphic_engine->xset_usecolor(Xgc,uc);
   cairo_show_page (cr);

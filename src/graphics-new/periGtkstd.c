@@ -76,11 +76,7 @@ static void force_redraw(BCG *Xgc,void *rect)
     {
       /* rect should be similar to a  GdkRectangle */
       gdk_window_invalidate_rect(Xgc->private->drawing->window,rect, FALSE);
-     }
-  /*
-   * gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
-   */
-
+    }
 }
 
 /*---------------------------------------------------------
@@ -1764,11 +1760,16 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  
       if ( dd->private->draw == TRUE ) 
 	{
+	  int rect[4]={event->area.x, event->area.y,
+			  event->area.width, event->area.height};
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  dd->graphic_engine->clearwindow(dd);
-	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
+	  if ( event != NULL) 
+	    dd->graphic_engine->tape_replay(dd,dd->CurWindow,rect);
+	  else
+	    dd->graphic_engine->tape_replay(dd,dd->CurWindow,NULL);
 	  dd->private->in_expose= FALSE;
 	}
       else 
@@ -1781,6 +1782,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
+	  /* debug the drawing rectangle which is updated */
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);
@@ -1858,7 +1860,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  dd->private->in_expose= TRUE;
 	  /* nsp_gr_replay(dd->CurWindow); */
 	  dd->graphic_engine->clearwindow(dd);
-	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
+	  dd->graphic_engine->tape_replay(dd,dd->CurWindow,NULL);
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
 	  dd->private->in_expose= FALSE;

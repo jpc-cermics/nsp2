@@ -119,7 +119,7 @@ void __nsp_gr_replay(int win_num)
   if ( Xgc->record_flag != TRUE ) return ;
   nsp_gr_buzy =1;
   Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,win_num);
+  Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
   nsp_gr_buzy=0;
 }
 
@@ -143,7 +143,7 @@ void __nsp_gr_expose(int win_num)
   if ( pix == 0) 
     {
       Xgc->graphic_engine->clearwindow(Xgc);    
-      Xgc->graphic_engine->tape_replay(Xgc,win_num);
+      Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
     }
   else
     {
@@ -168,7 +168,7 @@ void __nsp_gr_resize(int win_num)
   nsp_gr_buzy =1;
   Xgc->graphic_engine->pixmap_resize(Xgc);
   Xgc->graphic_engine->clearwindow(Xgc);    
-  Xgc->graphic_engine->tape_replay(Xgc,win_num);
+  Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
   nsp_gr_buzy = 0;
 }
 
@@ -446,7 +446,7 @@ static void nsp_gc_delete(BCG *Xgc)
 static void nsp_gc_replay(BCG *Xgc)
 {
   Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
 }
 
 /**
@@ -464,7 +464,7 @@ static void nsp_gc_expose(BCG *Xgc)
   if ( pix == 0) 
     {
       Xgc->graphic_engine->clearwindow(Xgc);    
-      Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+      Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
     }
   else
     {
@@ -484,7 +484,7 @@ static void nsp_gc_resize(BCG *Xgc)
 {
   Xgc->graphic_engine->pixmap_resize(Xgc);
   Xgc->graphic_engine->clearwindow(Xgc);    
-  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
 }
 
 
@@ -577,7 +577,7 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
   Ggc->record_flag = TRUE ;
   Ggc->plots = Xgc->plots ; 
   xgc_reset_scales_to_default(Ggc);
-  Ggc->graphic_engine->tape_replay(Ggc,Xgc->CurWindow);
+  Ggc->graphic_engine->tape_replay(Ggc,Xgc->CurWindow,NULL);
   Ggc->plots = NULL ; 
   Ggc->record_flag = FALSE ;
   Ggc->graphic_engine->xend(Xgc);

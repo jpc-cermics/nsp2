@@ -212,7 +212,7 @@ extern void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag,
 extern void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,
 				   double *theta,
 				   double *alpha, double *bbox);
-extern void tape_replay(BCG *Xgc,int winnumber);
+extern void tape_replay(BCG *Xgc,int winnumber,int *rect);
 extern void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber);
 extern void UseColorFlag  (int flag); 
 

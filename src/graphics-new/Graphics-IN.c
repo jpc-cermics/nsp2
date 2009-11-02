@@ -5758,7 +5758,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
     case 2 : /* replay */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      Xgc->graphic_engine->tape_replay(Xgc,num);
+      Xgc->graphic_engine->tape_replay(Xgc,num,NULL);
       break;
     case 3 : /* replaysc */
       CheckRhs(2,4);

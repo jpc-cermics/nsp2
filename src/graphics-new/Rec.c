@@ -43,7 +43,7 @@ typedef void  (*record_new_angles)(void *plot, double *theta, double *alpha, int
 
 typedef  struct  {
   int  code ;        
-  void  (*replay) (BCG *,void*);
+  void  (*replay) (BCG *,void*,int *);
   void  (*clean) (void*);  
   void  (*unscale) (void*);
   void  (*scale_change)(BCG *,void *plot, int *flag, double *bbox, int *aaint,char *strf, int undo, int *bbox1, double *subwin, int win_num);
@@ -53,7 +53,7 @@ typedef  struct  {
 #define CODEobject               0
 #define CODEendplots             1
 
-static void replay_graphic_object(BCG *Xgc,void  *theplot);
+static void replay_graphic_object(BCG *Xgc,void  *theplot,int *rect);
 static void clean_graphic_object(void *plot);
 static void scale_change_graphic_object(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
 					int undo, int *bbox1, double *subwin, int win_num);
@@ -89,11 +89,11 @@ void tape_store_graphic_object(BCG *Xgc,void *vobj)
   return; 
 }
 
-static void replay_graphic_object(BCG *Xgc,void  *theplot)
+static void replay_graphic_object(BCG *Xgc,void  *theplot, int *rect)
 {
   struct rec_object *lplot= theplot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  G->type->draw(Xgc,G,NULL);
+  G->type->draw(Xgc,G,rect);
 }
 
 static void clean_graphic_object(void *plot) 
@@ -300,7 +300,7 @@ int tape_check_recorded_3D(BCG *Xgc,int winnumber)
 void tape_replay_undo_scale(BCG *Xgc,int winnumber)
 { 
   unscale_plots(Xgc,winnumber);
-  tape_replay(Xgc,winnumber);
+  tape_replay(Xgc,winnumber,NULL);
 }
 
 /*---------------------------------------------------------------------
@@ -326,7 +326,7 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double 
       bbox1[3]= YDouble2Pixel(Xgc->scales,bbox[3]);
       scale_change_plots(Xgc,winnumber,flag,bbox,aaint,NULL,1,bbox1,NULL);
     }
-  tape_replay(Xgc,winnumber);
+  tape_replay(Xgc,winnumber,NULL);
 }
 
 /*---------------------------------------------------------------------
@@ -341,7 +341,7 @@ void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, doub
    * and we do not want this operation to be undone ==> undo =0 
    */
   scale_change_plots(Xgc,winnumber,flag,bbox,aaint,strflag,0,NULL,Xgc->scales->subwin_rect);
-  tape_replay(Xgc,winnumber);
+  tape_replay(Xgc,winnumber,NULL);
 }
 
 /*---------------------------------------------------------------------
@@ -352,7 +352,7 @@ void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, int *aaint, doub
 void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double *theta, double *alpha, double *bbox)
 { 
   tape_new_angles_plots(Xgc,winnumber,theta,alpha,iflag,flag,bbox,NULL);
-  tape_replay(Xgc,winnumber);
+  tape_replay(Xgc,winnumber,NULL);
 }
 
 /*---------------------------------------------------------------------
@@ -360,7 +360,7 @@ void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,double 
  * in the window (or file) described by Xgc
  *---------------------------------------------------------------------------*/
 
-void tape_replay(BCG *Xgc,int winnumber)
+void tape_replay(BCG *Xgc,int winnumber,int *rect)
 { 
   double WRect[]={0,0,1,1};
   list_plot *list;
@@ -373,7 +373,7 @@ void tape_replay(BCG *Xgc,int winnumber)
   while (list)
     {
       if ( list->theplot != NULL) 
-	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
+	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot,rect);
       list =list->next;
     }
   /* Is there a replay handler */
@@ -395,7 +395,7 @@ void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
   while (list)
     {
       if ( list->theplot != NULL) 
-	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot);
+	record_table[((plot_code *) list->theplot)->code ].replay(Xgc,list->theplot,NULL);
       list =list->next;
     }
   /* Is there a replay handler */
@@ -527,7 +527,7 @@ int tape_load(BCG *Xgc,const char *fname1)
   Xgc->graphic_engine->xset_recording(Xgc,TRUE);
   Xgc->graphic_engine->pixmap_resize(Xgc);
   Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow);
+  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
   Xgc->graphic_engine->xset_recording(Xgc,record);
   return(0);
 }

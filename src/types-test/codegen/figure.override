@@ -200,7 +200,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,NULL);
+	  G->type->draw(Xgc,G,data);
 	}
       cloc = cloc->next;
     }

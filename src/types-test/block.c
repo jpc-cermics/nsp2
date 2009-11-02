@@ -25,7 +25,7 @@
 
 
 #line 122 "codegen/block.override"
-
+#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/figuredata.h"
@@ -1047,14 +1047,35 @@ static void draw_3d(BCG *Xgc,double r[]);
 
 static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  GdkRectangle *r = data, r1 ;
   NspBlock *B = (NspBlock *) Obj;
   /* take care of the fact that str1 must be writable */
   char str1[] = "my\nblock";
-  double loc[4];
+  double loc[4],dx,dy ;
   int cpat, cwidth,i, draw_script, fill=FALSE;
-  
+  int xmin,ymin,xmax,ymax;
+
   /* check the show attribute */
   if ( B->obj->show == FALSE ) return ;
+
+  /* check if the block is inside drawing rectangle
+   */
+  dx=B->obj->r[0];/* xmin */
+  dy=B->obj->r[1]-B->obj->r[3];/* ymin */
+  scale_f2i(Xgc->scales,&dx,&dy,&xmin,&ymin,1);
+  dx=B->obj->r[0]+B->obj->r[2];/* xmax */
+  dy=B->obj->r[1];/* ymax */
+  scale_f2i(Xgc->scales,&dx,&dy,&xmax,&ymax,1);
+  r1.x = xmin; 
+  r1.y = ymin;
+  r1.width = xmax - xmin;
+  r1.height = ymin - ymax;
+  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
+    {
+      Sciprintf("no draw for block with r1=[%d,%d,%d,%d] \n",
+		r1.x,r1.y,r1.width,r1.height);
+      return;
+    }
   cpat = Xgc->graphic_engine->xget_pattern(Xgc);
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
@@ -1910,4 +1931,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1914 "block.c"
+#line 1935 "block.c"
