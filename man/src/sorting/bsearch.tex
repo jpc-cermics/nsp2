@@ -9,7 +9,7 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[ind [,occ [,info]]]  = bsearch(X, v ,match=str1, interval=str2, assume_sorted=b)
+[ind [,occ [,info]]]  = bsearch(X, v ,match=str1, interval=str2, assume_sorted=b, ind_type=str3)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -32,6 +32,7 @@
                               that \verb+v+ is strictly ordered or to
                               use bsearch with a \verb+v+ which is
                               only sorted (that is with redundant elements).  
+    \vname{ind_type = str3}: named optional argument, a string given the type for the index vector ind (default is \verb+"double"+)
     \vname{ind}: matrix or vector of indices with same dimensions than X.
     \vname{occ}: vector of same length than v (but with $n-1$ components 
                   when  \verb+match="i"+)
@@ -71,6 +72,10 @@ for each X(i) if it is equal to one v(k) then:
    \item occ(k) is the number of components of X equal to v(k)
    \item info is the number of components of X which are not in the set $\{v_1,...,v_n\}$ 
 \end{itemize}
+
+The type for the vector of indices \verb+ind+ is \verb+"double"+ (integers stored as
+doubles) by default but you can get \verb+ind+ as a vector of integers (integers stored as
+C int) using \verb+ind_type="int"+.
 
 \end{mandescription}
 
