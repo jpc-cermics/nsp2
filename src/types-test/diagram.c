@@ -1741,7 +1741,7 @@ static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 }
 
 
-static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],double *rect)
+static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],double *rect)
 {
   nsp_axes *axe;
   int th,color,style,fg,ix,iy;
@@ -1800,7 +1800,10 @@ static void nsp_diagram_zoom_get_rectangle(NspDiagram *R,const double pt[2],doub
 	  C = C->next ;
 	}
       rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
-      nsp_redraw_diagram(R);
+      /* XXX Note that the above bf->set_hilited calls 
+       * could be used to invalidate regions 
+       */
+      Xgc->graphic_engine->force_redraw(Xgc,Xgc->zrect);
     }
   nsp_set_cursor(Xgc,-1);
   /* disable zrect */
@@ -1835,7 +1838,7 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
       double bbox[4];
       /* acquire a rectangle and hilite objects inside */
       nsp_diagram_unhilite_objs(R,TRUE);
-      nsp_diagram_zoom_get_rectangle(R,pt,bbox);
+      nsp_diagram_rectangle_select_objs(R,pt,bbox);
       return OK;
     }
   bf = GR_INT(O->basetype->interface);
@@ -2990,4 +2993,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2994 "diagram.c"
+#line 2997 "diagram.c"

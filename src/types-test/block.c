@@ -1821,8 +1821,6 @@ static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
 static int nsp_load_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
 {
   int i,id;
-  if ( M->obj->locks != NULL) FREE(M->obj->locks);
-  
   for ( i = 0 ; i < M->obj->n_locks ; i++) 
     {
       grb_lock *lock= M->obj->locks+i;
@@ -1912,4 +1910,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1916 "block.c"
+#line 1914 "block.c"
