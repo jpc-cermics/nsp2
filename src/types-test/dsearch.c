@@ -59,7 +59,7 @@ void nsp_bsearchd_for_IMat(const NspIMatrix *x, const NspIMatrix *val,
  * bsearch interface  
  * jpc / bp
  *
- *       [ind , occ, info] = bsearch(x, val, match= 'i'|'v', interval='[--)'|'(--]')
+ *       [ind , occ, info] = bsearch(x, val, match= 'i'|'v', interval='[--)'|'(--]', ind_type='double'|'int')
  *        
  * X and val must be both real or strings vectors (says of length m for X and n for val ), 
  *
@@ -72,16 +72,17 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 {
   int info, m_occ, n_occ, m_x, n_x, mn_val, i;
   char *interval_type=NULL,*match_type=NULL, *ind_type=NULL;
-  int interval_flag = CLOSED_LEFT; 
-  char match_flag='i', type_flag='d';
+  int interval_flag = CLOSED_LEFT, *ind=NULL; 
+  char match_flag='i', type_flag='d', type_ind='d';
   Boolean assume_sorted = FALSE, in_order = TRUE;
   nsp_option opts[] ={{ "interval",string,NULLOBJ,-1},
 		      { "match",string,NULLOBJ,-1},
 		      { "assume_sorted",s_bool,NULLOBJ,-1},
+		      { "ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  NspMatrix *x=NULLMAT, *val=NULLMAT, *ind=NULLMAT, *occ=NULLMAT;
+  NspMatrix *x=NULLMAT, *val=NULLMAT, *indr=NULLMAT, *occ=NULLMAT;
   NspSMatrix *xstr=NULLSMAT, *valstr=NULLSMAT;
-  NspIMatrix *xi=NULLIMAT, *vali=NULLIMAT;
+  NspIMatrix *xi=NULLIMAT, *vali=NULLIMAT, *indi=NULLIMAT;
 
   CheckStdRhs(2,2);
   CheckLhs(0,3);
@@ -152,7 +153,31 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( (ind=nsp_matrix_create(NVOID,'r',m_x,n_x)) == NULLMAT ) return RET_BUG;
+  if ( ind_type != NULL )
+    {
+      if ( strcmp(ind_type,"double") == 0 )
+	type_ind = 'd';
+      else if ( strcmp(ind_type,"int") == 0 )
+	type_ind = 'i';
+      else
+	{
+	  Scierror("Error: unsupported ind_type in function %s (should be 'double' or 'int')\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( type_ind == 'd' )
+    {
+      if ( (indr=nsp_matrix_create(NVOID,'r',m_x,n_x)) == NULLMAT ) return RET_BUG;
+      ind = indr->I;
+    }
+  else
+    {
+      if ( (indi=nsp_imatrix_create(NVOID,m_x,n_x,nsp_gint)) == NULLIMAT ) return RET_BUG;
+      ind = indi->Gint;
+    }
+
+      
   if ( match_flag == 'i' )
     {
       m_occ = Max(m_occ -1, 1); 
@@ -188,17 +213,16 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 	{
 	  Scierror("Error: second argument in function %s\n",NspFname(stack));
 	  Scierror("\tis not strictly increasing \n");
-	  return RET_BUG;
+	  goto err;
 	}
     }
-
 
   if ( match_flag == 'i' ) 
     {
       if ( mn_val <= 1 ) 
 	{ 
 	  Scierror("%s: second argument should be of size > 1 when match='i' \n",NspFname(stack));
-	  return RET_BUG;
+	  goto err;
 	}
     }
   else
@@ -206,37 +230,43 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       if ( mn_val < 1 ) 
 	{ 
 	  Scierror("%s: second argument should be of size >= 1 when match='v' \n",NspFname(stack));
-	  return RET_BUG;
+	  goto err;
 	}
     }
 
   if ( type_flag == 'd' )
     {
       if ( match_flag == 'i' ) 
-	nsp_bsearchc(x->R,x->mn,val->R,val->mn-1,ind->I,occ->I,&info,interval_flag);
+	nsp_bsearchc(x->R, x->mn, val->R, val->mn-1, ind, occ->I, &info, interval_flag);
       else 
-	nsp_bsearchd(x->R,x->mn,val->R,val->mn,ind->I,occ->I,&info);
+	nsp_bsearchd(x->R, x->mn, val->R, val->mn, ind, occ->I, &info);
     }
 
   else if ( type_flag == 's' )
     {
       if ( match_flag == 'i' ) 
-	nsp_bsearchc_for_strings(xstr->S,xstr->mn,valstr->S,mn_val-1,ind->I,occ->I,&info,interval_flag);
+	nsp_bsearchc_for_strings(xstr->S, xstr->mn, valstr->S, mn_val-1, ind, occ->I, &info, interval_flag);
       else 
-	nsp_bsearchd_for_strings(xstr->S,xstr->mn,valstr->S,mn_val,ind->I,occ->I,&info);
+	nsp_bsearchd_for_strings(xstr->S, xstr->mn, valstr->S, mn_val, ind, occ->I, &info);
     }
 
   else if ( type_flag == 'i' )
     {
       if ( match_flag == 'i' ) 
-	nsp_bsearchc_for_IMat(xi, vali, ind->I, occ->I, &info, interval_flag);
+	nsp_bsearchc_for_IMat(xi, vali, ind, occ->I, &info, interval_flag);
       else 
-	nsp_bsearchd_for_IMat(xi, vali, ind->I, occ->I, &info);
+	nsp_bsearchd_for_IMat(xi, vali, ind, occ->I, &info);
     }
 
-  ind->convert = 'i'; /* occ is filed with integers */
-  ind = Mat2double(ind);
-  MoveObj(stack,1,NSP_OBJECT(ind));
+  if ( type_ind == 'd' )
+    {
+      indr->convert = 'i';
+      indr = Mat2double(indr);
+      MoveObj(stack,1,NSP_OBJECT(indr));
+    }
+  else
+    MoveObj(stack,1,NSP_OBJECT(indi));
+
   if ( lhs >= 2)
     {
       occ->convert = 'i';
@@ -252,6 +282,14 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
       if ( nsp_move_double(stack,3,(double) info) == FAIL) return RET_BUG;
     }
   return Max(lhs,1);
+
+ err:
+  nsp_matrix_destroy(occ);
+  if ( type_ind == 'd' ) 
+    nsp_matrix_destroy(indr); 
+  else 
+    nsp_imatrix_destroy(indi);  
+  return RET_BUG;
 }
 
 
