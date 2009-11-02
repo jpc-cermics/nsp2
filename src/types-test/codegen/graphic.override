@@ -4,6 +4,7 @@ include-public Graphic
 
 /* inserted at the end of public part of include file */
 extern void nsp_graphic_invalidate(NspGraphic *G);
+extern int nsp_graphic_intersect_rectangle(NspGraphic *G,void *);
 
 %%
 include-private Graphic
@@ -12,6 +13,7 @@ include-private Graphic
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/axes.h>
@@ -352,5 +354,27 @@ void nsp_graphic_invalidate(NspGraphic *G)
       /* a full window force redraw or nothing ? */
       Xgc->graphic_engine->force_redraw(Xgc,NULL);
     }
+}
+
+
+
+
+/* check if the block is inside drawing rectangle
+ */
+ 
+int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
+{
+  nsp_axes *axe = ((NspGraphic *) G)->obj->Axe;
+  GdkRectangle r1;
+  int xmin,ymin,xmax,ymax;
+  double bounds[4];
+  if ( G->type->bounds(G,bounds) == FALSE ) return TRUE;
+  scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
+  scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);
+  r1.x = xmin-10; 
+  r1.y = ymax-10;
+  r1.width = xmax - xmin +20;
+  r1.height = ymin - ymax +20 ;
+  return  gdk_rectangle_intersect(r,&r1,NULL);
 }
 
