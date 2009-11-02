@@ -10,7 +10,7 @@ TESTS= \
 	classref.dia \
 	concat.dia \
 	delete_op-nsp.dia \
-	dsearch.dia \
+	bsearch.dia \
 	env.dia \
 	extract.dia \
 	fft.dia \
