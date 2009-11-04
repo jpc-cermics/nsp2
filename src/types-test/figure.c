@@ -258,7 +258,6 @@ NspFigure  *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_figure))) == NULL) return NULL;
   M->obj->ref_count=1;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->fname)) == FAIL) return NULL;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->driver)) == FAIL) return NULL;
@@ -285,8 +284,13 @@ static NspFigure  *nsp_figure_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLFIGURE;
   if ((H  = nsp_figure_create_void(name,(NspTypeBase *) nsp_type_figure))== NULLFIGURE) return H;
+  if ( nsp_figure_create_partial(H) == FAIL) return NULLFIGURE;
   if ((H  = nsp_figure_xdr_load_partial(xdrs,H))== NULLFIGURE) return H;
   if ( nsp_figure_check_values(H) == FAIL) return NULLFIGURE;
+#line 74 "codegen/figure.override"
+  /* verbatim in create/load/full_copy interface use NULL for returned value */
+  nsp_figure_children_link_figure(H);
+#line 294 "figure.c"
   return H;
 }
 
@@ -304,7 +308,7 @@ void nsp_figure_destroy_partial(NspFigure *H)
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
-#line 308 "figure.c"
+#line 312 "figure.c"
   nsp_string_destroy(&(H->obj->fname));
   nsp_string_destroy(&(H->obj->driver));
     if ( H->obj->dims != NULL ) 
@@ -659,6 +663,10 @@ NspFigure *nsp_figure_full_copy(NspFigure *self)
   if ( H ==  NULLFIGURE) return NULLFIGURE;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLFIGURE;
   if ( nsp_figure_full_copy_partial(H,self)== NULL) return NULLFIGURE;
+#line 74 "codegen/figure.override"
+  /* verbatim in create/load/full_copy interface use NULL for returned value */
+  nsp_figure_children_link_figure(H);
+#line 670 "figure.c"
   return H;
 }
 
@@ -678,6 +686,10 @@ int int_figure_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_figure_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_figure_check_values(H) == FAIL) return RET_BUG;
+#line 74 "codegen/figure.override"
+  /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
+  nsp_figure_children_link_figure(H);
+#line 693 "figure.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -709,7 +721,7 @@ static int _wrap_nsp_figure_draw_now(NspFigure *self,Stack stack,int rhs,int opt
   return 0;
 }
 
-#line 152 "codegen/figure.override"
+#line 156 "codegen/figure.override"
 
 static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -719,10 +731,10 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 723 "figure.c"
+#line 735 "figure.c"
 
 
-#line 163 "codegen/figure.override"
+#line 167 "codegen/figure.override"
 
 static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -731,10 +743,10 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 }
 
 
-#line 735 "figure.c"
+#line 747 "figure.c"
 
 
-#line 173 "codegen/figure.override"
+#line 177 "codegen/figure.override"
 
 static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -744,7 +756,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   return 1;
 }
 
-#line 748 "figure.c"
+#line 760 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
@@ -939,7 +951,7 @@ static int _wrap_figure_set_position(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 88 "codegen/figure.override"
+#line 92 "codegen/figure.override"
 
 static NspObject *_wrap_figure_get_obj_children(void *self,char *attr, int *copy)
 {
@@ -982,7 +994,7 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 986 "figure.c"
+#line 998 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1296,6 +1308,7 @@ static NspFigureData  *nsp_figuredata_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLFIGUREDATA;
   if ((H  = nsp_figuredata_create_void(name,(NspTypeBase *) nsp_type_figuredata))== NULLFIGUREDATA) return H;
+  if ( nsp_figuredata_create_partial(H) == FAIL) return NULLFIGUREDATA;
   if ((H  = nsp_figuredata_xdr_load_partial(xdrs,H))== NULLFIGUREDATA) return H;
   if ( nsp_figuredata_check_values(H) == FAIL) return NULLFIGUREDATA;
   return H;
@@ -1982,7 +1995,7 @@ int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_cu
   return 1;
 }
 
-#line 132 "codegen/figure.override"
+#line 136 "codegen/figure.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1991,10 +2004,10 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1995 "figure.c"
+#line 2008 "figure.c"
 
 
-#line 142 "codegen/figure.override"
+#line 146 "codegen/figure.override"
 
 extern function int_graphic_set_attribute;
 
@@ -2003,7 +2016,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2007 "figure.c"
+#line 2020 "figure.c"
 
 
 /*----------------------------------------------------
@@ -2036,7 +2049,7 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
   *f = Figure_func[i].fonc;
 }
 
-#line 184 "codegen/figure.override"
+#line 188 "codegen/figure.override"
 
 
 /* draw the axes contained in the Figure 
@@ -2856,4 +2869,4 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
 
 
 
-#line 2860 "figure.c"
+#line 2873 "figure.c"

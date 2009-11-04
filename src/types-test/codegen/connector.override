@@ -181,7 +181,6 @@ NspConnector  *nsp_connector_xdr_load_partial(XDR *xdrs, NspConnector *M)
 {
   int id,fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_connector))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLCONNECTOR;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
@@ -207,12 +206,11 @@ static NspConnector  *nsp_connector_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCONNECTOR;
   if ((H  = nsp_connector_create_void(name,(NspTypeBase *) nsp_type_connector))== NULLCONNECTOR) return H;
+  if ( nsp_connector_create_partial(H) == FAIL) return NULLCONNECTOR;
   if ((H  = nsp_connector_xdr_load_partial(xdrs,H))== NULLCONNECTOR) return H;
   if ( nsp_connector_check_values(H) == FAIL) return NULLCONNECTOR;
   return H;
 }
-
-
 
 %%
 override-create Connector 

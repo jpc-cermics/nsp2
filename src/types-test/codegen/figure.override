@@ -70,6 +70,10 @@ override_destroy_prelim Figure
   nsp_figure_children_unlink_figure(H);
 
 %%
+override_int_create_final Figure
+  /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+  nsp_figure_children_link_figure(H);
+%%
 override figure_attach kwargs
 int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
 {

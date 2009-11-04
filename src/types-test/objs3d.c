@@ -274,7 +274,6 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_objs3d))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->wrect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->rho) == FAIL) return NULL;
@@ -305,6 +304,7 @@ static NspObjs3d  *nsp_objs3d_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLOBJS3D;
   if ((H  = nsp_objs3d_create_void(name,(NspTypeBase *) nsp_type_objs3d))== NULLOBJS3D) return H;
+  if ( nsp_objs3d_create_partial(H) == FAIL) return NULLOBJS3D;
   if ((H  = nsp_objs3d_xdr_load_partial(xdrs,H))== NULLOBJS3D) return H;
   if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
   return H;

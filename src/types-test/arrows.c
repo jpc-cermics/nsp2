@@ -251,7 +251,6 @@ NspArrows  *nsp_arrows_xdr_load_partial(XDR *xdrs, NspArrows *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_arrows))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -273,6 +272,7 @@ static NspArrows  *nsp_arrows_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLARROWS;
   if ((H  = nsp_arrows_create_void(name,(NspTypeBase *) nsp_type_arrows))== NULLARROWS) return H;
+  if ( nsp_arrows_create_partial(H) == FAIL) return NULLARROWS;
   if ((H  = nsp_arrows_xdr_load_partial(xdrs,H))== NULLARROWS) return H;
   if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
   return H;

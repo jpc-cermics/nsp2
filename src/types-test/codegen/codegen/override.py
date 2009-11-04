@@ -33,7 +33,7 @@ class Overrides:
         self.override_destroy = {} # inserted verbatim before standard destroy
         self.override_internal_methods = '' # inserted verbatim in type structure 
         self.override_internal_methods_protos = '' # inserted verbatim before type structure
-        self.override_int_create_final = '' # inserted verbatim in  create/load/full_copy
+        self.override_int_create_final = {} # inserted verbatim in  create/load/full_copy
         self.init = ''
         self.last = ''
         self.imports = []
@@ -137,6 +137,14 @@ class Overrides:
             # take care to use a different name as in type override 
             stn = 'destroy_%s' % slot
             self.startlines[stn] = (startline + 1, filename)
+        elif words[0] == 'override_int_create_final':
+            slot = words[1]
+            self.override_int_create_final[slot] = rest
+            # take care to use a different name as in type override 
+            stn = 'int_create_final_%s' % slot
+            self.startlines[stn] = (startline + 1, filename)
+            #self.override_int_create_final = '%s\n#line %d "codegen/%s"\n%s' % \
+            # (self.override_int_create_final, startline + 1, filename, rest)
         elif words[0] == 'include-public':
             # we add '.include' to the slot for unicity
             slot = words[1]+'.include_public' # 
@@ -158,9 +166,6 @@ class Overrides:
         elif words[0] == 'override_internal_methods_protos':
             self.override_internal_methods_protos = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods_protos, startline + 1, filename, rest)
-        elif words[0] == 'override_int_create_final':
-            self.override_int_create_final = '%s\n#line %d "codegen/%s"\n%s' % \
-                           (self.override_int_create_final, startline + 1, filename, rest)
         elif words[0] == 'init':
             self.init = '%s\n#line %d "codegen/%s"\n%s' % \
                         (self.init, startline + 1, filename, rest)
@@ -243,6 +248,10 @@ class Overrides:
         return self.override_destroy.has_key(slot)
     def get_override_destroy(self,slot):
         return self.override_destroy[slot]
+    def part_int_create_final_is_overriden(self, slot):
+        return self.override_int_create_final.has_key(slot)
+    def get_override_int_create_final(self,slot):
+        return self.override_int_create_final[slot]
     def get_init(self):
         return self.init
     def get_last(self):

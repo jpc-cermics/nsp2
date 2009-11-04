@@ -255,7 +255,6 @@ NspBox3d  *nsp_box3d_xdr_load_partial(XDR *xdrs, NspBox3d *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_box3d))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -279,6 +278,7 @@ static NspBox3d  *nsp_box3d_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBOX3D;
   if ((H  = nsp_box3d_create_void(name,(NspTypeBase *) nsp_type_box3d))== NULLBOX3D) return H;
+  if ( nsp_box3d_create_partial(H) == FAIL) return NULLBOX3D;
   if ((H  = nsp_box3d_xdr_load_partial(xdrs,H))== NULLBOX3D) return H;
   if ( nsp_box3d_check_values(H) == FAIL) return NULLBOX3D;
   return H;

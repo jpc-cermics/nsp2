@@ -262,7 +262,6 @@ NspGrArc  *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_grarc))) == NULL) return NULL;
   M->obj->ref_count=1;
   if (nsp_xdr_load_d(xdrs, &M->obj->x) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->y) == FAIL) return NULL;
@@ -289,6 +288,7 @@ static NspGrArc  *nsp_grarc_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRARC;
   if ((H  = nsp_grarc_create_void(name,(NspTypeBase *) nsp_type_grarc))== NULLGRARC) return H;
+  if ( nsp_grarc_create_partial(H) == FAIL) return NULLGRARC;
   if ((H  = nsp_grarc_xdr_load_partial(xdrs,H))== NULLGRARC) return H;
   if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
   return H;

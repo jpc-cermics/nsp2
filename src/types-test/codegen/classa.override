@@ -39,7 +39,7 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final
+override_int_create_final ClassA
   /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
 %%
 override_destroy_prelim  ClassA

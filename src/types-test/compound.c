@@ -247,7 +247,6 @@ NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_compound))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -266,6 +265,7 @@ static NspCompound  *nsp_compound_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCOMPOUND;
   if ((H  = nsp_compound_create_void(name,(NspTypeBase *) nsp_type_compound))== NULLCOMPOUND) return H;
+  if ( nsp_compound_create_partial(H) == FAIL) return NULLCOMPOUND;
   if ((H  = nsp_compound_xdr_load_partial(xdrs,H))== NULLCOMPOUND) return H;
   if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
   return H;

@@ -205,7 +205,6 @@ NspLink  *nsp_link_xdr_load_partial(XDR *xdrs, NspLink *M)
 {
   int id,fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_link))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLLINK;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
@@ -233,11 +232,11 @@ static NspLink  *nsp_link_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLLINK;
   if ((H  = nsp_link_create_void(name,(NspTypeBase *) nsp_type_link))== NULLLINK) return H;
+  if ( nsp_link_create_partial(H) == FAIL) return NULLLINK;
   if ((H  = nsp_link_xdr_load_partial(xdrs,H))== NULLLINK) return H;
   if ( nsp_link_check_values(H) == FAIL) return NULLLINK;
   return H;
 }
-
 
 
 %%

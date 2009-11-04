@@ -3211,7 +3211,6 @@ static int int_xfrect(Stack stack, int rhs, int opt, int lhs)
 
 #endif 
 
-
 /*-----------------------------------------------------------
  *   xclear(window-ids,[tape_clean])
  *   the default value for tape_clean is TRUE 

@@ -64,7 +64,7 @@ modulename atk
 ignore-glob
   *_get_type
 %%
-override_int_create_final 
+override_int_create_final  SPolyhedron
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return %(ret)s; 
 

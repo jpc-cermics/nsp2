@@ -253,7 +253,6 @@ NspVField  *nsp_vfield_xdr_load_partial(XDR *xdrs, NspVField *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_vfield))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->fx =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->fy =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -276,6 +275,7 @@ static NspVField  *nsp_vfield_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLVFIELD;
   if ((H  = nsp_vfield_create_void(name,(NspTypeBase *) nsp_type_vfield))== NULLVFIELD) return H;
+  if ( nsp_vfield_create_partial(H) == FAIL) return NULLVFIELD;
   if ((H  = nsp_vfield_xdr_load_partial(xdrs,H))== NULLVFIELD) return H;
   if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
   return H;

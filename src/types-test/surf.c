@@ -258,7 +258,6 @@ NspSurf  *nsp_surf_xdr_load_partial(XDR *xdrs, NspSurf *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_surf))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -284,6 +283,7 @@ static NspSurf  *nsp_surf_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSURF;
   if ((H  = nsp_surf_create_void(name,(NspTypeBase *) nsp_type_surf))== NULLSURF) return H;
+  if ( nsp_surf_create_partial(H) == FAIL) return NULLSURF;
   if ((H  = nsp_surf_xdr_load_partial(xdrs,H))== NULLSURF) return H;
   if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
   return H;

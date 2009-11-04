@@ -228,7 +228,6 @@ int nsp_groot_xdr_save(XDR *xdrs, NspGRoot *M)
 
 NspGRoot  *nsp_groot_xdr_load_partial(XDR *xdrs, NspGRoot *M)
 {
-  if ((M->obj = calloc(1,sizeof(nsp_groot))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->figures =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
  return M;
@@ -240,6 +239,7 @@ static NspGRoot  *nsp_groot_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGROOT;
   if ((H  = nsp_groot_create_void(name,(NspTypeBase *) nsp_type_groot))== NULLGROOT) return H;
+  if ( nsp_groot_create_partial(H) == FAIL) return NULLGROOT;
   if ((H  = nsp_groot_xdr_load_partial(xdrs,H))== NULLGROOT) return H;
   if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
   return H;

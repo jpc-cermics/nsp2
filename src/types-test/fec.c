@@ -262,7 +262,6 @@ NspFec  *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_fec))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -288,6 +287,7 @@ static NspFec  *nsp_fec_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLFEC;
   if ((H  = nsp_fec_create_void(name,(NspTypeBase *) nsp_type_fec))== NULLFEC) return H;
+  if ( nsp_fec_create_partial(H) == FAIL) return NULLFEC;
   if ((H  = nsp_fec_xdr_load_partial(xdrs,H))== NULLFEC) return H;
   if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
   return H;

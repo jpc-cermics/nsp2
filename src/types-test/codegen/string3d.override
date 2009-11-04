@@ -62,7 +62,7 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final 
+override_int_create_final String3d 
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return %(ret)s; 
 

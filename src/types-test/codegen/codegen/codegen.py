@@ -270,6 +270,7 @@ class Wrapper:
         '  char name[NAME_MAXL];\n' \
         '  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL%(typename_uc)s;\n' \
         '  if ((H  = nsp_%(typename_dc)s_create_void(name,(NspTypeBase *) nsp_type_%(typename_dc)s))== NULL%(typename_uc)s) return H;\n' \
+        '  if ( nsp_%(typename_dc)s_create_partial(H) == FAIL) return NULL%(typename_uc)s;\n' \
         '  if ((H  = nsp_%(typename_dc)s_xdr_load_partial(xdrs,H))== NULL%(typename_uc)s) return H;\n' \
         '  if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n'
 
@@ -711,9 +712,6 @@ class Wrapper:
         substdict['copy_partial'] = self.build_copy_partial('H','')
         substdict['full_copy_partial'] = self.build_copy_partial('H','full_')
         substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
-        # used to insert verbatim code in int_xxx_create
-        # just before returning object 
-        substdict['int_create_final'] = self.build_int_create_final('H')
         # fields for declaration 
         substdict['fields'] = self.build_fields()
         # methods to be inserted in the class declaration 
@@ -745,22 +743,19 @@ class Wrapper:
             # insert the code for load 
             self.fp.write(self.type_tmpl_load_1 % substdict)
             substdict['ret']= 'NULL'
-            str = ( '%(int_create_final)s' % substdict) %substdict 
-            if str != '':
-                self.fp.write( str ) 
-                self.fp.resetline()
+            self.build_int_create_final('H',typename_nn,substdict)
             self.fp.write(self.type_tmpl_load_2 % substdict)
 
         # destroy code 
         self.fp.write(self.type_tmpl_delete % substdict)
-
+        
         if self.overrides.part_destroy_is_overriden(typename_nn):
             stn = 'destroy_%s' % typename_nn
             lineno, filename = self.overrides.getstartline(stn)
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_destroy(typename_nn))
             self.fp.resetline()
-
+            
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
         # insert the end of type definition 
         # i.e a set of functions used for writing interfaces 
@@ -781,10 +776,7 @@ class Wrapper:
         # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
         substdict['ret']= 'NULL'
-        str = ( '%(int_create_final)s' % substdict) %substdict 
-        if str != '':
-            self.fp.write( str ) 
-            self.fp.resetline()
+        self.build_int_create_final('H',typename_nn,substdict)
         self.fp.write(self.type_tmpl_copy_2 % substdict)
 
         # write the int_create inteface 
@@ -797,10 +789,7 @@ class Wrapper:
         else:
             self.fp.write(self.type_tmpl_intcreate % substdict)
             substdict['ret']= 'RET_BUG'
-            str = ( '%(int_create_final)s' % substdict) %substdict 
-            if str != '':
-                self.fp.write( str ) 
-                self.fp.resetline()
+            self.build_int_create_final('H',typename_nn,substdict)
             self.fp.write(self.type_tmpl_intcreate_last % substdict)
 
         # write a header file for class object
@@ -948,9 +937,6 @@ class Wrapper:
         substdict['copy_partial'] = self.build_copy_partial('H','')
         substdict['full_copy_partial'] = self.build_copy_partial('H','full_')
         substdict['full_copy_code'] = self.build_full_copy_code(substdict,'H')
-        # used to insert verbatim code in int_xxx_create
-        # just before returning object 
-        substdict['int_create_final'] = self.build_int_create_final('H')
         # fields for declaration 
         substdict['fields'] = self.build_fields()
         # methods to be inserted in the class declaration 
@@ -979,10 +965,7 @@ class Wrapper:
             # insert the code for load 
             self.fp.write(self.type_tmpl_load_1 % substdict)
             substdict['ret']= 'NULL'
-            str = ( '%(int_create_final)s' % substdict) %substdict 
-            if str != '':
-                self.fp.write( str ) 
-                self.fp.resetline()
+            self.build_int_create_final('H',typename_nn,substdict)
             self.fp.write(self.type_tmpl_load_2 % substdict)
 
         # destroy code 
@@ -1015,10 +998,7 @@ class Wrapper:
         # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
         substdict['ret']= 'NULL'
-        str = ( '%(int_create_final)s' % substdict) %substdict 
-        if str != '':
-            self.fp.write( str ) 
-            self.fp.resetline()
+        self.build_int_create_final('H',typename_nn,substdict)
         self.fp.write(self.type_tmpl_copy_2 % substdict)
 
         # write the int_create inteface 
@@ -1031,10 +1011,7 @@ class Wrapper:
         else:
             self.fp.write(self.type_tmpl_intcreate % substdict)
             substdict['ret']= 'RET_BUG'
-            str = ( '%(int_create_final)s' % substdict) %substdict 
-            if str != '':
-                self.fp.write( str ) 
-                self.fp.resetline()
+            self.build_int_create_final('H',typename_nn,substdict)
             self.fp.write(self.type_tmpl_intcreate_last % substdict)
 
         # write a header file for class object
@@ -1308,7 +1285,7 @@ class Wrapper:
             str = str + '  int fid;\n  char name[NAME_MAXL];\n'
             
         if self.byref == 't' :
-            str = str + '  if ((%s->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL;\n' % (varname,lower_name)
+            #str = str + '  if ((%s->obj = calloc(1,sizeof(nsp_%s))) == NULL) return NULL;\n' % (varname,lower_name)
             str = str + '  %s->obj->ref_count=1;\n' % (varname)
             varname = varname +'->obj'
 
@@ -1397,11 +1374,17 @@ class Wrapper:
             str = str + '    FREE(%s);\n   }\n'  % (varname)
         return str
 
-    def build_int_create_final(self,varname):
+    def build_int_create_final(self,varname,typename_nn,substdict):
         # code to be called before returning in the _create 
         # interface By defaut this code is 
         # empty but can be filled in override code 
-        return self.overrides.override_int_create_final
+        if self.overrides.part_int_create_final_is_overriden(typename_nn):
+            stn = 'int_create_final_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_int_create_final(typename_nn) % substdict)
+            self.fp.resetline()
+            # return self.overrides.override_int_create_final
         
     def build_create_partial(self,varname):
         # used when creating a new instance 

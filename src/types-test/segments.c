@@ -248,7 +248,6 @@ NspSegments  *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_segments))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -269,6 +268,7 @@ static NspSegments  *nsp_segments_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSEGMENTS;
   if ((H  = nsp_segments_create_void(name,(NspTypeBase *) nsp_type_segments))== NULLSEGMENTS) return H;
+  if ( nsp_segments_create_partial(H) == FAIL) return NULLSEGMENTS;
   if ((H  = nsp_segments_xdr_load_partial(xdrs,H))== NULLSEGMENTS) return H;
   if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
   return H;

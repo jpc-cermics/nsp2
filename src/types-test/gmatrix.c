@@ -256,7 +256,6 @@ NspGMatrix  *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_gmatrix))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->data =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->rect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -279,6 +278,7 @@ static NspGMatrix  *nsp_gmatrix_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGMATRIX;
   if ((H  = nsp_gmatrix_create_void(name,(NspTypeBase *) nsp_type_gmatrix))== NULLGMATRIX) return H;
+  if ( nsp_gmatrix_create_partial(H) == FAIL) return NULLGMATRIX;
   if ((H  = nsp_gmatrix_xdr_load_partial(xdrs,H))== NULLGMATRIX) return H;
   if ( nsp_gmatrix_check_values(H) == FAIL) return NULLGMATRIX;
   return H;

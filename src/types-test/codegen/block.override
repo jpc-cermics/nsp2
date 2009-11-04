@@ -198,6 +198,8 @@ int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
   if ( nsp_xdr_save_i(xdrs,M->obj->color) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->thickness) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->hilited) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->show) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->n_locks) == FAIL) return FAIL;
   if ( nsp_save_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->icon)) == FAIL) return FAIL;
@@ -214,14 +216,14 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
 {
   int fid,id;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_block))) == NULL) return NULL;
   M->obj->ref_count=1;
-
   if ( nsp_xdr_load_i(xdrs,&id) == FAIL) return  NULLBLOCK;
   if ( nsp_xdr_load_array_d(xdrs,M->obj->r,4) == FAIL) return NULLBLOCK;
   if ( nsp_xdr_load_i(xdrs,&M->obj->color) == FAIL) return NULLBLOCK;
   if ( nsp_xdr_load_i(xdrs,&M->obj->thickness) == FAIL) return NULLBLOCK;
   if ( nsp_xdr_load_i(xdrs,&M->obj->background) == FAIL) return NULLBLOCK;
+  if (nsp_xdr_load_i(xdrs, &M->obj->hilited) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->show) == FAIL) return NULL;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
   /* the lock points */
   if ( nsp_xdr_load_i(xdrs,&M->obj->n_locks) == FAIL) return NULLBLOCK;
@@ -237,15 +239,16 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
     }
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULL;
   if ( nsp_graphic_xdr_load_partial(xdrs,(NspGraphic *)M) == NULL) return NULL;
- return M;
+  return M;
 }
 
-NspBlock  *nsp_block_xdr_load(XDR *xdrs)
+static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
 {
   NspBlock *H = NULL;
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBLOCK;
   if ((H  = nsp_block_create_void(name,(NspTypeBase *) nsp_type_block))== NULLBLOCK) return H;
+  if ( nsp_block_create_partial(H) == FAIL) return NULLBLOCK;
   if ((H  = nsp_block_xdr_load_partial(xdrs,H))== NULLBLOCK) return H;
   if ( nsp_block_check_values(H) == FAIL) return NULLBLOCK;
   return H;
@@ -857,6 +860,7 @@ void block_resize(NspBlock *B,const double size[2])
   sz[0] = Max(size[0],3*lock_size)/B->obj->r[2];
   sz[1] = Max(size[1],3*lock_size)/B->obj->r[3];
   */
+  nsp_graphic_invalidate((NspGraphic *) B);
   B->obj->r[2] = Max(size[0],3*lock_size) ;
   B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change to XXXXX */

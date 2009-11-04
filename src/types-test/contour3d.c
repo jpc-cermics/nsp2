@@ -263,7 +263,6 @@ NspContour3d  *nsp_contour3d_xdr_load_partial(XDR *xdrs, NspContour3d *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_contour3d))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->y =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -287,14 +286,14 @@ static NspContour3d  *nsp_contour3d_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCONTOUR3D;
   if ((H  = nsp_contour3d_create_void(name,(NspTypeBase *) nsp_type_contour3d))== NULLCONTOUR3D) return H;
+  if ( nsp_contour3d_create_partial(H) == FAIL) return NULLCONTOUR3D;
   if ((H  = nsp_contour3d_xdr_load_partial(xdrs,H))== NULLCONTOUR3D) return H;
   if ( nsp_contour3d_check_values(H) == FAIL) return NULLCONTOUR3D;
-
 #line 65 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return NULL; 
 
-#line 298 "contour3d.c"
+#line 297 "contour3d.c"
   return H;
 }
 
@@ -311,7 +310,7 @@ void nsp_contour3d_destroy_partial(NspContour3d *H)
 #line 70 "codegen/contour3d.override"
   /* verbatim in destroy */
 
-#line 315 "contour3d.c"
+#line 314 "contour3d.c"
     if ( H->obj->x != NULL ) 
       nsp_matrix_destroy(H->obj->x);
     if ( H->obj->y != NULL ) 
@@ -614,12 +613,11 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLCONTOUR3D;
   if ( nsp_contour3d_full_copy_partial(H,self)== NULL) return NULLCONTOUR3D;
-
 #line 65 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return NULL; 
 
-#line 623 "contour3d.c"
+#line 621 "contour3d.c"
   return H;
 }
 
@@ -639,12 +637,11 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_contour3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_contour3d_check_values(H) == FAIL) return RET_BUG;
-
 #line 65 "codegen/contour3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return RET_BUG; 
 
-#line 648 "contour3d.c"
+#line 645 "contour3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -832,7 +829,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 836 "contour3d.c"
+#line 833 "contour3d.c"
 
 
 #line 84 "codegen/contour3d.override"
@@ -844,7 +841,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 848 "contour3d.c"
+#line 845 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -1024,4 +1021,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1028 "contour3d.c"
+#line 1025 "contour3d.c"

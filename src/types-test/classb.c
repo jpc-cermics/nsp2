@@ -252,6 +252,7 @@ static NspClassB  *nsp_classb_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSB;
   if ((H  = nsp_classb_create_void(name,(NspTypeBase *) nsp_type_classb))== NULLCLASSB) return H;
+  if ( nsp_classb_create_partial(H) == FAIL) return NULLCLASSB;
   if ((H  = nsp_classb_xdr_load_partial(xdrs,H))== NULLCLASSB) return H;
   if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
   return H;
@@ -530,7 +531,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 534 "classb.c"
+#line 535 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -541,7 +542,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 545 "classb.c"
+#line 546 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -655,4 +656,4 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *f = ClassB_func[i].fonc;
 }
 
-#line 659 "classb.c"
+#line 660 "classb.c"

@@ -64,7 +64,7 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final 
+override_int_create_final  Polyline3d
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return %(ret)s; 
 

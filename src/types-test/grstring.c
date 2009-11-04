@@ -260,7 +260,6 @@ NspGrstring  *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_grstring))) == NULL) return NULL;
   M->obj->ref_count=1;
   if (nsp_xdr_load_d(xdrs, &M->obj->x) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->y) == FAIL) return NULL;
@@ -287,6 +286,7 @@ static NspGrstring  *nsp_grstring_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRSTRING;
   if ((H  = nsp_grstring_create_void(name,(NspTypeBase *) nsp_type_grstring))== NULLGRSTRING) return H;
+  if ( nsp_grstring_create_partial(H) == FAIL) return NULLGRSTRING;
   if ((H  = nsp_grstring_xdr_load_partial(xdrs,H))== NULLGRSTRING) return H;
   if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
   return H;

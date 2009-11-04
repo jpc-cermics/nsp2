@@ -16,7 +16,7 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final 
+override_int_create_final  ClassARef
   /* verbatim in create interface  */
 %%
 override_destroy_prelim ClassARef 

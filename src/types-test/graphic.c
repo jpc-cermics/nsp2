@@ -250,7 +250,6 @@ int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
 
 NspGraphic  *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M)
 {
-  if ((M->obj = calloc(1,sizeof(nsp_graphic))) == NULL) return NULL;
   M->obj->ref_count=1;
   if (nsp_xdr_load_i(xdrs, &M->obj->hidden) == FAIL) return NULL;
  return M;
@@ -262,6 +261,7 @@ static NspGraphic  *nsp_graphic_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGRAPHIC;
   if ((H  = nsp_graphic_create_void(name,(NspTypeBase *) nsp_type_graphic))== NULLGRAPHIC) return H;
+  if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
   if ((H  = nsp_graphic_xdr_load_partial(xdrs,H))== NULLGRAPHIC) return H;
   if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
   return H;
@@ -879,6 +879,7 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
   GdkRectangle r1;
   int xmin,ymin,xmax,ymax;
   double bounds[4];
+  if ( r == NULL ) return TRUE;
   if ( G->type->bounds(G,bounds) == FALSE ) return TRUE;
   scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
   scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);
@@ -890,4 +891,4 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
 }
 
 
-#line 894 "graphic.c"
+#line 895 "graphic.c"

@@ -258,7 +258,6 @@ NspQcurve  *nsp_qcurve_xdr_load_partial(XDR *xdrs, NspQcurve *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_qcurve))) == NULL) return NULL;
   M->obj->ref_count=1;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->width) == FAIL) return NULL;
@@ -283,6 +282,7 @@ static NspQcurve  *nsp_qcurve_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLQCURVE;
   if ((H  = nsp_qcurve_create_void(name,(NspTypeBase *) nsp_type_qcurve))== NULLQCURVE) return H;
+  if ( nsp_qcurve_create_partial(H) == FAIL) return NULLQCURVE;
   if ((H  = nsp_qcurve_xdr_load_partial(xdrs,H))== NULLQCURVE) return H;
   if ( nsp_qcurve_check_values(H) == FAIL) return NULLQCURVE;
   return H;

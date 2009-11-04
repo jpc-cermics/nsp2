@@ -368,6 +368,7 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
   GdkRectangle r1;
   int xmin,ymin,xmax,ymax;
   double bounds[4];
+  if ( r == NULL ) return TRUE;
   if ( G->type->bounds(G,bounds) == FALSE ) return TRUE;
   scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
   scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);

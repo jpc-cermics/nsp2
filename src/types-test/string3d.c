@@ -260,7 +260,6 @@ NspString3d  *nsp_string3d_xdr_load_partial(XDR *xdrs, NspString3d *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_string3d))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->Mcoord =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->str)) == FAIL) return NULL;
@@ -282,14 +281,14 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSTRING3D;
   if ((H  = nsp_string3d_create_void(name,(NspTypeBase *) nsp_type_string3d))== NULLSTRING3D) return H;
+  if ( nsp_string3d_create_partial(H) == FAIL) return NULLSTRING3D;
   if ((H  = nsp_string3d_xdr_load_partial(xdrs,H))== NULLSTRING3D) return H;
   if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
-
 #line 66 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 293 "string3d.c"
+#line 292 "string3d.c"
   return H;
 }
 
@@ -307,7 +306,7 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 311 "string3d.c"
+#line 310 "string3d.c"
     if ( H->obj->Mcoord != NULL ) 
       nsp_matrix_destroy(H->obj->Mcoord);
   nsp_string_destroy(&(H->obj->str));
@@ -567,12 +566,11 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   if ( H ==  NULLSTRING3D) return NULLSTRING3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSTRING3D;
   if ( nsp_string3d_full_copy_partial(H,self)== NULL) return NULLSTRING3D;
-
 #line 66 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 576 "string3d.c"
+#line 574 "string3d.c"
   return H;
 }
 
@@ -592,12 +590,11 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_string3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_string3d_check_values(H) == FAIL) return RET_BUG;
-
 #line 66 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 601 "string3d.c"
+#line 598 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -715,7 +712,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 719 "string3d.c"
+#line 716 "string3d.c"
 
 
 #line 86 "codegen/string3d.override"
@@ -728,7 +725,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 732 "string3d.c"
+#line 729 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -971,4 +968,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 975 "string3d.c"
+#line 972 "string3d.c"

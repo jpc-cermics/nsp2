@@ -232,7 +232,6 @@ NspClassBRef  *nsp_classbref_xdr_load_partial(XDR *xdrs, NspClassBRef *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_classbref))) == NULL) return NULL;
   M->obj->ref_count=1;
   if (nsp_xdr_load_i(xdrs, &M->obj->clb_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->clb_thickness) == FAIL) return NULL;
@@ -253,6 +252,7 @@ static NspClassBRef  *nsp_classbref_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCLASSBREF;
   if ((H  = nsp_classbref_create_void(name,(NspTypeBase *) nsp_type_classbref))== NULLCLASSBREF) return H;
+  if ( nsp_classbref_create_partial(H) == FAIL) return NULLCLASSBREF;
   if ((H  = nsp_classbref_xdr_load_partial(xdrs,H))== NULLCLASSBREF) return H;
   if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
   return H;

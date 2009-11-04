@@ -26,6 +26,7 @@
    '("NspMatrix*" "cla_val")
    '("NspBMatrix*" "cla_bval")
    '("NspList*" "cla_lval")
+   ;;'("gboolean" "bzzz")
    ;;'("hfoo*" "zz" "hidden")
    ;;'("hfoo" "xx" "hidden" )
    ;; a double array of fixed size 

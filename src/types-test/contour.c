@@ -259,7 +259,6 @@ NspContour  *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M)
 {
   int fid;
   char name[NAME_MAXL];
-  if ((M->obj = calloc(1,sizeof(nsp_contour))) == NULL) return NULL;
   M->obj->ref_count=1;
   if ((M->obj->z =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->x =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
@@ -283,6 +282,7 @@ static NspContour  *nsp_contour_xdr_load(XDR *xdrs)
   char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLCONTOUR;
   if ((H  = nsp_contour_create_void(name,(NspTypeBase *) nsp_type_contour))== NULLCONTOUR) return H;
+  if ( nsp_contour_create_partial(H) == FAIL) return NULLCONTOUR;
   if ((H  = nsp_contour_xdr_load_partial(xdrs,H))== NULLCONTOUR) return H;
   if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
   return H;
