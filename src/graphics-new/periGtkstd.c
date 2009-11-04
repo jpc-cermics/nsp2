@@ -68,7 +68,9 @@ static void force_redraw(BCG *Xgc,void *rect)
   Xgc->private->draw = TRUE;
   if ( rect == NULL ) 
     {
-      nsp_gtk_invalidate(Xgc);
+      gdk_window_invalidate_rect(Xgc->private->drawing->window,
+				 &Xgc->private->drawing->allocation,
+				 FALSE);
     }
   else
     {
@@ -1668,19 +1670,6 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
   return FALSE;
 }
 
-
-/**
- * nsp_gtk_invalidate:
- * @Xgc: a #BCG  
- * 
- * 
- **/
-static void nsp_gtk_invalidate(BCG *Xgc)
-{
-  gdk_window_invalidate_rect(Xgc->private->drawing->window,
-			     &Xgc->private->drawing->allocation,
-			     FALSE);
-}
 
 /**
  * expose_event:

@@ -17,6 +17,7 @@ headers
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/axes.h>
+#include <nsp/objs3d.h>
 #include "../interp/Eval.h"
 
 %%
@@ -364,11 +365,22 @@ void nsp_graphic_invalidate(NspGraphic *G)
     }
   else
     {
-      /* XXX : here it should be better to invalidate 
-       * the axe or objs3d in which we are stored.
-       * a full window force redraw or nothing ? 
-       */
-      Xgc->graphic_engine->force_redraw(Xgc,NULL);
+      NspObject *obj = nsp_check_for_axes_or_objs3d_from_pointer(F,G->obj->Axe);
+      if ( obj != NULL)
+	{
+	  if (IsAxes(obj) )
+	    {
+	      nsp_axes_invalidate((NspGraphic *) obj);
+	    }
+	  else 
+	    {
+	      nsp_objs3d_invalidate((NspGraphic *) obj);
+	    }
+	}
+      else
+	{
+	  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+	}
     }
 }
 
