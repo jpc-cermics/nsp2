@@ -44,7 +44,12 @@ function x=edit_object_ce(x,varargopt)
 endfunction
 
 function x=edit_object(x,varargopt)
-  x=x;
+  if is(x, %types.Graphic) then 
+    // for all the objects which inherits from graphic.
+    x=edit_grobject(x,varargopt(:));
+  else
+    x=x;
+  end
 endfunction
 
 // matrices 

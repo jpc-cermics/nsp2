@@ -1,34 +1,35 @@
 // figure 
 //---------------------
 
-function x=edit_object_figure(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-  xbasr(x.id);
-endfunction
+// function x=edit_object_figure(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+//   xbasr(x.id);
+// endfunction
 
-function x=edit_object_axes(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-endfunction
+// function x=edit_object_axes(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+// endfunction
 
-function x=edit_object_curve(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-endfunction
+// function x=edit_object_curve(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+// endfunction
 
-function x=edit_object_polyline(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-endfunction
+// function x=edit_object_polyline(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+// endfunction
 
-function x=edit_object_gmatrix(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-endfunction
+// function x=edit_object_gmatrix(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+// endfunction
 
-function x=edit_object_spolyhedron(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-endfunction
+// function x=edit_object_spolyhedron(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+// endfunction
 
-function x=edit_object_objs3d(x,varargopt)
-  x=edit_grobject(x,varargopt(:));
-endfunction
+// function x=edit_object_objs3d(x,varargopt)
+//   x=edit_grobject(x,varargopt(:));
+// endfunction
+
 
 function L=edit_grobject(L,with_scroll=%t,title="Edit Graphic object",size_request=[],headers=%t,top=[])
   
@@ -281,15 +282,15 @@ function L=edit_grobject(L,with_scroll=%t,title="Edit Graphic object",size_reque
     vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
   end
   
-  function figure_redraw (button, data)
-    xbasr(data(1));
+  function gr_object_redraw (button, data)
+    data(1).invalidate[];
+    // xbasr(data(1));
   endfunction
   
-  if type(L,'short')== 'figure' then 
-    button = gtkbutton_new(label="Redraw");
-    button.connect[ "clicked", figure_redraw , list(L.id)] 
-    vbox.pack_start[button,expand=%f,fill=%f,padding=0];
-  end
+  button = gtkbutton_new(label="Redraw");
+  button.connect[ "clicked", gr_object_redraw ,list(L)] 
+  vbox.pack_start[button,expand=%f,fill=%f,padding=0];
+  
 
   if top.equal[[]] then 
     window.show_all[];
