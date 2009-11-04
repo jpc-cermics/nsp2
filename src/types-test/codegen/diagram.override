@@ -135,7 +135,7 @@ static int _wrap_diagram_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspDiagram *) self)->obj->rho != rho) 
     {
       ((NspDiagram *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
+      nsp_graphic_invalidate((NspGraphic *) self);
     }
   return OK;
 }

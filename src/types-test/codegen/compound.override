@@ -79,7 +79,7 @@ static int _wrap_compound_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspCompound *) self)->obj->rho != rho) 
     {
       ((NspCompound *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig);
+      nsp_graphic_invalidate((NspGraphic *) self);
     }
   return OK;
 }

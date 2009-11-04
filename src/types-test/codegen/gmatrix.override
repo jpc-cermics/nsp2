@@ -178,8 +178,8 @@ static void nsp_scale_gmatrix(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->rect->R[0] *= alpha[0];
   P->obj->rect->R[2] *= alpha[0];
-  P->obj->rect->R[3] *= alpha[1];
   P->obj->rect->R[1] *= alpha[1];
+  P->obj->rect->R[3] *= alpha[1];
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 

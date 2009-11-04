@@ -18,6 +18,7 @@ extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_graphic_link_figure(NspGraphic *G, void *F, void *A);
 extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
+extern void nsp_figure_invalidate(NspGraphic *G);
 
 %%
 include-private Figure
@@ -59,6 +60,7 @@ override-type Figure
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_figure;
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_figure_children ;
+  ((NspTypeGraphic *) type->surtype)->invalidate = nsp_figure_invalidate;
 
 %%
 ignore-glob
@@ -1002,4 +1004,18 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj)
   return FAIL;
 }
 
+
+/* invalidate the drawing region associated to a
+ * figure. 
+ */
+
+void nsp_figure_invalidate(NspGraphic *G)
+{
+  NspFigure *F = (NspFigure *) G;
+  BCG *Xgc;
+  if ( F == NULL ) return ;
+  if ((Xgc= F->obj->Xgc) == NULL) return ;
+  if ( F->obj->draw_now== FALSE) return;
+  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+}
 

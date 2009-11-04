@@ -66,7 +66,7 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
 
 static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 {
-  DRAW_CHECK;
+  
   RectangleClear(Xgc,x,y,w,h,0,R_clear);
 }
 
@@ -77,7 +77,7 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 
 static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
 {
-  DRAW_CHECK;
+  
   glBegin(GL_LINES);
   glVertex2i(x1, y1);
   glVertex2i(x2, y2);
@@ -92,7 +92,7 @@ static void drawline(BCG *Xgc,int x1, int y1, int x2, int y2)
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
 }
 
@@ -105,7 +105,7 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
@@ -125,7 +125,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
@@ -133,7 +133,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
-  DRAW_CHECK;
+  
   glBegin(GL_LINE_LOOP);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
@@ -146,7 +146,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
-  DRAW_CHECK;
+  
   glBegin(GL_QUADS);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
@@ -166,7 +166,7 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
@@ -183,7 +183,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
@@ -204,7 +204,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
@@ -219,7 +219,7 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
@@ -228,7 +228,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
-  DRAW_CHECK; /* FIXME */
+   /* FIXME */
   Xgc->graphic_engine->generic->drawarc(Xgc,arc);
 }
 
@@ -236,7 +236,7 @@ static void drawarc(BCG *Xgc,int arc[])
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
-  DRAW_CHECK; /* FIXME */
+   /* FIXME */
   Xgc->graphic_engine->generic->fillarc(Xgc,arc);
 }
 
@@ -249,7 +249,7 @@ static void fillarc(BCG *Xgc,int arc[])
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
@@ -270,7 +270,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
   int dash,color,i;
-  DRAW_CHECK;
+  
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
   for (i = 0 ; i< n ; i++)
@@ -314,7 +314,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
   gint i;
   if ( n <= 1) return;
-  DRAW_CHECK;
+  
   glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
   if ( closeflag == 1 ) 
     glBegin(GL_LINE_LOOP);
@@ -338,7 +338,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 {
   gint i;
   if ( n <= 1) return;
-  DRAW_CHECK;
+  
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex2i( vx[i], vy[i]);
   glEnd();
@@ -352,7 +352,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
-  DRAW_CHECK;
+  
   if ( Xgc->CurHardSymb == 0 )
     {
       gint i;
@@ -396,7 +396,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
@@ -408,7 +408,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
@@ -441,7 +441,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   PangoRectangle ink_rect,logical_rect;
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
-  DRAW_CHECK;
+  
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
@@ -485,7 +485,7 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
-  DRAW_CHECK;
+  
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /*  PangoLayoutLine *line;
    *  nline = pango_layout_get_line_count(Xgc->private->layout); 
@@ -636,7 +636,7 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 
 static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->draw_pixbuf(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
 }
 
@@ -1317,7 +1317,7 @@ void nsp_ogl_set_3dview(BCG *Xgc)
 
 static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double y2, double z2)
 {
-  DRAW_CHECK;
+  
   glBegin(GL_LINES);
   glVertex3d(x1, y1, z1);
   glVertex3d(x2, y2, z2);
@@ -1327,7 +1327,7 @@ static void drawline3D(BCG *Xgc,double x1,double y1, double z1, double x2,double
 void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag)
 {
   int dash,color,i;
-  DRAW_CHECK;
+  
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( iflag == 1) { /* one style per segment */
@@ -1352,7 +1352,7 @@ void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int clos
 {
   gint i;
   if ( n <= 1) return;
-  DRAW_CHECK;
+  
   glEnable(GL_POLYGON_OFFSET_FILL);
   glPolygonOffset(1.0,1.0);
   glBegin(GL_POLYGON);
@@ -1385,7 +1385,7 @@ void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy,
 			   double *vectsz, int *fillvect,int n, int p)
 {
   int dash,color,i;
-  DRAW_CHECK;
+  
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
 
@@ -1426,7 +1426,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 {
   gint i;
   if ( n <= 1) return;
-  DRAW_CHECK;
+  
 #if 1
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) 
@@ -1472,7 +1472,7 @@ static void fillpolyline3D_shade(BCG *Xgc, double *vx, double *vy, double *vz,in
 void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p)
 {
   int dash,color,i;
-  DRAW_CHECK;
+  
   /* xget_dash_and_color(Xgc,&dash,&color); */
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -1512,7 +1512,7 @@ static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 {
   gint i;
   if ( n <= 1) return;
-  DRAW_CHECK;
+  
   glBegin(GL_POLYGON);
   for ( i=0 ;  i< n ; i++) glVertex3d( vx[i], vy[i], vz[i]);
   glEnd();
@@ -1523,7 +1523,7 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 { 
   gint i;
   if ( n <= 1) return;
-  DRAW_CHECK;
+  
   glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
   if ( closeflag == 1 ) 
     glBegin(GL_LINE_LOOP);
@@ -1540,7 +1540,7 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
  */
 static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
 {
-  DRAW_CHECK;
+  
   printf("To be done drawpolymark3D \n");
 }
 
@@ -1548,7 +1548,7 @@ void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, in
 { 
   int symb[2],dash,color,i,close;
   /* store the current values */
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->xget_mark(Xgc,symb);
   dash = Xgc->graphic_engine->xget_dash(Xgc);
   color = Xgc->graphic_engine->xget_pattern(Xgc);

@@ -56,7 +56,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   if ( ((NspCurve *) self)->obj->mode !=  mode)
     {
       ((NspCurve *) self)->obj->mode =  mode;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
+      nsp_graphic_invalidate((NspGraphic *) self);
     }
   return OK;
 }

@@ -19,9 +19,7 @@ include-start Axes
 %%
 include-public Axes
 
-/* inserted at the end of public part of include file
- * of figure.h
- */
+/* inserted at the end of public part of include file */
 
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2]);
@@ -31,7 +29,8 @@ extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
 extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
-
+extern int nsp_axes_insert_child(NspAxes *A, NspGraphic *G);
+extern void nsp_axes_invalidate(NspGraphic *G);
 
 %%
 include-private Axes
@@ -88,6 +87,8 @@ override-type  Axes
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_axes_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_axes_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
+  ((NspTypeGraphic *) type->surtype)->invalidate = nsp_axes_invalidate;
+
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */
@@ -107,7 +108,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspAxes *) self)->obj->rho != rho) 
     {
       ((NspAxes *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
+      nsp_axes_invalidate((NspGraphic *) self);
     }
   return OK;
 }
@@ -615,17 +616,28 @@ static void nsp_scale_axes(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_axes(NspGraphic *Obj,double *bounds)
 {
   NspAxes *P = (NspAxes *) Obj;
-  if ( P->obj->top == TRUE) return FALSE;
-  /* get the bound in parent i.e given by wrect : upper-left w,h */
-  bounds[0]=P->obj->wrect->R[0]; /* xmin */
-  bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
-  bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
-  bounds[3]=P->obj->wrect->R[1];/* ymax */
+  if ( P->obj->top == TRUE)
+    {
+      nsp_figure *Fig = (((NspGraphic *) Obj)->obj->Fig);
+      BCG *Xgc= Fig->Xgc;
+      /* tolevel axe: we need the window dimension */
+      int wdim[2];
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      bounds[0]= P->obj->wrect->R[0]*wdim[0];
+      bounds[1]= (P->obj->wrect->R[1]- P->obj->wrect->R[3])*wdim[1];
+      bounds[2]= (P->obj->wrect->R[0]+P->obj->wrect->R[2])*wdim[0];
+      bounds[3]= P->obj->wrect->R[1]*wdim[1];
+    }
+  else
+    {
+      /* get the bound in parent i.e given by wrect : upper-left w,h */
+      bounds[0]=P->obj->wrect->R[0]; /* xmin */
+      bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
+      bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
+      bounds[3]=P->obj->wrect->R[1];/* ymax */
+    }
   return TRUE;
 }
-
-
-
 
 static void nsp_axes_link_figure(NspGraphic *G, void *F, void *A)
 {
@@ -913,4 +925,61 @@ static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 {
   nsp_scale_default(scale);
+}
+
+/**
+ * nsp_axes_insert_child:
+ * @A: a #NspAxes
+ * @G: a #NspGraphic 
+ * 
+ * inserts @G in the given axe @A. The bounds 
+ * of the axes are updated acordingly and an 
+ * invalidate operation is raised using the 
+ * graphic object. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_axes_insert_child(NspAxes *A, NspGraphic *G)
+{
+  /* XXX inside_bounds: to be inserted in structure */
+  double inside_bounds[4];
+  if ( nsp_list_end_insert(A->obj->children,(NspObject *) G )== FAIL)
+    return FAIL;
+  nsp_graphic_link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
+  /* nsp_list_link_figure(A->obj->children,((NspGraphic *) A)->obj->Fig,A->obj); */
+  /* updates the bounds of the axe */
+  nsp_axes_compute_inside_bounds(NULL,(NspGraphic *) A,inside_bounds);
+  /* raise an invalidate operation */
+  nsp_graphic_invalidate((NspGraphic *) G);
+  return OK;
+}
+
+/* invalidate the drawing region associated to an axes object. 
+ */
+
+void nsp_axes_invalidate(NspGraphic *G)
+{
+  NspAxes *P = (NspAxes *) G;
+  if ( P->obj->top == TRUE)
+    {
+      gint rect[4]; /* like a GdkRectangle */
+      int wdim[2];
+      nsp_figure *F = G->obj->Fig;
+      BCG *Xgc;
+      if ( F == NULL ) return ;
+      if ((Xgc= F->Xgc) == NULL) return ;
+      if ( F->draw_now== FALSE) return;
+      if ( G->obj->hidden == TRUE ) return;
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      rect[0]= P->obj->wrect->R[0]*wdim[0];
+      rect[1]= P->obj->wrect->R[1]*wdim[1];
+      rect[2]= P->obj->wrect->R[2]*wdim[0];
+      rect[3]= P->obj->wrect->R[3]*wdim[1];
+      Xgc->graphic_engine->force_redraw(Xgc,rect);
+    }
+  else
+    {
+      return nsp_graphic_invalidate(G);
+    }
 }

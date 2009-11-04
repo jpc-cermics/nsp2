@@ -31,7 +31,7 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
   /* switch to a clear gc */
   int cur_alu = Xgc->CurDrawFunction;
   int clear = 0 ; /* 0 is the Xclear alufunction */;
-  DRAW_CHECK;
+  
 
   if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
@@ -59,7 +59,7 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
-  DRAW_CHECK;
+  
   gdk_draw_line(Xgc->private->drawable,Xgc->private->wgc, x1, yy1, x2, y2);
 }
 
@@ -71,7 +71,7 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
 }
 
@@ -84,7 +84,7 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
@@ -104,7 +104,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
@@ -112,7 +112,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
-  DRAW_CHECK;
+  
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,
 		     rect[0],rect[1],rect[2],rect[3]);
 }
@@ -121,7 +121,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
-  DRAW_CHECK;
+  
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,rect[0],rect[1],rect[2],rect[3]);
 }
 
@@ -136,7 +136,7 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
@@ -153,7 +153,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
@@ -173,7 +173,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
@@ -188,7 +188,7 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
@@ -196,7 +196,7 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
-  DRAW_CHECK;
+  
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,FALSE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
@@ -205,7 +205,7 @@ static void drawarc(BCG *Xgc,int arc[])
 
 static void fillarc(BCG *Xgc,int arc[])
 { 
-  DRAW_CHECK;
+  
   gdk_draw_arc(Xgc->private->drawable, Xgc->private->wgc,TRUE,
 	       arc[0],arc[1],arc[2],arc[3],arc[4],arc[5]);
 }
@@ -219,7 +219,7 @@ static void fillarc(BCG *Xgc,int arc[])
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
@@ -237,7 +237,7 @@ static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n
 
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p);
 }
 
@@ -250,7 +250,7 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
 static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 { 
   int n1;
-  DRAW_CHECK;
+  
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
@@ -269,7 +269,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag) 
 {
   int n1;
-  DRAW_CHECK;
+  
   if (closeflag == 1) n1 = n+1;else n1= n;
   if ( gtk_store_points(n, vx, vy, closeflag)) 
     {
@@ -284,7 +284,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
-  DRAW_CHECK;
+  
   if ( Xgc->CurHardSymb == 0 )
     {
       if (gtk_store_points(n, vx, vy,(int)0L))
@@ -326,7 +326,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
@@ -338,7 +338,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
@@ -347,7 +347,7 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
 static void draw_mark(BCG *Xgc,int *x, int *y)
 { 
   char str[2]={0,0};
-  DRAW_CHECK;
+  
   str[0]=Marks[Xgc->CurHardSymb]; 
   gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
 		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
@@ -371,7 +371,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
 { 
   gint lbearing, rbearing, iascent, idescent, iwidth;
-  DRAW_CHECK;
+  
   gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
 		     &iwidth, &iascent, &idescent);
   if ( Abs(angle) <= 0.1) 
@@ -419,7 +419,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 {
   GdkPixbuf *pixbuf = pix;
   /* we could here limit the drawing to the visible part */
-  DRAW_CHECK;
+  
   gdk_draw_pixbuf(Xgc->private->drawable,
 		  Xgc->private->wgc,
 		  pixbuf,

@@ -103,7 +103,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
   type->init = (init_func *) init_graphic;
 
-#line 65 "codegen/graphic.override"
+#line 67 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
@@ -119,8 +119,9 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->children = NULL;
   type->zmean = NULL; 
   type->n_faces = NULL;
+  type->invalidate = nsp_graphic_invalidate;
 
-#line 124 "graphic.c"
+#line 125 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -515,7 +516,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 83 "codegen/graphic.override"
+#line 86 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -529,10 +530,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 533 "graphic.c"
+#line 534 "graphic.c"
 
 
-#line 98 "codegen/graphic.override"
+#line 101 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -544,10 +545,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 548 "graphic.c"
+#line 549 "graphic.c"
 
 
-#line 111 "codegen/graphic.override"
+#line 114 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -558,10 +559,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 562 "graphic.c"
+#line 563 "graphic.c"
 
 
-#line 123 "codegen/graphic.override"
+#line 136 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -570,7 +571,19 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 574 "graphic.c"
+#line 575 "graphic.c"
+
+
+#line 126 "codegen/graphic.override"
+static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  self->type->invalidate(self);
+  return 0;
+}
+
+#line 587 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -578,6 +591,7 @@ static NspMethods graphic_methods[] = {
   {"scale",(nsp_method *) _wrap_graphic_scale},
   {"rotate",(nsp_method *) _wrap_graphic_rotate},
   {"unlink",(nsp_method *) _wrap_graphic_unlink},
+  {"invalidate",(nsp_method *) _wrap_graphic_invalidate},
   { NULL, NULL}
 };
 
@@ -640,7 +654,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 133 "codegen/graphic.override"
+#line 146 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -862,7 +876,10 @@ void nsp_graphic_invalidate(NspGraphic *G)
     }
   else
     {
-      /* a full window force redraw or nothing ? */
+      /* XXX : here it should be better to invalidate 
+       * the axe or objs3d in which we are stored.
+       * a full window force redraw or nothing ? 
+       */
       Xgc->graphic_engine->force_redraw(Xgc,NULL);
     }
 }
@@ -891,4 +908,4 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
 }
 
 
-#line 895 "graphic.c"
+#line 912 "graphic.c"

@@ -219,7 +219,7 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
-  DRAW_CHECK;
+  ;
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /*  PangoLayoutLine *line;
    *  nline = pango_layout_get_line_count(Xgc->private->layout); 
@@ -341,7 +341,7 @@ static void displaystring_xxx(BCG *Xgc,char *str, int x, int y, int flag,double 
   GdkPixbuf *rgba = NULL;
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
-  DRAW_CHECK;
+  ;
 
   if (0 &&  AluStruc_[Xgc->CurDrawFunction].id != GDK_XOR )
     {
@@ -484,7 +484,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   PangoRectangle ink_rect;
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
-  DRAW_CHECK;
+  ;
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);

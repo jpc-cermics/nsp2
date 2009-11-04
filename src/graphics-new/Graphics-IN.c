@@ -38,6 +38,7 @@
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h> 
+#include <nsp/compound.h> 
 #include <nsp/curve.h> 
 #include <nsp/polyline.h> 
 #include <nsp/vfield.h> 
@@ -474,18 +475,25 @@ static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
 }
 
 
-/*-------------------------------------------------------------------
- * champ 
- * champ(x,y,fx,fy,[arfact=1.0,rect=[xMin,yMin,xMax,yMax],flag])
- * champ1(x,y,fx,fy,[arfact=1.0,rect=[xMin,yMin,xMax,yMax],flag])
- *-------------------------------------------------------------------*/
 
-typedef int (*vf_func)(BCG *Xgc,double *x, double *y, double *fx, double *fy, int *n1, int *n2,
-		       char *strflag, double *brect, double *arfact);
+/**
+ * int_champ_G:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * @func: 
+ * @colored: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-
-static int int_champ_G(Stack stack, int rhs, int opt, int lhs,vf_func func,int colored )
+static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 {
+  NspAxes *axe;
+  NspVField *vf;
   BCG *Xgc;
   NspMatrix *x,*y,*fx,*fy,*rect=NULL;
   double arfact =1.0,*R;
@@ -511,54 +519,63 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,vf_func func,int c
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-#ifdef NEW_GRAPHICS 
-  {
-    NspAxes *axe;
-    NspVField *vf;
-    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
-    /* create a vfield and insert-it in axes */
-    if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
-    if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
-    if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return FAIL;
-    if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return FAIL;
-    vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
-    if ( vf == NULL) return FAIL;
-    /* insert the new vfield */
-    if ( nsp_list_end_insert( axe->obj->children,(NspObject *) vf )== FAIL)
-      return FAIL;
-    nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-    /* updates the axes scale information */
-    nsp_strf_axes(Xgc, axe , R, strf[1]);
-    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-  }
-#else 
-  (*func)(Xgc,x->R,y->R,fx->R,fy->R,&fx->m,&fx->n,strf,R, &arfact);
-#endif 
+  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+  /* create a vfield and insert-it in axes */
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
+  if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return FAIL;
+  if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return FAIL;
+  vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
+  if ( vf == NULL) return FAIL;
+  /* insert the new vfield */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) vf)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(rect));
+      return 1;
+    }
   return 0;
 }
 
-static int int_champ( Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_champ_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int int_champ_new( Stack stack, int rhs, int opt, int lhs)
 {
   if (rhs <= 0) return sci_demo(NspFname(stack),"champ(1:10,1:10,rand(10,10),rand(10,10));",1);
-#ifdef NEW_GRAPHICS
-  return int_champ_G( stack, rhs,opt,lhs, NULL, FALSE);
-#else 
-  return int_champ_G( stack, rhs,opt,lhs, nsp_champ_old, FALSE);
-#endif 
-
+  return int_champ_G( stack, rhs,opt,lhs, FALSE);
 }
 
-static int int_champ1( Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_champ1_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int int_champ1_new( Stack stack, int rhs, int opt, int lhs)
 {
   if (rhs <= 0) return sci_demo(NspFname(stack),"champ1(1:10,1:10,rand(10,10),rand(10,10));",1);
-#ifdef NEW_GRAPHICS
-  return int_champ_G( stack, rhs, opt, lhs,NULL,TRUE);
-#else 
-  return int_champ_G( stack, rhs, opt, lhs,nsp_champ1_old,TRUE);
-#endif 
-
+  return int_champ_G( stack, rhs, opt, lhs,TRUE);
 }
-
 
 
 /*-----------------------------------------------------------
@@ -2106,7 +2123,7 @@ static int int_grayplot( Stack stack, int rhs, int opt, int lhs)
  * idem optional arguments ....
  *-----------------------------------------------------------*/
 
-static int int_matplot(Stack stack, int rhs, int opt, int lhs) 
+static int int_matplot_new(Stack stack, int rhs, int opt, int lhs) 
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "colminmax",mat_int,NULLOBJ,-1},
@@ -2122,6 +2139,7 @@ static int int_matplot(Stack stack, int rhs, int opt, int lhs)
 			 { "zminmax",mat,NULLOBJ,-1},
 			 { NULL,t_end,NULLOBJ,-1}};
   
+  NspAxes *axe;
   BCG *Xgc;
   NspMatrix *z; 
   /* for 2d optional arguments; */
@@ -2155,13 +2173,12 @@ static int int_matplot(Stack stack, int rhs, int opt, int lhs)
   if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,
+		   &rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
-  
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-#ifdef NEW_GRAPHICS 
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
+  axe =  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return FAIL;
   /* create a gmatrix and insert-it in axes */
   if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
@@ -2183,18 +2200,20 @@ static int int_matplot(Stack stack, int rhs, int opt, int lhs)
   NspGMatrix *gm = nsp_gmatrix_create("gm",z,Mrect,remap,Mcolminmax,Mzminmax,NULL);
   if ( gm == NULL) return FAIL;
   /* insert the new matrix */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe ,rect, strf[1]);
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-#else 
-  nsp_draw_matrix_1_old(Xgc,z->R,z->m,z->n,strf,rect,nax,remap,
-			(Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
-			(Mzminmax == NULL) ? NULL : Mzminmax->R);
-#endif 
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(gm));
+      return 1;
+    }
   return 0;
 } 
 
@@ -2202,7 +2221,7 @@ static int int_matplot(Stack stack, int rhs, int opt, int lhs)
  * Matplot1 
  *-----------------------------------------------------------*/
 
-static int int_matplot1(Stack stack, int rhs, int opt, int lhs)
+static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "colminmax",mat_int,NULLOBJ,-1},
@@ -2226,6 +2245,7 @@ static int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 
   BCG *Xgc;
   NspMatrix *M,*Rect; 
+  NspAxes *axe;
 
   int_types T[] = {realmat, realmat, new_opts, t_end} ;
 
@@ -2251,8 +2271,7 @@ static int int_matplot1(Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-#ifdef NEW_GRAPHICS 
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
+  axe =  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return FAIL;
   /* create a gmatrix and insert-it in axes */
   if ( ( M = (NspMatrix *)  nsp_object_copy_and_name("M",NSP_OBJECT(M))) == NULLMAT) return FAIL;
@@ -2273,20 +2292,22 @@ static int int_matplot1(Stack stack, int rhs, int opt, int lhs)
     }
   NspGMatrix *gm = nsp_gmatrix_create("gm",M,Rect,remap,Mcolminmax,Mzminmax,NULL);
   if ( gm == NULL) return FAIL;
+
   /* insert the new matrix */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe , NULL, '2');
   nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-#else 
-  nsp_draw_matrix_2_old(Xgc,M->R, M->m,M->n,Rect->R,remap,
-			(Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R,
-			(Mzminmax == NULL) ? NULL : Mzminmax->R);
-#endif
-  if ( Mstyle != Mistyle)  nsp_matrix_destroy(Mistyle);
-		    
+  if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(gm));
+      return 1;
+    }
   return 0;
 } 
 
@@ -2398,16 +2419,19 @@ BCG *nsp_check_graphic_context(void)
 } 
 
 
-#ifdef NEW_GRAPHICS 
+/**
+ * int_xarc:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-/*-----------------------------------------------------------
- *   xrect(x,y,w,h,opts) etendu a xrect([x,y,w,h],opts)
- *   opts: color =       ( line color )
- *         thickness =       ( line width )
- *         background=   ( also fill the rectangle)
- *-----------------------------------------------------------*/
-
-static int int_xarc(Stack stack, int rhs, int opt, int lhs)
+static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrArc *arc;
   NspAxes *axe; 
@@ -2427,57 +2451,45 @@ static int int_xarc(Stack stack, int rhs, int opt, int lhs)
   if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) arc )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) arc)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(arc));
+      return 1;
+    }
   return 0;
 } 
 
-static int int_xfarc(Stack stack, int rhs, int opt, int lhs) 
+static int int_xfarc_new(Stack stack, int rhs, int opt, int lhs) 
 {
-  return int_xarc(stack,rhs,opt,lhs);
+  return int_xarc_new(stack,rhs,opt,lhs);
 }
 
-#else 
-
-/*-----------------------------------------------------------
- * xarc(...)
- *-----------------------------------------------------------*/
-
-static int int_xarc_G(Stack stack, int rhs, int opt, int lhs,char *name, void (*f)(BCG *Xgc,double arc[]))
-{
-  BCG *Xgc;
-  double *val=NULL;
-  if ( get_arc(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  f(Xgc,val);
-  return 0;
-} 
-
-static int int_xarc(Stack stack, int rhs, int opt, int lhs) 
-{
-  BCG *Xgc=nsp_check_graphic_context();
-  return int_xarc_G(stack,rhs,opt,lhs,"xarc",Xgc->graphic_engine->scale->drawarc);
-}
-
-static int int_xfarc(Stack stack, int rhs, int opt, int lhs) 
-{
-  BCG *Xgc=nsp_check_graphic_context();
-  return int_xarc_G(stack,rhs,opt,lhs,"xfarc",Xgc->graphic_engine->scale->fillarc);
-}
-
-#endif 
-
-#ifdef NEW_GRAPHICS 
-
-/* generic function for xrects and xarcs and xfarcs 
+/**
+ * int_xarcs_G:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * @nrow: 
+ * @flag: 
+ * 
+ * generic function for xrects and xarcs and xfarcs 
  * with backward compatibility. 
  * 
- */
+ * 
+ * Returns: 
+ **/
 
-static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
+static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
 {
+  int compound = TRUE;
+  NspList *L;
+  NspCompound *C;
   NspGraphic *gobj;
   NspAxes *axe; 
   BCG *Xgc;
@@ -2490,6 +2502,7 @@ static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
   nsp_option opts[] ={{ "background", realmat,NULLOBJ,-1},
 		      { "color",realmat,NULLOBJ,-1},
 		      { "thickness", realmat,NULLOBJ,-1},
+		      { "compound", s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   CheckStdRhs(1,2);
@@ -2503,7 +2516,8 @@ static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
       CheckLength(NspFname(stack),2, color_std, arcs->n);
     }
   
-  if ( get_optional_args(stack,rhs,opt,opts,&background,&color,&thickness) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&background,&color,&thickness,&compound) == FAIL)
+    return RET_BUG;
   if ( background != NULL) 
     {
       CheckLength(NspFname(stack),opts[0].position, background, arcs->n);
@@ -2521,6 +2535,15 @@ static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
   axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return RET_BUG;
 
+  if ( compound == TRUE ) 
+    {
+      if ((C= nsp_compound_create("c",NULL,NULL,NULL))== NULL) return RET_BUG;
+      L = C->obj->children;
+    }
+  else
+    {
+      L = axe->obj->children;
+    }
   for ( i = 0 ; i < arcs->n ; i++)
     {
       double *val = arcs->R + i*(arcs->m);
@@ -2580,112 +2603,115 @@ static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int nrow,int flag)
 	}
       if ( nrow == 6 ) 
 	{
-	  if ((gobj =(NspGraphic *) nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],
+	  if ((gobj =(NspGraphic *) nsp_grarc_create("arc",val[0],val[1],val[2],val[3],val[4],val[5],
 						     iback,ithickness,icolor,NULL)) == NULL)
 	    return RET_BUG;
 	}
       else 
 	{
-	  if ((gobj =(NspGraphic *) nsp_grrect_create("pl",val[0],val[1],val[2],val[3],
+	  if ((gobj =(NspGraphic *) nsp_grrect_create("rect",val[0],val[1],val[2],val[3],
 						      iback,ithickness,icolor,NULL))== NULL)
 	    return RET_BUG;
+	
 	}
-      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL)
-	return RET_BUG;
-    }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-  return 0;
-} 
-
-static int int_xrects(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_xarcs_G(stack,rhs,opt,lhs,4,0);
-}
-
-static int int_xarcs(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_xarcs_G(stack,rhs,opt,lhs,6,1);
-}
-
-static int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_xarcs_G(stack,rhs,opt,lhs,6,2);
-}
-
-
-#else 
-
-typedef  void (*f_xarcs)(BCG *Xgc,double vects[],int fillvect[], int n);
-
-
-static int int_xarcs_G(Stack stack, int rhs, int opt, int lhs,int row,int flag,char *name,f_xarcs f)
-{
-  BCG *Xgc;
-  NspMatrix *arcs,*styles;
-  CheckRhs(1,2);
-  if ((arcs = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-  CheckRows(NspFname(stack),1,arcs,row) ;
-
-  if (rhs == 2) 
-    {
-      if ((styles= GetRealMatInt(stack,2))  == NULLMAT) return RET_BUG;
-      CheckVector(NspFname(stack),2,styles);
-      if ( styles->mn != arcs->n ) {
-	Scierror("%s: first and second arguments have incompatible length\n",NspFname(stack));
-	return RET_BUG;
-      }
-    }
-  else 
-    {
-      switch (flag) 
+      if ( compound == TRUE ) 
 	{
-	case 1: 
-	  if (( styles = nsp_matrix_create_impl(1.0,1.0,arcs->n) ) == NULLMAT) return RET_BUG;
-	  break;
-	default:
-	  if (( styles =nsp_mat_zeros(1,arcs->n))  == NULLMAT) return RET_BUG;
-	  break;
-	  
+	  /* insert in the compound */
+	  if ( nsp_list_end_insert(L,(NspObject *) gobj )== FAIL)
+	    return RET_BUG;
 	}
-      styles= Mat2int(styles);
-      StackStore(stack,(NspObject *) styles,2); /* to be sure that styles will be cleaned */
-    }  
-
-  Xgc=nsp_check_graphic_context();
-  f(Xgc,arcs->R,(int *)styles->R,arcs->n);
+      else
+	{
+	  if (  nsp_axes_insert_child(axe,(NspGraphic *) gobj)== FAIL) 
+	    return RET_BUG;
+	}
+    }
+  if ( compound == TRUE ) 
+    {
+      /* insert the compound in the axe */
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) C)== FAIL) 
+	{
+	  Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  if ( lhs == 1 ) 
+    {
+      if ( compound == TRUE ) 
+	{
+	  MoveObj(stack,1,NSP_OBJECT(C));
+	}
+      else
+	{
+	  MoveObj(stack,1,NSP_OBJECT(gobj));
+	}
+      return 1;
+    }
   return 0;
 } 
 
+/**
+ * int_xrects:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int int_xarcs(Stack stack, int rhs, int opt, int lhs)
+static int int_xrects_new(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc=nsp_check_graphic_context();
-  return int_xarcs_G(stack,rhs,opt,lhs,6,0,"xarcs",Xgc->graphic_engine->scale->drawarcs);
+  return int_xarcs_G_(stack,rhs,opt,lhs,4,0);
 }
 
-static int int_xrects(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_xarcs:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+static int int_xarcs_new(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc=nsp_check_graphic_context();
-  return int_xarcs_G(stack,rhs,opt,lhs,4,0,"xrects",Xgc->graphic_engine->scale->drawrectangles);
+  return int_xarcs_G_(stack,rhs,opt,lhs,6,1);
 }
 
-static int int_xfarcs(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_xfarcs:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+static int int_xfarcs_new(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc=nsp_check_graphic_context();
-  return int_xarcs_G(stack,rhs,opt,lhs,6,1,"xfarcs",Xgc->graphic_engine->scale->fillarcs);
+  return int_xarcs_G_(stack,rhs,opt,lhs,6,2);
 }
 
+/**
+ * int_xarrows:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-#endif 
-
-/*-----------------------------------------------------------
- *   xarrows(nx,ny,[arsize=,style=])
- *-----------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
-
-static int int_xarrows(Stack stack, int rhs, int opt, int lhs)
+static int int_xarrows_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe; 
   NspArrows *pl;
@@ -2726,66 +2752,33 @@ static int int_xarrows(Stack stack, int rhs, int opt, int lhs)
   /* passer color en entiers ? */
   if ((pl = nsp_arrows_create("ar",x,y,color,arsize,NULL))== NULL)
     return RET_BUG;
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-  return 0;
-}
 
-#else 
-
-static int int_xarrows(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int dstyle = -1;
-  double arsize=-1.0 ;
-  NspMatrix *nx,*ny,*Mstyle=NULL;
-
-  int_types T[] = {realmat,realmat,new_opts, t_end} ;
-
-  nsp_option opts[] ={{ "arsize",s_double,NULLOBJ,-1},
-		      { "style",mat_int,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
-
-  if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&opts,&arsize,&Mstyle) == FAIL) return RET_BUG;
-
-  CheckSameDims(NspFname(stack),1,2,nx,ny);
-  if ( nx->mn == 0) { return 0;} 
-
-  Xgc=nsp_check_graphic_context();
-  
-  if ( Mstyle != NULLMAT) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
     {
-      if ( Mstyle->mn == 1) 
-	{
-	  dstyle = ((int*) Mstyle->R)[0];
-	  Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,&dstyle,0);
-	}
-      else 
-	{
-	  if ( Mstyle->mn != nx->mn/2 ) {
-	    Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
-	    return RET_BUG;
-	  }
-	  Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,(int*) Mstyle->R,1);
-	}
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
     }
-  else 
+  if ( lhs == 1 ) 
     {
-      Xgc->graphic_engine->scale->drawarrows(Xgc,nx->R,ny->R,nx->mn,arsize,&dstyle,0);
+      MoveObj(stack,1,NSP_OBJECT(pl));
+      return 1;
     }
   return 0;
 }
 
-#endif 
 
-
-#ifdef NEW_GRAPHICS 
-
-static int int_xsegs(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_xsegs:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe; 
   NspSegments *pl;
@@ -2823,60 +2816,20 @@ static int int_xsegs(Stack stack, int rhs, int opt, int lhs)
   /* passer color en entiers ? */
   if ((pl = nsp_segments_create("ar",x,y,color,NULL))== NULL)
     return RET_BUG;
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
+
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(pl));
+      return 1;
+    }
   return 0;
 }
 
-#else 
-
- 
-/*-----------------------------------------------------------
- *   xsegs(xv,yv,style=)
- *-----------------------------------------------------------*/
-
-static int int_xsegs(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int dstyle = -1;
-  NspMatrix *nx,*ny,*Mstyle=NULL;
-  int_types T[] = {realmat,realmat,new_opts, t_end} ;
-  nsp_option opts[] ={{ "style",mat_int,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  if ( GetArgs(stack,rhs,opt,T,&nx,&ny,&opts,&Mstyle) == FAIL) return RET_BUG;
-
-  CheckSameDims(NspFname(stack),1,2,nx,ny);
-  if ( nx->mn == 0) { return 0;} 
-
-  Xgc=nsp_check_graphic_context();
-
-  if ( Mstyle != NULLMAT) 
-    {
-      if ( Mstyle->mn == 1) 
-	{
-	  dstyle = ((int*) Mstyle->R)[0];
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&dstyle,0);
-	}
-      else 
-	{
-	  if ( Mstyle->mn != nx->mn/2 ) {
-	    Scierror("%s: style has a wrong size (%d), expecting (%d)\n",NspFname(stack),Mstyle->mn, nx->mn/2  );
-	    return RET_BUG;
-	  }
-	  Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,(int*) Mstyle->R,1);
-	}
-    }
-  else 
-    {
-      Xgc->graphic_engine->scale->drawsegments(Xgc,nx->R,ny->R,nx->mn,&dstyle,0);
-    }
-  return 0;
-} 
-
-#endif 
 
 /*-----------------------------------------------------------
  * old version : kept for backward compatibility 
@@ -3037,11 +2990,14 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
   return OK;
 }
 
-
-#ifdef NEW_GRAPHICS 
-
-/* interface to xrect which mixes xrect and xfrect
+/**
+ * int_xrect_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
  * 
+ * Interface for xrect which mixes xrect and xfrect.
  * The values of the optional parameters are used in the following manner 
  * color: If color is not given it will be set to the <<current color>> 
  *        If color is given a value of -1 the color will be set at run time using 
@@ -3049,9 +3005,11 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
  *        If color is given a value of -2 draw is not performed.
  * back: the same except that the default value is -2 
  * 
- */
+ * 
+ * Returns: 0 or 1 or %RET_BUG;
+ **/
 
-static int int_xrect(Stack stack, int rhs, int opt, int lhs)
+static int int_xrect_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrRect *rect;
   NspAxes *axe; 
@@ -3072,80 +3030,43 @@ static int int_xrect(Stack stack, int rhs, int opt, int lhs)
 
   if ( opts[1].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
   if ( opts[2].obj == NULLOBJ) width = Xgc->graphic_engine->xget_thickness(Xgc);
-
+  /* create the object */
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,NULL))== NULL)
     return RET_BUG;
-  /* insert the object */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-  return 0;
-} 
-
-#else 
-
-/*-----------------------------------------------------------
- *   xrect(x,y,w,h,opts) etendu a xrect([x,y,w,h],opts)
- *   opts: color =       ( line color )
- *         thickness =       ( line width )
- *         background=   ( also fill the rectangle)
- *-----------------------------------------------------------*/
-
-static int int_xrect(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  double *val=NULL;
-  int cpat=0,cwidth=0,back,color,width;
-
-  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
-		      { "color",s_int,NULLOBJ,-1},
-		      { "thickness",s_int,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  CheckRhs(1,7);
-
-  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
-
-  Xgc=nsp_check_graphic_context();
-
-  if ( opt != 0 ) 
+  /* insert the object in the axe */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) rect)== FAIL) 
     {
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-      cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
-      if ( opts[0].obj != NULLOBJ) 
-	{
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,back);
-	  Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
-	}
-      if ( opts[1].obj != NULLOBJ) 
-	Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
-      if ( opts[2].obj != NULLOBJ) 
-	Xgc->graphic_engine->scale->xset_thickness(Xgc,width);
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
     }
-
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,val);
-
-  if ( opt != 0 ) 
+  if ( lhs == 1 ) 
     {
-      Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
-      Xgc->graphic_engine->scale->xset_thickness(Xgc,cwidth);
+      MoveObj(stack,1,NSP_OBJECT(rect));
+      return 1;
     }
   return 0;
 } 
 
-#endif 
+/**
+ * int_xfrect_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * Interface for xfrect which mixes xrect and xfrect.
+ * The values of the optional parameters are used in the following manner 
+ * color: If color is not given it will be set to the <<current color>> 
+ *        If color is given a value of -1 the color will be set at run time using 
+ *                 the figure default color. 
+ *        If color is given a value of -2 draw is not performed.
+ * back: the same except that the default value is -2 
+ * 
+ * 
+ * Returns: 0 or 1 or %RET_BUG;
+ **/
 
-/*-----------------------------------------------------------
- *   xfrect(x,y,w,h,opts) etendu a xfrect([x,y,w,h],opts)
- *   opts: color =       ( fill color )
- *-----------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
-
-static int int_xfrect(Stack stack, int rhs, int opt, int lhs)
+static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrRect *rect;
   NspAxes *axe; 
@@ -3173,43 +3094,6 @@ static int int_xfrect(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
-#else 
-
-static int int_xfrect(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  double *val=NULL;
-  int cpat,color;
-
-  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  CheckStdRhs(1,5);
-
-  if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&color) == FAIL) return RET_BUG;
-
-  Xgc=nsp_check_graphic_context();
-  if ( opt != 0 ) 
-    {
-      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-      if ( opts[0].obj != NULLOBJ) 
-	{
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc, color);
-	  Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
-	}
-      else 
-	Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
-    }
-  else 
-    {
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,val);
-    }
-  return 0;
-} 
-
-#endif 
 
 /*-----------------------------------------------------------
  *   xclear(window-ids,[tape_clean])
@@ -3406,12 +3290,20 @@ static int int_xend(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
- *   xgrid([style])
- *-----------------------------------------------------------*/
-
-static int int_xgrid(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_xgrid_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+static int int_xgrid_new(Stack stack, int rhs, int opt, int lhs)
 {
+  NspAxes *axe;
   BCG *Xgc;
   int style = 0;
   CheckRhs(-1,1);
@@ -3419,25 +3311,23 @@ static int int_xgrid(Stack stack, int rhs, int opt, int lhs)
     if (GetScalarInt(stack,1,&style) == FAIL) return RET_BUG;
   }
   Xgc=nsp_check_graphic_context();
-#ifdef NEW_GRAPHICS 
-  {
-    NspAxes *axe;
-    if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
-    axe->obj->grid = style;
-    nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
-  }
-#else 
-  nsp_plot_grid_old(Xgc,&style);
-#endif 
-  /* FIXME nsp_plot_polar_grid(Xgc,&style); */
+  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+  axe->obj->grid = style;
+  nsp_axes_invalidate((NspGraphic *) axe);
   return 0;
 } 
 
-/*-----------------------------------------------------------
- *   xfpoly(xv,yv,[close])
- *-----------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
+/**
+ * int_xfpoly:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
 {
@@ -3470,45 +3360,24 @@ static int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
   if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
   /* insert the polyline */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(pl));
+      return 1;
+    }
   return 0;
 }
-
-#else 
-
-static int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  NspMatrix *l1,*l2;
-  int close=0;
-
-  CheckRhs(2,3);
-
-  if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(NspFname(stack),1,2,l1,l2);
-
-  if (rhs == 3) {
-    if (GetScalarInt(stack,3,&close) == FAIL) return RET_BUG;
-  } 
-
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->scale->fillpolyline(Xgc,l1->R,l2->R,l1->mn,close);
-  return 0;
-}
-
-#endif 
 
 
 /*-----------------------------------------------------------
  *  xfpolys(xpols,ypols,[fill])
  *  interpolated shading added by polpoth 7/7/2000
  *-----------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
 
 static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 {
@@ -3595,61 +3464,11 @@ static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
-#else 
-
-static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  NspMatrix *l1,*l2,*l3;
-  int v1 = 0;
-
-  CheckRhs(2,3);
-
-  if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(NspFname(stack),1,2,l1,l2);
-
-  if (rhs == 3) 
-    {
-      if ((l3=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
-      if ( l3->mn == l1->mn ) 
-	{ 
-	  CheckSameDims(NspFname(stack),1,3,l1,l3);
-	  v1=2; /* interpolated shading */
-	  if ( l3->m != 3 && l3->m != 4 ) 
-	    {
-	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\n",NspFname(stack));
-	      return RET_BUG;
-	    }
-	} 
-      else
-	{
-	  CheckVector(NspFname(stack),3,l3);
-	  CheckDimProp(NspFname(stack),2,3, l3->mn != l2->n);
-	  v1=1; /* flat shading */
-	}
-    }
-  else 
-    {
-      v1=1; /* flat shading */ 
-      if (( l3 =nsp_mat_zeros(1,l2->n))  == NULLMAT) return RET_BUG;
-      l3= Mat2int(l3);
-    }
-
-  Xgc=nsp_check_graphic_context();    
-  Xgc->graphic_engine->scale->fillpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m,v1);
-  return 0;
-} 
-
-#endif 
-
 /*-----------------------------------------------------------
  * 
  *-----------------------------------------------------------*/
 
 #ifdef NEW_GRAPHICS 
-
- 
 
 typedef enum {  
   xget_alufunction, xget_background, xget_clipoff, xget_clipping, xget_color, xget_colormap, 
@@ -4361,17 +4180,23 @@ static int int_xflush(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
+/**
+ * int_xpoly_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  *  xpoly(xv,yv, close = %t|%f , color= , thickness= , mark= , 
  *        type = "lines" | "marks") 
  *    if mark is set then type is set to xmarks 
  *    thickness is only active for xlines 
  *    FIXME: mark_size should be added 
- *-----------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
-
-static int int_xpoly(Stack stack, int rhs, int opt, int lhs)
+ * 
+ * 
+ * Returns: 
+ **/
+static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe; 
@@ -4415,101 +4240,19 @@ static int int_xpoly(Stack stack, int rhs, int opt, int lhs)
 
   if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
-  /* insert the polyline */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
+  /* insert the object in the axe */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(pl));
+      return 1;
+    }
   return 0;
 }
-
-#else 
-
-static int int_xpoly(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int close=0,color,mark,thick;
-  int xmark[2],cmark=0,cthick=0,ccolor=0;
-  char *type;
-
-  NspMatrix *l1,*l2;
-  static char xlines[]="xlines", xmarks[]="xmarks";
-  char *dtype=xlines;
-
-  nsp_option opts[] ={
-    { "close",s_bool,NULLOBJ,-1},
-    { "color",s_int,NULLOBJ,-1},
-    { "mark",s_int,NULLOBJ,-1},
-    { "thickness",s_int,NULLOBJ,-1},
-    { "type",string,NULLOBJ,-1},
-    { NULL,t_end,NULLOBJ,-1}};
-  
-  CheckStdRhs(2,2);
-  if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(NspFname(stack),1,2,l1,l2);
-  if ( l1->mn == 0 ) return 0;
-
-  if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thick,&type) == FAIL) return RET_BUG;
-
-  Xgc=nsp_check_graphic_context();
-
-  if ( opt != 0 ) 
-    {
-      if ( opts[1].obj != NULLOBJ) 
-	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-	  Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
-	}
-      if ( opts[2].obj != NULLOBJ) 
-	{
-	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-	  cmark=xmark[0];
-	  Xgc->graphic_engine->scale->xset_mark(Xgc,mark,xmark[1]);
-	  dtype = xmarks; 
-	}
-      if ( opts[3].obj != NULLOBJ) 
-	{
-	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
-	  Xgc->graphic_engine->scale->xset_thickness(Xgc,thick);
-	}
-      if ( opts[4].obj != NULLOBJ) 
-	{
-	  if ( strncmp(type,"lines",5) == 0) dtype = xlines;
-	  else if (strncmp(type,"marks",5) == 0) dtype = xmarks;
-	  else {
-	    Scierror("%s: type must be \"lines\" or \"marks\"\n",NspFname(stack));
-	    return RET_BUG;
-	  }
-	  if ( opts[2].obj != NULLOBJ && strncmp(type,"lines",5) == 0 )
-	    {
-	      Sciprintf("type is set to \"marks\" since mark is set \n",NspFname(stack));
-	      dtype = xmarks;
-	    }
-	}
-    }
-  
-  if ( dtype == xmarks ) 
-    Xgc->graphic_engine->scale->drawpolymark(Xgc,l1->R,l2->R,l2->mn);
-  else
-    Xgc->graphic_engine->scale->drawpolyline(Xgc,l1->R,l2->R,l2->mn,close);
-
-  if ( opt != 0 ) 
-    {
-      /* reset to default values */
-      if ( opts[1].obj != NULLOBJ) Xgc->graphic_engine->scale->xset_pattern(Xgc,ccolor);
-      if ( opts[2].obj != NULLOBJ) 
-	{
-	  xmark[0]= cmark;  Xgc->graphic_engine->scale->xset_mark(Xgc,xmark[0],xmark[1]);
-	}
-      if ( opts[3].obj != NULLOBJ) Xgc->graphic_engine->scale->xset_thickness(Xgc,cthick);
-    }
-
-  return 0;
-}
-
-#endif
-
 
 /*-----------------------------------------------------------
  * xpoly_clip(xv,yv,clip_rect,opts)
@@ -7378,11 +7121,11 @@ void GraphicsUtil_Interf_Info(int i, char **fname, function (**f))
 #define NAMES(a) a "_new", a 
 
 OpGrTab Graphics_func[]={
-  {NAMES("Matplot"), int_matplot},
-  {NAMES("Matplot1"),int_matplot1}, 
+  {NAMES("Matplot"), int_matplot_new},
+  {NAMES("Matplot1"),int_matplot1_new}, 
   {NAMES("c2dex"),int_c2dex},
-  {NAMES("champ"),int_champ},
-  {NAMES("champ1"),int_champ1},
+  {NAMES("champ"),int_champ_new},
+  {NAMES("champ1"),int_champ1_new},
   {NAMES("contour"),int_contour},
   {NAMES("contour2d"),int_contour2d},
   {NAMES("contour2di"),int_contour2d1},
@@ -7403,9 +7146,9 @@ OpGrTab Graphics_func[]={
   {NAMES("seteventhandler"),int_seteventhandler},
   {NAMES("show_pixbuf"),int_show_pixbuf}, 
   {NAMES("winsid"),int_winsid},
-  {NAMES("xarc"),int_xarc},
-  {NAMES("xarcs"),int_xarcs},
-  {NAMES("xarrows"),int_xarrows},
+  {NAMES("xarc"),int_xarc_new},
+  {NAMES("xarcs"),int_xarcs_new},
+  {NAMES("xarrows"),int_xarrows_new},
   {NAMES("xaxis"),int_xaxis},
   {NAMES("xchange"),int_xchange_new},
   {NAMES("xclea"),int_xclea},
@@ -7417,19 +7160,19 @@ OpGrTab Graphics_func[]={
   {NAMES("xdraw_pixbuf_from_file"),int_draw_pixbuf_from_file},
   {NAMES("xend"),int_xend},
   {NAMES("xexport"),int_xexport},
-  {NAMES("xfarc"),int_xfarc},
-  {NAMES("xfarcs"),int_xfarcs},
+  {NAMES("xfarc"),int_xfarc_new},
+  {NAMES("xfarcs"),int_xfarcs_new},
   {NAMES("xflush"),int_xflush},
   {NAMES("xfpoly"),int_xfpoly},
   {NAMES("xfpolys"),int_xfpolys},
-  {NAMES("xfrect"),int_xfrect},
+  {NAMES("xfrect"),int_xfrect_new},
   {NAMES("xget"),int_xget},
   {NAMES("xget_image"),int_get_image},
   {NAMES("xget_pixbuf"),int_get_pixbuf},
   {NAMES("xgetech"),int_xgetech},
   {NAMES("xgetmouse"),int_xgetmouse},
   {NAMES("xgraduate"),int_xgraduate},
-  {NAMES("xgrid"),int_xgrid},
+  {NAMES("xgrid"),int_xgrid_new},
   {NAMES("xinfo"),int_xinfo},
   {NAMES("xinit"),int_xinit},
   {NAMES("xlfont"),int_xlfont},
@@ -7437,11 +7180,11 @@ OpGrTab Graphics_func[]={
   {NAMES("xname"),int_xname},
   {NAMES("xnumb"),int_xnumb},
   {NAMES("xpause"),int_xpause},
-  {NAMES("xpoly"),int_xpoly},
+  {NAMES("xpoly"),int_xpoly_new},
   {NAMES("xpoly_clip"),int_xpoly_clip},
   {NAMES("xpolys"),int_xpolys},
-  {NAMES("xrect"),int_xrect},
-  {NAMES("xrects"),int_xrects},
+  {NAMES("xrect"),int_xrect_new},
+  {NAMES("xrects"),int_xrects_new},
   {NAMES("xs2fig"),int_xs2fig},
   {NAMES("xs2pdf"),int_xs2pdf},
   {NAMES("xs2png"),int_xs2png},
@@ -7450,7 +7193,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xs2ps_old"),int_xs2ps_old},
   {NAMES("xs2svg"),int_xs2svg},
   {NAMES("xsave"),int_xsave},
-  {NAMES("xsegs"),int_xsegs},
+  {NAMES("xsegs"),int_xsegs_new},
   {NAMES("xselect"),int_xselect},
   {NAMES("xset"),int_xset},
   {NAMES("xsetech"),int_xsetech},

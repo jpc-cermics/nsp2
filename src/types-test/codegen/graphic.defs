@@ -37,4 +37,12 @@
   (return-type "NspGraphic")
   )
 
+;; tells gtk that the rectangle is invalidated
+
+(define-method invalidate
+  (of-object "Graphic")
+  (c-name "graphic_invalidate")
+  (return-type "none")
+  )
+
 

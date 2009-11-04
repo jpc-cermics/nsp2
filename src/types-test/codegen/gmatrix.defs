@@ -6,7 +6,8 @@
   (c-name "NspGMatrix")
   (fields
     '("NspMatrix*" "data") ;; Matrix 
-    '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" )     ;; Matrix is to be drawn inside rect 
+    ;; rect = [xmin,ymin , w, h]
+    '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" )  
     '("gboolean"   "remap")  ;; remap color mode 
     '("NspMatrix*" "colminmax" );; 
     '("NspMatrix*" "zminmax") ;; 

@@ -701,7 +701,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   if ( ((NspQcurve *) self)->obj->mode !=  mode)
     {
       ((NspQcurve *) self)->obj->mode =  mode;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
+      nsp_graphic_invalidate((NspGraphic *) self);
     }
   return OK;
 }
@@ -968,12 +968,13 @@ static void nsp_scale_qcurve(NspGraphic *Obj,double *alpha)
   NspQcurve *P = (NspQcurve *) Obj;
   NspMatrix *M = P->obj->Pts;
   double *x=M->R,*y= M->R+M->m;
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < M->m ; i++) 
     {
       *(x++) *= alpha[0];
       *(y++) *= alpha[1];
     }
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of qcurve 
@@ -1201,4 +1202,4 @@ static void oscillo_test()
 
      
 
-#line 1205 "qcurve.c"
+#line 1206 "qcurve.c"

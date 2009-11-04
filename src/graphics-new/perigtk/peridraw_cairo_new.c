@@ -32,7 +32,7 @@
 static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  ;
   cairo_set_source_rgb(cr,
 		       Xgc->private->gcol_bg.red/65535.0,
 		       Xgc->private->gcol_bg.green/65535.0,
@@ -48,7 +48,7 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  ;
   cairo_move_to(cr,x1,yy1);
   cairo_line_to(cr,x2,y2);
   cairo_stroke(cr);
@@ -63,7 +63,7 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
   /* cairo_t *cr =  Xgc->private->cairo_cr; */
-  DRAW_CHECK;
+  ;
   /* test */
   /* cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE); */
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
@@ -79,7 +79,7 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-  DRAW_CHECK;
+  ;
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
@@ -101,7 +101,7 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  DRAW_CHECK;
+  ;
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
@@ -110,7 +110,7 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  ;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_stroke (cr);
 }
@@ -120,7 +120,7 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 static void fillrectangle(BCG *Xgc,const int rect[])
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  ;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_fill (cr);
 }
@@ -136,7 +136,7 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
-  DRAW_CHECK;
+  ;
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
@@ -153,7 +153,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
-  DRAW_CHECK;
+  ;
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
@@ -173,7 +173,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-  DRAW_CHECK;
+  ;
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
@@ -188,7 +188,6 @@ static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n)
 
 static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 {
-  DRAW_CHECK;
   Xgc->graphic_engine->generic->drawarcs(Xgc,vects,style,n);
 }
 
@@ -198,7 +197,7 @@ static void _draw_fill_arc(BCG *Xgc,int arc[], int flag)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
   double xc, yc, radius, angle1, angle2; 
-  DRAW_CHECK;
+  
   xc = arc[0]+arc[2]/2.0;
   yc = arc[1]+arc[3]/2.0;
   radius = arc[2]/2.0;
@@ -249,7 +248,7 @@ static void fillarc(BCG *Xgc,int arc[])
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
@@ -268,7 +267,7 @@ static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, in
 
 static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n, int p)
 {
-  DRAW_CHECK;
+  
   /* Xgc->graphic_engine->generic->fillpolylines(Xgc,vectsx,vectsy,fillvect,n,p); */
   int dash,color,i;
   dash = Xgc->graphic_engine->xget_dash(Xgc);
@@ -313,7 +312,7 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
   int n1,i;
-  DRAW_CHECK;
+  
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
@@ -341,7 +340,7 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
   int n1,i;
-  DRAW_CHECK;
+  
   if (closeflag == 1) n1 = n+1;else n1= n;
   cairo_new_path(cr); 
   cairo_move_to(cr, vx[0],vy[0]);
@@ -361,7 +360,7 @@ static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, in
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
   int n1,i;
-  /*   DRAW_CHECK; */
+  /*    */
   if (closeflag == 1) n1 = n+1;else n1= n;
   cairo_new_path(cr); 
   cairo_move_to(cr, vx[0],vy[0]);
@@ -387,7 +386,7 @@ static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, in
 
 static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 {
-  DRAW_CHECK;
+  
   if ( Xgc->CurHardSymb == 0 )
     {
       /* XXXX 
@@ -431,7 +430,7 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
 
 static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *size)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->drawaxis(Xgc,alpha,nsteps,initpoint,size);
 }
 
@@ -443,7 +442,7 @@ static void drawaxis(BCG *Xgc, int alpha, int *nsteps, int *initpoint,double *si
 
 static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z, double *alpha)
 {
-  DRAW_CHECK;
+  
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
@@ -456,7 +455,7 @@ static void draw_mark_cairo(BCG *Xgc,int *x, int *y)
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
 
-  DRAW_CHECK;
+  
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
@@ -487,7 +486,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   cairo_t *cr =  Xgc->private->cairo_cr;
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
-  DRAW_CHECK;
+  
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
@@ -520,7 +519,7 @@ static void displaystring_cairo(BCG *Xgc,char *string, int x, int y,  int flag, 
 { 
   int rect[4];
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  
   cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
   cairo_set_font_size(cr, 20);
 
@@ -564,7 +563,7 @@ static void boundingbox_cairo(BCG *Xgc,char *string, int x, int y, int *rect)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_text_extents_t extents;
-  DRAW_CHECK;
+  
   cairo_text_extents (cr,string, &extents);
   rect[0]= x ;
   rect[3]= extents.height;
@@ -579,7 +578,7 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 { 
   int width,height;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  
   pango_layout_set_text (Xgc->private->layout, string, -1);
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
@@ -620,7 +619,7 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 {
   int width, height;
-  DRAW_CHECK;
+  
   pango_layout_set_text (Xgc->private->layout, string, -1);
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
@@ -633,7 +632,7 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
   GdkPixbuf *pixbuf=pix; 
   int w,h;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  
   cairo_save (cr);
   w = gdk_pixbuf_get_width (pixbuf);
   h = gdk_pixbuf_get_height (pixbuf);
@@ -652,7 +651,7 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
   int w,h, status ;
   cairo_surface_t *image;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  
   image = cairo_image_surface_create_from_png (fname);
   cairo_save (cr);
   if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS) 
@@ -692,7 +691,7 @@ static void xset_clip(BCG *Xgc,int x[])
 {
   int i;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  
   Xgc->ClipRegionSet = 1;
   for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
   cairo_new_path (cr);
@@ -710,7 +709,7 @@ static void xset_clip(BCG *Xgc,int x[])
 static void xset_unclip(BCG *Xgc)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  DRAW_CHECK;
+  
   if ( Xgc->ClipRegionSet == 0 ) return;
   Xgc->ClipRegionSet = 0;
   cairo_reset_clip(cr);

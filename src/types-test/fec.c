@@ -1018,7 +1018,7 @@ static void nsp_scale_fec(NspGraphic *Obj,double *alpha)
   int i;
   NspFec *P = (NspFec *) Obj;
   double *x=P->obj->x->R,*y= P->obj->y->R;
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
   for ( i=0; i < P->obj->x->mn ; i++) 
     {
       *(x++) *= alpha[0];

@@ -36,8 +36,6 @@
 #include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
 
-#define DRAW_CHECK 
-
 #ifdef PERIGTK
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 #endif 
@@ -192,7 +190,6 @@ static void clearwindow(BCG *Xgc)
   cairo_t *cr; 
 #endif 
   /* we use the private->stdgc graphic context */
-  DRAW_CHECK;
 #ifdef PERICAIRO
   cr =  Xgc->private->cairo_cr;
   cairo_set_source_rgb(cr,
@@ -1782,7 +1779,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated 
+	  /* debug the drawing rectangle which is updated  
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);

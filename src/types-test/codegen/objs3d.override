@@ -16,7 +16,7 @@ extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,do
 					 int *aaint,int isomode, int auto_axes, char *xf);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
-
+extern void nsp_objs3d_invalidate(NspGraphic *G);
 
 %%
 include-private Objs3d
@@ -75,6 +75,8 @@ override-type Objs3d
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
+  ((NspTypeGraphic *) type->surtype)->invalidate = nsp_objs3d_invalidate;
+
 %%
 modulename atk
 /* %%  import gobject.GObject as GObject */
@@ -94,7 +96,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspObjs3d *) self)->obj->rho != rho) 
     {
       ((NspObjs3d *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
+      nsp_objs3d_invalidate((NspGraphic *) self);
     }
   return OK;
 }
@@ -343,13 +345,27 @@ static void nsp_scale_objs3d(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_objs3d(NspGraphic *Obj,double *bounds)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
-  if ( P->obj->top == TRUE) return FALSE;
-  /* get the bound in parent i.e given by wrect : upper-left w,h */
-  bounds[0]=P->obj->wrect->R[0]; /* xmin */
-  bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
-  bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
-  bounds[3]=P->obj->wrect->R[1];/* ymax */
-  return FALSE;
+  if ( P->obj->top == TRUE)
+    {
+      nsp_figure *Fig = (((NspGraphic *) Obj)->obj->Fig);
+      BCG *Xgc= Fig->Xgc;
+      /* tolevel axe: we need the window dimension */
+      int wdim[2];
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      bounds[0]= P->obj->wrect->R[0]*wdim[0];
+      bounds[1]= (P->obj->wrect->R[1]- P->obj->wrect->R[3])*wdim[1];
+      bounds[2]= (P->obj->wrect->R[0]+P->obj->wrect->R[2])*wdim[0];
+      bounds[3]= P->obj->wrect->R[1]*wdim[1];
+    }
+  else
+    {
+      /* get the bound in parent i.e given by wrect : upper-left w,h */
+      bounds[0]=P->obj->wrect->R[0]; /* xmin */
+      bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
+      bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
+      bounds[3]=P->obj->wrect->R[1];/* ymax */
+    }
+  return TRUE;
 }
 
 static void nsp_objs3d_link_figure(NspGraphic *G, void *F, void *A)
@@ -599,6 +615,7 @@ void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, doub
   if ( !IsObjs3d(NSP_OBJECT(Obj3d))) return;
   Obj3d->obj->alpha = alpha;
   Obj3d->obj->theta = theta;
+  nsp_objs3d_invalidate((NspGraphic *) Obj3d);
 }
 
 
@@ -1677,10 +1694,10 @@ void nsp_3d_rotation(BCG *Xgc)
 	}
       else 
 	{
-	  /* just changes the angles in recorded plots */
+	  /* just changes the angles in recorded plots 
+	   * and invalidate the objs3d 
+	   */
 	  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
-	  /* immediate redraw */
-	  Xgc->graphic_engine->force_redraw(Xgc,NULL);
 	}
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
       x=xc;
@@ -1690,5 +1707,37 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
-  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+  /* Xgc->graphic_engine->force_redraw(Xgc,NULL); */
+}
+
+
+
+
+/* invalidate the drawing region associated to an axes object. 
+ */
+
+void nsp_objs3d_invalidate(NspGraphic *G)
+{
+  NspObjs3d *P = (NspObjs3d *) G;
+  if ( P->obj->top == TRUE)
+    {
+      gint rect[4]; /* like a GdkRectangle */
+      int wdim[2];
+      nsp_figure *F = G->obj->Fig;
+      BCG *Xgc;
+      if ( F == NULL ) return ;
+      if ((Xgc= F->Xgc) == NULL) return ;
+      if ( F->draw_now== FALSE) return;
+      if ( G->obj->hidden == TRUE ) return;
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      rect[0]= P->obj->wrect->R[0]*wdim[0];
+      rect[1]= P->obj->wrect->R[1]*wdim[1];
+      rect[2]= P->obj->wrect->R[2]*wdim[0];
+      rect[3]= P->obj->wrect->R[3]*wdim[1];
+      Xgc->graphic_engine->force_redraw(Xgc,rect);
+    }
+  else
+    {
+      return nsp_graphic_invalidate(G);
+    }
 }

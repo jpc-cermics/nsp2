@@ -118,7 +118,9 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_objs3d_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_objs3d_unlink_figure; 
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
-#line 122 "objs3d.c"
+  ((NspTypeGraphic *) type->surtype)->invalidate = nsp_objs3d_invalidate;
+
+#line 124 "objs3d.c"
   /* 
    * NspObjs3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -764,7 +766,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 88 "codegen/objs3d.override"
+#line 90 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -774,12 +776,12 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   if ( ((NspObjs3d *) self)->obj->rho != rho) 
     {
       ((NspObjs3d *) self)->obj->rho = rho;
-      nsp_figure_force_redraw(((NspGraphic *) self)->obj->Fig,NULL);
+      nsp_objs3d_invalidate((NspGraphic *) self);
     }
   return OK;
 }
 
-#line 783 "objs3d.c"
+#line 785 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -888,7 +890,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 104 "codegen/objs3d.override"
+#line 106 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -945,7 +947,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 949 "objs3d.c"
+#line 951 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1095,7 +1097,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 162 "codegen/objs3d.override"
+#line 164 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1104,10 +1106,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1108 "objs3d.c"
+#line 1110 "objs3d.c"
 
 
-#line 172 "codegen/objs3d.override"
+#line 174 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1116,7 +1118,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1120 "objs3d.c"
+#line 1122 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1147,7 +1149,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 182 "codegen/objs3d.override"
+#line 184 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1312,13 +1314,27 @@ static void nsp_scale_objs3d(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_objs3d(NspGraphic *Obj,double *bounds)
 {
   NspObjs3d *P = (NspObjs3d *) Obj;
-  if ( P->obj->top == TRUE) return FALSE;
-  /* get the bound in parent i.e given by wrect : upper-left w,h */
-  bounds[0]=P->obj->wrect->R[0]; /* xmin */
-  bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
-  bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
-  bounds[3]=P->obj->wrect->R[1];/* ymax */
-  return FALSE;
+  if ( P->obj->top == TRUE)
+    {
+      nsp_figure *Fig = (((NspGraphic *) Obj)->obj->Fig);
+      BCG *Xgc= Fig->Xgc;
+      /* tolevel axe: we need the window dimension */
+      int wdim[2];
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      bounds[0]= P->obj->wrect->R[0]*wdim[0];
+      bounds[1]= (P->obj->wrect->R[1]- P->obj->wrect->R[3])*wdim[1];
+      bounds[2]= (P->obj->wrect->R[0]+P->obj->wrect->R[2])*wdim[0];
+      bounds[3]= P->obj->wrect->R[1]*wdim[1];
+    }
+  else
+    {
+      /* get the bound in parent i.e given by wrect : upper-left w,h */
+      bounds[0]=P->obj->wrect->R[0]; /* xmin */
+      bounds[1]=P->obj->wrect->R[1]-P->obj->wrect->R[3];/* ymin */
+      bounds[2]=P->obj->wrect->R[0]+P->obj->wrect->R[2];/* xmax */
+      bounds[3]=P->obj->wrect->R[1];/* ymax */
+    }
+  return TRUE;
 }
 
 static void nsp_objs3d_link_figure(NspGraphic *G, void *F, void *A)
@@ -1568,6 +1584,7 @@ void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, doub
   if ( !IsObjs3d(NSP_OBJECT(Obj3d))) return;
   Obj3d->obj->alpha = alpha;
   Obj3d->obj->theta = theta;
+  nsp_objs3d_invalidate((NspGraphic *) Obj3d);
 }
 
 
@@ -2646,10 +2663,10 @@ void nsp_3d_rotation(BCG *Xgc)
 	}
       else 
 	{
-	  /* just changes the angles in recorded plots */
+	  /* just changes the angles in recorded plots 
+	   * and invalidate the objs3d 
+	   */
 	  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
-	  /* immediate redraw */
-	  Xgc->graphic_engine->force_redraw(Xgc,NULL);
 	}
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
       x=xc;
@@ -2659,7 +2676,39 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
-  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+  /* Xgc->graphic_engine->force_redraw(Xgc,NULL); */
 }
 
-#line 2666 "objs3d.c"
+
+
+
+/* invalidate the drawing region associated to an axes object. 
+ */
+
+void nsp_objs3d_invalidate(NspGraphic *G)
+{
+  NspObjs3d *P = (NspObjs3d *) G;
+  if ( P->obj->top == TRUE)
+    {
+      gint rect[4]; /* like a GdkRectangle */
+      int wdim[2];
+      nsp_figure *F = G->obj->Fig;
+      BCG *Xgc;
+      if ( F == NULL ) return ;
+      if ((Xgc= F->Xgc) == NULL) return ;
+      if ( F->draw_now== FALSE) return;
+      if ( G->obj->hidden == TRUE ) return;
+      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+      rect[0]= P->obj->wrect->R[0]*wdim[0];
+      rect[1]= P->obj->wrect->R[1]*wdim[1];
+      rect[2]= P->obj->wrect->R[2]*wdim[0];
+      rect[3]= P->obj->wrect->R[3]*wdim[1];
+      Xgc->graphic_engine->force_redraw(Xgc,rect);
+    }
+  else
+    {
+      return nsp_graphic_invalidate(G);
+    }
+}
+
+#line 2715 "objs3d.c"

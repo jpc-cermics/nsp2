@@ -114,7 +114,7 @@ extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,do
 					 int *aaint,int isomode, int auto_axes, char *xf);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
-
+extern void nsp_objs3d_invalidate(NspGraphic *G);
 
 #line 120 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
