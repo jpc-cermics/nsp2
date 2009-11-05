@@ -1533,13 +1533,6 @@ void nsp_redraw_diagram(NspDiagram *D)
   nsp_figure_force_redraw(Fig,NULL);
 }
 
-/**
- * nsp_redraw_diagram:
- * @R: a graphic frame  
- * 
- * draw the objects contained in frame @R.
- * 
- **/
 
 extern BCG ScilabGCPos ; /* Postscript */
 extern Gengine Pos_gengine_old;
@@ -2483,7 +2476,6 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
       /* draw the frame 
        * we could here record and use a fixed part.
        */
-      /* nsp_redraw_diagram(F); */
       /* get new mouse position */
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
       nsp_axes_i2f(((NspGraphic *) F)->obj->Axe,ix,iy,mpt);
@@ -2990,4 +2982,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2994 "diagram.c"
+#line 2986 "diagram.c"

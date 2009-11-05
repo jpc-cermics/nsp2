@@ -1399,8 +1399,15 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 	  r1.height=P->obj->wrect->R[3]*wdim[1];
 	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
 	    {
-	      Sciprintf("No need to draw \n");
+	      Sciprintf("No need to draw one axes [%d,%d,%d,%d] draw=[%d,%d,%d,%d]\n",
+			r1.x,r1.y,r1.width,r1.height,
+			r->x,r->y,r->width,r->height
+			);
 	      return;
+	    }
+	  else
+	    {
+	      Sciprintf("Drawing axes\n");
 	    }
 	}
       else
@@ -2127,8 +2134,14 @@ int nsp_axes_insert_child(NspAxes *A, NspGraphic *G)
   return OK;
 }
 
-/* invalidate the drawing region associated to an axes object. 
- */
+
+/**
+ * nsp_axes_invalidate:
+ * @G: 
+ * 
+ * invalidate the drawing region associated to an axes object. 
+ * 
+ **/
 
 void nsp_axes_invalidate(NspGraphic *G)
 {
@@ -2156,4 +2169,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2160 "axes.c"
+#line 2173 "axes.c"

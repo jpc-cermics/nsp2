@@ -201,18 +201,17 @@ static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_translate_polyhedron(NspGraphic *Obj,const double *tr)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_polyhedron(NspGraphic *Obj,double *R)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_polyhedron(NspGraphic *Obj,double *alpha)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute the bounds of the polyhedron: 

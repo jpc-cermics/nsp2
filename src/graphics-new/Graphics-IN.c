@@ -3103,7 +3103,7 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
  *        and scales are reset to default values
  *-----------------------------------------------------------*/
 
-static int int_xclear(Stack stack, int rhs, int opt, int lhs)
+static int int_xclear_(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   int val =TRUE,  ix;
@@ -7152,7 +7152,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xaxis"),int_xaxis},
   {NAMES("xchange"),int_xchange_new},
   {NAMES("xclea"),int_xclea},
-  {NAMES("xclear"),int_xclear},
+  {NAMES("xclear"),int_xclear_},
   {NAMES("xclick"),int_xclick},
   {NAMES("xcursor"), int_xcursor},
   {NAMES("xdel"),int_xdel},

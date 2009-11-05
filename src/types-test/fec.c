@@ -1010,7 +1010,7 @@ static void nsp_translate_fec(NspGraphic *Obj,const double *tr)
 
 static void nsp_rotate_fec(NspGraphic *Obj,double *R)
 {
-  /* nsp_figure_force_redraw(Obj->obj->Fig,NULL); */
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_fec(NspGraphic *Obj,double *alpha)

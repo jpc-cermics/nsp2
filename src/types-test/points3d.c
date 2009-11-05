@@ -790,18 +790,17 @@ static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data)
 
 static void nsp_translate_points3d(NspGraphic *Obj,const double *tr)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_points3d(NspGraphic *Obj,double *R)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_points3d(NspGraphic *Obj,double *alpha)
 {
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of points3d 
@@ -950,4 +949,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 954 "points3d.c"
+#line 953 "points3d.c"

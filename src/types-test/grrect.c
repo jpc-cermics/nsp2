@@ -772,6 +772,13 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
   NspGrRect *P = (NspGrRect *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+
+  if ( data != NULL && ! nsp_graphic_intersect_rectangle(Obj,data))
+    {
+      Sciprintf("No need to draw one rectangle\n");
+      return;
+    }
+
   val[0]= P->obj->x;
   val[1]= P->obj->y;
   val[2]= P->obj->w;
@@ -851,4 +858,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 855 "grrect.c"
+#line 862 "grrect.c"

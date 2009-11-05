@@ -1286,8 +1286,7 @@ static void nsp_translate_objs3d(NspGraphic *Obj,const double *tr)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
-
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_rotate_objs3d(NspGraphic *Obj,double *R)
@@ -1295,7 +1294,7 @@ static void nsp_rotate_objs3d(NspGraphic *Obj,double *R)
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( P->obj->top == TRUE) return ;
   Sciprintf("we should get a double here for rho\n");
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 static void nsp_scale_objs3d(NspGraphic *Obj,double *alpha)
@@ -1304,7 +1303,7 @@ static void nsp_scale_objs3d(NspGraphic *Obj,double *alpha)
   if ( P->obj->top == TRUE) return ;
   P->obj->wrect->R[2] *= alpha[0];
   P->obj->wrect->R[3] *= alpha[1];
-  nsp_figure_force_redraw(Obj->obj->Fig,NULL);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
 /* compute in bounds the enclosing rectangle of objs3d 
@@ -2676,7 +2675,6 @@ void nsp_3d_rotation(BCG *Xgc)
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
-  /* Xgc->graphic_engine->force_redraw(Xgc,NULL); */
 }
 
 
@@ -2711,4 +2709,4 @@ void nsp_objs3d_invalidate(NspGraphic *G)
     }
 }
 
-#line 2715 "objs3d.c"
+#line 2713 "objs3d.c"
