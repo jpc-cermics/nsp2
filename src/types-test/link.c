@@ -1066,8 +1066,14 @@ NspLink *link_create_n(char *name,int n,int color,int thickness)
  * change or get attributes 
  **************************************************/
 
-int link_get_hilited(NspLink *B) {  return B->obj->hilited; } 
-void link_set_hilited(NspLink *B,int val) {  B->obj->hilited = val; } 
+int link_get_hilited(NspLink *B) {return B->obj->hilited; } 
+void link_set_hilited(NspLink *B,int val) 
+{
+  if ( B->obj->hilited == val) return;
+  B->obj->hilited = val; 
+  nsp_graphic_invalidate((NspGraphic *) B);
+}
+
 int link_get_show(NspLink *B) {  return B->obj->show; } 
 void link_set_show(NspLink *B,int val) {  B->obj->show = val; } 
 
@@ -1956,4 +1962,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1960 "link.c"
+#line 1966 "link.c"

@@ -1024,7 +1024,11 @@ int connector_get_hilited(NspConnector *B) {  return B->obj->hilited; }
  *
  **/
 
-void connector_set_hilited(NspConnector *B,int val) {  B->obj->hilited = val; } 
+void connector_set_hilited(NspConnector *B,int val) {
+  if ( B->obj->hilited == val) return;
+  B->obj->hilited = val; 
+  nsp_graphic_invalidate((NspGraphic *) B);
+}
 
 /**
  * connector_get_show:
@@ -1582,4 +1586,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1586 "connector.c"
+#line 1590 "connector.c"

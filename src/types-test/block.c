@@ -1234,7 +1234,12 @@ int block_get_hilited(NspBlock *B) {  return B->obj->hilited; }
  *
  **/
 
-void block_set_hilited(NspBlock *B,int val) {  B->obj->hilited = val; } 
+void block_set_hilited(NspBlock *B,int val) 
+{
+  if ( B->obj->hilited == val) return;
+  B->obj->hilited = val; 
+  nsp_graphic_invalidate((NspGraphic *) B);
+} 
 
 /**
  * block_get_show:
@@ -1922,4 +1927,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1926 "block.c"
+#line 1931 "block.c"

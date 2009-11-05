@@ -1733,6 +1733,7 @@ static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 
 static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],double *rect)
 {
+  int zrect1[4]={-5,-5,10,10},i;
   nsp_axes *axe;
   int th,color,style,fg,ix,iy;
   int ibutton=-1,imask,iwait=FALSE;
@@ -1796,14 +1797,16 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
       Xgc->graphic_engine->force_redraw(Xgc,Xgc->zrect);
     }
   nsp_set_cursor(Xgc,-1);
+  for ( i = 0 ; i < 4 ; i++) zrect1[i] += Xgc->zrect[i];
   /* disable zrect */
   Xgc->zrect[2]=   Xgc->zrect[3]=0;
+  /* last draw without rectangle selection */
+  Xgc->graphic_engine->force_redraw(Xgc,zrect1);
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
-  nsp_redraw_diagram(R);
 }
 
 /**
@@ -1849,7 +1852,6 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
 	      /* it was a click not a move */
 	      nsp_diagram_unhilite_objs(R,FALSE); 
 	      bf->set_hilited(O,TRUE);
-	      nsp_redraw_diagram(R);
 	    }
 	  return OK;
 	}
@@ -1864,18 +1866,10 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
        */
       nsp_diagram_unhilite_objs(R,FALSE); 
     }
-  /* hide the moving object and its locked objects */
-  bf->set_show(O,FALSE);
-  if ( IsBlock(O)|| IsConnector(O) )  nsp_diagram_locks_set_show(R,O,FALSE);
-  bf->set_hilited(O,TRUE);
-  /* global draw of all but the moving object and linked objects 
-   * we could here record the state to redraw faster 
-   * since during the move this part will be kept constant.
+  /*
+   * hilite the moving object 
    */
-  nsp_redraw_diagram(R);
-  /*  */
-  bf->set_show(O,TRUE);
-  if ( IsBlock(O) || IsConnector(O) )  nsp_diagram_locks_set_show(R,O,TRUE);
+  bf->set_hilited(O,TRUE);
   if ( k1 == FALSE ) 
     {
       if ( nsp_diagram_move_obj(R,O, pt, -5,cp,MOVE ) == -100) 
@@ -1886,7 +1880,6 @@ int nsp_diagram_select_and_move(NspDiagram *R,const double pt[2],int mask)
       if ( nsp_diagram_move_obj(R,O, pt, -5,cp,MOVE_CONTROL ) == -100) 
 	return OK;
     }
-  nsp_redraw_diagram(R);
   return OK;
 }
 
@@ -1963,26 +1956,14 @@ int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double p
   if ( Obj != NULLOBJ) 
     {
       bf = GR_INT(Obj->basetype->interface);
-      /* hide the moving object and its locked objects */
-      bf->set_show(Obj,FALSE);
-      if ( IsBlock(Obj)|| IsConnector(Obj) )  nsp_diagram_locks_set_show(R,Obj,FALSE);
-      /* nsp_diagram_unhilite_objs(R,FALSE); */
       bf->set_hilited(Obj,TRUE);
-      /* global draw of all but the moving object and linked objects 
-       * we could here record the state to redraw faster 
-       * since during the move this part will be kept constant.
-       */
-      nsp_redraw_diagram(R);
-      /* */
-      bf->set_show(Obj,TRUE);
-      if ( IsBlock(Obj) || IsConnector(Obj) )  nsp_diagram_locks_set_show(R,Obj,TRUE);
     }
   L= nsp_diagram_get_hilited_list(R->obj,FALSE);
   if ( L== NULLLIST) return OK;
   rep = nsp_diagram_move_list_obj(R,L, pt, -5,cp,MOVE, click );
   nsp_list_destroy(L);
   if ( rep == -100) return rep;
-  nsp_redraw_diagram(R);
+  /* nsp_redraw_diagram(R); */
   return OK;
 }
 
@@ -2530,7 +2511,6 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
 
 void nsp_diagram_unhilite_objs(NspDiagram *R,int draw )
 {
-  int ok = FALSE;
   Cell *C = R->obj->children->first;
   while ( C != NULLCELL) 
     {
@@ -2541,12 +2521,10 @@ void nsp_diagram_unhilite_objs(NspDiagram *R,int draw )
 	  if ( bf->get_hilited(C->O) == TRUE) 
 	    {
 	      bf->set_hilited(C->O,FALSE);
-	      ok = TRUE;
 	    }
 	}
       C = C->next ;
     }
-  if ( ok == TRUE && draw == TRUE )  nsp_redraw_diagram(R);
 }
 
 /**
@@ -2792,15 +2770,16 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   /* insert link in diagram at the start 
    */
   if (nsp_list_insert(F->obj->children,(NspObject  *) L,0) == FAIL) return NULLOBJ;
-  
+  G = (NspGraphic *) L;
+  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
+  nsp_graphic_invalidate(G);
+
   while ( wstop==0 ) 
     {
-      nsp_redraw_diagram(F);
-      /* draw the link */
       /* get new mouse position */
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix,&iy,iwait,TRUE,TRUE,FALSE);
       nsp_axes_i2f(((NspGraphic *) F)->obj->Axe,ix,iy,mpt);
-      /* nsp_get_point_axes(Xgc,ix,iy,mpt); */
+      nsp_graphic_invalidate(G);
       if ( ibutton == -100 ) 
 	{
 	  /* we stop : window was killed */
@@ -2877,12 +2856,11 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	  L->obj->poly->R[count]= mpt[0];
 	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
 	}
+      nsp_graphic_invalidate(G);
     }
   /* check if first and last points are locked 
    * if true update locks 
    */
-  G = (NspGraphic *) L;
-  G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
 
   mpt[0]=L->obj->poly->R[0];
   mpt[1]=L->obj->poly->R[L->obj->poly->m];
@@ -2891,7 +2869,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   mpt[1]=L->obj->poly->R[2*L->obj->poly->m-1];
   link_lock_update(F,L,1,mpt);
   link_check(F,L);
-  nsp_redraw_diagram(F);
+  nsp_graphic_invalidate(G);
   return NSP_OBJECT(L);
 }
 
@@ -2982,4 +2960,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2986 "diagram.c"
+#line 2964 "diagram.c"
