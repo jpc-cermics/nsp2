@@ -134,9 +134,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
     }
 
   NewXgc->CurWindow = WinNum;
-  NewXgc->record_flag = TRUE; /* default mode is to record plots */
-  NewXgc->plots = NULL;
-  NewXgc->last_plot = NULL;
+  NewXgc->figure = NULL;
   /* the graphic engine associated to this graphic window */  
 #ifdef PERIGL 
   NewXgc->graphic_engine = &GL_gengine ;

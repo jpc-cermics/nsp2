@@ -74,6 +74,8 @@ static void force_redraw(BCG *Xgc,void *rect)
     }
   else
     {
+      GdkRectangle *grect = rect;
+      Sciprintf("Invalidate [%d,%d,%d,%d]\n",grect->x,grect->y,grect->width,grect->height);
       /* rect should be similar to a  GdkRectangle */
       gdk_window_invalidate_rect(Xgc->private->drawing->window,rect, FALSE);
     }
@@ -225,7 +227,7 @@ static void clearwindow(BCG *Xgc)
 
 static int xget_recording(BCG *Xgc)
 {
-  return Xgc->record_flag;
+  return TRUE;
 }
 
 /**
@@ -238,7 +240,7 @@ static int xget_recording(BCG *Xgc)
 
 static void xset_recording(BCG *Xgc, int val)
 {
-  Xgc->record_flag = (val == 0 ) ? FALSE : TRUE;
+  /* Xgc->record_flag = (val == 0 ) ? FALSE : TRUE; */
 }
 
 /**
@@ -1845,7 +1847,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
       /* we could take care here of  dd->private->draw == TRUE 
        */
-      if ( dd->record_flag == TRUE  ) 
+      if ( TRUE == TRUE  ) 
 	{
 	  /* just redraw if we have recorded stuffs */
 	  /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */

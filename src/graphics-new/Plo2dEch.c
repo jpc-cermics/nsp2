@@ -380,35 +380,19 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
 
 void zoom(BCG *Xgc)
 {
+  double bbox[4];
+  int ibbox[4];
   int aaint[]={2,10,2,10},flag[]={1,0,0} ;
   if ( Xgc == NULL) return ;
-  if ( Xgc->record_flag != TRUE )
-    {
-      Scistring("\n Use the Rec driver to zoom " );
-      return;
-    }
-  else 
-    {
-      double bbox[4];
-      int ibbox[4];
-      zoom_get_rectangle(Xgc,bbox,ibbox);
-      Xgc->graphic_engine->clearwindow(Xgc);    
-      tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
-    }
+  zoom_get_rectangle(Xgc,bbox,ibbox);
+  Xgc->graphic_engine->clearwindow(Xgc);    
+  tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
 }
 
 void unzoom(BCG *Xgc)
 {
   if ( Xgc == NULL) return ;
-  if ( Xgc->record_flag != TRUE )
-    {
-      Scistring("\n Use the Rec driver to unzoom " );
-      return;
-    }
-  else 
-    {
-      Xgc->graphic_engine->clearwindow(Xgc);
-      tape_replay_undo_scale(Xgc,Xgc->CurWindow);
-    }
+  Xgc->graphic_engine->clearwindow(Xgc);
+  tape_replay_undo_scale(Xgc,Xgc->CurWindow);
 }
 

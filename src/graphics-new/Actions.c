@@ -116,7 +116,6 @@ void __nsp_gr_replay(int win_num)
   BCG *Xgc;
   if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc= window_list_search(win_num)) == NULL) return;
-  if ( Xgc->record_flag != TRUE ) return ;
   nsp_gr_buzy =1;
   Xgc->graphic_engine->clearwindow(Xgc);
   Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
@@ -247,14 +246,7 @@ void __nsp_gr_2dzoom(int win_num)
   if ( nsp_gr_buzy_zoom == 1 ) return ;
   if ( (Xgc=window_list_search(win_num)) == NULL) return;
   nsp_gr_buzy_zoom =1;
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"Zoom works only with the Rec driver");
-    }
-  else 
-    {
-      zoom(Xgc);
-    }
+  zoom(Xgc);
   nsp_gr_buzy_zoom = 0;
 }
 
@@ -271,14 +263,7 @@ void  __nsp_gr_unzoom(int win_num)
   if ( nsp_gr_buzy  == 1 ) return ;
   if ( (Xgc = window_list_search(win_num)) == NULL) return;
   nsp_gr_buzy =1;
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"UnZoom works only with the Rec driver ");
-    }
-  else 
-    {
-      unzoom(Xgc);
-    }
+  unzoom(Xgc);
   nsp_gr_buzy = 0;
 }
 
@@ -295,14 +280,7 @@ void __nsp_gr_3drot(int win_num)
 {
   BCG *Xgc;
   if ((Xgc= window_list_search(win_num)) == NULL) return;
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"Rot3D works only with the Rec driver");
-    }
-  else 
-    {
-      nsp_3d_rotation(Xgc);
-    }
+  nsp_3d_rotation(Xgc);
 }
 
 
@@ -390,11 +368,6 @@ void __nsp_gr_savesg(char *filename, int win_num)
 {
   BCG *Xgc;
   if ( (Xgc = window_list_search(win_num)) == NULL) return;
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"save works only with the Rec driver");
-      return;
-    }
   tape_save(Xgc,filename,win_num);
 }
 
@@ -574,12 +547,10 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
     Ggc->graphic_engine->xset_usecolor(Ggc,un);
   else
     Ggc->graphic_engine->xset_usecolor(Ggc,zero);
-  Ggc->record_flag = TRUE ;
-  Ggc->plots = Xgc->plots ; 
+  Ggc->figure = Xgc->figure ; 
   xgc_reset_scales_to_default(Ggc);
   Ggc->graphic_engine->tape_replay(Ggc,Xgc->CurWindow,NULL);
-  Ggc->plots = NULL ; 
-  Ggc->record_flag = FALSE ;
+  Ggc->figure = NULL ; 
   Ggc->graphic_engine->xend(Xgc);
 }
 
@@ -597,14 +568,7 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 {
   static int nsp_gc_buzy_zoom = 0;
   nsp_gc_buzy_zoom =1;
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"Zoom works only with the Rec driver");
-    }
-  else 
-    {
-      zoom(Xgc);
-    }
+  zoom(Xgc);
   nsp_gc_buzy_zoom = 0;
 }
 
@@ -617,14 +581,7 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 
 static void  nsp_gc_unzoom(BCG *Xgc)
 {
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"UnZoom works only with the Rec driver ");
-    }
-  else 
-    {
-      unzoom(Xgc);
-    }
+  unzoom(Xgc);
 }
 
 
@@ -638,14 +595,7 @@ static void  nsp_gc_unzoom(BCG *Xgc)
 
 static void nsp_gc_3drot(BCG *Xgc)
 {
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"Rot3D works only with the Rec driver");
-    }
-  else 
-    {
-      nsp_3d_rotation(Xgc);
-    }
+  nsp_3d_rotation(Xgc);
 }
 
 
@@ -705,11 +655,6 @@ static int nsp_gc_change(BCG *Xgc)
 
 static void nsp_gc_savesg(BCG *Xgc,const char *filename )
 {
-  if ( Xgc->record_flag != TRUE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"save works only with the Rec driver");
-      return;
-    }
   tape_save(Xgc,filename,Xgc->CurWindow);
 }
 

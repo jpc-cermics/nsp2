@@ -629,7 +629,6 @@ static void   xset_test(BCG *Xgc)
 {
   static int count=0;
   char str[56];
-  int keep;
   int style[NCURVES2DD],aaint[4],n1,n2;
   double x[NCURVES2DD*XN2DD],y[NCURVES2DD*XN2DD],brect[4];
   int i,j;
@@ -647,12 +646,9 @@ static void   xset_test(BCG *Xgc)
   n1=NCURVES2DD;n2=XN2DD;
   aaint[0]=aaint[2]=2;aaint[1]=aaint[3]=10;
   brect[0]=brect[1]=0;brect[2]=brect[3]=10.0;
-  keep= Xgc->record_flag;
-  Xgc->record_flag = FALSE;
   nsp_plot2d(Xgc,x,y,&n1,&n2,style,"011"," ",4,brect,aaint);
   sprintf(str,"count=%d",count);
   count++;
   Xgc->graphic_engine->scale->displaystring(Xgc,str,5,5,0,0);
-  Xgc->record_flag= keep;
 }
 

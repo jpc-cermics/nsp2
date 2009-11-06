@@ -193,12 +193,12 @@ void cleararea(BCG *Xgc,int x, int y, int w, int h)
 
 static int xget_recording(BCG *Xgc)
 {
-  return Xgc->record_flag;
+  return TRUE; /* Xgc->record_flag; */
 }
 
 static void xset_recording(BCG *Xgc, int val)
 {
-  Xgc->record_flag = FALSE; /* never record with Xfig */
+  /* Xgc->record_flag = FALSE; */ /* never record with Xfig */
 }
 
 /* to get the window upper-left point coordinates **/

@@ -100,12 +100,11 @@ struct __BCG
   char EventHandler[NAME_MAXL+1]; /* name of window event handler XXXX */
   char fp_format[32]; 
   int Autoclear;
-
   window_scale_list *scales; /* scales associated to graphic window subwins */
 
-  int record_flag ; /* a flag to decide if graphics are recorded */
-  list_plot *plots ; /* list of recorded plots */
-  list_plot *last_plot; /* direct acces to last record */ 
+  int zz_record_flag ; /* unused but we must keep the same size as in old perigen.h */
+  void *figure;    /* list of recorded plots */
+  void *zz_last_plot;  /* unused but we must keep the same size as in old perigen.h */
   void *xdrs;            /* used to pass a xdr structure for saving data */
   int zrect[4];          /* rectangle to be superposed on graphic window 
 			  * used for zoom 
