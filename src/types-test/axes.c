@@ -2120,7 +2120,8 @@ int nsp_axes_insert_child(NspAxes *A, NspGraphic *G)
 {
   if ( nsp_list_end_insert(A->obj->children,(NspObject *) G )== FAIL)
     return FAIL;
-  nsp_graphic_link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
+  /* call the link_figure method */
+  G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
   /* updates the bounds of the axe */
   nsp_axes_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
   /* raise an invalidate operation */
@@ -2163,4 +2164,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2167 "axes.c"
+#line 2168 "axes.c"
