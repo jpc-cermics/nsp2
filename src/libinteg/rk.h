@@ -1,5 +1,5 @@
-#ifndef RANDLIB_H
-#define RANDLIB_H
+#ifndef NSP_RK_H
+#define NSP_RK_H
 
 typedef int (*xode_f)(int *neq,const double *t,const double y[],double ydot[]);
 typedef int (*xode_jac)(int *neq,const double *t,const double y[],int *ml,
@@ -31,4 +31,4 @@ extern int rk_rksimp (ode_f fydot2, int *neqn, double *y, double *t,
 		      double *work, int *lrw, int *iwork, int *liw,
 		      double *bjac, int *mf, void *param);
 
-#endif /*  RANDLIB_H */
+#endif /*  NSP_RK_H */

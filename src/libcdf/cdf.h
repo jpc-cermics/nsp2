@@ -1,5 +1,5 @@
-#ifndef RANDLIB_H
-#define RANDLIB_H
+#ifndef NSP_CDFLIB_H
+#define NSP_CDFLIB_H
 
 #include <nsp/math.h>
 #include <nsp/sciio.h>
@@ -98,4 +98,4 @@ extern int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum, double
 
 
 
-#endif /* RANDLIB_H */
+#endif /* NSP_CDFLIB_H */

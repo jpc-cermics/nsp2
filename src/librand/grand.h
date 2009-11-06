@@ -1,5 +1,5 @@
-#ifndef RANDLIB_H
-#define RANDLIB_H
+#ifndef NSP_RANDLIB_H
+#define NSP_RANDLIB_H
 
 #include <nsp/math.h> 
 #include <nsp/sciio.h> 
@@ -209,4 +209,4 @@ extern double nsp_rand_lognormal(double mu, double sigma);
 
 
 
-#endif /*  RANDLIB_H */
+#endif /*  NSP_RANDLIB_H */
