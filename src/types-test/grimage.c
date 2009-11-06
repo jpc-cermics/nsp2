@@ -815,6 +815,15 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, void *data)
   int ccolor=-1,cthick=-1;
   NspGrImage *P = (NspGrImage *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
   val[0]= P->obj->x;
   val[1]= P->obj->y;
@@ -886,4 +895,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 890 "grimage.c"
+#line 899 "grimage.c"

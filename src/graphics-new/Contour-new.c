@@ -220,8 +220,6 @@ int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
   int err=0,i;
   int N[3]= {n1, n2, nz}; 
   
-  frame_clip_on(Xgc);/* XXX sans doute inutile car fait par l'axe */
-  
   if ( zz == NULL )
     {
       double *zconst;
@@ -243,7 +241,6 @@ int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
       N[0]= n1;N[1]= n2;N[2]= nz;
       contourI(Xgc,Contstore_2,x,y,z,zz,N,style,&err);
     }
-  frame_clip_off(Xgc);
   return(0);
 }
 

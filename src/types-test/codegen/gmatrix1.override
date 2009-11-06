@@ -101,6 +101,15 @@ last
 static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->shade==TRUE) 
     nsp_draw_matrix_shade(Xgc,Obj,data);
   else

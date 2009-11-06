@@ -830,6 +830,16 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data)
   */
   NspBox3d *P =(NspBox3d*) Obj ;
   if ( Obj->obj->hidden == TRUE ) return ;
+
+  /* check if the block is inside drawing rectangle
+   */
+  /*
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+  */
+
   /* be sure that object are in canonical form */
   Mat2double(P->obj->x);
   Mat2double(P->obj->y);
@@ -865,4 +875,4 @@ static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 869 "box3d.c"
+#line 879 "box3d.c"

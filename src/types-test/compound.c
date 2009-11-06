@@ -696,6 +696,16 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data)
   NspList *L = P->obj->children;
   Cell *cloc = L->first;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   /* draw elements */
   while ( cloc != NULLCELL ) 
     {
@@ -846,4 +856,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 850 "compound.c"
+#line 860 "compound.c"

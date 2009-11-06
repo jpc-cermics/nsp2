@@ -133,8 +133,19 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, void *data)
   int xmark[2];
   NspCurve *P = (NspCurve *) Obj;
   NspMatrix *M = P->obj->Pts;
-  int c_width = Xgc->graphic_engine->xget_thickness(Xgc);
+  int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+
+  if (Obj->obj->hidden == TRUE ) return;
+       
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->Pts->m == 0) return;
   Xgc->graphic_engine->xset_thickness(Xgc,P->obj->width);
   if ( P->obj->mark >= 0 ) 

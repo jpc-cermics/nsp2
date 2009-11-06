@@ -838,6 +838,16 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
   int colminmax[2];
   double *zminmax = NULL;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->colminmax->mn == 2 ) 
     {
       colminmax[0] = P->obj->colminmax->R[0];
@@ -951,4 +961,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
 }
 
 
-#line 955 "gmatrix.c"
+#line 965 "gmatrix.c"

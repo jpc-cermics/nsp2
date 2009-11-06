@@ -734,6 +734,12 @@ static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
+  /*
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+  */
   nsp_check_polyline3d((NspPolyline3d *) Obj);
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
@@ -913,4 +919,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 917 "polyline3d.c"
+#line 923 "polyline3d.c"

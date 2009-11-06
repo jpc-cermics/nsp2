@@ -864,6 +864,15 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   /*     to keep the size of the largest line */
   wc = 0.;
   x= P->obj->x;
@@ -961,4 +970,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 965 "grstring.c"
+#line 974 "grstring.c"

@@ -980,6 +980,15 @@ void GMatrix1_Interf_Info(int i, char **fname, function (**f))
 static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->shade==TRUE) 
     nsp_draw_matrix_shade(Xgc,Obj,data);
   else
@@ -1563,4 +1572,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1567 "gmatrix1.c"
+#line 1576 "gmatrix1.c"

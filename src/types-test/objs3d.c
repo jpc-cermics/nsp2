@@ -1155,6 +1155,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
+  GdkRectangle *r = data;
   char xf[]="onn";
   char strflag[]="151";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[6];
@@ -1164,6 +1165,42 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
   NspList *L;
   NspObjs3d *P = (NspObjs3d *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  /* check if the block is inside drawing rectangle
+   */
+
+  /*
+   * check if we are in the draw zone 
+   */
+  if ( data != NULL) 
+    {
+      if ( P->obj->top == TRUE ) 
+	{
+	  GdkRectangle r1;
+	  int wdim[2];
+	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
+	  r1.x=P->obj->wrect->R[0]*wdim[0];
+	  r1.y=P->obj->wrect->R[1]*wdim[1];
+	  r1.width=P->obj->wrect->R[2]*wdim[0];
+	  r1.height=P->obj->wrect->R[3]*wdim[1];
+	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
+	    {
+	      Sciprintf("No need to draw one objs3d [%d,%d,%d,%d] draw=[%d,%d,%d,%d]\n",
+			r1.x,r1.y,r1.width,r1.height,
+			r->x,r->y,r->width,r->height
+			);
+	      return;
+	    }
+	  else
+	    {
+	      Sciprintf("Drawing objs3d\n");
+	    }
+	}
+      else
+	{
+	  Sciprintf("draw objs3d for non top level to be done \n");
+	}
+    }
+  
   /* draw elements */
   L = P->obj->children;
   cloc = L->first ;
@@ -2709,4 +2746,4 @@ void nsp_objs3d_invalidate(NspGraphic *G)
     }
 }
 
-#line 2713 "objs3d.c"
+#line 2750 "objs3d.c"

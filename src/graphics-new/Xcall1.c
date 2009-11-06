@@ -143,9 +143,6 @@ static void xset_clipgrf_1(BCG *Xgc)
   frame_clip_on(Xgc);
 }
 
-
-
-
 static void xset_clip_1(BCG *Xgc,double x[])
 {
   /* and clipping is special its args are floats **/

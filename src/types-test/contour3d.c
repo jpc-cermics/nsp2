@@ -879,6 +879,15 @@ void Contour3d_Interf_Info(int i, char **fname, function (**f))
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   if ( Obj->obj->hidden == TRUE ) return ;
+
+  /* check if the block is inside drawing rectangle
+   */
+  /* 
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+  */
   nsp_check_contour3d((NspContour3d *) Obj);
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
@@ -1022,4 +1031,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1026 "contour3d.c"
+#line 1035 "contour3d.c"

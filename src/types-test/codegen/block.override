@@ -571,6 +571,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
        
   /* check if the block is inside drawing rectangle
    */
+
   if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, data))
     {
       return ;

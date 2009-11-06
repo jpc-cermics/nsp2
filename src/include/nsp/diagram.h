@@ -99,7 +99,6 @@ extern int IsDiagramObj (Stack stack, int i);
 extern NspDiagram *GetDiagramCopy (Stack stack, int i); 
 extern NspDiagram *GetDiagram (Stack stack, int i); 
 extern int IsDiagram (NspObject *O); 
-extern void nsp_redraw_diagram (NspDiagram *R); 
 extern int nsp_diagram_select_obj (NspDiagram *R, const double *pt, NspObject **Objs,NspObject *exclude); 
 extern int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
 extern int nsp_diagram_select_and_move (NspDiagram *R, const double *pt, int mask); 
@@ -137,7 +136,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
 
-#line 141 "./diagram.h"
+#line 140 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -152,7 +151,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
-#line 56 "codegen/diagram.override"
+#line 55 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -181,6 +180,6 @@ static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 185 "./diagram.h"
+#line 184 "./diagram.h"
 #endif /* NspDiagram_Private */
 

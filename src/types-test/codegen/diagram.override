@@ -13,7 +13,6 @@ extern int IsDiagramObj (Stack stack, int i);
 extern NspDiagram *GetDiagramCopy (Stack stack, int i); 
 extern NspDiagram *GetDiagram (Stack stack, int i); 
 extern int IsDiagram (NspObject *O); 
-extern void nsp_redraw_diagram (NspDiagram *R); 
 extern int nsp_diagram_select_obj (NspDiagram *R, const double *pt, NspObject **Objs,NspObject *exclude); 
 extern int nsp_diagram_select_lock(NspDiagram *F,double pt[2], NspObject **O, int *cp, int *lock_c) ;
 extern int nsp_diagram_select_and_move (NspDiagram *R, const double *pt, int mask); 
@@ -218,19 +217,6 @@ extern function int_graphic_set_attribute;
 int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs) 
 {
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
-}
-
-
-%%
-override Diagram.diagram_draw
-/* draw */
-
-static int _wrap_diagram_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  CheckRhs(0,0);
-  nsp_redraw_diagram(self);
-  MoveObj(stack,1,self);
-  return 1;
 }
 
 %%
@@ -503,11 +489,17 @@ static int _wrap_diagram_new_link(void *self,Stack stack, int rhs, int opt, int 
   NspObject *obj;
   CheckRhs(0,0);
   CheckLhs(-1,1);
-  if ((obj =   nsp_diagram_create_new_link(((NspDiagram *) self)))== NULL) return RET_BUG;
-  /* since obj is kept on the frame we must return a copy */
-  if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
-  MoveObj(stack,1,obj);
-  return 1;
+  obj =  nsp_diagram_create_new_link(((NspDiagram *) self));
+  /* since obj is kept on the frame we must return a copy 
+   * link can be null because the new link may possibly have been aborted.
+   */
+  if (obj != NULL && lhs == 1) 
+    {
+      if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
+      MoveObj(stack,1,obj);
+      return 1;
+    }
+  return 0;
 }
 
 %%
@@ -705,36 +697,6 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
   nsp_diagram_destroy(GF);
   /* and we can enter a move_selection */
   rep = nsp_diagram_select_and_move_list(F,NULLOBJ,pt->R,&click);
-  nsp_redraw_diagram(F);
-  return 0;
-}
-
-
-%%
-override Diagram.diagram_tops
-/* XXX */
-extern void nsp_diagram_tops(NspDiagram *R,char *fname);
-
-static int _wrap_diagram_tops(void *self,Stack stack, int rhs, int opt, int lhs)
-{
-  int rep=1,color=-1;
-  char *filename= NULL, *mode = NULL;
-  static char *Table[] = {"d", "l", "n", "p", "k", NULL};
-  int_types T[] = {string, new_opts, t_end} ;
-  nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
-		      { "mode",string,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&filename,&opts,&color,&mode) == FAIL) return RET_BUG;
-  if ( mode != NULL) 
-    {
-      rep = is_string_in_array(mode,Table,1);
-      if ( rep < 0 ) 
-	{
-	  string_not_in_array(stack,mode,Table,"optional argument mode");
-	  return RET_BUG;
-	}
-    }
-  /* XXXXXXXXX nsp_diagram_tops(self,filename); */
   return 0;
 }
 
@@ -796,6 +758,15 @@ static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data)
   NspList *L = P->obj->children;
   Cell *cloc = L->first;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   /* draw elements */
   while ( cloc != NULLCELL ) 
     {
@@ -956,48 +927,6 @@ static NspList *nsp_diagram_children(NspGraphic *Obj)
 /*********************************************************************
  * Diagram Object in Scilab : a graphic Diagram
  *********************************************************************/
-
-/**
- * nsp_redraw_diagram:
- * @R: a graphic frame  
- * 
- * draw the objects contained in frame @R.
- * 
- **/
-
-void nsp_redraw_diagram(NspDiagram *D)
-{
-  nsp_figure *Fig = (((NspGraphic *) D)->obj->Fig);
-  nsp_figure_force_redraw(Fig,NULL);
-}
-
-
-extern BCG ScilabGCPos ; /* Postscript */
-extern Gengine Pos_gengine_old;
-
-void nsp_diagram_tops(NspDiagram *R,char *fname)
-{
-#if 0
-  int wdim[2],*wdim_p=NULL;
-  int zero=0,un=1,colored=TRUE;
-  BCG *Xgc = R->obj->Xgc;
-  if ( Xgc == NULL) return;
-  R->obj->Xgc->graphic_engine->xget_windowdim(R->obj->Xgc,wdim,wdim+1);
-  wdim_p = wdim;
-  ScilabGCPos.graphic_engine = &Pos_gengine_old;
-  ScilabGCPos.graphic_engine->initgraphic(fname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,'k',NULL);
-  if (colored == TRUE ) 
-    ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,un);
-  else
-    ScilabGCPos.graphic_engine->xset_usecolor(&ScilabGCPos,zero);
-  R->obj->Xgc = &ScilabGCPos;
-  nsp_redraw_diagram(R);
-  ScilabGCPos.graphic_engine->xend(&ScilabGCPos);
-  R->obj->Xgc = Xgc;
-#endif 
-
-}
-
 
 /**
  * nsp_diagram_select_obj:
@@ -1171,7 +1100,7 @@ static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 
 static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],double *rect)
 {
-  int zrect1[4]={-5,-5,10,10},i;
+  int zrect1[4], xof[4]={-5,-5,10,10},i;
   nsp_axes *axe;
   int th,color,style,fg,ix,iy;
   int ibutton=-1,imask,iwait=FALSE;
@@ -1190,19 +1119,28 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_pattern(Xgc,fg);
   x=pt[0];y=pt[1];
+  rect[0]= x;
+  rect[1]= y;
+  rect[2]= 0;
+  rect[3]= 0;
   while ( ibutton == -1 ) 
     {
       int ok_changed; 
       Cell *C;
+      rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
+      for ( i = 0 ; i < 4 ; i++) zrect1[i] = xof[i]+ Xgc->zrect[i];
+      Xgc->graphic_engine->force_redraw(Xgc,zrect1);
       rect[0]= Min(pt[0],x);
       rect[1]= Max(pt[1],y);
       rect[2]= Abs(pt[0]-x);
       rect[3]= Abs(pt[1]-y);
+      /* invalidate new zone */
+      rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
+      for ( i = 0 ; i < 4 ; i++) zrect1[i] = xof[i]+ Xgc->zrect[i];
+      Xgc->graphic_engine->force_redraw(Xgc,zrect1);
       nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix, &iy,iwait,TRUE,TRUE,FALSE);
       nsp_axes_i2f(axe,ix,iy,mpt);
-      /* nsp_get_point_axes(Xgc,ix,iy,mpt); */
-      
       x=mpt[0];y=mpt[1];
       /* hilite objects which are contained in bbox 
        */ 
@@ -1228,14 +1166,9 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
 	    }
 	  C = C->next ;
 	}
-      rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
-      /* XXX Note that the above bf->set_hilited calls 
-       * could be used to invalidate regions 
-       */
-      Xgc->graphic_engine->force_redraw(Xgc,Xgc->zrect);
     }
   nsp_set_cursor(Xgc,-1);
-  for ( i = 0 ; i < 4 ; i++) zrect1[i] += Xgc->zrect[i];
+  for ( i = 0 ; i < 4 ; i++) zrect1[i] = xof[i]+ Xgc->zrect[i];
   /* disable zrect */
   Xgc->zrect[2]=   Xgc->zrect[3]=0;
   /* last draw without rectangle selection */
@@ -1401,7 +1334,6 @@ int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const double p
   rep = nsp_diagram_move_list_obj(R,L, pt, -5,cp,MOVE, click );
   nsp_list_destroy(L);
   if ( rep == -100) return rep;
-  /* nsp_redraw_diagram(R); */
   return OK;
 }
 
@@ -1479,7 +1411,6 @@ int nsp_diagram_select_and_split(NspDiagram *R,const double pt[2])
     {
       NspLink *link;
       rep= link_split(R,(NspLink *) Ob,&link,pt);
-      nsp_redraw_diagram(R);
     }
   return rep;
 }
@@ -1505,7 +1436,6 @@ int nsp_diagram_select_link_and_add_control(NspDiagram *R,const double pt[2])
   if ( IsLink(O) ) 
     {
       rep= link_add_control((NspLink *)O,pt);
-      nsp_redraw_diagram(R);
     }
   return rep;
 }
@@ -1530,7 +1460,6 @@ int nsp_diagram_select_link_and_remove_control(NspDiagram *R,const double pt[2])
   if ( IsLink(O) ) 
     {
       rep= link_remove_control((NspLink *)O,pt);
-      nsp_redraw_diagram(R);
     }
   return rep;
 }
@@ -1558,7 +1487,6 @@ int  nsp_diagram_hilite_near_pt(NspDiagram *R,const double pt[2])
       NspTypeGRint *bf = GR_INT(O->basetype->interface);
       nsp_diagram_unhilite_objs(R,FALSE);
       bf->set_hilited(O,TRUE);
-      nsp_redraw_diagram(R);
     }
   return OK;
 }
@@ -1905,7 +1833,6 @@ int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int st
 	}
       if ( ibutton == stop ) wstop= 1;
       Xgc->graphic_engine->xinfo(Xgc,"ibutton=%d",ibutton);
-      /* clear block shape using redraw */
       /* move object */
       switch ( action ) 
 	{
@@ -2236,9 +2163,6 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	      if ( Abs( y[count] - y[count-1] ) < hvfactor ) y[count-1] = y[count];
 	    }              
 	}
-      /* clear link shape using redraw */
-      /* bf->draw(L); */
-      
       if ( ibutton == stop ) 
 	{
 	  break; 
@@ -2296,16 +2220,25 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	}
       nsp_graphic_invalidate(G);
     }
+  /*
+   * do not keep a Link with one point 
+   */ 
+  if ( L->obj->poly->m == 1)
+    {
+      nsp_graphic_invalidate(G);
+      nsp_list_remove_first(F->obj->children);
+      return NULLOBJ;
+    }
   /* check if first and last points are locked 
    * if true update locks 
    */
-
   mpt[0]=L->obj->poly->R[0];
   mpt[1]=L->obj->poly->R[L->obj->poly->m];
   link_lock_update(F,L,0,mpt);
   mpt[0]=L->obj->poly->R[L->obj->poly->m-1];
   mpt[1]=L->obj->poly->R[2*L->obj->poly->m-1];
   link_lock_update(F,L,1,mpt);
+  /* check if we are locked */
   link_check(F,L);
   nsp_graphic_invalidate(G);
   return NSP_OBJECT(L);

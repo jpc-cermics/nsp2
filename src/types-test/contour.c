@@ -888,6 +888,16 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
   int n2 = P->obj->y->mn;
   
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
   Mat2int(P->obj->style);
   nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R,P->obj->style->I);
@@ -949,4 +959,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 953 "contour.c"
+#line 963 "contour.c"

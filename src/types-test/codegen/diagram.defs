@@ -27,16 +27,6 @@
 
 ;; methods in diagram all are overriden 
 
-(define-method draw   
-  (of-object "Diagram") 
-  (c-name "diagram_draw") 
-  (return-type "none")
-)
-(define-method tops   
-  (of-object "Diagram") 
-  (c-name "diagram_tops") 
-  (return-type "none")
-)
 (define-method new_link    
   (of-object "Diagram") 
   (c-name "diagram_new_link") 

@@ -81,6 +81,15 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
   int ccolor=-1,cthick=-1;
   NspGrArc *P = (NspGrArc *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
   val[0]= P->obj->x;
   val[1]= P->obj->y;

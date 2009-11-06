@@ -1681,6 +1681,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  * 
  * Returns: 
  **/
+#define DEBUG_EXPOSE
 
 #if defined(PERIGTK) || defined(PERICAIRO)
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
@@ -1747,19 +1748,28 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
       if ( dd->private->draw == TRUE ) 
 	{
 	  int rect[4]={event->area.x, event->area.y,
-			  event->area.width, event->area.height};
+		       event->area.width, event->area.height};
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
-	  dd->graphic_engine->clearwindow(dd);
 	  if ( event != NULL) 
-	    dd->graphic_engine->tape_replay(dd,dd->CurWindow,rect);
+	    {
+	      dd->graphic_engine->cleararea(dd,event->area.x,event->area.y,
+					    event->area.width, event->area.height);
+	      dd->graphic_engine->xset_clip(dd,rect);
+	      dd->graphic_engine->tape_replay(dd,dd->CurWindow,rect);
+	      dd->graphic_engine->xset_unclip(dd);
+	    }
 	  else
-	    dd->graphic_engine->tape_replay(dd,dd->CurWindow,NULL);
+	    {
+	      dd->graphic_engine->clearwindow(dd);
+	      dd->graphic_engine->tape_replay(dd,dd->CurWindow,NULL);
+	    }
 	  dd->private->in_expose= FALSE;
 	}
       else 
 	{
+	  /**/
 	}
       
       if (event  != NULL) 
@@ -1768,12 +1778,10 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated  
+	  /* debug the drawing rectangle which is updated  */
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);
-	  */
-	  
 	}
       else 
 	{

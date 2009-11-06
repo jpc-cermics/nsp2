@@ -832,6 +832,12 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
   int n1 = P->obj->x->mn;
   int n2 = P->obj->y->mn;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->x->mn  == 0 || P->obj->y->mn  == 0 ) return;
   nsp_draw_vfield_(Xgc,"champ",P->obj->colored,x,y,fx,fy,n1,n2,NULL,NULL,&arfact);
 }
@@ -1068,4 +1074,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1072 "vfield.c"
+#line 1078 "vfield.c"

@@ -943,20 +943,25 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
 {
   NspLink *L = (NspLink *) Obj;
   double loc[4];
-  int cpat, cwidth;
+  int cpat, biconnected;
   /* only draw block which are in a frame */
   if ( L->obj->show == FALSE ) return ;
-  cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-  cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj , data))
+    {
+      return ;
+    }
   /* draw polyline */
-  if ( link_is_lock_connected(L,0)== TRUE && 
-       link_is_lock_connected(L,1)== TRUE ) 
-    Xgc->graphic_engine->xset_pattern(Xgc,L->obj->color);
-  else 
-    Xgc->graphic_engine->xset_pattern(Xgc,link_unconnected_color);
+  biconnected =  link_is_lock_connected(L,0)== TRUE 
+    && link_is_lock_connected(L,1)== TRUE ;
+  cpat = Xgc->graphic_engine->xset_pattern(Xgc,
+					   (biconnected) ? L->obj->color : link_unconnected_color);
   Xgc->graphic_engine->scale->drawpolyline(Xgc,L->obj->poly->R, L->obj->poly->R + L->obj->poly->m,
 					   L->obj->poly->m,0);
-  /* add hilited */ 
+  /* add hilited control points */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
   if ( L->obj->hilited == TRUE ) 
     {
@@ -972,17 +977,37 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
       for ( i=0 ; i <= 1; i++) 
 	{
 	  if ( i== 1 && m == 1) break; /* just one point in the link */
-	  if ( link_is_lock_connected(L,i)== TRUE)
-	    Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
-	  else 
-	    Xgc->graphic_engine->xset_pattern(Xgc,1); 
 	  link_get_lock_pos(L,i,loc);
 	  loc[0] += -lock_size/2; loc[1] += lock_size/2;loc[2]=loc[3]= lock_size;
-	  Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+	  if ( link_is_lock_connected(L,i)== TRUE)
+	    {
+	      Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+	      Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
+	    }
+	  else 
+	    {
+	      Xgc->graphic_engine->xset_pattern(Xgc,lock_color); 
+	      Xgc->graphic_engine->scale->drawrectangle(Xgc,loc);
+	    }
+	}
+    }
+  else
+    {
+      int i;
+      /* add unconnected locks points */
+      /* firts and last link points which are lock points */
+      for ( i=0 ; i <= 1; i++) 
+	{
+	  link_get_lock_pos(L,i,loc);
+	  loc[0] += -lock_size/2; loc[1] += lock_size/2;loc[2]=loc[3]= lock_size;
+	  if ( link_is_lock_connected(L,i)== FALSE)
+	    {
+	      Xgc->graphic_engine->xset_pattern(Xgc,1); 
+	      Xgc->graphic_engine->scale->drawrectangle(Xgc,loc);
+	    }
 	}
     }
   Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
 }
 
 static void nsp_translate_link(NspGraphic *Obj,const double *tr)
@@ -1582,6 +1607,7 @@ void link_check(NspDiagram *F,NspLink *L)
 		      G = (NspGraphic *) C;
 		      G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,
 					   ((NspGraphic *) F)->obj->Axe);
+		      nsp_graphic_invalidate(G);
 		      /* and link obj,link and L to the connector */
 		      p.object_id =NSP_OBJECT(C); 
 		      p.lock = 0; 
@@ -1590,7 +1616,7 @@ void link_check(NspDiagram *F,NspLink *L)
 		      link_lock(F,link,0,&p); 
 		      link_lock(F,L,i,&p); 
 		      nsp_diagram_locks_update(F,NSP_OBJECT(C)); /* align the locks */
-		      nsp_redraw_diagram(F);
+		      /* nsp_redraw_diagram(F); */
 		    }
 		}
 	    }
@@ -1962,4 +1988,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1966 "link.c"
+#line 1992 "link.c"

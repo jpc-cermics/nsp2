@@ -747,6 +747,12 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, void *data)
   NspMatrix *nx = P->obj->x;
   NspMatrix *ny = P->obj->y;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->x->mn == 0 )  return;
   if ( P->obj->color != NULLMAT && P->obj->color->mn != 0 ) 
     {
@@ -842,4 +848,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 846 "segments.c"
+#line 852 "segments.c"

@@ -387,18 +387,6 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
       gtk_adjustment_set_value( gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (scrolled_window)),
 				(gfloat) viewport_pos[1]);      
     }
-
-/* new pericairo mode for 2.8 */
-#ifdef PERICAIROXX
-  /* drawing is here a cairo_drawing */
-  dd->private->cairo_drawing = gtk_cairo_new (); 
-  /* XXX removing default Double buffering 
-   * since during expose we draw on our own surface 
-   * which is attached to the graphic window. 
-   */
-  gtk_widget_set_double_buffered (dd->private->cairo_drawing ,FALSE);
-  dd->private->drawing =   dd->private->cairo_drawing ;
-#else 
   /* create private->drawingarea */
   dd->private->drawing = gtk_drawing_area_new();
 #if defined(PERIGL) && !defined(PERIGLGTK) 
@@ -412,9 +400,9 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 				GDK_GL_RGBA_TYPE);
 #else 
   /* we use our own double buffer */
-  gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
+   gtk_widget_set_double_buffered (dd->private->drawing ,FALSE);
+
 #endif /* defined(PERIGL) && !defined(PERIGLGTK)  */
-#endif /* PERICAIRO */
 
   /* gtk_widget_set_usize (GTK_WIDGET (dd->private->cairo_drawing),600,400); */
 #if 0
@@ -453,7 +441,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   gtk_widget_set_events(dd->private->drawing, GDK_EXPOSURE_MASK 
 			| GDK_BUTTON_PRESS_MASK 
 			| GDK_BUTTON_RELEASE_MASK
-			| GDK_POINTER_MOTION_HINT_MASK 
+			| GDK_POINTER_MOTION_HINT_MASK
 			/* get all motions */
 			| GDK_POINTER_MOTION_MASK 
 			/* get motion when pressed buttons move*/

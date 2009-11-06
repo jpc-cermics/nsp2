@@ -5,31 +5,33 @@
   (parent "Graphic")
   (c-name "NspAxes")
   (fields
-   '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") ;; the position of this axes in a figure 
-                            ;; or the position of this axes in an other axe
-    '("double" "rho")       ;; rotation of the rectangle which contains the axe
-    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
-    '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the axe. 
-    '("NspMatrix*" "arect" "std" "{1/8.0,1/8.0,1/8.0,1/8.0}" "4") ;; 
-    '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this axes defines if []
-                            ;; frect is deduced from data. 
-    '("char*"  "title") 
-    '("char*"  "x") 
-    '("char*"  "y") 
-    '("NspList*" "children") ;; list of graphic object in the axe 
-    '("gboolean" "fixed" "std" "FALSE") ;; if TRUE then frect is not updated with internal objects.
-    '("gboolean" "iso" "std"  "TRUE") ;; iso mode 
-    '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis 
-    '("int"      "grid" "std" "-1") ;; color of grid if >= 0
-    '("int"      "axes" "std" "1" );; where axes are drawn
-    '("gboolean" "xlog" "std" "FALSE");; log scale on x 
-    '("gboolean" "ylog" "std" "FALSE");; log scale on y
-    '("int"      "lpos" "std" "1" );; where legends are drawn
-    '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
-    '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
-    '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
-    '("nsp_gcscale" "scale" "hidden") 
-    )
+   ;; the position of this axes in a figure 
+   ;; or the position of this axes in an other axe if we are not a 
+   ;; top level axes.
+   '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") 
+   '("double" "rho")       ;; rotation of the rectangle which contains the axe
+   '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
+   '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the axe. 
+   '("NspMatrix*" "arect" "std" "{1/8.0,1/8.0,1/8.0,1/8.0}" "4") ;; 
+   '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this axes defines if []
+   ;; frect is deduced from data. 
+   '("char*"  "title") 
+   '("char*"  "x") 
+   '("char*"  "y") 
+   '("NspList*" "children") ;; list of graphic object in the axe 
+   '("gboolean" "fixed" "std" "FALSE") ;; if TRUE then frect is not updated with internal objects.
+   '("gboolean" "iso" "std"  "TRUE") ;; iso mode 
+   '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis 
+   '("int"      "grid" "std" "-1") ;; color of grid if >= 0
+   '("int"      "axes" "std" "1" );; where axes are drawn
+   '("gboolean" "xlog" "std" "FALSE");; log scale on x 
+   '("gboolean" "ylog" "std" "FALSE");; log scale on y
+   '("int"      "lpos" "std" "1" );; where legends are drawn
+   '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
+   '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
+   '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
+   '("nsp_gcscale" "scale" "hidden") 
+   )
   (gtype-id "Axes")
 )
 

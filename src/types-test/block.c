@@ -1061,6 +1061,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
        
   /* check if the block is inside drawing rectangle
    */
+
   if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, data))
     {
       return ;
@@ -1927,4 +1928,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1931 "block.c"
+#line 1932 "block.c"

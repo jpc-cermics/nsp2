@@ -69,7 +69,7 @@ function w=create_object_menu (win,x,y)
   
   if ~hilited  then 
     rep=GF(s_win).select_and_hilite[[x,y]];
-    GF(s_win).draw[];
+    // GF(s_win).draw[];
   end
     
   // now selection should not be empty 
@@ -159,7 +159,7 @@ function objet_menuitem_response(w,args)
    case 1 then  
     // delete hilited objects 
     GF(win).delete_hilited[] ; 
-    GF(win).draw[];
+    //GF(win).draw[];
    case 2 then  
     // add a control to a link 
     GF(win).hilite_near_pt[[args(2),args(3)]];
@@ -197,10 +197,10 @@ function objet_menuitem_response(w,args)
     winid= 'win'+string(newwin);
     GF(winid)= newgf;
     GF(winid).attach_to_window[newwin];
-    GF(winid).draw[];
+    //GF(winid).draw[];
     seteventhandler('my_eventhandler');
   end
-  GF(win).draw[]
+  //GF(win).draw[]
 endfunction
 
 function menu=create_right_menu (win,xc,yc)
@@ -310,7 +310,7 @@ function menuitem_response(w,args)
     if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
     else x_message('No selection');end 
   end
-  GF(win).draw[]
+  //GF(win).draw[]
 endfunction
 
 function my_eventhandler(win,x,y,ibut,imask)
@@ -345,7 +345,7 @@ function my_eventhandler(win,x,y,ibut,imask)
 	// toggle the selection 
 	// printf("control -press \n");
 	GF(winid).select_and_toggle_hilite[[x,y]];
-	GF(winid).draw[];
+	//GF(winid).draw[];
     else
       // select the new, unhilite others and move selected 
       GF(winid).select_and_move[[x,y]];
@@ -364,15 +364,13 @@ function my_eventhandler(win,x,y,ibut,imask)
     x_message('100');
     x_message('click on d: 99');
     //gr_delete();
-    //gr_draw(win);
   elseif ibut==99
     x_message('click on c: 99');
     //gr_copy();
-    //gr_draw(win);
   elseif ibut == 65288 || ibut == 65535 
     // Delete and supr keys -> delete hilited objects 
     GF(winid).delete_hilited[] ; 
-    GF(winid).draw[];
+    //GF(winid).draw[];
   else
     xinfo('Mouse action: ['+string(ibut)+']');
     // test a popup menu 
@@ -451,7 +449,7 @@ if ~new_graphics() then
   switch_graphics();
 end
 
-xinit(name='My diagram',cairo=%f,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
+xinit(name='My diagram',cairo=%f,opengl=%f,dim=[1000,1000])//popup_dim=[600,400])
 //xset('recording',0)
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);
@@ -471,7 +469,6 @@ F.draw_now[];
 //C=draw_vanne();
 //A.children($+1)= C;
 
-
 if %t then 
   seteventhandler('my_eventhandler');
   //xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
@@ -482,7 +479,7 @@ else
   F= diagram();
   pause;
   F.attach_to_window[0];
-  F.draw[];
+  //F.draw[];
 end
 
 

@@ -1063,6 +1063,15 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data)
   int *xm,*ym,i,  j, k;
 
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+
+  /* check if the block is inside drawing rectangle
+   */
+
+  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+    {
+      return ;
+    }
+
   if ( P->obj->colminmax->mn == 2 ) 
     colminmax = P->obj->colminmax->R;
 
@@ -1264,4 +1273,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1268 "fec.c"
+#line 1277 "fec.c"

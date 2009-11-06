@@ -1046,7 +1046,6 @@ static NspObject *_wrap_axes_get_obj_children(void *self,char *attr, int *copy)
 
 static int _wrap_axes_set_obj_children(void *self,NspObject *val)
 {
-  double inside_bounds[4];
   if ( ! IsList(val) ) return FAIL;
   if ( nsp_list_check_figure((NspList *) val, ((NspGraphic *) self)->obj->Fig) == FAIL) return FAIL;
   if (((NspAxes *) self)->obj->children != NULL ) 
@@ -1056,7 +1055,7 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children =  (NspList *) val;
-  nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
+  nsp_axes_compute_inside_bounds(NULL,self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj );
   return OK;
@@ -1064,7 +1063,6 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
 
 static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 {
-  double inside_bounds[4];
   NspList *children;
   if ( ! IsList(O) ) return FAIL;
   if ((children = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
@@ -1075,14 +1073,14 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children= children;
-  nsp_axes_compute_inside_bounds(NULL,self,inside_bounds);
+  nsp_axes_compute_inside_bounds(NULL,self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj);
   return OK;
 }
 
 
-#line 1086 "axes.c"
+#line 1084 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1312,7 +1310,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 176 "codegen/axes.override"
+#line 174 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1321,10 +1319,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1325 "axes.c"
+#line 1323 "axes.c"
 
 
-#line 186 "codegen/axes.override"
+#line 184 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1334,7 +1332,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1338 "axes.c"
+#line 1336 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1365,7 +1363,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 197 "codegen/axes.override"
+#line 195 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1457,7 +1455,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   if ( P->obj->fixed == FALSE ) 
     {
       /* actualize the inside bounds with objects 
-       * this should not be done systématically 
+       * this should not be done systematically 
        */
       nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
       memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
@@ -1492,7 +1490,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   axis_draw(Xgc,'1', 
 	    (P->obj->auto_axis) ? '5': '1',
 	    P->obj->grid);
-  
   frame_clip_on(Xgc);
   while ( cloc != NULLCELL ) 
     {
@@ -2121,14 +2118,11 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 
 int nsp_axes_insert_child(NspAxes *A, NspGraphic *G)
 {
-  /* XXX inside_bounds: to be inserted in structure */
-  double inside_bounds[4];
   if ( nsp_list_end_insert(A->obj->children,(NspObject *) G )== FAIL)
     return FAIL;
   nsp_graphic_link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
-  /* nsp_list_link_figure(A->obj->children,((NspGraphic *) A)->obj->Fig,A->obj); */
   /* updates the bounds of the axe */
-  nsp_axes_compute_inside_bounds(NULL,(NspGraphic *) A,inside_bounds);
+  nsp_axes_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
   /* raise an invalidate operation */
   nsp_graphic_invalidate((NspGraphic *) G);
   return OK;
@@ -2169,4 +2163,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2173 "axes.c"
+#line 2167 "axes.c"
