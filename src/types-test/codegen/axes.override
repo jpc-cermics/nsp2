@@ -318,7 +318,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   axis_draw(Xgc,'1', 
 	    (P->obj->auto_axis) ? '5': '1',
 	    P->obj->grid);
-  frame_clip_on(Xgc);
+  /* frame_clip_on(Xgc); */
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -331,7 +331,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
-  frame_clip_off(Xgc);
+  /* frame_clip_off(Xgc);*/
   /* legends */
   nsp_axes_legends(Xgc,P);
   /* title if present */
