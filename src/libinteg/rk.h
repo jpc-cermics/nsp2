@@ -1,9 +1,11 @@
 #ifndef NSP_RK_H
 #define NSP_RK_H
 
-typedef int (*xode_f)(int *neq,const double *t,const double y[],double ydot[]);
-typedef int (*xode_jac)(int *neq,const double *t,const double y[],int *ml,
-		       int *mu,double pd[],int *nrpd);
+/*
+  typedef int (*xode_f)(int *neq,const double *t,const double y[],double ydot[]);
+  typedef int (*xode_jac)(int *neq,const double *t,const double y[],int *ml,
+  int *mu,double pd[],int *nrpd);
+*/
 
 typedef int (*rk_rkqc_f) (double *y, double *dydx, int *n, double *x, double *htry,
 			  double *eps, double *yscal, double *hdid, double *hnext,
