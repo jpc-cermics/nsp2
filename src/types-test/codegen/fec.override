@@ -17,7 +17,7 @@ include-private Fec
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_fec(NspGraphic *o,const double *tr);
 static void nsp_rotate_fec(NspGraphic *o,double *R);
 static void nsp_scale_fec(NspGraphic *o,double *alpha);
@@ -26,6 +26,7 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -142,7 +143,7 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double *colout = NULL ; /* XXX à rajouter */
   NspFec *P = (NspFec *) Obj;
@@ -162,7 +163,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

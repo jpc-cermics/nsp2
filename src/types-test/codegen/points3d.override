@@ -11,7 +11,7 @@ extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos 
 
 %%
 include-private  Points3d
-static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_points3d(NspGraphic *o,double *R);
 static void nsp_scale_points3d(NspGraphic *o,double *alpha);
@@ -28,6 +28,7 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/polyhedron.h>
@@ -105,13 +106,13 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
 
   /*
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

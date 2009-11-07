@@ -1153,7 +1153,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   GdkRectangle *r = data;
   char xf[]="onn";
@@ -1533,7 +1533,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
       j = HF[p[i]].num_in_obj; /* son numéro de face dans l'objet en question */
       /* dessin partiel de l'objet en utilisant la face j */
       /* XXX OBJ3D(Obj[k].obj)->draw_partial(Xgc,Obj[k].obj,j); */
-      ((NspGraphic *) objs_array[k])->type->draw(Xgc,(NspGraphic *) objs_array[k],&j);
+      ((NspGraphic *) objs_array[k])->type->draw(Xgc,(NspGraphic *) objs_array[k],NULL,&j);
     }
   if ( with_box == TRUE  &&  B->box_style == SCILAB )  nsp_obj3d_draw_near_box_segments(Xgc,B);
   if ( with_box == TRUE ) nsp_obj3d_free_box(B);
@@ -1601,7 +1601,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
 	  nsp_ogl_set_3dview(Xgc);
-	  G->type->draw(Xgc,G,NULL);
+	  G->type->draw(Xgc,G,NULL,NULL);
 	}
       cloc = cloc->next;
     }
@@ -2738,7 +2738,7 @@ void nsp_objs3d_invalidate(NspGraphic *G)
       rect[1]= P->obj->wrect->R[1]*wdim[1];
       rect[2]= P->obj->wrect->R[2]*wdim[0];
       rect[3]= P->obj->wrect->R[3]*wdim[1];
-      Xgc->graphic_engine->force_redraw(Xgc,rect);
+      Xgc->graphic_engine->invalidate(Xgc,rect);
     }
   else
     {

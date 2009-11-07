@@ -1,5 +1,9 @@
 /* -*- Mode: C -*- */
 %%
+include-start Graphic
+#include <gdk/gdk.h>
+
+%%
 include-public Graphic
 
 /* inserted at the end of public part of include file */
@@ -51,7 +55,7 @@ override_internal_methods
 %%
 override_internal_methods_protos
 
-typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
+typedef void draw_func(BCG *Xgc,NspGraphic *Obj,GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
 typedef void rotate_func(NspGraphic *Obj,double *R);
 typedef void scale_func(NspGraphic *Obj,double *alpha);
@@ -361,7 +365,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
       scale_f2i(&A->scale,bounds+2,bounds+3,&xmax,&ymax,1);
       rect[0]=xmin-10;rect[1]=ymax-10;rect[2]=xmax-xmin+20;rect[3]=ymin-ymax+20;
       /* fprintf(stderr,"invalidate [%d,%d,%d,%d]\n",rect[0],rect[1],rect[2],rect[3]);*/
-      Xgc->graphic_engine->force_redraw(Xgc,rect);
+      Xgc->graphic_engine->invalidate(Xgc,rect);
     }
   else
     {
@@ -379,7 +383,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
 	}
       else
 	{
-	  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+	  Xgc->graphic_engine->invalidate(Xgc,NULL);
 	}
     }
 }
@@ -404,6 +408,10 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
   r1.y = ymax-10;
   r1.width = xmax - xmin +20;
   r1.height = ymin - ymax +20 ;
+  /* Sciprintf("bounds rectangle [%d,%d,%d,%d]\n",
+	    r1.x,r1.y,r1.width,r1.height);
+  */
+
   return  gdk_rectangle_intersect(r,&r1,NULL);
 }
 

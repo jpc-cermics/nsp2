@@ -126,7 +126,10 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 #ifdef PERICAIRO 
   private->cairo_cr = NULL;
 #endif 
-
+  private->invalidated.width = 0;
+  private->invalidated.height = 0;
+  private->invalidated.x = 0;
+  private->invalidated.y = 0;
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");

@@ -8,7 +8,7 @@ include-public  Polyline
 include-private  Polyline
 
 /* inserted in the private part of include file */
-static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_polyline(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyline(NspGraphic *o,double *R);
 static void nsp_scale_polyline(NspGraphic *o,double *alpha);
@@ -16,6 +16,7 @@ static int nsp_getbounds_polyline(NspGraphic *o,double *bounds);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
@@ -73,7 +74,7 @@ last
 /* inserted verbatim at the end */
 
 
-static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int xmark[2];
   int ccolor=-1,cmark=-1,cthick=-1;
@@ -83,7 +84,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
   if (((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->x->mn == 0) return ;
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

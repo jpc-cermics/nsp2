@@ -25,7 +25,7 @@
 
 
 #line 93 "codegen/connector.override"
-
+#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"
@@ -734,7 +734,7 @@ static int _wrap_connector_draw(void  *self, Stack stack, int rhs, int opt, int 
 {
   nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  nsp_draw_connector(Fig->Xgc, self, NULL);
+  nsp_draw_connector(Fig->Xgc, self,NULL, NULL);
   return 0;
 }
 
@@ -889,7 +889,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
  *
  */
 
-static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspConnector *B = (NspConnector *) Obj;
   double loc[6];
@@ -900,7 +900,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, data))
+  if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, rect))
     {
       return ;
     }

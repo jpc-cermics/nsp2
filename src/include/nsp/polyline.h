@@ -114,7 +114,7 @@ static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/polyline.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_polyline(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyline(NspGraphic *o,double *R);
 static void nsp_scale_polyline(NspGraphic *o,double *alpha);

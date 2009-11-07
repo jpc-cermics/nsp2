@@ -43,7 +43,7 @@ static double lock_size=1; /*  XXX a factoriser quelque part ... */
 static int lock_color=10;
 
 /* set of method for parent class graphic  */
-static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_connector(NspGraphic *o,const double *tr);
 static void nsp_rotate_connector(NspGraphic *o,double *R);
 static void nsp_scale_connector(NspGraphic *o,double *alpha);
@@ -90,7 +90,7 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
 
 %%
 headers
-
+#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"
@@ -381,7 +381,7 @@ static int _wrap_connector_draw(void  *self, Stack stack, int rhs, int opt, int 
 {
   nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  nsp_draw_connector(Fig->Xgc, self, NULL);
+  nsp_draw_connector(Fig->Xgc, self,NULL, NULL);
   return 0;
 }
 
@@ -463,7 +463,7 @@ last
  *
  */
 
-static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspConnector *B = (NspConnector *) Obj;
   double loc[6];
@@ -474,7 +474,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, data))
+  if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, rect))
     {
       return ;
     }

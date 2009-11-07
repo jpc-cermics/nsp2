@@ -25,10 +25,11 @@
 
 
 #line 19 "codegen/grrect.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 32 "grrect.c"
+#line 33 "grrect.c"
 
 /* ----------- NspGrRect ----------- */
 
@@ -100,7 +101,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
 
   type->init = (init_func *) init_grrect;
 
-#line 29 "codegen/grrect.override"
+#line 30 "codegen/grrect.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -113,7 +114,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 117 "grrect.c"
+#line 118 "grrect.c"
   /* 
    * NspGrRect interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -708,7 +709,7 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/grrect.override"
+#line 53 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -717,10 +718,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 721 "grrect.c"
+#line 722 "grrect.c"
 
 
-#line 62 "codegen/grrect.override"
+#line 63 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -730,7 +731,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 734 "grrect.c"
+#line 735 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -761,11 +762,11 @@ void GrRect_Interf_Info(int i, char **fname, function (**f))
   *f = GrRect_func[i].fonc;
 }
 
-#line 73 "codegen/grrect.override"
+#line 74 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double val[4];
   int ccolor=-1,cthick=-1;
@@ -773,7 +774,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, void *data)
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj,data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj,rect))
     {
       /* Sciprintf("No need to draw one rectangle\n"); */
       return;
@@ -858,4 +859,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 862 "grrect.c"
+#line 863 "grrect.c"

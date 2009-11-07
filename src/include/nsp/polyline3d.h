@@ -111,7 +111,7 @@ static NspPolyline3d *nsp_polyline3d_create_void(char *name,NspTypeBase *type);
 #line 10 "codegen/polyline3d.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_polyline3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyline3d(NspGraphic *o,double *R);
 static void nsp_scale_polyline3d(NspGraphic *o,double *alpha);

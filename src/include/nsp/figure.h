@@ -106,7 +106,6 @@ extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern NspFigure *nsp_check_for_figure(BCG *Xgc);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
-extern void nsp_figure_force_redraw(nsp_figure *F,void *rect);
 extern void nsp_list_link_figure(NspList *L, nsp_figure  *F,void *A);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
@@ -115,7 +114,7 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_invalidate(NspGraphic *G);
 extern NspObject *nsp_check_for_axes_or_objs3d_from_pointer(nsp_figure *F,void *obj);
 
-#line 119 "./figure.h"
+#line 118 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -130,12 +129,12 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type);
-#line 25 "codegen/figure.override"
+#line 24 "codegen/figure.override"
 
 /* inserted in the private part of include file
  * of classa.h
  */
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
 static int nsp_figure_draw_latter(NspFigure *);
@@ -150,6 +149,6 @@ static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 
-#line 154 "./figure.h"
+#line 153 "./figure.h"
 #endif /* NspFigure_Private */
 

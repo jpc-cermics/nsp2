@@ -25,7 +25,7 @@
 
 
 #line 23 "codegen/vfield.override"
-
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -821,7 +821,7 @@ void VField_Interf_Info(int i, char **fname, function (**f))
 
 #line 77 "codegen/vfield.override"
 
-static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double arfact = 2.0;
   NspVField *P = (NspVField *) Obj;
@@ -833,7 +833,7 @@ static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, void *data)
   int n2 = P->obj->y->mn;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

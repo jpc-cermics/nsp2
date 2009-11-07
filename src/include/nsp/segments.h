@@ -110,7 +110,7 @@ static NspSegments *nsp_segments_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_segments(NspGraphic *o,const double *tr);
 static void nsp_rotate_segments(NspGraphic *o,double *R);
 static void nsp_scale_segments(NspGraphic *o,double *alpha);

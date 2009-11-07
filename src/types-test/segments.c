@@ -25,10 +25,11 @@
 
 
 #line 20 "codegen/segments.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 32 "segments.c"
+#line 33 "segments.c"
 
 /* ----------- NspSegments ----------- */
 
@@ -100,7 +101,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
 
   type->init = (init_func *) init_segments;
 
-#line 30 "codegen/segments.override"
+#line 31 "codegen/segments.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -113,7 +114,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 117 "segments.c"
+#line 118 "segments.c"
   /* 
    * NspSegments interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -683,7 +684,7 @@ static AttrTab segments_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/segments.override"
+#line 54 "codegen/segments.override"
 
 extern function int_nspgraphic_extract;
 
@@ -692,10 +693,10 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 696 "segments.c"
+#line 697 "segments.c"
 
 
-#line 63 "codegen/segments.override"
+#line 64 "codegen/segments.override"
 
 extern function int_graphic_set_attribute;
 
@@ -705,7 +706,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 709 "segments.c"
+#line 710 "segments.c"
 
 
 /*----------------------------------------------------
@@ -736,11 +737,11 @@ void Segments_Interf_Info(int i, char **fname, function (**f))
   *f = Segments_func[i].fonc;
 }
 
-#line 74 "codegen/segments.override"
+#line 75 "codegen/segments.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int ccolor=-1;
   NspSegments *P = (NspSegments *) Obj;
@@ -748,7 +749,7 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, void *data)
   NspMatrix *ny = P->obj->y;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -848,4 +849,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 852 "segments.c"
+#line 853 "segments.c"

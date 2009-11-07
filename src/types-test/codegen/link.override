@@ -63,7 +63,7 @@ static double lock_size=1; /*  XXX a factoriser quelque part ... */
 static int lock_color=10;
 
 /* set of method for parent class graphic  */
-static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_link(NspGraphic *o,const double *tr);
 static void nsp_rotate_link(NspGraphic *o,double *R);
 static void nsp_scale_link(NspGraphic *o,double *alpha);
@@ -110,7 +110,7 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
 %%
 headers
-
+#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"
@@ -388,7 +388,7 @@ static int _wrap_link_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  nsp_draw_link(Fig->Xgc, self, NULL);
+  nsp_draw_link(Fig->Xgc, self,NULL, NULL);
   return 0;
 }
 
@@ -469,7 +469,7 @@ last
 
 static int link_unconnected_color=10;
 
-static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspLink *L = (NspLink *) Obj;
   double loc[4];
@@ -480,7 +480,7 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj , data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

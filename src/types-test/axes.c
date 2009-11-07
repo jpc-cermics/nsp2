@@ -1370,9 +1370,9 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
 				  int *aaint,int isomode, int auto_axes, char *xf);
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
-static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
-  GdkRectangle *r = data;
+  GdkRectangle *r = rect, clip;
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
@@ -1381,11 +1381,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-  /*
-   * check if we are in the draw zone 
-   */
-  if ( data != NULL) 
+
+  if ( rect != NULL) 
     {
+      /*
+       * check if we are in the draw zone given by data.
+       */
       if ( P->obj->top == TRUE ) 
 	{
 	  GdkRectangle r1;
@@ -1397,20 +1398,26 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 	  r1.height=P->obj->wrect->R[3]*wdim[1];
 	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
 	    {
+	      /*
 	      Sciprintf("No need to draw one axes [%d,%d,%d,%d] draw=[%d,%d,%d,%d]\n",
 			r1.x,r1.y,r1.width,r1.height,
 			r->x,r->y,r->width,r->height
 			);
+	      */
 	      return;
 	    }
 	  else
 	    {
+	      /*
 	      Sciprintf("Drawing axes\n");
+	      */
 	    }
 	}
       else
 	{
-	  Sciprintf("draw axes for non to level to be done \n");
+	  /*
+	    Sciprintf("draw axes for non to level to be done \n");
+	  */
 	}
     }
 
@@ -1476,7 +1483,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
   
   if ( P->obj->xlog == TRUE ) xf[1]= 'l';
   if ( P->obj->ylog == TRUE ) xf[2]= 'l';
-
+  
   nsp_axes_update_frame_bounds(Xgc,wrect1,
 			       P->obj->frect->R,
 			       P->obj->arect->R,
@@ -1484,26 +1491,61 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data)
 			       P->obj->iso,
 			       P->obj->auto_axis,
 			       xf);
-  /* save the scales */
-  P->obj->scale = *Xgc->scales;
+#if 0
+  {
+    int clipz[5];
+    Xgc->graphic_engine->xget_clip(Xgc,(int *) &clipz);
+    Sciprintf("avant de dessiner les axes: clip=[%d,%d,%d,%d]\n",
+	      clipz[1],clipz[2],clipz[3],clipz[4]);
+    Sciprintf("avant de dessiner les axes: rect=[%d,%d,%d,%d]\n",
+	      rect->x,rect->y, rect->width,rect->height);
+  }
+#endif 
 
   axis_draw(Xgc,'1', 
 	    (P->obj->auto_axis) ? '5': '1',
 	    P->obj->grid);
-  /* frame_clip_on(Xgc); */
+
+  /* save the scales */
+  P->obj->scale = *Xgc->scales;
+
+  /* clip the axes 
+   * Note that clipping is wrong when an axe is rotated 
+   * since clipping only works with rectangles 
+   */
+  if ( rect != NULL ) 
+    {
+      gdk_rectangle_intersect( rect, (GdkRectangle *) Xgc->scales->WIRect1, &clip);
+      Xgc->graphic_engine->xset_clip(Xgc,(int *) &clip);
+      /*
+	Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
+	clip.x,clip.y,clip.width,clip.height);
+      */
+    }
+  else
+    {
+      Xgc->graphic_engine->xset_clip(Xgc,(int *) Xgc->scales->WIRect1);
+    }
+  
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,data);
+	  G->type->draw(Xgc,G,rect,data);
 	}
       cloc = cloc->next;
     }
-  /* Note that clipping is wrong when an axe is rotated 
-   * since clipping only works with rectangles 
-   */
-  /* frame_clip_off(Xgc);*/
+  /* back to previous clip zone */
+  if ( rect != NULL ) 
+    {
+      Xgc->graphic_engine->xset_clip(Xgc,(int *) &rect);
+    }
+  else
+    {
+      Xgc->graphic_engine->xset_unclip(Xgc);
+    }
+  
   /* legends */
   nsp_axes_legends(Xgc,P);
   /* title if present */
@@ -2156,7 +2198,7 @@ void nsp_axes_invalidate(NspGraphic *G)
       rect[1]= P->obj->wrect->R[1]*wdim[1];
       rect[2]= P->obj->wrect->R[2]*wdim[0];
       rect[3]= P->obj->wrect->R[3]*wdim[1];
-      Xgc->graphic_engine->force_redraw(Xgc,rect);
+      Xgc->graphic_engine->invalidate(Xgc,rect);
     }
   else
     {
@@ -2164,4 +2206,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2168 "axes.c"
+#line 2210 "axes.c"

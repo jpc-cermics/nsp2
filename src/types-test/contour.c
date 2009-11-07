@@ -25,7 +25,7 @@
 
 
 #line 23 "codegen/contour.override"
-
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -878,7 +878,7 @@ void Contour_Interf_Info(int i, char **fname, function (**f))
 
 #line 81 "codegen/contour.override"
 
-static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspContour *P = (NspContour *) Obj;
   double *x= P->obj->x->R; 
@@ -893,7 +893,7 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

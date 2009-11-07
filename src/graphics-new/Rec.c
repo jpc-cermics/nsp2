@@ -157,7 +157,7 @@ void tape_replay_undo_scale(BCG *Xgc,int winnumber)
   if ( Xgc == NULL || Xgc->figure == NULL ) return ;
   G = (NspGraphic *) Xgc->figure ;
   nsp_figure_unzoom(G);
-  G->type->draw(Xgc,G,NULL);
+  G->type->draw(Xgc,G,NULL,NULL);
   nsp_gr_handler(Xgc,winnumber);
 }
 
@@ -261,7 +261,7 @@ void tape_replay(BCG *Xgc,int winnumber,int *rect)
   NspGraphic *G;
   if ( Xgc == NULL || Xgc->figure == NULL ) return ;
   G = (NspGraphic *) Xgc->figure ;
-  G->type->draw(Xgc,G,rect);
+  G->type->draw(Xgc,G, (GdkRectangle *)rect,NULL);
   /* Is there a replay handler */
   nsp_gr_handler(Xgc,winnumber);
 }
@@ -283,7 +283,7 @@ void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber)
   NspGraphic *G;
   if ( Xgc == NULL || Xgc->figure == NULL ) return ;
   G = (NspGraphic *) Xgc1->figure ;
-  G->type->draw(Xgc,G,NULL);
+  G->type->draw(Xgc,G,NULL,NULL);
   /* Is there a replay handler */
   nsp_gr_handler(Xgc,winnumber);
 }

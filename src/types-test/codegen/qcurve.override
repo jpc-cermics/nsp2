@@ -13,7 +13,7 @@ extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 include-private Qcurve
 
 /* inserted in the private part of include file */
-static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
 static void nsp_rotate_qcurve(NspGraphic *o,double *R);
 static void nsp_scale_qcurve(NspGraphic *o,double *alpha);
@@ -27,6 +27,7 @@ static void oscillo_test();
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/qcurve.h>
@@ -138,7 +139,7 @@ last
 
 typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
 
-static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int cmark=-1;
   int xmark[2];
@@ -147,7 +148,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, void *data)
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
 
   if (((NspGraphic *) P)->obj->hidden == FALSE ) return;
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -393,7 +394,8 @@ static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
  * 
  */
 
-NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,double ymin,double ymax,NspList **Lc)
+NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
+			   int yfree,double ymin,double ymax,NspList **Lc)
 {
   NspAxes *axe;
   BCG *Xgc;
@@ -440,7 +442,7 @@ NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree
   nsp_strf_axes(Xgc, axe , NULL, '2');
   axe->obj->iso = FALSE;
   axe->obj->fixed = FALSE;
-  nsp_figure_force_redraw(((NspGraphic *) axe)->obj->Fig,NULL);
+  nsp_axes_invalidate((NspGraphic *) axe);
   if ( Lc != NULL) *Lc = axe->obj->children;
   return ((NspGraphic *) axe)->obj->Fig;
 }

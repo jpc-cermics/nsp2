@@ -1309,20 +1309,24 @@ void Diagram_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspDiagram *P = (NspDiagram *) Obj;
   NspList *L = P->obj->children;
   Cell *cloc = L->first;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
 
-  /* check if the block is inside drawing rectangle
+  /*
+   * we do not check here the bound of the diagram since 
+   * they are not relevant here (see getbounds). 
+   * proper bounds should be given at creation or we just 
+   * use here the fact that each block will do the proper 
+   * job 
+   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
+   {
+   return ;
+   }
    */
-
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
-    {
-      return ;
-    }
 
   /* draw elements */
   while ( cloc != NULLCELL ) 
@@ -1330,7 +1334,7 @@ static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, void *data)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,data);
+	  G->type->draw(Xgc,G,rect,data);
 	}
       cloc = cloc->next;
     }
@@ -1447,6 +1451,7 @@ static int nsp_getbounds_diagram(NspGraphic *Obj,double *bounds)
     {
       nsp_diagram_compute_inside_bounds(Obj);
       memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+      return TRUE;
     }
   else
     {
@@ -1629,7 +1634,7 @@ static void *nspdiagram_get_adress(NspList *L,void *old )
  * sets the show attribute to value @val for all the objects which 
  * are connected to object @O by lock connections.
  **/
-
+#if 0
 static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 {
   NspTypeGRint *bf = GR_INT(O->basetype->interface);
@@ -1653,7 +1658,7 @@ static void nsp_diagram_locks_set_show(NspDiagram *F,NspObject *O,int val)
 	}
     }
 }
-
+#endif 
 
 static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],double *rect)
 {
@@ -1686,7 +1691,7 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
       Cell *C;
       rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
       for ( i = 0 ; i < 4 ; i++) zrect1[i] = xof[i]+ Xgc->zrect[i];
-      Xgc->graphic_engine->force_redraw(Xgc,zrect1);
+      Xgc->graphic_engine->invalidate(Xgc,zrect1);
       rect[0]= Min(pt[0],x);
       rect[1]= Max(pt[1],y);
       rect[2]= Abs(pt[0]-x);
@@ -1694,7 +1699,7 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
       /* invalidate new zone */
       rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
       for ( i = 0 ; i < 4 ; i++) zrect1[i] = xof[i]+ Xgc->zrect[i];
-      Xgc->graphic_engine->force_redraw(Xgc,zrect1);
+      Xgc->graphic_engine->invalidate(Xgc,zrect1);
       nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ix, &iy,iwait,TRUE,TRUE,FALSE);
       nsp_axes_i2f(axe,ix,iy,mpt);
@@ -1729,7 +1734,7 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
   /* disable zrect */
   Xgc->zrect[2]=   Xgc->zrect[3]=0;
   /* last draw without rectangle selection */
-  Xgc->graphic_engine->force_redraw(Xgc,zrect1);
+  Xgc->graphic_engine->invalidate(Xgc,zrect1);
   Xgc->graphic_engine->xset_thickness(Xgc,th);
   Xgc->graphic_engine->xset_dash(Xgc,style);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
@@ -2888,4 +2893,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2892 "diagram.c"
+#line 2897 "diagram.c"

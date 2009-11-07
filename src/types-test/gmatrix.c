@@ -25,7 +25,7 @@
 
 
 #line 19 "codegen/gmatrix.override"
-
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -827,7 +827,7 @@ void GMatrix_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   int remap = P->obj->remap; 
@@ -843,7 +843,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

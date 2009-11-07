@@ -123,7 +123,7 @@ static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_fec(NspGraphic *o,const double *tr);
 static void nsp_rotate_fec(NspGraphic *o,double *R);
 static void nsp_scale_fec(NspGraphic *o,double *alpha);

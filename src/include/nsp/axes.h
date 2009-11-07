@@ -159,7 +159,7 @@ static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
  * of classa.h
  */
 
-static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_axes(NspGraphic *o,const double *tr);
 static void nsp_rotate_axes(NspGraphic *o,double *R);
 static void nsp_scale_axes(NspGraphic *o,double *alpha);

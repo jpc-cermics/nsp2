@@ -7,6 +7,10 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/graphic.override"
+#include <gdk/gdk.h>
+
+#line 14 "./graphic.h"
 /* NspGraphic */
 
 #include <nsp/object.h>
@@ -19,9 +23,9 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 53 "codegen/graphic.override"
+#line 57 "codegen/graphic.override"
 
-typedef void draw_func(BCG *Xgc,NspGraphic *Obj,void *data);
+typedef void draw_func(BCG *Xgc,NspGraphic *Obj,GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
 typedef void rotate_func(NspGraphic *Obj,double *R);
 typedef void scale_func(NspGraphic *Obj,double *alpha);
@@ -33,14 +37,14 @@ typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, i
 typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 typedef void invalidate_func(NspGraphic *G);
 
-#line 37 "./graphic.h"
+#line 41 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 38 "codegen/graphic.override"
+#line 42 "codegen/graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
@@ -55,7 +59,7 @@ struct _NspTypeGraphic {
   invalidate_func *invalidate;
 
 
-#line 59 "./graphic.h"
+#line 63 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
@@ -117,13 +121,13 @@ extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);
 extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
-#line 4 "codegen/graphic.override"
+#line 8 "codegen/graphic.override"
 
 /* inserted at the end of public part of include file */
 extern void nsp_graphic_invalidate(NspGraphic *G);
 extern int nsp_graphic_intersect_rectangle(NspGraphic *G,void *);
 
-#line 127 "./graphic.h"
+#line 131 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -138,10 +142,10 @@ static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
 /* static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
-#line 11 "codegen/graphic.override"
+#line 15 "codegen/graphic.override"
 
 /* inserted in the private part of include file */
 
-#line 146 "./graphic.h"
+#line 150 "./graphic.h"
 #endif /* NspGraphic_Private */
 

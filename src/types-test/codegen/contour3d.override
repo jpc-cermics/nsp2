@@ -8,7 +8,7 @@ include-public  Contour3d
 include-private  Contour3d
 
 /* inserted in the private part of include file */
-static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_contour3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_contour3d(NspGraphic *o,double *R);
 static void nsp_scale_contour3d(NspGraphic *o,double *alpha);
@@ -22,6 +22,7 @@ static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/object.h>
 #include <nsp/contour3d.h>
 #include <nsp/polyhedron.h>
@@ -94,14 +95,14 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   if ( Obj->obj->hidden == TRUE ) return ;
 
   /* check if the block is inside drawing rectangle
    */
   /* 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

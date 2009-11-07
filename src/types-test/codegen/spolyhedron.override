@@ -8,7 +8,7 @@ include-public  SPolyhedron
 include-private  SPolyhedron
 
 /* inserted in the private part of include file */
-static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_spolyhedron(NspGraphic *o,const double *tr);
 static void nsp_rotate_spolyhedron(NspGraphic *o,double *R);
 static void nsp_scale_spolyhedron(NspGraphic *o,double *alpha);
@@ -27,6 +27,7 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/object.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
@@ -98,13 +99,13 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
   nsp_check_spolyhedron(Xgc,(NspSPolyhedron *) Obj);
   /*
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

@@ -10,7 +10,7 @@ include-private Compound
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_compound(NspGraphic *o,const double *tr);
 static void nsp_rotate_compound(NspGraphic *o,double *R);
 static void nsp_scale_compound(NspGraphic *o,double *alpha);
@@ -22,6 +22,7 @@ static NspList *nsp_compound_children(NspGraphic *Obj);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/curve.h>
@@ -166,7 +167,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspCompound *P = (NspCompound *) Obj;
   NspList *L = P->obj->children;
@@ -177,7 +178,7 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -188,7 +189,7 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, void *data)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,data);
+	  G->type->draw(Xgc,G,rect,data);
 	}
       cloc = cloc->next;
     }

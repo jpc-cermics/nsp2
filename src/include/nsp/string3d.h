@@ -115,7 +115,7 @@ static NspMethods *string3d_get_methods(void);
 /* static int int_string3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspString3d *nsp_string3d_create_void(char *name,NspTypeBase *type);
 #line 14 "codegen/string3d.override"
-static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_string3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_string3d(NspGraphic *o,double *R);
 static void nsp_scale_string3d(NspGraphic *o,double *alpha);

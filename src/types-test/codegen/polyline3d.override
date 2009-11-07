@@ -9,7 +9,7 @@ extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *s
 include-private  Polyline3d
 
 /* inserted in the private part of include file */
-static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_polyline3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyline3d(NspGraphic *o,double *R);
 static void nsp_scale_polyline3d(NspGraphic *o,double *alpha);
@@ -25,6 +25,7 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/object.h>
 #include <nsp/polyline3d.h>
 #include <nsp/figuredata.h> 
@@ -99,12 +100,12 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->hidden == TRUE ) return ;
   /*
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

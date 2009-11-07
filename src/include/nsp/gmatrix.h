@@ -111,7 +111,7 @@ static NspGMatrix *nsp_gmatrix_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/gmatrix.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_gmatrix(NspGraphic *o,const double *tr);
 static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);

@@ -25,11 +25,12 @@
 
 
 #line 20 "codegen/box3d.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/box3d.h>
 
-#line 33 "box3d.c"
+#line 34 "box3d.c"
 
 /* ----------- NspBox3d ----------- */
 
@@ -101,7 +102,7 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
 
   type->init = (init_func *) init_box3d;
 
-#line 31 "codegen/box3d.override"
+#line 32 "codegen/box3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +115,7 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "box3d.c"
+#line 119 "box3d.c"
   /* 
    * NspBox3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -764,7 +765,7 @@ static AttrTab box3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/box3d.override"
+#line 54 "codegen/box3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -773,10 +774,10 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 777 "box3d.c"
+#line 778 "box3d.c"
 
 
-#line 63 "codegen/box3d.override"
+#line 64 "codegen/box3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -786,7 +787,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 790 "box3d.c"
+#line 791 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -817,11 +818,11 @@ void Box3d_Interf_Info(int i, char **fname, function (**f))
   *f = Box3d_func[i].fonc;
 }
 
-#line 74 "codegen/box3d.override"
+#line 75 "codegen/box3d.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   /* 
   int flag[]={1,2,4};
@@ -834,7 +835,7 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
   /*
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -875,4 +876,4 @@ static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 879 "box3d.c"
+#line 880 "box3d.c"

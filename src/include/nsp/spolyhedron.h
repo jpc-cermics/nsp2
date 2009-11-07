@@ -123,7 +123,7 @@ static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type)
 #line 9 "codegen/spolyhedron.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_spolyhedron(NspGraphic *o,const double *tr);
 static void nsp_rotate_spolyhedron(NspGraphic *o,double *R);
 static void nsp_scale_spolyhedron(NspGraphic *o,double *alpha);

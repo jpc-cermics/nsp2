@@ -3488,7 +3488,7 @@ static void replay_graphic_object(BCG *Xgc,void  *theplot)
 {
   struct rec_object *lplot= theplot ;
   NspGraphic *G = (NspGraphic *) lplot->obj;
-  G->type->draw(Xgc,G,NULL);
+  G->type->draw(Xgc,G,NULL,NULL);
   /* Scistring("replay graphic_object \n"); */
 }
 

@@ -790,7 +790,7 @@ static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  nsp_draw_block(Fig->Xgc, self, NULL);
+  nsp_draw_block(Fig->Xgc, self, NULL,NULL);
   return 0;
 }
 
@@ -1047,8 +1047,10 @@ void Block_Interf_Info(int i, char **fname, function (**f))
  */
 static void draw_3d(BCG *Xgc,double r[]);
 
+extern int rand_ignuin(int,int);
 
-static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
+
+static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspBlock *B = (NspBlock *) Obj;
   /* take care of the fact that str1 must be writable */
@@ -1062,7 +1064,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, data))
+  if ( ! nsp_graphic_intersect_rectangle((NspGraphic *) B, rect))
     {
       return ;
     }
@@ -1071,7 +1073,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
   /* first draw the block icon */
-  draw_script = 0;
+  draw_script = 2;
   switch (draw_script)
     {
     case 0: 
@@ -1082,7 +1084,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
 	}
       if ( B->obj->icon != NULL ) 
 	{
-	  B->obj->icon->type->draw(Xgc, B->obj->icon,NULL);
+	  B->obj->icon->type->draw(Xgc, B->obj->icon,rect,data);
 	}
       else
 	{
@@ -1110,6 +1112,13 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, void *data)
       loc[0] = B->obj->r[1] - B->obj->r[3];
       Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
 					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+    case 3:
+      /* 
+       * a rectangle with random color 
+       *
+       */
+      Xgc->graphic_engine->xset_pattern(Xgc,rand_ignuin(1,32));
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
       break;
     }
   /* draw frame rectangle */
@@ -1928,4 +1937,4 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 }
 
 
-#line 1932 "block.c"
+#line 1941 "block.c"

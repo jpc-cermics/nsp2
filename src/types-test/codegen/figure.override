@@ -11,7 +11,6 @@ extern NspFigure *nsp_get_figure(BCG *Xgc);
 extern NspFigure *nsp_check_for_figure(BCG *Xgc);
 extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
-extern void nsp_figure_force_redraw(nsp_figure *F,void *rect);
 extern void nsp_list_link_figure(NspList *L, nsp_figure  *F,void *A);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
@@ -26,7 +25,7 @@ include-private Figure
 /* inserted in the private part of include file
  * of classa.h
  */
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
 static int nsp_figure_draw_latter(NspFigure *);
@@ -43,7 +42,7 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 
 %%
 headers
-
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
@@ -189,7 +188,7 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
 last
 
 
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   Cell *cloc;
   NspList *L;
@@ -202,7 +201,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, void *data)
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,data);
+	  G->type->draw(Xgc,G,rect,data);
 	}
       cloc = cloc->next;
     }
@@ -469,29 +468,6 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
 {
   return  nsp_list_check_figure(F->obj->children,F->obj);
 }
-
-/**
- * nsp_figure_force_redraw:
- * @F: 
- * @rect: 
- * 
- * send a force redraw to a figure 
- * should be improved with a rectangle to be used.
- * Note that a force redraw is only effective when gtk events 
- * can be activated.
- * 
- **/
-void nsp_figure_force_redraw(nsp_figure *F,void *rect) 
-{
-  /* XX should be stored in figure to avoid a search */
-  BCG *Xgc;
-  if ( F == NULL) return ;
-  if ( F->draw_now== FALSE) return;
-  Xgc = window_list_search_new(F->id);
-  if ( Xgc == NULL) return;
-  Xgc->graphic_engine->force_redraw(Xgc,rect);
-}
-
 
 extern NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber);
 
@@ -954,12 +930,22 @@ static int nsp_figure_draw_latter(NspFigure *F)
  * 
  * Returns: 
  **/
+
 static int nsp_figure_draw_now(NspFigure *F)
 {
-  /* we are in a draw now */
-  F->obj->draw_now=TRUE; 
-  /* we invalidate the whole figure */
-  nsp_figure_force_redraw(F->obj,NULL);
+  BCG *Xgc;
+  if ( F->obj->draw_now == FALSE ) 
+    {
+      F->obj->draw_now= TRUE;
+      /* we were not in draw_now mode 
+       * thus all the invalidate have been 
+       * lost 
+       */
+      nsp_figure_invalidate((NspGraphic *) F);
+    }
+  if ((Xgc= F->obj->Xgc) == NULL) return FAIL;
+  /* flush the accumulated expose events */
+  Xgc->graphic_engine->process_updates(Xgc);
   return OK ;
 }
 
@@ -1245,6 +1231,6 @@ void nsp_figure_invalidate(NspGraphic *G)
   if ( F == NULL ) return ;
   if ((Xgc= F->obj->Xgc) == NULL) return ;
   if ( F->obj->draw_now== FALSE) return;
-  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
 }
 

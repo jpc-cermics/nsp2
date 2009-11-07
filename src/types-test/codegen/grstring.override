@@ -8,7 +8,7 @@ include-public  Grstring
 include-private  Grstring
 
 /* inserted in the private part of include file */
-static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_grstring(NspGraphic *o,const double *tr);
 static void nsp_rotate_grstring(NspGraphic *o,double *R);
 static void nsp_scale_grstring(NspGraphic *o,double *alpha);
@@ -16,6 +16,7 @@ static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
@@ -72,10 +73,10 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int i,flagx=0;
-  double rect[4],wc,x,y,yi;
+  double rect1[4],wc,x,y,yi;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
@@ -83,7 +84,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -124,16 +125,16 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
 	  for (i = S->m -1 ; i >= 0; --i) 
 	    {
 	      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,P->obj->angle);
-	      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
-	      wc = Max(wc,rect[2]);
+	      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect1);
+	      wc = Max(wc,rect1[2]);
 	      if (i != 0 ) 
-		y += rect[3] * 1.2;
+		y += rect1[3] * 1.2;
 	      else 
-		y += rect[3];
+		y += rect1[3];
 	    }
 	  if (flagx == 1) {
-	    double rect[]={x,y,wc, y - yi};
-	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+	    double rect2[]={x,y,wc, y - yi};
+	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect2);
 	  }
 	}
     }

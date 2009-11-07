@@ -122,7 +122,8 @@ typedef int driver_xget_recording(BCG *Xgc);
 typedef void driver_xset_recording(BCG *Xgc, int val);
 typedef void driver_xset_win_protect(BCG *Xgc,int val);
 typedef void driver_delete_window(BCG *gc,int wid);/* delete window: use gc is non null or wid as window number */
-typedef void driver_force_redraw(BCG *gc,void *rect);
+typedef void driver_invalidate(BCG *gc,void *rect);
+typedef void driver_process_updates(BCG *gc);
 typedef void driver_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height);
 typedef void driver_draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y,int dest_x,
 					  int dest_y,int width,int height);
@@ -262,7 +263,8 @@ struct nsp_gengine {
   driver_xset_recording *xset_recording;
   driver_xset_win_protect *xset_win_protect;
   driver_delete_window *delete_window;
-  driver_force_redraw *force_redraw;
+  driver_invalidate *invalidate;
+  driver_process_updates *process_updates;
   driver_draw_pixbuf *draw_pixbuf;
   driver_draw_pixbuf_from_file *draw_pixbuf_from_file;
 };
@@ -298,7 +300,8 @@ static driver_fillarcs fillarcs;
 static driver_fillpolyline fillpolyline;
 static driver_fillpolylines fillpolylines;
 static driver_fillrectangle fillrectangle;
-static driver_force_redraw force_redraw;
+static driver_invalidate invalidate;
+static driver_process_updates process_updates;
 static driver_initgraphic initgraphic;
 static driver_loadfamily loadfamily;
 static driver_pixmap_resize pixmap_resize;

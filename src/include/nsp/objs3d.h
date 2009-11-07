@@ -134,7 +134,7 @@ static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type);
 #line 23 "codegen/objs3d.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_objs3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_objs3d(NspGraphic *o,double *R);
 static void nsp_scale_objs3d(NspGraphic *o,double *alpha);

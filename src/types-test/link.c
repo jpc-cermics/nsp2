@@ -25,7 +25,7 @@
 
 
 #line 113 "codegen/link.override"
-
+#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"
@@ -733,7 +733,7 @@ static int _wrap_link_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
 {
   nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
   CheckRhs(0,0);
-  nsp_draw_link(Fig->Xgc, self, NULL);
+  nsp_draw_link(Fig->Xgc, self,NULL, NULL);
   return 0;
 }
 
@@ -939,7 +939,7 @@ void Link_Interf_Info(int i, char **fname, function (**f))
 
 static int link_unconnected_color=10;
 
-static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspLink *L = (NspLink *) Obj;
   double loc[4];
@@ -950,7 +950,7 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj , data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

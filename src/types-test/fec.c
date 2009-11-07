@@ -25,6 +25,7 @@
 
 
 #line 29 "codegen/fec.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -34,7 +35,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 38 "fec.c"
+#line 39 "fec.c"
 
 /* ----------- NspFec ----------- */
 
@@ -106,7 +107,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 45 "codegen/fec.override"
+#line 46 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -117,7 +118,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 121 "fec.c"
+#line 122 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -935,7 +936,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 66 "codegen/fec.override"
+#line 67 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -944,10 +945,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 948 "fec.c"
+#line 949 "fec.c"
 
 
-#line 76 "codegen/fec.override"
+#line 77 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -956,7 +957,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 960 "fec.c"
+#line 961 "fec.c"
 
 
 /*----------------------------------------------------
@@ -987,7 +988,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 86 "codegen/fec.override"
+#line 87 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1047,7 +1048,7 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double *colout = NULL ; /* XXX à rajouter */
   NspFec *P = (NspFec *) Obj;
@@ -1067,7 +1068,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -1273,4 +1274,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1277 "fec.c"
+#line 1278 "fec.c"

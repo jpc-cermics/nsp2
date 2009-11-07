@@ -9,7 +9,7 @@ include-private GrArc
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_grarc(NspGraphic *o,const double *tr);
 static void nsp_rotate_grarc(NspGraphic *o,double *R);
 static void nsp_scale_grarc(NspGraphic *o,double *alpha);
@@ -17,6 +17,7 @@ static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/object.h>
 #include <nsp/grarc.h>
 #include <nsp/figuredata.h> 
@@ -75,7 +76,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double val[6];
   int ccolor=-1,cthick=-1;
@@ -85,7 +86,7 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

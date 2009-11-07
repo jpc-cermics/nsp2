@@ -158,7 +158,8 @@ Gengine XFig_gengine = {
 
   xset_win_protect,
   delete_window,
-  force_redraw,
+  invalidate,
+  process_updates,
 
   draw_pixbuf,
   draw_pixbuf_from_file

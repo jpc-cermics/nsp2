@@ -115,7 +115,7 @@ static NspGrstring *nsp_grstring_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/grstring.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_grstring(NspGraphic *o,const double *tr);
 static void nsp_rotate_grstring(NspGraphic *o,double *R);
 static void nsp_scale_grstring(NspGraphic *o,double *alpha);

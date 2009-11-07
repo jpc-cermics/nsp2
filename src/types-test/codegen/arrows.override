@@ -9,7 +9,7 @@ include-private Arrows
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj,GdkRectangle *rect, void *data);
 static void nsp_translate_arrows(NspGraphic *o,const double *tr);
 static void nsp_rotate_arrows(NspGraphic *o,double *R);
 static void nsp_scale_arrows(NspGraphic *o,double *alpha);
@@ -17,6 +17,7 @@ static int nsp_getbounds_arrows(NspGraphic *o,double *bounds);
 
 %%
 headers
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/arrows.h>
@@ -74,7 +75,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int ccolor=-1;
   NspArrows *P = (NspArrows *) Obj;
@@ -86,7 +87,7 @@ static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

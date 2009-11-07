@@ -25,11 +25,12 @@
 
 
 #line 20 "codegen/arrows.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/arrows.h>
 
-#line 33 "arrows.c"
+#line 34 "arrows.c"
 
 /* ----------- NspArrows ----------- */
 
@@ -101,7 +102,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
 
   type->init = (init_func *) init_arrows;
 
-#line 31 "codegen/arrows.override"
+#line 32 "codegen/arrows.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +115,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "arrows.c"
+#line 119 "arrows.c"
   /* 
    * NspArrows interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -712,7 +713,7 @@ static AttrTab arrows_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/arrows.override"
+#line 54 "codegen/arrows.override"
 
 extern function int_nspgraphic_extract;
 
@@ -721,10 +722,10 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 725 "arrows.c"
+#line 726 "arrows.c"
 
 
-#line 63 "codegen/arrows.override"
+#line 64 "codegen/arrows.override"
 
 extern function int_graphic_set_attribute;
 
@@ -734,7 +735,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 738 "arrows.c"
+#line 739 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -765,11 +766,11 @@ void Arrows_Interf_Info(int i, char **fname, function (**f))
   *f = Arrows_func[i].fonc;
 }
 
-#line 74 "codegen/arrows.override"
+#line 75 "codegen/arrows.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int ccolor=-1;
   NspArrows *P = (NspArrows *) Obj;
@@ -781,7 +782,7 @@ static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -880,4 +881,4 @@ static int nsp_getbounds_arrows(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 884 "arrows.c"
+#line 885 "arrows.c"

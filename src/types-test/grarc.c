@@ -25,12 +25,13 @@
 
 
 #line 20 "codegen/grarc.override"
+#include <gdk/gdk.h>
 #include <nsp/object.h>
 #include <nsp/grarc.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 34 "grarc.c"
+#line 35 "grarc.c"
 
 /* ----------- NspGrArc ----------- */
 
@@ -102,7 +103,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
 
   type->init = (init_func *) init_grarc;
 
-#line 32 "codegen/grarc.override"
+#line 33 "codegen/grarc.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -115,7 +116,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 119 "grarc.c"
+#line 120 "grarc.c"
   /* 
    * NspGrArc interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -766,7 +767,7 @@ static AttrTab grarc_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 54 "codegen/grarc.override"
+#line 55 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -775,10 +776,10 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 779 "grarc.c"
+#line 780 "grarc.c"
 
 
-#line 64 "codegen/grarc.override"
+#line 65 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -788,7 +789,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 792 "grarc.c"
+#line 793 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -819,11 +820,11 @@ void GrArc_Interf_Info(int i, char **fname, function (**f))
   *f = GrArc_func[i].fonc;
 }
 
-#line 75 "codegen/grarc.override"
+#line 76 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double val[6];
   int ccolor=-1,cthick=-1;
@@ -833,7 +834,7 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -921,4 +922,4 @@ static int nsp_getbounds_grarc(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 925 "grarc.c"
+#line 926 "grarc.c"

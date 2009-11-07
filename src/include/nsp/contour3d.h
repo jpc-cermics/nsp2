@@ -112,7 +112,7 @@ static NspContour3d *nsp_contour3d_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/contour3d.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_contour3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_contour3d(NspGraphic *o,double *R);
 static void nsp_scale_contour3d(NspGraphic *o,double *alpha);

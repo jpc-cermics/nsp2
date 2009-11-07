@@ -41,29 +41,17 @@ GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 #endif 
 
 /**
- * force_affichage:
+ * invalidate:
  * @Xgc: a #BCG 
  * 
- * force expose events to be executed by calling 
- * gdk_window_process_updates().
- **/
-
-static void force_affichage(BCG *Xgc)
-{
-#ifndef PERIGLGTK
-  Xgc->private->resize = 1;
-#endif 
-  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
-}
-
-/**
- * force_redraw:
- * @Xgc: a #BCG 
+ * invalidate a rectangle and set the draw mode to TRUE to 
+ * tell to expose events that the graphic structure is to 
+ * be used for drawing i.e the backing store pixmap is not 
+ * up to date.
  * 
- * force an expose_event with draw set to TRUE
  **/
 
-static void force_redraw(BCG *Xgc,void *rect)
+static void invalidate(BCG *Xgc,void *rect)
 {
   Xgc->private->draw = TRUE;
   if ( rect == NULL ) 
@@ -75,10 +63,33 @@ static void force_redraw(BCG *Xgc,void *rect)
   else
     {
       GdkRectangle *grect = rect;
-      Sciprintf("Invalidate [%d,%d,%d,%d]\n",grect->x,grect->y,grect->width,grect->height);
-      /* rect should be similar to a  GdkRectangle */
+      /*
+       * keep track of the union of the invalidated rectangles (to be used 
+       * in expose_event. 
+       */
+      if ( Xgc->private->invalidated.width != 0 
+	   && Xgc->private->invalidated.height != 0 )
+	{
+	  gdk_rectangle_union(grect,&Xgc->private->invalidated,&Xgc->private->invalidated);
+	}
+      else 
+	{
+	  Xgc->private->invalidated = *grect;
+	}
       gdk_window_invalidate_rect(Xgc->private->drawing->window,rect, FALSE);
     }
+}
+
+/**
+ * process_updates:
+ * @Xgc: a #BCG 
+ * 
+ *
+ **/
+
+static void process_updates(BCG *Xgc)
+{
+  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
 /*---------------------------------------------------------
@@ -142,8 +153,10 @@ static void xset_show(BCG *Xgc)
     }
   else
     {
-      /* see the comments at the begining */
-      force_affichage(Xgc);
+      /* if we do not have an extra pixmap 
+       * we just make a gdk_window_process_updates
+       */
+      gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
     }
 }
 
@@ -1683,7 +1696,6 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  * 
  * Returns: 
  **/
-#define DEBUG_EXPOSE
 
 #if defined(PERIGTK) || defined(PERICAIRO)
 static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
@@ -1737,27 +1749,46 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
     {
 #ifdef DEBUG_EXPOSE
       if ( event != NULL) 
-	fprintf(stderr,"draw=%s, with area %d %d %d %d\n", 
+	fprintf(stderr,"draw=%s, with area [%d,%d]->[%d,%d]\n", 
 		dd->private->draw == TRUE ? "T":"F",
 		event->area.x, event->area.y,
-		event->area.width, event->area.height);
+		event->area.x+ event->area.width, event->area.y+ event->area.height);
       else 
 	fprintf(stderr,"draw=%s, with full area %d %d %d %d\n", 
 		dd->private->draw == TRUE ? "T":"F",0,0,
 		dd->CWindowWidth, dd->CWindowHeight);
+      fprintf(stderr,"With dd->private->invalidated.x [%d,%d]->[%d,%d]\n",
+	      dd->private->invalidated.x, dd->private->invalidated.y,
+	      dd->private->invalidated.x+ dd->private->invalidated.width,
+	      dd->private->invalidated.y+ dd->private->invalidated.height);
+
 #endif 
-	  
+      
       if ( dd->private->draw == TRUE ) 
 	{
-	  int rect[4]={event->area.x, event->area.y,
-		       event->area.width, event->area.height};
+	  /* 
+	  int rect[4]={event->area.x, event->area.y,event->area.width, event->area.height};
+	  */
+	  int rect[4]={dd->private->invalidated.x,
+		       dd->private->invalidated.y,
+		       dd->private->invalidated.width,
+		       dd->private->invalidated.height};
 	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
 	  dd->private->in_expose= TRUE;
 	  if ( event != NULL) 
 	    {
-	      dd->graphic_engine->cleararea(dd,event->area.x,event->area.y,
-					    event->area.width, event->area.height);
+	      /* 
+	       * here we use dd->private->invalidated and not 
+	       * event because event is clipped to the visible 
+	       * part of the drawing area and we want to keep 
+	       * also correct drawing in hidden part of the 
+	       * drawing area since we use a backing store pixbuf.
+	       */
+	      dd->graphic_engine->cleararea(dd,dd->private->invalidated.x,
+					    dd->private->invalidated.y,
+					    dd->private->invalidated.width,
+					    dd->private->invalidated.height);
 	      dd->graphic_engine->xset_clip(dd,rect);
 	      dd->graphic_engine->tape_replay(dd,dd->CurWindow,rect);
 	      dd->graphic_engine->xset_unclip(dd);
@@ -1780,10 +1811,11 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated  */
+	  /* debug the drawing rectangle which is updated  
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);
+	  */
 	}
       else 
 	{
@@ -1798,6 +1830,12 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
 	}
+
+      dd->private->invalidated.x = 0;
+      dd->private->invalidated.y = 0;
+      dd->private->invalidated.width = 0;
+      dd->private->invalidated.height = 0;
+      
     }
   gdk_flush();
   return FALSE;

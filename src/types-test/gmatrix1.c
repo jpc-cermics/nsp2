@@ -25,7 +25,7 @@
 
 
 #line 28 "codegen/gmatrix1.override"
-
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -977,14 +977,14 @@ void GMatrix1_Interf_Info(int i, char **fname, function (**f))
  *  zminmax[0] or above zminmax[1] (a zero value is interpreted as no painting).
  */
 
-static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspGMatrix1 *P = (NspGMatrix1 *) Obj;
 
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }

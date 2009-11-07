@@ -149,7 +149,7 @@ static double lock_size=1; /*  XXX a factoriser quelque part ... */
 static int lock_color=10;
 
 /* set of method for parent class graphic  */
-static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_connector(NspGraphic *o,const double *tr);
 static void nsp_rotate_connector(NspGraphic *o,double *R);
 static void nsp_scale_connector(NspGraphic *o,double *alpha);

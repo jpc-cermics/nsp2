@@ -25,10 +25,11 @@
 
 
 #line 19 "codegen/polyline.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 32 "polyline.c"
+#line 33 "polyline.c"
 
 /* ----------- NspPolyline ----------- */
 
@@ -100,7 +101,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
 
   type->init = (init_func *) init_polyline;
 
-#line 29 "codegen/polyline.override"
+#line 30 "codegen/polyline.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -113,7 +114,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 117 "polyline.c"
+#line 118 "polyline.c"
   /* 
    * NspPolyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -786,7 +787,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 51 "codegen/polyline.override"
+#line 52 "codegen/polyline.override"
 
 extern function int_nspgraphic_extract;
 
@@ -795,10 +796,10 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 799 "polyline.c"
+#line 800 "polyline.c"
 
 
-#line 61 "codegen/polyline.override"
+#line 62 "codegen/polyline.override"
 
 extern function int_graphic_set_attribute;
 
@@ -808,7 +809,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 812 "polyline.c"
+#line 813 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -839,12 +840,12 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
   *f = Polyline_func[i].fonc;
 }
 
-#line 72 "codegen/polyline.override"
+#line 73 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
 
-static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int xmark[2];
   int ccolor=-1,cmark=-1,cthick=-1;
@@ -854,7 +855,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, void *data)
   if (((NspGraphic *) P)->obj->hidden == TRUE ) return;
   if ( P->obj->x->mn == 0) return ;
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -990,4 +991,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 994 "polyline.c"
+#line 995 "polyline.c"

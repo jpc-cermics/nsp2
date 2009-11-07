@@ -111,7 +111,7 @@ static NspMethods *polyhedron_get_methods(void);
 /* static int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyhedron *nsp_polyhedron_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/polyhedron.override"
-static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, void *data);
+static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_polyhedron(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyhedron(NspGraphic *o,double *R);
 static void nsp_scale_polyhedron(NspGraphic *o,double *alpha);

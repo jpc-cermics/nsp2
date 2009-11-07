@@ -347,7 +347,7 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
       double rect[4]= {Min(x0,x),Max(y0,y),Abs(x0-x),Abs(y0-y)};
       Xgc->graphic_engine->clearwindow(Xgc);    
       rect2d_f2i(Xgc->scales,rect,Xgc->zrect,1);
-      Xgc->graphic_engine->force_redraw(Xgc,NULL);
+      Xgc->graphic_engine->invalidate(Xgc,NULL);
       nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,TRUE,FALSE);
       scale_i2f(Xgc->scales,&xl,&yl,&ixl,&iyl,1);
@@ -374,7 +374,7 @@ static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
   Xgc->graphic_engine->xset_pattern(Xgc,color);
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
   Xgc->graphic_engine->xinfo(Xgc," ");
-  Xgc->graphic_engine->force_redraw(Xgc,NULL);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
 }
 
 

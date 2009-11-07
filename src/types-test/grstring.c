@@ -25,10 +25,11 @@
 
 
 #line 19 "codegen/grstring.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 32 "grstring.c"
+#line 33 "grstring.c"
 
 /* ----------- NspGrstring ----------- */
 
@@ -100,7 +101,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 
   type->init = (init_func *) init_grstring;
 
-#line 29 "codegen/grstring.override"
+#line 30 "codegen/grstring.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -113,7 +114,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 117 "grstring.c"
+#line 118 "grstring.c"
   /* 
    * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -800,7 +801,7 @@ static AttrTab grstring_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 51 "codegen/grstring.override"
+#line 52 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -809,10 +810,10 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 813 "grstring.c"
+#line 814 "grstring.c"
 
 
-#line 61 "codegen/grstring.override"
+#line 62 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -822,7 +823,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 826 "grstring.c"
+#line 827 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -853,14 +854,14 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
   *f = Grstring_func[i].fonc;
 }
 
-#line 72 "codegen/grstring.override"
+#line 73 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int i,flagx=0;
-  double rect[4],wc,x,y,yi;
+  double rect1[4],wc,x,y,yi;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
   if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
@@ -868,7 +869,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -909,16 +910,16 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, void *data)
 	  for (i = S->m -1 ; i >= 0; --i) 
 	    {
 	      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,P->obj->angle);
-	      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
-	      wc = Max(wc,rect[2]);
+	      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect1);
+	      wc = Max(wc,rect1[2]);
 	      if (i != 0 ) 
-		y += rect[3] * 1.2;
+		y += rect1[3] * 1.2;
 	      else 
-		y += rect[3];
+		y += rect1[3];
 	    }
 	  if (flagx == 1) {
-	    double rect[]={x,y,wc, y - yi};
-	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+	    double rect2[]={x,y,wc, y - yi};
+	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect2);
 	  }
 	}
     }
@@ -970,4 +971,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 974 "grstring.c"
+#line 975 "grstring.c"

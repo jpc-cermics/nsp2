@@ -25,10 +25,11 @@
 
 
 #line 19 "codegen/grimage.override"
+#include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 32 "grimage.c"
+#line 33 "grimage.c"
 
 /* ----------- NspGrImage ----------- */
 
@@ -100,7 +101,7 @@ NspTypeGrImage *new_type_grimage(type_mode mode)
 
   type->init = (init_func *) init_grimage;
 
-#line 29 "codegen/grimage.override"
+#line 30 "codegen/grimage.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -113,7 +114,7 @@ NspTypeGrImage *new_type_grimage(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 117 "grimage.c"
+#line 118 "grimage.c"
   /* 
    * NspGrImage interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -752,7 +753,7 @@ static AttrTab grimage_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/grimage.override"
+#line 53 "codegen/grimage.override"
 
 extern function int_nspgraphic_extract;
 
@@ -761,10 +762,10 @@ int _wrap_nsp_extractelts_grimage(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 765 "grimage.c"
+#line 766 "grimage.c"
 
 
-#line 62 "codegen/grimage.override"
+#line 63 "codegen/grimage.override"
 
 extern function int_graphic_set_attribute;
 
@@ -774,7 +775,7 @@ int _wrap_nsp_setrowscols_grimage(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 778 "grimage.c"
+#line 779 "grimage.c"
 
 
 /*----------------------------------------------------
@@ -805,11 +806,11 @@ void GrImage_Interf_Info(int i, char **fname, function (**f))
   *f = GrImage_func[i].fonc;
 }
 
-#line 73 "codegen/grimage.override"
+#line 74 "codegen/grimage.override"
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, void *data)
+static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   double val[4];
   int ccolor=-1,cthick=-1;
@@ -819,7 +820,7 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, void *data)
   /* check if the block is inside drawing rectangle
    */
 
-  if ( ! nsp_graphic_intersect_rectangle(Obj, data))
+  if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
     }
@@ -895,4 +896,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 899 "grimage.c"
+#line 900 "grimage.c"

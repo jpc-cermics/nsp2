@@ -170,6 +170,7 @@ typedef struct  _gtk_data {
   GdkGLContext *glcontext ;
   GdkGLDrawable *gldrawable;
 #endif 
+  GdkRectangle invalidated;             /* used for expose_event */
 } gui_private ;
 
 
@@ -314,7 +315,8 @@ Gengine xx__gengine = {
   xset_recording,
   xset_win_protect,
   delete_window,
-  force_redraw,
+  invalidate,
+  process_updates,
 
   draw_pixbuf,
   draw_pixbuf_from_file
@@ -350,7 +352,6 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void nsp_fonts_finalize(BCG *Xgc);
 static void nsp_fonts_initialize(BCG *Xgc);
-static void force_affichage(BCG *Xgc);
 static void draw_mark(BCG *Xgc,int *x, int *y);
 static void pixmap_clear_rect(BCG *Xgc,int x,int y,int w,int h);
 static void pixmap_clear_rect   (BCG *Xgc,int x,int y,int w,int h);
