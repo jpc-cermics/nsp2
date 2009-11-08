@@ -29,15 +29,14 @@
  * xclea(1,0,2,6)
  */
 
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
+static void cleararea(BCG *Xgc,GdkRectangle *r)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  ;
   cairo_set_source_rgb(cr,
 		       Xgc->private->gcol_bg.red/65535.0,
 		       Xgc->private->gcol_bg.green/65535.0,
 		       Xgc->private->gcol_bg.blue/65535.0);
-  cairo_rectangle (cr,x,y,w,h);
+  cairo_rectangle (cr,r->x,r->y,r->width,r->height);
   cairo_fill (cr);
 }
 

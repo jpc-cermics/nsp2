@@ -467,7 +467,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		   G_CALLBACK(configure_event), (gpointer) dd);
 
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "expose_event",
-		   G_CALLBACK(expose_event), (gpointer) dd);
+		   G_CALLBACK(expose_event_new), (gpointer) dd);
   
   /* 
    *  g_signal_connect (G_OBJECT (dd->private->cairo_drawing), "paint", 

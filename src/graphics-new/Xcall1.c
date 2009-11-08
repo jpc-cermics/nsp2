@@ -256,13 +256,13 @@ static void drawaxis_1(BCG *Xgc,double *alpha, int *nsteps, double *initpoint, d
 }
 
 
-static void cleararea_1(BCG *Xgc,double x, double y, double w, double h)
+static void cleararea_1(BCG *Xgc,double *rect)
 {
-  int x1,yy1,w1,h1;
-  x1 = XDouble2Pixel(Xgc->scales,x);
-  yy1 = YDouble2Pixel(Xgc->scales,y);
-  length_scale_f2i (Xgc->scales,&w,&h,&w1,&h1,1);
-  Xgc->graphic_engine->cleararea(Xgc,x1,yy1,w1,h1);
+  GdkRectangle r;
+  r.x = XDouble2Pixel(Xgc->scales,rect[0]);
+  r.y = YDouble2Pixel(Xgc->scales,rect[1]);
+  length_scale_f2i (Xgc->scales,&rect[2],&rect[3],&r.width,&r.height,1);
+  Xgc->graphic_engine->cleararea(Xgc,&r);
 }
 
 

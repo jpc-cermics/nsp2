@@ -105,111 +105,6 @@ void nsp_gr_delete(int winid)
 }
 
 /**
- * nsp_gr_replay: 
- * @win_num: graphic window number.
- * 
- * redraws the recorded graphics associated to graphic window @win_num.
- */
-
-void __nsp_gr_replay(int win_num)
-{
-  BCG *Xgc;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  if ( (Xgc= window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy =1;
-  Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
-  nsp_gr_buzy=0;
-}
-
-/**
- * nsp_gr_expose: 
- * @win_num: graphic window number.
- * 
- * Used to deal with an expose event. If the graphic window 
- * is in pixmap mode we can perform a wshow 
- * else we perform a sgig_replay. 
- */
-
-void __nsp_gr_expose(int win_num)
-{
-  BCG *Xgc;
-  int pix;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  if ( (Xgc= window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy =1;
-  pix = Xgc->graphic_engine->xget_pixmapOn(Xgc);
-  if ( pix == 0) 
-    {
-      Xgc->graphic_engine->clearwindow(Xgc);    
-      Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
-    }
-  else
-    {
-      Xgc->graphic_engine->xset_show(Xgc);    
-    }
-  nsp_gr_buzy = 0;
-}
-
-/**
- * __nsp_gr_resize:
- * @win_num: graphic window number.
- * 
- * Redraws graphic window @win_num  after resizing. 
- */ 
-
-
-void __nsp_gr_resize(int win_num)
-{
-  BCG *Xgc;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  if ( (Xgc = window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy =1;
-  Xgc->graphic_engine->pixmap_resize(Xgc);
-  Xgc->graphic_engine->clearwindow(Xgc);    
-  Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
-  nsp_gr_buzy = 0;
-}
-
-
-/**
- * nsp_gr_resize_pixmap:
- * @win_num: graphic window number.
- * 
- * resize the pixmap associated to graphic window @win_num.
- */ 
-
-void __nsp_gr_resize_pixmap(int win_num)
-{
-  BCG *Xgc;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  if ( (Xgc= window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy =1;
-  Xgc->graphic_engine->pixmap_resize(Xgc);
-  nsp_gr_buzy = 0;
-}
-
-/**
- * nsp_gr_erase:
- * @win_num: graphic window number.
- * 
- * clears the graphic window @win_num and the associated 
- * recorded data. 
- */ 
-
-void  __nsp_gr_erase(int win_num)
-{
-  BCG *Xgc;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  if ( (Xgc=window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy =1;
-  Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_clean_plots(Xgc,win_num);
-  nsp_gr_buzy = 0;
-}
-
-
-/**
  * nsp_gr_export:
  * @fname: file name;
  * @winid: graphic window number.
@@ -228,73 +123,6 @@ void nsp_gr_export(const char *fname, int winid, int color,const char *driver,ch
   int sc = color;
   if ( color == -1 )  getcolordef(&sc);
   Xgc->actions->tops(Xgc,sc,fname,driver,option);
-}
-
-
-/**
- * nsp_gr_2dzoom: 
- * @win_num: graphic window number.
- * 
- * zoom the graphics of graphic window @win_num.
- */ 
-
-
-void __nsp_gr_2dzoom(int win_num)
-{
-  static int nsp_gr_buzy_zoom = 0;
-  BCG *Xgc;
-  if ( nsp_gr_buzy_zoom == 1 ) return ;
-  if ( (Xgc=window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy_zoom =1;
-  zoom(Xgc);
-  nsp_gr_buzy_zoom = 0;
-}
-
-/**
- * nsp_gr_unzoom: 
- * @win_num: graphic window number.
- * 
- * Unzoom the graphics of graphic window @win_num.
- */ 
-
-void  __nsp_gr_unzoom(int win_num)
-{
-  BCG *Xgc;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  if ( (Xgc = window_list_search(win_num)) == NULL) return;
-  nsp_gr_buzy =1;
-  unzoom(Xgc);
-  nsp_gr_buzy = 0;
-}
-
-
-/**
- * nsp_gr_3drot: 
- * @win_num: graphic window number.
- * 
- * Rotation of 3d plots of graphic window @win_num.
- */ 
-
-
-void __nsp_gr_3drot(int win_num)
-{
-  BCG *Xgc;
-  if ((Xgc= window_list_search(win_num)) == NULL) return;
-  nsp_3d_rotation(Xgc);
-}
-
-
-/**
- * nsp_gr_sel: 
- * @win_num: graphic window number.
- * 
- * selects window @win_num as the current graphic window.
- */ 
-
-
-void __nsp_gr_sel(int win_num)
-{
-  set_graphic_window(Max(win_num,0)) ;
 }
 
 /**
@@ -335,43 +163,6 @@ int nsp_gr_new_change(int win_num)
 
 
 /**
- * nsp_gr_loadsg: 
- * @win_num: graphic window number.
- * @filename: a filename 
- * 
- * graphics reloaded from file @filename are displayed on graphic window 
- * @win_num.
- */ 
-
-void __nsp_gr_loadsg(int win_num, char *filename)
-{
-  BCG *Xgc;
-  int cur;
-  if ( nsp_gr_buzy  == 1 ) return ;
-  nsp_gr_buzy =1;
-  Xgc=check_graphic_window();
-  cur = Xgc->graphic_engine->xset_curwin(win_num,FALSE);
-  tape_load(Xgc,filename);
-  Xgc->graphic_engine->xset_curwin(cur,FALSE);
-  nsp_gr_buzy = 0;
-}
-
-/**
- * nsp_gr_savesg: 
- * @filename: a filename 
- * @win_num: graphic window number.
- * 
- * save graphic data from graphic window @win_num to file @filename.
- */ 
-
-void __nsp_gr_savesg(char *filename, int win_num)
-{
-  BCG *Xgc;
-  if ( (Xgc = window_list_search(win_num)) == NULL) return;
-  tape_save(Xgc,filename,win_num);
-}
-
-/**
  * nsp_gr_set_graphic_eventhandler:
  * @win_num: 
  * @name: 
@@ -392,8 +183,11 @@ void nsp_gr_set_graphic_eventhandler(int *win_num,char *name,int *ierr)
 }
 
 
-/* set of actions that can be performed on a Xgc. 
- */ 
+/*-------------------------------------------------------
+ * set of actions that can be performed on a Xgc. The 
+ * next functions are static and inserted in Xgc->actions
+ *
+ *-------------------------------------------------------*/ 
 
 /**
  * nsp_gc_delete:
@@ -418,8 +212,8 @@ static void nsp_gc_delete(BCG *Xgc)
 
 static void nsp_gc_replay(BCG *Xgc)
 {
-  Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  Xgc->graphic_engine->process_updates(Xgc);
 }
 
 /**
@@ -436,8 +230,8 @@ static void nsp_gc_expose(BCG *Xgc)
   int pix = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   if ( pix == 0) 
     {
-      Xgc->graphic_engine->clearwindow(Xgc);    
-      Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
+      Xgc->graphic_engine->invalidate(Xgc,NULL);
+      Xgc->graphic_engine->process_updates(Xgc);
     }
   else
     {
@@ -456,8 +250,8 @@ static void nsp_gc_expose(BCG *Xgc)
 static void nsp_gc_resize(BCG *Xgc)
 {
   Xgc->graphic_engine->pixmap_resize(Xgc);
-  Xgc->graphic_engine->clearwindow(Xgc);    
-  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  Xgc->graphic_engine->process_updates(Xgc);
 }
 
 
@@ -483,8 +277,9 @@ static void nsp_gc_resize_pixmap(BCG *Xgc)
 
 static void  nsp_gc_erase(BCG *Xgc)
 {
-  Xgc->graphic_engine->clearwindow(Xgc);
   Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  Xgc->graphic_engine->process_updates(Xgc);
 }
 
 

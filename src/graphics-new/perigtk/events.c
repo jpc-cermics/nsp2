@@ -659,7 +659,7 @@ static void scig_deconnect_handlers(BCG *winxgc)
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  G_CALLBACK( configure_event), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
-					  G_CALLBACK( expose_event), (gpointer) winxgc);
+					  G_CALLBACK( expose_event_new), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window),
 					  G_CALLBACK(  sci_destroy_window ), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window), 

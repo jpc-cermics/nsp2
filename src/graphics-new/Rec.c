@@ -416,9 +416,6 @@ int tape_save(BCG *Xgc,const char *fname1, int winnumber)
   return(0);
 }
 
-
-
-
 static int save_VectC(XDR *xdrs,char *nx, int l)
 { 
   char nx1='1';

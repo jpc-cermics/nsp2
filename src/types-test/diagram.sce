@@ -418,6 +418,14 @@ function y=scs_color(i);y=i;endfunction
 
 function F= diagram()
 // build a diagram non interactively 
+// XXXXX: Il faut faire attention car les 
+// liens sont faits avec des refs (adresses) aux objets 
+// nsp et pas aux adresses des structures pointées. 
+// Cela fait que si on copie les objets lors de 
+// l'insertion tout devient faux 
+// La fonction F.insert doit tenir compte de cela 
+// et metre à jour les pointeurs.
+  
   F=%types.GFrame.new[[0,0,100,100],[0,0,100,100],-1];
   B1=%types.Block.new[[10,80,10,10],color=6,background=7];
   F.insert[B1];
@@ -433,7 +441,6 @@ function F= diagram()
   // type = L_IN=0 ,L_OUT=1 ,L_EVIN=2 ,L_EVOUT=3 , L_SQP=4 , L_SQM=5 ;
   B4.set_locks_pos[[0.80;0.0;ior(4,ishift(2,4))]]
   F.insert[B4];
-  
   L=%types.Link.new[[0,10;0,10]];
   L.connect[0,B1,1];  L.connect[1,B2,1];
   F.insert[L];
@@ -442,19 +449,21 @@ function F= diagram()
   F.insert[L];
 endfunction;
   
-global('GF');
-GF=hash_create(6);
+if ~exists('GF','global') then 
+  global('GF');
+  GF=hash_create(6);
+end
 
 if ~new_graphics() then 
   switch_graphics();
 end
 
-xinit(name='My diagram',cairo=%f,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
+xinit(cairo=%f,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
 //xset('recording',0)
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);
-win=0;
-winid= 'win'+string(win);
+F=get_current_figure();
+winid= 'win'+string(F.id);
 D=diagram_create()
 GF(winid)= D;
 F=get_current_figure();
@@ -465,22 +474,9 @@ y=20*(1+cos(2*x/10));
 cu = curve_create(Pts=[x',y'],color=3,width=2);
 A.children($+1)=cu ;
 F.draw_now[];
+seteventhandler('my_eventhandler');
 
-//C=draw_vanne();
-//A.children($+1)= C;
 
-if %t then 
-  seteventhandler('my_eventhandler');
-  //xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
-  //xset('recording',0)
-  //xsetech(arect=[0,0,0,0]);
-  //seteventhandler('my_eventhandler');
-else
-  F= diagram();
-  pause;
-  F.attach_to_window[0];
-  //F.draw[];
-end
 
 
 

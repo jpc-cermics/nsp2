@@ -25,7 +25,7 @@
  * clear a rectangle zone 
  */
 
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
+static void cleararea(BCG *Xgc, GdkRectangle *r)
 {
   int clipflag = 0;
   /* switch to a clear gc */
@@ -39,7 +39,8 @@ static void cleararea(BCG *Xgc, int x, int y, int w, int h)
       static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
       gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
     }
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,x,y,w,h);
+  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
+		     r->x,r->y,r->width,r->height);
   if ( cur_alu != clear )
     xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
   if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 

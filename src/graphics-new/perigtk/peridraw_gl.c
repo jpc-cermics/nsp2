@@ -64,10 +64,9 @@ static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_
     }
 }
 
-static void cleararea(BCG *Xgc, int x, int y, int w, int h)
+static void cleararea(BCG *Xgc, GdkRectangle *r)
 {
-  
-  RectangleClear(Xgc,x,y,w,h,0,R_clear);
+  RectangleClear(Xgc,r->x,r->y,r->width,r->height,0,R_clear);
 }
 
 
@@ -1208,7 +1207,7 @@ void change_camera(BCG *Xgc,const double *val)
   Xgc->private->camera.ymin=*val;val++;
   Xgc->private->camera.ymax=*val;val++;
 #endif
-  expose_event( Xgc->private->drawing,NULL, Xgc);
+  expose_event_new( Xgc->private->drawing,NULL, Xgc);
 }
 
 /* select the view mode from 2d view to 

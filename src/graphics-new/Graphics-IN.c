@@ -84,397 +84,29 @@ static int sci_demo (const char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
-/**
- * check_style:
- * @stack: calling stack
- * @fname: caller name 
- * @varname: name of variable 
- * @var: value of the variable or NULL
- * @size: requested size 
- * 
- * returns a #NspMatrix containing style values, if the returned 
- * value is different from @var then a new matrix was allocated 
- * and should be freed. 
- * 
- * 
- * Returns: %NULL or a new #NspMatrix 
- **/
+/* 
+ * static utilities 
+ */
 
-static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
-{
-  NspMatrix *loc_var = var;
-  int i,*ival;
-  if ( var == NULLMAT) 
-    {
-      size = Max(size,2);
-      /* provide a default value */ 
-      if (( loc_var = nsp_matrix_create(NVOID,'r',1,size))== NULLMAT) return NULL;
-      ival = (int *) loc_var->R;
-      for (i = 0 ; i < size ; ++i) ival[i]= i+1;
-      if ( size == 1) ival[1]= 1;
-    }
-  else
-    {
-      /* check size */ 
-      if ( var->mn < size ) 
-	{
-	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
-	  return NULL;
-	}
-      loc_var = var;
-      ival = var->I;
-      if ( size == 1 && var->mn != 2) 
-	{
-	  if ((loc_var = nsp_matrix_create(NVOID,'r',1,2))== NULLMAT) return NULL;
-	  ival = loc_var->I;
-	  ival[0]=  var->I[0];
-	  ival[1]=1;
-	}
-    }
-  return loc_var;
-}
-
-/*-----------------------------------------------------------
- * Check optional iflag argument 
- * 3D options 
- * default mode is 8 which is a superpose mode 
- *-----------------------------------------------------------*/
-
-static const int iflag_def[]={2,8,4};
-static int iflag_loc[] = {2,8,4};
-
-static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
-{
-  int i;
-  /* provide a default value by copying since the returned array is 
-   * changed 
-   */
-  if ( var == NULLMAT) 
-    {
-      for ( i= 0 ; i < size ; i++) iflag_loc[i]=iflag_def[i];
-    }
-  else
-    {
-      /* check size */ 
-      if ( var->mn < size ) 
-	{
-	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
-	  return NULL;
-	}
-      for ( i= 0 ; i < size ; i++) iflag_loc[i]=(int) var->R[i];
-    }
-  return iflag_loc;
-}
-
-/*-----------------------------------------------------------
- * Check optional iflag argument for param3d 
- *-----------------------------------------------------------*/
-
-static const int param_iflag_def[]={8,4};
-static int param_iflag_loc[] = {8,4};
-
-static int * check_param_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
-{
-  int i;
-  /* provide a default value by copying since the returned array is 
-   * changed 
-   */
-  if ( var == NULLMAT) 
-    {
-      for ( i= 0 ; i < size ; i++) param_iflag_loc[i]=param_iflag_def[i];
-    }
-  else
-    {
-      /* check size */ 
-      if ( var->mn < size ) 
-	{
-	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
-	  return NULL;
-	}
-      for ( i= 0 ; i < size ; i++) param_iflag_loc[i]=(int) var->R[i];
-    }
-  return param_iflag_loc;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument ebox for 3d plot 
- *-----------------------------------------------------------*/
-
-static const double  ebox_def[]= { 0,1,0,1,0,1};
-static double ebox_loc[]=  { 0,1,0,1,0,1};
-
-static double * check_ebox(Stack stack,const char *fname,char *varname,NspMatrix *var)
-{
-  int i;
-  if ( var == NULLMAT) 
-    {
-      for ( i= 0 ; i < 6 ; i++) ebox_loc[i]=ebox_def[i];
-    }
-  else 
-    {
-      /* check size */ 
-      if ( var->mn != 6 ) 
-	{
-	  Scierror("%s: optional argument %s should be of size 6\n",fname,varname);
-	  return NULL;
-	}
-      else 
-	{
-	  for ( i= 0 ; i < 6 ; i++) ebox_loc[i]= var->R[i];
-	}
-    }
-  return ebox_loc;
-}
-
-
-/*-----------------------------------------------------------
- * Check optional argument rect
- *-----------------------------------------------------------*/
+static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
+static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
+static int * check_param_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
+static double * check_ebox(Stack stack,const char *fname,char *varname,NspMatrix *var);
+static char * check_strf(Stack stack,const char *fname,char *varname,char *strf);
+static char * check_legend(Stack stack,const char *fname,char *varname, char *legend);
+static const char * check_legend_3d(Stack stack,const char *fname,char *varname,const char *legend);
+static int check_legend_pos(Stack stack,const char *fname,const char *varnam,const char *l_pos);
+static int * check_nax(Stack stack,const char *fname,char *varname,NspMatrix *var);
+static int check_zminmax (Stack stack,const char *fname,char *varname,NspMatrix *var);
+static int check_colminmax (Stack stack,const char *fname,char *varname,NspMatrix *var);
+static int check_colout (Stack stack,const char *fname,char *varname,NspMatrix *var);
+static char * check_logflags(Stack stack,const char *fname,char *varname,char *logflags);
+static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
+static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val);
 
 static const double  rect_def[]= {0.,0.,10.0,10.0}; 
 static double rect_loc[]=  {0.,0.,10.0,10.0}; 
-
-static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix *var)
-{
-  int i;
-  if ( var == NULLMAT) 
-    {
-      for ( i= 0 ; i < 4 ; i++) rect_loc[i]= rect_def[i];
-    }
-  else 
-    {
-      /* check size */ 
-      if ( var->mn != 4 ) 
-	{
-	  Scierror("%s: optional argument %s should be of size 4\n",fname,varname);
-	  return NULL;
-	}
-      else 
-	{
-	  for ( i= 0 ; i < 4 ; i++) rect_loc[i]= var->R[i];
-	}
-    }
-  return rect_loc;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument strf
- *-----------------------------------------------------------*/
-
-#define DEFSTRF "081" 
-static char strf_loc[] = DEFSTRF;
-
-static char * check_strf(Stack stack,const char *fname,char *varname,char *strf)
-{
-
-  if ( strf == NULL ) 
-    {
-      strcpy(strf_loc,DEFSTRF);
-    }
-  else 
-    {
-      if ( strlen(strf) != 3) 
-	{
-	  Scierror("%s: optional argument strf has wrong size (%d), 3 expected\n",fname,strlen(strf)); 
-	  return NULL;
-	}
-      else 
-	{
-	  strcpy(strf_loc,strf);
-	}
-    }
-  return strf_loc;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument legend 
- * FIXME should return a const char *
- *-----------------------------------------------------------*/
-
-static char legend_loc[]  = "";
-
-static char * check_legend(Stack stack,const char *fname,char *varname, char *legend)
-{
-  return ( legend == NULL ) ? legend_loc: legend; 
-}
-
-static const char legend_3d_loc[]  = "X@Y@Z";
-
-static const char * check_legend_3d(Stack stack,const char *fname,char *varname,const char *legend)
-{
-  return ( legend == NULL ) ? legend_3d_loc: legend; 
-}
-
-/*-----------------------------------------------------------
- * Check optional argument legend_pos 
- *-----------------------------------------------------------*/
-/* 
- * take care to keep the same order in enum legend_pos and in lpos_table;
- * typedef enum { legend_dl, legend_dr ,legend_drm, legend_ur,legend_ur,legend_urm } legends_pos;
- */
-
-
-static int check_legend_pos(Stack stack,const char *fname,const char *varnam,const char *l_pos)
-{
-  static char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
-  char **entry;
-  int rep ; 
-  if ( l_pos == NULL ) return 4;
-  rep = is_string_in_array(l_pos,Table,1);
-  if ( rep < 0 ) 
-    {
-      Scierror("Error:\toptional argument %s of function %s has a wrong value %s\n",varnam,fname,l_pos);
-      Scierror("\texpected values are '%s'", *Table);
-      for (entry = Table+1 ; *entry != NULL; entry++) {
-	if (entry[1] == NULL) {
-	  Scierror(", or '%s'\n",*entry);
-	} else {
-	  Scierror(", '%s'",*entry);
-	}
-      }
-      return -1;
-    }
-  return rep;
-}
-
-
-/*-----------------------------------------------------------
- * Check optional argument nax 
- * note that var can be changed by this function 
- *-----------------------------------------------------------*/
-
-static const int nax_def[]={2,10,2,10};
-static int nax_loc[]={2,10,2,10};
-
-static int * check_nax(Stack stack,const char *fname,char *varname,NspMatrix *var)
-{
-  int i;
-  if ( var == NULLMAT) 
-    {
-      for (i = 0 ; i < 4; ++i) nax_loc[i]=nax_def[i];
-    }
-  else 
-    {
-      /* check size */ 
-      if ( var->mn != 4 ) 
-	{
-	  Scierror("%s: optional argument %s should be of size 4\n",fname,varname);
-	  return NULL;
-	}
-      else 
-	{
-	  int *ivar  = (int *) var->R,i;
-	  for (i = 0 ; i < 4; ++i) nax_loc[i]=Max(ivar[i],0);
-	  return ivar;
-	}
-    }
-  return nax_loc;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument zminmax
- *-----------------------------------------------------------*/
-
-static int check_zminmax (Stack stack,const char *fname,char *varname,NspMatrix *var)
-{
-  if ( var != NULLMAT &&  var->mn != 2 ) 
-    {
-      Scierror("%s: optional argument %s should be of size 2\n",fname,varname);
-      return FAIL;
-    }
-  return OK;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument colminmax
- *-----------------------------------------------------------*/
-
-static int check_colminmax (Stack stack,const char *fname,char *varname,NspMatrix *var)
-{
-  if ( var != NULLMAT && var->mn != 2 ) 
-    {
-      Scierror("%s: optional argument %s should be of size 2\n",fname,varname);
-      return FAIL;
-    }
-  return OK;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument colout
- *-----------------------------------------------------------*/
-
-static int check_colout (Stack stack,const char *fname,char *varname,NspMatrix *var)
-{
-  if ( var != NULLMAT &&  var->mn != 2 ) 
-    {
-      Scierror("%s: optional argument %s should be of size 2\n",fname,varname);
-      return FAIL;
-    }
-  return OK;
-}
-
-/*-----------------------------------------------------------
- * Check optional argument for logflags 
- * note that var can be changed by this function 
- * (Bruno)
- *-----------------------------------------------------------*/
-
-#define DEFLOGFLAGS "gnn" 
-static char logflags_loc[]  = DEFLOGFLAGS;
-
-static char * check_logflags(Stack stack,const char *fname,char *varname,char *logflags)
-{
-  if ( logflags == NULL ) 
-    {
-      strcpy(logflags_loc,DEFLOGFLAGS);
-    }
-  else 
-    {
-      if ( strlen(logflags) == 2 ) 
-	{
-	  sprintf(logflags_loc,"g%c%c",logflags[0],logflags[1]);
-	}
-      else if ( strlen(logflags) != 3) 
-	{
-	  Scierror("%s: optional argument %s has wrong size (%d), 3 expected\n",fname,varname,strlen(logflags)); 
-	  return NULL;
-	}
-      else
-	{
-	  strcpy(logflags_loc,logflags);
-	}
-    }
-  return logflags_loc;
-}
-
-
-static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
-{
-  NspMatrix *M1;
-  int i;
-  static double l[6];
-  switch ( rhs -opt ) 
-    {
-    case 1 :
-      if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
-      CheckLength_(NspFname(stack),1,M1,6,FAIL);
-      *val = M1->R;
-      break;
-    case 6 :
-      for ( i = 1 ; i <= 6 ; i++) 
-	{
-	  if (GetScalarDouble(stack,i,l+i-1) == FAIL) return FAIL;
-	}
-      *val = l;
-      break;
-    default :
-      Scierror("%s: wrong number of standard rhs arguments (%d), rhs must be 1 or 6\n",NspFname(stack),rhs);
-      return FAIL;
-    }
-  return OK;
-}
-
-
+static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix *var);
 
 /**
  * int_champ_G:
@@ -947,6 +579,7 @@ static int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
   return 2;
 }
 
+
 #ifdef  NEW_GRAPHICS
 
 int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *style,
@@ -1072,6 +705,7 @@ static int int_param3d( Stack stack, int rhs, int opt, int lhs)
   return 0;
 
 } 
+
 
 /*-----------------------------------------------------------
  * used in contourf, to extract contour points 
@@ -2382,19 +2016,21 @@ static int int_driver(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
-
-/*-----------------------------------------------------------
- * erase a graphic window if necessary 
- *-----------------------------------------------------------*/
+/**
+ * nsp_gwin_clear:
+ * @Xgc: 
+ * 
+ * 
+ **/
 
 static void  nsp_gwin_clear(BCG *Xgc)
 {
   if ( Xgc != NULL) 
     if ( Xgc->graphic_engine->xget_autoclear(Xgc) == 1 ) 
       {
-	Xgc->graphic_engine->clearwindow(Xgc);
 	Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+	Xgc->graphic_engine->invalidate(Xgc,NULL);
+	Xgc->graphic_engine->process_updates(Xgc);
       }
 }
 
@@ -2947,12 +2583,6 @@ int C2F(simple2dXXX)(int *n,double *dx, float *s)
 } 
 
 
-/*-----------------------------------------------------------
- *   xclea(x,y,w,h) etendu a xclea([x,y,w,h])
- *-----------------------------------------------------------*/
-
-static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
-
 static int int_xclea(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -2960,7 +2590,7 @@ static int int_xclea(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->scale->cleararea(Xgc,*val,*(val+1),*(val+2),*(val+3));
+  Xgc->graphic_engine->scale->cleararea(Xgc,val);
   return 0;
 } 
 
@@ -3094,28 +2724,29 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
+/**
+ * int_xclear_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * xclear(window-ids,[tape_clean])
+ * In new graphics only tape_clean == %t is 
+ * accepted. This function remove all the axes 
+ * contained in the graphics window. Then call 
+ * an invalidate and a show 
+ * 
+ * Returns: 
+ **/
 
-/*-----------------------------------------------------------
- *   xclear(window-ids,[tape_clean])
- *   the default value for tape_clean is TRUE 
- *   if tape_clean  is true then 
- *        a tape_clean_plots is also performed 
- *        and scales are reset to default values
- *-----------------------------------------------------------*/
-
-static int int_xclear_(Stack stack, int rhs, int opt, int lhs)
+static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int val =TRUE,  ix;
+  int ix;
   NspMatrix *l1;
-
-  CheckRhs(0,2) ;
-  
-  if ( rhs == 2 )
-    {
-      if ( GetScalarBool (stack,2,&val) == FAIL) return RET_BUG;
-    }
-  
+  CheckRhs(0,2);
+  /* we ignore second argument */
   if (rhs >= 1) 
     {
       if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
@@ -3124,8 +2755,9 @@ static int int_xclear_(Stack stack, int rhs, int opt, int lhs)
 	  int wid = l1->R[ix];
 	  if (( Xgc=window_list_search_new(wid)) != NULL) 
 	    {
-	      Xgc->graphic_engine->clearwindow(Xgc);
-	      if ( val == TRUE ) Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+	      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
+	      Xgc->graphic_engine->invalidate(Xgc,NULL);
+	      Xgc->graphic_engine->process_updates(Xgc);
 	    }
 	}
     } 
@@ -3133,8 +2765,9 @@ static int int_xclear_(Stack stack, int rhs, int opt, int lhs)
     {
       if ((Xgc = window_list_get_first()) != NULL) 
 	{
-	  Xgc->graphic_engine->clearwindow(Xgc);
-	  if ( val == TRUE ) Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+	  Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+	  Xgc->graphic_engine->invalidate(Xgc,NULL);
+	  Xgc->graphic_engine->process_updates(Xgc);
 	}
     }
   return 0;
@@ -3318,7 +2951,7 @@ static int int_xgrid_new(Stack stack, int rhs, int opt, int lhs)
 } 
 
 /**
- * int_xfpoly:
+ * int_xfpoly_new:
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -3329,7 +2962,7 @@ static int int_xgrid_new(Stack stack, int rhs, int opt, int lhs)
  * Returns: 
  **/
 
-static int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
+static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe; 
@@ -3374,13 +3007,25 @@ static int int_xfpoly(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*-----------------------------------------------------------
- *  xfpolys(xpols,ypols,[fill])
- *  interpolated shading added by polpoth 7/7/2000
- *-----------------------------------------------------------*/
+/**
+ * int_xfpolys_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
+static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 {
+  int compound = TRUE;
+  NspList *L;
+  NspCompound *C;
+  nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   int i;
   NspPolyline *pl;
   NspAxes *axe; 
@@ -3390,7 +3035,7 @@ static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *l1=NULL,*l2=NULL,*l3=NULL;
   int v1 = 0;
 
-  CheckRhs(2,3);
+  CheckStdRhs(2,3);
 
   if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
@@ -3416,9 +3061,25 @@ static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
 	  v1=1; /* flat shading */
 	}
     }
+
+  if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
+    return RET_BUG;
+
   Xgc=nsp_check_graphic_context();    
   axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return RET_BUG;
+
+  if ( compound == TRUE ) 
+    {
+      if ((C= nsp_compound_create("c",NULL,NULL,NULL))== NULL) return RET_BUG;
+      L = C->obj->children;
+    }
+  else
+    {
+      L = axe->obj->children;
+    }
+
+
   /* loop on the polylines */
   for ( i = 0 ; i < l1->n ; i++)
     {
@@ -3456,11 +3117,39 @@ static int int_xfpolys(Stack stack, int rhs, int opt, int lhs)
       if ((pl = nsp_polyline_create("pl",x,y,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
       /* insert the polyline */
-      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
-	return FAIL;
+      if ( compound == TRUE ) 
+	{
+	  /* insert in the compound */
+	  if ( nsp_list_end_insert(L,(NspObject *) pl )== FAIL)
+	    return RET_BUG;
+	}
+      else
+	{
+	  if (  nsp_axes_insert_child(axe,(NspGraphic *) pl )== FAIL) 
+	    return RET_BUG;
+	}
     }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_axes_invalidate(((NspGraphic *) axe));
+  if ( compound == TRUE ) 
+    {
+      /* insert the compound in the axe */
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) C)== FAIL) 
+	{
+	  Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  if ( lhs == 1 ) 
+    {
+      if ( compound == TRUE ) 
+	{
+	  MoveObj(stack,1,NSP_OBJECT(C));
+	}
+      else
+	{
+	  MoveObj(stack,1,NSP_OBJECT(pl));
+	}
+      return 1;
+    }
   return 0;
 } 
 
@@ -4311,22 +4000,33 @@ static int int_xpoly_clip(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
- *   xpolys(xpols,ypols,[draw])
- *-----------------------------------------------------------*/
 
+/**
+ * int_xpolys_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-#ifdef NEW_GRAPHICS 
-
-static int int_xpolys(Stack stack, int rhs, int opt, int lhs)
+static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
 {
+  int compound = TRUE;
+  NspList *L;
+  NspCompound *C;
   int close=0,color=-1,mark=-2,mark_size=-1,fill_color=-2,thickness=-1,i;
   NspMatrix *x,*y,*style=NULL;
   NspPolyline *pl;
   NspAxes *axe; 
   BCG *Xgc;
-  CheckRhs(2,3);
+  nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
 
+  CheckStdRhs(2,3);
   if ((x=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
   if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,x,y);
@@ -4337,9 +4037,23 @@ static int int_xpolys(Stack stack, int rhs, int opt, int lhs)
       CheckVector(NspFname(stack),3,style); 
       CheckDimProp(NspFname(stack),1,3, style->mn < x->n);
     }
+  
+  if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
+    return RET_BUG;
+
   Xgc=nsp_check_graphic_context();
   axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return RET_BUG;
+
+  if ( compound == TRUE ) 
+    {
+      if ((C= nsp_compound_create("c",NULL,NULL,NULL))== NULL) return RET_BUG;
+      L = C->obj->children;
+    }
+  else
+    {
+      L = axe->obj->children;
+    }
 
   for ( i = 0 ; i < x->n ; i++)
     {
@@ -4363,46 +4077,43 @@ static int int_xpolys(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
       mark = color=-1;
       /* insert the polyline */
-      if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)
-	return RET_BUG;
+      if ( compound == TRUE ) 
+	{
+	  /* insert in the compound */
+	  if ( nsp_list_end_insert(L,(NspObject *) pl )== FAIL)
+	    return RET_BUG;
+	}
+      else
+	{
+	  if (  nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+	    return RET_BUG;
+	}
     }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_axes_invalidate(((NspGraphic *) axe));
+
+  if ( compound == TRUE ) 
+    {
+      /* insert the compound in the axe */
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) C)== FAIL) 
+	{
+	  Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  /* return something */
+  if ( lhs == 1 ) 
+    {
+      if ( compound == TRUE ) 
+	{
+	  MoveObj(stack,1,NSP_OBJECT(C));
+	}
+      else
+	{
+	  MoveObj(stack,1,NSP_OBJECT(pl));
+	}
+      return 1;
+    }
   return 0;
 }
-
-#else 
-
-static int int_xpolys(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  NspMatrix *l1,*l2,*l3;
-
-  CheckRhs(2,3);
-
-  if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
-  if ((l2=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-  CheckSameDims(NspFname(stack),1,2,l1,l2);
-
-  if (rhs == 3) 
-    {
-      if ((l3=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
-      CheckVector(NspFname(stack),3,l3); 
-      CheckDimProp(NspFname(stack),1,3, l3->mn < l1->n);
-    }
-  else
-    {
-      if (( l3 =nsp_mat_ones(1,l1->n))  == NULLMAT) return RET_BUG;
-      l3= Mat2int(l3);
-      StackStore(stack,(NspObject *) l3,3);
-    }
-
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->scale->drawpolylines(Xgc,l1->R,l2->R,(int *)l3->R,l2->n,l2->m);
-  return 0;
-}
-
-#endif 
 
 
 /*-----------------------------------------------------------
@@ -7139,7 +6850,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xaxis"),int_xaxis},
   {NAMES("xchange"),int_xchange_new},
   {NAMES("xclea"),int_xclea},
-  {NAMES("xclear"),int_xclear_},
+  {NAMES("xclear"),int_xclear_new},
   {NAMES("xclick"),int_xclick},
   {NAMES("xcursor"), int_xcursor},
   {NAMES("xdel"),int_xdel},
@@ -7150,8 +6861,8 @@ OpGrTab Graphics_func[]={
   {NAMES("xfarc"),int_xfarc_new},
   {NAMES("xfarcs"),int_xfarcs_new},
   {NAMES("xflush"),int_xflush},
-  {NAMES("xfpoly"),int_xfpoly},
-  {NAMES("xfpolys"),int_xfpolys},
+  {NAMES("xfpoly"),int_xfpoly_new},
+  {NAMES("xfpolys"),int_xfpolys_new},
   {NAMES("xfrect"),int_xfrect_new},
   {NAMES("xget"),int_xget},
   {NAMES("xget_image"),int_get_image},
@@ -7169,7 +6880,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xpause"),int_xpause},
   {NAMES("xpoly"),int_xpoly_new},
   {NAMES("xpoly_clip"),int_xpoly_clip},
-  {NAMES("xpolys"),int_xpolys},
+  {NAMES("xpolys"),int_xpolys_new},
   {NAMES("xrect"),int_xrect_new},
   {NAMES("xrects"),int_xrects_new},
   {NAMES("xs2fig"),int_xs2fig},
@@ -7212,5 +6923,384 @@ void Graphics_Interf_Info(int i, char **fname, function (**f))
   *f = Graphics_func[i].fonc;
 }
 
+/* Utilities  */
 
+/**
+ * check_style:
+ * @stack: calling stack
+ * @fname: caller name 
+ * @varname: name of variable 
+ * @var: value of the variable or NULL
+ * @size: requested size 
+ * 
+ * returns a #NspMatrix containing style values, if the returned 
+ * value is different from @var then a new matrix was allocated 
+ * and should be freed. 
+ * 
+ * 
+ * Returns: %NULL or a new #NspMatrix 
+ **/
+
+static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
+{
+  NspMatrix *loc_var = var;
+  int i,*ival;
+  if ( var == NULLMAT) 
+    {
+      size = Max(size,2);
+      /* provide a default value */ 
+      if (( loc_var = nsp_matrix_create(NVOID,'r',1,size))== NULLMAT) return NULL;
+      ival = (int *) loc_var->R;
+      for (i = 0 ; i < size ; ++i) ival[i]= i+1;
+      if ( size == 1) ival[1]= 1;
+    }
+  else
+    {
+      /* check size */ 
+      if ( var->mn < size ) 
+	{
+	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
+	  return NULL;
+	}
+      loc_var = var;
+      ival = var->I;
+      if ( size == 1 && var->mn != 2) 
+	{
+	  if ((loc_var = nsp_matrix_create(NVOID,'r',1,2))== NULLMAT) return NULL;
+	  ival = loc_var->I;
+	  ival[0]=  var->I[0];
+	  ival[1]=1;
+	}
+    }
+  return loc_var;
+}
+
+
+static const int iflag_def[]={2,8,4};
+static int iflag_loc[] = {2,8,4};
+
+/**
+ * check_iflag:
+ * @stack: 
+ * @fname: 
+ * @varname: 
+ * @var: 
+ * @size: 
+ * 
+ * Check optional iflag argument 
+ * 3D options 
+ * default mode is 8 which is a superpose mode 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
+{
+  int i;
+  /* provide a default value by copying since the returned array is 
+   * changed 
+   */
+  if ( var == NULLMAT) 
+    {
+      for ( i= 0 ; i < size ; i++) iflag_loc[i]=iflag_def[i];
+    }
+  else
+    {
+      /* check size */ 
+      if ( var->mn < size ) 
+	{
+	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
+	  return NULL;
+	}
+      for ( i= 0 ; i < size ; i++) iflag_loc[i]=(int) var->R[i];
+    }
+  return iflag_loc;
+}
+
+
+static const int param_iflag_def[]={8,4};
+static int param_iflag_loc[] = {8,4};
+
+/**
+ * check_param_iflag:
+ * @stack: 
+ * @fname: 
+ * @varname: 
+ * @var: 
+ * @size: 
+ * 
+ * Check optional iflag argument for param3d 
+ * 
+ * Returns: 
+ **/
+
+static int * check_param_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) 
+{
+  int i;
+  /* provide a default value by copying since the returned array is 
+   * changed 
+   */
+  if ( var == NULLMAT) 
+    {
+      for ( i= 0 ; i < size ; i++) param_iflag_loc[i]=param_iflag_def[i];
+    }
+  else
+    {
+      /* check size */ 
+      if ( var->mn < size ) 
+	{
+	  Scierror("%s: optional argument %s is too small (%d<%d)\n",fname,varname,var->mn,size);
+	  return NULL;
+	}
+      for ( i= 0 ; i < size ; i++) param_iflag_loc[i]=(int) var->R[i];
+    }
+  return param_iflag_loc;
+}
+
+
+static const double  ebox_def[]= { 0,1,0,1,0,1};
+static double ebox_loc[]=  { 0,1,0,1,0,1};
+
+static double * check_ebox(Stack stack,const char *fname,char *varname,NspMatrix *var)
+{
+  int i;
+  if ( var == NULLMAT) 
+    {
+      for ( i= 0 ; i < 6 ; i++) ebox_loc[i]=ebox_def[i];
+    }
+  else 
+    {
+      /* check size */ 
+      if ( var->mn != 6 ) 
+	{
+	  Scierror("%s: optional argument %s should be of size 6\n",fname,varname);
+	  return NULL;
+	}
+      else 
+	{
+	  for ( i= 0 ; i < 6 ; i++) ebox_loc[i]= var->R[i];
+	}
+    }
+  return ebox_loc;
+}
+
+
+static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix *var)
+{
+  int i;
+  if ( var == NULLMAT) 
+    {
+      for ( i= 0 ; i < 4 ; i++) rect_loc[i]= rect_def[i];
+    }
+  else 
+    {
+      /* check size */ 
+      if ( var->mn != 4 ) 
+	{
+	  Scierror("%s: optional argument %s should be of size 4\n",fname,varname);
+	  return NULL;
+	}
+      else 
+	{
+	  for ( i= 0 ; i < 4 ; i++) rect_loc[i]= var->R[i];
+	}
+    }
+  return rect_loc;
+}
+
+
+#define DEFSTRF "081" 
+static char strf_loc[] = DEFSTRF;
+
+static char * check_strf(Stack stack,const char *fname,char *varname,char *strf)
+{
+
+  if ( strf == NULL ) 
+    {
+      strcpy(strf_loc,DEFSTRF);
+    }
+  else 
+    {
+      if ( strlen(strf) != 3) 
+	{
+	  Scierror("%s: optional argument strf has wrong size (%d), 3 expected\n",fname,strlen(strf)); 
+	  return NULL;
+	}
+      else 
+	{
+	  strcpy(strf_loc,strf);
+	}
+    }
+  return strf_loc;
+}
+
+static char legend_loc[]  = "";
+
+static char * check_legend(Stack stack,const char *fname,char *varname, char *legend)
+{
+  return ( legend == NULL ) ? legend_loc: legend; 
+}
+
+static const char legend_3d_loc[]  = "X@Y@Z";
+
+static const char * check_legend_3d(Stack stack,const char *fname,char *varname,const char *legend)
+{
+  return ( legend == NULL ) ? legend_3d_loc: legend; 
+}
+
+
+/* 
+ * take care to keep the same order in enum legend_pos and in lpos_table;
+ * typedef enum { legend_dl, legend_dr ,legend_drm, legend_ur,legend_ur,legend_urm } legends_pos;
+ */
+
+static int check_legend_pos(Stack stack,const char *fname,const char *varnam,const char *l_pos)
+{
+  static char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
+  char **entry;
+  int rep ; 
+  if ( l_pos == NULL ) return 4;
+  rep = is_string_in_array(l_pos,Table,1);
+  if ( rep < 0 ) 
+    {
+      Scierror("Error:\toptional argument %s of function %s has a wrong value %s\n",varnam,fname,l_pos);
+      Scierror("\texpected values are '%s'", *Table);
+      for (entry = Table+1 ; *entry != NULL; entry++) {
+	if (entry[1] == NULL) {
+	  Scierror(", or '%s'\n",*entry);
+	} else {
+	  Scierror(", '%s'",*entry);
+	}
+      }
+      return -1;
+    }
+  return rep;
+}
+
+/*
+ * Check optional argument nax 
+ * note that var can be changed by this function 
+ */
+
+static const int nax_def[]={2,10,2,10};
+static int nax_loc[]={2,10,2,10};
+
+static int * check_nax(Stack stack,const char *fname,char *varname,NspMatrix *var)
+{
+  int i;
+  if ( var == NULLMAT) 
+    {
+      for (i = 0 ; i < 4; ++i) nax_loc[i]=nax_def[i];
+    }
+  else 
+    {
+      /* check size */ 
+      if ( var->mn != 4 ) 
+	{
+	  Scierror("%s: optional argument %s should be of size 4\n",fname,varname);
+	  return NULL;
+	}
+      else 
+	{
+	  int *ivar  = (int *) var->R,i;
+	  for (i = 0 ; i < 4; ++i) nax_loc[i]=Max(ivar[i],0);
+	  return ivar;
+	}
+    }
+  return nax_loc;
+}
+
+
+static int check_zminmax (Stack stack,const char *fname,char *varname,NspMatrix *var)
+{
+  if ( var != NULLMAT &&  var->mn != 2 ) 
+    {
+      Scierror("%s: optional argument %s should be of size 2\n",fname,varname);
+      return FAIL;
+    }
+  return OK;
+}
+
+static int check_colminmax (Stack stack,const char *fname,char *varname,NspMatrix *var)
+{
+  if ( var != NULLMAT && var->mn != 2 ) 
+    {
+      Scierror("%s: optional argument %s should be of size 2\n",fname,varname);
+      return FAIL;
+    }
+  return OK;
+}
+
+static int check_colout (Stack stack,const char *fname,char *varname,NspMatrix *var)
+{
+  if ( var != NULLMAT &&  var->mn != 2 ) 
+    {
+      Scierror("%s: optional argument %s should be of size 2\n",fname,varname);
+      return FAIL;
+    }
+  return OK;
+}
+
+/*
+ * Check optional argument for logflags 
+ * note that var can be changed by this function 
+ * (Bruno)
+ */
+
+#define DEFLOGFLAGS "gnn" 
+static char logflags_loc[]  = DEFLOGFLAGS;
+
+static char * check_logflags(Stack stack,const char *fname,char *varname,char *logflags)
+{
+  if ( logflags == NULL ) 
+    {
+      strcpy(logflags_loc,DEFLOGFLAGS);
+    }
+  else 
+    {
+      if ( strlen(logflags) == 2 ) 
+	{
+	  sprintf(logflags_loc,"g%c%c",logflags[0],logflags[1]);
+	}
+      else if ( strlen(logflags) != 3) 
+	{
+	  Scierror("%s: optional argument %s has wrong size (%d), 3 expected\n",fname,varname,strlen(logflags)); 
+	  return NULL;
+	}
+      else
+	{
+	  strcpy(logflags_loc,logflags);
+	}
+    }
+  return logflags_loc;
+}
+
+
+static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
+{
+  NspMatrix *M1;
+  int i;
+  static double l[6];
+  switch ( rhs -opt ) 
+    {
+    case 1 :
+      if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
+      CheckLength_(NspFname(stack),1,M1,6,FAIL);
+      *val = M1->R;
+      break;
+    case 6 :
+      for ( i = 1 ; i <= 6 ; i++) 
+	{
+	  if (GetScalarDouble(stack,i,l+i-1) == FAIL) return FAIL;
+	}
+      *val = l;
+      break;
+    default :
+      Scierror("%s: wrong number of standard rhs arguments (%d), rhs must be 1 or 6\n",
+	       NspFname(stack),rhs);
+      return FAIL;
+    }
+  return OK;
+}
 

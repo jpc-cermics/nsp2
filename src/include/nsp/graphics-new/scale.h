@@ -9,10 +9,12 @@
  * to the graphics driver.
  */
 
+#include <gdk/gdk.h> 
+
 typedef struct _nsp_gengine1 Gengine1; 
 
 typedef void driver_s_boundingbox(BCG *Xgc,char *string, double x, double y, double *rect);
-typedef void driver_s_cleararea(BCG *Xgc,double x, double y, double w, double h);
+typedef void driver_s_cleararea(BCG *Xgc, double *r);
 typedef void driver_s_displaynumbers(BCG *Xgc,double *x, double *y,int n, int flag,double *z, double *alpha);
 typedef void driver_s_displaystring(BCG *Xgc,char *string,double x, double y,int flag, double angle);
 typedef void driver_s_displaystringa(BCG *Xgc,char *string, int ipos);

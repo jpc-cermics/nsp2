@@ -960,25 +960,29 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
   NspMatrix *pt;
   int rep,click;
   double pt1[2]= {5,-10};
-  NspDiagram *F = self;
+  NspDiagram *D = self;
   Cell *C;
-  NspDiagram *GF;
+  NspDiagram *Di;
+  NspGraphic *GDi;
   CheckRhs(2,2);
   CheckLhs(-1,0);
-  if ((GF=GetDiagram(stack,1)) == NULLDIAGRAM ) return RET_BUG;
+  if ((Di=GetDiagram(stack,1)) == NULLDIAGRAM ) return RET_BUG;
   if ((pt = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),2,pt,2);
   /* now we loop on objects and insert them 
    * this could be turned into a new function 
    */
-  if ((GF = nsp_diagram_full_copy(GF))== NULLDIAGRAM)   return RET_BUG;
+  if ((Di = nsp_diagram_full_copy(Di))== NULLDIAGRAM)   return RET_BUG;
+  /* take care that full copy preserve the figure */
+  GDi = (NspGraphic *) Di;
+  GDi->type->unlink_figure(GDi,GDi->obj->Fig);
   /* 
    * pt is the mouse position 
    * we have to translate or move the upper-left rectangle enclosing the 
    * selection to pt. Thus we need to now this enclosing rectangle.
    * XXX: we start here by using the first object position as a position 
    */
-  Obj = nsp_list_get_element(GF->obj->children,1);
+  Obj = nsp_list_get_element(Di->obj->children,1);
   if ( Obj != NULLOBJ ) 
     {
       double pt2[2];
@@ -987,40 +991,44 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
       pt1[0] = pt->R[0]-pt2[0];
       pt1[1] = pt->R[1]-pt2[1];
     }
-  nsp_diagram_list_obj_action(GF,GF->obj->children,pt1,L_TRANSLATE);
-  nsp_diagram_list_obj_action(GF,GF->obj->children,pt1, L_LOCK_UPDATE);
+  nsp_diagram_list_obj_action(Di,Di->obj->children,pt1,L_TRANSLATE);
+  nsp_diagram_list_obj_action(Di,Di->obj->children,pt1, L_LOCK_UPDATE);
   /* unselect the objects */
-  nsp_diagram_unhilite_objs(F,FALSE);
+  nsp_diagram_unhilite_objs(D,FALSE);
   /* insert each object 
    * 
    */
-  C = GF->obj->children->first; 
+  C = Di->obj->children->first; 
   while ( C != NULLCELL) 
     {
       if ( C->O != NULLOBJ )
 	{
 	  /* set the frame field of each object */
 	  /* NspBlock *B = (NspBlock *) C->O;  */
-	  /* B->obj->frame = F->obj; */
+	  /* B->obj->frame = D->obj; */
 	  /* hilite inserted */
 	  bf = GR_INT(C->O->basetype->interface);
 	  bf->set_hilited(C->O,TRUE);
 	  /* add the object */
-	  if ( nsp_list_end_insert(F->obj->children,C->O) == FAIL )
+	  if ( nsp_list_end_insert(D->obj->children,C->O) == FAIL )
 	    return RET_BUG; 
+	  /* be sure that the object Figure is OK */
+	  nsp_graphic_link_figure((NspGraphic *) C->O,
+				  ((NspGraphic *) D)->obj->Fig,
+				  ((NspGraphic *) D)->obj->Axe);
 	  C->O= NULLOBJ;
 	}
       C = C->next ;
     }
-  /* we can now destroy GF */
-  nsp_diagram_destroy(GF);
+  /* we can now destroy Di */
+  nsp_diagram_destroy(Di);
   /* and we can enter a move_selection */
-  rep = nsp_diagram_select_and_move_list(F,NULLOBJ,pt->R,&click);
+  rep = nsp_diagram_select_and_move_list(D,NULLOBJ,pt->R,&click);
   return 0;
 }
 
 
-#line 1024 "diagram.c"
+#line 1032 "diagram.c"
 
 
 #line 519 "codegen/diagram.override"
@@ -1049,7 +1057,7 @@ static int _wrap_diagram_get_selection(void *self,Stack stack, int rhs, int opt,
 
 
 
-#line 1053 "diagram.c"
+#line 1061 "diagram.c"
 
 
 #line 546 "codegen/diagram.override"
@@ -1075,7 +1083,7 @@ static int _wrap_diagram_get_selection_copy(void *self,Stack stack, int rhs, int
 }
 
 
-#line 1079 "diagram.c"
+#line 1087 "diagram.c"
 
 
 #line 570 "codegen/diagram.override"
@@ -1092,10 +1100,10 @@ static int _wrap_diagram_get_selection_as_diagram(void *self,Stack stack, int rh
 }
 
 
-#line 1096 "diagram.c"
+#line 1104 "diagram.c"
 
 
-#line 720 "codegen/diagram.override"
+#line 728 "codegen/diagram.override"
 /* check if we are over an object */
 
 static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt, int lhs)
@@ -1126,10 +1134,10 @@ static int _wrap_diagram_check_pointer(void *self,Stack stack, int rhs, int opt,
   return Max(lhs,1);
 }
 
-#line 1130 "diagram.c"
+#line 1138 "diagram.c"
 
 
-#line 706 "codegen/diagram.override"
+#line 714 "codegen/diagram.override"
 
 static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -1142,7 +1150,7 @@ static int _wrap_diagram_get_nobjs(void *self,Stack stack, int rhs, int opt, int
 }
 
 
-#line 1146 "diagram.c"
+#line 1154 "diagram.c"
 
 
 static NspMethods diagram_methods[] = {
@@ -1235,7 +1243,7 @@ static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1239 "diagram.c"
+#line 1247 "diagram.c"
 static NspObject *_wrap_diagram_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1262,7 +1270,7 @@ int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1266 "diagram.c"
+#line 1274 "diagram.c"
 
 
 #line 214 "codegen/diagram.override"
@@ -1274,7 +1282,7 @@ int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1278 "diagram.c"
+#line 1286 "diagram.c"
 
 
 /*----------------------------------------------------
@@ -1305,7 +1313,7 @@ void Diagram_Interf_Info(int i, char **fname, function (**f))
   *f = Diagram_func[i].fonc;
 }
 
-#line 752 "codegen/diagram.override"
+#line 760 "codegen/diagram.override"
 
 /* inserted verbatim at the end */
 
@@ -2472,6 +2480,10 @@ void nsp_diagram_delete_hilited(NspDiagram *R)
 	  NspTypeGRint *bf = GR_INT(C->O->basetype->interface);
 	  if ( bf->get_hilited(C->O) == TRUE ) 
 	    {
+	      /* we change the hilited property to invalidate the 
+	       * object (drawing will be updated).
+	       */
+	      bf->set_hilited(C->O,FALSE);
 	      nsp_object_destroy(&C->O);
 	      C->O = NULLOBJ;
 	    }
@@ -2809,10 +2821,10 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 
 /**
  * nsp_diagram_hilited_full_copy:
- * @F: a #NspDiagram
+ * @self: a #NspDiagram
  * 
- * Make a full copy of a @F but only for hilited objects. 
- * Since @F contains a list of objects which are themselves objects with 
+ * Make a full copy of a @self but only for hilited objects. 
+ * Since @self contains a list of objects which are themselves objects with 
  * references, the full copy must be performed on these
  * objects and cross references are to be updates.
  * 
@@ -2893,4 +2905,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2897 "diagram.c"
+#line 2909 "diagram.c"

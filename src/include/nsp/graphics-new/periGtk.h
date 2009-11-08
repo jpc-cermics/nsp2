@@ -348,7 +348,7 @@ extern void change_camera(BCG *Xgc,const double *val);
 #ifdef  PERI_PRIVATE
 
 static unsigned long maxcol; /* FIXME XXXXX : à revoir */
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data);
+static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data);
 static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void nsp_fonts_finalize(BCG *Xgc);
 static void nsp_fonts_initialize(BCG *Xgc);

@@ -59,6 +59,7 @@ static void invalidate(BCG *Xgc,void *rect)
       gdk_window_invalidate_rect(Xgc->private->drawing->window,
 				 &Xgc->private->drawing->allocation,
 				 FALSE);
+      Xgc->private->invalidated = Xgc->private->drawing->allocation;
     }
   else
     {
@@ -197,8 +198,10 @@ static void xend(BCG *Xgc)
  * clearwindow:
  * @Xgc: a #BCG  
  * 
+ * use background to paint the current window.
+ * this function should only be called by expose_event
+ * when necessary.
  * 
- * clears the current graphic window.
  **/
 
 static void clearwindow(BCG *Xgc)
@@ -388,7 +391,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
        */
       if ( schrink == FALSE && inhibit_enlarge == TRUE ) 
 	{
-	  expose_event( Xgc->private->drawing,NULL, Xgc);
+	  expose_event_new( Xgc->private->drawing,NULL, Xgc);
 	}
     }
   gdk_flush();
@@ -1698,7 +1701,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  **/
 
 #if defined(PERIGTK) || defined(PERICAIRO)
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
@@ -1785,10 +1788,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 	       * also correct drawing in hidden part of the 
 	       * drawing area since we use a backing store pixbuf.
 	       */
-	      dd->graphic_engine->cleararea(dd,dd->private->invalidated.x,
-					    dd->private->invalidated.y,
-					    dd->private->invalidated.width,
-					    dd->private->invalidated.height);
+	      dd->graphic_engine->cleararea(dd,&dd->private->invalidated);
 	      dd->graphic_engine->xset_clip(dd,rect);
 	      dd->graphic_engine->tape_replay(dd,dd->CurWindow,rect);
 	      dd->graphic_engine->xset_unclip(dd);
@@ -1846,7 +1846,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 #ifndef PERIGLGTK 
 
 /* periGL version */
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
   /* 
@@ -1921,7 +1921,7 @@ static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data
 #else 
 
 /* periGL version */
-static gint expose_event(GtkWidget *widget, GdkEventExpose *event, gpointer data)
+static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
