@@ -505,16 +505,16 @@ int nsp_vfield_check_values(NspVField *H)
 
 NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type)
 {
- NspVField *H  = nsp_vfield_create_void(name,type);
- if ( H ==  NULLVFIELD) return NULLVFIELD;
+  NspVField *H  = nsp_vfield_create_void(name,type);
+  if ( H ==  NULLVFIELD) return NULLVFIELD;
   if ( nsp_vfield_create_partial(H) == FAIL) return NULLVFIELD;
   H->obj->fx= fx;
   H->obj->fy= fy;
   H->obj->x= x;
   H->obj->y= y;
   H->obj->colored=colored;
- if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
- return H;
+  if ( nsp_vfield_check_values(H) == FAIL) return NULLVFIELD;
+  return H;
 }
 
 

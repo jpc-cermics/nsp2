@@ -488,15 +488,15 @@ int nsp_arrows_check_values(NspArrows *H)
 
 NspArrows *nsp_arrows_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type)
 {
- NspArrows *H  = nsp_arrows_create_void(name,type);
- if ( H ==  NULLARROWS) return NULLARROWS;
+  NspArrows *H  = nsp_arrows_create_void(name,type);
+  if ( H ==  NULLARROWS) return NULLARROWS;
   if ( nsp_arrows_create_partial(H) == FAIL) return NULLARROWS;
   H->obj->x= x;
   H->obj->y= y;
   H->obj->color= color;
   H->obj->arsize=arsize;
- if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
- return H;
+  if ( nsp_arrows_check_values(H) == FAIL) return NULLARROWS;
+  return H;
 }
 
 

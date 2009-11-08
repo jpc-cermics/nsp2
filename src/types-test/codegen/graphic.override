@@ -38,7 +38,7 @@ ignore-glob
   *_get_type
 
 %%
-override_internal_methods
+override-internal-methods
 
   draw_func *draw; 
   translate_func *translate;
@@ -53,7 +53,7 @@ override_internal_methods
   invalidate_func *invalidate;
 
 %%
-override_internal_methods_protos
+override-internal-methods-protos
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);

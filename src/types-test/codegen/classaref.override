@@ -16,10 +16,10 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final  ClassARef
+override-int-create-final  ClassARef
   /* verbatim in create interface  */
 %%
-override_destroy_prelim ClassARef 
+override-destroy-prelim ClassARef 
   /* verbatim in destroy */
 %%
 override classa_color_change kwargs

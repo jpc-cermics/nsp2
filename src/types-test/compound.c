@@ -463,13 +463,13 @@ int nsp_compound_check_values(NspCompound *H)
 
 NspCompound *nsp_compound_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type)
 {
- NspCompound *H  = nsp_compound_create_void(name,type);
- if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
+  NspCompound *H  = nsp_compound_create_void(name,type);
+  if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
   if ( nsp_compound_create_partial(H) == FAIL) return NULLCOMPOUND;
   H->obj->bounds= bounds;
   H->obj->children= children;
- if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
- return H;
+  if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
+  return H;
 }
 
 

@@ -70,12 +70,12 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final  Points3d
+override-int-create-final  Points3d
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim Points3d
+override-destroy-prelim Points3d
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

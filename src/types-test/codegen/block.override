@@ -124,6 +124,7 @@ headers
 #include "nsp/block.h"
 #include "nsp/figuredata.h"
 #include "nsp/figure.h"
+#include "nsp/axes.h"
 #include "nsp/diagram.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
@@ -352,7 +353,7 @@ NspBlock *nsp_block_create_default(char *name)
 }
 
 %%
-zz-override_destroy_prelim Block
+zz-override-destroy-prelim Block
     /* verbatim in destroy */
     nsp_destroy_grb_lock(H->obj->locks,H);FREE(H->obj->locks);
 %%
@@ -583,7 +584,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
   /* first draw the block icon */
-  draw_script = 2;
+  draw_script = 0;
   switch (draw_script)
     {
     case 0: 
@@ -622,6 +623,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
       loc[0] = B->obj->r[1] - B->obj->r[3];
       Xgc->graphic_engine->scale->xstringb(Xgc,str1,&fill,
 					   B->obj->r,loc,B->obj->r+2,B->obj->r+3);
+      break;
     case 3:
       /* 
        * a rectangle with random color 
@@ -869,18 +871,16 @@ void block_get_pos(NspBlock *B, double tr[2])
 
 void block_resize(NspBlock *B,const double size[2])
 {
-  /*
-  double sz[2];
   NspGraphic *Icon = (NspGraphic *) B->obj->icon;
-  sz[0] = Max(size[0],3*lock_size)/B->obj->r[2];
-  sz[1] = Max(size[1],3*lock_size)/B->obj->r[3];
-  */
   nsp_graphic_invalidate((NspGraphic *) B);
   B->obj->r[2] = Max(size[0],3*lock_size) ;
   B->obj->r[3] = Max(size[1],3*lock_size) ;
-  /* if resized the lock relative positions should change to XXXXX */
+  /* if resized the lock relative positions should change  */
   block_update_locks(B);
-  /* if ( Icon != NULL) Icon->type->scale(NULL,Icon,sz); */
+  if ( Icon != NULL && IsAxes((NspObject *) Icon) )
+    {
+      memcpy(((NspAxes *) Icon)->obj->wrect->R,B->obj->r,4*sizeof(double));
+    }
   nsp_graphic_invalidate((NspGraphic *) B);
 }
 
@@ -1251,8 +1251,6 @@ static void block_set_lock_pos_from_rel(NspBlock *B, int i)
     }
 }
 
-
-
 /**
  * block_set_locks:
  * @B: a #NspBlock 
@@ -1347,7 +1345,8 @@ static int nsp_save_grb_lock(XDR *xdrs,grb_lock *locks,NspBlock *M)
       if ( nsp_xdr_save_array_d(xdrs,lock->ptr,2) == FAIL) return FAIL;
       if ( nsp_xdr_save_i(xdrs,lock->type) == FAIL) return FAIL;
       /* the port */
-      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(lock->port.object_id)) == FAIL) return FAIL;
+      if ( nsp_xdr_save_i(xdrs,NSP_POINTER_TO_INT(lock->port.object_id)) == FAIL)
+	return FAIL;
       if ( nsp_xdr_save_i(xdrs,lock->port.lock) == FAIL) return FAIL;
       if ( nsp_xdr_save_i(xdrs,lock->port.port) == FAIL) return FAIL;
     }
@@ -1402,14 +1401,27 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 }
 
 
-/* execute a function which should return a 
+/**
+ * nsp_block_create_icon:
+ * @Xgc: 
+ * @B: 
+ * 
+ * execute a function which should return a 
  * compounf giving the block icon 
- */
+ * 
+ * Returns: 
+ **/
+
+#define USE_AXE
 
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 {
-  double tr[2];
   NspGraphic *G;
+#ifdef USE_AXE 
+  NspAxes *axe;
+#else
+  double tr[2];
+#endif 
   NspObject *targs[]={NULL};
   NspObject *nsp_ret[1];
   int nret = 1,nargs = 0,i;
@@ -1422,24 +1434,35 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
     {
       goto stop;
     }
-  if ( IsGraphic(nsp_ret[0])) 
-    {
-      /* XXX we could free icon if it is already set.
-       */
-      if (nsp_object_set_name(nsp_ret[0],"icon") == FAIL) goto stop;
-      B->obj->icon = (NspGraphic *) nsp_ret[0];
-      G =  (NspGraphic *) B->obj->icon;
-    }
-  else 
-    {
-      goto stop;
-    }
-  G =  (NspGraphic *) B->obj->icon;
-  G->type->link_figure(G, ((NspGraphic *) B)->obj->Fig,((NspGraphic *) B)->obj->Axe );
+  if ( ! IsGraphic(nsp_ret[0])) goto stop;
+
+  if (nsp_object_set_name(nsp_ret[0],"icon") == FAIL) goto stop;
+
+#ifdef USE_AXE 
+  /* create a non top level axe */
+  if ((axe= nsp_axes_create_default("axe"))== NULL) goto stop;
+  axe->obj->top = FALSE;
+  axe->obj->fixed = TRUE;
+  axe->obj->rect->R[0]=   axe->obj->rect->R[1]=0;
+  axe->obj->rect->R[2]=   axe->obj->rect->R[3]=10;
+  /* (x,y,w,h) for the axe */
+  memcpy(axe->obj->wrect->R,B->obj->r,4*sizeof(double));
+  G= (NspGraphic *) axe ;
+  G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
+			((NspGraphic *) B)->obj->Axe );
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) nsp_ret[0]) == FAIL)
+    goto stop;
+  B->obj->icon = G;
+#else 
+  G= (NspGraphic *) nsp_ret[0] ;
+  G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
+			((NspGraphic *) B)->obj->Axe);
+  B->obj->icon = G;
   /* we should also scale */
   tr[0]= B->obj->r[0];
   tr[1]= B->obj->r[1] - B->obj->r[3];
   G->type->translate(G,tr);
+#endif 
   return OK;
  stop: 
   for( i= 0 ; i < nret ; i++) nsp_void_object_destroy(&nsp_ret[i]);

@@ -494,8 +494,8 @@ int nsp_string3d_check_values(NspString3d *H)
 
 NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type)
 {
- NspString3d *H  = nsp_string3d_create_void(name,type);
- if ( H ==  NULLSTRING3D) return NULLSTRING3D;
+  NspString3d *H  = nsp_string3d_create_void(name,type);
+  if ( H ==  NULLSTRING3D) return NULLSTRING3D;
   if ( nsp_string3d_create_partial(H) == FAIL) return NULLSTRING3D;
   H->obj->Mcoord= Mcoord;
   H->obj->Mcoord_l = Mcoord_l;
@@ -504,8 +504,13 @@ NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,cha
   H->obj->font_size=font_size;
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
- if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
- return H;
+  if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
+#line 67 "codegen/string3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_string3d(H)== FAIL) return NULL; 
+
+#line 513 "string3d.c"
+  return H;
 }
 
 
@@ -571,7 +576,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 575 "string3d.c"
+#line 580 "string3d.c"
   return H;
 }
 
@@ -595,7 +600,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 599 "string3d.c"
+#line 604 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -713,7 +718,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 717 "string3d.c"
+#line 722 "string3d.c"
 
 
 #line 87 "codegen/string3d.override"
@@ -726,7 +731,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 730 "string3d.c"
+#line 735 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -974,4 +979,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 978 "string3d.c"
+#line 983 "string3d.c"

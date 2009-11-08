@@ -509,16 +509,16 @@ int nsp_gmatrix_check_values(NspGMatrix *H)
 
 NspGMatrix *nsp_gmatrix_create(char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type)
 {
- NspGMatrix *H  = nsp_gmatrix_create_void(name,type);
- if ( H ==  NULLGMATRIX) return NULLGMATRIX;
+  NspGMatrix *H  = nsp_gmatrix_create_void(name,type);
+  if ( H ==  NULLGMATRIX) return NULLGMATRIX;
   if ( nsp_gmatrix_create_partial(H) == FAIL) return NULLGMATRIX;
   H->obj->data= data;
   H->obj->rect= rect;
   H->obj->remap=remap;
   H->obj->colminmax= colminmax;
   H->obj->zminmax= zminmax;
- if ( nsp_gmatrix_check_values(H) == FAIL) return NULLGMATRIX;
- return H;
+  if ( nsp_gmatrix_check_values(H) == FAIL) return NULLGMATRIX;
+  return H;
 }
 
 

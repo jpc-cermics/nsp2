@@ -243,7 +243,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	}
       else
 	{
-	  /*
+	  /* XXXX
 	    Sciprintf("draw axes for non to level to be done \n");
 	  */
 	}
@@ -341,18 +341,22 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
    * Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
-  if ( rect != NULL ) 
+
+  if ( P->obj->top == TRUE )
     {
-      gdk_rectangle_intersect( rect, (GdkRectangle *) Xgc->scales->WIRect1, &clip);
-      Xgc->graphic_engine->xset_clip(Xgc,(int *) &clip);
-      /*
-	Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
-	clip.x,clip.y,clip.width,clip.height);
-      */
-    }
-  else
-    {
-      Xgc->graphic_engine->xset_clip(Xgc,(int *) Xgc->scales->WIRect1);
+      if ( rect != NULL ) 
+	{
+	  gdk_rectangle_intersect( rect, (GdkRectangle *) Xgc->scales->WIRect1, &clip);
+	  Xgc->graphic_engine->xset_clip(Xgc,(int *) &clip);
+	  /*
+	    Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
+	    clip.x,clip.y,clip.width,clip.height);
+	  */
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_clip(Xgc,(int *) Xgc->scales->WIRect1);
+	}
     }
   
   while ( cloc != NULLCELL ) 
@@ -364,14 +368,18 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	}
       cloc = cloc->next;
     }
-  /* back to previous clip zone */
-  if ( rect != NULL ) 
+
+  if ( P->obj->top == TRUE )
     {
-      Xgc->graphic_engine->xset_clip(Xgc,(int *) &rect);
-    }
-  else
-    {
-      Xgc->graphic_engine->xset_unclip(Xgc);
+      /* back to previous clip zone */
+      if ( rect != NULL ) 
+	{
+	  Xgc->graphic_engine->xset_clip(Xgc,(int *) &rect);
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_unclip(Xgc);
+	}
     }
   
   /* legends */

@@ -487,8 +487,8 @@ int nsp_curve_check_values(NspCurve *H)
 
 NspCurve *nsp_curve_create(char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type)
 {
- NspCurve *H  = nsp_curve_create_void(name,type);
- if ( H ==  NULLCURVE) return NULLCURVE;
+  NspCurve *H  = nsp_curve_create_void(name,type);
+  if ( H ==  NULLCURVE) return NULLCURVE;
   if ( nsp_curve_create_partial(H) == FAIL) return NULLCURVE;
   H->obj->mark=mark;
   H->obj->width=width;
@@ -497,8 +497,8 @@ NspCurve *nsp_curve_create(char *name,int mark,int width,int style,int color,int
   H->obj->mode=mode;
   H->obj->Pts= Pts;
   H->obj->legend = legend;
- if ( nsp_curve_check_values(H) == FAIL) return NULLCURVE;
- return H;
+  if ( nsp_curve_check_values(H) == FAIL) return NULLCURVE;
+  return H;
 }
 
 

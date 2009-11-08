@@ -39,6 +39,8 @@ static NspAxes *nsp_get_current_axes(void);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
+static void nsp_figure_set_gc_values(NspFigure *F);
+static void nsp_figure_initialize_gc(NspFigure *F);
 
 %%
 headers
@@ -66,14 +68,15 @@ ignore-glob
   *_get_type
 
 %%
-override_destroy_prelim Figure
+override-destroy-prelim Figure
   /* inserted verbatim at the begining of destroy */
   nsp_figure_children_unlink_figure(H);
 
 %%
-override_int_create_final Figure
+override-int-create-final Figure
   /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
   nsp_figure_children_link_figure(H);
+  nsp_figure_initialize_gc(H);
 %%
 override figure_attach kwargs
 int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
@@ -193,6 +196,8 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
   Cell *cloc;
   NspList *L;
   NspFigure *F = (NspFigure *) Obj;
+  /* set up values according to figure */
+  nsp_figure_set_gc_values(F);
   /* draw elements */
   L = F->obj->children;
   cloc = L->first ;
@@ -1234,3 +1239,52 @@ void nsp_figure_invalidate(NspGraphic *G)
   Xgc->graphic_engine->invalidate(Xgc,NULL);
 }
 
+
+
+/**
+ * nsp_figure_set_gc_values:
+ * @F: 
+ * 
+ * used FigureData to set up values in 
+ * Xgc 
+ **/
+
+static void nsp_figure_set_gc_values(NspFigure *F)
+{
+  NspFigureData *Gc = F->obj->gc;
+  BCG *Xgc =  F->obj->Xgc;  
+  Gc = F->obj->gc;
+  if ( Xgc == NULL) return;
+  Xgc->graphic_engine->xset_pattern(Xgc,Gc->color);
+  Xgc->graphic_engine->xset_background(Xgc,Gc->background);
+  /*    '("NspMatrix*" "colormap") */
+  Xgc->graphic_engine->xset_dash(Xgc,Gc->dashes);
+  Xgc->graphic_engine->xset_font(Xgc,Gc->font,Gc->font_size);
+  Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,Gc->hidden3d);
+  Xgc->graphic_engine->xset_absourel(Xgc,Gc->line_mode);
+  Xgc->graphic_engine->xset_dash(Xgc,Gc->line_style);
+  Xgc->graphic_engine->xset_mark(Xgc,Gc->mark,Gc->mark_size);
+  /* '("int" "pattern" "std" "1") */
+  Xgc->graphic_engine->xset_pixmapOn(Xgc,Gc->pixmap);
+  Xgc->graphic_engine->xset_thickness(Xgc,Gc->thickness);
+  Xgc->graphic_engine->xset_usecolor(Xgc,Gc->use_color);
+  Xgc->graphic_engine->xset_autoclear(Xgc,Gc->auto_clear);
+}
+
+/**
+ * nsp_figure_initialize_gc:
+ * @F: 
+ * 
+ * initialize some values in FigureData 
+ * which are not properly initialized at creation.
+ **/
+
+void nsp_figure_initialize_gc(NspFigure *F)
+{
+  NspFigureData *Gc = F->obj->gc;
+  BCG *Xgc =  F->obj->Xgc;  
+  Gc = F->obj->gc;
+  Gc->background = Xgc->graphic_engine->xget_background(Xgc);
+  Gc->foreground = Xgc->graphic_engine->xget_foreground(Xgc);
+}

@@ -65,12 +65,12 @@ modulename atk
 ignore-glob
   *_get_type
 %%
-override_int_create_final  SPolyhedron
+override-int-create-final  SPolyhedron
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim SPolyhedron 
+override-destroy-prelim SPolyhedron 
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

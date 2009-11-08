@@ -61,12 +61,12 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final Polyhedron
+override-int-create-final Polyhedron
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyhedron(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim Polyhedron
+override-destroy-prelim Polyhedron
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

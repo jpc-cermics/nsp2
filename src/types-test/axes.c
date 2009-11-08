@@ -667,8 +667,8 @@ int nsp_axes_check_values(NspAxes *H)
 
 NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,NspTypeBase *type)
 {
- NspAxes *H  = nsp_axes_create_void(name,type);
- if ( H ==  NULLAXES) return NULLAXES;
+  NspAxes *H  = nsp_axes_create_void(name,type);
+  if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
   H->obj->wrect= wrect;
   H->obj->rho=rho;
@@ -692,8 +692,8 @@ NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,Nsp
   H->obj->zoom=zoom;
   H->obj->zrect= zrect;
   H->obj->scale = scale;
- if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
- return H;
+  if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
+  return H;
 }
 
 
@@ -1415,7 +1415,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	}
       else
 	{
-	  /*
+	  /* XXXX
 	    Sciprintf("draw axes for non to level to be done \n");
 	  */
 	}
@@ -1513,18 +1513,22 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
    * Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
-  if ( rect != NULL ) 
+
+  if ( P->obj->top == TRUE )
     {
-      gdk_rectangle_intersect( rect, (GdkRectangle *) Xgc->scales->WIRect1, &clip);
-      Xgc->graphic_engine->xset_clip(Xgc,(int *) &clip);
-      /*
-	Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
-	clip.x,clip.y,clip.width,clip.height);
-      */
-    }
-  else
-    {
-      Xgc->graphic_engine->xset_clip(Xgc,(int *) Xgc->scales->WIRect1);
+      if ( rect != NULL ) 
+	{
+	  gdk_rectangle_intersect( rect, (GdkRectangle *) Xgc->scales->WIRect1, &clip);
+	  Xgc->graphic_engine->xset_clip(Xgc,(int *) &clip);
+	  /*
+	    Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
+	    clip.x,clip.y,clip.width,clip.height);
+	  */
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_clip(Xgc,(int *) Xgc->scales->WIRect1);
+	}
     }
   
   while ( cloc != NULLCELL ) 
@@ -1536,14 +1540,18 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	}
       cloc = cloc->next;
     }
-  /* back to previous clip zone */
-  if ( rect != NULL ) 
+
+  if ( P->obj->top == TRUE )
     {
-      Xgc->graphic_engine->xset_clip(Xgc,(int *) &rect);
-    }
-  else
-    {
-      Xgc->graphic_engine->xset_unclip(Xgc);
+      /* back to previous clip zone */
+      if ( rect != NULL ) 
+	{
+	  Xgc->graphic_engine->xset_clip(Xgc,(int *) &rect);
+	}
+      else
+	{
+	  Xgc->graphic_engine->xset_unclip(Xgc);
+	}
     }
   
   /* legends */
@@ -2206,4 +2214,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2210 "axes.c"
+#line 2218 "axes.c"

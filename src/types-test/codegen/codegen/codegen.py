@@ -760,8 +760,8 @@ class Wrapper:
         # insert the end of type definition 
         # i.e a set of functions used for writing interfaces 
         self.fp.write(self.type_tmpl_interface_util % substdict)
-        # code for create 
 
+        # code for create 
         self.fp.write(self.type_tmpl_create_header % substdict)
         if self.overrides.part_create_is_overriden(typename_nn):
             slot = '%s_create' % (typename_nn)
@@ -771,7 +771,10 @@ class Wrapper:
             self.fp.resetline()
         else:
             # insert the code for create
-            self.fp.write(self.type_tmpl_create % substdict)
+            self.fp.write(self.type_tmpl_create_0 % substdict)
+            substdict['ret']= 'NULL'
+            self.build_int_create_final('H',typename_nn,substdict)
+            self.fp.write(self.type_tmpl_create_1 % substdict)
 
         # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
@@ -993,7 +996,10 @@ class Wrapper:
             self.fp.resetline()
         else:
             # insert the code for create
-            self.fp.write(self.type_tmpl_create % substdict)
+            self.fp.write(self.type_tmpl_create_0 % substdict)
+            substdict['ret']= 'NULL'
+            self.build_int_create_final('H',typename_nn,substdict)
+            self.fp.write(self.type_tmpl_create_1 % substdict)
 
         # code for copy 
         self.fp.write(self.type_tmpl_copy_1 % substdict)
@@ -1880,7 +1886,8 @@ class NspObjectWrapper(Wrapper):
         ' * if type is non NULL it is a subtype which can be used to \n' \
         ' * create a %(typename)s instance \n' \
         ' *-----------------------------------------------------*/\n' 
-    type_tmpl_create = \
+
+    type_tmpl_create_0 = \
         '\n' \
         'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type)\n' \
         '{\n' \
@@ -1907,11 +1914,13 @@ class NspObjectWrapper(Wrapper):
         '\n' \
         '%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type)\n' \
         '{\n' \
-        ' %(typename)s *H  = nsp_%(typename_dc)s_create_void(name,type);\n' \
-        ' if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
+        '  %(typename)s *H  = nsp_%(typename_dc)s_create_void(name,type);\n' \
+        '  if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
         '%(fields_copy)s' \
-        ' if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' \
-        ' return H;\n' \
+        '  if ( nsp_%(typename_dc)s_check_values(H) == FAIL) return NULL%(typename_uc)s;\n' 
+
+    type_tmpl_create_1 = \
+        '  return H;\n' \
         '}\n' \
         '\n' \
         '\n' \
@@ -1924,6 +1933,7 @@ class NspObjectWrapper(Wrapper):
         ' return H;\n' \
         '}\n' \
         '\n' 
+
     type_tmpl_copy_1 = \
         '/*\n'  \
         ' * copy for gobject derived class  \n'  \

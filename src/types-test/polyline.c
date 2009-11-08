@@ -499,8 +499,8 @@ int nsp_polyline_check_values(NspPolyline *H)
 
 NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type)
 {
- NspPolyline *H  = nsp_polyline_create_void(name,type);
- if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
+  NspPolyline *H  = nsp_polyline_create_void(name,type);
+  if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
   if ( nsp_polyline_create_partial(H) == FAIL) return NULLPOLYLINE;
   H->obj->x= x;
   H->obj->y= y;
@@ -510,8 +510,8 @@ NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean c
   H->obj->mark_size=mark_size;
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
- if ( nsp_polyline_check_values(H) == FAIL) return NULLPOLYLINE;
- return H;
+  if ( nsp_polyline_check_values(H) == FAIL) return NULLPOLYLINE;
+  return H;
 }
 
 

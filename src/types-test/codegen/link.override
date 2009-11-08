@@ -320,7 +320,7 @@ NspLink *nsp_link_create_default(char *name)
 }
 
 %%
-zz_override_destroy_prelim Link
+zz_override-destroy-prelim Link
     /* verbatim in destroy */
     nsp_destroy_grl_lock(H->obj->locks,H);FREE(H->obj->locks);
 %%

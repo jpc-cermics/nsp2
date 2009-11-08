@@ -63,12 +63,12 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final String3d 
+override-int-create-final String3d 
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim String3d 
+override-destroy-prelim String3d 
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

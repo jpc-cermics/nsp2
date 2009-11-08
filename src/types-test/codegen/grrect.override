@@ -87,7 +87,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
       /* Sciprintf("No need to draw one rectangle\n"); */
       return;
     }
-
+  
   val[0]= P->obj->x;
   val[1]= P->obj->y;
   val[2]= P->obj->w;

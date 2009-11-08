@@ -110,7 +110,7 @@ override-type Diagram
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_diagram_children ;
 
 %%
-override_int_create_final Diagram
+override-int-create-final Diagram
   /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
   nspdiagram_recompute_pointers(H->obj);
 

@@ -481,14 +481,14 @@ int nsp_segments_check_values(NspSegments *H)
 
 NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type)
 {
- NspSegments *H  = nsp_segments_create_void(name,type);
- if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
+  NspSegments *H  = nsp_segments_create_void(name,type);
+  if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
   if ( nsp_segments_create_partial(H) == FAIL) return NULLSEGMENTS;
   H->obj->x= x;
   H->obj->y= y;
   H->obj->color= color;
- if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
- return H;
+  if ( nsp_segments_check_values(H) == FAIL) return NULLSEGMENTS;
+  return H;
 }
 
 

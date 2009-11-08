@@ -65,12 +65,12 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final  Polyline3d
+override-int-create-final  Polyline3d
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim  Polyline3d
+override-destroy-prelim  Polyline3d
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 

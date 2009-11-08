@@ -485,8 +485,8 @@ int nsp_grimage_check_values(NspGrImage *H)
 
 NspGrImage *nsp_grimage_create(char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type)
 {
- NspGrImage *H  = nsp_grimage_create_void(name,type);
- if ( H ==  NULLGRIMAGE) return NULLGRIMAGE;
+  NspGrImage *H  = nsp_grimage_create_void(name,type);
+  if ( H ==  NULLGRIMAGE) return NULLGRIMAGE;
   if ( nsp_grimage_create_partial(H) == FAIL) return NULLGRIMAGE;
   H->obj->x=x;
   H->obj->y=y;
@@ -497,8 +497,8 @@ NspGrImage *nsp_grimage_create(char *name,double x,double y,double w,double h,gb
   H->obj->fname = fname;
   H->obj->image = image;
   H->obj->color=color;
- if ( nsp_grimage_check_values(H) == FAIL) return NULLGRIMAGE;
- return H;
+  if ( nsp_grimage_check_values(H) == FAIL) return NULLGRIMAGE;
+  return H;
 }
 
 

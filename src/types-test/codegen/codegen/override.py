@@ -131,13 +131,13 @@ class Overrides:
             self.override_intcreate[type] = rest
             slot = '%s_intcreate' % ( type )
             self.startlines[slot] = (startline + 1, filename)
-        elif words[0] == 'override_destroy_prelim':
+        elif words[0] == 'override-destroy-prelim':
             slot = words[1]
             self.override_destroy[slot] = rest
             # take care to use a different name as in type override 
             stn = 'destroy_%s' % slot
             self.startlines[stn] = (startline + 1, filename)
-        elif words[0] == 'override_int_create_final':
+        elif words[0] == 'override-int-create-final':
             slot = words[1]
             self.override_int_create_final[slot] = rest
             # take care to use a different name as in type override 
@@ -160,10 +160,10 @@ class Overrides:
             slot = words[1]+'.include_private' # 
             self.override_include_private[slot] = rest
             self.startlines[slot] = (startline + 1, filename)
-        elif words[0] == 'override_internal_methods':
+        elif words[0] == 'override-internal-methods':
             self.override_internal_methods = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods, startline + 1, filename, rest)
-        elif words[0] == 'override_internal_methods_protos':
+        elif words[0] == 'override-internal-methods-protos':
             self.override_internal_methods_protos = '%s\n#line %d "codegen/%s"\n%s' % \
                            (self.override_internal_methods_protos, startline + 1, filename, rest)
         elif words[0] == 'init':

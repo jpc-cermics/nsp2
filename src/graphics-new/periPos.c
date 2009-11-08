@@ -366,10 +366,12 @@ static int xget_alufunction(BCG *Xgc)
 
 #define Thick_prec 5
 
-static void xset_thickness(BCG *Xgc,int value)
+static int xset_thickness(BCG *Xgc,int value)
 { 
+  int old = Xgc->CurLineWidth;
   Xgc->CurLineWidth =Max(0, value);
   FPRINTF((file,"\n%d Thickness",(int)Max(0,value*Thick_prec)));
+  return old ;
 }
 
 /** to get the thicknes value **/

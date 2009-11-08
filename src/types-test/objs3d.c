@@ -595,8 +595,8 @@ int nsp_objs3d_check_values(NspObjs3d *H)
 
 NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
 {
- NspObjs3d *H  = nsp_objs3d_create_void(name,type);
- if ( H ==  NULLOBJS3D) return NULLOBJS3D;
+  NspObjs3d *H  = nsp_objs3d_create_void(name,type);
+  if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_objs3d_create_partial(H) == FAIL) return NULLOBJS3D;
   H->obj->wrect= wrect;
   H->obj->rho=rho;
@@ -612,8 +612,8 @@ NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top
   H->obj->with_box=with_box;
   H->obj->box_color=box_color;
   H->obj->box_style=box_style;
- if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
- return H;
+  if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
+  return H;
 }
 
 

@@ -46,6 +46,34 @@ function C=draw_vanne()
   xdel(30);
 endfunction;
 
+function C=draw_vanne()
+  if ~new_graphics() then 
+    switch_graphics();
+  end
+  new_win=%t
+  
+  if new_win then 
+    win=xget('window');
+    xset('window',30);
+    xrect(0,0,10,10);
+  end
+  
+  F=get_current_figure();
+  F.draw_latter[];
+  F.start_compound[];
+  Matplot1(rand(40,40)*30,[0,0,10,10]);
+  C=F.end_compound[];
+  if new_win then 
+    xset('window',win);
+  end
+  C= C.full_copy[];
+  C.unlink[];
+  xdel(30);
+endfunction;
+
+
+
+
 function w=create_object_menu (win,x,y)
 // midle button menu construction 
 // version where selection is a list 

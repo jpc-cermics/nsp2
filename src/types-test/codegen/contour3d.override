@@ -62,12 +62,12 @@ modulename atk
 ignore-glob
   *_get_type
 %%
-override_int_create_final Contour3d
+override-int-create-final Contour3d
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return %(ret)s; 
 
 %%
-override_destroy_prelim Contour3d 
+override-destroy-prelim Contour3d 
   /* verbatim in destroy */
 
 %%

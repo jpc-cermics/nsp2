@@ -285,7 +285,7 @@ NspConnector *nsp_connector_create_default(char *name)
 }
 
 %%
-zz_override_destroy_prelim Connector
+zz_override-destroy-prelim Connector
     /* verbatim in destroy */
     nsp_destroy_gr_lock(H->obj->locks,H);FREE(H->obj->locks);
 %%

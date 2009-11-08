@@ -434,14 +434,14 @@ int nsp_graphic_check_values(NspGraphic *H)
 
 NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,void* Axe,NspTypeBase *type)
 {
- NspGraphic *H  = nsp_graphic_create_void(name,type);
- if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
+  NspGraphic *H  = nsp_graphic_create_void(name,type);
+  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
   H->obj->hidden=hidden;
   H->obj->Fig = Fig;
   H->obj->Axe = Axe;
- if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
- return H;
+  if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
+  return H;
 }
 
 

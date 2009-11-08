@@ -498,8 +498,8 @@ int nsp_grstring_check_values(NspGrstring *H)
 
 NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,int position,double angle,double w,double h,int fill,NspTypeBase *type)
 {
- NspGrstring *H  = nsp_grstring_create_void(name,type);
- if ( H ==  NULLGRSTRING) return NULLGRSTRING;
+  NspGrstring *H  = nsp_grstring_create_void(name,type);
+  if ( H ==  NULLGRSTRING) return NULLGRSTRING;
   if ( nsp_grstring_create_partial(H) == FAIL) return NULLGRSTRING;
   H->obj->x=x;
   H->obj->y=y;
@@ -510,8 +510,8 @@ NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMat
   H->obj->w=w;
   H->obj->h=h;
   H->obj->fill=fill;
- if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
- return H;
+  if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
+  return H;
 }
 
 

@@ -80,7 +80,7 @@ typedef void driver_xset_absourel(BCG *gc,int flag);
 typedef int driver_xget_absourel(BCG *gc);
 typedef void driver_xset_alufunction1(BCG *gc,int num);
 typedef int driver_xget_alufunction(BCG *gc);
-typedef void driver_xset_thickness(BCG *gc,int value);
+typedef int driver_xset_thickness(BCG *gc,int value);
 typedef int driver_xget_thickness(BCG *gc);
 typedef int driver_xset_pattern(BCG *gc,int num);
 typedef int driver_xget_pattern(BCG *gc);

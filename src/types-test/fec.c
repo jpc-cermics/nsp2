@@ -563,8 +563,8 @@ int nsp_fec_check_values(NspFec *H)
 
 NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean draw,NspMatrix* colout,NspTypeBase *type)
 {
- NspFec *H  = nsp_fec_create_void(name,type);
- if ( H ==  NULLFEC) return NULLFEC;
+  NspFec *H  = nsp_fec_create_void(name,type);
+  if ( H ==  NULLFEC) return NULLFEC;
   if ( nsp_fec_create_partial(H) == FAIL) return NULLFEC;
   H->obj->x= x;
   H->obj->y= y;
@@ -574,8 +574,8 @@ NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles
   H->obj->zminmax= zminmax;
   H->obj->draw=draw;
   H->obj->colout= colout;
- if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
- return H;
+  if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
+  return H;
 }
 
 

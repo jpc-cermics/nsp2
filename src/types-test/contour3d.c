@@ -529,8 +529,8 @@ int nsp_contour3d_check_values(NspContour3d *H)
 
 NspContour3d *nsp_contour3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type)
 {
- NspContour3d *H  = nsp_contour3d_create_void(name,type);
- if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
+  NspContour3d *H  = nsp_contour3d_create_void(name,type);
+  if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
   if ( nsp_contour3d_create_partial(H) == FAIL) return NULLCONTOUR3D;
   H->obj->x= x;
   H->obj->y= y;
@@ -538,8 +538,13 @@ NspContour3d *nsp_contour3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatri
   H->obj->zz= zz;
   H->obj->flag=flag;
   H->obj->zlev=zlev;
- if ( nsp_contour3d_check_values(H) == FAIL) return NULLCONTOUR3D;
- return H;
+  if ( nsp_contour3d_check_values(H) == FAIL) return NULLCONTOUR3D;
+#line 66 "codegen/contour3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_contour3d(H)== FAIL) return NULL; 
+
+#line 547 "contour3d.c"
+  return H;
 }
 
 
@@ -618,7 +623,7 @@ NspContour3d *nsp_contour3d_full_copy(NspContour3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return NULL; 
 
-#line 622 "contour3d.c"
+#line 627 "contour3d.c"
   return H;
 }
 
@@ -642,7 +647,7 @@ int int_contour3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_contour3d(H)== FAIL) return RET_BUG; 
 
-#line 646 "contour3d.c"
+#line 651 "contour3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -830,7 +835,7 @@ int _wrap_nsp_extractelts_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 834 "contour3d.c"
+#line 839 "contour3d.c"
 
 
 #line 85 "codegen/contour3d.override"
@@ -842,7 +847,7 @@ int _wrap_nsp_setrowscols_contour3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 846 "contour3d.c"
+#line 851 "contour3d.c"
 
 
 /*----------------------------------------------------
@@ -1032,4 +1037,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1036 "contour3d.c"
+#line 1041 "contour3d.c"

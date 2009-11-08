@@ -483,8 +483,8 @@ int nsp_grarc_check_values(NspGrArc *H)
 
 NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type)
 {
- NspGrArc *H  = nsp_grarc_create_void(name,type);
- if ( H ==  NULLGRARC) return NULLGRARC;
+  NspGrArc *H  = nsp_grarc_create_void(name,type);
+  if ( H ==  NULLGRARC) return NULLGRARC;
   if ( nsp_grarc_create_partial(H) == FAIL) return NULLGRARC;
   H->obj->x=x;
   H->obj->y=y;
@@ -495,8 +495,8 @@ NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
   H->obj->color=color;
- if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
- return H;
+  if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
+  return H;
 }
 
 

@@ -148,7 +148,9 @@ static NspAxes *nsp_get_current_axes(void);
 static int nsp_figure_start_compound(NspFigure *F);
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
+static void nsp_figure_set_gc_values(NspFigure *F);
+static void nsp_figure_initialize_gc(NspFigure *F);
 
-#line 153 "./figure.h"
+#line 155 "./figure.h"
 #endif /* NspFigure_Private */
 

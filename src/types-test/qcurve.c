@@ -495,8 +495,8 @@ int nsp_qcurve_check_values(NspQcurve *H)
 
 NspQcurve *nsp_qcurve_create(char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type)
 {
- NspQcurve *H  = nsp_qcurve_create_void(name,type);
- if ( H ==  NULLQCURVE) return NULLQCURVE;
+  NspQcurve *H  = nsp_qcurve_create_void(name,type);
+  if ( H ==  NULLQCURVE) return NULLQCURVE;
   if ( nsp_qcurve_create_partial(H) == FAIL) return NULLQCURVE;
   H->obj->mark=mark;
   H->obj->width=width;
@@ -507,8 +507,8 @@ NspQcurve *nsp_qcurve_create(char *name,int mark,int width,int style,int color,i
   H->obj->legend = legend;
   H->obj->start=start;
   H->obj->last=last;
- if ( nsp_qcurve_check_values(H) == FAIL) return NULLQCURVE;
- return H;
+  if ( nsp_qcurve_check_values(H) == FAIL) return NULLQCURVE;
+  return H;
 }
 
 

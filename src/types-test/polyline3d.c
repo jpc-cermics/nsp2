@@ -491,16 +491,21 @@ int nsp_polyline3d_check_values(NspPolyline3d *H)
 
 NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type)
 {
- NspPolyline3d *H  = nsp_polyline3d_create_void(name,type);
- if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
+  NspPolyline3d *H  = nsp_polyline3d_create_void(name,type);
+  if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_create_partial(H) == FAIL) return NULLPOLYLINE3D;
   H->obj->Mcoord= Mcoord;
   H->obj->Mcoord_l = Mcoord_l;
   H->obj->Mcolor= Mcolor;
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
- if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
- return H;
+  if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
+#line 69 "codegen/polyline3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
+
+#line 508 "polyline3d.c"
+  return H;
 }
 
 
@@ -569,7 +574,7 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 573 "polyline3d.c"
+#line 578 "polyline3d.c"
   return H;
 }
 
@@ -593,7 +598,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
-#line 597 "polyline3d.c"
+#line 602 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -683,7 +688,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 687 "polyline3d.c"
+#line 692 "polyline3d.c"
 
 
 #line 89 "codegen/polyline3d.override"
@@ -696,7 +701,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 700 "polyline3d.c"
+#line 705 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -920,4 +925,4 @@ static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 924 "polyline3d.c"
+#line 929 "polyline3d.c"

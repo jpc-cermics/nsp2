@@ -494,8 +494,8 @@ int nsp_points3d_check_values(NspPoints3d *H)
 
 NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type)
 {
- NspPoints3d *H  = nsp_points3d_create_void(name,type);
- if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
+  NspPoints3d *H  = nsp_points3d_create_void(name,type);
+  if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
   if ( nsp_points3d_create_partial(H) == FAIL) return NULLPOINTS3D;
   H->obj->Mcoord= Mcoord;
   H->obj->Mcoord_l = Mcoord_l;
@@ -504,8 +504,13 @@ NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int
   H->obj->mark_size=mark_size;
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
- if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
- return H;
+  if ( nsp_points3d_check_values(H) == FAIL) return NULLPOINTS3D;
+#line 74 "codegen/points3d.override"
+  /* verbatim in create/load/copy interface  */
+  if ( nsp_check_points3d(H)== FAIL) return NULL; 
+
+#line 513 "points3d.c"
+  return H;
 }
 
 
@@ -571,7 +576,7 @@ NspPoints3d *nsp_points3d_full_copy(NspPoints3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return NULL; 
 
-#line 575 "points3d.c"
+#line 580 "points3d.c"
   return H;
 }
 
@@ -595,7 +600,7 @@ int int_points3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_points3d(H)== FAIL) return RET_BUG; 
 
-#line 599 "points3d.c"
+#line 604 "points3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -709,7 +714,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 713 "points3d.c"
+#line 718 "points3d.c"
 
 
 #line 95 "codegen/points3d.override"
@@ -722,7 +727,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 726 "points3d.c"
+#line 731 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -958,4 +963,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 962 "points3d.c"
+#line 967 "points3d.c"

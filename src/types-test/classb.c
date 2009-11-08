@@ -429,13 +429,13 @@ int nsp_classb_check_values(NspClassB *H)
 
 NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
- NspClassB *H  = nsp_classb_create_void(name,type);
- if ( H ==  NULLCLASSB) return NULLCLASSB;
+  NspClassB *H  = nsp_classb_create_void(name,type);
+  if ( H ==  NULLCLASSB) return NULLCLASSB;
   H->clb_color=clb_color;
   H->clb_thickness=clb_thickness;
   H->clb_val= clb_val;
- if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
- return H;
+  if ( nsp_classb_check_values(H) == FAIL) return NULLCLASSB;
+  return H;
 }
 
 

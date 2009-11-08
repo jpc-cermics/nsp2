@@ -411,10 +411,12 @@ static int xget_alufunction(BCG *Xgc)
 /* to set the thickness of lines :min is 1 is a possible value **/
 /* give the thinest line **/
 
-static void xset_thickness(BCG *Xgc,int value)
+static int xset_thickness(BCG *Xgc,int value)
 { 
+  int old = Xgc->CurLineWidth;
   Xgc->CurLineWidth =Max(1,value);
   FPRINTF((file,"# %d Thickness\n",  Xgc->CurLineWidth ));
+  return old;
 }
 
 /* to xget_ the thicknes value **/
@@ -547,7 +549,7 @@ static void xset_dash_and_color(BCG *Xgc,int dash,int color)
   xset_pattern(Xgc,color);
 }
 
-/* to get the current dash-style **/
+/* to get the current dash-style */
 
 static int xget_dash(BCG *Xgc)
 {

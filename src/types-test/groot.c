@@ -415,12 +415,12 @@ int nsp_groot_check_values(NspGRoot *H)
 
 NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type)
 {
- NspGRoot *H  = nsp_groot_create_void(name,type);
- if ( H ==  NULLGROOT) return NULLGROOT;
+  NspGRoot *H  = nsp_groot_create_void(name,type);
+  if ( H ==  NULLGROOT) return NULLGROOT;
   if ( nsp_groot_create_partial(H) == FAIL) return NULLGROOT;
   H->obj->figures= figures;
- if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
- return H;
+  if ( nsp_groot_check_values(H) == FAIL) return NULLGROOT;
+  return H;
 }
 
 

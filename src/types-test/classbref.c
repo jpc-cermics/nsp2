@@ -440,14 +440,14 @@ int nsp_classbref_check_values(NspClassBRef *H)
 
 NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
- NspClassBRef *H  = nsp_classbref_create_void(name,type);
- if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
+  NspClassBRef *H  = nsp_classbref_create_void(name,type);
+  if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
   if ( nsp_classbref_create_partial(H) == FAIL) return NULLCLASSBREF;
   H->obj->clb_color=clb_color;
   H->obj->clb_thickness=clb_thickness;
   H->obj->clb_val= clb_val;
- if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
- return H;
+  if ( nsp_classbref_check_values(H) == FAIL) return NULLCLASSBREF;
+  return H;
 }
 
 

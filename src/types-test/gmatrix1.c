@@ -550,8 +550,8 @@ int nsp_gmatrix1_check_values(NspGMatrix1 *H)
 
 NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type)
 {
- NspGMatrix1 *H  = nsp_gmatrix1_create_void(name,type);
- if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
+  NspGMatrix1 *H  = nsp_gmatrix1_create_void(name,type);
+  if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
   if ( nsp_gmatrix1_create_partial(H) == FAIL) return NULLGMATRIX1;
   H->obj->data= data;
   H->obj->remap=remap;
@@ -561,8 +561,8 @@ NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gbool
   H->obj->colout= colout;
   H->obj->x= x;
   H->obj->y= y;
- if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
- return H;
+  if ( nsp_gmatrix1_check_values(H) == FAIL) return NULLGMATRIX1;
+  return H;
 }
 
 

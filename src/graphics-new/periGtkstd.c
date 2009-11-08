@@ -630,13 +630,15 @@ static int xget_absourel(BCG *Xgc)
  *  defaut value is 1 
  **/
 
-static void xset_thickness(BCG *Xgc,int value)
+static int xset_thickness(BCG *Xgc,int value)
 { 
+  int old = Xgc->CurLineWidth;
   value = Max(0, value);
-  if ( Xgc->CurLineWidth == value ) return;
+  if ( Xgc->CurLineWidth == value ) return value;
   Xgc->CurLineWidth  = value; 
   /* when line thickness changes we must change the dash style */
   xset_dash(Xgc,Xgc->CurDashStyle + 1);
+  return old ;
 }
 
 /**

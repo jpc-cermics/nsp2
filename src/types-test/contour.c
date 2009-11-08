@@ -527,8 +527,8 @@ int nsp_contour_check_values(NspContour *H)
 
 NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type)
 {
- NspContour *H  = nsp_contour_create_void(name,type);
- if ( H ==  NULLCONTOUR) return NULLCONTOUR;
+  NspContour *H  = nsp_contour_create_void(name,type);
+  if ( H ==  NULLCONTOUR) return NULLCONTOUR;
   if ( nsp_contour_create_partial(H) == FAIL) return NULLCONTOUR;
   H->obj->z= z;
   H->obj->x= x;
@@ -536,8 +536,8 @@ NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y
   H->obj->levels= levels;
   H->obj->nlevels=nlevels;
   H->obj->style= style;
- if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
- return H;
+  if ( nsp_contour_check_values(H) == FAIL) return NULLCONTOUR;
+  return H;
 }
 
 

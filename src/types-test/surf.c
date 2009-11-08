@@ -523,8 +523,8 @@ int nsp_surf_check_values(NspSurf *H)
 
 NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type)
 {
- NspSurf *H  = nsp_surf_create_void(name,type);
- if ( H ==  NULLSURF) return NULLSURF;
+  NspSurf *H  = nsp_surf_create_void(name,type);
+  if ( H ==  NULLSURF) return NULLSURF;
   if ( nsp_surf_create_partial(H) == FAIL) return NULLSURF;
   H->obj->x= x;
   H->obj->y= y;
@@ -534,8 +534,8 @@ NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMa
   H->obj->zcolor=zcolor;
   H->obj->mesh_color=mesh_color;
   H->obj->face_color=face_color;
- if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
- return H;
+  if ( nsp_surf_check_values(H) == FAIL) return NULLSURF;
+  return H;
 }
 
 

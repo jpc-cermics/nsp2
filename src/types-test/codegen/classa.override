@@ -39,10 +39,10 @@ ignore-glob
   *_get_type
 
 %%
-override_int_create_final ClassA
+override-int-create-final ClassA
   /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
 %%
-override_destroy_prelim  ClassA
+override-destroy-prelim  ClassA
   /* verbatim in destroy */
 %%
 override classa_color_change kwargs

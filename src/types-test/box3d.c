@@ -500,8 +500,8 @@ int nsp_box3d_check_values(NspBox3d *H)
 
 NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type)
 {
- NspBox3d *H  = nsp_box3d_create_void(name,type);
- if ( H ==  NULLBOX3D) return NULLBOX3D;
+  NspBox3d *H  = nsp_box3d_create_void(name,type);
+  if ( H ==  NULLBOX3D) return NULLBOX3D;
   if ( nsp_box3d_create_partial(H) == FAIL) return NULLBOX3D;
   H->obj->x= x;
   H->obj->y= y;
@@ -509,8 +509,8 @@ NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gbo
   H->obj->mesh=mesh;
   H->obj->mesh_color=mesh_color;
   H->obj->face_color=face_color;
- if ( nsp_box3d_check_values(H) == FAIL) return NULLBOX3D;
- return H;
+  if ( nsp_box3d_check_values(H) == FAIL) return NULLBOX3D;
+  return H;
 }
 
 

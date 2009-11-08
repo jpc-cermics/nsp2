@@ -469,8 +469,8 @@ int nsp_grrect_check_values(NspGrRect *H)
 
 NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type)
 {
- NspGrRect *H  = nsp_grrect_create_void(name,type);
- if ( H ==  NULLGRRECT) return NULLGRRECT;
+  NspGrRect *H  = nsp_grrect_create_void(name,type);
+  if ( H ==  NULLGRRECT) return NULLGRRECT;
   if ( nsp_grrect_create_partial(H) == FAIL) return NULLGRRECT;
   H->obj->x=x;
   H->obj->y=y;
@@ -479,8 +479,8 @@ NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int 
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
   H->obj->color=color;
- if ( nsp_grrect_check_values(H) == FAIL) return NULLGRRECT;
- return H;
+  if ( nsp_grrect_check_values(H) == FAIL) return NULLGRRECT;
+  return H;
 }
 
 
@@ -779,7 +779,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
       /* Sciprintf("No need to draw one rectangle\n"); */
       return;
     }
-
+  
   val[0]= P->obj->x;
   val[1]= P->obj->y;
   val[2]= P->obj->w;
