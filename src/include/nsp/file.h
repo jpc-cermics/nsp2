@@ -68,7 +68,7 @@ NspFile *nsp_new_file();
  * Object methods redefined for file 
  */
 
-extern NspFile *nsp_file_create(char *name, char *fname, char *str, int flag, FILE *f);
+extern NspFile *nsp_file_create(char *name,const char *fname, char *str, int flag, FILE *f);
 extern NspFile *nsp_file_copy(NspFile *H);
 extern void nsp_file_destroy(NspFile *H);
 extern int nsp_file_info(NspFile *H, int indent,char *name, int rec_level);
@@ -103,9 +103,9 @@ extern NspFile *GetSciFile (Stack stack, int i);
 /* File.c */
 NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on);
 extern int nsp_file_close(NspFile *F);
-extern NspFile *nsp_file_open_xdr_r(char *fname);
+extern NspFile *nsp_file_open_xdr_r(const char *fname);
 extern int nsp_file_close_xdr_r(NspFile *F);
-extern NspFile *nsp_file_open_xdr_w(char *fname);
+extern NspFile *nsp_file_open_xdr_w(const char *fname);
 extern int nsp_file_close_xdr_w(NspFile *F);
 extern int nsp_xdr_save_d(XDR *xdrs, double x);
 extern int nsp_xdr_load_d(XDR *xdrs, double *x);

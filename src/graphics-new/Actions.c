@@ -22,10 +22,15 @@
 
 #include "nsp/math.h"
 #include "nsp/graphics-new/Graphics.h"
+#include "nsp/object.h"
 #define PERI_ACTION_PRIVATE 
 #include "nsp/graphics-new/actions.h"
 #include "nsp/command.h"
+#include "../system/files.h" /* FSIZE */
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
 
+static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox);
 static int nsp_gr_buzy = 0;
 
 /*
@@ -357,13 +362,18 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
  * zoom the graphics of graphic window @win_num.
  */ 
 
-
-
 static void nsp_gc_2dzoom(BCG *Xgc)
 {
+  double bbox[4];
+  int ibbox[4];
+  int aaint[]={2,10,2,10},flag[]={1,0,0} ;
   static int nsp_gc_buzy_zoom = 0;
   nsp_gc_buzy_zoom =1;
-  zoom(Xgc);
+  if ( Xgc == NULL) return ;
+  zoom_get_rectangle(Xgc,bbox,ibbox);
+  tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  Xgc->graphic_engine->process_updates(Xgc);
   nsp_gc_buzy_zoom = 0;
 }
 
@@ -376,7 +386,10 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 
 static void  nsp_gc_unzoom(BCG *Xgc)
 {
-  unzoom(Xgc);
+  if ( Xgc == NULL) return ;
+  tape_replay_undo_scale(Xgc,Xgc->CurWindow);
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  Xgc->graphic_engine->process_updates(Xgc);
 }
 
 
@@ -448,9 +461,23 @@ static int nsp_gc_change(BCG *Xgc)
  * save graphic data from graphic window @win_num to file @filename.
  */ 
 
-static void nsp_gc_savesg(BCG *Xgc,const char *filename )
+static int nsp_gc_savesg(BCG *Xgc,const char *filename )
 {
-  tape_save(Xgc,filename,Xgc->CurWindow);
+  NspFile *F;
+  /* expand keys in path name result in buf */
+  if ( Xgc == NULL || Xgc->figure == NULL) return FAIL;
+  if (( F =nsp_file_open_xdr_w(filename)) == NULLSCIFILE) return FAIL;
+  if (nsp_object_xdr_save(F->obj->xdrs,Xgc->figure)== FAIL) 
+    return FAIL;
+  /* flag for detecting end of obj at reload */
+  nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id);
+  if (nsp_file_close_xdr_w(F) == FAIL) 
+    {
+      nsp_file_destroy(F);
+      return FAIL;
+    }
+  nsp_file_destroy(F);
+  return OK;
 }
 
 
@@ -463,10 +490,107 @@ static void nsp_gc_savesg(BCG *Xgc,const char *filename )
  * @win_num.
  */ 
 
-static void nsp_gc_loadsg(BCG *Xgc,const char *filename)
+static int nsp_gc_loadsg(BCG *Xgc,const char *filename)
 {
+  NspFile *F;
+  NspObject *O; 
   int cur;
   cur = Xgc->graphic_engine->xset_curwin(Xgc->CurWindow,FALSE);
-  tape_load(Xgc,filename);
+  if (( F =nsp_file_open_xdr_r(filename)) == NULLSCIFILE) 
+    return FAIL;
+  if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) 
+    return FAIL;
+  if ( ! IsFigure(O)) 
+    return FAIL;
+  if (nsp_file_close_xdr_r(F) == FAIL)
+    {
+      nsp_file_destroy(F);
+      return FAIL;
+    }
+  nsp_file_destroy(F);
+  /*
+   * use the given figure in Xgc 
+   */
   Xgc->graphic_engine->xset_curwin(cur,FALSE);
+  return OK;
 }
+
+
+
+/**
+ * zoom_get_rectangle:
+ * @Xgc: 
+ * @bbox: 
+ * @ibbox: 
+ * 
+ * A version for drivers who do not have Xor mode 
+ * we have to redraw while acquiring the zoom rectangle 
+ * we could also try to keep the graphic in a backing store 
+ * pixmap. 
+ *
+ * XXXX : a revoir en regardant ce qui est fait dans 
+ *        diagram pour minimiser les redessins.
+ *
+ * 
+ **/
+
+static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
+{
+  /* Using the mouse to get the new rectangle to fix boundaries */
+  int th,pixmode,alumode,color,style,fg;
+  int ibutton,imask,iwait=FALSE,istr=0;
+  double x0,y0,x,y,xl,yl;
+  int    ix0,iy0,ix,iy,ixl,iyl;
+  if ( Xgc == NULL ) return; 
+  Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
+  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  th = Xgc->graphic_engine->xget_thickness(Xgc);
+  color= Xgc->graphic_engine->xget_pattern(Xgc);
+  style = Xgc->graphic_engine->xget_dash(Xgc);
+  fg    = Xgc->graphic_engine->xget_foreground(Xgc);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  nsp_set_cursor(Xgc,GDK_TOP_LEFT_CORNER );
+  Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&ix0,&iy0,iwait,FALSE,FALSE,FALSE,istr);
+  scale_i2f(Xgc->scales,&x0,&y0,&ix0,&iy0,1);
+  x=x0;y=y0;
+  ix=ix0;iy=iy0;
+  ibutton=-1;
+  while ( ibutton == -1 ) 
+    {
+      double rect[4]= {Min(x0,x),Max(y0,y),Abs(x0-x),Abs(y0-y)};
+      Xgc->graphic_engine->clearwindow(Xgc);    
+      rect2d_f2i(Xgc->scales,rect,Xgc->zrect,1);
+      Xgc->graphic_engine->invalidate(Xgc,NULL);
+      nsp_set_cursor(Xgc,GDK_BOTTOM_RIGHT_CORNER);
+      Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&ixl, &iyl,iwait,TRUE,TRUE,FALSE);
+      scale_i2f(Xgc->scales,&xl,&yl,&ixl,&iyl,1);
+      x=xl;y=yl;
+      ix=ixl;iy=iyl;
+    }
+  nsp_set_cursor(Xgc,-1);
+  /* Back to the default driver which must be Rec and redraw the recorded
+   * graphics with the new scales 
+   */
+  bbox[0]=Min(x0,x);
+  bbox[1]=Min(y0,y);
+  bbox[2]=Max(x0,x);
+  bbox[3]=Max(y0,y);
+  ibbox[0]=Min(ix0,ix);
+  ibbox[1]=Min(iy0,iy);
+  ibbox[2]=Max(ix0,ix);
+  ibbox[3]=Max(iy0,iy);
+
+  /* disable zrect */
+  Xgc->zrect[2]=   Xgc->zrect[3]=0;
+  Xgc->graphic_engine->xset_thickness(Xgc,th);
+  Xgc->graphic_engine->xset_dash(Xgc,style);
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
+  Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
+  Xgc->graphic_engine->xinfo(Xgc," ");
+  Xgc->graphic_engine->invalidate(Xgc,NULL);
+}
+
+

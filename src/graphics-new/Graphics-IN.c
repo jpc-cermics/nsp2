@@ -5062,22 +5062,22 @@ static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
 static int int_xsave(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int wid;
   char *str;
-  CheckRhs(1,2);
+  CheckStdRhs(1,2);
 
   if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
   if (rhs == 2) 
     { 
+      int wid;
       if (GetScalarInt(stack,2,&wid) == FAIL) return RET_BUG;
       if (( Xgc=window_list_search_new(wid)) == NULL) return 0;
     }
   else 
     {
       Xgc = check_graphic_window_new();
-      wid = Xgc->CurWindow;
     }
-  tape_save(Xgc,str,wid);
+  /* tape_save(Xgc,str,wid);*/
+  Xgc->actions->savesg(Xgc,str);
   return 0;
 }
 
@@ -5099,7 +5099,9 @@ static int int_xload(Stack stack, int rhs, int opt, int lhs)
       Xgc = set_graphic_window_new(Max(0,wid));
     }
   Xgc=check_graphic_window_new();
-  tape_load(Xgc,str);
+  /* tape_load(Xgc,str);*/
+  Xgc->actions->loadsg(Xgc,str);
+
   return 0;
 }
 

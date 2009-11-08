@@ -305,7 +305,7 @@ NspFile *nsp_file_create_void(char *name,NspTypeBase *type)
   return F;
 }
 
-NspFile *nsp_file_create(char *name, char *fname, char *str,int flag,FILE *f)
+NspFile *nsp_file_create(char *name,const char *fname, char *str,int flag,FILE *f)
 {
   NspFile *F =nsp_file_create_void(name,(NspTypeBase *) nsp_type_file);
   if ( F == NULLSCIFILE)  return NULLSCIFILE;

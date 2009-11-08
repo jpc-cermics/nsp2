@@ -160,7 +160,7 @@ static u_int szof ;
  * Return value: a #NspFile object 
  **/
 
-NspFile *nsp_file_open_xdr_r(char *fname)
+NspFile *nsp_file_open_xdr_r(const char *fname)
 {
 #if defined(__STDC__) ||  defined(_MSC_VER)
   static char openf[]="rb";
@@ -255,7 +255,7 @@ int nsp_file_close_xdr_r(NspFile  *F)
  * Return value: a #NspFile object 
  **/
 
-NspFile *nsp_file_open_xdr_w(char *fname)
+NspFile *nsp_file_open_xdr_w(const char *fname)
 {
   char scis[]={"NspXdr_1.0"};
   FILE *f;

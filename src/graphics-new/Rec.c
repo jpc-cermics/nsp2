@@ -26,6 +26,10 @@
 #include "nsp/math.h"
 #include "nsp/graphics-new/Graphics.h"
 #include "nsp/object.h"
+#include "../system/files.h" /* FSIZE */
+#include <gtk/gtk.h>
+#include <nsp/figuredata.h> 
+#include <nsp/figure.h> 
 
 extern void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,
 					    double theta, double alpha,int *pt);
@@ -298,150 +302,62 @@ NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber)
   return (NspObject *) Xgc->figure ; 
 }
 
-static int load_VectC(XDR *xdrs, char **nx);
-static char *SciF_version;
-
-#define assert(ex) {if (!(ex)){ sciprint("Graphic load_/Save Error \r\n");return(0);}}
 
 /**
- * tape_load:
+ * tape_save:
  * @Xgc: 
- * @fname1: 
+ * @fname: 
+ * @winnumber: 
  * 
  * 
  * 
  * Returns: 
  **/
 
-static char RFname[128];
-static FILE *RF ;
-
-#ifdef __MSC__
-#ifndef __STDC__
-#define __STDC__
-#endif
-#endif 
-
-int tape_load(BCG *Xgc,const char *fname1)
+int xx_tape_save(BCG *Xgc,const char *fname, int winnumber)
 {
-  NspObject *obj,*old_obj;
-  XDR xdrs[1];
-  strncpy(RFname,fname1,128);
-#ifdef __STDC__
-  RF = fopen(RFname,"rb") ;
-#else
-  RF = fopen(RFname,"r") ;
-#endif
-  if( RF == NULL)
+  NspFile *F;
+  /* expand keys in path name result in buf */
+  if ( Xgc == NULL || Xgc->figure == NULL) return FAIL;
+  if (( F =nsp_file_open_xdr_w(fname)) == NULLSCIFILE) return FAIL;
+  if (nsp_object_xdr_save(F->obj->xdrs,Xgc->figure)== FAIL) 
+    return FAIL;
+  /* flag for detecting end of obj at reload */
+  nsp_xdr_save_i(F->obj->xdrs,nsp_no_type_id);
+  if (nsp_file_close_xdr_w(F) == FAIL) 
     {
-      sciprint("fopen failed\r\n") ;
-      return(0);
+      nsp_file_destroy(F);
+      return FAIL;
     }
-  xdrstdio_create(xdrs, RF, XDR_DECODE) ;
-  Xgc->xdrs = xdrs;
-  if ( load_VectC(Xgc->xdrs,&SciF_version) == 0 ) 
-    {
-      sciprint("Wrong plot file : %s\n\n",fname1);
-      return(0);
-    }
-
-  if ( strncmp(SciF_version,"Nsp",3) != 0 )
-    {
-      sciprint("This is not a saved graphic file: %s\n\n",fname1);
-      return(0);
-    }
-  if ( strcmp(SciF_version,"Nsp_1.0") != 0 )
-    {
-      sciprint("Wrong version of saved graphics %s: %s\n\n",
-	       SciF_version,fname1);
-      return(0);
-    }
-
-  if (( obj = nsp_object_xdr_load(Xgc->xdrs))== NULL) 
-    {
-      sciprint("No object found in file %s\n",fname1);
-      return 0;
-    }
-  assert(fflush((FILE *)xdrs->x_private) != EOF) ; 
-  assert(fclose(RF) != EOF) ;
-  
-  old_obj = Xgc->figure;
-  if ( old_obj != NULL)  nsp_object_destroy(&old_obj);
-  Xgc->figure = obj;
-  /* 
-   *  we plot the loaded graphics 
-   */
-  Xgc->graphic_engine->pixmap_resize(Xgc);
-  Xgc->graphic_engine->clearwindow(Xgc);
-  Xgc->graphic_engine->tape_replay(Xgc,Xgc->CurWindow,NULL);
-  return(0);
+  nsp_file_destroy(F);
+  return OK;
 }
 
-/*
- *
- *
- */
+/**
+ * tape_load:
+ * @Xgc: 
+ * @fname: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int save_VectC(XDR *xdrs,char *nx, int l);
-
-int tape_save(BCG *Xgc,const char *fname1, int winnumber)
+int xx_tape_load(BCG *Xgc,const char *fname)
 {
-  NspObject *obj;
-  char fname[128]; /* FIXME */
-  FILE *F ;
-  XDR xdrs[1] ;
-  static char scig[]={"Nsp_1.0"};
-#ifdef lint 
-  *unused;
-#endif
-  strncpy(fname,fname1,128);
-#ifdef __STDC__
-  F = fopen(fname,"wb") ;
-#else
-  F = fopen(fname,"w") ;
-#endif
-  if( F == NULL)
+  NspObject *O; 
+  NspFile *F;
+  if (( F =nsp_file_open_xdr_r(fname)) == NULLSCIFILE) 
+    return FAIL;
+  if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) 
+    return FAIL;
+  if ( ! IsFigure(O)) 
+    return FAIL;
+  if (nsp_file_close_xdr_r(F) == FAIL)
     {
-      sciprint("fopen failed\n") ;
-      return(0);
+      nsp_file_destroy(F);
+      return FAIL;
     }
-  xdrstdio_create(xdrs, F, XDR_ENCODE) ;
-  Xgc->xdrs = xdrs;
-  save_VectC(Xgc->xdrs,scig,((int)strlen(scig))+1) ;
-
-  obj = Xgc->figure;
-  if ( obj->type->save(Xgc->xdrs,obj) == FAIL) return FAIL;
-  assert(fflush((FILE *)xdrs->x_private) != EOF) ; 
-  assert(fclose(F) != EOF) ;
-  return(0);
+  nsp_file_destroy(F);
+  return OK;
 }
-
-static int save_VectC(XDR *xdrs,char *nx, int l)
-{ 
-  char nx1='1';
-  u_int szof = l*sizeof(char);
-  assert( xdr_vector(xdrs,(char *) &szof,(unsigned)1,(unsigned) sizeof(unsigned),
-		     (xdrproc_t) xdr_u_int)) ;
-  if ( nx == (char  *) NULL && l == (int) 1)
-    { assert( xdr_opaque(xdrs, &nx1,szof)); } 
-  else 
-    { assert( xdr_opaque(xdrs, nx,szof)); }
-  return(1);
-}
-
-
-static int load_VectC(XDR *xdrs, char **nx)
-{
-  u_int rszof;
-  assert( xdr_vector(xdrs,(char *) &rszof,(u_int)1,(u_int) sizeof(u_int),
-		     (xdrproc_t) xdr_u_int)) ;
-  *nx = (char *)  MALLOC(rszof);
-  if ( *nx == NULL) return(0);
-  assert( xdr_opaque(xdrs, *nx,rszof));
-  return(1);
-}
-
- 
-
-
-
