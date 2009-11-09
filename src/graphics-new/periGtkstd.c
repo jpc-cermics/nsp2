@@ -1692,7 +1692,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 
 
 /**
- * expose_event:
+ * expose_event_new:
  * @widget: 
  * @event: 
  * @data: 
@@ -1813,7 +1813,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated  
+	  /* debug the drawing rectangle which is updated  	  
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);

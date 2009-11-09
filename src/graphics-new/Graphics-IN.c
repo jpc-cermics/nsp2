@@ -2432,7 +2432,8 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
   if ( Mstyle != NULL) 
     {
       if ( Mstyle->mn != x->mn/2 && Mstyle->mn != 1 ) {
-	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",NspFname(stack),Mstyle->mn,x->mn/2);
+	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",
+		 NspFname(stack),Mstyle->mn,x->mn/2);
 	return RET_BUG;
       }
     }

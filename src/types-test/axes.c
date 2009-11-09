@@ -1514,6 +1514,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
    * since clipping only works with rectangles 
    */
 
+  Sciprintf("Axes with t=%d\n", P->obj->top);
+
   if ( P->obj->top == TRUE )
     {
       if ( rect != NULL ) 
@@ -2214,4 +2216,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2218 "axes.c"
+#line 2220 "axes.c"

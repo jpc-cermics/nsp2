@@ -477,7 +477,7 @@ if ~new_graphics() then
   switch_graphics();
 end
 
-xinit(cairo=%f,opengl=%t,dim=[1000,1000],popup_dim=[600,400])
+xinit(cairo=%t,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
 //xset('recording',0)
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);

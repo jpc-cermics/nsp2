@@ -584,7 +584,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
   /* first draw the block icon */
-  draw_script = 0;
+  draw_script = 3;
   switch (draw_script)
     {
     case 0: 
