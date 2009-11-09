@@ -3155,8 +3155,11 @@ void nsp_figure_initialize_gc(NspFigure *F)
   NspFigureData *Gc = F->obj->gc;
   BCG *Xgc =  F->obj->Xgc;  
   Gc = F->obj->gc;
-  Gc->background = Xgc->graphic_engine->xget_background(Xgc);
-  Gc->foreground = Xgc->graphic_engine->xget_foreground(Xgc);
+  if ( Xgc != NULL) 
+    {
+      Gc->background = Xgc->graphic_engine->xget_background(Xgc);
+      Gc->foreground = Xgc->graphic_engine->xget_foreground(Xgc);
+    }
 }
 
-#line 3163 "figure.c"
+#line 3166 "figure.c"

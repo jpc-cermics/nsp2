@@ -97,7 +97,6 @@ function w=create_object_menu (win,x,y)
   
   if ~hilited  then 
     rep=GF(s_win).select_and_hilite[[x,y]];
-    // GF(s_win).draw[];
   end
     
   // now selection should not be empty 
@@ -187,7 +186,6 @@ function objet_menuitem_response(w,args)
    case 1 then  
     // delete hilited objects 
     GF(win).delete_hilited[] ; 
-    //GF(win).draw[];
    case 2 then  
     // add a control to a link 
     GF(win).hilite_near_pt[[args(2),args(3)]];
@@ -225,10 +223,8 @@ function objet_menuitem_response(w,args)
     winid= 'win'+string(newwin);
     GF(winid)= newgf;
     GF(winid).attach_to_window[newwin];
-    //GF(winid).draw[];
     seteventhandler('my_eventhandler');
   end
-  //GF(win).draw[]
 endfunction
 
 function menu=create_right_menu (win,xc,yc)
@@ -338,7 +334,6 @@ function menuitem_response(w,args)
     if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
     else x_message('No selection');end 
   end
-  //GF(win).draw[]
 endfunction
 
 function my_eventhandler(win,x,y,ibut,imask)
@@ -373,7 +368,6 @@ function my_eventhandler(win,x,y,ibut,imask)
 	// toggle the selection 
 	// printf("control -press \n");
 	GF(winid).select_and_toggle_hilite[[x,y]];
-	//GF(winid).draw[];
     else
       // select the new, unhilite others and move selected 
       GF(winid).select_and_move[[x,y]];
@@ -398,7 +392,6 @@ function my_eventhandler(win,x,y,ibut,imask)
   elseif ibut == 65288 || ibut == 65535 
     // Delete and supr keys -> delete hilited objects 
     GF(winid).delete_hilited[] ; 
-    //GF(winid).draw[];
   else
     xinfo('Mouse action: ['+string(ibut)+']');
     // test a popup menu 
@@ -442,8 +435,6 @@ function draw_gtk_logo(rect)
   xdraw_pixbuf(0,gtk_logo_pixbuf,0,0,rect(1),rect(2),rect(3),rect(4));
 endfunction;
 
-function y=scs_color(i);y=i;endfunction
-
 function F= diagram()
 // build a diagram non interactively 
 // XXXXX: Il faut faire attention car les 
@@ -486,15 +477,15 @@ if ~new_graphics() then
   switch_graphics();
 end
 
-xinit(cairo=%f,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
+xinit(cairo=%f,opengl=%t,dim=[1000,1000],popup_dim=[600,400])
 //xset('recording',0)
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);
 F=get_current_figure();
+F.draw_latter[];
 winid= 'win'+string(F.id);
 D=diagram_create()
 GF(winid)= D;
-F=get_current_figure();
 A=F.children(1);
 A.children(1)=D;
 x=10*linspace(0,2*%pi,300);

@@ -889,6 +889,8 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
  *
  */
 
+#define CIRCLE 0
+
 static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   NspConnector *B = (NspConnector *) Obj;
@@ -925,7 +927,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void
       loc[0]+= B->obj->r[2] -lock_size; loc[1] -= B->obj->r[3] -lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
     }
-  if ( 0 )
+  if ( CIRCLE )
     {
       /* test file */
       int i;
@@ -946,7 +948,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void
     }
   connector_get_lock_pos(B,lockid,loc);
   loc[0] -= lock_size/2; loc[1] += lock_size/2;loc[2]=loc[3]= lock_size;
-  if (0) 
+  if ( CIRCLE ) 
     {
       if ( locked ) 
 	Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
@@ -1090,6 +1092,7 @@ void connector_resize(NspConnector *B,const double size[2])
   nsp_graphic_invalidate((NspGraphic *) B);
   B->obj->r[2] = Max(size[0],3*lock_size) ;
   B->obj->r[3] = Max(size[1],3*lock_size) ;
+  connector_update_locks(B);
   nsp_graphic_invalidate((NspGraphic *) B);
 }
 
@@ -1393,6 +1396,10 @@ void connector_unset_lock_connection(NspConnector *B,int i,int port)
     {
       B->obj->lock.ports[port].object_id = NULL;
     }
+  /* invalidate is only requested if the connected 
+   * links is equal tozéro 
+   */
+  nsp_graphic_invalidate((NspGraphic *) B);
 }
 
 /**
@@ -1596,4 +1603,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1600 "connector.c"
+#line 1607 "connector.c"
