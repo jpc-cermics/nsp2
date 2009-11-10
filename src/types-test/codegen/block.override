@@ -73,6 +73,8 @@ static void nsp_translate_block(NspGraphic *o,const double *tr);
 static void nsp_rotate_block(NspGraphic *o,double *R);
 static void nsp_scale_block(NspGraphic *o,double *alpha);
 static int nsp_getbounds_block(NspGraphic *o,double *bounds);
+static void nsp_block_link_figure(NspGraphic *G, void *F, void *A);
+static void nsp_block_unlink_figure(NspGraphic *G, void *F);
 
 /* set of methods for implementing Grint */
 static int block_get_hilited (NspBlock *B); 
@@ -146,8 +148,8 @@ override-type Block
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_block  ;
   ((NspTypeGraphic *) type->surtype)->bounds =nsp_getbounds_block  ;
   /* next method are defined in NspGraphic and need not be changed here for Block */
-  /* ((NspTypeNspGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
-  /* ((NspTypeNspGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
+  ((NspTypeGraphic *) type->surtype)->link_figure = nsp_block_link_figure; 
+  ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_block_unlink_figure;
 
 %%
 override-implements Block 
@@ -1469,3 +1471,22 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   return FAIL;
 }
 
+
+static void nsp_block_link_figure(NspGraphic *G, void *F, void *A)
+{
+  NspGraphic *Icon = (NspGraphic *) ((NspBlock *) G)->obj->icon;
+  /* link toplevel, take care to use nsp_graphic field */
+  nsp_graphic_link_figure(G, F,A);
+  /* link Icon */
+  if ( Icon != NULL)  nsp_graphic_link_figure(Icon, F,A);
+}
+
+
+static void nsp_block_unlink_figure(NspGraphic *G, void *F)
+{
+  NspGraphic *Icon = (NspGraphic *) ((NspBlock *) G)->obj->icon;
+  /* unlink toplevel */
+  nsp_graphic_unlink_figure(G,  F);
+  /* unlink Icon */
+  if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
+}

@@ -684,6 +684,7 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
     {
       if ( C->O != NULLOBJ )
 	{
+	  NspGraphic *G = (NspGraphic *) C->O;
 	  /* set the frame field of each object */
 	  /* NspBlock *B = (NspBlock *) C->O;  */
 	  /* B->obj->frame = D->obj; */
@@ -694,9 +695,9 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
 	  if ( nsp_list_end_insert(D->obj->children,C->O) == FAIL )
 	    return RET_BUG; 
 	  /* be sure that the object Figure is OK */
-	  nsp_graphic_link_figure((NspGraphic *) C->O,
-				  ((NspGraphic *) D)->obj->Fig,
-				  ((NspGraphic *) D)->obj->Axe);
+	  G->type->link_figure(G,
+			       ((NspGraphic *) D)->obj->Fig,
+			       ((NspGraphic *) D)->obj->Axe);
 	  C->O= NULLOBJ;
 	}
       C = C->next ;

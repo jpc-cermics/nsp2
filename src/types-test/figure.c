@@ -2959,6 +2959,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
   NspAxes *A1,*A2;
   NspList *L;
   NspCompound *C;
+  NspGraphic *G;
   if ((C= nsp_compound_create(name,NULL,NULL,NULL))== NULL) return NULL;
   /* unlink the children from the figure */
   /* return the first axes XXX  */
@@ -2972,14 +2973,16 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
   if ( (A2 =(NspAxes *) nsp_list_get_element(F->obj->children,2)) ==  NULL )
     {
       /* insert the compound in A1 */
-      nsp_graphic_link_figure((NspGraphic *) C, ((NspFigure *) F)->obj, A1->obj);
+      G = (NspGraphic *) C;
+      G->type->link_figure(G, ((NspFigure *) F)->obj, A1->obj);
       if ( nsp_list_begin_insert(L,(NspObject *) C)== FAIL)
 	return NULL;
     }
   else
     {
       /* insert the compound in A2 */
-      nsp_graphic_link_figure((NspGraphic *) C, ((NspFigure *) F)->obj, A2->obj);
+      G = (NspGraphic *) C;
+      G->type->link_figure(G, ((NspFigure *) F)->obj, A2->obj);
       if ( nsp_list_begin_insert(A2->obj->children,(NspObject *) C)== FAIL)
 	return NULL;
       /* remove A1 */
@@ -3157,9 +3160,11 @@ void nsp_figure_initialize_gc(NspFigure *F)
   Gc = F->obj->gc;
   if ( Xgc != NULL) 
     {
-      Gc->background = Xgc->graphic_engine->xget_background(Xgc);
-      Gc->foreground = Xgc->graphic_engine->xget_foreground(Xgc);
+      if ( Gc->background == -1 ) 
+	Gc->background = Xgc->graphic_engine->xget_background(Xgc);
+      if ( Gc->foreground == -1 ) 
+	Gc->foreground = Xgc->graphic_engine->xget_foreground(Xgc);
     }
 }
 
-#line 3166 "figure.c"
+#line 3171 "figure.c"

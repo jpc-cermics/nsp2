@@ -546,20 +546,24 @@ endfunction
 function demo_anim_6()
   a=ones_new(60,60);
   if new_graphics() then
-    // new graphics version 
     xclear();
     plot2d([0,10],[0,10],style = 0);
     F=get_current_figure();
-    F.draw_latter[];
-    Matplot1(a,[4,4,9,9]);
-    Mg = F.children(1).children(2);
-    F.draw_now[];
+    i=-60;
+    b=3*tril(a,i)+2*triu(a,i+1);
+    M= Matplot1(b,[4,4,9,9]);
+    M1= Matplot1(b,[1,1,3,3]);
+    xset('wshow'); // force expose_events 
     for i=-60:60 do
-      F.draw_latter[];
-      // update object data directly 
-      Mg.data =3*tril(a,i)+2*triu(a,i+1) ;
-      F.draw_now[];
-      //xpause(0,events=%t);
+      b=3*tril(a,i)+2*triu(a,i+1);
+      M.data = b;
+      M.invalidate[];
+      M.translate[-[0,0.01]];
+      b=3*triu(a,i)+2*tril(a,i+1);
+      M1.data = b;
+      M1.invalidate[];
+      xset('wshow'); // force expose_events 
+      //xpause(10,events=%t);
     end
   else
     for i=-60:60 do

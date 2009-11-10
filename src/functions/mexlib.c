@@ -2845,7 +2845,7 @@ void mexSetTrapFlag(int trapflag)
 }
 
 
-int mexCheck(char *str,int nbvars) 
+int mexCheck(const char *str,int nbvars) 
 { 
   if ( nbvars != -1 ) 
     fprintf(stderr,"%s %d\r\n",str,nbvars);

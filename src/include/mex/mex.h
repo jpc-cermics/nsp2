@@ -243,7 +243,7 @@ extern void mxSparseMtlbTripletTonsp(const mxArray *ptr) ;
 
 extern void mexSetTrapFlag(int trapflag);
 
-extern int mexCheck(char *str,int nbvars) ;
+extern int mexCheck(const char *str,int nbvars) ;
 
 
 #ifdef __cplusplus

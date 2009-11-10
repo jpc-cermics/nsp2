@@ -181,6 +181,8 @@ static void nsp_translate_block(NspGraphic *o,const double *tr);
 static void nsp_rotate_block(NspGraphic *o,double *R);
 static void nsp_scale_block(NspGraphic *o,double *alpha);
 static int nsp_getbounds_block(NspGraphic *o,double *bounds);
+static void nsp_block_link_figure(NspGraphic *G, void *F, void *A);
+static void nsp_block_unlink_figure(NspGraphic *G, void *F);
 
 /* set of methods for implementing Grint */
 static int block_get_hilited (NspBlock *B); 
@@ -225,6 +227,6 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
 
-#line 229 "./block.h"
+#line 231 "./block.h"
 #endif /* NspBlock_Private */
 
