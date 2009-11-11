@@ -7,6 +7,10 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/figure.override"
+#include <nsp/figuredata.h>
+
+#line 14 "./figure.h"
 /* NspFigure */
 
 #include <nsp/graphic.h>
@@ -18,14 +22,14 @@
 typedef struct _NspFigure NspFigure ;
 typedef struct _NspTypeFigure NspTypeFigure ;
 
-#line 22 "./figure.h"
+#line 26 "./figure.h"
 
 struct _NspTypeFigure {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./figure.h"
+#line 33 "./figure.h"
 };
 
 typedef struct _nsp_figure nsp_figure;
@@ -95,7 +99,7 @@ extern int int_figure_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFigure *nsp_figure_xdr_load_partial(XDR *xdrs, NspFigure *M);
 extern int nsp_figure_xdr_save(XDR  *xdrs, NspFigure *M);
 
-#line 4 "codegen/figure.override"
+#line 8 "codegen/figure.override"
 
 /* inserted at the end of public part of include file
  * of figure.h
@@ -114,7 +118,7 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_invalidate(NspGraphic *G);
 extern NspObject *nsp_check_for_axes_or_objs3d_from_pointer(nsp_figure *F,void *obj);
 
-#line 118 "./figure.h"
+#line 122 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -129,7 +133,7 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type);
-#line 24 "codegen/figure.override"
+#line 28 "codegen/figure.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -151,6 +155,6 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 
-#line 155 "./figure.h"
+#line 159 "./figure.h"
 #endif /* NspFigure_Private */
 

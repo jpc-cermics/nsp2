@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/compound.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./compound.h"
 /* NspCompound */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspCompound NspCompound ;
 typedef struct _NspTypeCompound NspTypeCompound ;
 
-#line 22 "./compound.h"
+#line 27 "./compound.h"
 
 struct _NspTypeCompound {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./compound.h"
+#line 34 "./compound.h"
 };
 
 typedef struct _nsp_compound nsp_compound;
@@ -86,12 +91,12 @@ extern int int_compound_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCompound *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M);
 extern int nsp_compound_xdr_save(XDR  *xdrs, NspCompound *M);
 
-#line 4 "codegen/compound.override"
+#line 9 "codegen/compound.override"
 
 /* inserted at the end of public part of include file */
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
-#line 95 "./compound.h"
+#line 100 "./compound.h"
 #endif /* NSP_INC_NspCompound */ 
 
 #ifdef NspCompound_Private 
@@ -106,7 +111,7 @@ static AttrTab compound_attrs[];
 static NspMethods *compound_get_methods(void);
 /* static int int_compound_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type);
-#line 10 "codegen/compound.override"
+#line 15 "codegen/compound.override"
 
 /* inserted in the private part of include file */
 
@@ -120,6 +125,6 @@ static void nsp_compound_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_compound_children(NspGraphic *Obj);
 
-#line 124 "./compound.h"
+#line 129 "./compound.h"
 #endif /* NspCompound_Private */
 

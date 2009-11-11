@@ -24,20 +24,9 @@
 
 
 
-#line 93 "codegen/connector.override"
-#include <gdk/gdk.h>
-#include "nsp/link.h"
-#include "nsp/block.h"
-#include "nsp/connector.h"
-#include "nsp/figuredata.h"
-#include "nsp/figure.h"
-#include "nsp/diagram.h"
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/parse.h"
+#line 91 "codegen/connector.override"
 
-#line 41 "connector.c"
+#line 30 "connector.c"
 
 /* ----------- NspConnector ----------- */
 
@@ -111,7 +100,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
 
   type->init = (init_func *) init_connector;
 
-#line 112 "codegen/connector.override"
+#line 99 "codegen/connector.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_connector;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_connector ;
@@ -122,7 +111,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   /* ((NspTypeNspGraphic *) type->surtype)->connector_figure = nsp_graphic_connector_figure; */ 
   /* ((NspTypeNspGraphic *) type->surtype)->unconnector_figure = nsp_graphic_unconnector_figure; */ 
 
-#line 126 "connector.c"
+#line 115 "connector.c"
   /* 
    * NspConnector interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -131,7 +120,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 124 "codegen/connector.override"
+#line 111 "codegen/connector.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) connector_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) connector_set_hilited;
@@ -159,7 +148,7 @@ NspTypeConnector *new_type_connector(type_mode mode)
   t_grint->set_lock_pos =(gr_set_lock_pos *) connector_set_lock_pos;
   t_grint->unlock =(gr_unlock *) connector_unlock;
 
-#line 163 "connector.c"
+#line 152 "connector.c"
   if ( nsp_type_connector_id == 0 ) 
     {
       /* 
@@ -273,7 +262,7 @@ static int nsp_connector_neq(NspConnector *A, NspObject *B)
  * save 
  */
 
-#line 153 "codegen/connector.override"
+#line 140 "codegen/connector.override"
 
 /*
  * save 
@@ -332,7 +321,7 @@ static NspConnector  *nsp_connector_xdr_load(XDR *xdrs)
   return H;
 }
 
-#line 336 "connector.c"
+#line 325 "connector.c"
 /*
  * delete 
  */
@@ -477,7 +466,7 @@ NspConnector  *GetConnector(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspConnector instance 
  *-----------------------------------------------------*/
-#line 213 "codegen/connector.override"
+#line 200 "codegen/connector.override"
 /* override the code for connector creation */
 
 
@@ -544,7 +533,7 @@ NspConnector *nsp_connector_create_default(char *name)
  return H;
 }
 
-#line 548 "connector.c"
+#line 537 "connector.c"
 /*
  * copy for gobject derived class  
  */
@@ -595,7 +584,7 @@ NspConnector *nsp_connector_full_copy(NspConnector *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 285 "codegen/connector.override"
+#line 272 "codegen/connector.override"
 
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 
@@ -649,11 +638,11 @@ static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 
 
 
-#line 653 "connector.c"
+#line 642 "connector.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 382 "codegen/connector.override"
+#line 356 "codegen/connector.override"
 
 /* translate */
 
@@ -670,10 +659,10 @@ static int _wrap_connector_translate(void  *self,Stack stack, int rhs, int opt, 
 
 }
 
-#line 674 "connector.c"
+#line 663 "connector.c"
 
 
-#line 400 "codegen/connector.override"
+#line 374 "codegen/connector.override"
 /* set_position */
 
 static int _wrap_connector_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -689,10 +678,10 @@ static int _wrap_connector_set_pos(void  *self,Stack stack, int rhs, int opt, in
 
 }
 
-#line 693 "connector.c"
+#line 682 "connector.c"
 
 
-#line 417 "codegen/connector.override"
+#line 391 "codegen/connector.override"
 /* resize */ 
 
 static int _wrap_connector_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -707,29 +696,13 @@ static int _wrap_connector_resize(void  *self, Stack stack, int rhs, int opt, in
   return 1;
 }
 
-#line 711 "connector.c"
-
-
-#line 369 "codegen/connector.override"
-
-/* draw */
-
-static int _wrap_connector_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
-  CheckRhs(0,0);
-  nsp_draw_connector(Fig->Xgc, self,NULL, NULL);
-  return 0;
-}
-
-#line 726 "connector.c"
+#line 700 "connector.c"
 
 
 static NspMethods connector_methods[] = {
   {"translate",(nsp_method *) _wrap_connector_translate},
   {"set_pos",(nsp_method *) _wrap_connector_set_pos},
   {"resize",(nsp_method *) _wrap_connector_resize},
-  {"draw",(nsp_method *) _wrap_connector_draw},
   { NULL, NULL}
 };
 
@@ -826,7 +799,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
   *f = Connector_func[i].fonc;
 }
 
-#line 452 "codegen/connector.override"
+#line 426 "codegen/connector.override"
 
 /* methods for the graphic class 
  *
@@ -1550,4 +1523,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1554 "connector.c"
+#line 1527 "connector.c"

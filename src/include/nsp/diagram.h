@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/diagram.override"
+/* inserted at the start of include file */
+ #include <nsp/figure.h>
+
+#line 15 "./diagram.h"
 /* NspDiagram */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspDiagram NspDiagram ;
 typedef struct _NspTypeDiagram NspTypeDiagram ;
 
-#line 22 "./diagram.h"
+#line 27 "./diagram.h"
 
 struct _NspTypeDiagram {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./diagram.h"
+#line 34 "./diagram.h"
 };
 
 typedef struct _nsp_diagram nsp_diagram;
@@ -86,7 +91,7 @@ extern int int_diagram_create(Stack stack, int rhs, int opt, int lhs);
 extern NspDiagram *nsp_diagram_xdr_load_partial(XDR *xdrs, NspDiagram *M);
 extern int nsp_diagram_xdr_save(XDR  *xdrs, NspDiagram *M);
 
-#line 4 "codegen/diagram.override"
+#line 9 "codegen/diagram.override"
 typedef enum { MOVE, MOVE_CONTROL } move_action ;
 typedef enum _list_move_action list_move_action; 
 enum _list_move_action {  L_INVALIDATE,  L_TRANSLATE,  L_LOCK_UPDATE,  L_LINK_CHECK};
@@ -136,7 +141,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
 
-#line 140 "./diagram.h"
+#line 145 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -151,7 +156,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
-#line 55 "codegen/diagram.override"
+#line 60 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -180,6 +185,6 @@ static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 184 "./diagram.h"
+#line 189 "./diagram.h"
 #endif /* NspDiagram_Private */
 

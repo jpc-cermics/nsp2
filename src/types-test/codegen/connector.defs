@@ -44,10 +44,6 @@
   (return-type "int")
   )
 
-(define-method draw
-  (of-object "Connector")
-  (c-name "connector_draw")
-  (return-type "int")
-  )
+
 
 

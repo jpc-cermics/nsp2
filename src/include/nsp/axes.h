@@ -14,6 +14,7 @@
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 #include "nsp/graphics-new/gcscale.h"
+#include <nsp/figure.h>
 
 /**
  * NspAxes:
@@ -21,7 +22,6 @@
  *
  * inherits from #NspGraphics 
  */
-
 
 #line 27 "./axes.h"
 /* NspAxes */

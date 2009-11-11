@@ -7,6 +7,7 @@ include-start Axes
 #include "nsp/sciio.h" 
 #include "nsp/object.h"
 #include "nsp/graphics-new/gcscale.h"
+#include <nsp/figure.h>
 
 /**
  * NspAxes:
@@ -14,7 +15,6 @@ include-start Axes
  *
  * inherits from #NspGraphics 
  */
-
 
 %%
 include-public Axes
@@ -63,8 +63,6 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 %%
 headers
 #include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>

@@ -1,5 +1,9 @@
 /* -*- Mode: C -*- */
 %%
+include-start Arrows
+/* inserted at the start of include file */
+
+%%
 include-public Arrows
 
 /* inserted at the end of public part of include file */
@@ -17,10 +21,6 @@ static int nsp_getbounds_arrows(NspGraphic *o,double *bounds);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/arrows.h>
 
 %%
 init 

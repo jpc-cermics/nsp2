@@ -26,8 +26,6 @@
 
 #line 65 "codegen/axes.override"
 #include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
@@ -36,7 +34,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 40 "axes.c"
+#line 38 "axes.c"
 
 /* ----------- NspAxes ----------- */
 
@@ -108,7 +106,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 83 "codegen/axes.override"
+#line 81 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -120,7 +118,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
   ((NspTypeGraphic *) type->surtype)->invalidate = nsp_axes_invalidate;
 
-#line 124 "axes.c"
+#line 122 "axes.c"
   /* 
    * NspAxes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -860,7 +858,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 104 "codegen/axes.override"
+#line 102 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -875,7 +873,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 879 "axes.c"
+#line 877 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1026,7 +1024,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 120 "codegen/axes.override"
+#line 118 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1081,7 +1079,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1085 "axes.c"
+#line 1083 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1311,7 +1309,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 176 "codegen/axes.override"
+#line 174 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1320,10 +1318,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1324 "axes.c"
+#line 1322 "axes.c"
 
 
-#line 186 "codegen/axes.override"
+#line 184 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1333,7 +1331,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1337 "axes.c"
+#line 1335 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1364,7 +1362,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 197 "codegen/axes.override"
+#line 195 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -2243,4 +2241,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2247 "axes.c"
+#line 2245 "axes.c"

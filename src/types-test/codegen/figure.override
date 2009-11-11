@@ -1,5 +1,9 @@
 /* -*- Mode: C -*- */
 %%
+include-start Figure 
+#include <nsp/figuredata.h>
+
+%%
 include-public Figure
 
 /* inserted at the end of public part of include file
@@ -45,7 +49,6 @@ static void nsp_figure_initialize_gc(NspFigure *F);
 %%
 headers
 #include <gdk/gdk.h>
-#include <nsp/figuredata.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>

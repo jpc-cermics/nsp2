@@ -4,8 +4,6 @@ include-start Block
 /* inserted at the start of include file */
 
 #include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -121,18 +119,9 @@ static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int
 
 %%
 headers
-#include <gdk/gdk.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
-#include "nsp/figuredata.h"
-#include "nsp/figure.h"
 #include "nsp/axes.h"
-#include "nsp/diagram.h"
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/parse.h"
-
 
 %%
 init 
@@ -432,19 +421,6 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-
-%%
-override Block.block_draw kwargs
-
-/* draw */
-
-static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
-  CheckRhs(0,0);
-  nsp_draw_block(Fig->Xgc, self, NULL,NULL);
-  return 0;
-}
 
 %%
 override Block.block_translate kwargs

@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start Compound 
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public Compound
 
 /* inserted at the end of public part of include file */
@@ -22,14 +27,6 @@ static NspList *nsp_compound_children(NspGraphic *Obj);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/curve.h>
-
-#ifdef  WITH_GTKGLEXT 
-extern Gengine GL_gengine;
-#endif 
 
 %%
 init 

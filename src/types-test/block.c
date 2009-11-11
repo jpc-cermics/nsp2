@@ -24,21 +24,12 @@
 
 
 
-#line 124 "codegen/block.override"
-#include <gdk/gdk.h>
+#line 122 "codegen/block.override"
 #include "nsp/link.h"
 #include "nsp/block.h"
-#include "nsp/figuredata.h"
-#include "nsp/figure.h"
 #include "nsp/axes.h"
-#include "nsp/diagram.h"
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/parse.h"
 
-
-#line 42 "block.c"
+#line 33 "block.c"
 
 /* ----------- NspBlock ----------- */
 
@@ -112,7 +103,7 @@ NspTypeBlock *new_type_block(type_mode mode)
 
   type->init = (init_func *) init_block;
 
-#line 144 "codegen/block.override"
+#line 133 "codegen/block.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_block;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_block ;
@@ -123,7 +114,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->link_figure = nsp_block_link_figure; 
   ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_block_unlink_figure;
 
-#line 127 "block.c"
+#line 118 "block.c"
   /* 
    * NspBlock interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -132,7 +123,7 @@ NspTypeBlock *new_type_block(type_mode mode)
    */
   t_grint = new_type_grint(T_DERIVED);
   type->interface = (NspTypeBase *) t_grint;
-#line 156 "codegen/block.override"
+#line 145 "codegen/block.override"
 
   t_grint->get_hilited 	=(gr_get_hilited *) block_get_hilited;
   t_grint->set_hilited 	=(gr_set_hilited *) block_set_hilited;
@@ -160,7 +151,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   t_grint->set_lock_pos =(gr_set_lock_pos *) block_set_lock_pos;
   t_grint->unlock =(gr_unlock *) block_unlock;
 
-#line 164 "block.c"
+#line 155 "block.c"
   if ( nsp_type_block_id == 0 ) 
     {
       /* 
@@ -276,7 +267,7 @@ static int nsp_block_neq(NspBlock *A, NspObject *B)
  * save 
  */
 
-#line 185 "codegen/block.override"
+#line 174 "codegen/block.override"
 
 /* code used to override the save/load functions */
 
@@ -348,7 +339,7 @@ static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
-#line 352 "block.c"
+#line 343 "block.c"
 /*
  * delete 
  */
@@ -504,7 +495,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspBlock instance 
  *-----------------------------------------------------*/
-#line 258 "codegen/block.override"
+#line 247 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -596,7 +587,7 @@ NspBlock *nsp_block_create_default(char *name)
  return H;
 }
 
-#line 600 "block.c"
+#line 591 "block.c"
 /*
  * copy for gobject derived class  
  */
@@ -654,7 +645,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 355 "codegen/block.override"
+#line 344 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -707,11 +698,11 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 711 "block.c"
+#line 702 "block.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 451 "codegen/block.override"
+#line 427 "codegen/block.override"
 
 /* translate */
 
@@ -727,10 +718,10 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-#line 731 "block.c"
+#line 722 "block.c"
 
 
-#line 468 "codegen/block.override"
+#line 444 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -745,10 +736,10 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 749 "block.c"
+#line 740 "block.c"
 
 
-#line 484 "codegen/block.override"
+#line 460 "codegen/block.override"
 /* resize */ 
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -763,25 +754,10 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 767 "block.c"
+#line 758 "block.c"
 
 
-#line 438 "codegen/block.override"
-
-/* draw */
-
-static int _wrap_block_draw(void  *self, Stack stack, int rhs, int opt, int lhs)
-{
-  nsp_figure *Fig = (((NspGraphic *) self)->obj->Fig);
-  CheckRhs(0,0);
-  nsp_draw_block(Fig->Xgc, self, NULL,NULL);
-  return 0;
-}
-
-#line 782 "block.c"
-
-
-#line 500 "codegen/block.override"
+#line 476 "codegen/block.override"
 
 /* fix a lock point position 
  * in relative coordinates 
@@ -801,10 +777,10 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-#line 805 "block.c"
+#line 781 "block.c"
 
 
-#line 521 "codegen/block.override"
+#line 497 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -827,14 +803,13 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
 }
 
 
-#line 831 "block.c"
+#line 807 "block.c"
 
 
 static NspMethods block_methods[] = {
   {"translate",(nsp_method *) _wrap_block_translate},
   {"set_pos",(nsp_method *) _wrap_block_set_pos},
   {"resize",(nsp_method *) _wrap_block_resize},
-  {"draw",(nsp_method *) _wrap_block_draw},
   {"set_lock_pos",(nsp_method *) _wrap_block_set_lock_pos},
   {"set_locks_pos",(nsp_method *) _wrap_block_set_locks_pos},
   { NULL, NULL}
@@ -928,7 +903,7 @@ static AttrTab block_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 417 "codegen/block.override"
+#line 406 "codegen/block.override"
 
 extern function int_nspgraphic_extract;
 
@@ -937,10 +912,10 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 941 "block.c"
+#line 916 "block.c"
 
 
-#line 427 "codegen/block.override"
+#line 416 "codegen/block.override"
 
 extern function int_graphic_set_attribute;
 
@@ -950,7 +925,7 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 954 "block.c"
+#line 929 "block.c"
 
 
 /*----------------------------------------------------
@@ -981,7 +956,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
   *f = Block_func[i].fonc;
 }
 
-#line 545 "codegen/block.override"
+#line 521 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -1923,4 +1898,4 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1927 "block.c"
+#line 1902 "block.c"

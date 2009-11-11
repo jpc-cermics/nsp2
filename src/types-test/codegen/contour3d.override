@@ -32,7 +32,6 @@ headers
 #include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
-
 %%
 init 
 

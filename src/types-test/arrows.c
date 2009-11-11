@@ -24,13 +24,9 @@
 
 
 
-#line 20 "codegen/arrows.override"
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/arrows.h>
+#line 24 "codegen/arrows.override"
 
-#line 34 "arrows.c"
+#line 30 "arrows.c"
 
 /* ----------- NspArrows ----------- */
 
@@ -115,7 +111,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 119 "arrows.c"
+#line 115 "arrows.c"
   /* 
    * NspArrows interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -722,7 +718,7 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 726 "arrows.c"
+#line 722 "arrows.c"
 
 
 #line 64 "codegen/arrows.override"
@@ -735,7 +731,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 739 "arrows.c"
+#line 735 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -881,4 +877,4 @@ static int nsp_getbounds_arrows(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 885 "arrows.c"
+#line 881 "arrows.c"

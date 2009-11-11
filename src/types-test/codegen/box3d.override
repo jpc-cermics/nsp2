@@ -17,10 +17,6 @@ static int nsp_getbounds_box3d(NspGraphic *o,double *bounds);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/box3d.h>
 
 %%
 init 

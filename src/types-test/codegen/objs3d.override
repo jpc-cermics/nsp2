@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start  Objs3d
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public Objs3d
 
 /* inserted at the end of public part of include file */
@@ -51,10 +56,6 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
 headers
 #include <gtk/gtk.h>
 #include <nsp/object.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/curve.h>
-#include <nsp/polyhedron.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;

@@ -59,12 +59,6 @@
   (return-type "int")
   )
 
-(define-method draw
-  (of-object "Block")
-  (c-name "block_draw")
-  (return-type "int")
-  )
-
 (define-method set_lock_pos
   (of-object "Block")
   (c-name "block_set_lock_pos")

@@ -4,8 +4,6 @@ include-start Link
 /* inserted at the start of include file */
 
 #include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -110,17 +108,10 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include "nsp/link.h"
 #include "nsp/block.h"
+#include "nsp/link.h"
 #include "nsp/connector.h"
-#include "nsp/figuredata.h"
-#include "nsp/figure.h"
 #include "nsp/diagram.h"
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
-#include "nsp/parse.h"
 
 extern int nsp_message_(char *message,char **buttons,int n_buttons);
 

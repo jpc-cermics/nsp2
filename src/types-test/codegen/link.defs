@@ -45,11 +45,6 @@
   (return-type "int")
   )
 
-(define-method draw
-  (of-object "Link")
-  (c-name "link_draw")
-  (return-type "int")
-  )
 
 (define-method connect
   (of-object "Link")

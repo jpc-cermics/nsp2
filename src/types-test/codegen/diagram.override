@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start  Diagram
+/* inserted at the start of include file */
+ #include <nsp/figure.h>
+
+%%
 include-public Diagram
 typedef enum { MOVE, MOVE_CONTROL } move_action ;
 typedef enum _list_move_action list_move_action; 
