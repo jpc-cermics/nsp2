@@ -1062,8 +1062,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data
   int Ntr = P->obj->triangles->m;
   int draw = P->obj->draw;
   int *xm,*ym,i,  j, k;
-
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
    */
@@ -1274,4 +1273,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1278 "fec.c"
+#line 1277 "fec.c"

@@ -43,7 +43,6 @@ typedef void driver_s_xgetmouse(BCG *Xgc,char *str, int *ibutton, int *imask,dou
 typedef void driver_s_xset_clip(BCG *Xgc,double x[]);
 typedef void driver_s_xset_clipgrf(BCG *Xgc);
 typedef void driver_s_xset_clipping_p(BCG *Xgc,double x,double y,double w,double h);
-typedef void driver_s_xset_colormap(BCG *Xgc,int m, double val[]);
 typedef void driver_s_xset_default(BCG *Xgc) ;
 typedef void driver_s_xset_font_size(BCG *Xgc,int val);
 typedef void driver_s_xset_mark_size(BCG *Xgc,int val);
@@ -80,7 +79,6 @@ struct _nsp_gengine1 {
   driver_s_xset_clip *xset_clip;
   driver_s_xset_clipgrf *xset_clipgrf;
   driver_s_xset_clipping_p *xset_clipping_p;
-  driver_s_xset_colormap *xset_colormap;
   driver_s_xset_default *xset_default;
   driver_s_xset_font_size *xset_font_size;
   driver_s_xset_mark_size *xset_mark_size;
@@ -121,7 +119,6 @@ static  driver_s_xgetmouse xgetmouse_1;
 static  driver_s_xset_clip xset_clip_1;
 static  driver_s_xset_clipgrf xset_clipgrf_1;
 static  driver_s_xset_clipping_p xset_clipping_p_1;
-static  driver_s_xset_colormap xset_colormap_1;
 static  driver_s_xset_default xset_default_1;
 static  driver_s_xset_font_size xset_font_size_1;
 static  driver_s_xset_mark_size  xset_mark_size_1;

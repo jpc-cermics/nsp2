@@ -22,36 +22,15 @@
  *--------------------------------------------------------------------------*/
 
 /*
- * clear a rectangle zone 
+ * clear a rectangle using background 
  */
 
 static void cleararea(BCG *Xgc, GdkRectangle *r)
 {
-  int clipflag = 0;
-  /* switch to a clear gc */
-  int cur_alu = Xgc->CurDrawFunction;
-  int clear = 0 ; /* 0 is the Xclear alufunction */;
-  
-
-  if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-      gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-    }
+  int old= xset_pattern(Xgc,Xgc->NumBackground+1);
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
 		     r->x,r->y,r->width,r->height);
-  if ( cur_alu != clear )
-    xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      /* restore clip */
-      GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
-				 Xgc->CurClipRegion[1],
-				 Xgc->CurClipRegion[2],
-				 Xgc->CurClipRegion[3]};
-      gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
-    }
+  xset_pattern(Xgc,old);
 }
 
 /*
@@ -492,72 +471,18 @@ static void xget_clip(BCG *Xgc,int *x)
     }
 }
 
-/* The alu function for private->drawing : Works only with X11
- * Not in Postscript, Read The X11 manual to get more informations 
- */
-
-static struct alinfo { 
-  char *name;
-  char id;
-  char *info;} AluStruc_[] =
-    { 
-      {"GXclear" , GDK_CLEAR," 0 "},
-      {"GXand" , GDK_AND," src AND dst "},
-      {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
-      {"GXcopy" , GDK_COPY," src "},
-      {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
-      {"GXnoop" , GDK_NOOP," dst "},
-      {"GXxor" , GDK_XOR," src XOR dst "},
-      {"GXor" , GDK_OR," src OR dst "},
-      {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-      {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
-      {"GXinvert" , GDK_INVERT," NOT dst "},
-      {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
-      {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
-      {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
-      {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
-      {"GXset" , GDK_SET," 1 "}
-    };
 
 /**
  * xset_alufunction1:
  * @Xgc: a #BCG  
  * @num: 
  * 
- * 
+ * unused 
  **/
+
 static void xset_alufunction1(BCG *Xgc,int num)
 {   
-  int value ; 
-  GdkColor temp = {0,0,0,0};
   Xgc->CurDrawFunction = Min(15,Max(0,num));
-  value = AluStruc_[Xgc->CurDrawFunction].id;
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_COPY);
-      break;
-    case GDK_XOR   : 
-      temp.pixel = Xgc->private->gcol_fg.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,GDK_XOR);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_fg);
-      gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-      gdk_gc_set_function(Xgc->private->wgc,value);
-      break;
-    }
-  if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
-    {
-      /* the way colors are computed changes if we are in Xor mode 
-       * so we force here the computation of current color  
-       */
-      nsp_gtk_set_color(Xgc,Xgc->CurColor);
-    }
 }
 
 
@@ -565,7 +490,7 @@ static void xset_alufunction1(BCG *Xgc,int num)
  * xget_alufunction:
  * @Xgc: a #BCG  
  * 
- * 
+ * unused 
  * 
  * Returns: 
  **/
@@ -575,15 +500,6 @@ static int xget_alufunction(BCG *Xgc)
   return  Xgc->CurDrawFunction ;
 }
 
-
-
-/*
- *  To change The X11-default dash style
- * if *value == 0, use a solid line, if *value != 0 
- * the dash style is specified by the xx vector of n values 
- * xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots 
- */
-
 /**
  * xset_dashstyle:
  * @Xgc: a #BCG  
@@ -591,8 +507,13 @@ static int xget_alufunction(BCG *Xgc)
  * @xx: 
  * @n: 
  * 
+ *  To change The X11-default dash style
+ * if *value == 0, use a solid line, if *value != 0 
+ * the dash style is specified by the xx vector of n values 
+ * xx[3]={5,3,7} and *n == 3 means :  5white 3 void 7 white \ldots 
  * 
  **/
+
 static void xset_dashstyle(BCG *Xgc,int value, int *xx, int *n)
 {
   if ( value == 0) 
@@ -630,7 +551,7 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 {
   if ( Xgc->CurPixmapStatus == 1) 
     {
-      gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+      gdk_gc_set_rgb_fg_color(Xgc->private->stdgc, &Xgc->private->gcol_bg);
       gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
 			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
     }
@@ -733,26 +654,20 @@ static void xset_pixmapOn(BCG *Xgc,int num)
  * 
  **/
 
-static void nsp_gtk_set_color(BCG *Xgc,int col)
+static void nsp_gtk_set_color_new(BCG *Xgc, NspMatrix *colors)
 {
-  int value = AluStruc_[Xgc->CurDrawFunction].id;
-  GdkColor temp = {0,0,0,0};
-  /* colors from 1 to Xgc->Numcolors */
-  Xgc->CurColor = col = Max(0,Min(col,Xgc->Numcolors + 2));
-  if (Xgc->private->colors  == NULL) return;
-  temp.pixel = Xgc->private->colors[col].pixel;
-  switch (value) 
+  int m = colors->m;
+  GdkColor temp;
+  if ( colors == NULL) return ;
+  Xgc->CurColor = Max(0,Min(Xgc->CurColor,Xgc->Numcolors + 2));
+  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL) 
     {
-    case GDK_CLEAR : 
-      break;
-    case GDK_XOR   : 
-      temp.pixel = temp.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
+      gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
     }
+  temp.red   = (guint16)  (colors->R[Xgc->CurColor]*65535);
+  temp.green = (guint16)  (colors->R[Xgc->CurColor+m]*65535);
+  temp.blue  = (guint16)  (colors->R[Xgc->CurColor+2*m]*65535);
+  gdk_gc_set_rgb_fg_color(Xgc->private->wgc,&temp);
 }
 
 

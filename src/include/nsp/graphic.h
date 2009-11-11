@@ -64,7 +64,8 @@ struct _NspTypeGraphic {
 
 typedef struct _nsp_graphic nsp_graphic;
 struct _nsp_graphic {
-  Boolean hidden;
+  gboolean hilited;
+  gboolean show;
   void* Fig;
   void* Axe;
   int ref_count;
@@ -96,7 +97,7 @@ NspGraphic *new_graphic();
 
 #define NULLGRAPHIC (NspGraphic*) 0
 
-extern NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,void* Axe,NspTypeBase *type);
+extern NspGraphic *nsp_graphic_create(char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type);
 extern NspGraphic *nsp_graphic_create_default(char *name);
 
 /* from NspGraphicObj.c */
@@ -127,7 +128,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 extern void nsp_graphic_invalidate(NspGraphic *G);
 extern int nsp_graphic_intersect_rectangle(NspGraphic *G,void *);
 
-#line 131 "./graphic.h"
+#line 132 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -146,6 +147,6 @@ static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-#line 150 "./graphic.h"
+#line 151 "./graphic.h"
 #endif /* NspGraphic_Private */
 

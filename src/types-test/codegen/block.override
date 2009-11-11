@@ -201,8 +201,6 @@ int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
   if ( nsp_xdr_save_i(xdrs,M->obj->color) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->thickness) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->hilited) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->show) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->n_locks) == FAIL) return FAIL;
   if ( nsp_save_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->icon)) == FAIL) return FAIL;
@@ -225,8 +223,6 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
   if ( nsp_xdr_load_i(xdrs,&M->obj->color) == FAIL) return NULLBLOCK;
   if ( nsp_xdr_load_i(xdrs,&M->obj->thickness) == FAIL) return NULLBLOCK;
   if ( nsp_xdr_load_i(xdrs,&M->obj->background) == FAIL) return NULLBLOCK;
-  if (nsp_xdr_load_i(xdrs, &M->obj->hilited) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->show) == FAIL) return NULL;
   M->obj->object_sid = NSP_INT_TO_POINTER(id);
   /* the lock points */
   if ( nsp_xdr_load_i(xdrs,&M->obj->n_locks) == FAIL) return NULLBLOCK;
@@ -289,8 +285,6 @@ int nsp_block_create_partial(NspBlock *H)
   H->obj->background = 0;
   H->obj->n_locks = 0;
   H->obj->locks = NULL;
-  H->obj->hilited = FALSE;
-  H->obj->show = TRUE;
   H->obj->icon = NULL;
   return OK;
 }
@@ -303,7 +297,7 @@ int nsp_block_check_values(NspBlock *H)
 }
 
 
-NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,int hilited,gboolean show,NspGraphic *icon,NspTypeBase *type)
+NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,NspTypeBase *type)
 {
   double pt[2];
   int i;
@@ -317,8 +311,6 @@ NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int t
   H->obj->background=background;
   H->obj->n_locks=n_locks;
   H->obj->locks = locks;
-  H->obj->hilited=hilited;
-  H->obj->show=show;
   H->obj->icon= icon;
   /* initial lock points */
   H->obj->n_locks = 4 ;
@@ -405,8 +397,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0,
-			    NULL,FALSE,TRUE,NULL,NULL))
+  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0, NULL,NULL,NULL))
      == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -572,7 +563,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   int cpat, cwidth,i, draw_script, fill=FALSE;
 
   /* check the show attribute */
-  if ( B->obj->show == FALSE ) return ;
+  if ( Obj->obj->show == FALSE ) return ;
        
   /* check if the block is inside drawing rectangle
    */
@@ -641,7 +632,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
   /* add the control points if block is hilited */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-  if ( B->obj->hilited == TRUE ) 
+  if ( Obj->obj->hilited == TRUE ) 
     {
       loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,loc);
@@ -747,7 +738,7 @@ static int nsp_getbounds_block (NspGraphic *Obj,double *bounds)
  *
  **/
 
-int block_get_hilited(NspBlock *B) {  return B->obj->hilited; } 
+int block_get_hilited(NspBlock *B) {  return ((NspGraphic *)B)->obj->hilited; } 
 
 /**
  * block_set_hilited:
@@ -760,9 +751,10 @@ int block_get_hilited(NspBlock *B) {  return B->obj->hilited; }
 
 void block_set_hilited(NspBlock *B,int val) 
 {
-  if ( B->obj->hilited == val) return;
-  B->obj->hilited = val; 
-  nsp_graphic_invalidate((NspGraphic *) B);
+  NspGraphic *G =  (NspGraphic *) B;
+  if ( G->obj->hilited == val) return;
+  G->obj->hilited = val; 
+  nsp_graphic_invalidate(G);
 } 
 
 /**
@@ -774,7 +766,7 @@ void block_set_hilited(NspBlock *B,int val)
  *
  **/
 
-int block_get_show(NspBlock *B) {  return B->obj->show; } 
+int block_get_show(NspBlock *B) {  return ((NspGraphic *)B)->obj->show; } 
 
 /**
  * block_set_show:
@@ -784,7 +776,7 @@ int block_get_show(NspBlock *B) {  return B->obj->show; }
  *
  **/
 
-void block_set_show(NspBlock *B,int val) {  B->obj->show = val; } 
+void block_set_show(NspBlock *B,int val) {  ((NspGraphic *)B)->obj->show = val; } 
 
 /**
  * lock_draw:

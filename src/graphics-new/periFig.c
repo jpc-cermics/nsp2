@@ -32,6 +32,7 @@
 #include "nsp/graphics-new/periFig.h"
 #include "nsp/version.h"
 #include "nsp/graphics-new/color.h"
+#include "nsp/object.h"
 
 #define WHITE 7
 #define BLACK 0
@@ -658,21 +659,24 @@ static void sedeco(int flag)
  */
 
 
-static void xset_colormap(BCG *Xgc,int m,int n, double *a)
+static int xset_colormap(BCG *Xgc,void *C)
 {
+  NspMatrix *A = C;
+  int m = A->m,n = A->n;
+  double *a = A->R;
   int i;
   Scistring("Warning : you will have to move the colors definition\n");
   Scistring(" at the top of the xfig file \n");
   if ( n != 3 ||  m < 0) {
     Scistring("Colormap must be a m x 3 array \n");
-    return;
+    return FAIL;
   }
   /* Checking RGB values */
   for (i = 0; i < m; i++) {
     if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
         a[i+2*m] < 0 || a[i+2*m]> 1) {
       Scistring("RGB values must be between 0 and 1\n");
-      return;
+      return FAIL;
     }
   }
   Xgc->Numcolors = m;
@@ -694,9 +698,10 @@ static void xset_colormap(BCG *Xgc,int m,int n, double *a)
   xset_pattern(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
+  return OK;
 }
 
-static void xset_default_colormap(BCG *Xgc)
+static int xset_default_colormap(BCG *Xgc)
 {
   unsigned short *a = default_colors;
   int   m = DEFAULTNUMCOLORS;
@@ -722,6 +727,7 @@ static void xset_default_colormap(BCG *Xgc)
   xset_pattern(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
+  return OK;
 }
 
 /* getting the colormap XXXX */
@@ -729,6 +735,30 @@ static void xset_default_colormap(BCG *Xgc)
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   *num=0 ; /* XXX */
+}
+
+/**
+ * xpush_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * Returns: 
+ **/
+
+static int xpush_colormap(BCG *Xgc,void *colors)
+{
+  return OK;
+}
+
+/**
+ * xpop_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * Returns: 
+ **/
+
+static int xpop_colormap(BCG *Xgc)
+{
+  return OK;
 }
 
 

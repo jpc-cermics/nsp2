@@ -107,8 +107,9 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 #line 72 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   * this method of class Graphic are to be defined by subclasses.
+   * here we define the default values for graphic methods 
+   * these methods of class Graphic are to be re-defined by subclasses 
+   * if necessary.
    */
   type->draw = NULL;
   type->translate = NULL;
@@ -122,7 +123,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->n_faces = NULL;
   type->invalidate = nsp_graphic_invalidate;
 
-#line 126 "graphic.c"
+#line 127 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -216,7 +217,8 @@ static int nsp_graphic_eq(NspGraphic *A, NspObject *B)
   NspGraphic *loc = (NspGraphic *) B;
   if ( check_cast(B,nsp_type_graphic_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( A->obj->hidden != loc->obj->hidden) return FALSE;
+  if ( A->obj->hilited != loc->obj->hilited) return FALSE;
+  if ( A->obj->show != loc->obj->show) return FALSE;
   if ( A->obj->Fig != loc->obj->Fig) return FALSE;
   if ( A->obj->Axe != loc->obj->Axe) return FALSE;
   return TRUE;
@@ -242,7 +244,8 @@ int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_graphic)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->hidden) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->hilited) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->show) == FAIL) return FAIL;
   return OK;
 }
 
@@ -253,7 +256,8 @@ int nsp_graphic_xdr_save(XDR *xdrs, NspGraphic *M)
 NspGraphic  *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M)
 {
   M->obj->ref_count=1;
-  if (nsp_xdr_load_i(xdrs, &M->obj->hidden) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->hilited) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->show) == FAIL) return NULL;
  return M;
 }
 
@@ -332,7 +336,8 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"hidden	= %s\n", ( M->obj->hidden == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Fig=%xl\n",M->obj->Fig);
   Sciprintf1(indent+2,"Axe=%xl\n",M->obj->Axe);
       Sciprintf1(indent+1,"}\n");
@@ -350,7 +355,8 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_graphic_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"hidden	= %s\n", ( M->obj->hidden == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Fig=%xl\n",M->obj->Fig);
   Sciprintf1(indent+2,"Axe=%xl\n",M->obj->Axe);
   Sciprintf1(indent+1,"}\n");
@@ -421,7 +427,8 @@ int nsp_graphic_create_partial(NspGraphic *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_graphic)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->hidden = FALSE;
+  H->obj->hilited = FALSE;
+  H->obj->show = TRUE;
   H->obj->Fig = NULL;
   H->obj->Axe = NULL;
   return OK;
@@ -432,12 +439,13 @@ int nsp_graphic_check_values(NspGraphic *H)
   return OK;
 }
 
-NspGraphic *nsp_graphic_create(char *name,Boolean hidden,void* Fig,void* Axe,NspTypeBase *type)
+NspGraphic *nsp_graphic_create(char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type)
 {
   NspGraphic *H  = nsp_graphic_create_void(name,type);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
   if ( nsp_graphic_create_partial(H) == FAIL) return NULLGRAPHIC;
-  H->obj->hidden=hidden;
+  H->obj->hilited=hilited;
+  H->obj->show=show;
   H->obj->Fig = Fig;
   H->obj->Axe = Axe;
   if ( nsp_graphic_check_values(H) == FAIL) return NULLGRAPHIC;
@@ -480,7 +488,8 @@ NspGraphic *nsp_graphic_full_copy_partial(NspGraphic *H,NspGraphic *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_graphic))) == NULL) return NULLGRAPHIC;
   H->obj->ref_count=1;
-  H->obj->hidden=self->obj->hidden;
+  H->obj->hilited=self->obj->hilited;
+  H->obj->show=self->obj->show;
   H->obj->Fig = self->obj->Fig;
   H->obj->Axe = self->obj->Axe;
   return H;
@@ -517,7 +526,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 91 "codegen/graphic.override"
+#line 92 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -531,10 +540,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 535 "graphic.c"
+#line 544 "graphic.c"
 
 
-#line 106 "codegen/graphic.override"
+#line 107 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -546,10 +555,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 550 "graphic.c"
+#line 559 "graphic.c"
 
 
-#line 119 "codegen/graphic.override"
+#line 120 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -560,10 +569,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 564 "graphic.c"
+#line 573 "graphic.c"
 
 
-#line 141 "codegen/graphic.override"
+#line 142 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -572,10 +581,10 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 576 "graphic.c"
+#line 585 "graphic.c"
 
 
-#line 131 "codegen/graphic.override"
+#line 132 "codegen/graphic.override"
 static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -584,7 +593,7 @@ static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt
   return 0;
 }
 
-#line 588 "graphic.c"
+#line 597 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -601,27 +610,47 @@ static NspMethods *graphic_get_methods(void) { return graphic_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_graphic_get_hidden(void *self,const char *attr)
+static NspObject *_wrap_graphic_get_hilited(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
 
-  ret = ((NspGraphic *) self)->obj->hidden;
+  ret = ((NspGraphic *) self)->obj->hilited;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
 }
 
-static int _wrap_graphic_set_hidden(void *self,const char *attr, NspObject *O)
+static int _wrap_graphic_set_hilited(void *self,const char *attr, NspObject *O)
 {
-  int hidden;
+  int hilited;
 
-  if ( BoolScalar(O,&hidden) == FAIL) return FAIL;
-  ((NspGraphic *) self)->obj->hidden= hidden;
+  if ( BoolScalar(O,&hilited) == FAIL) return FAIL;
+  ((NspGraphic *) self)->obj->hilited= hilited;
+  return OK;
+}
+
+static NspObject *_wrap_graphic_get_show(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspGraphic *) self)->obj->show;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_graphic_set_show(void *self,const char *attr, NspObject *O)
+{
+  int show;
+
+  if ( BoolScalar(O,&show) == FAIL) return FAIL;
+  ((NspGraphic *) self)->obj->show= show;
   return OK;
 }
 
 static AttrTab graphic_attrs[] = {
-  { "hidden", (attr_get_function *)_wrap_graphic_get_hidden, (attr_set_function *)_wrap_graphic_set_hidden,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "hilited", (attr_get_function *)_wrap_graphic_get_hilited, (attr_set_function *)_wrap_graphic_set_hilited,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "show", (attr_get_function *)_wrap_graphic_get_show, (attr_set_function *)_wrap_graphic_set_show,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -655,7 +684,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 151 "codegen/graphic.override"
+#line 152 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -864,7 +893,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
   if ( F == NULL ) return ;
   if ((Xgc= F->Xgc) == NULL) return ;
   if ( F->draw_now== FALSE) return;
-  if ( G->obj->hidden == TRUE ) return;
+  if ( G->obj->show == FALSE ) return;
   if ( G->type->bounds(G,bounds)== TRUE) 
     {
       gint rect[4]; /* like a GdkRectangle */
@@ -924,4 +953,4 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
 }
 
 
-#line 928 "graphic.c"
+#line 957 "graphic.c"

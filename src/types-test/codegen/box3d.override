@@ -83,8 +83,7 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   double teta = 35, alpha=45;
   */
   NspBox3d *P =(NspBox3d*) Obj ;
-  if ( Obj->obj->hidden == TRUE ) return ;
-
+  if ( Obj->obj->show == FALSE ) return;
   /* check if the block is inside drawing rectangle
    */
   /*

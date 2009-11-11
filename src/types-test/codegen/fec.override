@@ -157,8 +157,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data
   int Ntr = P->obj->triangles->m;
   int draw = P->obj->draw;
   int *xm,*ym,i,  j, k;
-
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
    */

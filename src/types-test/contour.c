@@ -887,7 +887,7 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *
   int n1 = P->obj->x->mn;
   int n2 = P->obj->y->mn;
   
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
 
   /* check if the block is inside drawing rectangle

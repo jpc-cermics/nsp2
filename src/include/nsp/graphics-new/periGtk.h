@@ -124,8 +124,9 @@ struct s_menu_entry
 
 
 typedef struct  _gtk_data {
-  GdkColor *colors; /* an array of colors */
-  GdkColormap *colormap ; /* used to keep track of drawing colormap */
+  void     *colors;                     /* an array of colors in a NspMatrix  */
+  GQueue   *q_colors;                   /* an queue for storing colors        */
+  GdkColormap *colormap ;               /* used to keep track of drawing colormap */
   GtkWidget *window;			/* Graphics frame */
   GtkWidget *drawing;                   /* gtk drawing area used for drawing */
   GtkWidget *scrolled;                  /* scrolled window which contains the drawing area*/
@@ -319,8 +320,10 @@ Gengine xx__gengine = {
   process_updates,
 
   draw_pixbuf,
-  draw_pixbuf_from_file
+  draw_pixbuf_from_file,
 
+  xpush_colormap,
+  xpop_colormap
 
 };
 
@@ -349,7 +352,6 @@ extern void change_camera(BCG *Xgc,const double *val);
 
 static unsigned long maxcol; /* FIXME XXXXX : à revoir */
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data);
-static void nsp_gtk_set_color(BCG *Xgc,int col);
 static void nsp_fonts_finalize(BCG *Xgc);
 static void nsp_fonts_initialize(BCG *Xgc);
 static void draw_mark(BCG *Xgc,int *x, int *y);

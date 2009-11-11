@@ -852,7 +852,7 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void 
   NspPolyline *P = (NspPolyline *) Obj;
   int *xm=NULL,*ym=NULL;
 
-  if (((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if (((NspGraphic *) P)->obj->show == FALSE ) return;
   if ( P->obj->x->mn == 0) return ;
 
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))

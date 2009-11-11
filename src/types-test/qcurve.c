@@ -884,7 +884,8 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
   int c_width = Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
 
-  if (((NspGraphic *) P)->obj->hidden == FALSE ) return;
+  if ( Obj->obj->show == FALSE ) return ;
+
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
       return ;
@@ -1211,4 +1212,4 @@ static void oscillo_test()
 
      
 
-#line 1215 "qcurve.c"
+#line 1216 "qcurve.c"

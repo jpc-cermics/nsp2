@@ -79,7 +79,6 @@ Gengine1 nsp_gengine1={
   xset_clip_1,
   xset_clipgrf_1,
   xset_clipping_p_1,
-  xset_colormap_1,
   xset_default_1,
   xset_font_size_1,
   xset_mark_size_1,
@@ -152,13 +151,6 @@ static void xset_clip_1(BCG *Xgc,double x[])
   Xgc->graphic_engine->xset_clip(Xgc,ix);
 }
 
-
-static void xset_colormap_1(BCG *Xgc,int m, double val[])
-{
-  Xgc->graphic_engine->xset_colormap(Xgc,m,3,val);
-}
-
-
 static void xset_default_1(BCG *Xgc) 
 {
   nsp_initialize_gc(Xgc);
@@ -171,7 +163,6 @@ static void xset_font_size_1(BCG *Xgc,int val)
   Xgc->graphic_engine->xset_font(Xgc,font[0],val);
 }
 
-
 static void xset_mark_size_1(BCG *Xgc,int val)
 {
   int mark[2];
@@ -179,7 +170,6 @@ static void xset_mark_size_1(BCG *Xgc,int val)
   mark[1]=val;
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
 }
-
 
 static void drawarc_1(BCG *Xgc,double arc[])
 { 

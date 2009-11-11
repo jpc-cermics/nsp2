@@ -166,8 +166,6 @@ int nsp_connector_xdr_save(XDR *xdrs, NspConnector *M)
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->background) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->hilited) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->show) == FAIL) return FAIL;
   if (nsp_save_gr_lock(xdrs,&M->obj->lock,M) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
@@ -187,8 +185,6 @@ NspConnector  *nsp_connector_xdr_load_partial(XDR *xdrs, NspConnector *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->background) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->hilited) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->show) == FAIL) return NULL;
   if (nsp_load_gr_lock(xdrs,&M->obj->lock,M) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
@@ -244,8 +240,6 @@ int nsp_connector_create_partial(NspConnector *H)
   H->obj->thickness = 0;
   H->obj->background = 0;
   nsp_init_gr_lock(&H->obj->lock);
-  H->obj->hilited = FALSE;
-  H->obj->show = TRUE;
   return OK;
 }
 
@@ -256,7 +250,7 @@ int nsp_connector_check_values(NspConnector *H)
   return OK;
 }
 
-NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type)
+NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type)
 {
  NspConnector *H  = nsp_connector_create_void(name,type);
  if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
@@ -268,8 +262,6 @@ NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int col
   H->obj->background=background;
   /* H->obj->lock = lock; */
   connector_update_locks(H);
-  H->obj->hilited=hilited;
-  H->obj->show=show;
  if ( nsp_connector_check_values(H) == FAIL) return NULLCONNECTOR;
  return H;
 }
@@ -309,7 +301,7 @@ int int_connector_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_connector_create(NVOID,NULL,val,color,thickness,back,l,FALSE,TRUE,NULL)) == NULLCONNECTOR) return RET_BUG;
+  if(( H = nsp_connector_create(NVOID,NULL,val,color,thickness,back,l,NULL)) == NULLCONNECTOR) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -471,7 +463,7 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void
   double loc[6];
   int cpat, cwidth,locked,lockid=0;
   /* only draw block which are in a frame */
-  if ( B->obj->show == FALSE ) return ;
+  if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
    */
@@ -487,13 +479,13 @@ static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void
 
   locked =  connector_is_lock_connected(B,lockid);
 
-  if ( B->obj->hilited == TRUE || locked == FALSE ) 
+  if ( Obj->obj->hilited == TRUE || locked == FALSE ) 
     {
       /* draw frame rectangle if hilited or non connected connector */
       Xgc->graphic_engine->xset_pattern(Xgc,B->obj->color);
       Xgc->graphic_engine->scale->drawrectangle(Xgc,B->obj->r);
     }
-  if ( B->obj->hilited == TRUE ) 
+  if ( Obj->obj->hilited == TRUE ) 
     {
       /* draw control points when hilited */ 
       loc[0]=B->obj->r[0]; loc[1]=B->obj->r[1];loc[2]=loc[3]= lock_size;
@@ -598,7 +590,7 @@ static int nsp_getbounds_connector (NspGraphic *Obj,double *bounds)
  *
  **/
 
-int connector_get_hilited(NspConnector *B) {  return B->obj->hilited; } 
+int connector_get_hilited(NspConnector *B) {  return ((NspGraphic *)B)->obj->hilited; } 
 
 /**
  * connector_set_hilited:
@@ -609,11 +601,14 @@ int connector_get_hilited(NspConnector *B) {  return B->obj->hilited; }
  *
  **/
 
-void connector_set_hilited(NspConnector *B,int val) {
-  if ( B->obj->hilited == val) return;
-  B->obj->hilited = val; 
-  nsp_graphic_invalidate((NspGraphic *) B);
+void connector_set_hilited(NspConnector *B,int val) 
+{
+  NspGraphic *G = (NspGraphic *)B;
+  if ( G->obj->hilited == val) return;
+  G->obj->hilited = val; 
+  nsp_graphic_invalidate(G);
 }
+
 
 /**
  * connector_get_show:
@@ -624,7 +619,7 @@ void connector_set_hilited(NspConnector *B,int val) {
  *
  **/
 
-int connector_get_show(NspConnector *B) {  return B->obj->show; } 
+int connector_get_show(NspConnector *B) {  return ((NspGraphic *)B)->obj->show; } 
 
 /**
  * connector_set_show:
@@ -634,7 +629,7 @@ int connector_get_show(NspConnector *B) {  return B->obj->show; }
  *
  **/
 
-void connector_set_show(NspConnector *B,int val) {  B->obj->show = val; } 
+void connector_set_show(NspConnector *B,int val) {  ((NspGraphic *)B)->obj->show = val; } 
 
 
 int connector_set_pos(NspConnector *B,const double pt[2])

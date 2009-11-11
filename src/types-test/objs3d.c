@@ -1155,6 +1155,8 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
 
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
+  int flag[]={1,2,4}, rep;
+  char legend[]="X@Y@Z";
   GdkRectangle *r = data;
   char xf[]="onn";
   char strflag[]="151";
@@ -1164,11 +1166,12 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
   Cell *cloc;
   NspList *L;
   NspObjs3d *P = (NspObjs3d *) Obj;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return;
+
   /* check if the block is inside drawing rectangle
    */
 
-  /*
+  /*y
    * check if we are in the draw zone 
    */
   if ( data != NULL) 
@@ -1251,15 +1254,14 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
 	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
   frame_clip_on(Xgc);
-  {
-    int flag[]={1,2,4};
-    char legend[]="X@Y@Z";
-    if ( P->obj->colormap != NULL &&  P->obj->colormap->n == 3 )
-      Xgc->graphic_engine->scale->xset_colormap(Xgc,P->obj->colormap->m,
-						P->obj->colormap->R);
-    nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
-		       P->obj->with_box,P->obj->box_color,P->obj->box_style);
-  }
+  
+  rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
+
+  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
+		     P->obj->with_box,P->obj->box_color,P->obj->box_style);
+
+  if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
+
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
@@ -2732,7 +2734,7 @@ void nsp_objs3d_invalidate(NspGraphic *G)
       if ( F == NULL ) return ;
       if ((Xgc= F->Xgc) == NULL) return ;
       if ( F->draw_now== FALSE) return;
-      if ( G->obj->hidden == TRUE ) return;
+      if ( G->obj->show == FALSE ) return;
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       rect[0]= P->obj->wrect->R[0]*wdim[0];
       rect[1]= P->obj->wrect->R[1]*wdim[1];
@@ -2746,4 +2748,4 @@ void nsp_objs3d_invalidate(NspGraphic *G)
     }
 }
 
-#line 2750 "objs3d.c"
+#line 2752 "objs3d.c"

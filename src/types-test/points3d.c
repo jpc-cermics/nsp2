@@ -765,7 +765,7 @@ void Points3d_Interf_Info(int i, char **fname, function (**f))
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int face; 
-  if ( Obj->obj->hidden == TRUE ) return ;
+  if ( Obj->obj->show == FALSE ) return ;
 
   /*
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))

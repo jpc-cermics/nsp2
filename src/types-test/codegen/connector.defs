@@ -12,8 +12,6 @@
    '("int" "thickness")
    '("int" "background")
    '("gr_lock" "lock" "hidden" ) 
-   '("gboolean" "hilited" "std" "FALSE") 
-   '("gboolean"  "show" "std" "TRUE")   
   )
   (gtype-id "Connector")
 )

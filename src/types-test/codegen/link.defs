@@ -13,8 +13,6 @@
    '("NspMatrix*" "poly")
    '("grl_lock" "lock1" "hidden" ) 
    '("grl_lock" "lock2" "hidden" ) 
-   '("gboolean" "hilited" "std" "FALSE") 
-   '("gboolean"  "show" "std" "TRUE")   
   )
   (gtype-id "Link")
 )

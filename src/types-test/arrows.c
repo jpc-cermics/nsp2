@@ -777,7 +777,7 @@ static void nsp_draw_arrows(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
   double arsize= P->obj->arsize ;
   NspMatrix *nx = P->obj->x;
   NspMatrix *ny = P->obj->y;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return;
 
   /* check if the block is inside drawing rectangle
    */

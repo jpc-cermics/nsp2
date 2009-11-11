@@ -7,7 +7,6 @@
 
 typedef void gui_private ;
 
-#if defined(THINK_C) || defined (__MWERKS__)|| defined(WIN32)
 #define CoordModePrevious 0
 #define CoordModeOrigin 1
 #define GXclear 0
@@ -26,10 +25,6 @@ typedef void gui_private ;
 #define GXorInverted 13
 #define GXnand 14
 #define GXset 15
-#else
-#include <X11/Xlib.h>
-#include <X11/Intrinsic.h>
-#endif
 
 /*-----------------------------------------------------------------
  * mix with generic data 
@@ -162,7 +157,10 @@ Gengine XFig_gengine = {
   process_updates,
 
   draw_pixbuf,
-  draw_pixbuf_from_file
+  draw_pixbuf_from_file,
+
+  xpush_colormap,
+  xpop_colormap,
 
 };
 

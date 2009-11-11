@@ -225,5 +225,7 @@ extern void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *
 			     double *zmax,double *coeff,
 			     const int *colminmax,const double *zminmax,const double z[],int zn);
 
+extern void nsp_set_colormap_constants(BCG *Xgc,int m);
+
 #endif 
 

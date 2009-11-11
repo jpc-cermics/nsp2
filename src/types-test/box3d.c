@@ -830,8 +830,7 @@ static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   double teta = 35, alpha=45;
   */
   NspBox3d *P =(NspBox3d*) Obj ;
-  if ( Obj->obj->hidden == TRUE ) return ;
-
+  if ( Obj->obj->show == FALSE ) return;
   /* check if the block is inside drawing rectangle
    */
   /*
@@ -876,4 +875,4 @@ static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 880 "box3d.c"
+#line 879 "box3d.c"

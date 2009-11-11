@@ -32,6 +32,7 @@
 #include "nsp/version.h"
 #include "nsp/graphics-new/color.h"
 #include "../system/files.h" /* FSIZE */
+#include "nsp/object.h" 
 
 extern char *nsp_getenv (const char *name);
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);
@@ -629,9 +630,9 @@ static int check_colors_def(BCG *Xgc,int m,int n,void *colors);
 typedef void (*write_c)(BCG *Xgc,char *str, void *colors,int flag);
 typedef int (*check_c)(BCG *Xgc,int m,int n,void *colors);
 
-static void xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,check_c check)
+static int xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,check_c check)
 {
-  if ( check(colors,m,n,colors) == FAIL) return;
+  if ( check(colors,m,n,colors) == FAIL) return FAIL;
   Xgc->Numcolors = m;
   Xgc->IDLastPattern = m - 1;
   Xgc->NumForeground = m;
@@ -647,18 +648,20 @@ static void xset_colormap_gen(BCG *Xgc,int m,int n,void *colors,write_c func,che
   xset_pattern(Xgc,Xgc->NumForeground+1);
   xset_foreground(Xgc,Xgc->NumForeground+1);
   xset_background(Xgc,Xgc->NumForeground+2);
+  return OK;
 }
 
 
-static void xset_colormap(BCG *Xgc,int m,int n, double *colors)
+static int xset_colormap(BCG *Xgc,void *colors)
 {
-  xset_colormap_gen(Xgc,m,n,colors,WriteColorRGB,check_colors);
+  NspMatrix *C = colors;
+  return xset_colormap_gen(Xgc,C->m,C->n,C->R,WriteColorRGB,check_colors);
 }
 
-static void xset_default_colormap(BCG *Xgc)
+static int xset_default_colormap(BCG *Xgc)
 {
   int   m = DEFAULTNUMCOLORS;
-  xset_colormap_gen(Xgc,m,3,default_colors,WriteColorRGBDef,check_colors_def);
+  return xset_colormap_gen(Xgc,m,3,default_colors,WriteColorRGBDef,check_colors_def);
 }
 
 
@@ -718,6 +721,30 @@ static void WriteColorRGB(BCG *Xgc,char *str, void *colors,int ind)
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   *num=0 ; /* XXX */
+}
+
+/**
+ * xpush_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * Returns: 
+ **/
+
+static int xpush_colormap(BCG *Xgc,void *colors)
+{
+  return OK;
+}
+
+/**
+ * xpop_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * Returns: 
+ **/
+
+static int xpop_colormap(BCG *Xgc)
+{
+  return OK;
 }
 
 /** 

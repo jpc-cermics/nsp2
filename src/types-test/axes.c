@@ -1380,7 +1380,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
   Cell *cloc;
   NspList *L;
   NspAxes *P = (NspAxes *) Obj;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
   if ( rect != NULL) 
     {
@@ -1813,7 +1813,7 @@ static void nsp_translate_axes(NspGraphic *Obj,const double *tr)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
-  if (((NspGraphic *) Obj)->obj->hidden == FALSE)
+  if (((NspGraphic *) Obj)->obj->show == TRUE)
     nsp_graphic_invalidate((NspGraphic *) Obj);
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
@@ -2202,7 +2202,7 @@ void nsp_axes_invalidate(NspGraphic *G)
       if ( F == NULL ) return ;
       if ((Xgc= F->Xgc) == NULL) return ;
       if ( F->draw_now== FALSE) return;
-      if ( G->obj->hidden == TRUE ) return;
+      if ( G->obj->show == FALSE ) return;
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       rect[0]= P->obj->wrect->R[0]*wdim[0];
       rect[1]= P->obj->wrect->R[1]*wdim[1];

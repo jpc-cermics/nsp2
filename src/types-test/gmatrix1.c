@@ -1061,7 +1061,8 @@ static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data)
   int *xm,*ym,  j;
   int  *colminmax = NULL, *colout=NULL;
   double zminmax[2];
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return ;
+
   if ( P->obj->colminmax->mn == 2 ) 
     {
       /* colminmax is supposed to be converted to int */
@@ -1154,7 +1155,8 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
   int Nnode= nx*ny;
   int *colminmax = NULL, *colout = NULL;
 
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return ;
+
 
   if ( P->obj->colminmax->mn == 2 ) 
     {
@@ -1572,4 +1574,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1576 "gmatrix1.c"
+#line 1578 "gmatrix1.c"

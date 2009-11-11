@@ -95,8 +95,10 @@ typedef void driver_xset_pixmapOn(BCG *gc,int num);
 typedef int driver_xget_pixmapOn(BCG *gc);
 typedef void driver_xset_wresize(BCG *gc,int num);
 typedef int driver_xget_wresize(BCG *gc);
-typedef void driver_xset_colormap(BCG *gc,int m,int n , double *a);
-typedef void driver_xset_default_colormap(BCG *gc);
+typedef int driver_xset_colormap(BCG *gc,void *a);
+typedef int driver_xpush_colormap(BCG *gc,void *a);
+typedef int driver_xpop_colormap(BCG *gc);
+typedef int driver_xset_default_colormap(BCG *gc);
 typedef void driver_xget_colormap(BCG *gc, int *num,  double *val,int color_id);
 typedef void driver_xset_background(BCG *gc,int num);
 typedef int driver_xget_background(BCG *gc);
@@ -156,7 +158,7 @@ typedef struct _nsp_gengine_generic {
 extern nsp_gengine_generic nsp_peri_generic; 
 
 struct nsp_gengine {
-  nsp_gengine_generic *generic; /* A set of genric functions hidden here */
+  nsp_gengine_generic *generic; /* A set of generic functions hidden here */
   char *name;
   int id;
   Gengine1 *scale;  /* */
@@ -267,6 +269,9 @@ struct nsp_gengine {
   driver_process_updates *process_updates;
   driver_draw_pixbuf *draw_pixbuf;
   driver_draw_pixbuf_from_file *draw_pixbuf_from_file;
+
+  driver_xpush_colormap *xpush_colormap;
+  driver_xpop_colormap *xpop_colormap;
 };
 
 
@@ -317,6 +322,8 @@ static driver_xget_autoclear  xget_autoclear;
 static driver_xget_background  xget_background;
 static driver_xget_clip xget_clip;
 static driver_xget_colormap xget_colormap;
+static driver_xpush_colormap xpush_colormap;
+static driver_xpop_colormap xpop_colormap;
 static driver_xget_curwin xget_curwin;
 static driver_xget_dash xget_dash;
 static driver_xget_font  xget_font;

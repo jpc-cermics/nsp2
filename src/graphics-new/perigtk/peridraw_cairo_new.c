@@ -32,12 +32,11 @@
 static void cleararea(BCG *Xgc,GdkRectangle *r)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  cairo_set_source_rgb(cr,
-		       Xgc->private->gcol_bg.red/65535.0,
-		       Xgc->private->gcol_bg.green/65535.0,
-		       Xgc->private->gcol_bg.blue/65535.0);
+  int old= xset_pattern(Xgc,Xgc->NumBackground+1);
   cairo_rectangle (cr,r->x,r->y,r->width,r->height);
   cairo_fill (cr);
+  xset_pattern(Xgc,old);
+
 }
 
 /*
@@ -771,44 +770,7 @@ static struct alinfo {
  **/
 static void xset_alufunction1(BCG *Xgc,int num) 
 {   
-  cairo_t *cr =  Xgc->private->cairo_cr; 
-  int value ;  
-  /* GdkColor temp = {0,0,0,0}; */
   Xgc->CurDrawFunction = Min(15,Max(0,num));
-  value = AluStruc_[Xgc->CurDrawFunction].id;
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      /* 
-	 gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_bg);
-	 gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-	 gdk_gc_set_function(Xgc->private->wgc,GDK_COPY);
-      */
-      break;
-    case GDK_XOR   : 
-      cairo_set_operator (cr, CAIRO_OPERATOR_XOR);
-      /* temp.pixel = Xgc->private->gcol_fg.pixel ^ Xgc->private->gcol_bg.pixel ;
-	 gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-	 gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-	 gdk_gc_set_function(Xgc->private->wgc,GDK_XOR);
-      */
-      break;
-    default :
-      cairo_set_operator (cr, CAIRO_OPERATOR_OVER);
-      /* 
-	 gdk_gc_set_foreground(Xgc->private->wgc, &Xgc->private->gcol_fg);
-	 gdk_gc_set_background(Xgc->private->wgc, &Xgc->private->gcol_bg);
-	 gdk_gc_set_function(Xgc->private->wgc,value);
-      */
-      break;
-    }
-  if ( value == GDK_XOR  && Xgc->CurColorStatus == 1 )
-    {
-      /* the way colors are computed changes if we are in Xor mode 
-       * so we force here the computation of current color  
-       */
-      nsp_gtk_set_color(Xgc,Xgc->CurColor);
-    }
 }
 
 /**
@@ -1000,16 +962,15 @@ static void xset_pixmapOn(BCG *Xgc,int num)
  * 
  **/
 
-static void nsp_gtk_set_color(BCG *Xgc,int col)
+static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors)
 {
   cairo_t *cr =  Xgc->private->cairo_cr; 
-  col = Max(0,Min(col,Xgc->Numcolors + 2));
-  if ( Xgc->CurColor == col ) return; 
-  Xgc->CurColor = col;
-  if (Xgc->private->colors  == NULL) return;
-  cairo_set_source_rgb(cr,Xgc->private->colors[col].red/((double) 0xffff),
-		       Xgc->private->colors[col].green/((double) 0xffff),
-		       Xgc->private->colors[col].blue/((double) 0xffff));
+  int m = colors->m;
+  if ( colors== NULL) return ;
+  Xgc->CurColor = Max(0,Min(Xgc->CurColor,Xgc->Numcolors + 2));
+  cairo_set_source_rgb(cr, colors->R[Xgc->CurColor],
+		       colors->R[Xgc->CurColor+m],
+		       colors->R[Xgc->CurColor+2*m]);
 }
 
 

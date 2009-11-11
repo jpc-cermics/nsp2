@@ -747,7 +747,7 @@ static void nsp_draw_segments(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void 
   NspSegments *P = (NspSegments *) Obj;
   NspMatrix *nx = P->obj->x;
   NspMatrix *ny = P->obj->y;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( Obj->obj->show == FALSE ) return;
 
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {

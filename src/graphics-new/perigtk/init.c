@@ -88,6 +88,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
     }
   /* default values  */
   private->colors=NULL;
+  private->q_colors=NULL;
   private->colormap=NULL;
   private->window=NULL;		
   private->drawing=NULL;           

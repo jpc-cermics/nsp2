@@ -771,7 +771,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
   double val[4];
   int ccolor=-1,cthick=-1;
   NspGrRect *P = (NspGrRect *) Obj;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
 
   if ( ! nsp_graphic_intersect_rectangle(Obj,rect))

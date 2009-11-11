@@ -89,8 +89,6 @@ struct _nsp_link {
   NspMatrix* poly;
   grl_lock lock1;
   grl_lock lock2;
-  gboolean hilited;
-  gboolean show;
   int ref_count;
 };
 
@@ -120,7 +118,7 @@ NspLink *new_link();
 
 #define NULLLINK (NspLink*) 0
 
-extern NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,NspTypeBase *type);
 extern NspLink *nsp_link_create_default(char *name);
 
 /* from NspLinkObj.c */
@@ -149,7 +147,7 @@ extern int nsp_link_xdr_save(XDR  *xdrs, NspLink *M);
 
 /* inserted at the end of public part of include file */
 
-#line 153 "./link.h"
+#line 151 "./link.h"
 #endif /* NSP_INC_NspLink */ 
 
 #ifdef NspLink_Private 
@@ -215,6 +213,6 @@ static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
 static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
-#line 219 "./link.h"
+#line 217 "./link.h"
 #endif /* NspLink_Private */
 

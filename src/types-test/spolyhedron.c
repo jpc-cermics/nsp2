@@ -1082,7 +1082,8 @@ void SPolyhedron_Interf_Info(int i, char **fname, function (**f))
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
   int face; 
-  if ( Obj->obj->hidden == TRUE ) return ;
+  if ( Obj->obj->show == FALSE ) return ;
+
   nsp_check_spolyhedron(Xgc,(NspSPolyhedron *) Obj);
   /*
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
@@ -1791,4 +1792,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1795 "spolyhedron.c"
+#line 1796 "spolyhedron.c"

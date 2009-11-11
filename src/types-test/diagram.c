@@ -1014,11 +1014,11 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
 	  /* B->obj->frame = D->obj; */
 	  /* hilite inserted */
 	  bf = GR_INT(C->O->basetype->interface);
-	  bf->set_hilited(C->O,TRUE);
 	  /* add the object */
 	  if ( nsp_list_end_insert(D->obj->children,C->O) == FAIL )
 	    return RET_BUG; 
 	  /* be sure that the object Figure is OK */
+	  bf->set_hilited(C->O,TRUE); 
 	  G->type->link_figure(G,
 			       ((NspGraphic *) D)->obj->Fig,
 			       ((NspGraphic *) D)->obj->Axe);
@@ -1328,8 +1328,8 @@ static void nsp_draw_diagram(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *
   NspDiagram *P = (NspDiagram *) Obj;
   NspList *L = P->obj->children;
   Cell *cloc = L->first;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-
+  
+  if ( Obj->obj->show == FALSE ) return ;
   /*
    * we do not check here the bound of the diagram since 
    * they are not relevant here (see getbounds). 
@@ -2549,10 +2549,10 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2])
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,FALSE,TRUE,NULL,NULL);
+  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,NULL,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
-  B->obj->hilited = TRUE;
   G = (NspGraphic *) B;
+  G->obj->hilited = TRUE;
   G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
@@ -2631,12 +2631,11 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   gr_lock l;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B=nsp_connector_create("fe",NULL,rect,color,thickness,background,l,
-			 FALSE,TRUE,NULL);
+  B=nsp_connector_create("fe",NULL,rect,color,thickness,background,l,NULL);
   if ( B == NULL) return NULLOBJ;
-  B->obj->hilited = TRUE;
-  if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   G = (NspGraphic *) B;
+  G->obj->hilited = TRUE;
+  if (nsp_list_end_insert(F->obj->children,(NspObject  *) B) == FAIL) return NULLOBJ;
   G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
@@ -2709,13 +2708,14 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   L= link_create_n("fe",1,color,thickness);
   bf = GR_INT(((NspObject *) L)->basetype->interface);
   if ( L == NULLLINK) return NULLOBJ;
-  L->obj->hilited = TRUE;
+  G = (NspGraphic *) L;
+  G->obj->hilited = TRUE;
   L->obj->poly->R[0]=mpt[0];
   L->obj->poly->R[1]=mpt[0];
   /* insert link in diagram at the start 
    */
   if (nsp_list_insert(F->obj->children,(NspObject  *) L,0) == FAIL) return NULLOBJ;
-  G = (NspGraphic *) L;
+  
   G->type->link_figure(G,((NspGraphic *) F)->obj->Fig,((NspGraphic *) F)->obj->Axe);
   nsp_graphic_invalidate(G);
 

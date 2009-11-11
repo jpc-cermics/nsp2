@@ -884,7 +884,7 @@ void Contour3d_Interf_Info(int i, char **fname, function (**f))
 
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
-  if ( Obj->obj->hidden == TRUE ) return ;
+  if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
    */

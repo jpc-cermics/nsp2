@@ -68,8 +68,6 @@ struct _nsp_connector {
   int thickness;
   int background;
   gr_lock lock;
-  gboolean hilited;
-  gboolean show;
   int ref_count;
 };
 
@@ -99,7 +97,7 @@ NspConnector *new_connector();
 
 #define NULLCONNECTOR (NspConnector*) 0
 
-extern NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,gboolean hilited,gboolean show,NspTypeBase *type);
+extern NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type);
 extern NspConnector *nsp_connector_create_default(char *name);
 
 /* from NspConnectorObj.c */
@@ -128,7 +126,7 @@ extern int nsp_connector_xdr_save(XDR  *xdrs, NspConnector *M);
 
 /* inserted at the end of public part of include file */
 
-#line 132 "./connector.h"
+#line 130 "./connector.h"
 #endif /* NSP_INC_NspConnector */ 
 
 #ifdef NspConnector_Private 
@@ -194,6 +192,6 @@ static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M);
 
-#line 198 "./connector.h"
+#line 196 "./connector.h"
 #endif /* NspConnector_Private */
 

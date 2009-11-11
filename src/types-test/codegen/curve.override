@@ -137,7 +137,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   int c_width =  Xgc->graphic_engine->xget_thickness(Xgc);
   int c_color = Xgc->graphic_engine->xget_pattern(Xgc);
 
-  if (Obj->obj->hidden == TRUE ) return;
+  if (Obj->obj->show == FALSE ) return;
        
   /* check if the block is inside drawing rectangle
    */

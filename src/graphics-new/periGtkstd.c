@@ -35,6 +35,9 @@
 #include "nsp/version.h"
 #include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
+#include "nsp/object.h"
+
+static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors);
 
 #ifdef PERIGTK
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
@@ -128,7 +131,6 @@ static void xset_show(BCG *Xgc)
     {
 #ifdef PERIGLGTK 
       /* we copy the extra_pixmap to the window and to the backing store pixmap */
-      /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg); */
       /* drawing to the window and to the backing store pixmap */
       if ( Xgc->private->gldrawable != NULL 
 	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
@@ -220,7 +222,7 @@ static void clearwindow(BCG *Xgc)
   cairo_fill (cr);
 #endif 
 #ifdef PERIGTK  
-  gdk_gc_set_foreground(Xgc->private->stdgc, &Xgc->private->gcol_bg);
+  gdk_gc_set_rgb_fg_color(Xgc->private->stdgc,&Xgc->private->gcol_bg);
   gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->stdgc, TRUE, 0, 0,
 		     Xgc->CWindowWidth, Xgc->CWindowHeight);
 #endif 
@@ -706,23 +708,10 @@ static int xget_thickness(BCG *Xgc)
 static int  xset_pattern(BCG *Xgc,int num)
 { 
   int old = xget_pattern(Xgc);
-  if (Xgc->CurColorStatus == 1) 
-    {
-      nsp_gtk_set_color(Xgc,num-1);
-    }
-  else 
-    {
-      /* 
-	 int i ; 
-	 i= Max(0,Min(*num - 1,GREYNUMBER - 1));
-	 Xgc->CurPattern = i;
-	 XSetTile (dpy, gc, Tabpix_[i]); 
-	 if (i ==0)
-	 XSetFillStyle(dpy,gc,FillSolid);
-	 else 
-	 XSetFillStyle(dpy,gc,FillTiled);
-      */
-    }
+  if ( old == num ) return old;
+  /* XXXX if ( Xgc->CurColorStatus == 1 )  */
+  Xgc->CurColor = Max(0,Min(num-1,Xgc->Numcolors + 2));
+  nsp_gtk_set_color_new(Xgc,Xgc->private->colors);
   return old;
 }
 
@@ -971,12 +960,12 @@ static int xget_wresize(BCG *Xgc)
   return Xgc->CurResizeStatus;
 }
 
-/* XXXX setting the default colormap with colors defined in color.h */
 
 /**
  * sedeco:
  * @flag: 
  * 
+ * setting the default colormap with colors defined in color.h
  * 
  * 
  * Returns: 
@@ -988,183 +977,156 @@ static void sedeco(int flag)
   set_default_colormap_flag = flag;
 }
 
-/* set_default_colormap is called when raising a window for the first 
- * time by xset('window',...) or by getting back to default by 
- * xset('default',...) 
- */
-
-static int XgcAllocColors( BCG *xgc, int m);
-
-static void set_colormap_constants(BCG *Xgc,int m);
 
 /**
  * xset_default_colormap:
  * @Xgc: a #BCG  
  * 
+ * set_default_colormap is called when raising a window for the first 
+ * time by xset('window',...) or by getting back to default by 
+ * xset('default',...) 
  * 
  **/
 
-static void xset_default_colormap(BCG *Xgc)
+static int xset_default_colormap(BCG *Xgc)
 {
-  int i,m ;
-  GdkColor *colors_old;
+  int i,m= DEFAULTNUMCOLORS;
+  NspMatrix *colors;
   /*  we don't want to set the default colormap at window creation 
-   *  if the scilab command was xset("colormap"); 
+   *  if the command was xset("colormap"); 
    */
-  if ( Xgc->CmapFlag == 1 ) return ; /* default colormap already */
-  if (set_default_colormap_flag == 0) return;
-  if (DEFAULTNUMCOLORS > maxcol) {
-    Sciprintf("Not enough colors for default colormap. Maximum is %d\n", maxcol);
-    return;
-  }
-  m = DEFAULTNUMCOLORS;
-  /* Save old color vectors */
-  colors_old = Xgc->private->colors;
-  if (!XgcAllocColors(Xgc,m)) {
-    Xgc->private->colors =     colors_old ;
-    return;
-  }
+  if ( Xgc->CmapFlag == 1 ) return OK ; /* default colormap already */
+  if (set_default_colormap_flag == 0) return OK;
+  
+  /* Allocate a new matrix for storing the default colors 
+   * don't forget to add three colors at the end black, white, gray 
+   */
 
-  /* get pixel values for the colors we let gtk do the job 
-   * an other way to fix a pixel value but which could only work for X 
-   * if rgb are coded as guchar
-   * gdk_rgb_xpixel_from_rgb((r << 16)|(g << 8)|(b))
-   */
+  if ((colors = nsp_matrix_create("colors",'r',m+3,3))== NULL) 
+    {
+      return FAIL;
+    }
+  else
+    {
+      if ( Xgc->private->colors != NULL) 
+	nsp_matrix_destroy(Xgc->private->colors);
+      Xgc->private->colors = colors; 
+    }
+  /* just in case: initialize the colormap */
   if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL) 
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
+
   for (i = 0; i < m; i++) {
-    Xgc->private->colors[i].red = (default_colors[3*i] << 8);
-    Xgc->private->colors[i].green = (default_colors[3*i+1] << 8);
-    Xgc->private->colors[i].blue = (default_colors[3*i+2] << 8);
-    if ( Xgc->private->colormap != NULL) 
-      gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
+    colors->R[i] = (default_colors[3*i]/(double) 255);
+    colors->R[i+ colors->m] = (default_colors[3*i+1]/(double) 255);
+    colors->R[i+2*colors->m] = (default_colors[3*i+2]/(double) 255);
   }
-  set_colormap_constants(Xgc,m);
-  FREE(colors_old);
+  nsp_set_colormap_constants(Xgc,m);
+  return OK;
 }
 
-/* Setting the colormap 
- *   a must be a m x 3 double RGB matrix: 
- *   a[i] = RED
- *   a[i+m] = GREEN
- *   a[i+2*m] = BLUE
- * v2 gives the value of m and *v3 must be equal to 3 
- */
 
 /**
  * xset_colormap:
  * @Xgc: a #BCG  
- * @m: 
- * @n: 
- * @a: 
+ * @a: should be a #NspMatrix
  * 
- * 
+ * a must be a m x 3 double RGB matrix: 
+ * a[i] = RED
+ * a[i+m] = GREEN
+ * a[i+2*m] = BLUE
+ *
+ * Returns: %OK or %FAIL
  **/
 
-static void xset_colormap(BCG *Xgc,int m,int n,double *a)
+static int xset_colormap(BCG *Xgc,void *a)
 {
+  NspMatrix *colors, *A = (NspMatrix *) a;
   int i ;
-  GdkColor *colors_old;
   /* 3 colors reserved for black and white and gray */
-  if ( n != 3 || m  < 0 || m > maxcol - 3) {
-    Scierror("Colormap must be a m x 3 array with m <= %ld\n", maxcol-3);
-    return;
-  }
+  if ( A->n != 3 || A->m  < 0 )
+    {
+      Scierror("Error: a colormap must be a m x 3 array of doubles\n");
+      return FAIL;
+    }
+  /* Checking RGB values */
+  for (i = 0; i < A->m; i++) 
+    {
+      if (A->R[i] < 0 || A->R[i] > 1 || A->R[i+A->m] < 0 || A->R[i+A->m] > 1 ||
+	  A->R[i+2*A->m] < 0 || A->R[i+2*A->m]> 1) 
+	{
+	  Scierror("Error: RGB values must be between 0 and 1\n");
+	  return FAIL;
+	}
+    }
 
-  colors_old = Xgc->private->colors;
-  if (!XgcAllocColors(Xgc,m)) {
-    Xgc->private->colors =     colors_old ;
-    return;
-  }
-  if ( Xgc->private->colormap == NULL&& Xgc->private->drawing != NULL ) 
+  /* Allocate a new matrix for storing the default colors 
+   * don't forget to add three colors at the end black, white, gray 
+   */
+
+  if ((colors = nsp_matrix_create("colors",'r',A->m+3,3))== NULL) 
+    {
+      return FAIL;
+    }
+  else
+    {
+      if ( Xgc->private->colors != NULL) 
+	nsp_matrix_destroy(Xgc->private->colors);
+      Xgc->private->colors = colors; 
+    }
+  /* just in case: initialize the colormap */
+  if ( Xgc->private->colormap == NULL && Xgc->private->drawing != NULL) 
     Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
   
-  /* Checking RGB values */
-  for (i = 0; i < m; i++) 
-    {
-      if (a[i] < 0 || a[i] > 1 || a[i+m] < 0 || a[i+m] > 1 ||
-	  a[i+2*m] < 0 || a[i+2*m]> 1) 
-	{
-	  Sciprintf("RGB values must be between 0 and 1\n");
-	  FREE(Xgc->private->colors);
-	  Xgc->private->colors = colors_old ;
-	  return;
-	}
-      Xgc->private->colors[i].red = (guint16)  (a[i]*65535);
-      Xgc->private->colors[i].green = (guint16)(a[i+m]*65535);
-      Xgc->private->colors[i].blue = (guint16) (a[i+2*m]*65535);
-      if ( Xgc->private->colormap != NULL )
-	gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[i]);      
-    }
-  set_colormap_constants(Xgc,m);
-  FREE(colors_old);
+  for (i = 0; i < A->m; i++) {
+    colors->R[i] = A->R[i];
+    colors->R[i+ colors->m] =A->R[i+A->m];
+    colors->R[i+2*colors->m] =A->R[i+2*A->m];
+  }
+  nsp_set_colormap_constants(Xgc,A->m);
+  return OK;
 }
 
-/**
- * XgcAllocColors:
- * @xgc: 
- * @m: 
- * 
- * 
- * 
- * Returns: 
- **/
 
-static int XgcAllocColors( BCG *xgc, int m)
-{
-  /* don't forget black, white, gray */
-  int mm = m + 3;
-  if ( ! ( xgc->private->colors = MALLOC(mm*sizeof(GdkColor))))
-    {
-      Sciprintf("memory exhausted: unable to alloc an array of GdkColors\n");
-      FREE(xgc->private->colors);
-      return 0;
-    }
-  return 1;
-}
 
 /**
- * set_colormap_constants:
+ * nsp_set_colormap_constants:
  * @Xgc: a #BCG  
  * @m: 
  * 
  * 
  **/
-static void set_colormap_constants(BCG *Xgc,int m)
-{
-  /* Black */
-  if ( Xgc->private->colormap == NULL &&  Xgc->private->drawing != NULL ) 
-    Xgc->private->colormap = gtk_widget_get_colormap( Xgc->private->drawing);
-  Xgc->private->colors[m].red = 0; 
-  Xgc->private->colors[m].green = 0;
-  Xgc->private->colors[m].blue = 0;
-  if (  Xgc->private->colormap != NULL ) 
-    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m]);      
-  /* White */
-  Xgc->private->colors[m+1].red = 65535; 
-  Xgc->private->colors[m+1].green = 65535; 
-  Xgc->private->colors[m+1].blue = 65535; 
-  if (  Xgc->private->colormap != NULL ) 
-    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+1]);      
-  /* Gray */
-  Xgc->private->colors[m+2].red = 60000; 
-  Xgc->private->colors[m+2].green = 60000; 
-  Xgc->private->colors[m+2].blue = 60000; 
-  if (  Xgc->private->colormap != NULL ) 
-    gdk_rgb_find_color (Xgc->private->colormap,&Xgc->private->colors[m+2]);      
 
+#ifdef  PERIGTK
+void nsp_set_colormap_constants(BCG *Xgc,int m)
+{
+  NspMatrix *colors = Xgc->private->colors;
+  /* Black */
+  colors->R[m] = 0; 
+  colors->R[m+colors->m] = 0;
+  colors->R[m+2*colors->m] = 0;
+  /* White */
+  colors->R[m+1] = 1.0;
+  colors->R[m+1+colors->m] = 1.0;
+  colors->R[m+1+2*colors->m] = 1.0;
+  /* Gray */
+  colors->R[m+2] = 0.9; 
+  colors->R[m+2+colors->m] = 0.9;
+  colors->R[m+2+2*colors->m] = 0.9;
   /* constants */
+  
   Xgc->Numcolors = m;
   Xgc->IDLastPattern = m - 1;
   Xgc->CmapFlag = 0;
   Xgc->NumForeground = m;
   Xgc->NumBackground = m + 1;
-  xset_usecolor(Xgc,1);
-  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-  xset_pattern(Xgc,Xgc->NumForeground+1);
-  xset_foreground(Xgc,Xgc->NumForeground+1);
-  xset_background(Xgc,Xgc->NumForeground+2);
+  Xgc->graphic_engine->xset_usecolor(Xgc,1);
+  Xgc->graphic_engine->xset_alufunction1(Xgc,Xgc->CurDrawFunction);
+  Xgc->graphic_engine->xset_pattern(Xgc,Xgc->NumForeground+1);
+  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground+1);
+  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumForeground+2);
 }
+#endif 
 
 /**
  * xget_colormap:
@@ -1177,10 +1139,10 @@ static void set_colormap_constants(BCG *Xgc,int m)
  * 
  * Returns: 
  **/
-/* getting the colormap */
 
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
+  NspMatrix *colors;
   int m = Xgc->Numcolors;
   int i;
   *num = m;
@@ -1192,24 +1154,60 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 	  if ( color_id >= 1 && color_id <= m )
 	    {
 	      int i=color_id-1;
-	      val[0] = (double)Xgc->private->colors[i].red/65535.0;
-	      val[1] = (double)Xgc->private->colors[i].green/65535.0;
-	      val[2] = (double)Xgc->private->colors[i].blue/65535.0;
+	      val[0] = colors->R[i];
+	      val[1] = colors->R[i+colors->m];
+	      val[2] = colors->R[i+2*colors->m];
 	    }
 	  else 
 	    {
-	      val[0]= val[1] =val[2]=0;
+	      val[0]= val[1] =val[2]=0.0;
 	    }
 	}
       else 
 	{
-	  for (i = 0; i < m; i++) {
-	    val[i] = (double)Xgc->private->colors[i].red/65535.0;
-	    val[i+m] = (double)Xgc->private->colors[i].green/65535.0;
-	    val[i+2*m] = (double)Xgc->private->colors[i].blue/65535.0;
-	  }
-      }
+	  for (i = 0; i < m; i++) 
+	    {
+	      val[i] = colors->R[i];
+	      val[i+m] =  colors->R[i+colors->m];
+	      val[i+2*m] = colors->R[i+2*colors->m];
+	    }
+	}
     }
+}
+
+/**
+ * xpush_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * Returns: 
+ **/
+
+static int xpush_colormap(BCG *Xgc,void *colors)
+{
+  if ( ((NspMatrix *)colors)->mn == 0) return FAIL;
+  if ( Xgc->private->q_colors == NULL) 
+    Xgc->private->q_colors = g_queue_new();
+  if ( Xgc->private->q_colors == NULL) return FAIL;
+  g_queue_push_head( Xgc->private->q_colors,Xgc->private->colors);
+  Xgc->private->colors = colors ;
+  nsp_set_colormap_constants(Xgc,((NspMatrix *) colors)->m-3);
+  return OK;
+}
+
+/**
+ * xpop_colormap:
+ * @Xgc: a #BCG  
+ * 
+ * Returns: 
+ **/
+
+static int xpop_colormap(BCG *Xgc)
+{
+  NspMatrix *C = g_queue_pop_head(Xgc->private->q_colors);
+  if ( C == NULL ) return FAIL;
+  Xgc->private->colors = C; 
+  nsp_set_colormap_constants(Xgc, C->m-3);
+  return OK;
 }
 
 
@@ -1227,11 +1225,14 @@ static void xset_background(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
     {
+      NspMatrix *colors = Xgc->private->colors;
       int bg = Xgc->NumBackground =  Max(0,Min(num - 1,Xgc->Numcolors + 1));
       if (Xgc->private->colors != NULL )
 	{
 	  /* we fix the default background in Xgc->private->gcol_bg */
-	  Xgc->private->gcol_bg = Xgc->private->colors[bg];
+	  Xgc->private->gcol_bg.red   = (guint16)  (colors->R[bg]*65535);
+	  Xgc->private->gcol_bg.green = (guint16)  (colors->R[bg+colors->m]*65535);
+	  Xgc->private->gcol_bg.blue  = (guint16)  (colors->R[bg+2*colors->m]*65535);
 	}
 #ifndef PERIGL 
       /* 
@@ -1241,7 +1242,9 @@ static void xset_background(BCG *Xgc,int num)
        */
       xset_alufunction1(Xgc,Xgc->CurDrawFunction);
       if (Xgc->private->drawing!= NULL) 
-	gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg);
+	{
+	  /* gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg); */
+	}
 #endif 
     }
 }
@@ -1275,10 +1278,14 @@ static void xset_foreground(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
     {
+      NspMatrix *colors = Xgc->private->colors;
       int fg = Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
       if (Xgc->private->colors != NULL )
 	{
-	  Xgc->private->gcol_fg =  Xgc->private->colors[fg];
+	  /* we fix the default background in Xgc->private->gcol_fg */
+	  Xgc->private->gcol_fg.red   = (guint16)  (colors->R[fg]*65535);
+	  Xgc->private->gcol_fg.green = (guint16)  (colors->R[fg+colors->m]*65535);
+	  Xgc->private->gcol_fg.blue  = (guint16)  (colors->R[fg+2*colors->m]*65535);
 	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
 	}
     }
@@ -1523,11 +1530,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
       dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
-      /* 
-       *  gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
-       *  gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
-       * 	 dd->CWindowWidth, dd->CWindowHeight);
-       */
     }
 
   /* default value is to use the background pixmap */
@@ -1594,11 +1596,6 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   dd->private->drawable= (GdkDrawable *) dd->private->pixmap;
   nsp_set_gldrawable(dd,dd->private->pixmap);
   pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
-  /*
-  gdk_gc_set_foreground(dd->private->stdgc, &dd->private->gcol_bg);
-  gdk_draw_rectangle(dd->private->pixmap, dd->private->stdgc, TRUE, 0, 0,
-		     dd->CWindowWidth, dd->CWindowHeight);
-  */
   if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext))
     return FALSE;
   realize_event_ogl(dd);
@@ -1730,7 +1727,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
       /* fill private background with background */
-      gdk_gc_set_background(dd->private->stdgc, &dd->private->gcol_bg);
+      gdk_gc_set_rgb_fg_color(dd->private->stdgc,&dd->private->gcol_bg);
       gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,dd->CWindowWidth, dd->CWindowHeight);
       /* On lance l'action standard de resize + redessin  */
       dd->private->in_expose= TRUE;
@@ -1956,11 +1953,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
       /* fill private background with background */
       pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
-      /* 
-      gdk_gc_set_background(dd->private->stdgc, &dd->private->gcol_bg);
-      gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,
-			 dd->CWindowWidth, dd->CWindowHeight);
-      */
       /* we resize and draw  
        * Note that the gldrawable will be changed in nsp_gr_resize if we are 
        * using the extra_pixmap.

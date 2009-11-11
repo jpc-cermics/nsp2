@@ -172,8 +172,8 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void 
   NspCompound *P = (NspCompound *) Obj;
   NspList *L = P->obj->children;
   Cell *cloc = L->first;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
-
+  
+  if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
    */

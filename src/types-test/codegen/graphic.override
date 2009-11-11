@@ -71,8 +71,9 @@ typedef void invalidate_func(NspGraphic *G);
 override-type Graphic
 
   /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   * this method of class Graphic are to be defined by subclasses.
+   * here we define the default values for graphic methods 
+   * these methods of class Graphic are to be re-defined by subclasses 
+   * if necessary.
    */
   type->draw = NULL;
   type->translate = NULL;
@@ -356,7 +357,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
   if ( F == NULL ) return ;
   if ((Xgc= F->Xgc) == NULL) return ;
   if ( F->draw_now== FALSE) return;
-  if ( G->obj->hidden == TRUE ) return;
+  if ( G->obj->show == FALSE ) return;
   if ( G->type->bounds(G,bounds)== TRUE) 
     {
       gint rect[4]; /* like a GdkRectangle */

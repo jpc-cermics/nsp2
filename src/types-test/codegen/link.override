@@ -189,8 +189,6 @@ int nsp_link_xdr_save(XDR *xdrs, NspLink *M)
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->background) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->poly)) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->hilited) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->show) == FAIL) return FAIL;
   if ( nsp_save_grl_lock(xdrs,&M->obj->lock1,M) == FAIL ) return FAIL;
   if ( nsp_save_grl_lock(xdrs,&M->obj->lock2,M) == FAIL ) return FAIL;
   if (nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
@@ -212,8 +210,6 @@ NspLink  *nsp_link_xdr_load_partial(XDR *xdrs, NspLink *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->background) == FAIL) return NULL;
   if ((M->obj->poly =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->hilited) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->show) == FAIL) return NULL;
   if ( nsp_load_grl_lock(xdrs,&M->obj->lock1,M) == FAIL ) return NULL;
   if ( nsp_load_grl_lock(xdrs,&M->obj->lock2,M) == FAIL ) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -268,8 +264,6 @@ int nsp_link_create_partial(NspLink *H)
   H->obj->poly = NULLMAT;
   nsp_init_grl_lock(&H->obj->lock1);
   nsp_init_grl_lock(&H->obj->lock2);
-  H->obj->hilited = FALSE;
-  H->obj->show = TRUE;
   return OK;
 }
 
@@ -286,7 +280,7 @@ int nsp_link_check_values(NspLink *H)
   return OK;
 }
 
-NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,gboolean hilited,gboolean show,NspTypeBase *type)
+NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,NspTypeBase *type)
 {
  NspLink *H  = nsp_link_create_void(name,type);
  if ( H ==  NULLLINK) return NULLLINK;
@@ -304,8 +298,6 @@ NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int
   H->obj->lock2 = lock2;
   H->obj->lock1.port.object_id = NULL;
   H->obj->lock2.port.object_id = NULL;
-  H->obj->hilited=hilited;
-  H->obj->show=show;
   if ( nsp_link_check_values(H) == FAIL) return NULLLINK;
   return H;
 }
@@ -343,7 +335,7 @@ int int_link_create(Stack stack, int rhs, int opt, int lhs)
   if ((M1=GetRealMat(stack,1)) == NULLMAT ) return FAIL;
   CheckCols(NspFname(stack),1,M1,2);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_link_create(NVOID,NULL,color,thickness,0,M1,l,l,FALSE,TRUE,NULL)) 
+  if(( H = nsp_link_create(NVOID,NULL,color,thickness,0,M1,l,l,NULL)) 
     == NULLLINK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -475,7 +467,7 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
   double loc[4];
   int cpat, biconnected;
   /* only draw block which are in a frame */
-  if ( L->obj->show == FALSE ) return ;
+  if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
    */
@@ -493,7 +485,7 @@ static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 					   L->obj->poly->m,0);
   /* add hilited control points */ 
   Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-  if ( L->obj->hilited == TRUE ) 
+  if ( Obj->obj->hilited == TRUE ) 
     {
       int i,m= L->obj->poly->m;
       double *x= L->obj->poly->R, *y = x + m; 
@@ -608,7 +600,7 @@ NspLink *link_create_n(char *name,int n,int color,int thickness)
   NspLink *L;
   if ((P =nsp_mat_zeros(n,2))== NULLMAT) return NULLLINK;
   if (nsp_object_set_name(NSP_OBJECT(P),"lpt") == FAIL) return NULLLINK;  
-  if(( L = nsp_link_create(name,NULL,color,thickness,0,P,l,l,FALSE,TRUE,NULL)) 
+  if(( L = nsp_link_create(name,NULL,color,thickness,0,P,l,l,NULL)) 
      == NULLLINK) return NULLLINK;
   return L;
 }
@@ -621,16 +613,17 @@ NspLink *link_create_n(char *name,int n,int color,int thickness)
  * change or get attributes 
  **************************************************/
 
-int link_get_hilited(NspLink *B) {return B->obj->hilited; } 
+int link_get_hilited(NspLink *B) {return ((NspGraphic *)B)->obj->hilited; } 
 void link_set_hilited(NspLink *B,int val) 
 {
-  if ( B->obj->hilited == val) return;
-  B->obj->hilited = val; 
-  nsp_graphic_invalidate((NspGraphic *) B);
+  NspGraphic *G  = (NspGraphic *)B;
+  if ( G->obj->hilited == val) return;
+  G->obj->hilited = val; 
+  nsp_graphic_invalidate(G);
 }
 
-int link_get_show(NspLink *B) {  return B->obj->show; } 
-void link_set_show(NspLink *B,int val) {  B->obj->show = val; } 
+int link_get_show(NspLink *B) {  return ((NspGraphic *)B)->obj->show; } 
+void link_set_show(NspLink *B,int val) {  ((NspGraphic *)B)->obj->show = val; } 
 
 /**************************************************
  * Draw 
@@ -1131,7 +1124,7 @@ void link_check(NspDiagram *F,NspLink *L)
 		      gr_lock l;
 		      C= nsp_connector_create("fe",NULL,
 					      rect,color,thickness,background,
-					      l,FALSE,TRUE,NULL);
+					      l,NULL);
 		      if ( C == NULL) return;
 		      if (nsp_list_end_insert(F->obj->children,NSP_OBJECT(C)) == FAIL) return ; 
 		      G = (NspGraphic *) C;

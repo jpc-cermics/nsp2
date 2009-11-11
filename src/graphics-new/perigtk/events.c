@@ -636,7 +636,11 @@ static void delete_window(BCG *dd,int intnum)
       gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
     }
   /* free gui private area */
-  FREE(winxgc->private->colors);
+  if ( winxgc->private->colors != NULL) 
+    nsp_matrix_destroy(winxgc->private->colors);
+  if ( winxgc->private->q_colors != NULL) 
+    g_queue_free( winxgc->private->q_colors);
+
   /* free data associated to menus */
   menu_entry_delete(winxgc->private->menu_entries);
   if (winxgc->private->gcursor != NULL) gdk_cursor_unref (winxgc->private->gcursor);

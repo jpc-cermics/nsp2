@@ -85,7 +85,7 @@ static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *
   int *xm,*ym,  j;
   int colminmax[2];
   double *zminmax = NULL;
-  if ( ((NspGraphic *) P)->obj->hidden == TRUE ) return;
+  if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
 
   /* check if the block is inside drawing rectangle

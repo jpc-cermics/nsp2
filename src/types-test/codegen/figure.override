@@ -42,6 +42,7 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 
+
 %%
 headers
 #include <gdk/gdk.h>
@@ -193,11 +194,16 @@ last
 
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
+  int rep;
   Cell *cloc;
   NspList *L;
   NspFigure *F = (NspFigure *) Obj;
   /* set up values according to figure */
   nsp_figure_set_gc_values(F);
+  /* push figure colors in Xgc 
+   * Note that this will reset fg,bg, colors etc.... 
+   */
+  rep = Xgc->graphic_engine->xpush_colormap(Xgc, F->obj->gc->colormap);
   /* draw elements */
   L = F->obj->children;
   cloc = L->first ;
@@ -210,8 +216,9 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
 	}
       cloc = cloc->next;
     }
+  /* reset Xgc colors */
+  if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
 }
-
 
 
 #ifdef WITH_GTKGLEXT 
@@ -1296,3 +1303,4 @@ void nsp_figure_initialize_gc(NspFigure *F)
 	Gc->foreground = Xgc->graphic_engine->xget_foreground(Xgc);
     }
 }
+

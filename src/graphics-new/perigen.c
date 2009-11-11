@@ -71,7 +71,7 @@ nsp_gengine_generic nsp_peri_generic = {
   fillarc_gen,
   draw_pixbuf_gen,
   draw_pixbuf_from_file_gen,
-  xset_test
+  xset_test,
 };
 
 
@@ -651,4 +651,6 @@ static void   xset_test(BCG *Xgc)
   count++;
   Xgc->graphic_engine->scale->displaystring(Xgc,str,5,5,0,0);
 }
+
+
 

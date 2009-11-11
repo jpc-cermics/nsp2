@@ -5,7 +5,8 @@
   (parent "Object")
   (c-name "NspGraphic")
   (fields
-   '("Boolean" "hidden" "std" "FALSE" );; object is hidden 
+   '("gboolean" "hilited" "std" "FALSE") 
+   '("gboolean" "show" "std" "TRUE")   
    '("void*" "Fig" "hidden" "NULL");; take care that this is a nsp_figure 
    '("void*" "Axe" "hidden" "NULL");; take care that this is a nsp_axes
    )

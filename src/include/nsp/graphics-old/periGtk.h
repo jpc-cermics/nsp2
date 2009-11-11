@@ -126,6 +126,7 @@ struct s_menu_entry
 
 typedef struct  _gtk_data {
   GdkColor *colors; /* an array of colors */
+  GdkColor *colors_saved; /* an array of colors: unused */
   GdkColormap *colormap ; /* used to keep track of drawing colormap */
   GtkWidget *window;			/* Graphics frame */
   GtkWidget *drawing;                   /* gtk drawing area used for drawing */

@@ -3945,7 +3945,7 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
   char *info;
   int rep,val,val1, i;
   double cl[4];
-  NspMatrix *M;
+  NspMatrix *M,*Mc;
 
   if (rhs <= 0) {return sci_demo(NspFname(stack),"xsetm();",0);}
 
@@ -4011,11 +4011,14 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       CheckRhs(2,2);
       if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG; 
       CheckCols(NspFname(stack),2,M,3);
-      if ( (M = (NspMatrix *) nsp_object_copy_and_name("cmap",NSP_OBJECT(M))) == NULLMAT) 
-	return RET_BUG;
-      Gc->colormap = M;
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->scale->xset_colormap(Xgc,M->m,M->R);
+      if (( Mc  = nsp_matrix_create("cmap",'r',M->m+3,M->n))== NULLMAT) return RET_BUG;
+      memcpy(Mc->R, M->R, M->m*sizeof(double));
+      memcpy(Mc->R+Mc->m, M->R+M->m, M->m*sizeof(double));
+      memcpy(Mc->R+2*Mc->m, M->R+2*M->m, M->m*sizeof(double));
+      if ( Gc->colormap != NULL) nsp_matrix_destroy(Gc->colormap);
+      Gc->colormap = Mc;
+      /* need to invalidate */
+      Xgc->graphic_engine->invalidate(Xgc,NULL);
       break;
     case xset_dashes:
       CheckRhs(2,2);

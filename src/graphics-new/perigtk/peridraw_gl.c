@@ -27,48 +27,17 @@
  * cleararea: clear a rectangle zone 
  */
 
-typedef void (*r_c) (BCG *Xgc,int x,int y,int w,int h);
-static void RectangleClear   (BCG *Xgc,int x,int y,int w,int h,int clipflag,r_c f );
-static void R_clear  (BCG *Xgc,int x,int y,int w,int h);
-
-static void R_clear(BCG *Xgc,int x, int y, int w, int h)
-{
-  int tab[]={ x,y,w, h};
-  fillrectangle(Xgc, tab);
-}
-
-static void RectangleClear(BCG *Xgc,int x, int y, int w, int h, int clipflag, r_c F)
-{
-  /* switch to a clear gc */
-  int cur_alu = Xgc->CurDrawFunction;
-  int clear = 0 ; /* 0 is the Xclear alufunction */;
-  if ( cur_alu != clear ) xset_alufunction1(Xgc,clear);
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
-      /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-      clip_rectangle(Xgc, clip_rect);
-    }
-  (*F)(Xgc,x,y,w,h);
-  if ( cur_alu != clear )
-    xset_alufunction1(Xgc,cur_alu);   /* back to current value */ 
-  if ( clipflag == 1 && Xgc->ClipRegionSet == 1) 
-    {
-      /* restore clip */
-      GdkRectangle clip_rect = { Xgc->CurClipRegion[0],
-				 Xgc->CurClipRegion[1],
-				 Xgc->CurClipRegion[2],
-				 Xgc->CurClipRegion[3]};
-      /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-      clip_rectangle(Xgc, clip_rect);
-    }
-}
-
 static void cleararea(BCG *Xgc, GdkRectangle *r)
 {
-  RectangleClear(Xgc,r->x,r->y,r->width,r->height,0,R_clear);
+  int old= xset_pattern(Xgc,Xgc->NumBackground+1);
+  glBegin(GL_QUADS);
+  glVertex2i(r->x        ,r->y);
+  glVertex2i(r->x+r->width,r->y);
+  glVertex2i(r->x+r->width,r->y+r->height);
+  glVertex2i(r->x        ,r->y+r->height);
+  glEnd();
+  xset_pattern(Xgc,old);
 }
-
 
 /*
  * line 
@@ -145,7 +114,6 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 
 static void fillrectangle(BCG *Xgc,const int rect[])
 { 
-  
   glBegin(GL_QUADS);
   glVertex2i(rect[0]        ,rect[1]);
   glVertex2i(rect[0]+rect[2],rect[1]);
@@ -449,7 +417,8 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   dx = ink_rect.x + ink_rect.width/2.0;
   dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
   /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
-  nsp_gtk_set_color(Xgc,1);
+  Xgc->CurColor=1;
+  nsp_gtk_set_color_new(Xgc,Xgc->private->colors);
   glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
   if (0) 
@@ -841,10 +810,6 @@ static void pixmap_clear_rect(BCG *Xgc,int x, int y, int w, int h)
 		   Xgc->private->gcol_bg.green /255.0,
 		   Xgc->private->gcol_bg.blue /255.0,0.0);
       glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-      /* gdk_gc_set_background(Xgc->private->stdgc, &Xgc->private->gcol_bg);
-	 gdk_draw_rectangle(Xgc->private->extra_pixmap,Xgc->private->stdgc, TRUE,
-			 0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
-      */
     }
 }
 
@@ -1049,36 +1014,13 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
  * 
  **/
 
-
-static void  nsp_gtk_set_color(BCG *Xgc,int col)
+static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors)
 {
-  /* int value = AluStruc_[Xgc->CurDrawFunction].id; */
-  GdkColor c; 
-  /* colors from 1 to Xgc->Numcolors */
-  col = Max(0,Min(col,Xgc->Numcolors + 2));
-  if (col == Xgc->CurColor) return;
-  Xgc->CurColor=col;
-  if (Xgc->private->colors  == NULL) return;
-  c = Xgc->private->colors[Xgc->CurColor];
-  glColor3ub( c.red >> 8 , c.green >> 8,c.blue >> 8 );
-
-#if 0
-  temp.pixel = PIXEL_FROM_CMAP(col);
-  switch (value) 
-    {
-    case GDK_CLEAR : 
-      break;
-    case GDK_XOR   : 
-      temp.pixel = temp.pixel ^ Xgc->private->gcol_bg.pixel ;
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    default :
-      gdk_gc_set_foreground(Xgc->private->wgc, &temp);
-      break;
-    }
-#endif
+  int m = colors->m;
+  if ( colors == NULL) return ;
+  Xgc->CurColor = Max(0,Min(Xgc->CurColor,Xgc->Numcolors + 2));
+  glColor3d(colors->R[Xgc->CurColor],colors->R[Xgc->CurColor+m],colors->R[Xgc->CurColor+2*m]);
 }
-
 
 
 #if 0 
@@ -1216,7 +1158,6 @@ void change_camera(BCG *Xgc,const double *val)
 
 void nsp_ogl_set_view(BCG *Xgc)
 {
-  /* xset_background(Xgc,Xgc->NumBackground+1); */
   if ( Xgc->scales->scale_flag3d == 0 ) /* XXX */
     {
       nsp_ogl_set_2dview(Xgc);
@@ -1231,7 +1172,6 @@ void nsp_ogl_set_2dview(BCG *Xgc)
 {
   glViewport (0,  0, Xgc->private->drawing->allocation.width, 
 	      Xgc->private->drawing->allocation.height);
-  /* xset_background(Xgc,Xgc->NumBackground+1); */
   glMatrixMode(GL_MODELVIEW);
   glLoadIdentity ();
   gluLookAt (0,0,1,
