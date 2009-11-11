@@ -580,15 +580,69 @@ static int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#ifdef  NEW_GRAPHICS
 
-int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *style,
-		 double teta,double alpha,const char *legend, int flag, double *bbox)
+/*-----------------------------------------------------------
+ *  param3d(x,y,z,[theta,alpha,leg,flag,ebox,style])
+ *  style is used to give style to each curve ( color or mark) 
+ *  and param3d1 is no used any more 
+ * 
+ *  param3d1(x,y,z,[theta,alpha,leg,flag,ebox])
+ *  param3d1(x,y,list(z,colors),[theta,alpha,leg,flag,ebox])
+ *                XXXX : to be done for backward compatibility ? 
+ *-----------------------------------------------------------*/
+
+static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 {
   int i,color,nb_poly,psize;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
+  NspObjs3d *objs3d;
+  BCG *Xgc;
+  int *iflag;
+  NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
+  double alpha=35.0,theta=45.0,*ebox ;
+  const char *leg=NULL,*legend=NULL;
+  int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
+
+  nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
+		      { "ebox",realmat,NULLOBJ,-1},
+		      { "flag",realmat,NULLOBJ,-1},
+		      { "leg",string,NULLOBJ,-1}, /* XXXX string matrix ? */
+		      { "style",mat_int,NULLOBJ,-1},
+		      { "theta",s_double,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ( rhs <= 0) {return  sci_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
+
+  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta) == FAIL)
+    return RET_BUG;
+
+  if ( x->mn == 0 ) return 0;
+
+  CheckSameDims(NspFname(stack),1,2,x,y);
+  CheckSameDims(NspFname(stack),1,3,x,z);
+
+  if (( iflag = check_param_iflag(stack,NspFname(stack),"flag",flag,2))==NULL) return RET_BUG;
+  if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
+  if (( legend = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) return RET_BUG;
+
+  if ( Mstyle != NULLMAT ) 
+    { 
+      if ( Mstyle->mn != z->n) 
+	{
+	  Scierror("%s: style argument has wrong size (%d), %d values expected \n",
+		   NspFname(stack),Mstyle->mn, z->n);
+	  return RET_BUG;
+	}
+    }
+  /*
+   * check that iflag[1] and leg are compatible 
+   * i.e force visibility of axes names if they are given
+   */
+  if (leg !=  NULL && strlen(leg) != 0 ) iflag[1]=4;
+
+  Xgc=nsp_check_graphic_context();
+  nsp_gwin_clear(Xgc);
+  objs3d = nsp_check_for_objs3d(Xgc,NULL);
   if ( objs3d == NULL) return FAIL;
-  /* XXXX we should encapuslate all this in a compound */
   /* Loop on the number of polylines */
   nb_poly = (x->m == 1) ? 1 : x->n;
   psize= (x->m==1) ? x->n : x->m;
@@ -601,13 +655,13 @@ int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *s
       memcpy(M1->R+psize,y->R + i*(psize),psize*sizeof(double));
       memcpy(M1->R+2*psize,z->R + i*(psize),psize*sizeof(double));
       /* check the color */
-      if ( style == NULL) 
+      if ( Mstyle == NULL) 
 	color=-1; 
-      else if ( style->mn == 1) 
-	color= style->R[0];
+      else if ( Mstyle->mn == 1) 
+	color= Mstyle->R[0];
       else 
-	color= style->R[i];
-      if ( style == NULL || color >= 0) 
+	color= Mstyle->R[i];
+      if ( Mstyle == NULL || color >= 0) 
 	{
 	  NspMatrix *Mcol;
 	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return FAIL;
@@ -627,85 +681,6 @@ int nsp_param3d_new(BCG *Xgc,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspMatrix *s
   nsp_axes_invalidate(((NspGraphic *) objs3d));
   return 0;
 } 
-#endif
-
-
-/*-----------------------------------------------------------
- *  param3d(x,y,z,[theta,alpha,leg,flag,ebox,style])
- *  style is used to give style to each curve ( color or mark) 
- *  and param3d1 is no used any more 
- * 
- *  param3d1(x,y,z,[theta,alpha,leg,flag,ebox])
- *  param3d1(x,y,list(z,colors),[theta,alpha,leg,flag,ebox])
- *                XXXX : to be done for backward compatibility ? 
- *-----------------------------------------------------------*/
-
-static int int_param3d( Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int *iflag;
-  NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
-  double alpha=35.0,theta=45.0,*ebox ;
-  const char *leg=NULL,*leg1=NULL;
-  int_types T[] = {realmat,realmat,realmat,new_opts, t_end} ;
-
-  nsp_option opts[] ={{ "alpha",s_double,NULLOBJ,-1},
-		      { "ebox",realmat,NULLOBJ,-1},
-		      { "flag",realmat,NULLOBJ,-1},
-		      { "leg",string,NULLOBJ,-1}, /* XXXX string matrix ? */
-		      { "style",mat_int,NULLOBJ,-1},
-		      { "theta",s_double,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-
-  if ( rhs <= 0) {return  sci_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
-
-  if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta) == FAIL) return RET_BUG;
-
-  if ( x->mn == 0 ) return 0;
-
-  CheckSameDims(NspFname(stack),1,2,x,y);
-  CheckSameDims(NspFname(stack),1,3,x,z);
-
-  if (( iflag = check_param_iflag(stack,NspFname(stack),"flag",flag,2))==NULL) return RET_BUG;
-  if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg1 = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) return RET_BUG;
-
-  if ( Mstyle != NULLMAT ) 
-    { 
-      if ( Mstyle->mn != z->n) 
-	{
-	  Scierror("%s: style argument has wrong size (%d), %d values expected \n",NspFname(stack),Mstyle->mn, z->n);
-	  return RET_BUG;
-	}
-    }
-  /*
-   * check that iflag[1] and leg are compatible 
-   * i.e force visibility of axes names if they are given
-   */
-  if (leg !=  NULL && strlen(leg) != 0 ) iflag[1]=4;
-
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-
-#ifdef NEW_GRAPHICS
-  nsp_param3d_new(Xgc,x,y,z,Mstyle,theta,alpha,leg1,*iflag,ebox);
-  
-#else 
-  if ( Mstyle != NULLMAT ) 
-    {
-      int izcol=1;
-      nsp_param3d_1(Xgc,x->R,y->R,z->R,&z->m,&z->n,&izcol,(int *) Mstyle->R,
-		    &theta,&alpha,leg1,iflag,ebox);
-    }
-  else 
-    {
-      nsp_param3d(Xgc,x->R,y->R,z->R,&z->mn,&theta,&alpha,leg1,iflag,ebox);
-    }
-#endif 
-  return 0;
-
-} 
-
 
 /*-----------------------------------------------------------
  * used in contourf, to extract contour points 
@@ -1626,13 +1601,22 @@ static int int_plot2d1_4( Stack stack, int rhs, int opt, int lhs)
 #endif 
 }
 
-/*-----------------------------------------------------------
- *  grayplot(x,y,z,[strf,rect,nax])
- *  Attention trop d'args optionnels XXXXX 
- *-----------------------------------------------------------*/
 
-static int int_grayplot( Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_grayplot:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
 {
+  NspAxes *axe;
   nsp_option opts_mp[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			 { "colminmax",mat_int,NULLOBJ,-1},
 			 { "colout",mat_int,NULLOBJ,-1},
@@ -1659,8 +1643,11 @@ static int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   /* */
   BCG *Xgc;
   NspMatrix *x,*y,*z; 
-
-  if ( rhs <= 0) {return sci_demo(NspFname(stack), "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);}
+  NspGMatrix1 *gm;
+  if ( rhs <= 0) 
+    {
+      return sci_demo(NspFname(stack), "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);
+    }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&shade,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
@@ -1702,14 +1689,14 @@ static int int_grayplot( Stack stack, int rhs, int opt, int lhs)
   if ( check_colminmax(stack,NspFname(stack),"colminmax",Mcolminmax)== FAIL) return RET_BUG;
   if ( check_colout(stack,NspFname(stack),"colout",Mcolout)== FAIL) return RET_BUG;
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,
+		   Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-#ifdef NEW_GRAPHICS 
   /* colout to be added */
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
+  axe =  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return FAIL;
   /* create a gmatrix and insert-it in axes */
   if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
@@ -1730,32 +1717,37 @@ static int int_grayplot( Stack stack, int rhs, int opt, int lhs)
       if ( (Mcolout = (NspMatrix *) nsp_object_copy_and_name("com",NSP_OBJECT(Mcolout))) == NULLMAT)
 	return FAIL;
     }
-  NspGMatrix1 *gm= nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
+  gm = nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
   if ( gm == NULL) return FAIL;
   /* insert the new matrix */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gm )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
   /* updates the axes scale information */
   nsp_strf_axes(Xgc, axe ,rect, strf[1]);
-  
   nsp_axes_invalidate(((NspGraphic *) axe));
-#else 
-  nsp_draw_matrix_old(Xgc,x->R,y->R,z->R,z->m,z->n,strf,rect,nax,remap,
-		      (Mcolminmax == NULL) ? NULL : Mcolminmax->I,
-		      (Mzminmax == NULL) ? NULL : Mzminmax->R,
-		      (Mcolout == NULL) ? NULL : Mcolout->I,
-		      shade);
-#endif 
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
-  
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(gm));
+      return 1;
+    }
   return 0;
 }
 
-/*-----------------------------------------------------------
- * scimatplot
- * idem optional arguments ....
- *-----------------------------------------------------------*/
+/**
+ * int_matplot_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int int_matplot_new(Stack stack, int rhs, int opt, int lhs) 
 {
@@ -1851,9 +1843,18 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
-/*-----------------------------------------------------------
- * Matplot1 
- *-----------------------------------------------------------*/
+
+/**
+ * int_matplot1_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2018,8 +2019,10 @@ static int int_driver(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * nsp_gwin_clear:
- * @Xgc: 
+ * @Xgc: a #BCG
  * 
+ * remove the figure from @Xgc and 
+ * invalidate the graphics window.
  * 
  **/
 
@@ -2053,7 +2056,6 @@ BCG *nsp_check_graphic_context(void)
   else
     return check_graphic_window_new(); /* a graphic window */
 } 
-
 
 /**
  * int_xarc:
@@ -2367,7 +2369,8 @@ static int int_xarrows_new(Stack stack, int rhs, int opt, int lhs)
   if ( Mstyle != NULL) 
     {
       if ( Mstyle->mn != x->mn/2 && Mstyle->mn != 1 ) {
-	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",NspFname(stack),Mstyle->mn,x->mn/2);
+	Scierror("%s: style has a wrong size (%d), expecting (%d) or (1)\n",
+		 NspFname(stack),Mstyle->mn,x->mn/2);
 	return RET_BUG;
       }
     }
@@ -2555,46 +2558,43 @@ static int int_xchange_new(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,2);
 }
 
-/*-----------------------------------------------------------
- *     convertion d'entier vers double 
- *     d et s peuvent en fait pointer sur le meme tableau 
- *     car la recopie est fait de n,1,-1 
- *      implicit undefined (a-z) 
- *-----------------------------------------------------------*/
 
-int C2F(entier2dXXX)(int *n, double *dx,  int *s)
-{
-  int ix;
-  for (ix = *n -1 ; ix >= 0; --ix) dx[ix] = (double) s[ix];
-  return 0;
-} 
+/**
+ * int_xclea_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-/*-----------------------------------------------------------
- *     convertion de float vers double 
- *     d et s peuvent en fait pointer sur le meme tableau 
- *     car la recopie est fait de n,1,-1 
- * Parameter adjustments 
- *-----------------------------------------------------------*/
-
-int C2F(simple2dXXX)(int *n,double *dx, float *s)
-{
-  int ix;
-  for (ix = *n-1 ; ix >= 0; --ix)  dx[ix] = (double) s[ix];
-  return 0;
-} 
-
-
-static int int_xclea(Stack stack, int rhs, int opt, int lhs)
+static int int_xclea_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   double *val=NULL;
   CheckRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val) == FAIL) return RET_BUG;
   Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->scale->cleararea(Xgc,val);
+  Sciprintf("Error: function %s should not be used with new graphics\n",
+	    NspFname(stack));
   return 0;
 } 
 
+/**
+ * get_rect:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * @val: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val)
 {
   NspMatrix *M1;
@@ -2774,11 +2774,17 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
-/*-----------------------------------------------------------
- *   
- *   x = xclick(clearq=bool,getmotion=bool,getrelease=bool,win=%d,winall=%t)
- *   [but,x,y,win,str]=xclick(clearq=bool,getmotion=bool,getrelease=bool,win=%d,winall=%t)
- *-----------------------------------------------------------*/
+/**
+ * int_xclick:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int int_xclick(Stack stack, int rhs, int opt, int lhs)
 {
@@ -2851,7 +2857,6 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
 
   if ( winall ) 
     {
-#ifdef NEW_GRAPHICS 
       int ixrep,iyrep;
       iw=-1;
       Xgc->graphic_engine->xclick_any(Xgc,buf,&button,&imask,&ixrep,&iyrep,&iw,iflag,motion,release,key,istr);
@@ -2861,22 +2866,13 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
 	  BCG *Xgc_win =window_list_search_new(iw);
 	  G= nsp_get_point_axes(Xgc_win,ixrep,iyrep,drep+1);
 	}
-#else 
-      iw=-1;     
-      Xgc->graphic_engine->scale->xclick_any(Xgc,buf,&button,&imask,&drep[1],&drep[2],&iw,iflag,motion,release,key,istr);
-#endif 
     }
   else 
     {
-#ifdef NEW_GRAPHICS 
       NspGraphic *G; 
       int ixrep,iyrep;
       Xgc->graphic_engine->xclick(Xgc,buf,&button,&imask,&ixrep,&iyrep,iflag,motion,release,key,istr);
       G= nsp_get_point_axes(Xgc,ixrep,iyrep,drep+1);
-#else 
-      Xgc->graphic_engine->scale->xclick(Xgc,buf,&button,&imask,&drep[1],&drep[2],iflag,motion,release,key,istr);
-#endif 
-
       iw=win;
     }
 
@@ -2911,11 +2907,19 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*-----------------------------------------------------------
+/**
+ * int_xend:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
  * 
- *-----------------------------------------------------------*/
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int int_xend(Stack stack, int rhs, int opt, int lhs)
+static int int_xend_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   CheckRhs(-1,0);
@@ -2935,6 +2939,7 @@ static int int_xend(Stack stack, int rhs, int opt, int lhs)
  * 
  * Returns: 
  **/
+
 static int int_xgrid_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe;
@@ -3154,6 +3159,18 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
+
+/**
+ * int_xget_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 typedef enum {  
   xget_alufunction, xget_background, xget_clipoff, xget_clipping, xget_color, xget_colormap, 
@@ -3381,16 +3398,23 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
-/*-----------------------------------------------------------
+/**
+ * int_xinit:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * xinit(name=,wdim=,wpdim=,wresize=,viewport=,file=,opengl=)
  * name: window name 
  * wdim: window dimensions 
  * wpdim: popupdimension
  * wresize: wresize status 
  * viewport: viewport position 
- *-----------------------------------------------------------*/
-
+ * 
+ * 
+ * Returns: 
+ **/
 static int int_xinit(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
@@ -3645,6 +3669,7 @@ static int int_xflush(Stack stack, int rhs, int opt, int lhs)
  * 
  * Returns: 
  **/
+
 static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
@@ -3875,13 +3900,20 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-
-/*-----------------------------------------------------------
+/**
+ * int_xselect:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * xselect([winid])
  * raise the current graphics window  or window with id winid 
  * which becomes the new current window. 
  * windows are created if necessary.
- *-----------------------------------------------------------*/
+ * 
+ * Returns: 
+ **/
 
 static int int_xselect(Stack stack, int rhs, int opt, int lhs)
 {
@@ -3913,10 +3945,19 @@ static int int_xselect(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
- * xset(choice-name,x1,x2,x3,x4,x5)
- * or   xset()
- *-----------------------------------------------------------*/
+
+
+/**
+ * int_xset_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 typedef enum  { 
   xset_alufunction, xset_background, xset_clipoff, xset_clipping, xset_color, xset_colormap
@@ -3935,7 +3976,6 @@ static char *xset_Table[] = {
   "pixmap", "recording",  "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
   "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf", NULL
 };
-
 static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspFigureData *Gc;
@@ -4218,7 +4258,6 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 /*
  *
  * test 
@@ -4235,13 +4274,21 @@ static int int_xtest(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*-----------------------------------------------------------
- * xstring(x,y,str,[angle,box])
- *-----------------------------------------------------------*/
 
-#ifdef NEW_GRAPHICS 
 
-static int int_xstring(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_xstring:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrstring *grs;
   NspAxes *axe;
@@ -4279,75 +4326,18 @@ static int int_xstring(Stack stack, int rhs, int opt, int lhs)
   if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,0,angle,0.0,0.0,0,NULL))== NULL) 
     return RET_BUG;
   /* insert the new string */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
-    return RET_BUG;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_axes_invalidate(((NspGraphic *) axe));
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) grs)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(grs));
+      return 1;
+    }
   return 0;
 } 
-
-#else 
-
-static int int_xstring(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int remove=0;
-  NspSMatrix *S;
-  double rect[4],wc,x,y,yi,angle=0.0;
-  int i,flagx=0;
-
-  CheckRhs(3,5);
-  
-  if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
-  if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
-  yi=y;
-
-  if (( S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
-
-  if ( S->mn == 0 ) {  return 0;} 
-
-  if (rhs >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
-  if (rhs >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
-
-  Xgc=nsp_check_graphic_context();
-
-  /*     to keep the size of the largest line */
-  wc = 0.;
-
-  if ( S->n != 1 ) 
-    {
-      remove=1;
-      if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
-    }
-
-  if ( S->m == 1 )
-    {
-      /* one rotated string */
-      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[0],x,y,flagx,angle);
-    }
-  else 
-    {
-      for (i = S->m -1 ; i >= 0; --i) 
-	{
-	  Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,angle);
-	  Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
-	  wc = Max(wc,rect[2]);
-	  if (i != 0 ) 
-	    y += rect[3] * 1.2;
-	  else 
-	    y += rect[3];
-	}
-      if (flagx == 1) {
-	double rect[]={x,y,wc, y - yi};
-	Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
-      }
-    }
-  if ( remove == 1) nsp_smatrix_destroy(S);
-  return 0;
-} 
-
-#endif 
-
 
 /*-----------------------------------------------------------
  * xtitle(tit,x,y)
@@ -4400,9 +4390,6 @@ static int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 /*-----------------------------------------------------------
  * xstringb 
  *-----------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
-
 
 static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 {
@@ -4458,45 +4445,6 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
-
-
-#else 
-
-static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  char * info;
-  int fill =0;
-  double x,y,w,hx;
-  nsp_string str;
-  NspSMatrix *S;
-
-  CheckRhs(5,6);
-  if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
-  if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
-  if ((S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
-  if ( S->mn == 0 ) return 0; 
-  if (GetScalarDouble(stack,4,&w) == FAIL) return RET_BUG;
-  if (GetScalarDouble(stack,5,&hx) == FAIL) return RET_BUG;
-
-  if (rhs == 6) {
-    if ((info = GetString(stack,6)) == (char*)0) return RET_BUG;
-    if ( strncmp(info,"fill",4) == 0) 
-      fill =1;
-    else 
-      {
-	Scierror("%s: optional argument has a wrong value 'fill' expected\n",NspFname(stack));
-	return RET_BUG;
-      }
-  }
-  if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,&x,&y,&w,&hx);
-  FREE(str);
-  return 0;
-} 
-
-#endif 
 
 /*-----------------------------------------------------------
  * xstringc 
@@ -4572,7 +4520,6 @@ static int int_xstringc(Stack stack, int rhs, int opt, int lhs)
   FREE(str);
   return 0;
 } 
-
 
 
 /*-----------------------------------------------------------
@@ -4715,11 +4662,21 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
- * xinfo(string)
- *-----------------------------------------------------------*/
 
-static int int_xinfo(Stack stack, int rhs, int opt, int lhs)
+
+/**
+ * int_xinfo:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int int_xinfo_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   char *info;
@@ -4731,16 +4688,7 @@ static int int_xinfo(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*------------------------------------------------------------
- * xsetech(wrect=[...],frect=[..],logflag="..", arect=[...]) 
- * or 
- * xsetech(wrect,[frect,logflag])
- * or 
- * xsetech()
- *------------------------------------------------------------*/
-
-#ifdef NEW_GRAPHICS 
-int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
+static int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
 		    const double *FRect,const char *logscale, int fixed)
 {
   NspAxes *axe; 
@@ -4761,7 +4709,7 @@ int Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
   return OK;
 }
 
-int Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
+static int Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
 		    const double *FRect,const char *logscale, int fixed)
 {
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,WRect);
@@ -4772,10 +4720,23 @@ int Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
   return OK;
 }
 
-#endif 
-
-
-static int int_xsetech(Stack stack, int rhs, int opt, int lhs)
+/**
+ * int_xsetech:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * xsetech(wrect=[...],frect=[..],logflag="..", arect=[...]) 
+ * or 
+ * xsetech(wrect,[frect,logflag])
+ * or 
+ * xsetech()
+ * 
+ * Returns: 
+ **/
+static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
 {
   int fixed = TRUE, axe3d=FALSE;
   BCG *Xgc;
@@ -4844,24 +4805,28 @@ static int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 	} 
       }
     }
-#ifdef NEW_GRAPHICS 
   if ( axe3d == TRUE ) 
     Nsetscale3d_new(Xgc,wrect,arect,frect,logflag,fixed);
   else
     Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed);
-#else 
-  Nsetscale2d_old(Xgc,wrect,arect,frect,logflag);
-#endif 
   return 0;
 }
 
-/*-----------------------------------------------------------
+
+/**
+ * int_xgetech_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
  * [wrect,frect,logflag,arect]=xgetech()
- *-----------------------------------------------------------*/
+ * 
+ * Returns: 
+ **/
 
-#ifdef NEW_GRAPHICS 
-
-static int int_xgetech(Stack stack, int rhs, int opt, int lhs)
+static int int_xgetech_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe;
   BCG *Xgc;
@@ -4877,49 +4842,21 @@ static int int_xgetech(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,0);
 } 
 
-#else 
-
-static int int_xgetech(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc;
-  int i;
-  double WRect[4],FRect[4],ARect[4];
-  double *W= WRect, *F = FRect, *A= ARect ;
-  char logf[2], *L=logf;
-  NspObject *l[5];
-
-  CheckRhs(0,0);
-  CheckLhs(1,4);
-
-  if ( lhs >=1 ) { if ((l[1]=(NspObject *) nsp_matrix_create(NVOID,'r',1,4))==NULLOBJ) return RET_BUG;   W= ((NspMatrix *) l[1])->R;}
-  if ( lhs >=2 ) { if ((l[2]=(NspObject *) nsp_matrix_create(NVOID,'r',1,4))==NULLOBJ) return RET_BUG; F=((NspMatrix *) l[2])->R;}
-  if ( lhs >=3 ) 
-    { 
-      if ((l[3]=(NspObject *)nsp_smatrix_create_with_length(NVOID,1,1,2))== NULLOBJ) return RET_BUG; 
-      L=((NspSMatrix *) l[3])->S[0];
-      L[2]='\0';
-    }
-
-  if ( lhs >=4 ) { if ((l[4]=(NspObject *) nsp_matrix_create(NVOID,'r',1,4))==NULLOBJ) return RET_BUG; A= ((NspMatrix *) l[4])->R;}
-  Xgc=nsp_check_graphic_context();
-  getscale2d_old(Xgc,W,F,L,A);
-  for ( i = 1 ; i <= lhs ; i++) 
-    {
-      NSP_OBJECT(l[i])->ret_pos = i;
-      StackStore(stack,(NspObject *) l[i],rhs+i);
-    }
-  return Max(lhs,0);
-} 
-
-#endif 
-
-/*-----------------------------------------------------------
+/**
+ * int_fec_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
  * fec(x,y,triangles,func,...)
  * from the modified version by Bruno 1/2/2001
- *-----------------------------------------------------------*/
+ * 
+ * 
+ * Returns: 
+ **/
 
-
-static int int_fec(Stack stack, int rhs, int opt, int lhs)
+static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_option opts_fec[] ={{ "axesflag",s_int,NULLOBJ,-1},
 			  { "colminmax",mat_int,NULLOBJ,-1},
@@ -4968,53 +4905,58 @@ static int int_fec(Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-#ifdef NEW_GRAPHICS 
   /* colout to be added */
   NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return FAIL;
+  if ( axe == NULL) return RET_BUG;
   /* create a gmatrix and insert-it in axes */
-  if ( ( Tr = (NspMatrix *)  nsp_object_copy_and_name("Tr",NSP_OBJECT(Tr))) == NULLMAT) return FAIL;
-  if ( ( F = (NspMatrix *)  nsp_object_copy_and_name("F",NSP_OBJECT(F))) == NULLMAT) return FAIL;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+  if ( ( Tr = (NspMatrix *)  nsp_object_copy_and_name("Tr",NSP_OBJECT(Tr))) == NULLMAT) return RET_BUG;
+  if ( ( F = (NspMatrix *)  nsp_object_copy_and_name("F",NSP_OBJECT(F))) == NULLMAT) return RET_BUG;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
   if ( Mcolminmax != NULL )
     {
       if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mzminmax != NULL) 
     {
       if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mcolout != NULL) 
     {
       if ( (Mcolout  = (NspMatrix *)  nsp_object_copy_and_name("co",NSP_OBJECT(Mcolout))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
 
   NspFec *fec = nsp_fec_create("fec",x,y,Tr,F,Mcolminmax,Mzminmax,mesh,Mcolout,NULL);
-  if ( fec == NULL) return FAIL;
-  /* insert the new matrix */
-  if ( nsp_list_end_insert( axe->obj->children,(NspObject *) fec )== FAIL)
-    return FAIL;
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
-  nsp_axes_invalidate(((NspGraphic *) axe));
-#else 
-  nsp_fec_old(Xgc,x->R,y->R,Tr->R,F->R,&x->mn,&Tr->m,strf,leg,rect,nax,
-	  (Mzminmax == NULL) ? NULL : Mzminmax->R,
-	  (Mcolminmax == NULL) ? NULL :(int *)  Mcolminmax->R, 
-	  (Mcolout == NULL) ? NULL :(int *)  Mcolout->R,
-	  mesh);
-#endif 
+  if ( fec == NULL) return RET_BUG;
+  /* insert the new fec */
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
-	  
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) fec)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(fec));
+      return 1;
+    }
   return 0;
 }
 
-/*--------------------------------------------------------------
- * rep = xgetmouse(clearq=bool,getmotion=bool,getrelease=bool)
- *--------------------------------------------------------------*/
+/**
+ * int_xgetmouse:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
 {
@@ -5024,11 +4966,8 @@ static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   int button,mask;
   int cursor = TRUE;
   double drep[2];
-#ifdef NEW_GRAPHICS
   NspGraphic *G; 
   int ix,iy;
-#endif 
-
   nsp_option opts[] ={
     { "clearq",s_bool,NULLOBJ,-1},
     { "cursor",s_bool,NULLOBJ,-1}, /* change the cursor pixmap */
@@ -5045,12 +4984,8 @@ static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   iflag = (clearq == TRUE) ? FALSE : TRUE;
   if ( cursor == TRUE ) iflag = iflag | (1 <<2);
 
-#ifdef NEW_GRAPHICS 
   Xgc->graphic_engine->xgetmouse(Xgc,"xv",&button,&mask,&ix,&iy,iflag,motion,release,key);
   G= nsp_get_point_axes(Xgc,ix,iy,drep);
-#else 
-  Xgc->graphic_engine->scale->xgetmouse(Xgc,"xv",&button,&mask,drep,drep+1,iflag,motion,release,key);
-#endif 
   if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
   M->R[0] = drep[0];  M->R[1] =drep[1];  M->R[2] = (double) button;
   NSP_OBJECT(M)->ret_pos=1;
@@ -5058,11 +4993,19 @@ static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-/*-----------------------------------------------------------
- * xsave('fname' [, wid]) 
- *-----------------------------------------------------------*/
+/**
+ * int_xsave:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int int_xsave(Stack stack, int rhs, int opt, int lhs)
+static int int_xsave_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   char *str;
@@ -5084,11 +5027,19 @@ static int int_xsave(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
- * xload('fname' [, wid]) 
- *-----------------------------------------------------------*/
+/**
+ * int_xload_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int int_xload(Stack stack, int rhs, int opt, int lhs)
+static int int_xload_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc=NULL;
   int wid;
@@ -5108,11 +5059,20 @@ static int int_xload(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-/*-----------------------------------------------------------
- * xdel([win-ids]) 
- *-----------------------------------------------------------*/
 
-static int int_xdel(Stack stack, int rhs, int opt, int lhs)
+
+/**
+ * int_xdel_new:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+static int int_xdel_new(Stack stack, int rhs, int opt, int lhs)
 {
 
   NspMatrix *l1;
@@ -5222,11 +5182,19 @@ static int int_xexport(Stack stack, int rhs, int opt, int lhs)
   return int_export_G(stack,rhs,opt,lhs,NULL);
 }
 
-/*-----------------------------------------------------------
- *   x=winsid()
- *-----------------------------------------------------------*/
+/**
+ * int_winsid:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
-static int int_winsid(Stack stack, int rhs, int opt, int lhs)
+static int int_winsid_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc =  window_list_get_first();
   NspMatrix *M;
@@ -5278,9 +5246,17 @@ static int int_xgraduate(Stack stack, int rhs, int opt, int lhs)
   return lhs;
 }
 
-/*-----------------------------------------------------------
- * xname('name') : give a name to current graphic window 
- *-----------------------------------------------------------*/
+/**
+ * int_xname:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int int_xname(Stack stack, int rhs, int opt, int lhs)
 {
@@ -5533,11 +5509,16 @@ static int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-
-/*-----------------------------------------------------------
- * Utility function for demo 
- * XXXX
- *-----------------------------------------------------------*/
+/**
+ * sci_demo:
+ * @fname: 
+ * @code: 
+ * @flag: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 static int sci_demo (const char *fname,char *code,int flag) 
 {
@@ -5557,7 +5538,6 @@ static int sci_demo (const char *fname,char *code,int flag)
 }
 
 extern int int_bsearch(Stack stack, int rhs, int opt, int lhs);
-
 
 /*-----------------------------------------------------------
  * feval en preparation 
@@ -5881,8 +5861,6 @@ static int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-#ifdef NEW_GRAPHICS 
-
 static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
 {
   int mark=-2,mark_size=-2,thickness=1,fill_color=color;
@@ -5912,28 +5890,6 @@ static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
   return OK;
 }
 
-#else 
-
-static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
-{
-  int cpat = Xgc->graphic_engine->xget_pattern(Xgc);
-  int npt=6;
-  double x[]={r[0],r[0]     ,r[0]+r[2],r[0]+r[2]-size3d,r[0]-size3d     ,r[0]-size3d};
-  double y[]={r[1],r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d,r[1]-size3d};
-  if ( color != -1 && color != cpat ) 
-    Xgc->graphic_engine->scale->xset_pattern(Xgc,color);
-  Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
-  Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
-  Xgc->graphic_engine->scale->drawrectangle(Xgc,r);
-  if ( color != -1 && color != cpat ) 
-    Xgc->graphic_engine->scale->xset_pattern(Xgc,cpat);
-  return OK;
-}
-
-#endif 
-
-
-
 static int int_scicos_draw3D(Stack stack, int rhs, int opt, int lhs)
 {
   int color=-1;
@@ -5959,12 +5915,10 @@ typedef  enum { SL_IN=0  ,SL_OUT=1 ,SL_EVIN=2,SL_EVOUT=3 , SL_SQP=4, SL_SQM=5 }
 
 static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
 {
-#ifdef NEW_GRAPHICS 
   NspPolyline *pl;
   NspAxes *axe; 
   int color=-1,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
   NspMatrix *Mx,*My;
-#endif 
   /* angle according to dir */
   /*  LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 */
   const double alpha[]= {180,0,90,-90,0};
@@ -6006,7 +5960,6 @@ static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir d
       y[i] = sina*lx[i] +cosa*ly[i]+pt[1];
     }
 
-#ifdef NEW_GRAPHICS 
   axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return RET_BUG;
   if ((Mx= nsp_matrix_create("x",'r',npt,1))== NULLMAT) return FAIL;
@@ -6028,14 +5981,6 @@ static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir d
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   nsp_axes_invalidate(((NspGraphic *) axe));
   return OK;
-#else 
-  if ( typ == SL_SQP ) 
-    Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,npt,TRUE);
-  else 
-    Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,npt,TRUE);
-  return OK;
-#endif 
-
 }
 
 
@@ -6299,11 +6244,11 @@ OpGrTab Graphics_func[]={
   {NAMES("contour2di"),int_contour2d1},
   {NAMES("drawaxis"),int_nxaxis},
   {NAMES("driver"),int_driver},
-  {NAMES("fec"),int_fec},
+  {NAMES("fec"),int_fec_new},
   {NAMES("geom3d"),int_geom3d},
-  {NAMES("grayplot"),int_grayplot},
-  {NAMES("param3d"),int_param3d},
-  {NAMES("param3d1"),int_param3d},
+  {NAMES("grayplot"),int_grayplot_new},
+  {NAMES("param3d"),int_param3d_new},
+  {NAMES("param3d1"),int_param3d_new},
   {NAMES("plot2d"),int_plot2d},
   {NAMES("plot2d1"),int_plot2d1_1},
   {NAMES("plot2d2"),int_plot2d1_2},
@@ -6313,20 +6258,20 @@ OpGrTab Graphics_func[]={
   {NAMES("plot3d1"),int_plot3d1},
   {NAMES("seteventhandler"),int_seteventhandler},
   {NAMES("show_pixbuf"),int_show_pixbuf}, 
-  {NAMES("winsid"),int_winsid},
+  {NAMES("winsid"),int_winsid_new},
   {NAMES("xarc"),int_xarc_new},
   {NAMES("xarcs"),int_xarcs_new},
   {NAMES("xarrows"),int_xarrows_new},
   {NAMES("xaxis"),int_xaxis},
   {NAMES("xchange"),int_xchange_new},
-  {NAMES("xclea"),int_xclea},
+  {NAMES("xclea"),int_xclea_new},
   {NAMES("xclear"),int_xclear_new},
   {NAMES("xclick"),int_xclick},
   {NAMES("xcursor"), int_xcursor},
-  {NAMES("xdel"),int_xdel},
+  {NAMES("xdel"),int_xdel_new},
   {NAMES("xdraw_pixbuf"),int_draw_pixbuf},
   {NAMES("xdraw_pixbuf_from_file"),int_draw_pixbuf_from_file},
-  {NAMES("xend"),int_xend},
+  {NAMES("xend"),int_xend_new},
   {NAMES("xexport"),int_xexport},
   {NAMES("xfarc"),int_xfarc_new},
   {NAMES("xfarcs"),int_xfarcs_new},
@@ -6337,14 +6282,14 @@ OpGrTab Graphics_func[]={
   {NAMES("xget"),int_xget_new},
   {NAMES("xget_image"),int_get_image},
   {NAMES("xget_pixbuf"),int_get_pixbuf},
-  {NAMES("xgetech"),int_xgetech},
+  {NAMES("xgetech"),int_xgetech_new},
   {NAMES("xgetmouse"),int_xgetmouse},
   {NAMES("xgraduate"),int_xgraduate},
   {NAMES("xgrid"),int_xgrid_new},
-  {NAMES("xinfo"),int_xinfo},
+  {NAMES("xinfo"),int_xinfo_new},
   {NAMES("xinit"),int_xinit},
   {NAMES("xlfont"),int_xlfont},
-  {NAMES("xload"),int_xload},
+  {NAMES("xload"),int_xload_new},
   {NAMES("xname"),int_xname},
   {NAMES("xnumb"),int_xnumb},
   {NAMES("xpause"),int_xpause},
@@ -6360,12 +6305,12 @@ OpGrTab Graphics_func[]={
   {NAMES("xs2ps"),int_xs2ps},
   {NAMES("xs2ps_old"),int_xs2ps_old},
   {NAMES("xs2svg"),int_xs2svg},
-  {NAMES("xsave"),int_xsave},
+  {NAMES("xsave"),int_xsave_new},
   {NAMES("xsegs"),int_xsegs_new},
   {NAMES("xselect"),int_xselect},
   {NAMES("xset"),int_xset_new},
-  {NAMES("xsetech"),int_xsetech},
-  {NAMES("xstring"),int_xstring},
+  {NAMES("xsetech"),int_xsetech_new},
+  {NAMES("xstring"),int_xstring_new},
   {NAMES("xstringb"),int_xstringb},
   {NAMES("xstringc"),int_xstringc},
   {NAMES("xstringl"),int_xstringl},
