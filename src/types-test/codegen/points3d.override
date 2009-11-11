@@ -6,7 +6,6 @@ include-public  Points3d
 /* inserted at the end of public part of include file */
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 extern BCG *nsp_check_graphic_context(void);
-extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 %%

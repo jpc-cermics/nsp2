@@ -24,10 +24,11 @@
 
 
 
-#line 64 "codegen/axes.override"
+#line 65 "codegen/axes.override"
 #include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
+#include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
 
@@ -35,7 +36,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 39 "axes.c"
+#line 40 "axes.c"
 
 /* ----------- NspAxes ----------- */
 
@@ -107,7 +108,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 81 "codegen/axes.override"
+#line 83 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -119,7 +120,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_axes_children ;
   ((NspTypeGraphic *) type->surtype)->invalidate = nsp_axes_invalidate;
 
-#line 123 "axes.c"
+#line 124 "axes.c"
   /* 
    * NspAxes interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -859,7 +860,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 102 "codegen/axes.override"
+#line 104 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -874,7 +875,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 878 "axes.c"
+#line 879 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1025,7 +1026,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 118 "codegen/axes.override"
+#line 120 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1080,7 +1081,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1084 "axes.c"
+#line 1085 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1310,7 +1311,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 174 "codegen/axes.override"
+#line 176 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1319,10 +1320,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1323 "axes.c"
+#line 1324 "axes.c"
 
 
-#line 184 "codegen/axes.override"
+#line 186 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1332,7 +1333,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1336 "axes.c"
+#line 1337 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1363,7 +1364,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 195 "codegen/axes.override"
+#line 197 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
@@ -1958,9 +1959,18 @@ void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
 }
 
 
-  
+/**
+ * nsp_figure_zoom:
+ * @Xgc: 
+ * @box: 
+ * 
+ * select the axes to be zoomed by considering the 
+ * center of the given @box. Then set the zoom 
+ * scales on the axe and invalidate the axe. 
+ *
+ **/
 
-void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
+void nsp_figure_zoom(BCG *Xgc,int *box)
 {
 
   NspObject *Obj1;
@@ -1970,6 +1980,7 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
   if ( IsAxes(Obj1) )
     {
       NspAxes *A = (NspAxes *) Obj1;
+      NspGraphic *G = (NspGraphic *) Obj1;
       double pt1[2],pt2[2];
       /* Sciprintf("Found an axes to be zoomed\n"); */
       nsp_axes_i2f(A->obj,box[0],box[1], pt1);
@@ -1979,6 +1990,7 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
       A->obj->zrect->R[1]=pt2[1]; /* ymin */
       A->obj->zrect->R[2]=pt2[0]; /* xmax */
       A->obj->zrect->R[3]=pt1[1]; /* ymax */
+      G->type->invalidate(G);
     }
   else if ( IsObjs3d(Obj1))
     {
@@ -1986,6 +1998,16 @@ void nsp_figure_zoom(BCG *Xgc,NspGraphic *Obj,int *box)
     }
 }
 
+
+/**
+ * nsp_figure_unzoom:
+ * @Obj: a #NspGraphic
+ * 
+ * change the zoom flag for all the axes 
+ * found in figure @Obj and invalidate the 
+ * axes if necessary.
+ * 
+ **/
 
 void nsp_figure_unzoom(NspGraphic *Obj)
 {
@@ -2004,7 +2026,12 @@ void nsp_figure_unzoom(NspGraphic *Obj)
 	  if ( IsAxes(NSP_OBJECT(G)))
 	    { 
 	      NspAxes *A = (NspAxes *) G;
-	      A->obj->zoom= FALSE;
+	      if ( A->obj->zoom == TRUE)
+		{
+		  A->obj->zoom= FALSE;
+		  G->type->invalidate(G);
+		}
+
 	    }
 	  else if ( IsObjs3d(NSP_OBJECT(G)))
 	    {
@@ -2216,4 +2243,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2220 "axes.c"
+#line 2247 "axes.c"

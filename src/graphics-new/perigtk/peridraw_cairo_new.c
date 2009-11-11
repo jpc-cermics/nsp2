@@ -734,32 +734,6 @@ static void xget_clip(BCG *Xgc,int *x)
     }
 }
 
-/* The alu function for private->drawing : Works only with X11
- * Not in Postscript, Read The X11 manual to get more informations 
- */
-
-static struct alinfo { 
-  char *name;
-  char id;
-  char *info;} AluStruc_[] =
-    { 
-      {"GXclear" , GDK_CLEAR," 0 "},
-      {"GXand" , GDK_AND," src AND dst "},
-      {"GXandReverse" , GDK_AND_REVERSE," src AND NOT dst "},
-      {"GXcopy" , GDK_COPY," src "},
-      {"GXandInverted" , GDK_AND_INVERT," NOT src AND dst "},
-      {"GXnoop" , GDK_NOOP," dst "},
-      {"GXxor" , GDK_XOR," src XOR dst "},
-      {"GXor" , GDK_OR," src OR dst "},
-      {"GXnor" , GDK_OR," NOT src AND NOT dst "}, /*  GDK_NOR:  XXX missing in gdk */
-      {"GXequiv" , GDK_EQUIV," NOT src XOR dst "},
-      {"GXinvert" , GDK_INVERT," NOT dst "},
-      {"GXorReverse" , GDK_OR_REVERSE," src OR NOT dst "},
-      {"GXcopyInverted" , GDK_COPY_INVERT," NOT src "},
-      {"GXorInverted" , GDK_OR_INVERT," NOT src OR dst "},
-      {"GXnand" , GDK_NAND," NOT src OR NOT dst "},
-      {"GXset" , GDK_SET," 1 "}
-    };
 
 /**
  * xset_alufunction1:
@@ -1038,7 +1012,7 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
     Xgc->graphic_engine->xset_usecolor(Xgc,1);
   else
     Xgc->graphic_engine->xset_usecolor(Xgc,0);
-  Xgc->graphic_engine->tape_replay(Xgc,win_num,NULL);
+  Xgc->graphic_engine->tape_replay(Xgc,NULL);
   Xgc->private->cairo_cr = cr_current;
   Xgc->graphic_engine->xset_usecolor(Xgc,uc);
   cairo_show_page (cr);
@@ -1053,7 +1027,8 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
 
 int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
 {
-  BCG *Xgc = window_list_search(win_num);
+  NspGraphic *G ; 
+  BCG *Xgc = window_list_search_new(win_num);
   int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
   /* we must create a cairo Xgc with a file-surface */
@@ -1062,14 +1037,16 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
   win= Cairo_gengine.initgraphic("void",&v1,NULL,NULL,NULL,NULL,'k',cr);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
-  if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
+  if (win == -1 || ( Xgc1 = window_list_search_new(win)) == NULL)
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
     }
   Xgc1->CWindowWidth= width;
   Xgc1->CWindowHeight=  height;
-  tape_replay_mix(Xgc1,Xgc,win_num);
+
+  G = (NspGraphic *) Xgc->figure ;
+  G->type->draw(Xgc1,G,NULL,NULL);
   if ( Xgc1 != Xgc ) 
     {
       /* delete the localy created <<window>> 
@@ -1092,6 +1069,7 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
 static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
 				const char *driver,char option)
 {
+  NspGraphic *G;
   int v1=-1,win,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
   /* default is to follow the window size */
@@ -1128,7 +1106,7 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   win= Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
-  if (win == -1 || ( Xgc1 = window_list_search(win)) == NULL)
+  if (win == -1 || ( Xgc1 = window_list_search_new(win)) == NULL)
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
@@ -1136,7 +1114,8 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   Xgc1->CWindowWidth=   Xgc->CWindowWidth;
   Xgc1->CWindowHeight=  Xgc->CWindowHeight;
   Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
-  tape_replay_mix(Xgc1,Xgc,win_num);
+  G = (NspGraphic *) Xgc->figure ;
+  G->type->draw(Xgc1,G,NULL,NULL);
   cairo_show_page (cr);
   if ( strcmp(driver,"cairo-png")==0 )
     cairo_surface_write_to_png (surface,bufname);

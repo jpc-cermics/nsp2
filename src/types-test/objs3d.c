@@ -24,7 +24,7 @@
 
 
 
-#line 51 "codegen/objs3d.override"
+#line 52 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 #include <nsp/object.h>
 #include <nsp/figuredata.h> 
@@ -108,7 +108,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 69 "codegen/objs3d.override"
+#line 70 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -766,7 +766,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 90 "codegen/objs3d.override"
+#line 91 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -890,7 +890,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 106 "codegen/objs3d.override"
+#line 107 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1097,7 +1097,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 164 "codegen/objs3d.override"
+#line 165 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1109,7 +1109,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1110 "objs3d.c"
 
 
-#line 174 "codegen/objs3d.override"
+#line 175 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1149,7 +1149,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 184 "codegen/objs3d.override"
+#line 185 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1614,7 +1614,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
  *
  */
 
-void nsp_figure_change3d_orientation(BCG *Xgc,NspGraphic *Obj,double theta, double alpha,int *pt)
+void nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt)
 {
   NspObjs3d *Obj3d;
   Obj3d = (NspObjs3d *) nsp_check_pt_axes_or_objs3d(Xgc,pt);
@@ -2470,16 +2470,7 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
   /* Redraw other graphics */
   if ( redraw == TRUE )
     {
-      /* just change bbox not flag */
-      static int iflag[]={0,0,0,1};
-      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
-	{
-	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
-	  return;
-	}
-      Xgc->graphic_engine->clearwindow(Xgc);    
-      /* redraw 3d with new bbox */
-      tape_replay_new_angles(Xgc,Xgc->CurWindow,iflag,NULL,teta,alpha,bbox);
+      
     }
 }
 
@@ -2652,24 +2643,15 @@ int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
 
 void nsp_3d_rotation(BCG *Xgc)
 {
-  int box_only = FALSE;
   double theta,alpha, theta_dir;
-  int flag[3],pixmode,pt[2];
-  int iflag[]={0,0,0,0};
+  int pixmode,pt[2];
   int xc,yc;
   double theta0,alpha0;
   int ibutton,imask,iwait=FALSE,istr=0;
-  double x0,y0,x,y,bbox[4];
-  /* FIXME */
+  double x0,y0,x,y;
   if ( tape_check_recorded_3D(Xgc,Xgc->CurWindow) == FAIL) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
-      /* XXX continue for new graphics  */
-    }
-  if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
-    {
-      Xgc->graphic_engine->xinfo(Xgc,"3d rotation is not possible when recording is not on" );
-      return;
     }
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
@@ -2691,21 +2673,10 @@ void nsp_3d_rotation(BCG *Xgc)
       Xgc->scales->scale_3drot_flag = 1;
 #endif 
       Xgc->graphic_engine->xinfo(Xgc,"alpha=%.2f,theta=%.2f",alpha,theta); 
-      if ( box_only == TRUE) 
-	{
-	  Xgc->graphic_engine->xset_recording(Xgc,FALSE);
-	  Xgc->graphic_engine->clearwindow(Xgc);    
-	  /* dbox(Xgc,theta,alpha); */
-	  if ( pixmode == 1) Xgc->graphic_engine->xset_show(Xgc);
-	  Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-	}
-      else 
-	{
-	  /* just changes the angles in recorded plots 
-	   * and invalidate the objs3d 
-	   */
-	  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
-	}
+      /* just changes the angles in the objs3d which contains the 
+       * point @pt and invalidate the objs3d.
+       */
+      nsp_figure_change3d_orientation(Xgc,theta,alpha,pt);
       Xgc->graphic_engine->xgetmouse(Xgc,"one",&ibutton,&imask,&xc, &yc,FALSE,TRUE,TRUE,FALSE);
       x=xc;
       y=yc;
@@ -2713,9 +2684,8 @@ void nsp_3d_rotation(BCG *Xgc)
   nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = 0;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
-  tape_new_angles_plots(Xgc,Xgc->CurWindow,&theta,&alpha,iflag,flag,bbox,pt);
+  nsp_figure_change3d_orientation(Xgc,theta,alpha,pt);
 }
-
 
 
 
@@ -2748,4 +2718,4 @@ void nsp_objs3d_invalidate(NspGraphic *G)
     }
 }
 
-#line 2752 "objs3d.c"
+#line 2722 "objs3d.c"

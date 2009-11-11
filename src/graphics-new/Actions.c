@@ -29,6 +29,7 @@
 #include "../system/files.h" /* FSIZE */
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
+#include <nsp/axes.h> 
 
 static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox);
 static int nsp_gr_buzy = 0;
@@ -349,7 +350,7 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
     Ggc->graphic_engine->xset_usecolor(Ggc,zero);
   Ggc->figure = Xgc->figure ; 
   xgc_reset_scales_to_default(Ggc);
-  Ggc->graphic_engine->tape_replay(Ggc,Xgc->CurWindow,NULL);
+  Ggc->graphic_engine->tape_replay(Ggc,NULL);
   Ggc->figure = NULL ; 
   Ggc->graphic_engine->xend(Xgc);
 }
@@ -366,13 +367,11 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 {
   double bbox[4];
   int ibbox[4];
-  int aaint[]={2,10,2,10},flag[]={1,0,0} ;
   static int nsp_gc_buzy_zoom = 0;
   nsp_gc_buzy_zoom =1;
   if ( Xgc == NULL) return ;
   zoom_get_rectangle(Xgc,bbox,ibbox);
-  tape_replay_new_scale(Xgc,Xgc->CurWindow,flag,aaint,bbox,ibbox);
-  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  nsp_figure_zoom(Xgc,ibbox);
   Xgc->graphic_engine->process_updates(Xgc);
   nsp_gc_buzy_zoom = 0;
 }
@@ -386,9 +385,9 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 
 static void  nsp_gc_unzoom(BCG *Xgc)
 {
-  if ( Xgc == NULL) return ;
-  tape_replay_undo_scale(Xgc,Xgc->CurWindow);
-  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  if ( Xgc == NULL || Xgc->figure == NULL ) return ;
+  /* unzoom and invalidate axes */
+  nsp_figure_unzoom((NspGraphic *) Xgc->figure);
   Xgc->graphic_engine->process_updates(Xgc);
 }
 

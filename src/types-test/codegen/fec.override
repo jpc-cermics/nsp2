@@ -3,7 +3,6 @@
 include-public Fec
 
 extern BCG *nsp_check_graphic_context(void);
-extern void tape_store_graphic_object(BCG *Xgc,NspObject *obj);
 extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);

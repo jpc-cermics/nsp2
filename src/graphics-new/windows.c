@@ -226,7 +226,7 @@ void window_list_remove(int num)
 }
 
 /**
- * window_list_search:
+ * window_list_search_new:
  * @winnum: 
  * 
  * Search a graphic context for window @winnum 
@@ -558,7 +558,7 @@ int xgc_reset_scales_to_default(BCG *Xgc)
 static int set_window_scale(int win,window_scale_list *scale)
 { 
   window_scale_list *loc;
-  BCG * winxgc = window_list_search(win);
+  BCG * winxgc = window_list_search_new(win);
   if ( winxgc == NULL) return FAIL;
   if ( winxgc->scales ==  NULL)
     {
@@ -677,7 +677,7 @@ void window_scale_delete(int win)
 { 
 
   window_scale_list *loc;
-  BCG * winxgc = window_list_search(win);
+  BCG * winxgc = window_list_search_new(win);
   if ( winxgc == NULL) return ; 
   if ( winxgc->scales ==  NULL) return ;
   loc = winxgc->scales ;

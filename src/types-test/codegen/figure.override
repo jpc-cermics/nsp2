@@ -42,7 +42,6 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 
-
 %%
 headers
 #include <gdk/gdk.h>
@@ -88,7 +87,9 @@ int _wrap_figure_attach(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&pl) == FAIL) return RET_BUG;
   /* here we should get the Xgc with the same id as figure XXXX */
   Xgc=nsp_check_graphic_context();
-  tape_store_graphic_object(Xgc, pl);
+  if ((pl = nsp_object_copy_and_name("Obj",pl)) == NULLOBJ ) 
+    return RET_BUG;
+  Xgc->figure = pl;
   return 0;
 }
 
@@ -188,6 +189,48 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
   return 1;
 }
 
+
+%%
+override-attr FigureData.colormap
+
+static NspObject *_wrap_figuredata_get_colormap(void *self,const char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspFigureData *) self)->colormap;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_figuredata_get_obj_colormap(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+  *copy = TRUE;
+  ret = ((NspMatrix*) ((NspFigureData *) self)->colormap);
+  return (NspObject *) ret;
+}
+
+static int _wrap_figuredata_set_obj_colormap(void *self, NspObject *O)
+{
+  NspMatrix *colormap;
+  if ( ! IsMat(O) ) return FAIL;
+  if ((colormap = (NspMatrix *) nsp_object_copy_and_name("cmap",O)) == NULLMAT) return FAIL;
+  if (((NspFigureData *) self)->colormap != NULL ) 
+    nsp_matrix_destroy(((NspFigureData *) self)->colormap);
+  ((NspFigureData *) self)->colormap= colormap;
+  return OK;
+}
+
+static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *colormap;
+  if ( ! IsMat(O) ) return FAIL;
+  if ((colormap = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspFigureData *) self)->colormap != NULL ) 
+    nsp_matrix_destroy(((NspFigureData *) self)->colormap);
+  ((NspFigureData *) self)->colormap= colormap;
+  return OK;
+}
+
 %%
 last
 
@@ -245,6 +288,7 @@ extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine;
 
 static int nsp_figure_connect(NspFigure *F)
 {
+  NspObject *obj;
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   BCG *Xgc;
@@ -335,11 +379,10 @@ static int nsp_figure_connect(NspFigure *F)
   
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
     Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
-  tape_store_graphic_object(Xgc,NSP_OBJECT(F));
-  /* 
-     F->obj->ref_count++;
-     ((NspGraphic *) F)->obj->ref_count++;
-  */
+
+  if ((obj = nsp_object_copy_and_name("Obj",NSP_OBJECT(F))) == NULLOBJ )
+    return FAIL;
+  Xgc->figure = obj;
   return OK;
 }
 
@@ -496,9 +539,10 @@ static NspFigure *nsp_get_current_figure(void)
   NspObject  *F = NULL;
   BCG *Xgc = nsp_check_graphic_context();
   if ( Xgc == NULL) return NULL;
-  F = tape_search_graphic_object(Xgc,Xgc->CurWindow);
-  if ( F == NULL) return NULL;
-  if ( ! IsFigure(F)) return NULL;
+  if ((F = (NspObject *) Xgc->figure)== NULL)
+    return NULL;
+  if ( ! IsFigure(F)) 
+    return NULL;
   return (NspFigure *) F;
 }
 
@@ -560,7 +604,13 @@ static NspFigure *nsp_create_default_figure(BCG *Xgc)
   Fig = nsp_figure_create("fig",name,driver,Xgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,
 			  TRUE,NULL,Xgc,NULL);
   /* insert in Xgc */
-  if ( Fig != NULL)  tape_store_graphic_object(Xgc,NSP_OBJECT(Fig));
+  if ( Fig != NULL) 
+    {
+      NspObject *obj;
+      if ((obj = nsp_object_copy_and_name("Obj",NSP_OBJECT(Fig))) == NULLOBJ ) 
+	return NULL;
+      Xgc->figure = obj;
+    }
   return Fig;
 }
 
@@ -575,7 +625,7 @@ static NspFigure *nsp_create_default_figure(BCG *Xgc)
 
 NspFigure *nsp_check_for_figure(BCG *Xgc)
 {
-  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  NspFigure  *F =  Xgc->figure; 
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
@@ -601,12 +651,13 @@ NspFigure *nsp_check_for_figure(BCG *Xgc)
  * 
  * Returns: 
  **/
+
 NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 {
   int i,l, created=FALSE;
   NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
   NspList *L;
-  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  NspFigure  *F = Xgc->figure; 
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
@@ -679,7 +730,7 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
   int i,l , created=FALSE;
   NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
   NspList *L;
-  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  NspFigure  *F = Xgc->figure; 
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
@@ -748,7 +799,7 @@ NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect)
   int i,l, created=FALSE;
   NspObject *Obj=NULLOBJ,*Res=NULLOBJ;
   NspList *L;
-  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  NspFigure  *F = (NspFigure *) Xgc->figure;
   if ( F == NULL) 
     {
       /* create a new figure and store it in Xgc */
@@ -836,7 +887,7 @@ NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt)
   int i,l,  Irect[4];
   NspObject *Obj=NULLOBJ,*Res=NULLOBJ;
   NspList *L;
-  NspFigure  *F = (NspFigure *) tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  NspFigure  *F = (NspFigure *) Xgc->figure;
   if ( ! IsFigure((NspObject *) F)) return NULL;
 
   L= F->obj->children;
@@ -1039,7 +1090,7 @@ NspFigure *nsp_get_figure(BCG *Xgc)
 {
   NspObject  *F = NULL;
   if ( Xgc == NULL) return NULL;
-  F = tape_search_graphic_object(Xgc,Xgc->CurWindow);
+  F = Xgc->figure; 
   if ( F == NULL) return NULL;
   if ( ! IsFigure(F)) return NULL;
   return (NspFigure *) F;

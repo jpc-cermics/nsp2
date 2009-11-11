@@ -708,7 +708,7 @@ static int _wrap_classa_set_cla_bval(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 94 "codegen/classa.override"
+#line 95 "codegen/classa.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -788,7 +788,8 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 792 "classa.c"
+
+#line 793 "classa.c"
 
 
 #line 69 "codegen/classa.override"
@@ -796,7 +797,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 800 "classa.c"
+#line 801 "classa.c"
 
 
 /*----------------------------------------------------
@@ -827,4 +828,4 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
   *f = ClassA_func[i].fonc;
 }
 
-#line 831 "classa.c"
+#line 832 "classa.c"

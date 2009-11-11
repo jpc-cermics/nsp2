@@ -89,6 +89,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
+
 %%
 override-attr ClassA.cla_lval 
 

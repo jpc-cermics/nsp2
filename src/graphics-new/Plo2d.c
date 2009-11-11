@@ -370,20 +370,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
   /* Redraw other graphics if needed */
   if ( redraw )
     {
-      /* we propagate the new strflag[1] to previous plots and the new frect 
-       */
-      static int flag[3]={1,1,1};
-      /* if the last graphic contains axis draw we remove previous ones */
-      /* Redraw previous graphics with new Scale */
-      if ( Xgc->graphic_engine->xget_recording(Xgc) == FALSE ) 
-	{
-	  Xgc->graphic_engine->xinfo(Xgc,"Auto rescale only works when recording is on " );
-	}
-      else 
-	{
-	  Xgc->graphic_engine->clearwindow(Xgc);    
-	  tape_replay_new_scale_1(Xgc,Xgc->CurWindow,flag,aaint,FRect,strflag);
-	}
+      
     }
 
 #ifdef WITH_GTKGLEXT 
@@ -393,7 +380,7 @@ void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,double *y,
       nsp_ogl_set_2dview(Xgc);
     }
 #endif
-
+  
 }
 
 /*----------------------------------------------------

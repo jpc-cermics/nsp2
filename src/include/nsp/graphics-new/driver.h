@@ -54,13 +54,12 @@ typedef void driver_xinfo( BCG *gc,char *message,...);
 typedef void driver_xpause( int sec_time,int events);
 typedef void driver_xselgraphic ( BCG *gc);
 typedef void driver_sedeco( int );
-typedef void driver_tape_replay(BCG *gc,int winnumber,int *rect);
+typedef void driver_tape_replay(BCG *gc,int *rect);
 typedef void driver_tape_clean_plots(BCG *gc,int winnumber);
-typedef void driver_tape_replay_new_angles(BCG *gc,int winnumber,int *iflag, int *flag,
-					   double *theta, double *alpha, double *bbox);
+typedef void driver_tape_replay_new_angles(BCG *gc);
 typedef void driver_tape_replay_new_scale(BCG *gc,int winnumber, int *flag, int *aaint, 
 					  double *bbox, int *ibbox);
-typedef void driver_tape_replay_undo_scale(BCG *gc,int winnumber);
+typedef void driver_tape_replay_undo_scale(BCG *gc);
 typedef int  driver_tape_check_recorded_3D(BCG *gc,int winnumber);
 typedef void driver_xget_windowpos(BCG *gc,int *x,int *y);
 typedef void driver_xset_windowpos(BCG *gc,int x, int y);

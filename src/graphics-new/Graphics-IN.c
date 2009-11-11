@@ -4640,8 +4640,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
   int *iflag = iflag_def,*aint = aint_def, *flagx= flagx_def,num;
   double alpha = 35.0,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
 
-  static char *xtape_Table[] = {  "on","clear","replay","replaysc","replayna","off",  NULL };
-
+  static char *xtape_Table[] = {"on","clear","replay","replaysc","replayna","off",  NULL };
   CheckRhs(1,7);
   Xgc=nsp_check_graphic_context();
 
@@ -4667,7 +4666,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
     case 2 : /* replay */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      Xgc->graphic_engine->tape_replay(Xgc,num,NULL);
+      Xgc->graphic_engine->tape_replay(Xgc,NULL);
       break;
     case 3 : /* replaysc */
       CheckRhs(2,4);
@@ -4683,6 +4682,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	  CheckLength(NspFname(stack),4,M,4); aint = (int*) M->R;
 	}
       Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect,NULL);
+      Xgc->graphic_engine->process_updates(Xgc);
       break;
     case 4: /* replayna */
       CheckRhs(2,5);
@@ -4701,18 +4701,17 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	if ((M= GetRealMat(stack,6))  == NULLMAT) return RET_BUG;
 	CheckLength(NspFname(stack),7,M,6); ebox =  M->R;
       }
-      Xgc->graphic_engine->tape_replay_new_angles(Xgc,num,iflag,flagx,&theta,&alpha,ebox); /*  */
+      nsp_figure_change3d_orientation(Xgc,theta,alpha,NULL);
+      Xgc->graphic_engine->process_updates(Xgc);
       break;
     case 5: /* off */
       CheckRhs(1,1);
       rec= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,FALSE);
       if ((status= nsp_new_string_obj(NVOID,(rec== TRUE) ? "on": "off",-1))== NULLOBJ)
 	return RET_BUG;
       MoveObj(stack,1,status);
       return 1;
     }
-  
   return 0;
 }
 

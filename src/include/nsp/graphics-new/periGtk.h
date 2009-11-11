@@ -253,7 +253,7 @@ Gengine xx__gengine = {
   tape_replay_new_scale,
   tape_replay_undo_scale,
   tape_check_recorded_3D,
-
+  
   xget_windowpos,
   xset_windowpos,
   xget_windowdim,

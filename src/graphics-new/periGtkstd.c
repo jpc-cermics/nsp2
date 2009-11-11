@@ -57,6 +57,7 @@ GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
 static void invalidate(BCG *Xgc,void *rect)
 {
   Xgc->private->draw = TRUE;
+  if ( Xgc->private->drawing == NULL) return;
   if ( rect == NULL ) 
     {
       gdk_window_invalidate_rect(Xgc->private->drawing->window,
@@ -93,6 +94,7 @@ static void invalidate(BCG *Xgc,void *rect)
 
 static void process_updates(BCG *Xgc)
 {
+  if ( Xgc->private->drawing == NULL) return;
   gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
@@ -1789,13 +1791,13 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	       */
 	      dd->graphic_engine->cleararea(dd,&dd->private->invalidated);
 	      dd->graphic_engine->xset_clip(dd,rect);
-	      dd->graphic_engine->tape_replay(dd,dd->CurWindow,rect);
+	      dd->graphic_engine->tape_replay(dd,rect);
 	      dd->graphic_engine->xset_unclip(dd);
 	    }
 	  else
 	    {
 	      dd->graphic_engine->clearwindow(dd);
-	      dd->graphic_engine->tape_replay(dd,dd->CurWindow,NULL);
+	      dd->graphic_engine->tape_replay(dd,NULL);
 	    }
 	  dd->private->in_expose= FALSE;
 	}
@@ -1895,7 +1897,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  dd->private->in_expose= TRUE;
 	  /* nsp_gr_replay(dd->CurWindow); */
 	  dd->graphic_engine->clearwindow(dd);
-	  dd->graphic_engine->tape_replay(dd,dd->CurWindow,NULL);
+	  dd->graphic_engine->tape_replay(dd,NULL);
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
 	  dd->private->in_expose= FALSE;

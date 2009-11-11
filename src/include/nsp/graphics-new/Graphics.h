@@ -199,20 +199,14 @@ extern void Convex_Box(BCG *Xgc, nsp_box_3d *box,const char *legend, int flag);
 
 /* Rec.c */ 
 
-extern void tape_new_angles_plots(BCG *Xgc, int winnumber, double *theta,
-				  double *alpha, int *iflag, int *flag, 
-				  double *bbox,int *pt);
+extern void tape_new_angles_plots(BCG *Xgc,double theta,double alpha,const int *pt);
 extern int  tape_check_recorded_3D (BCG *Xgc,int winnumber); 
 extern void tape_clean_plots  (BCG *Xgc,int winnumber);
-extern void tape_replay_undo_scale(BCG *Xgc,int winnumber);
+extern void tape_replay_undo_scale(BCG *Xgc);
 extern void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,
 				  double *bbox,int *ibbox);
-extern void tape_replay_new_scale_1(BCG *Xgc,int winnumber, int *flag, 
-				    int *aaint, double *bbox, char *strf);
-extern void tape_replay_new_angles(BCG *Xgc,int winnumber,int *iflag, int *flag,
-				   double *theta,
-				   double *alpha, double *bbox);
-extern void tape_replay(BCG *Xgc,int winnumber,int *rect);
+extern void tape_replay_new_angles(BCG *Xgc);
+extern void tape_replay(BCG *Xgc,int *rect);
 extern void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber);
 extern void UseColorFlag  (int flag); 
 
