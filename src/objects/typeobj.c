@@ -29,6 +29,39 @@
 /* FIXME */
 extern void nsp_init_gtk_types(void);
 extern void nsp_init_gtk_types_added(void);
+extern void *new_type_arrows(type_mode mode);
+extern void *new_type_axes(type_mode mode);
+extern void *new_type_block(type_mode mode);
+extern void *new_type_box3d(type_mode mode);
+extern void *new_type_compound(type_mode mode);
+extern void *new_type_connector(type_mode mode);
+extern void *new_type_contour(type_mode mode);
+extern void *new_type_contour3d(type_mode mode);
+extern void *new_type_curve(type_mode mode);
+extern void *new_type_diagram(type_mode mode);
+extern void *new_type_fec(type_mode mode);
+extern void *new_type_figure(type_mode mode);
+extern void *new_type_figuredata(type_mode mode);
+extern void *new_type_gmatrix(type_mode mode);
+extern void *new_type_gmatrix1(type_mode mode);
+extern void *new_type_rect(type_mode mode); 
+extern void *new_type_grarc(type_mode mode);
+extern void *new_type_grimage(type_mode mode);
+extern void *new_type_groot(type_mode mode);
+extern void *new_type_grrect(type_mode mode);
+extern void *new_type_grstring(type_mode mode);
+extern void *new_type_link(type_mode mode);
+extern void *new_type_objs3d(type_mode mode);
+extern void *new_type_points3d(type_mode mode);
+extern void *new_type_polyhedron(type_mode mode);
+extern void *new_type_polyline(type_mode mode);
+extern void *new_type_polyline3d(type_mode mode);
+extern void *new_type_qcurve(type_mode mode);
+extern void *new_type_segments(type_mode mode);
+extern void *new_type_spolyhedron(type_mode mode);
+extern void *new_type_string3d(type_mode mode);
+extern void *new_type_surf(type_mode mode);
+extern void *new_type_vfield(type_mode mode);
 
 /* 
  * NspType inherits from NspObject
@@ -545,30 +578,6 @@ void primitive_types_register(void)
 }
 
 
-extern void *  new_type_arrows(type_mode mode);
-extern void *  new_type_axes(type_mode mode);
-extern void *  new_type_box3d(type_mode mode);
-extern void *  new_type_compound(type_mode mode);
-extern void *  new_type_contour(type_mode mode);
-extern void *  new_type_curve(type_mode mode);
-extern void *  new_type_figure(type_mode mode);
-extern void *  new_type_gmatrix(type_mode mode);
-/* extern void *  new_type_graphic(type_mode mode); */
-extern void *  new_type_grarc(type_mode mode);
-extern void *  new_type_groot(type_mode mode);
-extern void *  new_type_grrect(type_mode mode);
-extern void *  new_type_grstring(type_mode mode);
-extern void *  new_type_objs3d(type_mode mode);
-extern void *  new_type_points3d(type_mode mode);
-extern void *  new_type_polyhedron(type_mode mode);
-extern void *  new_type_polyline3d(type_mode mode);
-extern void *  new_type_polyline(type_mode mode);
-extern void *  new_type_segments(type_mode mode);
-extern void *  new_type_spolyhedron(type_mode mode);
-extern void *  new_type_string3d(type_mode mode);
-extern void *  new_type_surf(type_mode mode);
-extern void *  new_type_vfield(type_mode mode);
-
 #define  WITH_GRAPHIC_OBJECTS 
 static void graphic_types_register(void) 
 {
@@ -578,19 +587,25 @@ static void graphic_types_register(void)
   new_type_box3d(T_BASE);
   new_type_compound(T_BASE);
   new_type_contour(T_BASE);
+  new_type_contour3d(T_BASE);
   new_type_curve(T_BASE);
+  new_type_fec(T_BASE);
   new_type_figure(T_BASE);
+  new_type_figuredata(T_BASE);
   new_type_gmatrix(T_BASE);
+  new_type_gmatrix1(T_BASE);
   new_type_graphic(T_BASE);
   new_type_grarc(T_BASE);
+  new_type_grimage(T_BASE);
   new_type_groot(T_BASE);
   new_type_grrect(T_BASE);
   new_type_grstring(T_BASE);
   new_type_objs3d(T_BASE);
   new_type_points3d(T_BASE);
   new_type_polyhedron(T_BASE);
-  new_type_polyline3d(T_BASE);
   new_type_polyline(T_BASE);
+  new_type_polyline3d(T_BASE);
+  new_type_qcurve(T_BASE);
   new_type_segments(T_BASE);
   new_type_spolyhedron(T_BASE);
   new_type_string3d(T_BASE);
