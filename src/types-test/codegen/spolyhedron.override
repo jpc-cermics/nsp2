@@ -1,12 +1,10 @@
 /* -*- Mode: C -*- */
 %%
 include-public  SPolyhedron
-
 /* inserted at the end of public part of include file */
 
 %%
 include-private  SPolyhedron
-
 /* inserted in the private part of include file */
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_spolyhedron(NspGraphic *o,const double *tr);
@@ -31,7 +29,6 @@ headers
 #include <nsp/object.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
-#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>

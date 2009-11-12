@@ -1,18 +1,21 @@
 /* -*- Mode: C -*- */
 %%
-include-public Qcurve
+include-start Qcurve
+/* inserted at the start of the include file */
+#include <nsp/axes.h> 
 
+%%
+include-public Qcurve
 /* inserted at the end of public part of include file */
 
 extern NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
 				  double ymin,double ymax,NspList **Lc);
 extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 
-
 %%
 include-private Qcurve
-
 /* inserted in the private part of include file */
+
 static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
 static void nsp_rotate_qcurve(NspGraphic *o,double *R);
@@ -27,11 +30,6 @@ static void oscillo_test();
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/qcurve.h>
-#include <nsp/axes.h> 
 
 %%
 init 

@@ -25,11 +25,8 @@
 
 
 #line 20 "codegen/segments.override"
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
 
-#line 33 "segments.c"
+#line 30 "segments.c"
 
 /* ----------- NspSegments ----------- */
 
@@ -101,7 +98,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
 
   type->init = (init_func *) init_segments;
 
-#line 31 "codegen/segments.override"
+#line 28 "codegen/segments.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +111,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "segments.c"
+#line 115 "segments.c"
   /* 
    * NspSegments interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -684,7 +681,7 @@ static AttrTab segments_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 54 "codegen/segments.override"
+#line 51 "codegen/segments.override"
 
 extern function int_nspgraphic_extract;
 
@@ -693,10 +690,10 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 697 "segments.c"
+#line 694 "segments.c"
 
 
-#line 64 "codegen/segments.override"
+#line 61 "codegen/segments.override"
 
 extern function int_graphic_set_attribute;
 
@@ -706,7 +703,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 710 "segments.c"
+#line 707 "segments.c"
 
 
 /*----------------------------------------------------
@@ -737,7 +734,7 @@ void Segments_Interf_Info(int i, char **fname, function (**f))
   *f = Segments_func[i].fonc;
 }
 
-#line 75 "codegen/segments.override"
+#line 72 "codegen/segments.override"
 
 /* inserted verbatim at the end */
 
@@ -849,4 +846,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 853 "segments.c"
+#line 850 "segments.c"

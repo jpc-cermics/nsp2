@@ -20,11 +20,6 @@ static double min_of_doubles (const double *x,int n);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/axes.h>
-
 
 %%
 init 

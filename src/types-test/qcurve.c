@@ -24,14 +24,9 @@
 
 
 
-#line 30 "codegen/qcurve.override"
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h>
-#include <nsp/qcurve.h>
-#include <nsp/axes.h> 
+#line 33 "codegen/qcurve.override"
 
-#line 35 "qcurve.c"
+#line 30 "qcurve.c"
 
 /* ----------- NspQcurve ----------- */
 
@@ -103,7 +98,7 @@ NspTypeQcurve *new_type_qcurve(type_mode mode)
 
   type->init = (init_func *) init_qcurve;
 
-#line 43 "codegen/qcurve.override"
+#line 41 "codegen/qcurve.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_qcurve;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
@@ -114,7 +109,7 @@ NspTypeQcurve *new_type_qcurve(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "qcurve.c"
+#line 113 "qcurve.c"
   /* 
    * NspQcurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -693,7 +688,7 @@ static int _wrap_qcurve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 63 "codegen/qcurve.override"
+#line 61 "codegen/qcurve.override"
 /* override set alpha */
 static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -707,7 +702,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 711 "qcurve.c"
+#line 706 "qcurve.c"
 static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -716,7 +711,7 @@ static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 78 "codegen/qcurve.override"
+#line 76 "codegen/qcurve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -745,7 +740,7 @@ static int _wrap_qcurve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 749 "qcurve.c"
+#line 744 "qcurve.c"
 static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -802,7 +797,7 @@ static AttrTab qcurve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 108 "codegen/qcurve.override"
+#line 106 "codegen/qcurve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -811,10 +806,10 @@ int _wrap_nsp_extractelts_qcurve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 815 "qcurve.c"
+#line 810 "qcurve.c"
 
 
-#line 118 "codegen/qcurve.override"
+#line 116 "codegen/qcurve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -824,7 +819,7 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 828 "qcurve.c"
+#line 823 "qcurve.c"
 
 
 int _wrap_oscillo_test(Stack stack, int rhs, int opt, int lhs) /* oscillo */
@@ -862,7 +857,7 @@ void Qcurve_Interf_Info(int i, char **fname, function (**f))
   *f = Qcurve_func[i].fonc;
 }
 
-#line 129 "codegen/qcurve.override"
+#line 127 "codegen/qcurve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -1212,4 +1207,4 @@ static void oscillo_test()
 
      
 
-#line 1216 "qcurve.c"
+#line 1211 "qcurve.c"

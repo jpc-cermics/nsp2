@@ -26,13 +26,12 @@
 
 #line 57 "codegen/objs3d.override"
 #include <gtk/gtk.h>
-#include <nsp/object.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
-#line 36 "objs3d.c"
+#line 35 "objs3d.c"
 
 /* ----------- NspObjs3d ----------- */
 
@@ -104,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 71 "codegen/objs3d.override"
+#line 70 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -116,7 +115,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->children = (children_func *) nsp_objs3d_children ;
   ((NspTypeGraphic *) type->surtype)->invalidate = nsp_objs3d_invalidate;
 
-#line 120 "objs3d.c"
+#line 119 "objs3d.c"
   /* 
    * NspObjs3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -762,7 +761,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 92 "codegen/objs3d.override"
+#line 91 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -777,7 +776,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 781 "objs3d.c"
+#line 780 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -886,7 +885,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 108 "codegen/objs3d.override"
+#line 107 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -943,7 +942,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 947 "objs3d.c"
+#line 946 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1093,7 +1092,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 166 "codegen/objs3d.override"
+#line 165 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1102,10 +1101,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1106 "objs3d.c"
+#line 1105 "objs3d.c"
 
 
-#line 176 "codegen/objs3d.override"
+#line 175 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1114,7 +1113,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1118 "objs3d.c"
+#line 1117 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1145,7 +1144,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 186 "codegen/objs3d.override"
+#line 185 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -2714,4 +2713,4 @@ void nsp_objs3d_invalidate(NspGraphic *G)
     }
 }
 
-#line 2718 "objs3d.c"
+#line 2717 "objs3d.c"

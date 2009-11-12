@@ -2,11 +2,6 @@
 %%
 include-start Axes
 /* inserted at the start of include file */
-
-#include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
-#include "nsp/graphics-new/gcscale.h"
 #include <nsp/figure.h>
 
 /**
@@ -62,8 +57,6 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
 

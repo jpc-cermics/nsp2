@@ -24,17 +24,16 @@
 
 
 
-#line 30 "codegen/spolyhedron.override"
+#line 28 "codegen/spolyhedron.override"
 #include <gdk/gdk.h>
 #include <nsp/object.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
-#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
-#line 38 "spolyhedron.c"
+#line 37 "spolyhedron.c"
 
 /* ----------- NspSPolyhedron ----------- */
 
@@ -106,7 +105,7 @@ NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
 
   type->init = (init_func *) init_spolyhedron;
 
-#line 46 "codegen/spolyhedron.override"
+#line 43 "codegen/spolyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -121,7 +120,7 @@ NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_spolyhedron_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_spolyhedron_n_faces;
 
-#line 125 "spolyhedron.c"
+#line 124 "spolyhedron.c"
   /* 
    * NspSPolyhedron interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -322,11 +321,11 @@ static NspSPolyhedron  *nsp_spolyhedron_xdr_load(XDR *xdrs)
   if ( nsp_spolyhedron_create_partial(H) == FAIL) return NULLSPOLYHEDRON;
   if ((H  = nsp_spolyhedron_xdr_load_partial(xdrs,H))== NULLSPOLYHEDRON) return H;
   if ( nsp_spolyhedron_check_values(H) == FAIL) return NULLSPOLYHEDRON;
-#line 69 "codegen/spolyhedron.override"
+#line 66 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 330 "spolyhedron.c"
+#line 329 "spolyhedron.c"
   return H;
 }
 
@@ -340,11 +339,11 @@ void nsp_spolyhedron_destroy_partial(NspSPolyhedron *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 74 "codegen/spolyhedron.override"
+#line 71 "codegen/spolyhedron.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 348 "spolyhedron.c"
+#line 347 "spolyhedron.c"
     if ( H->obj->Mcoord != NULL ) 
       nsp_matrix_destroy(H->obj->Mcoord);
     if ( H->obj->Mface != NULL ) 
@@ -604,11 +603,11 @@ NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* M
   H->obj->vlevel_length = vlevel_length;
   H->obj->coldef=coldef;
   if ( nsp_spolyhedron_check_values(H) == FAIL) return NULLSPOLYHEDRON;
-#line 69 "codegen/spolyhedron.override"
+#line 66 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 612 "spolyhedron.c"
+#line 611 "spolyhedron.c"
   return H;
 }
 
@@ -696,11 +695,11 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
   if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSPOLYHEDRON;
   if ( nsp_spolyhedron_full_copy_partial(H,self)== NULL) return NULLSPOLYHEDRON;
-#line 69 "codegen/spolyhedron.override"
+#line 66 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 704 "spolyhedron.c"
+#line 703 "spolyhedron.c"
   return H;
 }
 
@@ -720,11 +719,11 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_spolyhedron_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_spolyhedron_check_values(H) == FAIL) return RET_BUG;
-#line 69 "codegen/spolyhedron.override"
+#line 66 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return RET_BUG; 
 
-#line 728 "spolyhedron.c"
+#line 727 "spolyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -1023,7 +1022,7 @@ static AttrTab spolyhedron_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 79 "codegen/spolyhedron.override"
+#line 76 "codegen/spolyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1032,10 +1031,10 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1036 "spolyhedron.c"
+#line 1035 "spolyhedron.c"
 
 
-#line 89 "codegen/spolyhedron.override"
+#line 86 "codegen/spolyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1044,7 +1043,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1048 "spolyhedron.c"
+#line 1047 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1075,7 +1074,7 @@ void SPolyhedron_Interf_Info(int i, char **fname, function (**f))
   *f = SPolyhedron_func[i].fonc;
 }
 
-#line 99 "codegen/spolyhedron.override"
+#line 96 "codegen/spolyhedron.override"
 
 /* inserted verbatim at the end */
 
@@ -1792,4 +1791,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1796 "spolyhedron.c"
+#line 1795 "spolyhedron.c"

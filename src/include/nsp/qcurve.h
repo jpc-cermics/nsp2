@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/qcurve.override"
+/* inserted at the start of the include file */
+#include <nsp/axes.h> 
+
+#line 15 "./qcurve.h"
 /* NspQcurve */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspQcurve NspQcurve ;
 typedef struct _NspTypeQcurve NspTypeQcurve ;
 
-#line 22 "./qcurve.h"
+#line 27 "./qcurve.h"
 
 struct _NspTypeQcurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./qcurve.h"
+#line 34 "./qcurve.h"
 };
 
 typedef struct _nsp_qcurve nsp_qcurve;
@@ -93,16 +98,14 @@ extern int int_qcurve_create(Stack stack, int rhs, int opt, int lhs);
 extern NspQcurve *nsp_qcurve_xdr_load_partial(XDR *xdrs, NspQcurve *M);
 extern int nsp_qcurve_xdr_save(XDR  *xdrs, NspQcurve *M);
 
-#line 4 "codegen/qcurve.override"
-
+#line 9 "codegen/qcurve.override"
 /* inserted at the end of public part of include file */
 
 extern NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
 				  double ymin,double ymax,NspList **Lc);
 extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 
-
-#line 106 "./qcurve.h"
+#line 109 "./qcurve.h"
 #endif /* NSP_INC_NspQcurve */ 
 
 #ifdef NspQcurve_Private 
@@ -117,9 +120,9 @@ static AttrTab qcurve_attrs[];
 static NspMethods *qcurve_get_methods(void);
 /* static int int_qcurve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspQcurve *nsp_qcurve_create_void(char *name,NspTypeBase *type);
-#line 14 "codegen/qcurve.override"
-
+#line 17 "codegen/qcurve.override"
 /* inserted in the private part of include file */
+
 static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
 static void nsp_rotate_qcurve(NspGraphic *o,double *R);
@@ -132,6 +135,6 @@ static int nsp_qcurve_get_len(NspQcurve *C);
 static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy);
 static void oscillo_test();
 
-#line 136 "./qcurve.h"
+#line 139 "./qcurve.h"
 #endif /* NspQcurve_Private */
 

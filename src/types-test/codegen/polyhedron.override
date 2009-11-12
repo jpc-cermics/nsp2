@@ -1,11 +1,11 @@
 /* -*- Mode: C -*- */
 %%
 include-public  Polyhedron
-
 /* inserted at the end of public part of include file */
 
 %%
 include-private  Polyhedron
+/* inserted in the private part of include file */
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
 static void nsp_translate_polyhedron(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyhedron(NspGraphic *o,double *R);
@@ -14,16 +14,12 @@ static int nsp_getbounds_polyhedron(NspGraphic *o,double *bounds);
 static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim);
 static int nsp_polyhedron_n_faces(BCG *Xgc,NspGraphic *Obj);
 static int nsp_check_polyhedron(NspPolyhedron *P);
-
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
-
-/* inserted in the private part of include file */
 
 %%
 headers
 #include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>

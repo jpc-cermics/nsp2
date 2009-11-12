@@ -55,7 +55,6 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
 %%
 headers
 #include <gtk/gtk.h>
-#include <nsp/object.h>
 
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;

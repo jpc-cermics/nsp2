@@ -25,13 +25,8 @@
 
 
 #line 23 "codegen/vfield.override"
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
-#include <nsp/axes.h>
 
-
-#line 35 "vfield.c"
+#line 30 "vfield.c"
 
 /* ----------- NspVField ----------- */
 
@@ -103,7 +98,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
 
   type->init = (init_func *) init_vfield;
 
-#line 36 "codegen/vfield.override"
+#line 31 "codegen/vfield.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_vfield;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_vfield ;
@@ -114,7 +109,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "vfield.c"
+#line 113 "vfield.c"
   /* 
    * NspVField interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -767,7 +762,7 @@ static AttrTab vfield_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 57 "codegen/vfield.override"
+#line 52 "codegen/vfield.override"
 
 extern function int_nspgraphic_extract;
 
@@ -776,10 +771,10 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 780 "vfield.c"
+#line 775 "vfield.c"
 
 
-#line 67 "codegen/vfield.override"
+#line 62 "codegen/vfield.override"
 
 extern function int_graphic_set_attribute;
 
@@ -788,7 +783,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 792 "vfield.c"
+#line 787 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -819,7 +814,7 @@ void VField_Interf_Info(int i, char **fname, function (**f))
   *f = VField_func[i].fonc;
 }
 
-#line 77 "codegen/vfield.override"
+#line 72 "codegen/vfield.override"
 
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
 {
@@ -1074,4 +1069,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1078 "vfield.c"
+#line 1073 "vfield.c"

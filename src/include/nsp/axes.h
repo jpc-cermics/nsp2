@@ -9,11 +9,6 @@
 
 #line 4 "codegen/axes.override"
 /* inserted at the start of include file */
-
-#include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
-#include "nsp/graphics-new/gcscale.h"
 #include <nsp/figure.h>
 
 /**
@@ -23,7 +18,7 @@
  * inherits from #NspGraphics 
  */
 
-#line 27 "./axes.h"
+#line 22 "./axes.h"
 /* NspAxes */
 
 #include <nsp/graphic.h>
@@ -35,14 +30,14 @@
 typedef struct _NspAxes NspAxes ;
 typedef struct _NspTypeAxes NspTypeAxes ;
 
-#line 39 "./axes.h"
+#line 34 "./axes.h"
 
 struct _NspTypeAxes {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 46 "./axes.h"
+#line 41 "./axes.h"
 };
 
 typedef struct _nsp_axes nsp_axes;
@@ -123,7 +118,7 @@ extern int int_axes_create(Stack stack, int rhs, int opt, int lhs);
 extern NspAxes *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M);
 extern int nsp_axes_xdr_save(XDR  *xdrs, NspAxes *M);
 
-#line 21 "codegen/axes.override"
+#line 16 "codegen/axes.override"
 
 /* inserted at the end of public part of include file */
 
@@ -139,7 +134,7 @@ extern void nsp_axes_invalidate(NspGraphic *G);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
 extern void nsp_figure_zoom(BCG *Xgc,int *box);
 
-#line 143 "./axes.h"
+#line 138 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -154,7 +149,7 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
-#line 38 "codegen/axes.override"
+#line 33 "codegen/axes.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -180,6 +175,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 184 "./axes.h"
+#line 179 "./axes.h"
 #endif /* NspAxes_Private */
 

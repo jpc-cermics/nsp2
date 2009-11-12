@@ -17,9 +17,6 @@ static int nsp_getbounds_segments(NspGraphic *o,double *bounds);
 
 %%
 headers
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
 
 %%
 init 

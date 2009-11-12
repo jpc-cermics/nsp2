@@ -25,11 +25,8 @@
 
 
 #line 19 "codegen/surf.override"
-#include <gdk/gdk.h>
-#include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
 
-#line 33 "surf.c"
+#line 30 "surf.c"
 
 /* ----------- NspSurf ----------- */
 
@@ -101,7 +98,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
 
   type->init = (init_func *) init_surf;
 
-#line 30 "codegen/surf.override"
+#line 27 "codegen/surf.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +111,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "surf.c"
+#line 115 "surf.c"
   /* 
    * NspSurf interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -847,7 +844,7 @@ static AttrTab surf_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/surf.override"
+#line 50 "codegen/surf.override"
 
 extern function int_nspgraphic_extract;
 
@@ -856,10 +853,10 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 860 "surf.c"
+#line 857 "surf.c"
 
 
-#line 63 "codegen/surf.override"
+#line 60 "codegen/surf.override"
 
 extern function int_graphic_set_attribute;
 
@@ -869,7 +866,7 @@ int _wrap_nsp_setrowscols_surf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 873 "surf.c"
+#line 870 "surf.c"
 
 
 /*----------------------------------------------------
@@ -900,7 +897,7 @@ void Surf_Interf_Info(int i, char **fname, function (**f))
   *f = Surf_func[i].fonc;
 }
 
-#line 74 "codegen/surf.override"
+#line 71 "codegen/surf.override"
 
 /* inserted verbatim at the end */
 
@@ -979,4 +976,4 @@ static int nsp_getbounds_surf(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 983 "surf.c"
+#line 980 "surf.c"
