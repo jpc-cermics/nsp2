@@ -82,6 +82,7 @@ static int check_colout (Stack stack,const char *fname,char *varname,NspMatrix *
 static char * check_logflags(Stack stack,const char *fname,char *varname,char *logflags);
 static int get_rect(Stack stack, int rhs, int opt, int lhs,double **val);
 static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val);
+static void plot2d_strf_change(char c, char *strf);
 
 static const double  rect_def[]= {0.,0.,10.0,10.0}; 
 static double rect_loc[]=  {0.,0.,10.0,10.0}; 
@@ -1106,6 +1107,165 @@ static int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
 static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, NspObject *fargs);
 
 typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char *,const char *,int,double *,int *);
+
+/* a new version with objects 
+ * 
+ *  nsp_plot2d_obj(x,y,n1,n2,style,strflag,legend,brect,aaint,lstr1,lstr2)
+ *  
+ *  Draw *n1 curves of *n2 points each
+ *  (x[i+(*n2)*j] ,y[i+(*n2)*j]) Double values giving the point
+ *  position of point i of curve j (i=0,*n2-1 j=0,*n1-1)
+ *
+ *  style[*n1]-> give the style to use for each curve 
+ *     if style is positive --> a mark is used (mark id = style[i])
+ *     if style is strictly negative --> a dashed line is used 
+ *        (dash id = abs(style[i])
+ *     if there's only one curve, style can be of type style[0]=style,
+ *     style[1]=pos ( pos in [1,6]) 
+ *     pos give the legend position (1 to 6) (this can be iteresting
+ *     if you want to superpose curves with different legends by 
+ *     calling plot2d more than one time.
+ *
+ *  strflag[3] is a string
+ *  
+ *     if strflag[0] == '1' then legends are added 
+ *        legend = "leg1@leg2@....@legn"; gives the legend for each curve
+ *	else no legend
+ *
+ *     if strflag[1] == '1' then  the values of brect are used to fix 
+ *        the drawing boundaries :  brect[]= <xmin,ymin,xmax,ymax>;
+ *	if strflag[1] == '2' then the values  are computed from data
+ *	else if strflag[1]=='0' the previous values 
+ *                (previous call or defaut values) are used 
+ *
+ *     if  strflag[2] == '1' ->then an axis is added
+ *        the number of intervals 
+ *        is specified by the vector aaint[4] of ints 
+ *	   <aaint[0],aaint[1]> specifies the x-axis number of  points 
+ *	   <aaint[2],aaint[3]> same for y-axis
+ *     if  strflag[2] == '2' -> no axis, only a box around the curves
+ *     else no box and no axis 
+ *
+ */
+
+
+
+int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,int style[],char *strflag,
+		   const char *legend,int legend_pos,int mode,double brect[],int aaint[])
+{
+  const char *l_c = legend, *l_n;
+  char *curve_l;
+  char c;
+  double frect[4],xmin,xmax,ymin,ymax;
+  int i;
+  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
+  if ( axe == NULL) return FAIL;
+
+  axe->obj->lpos = legend_pos;
+
+  /* compute brect if not given */
+  switch (strflag[1])
+    {
+    case '1' : case '3' : case '5' : case '7': case '9' : case 'B':
+      frect[0]=brect[0];frect[1]=brect[1];frect[2]=brect[2];frect[3]=brect[3];
+      break;
+    case '2' : case '4' : case '6' : case '8': case 'A' : case 'C':
+      if ( strlen(logflag) < 1) c='g' ; else c=logflag[0];
+      switch ( c )
+	{
+	case 'e' : xmin= 1.0 ; xmax = (*n2);break;
+	case 'o' : xmax= Maxi(x,(*n2)); xmin= Mini(x,(*n2)); break;
+	case 'g' :
+	default: xmax= Maxi(x, (*n1)*(*n2)); xmin= Mini(x, (*n1)*(*n2)); break;
+	}
+      ymin=  Mini(y, (*n1)*(*n2)); ymax=  Maxi(y, (*n1)*(*n2));
+      /* back to default values for  x=[] and y = [] */
+      if ( ymin == LARGEST_REAL ) { ymin = 0; ymax = 10.0 ;} 
+      if ( xmin == LARGEST_REAL ) { xmin = 0; xmax = 10.0 ;} 
+      frect[0]=xmin;frect[1]=ymin;frect[2]=xmax;frect[3]=ymax;
+      break;
+    }
+  
+  if (strflag[1] == '7' || strflag[1] == '8' )
+    {
+      frect[0] = Min(frect[0], axe->obj->frect->R[0]);
+      frect[2] = Max(frect[2], axe->obj->frect->R[2]);
+      frect[1] = Min(frect[1], axe->obj->frect->R[1]);
+      frect[3] = Max(frect[3], axe->obj->frect->R[3]);
+    }
+
+  /* set the axes frect 
+   * note that this is also performed below 
+   */
+  
+  switch (strflag[1])
+    {
+    case '0': break;
+    default: memcpy(axe->obj->frect->R,frect,4*sizeof(double)); break;
+    }
+  
+
+  /* create a set of curves and insert them in axe */
+  for ( i = 0 ; i < *n1 ; i++) 
+    {
+      int mark=-1,k;
+      NspCurve *curve;
+      NspMatrix *Pts = nsp_matrix_create("Pts",'r',*n2,2); 
+      if ( Pts == NULL) return FAIL;
+      /* XXX: we should have to keep the log flags */
+      /* get x-values */
+      switch ( logflag[0] )
+	{
+	case 'e' : /* No X-value given by the user */
+	  for ( k=0 ; k < (*n2) ; k++)  Pts->R[k] = k+1.0;
+	  break ;
+	case 'o' : /* same X for all_curves */
+	  memcpy(Pts->R, x, (*n2)*sizeof(double));
+	  break;
+	case 'g' :
+	default: /* x are given for each curves */
+	  memcpy(Pts->R, x +(*n2)*i, (*n2)*sizeof(double));
+	  break;
+	}
+      memcpy(Pts->R+Pts->m,y + (*n2)*i, (*n2)*sizeof(double));
+      if ( style[i] <= 0 ) mark = -style[i];
+      /* get legend for curve i*/
+      l_n = l_c; while ( *l_n != '@' && *l_n != '\0') l_n++;
+      if ( l_n > l_c )
+	{
+	  curve_l = new_nsp_string_n(l_n-l_c +1);
+	  if ( curve_l != NULL) 
+	    {
+	      strncpy(curve_l,l_c,l_n-l_c+1);
+	      curve_l[l_n-l_c]='\0';
+	    }
+	}
+      else
+	{
+	  curve_l = NULL;
+	}
+      l_c = ( *l_n == '@') ? l_n+1: l_n;
+      /* "mark", "width", "style", "color", "mode", "Pts", legend */
+      curve= nsp_curve_create("curve",mark,0,0,
+			      ( style[i] > 0 ) ?  style[i] : -1, 
+			      mode,Pts,curve_l,NULL);
+      /* insert the new curve */
+      if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
+	return FAIL;
+    }
+  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
+  /* updates the axes scale information */
+  nsp_strf_axes(Xgc, axe , frect, strflag[1]);
+  
+  axe->obj->axes = ( strlen(strflag) >= 2) ? strflag[2] -60 : 1;
+  axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
+  axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
+  
+  nsp_axes_invalidate(((NspGraphic *) axe));
+  return OK;
+}
+
+
 
 static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int mode,func_2d func)
 {
@@ -6511,3 +6671,34 @@ static int get_arc(Stack stack, int rhs, int opt, int lhs,double **val)
   return OK;
 }
 
+
+static void plot2d_strf_change(char c, char *strf)
+{
+  if ( c == 'u') 
+    {
+      /* move up */ 
+      switch (strf[1]) 
+	{
+	case '1' : strf[1]='2';break;
+	case '3' : strf[1]='4';break;
+	case '5' : strf[1]='6';break;
+	case '7' : strf[1]='8';break;
+	case '9' : strf[1]='A';break;
+	case 'B' : strf[1]='C';break;
+	}
+    }
+  else
+    {
+      /*move down */
+      switch (strf[1]) 
+	{
+	case '2' : strf[1]='1';break;
+	case '4' : strf[1]='3';break;
+	case '6' : strf[1]='5';break;
+	case '8' : strf[1]='7';break;
+	case 'A' : strf[1]='9';break;
+	case 'C' : strf[1]='B';break;
+	}
+
+    }
+}

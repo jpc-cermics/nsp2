@@ -152,8 +152,6 @@ extern int graduate  (double *,double *,double *,double *,int *,int *,int *,
 extern void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,
 				double *y, int *n1, int *n2, int *aaint,
 				char *strflag,double FRect[4]);
-extern void plot2d_strf_change(char c, char *strf);
-
 extern void ellipse2d(nsp_gcscale *,double *,int *,int *,char *); 
 extern void axis2d  (nsp_gcscale *scales,double *,double *,double *,int *,double *); 
 extern void rect2d_f2i(nsp_gcscale *scales,const double x[],int x1[], int n);
