@@ -1419,7 +1419,7 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   /* sort the matrix 
    * [Cs,ks]= sort(C,'ldr','i');
    */
-  nsp_matrix_lexical_row_sort(C,&Index,TRUE,'i','d');
+  nsp_matrix_lexical_row_sort(C, (NspObject **)&Index, TRUE,'i','d','d');
 
   if ( Colr != NULL)
     {

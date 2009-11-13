@@ -1501,26 +1501,67 @@ static int int_smxascii(Stack stack, int rhs, int opt, int lhs)
 static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *M=NULL;
-  NspMatrix *Index=NULL;
-  char *type_sort[]={ "g", "gs", "c", "r", "lr" , "lc" , NULL };
-  char *dir_sort[]={ "i", "d",  NULL };
+  NspObject *Index=NULLOBJ;
+  char *type_possible_choices[]={ "g", "gs", "c", "r", "lr" , "lc", NULL };
+  char *type=NULL;
+  char *dir_possible_choices[]={ "i", "d",  NULL };
+  char *dir=NULL;
+  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL;
   int iflag = FALSE;
-  char direction = 'd';
-  int rep_type= sort_g,rep_dir;
+  char direction = 'd', itype = 'd';
+  int rep_type= sort_g, rep_dir, rep_ind_type;
 
-  CheckRhs(1,3);
+  CheckRhs(1,4);
+  CheckOptRhs(0,3)
   CheckLhs(0,2);
-  if ((M=GetSMatCopy(stack,1)) == NULLSMAT ) return RET_BUG;
+   if ((M=GetSMatCopy(stack,1)) == NULLSMAT ) return RET_BUG;
 
-  if ( rhs >= 2) 
+  if ( rhs > 1 )
     {
-      if ((rep_type= GetStringInArray(stack,2,type_sort,1)) == -1) return RET_BUG; 
-    }
+      if ( rhs - opt >= 2  && opt >= 1 )
+	{
+	  Scierror ("Error:\t don't use both usual and named optional arguments (in function %s)\n", NspFname(stack));
+	  return RET_BUG;
+	}
 
-  if (rhs >= 3) 
-    {
-      if ((rep_dir= GetStringInArray(stack,3,dir_sort,1)) == -1) return RET_BUG; 
-      direction = dir_sort[rep_dir][0];
+      if ( opt == 0 )
+	{
+	  if ((type = GetString(stack,2)) == NULLSTRING) return RET_BUG; 
+	  if (rhs >= 3) 
+	    {
+	      if ((dir = GetString(stack,3)) == NULLSTRING) return RET_BUG; 
+	      if ( rhs >= 4 )
+		{
+		  if ((ind_type = GetString(stack,4)) == NULLSTRING) return RET_BUG; 
+		}
+	    }  
+	}
+      else
+	{
+	  nsp_option opts[] ={{"type",string,NULLOBJ,-1},
+			      {"dir",string,NULLOBJ,-1},
+			      {"ind_type",string,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &type, &dir, &ind_type) == FAIL )
+	    return RET_BUG;
+	}
+
+      /* verify optional arg*/
+      if ( type != NULL )
+	{
+	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 ) return RET_BUG; 
+	}
+      if ( dir != NULL )
+	{
+	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) return RET_BUG; 
+	  direction = dir_possible_choices[rep_dir][0];
+	}
+      if ( ind_type != NULL )
+	{
+	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) return RET_BUG; 
+	  itype = ind_type_possible_choices[rep_ind_type][0];
+	}
     }
 
   if (lhs  == 2 || rep_type == 1 )  /* force index allocation for stable quick sort */
@@ -1532,23 +1573,26 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
     {
     case 0: 
     case 1:
-      nsp_smatrix_sort(M,&Index,iflag,direction,rep_type);break;
+      nsp_smatrix_sort(M,&Index,iflag,direction,rep_type,itype);break;
     case 2:
-      nsp_smatrix_row_sort(M,&Index,iflag,direction);break;
+      nsp_smatrix_row_sort(M,&Index,iflag,direction,itype);break;
     case 3:
-      nsp_smatrix_column_sort(M,&Index,iflag,direction);break;
+      nsp_smatrix_column_sort(M,&Index,iflag,direction,itype);break;
     case 4:
-      nsp_smatrix_lexical_row_sort(M,&Index,iflag,direction);break;
+      nsp_smatrix_lexical_row_sort(M,&Index,iflag,direction,itype);break;
     case 5:
-      nsp_smatrix_lexical_column_sort(M,&Index,iflag,direction);break;
+      nsp_smatrix_lexical_column_sort(M,&Index,iflag,direction,itype);break;
     }
+
   if ( iflag == TRUE && Index == NULL) return RET_BUG;
   NSP_OBJECT(M)->ret_pos = 1;
-  if ( lhs == 2 ) {
-    /* back convert */
-    Index = Mat2double(Index);
-    MoveObj(stack,2, NSP_OBJECT(Index));
-  }
+
+  if ( lhs == 2 ) 
+    {
+      if ( itype == 'd' ) /* back convert */
+	Index = (NspObject *) Mat2double( (NspMatrix *) Index);
+      MoveObj(stack,2,Index);
+    }
   return Max(lhs,1);
 } 
 

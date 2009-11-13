@@ -9,23 +9,29 @@
 \begin{calling_sequence}
 \begin{verbatim}
 [y [,p]]  = sort(x)
-[y [,p]]  = sort(x, type_of_sort)
+[y [,p]] = sort(x, type=type_of_sort, dir=order)
+[y, p] = sort(x, type=type_of_sort, dir=order, ind_type=ptype)
 [y [,p]]  = sort(x, type_of_sort, order)
+[y, p]  = sort(x, type_of_sort, order, ptype)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x}:  matrix or vector of real numbers or strings.
-    \vname{type_of_sort}: a string among
+    \vname{x}:  matrix or vector of numbers or strings.
+    \vname{type=type_of_sort}: a string among
     \verb+"g","gb","gm","gs","c","r","ldc","ldr","lc","lr"+ (default
     is \verb+"g"+)
-    \vname{order}: must be \verb+"i"+ for an increasing sort or \verb+"d"+ for a
+    \vname{dir=order}: must be \verb+"i"+ for an increasing sort or \verb+"d"+ for a
                     decreasing sort (current default)
+    \vname{ind_type=ptype}: a string among
+    \verb+"int","double"+ (default is \verb+"double"+)
     \vname{y}: sorted output
     \vname{p}: vector (or matrix) of indices such that \verb+y=x(p)+
     or  \verb+y=x(:,p)+ or  \verb+y=x(p,:)+ or other meanings
-    depending of the sort type.
+    depending of the sort type. \verb+p+ could be stored in an array of
+    floating point numbers (Mat) (the default) or in an array of 
+    usual C integers (IMat of itype int) if you use \verb+ind_type = "int"+
   \end{varlist}
 \end{parameters}
 
@@ -125,63 +131,67 @@ you need such a feature:
 \begin{examples}
 
 \paragraph{example 1} sort of a vector of numbers:
-\begin{program}\HCode{x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
-\Hnewline
-// increasing sort\Hnewline
-y = sort(x,"g","i")\Hnewline
-[y,p] = sort(x,"g","i")\Hnewline
-y.equal[x(p)]  // must be true \Hnewline 
-\Hnewline
-// decreasing sort\Hnewline
-y = sort(x,"g","d")\Hnewline
-[y,p] = sort(x,"g","d")\Hnewline
-y.equal[x(p)]  // must be true \Hnewline 
-\Hnewline
-// behavior with special values \Hnewline 
-x(2)=}\verb+%+\HCode{nan;x(3)=}\verb+%+\HCode{inf; x(7)=}\verb+%+\HCode{nan; x(8)=-}\verb+%+\HCode{inf\Hnewline   
-y = sort(x,"g","i")\Hnewline
-y = sort(x,"g","d")}
-\end{program}
+\begin{Verbatim}
+x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
+
+// increasing sort
+y = sort(x,dir="i") // or y = sort(x,"g","i")
+[y,p] = sort(x,dir="i")
+y.equal[x(p)]  // must be true
+
+// decreasing sort
+y = sort(x,dir="d") // or y = sort(x,"g","d")
+[y,p] = sort(x,dir="d")
+y.equal[x(p)]  // must be true
+
+// behavior with special values
+x(2)= %nan;x(3)=%inf; x(7)=%nan; x(8)=-%inf
+y = sort(x,dir="i")
+y = sort(x,dir="d")
+\end{Verbatim}
 
 \paragraph{example 2} sort a vector of strings:
-\begin{program}\HCode{x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
-y = sort(x,"g","i")\Hnewline
-y = sort(x,"g","d")\Hnewline
-[y,p] = sort(x,"g","i")\Hnewline
-y.equal[x(p)]  // must be true}
-\end{program}
+\begin{Verbatim}
+x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
+y = sort(x,dir="i")
+y = sort(x,dir="d")
+[y,p] = sort(x,dir="i")
+y.equal[x(p)]  // must be true
+\end{Verbatim}
 
 \paragraph{example 3} lexical sorts
-\begin{program}\HCode{A = [0.5, -1, 2; 0.3, 4, 0.7; 0.3, -1, 2]\Hnewline
-// increasing row lexical sort\Hnewline
-B = sort(A,"ldr","i")\Hnewline
-[B,p] = sort(A,"ldr","i")\Hnewline
-B.equal[A(p,:)]  // must be true \Hnewline 
-// increasing column lexical sort\Hnewline
-B = sort(A,"ldc","i")\Hnewline
-[B,p] = sort(A,"ldc","i")\Hnewline
-B.equal[A(:,p)]  // must be true}
-\end{program}
+\begin{Verbatim}
+A = [0.5, -1, 2; 0.3, 4, 0.7; 0.3, -1, 2]
+// increasing row lexical sort
+B = sort(A,type="ldr",dir="i") // or B = sort(A,"ldr","i")
+[B,p] = sort(A,type="ldr",dir="i")
+B.equal[A(p,:)]  // must be true
+// increasing column lexical sort
+B = sort(A,type="ldc",dir="i")
+[B,p] = sort(A,"ldc","i")
+B.equal[A(:,p)]  // must be true
+\end{Verbatim}
 
 \paragraph{example 4} speed issues
-\begin{program}\HCode{// a case where all or near all vector components are different\Hnewline
-x = rand(1e6,1);\Hnewline
-// g sort (should be slower than gb here)\Hnewline
-t=cputime(); y = sort(x,"g","i"); cputime()-t\Hnewline
-// gb sort (should be faster here)\Hnewline
-t=cputime(); y = sort(x,"gb","i"); cputime()-t\Hnewline
-// merge sort (generally slower than g and gb)\Hnewline
-t=cputime(); y = sort(x,"gm","i"); cputime()-t\Hnewline
-\Hnewline
-// a case with many equal components\Hnewline
-x = grand(1e6,1,"uin",1,100);\Hnewline
-// g sort (should be faster here)\Hnewline
-t=cputime(); y = sort(x,"g","i"); cputime()-t\Hnewline
-// gb sort (should be slower than g)\Hnewline
-t=cputime(); y = sort(x,"gb","i"); cputime()-t\Hnewline
-// merge sort\Hnewline
-t=cputime(); y = sort(x,"gm","i"); cputime()-t}
-\end{program}
+\begin{Verbatim}
+// a case where all or near all vector components are different
+x = rand(1e6,1);
+// g sort (should be slower than gb here)
+t=cputime(); y = sort(x,"g","i"); cputime()-t
+// gb sort (should be faster here)
+t=cputime(); y = sort(x,"gb","i"); cputime()-t
+// merge sort (generally slower than g and gb)
+t=cputime(); y = sort(x,"gm","i"); cputime()-t
+
+// a case with many equal components
+x = grand(1e6,1,"uin",1,100);
+// g sort (should be faster here)
+t=cputime(); y = sort(x,"g","i"); cputime()-t
+// gb sort (should be slower than g)
+t=cputime(); y = sort(x,"gb","i"); cputime()-t
+// merge sort
+t=cputime(); y = sort(x,"gm","i"); cputime()-t
+\end{Verbatim}
 
 \end{examples}
 
