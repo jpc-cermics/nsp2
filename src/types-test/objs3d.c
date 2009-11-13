@@ -2634,7 +2634,7 @@ int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
  * stopped when the mouse is released 
  */
 
-/* #define ROTATION_NORESCALE */
+/* #define ROTATION_NORESCALE  */
 
 void nsp_3d_rotation(BCG *Xgc)
 {

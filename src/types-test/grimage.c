@@ -849,6 +849,27 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *
       if ( P->obj->thickness != -1 ) 
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
+
+  /* now we draw the image */
+  if ( P->obj->image == NULL ) 
+    {
+      GError *error = NULL;
+      GdkPixbuf *ret;
+      ret = gdk_pixbuf_new_from_file(P->obj->fname,&error);
+      if ( error != NULL ) {
+	Sciprintf("gdk_pixbuf_new_from_file: gtk error\n");
+	return;
+      }
+      P->obj->image = ret;
+    }
+  if ( P->obj->image != NULL )
+    {
+      int idest_x,idest_y,iw,ih;
+      length_scale_f2i(Xgc->scales,&P->obj->w,&P->obj->h,&iw,&ih,1);
+      scale_f2i(Xgc->scales,&P->obj->x,&P->obj->y,&idest_x,&idest_y,1);
+      length_scale_f2i(Xgc->scales,&P->obj->w,&P->obj->h,&iw,&ih,1);
+      Xgc->graphic_engine->draw_pixbuf(Xgc,P->obj->image,0,0,idest_x,idest_y, iw, ih);
+    }
 }
 
 
@@ -897,4 +918,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 901 "grimage.c"
+#line 922 "grimage.c"

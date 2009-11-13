@@ -391,15 +391,29 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 }
 #endif 
 
-/* pixbuf 
- *
- */
+
+/**
+ * draw_pixbuf:
+ * @Xgc: 
+ * @pix: 
+ * @src_x: 
+ * @src_y: 
+ * @dest_x: 
+ * @dest_y: 
+ * @width: 
+ * @height: 
+ * 
+ * src_x and src_y are unused here. 
+ * The pixbuf is scaled in order to be drawn in the destination 
+ * rectangle.
+ * 
+ * 
+ **/
 
 static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
   GdkPixbuf *pixbuf = pix;
   /* we could here limit the drawing to the visible part */
-  
   gdk_draw_pixbuf(Xgc->private->drawable,
 		  Xgc->private->wgc,
 		  pixbuf,

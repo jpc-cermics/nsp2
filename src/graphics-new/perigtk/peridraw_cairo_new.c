@@ -46,7 +46,6 @@ static void cleararea(BCG *Xgc,GdkRectangle *r)
 static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  ;
   cairo_move_to(cr,x1,yy1);
   cairo_line_to(cr,x2,y2);
   cairo_stroke(cr);
@@ -61,7 +60,6 @@ static void drawline(BCG *Xgc,int x1, int yy1, int x2, int y2)
 static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int iflag)
 {
   /* cairo_t *cr =  Xgc->private->cairo_cr; */
-  ;
   /* test */
   /* cairo_set_antialias(cr,CAIRO_ANTIALIAS_NONE); */
   Xgc->graphic_engine->generic->drawsegments(Xgc,vx,vy,n,style,iflag);
@@ -77,7 +75,6 @@ static void drawsegments(BCG *Xgc, int *vx, int *vy, int n, int *style, int ifla
 
 static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, int iflag)
 { 
-  ;
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
@@ -99,7 +96,6 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
-  ;
   Xgc->graphic_engine->generic->drawrectangles(Xgc,vects,fillvect,n);
 }
 
@@ -108,7 +104,6 @@ static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 static void drawrectangle(BCG *Xgc,const int rect[])
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
-  ;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_stroke (cr);
 }
@@ -118,7 +113,6 @@ static void drawrectangle(BCG *Xgc,const int rect[])
 static void fillrectangle(BCG *Xgc,const int rect[])
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  ;
   cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
   cairo_fill (cr);
 }
@@ -134,7 +128,6 @@ static void fillrectangle(BCG *Xgc,const int rect[])
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
 {
-  ;
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
@@ -151,7 +144,6 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
 {
-  ;
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
@@ -171,7 +163,6 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
-  ;
   Xgc->graphic_engine->generic->fillarcs(Xgc,vects,fillvect,n);
 }
 
@@ -624,19 +615,31 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 }
 
 
+/**
+ * draw_pixbuf:
+ * @Xgc: 
+ * @pix: 
+ * @src_x: 
+ * @src_y: 
+ * @dest_x: 
+ * @dest_y: 
+ * @width: 
+ * @height: 
+ * 
+ * src_x and src_y are unused here. 
+ * The pixbuf is scaled in order to be drawn in the destination 
+ * rectangle.
+ * 
+ **/
+
 static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
-  /* here pix must be a GdkPixbuf */
   GdkPixbuf *pixbuf=pix; 
   int w,h;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  
   cairo_save (cr);
   w = gdk_pixbuf_get_width (pixbuf);
   h = gdk_pixbuf_get_height (pixbuf);
-  /* cairo_rectangle (cr,dest_x,dest_y,width,height);
-   * cairo_stroke (cr);
-   */
   cairo_translate(cr,  dest_x, dest_y);
   cairo_scale (cr, ((double) width)/w, ((double) height)/h);
   gdk_cairo_set_source_pixbuf (cr,pixbuf,0,0);

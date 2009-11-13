@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -596,16 +596,29 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
 
-
-
 /* pixbuf 
  *
  */
 
-static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,
+			int dest_y,int width,int height)
 {
-  
-  Xgc->graphic_engine->generic->draw_pixbuf(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
+  guchar *texpix=NULL;
+  GdkPixbuf *pixbuf = pix;
+  gint w = gdk_pixbuf_get_width (pixbuf);
+  gint h = gdk_pixbuf_get_height (pixbuf);
+  int nChannels = gdk_pixbuf_get_n_channels(pixbuf);
+  /* int rowstride = gdk_pixbuf_get_rowstride (pixbuf); */
+  texpix = gdk_pixbuf_get_pixels (pixbuf);
+  glShadeModel(GL_FLAT);
+  glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+  glPixelZoom ( ((double) width)/w,- ((double) height)/h);
+  glRasterPos2i(dest_x, dest_y );
+  if ( nChannels == 4 )
+    glDrawPixels( w,h,GL_RGBA,GL_UNSIGNED_BYTE, texpix);
+  else 
+    glDrawPixels( w,h,GL_RGB,GL_UNSIGNED_BYTE, texpix);
+  glPixelZoom (1.0,1.0);
 }
 
 static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
@@ -1547,4 +1560,5 @@ static  void xset_test(BCG *Xgc)
 {
   Xgc->graphic_engine->generic->xset_test(Xgc);
 }
+
 
