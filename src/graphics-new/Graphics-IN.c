@@ -32,12 +32,11 @@
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
-#define NEW_GRAPHICS 
-
 #include <gtk/gtk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h> 
+#include <nsp/objs3d.h> 
 #include <nsp/compound.h> 
 #include <nsp/curve.h> 
 #include <nsp/polyline.h> 
@@ -59,21 +58,6 @@
 #include <nsp/contour.h> 
 #include <nsp/contour3d.h> 
 
-extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
-extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
-extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
-extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n, int *colors, int ncol, int cmap_ncol );
-
-extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
-extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
-extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
-extern NspFigure *nsp_get_figure(BCG *Xgc);
-extern NspFigure *nsp_check_for_figure(BCG *Xgc);
-extern NspObject * nsp_check_for_axes_or_objs3d(BCG *Xgc,const double *wrect);
-
-
-
-
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
 extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos); 
@@ -83,11 +67,6 @@ extern BCG *nsp_check_graphic_context(void);
 static int sci_demo (const char *fname,char *code,int flag) ;
 static void  nsp_gwin_clear(BCG *Xgc);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
-
-/* 
- * static utilities 
- */
-
 static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
 static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
 static int * check_param_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
@@ -284,7 +263,7 @@ static int int_contour( Stack stack, int rhs, int opt, int lhs)
 
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-#ifdef NEW_GRAPHICS 
+
   if ( iflag[0] >= 2 )
     {
       /* mode=2:the level curves are drawn on a 2D plot.*/
@@ -335,11 +314,6 @@ static int int_contour( Stack stack, int rhs, int opt, int lhs)
       nsp_list_link_figure(objs3d->obj->children, ((NspGraphic *) objs3d)->obj->Fig, objs3d->obj);
       nsp_axes_invalidate(((NspGraphic *) objs3d));
     }
-  return 0;
-#else 
-  nsp_gcontour(Xgc,x->R,y->R,z->R,&z->m,&z->n, &flagx, &nnz,nz->R, &theta, &alpha,
-	      leg, iflag, ebox, &zlev,strlen(leg));
-#endif 
   return 0;
 }
 
@@ -466,8 +440,6 @@ static int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
   
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
-
-#ifdef NEW_GRAPHICS 
   {
     NspMatrix *s=NULL;
     NspAxes *axe;
@@ -495,9 +467,6 @@ static int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
     nsp_strf_axes(Xgc, axe , rect, strf[1]);
     nsp_axes_invalidate(((NspGraphic *) axe));
   }
-#else 
-  (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&flagx,&nnz,nz->R,Mistyle->I,strf,leg,rect,nax);
-#endif 
   if ( Mstyle != Mistyle) 
     nsp_matrix_destroy(Mistyle);
   return 0;
@@ -506,12 +475,7 @@ static int int_contour2d_G( Stack stack, int rhs, int opt, int lhs,fc func)
 
 static int int_contour2d( Stack stack, int rhs, int opt, int lhs)
 {
-#ifdef NEW_GRAPHICS 
   return int_contour2d_G(stack,rhs,opt,lhs, NULL);
-#else  
-  return int_contour2d_G(stack,rhs,opt,lhs, nsp_contour2);
-#endif 
-
 }
 
 /* Interface to contour2di 
@@ -761,7 +725,7 @@ static int int_geom3d( Stack stack, int rhs, int opt, int lhs)
  * plot3dXXX(x,y,z,opts)
  *-----------------------------------------------------------*/
 
-#ifdef NEW_GRAPHICS
+
 typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *,
 		    NspMatrix *); 
 typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
@@ -770,15 +734,6 @@ typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int
 		    double *,const char *,int *,double *,NspMatrix *); 
 typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 		    double *,const char *,int *,double *,NspMatrix *);
-#else 
-typedef int (*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,double *,const char *,int *,double *);
-typedef int (*f3d1)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
-		    double *,const char *,int *,double *); 
-typedef int (*f3d2)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
-		    double *,const char *,int *,double *); 
-typedef int (*f3d3)(BCG *Xgc,double *,double *,double *,int *cvect,int *p,int *q,double *, 
-		    double *,const char *,int *,double *);
-#endif 
 
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
@@ -857,14 +812,12 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
     }
 
 
-#ifdef NEW_GRAPHICS 
   if (colormap != NULL &&
       (colormap = (NspMatrix *) nsp_object_copy_and_name("cmap",NSP_OBJECT(colormap))) == NULLMAT)
     {
       ret = RET_BUG;
       goto end;
     }
-#endif 
   
   if (( iflag = check_iflag(stack,NspFname(stack),"flag",Mflag,3))==NULL) 
     {
@@ -926,38 +879,22 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
       /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0) 
 	{
-#ifdef NEW_GRAPHICS 
 	  (*func1)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox ,colormap);
-#else 
-	  (*func1)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
-#endif 
 	} 
       else if (izcol == 2) 
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
-#ifdef NEW_GRAPHICS 
 	  (*func3)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
-#else 
-	  (*func3)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
-#endif 
 	}
       else 
 	{
-#ifdef NEW_GRAPHICS 
 	  (*func2)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
-#else 
-	  (*func2)(Xgc,x->R,y->R,z->R,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
-#endif 
 	}
     } 
   else 
     {
       /*  Here we are in the standard case  */
-#ifdef NEW_GRAPHICS 
       (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox,colormap);
-#else 
-      (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,iflag,ebox);
-#endif 
     }
  end:
   nsp_matrix_destroy(zloc);
@@ -1029,7 +966,6 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
   }
 }
 
-#ifdef NEW_GRAPHICS 
 
 int nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
 {
@@ -1122,18 +1058,6 @@ static int int_plot3d( Stack stack, int rhs, int opt, int lhs)
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_new,nsp_plot_fac3d_new,nsp_plot_fac3d1_new,nsp_plot_fac3d1_new);
 }
 
-#else 
-
-static int int_plot3d( Stack stack, int rhs, int opt, int lhs)
-{
-  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
-  return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d,nsp_plot_fac3d,nsp_plot_fac3d_2,nsp_plot_fac3d_3);
-}
-
-#endif 
-
-
-#ifdef NEW_GRAPHICS 
 
 
 int nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox, NspMatrix *colormap)
@@ -1173,104 +1097,11 @@ static int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d1_new,nsp_plot_fac3d1_new,nsp_plot_fac3d1_new,nsp_plot_fac3d1_new);
 }
 
-#else 
-
-static int int_plot3d1( Stack stack, int rhs, int opt, int lhs)
-{
-  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t));",1);
-  return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_1,nsp_plot_fac3d_1,nsp_plot_fac3d_2,nsp_plot_fac3d_3);
-}
-
-#endif 
-
-
-/* [] = draw_3d_obj(list(Objs),...)
- */
-
-#ifndef NEW_GRAPHICS 
-static int int_draw3dobj(Stack stack, int rhs, int opt, int lhs)
-{
-  int err,*iflag,nf=0,nbObj=0, box_color=-1,box_style=SCILAB,with_mesh=FALSE,with_box=TRUE;
-  char *box_style_name=NULL;
-  NspList *L;
-  BCG *Xgc;
-  double alpha=35.0,theta=45.0,*ebox ;
-  const char *leg=NULL, *leg1;
-  NspMatrix *Mflag=NULL,*Mebox=NULL;
-  
-  int_types T[] = {list,new_opts, t_end} ;
-
-  nsp_option opts[] ={
-    { "alpha",s_double,NULLOBJ,-1},
-    { "box_color",s_int,NULLOBJ,-1},
-    { "box_style",string,NULLOBJ,-1},
-    { "ebox",realmat,NULLOBJ,-1},
-    { "flag",realmat,NULLOBJ,-1},
-    { "leg", string,NULLOBJ,-1},
-    { "theta",s_double,NULLOBJ,-1},
-    { "with_box",s_bool,NULLOBJ,-1},
-    { "with_mesh",s_bool,NULLOBJ,-1},
-    { NULL,t_end,NULLOBJ,-1}};
-
-  if ( GetArgs(stack,rhs,opt,T,&L,&opts,&alpha,&box_color,&box_style_name,
-	       &Mebox,&Mflag,&leg,&theta,&with_box,&with_mesh) == FAIL) 
-    return RET_BUG;
-  CheckLhs(1,1);
-
-  if ( box_style_name != NULL) 
-    {
-      if ( strcmp("matlab",box_style_name) == 0 ) 
-	box_style = MATLAB;
-      else if ( strcmp("scilab",box_style_name) == 0 ) 
-	box_style = SCILAB;
-      else
-	box_style = OTHER;
-    }
-
-  obj3d_from_list_old(stack,L,FALSE,&err,&nf,&nbObj);
-
-  if (err == TRUE) 
-    {
-      Scierror("%s: list of Object is wrong\n",NspFname(stack));
-      return RET_BUG;
-    }
-
-  if (( iflag = check_iflag(stack,NspFname(stack),"flag",Mflag,3))==NULL) return RET_BUG;
-  if (( ebox = check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
-  if (( leg1 = check_legend_3d(stack,NspFname(stack),"leg",leg)) == NULL) return RET_BUG;
-
-  /* 7 and 8 are the mode for superposed graphics */
-  iflag[1]=Max(Min(iflag[1],8),0);
-  /* check that iflag[1] and ebox are compatible */
-  if ( Mebox != NULLMAT) 
-    {
-      /* ebox is given then iflag[1] must be 1 or 3 or 5 */
-      if ( iflag[1] == 2 ||  iflag[1] == 4 ||  iflag[1] == 6 || iflag[1] == 8 ) iflag[1]--;
-    }
-  else
-    {
-      /* ebox is not given then iflag[1] cannot be 1 or 3 or 5 */
-      if ( iflag[1] == 1 ||  iflag[1] == 3 ||  iflag[1] == 5 || iflag[1] == 7 ) iflag[1]++;
-    }
-  /*
-   * check that iflag[2] and leg are compatible 
-   * i.e force visibility of axes names if they are given
-   */
-  if (leg !=  NULL && strlen(leg) != 0 ) iflag[2]=4;
-
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-
-  nsp_draw_3d_obj_old(Xgc,L,&theta,&alpha,leg1,iflag,ebox,with_mesh,with_box,box_color,box_style);
-  return 0;
-}
-#endif 
 
 /*-----------------------------------------------------------
  *   plot2d(x,y,[style,strf,leg,rect,nax]) 
  *   plot2dxx(x,y,[style,strf,leg,rect,nax])
  *-----------------------------------------------------------*/
-
 
 static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, NspObject *fargs);
 
@@ -1445,7 +1276,8 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
 	}
     }
 
-  if ( int_check2d(stack,Mstyle,&Mistyle,ncurves,&strf,&leg,&leg_pos,&leg_posi,Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
+  if ( int_check2d(stack,Mstyle,&Mistyle,ncurves,&strf,&leg,&leg_pos,&leg_posi,Mrect,
+		   &rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
   
   /* logflags */ 
@@ -1466,23 +1298,8 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       /* if rect is provided and not selected by strf we force it */
       plot2d_strf_change('d',strf);
     }
-
-#ifdef NEW_GRAPHICS 
   nsp_plot2d_obj(Xgc,x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,mode,rect,nax);
-#else 
-  if ( strcmp(logflags,"gnn")==0 && force2d == 0) 
-    {
-      nsp_plot2d_old(Xgc,x->R,y->R,&ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
-    }
-  else
-    {
-      (*func)(Xgc,logflags,x->R,y->R,&ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,rect,nax);
-    }
-#endif 
-
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
-
-
   return 0;
 }
 
@@ -1550,55 +1367,35 @@ static int int_plot2d( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-#ifdef NEW_GRAPHICS 
   return int_plot2d_G(stack,rhs,opt,lhs,0,0,NULL);
-#else
-  return int_plot2d_G(stack,rhs,opt,lhs,0,0,nsp_plot2d_1);
-#endif 
 }
 
 static int int_plot2d1_1( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-#ifdef NEW_GRAPHICS 
   return int_plot2d_G(stack,rhs,opt,lhs,1,0,NULL);
-#else
-  return int_plot2d_G(stack,rhs,opt,lhs,1,0,nsp_plot2d_1);
-#endif 
 }
 
 static int int_plot2d1_2( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-#ifdef NEW_GRAPHICS 
   return int_plot2d_G(stack,rhs,opt,lhs,1,1,NULL);
-#else
-  return int_plot2d_G(stack,rhs,opt,lhs,1,1,nsp_plot2d_2);
-#endif 
 }
 
 static int int_plot2d1_3( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-#ifdef NEW_GRAPHICS 
   return int_plot2d_G(stack,rhs,opt,lhs,1,2,NULL);
-#else
-  return int_plot2d_G(stack,rhs,opt,lhs,1,2,nsp_plot2d_3);
-#endif 
 }
 
 static int int_plot2d1_4( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
   if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
-#ifdef NEW_GRAPHICS 
   return int_plot2d_G(stack,rhs,opt,lhs,1,3,NULL);
-#else
-  return int_plot2d_G(stack,rhs,opt,lhs,1,3,nsp_plot2d_4);
-#endif 
 }
 
 
@@ -5404,13 +5201,8 @@ static int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
       /* sciprint("nombre de tics %d\n",ntics); */
       CheckLength(NspFname(stack), opts[8].position, S,ntics);
     }
-#ifdef NEW_GRAPHICS 
   Scierror("%s: Nor implemented \n",  NspFname(stack));
   return RET_BUG;
-#else 
-  nsp_axis_old(Xgc,dir,tics,x,&nx,y,&ny,val,sub_int,format,fontsize,textcolor,ticscolor,'n',seg_flag,-1);
-#endif 
-  return 0;
 }
 
 static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int ypos,NspMatrix *My,int *ntics)

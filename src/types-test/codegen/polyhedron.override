@@ -3,6 +3,14 @@
 include-public  Polyhedron
 /* inserted at the end of public part of include file */
 
+extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
+extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
+extern NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n);
+extern NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn) ; 
+extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
+			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr);
+extern int nsp_obj3d_orientation(int x[], int y[], int n);
+
 %%
 include-private  Polyhedron
 /* inserted in the private part of include file */

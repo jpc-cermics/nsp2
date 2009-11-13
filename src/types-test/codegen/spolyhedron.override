@@ -3,6 +3,9 @@
 include-public  SPolyhedron
 /* inserted at the end of public part of include file */
 
+extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol );
+extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n, double *col,int ncol);
+
 %%
 include-private  SPolyhedron
 /* inserted in the private part of include file */
@@ -25,12 +28,11 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 
 %%
 headers
+
 #include <gdk/gdk.h>
-#include <nsp/object.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
 #include <nsp/figure.h> 
-#include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
 %%

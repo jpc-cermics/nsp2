@@ -24,7 +24,7 @@
 
 
 
-#line 57 "codegen/objs3d.override"
+#line 58 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
@@ -103,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 70 "codegen/objs3d.override"
+#line 71 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -761,7 +761,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 91 "codegen/objs3d.override"
+#line 92 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -885,7 +885,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 107 "codegen/objs3d.override"
+#line 108 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1092,7 +1092,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 165 "codegen/objs3d.override"
+#line 166 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1104,7 +1104,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1105 "objs3d.c"
 
 
-#line 175 "codegen/objs3d.override"
+#line 176 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1144,7 +1144,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 185 "codegen/objs3d.override"
+#line 186 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 

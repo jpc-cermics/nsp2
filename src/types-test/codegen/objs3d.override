@@ -13,6 +13,7 @@ include-public Objs3d
 #include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
+extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
 extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
