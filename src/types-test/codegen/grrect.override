@@ -119,6 +119,26 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *d
       if ( P->obj->thickness != -1 ) 
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
+  
+  if (((NspGraphic *) P)->obj->hilited == TRUE )
+    {
+      int lock_size=6, lock_color=10;
+      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int x=lock_size,y=lock_size;
+      double xd,yd;
+      double rect[4]; 
+      length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
+      rect[0]=val[0] -xd/2.0;
+      rect[1]=val[1] +yd/2.0;
+      rect[2]=xd;
+      rect[3]=yd;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      rect[0]=val[0] + val[2]-xd/2.0;
+      rect[1]=val[1] - val[3] + yd/2.0;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      Xgc->graphic_engine->xset_pattern(Xgc,color);
+    }
+
 }
 
 

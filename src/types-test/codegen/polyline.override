@@ -88,7 +88,6 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void 
     {
       return ;
     }
-
   
   xm= graphic_alloc(6,P->obj->x->mn,sizeof(int));
   ym= graphic_alloc(7,P->obj->x->mn,sizeof(int));
@@ -142,6 +141,19 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void 
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
       if ( P->obj->mark != -1 ) 
 	Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);
+    }
+
+  if (((NspGraphic *) P)->obj->hilited == TRUE )
+    {
+      int lock_size=6, lock_color=10, loc[4];
+      int i,color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      for ( i=0 ; i < P->obj->x->mn ; i++) 
+	{
+	  loc[0]=xm[i]- lock_size/2; loc[1]=ym[i]-lock_size/2;
+	  loc[2]=lock_size; loc[3]=lock_size;
+	  Xgc->graphic_engine->fillrectangle(Xgc,loc);
+	}
+      Xgc->graphic_engine->xset_pattern(Xgc,color);
     }
 }
 

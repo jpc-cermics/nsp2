@@ -1144,9 +1144,8 @@ void nsp_set_colormap_constants(BCG *Xgc,int m)
 
 static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
-  NspMatrix *colors;
-  int m = Xgc->Numcolors;
-  int i;
+  NspMatrix *colors = Xgc->private->colors;
+  int m = Xgc->Numcolors,  i;
   *num = m;
   if ( val != NULL )
     {
@@ -1812,7 +1811,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated  	  
+	  /* debug the drawing rectangle which is updated 	  
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);

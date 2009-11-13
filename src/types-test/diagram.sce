@@ -76,7 +76,7 @@ function im=draw_vanne()
     switch_graphics();
   end
   im = grimage_create(x=0,y=0,w=10,h=10,...
-		      fname='demos/gtk2/libplus/tumbi.svg');
+		      fname='config/tumbi.svg');
 endfunction;
 
 

@@ -60,7 +60,10 @@ TESTS= \
 	scalexp.dia \
 	fsolve1.dia \
 	fsolve.dia \
-	ode.dia \
+	ode_1.dia \
+	ode_2.dia \
+	ode_3.dia \
+	ode_4.dia \
 	find.dia \
 	global.dia \
 	matops.dia \

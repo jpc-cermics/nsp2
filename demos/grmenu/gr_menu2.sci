@@ -468,17 +468,24 @@ endfunction;
 global('GF');
 GF=hash_create(6);
 
+
+
 xinit(name='My diagram',dim=[1000,1000],popup_dim=[600,400])
 xset('recording',0)
 xsetech(arect=[0,0,0,0]);
 
-seteventhandler('my_eventhandler');
-
-xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
-xset('recording',0)
-xsetech(arect=[0,0,0,0]);
-seteventhandler('my_eventhandler');
-
+if %t then 
+  seteventhandler('my_eventhandler');
+  xinit(name='My second diagram opengl=%t',opengl=%t,dim=[1000,1000],popup_dim=[600,400])
+  xset('recording',0)
+  xsetech(arect=[0,0,0,0]);
+  seteventhandler('my_eventhandler');
+else
+  F= diagram();
+  pause;
+  F.attach_to_window[0];
+  F.draw[];
+end
 
 
 
