@@ -915,7 +915,7 @@ static int nsp_getbounds_grarc(NspGraphic *Obj,double *bounds)
 {
   NspGrArc *P = (NspGrArc *) Obj;
   bounds[0]=P->obj->x;/* xmin */
-  bounds[1]=P->obj->y-P->obj->w;/* ymin */
+  bounds[1]=P->obj->y-P->obj->h;/* ymin */
   bounds[2]=P->obj->x+P->obj->w;/* xmax */
   bounds[3]=P->obj->y;/* ymax */
   return TRUE;

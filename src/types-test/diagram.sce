@@ -71,7 +71,13 @@ function C=draw_vanne()
   xdel(30);
 endfunction;
 
-
+function im=draw_vanne()
+  if ~new_graphics() then 
+    switch_graphics();
+  end
+  im = grimage_create(x=0,y=0,w=10,h=10,...
+		      fname='demos/gtk2/libplus/tumbi.svg');
+endfunction;
 
 
 function w=create_object_menu (win,x,y)

@@ -95,7 +95,7 @@ static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *
   val[1]= P->obj->y;
   val[2]= P->obj->w;
   val[3]= P->obj->h;
-
+  
   if ( P->obj->border == TRUE &&  P->obj->color != -2 ) 
     {
       /* draw the rectangle */ 
@@ -175,7 +175,7 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 {
   NspGrImage *P = (NspGrImage *) Obj;
   bounds[0]=P->obj->x;/* xmin */
-  bounds[1]=P->obj->y-P->obj->w;/* ymin */
+  bounds[1]=P->obj->y-P->obj->h;/* ymin */
   bounds[2]=P->obj->x+P->obj->w;/* xmax */
   bounds[3]=P->obj->y;/* ymax */
   return TRUE;

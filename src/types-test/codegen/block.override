@@ -122,6 +122,7 @@ headers
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/axes.h"
+#include "nsp/grimage.h"
 
 %%
 init 
@@ -553,7 +554,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *da
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
   /* first draw the block icon */
-  draw_script = 3;
+  draw_script = 0;
   switch (draw_script)
     {
     case 0: 
@@ -847,9 +848,21 @@ void block_resize(NspBlock *B,const double size[2])
   B->obj->r[3] = Max(size[1],3*lock_size) ;
   /* if resized the lock relative positions should change  */
   block_update_locks(B);
-  if ( Icon != NULL && IsAxes((NspObject *) Icon) )
+  if ( Icon != NULL ) 
     {
-      memcpy(((NspAxes *) Icon)->obj->wrect->R,B->obj->r,4*sizeof(double));
+      if (  IsAxes((NspObject *) Icon) )
+	{
+	  /* note that this should be the resize method for non 
+	   * top axes 
+	   */
+	  memcpy(((NspAxes *) Icon)->obj->wrect->R,B->obj->r,4*sizeof(double));
+	}
+      else if ( IsGrImage((NspObject *) Icon)) 
+	{
+	  NspGrImage *I = (NspGrImage *) Icon;
+	  I->obj->w = size[0];
+	  I->obj->h = size[1];
+	}
     }
   nsp_graphic_invalidate((NspGraphic *) B);
 }
@@ -1409,20 +1422,35 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   if (nsp_object_set_name(nsp_ret[0],"icon") == FAIL) goto stop;
 
 #ifdef USE_AXE 
-  /* create a non top level axe */
-  if ((axe= nsp_axes_create_default("axe"))== NULL) goto stop;
-  axe->obj->top = FALSE;
-  axe->obj->fixed = TRUE;
-  axe->obj->rect->R[0]=   axe->obj->rect->R[1]=0;
-  axe->obj->rect->R[2]=   axe->obj->rect->R[3]=10;
-  /* (x,y,w,h) for the axe */
-  memcpy(axe->obj->wrect->R,B->obj->r,4*sizeof(double));
-  G= (NspGraphic *) axe ;
-  G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
-			((NspGraphic *) B)->obj->Axe );
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) nsp_ret[0]) == FAIL)
-    goto stop;
-  B->obj->icon = G;
+  if ( IsGrImage( nsp_ret[0]) )
+    {
+      NspGrImage *I = (NspGrImage *) nsp_ret[0];
+      G= (NspGraphic *) nsp_ret[0];
+      B->obj->icon = G;
+      I->obj->x = B->obj->r[0];
+      I->obj->y = B->obj->r[1];
+      I->obj->w = B->obj->r[2];
+      I->obj->h = B->obj->r[3];
+      G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
+			   ((NspGraphic *) B)->obj->Axe );
+    }
+  else
+    {
+      /* create a non top level axe */
+      if ((axe= nsp_axes_create_default("axe"))== NULL) goto stop;
+      axe->obj->top = FALSE;
+      axe->obj->fixed = TRUE;
+      axe->obj->rect->R[0]=   axe->obj->rect->R[1]=0;
+      axe->obj->rect->R[2]=   axe->obj->rect->R[3]=10;
+      /* (x,y,w,h) for the axe */
+      memcpy(axe->obj->wrect->R,B->obj->r,4*sizeof(double));
+      G= (NspGraphic *) axe ;
+      G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
+			   ((NspGraphic *) B)->obj->Axe );
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) nsp_ret[0]) == FAIL)
+	goto stop;
+      B->obj->icon = G;
+    }
 #else 
   G= (NspGraphic *) nsp_ret[0] ;
   G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,

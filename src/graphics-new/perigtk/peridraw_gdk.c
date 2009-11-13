@@ -413,15 +413,32 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
 {
   GdkPixbuf *pixbuf = pix;
-  /* we could here limit the drawing to the visible part */
-  gdk_draw_pixbuf(Xgc->private->drawable,
-		  Xgc->private->wgc,
-		  pixbuf,
-		  src_x,src_y,
-		  dest_x,dest_y,
-		  width,height,
-		  GDK_RGB_DITHER_NONE,
-		  0,0);
+  GdkPixbuf *scaled ;
+  gint w = gdk_pixbuf_get_width (pixbuf);
+  gint h = gdk_pixbuf_get_height (pixbuf);
+  if ( w == width && h == height) 
+    gdk_draw_pixbuf(Xgc->private->drawable,
+		    Xgc->private->wgc,
+		    pixbuf,
+		    src_x,src_y,
+		    dest_x,dest_y,
+		    width,height,
+		    GDK_RGB_DITHER_NONE,
+		    0,0);
+  else
+    {
+      scaled = gdk_pixbuf_scale_simple(pixbuf,width,height, GDK_INTERP_BILINEAR);
+      gdk_draw_pixbuf(Xgc->private->drawable,
+		      Xgc->private->wgc,
+		      scaled,
+		      src_x,src_y,
+		      dest_x,dest_y,
+		      width,height,
+		      GDK_RGB_DITHER_NONE,
+		      0,0);
+      gdk_pixbuf_unref(scaled);
+    }
+
 }
 
 
