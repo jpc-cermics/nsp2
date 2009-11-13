@@ -246,7 +246,7 @@ function menu=create_right_menu (win,xc,yc)
     menuitem.show[];
   end
   //--  new
-  tags = ['link';'block';'connector';'empty super block';'selection to super block']
+  tags = ['link';'block 1';'block 2';'block 3';'connector';'empty super block';'selection to super block']
   for i=1:size(tags,'*')
     // BUG: mnemonic and label are not active ?
     // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
@@ -261,6 +261,7 @@ function menu=create_right_menu (win,xc,yc)
   if ~test  then 
     menuitem.set_sensitive[%f];
   end
+  
   // separator 
   menuitem = gtkseparatormenuitem_new()
   menu.append[menuitem]
@@ -280,7 +281,7 @@ function menu=create_right_menu (win,xc,yc)
     // nothing to paste 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",menuitem_response,list(6,xc,yc,win)];
+  menuitem.connect["activate",menuitem_response,list(10,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   // separator 
@@ -289,12 +290,12 @@ function menu=create_right_menu (win,xc,yc)
   menuitem.show[];
   //--  save to file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-save-as");
-  menuitem.connect["activate",menuitem_response,list(7,win)];
+  menuitem.connect["activate",menuitem_response,list(11,win)];
   menu.append[menuitem]
   menuitem.show[];
   //--  load file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
-  menuitem.connect["activate",menuitem_response,list(8,win)];
+  menuitem.connect["activate",menuitem_response,list(12,win)];
   menu.append[menuitem]
   menuitem.show[];
 endfunction 
@@ -306,11 +307,18 @@ function menuitem_response(w,args)
   win='win'+string(args($));
   select args(1) 
    case 1 then  GF(win).new_link[];
-   case 2 then  GF(win).new_block[[args(2),args(3)]];
-   case 3 then  GF(win).new_connector[] ;
-   case 4 then  GF(win).new_gridblock[] ;
-   case 5 then  GF(win).new_gridblock_from_selection[] ;
-   case 6 then  
+   case 2 then  GF(win).new_block[[args(2),args(3)],0];
+   case 3 then  GF(win).new_block[[args(2),args(3)],1];
+   case 4 then  GF(win).new_block[[args(2),args(3)],2];
+   case 5 then  GF(win).new_connector[] ;
+   case 6 then  GF(win).new_gridblock[] ;
+   case 7 then  GF(win).new_gridblock_from_selection[] ;
+   case 9 then 
+    // copy selection into the clipboard 
+    L= GF(win).get_selection_as_diagram[];
+    if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
+    else x_message('No selection');end 
+   case 10 then  
     // paste selection 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
@@ -320,12 +328,12 @@ function menuitem_response(w,args)
 	x_message('Clipboard is empty');end 
     end
     //GF('clipboard') = list();
-   case 7 then  
+   case 11 then  
     fname = xgetfile();
     if fname <> "" then 
       save(fname,diagram=GF(win));
     end
-   case 8 then 
+   case 12 then 
     fname = xgetfile();
     if fname <> "" then 
       load(fname);
@@ -334,11 +342,6 @@ function menuitem_response(w,args)
 	GF(win)=diagram;
       end
     end
-   case 9 then 
-    // copy selection into the clipboard 
-    L= GF(win).get_selection_as_diagram[];
-    if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
-    else x_message('No selection');end 
   end
 endfunction
 

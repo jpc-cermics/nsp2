@@ -405,10 +405,11 @@ override Diagram.diagram_new_block
 static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *pt;
+  int mode=0;
   int ix,iy;
   double pt1[2]={0,100};
   NspObject *obj;
-  CheckRhs(0,1);
+  CheckRhs(0,2);
   CheckLhs(-1,1);
   if ( rhs == 1 ) 
     {
@@ -417,6 +418,10 @@ static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int
       /* pt is in pixel here */
       ix=pt->R[0];iy=pt->R[1];
       nsp_axes_i2f(((NspGraphic *) self)->obj->Axe,ix,iy,pt1);
+    }
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt(stack,2,&mode) == FAIL) return RET_BUG;
     }
   if ((obj = nsp_diagram_create_new_block((NspDiagram *) self,pt1))== NULL)
     return RET_BUG;
