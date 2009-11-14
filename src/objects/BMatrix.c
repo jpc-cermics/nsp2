@@ -990,10 +990,11 @@ NspMatrix *nsp_bmatrix_find(const NspBMatrix *A)
  * Return value: %OK or %FAIL. %FAIL is returned in case of malloc() failure.
  */
 
-int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
+int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspObject **Res1, NspObject **Res2, char ind_type)
 {
   int j,i,count=0, k;
   int nrow = ( A->mn == 0) ? 0: 1;
+  int *indr=NULL, *indc=NULL;
 
   /* first pass for counting */
   for ( i=0 ; i < A->mn ; i++) if ( A->B[i] ) count++;
@@ -1002,93 +1003,30 @@ int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
 
   if ( lhs == 1)
     {
-      *Res1 = nsp_matrix_create(NVOID,'r', nrow, count);
-      if ( *Res1 == NULLMAT) return FAIL;
+      if ( (*Res1 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indr)) == NULLOBJ )
+	return FAIL;
       count=0;
       for ( i = 0 ; i < A->mn ; i++ )
-	if ( A->B[i] ) (*Res1)->R[count++] = i+1;
+	if ( A->B[i] ) indr[count++] = i+1;
       return OK;
     }
   else
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',nrow , count);
-      if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',nrow , count);
-      if ( *Res2 == NULLMAT) { nsp_matrix_destroy(*Res1); return FAIL; }
+      if ( (*Res1 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indr)) == NULLOBJ )
+	return FAIL;
+      if ( (*Res2 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indc)) == NULLOBJ )
+	{
+	  nsp_object_destroy(Res1);
+	  return FAIL;
+	}
       count=0;
-      /* change loop order for speed (bruno) */
       for ( j = 0, k = 0 ; j < A->n ; j++ )
 	for ( i = 0 ; i < A->m ; i++, k++ )
 	  if ( A->B[k] )
 	    {
-	      (*Res1)->R[count] = i+1;
-	      (*Res2)->R[count++] = j+1;
+	      indr[count] = i+1;
+	      indc[count++] = j+1;
 	    }
-    }
-  return OK;
-}
-
-
-/**
- * nsp_bmatrix_ifind_2:
- * @A: a #NspBMatrix. 
- * @lhs: a flag 
- * @Res1:  a #NspIMatrix. 
- * @Res2: a #NspIMatrix. 
- * 
- * the same than nsp_bmatrix_find_2() but returns the indices in one or 2
- * #NspIMatrix (added by Bruno)
- * returns in one or two #NspIMatrix objects the indices for which the 
- * #NspBMatrix @A is true. if @lhs is equal to one, the @Res1 will 
- * contains the indices in @A considering that @A is a one dimensional array.
- * If @lhs is equal to two then @Res1 will contian the rows indices and @Res2 
- * will contain the columns indices.
- *
- * Return value: %OK or %FAIL. %FAIL is returned in case of malloc() failure.
- */
-
-
-int nsp_bmatrix_ifind_2(const NspBMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2, nsp_itype itype)
-{
-  int j,i,count=0, k;
-  int nrow = ( A->mn == 0) ? 0: 1;
-
-  /* first pass for counting */
-  for ( i=0 ; i < A->mn ; i++) if ( A->B[i] ) count++;
-  /* special rule for scalars */
-  if ( A->mn == 1 && count ==0) nrow =0;
-
-  if ( lhs == 1)
-    {
-      *Res1 = nsp_imatrix_create(NVOID, nrow, count, itype);
-      if ( *Res1 == NULLIMAT) return FAIL;
-      count=0;
-
-#define ifind1assign(name,type,arg)			       \
-       for ( i = 0 ; i < A->mn ; i++ )                         \
-	 if ( A->B[i] ) (*Res1)->name[count++] = (type) (i+1); \
-       break;
-      NSP_ITYPE_SWITCH(itype,ifind1assign, A);
-#undef ifind1assign
-    }
-  else
-    {
-      *Res1 = nsp_imatrix_create(NVOID,nrow , count, itype);
-      if ( *Res1 == NULLIMAT) return FAIL;
-      *Res2 = nsp_imatrix_create(NVOID, nrow , count, itype);
-      if ( *Res2 == NULLIMAT) { nsp_imatrix_destroy(*Res1); return FAIL; }
-      count=0;
-#define ifind2assign(name,type,arg)		       \
-      for ( j = 0, k = 0 ; j < A->n ; j++ )            \
-         for ( i = 0 ; i < A->m ; i++, k++ )           \
-	    if ( A->B[k] )                             \
-	    {                                          \
-	      (*Res1)->name[count] = (type) (i+1);     \
-	      (*Res2)->name[count++] = (type) (j+1);   \
-	    }                                          \
-      break;
-      NSP_ITYPE_SWITCH(itype,ifind2assign, A);
-#undef ifind2assign
     }
   return OK;
 }

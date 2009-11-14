@@ -217,3 +217,32 @@ int *nsp_alloc_work_int(unsigned int n)
 }
 
    
+/*  
+ * nsp_alloc_index:
+ * @m:  nb of rows
+ * @n: nb of columns
+ *
+ *  this routine allocates an NspMatrix or an NspIMatrix to store indices
+ *  depending upon the ind_type parameter (currently 'd' or 'i'). It sets 
+ *  also the int pointer index. 
+ */
+NspObject *nsp_alloc_mat_or_imat(int m, int n, char ind_type, int **index)
+{
+  if ( ind_type == 'd' )
+    {
+      NspMatrix *RIndex = NULLMAT;
+      if ( (RIndex = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT ) 
+	return NULLOBJ;
+      RIndex->convert='i';
+      *index = RIndex->I;
+      return (NspObject *) RIndex; 
+    }
+  else  /* assume ind_type == 'i' */
+    {
+      NspIMatrix *IIndex = NULLIMAT;
+      if ( (IIndex = nsp_imatrix_create(NVOID,m,n,nsp_gint) ) == NULLIMAT ) 
+	return NULLOBJ;
+      *index = IIndex->Gint;
+      return (NspObject *) IIndex; 
+    }
+}

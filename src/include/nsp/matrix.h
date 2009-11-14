@@ -94,6 +94,8 @@ extern double *nsp_alloc_work_doubles(unsigned int n);
 extern int *nsp_alloc_work_int(unsigned int n);
 extern doubleC *nsp_alloc_work_doubleC(unsigned int n);
 
+extern NspObject *nsp_alloc_mat_or_imat(int m, int n, char ind_type, int **index);
+
 /* from MatObj.c */
 
 extern void nsp_matrix_destroy(NspMatrix *Mat); 
@@ -302,12 +304,9 @@ extern NspMatrix *nsp_mat_magic(int n);
 extern NspMatrix *nsp_mat_franck(int n, int job); 
 extern NspMatrix *nsp_mat_hilbert(int n,int job); 
 extern int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op, int *err); 
-extern int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
+extern int nsp_mat_find(NspMatrix *A, int lhs, NspObject **Res1, NspObject **Res2, char ind_type); 
 
-extern int nsp_mat_ifind(NspMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2, nsp_itype itype);
-
-extern int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind);
-extern int nsp_mat_imfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspIMatrix **Ind, nsp_itype itype);
+extern int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspObject **Ind, char ind_type);
 extern int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind);
 extern int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind);
 extern int nsp_mat_nnz(NspMatrix *A);

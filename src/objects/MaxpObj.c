@@ -819,16 +819,28 @@ static int int_mpmatrix_sort(Stack stack, int rhs, int opt, int lhs)
       /* verify optional arg*/
       if ( type != NULL )
 	{
-	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 ) return RET_BUG; 
+	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 )
+	    {
+	      string_not_in_array(stack, type, type_possible_choices, "optional argument type");
+	      return RET_BUG; 
+	    }
 	}
       if ( dir != NULL )
 	{
-	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) return RET_BUG; 
+	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) 
+	    {
+	      string_not_in_array(stack, dir, dir_possible_choices, "optional argument dir");
+	      return RET_BUG;
+	    } 
 	  direction = dir_possible_choices[rep_dir][0];
 	}
       if ( ind_type != NULL )
 	{
-	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) return RET_BUG; 
+	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	    {
+	      string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	      return RET_BUG;
+	    } 
 	  itype = ind_type_possible_choices[rep_ind_type][0];
 	}
     }

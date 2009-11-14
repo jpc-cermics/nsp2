@@ -355,7 +355,7 @@ extern int nsp_imatrix_scalar_or(NspIMatrix *A,const NspIMatrix *B);
 extern int nsp_imatrix_not(NspIMatrix *A); 
 extern int IMatIsTrue (NspIMatrix *A); 
 extern NspMatrix *nsp_imatrix_count_true(const NspIMatrix *A); 
-extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2);
+extern int nsp_imatrix_find(NspIMatrix *A, int lhs, NspObject **Res1, NspObject **Res2, char ind_type);
 extern int nsp_imatrix_find_2(const NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
 extern NspBMatrix *nsp_imatrix_comp(const NspIMatrix *A, const NspIMatrix *B,const char *op); 
 extern int nsp_imatrix_fullcomp(const NspIMatrix *A,const  NspIMatrix *B, const char *op, int *err); 

@@ -736,13 +736,13 @@ static int int_bmatrix_not(Stack stack, int rhs, int opt, int lhs)
 static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
 {
   NspBMatrix *A;
-  char *type=NULLSTRING;
-  Boolean realtype=TRUE;
+  NspObject *Rc=NULLOBJ,*Rr=NULLOBJ;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL;
+  char itype = 'd';
   int rep;
-  NSP_ITYPE_NAMES(intnames);
-  nsp_itype itype;
 
   CheckRhs(1, 2);
   CheckOptRhs(0, 1)
@@ -754,54 +754,36 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
     {
       if ( opt == 0 )
 	{
-	  if ( (type = GetString(stack, 2)) == NULLSTRING )
+	  if ( (ind_type = GetString(stack, 2)) == NULLSTRING )
 	    return RET_BUG;
 	}
       else
 	{
-	  if ( get_optional_args(stack, rhs, opt, opts, &type) == FAIL )
+	  if ( get_optional_args(stack, rhs, opt, opts, &ind_type) == FAIL )
 	    return RET_BUG;
 	}
-      if ( strcmp(type,"double") != 0 )
+      rep = is_string_in_array(ind_type, ind_type_possible_choices, 1);
+      if ( rep < 0 )
 	{
-	  realtype = FALSE;
-	  rep = is_string_in_array(type, intnames, 1);
-	  if ( rep < 0 )
-	    {
-	      Scierror ("Error:\t output type %s, not supported for function %s\n", type, NspFname(stack));
-	      return RET_BUG;
-	    }
-	  else
-	    itype = rep;
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
 	}
+      itype = ind_type_possible_choices[rep][0];
     }
 
-  if ( realtype )
+  if (nsp_bmatrix_find_2(A,Max(lhs,1),&Rr,&Rc,itype) == FAIL) return RET_BUG;
+
+  if ( itype == 'd' ) /* back convert */
+    Rr = (NspObject *) Mat2double( (NspMatrix *) Rr);
+  MoveObj(stack,1, Rr);
+  if ( lhs == 2 )
     {
-      NspMatrix *Rc,*Rr;
-      if (nsp_bmatrix_find_2(A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
-      MoveObj(stack,1,(NspObject *)Rr);
-      if ( lhs == 2 )
-	{
-	  NthObj(2) = (NspObject *) Rc ;
-	  NSP_OBJECT(NthObj(2))->ret_pos = 2;
-	  return 2;
-	}
-      return 1;
-    }      
-  else
-    {
-      NspIMatrix *Rc,*Rr;
-      if (nsp_bmatrix_ifind_2(A,Max(lhs,1),&Rr,&Rc, itype) == FAIL) return RET_BUG;
-      MoveObj(stack,1,(NspObject *)Rr);
-      if ( lhs == 2 )
-	{
-	  NthObj(2) = (NspObject *) Rc ;
-	  NSP_OBJECT(NthObj(2))->ret_pos = 2;
-	  return 2;
-	}
-      return 1;
+      if ( itype == 'd' ) /* back convert */
+	Rc = (NspObject *) Mat2double( (NspMatrix *) Rc);
+      MoveObj(stack,2, Rc);
+      return 2;
     }
+  return 1;
 }
 
 

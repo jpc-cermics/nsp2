@@ -2966,42 +2966,48 @@ int nsp_imatrix_fullcomp(const NspIMatrix *A,const NspIMatrix *B,const char *op,
  * Return value:  a new #NspMatrix or %NULLMAT
  */
 
-int nsp_imatrix_find(NspIMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
+int nsp_imatrix_find(NspIMatrix *A, int lhs, NspObject **Res1, NspObject **Res2, char ind_type)
 {
   int j,i,count=0; 
   int nrow = ( A->mn == 0) ? 0: 1;
+  int *indr=NULL, *indc=NULL;
+
   /* first pass for counting */
 #define IMAT_FIND1(name,type,arg) for ( i=0 ; i < A->mn ; i++) \
     {if ( A->name[i] ) count++;}break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_FIND1,"");
 #undef FIND1
+
   /* special rule for scalars */
   if ( A-> m == 1 && count ==0) nrow =0;
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',nrow, count);
-      if ( *Res1 == NULLMAT) return FAIL;
+      if ( (*Res1 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indr)) == NULLOBJ )
+	return FAIL;
       count=0;
 #define IMAT_FIND2(name,type,arg) for ( i=0 ; i < A->mn ; i++) \
-	if ( A->name[i] ) (*Res1)->R[count++] = i+1; break;
+	if ( A->name[i] ) indr[count++] = i+1; break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_FIND2,"");
 #undef FIND2
     }
   else 
     {
       int k;
-      *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res2 == NULLMAT) return FAIL;
+      if ( (*Res1 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indr)) == NULLOBJ )
+	return FAIL;
+      if ( (*Res2 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indc)) == NULLOBJ )
+	{
+	  nsp_object_destroy(Res1);
+	  return FAIL;
+	}
       count=0;
-#define IMAT_FIND3(name,type,arg)			\
+#define IMAT_FIND3(name,type,arg)		\
       for ( j = 0, k = 0 ; j < A->n ; j++ )	\
 	for ( i = 0 ; i < A->m ; i++, k++ )	\
 	  if (  A->name[k] != 0.0 )		\
 	    {					\
-	      (*Res1)->R[count] = i+1;		\
-	      (*Res2)->R[count++] = j+1;	\
+	      indr[count] = i+1;		\
+	      indc[count++] = j+1;		\
 	    }					\
       break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_FIND3,"");

@@ -129,8 +129,7 @@ extern int nsp_bmatrix_not(NspBMatrix *A);
 extern int BMatIsTrue (NspBMatrix *A); 
 extern NspMatrix *nsp_bmatrix_count_true(const NspBMatrix *A); 
 extern NspMatrix *nsp_bmatrix_find(const NspBMatrix *A); 
-extern int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2); 
-extern int nsp_bmatrix_ifind_2(const NspBMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2, nsp_itype itype);
+extern int nsp_bmatrix_find_2(const NspBMatrix *A, int lhs, NspObject **Res1, NspObject **Res2, char ind_type);
 extern NspBMatrix *nsp_bmatrix_compare(const NspBMatrix *A, const NspBMatrix *B, char *op); 
 extern int nsp_bmatrix_full_compare(const NspBMatrix *A,const  NspBMatrix *B, char *op, int *err); 
 

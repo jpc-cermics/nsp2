@@ -1175,19 +1175,31 @@ static int int_imatrix_sort(Stack stack, int rhs, int opt, int lhs)
       /* verify optional arg*/
       if ( type != NULL )
 	{
-	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 ) return RET_BUG; 
+	  if ( (rep_type= is_string_in_array(type, type_possible_choices,1)) == -1 )
+	    {
+	      string_not_in_array(stack, type, type_possible_choices, "optional argument type");
+	      return RET_BUG; 
+	    }
 	}
       if ( dir != NULL )
 	{
-	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) return RET_BUG; 
+	  if ( (rep_dir= is_string_in_array(dir, dir_possible_choices,1)) == -1 ) 
+	    {
+	      string_not_in_array(stack, dir, dir_possible_choices, "optional argument dir");
+	      return RET_BUG;
+	    } 
 	  direction = dir_possible_choices[rep_dir][0];
 	}
       if ( ind_type != NULL )
 	{
-	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) return RET_BUG; 
+	  if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	    {
+	      string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	      return RET_BUG;
+	    } 
 	  itype = ind_type_possible_choices[rep_ind_type][0];
 	}
-    }
+     }
 
   if ( lhs  == 2 || rep_type == sort_gs )  /* force index allocation for stable quick sort */
     {
@@ -2533,35 +2545,89 @@ int int_imatrix_div (Stack stack, int rhs, int opt, int lhs)
 int
 int_imatrix_find (Stack stack, int rhs, int opt, int lhs)
 {
-  NspIMatrix *A;
-  NspMatrix*Rc, *Rr;
-  CheckRhs (1, 1);
-  CheckLhs (1, 3);
+  NspIMatrix *A=NULLIMAT, *val=NULLIMAT;;
+  NspObject *Rc=NULLOBJ,*Rr=NULLOBJ;
+  nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL;
+  char itype = 'd';
+  int rep;
+
+  CheckRhs(1, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1, 3);
+
   if ((A = GetIMat (stack, 1)) == NULLIMAT)
     return RET_BUG;
-  if (nsp_imatrix_find (A, Max (lhs, 1), &Rr, &Rc) == FAIL)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) Rr);
-  if ( lhs >= 2 )
+
+  if ( rhs == 2 )
     {
-      NthObj (2) = (NspObject *) Rc;
-      NSP_OBJECT (NthObj (2))->ret_pos = 2;
+      if ( opt == 0 )
+	{
+	  if ( (ind_type = GetString(stack, 2)) == NULLSTRING )
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ( get_optional_args(stack, rhs, opt, opts, &ind_type) == FAIL )
+	    return RET_BUG;
+	}
+      rep = is_string_in_array(ind_type, ind_type_possible_choices, 1);
+      if ( rep < 0 )
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	}
+      itype = ind_type_possible_choices[rep][0];
     }
+
+  if (nsp_imatrix_find (A, Max (lhs, 1), &Rr, &Rc, itype) == FAIL)
+    return RET_BUG;
+
   if ( lhs >= 3 )
     {
-      int i;
-      NspIMatrix *val;
-      if ((val = nsp_imatrix_create(NVOID,Rc->m,Rc->n,A->itype))== NULLIMAT)
-	return RET_BUG;
-#define IMAT_FIND(name,type,arg)					\
-      for ( i = 0 ; i < Rr->mn; i++)					\
-	val->name[i]= A->name[(((int) Rr->R[i]-1))+A->m*(((int)Rc->R[i])-1)];	\
+      int i, *indr, *indc;
+      if ((val = nsp_imatrix_create(NVOID,((NspMatrix *)Rc)->m,((NspMatrix *)Rc)->n,A->itype))== NULLIMAT)
+	{
+	  nsp_object_destroy(&Rr); 
+	  nsp_object_destroy(&Rc);
+	  return RET_BUG; 
+	}
+
+      if ( itype == 'd' )
+	{
+	  indr = ((NspMatrix *)Rr)->I;
+	  indc = ((NspMatrix *)Rc)->I;
+	}
+      else
+	{
+	  indr = ((NspIMatrix *)Rr)->Gint;
+	  indc = ((NspIMatrix *)Rc)->Gint;
+	}
+
+#define IMAT_FIND(name,type,arg)				\
+      for ( i = 0 ; i < ((NspMatrix *)Rr)->mn; i++)		\
+	val->name[i]= A->name[indr[i]-1 + A->m*(indc[i]-1)];	\
       break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_FIND,"");
 #undef IMAT_FIND
-      NthObj (3) = (NspObject *) val;
-      NSP_OBJECT(NthObj (3))->ret_pos = 3;
     }
+
+  if ( itype == 'd' ) /* back convert */
+    Rr = (NspObject *) Mat2double( (NspMatrix *) Rr);
+  MoveObj (stack, 1, Rr);
+
+  if ( lhs >= 2 )
+    {
+      if ( itype == 'd' ) /* back convert */
+	Rc = (NspObject *) Mat2double( (NspMatrix *) Rc);
+      MoveObj(stack,2, Rc);
+
+      if ( lhs >= 3 )
+	MoveObj(stack,3, (NspObject *)val);
+    }
+
   return Max(lhs, 1) ;
 }
 

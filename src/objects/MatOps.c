@@ -5259,10 +5259,12 @@ int nsp_mat_fullcomp(NspMatrix *A, NspMatrix *B, char *op,int *err)
  * Return value: %OK or %FAIL  
  **/
 
-int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
+int nsp_mat_find(NspMatrix *A, int lhs, NspObject **Res1, NspObject **Res2, char ind_type)
 {
   int j,i,count=0; 
   int nrow = ( A->mn == 0) ? 0: 1;
+  int *indr=NULL, *indc=NULL;
+
   /* first pass for counting */
   if ( A->rc_type == 'r' ) 
     {
@@ -5278,28 +5280,31 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
   if ( A-> m == 1 && count ==0) nrow =0;
   if ( lhs == 1) 
     {
-      *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res1 == NULLMAT) return FAIL;
+      if ( (*Res1 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indr)) == NULLOBJ )
+	return FAIL;
       count=0;
       if ( A->rc_type == 'r' ) 
 	{
 	  for ( i = 0 ; i < A->mn ; i++ )
-	    if ( A->R[i] != 0.0 ) (*Res1)->R[count++] = i+1;
+	    if ( A->R[i] != 0.0 ) indr[count++] = i+1;
 	}
       else 
 	{
 	  for ( i = 0 ; i < A->mn ; i++ )
 	    if ((A->C[i].r != 0.0 || A->C[i].i != 0.0))
-	      (*Res1)->R[count++] = i+1;
+	      indr[count++] = i+1;
 	}
     }
   else 
     {
       int k;
-      *Res1 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res1 == NULLMAT) return FAIL;
-      *Res2 = nsp_matrix_create(NVOID,'r',nrow,(int) count);
-      if ( *Res2 == NULLMAT) return FAIL;
+      if ( (*Res1 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indr)) == NULLOBJ )
+	return FAIL;
+      if ( (*Res2 = nsp_alloc_mat_or_imat(nrow, count, ind_type, &indc)) == NULLOBJ )
+	{
+	  nsp_object_destroy(Res1);
+	  return FAIL;
+	}
       count=0;
       if ( A->rc_type == 'r' ) 
 	{
@@ -5307,8 +5312,8 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 	    for ( i = 0 ; i < A->m ; i++, k++ )
 	      if (  A->R[k] != 0.0 )
 		{
-		  (*Res1)->R[count] = i+1;
-		  (*Res2)->R[count++] = j+1;
+		  indr[count] = i+1;
+		  indc[count++] = j+1;
 		}
 	}
       else 
@@ -5317,118 +5322,9 @@ int nsp_mat_find(NspMatrix *A, int lhs, NspMatrix **Res1, NspMatrix **Res2)
 	    for ( i = 0 ; i < A->m ; i++, k++ )
 	      if (  A->C[k].r != 0.0 || A->C[k].i != 0.0 )
 		{
-		  (*Res1)->R[count] = i+1;
-		  (*Res2)->R[count++] = j+1;
+		  indr[count] = i+1;
+		  indc[count++] = j+1;
 		}
-	}
-    }
-  return OK;
-}
-
-
-
-/**
- * nsp_mat_ifind:
- * @A: a #NspMatrix 
- * @lhs: 1 or 2 
- * @Res1: a pointer to a #NspIMatrix
- * @Res2: a pointer to a #NspIMatrix
- * 
- * returns in one or two #NspIMatrix the indices for which the 
- * Matrix @A has non zero entries. @A is left unchanged
- * according to the value of @lhs one or two arguments are returned 
- * When @A is a non null matrix and @lhs is one, the return value is a 1xn row vector. 
- * But when n is equal to zero and @A is scalar then a 0x0 is returned. 
- *
- * In Matlab the rules are different: 
- * when lhs == 1 
- *   A 1x1 => result 1x1 or 0x0 (like us) 
- *   A mx1 => result px1        (diff)
- *   A 1xn => result 1xp        (like us)
- *   A mxn => result px min(1,max(m,n)) 
- *     (this rule is valid for all m,n cases except the ones covered above)
- * 
- *
- * Return value: %OK or %FAIL  
- **/
-
-int nsp_mat_ifind(NspMatrix *A, int lhs, NspIMatrix **Res1, NspIMatrix **Res2, nsp_itype itype)
-{
-  int j,i,count=0; 
-  int nrow = ( A->mn == 0) ? 0: 1;
-  /* first pass for counting */
-  if ( A->rc_type == 'r' ) 
-    {
-      for ( i=0 ; i < A->mn ; i++) 
-	if ( A->R[i] != 0.0 ) count++;
-    }
-  else 
-    {
-      for ( i=0 ; i < A->mn ; i++) 
-	if (A->C[i].r != 0.0 || A->C[i].i != 0.0) count++;
-    }
-  /* special rule for scalars */
-  if ( A-> m == 1 && count ==0) nrow =0;
-  if ( lhs == 1) 
-    {
-      *Res1 = nsp_imatrix_create(NVOID, nrow, count,itype);
-      if ( *Res1 == NULLIMAT) return FAIL;
-      count=0;
-      if ( A->rc_type == 'r' ) 
-	{
-#define IMAT_IFIND(name,type,arg)					\
-	  for ( i = 0 ; i < A->mn ; i++ )				\
-	    if ( A->R[i] != 0.0 ) (*Res1)->name[count++] = (type) i+1;	\
-	  break;
-	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
-#undef IMAT_IFIND
-	}
-      else 
-	{
-#define IMAT_IFIND(name,type,arg)					\
-	  for ( i = 0 ; i < A->mn ; i++ )				\
-	    if ((A->C[i].r != 0.0 || A->C[i].i != 0.0))			\
-	      (*Res1)->name[count++] = (type) i+1;			\
-	  break;
-	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
-#undef IMAT_IFIND
-	}
-    }
-  else 
-    {
-      int k;
-      *Res1 = nsp_imatrix_create(NVOID,nrow, count,itype);
-      if ( *Res1 == NULLIMAT) return FAIL;
-      *Res2 = nsp_imatrix_create(NVOID,nrow, count,itype);
-      if ( *Res2 == NULLIMAT) return FAIL;
-      count=0;
-      if ( A->rc_type == 'r' ) 
-	{
-#define IMAT_IFIND(name,type,arg)					\
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )				\
-	    for ( i = 0 ; i < A->m ; i++, k++ )				\
-	      if (  A->R[k] != 0.0 )					\
-		{							\
-		  (*Res1)->name[count] = (type) i+1;			\
-		  (*Res2)->name[count++] = (type) j+1;			\
-		}							\
-	  break;
-	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
-#undef IMAT_IFIND
-	}
-      else 
-	{
-#define IMAT_IFIND(name,type,arg)					\
-	  for ( j = 0, k = 0 ; j < A->n ; j++ )				\
-	    for ( i = 0 ; i < A->m ; i++, k++ )				\
-	      if (  A->C[k].r != 0.0 || A->C[k].i != 0.0 )		\
-		{							\
-		  (*Res1)->name[count] = (type) i+1;			\
-		  (*Res2)->name[count++] = (type) j+1;			\
-		}							\
-	  break;
-	  NSP_ITYPE_SWITCH(itype,IMAT_IFIND,"");
-#undef IMAT_IFIND
 	}
     }
   return OK;
@@ -5471,16 +5367,20 @@ static CompOp *SearchCompBis(const char *op)
  *
  **/
 
-int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspMatrix **Ind)
+int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspObject **Ind, char ind_type)
 {
   CompOp **func = NULL;
   int *length = NULL;
+  int **ind = NULL;
   Boolean found;
   int i, j;
 
   if ( (length = malloc((m+1)*sizeof(int))) == NULL )
     goto err;
   for ( i = 0 ; i <= m ; i++ ) length[i] = 0;
+
+  if ( (ind = malloc((m+1)*sizeof(int *))) == NULL )
+    goto err;
 
   if ( (func = malloc(m*sizeof(CompOp *))) == NULL )
     goto err;
@@ -5493,7 +5393,7 @@ int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scala
 
   for ( i = 0 ; i <= m ; i++ )
     {
-      if ( (Ind[i] = nsp_matrix_create(NVOID, 'r', 1, x->mn)) == NULLMAT ) 
+      if ( (Ind[i] = nsp_alloc_mat_or_imat(1, x->mn, ind_type, &(ind[i]))) == NULLOBJ ) 
 	goto err;
     }
 
@@ -5503,111 +5403,35 @@ int nsp_mat_mfind(const NspMatrix *x, int m,const char **ops,const double *scala
       for ( i = 0 ; i < m ; i++ )
 	if ( func[i](x->R[j], scalars[i]) )
 	  {
-	    Ind[i]->R[length[i]++] = (double) j+1;
+	    ind[i][length[i]++] = j+1;
 	    found = TRUE;
 	    break;
 	  }
       if ( ! found )
-	Ind[m]->R[length[m]++] = (double) j+1;
+	ind[m][length[m]++] = j+1;
     }
 
-  for ( i = 0 ; i <= m ; i++ )
-    nsp_matrix_resize(Ind[i], 1, length[i]);
+  if ( ind_type == 'd' )
+    for ( i = 0 ; i <= m ; i++ )
+      nsp_matrix_resize((NspMatrix *) Ind[i], 1, length[i]);
+  else
+    for ( i = 0 ; i <= m ; i++ )
+      nsp_imatrix_resize((NspIMatrix *) Ind[i], 1, length[i]);
 
   free(length);
+  free(ind);
   free(func);
   return OK;
 
 err:
   free(length);
+  free(ind);
   free(func);
   for ( i = 0 ; i <= m ; i++ )
-    nsp_matrix_destroy(Ind[i]);
+    nsp_object_destroy(&(Ind[i]));
   return FAIL;
 }
 
-/**
- * nsp_mat_imfind:
- * @x: a #NspMatrix 
- * @m: number of tests
- * @ops: string array given the operator of each of the m tests 
- * @scalars: scalars associated with the tests 
- * @Ind: the result (a matrix of (m+1) indices vectors)
- * 
- * Return value: %OK or %FAIL
- * Same than nsp_mat_mfind but used for mfind when an integer output is choosen:
- * multiple find  [ind1,...,indm, indm+1] = mfind( x, ops1, sc1, ..., opsm, scm, type="int" )
- * 
- * opsk is the operator for the k th test (<,<=, >, ...) and sck is the scalar
- * for the k th test. 
- *
- * ind1 is the vector of indices i1 corresponding to components
- *      of x satisfying: x(i1) ops1 sc1  (x(i1) < 0.0 if ops1 is < and sc1 is 0.0) 
- * ind2 is the vector of indices i2 corresponding to components 
- *      of x which don't satisfy test 1 but satisfy test 2:  x(i2) ops2 sc2
- * .....
- * indm+1 is the vector of indices which don't satisfy any of the m tests 
- *
- **/
-
-int nsp_mat_imfind(const NspMatrix *x, int m,const char **ops,const double *scalars, NspIMatrix **Ind, nsp_itype itype)
-{
-  CompOp **func = NULL;
-  int *length = NULL;
-  Boolean found;
-  int i, j;
-
-  if ( (length = malloc((m+1)*sizeof(int))) == NULL )
-    goto err;
-  for ( i = 0 ; i <= m ; i++ ) length[i] = 0;
-
-  if ( (func = malloc(m*sizeof(CompOp *))) == NULL )
-    goto err;
-  for ( i = 0 ; i < m ; i++ )
-    if ( (func[i] = SearchCompBis(ops[i])) == NULL )
-      {
-	Sciprintf("\nUnknow comp operator <%s>\n",ops[i]);
-	goto err;
-      }
-
-  for ( i = 0 ; i <= m ; i++ )
-    {
-      if ( (Ind[i] = nsp_imatrix_create(NVOID, 1, x->mn, itype)) == NULLIMAT ) 
-	goto err;
-    }
-
-#define mfindassign(name,cast,x)                       \
-  for ( j = 0 ; j < x->mn ; j++ )                      \
-    {                                                  \
-      found = FALSE;                                   \
-      for ( i = 0 ; i < m ; i++ )                      \
-	if ( func[i](x->R[j], scalars[i]) )            \
-	  {                                            \
-	    Ind[i]->name[length[i]++] = (cast) (j+1);  \
-	    found = TRUE;                              \
-	    break;                                     \
-	  }                                            \
-      if ( ! found )                                   \
-	Ind[m]->name[length[m]++] = (cast) (j+1);      \
-    }                                                  \
-  break;
-
-  NSP_ITYPE_SWITCH(itype,mfindassign, x);
-
-  for ( i = 0 ; i <= m ; i++ )
-    nsp_imatrix_resize(Ind[i], 1, length[i]);
-
-  free(length);
-  free(func);
-  return OK;
-
-err:
-  free(length);
-  free(func);
-  for ( i = 0 ; i <= m ; i++ )
-    nsp_imatrix_destroy(Ind[i]);
-  return FAIL;
-}
   
 /**
  * nsp_mat_ndind2ind:
