@@ -24,33 +24,6 @@
 #include "nsp/gsort-p.h"
 
 
-/*  
- *  this routine allocates an NspMatrix or an NspIMatrix to store indices
- *  depending upon the ind_type parameter. It sets also the int pointer
- *  index. 
- *
- */
-static NspObject *nsp_alloc_Index(int m, int n, char ind_type, int **index)
-{
-  if ( ind_type == 'd' )
-    {
-      NspMatrix *RIndex = NULLMAT;
-      if ( (RIndex = nsp_matrix_create(NVOID,'r',m,n) ) == NULLMAT ) 
-	return NULLOBJ;
-      RIndex->convert='i';
-      *index = RIndex->I;
-      return (NspObject *) RIndex; 
-    }
-  else  /* assume ind_type == 'i' */
-    {
-      NspIMatrix *IIndex = NULLIMAT;
-      if ( (IIndex = nsp_imatrix_create(NVOID,m,n,nsp_gint) ) == NULLIMAT ) 
-	return NULLOBJ;
-      *index = IIndex->Gint;
-      return (NspObject *) IIndex; 
-    }
-}
-
 /*
  * General sorting routines 
  * xI is the transmitted table to sort ( if table is int ) 
@@ -80,7 +53,7 @@ int nsp_matrix_sort(NspMatrix *A,NspObject **Index,int ind_flag,char dir, nsp_so
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
 
@@ -116,7 +89,7 @@ int nsp_matrix_column_sort(NspMatrix *A,NspObject **Index,int ind_flag,char dir,
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   nsp_qsort_gen_col_sort_double(A->R,index,ind_flag,A->m,A->n,dir);
@@ -128,7 +101,7 @@ int nsp_matrix_row_sort(NspMatrix *A,NspObject **Index,int ind_flag,char dir, ch
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   nsp_qsort_gen_row_sort_double(A->R,index,ind_flag,A->m,A->n,dir);
@@ -141,7 +114,7 @@ int nsp_matrix_lexical_column_sort(NspMatrix *A,NspObject **Index,int ind_flag,c
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(1, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(1, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   if ( mode == 'i') 
@@ -161,7 +134,7 @@ int nsp_matrix_lexical_row_sort(NspMatrix *A,NspObject **Index,int ind_flag,char
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, 1, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, 1, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   if ( mode == 'i') 
@@ -194,7 +167,7 @@ int nsp_smatrix_sort(NspSMatrix *A,NspObject **Index,int ind_flag,char dir, int 
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   
@@ -213,7 +186,7 @@ int nsp_smatrix_column_sort(NspSMatrix *A,NspObject **Index,int ind_flag,char di
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   nsp_qsort_gen_col_sort_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
@@ -225,7 +198,7 @@ int nsp_smatrix_row_sort(NspSMatrix *A,NspObject **Index,int ind_flag,char dir,c
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   nsp_qsort_gen_row_sort_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
@@ -238,7 +211,7 @@ int nsp_smatrix_lexical_column_sort(NspSMatrix *A,NspObject **Index,int ind_flag
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(1, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(1, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   nsp_qsort_gen_lexicol_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
@@ -250,7 +223,7 @@ int nsp_smatrix_lexical_row_sort(NspSMatrix *A,NspObject **Index,int ind_flag,ch
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, 1, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, 1, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   nsp_qsort_gen_lexirow_nsp_string(A->S,index,ind_flag,A->m,A->n,dir);
@@ -275,7 +248,7 @@ int nsp_imatrix_sort(NspIMatrix *A,NspObject **Index,int ind_flag,char dir, nsp_
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
   switch (type)
@@ -334,7 +307,7 @@ int nsp_imatrix_column_sort(NspIMatrix *A,NspObject **Index,int ind_flag,char di
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
 #define IMAT_SORT(name,type,arg)					\
@@ -349,7 +322,7 @@ int nsp_imatrix_row_sort(NspIMatrix *A,NspObject **Index,int ind_flag,char dir,c
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
 
@@ -366,7 +339,7 @@ int nsp_imatrix_lexical_column_sort(NspIMatrix *A,NspObject **Index,int ind_flag
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(1, A->n, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(1, A->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
 #define IMAT_SORT(name,type,arg)					\
@@ -381,7 +354,7 @@ int nsp_imatrix_lexical_row_sort(NspIMatrix *A,NspObject **Index,int ind_flag,ch
   int *index = NULL;
   if ( ind_flag == TRUE ) 
     {
-      if ( (*Index = nsp_alloc_Index(A->m, 1, ind_type, &index)) == NULLOBJ )
+      if ( (*Index = nsp_alloc_mat_or_imat(A->m, 1, ind_type, &index)) == NULLOBJ )
 	return FAIL;
     }
 #define IMAT_SORT(name,type,arg)					\
