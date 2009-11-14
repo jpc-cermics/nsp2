@@ -2243,7 +2243,7 @@ static int int_mpfind(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,2);
   if ((A = GetMpMat(stack,1)) == NULLMAXPMAT)  return RET_BUG;
-  if (nsp_mat_find((NspMatrix *) A,Max(lhs,1),&Rr,&Rc) == FAIL) return RET_BUG;
+  if (nsp_mat_find((NspMatrix *) A,Max(lhs,1),(NspObject **)&Rr,(NspObject **)&Rc,'d') == FAIL) return RET_BUG;
   MoveObj(stack,1, (NspObject *)Rr);
   if ( lhs == 2 )
     {
