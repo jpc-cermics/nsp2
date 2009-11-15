@@ -1587,20 +1587,21 @@ int nsp_list_full_not_equal(NspList *L1, NspList *L2)
  * Return value: a NspList
  **/
 
-NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
+NspList *nsp_list_unique(NspList *L, NspObject **Ind, NspMatrix **Occ, char ind_type)
 {
   NspList *LL;
-  int i, j, k;
+  int i, j, k, *index;
   Boolean found;
   Cell *cell_L, *cell_LL;
-  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  NspMatrix *occ=NULLMAT;
   NspObject *O=NULLOBJ;
 
   if ( (LL = nsp_list_create(NVOID)) == NULLLIST ) return NULLLIST;
 
   if (Ind != NULL )
     {
-      if ( (ind = nsp_matrix_create(NVOID,'r',1,L->nel)) == NULLMAT ) goto err;
+      if ( (*Ind = nsp_alloc_mat_or_imat(1,L->nel, ind_type, &index)) == NULLOBJ ) goto err;
+
       if (Occ != NULL )
 	if ( (occ = nsp_matrix_create(NVOID,'r',1,L->nel)) == NULLMAT ) goto err;
     }
@@ -1629,7 +1630,7 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
 	      if ( nsp_list_end_insert(LL,O) == FAIL ) { nsp_object_destroy(&O); goto err;}
 	      if ( Ind != NULL )
 		{
-		  ind->R[k] = (double) i;
+		  index[k] = i;
 		  if ( Occ != NULL ) occ->R[k] = 1;
 		}
 	      k++;
@@ -1640,8 +1641,13 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
 
   if ( Ind != NULL )
     {
-      nsp_matrix_resize(ind,1,k);
-      *Ind = ind; 
+      if ( ind_type == 'd' )
+	nsp_matrix_resize((NspMatrix *) *Ind, 1, k);
+      else
+	nsp_imatrix_resize((NspIMatrix *) *Ind, 1, k);
+      if ( ind_type == 'd' )
+	*Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+
       if ( Occ != NULL ) 
 	{
 	  nsp_matrix_resize(occ,1,k);
@@ -1652,7 +1658,8 @@ NspList *nsp_list_unique(NspList *L, NspMatrix **Ind, NspMatrix **Occ)
 
  err:
   nsp_list_destroy(LL);
-  nsp_matrix_destroy(ind);
+  if ( Ind != NULL )
+    nsp_object_destroy(Ind);
   nsp_matrix_destroy(occ);
   return NULLLIST;
 }

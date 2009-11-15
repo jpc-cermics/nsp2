@@ -1378,20 +1378,43 @@ static int int_lxcat(Stack stack, int rhs, int opt, int lhs)
 static int int_lxunique(Stack stack, int rhs, int opt, int lhs)
 {
   NspList *L, *LL;
-  NspMatrix *ind=NULLMAT, *occ=NULLMAT, **hind=NULL, **hocc=NULL;
-  CheckRhs(1,1);
+  NspMatrix  *occ=NULLMAT, **hocc=NULL;
+  NspObject *ind=NULLOBJ, **hind=NULL;
+  int_types T[] = {list,new_opts,t_end} ;
+  nsp_option opts[] ={{ "ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
+  int rep_ind_type;
+
+  if ( GetArgs(stack,rhs,opt,T,&L,&opts,&ind_type) == FAIL ) 
+    return RET_BUG;
+
+  if ( ind_type != NULL )
+    {
+      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	} 
+      itype = ind_type_possible_choices[rep_ind_type][0];
+    }
+
   CheckLhs(1,3);
 
-  if ( (L = GetList(stack,1)) == NULLLIST ) return RET_BUG;
-  if ( lhs >= 2 ) hind = &ind;
-  if ( lhs == 3 ) hocc = &occ;
+  if ( lhs >= 2 ) 
+    {
+      hind = &ind;
+      if ( lhs == 3 ) hocc = &occ;
+    }
       
-  if ( (LL = nsp_list_unique(L, hind, hocc)) == NULLLIST ) return RET_BUG;
+  if ( (LL = nsp_list_unique(L, hind, hocc, itype)) == NULLLIST ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(LL));
   if ( lhs >= 2 )
-    MoveObj(stack,2,NSP_OBJECT(ind));
-  if ( lhs == 3 )
-    MoveObj(stack,3,NSP_OBJECT(occ));
+    {
+      MoveObj(stack,2,ind);
+      if ( lhs == 3 )
+	MoveObj(stack,3,NSP_OBJECT(occ));
+    }
   return Max(lhs,1);
 }
 
