@@ -82,7 +82,7 @@ extern NspCells *nsp_cells_extract_columns(NspCells *A, NspMatrix *Cols, int *er
 extern NspCells *CellsLoopCol (char *str, NspCells *Col, NspCells *A, int icol, int *rep); 
 extern NspCells *nsp_cells_extract_rows(NspCells *A, NspMatrix *Rows, int *err); 
 extern int nsp_cells_set_element(NspCells *A,int index, NspObject *B);
-extern NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ);
+extern NspCells *nsp_cells_unique(NspCells *C, NspObject **Ind, NspMatrix **Occ, char ind_type);
 extern Boolean nsp_cells_has(NspCells *C, NspObject *Obj, int *ind);
 extern NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)  ;
 

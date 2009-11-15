@@ -1121,23 +1121,22 @@ NspCells*nsp_cells_transpose(const NspCells *A)
  * Return value: a new #NspCells or %NULLCELLS.
  **/
 
-NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
+NspCells *nsp_cells_unique(NspCells *C, NspObject **Ind, NspMatrix **Occ, char ind_type)
 {
   NspCells *CC;
-  int i, j, k;
+  int i, j, k, *index;
   Boolean found;
-  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  NspMatrix *occ=NULLMAT;
   NspObject *Current, *O=NULLOBJ;
 
   if ( (CC = nsp_cells_create(NVOID, C->mn, 1)) == NULLCELLS ) return NULLCELLS;
 
   if (Ind != NULL )
     {
-      if ( (ind = nsp_matrix_create(NVOID,'r', C->mn, 1)) == NULLMAT ) goto err;
+      if ( (*Ind = nsp_alloc_mat_or_imat(C->mn, 1, ind_type, &index)) == NULLOBJ ) goto err;
       if (Occ != NULL )
 	if ( (occ = nsp_matrix_create(NVOID,'r', C->mn, 1)) == NULLMAT ) goto err;
     }
-
 
   k = 0;
   for ( i = 0 ; i < C->mn ; i++ )
@@ -1158,7 +1157,7 @@ NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
 	      CC->objs[k] = O;
 	      if ( Ind != NULL )
 		{
-		  ind->R[k] = (double) (i+1);
+		  index[k] = i+1;
 		  if ( Occ != NULL ) occ->R[k] = 1;
 		}
 	      k++;
@@ -1171,11 +1170,14 @@ NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
       nsp_cells_resize(CC, k, 1);
       if ( Ind != NULL )
 	{
-	  nsp_matrix_resize(ind,k,1);
+	  if ( ind_type == 'd' )
+	    nsp_matrix_resize((NspMatrix *) *Ind, k, 1);
+	  else
+	    nsp_imatrix_resize((NspIMatrix *) *Ind, k, 1);
+	  if ( ind_type == 'd' )
+	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
 	  if ( Occ != NULL ) 
-	    {
 	      nsp_matrix_resize(occ,k,1);
-	    }
 	}
     }
 
@@ -1184,7 +1186,7 @@ NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
       CC->m = 1; CC->n = k;
       if ( Ind != NULL )
 	{
-	  ind->m = 1; ind->n = k;
+	  ((NspMatrix *)*Ind)->m = 1; ((NspMatrix *)*Ind)->n = k;
 	  if ( Occ != NULL ) 
 	    {
 	      occ->m = 1; occ->n = k;
@@ -1192,18 +1194,15 @@ NspCells *nsp_cells_unique(NspCells *C, NspMatrix **Ind, NspMatrix **Occ)
 	}
     }
 
-  if ( Ind != NULL )
-    {
-      *Ind = ind;
-      if ( Occ != NULL )
-	*Occ = occ;
-    }
+  if ( Occ != NULL )
+    *Occ = occ;
 
   return CC;
 
  err:
   nsp_cells_destroy(CC);
-  nsp_matrix_destroy(ind);
+  if ( Ind != NULL )
+    nsp_object_destroy(Ind);
   nsp_matrix_destroy(occ);
   return NULLCELLS;
 }

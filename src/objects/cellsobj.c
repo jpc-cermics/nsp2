@@ -1276,20 +1276,44 @@ static int int_cells_setrowscols(Stack stack, int rhs, int opt, int lhs)
 static int int_cells_unique(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *C, *CC;
-  NspMatrix *ind=NULLMAT, *occ=NULLMAT, **hind=NULL, **hocc=NULL;
-  CheckRhs(1,1);
+  NspMatrix  *occ=NULLMAT, **hocc=NULL;
+  NspObject *ind=NULLOBJ, **hind=NULL;
+  nsp_option opts[] ={{ "ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
+  int rep_ind_type;
+
   CheckLhs(1,3);
+  CheckStdRhs(1,1);
 
   if ( (C = GetCells(stack,1)) == NULLCELLS ) return RET_BUG;
-  if ( lhs >= 2 ) hind = &ind;
-  if ( lhs == 3 ) hocc = &occ;
+  if ( get_optional_args(stack,rhs,opt,opts,&ind_type) == FAIL) 
+    return RET_BUG;
+ 
+  if ( ind_type != NULL )
+    {
+      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	} 
+      itype = ind_type_possible_choices[rep_ind_type][0];
+    }
+
+  if ( lhs >= 2 ) 
+    {
+      hind = &ind;
+      if ( lhs == 3 ) hocc = &occ;
+    }
       
-  if ( (CC = nsp_cells_unique(C, hind, hocc)) == NULLCELLS ) return RET_BUG;
+  if ( (CC = nsp_cells_unique(C, hind, hocc, itype)) == NULLCELLS ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(CC));
   if ( lhs >= 2 )
-    MoveObj(stack,2,NSP_OBJECT(ind));
-  if ( lhs == 3 )
-    MoveObj(stack,3,NSP_OBJECT(occ));
+    {
+      MoveObj(stack,2,ind);
+      if ( lhs == 3 )
+	MoveObj(stack,3,NSP_OBJECT(occ));
+    }
   return Max(lhs,1);
 }
 
