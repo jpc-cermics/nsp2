@@ -459,13 +459,11 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
  * 
  **/
 
-static void xset_clip(BCG *Xgc,int x[])
+static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 {
-  int i;
-  GdkRectangle clip_rect ={x[0],x[1],x[2],x[3]};
   Xgc->ClipRegionSet = 1;
-  for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect);
+  Xgc->CurClipRegion= *r;
+  gdk_gc_set_clip_rectangle(Xgc->private->wgc, r);
 }
 
 /**
@@ -495,10 +493,10 @@ static void xget_clip(BCG *Xgc,int *x)
   x[0] = Xgc->ClipRegionSet;
   if ( x[0] == 1)
     {
-      x[1] =Xgc->CurClipRegion[0];
-      x[2] =Xgc->CurClipRegion[1];
-      x[3] =Xgc->CurClipRegion[2];
-      x[4] =Xgc->CurClipRegion[3];
+      x[1] =Xgc->CurClipRegion.x;
+      x[2] =Xgc->CurClipRegion.y;
+      x[3] =Xgc->CurClipRegion.width;
+      x[4] =Xgc->CurClipRegion.height;
     }
 }
 

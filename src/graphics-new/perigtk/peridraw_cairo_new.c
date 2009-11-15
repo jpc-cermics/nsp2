@@ -676,9 +676,6 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
 }
 
 
-
-
-
 /**
  * xset_clip:
  * @Xgc: a graphic context 
@@ -688,15 +685,13 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
  * 
  **/
 
-static void xset_clip(BCG *Xgc,int x[])
+static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 {
-  int i;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  
   Xgc->ClipRegionSet = 1;
-  for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
+  Xgc->CurClipRegion = *r;
   cairo_new_path (cr);
-  cairo_rectangle(cr,x[0],x[1],x[2],x[3]);
+  cairo_rectangle(cr,r->x,r->y,r->width,r->height);
   cairo_clip (cr);
 }
 
@@ -730,10 +725,10 @@ static void xget_clip(BCG *Xgc,int *x)
   x[0] = Xgc->ClipRegionSet;
   if ( x[0] == 1)
     {
-      x[1] =Xgc->CurClipRegion[0];
-      x[2] =Xgc->CurClipRegion[1];
-      x[3] =Xgc->CurClipRegion[2];
-      x[4] =Xgc->CurClipRegion[3];
+      x[1] =Xgc->CurClipRegion.x;
+      x[2] =Xgc->CurClipRegion.y;
+      x[3] =Xgc->CurClipRegion.width;
+      x[4] =Xgc->CurClipRegion.height;
     }
 }
 

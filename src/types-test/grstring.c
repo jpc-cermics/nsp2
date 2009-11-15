@@ -858,7 +858,7 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int i,flagx=0;
   double rect1[4],wc,x,y,yi;

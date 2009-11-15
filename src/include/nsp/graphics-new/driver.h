@@ -9,6 +9,8 @@
  * and driver structures.
  */
 
+#include <gdk/gdk.h> 
+
 extern void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy,int n, int *clip_box , int onemore);
 
 typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
@@ -54,7 +56,7 @@ typedef void driver_xinfo( BCG *gc,char *message,...);
 typedef void driver_xpause( int sec_time,int events);
 typedef void driver_xselgraphic ( BCG *gc);
 typedef void driver_sedeco( int );
-typedef void driver_tape_replay(BCG *gc,int *rect);
+typedef void driver_tape_replay(BCG *gc,const GdkRectangle *rect);
 typedef void driver_tape_clean_plots(BCG *gc,int winnumber);
 typedef void driver_tape_replay_new_angles(BCG *gc);
 typedef void driver_tape_replay_new_scale(BCG *gc,int winnumber, int *flag, int *aaint, 
@@ -71,7 +73,7 @@ typedef void driver_xget_viewport(BCG *gc,int *x, int *y);
 typedef void driver_xset_viewport(BCG *gc,int x, int y);
 typedef int  driver_xset_curwin(int intnum,int set_menu);
 typedef int driver_xget_curwin(void);
-typedef void driver_xset_clip(BCG *gc,int x[]);
+typedef void driver_xset_clip(BCG *gc,const GdkRectangle *r);
 typedef void driver_xset_unclip(BCG *gc);
 typedef void driver_xset_test(BCG *gc);
 typedef void driver_xget_clip(BCG *gc,int *x);
@@ -128,7 +130,6 @@ typedef void driver_process_updates(BCG *gc);
 typedef void driver_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height);
 typedef void driver_draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y,int dest_x,
 					  int dest_y,int width,int height);
-#endif 
 
 /* a set of generic functions which can be used or 
  * not by each driver 
@@ -273,9 +274,10 @@ struct nsp_gengine {
   driver_xpop_colormap *xpop_colormap;
 };
 
+#endif 
+
 
 #ifdef PERI_PRIVATE
-
 /* forward definitions */
 
 static driver_boundingbox boundingbox;

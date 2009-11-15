@@ -701,13 +701,9 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
 void nsp_graphic_link_figure(NspGraphic *G,void *F, void *A)
 {
   nsp_figure *Fi = F;
-  if ( G->obj->Fig == NULL ) 
-    {
-      G->obj->Fig = Fi;
-      G->obj->Axe = A;
-    }
+  G->obj->Fig = Fi;
+  G->obj->Axe = A;
 }
-
 
 /**
  * nsp_graphic_unlink_figure:
@@ -925,19 +921,23 @@ void nsp_graphic_invalidate(NspGraphic *G)
     }
 }
 
-
-
-
-/* check if the block is inside drawing rectangle
- */
+/**
+ * nsp_graphic_intersect_rectangle:
+ * @G: 
+ * @rect: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
  
-int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
+int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
 {
   nsp_axes *axe = ((NspGraphic *) G)->obj->Axe;
   GdkRectangle r1;
   int xmin,ymin,xmax,ymax;
   double bounds[4];
-  if ( r == NULL ) return TRUE;
+  if ( rect == NULL ) return TRUE;
   if ( G->type->bounds(G,bounds) == FALSE ) return TRUE;
   scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
   scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);
@@ -945,12 +945,8 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,void *r)
   r1.y = ymax-10;
   r1.width = xmax - xmin +20;
   r1.height = ymin - ymax +20 ;
-  /* Sciprintf("bounds rectangle [%d,%d,%d,%d]\n",
-	    r1.x,r1.y,r1.width,r1.height);
-  */
-
-  return  gdk_rectangle_intersect(r,&r1,NULL);
+  return  gdk_rectangle_intersect(rect,&r1,NULL);
 }
 
 
-#line 957 "graphic.c"
+#line 953 "graphic.c"

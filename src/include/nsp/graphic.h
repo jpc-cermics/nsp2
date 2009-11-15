@@ -25,7 +25,7 @@ typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 #line 57 "codegen/graphic.override"
 
-typedef void draw_func(BCG *Xgc,NspGraphic *Obj,GdkRectangle *rect, void *data);
+typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const const GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
 typedef void rotate_func(NspGraphic *Obj,double *R);
 typedef void scale_func(NspGraphic *Obj,double *alpha);
@@ -126,7 +126,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
 /* inserted at the end of public part of include file */
 extern void nsp_graphic_invalidate(NspGraphic *G);
-extern int nsp_graphic_intersect_rectangle(NspGraphic *G,void *);
+extern int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect);
 
 #line 132 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 

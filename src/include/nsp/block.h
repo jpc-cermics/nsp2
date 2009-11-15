@@ -172,7 +172,7 @@ static int lock_color=10;
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B);
 
 /* set of method for parent class graphic  */
-static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_block(NspGraphic *o,const double *tr);
 static void nsp_rotate_block(NspGraphic *o,double *R);
 static void nsp_scale_block(NspGraphic *o,double *alpha);

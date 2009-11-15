@@ -766,7 +766,7 @@ void String3d_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->show == FALSE ) return ;

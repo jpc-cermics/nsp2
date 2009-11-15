@@ -1148,7 +1148,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int flag[]={1,2,4}, rep;
   char legend[]="X@Y@Z";

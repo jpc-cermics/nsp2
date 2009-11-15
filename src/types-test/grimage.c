@@ -810,7 +810,7 @@ void GrImage_Interf_Info(int i, char **fname, function (**f))
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   double val[4];
   int ccolor=-1,cthick=-1;

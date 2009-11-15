@@ -133,8 +133,8 @@ static void initialize_gc_1(BCG *Xgc)
 
 static void xset_clipping_p_1(BCG *Xgc,double x,double y,double w,double h)
 {
-  int rect[4]={x,y,w,h};
-  Xgc->graphic_engine->xset_clip(Xgc,rect);
+  GdkRectangle r = { x,y,w,h};
+  Xgc->graphic_engine->xset_clip(Xgc, &r);
 }
 
 static void xset_clipgrf_1(BCG *Xgc)
@@ -144,11 +144,10 @@ static void xset_clipgrf_1(BCG *Xgc)
 
 static void xset_clip_1(BCG *Xgc,double x[])
 {
-  /* and clipping is special its args are floats **/
-  int ix[4];
-  scale_f2i(Xgc->scales,x,x+1,ix,ix+1,1);
-  length_scale_f2i(Xgc->scales,x+2,x+3,ix+2,ix+3,1);
-  Xgc->graphic_engine->xset_clip(Xgc,ix);
+  GdkRectangle r;
+  scale_f2i(Xgc->scales,x,x+1,&r.x,&r.y,1);
+  length_scale_f2i(Xgc->scales,x+2,x+3,&r.width,&r.height,1);
+  Xgc->graphic_engine->xset_clip(Xgc,&r);
 }
 
 static void xset_default_1(BCG *Xgc) 
@@ -567,21 +566,21 @@ static void displaystringa_1(BCG *Xgc,char *string, int ipos)
   switch ( ipos )
     {
     case 1:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0],Xgc->scales->WIRect1[1],Xgc->scales->WIRect1[2],
-	       Xgc->scales->WIRect1[1] - Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[1]);
+      xstringb(Xgc,string,Xgc->scales->Irect.x,Xgc->scales->Irect.y,Xgc->scales->Irect.width,
+	       Xgc->scales->Irect.y - Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[1]);
       break;
     case 2:
-      xstringb(Xgc,string,Xgc->scales->WIRect1[0],
+      xstringb(Xgc,string,Xgc->scales->Irect.x,
 	       Xgc->scales->wdim[1]*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3]),
-	       Xgc->scales->WIRect1[2],
+	       Xgc->scales->Irect.width,
 	       (Xgc->scales->wdim[1]*(Xgc->scales->subwin_rect[1]+Xgc->scales->subwin_rect[3])
-		- (Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3]))*2.0/3.0);
+		- (Xgc->scales->Irect.y+Xgc->scales->Irect.height))*2.0/3.0);
       break;
     case 3:
       xstringb_vert(Xgc,string,Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0],
-		    Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3],
-		    (Xgc->scales->WIRect1[0]-Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0]) /3.0,
-		    Xgc->scales->WIRect1[3]);
+		    Xgc->scales->Irect.y+Xgc->scales->Irect.height,
+		    (Xgc->scales->Irect.x-Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[0]) /3.0,
+		    Xgc->scales->Irect.height);
       break;
     }
 }

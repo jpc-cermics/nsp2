@@ -139,7 +139,7 @@ static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type);
 /* inserted in the private part of include file
  * of classa.h
  */
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
 static int nsp_figure_draw_latter(NspFigure *);

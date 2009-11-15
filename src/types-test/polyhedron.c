@@ -954,7 +954,7 @@ void Polyhedron_Interf_Info(int i, char **fname, function (**f))
  * it gives the face to draw for the polyhedron 
  */
 
-static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->show == FALSE ) return ;

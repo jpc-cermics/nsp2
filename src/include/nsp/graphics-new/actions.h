@@ -50,22 +50,21 @@ extern Nsp_gc_actions nsp_gc_actions ;
 #endif 
 
 #ifdef PERI_ACTION_PRIVATE 
-
-static int  nsp_gc_change(BCG *Xgc);
-static void nsp_gc_2dzoom(BCG *Xgc);
-static void nsp_gc_3drot(BCG *Xgc);
-static void nsp_gc_delete(BCG *Xgc);
-static void nsp_gc_erase(BCG *Xgc);
-static void nsp_gc_expose(BCG *Xgc);
-static int  nsp_gc_loadsg(BCG *Xgc,const char *filename);
-static void nsp_gc_raise(BCG *Xgc);
-static void nsp_gc_replay(BCG *Xgc);
-static void nsp_gc_resize(BCG *Xgc);
-static void nsp_gc_resize_pixmap(BCG *Xgc);
-static int  nsp_gc_savesg(BCG *Xgc,const char *filename);
-static void nsp_gc_sel(BCG *Xgc);
-static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *driver,char option);
-static void nsp_gc_unzoom(BCG *Xgc);
+static  driver_gc_change         nsp_gc_change;	   
+static  driver_gc_2dzoom 	 nsp_gc_2dzoom;	   
+static  driver_gc_3drot  	 nsp_gc_3drot;	   
+static  driver_gc_delete 	 nsp_gc_delete;	   
+static  driver_gc_erase  	 nsp_gc_erase;	   
+static  driver_gc_expose 	 nsp_gc_expose;	   
+static  driver_gc_loadsg 	 nsp_gc_loadsg;	   
+static  driver_gc_raise  	 nsp_gc_raise;	   
+static  driver_gc_replay 	 nsp_gc_replay;	   
+static  driver_gc_resize 	 nsp_gc_resize;	   
+static  driver_gc_resize_pixmap  nsp_gc_resize_pixmap;  
+static  driver_gc_savesg 	 nsp_gc_savesg;	   
+static  driver_gc_select 	 nsp_gc_sel;		   
+static  driver_gc_tops   	 nsp_gc_tops;	   
+static  driver_gc_unzoom 	 nsp_gc_unzoom;         
 
 Nsp_gc_actions nsp_gc_actions = {
   nsp_gc_change,

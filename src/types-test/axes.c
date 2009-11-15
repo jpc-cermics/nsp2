@@ -1367,9 +1367,9 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
 				  int *aaint,int isomode, int auto_axes, char *xf);
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
-static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  GdkRectangle *r = rect, clip;
+  GdkRectangle clip;
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
@@ -1382,7 +1382,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
   if ( rect != NULL) 
     {
       /*
-       * check if we are in the draw zone given by data.
+       * check if we are in the draw zone given by rect
        */
       if ( P->obj->top == TRUE ) 
 	{
@@ -1393,35 +1393,16 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	  r1.y=P->obj->wrect->R[1]*wdim[1];
 	  r1.width=P->obj->wrect->R[2]*wdim[0];
 	  r1.height=P->obj->wrect->R[3]*wdim[1];
-	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
-	    {
-	      /*
-	      Sciprintf("No need to draw one axes [%d,%d,%d,%d] draw=[%d,%d,%d,%d]\n",
-			r1.x,r1.y,r1.width,r1.height,
-			r->x,r->y,r->width,r->height
-			);
-	      */
-	      return;
-	    }
-	  else
-	    {
-	      /*
-	      Sciprintf("Drawing axes\n");
-	      */
-	    }
+	  if ( ! gdk_rectangle_intersect(rect,&r1,NULL)) return;
 	}
       else
 	{
 	  /* XXXX
-	    Sciprintf("draw axes for non to level to be done \n");
-	  */
+	   *  Sciprintf("draw axes for non to level to be done \n");
+	   */
 	}
     }
 
-  /* draw elements */
-
-  L = P->obj->children;
-  cloc = L->first ;
   /* we change the scale according to the axes */
   getscale2d(Xgc,WRect,FRect,logscale,ARect);
   if ( P->obj->top == TRUE ) 
@@ -1511,14 +1492,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
    * since clipping only works with rectangles 
    */
 
-  Sciprintf("Axes with t=%d\n", P->obj->top);
-
   if ( P->obj->top == TRUE )
     {
       if ( rect != NULL ) 
 	{
-	  gdk_rectangle_intersect( rect, (GdkRectangle *) Xgc->scales->WIRect1, &clip);
-	  Xgc->graphic_engine->xset_clip(Xgc,(int *) &clip);
+	  gdk_rectangle_intersect( rect,&Xgc->scales->Irect, &clip);
+	  Xgc->graphic_engine->xset_clip(Xgc, &clip);
 	  /*
 	    Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
 	    clip.x,clip.y,clip.width,clip.height);
@@ -1526,9 +1505,14 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	}
       else
 	{
-	  Xgc->graphic_engine->xset_clip(Xgc,(int *) Xgc->scales->WIRect1);
+	  Xgc->graphic_engine->xset_clip(Xgc,&Xgc->scales->Irect);
 	}
     }
+
+  /* draw elements */
+
+  L = P->obj->children;
+  cloc = L->first ;
   
   while ( cloc != NULLCELL ) 
     {
@@ -1539,13 +1523,13 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *dat
 	}
       cloc = cloc->next;
     }
-
+  
   if ( P->obj->top == TRUE )
     {
       /* back to previous clip zone */
       if ( rect != NULL ) 
 	{
-	  Xgc->graphic_engine->xset_clip(Xgc,(int *) &rect);
+	  Xgc->graphic_engine->xset_clip(Xgc,rect);
 	}
       else
 	{
@@ -1623,9 +1607,6 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
  * axes 
  */
 
-
-
-
 static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
 {
   double l_bounds[4];
@@ -1685,8 +1666,8 @@ void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *a
       double hx=xmax-xmin,hy=ymax-ymin,hx1,hy1, dwdim[2];
       int wdim[2];
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-arect[0]-arect[1])));  /* add corrections for margins */
-      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-arect[2]-arect[3])));  /* add corrections for margins */
+      dwdim[0]=linint((double)wdim[0] * (wrect[2]*(1.0-arect[0]-arect[1]))); 
+      dwdim[1]=linint((double)wdim[1] * (wrect[3]*(1.0-arect[2]-arect[3]))); 
       if ( hx/dwdim[0] < hy/dwdim[1] ) 
 	{
 	  hx1=dwdim[0]*hy/dwdim[1];
@@ -2239,4 +2220,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2243 "axes.c"
+#line 2224 "axes.c"

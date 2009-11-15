@@ -2458,7 +2458,6 @@ static int int_xaxis(Stack stack, int rhs, int opt, int lhs)
 static int int_xchange_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int i;
   char *dir;
   NspMatrix *l1,*l2,*l3,*l4,*l5;
 
@@ -2508,8 +2507,12 @@ static int int_xchange_new(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(l4)->ret_pos = 2;     StackStore(stack,(NspObject *) l4,rhs+2);
   if ( lhs >= 3 )  
     { 
+      
       if ((l5 = nsp_matrix_create(NVOID,'r',1,4)) == NULLMAT ) return RET_BUG;
-      for (i=0; i < 4 ; i++) l5->R[i] =  Xgc->scales->WIRect1[i];
+      l5->R[0] =  Xgc->scales->Irect.x;
+      l5->R[1] =  Xgc->scales->Irect.y;
+      l5->R[2] =  Xgc->scales->Irect.width;
+      l5->R[3] =  Xgc->scales->Irect.height;
       NSP_OBJECT(l5)->ret_pos = 3;     StackStore(stack,(NspObject *) l5,rhs+3);
     }
   return Max(lhs,2);
@@ -3923,6 +3926,8 @@ typedef enum  {
   , xset_lastpattern, xset_line_mode , xset_line_style , xset_mark , xset_mark_size, xset_pattern
   , xset_pixmap ,xset_recording, xset_thickness, xset_use_color, xset_viewport, xset_wdim , xset_white , xset_window
   , xset_wpdim , xset_wpos, xset_wresize, xset_wshow, xset_wwpc, xset_fpf, xset_auto_clear, xset_clipgrf
+  , xset_process_updates
+
 } xset_enum ;
 
 static char *xset_Table[] = { 
@@ -3931,8 +3936,10 @@ static char *xset_Table[] = {
   "font",   "font size",    "foreground",  "hidden3d",
   "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
   "pixmap", "recording",  "thickness",  "use color",  "viewport", "wdim",   "white",   "window",
-  "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf", NULL
+  "wpdim",   "wpos",  "wresize",  "wshow",  "wwpc", "fpf","auto clear", "clipgrf",
+  "process_updates", NULL
 };
+
 static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspFigureData *Gc;
@@ -4209,6 +4216,11 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       Xgc=nsp_check_graphic_context();
       Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
       */
+      break;
+    case  xset_process_updates:
+      CheckRhs(1,1);
+      Xgc=nsp_check_graphic_context();
+      Xgc->graphic_engine->process_updates(Xgc);
       break;
     }
   return 0;

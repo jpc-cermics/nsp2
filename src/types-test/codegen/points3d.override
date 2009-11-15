@@ -10,7 +10,7 @@ extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos 
 
 %%
 include-private  Points3d
-static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_points3d(NspGraphic *o,double *R);
 static void nsp_scale_points3d(NspGraphic *o,double *alpha);
@@ -105,7 +105,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->show == FALSE ) return ;

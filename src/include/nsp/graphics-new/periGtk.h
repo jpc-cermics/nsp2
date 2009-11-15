@@ -147,7 +147,7 @@ typedef struct  _gtk_data {
   GdkCursor *extra_cursor;              /* extra cursor */
   GdkFont *font;
   int resize;				/* Window resized */
-  int in_expose;                        /* we are in an expose_event action*/
+  int zzin_expose;                      /* we are in an expose_event action*/
   int draw;                             /* when true need to redraw  */
   int protect;                          /* when true window cannot be deleted */
   PangoLayout *layout;
@@ -365,8 +365,8 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 
 #ifdef PERIGL
 static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle * rect);
-static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect);
-static void unclip_rectangle(GdkRectangle clip_rect);
+static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect);
+static void unclip_rectangle(const GdkRectangle *clip_rect);
 static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static void fillpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,int closeflag);
 static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);

@@ -298,9 +298,9 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
        * if the sign of d_barlength is changed ticks will
        * go in the direction of the strings 
        */
-      barlength = Xgc->scales->WIRect1[3]/40.0;
+      barlength = Xgc->scales->Irect.height/40.0;
       d_barlength = barlength/Xgc->scales->Wscy1;
-      str_offset = Xgc->scales->WIRect1[3]/60.0/Xgc->scales->Wscy1;
+      str_offset = Xgc->scales->Irect.height/60.0/Xgc->scales->Wscy1;
       
       /* compute a format 
        */
@@ -419,9 +419,9 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
     case 'r' : 
     case 'l' :
       /* Vertical axes */
-      barlength = Xgc->scales->WIRect1[2]/40.0;
+      barlength = Xgc->scales->Irect.width/40.0;
       d_barlength = barlength/Xgc->scales->Wscx1;
-      str_offset = Xgc->scales->WIRect1[2]/60.0/Xgc->scales->Wscx1;
+      str_offset = Xgc->scales->Irect.width/60.0/Xgc->scales->Wscx1;
       if (str == NULL &&  format == NULL )  
 	switch (xy_type ) {
 	case 'v' : nsp_grformat_e1(c_format,y,Ny);break;
@@ -584,7 +584,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
        * if the sign of d_barlength is changed ticks will
        * go in the direction of the strings 
        */
-      d_barlength = Xgc->scales->WIRect1[3]/Xgc->scales->Wscy1;
+      d_barlength = Xgc->scales->Irect.height/Xgc->scales->Wscy1;
       
       /* loop on the ticks */
       for (i=0 ; i < Nx ; i++)
@@ -605,7 +605,7 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
     case 'r' : 
     case 'l' :
       /* Vertical axes */
-      d_barlength = Xgc->scales->WIRect1[2]/Xgc->scales->Wscx1;
+      d_barlength = Xgc->scales->Irect.width/Xgc->scales->Wscx1;
       /* loop on the ticks */
       for (i=0 ; i < Ny ; i++)
 	{ 
@@ -683,7 +683,9 @@ static void nsp_draw_frame_rectangle(BCG *Xgc)
 {
   if ( Xgc->scales->cosa == 1.0 ) 
     {
-      Xgc->graphic_engine->drawrectangle(Xgc,Xgc->scales->WIRect1);
+      int rect[4]= {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
+		    Xgc->scales->Irect.width,Xgc->scales->Irect.height};
+      Xgc->graphic_engine->drawrectangle(Xgc,rect);
     }
   else 
     {

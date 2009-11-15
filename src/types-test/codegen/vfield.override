@@ -8,7 +8,7 @@ include-public  VField
 include-private   VField
 
 /* inserted in the private part of include file */
-static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_vfield(NspGraphic *o,const double *tr);
 static void nsp_rotate_vfield(NspGraphic *o,double *R);
 static void nsp_scale_vfield(NspGraphic *o,double *alpha);
@@ -70,7 +70,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
 %%
 last
 
-static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   double arfact = 2.0;
   NspVField *P = (NspVField *) Obj;
@@ -228,15 +228,15 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   sc= sqrt(nx*nx+ny*ny)/maxsf;
   
   /* size of arrow */
-  arsize1= ((double) Xgc->scales->WIRect1[2])/(5*(n1));
-  arsize2= ((double) Xgc->scales->WIRect1[3])/(5*(n2));
+  arsize1= ((double) Xgc->scales->Irect.width)/(5*(n1));
+  arsize2= ((double) Xgc->scales->Irect.height)/(5*(n2));
   arsize=  (arsize1 < arsize2) ? inint(arsize1*10.0) : inint(arsize2*10.0) ;
   arsize = (int)(arsize*(*arfact));
   
-  clip_box[0]=Xgc->scales->WIRect1[0];
-  clip_box[1]=Xgc->scales->WIRect1[0]+Xgc->scales->WIRect1[2];
-  clip_box[2]=Xgc->scales->WIRect1[1];
-  clip_box[3]=Xgc->scales->WIRect1[1]+Xgc->scales->WIRect1[3];
+  clip_box[0]=Xgc->scales->Irect.x;
+  clip_box[1]=Xgc->scales->Irect.x+Xgc->scales->Irect.width;
+  clip_box[2]=Xgc->scales->Irect.y;
+  clip_box[3]=Xgc->scales->Irect.y+Xgc->scales->Irect.height;
 
   if ( colored == 0 ) 
     {

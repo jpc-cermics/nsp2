@@ -635,14 +635,11 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,i
  * 
  **/
 
-static void xset_clip(BCG *Xgc,int x[])
+static void xset_clip(BCG *Xgc,const  GdkRectangle *r)
 {
-  int i;
-  GdkRectangle clip_rect ={x[0],x[1],x[2],x[3]};
   Xgc->ClipRegionSet = 1;
-  for (i=0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-  clip_rectangle(Xgc, clip_rect);
+  Xgc->CurClipRegion = *r;
+  clip_rectangle(Xgc, r);
 }
 
 /**
@@ -657,7 +654,7 @@ static void xset_unclip(BCG *Xgc)
   static GdkRectangle clip_rect = { 0,0,int16max,  int16max};
   Xgc->ClipRegionSet = 0;
   /* gdk_gc_set_clip_rectangle(Xgc->private->wgc, &clip_rect); */
-  unclip_rectangle(clip_rect);
+  unclip_rectangle(&clip_rect);
 }
 
 /**
@@ -673,10 +670,10 @@ static void xget_clip(BCG *Xgc,int *x)
   x[0] = Xgc->ClipRegionSet;
   if ( x[0] == 1)
     {
-      x[1] =Xgc->CurClipRegion[0];
-      x[2] =Xgc->CurClipRegion[1];
-      x[3] =Xgc->CurClipRegion[2];
-      x[4] =Xgc->CurClipRegion[3];
+      x[1] =Xgc->CurClipRegion.x;
+      x[2] =Xgc->CurClipRegion.y;
+      x[3] =Xgc->CurClipRegion.width;
+      x[4] =Xgc->CurClipRegion.height;
     }
 }
 
@@ -684,7 +681,7 @@ static void xget_clip(BCG *Xgc,int *x)
 /* Open GL clipping 
  */
 
-static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
+static void clip_rectangle(BCG *Xgc,const GdkRectangle *clip_rect)
 {
 #if 0
   int bg = Xgc->NumBackground;
@@ -703,7 +700,7 @@ static void clip_rectangle(BCG *Xgc, GdkRectangle clip_rect)
 }
 
 
-static void unclip_rectangle(GdkRectangle clip_rect)
+static void unclip_rectangle(const GdkRectangle *clip_rect)
 {
 #if 0
   glStencilFunc(GL_ALWAYS, 0x0, 0x0);

@@ -878,7 +878,7 @@ void Contour_Interf_Info(int i, char **fname, function (**f))
 
 #line 81 "codegen/contour.override"
 
-static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspContour *P = (NspContour *) Obj;
   double *x= P->obj->x->R; 

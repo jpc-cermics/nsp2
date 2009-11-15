@@ -113,7 +113,7 @@ static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type);
 #line 9 "codegen/curve.override"
 
 /* inserted in the private part of include file */
-static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_curve(NspGraphic *o,const double *tr);
 static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);

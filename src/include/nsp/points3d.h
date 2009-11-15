@@ -114,7 +114,7 @@ static NspMethods *points3d_get_methods(void);
 /* static int int_points3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPoints3d *nsp_points3d_create_void(char *name,NspTypeBase *type);
 #line 13 "codegen/points3d.override"
-static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_points3d(NspGraphic *o,double *R);
 static void nsp_scale_points3d(NspGraphic *o,double *alpha);

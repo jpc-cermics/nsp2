@@ -871,7 +871,7 @@ void Qcurve_Interf_Info(int i, char **fname, function (**f))
 
 typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
 
-static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int cmark=-1;
   int xmark[2];

@@ -9,8 +9,6 @@
  * to the graphics driver.
  */
 
-#include <gdk/gdk.h> 
-
 typedef struct _nsp_gengine1 Gengine1; 
 
 typedef void driver_s_boundingbox(BCG *Xgc,char *string, double x, double y, double *rect);

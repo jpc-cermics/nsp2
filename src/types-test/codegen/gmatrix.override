@@ -8,7 +8,7 @@ include-public  GMatrix
 include-private  GMatrix
 
 /* inserted in the private part of include file */
-static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_gmatrix(NspGraphic *o,const double *tr);
 static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);
@@ -75,7 +75,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspGMatrix *P = (NspGMatrix *) Obj;
   int remap = P->obj->remap; 

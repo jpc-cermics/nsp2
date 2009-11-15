@@ -2073,7 +2073,7 @@ void Figure_Interf_Info(int i, char **fname, function (**f))
 #line 240 "codegen/figure.override"
 
 
-static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int rep;
   Cell *cloc;
@@ -2964,6 +2964,53 @@ NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
   return C;
 }
 
+
+
+/**
+ * nsp_figure_start_compound:
+ * @F: 
+ * 
+ * creates a new axe which is inserted in a figure 
+ * as the first axe. This axe also becomes the 
+ * default axe and its show attribute is set to 
+ * %FALSE. Subsequent graphics are collected in 
+ * this axe. Using #nsp_figure_end_compound it is 
+ * possible to collect all the graphics contained in this
+ * axe and store them in a compound.
+ *
+ * Returns: %OK or %FAIL
+ **/
+
+static int count = 0;
+
+static int nsp_figure_start_compound(NspFigure *F)
+{
+  NspAxes *axe= nsp_axes_create_default("axe");
+  if ( axe == NULL) return FAIL;
+  /* store in Figure */
+
+  if (count == 0 )
+    {
+      count = 1;
+    }
+  else
+    {
+      Sciprintf("Recursive call to nsp_figure_start_compound\n");
+      return FAIL;
+    }
+  
+  if ( nsp_list_begin_insert(F->obj->children,(NspObject *) axe)== FAIL) 
+    {
+      nsp_axes_destroy(axe);
+      return FAIL;
+    }
+  /* set figure informations in axe */
+  ((NspGraphic *) axe)->type->link_figure((NspGraphic *) axe,F->obj, axe->obj);
+  /* set the axe drawing mode to false */
+  ((NspGraphic *) axe)->obj->show = FALSE;
+  return OK;
+}
+
 /**
  * nsp_figure_end_compound:
  * @name: 
@@ -2980,36 +3027,48 @@ NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
  * 
  * Returns: 
  **/
+
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
 {
   NspAxes *A1,*A2;
   NspList *L;
   NspCompound *C;
-  NspGraphic *G;
+
+  if ( count == 0 )
+    {
+      Sciprintf("ending a non started compound\n");
+    }
+  else
+    {
+      count = 0;
+    }
+
   if ((C= nsp_compound_create(name,NULL,NULL,NULL))== NULL) return NULL;
-  /* unlink the children from the figure */
-  /* return the first axes XXX  */
+  /*
+   * the first child of figure is the axe that must be converted to 
+   * compound.
+   */
   if ( (A1 =(NspAxes *) nsp_list_get_element(F->obj->children,1)) ==  NULL )
     return NULL;
   if ( IsAxes(NSP_OBJECT(A1)) == FALSE) return NULL;
-  /* swap respective children */
+  /*
+   * mv the axe children in the compound.
+   */
   L = C->obj->children;
   C->obj->children = A1->obj->children;
   A1->obj->children = L;
   if ( (A2 =(NspAxes *) nsp_list_get_element(F->obj->children,2)) ==  NULL )
     {
-      /* insert the compound in A1 */
-      G = (NspGraphic *) C;
-      G->type->link_figure(G, ((NspFigure *) F)->obj, A1->obj);
-      if ( nsp_list_begin_insert(L,(NspObject *) C)== FAIL)
+      /* if we just have one axe we insert the new compound in 
+       * the same axe.
+       */
+      if ( nsp_axes_insert_child(A1, (NspGraphic *) C) == FAIL) 
 	return NULL;
     }
   else
     {
       /* insert the compound in A2 */
-      G = (NspGraphic *) C;
-      G->type->link_figure(G, ((NspFigure *) F)->obj, A2->obj);
-      if ( nsp_list_begin_insert(A2->obj->children,(NspObject *) C)== FAIL)
+      if ( nsp_axes_insert_child(A2, (NspGraphic *) C) == FAIL) 
 	return NULL;
       /* remove A1 */
       nsp_list_remove_first(F->obj->children);
@@ -3017,33 +3076,6 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
   return C;
 }
 
-
-/**
- * nsp_figure_start_compound:
- * @F: 
- * 
- *
- * start a new axe in a Figure 
- * which can be used to collect elements 
- * in a compound.
- * with nsp_figure_end_compound(char *name,NspFigure *F)
- *
- * Returns: 
- **/
-static int nsp_figure_start_compound(NspFigure *F)
-{
-  NspAxes *axe= nsp_axes_create_default("axe");
-  if ( axe == NULL) return FAIL;
-  /* store in Figure */
-  if ( nsp_list_begin_insert(F->obj->children,(NspObject *) axe)== FAIL) 
-    {
-      nsp_axes_destroy(axe);
-      return FAIL;
-    }
-  /* set figure informations in axe */
-  ((NspGraphic *) axe)->type->link_figure((NspGraphic *) axe,F->obj, axe->obj);
-  return OK;
-}
 
 
 /**
@@ -3194,4 +3226,4 @@ void nsp_figure_initialize_gc(NspFigure *F)
 }
 
 
-#line 3198 "figure.c"
+#line 3230 "figure.c"

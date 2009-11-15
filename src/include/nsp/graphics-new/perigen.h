@@ -87,7 +87,7 @@ struct __BCG
   int CurVectorStyle;
   int CurDrawFunction;
   int ClipRegionSet;
-  int CurClipRegion[4];
+  GdkRectangle CurClipRegion;/* same as gint CurClipRegion[4]; */
   int CurDashStyle;
   char CurNumberDispFormat[32];
   int CurColorStatus;

@@ -204,14 +204,10 @@ extern void tape_replay_undo_scale(BCG *Xgc);
 extern void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,
 				  double *bbox,int *ibbox);
 extern void tape_replay_new_angles(BCG *Xgc);
-extern void tape_replay(BCG *Xgc,int *rect);
+extern void tape_replay(BCG *Xgc,const GdkRectangle *rect);
 extern void tape_replay_mix(BCG *Xgc,BCG *Xgc1, int winnumber);
-extern void UseColorFlag  (int flag); 
 
 typedef enum {plot3d_t ,facettes_t , param3d_t} nsp_plot3d_type;
-
-extern int tape_load(BCG *Xgc,const char *fname1);
-extern int tape_save(BCG *Xgc,const char *fname1, int winnumber);
 
 extern void nsp_remap_colors(BCG *Xgc,int remap,int *colmin,int *colmax,double *zmin,
 			     double *zmax,double *coeff,

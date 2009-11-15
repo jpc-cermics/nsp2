@@ -808,7 +808,7 @@ void Connector_Interf_Info(int i, char **fname, function (**f))
 
 #define CIRCLE 0
 
-static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_connector(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspConnector *B = (NspConnector *) Obj;
   double loc[6];

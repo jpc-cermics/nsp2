@@ -16,7 +16,7 @@ extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 include-private Qcurve
 /* inserted in the private part of include file */
 
-static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
 static void nsp_rotate_qcurve(NspGraphic *o,double *R);
 static void nsp_scale_qcurve(NspGraphic *o,double *alpha);
@@ -137,7 +137,7 @@ last
 
 typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
 
-static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int cmark=-1;
   int xmark[2];

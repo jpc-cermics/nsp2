@@ -8,7 +8,7 @@ include-public Curve
 include-private Curve
 
 /* inserted in the private part of include file */
-static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_curve(NspGraphic *o,const double *tr);
 static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);
@@ -128,7 +128,7 @@ last
 
 typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ; 
 
-static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int cmark=-1;
   int xmark[2];

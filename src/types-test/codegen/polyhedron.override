@@ -14,7 +14,7 @@ extern int nsp_obj3d_orientation(int x[], int y[], int n);
 %%
 include-private  Polyhedron
 /* inserted in the private part of include file */
-static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_polyhedron(NspGraphic *o,const double *tr);
 static void nsp_rotate_polyhedron(NspGraphic *o,double *R);
 static void nsp_scale_polyhedron(NspGraphic *o,double *alpha);
@@ -171,7 +171,7 @@ last
  * it gives the face to draw for the polyhedron 
  */
 
-static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int face; 
   if ( Obj->obj->show == FALSE ) return ;

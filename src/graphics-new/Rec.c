@@ -133,12 +133,11 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double 
  *
  **/
 
-void tape_replay(BCG *Xgc,int *rect)
+void tape_replay(BCG *Xgc,const GdkRectangle *rect)
 { 
   NspGraphic *G;
   if ( Xgc == NULL || Xgc->figure == NULL ) return ;
   G = (NspGraphic *) Xgc->figure ;
-  G->type->draw(Xgc,G, (GdkRectangle *)rect,NULL);
-  /* Is there a replay handler */
+  G->type->draw(Xgc,G,rect,NULL);
 }
 

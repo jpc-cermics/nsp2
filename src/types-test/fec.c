@@ -1048,7 +1048,7 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   double *colout = NULL ; /* XXX à rajouter */
   NspFec *P = (NspFec *) Obj;

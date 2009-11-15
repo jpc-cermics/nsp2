@@ -8,7 +8,7 @@ include-public  Contour3d
 include-private  Contour3d
 
 /* inserted in the private part of include file */
-static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_contour3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_contour3d(NspGraphic *o,double *R);
 static void nsp_scale_contour3d(NspGraphic *o,double *alpha);
@@ -94,7 +94,7 @@ last
 
 /* inserted verbatim at the end */
 
-static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   if ( Obj->obj->show == FALSE ) return ;
 

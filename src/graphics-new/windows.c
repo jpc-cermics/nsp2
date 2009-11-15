@@ -708,11 +708,11 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->scale_3drot_flag=s2->scale_3drot_flag;
   s1->wdim[0]=  s2->wdim[0];
   s1->wdim[1]=  s2->wdim[1];
+  s1->Irect=s2->Irect;
   for (i=0; i< 4; i++) 
     {
       s1->subwin_rect[i]=s2->subwin_rect[i];
       s1->frect[i]=s2->frect[i];
-      s1->WIRect1[i]=s2->WIRect1[i];
       s1->Waaint1[i]=s2->Waaint1[i];
       s1->xtics[i]=s2->xtics[i];
       s1->ytics[i]=s2->ytics[i];
@@ -1042,10 +1042,10 @@ void set_scale(BCG *Xgc,const char flag[6],const double subwin[4],const double f
       val = Abs(Xgc->scales->frect[1]- Xgc->scales->frect[3]);
       Xgc->scales->Wscy1 = (val <=SMDOUBLE) ? Xgc->scales->Wscy1/SMDOUBLE : Xgc->scales->Wscy1/val;
 
-      Xgc->scales->WIRect1[0] = XScale(Xgc->scales, Xgc->scales->frect[0]);
-      Xgc->scales->WIRect1[1] = YScale(Xgc->scales, Xgc->scales->frect[3]);
-      Xgc->scales->WIRect1[2] = Abs(XScale(Xgc->scales, Xgc->scales->frect[2]) -  XScale(Xgc->scales, Xgc->scales->frect[0]));
-      Xgc->scales->WIRect1[3] = Abs(YScale(Xgc->scales, Xgc->scales->frect[3]) -  YScale(Xgc->scales, Xgc->scales->frect[1]));
+      Xgc->scales->Irect.x = XScale(Xgc->scales, Xgc->scales->frect[0]);
+      Xgc->scales->Irect.y = YScale(Xgc->scales, Xgc->scales->frect[3]);
+      Xgc->scales->Irect.width = Abs(XScale(Xgc->scales, Xgc->scales->frect[2]) -  XScale(Xgc->scales, Xgc->scales->frect[0]));
+      Xgc->scales->Irect.height = Abs(YScale(Xgc->scales, Xgc->scales->frect[3]) -  YScale(Xgc->scales, Xgc->scales->frect[1]));
 #ifdef WITH_GTKGLEXT 
       /* transmit info to opengl */
       if ( Xgc->graphic_engine == &GL_gengine ) 
@@ -1101,7 +1101,9 @@ void get_cwindow_dims( int *wdims)
 
 void frame_clip_on(BCG *Xgc)
 {
-  Xgc->graphic_engine->xset_clip(Xgc,Xgc->scales->WIRect1);
+  GdkRectangle r ={ Xgc->scales->Irect.x,Xgc->scales->Irect.y,
+		    Xgc->scales->Irect.width,Xgc->scales->Irect.height};
+  Xgc->graphic_engine->xset_clip(Xgc,&r);
 }
 
 /**

@@ -970,7 +970,7 @@ static void draw_3d(BCG *Xgc,double r[]);
 extern int rand_ignuin(int,int);
 
 
-static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspBlock *B = (NspBlock *) Obj;
   /* take care of the fact that str1 must be writable */

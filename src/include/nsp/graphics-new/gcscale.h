@@ -7,14 +7,11 @@
  *
  * The following functions perform scale changes and then redirect 
  * to the graphics driver.
- */
-
-/* structure for storing scale informations associated to an 
+ *
+ * structure for storing scale informations associated to an 
  * axes. This should be similar to the same structure in Xgc
- * which will be removed then removed 
+ * which will be removed in the future.
  */
-
-/* structure for storing scale informations associated to a graphic window */
 
 typedef struct wcscalelist window_scale_list;
 typedef struct wcscalelist nsp_gcscale;
@@ -34,10 +31,9 @@ struct wcscalelist
   char   strflag;                       /* the default mode used by stored graphics: 
 					 * supposed to be 1 or 3 or 5 
 					 */
-  /* XXXX : c'est redondant avec aaint et quelquefois avec frect ? */
   double Wxofset1,Wyofset1,Wscx1,Wscy1; /* ofsets and scale factor for pixel<->double transf.*/
   char logflag[2];                      /* are we using logscale */
-  int WIRect1[4];                       /* frame bounds in pixel */
+  GdkRectangle Irect;                   /* WIRect1[4]; frame bounds in pixel */
   int Waaint1[4];                       /* tics and subtics numbers: [xint,xsubint,yint,ysubint] */
   double m[3][3];                       /* 3d geometric transformation */
   double bbox1[6];                      /* 3d bounds */

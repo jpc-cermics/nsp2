@@ -16,7 +16,7 @@ include-private Fec
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_fec(NspGraphic *o,const double *tr);
 static void nsp_rotate_fec(NspGraphic *o,double *R);
 static void nsp_scale_fec(NspGraphic *o,double *alpha);
@@ -142,7 +142,7 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 
 
-static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   double *colout = NULL ; /* XXX à rajouter */
   NspFec *P = (NspFec *) Obj;

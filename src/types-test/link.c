@@ -860,7 +860,7 @@ void Link_Interf_Info(int i, char **fname, function (**f))
 
 static int link_unconnected_color=10;
 
-static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_link(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspLink *L = (NspLink *) Obj;
   double loc[4];

@@ -228,12 +228,11 @@ static int xget_curwin(void)
 
 /** Set a clip zone (rectangle ) **/
 
-static void xset_clip(BCG *Xgc,int x[])
+static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 {
-  int i;
   Xgc->ClipRegionSet = 1;
-  for ( i = 0 ; i < 4 ; i++)   Xgc->CurClipRegion[i]= x[i];
-  FPRINTF((file,"\n%d %d %d %d setclipzone",*x,*(x+1),*(x+2),*(x+3)));
+  Xgc->CurClipRegion = *r;
+  FPRINTF((file,"\n%d %d %d %d setclipzone",r->x,r->y,r->width,r->height));
 }
 
 /** unset clip zone **/
@@ -241,10 +240,10 @@ static void xset_clip(BCG *Xgc,int x[])
 static void xset_unclip(BCG *Xgc)
 {
   Xgc->ClipRegionSet = 0;
-  Xgc->CurClipRegion[0]= -1;
-  Xgc->CurClipRegion[1]= -1;
-  Xgc->CurClipRegion[2]= 200000;
-  Xgc->CurClipRegion[3]= 200000;
+  Xgc->CurClipRegion.x= -1;
+  Xgc->CurClipRegion.y= -1;
+  Xgc->CurClipRegion.width= 200000;
+  Xgc->CurClipRegion.height= 200000;
   FPRINTF((file,"\n%d %d %d %d setclipzone",-1,-1,200000,200000));
 }
 
@@ -255,10 +254,10 @@ static void xget_clip(BCG *Xgc,int *x)
   x[0] = Xgc->ClipRegionSet;
   if ( x[0] == 1)
     {
-      x[1] =Xgc->CurClipRegion[0];
-      x[2] =Xgc->CurClipRegion[1];
-      x[3] =Xgc->CurClipRegion[2];
-      x[4] =Xgc->CurClipRegion[3];
+      x[1] =Xgc->CurClipRegion.x;
+      x[2] =Xgc->CurClipRegion.y;
+      x[3] =Xgc->CurClipRegion.width;
+      x[4] =Xgc->CurClipRegion.height;
     }
 }
 

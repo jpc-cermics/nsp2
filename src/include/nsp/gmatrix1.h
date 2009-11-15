@@ -121,7 +121,7 @@ static NspGMatrix1 *nsp_gmatrix1_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_gmatrix1(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_gmatrix1(NspGraphic *o,const double *tr);
 static void nsp_rotate_gmatrix1(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix1(NspGraphic *o,double *alpha);

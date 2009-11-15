@@ -834,7 +834,7 @@ void Curve_Interf_Info(int i, char **fname, function (**f))
 
 typedef enum { curve_std, curve_stairs, curve_stem , curve_arrow} nsp_curve_mode ; 
 
-static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data)
+static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int cmark=-1;
   int xmark[2];

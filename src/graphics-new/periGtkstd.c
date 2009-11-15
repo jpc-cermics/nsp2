@@ -1731,7 +1731,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       gdk_gc_set_rgb_fg_color(dd->private->stdgc,&dd->private->gcol_bg);
       gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,dd->CWindowWidth, dd->CWindowHeight);
       /* On lance l'action standard de resize + redessin  */
-      dd->private->in_expose= TRUE;
 #ifdef PERICAIRO
       if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
       dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
@@ -1744,7 +1743,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       /* nsp_gr_resize(dd->CurWindow); */
       dd->actions->resize(dd);
 #endif 
-      dd->private->in_expose= FALSE;
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
     }
@@ -1769,16 +1767,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       
       if ( dd->private->draw == TRUE ) 
 	{
-	  /* 
-	  int rect[4]={event->area.x, event->area.y,event->area.width, event->area.height};
-	  */
-	  int rect[4]={dd->private->invalidated.x,
-		       dd->private->invalidated.y,
-		       dd->private->invalidated.width,
-		       dd->private->invalidated.height};
-	  /* need to make incremental draw */
 	  dd->private->draw = FALSE;
-	  dd->private->in_expose= TRUE;
 	  if ( event != NULL) 
 	    {
 	      /* 
@@ -1789,8 +1778,8 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	       * drawing area since we use a backing store pixbuf.
 	       */
 	      dd->graphic_engine->cleararea(dd,&dd->private->invalidated);
-	      dd->graphic_engine->xset_clip(dd,rect);
-	      dd->graphic_engine->tape_replay(dd,rect);
+	      dd->graphic_engine->xset_clip(dd,&dd->private->invalidated);
+	      dd->graphic_engine->tape_replay(dd,&dd->private->invalidated);
 	      dd->graphic_engine->xset_unclip(dd);
 	    }
 	  else
@@ -1798,11 +1787,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	      dd->graphic_engine->clearwindow(dd);
 	      dd->graphic_engine->tape_replay(dd,NULL);
 	    }
-	  dd->private->in_expose= FALSE;
-	}
-      else 
-	{
-	  /**/
 	}
       
       if (event  != NULL) 
@@ -1811,7 +1795,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			    dd->private->pixmap,
 			    event->area.x, event->area.y, event->area.x, event->area.y,
 			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated 	  
+	  /* debug the drawing rectangle which is updated  	  
 	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			     event->area.x, event->area.y, 
 			     event->area.width, event->area.height);
@@ -1868,10 +1852,8 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
       glClear(GL_DEPTH_BUFFER_BIT);
       nsp_ogl_set_view(dd);
-      dd->private->in_expose= TRUE;
       /* nsp_gr_resize(dd->CurWindow); */
       dd->actions->resize(dd);
-      dd->private->in_expose= FALSE;
       /* Swap buffers or flush */
       if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
@@ -1893,13 +1875,11 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  nsp_ogl_set_view(dd);
 	  dd->private->draw = FALSE;
 	  /* need to redraw */
-	  dd->private->in_expose= TRUE;
 	  /* nsp_gr_replay(dd->CurWindow); */
 	  dd->graphic_engine->clearwindow(dd);
 	  dd->graphic_engine->tape_replay(dd,NULL);
 	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
 	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
-	  dd->private->in_expose= FALSE;
 	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
 	  else
@@ -1960,11 +1940,9 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
        */
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
       gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
-      dd->private->in_expose= TRUE;
       dd->private->gl_only = TRUE;
       /* nsp_gr_resize(dd->CurWindow); */
       dd->actions->resize(dd);
-      dd->private->in_expose= FALSE;
       gdk_gl_drawable_gl_end (dd->private->gldrawable);
       glFlush ();
       gdk_gl_drawable_wait_gl (dd->private->gldrawable);
@@ -1980,12 +1958,10 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
 	  gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
 	  dd->private->draw = FALSE;
-	  dd->private->in_expose= TRUE;
 	  dd->private->gl_only = TRUE;
 	  /* nsp_gr_replay(dd->CurWindow); */
 	  dd->graphic_engine->clearwindow(dd);
 	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
-	  dd->private->in_expose= FALSE;
 	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
 	}
       glFlush ();

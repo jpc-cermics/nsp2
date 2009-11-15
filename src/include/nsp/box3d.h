@@ -113,7 +113,7 @@ static NspBox3d *nsp_box3d_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, GdkRectangle *rect,void *data);
+static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_box3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_box3d(NspGraphic *o,double *R);
 static void nsp_scale_box3d(NspGraphic *o,double *alpha);
