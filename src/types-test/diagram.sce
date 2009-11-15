@@ -46,7 +46,7 @@ function C=draw_vanne()
   xdel(30);
 endfunction;
 
-function C=draw_vanne()
+function C=draw_gmatrix()
   if ~new_graphics() then 
     switch_graphics();
   end
@@ -71,7 +71,7 @@ function C=draw_vanne()
   xdel(30);
 endfunction;
 
-function im=draw_vanne()
+function im=draw_tumbi()
   if ~new_graphics() then 
     switch_graphics();
   end
@@ -246,7 +246,8 @@ function menu=create_right_menu (win,xc,yc)
     menuitem.show[];
   end
   //--  new
-  tags = ['link';'block 1';'block 2';'block 3';'connector';'empty super block';'selection to super block']
+  tags = ['link';'block (tumbi)';'block (matrix)';'block (string)';'block (test)';
+	  'connector';'empty super block';'selection to super block']
   for i=1:size(tags,'*')
     // BUG: mnemonic and label are not active ?
     // menuitem = gtkimagemenuitem_new(stock_id="gtk-new",mnemonic=tags(i),label=tags(i));
@@ -272,7 +273,7 @@ function menu=create_right_menu (win,xc,yc)
   if  ~ok then 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",menuitem_response,list(9,xc,yc,win)];
+  menuitem.connect["activate",menuitem_response,list(10,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   //-- paste 
@@ -281,7 +282,7 @@ function menu=create_right_menu (win,xc,yc)
     // nothing to paste 
     menuitem.set_sensitive[%f];
   end
-  menuitem.connect["activate",menuitem_response,list(10,xc,yc,win)];
+  menuitem.connect["activate",menuitem_response,list(11,xc,yc,win)];
   menu.append[menuitem]
   menuitem.show[];
   // separator 
@@ -290,12 +291,12 @@ function menu=create_right_menu (win,xc,yc)
   menuitem.show[];
   //--  save to file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-save-as");
-  menuitem.connect["activate",menuitem_response,list(11,win)];
+  menuitem.connect["activate",menuitem_response,list(12,win)];
   menu.append[menuitem]
   menuitem.show[];
   //--  load file 
   menuitem = gtkimagemenuitem_new(stock_id="gtk-open");
-  menuitem.connect["activate",menuitem_response,list(12,win)];
+  menuitem.connect["activate",menuitem_response,list(13,win)];
   menu.append[menuitem]
   menuitem.show[];
 endfunction 
@@ -310,15 +311,16 @@ function menuitem_response(w,args)
    case 2 then  GF(win).new_block[[args(2),args(3)],0];
    case 3 then  GF(win).new_block[[args(2),args(3)],1];
    case 4 then  GF(win).new_block[[args(2),args(3)],2];
-   case 5 then  GF(win).new_connector[] ;
-   case 6 then  GF(win).new_gridblock[] ;
-   case 7 then  GF(win).new_gridblock_from_selection[] ;
-   case 9 then 
+   case 5 then  GF(win).new_block[[args(2),args(3)],3];
+   case 6 then  GF(win).new_connector[] ;
+   case 7 then  GF(win).new_gridblock[] ;
+   case 8 then  GF(win).new_gridblock_from_selection[] ;
+   case 10 then 
     // copy selection into the clipboard 
     L= GF(win).get_selection_as_diagram[];
     if L.get_nobjs[]<>0 then GF('clipboard') = list(L);
     else x_message('No selection');end 
-   case 10 then  
+   case 11 then  
     // paste selection 
     if GF.iskey['clipboard'] then 
       if length(GF('clipboard'))<> 0 then
@@ -328,12 +330,12 @@ function menuitem_response(w,args)
 	x_message('Clipboard is empty');end 
     end
     //GF('clipboard') = list();
-   case 11 then  
+   case 12 then  
     fname = xgetfile();
     if fname <> "" then 
       save(fname,diagram=GF(win));
     end
-   case 12 then 
+   case 13 then 
     fname = xgetfile();
     if fname <> "" then 
       load(fname);
@@ -491,7 +493,8 @@ xinit(cairo=%t,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
 //xsetech(arect=[0,0,0,0],frect=[0,0,100,100]);
 xsetech(frect=[0,0,100,100]);
 F=get_current_figure();
-F.draw_latter[];
+A=F.children(1);
+A.clip = %t; // do or do not clip inside the axes frame.
 winid= 'win'+string(F.id);
 D=diagram_create()
 GF(winid)= D;
@@ -501,7 +504,7 @@ x=10*linspace(0,2*%pi,300);
 y=20*(1+cos(2*x/10));
 cu = curve_create(Pts=[x',y'],color=3,width=2);
 A.children($+1)=cu ;
-F.draw_now[];
+F.invalidate[];
 seteventhandler('my_eventhandler');
 
 

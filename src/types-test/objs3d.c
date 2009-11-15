@@ -24,7 +24,7 @@
 
 
 
-#line 58 "codegen/objs3d.override"
+#line 53 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
@@ -103,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 71 "codegen/objs3d.override"
+#line 66 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -761,7 +761,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 92 "codegen/objs3d.override"
+#line 87 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -885,7 +885,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 108 "codegen/objs3d.override"
+#line 103 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1092,7 +1092,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 166 "codegen/objs3d.override"
+#line 161 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1104,7 +1104,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1105 "objs3d.c"
 
 
-#line 176 "codegen/objs3d.override"
+#line 171 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1144,7 +1144,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 186 "codegen/objs3d.override"
+#line 181 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -2713,4 +2713,32 @@ void nsp_objs3d_invalidate(NspGraphic *G)
     }
 }
 
-#line 2717 "objs3d.c"
+
+/**
+ * nsp_objs3d_insert_child:
+ * @A: a #NspAxes
+ * @G: a #NspGraphic 
+ * 
+ * inserts @G in the given axe @A. The bounds 
+ * of the objs3d are updated acordingly and an 
+ * invalidate operation is raised using the 
+ * graphic object. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
+{
+  if ( nsp_list_end_insert(A->obj->children,(NspObject *) G )== FAIL)
+    return FAIL;
+  /* call the link_figure method */
+  G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
+  /* updates the bounds of the axe */
+  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
+  /* raise an invalidate operation */
+  nsp_graphic_invalidate((NspGraphic *) G);
+  return OK;
+}
+
+
+#line 2745 "objs3d.c"

@@ -252,6 +252,7 @@ static int nsp_block_eq(NspBlock *A, NspObject *B)
   if ( A->obj->n_locks != loc->obj->n_locks) return FALSE;
   if ( A->obj->locks != loc->obj->locks) return FALSE;
 if ( NSP_OBJECT(A->obj->icon)->type->eq(A->obj->icon,loc->obj->icon) == FALSE ) return FALSE;
+  if ( A->obj->draw_mode != loc->obj->draw_mode) return FALSE;
   return TRUE;
 }
 
@@ -290,7 +291,8 @@ int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
   if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->n_locks) == FAIL) return FAIL;
   if ( nsp_save_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->icon)) == FAIL) return FAIL;
+  if ( nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->icon)) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->draw_mode) == FAIL) return FAIL;
   /* the upper class */
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
@@ -318,6 +320,7 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
     return NULLBLOCK;
   if ( nsp_load_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return NULL;
   if ((M->obj->icon= (NspGraphic *) nsp_object_xdr_load(xdrs))== NULL) return NULL;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->draw_mode) == FAIL) return NULLBLOCK;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -340,7 +343,7 @@ static NspBlock  *nsp_block_xdr_load(XDR *xdrs)
   return H;
 }
 
-#line 344 "block.c"
+#line 347 "block.c"
 /*
  * delete 
  */
@@ -419,6 +422,7 @@ int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
   if ( M->obj->icon != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->icon),indent+2,"icon",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"draw_mode=%d\n",M->obj->draw_mode);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -445,6 +449,7 @@ int nsp_block_latex(NspBlock *M, int indent,const char *name, int rec_level)
   if ( M->obj->icon != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->icon),indent+2,"icon",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"draw_mode=%d\n",M->obj->draw_mode);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -496,7 +501,7 @@ NspBlock  *GetBlock(Stack stack, int i)
  * if type is non NULL it is a subtype which can be used to 
  * create a NspBlock instance 
  *-----------------------------------------------------*/
-#line 248 "codegen/block.override"
+#line 250 "codegen/block.override"
 /* override the code for block creation */
 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
@@ -528,6 +533,7 @@ int nsp_block_create_partial(NspBlock *H)
   H->obj->n_locks = 0;
   H->obj->locks = NULL;
   H->obj->icon = NULL;
+  H->obj->draw_mode = 0;
   return OK;
 }
 
@@ -539,7 +545,7 @@ int nsp_block_check_values(NspBlock *H)
 }
 
 
-NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,NspTypeBase *type)
+NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,int draw_mode,NspTypeBase *type)
 {
   double pt[2];
   int i;
@@ -554,6 +560,7 @@ NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int t
   H->obj->n_locks=n_locks;
   H->obj->locks = locks;
   H->obj->icon= icon;
+  H->obj->draw_mode= draw_mode ;
   /* initial lock points */
   H->obj->n_locks = 4 ;
   if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
@@ -588,7 +595,7 @@ NspBlock *nsp_block_create_default(char *name)
  return H;
 }
 
-#line 592 "block.c"
+#line 599 "block.c"
 /*
  * copy for gobject derived class  
  */
@@ -629,6 +636,7 @@ NspBlock *nsp_block_full_copy_partial(NspBlock *H,NspBlock *self)
     {
       if ((H->obj->icon = (NspGraphic *) nsp_object_full_copy_and_name("icon",NSP_OBJECT(self->obj->icon))) == NULL) return NULL;
     }
+  H->obj->draw_mode=self->obj->draw_mode;
   return H;
 }
 
@@ -646,7 +654,7 @@ NspBlock *nsp_block_full_copy(NspBlock *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 345 "codegen/block.override"
+#line 349 "codegen/block.override"
 
 /* override the default int_create */
 
@@ -692,18 +700,18 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0, NULL,NULL,NULL))
+  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0, NULL,NULL,0,NULL))
      == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
 
-#line 703 "block.c"
+#line 711 "block.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 428 "codegen/block.override"
+#line 432 "codegen/block.override"
 
 /* translate */
 
@@ -719,10 +727,10 @@ static int _wrap_block_translate(void  *self,Stack stack, int rhs, int opt, int 
   return 1;
 }
 
-#line 723 "block.c"
+#line 731 "block.c"
 
 
-#line 445 "codegen/block.override"
+#line 449 "codegen/block.override"
 /* set_position */
 
 static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lhs)
@@ -737,10 +745,10 @@ static int _wrap_block_set_pos(void  *self,Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 741 "block.c"
+#line 749 "block.c"
 
 
-#line 461 "codegen/block.override"
+#line 465 "codegen/block.override"
 /* resize */ 
 
 static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lhs)
@@ -755,10 +763,10 @@ static int _wrap_block_resize(void  *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 759 "block.c"
+#line 767 "block.c"
 
 
-#line 477 "codegen/block.override"
+#line 481 "codegen/block.override"
 
 /* fix a lock point position 
  * in relative coordinates 
@@ -778,10 +786,10 @@ static int _wrap_block_set_lock_pos(void  *self, Stack stack, int rhs, int opt, 
   return 1;
 }
 
-#line 782 "block.c"
+#line 790 "block.c"
 
 
-#line 498 "codegen/block.override"
+#line 502 "codegen/block.override"
 
 /*
  * reset the locks pos
@@ -804,7 +812,7 @@ static int _wrap_block_set_locks_pos(void  *self, Stack stack, int rhs, int opt,
 }
 
 
-#line 808 "block.c"
+#line 816 "block.c"
 
 
 static NspMethods block_methods[] = {
@@ -904,7 +912,7 @@ static AttrTab block_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 407 "codegen/block.override"
+#line 411 "codegen/block.override"
 
 extern function int_nspgraphic_extract;
 
@@ -913,10 +921,10 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 917 "block.c"
+#line 925 "block.c"
 
 
-#line 417 "codegen/block.override"
+#line 421 "codegen/block.override"
 
 extern function int_graphic_set_attribute;
 
@@ -926,7 +934,7 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 930 "block.c"
+#line 938 "block.c"
 
 
 /*----------------------------------------------------
@@ -957,7 +965,7 @@ void Block_Interf_Info(int i, char **fname, function (**f))
   *f = Block_func[i].fonc;
 }
 
-#line 522 "codegen/block.override"
+#line 526 "codegen/block.override"
 
 /* inserted verbatim at the end */
 
@@ -976,7 +984,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   /* take care of the fact that str1 must be writable */
   char str1[] = "my\nblock";
   double loc[4];
-  int cpat, cwidth,i, draw_script, fill=FALSE;
+  int cpat, cwidth,i, fill=FALSE;
 
   /* check the show attribute */
   if ( Obj->obj->show == FALSE ) return ;
@@ -993,10 +1001,10 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
   /* first draw the block icon */
-  draw_script = 0;
-  switch (draw_script)
+  switch ( B->obj->draw_mode )
     {
     case 0: 
+    case 1:
       if ( B->obj->icon == NULL ) 
 	{
 	  if ( nsp_block_create_icon(Xgc,B) == FAIL) 
@@ -1838,6 +1846,7 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 {
+  
   NspGraphic *G;
 #ifdef USE_AXE 
   NspAxes *axe;
@@ -1847,8 +1856,9 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   NspObject *targs[]={NULL};
   NspObject *nsp_ret[1];
   int nret = 1,nargs = 0,i;
-  
-  if ( nsp_gtk_eval_function_by_name("draw_vanne",targs,nargs,nsp_ret,&nret)== FAIL)
+  char *func = ( B->obj->draw_mode == 0) ? "draw_tumbi" : "draw_gmatrix";
+
+  if ( nsp_gtk_eval_function_by_name(func,targs,nargs,nsp_ret,&nret)== FAIL)
     {
       goto stop;
     }
@@ -1926,4 +1936,4 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1930 "block.c"
+#line 1940 "block.c"

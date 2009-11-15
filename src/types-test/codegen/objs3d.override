@@ -3,26 +3,21 @@
 include-start  Objs3d
 /* inserted at the start of include file */
 #include <nsp/figure.h>
-
-%%
-include-public Objs3d
-
-/* inserted at the end of public part of include file */
+#include <nsp/axes.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
 #include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
+%%
+include-public Objs3d
+
+/* inserted at the end of public part of include file */
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
-extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
-extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
-extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
-extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
-extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
-					 int *aaint,int isomode, int auto_axes, char *xf);
+extern int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G);
+extern void nsp_objs3d_invalidate(NspGraphic *G);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
-extern void nsp_objs3d_invalidate(NspGraphic *G);
 extern void nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
 
 %%
@@ -1750,3 +1745,31 @@ void nsp_objs3d_invalidate(NspGraphic *G)
       return nsp_graphic_invalidate(G);
     }
 }
+
+
+/**
+ * nsp_objs3d_insert_child:
+ * @A: a #NspAxes
+ * @G: a #NspGraphic 
+ * 
+ * inserts @G in the given axe @A. The bounds 
+ * of the objs3d are updated acordingly and an 
+ * invalidate operation is raised using the 
+ * graphic object. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
+{
+  if ( nsp_list_end_insert(A->obj->children,(NspObject *) G )== FAIL)
+    return FAIL;
+  /* call the link_figure method */
+  G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
+  /* updates the bounds of the axe */
+  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
+  /* raise an invalidate operation */
+  nsp_graphic_invalidate((NspGraphic *) G);
+  return OK;
+}
+

@@ -10,8 +10,13 @@
 #line 4 "codegen/objs3d.override"
 /* inserted at the start of include file */
 #include <nsp/figure.h>
+#include <nsp/axes.h>
+#include <nsp/spolyhedron.h>
+#include <nsp/polyhedron.h>
+#include "../graphics-new/Plo3dObj.h"
+#include <nsp/grcommon.h>
 
-#line 15 "./objs3d.h"
+#line 20 "./objs3d.h"
 /* NspObjs3d */
 
 #include <nsp/graphic.h>
@@ -23,14 +28,14 @@
 typedef struct _NspObjs3d NspObjs3d ;
 typedef struct _NspTypeObjs3d NspTypeObjs3d ;
 
-#line 27 "./objs3d.h"
+#line 32 "./objs3d.h"
 
 struct _NspTypeObjs3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./objs3d.h"
+#line 39 "./objs3d.h"
 };
 
 typedef struct _nsp_objs3d nsp_objs3d;
@@ -103,27 +108,17 @@ extern int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspObjs3d *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M);
 extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 
-#line 9 "codegen/objs3d.override"
+#line 14 "codegen/objs3d.override"
 
 /* inserted at the end of public part of include file */
-#include <nsp/spolyhedron.h>
-#include <nsp/polyhedron.h>
-#include "../graphics-new/Plo3dObj.h"
-#include <nsp/grcommon.h>
-
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
-extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
-extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
-extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
-extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
-extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
-					 int *aaint,int isomode, int auto_axes, char *xf);
+extern int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G);
+extern void nsp_objs3d_invalidate(NspGraphic *G);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
-extern void nsp_objs3d_invalidate(NspGraphic *G);
 extern void nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
 
-#line 127 "./objs3d.h"
+#line 122 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -138,7 +133,7 @@ static AttrTab objs3d_attrs[];
 static NspMethods *objs3d_get_methods(void);
 /* static int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type);
-#line 30 "codegen/objs3d.override"
+#line 25 "codegen/objs3d.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -165,6 +160,6 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
 				     double *zmax,nsp_plot3d_type type3d);
 static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag);
 
-#line 169 "./objs3d.h"
+#line 164 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

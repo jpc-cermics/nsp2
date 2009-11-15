@@ -64,6 +64,7 @@ struct _nsp_axes {
   gboolean zoom;
   NspMatrix* zrect;
   nsp_gcscale scale;
+  gboolean clip;
   int ref_count;
 };
 
@@ -93,7 +94,7 @@ NspAxes *new_axes();
 
 #define NULLAXES (NspAxes*) 0
 
-extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,NspTypeBase *type);
+extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,gboolean clip,NspTypeBase *type);
 extern NspAxes *nsp_axes_create_default(char *name);
 
 /* from NspAxesObj.c */
@@ -134,8 +135,10 @@ extern void nsp_axes_invalidate(NspGraphic *G);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
 extern void nsp_figure_zoom(BCG *Xgc,int *box);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect);
+extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+					 int *aaint,int isomode, int auto_axes, char *xf);
 
-#line 139 "./axes.h"
+#line 142 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -150,7 +153,7 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
-#line 34 "codegen/axes.override"
+#line 36 "codegen/axes.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -176,6 +179,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 180 "./axes.h"
+#line 183 "./axes.h"
 #endif /* NspAxes_Private */
 

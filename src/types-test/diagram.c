@@ -624,7 +624,7 @@ static int _wrap_diagram_new_block(void *self,Stack stack, int rhs, int opt, int
     {
       if (GetScalarInt(stack,2,&mode) == FAIL) return RET_BUG;
     }
-  if ((obj = nsp_diagram_create_new_block((NspDiagram *) self,pt1))== NULL)
+  if ((obj = nsp_diagram_create_new_block((NspDiagram *) self,pt1,mode))== NULL)
     return RET_BUG;
   /* since obj is kept on the frame we must return a copy */
   if ((obj=nsp_object_copy(obj)) == NULLOBJ) return RET_BUG;
@@ -2545,7 +2545,7 @@ NspObject * nsp_diagram_get_hilited(NspDiagram *R)
  * Return value: %OK or %FALSE.
  **/
 
-NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2])
+NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2],int mode)
 {
   int color=4,thickness=1, background=9,rep;
   double rect[]={pt[0],pt[1],10,10};
@@ -2554,7 +2554,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2])
   BCG *Xgc;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
-  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,NULL,NULL);
+  B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,NULL,mode,NULL);
   if ( B == NULLBLOCK) return NULLOBJ;
   G = (NspGraphic *) B;
   G->obj->hilited = TRUE;

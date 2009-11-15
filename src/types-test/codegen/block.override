@@ -193,7 +193,8 @@ int nsp_block_xdr_save(XDR *xdrs, NspBlock *M)
   if ( nsp_xdr_save_i(xdrs,M->obj->background) == FAIL) return FAIL;
   if ( nsp_xdr_save_i(xdrs,M->obj->n_locks) == FAIL) return FAIL;
   if ( nsp_save_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->icon)) == FAIL) return FAIL;
+  if ( nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->icon)) == FAIL) return FAIL;
+  if ( nsp_xdr_save_i(xdrs,M->obj->draw_mode) == FAIL) return FAIL;
   /* the upper class */
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
@@ -221,6 +222,7 @@ NspBlock  *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M)
     return NULLBLOCK;
   if ( nsp_load_grb_lock(xdrs,M->obj->locks,M) == FAIL ) return NULL;
   if ((M->obj->icon= (NspGraphic *) nsp_object_xdr_load(xdrs))== NULL) return NULL;
+  if ( nsp_xdr_load_i(xdrs,&M->obj->draw_mode) == FAIL) return NULLBLOCK;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -276,6 +278,7 @@ int nsp_block_create_partial(NspBlock *H)
   H->obj->n_locks = 0;
   H->obj->locks = NULL;
   H->obj->icon = NULL;
+  H->obj->draw_mode = 0;
   return OK;
 }
 
@@ -287,7 +290,7 @@ int nsp_block_check_values(NspBlock *H)
 }
 
 
-NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,NspTypeBase *type)
+NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,int draw_mode,NspTypeBase *type)
 {
   double pt[2];
   int i;
@@ -302,6 +305,7 @@ NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int t
   H->obj->n_locks=n_locks;
   H->obj->locks = locks;
   H->obj->icon= icon;
+  H->obj->draw_mode= draw_mode ;
   /* initial lock points */
   H->obj->n_locks = 4 ;
   if (( H->obj->locks = malloc(H->obj->n_locks*sizeof(grb_lock))) == NULL ) return NULLBLOCK;
@@ -387,7 +391,7 @@ int int_block_create(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&thickness) == FAIL) return RET_BUG;
-  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0, NULL,NULL,NULL))
+  if(( H = nsp_block_create(NVOID,NULL,val,color,thickness,back,0, NULL,NULL,0,NULL))
      == NULLBLOCK) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -537,7 +541,7 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   /* take care of the fact that str1 must be writable */
   char str1[] = "my\nblock";
   double loc[4];
-  int cpat, cwidth,i, draw_script, fill=FALSE;
+  int cpat, cwidth,i, fill=FALSE;
 
   /* check the show attribute */
   if ( Obj->obj->show == FALSE ) return ;
@@ -554,10 +558,10 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   cwidth = Xgc->graphic_engine->xget_thickness(Xgc);
   
   /* first draw the block icon */
-  draw_script = 0;
-  switch (draw_script)
+  switch ( B->obj->draw_mode )
     {
     case 0: 
+    case 1:
       if ( B->obj->icon == NULL ) 
 	{
 	  if ( nsp_block_create_icon(Xgc,B) == FAIL) 
@@ -1399,6 +1403,7 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M)
 
 static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
 {
+  
   NspGraphic *G;
 #ifdef USE_AXE 
   NspAxes *axe;
@@ -1408,8 +1413,9 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
   NspObject *targs[]={NULL};
   NspObject *nsp_ret[1];
   int nret = 1,nargs = 0,i;
-  
-  if ( nsp_gtk_eval_function_by_name("draw_vanne",targs,nargs,nsp_ret,&nret)== FAIL)
+  char *func = ( B->obj->draw_mode == 0) ? "draw_tumbi" : "draw_gmatrix";
+
+  if ( nsp_gtk_eval_function_by_name(func,targs,nargs,nsp_ret,&nret)== FAIL)
     {
       goto stop;
     }

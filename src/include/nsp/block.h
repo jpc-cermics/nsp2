@@ -91,6 +91,7 @@ struct _nsp_block {
   int n_locks;
   grb_lock* locks;
   NspGraphic* icon;
+  int draw_mode;
   int ref_count;
 };
 
@@ -120,7 +121,7 @@ NspBlock *new_block();
 
 #define NULLBLOCK (NspBlock*) 0
 
-extern NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic* icon,NspTypeBase *type);
+extern NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic* icon,int draw_mode,NspTypeBase *type);
 extern NspBlock *nsp_block_create_default(char *name);
 
 /* from NspBlockObj.c */
@@ -149,7 +150,7 @@ extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
 
 /* inserted at the end of public part of include file */
 
-#line 153 "./block.h"
+#line 154 "./block.h"
 #endif /* NSP_INC_NspBlock */ 
 
 #ifdef NspBlock_Private 
@@ -223,6 +224,6 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
 
-#line 227 "./block.h"
+#line 228 "./block.h"
 #endif /* NspBlock_Private */
 

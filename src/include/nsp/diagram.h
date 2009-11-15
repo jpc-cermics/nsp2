@@ -112,7 +112,7 @@ extern int nsp_diagram_select_and_toggle_hilite(NspDiagram *R,const double pt[2]
 extern int nsp_diagram_move_obj (NspDiagram *R,NspObject *O, const double *pt, int stop, int cp,move_action  action ); 
 extern void nsp_diagram_unhilite_objs (NspDiagram *R, int draw); 
 extern void nsp_diagram_delete_hilited (NspDiagram *R); 
-extern NspObject* nsp_diagram_create_new_block(NspDiagram *R,const double pt[2]);
+extern NspObject* nsp_diagram_create_new_block(NspDiagram *R,const double pt[2],int mode);
 extern NspObject* nsp_diagram_create_new_connector(NspDiagram *R);
 extern NspObject* nsp_diagram_create_new_link(NspDiagram *F);
 extern NspObject * nsp_diagram_create_new_gridblock(NspDiagram *F, int flag);

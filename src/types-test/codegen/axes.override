@@ -28,6 +28,8 @@ extern void nsp_axes_invalidate(NspGraphic *G);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
 extern void nsp_figure_zoom(BCG *Xgc,int *box);
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect);
+extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
+					 int *aaint,int isomode, int auto_axes, char *xf);
 
 %%
 include-private Axes
@@ -188,8 +190,6 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 last
 
 /* inserted verbatim at the end */
-void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
-				  int *aaint,int isomode, int auto_axes, char *xf);
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
@@ -294,44 +294,29 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 			       P->obj->iso,
 			       P->obj->auto_axis,
 			       xf);
-#if 0
-  {
-    int clipz[5];
-    Xgc->graphic_engine->xget_clip(Xgc,(int *) &clipz);
-    Sciprintf("avant de dessiner les axes: clip=[%d,%d,%d,%d]\n",
-	      clipz[1],clipz[2],clipz[3],clipz[4]);
-    Sciprintf("avant de dessiner les axes: rect=[%d,%d,%d,%d]\n",
-	      rect->x,rect->y, rect->width,rect->height);
-  }
-#endif 
-
   axis_draw(Xgc,'1', 
 	    (P->obj->auto_axis) ? '5': '1',
 	    P->obj->grid);
-
+  
   /* save the scales */
   P->obj->scale = *Xgc->scales;
-
+  
   /* clip the axes 
    * Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
 
-  if ( P->obj->top == TRUE )
+  {
+    int xxclip[5];
+    Xgc->graphic_engine->xget_clip(Xgc, xxclip);
+  }
+  
+
+  if ( P->obj->top == TRUE && P->obj->clip == TRUE )
     {
-      if ( rect != NULL ) 
-	{
-	  gdk_rectangle_intersect( rect,&Xgc->scales->Irect, &clip);
-	  Xgc->graphic_engine->xset_clip(Xgc, &clip);
-	  /*
-	    Sciprintf("apres les  axes intersection de clip=[%d,%d,%d,%d]\n",
-	    clip.x,clip.y,clip.width,clip.height);
-	  */
-	}
-      else
-	{
-	  Xgc->graphic_engine->xset_clip(Xgc,&Xgc->scales->Irect);
-	}
+      clip = Xgc->scales->Irect;
+      if ( rect != NULL ) gdk_rectangle_intersect( rect,&clip,&clip);
+      Xgc->graphic_engine->xset_clip(Xgc, &clip);
     }
 
   /* draw elements */

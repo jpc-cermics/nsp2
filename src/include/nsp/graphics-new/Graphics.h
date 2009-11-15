@@ -124,10 +124,6 @@ extern double Maxi  (const double vect[],int);
 
 /* Plo2d.c */
 
-extern int nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag,
-			  int *n1,int *n2,int style[],char *strflag,
-			  const char *legend,int legend_pos,int mode,
-			  double brect[],int aaint[]);
 extern int nsp_plot2d(BCG *Xgc,double x[],double y[],int *n1,int *n2,
 		      int style[],char *strflag,const char *legend,
 		      int leg_pos,double brect[],int aaint[]);
