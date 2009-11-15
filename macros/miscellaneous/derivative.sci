@@ -53,17 +53,17 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
    end
    
    if isempty(Q) then 
-      Q = eye_new(n,n);
-   elseif norm(clean(Q*Q'-eye_new(n,n)))>0 then
+      Q = eye(n,n);
+   elseif norm(clean(Q*Q'-eye(n,n)))>0 then
       error("Q must be orthogonal");
    end   
    
    if isempty(h) then
       h_not_given = %t
       select order  // stepsizes for approximation of first derivatives
-	case 1 , h = sqrt(%eps)
-	case 2 , h = %eps^(1/3)
-	case 4 , h = %eps^(1/4)
+	case 1 , h = sqrt(%eps)*(1 + 1e-3*norm(x))
+	case 2 , h = %eps^(1/3)*(1 + 1e-3*norm(x))
+	case 4 , h = %eps^(1/5)*(1 + 1e-3*norm(x))
       end	 
    else
       h_not_given = %f	
@@ -76,9 +76,9 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
 
    if h_not_given then
       select order  // stepsizes for approximation of second derivatives
-	case 1 , h = %eps^(1/3)
-	case 2 , h = %eps^(1/4)
-	case 4 , h = %eps^(1/6)
+	case 1 , h = %eps^(1/3)*(1 + 1e-3*norm(x))
+	case 2 , h = %eps^(1/4)*(1 + 1e-3*norm(x))
+	case 4 , h = %eps^(1/6)*(1 + 1e-3*norm(x))
       end	 
    end
    H = %deriv1_(%DF_, x, h, order, Q, args)
