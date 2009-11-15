@@ -10,7 +10,7 @@
 \begin{verbatim}
 y = unique(x)
 [y [,ind [,occ]]] = unique(x)
-[y [,ind [,occ]]] = unique(x,first_ind=value)
+[y [,ind [,occ]]] = unique(x,first_ind=value, ind_type=str)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -19,12 +19,16 @@ y = unique(x)
     \vname{x}: vector of numbers or strings or cells, or a list.
     \vname{y}: vector (or list when x is a list) containing unique components of x
     \vname{ind}: vector of same length than y, ind(i) is an index
-                  such that y(i)=x(ind(i)).
+                 such that y(i)=x(ind(i)). \verb+ind+ could be stored in an array of
+                 floating point numbers (Mat) (the default) or in an array of 
+                 usual C integers (IMat of itype int) if you use \verb+ind_type = "int"+
     \vname{occ}: vector of same length than y, occ(i) is the number
                   of occurrences of y(i) in the x.
     \vname{first\_ind}: optional boolean scalar, useful only when x is a vector
     of numbers or strings. In this case using \verb!first_ind=%t! ind(i) is
     the smaller index such that y(i) = x(ind(i)).
+    \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
+    which gives the type for the index vector  \verb+ind+. 
   \end{varlist}
 \end{parameters}
 
@@ -33,6 +37,8 @@ y = unique(x)
   strings or cells. As the number of occurrences of each unique
   component may be returned, it can be also useful for basic statistic
   computations.
+
+
 \end{mandescription}
 
 \begin{examples}

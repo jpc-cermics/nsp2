@@ -411,7 +411,7 @@ static int nsp_matrix_bounds(const NspMatrix *A,index_vector *index)
 	{
 	  if ( floor(A->R[i]) != A->R[i] )
 	    {
-	      Scierror("Error:\tIndice (%g) is not an integer\n", A->R[i]);
+	      Scierror("Error:\tIndex (%g) is not an integer\n", A->R[i]);
 	      index->error = index_wrong_value;
 	      return FAIL;
 	    }
@@ -5032,16 +5032,29 @@ static int int_format(Stack stack, int rhs, int opt, int lhs)
 static int int_unique( Stack stack, int rhs, int opt, int lhs)
 { 
   Boolean first_ind;
-  NspMatrix *x;
-  NspMatrix *ind, *occ;
-  NspMatrix **Ind=NULL, **Occ=NULL;
+  NspMatrix *x, *occ, **Occ=NULL;
+  NspObject *ind, **Ind=NULL;
   int_types T[] = {realmatcopy,new_opts,t_end} ;
   nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
+		      { "ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
+  int rep_ind_type;
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind) == FAIL ) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind, &ind_type) == FAIL ) 
+    return RET_BUG;
 
   if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
+  
+  if ( ind_type != NULL )
+    {
+      if ( (rep_ind_type= is_string_in_array(ind_type, ind_type_possible_choices,1)) == -1 ) 
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	} 
+      itype = ind_type_possible_choices[rep_ind_type][0];
+    }
 
   CheckLhs(1,3);
 
@@ -5051,7 +5064,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
       if ( lhs == 3 ) Occ = &occ;
     }
 
-  if ( nsp_mat_unique(x, Ind, Occ, first_ind) == FAIL )
+  if ( nsp_mat_unique(x, Ind, Occ, first_ind, itype) == FAIL )
     return RET_BUG;
 
   NSP_OBJECT(x)->ret_pos = 1; 

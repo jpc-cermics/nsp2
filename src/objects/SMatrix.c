@@ -2580,10 +2580,10 @@ NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S)
  * Return value: %OK or %FAIL
  *
  **/
-int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean first_ind)
+int nsp_smatrix_unique(NspSMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first_ind, char ind_type)
 {
   int i0, i, i_old, *index;
-  NspMatrix *ind=NULLMAT, *occ=NULLMAT;
+  NspMatrix *occ=NULLMAT;
   nsp_string val;
 
   if ( Ind == NULL )
@@ -2611,14 +2611,13 @@ int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean 
 
   else
     {
-      if ( (ind = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+      if ( (*Ind = nsp_alloc_mat_or_imat(x->m,x->n, ind_type, &index)) == NULLOBJ )
 	return FAIL;
-      index = (int *) ind->R;
 
       if ( Occ != NULL )
 	if ( (occ = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
 	  {
-	    nsp_matrix_destroy(ind); return FAIL;
+	    nsp_object_destroy(Ind); return FAIL;
 	  }
       
       if ( x->mn > 0 )
@@ -2649,20 +2648,25 @@ int nsp_smatrix_unique(NspSMatrix *x, NspMatrix **Ind, NspMatrix **Occ, Boolean 
 	  if ( x->m == 1 )
 	    {
 	      nsp_smatrix_resize(x, 1, i0+1);
-	      nsp_matrix_resize(ind, 1, i0+1);
+	      if ( ind_type == 'd' )
+		nsp_matrix_resize((NspMatrix *) *Ind, 1, i0+1);
+	      else
+		nsp_imatrix_resize((NspIMatrix *) *Ind, 1, i0+1);
 	      if ( Occ != NULL ) nsp_matrix_resize(occ, 1, i0+1);
 	    }
 	  else
 	    {
 	      nsp_smatrix_resize(x, i0+1, 1);
-	      nsp_matrix_resize(ind, i0+1, 1);
+	      if ( ind_type == 'd' )
+		nsp_matrix_resize((NspMatrix *) *Ind, i0+1, 1);
+	      else
+		nsp_imatrix_resize((NspIMatrix *) *Ind, i0+1, 1);
 	      if ( Occ != NULL ) nsp_matrix_resize(occ, i0+1, 1);
 	    }
-	  ind->convert = 'i';
-	  ind = Mat2double(ind);
+	  if ( ind_type == 'd' )
+	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
 	}
 
-      *Ind = ind;
       if ( Occ != NULL ) *Occ = occ;
       return OK;
     }
