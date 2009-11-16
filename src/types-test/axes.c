@@ -1462,7 +1462,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
    * thus we use T in flag[1].
    */
 
-
   if ( P->obj->fixed == FALSE ) 
     {
       /* actualize the inside bounds with objects 
@@ -1507,24 +1506,17 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
    * since clipping only works with rectangles 
    */
 
-  {
-    int xxclip[5];
-    Xgc->graphic_engine->xget_clip(Xgc, xxclip);
-  }
-  
-
   if ( P->obj->top == TRUE && P->obj->clip == TRUE )
     {
       clip = Xgc->scales->Irect;
       if ( rect != NULL ) gdk_rectangle_intersect( rect,&clip,&clip);
       Xgc->graphic_engine->xset_clip(Xgc, &clip);
     }
-
+  
   /* draw elements */
 
   L = P->obj->children;
   cloc = L->first ;
-  
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -1802,8 +1794,8 @@ static void nsp_translate_axes(NspGraphic *Obj,const double *tr)
 {
   NspAxes *P = (NspAxes *) Obj;
   if ( P->obj->top == TRUE) return ;
-  if (((NspGraphic *) Obj)->obj->show == TRUE)
-    nsp_graphic_invalidate((NspGraphic *) Obj);
+  nsp_graphic_invalidate((NspGraphic *) Obj);
+  /* only valid for non top axes */
   P->obj->wrect->R[0] += tr[0];
   P->obj->wrect->R[1] += tr[1];
   nsp_graphic_invalidate((NspGraphic *) Obj);
@@ -1859,7 +1851,10 @@ static int nsp_getbounds_axes(NspGraphic *Obj,double *bounds)
 static void nsp_axes_link_figure(NspGraphic *G, void *F, void *A)
 {
   /* link toplevel */
-  nsp_graphic_link_figure(G, F, ((NspAxes *) G)->obj);
+  if ( ((NspAxes *) G)->obj->top == TRUE)
+    nsp_graphic_link_figure(G, F, ((NspAxes *) G)->obj);
+  else
+    nsp_graphic_link_figure(G, F, A);
   /* link children */
   nsp_list_link_figure(((NspAxes *) G)->obj->children,F, ((NspAxes *) G)->obj);
 }
@@ -2231,4 +2226,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2235 "axes.c"
+#line 2230 "axes.c"
