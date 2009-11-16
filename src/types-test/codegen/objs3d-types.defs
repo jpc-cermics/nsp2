@@ -9,7 +9,7 @@
                             ;; or the position of this objs3d in an other Obj3d
    '("double" "rho")     ;; rotation of the rectangle which contains the Obj3d
    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
-   '("NspMatrix*" "bounds" "hidden");; bounds of objects contained in the Obj3d. 
+   '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the Obj3d. 
    '("NspMatrix*" "arect" "std" "{1./8.,1./8.,1./8.,1./8.}" "4") ;; 
    '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this objs3d defines if []
                             ;; frect is deduced from data. 

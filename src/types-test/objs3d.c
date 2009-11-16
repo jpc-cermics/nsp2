@@ -550,10 +550,11 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   }
   if ( H->obj->bounds == NULLMAT) 
     {
-       if (( H->obj->bounds = nsp_matrix_create("bounds",'r',0,0)) == NULLMAT)
+     double x_def[4]={0,0,0,0};
+     if (( H->obj->bounds = nsp_matrix_create("bounds",'r',1,4)) == NULLMAT)
        return FAIL;
-
-    }
+      memcpy(H->obj->bounds->R,x_def,4*sizeof(double));
+  }
   if ( H->obj->arect == NULLMAT) 
     {
      double x_def[4]={1./8.,1./8.,1./8.,1./8.};
@@ -776,7 +777,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 780 "objs3d.c"
+#line 781 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -942,7 +943,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 946 "objs3d.c"
+#line 947 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1101,7 +1102,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1105 "objs3d.c"
+#line 1106 "objs3d.c"
 
 
 #line 171 "codegen/objs3d.override"
@@ -1113,7 +1114,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1117 "objs3d.c"
+#line 1118 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -2741,4 +2742,4 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
 }
 
 
-#line 2745 "objs3d.c"
+#line 2746 "objs3d.c"

@@ -1407,8 +1407,8 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   int switch_orient= TRUE;
   index_vector index={0};
   int i,j,k;
-  NspMatrix *C,*Fs,*Fc,*Fsc,*Index,*Col=NULL;
-  NspObject *OIndex;
+  NspMatrix *C,*Fs,*Fc,*Fsc,*Index=NULL,*Col=NULL;
+  NspObject *OIndex=NULL;
   NspBMatrix *B;
   if ((C = nsp_matrix_create("C",'r',m*n,3))==NULL) return FAIL;
   for ( i=0 ; i < C->m; i++)
@@ -1420,8 +1420,8 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   /* sort the matrix 
    * [Cs,ks]= sort(C,'ldr','i');
    */
-  OIndex = NSP_OBJECT(Index);
   nsp_matrix_lexical_row_sort(C,&OIndex,TRUE,'i','d','d');
+  Index = (NspMatrix *) OIndex;
 
   if ( Colr != NULL)
     {
