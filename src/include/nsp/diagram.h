@@ -133,15 +133,12 @@ extern int nsp_diagram_select_and_move_list(NspDiagram *R,NspObject *Obj,const d
 extern int nsp_diagram_move_list_obj(NspDiagram *F,NspList *L,const double pt[2],int stop,int cp,
 				     move_action action, int *click);
 extern NspDiagram *nsp_diagram_hilited_full_copy( NspDiagram *F);
-
-extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
-extern int link_add_control(NspLink *L,const double pt[2]);
-extern int link_remove_control(NspLink *L,const double pt[2]);
-extern void link_check(NspDiagram *F,NspLink *L);
-extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 extern void link_lock_update(NspDiagram *F, NspLink *L,int lp,double ptnew[2]);
+extern void link_check(NspDiagram *F,NspLink *L);
+extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
+extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 
-#line 145 "./diagram.h"
+#line 142 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -156,7 +153,7 @@ static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
-#line 60 "codegen/diagram.override"
+#line 57 "codegen/diagram.override"
 
 /* inserted in the private part of include file */
 
@@ -185,6 +182,6 @@ static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 189 "./diagram.h"
+#line 186 "./diagram.h"
 #endif /* NspDiagram_Private */
 

@@ -144,8 +144,11 @@ extern int nsp_link_xdr_save(XDR  *xdrs, NspLink *M);
 #line 54 "codegen/link.override"
 
 /* inserted at the end of public part of include file */
+extern int link_add_control(NspLink *L,const double pt[2]);
+extern int link_remove_control(NspLink *L,const double pt[2]);
+extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 
-#line 149 "./link.h"
+#line 152 "./link.h"
 #endif /* NSP_INC_NspLink */ 
 
 #ifdef NspLink_Private 
@@ -160,7 +163,7 @@ static AttrTab link_attrs[];
 static NspMethods *link_get_methods(void);
 /* static int int_link_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspLink *nsp_link_create_void(char *name,NspTypeBase *type);
-#line 59 "codegen/link.override"
+#line 62 "codegen/link.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
@@ -211,6 +214,6 @@ static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
 static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
-#line 215 "./link.h"
+#line 218 "./link.h"
 #endif /* NspLink_Private */
 

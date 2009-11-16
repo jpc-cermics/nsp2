@@ -636,7 +636,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
    * i.e force visibility of axes names if they are given
    */
   if (leg !=  NULL && strlen(leg) != 0 ) iflag[1]=4;
-
+  
   Xgc=nsp_check_graphic_context();
   nsp_gwin_clear(Xgc);
   objs3d = nsp_check_for_objs3d(Xgc,NULL);

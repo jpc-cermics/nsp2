@@ -60,7 +60,6 @@ modulename atk
 ignore-glob
   *_get_type
 
-
 %%
 override nsp_extractelts_fec kwargs
 
@@ -305,11 +304,11 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	      /* using ii for colors */
 	      ii[k]= - fill[zxy[k]]; 
 	    };
+	    /* call the "painting" function */
 	    if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
 	      {
 		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
 	      }     
-	    /* call the "painting" function */
 	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
 	  };
       }
@@ -340,7 +339,6 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    
 	    /* call the "painting" function */
 	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
-	    
 	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
 	  }
       }

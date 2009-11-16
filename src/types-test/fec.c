@@ -936,7 +936,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 66 "codegen/fec.override"
+#line 65 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -948,7 +948,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
 #line 949 "fec.c"
 
 
-#line 76 "codegen/fec.override"
+#line 75 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -988,7 +988,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 86 "codegen/fec.override"
+#line 85 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1211,11 +1211,11 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	      /* using ii for colors */
 	      ii[k]= - fill[zxy[k]]; 
 	    };
+	    /* call the "painting" function */
 	    if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
 	      {
 		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
 	      }     
-	    /* call the "painting" function */
 	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
 	  };
       }
@@ -1246,7 +1246,6 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    
 	    /* call the "painting" function */
 	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
-	    
 	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
 	  }
       }
@@ -1273,4 +1272,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1277 "fec.c"
+#line 1276 "fec.c"

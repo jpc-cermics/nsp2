@@ -53,6 +53,9 @@ struct _grl_lock {
 include-public  Link
 
 /* inserted at the end of public part of include file */
+extern int link_add_control(NspLink *L,const double pt[2]);
+extern int link_remove_control(NspLink *L,const double pt[2]);
+extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 
 %%
 include-private  Link
