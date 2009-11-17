@@ -1,47 +1,62 @@
 function colorbar(umin, umax, colminmax)
-
-  //  PURPOSE
-  //     Draw a colorbar for a plot3d, fec, Sgrayplot, etc...
-  //
-  //  PARAMETERS
-  //     umin : min value of the plot
-  //     umax : max value of the plot
-  //     colminmax : (optional) a vector with 2 integer components
-  //                 the first is the color number (of the current
-  //                 colormap) associated with umin
-  //                 the second the max color number ....
-  //                 default : [1 nb_colors] where nb_colors is
-  //                 the number of colors of the current colormap.
-  //                 May be useful to deal with a part of the colormap
-  //                 (for instance using fec or plot3d)
-  //                 
-  //  CAUTION
-  //     this function may be used BEFORE a plot3d, fec, grayplot, ...
-  //     It is important because this function set and change the
-  //     frame for the plot. This way the colorbar is not part of 
-  //     the "associated" plot and so is not modified by a zoom or 
-  //     a rotation of the plot.
-  //
-  //  AUTHOR
-  //     Bruno Pincon
-  //
-  //  EXAMPLES
-  //     see the help page
-     
+//  PURPOSE
+//     Draw a colorbar for a plot3d, fec, Sgrayplot, etc...
+//
+//  PARAMETERS
+//     umin : min value of the plot
+//     umax : max value of the plot
+//     colminmax : (optional) a vector with 2 integer components
+//                 the first is the color number (of the current
+//                 colormap) associated with umin
+//                 the second the max color number ....
+//                 default : [1 nb_colors] where nb_colors is
+//                 the number of colors of the current colormap.
+//                 May be useful to deal with a part of the colormap
+//                 (for instance using fec or plot3d)
+//                 
+//  CAUTION
+//     this function may be used BEFORE a plot3d, fec, grayplot, ...
+//     It is important because this function set and change the
+//     frame for the plot. This way the colorbar is not part of 
+//     the "associated" plot and so is not modified by a zoom or 
+//     a rotation of the plot.
+//
+//     When used with new graphics this function must be 
+//     called after graphics since it changes current axes 
+//
+//  AUTHOR
+//     Bruno Pincon
+//
+//  EXAMPLES
+//     see the help page
+  
   if ~exists("colminmax","local") then 
-     nb_colors = xget("lastpattern")
-     colminmax = [1 nb_colors]
+    nb_colors = xget("lastpattern")
+    colminmax = [1 nb_colors]
   else
-     nb_colors = colminmax(2) - colminmax(1) + 1
+    nb_colors = colminmax(2) - colminmax(1) + 1
+  end
+
+  fg_color = xget("foreground")
+  
+  if new_graphics();
+    F=get_current_figure();
+    A=F(1);
+    wr = A.wrect;
+    wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
+    A.wrect = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
+    A.invalidate[];
+    A1=xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1],fixed=%t);
+    A1.axes = 0;  // do not draw axes 
+    A1.iso  = %f; // no iso mode 
+    A1.clip = %f; // no clip in axe 
+  else
+    wr = xgetech()
+    wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
+    wrect_pl = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
+    xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1])
   end
   
-  fg_color = xget("foreground")
-
-  wr = xgetech()
-  wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
-  wrect_pl = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
-  xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1])
-
   nb_grad = 4
   uval = getticks(umin,umax,anum=nb_grad)'
   nb_grad = length(uval)
@@ -54,7 +69,7 @@ function colorbar(umin, umax, colminmax)
   y1 = 0.1 ; y2 = 0.9
   y = linspace(y1,y2,nb_colors+1)
   y_polys = [y(1:$-1) ; y(1:$-1) ; y(2:$) ; y(2:$)] 
- 
+  
   xtics = x2*ones_new(1,nb_grad) ; dx_tics = 0.05 ; 
   ytics = y1 + ((uval-umin)/(umax - umin))*(y2-y1); dy_tics = 0
   
@@ -66,10 +81,11 @@ function colorbar(umin, umax, colminmax)
   xset("color", fg_color) ;
   xpoly([x1 x2 x2 x1],[y1 y1 y2 y2],close=%t,color=fg_color)
   for i = 1:nb_grad
-     xstring(xmarks(i), ymarks(i), sprintf("%g",uval(i)))
+    xstring(xmarks(i), ymarks(i), sprintf("%g",uval(i)))
   end
   xsegs([xtics ; xtics+dx_tics ],[ytics ; ytics+dy_tics],style=fg_color)
   
-  xsetech(wrect=wrect_pl)
-  
+  if ~new_graphics() then
+    xsetech(wrect=wrect_pl)
+  end
 endfunction

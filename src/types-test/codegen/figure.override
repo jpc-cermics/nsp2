@@ -23,7 +23,7 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_invalidate(NspGraphic *G);
 extern NspObject *nsp_check_for_axes_or_objs3d_from_pointer(nsp_figure *F,void *obj);
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
-
+extern void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc);
 %%
 include-private Figure
 
@@ -46,6 +46,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
+
 
 %%
 headers
@@ -1391,3 +1392,41 @@ void nsp_figure_initialize_gc(NspFigure *F)
     }
 }
 
+/**
+ * nsp_figure_data_set_colormap:
+ * @Xgc: 
+ * @Mc: 
+ * 
+ * @Mc is not copied here and should contains a colormap + 3 colors.
+ **/
+
+void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc) 
+{
+  NspFigureData *Gc = F->obj->gc;
+  BCG *Xgc =  F->obj->Xgc;  
+  int m = Mc->m -3;
+  if ( Gc->colormap != NULL) nsp_matrix_destroy(Gc->colormap);
+  Gc->colormap = Mc; 
+  /* Black */
+  Mc->R[m] = 0; 
+  Mc->R[m+Mc->m] = 0;
+  Mc->R[m+2*Mc->m] = 0;
+  /* White */
+  Mc->R[m+1] = 1.0;
+  Mc->R[m+1+Mc->m] = 1.0;
+  Mc->R[m+1+2*Mc->m] = 1.0;
+  /* Gray */
+  Mc->R[m+2] = 0.9; 
+  Mc->R[m+2+Mc->m] = 0.9;
+  Mc->R[m+2+2*Mc->m] = 0.9;
+  /* constants */
+  Gc->foreground = m+1;
+  Gc->background = m+2;
+  if ( Xgc != NULL ) 
+    {
+      Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
+      Xgc->graphic_engine->xset_background(Xgc,Gc->background);
+      Xgc->graphic_engine->xset_usecolor(Xgc,1);
+      Xgc->graphic_engine->xset_pattern(Xgc,Gc->foreground);
+    }
+}

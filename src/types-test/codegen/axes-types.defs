@@ -23,7 +23,7 @@
    '("gboolean" "iso" "std"  "TRUE") ;; iso mode 
    '("gboolean" "auto_axis" "std" "TRUE") ;; auto axis 
    '("int"      "grid" "std" "-1") ;; color of grid if >= 0
-   '("int"      "axes" "std" "1" );; where axes are drawn
+   '("int"      "axes" "std" "1" );; where and how axes are drawn
    '("gboolean" "xlog" "std" "FALSE");; log scale on x 
    '("gboolean" "ylog" "std" "FALSE");; log scale on y
    '("int"      "lpos" "std" "1" );; where legends are drawn

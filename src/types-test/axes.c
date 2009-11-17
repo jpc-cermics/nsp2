@@ -1494,9 +1494,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 			       P->obj->iso,
 			       P->obj->auto_axis,
 			       xf);
-  axis_draw(Xgc,'1', 
-	    (P->obj->auto_axis) ? '5': '1',
-	    P->obj->grid);
   
   /* save the scales */
   P->obj->scale = *Xgc->scales;
@@ -1527,7 +1524,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       cloc = cloc->next;
     }
   
-  if ( P->obj->top == TRUE )
+  if ( P->obj->top == TRUE && P->obj->clip == TRUE )
     {
       /* back to previous clip zone */
       if ( rect != NULL ) 
@@ -1539,6 +1536,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 	  Xgc->graphic_engine->xset_unclip(Xgc);
 	}
     }
+  
+  /* draw axes, ticks */
+  axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid);
   
   /* legends */
   nsp_axes_legends(Xgc,P);

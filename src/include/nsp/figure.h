@@ -118,7 +118,7 @@ extern void nsp_graphic_unlink_figure(NspGraphic *G, void *F);
 extern void nsp_figure_invalidate(NspGraphic *G);
 extern NspObject *nsp_check_for_axes_or_objs3d_from_pointer(nsp_figure *F,void *obj);
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
-
+extern void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc);
 #line 123 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
@@ -156,6 +156,7 @@ static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 
-#line 160 "./figure.h"
+
+#line 161 "./figure.h"
 #endif /* NspFigure_Private */
 
