@@ -468,29 +468,65 @@ endfunction
 
 
 function demo_anim_1()
-  t=%pi*(-5:5)/5;
-  plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
-  st=1;
-  for i=35:st:80, // loop on theta angle
-    xclear();
-    plot3d1(t,t,sin(t)'*cos(t),alpha=i,theta=45,flag=[1,2,4])
-    xset("wshow");
-  end
-  for i=45:st:80, //loop on alpha angle
-    xclear()
-    plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=i,flag=[1,2,4])
-    xset("wshow");
+  if new_graphics() then 
+    t=%pi*(-5:5)/5;
+    xset('colormap',jetcolormap(32));
+    P=plot3d1(t,t,sin(t)'*cos(t),alpha = 35,theta = 45);
+    st=5;
+    F=get_current_figure();
+    A=F(1);
+    P=A(1);
+    P.shade = %t;
+    for i=35 : st : 80 do
+      A.theta = 2*i;
+      A.alpha = i;
+      A.invalidate[];
+      F.draw_now[]; // will activate a process_updates
+    end
+  else
+    t=%pi*(-5:5)/5;
+    plot3d1(t,t,sin(t)'*cos(t),alpha=35,theta=45);
+    st=1;
+    for i=35:st:80, // loop on theta angle
+      xclear();
+      plot3d1(t,t,sin(t)'*cos(t),alpha=i,theta=45,flag=[1,2,4])
+      xset("wshow");
+    end
+    for i=45:st:80, //loop on alpha angle
+      xclear()
+      plot3d1(t,t,sin(t)'*cos(t),alpha=80,theta=i,flag=[1,2,4])
+      xset("wshow");
+    end
   end
 endfunction
 
 function demo_anim_2()
-  np=10;
-  t=(0:0.1:np)*%pi;
-  for i=1:1:30
-    xclear();
+  if new_graphics() then 
+    np=10;
+    t=(0:0.1:np)'*%pi;
+    i=1;
     param3d((t/(np*%pi)*%pi).*sin(t),(t/(np*%pi)*%pi).*cos(t),...
-	    i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
-    xset("wshow");
+	      i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
+    F=get_current_figure();
+    A=F(1);
+    P=A(1);
+    P.Mcolor= 2;
+    for i=1:1:30
+      P.Mcoord(:,3) = i*t/(np*%pi)
+      // P.Mcolor= i;
+      // P.invalidate[]; // A revoir.
+      A.invalidate[];
+      F.draw_now[]; // will activate a process_updates
+    end
+  else
+    np=10;
+    t=(0:0.1:np)*%pi;
+    for i=1:1:30
+      xclear();
+      param3d((t/(np*%pi)*%pi).*sin(t),(t/(np*%pi)*%pi).*cos(t),...
+	      i*t/(np*%pi),alpha=35,theta=45,flag=[2,4]);
+      xset("wshow");
+    end
   end
 endfunction
 
@@ -509,15 +545,28 @@ function demo_anim_3()
 endfunction
 
 function demo_anim_4()
-  t=%pi*(-1:0.1:1);
-  I=20:-1:1;
-  ebox=[min(t),max(t),min(t),max(t),-1,1];
-  //realtimeinit(0.1)
-  for i=1:size(I,'*')
-    //realtime(i)
-    xclear();
-    plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=35,theta=45,flag=[2,1,0],ebox=ebox)
-    xset("wshow");
+  if new_graphics() then 
+    t=%pi*(-1:0.1:1);
+    I=20:-1:1;
+    ebox=[min(t),max(t),min(t),max(t),-1,1];
+    //realtimeinit(0.1)
+    for i=1:size(I,'*')
+      //realtime(i)
+      xclear();
+      plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=35,theta=45,flag=[2,1,0],ebox=ebox)
+      xset("wshow");
+    end
+  else
+    t=%pi*(-1:0.1:1);
+    I=20:-1:1;
+    ebox=[min(t),max(t),min(t),max(t),-1,1];
+    //realtimeinit(0.1)
+    for i=1:size(I,'*')
+      //realtime(i)
+      xclear();
+      plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=35,theta=45,flag=[2,1,0],ebox=ebox)
+      xset("wshow");
+    end
   end
 endfunction 
 
