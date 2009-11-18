@@ -1,5 +1,9 @@
 /* -*- Mode: C -*- */
 %%
+copyright
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2009 Bruno Pinçon Enpc/Cermics
+%%
 include-public Fec
 
 extern BCG *nsp_check_graphic_context(void);
@@ -143,10 +147,10 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  double *colout = NULL ; /* XXX à rajouter */
+  int *colout = NULL ; 
+  int *colminmax = NULL;
   NspFec *P = (NspFec *) Obj;
   double *zminmax = NULL;
-  double *colminmax = NULL;
   double *func= P->obj->func->R;
   double *x =  P->obj->x->R;
   double *y =  P->obj->y->R;
@@ -166,13 +170,13 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     }
 
   if ( P->obj->colminmax->mn == 2 ) 
-    colminmax = P->obj->colminmax->R;
+    colminmax = P->obj->colminmax->I;
 
   if ( P->obj->zminmax->mn == 2 ) 
     zminmax = P->obj->zminmax->R;
 
   if ( P->obj->colout->mn == 2) 
-    colout = P->obj->colout->R;
+    colout = P->obj->colout->I;
 
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -185,12 +189,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   
   scale_f2i(Xgc->scales,x,y,xm,ym,Nnode);
 
-  /* Fec code */
   {
-    /*
-     *	 beginning of the code modified by Bruno 01/02/2001  
-     */
-    
     int nz, whiteid; 
     double *zlevel, dz, zmin, zmax, sx[3], sy[3];
     int *zone, *fill, zxy[3], color_min, color_max;
@@ -267,7 +266,8 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       }
     else 
       {
-	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
+	fill[0] = (colout[0]==-1) ? fill[1] : - colout[0] ;
+	fill[nz+1] = (colout[1]==-1) ? fill[nz]: - colout[1];
       }
 
     /* compute the zlevels */
@@ -344,11 +344,6 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       }
 #endif 
   }
-
-  /*
-   *                     end of the modified code
-   */
-  
 }
 
 

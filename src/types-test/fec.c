@@ -2,7 +2,10 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
+#line 4 "codegen/fec.override"
  * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2009 Bruno Pinçon Enpc/Cermics
+#line 9 "fec.c"
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,7 +27,7 @@
 
 
 
-#line 28 "codegen/fec.override"
+#line 32 "codegen/fec.override"
 #include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
@@ -35,7 +38,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 39 "fec.c"
+#line 42 "fec.c"
 
 /* ----------- NspFec ----------- */
 
@@ -107,7 +110,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 45 "codegen/fec.override"
+#line 49 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -118,7 +121,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 122 "fec.c"
+#line 125 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -936,7 +939,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 65 "codegen/fec.override"
+#line 69 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -945,10 +948,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 949 "fec.c"
+#line 952 "fec.c"
 
 
-#line 75 "codegen/fec.override"
+#line 79 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -957,7 +960,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 961 "fec.c"
+#line 964 "fec.c"
 
 
 /*----------------------------------------------------
@@ -988,7 +991,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 85 "codegen/fec.override"
+#line 89 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1050,10 +1053,10 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  double *colout = NULL ; /* XXX à rajouter */
+  int *colout = NULL ; 
+  int *colminmax = NULL;
   NspFec *P = (NspFec *) Obj;
   double *zminmax = NULL;
-  double *colminmax = NULL;
   double *func= P->obj->func->R;
   double *x =  P->obj->x->R;
   double *y =  P->obj->y->R;
@@ -1073,13 +1076,13 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     }
 
   if ( P->obj->colminmax->mn == 2 ) 
-    colminmax = P->obj->colminmax->R;
+    colminmax = P->obj->colminmax->I;
 
   if ( P->obj->zminmax->mn == 2 ) 
     zminmax = P->obj->zminmax->R;
 
   if ( P->obj->colout->mn == 2) 
-    colout = P->obj->colout->R;
+    colout = P->obj->colout->I;
 
   /* Allocation */
   xm = graphic_alloc(0,Nnode,sizeof(int));
@@ -1092,12 +1095,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   
   scale_f2i(Xgc->scales,x,y,xm,ym,Nnode);
 
-  /* Fec code */
   {
-    /*
-     *	 beginning of the code modified by Bruno 01/02/2001  
-     */
-    
     int nz, whiteid; 
     double *zlevel, dz, zmin, zmax, sx[3], sy[3];
     int *zone, *fill, zxy[3], color_min, color_max;
@@ -1174,7 +1172,8 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       }
     else 
       {
-	fill[0] = - colout[0] ; fill[nz+1] = - colout[1];
+	fill[0] = (colout[0]==-1) ? fill[1] : - colout[0] ;
+	fill[nz+1] = (colout[1]==-1) ? fill[nz]: - colout[1];
       }
 
     /* compute the zlevels */
@@ -1251,11 +1250,6 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       }
 #endif 
   }
-
-  /*
-   *                     end of the modified code
-   */
-  
 }
 
 
@@ -1272,4 +1266,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1276 "fec.c"
+#line 1270 "fec.c"
