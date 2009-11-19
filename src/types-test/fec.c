@@ -221,7 +221,8 @@ static int nsp_fec_eq(NspFec *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->func)->type->eq(A->obj->func,loc->obj->func) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->colminmax)->type->eq(A->obj->colminmax,loc->obj->colminmax) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->zminmax)->type->eq(A->obj->zminmax,loc->obj->zminmax) == FALSE ) return FALSE;
-  if ( A->obj->draw != loc->obj->draw) return FALSE;
+  if ( A->obj->mesh != loc->obj->mesh) return FALSE;
+  if ( A->obj->paint != loc->obj->paint) return FALSE;
   if ( NSP_OBJECT(A->obj->colout)->type->eq(A->obj->colout,loc->obj->colout) == FALSE ) return FALSE;
   return TRUE;
 }
@@ -252,7 +253,8 @@ int nsp_fec_xdr_save(XDR *xdrs, NspFec *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->func)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colminmax)) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->zminmax)) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->draw) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->paint) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colout)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
@@ -273,7 +275,8 @@ NspFec  *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M)
   if ((M->obj->func =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->colminmax =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if ((M->obj->zminmax =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->draw) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->paint) == FAIL) return NULL;
   if ((M->obj->colout =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
@@ -393,7 +396,8 @@ int nsp_fec_print(NspFec *M, int indent,const char *name, int rec_level)
   if ( M->obj->zminmax != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"draw	= %s\n", ( M->obj->draw == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"paint	= %s\n", ( M->obj->paint == TRUE) ? "T" : "F" );
   if ( M->obj->colout != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -431,7 +435,8 @@ int nsp_fec_latex(NspFec *M, int indent,const char *name, int rec_level)
   if ( M->obj->zminmax != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zminmax),indent+2,"zminmax",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"draw	= %s\n", ( M->obj->draw == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"paint	= %s\n", ( M->obj->paint == TRUE) ? "T" : "F" );
   if ( M->obj->colout != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -511,7 +516,8 @@ int nsp_fec_create_partial(NspFec *H)
   H->obj->func = NULLMAT;
   H->obj->colminmax = NULLMAT;
   H->obj->zminmax = NULLMAT;
-  H->obj->draw = TRUE;
+  H->obj->mesh = TRUE;
+  H->obj->paint = TRUE;
   H->obj->colout = NULLMAT;
   return OK;
 }
@@ -564,7 +570,7 @@ int nsp_fec_check_values(NspFec *H)
   return OK;
 }
 
-NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean draw,NspMatrix* colout,NspTypeBase *type)
+NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,NspTypeBase *type)
 {
   NspFec *H  = nsp_fec_create_void(name,type);
   if ( H ==  NULLFEC) return NULLFEC;
@@ -575,7 +581,8 @@ NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles
   H->obj->func= func;
   H->obj->colminmax= colminmax;
   H->obj->zminmax= zminmax;
-  H->obj->draw=draw;
+  H->obj->mesh=mesh;
+  H->obj->paint=paint;
   H->obj->colout= colout;
   if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
   return H;
@@ -654,7 +661,8 @@ NspFec *nsp_fec_full_copy_partial(NspFec *H,NspFec *self)
     {
       if ((H->obj->zminmax = (NspMatrix *) nsp_object_full_copy_and_name("zminmax",NSP_OBJECT(self->obj->zminmax))) == NULLMAT) return NULL;
     }
-  H->obj->draw=self->obj->draw;
+  H->obj->mesh=self->obj->mesh;
+  H->obj->paint=self->obj->paint;
   if ( self->obj->colout == NULL )
     { H->obj->colout = NULL;}
   else
@@ -875,22 +883,41 @@ static int _wrap_fec_set_zminmax(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_fec_get_draw(void *self,const char *attr)
+static NspObject *_wrap_fec_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
 
-  ret = ((NspFec *) self)->obj->draw;
+  ret = ((NspFec *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
 }
 
-static int _wrap_fec_set_draw(void *self,const char *attr, NspObject *O)
+static int _wrap_fec_set_mesh(void *self,const char *attr, NspObject *O)
 {
-  int draw;
+  int mesh;
 
-  if ( BoolScalar(O,&draw) == FAIL) return FAIL;
-  ((NspFec *) self)->obj->draw= draw;
+  if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
+  ((NspFec *) self)->obj->mesh= mesh;
+  return OK;
+}
+
+static NspObject *_wrap_fec_get_paint(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspFec *) self)->obj->paint;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_fec_set_paint(void *self,const char *attr, NspObject *O)
+{
+  int paint;
+
+  if ( BoolScalar(O,&paint) == FAIL) return FAIL;
+  ((NspFec *) self)->obj->paint= paint;
   return OK;
 }
 
@@ -930,7 +957,8 @@ static AttrTab fec_attrs[] = {
   { "func", (attr_get_function *)_wrap_fec_get_func, (attr_set_function *)_wrap_fec_set_func,(attr_get_object_function *)_wrap_fec_get_obj_func, (attr_set_object_function *)int_set_object_failed },
   { "colminmax", (attr_get_function *)_wrap_fec_get_colminmax, (attr_set_function *)_wrap_fec_set_colminmax,(attr_get_object_function *)_wrap_fec_get_obj_colminmax, (attr_set_object_function *)int_set_object_failed },
   { "zminmax", (attr_get_function *)_wrap_fec_get_zminmax, (attr_set_function *)_wrap_fec_set_zminmax,(attr_get_object_function *)_wrap_fec_get_obj_zminmax, (attr_set_object_function *)int_set_object_failed },
-  { "draw", (attr_get_function *)_wrap_fec_get_draw, (attr_set_function *)_wrap_fec_set_draw,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mesh", (attr_get_function *)_wrap_fec_get_mesh, (attr_set_function *)_wrap_fec_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "paint", (attr_get_function *)_wrap_fec_get_paint, (attr_set_function *)_wrap_fec_set_paint,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "colout", (attr_get_function *)_wrap_fec_get_colout, (attr_set_function *)_wrap_fec_set_colout,(attr_get_object_function *)_wrap_fec_get_obj_colout, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
@@ -948,7 +976,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 952 "fec.c"
+#line 980 "fec.c"
 
 
 #line 79 "codegen/fec.override"
@@ -960,7 +988,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 964 "fec.c"
+#line 992 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1063,8 +1091,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   double *triangles = P->obj->triangles->R;
   int Nnode = P->obj->x->mn;
   int Ntr = P->obj->triangles->m;
-  int draw = P->obj->draw;
+  int mesh = P->obj->mesh;
   int *xm,*ym,i,  j, k;
+
   if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
@@ -1103,7 +1132,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     /* choice between zmin and zmax given by the user or computed
      * with the min and max z values. 
      */
-
+    
     if ( zminmax == NULL  ) { 
       zmin=(double) Mini(func,Nnode); 
       zmax=(double) Maxi(func,Nnode);
@@ -1112,14 +1141,14 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       zmin = Min( zminmax[0] , zminmax[1] );
       zmax = Max( zminmax[0] , zminmax[1] );
     };
-      
+    
     whiteid= Xgc->graphic_engine->xget_last(Xgc);
     nz=whiteid;
     
     /* choice for the colormap (in case of a user 's choice 
      * verify the parameter). 
      */
-
+    
     if ( colminmax == NULL ) 
       {
 	color_min=1; 
@@ -1183,7 +1212,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 
     /* finaly compute the zone of each point */
     for ( i = 0 ; i < (Nnode) ; i++ ) {
-      if ( func[i] > zmax )
+      if ( isnan(func[i]) ||  func[i] > zmax )
 	zone[i] = nz+1;
       else if ( func[i] < zmin )
 	zone[i] = 0;
@@ -1195,7 +1224,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
      *  2/ loop on the triangles : each triangle is finally decomposed 
      *     into its differents zones (polygons) by the function PaintTriangle   
      */
-#if 0 
+#if 0
     if (  Xgc->graphic_engine == &GL_gengine ) 
       {
 	for ( j = 0 ; j < Ntr ; j++) 
@@ -1219,11 +1248,11 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  };
       }
     else
-#else 
+#endif
       {
 	for ( j = 0 ; j < Ntr ; j++) 
 	  {
-	    int ii[3], perm[3],kp;
+	    int ii[3], perm[3],kp, stop = FALSE;
 	    double fxy[3];
 	    
 	    /* retrieve node numbers and functions values */
@@ -1231,6 +1260,10 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	      ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
 	      zxy[k] = zone[ii[k]];
 	    }
+	    
+	    for ( k = 0 ; k < 3 ; k++ )
+	      stop |=  ( isnan(func[ii[k]]));
+	    if ( stop == TRUE ) continue;
 
 	    /* get the permutation perm so as zxy[perm] is sorted */
 	    PermutOfSort(zxy, perm); 
@@ -1244,26 +1277,21 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    };
 	    
 	    /* call the "painting" function */
-	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
-	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	    if ( P->obj->paint ) 
+	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	  }
       }
-#endif 
   }
 }
-
-
 
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
 {
   int nr, resx[3],resy[3];
-  /* 
-   * case of only one color for the triangle : 
-   */
   resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
   resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
   nr = 3;
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1270 "fec.c"
+#line 1298 "fec.c"

@@ -218,7 +218,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 	  r1.y=P->obj->wrect->R[1]*wdim[1];
 	  r1.width=P->obj->wrect->R[2]*wdim[0];
 	  r1.height=P->obj->wrect->R[3]*wdim[1];
-	  if ( ! gdk_rectangle_intersect(rect,&r1,NULL)) return;
+	  if ( ! gdk_rectangle_intersect(rect,&r1,&r1)) return;
 	}
       else
 	{

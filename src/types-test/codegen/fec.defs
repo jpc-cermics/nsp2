@@ -11,7 +11,8 @@
     '("NspMatrix*" "func") ;; 
     '("NspMatrix*" "colminmax" );; 
     '("NspMatrix*" "zminmax") ;; 
-    '("gboolean"   "draw")   ;; draw the triangles 
+    '("gboolean"   "mesh")   ;; draw the triangles 
+    '("gboolean"   "paint" "std" "TRUE")  ;; fill the triangles 
     '("NspMatrix*" "colout")
     )
   (gtype-id "Fec")

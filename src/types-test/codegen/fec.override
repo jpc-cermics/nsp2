@@ -157,8 +157,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   double *triangles = P->obj->triangles->R;
   int Nnode = P->obj->x->mn;
   int Ntr = P->obj->triangles->m;
-  int draw = P->obj->draw;
+  int mesh = P->obj->mesh;
   int *xm,*ym,i,  j, k;
+
   if ( Obj->obj->show == FALSE ) return ;
 
   /* check if the block is inside drawing rectangle
@@ -197,7 +198,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     /* choice between zmin and zmax given by the user or computed
      * with the min and max z values. 
      */
-
+    
     if ( zminmax == NULL  ) { 
       zmin=(double) Mini(func,Nnode); 
       zmax=(double) Maxi(func,Nnode);
@@ -206,14 +207,14 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
       zmin = Min( zminmax[0] , zminmax[1] );
       zmax = Max( zminmax[0] , zminmax[1] );
     };
-      
+    
     whiteid= Xgc->graphic_engine->xget_last(Xgc);
     nz=whiteid;
     
     /* choice for the colormap (in case of a user 's choice 
      * verify the parameter). 
      */
-
+    
     if ( colminmax == NULL ) 
       {
 	color_min=1; 
@@ -277,7 +278,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 
     /* finaly compute the zone of each point */
     for ( i = 0 ; i < (Nnode) ; i++ ) {
-      if ( func[i] > zmax )
+      if ( isnan(func[i]) ||  func[i] > zmax )
 	zone[i] = nz+1;
       else if ( func[i] < zmin )
 	zone[i] = 0;
@@ -289,7 +290,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
      *  2/ loop on the triangles : each triangle is finally decomposed 
      *     into its differents zones (polygons) by the function PaintTriangle   
      */
-#if 0 
+#if 0
     if (  Xgc->graphic_engine == &GL_gengine ) 
       {
 	for ( j = 0 ; j < Ntr ; j++) 
@@ -313,11 +314,11 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  };
       }
     else
-#else 
+#endif
       {
 	for ( j = 0 ; j < Ntr ; j++) 
 	  {
-	    int ii[3], perm[3],kp;
+	    int ii[3], perm[3],kp, stop = FALSE;
 	    double fxy[3];
 	    
 	    /* retrieve node numbers and functions values */
@@ -325,6 +326,10 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	      ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
 	      zxy[k] = zone[ii[k]];
 	    }
+	    
+	    for ( k = 0 ; k < 3 ; k++ )
+	      stop |=  ( isnan(func[ii[k]]));
+	    if ( stop == TRUE ) continue;
 
 	    /* get the permutation perm so as zxy[perm] is sorted */
 	    PermutOfSort(zxy, perm); 
@@ -338,22 +343,17 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    };
 	    
 	    /* call the "painting" function */
-	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
-	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	    if ( P->obj->paint ) 
+	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	  }
       }
-#endif 
   }
 }
-
-
 
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
 {
   int nr, resx[3],resy[3];
-  /* 
-   * case of only one color for the triangle : 
-   */
   resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
   resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
   nr = 3;

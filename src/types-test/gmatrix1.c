@@ -1474,7 +1474,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
 
   /* 
    *  at least 2 colors for painting the triangle : it is divided in elementary
-   **  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
+   *  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
    *
    *  P2           as zxy[0] <= zxy[1] <  zxy[2] or 
    *  Notations/Hints :       /\           zxy[0] <  zxy[1] <= zxy[2]
@@ -1539,10 +1539,18 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
       resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
       color = fill[izone];
-      if ( color != 0 ) 
+      if (1 && color != 0 ) 
 	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+      /*
+       * this function could be used to draw levels as we can test here.
+       */
+      if (0 && color != 0 ) 
+	{
+	  color = -  fill[izone];
+	  Xgc->graphic_engine->drawpolylines(Xgc,resx,resy,&color,1,nr);
+	}
     }
-
+  
   /*
    *  compute the last poly  
    */
@@ -1563,9 +1571,8 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
 
 }
 
-
-void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,int inda, int indb,
-		      int *xint, int *yint)
+static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,
+			     int inda, int indb,  int *xint, int *yint)
 {
   double alpha =  (z - fxy[inda])/(fxy[indb] - fxy[inda]);
   *xint = inint((1 - alpha)*sx[inda] + alpha*sx[indb]);
@@ -1574,4 +1581,4 @@ void FindIntersection(const double *sx,const double *sy,const double *fxy,double
 
 
 
-#line 1578 "gmatrix1.c"
+#line 1585 "gmatrix1.c"

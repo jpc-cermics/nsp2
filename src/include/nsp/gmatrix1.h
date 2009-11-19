@@ -99,10 +99,8 @@ extern int nsp_gmatrix1_xdr_save(XDR  *xdrs, NspGMatrix1 *M);
 extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
-extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
-			     double z,int inda, int indb,  int *xint, int *yint);
 
-#line 106 "./gmatrix1.h"
+#line 104 "./gmatrix1.h"
 #endif /* NSP_INC_NspGMatrix1 */ 
 
 #ifdef NspGMatrix1_Private 
@@ -117,7 +115,7 @@ static AttrTab gmatrix1_attrs[];
 static NspMethods *gmatrix1_get_methods(void);
 /* static int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGMatrix1 *nsp_gmatrix1_create_void(char *name,NspTypeBase *type);
-#line 15 "codegen/gmatrix1.override"
+#line 13 "codegen/gmatrix1.override"
 
 /* inserted in the private part of include file */
 
@@ -128,6 +126,8 @@ static void nsp_scale_gmatrix1(NspGraphic *o,double *alpha);
 static int nsp_getbounds_gmatrix1(NspGraphic *o,double *bounds);
 static void nsp_draw_matrix_zmoy(BCG *Xgc,NspGraphic *Obj, void *data);
 static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
+static void FindIntersection(const double *sx,const double *sy,const double *fxy,
+			     double z,int inda, int indb,  int *xint, int *yint);
 
 #line 133 "./gmatrix1.h"
 #endif /* NspGMatrix1_Private */

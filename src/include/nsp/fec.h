@@ -36,7 +36,8 @@ struct _nsp_fec {
   NspMatrix* func;
   NspMatrix* colminmax;
   NspMatrix* zminmax;
-  gboolean draw;
+  gboolean mesh;
+  gboolean paint;
   NspMatrix* colout;
   int ref_count;
 };
@@ -67,7 +68,7 @@ NspFec *new_fec();
 
 #define NULLFEC (NspFec*) 0
 
-extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean draw,NspMatrix* colout,NspTypeBase *type);
+extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,NspTypeBase *type);
 extern NspFec *nsp_fec_create_default(char *name);
 
 /* from NspFecObj.c */
@@ -92,7 +93,7 @@ extern int int_fec_create(Stack stack, int rhs, int opt, int lhs);
 extern NspFec *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M);
 extern int nsp_fec_xdr_save(XDR  *xdrs, NspFec *M);
 
-#line 4 "codegen/fec.override"
+#line 8 "codegen/fec.override"
 
 extern BCG *nsp_check_graphic_context(void);
 extern void PermutOfSort (const int *tab, int *perm);
@@ -103,7 +104,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 
 /* inserted at the end of public part of include file */
 
-#line 107 "./fec.h"
+#line 108 "./fec.h"
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
@@ -118,7 +119,7 @@ static AttrTab fec_attrs[];
 static NspMethods *fec_get_methods(void);
 /* static int int_fec_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type);
-#line 16 "codegen/fec.override"
+#line 20 "codegen/fec.override"
 
 /* inserted in the private part of include file */
 
@@ -129,6 +130,6 @@ static void nsp_scale_fec(NspGraphic *o,double *alpha);
 static int nsp_getbounds_fec(NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
-#line 133 "./fec.h"
+#line 134 "./fec.h"
 #endif /* NspFec_Private */
 

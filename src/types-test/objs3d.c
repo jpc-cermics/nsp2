@@ -1174,14 +1174,14 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     {
       if ( P->obj->top == TRUE ) 
 	{
-	  GdkRectangle r1;
+	  GdkRectangle r1,r2;
 	  int wdim[2];
 	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
 	  r1.x=P->obj->wrect->R[0]*wdim[0];
 	  r1.y=P->obj->wrect->R[1]*wdim[1];
 	  r1.width=P->obj->wrect->R[2]*wdim[0];
 	  r1.height=P->obj->wrect->R[3]*wdim[1];
-	  if ( ! gdk_rectangle_intersect(r,&r1,NULL))
+	  if ( ! gdk_rectangle_intersect(r,&r1,&r2))
 	    {
 	      Sciprintf("No need to draw one objs3d [%d,%d,%d,%d] draw=[%d,%d,%d,%d]\n",
 			r1.x,r1.y,r1.width,r1.height,

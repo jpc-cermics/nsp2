@@ -4714,7 +4714,8 @@ static int int_xinfo_new(Stack stack, int rhs, int opt, int lhs)
 
 
 static NspAxes *Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
-				const double *FRect,const char *logscale, int fixed)
+				const double *FRect,const char *logscale, int fixed,
+				int axesflag,int clip, int iso)
 {
   NspAxes *axe; 
   axe=  nsp_check_for_axes(Xgc,WRect);
@@ -4731,22 +4732,33 @@ static NspAxes *Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect
       axe->obj->fixed = fixed;
       memcpy(axe->obj->rect->R,FRect,4*sizeof(double));
     }
+  axe->obj->clip = clip;
+  axe->obj->axes = axesflag;
+  axe->obj->iso = iso;
+  nsp_axes_invalidate((NspGraphic *) axe);
   return axe;
 }
 
 static NspObjs3d *Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
-				 const double *FRect,const char *logscale, int fixed)
+				  const double *FRect,const char *logscale, int fixed,
+				  int axesflag,int clip, int iso  )
 {
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,WRect);
   if ( objs3d == NULL) return NULL;
   if ( WRect != NULL)   memcpy(objs3d->obj->wrect->R,WRect,4*sizeof(double));
   if ( ARect != NULL)   memcpy(objs3d->obj->arect->R,ARect,4*sizeof(double));
   if ( FRect != NULL)   memcpy(objs3d->obj->frect->R,FRect,4*sizeof(double));
+  /*
+  objs3d->obj->clip = clip;
+  objs3d->obj->axes = axesflag;
+  objs3d->obj->iso = iso;
+  */
+  nsp_objs3d_invalidate((NspGraphic *) objs3d);
   return objs3d ;
 }
 
 /**
- * int_xsetech:
+ * int_xsetech
  * @stack: 
  * @rhs: 
  * @opt: 
@@ -4764,6 +4776,7 @@ static NspObjs3d *Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARe
 
 static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
 {
+  int axesflag= 0, iso = FALSE, clip=TRUE;
   NspObject *ret;
   int fixed = TRUE, axe3d=FALSE;
   BCG *Xgc;
@@ -4773,7 +4786,7 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
 
   CheckLhs(0,1);
-
+  
   Xgc=nsp_check_graphic_context();
   if ( opt == 0) 
     {
@@ -4804,21 +4817,24 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
     {
       NspMatrix *Marect=NULL,*Mwrect=NULL,*Mfrect=NULL;
       int_types T[] = {new_opts, t_end} ;
-
       nsp_option opts[]={{"arect",realmat,NULLOBJ,-1},
 			 {"frect",realmat,NULLOBJ,-1},
 			 {"logflag",string,NULLOBJ,-1},
 			 {"wrect",realmat,NULLOBJ,-1},
 			 {"fixed",s_bool,NULLOBJ,-1},
 			 {"a3d",s_bool,NULLOBJ,-1},
+			 {"axesflag",s_int,NULLOBJ,-1},
+			 {"iso",s_bool,NULLOBJ,-1},
+			 {"clip",s_bool,NULLOBJ,-1},
 			 {NULL,t_end,NULLOBJ,-1},};
 
-      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed,&axe3d) == FAIL) return RET_BUG;
+      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed,&axe3d,
+		   &axesflag, &iso,&clip) == FAIL) return RET_BUG;
 
       if ( Marect != NULL) {
 	arect = Marect->R;CheckLength(NspFname(stack),opts[0].position,Marect,4);
       }
-
+      
       if ( Mfrect != NULL) {
 	frect = Mfrect->R;CheckLength(NspFname(stack),opts[1].position,Mfrect,4);
       }
@@ -4829,18 +4845,19 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
       
       if ( logflag != logflag_def ) {
 	if ( strlen(logflag) != 2 ) {
-	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\n",NspFname(stack),strlen(logflag),2 );
+	  Scierror("%s: logflag argument has a wrong length %d expecting (%d)\n",
+		   NspFname(stack),strlen(logflag),2 );
 	  return RET_BUG;
 	} 
       }
     }
   if ( axe3d == TRUE ) 
     {
-      ret = (NspObject *) Nsetscale3d_new(Xgc,wrect,arect,frect,logflag,fixed);
+      ret = (NspObject *) Nsetscale3d_new(Xgc,wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
     }
   else
     {
-      ret = (NspObject *) Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed);
+      ret = (NspObject *) Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
     }
   if ((ret =nsp_object_copy(ret)) == NULLOBJ)
     return RET_BUG;
@@ -4911,13 +4928,15 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 			  { "strf",string,NULLOBJ,-1},
 			  { "style",mat_int,NULLOBJ,-1},
 			  { "zminmax",mat,NULLOBJ,-1},
+			  { "paint",s_bool,NULLOBJ,-1},
 			  { NULL,t_end,NULLOBJ,-1}};
 
   NspAxes *axe;
   BCG *Xgc;
-  NspMatrix *Mistyle,*x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL,*Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
+  NspMatrix *Mistyle,*x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
+  NspMatrix *Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
-  int *nax,nnz= 10, frame= -1, axes=-1,mesh = FALSE, leg_posi;
+  int *nax,nnz= 10, frame= -1, axes=-1,mesh = FALSE, leg_posi,paint = TRUE;
   char *strf=NULL, *leg=NULL, *leg_pos = NULL,*logflags=NULL;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
@@ -4925,7 +4944,8 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/graphics-old/fec/fec.ex1\");",1);}
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
-	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
+	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,&paint)
+       == FAIL) return RET_BUG;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
   CheckSameDims(NspFname(stack),1,4,x,F);
@@ -4971,8 +4991,10 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
       if ( (Mcolout  = (NspMatrix *)  nsp_object_copy_and_name("co",NSP_OBJECT(Mcolout))) == NULLMAT)
 	return RET_BUG;
     }
-
-  NspFec *fec = nsp_fec_create("fec",x,y,Tr,F,Mcolminmax,Mzminmax,mesh,Mcolout,NULL);
+  if ( paint == FALSE ) mesh= TRUE;
+  
+  NspFec *fec = nsp_fec_create("fec",x,y,Tr,F,Mcolminmax,Mzminmax,mesh,
+			       paint,Mcolout,NULL);
   if ( fec == NULL) return RET_BUG;
   /* insert the new fec */
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
