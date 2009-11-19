@@ -185,7 +185,6 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 {
   int flag[]={1,2,4}, rep;
   char legend[]="X@Y@Z";
-  GdkRectangle *r = data;
   char xf[]="onn";
   char strflag[]="151";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[6];
@@ -198,37 +197,36 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
   /* check if the block is inside drawing rectangle
    */
-
-  /*y
-   * check if we are in the draw zone 
-   */
-  if ( data != NULL) 
+  
+  if ( rect != NULL) 
     {
       if ( P->obj->top == TRUE ) 
 	{
-	  GdkRectangle r1,r2;
+	  GdkRectangle r1,rect1 = *rect;
 	  int wdim[2];
 	  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
 	  r1.x=P->obj->wrect->R[0]*wdim[0];
 	  r1.y=P->obj->wrect->R[1]*wdim[1];
 	  r1.width=P->obj->wrect->R[2]*wdim[0];
 	  r1.height=P->obj->wrect->R[3]*wdim[1];
-	  if ( ! gdk_rectangle_intersect(r,&r1,&r2))
+	  if ( ! gdk_rectangle_intersect(&rect1,&r1,&rect1))
 	    {
+	      /* 
 	      Sciprintf("No need to draw one objs3d [%d,%d,%d,%d] draw=[%d,%d,%d,%d]\n",
 			r1.x,r1.y,r1.width,r1.height,
-			r->x,r->y,r->width,r->height
+			rect1.x,rect1.y,rect1.width,rect1.height
 			);
+	      */
 	      return;
 	    }
 	  else
 	    {
-	      Sciprintf("Drawing objs3d\n");
+	      /* Sciprintf("Drawing objs3d\n"); */
 	    }
 	}
       else
 	{
-	  Sciprintf("draw objs3d for non top level to be done \n");
+	  /* Sciprintf("draw objs3d for non top level to be done \n"); */
 	}
     }
   
@@ -278,10 +276,12 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 				 xf);
   
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
-  axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
-	    (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
-  frame_clip_on(Xgc);
+  if ( 0) 
+    axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
+	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
+
+  /* frame_clip_on(Xgc); */
   
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 
@@ -293,7 +293,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
-  frame_clip_off(Xgc);
+  /* frame_clip_off(Xgc); */
+
   /* title if present */
   if ( P->obj->title[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
