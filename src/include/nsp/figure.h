@@ -155,7 +155,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
-
+static void nsp_figure_process_updates(NspFigure *F);
 
 #line 161 "./figure.h"
 #endif /* NspFigure_Private */

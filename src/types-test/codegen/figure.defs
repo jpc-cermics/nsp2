@@ -73,6 +73,12 @@
   (return-type "none")
   )
 
+(define-method process_updates
+  (of-object "Figure")
+  (c-name "nsp_figure_process_updates")
+  (return-type "none")
+  )
+
 ;; overwriten 
 
 (define-method extract

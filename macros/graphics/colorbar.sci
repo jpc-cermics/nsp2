@@ -46,10 +46,8 @@ function colorbar(umin, umax, colminmax)
     wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]
     A.wrect = [wr(1) , wr(2) , 0.85*wr(3) , wr(4)]
     A.invalidate[];
-    A1=xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1],fixed=%t);
-    A1.axes = 0;  // do not draw axes 
-    A1.iso  = %f; // no iso mode 
-    A1.clip = %f; // no clip in axe 
+    A1=xsetech(wrect=wrect_cb,frect=[0 0 1 1], arect=0.125*[1 1 1 1],fixed=%t,...
+	       axesflag=0,iso =%f, clip=%f);
   else
     wr = xgetech()
     wrect_cb = [wr(1)+0.85*wr(3) , wr(2) , 0.15*wr(3) , wr(4)]

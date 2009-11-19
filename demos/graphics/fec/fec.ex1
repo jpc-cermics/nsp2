@@ -16,8 +16,13 @@ for i=1:(N-1),trianl=[trianl;i,i,i+1,N+1,0];end
 trianl=[trianl;N,N,1,N+1,0];
 triang=N;
 rect=[-1.2,-1.2,1.2,1.2];
-fec(noeul(:,2),noeul(:,3),trianl,(1:N+1)',strf="030",rect=rect,mesh=%t);
-// meshvisu(1,rect);
+z=(1:N+1)';
+if new_graphics() then 
+  // z(1:4)=%nan;
+end
+fec(noeul(:,2),noeul(:,3),trianl,z,strf='030',axesflag=2,rect=rect,mesh=%t);
+colorbar(min(z),max(z));
+
 
 
 

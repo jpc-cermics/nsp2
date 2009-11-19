@@ -46,7 +46,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F);
 static int nsp_figure_remove_element(NspFigure *F,NspGraphic *Obj);
 static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
-
+static void nsp_figure_process_updates(NspFigure *F);
 
 %%
 headers
@@ -1429,4 +1429,13 @@ void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc)
       Xgc->graphic_engine->xset_usecolor(Xgc,1);
       Xgc->graphic_engine->xset_pattern(Xgc,Gc->foreground);
     }
+}
+
+
+
+static void nsp_figure_process_updates(NspFigure *F)
+{
+  BCG *Xgc =  F->obj->Xgc;  
+  if ( Xgc == NULL ) return ;
+  Xgc->graphic_engine->process_updates(Xgc);
 }

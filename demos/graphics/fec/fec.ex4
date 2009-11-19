@@ -10,16 +10,18 @@ x=cos(n*2*%pi/N); y=sin(n*2*%pi/N);
 noeul=[(1:(N))', x', y',zeros(N,1);
        (N+1),    0,  0, 0];
 trianl=[]
-for i=1:(N-1), trianl=[trianl;i,i,i+1,N+1,0]; end
+for i=1:(N-1), 
+  trianl=[trianl;i,i,i+1,N+1,0]; 
+end
 trianl=[trianl;N,N,1,N+1,0];
 // Set the colormap
 xset("colormap",hotcolormap(N));
 // the mesh picture 
-xsetech([0,0,1.0,3/4]) // use the upper part of graphic window
+z=(1:N+1)';
 rect=[-1.2,-1.2,1.2,1.2];
-fec(noeul(:,2),noeul(:,3),trianl,(1:N+1)',strf="030",rect=rect);
-meshvisu(3,rect) // the mesh 
-// second picture to show the color scales 
-xsetech([0,3/4,1,1/5]) ; // use the lower part of graphic window
-Matplot((1:xget("lastpattern")),rect=[0,0.5,N+2,1.5]);
+fec(noeul(:,2),noeul(:,3),trianl,z,strf="030",...
+    axesflag=2,rect=rect,mesh=%t);
+colorbar(min(z),max(z));
+
+
 

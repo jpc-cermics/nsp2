@@ -625,13 +625,48 @@ function demo_anim_6()
   end
 endfunction
 
-function demo_anim_7()
+function demo_anim_7_other()
   x=%pi*(-1:0.1:1);y=x;
+  i=1;
+  champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y));
+  F=get_current_figure();
   for i=1:50
-    xclear();
-    champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y),
-           rect=[-%pi,-%pi,%pi,%pi],arfact=3)
-    xset('wshow');
+    // removing and changing a graphic object is 
+    // better than xclear for smooth animation 
+    // because process_updates is not called 
+    // xclear();
+    F(1).children.remove_first[];
+    C=champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y),...
+	     rect=[-%pi,-%pi,%pi,%pi],arfact=3)
+    C.invalidate[];
+    F.process_updates[];
+  end
+endfunction
+
+function demo_anim_7()
+  if new_graphics() then 
+    x=%pi*(-1:0.1:1);y=x;
+    M=x'*y;
+    i=1;
+    xset('thickness',2.0);
+    xset('colormap',jetcolormap(64));
+    C=champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y));
+    F=get_current_figure();
+    for i=1:50
+      C.fx = sin((i/10)+M).*M;
+      C.fy = cos((i/10)+M).*M;
+      C.invalidate[];
+      F.process_updates[];
+    end
+  else
+    x=%pi*(-1:0.1:1);y=x;
+    // xset('thickness',2.0);
+    for i=1:50
+      xclear();
+      champ1(x,y,sin((i/10)+x'*y),cos((i/10)+x'*y),...
+	     rect=[-%pi,-%pi,%pi,%pi],arfact=3)
+      xset('wshow');
+    end
   end
 endfunction
 

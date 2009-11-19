@@ -152,7 +152,7 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
     }
   if ( lhs == 1 ) 
     {
-      MoveObj(stack,1,NSP_OBJECT(rect));
+      MoveObj(stack,1,NSP_OBJECT(vf));
       return 1;
     }
   return 0;
