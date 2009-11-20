@@ -325,10 +325,13 @@ static void drawpolyline_clip_1(BCG *Xgc, double *vx, double *vy ,int n,double *
   Xgc->graphic_engine->drawpolyline_clip(Xgc,xm,ym,n,cb,closeflag);
 }
 
+#if 0 
 static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag);
+#endif 
 
 static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int n, int p, int v1)
 {
+#if 0 
   int *xm=NULL,*ym=NULL,err=0,i;
   Myalloc(&xm,&ym,n*p,&err);
   if (err  ==   1) return;
@@ -338,17 +341,19 @@ static void fillpolylines_1(BCG *Xgc, double *vx, double *vy, int *fillvect, int
   }
   else 
     Xgc->graphic_engine->fillpolylines(Xgc,xm,ym,fillvect,n,p);
-
-  /* end of code modified by polpoth 11/7/2000 */
+#else 
+  Sciprintf("Warning: fillpolylines_1 should not be called\n");
+#endif 
 
 }
-
 
 /*---------------------------------------------------------------------------------
  *This function sorts the vertices such that the color value is in decreasing order
  *---------------------------------------------------------------------------------*/
 
-static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, int *polyx, int *polyy, int *fill)
+#if 0 
+static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin, 
+			 int *polyx, int *polyy, int *fill)
 { 
   int tmp,k;
   for (k=0;k<3;k++) {polyx[k]=polyxin[k]; polyy[k]=polyyin[k]; fill[k]=fillin[k];}
@@ -370,7 +375,7 @@ static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin
   }
   return 0;
 }
-
+#endif 
 
 /*-----------------------------------------------------------------------
  * This is the main shading function. When the polygon has 4 vertices, it
@@ -379,7 +384,7 @@ static int  triangleSort(const int *polyxin,const int *polyyin,const int *fillin
  * XXXX: remplacer les malloc par graphic_alloc pour uniformiser avec les autres 
  *       routines 
  *-----------------------------------------------------------------------*/
-
+#if 0 
 static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill, int polysize, int flag)
 {
   int px[5],py[5],fil[4],is[3],ie[3],n[3];
@@ -485,6 +490,7 @@ static int nsp_shade(BCG *Xgc,const int *polyx,const int *polyy,const int *fill,
   return 0;
 }     
 
+#endif 
 
 
 

@@ -68,7 +68,7 @@ struct _nsp_gengine1 {
   driver_s_fillarc *fillarc;
   driver_s_fillarcs *fillarcs;
   driver_s_fillpolyline *fillpolyline;
-  driver_s_fillpolylines *fillpolylines;
+  driver_s_fillpolylines *zzfillpolylines; /* no more used */
   driver_s_fillrectangle *fillrectangle;
   driver_s_initialize_gc *initialize_gc;
   driver_s_xclick *xclick;

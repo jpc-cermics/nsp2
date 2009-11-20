@@ -43,6 +43,24 @@ static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors);
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
 #endif 
 
+#ifdef PERIGTK
+double nsp_predef_colors[] = 
+  {
+    0,0,0,       /* black */
+    1,1,1,       /* white */
+    0.9,0.9,0.9, /* gray */
+    0,   0, 1,   /* Blue */
+    0,   1, 0,   /* Green */
+    0,   1, 1,   /* Cyan */
+    1,   0,   0, /* Red */
+    1,   0, 1,   /* Magenta */
+    1,   0,   0, /* Yellow */
+};
+#else 
+extern double nsp_predef_colors[];
+#endif 
+
+
 /**
  * invalidate:
  * @Xgc: a #BCG 

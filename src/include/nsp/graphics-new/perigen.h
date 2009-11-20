@@ -42,12 +42,16 @@ extern void window_scale_delete(int win);
  */
 
 typedef struct _nsp_gwin_event nsp_gwin_event ;
+
 struct _nsp_gwin_event {
   int win,x,y,ibutton,mask,motion,release;
 };
 
-typedef enum { nsp_ev_motion = 0x1 , nsp_ev_release = 0x10, nsp_ev_getkey = 0x100, nsp_ev_getmenu = 0x1000 } _nsp_ev_code;
-
+typedef enum { 
+  nsp_ev_motion = 0x1 , 
+  nsp_ev_release = 0x10, 
+  nsp_ev_getkey = 0x100, 
+  nsp_ev_getmenu = 0x1000 } _nsp_ev_code;
 
 #define MaxCB 50
 
