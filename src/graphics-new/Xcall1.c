@@ -109,8 +109,8 @@ void nsp_initialize_gc( BCG *Xgc )
   Xgc->graphic_engine->xset_dash(Xgc,1);
   Xgc->graphic_engine->xset_hidden3d(Xgc,1);
   Xgc->graphic_engine->xset_thickness(Xgc,1);;
-  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground+1);
-  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumForeground+2);
+  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground);
+  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumBackground);
   Xgc->graphic_engine->xset_hidden3d(Xgc,4);
   Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
   Xgc->graphic_engine->xset_fpf_def(Xgc) ;

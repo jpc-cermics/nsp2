@@ -125,7 +125,6 @@ extern int nsp_axes_xdr_save(XDR  *xdrs, NspAxes *M);
 
 extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect) ;
 extern void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2]);
-extern NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt);
 extern BCG *nsp_check_graphic_context(void);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
@@ -138,7 +137,7 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect);
 extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
 
-#line 142 "./axes.h"
+#line 141 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -153,7 +152,7 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
-#line 36 "codegen/axes.override"
+#line 35 "codegen/axes.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -179,6 +178,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 183 "./axes.h"
+#line 182 "./axes.h"
 #endif /* NspAxes_Private */
 

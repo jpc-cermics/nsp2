@@ -29,11 +29,14 @@
  * xclea(1,0,2,6)
  */
 
-static void cleararea(BCG *Xgc,GdkRectangle *r)
+static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
-  int old= xset_pattern(Xgc,Xgc->NumBackground+1);
-  cairo_rectangle (cr,r->x,r->y,r->width,r->height);
+  int old= xset_pattern(Xgc,Xgc->NumBackground);
+  if ( r != NULL) 
+    cairo_rectangle (cr,r->x,r->y,r->width,r->height);
+  else 
+    cairo_rectangle (cr,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
   cairo_fill (cr);
   xset_pattern(Xgc,old);
 
@@ -925,26 +928,28 @@ static void xset_pixmapOn(BCG *Xgc,int num)
   
 }
 
-
 /**
- * nsp_gtk_set_color:
- * @Xgc: a #BCG  
- * @col: 
+ * xset_pattern:
+ * @Xgc: 
+ * @num: 
  * 
  * 
+ * 
+ * Returns: 
  **/
 
-static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors)
+static int  xset_pattern(BCG *Xgc,int color)
 {
   cairo_t *cr =  Xgc->private->cairo_cr; 
-  int m = colors->m;
-  if ( colors== NULL) return ;
-  Xgc->CurColor = Max(0,Min(Xgc->CurColor,Xgc->Numcolors + 2));
-  cairo_set_source_rgb(cr, colors->R[Xgc->CurColor],
-		       colors->R[Xgc->CurColor+m],
-		       colors->R[Xgc->CurColor+2*m]);
+  double rgb[3];
+  int old = xget_pattern(Xgc);
+  if ( old == color ) return old;
+  if ( Xgc->private->colors == NULL) return 1;
+  Xgc->CurColor = color = Max(1,color);
+  nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->colors);
+  cairo_set_source_rgb(cr, rgb[0], rgb[1], rgb[2]);
+  return old;
 }
-
 
 /* export cairo graphics to files in various formats 
  * This cairo facilities should be checked by configure 
@@ -958,6 +963,7 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
 
 int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option)
 {
+  NspGraphic *G;
   /* default is to follow the window size */
   int width = Xgc->CWindowWidth; 
   int height= Xgc->CWindowHeight;
@@ -1010,7 +1016,13 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
     Xgc->graphic_engine->xset_usecolor(Xgc,1);
   else
     Xgc->graphic_engine->xset_usecolor(Xgc,0);
-  Xgc->graphic_engine->tape_replay(Xgc,NULL);
+  
+  if ((G = (NspGraphic *) Xgc->figure)!= NULL)
+    {
+      G->type->draw(Xgc,G,NULL,NULL);
+    }
+  
+  
   Xgc->private->cairo_cr = cr_current;
   Xgc->graphic_engine->xset_usecolor(Xgc,uc);
   cairo_show_page (cr);

@@ -283,7 +283,9 @@ static void nsp_gc_resize_pixmap(BCG *Xgc)
 
 static void  nsp_gc_erase(BCG *Xgc)
 {
-  Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
+  NspObject *Obj= (NspObject *) Xgc->figure ;
+  nsp_object_destroy(&Obj);
+  Xgc->figure = NULL;
   Xgc->graphic_engine->invalidate(Xgc,NULL);
   Xgc->graphic_engine->process_updates(Xgc);
 }
@@ -311,6 +313,7 @@ extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufnam
 
 static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *driver,char option)
 {
+  NspGraphic *G;
   int wdim[2],*wdim_p=NULL;
   BCG *Ggc;
   int zero=0,un=1;
@@ -350,7 +353,8 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
     Ggc->graphic_engine->xset_usecolor(Ggc,zero);
   Ggc->figure = Xgc->figure ; 
   xgc_reset_scales_to_default(Ggc);
-  Ggc->graphic_engine->tape_replay(Ggc,NULL);
+  if ((G = (NspGraphic *) Xgc->figure)!= NULL)
+    G->type->draw(Ggc,G,NULL,NULL);
   Ggc->figure = NULL ; 
   Ggc->graphic_engine->xend(Xgc);
 }

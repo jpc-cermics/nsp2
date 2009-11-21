@@ -36,8 +36,9 @@
 #include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
 #include "nsp/object.h"
+#include "nsp/figure.h"
 
-static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors);
+static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
 #ifdef PERIGTK
 GTK_locator_info nsp_event_info = { -1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0};
@@ -52,9 +53,9 @@ double nsp_predef_colors[] =
     0,   0, 1,   /* Blue */
     0,   1, 0,   /* Green */
     0,   1, 1,   /* Cyan */
-    1,   0,   0, /* Red */
+    1,   0, 0,   /* Red */
     1,   0, 1,   /* Magenta */
-    1,   0,   0, /* Yellow */
+    1,   1, 0,   /* Yellow */
 };
 #else 
 extern double nsp_predef_colors[];
@@ -715,25 +716,35 @@ static int xget_thickness(BCG *Xgc)
  }
 */
 
+
 /**
- * xset_pattern:
- * @Xgc: a #BCG  
- * @num: 
+ * nsp_get_color_rgb:
+ * @Xgc: 
+ * @color: 
+ * @rgb: 
+ * @colors: 
  * 
  * 
- * 
- * Returns: 
  **/
 
-static int  xset_pattern(BCG *Xgc,int num)
-{ 
-  int old = xget_pattern(Xgc);
-  if ( old == num ) return old;
-  /* XXXX if ( Xgc->CurColorStatus == 1 )  */
-  Xgc->CurColor = Max(0,Min(num-1,Xgc->Numcolors + 2));
-  nsp_gtk_set_color_new(Xgc,Xgc->private->colors);
-  return old;
+static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors)
+{
+  if ( color <= colors->m ) 
+    {
+      rgb[0]= colors->R[color-1];
+      rgb[1]= colors->R[color-1+colors->m];
+      rgb[2]= colors->R[color-1+2*colors->m];
+    }
+  else
+    {
+      color -= colors->m +1 ;
+      color  = Min(8,color);
+      rgb[0] = nsp_predef_colors[3*color];
+      rgb[1] = nsp_predef_colors[3*color+1];
+      rgb[2] = nsp_predef_colors[3*color+2];
+    }
 }
+
 
 /**
  * xget_pattern:
@@ -747,9 +758,9 @@ static int  xset_pattern(BCG *Xgc,int num)
 static int xget_pattern(BCG *Xgc)
 { 
   if ( Xgc->CurColorStatus == 1 ) 
-    return Xgc->CurColor + 1;
+    return Xgc->CurColor;
   else 
-    return Xgc->CurPattern + 1;
+    return Xgc->CurPattern;
 }
 
 /**
@@ -765,11 +776,11 @@ static int xget_last(BCG *Xgc)
 {
   if ( Xgc->CurColorStatus == 1 ) 
     {
-      return Xgc->IDLastPattern + 1;
+      return Xgc->IDLastPattern;
     }
   else 
     {
-      return Xgc->IDLastPattern + 1;
+      return Xgc->IDLastPattern;
     }
 }
 
@@ -875,7 +886,7 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  xset_pattern(Xgc,i);
 	  i= Xgc->CurDashStyle + 1;
 	  xset_dash(Xgc,i);
-	  Xgc->IDLastPattern = GREYNUMBER - 1;
+	  Xgc->IDLastPattern = GREYNUMBER;
 	}
       else 
 	{
@@ -890,7 +901,7 @@ static void xset_usecolor(BCG *Xgc,int num)
 	  i= Xgc->CurColor + 1;
 	  xset_pattern(Xgc,i);
 	  xset_pattern(Xgc,i);
-	  Xgc->IDLastPattern = Xgc->Numcolors - 1;
+	  Xgc->IDLastPattern = Xgc->Numcolors;
 	}
     }
 }
@@ -1022,7 +1033,7 @@ static int xset_default_colormap(BCG *Xgc)
    * don't forget to add three colors at the end black, white, gray 
    */
 
-  if ((colors = nsp_matrix_create("colors",'r',m+3,3))== NULL) 
+  if ((colors = nsp_matrix_create("colors",'r',m,3))== NULL) 
     {
       return FAIL;
     }
@@ -1080,11 +1091,8 @@ static int xset_colormap(BCG *Xgc,void *a)
 	}
     }
 
-  /* Allocate a new matrix for storing the default colors 
-   * don't forget to add three colors at the end black, white, gray 
-   */
-
-  if ((colors = nsp_matrix_create("colors",'r',A->m+3,3))== NULL) 
+  /* Allocate a new matrix for storing the default colors */
+  if ((colors = nsp_matrix_create("colors",'r',A->m,3))== NULL) 
     {
       return FAIL;
     }
@@ -1107,8 +1115,6 @@ static int xset_colormap(BCG *Xgc,void *a)
   return OK;
 }
 
-
-
 /**
  * nsp_set_colormap_constants:
  * @Xgc: a #BCG  
@@ -1120,31 +1126,16 @@ static int xset_colormap(BCG *Xgc,void *a)
 #ifdef  PERIGTK
 void nsp_set_colormap_constants(BCG *Xgc,int m)
 {
-  NspMatrix *colors = Xgc->private->colors;
-  /* Black */
-  colors->R[m] = 0; 
-  colors->R[m+colors->m] = 0;
-  colors->R[m+2*colors->m] = 0;
-  /* White */
-  colors->R[m+1] = 1.0;
-  colors->R[m+1+colors->m] = 1.0;
-  colors->R[m+1+2*colors->m] = 1.0;
-  /* Gray */
-  colors->R[m+2] = 0.9; 
-  colors->R[m+2+colors->m] = 0.9;
-  colors->R[m+2+2*colors->m] = 0.9;
-  /* constants */
-  
   Xgc->Numcolors = m;
-  Xgc->IDLastPattern = m - 1;
+  Xgc->IDLastPattern = m;
+  Xgc->NumForeground = -1 ;
+  Xgc->NumBackground = -1;
+  Xgc->CurColor = -1;
   Xgc->CmapFlag = 0;
-  Xgc->NumForeground = m;
-  Xgc->NumBackground = m + 1;
   Xgc->graphic_engine->xset_usecolor(Xgc,1);
-  Xgc->graphic_engine->xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-  Xgc->graphic_engine->xset_pattern(Xgc,Xgc->NumForeground+1);
-  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground+1);
-  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumForeground+2);
+  Xgc->graphic_engine->xset_pattern(Xgc,m+1);
+  Xgc->graphic_engine->xset_foreground(Xgc,m+1);
+  Xgc->graphic_engine->xset_background(Xgc,m+2);
 }
 #endif 
 
@@ -1209,7 +1200,7 @@ static int xpush_colormap(BCG *Xgc,void *colors)
   if ( Xgc->private->q_colors == NULL) return FAIL;
   g_queue_push_head( Xgc->private->q_colors,Xgc->private->colors);
   Xgc->private->colors = colors ;
-  nsp_set_colormap_constants(Xgc,((NspMatrix *) colors)->m-3);
+  nsp_set_colormap_constants(Xgc,((NspMatrix *) colors)->m);
   return OK;
 }
 
@@ -1225,7 +1216,7 @@ static int xpop_colormap(BCG *Xgc)
   NspMatrix *C = g_queue_pop_head(Xgc->private->q_colors);
   if ( C == NULL ) return FAIL;
   Xgc->private->colors = C; 
-  nsp_set_colormap_constants(Xgc, C->m-3);
+  nsp_set_colormap_constants(Xgc, C->m);
   return OK;
 }
 
@@ -1242,31 +1233,18 @@ static int xpop_colormap(BCG *Xgc)
 
 static void xset_background(BCG *Xgc,int num)
 { 
+  const int predef =9; /* see nsp_predef_colors */
   if (Xgc->CurColorStatus == 1) 
     {
-      NspMatrix *colors = Xgc->private->colors;
-      int bg = Xgc->NumBackground =  Max(0,Min(num - 1,Xgc->Numcolors + 1));
-      if (Xgc->private->colors != NULL )
-	{
-	  /* we fix the default background in Xgc->private->gcol_bg */
-	  Xgc->private->gcol_bg.red   = (guint16)  (colors->R[bg]*65535);
-	  Xgc->private->gcol_bg.green = (guint16)  (colors->R[bg+colors->m]*65535);
-	  Xgc->private->gcol_bg.blue  = (guint16)  (colors->R[bg+2*colors->m]*65535);
-	}
-#ifndef PERIGL 
-      /* 
-       * if we change the background of the window we must change 
-       * the gc ( with alufunction ) and the window background 
-       * this is only used for xor mode but we are removing it.
-       */
-      xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-      if (Xgc->private->drawing!= NULL) 
-	{
-	  /* gdk_window_set_background(Xgc->private->drawing->window, &Xgc->private->gcol_bg); */
-	}
-#endif 
+      double rgb[3];
+      Xgc->NumBackground =  Max(1,Min(num,Xgc->Numcolors+predef));
+      nsp_get_color_rgb(Xgc,Xgc->NumBackground,rgb,Xgc->private->colors);
+      Xgc->private->gcol_bg.red   = (guint16)  (rgb[0]*65535);
+      Xgc->private->gcol_bg.green = (guint16)  (rgb[1]*65535);
+      Xgc->private->gcol_bg.blue  = (guint16)  (rgb[2]*65535);
     }
 }
+
 
 /**
  * xget_background:
@@ -1279,7 +1257,7 @@ static void xset_background(BCG *Xgc,int num)
  
 static int  xget_background(BCG *Xgc)
 { 
-  return ( Xgc->CurColorStatus == 1 ) ? Xgc->NumBackground + 1 : 1;
+  return ( Xgc->CurColorStatus == 1 ) ? Xgc->NumBackground: 1;
 }
 
 /**
@@ -1291,22 +1269,18 @@ static int  xget_background(BCG *Xgc)
  * 
  * Returns: 
  **/
-/* set and get the number of the background or foreground */
 
 static void xset_foreground(BCG *Xgc,int num)
 { 
+  const int predef =9; /* see nsp_predef_colors */
   if (Xgc->CurColorStatus == 1) 
     {
-      NspMatrix *colors = Xgc->private->colors;
-      int fg = Xgc->NumForeground = Max(0,Min(num - 1,Xgc->Numcolors + 1));
-      if (Xgc->private->colors != NULL )
-	{
-	  /* we fix the default background in Xgc->private->gcol_fg */
-	  Xgc->private->gcol_fg.red   = (guint16)  (colors->R[fg]*65535);
-	  Xgc->private->gcol_fg.green = (guint16)  (colors->R[fg+colors->m]*65535);
-	  Xgc->private->gcol_fg.blue  = (guint16)  (colors->R[fg+2*colors->m]*65535);
-	  xset_alufunction1(Xgc,Xgc->CurDrawFunction);
-	}
+      double rgb[3];
+      Xgc->NumForeground =  Max(1,Min(num,Xgc->Numcolors+predef));
+      nsp_get_color_rgb(Xgc,Xgc->NumForeground,rgb,Xgc->private->colors);
+      Xgc->private->gcol_fg.red   = (guint16)  (rgb[0]*65535);
+      Xgc->private->gcol_fg.green = (guint16)  (rgb[1]*65535);
+      Xgc->private->gcol_fg.blue  = (guint16)  (rgb[2]*65535);
     }
 }
 
@@ -1318,18 +1292,11 @@ static void xset_foreground(BCG *Xgc,int num)
  * 
  * Returns: 
  **/
+
 static int xget_foreground(BCG *Xgc)
 { 
-  if ( Xgc->CurColorStatus == 1 ) 
-    {
-      return  Xgc->NumForeground + 1;
-    }
-  else 
-    {
-      return 1 ;
-    }
+  return ( Xgc->CurColorStatus == 1 ) ? Xgc->NumForeground: 1;
 }
-
 
 /**
  * xset_hidden3d:
@@ -1347,7 +1314,7 @@ static void xset_hidden3d(BCG *Xgc,int num)
 { 
   if (Xgc->CurColorStatus == 1) 
     {
-      Xgc->NumHidden3d = Max(-2,Min(num - 1,Xgc->Numcolors + 1));
+      Xgc->NumHidden3d = Max(-2,Min(num -1,Xgc->Numcolors + 1));
     }
 }
 
@@ -1587,7 +1554,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
   glEnd();
 #endif
 
-  xset_background(Xgc,Xgc->NumBackground+1);
+  xset_background(Xgc,Xgc->NumBackground);
 
 #ifdef LIGHTS
   init_gl_lights(light0_pos); 
@@ -1721,6 +1688,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 #if defined(PERIGTK) || defined(PERICAIRO)
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+  GdkRectangle *rect;
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
@@ -1729,15 +1697,21 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   static int count = 0;
   fprintf(stderr,"Expose event %d resize=%d\n",count,dd->private->resize);
 #endif 
+
+  /* 
+   * redraw rectangle:
+   * here we use dd->private->invalidated and not 
+   * event because event is clipped to the visible 
+   * part of the drawing area and we want to keep 
+   * also correct drawing in hidden part of the 
+   * drawing area since we use a backing store pixbuf.
+   */
+  rect = ( event != NULL) ? &dd->private->invalidated : NULL;
+  
   if(dd->private->resize != 0) 
     { 
-      /* here we execute an expose and it works also when CurPixmapStatus == 1.
-       * when CurPixmapStatus == 1 the extra pixmap is resized in nsp_gr_resize
-       * and the drawing are redirected to the extra_pixmap. If a wshow is 
-       * recorded then it will copy the extra_pixmap to both window and pixmap.
-       * the last gdk_draw_drawable found here is not usefull in that case. 
+      /* we need to resize the pixmap used for drawing 
        */
-
       dd->private->resize = 0;
       if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
       dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
@@ -1745,100 +1719,62 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 					   -1);
       /* update drawable */
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
-      /* fill private background with background */
-      gdk_gc_set_rgb_fg_color(dd->private->stdgc,&dd->private->gcol_bg);
-      gdk_draw_rectangle(dd->private->pixmap,dd->private->stdgc, TRUE,0,0,dd->CWindowWidth, dd->CWindowHeight);
-      /* On lance l'action standard de resize + redessin  */
 #ifdef PERICAIRO
       if ( dd->private->cairo_cr != NULL) cairo_destroy (dd->private->cairo_cr);
       dd->private->cairo_cr = gdk_cairo_create (dd->private->pixmap);
-      /* nsp_gr_resize(dd->CurWindow); */
-      dd->actions->resize(dd);
-      /* cairo_destroy (dd->private->cairo_cr);
-       * dd->private->cairo_cr = NULL;
-       */
-#else 
-      /* nsp_gr_resize(dd->CurWindow); */
-      dd->actions->resize(dd);
 #endif 
-      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
-			dd->CWindowWidth, dd->CWindowHeight);
+      /* if we have an extra pixmap we must resize */
+      dd->graphic_engine->pixmap_resize(dd);
+      /* we want to redraw all the window */
+      dd->private->draw = TRUE;
+      rect = NULL;
+    }
+  
+  if ( dd->private->draw == TRUE ) 
+    {
+      dd->private->draw = FALSE;
+      if (dd->figure == NULL) 
+	{
+	  dd->graphic_engine->cleararea(dd,rect);
+	}
+      else
+	{
+	  NspGraphic *G = (NspGraphic *) dd->figure ;
+	  G->type->draw(dd,G,rect,NULL);
+	}
+    }
+  
+  if (event  != NULL) 
+    {
+      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
+			dd->private->pixmap,
+			event->area.x, event->area.y, event->area.x, event->area.y,
+			event->area.width, event->area.height);
+      /* debug the drawing rectangle which is updated  	  
+	 gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+	 event->area.x, event->area.y, 
+	 event->area.width, event->area.height);
+      */
     }
   else 
     {
-#ifdef DEBUG_EXPOSE
-      if ( event != NULL) 
-	fprintf(stderr,"draw=%s, with area [%d,%d]->[%d,%d]\n", 
-		dd->private->draw == TRUE ? "T":"F",
-		event->area.x, event->area.y,
-		event->area.x+ event->area.width, event->area.y+ event->area.height);
-      else 
-	fprintf(stderr,"draw=%s, with full area %d %d %d %d\n", 
-		dd->private->draw == TRUE ? "T":"F",0,0,
-		dd->CWindowWidth, dd->CWindowHeight);
-      fprintf(stderr,"With dd->private->invalidated.x [%d,%d]->[%d,%d]\n",
-	      dd->private->invalidated.x, dd->private->invalidated.y,
-	      dd->private->invalidated.x+ dd->private->invalidated.width,
-	      dd->private->invalidated.y+ dd->private->invalidated.height);
-
-#endif 
-      
-      if ( dd->private->draw == TRUE ) 
-	{
-	  dd->private->draw = FALSE;
-	  if ( event != NULL) 
-	    {
-	      /* 
-	       * here we use dd->private->invalidated and not 
-	       * event because event is clipped to the visible 
-	       * part of the drawing area and we want to keep 
-	       * also correct drawing in hidden part of the 
-	       * drawing area since we use a backing store pixbuf.
-	       */
-	      dd->graphic_engine->cleararea(dd,&dd->private->invalidated);
-	      dd->graphic_engine->xset_clip(dd,&dd->private->invalidated);
-	      dd->graphic_engine->tape_replay(dd,&dd->private->invalidated);
-	      dd->graphic_engine->xset_unclip(dd);
-	    }
-	  else
-	    {
-	      dd->graphic_engine->clearwindow(dd);
-	      dd->graphic_engine->tape_replay(dd,NULL);
-	    }
-	}
-      
-      if (event  != NULL) 
-	{
-	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
-			    dd->private->pixmap,
-			    event->area.x, event->area.y, event->area.x, event->area.y,
-			    event->area.width, event->area.height);
-	  /* debug the drawing rectangle which is updated  	  
-	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
-			     event->area.x, event->area.y, 
-			     event->area.width, event->area.height);
-	  */
-	}
-      else 
-	{
-	  gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
-			    dd->private->pixmap,
-			    0,0,0,0,
-			    dd->CWindowWidth, dd->CWindowHeight);
-	}
-      /* if a zrect exists then add it on graphics  */
-      if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
-	{
-	  gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
-			     dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
-	}
-
-      dd->private->invalidated.x = 0;
-      dd->private->invalidated.y = 0;
-      dd->private->invalidated.width = 0;
-      dd->private->invalidated.height = 0;
-      
+      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
+			dd->private->pixmap,
+			0,0,0,0,
+			dd->CWindowWidth, dd->CWindowHeight);
     }
+  /* if a zrect exists then add it on graphics  */
+  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+    {
+      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+    }
+  
+  dd->private->invalidated.x = 0;
+  dd->private->invalidated.y = 0;
+  dd->private->invalidated.width = 0;
+  dd->private->invalidated.height = 0;
+  
   gdk_flush();
   return FALSE;
 }
@@ -1850,17 +1786,15 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 /* periGL version */
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+  GdkRectangle *rect;
   BCG *dd = (BCG *) data;
-  /* 
-   *  GdkGLContext *glcontext = gtk_widget_get_gl_context (widget);
-   *  GdkGLDrawable *gldrawable = gtk_widget_get_gl_drawable (widget);
-   */
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  
-  /* glLineWidth(1.5);  FIXME */ 
 
+  /*   rect = ( event != NULL) ? &dd->private->invalidated : NULL; */
+  rect = ( event != NULL) ? &event->area : NULL;
+    
   if ( dd->private->resize != 0)  
     { 
       /* redraw after resize 
@@ -1870,49 +1804,50 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
       glClear(GL_DEPTH_BUFFER_BIT);
       nsp_ogl_set_view(dd);
-      /* nsp_gr_resize(dd->CurWindow); */
-      dd->actions->resize(dd);
-      /* Swap buffers or flush */
+      /* if we have an extra pixmap we must resize */
+      dd->graphic_engine->pixmap_resize(dd);
+      /* we want to redraw all the window */
+      dd->private->draw = TRUE;
+      rect = NULL;
+    }
+
+  if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
+
+  /* with this driver we have to draw all times */
+  
+  if ( 1 ||  dd->private->draw == TRUE  ) 
+    {
+      /* just redraw if we have recorded stuffs */
+      /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
+      glClear(GL_DEPTH_BUFFER_BIT);
+      nsp_ogl_set_view(dd);
+      dd->private->draw = FALSE;
+      /* need to redraw */
+      if (dd->figure == NULL) 
+	{
+	  dd->graphic_engine->cleararea(dd,rect);
+	}
+      else
+	{
+	  NspGraphic *G = (NspGraphic *) dd->figure ;
+	  G->type->draw(dd,G,rect,NULL);
+	}
+      if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+	dd->graphic_engine->drawrectangle(dd,dd->zrect);
       if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
 	gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
       else
 	glFlush ();
-      gdk_gl_drawable_gl_end (dd->private->gldrawable);
     }
   else 
     {
-      /* just an expose without resizing we need to redraw  */ 
-      if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
-      /* we could take care here of  dd->private->draw == TRUE 
-       */
-      if ( TRUE == TRUE  ) 
-	{
-	  /* just redraw if we have recorded stuffs */
-	  /* glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); */
-	  glClear(GL_DEPTH_BUFFER_BIT);
-	  nsp_ogl_set_view(dd);
-	  dd->private->draw = FALSE;
-	  /* need to redraw */
-	  /* nsp_gr_replay(dd->CurWindow); */
-	  dd->graphic_engine->clearwindow(dd);
-	  dd->graphic_engine->tape_replay(dd,NULL);
-	  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
-	    dd->graphic_engine->drawrectangle(dd,dd->zrect);
-	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
-	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
-	  else
-	    glFlush ();
-	}
-      else 
-	{
-	  /* just try a swap buffer ? */
-	  if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
-	    gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
-	  else
-	    glFlush ();
-	}
-      gdk_gl_drawable_gl_end (dd->private->gldrawable);
+      /* just try a swap buffer ? */
+      if (gdk_gl_drawable_is_double_buffered (dd->private->gldrawable))
+	gdk_gl_drawable_swap_buffers (dd->private->gldrawable);
+      else
+	glFlush ();
     }
+  gdk_gl_drawable_gl_end (dd->private->gldrawable);
   return FALSE;
 }
 

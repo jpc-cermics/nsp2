@@ -2038,10 +2038,8 @@ static void  nsp_gwin_clear(BCG *Xgc)
 {
   if ( Xgc != NULL) 
     if ( Xgc->graphic_engine->xget_autoclear(Xgc) == 1 ) 
-      {
-	Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
-	Xgc->graphic_engine->invalidate(Xgc,NULL);
-	Xgc->graphic_engine->process_updates(Xgc);
+      {	
+	Xgc->actions->erase(Xgc);
       }
 }
 
@@ -2767,9 +2765,7 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
 	  int wid = l1->R[ix];
 	  if (( Xgc=window_list_search_new(wid)) != NULL) 
 	    {
-	      Xgc->graphic_engine->tape_clean_plots(Xgc,wid);
-	      Xgc->graphic_engine->invalidate(Xgc,NULL);
-	      Xgc->graphic_engine->process_updates(Xgc);
+	      Xgc->actions->erase(Xgc);
 	    }
 	}
     } 
@@ -2777,9 +2773,7 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
     {
       if ((Xgc = window_list_get_first()) != NULL) 
 	{
-	  Xgc->graphic_engine->tape_clean_plots(Xgc,Xgc->CurWindow);
-	  Xgc->graphic_engine->invalidate(Xgc,NULL);
-	  Xgc->graphic_engine->process_updates(Xgc);
+	  Xgc->actions->erase(Xgc);
 	}
     }
   return 0;
@@ -3293,7 +3287,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
       break;
     case xget_lastpattern:
       if ( Gc->colormap != NULL &&Gc->colormap->mn != 0 ) 
-	val = Gc->colormap->m -3 ;
+	val = Gc->colormap->m ;
       else 
 	val = Xgc->graphic_engine->xget_last(Xgc);
       if ( nsp_move_double(stack,1,(double) val) == FAIL) return RET_BUG;
@@ -3356,7 +3350,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
       break;
     case xget_white:
       if ( Gc->colormap != NULL &&Gc->colormap->mn != 0 ) 
-	val = Gc->colormap->m-3 ;
+	val = Gc->colormap->m ;
       else 
 	val = Xgc->graphic_engine->xget_last(Xgc);
       if ( nsp_move_double(stack,1,(double) val+2) == FAIL) return RET_BUG;
@@ -4072,10 +4066,8 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       CheckRhs(2,2);
       if ( (M = GetRealMat(stack,2)) == NULLMAT) return RET_BUG; 
       CheckCols(NspFname(stack),2,M,3);
-      if (( Mc  = nsp_matrix_create("cmap",'r',M->m+3,M->n))== NULLMAT) return RET_BUG;
-      memcpy(Mc->R, M->R, M->m*sizeof(double));
-      memcpy(Mc->R+Mc->m, M->R+M->m, M->m*sizeof(double));
-      memcpy(Mc->R+2*Mc->m, M->R+2*M->m, M->m*sizeof(double));
+      if (( Mc  = nsp_matrix_create("cmap",'r',M->m,M->n))== NULLMAT) return RET_BUG;
+      memcpy(Mc->R, M->R, M->mn*sizeof(double));
       nsp_figure_data_set_colormap(F,Mc);
       /* need to invalidate */
       Xgc->graphic_engine->invalidate(Xgc,NULL);
@@ -4633,7 +4625,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
     case 1 : /* clear */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      Xgc->graphic_engine->tape_clean_plots(Xgc,num);
+      /* Xgc->graphic_engine->tape_clean_plots(Xgc,num); */
       break;
     case 2 : /* replay */
       CheckRhs(2,2);
@@ -5242,7 +5234,7 @@ static int int_xs2ps(Stack stack, int rhs, int opt, int lhs)
   return int_export_G(stack,rhs,opt,lhs,"cairo-ps");
 }
 
-static int int_xexport(Stack stack, int rhs, int opt, int lhs)
+static int int_xexport_new(Stack stack, int rhs, int opt, int lhs)
 {
   return int_export_G(stack,rhs,opt,lhs,NULL);
 }
@@ -6332,7 +6324,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xdraw_pixbuf"),int_draw_pixbuf},
   {NAMES("xdraw_pixbuf_from_file"),int_draw_pixbuf_from_file},
   {NAMES("xend"),int_xend_new},
-  {NAMES("xexport"),int_xexport},
+  {NAMES("xexport"),int_xexport_new},
   {NAMES("xfarc"),int_xfarc_new},
   {NAMES("xfarcs"),int_xfarcs_new},
   {NAMES("xflush"),int_xflush},

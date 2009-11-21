@@ -171,7 +171,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   NewXgc->CurHardSymbSize=0;
   NewXgc->CurLineWidth=0;
   NewXgc->CurPattern=0;
-  NewXgc->CurColor=0;
+  NewXgc->CurColor=1;
   NewXgc->CurPixmapStatus=0;
   NewXgc->CurVectorStyle=0;
   NewXgc->CurDrawFunction=0;

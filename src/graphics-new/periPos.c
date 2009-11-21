@@ -130,7 +130,7 @@ static void xgetmouse(BCG *Xgc,char *str, int *ibutton,int *imask, int *x1, int 
 
 /** Clear a rectangle **/
 
-void cleararea(BCG *Xgc,GdkRectangle *r)
+void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
   FPRINTF((file,"\n [ %d %d %d %d ] clearzone",r->x,r->y,r->width,r->height));
 }

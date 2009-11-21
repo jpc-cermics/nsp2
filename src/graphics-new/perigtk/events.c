@@ -727,9 +727,6 @@ static void nsp_event_pause(int number)
 
 
 
-extern void *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
-
-
 static void  
 target_drag_data_received  (GtkWidget          *widget,
 			    GdkDragContext     *context,

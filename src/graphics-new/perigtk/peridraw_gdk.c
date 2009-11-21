@@ -25,11 +25,15 @@
  * clear a rectangle using background 
  */
 
-static void cleararea(BCG *Xgc, GdkRectangle *r)
+static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
-  int old= xset_pattern(Xgc,Xgc->NumBackground+1);
-  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
-		     r->x,r->y,r->width,r->height);
+  int old= xset_pattern(Xgc,Xgc->NumBackground);
+  if ( r != NULL) 
+    gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
+		       r->x,r->y,r->width,r->height);
+  else 
+    gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, TRUE,
+		       0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
   xset_pattern(Xgc,old);
 }
 
@@ -675,28 +679,35 @@ static void xset_pixmapOn(BCG *Xgc,int num)
   
 }
 
+
 /**
- * nsp_gtk_set_color:
- * @Xgc: a #BCG  
- * @col: 
+ * xset_pattern:
+ * @Xgc: 
+ * @num: 
  * 
  * 
+ * 
+ * Returns: 
  **/
 
-static void nsp_gtk_set_color_new(BCG *Xgc, NspMatrix *colors)
+static int  xset_pattern(BCG *Xgc,int color)
 {
-  int m = colors->m;
   GdkColor temp;
-  if ( colors == NULL) return ;
-  Xgc->CurColor = Max(0,Min(Xgc->CurColor,Xgc->Numcolors + 2));
+  double rgb[3];
+  int old = xget_pattern(Xgc);
+  if ( old == color ) return old;
+  if ( Xgc->private->colors == NULL) return 1 ;
   if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL) 
     {
       gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
     }
-  temp.red   = (guint16)  (colors->R[Xgc->CurColor]*65535);
-  temp.green = (guint16)  (colors->R[Xgc->CurColor+m]*65535);
-  temp.blue  = (guint16)  (colors->R[Xgc->CurColor+2*m]*65535);
+  Xgc->CurColor = color = Max(1,color);
+  nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->colors);
+  temp.red   = (guint16)  (rgb[0]*65535);
+  temp.green = (guint16)  (rgb[1]*65535);
+  temp.blue  = (guint16)  (rgb[2]*65535);
   gdk_gc_set_rgb_fg_color(Xgc->private->wgc,&temp);
+  return old;
 }
 
 

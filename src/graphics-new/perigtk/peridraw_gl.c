@@ -27,9 +27,16 @@
  * cleararea: clear a rectangle zone 
  */
 
-static void cleararea(BCG *Xgc, GdkRectangle *r)
+static void cleararea(BCG *Xgc,const GdkRectangle *r)
 {
-  int old= xset_pattern(Xgc,Xgc->NumBackground+1);
+  int old;
+  nsp_ogl_set_2dview(Xgc);
+  if ( r == NULL ) 
+    {
+      clearwindow(Xgc);
+      return ;
+    }
+  old = xset_pattern(Xgc,Xgc->NumBackground);
   glBegin(GL_QUADS);
   glVertex2i(r->x        ,r->y);
   glVertex2i(r->x+r->width,r->y);
@@ -416,9 +423,8 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
   dx = ink_rect.x + ink_rect.width/2.0;
   dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
-  /* gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout); */
   Xgc->CurColor=1;
-  nsp_gtk_set_color_new(Xgc,Xgc->private->colors);
+  xset_pattern(Xgc,Xgc->CurColor);
   glRasterPos2i(*x-PANGO_PIXELS(dx),*y + PANGO_PIXELS(-dy));
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
   if (0) 
@@ -1016,21 +1022,33 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap)
   return TRUE;
 }
 
+
 /**
- * nsp_gtk_set_color:
- * @Xgc: a #BCG  
- * @col: 
+ * xset_pattern:
+ * @Xgc: 
+ * @num: 
  * 
  * 
+ * 
+ * Returns: 
  **/
 
-static void nsp_gtk_set_color_new(BCG *Xgc,NspMatrix *colors)
+static int  xset_pattern(BCG *Xgc,int color)
 {
-  int m = colors->m;
-  if ( colors == NULL) return ;
-  Xgc->CurColor = Max(0,Min(Xgc->CurColor,Xgc->Numcolors + 2));
-  glColor3d(colors->R[Xgc->CurColor],colors->R[Xgc->CurColor+m],colors->R[Xgc->CurColor+2*m]);
+  double rgb[3];
+  int old = xget_pattern(Xgc);
+  if ( old == color ) return old;
+  if ( Xgc->private->colors == NULL) return 1;
+  if ( gdk_gc_get_colormap(Xgc->private->wgc) == NULL) 
+    {
+      gdk_gc_set_colormap(Xgc->private->wgc,Xgc->private->colormap);
+    }
+  Xgc->CurColor = color = Max(1,color);
+  nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->colors);
+  glColor3d(rgb[0], rgb[1], rgb[2]);
+  return old;
 }
+
 
 
 #if 0 

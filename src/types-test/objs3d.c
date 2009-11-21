@@ -1780,7 +1780,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
     }
 
   B->color = box_color;
-  
+
   B->coord[0]  = xmin; B->coord[1]  = ymin; B->coord[2]  = zmin; //1
   B->coord[3]  = xmax; B->coord[4]  = ymax; B->coord[5]  = zmax; //2
   B->coord[6]  = xmin; B->coord[7]  = ymin; B->coord[8]  = zmax; //3

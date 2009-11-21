@@ -18,7 +18,7 @@ typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],co
 typedef void driver_fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 					  int remap,const int *colminmax,const double *zminmax);
 typedef void driver_boundingbox( BCG *gc,char *string, int x, int y, int *rect);
-typedef void driver_cleararea( BCG *gc, GdkRectangle *r);
+typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
 typedef void driver_displaynumbers( BCG *gc,int *x, int *y, int n, int flag, double *z, double *alpha);
 typedef void driver_displaystring( BCG *gc,char *string, int x, int y, int flag, double angle);

@@ -248,10 +248,19 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   NspFigure *F = (NspFigure *) Obj;
   /* set up values according to figure */
   nsp_figure_set_gc_values(F);
-  /* push figure colors in Xgc 
-   * Note that this will reset fg,bg, colors etc.... 
-   */
   rep = Xgc->graphic_engine->xpush_colormap(Xgc, F->obj->gc->colormap);
+
+  /* clear proper zone */
+  if ( rect != NULL)
+    {
+      Xgc->graphic_engine->cleararea(Xgc,rect);
+      Xgc->graphic_engine->xset_clip(Xgc,rect);
+    }
+  else 
+    {
+      Xgc->graphic_engine->clearwindow(Xgc);
+    }
+
   /* draw elements */
   L = F->obj->children;
   cloc = L->first ;
@@ -266,6 +275,8 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     }
   /* reset Xgc colors */
   if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
+  /* unclip */
+  Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
 
@@ -546,7 +557,7 @@ static NspFigure *nsp_get_current_figure(void)
   if ( Xgc == NULL) return NULL;
   if ((F = (NspObject *) Xgc->figure)== NULL)
     return NULL;
-  if ( ! IsFigure(F)) 
+  if (F == NULL || ! IsFigure(F)) 
     return NULL;
   return (NspFigure *) F;
 }
@@ -893,7 +904,7 @@ NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt)
   NspObject *Obj=NULLOBJ,*Res=NULLOBJ;
   NspList *L;
   NspFigure  *F = (NspFigure *) Xgc->figure;
-  if ( ! IsFigure((NspObject *) F)) return NULL;
+  if ( F== NULL ||  ! IsFigure((NspObject *) F)) return NULL;
 
   L= F->obj->children;
   /* return the first axes or objs3d found 
@@ -1095,9 +1106,8 @@ NspFigure *nsp_get_figure(BCG *Xgc)
 {
   NspObject  *F = NULL;
   if ( Xgc == NULL) return NULL;
-  F = Xgc->figure; 
-  if ( F == NULL) return NULL;
-  if ( ! IsFigure(F)) return NULL;
+  F = Xgc->figure;
+  if ( F== NULL || ! IsFigure(F)) return NULL;
   return (NspFigure *) F;
 }
 
@@ -1354,16 +1364,20 @@ static void nsp_figure_set_gc_values(NspFigure *F)
   Gc = F->obj->gc;
   if ( Xgc == NULL) return;
   Xgc->graphic_engine->xset_pattern(Xgc,Gc->color);
-  Xgc->graphic_engine->xset_background(Xgc,Gc->background);
-  /*    '("NspMatrix*" "colormap") */
+  if ( Gc->background != -1 ) 
+    Xgc->graphic_engine->xset_background(Xgc,Gc->background);
+  else
+    Gc->background= Xgc->graphic_engine->xget_background(Xgc);
+  if ( Gc->foreground != -1 ) 
+    Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
+  else
+    Gc->foreground= Xgc->graphic_engine->xget_foreground(Xgc);
   Xgc->graphic_engine->xset_dash(Xgc,Gc->dashes);
   Xgc->graphic_engine->xset_font(Xgc,Gc->font,Gc->font_size);
-  Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
   Xgc->graphic_engine->xset_hidden3d(Xgc,Gc->hidden3d);
   Xgc->graphic_engine->xset_absourel(Xgc,Gc->line_mode);
   Xgc->graphic_engine->xset_dash(Xgc,Gc->line_style);
   Xgc->graphic_engine->xset_mark(Xgc,Gc->mark,Gc->mark_size);
-  /* '("int" "pattern" "std" "1") */
   Xgc->graphic_engine->xset_pixmapOn(Xgc,Gc->pixmap);
   Xgc->graphic_engine->xset_thickness(Xgc,Gc->thickness);
   Xgc->graphic_engine->xset_usecolor(Xgc,Gc->use_color);
@@ -1404,29 +1418,19 @@ void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc)
 {
   NspFigureData *Gc = F->obj->gc;
   BCG *Xgc =  F->obj->Xgc;  
-  int m = Mc->m -3;
+  int m = Mc->m;
   if ( Gc->colormap != NULL) nsp_matrix_destroy(Gc->colormap);
   Gc->colormap = Mc; 
-  /* Black */
-  Mc->R[m] = 0; 
-  Mc->R[m+Mc->m] = 0;
-  Mc->R[m+2*Mc->m] = 0;
-  /* White */
-  Mc->R[m+1] = 1.0;
-  Mc->R[m+1+Mc->m] = 1.0;
-  Mc->R[m+1+2*Mc->m] = 1.0;
-  /* Gray */
-  Mc->R[m+2] = 0.9; 
-  Mc->R[m+2+Mc->m] = 0.9;
-  Mc->R[m+2+2*Mc->m] = 0.9;
-  /* constants */
   Gc->foreground = m+1;
   Gc->background = m+2;
   if ( Xgc != NULL ) 
     {
-      Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
-      Xgc->graphic_engine->xset_background(Xgc,Gc->background);
       Xgc->graphic_engine->xset_usecolor(Xgc,1);
+      Xgc->graphic_engine->xset_foreground(Xgc,-1);
+      Xgc->graphic_engine->xset_foreground(Xgc,Gc->foreground);
+      Xgc->graphic_engine->xset_background(Xgc,-1);
+      Xgc->graphic_engine->xset_background(Xgc,Gc->background);
+      Xgc->graphic_engine->xset_pattern(Xgc,-1);
       Xgc->graphic_engine->xset_pattern(Xgc,Gc->foreground);
     }
 }

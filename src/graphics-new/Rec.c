@@ -38,11 +38,9 @@
  * old drivers.
  */
 
-
 void tape_replay_undo_scale(BCG *Xgc)
 { 
   Sciprintf("This function should not be called\n");
-
 }
 
 void tape_replay_new_angles(BCG *Xgc)
@@ -50,22 +48,14 @@ void tape_replay_new_angles(BCG *Xgc)
   Sciprintf("This function should not be called\n");
 }
 
-
-/**
- * tape_clean_plots:
- * @Xgc: 
- * @winnumber: 
- * 
- * 
- **/
-
 void tape_clean_plots(BCG *Xgc,int winnumber)
 {
-  NspObject *Obj;
-  if ( Xgc == NULL || Xgc->figure == NULL ) return ;
-  Obj = (NspObject *) Xgc->figure ;
-  nsp_object_destroy(&Obj);
-  Xgc->figure = NULL;
+  Sciprintf("This function should not be called\n");
+}
+
+void tape_replay(BCG *Xgc,const GdkRectangle *rect)
+{ 
+  Sciprintf("This function should not be called\n");
 }
 
 /**
@@ -120,24 +110,5 @@ void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double 
       bbox1[3]= YDouble2Pixel(Xgc->scales,bbox[3]);
       nsp_figure_zoom(Xgc,bbox1);
     }
-}
-
-/**
- * tape_replay:
- * @Xgc: 
- * @winnumber: 
- * @rect: 
- * 
- * call the draw method on the figure contained 
- * in Xgc. Then call a graphic handler if such handler exists. 
- *
- **/
-
-void tape_replay(BCG *Xgc,const GdkRectangle *rect)
-{ 
-  NspGraphic *G;
-  if ( Xgc == NULL || Xgc->figure == NULL ) return ;
-  G = (NspGraphic *) Xgc->figure ;
-  G->type->draw(Xgc,G,rect,NULL);
 }
 
