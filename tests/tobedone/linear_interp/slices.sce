@@ -10,6 +10,7 @@ function v=f(x,y,z)
 endfunction
 
 mx = 60; my = 90; mz = 60;
+//mx = 6; my = 9; mz = 6;
 dir = ["z=", "z=", "z=", "y=", "y=", "y=", "y="];
 val = [ 0.1,  0.5,  0.9, -0.1,  0.3,  0.7,  1.1];
 ebox = [0, 1, -0.2, 1.3, 0, 1];
@@ -32,11 +33,11 @@ xset("colormap",jetcolormap(nb_col));
 xset("hidden3d",0)
 //xset("font",6,1)
 xset("font size",1)
-colorbar(vmin,vmax)
-plot3d(XF, YF, ZF, colors=-color, flag=[-1 6 4], alpha=75, theta=20)
+plot3d(XF, YF, ZF, colors=color, flag=[-1 6 4], alpha=75, theta=20)
 //xset("font",6,2)
 xset("font size",2)
 xtitle("some slices of "+func)
 //xset("font",6,1)
 xset("font size",1)
+colorbar(vmin,vmax)
 xselect()

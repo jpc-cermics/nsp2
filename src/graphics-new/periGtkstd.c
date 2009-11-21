@@ -1856,18 +1856,25 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 /* periGL version */
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
+  GdkRectangle *rect;
   BCG *dd = (BCG *) data;
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-  /* {static int count = 0; xinfo(dd,"Expose event %d",count++);} */
+
+  /* 
+   * redraw rectangle:
+   * here we use dd->private->invalidated and not 
+   * event because event is clipped to the visible 
+   * part of the drawing area and we want to keep 
+   * also correct drawing in hidden part of the 
+   * drawing area since we use a backing store pixbuf.
+   */
+  rect = ( event != NULL) ? &dd->private->invalidated : NULL;
+
   if(dd->private->resize != 0) 
     { 
-      /* here we execute an expose and it works also when CurPixmapStatus == 1.
-       * when CurPixmapStatus == 1 the extra pixmap is resized in nsp_gr_resize
-       * and the drawing are redirected to the extra_pixmap. If a wshow is 
-       * recorded then it will copy the extra_pixmap to both window and pixmap.
-       * the last gdk_draw_drawable found here is not usefull in that case. 
+      /* we need to resize the pixmap used for drawing 
        */
       dd->private->resize = 0;
       if ( dd->private->pixmap ) 
@@ -1887,51 +1894,59 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       if ( dd->CurPixmapStatus == 0 ) dd->private->drawable = dd->private->pixmap;
       /* fill private background with background */
       pixmap_clear_rect(dd,0,0,dd->CWindowWidth, dd->CWindowHeight);
-      /* we resize and draw  
-       * Note that the gldrawable will be changed in nsp_gr_resize if we are 
-       * using the extra_pixmap.
-       */
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
-      gdk_gl_drawable_gl_begin(dd->private->gldrawable, dd->private->glcontext);  
       dd->private->gl_only = TRUE;
-      /* nsp_gr_resize(dd->CurWindow); */
-      dd->actions->resize(dd);
-      gdk_gl_drawable_gl_end (dd->private->gldrawable);
-      glFlush ();
-      gdk_gl_drawable_wait_gl (dd->private->gldrawable);
-      /* synchronize pixmap */
-      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
-		      dd->CWindowWidth, dd->CWindowHeight);
+      /* if we have an extra pixmap we must resize */
+      dd->graphic_engine->pixmap_resize(dd);
+      /* we want to redraw all the window */
+      dd->private->draw = TRUE;
+      rect = NULL;
+    }
+
+  if ( dd->private->draw == TRUE ) 
+    {
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
+      gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
+      dd->private->draw = FALSE;
+      dd->private->gl_only = TRUE;
+      if (dd->figure == NULL) 
+	{
+	  dd->graphic_engine->cleararea(dd,rect);
+	}
+      else
+	{
+	  NspGraphic *G = (NspGraphic *) dd->figure ;
+	  G->type->draw(dd,G,rect,NULL);
+	}
+      gdk_gl_drawable_gl_end (dd->private->gldrawable);
+    }
+
+  glFlush ();
+  gdk_gl_drawable_wait_gl(dd->private->gldrawable);
+
+  if (event  != NULL) 
+    {
+      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+			event->area.x, event->area.y, event->area.x, event->area.y,
+			event->area.width, event->area.height);
     }
   else 
     {
-      if ( dd->private->draw == TRUE ) 
-	{
-	  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
-	  gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
-	  dd->private->draw = FALSE;
-	  dd->private->gl_only = TRUE;
-	  /* nsp_gr_replay(dd->CurWindow); */
-	  dd->graphic_engine->clearwindow(dd);
-	  dd->graphic_engine->tape_replay(dd,dd->CurWindow);
-	  gdk_gl_drawable_gl_end (dd->private->gldrawable);
-	}
-      glFlush ();
-      gdk_gl_drawable_wait_gl(dd->private->gldrawable);
-      if (event  != NULL) 
-	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
-			event->area.x, event->area.y, event->area.x, event->area.y,
-			event->area.width, event->area.height);
-      else 
-	gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
-      /* if a zrect exists then add it on graphics  */
-      if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
-	gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
-			   dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
+  /* if a zrect exists then add it on graphics  */
+  if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
+    {
+      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+    }
+
+  dd->private->invalidated.x = 0;
+  dd->private->invalidated.y = 0;
+  dd->private->invalidated.width = 0;
+  dd->private->invalidated.height = 0;
+  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
+
   gdk_flush();
   return FALSE;
 }
