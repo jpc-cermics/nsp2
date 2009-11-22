@@ -1693,10 +1693,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   g_return_val_if_fail(dd != NULL, FALSE);
   g_return_val_if_fail(dd->private->drawing != NULL, FALSE);
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
-#ifdef DEBUG_EXPOSE
-  static int count = 0;
-  fprintf(stderr,"Expose event %d resize=%d\n",count,dd->private->resize);
-#endif 
 
   /* 
    * redraw rectangle:
@@ -1750,7 +1746,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
-      /* debug the drawing rectangle which is updated  	  
+      /* debug the drawing rectangle which is updated        
 	 gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 	 event->area.x, event->area.y, 
 	 event->area.width, event->area.height);

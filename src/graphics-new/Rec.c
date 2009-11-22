@@ -20,18 +20,8 @@
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
-#include <string.h> /* in case of dbmalloc use */
-#include <stdio.h>
-#include <math.h>
-#include "nsp/math.h"
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/object.h"
-#include "../system/files.h" /* FSIZE */
-#include <gtk/gtk.h>
-#include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h> 
-#include <nsp/objs3d.h> 
 
 /* just kept for compatibility since 
  * it must be kept in drivers to match 
@@ -58,6 +48,14 @@ void tape_replay(BCG *Xgc,const GdkRectangle *rect)
   Sciprintf("This function should not be called\n");
 }
 
+
+void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag,
+			   int *aaint,double *bbox, 
+			   int *ibbox)
+{ 
+  Sciprintf("This function should not be called\n");
+}
+
 /**
  * tape_check_recorded_3D:
  * @Xgc: 
@@ -76,39 +74,3 @@ int tape_check_recorded_3D(BCG *Xgc,int winnumber)
    */
   return OK;
 }
-
-
-/**
- * tape_replay_new_scale:
- * @Xgc: 
- * @winnumber: 
- * @flag: 
- * @aaint: 
- * @bbox: 
- * @ibbox: 
- * 
- * used when zooming: replay with a new scale 
- * the new scale is coded in bbox=[xmin,ymin,xmax,ymax] 
- * the problem is a bit complex if we have many subwindows 
- * 
- **/
-
-void tape_replay_new_scale(BCG *Xgc,int winnumber, int *flag, int *aaint,double *bbox, 
-			   int *ibbox)
-{ 
-  /* get the bounding box in pixel */
-  int bbox1[4];
-  if ( ibbox != NULL) 
-    {
-      nsp_figure_zoom(Xgc,ibbox);
-    }
-  else
-    {
-      bbox1[0]= XDouble2Pixel(Xgc->scales,bbox[0]);
-      bbox1[1]= YDouble2Pixel(Xgc->scales,bbox[1]);
-      bbox1[2]= XDouble2Pixel(Xgc->scales,bbox[2]);
-      bbox1[3]= YDouble2Pixel(Xgc->scales,bbox[3]);
-      nsp_figure_zoom(Xgc,bbox1);
-    }
-}
-

@@ -21,7 +21,8 @@
  *--------------------------------------------------------------------------*/
 
 /*------------------------------------------------------------------------
- * the functions in this file are stored in the global struct Gengine nsp_gengine1
+ * the functions in this file are stored in the global struct 
+ * Gengine nsp_gengine1
  * they are used when a graphic order is to be recorded or 
  * if it needs scale changes from pixel to double or both. 
  *--------------------------------------------------------------------------*/
@@ -98,7 +99,7 @@ void nsp_initialize_gc( BCG *Xgc )
   Xgc->graphic_engine->xset_unclip(Xgc);
   Xgc->graphic_engine->xset_font(Xgc,2,1);
   Xgc->graphic_engine->xset_mark(Xgc,0,0);
-  /** Absolute coord mode  **/
+  /* Absolute coord mode */
   Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
   /* initialisation des pattern dash par defaut en n&b */
   Xgc->graphic_engine->xset_default_colormap(Xgc);

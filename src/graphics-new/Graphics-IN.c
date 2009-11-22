@@ -92,6 +92,7 @@ static int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int 
 static const double  rect_def[]= {0.,0.,10.0,10.0}; 
 static double rect_loc[]=  {0.,0.,10.0,10.0}; 
 static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix *var);
+static void replay_new_scale(BCG *Xgc,double *bbox);
 
 /**
  * int_champ_G:
@@ -4664,7 +4665,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	  if ((M= GetRealMatInt(stack,4))  == NULLMAT) return RET_BUG;
 	  CheckLength(NspFname(stack),4,M,4); aint = (int*) M->R;
 	}
-      Xgc->graphic_engine->tape_replay_new_scale(Xgc,num,iscflag,aint,rect,NULL);
+      replay_new_scale(Xgc,rect);
       Xgc->graphic_engine->process_updates(Xgc);
       break;
     case 4: /* replayna */
@@ -4699,6 +4700,19 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static void replay_new_scale(BCG *Xgc,double *bbox) 
+{ 
+  /* get the bounding box in pixel */
+  int bbox1[4];
+  bbox1[0]= XDouble2Pixel(Xgc->scales,bbox[0]);
+  bbox1[1]= YDouble2Pixel(Xgc->scales,bbox[1]);
+  bbox1[2]= XDouble2Pixel(Xgc->scales,bbox[2]);
+  bbox1[3]= YDouble2Pixel(Xgc->scales,bbox[3]);
+  nsp_figure_zoom(Xgc,bbox1);
+}
+
+
+
 
 /**
  * int_xinfo:
@@ -4726,7 +4740,7 @@ static int int_xinfo_new(Stack stack, int rhs, int opt, int lhs)
 
 static NspAxes *Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
 				const double *FRect,const char *logscale, int fixed,
-				int axesflag,int clip, int iso)
+				int axesflag,int iso,int clip)
 {
   NspAxes *axe; 
   axe=  nsp_check_for_axes(Xgc,WRect);
@@ -4752,7 +4766,7 @@ static NspAxes *Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect
 
 static NspObjs3d *Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
 				  const double *FRect,const char *logscale, int fixed,
-				  int axesflag,int clip, int iso  )
+				  int axesflag,int iso,int clip )
 {
   NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,WRect);
   if ( objs3d == NULL) return NULL;

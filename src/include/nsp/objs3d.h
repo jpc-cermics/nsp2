@@ -116,7 +116,7 @@ extern int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G);
 extern void nsp_objs3d_invalidate(NspGraphic *G);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
-extern void nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
+extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
 
 #line 122 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
