@@ -103,7 +103,16 @@ static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *r
   int face; 
   if ( Obj->obj->show == FALSE ) return ;
 
-  nsp_check_spolyhedron(Xgc,(NspSPolyhedron *) Obj);
+  /* initialization: called one type before calling above 
+   * function for each face 
+   */
+
+  if ( data != NULL &&  *((int *) data) < 0 ) 
+    {
+      nsp_check_spolyhedron(Xgc,(NspSPolyhedron *) Obj);
+      return;
+    }
+  
   /*
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {

@@ -284,7 +284,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   guint mode = GDK_GL_MODE_RGB | GDK_GL_MODE_DEPTH | GDK_GL_MODE_STENCIL;
   GdkGLConfig *glconfig;
 
-  glconfig = gdk_gl_config_new_by_mode (mode  | GDK_GL_MODE_DOUBLE) ;
+  glconfig = gdk_gl_config_new_by_mode (mode | GDK_GL_MODE_DOUBLE);
   if (glconfig == NULL)
     {
       glconfig = gdk_gl_config_new_by_mode (mode);

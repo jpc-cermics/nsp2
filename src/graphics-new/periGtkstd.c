@@ -1789,8 +1789,11 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
 
   /*   rect = ( event != NULL) ? &dd->private->invalidated : NULL; */
-  rect = ( event != NULL) ? &event->area : NULL;
-    
+  /* 
+   * with this driver we need to fully redraw.
+   */
+  rect = NULL; 
+
   if ( dd->private->resize != 0)  
     { 
       /* redraw after resize 
@@ -1806,9 +1809,8 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       dd->private->draw = TRUE;
       rect = NULL;
     }
-
   if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
-
+  
   /* with this driver we have to draw all times */
   
   if ( 1 ||  dd->private->draw == TRUE  ) 
@@ -1848,7 +1850,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 }
 
 #else 
-
 /* periGL version */
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
@@ -1918,12 +1919,17 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 
   glFlush ();
   gdk_gl_drawable_wait_gl(dd->private->gldrawable);
-
+  
   if (event  != NULL) 
     {
       gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
+      /* debug the drawing rectangle which is updated              */
+	 gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+	 event->area.x, event->area.y, 
+	 event->area.width, event->area.height);
+
     }
   else 
     {
@@ -1935,13 +1941,13 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
     {
       gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
 			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
+      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
 
   dd->private->invalidated.x = 0;
   dd->private->invalidated.y = 0;
   dd->private->invalidated.width = 0;
   dd->private->invalidated.height = 0;
-  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
 
   gdk_flush();
   return FALSE;

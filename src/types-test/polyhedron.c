@@ -964,7 +964,12 @@ static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
       return ;
     }
   */
-  nsp_check_polyhedron((NspPolyhedron *) Obj);
+  if ( data != NULL &&  *((int *) data) < 0 ) 
+    {
+      nsp_check_polyhedron((NspPolyhedron *) Obj);
+      return;
+    }
+
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -1540,4 +1545,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1544 "polyhedron.c"
+#line 1549 "polyhedron.c"

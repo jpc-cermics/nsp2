@@ -777,7 +777,13 @@ static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       return ;
     }
   */
-  nsp_check_string3d((NspString3d *) Obj);
+
+  if ( data != NULL &&  *((int *) data) < 0 ) 
+    {
+      nsp_check_string3d((NspString3d *) Obj);
+      return;
+    }
+
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -980,4 +986,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 984 "string3d.c"
+#line 990 "string3d.c"

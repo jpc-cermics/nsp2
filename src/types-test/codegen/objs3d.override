@@ -555,6 +555,20 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   /*  step 3 : sort of all the a priori visible "faces" (faces, segments, points) */
   nsp_obj3d_dsortc(z, &n, p);
 
+  /* step 3.1: a firts pass with data == -1 to tell each object to make 
+   * pre-drawing initializations 
+   */
+
+  cloc = Children->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      int mun=-1;
+      NspGraphic *G = (NspGraphic *) cloc->O;
+      G->type->draw(Xgc,G,NULL,&mun);
+      cloc = cloc->next;
+    }
+
+
   /* step 4 : drawing of each faces */
   if ( with_box == TRUE  ) nsp_obj3d_draw_box(Xgc,B);
 

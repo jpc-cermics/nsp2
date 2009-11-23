@@ -1428,11 +1428,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       scale_f2i(&A->scale,P->obj->wrect->R,P->obj->wrect->R+1,&clip_axe.x,&clip_axe.y,1);
       length_scale_f2i(&A->scale,P->obj->wrect->R+2,P->obj->wrect->R+3,
 		       &clip_axe.width,&clip_axe.height,1);
-      Sciprintf("non top axe ZZ  [%d,%d,%d,%d]\n",
-		clip_axe.x,
-		clip_axe.y,
-		clip_axe.width,
-		clip_axe.height);
     }
   
   if ( rect != NULL) 
@@ -2243,4 +2238,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2247 "axes.c"
+#line 2242 "axes.c"

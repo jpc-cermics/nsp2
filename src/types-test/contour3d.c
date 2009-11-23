@@ -893,7 +893,13 @@ static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rec
       return ;
     }
   */
-  nsp_check_contour3d((NspContour3d *) Obj);
+
+  if ( data != NULL &&  *((int *) data) < 0 ) 
+    {
+      nsp_check_contour3d((NspContour3d *) Obj);
+      return;
+    }
+
 #ifdef  WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -1036,4 +1042,4 @@ static int nsp_contour3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 }
 
 
-#line 1040 "contour3d.c"
+#line 1046 "contour3d.c"
