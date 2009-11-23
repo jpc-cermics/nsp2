@@ -1431,7 +1431,7 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
       return; 
     }
 #endif
-    
+  
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   /* XXX */
   foreground_color = flagx+1;
@@ -1606,6 +1606,17 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
     }
 
   Children = nsp_objs3d_children((NspGraphic *) Obj);
+
+  /* firts pass for initialisation */
+  cloc = Children->first ;
+  while ( cloc != NULLCELL ) 
+    {
+      int mun=-1;
+      NspGraphic *G = (NspGraphic *) cloc->O;
+      G->type->draw(Xgc,G,NULL,&mun);
+      cloc = cloc->next;
+    }
+
   cloc = Children->first ;
   nf = 0;
   while ( cloc != NULLCELL ) 
@@ -2758,4 +2769,4 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
 }
 
 
-#line 2762 "objs3d.c"
+#line 2773 "objs3d.c"

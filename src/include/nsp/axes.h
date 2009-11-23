@@ -65,6 +65,8 @@ struct _nsp_axes {
   NspMatrix* zrect;
   nsp_gcscale scale;
   gboolean clip;
+  int line_width;
+  int font_size;
   int ref_count;
 };
 
@@ -94,7 +96,7 @@ NspAxes *new_axes();
 
 #define NULLAXES (NspAxes*) 0
 
-extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,gboolean clip,NspTypeBase *type);
+extern NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,gboolean clip,int line_width,int font_size,NspTypeBase *type);
 extern NspAxes *nsp_axes_create_default(char *name);
 
 /* from NspAxesObj.c */
@@ -137,7 +139,7 @@ extern NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect);
 extern void nsp_axes_update_frame_bounds(BCG *Xgc,double *wrect,double *frect,double *arect,
 					 int *aaint,int isomode, int auto_axes, char *xf);
 
-#line 141 "./axes.h"
+#line 143 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -178,6 +180,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 182 "./axes.h"
+#line 184 "./axes.h"
 #endif /* NspAxes_Private */
 

@@ -1207,7 +1207,7 @@ int nsp_check_spolyhedron(BCG *Xgc, NspSPolyhedron *P)
       Scierror("Error: bad face for spolyhedron, first dimension should be >= 3 %d\n",Q->Mface->m);
       return FAIL;
     }
-
+  
   Q->Mface = Mat2int(Q->Mface);
 
   if ( Q->Mval->mn != Q_nb_coords && Q->Mval->mn != Q->Mface->n  ) 

@@ -233,6 +233,8 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->zrect)->type->eq(A->obj->zrect,loc->obj->zrect) == FALSE ) return FALSE;
   if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   if ( A->obj->clip != loc->obj->clip) return FALSE;
+  if ( A->obj->line_width != loc->obj->line_width) return FALSE;
+  if ( A->obj->font_size != loc->obj->font_size) return FALSE;
   return TRUE;
 }
 
@@ -276,6 +278,8 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->rect)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->zoom) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->clip) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->line_width) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->font_size) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -309,6 +313,8 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if ((M->obj->rect =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->zoom) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->clip) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->line_width) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->font_size) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -450,6 +456,8 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
     }
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
+  Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -503,6 +511,8 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
     }
   nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
+  Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -596,6 +606,8 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->zrect = NULLMAT;
   nsp_init_nsp_gcscale(&H->obj->scale);
   H->obj->clip = TRUE;
+  H->obj->line_width = 0;
+  H->obj->font_size = 1;
   return OK;
 }
 
@@ -668,7 +680,7 @@ int nsp_axes_check_values(NspAxes *H)
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,gboolean clip,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,gboolean clip,int line_width,int font_size,NspTypeBase *type)
 {
   NspAxes *H  = nsp_axes_create_void(name,type);
   if ( H ==  NULLAXES) return NULLAXES;
@@ -696,6 +708,8 @@ NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,Nsp
   H->obj->zrect= zrect;
   H->obj->scale = scale;
   H->obj->clip=clip;
+  H->obj->line_width=line_width;
+  H->obj->font_size=font_size;
   if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
   return H;
 }
@@ -795,6 +809,8 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     }
   if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   H->obj->clip=self->obj->clip;
+  H->obj->line_width=self->obj->line_width;
+  H->obj->font_size=self->obj->font_size;
   return H;
 }
 
@@ -879,7 +895,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 883 "axes.c"
+#line 899 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1085,7 +1101,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1089 "axes.c"
+#line 1105 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1307,6 +1323,40 @@ static int _wrap_axes_set_clip(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_axes_get_line_width(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspAxes *) self)->obj->line_width;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_axes_set_line_width(void *self,const char *attr, NspObject *O)
+{
+  int line_width;
+
+  if ( IntScalar(O,&line_width) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->line_width= line_width;
+  return OK;
+}
+
+static NspObject *_wrap_axes_get_font_size(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspAxes *) self)->obj->font_size;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_axes_set_font_size(void *self,const char *attr, NspObject *O)
+{
+  int font_size;
+
+  if ( IntScalar(O,&font_size) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->font_size= font_size;
+  return OK;
+}
+
 static AttrTab axes_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
   { "rho", (attr_get_function *)_wrap_axes_get_rho, (attr_set_function *)_wrap_axes_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -1328,6 +1378,8 @@ static AttrTab axes_attrs[] = {
   { "rect", (attr_get_function *)_wrap_axes_get_rect, (attr_set_function *)_wrap_axes_set_rect,(attr_get_object_function *)_wrap_axes_get_obj_rect, (attr_set_object_function *)int_set_object_failed },
   { "zoom", (attr_get_function *)_wrap_axes_get_zoom, (attr_set_function *)_wrap_axes_set_zoom,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "clip", (attr_get_function *)_wrap_axes_get_clip, (attr_set_function *)_wrap_axes_set_clip,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "line_width", (attr_get_function *)_wrap_axes_get_line_width, (attr_set_function *)_wrap_axes_set_line_width,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "font_size", (attr_get_function *)_wrap_axes_get_font_size, (attr_set_function *)_wrap_axes_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1344,7 +1396,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1348 "axes.c"
+#line 1400 "axes.c"
 
 
 #line 179 "codegen/axes.override"
@@ -1357,7 +1409,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1361 "axes.c"
+#line 1413 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1395,6 +1447,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
+  int lw, font[2];
   GdkRectangle clip, clip_axe , r2;
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
@@ -1537,10 +1590,13 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   clip = clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect( rect,&clip,&clip);
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
-    
+
+  Xgc->graphic_engine->xget_font(Xgc,font);
+  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size);
+  lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+  
   /* draw axes, ticks */
   axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid);
-  
   /* legends */
   nsp_axes_legends(Xgc,P);
   /* title if present */
@@ -1551,6 +1607,10 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->y[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
   
+
+  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1]);
+  Xgc->graphic_engine->xset_thickness(Xgc, lw);
+
 
   /* back to previous clip zone */
   if ( rect != NULL ) 
@@ -2238,4 +2298,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2242 "axes.c"
+#line 2302 "axes.c"
