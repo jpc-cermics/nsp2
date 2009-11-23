@@ -167,6 +167,7 @@ last
 static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspCompound *P = (NspCompound *) Obj;
+  NspGraphic *G =  (NspGraphic *) Obj;
   NspList *L = P->obj->children;
   Cell *cloc = L->first;
   
@@ -189,6 +190,35 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 	  G->type->draw(Xgc,G,rect,data);
 	}
       cloc = cloc->next;
+    }
+
+  /* draw rectangle if hilited */
+  
+  if ( G->obj->hilited == TRUE )
+    {
+      double bounds[4];
+      int lock_size=6, lock_color=10;
+      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int x=lock_size,y=lock_size;
+      double xd,yd;
+      double rect[4]; 
+      nsp_getbounds_compound(G,bounds);
+      length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
+      
+      rect[0]=bounds[0] -xd/2.0;
+      rect[1]=bounds[3] +yd/2.0;
+      rect[2]=xd;
+      rect[3]=yd;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      rect[0]=bounds[2]-xd/2.0;
+      rect[1]=bounds[1]+ yd/2.0;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      rect[0]=bounds[0]; 
+      rect[1]=bounds[3];
+      rect[2]=bounds[2]-bounds[0];
+      rect[3]=bounds[3]-bounds[1];
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+      Xgc->graphic_engine->xset_pattern(Xgc,color);
     }
 }
 
