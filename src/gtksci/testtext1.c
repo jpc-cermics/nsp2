@@ -847,7 +847,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
-	      nsp_eval_pasted_from_clipboard((gchar *) str);
+	      nsp_eval_pasted_from_clipboard((gchar *) str,view);
 	      g_free (str);
 	    }
 #endif
