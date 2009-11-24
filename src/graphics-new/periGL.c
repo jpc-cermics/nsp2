@@ -1,7 +1,7 @@
 /* opengl rendering in a gtk widget */
 #define PERIGL 
 
-#if 0
+#if 1
 /* render in gtk window */
 #include "periGtkstd.c" 
 #else 
