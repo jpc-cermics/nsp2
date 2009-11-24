@@ -1850,7 +1850,8 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 }
 
 #else 
-/* periGL version */
+/* periGL version with drawing in a pixbuf
+ */
 static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer data)
 {
   GdkRectangle *rect;
@@ -1867,7 +1868,8 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
    * also correct drawing in hidden part of the 
    * drawing area since we use a backing store pixbuf.
    */
-  rect = ( event != NULL) ? &dd->private->invalidated : NULL;
+  rect =  ( event != NULL) ? &dd->private->invalidated : NULL;
+
 
   if(dd->private->resize != 0) 
     { 
@@ -1901,7 +1903,6 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 
   if ( dd->private->draw == TRUE ) 
     {
-      gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
       gdk_gl_drawable_gl_begin (dd->private->gldrawable,dd->private->glcontext);
       dd->private->draw = FALSE;
       dd->private->gl_only = TRUE;
@@ -1926,10 +1927,9 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       /* debug the drawing rectangle which is updated              */
-	 gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
-	 event->area.x, event->area.y, 
-	 event->area.width, event->area.height);
-
+      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			 event->area.x, event->area.y, 
+			 event->area.width, event->area.height);
     }
   else 
     {
@@ -1943,6 +1943,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
+  gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
 
   dd->private->invalidated.x = 0;
   dd->private->invalidated.y = 0;

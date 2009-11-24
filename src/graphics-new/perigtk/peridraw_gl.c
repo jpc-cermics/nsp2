@@ -44,6 +44,7 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
   glVertex2i(r->x        ,r->y+r->height);
   glEnd();
   xset_pattern(Xgc,old);
+  glClear (GL_DEPTH_BUFFER_BIT);
 }
 
 /*
