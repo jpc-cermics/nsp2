@@ -340,7 +340,11 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
   count++;
   sprintf(tmp_file, "/tmp/SD_%d_/SL_%d_XXXXXX",(int) getpid(),count);
 #ifdef HAVE_MKSTEMP 
-  mkstemp(tmp_file);
+  if ( mkstemp(tmp_file) == -1 ) 
+    {
+      Sciprint("can't create a temporary file: \n");
+      return(-1);
+    }
 #else 
   mktemp(tmp_file);
 #endif

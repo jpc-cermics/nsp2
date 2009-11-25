@@ -3429,7 +3429,7 @@ int nsp_imatrix_nnz(NspIMatrix *A)
 
 int nsp_imatrix_unique(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first_ind, char ind_type)
 {
-  int i0, i, i_old, *index;
+  int i0=0, i, i_old, *index;
   NspMatrix *occ=NULLMAT;
   nsp_int_union val;
 

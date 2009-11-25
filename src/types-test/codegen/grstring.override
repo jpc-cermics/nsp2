@@ -134,7 +134,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 		y += rect1[3];
 	    }
 	  if (flagx == 1) {
-	    double rect2[]={x,y,wc, y - yi};
+	    double rect2[]={x,y,wc, y } ;
 	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect2);
 	  }
 	}

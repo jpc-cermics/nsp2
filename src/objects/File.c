@@ -1276,9 +1276,10 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
     {
       for (j=0 ; j < cols;j++)
 	{ 
+	  int n;
 	  double xloc;
-	  fscanf(F->obj->file,"%lf",&xloc);
-	  (*M)->R[i+rows*j]=xloc;
+	  n = fscanf(F->obj->file,"%lf",&xloc);
+	  (*M)->R[i+rows*j]=( n != 1) ? 0.0: xloc;
 	}
     }
   while ( (c = getc(F->obj->file)) != '\n' && c != EOF) {};

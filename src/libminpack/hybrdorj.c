@@ -75,7 +75,7 @@ int minpack_hybrd (minpack_fcn1 fcn, int *n, double *x, double *fvec, double *xt
 #endif 
 {
   const double one = 1.0,  p1 = .1,  p5 = .5,  p001 = .001, p0001 = 1e-4, zero = 0.;
-  double d__1, d__2,  temp,  delta,  ratio;
+  double d__1, d__2,  temp,  delta=0.0,  ratio;
   double fnorm, fninf= DBL_MAX,  pnorm, xnorm=0.0, fnorm1;
   double actred, epsmch, prered,  sum;
   int c_false = FALSE, c__1 = 1, fjac_dim1, fjac_offset ;

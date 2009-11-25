@@ -2183,7 +2183,7 @@ static u_int get_xdr_len (u_int cnt)
 int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
 {
   FILE *FIC;
-  int len, offset, c;
+  int len, offset, c,n ;
   NspSerial *S;
   char *name, *str, scis[]={"NspXdr_1.0"};
   
@@ -2196,7 +2196,7 @@ int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
   while ((c = fgetc(FIC)) != EOF) { len++; }
   if ((str=malloc(sizeof(int)*len)) == NULL) return RET_BUG;
   rewind (FIC);
-  fread (str, sizeof(char), len,  FIC);
+  n = fread (str, sizeof(char), len,  FIC);
   fclose (FIC);
   offset = sizeof(u_int);
   if (strncmp (str + offset, scis, strlen(scis)) != 0)

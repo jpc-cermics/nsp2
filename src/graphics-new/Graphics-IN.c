@@ -2152,8 +2152,8 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
 {
   int compound = TRUE;
   NspList *L;
-  NspCompound *C;
-  NspGraphic *gobj;
+  NspCompound *C = NULL;
+  NspGraphic *gobj = NULL;
   NspAxes *axe; 
   BCG *Xgc;
   NspMatrix *arcs=NULL;
@@ -2303,12 +2303,13 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
       if ( compound == TRUE ) 
 	{
 	  MoveObj(stack,1,NSP_OBJECT(C));
+	  return 1;
 	}
-      else
+      else if ( gobj != NULL)
 	{
 	  MoveObj(stack,1,NSP_OBJECT(gobj));
+	  return 1;
 	}
-      return 1;
     }
   return 0;
 } 
@@ -3053,11 +3054,11 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 {
   int compound = TRUE;
   NspList *L;
-  NspCompound *C;
+  NspCompound *C=NULL;
   nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   int i;
-  NspPolyline *pl;
+  NspPolyline *pl= NULL;
   NspAxes *axe; 
   BCG *Xgc;
   int color=-2,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
@@ -3080,7 +3081,8 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 	  v1=2; /* interpolated shading */
 	  if ( l3->m != 3 && l3->m != 4 ) 
 	    {
-	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\n",NspFname(stack));
+	      Scierror("%s: interpolated shading only works for polygons of size 3 or 4\n",
+		       NspFname(stack));
 	      return RET_BUG;
 	    }
 	} 
@@ -3094,7 +3096,7 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
     return RET_BUG;
-
+  
   Xgc=nsp_check_graphic_context();    
   axe=  nsp_check_for_axes(Xgc,NULL);
   if ( axe == NULL) return RET_BUG;
@@ -3173,12 +3175,13 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
       if ( compound == TRUE ) 
 	{
 	  MoveObj(stack,1,NSP_OBJECT(C));
+	  return 1;
 	}
-      else
+      else if ( pl != NULL ) 
 	{
 	  MoveObj(stack,1,NSP_OBJECT(pl));
+	  return 1;
 	}
-      return 1;
     }
   return 0;
 } 
@@ -3832,10 +3835,10 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
 {
   int compound = TRUE;
   NspList *L;
-  NspCompound *C;
+  NspCompound *C = NULL;
   int close=0,color=-1,mark=-2,mark_size=-1,fill_color=-2,thickness=-1,i;
   NspMatrix *x,*y,*style=NULL;
-  NspPolyline *pl;
+  NspPolyline *pl= NULL;
   NspAxes *axe; 
   BCG *Xgc;
   nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
@@ -3920,12 +3923,14 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
       if ( compound == TRUE ) 
 	{
 	  MoveObj(stack,1,NSP_OBJECT(C));
+	  return 1;
 	}
-      else
+      else if ( pl != NULL) 
 	{
 	  MoveObj(stack,1,NSP_OBJECT(pl));
+	  return 1;
 	}
-      return 1;
+
     }
   return 0;
 }

@@ -62,6 +62,7 @@ char *get_sci_data_strings(int n)
 
 void set_nsp_tmpdir(void)
 {
+  int status;
   static int first =0;
   if ( first == 0 ) 
     {
@@ -76,7 +77,7 @@ void set_nsp_tmpdir(void)
 #else 
       sprintf(tmp_dir,"/tmp/SD_%d_",(int) getpid());
       sprintf(buf,"umask 000;if test ! -d %s; then mkdir %s; fi ",tmp_dir,tmp_dir);
-      system(buf);
+      status = system(buf);
 #endif 
       sprintf(buf,"NSP_TMPDIR=%s",tmp_dir);
       nsp_putenv(buf);
@@ -114,6 +115,7 @@ extern void hppa_sci_unlink_shared();
 
 void clean_tmpdir(void)
 {
+  int status ;
   char *tmp_dir = get_nsp_tmpdir(); 
 #ifdef WIN32 
   nsp_remove_directory(tmp_dir,1,NULL);
@@ -122,10 +124,10 @@ void clean_tmpdir(void)
   hppa_sci_unlink_shared();
 #endif
   sprintf(buf,"rm -f -r %s >/dev/null  2>/dev/null",tmp_dir);
-  system(buf);
+  status = system(buf);
   sprintf(buf,"rm -f -r /tmp/%d.metanet.* > /dev/null  2>/dev/null",
 	  (int) getpid());
-  system(buf);
+  status = system(buf);
 #endif 
 }
 

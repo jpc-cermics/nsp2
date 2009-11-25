@@ -40,6 +40,7 @@
 #include "nsp/gtksci.h"
 #include "nsp/nsptcl.h"
 
+extern void nsp_pa_stop(void);
 extern void create_nsp_about(void); 
 extern char GetDriver();
 

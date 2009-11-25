@@ -1011,8 +1011,10 @@ NspMatrix **nsp_mat_slec(char *file, int *Count)
       for (i=0;i < Loc[MatCount-1]->m;i++)
 	for (j=0;j < Loc[MatCount-1]->n;j++)
 	  { 
+	    int n;
 	    double xloc;
-	    fscanf(fd,"%lf",&xloc);
+	    n = fscanf(fd,"%lf",&xloc);
+	    if ( n != 1) xloc = 0.0;
 	    Loc[MatCount-1]->R[i+Loc[MatCount-1]->m*j]=xloc;
 	  }
     }
@@ -1056,8 +1058,10 @@ NspMatrix *MatLec(FILE *fd)
   for (i=0; i < rows ;i++)
     for (j=0;j < cols;j++)
       { 
+	int n;
 	double xloc;
-	fscanf(fd,"%lf",&xloc);
+	n = fscanf(fd,"%lf",&xloc);
+	if ( n != 1 ) xloc =0.0;
 	Loc->R[i+Loc->m*j]=xloc;
       }
   return(Loc);
