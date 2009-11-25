@@ -870,7 +870,7 @@ int nsp_check_points3d( NspPoints3d *Pt)
 
 static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
-  int mark[2],current_mark[2],color;
+  int mark[2],current_mark[2],color=1;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   double * V_coord = ((NspMatrix *) V->Mcoord_l)->R;
   int V_nb_coords = V->Mcoord->m;

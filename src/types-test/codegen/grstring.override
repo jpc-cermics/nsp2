@@ -76,7 +76,7 @@ last
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int i,flagx=0;
-  double rect1[4],wc,x,y,yi;
+  double rect1[4],wc,x,y;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
 

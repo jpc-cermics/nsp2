@@ -934,7 +934,7 @@ void nsp_graphic_invalidate(NspGraphic *G)
 int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
 {
   nsp_axes *axe = ((NspGraphic *) G)->obj->Axe;
-  GdkRectangle r1;
+  GdkRectangle r1, r2 = *rect;
   int xmin,ymin,xmax,ymax;
   double bounds[4];
   if ( rect == NULL ) return TRUE;
@@ -945,7 +945,7 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
   r1.y = ymax-10;
   r1.width = xmax - xmin +20;
   r1.height = ymin - ymax +20 ;
-  return  gdk_rectangle_intersect(rect,&r1,&r1);
+  return  gdk_rectangle_intersect(&r2,&r1,&r1);
 }
 
 

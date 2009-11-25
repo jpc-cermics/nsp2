@@ -4946,15 +4946,10 @@ int int_alignement(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M, *A;
   CheckRhs(1,1);
   CheckLhs(1,1);  
-  unsigned int a, p; 
+  unsigned long int a, p; 
   if ( (M = GetMat(stack, 1)) == NULLMAT ) return RET_BUG;
   if ( (A = nsp_matrix_create(NVOID, 'r', 1, 1)) == NULLMAT ) return RET_BUG;
-
-  if ( M->rc_type == 'r' )
-    p = (unsigned int) M->R;
-  else
-    p = (unsigned int) M->C;
-
+  p = (long int) M->I;
   a = p & 0xF;
   A->R[0] = (double) a;
   MoveObj (stack, 1, (NspObject *) A);

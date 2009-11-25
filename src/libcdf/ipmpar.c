@@ -83,11 +83,16 @@ static int largestint()
   if ( first == 0) 
     {
       if (sizeof(int)==sizeof(long))
-	large = LARGEST_LONG_INTEGER ;
+	{
+	  large = (int)  LARGEST_LONG_INTEGER ;
+	}
       else if (sizeof(int)==sizeof(short))
-	large = LARGEST_SHORT_INTEGER;
+	{
+	  large = LARGEST_SHORT_INTEGER;
+	}
       else 
-	large = 2147483647 ; /** using default value **/
+	/* using default value */
+	large = 2147483647 ; 
       first++;
       return large ;
     }

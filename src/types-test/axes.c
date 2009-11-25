@@ -1448,7 +1448,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
 static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int lw, font[2];
-  GdkRectangle clip, clip_axe , r2;
+  GdkRectangle clip, clip_axe , r2, rect_a;
   char xf[]="onn";
   double WRect[4],*wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
   char logscale[2];
@@ -1458,6 +1458,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   NspAxes *P = (NspAxes *) Obj;
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
+  if ( rect != NULL) rect_a = *rect;
+  
   /* get the axe bounding rectangle */
 
   if ( P->obj->top == TRUE ) 
@@ -1488,7 +1490,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       /*
        * check if we are in the draw zone given by rect
        */
-      if ( ! gdk_rectangle_intersect(rect,&clip_axe,&r2)) return;
+      if ( ! gdk_rectangle_intersect(&rect_a,&clip_axe,&r2)) return;
     }
 
   /* we change the scale according to the axes */
@@ -1567,7 +1569,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
    */
   
   clip = (  P->obj->clip == TRUE ) ?  Xgc->scales->Irect : clip_axe;
-  if ( rect != NULL ) gdk_rectangle_intersect( rect,&clip,&clip);
+  if ( rect != NULL ) gdk_rectangle_intersect(&rect_a,&clip,&clip);
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
   
   /* draw elements */
@@ -1588,7 +1590,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
    */
 
   clip = clip_axe;
-  if ( rect != NULL ) gdk_rectangle_intersect( rect,&clip,&clip);
+  if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
 
   Xgc->graphic_engine->xget_font(Xgc,font);
@@ -2298,4 +2300,4 @@ void nsp_axes_invalidate(NspGraphic *G)
     }
 }
 
-#line 2302 "axes.c"
+#line 2304 "axes.c"

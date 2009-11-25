@@ -3436,6 +3436,7 @@ int nsp_imatrix_unique(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean 
 
   if ( Ind == NULL )
     {
+      i0=0;
       if ( x->mn <= 1 ) return OK;
 #define IMAT_AC(name,type,arg)				\
       nsp_qsort_##type( x->Iv, NULL, 0, x->mn, 'i');	\
@@ -3469,6 +3470,7 @@ int nsp_imatrix_unique(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean 
       
       if ( x->mn > 0 )
 	{
+	  i0 = 0;
 #define IMAT_AC(name,type,arg)					\
 	  if ( first_ind )					\
 	  nsp_sqsort_bp_##type( x->Iv, x->mn, index, 'i');	\

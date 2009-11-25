@@ -861,7 +861,7 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int i,flagx=0;
-  double rect1[4],wc,x,y,yi;
+  double rect1[4],wc,x,y;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
 
@@ -919,7 +919,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 		y += rect1[3];
 	    }
 	  if (flagx == 1) {
-	    double rect2[]={x,y,wc, y - yi};
+	    double rect2[]={x,y,wc, y } ;
 	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect2);
 	  }
 	}
