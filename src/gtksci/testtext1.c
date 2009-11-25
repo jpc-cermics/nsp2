@@ -45,6 +45,7 @@
 #include "nsp/command.h" 
 #include "nsp/sciio.h"
 #include "nsp/interf.h"
+#include "nsp/eval.h"
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>

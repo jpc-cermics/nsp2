@@ -12,7 +12,7 @@
 
 #include <stdio.h>   /* for file declaration */
 #include "nsp/grint.h" /* interface definition */
-
+#include "nsp/eval.h" /* interface definition */
 /**
  * NspBlock:
  * @obj: a #nsp_block pointer 

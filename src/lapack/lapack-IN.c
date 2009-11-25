@@ -29,6 +29,7 @@
 #include "nsp/bmatrix-in.h"
 #include "nsp/approx.h"
 #include "nsp/nsp_lapack.h"
+#include "nsp/eval.h"
 
 /*
  * interface for nsp_qr 
