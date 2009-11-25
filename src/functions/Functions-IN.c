@@ -230,14 +230,14 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 {
   function *f;
   /* posi[i]=j if i-th argument of function fname 
-    is then j-th argument on the stack **/
+    is then j-th argument on the stack */
   int posi[MAXPAR]={0}; 
   /* outpos[i]=j if i-th returned argument is the one 
-    which is at position j on the stack **/
+    which is at position j on the stack */
   int outpos[MAXPAR];
-  /* flag to check that returned arguments are returned only once **/
+  /* flag to check that returned arguments are returned only once */
   int checkout[MAXPAR]={0};
-  /* ref[i] stores pointer for relevant data for i-th fname argument **/
+  /* ref[i] stores pointer for relevant data for i-th fname argument */
   void *ref[MAXPAR];
   int inpos,i,newout=1,outarg,ismat,count_ref;
   char *Fname,*Type;
@@ -246,7 +246,7 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
   void *Data;
   CheckRhs(1,1000);
   CheckLhs(0,1000);
-  /* first argument is the function name **/
+  /* first argument is the function name */
   if ((Fname = GetString(stack,1)) == NULL) return RET_BUG;
   if ( SearchInDynLinks(Fname,&f) == -1 )
     {
@@ -266,13 +266,13 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 	  ismat = FAIL;
 	  if ( strcmp("out",Str)==0)
 	    {
-	      /* we have reached keywork out **/
+	      /* we have reached keywork out */
 	      i++; break ;
 	    }
 	}
       else 
 	{
-	  /* Argument is a Matrix **/
+	  /* Argument is a Matrix */
 	  if ( (M=GetRealMatCopy(stack,i))== NULLMAT) return RET_BUG;	  
 	  Data = (void *) M->R;
 	  ismat = OK;
@@ -285,7 +285,7 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 	}
       if (GetScalarInt(stack,i+1,&inpos) == FAIL) return RET_BUG;
       if ((Type = GetString(stack,i+2))== NULL) return RET_BUG;
-      /* Change data **/
+      /* Change data */
       if ( ismat == OK ) 
 	switch (Type[0]) 
 	  {
@@ -318,14 +318,14 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
   /*  Checking output arguments                 
    */
 
-  outarg = 0; /* counts output arguments **/
+  outarg = 0; /* counts output arguments */
   while ( i <= rhs )
     {
       int pos1;
       if ((M=GetRealMatCopy(stack,i))== NULLMAT) return RET_BUG;
       if ( M->mn == 1) 
 	{
-	  /* output argument is only specified by its position in the input list **/
+	  /* output argument is only specified by its position in the input list */
 	  if (GetScalarInt(stack,i,&pos1) == FAIL) return RET_BUG;
 	  if ( pos1 <= 0 || pos1 > MAXPAR) 
 	    {
@@ -359,14 +359,14 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 	}
       else 
 	{
-	  /* [m,n],pos,type **/
+	  /* [m,n],pos,type */
 	  if ( i+2 > rhs ) 
 	    {
 	      Scierror("Error: Not enough arguments to describe output variable %d\n",
 		       outarg+1);
 	      return RET_BUG;
 	    }
-	  /* M gives output size **/
+	  /* M gives output size */
 	  if (GetScalarInt(stack,i+1,&pos1) == FAIL) return RET_BUG;
 	  if ((Type = GetString(stack,i+2))== NULL) return RET_BUG;
 	  if ( pos1 <= 0 || pos1 > MAXPAR) 
@@ -378,8 +378,8 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 	    }
 	  if ( posi[pos1] != 0 ) 
 	    {
-	      /* output variable is an input variable **/
-	      /* Check size compatibility XXXXXXXXXX **/
+	      /* output variable is an input variable */
+	      /* Check size compatibility XXXXXXXXXX */
 	      if ( checkout[pos1] > 0) 
 		{
 		  Scierror("Error: an input variable (here %d) can appear only once in output list\n",
@@ -391,14 +391,14 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 	    }
 	  else 
 	    {
-	      /* Create new variable **/
+	      /* Create new variable */
 	      NspSMatrix *S;
 	      NspMatrix *Loc;
 	      char *lstr;
 	      switch (Type[0])
 		{
 		case 'c' :
-		  /* A revoir pour faire plus court  XXXXX **/
+		  /* A revoir pour faire plus court  XXXXX */
 		  if ((S=nsp_smatrix_create_with_length(NVOID,1,1,M->mn)) == NULLSMAT ) return RET_BUG;
 		  NthObj(rhs+newout) = (NspObject *) S;
 		  if ((lstr =new_nsp_string_n(M->mn)) == (nsp_string) 0) 
@@ -422,7 +422,7 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 	}
       outarg++;      
     }
-  /* Calling the interfaced routine **/
+  /* Calling the interfaced routine */
   count_ref = 0;
   for ( i= 1 ; i <= rhs ; i++) if (posi[i] != 0) count_ref++;
   switch (count_ref) 
@@ -438,13 +438,15 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* put output arguments on the stack : all the outpos[i] are differents 
-    and outpos is changed after the call to PutLhsObj **/
+   * and outpos is changed after the call to PutLhsObj 
+   */
   PutLhsObj(stack,Min(lhs,outarg),outpos);
-  /* Check if we need to change Data i->d or r->d **/
+  /* Check if we need to change Data i->d or r->d */
   for ( i=1 ; i <= Min(lhs,outarg) ; i++) 
     ObjConvert(NthObj(i));
-  /* Check if we need to change output dimensions **/
-  return Min(lhs,outarg);
+  /* Check if we need to change output dimensions */
+  return Max(0,Min(lhs,outarg));
+
 }
 
 

@@ -3657,7 +3657,7 @@ static int int_xnumb(Stack stack, int rhs, int opt, int lhs)
 
 extern void nsp_pause(int sec_time,int events);
 
-static int int_xpause(Stack stack, int rhs, int opt, int lhs)
+static int int_xpause_new(Stack stack, int rhs, int opt, int lhs)
 {
   /* BCG *Xgc; */
   int sec=0,flag=FALSE;
@@ -6381,7 +6381,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xload"),int_xload_new},
   {NAMES("xname"),int_xname},
   {NAMES("xnumb"),int_xnumb},
-  {NAMES("xpause"),int_xpause},
+  {NAMES("xpause"),int_xpause_new},
   {NAMES("xpoly"),int_xpoly_new},
   {NAMES("xpoly_clip"),int_xpoly_clip},
   {NAMES("xpolys"),int_xpolys_new},
