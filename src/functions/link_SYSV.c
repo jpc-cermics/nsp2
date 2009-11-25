@@ -342,7 +342,7 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
 #ifdef HAVE_MKSTEMP 
   if ( mkstemp(tmp_file) == -1 ) 
     {
-      Sciprint("can't create a temporary file: \n");
+      Sciprintf("can't create a temporary file: \n");
       return(-1);
     }
 #else 
