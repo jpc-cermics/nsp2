@@ -1351,7 +1351,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 	}
       else
 	{
-	  color = -Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
+	  color = - Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  if ( Q->mesh ) color= Abs(color);
 	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
 	}
@@ -1432,12 +1432,14 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
       if ( display_mode == FLAT  )
 	{
 	  color = Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
+	  if ( Q->mesh == FALSE  ) color = - color;
 	  fillpolylines3D(Xgc, x, y,z, &color, np, m);
 	}
       else
 	{
 	  for (i = 0 ; i < m ; i++) 
 	    colors[i] = Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	  if ( Q->mesh == FALSE  ) colors[0] = - colors[0];
 	  /* colors are given by cvect of size (*p) times (*q) */
 	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
 	}
@@ -1799,4 +1801,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1803 "spolyhedron.c"
+#line 1805 "spolyhedron.c"

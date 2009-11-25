@@ -1049,7 +1049,6 @@ static NspGraphic * nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z,
   /* create a polyhedron and insert it in objs3d */
   pol = nsp_polyhedron_create_from_facets("pol",x,y,z,*p,*q);
   if ( pol == NULL) return NULL;
-  if ( flag[0] < 0) pol->obj->mesh = FALSE;
   /* fix the color according to flag */
   pol->obj->Mcolor->I[0]=abs(flag[0]);
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
