@@ -7023,7 +7023,7 @@ OpGrTab GraphicsOld_func[]={
   {NAMES("xs2ps_old" ),int_xs2ps_old},
   {NAMES("xs2pdf" ),int_xs2pdf},
   {NAMES("xs2png" ),int_xs2png},
-  {NAMES("xs2ps" ),int_xs2ps},
+  {NAMES("xs2eps" ),int_xs2ps},
   {NAMES("xs2svg" ),int_xs2svg},
   {NAMES("xexport" ),int_xexport},
   {NAMES("bsearch" ), int_bsearch},

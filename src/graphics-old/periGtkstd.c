@@ -92,7 +92,8 @@ static void force_affichage(BCG *Xgc)
 #ifndef PERIGLGTK
   Xgc->private->resize = 1;
 #endif 
-  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+  if ( Xgc->private->drawing != NULL )
+    gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
 /**
@@ -107,7 +108,8 @@ static void force_redraw(BCG *Xgc)
 {
   nsp_gtk_invalidate(Xgc);
   Xgc->private->draw = TRUE;
-  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+  if ( Xgc->private->drawing != NULL )
+    gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
 }
 
 /*---------------------------------------------------------
@@ -225,6 +227,7 @@ static void clearwindow(BCG *Xgc)
   /* we use the private->stdgc graphic context */
   DRAW_CHECK;
 #ifdef PERICAIRO
+  if ( Xgc->private->drawing == NULL) return;
   cr =  Xgc->private->cairo_cr;
   cairo_set_source_rgb(cr,
 		       Xgc->private->gcol_bg.red/65535.0,
