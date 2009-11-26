@@ -1119,7 +1119,8 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
   int i, np=1, m;
-  int x[6], y[6];   /* a changer */
+  int x_def[128], y_def[128];
+  int *x=x_def, *y=y_def;
   int numpt, *current_vertex, color;
 
   int Q_nb_coords = Q->Mcoord->m;
@@ -1136,6 +1137,13 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
+
+  if ( m > 128 ) 
+    {
+      x = graphic_alloc(0,m,sizeof(int));
+      y = graphic_alloc(1,m,sizeof(int));
+    }
+
   for (i = 0 ; i < m ; i++)
     {
       double z;
@@ -1175,7 +1183,8 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
 #ifdef  WITH_GTKGLEXT 
   nsp_polyhedron *Q = ((NspPolyhedron *) Ob)->obj;
   int i,j, m;
-  double x[6], y[6], z[6];   /* a changer */
+  double x_def[128], y_def[128], z_def[128];
+  double *x=x_def, *y=y_def, *z = z_def;
   int numpt, *current_vertex, color;
 
   int Q_nb_coords = Q->Mcoord->m;
@@ -1191,6 +1200,13 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
   int foreground_color = 1; /* should be shared */
   
   m = Q_nb_vertices_per_face;
+
+  if ( m > 128 )
+    {
+      x = graphic_alloc(0,m,sizeof(double));
+      y = graphic_alloc(1,m,sizeof(double));
+      z = graphic_alloc(2,m,sizeof(double));
+    }
 
   for ( j = 0 ; j < Q_nb_faces ; j++ )
     {
@@ -1545,4 +1561,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1549 "polyhedron.c"
+#line 1565 "polyhedron.c"

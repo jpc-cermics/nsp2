@@ -313,7 +313,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
   int i, k, np=1, m, zero=0;
-  int x_def[12], y_def[12];
+  int x_def[128], y_def[128];
   int *x=x_def, *y=y_def;
   int nbtri; 
   int zxy[3], sx[3], sy[3];
@@ -327,7 +327,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int *Q_face = Q->Mface->I; 
   double *Q_val = Q->Mval->R;
   int Q_nb_levels = Q->colmax - Q->colmin + 1;
-
+  
   int display_mode = (Q->shade == TRUE) ? INTERP : FLAT;
 
   if ( Q->Mval->mn != Q->Mcoord->m && Q->Mval->mn == Q->Mface->n) 
@@ -340,7 +340,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
 
-  if ( m > 12 ) 
+  if ( m > 128 ) 
     {
       x = graphic_alloc(0,m,sizeof(int));
       y = graphic_alloc(1,m,sizeof(int));
@@ -353,7 +353,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       y[i] = YScale(Xgc->scales,Q_coord[numpt+Q_nb_coords]);
       val_mean += (one_face_color) ? Q_val[j] : Q_val[numpt];
     }
-
+  
   val_mean /=  m;
   
   if ( ISNAN(val_mean) || isinf(val_mean)) return;
@@ -415,8 +415,8 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
   int i,j, np=1, m,colors[128];
   int numpt, *current_vertex, color;
   double val_mean=0.0;
-  double x[128], y[128], z[128], v[128];
-
+  double x_def[128], y_def[128], z_def[128], v_def[128];
+  double *x=x_def, *y=y_def, *z = z_def, *v = v_def;
   int Q_nb_coords = Q->Mcoord->m;  
   double *Q_coord = Q->Mcoord->R; 
   int Q_nb_vertices_per_face = Q->Mface->m;
@@ -432,6 +432,15 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
       display_mode = FLAT;
       one_face_color = TRUE;
     }
+
+  if ( m > 128 )
+    {
+      x = graphic_alloc(0,m,sizeof(double));
+      y = graphic_alloc(1,m,sizeof(double));
+      z = graphic_alloc(2,m,sizeof(double));
+      v = graphic_alloc(3,m,sizeof(double));
+    }
+
   
   for ( j = 0 ; j < Q_nb_faces ; j++) 
     {
