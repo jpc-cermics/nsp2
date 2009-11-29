@@ -17,3 +17,4 @@ xset("use color",1)
 emc2C(1,6,path+'MESH.VAL',[-2,-2,2,2])
 xclear();
 emc2V(2,3,6,20,path+'MESH.VAL',[-0.5,-0.5,2,0.5])
+

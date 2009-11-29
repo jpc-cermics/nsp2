@@ -64,7 +64,7 @@ extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos);
 extern char *nsp_get_extension(char *name);
 extern BCG *nsp_check_graphic_context(void);
 
-static int sci_demo (const char *fname,char *code,int flag) ;
+static int nsp_graphic_demo (const char *fname,const char *code,int flag) ;
 static void  nsp_gwin_clear(void);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
@@ -174,7 +174,7 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 
 static int int_champ_new( Stack stack, int rhs, int opt, int lhs)
 {
-  if (rhs <= 0) return sci_demo(NspFname(stack),"champ(1:10,1:10,rand(10,10),rand(10,10));",1);
+  if (rhs <= 0) return nsp_graphic_demo(NspFname(stack),"champ(1:10,1:10,rand(10,10),rand(10,10));",1);
   return int_champ_G( stack, rhs,opt,lhs, FALSE);
 }
 
@@ -192,7 +192,7 @@ static int int_champ_new( Stack stack, int rhs, int opt, int lhs)
 
 static int int_champ1_new( Stack stack, int rhs, int opt, int lhs)
 {
-  if (rhs <= 0) return sci_demo(NspFname(stack),"champ1(1:10,1:10,rand(10,10),rand(10,10));",1);
+  if (rhs <= 0) return nsp_graphic_demo(NspFname(stack),"champ1(1:10,1:10,rand(10,10),rand(10,10));",1);
   return int_champ_G( stack, rhs, opt, lhs,TRUE);
 }
 
@@ -228,7 +228,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 		      { "zlevel",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   
-  if (rhs <= 0) { return sci_demo(NspFname(stack),"contour(1:5,1:10,rand(5,10),5);",1); }
+  if (rhs <= 0) { return nsp_graphic_demo(NspFname(stack),"contour(1:5,1:10,rand(5,10),5);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&nz,&opts,&alpha,&Mebox,&Mflag,&leg,
 	       &theta,&zlev) == FAIL) return RET_BUG;
@@ -397,7 +397,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
 
   CheckLhs(0,1);
 
-  if (rhs <= 0) {return  sci_demo(NspFname(stack),"contour2d(1:5,1:10,rand(5,10),5);",1); }
+  if (rhs <= 0) {return  nsp_graphic_demo(NspFname(stack),"contour2d(1:5,1:10,rand(5,10),5);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&nz,&opts_2d,&axes,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&strf,&Mstyle) == FAIL) return RET_BUG;
@@ -609,7 +609,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 		      { "theta",s_double,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( rhs <= 0) {return  sci_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
+  if ( rhs <= 0) {return  nsp_graphic_demo(NspFname(stack),"t=0:0.1:5*%pi;param3d(sin(t),cos(t),t*0.1);",1); }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&z,&opts,&alpha,&Mebox,&flag,&leg,&Mstyle,&theta) == FAIL)
     return RET_BUG;
@@ -701,7 +701,7 @@ static int int_geom3d( Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   NspMatrix *x1,*y1,*z1;
 
-  if (rhs <= 0) { return sci_demo(NspFname(stack), "t=0:0.1:5*%pi,[x,y]=geom3d(sin(t),cos(t),t/10);",1);}
+  if (rhs <= 0) { return nsp_graphic_demo(NspFname(stack), "t=0:0.1:5*%pi,[x,y]=geom3d(sin(t),cos(t),t/10);",1);}
 
   CheckRhs(3,3);
   CheckLhs(2,3);
@@ -1130,14 +1130,15 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
 
 static int int_plot3d_new( Stack stack, int rhs, int opt, int lhs)
 {
-  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
+  if ( rhs <= 0) return nsp_graphic_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d(t,t,sin(t)'*cos(t))",1);
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d_new,nsp_plot_fac3d_new,
 		      nsp_plot_fac3d1_new,nsp_plot_fac3d1_new);
 }
 
 static int int_plot3d1_new( Stack stack, int rhs, int opt, int lhs)
 {
-  if ( rhs <= 0) return sci_demo(NspFname(stack),"t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t))",1);
+  const char pl3d[]="t=-%pi:0.3:%pi;plot3d1(t,t,sin(t)'*cos(t),colormap=jetcolormap(64));";
+  if ( rhs <= 0) return nsp_graphic_demo(NspFname(stack),pl3d,1);
   return int_plot3d_G(stack,rhs,opt,lhs,nsp_plot3d1_new,nsp_plot_fac3d1_new,
 		      nsp_plot_fac3d1_new,nsp_plot_fac3d1_new);
 }
@@ -1584,35 +1585,35 @@ static int plot2d_build_y(Stack stack,NspMatrix *x,NspMatrix *y,NspObject *f, Ns
 static int int_plot2d_new( Stack stack, int rhs, int opt, int lhs)
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,0,0,NULL);
 }
 
 static int int_plot2d1_1_new( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,0,NULL);
 }
 
 static int int_plot2d1_2_new( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d2([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,1,NULL);
 }
 
 static int int_plot2d1_3_new( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d3([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,2,NULL);
 }
 
 static int int_plot2d1_4_new( Stack stack, int rhs, int opt, int lhs) 
 {
   static char str[]="x=0:0.1:2*%pi;plot2d4([x;x;x]',[sin(x);sin(2*x);sin(3*x)]',style=[-1,-2,3],strf='151',rect=[0,-2,2*%pi,2]);";
-  if (rhs == 0) {  return sci_demo(NspFname(stack),str,1); }
+  if (rhs == 0) {  return nsp_graphic_demo(NspFname(stack),str,1); }
   return int_plot2d_G(stack,rhs,opt,lhs,1,3,NULL);
 }
 
@@ -1660,7 +1661,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   NspGMatrix1 *gm;
   if ( rhs <= 0) 
     {
-      return sci_demo(NspFname(stack), "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);
+      return nsp_graphic_demo(NspFname(stack), "t=-%pi:0.1:%pi;m=sin(t)'*cos(t);grayplot(t,t,m);",1);
     }
 
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&fobj,&opts_mp,&axes,&Mcolminmax,&Mcolout,&frame,&leg,&leg_pos,
@@ -1789,7 +1790,7 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   int leg_posi;
   int_types T[] = {realmat,new_opts, t_end} ;
 
-  if ( rhs <= 0) {return   sci_demo(NspFname(stack),"m=[1,2;3,4];Matplot(m);",1);}
+  if ( rhs <= 0) {return   nsp_graphic_demo(NspFname(stack),"m=[1,2;3,4];Matplot(m);",1);}
 
   if ( GetArgs(stack,rhs,opt,T,&z,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
@@ -1896,7 +1897,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 
   int_types T[] = {realmat, realmat, new_opts, t_end} ;
 
-  if ( rhs <= 0) return sci_demo(NspFname(stack),"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
+  if ( rhs <= 0) return nsp_graphic_demo(NspFname(stack),"plot2d([0,10],[0,10],style=0);a=ones(50,50);a= 3*tril(a)+2*a;Matplot1(a,[4,4,9,9]);",1);
 
   if ( GetArgs(stack,rhs,opt,T,&M,&Rect,&opts_mp,&axes,&Mcolminmax,&frame,&leg,&leg_pos,
 	       &logflags,&Mnax,&Mrect,&remap,&strf,&Mstyle,&Mzminmax) == FAIL) return RET_BUG;
@@ -2763,6 +2764,7 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
     } 
   else 
     {
+      
       if ((Xgc = window_list_get_first()) != NULL) 
 	{
 	  Xgc->actions->erase(Xgc);
@@ -3184,7 +3186,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M;
   int rep, flagx=0, val,i, cl[5],m3,vals[2];
 
-  if ( rhs <= 0) { return sci_demo(NspFname(stack),"xsetm();",0);}
+  if ( rhs <= 0) { return nsp_graphic_demo(NspFname(stack),"xsetm();",0);}
 
   CheckRhs(1,2);
   CheckLhs(0,1);
@@ -3192,10 +3194,9 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
   if ((rep= GetStringInArray(stack,1,xget_Table,1)) == -1) return RET_BUG; 
 
   if (rhs == 2) { if (GetScalarInt(stack,2,&flagx) == FAIL) return RET_BUG;}
-
+  
+  F = nsp_check_for_current_figure(); 
   Xgc=nsp_check_graphic_context();
-  F= nsp_check_for_figure(Xgc);
-
   if ( F == NULL) return RET_BUG;
   Gc = F->obj->gc;
 
@@ -3968,11 +3969,10 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc = NULL;
   static char *auto_clear_values[]= {"off","on",NULL};
   char *info;
-  int rep,val,val1, i;
-  double cl[4];
+  int rep,val,val1;
   NspMatrix *M,*Mc;
 
-  if (rhs <= 0) {return sci_demo(NspFname(stack),"xsetm();",0);}
+  if (rhs <= 0) {return nsp_graphic_demo(NspFname(stack),"xsetm();",0);}
 
   CheckRhs(1,6);
   CheckLhs(0,1);
@@ -3981,56 +3981,37 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( rep != xset_window )
     {
-      Xgc=nsp_check_graphic_context();
-      F= nsp_check_for_figure(Xgc);
+      F = nsp_check_for_current_figure(); 
       if ( F == NULL) return RET_BUG;
       Gc = F->obj->gc;
     }
-
+  
   switch (rep) 
     {
     case xset_alufunction:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      /* obsolete */
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_alufunction1(Xgc,val);
+      /* not valid in new graphics */
       break;
     case xset_background:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->background = val;
-      Xgc->graphic_engine->xset_background(Xgc,val);
       break;
     case xset_clipoff:
       CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_unclip(Xgc);
+      /*
+	Xgc=nsp_check_graphic_context();
+	Xgc->graphic_engine->xset_unclip(Xgc);
+      */
       break;
     case xset_clipping:
-      if ( rhs == 2 ) 
-	{
-	  if (( M = GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-	  CheckLength(NspFname(stack),2,M,4);
-	  Xgc=nsp_check_graphic_context();
-	  Xgc->graphic_engine->scale->xset_clip(Xgc,M->R);
-	}
-      else
-	{
-	  CheckRhs(2,5);
-	  for ( i = 0; i < 4 ; i++) 
-	    {
-	      if (GetScalarDouble(stack,i+2,cl+i) == FAIL) return RET_BUG; 
-	    }
-	  Xgc=nsp_check_graphic_context();
-	  Xgc->graphic_engine->scale->xset_clip(Xgc,cl);
-	}
+      /* */
       break;
     case xset_color:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->color = val;
-      Xgc->graphic_engine->xset_pattern(Xgc,val);
       break;
     case xset_colormap:
       CheckRhs(2,2);
@@ -4040,24 +4021,26 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       memcpy(Mc->R, M->R, M->mn*sizeof(double));
       nsp_figure_data_set_colormap(F,Mc);
       /* need to invalidate */
-      Xgc->graphic_engine->invalidate(Xgc,NULL);
+      nsp_figure_invalidate((NspGraphic *) F);
       break;
     case xset_dashes:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->dashes = val;
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_dash(Xgc,val);
       break;
     case xset_default:
       CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->scale->xset_default(Xgc);
+      /* 
+	 Xgc=nsp_check_graphic_context();
+	 Xgc->graphic_engine->scale->xset_default(Xgc);
+      */
       break;
     case xset_default_colormap:
       CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_default_colormap(Xgc);
+      /* 
+	 Xgc=nsp_check_graphic_context();
+	 Xgc->graphic_engine->xset_default_colormap(Xgc);
+      */
       break;
     case xset_font:
       CheckRhs(2,3);
@@ -4068,25 +4051,21 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 	  if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
 	  Gc->font_size = val;
 	}
-      Xgc->graphic_engine->xset_font(Xgc,Gc->font,Gc->font_size);
       break;
     case xset_font_size:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->font_size = val;
-      Xgc->graphic_engine->xset_font(Xgc,Gc->font,Gc->font_size);
       break;
     case xset_foreground:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->foreground = val;
-      Xgc->graphic_engine->xset_foreground(Xgc,val);
       break;
     case xset_hidden3d:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->hidden3d = val;
-      Xgc->graphic_engine->xset_hidden3d(Xgc,val);
       break;
     case xset_lastpattern:
       CheckRhs(1,1);
@@ -4097,13 +4076,11 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->line_mode = val;
-      Xgc->graphic_engine->xset_absourel(Xgc,val);
       break;
     case xset_line_style:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->line_style = val;
-      Xgc->graphic_engine->xset_dash(Xgc,val);
       break;
     case xset_mark:
       CheckRhs(2,3);
@@ -4114,43 +4091,35 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 	  if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
 	  Gc->mark_size=val1;
 	}
-      Xgc->graphic_engine->xset_mark(Xgc,Gc->mark,Gc->mark_size);
       break;
     case xset_mark_size:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->mark_size=val;
-      Xgc->graphic_engine->xset_mark(Xgc,Gc->mark,Gc->mark_size);
       break;
     case xset_pattern:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->pattern=val;
-      Xgc->graphic_engine->xset_pattern(Xgc,val);
       break;
     case xset_pixmap:
       CheckRhs(2,2);
-      Xgc=nsp_check_graphic_context();
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->pixmap=val;
-      Xgc->graphic_engine->xset_pixmapOn(Xgc,val);
       break;
     case xset_recording: 
       CheckRhs(2,2);
-      Xgc=nsp_check_graphic_context();
       /* ignore */
       break;
     case xset_thickness:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->thickness=val;
-      Xgc->graphic_engine->xset_thickness(Xgc,val);
       break;
     case xset_use_color:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       Gc->use_color=val;
-      Xgc->graphic_engine->xset_usecolor(Xgc,val);
       break;
     case xset_viewport:
       CheckRhs(3,3);
@@ -4221,10 +4190,8 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       break;
     case xset_auto_clear:
       CheckRhs(2,2);
-      Xgc=nsp_check_graphic_context();
       if ( (rep = GetStringInArray(stack,2,auto_clear_values,1)) == -1 ) return RET_BUG;
       Gc->auto_clear=rep;
-      Xgc->graphic_engine->xset_autoclear(Xgc,rep);
       return 0;
       break;
     case xset_clipgrf:
@@ -4330,7 +4297,7 @@ static int int_xtitle(Stack stack, int rhs, int opt, int lhs)
   char demo[]="x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x legend ','y legend');";
   NspSMatrix *S;
   int narg;
-  if ( rhs <= 0) return sci_demo(NspFname(stack),demo,1);
+  if ( rhs <= 0) return nsp_graphic_demo(NspFname(stack),demo,1);
   CheckRhs(1,3);
   Obj = nsp_check_for_current_axes_or_objs3d();
   if ( Obj == NULL) return RET_BUG;
@@ -4902,13 +4869,15 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
-  if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/graphics/fec/fec.ex1\");",1);}
+  CheckLhs(0,1);
+
+  if ( rhs <= 0) { return nsp_graphic_demo (NspFname(stack)," exec(\"SCI/demos/graphics/fec/fec.ex1\");",1);}
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
 	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,&paint,
 	       &colorbar)
        == FAIL) return RET_BUG;
-
+  
   CheckSameDims(NspFname(stack),1,2,x,y);
   CheckSameDims(NspFname(stack),1,4,x,F);
 
@@ -5532,7 +5501,7 @@ static int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
 
 
 /**
- * sci_demo:
+ * nsp_graphic_demo:
  * @fname: 
  * @code: 
  * @flag: 
@@ -5542,7 +5511,7 @@ static int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
  * Returns: 
  **/
 
-static int sci_demo (const char *fname,char *code,int flag) 
+static int nsp_graphic_demo (const char *fname,const char *code,int flag) 
 {
   int rep;
   if ( flag == 1) 

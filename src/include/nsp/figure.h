@@ -125,8 +125,10 @@ extern void nsp_send_scale_2D_to_opengl(BCG *Xgc);
 extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
 extern int nsp_figure_remove_children(NspFigure *F);
 extern NspObject *nsp_check_for_current_axes_or_objs3d(void);
+extern NspFigure *nsp_check_for_current_figure(void);
 
-#line 130 "./figure.h"
+
+#line 132 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -141,7 +143,7 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type);
-#line 36 "codegen/figure.override"
+#line 38 "codegen/figure.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -163,6 +165,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 167 "./figure.h"
+#line 169 "./figure.h"
 #endif /* NspFigure_Private */
 
