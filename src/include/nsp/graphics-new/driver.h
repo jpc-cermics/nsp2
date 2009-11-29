@@ -131,6 +131,7 @@ typedef void driver_draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_
 typedef void driver_draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y,int dest_x,
 					  int dest_y,int width,int height);
 
+typedef void driver_xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position);
 /* a set of generic functions which can be used or 
  * not by each driver 
  */
@@ -272,6 +273,8 @@ struct nsp_gengine {
 
   driver_xpush_colormap *xpush_colormap;
   driver_xpop_colormap *xpop_colormap;
+
+  driver_xstring_pango *xstring_pango;
 };
 
 #endif 
@@ -383,6 +386,11 @@ static driver_xset_win_protect xset_win_protect;
 static driver_xset_windowdim xset_windowdim;
 static driver_xset_windowpos xset_windowpos;
 static driver_xset_wresize xset_wresize;
+static driver_xstring_pango xstring_pango;
 
 #endif 
+
+
+
+
 

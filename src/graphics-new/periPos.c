@@ -2032,3 +2032,7 @@ static  void xset_test(BCG *Xgc)
   Xgc->graphic_engine->generic->xset_test(Xgc);
 }
 
+void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
+{
+
+}

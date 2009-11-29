@@ -10,7 +10,7 @@
    '("char*" "font" ) 
    '("NspSMatrix*" "text" ) 
    '("int" "position" ) 
-   '("double" "angle" ) 
+   '("double" "angle" "std" "0.0" ) 
    '("double" "w") ;;
    '("double" "h") ;; 
    '("int" "fill" "std" "0")

@@ -24,7 +24,7 @@
 
 
 
-#line 62 "codegen/objs3d.override"
+#line 63 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
@@ -103,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 75 "codegen/objs3d.override"
+#line 76 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -770,7 +770,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 96 "codegen/objs3d.override"
+#line 97 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -894,7 +894,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 112 "codegen/objs3d.override"
+#line 113 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1101,7 +1101,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 170 "codegen/objs3d.override"
+#line 171 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1113,7 +1113,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1114 "objs3d.c"
 
 
-#line 180 "codegen/objs3d.override"
+#line 181 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1153,7 +1153,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 190 "codegen/objs3d.override"
+#line 191 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1259,8 +1259,6 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
-  /* frame_clip_on(Xgc); */
-  
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 
   nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
@@ -1271,8 +1269,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
-  /* frame_clip_off(Xgc); */
-
+  
   /* title if present */
   if ( P->obj->title[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);

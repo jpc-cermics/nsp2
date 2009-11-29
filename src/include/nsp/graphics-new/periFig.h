@@ -162,6 +162,8 @@ Gengine XFig_gengine = {
   xpush_colormap,
   xpop_colormap,
 
+  xstring_pango
+
 };
 
 #else 

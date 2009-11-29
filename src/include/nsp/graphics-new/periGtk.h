@@ -323,7 +323,9 @@ Gengine xx__gengine = {
   draw_pixbuf_from_file,
 
   xpush_colormap,
-  xpop_colormap
+  xpop_colormap,
+
+  xstring_pango
 
 };
 

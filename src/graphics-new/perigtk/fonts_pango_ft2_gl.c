@@ -287,3 +287,8 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
 }
 
 #endif 
+
+void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
+{
+
+}

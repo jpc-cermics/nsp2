@@ -32,6 +32,39 @@ extern Gengine GL_gengine;
 extern int window_list_check_top(BCG *,void *) ;
 extern int window_list_check_drawing(BCG *dd,void *win);
 
+/*
+ * default values 
+ * 
+ */
+
+static window_scale_list  default_scale = 
+  { 
+    0,
+    0,
+    0,
+    {600,400},
+    {0.0,0.0,1.0,1.0},
+    {0.0,0.0,1.0,1.0},
+    {0.0,0.0},
+    {1/8.0,1/8.0,1/8.0,1/8.0},
+    {0.0,1.0,0.0,10},
+    {0.0,1.0,0.0,10},
+    '5',
+    75.0,53.0,450.0,318.0,
+    {'n','n'},
+    {75,53,450,318},
+    {2,10,2,10},
+    {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}},
+    {-1.0,1.0,-1.0,1.0,-1.0,1.0},
+    {0.0,0.0,0.0},
+    35.0,45.0,
+    1,                 /* added by es */
+    1.0,0.0,           /* test: cosa, sina */
+    (window_scale_list *) 0, /*unused */
+    (window_scale_list *) 0 /*unused */
+  };
+
+
 
 /**
  * WindowList: 
@@ -54,14 +87,10 @@ struct  _window_list
 
 static WindowList *The_List  = (WindowList *) NULL; 
 
-static int set_window_scale(int win,window_scale_list *scale);
-static window_scale_list *check_subwin_wcscale( window_scale_list *listptr,const double subwin_rect[4]);
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static WindowList  *window_list_search_w_int(WindowList *listptr, int i);
 static int window_list_search_topelevel_int(WindowList *,void *,int);
 static void scale_copy (window_scale_list *s1, window_scale_list *s2);
-static window_scale_list *new_wcscale ( window_scale_list *val);
-static int same_subwin(const double lsubwin_rect[4],const double subwin_rect[4]);
 static int window_list_search_from_drawing__(WindowList *listptr,void *win);
 
 /**
@@ -131,10 +160,9 @@ BCG *window_list_new(void *private)
   else 
     { 
       loc->winxgc.scales = NULL;
-      if ( xgc_add_default_scale(&loc->winxgc) == FAIL)
+      if (( loc->winxgc.scales = new_wcscale(&default_scale))== NULL)
 	{
-	  FREE(loc);
-	  Sciprintf("window_list_new_entry_int: running out of memory\n");
+	  Sciprintf("set_window_scale: running out of memory\n");
 	  return NULL;
 	}
       loc->winxgc.private = private ;
@@ -194,7 +222,6 @@ BCG * window_list_win_to_front(int win)
 void window_list_remove(int num)
 {
   WindowList *L1= The_List ;
-  window_scale_list *loc;
   while ( L1 != (WindowList *) NULL)
     {
       if ( L1->winxgc.CurWindow == num )
@@ -210,13 +237,7 @@ void window_list_remove(int num)
 	      if ( L1->next != NULL) L1->next->prev = NULL;
 	    }
 	  /* now L1 is to be freed */
-	  loc = L1->winxgc.scales ; 
-	  while ( loc != NULL)
-	    {
-	      window_scale_list *next = loc->next;
-	      FREE(loc);
-	      loc = next;
-	    }
+	  FREE(L1->winxgc.scales)
 	  FREE(L1);
 	  break;
 	}
@@ -385,124 +406,6 @@ int window_list_get_max_id(void)
  * Graphic scales 
  */
 
-/*
- * default values 
- * 
- */
-
-static window_scale_list  default_scale = 
-  { 
-    0,
-    0,
-    0,
-    {600,400},
-    {0.0,0.0,1.0,1.0},
-    {0.0,0.0,1.0,1.0},
-    {0.0,0.0},
-    {1/8.0,1/8.0,1/8.0,1/8.0},
-    {0.0,1.0,0.0,10},
-    {0.0,1.0,0.0,10},
-    '5',
-    75.0,53.0,450.0,318.0,
-    {'n','n'},
-    {75,53,450,318},
-    {2,10,2,10},
-    {{1.0,0.0,0.0},{0.0,1.0,0.0},{0.0,0.0,1.0}},
-    {-1.0,1.0,-1.0,1.0,-1.0,1.0},
-    {0.0,0.0,0.0},
-    35.0,45.0,
-    1,                 /* added by es */
-    1.0,0.0,           /* test: cosa, sina */
-    (window_scale_list *) 0, /*unused */
-    (window_scale_list *) 0 /*unused */
-  };
-
-
-/**
- * set_window_scale_with_default:
- * @win: an integer 
- * 
- * fills the current scale of window @win with default values.
- **/
-
-void set_window_scale_with_default(int win) 
-{ 
-  set_window_scale(win,&default_scale);
-} 
-
-
-
-/**
- * move_subwindow_scale_to_front:
- * @Xgc: a graphic context 
- * @subwin: a pointer to an array of doubles specifying a subwindows.
- * 
- *   if subwin == NULL : returns OK 
- *   if subwin != NULL : search for existing scale values for
- *      subwindow subwin of window graphics context Xgc.
- *   If no scale are found we do nothing and return FAIL
- *   else the scale is moved on the top of the scale list and we return OK
- * 
- * 
- * Returns: %OK or %FAIL
- **/
-
-#if 0
-int move_subwindow_scale_to_front(BCG *Xgc,const double *subwin)
-{ 
-  window_scale_list *loc;
-  if ( Xgc == NULL) return FAIL;
-  if ( Xgc->scales == NULL ) return FAIL;
-  loc = check_subwin_wcscale(Xgc->scales,subwin);
-  if ( loc != NULL) 
-    {
-      /* we move loc to the top of the list */
-      if ( loc != Xgc->scales )
-	{
-	  /* remove loc */
-	  (loc->prev)->next = loc->next ;
-	  if ( loc->next != NULL) (loc->next)->prev = loc->prev ;
-	  /* reinsert loc on top */
-	  loc->next = Xgc->scales;
-	  loc->next->prev = loc ;
-	  Xgc->scales = loc;
-	}
-      return OK;
-    }
-  return FAIL;
-}
-#endif 
-
-/**
- * xgc_add_scale:
- * @Xgc: a graphic context 
- * @scale: a #window_scale_list pointer 
- * 
- * adds a copy of @scale at the begining of the window scale list  
- * of graphic context @Xgc.
- * 
- * Returns:  %OK or %FAIL.
- **/
-
-static int xgc_add_scale(BCG *Xgc,window_scale_list *scale)
-{ 
-  window_scale_list *loc;
-  if ( Xgc == NULL) return FAIL;
-  if (( loc = new_wcscale(scale))== NULL)
-    {
-      Scistring("set_window_scale: running out of memory\n");
-      return FAIL;
-    }
-  else 
-    {
-      loc->next = Xgc->scales;
-      if (loc->next != NULL) loc->next->prev = loc;
-      Xgc->scales = loc;
-    }
-  return OK;
-}
-
-
 /**
  * xgc_add_default_scale:
  * @Xgc:  a graphic context 
@@ -515,97 +418,27 @@ static int xgc_add_scale(BCG *Xgc,window_scale_list *scale)
 
 int xgc_add_default_scale(BCG *Xgc)
 {
-  return xgc_add_scale(Xgc,&default_scale);
+  if (( Xgc->scales = new_wcscale(&default_scale))== NULL)
+    {
+      Sciprintf("set_window_scale: running out of memory\n");
+      return FAIL;
+    }
+  return OK;
 }
-
+ 
 /**
  * xgc_reset_scales_to_default:
  * @Xgc:  a graphic context 
  * 
- * remove the scales in the graphic context @Xgc and 
- * stores a copy of default scale in the window scale list
+ * reset the scale to default scale.
  * 
  * Returns: %OK or %FAIL.
  **/
 
 int xgc_reset_scales_to_default(BCG *Xgc)
 {
-  window_scale_list *loc = Xgc->scales;
-  while ( loc != NULL)
-    {
-      window_scale_list *next = loc->next;
-      FREE(loc);
-      loc = next;
-    }
-  Xgc->scales = NULL;
-  /* now reinsert default scale */
-  return xgc_add_default_scale(Xgc);
-}
-
-
-/**
- * set_window_scale:
- * @win: an integer 
- * @scale: a scale (#window_scale_list pointer).
- * 
- * if a subwin given by @scale is already in the scale list 
- * the scale list item is updated using @scale 
- * and moved at the begining of window @win scale list 
- * if not, a copy of @scale is added at the begining of the scale list 
- * of window @win.
- * 
- * Return value: %OK or %FAIL
- **/
-
-static int set_window_scale(int win,window_scale_list *scale)
-{ 
-  window_scale_list *loc;
-  BCG * winxgc = window_list_search_new(win);
-  if ( winxgc == NULL) return FAIL;
-  if ( winxgc->scales ==  NULL)
-    {
-      winxgc->scales = new_wcscale(scale);
-      if ( winxgc->scales == 0) 
-	{
-	  Scistring("set_window_scale: running out of memory\n");
-	  return FAIL;
-	}
-      return OK;
-    }
-  loc = check_subwin_wcscale(winxgc->scales,scale->subwin_rect); 
-  if ( loc != NULL) 
-    {
-      /* subwin exists we update it with data from scale
-       * loc->next and loc->previous are not changed !
-       */
-      scale_copy(loc,scale);
-      /* we move listptr to the top of the list */
-      if ( loc != winxgc->scales )
-	{
-	  /* remove loc */
-	  (loc->prev)->next = loc->next ;
-	  if ( loc->next != NULL) (loc->next)->prev = loc->prev ;
-	  /* reinsert loc on top */
-	  loc->next = winxgc->scales;
-	  loc->next->prev = loc ;
-	  winxgc->scales = loc;
-	}      
-    }
-  else 
-    {
-      /* subwin does not exists we add it a the begining of the list */
-      if (( loc = new_wcscale(scale))== NULL)
-	{
-	  Scistring("set_window_scale: running out of memory\n");
-	  return FAIL;
-	}
-      else 
-	{
-	  loc->next = winxgc->scales;
-	  if (loc->next != NULL) loc->next->prev = loc;
-	  winxgc->scales = loc;
-	}
-    }
+  if ( Xgc->scales == NULL) return FAIL;
+  scale_copy(Xgc->scales,&default_scale);
   return OK;
 }
 
@@ -627,71 +460,6 @@ static window_scale_list *new_wcscale(window_scale_list *val)
   scale_copy(new,val);
   return new;
 }
-
-/**
- * check_subwin_wcscale:
- * @listptr: a #window_scale_list
- * @subwin_rect: array pointer 
- * 
- * Check is a #window_scale_list for a subwindow specified by @subwin_rect 
- * is found in the scale list @listptr and returns it if found. 
- * 
- * Returns: %NULL or a #window_scale_list
- **/
-
-static window_scale_list *check_subwin_wcscale( window_scale_list *listptr,const double subwin_rect[4])
-{
-  int count = 0;
-  window_scale_list *listptr1 = listptr;
-  while ( listptr1 != NULL) 
-    {
-      count++; listptr1 = listptr1->next;
-    }
-  /* Sciprintf("Number of scales : %d\n",count); */
-  while ( listptr != NULL) 
-    {
-      if ( same_subwin( listptr->subwin_rect,subwin_rect)) return listptr;
-      listptr = listptr->next;
-    }
-  return NULL;
-}
-
-static int same_subwin(const double lsubwin_rect[4],const double subwin_rect[4])
-{
-  if ( Abs(lsubwin_rect[0] - subwin_rect[0]) < 1.e-8
-       && Abs(lsubwin_rect[1] - subwin_rect[1]) < 1.e-8
-       && Abs(lsubwin_rect[2] - subwin_rect[2]) < 1.e-8
-       && Abs(lsubwin_rect[3] - subwin_rect[3]) < 1.e-8 ) 
-    return 1;
-  else 
-    return 0;
-}
-
-/**
- * window_scale_delete:
- * @win: an integer 
- * 
- * delete the scales associated to window @win. 
- * 
- **/
-
-void window_scale_delete(int win)
-{ 
-
-  window_scale_list *loc;
-  BCG * winxgc = window_list_search_new(win);
-  if ( winxgc == NULL) return ; 
-  if ( winxgc->scales ==  NULL) return ;
-  loc = winxgc->scales ;
-  while ( loc != NULL)
-    {
-      window_scale_list *next = loc->next;
-      FREE(loc);
-      loc = next;
-    }
-  winxgc->scales = NULL;
-}
-
 
 /**
  * scale_copy:
@@ -764,36 +532,6 @@ void nsp_scale_default(nsp_gcscale *scale1)
   scale_copy(scale1,&default_scale);
 }
 
-
-
-
-/**
- * show_scales:
- * @Xgc: a graphic context 
- * 
- * display on the current output stream the subwindows 
- * associated to graphic context @Xgc.
- * 
- **/
-
-void show_scales(BCG *Xgc)
-{
-  window_scale_list *loc;
-  if ( Xgc == NULL ||  Xgc->scales ==  NULL) 
-    {
-      Sciprintf("No scales for window %d\r\n",Xgc->CurWindow);
-      return ;
-    }
-  Sciprintf("scales for window %d\r\n",Xgc->CurWindow);
-  loc = Xgc->scales ;
-  while ( loc != NULL)
-    {
-      Sciprintf("\tsubwin=[%5.2f,%5.2f,%5.2f,%5.2f], flag=%d\r\n",
-	       loc->subwin_rect[0],loc->subwin_rect[1],loc->subwin_rect[2],loc->subwin_rect[3],
-	       loc->scale_flag);      
-      loc = loc->next;
-    }
-}
 
 /**
  * getscale2d:

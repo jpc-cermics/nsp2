@@ -138,3 +138,7 @@ static const int symbols[] =
     0x00B0  /* degree sign */
   };
 
+void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
+{
+
+}

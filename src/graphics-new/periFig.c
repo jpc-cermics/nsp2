@@ -2019,3 +2019,7 @@ static  void xset_test(BCG *Xgc)
 }
 
 
+void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
+{
+
+}

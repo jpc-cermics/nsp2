@@ -28,6 +28,8 @@ extern int nsp_set_current_figure(NspFigure *F);
 extern NspFigure *nsp_get_current_figure(void);
 extern void nsp_send_scale_2D_to_opengl(BCG *Xgc);
 extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
+extern int nsp_figure_remove_children(NspFigure *F);
+extern NspObject *nsp_check_for_current_axes_or_objs3d(void);
 
 %%
 include-private Figure
@@ -1577,6 +1579,133 @@ NspAxes *nsp_check_for_current_axes(void)
   return Axes;
 }
 
+/**
+ * nsp_check_for_current_objs3d:
+ * @void: 
+ * 
+ * returns the current objs3d and create one 
+ * if necessary.
+ * 
+ * Returns: a new #NspObjs3d or %NULL.
+ **/
+
+NspObjs3d *nsp_check_for_current_objs3d(void)
+{
+  int l,i;
+  NspObject *Obj;
+  NspList *L;
+  NspFigure *F;
+  NspObjs3d *Objs3d = NULL;
+  /* 
+     Objs3d = nsp_get_current_axes();
+     if ( Objs3d != NULL ) return Objs3d;
+  */
+  
+  F = nsp_get_current_figure(); 
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      BCG *Xgc=nsp_check_graphic_context();
+      if ( Xgc == NULL ) return NULL;
+      F = nsp_create_default_figure(Xgc);
+      if ( F == NULL) return NULL;
+      if ( nsp_set_current_figure(F) == FAIL) return NULL;
+      /* destroy the local copy */
+      nsp_figure_destroy(F);
+      F = nsp_get_current_figure();
+    }
+  L= F->obj->children;
+  /* return the first axes found 
+   * Note that the children of a Figure should be axes or 3daxes (obj3d)
+   */
+  l= nsp_list_length(L);
+  for ( i= 1; i <= l ; i++) 
+    {
+      Obj = nsp_list_get_element(L,i);
+      if ( Obj != NULLOBJ && IsObjs3d(Obj) )
+	{
+	  Objs3d=(NspObjs3d *) Obj;
+	  break;
+	}
+    }
+  if ( Objs3d == NULLOBJS3D ) 
+    {
+      /* create a new axes */
+      Objs3d= nsp_objs3d_create_default("objs3d");
+      if ( Objs3d == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) Objs3d)== FAIL) 
+	{
+	  nsp_objs3d_destroy(Objs3d);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+    }
+  return Objs3d;
+}
+/**
+ * nsp_check_for_current_objs3d:
+ * @void: 
+ * 
+ * returns the current objs3d and create one 
+ * if necessary.
+ * 
+ * Returns: a new #NspObjs3d or %NULL.
+ **/
+
+NspObject *nsp_check_for_current_axes_or_objs3d(void)
+{
+  int l,i;
+  NspObject *Obj;
+  NspList *L;
+  NspFigure *F;
+  NspObject *Ret = NULL;
+  F = nsp_get_current_figure(); 
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      BCG *Xgc=nsp_check_graphic_context();
+      if ( Xgc == NULL ) return NULL;
+      F = nsp_create_default_figure(Xgc);
+      if ( F == NULL) return NULL;
+      if ( nsp_set_current_figure(F) == FAIL) return NULL;
+      /* destroy the local copy */
+      nsp_figure_destroy(F);
+      F = nsp_get_current_figure();
+    }
+  L= F->obj->children;
+  /* return the first axes found 
+   * Note that the children of a Figure should be axes or 3daxes (obj3d)
+   */
+  l= nsp_list_length(L);
+  for ( i= 1; i <= l ; i++) 
+    {
+      Obj = nsp_list_get_element(L,i);
+      if ( Obj != NULLOBJ && ( IsObjs3d(Obj) || IsAxes(Obj)) )
+	{
+	  Ret = Obj;
+	  break;
+	}
+    }
+  if ( Ret == NULLOBJ ) 
+    {
+      /* create a new axes */
+      NspAxes *Axes =  nsp_axes_create_default("axe");
+      if ( Axes == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL) 
+	{
+	  nsp_axes_destroy(Axes);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+      Ret = (NspObject *) Axes;
+    }
+  return Ret;
+}
+
 
 void nsp_send_scale_2D_to_opengl(BCG *Xgc)
 {
@@ -1599,3 +1728,18 @@ void nsp_send_scale_3D_to_opengl(BCG *Xgc)
     }
 #endif
 }
+
+
+int nsp_figure_remove_children(NspFigure *F)
+{
+  if (F->obj->children != NULL ) 
+    {
+      nsp_figure_children_unlink_figure(F);
+      nsp_list_destroy(F->obj->children);
+    }
+  if ((F->obj->children = nsp_list_create("children")) == NULLLIST)
+    return FAIL;  
+  else 
+    return OK;
+}
+

@@ -157,10 +157,8 @@ static const int symbols[] =
     0x00B0  /* degree sign */
   };
 
-/* utility to rotate a string 
- *
- */
 
+/* utility to rotate a string */
 
 static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
 				       const PangoMatrix *matrix, GdkRectangle *rect)
@@ -255,19 +253,9 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
 				 &matrix,&rect);
       gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
 		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
-      if (0) 
-	{
-	  /* just to test : also draw the enclosing rectangle */
-	  int myrect[]={ x,y ,rect.width,rect.height};
-	  drawrectangle(Xgc,myrect);
-	  fprintf(stderr,"rect = %d %d %d %d\n",rect.x,rect.y,rect.width,rect.height);
-	  gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
-			   x,y,Xgc->private->layout);
-
-	}
       pango_context_set_matrix (Xgc->private->context,NULL);
       pango_layout_context_changed (Xgc->private->layout);
-      if (0) 
+      if (1) 
 	{
 	  /* draw the bounding box */
 	  int vx[]={x,x,x,x},vy[]={y,y,y,y};
@@ -292,182 +280,6 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
       gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,x,y - height,Xgc->private->layout);
     }
 }
-
-
-#if 0
-static void
-composite (guchar *src_buf,
-	   gint    src_rowstride,
-	   guchar *dest_buf,
-	   gint    dest_rowstride,
-	   gint    width,
-	   gint    height)
-{
-  guchar *src = src_buf;
-  guchar *dest = dest_buf;
-
-  while (height--)
-    {
-      gint twidth = width;
-      guchar *p = src;
-      guchar *q = dest;
-
-      while (twidth--)
-	{
-	  guchar a = p[3];
-	  guint t;
-	  t = a * p[0] + (255 - a) * q[0] + 0x80;
-	  q[0] = (t + (t >> 8)) >> 8;
-	  t = a * p[1] + (255 - a) * q[1] + 0x80;
-	  q[1] = (t + (t >> 8)) >> 8;
-	  t = a * p[2] + (255 - a) * q[2] + 0x80;
-	  q[2] = (t + (t >> 8)) >> 8;
-	  p += 4;
-	  q += 3;
-	}
-      
-      src += src_rowstride;
-      dest += dest_rowstride;
-    }
-}
-
-
-static void displaystring_xxx(BCG *Xgc,char *str, int x, int y, int flag,double angle)
-{
-  GdkColor gdkcolor;
-  FT_Bitmap ftbitmap;
-  guint8 *graybitmap;
-  int rowstride;
-  GdkPixbuf *rgba = NULL;
-  PangoRectangle ink_rect,logical_rect;
-  int  height,width;
-  ;
-
-  if (0 &&  AluStruc_[Xgc->CurDrawFunction].id != GDK_XOR )
-    {
-      displaystring_xx(Xgc,str,x, y, flag, angle);
-      return;
-    }
-
-  gdkcolor = Xgc->private->colors[Xgc->CurColor];
-  pango_layout_set_text (Xgc->private->layout, str, -1);
-
-  /*  PangoLayoutLine *line;
-   *  nline = pango_layout_get_line_count(Xgc->private->layout); 
-   *  if ( nline == 1 ) 
-   *    {
-   *   / * we want (x,y) to be at the baseline of the first string position * /
-   *   line = pango_layout_get_line(Xgc->private->layout,0);
-   *   pango_layout_line_get_extents(line, &ink_rect,&logical_rect);
-   *   height = - logical_rect.y/PANGO_SCALE;
-   *   width = logical_rect.width/PANGO_SCALE;
-   */
-  /* used to position the descent of the last line of layout at y */
-  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
-
-  if (width > 0) 
-    {
-      int stride;
-      guchar* pixels=NULL;
-      int i,j;
-      rowstride = 32*((width+31)/31);
-      graybitmap = (guint8*)g_new0(guint8, height*rowstride);
-      ftbitmap.rows = height;
-      ftbitmap.width = width;
-      ftbitmap.pitch = rowstride;
-      ftbitmap.buffer = graybitmap;
-      ftbitmap.num_grays = 256;
-      ftbitmap.pixel_mode = ft_pixel_mode_grays;
-      ftbitmap.palette_mode = 0;
-      ftbitmap.palette = 0;
-      pango_ft2_render_layout(&ftbitmap, Xgc->private->layout, 0, 0);
-      if (0)
-	{
-	  /* render the ftbitmap 
-	   * works but it's ugly 
-	   */
-	  for (i = 0; i < height; i++) {
-	    for (j = 0; j < width; j++) {
-	      if ( graybitmap[i*rowstride+j] != 0 )
-		gdk_draw_point(Xgc->private->drawable,Xgc->private->wgc,x+ j,y+ i);
-	    }
-	  }
-	}
-
-      /* use a pixbuf to render */
-      else 
-	{
-	  int src_x=0,src_y=0,red,green,blue;
-	  GdkPixbuf *composited=NULL;
-	  /* fill a pixbuf with ftbitmap and draw pixbuf */
-	  rgba = gdk_pixbuf_new(GDK_COLORSPACE_RGB, TRUE, 8, width, height);
-	  stride = gdk_pixbuf_get_rowstride(rgba);
-	  pixels = gdk_pixbuf_get_pixels(rgba);
-	  red = (gdkcolor.red ) >> 8;
-	  green =(gdkcolor.green ) >> 8;
-	  blue = (gdkcolor.blue ) >> 8;
-	  for (i = 0; i < height; i++) {
-	    for (j = 0; j < width; j++) {
-	      pixels[i*stride+j*4] = red;
-	      pixels[i*stride+j*4+1] = green;
-	      pixels[i*stride+j*4+2] = blue;
-	      pixels[i*stride+j*4+3] = graybitmap[i*rowstride+j];
-	    }
-	  }
-	  if (1) 
-	    {
-	      composited = gdk_pixbuf_get_from_drawable (NULL,
-							 Xgc->private->drawable,
-							 NULL,
-							 x, y,
-							 0, 0,
-							 width, height);
-	  
-	      if (composited)
-		composite (pixels + src_y * stride + src_x * 4,
-			   stride,
-			   gdk_pixbuf_get_pixels(composited),
-			   gdk_pixbuf_get_rowstride(composited),
-			   width, height);
-
-	      gdk_draw_pixbuf(Xgc->private->drawable,
-			      Xgc->private->wgc,
-			      composited,
-			      0,0,
-			      x,y,
-			      width, height,
-			      GDK_RGB_DITHER_NONE,
-			      0,0);
-	      g_object_unref(G_OBJECT(rgba));
-	      if ( composited ) g_object_unref(G_OBJECT(composited));
-	    }
-	  else 
-	    {
-	      gdk_draw_pixbuf(Xgc->private->drawable,
-			      Xgc->private->wgc,
-			      rgba,
-			      0,0,
-			      x,y,
-			      width, height,
-			      GDK_RGB_DITHER_NONE,
-			      0,0);
-	      g_object_unref(G_OBJECT(rgba));
-	    }
-	}
-      /* test with a pixbuf from file */
-      if ( 1 )
-	{
-	  rgba = gdk_pixbuf_new_from_file((gchar *) "linux.png", NULL);
-	  gdk_draw_pixbuf(Xgc->private->drawable,
-			  Xgc->private->wgc, GDK_PIXBUF(rgba),
-			  0,0,x,y,-1,-1,GDK_RGB_DITHER_NONE,0,0);
-	  g_object_unref(G_OBJECT(rgba));
-	}
-      g_free(graybitmap);
-    }
-}
-#endif 
-
 
 
 static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
@@ -502,6 +314,12 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
       for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
       drawrectangle(Xgc,myrect);
     }
+}
+
+
+void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
+{
+  
 }
 
 

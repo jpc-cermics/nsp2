@@ -21,7 +21,7 @@ extern void nsp_axes_i2f(nsp_axes *A,int x,int y,double pt[2]);
 extern BCG *nsp_check_graphic_context(void);
 extern void nsp_list_unlink_figure(NspList *L, nsp_figure *F);
 extern int nsp_list_check_figure(NspList *L, nsp_figure *F);
-extern void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale);
+extern void nsp_strf_axes(NspAxes *A,double *rect, char scale);
 extern int nsp_axes_insert_child(NspAxes *A, NspGraphic *G, int invalidate);
 extern void nsp_axes_invalidate(NspGraphic *G);
 extern void nsp_figure_unzoom(NspGraphic *Obj);
@@ -46,7 +46,7 @@ static void nsp_translate_axes(NspGraphic *o,const double *tr);
 static void nsp_rotate_axes(NspGraphic *o,double *R);
 static void nsp_scale_axes(NspGraphic *o,double *alpha);
 static int nsp_getbounds_axes(NspGraphic *o,double *bounds);
-static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds);
+static void nsp_axes_compute_inside_bounds(NspGraphic *Obj,double *bounds);
 static void nsp_axes_link_figure(NspGraphic *G, void *F,void *A);
 static void nsp_axes_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_axes_children(NspGraphic *Obj);
@@ -144,7 +144,7 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children =  (NspList *) val;
-  nsp_axes_compute_inside_bounds(NULL,self,((NspAxes *) self)->obj->bounds->R);
+  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj );
   return OK;
@@ -162,7 +162,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children= children;
-  nsp_axes_compute_inside_bounds(NULL,self,((NspAxes *) self)->obj->bounds->R);
+  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj);
   return OK;
@@ -280,7 +280,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       /* actualize the inside bounds with objects 
        * this should not be done systematically 
        */
-      nsp_axes_compute_inside_bounds(Xgc,Obj,inside_bounds);
+      nsp_axes_compute_inside_bounds(Obj,inside_bounds);
       memcpy(P->obj->frect->R,inside_bounds,4*sizeof(double));
     }
   else
@@ -431,7 +431,7 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
  * axes 
  */
 
-static void nsp_axes_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bounds)
+static void nsp_axes_compute_inside_bounds(NspGraphic *Obj,double *bounds)
 {
   double l_bounds[4];
   Cell *cloc;
@@ -700,7 +700,7 @@ static NspList *nsp_axes_children(NspGraphic *Obj)
  * 
  */
 
-void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
+void nsp_strf_axes(NspAxes *A,double *rect, char scale)
 {
   NspGraphic *G= (NspGraphic *) A;
   /* use strf argument to change the axes */
@@ -732,25 +732,25 @@ void nsp_strf_axes(BCG *Xgc,NspAxes *A,double *rect, char scale)
       break;
     case '2': /* from the min/max of the x, y datas */
       /* could be stored in a cache */
-      nsp_axes_compute_inside_bounds(Xgc,G,A->obj->bounds->R);
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->iso = FALSE;
       A->obj->auto_axis = FALSE;
       A->obj->fixed = FALSE; 
       break;
     case '8': /* backward compatibility  */
-      nsp_axes_compute_inside_bounds(Xgc,G,A->obj->bounds->R);
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->auto_axis = TRUE;
       A->obj->iso = FALSE;
       A->obj->fixed = FALSE; 
       break;
     case '6': /* enlarged for pretty axes from the min/max of the x, y datas */
-      nsp_axes_compute_inside_bounds(Xgc,G,A->obj->bounds->R);
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->auto_axis = TRUE;
       A->obj->iso = TRUE;
       A->obj->fixed = FALSE; 
       break;
     case '4': /* built for an isometric plot from the min/max of the x, y datas */
-      nsp_axes_compute_inside_bounds(Xgc,G,A->obj->bounds->R);
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->iso = TRUE;
       A->obj->auto_axis = TRUE;
       A->obj->fixed = FALSE; 
@@ -1006,7 +1006,7 @@ int nsp_axes_insert_child(NspAxes *A, NspGraphic *G, int invalidate)
   /* call the link_figure method */
   G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
   /* updates the bounds of the axe */
-  nsp_axes_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
+  nsp_axes_compute_inside_bounds((NspGraphic *) A,A->obj->bounds->R);
   /* raise an invalidate operation */
   if ( invalidate ) nsp_graphic_invalidate((NspGraphic *) G);
   return OK;

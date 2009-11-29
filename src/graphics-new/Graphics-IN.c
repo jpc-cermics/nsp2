@@ -65,7 +65,7 @@ extern char *nsp_get_extension(char *name);
 extern BCG *nsp_check_graphic_context(void);
 
 static int sci_demo (const char *fname,char *code,int flag) ;
-static void  nsp_gwin_clear(BCG *Xgc);
+static void  nsp_gwin_clear(void);
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 static NspMatrix * check_style(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
 static int * check_iflag(Stack stack,const char *fname,char *varname,NspMatrix *var,int size) ;
@@ -112,7 +112,6 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
 {
   NspAxes *axe;
   NspVField *vf;
-  BCG *Xgc;
   NspMatrix *x,*y,*fx,*fy,*rect=NULL;
   double arfact =1.0,*R;
   char *strf=NULL;
@@ -135,16 +134,16 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
   if (( strf = check_strf(stack,NspFname(stack),"strf",strf))==NULL) return RET_BUG;
   if ( R == rect_def ) strf[1]='5';
 
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+  nsp_gwin_clear();
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+  
   /* create a vfield and insert-it in axes */
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
-  if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return FAIL;
-  if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return FAIL;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
+  if ( ( fx = (NspMatrix *)  nsp_object_copy_and_name("fx",NSP_OBJECT(fx))) == NULLMAT) return RET_BUG;
+  if ( ( fy = (NspMatrix *)  nsp_object_copy_and_name("fy",NSP_OBJECT(fy))) == NULLMAT) return RET_BUG;
   vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
-  if ( vf == NULL) return FAIL;
+  if ( vf == NULL) return RET_BUG;
   /* insert the new vfield */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) vf,FALSE)== FAIL) 
     {
@@ -213,7 +212,6 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *args = NULL,*fobj;/* when z is a function */
   NspObject *ret = NULL;
-  BCG *Xgc;
   int *iflag,flagx,nnz=10;
   NspMatrix *x,*y,*z,*nz,*Mebox=NULL,*Mflag=NULL;
   double alpha=35.0,theta=45.0,zlev=0.0,*ebox ;
@@ -280,8 +278,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
   if (( iflag=check_iflag(stack,NspFname(stack),"flag",Mflag,3)) == NULL) return RET_BUG;
   if (( ebox=check_ebox(stack,NspFname(stack),"ebox",Mebox)) == NULL) return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
+  nsp_gwin_clear();
 
   if ( iflag[0] >= 2 )
     {
@@ -291,7 +288,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
       NspMatrix *s=NULL;
       NspAxes *axe;
       NspContour *vf;
-      if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return RET_BUG;
+      if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
       /* create a vfield and insert-it in axes */
       if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) 
 	return RET_BUG;
@@ -318,15 +315,16 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
       /* updates the axes scale information */
-      nsp_strf_axes(Xgc, axe , NULL, '2');
+      nsp_strf_axes( axe , NULL, '2');
       nsp_axes_invalidate(((NspGraphic *) axe));
       ret = NSP_OBJECT(vf);
     }
   else 
     {
       NspContour3d *vf;
-      NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
-      if ( objs3d == NULL) return RET_BUG;
+      NspObjs3d *objs3d;
+      if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return RET_BUG;
+
       /* create a conrour3d and insert-it in axes */
       if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) 
 	return RET_BUG;
@@ -375,7 +373,6 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
   NspMatrix *s=NULL;
   NspAxes *axe;
   NspContour *vf;
-  BCG *Xgc;
   int flagx=0,nnz= 10; /* default number of level curves : 10 */
   int frame= -1, axes=-1;
   NspMatrix *x,*y,*z,*nz;
@@ -435,27 +432,27 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+  nsp_gwin_clear();
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+
   axe->obj->axes = strf[2] -'0';
 
   /* create a vfield and insert-it in axes */
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
-  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
+  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return RET_BUG;
   if ( Mistyle != NULL) 
     {
       if ( ( s = (NspMatrix *) nsp_object_copy_and_name("style",NSP_OBJECT(Mistyle))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( flagx==1) 
     {
       if ( (nz = (NspMatrix *) nsp_object_copy_and_name("nz",NSP_OBJECT(nz))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   vf = nsp_contour_create("c",z,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
-  if ( vf == NULL) return FAIL;
+  if ( vf == NULL) return RET_BUG;
   /* insert the new contour */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) vf , FALSE)== FAIL) 
     {
@@ -463,7 +460,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* updates the axes scale information */
-  nsp_strf_axes(Xgc, axe , rect, strf[1]);
+  nsp_strf_axes( axe , rect, strf[1]);
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle) 
     nsp_matrix_destroy(Mistyle);
@@ -598,7 +595,6 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 {
   int i,color,nb_poly,psize;
   NspObjs3d *objs3d;
-  BCG *Xgc;
   int *iflag;
   NspMatrix *x,*y,*z,*Mebox=NULL,*flag=NULL,*Mstyle=NULL;
   double alpha=35.0,theta=45.0,*ebox ;
@@ -642,10 +638,8 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
    */
   if (leg !=  NULL && strlen(leg) != 0 ) iflag[1]=4;
   
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-  objs3d = nsp_check_for_objs3d(Xgc,NULL);
-  if ( objs3d == NULL) return FAIL;
+  nsp_gwin_clear();
+  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return RET_BUG;
   /* Loop on the number of polylines */
   nb_poly = (x->m == 1) ? 1 : x->n;
   psize= (x->m==1) ? x->n : x->m;
@@ -653,7 +647,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
     {
       NspObject *gobj;
       NspMatrix *M1;
-      if ((M1 = nsp_matrix_create("coord",'r',psize,3))== NULLMAT) return FAIL;
+      if ((M1 = nsp_matrix_create("coord",'r',psize,3))== NULLMAT) return RET_BUG;
       memcpy(M1->R,x->R + i*(psize),psize*sizeof(double));
       memcpy(M1->R+psize,y->R + i*(psize),psize*sizeof(double));
       memcpy(M1->R+2*psize,z->R + i*(psize),psize*sizeof(double));
@@ -667,15 +661,15 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
       if ( Mstyle == NULL || color >= 0) 
 	{
 	  NspMatrix *Mcol;
-	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return FAIL;
+	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return RET_BUG;
 	  Mcol->R[0]=color;
 	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,NULL,0,NULL);
-	  if ( gobj == NULL)  return FAIL;
+	  if ( gobj == NULL)  return RET_BUG;
 	}
       else
 	{
 	  gobj = (NspObject *)nsp_points3d_create("pts",M1,NULL,-1,-color,-1,NULL,0,NULL);
-	  if ( gobj == NULL)  return FAIL;
+	  if ( gobj == NULL)  return RET_BUG;
 	}
       if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj)== FAIL)
 	{
@@ -734,20 +728,19 @@ static int int_geom3d( Stack stack, int rhs, int opt, int lhs)
  *-----------------------------------------------------------*/
 
 
-typedef NspGraphic *(*f3d) (BCG *Xgc,double *,double *,double *,int *p,int *q,double *,
+typedef NspGraphic *(*f3d) (double *,double *,double *,int *p,int *q,double *,
 			    double *,const char *,int *,double *,  NspMatrix *,int shade); 
-typedef NspGraphic *(*f3d1)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
+typedef NspGraphic *(*f3d1)(double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 			    double *,const char *,int *,double *,NspMatrix *,int shade); 
-typedef NspGraphic *(*f3d2)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
+typedef NspGraphic *(*f3d2)(double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 			    double *,const char *,int *,double *,NspMatrix *,int shade); 
-typedef NspGraphic *(*f3d3)(BCG *Xgc,double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
+typedef NspGraphic *(*f3d3)(double *,double *,double *,int izcol,int *cvect,int *p,int *q,double *, 
 			    double *,const char *,int *,double *,NspMatrix *,int shade);
 
 static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,NspObject *f, NspObject *fargs);
 
 static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 func1,f3d2 func2,f3d3 func3)
 {
-  BCG *Xgc;
   int mesh=TRUE,mesh_only=FALSE, shade=TRUE;
   NspObject  *args = NULL,*fobj;/* when z is a function */
   double alpha=35.0,theta=45.0,*ebox ;
@@ -889,32 +882,31 @@ static int int_plot3d_G( Stack stack, int rhs, int opt, int lhs,f3d func,f3d1 fu
 
   if ( x->mn == 0 || y->mn == 0 || z->mn == 0) { goto end;}
 
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
+  nsp_gwin_clear();
   if ( x->mn == y->mn && x->mn == z->mn && x->mn != 1) 
     { 
       /*  Here we are in the case where x,y and z specify some polygons */
       if (izcol == 0) 
 	{
-	  nsp_ret = (*func1)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,
+	  nsp_ret = (*func1)(x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,
 			     &alpha,leg1,iflag,ebox ,colormap,shade);
 	} 
       else if (izcol == 2) 
 	{
 	  /*  New case for the fac3d3 call (interpolated shadig)  */
-	  nsp_ret = (*func3)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,
+	  nsp_ret = (*func3)(x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,leg1,iflag,
 			     ebox,colormap,shade);
 	}
       else 
 	{
-	  nsp_ret = (*func2)(Xgc,x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,
+	  nsp_ret = (*func2)(x->R,y->R,z->R,izcol,zcol,&z->m,&z->n,&theta,&alpha,
 			     leg1,iflag,ebox,colormap,shade);
 	}
     } 
   else 
     {
       /*  Here we are in the standard case  */
-      nsp_ret = (*func)(Xgc,x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,
+      nsp_ret = (*func)(x->R,y->R,z->R,&z->m,&z->n,&theta,&alpha,leg1,
 			iflag,ebox,colormap,shade);
     }
   if ( nsp_ret == NULL) 
@@ -999,13 +991,13 @@ static int plot3d_build_z(Stack stack,NspMatrix *x,NspMatrix *y,NspMatrix *z,Nsp
 }
 
 
-static NspGraphic *nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q,
+static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *q,
 				  double *teta, double *alpha,const char *legend, int *flag,
 				  double *bbox, NspMatrix *colormap, int shade)
 {
   NspPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
-  if ( objs3d == NULL) return NULL;
+  NspObjs3d *objs3d;
+  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   /* XXX : bbox should be used somewhere if needed */
 
   objs3d->obj->alpha=*alpha;
@@ -1033,13 +1025,13 @@ static NspGraphic *nsp_plot3d_new(BCG *Xgc,double *x, double *y, double *z, int 
   return (NspGraphic *) pol;
 }
 
-static NspGraphic * nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *cvect, 
+static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol, int *cvect, 
 				       int *p, int *q, double *teta, double *alpha,const char *legend, 
 				       int *flag, double *bbox, NspMatrix *colormap,int shade)
 {
   NspPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
-  if ( objs3d == NULL) return NULL;
+  NspObjs3d *objs3d;
+  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   if (colormap != NULL && objs3d->obj->colormap != NULL) 
@@ -1064,15 +1056,15 @@ static NspGraphic * nsp_plot_fac3d_new(BCG *Xgc,double *x, double *y, double *z,
   return (NspGraphic *) pol;
 }
 
-static NspGraphic *nsp_plot_fac3d1_new(BCG *Xgc,double *x, double *y, double *z,int izcol, int *cvect,
+static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol, int *cvect,
 				       int *p, int *q, double *teta, double *alpha,const char *legend,
 				       int *flag, double *bbox, NspMatrix *colormap,int shade)
 {
   int ncols=1,i;
   int len_cvect = (izcol==1) ? *q : (izcol==2) ? *p*(*q) :0 ;
   NspSPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
-  if ( objs3d == NULL) return NULL;
+  NspObjs3d *objs3d;
+  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   if (colormap != NULL && objs3d->obj->colormap != NULL) 
@@ -1100,13 +1092,13 @@ static NspGraphic *nsp_plot_fac3d1_new(BCG *Xgc,double *x, double *y, double *z,
   return (NspGraphic *) pol;
 }
 
-static NspGraphic *nsp_plot3d1_new(BCG *Xgc,double *x, double *y, double *z, int *p, int *q, 
+static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int *q, 
 				   double *teta, double *alpha,const char *legend, int *flag, 
 				   double *bbox, NspMatrix *colormap,int shade)
 {
   NspSPolyhedron *pol;
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,NULL);
-  if ( objs3d == NULL) return NULL;
+  NspObjs3d *objs3d;
+  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   objs3d->obj->alpha=*alpha;
   objs3d->obj->theta=*teta;
   if (colormap != NULL && objs3d->obj->colormap != NULL) 
@@ -1200,7 +1192,7 @@ typedef int (*func_2d)(BCG *Xgc,char *,double *,double *,int *,int *,int *,char 
  *
  */
 
-static NspGraphic *nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, int *n1,int *n2,
+static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,int *n2,
 				  int style[],char *strflag, const char *legend,int legend_pos,
 				  int mode,double brect[],int aaint[])
 {
@@ -1210,8 +1202,8 @@ static NspGraphic *nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, 
   char c;
   double frect[4],xmin,xmax,ymin,ymax;
   int i;
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return NULL;
+  NspAxes *axe; 
+  if (( axe=  nsp_check_for_current_axes())== NULL) return NULL;
 
   axe->obj->lpos = legend_pos;
 
@@ -1307,7 +1299,7 @@ static NspGraphic *nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, 
 	}
     }
   /* updates the axes scale information */
-  nsp_strf_axes(Xgc, axe , frect, strflag[1]);
+  nsp_strf_axes( axe , frect, strflag[1]);
   axe->obj->axes = ( strlen(strflag) >= 2) ? strflag[2] - '0' : 1;
   axe->obj->xlog = ( strlen(logflag) >= 1) ? ((logflag[1]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logflag) >= 2) ? ((logflag[2]=='n') ? FALSE:TRUE) : FALSE;
@@ -1319,7 +1311,6 @@ static NspGraphic *nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, 
 static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int mode,func_2d func)
 {
   NspGraphic *ret;
-  BCG *Xgc;
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1,ncurves,lcurve;
   NspMatrix *Mistyle, *x,*y, *Mrect=NULL,*Mnax=NULL,*Mstyle=NULL;
@@ -1504,8 +1495,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
   /* logflags */ 
   logflags[0]= tflag;
   
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
+  nsp_gwin_clear();
   
   /* FIXME: make a function with all this and propagate to other primitives */
 
@@ -1520,7 +1510,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       plot2d_strf_change('d',strf);
     }
   if ( ncurves == 0 ) return 0;
-  ret = nsp_plot2d_obj(Xgc,x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,mode,rect,nax);
+  ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,mode,rect,nax);
   if ( ret == NULL) return RET_BUG;
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 ) 
@@ -1666,7 +1656,6 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   int leg_posi;
   int_types T[] = {realmat,realmat,obj,new_opts, t_end} ;
   /* */
-  BCG *Xgc;
   NspMatrix *x,*y,*z; 
   NspGMatrix1 *gm;
   if ( rhs <= 0) 
@@ -1718,34 +1707,32 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
 		   Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
+  nsp_gwin_clear();
   /* colout to be added */
-  axe =  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return FAIL;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   axe->obj->axes = strf[2] -'0';
 
   /* create a gmatrix and insert-it in axes */
-  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
-  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return FAIL;
-  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return FAIL;
+  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return RET_BUG;
+  if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
+  if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
   if ( Mcolminmax != NULL )
     {
       if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mzminmax != NULL) 
     {
       if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mcolout != NULL) 
     {
       if ( (Mcolout = (NspMatrix *) nsp_object_copy_and_name("com",NSP_OBJECT(Mcolout))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   gm = nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
-  if ( gm == NULL) return FAIL;
+  if ( gm == NULL) return RET_BUG;
   /* insert the new matrix */
   if ( nsp_axes_insert_child(axe,(NspGraphic *)gm, FALSE)== FAIL) 
     {
@@ -1753,7 +1740,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* updates the axes scale information */
-  nsp_strf_axes(Xgc, axe ,rect, strf[1]);
+  nsp_strf_axes( axe ,rect, strf[1]);
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 ) 
@@ -1793,7 +1780,6 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
 			 { NULL,t_end,NULLOBJ,-1}};
   
   NspAxes *axe;
-  BCG *Xgc;
   NspMatrix *z; 
   /* for 2d optional arguments; */
   int *nax, frame= -1, axes=-1, remap=FALSE;
@@ -1829,31 +1815,30 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   if ( int_check2d(stack,Mstyle,&Mistyle,z->mn,&strf,&leg,&leg_pos,&leg_posi,Mrect,
 		   &rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-  axe =  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return FAIL;
+
+  nsp_gwin_clear();
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   axe->obj->axes = strf[2] -'0';
 
   /* create a gmatrix and insert-it in axes */
-  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return FAIL;
+  if ( ( z = (NspMatrix *)  nsp_object_copy_and_name("z",NSP_OBJECT(z))) == NULLMAT) return RET_BUG;
   if ( Mcolminmax != NULL )
     {
       if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mzminmax != NULL) 
     {
       if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mrect != NULL) 
     {
       if (( Mrect = (NspMatrix *)  nsp_object_copy_and_name("rect",NSP_OBJECT(Mrect)))== NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   NspGMatrix *gm = nsp_gmatrix_create("gm",z,Mrect,remap,Mcolminmax,Mzminmax,NULL);
-  if ( gm == NULL) return FAIL;
+  if ( gm == NULL) return RET_BUG;
   /* insert the new matrix */
   if ( nsp_axes_insert_child(axe,(NspGraphic *)gm, FALSE)== FAIL) 
     {
@@ -1861,7 +1846,7 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* updates the axes scale information */
-  nsp_strf_axes(Xgc, axe ,rect, strf[1]);
+  nsp_strf_axes( axe ,rect, strf[1]);
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 ) 
@@ -1906,8 +1891,6 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Mistyle,*Mrect=NULL,*Mnax=NULL,*Mstyle=NULL,*Mzminmax=NULL,*Mcolminmax=NULL;
   double *rect ; 
   char *leg=NULL, *strf=NULL, *logflags = NULL, *leg_pos = NULL;
-
-  BCG *Xgc;
   NspMatrix *M,*Rect; 
   NspAxes *axe;
 
@@ -1933,30 +1916,28 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
-  axe =  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return FAIL;
+  nsp_gwin_clear();
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   axe->obj->axes = strf[2] -'0';
   /* create a gmatrix and insert-it in axes */
-  if ( ( M = (NspMatrix *)  nsp_object_copy_and_name("M",NSP_OBJECT(M))) == NULLMAT) return FAIL;
+  if ( ( M = (NspMatrix *)  nsp_object_copy_and_name("M",NSP_OBJECT(M))) == NULLMAT) return RET_BUG;
   if ( Mcolminmax != NULL )
     {
       if (( Mcolminmax = (NspMatrix *) nsp_object_copy_and_name("cm",NSP_OBJECT(Mcolminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Mzminmax != NULL) 
     {
       if ( (Mzminmax  = (NspMatrix *)  nsp_object_copy_and_name("zm",NSP_OBJECT(Mzminmax))) == NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   if ( Rect != NULL) 
     {
       if (( Rect = (NspMatrix *)  nsp_object_copy_and_name("rect",NSP_OBJECT(Rect)))== NULLMAT)
-	return FAIL;
+	return RET_BUG;
     }
   NspGMatrix *gm = nsp_gmatrix_create("gm",M,Rect,remap,Mcolminmax,Mzminmax,NULL);
-  if ( gm == NULL) return FAIL;
+  if ( gm == NULL) return RET_BUG;
   /* insert the new matrix */
   if ( nsp_axes_insert_child(axe,(NspGraphic *)gm,FALSE)== FAIL) 
     {
@@ -1964,7 +1945,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* updates the axes scale information */
-  nsp_strf_axes(Xgc, axe , NULL, '2');
+  nsp_strf_axes( axe , NULL, '2');
   nsp_axes_invalidate(((NspGraphic *) axe));
   if ( Mstyle != Mistyle)   nsp_matrix_destroy(Mistyle);
   if ( lhs == 1 ) 
@@ -2048,20 +2029,20 @@ static int int_driver(Stack stack, int rhs, int opt, int lhs)
 
 /**
  * nsp_gwin_clear:
- * @Xgc: a #BCG
  * 
- * remove the figure from @Xgc and 
- * invalidate the graphics window.
+ * remove the children of the current figure 
  * 
  **/
 
-static void  nsp_gwin_clear(BCG *Xgc)
+static void  nsp_gwin_clear(void)
 {
-  if ( Xgc != NULL) 
-    if ( Xgc->graphic_engine->xget_autoclear(Xgc) == 1 ) 
-      {	
-	Xgc->actions->erase(Xgc);
-      }
+  NspFigure *F = nsp_get_current_figure();
+  if ( F == NULL ) return;
+  if ( F->obj->gc->auto_clear == TRUE) 
+    {
+      nsp_figure_remove_children(F);
+      nsp_figure_invalidate((NspGraphic *) F);
+    }
 }
 
 /**
@@ -2100,7 +2081,6 @@ static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrArc *arc;
   NspAxes *axe; 
-  BCG *Xgc;
   double *val=NULL;
   int back=-1,color=-1,width=-1;
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
@@ -2110,9 +2090,8 @@ static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(1,6);
   if ( get_arc(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
@@ -2196,10 +2175,7 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
       CheckLength(NspFname(stack),opts[2].position, thickness, arcs->n);
     }
 
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
-
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ( compound == TRUE ) 
     {
       if ((C= nsp_compound_create("c",NULL,NULL,NULL))== NULL) return RET_BUG;
@@ -2381,7 +2357,6 @@ static int int_xarrows_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe; 
   NspArrows *pl;
-  BCG *Xgc;
   double arsize=-1.0 ;
   NspMatrix *x,*y,*Mstyle=NULL,*color=NULL;
   
@@ -2403,10 +2378,7 @@ static int int_xarrows_new(Stack stack, int rhs, int opt, int lhs)
       }
     }
     
-  Xgc=nsp_check_graphic_context();
-  
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
@@ -2450,7 +2422,6 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe; 
   NspSegments *pl;
-  BCG *Xgc;
   NspMatrix *x,*y,*Mstyle=NULL,*color=NULL;
   
   int_types T[] = {realmat,realmat,new_opts, t_end} ;
@@ -2470,10 +2441,8 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
       }
     }
     
-  Xgc=nsp_check_graphic_context();
   
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
@@ -2518,7 +2487,6 @@ static int int_xaxis(Stack stack, int rhs, int opt, int lhs)
   CheckLength(NspFname(stack),3,l3,3);
   if ((l4=GetRealMat(stack,4)) == NULLMAT ) return RET_BUG;
   CheckLength(NspFname(stack),4,l4,2);
-
   Xgc=nsp_check_graphic_context();
   Xgc->graphic_engine->scale->drawaxis(Xgc,&l1,(int *)l2->R,l3->R,l4->R);
   return 0;
@@ -2606,11 +2574,9 @@ static int int_xchange_new(Stack stack, int rhs, int opt, int lhs)
 
 static int int_xclea_new(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
   double *val=NULL;
   CheckRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
   Sciprintf("Error: function %s should not be used with new graphics\n",
 	    NspFname(stack));
   return 0;
@@ -2694,10 +2660,10 @@ static int int_xrect_new(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckStdRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
-  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) 
+    return RET_BUG;
 
-  axe=  nsp_check_for_current_axes();
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   /* create the object */
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,NULL))== NULL)
     return RET_BUG;
@@ -2738,7 +2704,6 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrRect *rect;
   NspAxes *axe; 
-  BCG *Xgc;
   double *val=NULL;
   int color=-3,stroke_color=-2,width=-1;
   nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
@@ -2746,17 +2711,16 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(1,4);
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&color) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   
-  if ( opts[0].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
+  if ( opts[0].obj == NULLOBJ) color = -1;
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],color,width,
 				stroke_color,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
-    return FAIL;
+    return RET_BUG;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   nsp_axes_invalidate(((NspGraphic *) axe));
   return 0;
@@ -2976,14 +2940,12 @@ static int int_xend_new(Stack stack, int rhs, int opt, int lhs)
 static int int_xgrid_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe;
-  BCG *Xgc;
   int style = 0;
   CheckRhs(-1,1);
   if ( rhs == 1) {
     if (GetScalarInt(stack,1,&style) == FAIL) return RET_BUG;
   }
-  Xgc=nsp_check_graphic_context();
-  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return FAIL;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   axe->obj->grid = style;
   nsp_axes_invalidate((NspGraphic *) axe);
   return 0;
@@ -3005,8 +2967,7 @@ static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe; 
-  BCG *Xgc;
-  int close=TRUE,color=-2,mark=-2,mark_size=-1,fill_color=-3,thickness=-1;
+  int close=TRUE,color=-2,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
   NspMatrix *x,*y;
 
   nsp_option opts[] ={
@@ -3020,13 +2981,7 @@ static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
   if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,x,y);
   if ( get_optional_args(stack,rhs,opt,opts,&color,&fill_color,&thickness) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
-
-  if ( opts[1].obj == NULLOBJ) fill_color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( opts[2].obj == NULLOBJ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
-
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
   if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
@@ -3068,7 +3023,6 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
   int i;
   NspPolyline *pl= NULL;
   NspAxes *axe; 
-  BCG *Xgc;
   int color=-2,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
   NspMatrix *x,*y;
   NspMatrix *l1=NULL,*l2=NULL,*l3=NULL;
@@ -3105,9 +3059,7 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
     return RET_BUG;
   
-  Xgc=nsp_check_graphic_context();    
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
 
   if ( compound == TRUE ) 
     {
@@ -3667,15 +3619,10 @@ extern void nsp_pause(int sec_time,int events);
 
 static int int_xpause_new(Stack stack, int rhs, int opt, int lhs)
 {
-  /* BCG *Xgc; */
   int sec=0,flag=FALSE;
   CheckRhs(-1,2);
   if (rhs >= 1){ if (GetScalarInt(stack,1,&sec) == FAIL) return RET_BUG;}
   if (rhs >= 2){ if (GetScalarBool(stack,2,&flag) == FAIL) return RET_BUG;}
-  /* 
-   *  Xgc=nsp_check_graphic_context();
-   *  Xgc->graphic_engine->xpause(sec,flag);
-   */
   nsp_pause(sec,flag);
   return 0;
 } 
@@ -3715,7 +3662,6 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe; 
-  BCG *Xgc;
   int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-2,thickness=-1;
   char *type= "lines"; 
   NspMatrix *x,*y;
@@ -3733,12 +3679,8 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
   if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,x,y);
   if ( get_optional_args(stack,rhs,opt,opts,&close,&color,&mark,&thickness,&type) == FAIL) return RET_BUG;
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
-  
-  if ( opts[1].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( opts[3].obj == NULLOBJ) thickness = Xgc->graphic_engine->xget_thickness(Xgc);
+
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
     
   if (strncmp(type,"marks",5) == 0)
     {
@@ -3848,7 +3790,6 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *x,*y,*style=NULL;
   NspPolyline *pl= NULL;
   NspAxes *axe; 
-  BCG *Xgc;
   nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
@@ -3867,10 +3808,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
     return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
-
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ( compound == TRUE ) 
     {
       if ((C= nsp_compound_create("c",NULL,NULL,NULL))== NULL) return RET_BUG;
@@ -4338,7 +4276,6 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrstring *grs;
   NspAxes *axe;
-  BCG *Xgc;
   NspSMatrix *S,*Sk;
   double x,y,yi,angle=0.0;
   int flagx=0;
@@ -4366,9 +4303,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
 
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,0,angle,0.0,0.0,0,NULL))== NULL) 
     return RET_BUG;
   /* insert the new string */
@@ -4393,14 +4328,12 @@ static int int_xtitle(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Obj;
   char demo[]="x=(1:10)';plot2d(x,x);xtitle(['Titre';'Principal'],'x legend ','y legend');";
-  BCG *Xgc;
   NspSMatrix *S;
   int narg;
   if ( rhs <= 0) return sci_demo(NspFname(stack),demo,1);
   CheckRhs(1,3);
-  Xgc=nsp_check_graphic_context();
-  Obj = nsp_check_for_axes_or_objs3d(Xgc,NULL);
-  if ( Obj == NULL) return FAIL;
+  Obj = nsp_check_for_current_axes_or_objs3d();
+  if ( Obj == NULL) return RET_BUG;
   /* create a vfield and insert-it in axes */
   if ( IsAxes(Obj))
     for ( narg = 1 ; narg <= rhs ; narg++) 
@@ -4441,7 +4374,6 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrstring *grs;
   NspAxes *axe;
-  BCG *Xgc;
   char * info;
   int fill =0;
   double x,y,w,h,angle=0.0;
@@ -4477,9 +4409,7 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
 
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   /* 10 for xstringb: to be simplified latter */
   if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,10,angle,w,h,fill,NULL))== NULL) 
     return RET_BUG;
@@ -4747,13 +4677,12 @@ static int int_xinfo_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static NspAxes *Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect,
+static NspAxes *Nsetscale2d_new(const double *WRect,const double *ARect,
 				const double *FRect,const char *logscale, int fixed,
 				int axesflag,int iso,int clip)
 {
   NspAxes *axe; 
-  axe=  nsp_check_for_axes(Xgc,WRect);
-  if ( axe == NULL) return NULL;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return NULL;
   axe->obj->xlog = ( strlen(logscale) >= 0) ? ((logscale[0]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logscale) >= 1) ? ((logscale[1]=='n') ? FALSE:TRUE) : FALSE;
 
@@ -4773,12 +4702,12 @@ static NspAxes *Nsetscale2d_new(BCG *Xgc,const double *WRect,const double *ARect
   return axe;
 }
 
-static NspObjs3d *Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
+static NspObjs3d *Nsetscale3d_new(const double *WRect,const double *ARect,
 				  const double *FRect,const char *logscale, int fixed,
 				  int axesflag,int iso,int clip )
 {
-  NspObjs3d *objs3d =  nsp_check_for_objs3d(Xgc,WRect);
-  if ( objs3d == NULL) return NULL;
+  NspObjs3d *objs3d;
+  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
   if ( WRect != NULL)   memcpy(objs3d->obj->wrect->R,WRect,4*sizeof(double));
   if ( ARect != NULL)   memcpy(objs3d->obj->arect->R,ARect,4*sizeof(double));
   if ( FRect != NULL)   memcpy(objs3d->obj->frect->R,FRect,4*sizeof(double));
@@ -4827,7 +4756,7 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
       /* compatibility with old version */
       CheckRhs(-1,3);
       CheckLhs(0,1);
-      if ( rhs <= 0) { show_scales(Xgc); return 0;	}
+      if ( rhs <= 0) { return 0;	}
 
       if ((M= GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
       CheckLength(NspFname(stack),1,M,4);
@@ -4887,11 +4816,11 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
     }
   if ( axe3d == TRUE ) 
     {
-      ret = (NspObject *) Nsetscale3d_new(Xgc,wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
+      ret = (NspObject *) Nsetscale3d_new(wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
     }
   else
     {
-      ret = (NspObject *) Nsetscale2d_new(Xgc,wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
+      ret = (NspObject *) Nsetscale2d_new(wrect,arect,frect,logflag,fixed,axesflag,iso,clip);
     }
   if ((ret =nsp_object_copy(ret)) == NULLOBJ)
     return RET_BUG;
@@ -4920,12 +4849,9 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
 static int int_xgetech_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspAxes *axe;
-  BCG *Xgc;
   CheckRhs(0,0);
   CheckLhs(1,4);
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ( lhs >= 1) MoveObj(stack,1,NSP_OBJECT(axe->obj->wrect));
   if ( lhs >= 2) MoveObj(stack,2,NSP_OBJECT(axe->obj->frect));
   if ( lhs >= 3) if ( nsp_move_string(stack,3,"tobedone",-1) ==FAIL) return RET_BUG;
@@ -4967,7 +4893,6 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 			  { NULL,t_end,NULLOBJ,-1}};
 
   NspAxes *axe;
-  BCG *Xgc;
   NspMatrix *Mistyle,*x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
   NspMatrix *Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
@@ -5002,10 +4927,9 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 		   Mrect,&rect,Mnax,&nax,frame,axes,&logflags) != 0) 
     return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
-  nsp_gwin_clear(Xgc);
+  nsp_gwin_clear();
   /* colout to be added */
-  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   axe->obj->axes = strf[2] -'0';
   
   /* create a gmatrix and insert-it in axes */
@@ -5959,17 +5883,18 @@ static int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-static int scicos_draw_3d(BCG *Xgc,double r[],int color,double size3d)
+static int scicos_draw_3d(double r[],int color,double size3d)
 {
   int mark=-2,mark_size=-2,thickness=1,fill_color=color;
   NspPolyline *pl;
   NspMatrix *Mx,*My;
   NspObject *gobj;
   int npt=6;
-  NspAxes *axe=  nsp_check_for_axes(Xgc,NULL);
+  NspAxes *axe;
   double x[]={r[0],r[0]     ,r[0]+r[2],r[0]+r[2]-size3d,r[0]-size3d     ,r[0]-size3d};
   double y[]={r[1],r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d,r[1]-size3d};
-  if ( axe == NULL) return FAIL;
+
+  if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
   if ((Mx = nsp_matrix_create("x",'r',6,1))== NULLMAT) return FAIL;
   if ((My = nsp_matrix_create("y",'r',6,1))== NULLMAT) return FAIL;
   memcpy(Mx->R,x,npt*sizeof(double));
@@ -5992,16 +5917,17 @@ static int int_scicos_draw3D(Stack stack, int rhs, int opt, int lhs)
 {
   int color=-1;
   double rect[4],e=0.3;
-  BCG *Xgc;
   NspMatrix *orig,*size;
   int_types T[] = {realmat,realmat,s_double,s_int, t_end} ;
   CheckRhs(4,4);
   if ( GetArgs(stack,rhs,opt,T,&orig,&size,&e,&color) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,orig,2);
   CheckLength(NspFname(stack),2,size,2);
-  Xgc=nsp_check_graphic_context();
-  rect[0]=orig->R[0]+e;rect[1]=orig->R[1]+size->R[1];rect[2]=size->R[0]-e;rect[3]=size->R[1]-e;
-  if ( scicos_draw_3d(Xgc,rect,color,e) == FAIL) return RET_BUG;
+  rect[0]=orig->R[0]+e;
+  rect[1]=orig->R[1]+size->R[1];
+  rect[2]=size->R[0]-e;
+  rect[3]=size->R[1]-e;
+  if ( scicos_draw_3d(rect,color,e) == FAIL) return RET_BUG;
   return 0;
 } 
 
@@ -6011,7 +5937,7 @@ typedef  enum { SLD_NORTH=0, SLD_SOUTH=1, SLD_EAST=2, SLD_WEST=3, SLD_ANY=4 }
 typedef  enum { SL_IN=0  ,SL_OUT=1 ,SL_EVIN=2,SL_EVOUT=3 , SL_SQP=4, SL_SQM=5 } 
   slock_type;
 
-static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
+static int lock_draw(const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
 {
   NspPolyline *pl;
   NspAxes *axe; 
@@ -6058,14 +5984,13 @@ static int lock_draw(BCG *Xgc,const double pt[2],double xf,double yf,slock_dir d
       y[i] = sina*lx[i] +cosa*ly[i]+pt[1];
     }
 
-  axe=  nsp_check_for_axes(Xgc,NULL);
-  if ( axe == NULL) return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
   if ((Mx= nsp_matrix_create("x",'r',npt,1))== NULLMAT) return FAIL;
   if ((My= nsp_matrix_create("y",'r',npt,1))== NULLMAT) return FAIL;
   memcpy(Mx->R,x,npt*sizeof(double));
   memcpy(My->R,y,npt*sizeof(double));
-  fill_color= color= Xgc->graphic_engine->xget_pattern(Xgc);
-  thickness= Xgc->graphic_engine->xget_thickness(Xgc);
+  fill_color= color= -1;
+  thickness= -1;
   if ( typ == SL_SQP )
     {
       /* draw only */
@@ -6086,14 +6011,12 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
 {
   int dir=0,typ=0;
   double xf,yf;
-  BCG *Xgc;
   NspMatrix *Mpt;
   int_types T[] = {realmat,s_double,s_double,s_int,s_int, t_end} ;
   CheckRhs(5,5);
   if ( GetArgs(stack,rhs,opt,T,&Mpt,&xf,&yf,&dir,&typ) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,Mpt,2);
-  Xgc=nsp_check_graphic_context();
-  lock_draw(Xgc,Mpt->R,xf/9.0,yf/3.5,dir,typ,1);
+  lock_draw(Mpt->R,xf/9.0,yf/3.5,dir,typ,1);
   return 0;
 } 
 
