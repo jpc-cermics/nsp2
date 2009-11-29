@@ -39,6 +39,7 @@ struct _nsp_fec {
   gboolean mesh;
   gboolean paint;
   NspMatrix* colout;
+  gboolean colorbar;
   int ref_count;
 };
 
@@ -68,7 +69,7 @@ NspFec *new_fec();
 
 #define NULLFEC (NspFec*) 0
 
-extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,NspTypeBase *type);
+extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type);
 extern NspFec *nsp_fec_create_default(char *name);
 
 /* from NspFecObj.c */
@@ -104,7 +105,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 
 /* inserted at the end of public part of include file */
 
-#line 108 "./fec.h"
+#line 109 "./fec.h"
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
@@ -130,6 +131,6 @@ static void nsp_scale_fec(NspGraphic *o,double *alpha);
 static int nsp_getbounds_fec(NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
-#line 134 "./fec.h"
+#line 135 "./fec.h"
 #endif /* NspFec_Private */
 

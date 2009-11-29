@@ -24,7 +24,7 @@
 
 
 
-#line 53 "codegen/objs3d.override"
+#line 62 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
@@ -103,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 66 "codegen/objs3d.override"
+#line 75 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -223,6 +223,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( A->obj->with_box != loc->obj->with_box) return FALSE;
   if ( A->obj->box_color != loc->obj->box_color) return FALSE;
   if ( A->obj->box_style != loc->obj->box_style) return FALSE;
+  if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   return TRUE;
 }
 
@@ -330,6 +331,7 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
       nsp_list_destroy(H->obj->children);
     if ( H->obj->colormap != NULL ) 
       nsp_matrix_destroy(H->obj->colormap);
+  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
     FREE(H->obj);
    }
 }
@@ -410,6 +412,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -452,6 +455,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -536,6 +540,7 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->with_box = TRUE;
   H->obj->box_color = -1;
   H->obj->box_style = 0;
+  nsp_init_nsp_gcscale(&H->obj->scale);
   return OK;
 }
 
@@ -585,11 +590,12 @@ int nsp_objs3d_check_values(NspObjs3d *H)
        return FAIL;
 
     }
+  if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,nsp_gcscale scale,NspTypeBase *type)
 {
   NspObjs3d *H  = nsp_objs3d_create_void(name,type);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
@@ -608,6 +614,7 @@ NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top
   H->obj->with_box=with_box;
   H->obj->box_color=box_color;
   H->obj->box_style=box_style;
+  H->obj->scale = scale;
   if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
   return H;
 }
@@ -693,6 +700,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
   H->obj->with_box=self->obj->with_box;
   H->obj->box_color=self->obj->box_color;
   H->obj->box_style=self->obj->box_style;
+  if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   return H;
 }
 
@@ -762,7 +770,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 87 "codegen/objs3d.override"
+#line 96 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -777,7 +785,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 781 "objs3d.c"
+#line 789 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -886,7 +894,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 103 "codegen/objs3d.override"
+#line 112 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -943,7 +951,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 947 "objs3d.c"
+#line 955 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1093,7 +1101,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 161 "codegen/objs3d.override"
+#line 170 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1102,10 +1110,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1106 "objs3d.c"
+#line 1114 "objs3d.c"
 
 
-#line 171 "codegen/objs3d.override"
+#line 180 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1114,7 +1122,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1118 "objs3d.c"
+#line 1126 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1145,7 +1153,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 181 "codegen/objs3d.override"
+#line 190 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1209,7 +1217,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
        * enclosing graphic window. 
        */
       if ( Xgc->scales->scale_3drot_flag == FALSE) 
-	set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
+	set_scale(Xgc->scales,NULL,P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
       wrect1= P->obj->wrect->R;
     }
   else 
@@ -1242,6 +1250,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 				 TRUE,
 				 TRUE,
 				 xf);
+  
+  nsp_send_scale_3D_to_opengl(Xgc);
   
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
 
@@ -2516,6 +2526,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
   char logf[2];
 
+  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
   Xgc->scales->scale_flag3d = 1;
   Xgc->scales->alpha = Alpha;
   Xgc->scales->theta = Teta;
@@ -2579,7 +2590,6 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   if ( flag == 2 || flag == 3 )
     {
       /* get current window size */
-      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       /* FIXME: getscale2d is useless here just use 
        * WRect[i] <-> Xgc->scales->subwin_rect[i];
        */
@@ -2621,7 +2631,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   if (flag !=0 && Xgc->scales->scale_3drot_flag  == FALSE )
     {
       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
-      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      set_scale(Xgc->scales,wdim,NULL,FRect,aaint,"nn",NULL);
       Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
       /* this is used by opengl for zmin zmax and depth */
       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
@@ -2769,4 +2779,42 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
 }
 
 
-#line 2773 "objs3d.c"
+
+/* requested for nsp_gcscale
+ *
+ */
+
+static void  nsp_destroy_nsp_gcscale(nsp_gcscale *scales,NspObjs3d *H)
+{
+  return;
+}
+
+
+static int nsp_print_nsp_gcscale(int indent,nsp_gcscale *locks,NspObjs3d *M)
+{
+  return OK;
+}
+
+static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *M)
+{
+  return OK;
+}
+
+static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *scale,NspObjs3d *M)
+{
+  C->obj->scale = *scale;
+  return OK;
+}
+
+static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
+{
+  /* XXX */
+  return TRUE; 
+}
+
+static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
+{
+  nsp_scale_default(scale);
+}
+
+#line 2821 "objs3d.c"

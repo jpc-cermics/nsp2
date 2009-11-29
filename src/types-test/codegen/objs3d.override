@@ -48,6 +48,15 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
 				     double *zmax,nsp_plot3d_type type3d);
 static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag);
 
+/* requested for nsp_gcscale */
+
+static void nsp_destroy_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *H);
+static int nsp_print_nsp_gcscale(int indent,nsp_gcscale *locks,NspObjs3d *M);
+static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *M);
+static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *M);
+static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
+static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
+
 %%
 headers
 #include <gtk/gtk.h>
@@ -241,7 +250,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
        * enclosing graphic window. 
        */
       if ( Xgc->scales->scale_3drot_flag == FALSE) 
-	set_scale(Xgc,"fTffft",P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
+	set_scale(Xgc->scales,NULL,P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
       wrect1= P->obj->wrect->R;
     }
   else 
@@ -274,6 +283,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 				 TRUE,
 				 TRUE,
 				 xf);
+  
+  nsp_send_scale_3D_to_opengl(Xgc);
   
   nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
 
@@ -1548,6 +1559,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
   char logf[2];
 
+  Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
   Xgc->scales->scale_flag3d = 1;
   Xgc->scales->alpha = Alpha;
   Xgc->scales->theta = Teta;
@@ -1611,7 +1623,6 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   if ( flag == 2 || flag == 3 )
     {
       /* get current window size */
-      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       /* FIXME: getscale2d is useless here just use 
        * WRect[i] <-> Xgc->scales->subwin_rect[i];
        */
@@ -1653,7 +1664,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   if (flag !=0 && Xgc->scales->scale_3drot_flag  == FALSE )
     {
       FRect[0]=xmmin;FRect[1]= -ymmax;FRect[2]=xmmax;FRect[3]= -ymmin;
-      set_scale(Xgc,"tftttf",NULL,FRect,aaint,"nn",NULL);
+      set_scale(Xgc->scales,wdim,NULL,FRect,aaint,"nn",NULL);
       Xgc->scales->metric3d=flag; /* the metric mode is stored into the list of Scales */
       /* this is used by opengl for zmin zmax and depth */
       Xgc->scales->zfrect[0]= (double) Mini(box->z,8L);
@@ -1800,3 +1811,41 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
   return OK;
 }
 
+
+
+/* requested for nsp_gcscale
+ *
+ */
+
+static void  nsp_destroy_nsp_gcscale(nsp_gcscale *scales,NspObjs3d *H)
+{
+  return;
+}
+
+
+static int nsp_print_nsp_gcscale(int indent,nsp_gcscale *locks,NspObjs3d *M)
+{
+  return OK;
+}
+
+static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *M)
+{
+  return OK;
+}
+
+static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *scale,NspObjs3d *M)
+{
+  C->obj->scale = *scale;
+  return OK;
+}
+
+static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
+{
+  /* XXX */
+  return TRUE; 
+}
+
+static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
+{
+  nsp_scale_default(scale);
+}

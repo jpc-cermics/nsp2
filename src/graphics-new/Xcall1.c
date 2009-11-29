@@ -140,7 +140,7 @@ static void xset_clipping_p_1(BCG *Xgc,double x,double y,double w,double h)
 
 static void xset_clipgrf_1(BCG *Xgc)
 {
-  frame_clip_on(Xgc);
+  Sciprintf("xset_clipgrf_1: should not be called\n");
 }
 
 static void xset_clip_1(BCG *Xgc,double x[])

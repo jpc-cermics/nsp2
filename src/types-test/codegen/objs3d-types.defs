@@ -21,6 +21,16 @@
    '("gboolean" "with_box" "std" "TRUE")  ;; draw a 3d box container 
    '("int" "box_color" "std" "-1")  ;; box color 
    '("int" "box_style" "std" "0")  ;; box style 
+   '("nsp_gcscale" "scale" "hidden") ;; store data used for scaling
    )
   (gtype-id "Objs3d")
+)
+
+;; defined in graphics-new 
+
+(define-struct nsp_gcscale
+  (in-module "Axes")
+  (parent "Graphic")
+  (c-name "nsp_gcscale")
+  (gtype-id "nsp_gcscale")
 )

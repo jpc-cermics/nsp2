@@ -24,6 +24,11 @@ extern void nsp_figure_invalidate(NspGraphic *G);
 extern NspObject *nsp_check_for_axes_or_objs3d_from_pointer(nsp_figure *F,void *obj);
 extern NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp);
 extern void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc);
+extern int nsp_set_current_figure(NspFigure *F);
+extern NspFigure *nsp_get_current_figure(void);
+extern void nsp_send_scale_2D_to_opengl(BCG *Xgc);
+extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
+
 %%
 include-private Figure
 
@@ -38,7 +43,6 @@ static int nsp_figure_draw_now(NspFigure *);
 static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
-static NspFigure *nsp_get_current_figure(void);
 static NspList *nsp_figure_children(NspGraphic *Obj);
 static NspAxes *nsp_get_current_axes(void);
 static int nsp_figure_start_compound(NspFigure *F);
@@ -201,7 +205,6 @@ override-attr FigureData.colormap
 static NspObject *_wrap_figuredata_get_colormap(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFigureData *) self)->colormap;
   return (NspObject *) ret;
 }
@@ -225,6 +228,17 @@ static int _wrap_figuredata_set_obj_colormap(void *self, NspObject *O)
   return OK;
 }
 
+/**
+ * _wrap_figuredata_set_colormap:
+ * @self: 
+ * @attr: 
+ * @O: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
 static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colormap;
@@ -236,9 +250,19 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
   return OK;
 }
 
+
 %%
 last
 
+/**
+ * nsp_draw_figure:
+ * @Xgc: 
+ * @Obj: 
+ * @rect: 
+ * @data: 
+ * 
+ * 
+ **/
 
 static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
@@ -283,23 +307,21 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 #ifdef WITH_GTKGLEXT 
 extern Gengine GL_gengine; 
 #endif 
-
 #ifdef WITH_CAIRO
 extern Gengine Cairo_gengine; 
 #endif 
-
 extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine; 
 
 /**
  * nsp_figure_connect:
  * @F: 
  * 
- * create a graphic window (in fact a Gtk one)
- * an set this window as the current one 
+ * creates a graphic window, sets this window as the current one 
  * then add figure to the Xgc associated to the 
- * window 
- * 
- * Returns: 
+ * window. The type of the window depends on the 
+ * driver field of the figure @F.
+ *
+ * Returns: %OK or %FAIL
  **/
 
 static int nsp_figure_connect(NspFigure *F)
@@ -308,25 +330,12 @@ static int nsp_figure_connect(NspFigure *F)
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   BCG *Xgc;
-
+  
   if (F->obj->Xgc != NULL ) 
     {
       /* Figure is already connected */
       return OK;
     }
-#if 0
-  Xgc = window_list_search_new(F->obj->id);
-
-  if ( Xgc != NULL) 
-    {
-      NspFigure *F1=nsp_get_figure(Xgc);
-      if ( F1 != NULL && nsp_figure_eq(F1,NSP_OBJECT(F))) return OK;
-      /* delete window F->obj->id and reconnect */
-      Sciprintf("\tFigure %d already connected\n",F->obj->id);
-      Sciprintf("\tdeleting window %d\n",F->obj->id);
-      Xgc->actions->delete(Xgc);
-     }
- #endif
  
   if ( F->obj->dims != NULL && F->obj->dims->mn == 2 )
     { 
@@ -405,12 +414,14 @@ static int nsp_figure_connect(NspFigure *F)
 
 /**
  * nsp_figure_unconnect:
- * @F: 
+ * @F: a #NspFigure 
  * 
- *delete window associated to F 
+ * delete graphic window associated to @F. 
+ * @F is not deleted.
  * 
- * Returns: 
+ * Returns: %OK
  **/
+
 static int nsp_figure_unconnect(NspFigure *F)
 {
   BCG *Xgc =  F->obj->Xgc;
@@ -425,16 +436,14 @@ static int nsp_figure_unconnect(NspFigure *F)
  * @F: 
  * @A: 
  * 
+ * recursively call the link_figure method for each element of 
+ * the list.
  * 
- * 
- * Returns: 
  **/
-/* utilities */
 
 void nsp_list_link_figure(NspList *L, nsp_figure *F, void *A)
 {
   /* A should be a nsp_axes */
-
   Cell *cloc = L->first ;
   while ( cloc != NULLCELL ) 
     {
@@ -452,8 +461,11 @@ void nsp_list_link_figure(NspList *L, nsp_figure *F, void *A)
  * @L: 
  * @F: 
  * 
+ * recursively call the unlink_figure method for each element of 
+ * the list.
  * 
  **/
+
 void nsp_list_unlink_figure(NspList *L, nsp_figure *F)
 {
   Cell *cloc = L->first ;
@@ -473,10 +485,13 @@ void nsp_list_unlink_figure(NspList *L, nsp_figure *F)
  * @L: 
  * @F: 
  * 
+ * checks that all the children of the Figure @F have a field Fif 
+ * set to #nsp_figure @F.
+ *
  * 
- * 
- * Returns: 
+ * Returns: %OK or %FAIL
  **/
+
 int nsp_list_check_figure(NspList *L, nsp_figure *F)
 {
   Cell *cloc = L->first ;
@@ -500,12 +515,11 @@ int nsp_list_check_figure(NspList *L, nsp_figure *F)
   return OK;
 }
 
-
-
 /**
  * nsp_figure_children_link_figure:
- * @F: 
+ * @F: a #NspFigure 
  * 
+ * call link_figure method on children of @F.
  * 
  **/
 static void nsp_figure_children_link_figure(NspFigure *F)
@@ -516,9 +530,10 @@ static void nsp_figure_children_link_figure(NspFigure *F)
 
 /**
  * nsp_figure_children_unlink_figure:
- * @F: 
+ * @F: a #NspFigure 
  * 
  * 
+ * call unlink_figure method on children of @F.
  **/
 static void nsp_figure_children_unlink_figure(NspFigure *F)
 {
@@ -532,6 +547,7 @@ static void nsp_figure_children_unlink_figure(NspFigure *F)
  * @L: 
  * 
  * 
+ * cheks that all the children of @F have proper Fig field
  * 
  * Returns: 
  **/
@@ -540,27 +556,63 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
   return  nsp_list_check_figure(F->obj->children,F->obj);
 }
 
-extern NspObject * tape_search_graphic_object(BCG *Xgc,int winnumber);
-
 /**
  * nsp_get_current_figure:
  * @void: 
  * 
+ * returns the current figure.
  * 
+ * Returns: a #NspFigure or %NULL
+ **/
+
+static NspFigure *nsp_current_figure=NULL;
+
+NspFigure *nsp_get_current_figure(void)
+{
+  BCG *Xgc;
+  NspObject  *F = NULL;
+  if ( nsp_current_figure != NULL )
+    {
+      if ( nsp_current_figure->obj->ref_count > 1) 
+	return nsp_current_figure;
+      /* no more ref to the current_figure */
+      nsp_figure_destroy(nsp_current_figure);
+      nsp_current_figure = NULL;
+    }
+  if ((Xgc = nsp_check_graphic_context()) == NULL) return NULL;
+  if ((F = (NspObject *) Xgc->figure)== NULL) return NULL;
+  if (F == NULL || ! IsFigure(F)) return NULL;
+  nsp_current_figure = (NspFigure *) nsp_object_copy_with_name(F);
+  return nsp_current_figure;
+}
+
+/**
+ * nsp_set_current_figure:
+ * @F: 
+ * 
+ * sets nsp_current_figure to @F
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_set_current_figure(NspFigure *F)
+{
+  NspFigure *loc = nsp_figure_copy(F);
+  if ( loc == NULL ) return FAIL;
+  if ( nsp_current_figure != NULL) 
+    nsp_figure_destroy(nsp_current_figure);
+  nsp_current_figure =loc ;
+  return OK;
+}
+
+/**
+ * nsp_figure_children:
+ * @Obj: a #NspGraphic which is to be a #NspFigure.
+ * 
+ * returns the children of a @Figure
  * 
  * Returns: 
  **/
-static NspFigure *nsp_get_current_figure(void)
-{
-  NspObject  *F = NULL;
-  BCG *Xgc = nsp_check_graphic_context();
-  if ( Xgc == NULL) return NULL;
-  if ((F = (NspObject *) Xgc->figure)== NULL)
-    return NULL;
-  if (F == NULL || ! IsFigure(F)) 
-    return NULL;
-  return (NspFigure *) F;
-}
 
 static NspList *nsp_figure_children(NspGraphic *Obj)
 {
@@ -571,9 +623,9 @@ static NspList *nsp_figure_children(NspGraphic *Obj)
  * nsp_get_current_axes:
  * @void: 
  * 
+ * returns the current axe
  * 
- * 
- * Returns: 
+ * Returns: a #NspAxes or %NULL
  **/
 
 static NspAxes *nsp_current_axes=NULL;
@@ -583,7 +635,11 @@ static NspAxes *nsp_get_current_axes(void)
   NspObject *Obj;
   NspFigure *cf;
   NspList *L;
-  if ( nsp_current_axes != NULL) return nsp_current_axes;
+  if ( nsp_current_axes != NULL) 
+    {
+      if ( nsp_current_axes->obj->ref_count > 1 )
+	return nsp_current_axes;
+    }
   cf = nsp_get_current_figure();
   if ( cf == NULL) return NULL;
   L= cf->obj->children;
@@ -599,11 +655,11 @@ static NspAxes *nsp_get_current_axes(void)
 
 /**
  * nsp_create_default_figure:
- * @Xgc: 
+ * @Xgc: a graphic context 
  * 
+ * create and return a #NspFigure connected to @Xgc.
  * 
- * 
- * Returns: 
+ * Returns: a new #NspFigure.
  **/
 
 static NspFigure *nsp_create_default_figure(BCG *Xgc)
@@ -632,11 +688,13 @@ static NspFigure *nsp_create_default_figure(BCG *Xgc)
 
 /**
  * nsp_check_for_figure:
- * @Xgc: 
+ * @Xgc: a #BCG 
  * 
+ * checks for a figure in graphic context @Xgc 
+ * and create one if not present. 
+ * Xgc should not be null here. 
  * 
- * 
- * Returns: 
+ * Returns: a new #NspFigure
  **/
 
 NspFigure *nsp_check_for_figure(BCG *Xgc)
@@ -651,7 +709,6 @@ NspFigure *nsp_check_for_figure(BCG *Xgc)
   if ( ! IsFigure((NspObject *) F)) return NULL;
   return F;
 }
-
 
 /**
  * nsp_check_for_axes:
@@ -741,6 +798,7 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
  * 
  * Returns: 
  **/
+
 NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
 {
   int i,l , created=FALSE;
@@ -1043,6 +1101,7 @@ static int nsp_figure_draw_now(NspFigure *F)
  * 
  * Returns: 
  **/
+
 NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
 {
   NspGraphic *gr=NULL;
@@ -1082,7 +1141,7 @@ NspGraphic *nsp_get_point_axes(BCG *Xgc,int px,int py,double *dp)
 		{
 		  gr = G;
 		  /* a revoir XXXXX */
-		  set_scale(Xgc,"fTtfft",A->obj->wrect->R,A->obj->frect->R,NULL,NULL,A->obj->arect->R);
+		  set_scale(Xgc->scales,NULL,A->obj->wrect->R,A->obj->frect->R,NULL,NULL,A->obj->arect->R);
 		  scale_i2f(Xgc->scales,dp,dp+1,&px,&py,1);
 		}
 	    }
@@ -1239,13 +1298,13 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
       /* if we just have one axe we insert the new compound in 
        * the same axe.
        */
-      if ( nsp_axes_insert_child(A1, (NspGraphic *) C) == FAIL) 
+      if ( nsp_axes_insert_child(A1, (NspGraphic *) C, TRUE) == FAIL) 
 	return NULL;
     }
   else
     {
       /* insert the compound in A2 */
-      if ( nsp_axes_insert_child(A2, (NspGraphic *) C) == FAIL) 
+      if ( nsp_axes_insert_child(A2, (NspGraphic *) C, TRUE) == FAIL) 
 	return NULL;
       /* remove A1 */
       nsp_list_remove_first(F->obj->children);
@@ -1436,10 +1495,107 @@ void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc)
 }
 
 
-
+/**
+ * nsp_figure_process_updates:
+ * @F: a #NspFigure 
+ * 
+ * call process_updates on the graphic window if any 
+ * associated to figure @F.
+ *
+ **/
 static void nsp_figure_process_updates(NspFigure *F)
 {
   BCG *Xgc =  F->obj->Xgc;  
   if ( Xgc == NULL ) return ;
   Xgc->graphic_engine->process_updates(Xgc);
+}
+
+
+/**
+ * nsp_check_for_current_axes:
+ * @void: 
+ * 
+ * returns the current axe and create one 
+ * if necessary.
+ * 
+ * Returns: a new #NspAxes or %NULL.
+ **/
+
+NspAxes *nsp_check_for_current_axes(void)
+{
+  int l,i;
+  NspObject *Obj;
+  NspList *L;
+  NspFigure *F;
+  NspAxes *Axes= NULLAXES;
+  /* 
+     Axes = nsp_get_current_axes();
+     if ( Axes != NULL ) return Axes;
+  */
+
+  F = nsp_get_current_figure(); 
+  if ( F == NULL) 
+    {
+      /* create a new figure and store it in Xgc */
+      BCG *Xgc=nsp_check_graphic_context();
+      if ( Xgc == NULL ) return NULL;
+      F = nsp_create_default_figure(Xgc);
+      if ( F == NULL) return NULL;
+      if ( nsp_set_current_figure(F) == FAIL) return NULL;
+      /* destroy the local copy */
+      nsp_figure_destroy(F);
+      F = nsp_get_current_figure();
+    }
+  L= F->obj->children;
+  /* return the first axes found 
+   * Note that the children of a Figure should be axes or 3daxes (obj3d)
+   */
+  l= nsp_list_length(L);
+  for ( i= 1; i <= l ; i++) 
+    {
+      Obj = nsp_list_get_element(L,i);
+      if ( Obj != NULLOBJ && IsAxes(Obj) )
+	{
+	  Axes=(NspAxes *) Obj;
+	  break;
+	}
+    }
+  if ( Axes == NULLAXES ) 
+    {
+      /* create a new axes */
+      Axes= nsp_axes_create_default("axe");
+      if ( Axes == NULL) return NULL;
+      /* store in Figure */
+      if ( nsp_list_begin_insert(L,(NspObject *) Axes)== FAIL) 
+	{
+	  nsp_axes_destroy(Axes);
+	  return NULL;
+	}
+      /* set figure informations in axe */
+      nsp_figure_children_link_figure(F);
+    }
+  return Axes;
+}
+
+
+void nsp_send_scale_2D_to_opengl(BCG *Xgc)
+{
+#ifdef WITH_GTKGLEXT 
+  /* transmit info to opengl */
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_2dview(Xgc);
+    }
+#endif
+}
+
+void nsp_send_scale_3D_to_opengl(BCG *Xgc)
+{
+#ifdef WITH_GTKGLEXT 
+  /* transmit info to opengl */
+  if ( Xgc->graphic_engine == &GL_gengine ) 
+    {
+      nsp_ogl_set_3dview(Xgc);
+    }
+#endif
 }

@@ -1896,7 +1896,7 @@ static int nsp_block_create_icon(BCG *Xgc,NspBlock *B)
       G= (NspGraphic *) axe ;
       G->type->link_figure(G,((NspGraphic *) B)->obj->Fig,
 			   ((NspGraphic *) B)->obj->Axe );
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) nsp_ret[0]) == FAIL)
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) nsp_ret[0],FALSE) == FAIL)
 	goto stop;
       B->obj->icon = G;
     }

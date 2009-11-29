@@ -224,6 +224,7 @@ static int nsp_fec_eq(NspFec *A, NspObject *B)
   if ( A->obj->mesh != loc->obj->mesh) return FALSE;
   if ( A->obj->paint != loc->obj->paint) return FALSE;
   if ( NSP_OBJECT(A->obj->colout)->type->eq(A->obj->colout,loc->obj->colout) == FALSE ) return FALSE;
+  if ( A->obj->colorbar != loc->obj->colorbar) return FALSE;
   return TRUE;
 }
 
@@ -256,6 +257,7 @@ int nsp_fec_xdr_save(XDR *xdrs, NspFec *M)
   if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->paint) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->colout)) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->colorbar) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -278,6 +280,7 @@ NspFec  *nsp_fec_xdr_load_partial(XDR *xdrs, NspFec *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->paint) == FAIL) return NULL;
   if ((M->obj->colout =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->colorbar) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -401,6 +404,7 @@ int nsp_fec_print(NspFec *M, int indent,const char *name, int rec_level)
   if ( M->obj->colout != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"colorbar	= %s\n", ( M->obj->colorbar == TRUE) ? "T" : "F" );
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -440,6 +444,7 @@ int nsp_fec_latex(NspFec *M, int indent,const char *name, int rec_level)
   if ( M->obj->colout != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->colout),indent+2,"colout",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"colorbar	= %s\n", ( M->obj->colorbar == TRUE) ? "T" : "F" );
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -519,6 +524,7 @@ int nsp_fec_create_partial(NspFec *H)
   H->obj->mesh = TRUE;
   H->obj->paint = TRUE;
   H->obj->colout = NULLMAT;
+  H->obj->colorbar = TRUE;
   return OK;
 }
 
@@ -570,7 +576,7 @@ int nsp_fec_check_values(NspFec *H)
   return OK;
 }
 
-NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,NspTypeBase *type)
+NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type)
 {
   NspFec *H  = nsp_fec_create_void(name,type);
   if ( H ==  NULLFEC) return NULLFEC;
@@ -584,6 +590,7 @@ NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles
   H->obj->mesh=mesh;
   H->obj->paint=paint;
   H->obj->colout= colout;
+  H->obj->colorbar=colorbar;
   if ( nsp_fec_check_values(H) == FAIL) return NULLFEC;
   return H;
 }
@@ -669,6 +676,7 @@ NspFec *nsp_fec_full_copy_partial(NspFec *H,NspFec *self)
     {
       if ((H->obj->colout = (NspMatrix *) nsp_object_full_copy_and_name("colout",NSP_OBJECT(self->obj->colout))) == NULLMAT) return NULL;
     }
+  H->obj->colorbar=self->obj->colorbar;
   return H;
 }
 
@@ -950,6 +958,25 @@ static int _wrap_fec_set_colout(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_fec_get_colorbar(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspFec *) self)->obj->colorbar;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_fec_set_colorbar(void *self,const char *attr, NspObject *O)
+{
+  int colorbar;
+
+  if ( BoolScalar(O,&colorbar) == FAIL) return FAIL;
+  ((NspFec *) self)->obj->colorbar= colorbar;
+  return OK;
+}
+
 static AttrTab fec_attrs[] = {
   { "x", (attr_get_function *)_wrap_fec_get_x, (attr_set_function *)_wrap_fec_set_x,(attr_get_object_function *)_wrap_fec_get_obj_x, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_fec_get_y, (attr_set_function *)_wrap_fec_set_y,(attr_get_object_function *)_wrap_fec_get_obj_y, (attr_set_object_function *)int_set_object_failed },
@@ -960,6 +987,7 @@ static AttrTab fec_attrs[] = {
   { "mesh", (attr_get_function *)_wrap_fec_get_mesh, (attr_set_function *)_wrap_fec_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "paint", (attr_get_function *)_wrap_fec_get_paint, (attr_set_function *)_wrap_fec_set_paint,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "colout", (attr_get_function *)_wrap_fec_get_colout, (attr_set_function *)_wrap_fec_set_colout,(attr_get_object_function *)_wrap_fec_get_obj_colout, (attr_set_object_function *)int_set_object_failed },
+  { "colorbar", (attr_get_function *)_wrap_fec_get_colorbar, (attr_set_function *)_wrap_fec_set_colorbar,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -976,7 +1004,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 980 "fec.c"
+#line 1008 "fec.c"
 
 
 #line 79 "codegen/fec.override"
@@ -988,7 +1016,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 992 "fec.c"
+#line 1020 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1092,7 +1120,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   int Nnode = P->obj->x->mn;
   int Ntr = P->obj->triangles->m;
   int mesh = P->obj->mesh;
-  int *xm,*ym,i,  j, k;
+  int *xm,*ym,i,  j, k, nz;
+  double *zlevel, dz, zmin, zmax, sx[3], sy[3];
+  int *zone, *fill, zxy[3], colors_minmax[2];
 
   if ( Obj->obj->show == FALSE ) return ;
 
@@ -1124,165 +1154,165 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
   
   scale_f2i(Xgc->scales,x,y,xm,ym,Nnode);
 
-  {
-    int nz, whiteid; 
-    double *zlevel, dz, zmin, zmax, sx[3], sy[3];
-    int *zone, *fill, zxy[3], color_min, color_max;
-
-    /* choice between zmin and zmax given by the user or computed
-     * with the min and max z values. 
-     */
     
-    if ( zminmax == NULL  ) { 
-      zmin=(double) Mini(func,Nnode); 
-      zmax=(double) Maxi(func,Nnode);
-    } 
-    else {
-      zmin = Min( zminmax[0] , zminmax[1] );
-      zmax = Max( zminmax[0] , zminmax[1] );
-    };
+  /* choice between zmin and zmax given by the user or computed
+   * with the min and max z values. 
+   */
     
-    whiteid= Xgc->graphic_engine->xget_last(Xgc);
-    nz=whiteid;
+  if ( zminmax == NULL  ) { 
+    zmin=(double) Mini(func,Nnode); 
+    zmax=(double) Maxi(func,Nnode);
+  } 
+  else {
+    zmin = Min( zminmax[0] , zminmax[1] );
+    zmax = Max( zminmax[0] , zminmax[1] );
+  };
     
-    /* choice for the colormap (in case of a user 's choice 
-     * verify the parameter). 
-     */
     
-    if ( colminmax == NULL ) 
-      {
-	color_min=1; 
-      }
-    else 
-      {
-	/* we project on accepted values */
-	color_min = Max(1,Min(Abs(colminmax[0]),Abs(colminmax[1])));
-	color_max = Min(nz,Max(Abs(colminmax[0]),Abs(colminmax[1])));
-	nz = color_max-color_min  + 1;
-      }
-      
-    /* 
-     *  1/ the purpose of the first part is to to compute the "zone" of each point :
-     *    
-     *    - the array zlevel are the boundaries between the differents zones :
-     *
-     *        zlevel[0] = zmin, zlevel[nz] = zmax 
-     *     and zlevel[i] = zmin + i*(zmax-zmin)/nz
-     *  
-     *     - if  zlevel[j-1] <= func[i] < zlevel[j]  then zone[i] = j
-     *       if func[i] > zmax  then zone[i] = nz+1
-     *       if func[i] < zmin  then zone[i] = 0
-     *     - the zone j is filled with color fill[j] with
-     *       fill[j] = -(j-1 + color_min) if 1 <= j <= nz
-     *     - if colout == NULL
-     *        fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
-     *        fill[nz+1] = color attributed for fill[nz] --/
-     *       else 
-     *        fill[0]=- colout[0];
-     *        fill[1]=- colout[1];
-     */
+  /* choice for the colormap (in case of a user 's choice 
+   * verify the parameter). 
+   */
+    
+  if ( colminmax == NULL ) 
+    {
+      colors_minmax[0]= 1; 
+      colors_minmax[1]= Xgc->graphic_engine->xget_last(Xgc);
+    }
+  else 
+    {
+      int nz= Xgc->graphic_engine->xget_last(Xgc);
+      /* we project on accepted values */
+      colors_minmax[0] = Max(1,Min(Abs(colminmax[0]),Abs(colminmax[1])));
+      colors_minmax[1] = Min(nz,Max(Abs(colminmax[0]),Abs(colminmax[1])));
+    }
+  nz = colors_minmax[1]- colors_minmax[0]+ 1;
+  
+  /* 
+   *  1/ the purpose of the first part is to to compute the "zone" of each point :
+   *    
+   *    - the array zlevel are the boundaries between the differents zones :
+   *
+   *        zlevel[0] = zmin, zlevel[nz] = zmax 
+   *     and zlevel[i] = zmin + i*(zmax-zmin)/nz
+   *  
+   *     - if  zlevel[j-1] <= func[i] < zlevel[j]  then zone[i] = j
+   *       if func[i] > zmax  then zone[i] = nz+1
+   *       if func[i] < zmin  then zone[i] = 0
+   *     - the zone j is filled with color fill[j] with
+   *       fill[j] = -(j-1 + color_min) if 1 <= j <= nz
+   *     - if colout == NULL
+   *        fill[0] = color attributed for fill[1]     ---> this behavior may be changed ...
+   *        fill[nz+1] = color attributed for fill[nz] --/
+   *       else 
+   *        fill[0]=- colout[0];
+   *        fill[1]=- colout[1];
+   */
  
-    /* allocations for some arrays ... */
+  /* allocations for some arrays ... */
 
-    zone = graphic_alloc(2,(Nnode),sizeof(int));
-    zlevel = graphic_alloc(3,nz+1,sizeof(double));
-    fill  = graphic_alloc(4,nz+2,sizeof(int));
-    if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL)) 
-      {
-	Scistring("fec: malloc No more Place\n");
-	return;
-      }
-    /* compute the fill array (fill = - num color) */
-    fill[1] = - color_min;
-    for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
-    if ( colout == NULL) 
-      {
-	fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
-      }
-    else 
-      {
-	fill[0] = (colout[0]==-1) ? fill[1] : - colout[0] ;
-	fill[nz+1] = (colout[1]==-1) ? fill[nz]: - colout[1];
-      }
+  zone = graphic_alloc(2,(Nnode),sizeof(int));
+  zlevel = graphic_alloc(3,nz+1,sizeof(double));
+  fill  = graphic_alloc(4,nz+2,sizeof(int));
+  if ( (zone == NULL) || (zlevel == NULL) || (fill  == NULL)) 
+    {
+      Scistring("fec: malloc No more Place\n");
+      return;
+    }
+  /* compute the fill array (fill = - num color) */
+  fill[1] = - colors_minmax[0];
+  for ( i = 2 ; i <= nz ; i++ ) fill[i] = fill[i-1] - 1;
+  if ( colout == NULL) 
+    {
+      fill[0] =  fill[1] ; fill[nz+1] = fill[nz];
+    }
+  else 
+    {
+      fill[0] = (colout[0]==-1) ? fill[1] : - colout[0] ;
+      fill[nz+1] = (colout[1]==-1) ? fill[nz]: - colout[1];
+    }
 
-    /* compute the zlevels */
-    dz = (zmax - zmin)/nz;
-    for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
-    zlevel[nz] = zmax;
+  /* compute the zlevels */
+  dz = (zmax - zmin)/nz;
+  for (i = 0 ; i < nz ; i++) zlevel[i] = zmin + i*dz;
+  zlevel[nz] = zmax;
 
-    /* finaly compute the zone of each point */
-    for ( i = 0 ; i < (Nnode) ; i++ ) {
-      if ( isnan(func[i]) ||  func[i] > zmax )
-	zone[i] = nz+1;
-      else if ( func[i] < zmin )
-	zone[i] = 0;
-      else
-	zone[i] = floor( (func[i] - zmin)/dz ) + 1;
-    };
-
-    /* 
-     *  2/ loop on the triangles : each triangle is finally decomposed 
-     *     into its differents zones (polygons) by the function PaintTriangle   
-     */
-#if 0
-    if (  Xgc->graphic_engine == &GL_gengine ) 
-      {
-	for ( j = 0 ; j < Ntr ; j++) 
-	  {
-	    int ii[3],isx[3],isy[3]; 
-	    /* retrieve node numbers and functions values */
-	    for ( k = 0 ; k < 3 ; k++ ) {
-	      ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
-	      zxy[k] = zone[ii[k]];
-	      isx[k]  = xm[ii[k]];   
-	      isy[k]  = ym[ii[k]];
-	      /* using ii for colors */
-	      ii[k]= - fill[zxy[k]]; 
-	    };
-	    /* call the "painting" function */
-	    if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
-	      {
-		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
-	      }     
-	    if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
-	  };
-      }
+  /* finaly compute the zone of each point */
+  for ( i = 0 ; i < (Nnode) ; i++ ) {
+    if ( isnan(func[i]) ||  func[i] > zmax )
+      zone[i] = nz+1;
+    else if ( func[i] < zmin )
+      zone[i] = 0;
     else
+      zone[i] = floor( (func[i] - zmin)/dz ) + 1;
+  };
+
+  /* 
+   *  2/ loop on the triangles : each triangle is finally decomposed 
+   *     into its differents zones (polygons) by the function PaintTriangle   
+   */
+#if 0
+  if (  Xgc->graphic_engine == &GL_gengine ) 
+    {
+      for ( j = 0 ; j < Ntr ; j++) 
+	{
+	  int ii[3],isx[3],isy[3]; 
+	  /* retrieve node numbers and functions values */
+	  for ( k = 0 ; k < 3 ; k++ ) {
+	    ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
+	    zxy[k] = zone[ii[k]];
+	    isx[k]  = xm[ii[k]];   
+	    isy[k]  = ym[ii[k]];
+	    /* using ii for colors */
+	    ii[k]= - fill[zxy[k]]; 
+	  };
+	  /* call the "painting" function */
+	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
+	    {
+	      fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+	    }     
+	  if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
+	};
+    }
+  else
 #endif
-      {
-	for ( j = 0 ; j < Ntr ; j++) 
-	  {
-	    int ii[3], perm[3],kp, stop = FALSE;
-	    double fxy[3];
+    {
+      for ( j = 0 ; j < Ntr ; j++) 
+	{
+	  int ii[3], perm[3],kp, stop = FALSE;
+	  double fxy[3];
 	    
-	    /* retrieve node numbers and functions values */
-	    for ( k = 0 ; k < 3 ; k++ ) {
-	      ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
-	      zxy[k] = zone[ii[k]];
-	    }
-	    
-	    for ( k = 0 ; k < 3 ; k++ )
-	      stop |=  ( isnan(func[ii[k]]));
-	    if ( stop == TRUE ) continue;
-
-	    /* get the permutation perm so as zxy[perm] is sorted */
-	    PermutOfSort(zxy, perm); 
-
-	    /* apply the permutation to get the triangle 's vertices
-	       in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
-	    for ( k = 0 ; k < 3 ; k++ ) {
-	      kp = perm[k];
-	      sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
-	      fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
-	    };
-	    
-	    /* call the "painting" function */
-	    if ( P->obj->paint ) 
-	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
-	    if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
+	  /* retrieve node numbers and functions values */
+	  for ( k = 0 ; k < 3 ; k++ ) {
+	    ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
+	    zxy[k] = zone[ii[k]];
 	  }
-      }
-  }
+	    
+	  for ( k = 0 ; k < 3 ; k++ )
+	    stop |=  ( isnan(func[ii[k]]));
+	  if ( stop == TRUE ) continue;
+
+	  /* get the permutation perm so as zxy[perm] is sorted */
+	  PermutOfSort(zxy, perm); 
+
+	  /* apply the permutation to get the triangle 's vertices
+	     in increasing zone (zxy[0] <= zxy[1] <= zxy[2]) */
+	  for ( k = 0 ; k < 3 ; k++ ) {
+	    kp = perm[k];
+	    sx[k]  = xm[ii[kp]];   sy[k]  = ym[ii[kp]];
+	    fxy[k] = func[ii[kp]]; zxy[k] = zone[ii[kp]];
+	  };
+	    
+	  /* call the "painting" function */
+	  if ( P->obj->paint ) 
+	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	  if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
+	}
+    }
+
+  if (  P->obj->colorbar ) 
+    {
+      nsp_draw_colorbar(Xgc,((NspGraphic *) P)->obj->Axe,zmin ,zmax, colors_minmax);
+    }
 }
 
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
@@ -1294,4 +1324,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1298 "fec.c"
+#line 1328 "fec.c"

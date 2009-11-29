@@ -146,11 +146,13 @@ static int int_champ_G(Stack stack, int rhs, int opt, int lhs,int colored )
   vf = nsp_vfield_create("vf",fx,fy,x,y,colored,NULL);
   if ( vf == NULL) return FAIL;
   /* insert the new vfield */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) vf)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) vf,FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
+  /* invalidate the whole axe */
+  nsp_axes_invalidate((NspGraphic *)axe);
   if ( lhs == 1 ) 
     {
       MoveObj(stack,1,NSP_OBJECT(vf));
@@ -310,7 +312,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
       vf = nsp_contour_create("c",z,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
       if ( vf == NULL) return RET_BUG;
       /* insert the new vfield */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *)vf )== FAIL) 
+      if ( nsp_axes_insert_child(axe,(NspGraphic *)vf, FALSE )== FAIL) 
 	{
 	  Scierror("Error: failed to insert contour in Figure\n");
 	  return RET_BUG;
@@ -455,7 +457,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
   vf = nsp_contour_create("c",z,x,y,(flagx==1) ? nz:NULL , nnz,s,NULL);
   if ( vf == NULL) return FAIL;
   /* insert the new contour */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) vf )== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) vf , FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert contour in Figure\n");
       return RET_BUG;
@@ -1298,7 +1300,7 @@ static NspGraphic *nsp_plot2d_obj(BCG *Xgc,double x[],double y[],char *logflag, 
 			      ( style[i] > 0 ) ?  style[i] : -1, 
 			      mode,Pts,curve_l,NULL);
       /* insert the new curve */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) curve)== FAIL) 
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) curve, FALSE)== FAIL) 
 	{
 	  Scierror("Error: failed to insert rectangle in Figure\n");
 	  return NULL;
@@ -1745,7 +1747,7 @@ static int int_grayplot_new( Stack stack, int rhs, int opt, int lhs)
   gm = nsp_gmatrix1_create("gm1",z,remap,shade,Mcolminmax,Mzminmax,Mcolout,x,y,NULL);
   if ( gm == NULL) return FAIL;
   /* insert the new matrix */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm, FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -1853,7 +1855,7 @@ static int int_matplot_new(Stack stack, int rhs, int opt, int lhs)
   NspGMatrix *gm = nsp_gmatrix_create("gm",z,Mrect,remap,Mcolminmax,Mzminmax,NULL);
   if ( gm == NULL) return FAIL;
   /* insert the new matrix */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm, FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -1956,7 +1958,7 @@ static int int_matplot1_new(Stack stack, int rhs, int opt, int lhs)
   NspGMatrix *gm = nsp_gmatrix_create("gm",M,Rect,remap,Mcolminmax,Mzminmax,NULL);
   if ( gm == NULL) return FAIL;
   /* insert the new matrix */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *)gm,FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -2114,7 +2116,7 @@ static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
   if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) arc)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) arc,TRUE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -2285,14 +2287,14 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
 	}
       else
 	{
-	  if (  nsp_axes_insert_child(axe,(NspGraphic *) gobj)== FAIL) 
+	  if (  nsp_axes_insert_child(axe,(NspGraphic *) gobj, TRUE)== FAIL) 
 	    return RET_BUG;
 	}
     }
   if ( compound == TRUE ) 
     {
       /* insert the compound in the axe */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) C)== FAIL) 
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) C, TRUE)== FAIL) 
 	{
 	  Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
 	  return RET_BUG;
@@ -2418,11 +2420,12 @@ static int int_xarrows_new(Stack stack, int rhs, int opt, int lhs)
   if ((pl = nsp_arrows_create("ar",x,y,color,arsize,NULL))== NULL)
     return RET_BUG;
 
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
+  nsp_axes_invalidate((NspGraphic *)axe);
   if ( lhs == 1 ) 
     {
       MoveObj(stack,1,NSP_OBJECT(pl));
@@ -2483,11 +2486,12 @@ static int int_xsegs_new(Stack stack, int rhs, int opt, int lhs)
   if ((pl = nsp_segments_create("ar",x,y,color,NULL))== NULL)
     return RET_BUG;
 
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
+  nsp_axes_invalidate((NspGraphic *)axe);
   if ( lhs == 1 ) 
     {
       MoveObj(stack,1,NSP_OBJECT(pl));
@@ -2673,9 +2677,17 @@ static int int_xrect_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspGrRect *rect;
   NspAxes *axe; 
-  BCG *Xgc;
   double *val=NULL;
-  int back=-2,color=-3,width=-3;
+
+  /* XXX: should be changed since colors start at 0 now 
+   * back : -2 means do not paint the background 
+   *        -1 paint with default color
+   *        >=0 paint with given color.
+   * same for color 
+   * thickness : -1 current else given 
+   */
+
+  int back=-2,color=-1,width=-1;
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},
 		      { "thickness",s_int,NULLOBJ,-1},
@@ -2684,17 +2696,13 @@ static int int_xrect_new(Stack stack, int rhs, int opt, int lhs)
   if ( get_rect(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
-  axe=  nsp_check_for_axes(Xgc,NULL);
+  axe=  nsp_check_for_current_axes();
   if ( axe == NULL) return RET_BUG;
-
-  if ( opts[1].obj == NULLOBJ) color = Xgc->graphic_engine->xget_pattern(Xgc);
-  if ( opts[2].obj == NULLOBJ) width = Xgc->graphic_engine->xget_thickness(Xgc);
   /* create the object */
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,NULL))== NULL)
     return RET_BUG;
   /* insert the object in the axe */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) rect)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) rect, TRUE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -3024,7 +3032,7 @@ static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
   if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
   /* insert the polyline */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, TRUE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -3157,14 +3165,14 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 	}
       else
 	{
-	  if (  nsp_axes_insert_child(axe,(NspGraphic *) pl )== FAIL) 
+	  if (  nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE )== FAIL) 
 	    return RET_BUG;
 	}
     }
   if ( compound == TRUE ) 
     {
       /* insert the compound in the axe */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) C)== FAIL) 
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) C, TRUE )== FAIL) 
 	{
 	  Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
 	  return RET_BUG;
@@ -3748,7 +3756,7 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
   if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
   /* insert the object in the axe */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, TRUE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -3903,7 +3911,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
 	}
       else
 	{
-	  if (  nsp_axes_insert_child(axe,(NspGraphic *) pl)== FAIL) 
+	  if (  nsp_axes_insert_child(axe,(NspGraphic *) pl, FALSE)== FAIL) 
 	    return RET_BUG;
 	}
     }
@@ -3911,7 +3919,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   if ( compound == TRUE ) 
     {
       /* insert the compound in the axe */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) C)== FAIL) 
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) C, TRUE)== FAIL) 
 	{
 	  Scierror("Error: in %s failed to insert graphic object in Figure\n",NspFname(stack));
 	  return RET_BUG;
@@ -4282,12 +4290,9 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       return 0;
       break;
     case xset_clipgrf:
-      /* In new graphics this should be inserted 
-       * in a compound 
-      CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->scale->xset_clipgrf(Xgc);
-      */
+      /* In new graphics this has no meaning  
+       * except changing clip for default axe or objs3d.
+       */
       break;
     case  xset_process_updates:
       CheckRhs(1,1);
@@ -4367,7 +4372,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,0,angle,0.0,0.0,0,NULL))== NULL) 
     return RET_BUG;
   /* insert the new string */
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) grs)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) grs, TRUE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
@@ -4957,6 +4962,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 			  { "strf",string,NULLOBJ,-1},
 			  { "style",mat_int,NULLOBJ,-1},
 			  { "zminmax",mat,NULLOBJ,-1},
+			  { "colorbar",s_bool,NULLOBJ,-1},
 			  { "paint",s_bool,NULLOBJ,-1},
 			  { NULL,t_end,NULLOBJ,-1}};
 
@@ -4966,14 +4972,16 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
   int *nax,nnz= 10, frame= -1, axes=-1,mesh = FALSE, leg_posi,paint = TRUE;
+  int colorbar=TRUE;
   char *strf=NULL, *leg=NULL, *leg_pos = NULL,*logflags=NULL;
   int_types T[] = {realmat,realmat,realmat,realmat,new_opts, t_end} ;
   /* N.n =  4 ; N.names= Names, N.types = Topt, N.objs = Tab; */
 
-  if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/graphics-old/fec/fec.ex1\");",1);}
+  if ( rhs <= 0) { return sci_demo (NspFname(stack)," exec(\"SCI/demos/graphics/fec/fec.ex1\");",1);}
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
-	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,&paint)
+	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,&paint,
+	       &colorbar)
        == FAIL) return RET_BUG;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
@@ -5023,15 +5031,16 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   if ( paint == FALSE ) mesh= TRUE;
   
   NspFec *fec = nsp_fec_create("fec",x,y,Tr,F,Mcolminmax,Mzminmax,mesh,
-			       paint,Mcolout,NULL);
+			       paint,Mcolout,colorbar,NULL);
   if ( fec == NULL) return RET_BUG;
   /* insert the new fec */
   if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
-  if ( nsp_axes_insert_child(axe,(NspGraphic *) fec)== FAIL) 
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) fec, FALSE)== FAIL) 
     {
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
+  nsp_axes_invalidate((NspGraphic *)axe);
   if ( lhs == 1 ) 
     {
       MoveObj(stack,1,NSP_OBJECT(fec));

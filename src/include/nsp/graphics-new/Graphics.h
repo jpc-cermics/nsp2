@@ -69,8 +69,9 @@ extern int nsp_get_win_counter(void);
 extern void nsp_set_win_counter(int n);
 extern void frame_clip_on(BCG *Xgc);
 extern void frame_clip_off(BCG *Xgc);
-extern void set_scale(BCG *Xgc,const char flag[6],const double subwin[4],const double frame_values[4],
-		      const int aaint[4],const char logflag[2],const double axis_values[4]);
+extern void set_scale(nsp_gcscale *scale,const int wdim[2],const double subwin[4],
+		      const double frame_values[4], const int aaint[4],const char logflag[2],
+		      const double axis_values[4]);
 extern int xgc_add_default_scale(BCG *Xgc);
 extern int xgc_reset_scales_to_default(BCG *Xgc);
 extern int move_subwindow_scale_to_front(BCG *Xgc,const double *subwin);

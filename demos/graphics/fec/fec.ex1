@@ -21,7 +21,7 @@ if new_graphics() then
   // z(1:4)=%nan;
 end
 fec(noeul(:,2),noeul(:,3),trianl,z,strf='030',axesflag=2,rect=rect,mesh=%t);
-colorbar(min(z),max(z));
+
 
 
 

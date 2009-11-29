@@ -54,6 +54,7 @@ struct _nsp_objs3d {
   gboolean with_box;
   int box_color;
   int box_style;
+  nsp_gcscale scale;
   int ref_count;
 };
 
@@ -83,7 +84,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,nsp_gcscale scale,NspTypeBase *type);
 extern NspObjs3d *nsp_objs3d_create_default(char *name);
 
 /* from NspObjs3dObj.c */
@@ -118,7 +119,7 @@ extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ng
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
 
-#line 122 "./objs3d.h"
+#line 123 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -160,6 +161,15 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,
 				     double *zmax,nsp_plot3d_type type3d);
 static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag);
 
-#line 164 "./objs3d.h"
+/* requested for nsp_gcscale */
+
+static void nsp_destroy_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *H);
+static int nsp_print_nsp_gcscale(int indent,nsp_gcscale *locks,NspObjs3d *M);
+static int nsp_check_nsp_gcscale(nsp_gcscale *locks,NspObjs3d *M);
+static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *M);
+static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
+static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
+
+#line 174 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

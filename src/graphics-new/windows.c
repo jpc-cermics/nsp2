@@ -447,6 +447,7 @@ void set_window_scale_with_default(int win)
  * Returns: %OK or %FAIL
  **/
 
+#if 0
 int move_subwindow_scale_to_front(BCG *Xgc,const double *subwin)
 { 
   window_scale_list *loc;
@@ -470,6 +471,7 @@ int move_subwindow_scale_to_front(BCG *Xgc,const double *subwin)
     }
   return FAIL;
 }
+#endif 
 
 /**
  * xgc_add_scale:
@@ -794,94 +796,6 @@ void show_scales(BCG *Xgc)
 }
 
 /**
- * Nsetscale2d:
- * @Xgc: a graphic context 
- * @WRect: subwindow 
- * @FRect: scales 
- * @logscale: a string. 
- * 
- * uses @WRect,@FRect,@logscale to update the graphic scales 
- * contained in @Xgc. 
- *  @WRect gives the subwindow to use 
- *  @ARect gives the axis rectangle 
- *  @FRect gives the bounds 
- *  WRect=[<x-upperleft>,<y-upperleft>,largeur,hauteur]
- *  example WRect=[0,0,1.0,1.0] we use all the window 
- *          WRect=[0.5,0.5,0.5,0.5] we use the down right 
- *  quarter of the window
- *  @logscale : gives xy log axis flags 
- *  each argument can be a null pointer if they are 
- *  not to be changed from their current value 
- * 
- *  Each window can have a set of scales : one for each specified 
- *  subwindow. This routine must take care of properly 
- *  switching from one scale to an other.
- * 
- * 
- * Returns: 0 
- **/
-
-int Nsetscale2d(BCG *Xgc,double WRect[4],double ARect[4],double FRect[4],char *logscale)
-{
-  /* if some arguments are null pointer we set them to 
-   * the corresponding current_scale value. 
-   * this is only important for store_NEch which does not work with null arguments 
-   */ 
-  /* char flag[] = "tfffff";*/ /* flag to specify which arguments have changed*/
-  char flag[7];
-  strcpy(flag,"tfffff");
-  if ( WRect != NULL) 
-    {
-      flag[1]='t';
-      /* a subwindow is specified 
-       * try to get its scale values as default values 
-       */
-      if (  move_subwindow_scale_to_front(Xgc,WRect) == FAIL)
-	{
-	  /* new subwindow */
-	  if ( xgc_add_scale(Xgc,&default_scale)== FAIL)   return 0;
-	  memcpy(Xgc->scales->subwin_rect, WRect,4*sizeof(double));
-	  Xgc->scales->scale_flag = 0;
-	  Xgc->scales->scale_flag3d = 0;
-	}
-    }
-  else 
-    {
-      /* set WRect to default value */
-      WRect = Xgc->scales->subwin_rect;
-    }
-  if ( FRect != NULL) flag[2]='t'; else FRect = Xgc->scales->frect;
-  if ( ARect != NULL) flag[5]='t'; else ARect = Xgc->scales->axis;
-  if ( logscale != NULL) flag[4] ='t'; else logscale = Xgc->scales->logflag;
-  if ( flag[4] == 't' && flag[2] == 't' ) 
-    {
-      if (logscale[0]=='l') 
-	{
-	  if ( FRect[0] <= 0 || FRect[2] <= 0 ) 
-	    {
-	      Scistring("Warning: negative boundaries on x scale with a log scale \n");
-	      FRect[0]=1.e-8;FRect[2]=1.e+8;
-	    } 
-	  FRect[0]=log10(FRect[0]);
-	  FRect[2]=log10(FRect[2]);
-	}
-      if (logscale[1]=='l') 
-	{
-	  if ( FRect[1] <= 0 || FRect[3] <= 0 ) 
-	    {
-	      Scistring("Warning: negative boundaries on y scale with a log scale \n");
-	      FRect[1]=1.e-8;FRect[3]=1.e+8;
-	    } 
-	  FRect[1]=log10(FRect[1]);
-	  FRect[3]=log10(FRect[3]);
-	}
-    }
-
-  set_scale(Xgc,flag,WRect,FRect,NULL,logscale,ARect);
-  return(0);
-}
-
-/**
  * getscale2d:
  * @Xgc: 
  * @WRect: 
@@ -931,148 +845,123 @@ int getscale2d(BCG *Xgc,double WRect[4],double FRect[4],char *logscale,double AR
  * @axis_values: mfact_xl, mfact_xr,mfact_yu,mfact_yd
  * 
  * changes selected items in Xgc scale 
- * flag gives which component must be used for 
- *      upgrading or setting the current scale 
- * flag[0]   : used for window dim upgrade t or f 
- * flag[1:5] : subwin,frame_values,aaint,logflag,axis_values
- *           for subwin the values can be t,T,f 
  * Warning : frame_values[i] must be log10(val[i]) 
  *           when using log scales 
  * 
  **/
 
-void set_scale(BCG *Xgc,const char flag[6],const double subwin[4],const double frame_values[4],
-	       const int aaint[4],const char logflag[2],const double axis_values[4])
+void set_scale(nsp_gcscale *scale,const int wdim[2],const double subwin[4],
+	       const double frame_values[4], const int aaint[4],const char logflag[2],
+	       const double axis_values[4])
 {
   char wdim_changed= 'f',subwin_changed='f';
   char frame_values_changed='f',aaint_changed='f';
   char logflag_changed='f';
   char axis_changed = 'f';
-  int wdim[2];
   int i;
-  
-  if ( flag[1] == 'T') 
+
+  if ( wdim != NULL  ) 
     {
-      /* we directly change the current scale without searching 
-       * a subwindow scale 
-       */
-      memcpy(Xgc->scales->subwin_rect, subwin ,4*sizeof(double));
-      subwin_changed='t' ;
-    }
-  else if ( flag[1] == 't' ) 
-    {
-      if ( ! same_subwin( subwin,Xgc->scales->subwin_rect)) 
-	{
-	  subwin_changed='t' ;
-	  if ( move_subwindow_scale_to_front(Xgc,subwin)==FAIL);
-	  if ( xgc_add_scale(Xgc,&default_scale)== FAIL)
-	    return;
-	}
-    }
-  
-  if ( flag[0] == 't'  ) 
-    {
-      Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
-      if ( Xgc->scales->wdim[0] != wdim[0] || Xgc->scales->wdim[1] != wdim[1]) 
+      if ( scale->wdim[0] != wdim[0] || scale->wdim[1] != wdim[1]) 
 	{ 
-	  Xgc->scales->wdim[0] = wdim[0]; Xgc->scales->wdim[1] = wdim[1]; 
+	  scale->wdim[0] = wdim[0]; 
+	  scale->wdim[1] = wdim[1]; 
 	  wdim_changed='t';
 	}
     }
-  if ( flag[2] == 't' ) 
+  
+  if ( subwin != NULL)
+    {
+      subwin_changed='t' ;
+      memcpy(scale->subwin_rect, subwin ,4*sizeof(double));
+    }
+
+  if ( frame_values != NULL) 
     {
       for (i=0; i < 4 ; i++ ) 
-	if ( frame_values[i] != Xgc->scales->frect[i]) { frame_values_changed='t' ; break;}
+	if ( frame_values[i] != scale->frect[i]) { frame_values_changed='t' ; break;}
       /* if no scales were present and the values given are the same as the 
        * default frect values we must register that we are setting a scale 
        */
-      if ( Xgc->scales->scale_flag == 0)  frame_values_changed='t' ;
-
+      if ( scale->scale_flag == 0)  frame_values_changed='t' ;
     }
-  if ( flag[3] == 't' ) 
+
+  if ( aaint != NULL )
     {
       for (i=0; i < 4 ; i++ ) 
-	if ( aaint[i] != Xgc->scales->Waaint1[i]) { aaint_changed='t' ; break;}
+	if ( aaint[i] != scale->Waaint1[i]) { aaint_changed='t' ; break;}
+      if (  aaint_changed== 't' ) 
+	{
+	  for (i=0; i < 4 ; i++) scale->Waaint1[i]=aaint[i];
+	}
     }
-  if ( flag[4] == 't' ) 
+
+  if ( logflag != NULL ) 
     {
       for (i=0; i < 2 ; i++ ) 
-	if ( logflag[i] != Xgc->scales->logflag[i]) { logflag_changed='t' ; break;}
+	if ( logflag[i] != scale->logflag[i]) { logflag_changed='t' ; break;}
+      if ( logflag_changed== 't' ) 
+	{
+	  scale->logflag[0]=logflag[0];      scale->logflag[1]=logflag[1];
+	}
     }
-  if ( flag[5] == 't' ) 
+
+  if ( axis_values != NULL ) 
     {
       for (i=0; i < 4 ; i++ ) 
-	if ( axis_values[i] != Xgc->scales->axis[i]) { axis_changed='t' ; break;}
+	if ( axis_values[i] != scale->axis[i]) { axis_changed='t' ; break;}
+      if ( axis_changed == 't') 
+	{
+	  for (i=0; i < 4 ; i++ ) scale->axis[i] = axis_values[i];
+	}
     }
-  if ( axis_changed == 't') 
-    {
-      for (i=0; i < 4 ; i++ ) Xgc->scales->axis[i] = axis_values[i];
-    }
-
-  if ( subwin_changed == 't' ) 
-    {
-      for (i=0; i < 4 ; i++ ) Xgc->scales->subwin_rect[i] = subwin[i];
-    }
+  
   if ( frame_values_changed == 't' ) 
     {
-      for (i=0; i < 4 ; i++) Xgc->scales->frect[i]=frame_values[i]; 
+      for (i=0; i < 4 ; i++) scale->frect[i]=frame_values[i]; 
       /* the scale is no more a default scale */
-      Xgc->scales->scale_flag = 1;
+      scale->scale_flag = 1;
     }
-
+  
   if ( wdim_changed == 't' || subwin_changed == 't' || frame_values_changed == 't' 
        ||  axis_changed == 't' )
     {
       /* Upgrading constants for 2D transformation */
       double scx,scy,xoff,yoff,val;
-      scx =  ((double) Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[2]-Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[2]
-	      *(Xgc->scales->axis[0]+Xgc->scales->axis[1]));
-      scy =  ((double) Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[3]-Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[3]
-	      *(Xgc->scales->axis[2]+Xgc->scales->axis[3]));
-      xoff= ((double) Xgc->scales->wdim[0]*Xgc->scales->subwin_rect[2])*(Xgc->scales->axis[0]);
-      yoff= ((double) Xgc->scales->wdim[1]*Xgc->scales->subwin_rect[3])*(Xgc->scales->axis[2]);
+      scx =  ((double) scale->wdim[0]*scale->subwin_rect[2]-scale->wdim[0]*scale->subwin_rect[2]
+	      *(scale->axis[0]+scale->axis[1]));
+      scy =  ((double) scale->wdim[1]*scale->subwin_rect[3]-scale->wdim[1]*scale->subwin_rect[3]
+	      *(scale->axis[2]+scale->axis[3]));
+      xoff= ((double) scale->wdim[0]*scale->subwin_rect[2])*(scale->axis[0]);
+      yoff= ((double) scale->wdim[1]*scale->subwin_rect[3])*(scale->axis[2]);
       
-      Xgc->scales->Wxofset1= xoff+Xgc->scales->subwin_rect[0]*((double)Xgc->scales->wdim[0]);
-      Xgc->scales->Wyofset1= yoff+Xgc->scales->subwin_rect[1]*((double)Xgc->scales->wdim[1]);
-      Xgc->scales->Wscx1   = scx;
-      Xgc->scales->Wscy1   = scy;
+      scale->Wxofset1= xoff+scale->subwin_rect[0]*((double)scale->wdim[0]);
+      scale->Wyofset1= yoff+scale->subwin_rect[1]*((double)scale->wdim[1]);
+      scale->Wscx1   = scx;
+      scale->Wscy1   = scy;
 
-      val = Abs(Xgc->scales->frect[0]- Xgc->scales->frect[2]);
-      Xgc->scales->Wscx1 = (val <=SMDOUBLE) ? Xgc->scales->Wscx1/SMDOUBLE : Xgc->scales->Wscx1/val; 
-      val = Abs(Xgc->scales->frect[1]- Xgc->scales->frect[3]);
-      Xgc->scales->Wscy1 = (val <=SMDOUBLE) ? Xgc->scales->Wscy1/SMDOUBLE : Xgc->scales->Wscy1/val;
+      val = Abs(scale->frect[0]- scale->frect[2]);
+      scale->Wscx1 = (val <=SMDOUBLE) ? scale->Wscx1/SMDOUBLE : scale->Wscx1/val; 
+      val = Abs(scale->frect[1]- scale->frect[3]);
+      scale->Wscy1 = (val <=SMDOUBLE) ? scale->Wscy1/SMDOUBLE : scale->Wscy1/val;
 
-      Xgc->scales->Irect.x = XScale(Xgc->scales, Xgc->scales->frect[0]);
-      Xgc->scales->Irect.y = YScale(Xgc->scales, Xgc->scales->frect[3]);
-      Xgc->scales->Irect.width = Abs(XScale(Xgc->scales, Xgc->scales->frect[2]) -  XScale(Xgc->scales, Xgc->scales->frect[0]));
-      Xgc->scales->Irect.height = Abs(YScale(Xgc->scales, Xgc->scales->frect[3]) -  YScale(Xgc->scales, Xgc->scales->frect[1]));
-#ifdef WITH_GTKGLEXT 
-      /* transmit info to opengl */
-      if ( Xgc->graphic_engine == &GL_gengine ) 
-	{
-	  nsp_ogl_set_view(Xgc);
-	}
-#endif
+      scale->Irect.x = XScale(scale, scale->frect[0]);
+      scale->Irect.y = YScale(scale, scale->frect[3]);
+      scale->Irect.width = Abs(XScale(scale, scale->frect[2]) -  XScale(scale, scale->frect[0]));
+      scale->Irect.height = Abs(YScale(scale, scale->frect[3]) -  YScale(scale, scale->frect[1]));
 
     }
-  if (  aaint_changed== 't' ) 
-    {
-      for (i=0; i < 4 ; i++) Xgc->scales->Waaint1[i]=aaint[i];
-    }
-  if ( logflag_changed== 't' ) 
-    {
-      Xgc->scales->logflag[0]=logflag[0];      Xgc->scales->logflag[1]=logflag[1];
-    }
+
   if (  aaint_changed== 't' || frame_values_changed == 't')
     {
-      Xgc->scales->xtics[0] = Xgc->scales->frect[0];
-      Xgc->scales->xtics[1] = Xgc->scales->frect[2];
-      Xgc->scales->ytics[0] = Xgc->scales->frect[1];
-      Xgc->scales->ytics[1] = Xgc->scales->frect[3];
-      Xgc->scales->xtics[2] = 0.0;
-      Xgc->scales->ytics[2] = 0.0;
-      Xgc->scales->xtics[3] = Xgc->scales->Waaint1[1];
-      Xgc->scales->ytics[3] = Xgc->scales->Waaint1[3];
+      scale->xtics[0] = scale->frect[0];
+      scale->xtics[1] = scale->frect[2];
+      scale->ytics[0] = scale->frect[1];
+      scale->ytics[1] = scale->frect[3];
+      scale->xtics[2] = 0.0;
+      scale->ytics[2] = 0.0;
+      scale->xtics[3] = scale->Waaint1[1];
+      scale->ytics[3] = scale->Waaint1[3];
     }
 }
 
@@ -1089,34 +978,6 @@ void get_cwindow_dims( int *wdims)
 {
   BCG *Xgc = check_graphic_window();
   Xgc->graphic_engine->xget_windowdim(Xgc,wdims,wdims+1);
-}
-
-/**
- * frame_clip_on:
- * @Xgc:  graphic context #BCG
- * 
- * use current scale to set the clipping rectangle 
- * 
- **/
-
-void frame_clip_on(BCG *Xgc)
-{
-  GdkRectangle r ={ Xgc->scales->Irect.x,Xgc->scales->Irect.y,
-		    Xgc->scales->Irect.width,Xgc->scales->Irect.height};
-  Xgc->graphic_engine->xset_clip(Xgc,&r);
-}
-
-/**
- * frame_clip_off:
- * @Xgc:  graphic context #BCG
- * 
- * unset clipping.
- * 
- **/
-
-void frame_clip_off(BCG *Xgc)
-{
-  Xgc->graphic_engine->xset_unclip(Xgc);
 }
 
 

@@ -101,7 +101,7 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       if (  P->obj->fill_color != -1) 
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
-
+  
   if ( P->obj->color != -2 ) 
     {
       /* draw the rectangle */ 

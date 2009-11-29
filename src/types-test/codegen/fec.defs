@@ -14,6 +14,7 @@
     '("gboolean"   "mesh")   ;; draw the triangles 
     '("gboolean"   "paint" "std" "TRUE")  ;; fill the triangles 
     '("NspMatrix*" "colout")
+    '("gboolean"   "colorbar" "std" "TRUE");; add a colorbar 
     )
   (gtype-id "Fec")
 )

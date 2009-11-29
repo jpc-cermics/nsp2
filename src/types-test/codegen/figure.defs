@@ -79,6 +79,13 @@
   (return-type "none")
   )
 
+(define-method set_current
+  (of-object "Figure")
+  (c-name "nsp_set_current_figure")
+  (return-type "none")
+  )
+
+
 ;; overwriten 
 
 (define-method extract
