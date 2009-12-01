@@ -4,10 +4,12 @@
   (in-module "Objs3d")
   (parent "Graphic")
   (c-name "NspObjs3d")
+  
   (fields
+   '("nsp_gcscale" "scale" "hidden") ;; store data used for scaling
    '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") ;; the position of this objs3d in a figure 
                             ;; or the position of this objs3d in an other Obj3d
-   '("double" "rho")     ;; rotation of the rectangle which contains the Obj3d
+   '("double" "rho")        ;; rotation of the rectangle which contains the Obj3d
    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
    '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the Obj3d. 
    '("NspMatrix*" "arect" "std" "{1./8.,1./8.,1./8.,1./8.}" "4") ;; 
@@ -21,7 +23,6 @@
    '("gboolean" "with_box" "std" "TRUE")  ;; draw a 3d box container 
    '("int" "box_color" "std" "-1")  ;; box color 
    '("int" "box_style" "std" "0")  ;; box style 
-   '("nsp_gcscale" "scale" "hidden") ;; store data used for scaling
    )
   (gtype-id "Objs3d")
 )

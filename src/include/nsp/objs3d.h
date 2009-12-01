@@ -40,6 +40,7 @@ struct _NspTypeObjs3d {
 
 typedef struct _nsp_objs3d nsp_objs3d;
 struct _nsp_objs3d {
+  nsp_gcscale scale;
   NspMatrix* wrect;
   double rho;
   gboolean top;
@@ -54,7 +55,6 @@ struct _nsp_objs3d {
   gboolean with_box;
   int box_color;
   int box_style;
-  nsp_gcscale scale;
   int ref_count;
 };
 
@@ -84,7 +84,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,nsp_gcscale scale,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
 extern NspObjs3d *nsp_objs3d_create_default(char *name);
 
 /* from NspObjs3dObj.c */

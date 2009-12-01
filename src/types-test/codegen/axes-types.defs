@@ -8,6 +8,7 @@
    ;; the position of this axes in a figure 
    ;; or the position of this axes in an other axe if we are not a 
    ;; top level axes.
+   '("nsp_gcscale" "scale" "hidden") ;; store data used for scaling
    '("NspMatrix*" "wrect" "std" "{0,0,1,1}" "4") 
    '("double" "rho")       ;; rotation of the rectangle which contains the axe
    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
@@ -30,7 +31,6 @@
    '("NspMatrix*" "rect" "std" "{0,0,1,1}" "4" );; when fixed is true bounds are specified by rect.
    '("gboolean" "zoom" "std"  "FALSE") ;; true when we are zooming 
    '("NspMatrix*" "zrect" "hidden" "{0,0,1,1}" "4" );; when zoom is true bounds are specified by zrect.
-   '("nsp_gcscale" "scale" "hidden") ;; store data used for scaling
    '("gboolean" "clip" "std" "TRUE") ;; are we doing a clipgrf.
    '("int" "line_width" "std" "0") ;; default line width for axes  
    '("int" "font_size" "std" "1") ;; font size for axes and titles 

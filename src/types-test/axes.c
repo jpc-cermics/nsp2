@@ -210,6 +210,7 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   NspAxes *loc = (NspAxes *) B;
   if ( check_cast(B,nsp_type_axes_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
+  if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   if ( NSP_OBJECT(A->obj->wrect)->type->eq(A->obj->wrect,loc->obj->wrect) == FALSE ) return FALSE;
   if ( A->obj->rho != loc->obj->rho) return FALSE;
   if ( A->obj->top != loc->obj->top) return FALSE;
@@ -231,7 +232,6 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->rect)->type->eq(A->obj->rect,loc->obj->rect) == FALSE ) return FALSE;
   if ( A->obj->zoom != loc->obj->zoom) return FALSE;
   if ( NSP_OBJECT(A->obj->zrect)->type->eq(A->obj->zrect,loc->obj->zrect) == FALSE ) return FALSE;
-  if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   if ( A->obj->clip != loc->obj->clip) return FALSE;
   if ( A->obj->line_width != loc->obj->line_width) return FALSE;
   if ( A->obj->font_size != loc->obj->font_size) return FALSE;
@@ -347,6 +347,7 @@ void nsp_axes_destroy_partial(NspAxes *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
     if ( H->obj->wrect != NULL ) 
       nsp_matrix_destroy(H->obj->wrect);
     if ( H->obj->bounds != NULL ) 
@@ -364,7 +365,6 @@ void nsp_axes_destroy_partial(NspAxes *H)
       nsp_matrix_destroy(H->obj->rect);
     if ( H->obj->zrect != NULL ) 
       nsp_matrix_destroy(H->obj->zrect);
-  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
     FREE(H->obj);
    }
 }
@@ -419,6 +419,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -454,7 +455,6 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   if ( M->obj->zrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->zrect),indent+2,"zrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
   Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
@@ -474,6 +474,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_axes_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -509,7 +510,6 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   if ( M->obj->zrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->zrect),indent+2,"zrect",rec_level+1)== FALSE ) return FALSE ;
     }
-  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
   Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
@@ -583,6 +583,7 @@ int nsp_axes_create_partial(NspAxes *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_axes)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  nsp_init_nsp_gcscale(&H->obj->scale);
   H->obj->wrect = NULLMAT;
   H->obj->rho = 0.0;
   H->obj->top = TRUE;
@@ -604,7 +605,6 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->rect = NULLMAT;
   H->obj->zoom = FALSE;
   H->obj->zrect = NULLMAT;
-  nsp_init_nsp_gcscale(&H->obj->scale);
   H->obj->clip = TRUE;
   H->obj->line_width = 0;
   H->obj->font_size = 1;
@@ -613,6 +613,7 @@ int nsp_axes_create_partial(NspAxes *H)
 
 int nsp_axes_check_values(NspAxes *H)
 {
+  if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
   if ( H->obj->wrect == NULLMAT) 
     {
      double x_def[4]={0,0,1,1};
@@ -675,16 +676,16 @@ int nsp_axes_check_values(NspAxes *H)
        return FAIL;
       memcpy(H->obj->zrect->R,x_def,4*sizeof(double));
   }
-  if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,nsp_gcscale scale,gboolean clip,int line_width,int font_size,NspTypeBase *type)
+NspAxes *nsp_axes_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type)
 {
   NspAxes *H  = nsp_axes_create_void(name,type);
   if ( H ==  NULLAXES) return NULLAXES;
   if ( nsp_axes_create_partial(H) == FAIL) return NULLAXES;
+  H->obj->scale = scale;
   H->obj->wrect= wrect;
   H->obj->rho=rho;
   H->obj->top=top;
@@ -706,7 +707,6 @@ NspAxes *nsp_axes_create(char *name,NspMatrix* wrect,double rho,gboolean top,Nsp
   H->obj->rect= rect;
   H->obj->zoom=zoom;
   H->obj->zrect= zrect;
-  H->obj->scale = scale;
   H->obj->clip=clip;
   H->obj->line_width=line_width;
   H->obj->font_size=font_size;
@@ -751,6 +751,7 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_axes))) == NULL) return NULLAXES;
   H->obj->ref_count=1;
+  if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   if ( self->obj->wrect == NULL )
     { H->obj->wrect = NULL;}
   else
@@ -807,7 +808,6 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
     {
       if ((H->obj->zrect = (NspMatrix *) nsp_object_full_copy_and_name("zrect",NSP_OBJECT(self->obj->zrect))) == NULLMAT) return NULL;
     }
-  if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   H->obj->clip=self->obj->clip;
   H->obj->line_width=self->obj->line_width;
   H->obj->font_size=self->obj->font_size;

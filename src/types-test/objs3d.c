@@ -209,6 +209,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   NspObjs3d *loc = (NspObjs3d *) B;
   if ( check_cast(B,nsp_type_objs3d_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
+  if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   if ( NSP_OBJECT(A->obj->wrect)->type->eq(A->obj->wrect,loc->obj->wrect) == FALSE ) return FALSE;
   if ( A->obj->rho != loc->obj->rho) return FALSE;
   if ( A->obj->top != loc->obj->top) return FALSE;
@@ -223,7 +224,6 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( A->obj->with_box != loc->obj->with_box) return FALSE;
   if ( A->obj->box_color != loc->obj->box_color) return FALSE;
   if ( A->obj->box_style != loc->obj->box_style) return FALSE;
-  if ( nsp_eq_nsp_gcscale(&A->obj->scale,&loc->obj->scale)== FALSE) return FALSE;
   return TRUE;
 }
 
@@ -318,6 +318,7 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
     if ( H->obj->wrect != NULL ) 
       nsp_matrix_destroy(H->obj->wrect);
     if ( H->obj->bounds != NULL ) 
@@ -331,7 +332,6 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
       nsp_list_destroy(H->obj->children);
     if ( H->obj->colormap != NULL ) 
       nsp_matrix_destroy(H->obj->colormap);
-  nsp_destroy_nsp_gcscale(&H->obj->scale,H); 
     FREE(H->obj);
    }
 }
@@ -386,6 +386,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_objs3d_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -412,7 +413,6 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
-  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -429,6 +429,7 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_objs3d_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
+  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   if ( M->obj->wrect != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->wrect),indent+2,"wrect",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -455,7 +456,6 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
-  nsp_print_nsp_gcscale(indent+2,&M->obj->scale,M);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -526,6 +526,7 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   if ( nsp_graphic_create_partial((NspGraphic *) H)== FAIL) return FAIL;
   if((H->obj = calloc(1,sizeof(nsp_objs3d)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  nsp_init_nsp_gcscale(&H->obj->scale);
   H->obj->wrect = NULLMAT;
   H->obj->rho = 0.0;
   H->obj->top = TRUE;
@@ -540,12 +541,12 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->with_box = TRUE;
   H->obj->box_color = -1;
   H->obj->box_style = 0;
-  nsp_init_nsp_gcscale(&H->obj->scale);
   return OK;
 }
 
 int nsp_objs3d_check_values(NspObjs3d *H)
 {
+  if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
   if ( H->obj->wrect == NULLMAT) 
     {
      double x_def[4]={0,0,1,1};
@@ -590,16 +591,16 @@ int nsp_objs3d_check_values(NspObjs3d *H)
        return FAIL;
 
     }
-  if ( nsp_check_nsp_gcscale(&H->obj->scale,H) == FAIL ) return FAIL;
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,nsp_gcscale scale,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
 {
   NspObjs3d *H  = nsp_objs3d_create_void(name,type);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
   if ( nsp_objs3d_create_partial(H) == FAIL) return NULLOBJS3D;
+  H->obj->scale = scale;
   H->obj->wrect= wrect;
   H->obj->rho=rho;
   H->obj->top=top;
@@ -614,7 +615,6 @@ NspObjs3d *nsp_objs3d_create(char *name,NspMatrix* wrect,double rho,gboolean top
   H->obj->with_box=with_box;
   H->obj->box_color=box_color;
   H->obj->box_style=box_style;
-  H->obj->scale = scale;
   if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
   return H;
 }
@@ -656,6 +656,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_objs3d))) == NULL) return NULLOBJS3D;
   H->obj->ref_count=1;
+  if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   if ( self->obj->wrect == NULL )
     { H->obj->wrect = NULL;}
   else
@@ -700,7 +701,6 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
   H->obj->with_box=self->obj->with_box;
   H->obj->box_color=self->obj->box_color;
   H->obj->box_style=self->obj->box_style;
-  if( nsp_nsp_gcscale_full_copy(H,&H->obj->scale,self)== FAIL) return NULL;
   return H;
 }
 
