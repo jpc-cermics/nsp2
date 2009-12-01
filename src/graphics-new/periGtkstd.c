@@ -575,13 +575,7 @@ static int xset_curwin(int intnum,int set_menu)
       if (! GTK_WIDGET_REALIZED(new->private->drawing))
 	gtk_widget_realize(new->private->drawing);
       if ( set_menu == TRUE) MenuFixCurrentWin(intnum);
-      /* be sure that the graphic window contains a 
-       * Figure which becomes the current one 
-       */
-      nsp_check_for_figure(new,TRUE);
     }
-
-  
   return old;
 }
 

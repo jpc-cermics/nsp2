@@ -564,7 +564,7 @@ static int nsp_figure_check_children(NspFigure *F,NspList *L)
  * nsp_get_current_figure:
  * @void: 
  * 
- * returns the current figure.
+ * returns the current figure (not a copy).
  * 
  * Returns: a #NspFigure or %NULL
  **/
