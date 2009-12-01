@@ -1572,7 +1572,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( rect != NULL ) gdk_rectangle_intersect(&rect_a,&clip,&clip);
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
   
-  /* draw elements */
+  /* draw elements 
+   * we can limit the drawing to clip 
+   */
 
   L = P->obj->children;
   cloc = L->first ;
@@ -1581,7 +1583,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,&clip,data);
+	  G->type->draw(Xgc,G,rect,data);
 	}
       cloc = cloc->next;
     }
@@ -2395,4 +2397,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2399 "axes.c"
+#line 2401 "axes.c"
