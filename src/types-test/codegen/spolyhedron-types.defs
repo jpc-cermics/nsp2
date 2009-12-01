@@ -15,6 +15,7 @@
    '("int" "coloutmin" "std" "-1" )
    '("int" "coloutmax"  "std" "-1")
    '("gboolean" "mesh" "std" "TRUE")
+   '("gboolean" "mesh_only" "std" "FALSE")
    '("int" "back_color" "std" "4") 
    '("gboolean" "shade" "std" "FALSE")
    ;;  extra hidden fields 

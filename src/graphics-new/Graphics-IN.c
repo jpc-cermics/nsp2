@@ -1015,6 +1015,7 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
    */
   pol->obj->Mcolor->I[0]=abs(flag[0]);
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
+
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
     {
@@ -1046,6 +1047,7 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
   /* fix the color according to flag */
   pol->obj->Mcolor->I[0]=abs(flag[0]);
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
+
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
     {
@@ -1081,6 +1083,10 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
 					   (izcol==1) ? *q : (izcol==2) ? *p*(*q) : 0,ncols);
   if ( pol == NULL) return NULL;
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
+  if ( flag[0] == 0) 
+    {
+      pol->obj->mesh_only = TRUE;
+    }
   pol->obj->shade = shade;
   /* insert the new polyhedron */
   if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
@@ -1114,6 +1120,10 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
    * only draw the mesh 
    */
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
+  if ( flag[0] == 0) 
+    {
+      pol->obj->mesh_only = TRUE;
+    }
   
   pol->obj->shade = shade;
   if ( pol == NULL) return NULL;

@@ -223,6 +223,7 @@ static int nsp_spolyhedron_eq(NspSPolyhedron *A, NspObject *B)
   if ( A->obj->coloutmin != loc->obj->coloutmin) return FALSE;
   if ( A->obj->coloutmax != loc->obj->coloutmax) return FALSE;
   if ( A->obj->mesh != loc->obj->mesh) return FALSE;
+  if ( A->obj->mesh_only != loc->obj->mesh_only) return FALSE;
   if ( A->obj->back_color != loc->obj->back_color) return FALSE;
   if ( A->obj->shade != loc->obj->shade) return FALSE;
   if ( A->obj->Mcoord_l != loc->obj->Mcoord_l) return FALSE;
@@ -272,6 +273,7 @@ int nsp_spolyhedron_xdr_save(XDR *xdrs, NspSPolyhedron *M)
   if (nsp_xdr_save_i(xdrs, M->obj->coloutmin) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->coloutmax) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mesh) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mesh_only) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->back_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->shade) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->coldef) == FAIL) return FAIL;
@@ -298,6 +300,7 @@ NspSPolyhedron  *nsp_spolyhedron_xdr_load_partial(XDR *xdrs, NspSPolyhedron *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->coloutmin) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->coloutmax) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mesh) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mesh_only) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->back_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->shade) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->coldef) == FAIL) return NULL;
@@ -324,7 +327,7 @@ static NspSPolyhedron  *nsp_spolyhedron_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 328 "spolyhedron.c"
+#line 331 "spolyhedron.c"
   return H;
 }
 
@@ -342,7 +345,7 @@ void nsp_spolyhedron_destroy_partial(NspSPolyhedron *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 346 "spolyhedron.c"
+#line 349 "spolyhedron.c"
     if ( H->obj->Mcoord != NULL ) 
       nsp_matrix_destroy(H->obj->Mcoord);
     if ( H->obj->Mface != NULL ) 
@@ -422,6 +425,7 @@ int nsp_spolyhedron_print(NspSPolyhedron *M, int indent,const char *name, int re
   Sciprintf1(indent+2,"coloutmin=%d\n",M->obj->coloutmin);
   Sciprintf1(indent+2,"coloutmax=%d\n",M->obj->coloutmax);
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"mesh_only	= %s\n", ( M->obj->mesh_only == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"back_color=%d\n",M->obj->back_color);
   Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
@@ -458,6 +462,7 @@ int nsp_spolyhedron_latex(NspSPolyhedron *M, int indent,const char *name, int re
   Sciprintf1(indent+2,"coloutmin=%d\n",M->obj->coloutmin);
   Sciprintf1(indent+2,"coloutmax=%d\n",M->obj->coloutmax);
   Sciprintf1(indent+2,"mesh	= %s\n", ( M->obj->mesh == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"mesh_only	= %s\n", ( M->obj->mesh_only == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"back_color=%d\n",M->obj->back_color);
   Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
@@ -542,6 +547,7 @@ int nsp_spolyhedron_create_partial(NspSPolyhedron *H)
   H->obj->coloutmin = -1;
   H->obj->coloutmax = -1;
   H->obj->mesh = TRUE;
+  H->obj->mesh_only = FALSE;
   H->obj->back_color = 4;
   H->obj->shade = FALSE;
   H->obj->Mcoord_l = NULL;
@@ -576,7 +582,7 @@ int nsp_spolyhedron_check_values(NspSPolyhedron *H)
   return OK;
 }
 
-NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type)
+NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type)
 {
   NspSPolyhedron *H  = nsp_spolyhedron_create_void(name,type);
   if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;
@@ -591,6 +597,7 @@ NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* M
   H->obj->coloutmin=coloutmin;
   H->obj->coloutmax=coloutmax;
   H->obj->mesh=mesh;
+  H->obj->mesh_only=mesh_only;
   H->obj->back_color=back_color;
   H->obj->shade=shade;
   H->obj->Mcoord_l = Mcoord_l;
@@ -606,7 +613,7 @@ NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* M
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 610 "spolyhedron.c"
+#line 617 "spolyhedron.c"
   return H;
 }
 
@@ -672,6 +679,7 @@ NspSPolyhedron *nsp_spolyhedron_full_copy_partial(NspSPolyhedron *H,NspSPolyhedr
   H->obj->coloutmin=self->obj->coloutmin;
   H->obj->coloutmax=self->obj->coloutmax;
   H->obj->mesh=self->obj->mesh;
+  H->obj->mesh_only=self->obj->mesh_only;
   H->obj->back_color=self->obj->back_color;
   H->obj->shade=self->obj->shade;
   H->obj->Mcoord_l = self->obj->Mcoord_l;
@@ -698,7 +706,7 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
-#line 702 "spolyhedron.c"
+#line 710 "spolyhedron.c"
   return H;
 }
 
@@ -722,7 +730,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return RET_BUG; 
 
-#line 726 "spolyhedron.c"
+#line 734 "spolyhedron.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -947,6 +955,25 @@ static int _wrap_spolyhedron_set_mesh(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_spolyhedron_get_mesh_only(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspSPolyhedron *) self)->obj->mesh_only;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_spolyhedron_set_mesh_only(void *self,const char *attr, NspObject *O)
+{
+  int mesh_only;
+
+  if ( BoolScalar(O,&mesh_only) == FAIL) return FAIL;
+  ((NspSPolyhedron *) self)->obj->mesh_only= mesh_only;
+  return OK;
+}
+
 static NspObject *_wrap_spolyhedron_get_back_color(void *self,const char *attr)
 {
   int ret;
@@ -1011,6 +1038,7 @@ static AttrTab spolyhedron_attrs[] = {
   { "coloutmin", (attr_get_function *)_wrap_spolyhedron_get_coloutmin, (attr_set_function *)_wrap_spolyhedron_set_coloutmin,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "coloutmax", (attr_get_function *)_wrap_spolyhedron_get_coloutmax, (attr_set_function *)_wrap_spolyhedron_set_coloutmax,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mesh", (attr_get_function *)_wrap_spolyhedron_get_mesh, (attr_set_function *)_wrap_spolyhedron_set_mesh,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mesh_only", (attr_get_function *)_wrap_spolyhedron_get_mesh_only, (attr_set_function *)_wrap_spolyhedron_set_mesh_only,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "back_color", (attr_get_function *)_wrap_spolyhedron_get_back_color, (attr_set_function *)_wrap_spolyhedron_set_back_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "shade", (attr_get_function *)_wrap_spolyhedron_get_shade, (attr_set_function *)_wrap_spolyhedron_set_shade,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "coldef", (attr_get_function *)_wrap_spolyhedron_get_coldef, (attr_set_function *)_wrap_spolyhedron_set_coldef,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -1030,7 +1058,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1034 "spolyhedron.c"
+#line 1062 "spolyhedron.c"
 
 
 #line 88 "codegen/spolyhedron.override"
@@ -1042,7 +1070,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1046 "spolyhedron.c"
+#line 1074 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1347,39 +1375,42 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 	{
 	  color = - Q->back_color;
 	  if ( Q->mesh ) color= Abs(color);
+	  if ( Q->mesh_only ) color = 0;
 	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
 	}
       else
 	{
 	  color = - Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  if ( Q->mesh ) color= Abs(color);
+	  if ( Q->mesh_only ) color = 0;
 	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
 	}
     }
   else
     {
       nbtri = m - 2;
-      for ( k = 0 ; k < nbtri ; k++ )
-	{
-	  int l;
-	  int triangle[]= { 0, k+1,k+2};
-	  for ( l = 0 ; l < 3 ; l++ )
-	    {
-	      i = triangle[l];
-	      if ( one_face_color ) 
-		v[l] = Q_val[j]; /* one color for each facet */
-	      else	
-		v[l] = Q_val[current_vertex[i]-1]; /* one color for each vertex */
-	      zxy[l] = zone(v[l], Q->vmin, Q->vmax, Q_nb_levels);
-	      sx[l] = x[i]; sy[l] = y[i];
-	    }
-	  /* (sx,sy,v) : triangle et valeur en chaque sommet
-	   * zxy : vecteur indiquant que la couleur du sommet i vaut - Q->fill[zxy[i]]
-	   * (Q->vlevel,Q->fill): donne une couleur en fonction de z. 
-	   * Q->vlevel[i]: donne le z quantifié qui porte la couleur i 
-	   */
-	  interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);  
-	}
+      if ( Q->mesh_only == FALSE )
+	for ( k = 0 ; k < nbtri ; k++ )
+	  {
+	    int l;
+	    int triangle[]= { 0, k+1,k+2};
+	    for ( l = 0 ; l < 3 ; l++ )
+	      {
+		i = triangle[l];
+		if ( one_face_color ) 
+		  v[l] = Q_val[j]; /* one color for each facet */
+		else	
+		  v[l] = Q_val[current_vertex[i]-1]; /* one color for each vertex */
+		zxy[l] = zone(v[l], Q->vmin, Q->vmax, Q_nb_levels);
+		sx[l] = x[i]; sy[l] = y[i];
+	      }
+	    /* (sx,sy,v) : triangle et valeur en chaque sommet
+	     * zxy : vecteur indiquant que la couleur du sommet i vaut - Q->fill[zxy[i]]
+	     * (Q->vlevel,Q->fill): donne une couleur en fonction de z. 
+	     * Q->vlevel[i]: donne le z quantifié qui porte la couleur i 
+	     */
+	    interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);  
+	  }
       if ( Q->mesh  ) 
 	Xgc->graphic_engine->fillpolylines(Xgc, x, y, &zero, np, m);
     }
@@ -1444,12 +1475,16 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	{
 	  color = Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  if ( Q->mesh == FALSE  ) color = - color;
+	  if ( Q->mesh_only == TRUE ) color = 0;
 	  fillpolylines3D(Xgc, x, y,z, &color, np, m);
 	}
       else
 	{
 	  for (i = 0 ; i < m ; i++) 
-	    colors[i] = Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	    {
+	      colors[i] = Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	      if ( Q->mesh_only == TRUE ) colors[i] = 0;
+	    }
 	  if ( Q->mesh == FALSE  ) colors[0] = - colors[0];
 	  /* colors are given by cvect of size (*p) times (*q) */
 	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
@@ -1758,7 +1793,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
 	}
     }
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,4,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,FALSE,4,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
   return pol;
@@ -1798,7 +1833,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   bc = 4; /* XXX the color for hidden faces
 	   */
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,bc,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,FALSE,bc,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
 
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
@@ -1812,4 +1847,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1816 "spolyhedron.c"
+#line 1851 "spolyhedron.c"

@@ -40,6 +40,7 @@ struct _nsp_spolyhedron {
   int coloutmin;
   int coloutmax;
   gboolean mesh;
+  gboolean mesh_only;
   int back_color;
   gboolean shade;
   void* Mcoord_l;
@@ -76,7 +77,7 @@ NspSPolyhedron *new_spolyhedron();
 
 #define NULLSPOLYHEDRON (NspSPolyhedron*) 0
 
-extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type);
+extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type);
 extern NspSPolyhedron *nsp_spolyhedron_create_default(char *name);
 
 /* from NspSPolyhedronObj.c */
@@ -107,7 +108,7 @@ extern int nsp_spolyhedron_xdr_save(XDR  *xdrs, NspSPolyhedron *M);
 extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol );
 extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n, double *col,int ncol);
 
-#line 111 "./spolyhedron.h"
+#line 112 "./spolyhedron.h"
 #endif /* NSP_INC_NspSPolyhedron */ 
 
 #ifdef NspSPolyhedron_Private 
@@ -141,6 +142,6 @@ static void permut_of_sort(int *tab, int *perm);
 static void find_intersection(int *sx, int *sy, double *fxy, double z, 
 			      int inda, int indb, int *xint, int *yint);
 
-#line 145 "./spolyhedron.h"
+#line 146 "./spolyhedron.h"
 #endif /* NspSPolyhedron_Private */
 

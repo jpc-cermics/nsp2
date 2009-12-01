@@ -368,39 +368,42 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 	{
 	  color = - Q->back_color;
 	  if ( Q->mesh ) color= Abs(color);
+	  if ( Q->mesh_only ) color = 0;
 	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
 	}
       else
 	{
 	  color = - Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  if ( Q->mesh ) color= Abs(color);
+	  if ( Q->mesh_only ) color = 0;
 	  Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
 	}
     }
   else
     {
       nbtri = m - 2;
-      for ( k = 0 ; k < nbtri ; k++ )
-	{
-	  int l;
-	  int triangle[]= { 0, k+1,k+2};
-	  for ( l = 0 ; l < 3 ; l++ )
-	    {
-	      i = triangle[l];
-	      if ( one_face_color ) 
-		v[l] = Q_val[j]; /* one color for each facet */
-	      else	
-		v[l] = Q_val[current_vertex[i]-1]; /* one color for each vertex */
-	      zxy[l] = zone(v[l], Q->vmin, Q->vmax, Q_nb_levels);
-	      sx[l] = x[i]; sy[l] = y[i];
-	    }
-	  /* (sx,sy,v) : triangle et valeur en chaque sommet
-	   * zxy : vecteur indiquant que la couleur du sommet i vaut - Q->fill[zxy[i]]
-	   * (Q->vlevel,Q->fill): donne une couleur en fonction de z. 
-	   * Q->vlevel[i]: donne le z quantifié qui porte la couleur i 
-	   */
-	  interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);  
-	}
+      if ( Q->mesh_only == FALSE )
+	for ( k = 0 ; k < nbtri ; k++ )
+	  {
+	    int l;
+	    int triangle[]= { 0, k+1,k+2};
+	    for ( l = 0 ; l < 3 ; l++ )
+	      {
+		i = triangle[l];
+		if ( one_face_color ) 
+		  v[l] = Q_val[j]; /* one color for each facet */
+		else	
+		  v[l] = Q_val[current_vertex[i]-1]; /* one color for each vertex */
+		zxy[l] = zone(v[l], Q->vmin, Q->vmax, Q_nb_levels);
+		sx[l] = x[i]; sy[l] = y[i];
+	      }
+	    /* (sx,sy,v) : triangle et valeur en chaque sommet
+	     * zxy : vecteur indiquant que la couleur du sommet i vaut - Q->fill[zxy[i]]
+	     * (Q->vlevel,Q->fill): donne une couleur en fonction de z. 
+	     * Q->vlevel[i]: donne le z quantifié qui porte la couleur i 
+	     */
+	    interp_color_triangle (Xgc,sx, sy, v, zxy, Q->vlevel, Q->fill);  
+	  }
       if ( Q->mesh  ) 
 	Xgc->graphic_engine->fillpolylines(Xgc, x, y, &zero, np, m);
     }
@@ -465,12 +468,16 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	{
 	  color = Q->fill[zone(val_mean, Q->vmin, Q->vmax, Q_nb_levels)];
 	  if ( Q->mesh == FALSE  ) color = - color;
+	  if ( Q->mesh_only == TRUE ) color = 0;
 	  fillpolylines3D(Xgc, x, y,z, &color, np, m);
 	}
       else
 	{
 	  for (i = 0 ; i < m ; i++) 
-	    colors[i] = Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	    {
+	      colors[i] = Q->fill[zone(v[i], Q->vmin, Q->vmax, Q_nb_levels)];
+	      if ( Q->mesh_only == TRUE ) colors[i] = 0;
+	    }
 	  if ( Q->mesh == FALSE  ) colors[0] = - colors[0];
 	  /* colors are given by cvect of size (*p) times (*q) */
 	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
@@ -779,7 +786,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
 	}
     }
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,4,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,FALSE,4,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
   return pol;
@@ -819,7 +826,7 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
   bc = 4; /* XXX the color for hidden faces
 	   */
   if ((pol = nsp_spolyhedron_create(name,C,F,Val,vmin,vmax,-1,-1,-1,-1,
-				    TRUE,bc,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
+				    TRUE,FALSE,bc,TRUE,NULL,NULL,0,NULL,0,NULL,0,0,NULL))==NULL)
     goto bug;
 
   if ( nsp_check_spolyhedron(NULL,pol)== FAIL) goto bug;
