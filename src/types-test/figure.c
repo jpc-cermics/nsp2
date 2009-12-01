@@ -3333,6 +3333,41 @@ static void nsp_figure_process_updates(NspFigure *F)
 }
 
 /**
+ * nsp_check_for_figure :
+ * @Xgc: 
+ * 
+ * check if a figure is present in @Xgc.
+ * if not figure is created and set as current if 
+ * set_current is %TRUE.
+ * 
+ * Returns: a new Figure or %NULL
+ **/
+
+NspFigure *nsp_check_for_figure(BCG *Xgc,int set_current)
+{
+  NspFigure *F;
+  if ( Xgc == NULL ) return NULL;
+  if ( Xgc->figure != NULL) 
+    {
+      if ( set_current == TRUE )
+	{
+	  if ( nsp_set_current_figure(Xgc->figure) == FAIL) return NULL;
+	}
+      return Xgc->figure; 
+    }
+  F = nsp_create_default_figure(Xgc);
+  if ( F == NULL) return NULL;
+  if ( set_current == TRUE )
+    {
+      if (  nsp_set_current_figure(F) == FAIL) return NULL;
+    }
+  /* destroy the local copy */
+  nsp_figure_destroy(F);
+  F = nsp_get_current_figure();
+  return F;
+}
+
+/**
  * nsp_check_for_current_figure :
  * @void: 
  * 
@@ -3350,18 +3385,7 @@ NspFigure *nsp_check_for_current_figure(void)
     {
       /* create a new figure and store it in Xgc */
       BCG *Xgc=nsp_check_graphic_context();
-      if ( Xgc == NULL ) return NULL;
-      if ( Xgc->figure != NULL) 
-	{
-	  if ( nsp_set_current_figure(Xgc->figure) == FAIL) return NULL;
-	  return Xgc->figure; 
-	}
-      F = nsp_create_default_figure(Xgc);
-      if ( F == NULL) return NULL;
-      if ( nsp_set_current_figure(F) == FAIL) return NULL;
-      /* destroy the local copy */
-      nsp_figure_destroy(F);
-      F = nsp_get_current_figure();
+      F = nsp_check_for_figure(Xgc,TRUE);
     }
   return F;
 }
@@ -3554,4 +3578,4 @@ int nsp_figure_remove_children(NspFigure *F)
 }
 
 
-#line 3558 "figure.c"
+#line 3582 "figure.c"
