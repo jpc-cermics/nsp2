@@ -2147,7 +2147,6 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
   NspCompound *C = NULL;
   NspGraphic *gobj = NULL;
   NspAxes *axe; 
-  BCG *Xgc;
   NspMatrix *arcs=NULL;
   NspMatrix *color=NULL;
   NspMatrix *color_std=NULL;
@@ -2216,19 +2215,17 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
 	      }
 	    else
 	      {
-		icolor = Xgc->graphic_engine->xget_pattern(Xgc);
+		icolor = -1; /* default*/
 		iback  = -2; /* no fill*/
 	      }
 	    break;
 	  case 1: /* backward compatibility for rects xarcs */
 	    iback  = -2;
-	    icolor = (color_std->I[i] > 0 ) ? color_std->I[i] 
-	      : Xgc->graphic_engine->xget_pattern(Xgc);
+	    icolor = (color_std->I[i] > 0 ) ? color_std->I[i]   : -1;
 	    break;
 	  case 2: /* backward compatibility for rects xfarcs */
 	    icolor = -2;
-	    iback = (color_std->I[i] > 0 ) ? color_std->I[i] 
-	      : Xgc->graphic_engine->xget_pattern(Xgc);
+	    iback = (color_std->I[i] > 0 ) ? color_std->I[i] : -1;
 	    break;
 	  }
 	}
