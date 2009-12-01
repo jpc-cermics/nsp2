@@ -2764,11 +2764,13 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
     } 
   else 
     {
-      
-      if ((Xgc = window_list_get_first()) != NULL) 
-	{
-	  Xgc->actions->erase(Xgc);
-	}
+      NspFigure *F = nsp_check_for_current_figure(); 
+      if ( F == NULL) return RET_BUG;
+      /* XXX: we should also reset the figure parameters to 
+       * default ones 
+       */
+      nsp_figure_remove_children(F);
+      nsp_figure_invalidate((NspGraphic *) F);
     }
   return 0;
 } 
@@ -4147,6 +4149,11 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 	Xgc->graphic_engine->xset_curwin(Max(val,0),TRUE);
       else 
 	Xgc= set_graphic_window_new(Max(val,0));
+      /* now we have to check that a Figure is associated 
+       * to Xgc.
+       */
+      if ((Xgc = window_list_get_first()) != NULL)
+	nsp_check_for_figure(Xgc,TRUE);
       break;
     case xset_wpdim:
       CheckRhs(3,3);
