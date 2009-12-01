@@ -215,7 +215,12 @@ static int nsp_scalexp_neq(NspScalExp *A, NspObject *B)
 
 static int nsp_scalexp_xdr_save(XDR *xdrs, NspScalExp *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_scalexp)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   /* just save expr and extra_vars */
   if ( NSP_OBJECT(M->expr)->type->save(xdrs,M->expr)== FAIL) return FAIL;

@@ -225,6 +225,12 @@ static int nsp_cholmod_neq(NspCholmod *A, NspObject *B)
 
 static int nsp_cholmod_xdr_save(XDR *xdrs, NspCholmod *M)
 {
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_cholmod)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   Sciprintf("Warning: cannot save Cholmod objects (cowardly not saving this object)\n");
   return OK;
 }

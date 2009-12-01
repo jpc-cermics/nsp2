@@ -207,7 +207,12 @@ static NspObject *gdkatom_path_extract(NspGdkAtom *a,int n, NspObject **ob, int 
 
 static int gdkatom_xdr_save(XDR  *xdrs, NspGdkAtom *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_gdkatom)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("gdkatom_xdr_save: to be implemented \n");
   return OK;

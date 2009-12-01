@@ -323,10 +323,14 @@ matrix_is_true (NspMatrix * M)
  * Save a Matrix in a file stream 
  */
 
-static int
-matrix_xdr_save (XDR *xdrs, NspMatrix * M)
+static int matrix_xdr_save(XDR *xdrs, NspMatrix * M)
 {
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_matrix)) == FAIL) return FAIL;
+#else
   if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT (M)->name) == FAIL)    return FAIL;
   if (nsp_xdr_save_i(xdrs, M->m) == FAIL)    return FAIL;
   if (nsp_xdr_save_i(xdrs, M->n) == FAIL)    return FAIL;

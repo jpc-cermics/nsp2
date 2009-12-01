@@ -227,7 +227,12 @@ static int nsp_sprowmatrix_xdr_save(XDR *xdrs, NspSpRowMatrix *M)
   int rep=FAIL;
   NspMatrix *RC=NULL, *Values=NULL;
   if ( nsp_sprowmatrix_get(M,&RC,&Values) == FAIL) goto fail;
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) goto fail;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_smatrix)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) goto fail;
   if (nsp_xdr_save_i(xdrs, M->m) == FAIL) goto fail;
   if (nsp_xdr_save_i(xdrs, M->n) == FAIL) goto fail;

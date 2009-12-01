@@ -223,7 +223,12 @@ static int function_neq(NspFunction *A, NspObject *B)
 
 static int function_xdr_save(XDR *xdrs, NspFunction *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_function)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("function_xdr_save: to be implemented, cannot save %s\n",
 	   NSP_OBJECT(M)->name);

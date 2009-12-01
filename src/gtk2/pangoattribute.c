@@ -205,7 +205,12 @@ static NspObject *pangoattribute_path_extract(NspPangoAttribute *a,int n,NspObje
 
 static int pangoattribute_xdr_save(XDR  *xdrs, NspPangoAttribute *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_pangoattribute)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("pangoattribute_xdr_save: to be implemented \n");
   return OK;

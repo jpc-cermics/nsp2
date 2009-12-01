@@ -216,7 +216,12 @@ static NspObject *nsp_none_path_extract(NspNone *a,int n, NspObject **ob, int *c
 
 static int nsp_none_xdr_save(XDR *xdrs, NspNone *M)
 {
-  if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_none)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   Scierror("none_xdr_save: to be implemented \n");
   return OK;

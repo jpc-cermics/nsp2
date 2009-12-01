@@ -260,7 +260,12 @@ int nsp_list_xdr_save(XDR *xdrs, NspList *L)
 {
   Cell *cell = L->first;
   int length;
-  if (nsp_xdr_save_i(xdrs,L->type->id) == FAIL) return FAIL;
+#if 1 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_list)) == FAIL) return FAIL;
+#else
+  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
+#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(L)->name) == FAIL) return FAIL;
   length =nsp_list_length(L);
   if (nsp_xdr_save_i(xdrs,length) == FAIL) return FAIL;
