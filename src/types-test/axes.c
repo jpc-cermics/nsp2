@@ -1492,7 +1492,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
        */
       if ( ! gdk_rectangle_intersect(&rect_a,&clip_axe,&r2)) return;
     }
-
+  
   if ( P->obj->top == TRUE ) 
     {
       /* This is a top level axes, wrect gives the axes position in the 
@@ -1581,7 +1581,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,rect,data);
+	  G->type->draw(Xgc,G,&clip,data);
 	}
       cloc = cloc->next;
     }
