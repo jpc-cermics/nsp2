@@ -2021,11 +2021,11 @@ static AttrTab figuredata_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-int _wrap_nsp_get_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_current_figure */
+int _wrap_nsp_check_for_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_current_figure */
 {
   NspFigure *ret;
 
-    ret = nsp_get_current_figure();
+    ret = nsp_check_for_current_figure();
   if (ret == NULL ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -2071,7 +2071,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
  *----------------------------------------------------*/
 
 static OpTab Figure_func[]={
-  {"get_current_figure", _wrap_nsp_get_current_figure},
+  {"get_current_figure", _wrap_nsp_check_for_current_figure},
   {"get_current_axes", _wrap_nsp_get_current_axes},
   {"extractelts_figure", _wrap_nsp_extractelts_figure},
   {"setrowscols_figure", _wrap_nsp_setrowscols_figure},

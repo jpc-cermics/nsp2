@@ -412,11 +412,12 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
   int one_face_color = FALSE;
   int foreground_color = 1; /* XX should be shared */
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
-  int i,j, np=1, m,colors[128];
+  int i,j, np=1, m;
   int numpt, *current_vertex, color;
   double val_mean=0.0;
   double x_def[128], y_def[128], z_def[128], v_def[128];
   double *x=x_def, *y=y_def, *z = z_def, *v = v_def;
+  int colors_def[128], *colors= colors_def;
   int Q_nb_coords = Q->Mcoord->m;  
   double *Q_coord = Q->Mcoord->R; 
   int Q_nb_vertices_per_face = Q->Mface->m;
@@ -433,21 +434,22 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
       one_face_color = TRUE;
     }
 
+  m = Q_nb_vertices_per_face;
+  
   if ( m > 128 )
     {
       x = graphic_alloc(0,m,sizeof(double));
       y = graphic_alloc(1,m,sizeof(double));
       z = graphic_alloc(2,m,sizeof(double));
       v = graphic_alloc(3,m,sizeof(double));
+      colors = graphic_alloc(4,m,sizeof(int));
     }
-
   
   for ( j = 0 ; j < Q_nb_faces ; j++) 
     {
       val_mean = 0;
-      m = Min(Q_nb_vertices_per_face,128) ; /* 128 à gerer XXX */
       current_vertex = &(Q_face[m*j]);
-      for (i = 0 ; i < m ; i++)
+      for (i = 0 ; i < Q_nb_vertices_per_face ; i++)
 	{
 	  numpt = current_vertex[i]-1;
 	  x[i] = Q_coord[numpt];

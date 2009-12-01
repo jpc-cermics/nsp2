@@ -1,7 +1,8 @@
 // first example 
 // 
 
-function demo_3dlib_1(F,mode="Gtk") 
+function demo_3dlib_1() 
+  F=get_current_figure();
   [C, L, LL, P] = obj1();
   S = string3d_create( Mcoord=[1.2;0.5;0.5],str="A string !");
   A=objs3d_create(top=%t,title="Main title",box_color=0,box_style=1,with_box=%f) 
@@ -21,8 +22,8 @@ function demo_3dlib_1(F,mode="Gtk")
   F.connect[];
 endfunction 
 
-
-function demo_3dlib_2(F,mode="Gtk") 
+function demo_3dlib_2() 
+  F=get_current_figure();
   ncol= 32
   A=objs3d_create(top=%t,title="Main title",colormap=hotcolormap(ncol),...
 		  with_box=%t,box_color=29,box_style=2);
@@ -35,7 +36,8 @@ function demo_3dlib_2(F,mode="Gtk")
 endfunction
 
 
-function demo_3dlib_3(F,mode="Gtk") 
+function demo_3dlib_3() 
+  F=get_current_figure();
   ncol= 32;
   cm=[jetcolormap(128);[0.9 0.9 0.9]];
   A=objs3d_create(top=%t,title="Main title", colormap=cm,...
@@ -60,7 +62,8 @@ function demo_3dlib_3(F,mode="Gtk")
   F.connect[];
 endfunction
 
-function demo_3dlib_4(F,mode="Gtk") 
+function demo_3dlib_4() 
+  F=get_current_figure();
   // a top level axes 
   ncol= 32;
   cm=[jetcolormap(128);[0.9 0.9 0.9]];
@@ -78,7 +81,8 @@ function demo_3dlib_4(F,mode="Gtk")
   F.connect[];
 endfunction
 
-function demo_3dlib_5(F,mode="Gtk") 
+function demo_3dlib_5() 
+  F=get_current_figure();
   xset("colormap", jetcolormap(64));
   // a top level axes 
   ncol= 32;
@@ -94,7 +98,8 @@ function demo_3dlib_5(F,mode="Gtk")
 endfunction
 
 
-function demo_3dlib_6(F,mode="Gtk") 
+function demo_3dlib_6() 
+  F=get_current_figure();
   n = 80;
   x = linspace(0,2*%pi,n);
   z = 1.5*cos(x')*cos(x);
@@ -133,10 +138,11 @@ function demo_3dlib_6(F,mode="Gtk")
   F.connect[];
 endfunction 
 
-function demo_3dlib_7(F,mode="Gtk") 
+function demo_3dlib_7() 
 // exemple 4 : two polyhedron 
 // 
-  // a top level axes 
+// a top level axes 
+  F=get_current_figure();
   cmap =  [jetcolormap(64) ; graycolormap(64) ; [0.9 0.9 0.9]];
   A=objs3d_create(top=%t,title="Main title", colormap=cmap);
   // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
@@ -154,8 +160,9 @@ function demo_3dlib_7(F,mode="Gtk")
 endfunction 
 
 
-function demo_3dlib_8(F,mode="Gtk") 
+function demo_3dlib_8() 
 // exemple 5 : un tore bossele et une sphere
+  F=get_current_figure();
   nu = 120;
   nv = 60;
   u = linspace(0, 2*%pi, nu);
@@ -179,8 +186,9 @@ function demo_3dlib_8(F,mode="Gtk")
 endfunction 
 
 
-function demo_3dlib_9(F,mode="Gtk") 
+function demo_3dlib_9() 
 // exemple 6 : l'helice torique
+  F=get_current_figure();
   nu = 120;
   nv = 30;
   u = linspace(0, 6*%pi, nu);
@@ -195,20 +203,21 @@ function demo_3dlib_9(F,mode="Gtk")
   F.connect[];
 endfunction 
 
-function demo_3dlib_10(F,mode="Gtk") 
+function demo_3dlib_10() 
 // exemple 7 : un peu comme un plot3d1
-  
+  F=get_current_figure();
   x = linspace(0,1,60);
   y = x.*(1-x);
   z = 10*y'*y;
 
   P = zsurf_to_spolyhedron(x, x, z, 1, 64, back_color=1);
-
-  t = linspace(0,2*%pi,200);
-  r = sqrt(0.5);
-  xx = r*cos(t)+0.5;
-  yy = r*sin(t)+0.5;
-  zz = zeros(size(xx));
+  q=8*%pi;
+  t = linspace(0,q,200);
+  r = sqrt(0.5*(t/(q)));
+  xx = r.*cos(t)+0.5;
+  yy = r.*sin(t)+0.5;
+  zz = r.*(1-t)/(q)+0.6;
+  
   color = 1;
   L1 = polyline3d_create(Mcoord= [xx;yy;zz]', Mcolor=color);
 
@@ -222,11 +231,10 @@ function demo_3dlib_10(F,mode="Gtk")
   F.connect[];
 endfunction 
 
-function demo_3dlib_11(F,mode="Gtk") 
+function demo_3dlib_11() 
 // une courbe
-
+  F=get_current_figure();
   cmap= [jetcolormap(128);[0.9 0.9 0.9]];
-
   t = linspace(-16*%pi,16*%pi,4000);
   xx = abs(t/(16*%pi)).*cos(t);
   yy = abs(t/(16*%pi)).*sin(t);
@@ -248,11 +256,11 @@ function demo_3dlib_11(F,mode="Gtk")
   F.connect[];
 endfunction 
 
-function demo_3dlib_12(F,mode="Gtk") 
+function demo_3dlib_12() 
+  F=get_current_figure();
   A=objs3d_create(top=%t,title="Main title",box_color=0,box_style=1,with_box=%t) 
   // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
-
   A.children($+1) = string3d_create(Mcoord=[0;-1;-1],str="x,m,m");
   A.children($+1) = string3d_create(Mcoord=[0;1;-1],str="x,M,m");
   A.children($+1) = string3d_create(Mcoord=[0;-1;1],str="x,m,M");
@@ -266,7 +274,6 @@ function demo_3dlib_12(F,mode="Gtk")
   A.children($+1) = string3d_create(Mcoord=[-1;0;1],str="m,y,M");
   A.children($+1) = string3d_create(Mcoord=[1;0;1],str="M,y,M");
   A.children($+1) = string3d_create(Mcoord=[-1;-1;-1],str="0");
-
   A.children($+1) = string3d_create(Mcoord=[1;1;1],str="1");
   A.children($+1) = string3d_create(Mcoord=[-1;-1;1],str="2");
   A.children($+1) = string3d_create(Mcoord=[1;1;-1],str="3");
@@ -274,7 +281,6 @@ function demo_3dlib_12(F,mode="Gtk")
   A.children($+1) = string3d_create(Mcoord=[-1;1;-1],str="5");
   A.children($+1) = string3d_create(Mcoord=[1;-1;-1],str="6");
   A.children($+1) = string3d_create(Mcoord=[-1;1;1],str="7");
-
   A.children($+1) = polyline3d_create(Mcoord=[-1 , 1;-1 ,-1;-1 ,-1]', Mcolor=2);
   A.children($+1) = polyline3d_create(Mcoord=[-1 ,-1;-1 , 1;-1 ,-1]', Mcolor=2);
   A.children($+1) = polyline3d_create(Mcoord=[-1 ,-1;-1 ,-1;-1  ,1]', Mcolor=2);
@@ -285,9 +291,9 @@ function demo_3dlib_12(F,mode="Gtk")
 endfunction 
 
 
-function demo_3dlib_13(F,mode="Gtk") 
+function demo_3dlib_13() 
 // une courbe
-
+  F=get_current_figure();
   cmap=[jetcolormap(128);[0.9 0.9 0.9]];
   t = linspace(-16*%pi,16*%pi,4000);
   xx = abs(t/(16*%pi)).*cos(t);
@@ -309,7 +315,8 @@ function demo_3dlib_13(F,mode="Gtk")
   F.connect[];
 endfunction
 
-function demo_3dlib_14(F,mode="Gtk") 
+function demo_3dlib_14() 
+  F=get_current_figure();
   polyedres = ["tetrahedron","cube","octahedron","dodecahedron","icosahedron"];
   cm = xget("colormap");
   cmap= [cm;[0.92 0.92 0.92]];
@@ -331,8 +338,8 @@ function demo_3dlib_14(F,mode="Gtk")
   F.connect[];
 endfunction
 
-
-function demo_3dlib_15(F,mode="Gtk") 
+function demo_3dlib_15() 
+  F=get_current_figure();
   D = dino_steph_nsp();
   // This should be given by a method 
   xmin = min(D.Mcoord(1,:)); xmax = max(D.Mcoord(1,:)); 
@@ -361,10 +368,11 @@ function demo_3dlib_15(F,mode="Gtk")
 endfunction 
 
 
-function all_3d_demos(F,mode="Gtk") 
+function all_3d_demos() 
+  F=get_current_figure();
   for i=1:15 
     F.children = list();
-    execstr('demo_3dlib_'+string(i)+'(F,mode=mode)');
+    execstr('demo_3dlib_'+string(i)+'()');
     F.invalidate[];
     xclick();
   end
@@ -374,10 +382,10 @@ if ~new_graphics()
   switch_graphics()
 end
 
-exec('NSP/tests/tobedone/3dbruno-new/libbruno.sce');
-mode="Gtk";
-F=figure_create(wresize=%t,fname=mode,driver=mode,id=20);
-all_3d_demos(F,mode=mode);
+function demos()
+  exec('NSP/tests/tobedone/3dbruno-new/libbruno.sce');
+  all_3d_demos();
+endfunction
 
 
 
