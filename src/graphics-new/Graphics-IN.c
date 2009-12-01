@@ -4874,9 +4874,9 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   if ( rhs <= 0) { return nsp_graphic_demo (NspFname(stack)," exec(\"SCI/demos/graphics/fec/fec.ex1\");",1);}
   
   if ( GetArgs(stack,rhs,opt,T,&x,&y,&Tr,&F,&opts_fec,&axes,&Mcolminmax,&Mcolout,&frame,
-	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,&paint,
-	       &colorbar)
-       == FAIL) return RET_BUG;
+	       &leg,&leg_pos,&logflags,&mesh,&Mnax,&Mrect,&strf,&Mstyle,&Mzminmax,
+	       &colorbar,&paint) == FAIL) 
+    return RET_BUG;
   
   CheckSameDims(NspFname(stack),1,2,x,y);
   CheckSameDims(NspFname(stack),1,4,x,F);

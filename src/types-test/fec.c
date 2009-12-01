@@ -1268,7 +1268,8 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  /* call the "painting" function */
 	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
 	    {
-	      fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+	      if ( P->obj->paint == TRUE  ) 
+		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
 	    }     
 	  if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
 	};
@@ -1303,7 +1304,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  };
 	    
 	  /* call the "painting" function */
-	  if ( P->obj->paint ) 
+	  if ( P->obj->paint == TRUE ) 
 	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 	  if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	}
@@ -1324,4 +1325,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1328 "fec.c"
+#line 1329 "fec.c"

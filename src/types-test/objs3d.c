@@ -1259,6 +1259,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
+  /* frame_clip_on(Xgc); */
+  
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 
   nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
@@ -1269,7 +1271,8 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   /* Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
    */
-  
+  /* frame_clip_off(Xgc); */
+
   /* title if present */
   if ( P->obj->title[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
