@@ -1746,10 +1746,10 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
-      /* debug the drawing rectangle which is updated        
-	 gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
-	 event->area.x, event->area.y, 
-	 event->area.width, event->area.height);
+      /* debug the drawing rectangle which is updated              
+      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+			 event->area.x, event->area.y, 
+			 event->area.width, event->area.height);
       */
     }
   else 

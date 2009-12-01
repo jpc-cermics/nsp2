@@ -3564,6 +3564,15 @@ void nsp_send_scale_3D_to_opengl(BCG *Xgc)
 }
 
 
+/**
+ * nsp_figure_remove_children:
+ * @F: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
 int nsp_figure_remove_children(NspFigure *F)
 {
   if (F->obj->children != NULL ) 
@@ -3578,4 +3587,4 @@ int nsp_figure_remove_children(NspFigure *F)
 }
 
 
-#line 3582 "figure.c"
+#line 3591 "figure.c"

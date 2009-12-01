@@ -1451,7 +1451,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   int lw, font[2];
   GdkRectangle clip, clip_axe , r2, rect_a;
   char xf[]="onn";
-  double *wrect1,WRect1[4], FRect[4], ARect[4], inside_bounds[4];
+  double *wrect1, inside_bounds[4];
   int aaint[4]={10,2,10,2};
   Cell *cloc;
   NspList *L;
@@ -1503,6 +1503,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
     }
   else 
     {
+      nsp_axes *A = ((NspGraphic *) P)->obj->Axe;
+      double *ARect = A->arect->R, *FRect = A->frect->R, WRect1[4];
       /* This is not a top level axes, we draw its enclosing rectangle 
        * if alpha is non nul we should draw a rotated rectangle
        */
@@ -1560,7 +1562,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
 
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_2D_to_opengl(Xgc);
-
+  
   /* clip the inside rectangle of the  axe
    * Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
@@ -2393,4 +2395,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2397 "axes.c"
+#line 2399 "axes.c"
