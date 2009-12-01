@@ -94,7 +94,7 @@ static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static int window_list_search_from_drawing__(WindowList *listptr,void *win);
 
 /**
- * check_graphic_window
+ * check_graphic_window_new
  * 
  * returns the BCG structure associated to 
  * the current graphic window. If no current graphic 
@@ -491,7 +491,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->strflag = s2->strflag;
   for (i=0; i< 2; i++) s1->zfrect[i]=s2->zfrect[i]; 
   for (i=0; i< 3; i++) 
-    for (j=0; i< 3; i++) 
+    for (j=0; j< 3; j++) 
       s1->m[i][j]=s2->m[i][j];
   for (i=0; i< 6; i++) 
     s1->bbox1[i]=s2->bbox1[i] ;
@@ -503,6 +503,10 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->logflag[1] = s2->logflag[1];
   s1->cosa = s2->cosa;
   s1->sina = s2->sina;
+  s1->alpha = s2->alpha;
+  s1->theta = s2->theta;
+  for ( i = 0 ; i < 3 ; i++) s1->c[i]= s2->c[i];
+  s1->metric3d = s2->metric3d;
 }
 
 /**
@@ -714,7 +718,7 @@ void set_scale(nsp_gcscale *scale,const int wdim[2],const double subwin[4],
 
 void get_cwindow_dims( int *wdims)
 {
-  BCG *Xgc = check_graphic_window();
+  BCG *Xgc = check_graphic_window_new();
   Xgc->graphic_engine->xget_windowdim(Xgc,wdims,wdims+1);
 }
 

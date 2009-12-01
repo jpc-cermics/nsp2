@@ -725,7 +725,7 @@ static void scale_copy( window_scale_list *s1,window_scale_list *s2)
   s1->strflag = s2->strflag;
   for (i=0; i< 2; i++) s1->zfrect[i]=s2->zfrect[i]; 
   for (i=0; i< 3; i++) 
-    for (j=0; i< 3; i++) 
+    for (j=0; j< 3; j++) 
       s1->m[i][j]=s2->m[i][j];
   for (i=0; i< 6; i++) 
     s1->bbox1[i]=s2->bbox1[i] ;

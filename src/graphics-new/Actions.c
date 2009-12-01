@@ -156,7 +156,7 @@ void nsp_gr_new_raise(int win_num)
 
 int nsp_gr_new_change(int win_num)
 {
-  BCG *Xgc = check_graphic_window();
+  BCG *Xgc = check_graphic_window_new();
   if ( Xgc != NULL ) 
     {
       if ( Xgc->CurWindow != win_num) 
@@ -445,7 +445,7 @@ static void nsp_gc_raise(BCG *Xgc)
 
 static int nsp_gc_change(BCG *Xgc)
 {
-  BCG *Cgc = check_graphic_window();
+  BCG *Cgc = check_graphic_window_new();
   if ( Cgc != NULL ) 
     {
       if ( Cgc->CurWindow != Xgc->CurWindow) 
