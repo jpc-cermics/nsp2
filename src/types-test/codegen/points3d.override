@@ -237,14 +237,16 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
     }
 }
 
-
+/* A revoir car en procedant comme cela les 
+ * marques n'utilisent pas le zbuffer des 
+ * parties cachées. Il faut un drapolymark3d.
+ */
 
 static void draw_points3d_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
   int mark[2],current_mark[2],color;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
-  double x, y,z;
   int j;
   int V_nb_coords = V->Mcoord->m;
   double * V_coord = ((NspMatrix *) V->Mcoord)->R;
@@ -260,10 +262,20 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
   for ( j = 0 ; j < V_nb_coords ; j++) 
     {
-      x = V_coord[j];
-      y = V_coord[j+V_nb_coords];
-      z = V_coord[j+2*V_nb_coords];
-      /* XXX  Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,&z,n); */
+      int x,y;
+      double Vp[3],Tp[3];
+      const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
+      Vp[0] = V_coord[j];
+      Vp[1] = V_coord[j+V_nb_coords];
+      Vp[2] = V_coord[j+2*V_nb_coords];
+      apply_transforms_new(Xgc,Tp,Vp,V->pos,lim,1); 
+      Tp[0] = XScale(Xgc->scales,Tp[0]);
+      Tp[1] = YScale(Xgc->scales,Tp[1]);
+      nsp_ogl_set_2dview(Xgc);
+      x = Tp[0];
+      y = Tp[1];
+      Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,1);
+      nsp_ogl_set_3dview(Xgc);
     }
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
   if ( V->color != -1 ) 
