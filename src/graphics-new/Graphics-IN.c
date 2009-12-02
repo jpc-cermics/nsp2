@@ -2052,6 +2052,7 @@ static void  nsp_gwin_clear(void)
   if ( F->obj->gc->auto_clear == TRUE) 
     {
       nsp_figure_remove_children(F);
+      nsp_figure_data_reset(F);
       nsp_figure_invalidate((NspGraphic *) F);
     }
 }
@@ -2773,10 +2774,8 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
     {
       NspFigure *F = nsp_check_for_current_figure(); 
       if ( F == NULL) return RET_BUG;
-      /* XXX: we should also reset the figure parameters to 
-       * default ones 
-       */
       nsp_figure_remove_children(F);
+      nsp_figure_data_reset(F);
       nsp_figure_invalidate((NspGraphic *) F);
     }
   return 0;

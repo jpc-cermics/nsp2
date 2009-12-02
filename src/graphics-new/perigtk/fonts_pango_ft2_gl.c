@@ -149,14 +149,14 @@ static void queryfamily(char *name, int *j,int *v3)
 
 #ifndef HAVE_FREETYPE
 
-static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
+static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
 {
   Sciprintf("Cannot render string in OpenGL missing pangoft2\n");
 }
 
 #else 
 
-static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *e_rect)
+static void gl_pango_ft2_render_layout (PangoLayout *layout, GdkRectangle *e_rect)
 {
   int x,y;
   PangoRectangle logical_rect;
@@ -172,13 +172,13 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
   pango_layout_get_extents (layout, NULL, &logical_rect);
   if (logical_rect.width == 0 || logical_rect.height == 0)
     return;
-
+  
   if ( e_rect == NULL )
     {
       bitmap.rows = PANGO_PIXELS (logical_rect.height);
       bitmap.width = PANGO_PIXELS (logical_rect.width);
       bitmap.pitch = bitmap.width;
-      x= PANGO_PIXELS (-logical_rect.x);
+      x= PANGO_PIXELS(-logical_rect.x) ;
       y= 0;
     }
   else
@@ -207,7 +207,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
   memset (bitmap.buffer, 0, bitmap.rows * bitmap.width);
   
   pango_ft2_render_layout (&bitmap, layout,x,y);
-
+  
   if ( pixels != NULL) 
     {
       if ( bitmap.rows * bitmap.width > size )
@@ -219,7 +219,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
     }
   size = bitmap.rows * bitmap.width;
   p = (guint32 *) pixels;
-
+  
   glGetFloatv (GL_CURRENT_COLOR, color);
 #if !defined(GL_VERSION_1_2) && G_BYTE_ORDER == G_LITTLE_ENDIAN
   rgb =  ((guint32) (color[0] * 255.0))        |
@@ -231,7 +231,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
         (((guint32) (color[2] * 255.0)) << 8);
 #endif
   a = color[3];
-
+  
   row = bitmap.buffer + bitmap.rows * bitmap.width; /* past-the-end */
   row_end = bitmap.buffer;      /* beginning */
 
@@ -263,7 +263,7 @@ static void gl_pango_ft2_render_layout (PangoLayout *layout,      GdkRectangle *
         }
       while (row != row_end);
     }
-
+  
   glPixelStorei (GL_UNPACK_ALIGNMENT, 4);
 
   glEnable (GL_BLEND);

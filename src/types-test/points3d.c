@@ -899,6 +899,10 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j)
  * parties cachées. Il faut un drapolymark3d.
  */
 
+#ifdef  WITH_GTKGLEXT 
+void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n);
+#endif 
+
 static void draw_points3d_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
@@ -925,6 +929,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
       Vp[0] = V_coord[j];
       Vp[1] = V_coord[j+V_nb_coords];
       Vp[2] = V_coord[j+2*V_nb_coords];
+#if 0      
       apply_transforms_new(Xgc,Tp,Vp,V->pos,lim,1); 
       Tp[0] = XScale(Xgc->scales,Tp[0]);
       Tp[1] = YScale(Xgc->scales,Tp[1]);
@@ -933,6 +938,9 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
       y = Tp[1];
       Xgc->graphic_engine->drawpolymark(Xgc,&x,&y,1);
       nsp_ogl_set_3dview(Xgc);
+#else 
+      drawpolymark3D(Xgc,&Vp[0],&Vp[1],&Vp[2],1);
+#endif 
     }
   Xgc->graphic_engine->xset_mark(Xgc,current_mark[0],current_mark[1]);
   if ( V->color != -1 ) 
@@ -980,4 +988,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 984 "points3d.c"
+#line 992 "points3d.c"

@@ -348,6 +348,31 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
     }
 }
 
+static void draw_mark3D(BCG *Xgc,double x, double y, double z);
+
+void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n)
+{
+  
+  if ( Xgc->CurHardSymb == 0 )
+    {
+      gint i;
+      glBegin(GL_POINTS);
+      for (i=0; i< n ; i++) glVertex3f( vx[i], vy[i],vz[i]);
+      glEnd();
+    }
+  else 
+    { 
+      int i,keepid,keepsize,hds;
+      i=1;
+      keepid =  Xgc->fontId;
+      keepsize= Xgc->fontSize;
+      hds= Xgc->CurHardSymbSize;
+      xset_font(Xgc,i,hds);
+      for ( i=0; i< n ;i++) draw_mark3D(Xgc,vx[i],vy[i],vz[i]);
+      xset_font(Xgc,keepid,keepsize);
+    }
+}
+
 
 /*
  *   Draw an axis whith a slope of alpha degree (clockwise) 
@@ -437,6 +462,27 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
       for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
       drawrectangle(Xgc,myrect);
     }
+}
+
+static void draw_mark3D(BCG *Xgc,double x, double y, double z)
+{
+  double dx,dy;
+  PangoRectangle ink_rect,logical_rect;
+  int code = symbols[Xgc->CurHardSymb]; 
+  gchar symbol_code[4], *iter = symbol_code;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
+  dx = ink_rect.x + ink_rect.width/2.0;
+  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
+  Xgc->CurColor=1;
+  xset_pattern(Xgc,Xgc->CurColor);
+  /* XXX  we need here to move x,y,z to center the mark at (x,y,z)  */
+  /* glRasterPos3f(x- PANGO_PIXELS(dx),y + PANGO_PIXELS(-dy),z); */
+  glRasterPos3f(x,y,z);
+  gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);
 }
 
 
@@ -1506,11 +1552,6 @@ static void drawpolyline3D(BCG *Xgc, double *vx, double *vy, double *vz, int n,i
 /*
  *
  */
-static void drawpolymark3D(BCG *Xgc,double *vx, double *vy, double *vz, int n)
-{
-  
-  printf("To be done drawpolymark3D \n");
-}
 
 void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *drawvect,int n, int p)
 { 

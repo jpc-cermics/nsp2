@@ -31,6 +31,7 @@ extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
 extern int nsp_figure_remove_children(NspFigure *F);
 extern NspObject *nsp_check_for_current_axes_or_objs3d(void);
 extern NspFigure *nsp_check_for_current_figure(void);
+extern void nsp_figure_data_reset(NspFigure *F);
 
 
 %%
@@ -288,7 +289,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
     {
       Xgc->graphic_engine->clearwindow(Xgc);
     }
-
+  
   /* draw elements */
   L = F->obj->children;
   cloc = L->first ;
@@ -1527,6 +1528,38 @@ void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc)
       Xgc->graphic_engine->xset_pattern(Xgc,-1);
       Xgc->graphic_engine->xset_pattern(Xgc,Gc->foreground);
     }
+}
+
+/**
+ * nsp_figure_data_reset:
+ * @F: a #NspFigure
+ * 
+ * reset Figure data to default values 
+ **/
+
+void nsp_figure_data_reset(NspFigure *F)
+{
+  NspFigureData *Gc = F->obj->gc;
+  if ( Gc->colormap != NULL) 
+    nsp_matrix_destroy(Gc->colormap);
+  /* in order to use default colormap */
+  Gc->colormap = nsp_matrix_create("colormap",'r',0,0);
+  Gc->foreground = -1;
+  Gc->background = -1;
+  Gc->color= 1;
+  Gc->dashes=  1;
+  Gc->font=  2;
+  Gc->font_size=  1;
+  Gc->hidden3d=  4;
+  Gc->line_mode=  0;
+  Gc->line_style=  1;
+  Gc->mark=  0;
+  Gc->mark_size=  0;
+  Gc->pattern=  1;
+  Gc->pixmap=  0;
+  Gc->thickness=  1;
+  Gc->use_color=  1;
+  Gc->auto_clear= FALSE;
 }
 
 
