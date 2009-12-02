@@ -141,8 +141,10 @@ extern void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, in
 /* XXX */
 extern int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads);
 extern NspAxes *nsp_check_for_current_axes(void);
+extern NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect);
 
-#line 146 "./axes.h"
+
+#line 148 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -157,7 +159,7 @@ static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
-#line 38 "codegen/axes.override"
+#line 40 "codegen/axes.override"
 
 /* inserted in the private part of include file
  * of axes.h
@@ -184,6 +186,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 188 "./axes.h"
+#line 190 "./axes.h"
 #endif /* NspAxes_Private */
 

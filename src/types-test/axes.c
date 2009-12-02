@@ -24,7 +24,7 @@
 
 
 
-#line 66 "codegen/axes.override"
+#line 68 "codegen/axes.override"
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
 
@@ -104,7 +104,7 @@ NspTypeAxes *new_type_axes(type_mode mode)
 
   type->init = (init_func *) init_axes;
 
-#line 80 "codegen/axes.override"
+#line 82 "codegen/axes.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_axes;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_axes ;
@@ -880,7 +880,7 @@ static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 101 "codegen/axes.override"
+#line 103 "codegen/axes.override"
 /* override set rho */
 static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -1046,7 +1046,7 @@ static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 117 "codegen/axes.override"
+#line 119 "codegen/axes.override"
 
 /* here we override get_obj  and set_obj 
  * we want a get to be followed by a set to check that 
@@ -1387,7 +1387,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 173 "codegen/axes.override"
+#line 175 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1399,7 +1399,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
 #line 1400 "axes.c"
 
 
-#line 183 "codegen/axes.override"
+#line 185 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1440,7 +1440,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 194 "codegen/axes.override"
+#line 196 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
@@ -2397,4 +2397,5 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   return ngrads;
 }
 
-#line 2401 "axes.c"
+
+#line 2402 "axes.c"

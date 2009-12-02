@@ -692,6 +692,8 @@ static NspFigure *nsp_create_default_figure(BCG *Xgc)
 }
 
 
+
+
 /**
  * nsp_check_for_axes:
  * @Xgc: 
@@ -709,9 +711,8 @@ static NspFigure *nsp_create_default_figure(BCG *Xgc)
 
 NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 {
-  int i,l, created=FALSE;
-  NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
-  NspList *L;
+  int created=FALSE;
+  NspAxes *Axes= NULL;
   NspFigure  *F = Xgc->figure; 
   if ( F == NULL) 
     {
@@ -721,6 +722,33 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
       created=TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
+  Axes = nsp_check_for_axes_in_figure(F,wrect);
+  if ( created==TRUE) nsp_figure_destroy(F);
+  return Axes;
+}
+
+
+/**
+ * nsp_check_for_axes_in_figure:
+ * @Xgc: 
+ * @wrect: 
+ * 
+ * 
+ * checks for a figure and an axes in Xgc 
+ * create one if not present. 
+ * Xgc should not be null here. 
+ * this is not a definitive function just a hack.
+ * since graphic should be driven by Figure Not by Xgc 
+ * 
+ * Returns: 
+ **/
+
+NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect)
+{
+  int i,l;
+  NspObject *Obj=NULLOBJ,*Axes=NULLOBJ;
+  NspList *L;
+  if ( F == NULL) return NULL;
   L= F->obj->children;
   /* return the first axes found 
    * Note that the children of a Figure should be axes or 3daxes (obj3d)
@@ -761,10 +789,9 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
       nsp_figure_children_link_figure(F);
       Axes =(NspObject *) axe;
     }
-  if ( created==TRUE) nsp_figure_destroy(F);
-    
   return (NspAxes *) Axes;
 }
+
 
 /**
  * nsp_check_for_objs3d:
@@ -783,9 +810,8 @@ NspAxes * nsp_check_for_axes(BCG *Xgc,const double *wrect)
 
 NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
 {
-  int i,l , created=FALSE;
-  NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
-  NspList *L;
+  int  created=FALSE;
+  NspObjs3d *Objs3d=NULL;
   NspFigure  *F = Xgc->figure; 
   if ( F == NULL) 
     {
@@ -795,6 +821,33 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
       created = TRUE;
     }
   if ( ! IsFigure((NspObject *) F)) return NULL;
+  Objs3d = nsp_check_for_objs3d_in_figure(F,wrect);
+  if ( created==TRUE) nsp_figure_destroy(F);
+  return  Objs3d;
+}
+
+
+/**
+ * nsp_check_for_objs3d_in_figure:
+ * @Xgc: 
+ * @wrect: 
+ * 
+ * 
+ * checks for a figure and a 3dobj-axes in Xgc 
+ * create one if not present. 
+ * Xgc should not be null here. 
+ * this is not a definitive function just a hack.
+ * since graphic should be driven by Figure Not by Xgc 
+ * 
+ * Returns: 
+ **/
+
+NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect)
+{
+  int i,l ;
+  NspObject *Obj=NULLOBJ,*Objs3d=NULLOBJ;
+  NspList *L;
+  if ( F == NULL) return NULL;
   L= F->obj->children;
   /* return the first axes found 
    * Note that the children of a Figure should be axes or 3daxes (obj3d)
@@ -836,7 +889,6 @@ NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect)
       nsp_figure_children_link_figure(F);
       Objs3d =(NspObject *) obj3d;
     }
-  if ( created==TRUE) nsp_figure_destroy(F);
   return (NspObjs3d *) Objs3d;
 }
 

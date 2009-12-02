@@ -4663,7 +4663,10 @@ static NspAxes *Nsetscale2d_new(const double *WRect,const double *ARect,
 				int axesflag,int iso,int clip)
 {
   NspAxes *axe; 
-  if (( axe=  nsp_check_for_current_axes())== NULL) return NULL;
+  NspFigure *F = nsp_check_for_current_figure(); 
+  if ( F == NULL) return NULL;
+  axe = nsp_check_for_axes_in_figure(F,WRect);
+  if ( axe ==  NULL) return NULL;
   axe->obj->xlog = ( strlen(logscale) >= 0) ? ((logscale[0]=='n') ? FALSE:TRUE) : FALSE;
   axe->obj->ylog=  ( strlen(logscale) >= 1) ? ((logscale[1]=='n') ? FALSE:TRUE) : FALSE;
 
@@ -4688,7 +4691,10 @@ static NspObjs3d *Nsetscale3d_new(const double *WRect,const double *ARect,
 				  int axesflag,int iso,int clip )
 {
   NspObjs3d *objs3d;
-  if ((objs3d = nsp_check_for_current_objs3d()) == NULL) return NULL;
+  NspFigure *F = nsp_check_for_current_figure(); 
+  if ( F == NULL) return NULL;
+  objs3d = nsp_check_for_objs3d_in_figure(F,WRect);
+  if (objs3d == NULL) return NULL;
   if ( WRect != NULL)   memcpy(objs3d->obj->wrect->R,WRect,4*sizeof(double));
   if ( ARect != NULL)   memcpy(objs3d->obj->arect->R,ARect,4*sizeof(double));
   if ( FRect != NULL)   memcpy(objs3d->obj->frect->R,FRect,4*sizeof(double));
@@ -4723,15 +4729,12 @@ static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
   int axesflag= 0, iso = FALSE, clip=TRUE;
   NspObject *ret;
   int fixed = TRUE, axe3d=FALSE;
-  BCG *Xgc;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
   static char logflag_def[]="nn";
   char *logflag = logflag_def;
   NspMatrix *M;
 
   CheckLhs(0,1);
-  
-  Xgc=nsp_check_graphic_context();
   if ( opt == 0) 
     {
       /* compatibility with old version */

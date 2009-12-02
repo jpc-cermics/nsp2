@@ -32,6 +32,8 @@ extern void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, in
 /* XXX */
 extern int gr_compute_ticks(double *xminv,double *xmaxv,double *grads, int *ngrads);
 extern NspAxes *nsp_check_for_current_axes(void);
+extern NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect);
+
 
 %%
 include-private Axes
@@ -1146,3 +1148,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
   *start = n1;
   return ngrads;
 }
+
