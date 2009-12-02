@@ -3235,22 +3235,46 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
     case xget_colormap:
       /* flagx can be used if != 0 , to only get color flagx */
       flagx = Max(flagx,0);
-      if ( flagx != 0) 
+      if ( Gc->colormap != NULL &&Gc->colormap->mn != 0 ) 
 	{
-	  /* just get one color */
-	  if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
-	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
-	  StackStore(stack,(NspObject *) M,rhs+1);
-	  NSP_OBJECT(M)->ret_pos = 1;
+	  if ( flagx != 0) 
+	    {
+	      /* just get one color */
+	      if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
+	      flagx = Min(flagx-1,Gc->colormap->m-1);
+	      M->R[0]= Gc->colormap->R[flagx];
+	      M->R[1]= Gc->colormap->R[flagx+Gc->colormap->m];
+	      M->R[2]= Gc->colormap->R[flagx+2*Gc->colormap->m];
+	      StackStore(stack,(NspObject *) M,rhs+1);
+	      NSP_OBJECT(M)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      /* get all colors */
+	      StackStore(stack,(NspObject *)Gc->colormap ,rhs+1);
+	      NSP_OBJECT(Gc->colormap)->ret_pos = 1;
+	    }
 	}
-      else
+      else 
 	{
-	  /* get all colors */
-	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL,flagx); /*just to get m3 */
-	  if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
-	  Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
-	  StackStore(stack,(NspObject *) M,rhs+1);
-	  NSP_OBJECT(M)->ret_pos = 1;
+	  /* get from Xgc the default colormap ? */
+	  if ( flagx != 0) 
+	    {
+	      /* just get one color */
+	      if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
+	      Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	      StackStore(stack,(NspObject *) M,rhs+1);
+	      NSP_OBJECT(M)->ret_pos = 1;
+	    }
+	  else
+	    {
+	      /* get all colors */
+	      Xgc->graphic_engine->xget_colormap(Xgc,&m3,NULL,flagx); /*just to get m3 */
+	      if ((M = nsp_matrix_create(NVOID,'r',m3,3))== NULLMAT) return RET_BUG;
+	      Xgc->graphic_engine->xget_colormap(Xgc,&m3,M->R,flagx);
+	      StackStore(stack,(NspObject *) M,rhs+1);
+	      NSP_OBJECT(M)->ret_pos = 1;
+	    }
 	}
       return 1;
       break;
