@@ -4016,6 +4016,7 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       F = nsp_check_for_current_figure(); 
       if ( F == NULL) return RET_BUG;
       Gc = F->obj->gc;
+      Xgc = F->obj->Xgc;  
     }
   
   switch (rep) 
@@ -4062,10 +4063,7 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       break;
     case xset_default:
       CheckRhs(1,1);
-      /* 
-	 Xgc=nsp_check_graphic_context();
-	 Xgc->graphic_engine->scale->xset_default(Xgc);
-      */
+      nsp_figure_data_reset(F);
       break;
     case xset_default_colormap:
       CheckRhs(1,1);
@@ -4157,15 +4155,15 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_viewport(Xgc,val,val1);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_viewport(F->obj->Xgc,val,val1);
       break;
     case xset_wdim:
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_windowdim(Xgc,val,val1);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_windowdim(F->obj->Xgc,val,val1);
       break;
     case xset_white:
       CheckRhs(1,1);
@@ -4189,40 +4187,42 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_popupdim(Xgc,val,val1);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_popupdim(F->obj->Xgc,val,val1);
       break;
     case xset_wpos:
       CheckRhs(3,3);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
       if (GetScalarInt(stack,3,&val1) == FAIL) return RET_BUG; 
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_windowpos(Xgc,val,val1);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_windowpos(F->obj->Xgc,val,val1);
       break;
     case xset_wresize:
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&val) == FAIL) return RET_BUG; 
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_wresize(Xgc,val);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_wresize(F->obj->Xgc,val);
       break;
     case xset_wshow:
       CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_show(Xgc);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_show(F->obj->Xgc);
       break;
     case xset_wwpc:
       CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->xset_pixmapclear(Xgc);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->xset_pixmapclear(F->obj->Xgc);
       break;
     case xset_fpf:
       CheckRhs(2,2);
       if ((info = GetString(stack,2)) == (char*)0) return RET_BUG;
-      Xgc=nsp_check_graphic_context();
-      if ( strlen(info)== 0) 
-	Xgc->graphic_engine->xset_fpf_def(Xgc);
-      else 
-	Xgc->graphic_engine->xset_fpf(Xgc,info);
+      if ( F->obj->Xgc != NULL) 
+	{
+	  if ( strlen(info)== 0) 
+	    ((BCG *) F->obj->Xgc)->graphic_engine->xset_fpf_def(F->obj->Xgc);
+	  else 
+	    ((BCG *) F->obj->Xgc)->graphic_engine->xset_fpf(F->obj->Xgc,info);
+	}
       return 0;
       break;
     case xset_auto_clear:
@@ -4238,30 +4238,12 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
       break;
     case  xset_process_updates:
       CheckRhs(1,1);
-      Xgc=nsp_check_graphic_context();
-      Xgc->graphic_engine->process_updates(Xgc);
+      if ( F->obj->Xgc != NULL )
+	((BCG *) F->obj->Xgc)->graphic_engine->process_updates(F->obj->Xgc);
       break;
     }
   return 0;
 }
-
-
-/*
- *
- * test 
- */
-
-static int int_xtest(Stack stack, int rhs, int opt, int lhs)
-{
-  BCG *Xgc = NULL;
-  CheckRhs(0,0);
-  CheckLhs(0,1);
-  Xgc=nsp_check_graphic_context();
-  Xgc->graphic_engine->xset_test(Xgc);
-  return 0;
-}
-
-
 
 
 /**
@@ -6345,7 +6327,6 @@ OpGrTab Graphics_func[]={
   {NAMES("xstringc"),int_xstringc},
   {NAMES("xstringl"),int_xstringl},
   {NAMES("xtape"),int_xtape},
-  {NAMES("xtest_graphic"), int_xtest},
   {NAMES("xtitle"),int_xtitle},
   {NAMES("scicos_draw3D"), int_scicos_draw3D},
   {NAMES("scicos_lock_draw"), int_lock_draw},
