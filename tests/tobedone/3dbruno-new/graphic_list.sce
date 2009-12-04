@@ -23,13 +23,6 @@ endfunction
 exec('NSP/tests/tobedone/3dbruno-new/examples.sce');
 exec('NSP/tests/tobedone/3dbruno-new/libbruno.sce');
 
-demo_3dlib_1_info='demo_3dlib_ex1';
-demo_3dlib_2_info='plot2d log scale';
-demo_3dlib_3_info='plot2d3';
-demo_3dlib_4_info='plot2d superpose';
-demo_3dlib_5_info='plot2d with function';
-demo_3dlib_6_info='histplot';
-
 // organize the previous list for graphic demo widget 
 graphic_test_2d = build_demo_list("demo_3dlib",15);
 

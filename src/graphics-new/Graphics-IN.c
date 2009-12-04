@@ -3824,6 +3824,11 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   NspPolyline *pl= NULL;
   NspAxes *axe; 
   nsp_option opts[] ={{ "compound", s_bool,NULLOBJ,-1},
+		      { "thickness", s_int,NULLOBJ,-1},
+		      { "mark_size", s_int,NULLOBJ,-1},
+		      { "close", s_bool ,NULLOBJ,-1},
+		      { "color", s_int ,NULLOBJ,-1},
+		      { "mark", s_int ,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   CheckStdRhs(2,3);
@@ -3831,14 +3836,15 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   if ((y=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,x,y);
   
-  if (rhs == 3) 
+  if (rhs -opt == 3) 
     {
       if ((style=GetRealMatInt(stack,3)) == NULLMAT ) return RET_BUG;
       CheckVector(NspFname(stack),3,style); 
       CheckDimProp(NspFname(stack),1,3, style->mn < x->n);
     }
   
-  if ( get_optional_args(stack,rhs,opt,opts,&compound) == FAIL)
+  if ( get_optional_args(stack,rhs,opt,opts,&compound,&thickness,&mark_size,
+			 &close,&color,&mark) == FAIL)
     return RET_BUG;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
@@ -3909,7 +3915,6 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
 	  MoveObj(stack,1,NSP_OBJECT(pl));
 	  return 1;
 	}
-
     }
   return 0;
 }
