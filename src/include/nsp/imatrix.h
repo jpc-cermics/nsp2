@@ -175,7 +175,7 @@ struct _NspIMatrix {
   case nsp_gint32: X(Gint32,gint32,arg);	\
   case nsp_guint32: X(Guint32,guint32,arg);	\
   case nsp_gint64 : X(Gint64,gint64,arg );	\
-  case nsp_guint64 : X(Gint64,guint64,arg );}
+  case nsp_guint64 : X(Guint64,guint64,arg );}
 
 /* NSP_ITYPE_SIZE(s,itype) 
  * get the size of an int in s 
