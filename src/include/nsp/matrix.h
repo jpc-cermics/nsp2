@@ -311,6 +311,8 @@ extern int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **I
 extern int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind);
 extern int nsp_mat_nnz(NspMatrix *A);
 extern int nsp_mat_unique(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first_ind, char ind_type);
+extern int nsp_mat_unique_rows(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type);
+extern int nsp_mat_unique_columns(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type);
 extern NspMatrix *nsp_mat_dot(NspMatrix *A, NspMatrix *B, int dim_flag);
 extern NspMatrix *nsp_mat_cross(NspMatrix *X, NspMatrix *Y, int dim);
 extern NspBMatrix *nsp_mat_issorted(NspMatrix *A, int flag, Boolean strict_order, Boolean nan_ordered);

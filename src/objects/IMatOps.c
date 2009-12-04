@@ -3520,6 +3520,198 @@ int nsp_imatrix_unique(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean 
 }
 
 /**
+ * nsp_imatrix_unique_rows:
+ * @x: (input-output) #NspIMatrix
+ * @Ind: (output) if NOT NULL a vector with indices
+ * @Occ: (output) if NOT NULL a real #NspMatrix (see after)
+ * @ind_type: (input) should be 'i' or 'd'. This gives the type of the
+ *            vector which stores the indices.
+ * Removes from @x multiple occurences of identical rows
+ *
+ * Return value: %OK or %FAIL
+ **/
+int nsp_imatrix_unique_rows(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
+{
+  int i0, i, j, i_old, *index;
+  NspMatrix *occ=NULLMAT;
+  Boolean equal;
+
+  if ( Ind == NULL )
+    {
+      if ( x->m <= 1 ) return OK;
+#define IMAT_AC(name,type,arg)				           \
+      { type *pt;                                                  \
+      nsp_qsort_gen_lexirow_##type( x->Iv, NULL, 0, x->m, x->n,'i');\
+      i0 = 0;                                                      \
+      for ( i = 1 ; i < x->m ; i++ )                               \
+	{                                                          \
+	  for ( j = 0, equal = TRUE ; equal && j < x->n ; j++ )    \
+	    equal = x->name[i0 + j*x->m] ==  x->name[i + j*x->m];  \
+	  if ( ! equal )                                           \
+	    {                                                      \
+	      i0++;                                                \
+	      for ( j= 0 ; j < x->n ; j++ )                        \
+		x->name[i0 + j*x->m] = x->name[i + j*x->m];        \
+	    }                                                      \
+	}                                                          \
+      for ( j = 1, pt = x->name+i0+1 ; j < x->n ; j++ , pt+=i0+1 ) \
+	memmove(pt, x->name+j*x->m, (i0+1)*sizeof(type) );         \
+      }                                                            \
+      break;
+      NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
+#undef IMAT_AC
+      nsp_imatrix_resize(x, i0+1, x->n);
+      return OK;
+    }
+  else
+    {
+      if ( (*Ind = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index)) == NULLOBJ )
+	return FAIL;
+
+      if ( Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r',x->m,1)) == NULLMAT )
+	  {
+	    nsp_object_destroy(Ind); return FAIL;
+	  }
+      
+      if ( x->m > 0 )
+	{
+#define IMAT_AC(name,type,arg)				                  \
+	  { type *pt;							\
+	    nsp_qsort_gen_lexirow_##type( x->Iv, index, 1, x->m, x->n,'i'); \
+	  i0 = 0; i_old = 0;                                              \
+	  for ( i = 1 ; i < x->m ; i++ )                                  \
+	    {                                                             \
+	      for ( j = 0, equal = TRUE ; equal && j < x->n ; j++ )       \
+		equal = x->name[i0 + j*x->m] ==  x->name[i + j*x->m];     \
+	      if ( ! equal )                                              \
+		{                                                         \
+		  if (Occ != NULL) { occ->R[i0] = i - i_old; i_old = i; } \
+		  i0++;                                                   \
+		  for ( j= 0 ; j < x->n ; j++ )                           \
+		    x->name[i0 + j*x->m] = x->name[i + j*x->m];           \
+		  index[i0] = index[i];                                   \
+		}                                                         \
+	      else                                                        \
+		if ( index[i] < index[i0] )  index[i0] = index[i];        \
+	    }                                                             \
+	  if (Occ != NULL) occ->R[i0] = x->m - i_old;                     \
+	  for ( j = 1, pt = x->name+i0+1 ; j < x->n ; j++ , pt+=i0+1 )    \
+	    memmove(pt, x->name+j*x->m, (i0+1)*sizeof(type) );            \
+       }                                                              \
+	  break;
+	  NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
+#undef IMAT_AC
+	  nsp_imatrix_resize(x, i0+1, x->n);
+
+	  if ( ind_type == 'd' )
+	    nsp_matrix_resize((NspMatrix *) *Ind, i0+1, 1);
+	  else
+	    nsp_imatrix_resize((NspIMatrix *) *Ind, i0+1, 1);
+	  if ( Occ != NULL ) nsp_matrix_resize(occ, i0+1, 1);
+
+	  if ( ind_type == 'd' )
+	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+	}
+
+      if ( Occ != NULL ) *Occ = occ;
+      return OK;
+    }
+}
+
+/**
+ * nsp_imat_unique_columns:
+ * @x: (input-output) #NspIMatrix
+ * @Ind: (output) if NOT NULL a vector with indices
+ * @Occ: (output) if NOT NULL a real #NspMatrix (see after)
+ * @ind_type: (input) should be 'i' or 'd'. This gives the type of the
+ *            vector which stores the indices.
+ * Removes from @x multiple occurences of identical columns
+ *
+ * Return value: %OK or %FAIL
+ **/
+int nsp_imatrix_unique_columns(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
+{
+  int j0, i, j, j_old, *index, pj0, pj;
+  NspMatrix *occ=NULLMAT;
+  Boolean equal;
+
+  if ( Ind == NULL )
+    {
+      if ( x->n <= 1 ) return OK;
+#define IMAT_AC(name,type,arg)				           \
+      nsp_qsort_gen_lexicol_##type( x->Iv, NULL, 0, x->m, x->n, 'i');  \
+      j0 = 0;                                                      \
+      for ( j = 1 ; j < x->n ; j++ )                               \
+	{                                                          \
+	  for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )\
+	    equal = x->name[pj0] ==  x->name[pj];                  \
+	  if ( ! equal )                                           \
+	    {                                                      \
+	      j0++;                                                \
+	      memcpy(x->name + j0*x->m, x->name + j*x->m, x->m*sizeof(type));\
+	    }                                                      \
+	}                                                          \
+      break;
+      NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
+#undef IMAT_AC
+      nsp_imatrix_resize(x, x->m, j0+1);
+      return OK;
+    }
+  else
+    {
+      if ( (*Ind = nsp_alloc_mat_or_imat(1, x->n, ind_type, &index)) == NULLOBJ )
+	return FAIL;
+
+      if ( Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r', 1, x->n)) == NULLMAT )
+	  {
+	    nsp_object_destroy(Ind); return FAIL;
+	  }
+      
+      if ( x->n > 0 )
+	{
+#define IMAT_AC(name,type,arg)				                     \
+	  nsp_qsort_gen_lexicol_##type( x->Iv, index, 1, x->m, x->n, 'i');       \
+	  j0 = 0; j_old = 0;                                                 \
+	  for ( j = 1 ; j < x->n ; j++ )                                     \
+	    {                                                                \
+	      for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )\
+		equal = x->name[pj0] ==  x->name[pj];                        \
+	      if ( ! equal )                                                 \
+		{                                                            \
+		  if (Occ != NULL) { occ->R[j0] = j - j_old; j_old = j; }    \
+		  j0++;                                                      \
+		  memcpy(x->name + j0*x->m, x->name + j*x->m, x->m*sizeof(type));  \
+		  index[j0] = index[j];                                      \
+		}                                                            \
+	      else                                                           \
+		if ( index[j] < index[j0] )  index[j0] = index[j];           \
+	    }                                                                \
+	  break;
+	  NSP_ITYPE_SWITCH(x->itype,IMAT_AC,"");
+#undef IMAT_AC
+
+	  if (Occ != NULL) occ->R[j0] = x->n - j_old;                        
+
+	  nsp_imatrix_resize(x, x->m, j0+1);
+
+	  if ( ind_type == 'd' )
+	    nsp_matrix_resize((NspMatrix *) *Ind, 1, j0+1);
+	  else
+	    nsp_imatrix_resize((NspIMatrix *) *Ind, 1, j0+1);
+	  if ( Occ != NULL ) nsp_matrix_resize(occ, 1, j0+1);
+
+	  if ( ind_type == 'd' )
+	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+	}
+
+      if ( Occ != NULL ) *Occ = occ;
+      return OK;
+    }
+}
+
+/**
  * nsp_imatrix_dot:
  * @A: a #NspIMatrix.
  * @B: a #NspIMatrix.

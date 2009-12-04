@@ -5976,15 +5976,17 @@ int nsp_mat_nnz(NspMatrix *A)
 /**
  * nsp_mat_unique:
  * @x: (input-output) real #NspMatrix (considered as a vector)
- * @Ind: (output) if NOT NULL a real #NspMatrix (see after)
+ * @Ind: (output) if NOT NULL a vector with indices
  * @Occ: (output) if NOT NULL a real #NspMatrix (see after)
  * @first_ind: (input) used in case Ind is not NULL true if Ind[i]
  *             should be the first index of x[i] in the original @x
- *
+ * @ind_type: (input) should be 'i' or 'd'. This gives the type of the
+ *            vector which stores the indices.
  * Removes from @x multiple occurences of identical entries. Thus after 
  * calling this function @x will contain strictly different values sorted 
  * in increasing order. If @Ind is non null, it will be set to 
- * a new NspMatrix filled with the indice in the original array of each 
+ * a NspMatrix (if ind_type == 'd') or NspIMatrix (ind_type == 'i') 
+ * filled with the indice in the original array of each 
  * output value in @x. Thus @Ind[i] will contain the original indice of 
  * @x[i] in the input array @x. Note that indices in @Ind start at 1 !
  * If @Occ is non null, then @Occ[i] will contain the number of occurences 
@@ -6066,6 +6068,178 @@ int nsp_mat_unique(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first
 		nsp_imatrix_resize((NspIMatrix *) *Ind, i0+1, 1);
 	      if ( Occ != NULL ) nsp_matrix_resize(occ, i0+1, 1);
 	    }
+	  if ( ind_type == 'd' )
+	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+	}
+
+      if ( Occ != NULL ) *Occ = occ;
+      return OK;
+    }
+}
+
+/**
+ * nsp_mat_unique_rows:
+ * @x: (input-output) real #NspMatrix
+ * @Ind: (output) if NOT NULL a vector with indices
+ * @Occ: (output) if NOT NULL a real #NspMatrix (see after)
+ * @ind_type: (input) should be 'i' or 'd'. This gives the type of the
+ *            vector which stores the indices.
+ * Removes from @x multiple occurences of identical rows
+ *
+ * Return value: %OK or %FAIL
+ **/
+int nsp_mat_unique_rows(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
+{
+  int i0, i, j, i_old, *index;
+  NspMatrix *occ=NULLMAT;
+  double *pt;
+  Boolean equal;
+
+  if ( Ind == NULL )
+    {
+      if ( x->m <= 1 ) return OK;
+      nsp_qsort_gen_lexirow_double( x->R, NULL, 0, x->m, x->n,'i');
+      i0 = 0;
+      for ( i = 1 ; i < x->m ; i++ )
+	{
+	  for ( j = 0, equal = TRUE ; equal && j < x->n ; j++ )
+	    equal = x->R[i0 + j*x->m] ==  x->R[i + j*x->m];
+	  if ( ! equal )
+	    {
+	      i0++;
+	      for ( j= 0 ; j < x->n ; j++ )
+		x->R[i0 + j*x->m] = x->R[i + j*x->m];
+	    }
+	}
+      for ( j = 1, pt = x->R+i0+1 ; j < x->n ; j++ , pt+=i0+1 )
+	memmove(pt, x->R+j*x->m, (i0+1)*sizeof(double) );
+      nsp_matrix_resize(x, i0+1, x->n);
+      return OK;
+    }
+  else
+    {
+      if ( (*Ind = nsp_alloc_mat_or_imat(x->m, 1, ind_type, &index)) == NULLOBJ )
+	return FAIL;
+
+      if ( Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r',x->m,1)) == NULLMAT )
+	  {
+	    nsp_object_destroy(Ind); return FAIL;
+	  }
+      
+      if ( x->m > 0 )
+	{
+	  nsp_qsort_gen_lexirow_double( x->R, index, 1, x->m, x->n,'i');
+	  i0 = 0; i_old = 0;
+	  for ( i = 1 ; i < x->m ; i++ )
+	    {
+	      for ( j = 0, equal = TRUE ; equal && j < x->n ; j++ )
+		equal = x->R[i0 + j*x->m] ==  x->R[i + j*x->m];
+	      if ( ! equal )
+		{
+		  if (Occ != NULL) { occ->R[i0] = i - i_old; i_old = i; }
+		  i0++;
+		  for ( j= 0 ; j < x->n ; j++ )
+		    x->R[i0 + j*x->m] = x->R[i + j*x->m];
+		  index[i0] = index[i];
+		}
+	      else 
+		if ( index[i] < index[i0] )  index[i0] = index[i];
+	    }
+	  if (Occ != NULL) occ->R[i0] = x->m - i_old;
+
+	  for ( j = 1, pt = x->R+i0+1 ; j < x->n ; j++ , pt+=i0+1 )
+	    memmove(pt, x->R+j*x->m, (i0+1)*sizeof(double) );
+	  nsp_matrix_resize(x, i0+1, x->n);
+
+	  if ( ind_type == 'd' )
+	    nsp_matrix_resize((NspMatrix *) *Ind, i0+1, 1);
+	  else
+	    nsp_imatrix_resize((NspIMatrix *) *Ind, i0+1, 1);
+	  if ( Occ != NULL ) nsp_matrix_resize(occ, i0+1, 1);
+
+	  if ( ind_type == 'd' )
+	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
+	}
+
+      if ( Occ != NULL ) *Occ = occ;
+      return OK;
+    }
+}
+/**
+ * nsp_mat_unique_columns:
+ * @x: (input-output) real #NspMatrix
+ * @Ind: (output) if NOT NULL a vector with indices
+ * @Occ: (output) if NOT NULL a real #NspMatrix (see after)
+ * @ind_type: (input) should be 'i' or 'd'. This gives the type of the
+ *            vector which stores the indices.
+ * Removes from @x multiple occurences of identical columns
+ *
+ * Return value: %OK or %FAIL
+ **/
+int nsp_mat_unique_columns(NspMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
+{
+  int j0, i, j, j_old, *index, pj0, pj;
+  NspMatrix *occ=NULLMAT;
+  Boolean equal;
+
+  if ( Ind == NULL )
+    {
+      if ( x->n <= 1 ) return OK;
+      nsp_qsort_gen_lexicol_double( x->R, NULL, 0, x->m, x->n,'i');
+      j0 = 0;
+      for ( j = 1 ; j < x->n ; j++ )
+	{
+	  for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )
+	    equal = x->R[pj0] ==  x->R[pj];
+	  if ( ! equal )
+	    {
+	      j0++;
+	      memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
+	    }
+	}
+      nsp_matrix_resize(x, x->m, j0+1);
+      return OK;
+    }
+  else
+    {
+      if ( (*Ind = nsp_alloc_mat_or_imat(1, x->n, ind_type, &index)) == NULLOBJ )
+	return FAIL;
+
+      if ( Occ != NULL )
+	if ( (occ = nsp_matrix_create(NVOID,'r', 1, x->n)) == NULLMAT )
+	  {
+	    nsp_object_destroy(Ind); return FAIL;
+	  }
+      
+      if ( x->n > 0 )
+	{
+	  nsp_qsort_gen_lexicol_double( x->R, index, 1, x->m, x->n,'i');
+	  j0 = 0; j_old = 0;
+	  for ( j = 1 ; j < x->n ; j++ )
+	    {
+	      for ( i = 0, equal = TRUE, pj0 = j0*x->m, pj = j*x->m ; equal && i < x->m ; i++, pj0++, pj++ )
+		equal = x->R[pj0] ==  x->R[pj];
+	      if ( ! equal )
+		{
+		  if (Occ != NULL) { occ->R[j0] = j - j_old; j_old = j; }
+		  j0++;
+		  memcpy(x->R + j0*x->m, x->R + j*x->m, x->m*sizeof(double));
+		  index[j0] = index[j];
+		}
+	      else 
+		if ( index[j] < index[j0] )  index[j0] = index[j];
+	    }
+	  if (Occ != NULL) occ->R[j0] = x->n - j_old;
+
+	  nsp_matrix_resize(x, x->m, j0+1);
+
+	  if ( ind_type == 'd' )
+	    nsp_matrix_resize((NspMatrix *) *Ind, 1, j0+1);
+	  else
+	    nsp_imatrix_resize((NspIMatrix *) *Ind, 1, j0+1);
+	  if ( Occ != NULL ) nsp_matrix_resize(occ, 1, j0+1);
+
 	  if ( ind_type == 'd' )
 	    *Ind = (NspObject *) Mat2double((NspMatrix *) *Ind);
 	}

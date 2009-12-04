@@ -441,6 +441,8 @@ extern int nsp_imatrix_ndind2ind(int *dims, int nd, NspIMatrix **ndind, NspIMatr
 extern int nsp_imatrix_sub2ind(int *dims, int nd, NspIMatrix **ndind, int nb_ind, NspIMatrix **Ind);
 extern int nsp_imatrix_nnz(NspIMatrix *A);
 extern int nsp_imatrix_unique(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first_ind, char ind_type);
+extern int nsp_imatrix_unique_columns(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type);
+extern int nsp_imatrix_unique_rows(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type);
 extern NspIMatrix *nsp_imatrix_dot(NspIMatrix *A, NspIMatrix *B, int dim_flag);
 extern NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim);
 extern NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_order);
