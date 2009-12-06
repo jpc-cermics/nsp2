@@ -1309,7 +1309,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	}
     }
-
+  
   if (  P->obj->colorbar ) 
     {
       nsp_draw_colorbar(Xgc,((NspGraphic *) P)->obj->Axe,zmin ,zmax, colors_minmax);

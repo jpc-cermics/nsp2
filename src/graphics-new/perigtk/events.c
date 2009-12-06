@@ -571,20 +571,24 @@ int window_list_check_drawing(BCG *dd,void *win)
 
 #endif 
 
-/* delete the graphic window 
+/* delete the graphic window given a graphic 
+ * context or the window id @intnum.
  *
  */
 
 static void delete_window(BCG *dd,int intnum)
 { 
+  NspFigure *F;
   BCG *winxgc= dd; 
   int top_count;
   if ( dd == NULL) 
     {
       if ((winxgc = window_list_search(intnum)) == NULL) return;
     }
-  /* be sure to clear the recorded graphics */
-  dd->actions->erase(dd); /* nsp_gr_erase(intnum); */
+  
+  /* delete the associated figure */
+  F =  dd->figure;
+  if ( F != NULL) nsp_figure_destroy(F);
 
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) 
@@ -636,8 +640,11 @@ static void delete_window(BCG *dd,int intnum)
       gtk_container_remove(GTK_CONTAINER(father),GTK_WIDGET(winxgc->private->vbox));
     }
   /* free gui private area */
-  if ( winxgc->private->colors != NULL) 
-    nsp_matrix_destroy(winxgc->private->colors);
+  /* XXXX to be updated since colors can be allocated 
+   * for xgc or just be a link to a figure colormap 
+   if ( winxgc->private->colors != NULL) 
+   nsp_matrix_destroy(winxgc->private->colors);
+  */
   if ( winxgc->private->q_colors != NULL) 
     g_queue_free( winxgc->private->q_colors);
 

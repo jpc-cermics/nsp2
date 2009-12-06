@@ -33,8 +33,7 @@ extern int window_list_check_top(BCG *,void *) ;
 extern int window_list_check_drawing(BCG *dd,void *win);
 
 /*
- * default values 
- * 
+ * default values for scales.
  */
 
 static window_scale_list  default_scale = 
@@ -64,8 +63,6 @@ static window_scale_list  default_scale =
     (window_scale_list *) 0 /*unused */
   };
 
-
-
 /**
  * WindowList: 
  * @winxgc: graphic context #BCG
@@ -86,7 +83,6 @@ struct  _window_list
 } ;
 
 static WindowList *The_List  = (WindowList *) NULL; 
-
 static window_scale_list *new_wcscale ( window_scale_list *val);
 static WindowList  *window_list_search_w_int(WindowList *listptr, int i);
 static int window_list_search_topelevel_int(WindowList *,void *,int);
@@ -94,9 +90,9 @@ static void scale_copy (window_scale_list *s1, window_scale_list *s2);
 static int window_list_search_from_drawing__(WindowList *listptr,void *win);
 
 /**
- * check_graphic_window_new
+ * check_graphic_window_new:
  * 
- * returns the BCG structure associated to 
+ * returns the BCG structure associated with
  * the current graphic window. If no current graphic 
  * window exists, one is created 
  * 

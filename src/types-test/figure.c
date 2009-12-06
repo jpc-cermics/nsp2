@@ -2422,7 +2422,10 @@ NspFigure *nsp_get_current_figure(void)
       nsp_figure_destroy(nsp_current_figure);
       nsp_current_figure = NULL;
     }
-  if ((Xgc = nsp_check_graphic_context()) == NULL) return NULL;
+  /* check if we have a graphic window with 
+   * a figure non recorded as current 
+   */
+  if ((Xgc = window_list_get_first()) == NULL) return NULL;
   if ((F = (NspObject *) Xgc->figure)== NULL) return NULL;
   if (F == NULL || ! IsFigure(F)) return NULL;
   nsp_current_figure = (NspFigure *) nsp_object_copy_and_name("Fig",(NspObject *) F);
@@ -2839,7 +2842,7 @@ NspObject * nsp_check_pt_axes_or_objs3d(BCG *Xgc,const int *pt)
   if ( F== NULL ||  ! IsFigure((NspObject *) F)) return NULL;
 
   L= F->obj->children;
-  /* return the first axes or objs3d found 
+  /* return the first axes or objs3d found which contains pt 
    * Note that the children of a Figure should be axes or 3daxes (obj3d)
    */
   l= nsp_list_length(L);
@@ -3574,7 +3577,7 @@ NspObjs3d *nsp_check_for_current_objs3d(void)
   return Objs3d;
 }
 /**
- * nsp_check_for_current_objs3d:
+ * nsp_check_for_current_axes_or_objs3d:
  * @void: 
  * 
  * returns the current objs3d and create one 
@@ -3671,4 +3674,4 @@ int nsp_figure_remove_children(NspFigure *F)
 }
 
 
-#line 3675 "figure.c"
+#line 3678 "figure.c"

@@ -144,7 +144,7 @@ extern void nsp_legends(BCG *Xgc,legends_pos pos,int n1,const int *style,const c
 
 /* Plo2dEch.c */
 
-extern int graduate  (double *,double *,double *,double *,int *,int *,int *,
+extern int graduate  (const double *,const double *,double *,double *,int *,int *,int *,
 		      int *,int *); 
 extern void update_frame_bounds(BCG *Xgc, int cflag, char *xf, double *x,
 				double *y, int *n1, int *n2, int *aaint,

@@ -1328,7 +1328,7 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   double v[3], val_mean=0.0;
   int one_face_color = FALSE;
   int Q_nb_coords = Q->Mcoord->m;
-  int foreground_color = 1; /* XX should be shared */
+  int foreground_color = 1,cpat;
   double * Q_coord = ((NspMatrix *) Q->Mcoord_l)->R;
   int Q_nb_vertices_per_face = Q->Mface->m;
   int *Q_face = Q->Mface->I; 
@@ -1367,6 +1367,8 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
 
   orient = nsp_obj3d_orientation(x, y, m);
   
+  foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
+  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   
   if ( m > 12 || ( display_mode == FLAT  || ( orient == 1 && Q->back_color >= 0 ) ))
@@ -1414,13 +1416,16 @@ static void draw_spolyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
       if ( Q->mesh  ) 
 	Xgc->graphic_engine->fillpolylines(Xgc, x, y, &zero, np, m);
     }
+
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+
 }
 
 static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
   int one_face_color = FALSE;
-  int foreground_color = 1; /* XX should be shared */
+  int foreground_color = 1, cpat; 
   nsp_spolyhedron *Q = ((NspSPolyhedron *) Ob)->obj;
   int i,j, np=1, m;
   int numpt, *current_vertex, color;
@@ -1454,6 +1459,10 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
       v = graphic_alloc(3,m,sizeof(double));
       colors = graphic_alloc(4,m,sizeof(int));
     }
+
+
+  foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
+  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   
   for ( j = 0 ; j < Q_nb_faces ; j++) 
     {
@@ -1469,7 +1478,6 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	  val_mean += v[i];
 	}
       val_mean /=  m;
-      Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
 
       if ( display_mode == FLAT  )
 	{
@@ -1490,6 +1498,8 @@ static void draw_spolyhedron_ogl(BCG *Xgc,void *Ob)
 	  fillpolylines3D_shade(Xgc,x,y,z,colors, np,m);
 	}
     }
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+
 #endif
 }
 
@@ -1847,4 +1857,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1851 "spolyhedron.c"
+#line 1861 "spolyhedron.c"

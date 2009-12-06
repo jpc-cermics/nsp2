@@ -43,10 +43,10 @@ static void FormatPrec1 (char *fmt, int *desres, double *xx, int nx);
 static int Fsepare (char *fmt, int dec, int *l, double xmin, double xmax, 
 		    double xpas);
 static int Fsepare1 (char *fmt, int dec, int *l, double *xx, int nx);
-static void graduate1 (double *xmi,double * xma,double * xi,double * xa,
+static void graduate1 (const double *xmi,const double * xma,double * xi,double * xa,
 		       int * np1,int * np2,int * kminr,int * kmaxr,int * ar,int count);
 
-static void gradua ( double *xmi, double *xma,int * kminr,int *kmaxr,int *ar,int *npr,int *b);
+static void gradua (const double *xmi,const double *xma,int * kminr,int *kmaxr,int *ar,int *npr,int *b);
 static void decompSup (double x,int * xk,int *  xa,int   b);
 static void decompInf (double x,int * xk,int *  xa,int   b);
 
@@ -239,7 +239,8 @@ static int Fsepare1(char *fmt, int dec, int *l, double *xx, int nx)
  *  [xmi,xma]
  *---------------------------------------------------- */
 
-int graduate(double *xmi, double *xma, double *xi, double *xa, int *np1, int *np2, int *kminr, int *kmaxr, int *ar)
+int graduate(const double *xmi,const double *xma, double *xi, double *xa,
+	     int *np1, int *np2, int *kminr, int *kmaxr, int *ar)
 {
   if ( *xmi > *xma) 
     {
@@ -251,7 +252,8 @@ int graduate(double *xmi, double *xma, double *xi, double *xa, int *np1, int *np
   return(0);
 }
 
-static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1, int *np2, int *kminr, int *kmaxr, int *ar, int count)
+static void graduate1(const double *xmi,const double *xma, double *xi, double *xa, int *np1, int *np2,
+		      int *kminr, int *kmaxr, int *ar, int count)
 {
   int npr,b,i,dx,dxmi,dxma;
   /* fprintf(stderr,"[%20.10f,%20.10f]\n",*xmi,*xma); */
@@ -361,7 +363,7 @@ static void graduate1(double *xmi, double *xma, double *xi, double *xa, int *np1
 
 #define DMAX 0xFFFFFFF
 
-static void gradua(double *xmi, double *xma, int *kminr, int *kmaxr, int *ar, int *npr, int *b)
+static void gradua(const double *xmi,const double *xma, int *kminr, int *kmaxr, int *ar, int *npr, int *b)
 {
   double x0=*xmi,x1=*xma,loc;
   int x0k,x0a;

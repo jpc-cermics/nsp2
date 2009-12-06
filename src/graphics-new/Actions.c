@@ -278,18 +278,19 @@ static void nsp_gc_resize_pixmap(BCG *Xgc)
  * @Xgc: a graphic context.
  * 
  * clears the graphic window @win_num and the associated 
- * recorded data. 
+ * recorded data. The figure contained in graphic 
+ * window is not removed. 
  */ 
 
 static void  nsp_gc_erase(BCG *Xgc)
 {
-  NspObject *Obj= (NspObject *) Xgc->figure ;
-  nsp_object_destroy(&Obj);
-  Xgc->figure = NULL;
-  Xgc->graphic_engine->invalidate(Xgc,NULL);
+  NspFigure *F =  Xgc->figure;
+  if ( F == NULL ) return;
+  nsp_figure_remove_children(F);
+  nsp_figure_data_reset(F);
+  nsp_figure_invalidate((NspGraphic *) F);
   Xgc->graphic_engine->process_updates(Xgc);
 }
-
 
 /**
  * nsp_gc_tops:
@@ -485,7 +486,7 @@ static int nsp_gc_savesg(BCG *Xgc,const char *filename )
 
 
 /**
- * nsp_gr_loadsg: 
+ * nsp_gc_loadsg: 
  * @Xgc: a graphic context.
  * @filename: a filename 
  * 

@@ -152,8 +152,8 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 				const char *legend,
 				int *flag,double *ebox,int with_box,int box_color,int box_style);
 static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle box_style,int box_color, double lim[]);
-static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B);
-static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B);
+static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color);
+static void nsp_obj3d_draw_near_box_segments(BCG *Xgc,Plot3dBox *B, int foreground_color);
 static void nsp_obj3d_free_box(Plot3dBox *B);
 static void nsp_obj3d_dsortc(double x[], int *n, int p[]);
 static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y,

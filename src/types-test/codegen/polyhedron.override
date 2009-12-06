@@ -349,9 +349,8 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
   int * Q_color =  Q->Mcolor->I;
   int Q_nb_back_colors = Q->Mback_color->mn ;
   int * Q_back_color =  Q->Mback_color->I;
+  int foreground_color = -1, cpat;
   
-  int foreground_color = 1; /* XX should be shared */
-
   m = Q_nb_vertices_per_face;
   current_vertex = &(Q_face[m*j]);
 
@@ -391,8 +390,10 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j)
    *  x, y : polygone(s) coordinates, nr : number of sides
    *  np : number of polygone(s) =1 here
    */
-  Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
+  foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
+  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   Xgc->graphic_engine->fillpolylines(Xgc, x, y, &color, np, m);
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
 
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
@@ -413,8 +414,7 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
   int * Q_color =  Q->Mcolor->I;
   /*   int Q_nb_back_colors = Q->Mback_color->mn ; */
   /* int * Q_back_color =  Q->Mback_color->I;*/
-  
-  int foreground_color = 1; /* should be shared */
+  int foreground_color = -1,cpat;
   
   m = Q_nb_vertices_per_face;
 
@@ -425,6 +425,8 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       z = graphic_alloc(2,m,sizeof(double));
     }
 
+  foreground_color=  Xgc->graphic_engine->xget_foreground(Xgc);
+  cpat = Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
   for ( j = 0 ; j < Q_nb_faces ; j++ )
     {
       int stop = FALSE;
@@ -446,9 +448,9 @@ static void draw_polyhedron_ogl(BCG *Xgc,void *Ob)
       if ( ! Q->mesh ) 	color = -color; 
       /* color = 0;  permet de voir uniquement le maillage */
       /* draw one face */
-      Xgc->graphic_engine->xset_pattern(Xgc,foreground_color);
       fillpolylines3D(Xgc, x, y, z, &color, 1 , m);
     }
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 #endif
 }
 

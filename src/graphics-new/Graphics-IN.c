@@ -92,7 +92,6 @@ static int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int 
 static const double  rect_def[]= {0.,0.,10.0,10.0}; 
 static double rect_loc[]=  {0.,0.,10.0,10.0}; 
 static double * check_rect(Stack stack,const char *fname,char *varname,NspMatrix *var);
-static void replay_new_scale(BCG *Xgc,double *bbox);
 
 /**
  * int_champ_G:
@@ -2743,10 +2742,12 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
  * @lhs: 
  * 
  * xclear(window-ids,[tape_clean])
- * In new graphics only tape_clean == %t is 
- * accepted. This function remove all the axes 
+ * In new graphics the second argument is no 
+ * more pertinent. This function remove all the axes 
  * contained in the graphics window. Then call 
- * an invalidate and a show 
+ * an invalidate and a show. gc_reset can be used 
+ * to reset or not the figure graphic context. The 
+ * default value of gc_reset is TRUE.
  * 
  * Returns: 
  **/
@@ -2754,10 +2755,14 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
 static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
-  int ix;
+  int ix, gc_reset= TRUE;
   NspMatrix *l1;
-  CheckRhs(0,2);
-  /* we ignore second argument */
+  CheckStdRhs(0,2);
+  nsp_option opts[] ={{ "gc_reset",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( get_optional_args(stack,rhs,opt,opts,&gc_reset) == FAIL)
+    return RET_BUG;
+
   if (rhs >= 1) 
     {
       if ((l1=GetRealMat(stack,1)) == NULLMAT ) return RET_BUG;
@@ -2766,7 +2771,12 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
 	  int wid = l1->R[ix];
 	  if (( Xgc=window_list_search_new(wid)) != NULL) 
 	    {
-	      Xgc->actions->erase(Xgc);
+	      NspFigure *F =  Xgc->figure;
+	      if ( F == NULL ) continue;
+	      nsp_figure_remove_children(F);
+	      if ( gc_reset == TRUE ) nsp_figure_data_reset(F);
+	      nsp_figure_invalidate((NspGraphic *) F);
+	      Xgc->graphic_engine->process_updates(Xgc);
 	    }
 	}
     } 
@@ -2775,8 +2785,10 @@ static int int_xclear_new(Stack stack, int rhs, int opt, int lhs)
       NspFigure *F = nsp_check_for_current_figure(); 
       if ( F == NULL) return RET_BUG;
       nsp_figure_remove_children(F);
-      nsp_figure_data_reset(F);
+      if ( gc_reset == TRUE ) nsp_figure_data_reset(F);
       nsp_figure_invalidate((NspGraphic *) F);
+      if ( F->obj->Xgc != NULL) 
+	((BCG *) F->obj->Xgc)->graphic_engine->process_updates(F->obj->Xgc);
     }
   return 0;
 } 
@@ -4542,9 +4554,10 @@ static int int_xstringl(Stack stack, int rhs, int opt, int lhs)
 
 static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 {
+  int bbox1[4];
   NspObject  *status;
   BCG *Xgc;
-  int rep,rec;
+  int rep;
   NspMatrix *M;
   static double  rect_def[4] = { 0,0,10,10}, ebox_def[6] = {0,1,0,1,0,1};
   static int iflag_def[4] = { 0,0,0,0 };
@@ -4556,7 +4569,6 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 
   static char *xtape_Table[] = {"on","clear","replay","replaysc","replayna","off",  NULL };
   CheckRhs(1,7);
-  Xgc=nsp_check_graphic_context();
 
   /* first argument is a string in xtape_table */
 
@@ -4566,21 +4578,21 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
     {
     case 0 : /* on */ 
       CheckRhs(1,1);
-      rec= Xgc->graphic_engine->xget_recording(Xgc);
-      Xgc->graphic_engine->xset_recording(Xgc,TRUE);
-      if ((status= nsp_new_string_obj(NVOID,(rec== TRUE) ? "on": "off",-1))== NULLOBJ)
+      if ((status= nsp_new_string_obj(NVOID, "on" ,-1))== NULLOBJ)
 	return RET_BUG;
       MoveObj(stack,1, status);
       return 1;
     case 1 : /* clear */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      /* Xgc->graphic_engine->tape_clean_plots(Xgc,num); */
+      if ((Xgc=window_list_search_new(num)) == NULL) return 0;
+      Xgc->actions->erase(Xgc);
       break;
     case 2 : /* replay */
       CheckRhs(2,2);
       if (GetScalarInt(stack,2,&num) == FAIL) return RET_BUG;
-      Xgc->graphic_engine->tape_replay(Xgc,NULL);
+      if ((Xgc=window_list_search_new(num)) == NULL) return 0;
+      Xgc->actions->replay(Xgc);
       break;
     case 3 : /* replaysc */
       CheckRhs(2,4);
@@ -4595,8 +4607,16 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	  if ((M= GetRealMatInt(stack,4))  == NULLMAT) return RET_BUG;
 	  CheckLength(NspFname(stack),4,M,4); aint = (int*) M->R;
 	}
-      replay_new_scale(Xgc,rect);
-      Xgc->graphic_engine->process_updates(Xgc);
+      if ((Xgc=window_list_search_new(num)) == NULL) return 0;
+      /*
+       * change the scales XXX 
+       */
+      bbox1[0]= XDouble2Pixel(Xgc->scales,rect[0]);
+      bbox1[1]= YDouble2Pixel(Xgc->scales,rect[1]);
+      bbox1[2]= XDouble2Pixel(Xgc->scales,rect[2]);
+      bbox1[3]= YDouble2Pixel(Xgc->scales,rect[3]);
+      nsp_figure_zoom(Xgc,bbox1);
+      Xgc->actions->replay(Xgc);
       break;
     case 4: /* replayna */
       CheckRhs(2,5);
@@ -4615,33 +4635,22 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	if ((M= GetRealMat(stack,6))  == NULLMAT) return RET_BUG;
 	CheckLength(NspFname(stack),7,M,6); ebox =  M->R;
       }
+      if ((Xgc=window_list_search_new(num)) == NULL) return 0;
+      /*
+       * change the angles 
+       */
       nsp_figure_change3d_orientation(Xgc,theta,alpha,NULL);
-      Xgc->graphic_engine->process_updates(Xgc);
+      Xgc->actions->replay(Xgc);
       break;
     case 5: /* off */
       CheckRhs(1,1);
-      rec= Xgc->graphic_engine->xget_recording(Xgc);
-      if ((status= nsp_new_string_obj(NVOID,(rec== TRUE) ? "on": "off",-1))== NULLOBJ)
+      if ((status= nsp_new_string_obj(NVOID,"on",-1))== NULLOBJ)
 	return RET_BUG;
       MoveObj(stack,1,status);
       return 1;
     }
   return 0;
 }
-
-
-static void replay_new_scale(BCG *Xgc,double *bbox) 
-{ 
-  /* get the bounding box in pixel */
-  int bbox1[4];
-  bbox1[0]= XDouble2Pixel(Xgc->scales,bbox[0]);
-  bbox1[1]= YDouble2Pixel(Xgc->scales,bbox[1]);
-  bbox1[2]= XDouble2Pixel(Xgc->scales,bbox[2]);
-  bbox1[3]= YDouble2Pixel(Xgc->scales,bbox[3]);
-  nsp_figure_zoom(Xgc,bbox1);
-}
-
-
 
 
 /**
@@ -5112,8 +5121,9 @@ static int int_xdel_new(Stack stack, int rhs, int opt, int lhs)
     } 
   else 
     {
-      BCG *loc =  window_list_get_first();
-      if ( loc != NULL) nsp_gr_delete(loc->CurWindow);
+      NspFigure *F = nsp_get_current_figure(); 
+      if ( F == NULL) return 0;
+      ((BCG *) F->obj->Xgc)->actions->delete(F->obj->Xgc);
     }
   return 0;
 }
