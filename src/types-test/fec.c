@@ -1250,7 +1250,10 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
    *  2/ loop on the triangles : each triangle is finally decomposed 
    *     into its differents zones (polygons) by the function PaintTriangle   
    */
-#if 0
+#if 0 
+  /* when using opengl we could replace the nsp paint method 
+   * by gouraud shading 
+   */
   if (  Xgc->graphic_engine == &GL_gengine ) 
     {
       for ( j = 0 ; j < Ntr ; j++) 
@@ -1258,7 +1261,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  int ii[3],isx[3],isy[3]; 
 	  /* retrieve node numbers and functions values */
 	  for ( k = 0 ; k < 3 ; k++ ) {
-	    ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
+	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
 	    zxy[k] = zone[ii[k]];
 	    isx[k]  = xm[ii[k]];   
 	    isy[k]  = ym[ii[k]];
@@ -1284,7 +1287,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    
 	  /* retrieve node numbers and functions values */
 	  for ( k = 0 ; k < 3 ; k++ ) {
-	    ii[k] = (int) triangles[j+(Ntr)*(k+1)] - 1;
+	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
 	    zxy[k] = zone[ii[k]];
 	  }
 	    
@@ -1325,4 +1328,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1329 "fec.c"
+#line 1332 "fec.c"

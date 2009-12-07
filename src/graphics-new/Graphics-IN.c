@@ -4896,7 +4896,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
 			  { NULL,t_end,NULLOBJ,-1}};
 
   NspAxes *axe;
-  NspMatrix *Mistyle,*x,*y,*Tr,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
+  NspMatrix *Mistyle,*x,*y,*Tr,*Tr1,*F,*Mrect=NULL,*Mnax=NULL,*Mzminmax=NULL;
   NspMatrix *Mcolminmax=NULL,*Mstyle=NULL,*Mcolout=NULL;
   double *rect;
   int *nax,nnz= 10, frame= -1, axes=-1,mesh = FALSE, leg_posi,paint = TRUE;
@@ -4917,11 +4917,11 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   CheckSameDims(NspFname(stack),1,2,x,y);
   CheckSameDims(NspFname(stack),1,4,x,F);
 
-  if ( Tr->n != 5) {
-    Scierror("%s: triangles have %d columns,expecting 5\n",NspFname(stack),Tr->n);
+  if ( Tr->n != 5 &&  Tr->n != 3) {
+    Scierror("%s: triangles have %d columns,expecting 3 or 5\n",NspFname(stack),Tr->n);
     return RET_BUG;
   }
-
+  
   if ( x->mn == 0 || Tr->m == 0) { return 0;} 
 
   if ( check_zminmax(stack,NspFname(stack),"zminmax",Mzminmax)== FAIL ) return RET_BUG;
@@ -4938,7 +4938,18 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
   axe->obj->axes = strf[2] -'0';
   
   /* create a gmatrix and insert-it in axes */
-  if ( ( Tr = (NspMatrix *)  nsp_object_copy_and_name("Tr",NSP_OBJECT(Tr))) == NULLMAT) return RET_BUG;
+  if ( Tr->n == 3 ) 
+    {
+      if ( ( Tr1 = (NspMatrix *)  nsp_object_copy_and_name("Tr",NSP_OBJECT(Tr))) == NULLMAT)
+	return RET_BUG;
+    }
+  else
+    {
+      if ( ( Tr1 = nsp_matrix_create("Tr",'r',Tr->m,3)) == NULLMAT)
+	return RET_BUG;
+      /* Tr1 = Tr(:,[2:4]); */
+      memcpy(Tr1->R,Tr->R+Tr->m,3*(Tr1->m)*sizeof(double));
+    }
   if ( ( F = (NspMatrix *)  nsp_object_copy_and_name("F",NSP_OBJECT(F))) == NULLMAT) return RET_BUG;
   if ( ( y = (NspMatrix *)  nsp_object_copy_and_name("y",NSP_OBJECT(y))) == NULLMAT) return RET_BUG;
   if ( ( x = (NspMatrix *)  nsp_object_copy_and_name("x",NSP_OBJECT(x))) == NULLMAT) return RET_BUG;
@@ -4959,7 +4970,7 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
     }
   if ( paint == FALSE ) mesh= TRUE;
   
-  NspFec *fec = nsp_fec_create("fec",x,y,Tr,F,Mcolminmax,Mzminmax,mesh,
+  NspFec *fec = nsp_fec_create("fec",x,y,Tr1,F,Mcolminmax,Mzminmax,mesh,
 			       paint,Mcolout,colorbar,NULL);
   if ( fec == NULL) return RET_BUG;
   /* insert the new fec */

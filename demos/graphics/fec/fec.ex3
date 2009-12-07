@@ -6,7 +6,7 @@
 load('NSP/macros/mottelet/tridem.nsp')
 
 ntri=size(nodes,2);
-T=[ones(ntri,1),nodes',ones(ntri,1)];
+T=[nodes'];
 for i=1:size(P,2)
   xset('colormap',jetcolormap(64));
   fec(xy(1,:)',xy(2,:)',T,P(:,i),strf='030',axesflag=2,mesh=%f);

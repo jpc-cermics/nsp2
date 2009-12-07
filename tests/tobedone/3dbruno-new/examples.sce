@@ -19,7 +19,7 @@ function demo_3dlib_1()
       A.children($+1)=S;
     end 
   end
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 function demo_3dlib_2() 
@@ -32,7 +32,7 @@ function demo_3dlib_2()
   x = linspace(0,2*%pi,40);
   z = cos(x')*cos(x);
   A.children(1) = zsurf_to_polyhedron(x, x, z, 1,ncol);
-  F.connect[];
+  F.invalidate[];
 endfunction
 
 
@@ -59,7 +59,7 @@ function demo_3dlib_3()
   z = 3*z/max(z);
   P = zsurf_to_spolyhedron(x, x, z, 1, 128); 
   A.children(1)=P;
-  F.connect[];
+  F.invalidate[];
 endfunction
 
 function demo_3dlib_4() 
@@ -78,7 +78,7 @@ function demo_3dlib_4()
   z = ( 2*z / max(z) );
   P = zsurf_to_spolyhedron(x, x, z, 1, 128, back_color=40); 
   A.children(1)=P;
-  F.connect[];
+  F.invalidate[];
 endfunction
 
 function demo_3dlib_5() 
@@ -94,7 +94,7 @@ function demo_3dlib_5()
   z = -cos(x')*cos(x);
   P = zsurf_to_polyhedron(x, x, z, 1, 20);
   A.children(1)=P;
-  F.connect[];
+  F.invalidate[];
 endfunction
 
 
@@ -135,7 +135,7 @@ function demo_3dlib_6()
   A.children(2)= L1;
   A.children(3)= L2;
   A.children(4)= Q;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 function demo_3dlib_7() 
@@ -156,7 +156,7 @@ function demo_3dlib_7()
   Q = zsurf_to_polyhedron(x, y, z2, 65, 128, back_color=0,mesh=%f);
   A.children(1)=P;
   A.children(2)=Q;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 
@@ -182,7 +182,7 @@ function demo_3dlib_8()
   F.children(1)= A;
   A.children(1)=Q;
   A.children(2)=P;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 
@@ -200,7 +200,7 @@ function demo_3dlib_9()
   // ,wrect=[0,0,1,1],frect=[0,-2,6,2],arect=[1,1,1,1]/12);
   F.children(1)= A;
   A.children(1)=P;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 function demo_3dlib_10() 
@@ -228,7 +228,7 @@ function demo_3dlib_10()
   F.children(1)=A;
   A.children(1)=P;
   A.children(2)=L1;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 function demo_3dlib_11() 
@@ -253,7 +253,7 @@ function demo_3dlib_11()
   F.children(1)= A;
   A.children(1)=Q;
   A.children(2)=L;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 function demo_3dlib_12() 
@@ -287,7 +287,7 @@ function demo_3dlib_12()
   C = cube();
   C.Mcoord = C.Mcoord/2;
   A.children($+1) = C;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 
@@ -312,7 +312,7 @@ function demo_3dlib_13()
   F.children(1)= A;
   A.children(1)=Q;
   A.children(2)=L;
-  F.connect[];
+  F.invalidate[];
 endfunction
 
 function demo_3dlib_14() 
@@ -335,7 +335,7 @@ function demo_3dlib_14()
     A.children($+1) = string3d_create(Mcoord=[xt;yt;1.2],str=polyedres(i));
     A.children($+1) = P;
   end
-  F.connect[];
+  F.invalidate[];
 endfunction
 
 function demo_3dlib_15() 
@@ -364,7 +364,7 @@ function demo_3dlib_15()
   A.children($+1) = D;
   A.children($+1) = T;
   A.children($+1) = H;
-  F.connect[];
+  F.invalidate[];
 endfunction 
 
 

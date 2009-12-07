@@ -891,63 +891,60 @@ static int  build_ticks_segment(Plot3dBox *B, double xmin, double xmax,
 				double ymin, double ymax, double zmin, double zmax)
 {
   int i, sg=0;
-  double d, e, axe_x[2], axe_y[2], axe_z[2], sens_x[2], sens_y[2], sens_z[2];
+  double dx,dy,dz, axe_x[2], axe_y[2], axe_z[2], sens_x[2], sens_y[2], sens_z[2];
 
-  d = (xmax-xmin + ymax-ymin + zmax-zmin)/100; /* a voir */
-  e = d/sqrt(2.0);
+  dx = Abs(ymax-ymin)*0.05;
+  dy = Abs(xmax-xmin)*0.05;
+  dz = (xmax-xmin)*(xmax-xmin) + (ymax-ymin)*(ymax-ymin);
+  dz = sqrt(dz);
   
   B->ticks_coord = malloc( 6*(B->nb_xyz_ticks)*sizeof(double) );
   if ( B->ticks_coord == NULL) return FAIL;
+  /* B->inear = 5,3,6,0 => zaxis ticks on the right 
+   * else zaxis ticks on the left 
+   */
   switch(B->inear)
     {
     default:
     case(0):
-      axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-d; sens_x[1] = 0;
-      axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-d; sens_y[1] = 0;
-      axe_z[0] = xmax; axe_z[1] = ymin; sens_z[0] = d; sens_z[1] = 0;
-      sens_z[0] = e; sens_z[1] =-e;
+      axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-dx; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-dy; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymin; sens_z[0] = 0; sens_z[1] = - dx;
       break;
     case(1):
-      axe_x[0] = ymax; axe_x[1] = zmin; sens_x[0] = d; sens_x[1] = 0;
-      axe_y[0] = xmax; axe_y[1] = zmin; sens_y[0] = d; sens_y[1] = 0;
-      axe_z[0] = xmax; axe_z[1] = ymin; sens_z[0] = 0; sens_z[1] =-d;
-      sens_z[0] = e; sens_z[1] =-e;
+      axe_x[0] = ymax; axe_x[1] = zmin; sens_x[0] = dx; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmin; sens_y[0] = dy; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymin; sens_z[0] = dy; sens_z[1] = 0;
       break;
     case(2):
-      axe_x[0] = ymin; axe_x[1] = zmin; sens_x[0] =-d; sens_x[1] = 0;
-      axe_y[0] = xmin; axe_y[1] = zmin; sens_y[0] =-d; sens_y[1] = 0;
-      axe_z[0] = xmin; axe_z[1] = ymax; sens_z[0] = 0; sens_z[1] = d;
-      sens_z[0] =-e; sens_z[1] = e;
+      axe_x[0] = ymin; axe_x[1] = zmin; sens_x[0] =-dx; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmin; sens_y[0] =-dy; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymax; sens_z[0] = - dy; sens_z[1] = 0;
       break;
     case(3):
-      axe_x[0] = ymax; axe_x[1] = zmax; sens_x[0] = d; sens_x[1] = 0;
-      axe_y[0] = xmax; axe_y[1] = zmax; sens_y[0] = d; sens_y[1] = 0;
-      axe_z[0] = xmin; axe_z[1] = ymax; sens_z[0] =-d; sens_z[1] = 0;
-      sens_z[0] =-e; sens_z[1] = e;
+      axe_x[0] = ymax; axe_x[1] = zmax; sens_x[0] = dx; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmax; sens_y[0] = dy; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymax; sens_z[0] = 0; sens_z[1] = dx;
       break;
     case(4):
-      axe_x[0] = ymin; axe_x[1] = zmin; sens_x[0] =-d; sens_x[1] = 0;
-      axe_y[0] = xmax; axe_y[1] = zmin; sens_y[0] = d; sens_y[1] = 0;
-      axe_z[0] = xmin; axe_z[1] = ymin; sens_z[0] =-d; sens_z[1] = 0;
-      sens_z[0] =-e; sens_z[1] =-e;
+      axe_x[0] = ymin; axe_x[1] = zmin; sens_x[0] =-dx; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmin; sens_y[0] = dy; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymin; sens_z[0] = 0; sens_z[1] = - dx;
       break;
     case(5):
-      axe_x[0] = ymax; axe_x[1] = zmax; sens_x[0] = d; sens_x[1] = 0;
-      axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-d; sens_y[1] = 0;
-      axe_z[0] = xmin; axe_z[1] = ymin; sens_z[0] = 0; sens_z[1] =-d;
-      sens_z[0] =-e; sens_z[1] =-e;
+      axe_x[0] = ymax; axe_x[1] = zmax; sens_x[0] = dx; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmax; sens_y[0] =-dy; sens_y[1] = 0;
+      axe_z[0] = xmin; axe_z[1] = ymin; sens_z[0] = -dy; sens_z[1] = 0;
       break;
     case(6):
-      axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-d; sens_x[1] = 0;
-      axe_y[0] = xmax; axe_y[1] = zmax; sens_y[0] = d; sens_y[1] = 0;
-      axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = 0; sens_z[1] = d;
-      sens_z[0] = e; sens_z[1] = e;
+      axe_x[0] = ymin; axe_x[1] = zmax; sens_x[0] =-dx; sens_x[1] = 0;
+      axe_y[0] = xmax; axe_y[1] = zmax; sens_y[0] = dy; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = 0; sens_z[1] = dx;
       break;
     case(7):
-      axe_x[0] = ymax; axe_x[1] = zmin; sens_x[0] = d; sens_x[1] = 0;
-      axe_y[0] = xmin; axe_y[1] = zmin; sens_y[0] =-d; sens_y[1] = 0;
-      axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = d; sens_z[1] = 0;
-      sens_z[0] = e; sens_z[1] = e;
+      axe_x[0] = ymax; axe_x[1] = zmin; sens_x[0] = dx; sens_x[1] = 0;
+      axe_y[0] = xmin; axe_y[1] = zmin; sens_y[0] =-dy; sens_y[1] = 0;
+      axe_z[0] = xmax; axe_z[1] = ymax; sens_z[0] = 0 ; sens_z[1] = dx;
       break;
     }
 
