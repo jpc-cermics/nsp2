@@ -5900,9 +5900,9 @@ static int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-static int scicos_draw_3d(double r[],int color,double size3d)
+static int scicos_draw_3d_new(double r[],int color,double size3d)
 {
-  int mark=-2,mark_size=-2,thickness=1,fill_color=color;
+  int mark=-2,mark_size=-2,thickness=1,fill_color=-2; /* color; */
   NspPolyline *pl;
   NspMatrix *Mx,*My;
   NspObject *gobj;
@@ -5910,6 +5910,10 @@ static int scicos_draw_3d(double r[],int color,double size3d)
   NspAxes *axe;
   double x[]={r[0],r[0]     ,r[0]+r[2],r[0]+r[2]-size3d,r[0]-size3d     ,r[0]-size3d};
   double y[]={r[1],r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d,r[1]-size3d};
+
+  /* XXX: here we need the scicos 3d color */
+  color=5;
+  fill_color=color;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
   if ((Mx = nsp_matrix_create("x",'r',6,1))== NULLMAT) return FAIL;
@@ -5921,7 +5925,7 @@ static int scicos_draw_3d(double r[],int color,double size3d)
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL) return FAIL;
   if ((gobj =(NspObject *) nsp_grrect_create("pl",r[0],r[1],r[2],r[3],
-					      -1,2,color,NULL))== NULL)
+					      -2,thickness,color,NULL))== NULL)
     return FAIL;
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL) return FAIL;
@@ -5944,7 +5948,7 @@ static int int_scicos_draw3D(Stack stack, int rhs, int opt, int lhs)
   rect[1]=orig->R[1]+size->R[1];
   rect[2]=size->R[0]-e;
   rect[3]=size->R[1]-e;
-  if ( scicos_draw_3d(rect,color,e) == FAIL) return RET_BUG;
+  if ( scicos_draw_3d_new(rect,color,e) == FAIL) return RET_BUG;
   return 0;
 } 
 
@@ -5954,7 +5958,7 @@ typedef  enum { SLD_NORTH=0, SLD_SOUTH=1, SLD_EAST=2, SLD_WEST=3, SLD_ANY=4 }
 typedef  enum { SL_IN=0  ,SL_OUT=1 ,SL_EVIN=2,SL_EVOUT=3 , SL_SQP=4, SL_SQM=5 } 
   slock_type;
 
-static int lock_draw(const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
+static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
 {
   NspPolyline *pl;
   NspAxes *axe; 
@@ -6033,7 +6037,7 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(5,5);
   if ( GetArgs(stack,rhs,opt,T,&Mpt,&xf,&yf,&dir,&typ) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,Mpt,2);
-  lock_draw(Mpt->R,xf/9.0,yf/3.5,dir,typ,1);
+  lock_draw_new(Mpt->R,xf/9.0,yf/3.5,dir,typ,1);
   return 0;
 } 
 
