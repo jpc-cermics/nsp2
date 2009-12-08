@@ -5911,8 +5911,7 @@ static int scicos_draw_3d_new(double r[],int color,double size3d)
   double x[]={r[0],r[0]     ,r[0]+r[2],r[0]+r[2]-size3d,r[0]-size3d     ,r[0]-size3d};
   double y[]={r[1],r[1]-r[3],r[1]-r[3],r[1]-r[3]-size3d,r[1]-r[3]-size3d,r[1]-size3d};
 
-  /* XXX: here we need the scicos 3d color */
-  color=5;
+  /* here we need the scicos 3d color */
   fill_color=color;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
@@ -6006,11 +6005,16 @@ static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,sl
     }
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
+
+  {
+    nsp_figure *F = ((NspGraphic *) axe)->obj->Fig;
+    fill_color= color = F->gc->pattern ;
+  }
+
   if ((Mx= nsp_matrix_create("x",'r',npt,1))== NULLMAT) return FAIL;
   if ((My= nsp_matrix_create("y",'r',npt,1))== NULLMAT) return FAIL;
   memcpy(Mx->R,x,npt*sizeof(double));
   memcpy(My->R,y,npt*sizeof(double));
-  fill_color= color= -1;
   thickness= -1;
   if ( typ == SL_SQP )
     {

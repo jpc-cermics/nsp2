@@ -5718,6 +5718,7 @@ int Nsetscale3d_new(BCG *Xgc,const double *WRect,const double *ARect,
 
 static int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 {
+  int axesflag= 0, iso = FALSE, clip=TRUE;
   int fixed = TRUE, axe3d=FALSE;
   BCG *Xgc;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
@@ -5762,9 +5763,14 @@ static int int_xsetech(Stack stack, int rhs, int opt, int lhs)
 			 {"wrect",realmat,NULLOBJ,-1},
 			 {"fixed",s_bool,NULLOBJ,-1},
 			 {"a3d",s_bool,NULLOBJ,-1},
+			 {"axesflag",s_int,NULLOBJ,-1}, /* ignored in old graphics */
+			 {"iso",s_bool,NULLOBJ,-1}, /* ignored in old graphics */
+			 {"clip",s_bool,NULLOBJ,-1}, /* ignored in old graphics */
 			 {NULL,t_end,NULLOBJ,-1},};
 
-      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed,&axe3d) == FAIL) return RET_BUG;
+
+      if ( GetArgs(stack,rhs,opt,T,&opts,&Marect,&Mfrect,&logflag,&Mwrect,&fixed,&axe3d,
+		   &axesflag,&iso,&clip) == FAIL) return RET_BUG;
 
       if ( Marect != NULL) {
 	arect = Marect->R;CheckLength(NspFname(stack),opts[0].position,Marect,4);
