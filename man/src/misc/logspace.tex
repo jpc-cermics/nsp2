@@ -19,7 +19,7 @@
 \begin{mandescription}
   \verb+logspace+ computes a row vector of $n$ components logarithmically spaced from $10^a$ to $10^b$ :
 $$
-    x_i = 10^{a + \frac{b-a}{n} (i-1)}, \quad i = 1, \dots, n
+    x_i = 10^{a + \frac{b-a}{n-1} (i-1)}, \quad i = 1, \dots, n
 $$
 
    When $a$ and $b$ are column vectors, the $i$ th row of $x$ is such a vector starting from $10^{a(i)}$ and ended
