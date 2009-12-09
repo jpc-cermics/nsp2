@@ -5039,7 +5039,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
                       { "which",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
-  char *which=NULL, iwhich='e', *which_possible_choices[]={ "elems", "rows", "columns", NULL };
+  char *which=NULL, iwhich='e', *which_possible_choices[]={ "elements", "rows", "columns", NULL };
   int rep_ind_type, rep_which;
 
   if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind, &ind_type, &which) == FAIL ) 
