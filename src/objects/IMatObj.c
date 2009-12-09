@@ -2828,11 +2828,13 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {imatcopy,new_opts,t_end} ;
   nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
 		      { "ind_type",string,NULLOBJ,-1},
+                      { "which",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
-  int rep_ind_type;
+  char *which=NULL, iwhich='e', *which_possible_choices[]={ "elems", "rows", "columns", NULL };
+  int rep_ind_type, rep_which;
 
-  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type, &which) == FAIL ) 
     return RET_BUG;
 
   if ( opts[0].obj == NULLOBJ) first_ind = FALSE;
@@ -2846,6 +2848,16 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 	} 
       itype = ind_type_possible_choices[rep_ind_type][0];
     }
+  
+  if ( which != NULL )
+    {
+      if ( (rep_which= is_string_in_array(which, which_possible_choices,0)) == -1 ) 
+	{
+	  string_not_in_array(stack, which, which_possible_choices, "optional argument which");
+	  return RET_BUG;
+	} 
+      iwhich = which_possible_choices[rep_which][0];
+    }
 
   CheckLhs(1,3);
 
@@ -2855,8 +2867,21 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
       if ( lhs == 3 ) Occ = &occ;
     }
 
-  if ( nsp_imatrix_unique(x, Ind, Occ, first_ind, itype) == FAIL )
-    return RET_BUG;
+  if ( iwhich == 'e' )
+    {
+      if ( nsp_imatrix_unique(x, Ind, Occ, first_ind, itype) == FAIL )
+	return RET_BUG;
+    }
+  else if ( iwhich == 'r' )
+    {
+      if ( nsp_imatrix_unique_rows(x, Ind, Occ, itype) == FAIL )
+	return RET_BUG;
+    }
+  else /*  iwhich == 'c'  */
+    {
+      if ( nsp_imatrix_unique_columns(x, Ind, Occ, itype) == FAIL )
+	return RET_BUG;
+    }
 
   NSP_OBJECT(x)->ret_pos = 1; 
   if ( lhs >= 2 ) 
