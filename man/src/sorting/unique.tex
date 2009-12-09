@@ -2,7 +2,7 @@
 
 \mansection{unique}
 \begin{mandesc}
-  \short{unique}{compute unique components of a vector or of a list}
+  \short{unique}{compute unique components of a vector or of a list or unique rows or columns of a matrix}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -10,25 +10,31 @@
 \begin{verbatim}
 y = unique(x)
 [y [,ind [,occ]]] = unique(x)
-[y [,ind [,occ]]] = unique(x,first_ind=value, ind_type=str)
+[y [,ind [,occ]]] = unique(x,first_ind=value, ind_type=str, which=str)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{x}: vector of numbers or strings or cells, or a list.
-    \vname{y}: vector (or list when x is a list) containing unique components of x
+    \vname{x}: vector (or matrix) of numbers (real float (Mat) or integers (IMat) or strings 
+               or cells, or a list.
+    \vname{y}: vector (or matrix for unique with rows or columns) or list (when x is a list) containing 
+               unique components of x (or the unique rows or columns, see option which)
     \vname{ind}: vector of same length than y, ind(i) is an index
                  such that y(i)=x(ind(i)). \verb+ind+ could be stored in an array of
                  floating point numbers (Mat) (the default) or in an array of 
                  usual C integers (IMat of itype int) if you use \verb+ind_type = "int"+
     \vname{occ}: vector of same length than y, occ(i) is the number
-                  of occurrences of y(i) in the x.
+                 of occurrences of y(i) in the vector x.
     \vname{first\_ind}: optional boolean scalar, useful only when x is a vector
     of numbers or strings. In this case using \verb!first_ind=%t! ind(i) is
     the smaller index such that y(i) = x(ind(i)).
     \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
     which gives the type for the index vector  \verb+ind+. 
+    \vname{which = str}: named optional argument, a string among \verb+{"elements","columns","rows"}+ (default is
+    \verb+"elements"+) or any non ambiguous abreviation. This option is useful only for matrices of floating 
+       point numbers (Mat) or integer numbers (IMat) for which the unique operation can be done also for
+       columns or rows.
   \end{varlist}
 \end{parameters}
 
@@ -36,51 +42,72 @@ y = unique(x)
   This function computes the unique components of a vector of numbers,
   strings or cells. As the number of occurrences of each unique
   component may be returned, it can be also useful for basic statistic
-  computations.
-
-
+  computations. Using the option \verb+which = "rows"+ or \verb+which = "columns"+ 
+  you got instead of the unique elements, the unique rows or columns of the entry 
+  matrix. 
 \end{mandescription}
+
 
 \begin{examples}
 
 \paragraph{example 1} with a vector of numbers
-\begin{program}\HCode{x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];\Hnewline
-[y, ind, occ] = unique(x)}
-\end{program}
+\begin{Verbatim}
+x = [0.5, -1, 2, 2, -1, 0.5, 2, -1, 2];
+[y, ind, occ] = unique(x)
+\end{Verbatim}
 
 \paragraph{example 2} with a vector of strings:
-\begin{program}\HCode{x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
-[y, ind, occ] = unique(x)}
-\end{program}
+\begin{Verbatim}
+x = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
+[y, ind, occ] = unique(x)
+\end{Verbatim}
 
 \paragraph{example 3} with a vector of cells:
-\begin{program}\HCode{x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}\Hnewline
+\begin{Verbatim}
+x = {["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], {"toto"}, {"toto"}}
 [y, ind, occ] = unique(x)}
-\end{program}
+\end{Verbatim}
 
 \paragraph{example 4} with a list:
-\begin{program}\HCode{x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")\Hnewline
-[y, ind, occ] = unique(x)}
-\end{program}
+\begin{Verbatim}
+x = list(["foo", "bar"], [0;1], [0,1], ["foo", "bar"], [0;1], "toto", "toto")
+[y, ind, occ] = unique(x)
+\end{Verbatim}
 
-\paragraph{example 5} using unique for basic statistic:
-\begin{program}\HCode{// generate a big sample of the binomial distribution B(6,0.4)\Hnewline
-m = 1e5;\Hnewline
-x = grand(m,1,"bin",6,0.4); \Hnewline
-// computes the empirical probabilities associated to each values\Hnewline
-[y, ind, occ] = unique(x);\Hnewline
-p_emp = occ/m;\Hnewline
-// computes exact probabilities (using the cumulative distribution func)\Hnewline
-v = ones(7,1);\Hnewline
-p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);\Hnewline
-p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];\Hnewline
-// compare both empirical and exact ones\Hnewline
-xbasc()\Hnewline
-e = 0.05;\Hnewline
-plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...\Hnewline
-         rect=[-1,0,7,1.1*max(p_exact)],...\Hnewline
-         leg="exact probabilies@empirical probabilities")}
-\end{program}
+\paragraph{example 5} using unique for rows or columns:
+\begin{Verbatim}
+// for columns
+A = grand(2,8,"uin",-1,1)
+B = unique(A,which="columns")  // or simply which="c"
+[B,ind,occ] = unique(A,which="col")
+
+// for rows
+A = grand(8,2,"uin",-1,1)
+B = unique(B,which="rows")     // or simply which="r"
+[B,ind,occ] = unique(A,which="rows")
+\end{Verbatim}
+
+
+\paragraph{example 6} using unique for basic statistic:
+\begin{Verbatim}
+// generate a big sample of the binomial distribution B(6,0.4)
+m = 1e5;
+x = grand(m,1,"bin",6,0.4); 
+// computes the empirical probabilities associated to each values
+[y, ind, occ] = unique(x);
+p_emp = occ/m;
+// computes exact probabilities (using the cumulative distribution func)
+v = ones(7,1);
+p_cum = cdfbin("PQ", (0:6)', 6*v, 0.4*v, 0.6*v);
+p_exact = [p_cum(1); p_cum(2:$)-p_cum(1:$-1)];
+// compare both empirical and exact ones
+xbasc()
+e = 0.05;
+plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...
+         rect=[-1,0,7,1.1*max(p_exact)],...
+         leg="exact probabilies@empirical probabilities")
+\end{Verbatim}
+
 \end{examples}
 
 \begin{manseealso}
