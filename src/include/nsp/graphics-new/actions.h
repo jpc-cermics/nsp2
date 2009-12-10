@@ -22,7 +22,7 @@ typedef void driver_gc_resize(BCG *Xgc);
 typedef void driver_gc_resize_pixmap(BCG *Xgc);
 typedef int driver_gc_savesg(BCG *Xgc,const char *filename);
 typedef void driver_gc_select(BCG *Xgc);
-typedef void driver_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *driver,char option);
+typedef void driver_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *driver,char option,int export_bg_flag);
 typedef void driver_gc_unzoom(BCG *Xgc);
 
 typedef struct _nsp_gc_actions Nsp_gc_actions ;

@@ -959,9 +959,11 @@ static int  xset_pattern(BCG *Xgc,int color)
 #include <cairo-ps.h>
 #include <cairo-svg.h>
 
-static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,const char *driver,char option);
+static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,const char *driver,
+				char option,int figure_bg_draw);
 
-int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option)
+int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option,
+		     int figure_bg_draw)
 {
   NspGraphic *G;
   /* default is to follow the window size */
@@ -978,7 +980,7 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
       return FAIL;
 #else 
       /* we are trying to export with cairo a non cairo window */
-      return nsp_cairo_export_mix(Xgc,win_num,colored,bufname,driver,option);
+      return nsp_cairo_export_mix(Xgc,win_num,colored,bufname,driver,option,figure_bg_draw);
 #endif 
     }
   if ( strcmp(driver,"cairo-pdf")==0 ) 
@@ -1017,12 +1019,15 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
   else
     Xgc->graphic_engine->xset_usecolor(Xgc,0);
   
+  Xgc->figure_bg_draw = figure_bg_draw;
+
   if ((G = (NspGraphic *) Xgc->figure)!= NULL)
     {
       G->type->draw(Xgc,G,NULL,NULL);
     }
   
-  
+  Xgc->figure_bg_draw = TRUE;
+
   Xgc->private->cairo_cr = cr_current;
   Xgc->graphic_engine->xset_usecolor(Xgc,uc);
   cairo_show_page (cr);
@@ -1077,7 +1082,7 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
 
 
 static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
-				const char *driver,char option)
+				const char *driver,char option, int figure_bg_draw)
 {
   NspGraphic *G;
   int v1=-1,win,cwin;
@@ -1124,12 +1129,13 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   Xgc1->CWindowWidth=   Xgc->CWindowWidth;
   Xgc1->CWindowHeight=  Xgc->CWindowHeight;
   Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
+  Xgc1->figure_bg_draw = figure_bg_draw;
   G = (NspGraphic *) Xgc->figure ;
   G->type->draw(Xgc1,G,NULL,NULL);
   cairo_show_page (cr);
   if ( strcmp(driver,"cairo-png")==0 )
     cairo_surface_write_to_png (surface,bufname);
-  
+  Xgc1->figure_bg_draw = TRUE;
   cairo_destroy (cr); 
   cairo_surface_destroy (surface); 
   if ( Xgc1 != Xgc ) 

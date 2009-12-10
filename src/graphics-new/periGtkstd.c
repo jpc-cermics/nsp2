@@ -235,12 +235,18 @@ static void clearwindow(BCG *Xgc)
   /* we use the private->stdgc graphic context */
 #ifdef PERICAIRO
   cr =  Xgc->private->cairo_cr;
-  cairo_set_source_rgb(cr,
-		       Xgc->private->gcol_bg.red/65535.0,
-		       Xgc->private->gcol_bg.green/65535.0,
-		       Xgc->private->gcol_bg.blue/65535.0);
-  cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
-  cairo_fill (cr);
+  /* when exporting , figure background should not 
+   * be painted when  Xgc->figure_bg_draw is not TRUE
+   */
+  if ( Xgc->figure_bg_draw == TRUE ) 
+    {
+      cairo_set_source_rgb(cr,
+			   Xgc->private->gcol_bg.red/65535.0,
+			   Xgc->private->gcol_bg.green/65535.0,
+			   Xgc->private->gcol_bg.blue/65535.0);
+      cairo_rectangle (cr,0,0, Xgc->CWindowWidth, Xgc->CWindowHeight);
+      cairo_fill (cr);
+    }
 #endif 
 #ifdef PERIGTK  
   gdk_gc_set_rgb_fg_color(Xgc->private->stdgc,&Xgc->private->gcol_bg);

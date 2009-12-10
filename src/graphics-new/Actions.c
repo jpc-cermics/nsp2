@@ -122,13 +122,13 @@ void nsp_gr_delete(int winid)
  * 
  **/
 
-void nsp_gr_export(const char *fname, int winid, int color,const char *driver,char option)
+void nsp_gr_export(const char *fname, int winid, int color,const char *driver,char option, int figure_export)
 {
   BCG *Xgc;
   if ( (Xgc= window_list_search(winid)) == NULL) return;
   int sc = color;
   if ( color == -1 )  getcolordef(&sc);
-  Xgc->actions->tops(Xgc,sc,fname,driver,option);
+  Xgc->actions->tops(Xgc,sc,fname,driver,option,figure_export);
 }
 
 /**
@@ -308,11 +308,12 @@ extern BCG ScilabGCPos ; /* sans doute à changer FIXME XXX */
 extern BCG ScilabGCXfig ;
 extern Gengine Pos_gengine, XFig_gengine ; 
 
-extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option);
+extern int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const char *driver,char option,
+			    int figure_bg_draw);
 
 
 
-static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *driver,char option)
+static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *driver,char option,int figure_bg_draw)
 {
   NspGraphic *G;
   int wdim[2],*wdim_p=NULL;
@@ -332,7 +333,7 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
     {
       /* Try to switch to export via cairo. 
        */
-      int rep = nsp_cairo_export(Xgc,Xgc->CurWindow,colored,bufname,driver,option);
+      int rep = nsp_cairo_export(Xgc,Xgc->CurWindow,colored,bufname,driver,option,figure_bg_draw);
       if ( rep == OK ) 
 	{
 	  nsp_gr_buzy = 0;

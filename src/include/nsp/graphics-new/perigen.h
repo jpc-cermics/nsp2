@@ -121,6 +121,10 @@ struct __BCG
   BCG_PRIVATE *private ;  /* only visible when inside a specific driver */ 
 #endif 
   nsp_event_queue queue; /* a queue for storing event when outside xclick */
+  int figure_bg_draw;   /* used in exporting: if true draw the figure background 
+			 * if false do not so as to obtain transparent icons 
+			 * used for creating icons from graphics.
+			 */
 } ;
 
 

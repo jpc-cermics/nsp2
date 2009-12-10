@@ -189,7 +189,7 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   NewXgc->CurResizeStatus = -1; /* to be sure that next will initialize */
   NewXgc->CurColorStatus = -1;  /* to be sure that next will initialize */
   for ( i = 0 ; i < 4 ; i++) NewXgc->zrect[i]=0;
-
+  NewXgc->figure_bg_draw = TRUE;
   /* cairo graphics without window */
 #ifdef PERICAIRO
   if ( string == NULL || string[0]=='\0' ) 

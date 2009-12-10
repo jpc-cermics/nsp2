@@ -2093,7 +2093,7 @@ static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
   NspGrArc *arc;
   NspAxes *axe; 
   double *val=NULL;
-  int back=-1,color=-1,width=-1;
+  int back=-2,color=-1,width=-1;
   nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},
 		      { "thickness",s_int,NULLOBJ,-1},
@@ -2121,7 +2121,33 @@ static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
 
 static int int_xfarc_new(Stack stack, int rhs, int opt, int lhs) 
 {
-  return int_xarc_new(stack,rhs,opt,lhs);
+  NspGrArc *arc;
+  NspAxes *axe; 
+  double *val=NULL;
+  int back=-1,color=-2,width=-1;
+  nsp_option opts[] ={{ "background",s_int,NULLOBJ,-1},
+		      { "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,6);
+  if ( get_arc(stack,rhs,opt,lhs,&val)==FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
+
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
+    return RET_BUG;
+  /* insert the object */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) arc,TRUE)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(arc));
+      return 1;
+    }
+  return 0;
 }
 
 /**
@@ -5146,13 +5172,16 @@ static int int_xdel_new(Stack stack, int rhs, int opt, int lhs)
 static int int_export_G(Stack stack, int rhs, int opt, int lhs,char *export_format)
 {
   int win_id,rep=1,color=-1;
+  int figure_background=TRUE; /* export with figure background drawing*/
   char *filename= NULL, *mode = NULL;
   static char *Table[] = {"d", "l", "n", "p", "k", NULL};
   int_types T[] = {s_int,string, new_opts, t_end} ;
   nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
 		      { "mode",string,NULLOBJ,-1},
+		      { "figure_background",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&win_id,&filename,&opts,&color,&mode) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&win_id,&filename,&opts,&color,&mode,&figure_background) == FAIL) 
+    return RET_BUG;
   if ( mode != NULL) 
     {
       rep = is_string_in_array(mode,Table,1);
@@ -5185,7 +5214,7 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,char *export_form
 	}
       export_format = Ftable[frep];
     }
-  nsp_gr_export(filename,win_id,color,export_format,Table[rep][0]);
+  nsp_gr_export(filename,win_id,color,export_format,Table[rep][0],figure_background);
   return 0;
 }
 
