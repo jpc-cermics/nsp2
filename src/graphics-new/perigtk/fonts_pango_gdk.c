@@ -213,7 +213,8 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
  * 
  */
 
-static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle)
+static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle,
+			  gr_str_posx posx, gr_str_posy posy )
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
@@ -231,6 +232,12 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
    */
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  if ( posy == GR_STR_YBASELINE ) 
+    {
+      PangoLayoutLine *line;
+      line = pango_layout_get_line(Xgc->private->layout,0);
+      pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
+    }
   if ( Abs(angle) >= 0.1) 
     {
       double xt,yt;
@@ -255,9 +262,10 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
 		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
       pango_context_set_matrix (Xgc->private->context,NULL);
       pango_layout_context_changed (Xgc->private->layout);
-      if (1) 
+      if (flag ) 
 	{
-	  /* draw the bounding box */
+	  /* draw the enclosing polyline 
+	   */
 	  int vx[]={x,x,x,x},vy[]={y,y,y,y};
 	  double dx,dy;
 	  dx =  0 * matrix.xx + -height * matrix.xy + matrix.x0;
@@ -274,10 +282,24 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
     }
   else
     {
+      int xpos,ypos;
       /* horizontal string */
-      if (0)
-	gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc, FALSE,x,y - height,width,height);
-      gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,x,y - height,Xgc->private->layout);
+      switch( posx ) 
+	{
+	case GR_STR_XLEFT: xpos = x; break;
+	case GR_STR_XCENTER: xpos = x - width/2; break;
+	case GR_STR_XRIGHT: xpos = x - width; break;
+	}
+      switch( posy ) 
+	{
+	case GR_STR_YBOTTOM: ypos = y -height; break;
+	case GR_STR_YCENTER:  ypos = y - height/2; break;
+	case GR_STR_YBASELINE: ypos = y + logical_rect.y; break;
+	case GR_STR_YUP:  ypos = y ; break;
+	} 
+      if ( flag == TRUE )
+	gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc,FALSE,xpos,ypos,width,height);
+      gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,xpos,ypos,Xgc->private->layout);
     }
 }
 

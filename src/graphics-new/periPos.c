@@ -887,7 +887,8 @@ static void pixmap_resize(BCG *Xgc)
   around the string.}
   -----------------------------------------------------*/
 
-static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle)
+static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle,
+			  gr_str_posx posx, gr_str_posy posy)
 {     
   int i,rect[4] ;
   int yn = (int) (y + ascentPos(Xgc));

@@ -62,6 +62,9 @@ struct  _nsp_event_queue {
   nsp_gwin_event elems[MaxCB];
 };
 
+
+
+
 /* 
  * structure for storing data associated to a graphic window  
  */

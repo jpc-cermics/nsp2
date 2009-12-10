@@ -502,7 +502,8 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
  * 
  */
 
-static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle)
+static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle,
+			  gr_str_posx posx, gr_str_posy posy)
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;

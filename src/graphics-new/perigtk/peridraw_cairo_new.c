@@ -566,7 +566,8 @@ static void boundingbox_cairo(BCG *Xgc,char *string, int x, int y, int *rect)
 
 /* pango layout + cairo */
 
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
+static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle,
+			  gr_str_posx posx, gr_str_posy posy )
 { 
   int width,height;
   cairo_t *cr =  Xgc->private->cairo_cr;

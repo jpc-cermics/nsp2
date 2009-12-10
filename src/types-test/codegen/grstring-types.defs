@@ -9,11 +9,12 @@
    '("double" "y" ) 
    '("char*" "font" ) 
    '("NspSMatrix*" "text" ) 
-   '("int" "position" ) 
    '("double" "angle" "std" "0.0" ) 
-   '("double" "w") ;;
-   '("double" "h") ;; 
+   '("double" "w" "std" "0.0")
+   '("double" "h" "std" "0.0")
    '("int" "fill" "std" "0")
+   '("int" "posx" ) 
+   '("int" "posy" ) 
     )
   (gtype-id "Grstring")
 )

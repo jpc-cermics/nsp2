@@ -384,11 +384,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	      posi[1] = inint(YScaleR_d(Xgc->scales,xd,yd));
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
-	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
+	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  if ( logflag == 'l' )
 	    {
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
-	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle);
+	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
@@ -496,12 +496,14 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	    }
 
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,textcolor);
-	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle);
+	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,
+					     GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  if ( logflag == 'l' )
 	    {
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
 	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
-						 (posi[1] += logrect[3],posi[1]),flag,angle);
+						 (posi[1] += logrect[3],posi[1]),flag,angle,
+						 GR_STR_XLEFT, GR_STR_YBOTTOM);
 	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);

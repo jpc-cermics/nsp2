@@ -11,6 +11,9 @@
 
 #include <gdk/gdk.h> 
 
+typedef enum { GR_STR_XLEFT ,GR_STR_XCENTER , GR_STR_XRIGHT} gr_str_posx;
+typedef enum { GR_STR_YBOTTOM ,GR_STR_YCENTER , GR_STR_YBASELINE, GR_STR_YUP } gr_str_posy;
+
 extern void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy,int n, int *clip_box , int onemore);
 
 typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
@@ -21,7 +24,8 @@ typedef void driver_boundingbox( BCG *gc,char *string, int x, int y, int *rect);
 typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
 typedef void driver_displaynumbers( BCG *gc,int *x, int *y, int n, int flag, double *z, double *alpha);
-typedef void driver_displaystring( BCG *gc,char *string, int x, int y, int flag, double angle);
+typedef void driver_displaystring( BCG *gc,char *string, int x, int y, int flag, double angle,
+				   gr_str_posx posx, gr_str_posy posy);
 typedef void driver_drawarc( BCG *gc, int arc[]);
 typedef void driver_drawarcs( BCG *gc, int *vects, int *style, int n);
 typedef void driver_drawarrows( BCG *gc,int *vx, int *vy, int n, int as, int *style, int iflag);

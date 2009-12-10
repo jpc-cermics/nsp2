@@ -4303,13 +4303,27 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
 
 static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 {
+  int iposx = 0; /* left */
+  int iposy = 0; /* bottom */
   NspGrstring *grs;
   NspAxes *axe;
   NspSMatrix *S,*Sk;
-  double x,y,yi,angle=0.0;
-  int flagx=0;
+  double x,y,yi,angle=0.0, h = 0.0, w = 0.0;
+  int flagx=0, box=FALSE, fill= FALSE;
+  char *posx=NULL,*posy=NULL;
+  
+  nsp_option opts[] ={
+    { "angle", s_double, NULLOBJ,-1},
+    { "box",s_bool,NULLOBJ,-1}, /* draw a box around the string */
+    { "fill",s_bool,NULLOBJ,-1}, /* when (w,h) is given the string must fill the 
+				  * given box i.e change the font size */
+    { "h",s_double,NULLOBJ,-1}, 
+    { "w",s_double,NULLOBJ,-1},
+    { "posx", string ,NULLOBJ,-1},    /* position in x */
+    { "posy", string ,NULLOBJ,-1},    /* position in y */
+    { NULL,t_end,NULLOBJ,-1}};
 
-  CheckRhs(3,5);
+  CheckStdRhs(3,5);
   
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
@@ -4318,8 +4332,34 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   if (( S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) {  return 0;} 
 
-  if (rhs >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
-  if (rhs >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
+  if (rhs -opt >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
+  if (rhs -opt >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
+  
+
+  if ( get_optional_args(stack,rhs,opt,opts,&angle,&box,&fill,&h,&w,&posx,&posy) == FAIL)
+    return RET_BUG;
+
+  if ( posx != NULL) 
+    {
+      static char *x_table[] = {"left","center", "right", NULL};
+      iposx  = is_string_in_array(posx, x_table,1);
+      if ( iposx < 0 ) 
+	{
+	  string_not_in_array(stack,posx,x_table,"optional argument mode");
+	  return RET_BUG;
+	}
+    }
+  
+  if ( posy != NULL) 
+    {
+      static char *y_table[] = {"bottom","center", "baseline","up", NULL};
+      iposy = is_string_in_array(posy, y_table,1);
+      if ( iposy  < 0 ) 
+	{
+	  string_not_in_array(stack,posy,y_table,"optional argument mode");
+	  return RET_BUG;
+	}
+    }
 
   if ( S->n != 1 ) 
     {
@@ -4332,8 +4372,9 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
 
+
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,0,angle,0.0,0.0,0,NULL))== NULL) 
+  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,angle,w,h,fill,iposx,iposy ,NULL))== NULL) 
     return RET_BUG;
   /* insert the new string */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) grs, TRUE)== FAIL) 
@@ -4404,7 +4445,7 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   NspGrstring *grs;
   NspAxes *axe;
   char * info;
-  int fill =0;
+  int fill = FALSE;
   double x,y,w,h,angle=0.0;
   NspSMatrix *S,*Sk;
 
@@ -4419,7 +4460,7 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   if (rhs == 6) {
     if ((info = GetString(stack,6)) == (char*)0) return RET_BUG;
     if ( strncmp(info,"fill",4) == 0) 
-      fill =1;
+      fill = TRUE;
     else 
       {
 	Scierror("%s: optional argument has a wrong value 'fill' expected\n",NspFname(stack));
@@ -4440,7 +4481,9 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   /* 10 for xstringb: to be simplified latter */
-  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,10,angle,w,h,fill,NULL))== NULL) 
+  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,angle,w,h,fill,
+				  GR_STR_XLEFT, GR_STR_YBOTTOM,
+				  NULL))== NULL) 
     return RET_BUG;
   /* insert the new string */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
@@ -4484,7 +4527,7 @@ static int int_xstringc(Stack stack, int rhs, int opt, int lhs)
   if ((S = GetSMatUtf8(stack,2)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) return 0; 
   if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return RET_BUG;
- 
+  
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&fill,&frame,&thickness) == FAIL) return RET_BUG;
 
   Xgc=nsp_check_graphic_context();
@@ -4529,10 +4572,17 @@ static int int_xstringc(Stack stack, int rhs, int opt, int lhs)
 
 /*-----------------------------------------------------------
  *  rect=xstringl(x,y,str)
+ *
+ * Note that this function can only be used with a figure 
+ * which has already computed scales or the result can be 
+ * unpredicted. It should be removed in new_graphics ? 
+ * and replaced by options of xstring. 
  *-----------------------------------------------------------*/
 
-static int int_xstringl(Stack stack, int rhs, int opt, int lhs)
+static int int_xstringl_new(Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_figure *F;
+  NspAxes *axe;
   BCG *Xgc;
   NspSMatrix *S;
   NspMatrix *M;
@@ -4558,8 +4608,10 @@ static int int_xstringl(Stack stack, int rhs, int opt, int lhs)
       if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
     }
 
-  Xgc=nsp_check_graphic_context();
-
+  if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
+  F = ((NspGraphic *) axe)->obj->Fig;
+  Xgc = F->Xgc;
+  *Xgc->scales = axe->obj->scale;
   for (i = S->m -1 ; i >= 0; --i) 
     {
       Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
@@ -6388,7 +6440,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xstring"),int_xstring_new},
   {NAMES("xstringb"),int_xstringb},
   {NAMES("xstringc"),int_xstringc},
-  {NAMES("xstringl"),int_xstringl},
+  {NAMES("xstringl"),int_xstringl_new},
   {NAMES("xtape"),int_xtape},
   {NAMES("xtitle"),int_xtitle},
   {NAMES("scicos_draw3D"), int_scicos_draw3D},

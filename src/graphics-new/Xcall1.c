@@ -564,7 +564,7 @@ static void displaystring_1(BCG *Xgc,char *string,double x, double y,int flag, d
   iy1 = (yd1 > int16max ) ? int16max :  ((yd1 < - int16max) ? - int16max : inint(yd1));
   /* ignore points outside of window */
   if ( ix1 > w || iy1 > h ) return;
-  Xgc->graphic_engine->displaystring(Xgc,string,ix1,iy1,flag,angle);
+  Xgc->graphic_engine->displaystring(Xgc,string,ix1,iy1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 }
 
 
@@ -618,7 +618,7 @@ static void xstringb(BCG *Xgc,char *string, int x, int y, int w, int h)
 	{  
 	  double angle=0.0;
 	  int flag=0;
-	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,yy1,flag,angle);
+	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,yy1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  yy1 += (int) (1.2*((double)rect[3]));
 	  loc1=strtok((char *) 0,"@");
 	}
@@ -662,7 +662,7 @@ static void xstringb_vert(BCG *Xgc,char *string, int x, int y, int w, int h)
       while ( loc1 != ( char * ) 0) 
 	{  
 	  x1 += hl*(1.25);
-	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,y1,flag,angle);
+	  Xgc->graphic_engine->displaystring(Xgc,loc1,x1,y1,flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  loc1=strtok((char *) 0,"@");
 	}
       FREE(loc);
@@ -744,7 +744,8 @@ static void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, i
       while ( p1 != p && *p1 != '\n' ) 
 	p1--;
       if ( Dflag  ==  1) 
-	Xgc->graphic_engine->displaystring(Xgc,( p1  ==  p ) ? p1 : p1 +1, x,yi,flag,angle);
+	Xgc->graphic_engine->displaystring(Xgc,( p1  ==  p ) ? p1 : p1 +1, x,yi,flag,angle,
+					   GR_STR_XLEFT, GR_STR_YBOTTOM);
       Xgc->graphic_engine->boundingbox(Xgc, ( p1  ==  p ) ? p1 : p1 +1, x,yi,logrect);
       if ( p2 != plast) 	*p2 = '\n';
       wc = Max( wc , logrect[2]);

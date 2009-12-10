@@ -160,7 +160,8 @@ static void nsp_legends_box(BCG *Xgc,int n1,const int *style, char * legend,int 
 	  else
 	    {
 	      Xgc->graphic_engine->xset_pattern(Xgc,fg);
-	      Xgc->graphic_engine->displaystring(Xgc,legend,xs,ys,flag,angle);
+	      Xgc->graphic_engine->displaystring(Xgc,legend,xs,ys,flag,angle
+						 ,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	      Xgc->graphic_engine->xset_pattern(Xgc,pat);
 	      if (style[i] > 0)
 		{ 

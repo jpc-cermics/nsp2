@@ -27,9 +27,10 @@
 #line 19 "codegen/grstring.override"
 #include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
-#include <nsp/figure.h> 
+#include <nsp/figure.h>
+#include <nsp/axes.h>
 
-#line 33 "grstring.c"
+#line 34 "grstring.c"
 
 /* ----------- NspGrstring ----------- */
 
@@ -101,7 +102,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 
   type->init = (init_func *) init_grstring;
 
-#line 30 "codegen/grstring.override"
+#line 31 "codegen/grstring.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +115,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "grstring.c"
+#line 119 "grstring.c"
   /* 
    * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -212,11 +213,12 @@ static int nsp_grstring_eq(NspGrstring *A, NspObject *B)
   if ( A->obj->y != loc->obj->y) return FALSE;
   if ( strcmp(A->obj->font,loc->obj->font) != 0) return FALSE;
   if ( NSP_OBJECT(A->obj->text)->type->eq(A->obj->text,loc->obj->text) == FALSE ) return FALSE;
-  if ( A->obj->position != loc->obj->position) return FALSE;
   if ( A->obj->angle != loc->obj->angle) return FALSE;
   if ( A->obj->w != loc->obj->w) return FALSE;
   if ( A->obj->h != loc->obj->h) return FALSE;
   if ( A->obj->fill != loc->obj->fill) return FALSE;
+  if ( A->obj->posx != loc->obj->posx) return FALSE;
+  if ( A->obj->posy != loc->obj->posy) return FALSE;
   return TRUE;
 }
 
@@ -244,11 +246,12 @@ int nsp_grstring_xdr_save(XDR *xdrs, NspGrstring *M)
   if (nsp_xdr_save_d(xdrs, M->obj->y) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->font) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->text)) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, M->obj->position) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->angle) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->w) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->h) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fill) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->posx) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->posy) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -266,11 +269,12 @@ NspGrstring  *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M)
   if (nsp_xdr_load_d(xdrs, &M->obj->y) == FAIL) return NULL;
   if (nsp_xdr_load_new_string(xdrs,&(M->obj->font)) == FAIL) return NULL;
   if ((M->obj->text =(NspSMatrix *) nsp_object_xdr_load(xdrs))== NULLSMAT) return NULL;
-  if (nsp_xdr_load_i(xdrs, &M->obj->position) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->angle) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->w) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->h) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->fill) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->posx) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->posy) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -366,11 +370,12 @@ int nsp_grstring_print(NspGrstring *M, int indent,const char *name, int rec_leve
   if ( M->obj->text != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->text),indent+2,"text",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"position=%d\n",M->obj->position);
   Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
   Sciprintf1(indent+2,"w=%f\n",M->obj->w);
   Sciprintf1(indent+2,"h=%f\n",M->obj->h);
   Sciprintf1(indent+2,"fill=%d\n",M->obj->fill);
+  Sciprintf1(indent+2,"posx=%d\n",M->obj->posx);
+  Sciprintf1(indent+2,"posy=%d\n",M->obj->posy);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -393,11 +398,12 @@ int nsp_grstring_latex(NspGrstring *M, int indent,const char *name, int rec_leve
   if ( M->obj->text != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->text),indent+2,"text",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"position=%d\n",M->obj->position);
   Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
   Sciprintf1(indent+2,"w=%f\n",M->obj->w);
   Sciprintf1(indent+2,"h=%f\n",M->obj->h);
   Sciprintf1(indent+2,"fill=%d\n",M->obj->fill);
+  Sciprintf1(indent+2,"posx=%d\n",M->obj->posx);
+  Sciprintf1(indent+2,"posy=%d\n",M->obj->posy);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -472,11 +478,12 @@ int nsp_grstring_create_partial(NspGrstring *H)
   H->obj->y = 0.0;
   H->obj->font = NULL;
   H->obj->text = NULLSMAT;
-  H->obj->position = 0;
   H->obj->angle = 0.0;
   H->obj->w = 0.0;
   H->obj->h = 0.0;
   H->obj->fill = 0;
+  H->obj->posx = 0;
+  H->obj->posy = 0;
   return OK;
 }
 
@@ -496,7 +503,7 @@ int nsp_grstring_check_values(NspGrstring *H)
   return OK;
 }
 
-NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,int position,double angle,double w,double h,int fill,NspTypeBase *type)
+NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,NspTypeBase *type)
 {
   NspGrstring *H  = nsp_grstring_create_void(name,type);
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
@@ -505,11 +512,12 @@ NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMat
   H->obj->y=y;
   H->obj->font = font;
   H->obj->text= text;
-  H->obj->position=position;
   H->obj->angle=angle;
   H->obj->w=w;
   H->obj->h=h;
   H->obj->fill=fill;
+  H->obj->posx=posx;
+  H->obj->posy=posy;
   if ( nsp_grstring_check_values(H) == FAIL) return NULLGRSTRING;
   return H;
 }
@@ -560,11 +568,12 @@ NspGrstring *nsp_grstring_full_copy_partial(NspGrstring *H,NspGrstring *self)
     {
       if ((H->obj->text = (NspSMatrix *) nsp_object_full_copy_and_name("text",NSP_OBJECT(self->obj->text))) == NULLSMAT) return NULL;
     }
-  H->obj->position=self->obj->position;
   H->obj->angle=self->obj->angle;
   H->obj->w=self->obj->w;
   H->obj->h=self->obj->h;
   H->obj->fill=self->obj->fill;
+  H->obj->posx=self->obj->posx;
+  H->obj->posy=self->obj->posy;
   return H;
 }
 
@@ -693,23 +702,6 @@ static int _wrap_grstring_set_text(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-static NspObject *_wrap_grstring_get_position(void *self,const char *attr)
-{
-  int ret;
-
-  ret = ((NspGrstring *) self)->obj->position;
-  return nsp_new_double_obj((double) ret);
-}
-
-static int _wrap_grstring_set_position(void *self,const char *attr, NspObject *O)
-{
-  int position;
-
-  if ( IntScalar(O,&position) == FAIL) return FAIL;
-  ((NspGrstring *) self)->obj->position= position;
-  return OK;
-}
-
 static NspObject *_wrap_grstring_get_angle(void *self,const char *attr)
 {
   double ret;
@@ -784,16 +776,51 @@ static int _wrap_grstring_set_fill(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_grstring_get_posx(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspGrstring *) self)->obj->posx;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_grstring_set_posx(void *self,const char *attr, NspObject *O)
+{
+  int posx;
+
+  if ( IntScalar(O,&posx) == FAIL) return FAIL;
+  ((NspGrstring *) self)->obj->posx= posx;
+  return OK;
+}
+
+static NspObject *_wrap_grstring_get_posy(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspGrstring *) self)->obj->posy;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_grstring_set_posy(void *self,const char *attr, NspObject *O)
+{
+  int posy;
+
+  if ( IntScalar(O,&posy) == FAIL) return FAIL;
+  ((NspGrstring *) self)->obj->posy= posy;
+  return OK;
+}
+
 static AttrTab grstring_attrs[] = {
   { "x", (attr_get_function *)_wrap_grstring_get_x, (attr_set_function *)_wrap_grstring_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_grstring_get_y, (attr_set_function *)_wrap_grstring_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "font", (attr_get_function *)_wrap_grstring_get_font, (attr_set_function *)_wrap_grstring_set_font,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "text", (attr_get_function *)_wrap_grstring_get_text, (attr_set_function *)_wrap_grstring_set_text,(attr_get_object_function *)_wrap_grstring_get_obj_text, (attr_set_object_function *)int_set_object_failed },
-  { "position", (attr_get_function *)_wrap_grstring_get_position, (attr_set_function *)_wrap_grstring_set_position,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "angle", (attr_get_function *)_wrap_grstring_get_angle, (attr_set_function *)_wrap_grstring_set_angle,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "w", (attr_get_function *)_wrap_grstring_get_w, (attr_set_function *)_wrap_grstring_set_w,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "h", (attr_get_function *)_wrap_grstring_get_h, (attr_set_function *)_wrap_grstring_set_h,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "fill", (attr_get_function *)_wrap_grstring_get_fill, (attr_set_function *)_wrap_grstring_set_fill,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "posx", (attr_get_function *)_wrap_grstring_get_posx, (attr_set_function *)_wrap_grstring_set_posx,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "posy", (attr_get_function *)_wrap_grstring_get_posy, (attr_set_function *)_wrap_grstring_set_posy,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -801,7 +828,7 @@ static AttrTab grstring_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/grstring.override"
+#line 53 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -810,10 +837,10 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 814 "grstring.c"
+#line 841 "grstring.c"
 
 
-#line 62 "codegen/grstring.override"
+#line 63 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -823,7 +850,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 827 "grstring.c"
+#line 854 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -854,14 +881,13 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
   *f = Grstring_func[i].fonc;
 }
 
-#line 73 "codegen/grstring.override"
+#line 74 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  int i,flagx=0;
-  double rect1[4],wc,x,y;
+  double wc,x,y;
   NspGrstring *P = (NspGrstring *) Obj;
   NspSMatrix *S = P->obj->text;
 
@@ -879,13 +905,16 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   wc = 0.;
   x= P->obj->x;
   y= P->obj->y;
-  /* S->n should be equal to 1 here 
+  /* S->n should be equal to 1 or 0 here 
    * This is to be done at creation
    */
   if ( S->n == 0 ) return;
-
-  if ( P->obj->position == 10) /* !!*/ 
+  
+  if ( P->obj->w  != 0.0 ) /* !!*/ 
     {
+      /* using xstringb with fill.
+       *
+       */
       double w=P->obj->w, h = P->obj->h;
       nsp_string str;
       if ( S->mn != 1) 
@@ -894,37 +923,30 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 	}
       else
 	{
-	  str = S->S[0];
+	  str = S->S[0]; 
 	}
       Xgc->graphic_engine->scale->xstringb(Xgc,str,&P->obj->fill,&x,&y,&w,&h);
       if ( S->mn != 1 ) FREE(str);
     }
   else
     {
-      if ( S->m == 1 )
+      double xd1 = XDouble2Pixel_d(Xgc->scales,x);
+      double yd1 = YDouble2Pixel_d(Xgc->scales,y);
+      nsp_string str;
+      if ( S->mn != 1) 
 	{
-	  /* one rotated string */
-	  Xgc->graphic_engine->scale->displaystring(Xgc,S->S[0],x,y,0,P->obj->angle);
+	  if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return ;
 	}
-      else 
+      else
 	{
-	  for (i = S->m -1 ; i >= 0; --i) 
-	    {
-	      Xgc->graphic_engine->scale->displaystring(Xgc,S->S[i],x,y,0,P->obj->angle);
-	      Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect1);
-	      wc = Max(wc,rect1[2]);
-	      if (i != 0 ) 
-		y += rect1[3] * 1.2;
-	      else 
-		y += rect1[3];
-	    }
-	  if (flagx == 1) {
-	    double rect2[]={x,y,wc, y } ;
-	    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect2);
-	  }
+	  str = S->S[0]; 
 	}
+      Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
+					 P->obj->posx, P->obj->posy);
+      if ( S->mn != 1 ) FREE(str);
     }
 }
+
 
 static void nsp_translate_grstring(NspGraphic *Obj,const double *tr)
 {
@@ -962,14 +984,45 @@ static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
 
 static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 {
-  /* XXX */
+  nsp_string str;
   NspGrstring *P = (NspGrstring *) Obj;
-  bounds[0]= P->obj->x;/* xmin */ 
-  bounds[1]= P->obj->y;/* ymin */ 
-  bounds[2]= P->obj->x+P->obj->w;/* xmax */ 
-  bounds[3]= P->obj->y+P->obj->h;/* ymax */ 
+  int rect1[4];
+  double width, height;
+  nsp_axes *axe = Obj->obj->Axe;
+  nsp_figure *F = Obj->obj->Fig;
+  BCG *Xgc = F->Xgc;
+  NspSMatrix *S = P->obj->text;
+
+  if ( Xgc == NULL) return FALSE;
+
+  if ( S->mn != 1) 
+    {
+      if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return FALSE;
+    }
+  else
+    {
+      str = S->S[0]; 
+    }
+  Xgc->graphic_engine->boundingbox(Xgc,str,0,0,rect1);
+  if ( S->mn != 1 ) FREE(str);
+  length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
+  switch( P->obj->posx ) 
+    {
+    case GR_STR_XLEFT: bounds[0]= P->obj->x; bounds[2]= P->obj->x+width; break;
+    case GR_STR_XCENTER: bounds[0]= P->obj->x -width/2; bounds[2]= P->obj->x+width/2; break;
+    case GR_STR_XRIGHT: bounds[0]= P->obj->x - width; bounds[2]= P->obj->x; break;
+    }
+  switch( P->obj->posy ) 
+    {
+    case GR_STR_YBOTTOM:bounds[1]= P->obj->y; bounds[3]= P->obj->y + height; break;
+    case GR_STR_YCENTER:bounds[1]= P->obj->y -height/2; bounds[3]= P->obj->y + height/2; break;
+    case GR_STR_YBASELINE: 
+      /* TO BE IMPROVED we give something bigger */
+      bounds[1]= P->obj->y -height ; bounds[3]= P->obj->y + height; break;
+    case GR_STR_YUP:   bounds[1]= P->obj->y-height ; bounds[3]= P->obj->y; break;
+    }
   return TRUE;
 }
 
 
-#line 976 "grstring.c"
+#line 1029 "grstring.c"
