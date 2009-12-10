@@ -546,7 +546,8 @@ static void displaynumbers_gen(BCG *Xgc, int *x, int *y, int n, int flag, double
   for (i=0 ; i< n ; i++)
     { 
       sprintf(buf,Xgc->CurNumberDispFormat,z[i]);
-      Xgc->graphic_engine->displaystring(Xgc,buf,x[i],y[i],flag,alpha[i]);
+      Xgc->graphic_engine->displaystring(Xgc,buf,x[i],y[i],flag,alpha[i],
+					 GR_STR_XLEFT, GR_STR_YBOTTOM);
     }
 }
 

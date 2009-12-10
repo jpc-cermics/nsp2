@@ -2271,7 +2271,9 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
     y += h/2;
   else if ( yj == DOWN )
     y += h;
-  Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle);
+  Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle,
+				     GR_STR_XLEFT, GR_STR_YBOTTOM);
+
 }
 
 static void draw_box_face(BCG *Xgc,Plot3dBox *B, int j, int foreground_color)
@@ -2804,4 +2806,4 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 }
 
 
-#line 2808 "objs3d.c"
+#line 2810 "objs3d.c"

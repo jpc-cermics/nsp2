@@ -868,34 +868,34 @@ static void nspg_menu_export(BCG *Xgc, int winid)
     case 3 : /* "Postscript LaTeX" */
       switch ( orientation ) 
 	{
-	case 0: Xgc->actions->tops(Xgc,colored,fname,"Pos",'l');break;
-	case 1: Xgc->actions->tops(Xgc,colored,fname,"Pos",'p');break;
-	case 2: Xgc->actions->tops(Xgc,colored,fname,"Pos",'k');break;
+	case 0: Xgc->actions->tops(Xgc,colored,fname,"Pos",'l', TRUE );break;
+	case 1: Xgc->actions->tops(Xgc,colored,fname,"Pos",'p', TRUE);break;
+	case 2: Xgc->actions->tops(Xgc,colored,fname,"Pos",'k', TRUE);break;
 	}    
       break;
     case 2 : /* "Postscript No Preamble" */
-      Xgc->actions->tops(Xgc,colored,fname,"Pos",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"Pos",'n', TRUE);
       break;
     case 4 : /* Xfig */
-      Xgc->actions->tops(Xgc,colored,fname,"Fig",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"Fig",'n', TRUE);
       break;
     case 5 : /* Gif */
-      Xgc->actions->tops(Xgc,colored,fname,"GIF",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"GIF",'n', TRUE);
       break;
     case 6 : /* PPM */
-      Xgc->actions->tops(Xgc,colored,fname,"PPM",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"PPM",'n', TRUE);
       break;
     case 7 : /* cairo-pdf */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-pdf",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-pdf",'n', TRUE);
       break;
     case 8: /* cairo-svg */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-svg",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-svg",'n', TRUE);
       break;
     case 9: /* cairo-ps */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-ps",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-ps",'n', TRUE);
       break;
     case 10: /* cairo-png */
-      Xgc->actions->tops(Xgc,colored,fname,"cairo-png",'n');
+      Xgc->actions->tops(Xgc,colored,fname,"cairo-png",'n', TRUE);
       break;
     }
   nsp_string_destroy(&fname);

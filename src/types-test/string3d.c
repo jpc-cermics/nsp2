@@ -913,7 +913,9 @@ static void draw_justified_string(BCG *Xgc,char *str, double x, double y, int xj
     y += h/2;
   else if ( yj == DOWN )
     y += h;
-  Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle);
+  Xgc->graphic_engine->displaystring(Xgc,str,x,y, flag,angle,
+				     GR_STR_XLEFT, GR_STR_YBOTTOM);
+
 }
 
 static void draw_string3d_ogl(BCG *Xgc,void *Ob)
@@ -986,4 +988,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 990 "string3d.c"
+#line 992 "string3d.c"

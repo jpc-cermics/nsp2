@@ -2376,7 +2376,8 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
       y = rect[1] + rect[3]*(1-((uval-vmin)/(vmax - vmin)));
       Xgc->graphic_engine->drawline(Xgc,rect[0]+rect[2],y,rect[0]+rect[2]+5,y);
       y += srect[3]/2;
-      Xgc->graphic_engine->displaystring(Xgc,str,rect[0]+rect[2]+8,y,TRUE,0);
+      Xgc->graphic_engine->displaystring(Xgc,str,rect[0]+rect[2]+8,y,TRUE,0,
+					 GR_STR_XLEFT, GR_STR_YBOTTOM);
     }
 
   if ( clip[0]== 1 ) 
@@ -2403,4 +2404,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2407 "axes.c"
+#line 2408 "axes.c"
