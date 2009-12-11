@@ -1,0 +1,61 @@
+% -*- mode: latex -*-
+
+\mansection{is\_string\_in\_array}
+\begin{mandesc}
+ \shortunder{is\_string\_in\_array}{is_string_in_array}{check if a string is in an array (or is a valid abbreviation)}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ num = is_string_in_array(key, table, abbrev=bool, names=[arg_name,func_name])  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{key}: string.
+    \vname{table}: array of strings.
+    \vname{abbrev=bool}: optional named argument, scalar boolean (default is \verb+%t+)
+    \vname{names=[arg_name,func_name]}: optional named argumenta, a string matrix with 2 strings.
+    \vname{rep}: position of \verb+key+ in \verb+table+ or non positive integer.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function tests if a string \verb+key+ is among a given vector of strings \verb+table+
+ or is an non ambiguous abbreviation of one of these strings (unless \verb+abbrev+ 
+ is set to false in which case abbreviation are not considered). In case of success, 
+ \verb+num+ is the index of \verb+key+ in  \verb+table+ otherwise, when the optional
+ \verb+names+ argument is not provided, \verb+num+ is set to 0 
+ (or to -1 when \verb+abbrev=%t+ and when \verb+key+ is an ambiguous abbreviation).
+   
+ 
+  This function could be useful to parse the value \verb+key+ of an input string argument 
+ \verb+arg_name+ of a nsp function  \verb+func_name+. In this case of utilization, it is
+ practical to provide the optional argument \verb+names=[arg_name,func_name]+ as an error 
+ is automatically set with the message : ``Error:  argument \verb+arg_name+ of function  
+\verb+func_name+  has a wrong value \verb+'key'+ expected values are ....".
+
+\end{mandescription}
+% --example 
+\begin{examples}
+\begin{Verbatim}
+function rep = color_number(color)
+   table = ["black","red","blue","orange","yellow","green","brown"]
+   rep = is_string_in_array(color,table,names=["color","color_number"])
+endfunction
+color_number("y") // should be 5
+color_number("bl") // ambiguous abbreviation (an error should be set)
+color_number("blu") //should be 3
+\end{Verbatim}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+\manlink{has}{has}
+\end{manseealso}
+
+\begin{authors}
+  Jean-Philippe Chancelier, Bruno Pincon
+\end{authors}
+
+
