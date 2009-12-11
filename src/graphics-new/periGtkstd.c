@@ -2036,7 +2036,6 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  */
 
 #ifdef PERICAIRO
-#include "perigtk/fonts_pango_cairo.c"
 #include "perigtk/peridraw_cairo_new.c"
 #endif /* PERIGTK */
 
@@ -2045,11 +2044,6 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  */
 
 #ifdef PERIGTK
-#ifdef WITH_PANGO
-#include "perigtk/fonts_pango_gdk.c"
-#else 
-#include "perigtk/fonts_gdk.c" 
-#endif 
 #include "perigtk/peridraw_gdk.c"
 /* routines for allocating GdkPoints */
 #include "perigtk/points.c" 
@@ -2060,11 +2054,8 @@ GdkPixbuf* nsp_get_pixbuf(BCG *Xgc)
  */
 
 #ifdef PERIGL 
-#include "perigtk/fonts_pango_ft2_gl.c"
 #include "perigtk/peridraw_gl.c"
 #endif /* PERIGL */
-
-
 
 #ifdef PERIGTK
 /* for all drivers */

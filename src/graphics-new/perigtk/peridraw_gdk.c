@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -117,10 +117,10 @@ static void fillrectangle(BCG *Xgc,const int rect[])
  *  on each rectangle the average value of z is computed 
  */
 
-static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
-				  int remap,const int *colminmax,const double *zminmax,const int *colout)
+static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[],
+				  int nx, int ny, int remap,const int *colminmax,
+				  const double *zminmax,const int *colout)
 {
-  
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
@@ -134,10 +134,10 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
  *        P1= x[i],y[j] x[i+1],y[j+1]
  */
 
-static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
-				  int remap,const int *colminmax,const double *zminmax)
+static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[],
+				  int nr, int nc,int remap,const int *colminmax,
+				  const double *zminmax)
 {
-  
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
@@ -280,16 +280,6 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
   else 
     { 
       int i;
-      /* 
-	 symb[0] = Xgc->CurHardSymb ;
-	 symb[1] = Xgc->CurHardSymbSize ;
-	 int i,keepid,keepsize,hds;
-	 i=1;
-	 keepid =  Xgc->fontId;
-	 keepsize= Xgc->fontSize;
-	 hds= Xgc->CurHardSymbSize;
-	 xset_mark(Xgc,i,hds);
-      */
       for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
     }
 }
@@ -330,76 +320,6 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
-#ifndef WITH_PANGO
-
-static void draw_mark(BCG *Xgc,int *x, int *y)
-{ 
-  char str[2]={0,0};
-  
-  str[0]=Marks[Xgc->CurHardSymb]; 
-  gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-		*x+CurSymbXOffset(Xgc), *y +CurSymbYOffset(Xgc),str,1);
-}
-
-#endif 
-
-
-
-
-#ifndef WITH_PANGO 
-
-/*
- * display of a string at (x,y) position whith slope angle alpha 
- * (given in degree clockwise). If *flag ==1 and angle is zero a 
- * framed box is added around the string. 
- * (x,y) defines the lower left point of the bounding box 
- * of the string ( we do not separate asc and desc).
- */
-
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
-{ 
-  gint lbearing, rbearing, iascent, idescent, iwidth;
-  
-  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing,
-		     &iwidth, &iascent, &idescent);
-  if ( Abs(angle) <= 0.1) 
-    {
-      gdk_draw_text(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-		    x, y - idescent , string, strlen(string));
-      if ( flag == 1) 
-	{
-	  int rect[] = { x , y- iascent - idescent, 
-			 gdk_string_width(Xgc->private->font, string),
-			 iascent+idescent};
-	  drawrectangle(Xgc,rect);
-	}
-    }
-  else 
-    {
-      gdk_draw_text_rot(Xgc->private->drawable,Xgc->private->font,Xgc->private->wgc, 
-			x, y - idescent ,0,0, string, strlen(string),-angle * M_PI/180.0);
-    }
-}
-
-#endif 
-
-/* To get the bounding rectangle of a string 
- */
-
-#ifndef WITH_PANGO 
-
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
-{ 
-  gint lbearing, rbearing, iascent, idescent, iwidth;
-  gdk_string_extents(Xgc->private->font,"X", &lbearing, &rbearing, &iwidth, &iascent, &idescent);
-  rect[0]= x ;
-  rect[1]= y - iascent - idescent;
-  rect[2]= gdk_string_width(Xgc->private->font, string);
-  rect[3]= iascent + idescent;
-}
-#endif 
-
-
 /**
  * draw_pixbuf:
  * @Xgc: 
@@ -418,7 +338,8 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
  * 
  **/
 
-static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int dest_y,
+			int width,int height)
 {
   GdkPixbuf *pixbuf = pix;
   GdkPixbuf *scaled ;
@@ -449,13 +370,11 @@ static void draw_pixbuf(BCG *Xgc,void *pix,int src_x,int src_y,int dest_x,int de
 
 }
 
-
-static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,int dest_x,int dest_y,int width,int height)
+static void draw_pixbuf_from_file(BCG *Xgc,const char *pix,int src_x,int src_y,
+				  int dest_x,int dest_y,int width,int height)
 {
   Xgc->graphic_engine->generic->draw_pixbuf_from_file(Xgc,pix,src_x,src_y,dest_x,dest_y,width,height);
 }
-
-
 
 
 /**
@@ -507,7 +426,6 @@ static void xget_clip(BCG *Xgc,int *x)
       x[4] =Xgc->CurClipRegion.height;
     }
 }
-
 
 /**
  * xset_alufunction1:
@@ -715,27 +633,330 @@ static int  xset_pattern(BCG *Xgc,int color)
 }
 
 
-/* void function when cairo is not used 
- *
- */
-#ifndef WITH_CAIRO 
-int nsp_cairo_export(BCG *Xgc,int colored,int win_num, const char *bufname,const char *driver,char option)
-{
-  return FAIL;
-}
-
-int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
-{
-  return FAIL;
-}
-
-
-#endif 
-
-
 
 static  void xset_test(BCG *Xgc)
 {
   Xgc->graphic_engine->generic->xset_test(Xgc);
 }
+
+
+/*
+ * Text and symbols with pango 
+ */
+
+#define FONTNUMBER 6
+#define FONTMAXSIZE 6
+#define SYMBOLNUMBER 12
+
+/* Must be of size FONTMAXSIZE */
+
+static const int pango_size[] = {8,10,12,14,18,24};
+static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
+
+static void nsp_fonts_finalize(BCG *Xgc)
+{
+  if ( Xgc->private->layout != NULL) 
+    {
+      g_object_unref ( Xgc->private->layout);Xgc->private->layout=NULL;
+      g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
+      pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
+      pango_font_description_free ( Xgc->private->mark_desc);Xgc->private->mark_desc=NULL;
+    }
+}
+
+static void nsp_fonts_initialize(BCG *Xgc)
+{
+  if ( Xgc->private->layout == NULL) 
+    {
+      Xgc->private->context = gtk_widget_get_pango_context (Xgc->private->drawing);
+      Xgc->private->layout = pango_layout_new (Xgc->private->context);
+      Xgc->private->mark_layout = pango_layout_new (Xgc->private->context);
+      
+      Xgc->private->desc = pango_font_description_new();
+      Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
+    }
+}
+
+static void loadfamily(char *name, int *j)
+{
+  /* */
+}
+
+static void queryfamily(char *name, int *j,int *v3)
+{
+  /* */
+}
+
+/* set up the private layout with proper font 
+ *
+ */
+
+static void xset_font(BCG *Xgc,int fontid, int fontsize)
+{ 
+  int i,fsiz;
+  i = Min(FONTNUMBER-1,Max(fontid,0));
+  fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
+  if ( Xgc->fontId != i || Xgc->fontSize != fsiz )
+    {
+      Xgc->fontId = i;
+      Xgc->fontSize = fsiz;
+      pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
+      /* pango_font_description_set_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);*/
+      pango_font_description_set_absolute_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);
+      pango_layout_set_font_description (Xgc->private->layout, Xgc->private->desc);
+    }
+}
+
+/* To get the  id and size of the current font */
+
+static void  xget_font(BCG *Xgc,int *font)
+{
+  font[0] = Xgc->fontId ;
+  font[1] = Xgc->fontSize ;
+}
+
+/* set up the private mark_layout with proper font 
+ *
+ */
+
+static void xset_mark(BCG *Xgc,int number, int size)
+{ 
+  int n_size;
+  Xgc->CurHardSymb = Max(Min(SYMBOLNUMBER-1,number),0);
+  n_size  = Max(Min(FONTMAXSIZE-1,size),0);
+  if ( Xgc->CurHardSymbSize != n_size )
+    {
+      Xgc->CurHardSymbSize = n_size;
+      /* pango_font_description_set_size (Xgc->private->mark_desc, pango_size[fsiz] * PANGO_SCALE);*/
+      pango_font_description_set_absolute_size (Xgc->private->mark_desc, 
+						pango_size[Xgc->CurHardSymbSize] * PANGO_SCALE);
+      pango_layout_set_font_description (Xgc->private->mark_layout, Xgc->private->mark_desc);
+    }
+}
+
+/* To get the current mark id */
+
+static void xget_mark(BCG *Xgc,int *symb)
+{
+  symb[0] = Xgc->CurHardSymb ;
+  symb[1] = Xgc->CurHardSymbSize ;
+}
+
+
+/* drawing marks with pango 
+ */
+
+static const int symbols[] = 
+  {
+    0x22C5, /* lozenge */
+    0x002B, /* plus sign */
+    0x00D7, /* multiplication sign */
+    0x2217, /* asterisk operator */
+    0x2666, /* black diamond suit */
+    0x25CA, /* lozenge */
+    0x0394, /* greek capital letter delta */
+    0x2207, /* nabla  */
+    0x2663, /* black club suit */
+    0x2295, /* circled plus */
+    0x2665, /* black heart suit */
+    0x2660, /* black spade suit */
+    0x2297, /* circled times */
+    0x2022, /* bullet */
+    0x00B0  /* degree sign */
+  };
+
+
+/* utility to rotate a string */
+
+static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
+				       const PangoMatrix *matrix, GdkRectangle *rect)
+{
+  gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
+  PangoRectangle logical_rect;
+  gint i, j;
+  pango_layout_get_extents (layout, NULL, &logical_rect);
+  for (i = 0; i < 2; i++)
+    {
+      gdouble x = (i == 0) ? logical_rect.x : logical_rect.x + logical_rect.width;
+      for (j = 0; j < 2; j++)
+	{
+	  gdouble y = (j == 0) ? logical_rect.y : logical_rect.y + logical_rect.height;
+	  
+	  gdouble xt = (x * matrix->xx + y * matrix->xy) / PANGO_SCALE + matrix->x0;
+	  gdouble yt = (x * matrix->yx + y * matrix->yy) / PANGO_SCALE + matrix->y0;
+	  
+	  if (i == 0 && j == 0)
+	    {
+	      x_min = x_max = xt;
+	      y_min = y_max = yt;
+	    }
+	  else
+	    {
+	      if (xt < x_min)
+		x_min = xt;
+	      if (yt < y_min)
+		y_min = yt;
+	      if (xt > x_max)
+		x_max = xt;
+	      if (yt > y_max)
+		y_max = yt;
+	    }
+	}
+    }
+  
+  rect->x = floor (x_min);
+  rect->width = ceil (x_max) - rect->x;
+  rect->y = floor (y_min);
+  rect->height = floor (y_max) - rect->y;
+}
+
+
+/* 
+ * FIXME: flag is unused since the rectangle is drawn in Graphics-IN.c 
+ *        to deal with the case when string can be on multiple lines 
+ *        but pango could make this directly. 
+ * maybe we should change the display an consider that (x,y) is the baseline 
+ * of the string not its lower left boundary.
+ * Note that if the string contains \n then the layout will have multiple lines 
+ * 
+ */
+
+static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle,
+			  gr_str_posx posx, gr_str_posy posy )
+{
+  PangoRectangle ink_rect,logical_rect;
+  int  height,width;
+  ;
+  pango_layout_set_text (Xgc->private->layout, str, -1);
+  /*  PangoLayoutLine *line;
+   *  nline = pango_layout_get_line_count(Xgc->private->layout); 
+   *  if ( nline == 1 ) 
+   *    {
+   *   / * we want (x,y) to be at the baseline of the first string position * /
+   *   line = pango_layout_get_line(Xgc->private->layout,0);
+   *   pango_layout_line_get_extents(line, &ink_rect,&logical_rect);
+   *   height = - logical_rect.y/PANGO_SCALE;
+   *   width = logical_rect.width/PANGO_SCALE;
+   */
+  /* used to position the descent of the last line of layout at y */
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  if ( posy == GR_STR_YBASELINE ) 
+    {
+      PangoLayoutLine *line;
+      line = pango_layout_get_line(Xgc->private->layout,0);
+      pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
+    }
+  if ( Abs(angle) >= 0.1) 
+    {
+      double xt,yt;
+      GdkRectangle rect;
+      PangoMatrix matrix = PANGO_MATRIX_INIT; 
+      pango_matrix_rotate (&matrix, - angle );
+      pango_context_set_matrix (Xgc->private->context, &matrix);
+      pango_layout_context_changed (Xgc->private->layout);
+      pango_layout_get_extents(Xgc->private->layout,&ink_rect,&logical_rect);
+      /* 
+       * in gdk_draw_layout x and y specify the position of the top left corner 
+       * of the bounding box (in device space) of the transformed layout. 
+       * Here when alpha = 0, (x,y) is the lower left point of the bounding box 
+       * of the string we want the string to rotate around this point. 
+       * thus we cannot call gdk_draw_layout with (x,y) directly.
+       */
+      xt = 0 * matrix.xx + -height * matrix.xy + matrix.x0;
+      yt = 0 * matrix.yx + -height * matrix.yy + matrix.y0;
+      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->context, 
+				 &matrix,&rect);
+      gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
+		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
+      pango_context_set_matrix (Xgc->private->context,NULL);
+      pango_layout_context_changed (Xgc->private->layout);
+      if (flag ) 
+	{
+	  /* draw the enclosing polyline 
+	   */
+	  int vx[]={x,x,x,x},vy[]={y,y,y,y};
+	  double dx,dy;
+	  dx =  0 * matrix.xx + -height * matrix.xy + matrix.x0;
+	  dy =  0 * matrix.yx + -height * matrix.yy + matrix.x0;
+	  vx[1] += dx; vy[1] += dy;
+	  dx =  width * matrix.xx + -height * matrix.xy + matrix.x0;
+	  dy =  width * matrix.yx + -height * matrix.yy + matrix.x0;
+	  vx[2] += dx; vy[2] += dy;
+	  dx =  width * matrix.xx + 0 * matrix.xy + matrix.x0;
+	  dy =  width * matrix.yx + 0 * matrix.yy + matrix.x0;
+	  vx[3] += dx; vy[3] += dy;
+	  drawpolyline(Xgc,vx, vy,4,1);
+	}
+    }
+  else
+    {
+      int xpos=x,ypos=y;
+      /* horizontal string */
+      switch( posx ) 
+	{
+	case GR_STR_XLEFT: xpos = x; break;
+	case GR_STR_XCENTER: xpos = x - width/2; break;
+	case GR_STR_XRIGHT: xpos = x - width; break;
+	}
+      switch( posy ) 
+	{
+	case GR_STR_YBOTTOM: ypos = y -height; break;
+	case GR_STR_YCENTER:  ypos = y - height/2; break;
+	case GR_STR_YBASELINE: ypos = y + logical_rect.y; break;
+	case GR_STR_YUP:  ypos = y ; break;
+	} 
+      if ( flag == TRUE )
+	gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc,FALSE,xpos,ypos,width,height);
+      gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,xpos,ypos,Xgc->private->layout);
+    }
+}
+
+
+static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
+{
+  int width, height;
+  pango_layout_set_text (Xgc->private->layout, string, -1);
+  pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
+  rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
+}
+
+/* draw a mark centred at (x,y) using the 
+ * symbol font and the mark_layout.
+ */
+
+static void draw_mark(BCG *Xgc,int *x, int *y)
+{
+  double dx,dy;
+  PangoRectangle ink_rect;
+  int code = symbols[Xgc->CurHardSymb]; 
+  gchar symbol_code[4], *iter = symbol_code;
+  ;
+  g_unichar_to_utf8(code, iter);
+  iter = g_utf8_next_char(iter);
+  g_unichar_to_utf8(0x0, iter);
+  pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
+  pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,NULL);
+  dx = PANGO_PIXELS(( ink_rect.x + ink_rect.width/2.0));
+  dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
+  gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,*x-dx,*y-dy,Xgc->private->mark_layout);
+  if (0) 
+    {
+      /* draw the ink_rectangle aroud the mark */
+      int i;
+      double rect[]={ink_rect.x,ink_rect.y,ink_rect.width,ink_rect.height};
+      int myrect[]={*x-dx,*y-dy,0,0};
+      for ( i=0; i < 4 ; i++) myrect[i] += PANGO_PIXELS(rect[i]);
+      drawrectangle(Xgc,myrect);
+    }
+}
+
+
+void xstring_pango(BCG *Xgc,char *str,int rect[],char *font,int size,int markup,int position)
+{
+  
+}
+
+
+
+
 

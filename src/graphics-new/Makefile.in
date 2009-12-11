@@ -151,10 +151,6 @@ periCairoNew.o: periCairoNew.c periGtkstd.c \
   ../../src/include/nsp/graphics-new/color.h \
   ../../src/include/nsp/command.h \
   perigtk/events.c \
-  perigtk/fonts_gdk.c \
-  perigtk/fonts_pango_cairo.c \
-  perigtk/fonts_pango_ft2_gl.c \
-  perigtk/fonts_pango_gdk.c \
   perigtk/init.c \
   perigtk/peridraw_cairo_new.c \
   perigtk/peridraw_gdk.c \
@@ -177,10 +173,6 @@ periGL.o: periGL.c periGtkstd.c \
   ../../src/include/nsp/graphics-new/color.h \
   ../../src/include/nsp/command.h \
   perigtk/events.c \
-  perigtk/fonts_gdk.c \
-  perigtk/fonts_pango_cairo.c \
-  perigtk/fonts_pango_ft2_gl.c \
-  perigtk/fonts_pango_gdk.c \
   perigtk/init.c \
   perigtk/peridraw_cairo_new.c \
   perigtk/peridraw_gdk.c \
@@ -203,10 +195,6 @@ periGtk.o: periGtk.c periGtkstd.c \
   ../../src/include/nsp/graphics-new/color.h \
   ../../src/include/nsp/command.h \
   perigtk/events.c \
-  perigtk/fonts_gdk.c \
-  perigtk/fonts_pango_cairo.c \
-  perigtk/fonts_pango_ft2_gl.c \
-  perigtk/fonts_pango_gdk.c \
   perigtk/init.c \
   perigtk/peridraw_cairo_new.c \
   perigtk/peridraw_gdk.c \
@@ -255,7 +243,7 @@ periFig.o: periFig.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/version.h \
   ../../src/include/nsp/graphics-new/color.h \
   ../../src/include/nsp/command.h perigtk/events.c perigtk/init.c \
-  perigtk/fonts_pango_ft2_gl.c perigtk/peridraw_gl.c \
+	perigtk/peridraw_gl.c \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
   ../../src/include/nsp/config.h ../../src/include/nsp/package_undef.h \
   ../../src/include/nsp/user-prefs.h ../../src/include/nsp/tokenizer.h \
@@ -270,7 +258,7 @@ periFig.o: periFig.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/version.h \
   ../../src/include/nsp/graphics-new/color.h \
   ../../src/include/nsp/command.h perigtk/events.c perigtk/init.c \
-  perigtk/fonts_pango_gdk.c perigtk/peridraw_gdk.c perigtk/points.c
+		perigtk/peridraw_gdk.c perigtk/points.c
 
 periPos.o: periPos.c ../../src/include/nsp/sciio.h \
   ../../src/include/nsp/math.h ../../src/include/nsp/machine.h \
