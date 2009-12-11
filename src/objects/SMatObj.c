@@ -2038,6 +2038,49 @@ int_smatrix_issorted (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int
+int_is_string_in_array (Stack stack, int rhs, int opt, int lhs)
+{
+  Boolean abbrev = TRUE;
+  char *key = NULL;
+  NspSMatrix *Table, *names=NULLSMAT;
+  nsp_option opts[] ={{"abbrev",s_bool,NULLOBJ,-1},
+		      {"names",smat,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int rep, k;
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 3)
+  CheckLhs(1, 1);
+
+  if ((key = GetString(stack,1)) == ((char *) 0) )
+    return RET_BUG; 
+  if ((Table = GetSMat(stack, 2)) == NULLSMAT)
+    return RET_BUG;
+
+  if ( get_optional_args(stack, rhs, opt, opts, &abbrev, &names) == FAIL )
+    return RET_BUG;
+
+  rep = is_string_in_array(key, Table->S, !abbrev);
+  if ( rep < 0 && names != NULLSMAT )  /* in this case an automatic treatment of the error is done */ 
+    {
+      if ( names->mn != 2 )
+	{
+	  Scierror("Error:\t optional argument 'names' of function is_string_in_array should have 2 strings\n");
+	  return RET_BUG;
+	}
+      Scierror("Error:\t argument %s of function %s has a wrong value '%s'\n",names->S[0],names->S[1],key);
+      Scierror("\texpected values are ");
+      for (k = 0 ; k < Table->mn ; k++ ) 
+	Scierror(" '%s' ",Table->S[k]);
+      Scierror("\n");
+      return RET_BUG;
+    }
+  
+  if ( nsp_move_double(stack,1, (double) rep+1) == FAIL )	  
+    return RET_BUG;
+  return 1;
+}
+
 
 /*
  * The Interface for basic matrices operation 
@@ -2124,6 +2167,7 @@ static OpTab SMatrix_func[]={
   {"sqsort_s", int_bpsqsort},
   {"unique_s",int_smatrix_unique},
   {"issorted_s",int_smatrix_issorted},
+  {"is_string_in_array_s",int_is_string_in_array},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
   {(char *) 0, NULL}
