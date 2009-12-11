@@ -165,10 +165,6 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
    * d'ou des valeurs par defaut ...
    * A tester pour faire les choses dans l'ordre dans initialize 
    */
-  NewXgc->fontId=0 ;
-  NewXgc->fontSize=0 ;
-  NewXgc->CurHardSymb=0;
-  NewXgc->CurHardSymbSize=0;
   NewXgc->CurLineWidth=0;
   NewXgc->CurPattern=0;
   NewXgc->CurColor=1;
@@ -233,18 +229,11 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 #if defined(PERIGL) && !defined(PERIGLGTK) 
   NewXgc->private->drawable = (GdkDrawable *) NewXgc->private->drawing->window;  
 #endif 
-  
-  
-  nsp_fonts_initialize(NewXgc);/* initialize a pango_layout */
-  
-  NewXgc->graphic_engine->scale->initialize_gc(NewXgc);
-  /* Attention ce qui est ici doit pas etre rejoué 
-   * on l'enleve donc de initialize_gc
-   */
+  /* initialize a pango_layout */
+  nsp_fonts_initialize(NewXgc);
+  nsp_initialize_gc(NewXgc);
   NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
   NewXgc->graphic_engine->xset_wresize(NewXgc,1);
-  /* now initialize the scale list : already performed in window_list_new */
-  /* NewXgc->scales = NULL; xgc_add_default_scale(NewXgc);*/
   nsp_set_win_counter(WinNum);
   gdk_flush();
   return WinNum;
@@ -263,7 +252,6 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
  *        this function must be called when size is changed. I use this function 
  *        because I do not use the paint method.
  */
-
 
 static GtkTargetEntry target_table[] = {
   { "GTK_TREE_MODEL_ROW",1,10},

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2008 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -21,7 +21,6 @@
  * 
  *--------------------------------------------------------------------------*/
 
-
 /* clear a rectangle by drawing with the background color 
  * plot2d()
  * xclip(1,0,2,2)
@@ -39,7 +38,6 @@ static void cleararea(BCG *Xgc,const GdkRectangle *r)
     cairo_rectangle (cr,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
   cairo_fill (cr);
   xset_pattern(Xgc,old);
-
 }
 
 /*
@@ -81,7 +79,6 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
   Xgc->graphic_engine->generic->drawarrows(Xgc,vx,vy,n,as,style,iflag);
 }
 
-
 /*
  * Rectangles
  * Draw or fill a set of rectangle 
@@ -95,7 +92,6 @@ static void drawarrows(BCG *Xgc, int *vx, int *vy, int n, int as, int *style, in
  *                         with the current private->drawing style 
  * if fillvect[i] is < 0 then draw the  rectangle with -fillvect[i] 
  */
-
 
 static void drawrectangles(BCG *Xgc,const int *vects,const int *fillvect, int n)
 {
@@ -120,13 +116,13 @@ static void fillrectangle(BCG *Xgc,const int rect[])
   cairo_fill (cr);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * draw a set of rectangles, provided here to accelerate GraySquare for X11 device 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
  *  z : is the value of a function on the grid defined by x,y 
  *  on each rectangle the average value of z is computed 
- *----------------------------------------------------------------------------------*/
+ */
 
 static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const double z[], int nx, int ny,
 				  int remap,const int *colminmax,const double *zminmax,const int *colout)
@@ -134,7 +130,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles(Xgc,x,y,z,nx,ny,remap,colminmax,zminmax,colout);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * draw a set of rectangles, provided here to accelerate GraySquare1 for X11 device 
  *  x : of size n1 gives the x-values of the grid 
  *  y : of size n2 gives the y-values of the grid 
@@ -142,7 +138,7 @@ static  void fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],const dou
  *  of each rectangle. 
  *  z[i,j] is the value on the middle of rectangle 
  *        P1= x[i],y[j] x[i+1],y[j+1]
- *----------------------------------------------------------------------------------*/
+ */
 
 static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 				  int remap,const int *colminmax,const double *zminmax)
@@ -150,7 +146,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
   Xgc->graphic_engine->generic->fill_grid_rectangles1(Xgc,x,y,z,nr,nc,remap,colminmax,zminmax);
 }
 
-/*----------------------------------------------------------------------------------
+/*
  * Circles and Ellipsis 
  * Draw or fill a set of ellipsis or part of ellipsis 
  * Each is defined by 6-parameters, 
@@ -162,7 +158,7 @@ static void fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const dou
  * with pattern fillvect[i] 
  * if fillvect[i] is > lastpattern  then only draw the ellipsis i 
  * The private->drawing style is the current private->drawing 
- *----------------------------------------------------------------------------------*/
+ */
 
 static void fillarcs(BCG *Xgc,int *vects, int *fillvect, int n) 
 {
@@ -189,7 +185,6 @@ static void _draw_fill_arc(BCG *Xgc,int arc[], int flag)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
   double xc, yc, radius, angle1, angle2; 
-  
   xc = arc[0]+arc[2]/2.0;
   yc = arc[1]+arc[3]/2.0;
   radius = arc[2]/2.0;
@@ -214,8 +209,7 @@ static void _draw_fill_arc(BCG *Xgc,int arc[], int flag)
     }
 }
 
-/* Draw a single ellipsis or part of it **/
-
+/* Draw a single ellipsis or part of it */
 
 static void drawarc(BCG *Xgc,int arc[])
 { 
@@ -229,8 +223,6 @@ static void fillarc(BCG *Xgc,int arc[])
   _draw_fill_arc(Xgc,arc,TRUE);
 }
 
-
-
 /* 
  * Draw a set of (*n) polylines (each of which have (*p) points) 
  * with lines or marks 
@@ -240,7 +232,6 @@ static void fillarc(BCG *Xgc,int arc[])
 
 static void drawpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *drawvect,int n, int p)
 { 
-  
   Xgc->graphic_engine->generic->drawpolylines(Xgc,vectsx,vectsy,drawvect,n,p);
 }
 
@@ -289,8 +280,6 @@ static void fillpolylines(BCG *Xgc,int *vectsx, int *vectsy, int *fillvect,int n
     }
   Xgc->graphic_engine->xset_dash(Xgc,dash);
   Xgc->graphic_engine->xset_pattern(Xgc,color);
-
-
 }
 
 /* 
@@ -304,7 +293,6 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
   int n1,i;
-  
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
@@ -370,7 +358,6 @@ static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, in
 }
 
 
-
 /* 
  * Draw the current mark centred at points defined
  * by vx and vy (vx[i],vy[i]) 
@@ -391,14 +378,12 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
     }
   else 
     { 
-      int i,keepid,keepsize,hds;
-      i=1;
-      keepid =  Xgc->fontId;
-      keepsize= Xgc->fontSize;
-      hds= Xgc->CurHardSymbSize;
-      xset_font(Xgc,i,hds);
+      int i, cpat;
+      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      Xgc->CurColor = -1; /* we want to force xset to change rgb color */
+      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
       for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
-      xset_font(Xgc,keepid,keepsize);
+      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
     }
 }
 
@@ -438,35 +423,6 @@ static void displaynumbers(BCG *Xgc, int *x, int *y, int n, int flag, double *z,
   Xgc->graphic_engine->generic->displaynumbers(Xgc,x,y,n,flag,z,alpha);
 }
 
-/* cairo: we use in fact next routine i.e pango + cairo  */
-#if 0 
-static void draw_mark_cairo(BCG *Xgc,int *x, int *y)
-{ 
-  cairo_t *cr =  Xgc->private->cairo_cr;
-  cairo_status_t status;
-  int code = symbols[Xgc->CurHardSymb]; 
-  gchar symbol_code[4], *iter = symbol_code;
-
-  
-  g_unichar_to_utf8(code, iter);
-  iter = g_utf8_next_char(iter);
-  g_unichar_to_utf8(0x0, iter);
-
-  cairo_select_font_face (cr, "Standard Symbols L ",
-			  CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-  if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS) 
-    {
-      fprintf (stderr, "Cairo is unhappy in draw_mark : %s\n",
-	       cairo_status_to_string(status));
-    }
-  /* we need here to center the symbol XXXX */
-  cairo_set_font_size (cr, 10);
-  cairo_move_to (cr, *x,*y);
-  cairo_show_text (cr,symbol_code);
-}
-#endif 
- 
-
 /* pango layout and cairo 
  *
  */ 
@@ -488,81 +444,13 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
   cairo_move_to (cr, *x-dx,*y+dy);
   pango_cairo_update_layout (cr,Xgc->private->mark_layout);
-  cairo_show_text (cr,symbol_code);
-  /* 
-     cairo_rectangle (cr,*x-dx/2.0,*y-dy/2.0,PANGO_PIXELS(ink_rect.width),PANGO_PIXELS(ink_rect.height));
-     cairo_stroke (cr);
-  */
-}
-
-/*
- *  display of a string
- *  at (x,y) position whith slope angle alpha in degree . 
- * Angle are given clockwise. 
- * If *flag ==1 and angle is z\'ero a framed box is added 
- * around the string}.
- * 
- * (x,y) defines the lower left point of the bounding box 
- * of the string ( we do not separate asc and desc 
- */
-
-#if 0 
-static void displaystring_cairo(BCG *Xgc,char *string, int x, int y,  int flag, double angle) 
-{ 
-  int rect[4];
-  cairo_t *cr =  Xgc->private->cairo_cr;
-  
-  cairo_select_font_face (cr, "Sans", CAIRO_FONT_SLANT_NORMAL, CAIRO_FONT_WEIGHT_NORMAL);
-  cairo_set_font_size(cr, 20);
-
-  if ( flag == 1) boundingbox(Xgc,string, x,y,rect);
-
-  if ( Abs(angle) <= 0.1) 
+  pango_cairo_show_layout (cr,Xgc->private->mark_layout);
+  if (0) 
     {
-      cairo_move_to (cr, x,y);
-      cairo_show_text (cr, string);
-      if ( flag == 1) 
-	{
-	  cairo_rectangle (cr,rect[0],rect[1],rect[2],rect[3]);
-	  cairo_stroke (cr);
-	}
-    }
-  else 
-    {
-      double rad_angle = angle * M_PI/180.0;
-      /* cairo_text_extents_t extents; */
-      cairo_save (cr);
-      cairo_identity_matrix (cr);
-      cairo_translate (cr, x,y);
-      cairo_rotate (cr, rad_angle);
-      cairo_move_to (cr, 0,0);
-      cairo_show_text (cr, string);
-      if ( flag == 1) 
-	{
-	  cairo_rectangle (cr,0,0,rect[2],rect[3]);
-	  cairo_stroke (cr);
-	}
-      cairo_restore (cr);
+      cairo_rectangle (cr,*x-dx/2.0,*y-dy/2.0,PANGO_PIXELS(ink_rect.width),PANGO_PIXELS(ink_rect.height));
+      cairo_stroke (cr);
     }
 }
-#endif 
-
-/*
- * To get the bounding rectangle of a string 
- */
-#if 0 
-static void boundingbox_cairo(BCG *Xgc,char *string, int x, int y, int *rect)
-{ 
-  cairo_t *cr =  Xgc->private->cairo_cr;
-  cairo_text_extents_t extents;
-  
-  cairo_text_extents (cr,string, &extents);
-  rect[0]= x ;
-  rect[3]= extents.height;
-  rect[1]= y + extents.y_bearing;
-  rect[2]= extents.width +extents.x_bearing ;
-}
-#endif 
 
 /* pango layout + cairo */
 
@@ -571,7 +459,6 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 { 
   int width,height;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  
   pango_layout_set_text (Xgc->private->layout, string, -1);
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
@@ -581,7 +468,7 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
       pango_cairo_update_layout (cr,Xgc->private->layout);
       pango_cairo_show_layout (cr,Xgc->private->layout);
       /* horizontal string */
-      if (flag == 1) /*  flag == 1)  */
+      if ( flag == 1) /*  flag == 1)  */
 	{
 	  cairo_rectangle (cr,x,y-height,width,height);
 	  cairo_stroke (cr);
@@ -612,11 +499,11 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
 {
   int width, height;
-  
   pango_layout_set_text (Xgc->private->layout, string, -1);
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
+
 
 
 /**
@@ -692,6 +579,10 @@ static void draw_pixbuf_from_file(BCG *Xgc,const char *fname,int src_x,int src_y
 static void xset_clip(BCG *Xgc,const GdkRectangle *r)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
+  if ( Xgc->ClipRegionSet == 1 ) 
+    {
+      cairo_reset_clip(cr);
+    }
   Xgc->ClipRegionSet = 1;
   Xgc->CurClipRegion = *r;
   cairo_new_path (cr);
@@ -951,6 +842,7 @@ static int  xset_pattern(BCG *Xgc,int color)
   cairo_set_source_rgb(cr, rgb[0], rgb[1], rgb[2]);
   return old;
 }
+
 
 /* export cairo graphics to files in various formats 
  * This cairo facilities should be checked by configure 

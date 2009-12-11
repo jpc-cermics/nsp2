@@ -279,14 +279,18 @@ static void drawpolymark(BCG *Xgc,int *vx, int *vy,int n)
     }
   else 
     { 
-      int i,keepid,keepsize,hds;
-      i=1;
-      keepid =  Xgc->fontId;
-      keepsize= Xgc->fontSize;
-      hds= Xgc->CurHardSymbSize;
-      xset_font(Xgc,i,hds);
+      int i;
+      /* 
+	 symb[0] = Xgc->CurHardSymb ;
+	 symb[1] = Xgc->CurHardSymbSize ;
+	 int i,keepid,keepsize,hds;
+	 i=1;
+	 keepid =  Xgc->fontId;
+	 keepsize= Xgc->fontSize;
+	 hds= Xgc->CurHardSymbSize;
+	 xset_mark(Xgc,i,hds);
+      */
       for ( i=0; i< n ;i++) draw_mark(Xgc,vx+i,vy+i);
-      xset_font(Xgc,keepid,keepsize);
     }
 }
 

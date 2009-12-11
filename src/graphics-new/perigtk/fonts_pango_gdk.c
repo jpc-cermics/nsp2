@@ -31,8 +31,7 @@
 
 /* Must be of size FONTMAXSIZE */
 
-static const int pango_size[] = { 8 ,10,12,14,18,24};
-
+static const int pango_size[] = {8,10,12,14,18,24};
 static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
 
 #undef HAVE_FREETYPE
@@ -72,7 +71,6 @@ static void nsp_fonts_initialize(BCG *Xgc)
 #endif 
       Xgc->private->desc = pango_font_description_new();
       Xgc->private->mark_desc = pango_font_description_from_string(pango_fonttab[1]);
-
     }
 }
 
@@ -86,6 +84,10 @@ static void queryfamily(char *name, int *j,int *v3)
   /* */
 }
 
+/* set up the private layout with proper font 
+ *
+ */
+
 static void xset_font(BCG *Xgc,int fontid, int fontsize)
 { 
   int i,fsiz;
@@ -98,7 +100,6 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
       pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
       /* pango_font_description_set_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);*/
       pango_font_description_set_absolute_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);
-
       pango_layout_set_font_description (Xgc->private->layout, Xgc->private->desc);
     }
 }
@@ -110,6 +111,10 @@ static void  xget_font(BCG *Xgc,int *font)
   font[0] = Xgc->fontId ;
   font[1] = Xgc->fontSize ;
 }
+
+/* set up the private mark_layout with proper font 
+ *
+ */
 
 static void xset_mark(BCG *Xgc,int number, int size)
 { 
@@ -311,6 +316,10 @@ static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
   rect[0]=x;rect[1]=y+height;rect[2]=width;rect[3]=height;
 }
+
+/* draw a mark centred at (x,y) using the 
+ * symbol font and the mark_layout.
+ */
 
 static void draw_mark(BCG *Xgc,int *x, int *y)
 {

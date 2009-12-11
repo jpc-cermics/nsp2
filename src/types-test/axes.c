@@ -1572,6 +1572,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   
   clip = (  P->obj->clip == TRUE ) ?  Xgc->scales->Irect : clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect(&rect_a,&clip,&clip);
+
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
   
   /* draw elements 
@@ -1592,11 +1593,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   
   /* clip the enclosing rectangle of the  axe
    */
-
+  
   clip = clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
+  
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
-
+  
   Xgc->graphic_engine->xget_font(Xgc,font);
   Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size);
   lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
@@ -1613,12 +1615,11 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->y[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
   
-
   Xgc->graphic_engine->xset_font(Xgc,font[0],font[1]);
   Xgc->graphic_engine->xset_thickness(Xgc, lw);
 
-
   /* back to previous clip zone */
+
   if ( rect != NULL ) 
     {
       Xgc->graphic_engine->xset_clip(Xgc,rect);
@@ -1627,10 +1628,9 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
     {
       Xgc->graphic_engine->xset_unclip(Xgc);
     }
-
+  
   /* scale back */
   *Xgc->scales = scale_keep;
-
 }
 
 

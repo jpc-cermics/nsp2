@@ -93,7 +93,7 @@ Gengine1 nsp_gengine1={
  * graphic context initialization 
  *------------------------------------------------*/
 
-void nsp_initialize_gc( BCG *Xgc ) 
+void nsp_initialize_gc_obsol( BCG *Xgc ) 
 { 
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
@@ -119,7 +119,7 @@ void nsp_initialize_gc( BCG *Xgc )
 
 static void initialize_gc_1(BCG *Xgc)
 {
-  nsp_initialize_gc(Xgc);
+  nsp_initialize_gc_obsol(Xgc);
 }
 
 

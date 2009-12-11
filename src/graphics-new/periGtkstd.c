@@ -1448,7 +1448,34 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
  * 
  * 
  **/
-extern void nsp_initialize_gc( BCG *Xgc ) ;
+
+#ifdef PERIGTK 
+void nsp_initialize_gc( BCG *Xgc ) 
+{ 
+  int i;
+  Xgc->graphic_engine->xset_unclip(Xgc);
+  Xgc->fontId=0; Xgc->fontSize=0 ;
+  Xgc->graphic_engine->xset_font(Xgc,2,1);
+  Xgc->CurHardSymb=0; Xgc->CurHardSymbSize=0;
+  Xgc->graphic_engine->xset_mark(Xgc,1,1);
+  /* Absolute coord mode */
+  Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
+  /* initialisation des pattern dash par defaut en n&b */
+  Xgc->graphic_engine->xset_default_colormap(Xgc);
+  getcolordef(&i); /* preferred color status */
+  Xgc->graphic_engine->xset_alufunction1(Xgc,3);
+  Xgc->graphic_engine->xset_usecolor(Xgc,i);
+  Xgc->graphic_engine->xset_dash(Xgc,1);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,1);
+  Xgc->graphic_engine->xset_thickness(Xgc,1);
+  Xgc->graphic_engine->xset_pattern(Xgc,1);
+  Xgc->graphic_engine->xset_foreground(Xgc,Xgc->NumForeground);
+  Xgc->graphic_engine->xset_background(Xgc,Xgc->NumBackground);
+  Xgc->graphic_engine->xset_hidden3d(Xgc,4);
+  Xgc->graphic_engine->xset_autoclear_def(Xgc) ;
+  Xgc->graphic_engine->xset_fpf_def(Xgc) ;
+}
+#endif
 
 static void xset_default(BCG *Xgc)
 {
