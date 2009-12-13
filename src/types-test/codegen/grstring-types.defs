@@ -15,6 +15,7 @@
    '("int" "fill" "std" "0")
    '("int" "posx" ) 
    '("int" "posy" ) 
+   '("int" "size" ) 
     )
   (gtype-id "Grstring")
 )

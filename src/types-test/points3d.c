@@ -923,9 +923,11 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
   Xgc->graphic_engine->xset_mark(Xgc,mark[0],mark[1]);
   for ( j = 0 ; j < V_nb_coords ; j++) 
     {
+#if 0 
       int x,y;
-      double Vp[3],Tp[3];
-      const double lim[] ={ 1.e+10,  1.e+10, - 1.e+10};
+      double Tp[3];
+#endif 
+      double Vp[3];
       Vp[0] = V_coord[j];
       Vp[1] = V_coord[j+V_nb_coords];
       Vp[2] = V_coord[j+2*V_nb_coords];
@@ -988,4 +990,4 @@ static int nsp_points3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 992 "points3d.c"
+#line 994 "points3d.c"

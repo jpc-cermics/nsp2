@@ -574,7 +574,7 @@ void PermutOfSort (const int *tab, int *perm)
 void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 		    const int *zxy, const double *zlevel,const int *fill)
 {
-  int nb0, edge, izone, color;
+  int nb0, edge, izone, color, c_color;
   int nr, resx[5],resy[5];
   int xEdge2, yEdge2, xEdge, yEdge; 
 
@@ -582,13 +582,16 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
    * case of only one color for the triangle : 
    */
 
+  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+
   if ( zxy[0] == zxy[2] ) {
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
     color = fill[zxy[0]]; nr = 3;
     if ( color != 0 ) 
       {
-	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+	Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
       }
     return;
   }
@@ -629,7 +632,11 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   FindIntersection(sx, sy, fxy, zlevel[zxy[0]], 0, 2, &xEdge2, &yEdge2);
   resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
   color = fill[zxy[0]];
-  if ( color != 0 )   Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+  if ( color != 0 )
+    {
+      Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+      Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+    }
 
   /*
    *  compute the intermediary polygon(s) 
@@ -660,15 +667,19 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
       FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
       resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
       color = fill[izone];
-      if (1 && color != 0 ) 
-	Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
+      if ( color != 0 ) 
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	  Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+	}
       /*
        * this function could be used to draw levels as we can test here.
        */
       if (0 && color != 0 ) 
 	{
 	  color = -  fill[izone];
-	  Xgc->graphic_engine->drawpolylines(Xgc,resx,resy,&color,1,nr);
+	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	  Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 	}
     }
   
@@ -687,9 +698,12 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   /* the last point is P2 */
   resx[nr] = inint(sx[2]); resy[nr] = inint(sy[2]); nr++;
   color = fill[zxy[2]];
-  if ( color != 0 )  Xgc->graphic_engine->fillpolylines(Xgc,resx,resy,&color,1,nr);
-
-
+  if ( color != 0 ) 
+    {
+      Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+      Xgc->graphic_engine->fillpolyline(Xgc,resx,resy,nr,1);
+    }
+  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
 }
 
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,

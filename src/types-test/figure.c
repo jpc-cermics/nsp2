@@ -2169,7 +2169,6 @@ extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine;
 
 static int nsp_figure_connect(NspFigure *F)
 {
-  NspObject *obj;
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
   BCG *Xgc;
@@ -2224,33 +2223,32 @@ static int nsp_figure_connect(NspFigure *F)
 #endif
     }
   else 
-    initg = Gtk_gengine.initgraphic;
-  v1 = -1; 
-  F->obj->id=
-    initg("",&v1, 
-	  (F->obj->dims != NULL  && F->obj->dims->mn == 2 ) ? wdim :NULL, 
-	  (F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
-	  NULL, 
-	  ( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
-	  'e',NULL);
+    {
+      initg = Gtk_gengine.initgraphic;
+    }
   
-  /* check ! */
-  Xgc = window_list_search_new(F->obj->id);
-  if ( Xgc == NULL) 
+  v1 = -1; 
+
+  if ((F = (NspFigure *) nsp_object_copy_and_name("fig",NSP_OBJECT(F))) == NULL )
+    return FAIL;
+  
+  initg("",&v1, 
+	(F->obj->dims != NULL  && F->obj->dims->mn == 2 ) ? wdim :NULL, 
+	(F->obj->viewport_dims  != NULL &&  F->obj->viewport_dims->mn == 2) ? wpdim : NULL , 
+	NULL, 
+	( F->obj->position != NULL && F->obj->position->mn == 2 ) ? wpos: NULL , 
+	'e',NULL,F);
+  
+  if ( F->obj->Xgc == NULL) 
     {
       Sciprintf("failed to connect figure\n");
       return FAIL;
     }
-  F->obj->Xgc = Xgc;
-
-  Xgc->graphic_engine->xset_wresize(Xgc,F->obj->wresize);
   
+  Xgc->graphic_engine->xset_wresize(Xgc,F->obj->wresize);
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
     Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
 
-  if ((obj = nsp_object_copy_and_name("Obj",NSP_OBJECT(F))) == NULLOBJ )
-    return FAIL;
-  Xgc->figure = obj;
   return OK;
 }
 
@@ -3309,7 +3307,7 @@ static void nsp_figure_set_gc_values(NspFigure *F)
   else
     Gc->foreground= Xgc->graphic_engine->xget_foreground(Xgc);
   Xgc->graphic_engine->xset_dash(Xgc,Gc->dashes);
-  Xgc->graphic_engine->xset_font(Xgc,Gc->font,Gc->font_size);
+  Xgc->graphic_engine->xset_font(Xgc,Gc->font,Gc->font_size, FALSE);
   Xgc->graphic_engine->xset_hidden3d(Xgc,Gc->hidden3d);
   Xgc->graphic_engine->xset_absourel(Xgc,Gc->line_mode);
   Xgc->graphic_engine->xset_dash(Xgc,Gc->line_style);
@@ -3674,4 +3672,4 @@ int nsp_figure_remove_children(NspFigure *F)
 }
 
 
-#line 3678 "figure.c"
+#line 3676 "figure.c"

@@ -40,6 +40,7 @@ struct _nsp_grstring {
   int fill;
   int posx;
   int posy;
+  int size;
   int ref_count;
 };
 
@@ -69,7 +70,7 @@ NspGrstring *new_grstring();
 
 #define NULLGRSTRING (NspGrstring*) 0
 
-extern NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,NspTypeBase *type);
+extern NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type);
 extern NspGrstring *nsp_grstring_create_default(char *name);
 
 /* from NspGrstringObj.c */
@@ -98,7 +99,7 @@ extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
 /* inserted at the end of public part of include file */
 
-#line 102 "./grstring.h"
+#line 103 "./grstring.h"
 #endif /* NSP_INC_NspGrstring */ 
 
 #ifdef NspGrstring_Private 
@@ -122,6 +123,6 @@ static void nsp_rotate_grstring(NspGraphic *o,double *R);
 static void nsp_scale_grstring(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 
-#line 126 "./grstring.h"
+#line 127 "./grstring.h"
 #endif /* NspGrstring_Private */
 

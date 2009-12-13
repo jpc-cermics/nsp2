@@ -1572,7 +1572,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   
   clip = (  P->obj->clip == TRUE ) ?  Xgc->scales->Irect : clip_axe;
   if ( rect != NULL ) gdk_rectangle_intersect(&rect_a,&clip,&clip);
-
+  
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
   
   /* draw elements 
@@ -1586,7 +1586,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       if ( cloc->O != NULLOBJ ) 
 	{
 	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  G->type->draw(Xgc,G,rect,data);
+	  G->type->draw(Xgc,G,&clip,data);
 	}
       cloc = cloc->next;
     }
@@ -1599,8 +1599,8 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   
   Xgc->graphic_engine->xset_clip(Xgc, &clip);
   
-  Xgc->graphic_engine->xget_font(Xgc,font);
-  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size);
+  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
+  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
   lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
   
   /* draw axes, ticks */
@@ -1615,7 +1615,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   if ( P->obj->y[0] != '\0') 
     Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
   
-  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1]);
+  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
   Xgc->graphic_engine->xset_thickness(Xgc, lw);
 
   /* back to previous clip zone */
@@ -1967,6 +1967,7 @@ void nsp_strf_axes(NspAxes *A,double *rect, char scale)
     case '0': /* no computation, the plot use the previus (or default) scale */
       break;
     case '1': /* from the rect arg */
+      nsp_axes_compute_inside_bounds(G,A->obj->bounds->R);
       A->obj->iso = FALSE;
       A->obj->auto_axis = FALSE;
       break;
@@ -2404,4 +2405,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2408 "axes.c"
+#line 2409 "axes.c"

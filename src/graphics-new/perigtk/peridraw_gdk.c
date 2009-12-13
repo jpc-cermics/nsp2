@@ -688,31 +688,51 @@ static void queryfamily(char *name, int *j,int *v3)
 }
 
 /* set up the private layout with proper font 
- *
+ * Xgc->fontSize is used to keep track of previous value
+ *  if <=0 then previous value was an indice in the pango_size array 
+ *  if > 0 then previous value was an absolute value in pixel.
  */
 
-static void xset_font(BCG *Xgc,int fontid, int fontsize)
+static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
 { 
-  int i,fsiz;
+  int i,fsiz, changed = TRUE;
   i = Min(FONTNUMBER-1,Max(fontid,0));
-  fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
-  if ( Xgc->fontId != i || Xgc->fontSize != fsiz )
+  if ( full == TRUE ) 
+    {
+      fsiz = Max(1,fontsize);
+      changed = Xgc->fontId != i || Xgc->fontSize != fsiz ;
+      Xgc->fontSize = fsiz;
+   }
+  else
+    {
+      fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
+      changed = Xgc->fontId != i || Xgc->fontSize != - fsiz ;
+      Xgc->fontSize = - fsiz ;
+      fsiz = pango_size[fsiz];
+    }
+  if ( changed  ) 
     {
       Xgc->fontId = i;
-      Xgc->fontSize = fsiz;
       pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
-      /* pango_font_description_set_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);*/
-      pango_font_description_set_absolute_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);
+      pango_font_description_set_absolute_size (Xgc->private->desc, fsiz * PANGO_SCALE);
       pango_layout_set_font_description (Xgc->private->layout, Xgc->private->desc);
     }
 }
 
 /* To get the  id and size of the current font */
 
-static void  xget_font(BCG *Xgc,int *font)
+static void  xget_font(BCG *Xgc,int *font,int full)
 {
   font[0] = Xgc->fontId ;
-  font[1] = Xgc->fontSize ;
+  if ( full == TRUE )
+    {
+      font[1] = (Xgc->fontSize <= 0) ?
+	pango_size[-Xgc->fontSize]: Xgc->fontSize;
+    }
+  else
+    {
+      font[1] = (Xgc->fontSize <= 0) ? -Xgc->fontSize : 0 ;
+    }
 }
 
 /* set up the private mark_layout with proper font 
@@ -821,27 +841,19 @@ static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *contex
  * 
  */
 
-static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angle,
+static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,double angle,
 			  gr_str_posx posx, gr_str_posy posy )
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
   ;
   pango_layout_set_text (Xgc->private->layout, str, -1);
-  /*  PangoLayoutLine *line;
-   *  nline = pango_layout_get_line_count(Xgc->private->layout); 
-   *  if ( nline == 1 ) 
-   *    {
-   *   / * we want (x,y) to be at the baseline of the first string position * /
-   *   line = pango_layout_get_line(Xgc->private->layout,0);
-   *   pango_layout_line_get_extents(line, &ink_rect,&logical_rect);
-   *   height = - logical_rect.y/PANGO_SCALE;
-   *   width = logical_rect.width/PANGO_SCALE;
-   */
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
   if ( posy == GR_STR_YBASELINE ) 
     {
+      /* we want (x,y) to be at the baseline of the first layout line 
+       */
       PangoLayoutLine *line;
       line = pango_layout_get_line(Xgc->private->layout,0);
       pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
@@ -870,7 +882,7 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
 		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
       pango_context_set_matrix (Xgc->private->context,NULL);
       pango_layout_context_changed (Xgc->private->layout);
-      if (flag ) 
+      if (flag == TRUE ) 
 	{
 	  /* draw the enclosing polyline 
 	   */
@@ -911,8 +923,7 @@ static void displaystring(BCG *Xgc,char *str, int x, int y, int flag,double angl
     }
 }
 
-
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
+static void boundingbox(BCG *Xgc,const char *string, int x, int y, int *rect)
 {
   int width, height;
   pango_layout_set_text (Xgc->private->layout, string, -1);

@@ -893,7 +893,7 @@ static void pixmap_resize(BCG *Xgc)
   around the string.}
   -----------------------------------------------------*/
 
-static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle,
+static void displaystring(BCG *Xgc,const char *string, int x, int y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {
   int rect[4], font=-1,font_flag=2;
@@ -937,10 +937,10 @@ static int bsizeXfig_[6][4]= {{ 0,-7,463,9  },
 
 /* To get the bounding rectangle of a string **/
 
-void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
+void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
 {
   int font[2];
-  xget_font(Xgc,font);
+  xget_font(Xgc,font, FALSE);
   rect[0]= (int)(x+bsizeXfig_[font[1]][0]*((double) prec_fact));
   rect[1]= (int)(y+bsizeXfig_[font[1]][1]*((double) prec_fact));
   rect[2]= (int)(((double)prec_fact)*(bsizeXfig_[font[1]][2]/100.0)*((double)strlen(string)));
@@ -980,7 +980,7 @@ static int symb_yh[FONTMAXSIZE][SYMBOLNUMBER]={
 static void boundingboxM(BCG *Xgc,char *string, int x, int y, int *rect)
 {
   int font[2];
-  xget_font(Xgc,font);
+  xget_font(Xgc,font, FALSE);
   rect[0]= (int)(x+bsizeXfig_[font[1]][0]*((double) prec_fact));
   rect[1]= (int)(y+bsizeXfig_[font[1]][1]*((double) prec_fact));
   rect[2]= (int)(symb_xw[Xgc->CurHardSymbSize][Xgc->CurHardSymb]);
@@ -1337,16 +1337,16 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
   int keepid,keepsize,  i=1, sz=Xgc->CurHardSymbSize;
   keepid =  Xgc->fontId;
   keepsize= Xgc->fontSize;
-  xset_font(Xgc,i,sz);
+  xset_font(Xgc,i,sz, FALSE);
   displaysymbols(Xgc,vx,vy,n);
-  xset_font(Xgc,keepid,keepsize);
+  xset_font(Xgc,keepid,keepsize, FALSE);
 }
  
 /*-----------------------------------------------------
   \encadre{Routine for initialisation}
   ------------------------------------------------------*/
 
-static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data)
+static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode, void *data, void *f)
 { 
   char string1[256];
   static int EntryCounter = 0;
@@ -1373,7 +1373,7 @@ static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double 
   FileInit(Xgc);
   Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
-  return EntryCounter;
+  return NULL;
 }
 
 static void FileInit(BCG *Xgc)
@@ -1427,7 +1427,7 @@ void InitScilabGCXfig(BCG *Xgc)
   i=j= -1;
   xset_unclip(Xgc);
   xset_dash(Xgc,0);
-  xset_font(Xgc,2,1);
+  xset_font(Xgc,2,1, FALSE);
   xset_mark(Xgc,0,0);
   /* trac\'e absolu **/
   Xgc->CurVectorStyle = CoordModeOrigin ;
@@ -1913,7 +1913,7 @@ static void Write2Vect(const int *vx,const int *vy, int n, int flag)
 
 /* To set the current font id of font and size **/
 
-static void xset_font(BCG *Xgc,int fontid, int fontsize)
+static void xset_font(BCG *Xgc,int fontid, int fontsize, int full)
 { 
   int i,fsiz;
   i = Min(FONTNUMBER-1,Max(fontid,0));
@@ -1932,7 +1932,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
 
 /* To get the values id and size of the current font **/
 
-static void xget_font(BCG *Xgc, int *font)
+static void xget_font(BCG *Xgc, int *font, int full)
 {
   font[0]= Xgc->fontId ;
   font[1] =Xgc->fontSize ;

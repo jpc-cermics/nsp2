@@ -348,7 +348,7 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
       Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
       wdim_p = wdim;
     }
-  Ggc->graphic_engine->initgraphic(bufname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,option,NULL);
+  Ggc->graphic_engine->initgraphic(bufname,&Xgc->CurWindow,wdim_p,NULL,NULL,NULL,option,NULL,NULL);
   if (colored==1) 
     Ggc->graphic_engine->xset_usecolor(Ggc,un);
   else

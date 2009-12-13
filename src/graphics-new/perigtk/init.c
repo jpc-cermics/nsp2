@@ -36,13 +36,13 @@
 #include <cairo-svg.h>
 #endif 
 
-static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data);
+static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
+				  int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data, void *Fig);
 
-static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,
-		       int *wpos,char mode, void *data)
+static void *initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *viewport_pos,
+			 int *wpos,char mode, void *data,void *Fig)
 { 
-  return nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos,data);
+  return nsp_initgraphic(string,NULL,NULL,v2,wdim,wpdim,viewport_pos,wpos,data,Fig);
 }
 
 /* used when a graphic window is to be inserted in a more complex 
@@ -58,7 +58,7 @@ static int initgraphic(const char *string, int *v2,int *wdim,int *wpdim,double *
 
 int nsp_graphic_new_new(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *wpdim,double *viewport_pos,int *wpos)
 { 
-  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL);
+  nsp_initgraphic("",win,box,&v2,wdim,wpdim,viewport_pos,wpos,NULL,NULL);
   return  nsp_get_win_counter()-1;
 }
 
@@ -70,75 +70,48 @@ int nsp_get_win_counter() { return EntryCounter;};
 void nsp_set_win_counter(int n) {  EntryCounter=Max(EntryCounter,n); EntryCounter++;}
 #endif 
 
-static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
-			   int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data)
+static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int *v2,
+				  int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data,void *Fig)
 {
+  char *name=NULL,*driver=NULL;
+  const gchar *gname;
   int i;
-  static int first = 0;
   GdkColor white={0,0,0,0};
   GdkColor black={0,65535,65535,65535};
   BCG *NewXgc ;
   /* Attention ici on peut faire deux fenetre de meme numéro à régler ? XXXXX */
   int WinNum = ( v2 != (int *) NULL && *v2 != -1 ) ? *v2 : nsp_get_win_counter();
   gui_private *private ; 
-  if ( ( private = MALLOC(sizeof(gui_private)))== NULL) 
+
+  /* private Xgc data initialized to 0 */
+  if ( ( private = calloc(1,sizeof(gui_private)))== NULL) 
     {
       Sciprintf("initgraphics: running out of memory \n");
-      return -1;
+      return NULL;
     }
   /* default values  */
-  private->colors=NULL;
-  private->q_colors=NULL;
-  private->colormap=NULL;
-  private->window=NULL;		
-  private->drawing=NULL;           
-  private->scrolled=NULL;          
-  private->CinfoW =NULL;           
-  private->vbox=NULL;              
-  private->menubar=NULL;
-  private->menu_entries=NULL;
-  private->pixmap=NULL;       
-  private->extra_pixmap=NULL;
-  private->drawable=NULL;
-  private->wgc=NULL;
-  private->stdgc=NULL;
-  private->gcursor=NULL;      
-  private->ccursor=NULL;      
-  private->extra_cursor=NULL;      
-  private->font=NULL;
-  private->resize = 0; /* do not remove !! */
-  private->zzin_expose= FALSE; /* unused */
+  private->resize = 0; 
+  private->zzin_expose= FALSE;
   private->protect= FALSE;
   private->draw= FALSE;
-  private->layout  = NULL;
-  private->mark_layout  = NULL;
-  private->context = NULL;
-  private->desc = NULL;
-  private->mark_desc = NULL;
   private->gcol_bg = white;
   private->gcol_fg = black;
 #ifdef PERIGL 
-  private->ft2_context = NULL;
   private->gdk_only= FALSE;
   private->gl_only= FALSE;
-  private->gldrawable= NULL;
-  private->glcontext = NULL;
-#endif 
-#ifdef PERICAIRO 
-  private->cairo_cr = NULL;
 #endif 
   private->invalidated.width = 0;
   private->invalidated.height = 0;
   private->invalidated.x = 0;
   private->invalidated.y = 0;
+
   if (( NewXgc = window_list_new(private) ) == (BCG *) 0) 
     {
       Sciprintf("initgraphics: unable to alloc\n");
-      return -1;
+      return NULL;
     }
-
   NewXgc->CurWindow = WinNum;
-  NewXgc->figure = NULL;
+
   /* the graphic engine associated to this graphic window */  
 #ifdef PERIGL 
   NewXgc->graphic_engine = &GL_gengine ;
@@ -153,18 +126,6 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
 
   start_sci_gtk(); /* be sure that gtk is started */
 
-  if (first == 0)
-    {
-      maxcol = 1 << 16; /* FIXME XXXXX : to be changed */
-      first++;
-    }
-
-  /* recheck with valgrind 
-   * valgrind detecte des variables non initialisees dans 
-   * initialize a cause d'initialisation croisées 
-   * d'ou des valeurs par defaut ...
-   * A tester pour faire les choses dans l'ordre dans initialize 
-   */
   NewXgc->CurLineWidth=0;
   NewXgc->CurPattern=0;
   NewXgc->CurColor=1;
@@ -234,23 +195,35 @@ static int nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *box,int 
   nsp_initialize_gc(NewXgc);
   NewXgc->graphic_engine->xset_pixmapOn(NewXgc,0);
   NewXgc->graphic_engine->xset_wresize(NewXgc,1);
+
+  /* attach a figure to the graphic window */
+  gname = gtk_window_get_title (GTK_WINDOW(private->window));
+  if (( name =new_nsp_string(gname)) == NULLSTRING)
+    return NULL;
+  if (( driver =new_nsp_string("Gtk")) == NULLSTRING)
+    return NULL;
+  if ( Fig == NULL )
+    {
+      Fig = nsp_figure_create("fig",name,driver,NewXgc->CurWindow,NULL,NULL,TRUE,NULL,NULL,
+			      TRUE,NULL,NewXgc,NULL);
+      if ( Fig == NULL) return NULL;
+    }
+  else
+    {
+      ((NspFigure *) Fig)->obj->id = NewXgc->CurWindow;
+      ((NspFigure *) Fig)->obj->Xgc = NewXgc;
+    }
+  NewXgc->figure = Fig;
+  nsp_set_current_figure(Fig);
   nsp_set_win_counter(WinNum);
   gdk_flush();
-  return WinNum;
+  return Fig;
 }
+
 
 /*
  * partial or full creation of a graphic nsp widget 
  * if is_top == FALSE a partial widget (vbox) is created 
- */
-
-/* FIXME: for cairo 
- *        gint gtk_cairo_set_x11_cr(GtkCairo *gtkcairo,gint width,gint height)
- *        is added by me on my local gtkcairo installation. 
- *        the code should be updated and tested with a more recent version 
- *        of gtk which includes cairo.
- *        this function must be called when size is changed. I use this function 
- *        because I do not use the paint method.
  */
 
 static GtkTargetEntry target_table[] = {

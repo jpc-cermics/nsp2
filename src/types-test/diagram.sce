@@ -488,7 +488,7 @@ if ~new_graphics() then
   switch_graphics();
 end
 
-xinit(cairo=%f,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
+xinit(cairo=%t,opengl=%f,dim=[1000,1000],popup_dim=[600,400])
 xsetech(frect=[0,0,100,100],fixed=%t,axesflag=2,clip=%f);
 F=get_current_figure();
 A=F.children(1);

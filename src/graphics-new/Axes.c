@@ -245,13 +245,13 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
       
-  Xgc->graphic_engine->xget_font(Xgc,fontid);
+  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   fontsize_kp = fontid[1] ;
 
   if ( fontsize != -1 ) 
     {
       fontid[1] = fontsize ;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
     }
   if ( textcolor != -1 || ticscolor != -1 ) 
     {
@@ -262,7 +262,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
     {
       Xgc->graphic_engine->boundingbox(Xgc,"10",xx,yy,logrect);
       smallersize=fontid[1]-2;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, FALSE);
     }
   
   /* Real to Pixel values */
@@ -387,9 +387,9 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  Xgc->graphic_engine->displaystring(Xgc,foo,posi[0],posi[1],flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  if ( logflag == 'l' )
 	    {
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),(posi[1] += logrect[3],posi[1]),flag,angle,GR_STR_XLEFT, GR_STR_YBOTTOM);
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, FALSE);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 	  if ( ticscolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,ticscolor);
@@ -500,11 +500,11 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 					     GR_STR_XLEFT, GR_STR_YBOTTOM);
 	  if ( logflag == 'l' )
 	    {
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 	      Xgc->graphic_engine->displaystring(Xgc,"10",(posi[0] -= logrect[2],posi[0]),
 						 (posi[1] += logrect[3],posi[1]),flag,angle,
 						 GR_STR_XLEFT, GR_STR_YBOTTOM);
-	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize);
+	      Xgc->graphic_engine->xset_font(Xgc,fontid[0],smallersize, FALSE);
 	    }
 	  if ( textcolor != -1 )  Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
 
@@ -537,7 +537,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
   if ( fontsize != -1 || logflag == 'l' )
     {
       fontid[1] = fontsize_kp;
-      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+      Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
     }
   /* reset to current color */
   if ( textcolor != -1 || ticscolor != -1 ) 

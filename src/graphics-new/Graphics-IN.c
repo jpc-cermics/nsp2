@@ -475,7 +475,7 @@ static int int_contour2d_new( Stack stack, int rhs, int opt, int lhs)
  * which is used to get the values of the contours.
  */
 
-static int int_contour2d1( Stack stack, int rhs, int opt, int lhs)
+static int int_contour2di_new( Stack stack, int rhs, int opt, int lhs)
 {
   BCG *Xgc;
   NspMatrix *x,*y,*z, *M,*M1;
@@ -1519,11 +1519,14 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       /* if rect is provided and not selected by strf we force it */
       plot2d_strf_change('d',strf);
     }
-  if ( ncurves == 0 ) return 0;
-  ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,leg,leg_posi,mode,rect,nax);
-  if ( ret == NULL) return RET_BUG;
-  if ( Mstyle != Mistyle)     nsp_matrix_destroy(Mistyle);
-  if ( lhs == 1 ) 
+
+  ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,
+		       leg,leg_posi,mode,rect,nax);
+  if ( ret == NULL && ncurves != 0 )
+    return RET_BUG;
+  if ( Mstyle != Mistyle) 
+    nsp_matrix_destroy(Mistyle);
+  if ( lhs == 1 && ncurves != 0 ) 
     {
       MoveObj(stack,1,NSP_OBJECT(ret));
       return 1;
@@ -3544,7 +3547,7 @@ static int int_xinit(Stack stack, int rhs, int opt, int lhs)
 						   (wpdim) ? (int*)wpdim->R: NULL,
 						   (viewport) ? viewport->R : NULL,
 						   (wpos) ? (int*)wpos->R : NULL,
-						   mode[0],NULL);
+						   mode[0],NULL,NULL);
     }
   else 
     {
@@ -3570,7 +3573,7 @@ static int int_xinit(Stack stack, int rhs, int opt, int lhs)
 	    (wpdim) ? (int*)wpdim->R: NULL,
 	    (viewport) ? viewport->R : NULL,
 	    (wpos) ? (int*)wpos->R : NULL,
-	    'e',NULL);
+	    'e',NULL,NULL);
     }
   /* we should have an other way here to detect that 
    * initgraphic was fine 
@@ -4309,7 +4312,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   NspAxes *axe;
   NspSMatrix *S,*Sk;
   double x,y,yi,angle=0.0, h = 0.0, w = 0.0;
-  int flagx=0, box=FALSE, fill= FALSE;
+  int flagx=0, box=FALSE, fill= GR_no_box, fsiz = -1;
   char *posx=NULL,*posy=NULL;
   
   nsp_option opts[] ={
@@ -4321,8 +4324,9 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
     { "w",s_double,NULLOBJ,-1},
     { "posx", string ,NULLOBJ,-1},    /* position in x */
     { "posy", string ,NULLOBJ,-1},    /* position in y */
+    { "size", s_int , NULLOBJ,-1},    /* font size in pixel */
     { NULL,t_end,NULLOBJ,-1}};
-
+  
   CheckStdRhs(3,5);
   
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
@@ -4335,8 +4339,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   if (rhs -opt >= 4) {if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;};
   if (rhs -opt >= 5) {if (GetScalarInt(stack,5,&flagx) == FAIL) return RET_BUG;}; 
   
-
-  if ( get_optional_args(stack,rhs,opt,opts,&angle,&box,&fill,&h,&w,&posx,&posy) == FAIL)
+  if ( get_optional_args(stack,rhs,opt,opts,&angle,&box,&fill,&h,&w,&posx,&posy,&fsiz) == FAIL)
     return RET_BUG;
 
   if ( posx != NULL) 
@@ -4361,6 +4364,11 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
+  if ( w != 0.0 && h != 0.0 ) 
+    {
+      fill = ( fill == TRUE ) ? GR_fill_box: GR_in_box;
+    }
+
   if ( S->n != 1 ) 
     {
       if (( Sk =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
@@ -4372,9 +4380,8 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
     }
 
-
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,angle,w,h,fill,iposx,iposy ,NULL))== NULL) 
+  if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,angle,w,h,fill,iposx,iposy,fsiz,NULL))== NULL) 
     return RET_BUG;
   /* insert the new string */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) grs, TRUE)== FAIL) 
@@ -4445,7 +4452,7 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   NspGrstring *grs;
   NspAxes *axe;
   char * info;
-  int fill = FALSE;
+  int fill = FALSE, fsiz=-1;
   double x,y,w,h,angle=0.0;
   NspSMatrix *S,*Sk;
 
@@ -4467,7 +4474,7 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
 	return RET_BUG;
       }
   }
-
+  
   if ( S->n != 1 ) 
     {
       if (( Sk =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
@@ -4480,10 +4487,8 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
     }
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  /* 10 for xstringb: to be simplified latter */
   if (( grs = nsp_grstring_create("str",x,y,NULL,Sk,angle,w,h,fill,
-				  GR_STR_XLEFT, GR_STR_YBOTTOM,
-				  NULL))== NULL) 
+				  GR_STR_XLEFT, GR_STR_YBOTTOM,fsiz,NULL)) == NULL) 
     return RET_BUG;
   /* insert the new string */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) grs )== FAIL)
@@ -6368,7 +6373,7 @@ OpGrTab Graphics_func[]={
   {NAMES("champ1"),int_champ1_new},
   {NAMES("contour"),int_contour_new},
   {NAMES("contour2d"),int_contour2d_new},
-  {NAMES("contour2di"),int_contour2d1},
+  {NAMES("contour2di"),int_contour2di_new},
   {NAMES("drawaxis"),int_nxaxis},
   {NAMES("driver"),int_driver},
   {NAMES("fec"),int_fec_new},

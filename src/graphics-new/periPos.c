@@ -887,7 +887,7 @@ static void pixmap_resize(BCG *Xgc)
   around the string.}
   -----------------------------------------------------*/
 
-static void displaystring(BCG *Xgc,char *string, int x, int y, int flag, double angle,
+static void displaystring(BCG *Xgc,const char *string, int x, int y, int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy)
 {     
   int i,rect[4] ;
@@ -1041,7 +1041,7 @@ static PosFont *FontArray[NB_MAX_POS_FONT] = {&Courier, &Symbol, &TimesR, &Times
 static int Font_Size_in_pts[NB_MAX_SIZES] = {8, 10, 12, 14, 18, 24};
 
 
-static void PosStrBox(char *str, int id_font, int id_size, 
+static void PosStrBox(const char *str, int id_font, int id_size, 
 		      double *w, double *h)
 {
   /*
@@ -1105,11 +1105,11 @@ static double PosStrAsc(int id_font, int id_size)
 
 /*** modified by Bruno by using the previus datas and functions ***/
 
-void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
+void boundingbox(BCG *Xgc,const char *string, int x, int y, int rect[])
 {
   int font[2];
   double h, w;
-  xget_font(Xgc,font);
+  xget_font(Xgc,font,FALSE);
   PosStrBox(string, font[0], font[1], &w, &h);
   rect[0]= x;
   rect[1]= (int)(y-h*prec_fact);
@@ -1129,7 +1129,7 @@ void boundingbox(BCG *Xgc,char *string, int x, int y, int rect[])
 static double ascentPos(BCG *Xgc) 
 { 
   int font[2];
-  xget_font(Xgc,font);
+  xget_font(Xgc,font, FALSE);
   return (PosStrAsc(font[0], font[1]) * prec_fact);
   /* old: return ((bsizePos[font[1]][1] +(bsizePos[font[1]][3]/2.0) ))*((double) prec_fact); */
 }
@@ -1401,9 +1401,9 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
   int keepid,keepsize,i=1,sz=Xgc->CurHardSymbSize;
   keepid =  Xgc->fontId;
   keepsize= Xgc->fontSize;
-  xset_font(Xgc,i,sz);
+  xset_font(Xgc,i,sz, FALSE);
   displaysymbols(Xgc,vx,vy,n);
-  xset_font(Xgc,keepid,keepsize);
+  xset_font(Xgc,keepid,keepsize, FALSE);
 }
 
 /*-----------------------------------------------------
@@ -1417,7 +1417,7 @@ static void drawpolymark( BCG *Xgc,int *vx, int *vy,int n)
  *        'n': no_header 
  *------------------------------------------------------*/
 
-static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode,void *data)
+static void *initgraphic(const char *string, int *num,int *wdim,int *wpdim,double *viewport_pos,int *wpos,char mode,void *data,void *f)
 { 
   char bbox[256],geom[256];
   int x[2];
@@ -1488,7 +1488,7 @@ static int initgraphic(const char *string, int *num,int *wdim,int *wpdim,double 
   xgc_add_default_scale(Xgc);
   Xgc->CurWindow =EntryCounter;
   EntryCounter =EntryCounter +1;
-  return EntryCounter;
+  return NULL;
 }
 
 
@@ -1706,7 +1706,7 @@ static int fontsizePos (BCG *Xgc)
 	 
 
 
-static void xset_font(BCG *Xgc,int fontid, int fontsize)
+static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
 { 
   int i,fsiz;
   i = Min(FONTNUMBER-1,Max(fontid,0));
@@ -1725,7 +1725,7 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize)
 
 /** To get the values id and size of the current font **/
 
-static void xget_font(BCG *Xgc,int *font)
+static void xget_font(BCG *Xgc,int *font, int full)
 {
   font[0]= Xgc->fontId ;
   font[1] =Xgc->fontSize ;

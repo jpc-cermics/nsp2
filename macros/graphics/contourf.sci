@@ -18,6 +18,7 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   if nvs==1 then nvs=nv;zmin=min(z);zmax=max(z);nv = zmin + (1:nvs)*(zmax-zmin)./(nvs+1);end;
   if nargin <= 4 then style = -1*ones_new(1,nvs);end
   if nargin <= 7 then rect=[min(x),min(y),max(x),max(y)]; end 
+    
   nv1=nv
   [mz,nz] = size(z);
   minz = min(z);
@@ -60,14 +61,14 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   max_nv=max(nv);
 
   plot2d([min(xx);max(xx)],[min(yy);max(yy)],style=0,strf=strf,leg=leg,rect=rect,nax=nax);
-
+  
   if new_graphics() then 
     F=get_current_figure[]
     F.draw_latter[];
   end
     
   // Plot patches in order of decreasing size. This makes sure that
-  // all the lev1es get drawn, not matter if we are going up a hill or
+  // all the levels get drawn, not matter if we are going up a hill or
   // down into a hole. When going down we shift levels though, you can
   // tell whether we are going up or down by checking the sign of the
   // area (since curves are oriented so that the high side is always
@@ -94,10 +95,12 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   if style(1)<>-1 then 
     contour2d(xx,yy,zz,nv,style=style,strf="000",leg=leg,rect=rect,nax=nax);
   end
-
+  
   if new_graphics() then 
     F.draw_now[];
   end
 
-
 endfunction
+
+
+

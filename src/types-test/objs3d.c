@@ -2106,7 +2106,7 @@ static void nsp_obj3d_draw_box(BCG *Xgc,Plot3dBox *B, int foreground_color)
       for ( j = 0 ; j < B->nb_xyz_ticks ; j++)
 	draw_segment_bis(Xgc,B->ticks_coord, j, foreground_color);
 
-      Xgc->graphic_engine->xset_font(Xgc,(ticks_font_type),(ticks_font_size));
+      Xgc->graphic_engine->xset_font(Xgc,(ticks_font_type),(ticks_font_size), FALSE);
       for ( j = 0 ; j < B->nb_xticks ; j++)
 	draw_tick(Xgc,B,B->xticks[j], &(B->ticks_coord[6*j]));
       b0 = 6*B->nb_xticks;

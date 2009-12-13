@@ -97,7 +97,7 @@ void nsp_initialize_gc_obsol( BCG *Xgc )
 { 
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
-  Xgc->graphic_engine->xset_font(Xgc,2,1);
+  Xgc->graphic_engine->xset_font(Xgc,2,1, FALSE);
   Xgc->graphic_engine->xset_mark(Xgc,0,0);
   /* Absolute coord mode */
   Xgc->graphic_engine->xset_absourel(Xgc,CoordModeOrigin);
@@ -159,8 +159,8 @@ static void xset_default_1(BCG *Xgc)
 static void xset_font_size_1(BCG *Xgc,int val)
 {
   int font[2];
-  Xgc->graphic_engine->xget_font(Xgc,font);
-  Xgc->graphic_engine->xset_font(Xgc,font[0],val);
+  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
+  Xgc->graphic_engine->xset_font(Xgc,font[0],val, FALSE);
 }
 
 static void xset_mark_size_1(BCG *Xgc,int val)
@@ -699,7 +699,7 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
   x = XDouble2Pixel(Xgc->scales,*xd);
   y = YDouble2Pixel(Xgc->scales,*yd);
   length_scale_f2i(Xgc->scales,wd,hd,&wbox,&hbox,1);
-  Xgc->graphic_engine->xget_font(Xgc,fontid);
+  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
   size = FONTMAXSIZE;
   w = wbox +1;
   if ( *fflag  ==  1 ) 
@@ -707,7 +707,7 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
       while ( (w > wbox || h > hbox) && size >=0  ) 
 	{
 	  size--;
-	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size);
+	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size, FALSE);
 	  GSciString(Xgc,0,x,y,str,&w,&h);
 	}
     }
@@ -718,7 +718,7 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
   x = x +  (wbox - w)/2.0;
   y = y -  (hbox - h)/2.0; 
   GSciString(Xgc,1,x,y,str,&w,&h);
-  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1]);
+  Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 }
 
 

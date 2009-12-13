@@ -13,6 +13,7 @@
 
 typedef enum { GR_STR_XLEFT ,GR_STR_XCENTER , GR_STR_XRIGHT} gr_str_posx;
 typedef enum { GR_STR_YBOTTOM ,GR_STR_YCENTER , GR_STR_YBASELINE, GR_STR_YUP } gr_str_posy;
+typedef enum { GR_in_box, GR_fill_box, GR_no_box} gr_str_box;
 
 extern void nsp_drawpolyline_clip(BCG *Xgc,int *vx, int *vy,int n, int *clip_box , int onemore);
 
@@ -20,11 +21,11 @@ typedef void driver_fill_grid_rectangles(BCG *Xgc,const int x[],const int y[],co
 					 int remap,const int *colminmax,const double *zminmax,const int *colout);
 typedef void driver_fill_grid_rectangles1(BCG *Xgc,const int x[],const int y[],const double z[], int nr, int nc,
 					  int remap,const int *colminmax,const double *zminmax);
-typedef void driver_boundingbox( BCG *gc,char *string, int x, int y, int *rect);
+typedef void driver_boundingbox( BCG *gc,const char *string, int x, int y, int *rect);
 typedef void driver_cleararea( BCG *gc,const GdkRectangle *r);
 typedef void driver_clearwindow( BCG *gc);
 typedef void driver_displaynumbers( BCG *gc,int *x, int *y, int n, int flag, double *z, double *alpha);
-typedef void driver_displaystring( BCG *gc,char *string, int x, int y, int flag, double angle,
+typedef void driver_displaystring( BCG *gc,const char *string, int x, int y, int flag, double angle,
 				   gr_str_posx posx, gr_str_posy posy);
 typedef void driver_drawarc( BCG *gc, int arc[]);
 typedef void driver_drawarcs( BCG *gc, int *vects, int *style, int n);
@@ -44,8 +45,8 @@ typedef void driver_fillpolyline( BCG *gc,  int *vx, int *vy,int n, int closefla
 typedef void driver_fillpolylines( BCG *gc, int *vectsx, int *vectsy, int *fillvect, int n, int p);
 typedef void driver_fillrectangle( BCG *gc,const int rect[]);
 typedef void driver_window_list_get_ids(int *Num,int ids[],int flag); 
-typedef int driver_initgraphic(const char *string,int *num,int *wdim,int *wpdim,double *viewport_pos,
-			       int *wpos,char mode,void *data);
+typedef void *driver_initgraphic(const char *string,int *num,int *wdim,int *wpdim,double *viewport_pos,
+				 int *wpos,char mode,void *data,void *Fig);
 typedef void driver_loadfamily(char *name, int *j);
 typedef void driver_queryfamily(char *name, int *j,int *v3);
 typedef void driver_setpopupname( BCG *gc, char *x0);
@@ -113,8 +114,8 @@ typedef void driver_xset_hidden3d(BCG *gc,int num);
 typedef int driver_xget_hidden3d(BCG *gc);
 typedef void driver_xset_mark(BCG *gc,int number, int size);
 typedef void driver_xget_mark(BCG *gc,int *mark);
-typedef void driver_xset_font(BCG *gc,int fontid, int fontsize);
-typedef void driver_xget_font(BCG *gc,int *font);
+typedef void driver_xset_font(BCG *gc,int fontid, int fontsize,int full);
+typedef void driver_xget_font(BCG *gc,int *font,int full);
 typedef void driver_xset_autoclear(BCG *gc,int num);
 typedef void driver_xset_autoclear_def(BCG *gc);
 typedef int  driver_xget_autoclear(BCG *gcvoid);

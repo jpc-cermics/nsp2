@@ -360,7 +360,8 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   for ( i = 1 ; i < n ; i++ ) 
     cairo_line_to(cr,vx[i],vy[i]);
   if ( closeflag == 1) cairo_line_to(cr,vx[0],vy[0]);
-  cairo_fill(cr);
+  cairo_fill_preserve(cr);
+  cairo_stroke(cr);
   if ((status=cairo_status (cr)) != CAIRO_STATUS_SUCCESS) 
     {
       fprintf (stderr, "Cairo is unhappy in fillpolyline : %s\n",
@@ -487,7 +488,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 
 /* pango layout + cairo */
 
-static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double angle,
+static void displaystring(BCG *Xgc,const char *string, int x, int y,  int flag, double angle,
 			  gr_str_posx posx, gr_str_posy posy )
 { 
   int width,height;
@@ -529,7 +530,7 @@ static void displaystring(BCG *Xgc,char *string, int x, int y,  int flag, double
 }
 
 
-static void boundingbox(BCG *Xgc,char *string, int x, int y, int *rect)
+static void boundingbox(BCG *Xgc,const char *string, int x, int y, int *rect)
 {
   int width, height;
   pango_layout_set_text (Xgc->private->layout, string, -1);
@@ -969,20 +970,22 @@ int nsp_cairo_export(BCG *Xgc,int win_num,int colored, const char *bufname,const
 int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
 {
   NspGraphic *G ; 
+  NspFigure *F;
   BCG *Xgc = window_list_search_new(win_num);
-  int v1=-1,win,cwin;
+  int v1=-1,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
   /* we must create a cairo Xgc with a file-surface */
   cwin =  Xgc->graphic_engine->xget_curwin();
-  /* create a new graphic with cairo */
-  win= Cairo_gengine.initgraphic("void",&v1,NULL,NULL,NULL,NULL,'k',cr);
+  /* create a new graphic with cairo which becomes the current one */
+  F = Cairo_gengine.initgraphic("void",&v1,NULL,NULL,NULL,NULL,'k',cr,NULL);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
-  if (win == -1 || ( Xgc1 = window_list_search_new(win)) == NULL)
+  if ( F == NULL ) 
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
     }
+  Xgc1 = F->obj->Xgc;
   Xgc1->CWindowWidth= width;
   Xgc1->CWindowHeight=  height;
 
@@ -997,7 +1000,6 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
       Xgc1->private->cairo_cr = NULL;
       /* nsp_gr_delete(win); */
       Xgc1->actions->delete(Xgc1);
-      
     }
   return OK;
 }
@@ -1010,8 +1012,9 @@ int nsp_cairo_print(int win_num,cairo_t *cr, int width,int height)
 static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *bufname,
 				const char *driver,char option, int figure_bg_draw)
 {
+  NspFigure *F;
   NspGraphic *G;
-  int v1=-1,win,cwin;
+  int v1=-1,cwin;
   BCG *Xgc1=Xgc; /* used for drawing */
   /* default is to follow the window size */
   int width = Xgc->CWindowWidth; 
@@ -1044,14 +1047,15 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   /* we must create a cairo Xgc with a file-surface */
   cwin =  Xgc->graphic_engine->xget_curwin();
   /* create a new graphic with cairo */
-  win= Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr);
+  F = Cairo_gengine.initgraphic(bufname,&v1,NULL,NULL,NULL,NULL,option,cr,NULL);
   /* we don't want the cairo graphic to become the current one */
   xset_curwin(cwin,FALSE);
-  if (win == -1 || ( Xgc1 = window_list_search_new(win)) == NULL)
+  if ( F == NULL ) 
     {
       Sciprintf("cannot export a non cairo graphic\n");
       return FAIL;
     }
+  Xgc1 = F->obj->Xgc;
   Xgc1->CWindowWidth=   Xgc->CWindowWidth;
   Xgc1->CWindowHeight=  Xgc->CWindowHeight;
   Xgc1->graphic_engine->xset_usecolor(Xgc1,(colored ==1) ? 1:0);
@@ -1067,9 +1071,7 @@ static int nsp_cairo_export_mix(BCG *Xgc,int win_num,int colored,const char *buf
   if ( Xgc1 != Xgc ) 
     {
       /* delete the localy created <<window>> */
-      /* nsp_gr_delete(win); */
       Xgc1->actions->delete(Xgc1);
-
     }
   return OK;
 }
@@ -1113,26 +1115,35 @@ static void queryfamily(char *name, int *j,int *v3)
   /* */
 }
 
-static void xset_font(BCG *Xgc,int fontid, int fontsize)
+static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
 { 
-  int i,fsiz;
+  int i,fsiz, changed = TRUE;
   i = Min(FONTNUMBER-1,Max(fontid,0));
-  fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
-  if ( Xgc->fontId != i || Xgc->fontSize != fsiz )
+  if ( full == TRUE ) 
+    {
+      fsiz = Max(1,fontsize);
+      changed = Xgc->fontId != i || Xgc->fontSize != fsiz ;
+      Xgc->fontSize = fsiz;
+   }
+  else
+    {
+      fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
+      changed = Xgc->fontId != i || Xgc->fontSize != - fsiz ;
+      Xgc->fontSize = - fsiz ;
+      fsiz = pango_size[fsiz];
+    }
+  if ( changed  ) 
     {
       Xgc->fontId = i;
-      Xgc->fontSize = fsiz;
       pango_font_description_set_family(Xgc->private->desc, pango_fonttab[i]);
-      /* pango_font_description_set_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);*/
-      pango_font_description_set_absolute_size (Xgc->private->desc, pango_size[fsiz] * PANGO_SCALE);
-
+      pango_font_description_set_absolute_size (Xgc->private->desc, fsiz * PANGO_SCALE);
       pango_layout_set_font_description (Xgc->private->layout, Xgc->private->desc);
     }
 }
 
 /* To get the  id and size of the current font */
 
-static void  xget_font(BCG *Xgc,int *font)
+static void  xget_font(BCG *Xgc,int *font, int full)
 {
   font[0] = Xgc->fontId ;
   font[1] = Xgc->fontSize ;

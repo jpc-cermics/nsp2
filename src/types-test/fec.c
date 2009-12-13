@@ -1245,7 +1245,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     else
       zone[i] = floor( (func[i] - zmin)/dz ) + 1;
   };
-
+  
   /* 
    *  2/ loop on the triangles : each triangle is finally decomposed 
    *     into its differents zones (polygons) by the function PaintTriangle   

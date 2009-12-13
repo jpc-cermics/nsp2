@@ -200,7 +200,8 @@ static void xset_show(BCG *Xgc)
 static void xselgraphic(BCG *Xgc)
 { 
   /* Test not really usefull: see sciwin in matdes.f */
-  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL);
+  if ( Xgc == (BCG *)0 || Xgc->private->window ==  NULL) 
+    initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL,NULL);
   gdk_window_show(Xgc->private->window->window);
   gdk_flush();
 }
@@ -318,7 +319,8 @@ static void xget_windowpos(BCG *Xgc,int *x,int *y)
 
 static void xset_windowpos(BCG *Xgc, int x, int y)
 {
-  if (Xgc == NULL || Xgc->private->window ==  NULL) initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL);
+  if (Xgc == NULL || Xgc->private->window ==  NULL) 
+    initgraphic("",NULL,NULL,NULL,NULL,NULL,'e',NULL,NULL);
   gdk_window_move (Xgc->private->window->window, x,y);
 }
 
@@ -551,7 +553,7 @@ static int xset_curwin(int intnum,int set_menu)
   if ( bcgk == (BCG *) 0 ) 
     {
       /* First entry or no more graphic window */
-      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL);
+      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL,NULL);
       /* send info to menu */
       new = window_list_get_first();
       old = -1;
@@ -563,7 +565,7 @@ static int xset_curwin(int intnum,int set_menu)
 	  BCG *new= window_list_win_to_front(intnum);
 	  if ( new == NULL) 
 	    {
-	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL);
+	      initgraphic("",&intnum,NULL,NULL,NULL,NULL,'e',NULL,NULL);
 	      new = window_list_get_first();
 	    }
 	  old =  bcgk->CurWindow ;
@@ -1455,7 +1457,7 @@ void nsp_initialize_gc( BCG *Xgc )
   int i;
   Xgc->graphic_engine->xset_unclip(Xgc);
   Xgc->fontId=0; Xgc->fontSize=0 ;
-  Xgc->graphic_engine->xset_font(Xgc,2,1);
+  Xgc->graphic_engine->xset_font(Xgc,2,1,FALSE);
   Xgc->CurHardSymb=0; Xgc->CurHardSymbSize=0;
   Xgc->graphic_engine->xset_mark(Xgc,1,1);
   /* Absolute coord mode */
