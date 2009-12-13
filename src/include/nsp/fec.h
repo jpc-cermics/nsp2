@@ -100,12 +100,15 @@ extern BCG *nsp_check_graphic_context(void);
 extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
+extern void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+			  const int *zxy, const double *zlevel,const int *fill);
+
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
 
 /* inserted at the end of public part of include file */
 
-#line 109 "./fec.h"
+#line 112 "./fec.h"
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
@@ -120,7 +123,7 @@ static AttrTab fec_attrs[];
 static NspMethods *fec_get_methods(void);
 /* static int int_fec_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type);
-#line 20 "codegen/fec.override"
+#line 23 "codegen/fec.override"
 
 /* inserted in the private part of include file */
 
@@ -131,6 +134,6 @@ static void nsp_scale_fec(NspGraphic *o,double *alpha);
 static int nsp_getbounds_fec(NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 
-#line 135 "./fec.h"
+#line 138 "./fec.h"
 #endif /* NspFec_Private */
 

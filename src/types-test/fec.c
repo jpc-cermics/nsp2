@@ -27,7 +27,7 @@
 
 
 
-#line 32 "codegen/fec.override"
+#line 35 "codegen/fec.override"
 #include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
@@ -110,7 +110,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 49 "codegen/fec.override"
+#line 52 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -995,7 +995,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 69 "codegen/fec.override"
+#line 72 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1007,7 +1007,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
 #line 1008 "fec.c"
 
 
-#line 79 "codegen/fec.override"
+#line 82 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1047,7 +1047,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 89 "codegen/fec.override"
+#line 92 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1308,7 +1308,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    
 	  /* call the "painting" function */
 	  if ( P->obj->paint == TRUE ) 
-	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    {
+	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    }
 	  if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	}
     }
@@ -1328,4 +1330,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1332 "fec.c"
+#line 1334 "fec.c"

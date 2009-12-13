@@ -10,6 +10,9 @@ extern BCG *nsp_check_graphic_context(void);
 extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
+extern void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+			  const int *zxy, const double *zlevel,const int *fill);
+
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
 
@@ -346,7 +349,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	    
 	  /* call the "painting" function */
 	  if ( P->obj->paint == TRUE ) 
-	    PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    {
+	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
+	    }
 	  if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	}
     }

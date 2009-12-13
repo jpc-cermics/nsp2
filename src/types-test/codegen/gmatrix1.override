@@ -524,6 +524,7 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 
 
 
+
 /**
  * PermutOfSort:
  * @tab: 
@@ -706,6 +707,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
 }
 
+
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,double z,
 			     int inda, int indb,  int *xint, int *yint)
 {
@@ -714,4 +716,107 @@ static void FindIntersection(const double *sx,const double *sy,const double *fxy
   *yint = inint((1 - alpha)*sy[inda] + alpha*sy[indb]);
 }
 
+
+/**
+ * DrawTriangle:
+ * 
+ * very similar to PaintTriangle but the polygons are not filled 
+ * but partially painted. 
+ **/
+
+void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
+		    const int *zxy, const double *zlevel,const int *fill)
+{
+  int nb0, edge, izone, color, c_color;
+  int nr, resx[5],resy[5];
+  int xEdge2, yEdge2, xEdge, yEdge; 
+
+  /* 
+   * case of only one color for the triangle : 
+   */
+
+  c_color = Xgc->graphic_engine->xget_pattern(Xgc);
+
+  if ( zxy[0] == zxy[2] ) return;
+  
+  /* 
+   *  at least 2 colors for painting the triangle : it is divided in elementary
+   *  polygons. The number of polygons is npolys = zxy[2]-zxy[0]+1.
+   *
+   *  P2           as zxy[0] <= zxy[1] <  zxy[2] or 
+   *  Notations/Hints :       /\           zxy[0] <  zxy[1] <= zxy[2]
+   *                  edge2  /  \ edge1    from a previous sort. All the polygons
+   *                        /    \         have 2 points on edge2, the others points
+   *                       /______\        are on edge0 and/or edge1. I name the 2 ends
+   *                     P0        P1      points on each poly PEdge2 and Pedge, they are 
+   *                         edge0         the 2 first points of the next poly. I start
+   *  from P0 to form the first poly (a triangle or
+   *  a 4 sides depending if zxy[0]=zxy[1]), then the 2, 3, .., npolys - 1 (if they exist)
+   *  and finally the last one which comprise the P2 vertex.  In some special cases
+   *  we can have a degenerate poly but it doesn't matter ! 				  
+   */
+  
+  nb0 = zxy[1]-zxy[0]; /* number of intersection points on edge 0 */
+
+  /*
+   *    compute the first poly    
+   */
+  
+  resx[0]=inint(sx[0]); resy[0]=inint(sy[0]); nr = 1; edge = 0;
+  if ( nb0 == 0 ) {    /* the intersection point is on Edge1 but the next point
+                          of the poly is P1 */
+    resx[1]=inint(sx[1]); resy[1]=inint(sy[1]); nr++;
+    edge = 1;          /* the next intersection points will be on edge1 */
+  } else nb0--;
+  /* the intersection point on edge (0 or 1) : */
+  FindIntersection(sx, sy, fxy, zlevel[zxy[0]], edge, edge+1, &xEdge, &yEdge);
+  resx[nr]=xEdge; resy[nr]=yEdge; nr++;
+  /* the last point of the first poly (edge 2) : */
+  FindIntersection(sx, sy, fxy, zlevel[zxy[0]], 0, 2, &xEdge2, &yEdge2);
+  resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
+  color = fill[zxy[0]];
+  if ( color != 0 )
+    {
+      Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+      Xgc->graphic_engine->drawline(Xgc,resx[nr-2],resy[nr-2],resx[nr-1],resy[nr-1]);
+    }
+
+  /*
+   *  compute the intermediary polygon(s) 
+   */
+  
+  for ( izone = zxy[0]+1 ; izone < zxy[2] ; izone++ ) 
+    {
+      resx[0] = xEdge2; resy[0] = yEdge2;          /* the 2 first points are known */
+      resx[1] = xEdge;  resy[1] = yEdge; nr = 2;
+      if ( edge == 0 )
+	{
+	  /* the intersection point is perhaps on edge 0 */
+	  if (nb0 == 0 ) 
+	    {
+	      /* no it is on edge 1 but the next point of the poly is P1 */
+	      resx[2]=inint(sx[1]); resy[2]=inint(sy[1]); nr++;
+	      edge = 1;          /* the next intersection points will be on edge1 */
+	    } 
+	  else 
+	    {
+	      nb0--;
+	    }
+	}
+      /* the intersection point on edge (0 or 1) : */
+      FindIntersection(sx, sy, fxy, zlevel[izone], edge, edge+1, &xEdge, &yEdge);
+      resx[nr]=xEdge; resy[nr]=yEdge; nr++;
+      /* the last point of the first poly (edge 2) : */
+      FindIntersection(sx, sy, fxy, zlevel[izone], 0, 2, &xEdge2, &yEdge2);
+      resx[nr]=xEdge2; resy[nr]=yEdge2; nr++;
+      color = fill[izone];
+      if ( color != 0 ) 
+	{
+	  Xgc->graphic_engine->xset_pattern(Xgc,Abs(color));
+	  Xgc->graphic_engine->drawline(Xgc,resx[2],resy[2],resx[3],resy[3]);
+	}
+    }
+
+  Xgc->graphic_engine->xset_pattern(Xgc,c_color);
+}
 
