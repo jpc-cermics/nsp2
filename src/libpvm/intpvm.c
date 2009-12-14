@@ -70,8 +70,8 @@ static int nsp_pvm_spawn(char *task_file,int nowin, char *where,int ntask, int *
 #if (defined __MSC__) || (defined __ABSC__) || defined(__MINGW32__) 
   strcpy(cmd, "scilex.exe");
 #else
-  /* I really need scilab here for gtk -version */
-  strcpy(cmd, "scilab");
+  /* I really need nsp here for gtk -version */
+  strcpy(cmd, "nsp");
 #endif 
   /* always starts with -f since nsp is not run in bg mode in 
    * that case 
@@ -136,7 +136,7 @@ int int_pvm_spawn( Stack stack, int rhs, int opt, int lhs)
 /*
  *  function : pvm_spawn_independent, fin = 20
  *  args added to pass arguments to the spawn function 
- *  pvm_spawn_independent('/usr/local/nsp2/bin/scilab',args=['-debug'])
+ *  pvm_spawn_independent('/usr/local/nsp2/bin/nsp',args=['-debug'])
  */
 
 int int_pvm_spawn_independent( Stack stack, int rhs, int opt, int lhs)
