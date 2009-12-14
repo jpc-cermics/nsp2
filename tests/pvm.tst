@@ -6,7 +6,12 @@
 //since tests are run from scilex 
 
 ok=pvm_start();
-[task_id,numt] = pvm_spawn(task='SCI/tests/pvm_resend.sce',ntask=1,nowindow=%t);
+exe= file('join',[getenv('SCI'),'bin/nsp']);
+args=['-f',getenv('SCI')+'/tests/pvm_resend.sce','-nw'];
+[task_id, numt] = pvm_spawn_independent(exe,ntask=1,args=args);
+// [task_id,numt] =
+// pvm_spawn(task='SCI/tests/pvm_resend.sce',ntask=1,nowindow=%t);
+
 if numt<>1 then pause,end
 if size(task_id,'*')<>1 then pause,end
 // pvm_config 
@@ -45,7 +50,7 @@ if size(rest(4),'*')<>n then pause,end
 
 if type(rest(5),'short')<>'s' then pause,end
 if size(rest(5),'*')<>n then pause,end
-if rest(5)(n)<>'scilab' then pause,end
+if rest(5)(n)<> exe  then pause,end
 if or(rest(5)(1:n-1)<>"") then pause,end
 
 if rest(6)<>n then pause,end
@@ -90,44 +95,48 @@ if buff<>[1,2,3] then pause,end
 
 // send to spawned process
 a=[];
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~a.equal[a1] then pause,end
 a=[1 2 3];
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=1;
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=a+%i;
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=rand(7,10);
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=rand(100,10)+%i*rand(100,10);
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=rand(100,200);
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 
 // strings
 a='';
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=string(rand(5,10));
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=strcat(string(rand(10,10)));
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a='1';
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 a=string(rand(5,5));
-pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if ~and(a==a1) then pause,end
+pvm_send(task_id,a,0);a1=pvm_recv(task_id,0);if  ~a.equal[a1] then pause,end
 
 // stop the slave 
 pvm_send(task_id,'exit',0)
 // kill the slave
 pvm_kill(task_id)
 
-args=['-f',getenv('SCI')+'/tests/pvm_resend.sce','-nw'];
-[tids, numt] = pvm_spawn_independent('scilab',ntask=1,args=args);
-if numt<>1 then pause,end
-if size(tids,'*')<>1 then pause,end
-pvm_send(tids,'exit',0)
-// pvm_kill 
-// pvm_kill(tids);
-// halt pvm
+if %f then 
+  args=['-f',getenv('SCI')+'/tests/pvm_resend.sce','-nw'];
+  exe= file('join',[getenv('SCI'),'bin/nsp']);
+  [tids, numt] = pvm_spawn_independent(exe,ntask=1,args=args);
+  if numt<>1 then pause,end
+  if size(tids,'*')<>1 then pause,end
+  pvm_send(tids,'exit',0)
+  // pvm_kill 
+  // pvm_kill(tids);
+  // halt pvm
+end 
+
 pvm_halt( );
 
