@@ -5063,6 +5063,8 @@ static int int_fec_new(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to insert rectangle in Figure\n");
       return RET_BUG;
     }
+  /* updates the axes scale information */
+  nsp_strf_axes( axe ,rect, strf[1]);
   nsp_axes_invalidate((NspGraphic *)axe);
   if ( lhs == 1 ) 
     {

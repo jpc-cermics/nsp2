@@ -1340,8 +1340,8 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 		    {
 		      if ( tr == 0 ) 
 			{ 
-			  /* upper triangle 
-			   *  ___
+			  /* 
+			   *  ___ upper triangle 
 			   *  | /
 			   *  |/
 			   */
@@ -1349,9 +1349,8 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 			}
 		      else 
 			{
-			  /* lower triangle 
-			   * 
-			   *   /|
+			  /* 
+			   *   /|  lower triangle
 			   *  /_|
 			   */
 			  pos[0]=i+nx*j;  pos[1]=pos[0]+1;   pos[2]=pos[0]+nx+1;
@@ -1361,17 +1360,16 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data)
 		    {
 		      if ( tr == 0 ) 
 			{ 
-			  /* upper triangle 
-			   *  
-			   *  |\
+			  /*
+			   *  |\    upper triangle
 			   *  |_\
 			   */
 			  pos[0]=i+nx*j; pos[1]=pos[0]+1;  pos[2]=pos[0]+nx;
 			}
 		      else 
 			{
-			  /* lower triangle 
-			   *  ___
+			  /*
+			   *  ___  lower triangle 
 			   *  \ |
 			   *   \|
 			   */
@@ -1463,7 +1461,7 @@ void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fx
    */
 
   c_color = Xgc->graphic_engine->xget_pattern(Xgc);
-
+  
   if ( zxy[0] == zxy[2] ) {
     resx[0]=inint(sx[0]); resx[1]=inint(sx[1]);  resx[2]=inint(sx[2]);
     resy[0]=inint(sy[0]); resy[1]=inint(sy[1]);  resy[2]=inint(sy[2]);
@@ -1700,4 +1698,4 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
 }
 
 
-#line 1704 "gmatrix1.c"
+#line 1702 "gmatrix1.c"

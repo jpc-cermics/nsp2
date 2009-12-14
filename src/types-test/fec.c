@@ -33,12 +33,11 @@
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
 
-
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
 
-#line 42 "fec.c"
+#line 41 "fec.c"
 
 /* ----------- NspFec ----------- */
 
@@ -110,7 +109,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 52 "codegen/fec.override"
+#line 51 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -121,7 +120,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 125 "fec.c"
+#line 124 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -995,7 +994,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 72 "codegen/fec.override"
+#line 71 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1004,10 +1003,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1008 "fec.c"
+#line 1007 "fec.c"
 
 
-#line 82 "codegen/fec.override"
+#line 81 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1016,7 +1015,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1020 "fec.c"
+#line 1019 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1047,7 +1046,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 92 "codegen/fec.override"
+#line 91 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1109,6 +1108,7 @@ static int nsp_getbounds_fec (NspGraphic *Obj,double *bounds)
 
 static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
+  int cpat;
   int *colout = NULL ; 
   int *colminmax = NULL;
   NspFec *P = (NspFec *) Obj;
@@ -1250,36 +1250,9 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
    *  2/ loop on the triangles : each triangle is finally decomposed 
    *     into its differents zones (polygons) by the function PaintTriangle   
    */
-#if 0 
-  /* when using opengl we could replace the nsp paint method 
-   * by gouraud shading 
-   */
-  if (  Xgc->graphic_engine == &GL_gengine ) 
+  switch ( FALSE ) /* P->obj->shade */
     {
-      for ( j = 0 ; j < Ntr ; j++) 
-	{
-	  int ii[3],isx[3],isy[3]; 
-	  /* retrieve node numbers and functions values */
-	  for ( k = 0 ; k < 3 ; k++ ) {
-	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
-	    zxy[k] = zone[ii[k]];
-	    isx[k]  = xm[ii[k]];   
-	    isy[k]  = ym[ii[k]];
-	    /* using ii for colors */
-	    ii[k]= - fill[zxy[k]]; 
-	  };
-	  /* call the "painting" function */
-	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
-	    {
-	      if ( P->obj->paint == TRUE  ) 
-		fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
-	    }     
-	  if ( draw == TRUE ) draw_triangle(Xgc,sx,sy);
-	};
-    }
-  else
-#endif
-    {
+    case TRUE :
       for ( j = 0 ; j < Ntr ; j++) 
 	{
 	  int ii[3], perm[3],kp, stop = FALSE;
@@ -1309,12 +1282,51 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  /* call the "painting" function */
 	  if ( P->obj->paint == TRUE ) 
 	    {
+	      /*   zxy[2]= zxy[0] = (zxy[0]+zxy[1]+zxy[2])/3.0; */
 	      PaintTriangle(Xgc,sx, sy, fxy, zxy, zlevel, fill);
 	    }
 	  if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
 	}
+      break;
+    case FALSE:
+      cpat = Xgc->graphic_engine->xget_pattern(Xgc);
+      for ( j = 0 ; j < Ntr ; j++) 
+	{
+	  int ii[3],isx[3],isy[3]; 
+	  /* retrieve node numbers and functions values */
+	  for ( k = 0 ; k < 3 ; k++ ) {
+	    ii[k] = (int) triangles[j+(Ntr)*k] - 1;
+	    zxy[k] = zone[ii[k]];
+	    isx[k]  = xm[ii[k]];   
+	    isy[k]  = ym[ii[k]];
+	    /* using ii for colors */
+	    ii[k]= - fill[zxy[k]]; 
+	  };
+	  /* call the "painting" function */
+	  if (ii[0] != 0 && ii[1] != 0 && ii[2] != 0 ) 
+	    {
+	      if ( P->obj->paint == TRUE  ) 
+		{
+#ifdef  WITH_GTKGLEXT 
+		  /* when using opengl we use gouraud shading ? 
+		   */
+		  if ( Xgc->graphic_engine == &GL_gengine ) 
+		    fillpolyline2D_shade(Xgc,isx,isy,ii,3,1); 
+		  else
+#endif 
+		    {
+		      int color = (ii[0]+ii[1]+ii[2])/3.0;
+		      Xgc->graphic_engine->xset_pattern(Xgc,color);
+		      Xgc->graphic_engine->fillpolyline(Xgc,isx,isy,3,1); 
+		    }
+		}     
+	      if ( mesh == TRUE ) draw_triangle(Xgc,sx,sy);
+	    };
+	}
+      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
+      break;
     }
-  
+
   if (  P->obj->colorbar ) 
     {
       nsp_draw_colorbar(Xgc,((NspGraphic *) P)->obj->Axe,zmin ,zmax, colors_minmax);
@@ -1330,4 +1342,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1334 "fec.c"
+#line 1346 "fec.c"
