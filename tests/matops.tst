@@ -272,13 +272,14 @@ end
 
 function [y]=Msum(x,j)
   [m,n]=size(x);
-  if j==2, y= x*ones_new(n,min(1,n));
-  elseif j==1,y=ones_new(min(1,m),m)*x;
+  if j==2, y= x*ones_new(n,1);
+  elseif j==1,y=ones_new(1,m)*x;
   else y= ones_new(1,m)*x*ones_new(n,1);end;
 endfunction;
 
 function [y]=MsumG(x,j)
-  if and([isempty(x),j==0]) then y=0;else y=Msum(x,j);end
+  [m,n]=size(x);
+  if m==0 && n==0 && j==0 then y=0;else y=Msum(x,j);end
 endfunction;
 
 for i=1:6, m=M(i);n=N(i);
@@ -294,8 +295,8 @@ end
 
 function [p]=Mprod(x,j)
   [m,n]=size(x);
-  if j==2 then ;p=0*ones_new(m,min(1,m));for i=1:m,p(i)=Vprod(x(i,:));end;
-  elseif j==1 then p=0*ones_new(min(1,n),n);for i=1:n,p(i)=Vprod(x(:,i));end;
+  if j==2 then ;p=0*ones(m,1);for i=1:m,p(i)=Vprod(x(i,:));end;
+  elseif j==1 then p=0*ones(1,n);for i=1:n,p(i)=Vprod(x(:,i));end;
   else p= Mprod(Mprod(x,1),2);end;
 endfunction
 
@@ -305,7 +306,7 @@ function [vp]=Vprod(x)
 endfunction
 
 function [y]=MprodG(x,j)
-  if and([isempty(x),j==0]) then y=1;else y=Mprod(x,j);end
+  if m==0 && n==0 && j==0  then y=1;else y=Mprod(x,j);end
 endfunction
 
 nr=3;
