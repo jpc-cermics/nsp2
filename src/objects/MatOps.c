@@ -1467,17 +1467,17 @@ NspMatrix *nsp_mat_sum(NspMatrix *A, int dim)
   int inc=1;
 
 
-  if ( A->mn == 0)
-    {
-      if ( dim == 0 )
-	{
-	  Sum = nsp_matrix_create(NVOID,'r',1,1);
-	  if ( Sum != NULLMAT) Sum->R[0]=0;
-	  return Sum;
-	}
-      else
-	return  nsp_matrix_create(NVOID,'r',0,0);
-    }
+/*   if ( A->mn == 0) */
+/*     { */
+/*       if ( dim == 0 ) */
+/* 	{ */
+/* 	  Sum = nsp_matrix_create(NVOID,'r',1,1); */
+/* 	  if ( Sum != NULLMAT) Sum->R[0]=0; */
+/* 	  return Sum; */
+/* 	} */
+/*       else */
+/* 	return  nsp_matrix_create(NVOID,'r',0,0); */
+/*     } */
 
   switch (dim) 
     {
@@ -1536,17 +1536,17 @@ NspMatrix *nsp_mat_prod(NspMatrix *A, int dim)
   int j;
   int inc=1,zero=0;
 
-  if ( A->mn == 0) 
-    {
-      if ( dim == 0 )
-	{
-	  Prod = nsp_matrix_create(NVOID,'r',1,1);
-	  if ( Prod != NULLMAT) Prod->R[0]= 1.0;
-	  return Prod;
-	}
-      else 
-	return  nsp_matrix_create(NVOID,'r',0,0);
-    }
+/*   if ( A->mn == 0)  */
+/*     { */
+/*       if ( dim == 0 ) */
+/* 	{ */
+/* 	  Prod = nsp_matrix_create(NVOID,'r',1,1); */
+/* 	  if ( Prod != NULLMAT) Prod->R[0]= 1.0; */
+/* 	  return Prod; */
+/* 	} */
+/*       else  */
+/* 	return  nsp_matrix_create(NVOID,'r',0,0); */
+/*     } */
 
   switch (dim) 
     {
