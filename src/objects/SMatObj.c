@@ -2059,15 +2059,15 @@ int_is_string_in_array (Stack stack, int rhs, int opt, int lhs)
 
   if ( get_optional_args(stack, rhs, opt, opts, &abbrev, &names) == FAIL )
     return RET_BUG;
+  if ( names != NULLSMAT &&  names->mn != 2 )
+    {
+      Scierror("Error:\t optional argument 'names' of function is_string_in_array should have 2 strings\n");
+      return RET_BUG;
+    }
 
   rep = is_string_in_array(key, Table->S, !abbrev);
   if ( rep < 0 && names != NULLSMAT )  /* in this case an automatic treatment of the error is done */ 
     {
-      if ( names->mn != 2 )
-	{
-	  Scierror("Error:\t optional argument 'names' of function is_string_in_array should have 2 strings\n");
-	  return RET_BUG;
-	}
       Scierror("Error:\t argument %s of function %s has a wrong value '%s'\n",names->S[0],names->S[1],key);
       Scierror("\texpected values are ");
       for (k = 0 ; k < Table->mn ; k++ ) 
@@ -2081,6 +2081,46 @@ int_is_string_in_array (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int
+int_parse_dim_arg(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj = NULLOBJ;
+  int dim;
+  NspSMatrix *names=NULLSMAT;
+  nsp_option opts[] ={{"names",smat,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(1,1);
+  CheckOptRhs(0, 3)
+  CheckLhs(1,1);
+
+  if ( (Obj = nsp_get_object(stack, 1)) == NULLOBJ )
+    return RET_BUG;
+
+  if ( get_optional_args(stack, rhs, opt, opts, &names) == FAIL )
+    return RET_BUG;
+
+  if ( names != NULLSMAT &&  names->mn != 2 )
+    {
+      Scierror("Error:\t optional argument 'names' of function parse_dim_arg should have 2 strings\n");
+      return RET_BUG;
+    }
+
+  if ( DimArg(Obj, &dim) == FAIL )
+    {
+      if ( names != NULLSMAT )
+	{
+	  /* add an error message on the error message sends by DimArg func */
+	  Scierror("\terror concerns argument %s of function %s\n",names->S[0],names->S[1]);
+	}
+      return RET_BUG;
+    }
+
+  if ( nsp_move_double(stack,1, (double) dim) == FAIL )	  
+    return RET_BUG;
+
+  return 1;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -2168,6 +2208,7 @@ static OpTab SMatrix_func[]={
   {"unique_s",int_smatrix_unique},
   {"issorted_s",int_smatrix_issorted},
   {"is_string_in_array_s",int_is_string_in_array},
+  {"parse_dim_arg",int_parse_dim_arg},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
   {(char *) 0, NULL}
