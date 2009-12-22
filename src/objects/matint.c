@@ -960,10 +960,6 @@ static NspObject *nsp_matint_extract_columns(NspObject *Obj,NspObject *Elts,inde
   if ( index->nval == 0 )
     return MAT_INT(type)->clone(NVOID, Obj, A->m, 0, FALSE);
 
-  if ( A->m == 0 || A->n == 0) 
-    {
-      return nsp_object_copy(Obj);
-    }
   if ( index->min < 1 || index->max > A->n ) 
     {
       Scierror("Error:\tIndices out of bound\n");
@@ -1033,8 +1029,6 @@ NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
 }
 
 
-
-
 /*  Here we split the previous function according to the data 
  *  size of the array to be copied. 
  */
@@ -1047,11 +1041,6 @@ NspObject *nsp_matint_extract_columns1(NspObject *Obj,NspObject *Cols)
 									\
   if ( index->nval == 0 )							\
     return MAT_INT(type)->clone(NVOID, Obj, 0, A->n, FALSE);		\
-									\
-  if ( A->m == 0 || A->n == 0)						\
-    {									\
-      return nsp_object_copy(Obj);					\
-    }									\
 									\
   if ( index->min < 1 || index->max > A->m )				\
     {									\
