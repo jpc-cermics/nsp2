@@ -171,9 +171,9 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
  * Qsort routine from Bentley & McIlroy's "Engineering a Sort Function".
  */
 
-#define swap(a, b) swapcode(a, b, 1 )
+#define swap(a, b) swapcode(a, b, 1,es )
 #define swapind(a, b)  if ( flag==1) swapcodeind(a,b,1)
-#define vecswap(a, b, n) if ((n) > 0) swapcode(a, b, n/es)
+#define vecswap(a, b, n) if ((n) > 0) swapcode(a, b, n/es,es)
 #define vecswapind(a, b, n) if ((n) > 0 && flag == 1) swapcodeind(a,b,n/es1) 
 
 #define med3(res,tabres,a, b, c, xa,xb,xc,cmp) cmp(a, b) < 0 ?		\

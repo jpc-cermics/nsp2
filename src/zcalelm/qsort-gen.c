@@ -14,15 +14,17 @@
 
 #define XCNAME(x,y) CNAME(x,y)
 
-static int XCNAME(swapcode,ELT_TYPE)(char *parmi,char* parmj,int n) 
+static int XCNAME(swapcode,ELT_TYPE)(char *parmi,char* parmj,int n, int inc) 
 { 		
-  int i = n;
+  int i = n , inc1 = inc/sizeof(ELT_TYPE);
   register ELT_TYPE *pi = (ELT_TYPE *) (parmi); 		
   register ELT_TYPE *pj = (ELT_TYPE *) (parmj); 
   do { 						
     register ELT_TYPE t = *pi;		
-    *pi++ = *pj;				
-    *pj++ = t;				
+    *pi = *pj;				
+    *pj = t;				
+    pi += inc1;
+    pj += inc1;
   } while (--i > 0);				
   return(0);
 }
