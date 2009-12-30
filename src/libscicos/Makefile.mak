@@ -10,7 +10,7 @@ LIBRARY=nsp.lib
 
 OBJSF=
 OBJSC=  blocks_new.obj evaluate_expr.obj import.obj intcos.obj \
-	sciblk2.obj scicos.obj scicos_malloc.obj  \
+	sciblk2.obj scicos.obj \
 	dmmul.obj  blocks.obj trees.obj simul.obj \
 
 # blocks.obj

@@ -435,7 +435,7 @@ static void Inver(int* vect, int nb)
   for(i = 0; i < nb; i++)  vect[i]=-vect[i];
 }
 
-int ctree2(int *vect, int nb, int *depu, int *depuptr, int *outoin, int *outoinptr, int *ord, int *nord, int *ok)
+int scicos_ctree2(int *vect, int nb, int *depu, int *depuptr, int *outoin, int *outoinptr, int *ord, int *nord, int *ok)
 {
   int fini=0,i,j,k,m,ii;
   
@@ -489,7 +489,7 @@ int ctree2(int *vect, int nb, int *depu, int *depuptr, int *outoin, int *outoinp
 }
 
 
-int ctree3(int *vec, int nb, int *depu, int *depuptr, int *typl, int *bexe, int *boptr, 
+int scicos_ctree3(int *vec, int nb, int *depu, int *depuptr, int *typl, int *bexe, int *boptr, 
 	   int *blnk, int *blptr, int *ord, int *nord, int *ok)
 {
   int fini=0,i,j,m,nkk,kk;

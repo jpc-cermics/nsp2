@@ -54,7 +54,7 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
       
       if ( isinf(res) || ISNAN(res) ) 
 	{
-	  set_block_error(-2);
+	  scicos_set_block_error(-2);
 	  return;
 	} 
       else
@@ -339,7 +339,7 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
 	  s_pos++;
 	  if ( s_pos == BEVAL_STACK_SIZE ) 
 	    {
-	      set_block_error(-16);
+	      scicos_set_block_error(-16);
 	      return FAIL;
 	    }
 	  break;
@@ -349,7 +349,7 @@ static int nsp_scalarexp_byte_eval_scicos(const int *code,int lcode,const double
 	  s_pos++;
 	  if ( s_pos == BEVAL_STACK_SIZE ) 
 	    {
-	      set_block_error(-16);
+	      scicos_set_block_error(-16);
 	      return FAIL;
 	    }
 	  break;

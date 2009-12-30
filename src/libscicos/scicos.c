@@ -2498,7 +2498,7 @@ int get_block_number(void)
   return Scicos->params.curblk;
 }
 
-void set_block_error(int err)
+void scicos_set_block_error(int err)
 
 {
   if ( block_error != NULL)  *block_error=err;

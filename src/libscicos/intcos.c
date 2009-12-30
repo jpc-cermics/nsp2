@@ -543,7 +543,7 @@ static int int_setblockerror(Stack stack, int rhs, int opt, int lhs)
   int m1;
   CheckRhs(1,1);
   if ( GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
-  set_block_error(m1);
+  scicos_set_block_error(m1);
   return 0;
 }
 

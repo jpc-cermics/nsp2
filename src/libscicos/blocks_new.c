@@ -21,6 +21,7 @@
  * 
  *--------------------------------------------------------------------------*/
 
+#include <stdlib.h> 
 #include <math.h>
 #include "nsp/machine.h"
 #include "../graphics-new/new_graphics.h"
@@ -39,6 +40,12 @@ extern double asinh(double x);
 extern double acosh(double x);
 extern double atanh(double x);
 #endif
+
+
+static void * scicos_malloc(size_t size);
+static void scicos_free(void *p);
+
+
 
 /*
  * utility to set wid as the current graphic window
@@ -225,7 +232,7 @@ void scicos_backlash_block(scicos_block *block,int flag)
   double* rw,t;
   if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=	 scicos_malloc(sizeof(double)* 4))== NULL ) {
-      set_block_error(-16);
+      scicos_set_block_error(-16);
       return;
     }
     rw=*block->work; 
@@ -329,7 +336,7 @@ void scicos_deriv_block(scicos_block *block,int flag)
   if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(double)*2*(1+block->insz[0])))== NULL ) {
-      set_block_error(-16);
+      scicos_set_block_error(-16);
       return;
     }
     rw=*block->work; 
@@ -403,7 +410,7 @@ void scicos_time_delay_block(scicos_block *block,int flag)
     if ((*block->work=
 	 scicos_malloc(sizeof(int)+sizeof(double)* 
 		       block->ipar[0]*(1+block->insz[0])))== NULL ) {
-      set_block_error(-16);
+      scicos_set_block_error(-16);
       return;
     }
     pw=*block->work; 
@@ -494,7 +501,7 @@ void scicos_variable_delay_block(scicos_block *block,int flag)
     if ((*block->work=
 	 scicos_malloc(sizeof(int)+sizeof(double)* 
 		       block->ipar[0]*(1+block->insz[0])))== NULL ) {
-      set_block_error(-16);
+      scicos_set_block_error(-16);
       return;
     }
     pw=*block->work; 
@@ -1101,7 +1108,7 @@ void scicos_product_block(scicos_block *block,int flag)
 	    block->outptr[0][j]=block->outptr[0][j]*block->inptr[k][j];
 	  }else{
 	    if(block->inptr[k][j]==0){
-	      set_block_error(-2);
+	      scicos_set_block_error(-2);
 	      return;
 	    }else{
 	      block->outptr[0][j]=block->outptr[0][j]/block->inptr[k][j];
@@ -1123,7 +1130,7 @@ void scicos_ratelimiter_block(scicos_block *block,int flag)
   if (flag == 4){/* the workspace is used to store previous values */
     if ((*block->work=
 	 scicos_malloc(sizeof(double)*4))== NULL ) {
-      set_block_error(-16);
+      scicos_set_block_error(-16);
       return;
     }
     pw=*block->work; 
@@ -1676,12 +1683,12 @@ void scicos_cscope_block(scicos_block *block,int flag)
       NspFigure *Fig =  nsp_oscillo_obj(wid,csi->n,csi->type,scopebs,TRUE,0,0,&L);
       if ( Fig == NULL ) 
 	{
-	  set_block_error(-16);
+	  scicos_set_block_error(-16);
 	  return;
 	}
       if ((*block->work =  scicos_malloc(sizeof(cscope_data))) == NULL ) 
 	{
-	  set_block_error(-16);
+	  scicos_set_block_error(-16);
 	  return;
 	}
       D = (cscope_data *) (*block->work);
@@ -1800,7 +1807,7 @@ void scicos_cscope_block(scicos_block *block,int flag)
       /* the workspace is used as scope store buffer */
       if ((*block->work =  scicos_malloc(sizeof(double)*(1+csi->n*(1+nu))))== NULL ) 
 	{
-	  set_block_error(-16);
+	  scicos_set_block_error(-16);
 	  return;
 	}
       z__= *block->work; 
@@ -2007,7 +2014,7 @@ void scicos_cmscope_block(scicos_block *block,int flag)
       for ( i=0 ; i < block->nin ; ++i) sum=sum+block->insz[i];
       if ((*block->work=  scicos_malloc(sizeof(double)*(1+ipar[3]*(1+sum))))== NULL ) 
 	{
-	  set_block_error(-16);
+	  scicos_set_block_error(-16);
 	  return;
 	}
       z__=*block->work; 
@@ -2181,3 +2188,12 @@ void scicos_csslti4_block(scicos_block *block,int flag)
 
 
 
+static void * scicos_malloc(size_t size)
+{
+  return malloc(size);
+}
+
+static void scicos_free(void *p)
+{
+  free(p);
+}

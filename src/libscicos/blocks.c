@@ -2545,6 +2545,7 @@ int scicos_zcross_block(scicos_args_F0)
 
 void scicos_plus_block(scicos_args_F2);
 
+#if 0 
 void plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
 	     int *nx, double *z, int *nz, double *tvec, int *ntvec, 
 	     double *rpar, int *nrpar, int *ipar, int *nipar, double **inptr, 
@@ -2566,6 +2567,7 @@ void plusblk(int *flag, int *nevprt, double *t, double *xd, double *x,
     }
   }
 }
+#endif 
 
 void scicos_plus_block(scicos_args_F2);
 

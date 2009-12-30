@@ -558,7 +558,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
     {
       /* XXXX add a code for abort */
     }
-  set_block_error(-1);
+  scicos_set_block_error(-1);
 }
 
 
