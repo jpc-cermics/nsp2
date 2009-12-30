@@ -81,7 +81,7 @@ void scicos_absolute_value_block(scicos_block *block,int flag)
     case 1 : 
       if( block->ng>0){
 	for(i=0;i<block->insz[0];++i){
-	  if (get_phase_simulation()==1) {
+	  if (scicos_get_phase_simulation()==1) {
 	    if (block->inptr[0][i]<0){
 	      j=2;
 	    } else{
@@ -109,7 +109,7 @@ void scicos_absolute_value_block(scicos_block *block,int flag)
     case 9: 
       for(i=0;i<block->insz[0];++i){
 	block->g[i]=block->inptr[0][i];
-	if (get_phase_simulation()==1) {
+	if (scicos_get_phase_simulation()==1) {
 	  if(block->g[i]<0){
 	    block->mode[i]=2;
 	  }else{
@@ -236,7 +236,7 @@ void scicos_backlash_block(scicos_block *block,int flag)
       return;
     }
     rw=*block->work; 
-    t=get_scicos_time();
+    t=scicos_get_time();
     rw[0]=t;
     rw[1]=t;
     rw[2]=block->rpar[0];
@@ -245,7 +245,7 @@ void scicos_backlash_block(scicos_block *block,int flag)
     scicos_free(*block->work);
   }else  if (flag == 1) {
     rw=*block->work;
-    t=get_scicos_time();
+    t=scicos_get_time();
     if(t>rw[1]) {
       rw[0]=rw[1];
       rw[2]=rw[3];
@@ -261,7 +261,7 @@ void scicos_backlash_block(scicos_block *block,int flag)
     block->outptr[0][0]=rw[3];
   }  else if (flag == 9) {
     rw=*block->work;
-    t=get_scicos_time();
+    t=scicos_get_time();
     if(t>rw[1]){
       block->g[0] = block->inptr[0][0]-block->rpar[1]/2-rw[3];
       block->g[1] = block->inptr[0][0]+block->rpar[1]/2-rw[3];
@@ -295,7 +295,7 @@ void scicos_cosh_block(scicos_block *block,int flag)
 void scicos_deadband_block(scicos_block *block,int flag)
 {/* rpar[0]:upper limit,  rpar[1]:lower limit */
   if (flag==1){
-    if (get_phase_simulation()==1||block->ng==0) {
+    if (scicos_get_phase_simulation()==1||block->ng==0) {
       if (*block->inptr[0]>=block->rpar[0]){
 	block->outptr[0][0]=*block->inptr[0]-block->rpar[0];
       }else if (*block->inptr[0]<=block->rpar[1]){
@@ -315,7 +315,7 @@ void scicos_deadband_block(scicos_block *block,int flag)
   } else if (flag==9){
     block->g[0]=*block->inptr[0]-(block->rpar[0]);
     block->g[1]=*block->inptr[0]-(block->rpar[1]);
-    if (get_phase_simulation()==1) {
+    if (scicos_get_phase_simulation()==1) {
       if (block->g[0]>=0){
 	block->mode[0]=1;
       }else if (block->g[1]<=0){
@@ -340,7 +340,7 @@ void scicos_deriv_block(scicos_block *block,int flag)
       return;
     }
     rw=*block->work; 
-    t=get_scicos_time();
+    t=scicos_get_time();
     rw[0]=t;
     rw[1]=t;
     for(i=0;i<block->insz[0];++i){
@@ -351,7 +351,7 @@ void scicos_deriv_block(scicos_block *block,int flag)
     scicos_free(*block->work);
   }else  if (flag == 1) {
     rw=*block->work;
-    t=get_scicos_time();
+    t=scicos_get_time();
     if(t>rw[1]) {
       rw[0]=rw[1];
       for(i=0;i<block->insz[0];++i)  {rw[2+2*i]=rw[3+2*i];}
@@ -426,10 +426,10 @@ void scicos_time_delay_block(scicos_block *block,int flag)
   }else  if (flag == 5){
     scicos_free(*block->work);
   } else if (flag==0||flag==2) {
-    if (flag==2) do_cold_restart();
+    if (flag==2) scicos_do_cold_restart();
     pw=*block->work; 
     iw=(int *)(pw+block->ipar[0]*(1+block->insz[0]));
-    t=get_scicos_time();
+    t=scicos_get_time();
     td=t-block->rpar[0];
     if(td<pw[*iw]){
       Sciprintf("delayed time=%f but last stored time=%f \r\n", td, pw[*iw]);
@@ -456,7 +456,7 @@ void scicos_time_delay_block(scicos_block *block,int flag)
   } else if (flag==1) {
     pw=*block->work; 
     iw=(int *) (pw+block->ipar[0]*(1+block->insz[0]));
-    t=get_scicos_time();
+    t=scicos_get_time();
     td=t-block->rpar[0];
 
     i=0;j= block->ipar[0]-1;
@@ -517,10 +517,10 @@ void scicos_variable_delay_block(scicos_block *block,int flag)
   }else  if (flag == 5){
     scicos_free(*block->work);
   } else if (flag==1) {
-    if (get_phase_simulation()==1) do_cold_restart();
+    if (scicos_get_phase_simulation()==1) scicos_do_cold_restart();
     pw=*block->work; 
     iw=(int *) (pw+block->ipar[0]*(1+block->insz[0]));
-    t=get_scicos_time();
+    t=scicos_get_time();
     del=Min(Max(0,block->inptr[1][0]),block->rpar[0]);
     td=t-del;
     if(td<pw[*iw]){
@@ -592,7 +592,7 @@ void scicos_signum_block(scicos_block *block,int flag)
   int i,j;
   if (flag==1){
     for(i=0;i<block->insz[0];++i){
-      if (get_phase_simulation()==1||block->ng==0) {
+      if (scicos_get_phase_simulation()==1||block->ng==0) {
 	if (block->inptr[0][i]<0){
 	  j=2;
 	} else if (block->inptr[0][i]>0){
@@ -614,7 +614,7 @@ void scicos_signum_block(scicos_block *block,int flag)
   }else if (flag==9){
     for(i=0;i<block->insz[0];++i){
       block->g[i]=block->inptr[0][i];
-      if (get_phase_simulation()==1) {
+      if (scicos_get_phase_simulation()==1) {
 	if(block->g[i]<0){
 	  block->mode[i]=2;
 	}else{
@@ -656,7 +656,7 @@ void scicos_switch2_block(scicos_block *block,int flag)
 {
   int i=0,j,phase;
   if (flag == 1) {
-    phase=get_phase_simulation();
+    phase=scicos_get_phase_simulation();
     if (phase==1){
       i=2;
       if (*block->ipar==0){
@@ -677,7 +677,7 @@ void scicos_switch2_block(scicos_block *block,int flag)
       block->outptr[0][j]=block->inptr[i][j];
     }
   }else if(flag == 9){
-    phase=get_phase_simulation();
+    phase=scicos_get_phase_simulation();
     block->g[0]=*block->inptr[1]-(*block->rpar);
     if (phase==1){
       i=2;
@@ -702,7 +702,7 @@ void scicos_switch2_block(scicos_block *block,int flag)
 void scicos_satur_block(scicos_block *block,int flag)
 {/* rpar[0]:upper limit,  rpar[1]:lower limit */
   if (flag==1){
-    if (get_phase_simulation()==1||block->ng==0) {
+    if (scicos_get_phase_simulation()==1||block->ng==0) {
       if (*block->inptr[0]>=block->rpar[0]){
 	block->outptr[0][0]=block->rpar[0];
       }else if (*block->inptr[0]<=block->rpar[1]){
@@ -722,7 +722,7 @@ void scicos_satur_block(scicos_block *block,int flag)
   } else if (flag==9){
     block->g[0]=*block->inptr[0]-(block->rpar[0]);
     block->g[1]=*block->inptr[0]-(block->rpar[1]);
-    if (get_phase_simulation()==1) {
+    if (scicos_get_phase_simulation()==1) {
       if (block->g[0]>=0){
 	block->mode[0]=1;
       }else if (block->g[1]<=0){
@@ -902,7 +902,7 @@ void scicos_multiplex_block(scicos_block *block,int flag)
 void scicos_hystheresis_block(scicos_block *block,int flag)
 {
   if (flag==1){
-    if (get_phase_simulation()==1) {
+    if (scicos_get_phase_simulation()==1) {
       if (*block->inptr[0]>=block->rpar[0]){
 	block->outptr[0][0]=block->rpar[2];
       }else if (*block->inptr[0]<=block->rpar[1]){
@@ -918,7 +918,7 @@ void scicos_hystheresis_block(scicos_block *block,int flag)
   } else if (flag==9){
     block->g[0]=*block->inptr[0]-(block->rpar[0]);
     block->g[1]=*block->inptr[0]-(block->rpar[1]);
-    if (get_phase_simulation()==1) {
+    if (scicos_get_phase_simulation()==1) {
       if (block->g[0]>=0){
 	block->mode[0]=2;
       }else if (block->g[1]<=0){
@@ -934,8 +934,8 @@ void scicos_ramp_block(scicos_block *block,int flag)
 {
   double dt;
   if (flag==1){
-    dt=get_scicos_time()-block->rpar[1];
-    if (get_phase_simulation()==1) {
+    dt=scicos_get_time()-block->rpar[1];
+    if (scicos_get_phase_simulation()==1) {
       if(dt>0) {
 	block->outptr[0][0]=block->rpar[2]+block->rpar[0]*dt;
       }else{
@@ -949,8 +949,8 @@ void scicos_ramp_block(scicos_block *block,int flag)
       }
     }
   } else if (flag==9){
-    block->g[0]=get_scicos_time()-(block->rpar[1]);
-    if (get_phase_simulation()==1) {
+    block->g[0]=scicos_get_time()-(block->rpar[1]);
+    if (scicos_get_phase_simulation()==1) {
       if (block->g[0]>=0){
 	block->mode[0]=1;
       }else{
@@ -966,7 +966,7 @@ void scicos_minmax_block(scicos_block *block,int flag)
   /*ipar[0]=1 -> min,  ipar[0]=2 -> max */
   int i,phase;
   double maxmin;
-  phase=get_phase_simulation();
+  phase=scicos_get_phase_simulation();
   if (flag == 1) {
     if(block->nin==1){
       if((block->ng==0)|(phase==1)){
@@ -1141,9 +1141,9 @@ void scicos_ratelimiter_block(scicos_block *block,int flag)
   }else  if (flag == 5){
     scicos_free(*block->work);
   } else if (flag==1) {
-    if (get_phase_simulation()==1) do_cold_restart();
+    if (scicos_get_phase_simulation()==1) scicos_do_cold_restart();
     pw=*block->work; 
-    t=get_scicos_time();
+    t=scicos_get_time();
     if(t>pw[2]){
       pw[0]=pw[2];
       pw[1]=pw[3];
@@ -1200,7 +1200,7 @@ void scicos_integral_func_block(scicos_block *block,int flag)
       } else {
 	block->g[i]=block->inptr[0][i];
       } 
-      if (get_phase_simulation()==1) {
+      if (scicos_get_phase_simulation()==1) {
 	if (block->inptr[0][i]>=0&&block->x[i]>=block->rpar[0]){
 	  block->mode[i]=1;
 	}else if (block->inptr[0][i]<=0&&block->x[i]<=block->rpar[1]){
@@ -1226,7 +1226,7 @@ void scicos_relationalop_block(scicos_block *block,int flag)
   int i;
   i=block->ipar[0];
   if(flag==1){
-    if ((block->ng!=0)&(get_phase_simulation()==2))
+    if ((block->ng!=0)&(scicos_get_phase_simulation()==2))
       {
 	block->outptr[0][0]=block->mode[0]-1.0;
       }
@@ -1281,7 +1281,7 @@ void scicos_relationalop_block(scicos_block *block,int flag)
 
   }else if(flag==9){
     block->g[0]=block->inptr[0][0]-block->inptr[1][0];
-    if (get_phase_simulation()==1) {
+    if (scicos_get_phase_simulation()==1) {
       switch (i)
 	{
 	case 0:
@@ -1515,7 +1515,7 @@ void scicos_bouncexy_block(scicos_block *block,int flag)
   ipar=block->ipar;
   u=block->inptr[0];
   y=block->inptr[1];
-  t=get_scicos_time();
+  t=scicos_get_time();
 
   
   /* Parameter adjustments */
@@ -1651,9 +1651,9 @@ void scicos_cscope_block(scicos_block *block,int flag)
   int nu, cur = 0,k, wid;
 
   nu=Min(block->insz[0],8);
-  t=get_scicos_time();
+  t=scicos_get_time();
 
-  wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
+  wid = ( csi->wid == -1 ) ? 20000+ scicos_get_block_number() : csi->wid;
   
   if (flag == 2) 
     {
@@ -1733,9 +1733,9 @@ void scicos_cscope_block(scicos_block *block,int flag)
   int n1, n2,  wid;
 
   nu=Min(block->insz[0],8);
-  t=get_scicos_time();
+  t=scicos_get_time();
 
-  wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
+  wid = ( csi->wid == -1 ) ? 20000+scicos_get_block_number() : csi->wid;
   
   if (flag == 2) 
     {
@@ -1906,12 +1906,12 @@ void scicos_cmscope_block(scicos_block *block,int flag)
   rpar=block->rpar;
   ipar=block->ipar;
   nipar=block->nipar;
-  t=get_scicos_time();
+  t=scicos_get_time();
 
   --ipar;
   --rpar;
 
-  wid = ( csi->wid == -1 ) ? 20000+get_block_number() : csi->wid;
+  wid = ( csi->wid == -1 ) ? 20000+scicos_get_block_number() : csi->wid;
 
 
   if (flag == 2) {

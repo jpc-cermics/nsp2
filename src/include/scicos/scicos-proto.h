@@ -37,14 +37,12 @@ extern int scicos_getscilabel(int kfun,char **label);
 extern void scicos_clip(BCG *Xgc,int n) ;
 extern BCG *scicos_set_win(int wid,int *oldwid);
 extern void *scicos_get_function(char * fname);
-extern void do_cold_restart(void);
-extern int get_phase_simulation(void);
-extern double get_scicos_time(void);
-extern int get_block_number(void);
-extern void set_block_error(int);
-extern void set_pointer_xproperty(int* pointer);
-extern void * scicos_malloc(size_t );
-extern void scicos_free(void *p);
+extern void scicos_do_cold_restart(void);
+extern int scicos_get_phase_simulation(void);
+extern double scicos_get_time(void);
+extern int scicos_get_block_number(void);
+extern void scicos_set_block_error(int);
+extern void scicos_set_pointer_xproperty(int* pointer);
 
 /* FIXME should be defined elsewhere */
 extern int nsp_check_events_activated(void);

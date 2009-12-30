@@ -391,7 +391,7 @@ int int_setscicosvars(Stack stack, int rhs, int opt, int lhs)
  * is initialized i.e Scicos != NULL
  *
  */
-
+#if 0
 int int_getblocklabel(Stack stack, int rhs, int opt, int lhs) 
 {
   int kf;
@@ -422,12 +422,13 @@ int int_getblocklabel(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,Ob);
   return 1;
 }
+#endif 
 
 static int int_time_scicos(Stack stack, int rhs, int opt, int lhs) 
 { 
   CheckRhs(-1,0);
   CheckLhs(1,1);
-  if ( nsp_move_double(stack,1,(double) get_scicos_time() )== FAIL) return RET_BUG;
+  if ( nsp_move_double(stack,1,(double) scicos_get_time() )== FAIL) return RET_BUG;
   return 1;
 }
 
@@ -509,7 +510,7 @@ static int int_get_phase_simulation(Stack stack, int rhs, int opt, int lhs)
 { 
   CheckRhs(-1,0);
   CheckLhs(1,1);
-  if ( nsp_move_double(stack,1,(double) get_phase_simulation() )== FAIL) return RET_BUG;
+  if ( nsp_move_double(stack,1,(double) scicos_get_phase_simulation() )== FAIL) return RET_BUG;
   return 1;
 }
 
@@ -533,7 +534,7 @@ static int int_setxproperty(Stack stack, int rhs, int opt, int lhs)
   int m1;
   CheckRhs(1,1);
   if ( GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
-  set_pointer_xproperty(&m1);
+  scicos_set_pointer_xproperty(&m1);
   return 0;
 }
 

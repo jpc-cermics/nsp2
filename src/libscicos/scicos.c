@@ -39,10 +39,10 @@
 
 
 /* to be moved elsewhere */
-void Set_Jacobian_flag(int flag);
-double Get_Jacobian_parameter(void);
-double Get_Scicos_SQUR(void);
-void call_debug_scicos(double *, double *, double *, double *,double *,int *,int,int,int);
+void scicos_Set_Jacobian_flag(int flag);
+double scicos_Get_Jacobian_parameter(void);
+double scicos_Get_Scicos_SQUR(void);
+static void call_debug_scicos(double *, double *, double *, double *,double *,int *,int,int,int);
 
 extern  int C2F(ddaskr)();
 extern  int C2F(lsodar2)();
@@ -2226,7 +2226,7 @@ static void  callf(double *t, double *xtd, double *xt, double *residual, double 
 
 
 
-void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, double *g, int *flag, int kf, int flagi, int deb_blk)
+static void call_debug_scicos(double *t, double *xtd, double *xt, double *residual, double *g, int *flag, int kf, int flagi, int deb_blk)
 {
   voidf loc ; 
   int solver=Scicos->params.solver,k;
@@ -2477,23 +2477,23 @@ static int putevs(double t, int evtnb)
 /* } */
 
 
-int get_phase_simulation(void)
+int scicos_get_phase_simulation(void)
 {
   return phase;
 }
 
-void do_cold_restart(void)
+void scicos_do_cold_restart(void)
 {
   Scicos->params.hot=0;
   return;
 }
 
-double get_scicos_time(void)
+double scicos_get_time(void)
 {
   return scicos_time;
 }
 
-int get_block_number(void)
+int scicos_get_block_number(void)
 {
   return Scicos->params.curblk;
 }
@@ -2505,7 +2505,7 @@ void scicos_set_block_error(int err)
   return;
 }
 
-void set_pointer_xproperty(int* pointer)
+void scicos_set_pointer_xproperty(int* pointer)
 {
   int i;
   for (i=0;i<n_pointer_xproperty;i++){
@@ -2516,18 +2516,18 @@ void set_pointer_xproperty(int* pointer)
 
 
 /* Jacobian*/
-void Set_Jacobian_flag(int flag)
+void scicos_Set_Jacobian_flag(int flag)
 {
   Jacobian_Flag=flag;
   return;
 }
 
-double Get_Jacobian_parameter(void)
+double scicos_Get_Jacobian_parameter(void)
 {
   return CJJ;
 }
 
-double Get_Scicos_SQUR(void)
+double scicos_Get_Scicos_SQUR(void)
 {
   return  SQuround;
 }

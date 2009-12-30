@@ -44,7 +44,7 @@ void scicos_evaluate_expr_block(scicos_block *block,int flag)
   double *constv = block->rpar, vars[8]={0},res=0.0;
   if ( flag==1 || flag==9) 
     {
-      phase=get_phase_simulation();  
+      phase=scicos_get_phase_simulation();  
       if ( block->nin>1 ) 
 	for ( i = 0 ; i < block->nin ; i++) vars[i]=block->inptr[i][0];
       else 
