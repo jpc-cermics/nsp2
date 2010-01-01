@@ -1621,7 +1621,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
   double buf_lf[MAXSCAN];
   float buf_f[MAXSCAN];
   void *ptrtab[MAXSCAN];
-  int stared[MAXSCAN]; /* %* directives */
+  int stared; /* %* directives */
   int num_stared =0;
   sfdir  type[MAXSCAN];
   int nc[MAXSCAN];
@@ -1632,7 +1632,6 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
   int l_flag=0, h_flag=0,width_flag,width_val,str_width_flag=0;
   int num_conversion = -1;	/* for error messages and counting arguments*/
   PRINTER printer;		/* pts at fprintf() or sprintf() */
-  int count; 
 
   q = format;
   *retval = 0;
@@ -1701,13 +1700,14 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 
       /* check for ignore argument */
 
-      stared[num_conversion] = FALSE;
+      stared = FALSE;
 
       if (*q == '*')
 	{
 	  /* Ignore the argument in the input args */
-	  stared[num_conversion] = TRUE;
+	  stared = TRUE;
 	  num_stared++;
+	  num_conversion--;
 	  q++;
 	}
       /* check for %l or %h */
@@ -1767,8 +1767,10 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 		       width_val,MAX_STR-1);
 	      return FAIL;
 	    }
-	  ptrtab[num_conversion] =  char_buf[num_conversion];
-	  type[num_conversion] = SF_S;
+	  if (stared == FALSE ) {
+	    ptrtab[num_conversion] =  char_buf[num_conversion];
+	    type[num_conversion] = SF_S;
+	  }
 	  break;
 	case 's':
 	  if (l_flag + h_flag)
@@ -1780,53 +1782,65 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 		       width_val,MAX_STR-1);
 	      return FAIL;
 	    }
-	  ptrtab[num_conversion] =  char_buf[num_conversion];
-	  type[num_conversion] = SF_S;
+	  if (stared == FALSE ) {
+	    ptrtab[num_conversion] =  char_buf[num_conversion];
+	    type[num_conversion] = SF_S;
+	  }
 	  break;
 	case 'c':
 	  if (l_flag + h_flag)
 	    Scierror("Error: scanf: bad conversion\n");
-	  if ( width_flag == 1 ) 
-	    nc[num_conversion ] = width_val;
-	  else
-	    nc[num_conversion ] = 1;
+	  if (stared == FALSE ) 
+	    {
+	      if ( width_flag == 1 ) 
+		nc[num_conversion ] = width_val;
+	      else
+		nc[num_conversion ] = 1;
+	    }
 	  if (width_flag == 1 && width_val > MAX_STR-1 )
 	    {
 	      Scierror("Error: scanf width field %d is too long (< %d) for %%c directive\n",
 		       width_val,MAX_STR-1);
 	      return FAIL;
 	    }
-	  ptrtab[num_conversion] =  char_buf[num_conversion];
-	  type[num_conversion] = SF_C;
+	  if (stared == FALSE ) {
+	    ptrtab[num_conversion] =  char_buf[num_conversion];
+	    type[num_conversion] = SF_C;
+	  }
 	  break;
 	case 'o':
 	case 'u':
 	case 'x':
 	case 'X':
-	  if ( l_flag ) 
-	    {
-	      ptrtab[num_conversion] =  &buf_lui[num_conversion];
-	      type[num_conversion] = SF_LUI;
-	    }
-	  else if ( h_flag) 
-	    {
-	      ptrtab[num_conversion] =  &buf_sui[num_conversion];
-	      type[num_conversion] = SF_SUI;
-	    }
-	  else 
-	    {
-	      ptrtab[num_conversion] =  &buf_ui[num_conversion];
-	      type[num_conversion] = SF_UI;
-	    }
+	  if (stared == FALSE ) {
+	    if ( l_flag ) 
+	      {
+		ptrtab[num_conversion] =  &buf_lui[num_conversion];
+		type[num_conversion] = SF_LUI;
+	      }
+	    else if ( h_flag) 
+	      {
+		ptrtab[num_conversion] =  &buf_sui[num_conversion];
+		type[num_conversion] = SF_SUI;
+	      }
+	    else 
+	      {
+		ptrtab[num_conversion] =  &buf_ui[num_conversion];
+		type[num_conversion] = SF_UI;
+	      }
+	  }
 	  break;
 	case 'D':
-	  ptrtab[num_conversion] =  &buf_li[num_conversion];
-	  type[num_conversion] = SF_LI;
+	  if (stared == FALSE ) {
+	    ptrtab[num_conversion] =  &buf_li[num_conversion];
+	    type[num_conversion] = SF_LI;
+	  }
 	  break;
 	case 'n':
 	  n_conversions++;
 	case 'i':
 	case 'd':
+	  if (stared == FALSE ) {
 	  if ( l_flag ) 
 	    {
 	      ptrtab[num_conversion] =  &buf_li[num_conversion];
@@ -1842,6 +1856,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	      ptrtab[num_conversion] =  &buf_i[num_conversion];
 	      type[num_conversion] = SF_I;
 	    }
+	  }
 	  break;
 	case 'e':
 	case 'f':
@@ -1855,13 +1870,17 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	    }
 	  else if (l_flag) 
 	    {
-	      ptrtab[num_conversion] =  &buf_lf[num_conversion];
-	      type[num_conversion] = SF_LF;
+	      if (stared == FALSE ) {
+		ptrtab[num_conversion] =  &buf_lf[num_conversion];
+		type[num_conversion] = SF_LF;
+	      }
 	    }
 	  else
 	    {
-	      ptrtab[num_conversion] =  &buf_f[num_conversion];
-	      type[num_conversion] = SF_F;
+	      if (stared == FALSE ) {
+		ptrtab[num_conversion] =  &buf_f[num_conversion];
+		type[num_conversion] = SF_F;
+	      }
 	    }
 	  break;
 	default:
@@ -1894,6 +1913,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	      return FAIL;
 	    }
 	}
+      *f2 = '\0';
       format = sformat;
     }
 
@@ -1906,7 +1926,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 
   *retval = (*printer) ( target,format,SCAN_ARGS);
   
-  *nargs = num_conversion+1 - num_stared ;
+  *nargs = num_conversion+1  ;
   
   if ( *retval == EOF) 
     {
@@ -1928,15 +1948,12 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
       return FAIL;
     }
 
-  i=0;
   /* check all the conversions and 
    * put objects on the stack for non stared conversions.
    */
-  for ( count=1 ; count <= num_conversion+1 ; count++) 
+  for ( i=1 ; i <= *nargs ; i++) 
     {
-      if ( stared[count-1]== TRUE) continue;
-      i++;
-      switch ( type[count-1] )
+      switch ( type[i-1] )
 	{
 	case SF_C:
 	  char_buf[i-1][nc[i-1]]='\0';
