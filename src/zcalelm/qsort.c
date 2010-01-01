@@ -32,9 +32,10 @@
 #include "nsp/machine.h" 
 #include "nsp/gsort-p.h"
 
+typedef int (*Swapf) (char *parmi,char* parmj,int n, int inc);
 
 extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1, 
-		      int (*cmp) (), int (*swapcode) (), int (*swapcodeind) ());
+		      int (*cmp) (), Swapf swapcode,Swapf swapcodeind);
 
 #define swapcodeind CNAME(swapcode,int)
 
@@ -167,14 +168,15 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
  */
 
 
+
 /*
  * Qsort routine from Bentley & McIlroy's "Engineering a Sort Function".
  */
-
+#undef swapcodeind 
 #define swap(a, b) swapcode(a, b, 1,es )
-#define swapind(a, b)  if ( flag==1) swapcodeind(a,b,1)
+#define swapind(a, b)  if ( flag==1) swapcodeind(a,b,1, es1 )
 #define vecswap(a, b, n) if ((n) > 0) swapcode(a, b, n/es,es)
-#define vecswapind(a, b, n) if ((n) > 0 && flag == 1) swapcodeind(a,b,n/es1) 
+#define vecswapind(a, b, n) if ((n) > 0 && flag == 1) swapcodeind(a,b,n/es1, es1) 
 
 #define med3(res,tabres,a, b, c, xa,xb,xc,cmp) cmp(a, b) < 0 ?		\
   (cmp(b, c) < 0 ? (res=b,tabres=xb) :					\
@@ -194,8 +196,8 @@ extern void nsp_qsort(char *a, char *tab,int flag, int n, int es, int es1,
  * sinon cas standard on leur donnera la valeur 1;
  */
 
-void nsp_qsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp)(), int (*swapcode)(),
-	       int (*swapcodeind)())
+void nsp_qsort(char *a, char *tab, int flag, int n, int es, int es1, int (*cmp)(),
+	       Swapf swapcode,Swapf swapcodeind)
 {
   char *pa, *pb, *pc, *pd, *pl, *pm, *pn;
   char *taba, *tabb, *tabc, *tabd, *tabl, *tabm, *tabn;

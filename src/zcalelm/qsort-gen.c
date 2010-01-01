@@ -295,7 +295,7 @@ static  int XCNAME(LexiRowcompareD,ELT_TYPE)(ELT_TYPE *i, ELT_TYPE*j)
 #endif
 #endif
 
-static int XCNAME(LexiRowswapcode,ELT_TYPE)(char *parmi,char * parmj,int n) 
+static int XCNAME(LexiRowswapcode,ELT_TYPE)(char *parmi,char * parmj,int n,int inc) 
 { 		
   int i = n,j;
   register ELT_TYPE *pi = (ELT_TYPE *) (parmi); 		
@@ -452,7 +452,7 @@ static  int XCNAME(LexiColcompareD,ELT_TYPE)(ELT_TYPE *i,ELT_TYPE *j)
 #endif 
 #endif 
 
-static int XCNAME(LexiColswapcode,ELT_TYPE)(char *parmi,char* parmj,int n) 
+static int XCNAME(LexiColswapcode,ELT_TYPE)(char *parmi,char* parmj,int n,int inc) 
 { 		
   int i = n,ir;
   register ELT_TYPE *pi = (ELT_TYPE *) (parmi); 		
