@@ -1607,6 +1607,7 @@ typedef int (*PRINTER) (const FILE *,const char *,...);
 int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	      int iline, int *nargs,const char *strv, int *retval)
 {
+  int n_conversions = 0;
   double dval;
   int i;
   char sformat[MAX_STR];
@@ -1620,15 +1621,18 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
   double buf_lf[MAXSCAN];
   float buf_f[MAXSCAN];
   void *ptrtab[MAXSCAN];
+  int stared[MAXSCAN]; /* %* directives */
+  int num_stared =0;
   sfdir  type[MAXSCAN];
   int nc[MAXSCAN];
   char save,directive;
   char *p,*p1;
   register char *q;
   const void * target;
-  int l_flag=0, h_flag=0,width_flag,width_val,ign_flag,str_width_flag=0;
+  int l_flag=0, h_flag=0,width_flag,width_val,str_width_flag=0;
   int num_conversion = -1;	/* for error messages and counting arguments*/
   PRINTER printer;		/* pts at fprintf() or sprintf() */
+  int count; 
 
   q = format;
   *retval = 0;
@@ -1697,13 +1701,13 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 
       /* check for ignore argument */
 
-      ign_flag=0;
+      stared[num_conversion] = FALSE;
 
       if (*q == '*')
 	{
 	  /* Ignore the argument in the input args */
-	  num_conversion = Max(num_conversion-1,0);
-	  ign_flag = 1;
+	  stared[num_conversion] = TRUE;
+	  num_stared++;
 	  q++;
 	}
       /* check for %l or %h */
@@ -1820,6 +1824,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	  type[num_conversion] = SF_LI;
 	  break;
 	case 'n':
+	  n_conversions++;
 	case 'i':
 	case 'd':
 	  if ( l_flag ) 
@@ -1901,21 +1906,37 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 
   *retval = (*printer) ( target,format,SCAN_ARGS);
   
-  *nargs = num_conversion+1;
-
+  *nargs = num_conversion+1 - num_stared ;
+  
   if ( *retval == EOF) 
     {
       Scierror("Warning: eof found while executing %s\n",command);
       return FAIL;
     }
-  if ( *retval != *nargs )
+  /* take care that the n_conversions are not (always) counted in 
+   * *retval. This point seams implementation dependent. 
+   */
+  if ( *retval != *nargs && *retval + n_conversions != *nargs )
     {
-      Scierror("Warning: %d items not assigned while executing %s\n",*nargs-*retval,command);
+      int unassigned = *nargs-*retval;
+      if ( unassigned == 1) 
+	Scierror("Error: one item could not be assigned while executing %s\n",
+		 command);
+      else
+	Scierror("Error: %d items could not be assigned while executing %s\n",
+		 unassigned,command);
       return FAIL;
     }
-  for ( i=1 ; i <= *nargs ; i++) 
+
+  i=0;
+  /* check all the conversions and 
+   * put objects on the stack for non stared conversions.
+   */
+  for ( count=1 ; count <= num_conversion+1 ; count++) 
     {
-      switch ( type[i-1] )
+      if ( stared[count-1]== TRUE) continue;
+      i++;
+      switch ( type[count-1] )
 	{
 	case SF_C:
 	  char_buf[i-1][nc[i-1]]='\0';

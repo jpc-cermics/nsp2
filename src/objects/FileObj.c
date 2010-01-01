@@ -844,6 +844,42 @@ static int int_file_fscanfMat(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+
+/* compatibility with Scilab 
+ * format is not used. 
+ * fprintfMat(fname, format='fmt' ,header=SMat)
+ */
+
+static int int_file_fprintfMat(Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  char Fname_expanded[FSIZE+1];
+  NspMatrix *M;
+  NspSMatrix *header = NULL;
+  char *format=NULL;
+  char *sep=NULL;
+  int xdr= FALSE,swap = TRUE;
+  int_types T[] = {string, mat, new_opts, t_end} ;
+  NspFile *F;
+  char *Fname, *mode = "wb";
+  nsp_option opts[] ={{ "format",string,NULLOBJ,-1},
+		      { "header",smat,NULLOBJ,-1},
+		      { "sep",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&Fname,&M,&opts,&format,&header,&sep) == FAIL)
+    return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+  if ((F=nsp_file_open(Fname_expanded,mode,xdr,swap)) == NULLSCIFILE)
+    return RET_BUG;
+  rep= nsp_fprintf_matrix(F,format,sep,M,header);
+  nsp_file_close(F);
+  nsp_file_destroy(F);
+  return (rep == FAIL) ? RET_BUG: 0;
+}
+
+
+
+
 /* interface: 
  * is_little_endian()
  */
@@ -865,6 +901,7 @@ static OpTab File_func[]={
   {"getfile",int_file_getfile},
   {"putfile",int_file_putfile},
   {"fscanfMat",int_file_fscanfMat},
+  {"fprintfMat",int_file_fprintfMat},
   {(char *) 0, NULL}
 };
 
