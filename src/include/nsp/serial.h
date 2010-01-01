@@ -45,6 +45,7 @@ struct _NspSerial {
 };
 
 extern const char nsp_serial_header[];
+extern const char nsp_zserial_header[];
 
 extern int nsp_type_serial_id;
 extern NspTypeSerial *nsp_type_serial;
@@ -64,12 +65,10 @@ NspSerial *new_serial();
 #define NULLSERIAL (NspSerial*) 0
 
 extern NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes);
-extern NspSerial *nsp_serial_copy(NspSerial *H);
+extern NspSerial *nsp_serial_copy(const NspSerial *H);
 extern void nsp_serial_destroy(NspSerial *H);
 extern int nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level);
 extern int nsp_serial_print(NspSerial *H, int indent,const char *name, int rec_level);
-
-/* from SerialObj.c */
 
 extern NspSerial *nsp_serial_object (NspObject *O); 
 extern int IsSerialObj (Stack stack, int i); 
@@ -83,13 +82,16 @@ extern NspObject * nsp_object_serialize(const NspObject *O);
 extern NspMatrix *nsp_serial_to_matrix(const NspSerial *S);
 extern NspSerial *nsp_matrix_to_serial(const NspMatrix *A);
 
+extern NspSerial *nsp_serial_compress(const NspSerial *S);
+extern NspSerial *nsp_serial_uncompress(const NspSerial *Sz);
+
 
 #endif 
 
 /* private part */
 
 #ifdef Serial_Private 
-static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes,NspTypeBase *type);
+static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes,NspTypeBase *type,int zflag);
 static int init_serial(NspSerial *o,NspTypeSerial *type);
 static int nsp_serial_size(NspSerial *Mat, int flag);
 static char *nsp_serial_type_as_string(void);

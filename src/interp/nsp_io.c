@@ -109,7 +109,7 @@ int  Sciprintf1 (int indent,const char *fmt,...)
  * Returns: 
  **/
 
-int do_printf_stdout(FILE *ignore,const char *fmt, ...)
+int do_printf_stdout(const FILE *ignore,const char *fmt, ...)
 {
   int n;
   va_list ap;

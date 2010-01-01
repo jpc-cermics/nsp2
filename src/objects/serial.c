@@ -23,7 +23,7 @@
 #define  Serial_Private 
 #include "nsp/serial.h"
 #include "nsp/interf.h"
-
+#include "nsp/smio.h" /* zlib.h */
 /* 
  * NspSerial inherits from NspObject
  */
@@ -215,12 +215,8 @@ static int nsp_serial_neq(NspSerial *A, NspObject *B)
 
 static int nsp_serial_xdr_save(XDR  *xdrs, NspSerial *M)
 {
-#if 1 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_serial)) == FAIL) return FAIL;
-#else
-  if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
-#endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs,M->nbytes) == FAIL) return FAIL;
   if (nsp_xdr_save_array_c(xdrs,M->val,M->nbytes) == FAIL) return FAIL;
@@ -238,7 +234,10 @@ static NspSerial  *nsp_serial_xdr_load(XDR *xdrs)
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLSERIAL;
   if (nsp_xdr_load_i(xdrs,&nbytes) == FAIL) return NULLSERIAL;
-  /* nbytes here is all the bytes i.e + the serial header */
+  /* nbytes here is all the bytes i.e + the serial header 
+   * Note that the following code will work even if the 
+   * serial object was compressed. 
+   */
   if ((M = nsp_serial_create(name,NULL,nbytes-strlen(nsp_serial_header)))== NULLSERIAL) return NULLSERIAL;
   if (nsp_xdr_load_array_c(xdrs,M->val,M->nbytes) == FAIL) return  NULLSERIAL;
   return M;
@@ -331,18 +330,31 @@ NspSerial  *GetSerial(Stack stack, int i)
  *-----------------------------------------------------*/
 
 const char nsp_serial_header[]="@nsp01";
+const char nsp_zserial_header[]="@nspz01";
 
-static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes,NspTypeBase *type)
+static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes,NspTypeBase *type,int zflag)
 {
+  int len;
+  const char *header=NULL;
   NspSerial *H  = (type == NULL) ? new_serial() : type->new();
   if ( H ==  NULLSERIAL)
     {
       Sciprintf("No more memory\n");
       return NULLSERIAL;
     }
+  if ( zflag == TRUE)
+    {
+      header =  nsp_zserial_header; 
+      len = strlen(header)+8;
+    }
+  else
+    {
+      header =  nsp_serial_header; 
+      len = strlen(header);
+    }
   /* should be unsigned */
   nbytes=Max(0,nbytes);
-  H->nbytes = nbytes + strlen(nsp_serial_header);
+  H->nbytes = nbytes + len ;
   if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
     return(NULLSERIAL);
   NSP_OBJECT(H)->ret_pos = -1 ;
@@ -353,8 +365,8 @@ static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes
     }
   if ( buf != NULL) 
     {
-      memcpy(H->val,nsp_serial_header,strlen(nsp_serial_header));
-      memcpy(H->val+strlen(nsp_serial_header),buf,nbytes);
+      memcpy(H->val,header,strlen(header));
+      memcpy(H->val+len,buf,nbytes);
     }
   else 
     {
@@ -365,17 +377,28 @@ static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes
 
 NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes)
 {
-  return _nsp_serial_create(name,buf,nbytes,NULL);
+  return _nsp_serial_create(name,buf,nbytes,NULL,FALSE);
 }
 
 /*
  * copy 
  */
 
-NspSerial *nsp_serial_copy(NspSerial *H)
+NspSerial *nsp_serial_copy(const NspSerial *H)
 {
-  int len = strlen(nsp_serial_header);
-  return _nsp_serial_create(NVOID,H->val+len,H->nbytes-len,NULL);
+  if (strncmp(H->val,nsp_zserial_header,strlen(nsp_zserial_header))==0)
+    {
+      int len = strlen(nsp_zserial_header)+8;
+      NspSerial *S=_nsp_serial_create(NVOID,H->val+len,H->nbytes-len,NULL,TRUE);
+      if ( S == NULL) return S;
+      memcpy(S->val+strlen(nsp_zserial_header),H->val+strlen(nsp_zserial_header),sizeof(int));
+      return S;
+    }
+  else
+    {
+      int len = strlen(nsp_serial_header);
+      return _nsp_serial_create(NVOID,H->val+len,H->nbytes-len,NULL,FALSE);
+    }
 }
 
 /*-------------------------------------------------------------------
@@ -406,8 +429,111 @@ static int int_serial_meth_unserialize(void *a,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
+
+NspSerial *nsp_serial_compress(const NspSerial *S)
+{
+#ifdef HAVE_ZLIB
+  unsigned long nc;
+  char *loc;
+  NspSerial *Sz;
+  int nb,rep;
+  int len = strlen(nsp_serial_header);
+  if ( strncmp(S->val,nsp_zserial_header,strlen(nsp_zserial_header))==0 )
+    {
+      /*  S is already a compressed serial object 
+       */
+      return nsp_serial_copy(S);
+    }
+  /* number of bytes in serial object */
+  nb = S->nbytes-len;
+  /* initial size for compression buffer */
+  nc = nb*(1+0.1) + 12;
+  if ((Sz = _nsp_serial_create(NVOID,NULL,nc,NULL,TRUE))== NULL) 
+    return NULL;
+  rep = compress ((Bytef *) Sz->val + strlen(nsp_zserial_header)+8,&nc,
+		  (Bytef *) S->val + len, nb);
+  if ( rep != Z_OK )
+    {
+      Scierror("Error: compression failed\n");
+      nsp_serial_destroy(Sz);
+      return NULL;
+    }
+  loc = realloc(Sz->val, nc + strlen(nsp_zserial_header)+8);
+  if ( loc == NULL) 
+    {
+      Scierror("Error: running out of memory\n");
+      nsp_serial_destroy(Sz);
+      return NULL;
+    }
+  Sz->val = loc;
+  Sz->nbytes = nc +strlen(nsp_zserial_header)+8 ; 
+  memcpy(Sz->val,nsp_zserial_header, strlen(nsp_zserial_header));
+  memcpy(Sz->val+strlen(nsp_zserial_header),&nb,sizeof(int));
+  return Sz;
+#else
+  Scierror("Error: cannot compress with this nsp version\n");
+  return RET_BUG;
+#endif 
+}
+
+static int int_serial_meth_compress(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSerial *Sz; 
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((Sz = nsp_serial_compress(self))== NULL)
+    return RET_BUG; 
+  MoveObj(stack,1,NSP_OBJECT(Sz)); 
+  return 1;
+}
+
+
+NspSerial *nsp_serial_uncompress(const NspSerial *Sz)
+{
+#ifdef HAVE_ZLIB
+  NspSerial *S;
+  unsigned long nb;
+  int rep, zlen = strlen(nsp_zserial_header);
+  int len = strlen(nsp_serial_header);
+  if ( strncmp(Sz->val,nsp_serial_header,len) ==0) 
+    {
+      return nsp_serial_copy(Sz);
+    }
+  /* get size after uncompression */
+  memcpy(&nb,Sz->val+ zlen ,sizeof(int));
+  if ((S = _nsp_serial_create(NVOID,NULL,nb,NULL,FALSE))== NULL) 
+    return NULL;
+  rep = uncompress ((Bytef *) S->val + len ,&nb,
+		    (Bytef *) Sz->val + zlen+8 ,Sz->nbytes - (zlen+8));
+  if ( rep != Z_OK )
+    {
+      Scierror("Error: uncompression failed\n");
+      nsp_serial_destroy(S);
+      return NULL;
+    }
+  memcpy(S->val,nsp_serial_header,len);
+  return S;
+#else
+  Scierror("Error: cannot compress with this nsp version\n");
+  return NULL;
+#endif 
+}
+
+static int int_serial_meth_uncompress(void *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSerial *S; 
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((S = nsp_serial_uncompress(self))== NULL)
+    return RET_BUG; 
+  MoveObj(stack,1,NSP_OBJECT(S)); 
+  return 1;
+}
+
 static NspMethods serial_methods[] = {
   { "unserialize", int_serial_meth_unserialize},
+  { "compress", int_serial_meth_compress },
+  { "uncompress", int_serial_meth_uncompress },
   { (char *) 0, NULL}
 };
 

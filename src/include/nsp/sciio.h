@@ -18,7 +18,7 @@ typedef int (*IOVFun) (const char *fmt, va_list ap);
 IOVFun SetScilabIO(IOVFun F);
 int Sciprintf1(int indent,const char *fmt,...);
 int Sciprintf(const char *fmt,...); 
-int do_printf_stdout(FILE *ignore,const char *fmt, ...);
+int do_printf_stdout(const FILE *ignore,const char *fmt, ...);
 
 #ifdef  NSP_TYPE_OBJECT 
 NspObject *Sciprint2string_reset();

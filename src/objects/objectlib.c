@@ -914,17 +914,36 @@ NspObject *nsp_object_serialize(const NspObject *O)
 
 NspObject *nsp_object_unserialize(const NspSerial *S)
 {
-  NspObject *Obj;
+  NspSerial *Sl=NULL;
+  NspObject *Obj=NULL;
   int hs= strlen(nsp_serial_header);
   XDR xdrs;
-  if ( S->nbytes < hs 
-       || strncmp(S->val,nsp_serial_header,hs) != 0)
+
+  if ( S->nbytes > strlen(nsp_zserial_header) 
+       && strncmp(S->val,nsp_zserial_header,strlen(nsp_zserial_header)) == 0)
     {
-      Scierror("Error: serial object does not contain a serialized Nsp object\n");
-      return NULLOBJ;
+      /* decompress first */
+      Sl = nsp_serial_uncompress(S);
+      if (Sl == NULL) return NULLOBJ;
+      if ( Sl->nbytes < hs || strncmp(Sl->val,nsp_serial_header,hs) != 0)
+	{
+	  Scierror("Error: serial object does not contain a serialized Nsp object\n");
+	  return NULLOBJ;
+	}
+      xdrmem_create(&xdrs,Sl->val+hs,Sl->nbytes-hs,XDR_DECODE);
+      Obj= nsp_object_xdr_load(&xdrs); 
+      nsp_serial_destroy(Sl);
     }
-  xdrmem_create(&xdrs,S->val+hs,S->nbytes-hs,XDR_DECODE);
-  Obj= nsp_object_xdr_load(&xdrs); 
+  else
+    {
+      if ( S->nbytes < hs || strncmp(S->val,nsp_serial_header,hs) != 0)
+	{
+	  Scierror("Error: serial object does not contain a serialized Nsp object\n");
+	  return NULLOBJ;
+	}
+      xdrmem_create(&xdrs,S->val+hs,S->nbytes-hs,XDR_DECODE);
+      Obj= nsp_object_xdr_load(&xdrs); 
+    }
   return Obj;
 }
 

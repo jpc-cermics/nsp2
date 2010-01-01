@@ -37,7 +37,9 @@ OBJSC = Matrix.obj MatOps.obj MatObj.obj  \
 	serial.obj \
 	SpColMatrix.obj SpColMatObj.obj \
 	eframe.obj mtlb.obj \
-	IMatrix.obj IMatObj.obj IMatOps.obj
+	IMatrix.obj IMatObj.obj IMatOps.obj SMio.obj SMioObj.obj
+
+
 
 
 OLD=	gsort.obj qsort.obj	

@@ -435,6 +435,7 @@ static int int_file_getstr(void *self, Stack stack, int rhs, int opt, int lhs)
       if (( str =new_nsp_string_n(count+1))== NULL) return RET_BUG;
       strncpy(str,M->S[0],count);
       nsp_string_destroy(&(M->S[0]));
+      str[count]='\0';
       M->S[0]=str;
     }
   MoveObj(stack,1,(NspObject *) M);
@@ -456,7 +457,7 @@ static int int_file_eof(void *self, Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * f.seek[] ou f.seek["pos"]; 
+ * f.seek[offset] ou f.seek[offset,"set"| "cur"| "end" ]; 
  */
 
 static char *seek_Table[] = {"set", "cur", "end", NULL};
@@ -469,7 +470,7 @@ static int int_file_seek(void *self, Stack stack, int rhs, int opt, int lhs)
   if (GetScalarDouble(stack,1,&offset) == FAIL) return RET_BUG;
   if ( rhs == 2 ) 
     {
-      if ((rep= GetStringInArray(stack,1,seek_Table,1)) == -1) return RET_BUG; 
+      if ((rep= GetStringInArray(stack,2,seek_Table,1)) == -1) return RET_BUG; 
     }
   if ( nsp_fseek(self,(long int)offset,seek_Table[rep])== FAIL) return RET_BUG;
   return 0;
@@ -855,8 +856,11 @@ static int int_file_is_little_endian(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern function  int_smio_sopen;
+
 static OpTab File_func[]={
   {"fopen", int_file_fopen},
+  {"sopen", int_smio_sopen},
   {"is_little_endian",int_file_is_little_endian},
   {"getfile",int_file_getfile},
   {"putfile",int_file_putfile},

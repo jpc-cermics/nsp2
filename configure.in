@@ -805,6 +805,30 @@ else
 fi 
 
 #################
+## Check for zlib library.
+#################
+
+AC_ARG_WITH(zlib,
+  [AS_HELP_STRING([--without-zlib], [won't use zlib])],
+  with_zlib=$withval, with_zlib=yes)
+
+zlib_lib=
+if test "$with_zlib" = yes; then
+  zlib_lib="z"
+elif test "$with_zlib" != no; then
+  zlib_lib="$with_zlib"
+fi
+
+ZLIB_LIBS=
+if test -n "$zlib_lib"; then
+  AC_CHECK_LIB($zlib_lib, gzclearerr, [
+      AC_CHECK_HEADERS(zlib.h, [
+        ZLIB_LIBS="-l$zlib_lib"
+        LIBS="$ZLIB_LIBS $LIBS"
+        AC_DEFINE(HAVE_ZLIB, [], [Define if ZLIB is available.])])])
+fi
+
+#################
 ## PVM
 #################
 
@@ -1598,6 +1622,7 @@ AC_SUBST(GTK_PKGS_CFLAGS)
 AC_SUBST(UFSPARSE_LIB)
 AC_SUBST(SYST_FILES)
 AC_SUBST(RC_FILE)
+AC_SUBST(ZLIB_LIBS)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl )
 
@@ -1639,6 +1664,9 @@ echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
 if test "$HAVE_GMP" = "yes"; then
    echo "gmp....................:" $GMP_LIBS
+fi
+if test "xx$ZLIB_LIBS" != "xx"; then
+   echo "zlib...................:" $ZLIB_LIBS
 fi
 echo "Terminal...............:" $TERMCAPLIB
 if test "xx$cholmod_libs" != "xx" ; then

@@ -137,9 +137,9 @@ extern int do_printf (char *fname, FILE *fp, char *format, Stack stack,
 		      int nargs, int arg_cnt, int line, char **strv);
 
 
-extern int do_scanf (char *command,FILE *fp,
+extern int do_scanf (const char *command,FILE *fp,
 		     char *format,Stack stack,int iline, int *nargs, 
-		     char *strv,int *retval);
+		     const char *strv,int *retval);
 
 #endif 
 

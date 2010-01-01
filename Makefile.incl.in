@@ -80,7 +80,7 @@ TCLTK_INC_PATH = @TCLTK_INC_PATH@
 # libraries needed for linking 
 # 1- inside nsp 
 NSPLIBS=libs/nsp.a libs/graphics.a libs/graphics-new.a libs/rand.a libs/dcd.a libs/integ.a libs/approx.a libs/spmf.a @MPLUSLIB@ 
-EXTERNLIBS = $(PVMLIB) $(PVMGLIB) @GTKLIBS@ @FFTW3_LIBS@ @CHOLMOD_LIBS@ @UMFPACK_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@  @TERMCAPLIB@ @LIBXDR@ @GMP_LIBS@ @TCLTK_LIBS@
+EXTERNLIBS = $(PVMLIB) $(PVMGLIB) @GTKLIBS@ @FFTW3_LIBS@ @CHOLMOD_LIBS@ @UMFPACK_LIBS@ @LAPACK_LIBS@ @BLAS_LIBS@  @TERMCAPLIB@ @LIBXDR@ @GMP_LIBS@ @TCLTK_LIBS@ @ZLIB_LIBS@
 #
 # for WIN32 version 
 # win32 libraries for gcwin32 

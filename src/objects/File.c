@@ -1473,7 +1473,13 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
       if ( n == EOF ||  n == 0 ) break;
       rows++;
     }
-  
+
+  if ( rows == 0) 
+    {
+      Scierror("get_smatrix: cannot find smatrix data\n");
+      return FAIL;
+    }
+
   if ((*S =nsp_smatrix_create_with_length(NVOID,rows,1,-1))== NULLSMAT) return FAIL;
 
   /* second pass to read data **/
@@ -1580,7 +1586,7 @@ int nsp_fprintf_smatrix(NspFile *F,NspSMatrix *S)
 
 typedef enum {SF_C,SF_S,SF_LUI,SF_SUI,SF_UI,SF_LI,SF_SI,SF_I,SF_LF,SF_F} sfdir;
 
-typedef int (*PRINTER) (FILE *,const char *,...);
+typedef int (*PRINTER) (const FILE *,const char *,...);
 
 /**
  * do_scanf:
@@ -1598,7 +1604,8 @@ typedef int (*PRINTER) (FILE *,const char *,...);
  * Return value: %OK or %FAIL.
  **/
 
-int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int *nargs, char *strv, int *retval)
+int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
+	      int iline, int *nargs,const char *strv, int *retval)
 {
   double dval;
   int i;
@@ -1618,7 +1625,7 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
   char save,directive;
   char *p,*p1;
   register char *q;
-  void * target;
+  const void * target;
   int l_flag=0, h_flag=0,width_flag,width_val,ign_flag,str_width_flag=0;
   int num_conversion = -1;	/* for error messages and counting arguments*/
   PRINTER printer;		/* pts at fprintf() or sprintf() */
@@ -1893,7 +1900,7 @@ int do_scanf (char *command, FILE *fp, char *format, Stack stack,int iline, int 
    */
 
   *retval = (*printer) ( target,format,SCAN_ARGS);
-
+  
   *nargs = num_conversion+1;
 
   if ( *retval == EOF) 
