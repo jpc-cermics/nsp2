@@ -24,6 +24,7 @@ TESTS= \
 	lists.dia \
 	lu.dia \
 	matrix_io.dia \
+	sscanf.dia \
 	matelm-nsp.dia \
 	minmax.dia \
 	qr.dia \
