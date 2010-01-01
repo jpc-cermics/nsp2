@@ -64,11 +64,11 @@ TESTS= \
 	ode_1.dia \
 	ode_2.dia \
 	ode_3.dia \
-	ode_4.dia \
 	find.dia \
 	global.dia \
 	matops.dia \
 	min_max_minmax_int.dia
+
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
@@ -89,6 +89,7 @@ ALG=algebra-balanc.dia \
 	algebra-svd.dia 
 
 AFINIR= \
+	ode_4.dia \
 	color-strings.tst \
 	hash-vl.tst \
 	matops.tst \
