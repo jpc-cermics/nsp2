@@ -1,0 +1,72 @@
+% -*- mode: latex -*-
+\mansection{scanf}
+
+\begin{mandesc}
+  \short{scanf}{implements the {\texttt scanf} function}\\
+  \short{fscanf}{implements the {\texttt fscanf} function}\\
+  \short{sscanf}{implements the {\texttt sscanf} function}
+\end{mandesc}
+\index{scanf}\label{scanf}
+  %-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+   [v_1,...v_n]=scanf([iter,]format)
+   [v_1,...v_n]=fscanf([iter,]fd,format)
+   [v_1,...v_n]=sscanf([iter,]S,format)
+\end{verbatim}
+\end{calling_sequence}
+
+\begin{parameters}
+  \begin{varlist}
+    \vname{iter}: an integer which when given gives the number of times the given 
+    format is to be scanned (if \verb+iter=-1+ the format is reused until end of file or 
+    end of string matrix is reached).
+    \vname{format}: a string which gives the scan directives and conforming to the 
+    standard directives of the C library.
+    \vname{fd}: a \manlink{File}{File} object.
+    \vname{S}: a string column matrix. 
+    The format is used to scan the string matrix \verb+S+ row by row. Note that 
+    if \verb+S+ is not a column matrix only the first column will be used. 
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  The \verb+scanf+ family of functions scans input according to format which contains 
+  conversion specifications. The results from conversions are stored in the 
+  given left hand side names in the order of the conversion. If less arguments are 
+  given then some converted variables are omitted. If the left hand side argument 
+  list exceed the number of conversions a warning is returned. 
+  Note that using a list argument in the left hand side, it is possible to 
+  obtain any number of stored conversions without giving an explicit extended list. 
+  This last case is illustrated in one of the given examples. 
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    [a,b]=sscanf(2,["8 9 10";"11 12 14"],"%d %d");
+    S=string(rand(4,3));
+    S=catenate(S,col=" "); // change to column matrix
+    format=catenate(smat_create(1,3,"%f"),sep=" ");
+    [a,b,c]=sscanf(-1,S,format)
+  \end{Verbatim}
+
+  \begin{Verbatim}
+    n=10;
+    A=int(100*rand(4,n));
+    S=string(A);
+    S=catenate(S,col=" "); // change to column matrix
+    format=catenate(smat_create(1,n,"%d"),sep=" ");
+    L=list();
+    L(1:n)=sscanf(-1,S,format);
+    L.compact[];
+    A.equal[L(1)]
+  \end{Verbatim}
+
+\end{examples}
+% -- see also
+\begin{manseealso}
+  \manlink{printf}{printf}
+  \manlink{fopen}{fopen}  
+  \manlink{File}{File}  
+\end{manseealso}
+
