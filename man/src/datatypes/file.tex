@@ -39,8 +39,8 @@ F = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
     The mode string can also include the letter \verb+b+ as a last character. 
     Adding \verb+b+ b is used if you do I/O to a binary file 
     (but note that \verb+b+ is ignored on all POSIX conforming systems, including Linux).
-    \vname{swap} If true (the default value) then byte swaping is forced when using the \verb+mget+ and 
-    \verb+mput+ functions in order to have binary files always filed with data coded as little endian. 
+    \vname{swap} If true (the default value) then byte swaping is forced when using the \verb+get+ and 
+    \verb+put+ methods in order to have binary files always filed with data coded as little endian. 
     If \verb+swap+ is false then data is writen in the machine native mode. 
     \vname{xdr} If true then reading and writing is used using \verb+xdr+.
   \end{varlist}
