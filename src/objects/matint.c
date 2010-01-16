@@ -831,10 +831,10 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts,ind
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
 
-  if ( A->m == 0 || A->n == 0) 
-    {
-      return nsp_object_copy(Obj);
-    }
+/*   if ( A->m == 0 || A->n == 0)  */
+/*     { */
+/*       return nsp_object_copy(Obj); */
+/*     } */
 
   if ( index->min < 1 || index->max > A->mn )
     {
