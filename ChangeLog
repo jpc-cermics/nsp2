@@ -1,3 +1,9 @@
+2010-01-16  Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* macros/statistics: add some options to mean, var, and std
+	(st_deviation and variance tagged as obsolete), add median
+	function and a test file.
+
 2009-07-17  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/liboptim: optim library added. 

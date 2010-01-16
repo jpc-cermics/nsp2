@@ -1,10 +1,5 @@
-// Jérôme Lelong  
-// computes the standard deviation of a matrix
-  
-function v=st_deviation(x, orientation)
-  if nargin==1 then
-    v = sqrt(variance(x));
-  else
-    v = sqrt(variance(x,orientation));
-  end
+// obsolete function 
+function [S] = st_deviation_m(x, varargin, varargopt)
+   printf("\nWARNING: st_deviation is obsolete, use std instead\n")
+   S = std(x, varargin(:), varargopt(:))
 endfunction
