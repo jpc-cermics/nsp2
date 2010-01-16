@@ -433,6 +433,7 @@ a=sparse([1 2;-3 4;5,-6]+0*%i);
 //----------test of max 
 
 function [y,k]=Mmax(x)
+  if isempty(x) then y=x;k=x;return;end  
   k=1,y=x(1);
   for i=1:size(x,'*'),
     if x(i)>y,y=x(i),k=i;end;
