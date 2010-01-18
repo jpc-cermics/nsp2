@@ -1,0 +1,93 @@
+\mansection{mean}
+
+\begin{mandesc}
+  \short{mean}{arithmetic mean, arithmetic trimmed mean and weighted mean}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  mu = mean(X)
+  mu = mean(X, dim=dimarg, skip_nan=b, weights=wgt, trim=s)  
+  mu = mean(X, dimarg, skip_nan=b, weights=wgt, trim=s)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X}: vector or matrix (complex vectors or matrices are allowed for non trimmed mean (ie for trim=0))
+    \vname{dim=dimarg}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'*'+,\verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+    \vname{skip_nan=b}: scalar boolean (default is \verb+%f+).
+    \vname{trim=s}: scalar real in $[0,0.5]$.
+    \vname{weights=wgt}: non negative vector or matrix of same dimensions than \verb+X+
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb+mean+ computes the arithmetic mean:
+$$
+    \mu = \frac{1}{n} \sum_{k=1}^n X_i 
+$$ 
+trimmed or not (for a trimmed mean, a part of extremal values at both ends are discarded) 
+or the weighted mean:
+$$
+    \mu = \sum_{k=1}^n w_i X_i 
+$$
+of the elements of a vector or matrix (in this last case the weights should be provided
+using the weights option). Using the dim option described you can compute either
+the mean of all the elements or the mean of each row or each column. 
+
+\itemdesc{dim option} 
+  The dim argument (default full) gives the dimension to be used for performing the mean operation:
+  \begin{itemize}
+    \item 'full' or 0: mean of all the elements 
+    \item 'row' or 1: mean of each column (a row vector is returned)
+    \item 'col' or 2: mean of each row (a column vector is returned)
+    \item 'm' (or -2): (for Matlab compatibility) mean along the first non 
+          singleton dimension of the first argument.
+  \end{itemize}
+
+\itemdesc{skip\_nan option}
+   This option is available for usual, weighted or trimmed mean : when  \verb+%t+  Nan values 
+  (which stands for ``missing or not available values'') are not taking into account in the
+   mean computation.
+
+\itemdesc{trim option}
+  When the trim parameter $s$ is not zero, a trimmed mean is computed, that is
+  after having removed a fraction of $s$ (extremal) values at both ends of \verb+X+. For
+  the maximal value ($s=0.5$) one gets the median. If you want to remove exactly $p$
+  extremal values at both ends of a vector having $n$ elements use $s = p/n$.  
+   
+\itemdesc{weights option}
+  This option lets to compute weighted means. The weights should be non negative. Inside
+the function they are normalized such that they sum up to $1$.
+
+\end{mandescription}
+%--example 
+\begin{examples}
+\paragraph{example 1} empirical mean got from random samples of known probability distributions 
+\begin{Verbatim}
+n = 500;
+X = randn(n,1);  // a sample from N(0,1)
+mean(X)   // should tend to zero when n -> +oo
+
+X = grand(n,1,"bin",100,0.35); // a sample from Bin(100,0.35)
+mean(X)   // should tend to 100*0.35 when n -> +oo
+
+X = grand(n,1,"geom",0.2); // a sample from G(0.2)
+mean(X)   // should tend to 1/0.2 = 5 when n -> +oo
+\end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{mean}{mean}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Jerome Lelong, Bruno Pincon
+\end{authors}
