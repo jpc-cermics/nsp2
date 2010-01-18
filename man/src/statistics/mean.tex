@@ -19,8 +19,8 @@
     \vname{dim=dimarg}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'*'+,\verb+'full'+, \verb+'FULL'+, \verb+'row'+,
     \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
     This argument is optional and if omitted 'full' is assumed.
-    \vname{skip_nan=b}: scalar boolean (default is \verb+%f+).
-    \vname{trim=s}: scalar real in $[0,0.5]$.
+    \vname{skip_nan=b}: boolean scalar (default is \verb+%f+).
+    \vname{trim=s}: real scalar in $[0,0.5]$.
     \vname{weights=wgt}: non negative vector or matrix of same dimensions than \verb+X+
   \end{varlist}
 \end{parameters}
@@ -28,12 +28,12 @@
 \begin{mandescription}
   \verb+mean+ computes the arithmetic mean:
 $$
-    \mu = \frac{1}{n} \sum_{k=1}^n X_i 
+    \mu = \frac{1}{n} \sum_{k=1}^n X_k 
 $$ 
 trimmed or not (for a trimmed mean, a part of extremal values at both ends are discarded) 
 or the weighted mean:
 $$
-    \mu = \sum_{k=1}^n w_i X_i 
+    \mu = \sum_{k=1}^n w_k X_k 
 $$
 of the elements of a vector or matrix (in this last case the weights should be provided
 using the weights option). Using the dim option described you can compute either
@@ -50,8 +50,8 @@ the mean of all the elements or the mean of each row or each column.
   \end{itemize}
 
 \itemdesc{skip\_nan option}
-   This option is available for usual, weighted or trimmed mean : when  \verb+%t+  Nan values 
-  (which stands for ``missing or not available values'') are not taking into account in the
+   This option is available for usual, weighted or trimmed mean : when it is \verb+%t+,  Nan values 
+  (which stand for ``missing or not available values'') are not taking into account in the
    mean computation.
 
 \itemdesc{trim option}
@@ -80,11 +80,38 @@ X = grand(n,1,"geom",0.2); // a sample from G(0.2)
 mean(X)   // should tend to 1/0.2 = 5 when n -> +oo
 \end{Verbatim}
 
+\paragraph{example 2} mean of each row and each column
+\begin{Verbatim}
+X = rand(6,4);
+// mean of the columns
+mean(X,dim=1)
+// mean of the rows
+mean(X,dim=2)
+\end{Verbatim}
+
+\paragraph{example 3} trimmed mean
+\begin{Verbatim}
+X = [-7,1,0.0.5,-0.4,0.2,0.9,1.2,12];
+// usual mean
+mean(X)
+// trimmed mean (1 extremal value removed at both ends)
+mean(X,trim=1/length(X))
+\end{Verbatim}
+
+\paragraph{example 4} weighted mean
+\begin{Verbatim}
+n = 20; p = 0.4
+X = 0:n;
+wgt = pdf("bin",X, n,p);
+mean(X, weights=wgt)  // should be exactly n*p=0.8
+\end{Verbatim}
+
+
 \end{examples}
 
 %-- see also
 \begin{manseealso}
-  \manlink{mean}{mean}
+  \manlink{var}{var}, \manlink{std}{std}
 \end{manseealso}
 
 % -- Authors

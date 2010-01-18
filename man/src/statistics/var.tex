@@ -1,0 +1,124 @@
+\mansection{var}
+
+\begin{mandesc}
+  \short{var}{variance and weighted variance}
+  \short{std}{standard deviation and weighted standard deviation}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  V = var(X)
+  V = var(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
+  V = mean(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
+  sd = std(X)
+  sd = std(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
+  sd = std(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X}: vector or matrix (complex vectors or matrices are allowed see here after)
+    \vname{dim=dimarg}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'*'+,\verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+    \vname{skip_nan=b}: boolean scalar (default is \verb+%f+).
+    \vname{weights=w}: non negative vector or matrix of same dimensions than \verb+X+ 
+    \vname{unbiased=b}:  boolean scalar (default is \verb+%t+).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb+var+ computes the variance using the following formulae:
+$$
+\begin{array}{ll}
+    V = \frac{1}{n-1} \sum_{k=1}^n (X_k - \bar{X})^2  &  \mbox{ when unbiased is true} \\ 
+    V = \frac{1}{n} \sum_{k=1}^n (X_k - \bar{X})^2  &  \mbox{ otherwise} 
+\end{array} \mbox{ with }  \bar{X} = \frac{1}{n} \sum_{k=1}^n X_k
+$$ 
+or the weighted variance (when the weights $w$ are provided) using:
+$$
+\begin{array}{ll}
+    V = \frac{1}{1- \sum_{j=1}^n w_j^2} \sum_{k=1}^n w_k (X_k - \bar{X})^2  &  \mbox{ when unbiased is true} \\ 
+    V =                                \sum_{k=1}^n w_k (X_k - \bar{X})^2  &  \mbox{ otherwise} 
+\end{array} \mbox{ with }  \bar{X} = \sum_{k=1}^n w_k X_k
+$$ 
+Standard deviation is simply computed as the square root of the variance.
+
+Using the dim option you can compute either the variance or standard deviation
+of all the elements or of each row or each column. 
+
+When the entry $X$ is complex then the ``variance'' computed with \verb+var+ corresponds 
+to the sum of the variance of the real part and the variance of the imaginary part (this 
+corresponds to the matlab/octave behavior). If you want to compute the covariance matrix 
+of a complex valued signal use \verb+cov(real(X),imag(X))+.
+
+\itemdesc{dim option} 
+  The dim argument (default full) gives the dimension to be used for performing the mean operation:
+  \begin{itemize}
+    \item 'full' or 0: var or std of all the elements 
+    \item 'row' or 1: var or std of each column (a row vector is returned)
+    \item 'col' or 2: var or std of each row (a column vector is returned)
+    \item 'm' (or -2): (for Matlab compatibility) var or std along the first non 
+          singleton dimension of the first argument.
+  \end{itemize}
+
+\itemdesc{skip\_nan option}
+   This option is available for the usual or weighted variance or standard deviation. 
+When it is \verb+%t+,  Nan values (which stand for ``missing or not available values'') 
+are not taking into account in the computation.
+   
+\itemdesc{weights option}
+  This option lets to compute weighted variance or standard deviation. The weights should be non negative. Inside
+the function they are normalized such that they sum up to $1$.
+   
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{example 1} empirical variance got from random samples of known probability distributions 
+\begin{Verbatim}
+n = 500;
+X = randn(n,1);  // a sample from N(0,1)
+var(X)   // should tend to 1 when n -> +oo
+std(X)   // should tend to 1 when n -> +oo
+
+X = grand(n,1,"bin",100,0.35); // a sample from Bin(100,0.35)
+var(X)   // should tend to 100*0.35*0.65=22.75  when n -> +oo
+std(X)   // should tend to sqrt(100*0.35*0.65)  when n -> +oo
+
+X = grand(n,1,"geom",0.2); // a sample from G(0.2)
+var(X)   // should tend to (1-0.2)/0.2^2 = 20 when n -> +oo
+std(X)   // should tend to sqrt(20) when n -> +oo
+\end{Verbatim}
+
+\paragraph{example 2} var of each row and each column
+\begin{Verbatim}
+X = rand(6,4);
+// var of the columns
+var(X,dim=1)
+// var of the rows
+var(X,dim=2)
+\end{Verbatim}
+
+\paragraph{example 3} weighted variance
+\begin{Verbatim}
+n = 20; p = 0.4
+X = 0:n;
+wgt = pdf("bin",X, n,p);
+var(X, weights=wgt, unbiased=%f)  // should be exactly n*p*(1-p)=4.8
+\end{Verbatim}
+
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{mean}{mean}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Jerome Lelong, Bruno Pincon
+\end{authors}
