@@ -1053,7 +1053,6 @@ static OpTab Spmf_func[]={
   {"factor_m", int_nsp_primefactors},
   {"isprime_m", int_nsp_isprime},
   {"primes_m", int_nsp_primes},
-  {"primes_m", int_nsp_primes},
   {"convhull_m_m", int_convhull2d},
   {"pdf", int_nsp_pdf},
   {(char *) 0, NULL}
