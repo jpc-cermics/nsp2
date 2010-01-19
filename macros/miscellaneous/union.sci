@@ -36,38 +36,85 @@
 //   ka, kb: vectors of indices such that c = a(ka) U b(kb)
 //
 
-function [c,ka,kb] = union(a,b)
+function [c,ka,kb] = union(a,b,ind_type="double",which="elements")
   
   type_a = type(a,"string")
   if type_a ~= type(b,"string") then
     error(" both arg must be of the same type")
   end
+  if ind_type ~= "double" && ind_type ~= "int" then
+     error(" optional ind_type argument should be ""double"" or ""int""")
+  end
   
-  if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" || type_a == "IMat" then
-    row_flag = size(a,1)==1 & size(b,1)==1
-    a.redim[-1,1]; b.redim[-1,1]
-    n = size(a,"*")
-    if nargout == 1 then
-      c = unique([a;b]);
-      if row_flag then, c.redim[1,-1]; end
-    else
-      [c,ka] = unique([a;b])	 
-      ind = find(ka > n)
-      kb = ka(ind) - n
-      ka(ind) = []
-      if row_flag then
-	c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
-      end
-    end
+  num = is_string_in_array(which, ["elements","rows","columns"], names=["which","union"])
+  if num == 1 then
+     if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" || type_a == "IMat" then
+	row_flag = size(a,1)==1 & size(b,1)==1
+	a.redim[-1,1]; b.redim[-1,1]
+	n = size(a,"*")
+	if ind_type.equal["int"] then, n = m2i(n); end
+	if nargout == 1 then
+	   c = unique([a;b]);
+	   if row_flag then, c.redim[1,-1]; end
+	else
+	   [c,ka] = unique([a;b],ind_type=ind_type)	 
+	   ind = find(ka > n, ind_type)
+	   kb = ka(ind) - n
+	   ka(ind) = []
+	   if row_flag then
+	      c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
+	   end
+	end
+     else
+	error("union not implemented for "+type_a)
+     end
   else
-    error("union not implemented for "+type_a)
+     if type_a == "Mat" || type_a == "IMat" then
+	if num==2 then  // union of rows
+	   // a and b should have the same number of columns
+	   if size(a,2) ~= size(b,2) then
+	      error(" first and second args should have the same number of columns ")
+	   end
+	   if nargout == 1 then
+	      c = unique([a;b],which="rows",ind_type=ind_type)
+	   else
+	      m = size(a,1)
+	      if ind_type.equal["int"] then, m = m2i(m); end
+	      [c,ka] = unique([a;b],which="rows",ind_type=ind_type)
+	      ind = find(ka > m, ind_type)
+	      kb = ka(ind) - m
+	      ka(ind) = []
+	   end
+	else // num==1 union of columns
+	   // a and b should have the same number of rows
+	   if size(a,1) ~= size(b,1) then
+	      error(" first and second args should have the same number of columns ")
+	   end
+	   if nargout == 1 then
+	      c = unique([a,b],which="columns",ind_type=ind_type)
+	   else
+	      n = size(a,2)
+	      if ind_type.equal["int"] then, n = m2i(n); end
+	      [c,ka] = unique([a,b],which="columns",ind_type=ind_type)
+	      ind = find(ka > n, ind_type)
+	      kb = ka(ind) - n
+	      ka(ind) = []
+	   end
+	end
+     else
+	error("union of rows or columns not implemented for "+type_a)
+     end
   end
 endfunction
 
-function [c,ka,kb] = union_l_l(a,b)    
+function [c,ka,kb] = union_l_l(a,b,ind_type="double")    
+  if ind_type ~= "double" && ind_type ~= "int" then
+     error(" optional ind_type argument should be ""double"" or ""int""")
+  end
   n = length(a)
-  [c,ka] = unique(list_concat(a,b))
-  ind = find(ka > n)
+  if ind_type.equal["int"] then, n = m2i(n); end
+  [c,ka] = unique(list_concat(a,b),ind_type=ind_type)
+  ind = find(ka > n,ind_type)
   kb = ka(ind) - n
   ka(ind) = []
 endfunction
