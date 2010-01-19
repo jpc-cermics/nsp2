@@ -28,12 +28,21 @@ C = union(A,B)
 \end{parameters}
 
 \begin{mandescription}
-  This function computes the set union $C = A \cup B$
-  between 2 vectors (of numbers, strings or cells) or between 2
+\begin{itemize}
+\item  By default (which option is "elements" ) this function computes the set 
+  union $C = A \cup B$ between 2 vectors (of numbers, strings or cells) or between 2
   lists considered as sets (but uniqueness of each element in A or B is not
-  required). If A or B are matrices, they are considered as a big column vectors.
-  On output, $C$, $kA$ and $kB$ are row vectors if  $A$ and $B$ are both row vectors, otherwise they
-  are column vectors. For numbers or strings $C$ is sorted.
+  required). If A or B are matrices, they  are considered as big column vectors.
+   On output, $C$, $kA$ and $kB$ are row vectors if  $A$ and $B$ are both 
+  row vectors, otherwise they are column vectors. For numbers or strings $C$ 
+  is sorted. 
+
+\item  Using the option \verb+which = "rows"+ or \verb+which = "columns"+  the function 
+  computes the union of the rows or of the columns of the two entry 
+  matrices (this feature is available only for Mat and IMat matrices).
+
+\end{itemize}
+
 \end{mandescription}
 
 \begin{examples}
