@@ -1,7 +1,7 @@
 \mansection{var}
 
 \begin{mandesc}
-  \short{var}{variance and weighted variance}
+  \short{var}{variance and weighted variance} \\
   \short{std}{standard deviation and weighted standard deviation}
 \end{mandesc}
 
@@ -30,20 +30,18 @@
 \end{parameters}
 
 \begin{mandescription}
-  \verb+var+ computes the variance using the following formulae:
+  \verb+var+ computes the variance using the following formula:
 $$
-\begin{array}{ll}
-    V = \frac{1}{n-1} \sum_{k=1}^n (X_k - \bar{X})^2  &  \mbox{ when unbiased is true} \\ 
-    V = \frac{1}{n} \sum_{k=1}^n (X_k - \bar{X})^2  &  \mbox{ otherwise} 
-\end{array} \mbox{ with }  \bar{X} = \frac{1}{n} \sum_{k=1}^n X_k
-$$ 
+    V = \frac{1}{den} \sum_{k=1}^n (X_k - \bar{X})^2 \quad \mbox{  with  } \quad \bar{X} = \frac{1}{n} \sum_{k=1}^n X_k
+   \quad \mbox{ and } \quad  den = \left\{ \begin{array}{cl}  n-1 & \mbox{ if unbiased is true}\\
+                                                       n   & \mbox{ otherwise} \end{array}\right.
+$$
 or the weighted variance (when the weights $w$ are provided) using:
 $$
-\begin{array}{ll}
-    V = \frac{1}{1- \sum_{j=1}^n w_j^2} \sum_{k=1}^n w_k (X_k - \bar{X})^2  &  \mbox{ when unbiased is true} \\ 
-    V =                                \sum_{k=1}^n w_k (X_k - \bar{X})^2  &  \mbox{ otherwise} 
-\end{array} \mbox{ with }  \bar{X} = \sum_{k=1}^n w_k X_k
-$$ 
+    V = \frac{1}{1 - c} \sum_{k=1}^n w_k (X_k - \bar{X})^2 \quad \mbox{  with  } \quad \bar{X} =  \sum_{k=1}^n  w_k X_k
+   \quad \mbox{ and } \quad  c = \left\{ \begin{array}{cl} \sum_{j=1}^n w_j^2  & \mbox{ if unbiased is true}\\
+                                                       0   & \mbox{ otherwise} \end{array}\right.
+$$
 Standard deviation is simply computed as the square root of the variance.
 
 Using the dim option you can compute either the variance or standard deviation
