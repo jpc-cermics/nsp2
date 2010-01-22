@@ -80,9 +80,10 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 		      { "assume_sorted",s_bool,NULLOBJ,-1},
 		      { "ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  NspMatrix *x=NULLMAT, *val=NULLMAT, *indr=NULLMAT, *occ=NULLMAT;
+  NspMatrix *x=NULLMAT, *val=NULLMAT, *occ=NULLMAT;
   NspSMatrix *xstr=NULLSMAT, *valstr=NULLSMAT;
-  NspIMatrix *xi=NULLIMAT, *vali=NULLIMAT, *indi=NULLIMAT;
+  NspIMatrix *xi=NULLIMAT, *vali=NULLIMAT;
+  NspObject *Ind=NULLOBJ;
 
   CheckStdRhs(2,2);
   CheckLhs(0,3);
@@ -166,17 +167,8 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( type_ind == 'd' )
-    {
-      if ( (indr=nsp_matrix_create(NVOID,'r',m_x,n_x)) == NULLMAT ) return RET_BUG;
-      ind = indr->I;
-    }
-  else
-    {
-      if ( (indi=nsp_imatrix_create(NVOID,m_x,n_x,nsp_gint)) == NULLIMAT ) return RET_BUG;
-      ind = indi->Gint;
-    }
-
+  if ( (Ind = nsp_alloc_mat_or_imat(m_x, n_x, type_ind, &ind)) == NULLOBJ )
+    return RET_BUG;
       
   if ( match_flag == 'i' )
     {
@@ -259,14 +251,9 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
     }
 
   if ( type_ind == 'd' )
-    {
-      indr->convert = 'i';
-      indr = Mat2double(indr);
-      MoveObj(stack,1,NSP_OBJECT(indr));
-    }
-  else
-    MoveObj(stack,1,NSP_OBJECT(indi));
+    Ind = (NspObject *) Mat2double((NspMatrix *) Ind);
 
+  MoveObj(stack,1,Ind);
   if ( lhs >= 2)
     {
       occ->convert = 'i';
@@ -285,10 +272,7 @@ int int_bsearch(Stack stack, int rhs, int opt, int lhs)
 
  err:
   nsp_matrix_destroy(occ);
-  if ( type_ind == 'd' ) 
-    nsp_matrix_destroy(indr); 
-  else 
-    nsp_imatrix_destroy(indi);  
+  nsp_object_destroy(&Ind);
   return RET_BUG;
 }
 
