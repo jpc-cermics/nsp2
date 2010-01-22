@@ -5460,16 +5460,15 @@ err:
  * Return value: %OK or %FAIL
  *
  **/
-int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind)
+int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspObject **Ind, char ind_type)
 {
-  NspMatrix *ind;
   int *j, i, k, p, ni, ip, K, ntot=1;
 
   for ( i = 0 ; i < nd ; i++ )
     ntot *= ndind[i]->mn;
 
-  if ( (ind = nsp_matrix_create(NVOID,'r',1,ntot)) == NULLMAT) return FAIL;
-  j = (int *) ind->R;
+  if ( (*Ind = nsp_alloc_mat_or_imat(1, ntot, ind_type, &j)) == NULLOBJ )
+    return FAIL;
 
   K = ndind[nd-1]->mn;
   for ( k = 0 ; k < K ; k++ )
@@ -5503,15 +5502,12 @@ int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind)
       K *= ni;
     }
 
-  for ( i = 0 ; i < ntot ; i++ ) j[i]++;
+  for ( i = 0 ; i < ntot ; i++ ) j[i]++;  /* got 1-based indices */
 
-  ind->convert = 'i';
-  ind = Mat2double(ind);
-  *Ind = ind;
   return OK;
 
  err:
-  nsp_matrix_destroy(ind);
+  nsp_object_destroy(Ind);
   return FAIL;
 }
 
@@ -5539,13 +5535,12 @@ int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind)
  * Return value: %OK or %FAIL
  *
  **/
-int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind)
+int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspObject **Ind, char ind_type)
 {
-  NspMatrix *ind;
   int *j, i, k, p;
 
-  if ( (ind = nsp_matrix_create(NVOID,'r',1,nb_ind)) == NULLMAT) return FAIL;
-  j = (int *) ind->R;
+  if ( (*Ind = nsp_alloc_mat_or_imat(1, nb_ind, ind_type, &j)) == NULLOBJ )
+    return FAIL;
 
   for ( k = 0 ; k < nb_ind ; k++ )
     {
@@ -5575,13 +5570,10 @@ int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix 
 
   for ( k = 0 ; k < nb_ind ; k++ ) j[k]++; /* 1-based indices... and not 0-based */
 
-  ind->convert = 'i';
-  ind = Mat2double(ind);
-  *Ind = ind;
   return OK;
 
  err:
-  nsp_matrix_destroy(ind);
+  nsp_object_destroy(Ind);
   return FAIL;
 }
 
@@ -5946,6 +5938,7 @@ int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
     }
   return OK;
 }
+
 
 /**
  * nsp_mat_nnz:

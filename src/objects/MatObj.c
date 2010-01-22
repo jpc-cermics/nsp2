@@ -1154,14 +1154,17 @@ Mat2float (NspMatrix * A)
  * methods 
  *------------------------------------------------------*/
 
-
-static int int_meth_matrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
+static int int_meth_matrix_add(void *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspMatrix *B;
+  NspMatrix *A = (NspMatrix *) self, *B;
   CheckRhs(1,1);
   CheckLhs(1,1);
-  if ((B = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
-  if ( nsp_mat_add(a,B) == FAIL )  return RET_BUG;
+  if ((B = GetMat (stack, 1)) == NULLMAT) 
+    return RET_BUG;
+
+  if ( nsp_mat_add(A,B) == FAIL )  
+    return RET_BUG;
+
   return 0;
 }
 
@@ -4466,8 +4469,16 @@ int_mxmfind (Stack stack, int rhs, int opt, int lhs)
 int
 int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *Dims, **ndind = NULL, *ind;
+  NspMatrix *Dims, **ndind = NULL;
+  NspObject *ind;
   int nd, *dims=NULL, i;
+  nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL;
+  char itype = 'd';
+  int rep;
+
   CheckRhsMin (2);
 
   if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
@@ -4475,7 +4486,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 
   nd = Dims->mn; 
 
-  if ( rhs - 1 != nd )
+  if ( rhs - 1 - opt != nd )
     {
       Scierror ("%s: waiting for %d index vectors, got %d\n", NspFname(stack), nd, rhs-1);
       return RET_BUG;
@@ -4497,22 +4508,38 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( (ndind = malloc((rhs-1)*sizeof(NspMatrix *))) == NULL )
+  if ( (ndind = malloc(nd*sizeof(NspMatrix *))) == NULL )
     {
       Scierror ("%s: running out of memory\n", NspFname(stack));
       goto err;
     }
 
-  for ( i = 2 ; i <= rhs ; i++ )
+  for ( i = 2 ; i <= rhs-opt ; i++ )
     {
       if ( (ndind[i-2] =  GetRealMat(stack, i)) == NULLMAT )
 	goto err;
     } 
 
-  if ( nsp_mat_ndind2ind(dims, nd, ndind, &ind) == FAIL )
+  if ( opt > 0 )
+    {
+      if ( get_optional_args(stack, rhs, opt, opts, &ind_type) == FAIL )
+	return RET_BUG;
+      rep = is_string_in_array(ind_type, ind_type_possible_choices, 1);
+      if ( rep < 0 )
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	}
+      itype = ind_type_possible_choices[rep][0];
+    }
+
+  if ( nsp_mat_ndind2ind(dims, nd, ndind, &ind, itype) == FAIL )
     goto err;
 
-  MoveObj (stack, 1, (NspObject *) ind);
+  if ( itype == 'd' )
+    ind = (NspObject *) Mat2double((NspMatrix *) ind);
+
+  MoveObj (stack, 1, ind);
 
   free(dims);
   free(ndind);
@@ -4535,8 +4562,16 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 int
 int_sub2ind (Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *Dims, **ndind = NULL, *ind;
+  NspMatrix *Dims, **ndind = NULL;
+  NspObject *ind;
   int nd, *dims=NULL, i, nb_ind=0;
+  nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL;
+  char itype = 'd';
+  int rep;
+
   CheckRhsMin (2);
 
   if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
@@ -4544,7 +4579,7 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
 
   nd = Dims->mn; 
 
-  if ( rhs - 1 != nd )
+  if ( rhs - 1 - opt != nd )
     {
       Scierror ("%s: waiting for %d index vectors, got %d\n", NspFname(stack), nd, rhs-1);
       return RET_BUG;
@@ -4566,13 +4601,13 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
 	}
     }
 
-  if ( (ndind = malloc((rhs-1)*sizeof(NspMatrix *))) == NULL )
+  if ( (ndind = malloc(nd*sizeof(NspMatrix *))) == NULL )
     {
       Scierror ("%s: running out of memory\n", NspFname(stack));
       goto err;
     }
 
-  for ( i = 2 ; i <= rhs ; i++ )
+  for ( i = 2 ; i <= rhs-opt ; i++ )
     {
       if ( (ndind[i-2] =  GetRealMat(stack, i)) == NULLMAT )
 	goto err;
@@ -4586,10 +4621,27 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
 	  }
     }
 
-  if ( nsp_mat_sub2ind(dims, nd, ndind, nb_ind, &ind) == FAIL )
+  if ( opt > 0 )
+    {
+      if ( get_optional_args(stack, rhs, opt, opts, &ind_type) == FAIL )
+	return RET_BUG;
+      rep = is_string_in_array(ind_type, ind_type_possible_choices, 1);
+      if ( rep < 0 )
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	}
+      itype = ind_type_possible_choices[rep][0];
+    }
+
+
+  if ( nsp_mat_sub2ind(dims, nd, ndind, nb_ind, &ind, itype) == FAIL )
     goto err;
 
-  MoveObj (stack, 1, (NspObject *) ind);
+  if ( itype == 'd' )
+    ind = (NspObject *) Mat2double((NspMatrix *) ind);
+
+  MoveObj (stack, 1, ind);
 
   free(dims);
   free(ndind);
@@ -5373,7 +5425,6 @@ static int int_mat_scale_cols(Stack stack,int rhs,int opt,int lhs)
 
   return 1;
 }
-
 
 
 static int int_mat_tobase64(Stack stack,int rhs,int opt,int lhs)
