@@ -1,0 +1,70 @@
+\mansection{median}
+
+\begin{mandesc}
+  \short{median}{median computation}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  md = median(X)
+  md = median(X, dim=dimarg, skip_nan=b)  
+  md = mean(X, dimarg, skip_nan=b)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X}: real vector or matrix
+    \vname{dim=dimarg}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'*'+,\verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+    \vname{skip_nan=b}: boolean scalar (default is \verb+%f+).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb+median+ computes the median of the all the elements of \verb+X+
+or the median of each row or each column of \verb+X+ depending upon
+the parameter \verb+dim+. The median of $n$ sorted numbers 
+$X(1) \le X(2) \le \dots \le X(n)$ is equal to $X((n+1)/2)$ when $n$
+is odd and to  $(X(n/2)+X(n/2+1))/2$ when $n$ is even.
+
+\itemdesc{dim option} 
+  The dim argument (default full) gives the dimension to be used for performing the median operation:
+  \begin{itemize}
+    \item 'full' or 0: median of all the elements 
+    \item 'row' or 1: median of each column (a row vector is returned)
+    \item 'col' or 2: median of each row (a column vector is returned)
+    \item 'm' (or -2): (for Matlab compatibility) median along the first non 
+          singleton dimension of the first argument.
+  \end{itemize}
+
+\itemdesc{skip\_nan option}
+   When this option is \verb+%t+,  Nan values (which stand for ``missing or not 
+ available values'') are not taking into account in the computation.
+\end{mandescription}
+%--example 
+\begin{examples}
+\begin{Verbatim}
+X = rand(1,5)
+median(X)
+X = [%nan,X,%nan]
+median(X)
+median(X, skip_nan=%t) 
+
+X = randn(10,7)
+median(X, dim=1) // or median(X,1)
+median(X, dim=2) // or median(X,2)
+\end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+   \manlink{mean}{mean}, \manlink{var}{var}, \manlink{std}{std}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+ Bruno Pincon
+\end{authors}

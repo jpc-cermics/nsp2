@@ -10,7 +10,7 @@
 \begin{verbatim}
   V = var(X)
   V = var(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
-  V = mean(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
+  V = var(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
   sd = std(X)
   sd = std(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
   sd = std(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
@@ -113,7 +113,7 @@ var(X, weights=wgt, unbiased=%f)  // should be exactly n*p*(1-p)=4.8
 
 %-- see also
 \begin{manseealso}
-  \manlink{mean}{mean}
+  \manlink{mean}{mean}, \manlink{median}{median}
 \end{manseealso}
 
 % -- Authors
