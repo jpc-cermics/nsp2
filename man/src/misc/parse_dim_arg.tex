@@ -1,0 +1,78 @@
+% -*- mode: latex -*-
+
+\mansection{parse\_dim\_arg}
+\begin{mandesc}
+ \shortunder{parse\_dim\_arg}{parse_dim_arg}{parse a string or number corresponding to a dimensional argument}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ rep = parse_dim_arg( dim_arg, names=[arg_name,func_name])  
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{dim_arg}: a string choosen among  \verb+'M'+, \verb+'m'+, \verb+'*'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer.
+    \vname{names=[arg_name,func_name]}: optional named argument, a string matrix with 2 strings.
+    \vname{rep}: an integer (0 for full, 1 for row, 2 for column, -2 for matlab compatibility flag).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function could be useful to parse a ``dimensional argument'' (like in 
+the functions sum, prod, ...) which generally indicates the dimension along which 
+an operation must be done. In nsp this kind of argument could be either a string
+or an integer and this function returns the corresponding integer:  
+
+\begin{tabular}{|r|l|l|}
+\hline
+integer & equivalent strings & comment \\
+\hline
+0       & \verb+"full"+, \verb+"FULL"+, \verb+"*"+  &  operation along all the matrix (considered as a big vector) \\
+1       & \verb+"row"+, \verb+"ROW"+                &  operation along all the first dimension \\
+2       & \verb+"col"+, \verb+"COL"+                &  operation along all the second dimension \\
+-2      & \verb+"m"+, \verb+"M"+                    &  flag for matlab compatibility \\
+\hline
+\end{tabular}
+ 
+In case of a string, the function tests if it is in the set of
+valid strings or if it corresponds to a non ambiguous abbreviation. In case of a number
+the function tests if it is an integer larger than or equal to -2. If the test
+fails, an error is setted with an error message. To have a more
+meaningful message you can provide the optional argument 
+\verb+names=[arg_name,func_name]+.
+\end{mandescription}
+
+% --example 
+\begin{examples}
+\begin{Verbatim}
+function mu = freqmean(x,freq,dim=0)
+   dim = parse_dim_arg(dim,names=["dim","freqmean"])
+   if dim == -1 || dim > 2 then
+      error("Error: unsupported dim flag")
+   else if dim == -2 then
+      if isvector(x) then, dim = 0, else, dim = 1, end
+   end
+   mu = sum( x.*freq, dim )./ sum( freq, dim )
+endfunction
+x = [1, 2, 2.5, 4, 9; 5, -1, 1, -5]
+f = [1, 9, 2,   1, 2; 3,  2, 1,  4]
+mu = freqmean(x,f,dim="m")
+mu = freqmean(x,f,dim=2)
+mu = freqmean(x,f,dim="c")  // should raise an error
+mu = freqmean(x,f,dim=-3)  // should raise an error
+mu = freqmean(x,f,dim=3)  // should raise an error
+\end{Verbatim}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+\manlink{is_string_in_array}{is_string_in_array}
+\end{manseealso}
+
+\begin{authors}
+  Bruno Pincon
+\end{authors}
+
+
