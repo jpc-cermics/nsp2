@@ -15,6 +15,12 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-function [S] = std_m(x, varargin, varargopt)
+function [S] = st_deviation(x, varargin, varargopt)
+// obsolete function replaced by the next one 
+  printf("\nWARNING: st_deviation is obsolete, use std instead\n")
+  S = std(x, varargin(:), varargopt(:))
+endfunction
+
+function [S] = std(x, varargin, varargopt)
    S = sqrt(var(x, varargin(:), varargopt(:)))
 endfunction

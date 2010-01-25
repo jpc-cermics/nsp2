@@ -15,7 +15,14 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-function [V] = var_m(x, varargin, varargopt)
+
+function [V] = variance(x, varargin, varargopt)
+// obsolete function 
+  printf("\nWARNING: variance is obsolete, use var instead\n")
+  V = var(x, varargin(:), varargopt(:))
+endfunction
+
+function [V] = var(x, varargin, varargopt)
 
 // varargin should be only of size 1 (at max) with the dim argument
 // In this case the dim field should not be in the varargopt hash table

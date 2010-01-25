@@ -15,7 +15,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-function [y] = mean_m(x, varargin, varargopt)
+function [y] = mean(x, varargin, varargopt)
 
 // usage:   mean(x)
 //          mean(x,dim,skip_nan=, weights=, trim= )
