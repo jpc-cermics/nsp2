@@ -1,0 +1,70 @@
+% -*- mode: latex -*-
+
+\mansection{rowcomp}
+\begin{mandesc}
+  \short{rowcomp}{performs a row compression of a matrix}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[X,dim] = rowcomp(A, meth=str, tol=rscal) 
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}:  numerical matrix (size $m \times n$), real or complex.
+    \vname{tol=rscal}: optional named argument, \verb+rscal+ must be  a real positive scalar (default \verb+sqrt(%eps)*norm(A,1)+).
+    \vname{meth=str}: optional named argument, a string among "svd" (default) or "qr"
+    \vname{X}: numeric orthogonal (or hermitian) matrix.
+    \vname{dim}: the numerical rank of $A$
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function returns an $m \times m$ orthonormal matrix such that:
+$$
+  X*A  = \left[ \begin{array}{c} Abar \\ 0 \end{array} \right] 
+$$
+where $Abar$ is full row rank, with $dim$ rows and the bottom zero matrix
+in $X*A$ has a maximal number of rows ($dim$ is the numerical rank of $A$).
+This function characterizes the range of $A$: a vector $w$, with $m$ rows
+belongs in the range of $A$ iff 
+$$
+X*w  = \left[ \begin{array}{c} \ast \\ 0 \end{array} \right]
+$$
+where the bottom zero vector has dimension at least $m-dim$.
+The $m-dim$ last rows of $X$ is a matrix representation of the mapping
+$w \leftarrow w \text{mod Im} (A)$. 
+The first $dim$ columns of $X'$ span the range of $A$ ($\text{Im}(A)$).
+\begin{itemize}
+\item By default or when  meth="svd", a singular value decomposition 
+of $A$ is done and the numerical rank is calculated by 
+neglecting the singular values less than $tol$.
+\item When  meth="qr", a rank revealing factorization is made.
+\end{itemize}
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{A=randn(5,2)*randn(2,4);\Hnewline
+[X,rk]=rowcomp(A,'qr'); // rk is 2 \Hnewline
+Xp=X'; Im=Xp(:,1:dim); // Im = Image of A \Hnewline
+svd([Im,orth(A)]; //2 non zero singular values}
+  \end{program}
+  \begin{program}\HCode{A=randn(5,2)*randn(2,4);\Hnewline
+x0=rand(4,1); b=A*x0; // b belongs to range(A)  \Hnewline
+[Y,rk]= rowcomp(A,meth='qr');\Hnewline
+Y*b // b belongs to range(A) (last components of Y*b are zero)   \Hnewline
+x1=A\b;  // Both A*x0 and A*x1 are solutions of A*x=b.}
+  \end{program}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{qr}{qr}, \manlink{orth}{orth}, \manlink{svd}{svd}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   FD
+\end{authors}
