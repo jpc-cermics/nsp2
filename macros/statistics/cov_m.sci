@@ -15,7 +15,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-function [varargout] = cov(X, varargin, varargopt)
+function [varargout] = cov_m(X, varargin, varargopt)
 
 // varargin should be only of size 1 (at max) and corresponds to calls of
 // the form: cov(X,Y)

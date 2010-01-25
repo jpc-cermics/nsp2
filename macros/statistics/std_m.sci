@@ -21,6 +21,6 @@ function [S] = st_deviation(x, varargin, varargopt)
   S = std(x, varargin(:), varargopt(:))
 endfunction
 
-function [S] = std(x, varargin, varargopt)
+function [S] = std_m(x, varargin, varargopt)
    S = sqrt(var(x, varargin(:), varargopt(:)))
 endfunction

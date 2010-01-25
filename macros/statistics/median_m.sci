@@ -15,7 +15,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-function [md] = median(x, varargin, varargopt)
+function [md] = median_m(x, varargin, varargopt)
 
 // varargin should be only of size 1 (at max) with the dim argument
 // In this case the dim field should not be in the varargopt hash table

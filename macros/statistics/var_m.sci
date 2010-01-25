@@ -22,7 +22,7 @@ function [V] = variance(x, varargin, varargopt)
   V = var(x, varargin(:), varargopt(:))
 endfunction
 
-function [V] = var(x, varargin, varargopt)
+function [V] = var_m(x, varargin, varargopt)
 
 // varargin should be only of size 1 (at max) with the dim argument
 // In this case the dim field should not be in the varargopt hash table
