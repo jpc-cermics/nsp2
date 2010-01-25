@@ -59,11 +59,15 @@ $$
 $$
 These matrices are symmetric ($mcov_{i,j} = mcov_{j,i}$) and semi-positive definite.
 
-Additionnaly an estimate of the correlation matrix can be provided as second argument.
+\noindent{\bf Remarks:}
+\begin{itemize}
+\item Additionnaly an estimate of the correlation matrix can be provided as second argument.
 
-The second form  \verb+cov(X,Y [,options])+ computes the covariance matrix
+\item The second form  \verb+cov(X,Y [,options])+ computes the covariance matrix
 of two variables, that is $X$ and $Y$ are considered as two big column vectors (so \verb+cov(X,Y)+
 is equivalent to \verb+cov([X(:),Y(:)])+. 
+\end{itemize}
+
 
 \itemdesc{skip\_nan option}
    This option is available for both the usual or weighted covariance.
@@ -80,14 +84,14 @@ the function they are normalized such that they sum up to $1$.
 %--example 
 \begin{examples}
 \begin{Verbatim}
-n = 500;
+m = 500;
 Mu = [-2;5];
 Cv = [0.5, 0.3; 0.3, 2];
-// generate n random sample vectors of the multinormal distribution
+// generate m random sample vectors of the multinormal distribution
 // with mean Mu and covariance matrix Cv 
-X = grand(n,"mn",Mu,Cv)'; // transpose to get the good format for cov
-estimed_mean = mean(X,dim=1)  // should tend to Mu when n -> + oo
-estimed_cov = cov(X)          // should tend to Cv when n -> + oo
+X = grand(m,"mn",Mu,Cv)'; // transpose to get the good format for cov
+estimed_mean = mean(X,dim=1)  // should tend to Mu when m -> + oo
+estimed_cov = cov(X)          // should tend to Cv when m -> + oo
 \end{Verbatim}
 \end{examples}
 
