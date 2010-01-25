@@ -1,0 +1,102 @@
+\mansection{cov}
+
+\begin{mandesc}
+  \short{cov}{covariance matrix and weighted covariance matrix} \\
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  // first form
+  mcov = cov(X)
+  [mcov, mcor] = cov(X)
+  mcov = cov(X, skip_nan=b, weights=w, unbiaised=b)
+  [mcov, mcor] = cov(X, skip_nan=b, weights=w, unbiaised=b)
+
+  // second form
+  mcov = cov(X,Y)
+  [mcov, mcor] = cov(X,Y)
+  mcov = cov(X,Y, skip_nan=b, weights=w, unbiaised=b)
+  [mcov, mcor] = cov(X,Y, skip_nan=b, weights=w, unbiaised=b)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X, Y}: real vectors or matrices
+    \vname{skip_nan=b}: boolean scalar (default is \verb+%f+).
+    \vname{weights=w}: non negative vector
+    \vname{unbiased=b}:  boolean scalar (default is \verb+%t+).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  \verb+cov+ works on an array $X$ of size $m \times n$ where each column corresponds to
+ a ``variable'' and each row to an ``observation'' (a $1 \times n$ vector with a value 
+for each of the $n$ variables). \verb+cov+ computes an estimation of the covariance
+matrix between the underlying random variables using the formula:
+$$
+    mcov_{i,j} = \frac{1}{den} \sum_{k=1}^m (X_{k,i} - \bar{X}_i) (X_{k,j} - \bar{X}_j) \quad 1 \le
+   i,j \le n 
+$$ 
+with:
+$$
+   \bar{X}_i = \frac{1}{m} \sum_{k=1}^m X_{k,i}
+   \quad \mbox{ and } \quad  den = \left\{ \begin{array}{cl}  m-1 & \mbox{ if unbiased is true}\\
+                                                       m   & \mbox{ otherwise} \end{array}\right.
+$$
+But if the  weights $w$ are provided,  \verb+cov+ computes an estimation of the weighted covariance
+matrix using the following formula:
+$$
+     mcov_{i,j} = \frac{1}{1 - c} \sum_{k=1}^m w_k (X_{k,i} - \bar{X}_i) (X_{k,j} - \bar{X}_j) \quad 1 \le
+   i,j \le n  
+$$
+with:
+$$
+    \bar{X}_i =  \sum_{k=1}^m  w_k X_{k,i}
+   \quad \mbox{ and } \quad  c = \left\{ \begin{array}{cl} \sum_{p=1}^m w_p^2  & \mbox{ if unbiased is true}\\
+                                                       0   & \mbox{ otherwise} \end{array}\right.
+$$
+These matrices are symmetric ($mcov_{i,j} = mcov_{j,i}$) and semi-positive definite.
+
+Additionnaly an estimate of the correlation matrix can be provided as second argument.
+
+The second form  \verb+cov(X,Y [,options])+ computes the covariance matrix
+of two variables, that is $X$ and $Y$ are considered as two big column vectors (so \verb+cov(X,Y)+
+is equivalent to \verb+cov([X(:),Y(:)])+. 
+
+\itemdesc{skip\_nan option}
+   This option is available for both the usual or weighted covariance.
+When it is \verb+%t+, all observations (that is all rows) with at least 
+one nan values are are not taking into account in the computation.
+Nan values stand for ``missing or not available values''.
+   
+\itemdesc{weights option}
+  This option lets to compute weighted covariance matrix. The weights should be non negative. Inside
+the function they are normalized such that they sum up to $1$.
+   
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+n = 500;
+Mu = [-2;5];
+Cv = [0.5, 0.3; 0.3, 2];
+// generate n random sample vectors of the multinormal distribution
+// with mean Mu and covariance matrix Cv 
+X = grand(n,"mn",Mu,Cv)'; // transpose to get the good format for cov
+estimed_mean = mean(X,dim=1)  // should tend to Mu when n -> + oo
+estimed_cov = cov(X)          // should tend to Cv when n -> + oo
+\end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+  \manlink{var}{var}, \manlink{mean}{mean}, \manlink{median}{median}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  Bruno Pincon
+\end{authors}
