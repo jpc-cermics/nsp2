@@ -46,21 +46,22 @@ meaningful message you can provide the optional argument
 
 % --example 
 \begin{examples}
+
 \begin{Verbatim}
 function mu = freqmean(x,freq,dim=0)
    dim = parse_dim_arg(dim,names=["dim","freqmean"])
    if dim == -1 || dim > 2 then
       error("Error: unsupported dim flag")
-   else if dim == -2 then
+   elseif dim == -2 then
       if isvector(x) then, dim = 0, else, dim = 1, end
    end
    mu = sum( x.*freq, dim )./ sum( freq, dim )
 endfunction
-x = [1, 2, 2.5, 4, 9; 5, -1, 1, -5]
-f = [1, 9, 2,   1, 2; 3,  2, 1,  4]
+x = [1, 2, 2.5, 4, 9; 5, -1, 0, 1, -5]
+f = [1, 9, 2,   1, 2; 3,  2, 1, 1,  4]
 mu = freqmean(x,f,dim="m")
 mu = freqmean(x,f,dim=2)
-mu = freqmean(x,f,dim="c")  // should raise an error
+mu = freqmean(x,f,dim="c")
 mu = freqmean(x,f,dim=-3)  // should raise an error
 mu = freqmean(x,f,dim=3)  // should raise an error
 \end{Verbatim}
