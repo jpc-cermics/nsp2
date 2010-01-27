@@ -139,19 +139,19 @@ struct _NspIMatrix {
 #define NSP_MIN_ITYPE(xx,itype)						\
   switch(itype) {							\
   case nsp_gint: xx.Gint= G_MININT; break;				\
-  case nsp_guint: xx.Guint= G_MINUINT; break;				\
+  case nsp_guint: xx.Guint= 0; break;				\
   case  nsp_gshort: xx.Gshort= G_MINSHORT; break;			\
-  case nsp_gushort: xx.Gushort= G_MINUSHORT; break;			\
+  case nsp_gushort: xx.Gushort= 0; break;			\
   case  nsp_glong: xx.Glong= G_MINLONG ;  break;			\
-  case nsp_gulong: xx.Gulong= G_MINULONG; break;			\
+  case nsp_gulong: xx.Gulong= 0; break;			\
   case  nsp_gint8: xx.Gint8= G_MININT8; break;				\
-  case nsp_guint8: xx.Guint8= G_MINUINT8; break;			\
+  case nsp_guint8: xx.Guint8= 0; break;			\
   case  nsp_gint16: xx.Gint16= G_MININT16; break;			\
-  case nsp_guint16: xx.Guint16= G_MINUINT16; break;			\
+  case nsp_guint16: xx.Guint16= 0; break;			\
   case  nsp_gint32: xx.Gint32= G_MININT32; break;			\
-  case nsp_guint32: xx.Guint32= G_MINUINT32; break;			\
+  case nsp_guint32: xx.Guint32= 0; break;			\
   case  nsp_gint64: xx.Gint64= G_MININT64; break;			\
-  case  nsp_guint64: xx.Guint64= G_MINUINT64; break;}
+  case  nsp_guint64: xx.Guint64= 0; break;}
 
 
 

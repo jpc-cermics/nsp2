@@ -1149,7 +1149,7 @@ nsp_int_union nsp_imatrix_intmax(const NspIMatrix *A)
 nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A)
 {
   nsp_int_union val;
-  NSP_MAX_ITYPE(val,A->itype);
+  NSP_MIN_ITYPE(val,A->itype);
   return val;
 }
 
