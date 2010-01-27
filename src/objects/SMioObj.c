@@ -887,6 +887,20 @@ static int int_smio_compress(void *self, Stack stack, int rhs, int opt, int lhs)
 
 }
 
+static int int_smio_can_compress(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int rep;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+#ifdef HAVE_ZLIB
+  rep = TRUE; 
+#else 
+  rep = FALSE; 
+#endif 
+  nsp_move_boolean(stack,1,TRUE);
+  return 1;
+}
+
 /* returns a new NspSMio which contains an uncompressed 
  * version of the NspSMio compressed argument. 
  * A first argument must be passed to give the size of 
@@ -1000,6 +1014,7 @@ static NspMethods nsp_smio_methods[] = {
   {"scanf",int_smio_scanf},
   {"compress",int_smio_compress},
   {"uncompress",int_smio_uncompress},
+  {"can_compress",int_smio_can_compress},
   {"length", int_smio_length},
   {"clear", int_smio_clear},
   {"resize", int_smio_resize},
