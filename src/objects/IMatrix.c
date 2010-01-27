@@ -869,6 +869,7 @@ NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
 		dmax : (((long double) M->R[i] ) <= dmin  ? 
 			dmin : ((gint64)  M->R[i]));
 	    }
+	  return Loc;
 	}
       else if ( Loc->itype == nsp_guint64)
 	{
@@ -878,6 +879,7 @@ NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
 	      Loc->Gint64[i]= ((long double) M->R[i] >= dmax) ? 
 		dmax : ( M->R[i] <= 0  ? 0 : ((guint64)  M->R[i]));
 	    }
+	  return Loc;
 	}
       
 #define IMAT_COPY(name,type,arg)					\
@@ -895,6 +897,73 @@ NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
     }
   return(Loc);
 }
+
+#define NSP_MAT_TO_ITYPE( name, type,tmax,tmin, tag,val )	\
+  {								\
+    tag dmax = tmax;						\
+    tag dmin = tmin;						\
+    for (i= 0 ; i < Loc->mn; i++)				\
+      {								\
+	Loc->name[i]= ((tag) M->val >= dmax) ?			\
+	  dmax : (((tag) M->val) <= dmin  ?			\
+		  dmin : ((type)  M->val));			\
+      }								\
+  }								\
+    break;
+
+
+NspIMatrix  *nsp_matrix_to_imatrix_with_bounds(NspMatrix *M, nsp_itype itype)
+{
+  int i;
+  NspIMatrix *Loc;
+  if (( Loc =nsp_imatrix_create(NVOID,M->m,M->n,itype)) == NULLIMAT) 
+    return(NULLIMAT);
+  if ( M->rc_type == 'r') 
+    {
+      switch (itype ) {				
+      case nsp_gint: NSP_MAT_TO_ITYPE(Gint,gint,G_MAXINT , G_MININT,double, R[i]);		
+      case nsp_guint: NSP_MAT_TO_ITYPE(Guint,guint,G_MAXUINT , 0 ,double, R[i]);	
+      case nsp_gshort: NSP_MAT_TO_ITYPE(Gshort,gshort,G_MAXSHORT , G_MINSHORT,double, R[i]);	
+      case nsp_gushort: NSP_MAT_TO_ITYPE(Gushort,gushort,G_MAXUSHORT , 0,double, R[i]);	
+      case nsp_glong : NSP_MAT_TO_ITYPE(Glong,glong,G_MAXLONG , G_MINLONG ,double, R[i]);	
+      case nsp_gulong: NSP_MAT_TO_ITYPE(Gulong,gulong,G_MAXULONG , 0,double, R[i]);	
+      case nsp_gint8: NSP_MAT_TO_ITYPE(Gint8,gint8,G_MAXINT8 , G_MININT8,double, R[i]);	
+      case nsp_guint8:  NSP_MAT_TO_ITYPE(Guint8,guint8,G_MAXUINT8 , 0,double, R[i]);	
+      case nsp_gint16: NSP_MAT_TO_ITYPE(Gint16,gint16,G_MAXINT16 , G_MININT16,double, R[i]);	
+      case nsp_guint16: NSP_MAT_TO_ITYPE(Guint16,guint16,G_MAXUINT16 , 0,double, R[i]);	
+      case nsp_gint32: NSP_MAT_TO_ITYPE(Gint32,gint32,G_MAXINT32 , G_MININT32,double, R[i]);	
+      case nsp_guint32: NSP_MAT_TO_ITYPE(Guint32,guint32,G_MAXUINT32 , 0,double, R[i]);	
+      case nsp_gint64 : NSP_MAT_TO_ITYPE(Gint64,gint64,G_MAXINT64 , G_MININT64 ,long double, R[i]);	
+      case nsp_guint64 : NSP_MAT_TO_ITYPE(Guint64,guint64,G_MAXUINT64 , 0 ,long double, R[i]);
+      }
+    }
+  else
+    {
+      switch (itype ) {				
+      case nsp_gint: NSP_MAT_TO_ITYPE(Gint,gint,G_MAXINT , G_MININT,double, C[i].r);		
+      case nsp_guint: NSP_MAT_TO_ITYPE(Guint,guint,G_MAXUINT , 0 ,double, C[i].r);	
+      case nsp_gshort: NSP_MAT_TO_ITYPE(Gshort,gshort,G_MAXSHORT , G_MINSHORT,double, C[i].r);	
+      case nsp_gushort: NSP_MAT_TO_ITYPE(Gushort,gushort,G_MAXUSHORT , 0,double, C[i].r);	
+      case nsp_glong : NSP_MAT_TO_ITYPE(Glong,glong,G_MAXLONG , G_MINLONG ,double, C[i].r);	
+      case nsp_gulong: NSP_MAT_TO_ITYPE(Gulong,gulong,G_MAXULONG , 0,double, C[i].r);	
+      case nsp_gint8: NSP_MAT_TO_ITYPE(Gint8,gint8,G_MAXINT8 , G_MININT8,double, C[i].r);	
+      case nsp_guint8:  NSP_MAT_TO_ITYPE(Guint8,guint8,G_MAXUINT8 , 0,double, C[i].r);	
+      case nsp_gint16: NSP_MAT_TO_ITYPE(Gint16,gint16,G_MAXINT16 , G_MININT16,double, C[i].r);	
+      case nsp_guint16: NSP_MAT_TO_ITYPE(Guint16,guint16,G_MAXUINT16 , 0,double, C[i].r);	
+      case nsp_gint32: NSP_MAT_TO_ITYPE(Gint32,gint32,G_MAXINT32 , G_MININT32,double, C[i].r);	
+      case nsp_guint32: NSP_MAT_TO_ITYPE(Guint32,guint32,G_MAXUINT32 , 0,double, C[i].r);	
+      case nsp_gint64 : NSP_MAT_TO_ITYPE(Gint64,gint64,G_MAXINT64 , G_MININT64 ,long double, C[i].r);	
+      case nsp_guint64 : NSP_MAT_TO_ITYPE(Guint64,guint64,G_MAXUINT64 , 0 ,long double, C[i].r);
+      }
+    }
+  return(Loc);
+}
+
+
+
+
+
+
 
 
 /**

@@ -1041,7 +1041,16 @@ static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
       if ((rep = GetStringInArray(stack, 2, names, 0)) == -1 ) return RET_BUG;
       itype = (nsp_itype) rep;
     }
-  if ((BM =nsp_matrix_to_imatrix(M,itype)) == NULLIMAT ) return RET_BUG;
+  if (0) 
+    {
+      /* cast */
+      if ((BM =nsp_matrix_to_imatrix(M,itype)) == NULLIMAT ) return RET_BUG;
+    }
+  else
+    {
+      /* min/max */
+      if ((BM =nsp_matrix_to_imatrix_with_bounds(M,itype)) == NULLIMAT ) return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject *) BM);
   return 1;
 }
