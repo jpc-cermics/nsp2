@@ -1,0 +1,57 @@
+% -*- mode: latex -*-
+
+\mansection{SMio}
+\begin{mandesc}
+  \short{SMio}{input and output in a string buffer} \\
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+S=sopen(length, xdr = %t|%f, swap=%t|%f)
+S=sopen(Str, xdr=%t|%f , swap=%t|%f )
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{length}: integer
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+The \emph{SMio} data type can be used to perform input 
+output in a string buffer. 
+\end{mandescription}
+
+\paragraph{Operations on SMio objects}
+\itemdesc{Methods}
+\begin{itemize}
+  \item \verb+close+ 
+  \item \verb+putstr+ 
+  \item \verb+put+ 
+  \item \verb+get+ 
+  \item \verb+getstr+ 
+  \item \verb+eof+ 
+  \item \verb+seek+ 
+  \item \verb+tell+ 
+  \item \verb+clearerr+ 
+  \item \verb+error+ 
+  \item \verb+get_matrix+ 
+  \item \verb+get_lines+ 
+  \item \verb+get_smatrix+ 
+  \item \verb+put_matrix+ 
+  \item \verb+put_smatrix+ 
+  \item \verb+print+ 
+  \item \verb+printf+ 
+  \item \verb+scanf+ 
+  \item \verb+compress+ 
+  \item \verb+uncompress+ 
+  \item \verb+can_compress+ 
+  \item \verb+length+ 
+  \item \verb+clear+ 
+  \item \verb+resize+ 
+\end{itemize}
+% -- Authors
+\begin{authors}
+   Jean-Philippe Chancelier
+\end{authors}
