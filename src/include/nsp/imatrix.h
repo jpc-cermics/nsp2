@@ -346,6 +346,7 @@ extern int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k);
 extern NspIMatrix *nsp_imatrix_create_diag(NspIMatrix *Diag, int k); 
 extern NspIMatrix *nsp_imatrix_transpose(NspIMatrix *A); 
 extern NspIMatrix *nsp_matrix_to_imatrix(NspMatrix *M,nsp_itype itype); 
+extern NspIMatrix  *nsp_matrix_to_imatrix_with_bounds(NspMatrix *M, nsp_itype itype);
 extern NspMatrix *nsp_imatrix_to_matrix(NspIMatrix *M); 
 extern int MatIsTrue (NspMatrix *M); 
 extern int nsp_imatrix_and(NspIMatrix *A,const NspIMatrix *B); 
