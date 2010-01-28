@@ -16,7 +16,6 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 // 
 
-
 //   {"close", int_smio_fclose},
 //   {"putstr", int_smio_putstr},
 //   {"put", int_smio_put },
@@ -41,4 +40,19 @@
 //   {"length", int_smio_length},
 //   {"clear", int_smio_clear},
 //   {"resize", int_smio_resize},
+
+S=sopen(20);
+S.printf["an uncompressed string"]
+n=S.tell[];
+D=S.compress[n]; // compress n characters in the buffer (starting at
+                 // position 0) and store the result in a new SMio
+E=D.uncompress[n]; // uncompress n characters in a new SMio
+res=E.getstr[n=n]; 
+S.seek[0]; // rewind S 
+if res<>S.getstr[n=n]; then pause;end 
+
+
+
+
+
 

@@ -680,7 +680,7 @@ static int int_smio_put_smatrix(void *self, Stack stack, int rhs, int opt, int l
 
 static int int_smio_printf(void *self,Stack stack, int rhs, int opt, int lhs)
 {
-  char *str;
+  char *str = NULL;
   int i=0,rows=0;
   NspSMio *F =self;
   char *Format;
