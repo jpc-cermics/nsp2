@@ -22,10 +22,18 @@ function [V] = variance(x, varargin, varargopt)
   V = var(x, varargin(:), varargopt(:))
 endfunction
 
-function [V] = var_m(x, varargin, varargopt)
+function [V] = var(x, varargin, varargopt)
 
 // varargin should be only of size 1 (at max) with the dim argument
 // In this case the dim field should not be in the varargopt hash table
+
+   if nargin < 1 then
+      error("Error: var needs at least one input argument")
+   end
+   
+   if ~is(x,%types.Mat) then
+      error("Error: first argument should be of type Mat")
+   end
    
    dim = 0  // default value
    skip_nan = %f // default value
@@ -43,49 +51,55 @@ function [V] = var_m(x, varargin, varargopt)
       end
    end
    
-   if  varargopt.iskey["dim"] then, dim = varargopt.dim; narg_opt = narg_opt+1; end
+   if numel(varargopt) >= 1 then
+      
+      if  varargopt.iskey["dim"] then, dim = varargopt.dim; narg_opt = narg_opt+1; end
    
-   // verify dim arg
-   dim = parse_dim_arg(dim, names=["dim","var or std"]);
-   if dim > 2 then
-      error("Error: matrix with more than 2 dimensions not currently available")
-   elseif dim == -1 then
-      error("Error: dim should not be equal to -1")
-   elseif dim == -2 then // matlab compat
-      if isvector(x) then, dim = 0, else, dim = 1, end
-   end     
+      if varargopt.iskey["skip_nan"] then
+	 skip_nan = varargopt.skip_nan
+	 narg_opt = narg_opt+1;
+	 if ~ (is(skip_nan,%types.BMat) && isscalar(skip_nan)) then
+	    error("Error: skip_nan should be a boolean scalar")
+	 end
+      end   
    
-   if varargopt.iskey["skip_nan"] then
-      skip_nan = varargopt.skip_nan
-      narg_opt = narg_opt+1;
-      if ~ (is(skip_nan,%types.BMat) && isscalar(skip_nan)) then
-	 error("Error: skip_nan should be a boolean scalar")
-      end
-   end   
+      if varargopt.iskey["unbiased"] then
+	 unbiased = varargopt.unbiased
+	 narg_opt = narg_opt+1;
+	 if ~ (is(unbiased,%types.BMat) && isscalar(unbiased)) then
+	    error("Error: unbiased should be a boolean scalar")
+	 end
+      end   
    
-   if varargopt.iskey["unbiased"] then
-      unbiased = varargopt.unbiased
-      narg_opt = narg_opt+1;
-      if ~ (is(unbiased,%types.BMat) && isscalar(unbiased)) then
-	 error("Error: unbiased should be a boolean scalar")
-      end
-   end   
-   
-   if varargopt.iskey["weights"] then
-      weights = varargopt.weights
-      narg_opt = narg_opt+1;
-      if ~ (is(weights,%types.Mat) && isreal(weights) && and(size(x)==size(weights)) ) then
-	 error("Error: weights should be a real vector or matrix of same dimensions than first arg")
-      end
-      if min(weights) < 0 then
-	 error("Error: weights should be non negative")
-      end
-      weighted_var = %t;
-   end   
+      if varargopt.iskey["weights"] then
+	 weights = varargopt.weights
+	 narg_opt = narg_opt+1;
+	 if ~ (is(weights,%types.Mat) && isreal(weights) && and(size(x)==size(weights)) ) then
+	    error("Error: weights should be a real vector or matrix of same dimensions than first arg")
+	 end
+	 if min(weights) < 0 then
+	    error("Error: weights should be non negative")
+	 end
+	 weighted_var = %t;
+      end   
 
-   if numel(varargopt) > narg_opt then
-      error("Error: only ''dim'', ''skip_nan'' and ''unbiased'' could be optional named arguments")
+      if numel(varargopt) > narg_opt then
+	 error("Error: only ''dim'', ''skip_nan'' and ''unbiased'' could be optional named arguments")
+      end
    end
+
+   if ~dim.equal[0] then
+      // verify dim arg
+      dim = parse_dim_arg(dim, names=["dim","var or std"]);
+      if dim > 2 then
+	 error("Error: matrix with more than 2 dimensions not currently available")
+      elseif dim == -1 then
+	 error("Error: dim should not be equal to -1")
+      elseif dim == -2 then // matlab compat
+	 if isvector(x) then, dim = 0, else, dim = 1, end
+      end     
+   end
+
    
    if ~weighted_var then
       if ~skip_nan then

@@ -21,6 +21,15 @@ function [S] = st_deviation(x, varargin, varargopt)
   S = std(x, varargin(:), varargopt(:))
 endfunction
 
-function [S] = std_m(x, varargin, varargopt)
+function [S] = std(x, varargin, varargopt)
+      
+   if nargin < 1 then
+      error("Error: std needs at least one input argument")
+   end
+   
+   if ~is(x,%types.Mat) then
+      error("Error: first argument should be of type Mat")
+   end
+
    S = sqrt(var(x, varargin(:), varargopt(:)))
 endfunction

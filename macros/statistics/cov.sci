@@ -15,10 +15,21 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 
-function [varargout] = cov_m(X, varargin, varargopt)
+function [varargout] = cov(X, varargin, varargopt)
 
 // varargin should be only of size 1 (at max) and corresponds to calls of
 // the form: cov(X,Y)
+
+   if nargin < 1 then
+      error("Error: cov needs at least one input argument")
+   end
+   if nargout > 2 then
+      error("Error: only one or two output arguments")
+   end
+   
+   if ~( is(X,%types.Mat) && isreal(X,%t)) then
+      error("Error: first argument should be a real matrix or vector")
+   end
    
    skip_nan = %f // default value
    unbiased = %t // default value
@@ -26,14 +37,6 @@ function [varargout] = cov_m(X, varargin, varargopt)
    xy = %f;     // flag for cov(X,Y [,option=...) form
    weighted_cov = %f;
    
-   if nargout > 2 then
-      error("Error: only one or two output arguments")
-   end
-   
-   if ~isreal(X) then
-      error("Error: first argument should be a real matrix or vector")
-   end
-
    if numel(varargin) >= 1 then
       Y = varargin(1);
       if ~ (is(Y,%types.Mat) && isreal(Y) && numel(Y)==numel(X))
@@ -45,38 +48,39 @@ function [varargout] = cov_m(X, varargin, varargopt)
       xy = %t   
    end
    
-   if varargopt.iskey["skip_nan"] then
-      skip_nan = varargopt.skip_nan
-      narg_opt = narg_opt+1;
-      if ~ (is(skip_nan,%types.BMat) && isscalar(skip_nan)) then
-	 error("Error: skip_nan should be a boolean scalar")
-      end
-   end   
+   if numel(vararopt) >= 1 then
+      if varargopt.iskey["skip_nan"] then
+	 skip_nan = varargopt.skip_nan
+	 narg_opt = narg_opt+1;
+	 if ~ (is(skip_nan,%types.BMat) && isscalar(skip_nan)) then
+	    error("Error: skip_nan should be a boolean scalar")
+	 end
+      end   
    
-   if varargopt.iskey["unbiased"] then
-      unbiased = varargopt.unbiased
-      narg_opt = narg_opt+1;
-      if ~ (is(unbiased,%types.BMat) && isscalar(unbiased)) then
-	 error("Error: unbiased should be a boolean scalar")
-      end
-   end   
+      if varargopt.iskey["unbiased"] then
+	 unbiased = varargopt.unbiased
+	 narg_opt = narg_opt+1;
+	 if ~ (is(unbiased,%types.BMat) && isscalar(unbiased)) then
+	    error("Error: unbiased should be a boolean scalar")
+	 end
+      end   
    
-   
-   if varargopt.iskey["weights"] then
-      weights = varargopt.weights
-      narg_opt = narg_opt+1;
-      if ~ (is(weights,%types.Mat) && isreal(weights) && isvector(weights) ...
-	    && and(size(x,1)==numel(weights)) ) then
-	 error("Error: weights should be a real vector with size(x,1) elements")
-      end
-      if min(weights) < 0 then
-	 error("Error: weights should be non negative")
-      end
-      weighted_cov = %t;
-   end   
+      if varargopt.iskey["weights"] then
+	 weights = varargopt.weights
+	 narg_opt = narg_opt+1;
+	 if ~ (is(weights,%types.Mat) && isreal(weights) && isvector(weights) ...
+	       && and(size(x,1)==numel(weights)) ) then
+	    error("Error: weights should be a real vector with size(x,1) elements")
+	 end
+	 if min(weights) < 0 then
+	    error("Error: weights should be non negative")
+	 end
+	 weighted_cov = %t;
+      end   
 
-   if numel(varargopt) > narg_opt then
-      error("Error: only ''skip_nan'', ''unbiased'' and ''weights'' could be optional named arguments")
+      if numel(varargopt) > narg_opt then
+	 error("Error: only ''skip_nan'', ''unbiased'' and ''weights'' could be optional named arguments")
+      end
    end
 
    if xy then, X = [X(:), Y(:)], end
