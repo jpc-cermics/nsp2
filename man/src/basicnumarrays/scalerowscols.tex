@@ -1,0 +1,55 @@
+\mansection{scale\_rows, scale\_cols}
+\begin{mandesc}
+  \shortunder{scale\_rows}{scale_rows}{multiply each row of a matrix by a different scalar}\\ 
+  \shortunder{scale\_cols}{scale_cols}{multiply each column of a matrix by a different scalar}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A.scale_rows[scale_factors]      // method form: A is modified in place
+B = scale_rows(A,scale_factors)  // function form: a new matrix B is created
+
+A.scale_cols[scale_factors]      // method form: A is modified in place
+B = scale_cols(A,scale_factors)  // function form: a new matrix B is created
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A, B}: numerical matrices (full or sparse).
+    \vname{scale\_factors}: numerical vector (full).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+The methods \verb+scale_rows+ and \verb+scale_cols+ let to modify in place a matrix A 
+(says of size $m \times n$) by scaling (e.g. multiplying by a scalar) either its rows 
+or its columns. When scaling the rows  \verb+scale_factors+ should be a vector with $m$ 
+elements and when scaling the columns \verb+scale_factors+ should be a vector with 
+$n$ elements.
+
+The function form  creates a new matrix by these scaling operations without modifying 
+the original matrix.
+\end{mandescription}
+
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+A=rand(2,3)
+
+B = scale_rows(A,[0.5,2])
+A.scale_rows[[0.5,2]]; A
+
+B = scale_cols(A,[0.5,2,4])
+A.scale_cols[[0.5,2,4]]; A
+\end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+% \manlink{find}{find}
+\end{manseealso}
+

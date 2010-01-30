@@ -1,0 +1,109 @@
+\mansection{dot}
+\begin{mandesc}
+  \short{dot}{scalar product of 2 vectors (or matrices)}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  C=dot(A,B)  
+  C=dot(A,B,mode)  
+  C=dot(A,B,dim=mode)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B}: numerical vectors (or numerical matrices) of same size.
+    \vname{mode}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+dot+ computes the scalar product between the vectors or matrices \verb+A+ and \verb+B+ :
+$$
+dot(A,B) = \left\{
+\begin{array}{l}
+     \sum_{i} \bar{A}_i B_i, \mbox{ for vectors } \\
+     \sum_{i,j} \bar{A}_{i,j} B_{i,j}, \mbox{ for matrices } \\
+\end{array} \right.
+$$ 
+ Using the third argument you could compute the dot product between the rows or columns of
+ \verb+A+ and \verb+B+, precisely :
+  \begin{itemize}
+    \item 'full' or 0 (the default case) $$C= \sum_{i,j} \bar{A}_{i,j} B_{i,j}$$
+    \item 'row' or 1  computes the scalar product between the corresponding column vectors 
+          of the 2 matrices: $$C_j = \sum_{i} \bar{A}_{i,j} B_{i,j}$$ and thus gives a row vector.
+    \item 'col' or 2  computes the scalar product between the corresponding row vectors
+          of the 2 matrices: $$C_j = \sum_{j} \bar{A}_{i,j} B_{i,j}$$ and thus gives a column vector.
+    \item 'm' is the dot product along the first non singleton dimension of the given matrices 
+          (for Matlab compatibility). 
+  \end{itemize}
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{example 1} a simple example (we form 2 orthonormal vectors) :
+  \begin{program}\HCode{x = randn(5,1);\Hnewline
+    y = randn(5,1);\Hnewline
+    // step 0\Hnewline
+    dot(x,y)\Hnewline
+    // step 1 normalise x:\Hnewline
+    x = x/norm(x)\Hnewline
+    // step 2 remove the component of y in the direction of x\Hnewline
+    y = y - dot(y,x)*x\Hnewline
+    // step 3 normalise y\Hnewline
+    y = y/norm(y)\Hnewline
+    // test \Hnewline
+    norm(x)  // should be 1\Hnewline
+    norm(y)  // should be 1\Hnewline
+    dot(x,y) // should be near 0}
+  \end{program}
+
+\paragraph{example 2} same example with complex vectors
+  \begin{program}\HCode{x = randn(5,1) + \%i*randn(5,1);\Hnewline
+    y = randn(5,1) + \%i*randn(5,1);\Hnewline
+    // step 0\Hnewline
+    dot(x,y)\Hnewline
+    // step 1 normalise x:\Hnewline
+    x = x/norm(x)\Hnewline
+    // step 2 remove the component of y in the direction of x\Hnewline
+    // (be careful for the order in dot in this case)\Hnewline
+    y = y - dot(x,y)*x\Hnewline
+    // step 3 normalise y\Hnewline
+    y = y/norm(y)\Hnewline
+    // test \Hnewline
+    norm(x)  // should be 1\Hnewline
+    norm(y)  // should be 1\Hnewline
+    dot(x,y) // should be near 0}
+  \end{program}
+
+\paragraph{example 3} fastest way to compute the 2-norm of the rows or
+ columns vectors of a matrix : in this case you cannot use norm because
+ norm computes a matrix norm in this case.
+  \begin{program}\HCode{A = randn(5,7);\Hnewline
+    norm_cols_A = sqrt(dot(A,A,dim=1))\Hnewline
+    // test\Hnewline
+    norm(A(:,3)) - norm_cols_A(3)\Hnewline
+    // the same for the rows\Hnewline
+    norm_rows_A = sqrt(dot(A,A,dim=2))\Hnewline
+    // test\Hnewline
+    norm(A(2,:)) - norm_rows_A(2)\Hnewline
+    // comparizon with another method for a big matrix\Hnewline
+    A = randn(800,800);\Hnewline
+    tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()\Hnewline
+    // the other method (should be slower)\Hnewline
+    tic(); norm_cols_A = sqrt(sum(A.^2,dim=1)); toc()\Hnewline
+    // same thing with a complex matrix\Hnewline
+    A = randn(800,800) + \%i*rand(800,800);\Hnewline
+    tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()\Hnewline
+    // the other method (should be slower)\Hnewline
+    tic(); norm_cols_A = sqrt(sum(conj(A).*A,dim=1)); toc()}
+\end{program}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{norm}{norm}  \manlink{sum}{sum} 
+\end{manseealso}
+

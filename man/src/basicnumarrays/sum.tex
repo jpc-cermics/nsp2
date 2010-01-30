@@ -1,0 +1,51 @@
+\mansection{sum and prod}
+\begin{mandesc}
+  \short{sum}{sum of matrix elements}\\ % @mandesc@
+  \short{prod}{product of matrix elements}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  B=sum(A,mode)  
+  B=prod(A,mode)  
+  B=sum(A,dim=mode) 
+  B=prod(A,dim=mode)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B}: matrices.
+    \vname{mode}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+sum+ (resp. \verb+prod+) gives the sum (resp. the product) of the elements of the given matrix
+  argument \verb+A+. 
+  The second argument gives the dimension to be used for performing the sum (resp product) of elements.
+  \begin{itemize}
+    \item 'full' or 0  $$B= \sum_{i,j} A_{i,j} \quad \left(\text{resp. } \prod_{i,j} A_{i,j} \right)$$ and thus gives a scalar.
+    \item 'row' or 1  $$B_j = \sum_{i} A_{i,j}\quad \left(\text{resp. } \prod_{i} A_{i,j} \right)$$ and thus gives a row vector.
+    \item 'col' or 2  $$B_i = \sum_{j} A_{i,j}\quad \left(\text{resp. } \prod_{j} A_{i,j}\right)$$ and thus gives a column vector.
+    \item 'm' is the sum (resp. product) along the first non singleton dimension of the given matrix 
+      for Matlab compatibility. 
+  \end{itemize}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}\HCode{A=rand(4,5) \Hnewline
+      sum(A,'c'); \Hnewline
+      // boolean matrix \Hnewline
+      sum(A>=0.5,'c');\Hnewline
+      prod(1:5,'m') \Hnewline
+      // sparse matrix 
+      sum(sparse(rand(4,6)),'r')  }
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{cumsum}{cumsum}  \manlink{cumprod}{cumprod} 
+\end{manseealso}
+

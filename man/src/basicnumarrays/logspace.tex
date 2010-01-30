@@ -1,0 +1,51 @@
+\mansection{logspace}
+\begin{mandesc}
+  \short{logspace}{logarithmically spaced vector}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  x = logspace(a, b, n)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a,b}: real scalars or column vectors of same length
+    \vname{n}: a non negative integer
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+logspace+ computes a row vector of $n$ components logarithmically spaced from $10^a$ to $10^b$ :
+$$
+    x_i = 10^{a + \frac{b-a}{n-1} (i-1)}, \quad i = 1, \dots, n
+$$
+
+   When $a$ and $b$ are column vectors, the $i$ th row of $x$ is such a vector starting from $10^{a(i)}$ and ended
+  at $10^{b(i)}$.
+
+   This function is useful to work with a logarithmic scale.
+
+  {\em Special cases: } when $n=1$ then $x$ is equal to $10^b$ and when $n=0$ an empty matrix is returned.
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+// a decimal log scale vector
+x = logspace(-2,2,5)
+
+// make a binary log scale vector
+x = logspace(log(2^(-4),log(2^4),9)
+// but the following is simpler
+x = 2.^(-4:4)
+\end{Verbatim}
+
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{linspace}{linspace}
+\end{manseealso}
+

@@ -1,0 +1,55 @@
+\mansection{zeros, ones}
+\begin{mandesc}
+  \short{zeros}{matrix of zeros}\\ 
+  \short{ones}{matrix of ones}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A = zeros(n)
+A = zeros(m,n)
+A = zeros(dims)
+A = ones(n)
+A = ones(m,n)
+A = ones(dims)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m,n}: integers
+    \vname{dims}: vector of integers of length 1 or 2.
+    \vname{A}: matrix of zeros or ones.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+\verb+zeros(n)+ is the same than \verb+zeros(n,n)+. If \verb+dims+ is a vector of length 2, 
+with $dims_1 = m$ and $dims_2 = n$ then \verb+zeros(m,n)+ and  \verb+zeros(dims)+ are equivalent 
+and output a $m \times n$ matrix of zeros. The second form could be useful to get a matrix of 
+zeros of same size than another matrix $M$ using:
+\begin{verbatim}
+    A = zeros(size(M))
+\end{verbatim}
+
+The \verb+ones+ function works similarly but output a matrix of ones.
+
+\end{mandescription}
+
+
+%--example 
+\begin{examples}
+\begin{program}\HCode{A = ones(2,3) \Hnewline
+B = zeros(1,4)\Hnewline
+C = zeros(3,0)\Hnewline
+D = ones(0,2)\Hnewline
+C*D}
+\end{program} 
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{eye}{eye}, \manlink{repmat}{repmat}
+\end{manseealso}
+

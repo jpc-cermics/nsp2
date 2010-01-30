@@ -1,0 +1,106 @@
+% -*- mode: latex -*-
+\mansection{ndgrid}
+\begin{mandesc}
+\short{ndgrid}{arrays for multidimensional function evaluation on grid}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[X, Y] = ndgrid(x,y)
+[X, Y] = ndgrid(x)
+[X, Y, Z] = ndgrid(x,y,z)
+[X, Y, Z] = ndgrid(x)
+[X, Y, Z, T] = ndgrid(x,y,z,t)
+[X1, X2, ..., Xm] = ndgrid(x1,x2,...,xm)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{x, y, z, ...} : vectors
+   \vname{X, Y, Z, ...} : matrices
+\end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+ This is an utility routine useful to create arrays for function evaluation on 2, 3, ..., n 
+dimensional grids. 
+
+\paragraph{2d case}
+For instance in 2d, a grid is defined by two vectors, \verb!x! and
+\verb!y! of length nx and ny, and you want to evaluate a function (says {\em f}) 
+on all the grid points, that is on all the points of coordinates  $(x_i, y_j)$ 
+with  $i=1,..,nx$ and $j=1,..,ny$. In this case, this function can
+compute the two matrices \verb!X,Y! of size {\em nx x ny} such that:
+$$\left.
+  \begin{array}{r} X(i,j) = x_i \\
+                   Y(i,j) = y_j
+  \end{array} 
+  \right\} \forall (i,j) \in  [1,nx] \times [1,ny]
+$$
+and the evaluation may be done with \verb!Z=f(X,Y)! if the function \verb!f! have
+been coded  for evaluation on vectors/matrices arguments (which is obtained (in general) 
+by using the element-wise operators \verb!.*!, \verb!./! and \verb!.^! in place of the
+usual \verb!*!, \verb!/! and \verb!^!). The form \verb+[X, Y] = ndgrid(x)+ is equivalent 
+to \verb+[X, Y] = ndgrid(x,y)+ when y=x.    
+
+\paragraph{3d (or more) cases}
+In the 3d case, considering 3 vectors \verb!x,y,z! of length nx, ny and nz,  \verb!X,Y,Z!
+should be matrices with 3 dimensions of size {\em nx x ny x nz} such that :
+$$\left.
+\begin{array}{r}
+      X(i,j,k) = x_i  \\
+      Y(i,j,k) = y_j  \\
+      Z(i,j,k) = z_k  
+\end{array} \right\} \forall (i,j) \in  [1,nx] \times [1,ny] \times [1,nz]
+$$     
+but currently nsp don't support such matrices (that is matrices with more than 2 dimensions). 
+Nevertheless you could use \verb+ndgrid+ in this case with the convention that an element
+(of one of the 3 output arrays) which should be in position $(i,j,k)$ will be in position:
+$$
+i + nx(j-1 + ny(k-1))
+$$
+of the array seen as one dimensional array, or at position:
+$$
+(i , j + ny(k-1))
+$$
+of the same array seen as a 2 dimensional array.
+\end{mandescription}
+
+%--example 
+
+\begin{examples}
+\paragraph{example 1} plot a function...
+\begin{program}\HCode{// the function (we use element wize op)\Hnewline
+function z=f(x,y)\Hnewline
+z = x.^2 + y.^3\Hnewline
+endfunction\Hnewline
+\Hnewline
+// create a simple 2d grid\Hnewline
+nx = 40; ny = 40;\Hnewline
+x = linspace(-1,1,nx);\Hnewline
+y = linspace(-1,1,ny);\Hnewline
+[X,Y] = ndgrid(x,y);\Hnewline
+\Hnewline
+// compute the function on the grid\Hnewline
+Z = f(X,Y);\Hnewline
+\Hnewline
+// 3d plot of the function\Hnewline
+xbasc()\Hnewline
+plot3d(x,y,Z, flag=[2 6 4]);\Hnewline 
+xselect()}
+\end{program}
+
+\end{examples}
+
+%-- see also
+%\begin{manseealso}
+%\end{manseealso}
+
+%-- Author
+\begin{authors}
+B. Pincon
+\end{authors}
+

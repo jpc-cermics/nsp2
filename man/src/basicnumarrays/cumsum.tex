@@ -1,0 +1,55 @@
+\mansection{cumsum and cumprod}
+\begin{mandesc}
+  \short{cumsum}{cumulative sum of matrix elements}\\ % @mandesc@
+  \short{cumprod}{cumulative product of matrix elements}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  B=cumsum(A,mode)  
+  B=cumprod(A,mode)  
+  B=cumsum(A,dim=mode) 
+  B=cumprod(A,dim=mode)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B}: matrices.
+    \vname{mode}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+cumsum+ (resp. \verb+cumprod+) gives the cumulative sum (resp. product) of the 
+  elements of the given matrix argument \verb+A+. 
+  The second argument gives the dimension to be used for performing the cumsum (resp product) of entries.       
+  \begin{itemize}
+    \item 'full' or 0 \verb+B+ and \verb+A+ have the same size and 
+     $$B_{i,j} = \sum_{k+(l-1)m \le i+(j-1)m } A_{k,l} \quad \left( \text{resp. } \prod_{k+(l-1)m \le i+(j-1)m } A_{k,l} \right)$$ 
+     where $m$ is the number of rows of \verb+A+
+    \item 'row' or 1  \verb+B+ and \verb+A+ have the same size and 
+     $$B_{i,j} = \sum_{k\le i} A_{k,j}\quad \left(\text{resp. }  \prod_{k\le i} A_{k,j}\right) \,. $$     
+    \item 'col' or 2  \verb+B+ and \verb+A+ have the same size and 
+         $$B_{i,j} = \sum_{l\le j} A_{i,l} \quad \left(\text{resp. }  \prod_{l\le j} A_{i,l}  \right) \,. $$     
+    \item 'm' is the cumulative sum (resp. product) along the first non singleton dimension of the given matrix 
+      for Matlab compatibility. 
+  \end{itemize}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{program}\HCode{A=rand(4,5) \Hnewline
+      cumsum(A,'c'); \Hnewline
+      // boolean matrix \Hnewline
+      cumsum(A>=0.5,'c');\Hnewline
+      cumprod(1:5,'m') \Hnewline
+      // sparse matrix 
+      cumsum(sparse(rand(4,6)),'r')  }
+  \end{program}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{sum}{sum}  \manlink{prod}{prod} 
+\end{manseealso}
+
