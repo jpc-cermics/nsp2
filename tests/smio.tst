@@ -18,8 +18,6 @@
 
 //   {"close", int_smio_fclose},
 //   {"putstr", int_smio_putstr},
-//   {"put", int_smio_put },
-//   {"get", int_smio_get },
 //   {"getstr", int_smio_getstr },
 //   {"eof", int_smio_eof},
 //   {"seek", int_smio_seek },
@@ -34,13 +32,12 @@
 //   {"print",int_smio_print},
 //   {"printf",int_smio_printf},
 //   {"scanf",int_smio_scanf},
-//   {"compress",int_smio_compress},
-//   {"uncompress",int_smio_uncompress},
-//   {"can_compress",int_smio_can_compress},
-//   {"length", int_smio_length},
-//   {"clear", int_smio_clear},
-//   {"resize", int_smio_resize},
 
+// create a SMio object 
+// sopen(int | string), note that int is just the initial size
+
+// compress and uncompress
+//------------------------
 S=sopen(20);
 S.printf["an uncompressed string"]
 n=S.tell[];
@@ -51,6 +48,64 @@ res=E.getstr[n=n];
 S.seek[0]; // rewind S 
 if res<>S.getstr[n=n]; then pause;end 
 
+// test get method 
+// ---------------
+str= 'abcdefghijk';
+n=length(str);
+S=sopen('abcdefghijk');
+x=S.get[n=n,type='c'];
+if ascii(x)<>str then pause;end
+x=S.get[n=1,type='c'];
+if ~isempty(x) then pause;end
+if ~S.eof[] then pause;end 
+// back 
+S.seek[0];
+x=S.get[n=2,type='d'];
+if length(x)<> 1 then pause;end 
+S.seek[0];
+x=S.get[n=10,type='i'];
+if length(x)<> 2 then pause;end 
+
+// put then get 
+//------------- 
+S.seek[0]
+S.put[1:4,type='d']
+S.seek[0]
+x=S.get[n=4,type='d']
+if ~x.equal[1:4] then pause;end 
+// int 
+S.seek[0]
+S.put[1:4,type='ui']
+S.seek[0]
+x=S.get[n=4,type='ui']
+if ~x.equal[1:4] then pause;end 
+// int little endian 
+S.seek[0]
+S.put[1:4,type='uil']
+S.seek[0]
+x=S.get[n=4,type='uil']
+if ~x.equal[1:4] then pause;end 
+// int big endian 
+S.seek[0]
+S.put[1:4,type='uib']
+S.seek[0]
+x=S.get[n=4,type='uib']
+if ~x.equal[1:4] then pause;end 
+
+// length, clear, resize 
+// ----------------------
+S=sopen(32);
+if S.length[]<>32 then pause;end
+S.put[34*ones(1,32),type='c'];
+S.resize[64];
+S.seek[0];
+x=S.get[n=64,type='c'];
+if or(x(1:32)<>34) then pause;end
+if S.length[]<>64 then pause;end
+S.clear[];
+S.seek[0];
+x=S.get[n=64,type='c'];
+if or(x(1:64)<>-1) then pause;end
 
 
 

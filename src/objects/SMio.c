@@ -518,19 +518,25 @@ int nsp_smio_put(NspSMio *F,void *x,int n, char *type)
   return OK;
 }
 
+/* F->obj->pos = Min(Max(F->obj->pos,0),F->obj->len-1); */
 
-#define MGET_CHARS_(x,n,obj,Type)		\
-  items=n;					\
-  memcpy((Type *) x,obj->D+obj->pos,n*sizeof(Type));	\
-  obj->pos += n*sizeof(Type);
 
-#define MGET_(x,n,obj,swap,Type,Fswap)				\
-  {								\
-    Type *val = (Type *) x ;					\
-    memcpy(val,obj->D+obj->pos,n*sizeof(Type));				\
-    items = n;							\
-    if (swap) for (i=0;i<items;i++) val[i]=Fswap(val[i]);	\
-    obj->pos += n*sizeof(Type);					\
+#define MGET_CHARS_(x,n,obj,Type)					\
+  {									\
+    int nc = obj->len - obj->pos ;					\
+    items= Min(nc/sizeof(Type),n);					\
+    memcpy((Type *) x,obj->D+obj->pos,items*sizeof(Type));		\
+    obj->pos += items*sizeof(Type);					\
+  }
+
+#define MGET_(x,n,obj,swap,Type,Fswap)					\
+  {									\
+    int nc = obj->len - obj->pos ;					\
+    Type *val = (Type *) x ;						\
+    items= Min(nc/sizeof(Type),n);					\
+    memcpy(val,obj->D+obj->pos,items*sizeof(Type));			\
+    if (swap) for (i=0;i<items;i++) val[i]=Fswap(val[i]);		\
+    obj->pos += items*sizeof(Type);					\
   }
 
 /**
@@ -591,12 +597,12 @@ int nsp_smio_get(NspSMio *F,void *x,int n,const char *type,int *items_read)
 	case ' ' :  MGET_(x,n,F->obj,swap,unsigned int,swapi); break;
 	case 'c' :  MGET_CHARS_(x,n,F->obj,unsigned char); break;
 	default :  
-	  Scierror("mput '%c' unrecognized conversion character\n",c1);
+	  Scierror("mget '%c' unrecognized conversion character\n",c1);
 	  return FAIL;
 	}
       break;
     default :
-      Scierror("mput '%c' unrecognized conversion character\n",type[0]);
+      Scierror("mget '%c' unrecognized conversion character\n",type[0]);
       return FAIL;
       break;
     }
