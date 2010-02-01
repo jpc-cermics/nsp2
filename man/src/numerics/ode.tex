@@ -48,8 +48,8 @@ x = ode(x0,t0,t,f) // or  x = ode(x0,t0,t,f,task=1)
 This function computes an approximate solution of the ordinary differential equation:
 $$
 \begin{array}{l}
-   \dot{x}(t) = f(t, x(t)), \; f: R \times R^d \rightarrow  R^d \\
-   x(t_0) = x_0  \in  R^d
+   \dot{x}(t) = f(t, x(t)), \; f: \R \times \R^d \rightarrow  \R^d \\
+   x(t_0) = x_0  \in  \R^d
 \end{array}
 $$
 using various solvers (choosen by named optional \verb+type+ argument) 
@@ -74,6 +74,7 @@ In brief \verb+f+ should have the form:
 {\tt function y = f(t,x) \\
       ....}
   \end{quote}
+It is possible to code this function in C or fortran language, see examples. 
 
 \itemdesc{optional argument {\tt args}}
 Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
@@ -139,11 +140,11 @@ or:\\
      ....}
 \end{quote}
 when {\tt obj} is provided with {\tt args=obj}.
+It is possible to code this function in C or fortran language, see examples. 
 
 \itemdesc{odeoptions: fine solver tuning}
-odeoptions will be fully described in a future version of this help page. It is
-an hash table which lets to give values to some solvers parameter. Common
-parameters among the solvers are:
+ It is an hash table which lets to give values to some solvers parameters. 
+Common parameters among the solvers are:
 \begin{description}
 \item[mxstep=value] this sets the maximal number of time steps a solver can take ; default
 values are 10000 for lsode,lsoda and 20000 for dopri5. If you encounter such a limitation
@@ -217,20 +218,21 @@ $$
 \right.
 $$
 for some initial condition $u(0) = u0$ and some parameter $\epsilon$.
-\begin{program}\HCode{function [f] = Brusselator(t,u,eps)\Hnewline
-    f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...\Hnewline
-         (5+eps)*u(1) - u(1)^2*u(2)]\Hnewline
-endfunction\Hnewline
-eps = 0.1 // parameter value\Hnewline
-T = 200 ;  // final integration time\Hnewline
-t = linspace(0,T,8000); // time instants to record to solution\Hnewline
-u0 = [0;0];  // initial condition (starting point)\Hnewline
-// solve the ode\Hnewline
-u = ode(u0, 0, t, Brusselator, rtol = 1e-9, atol = 1e-10, args=eps);\Hnewline
-// plot solution in the phase space\Hnewline
-plot2d(u(1,:)',u(2,:)', style=2, rect=[-0.5,-0.5,6,6])\Hnewline
-plot2d(u0(1),u0(2),style=-5, strf="000",leg='starting point')}
-\end{program}
+\begin{Verbatim}
+function [f] = Brusselator(t,u,eps)
+    f = [ 2 - (6+eps)*u(1) + u(1)^2*u(2);...
+         (5+eps)*u(1) - u(1)^2*u(2)]
+endfunction
+eps = 0.1 // parameter value
+T = 200 ;  // final integration time
+t = linspace(0,T,8000); // time instants to record to solution
+u0 = [0;0];  // initial condition (starting point)
+// solve the ode
+u = ode(u0, 0, t, Brusselator, rtol = 1e-9, atol = 1e-10, args=eps);
+// plot solution in the phase space
+plot2d(u(1,:)',u(2,:)', style=2, rect=[-0.5,-0.5,6,6])
+plot2d(u0(1),u0(2),style=-5, strf="000",leg='starting point')
+\end{Verbatim}
   
   
 \paragraph{example 3} pure, damped or amplified oscillators. The second order differential
@@ -257,29 +259,34 @@ u(t) =  \left[ \begin{array}{c} u_1(t) \\  u_2(t)\end{array} \right]  \equiv  \l
     \left( \begin{array}{c} u_2(t) \\  -k u_1(t) - 2 \alpha u_2(t) \end{array} \right) = f(u)
 $$
 So the code (we choose to pass the 2 parameters with an  \manlink{hash table}{hash}):
-\begin{program}\HCode{function [f] = oscillator(t,u,p)\Hnewline
-   f = [ u(2); -p.k*u(1) -2*p.alpha*u(2)];\Hnewline
-endfunction\Hnewline
-T = 16 ;  // final integration time\Hnewline
-t = linspace(0,T,1000); // time instants to record to solution\Hnewline
-u0 = [1;0];  // initial condition (x(0)=1, dx/dt(0)=0)\Hnewline
-// solve the ode\Hnewline
-up = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0));\Hnewline
-ud = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0.02));\Hnewline
-ua = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=-0.02));\Hnewline
-// plot the 3 solutions\Hnewline
-xbasc()\Hnewline
-subplot(1,2,1)\Hnewline
-plot2d([up(1,:)',ud(1,:)',ua(1,:)'],[up(2,:)',ud(2,:)',ua(2,:)'], style=[2,3,5], leg="pure@damped@amplified")\Hnewline
-xtitle("trajectories in phase space","x(t)","dx/dt(t)")\Hnewline
-subplot(2,2,2)\Hnewline
-plot2d(t',[up(1,:)',ud(1,:)',ua(1,:)'],style=[2,3,5], leg="pure@damped@amplified")\Hnewline
-xtitle("position fct of time","t","x(t)")\Hnewline
-subplot(2,2,4)\Hnewline
-plot2d(t',[up(2,:)',ud(2,:)',ua(2,:)'],style=[2,3,5], leg="pure@damped@amplified")\Hnewline
-xtitle("velocity fct of time","t","dx/dt(t)")}
-\end{program}
+\begin{Verbatim}
+function [f] = oscillator(t,u,p)
+   f = [ u(2); -p.k*u(1) - 2*p.alpha*u(2)];
+endfunction
+T = 16 ;  // final integration time
+t = linspace(0,T,1000); // time instants to record to solution
+u0 = [1;0];  // initial condition (x(0)=1, dx/dt(0)=0)
+// solve the ode
+up = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0));
+ud = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0.02));
+ua = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=-0.02));
+// plot the 3 solutions
+xbasc()
+subplot(1,2,1)
+plot2d([up(1,:)',ud(1,:)',ua(1,:)'],[up(2,:)',ud(2,:)',ua(2,:)'], style=[2,3,5], leg="pure@damped@amplified")
+xtitle("trajectories in phase space","x(t)","dx/dt(t)")
+subplot(2,2,2)
+plot2d(t',[up(1,:)',ud(1,:)',ua(1,:)'],style=[2,3,5], leg="pure@damped@amplified")
+xtitle("position fct of time","t","x(t)")
+subplot(2,2,4)
+plot2d(t',[up(2,:)',ud(2,:)',ua(2,:)'],style=[2,3,5], leg="pure@damped@amplified")
+xtitle("velocity fct of time","t","dx/dt(t)")
+\end{Verbatim}
  
+\paragraph{example 4} using a function coded in C. To speed up the computation it is possible to code the rhs
+function (and its Jacobian if needed) in C or fortran language. To be done !
+
+
 \end{examples}
 
 \begin{manseealso}
