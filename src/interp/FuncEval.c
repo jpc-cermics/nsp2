@@ -37,6 +37,7 @@
 #include "../functions/FunTab.h"
 
 /* FIXME */
+static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
 extern int nsp_eval_macro(NspObject *OF,Stack,int first,int rhs,int opt,int lhs);
 extern NspObject *nsp_find_macro(const char *str);
 
@@ -842,6 +843,9 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 
   if ( option_case == 1 ) 
     {
+      if ( nsp_check_named(Loc,js,nargs,stack,first+j,rhs-j)==FAIL) 
+	return RET_BUG;
+
       /* search optional arguments in stack from first+j to end of stack  */
       int wrong_pos=js+1; 
       if (debug) Sciprintf("%d named optional arguments:",nargs -js);
@@ -1167,6 +1171,55 @@ static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_p
       if ( Ocheckname(stack.val->S[first+i],str)) return first+i;
     }
   return -1;
+}
+
+/**
+ * 
+ * check if used optional named are in the list of expected values 
+ *
+ **/
+
+static int nsp_check_named(PList Loc,int js,int nargs1, Stack stack, int first, int nargs)
+{
+  int i,j;
+  for ( i = 0 ; i < nargs ; i++)
+    {
+      if ( IsHopt(stack.val->S[first+i])) 
+	{
+	  const char *str = NSP_OBJECT(stack.val->S[first+i])->name;
+	  PList Loc1,Loc2=Loc;
+	  int ok = FALSE;
+	  /* Sciprintf("given option: <%s>\n",str);*/
+	  for ( j = js ; j  < nargs1 ; j++ ) 
+	    {
+	      Loc1 = ((PList) Loc2->O)->next;
+	      /* Sciprintf("possible option: <%s>\n",(char *) Loc1->O); */
+	      if ( strcmp((char *) Loc1->O,str)==0) 
+		{
+		  ok = TRUE; break;
+		}
+	      Loc2 = Loc2->next;
+	    }
+	  if ( ok == FALSE) 
+	    {
+	      Scierror("Error: named option %s is not recognized\n", str);
+	      Loc2=Loc;
+	      Scierror("\tpossible options are: ");
+	      for ( j = js ; j  < nargs1 ; j++ ) 
+		{
+		  Loc1 = ((PList) Loc2->O)->next;
+		  Scierror("%s",(char *) Loc1->O);
+		  Loc2 = Loc2->next;
+		  if ( j == nargs1 -1 ) 
+		    Scierror(".\n");
+		  else
+		    Scierror(", ");
+		}
+	      return FAIL;
+	    }
+	}
+    }
+  return OK;
 }
 
 /**
