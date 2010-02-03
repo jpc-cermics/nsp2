@@ -48,7 +48,7 @@ function [varargout] = cov(X, varargin, varargopt)
       xy = %t   
    end
    
-   if numel(vararopt) >= 1 then
+   if numel(varargopt) >= 1 then
       if varargopt.iskey["skip_nan"] then
 	 skip_nan = varargopt.skip_nan
 	 narg_opt = narg_opt+1;
