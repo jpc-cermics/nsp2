@@ -1008,6 +1008,31 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_t_part(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  double nu;
+  int i;
+  if ( rhs != 3 ) 
+    { Scierror("Error: 1 parameter is required for 't' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
+  
+  if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
+
+  if (GetScalarDouble(stack,3,&nu) == FAIL) return RET_BUG;      
+
+  if ( !(nu > 0.0) )
+    { 
+      Scierror("Error: pdf('t',x,nu), invalid parameter: nu should be positive\n"); 
+      return RET_BUG;
+    }
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_pdf_t(x->R[i], nu, 0);
+
+  NSP_OBJECT(x)->ret_pos  = 1;
+  return 1;
+}
+
 
 static OpTab pdf_table[]={
   {"nor", int_nor_part},
@@ -1028,6 +1053,7 @@ static OpTab pdf_table[]={
   {"nbn", int_nbn_part},
   {"bet", int_bet_part},
   {"f", int_f_part},
+  {"t", int_t_part},
   {"hyp", int_hyp_part},
   {(char *) 0, NULL}
 };

@@ -42,7 +42,7 @@ $$
      f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x} \;\mbox{for } x \in \{0,1,\dots,n\}
 $$
 
-\item \itemdesc{negative binomial} \verb!y=pdf("bin",x,r,p)!. Computes
+\item \itemdesc{negative binomial} \verb!y=pdf("nbn",x,r,p)!. Computes
   the negative binomial mass function with parameters $r > 0$ ($r$ not
   necessarily integer) and $p \in [0,1]$:
 $$
@@ -159,6 +159,14 @@ $$
   the tail Rayleigh density with parameters $\sigma > 0$ and $a \ge 0$:
 $$
      f(x; \sigma, a) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x-a)(x+a)/\sigma^2 }, \; \mbox{ for } x \ge a
+$$
+
+
+\item \itemdesc{Student's t} \verb!y=pdf("t",x,nu)! computes
+  the Student's t distribution density with parameter $\nu > 0$
+  (number of dof).
+$$
+    f(x; \nu) = \frac{\Gamma(\frac{\nu+1}{2})}{\sqrt{\nu \pi}\Gamma(\frac{\nu}{2})} \left( 1 + \frac{t^2}{\nu} \right)^{-(\nu+1)/2} 
 $$
 
 
