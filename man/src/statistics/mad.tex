@@ -1,0 +1,75 @@
+\mansection{mad}
+
+\begin{mandesc}
+  \short{mad}{median of absolute deviations around the median or mean of absolute deviations around the mean}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  md = mad(X)
+  md = mad(X, dim=dimarg, skip_nan=b, flag=str)  
+  md = mad(X, dimarg, skip_nan=b, flag=str)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X}: real vector or matrix
+    \vname{dim=dimarg}: a string chosen among \verb+'M'+, \verb+'m'+, \verb+'*'+,\verb+'full'+, \verb+'FULL'+, \verb+'row'+,
+    \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
+    This argument is optional and if omitted 'full' is assumed.
+    \vname{skip_nan=b}: boolean scalar (default is \verb+%f+).
+    \vname{flag=str}: a string among \verb+"median"+ or \verb+"mean"+ or any non ambiguous abbreviation 
+          (default is \verb+"median"+)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+ By default or when \verb+flag="median"+ \verb+mad+ computes the median of the absolute deviations
+around the median of all the elements of \verb+X+, or of each row or each column of \verb+X+ depending upon
+the parameter \verb+dim+.
+
+ When \verb+flag="mean"+  \verb+mad+ computes the mean of the absolute deviations around the
+mean.
+
+ Both mad (median based or mean based) like \manlink{std}{std}, compute a measure 
+of the statistical dispersion of the sample vector $X$ but are less sensible to 
+outliers. 
+
+
+\itemdesc{dim option} 
+  The dim argument (default full) gives the dimension to be used for performing the mad operation:
+  \begin{itemize}
+    \item 'full' or 0: mad of all the elements 
+    \item 'row' or 1: mad of each column (a row vector is returned)
+    \item 'col' or 2: mad of each row (a column vector is returned)
+    \item 'm' (or -2): (for Matlab compatibility) mad along the first non 
+          singleton dimension of the first argument.
+  \end{itemize}
+
+\itemdesc{skip\_nan option}
+   When this option is \verb+%t+,  Nan values (which stand for ``missing or not 
+ available values'') are not taking into account in the computation.
+\end{mandescription}
+%--example 
+\begin{examples}
+\begin{Verbatim}
+// use mad to estimate the std : if X are gaussian random variates
+// then a consistent estimator is mad / cdfnor("X",0,1,3/4,1/4)
+sigma= 2 
+X = grand(1,40,"nor",2,sigma);
+mad(X)/cdfnor("X",0,1,3/4,1/4)
+std(X)
+\end{Verbatim}
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+   \manlink{mean}{mean}, \manlink{var}{var}, \manlink{std}{std}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+ Bruno Pincon
+\end{authors}
