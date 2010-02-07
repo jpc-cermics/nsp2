@@ -939,6 +939,40 @@ static int int_chi_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return RET_BUG;
 }
 
+static int int_t_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *nu;
+  int i=0;
+  if ( rhs != suite) 
+    { Scierror("Error: 1 parameter required for 't' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (nu = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,nu,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( nu->mn == 1 )  /* fixed parameter case */
+    {
+      if ( ! (nu->R[0] > 0) ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i]= nsp_rand_t(nu->R[0]);
+    }
+  else               /* varying parameter case */      
+    for ( i=0 ; i < M->mn ; i++) 
+      {
+	if ( ! (nu->R[i] > 0) ) goto err;
+	M->R[i]= nsp_rand_t(nu->R[i]);
+      }
+  
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+
+ err:
+  Scierror("Error: grand(..'t',nu) : nu (=%g) <= 0.0 \n",nu->R[i]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
 static int int_poi_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
   NspMatrix *M, *mu;
@@ -1810,6 +1844,9 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"logi")==0)
     return int_logistic_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"t")==0)
+    return int_t_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else 
     {

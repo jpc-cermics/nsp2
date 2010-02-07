@@ -221,6 +221,28 @@ double nsp_rand_beta_direct(double a, double b)
 }
 
 /**
+ * nsp_rand_t:
+ * @nu:  parameter of the t distribution
+ * 
+ * generates a random number from t(nu).
+ *
+ * method: page 15 of Luc Devroye,
+ * Non-Uniform Random Variate Generation.  Springer-Verlag,
+ * New York, 1986.
+ * (available at the Luc Devroye 's home page :
+ * http://cg.scs.carleton.ca/~luc/rnbookindex.html)
+ *
+ * Returns: a double
+ **/
+double nsp_rand_t(double nu)
+{
+  double x, y;
+  x = nsp_rand_nor_core();
+  y = 2.0*nsp_rand_gamma_direct(0.5*nu);
+  return x / sqrt( y / nu );
+}
+
+/**
  * nsp_rand_chi2_init:
  * @nu: parameter of the chi2 distribution, number of df
  * @C: a pointer to an allocated #Chi2Struct
