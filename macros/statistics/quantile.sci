@@ -30,8 +30,8 @@ function q = quantile(x, p, dim=0, skip_nan=%f, meth=5, test_arg=%t)
       if ~( is(x,%types.Mat) && isreal(x,%t) ) then
 	 error("Error: first argument should be a real matrix or vector")
       end
-      if ~( is(p,%types.Mat) && isreal(p,%t) && isvector(p) ) then
-	 error("Error: 2d arg of should be a real vector")
+      if ~( is(p,%types.Mat) && isreal(p,%t) && isvector(p) && and(0 <= p && p <= 1)) then
+	 error("Error: 2d arg of should be a real vector with all components in [0,1]")
       end
 
       if ~dim.equal[0] then  // verify dim arg
