@@ -1,0 +1,140 @@
+% -*- mode: latex -*-
+
+\mansection{SpColMat}
+\begin{mandesc}
+  \short{SpColMat}{Sparse matrix data type}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+S = sparse(M)
+S = sparse(ij,v,[mn]);
+S = sp_create(m,n) // or spcol_create(m,n)
+\end{verbatim}
+
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{M}:  full vector or matrix  
+    \vname{ij}: matrix with two columns containing the row and column indices of 
+                non-zeros entries  
+    \vname{v}: vector of the values of nonzeros entries
+    \vname{mn}: vector of two integer values indicating the dimension 
+    \vname{m,n}: scalars numbers of rows and columns
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+The \emph{SpColMat} data type is the basic type for handling sparse matrices. 
+For these matrices, only non-zeros entries are stored in memory, which enables to 
+handle larger-size matrices and reduce complexity on matrices operations (the internal
+loops are done only one non-zeros entries).
+
+Internally a sparse matrix is stored as an array of pointers (on columns) , each containing 
+two arrays : one for the indices and another for the values of the non-zeros entries of
+the column \verb+i+. 
+%For compatibility with matlab, there is also a internal storage format
+%corresponding to the Compressed Row Storage Format (triplet Ax,Ai,Ap, also used by UMFPACK)
+ 
+The functions \verb+sparse+ and \verb+sp_create+ (or  \verb+spcol_create+) lets to create
+sparse matrices:
+\begin{itemize}
+\item \verb+sparse(M)+ builds a sparse matrix from a full one ;
+\item \verb+sparse(ij,v,[mn])+ , probably the most useful form, builds a sparse matrix
+   from the list of its non zeros elements. Note that it is possible to have several equal
+   $(i,j)$ couples of row, column indices. In this case the corresponding values $v$ are 
+   added (this can be useful to build finite element matrix).
+\item \verb+sp_create(m,n)+ simply creates a sparse matrix of size $m \times n$ (without
+   non zero elements).   
+\end{itemize}
+
+\end{mandescription}
+
+\paragraph{Operations on sparse matrices}
+\itemdesc{Methods}
+\begin{itemize}
+\item \verb+S.scale_rows[x]+ multiplies each row i of A with a scalar:
+\item \verb+S.scale_cols[x]+ multiplies each column j of A with a scalar:
+\item \verb+S.get_nnz[]+ returns the number of non zeros entries of \verb+S+ 
+\item \verb+S.set_diag[v[,k]]+ put the \emph{SpColMat} vector $v$ in the diagonal number $k$ of \verb+S+
+ (if the diagonal number $k$ is not given, default is 0, ie the main diagonal, see \manlink{tril}{tril} page).
+
+\end{itemize}
+
+\itemdesc{Operators}
+
+Classical operations such as addition (\verb-A+B-), substraction  (\verb+A-B+), product (\verb+A*B+), 
+element-wise product (\verb+A.*B+), sub-matrix extraction (\verb+A(indi,indj)+), 
+sub-matrix assignment (\verb+A(indi,indj)=B+), right concatenation  (\verb+[A ,B]+), 
+down concatenation  (\verb+[A;B]+),  rows deletion (\verb+A(ind,:)=[]+), columns deletion (\verb+A(:,ind)=[]+), 
+transposition (\verb+A'+ and \verb+A.'+),  system solving (\verb+A\B+) are available. 
+Mixed operations (\verb+A+ sparse and \verb+B+ full or the converse) generally give raise to a 
+full matrix (but there are some exceptions like the element-wise product for which it is natural 
+to get a sparse one). 
+
+\itemdesc{Some functions}
+\begin{itemize}
+   \item \verb+size(S)+ returns in a \verb+1 x 2+ vector the dimensions (nb of rows, nb of columns)
+of \verb+S+. \verb+size(S,1)+ (resp. \verb+size(S,2)+) returns the number of rows 
+(resp. columns) of \verb+S+.
+    \item \verb+nnz(S)+ returns the number of nonzero entries in \verb+S+.
+    \item \verb+M=full(S)+ converts a sparse matrix \verb+S+ to a full matrix \verb+M+ 
+    \item \verb+[I,J,V]=find(S)+ retrieves the \verb+[I,J,V]+ indices triplet 
+corresponding to the nonzero entries of \verb+S+ : i.e., the $i^{\mbox{th}}$ nonzero
+value \verb+V[i]+ has \verb+(I[i],J[i])+ coordinates.
+    \item \verb+[ij,v,mn]=spget(S)+ does the inverse of the call \verb+sparse(ij,v,[mn]);+ 
+    \item \verb+umfpack_create(A)+ computes LU factorizations (see \manlink{umfpack_create}{umfpack_create})
+    \item \verb+cholmod_create(A)+ computes Cholesky or LDLt factorizations (see
+      \manlink{cholmod_create}{cholmod_create})
+\end{itemize}
+
+\itemdesc{Some useful tests}
+\begin{itemize}
+    \item \verb+is(A,%types.SpColMat)+ tests if the argument $A$ is a sparse matrix.
+    \item \verb+isreal(A)+ tests if the sparse matrix $A$ is real or complex (see \manlink{isreal}{isreal})
+    \item \verb+isvector(A)+ tests if the sparse matrix $A$ is a (sparse) vector (see \manlink{isvector}{isvector})
+\end{itemize}
+
+
+\begin{examples}
+\begin{Verbatim}
+//
+A=sparse((1:10)'*[1 1],ones(1,10));
+norm(eye(10,10)-full(A));
+B=sparse(diag(ones(10,1));
+[I,J,V]=find(A);
+[ij,v,mn]=spget(B);
+norm(ij- [I' J'])+norm(V'-v);
+
+// built the 1d discrete laplacian matrix
+n = 10;
+A = sp_create(n,n);
+A.set_diag[sparse(2*ones(n,1))]
+A.set_diag[sparse(-ones(n-1,1)),1]
+A.set_diag[sparse(-ones(n-1,1)),-1]
+// built a random rhs
+b = randn(n,1)
+// solve
+x = A\b
+// compute residual norm
+norm(A*x-b)/norm(b)
+\end{Verbatim}
+\end{examples}
+
+\begin{manseealso}
+\manlink{spones}{spones},
+\manlink{spget}{spget},
+\manlink{full}{full},
+\manlink{sprand}{sprand},
+\manlink{speye}{speye},\manlink{norm}{norm},
+\manlink{diag}{diag},\manlink{tril}{tril},\manlink{triu}{triu},
+\manlink{issymmetric}{issymmetric},\manlink{istriangular}{istriangular},
+\manlink{lower_upper_bandwidths}{lower_upper_bandwidths}
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   Most of the sparse codes by Jean-Philippe Chancelier and a few by Bruno Pincon
+\end{authors}
