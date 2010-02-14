@@ -29,7 +29,7 @@ AC_DEFUN([AC_CHECK_AMD],
  # check amd includes 
  #-------------------
  AC_MSG_CHECKING([for amd include file directory])
- ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
+ ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
  AC_FIND_FILE("amd.h", $ac_amd_includedirs, amd_includedir)
  if test "x${amd_includedir}" != "xNO"; then
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
@@ -45,7 +45,7 @@ AC_DEFUN([AC_CHECK_AMD],
  #-------------------
  amd_library=no
  AC_MSG_CHECKING([amd library presence])
- ac_amd_libdirs="/usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack"
+ ac_amd_libdirs="/usr/lib /usr/local/lib /usr/lib/amd /usr/local/lib/amd /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
  AC_FIND_FILE("libamd.a", $ac_amd_libdirs, ac_amd_libdir)
  if test "x${ac_amd_libdir}" != "x" -a "x${ac_amd_libdir}" != "xNO"; then
   amd_library=$ac_amd_libdir/libamd.a
@@ -80,7 +80,7 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  # check umfpack includes 
  #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
- ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include"
+ ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
  AC_FIND_FILE("umfpack.h", $ac_umf_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
     if test "x${umfpack_includedir}" != "x${amd_includedir}"; then 
@@ -92,7 +92,7 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  #-------------------
  umfpack_library=no
  AC_MSG_CHECKING([umfpack library presence])
- ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack"
+ ac_umfpack_libdirs="/usr/lib /usr/local/lib /usr/lib/umfpack /usr/local/lib/umfpack /opt/local/lib"
  AC_FIND_FILE("libumfpack.a", $ac_umfpack_libdirs, ac_umfpack_libdir)
  if test "x${ac_umfpack_libdir}" != "x" -a "x${ac_umfpack_libdir}" != "xNO"; then
      umfpack_library=$ac_umfpack_libdir/libumfpack.a
