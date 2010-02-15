@@ -15,14 +15,14 @@ S=grand(action [,q1,....,ql])
   %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{m, n}: integers, size of the wanted matrix \verb!Y!
+    \vname{m, n}: integers, size of the wanted matrix \verb!X!
    \vname{Mat}: a matrix whom only the dimensions (say \verb!m x n!) are used
-   \vname{dist\_type}: a string given the distribution which (independants) variates are to be 
-     generated (\verb!"bin"!, \verb!"nor"!, \verb!"poi"!, etc ...)
+   \vname{dist\_type}: a string giving the distribution from which (independants) variates are to be 
+     generated (\verb!"bin"! for binomial, , \verb!"nor"! for normal , \verb!"poi"! for Poisson, etc ...)
    \vname{p1, ..., pk}: the parameters (reals or integers) required to define the distribution 
     \verb!dist_type!
    \vname{X}: the resulting \verb!m x n! random matrix
-   \vname{action}: a string given the action onto the base generator(s) (\verb!"setgen"! to change the current base 
+   \vname{action}: a string giving the action onto the base generator(s) (\verb!"setgen"! to change the current base 
      generator,  \verb!"getgen"! to get the current base generator name, \verb!"getsd"! to get the 
      state (seeds) of the current base generator, etc ...)
    \vname{q1, ..., ql}: the parameters (generally one string) needed to define the action

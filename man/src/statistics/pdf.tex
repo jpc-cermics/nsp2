@@ -12,10 +12,11 @@ y=pdf(dist_type, x [,p1,...,pk])
   %-- Parameters
 \begin{parameters}
   \begin{varlist}
-   \vname{dist\_type}: a string given the probability distribution (\verb!"bin"!, \verb!"nor"!, \verb!"poi"!, etc ...)
+   \vname{dist\_type}: a string giving the probability distribution (\verb!"bin"! for binomial, \verb!"nor"!
+   for normal, \verb!"poi"! for Poisson, etc ...)
     \vname{x}: scalar or vector or matrix with abscissae where the density function must be evaluated
    \vname{p1, ..., pk}: (scalar) parameters (reals or integers) required to define the distribution \verb!dist_type!
-   \vname{y}: values at \verb+x+ of the given density.
+   \vname{y}: values at \verb+x+ of the choosen density.
   \end{varlist}
   \end{parameters}
   
@@ -184,59 +185,63 @@ $$
 \begin{examples}
   
 \paragraph{example 1} draw N(0,1) 
-\begin{program}\HCode{x = linspace(-5,5,200)';\Hnewline
-y = pdf("nor",x,0,1);\Hnewline
-xclear(); plot2d(x,y,style=2);\Hnewline
-xtitle("The N(0,1) density function")}
-\end{program}
+\begin{Verbatim}
+x = linspace(-5,5,200)';
+y = pdf("nor",x,0,1);
+xclear(); plot2d(x,y,style=2);
+xtitle("The N(0,1) density function")
+\end{Verbatim}
   
 \paragraph{example 2} draw Gamma(5,1) empirically (with simulation and
 an histogram) and exactly (with pdf):
-\begin{program}\HCode{// generate a rather big sample of Gamma(5,1) variates\Hnewline
-X = grand(1e7,1,"gam",5,1);\Hnewline
-// draw an histogram using 200 classes\Hnewline
-xclear();histplot(200,X)\Hnewline
-// superpose the exact Gamma (5,1) density\Hnewline
-x = linspace(0,20,200)';\Hnewline
-y = pdf("gam",x,5,1);\Hnewline
-xset("thickness",2);plot2d(x,y,style=3,strf="000");xset("thickness",1)\Hnewline
-xtitle("Gamma (5,1) histogram and density")}
-\end{program}
+\begin{Verbatim}
+// generate a rather big sample of Gamma(5,1) variates
+X = grand(1e7,1,"gam",5,1);
+// draw an histogram using 200 classes
+xclear();histplot(200,X)
+// superpose the exact Gamma (5,1) density
+x = linspace(0,20,200)';
+y = pdf("gam",x,5,1);
+xset("thickness",2);plot2d(x,y,style=3,strf="000");xset("thickness",1)
+xtitle("Gamma (5,1) histogram and density")
+\end{Verbatim}
 
 \paragraph{example 3} using pdf and \verb+grand(..,"disc",..)+ to simulate
 binomial random variates (when many random variates must be generated
 this is faster than using directly \verb+grand(..,"bin",..)+):
-\begin{program}\HCode{// compute B(500,0.3) probabilities\Hnewline
-p = pdf("bin",0:500,500,0.3);\Hnewline
-// now simulate B(500,0.3)\Hnewline
-tic(); X = grand(1e7,1,"disc",p)-1; toc()\Hnewline
-// compare with grand(..,"bin",..)\Hnewline
-tic(); Y = grand(1e7,1,"bin",500,0.3); toc()\Hnewline
-// display histogram for each sample and superpose exact probabilities\Hnewline
-classes = (100:201 - 0.5);\Hnewline
-xclear();\Hnewline
-subplot(1,2,1); histplot(classes,X)\Hnewline
-plot2d2(classes,p(101:201),style=5)\Hnewline
-xtitle("B(500,0.3) with grand(..,""disc"",...)")\Hnewline
-subplot(1,2,2); histplot(classes,Y)\Hnewline
-plot2d2(classes,p(101:201),style=5)\Hnewline
-xtitle("B(500,0.3) with grand(..,""bin"",...)")}
-\end{program}
+\begin{Verbatim}
+// compute B(500,0.3) probabilities
+p = pdf("bin",0:500,500,0.3);
+// now simulate B(500,0.3)
+tic(); X = grand(1e7,1,"disc",p)-1; toc()
+// compare with grand(..,"bin",..)
+tic(); Y = grand(1e7,1,"bin",500,0.3); toc()
+// display histogram for each sample and superpose exact probabilities
+classes = (100:201 - 0.5);
+xclear();
+subplot(1,2,1); histplot(classes,X)
+plot2d2(classes,p(101:201),style=5)
+xtitle("B(500,0.3) with grand(..,""disc"",...)")
+subplot(1,2,2); histplot(classes,Y)
+plot2d2(classes,p(101:201),style=5)
+xtitle("B(500,0.3) with grand(..,""bin"",...)")
+\end{Verbatim}
 
 \paragraph{example 5} using pdf and \verb+grand(..,"disc",..)+ to simulate
 hypergeometric random variates. This is useful as grand doesn't yet
 support direct hypergeometric random generation.
-\begin{program}\HCode{// compute H(600,700,800) probabilities\Hnewline
-p = pdf("hyp",0:600,600,700,800);\Hnewline
-// now simulate \Hnewline
-tic(); X = grand(1e7,1,"disc",p)-1; toc()\Hnewline
-// display histogram and superpose exact probabilities\Hnewline
-classes = (240:321) - 0.5;\Hnewline
-xclear();\Hnewline
-histplot(classes,X)\Hnewline
-plot2d2(classes,p(241:322),style=5)\Hnewline
-xtitle("H(600,700,800) with grand(..,""disc"",...)")}
-\end{program}
+\begin{Verbatim}
+// compute H(600,700,800) probabilities
+p = pdf("hyp",0:600,600,700,800);
+// now simulate 
+tic(); X = grand(1e7,1,"disc",p)-1; toc()
+// display histogram and superpose exact probabilities
+classes = (240:321) - 0.5;
+xclear();
+histplot(classes,X)
+plot2d2(classes,p(241:322),style=5)
+xtitle("H(600,700,800) with grand(..,""disc"",...)")
+\end{Verbatim}
 
 \end{examples}
 
