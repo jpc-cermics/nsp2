@@ -756,22 +756,18 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
 
 int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
 {
-  int i,j;
-  int imin,imax,isize;
+  int i, ind, mn = Diag->mn;
+  int imin, imax, dsize, ind_start;
   imin = Max(0,-k);
-  imax = Min(A->m,A->n -k );
-  isize = imax-imin ;
+  imax = Min(A->m,A->n -k );  /* imax plus 1 in fact */
+  dsize = imax-imin ;
 
-  if ( isize > Diag->mn ) 
+  if ( dsize <= 0 || (mn != 1 && dsize != mn)  ) 
     {
-      Scierror("Error:\tGiven vector is too small\n");
-      return(FAIL);
+      Scierror("Error:\tdiagonal number and/or vector size not compatible with given matrix\n");
+      return FAIL;
     }
-  if ( isize < Diag->mn ) 
-    {
-      imax = Diag->mn +imin;
-      if ( nsp_imatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
-    }
+  ind_start = imin + (imin+k)*A->m;
 
   if ( Diag->eltsize > A->eltsize) 
     {
@@ -779,9 +775,16 @@ int nsp_imatrix_set_diag(NspIMatrix *A, NspIMatrix *Diag, int k)
 	return FAIL;
     }
 
-  j=0;
-  NSP_COPY_ITYPES(for ( i = imin ; i < imax ; i++ ),A,i+(i+k)*A->m,Diag->Iv,Diag->itype,j++);
-  return(OK);
+  if ( mn == 1 )   /* a scalar is given to fill the diagonal */
+    { 
+      NSP_COPY_ITYPES(for (i=0,ind=ind_start;i<dsize;i++,ind+=1+A->m),A,ind,Diag->Iv,Diag->itype,0);
+    }
+  else             /* a vector is given to fill the diagonal */
+    {
+      NSP_COPY_ITYPES(for (i=0,ind=ind_start;i<dsize;i++,ind+=1+A->m),A,ind,Diag->Iv,Diag->itype,i);
+    }
+
+  return OK;
 }
 
 

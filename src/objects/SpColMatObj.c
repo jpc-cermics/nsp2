@@ -429,16 +429,22 @@ static int int_meth_spcolmatrix_get_nnz(void *self, Stack stack,int rhs,int opt,
 
 static int int_meth_spcolmatrix_set_diag(void *self, Stack stack,int rhs,int opt,int lhs)
 {
-  NspSpColMatrix *Diag;
+  NspObject *ODiag;
   int k=0;
   CheckRhs (1,2);
   CheckLhs (0,0); 
-  if ((Diag = GetSpCol(stack, 1)) == NULLSPCOL)   return RET_BUG;
+  if ((ODiag = nsp_get_object(stack, 1)) == NULLOBJ)   return RET_BUG;
+  if ( ! ( IsSpColMat(ODiag) || IsMat(ODiag) ) )
+    {
+      Scierror("%s: first argument should be a sparse or full matrix/vector \n",NspFname(stack));
+      return RET_BUG;
+    }
+
   if ( rhs == 2 )
     {
       if (GetScalarInt (stack,2 , &k) == FAIL)   return RET_BUG;
     }
-  if (nsp_spcolmatrix_set_diag ((NspSpColMatrix *) self, Diag, k) != OK)
+  if (nsp_spcolmatrix_set_diag ((NspSpColMatrix *) self, ODiag, k) != OK)
     return RET_BUG;
   return 0;
 }
@@ -464,7 +470,7 @@ typedef int (*SpC) (NspSpColMatrix *A,NspSpColMatrix *B);
 
 /*
  * Creation of a Sparse Matrix 
- * returns NULLSPCOLon failure 
+ * returns NULLSPCOL on failure 
  * The matrix is created with no initial value 
  */
 

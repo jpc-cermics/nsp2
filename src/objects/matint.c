@@ -3928,7 +3928,7 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
   NspSMatrix *A = (NspSMatrix *) ObjA, *Diag = (NspSMatrix *) ObjB;
   char *to, *from;
   int i,j;
-  int imin,imax,isize;
+  int imin,imax,dsize;
   NspTypeBase *typeA, *typeB; 
   unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
 
@@ -3949,18 +3949,12 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
   
   imin = Max(0,-k);
   imax = Min(A->m,A->n -k );
-  isize = imax-imin ;
+  dsize = imax-imin ;
 
-  if ( isize > Diag->mn ) 
+  if ( dsize <= 0 || (Diag->mn != 1 && dsize != Diag->mn)  ) 
     {
-      Scierror("Error:\tGiven diagonal vector is too small \n");
-      return(FAIL);
-    }
-  if ( isize < Diag->mn ) 
-    {
-      imax = Diag->mn +imin;
-      if ( MAT_INT(typeA)->enlarge(ObjA,imax,imax+k) == FAIL )
-	return FAIL;
+      Scierror("Error:\tdiagonal number and/or vector size not compatible with given matrix\n");
+      return FAIL;
     }
 
   to = (char *) A->S; from = (char *) Diag->S;
@@ -3983,10 +3977,17 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
 	}
       else
 	{
-	  j=0;
-	  for ( i = imin ; i < imax ; i++ ) 
-	    memcpy(((NspBMatrix *)A)->B+ (i+(i+k)*A->m)*elt_size_A, 
-		   ((NspBMatrix *) Diag)->B + (j++)*elt_size_A,elt_size_A );
+	  int ind;
+	  if ( Diag->mn != 1 )    /* diag k set with a vector */
+	    {
+	      for ( i = 0, ind = imin + (imin+k)*A->m ; i < dsize ; i++, ind+=A->m+1 ) 
+		memcpy(to + ind*elt_size_A, from + i*elt_size_A, elt_size_A);
+	    }
+	  else                    /* diag k set with a scalar */
+	    {
+	      for ( i = 0, ind = imin + (imin+k)*A->m ; i < dsize ; i++, ind+=A->m+1 ) 
+		memcpy(to + ind*elt_size_A, from, elt_size_A);
+	    }
 	}
     }
   else
@@ -3998,8 +3999,9 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
 	  if (fromv[j] != NULL) 
 	    {
 	      MAT_INT(typeA)->free_elt( (void **) (tov +i+(i+k)*A->m ) ); 
-	      if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[j++])) == NULL ) return FAIL;
+	      if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[j])) == NULL ) return FAIL;
 	      tov[i+(i+k)*A->m] = elt;
+	      if ( Diag->mn != 1 ) j++;
 	    }
 	  else 
 	    {

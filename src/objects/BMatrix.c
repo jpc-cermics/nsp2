@@ -699,26 +699,28 @@ NspBMatrix  *nsp_bmatrix_extract_diag(NspBMatrix *A, int k)
 
 int nsp_bmatrix_set_diag(NspBMatrix *A, NspBMatrix *Diag, int k)
 {
-  int i,j;
-  int imin,imax,isize;
-  imin = Max(0,-k);
-  imax = Min(A->m,A->n -k );
-  isize = imax-imin ;
-  if ( isize > Diag->mn ) 
-    {
-      Scierror("Error:\tGiven vector is too small\n");
-      return(FAIL);
-    }
-  if ( isize < Diag->mn ) 
-    {
-      imax = Diag->mn +imin;
-      if (nsp_bmatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
-    }
-  j=0;
-  for ( i = imin ; i < imax ; i++ ) 
-    A->B[i+(i+k)*A->m] = Diag->B[j++] ;
+  int i, ind, mn = Diag->mn;
+  int imin, imax, dsize, ind_start;
 
-  return(OK);
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n-k);   /* imax plus 1 in fact */
+  dsize = imax-imin ;
+
+  if ( dsize <= 0 || (mn != 1 && dsize != mn)  ) 
+    {
+      Scierror("Error:\tdiagonal number and/or vector size not compatible with given matrix\n");
+      return FAIL;
+    }
+  ind_start = imin + (imin+k)*A->m;
+
+  if ( mn == 1 )  /* a scalar is given to fill the diagonal */
+    for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+      A->B[ind] = Diag->B[0];
+  else            /* a vector is given to fill the diagonal */
+    for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+      A->B[ind] = Diag->B[i];
+
+  return OK;
 }
 
 /**

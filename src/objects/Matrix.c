@@ -1318,50 +1318,71 @@ NspMatrix *nsp_matrix_extract_diag(const NspMatrix *A, int k)
 
 int nsp_matrix_set_diag(NspMatrix *A, NspMatrix *Diag, int k)
 {
-  int i,j;
-  int imin,imax,isize;
+  int ind, i, mn = Diag->mn ;
+  int imin, imax, dsize, ind_start;
+  
   imin = Max(0,-k);
-  imax = Min(A->m,A->n -k );
-  isize = imax-imin ;
-  if ( isize > Diag->mn ) 
+  imax =  Min(A->m, A->n-k);   /* imax plus 1 in fact */
+  dsize = imax-imin;
+  if ( dsize <= 0 || (mn != 1 && dsize != mn)  ) 
     {
-      Scierror("Error:\tGiven vector is too small\n");
-      return(FAIL);
+      Scierror("Error:\tdiagonal number and/or vector size not compatible with given matrix\n");
+      return FAIL;
     }
-  if ( isize < Diag->mn ) 
-    {
-      imax = Diag->mn +imin;
-      if ( nsp_matrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
-    }
-  j=0;
+  ind_start = imin + (imin+k)*A->m;
 
   if ( Diag->rc_type == 'r' ) 
     {
       if ( A->rc_type == 'r' ) 
 	{
-	  for ( i = imin ; i < imax ; i++ ) 
-	    A->R[i+(i+k)*A->m] = Diag->R[j++] ;
+	  if ( mn == 1 )  /* a scalar is given to fill the diagonal */
+	    for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+	      A->R[ind] = Diag->R[0] ;
+	  else            /* a vector is given to fill the diagonal */
+	    for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m )
+	      A->R[ind] = Diag->R[i] ;
 	}
       else 
 	{
-	  for ( i = imin ; i < imax ; i++ ) 
-	    {
-	      A->C[i+(i+k)*A->m].r = Diag->R[j++] ;
-	      A->C[i+(i+k)*A->m].i = 0.00;
-	    }
+	  if ( mn == 1 )  /* a scalar is given to fill the diagonal */
+	    for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+	      {
+		A->C[ind].r = Diag->R[0] ;
+		A->C[ind].i = 0.0 ;
+	      }
+	  else            /* a vector is given to fill the diagonal */
+	    for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+	      { 
+		A->C[ind].r = Diag->R[i] ;
+		A->C[ind].i = 0.0 ;
+	      }
 	}
     }
   else 
     {
       if ( A->rc_type == 'r' ) 
-	if (nsp_mat_complexify(A,0.00) == FAIL ) return(FAIL);
-      for ( i = imin ; i < imax ; i++ ) 
+	if ( nsp_mat_complexify(A,0.0) == FAIL ) 
+	  return FAIL;
+
+      if ( mn == 1 )  /* a scalar is given to fill the diagonal */
 	{
-	  A->C[i+(i+k)*A->m].r = Diag->C[j].r ;
-	  A->C[i+(i+k)*A->m].i = Diag->C[j++].i ;
+	  for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+	    {
+	      A->C[ind].r = Diag->C[0].r ;
+	      A->C[ind].i = Diag->C[0].i ;
+	    }
+	}
+      else            /* a vector is given to fill the diagonal */
+	{
+	  for ( i = 0, ind = ind_start ; i < dsize ; i++, ind += 1+A->m ) 
+	    {
+	      A->C[ind].r = Diag->C[i].r ;
+	      A->C[ind].i = Diag->C[i].i ;
+	    }
 	}
     }
-  return(OK);
+
+  return OK;
 }
 
 

@@ -2083,43 +2083,77 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
  * @k: an integer 
  * 
  * sets the @k-th diagonal of @A to @Diag 
- * @A is enlarged and complexified if necessary 
+ * @A is complexified if necessary 
  * 
  * Return value: %OK or %FAIL
  **/
 
-int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
+/*   adapted by bruno ( 19 fev 2010) such that the diagonal elements can be 
+ *   specified also with a full matrix (and also simply by a scalar)
+ */
+int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspObject *ODiag, int k)
 {
-  int i,l;
-  int rmin,cmin,rmax,cmax,itmax;
-  /*ZZZ */
+  int i,l, ii;
+  int rmin,cmin,dsize, mn;
+  NspSpColMatrix *Diag = (NspSpColMatrix*) ODiag;
+  NspMatrix *FDiag = (NspMatrix *) ODiag; 
+  Boolean diag_is_sparse = IsSpColMat(ODiag), diag_is_scalar;
+  char diag_rc_type;
+
   rmin = Max(0,-k);
   cmin = Max(0,k);
-  rmax = Diag->m*Diag->n + Max(0,-k);
-  cmax = Diag->m*Diag->n + Max(0,k);
-  itmax = Min(A->m-rmin,A->n -cmin );
-  if ( itmax != Diag->m*Diag->n ) 
+  if ( diag_is_sparse )
     {
-      Scierror("Error: the given diag vector should be of size %d\n",itmax);
+      diag_rc_type = Diag->rc_type;
+      mn = Diag->m*Diag->n;
+    }
+  else
+    {
+      diag_rc_type = FDiag->rc_type;
+      mn = FDiag->mn;
+    }
+
+  dsize = Min(A->m-rmin,A->n -cmin );
+  diag_is_scalar = mn == 1;
+  if ( dsize <= 0 || (!diag_is_scalar  &&  dsize != mn) ) 
+    {
+      Scierror("Error:\tdiagonal number and/or vector size not compatible with given matrix\n");
       return(FAIL);
     }
-  if ( Diag->rc_type == 'c' && A->rc_type == 'r' ) 
-    if (nsp_spcolmatrix_complexify(A) == FAIL ) return(FAIL);
 
-  for ( i = 0 ; i < itmax ; i++ ) 
+  if ( diag_rc_type == 'c' && A->rc_type == 'r' ) 
+    if ( nsp_spcolmatrix_complexify(A) == FAIL ) return(FAIL);
+
+  for ( i = 0, ii = 0 ; i < dsize ; i++ ) 
     {
       int rep ;
       double val=0.0;
       doubleC cval={0.0,0.0};
+
       /* get next element to be inserted */
-      rep = GetDiagVal(Diag,i,&val,&cval);
-      if ( rep  == OK  ) 
+      if ( diag_is_sparse )
+	rep = GetDiagVal(Diag,ii,&val,&cval);
+      else
 	{
-	  /* element in Diag is not null */
+	  if ( diag_rc_type == 'r' ) 
+	    { 
+	      val = FDiag->R[ii]; 
+	      rep = val != 0.0 ? OK : FAIL;
+	    }
+	  else
+	    { 
+	      cval = FDiag->C[ii]; 
+	      rep = cval.r != 0.0 || cval.i != 0.0 ? OK : FAIL; 
+	    }
+	}
+      if ( ! diag_is_scalar ) ii++;
+
+      if ( rep  == OK  )    /* element to be inserted is not null */
+	{
 	  SpCol *Ai= A->D[cmin+i];
 	  int ok = 0,row=-1;
 	  /* element is to be inserted at position (rmin+i,cmin+i) */
-	  /* chek is already present */
+	  /* check if there is already a non zero element present */
 	  for ( l = 0 ; l < Ai->size ; l++)
 	    {
 	      if ( Ai->J[l] == rmin+i ) 
@@ -2139,14 +2173,11 @@ int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
 	      /* Move data right */
 	      if ( row != -1 ) 
 		{
-		  for ( l = Ai->size -2 ; l >= row ; l--) 
-		    {
-		      Ai->J[l+1] = Ai->J[l]; 
-		      if ( A->rc_type == 'r' ) 
-			Ai->R[l+1] = Ai->R[l]; 
-		      else 
-			Ai->C[l+1] = Ai->C[l]; 
-		    }
+		  memmove(&Ai->J[row+1], &Ai->J[row], (Ai->size-1-row)*sizeof(int));
+		  if ( A->rc_type == 'r') 
+		    memmove(&Ai->R[row+1], &Ai->R[row], (Ai->size-1-row)*sizeof(double));
+		  else
+		    memmove(&Ai->C[row+1], &Ai->C[row], (Ai->size-1-row)*sizeof(doubleC));
 		}
 	      else 
 		{
@@ -2162,23 +2193,20 @@ int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
 	    }
 	  else
 	    {
-	      if ( Diag->rc_type == 'r') 
+	      if ( diag_rc_type == 'r') 
 		{
-		  Ai->C[row].r  = val ;
-		  Ai->C[row].i  = 0.0 ;
+		  Ai->C[row].r  = val ; Ai->C[row].i  = 0.0 ;
 		}
 	      else 
 		Ai->C[row]  = cval;
 	    }
 	}
-      else 
+      else                      /*  element to insert is a zero  */ 
 	{
-	  /* element in Diag is null 
-	   */
 	  SpCol *Ai= A->D[cmin+i];
 	  int ok = 0,tag=-1;
 	  /* element is to be inserted at position (rmin+i,cmin+i) */
-	  /* chek is already present */
+	  /* check if there is already a non zero element present  */
 	  for ( l = 0 ; l < Ai->size ; l++)
 	    {
 	      if ( Ai->J[l] == rmin+i ) 
@@ -2192,19 +2220,15 @@ int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspSpColMatrix *Diag, int k)
 	    }
 	  if ( ok == 1) 
 	    {
-	      /* element was present and we want to set it to zero 
-	       * thus we must supress it 
-	       */
-	      /* XXXXX faire des memmove */
-	      for ( l = tag  ; l < Ai->size -1 ; l++)
-		{
-		  Ai->J[l]= Ai->J[l+1];
-		  if ( A->rc_type == 'r') 
-		    Ai->R[l] = Ai->R[l+1];
-		  else 
-		    Ai->C[l] = Ai->C[l+1];
-		}
-	      if (nsp_spcolmatrix_resize_col(A,cmin+i,Ai->size-1)==FAIL) 
+	      /*  such an element was present and we want to set   */ 
+	      /*  it to zero thus we must supress it               */ 
+	      memmove(&Ai->J[tag], &Ai->J[tag+1], (Ai->size-1-tag)*sizeof(int));
+	      if ( A->rc_type == 'r') 
+		memmove(&Ai->R[tag], &Ai->R[tag+1], (Ai->size-1-tag)*sizeof(double));
+	      else
+		memmove(&Ai->C[tag], &Ai->C[tag+1], (Ai->size-1-tag)*sizeof(doubleC));
+
+	      if ( nsp_spcolmatrix_resize_col(A,cmin+i,Ai->size-1) == FAIL ) 
 		return FAIL;
 	    }
 	}
