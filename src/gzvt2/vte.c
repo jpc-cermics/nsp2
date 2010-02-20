@@ -657,7 +657,6 @@ main(int argc, char **argv)
 
   gtk_init(&argc, &argv);
   gdk_window_set_debug_updates(debug);
-
   /* Create a window to hold the scrolling shell, and hook its
    * delete event to the quit function.. */
   window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -815,6 +814,8 @@ main(int argc, char **argv)
   /* Go for it! */
   g_object_add_weak_pointer(G_OBJECT(widget), (gpointer*)&widget);
   g_object_add_weak_pointer(G_OBJECT(window), (gpointer*)&window);
+
+  gtk_widget_realize(widget);
   gtk_widget_show_all(window);
   /* need show all before getting the socket id */
   sprintf(buf,"SCIWIN=%ld",GDK_WINDOW_XWINDOW(socket_button->window));
