@@ -928,7 +928,33 @@ static int func_force_next_char(Tokenizer *T)
 
 static int ignore_white_spaces(Tokenizer *T)
 {
-  while ( T->tokenv.NextC == ' ' || T->tokenv.NextC == '\t' ) T->GetChar(T);
+  while ( 1)
+    {
+      if ( T->tokenv.NextC == ' ' || T->tokenv.NextC == '\t' ) 
+	{
+	  T->GetChar(T);
+	}
+      else if ( (unsigned char) T->tokenv.NextC == 194 )
+	{
+	  /* 194,160 is the utf8 code of &nbsp, which 
+	   * is considered as a white space 
+	   */
+	  T->GetChar(T);
+	  if  ( (unsigned char) T->tokenv.NextC == 160 )
+	    {
+	      T->GetChar(T);
+	    }
+	  else
+	    {
+	      T->backch(T);
+	      return 0;
+	    }
+	}
+      else 
+	{
+	  return 0;
+	}
+    }
   return 0;
 }
 
