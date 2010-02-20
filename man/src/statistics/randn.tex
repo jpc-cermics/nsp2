@@ -1,0 +1,58 @@
+% -*- mode: latex -*-
+\mansection{randn}
+\begin{mandesc}
+  \short{randn}{generates random variates from the normal distribution}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+X = randn()     // output only one random number 
+X = randn(m, n)
+X = randn(Mat)
+\end{verbatim}
+\end{calling_sequence}
+  %-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m, n}: integers, size of the wanted matrix \verb!X!
+   \vname{Mat}: a matrix whom only the dimensions (say \verb!m x n!) are used
+   \vname{X}: the resulting \verb!m x n! random matrix
+  \end{varlist}
+  \end{parameters}
+  
+\begin{mandescription}
+  This function generates random variates from the  \hyperlink{norpdf}{normal distribution} with
+ mean 0 and standard deviation 1. It is a shortcut for \verb+grand(m,n,"nor",0,1)+.
+  The first calling sequence \verb+randn()+ returns only one random number. The
+ third calling sequence \verb+randn(Mat)+ is equivalent to the second  
+ \verb+randn(m,n)+ with the dimensions $m$ and $n$ from the matrix $Mat$.
+
+  The internal code uses the ziggurat rejection method as explained in "Marsaglia 
+G and WW Tsang, The Ziggurat Method for Generating Random Variables, Journal of Statistical 
+ Software, vol. 5 (2000), no. 8"
+ 
+\end{mandescription}
+
+%-- see also
+%--example 
+\begin{examples}
+\begin{Verbatim}
+n = 50000;
+X = randn(n,1);  // a sample from N(0,1)
+
+// draw an histogram
+xbasc()
+histplot(20,X)
+// superpose the normal density
+x = linspace(-4,4,200)';
+y = pdf("nor",x,0,1);
+plot2d(x,y,style=5)
+\end{Verbatim}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{grand}{grand}, \manlink{pdf}{pdf}   
+\end{manseealso}
+
+
+
