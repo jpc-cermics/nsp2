@@ -15,8 +15,8 @@
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{X}:  matrix or vector of real numbers or strings.
-    \vname{v}: vector of real numbers or strings in strict
+    \vname{X}:  matrix or vector of real numbers (Mat) or integers (IMat) or strings (SMat).
+    \vname{v}: vector of real numbers, or integers, or strings in strict
     increasing order  $v_1 <  v_2 < ... v_n$ with $n \ge 2$ 
     when  \verb+match="i"+
     \vname{match=str1}: optional named argument, \verb+match="i"+
@@ -32,7 +32,8 @@
                               that \verb+v+ is strictly ordered or to
                               use bsearch with a \verb+v+ which is
                               only sorted (that is with redundant elements).  
-    \vname{ind_type = str3}: named optional argument, a string given the type for the index vector ind (default is \verb+"double"+)
+    \vname{ind_type = str3}: named optional argument, a string given the type for the index vector ind 
+                             (default is \verb+"double"+)
     \vname{ind}: matrix or vector of indices with same dimensions than X.
     \vname{occ}: vector of same length than v (but with $n-1$ components 
                   when  \verb+match="i"+)
