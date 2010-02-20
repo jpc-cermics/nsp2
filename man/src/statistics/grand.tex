@@ -60,68 +60,59 @@ S=grand(action [,q1,....,ql])
 
 \begin{itemize}
 \item \itemdesc{beta} \verb!X=grand(m,n,"bet",a,b)! generates random variates from 
-  the beta distribution with parameters $a$ and $b$ (positive reals).
-%  Related function(s) : \manlink{cdfbet}{cdfbet} .
+  the \hyperlink{betapdf}{beta distribution} with parameters $a$ and $b$ (positive reals).
 
 \item \itemdesc{binomial} 
-  \verb!X=grand(m,n,"bin",n,p)!  generates random variates from the binomial 
-  distribution with parameters $n$ (positive integer) and $p$
+  \verb!X=grand(m,n,"bin",n,p)!  generates random variates from the \hyperlink{binpdf}{binomial 
+  distribution} with parameters $n$ (positive integer) and $p$
   (real in [0,1]).
-%  Related function(s) : \manlink{binomial}{binomial} , \manlink{cdfbin}{cdfbin} .
 
 \item \itemdesc{negative binomial} 
-  \verb!X=grand(m,n,"nbn",r,p)! generates random variates from the negative binomial 
-  distribution with parameters $r$ (positive real) and $p$ (real 
+  \verb!X=grand(m,n,"nbn",r,p)! generates random variates from the \hyperlink{nbnpdf}{negative binomial 
+  distribution} with parameters $r$ (positive real) and $p$ (real 
   in $(0,1]$).
-%  Related function(s) : \manlink{cdfnbn}{cdfnbn} .
   
 \item \itemdesc{Cauchy} 
-  \verb!X=grand(m,n,"cauchy", sigma)! generates random variates from the Cauchy distribution 
+  \verb!X=grand(m,n,"cauchy", sigma)! generates random variates from the  \hyperlink{caupdf}{Cauchy distribution} 
   with (scale) parameter $sigma$ (positive real).
   
 \item \itemdesc{chi square} 
-  \verb!X=grand(m,n,"chi", nu)! generates random variates from the chisquare distribution 
+  \verb!X=grand(m,n,"chi", nu)! generates random variates from the  \hyperlink{chipdf}{chisquare distribution} 
   with $nu$ (positive real) degrees of freedom. 
-%  Related function(s) : \manlink{cdfchi}{cdfchi} .  
   
 \item \itemdesc{non central chisquare} 
   \verb!X=grand(m,n,"nch",nu,xnonc)! generates random variates from the non central chisquare
   distribution with $nu$ degrees of freedom (real $\ge 1$) and
   noncentrality parameter $xnonc$ (non negative real).
-%  Related function(s) : \manlink{cdfchn}{cdfchn} .
   
-\item \itemdesc{exponential} \verb!X=grand(m,n,"exp",tau)! generates random variates from the exponential
-  distribution with mean $\tau$ (non negative real). Caution : usually
+\item \itemdesc{exponential} \verb!X=grand(m,n,"exp",tau)! generates random variates from the  \hyperlink{exppdf}{exponential
+  distribution} with mean $\tau$ (non negative real). Caution : usually
   the exponential distribution 's parameter is $\lambda= 1/\tau$.  
   
 \item \itemdesc{F variance ratio} 
-  \verb!X=grand(m,n,"f",nu1,nu2)! generates random variates from the F 
-  (variance ratio) distribution with $nu1$ (positive real)
+  \verb!X=grand(m,n,"f",nu1,nu2)! generates random variates from the \hyperlink{fpdf}{F 
+  (variance ratio) distribution} with $nu1$ (positive real)
   degrees of freedom in the numerator and $nu2$ (positive real) 
   degrees of freedom in the denominator. 
-% Related function(s) : \manlink{cdff}{cdff} .
   
 \item \itemdesc{non central F variance ratio} 
   \verb!X=grand(m,n,"nf",nu1,nu2,xnonc)! generates random variates from the noncentral 
   F (variance ratio)  distribution with $nu1$ (real $\ge 1$) degrees of freedom 
   in the numerator, and $nu2$ (positive real) degrees of freedom in the denominator, 
   and noncentrality parameter $xnonc$ (non negative real). 
-%  Related function(s) : \manlink{cdffnc}{cdffnc} .
   
-\item \itemdesc{gamma} \verb!X=grand(m,n,"gam",a,b)! generates random variates from the gamma 
-  distribution with shape parameter $a$ (positive real) and rate
+\item \itemdesc{gamma} \verb!X=grand(m,n,"gam",a,b)! generates random variates from the  \hyperlink{gampdf}{gamma 
+  distribution} with shape parameter $a$ (positive real) and rate
   parameter $b$ (positive real). Caution: often the second parameter
   is the ``scale'', the inverse of the ``rate''.  
-%  Related function(s) : \manlink{gamma}{gamma} , \manlink{cdfgam}{cdfgam} .
   
 \item \itemdesc{Gauss Laplace (normal)} 
-  \verb!X=grand(m,n,"nor",mu,sigma)! generates random variates from the normal 
-  distribution with mean $\mu$ (real)  and standard deviation $\sigma$
+  \verb!X=grand(m,n,"nor",mu,sigma)! generates random variates from the \hyperlink{norpdf}{normal 
+  distribution} with mean $\mu$ (real)  and standard deviation $\sigma$
   (non negative real). 
-% Related function(s) : \manlink{cdfnor}{cdfnor} .
   
-\item \itemdesc{geometric} \verb!X=grand(m,n,"geom", p)! generates random variates from the geometric
-  distribution with parameter $p$ (real in $(0,1]$): number of Bernoulli trials (with 
+\item \itemdesc{geometric} \verb!X=grand(m,n,"geom", p)! generates random variates from the \hyperlink{geompdf}{geometric
+  distribution} with parameter $p$ (real in $(0,1]$): number of Bernoulli trials (with 
   probability succes of $p$) until a succes is met.
 
 \item \itemdesc{finite discrete distributions} 
@@ -136,36 +127,36 @@ S=grand(action [,q1,....,ql])
   \verb!ind=grand(m,n,"disc",P); X = val(ind); X.redim[m,n]!. 
   
 \item \itemdesc{Laplace} 
-  \verb!X=grand(m,n,"lap",a)! generates random variates from the Laplace 
-  distribution with (scale) parameter $a$ (positive real).
+  \verb!X=grand(m,n,"lap",a)! generates random variates from the \hyperlink{lappdf}{Laplace 
+  distribution} with (scale) parameter $a$ (positive real).
   
 \item \itemdesc{logistic} 
-  \verb!X=grand(m,n,"logi",a)! generates random variates from the logistic 
-  distribution with (location) parameter $a$ (real) and (scale) parameter $b$ (positive real).
+  \verb!X=grand(m,n,"logi",a)! generates random variates from the \hyperlink{logipdf}{logistic 
+  distribution} with (location) parameter $a$ (real) and (scale) parameter $b$ (positive real).
   
 \item \itemdesc{log normal} 
-  \verb!X=grand(m,n,"logn",mu,sigma)! generates random variates from the log normal
-  distribution with parameter $\mu$ (real) and  $\sigma$ (non negative real).
+  \verb!X=grand(m,n,"logn",mu,sigma)! generates random variates from the  \hyperlink{lognpdf}{log normal
+  distribution} with parameter $\mu$ (real) and  $\sigma$ (non negative real).
   
 \item \itemdesc{Pareto} 
-  \verb!X=grand(m,n,"par",a,b)! generates random variates from the Pareto 
-  distribution with (shape) parameter $a$ (positive real) and (location) parameter $b$ (positive real).
+  \verb!X=grand(m,n,"par",a,b)! generates random variates from the  \hyperlink{parpdf}{Pareto 
+  distribution} with (shape) parameter $a$ (positive real) and (location) parameter $b$ (positive real).
 
 \item \itemdesc{Poisson} \verb!X=grand(m,n,"poi",mu)! generates random
-  variates from the Poisson distribution with parameter $\mu$. 
+  variates from the \hyperlink{poipdf}{Poisson distribution} with parameter $\mu$. 
   
 \item \itemdesc{Rayleigh} 
-  \verb!X=grand(m,n,"ray",sigma)! generates random variates from the Rayleigh 
-  distribution with (scale) parameter $\sigma$ (positive real).
+  \verb!X=grand(m,n,"ray",sigma)! generates random variates from the  \hyperlink{raypdf}{Rayleigh 
+  distribution} with (scale) parameter $\sigma$ (positive real).
   
 \item \itemdesc{tail Rayleigh} 
   \verb!X=grand(m,n,"tray",a, sigma)! generates random variates from the
-  tail (from $a$) of the Rayleigh distribution with (scale) parameter 
+  \hyperlink{traypdf}{tail (from $a$) of the Rayleigh distribution} with (scale) parameter 
   $\sigma$ (positive real). The (tail) parameter $a$ must be a non negative
   real (for $a=0$ we have the original Rayleigh distribution).
 
 \item \itemdesc{Student's t} 
-  \verb!X=grand(m,n,"t", nu)! generates random variates from the t distribution 
+  \verb!X=grand(m,n,"t", nu)! generates random variates from the  \hyperlink{tpdf}{t distribution} 
   with $nu$ (positive real) degrees of freedom. 
 
 \item \itemdesc{uniform (def)} \verb!X=grand(m,n,"def")! generates random variates from the uniform 
@@ -190,8 +181,8 @@ S=grand(action [,q1,....,ql])
       distributed over $[0,255]$.
   
 \item \itemdesc{Weibull} 
-  \verb!X=grand(m,n,"wei",a,b)! generates random variates from the Weibull 
-  distribution with (scale) parameter $a$ (positive real) and (shape) parameter $b$ (positive real).
+  \verb!X=grand(m,n,"wei",a,b)! generates random variates from the  \hyperlink{weipdf}{Weibull 
+  distribution} with (scale) parameter $a$ (positive real) and (shape) parameter $b$ (positive real).
 \end{itemize}
 
 \item[multivariate distributions]

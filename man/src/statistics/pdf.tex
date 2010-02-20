@@ -28,7 +28,7 @@ y=pdf(dist_type, x [,p1,...,pk])
   function are supported. 
 \begin{itemize}
 
-\item \itemdesc{beta} \verb!y=pdf("bet",x,a,b)! computes the beta
+\item \itemdesc{\hypertarget{betapdf}{beta}}  \verb!y=pdf("bet",x,a,b)! computes the beta
   density with parameters $a > 0$ and $b > 0$:
 $$
      f(x; a, b) =
@@ -36,14 +36,14 @@ $$
         \mbox{for } x \in (0,1)
 $$
 
-\item \itemdesc{binomial} \verb!y=pdf("bin",x,n,p)!. Computes
+\item \itemdesc{\hypertarget{binpdf}{binomial}} \verb!y=pdf("bin",x,n,p)!. Computes
   the binomial mass function with parameters $p \in [0,1]$ and $n$
   (positive integer):
 $$
      f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x} \;\mbox{for } x \in \{0,1,\dots,n\}
 $$
 
-\item \itemdesc{negative binomial} \verb!y=pdf("nbn",x,r,p)!. Computes
+\item \itemdesc{\hypertarget{nbnpdf}{negative binomial}} \verb!y=pdf("nbn",x,r,p)!. Computes
   the negative binomial mass function with parameters $r > 0$ ($r$ not
   necessarily integer) and $p \in [0,1]$:
 $$
@@ -51,21 +51,21 @@ $$
 $$
 
 
-\item \itemdesc{Cauchy} \verb!y=pdf("cau",x,sigma)! computes the Cauchy
+\item \itemdesc{\hypertarget{caupdf}{Cauchy}} \verb!y=pdf("cau",x,sigma)! computes the Cauchy
   density with parameter $\sigma > 0$:
 $$
      f(x; \sigma) = \frac{ \sigma }{ \pi ( x^2 + \sigma^2 ) }
 $$
 
 
-\item \itemdesc{chi square} \verb!y=pdf("chi",x,nu)! computes the chi square
+\item \itemdesc{\hypertarget{chipdf}{chi square}} \verb!y=pdf("chi",x,nu)! computes the chi square
   density with parameter $\nu > 0$ (number of dof):
 $$
      f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}\; \mbox{for } x > 0 
 $$
 
 
-\item \itemdesc{exponential} \verb!y=pdf("exp",x,tau)! computes the exponential
+\item \itemdesc{\hypertarget{exppdf}{exponential}} \verb!y=pdf("exp",x,tau)! computes the exponential
   density with parameter $\tau > 0$:
 $$
      f(x; \tau) = \frac{1}{\tau} e^{-x/\tau} \; \mbox{for } x
@@ -74,12 +74,12 @@ $$
 Caution: the parameter is more frequently $\lambda = 1/\tau$.
 
 
-\item \itemdesc{F variance ratio} \verb!y=pdf("f",x,nu1,nu2)! computes
+\item \itemdesc{\hypertarget{fpdf}{F variance ratio}} \verb!y=pdf("f",x,nu1,nu2)! computes
   the variance ratio density with parameters $\nu_1 > 0$ and $\nu_2 >
   0$ (respectively number of dof in the numerator and denominator).
 
 
-\item \itemdesc{gamma} \verb!y=pdf("gam",x,a,b)! computes the gamma
+\item \itemdesc{\hypertarget{gampdf}{gamma}} \verb!y=pdf("gam",x,a,b)! computes the gamma
   density with parameters $a > 0$ (shape parameter) and $b \ge 0$
   (rate parameter):
 $$
@@ -87,7 +87,7 @@ $$
 $$
 Caution: second parameter is often a scale parameter, says $s = 1/b$.
 
-\item \itemdesc{Gauss Laplace} \verb!y=pdf("nor",x,mu,sigma)! computes the normal
+\item \itemdesc{\hypertarget{norpdf}{Gauss Laplace}} \verb!y=pdf("nor",x,mu,sigma)! computes the normal
   density with parameters $\mu$ and $\sigma > 0$:
 $$
      f(x; \mu, \sigma) = \frac{ 1 }{ \sigma \sqrt{2\pi}}
@@ -95,7 +95,7 @@ $$
 $$
 
 
-\item \itemdesc{geometric} \verb!y=pdf("geom",x,p)!. Computes
+\item \itemdesc{\hypertarget{geompdf}{geometric}} \verb!y=pdf("geom",x,p)!. Computes
   the geometric mass function with parameter $p \in (0,1]$:
 $$
      f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
@@ -116,20 +116,20 @@ in a sample (without replacement) of $n$ balls in an urn
 with $r$ red balls and $b$ blue balls.
 
 
-\item \itemdesc{Laplace} \verb!y=pdf("lap",x,a)! computes the Laplace
+\item \itemdesc{\hypertarget{lappdf}{Laplace}} \verb!y=pdf("lap",x,a)! computes the Laplace
   density with parameter $a > 0$:
 $$
      f(x; a) = \frac{1}{2a} e^{-\frac{|x|}{a}}
 $$
 
-\item \itemdesc{logistic} \verb!y=pdf("logi",x,a,b)! computes the logistic
+\item \itemdesc{\hypertarget{logipdf}{logistic}} \verb!y=pdf("logi",x,a,b)! computes the logistic
   density with parameter $a$ and $b > 0$:
 $$
      f(x; a,b) = \frac{y}{b (1+y)^2}, \; \mbox{ with } y = e^{-{|x-a|}{b}}
 $$
 
 
-\item \itemdesc{log normal} \verb!y=pdf("logn",x,mu,sigma)! computes
+\item \itemdesc{\hypertarget{lognpdf}{log normal}} \verb!y=pdf("logn",x,mu,sigma)! computes
   the log normal density with parameters $\mu$ and $\sigma > 0$:
 $$
      f(x; \mu, \sigma) = \frac{ 1 }{ \sigma \sqrt{2\pi}}
@@ -137,33 +137,33 @@ $$
 $$
 
 
-\item \itemdesc{Pareto} \verb!y=pdf("par",x,a,b)! computes the Pareto
+\item \itemdesc{\hypertarget{parpdf}{Pareto}} \verb!y=pdf("par",x,a,b)! computes the Pareto
   density with parameters $a > 0$ and $b > 0$:
 $$
      f(x; a, b) = \frac{ a/b }{ (x/b)^{a+1} }, \; \mbox{ for } x \ge b
 $$
 
 
-\item \itemdesc{Poisson} \verb!y=pdf("poi",x,mu)! computes
+\item \itemdesc{\hypertarget{poipdf}{Poisson}} \verb!y=pdf("poi",x,mu)! computes
   the Poisson mass function with parameter $\mu \ge 0$:
 $$
      f(x; \mu) = \frac{\mu^x e^{-\mu}}{x!} \;\mbox{for } x \in \{0, 1, 2, \dots\}
 $$
 
-\item \itemdesc{Rayleigh} \verb!y=pdf("ray",x,sigma)! computes the Rayleigh
+\item \itemdesc{\hypertarget{raypdf}{Rayleigh}} \verb!y=pdf("ray",x,sigma)! computes the Rayleigh
   density with parameter $\sigma > 0$:
 $$
      f(x; \sigma) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x/\sigma)^2 }, \; \mbox{ for } x \ge 0
 $$
 
-\item \itemdesc{tail Rayleigh} \verb!y=pdf("tray",x,sigma, a)! computes
+\item \itemdesc{\hypertarget{traypdf}{tail Rayleigh}} \verb!y=pdf("tray",x,sigma, a)! computes
   the tail Rayleigh density with parameters $\sigma > 0$ and $a \ge 0$:
 $$
      f(x; \sigma, a) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x-a)(x+a)/\sigma^2 }, \; \mbox{ for } x \ge a
 $$
 
 
-\item \itemdesc{Student's t} \verb!y=pdf("t",x,nu)! computes
+\item \itemdesc{\hypertarget{tpdf}{Student's t}} \verb!y=pdf("t",x,nu)! computes
   the Student's t distribution density with parameter $\nu > 0$
   (number of dof).
 $$
@@ -171,7 +171,7 @@ $$
 $$
 
 
-\item \itemdesc{Weibull} \verb!y=pdf("wei",x,a,b)! computes the Weibull
+\item \itemdesc{\hypertarget{weipdf}{Weibull}} \verb!y=pdf("wei",x,a,b)! computes the Weibull
   density with parameters $a > 0$ and $b > 0$:
 $$
      f(x; a, b) = \frac{b}{a} e^{ (b-1)\log(x/a) - (x/a)^b }, \; \mbox{ for } x > 0
