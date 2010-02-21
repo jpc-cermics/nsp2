@@ -1,0 +1,18 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+#include <nsp/interf.h> 
+#include "slicot.h"
+
+
+int_slicot_create(Stack stack, int rhs, int opt, int lhs)
+{
+  return 0;
+}
+
+%%
+init 
+
+/ * init code  * /
+

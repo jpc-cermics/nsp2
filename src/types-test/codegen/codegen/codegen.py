@@ -546,7 +546,7 @@ class Wrapper:
     # this is used when a default constructor giving a Warning must be used 
 
     function_tmpl = \
-        'int _wrap_%(cname)s(Stack stack, int rhs, int opt, int lhs) /* %(name)s */\n' \
+        'int _wrap_%(cname_1)s(Stack stack, int rhs, int opt, int lhs) /* %(name)s */\n' \
         '{\n' \
         '%(varlist)s' \
         '%(parseargs)s' \
@@ -1515,6 +1515,9 @@ class Wrapper:
         if self.objinfo:
             substdict['typename'] = self.objinfo.c_name
         substdict['cname'] = function_obj.c_name
+        cname1 = function_obj.c_name.replace("C2F(", "",1)
+        cname1 = cname1.replace(")", "",1)
+        substdict['cname_1'] = cname1
         substdict['varlist'] = info.get_varlist()
         substdict['typecodes'] = info.parsestr
         substdict['parselist'] = info.get_parselist()
@@ -1524,7 +1527,6 @@ class Wrapper:
             'return NULL', 'return ' + substdict['errorreturn'])
         substdict['codeafter'] = string.replace(info.get_codeafter(),
             'return NULL', 'return ' + substdict['errorreturn'])
-
 
         if info.parsestr or kwargs_needed:
             if info.get_parselist() == '': 
@@ -1797,9 +1799,11 @@ class Wrapper:
                     code, methflags = self.write_function_wrapper(func,
                         self.function_tmpl, handle_return=1, is_method=0)
                     self.fp.write(code)
+                cname1 = func.c_name.replace("C2F(", "",1)
+                cname1 = cname1.replace(")", "",1)
                 functions.append(self.funcdef_tmpl %
                                  { 'name':  func.name, # XXX use c_name and not name 
-                                   'cname': '_wrap_' + func.c_name,
+                                   'cname': '_wrap_' + cname1, 
                                    'flags': methflags })
             except:
                 sys.stderr.write('Could not write function %s: %s\n'

@@ -512,16 +512,6 @@ class IntPointerArg(ArgType):
         # for int pointers we add the length in a generated extra field 
         return '%s %s, int %s_length' % (fftype,fname,fname)
 
-    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
-	if pdflt:
-	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
-	else:
-	    info.varlist.add('NspMatrix*', pname)
-	info.arglist.append('&' + pname)
-        info.add_parselist('mat_int', ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL; \n')
-        info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
-
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :
             pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
@@ -533,18 +523,7 @@ class IntPointerArg(ArgType):
         info.attrcodebefore.append('  FREE(pi);\n' ) 
         info.attrcodebefore.append('  %s_lengh = %s->mn;\n' % (pset_name,pname))
         info.attrcodebefore.append('  for ( i = 0 ; i < p->mn ; i++) pi[i]= (int) %s->R[i];\n' % (pname) ) 
-        
-    def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('int', '*ret')
-        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
-                              '  return 1;')
 
-    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
-        pset_name = 'pipo'
-        info.varlist.add('int', '*ret')
-        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',0,%s_length)) == NULL) return NULL;\n' % (pset_name)
-        str = str + '  return nsp_ret;'
-        info.attrcodeafter.append(str)
         
     def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
@@ -564,6 +543,41 @@ class IntPointerArg(ArgType):
         """use to create the declaration for field in the type """
         str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
         return str
+
+    def write_param_old(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+	if pdflt:
+	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix*', pname)
+	info.arglist.append('&' + pname)
+        info.add_parselist('mat_int', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL; \n')
+        info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
+        
+    def write_param(self, upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+	if pdflt:
+	    info.varlist.add('int', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('int', pname)
+	info.arglist.append('&' + pname)
+        info.add_parselist('s_int', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( IntScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+        
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('int', '*ret')
+        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
+                              '  return 1;')
+
+    def attr_write_return_old(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        pset_name = 'pipo'
+        info.varlist.add('int', '*ret')
+        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',0,%s_length)) == NULL) return NULL;\n' % (pset_name)
+        str = str + '  return nsp_ret;'
+        info.attrcodeafter.append(str)
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        info.varlist.add('int', '*ret')
+        info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
 
 class DoublePointerArg(ArgType):
     
@@ -620,16 +634,6 @@ class DoublePointerArg(ArgType):
         # for int pointers we add the length in a generated extra field 
         return '%s %s, int %s_length' % (fftype,fname,fname)
 
-    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
-	if pdflt:
-	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
-	else:
-	    info.varlist.add('NspMatrix*', pname)
-	info.arglist.append('&' + pname)
-        info.add_parselist('mat_int', ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL; \n')
-        info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
-
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :
             pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
@@ -642,17 +646,7 @@ class DoublePointerArg(ArgType):
         info.attrcodebefore.append('  %s_lengh = %s->mn;\n' % (pset_name,pname))
         info.attrcodebefore.append('  for ( i = 0 ; i < p->mn ; i++) pi[i]= %s->R[i];\n' % (pname) ) 
         
-    def write_return(self, ptype, ownsreturn, info):
-        info.varlist.add('int', '*ret')
-        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
-                              '  return 1;')
 
-    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
-        pset_name = 'pipo'
-        info.varlist.add('int', '*ret')
-        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',0,%s_length)) == NULL) return NULL;\n' % (pset_name)
-        str = str + '  return nsp_ret;'
-        info.attrcodeafter.append(str)
         
     def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
@@ -672,6 +666,147 @@ class DoublePointerArg(ArgType):
         """use to create the declaration for field in the type """
         str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
         return str
+
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+	if pdflt:
+	    info.varlist.add('double', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('double', pname)
+	info.arglist.append('&' + pname)
+        info.add_parselist('s_double', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+
+    def write_param_old(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+	if pdflt:
+	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix*', pname)
+	info.arglist.append('&' + pname)
+        info.add_parselist('realmat', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL; \n')
+        info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
+
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('double', '*ret')
+        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
+                              '  return 1;')
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        info.varlist.add('double', '*ret')
+        info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
+
+    def attr_write_return_old(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        pset_name = 'pipo'
+        info.varlist.add('int', '*ret')
+        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',0,%s_length)) == NULL) return NULL;\n' % (pset_name)
+        str = str + '  return nsp_ret;'
+        info.attrcodeafter.append(str)
+
+class BoolPointerArg(ArgType):
+    
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+	"""used when a variable is to be copied """
+        if right_varname:
+            # this part is used in copy or full_copy 
+            str= '  if ((%s->%s = malloc(%s->%s_length*sizeof(Boolean)))== NULL) return NULL;\n' % (left_varname,pname,right_varname,pname)
+            str= str + '  %s->%s_length = %s->%s_length;\n' % (left_varname,pname,right_varname,pname) 
+            str= str + '  memcpy(%s->%s,%s->%s,%s->%s_length*sizeof(Boolean));\n' % (left_varname,pname,right_varname,pname,right_varname,pname) 
+            return str
+        else:
+            # this part is only used on create and we do not want to copy the given string 
+            # note that if the given string is NULL it will be set to "" by check_values. 
+            # return '  if ((%s->%s = nsp_string_copy(%s)) == NULL) return NULL;\n' % (left_varname,pname,pname)
+            str = '  %s->%s = %s;\n' % (left_varname,pname,pname)
+            str = str + '  %s->%s_length = %s_length;\n' % (left_varname,pname,pname)
+            return str 
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field of type string is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = NULL; %s->%s_length = 0; \n' % (varname,pname,varname,pname)
+        else: 
+            return '  %s->%s = AFAIRE %s;\n' % (varname,pname,pdef)
+
+    def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
+	"""used when a field is to be printed """
+        # XXX to be done 
+        return '' 
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+	"""used to free allocated fields  """
+        return  '    FREE(%s->%s);\n' % (varname,pname)
+
+    def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+        str = '  if (nsp_xdr_save_i(xdrs, %s->%s_length) == FAIL) return FAIL;\n' % (varname,pname)
+        str = str + '  if (nsp_xdr_save_array_i(xdrs, %s->%s, %s->%s_length) == FAIL) return FAIL;\n' % (varname,pname,varname,pname)
+        return str
+
+    def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        str= '  if (nsp_xdr_load_i(xdrs,&(%s->%s_length)) == FAIL) return NULL;\n'  % (varname,pname)
+        str= str + '  if ((%s->%s = malloc(%s->%s_length*sizeof(Boolean)))== NULL) return NULL;\n' % (varname,pname,varname,pname)
+        str= str + '  if (nsp_xdr_load_array_i(xdrs,%s->%s,%s->%s_length) == FAIL) return NULL;\n'  % (varname,pname,varname,pname)
+        return str 
+
+    def attr_write_create_call(self, ftype,fname,opt,pdef,psize,pcheck,flag):
+        """use to create the declaration in _create function"""
+        if flag:
+            fftype=''
+        else:
+            fftype=ftype
+        # for int pointers we add the length in a generated extra field 
+        return '%s %s, int %s_length' % (fftype,fname,fname)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+        info.varlist.add('int', "i")
+        info.varlist.add('Boolean*', "pi=" + pset_name  )
+        info.attrcodebefore.append('  FREE(pi);\n' ) 
+        info.attrcodebefore.append('  %s_lengh = %s->mn;\n' % (pset_name,pname))
+        info.attrcodebefore.append('  for ( i = 0 ; i < p->mn ; i++) pi[i]= %s->B[i];\n' % (pname) ) 
+        
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        str =       '  {int i;\n' 
+        str = str + '    for ( i = 0 ; i < A->%s_length ; i++)\n' % (pname) 
+        str = str + '      if ( A->%s[i] != loc->%s[i]) return FALSE;\n' % (pname,pname)
+        str = str + '  }\n'
+        return str
+
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        return ''
+        
+    def attr_write_field_declaration(self,ftype,fname,opt,pdef,psize,pcheck):
+        """use to create the declaration for field in the type """
+        str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
+        return str
+
+
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+	if pdflt:
+	    info.varlist.add('Boolean', pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('Boolean', pname)
+	info.arglist.append('&' + pname)
+        info.add_parselist('s_int', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( IntScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
+
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('Boolean', '*ret')
+        info.codeafter.append('  if ( nsp_move_boolean(stack,1, *ret)==FAIL) return RET_BUG;\n'
+                              '  return 1;')
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        info.varlist.add('Boolean', '*ret')
+        info.attrcodeafter.append('  return nsp_new_boolean_obj(*ret);')
+
 
 class BoolArg(IntArg):
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
@@ -2019,9 +2154,9 @@ class NspDoubleArrayArg(NspMatArg):
 
     def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type, byref):
 	if pdflt:
-	    info.varlist.add('double', '*' + pname + ' = ' + pdflt)
+	    info.varlist.add('zzdouble', '*' + pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('double', '*' + pname)
+	    info.varlist.add('NspMatrix', '*' + pname)
 	info.arglist.append(pname+'->R')
         info.add_parselist(nsp_type, ['&' + pname], [pname]) 
         
@@ -2117,6 +2252,212 @@ class NspDoubleArrayCopyArg(NspDoubleArrayArg):
             pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
         self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+
+class NspBoolArrayArg(NspMatArg):
+
+    def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type, byref):
+	if pdflt:
+	    info.varlist.add('zzint', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspBMatrix', '*' + pname)
+	info.arglist.append(pname+'->B')
+        info.add_parselist(nsp_type, ['&' + pname], [pname]) 
+        
+        info.attrcodebefore.append('  if ( ! IsBMat(O) \n' 
+                                   '       || ((NspBMatrix *) O)->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  memcpy(%s, ((NspBMatrix *) O)->B,%s*sizeof(int));\n' % (psize,pname,psize) )
+
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'bmat', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+	"""used to build the field setter """
+        info.varlist.add('NspBMatrix', '*M=(NspBMatrix *) O')
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        info.attrcodebefore.append('  if ( ! IsBMat(O) || M->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  memcpy(%s, ((NspBMatrix *) O)->B,%s*sizeof(int));\n' % (psize,pset_name,psize) )
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            vdef = '{0}'
+        else: 
+            vdef = pdef
+        return '  {\n' \
+            '    int x_def[%s]=%s;\n' \
+            '    memcpy(%s->%s,x_def,%s*sizeof(int));\n' \
+            '  }\n' % (psize,pdef, varname,pname, psize)
+
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  {\n' \
+            '    int i;\n' \
+            '    for ( i = 0 ; i < %s ; i++ )\n' \
+            '      if ( A->%s[i] != loc->%s[i] ) return FALSE;\n' \
+            '  }\n' % (psize, pname,pname)
+
+    def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be saved """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_save_array_i(xdrs,M->%s,%s)  == FAIL) return FAIL;\n' % ( pname , psize) 
+
+    def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_load_array_i(xdrs,M->%s,%s) == FAIL) return NULL;\n' % ( pname , psize) 
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+        return  ''
+
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+        if right_varname:
+            return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(int));\n'
+        else:
+            return '  memcpy('+ left_varname + '->'+ pname +','+ pname +','+ psize+ '*sizeof(int));\n'
+
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        return ''
+
+    def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
+	"""used when a field is to be printed """
+        if print_mode == 'latex':
+            tag = 'latex_' 
+        else:
+            tag = '' 
+        return  '  if ( nsp_print_%sarray_int(indent+2,"%s",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n' \
+            % (tag, pname,varname,pname,psize)
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+	"""used to set a field setter """
+        info.varlist.add('int*', 'ret')
+        info.attrcodeafter.append('zz  return NSP_OBJECT(nsp_matrix_create_from_array(NVOID,1,%s,ret,NULL));\n' % ( psize ))
+
+class NspBoolArrayCopyArg(NspBoolArrayArg):
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize, info,pos,'matcopy', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+        info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+
+
+class NspIntArrayArg(NspMatArg):
+
+    def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type, byref):
+	if pdflt:
+	    info.varlist.add('zzint', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix', '*' + pname)
+	info.arglist.append(pname+'->I')
+        info.add_parselist(nsp_type, ['&' + pname], [pname]) 
+        
+        info.attrcodebefore.append('  if ( ! IsMat(O) \n' \
+                                   '       || ((NspMatrix *) O)->rc_type != \'r\' \n' \
+                                   '       || ((NspMatrix *) O)->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(int));\n' % (psize,pname,psize) )
+
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat_int', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+	"""used to build the field setter """
+        info.varlist.add('NspMatrix', '*M=(NspMatrix *) O')
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        info.attrcodebefore.append('  if ( ! IsMat(O) || M->rc_type != \'r\' || M->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  Mat2double(M);\n' \
+                                   '  memcpy(%s, ((NspMatrix *) O)->R,%s*sizeof(int));\n' % (psize,pset_name,psize) )
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            vdef = '{0}'
+        else: 
+            vdef = pdef
+        return '  {\n' \
+            '    int x_def[%s]=%s;\n' \
+            '    memcpy(%s->%s,x_def,%s*sizeof(int));\n' \
+            '  }\n' % (psize,pdef, varname,pname, psize)
+
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  {\n' \
+            '    int i;\n' \
+            '    for ( i = 0 ; i < %s ; i++ )\n' \
+            '      if ( A->%s[i] != loc->%s[i] ) return FALSE;\n' \
+            '  }\n' % (psize, pname,pname)
+
+    def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be saved """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_save_array_d(xdrs,M->%s,%s)  == FAIL) return FAIL;\n' % ( pname , psize) 
+
+    def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_load_array_d(xdrs,M->%s,%s) == FAIL) return NULL;\n' % ( pname , psize) 
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+        return  ''
+
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+        if right_varname:
+            return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(int));\n'
+        else:
+            return '  memcpy('+ left_varname + '->'+ pname +','+ pname +','+ psize+ '*sizeof(int));\n'
+
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        return ''
+
+    def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
+	"""used when a field is to be printed """
+        if print_mode == 'latex':
+            tag = 'latex_' 
+        else:
+            tag = '' 
+        return  '  if ( nsp_print_%sarray_double(indent+2,"%s",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n' \
+            % (tag, pname,varname,pname,psize)
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+	"""used to set a field setter """
+        info.varlist.add('int*', 'ret')
+        info.attrcodeafter.append('  return NSP_OBJECT(nsp_matrix_create_from_array(NVOID,1,%s,ret,NULL));\n' % ( psize ))
+
+class NspIntArrayCopyArg(NspIntArrayArg):
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize, info,pos,'matcopy', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+        info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+
 
 
 class VoidPointerArg(ArgType):
@@ -2338,12 +2679,31 @@ matcher.register('double[]', arg)
 arg = NspDoubleArrayCopyArg()
 matcher.register('const double[]', arg)
 
+arg = NspIntArrayArg()
+matcher.register('int[]', arg)
+
+arg = NspIntArrayCopyArg()
+matcher.register('const int[]', arg)
+
+arg = NspBoolArrayArg()
+matcher.register('boolean[]', arg)
+
+arg = NspBoolArrayCopyArg()
+matcher.register('const boolean[]', arg)
+
+# pointers to double/int/boolean 
+
+arg = DoublePointerArg()
+matcher.register('double*', arg)
+matcher.register('gdouble*', arg)
+
 arg = IntPointerArg()
 matcher.register('int*', arg)
 matcher.register('gint*', arg)
 
-arg = DoublePointerArg()
-matcher.register('double*', arg)
+arg = BoolPointerArg()
+matcher.register('boolean*', arg)
+matcher.register('gboolean*', arg)
 
 arg = BoolArg()
 matcher.register('gboolean', arg)
