@@ -16,13 +16,13 @@ A=[a11, a12, ..., a1n;
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{a11 ...}: boolean numbers
+    \vname{a11 ...}: booleans
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-The \emph{Bmat} data type is a matrix made of boolean numbers. 
-A boolean number is either \verb+T+ (true) or \verb+F+ (false). 
+The \emph{Bmat} data type is a matrix made of booleans. 
+A boolean is either \verb+T+ (true) or \verb+F+ (false). 
 \verb+T+ is the nsp variable \verb+%t+ (same as \verb+1==1+)
 and \verb+F+ is the nsp variable \verb+%f+ (same as \verb+1~=1+).
 In conditional expressions \verb+T+ is equivalent to any nonzero
@@ -60,15 +60,36 @@ matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
 Boolean matrices are converted into numerical matrices with \verb+T+ converted to 1 
 and \verb+F+ converted to 0. 
 
-\itemdesc{Example of boolean function}
+\itemdesc{Example of boolean function or operators}
 \begin{itemize}
 \item \verb+bmat_create(m,n)+ make a $m \times n$ boolean matrix filled with \verb+T+ values
   (use \verb+~bmat_create(m,n)+ to make a boolean matrix filled with \verb+F+ values).
 \item \verb+b2m+ : explicit conversion from boolean matrix to numeric matrix.
 \item \verb+m2b+ : explicit conversion from numeric matrix to boolean matrix.
-\end{itemize}
-\begin{manseealso}
+\item  \manlink{\tt and, \&, \&\&}{and}: AND logical function and operators.
+\item  \manlink{\tt or, |, ||}{or}: OR logical function and operators.
+\item  \manlink{\tt not, \~}{not}: NOT logical function/operator.
+\item  \manlink{find}{find}: give indices corresponding to true values.
 
+\end{itemize}
+
+
+
+\itemdesc{Indexing using boolean vectors as index vectors}  
+
+Boolean vectors could be used instead of numerical ones either for usual 
+indexing or for linear indexing (see \manlink{indexing arrays}{indexing arrays} help page). 
+The convention is simply that true values are replaced by their corresponding index while 
+false values are not used. So the boolean vector \verb+[%t, %f, %f, %t, %f, %t]+ is 
+converted as the index vector \verb+[1, 4, 6]+. The actual usage is for expression like:
+\begin{Verbatim}
+     x = randn(1,8)
+     x( x < 0 ) = 0  // set all negative values to zero
+\end{Verbatim}
+ 
+
+\begin{manseealso}
+\manlink{all}{all},\manlink{any}{any} 
 \end{manseealso}
 
 % -- Authors
