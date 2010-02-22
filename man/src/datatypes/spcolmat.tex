@@ -30,7 +30,7 @@ S = sp_create(m,n) // or spcol_create(m,n)
 The \emph{SpColMat} data type is the basic type for handling sparse matrices. 
 For these matrices, only non-zeros entries are stored in memory, which enables to 
 handle larger-size matrices and reduce complexity on matrices operations (the internal
-loops are done only one non-zeros entries).
+loops are done only on non-zeros entries).
 
 Internally a sparse matrix is stored as an array of pointers (on columns) , each containing 
 two arrays : one for the indices and another for the values of the non-zeros entries of
