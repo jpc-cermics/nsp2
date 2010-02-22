@@ -6,7 +6,7 @@ headers
 #include "slicot.h"
 
 
-int_slicot_create(Stack stack, int rhs, int opt, int lhs)
+int int_slicot_create(Stack stack, int rhs, int opt, int lhs)
 {
   return 0;
 }

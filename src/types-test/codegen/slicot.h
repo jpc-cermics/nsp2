@@ -2,6 +2,26 @@
 typedef void (*S_fp)();
 typedef void (*U_fp)();
 
+
+extern int C2F(ab01md)(char *jobz, int *n, double *a, int *lda, double *b, int *ncont, double *z__, int *ldz, double *tau, double *tol, double *dwork, int *ldwork, int *info, unsigned int jobz_len);
+
+extern int C2F(mb04qc)(char *struct__, char *trana, char *tranb, char *tranq, char *direct, char *storev, char *storew, int *m, int *n, int *k, double *v, int *ldv, double *w, int *ldw, double *rs, int *ldrs, double *t, int *ldt, double *a, int *lda, double *b, int *ldb, double *dwork, unsigned int struct_len, unsigned int trana_len, unsigned int tranb_len, unsigned int tranq_len, unsigned int direct_len, unsigned int storev_len, unsigned int storew_len);
+
+extern int C2F(sb02mv)(double *reig, double *ieig);
+extern int C2F(sb02mw)(double *reig, double *ieig);
+extern int C2F(sb02ov)(double *alphar, double *alphai, double *beta);
+extern int C2F(sb02ow)(double *alphar, double *alphai, double *beta);
+extern int C2F(sb02ox)(double *alphar, double *alphai, double *beta);
+extern int C2F(sb02cx)(double *reig, double *ieig);
+extern int C2F(sb02ms)(double *reig, double *ieig);
+extern int C2F(sb02mr)(double *reig, double *ieig);
+extern int C2F(sb02ou)(double *alphar, double *alphai, double *beta);
+extern int C2F(select)(double *p1, double *p2);
+extern int C2F(ma02hd)(char *job, int *m, int *n, double *diag, double *a, int  *lda,unsigned int job_len);
+extern int C2F(delctg)(double *par1, double *par2, double *par3);
+extern int C2F(lfdum)(double *p1, double *p2);
+
+
 extern double C2F(ab13ad)(char *dico, char *equil, int *n, int *m, int *p, double *alpha, double *a, int *lda, double *b, int *ldb, double *c, int *ldc, int *ns, double *hsv, double *dwork, int *ldwork, int *info, unsigned int dico_len, unsigned int equil_len);
 extern double C2F(ab13ax)(char *dico, int *n, int *m, int *p, double *a, int *lda, double *b, int *ldb, double *c, int *ldc, double *hsv, double *dwork, int *ldwork, int *info, unsigned int dico_len);
 extern double C2F(ab13ax)(char *, int *, int *, int *, double *, int *, double *, int *, double *, int *, double *, double *, int *, int *, unsigned int);
@@ -223,7 +243,8 @@ extern int C2F(mb04pb)(int *n, int *ilo, double *a, int *lda, double *qg, int *l
 extern int C2F(mb04pu)(int *n, int *ilo, double *a, int *lda, double *qg, int *ldqg, double *cs, double *tau, double *dwork, int *ldwork, int *info);
 extern int C2F(mb04py)(char *side, int *m, int *n, double *v, double *tau, double *c, int *ldc, double *dwork, unsigned int side_len);
 extern int C2F(mb04qb)(char *tranc, char *trand, char *tranq, char *storev, char *storew, int *m, int *n, int *k, double *v, int *ldv, double *w, int *ldw, double *c, int *ldc, double *d, int *ldd, double *cs, double *tau, double *dwork, int *ldwork, int *info, unsigned int tranc_len, unsigned int trand_len, unsigned int tranq_len, unsigned int storev_len, unsigned int storew_len);
-extern int C2F(mb04qc)(char *struct, char *trana, char *tranb, char *tranq, char *direct, char *storev, char *storew, int *m, int *n, int *k, double *v, int *ldv, double *w, int *ldw, double *rs, int *ldrs, double *t, int *ldt, double *a, int *lda, double *b, int *ldb, double *dwork, unsigned int struct_len, unsigned int trana_len, unsigned int tranb_len, unsigned int tranq_len, unsigned int direct_len, unsigned int storev_len, unsigned int storew_len);
+
+extern int C2F(mb04qc)(char *, char *trana, char *tranb, char *tranq, char *direct, char *storev, char *storew, int *m, int *n, int *k, double *v, int *ldv, double *w, int *ldw, double *rs, int *ldrs, double *t, int *ldt, double *a, int *lda, double *b, int *ldb, double *dwork, unsigned int struct_len, unsigned int trana_len, unsigned int tranb_len, unsigned int tranq_len, unsigned int direct_len, unsigned int storev_len, unsigned int storew_len);
 extern int C2F(mb04qf)(char *direct, char *storev, char *storew, int *n, int *k, double *v, int *ldv, double *w, int *ldw, double *cs, double *tau, double *rs, int *ldrs, double *t, int *ldt, double *dwork, unsigned int direct_len, unsigned int storev_len, unsigned int storew_len);
 extern int C2F(mb04qu)(char *tranc, char *trand, char *tranq, char *storev, char *storew, int *m, int *n, int *k, double *v, int *ldv, double *w, int *ldw, double *c, int *ldc, double *d, int *ldd, double *cs, double *tau, double *dwork, int *ldwork, int *info, unsigned int tranc_len, unsigned int trand_len, unsigned int tranq_len, unsigned int storev_len, unsigned int storew_len);
 extern int C2F(mb04tb)(char *trana, char *tranb, int *n, int *ilo, double *a, int *lda, double *b, int *ldb, double *g, int *ldg, double *q, int *ldq, double *csl, double *csr, double *taul, double *taur, double *dwork, int *ldwork, int *info, unsigned int trana_len, unsigned int tranb_len);
@@ -262,7 +283,6 @@ extern int C2F(mc01qd)(int *da, int *db, double *a, double *b, double *rq, int *
 extern int C2F(mc01rd)(int *dp1, int *dp2, int *dp3, double *alpha, double *p1, double *p2, double *p3, int *info);
 extern int C2F(mc01sd)(int *dp, double *p, int *s, int *t, double *mant, int *e, int *iwork, int *info);
 extern int C2F(mc01sw)(double *a, int *b, double *m, int *e);
-extern int C2F(mc01sx)(int *, int *, int *, double *);
 extern int C2F(mc01sx)(int *lb, int *ub, int *e, double *mant);
 extern int C2F(mc01sy)(double *m, int *e, int *b, double *a, int *ovflow);
 extern int C2F(mc01td)(char *dico, int *dp, double *p, int *stable, int *nz, double *dwork, int *iwarn, int *info, unsigned int dico_len);
@@ -468,3 +488,4 @@ extern int C2F(ud01md)(int *m, int *n, int *l, int *nout, double *a, int *lda, c
 extern int C2F(ud01mz)(int *m, int *n, int *l, int *nout, doubleC *a, int *lda, char *text, int *info, unsigned int text_len);
 extern int C2F(ud01nd)(int *mp, int *np, int *dp, int *l, int *nout, double *p, int *ldp1, int *ldp2, char *text, int *info, unsigned int text_len);
 extern int C2F(ue01md)(int *ispec, char *name, char *opts, int *n1, int *n2, int *n3, unsigned int name_len, unsigned int opts_len);
+
