@@ -37,7 +37,8 @@
  it is a $m \times n$ matrix (full or sparse) with $m$ or $n$ equal to $1$. In this case the
  output  \verb+A+ is a matrix (full or sparse) with the $k$ th diagonal filled with the vector
  \verb+v+. If  \verb+v+ has $mn$ elements, we get a $p \times p$ (square) matrix (full or sparse)
- with $p=mn + | k |$.
+ with $p=mn + | k |$. Note that it can be more efficient to use the \manlink{set_diag}{set_diag}
+ method.
    
 \item \itemdesc{form 2}
   To have this behavior, the first argument, says \verb+A+ should have been detected as 
@@ -77,6 +78,6 @@ A = 2*speye(n,n) - diag(v,1) + diag(v,-1)}
 
 %-- see also
 \begin{manseealso}
-  \manlink{eye}{eye}, \manlink{tril}{tril}, \manlink{triu}{triu}
+ \manlink{set_diag}{set_diag}, \manlink{eye}{eye}, \manlink{tril}{tril}, \manlink{triu}{triu}
 \end{manseealso}
 

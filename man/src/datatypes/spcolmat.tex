@@ -55,11 +55,11 @@ sparse matrices:
 \paragraph{Operations on sparse matrices}
 \itemdesc{Methods}
 \begin{itemize}
-\item \verb+S.scale_rows[x]+ multiplies each row i of A with a scalar:
-\item \verb+S.scale_cols[x]+ multiplies each column j of A with a scalar:
+\item \verb+S.scale_rows[x]+ multiplies each row i of A with a scalar (see \manlink{scale_rows}{scale_rows}) 
+\item \verb+S.scale_cols[x]+ multiplies each column j of A with a scalar (see \manlink{scale_cols}{scale_cols})
 \item \verb+S.get_nnz[]+ returns the number of non zeros entries of \verb+S+ 
 \item \verb+S.set_diag[v[,k]]+ put the \emph{SpColMat} vector $v$ in the diagonal number $k$ of \verb+S+
- (if the diagonal number $k$ is not given, default is 0, ie the main diagonal, see \manlink{tril}{tril} page).
+ (see \manlink{set_diag}{set_diag}).
 
 \end{itemize}
 
