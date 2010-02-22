@@ -48,6 +48,17 @@ res=E.getstr[n=n];
 S.seek[0]; // rewind S 
 if res<>S.getstr[n=n]; then pause;end 
 
+
+S=sopen(20);
+n1=1000;
+S.put[1:n1,type='d'];
+n=S.tell[];
+D=S.compress[n]; // compress n characters in the buffer (starting at
+                 // position 0) and store the result in a new SMio
+E=D.uncompress[n]; // uncompress n characters in a new SMio
+res=E.get[n=n1,type='d']; 
+if ~res.equal[(1:n1)] then pause;end 
+
 // test get method 
 // ---------------
 str= 'abcdefghijk';
@@ -106,6 +117,9 @@ S.clear[];
 S.seek[0];
 x=S.get[n=64,type='c'];
 if or(x(1:64)<>-1) then pause;end
+
+
+
 
 
 

@@ -69,8 +69,8 @@ TESTS= \
 	global.dia \
 	matops.dia \
 	min_max_minmax_int.dia \
-	statfuncs.dia
-
+	statfuncs.dia \
+	smio.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
