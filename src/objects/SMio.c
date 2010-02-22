@@ -380,7 +380,7 @@ int nsp_smio_seek(NspSMio *F,long int offset,const char *flag)
       Scierror("fseek : flag = %s not recognized\n",flag);
       return FAIL;
     }
-  F->obj->pos = Min(Max(F->obj->pos,0),F->obj->len-1);
+  F->obj->pos = Min(Max(F->obj->pos,0),F->obj->len);
   return OK;
 }
 
@@ -437,7 +437,7 @@ int nsp_smio_tell(NspSMio *F,long int *offset)
 	    Scierror("Error: cannot enlarge smio buffer\n");		\
 	    return FAIL;						\
 	  }								\
-       obj->len = obj->pos + n*sizeof(Type);				\
+	obj->len = obj->pos + n*sizeof(Type);				\
       }									\
     for ( i=0; i < n; i++)						\
       {									\
@@ -518,7 +518,6 @@ int nsp_smio_put(NspSMio *F,void *x,int n, char *type)
   return OK;
 }
 
-/* F->obj->pos = Min(Max(F->obj->pos,0),F->obj->len-1); */
 
 
 #define MGET_CHARS_(x,n,obj,Type)					\
