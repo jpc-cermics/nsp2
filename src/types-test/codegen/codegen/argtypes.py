@@ -2253,6 +2253,112 @@ class NspDoubleArrayCopyArg(NspDoubleArrayArg):
         self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
 
+
+class NspComplexArrayArg(NspMatArg):
+
+    def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type, byref):
+	if pdflt:
+	    info.varlist.add('zzdouble', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix', '*' + pname)
+	info.arglist.append(pname+'->C')
+        info.add_parselist(nsp_type, ['&' + pname], [pname]) 
+        
+        info.attrcodebefore.append('  if ( ! IsMat(O) \n' \
+                                   '       || ((NspMatrix *) O)->rc_type != \'c\' \n' \
+                                   '       || ((NspMatrix *) O)->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  memcpy(%s, ((NspMatrix *) O)->C,%s*sizeof(doubleC));\n' % (psize,pname,psize) )
+
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos,'mat', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+	"""used to build the field setter """
+        info.varlist.add('NspMatrix', '*M=(NspMatrix *) O')
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        info.attrcodebefore.append('  if ( ! IsMat(O) || M->rc_type != \'c\' || M->mn != %s ) \n' \
+                                   '     return FAIL;\n' \
+                                   '  Mat2double(M);\n' \
+                                   '  memcpy(%s, ((NspMatrix *) O)->C,%s*sizeof(doubleC));\n' % (psize,pset_name,psize) )
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            vdef = '{0}'
+        else: 
+            vdef = pdef
+        return '  {\n' \
+            '    doubleC x_def[%s]=%s;\n' \
+            '    memcpy(%s->%s,x_def,%s*sizeof(doubleC));\n' \
+            '  }\n' % (psize,pdef, varname,pname, psize)
+
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  {\n' \
+            '    int i;\n' \
+            '    for ( i = 0 ; i < %s ; i++ )\n' \
+            '      if ( A->%s[i] != loc->%s[i] ) return FALSE;\n' \
+            '  }\n' % (psize, pname,pname)
+
+    def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be saved """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_save_array_d(xdrs,M->%s,2*%s)  == FAIL) return FAIL;\n' % ( pname , psize) 
+
+    def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( nsp_xdr_load_array_d(xdrs,M->%s,2*%s) == FAIL) return NULL;\n' % ( pname , psize) 
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+        return  ''
+
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+        if right_varname:
+            return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(doubleC));\n'
+        else:
+            return '  memcpy('+ left_varname + '->'+ pname +','+ pname +','+ psize+ '*sizeof(doubleC));\n'
+
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        return ''
+
+    def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
+	"""used when a field is to be printed """
+        if print_mode == 'latex':
+            tag = 'latex_' 
+        else:
+            tag = '' 
+        return  '  if ( ZZnsp_print_%sarray_double(indent+2,"%s",%s->%s,%s,rec_level) == FALSE ) return FALSE ;\n' \
+            % (tag, pname,varname,pname,psize)
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+	"""used to set a field setter """
+        info.varlist.add('doubleC*', 'ret')
+        info.attrcodeafter.append('  return ZZ NSP_OBJECT(nsp_matrix_create_from_array(NVOID,1,%s,ret,NULL));\n' % ( psize ))
+
+class NspComplexArrayCopyArg(NspComplexArrayArg):
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+        self.write_param_gen( ptype, pname, pdflt, pnull, psize, info,pos,'matcopy', byref)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+        self.write_param( upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
+        info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+
+
+
 class NspBoolArrayArg(NspMatArg):
 
     def write_param_gen(self, ptype, pname, pdflt, pnull, psize,info, pos, nsp_type, byref):
@@ -2678,6 +2784,12 @@ matcher.register('double[]', arg)
 
 arg = NspDoubleArrayCopyArg()
 matcher.register('const double[]', arg)
+
+arg = NspComplexArrayArg()
+matcher.register('doubleC[]', arg)
+
+arg = NspComplexArrayCopyArg()
+matcher.register('const doubleC[]', arg)
 
 arg = NspIntArrayArg()
 matcher.register('int[]', arg)
