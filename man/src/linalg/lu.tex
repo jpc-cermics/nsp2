@@ -52,10 +52,10 @@ condition number (in 1-norm) could be provided as the fourth output argument.
 $$
 rc \simeq \frac{1}{\kappa_1(A)} = \frac{1}{||A||_1 ||A^{-1}||_1}
 $$
-If $x'$ is an approximate solution and $x$ the exact solution,
-denoting $r = b - Ax'$ the residual we have the inequality :
+If $y$ is an approximate solution and $x$ the exact solution,
+denoting $r = b - A y$ the residual we have the inequality :
 $$
-\frac{||x' - x||_1}{||x||_1} \le \kappa_1(A) \frac{||r||_1}{||b||_1}
+\frac{|| y - x||_1}{||x||_1} \le \kappa_1(A) \frac{||r||_1}{||b||_1}
 $$
 %The reciprocal condition number is a useful information for the
 %numerical inversibility of a matrix : with a value less than the 
