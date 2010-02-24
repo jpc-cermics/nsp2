@@ -30,6 +30,7 @@
 extern Gengine GL_gengine;
 #define PERIGL
 #include "nsp/graphics-new/periGtk.h"
+/* seams defined on WIN32 with gtkglext */
 #endif 
 
 extern void drawpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz,

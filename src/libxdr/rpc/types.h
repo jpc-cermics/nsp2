@@ -54,8 +54,8 @@
 #ifndef makedev /* ie, we haven't already included it */
 #include <sys/types.h>
 #ifdef __MSC__ 
-#undef FALSE
-#undef TRUE 
+/* #undef FALSE */
+/* #undef TRUE */
 #include <winsock.h>
 typedef char * caddr_t;
 #define bzero(x,n) memset(x,0,n)

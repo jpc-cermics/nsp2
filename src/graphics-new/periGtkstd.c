@@ -27,11 +27,14 @@
 #include <stdarg.h>
 #include <signal.h>
 #include <gtk/gtk.h>
-
 #define PERI_PRIVATE 1
-#include "nsp/sciio.h" 
 #include "nsp/math.h"
+#include "nsp/sciio.h" 
 #include "nsp/graphics-new/periGtk.h"
+/* seams defined on WIN32 with gtkglext */
+#ifdef interface 
+#undef interface 
+#endif 
 #include "nsp/version.h"
 #include "nsp/graphics-new/color.h"
 #include "nsp/command.h"
