@@ -457,6 +457,10 @@ class IntArg(ArgType):
 	"""used to give a default value  """
         return ''
     
+# when used as a parameter in an interface; an "int*" is 
+# transmited through pointer at nsp level it is an integer 
+# i.e 1x1 real mat used by reference 
+
 class IntPointerArg(ArgType):
 
     def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
@@ -544,17 +548,28 @@ class IntPointerArg(ArgType):
         str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
         return str
 
-    def write_param_old(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+    def attr_write_return_old(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        pset_name = 'pipo'
+        info.varlist.add('int', '*ret')
+        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',0,%s_length)) == NULL) return NULL;\n' % (pset_name)
+        str = str + '  return nsp_ret;'
+        info.attrcodeafter.append(str)
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        info.varlist.add('int', '*ret')
+        info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
+
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
 	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
 	else:
 	    info.varlist.add('NspMatrix*', pname)
-	info.arglist.append('&' + pname)
+	info.arglist.append('&' + pname + '->I')
         info.add_parselist('mat_int', ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL; \n')
-        info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
+        info.attrcodebefore.append('  if ( ! IsMat(O)  || ((NspMatrix *) O)->mn != 1 ) return FAIL; \n')
+        info.attrcodebefore.append('  %s = Mat2int((NspMatrix *) O); \n' % (pname) )
         
-    def write_param(self, upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+    def write_param_xx(self, upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
 	    info.varlist.add('int', pname + ' = ' + pdflt)
 	else:
@@ -568,16 +583,6 @@ class IntPointerArg(ArgType):
         info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
 
-    def attr_write_return_old(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
-        pset_name = 'pipo'
-        info.varlist.add('int', '*ret')
-        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',0,%s_length)) == NULL) return NULL;\n' % (pset_name)
-        str = str + '  return nsp_ret;'
-        info.attrcodeafter.append(str)
-
-    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
-        info.varlist.add('int', '*ret')
-        info.attrcodeafter.append('  return nsp_new_double_obj((double) *ret);')
 
 class DoublePointerArg(ArgType):
     
@@ -646,7 +651,6 @@ class DoublePointerArg(ArgType):
         info.attrcodebefore.append('  %s_lengh = %s->mn;\n' % (pset_name,pname))
         info.attrcodebefore.append('  for ( i = 0 ; i < p->mn ; i++) pi[i]= %s->R[i];\n' % (pname) ) 
         
-
         
     def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used to test fields equality  """
@@ -667,23 +671,23 @@ class DoublePointerArg(ArgType):
         str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
         return str
 
-    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+    def write_param_xx(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
 	    info.varlist.add('double', pname + ' = ' + pdflt)
 	else:
 	    info.varlist.add('double', pname)
-	info.arglist.append('&' + pname)
+	info.arglist.append('&' + pname   )
         info.add_parselist('s_double', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( DoubleScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
 
-    def write_param_old(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
+    def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
 	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
 	else:
 	    info.varlist.add('NspMatrix*', pname)
-	info.arglist.append('&' + pname)
+	info.arglist.append('&' + pname + '->R')
         info.add_parselist('realmat', ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( ! IsMat(O) ) return FAIL; \n')
+        info.attrcodebefore.append('  if ( ! IsMat(O)  || ((NspMatrix *) O)->mn != 1 ) return FAIL; \n')
         info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
 
     def write_return(self, ptype, ownsreturn, info):
@@ -788,24 +792,26 @@ class BoolPointerArg(ArgType):
         str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
         return str
 
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        info.varlist.add('Boolean', '*ret')
+        info.attrcodeafter.append('  return nsp_new_boolean_obj(*ret);')
 
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
-	    info.varlist.add('Boolean', pname + ' = ' + pdflt)
+	    info.varlist.add('NspBMatrix*', pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('Boolean', pname)
-	info.arglist.append('&' + pname)
-        info.add_parselist('s_int', ['&' + pname], [pname])
-        info.attrcodebefore.append('  if ( IntScalar(O,&' + pname + ') == FAIL) return FAIL;\n')
-
+	    info.varlist.add('NspBMatrix*', pname)
+	info.arglist.append('&' + pname + '->B')
+        info.add_parselist('bmat', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( ! IsBMat(O)  || ((NspMatrix *) O)->mn != 1) return FAIL; \n')
+        info.attrcodebefore.append('  if ( ! IsBMat(O) ) return FAIL; \n')
+        
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add('Boolean', '*ret')
         info.codeafter.append('  if ( nsp_move_boolean(stack,1, *ret)==FAIL) return RET_BUG;\n'
                               '  return 1;')
 
-    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
-        info.varlist.add('Boolean', '*ret')
-        info.attrcodeafter.append('  return nsp_new_boolean_obj(*ret);')
+
 
 
 class BoolArg(IntArg):

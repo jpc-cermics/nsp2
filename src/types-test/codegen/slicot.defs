@@ -2147,7 +2147,7 @@
 (define-function slicot_delctg
   ;; delctg(par1,par2,par3) ! in delctg.f
   (c-name "C2F(delctg)") 
-  (return-type "delctg")
+  (return-type "int")
   (parameters 
    '("double*"  "par1")
    '("double*"  "par2")
