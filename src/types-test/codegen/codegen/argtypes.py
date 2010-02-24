@@ -561,10 +561,10 @@ class IntPointerArg(ArgType):
 
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
-	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
+	    info.varlist.add('NspMatrix', '*' + pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('NspMatrix*', pname)
-	info.arglist.append('&' + pname + '->I')
+	    info.varlist.add('NspMatrix', '*' + pname)
+	info.arglist.append( pname + '->I')
         info.add_parselist('mat_int', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( ! IsMat(O)  || ((NspMatrix *) O)->mn != 1 ) return FAIL; \n')
         info.attrcodebefore.append('  %s = Mat2int((NspMatrix *) O); \n' % (pname) )
@@ -682,10 +682,10 @@ class DoublePointerArg(ArgType):
 
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
-	    info.varlist.add('NspMatrix*', pname + ' = ' + pdflt)
+	    info.varlist.add('NspMatrix', '*'+ pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('NspMatrix*', pname)
-	info.arglist.append('&' + pname + '->R')
+	    info.varlist.add('NspMatrix', '*'+ pname)
+	info.arglist.append( pname + '->R')
         info.add_parselist('realmat', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( ! IsMat(O)  || ((NspMatrix *) O)->mn != 1 ) return FAIL; \n')
         info.attrcodebefore.append('  %s = Mat2double((NspMatrix *) O); \n' % (pname) )
@@ -798,10 +798,10 @@ class BoolPointerArg(ArgType):
 
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
 	if pdflt:
-	    info.varlist.add('NspBMatrix*', pname + ' = ' + pdflt)
+	    info.varlist.add('NspBMatrix', '*'+ pname + ' = ' + pdflt)
 	else:
-	    info.varlist.add('NspBMatrix*', pname)
-	info.arglist.append('&' + pname + '->B')
+	    info.varlist.add('NspBMatrix', '*'+ pname)
+	info.arglist.append( pname + '->B')
         info.add_parselist('bmat', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ( ! IsBMat(O)  || ((NspMatrix *) O)->mn != 1) return FAIL; \n')
         info.attrcodebefore.append('  if ( ! IsBMat(O) ) return FAIL; \n')
