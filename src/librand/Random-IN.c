@@ -311,9 +311,9 @@ static int int_smplx_part(Stack stack, int rhs, int opt, int lhs, int suite, int
 
 static int int_prm_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
 {
-  NspMatrix *M, *prm;
-  double *col_j;
-  int nn,j;
+  NspObject *prm, *M;
+  NspTypeBase *type;
+  int nn;
 
   if ( rhs != 3 || suite != 3) 
     { Scierror("Error: bad calling sequence. Correct usage is: grand(n,'prm',vect))\n"); return RET_BUG;}
@@ -327,17 +327,24 @@ static int int_prm_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   if ( GetScalarInt(stack,1,&nn) == FAIL ) return RET_BUG;      
   CheckNonNegative(NspFname(stack), nn, 1);
 
-  if ((prm = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
-  if ( prm->n != 1) { Scierror("Error: vect must be column vector\n");  return RET_BUG;}
-  
-  if ((M = nsp_matrix_create(NVOID,'r',prm->m,nn))== NULLMAT) return RET_BUG;
-  for ( j = 0 ; j < M->n ; j++) 
+  if ((prm = nsp_get_object(stack,suite)) == NULLOBJ) return RET_BUG;
+  if (( type = check_implements(prm, nsp_type_matint_id)) == NULL )
     {
-      col_j = M->R + M->m*j;
-      memcpy(col_j, prm->R, sizeof(double)*M->m);
-      rand_genprm(col_j, M->m);
+      Scierror("Error: vect must be a (full) matrix of any kind (matint interface)\n");
+      return RET_BUG;
     }
-  MoveObj(stack,1,(NspObject *) M);
+ 
+  if ( ((NspMatrix *)prm)->n != 1) { Scierror("Error: vect must be column vector\n");  return RET_BUG;}
+  
+  if ( (M = nsp_matint_repmat(prm, 1, nn)) == NULLOBJ ) return RET_BUG;
+
+  if ( nsp_rand_prm_array(M) == FAIL )
+    {
+      nsp_object_destroy(&M);
+      return RET_BUG;
+    }
+
+  MoveObj(stack,1, M);
   return 1;
 }
 

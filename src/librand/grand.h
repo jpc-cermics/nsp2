@@ -3,6 +3,7 @@
 
 #include <nsp/math.h> 
 #include <nsp/sciio.h> 
+#include <nsp/object.h> 
 
 
 typedef struct _PoissonStruct PoissonStruct;
@@ -169,8 +170,8 @@ extern double nsp_rand_F_direct(double nu1, double nu2);
 extern int nsp_rand_ncF_init(double nu1, double nu2, double xnonc, NcFStruct *E);
 extern double nsp_rand_ncF(NcFStruct *E);
 extern double nsp_rand_ncF_direct(double nu1, double nu2, double xnonc);
-extern void rand_genprm (double *array, int larray);
-extern void nsp_rand_prm (int *array, int n, int base);
+extern int nsp_rand_prm_array(NspObject *Objarray);
+extern void nsp_rand_prm(int *array, int n, int base);
 extern void nsp_rand_smpl_bis(int *p, int n, int N, int base);
 extern void nsp_rand_smpl(int *p, int n, int N, int base, int *head, int *next);
 extern int nsp_rand_poisson_init(double mu, PoissonStruct *P);

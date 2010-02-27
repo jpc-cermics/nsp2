@@ -913,24 +913,79 @@ void nsp_rand_markov(double *q, int *key, double *X0, double *X, int n, int X0mn
 }
 	 
 /**
- * rand_genprm:
- * @array:  array of double.
- * @n: length of array
+ * nsp_rand_prm_array:
+ * @Objarray:  array of any kind (implement matint interface)
  *
- * generates a random permutation of @array.
+ * permute each column of @Objarray with a random permutation .
  *
  **/
-void rand_genprm (double *array, int n)
+#define PERMUTE_ARRAY()			   \
+  for ( j = 0 ; j < n ; j++, A+=m )	   \
+    for ( i = 0 ; i < m-1 ; i++ )          \
+	  {                                \
+	    iwhich = rand_ignuin (i, m-1); \
+	    elt = A[iwhich];               \
+	    A[iwhich] = A[i];              \
+	    A[i] = elt;                    \
+	  }                                
+
+int nsp_rand_prm_array(NspObject *Objarray)
 {
-  int i, iwhich;
-  double elt;
-  for ( i = 0 ; i < n-1 ; ++i )
+  NspSMatrix *array = (NspSMatrix *)Objarray;
+  NspTypeBase *type;
+  int m = array->m, n = array->n, i, j, iwhich;
+  unsigned int elt_size; /* size in number of bytes */
+
+  type = check_implements(Objarray, nsp_type_matint_id);
+  MAT_INT(type)->canonic(Objarray);
+  elt_size = MAT_INT(type)->elt_size(Objarray);
+
+  if ( elt_size == sizeof(double) )
     {
-      iwhich = rand_ignuin (i, n-1);
-      elt = array[iwhich];
-      array[iwhich] = array[i];
-      array[i] = elt;
+      double elt;
+      double *A = (double *) array->S;
+      PERMUTE_ARRAY()
     }
+  else if ( elt_size == sizeof(doubleC) )
+    {
+      doubleC elt;
+      doubleC *A = (doubleC *) array->S;
+      PERMUTE_ARRAY()
+    }
+  else if ( elt_size == sizeof(int) )
+    {
+      int elt;
+      int *A = (int *) array->S;
+      PERMUTE_ARRAY()
+    }
+  else if ( elt_size == sizeof(short) )
+    {
+      short elt;
+      short *A = (short *) array->S;
+      PERMUTE_ARRAY()
+    }
+  else if ( elt_size == sizeof(char) )
+    {
+      char elt;
+      char *A = (char *) array->S;
+      PERMUTE_ARRAY()
+    }
+  else
+    {
+      char *elt, *A=(char *) array->S;
+      if ( (elt = malloc(elt_size*sizeof(char))) == NULL )
+	return FAIL;
+      
+      for ( j = 0 ; j < n ; j++ , A+=m*elt_size )
+	for ( i = 0 ; i < m-1 ; ++i )
+	  {                          
+	    iwhich = rand_ignuin (i, m-1);
+	    memcpy(elt,A+elt_size*iwhich,elt_size);          /* elt = A[iwhich]; */
+	    memcpy(A+elt_size*iwhich,A+elt_size*i,elt_size); /* A[iwhich] = A[i]; */
+	    memcpy(A+elt_size*i,elt,elt_size);               /* A[i] = elt; */
+	  }
+    }
+  return OK;
 }
 	 
 	 
