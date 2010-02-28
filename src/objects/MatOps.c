@@ -3634,6 +3634,7 @@ void nsp_mat_idiv(NspMatrix *A, int n)
 {
   int i ;
   nsp_mat_int(A);
+  if ( n== 0) return;
   switch ( A->rc_type ) 
     {
     case 'r' : 
