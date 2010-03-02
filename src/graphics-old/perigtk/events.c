@@ -224,10 +224,12 @@ static gint timeout_test (BCG *gc)
 {
   if ( dequeue_nsp_command(nsp_event_info_old.str,nsp_event_info_old.lstr) == OK)
     {
+      gdk_threads_enter();
       nsp_event_info_old.ok = 1 ; nsp_event_info_old.x = 0 ; nsp_event_info_old.y =0 ; nsp_event_info_old.button =  -2;
       nsp_event_info_old.mask = 0;
       nsp_event_info_old.win = (gc == NULL) ? 0 : gc->CurWindow;
       gtk_main_quit();
+      gdk_threads_leave();
     }
   return TRUE;
 }
@@ -238,7 +240,9 @@ extern void nsp_flush_tkevents(void);
 
 static gint timeout_tk (void *v)
 {
+  gdk_threads_enter();
   nsp_flush_tkevents();
+  gdk_threads_leave();
   return TRUE;
 }
 
@@ -683,8 +687,10 @@ static  int stop = FALSE;
 
 static gint timeout_pause (int *stop)
 {
+  gdk_threads_enter();
   *stop = TRUE;
   gtk_main_quit();
+  gdk_threads_leave();
   return TRUE;
 }
 

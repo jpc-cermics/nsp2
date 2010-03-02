@@ -66,15 +66,19 @@ char *ProgramName = NULL;
 void set_nsp_env (void);
 static void nsp_syntax (char *badOption) ;
 
-/* #define THREAD_VERSION */
+/* needed when wekbit-gtk is used */
+#define ACTIVATE_THREAD
 
-#ifdef THREAD_VERSION
+/* this is for a threaded main in nsp: still experimental */
+/* #define THREAD_MAIN_VERSION */
+
+#ifdef THREAD_MAIN_VERSION
 static void *nsp_top_level_loop_thread(void *args);
 #endif 
 
 int main(int argc, char **argv)
 {
-#ifdef THREAD_VERSION
+#ifdef THREAD_MAIN_VERSION
   GError *error = NULL;
 #endif 
   int use_stdlib = TRUE;
@@ -182,7 +186,7 @@ int main(int argc, char **argv)
     }
 #endif 
 
-#ifdef THREAD_VERSION
+#if defined(THREAD_MAIN_VERSION) || defined(ACTIVATE_THREAD)
   /* init threads */
   g_thread_init(NULL);
   gdk_threads_init();
@@ -190,13 +194,13 @@ int main(int argc, char **argv)
 
   /* FIXME: should be moved here  */
   nsp_gtk_init(argc,argv,no_window,use_textview);
-
+  
   /* #define NSP_ENTRY_INPUT_TEST   */
 #ifdef NSP_ENTRY_INPUT_TEST 
   if ( no_window == FALSE )
     term_output(argc, argv);
 #endif 
-
+  
   /* Load initial macros */
   if ( use_stdlib == TRUE ) nsp_enter_macros("SCI/macros",TRUE,FALSE);
 
@@ -291,8 +295,7 @@ int main(int argc, char **argv)
    * i.e RET_ABORT should not stop. 
    */
 
-
-#ifdef THREAD_VERSION
+#ifdef THREAD_MAIN_VERSION
   if (!g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error))
     {
       g_printerr ("Failed to create NO thread: %s\n", error->message);
@@ -303,17 +306,19 @@ int main(int argc, char **argv)
   gtk_main();
   gdk_threads_leave();
 #else 
+  gdk_threads_enter();
   while (1) 
     {
       if (  nsp_parse_eval_from_std(TRUE) == 0) break;
     }
+  gdk_threads_leave();
 #endif 
-
+  
   sci_clear_and_exit(0);
   return 0;
 }
 
-#ifdef THREAD_VERSION
+#ifdef THREAD_MAIN_VERSION
 static void *nsp_top_level_loop_thread(void *args)
 {
   int rep;
