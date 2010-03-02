@@ -51,8 +51,7 @@ BackColor=clPurple
 BackColor2=clBlack
 Compression=bzip/9
 OutputDir=..
-OutputBaseFilename=nsp2-2009-05-18
-
+OutputBaseFilename=nsp2-2010-03-02
 ;;[Registry]
 ;;Root: HKLM; Subkey: "Software\Nsp"; Flags: uninsdeletekeyifempty
 ;;Root: HKLM; Subkey: "Software\Nsp\1.0"; Flags: uninsdeletekey
