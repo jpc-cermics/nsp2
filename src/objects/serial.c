@@ -472,7 +472,7 @@ NspSerial *nsp_serial_compress(const NspSerial *S)
   return Sz;
 #else
   Scierror("Error: cannot compress with this nsp version\n");
-  return NULL
+  return NULL;
 #endif 
 }
 
