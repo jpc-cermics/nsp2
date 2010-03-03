@@ -1,0 +1,12 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+#include <nsp/interf.h> 
+#include <nsp/lapack-c.h>
+
+%%
+init 
+
+/ * init code  * /
+
