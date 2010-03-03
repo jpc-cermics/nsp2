@@ -4828,7 +4828,7 @@ static NspObjs3d *Nsetscale3d_new(const double *WRect,const double *ARect,
 
 static int int_xsetech_new(Stack stack, int rhs, int opt, int lhs)
 {
-  int axesflag= 0, iso = FALSE, clip=TRUE;
+  int axesflag= -1, iso = FALSE, clip=TRUE;
   NspObject *ret;
   int fixed = TRUE, axe3d=FALSE;
   double *wrect =NULL,*frect=NULL,*arect=NULL;
