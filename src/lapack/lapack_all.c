@@ -4062,7 +4062,7 @@ static OpTab lapack_all_func[]={
 
 /* call ith function in the lapack_all interface */
 
-int lapack_all_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int Lapack_all_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
   return (*(lapack_all_func[i].fonc))(stack,rhs,opt,lhs);
 }
@@ -4070,7 +4070,7 @@ int lapack_all_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void lapack_all_Interf_Info(int i, char **fname, function (**f))
+void Lapack_all_Interf_Info(int i, char **fname, function (**f))
 {
   *fname = lapack_all_func[i].name;
   *f = lapack_all_func[i].fonc;

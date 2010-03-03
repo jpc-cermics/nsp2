@@ -9,7 +9,7 @@ LIBRARY = nsp.a
 CFLAGS = $(CC_OPTIONS)
 FFLAGS = $(FC_OPTIONS)
 
-OBJSC = lapack.o lapack-IN.o
+OBJSC = lapack.o lapack-IN.o lapack_all.o
 
 # dhgeqz.f : patched version 
 
