@@ -97,6 +97,7 @@ extern  sci_interface  scalexp_Interf ;extern  interface_info  scalexp_Interf_In
 extern  sci_interface  Mtlb_Interf ;extern  interface_info  Mtlb_Interf_Info ;
 extern  sci_interface  Mtlb_Interf ;extern  interface_info  Mtlb_Interf_Info ;
 extern  sci_interface  Optim_Interf ;extern  interface_info  Optim_Interf_Info ;
+extern  sci_interface  Lapack_all_Interf ;extern  interface_info  Lapack_all_Interf_Info ;
 
 
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
@@ -312,6 +313,7 @@ InterfTab Interfaces[]={
   {Paudio_Interf , Paudio_Interf_Info},
 #endif
   {Optim_Interf, Optim_Interf_Info},
+  {Lapack_all_Interf , Lapack_all_Interf_Info },
   {NULL,NULL}
 }; 
 

@@ -1021,7 +1021,7 @@ NspSpRowMatrix *nsp_sprowmatrix_diag_extract(NspSpRowMatrix *A, int k)
 
 int nsp_sprowmatrix_set_diag(NspSpRowMatrix *A, NspSpRowMatrix *Diag, int k)
 {
-  return nsp_spcolmatrix_set_diag((NspSpColMatrix *) A,(NspSpColMatrix *) Diag,-k);
+  return nsp_spcolmatrix_set_diag((NspSpColMatrix *) A,(NspObject *) Diag,-k);
 }
 
 /**
