@@ -31,6 +31,6 @@ extern int nsp_mat_bdiv_square_pos_symmetric(NspMatrix *A, NspMatrix *B, double 
 extern int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, double tol_rcond);
 extern int nsp_mat_bdiv_triangular(NspMatrix *A, NspMatrix *B, char tri_type, char trans, int *info);
 extern int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info);
-extern int nsp_mat_bdiv_banded(NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rcond, double tol_rcond, int *info);
+extern int nsp_mat_bdiv_banded(NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rcond, double tol_rcond, int *info, double *rrcond);
 extern NspMatrix *nsp_increase_banded_mat(NspMatrix *A, int kl, char flag);
 #endif 

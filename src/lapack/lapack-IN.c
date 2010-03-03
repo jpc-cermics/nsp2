@@ -254,7 +254,7 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
   NspMatrix **hv=NULL;
   int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
-  CheckLhs(0,3);
+  CheckLhs(0,2);
   if ( nsp_mat_is_symmetric(A) == TRUE  ) 
     {
       char flag = (lhs == 2) ? 'V' : 'X';
@@ -274,6 +274,7 @@ static int int_spec( Stack stack, int rhs, int opt, int lhs)
     {
       if ( lhs == 2) hv = &v;
       if ( nsp_spec(A,&d,hv)== FAIL) return RET_BUG;
+
       if ( lhs <= 1) 
 	{
 	  MoveObj(stack,1,NSP_OBJECT(d));
@@ -625,12 +626,12 @@ static int int_expm( Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * interface for nsp_solve_banded: [x,rcA] = solve_banded(A,b,bandwidths=[kl,ku])
+ * interface for nsp_solve_banded: [x,rcA,rrcA] = solve_banded(A,b,bandwidths=[kl,ku])
  */
 static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B, *AA, *kb=NULLMAT;
-  double rcond;
+  double rcond, rrcond;
 
   nsp_option opts[] ={{ "bandwidths",realmat,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -638,7 +639,7 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
   int info, kl, ku;
 
   if ( GetArgs(stack,rhs,opt,T,&A,&B,&opts,&kb) == FAIL ) return RET_BUG;
-  CheckLhs(0,2);
+  CheckLhs(1,3);
 
   if ( kb != NULLMAT )
     {
@@ -668,13 +669,18 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
   
   if ( lhs == 1 )
     {
-      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, NULL, 0.0, &info) == FAIL ) 
-	return RET_BUG;
+      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, NULL, 0.0, &info, NULL) == FAIL ) 
+	goto err;
     }
-  else   
+  else if ( lhs == 2 ) 
     {
-      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, &rcond, 0.0, &info) == FAIL ) 
-	return RET_BUG;
+      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, &rcond, 0.0, &info, NULL) == FAIL ) 
+	goto err;
+    }
+  else
+    {
+      if ( nsp_mat_bdiv_banded(AA, kl, ku, B, &rcond, 0.0, &info, &rrcond) == FAIL ) 
+	goto err;
     }
 
   nsp_matrix_destroy(AA);
@@ -685,18 +691,27 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  if ( lhs == 2  &&  rcond <= A->n*nsp_dlamch("eps") )
+  if ( lhs >= 2  &&  rcond <= A->n*nsp_dlamch("eps") )
     Sciprintf("Warning: matrix is badly conditionned, solution is dubtious\n");
 
   NSP_OBJECT(B)->ret_pos=1;
 
-  if ( lhs == 2 )
+  NthObj(1) = NSP_OBJECT(B);
+  NthObj(2) = NULLOBJ;
+  if ( lhs > 1 )
     {
-      NthObj(1) = NSP_OBJECT(B);
       if ( nsp_move_double(stack,2,rcond) == FAIL ) 
 	return RET_BUG;
+      if ( lhs > 2 )
+	if ( nsp_move_double(stack,3,rrcond) == FAIL ) 
+	  return RET_BUG;
     }
+
   return Max(lhs,1);
+
+ err:
+  nsp_matrix_destroy(AA);
+  return RET_BUG;
 }
 
 
