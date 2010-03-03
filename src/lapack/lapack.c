@@ -32,7 +32,6 @@
 #include "nsp/nsp_lapack.h"
 #include "nsp/matint.h"
 
-
 /**
  * nsp_mat_is_symmetric:
  * @A: a real or complex matrix
@@ -55,9 +54,9 @@ int nsp_mat_is_symmetric(NspMatrix *A)
   else 
     {
       for ( i=0 ; i < A->m ; i++)
-	for ( j=0 ; j < i ; j++)
-	  if ( A->C[i+j*A->m].r != A->C[j+i*A->m].r  ||  A->C[i+j*A->m].i != -A->C[j+i*A->m].i )
-	    return FALSE;
+	  for ( j=0 ; j <= i ; j++)
+	    if ( A->C[i+j*A->m].r != A->C[j+i*A->m].r  ||  A->C[i+j*A->m].i != -A->C[j+i*A->m].i )
+	      return FALSE;
     }
   return TRUE;
 }
@@ -1013,22 +1012,28 @@ int nsp_spec(NspMatrix *A, NspMatrix **d,NspMatrix **v)
 {
   /*  A = [] return empty matrices */ 
   int m = A->m,n=A->n;
-  if ( A->mn == 0 ) 
-    {
-      if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-      if ( v != NULL) 
-	{
-	  if (( *v =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
-	}
-      return OK ; 
-    }
-  
+
   if (m != n) 
     { 
       Scierror("Error: first argument for spec should be square and it is (%dx%d)\n", 
 	       m,n);
       return FAIL;
     }
+
+  if ( A->mn == 0 ) 
+    {
+      if (( *d =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;
+      if ( v != NULL) 
+	{
+	  if (( *v =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) 
+	    {
+	      nsp_matrix_destroy(*d);
+	      return FAIL;
+	    }
+	}
+      return OK ; 
+    }
+  
 
   if ( nsp_mat_have_nan_or_inf(A) )
     {
@@ -1062,7 +1067,15 @@ static int intdgeev(NspMatrix *A, NspMatrix **D, NspMatrix **V)
   C2F(dgeev)("N",(V==NULL)?"N":"V", &n, A->R, &n, wr, wi, NULL, &n, (V==NULL)?NULL:vr->R, 
 	     &n, qwork, &lwork, &info, 1L, 1L);
   lwork = (int) qwork[0];
+
+  if (info != 0) 
+    {
+      Scierror("Error: bad query size in dgeev\n"); 
+      goto err;
+    }
+
   if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+
   C2F(dgeev)("N",(V==NULL)?"N":"V", &n, A->R, &n, wr, wi, NULL, &n, (V==NULL)?NULL:vr->R, 
 	     &n, dwork, &lwork, &info, 1L, 1L);
 
@@ -1071,6 +1084,7 @@ static int intdgeev(NspMatrix *A, NspMatrix **D, NspMatrix **V)
       Scierror("Error: convergence problem in dgeev\n"); 
       goto err;
     }
+
 
   /* result is real ? or complex */ 
 
@@ -1085,6 +1099,7 @@ static int intdgeev(NspMatrix *A, NspMatrix **D, NspMatrix **V)
     for (i = 0 ; i < n ; ++i) { d->R[i] = wr[i]; }
   else 
     for (i = 0 ; i < n ; ++i) { d->C[i].r = wr[i]; d->C[i].i = wi[i]; }
+
 
   if ( V != NULL ) 
     {
@@ -3370,11 +3385,18 @@ double nsp_vector_norm(NspMatrix *A, double p)
 static double intdvnorm(NspMatrix *A, double p)
 {
   int i;
-  double norm=0.0, scale, xi_abs, temp;
+  double norm=0.0, scale, xi_abs;
 
   if ( p == 1.0 )
-    for ( i = 0 ; i < A->mn ; i++ )
-      norm += fabs(A->R[i]);
+    {
+      i = 1;
+      norm = C2F(dasum)(&(A->mn), A->R, &i);
+    } 
+  else if ( p == 2.0 )
+    {
+      i = 1;
+      norm = C2F(dnrm2)(&(A->mn), A->R, &i);
+    } 
   else
     {
       scale = fabs(A->R[0]);
@@ -3386,20 +3408,14 @@ static double intdvnorm(NspMatrix *A, double p)
 
       if ( isinf(p) || scale == 0.0 )
 	norm = scale;
-      else if ( p == 2.0 )
+      else 
 	{
+	  int nscale;
+	  frexp(scale, &nscale); /* frac part (returned by frexp) is not used */
+	  nscale = - nscale;
 	  for ( i = 0 ; i < A->mn ; i++ )
-	    {
-	      temp = fabs(A->R[i])/scale;
-	      norm += temp*temp;
-	    }
-	  norm = scale*sqrt(norm);
-	}
-      else
-	{
-	  for ( i = 0 ; i < A->mn ; i++ )
-	    norm += pow(fabs(A->R[i])/scale, p);
-	  norm = scale*pow(norm,1.0/p);
+	    norm += pow(ldexp(fabs(A->R[i]),nscale), p);
+	  norm = ldexp(pow(norm,1.0/p), -nscale);
 	}
     }
   return norm;
@@ -3408,42 +3424,49 @@ static double intdvnorm(NspMatrix *A, double p)
 static double intzvnorm(NspMatrix *A, double p)
 {
   int i;
-  double norm=0.0, scale=0.0, temp, *work;
+  double norm=0.0, scale=0.0, *work=NULL;
 
   if ( p == 1.0 )
     {
       for ( i = 0 ; i < A->mn ; i++ )
 	norm +=  nsp_abs_c(&(A->C[i]));
-      return norm;
     }
-  
-  if ( (work=nsp_alloc_work_doubles(A->mn)) == NULL ) return -1.0;
-
-  for ( i = 0 ; i < A->mn ; i++ )
-    {
-      work[i] = nsp_abs_c(&(A->C[i]));
-      if ( work[i] > scale ) scale = work[i];
-    }
-
-  if ( isinf(p) || scale == 0.0 )
-    norm = scale;
   else if ( p == 2.0 )
     {
+      i = 1;
+      norm = C2F(dznrm2)(&(A->mn), A->C, &i);
+    }
+  else if ( isinf(p) )
+    {
+      double temp;
       for ( i = 0 ; i < A->mn ; i++ )
-	{
-	  temp = work[i]/scale;
-	  norm += temp*temp;
-	}
-      norm = scale*sqrt(norm);
+	if ( (temp = nsp_abs_c(&(A->C[i]))) > norm ) 
+	  norm = temp;
     }
   else
     {
-      for ( i = 0 ; i < A->mn ; i++ )
-	norm += pow(work[i]/scale, p);
-      norm = scale*pow(norm,1.0/p);
-    }
+      if ( (work=nsp_alloc_work_doubles(A->mn)) == NULL ) return -1.0;
 
-  FREE(work);
+      for ( i = 0 ; i < A->mn ; i++ )
+	{
+	  work[i] = nsp_abs_c(&(A->C[i]));
+	  if ( work[i] > scale ) scale = work[i];
+	}
+
+      if ( scale == 0.0 )
+	norm = scale;
+      else
+	{
+	  int nscale;
+	  frexp(scale, &nscale); /* frac part (returned by frexp) is not used */
+	  nscale = - nscale;
+	  for ( i = 0 ; i < A->mn ; i++ )
+	    norm += pow(ldexp(work[i],nscale), p);
+	  norm = ldexp(pow(norm,1.0/p), -nscale);
+	}
+      
+      FREE(work);
+    }
   return norm;
 }
 
@@ -3671,7 +3694,7 @@ NspMatrix *nsp_matrix_bdiv(NspMatrix *A, NspMatrix *B, double tol_rcond)
 	    {
 	      NspMatrix *AB;
 	      if ( (AB = nsp_make_bandmat_from_mat(A, kl, ku, TRUE)) == NULLMAT ) goto err;
-	      stat = nsp_mat_bdiv_banded(AB, kl, ku, C, &rcond, tol_rcond, &info);
+	      stat = nsp_mat_bdiv_banded(AB, kl, ku, C, &rcond, tol_rcond, &info, NULL);
 	      nsp_matrix_destroy(AB);
 	    }
 	  else
@@ -4022,6 +4045,40 @@ static void nsp_zgbcon(char *s_rien, int *n, int *kl, int *ku, doubleC *AAb, int
   *rcond = 1.0/((*normA1)*est);
 }
 
+/* compute a rough estimate of rcond using min(abs(diag(U)))/max(abs(diag(U))) */
+/* the diagonal of U correspond to the row number kl+ku of the matrix Ab */
+static double nsp_rough_rcond_for_banded_mat(NspMatrix *Ab, int kl, int ku)
+{
+  int i, k;
+  double umin, umax, ui;
+
+  if ( Ab->rc_type == 'r' )
+    {
+      umin = umax = fabs(Ab->R[kl+ku]);
+      for ( i = 1, k = kl+ku+Ab->m ; i < Ab->n ; i++, k+=Ab->m )
+	{
+	  ui = fabs(Ab->R[k]);
+	  if ( ui < umin )
+	    umin = ui;
+	  else if ( ui > umax )
+	    umax = ui;
+	}
+    }
+  else  /* Ab is complex */
+    {
+      umin = umax = nsp_abs_c(Ab->C+kl+ku);
+      for ( i = 1, k = kl+ku+Ab->m ; i < Ab->n ; i++, k+=Ab->m )
+	{
+	  ui = nsp_abs_c(Ab->C+k);
+	  if ( ui < umin )
+	    umin = ui;
+	  else if ( ui > umax )
+	    umax = ui;
+	}
+    }
+  return umin/umax;
+}
+
 /**
  * nsp_mat_bdiv_banded:
  * @Ab: (input/output) a real or complex banded matrix (the lapack storage is used 
@@ -4042,7 +4099,7 @@ static void nsp_zgbcon(char *s_rien, int *n, int *kl, int *ku, doubleC *AAb, int
  **/
 
 int nsp_mat_bdiv_banded(NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rcond, 
-			double tol_rcond, int *info)
+			double tol_rcond, int *info, double *rrcond)
 {
   int n = Ab->n, *ipiv=NULL, *iwork=NULL, ier;
   double *work=NULL, normA1=0.0;
@@ -4069,13 +4126,16 @@ int nsp_mat_bdiv_banded(NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rco
 	normA1 = C2F(zlangb)("1", &n, &kl, &ku, &(Ab->C[kl]), &(Ab->m), NULL, 1);
     }
 
-
   /* step 1 factorize */
   if ( (ipiv =nsp_alloc_work_int(n)) == NULL ) goto err;
   if ( Ab->rc_type == 'r' ) 
     C2F(dgbtrf)(&n, &n, &kl, &ku, Ab->R, &(Ab->m), ipiv, info);
   else 
     C2F(zgbtrf)(&n, &n, &kl, &ku, Ab->C, &(Ab->m), ipiv, info);
+
+  if ( rrcond != NULL )  /* compute rought estimate of rcond using min(abs(diag(U)))/max(abs(diag(U))) */
+    *rrcond = nsp_rough_rcond_for_banded_mat(Ab, kl, ku);
+
 
   if ( *info != 0 )
     {
