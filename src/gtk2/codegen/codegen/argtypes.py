@@ -1144,6 +1144,7 @@ matcher.register('int*', arg)
 matcher.register('gint*', arg)
 
 arg = DoublePointerArg()
+matcher.register('double*', arg)
 matcher.register('gdouble*', arg)
 
 arg = BoolArg()
