@@ -498,7 +498,10 @@ static int int_localtime(Stack stack,int rhs,int opt,int lhs)
  * The Interface for system functions 
  */ 
 
+extern function  int_nsp_query_registry;
+
 static OpTab System_func[]={
+  {"registry", int_nsp_query_registry },
   {"localtime", int_localtime},
   {"chdir", int_syscd},
   {"getcwd", int_pwd},
