@@ -1,0 +1,78 @@
+% -*- mode: latex -*-
+\mansection{registry}
+\begin{mandesc}
+  \short{registry}{get and set values of the windows registry}
+\end{mandesc}
+  %-- Calling sequence section
+\begin{calling_sequence}
+  \begin{verbatim}
+    [res,tres]=registry(key,subkey) 
+    [res,tres]=registry(key,subkey,name) 
+    registry(key,subkey,name, value);
+    registry(key,subkey, delete=%t)
+  \end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{key}: a root key which is to be chosen among the following 
+    possible values: \verb!"HKEY_CLASSES_ROOT"!, 
+    \verb!"HKEY_CURRENT_USER"!, \verb!"HKEY_LOCAL_MACHINE"!, 
+    \verb!"HKEY_USERS"!, \verb!"HKEY_DYN_DATA"!. 
+    \vname{subkey}: a path string giving a node in the registry. 
+    \vname{name}: a string 
+    \vname{delete}: an optional value given as a boolean. 
+    \vname{tres}: the type of the subkey: \verb!'n'! or \verb!'l'! or \verb!'v'!.
+    \vname{res}: a string or a scalar. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The \verb!registry! command is used to query the registry or to delete keys 
+  from the registry. 
+  \begin{itemize}
+  \item  When called with two arguments and if \verb!key! and \verb!subkey! describe a key present in the registry, the function returns 
+    \begin{itemize}
+    \item the list of subkeys of the key if the key is a node in the 
+      registree tree.  \verb!tres! is then set to  \verb!'n'! and the 
+      list is returned in a string matrix. 
+    \item the list of the value names of the key if the key is a leaf 
+      in the registree tree. The list is returned in a string matrix and 
+      \verb!tres! is then set to  \verb!'l'!. 
+    \end{itemize}
+  \item When called with two arguments and the optional argument 
+    \verb!delete=%t! the regsitry key given by  \verb!key! and \verb!subkey!
+    is deleted. Note that only leaves of the registry tree can be deleted. 
+  \item   When called with three arguments the function returns the value 
+    associated to the value-\verb!name! of the key  described by 
+    \verb!key! and \verb!subkey!. Note that only strings and integer 
+    values are searched. In that case \verb!tres! is set to \verb!v!.
+  \item When called with four arguments the function set the
+    value-\verb!name! of the key  described by 
+    \verb!key! and \verb!subkey! to the value given by \verb!value! 
+    Note that the key may preexist or not in the registry tree.
+  \end{itemize}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim} 
+    // get the subkeys of a node 
+    [n,Tn]=registry("HKEY_LOCAL_MACHINE","Software\\GTK");
+    // get the value-names of a leaf 
+    [l,Tl]=registry("HKEY_LOCAL_MACHINE","Software\\GTK\\2.0");
+    // get a specific value 
+    [v1,Tv1]=registry("HKEY_LOCAL_MACHINE","Software\\GTK\\2.0","Path");
+    [v2,Tv2]=registry("HKEY_LOCAL_MACHINE","Software\\GTK\\2.0","Version");
+    // set a specific value 
+    registry("HKEY_LOCAL_MACHINE","Software\\Test","Path","c:\\foo");
+    registry("HKEY_LOCAL_MACHINE","Software\\Test","String","nsp");
+    registry("HKEY_LOCAL_MACHINE","Software\\Test","K",678);
+    [zp,tp]=registry("HKEY_LOCAL_MACHINE","Software\\Test","Path");
+    [zs,ts]=registry("HKEY_LOCAL_MACHINE","Software\\Test","String");
+    zk=registry("HKEY_LOCAL_MACHINE","Software\\Test","K");
+    // delete a leaf 
+    registry("HKEY_LOCAL_MACHINE","Software\\Test",delete=%t);
+  \end{Verbatim}
+\end{examples}
+%-- see also
+
+
