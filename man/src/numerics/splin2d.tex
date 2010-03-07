@@ -34,8 +34,8 @@ C = splin2d(x, y, z, [,spline_type])
     of the (nx-1)(ny-1) bicubic patches : on $[x_i, x_{i+1}] \times
     [y_j, y_{j+1}]$, $s$ is defined by :
     $$
-       s(x,y) = \sum_{k=1}^4  \sum_{l=1}^4  C_{i,j}(k,l) (x - x_i)^k
-       (y - y_j)^l
+       s(x,y) = \sum_{k=1}^4  \sum_{l=1}^4  C_{i,j}(k,l) (x - x_i)^{k-1}
+       (y - y_j)^{l-1}
     $$
 
     The evaluation of  $s$ at some points must be done by the \manlink{interp2d}{interp2d}  
