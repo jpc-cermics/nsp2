@@ -498,7 +498,16 @@ static int int_localtime(Stack stack,int rhs,int opt,int lhs)
  * The Interface for system functions 
  */ 
 
-extern function  int_nsp_query_registry;
+#ifdef WIN32 
+extern function  int_nsp_query_registry
+#else 
+
+int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
+{
+  Scierror("Error: %s is only implemented on windows platforms\n",NspFname(stack));
+  return RET_BUG;
+}
+#endif 
 
 static OpTab System_func[]={
   {"registry", int_nsp_query_registry },

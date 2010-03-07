@@ -23,7 +23,8 @@ F_win= tcl/win/tclCmdAZ.o \
 	tcl/win/tclWinFCmd.o \
 	tcl/win/tclWinFile.o \
 	tcl/win/tclWinInit.o \
-	tcl/win/Tobedone.o 
+	tcl/win/Tobedone.o \
+	registry.o 
 
 OBJSC =  System-IN.o timer.o files.o realtime.o spawn.o regexp.o dstring.o $(F_@SYST_FILES@)
 

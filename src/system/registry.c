@@ -24,10 +24,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
+#include <windows.h>
 #include "nsp/interf.h"
 #include "nsp/system.h"
-#include "registry.h"
 
 #define MAX_KEY_LENGTH 255
 #define MAX_VALUE_NAME 16383
@@ -105,7 +104,7 @@ int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
 	}
       else
 	{
-	  Scierror("Error: argument 4 should be a string or a scalar\n",NspFname(stack));
+	  Scierror("Error: argument 4 of %s should be a string or a scalar\n",NspFname(stack));
 	  return RET_BUG;
 	}
       return 0;
