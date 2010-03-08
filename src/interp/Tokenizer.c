@@ -520,6 +520,28 @@ static int parse_number(Tokenizer *T)
 	  return FAIL;
 	}
     }
+  if ( c == 'i' || c == 'u'  )
+    {
+      char c1,c2; 
+      T->tokenv.buf[count++]=c;
+      T->tokenv.buf[count]='\0';
+      T->tokenv.id = NUMBER;
+      c1 = T->GetChar(T);
+      if ( c1 == '3' || c1 == '6') 
+	{
+	  c2 = T->GetChar(T);
+	  if ( ( (c1 == '3' && c2 != '2') || (c1 == '6' && c2 != '4')))
+	    {
+	      T->ParseError(T,"Error while parsing a number %s is ended by '%c%c' \n",T->tokenv.buf,c1,c2);
+	      return FAIL;
+	    }
+	  T->tokenv.buf[count++]=c1;
+	  T->tokenv.buf[count++]=c2;
+	  T->tokenv.buf[count]='\0';
+	  T->GetChar(T);
+	}
+      return OK;
+    }
   if ( c == '.' ) 
     {
       /* if the dot introduce an operator we leave the dot to the 
@@ -529,6 +551,7 @@ static int parse_number(Tokenizer *T)
       if ( c1 == '*' || c1 == '/' || c1 == '\\' || c1 == '^' 
 	   || c1 == '=' || c1 == '<' || c1 == '>' ||  c1 == '\''  )
 	{
+	  T->tokenv.buf[count++]='E';
 	}
       else
 	{
