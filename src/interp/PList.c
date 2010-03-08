@@ -420,17 +420,31 @@ int nsp_parse_add_doublei(PList *plist, char *str)
  * Returns: a new #parse_int 
  **/
 
+#define STR2NUM(val)					\
+  for ( i = 0 ; i < len  ; i++ )			\
+    {							\
+      int code = str[i];				\
+      if ( code >= '0' && code <= '9')			\
+	code -= '0';					\
+      else						\
+	return p;					\
+      val = 10*(val) + code;				\
+    }							\
+  if ( str[0] == '-' ) val -= val;
+
 static parse_int *new_nsp_parsed_int(nsp_string str, int type)
 {
   parse_int *p;
+  int len = strlen(str);
+  int i;
   if (( p = malloc(sizeof(parse_int)))== NULL) return NULL;
   if (( p->str =new_nsp_string(str)) == NULLSTRING) return NULL;
   switch ( type )
     {
-    case INUMBER32: p->Gint32 = atof(str);break;
-    case INUMBER64: p->Guint32 = atof(str);break;
-    case UNUMBER32: p->Gint64 = atof(str);break;
-    case UNUMBER64: p->Guint64 = atof(str);break;
+    case INUMBER32: p->Gint32 =0; STR2NUM(p->Gint32);break;
+    case INUMBER64: p->Guint32 =0;STR2NUM(p->Guint32);break;
+    case UNUMBER32: p->Gint64 =0; STR2NUM(p->Gint64);break;
+    case UNUMBER64: p->Guint64 =0; STR2NUM(p->Guint64);break;
     }
   return p;
 }
