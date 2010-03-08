@@ -88,7 +88,7 @@ NspSpRowMatrix *new_sprowmatrix();
 
 extern NspSpRowMatrix *SpRowObj (NspObject *O); 
 extern int IsSpRowMatObj (Stack stack, int i); 
-extern int IsSpRowMat(const NspObject *O);
+extern int IsSpMat(const NspObject *O);
 extern NspSpRowMatrix *GetSpRowCopy (Stack stack, int i); 
 extern NspSpRowMatrix *GetSpRow (Stack stack, int i); 
 extern NspSpRowMatrix *GetRealSpRow(Stack stack, int i);

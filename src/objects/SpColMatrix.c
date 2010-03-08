@@ -2091,13 +2091,14 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
 /*   adapted by bruno ( 19 fev 2010) such that the diagonal elements can be 
  *   specified also with a full matrix (and also simply by a scalar)
  */
+
 int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspObject *ODiag, int k)
 {
   int i,l, ii;
   int rmin,cmin,dsize, mn;
   NspSpColMatrix *Diag = (NspSpColMatrix*) ODiag;
   NspMatrix *FDiag = (NspMatrix *) ODiag; 
-  Boolean diag_is_sparse = IsSpColMat(ODiag), diag_is_scalar;
+  Boolean diag_is_sparse = IsSpColMat(ODiag) || IsSpMat(ODiag), diag_is_scalar;
   char diag_rc_type;
 
   rmin = Max(0,-k);
