@@ -418,6 +418,7 @@ extern NspObject *nsp_complexi_object_(const char *name);
 extern NspObject *nsp_create_object_from_str(const char *name,const char *str); 
 extern NspObject *nsp_create_object_from_str_and_size(const char *name,const char *str, int lstr);
 extern NspObject *nsp_create_object_from_doubles(const char *name,int m, int n,double *rtab, double *itab);
+extern NspObject *nsp_create_object_from_tint(const char *name, nsp_int_union val, int type);
 
 extern NspObject *nsp_create_empty_matrix_object(const char *name); 
 extern NspObject *nsp_create_true_object(const char *name); 

@@ -520,6 +520,7 @@ static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
 /*------------------------------------------------------
  * attributes  (set/get methods) 
  *------------------------------------------------------*/
@@ -689,6 +690,36 @@ static NspMethods *imatrix_get_methods(void) { return nsp_imatrix_methods;}
  * Interface 
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
+
+static int int_imatrix_impl (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *M;
+  CheckRhs (2, 3);
+  CheckLhs (1, 1);
+  NspIMatrix  *First, *Last, *Step= NULL; 
+  if ((First= GetScalarIMat(stack,1))==  NULLIMAT ) return RET_BUG;
+  if ((Last= GetScalarIMat(stack,2))==  NULLIMAT ) return RET_BUG;
+  if ( rhs -opt == 3) 
+    {
+      Step = Last;
+      if ((Last= GetScalarIMat(stack,3))==  NULLIMAT ) return RET_BUG;
+    }
+  if ( First->itype != Last->itype) 
+    {
+      Scierror ("Error: %s should be used with elements of the same subtype\n", NspFname(stack));
+      return RET_BUG;
+    }
+  if ( Step != NULL && First->itype != Step->itype) 
+    {
+      Scierror ("Error: %s should be used with elements of the same subtype\n", NspFname(stack));
+      return RET_BUG;
+    }
+  if ((M = nsp_imatrix_create_int_impl (First,Step,Last)) == NULLIMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) M);
+  return 1;
+}
+
 
 /*
  * Res =nsp_imatrix_copy(A) 
@@ -2904,12 +2935,140 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 }
 
 
+nsp_string nsp_dec2base( guint64 n,const char *str_base )
+{
+  nsp_string str=NULL;
+  char basic[32]; 
+  int base = strlen(str_base), count=0, i;
+  /* check that str_base contains unique symbols ? */
+  while (1)
+    {
+      int rem = n % base;
+      basic[count]= str_base[rem];
+      n /= base; 
+      count++;
+      if ( n == 0) break;
+    }
+  if ((str = new_nsp_string_n(count))==NULL) return NULL;
+  for ( i = 0 ; i < count ; i++ )   str[i]= basic[count-i-1];
+  str[count]='\0';
+  return str;
+}
+
+int int_dec2base(Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_string str=NULL;
+  const char tab[]="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const char base_def[]="01";
+  const char *base=base_def;
+  char *bbase = NULL;
+  int i;
+  NspSMatrix *M=NULL;
+  NspMatrix  *A;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if ( IsMatObj(stack,2) )
+	{
+	  int ibase; 
+	  if (GetScalarInt(stack,2,&ibase) == FAIL) return RET_BUG;
+	  if ( !(ibase >= 2 && ibase <= 36 )) 
+	    {
+	      Scierror("base should be in [2,36]\n");
+	      return RET_BUG;
+	    }
+	  if ((bbase = new_nsp_string_n(ibase))==NULL) return RET_BUG;
+	  strncpy(bbase,tab,ibase);
+	  bbase[ibase]='\0';
+	  base = bbase;
+	}
+      else if ( IsSMatObj(stack,2))
+	{
+	  if ((str = GetString(stack,2)) == (char*)0) return RET_BUG;
+	  if ( strlen(str) <= 1) return RET_BUG;
+	  base = str;
+	}
+      else
+	{
+	  Scierror("Error: expecting an integer or a string for base\n");
+	  return RET_BUG;
+	}
+    }
+  if ( ( M =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) 
+       == NULLSMAT) return RET_BUG;
+  for ( i = 0 ; i < A->mn ; i++ )
+    {
+      if ((str =nsp_dec2base((guint64) A->R[i],base)) == NULL) 
+	{
+	  nsp_smatrix_destroy(M);
+	  return RET_BUG;
+	}
+      M->S[i]= str ;
+    }
+  MoveObj(stack,1,NSP_OBJECT(M));
+  if ( bbase != NULL ) nsp_string_destroy(&bbase);
+  return 1;
+}
+
+double nsp_base2dec(const char *n, int base)
+{
+  int len = strlen(n), i, code;
+  double res = 0;
+  for ( i = 0 ; i < len  ; i++ )
+    {
+      code = n[i];
+      if ( code >= '0' && code <= '9') 
+	code -= '0';
+      else if ( code >= 'a' && code <= 'z') 
+	code -= 'a' - 10;
+      else if ( code >= 'A' && code <= 'Z') 
+	code -= 'A' - 10;
+      else 
+	code = 0;
+      res = base*res + code;
+    }
+  return res;
+}
+
+
+int int_base2dec(Stack stack, int rhs, int opt, int lhs)
+{
+  int i,base=2;
+  NspSMatrix *M=NULL;
+  NspMatrix  *A;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((M = GetSMat(stack,1))  == NULLSMAT) return RET_BUG;
+  if ( rhs == 2 )
+    {
+      if (GetScalarInt(stack,2,&base) == FAIL) return RET_BUG;
+      if ( base < 2 || base > 36 ) 
+	{
+	  Scierror("base should be in [2,36]\n");
+	  return RET_BUG;
+	}
+    }
+  if ((A = nsp_matrix_create(NVOID,'r',M->m,M->n)) == NULLMAT)
+    return RET_BUG;
+  for ( i = 0 ; i < A->mn ; i++) 
+    A->R[i]= nsp_base2dec(M->S[i], base);
+  MoveObj(stack,1,NSP_OBJECT(A));
+  return 1;
+}
+
+
+
 
 /*
  * The Interface for basic matrices operation 
  */
 
 static OpTab IMatrix_func[]={
+  {"impl_i", int_imatrix_impl},
+  {"dec2base", int_dec2base},
+  {"base2dec", int_base2dec},
   {"extract_i", int_matint_extract}, 
   {"extractelts_i", int_matint_extractelts}, 
   {"extractcols_i", int_matint_extractcols}, 

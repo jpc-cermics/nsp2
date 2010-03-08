@@ -75,6 +75,51 @@ NspIMatrix  *nsp_imatrix_create(const char *name, int m, int n,nsp_itype itype)
   return(Loc);
 }
 
+
+
+/**
+ * nsp_imatrix_create_int_impl:
+ * @first: 
+ * @step: 
+ * @last: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+#define NSP_MAT_IMPL(name,type,arg)	{				\
+    type first = First->name[0];					\
+    type step  = (Step == NULL) ? 1: Step->name[0];			\
+    type last = Last->name[0];						\
+    int count=0;							\
+    if ( (first < last  &&  step < 0) || (first > last && step > 0) || step == 0 ) \
+      {									\
+	Loc = nsp_imatrix_create(NVOID, 1, 0, First->itype);		\
+	return Loc;							\
+      }									\
+    if ( step == 1 )							\
+      count = last - first + 1;						\
+    else if ( step == -1 )						\
+      count = first - last + 1;						\
+    else if ( step > 0 )						\
+      count = 1 + (last-first)/step;					\
+    else								\
+      count = 1 + (first-last)/(-step);					\
+    if ( (Loc = nsp_imatrix_create(NVOID,1,count, First->itype)) == NULLIMAT ) \
+      return NULLIMAT;							\
+    for ( i = 0 ; i < Loc->mn ; i++) Loc->name[i] = first+i*step;}	\
+    break;
+
+NspIMatrix *nsp_imatrix_create_int_impl(NspIMatrix *First, NspIMatrix *Step,NspIMatrix *Last)
+{
+  int i;
+  NspIMatrix *Loc;
+  NSP_ITYPE_SWITCH(First->itype,NSP_MAT_IMPL,void);
+#undef NSP_MAT_IMPL
+  return Loc;
+}
+
 /**
  * nsp_imatrix_clone:
  * @name: matrix name 

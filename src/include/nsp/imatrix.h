@@ -316,6 +316,8 @@ extern int GetScalarBool (Stack stack, int i, int *val);
 /* from NspIMatrix.c */
 
 extern NspIMatrix *nsp_imatrix_create(const char *name, int m, int n, nsp_itype itype); 
+extern NspIMatrix *nsp_imatrix_create_int_impl(NspIMatrix *First, NspIMatrix *Step,NspIMatrix *Last);
+
 extern NspIMatrix *nsp_imatrix_clone(const char *name, NspIMatrix *A, int m, int n, int init);
 extern NspIMatrix *nsp_imatrix_copy(NspIMatrix *A); 
 extern unsigned int  nsp_imatrix_elt_size(NspMatrix *M);

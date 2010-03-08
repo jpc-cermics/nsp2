@@ -7,8 +7,8 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
+#include <glib.h> 
 #include "nsp/sciio.h" 
-
 #include "nsp/object.h"
 
 /*
@@ -54,6 +54,23 @@ struct _parse_double {
   double val ; /* the value of the parsed double */
   nsp_string str;
 };
+
+/*
+ * used for storing integers a string and an integer.
+ */
+
+typedef struct _parse_int parse_int ;
+
+struct _parse_int {
+  union { 
+    gint32 Gint32;
+    guint32 Guint32;
+    gint64 Gint64;
+    guint64 Guint64;
+  };
+  nsp_string str;
+};
+
 
 /*
  *  Store PList in the data structure of Scilab 
@@ -133,7 +150,7 @@ extern int nsp_parse_add_list1(PList *plist, PList *l);
 extern int nsp_parse_add_doublei(PList *plist, char *str);
 extern int nsp_parse_add_opname(PList *plist, char *str);
 extern int nsp_parse_add_object(PList *plist, NspObject *obj );
-
+extern int nsp_parse_add_inti(PList *plist, char *str, int type);
 
 
 extern int ParseAddDouble (PList *plist);

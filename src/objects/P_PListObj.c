@@ -250,6 +250,22 @@ int PListXdrSave_I(XDR *xdrs, PList L)
 	  nsp_xdr_save_c(xdrs,'D');
 	  nsp_xdr_save_string(xdrs,((parse_double *) L->O)->str);
 	  break;
+	case INUMBER32:
+	  nsp_xdr_save_c(xdrs,'I');
+	  nsp_xdr_save_string(xdrs,((parse_int *) L->O)->str);
+	  break;
+	case INUMBER64:
+	  nsp_xdr_save_c(xdrs,'J');
+	  nsp_xdr_save_string(xdrs,((parse_int *) L->O)->str);
+	  break;
+	case UNUMBER32:
+	  nsp_xdr_save_c(xdrs,'U');
+	  nsp_xdr_save_string(xdrs,((parse_int *) L->O)->str);
+	  break;
+	case UNUMBER64:
+	  nsp_xdr_save_c(xdrs,'V');
+	  nsp_xdr_save_string(xdrs,((parse_int *) L->O)->str);
+	  break;
 	case NAME :
 	  nsp_xdr_save_c(xdrs,'N');
 	  nsp_xdr_save_string(xdrs,(char *) L->O);
@@ -319,6 +335,22 @@ static int PListXdrLoad(XDR *xdrs, PList *plist)
 	case 'D':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);
 	  if (nsp_parse_add_doublei(plist,buf) == FAIL) return (FAIL);
+	  break;
+	case 'I':
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
+	  if (nsp_parse_add_inti(plist,buf, INUMBER32) == FAIL) return (FAIL);
+	  break;
+	case 'J':
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
+	  if (nsp_parse_add_inti(plist,buf, INUMBER64) == FAIL) return (FAIL);
+	  break;
+	case 'U':
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
+	  if (nsp_parse_add_inti(plist,buf, UNUMBER32) == FAIL) return (FAIL);
+	  break;
+	case 'V':
+	  nsp_xdr_load_string(xdrs,buf,TBUF);
+	  if (nsp_parse_add_inti(plist,buf, UNUMBER64) == FAIL) return (FAIL);
 	  break;
 	case 'N':
 	  nsp_xdr_load_string(xdrs,buf,TBUF);

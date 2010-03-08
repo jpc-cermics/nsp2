@@ -2215,6 +2215,14 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_doublei(plist,T->tokenv.buf) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       break;
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+      if ( debug)  Sciprintf("[N:%f]",atof(T->tokenv.buf));
+      if (nsp_parse_add_inti(plist,T->tokenv.buf, T->tokenv.id) == FAIL) return(FAIL);
+      if ( T->NextToken(T) == FAIL) return(FAIL);
+      break;
     case EXEC : /* command turned to function call */
     case GLOBAL:
     case APROPOS:

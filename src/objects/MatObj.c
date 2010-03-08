@@ -1544,8 +1544,6 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
     {
       if ((M = nsp_matrix_create_int_impl (dfirst, step, last)) == NULLMAT)
 	return RET_BUG;
-/*       if ((M = nsp_matrix_create_int_impl (ifirst, istep, ilast)) == NULLMAT) */
-/* 	return RET_BUG; */
     }
   else 
     {

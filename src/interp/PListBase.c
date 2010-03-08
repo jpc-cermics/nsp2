@@ -288,6 +288,14 @@ NspHash *nsp_ast_hash_create(void)
     }
   if ((el = nsp_create_object_from_double("NUMBER",NUMBER))== NULLOBJ) return NULLHASH;
   if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("INUMBER32",INUMBER32))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("INUMBER64",INUMBER64))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("UNUMBER32",UNUMBER32))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
+  if ((el = nsp_create_object_from_double("UNUMBER64",UNUMBER64))== NULLOBJ) return NULLHASH;
+  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
   if ((el = nsp_create_object_from_double("NAME",NAME))== NULLOBJ) return NULLHASH;
   if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
   if ((el = nsp_create_object_from_double("STRING",STRING))== NULLOBJ) return NULLHASH;

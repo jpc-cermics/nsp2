@@ -525,6 +525,30 @@ NspObject *nsp_create_object_from_int(const char *name, int ival)
   return (NspObject *) A;
 }
 
+
+
+/**
+ *nsp_create_object_from_tint:
+ * @name:  the object name or %NVOID
+ * @ival: value to store in the 1x1 matrix 
+ * @type: type of the given int 
+ * 
+ * Creates an Object containing a 1x1 int matrix 
+ * with value @ival, name @name and type @type
+ * 
+ * Return value: a new #NspObject ( in fact a #NspIMatrix)
+ **/
+
+NspObject *nsp_create_object_from_tint(const char *name, nsp_int_union val, int type)
+{
+  NspIMatrix *A;
+  if ((A= nsp_imatrix_create(name,(int)1,(int)1,type))==NULLIMAT) return(NULLOBJ);
+#define IMAT_INTM(name,type,arg) A->name[0] = val.name;break; 
+  NSP_ITYPE_SWITCH(A->itype,IMAT_INTM,"");
+#undef IMAT_INTM
+  return (NspObject *) A;
+}
+
 /**
  *nsp_complexi_object_:
  * @name:  the object name or %NVOID

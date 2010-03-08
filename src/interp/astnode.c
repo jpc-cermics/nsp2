@@ -302,6 +302,10 @@ int nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level)
 	  Sciprintf1(indent,"//%s", M->obj->obj);
 	  break;
 	case NUMBER:
+	case INUMBER32:
+	case INUMBER64:
+	case UNUMBER32:
+	case UNUMBER64:
 	  Sciprintf("%s",M->obj->obj);
 	  break;
 	case NAME :
@@ -455,6 +459,10 @@ static int int_astnode_meth_get_str(NspAstNode *self, Stack stack, int rhs, int 
     case STRING :
     case COMMENT :
     case NUMBER :
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
       str = ((NspAstNode *) self)->obj->obj;
       if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
       break;
@@ -489,6 +497,10 @@ static int int_astnode_meth_get_opname(NspAstNode *self, Stack stack, int rhs, i
     case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
     case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
     case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
     case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
     case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
     case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;

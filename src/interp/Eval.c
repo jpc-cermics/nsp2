@@ -383,6 +383,10 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	case NAME :
 	case OPNAME :
 	case NUMBER:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
 	case STRING:
 	case EMPTYMAT:
 	case EMPTYCELL:
@@ -1080,6 +1084,22 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       /* if (debug) Sciprintf("==>%s\n",((parse_double *) L->O)->str); */
       if ((stack->val->S[first] = nsp_create_object_from_double(NVOID,((parse_double *) L->O)->val)) == NULLOBJ) 
 	return RET_BUG;
+      return 1;
+    case INUMBER32 :
+      if ((stack->val->S[first] = nsp_create_object_from_tint(NVOID,(nsp_int_union) ((parse_int *) L->O)->Gint32,
+							      nsp_gint32)) == NULLOBJ) return RET_BUG;
+      return 1;
+    case INUMBER64 :
+      if ((stack->val->S[first] = nsp_create_object_from_tint(NVOID,(nsp_int_union)((parse_int *) L->O)->Gint64,
+							      nsp_gint64)) == NULLOBJ) return RET_BUG;
+      return 1;
+    case UNUMBER32 :
+      if ((stack->val->S[first] = nsp_create_object_from_tint(NVOID,(nsp_int_union)((parse_int *) L->O)->Guint32,
+							      nsp_guint32)) == NULLOBJ)return RET_BUG;
+      return 1;
+    case UNUMBER64 :
+      if ((stack->val->S[first] = nsp_create_object_from_tint(NVOID,(nsp_int_union)((parse_int *) L->O)->Guint64,
+							      nsp_guint64)) == NULLOBJ)return RET_BUG;
       return 1;
       break;
     case STRING:

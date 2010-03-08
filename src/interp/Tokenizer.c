@@ -525,7 +525,7 @@ static int parse_number(Tokenizer *T)
       char c1,c2; 
       T->tokenv.buf[count++]=c;
       T->tokenv.buf[count]='\0';
-      T->tokenv.id = NUMBER;
+      T->tokenv.id = (c == 'i') ? INUMBER32 : UNUMBER32;
       c1 = T->GetChar(T);
       if ( c1 == '3' || c1 == '6') 
 	{
@@ -535,11 +535,14 @@ static int parse_number(Tokenizer *T)
 	      T->ParseError(T,"Error while parsing a number %s is ended by '%c%c' \n",T->tokenv.buf,c1,c2);
 	      return FAIL;
 	    }
+	  if ( c == 'i' && c2 == '4' ) T->tokenv.id = INUMBER64;
+	  if ( c == 'u' && c2 == '4' ) T->tokenv.id = UNUMBER64;
 	  T->tokenv.buf[count++]=c1;
 	  T->tokenv.buf[count++]=c2;
 	  T->tokenv.buf[count]='\0';
 	  T->GetChar(T);
 	}
+      
       return OK;
     }
   if ( c == '.' ) 

@@ -12,6 +12,10 @@
  */
 
 enum _nsp_basic_types { 
+  INUMBER32 = -14,
+  INUMBER64,
+  UNUMBER32,
+  UNUMBER64,
   NUMBER =-10,
   NAME, 
   STRING, 

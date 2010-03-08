@@ -365,6 +365,14 @@ int nsp_parse_add_list1(PList *plist, PList *l)
   return(OK);
 }
 
+/**
+ * new_nsp_parsed_double:
+ * @str: a string containing a double representation 
+ * 
+ * 
+ * Returns: a new #parse_double 
+ **/
+
 static parse_double *new_nsp_parsed_double(nsp_string str)
 {
   parse_double *p;
@@ -392,6 +400,59 @@ int nsp_parse_add_doublei(PList *plist, char *str)
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   if (( loc1->O = new_nsp_parsed_double(str)) == NULLSTRING) return(FAIL);
   loc1->type = NUMBER;
+  if ( loc == NULLPLIST) 
+    {
+      *plist = loc1;
+    }
+  else 
+    {
+      while ( loc->next != NULLPLIST ) loc=loc->next;
+      loc->next = loc1;
+      loc1->prev = loc;
+    }
+  return(OK);
+}
+/**
+ * new_nsp_parsed_int:
+ * @str: a string containing an int representation 
+ * 
+ * 
+ * Returns: a new #parse_int 
+ **/
+
+static parse_int *new_nsp_parsed_int(nsp_string str, int type)
+{
+  parse_int *p;
+  if (( p = malloc(sizeof(parse_int)))== NULL) return NULL;
+  if (( p->str =new_nsp_string(str)) == NULLSTRING) return NULL;
+  switch ( type )
+    {
+    case INUMBER32: p->Gint32 = atof(str);break;
+    case INUMBER64: p->Guint32 = atof(str);break;
+    case UNUMBER32: p->Gint64 = atof(str);break;
+    case UNUMBER64: p->Guint64 = atof(str);break;
+    }
+  return p;
+}
+
+/**
+ * nsp_parse_add_inti:
+ * @plist: 
+ * @str: 
+ * 
+ * adds a new #PList containing a string coding the int value (@str) and a int value at end of 
+ * current #PList @plist. if list is empty a list is created. 
+ * 
+ * 
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_parse_add_inti(PList *plist, char *str, int type)
+{
+  PList loc = *plist,loc1;
+  if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
+  if (( loc1->O = new_nsp_parsed_int(str,type)) == NULLSTRING) return(FAIL);
+  loc1->type = type;
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -460,6 +521,13 @@ void nsp_plist_destroy(PList *List)
 	  FREE(((parse_double *)loc->O)->str);
  	  FREE(loc->O);
 	  break;
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
+	  FREE(((parse_int *)loc->O)->str);
+ 	  FREE(loc->O);
+	  break;
 	case PLIST: 
 	  loc1= (PList) loc->O;
 	  nsp_plist_destroy(&loc1);
@@ -501,8 +569,14 @@ static PList _nsp_plist_copy(PList L,int tag)
 	case COMMENT :
 	  if (nsp_parse_add_comment(&Res_last,(char*) L->O)==FAIL) return(NULLPLIST);
 	  break;
-	case NUMBER :
+ 	case NUMBER :
 	  if (nsp_parse_add_doublei(&Res_last,((parse_double *) L->O)->str)==FAIL) return(NULLPLIST);
+	  break;
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
+	  if (nsp_parse_add_inti(&Res_last,((parse_double *) L->O)->str,L->type)==FAIL) return(NULLPLIST);
 	  break;
 	case PLIST: 
 	  if ((loc=_nsp_plist_copy((PList) L->O,tag)) == NULLPLIST) return(NULLPLIST);
@@ -629,6 +703,13 @@ NspList *nsp_plist_to_list(PList L)
 	  if ( _nsp_list_add(&Res,L->type,L->arity,((parse_double *) L->O)->str)==FAIL) 
 	    return(NULLLIST);
 	  break;
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
+	  if ( _nsp_list_add(&Res,L->type,L->arity,((parse_int *) L->O)->str)==FAIL) 
+	    return(NULLLIST);
+	  break;
 	case PLIST: 
 	  if ((loc= nsp_plist_to_list((PList) L->O)) == NULLLIST) return(NULLLIST);
 	  /* if ( _nsp_list_add_list1(&loc1,loc) == FAIL) return (NULLLIST); */
@@ -692,6 +773,12 @@ static void _nsp_plist_print_internal(PList L, int indent)
 	  break;
 	case NUMBER:
 	  Sciprintf("%s",((parse_double *) L->O)->str);
+	  break;
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
+	  Sciprintf("%s",((parse_int *) L->O)->str);
 	  break;
 	case NAME :
 	  Sciprintf("%s",(char *) L->O);
@@ -926,6 +1013,10 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	case OPNAME :
 	case NUMBER:
 	case STRING:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
 	  return _nsp_plist_pretty_print_arg(L,indent,pos,posret);
 	  break;
 	case OBJECT: 
@@ -1218,6 +1309,12 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
     case NUMBER:
       return pos+  Sciprintf1(i,"%s",((parse_double *) L->O)->str);
       break;
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+      return pos+  Sciprintf1(i,"%s",((parse_int *) L->O)->str);
+      break;
     case OPNAME :
       return pos+Sciprintf1(i,"'%s'",(char *) L->O);
       break;
@@ -1475,6 +1572,10 @@ static void _nsp_plist_print(PList List, int indent)
 	case OPNAME :
 	case NUMBER:
 	case STRING:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
 	  _nsp_plist_print_arg(L,indent);
 	  break;
 	case OBJECT :
@@ -1685,6 +1786,11 @@ static void _nsp_plist_print_arg(PList L, int i)
       break;
     case NUMBER:
       Sciprintf("%s", ((parse_double *) L->O)->str);break;
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+      Sciprintf("%s", ((parse_int *) L->O)->str);break;
     case OPNAME :
       Sciprintf("'%s'",(char *) L->O);break;
     case STRING:
@@ -1775,6 +1881,10 @@ int nsp_parser_get_line(PList L)
     case COMMENT :
     case STRING:
     case NUMBER:
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
     case NAME :
     case OPNAME :
     case EMPTYMAT:
@@ -1972,6 +2082,10 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	case OPNAME :
 	case NUMBER:
 	case STRING:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
 	  Arg_name_to_local_name(rec,L,H);
 	  break;
 	case OBJECT :
@@ -2198,6 +2312,10 @@ void plist_name_search(PList List,const char *name,int *res)
 	case OPNAME :
 	case NUMBER:
 	case STRING:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
 	  _plist_name(L,name,res);
 	  break;
 	case OBJECT :
