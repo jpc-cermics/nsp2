@@ -442,8 +442,8 @@ static parse_int *new_nsp_parsed_int(nsp_string str, int type)
   switch ( type )
     {
     case INUMBER32: p->Gint32 =0; STR2NUM(p->Gint32);break;
-    case INUMBER64: p->Guint32 =0;STR2NUM(p->Guint32);break;
-    case UNUMBER32: p->Gint64 =0; STR2NUM(p->Gint64);break;
+    case INUMBER64: p->Gint64 =0; STR2NUM(p->Gint64);break;
+    case UNUMBER32: p->Guint32 =0; STR2NUM(p->Guint32);break;
     case UNUMBER64: p->Guint64 =0; STR2NUM(p->Guint64);break;
     }
   return p;
