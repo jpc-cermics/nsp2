@@ -59,8 +59,7 @@ if z<>4 | ~w.equal[hash_create(A=1,B=2,C=3)] then pause;end
 if z<>4 | ~w.equal[hash_create(A=100,B=2,C=3)] then pause;end 
 [z,w]=f(4,5,c=100);
 if z<>4 | ~w.equal[hash_create(A=1,B=2,C=100)] then pause;end 
-[z,w]=f(4,5,foo=100);
-if z<>4 | ~w.equal[hash_create(A=1,B=2,C=3)] then pause;end 
+
 
 
   
