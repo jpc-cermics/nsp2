@@ -3342,7 +3342,7 @@ int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x)
 
   if ( A->itype != x->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 #define IMAT_AC(name,type,arg)				\
@@ -3372,7 +3372,7 @@ int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x)
   int i,j, k;
   if ( A->itype != x->itype ) 
     {
-      Scierror("Error: arguments must have the same integre type\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
 #define IMAT_AC(name,type,arg)				\
