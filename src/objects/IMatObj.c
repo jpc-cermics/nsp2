@@ -2818,21 +2818,32 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 /*
  */
 
-int
-int_imatrix_intmax (Stack stack, int rhs, int opt, int lhs)
+int int_imatrix_intmax (Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_itype itype = nsp_gint;
   nsp_int_union val;
-  NspIMatrix *A;
   NspIMatrix *R;
   CheckRhs (1, 1);
   CheckLhs (0, 1);
-  if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+  if ( IsSMatObj(stack,1)) 
+    {
+      int rep;
+      NSP_ITYPE_NAMES(names);
+      if ((rep = GetStringInArray(stack,1, names, 0)) == -1 ) return RET_BUG;
+      itype = (nsp_itype) rep;
+    }
+  else
+    {
+      NspIMatrix *A;
+      if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+	return RET_BUG;
+      itype = A->itype;
+    }
+  NSP_MAX_ITYPE(val,itype);
+  if ((R = nsp_imatrix_create(NVOID,1,1,itype))== NULLIMAT)
     return RET_BUG;
-  if ((R = nsp_imatrix_create(NVOID,1,1,A->itype))== NULLIMAT)
-    return RET_BUG;
-  val = nsp_imatrix_intmax(A);
 #define IMAT_INTM(name,type,arg) R->name[0] = val.name;break; 
-  NSP_ITYPE_SWITCH(A->itype,IMAT_INTM,"");
+  NSP_ITYPE_SWITCH(itype,IMAT_INTM,"");
 #undef IMAT_INTM
   MoveObj(stack,1,NSP_OBJECT(R));
   return Max(lhs, 1) ;
@@ -2841,18 +2852,30 @@ int_imatrix_intmax (Stack stack, int rhs, int opt, int lhs)
 int
 int_imatrix_intmin (Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_itype itype = nsp_gint;
   nsp_int_union val;
-  NspIMatrix *A;
   NspIMatrix *R;
   CheckRhs (1, 1);
   CheckLhs (0, 1);
-  if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+  if ( IsSMatObj(stack,1)) 
+    {
+      int rep;
+      NSP_ITYPE_NAMES(names);
+      if ((rep = GetStringInArray(stack,1, names, 0)) == -1 ) return RET_BUG;
+      itype = (nsp_itype) rep;
+    }
+  else
+    {
+      NspIMatrix *A;
+      if ((A = GetIMat (stack, 1)) == NULLIMAT) 
+	return RET_BUG;
+      itype = A->itype;
+    }
+  NSP_MIN_ITYPE(val,itype);
+  if ((R = nsp_imatrix_create(NVOID,1,1,itype))== NULLIMAT)
     return RET_BUG;
-  if ((R = nsp_imatrix_create(NVOID,1,1,A->itype))== NULLIMAT)
-    return RET_BUG;
-  val = nsp_imatrix_intmin(A);
 #define IMAT_INTM(name,type,arg) R->name[0] = val.name;break; 
-  NSP_ITYPE_SWITCH(A->itype,IMAT_INTM,"");
+  NSP_ITYPE_SWITCH(itype,IMAT_INTM,"");
 #undef IMAT_INTM
   MoveObj(stack,1,NSP_OBJECT(R));
   return Max(lhs, 1) ;
@@ -2964,10 +2987,24 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
   char *bbase = NULL;
   int i;
   NspSMatrix *M=NULL;
-  NspMatrix  *A;
+  NspMatrix  *A=NULL;
+  NspIMatrix  *IA=NULL;
   CheckRhs(1,2);
   CheckLhs(1,1);
-  if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
+  if ( IsIMatObj(stack,1) )
+    {
+      if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
+      if ( IA->itype != nsp_guint64) 
+	{
+	  Scierror ("Error: integer matrix argument for %s should be of uint64 subtype\n", NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else 
+    {
+      if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
+    }
+  
   if ( rhs == 2 )
     {
       if ( IsMatObj(stack,2) )
@@ -2976,7 +3013,7 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
 	  if (GetScalarInt(stack,2,&ibase) == FAIL) return RET_BUG;
 	  if ( !(ibase >= 2 && ibase <= 36 )) 
 	    {
-	      Scierror("base should be in [2,36]\n");
+	      Scierror("Error: base should be in [2,36]\n");
 	      return RET_BUG;
 	    }
 	  if ((bbase = new_nsp_string_n(ibase))==NULL) return RET_BUG;
@@ -2996,21 +3033,49 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
-  if ( ( M =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) 
-       == NULLSMAT) return RET_BUG;
-  for ( i = 0 ; i < A->mn ; i++ )
+
+  if ( A != NULL ) 
     {
-      if ((str =nsp_dec2base((guint64) A->R[i],base)) == NULL) 
+      if ( ( M =nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1)) 
+	   == NULLSMAT) return RET_BUG;
+      for ( i = 0 ; i < A->mn ; i++ )
 	{
-	  nsp_smatrix_destroy(M);
-	  return RET_BUG;
+	if ((str =nsp_dec2base((guint64) A->R[i],base)) == NULL) 
+	  {
+	    nsp_smatrix_destroy(M);
+	    return RET_BUG;
+	  }
+	M->S[i]= str ;
 	}
-      M->S[i]= str ;
+    }
+  else
+    {
+      if ( ( M =nsp_smatrix_create_with_length(NVOID,IA->m,IA->n,-1)) 
+	   == NULLSMAT) return RET_BUG;
+      for ( i = 0 ; i < IA->mn ; i++ )
+	{
+	  if ((str =nsp_dec2base( IA->Guint64[i],base)) == NULL) 
+	    {
+	      nsp_smatrix_destroy(M);
+	      return RET_BUG;
+	    }
+	  M->S[i]= str ;
+	}
     }
   MoveObj(stack,1,NSP_OBJECT(M));
   if ( bbase != NULL ) nsp_string_destroy(&bbase);
   return 1;
 }
+
+/**
+ * nsp_base2dec:
+ * @n: 
+ * @base: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 double nsp_base2dec(const char *n, int base)
 {
@@ -3032,9 +3097,29 @@ double nsp_base2dec(const char *n, int base)
   return res;
 }
 
+double nsp_strbase2dec(const char *n, const char *base)
+{
+  int len = strlen(n), i,j;
+  int lenb=strlen(base);
+  double res = 0;
+  for ( i = 0 ; i < len  ; i++ )
+    {
+      int ok=0;
+      for ( j = 0 ; j < lenb ; j++)
+	if ( n[i]== base[j]) 
+	  {
+	    res = lenb*res + j;
+	    ok = 1;
+	  }
+      if ( ok == 0 ) return 0.0/0.0; 
+    }
+  return res;
+}
+
 
 int int_base2dec(Stack stack, int rhs, int opt, int lhs)
 {
+  char *strbase = NULL;
   int i,base=2;
   NspSMatrix *M=NULL;
   NspMatrix  *A;
@@ -3043,17 +3128,34 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
   if ((M = GetSMat(stack,1))  == NULLSMAT) return RET_BUG;
   if ( rhs == 2 )
     {
-      if (GetScalarInt(stack,2,&base) == FAIL) return RET_BUG;
-      if ( base < 2 || base > 36 ) 
+      if ( IsMatObj(stack,2) )
 	{
-	  Scierror("base should be in [2,36]\n");
+	  if (GetScalarInt(stack,2,&base) == FAIL) return RET_BUG;
+	  if ( base < 2 || base > 36 ) 
+	    {
+	      Scierror("base should be in [2,36]\n");
+	      return RET_BUG;
+	    }
+	}
+      else if ( IsSMatObj(stack,2))
+	{
+	  if ((strbase = GetString(stack,2)) == (char*)0) return RET_BUG;
+	  if ( strlen(strbase) <= 1) return RET_BUG;
+	}
+      else
+	{
+	  Scierror("Error: expecting an integer or a string for base\n");
 	  return RET_BUG;
 	}
     }
   if ((A = nsp_matrix_create(NVOID,'r',M->m,M->n)) == NULLMAT)
     return RET_BUG;
-  for ( i = 0 ; i < A->mn ; i++) 
-    A->R[i]= nsp_base2dec(M->S[i], base);
+  if ( strbase != NULL )
+    for ( i = 0 ; i < A->mn ; i++) 
+      A->R[i]= nsp_strbase2dec(M->S[i],strbase);
+  else
+    for ( i = 0 ; i < A->mn ; i++) 
+      A->R[i]= nsp_base2dec(M->S[i], base);
   MoveObj(stack,1,NSP_OBJECT(A));
   return 1;
 }
