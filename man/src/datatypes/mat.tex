@@ -71,6 +71,25 @@ Display of numerical matrices could be changed using the \manlink{format}{format
 \item \verb+A.set_diag[B [,k]]+ sets the \verb+k+-th diagonal of matrix \verb+A+ to \verb+B+.
 \end{itemize}
 
+\itemdesc{Operators}
+
+Usual operations such as addition (\verb-A+B-), substraction  (\verb+A-B+), product (\verb+A*B+), 
+kroneker product (\verb+A.*.B+), power (\verb+A^n+) (\verb+A+ should be square and $n$ a positive (or negative if $A$
+is inversible) integer, element-wise product (\verb+A.*B+), element-wise division (\verb+A./B+), 
+division of a matrix or vector by a scalar  (\verb+A/s+), 
+element-wise power (\verb+A.^n+), right concatenation  (\verb+[A ,B]+), 
+down concatenation  (\verb+[A;B]+), transposition (\verb+A'+ and \verb+A.'+), 
+linear system solving (\verb+A\x+) are available.
+
+It is worth noting that for addition and substraction one of the operands could be a scalar:
+\verb=s+M= or \verb=M+s= returns a matrix of same format than \verb+M+
+(even if \verb+M+ is an empty matrix) where the scalar \verb=s= has been added to each
+element of \verb+M+. Such shortcuts are also available for element-wise power and division. 
+
+Comparizon operators are denoted \verb+==+, \verb+~=+ or  \verb+<>+ (non equality test), 
+\verb+<=+, \verb+<+, \verb+>=+, \verb+>+, and like for  addition and substraction one of
+the operands could be a scalar. 
+
 \itemdesc{Extraction, insertion, deletion}
 \begin{itemize}
    \item If \verb+I+ and is \verb+J+ are respectively row and column indices \verb+A(I,J)+ is the submatrix of \verb+A+ with entries in \verb+I+ and \verb+j+.
@@ -85,13 +104,28 @@ matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
    \item \verb+A(I,:)=[]+ removes the rows of \verb+A+ with indices in \verb+J+.
    \item \verb+A(:,J)=[]+ removes the columns of \verb+A+ with indices in \verb+J+.
 \end{itemize}
+See also the \hyperlink{indexing arrays}{indexing arrays, extraction, assignment, rows/cols deletion} help page.
+
+\itemdesc{Some useful tests}
+\begin{itemize}
+    \item \verb+is(A,%types.Mat)+ or \verb+type(A,"short")=="m"+ or \verb+type(A,"string")=="Mat"+ 
+     test if the argument $A$ is a Mat matrix (double float real or complex numbers).
+    \item \verb+is(A,%types.Mat) && isreal(A,%t)+ tests if the argument $A$ is a real matrix (see
+                     \manlink{isreal}{isreal} help page).
+    \item \verb+isvector(A)+ tests if the matrix $A$ is a vector (see \manlink{isvector}{isvector})
+    \item \verb+isscalar(A)+ tests if the matrix $A$ is a scalar (see \manlink{isscalar}{isscalar})
+\end{itemize}
 
 \itemdesc{Empty matrices}
+
 Empty matrices are matrices with zero rows or zero columns. Operations with empty matrices
 are compatible with linear algebra operations. The \verb+m x n+ zero matrix can be 
 factorized as the empty \verb+m x 0+ matrix \verb+*+ the \verb+0 x n+ matrix. 
 
+
+
 \itemdesc{For loop control}
+
 With a matrix \verb+A+:
 \begin{verbatim}
      for col=A
@@ -107,6 +141,12 @@ variable  \verb+col+ being equal to the ith column of \verb+A+ at the i-th itera
    \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
 of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
 (resp. columns) of \verb+A+.
+   \item all \hyperlink{arrays}{basic arrays functions or method} (which works on full arrays of any kind) 
+     are naturally available for \emph{Mat} 
+   \item For basic functions or methods acting on \emph{Mat} matrix (like \verb+max+, \verb+min+, \verb+minmax+,
+     \verb+sum+, \verb+prod+, \verb+diff+, etc...) see \hyperlink{basicnumarrays}{basic functions or methods for numerical matrices}.
+    \item Sorting, searching, set function are available for \emph{Mat}  (note that they generally don't work for complex matrices
+      though) see \hyperlink{searchandsort}{searching and sorting} chapter.
 \end{itemize}
 
 

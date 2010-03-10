@@ -1,0 +1,216 @@
+% -*- mode: latex -*-
+
+\mansection{IMat}
+\begin{mandesc}
+  \short{IMat}{integer matrix data type}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A=[a11, a12, ..., a1n;
+   a21, a22, ..., a2n;
+   ...
+   am1, am2, ...; amn]
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{a11 ...}: integer numbers (IMat scalars)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+The \emph{IMat} data type lets to use scalars, vectors or matrices of
+integers stored as usual C integers (and not as double floating point numbers). 
+Several kinds of integers are available (signed and unsigned integers stored
+on 8, 16, 32 and 64 bits). Note that numbers written $1$, $13$, $-67$
+are recognized as double float by the nsp interpretor (and so as \manlink{Mat}{Mat}).
+Currently signed and unsigned 32 and 64 bits integers can be parsed
+directly by adding an \verb+i+ for signed int or  \verb+u+ for unsigned int 
+followed by \verb+32+ or \verb+64+ (if this last terminaison is not provided
+then \verb+32+ bits are considered). So  \verb+1i+,  \verb+13u+, \verb+-67i64+
+are recognized respectively as an int32, an unsigned int32 and a signed int64. 
+
+Other kinds of integers can be obtained using a cast from either the \emph{Mat} type
+with the function \verb=m2i(x,int_type_str)=, or either from the \emph{IMat} type with
+the method \verb+x.retype[int_type_str]+ where \verb+int_type_str+ could be:
+\begin{itemize}
+\item \verb+"int8"+ , \verb+"uint8"+ for signed and unsigned 8 bits integers
+\item \verb+"int16"+ , \verb+"uint16"+ for signed and unsigned 16 bits integers
+\item \verb+"int32"+  \verb+"uint32"+ for signed and unsigned 32 bits integers
+\item \verb+"int64"+ , \verb+"uint64"+ for signed and unsigned 64 bits integers
+\end{itemize}
+Note that the functions \verb+intmin+ and  \verb+intmax+  applied on an \emph{IMat} of
+integer type \verb+int_type_str+ returns the limits of this integer type.
+
+Additionnally there are also the following integer types: 'int', 'uint', 
+'short', 'ushort', 'long', 'ulong'. In most cases 'int' is equivalent
+to 'int32' but you cannot (in general) mix operations between  'int' and
+'int32', that is 'int' is a proper nsp integer type. We recommend to use
+essentially the first 8 mentionned integer type and not these 6 last ones.  
+
+The method itype[] applied on a IMat lets to known the integer type and returns 
+one of these 8+6=14 strings.
+
+To summarize here are some basic examples:
+\begin{Verbatim}
+// define an imatrix of int32 integer type directly
+A = [ 1i, -6i, 123i ;
+     -5i, 13i,  67i]
+
+// the method itype lets to known the integer type
+A.itype[]
+
+// get int8 integer type by a (in place) cast of A
+A.retype["int8"]
+A.itype[]
+
+// get int16 integer type by a cast from the Mat type
+C = m2i(-8:9, "int16")
+C.itype[]
+
+// limits
+intmin(1i)
+intmax(1i)
+intmin(1u)
+intmax(1u)
+intmin(m2i(1,"int8"))
+intmax(1u64)
+\end{Verbatim}
+
+%// if you mix both i, u, i64 and u64 : the final integer type is given by the first parsed 
+%// biggest (in number of bits) integer type, for instance:
+%B = [ 1i, 6789u64, 8i64, 6u ]  // should be of uint64 integer type
+%B = [ 1i, 6789i64, 8u64, 6u ]  // should be of int64 integer type
+
+\end{mandescription}
+
+\paragraph{Operations on matrices}
+
+
+\itemdesc{Matrix methods}
+\begin{itemize}
+\item \verb+A.itype[]+ returns the integer type of the \emph{IMat} A.
+\item \verb+A.retype[int_type_str]+ in place cast of A onto the integer type specified by the string \verb+int_type_str+.
+\item \verb+A.add[B]+  add the IMat matrix \verb+B+ to the IMat matrix \verb+A+ (\verb+A+ and \verb+B+ must have
+the same  integer type).
+\item \verb+A.scale_rows[x]+ multiplies each row i of A with the scalar \verb+x(i)+:
+  \verb+A(i,:) = x(i) A(i,:)+.  (\verb+A+ and \verb+x+ must have the same  integer type). See \manlink{scale_rows}{scale_rows} help page.
+\item \verb+A.scale_cols[x]+ multiplies each column j of A with a scalar:
+  \verb+A(:,j) = x(j) A(:,j)+. (\verb+A+ and \verb+x+ must have the same  integer type).See \manlink{scale_cols}{scale_cols} help page.
+\item \verb+b=A.has[x]+ look for each component of \verb+x+, 
+  if it is in \verb+A+: \verb+b+ is a boolean vector 
+  (of same dim than \verb+x+) with \verb+b(k)+ true if
+  \verb+x(k)+ is in \verb+A+. Additionaly the first index of
+  \verb+x(k)+ in \verb+A+ could be provided, either in the one index way
+  when 2 output arguments are requested (call of the form \verb+[b,i]=A.has[x]+) or
+  either in the two indices way if 3 output arguments are requested
+  (\verb+[b,i,j]=A.has[x]+). If \verb+x(k)+ is not in \verb+A+ then
+  \verb+i(k)=0+ and \verb+j(k)=0+. (\verb+A+ and \verb+x+ must have the same  integer type). See
+  \manlink{has}{has} help page.
+\item \verb+A.nnz[]+ returns the numbers of non zero elements of A.
+\end{itemize}
+
+\itemdesc{Methods from the matint interface}
+\begin{itemize}
+\item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+. See
+  \manlink{redim}{redim} help page.
+\item \verb+A.concatr[B]+ \verb+A = [A,B]+. Here mixed integer types are possible, the rule being that the first biggest
+ integer type (in number of bits) is the final type (if number of bits of A is equal of greather to the number of bits 
+of B then A don't  change of integer type, otherwise A is casted to the integer type of B). 
+\item \verb+A.concatd[B]+ \verb+A = [A;B]+. Same remarks than before for the final type of A.
+\item \verb+A.perm_elem[p,q[,dim]]+ permute p and q: elements
+  (default or dim=0), rows (dim=1) or columns (dim=2).
+\item \verb+A.set_diag[B [,k]]+ sets the \verb+k+-th diagonal of matrix \verb+A+ to \verb+B+. See
+  \manlink{set_diag}{set_diag} help page.
+\end{itemize}
+
+\itemdesc{Extraction, insertion, deletion}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are respectively row and column indices \verb+A(I,J)+ is the submatrix of \verb+A+ with entries in \verb+I+ and \verb+j+.
+   \item \verb+A(I,:)+ is the submatrix of \verb+A+ with row indices in \verb+I+.
+   \item \verb+A(:,J)+ is the submatrix of \verb+A+ with comumn indices in \verb+I+.
+   \item \verb+A(:,:)+ is \verb+A+
+   \item \verb+A(:)+  is the column matrix obtained by stacking the columns of \verb+A+.
+\end{itemize}
+\begin{itemize}
+   \item If \verb+I+ and is \verb+J+ are row and column indices \verb+A(I,J)=B+ inserts
+matrix \verb+B+ into matrix \verb+A+ in rows \verb+I+ and columns \verb!J!.
+   \item \verb+A(I,:)=[]+ removes the rows of \verb+A+ with indices in \verb+J+.
+   \item \verb+A(:,J)=[]+ removes the columns of \verb+A+ with indices in \verb+J+.
+\end{itemize}
+See also the \hyperlink{indexing arrays}{indexing arrays, extraction, assignment, rows/cols deletion} help page.
+
+\itemdesc{Operators}
+
+Usual operations such as addition (\verb-A+B-), substraction  (\verb+A-B+), matrix scalar or scalar
+matrix product (\verb+A*B+) (matrix product is not defined), element-wise product (\verb+A.*B+), 
+kroneker product (\verb+A.*.B+),
+element-wise division (\verb+A./B+), right concatenation  (\verb+[A ,B]+), down concatenation  (\verb+[A;B]+), 
+transposition (\verb+A'+) are available. 
+
+{\bf Important note:} integer overflow (an operation leading to an integer greather than
+the intmax limit) and underflow  (an operation leading to an integer less than
+the intmin limit) don't raise any warning or error. Results are computed following the
+rules of modular arithmetic, for instance:
+\begin{Verbatim}
+intmax(1i) + 1i  // should be equal to intmin(1i)
+intmax(1u64) + 1u64 // should be equal to 0 (which is intmin(1u64))
+m2i(127,"int8") + m2i(1,"int8")  // should be equal to -128  (which is intmin(m2i(1,"int8")))
+\end{Verbatim}
+
+It is worth noting that for addition and substraction one of the operands could be a scalar:
+\verb=s+M= or \verb=M+s= returns a matrix of same format than \verb+M+
+(even if \verb+M+ is an empty matrix) where the scalar \verb=s= has been added to each
+element of \verb+M+. Such shortcuts are also available for element-wise power and division. 
+
+Comparizon operators are denoted \verb+==+, \verb+~=+ or  \verb+<>+ (non equality test), 
+\verb+<=+, \verb+<+, \verb+>=+, \verb+>+, and like for  addition and substraction one of
+the operands could be a scalar. 
+
+\itemdesc{Some useful tests}
+\begin{itemize}
+    \item \verb+is(A,%types.IMat)+ or \verb+type(A,"short")=="im"+ or \verb+type(A,"string")=="IMat"+ 
+     test if the argument $A$ is an IMat matrix.
+    \item \verb+is(A,%types.IMat) && A.itype[]=="int32" + tests if the argument $A$ is an IMat matrix of int32 integer type.
+    \item \verb+isvector(A)+ tests if the matrix $A$ is a vector (see \manlink{isvector}{isvector})
+    \item \verb+isscalar(A)+ tests if the matrix $A$ is a scalar (see \manlink{isscalar}{isscalar})
+    \item \verb+is(A,%types.IMat) && A.itype[]=="int32" && isscalar(A)+ tests if the argument $A$ is a IMat scalar of
+                     int32 integer type.
+\end{itemize}
+
+\itemdesc{For loop control}
+
+With a matrix \verb+A+:
+\begin{verbatim}
+     for col=A
+       ....
+     end
+\end{verbatim} 
+is a loop with $size(A,2)$ iterations, the loop 
+variable  \verb+col+ being equal to the ith column of \verb+A+ at the i-th iteration.
+
+\itemdesc{Some functions}
+\begin{itemize}
+   \item \verb+numel(A)+ or \verb+length(A)+ returns the number of entries in \verb+A+.
+   \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
+of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
+(resp. columns) of \verb+A+.
+   \item \verb+i2m(A)+ returns a new \emph{Mat} matrix from the \emph{IMat} matrix A (this could be useful for
+    operations defined for floating point matrices and not for integer's ones).  
+   \item all \hyperlink{arrays}{basic arrays functions or method} (which works on full arrays of any kind) 
+     are naturally available for \emph{IMat} 
+    \item Most sorting, searching, set functions are available for \emph{IMat} see \hyperlink{searchandsort}{searching
+      and sorting} chapter.
+   \item Also many \hyperlink{basicnumarrays}{basic functions or methods for numerical matrices} like \verb+min+, 
+      \verb+max+, \verb+minmax+, \verb+sum+, \verb+cumsum+, \verb+prod+,  \verb+cumprod+, \verb+diff+ are available
+       for \emph{IMat}
+\end{itemize}
+
+
+% -- Authors
+\begin{authors}
+   Jean-Philippe Chancelier, Bruno Pincon
+\end{authors}
