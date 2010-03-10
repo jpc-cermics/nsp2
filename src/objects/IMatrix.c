@@ -900,6 +900,9 @@ NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
 {
   int i;
   NspIMatrix *Loc;
+  /* we do not use int and uint */
+  if ( itype == nsp_gint ) itype = nsp_gint32;
+  else if ( itype == nsp_guint ) itype = nsp_guint32;
   if (( Loc =nsp_imatrix_create(NVOID,M->m,M->n,itype)) == NULLIMAT) 
     return(NULLIMAT);
   if ( M->rc_type == 'r') 
@@ -964,6 +967,9 @@ NspIMatrix  *nsp_matrix_to_imatrix_with_bounds(NspMatrix *M, nsp_itype itype)
 {
   int i;
   NspIMatrix *Loc;
+  /* we do not use int and uint */
+  if ( itype == nsp_gint ) itype = nsp_gint32;
+  else if ( itype == nsp_guint ) itype = nsp_guint32;
   if (( Loc =nsp_imatrix_create(NVOID,M->m,M->n,itype)) == NULLIMAT) 
     return(NULLIMAT);
   if ( M->rc_type == 'r') 
