@@ -240,7 +240,7 @@ NspObject *nsp_alloc_mat_or_imat(int m, int n, char ind_type, int **index)
   else  /* assume ind_type == 'i' */
     {
       NspIMatrix *IIndex = NULLIMAT;
-      if ( (IIndex = nsp_imatrix_create(NVOID,m,n,nsp_gint) ) == NULLIMAT ) 
+      if ( (IIndex = nsp_imatrix_create(NVOID,m,n,nsp_gint32) ) == NULLIMAT ) 
 	return NULLOBJ;
       *index = IIndex->Gint;
       return (NspObject *) IIndex; 
