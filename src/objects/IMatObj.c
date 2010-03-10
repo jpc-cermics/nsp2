@@ -1054,12 +1054,12 @@ static int int_imatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * Usual matrix to boolean 
+ *   matrix to imatrix cast 
  */
 
 static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
 {
-  nsp_itype itype = nsp_gint;
+  nsp_itype itype = nsp_gint32;
   int rep;
   NSP_ITYPE_NAMES(names);
   NspIMatrix *BM;
@@ -1087,7 +1087,7 @@ static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * boolean to Matrix 
+ *  imatrix to matrix cast
  */
 
 int int_imatrix_i2m(Stack stack, int rhs, int opt, int lhs)
