@@ -2961,7 +2961,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 nsp_string nsp_dec2base( guint64 n,const char *str_base )
 {
   nsp_string str=NULL;
-  char basic[32]; 
+  char basic[64]; 
   int base = strlen(str_base), count=0, i;
   /* check that str_base contains unique symbols ? */
   while (1)
@@ -3005,7 +3005,7 @@ int int_dec2base(Stack stack, int rhs, int opt, int lhs)
       if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
     }
   
-  if ( rhs == 2 )
+  if ( rhs -opt == 2 )
     {
       if ( IsMatObj(stack,2) )
 	{
