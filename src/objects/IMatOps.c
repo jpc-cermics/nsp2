@@ -2430,13 +2430,13 @@ int nsp_imatrix_ior(NspIMatrix *A, NspIMatrix *B)
 int nsp_imatrix_ishift(NspIMatrix *A,int shift,char dir)
 {
   int i ;
-#define IMAT_ISHIFT(name,type,arg)						\
+#define IMAT_ISHIFT(name,type,arg)					\
   if ( dir == 'r' )							\
     for ( i = 0 ; i < A->mn ; i++)					\
-      A->name[i] = ((int) aint(A->name[i])) >> shift;				\
+      A->name[i] >>= shift;						\
   else									\
     for ( i = 0 ; i < A->mn ; i++)					\
-      A->name[i] = ((int) aint(A->name[i])) << shift;				\
+      A->name[i] <<= shift;						\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_ISHIFT,"");				
 #undef IMAT_ISHIFT
