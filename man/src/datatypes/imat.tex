@@ -11,12 +11,17 @@ A=[a11, a12, ..., a1n;
    a21, a22, ..., a2n;
    ...
    am1, am2, ...; amn]
+
+A = imat_create(m,n [,int_type_str]) \\ create an m x n IMat of integer type int_type_str filled with 0
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
     \vname{a11 ...}: integer numbers (IMat scalars)
+    \vname{m,n}: matrix dimensions
+    \vname{int_type_str}: a string among  "int8","uint8","int16","uint16","int32","uint32","int64","uint64"
+         (default is "int32").
   \end{varlist}
 \end{parameters}
 
@@ -94,6 +99,8 @@ intmax(1u64)
 \begin{itemize}
 \item \verb+A.itype[]+ returns the integer type of the \emph{IMat} A.
 \item \verb+A.retype[int_type_str]+ in place cast of A onto the integer type specified by the string \verb+int_type_str+.
+\item \verb+A.intmin[]+ returns the min integer corresponding to the integer type of A.
+\item \verb+A.intmax[]+ returns the max integer corresponding to the integer type of A.
 \item \verb+A.add[B]+  add the IMat matrix \verb+B+ to the IMat matrix \verb+A+ (\verb+A+ and \verb+B+ must have
 the same  integer type).
 \item \verb+A.scale_rows[x]+ multiplies each row i of A with the scalar \verb+x(i)+:
@@ -206,10 +213,20 @@ of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows
    \item Also many \hyperlink{basicnumarrays}{basic functions or methods for numerical matrices} like \verb+min+, 
       \verb+max+, \verb+minmax+, \verb+sum+, \verb+cumsum+, \verb+prod+,  \verb+cumprod+, \verb+diff+ are available
        for \emph{IMat}
+   \item {\bf Operations on bits}: 
+   \begin{itemize}
+   \item \verb+ishift(x,n,'l')+ shifts bits of \verb+x+ n steps on left, (\verb+ishift(x,n,'r')+ shifts on the right).
+          If \verb+x+ is a matrix, the shift operation is done for all elements.
+   \item \verb+ior(x,y)+ is the binary OR operation; arguments should have both the same integer type
+         and the same format.
+   \item \verb+iand(x,y)+ is the binary AND operation; arguments should have both the same integer type
+         and the same format. 
+   \item to be continued...
+   \end{itemize}
 \end{itemize}
 
 
 % -- Authors
 \begin{authors}
-   Jean-Philippe Chancelier, Bruno Pincon
+   most IMat codes by Jean-Philippe Chancelier and a few by Bruno Pincon.
 \end{authors}
