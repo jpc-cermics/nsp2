@@ -9,12 +9,12 @@
 \begin{calling_sequence}
 \begin{verbatim}
   C = and(A)
-  C = and(A,dim=dimarg) (equivalently C = and(A,dimarg))
-  C = A & B (equivalently C = and(A,B))
+  C = and(A,dim=dimarg)
+  C = A & B  // or  C = and(A,B)
   C = A && B 
   C = or(A)
-  C = or(A,dim=dimarg) (equivalently or(A,dimarg))
-  C = A | B (equivalently C = or(A,B))
+  C = or(A,dim=dimarg)
+  C = A | B  // or C = or(A,B)
   C = A || B 
 \end{verbatim}
 \end{calling_sequence}
@@ -33,10 +33,11 @@
   \begin{itemize} 
   \item \verb!and(A)! is the logical AND of the elements of the boolean matrix \verb!A!. 
     \verb!and(A)! returns \verb!%t! iff all entries of \verb!A! are \verb!%t!. 
-  \item \verb!y=and(A,dim='r')! (equivalently, \verb!y=and(A,'r')!,\verb!y=and(A,dim=1)! or \verb!y=and(A,1)!) 
-    returns in \verb!y! a row vector such that \verb!y(j)= and(A(i,j),i=1,m)!). 
-    \verb!y=and(A,dim='c')! (or, equivalently, \verb!y=and(A,dim=2)!) returns in \verb!y! a colum vector 
-    such that \verb!y(i)= and(A(i,j),j=1,n)!)).
+  \item \verb!and(A,dim='r')! or \verb!and(A,dim=1)!
+    returns a boolean row vector such that its j th component is the logical AND of the 
+    elements $A(i,j),i=1,m$
+  \item \verb!and(A,dim='c')! or \verb!and(A,dim=2)! returns a boolean colum vector 
+    such that its i th component is the logical AND of the elements $A(i,j),j=1,n$.
   \item \verb!A & B! or \verb!and(A,B)! gives the element-wise logical AND
     of the booleans matrices \verb!A! and  \verb!B!. The two matrices must have the same size 
     with the usual promotion of single booleans (\verb!1x1! matrices). 
@@ -48,11 +49,12 @@
   \begin{itemize} 
   \item \verb!or(A)! is the logical OR of the elements of the boolean matrix \verb!A!. 
     \verb!or(A)! returns \verb!%t! iff at least one entry of \verb!A! is \verb!%t!. 
-  \item \verb!y=or(A,dim='r')! (equivalently, \verb!y=or(A,'r')!,\verb!y=or(A,dim=1)! or \verb!y=or(A,1)!) 
-    returns in \verb!y! a row vector such that \verb!y(j)= or(A(i,j),i=1,m)!). 
-    \verb!y=or(A,dim='c')! (equivalently, \verb!y=or(A,dim=2)!) returns in \verb!y! a colum vector 
-    such that \verb!y(i)= or(A(i,j),j=1,n)!)).
-  \item \verb!A | B! (equivalently \verb!or(A,B)!) gives the element-wise logical  OR
+  \item \verb!or(A,dim='r')! or \verb!or(A,dim=1)!
+    returns a boolean row vector such that its j th component is the logical OR of the 
+    elements $A(i,j),i=1,m$
+  \item \verb!or(A,dim='c')! or \verb!or(A,dim=2)! returns a boolean colum vector 
+    such that its i th component is the logical OR of the elements $A(i,j),j=1,n$.
+  \item \verb!A | B! or \verb!or(A,B)! gives the element-wise logical  OR
     of the booleans matrices \verb!A! and  \verb!B!. The two matrices must have the same size 
     with the usual promotion of single booleans (\verb!1x1! matrices). 
   \item \verb!A || B! performs a sequential OR ; this is the same than 
@@ -66,34 +68,38 @@
 %--example 
 \begin{examples}
 \paragraph{AND basic examples}
-  \begin{program}\HCode{A = [\%t, \%f, \%t; \%t,\%t, \%f; \%t,\%t, \%t]\Hnewline
-    and(A)\Hnewline
-    and(A,dim=1)\Hnewline
-    and(A,dim=2)\Hnewline
-    B = rand(3,3) < 0.5\Hnewline
-    A & B\Hnewline
-    A }\verb+&&+\HCode{ B\Hnewline
-    // difference between & and }\verb+&&+\HCode{\Hnewline
-    i = 0;\Hnewline
-    x = rand(1,3)\Hnewline
-    bool = i > 0 }\verb+&&+\HCode{ x(i) < 0.5 // the 2d expression is not evaluated\Hnewline
-    bool = i > 0 & x(i) < 0.5 // the 2d expression is evaluated and so raise an error}
-  \end{program}
+\begin{Verbatim}
+A = [%t, %f, %t; %t, %t, %f; %t, %t, %t]
+and(A)
+and(A,dim=1)
+and(A,dim=2)
+B = rand(3,3) < 0.5
+A & B
+A && B
+
+// difference between & and &&
+i = 0;
+x = rand(1,3)
+bool = i > 0  &&  x(i) < 0.5 // the 2d expression is not evaluated
+bool = i > 0  &   x(i) < 0.5 // the 2d expression is evaluated and so raise an error
+\end{Verbatim}
 
 \paragraph{OR basic examples}
-  \begin{program}\HCode{A = [\%t, \%f, \%f; \%t,\%t, \%f; \%f,\%f, \%f]\Hnewline
-    or(A)\Hnewline
-    or(A,dim=1)\Hnewline
-    or(A,dim=2)\Hnewline
-    B = rand(3,3) < 0.5\Hnewline
-    A | B\Hnewline
-    A || B\Hnewline
-    // difference between | and || \Hnewline
-    i = 0;\Hnewline
-    x = rand(1,3)\Hnewline
-    bool = i == 0 || x(i) < 0.5 // the 2d expression is not evaluated\Hnewline
-    bool = i == 0 || x(i) < 0.5 // the 2d expression is evaluated and so raise an error}
-  \end{program}
+\begin{Verbatim}
+A = [%t, %f, %f; %t, %t, %f; %f, %f, %f]
+or(A)
+or(A,dim=1)
+or(A,dim=2)
+B = rand(3,3) < 0.5
+A | B
+A || B
+    
+// difference between | and || 
+i = 0;
+x = rand(1,3)
+bool = i == 0 || x(i) < 0.5 // the 2d expression is not evaluated
+bool = i == 0 || x(i) < 0.5 // the 2d expression is evaluated and so raise an error
+\end{Verbatim}
 
 \end{examples}
 
