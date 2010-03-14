@@ -1807,13 +1807,13 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
     
   nsp_tcldstring_init(&buffer);
   separators = NULL;		/* Needed only to prevent gcc warnings. */
-
+  
   if ((S=nsp_smatrix_create("",0,0,".",0))== NULLSMAT) 
     return RET_BUG;
+  
   for (i = 1 ; i <= rhs ; i++) 
     {
       if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
-      
       switch (tclPlatform) {
       case TCL_PLATFORM_UNIX:
 	separators = "/";

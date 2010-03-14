@@ -499,7 +499,7 @@ static int int_localtime(Stack stack,int rhs,int opt,int lhs)
  */ 
 
 #ifdef WIN32 
-extern function  int_nsp_query_registry
+extern function  int_nsp_query_registry;
 #else 
 
 int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
