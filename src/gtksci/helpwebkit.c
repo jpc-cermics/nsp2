@@ -293,8 +293,8 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   /* expand topic -> filename in buf */
   if ( help_file == NULL )
     {
-      int i;
 #ifdef WIN32 
+      int i;
       strcpy(buf,( strncmp(mandir,"//",2) == 0) ? "file:" : "file://");
       strcat(buf, mandir);
       for ( i = 0 ; i < strlen(buf) ; i++)
@@ -333,7 +333,10 @@ static int nsp_help_fill_help_table(const char *index_file)
   int all=TRUE;
   char buf[FSIZE+1];
   NspSMatrix *S = NULL;
-  int xdr= FALSE,swap = TRUE,i, j;
+  int xdr= FALSE,swap = TRUE,i;
+#ifdef WIN32 
+  int j;
+#endif 
   NspFile *F;
   char *mode = "r";
   if ( index_file != NULL) 
