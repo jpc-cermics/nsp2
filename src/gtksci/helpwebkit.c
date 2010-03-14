@@ -74,7 +74,7 @@ static void
 update_title (GtkWindow* window)
 {
   GString* string = g_string_new (main_title);
-  g_string_append (string, " - WebKit Launcher");
+  g_string_append (string, " - nsp help (webkit)");
   if (load_progress < 100)
     g_string_append_printf (string, " (%d%%)", load_progress);
   gchar* title = g_string_free (string, FALSE);
@@ -239,7 +239,7 @@ create_window ()
 {
   GtkWidget* window = gtk_window_new (GTK_WINDOW_TOPLEVEL);
   gtk_window_set_default_size (GTK_WINDOW (window), 800, 600);
-  gtk_widget_set_name (window, "GtkLauncher");
+  gtk_widget_set_name (window, "Nsp Help");
   g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (destroy_cb), NULL);
 
   return window;
@@ -293,22 +293,13 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   /* expand topic -> filename in buf */
   if ( help_file == NULL )
     {
+      int i;
 #ifdef WIN32 
-      /* X: -> //X/ and \ -> / */
-      if ( strncmp(mandir+1,":",1)==0) 
+      strcpy(buf,( strncmp(mandir,"//",2) == 0) ? "file:" : "file://");
+      strcat(buf, mandir);
+      for ( i = 0 ; i < strlen(buf) ; i++)
 	{
-	  char *str = mandir+2;
-	  int i;
-	  strcpy(buf,"//");buf[2]=mandir[0];
-	  for ( i = 0 ; i < strlen(str)+1 ; i++)
-	    {
-	      if ( str[i] == '\\') buf[i+2]='/';
-	      else buf[i+2]= str[i];
-	    }
-	}
-      else 
-	{
-	  strcat(buf,mandir);
+	  if ( buf[i] == '\\') buf[i]= '/';
 	}
 #else 
       strcpy(buf,mandir);
@@ -342,7 +333,7 @@ static int nsp_help_fill_help_table(const char *index_file)
   int all=TRUE;
   char buf[FSIZE+1];
   NspSMatrix *S = NULL;
-  int xdr= FALSE,swap = TRUE,i;
+  int xdr= FALSE,swap = TRUE,i, j;
   NspFile *F;
   char *mode = "r";
   if ( index_file != NULL) 
@@ -394,15 +385,12 @@ static int nsp_help_fill_help_table(const char *index_file)
       /* need a join here */
       /* Sciprintf("dirname for help [%s]\n",dirname); */
 #ifdef WIN32 
-      if ( strncmp(dirname+1,":",1)==0) 
+      strcpy(buf,( strncmp(dirname,"//",2) == 0) ? "file:" : "file://");
+      strcat(buf, dirname);
+      for ( j = 0 ; j < strlen(buf) ; j++)
 	{
-	  strcpy(buf,"//X");buf[2]=dirname[0];
+	  if ( buf[i] == '\\') buf[i]= '/';
 	}
-      else 
-	{
-	  buf[0]=dirname[0];buf[1]=dirname[1];
-	}
-      strcat(buf,dirname+2);
 #else 
       strcpy(buf,dirname);
 #endif 
@@ -450,14 +438,13 @@ int nsp_help_topic(const char *topic, char *buf)
 
   if ( nsp_hash_find(nsp_help_table,topic,&Obj)== FAIL) 
     {
-      Sciprintf("No man for %s\n",topic);
+      Sciprintf("No man found for topic %s\n",topic);
       strcpy(buf,"");
       return OK;
     }
   else
     {
       strcpy(buf,((NspSMatrix *) Obj)->S[0]);
-      /* Sciprintf("topic help file: [%s]\n",buf);  */
     }
   return OK;
 }
