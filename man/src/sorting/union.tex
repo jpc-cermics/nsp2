@@ -2,7 +2,7 @@
 
 \mansection{union}
 \begin{mandesc}
-  \short{union}{compute the union of two vectors or two lists or the union of the rows or columns of two matrices}
+  \short{union}{union of two matrices, vectors or lists}
 \end{mandesc}
 
 % -- Calling sequence section
@@ -15,8 +15,8 @@ C = union(A,B)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A, B}: both vectors of numbers, strings or cells , or both lists.
-    \vname{C}: vector or list with the union of elements of A and B.
+    \vname{A, B}: vectors or matrices of numbers (Mat or IMat), strings or cells , or lists.
+    \vname{C}: vector, matrix or list with the union of components (elements, rows or columns) of A and B.
     \vname{kA, kB}: vectors of indices such that $C = A(kA) \cup B(kB)$.
     \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
     which gives the type for the index vectors  \verb+kA+ and \verb+kB+. 
@@ -29,17 +29,17 @@ C = union(A,B)
 
 \begin{mandescription}
 \begin{itemize}
-\item  By default (which option is "elements" ) this function computes the set 
+\item  By default (or when which option is "elements" ) this function computes the set 
   union $C = A \cup B$ between 2 vectors (of numbers, strings or cells) or between 2
   lists considered as sets (but uniqueness of each element in A or B is not
   required). If A or B are matrices, they  are considered as big column vectors.
-   On output, $C$, $kA$ and $kB$ are row vectors if  $A$ and $B$ are both 
-  row vectors, otherwise they are column vectors. For numbers or strings $C$ 
+  $C$ is output as a row vector if  $A$ and $B$ are both 
+  row vectors, otherwise $C$ is a column vector. For numbers or strings $C$ 
   is sorted. 
 
 \item  Using the option \verb+which = "rows"+ or \verb+which = "columns"+  the function 
   computes the union of the rows or of the columns of the two entry 
-  matrices (this feature is available only for Mat and IMat matrices).
+  matrices (feature available only for Mat and IMat matrices).
 
 \end{itemize}
 

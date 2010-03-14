@@ -88,7 +88,7 @@ B = unique(B,which="rows")     // or simply which="r"
 \end{Verbatim}
 
 
-\paragraph{example 6} using unique for basic statistic:
+\paragraph{example 6} using unique for basic statistics:
 \begin{Verbatim}
 // generate a big sample of the binomial distribution B(6,0.4)
 m = 1e5;
@@ -106,6 +106,15 @@ e = 0.05;
 plot2d3([y-e,y+e], [p_exact,p_emp], style=[1 2], ...
          rect=[-1,0,7,1.1*max(p_exact)],...
          leg="exact probabilies@empirical probabilities")
+
+// we want to verify if grand(...,"perm",...) chooses random permutation uniformly
+// generate a big sample of permutations
+prms = grand(24e3,"perm",4);  // there 4!=24 possible permutation 
+[p,ind,occ] = unique(prms,which="col");
+size(p)   // should be 4 x 24
+xbasc()
+plot2d2(1:numel(occ),occ,style=2,rect=[0,0,25,max(occ)+100])
+xtitle("occurence for each 24 permutations should be around 1000")
 \end{Verbatim}
 
 \end{examples}

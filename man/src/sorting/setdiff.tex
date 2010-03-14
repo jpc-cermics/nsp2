@@ -2,78 +2,113 @@
 
 \mansection{setdiff}
 \begin{mandesc}
-  \short{setdiff}{compute the set difference between two vectors or two lists}
+  \short{setdiff}{set difference between two matrices, vectors or lists}
 \end{mandesc}
 
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
 C = setdiff(A,B)
-[C [,ind]] = setdiff(A,B)
+[C [,ind]] = setdiff(A,B, ind_type=str, which=str)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A}: vector of numbers, strings or cells (if A is a matrix, it is
-    considered as a big column vector), or list.
-    \vname{B}: vector of same type than A, or list if A is a list. 
-    \vname{C}: vector or list with elements of A but not in B.
-    \vname{ind}: vector of same length than C, ind(i) is an index
-                  such that C(i)=A(ind(i)).
+    \vname{A, B}:  vectors or matrices of numbers (Mat or IMat), strings or cells , or lists.
+    \vname{C}: matrix, vector or list with components (elements, rows or columns) of A which are not in B.
+    \vname{ind}: vector of indices such that $C=A(kA)$
+    \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
+    which gives the type for the index vector  \verb+ind+.
+    \vname{which = str}: named optional argument, a string among \verb+{"elements","columns","rows"}+ (default is
+    \verb+"elements"+) or any non ambiguous abreviation. This option is useful only for matrices of floating 
+       point numbers (Mat) or integer numbers (IMat) for which the setdiff operation can be done also for
+       columns or rows.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  This function computes the set difference $C = A \setminus B$
-  between 2 vectors (of numbers, strings or cells) or between 2
-  lists. $C$ contains the components
-  of $A$ which are not in $B$. Note that multiple equal components in
-  $A$ are reduced to one such component (if it is not in $B$) and that
-  $C$ is sorted in ascending order (only for vectors of numbers or strings).
+\begin{itemize}
+\item By default  (or when which="elements" ) this function computes the set 
+difference $C = A \setminus B$ between 2 vectors (of numbers, strings or cells) or between 2
+lists considered as sets. $C$ contains the components of $A$ which are not in $B$. Note that 
+multiple equal components in $A$ are reduced to one such component (if it is not in $B$) and that
+$C$ is sorted in ascending order (only for vectors of numbers or strings).
 
-  $C$ and $ind$ are row vectors if  A is a row vector, otherwise they
-  are column vectors.
+If $A$ and/or $B$ are matrices they are considered as big vectors.
+$C$ is output as a row vector if  A is a row vector, otherwise $C$ is a column vector.
   
+
+\item  Using the option \verb+which = "rows"+ or \verb+which = "columns"+  the function 
+  computes the set difference of the rows or of the columns of the two entry 
+  matrices (feature available only for Mat and IMat matrices).
+
+\end{itemize}
+
+
 \end{mandescription}
 
 \begin{examples}
 
 \paragraph{example 1} with vectors of numbers:
-\begin{program}\HCode{A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];\Hnewline
-B = [2, 0.5];\Hnewline
-C = setdiff(A,B)\Hnewline
-[C, ind] = setdiff(A,B)\Hnewline
-// we must have C = A(ind)\Hnewline
-and(C == A(ind))}
-\end{program}
+\begin{Verbatim}
+A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];
+B = [2, 0.5];
+C = setdiff(A,B)
+[C, ind] = setdiff(A,B)
+// we must have C = A(ind)
+C.equal[A(ind)]
+
+// same example but ind is output as a IMat "int32" vector
+[C, ind] = setdiff(A,B, ind_type="int")
+\end{Verbatim}
 
 \paragraph{example 2} with vectors of strings:
-  \begin{program}\HCode{A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
-    B = [ "foo", "bar" ]\Hnewline
-    C = setdiff(A,B)\Hnewline
-    [C, ind] = setdiff(A,B)\Hnewline
-    // we must have C = A(ind)\Hnewline
-    and(C == A(ind))}
-  \end{program}
+\begin{Verbatim}
+A = ["toto", "foo", "bar", "toto", "foobar", "bar", "toto", "foo", "bar"]
+B = [ "foo", "bar" ]
+C = setdiff(A,B)
+[C, ind] = setdiff(A,B)
+// we must have C = A(ind)
+C.equal[A(ind)]
+\end{Verbatim}
 
 \paragraph{example 3} with vectors of cells:
-  \begin{program}\HCode{A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}\Hnewline
-    B = { "foo", 2,  [0,1;1,0] }\Hnewline
-    C = setdiff(A,B)\Hnewline
-    [C, ind] = setdiff(A,B)\Hnewline
-    // we must have C = A(ind)\Hnewline
-    and(C == A(ind))}
-  \end{program}
+\begin{Verbatim}
+A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}
+B = { "foo", 2,  [0,1;1,0] }
+C = setdiff(A,B)
+[C, ind] = setdiff(A,B)
+// we must have C = A(ind)
+C.equal[A(ind)]
+\end{Verbatim}
 
 \paragraph{example 4} with lists:
-  \begin{program}\HCode{A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")\Hnewline
-    B = list( "foo", 2,  [0,1;1,0] )\Hnewline
-    C = setdiff(A,B)\Hnewline
-    [C, ind] = setdiff(A,B)\Hnewline
-    // we must have C = A(ind)\Hnewline
-    and(C == A.sublist[ind])}
-  \end{program}
+\begin{Verbatim}
+A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")
+B = list( "foo", 2,  [0,1;1,0] )
+C = setdiff(A,B)
+[C, ind] = setdiff(A,B)
+// we must have C = A(ind)
+C.equal[A.sublist[ind]]
+\end{Verbatim}
+
+\paragraph{example 5} setdiff of rows or columns:
+\begin{Verbatim}
+// for columns
+A = grand(2,6,"uin",-1,1)
+B = grand(2,7,"uin",-1,1)
+[C,ind] = setdiff(A,B,which="columns")  // or simply which="c"
+// we must have C = A(:,ind)
+C.equal[A(:,ind)]
+
+// for rows
+A = grand(8,2,"uin",-1,1)
+B = grand(5,2,"uin",-1,1)
+[C,ind] = union(A,B,which="rows",ind_type="int")  // or simply which="r"
+// we must have C = A(ind,:)
+C.equal[A(ind,:)]
+\end{Verbatim}
 
 \end{examples}
 
