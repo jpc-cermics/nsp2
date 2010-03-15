@@ -25,6 +25,11 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <windows.h>
+/* interface conflicts with nsp objects.h */
+#ifdef interface 
+#undef interface 
+#endif 
+
 #include "nsp/interf.h"
 #include "nsp/system.h"
 
