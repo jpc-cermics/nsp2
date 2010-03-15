@@ -25,12 +25,12 @@
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A,A1,A2,...}: numerical real matrices.
+    \vname{A,A1,A2,...}: numerical matrices (real Mat, real SpColMat or IMat)
     \vname{mode}: a string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
     \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
     This argument is optional and if omitted 'full' is assumed.
     \vname{m,M}: numerical scalars or vectors or matrices
-    \vname{km, kM}: integer scalars or vectors (or matrix) of indices.
+    \vname{km, kM}: integer scalars or vectors (or matrices) of indices.
   \end{varlist}
 \end{parameters}
 
@@ -98,42 +98,50 @@ simulate \verb+max(A1,A2,A3)+.
 %--example 
 \begin{examples}
 \paragraph{first form}
-\begin{program}\HCode{A = rand(4,5) \Hnewline
-// min and max of all elements\Hnewline
-m = min(A) \Hnewline
-M = max(A) \Hnewline
-[m,M] = minmax(A)\Hnewline
-[m,km] = min(A)\Hnewline
-[M,kM] = max(A)\Hnewline
-[m,M,km,kM] = minmax(A)\Hnewline
-// min and max of each column\Hnewline
-[m,km] = min(A,dim=1)\Hnewline
-[M,kM] = max(A,dim=1)\Hnewline
-[m,M,km,kM] = minmax(A,dim=1)\Hnewline
-// min and max of each row\Hnewline
-[m,km] = min(A,dim=2)\Hnewline
-[M,kM] = max(A,dim=2)\Hnewline
-[m,M,km,kM] = minmax(A,dim=2)\Hnewline
-// behavior with Nan\Hnewline
-x = [1, \%nan, 2, \%nan]\Hnewline
-[m,km] = min(x)\Hnewline
-[M,kM] = max(x)\Hnewline
-[m,M,km,kM] = minmax(A)}
-\end{program}
+\begin{Verbatim}
+A = rand(4,5) 
+
+// min and max of all elements
+m = min(A) 
+M = max(A) 
+[m,M] = minmax(A)
+[m,km] = min(A)
+[M,kM] = max(A)
+[m,M,km,kM] = minmax(A)
+
+// min and max of each column
+[m,km] = min(A,dim=1)
+[M,kM] = max(A,dim=1)
+[m,M,km,kM] = minmax(A,dim=1)
+
+// min and max of each row
+[m,km] = min(A,dim=2)
+[M,kM] = max(A,dim=2)
+[m,M,km,kM] = minmax(A,dim=2)
+
+// behavior with Nan
+x = [1, %nan, 2, %nan]
+[m,km] = min(x)
+[M,kM] = max(x)
+[m,M,km,kM] = minmax(A)
+\end{Verbatim}
 
 \paragraph{second form}
-\begin{program}\HCode{A=rand(2,2) \Hnewline
-B = rand(2,2) \Hnewline
-C = rand(2,2) \Hnewline
-m = min(A,B,C) \Hnewline
-[m,km] = min(A,B,C) \Hnewline
-// one (or more) of the matrix can be a scalar \Hnewline
-[m,km] = min(A,0.3,C) \Hnewline
-// using scalar is practical to impose a min and max thresholds on a matrix \Hnewline
-// in this example we want to limit a random matrix between 0.2 and 0.8 \Hnewline
-A = rand(2,4) \Hnewline
-B = min(0.8,max(0.2,A))}
-\end{program} 
+\begin{Verbatim}
+A=rand(2,2) 
+B = rand(2,2) 
+C = rand(2,2) 
+m = min(A,B,C) 
+[m,km] = min(A,B,C) 
+
+// one (or more) of the matrix can be a scalar 
+[m,km] = min(A,0.3,C) 
+
+// using scalar is practical to impose a min and max thresholds on a matrix 
+// in this example we want to limit a random matrix between 0.2 and 0.8 
+A = rand(2,4) 
+B = min(0.8,max(0.2,A))
+\end{Verbatim} 
 
 \end{examples}
 

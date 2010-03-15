@@ -6,16 +6,14 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  B=sum(A,mode)  
-  B=prod(A,mode)  
-  B=sum(A,dim=mode) 
-  B=prod(A,dim=mode)  
+B=sum(A,dim=mode)  // or B=sum(A,mode)  
+B=prod(A,dim=mode) // or B=prod(A,mode)  
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A,B}: matrices.
+    \vname{A,B}: vectors or matrices
     \vname{mode}: A string chosen among \verb+'M'+, \verb+'m'+, \verb+'full'+, \verb+'FULL'+, \verb+'row'+,
     \verb+'ROW'+, \verb+'col'+, \verb+'COL'+ or an non ambiguous abbreviation or an integer. 
     This argument is optional and if omitted 'full' is assumed.
@@ -35,14 +33,34 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{program}\HCode{A=rand(4,5) \Hnewline
-      sum(A,'c'); \Hnewline
-      // boolean matrix \Hnewline
-      sum(A>=0.5,'c');\Hnewline
-      prod(1:5,'m') \Hnewline
-      // sparse matrix 
-      sum(sparse(rand(4,6)),'r')  }
-  \end{program}
+\begin{Verbatim}
+// real matrix 
+A=rand(4,5)
+sum(A)  // sum of all the elements 
+sum(A,dim=1)  // sum of each column of A
+sum(A,dim=2)  // sum of each row of A
+
+prod(A)  // product of all elements
+prod(A,dim=1)  // product of each column of A
+prod(A,dim=2)  // product of each row of A
+
+// sparse matrix 
+A = sprand(10,8,0.3)
+sum(A,dim=1)  // sum of each column of A
+sum(A,dim=2)  // sum of each row of A
+
+// integer matrix
+A = [1i, 2i, 3i;...
+     4i, 5i, 6i]
+sum(A)        // sum of all element
+prod(A)       // prod of all element
+sum(A,dim=1)
+prod(A,dim=1)
+
+// boolean matrix 
+B = rand(3,4) >= 0.5
+sum(B,dim='c')
+\end{Verbatim}
 \end{examples}
 %-- see also
 \begin{manseealso}
