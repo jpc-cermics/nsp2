@@ -231,16 +231,9 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
     if ( expand_aliases(HOME,HOME_a,in_name,out_name,out_size) == 0 )
       if ( expand_aliases(TMP,TMP_a,in_name,out_name,out_size) == 0 )
 	strncpy(out_name,in_name, out_size);
-  /*strncpy(out_name,in_name,lout); */
-#if defined(THINK_C)||defined(__MWERKS__)
-  for (k=0 ; k < strlen(out_name) ;k++) if ( out_name[k]=='/') out_name[k]=':';
-#else
-#if defined(WIN32)
-  for (k=0 ; k < strlen(out_name) ;k++) if ( out_name[k]=='/') out_name[k]='\\';
-#else
+  /* strncpy(out_name,in_name,lout); */
+  /* just keep the unix style    */
   for (k=0 ; k < strlen(out_name) ;k++) if ( out_name[k]=='\\') out_name[k]='/';
-#endif
-#endif
 }
 
 /*
