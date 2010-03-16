@@ -121,6 +121,7 @@ menu_answer nsp_get_file_window(const char *title,const char *dirname,int action
 
 char * nsp_get_filename_save(const char *title,const char *dirname)
 {
+  int k;
   char *filename = NULL;
   GtkWidget *dialog;
   dialog = gtk_file_chooser_dialog_new (title,
@@ -135,6 +136,9 @@ char * nsp_get_filename_save(const char *title,const char *dirname)
     {
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
     }
+#ifdef WIN32
+  for (k=0 ; k < strlen(filename) ;k++) if ( filename[k]=='\\') filename[k]='/';
+#endif 
   gtk_widget_destroy (dialog);
   return filename ;
 }
@@ -181,7 +185,11 @@ char * nsp_get_filename_open(const char *title,const char *dirname,char **filter
     }
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
+      int k;
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+#ifdef WIN32
+      for (k=0 ; k < strlen(filename) ;k++) if ( filename[k]=='\\') filename[k]='/';
+#endif 
     }
   gtk_widget_destroy (dialog);
   return filename;

@@ -233,7 +233,10 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 	strncpy(out_name,in_name, out_size);
   /* strncpy(out_name,in_name,lout); */
   /* just keep the unix style    */
+#ifdef WIN32 
   for (k=0 ; k < strlen(out_name) ;k++) if ( out_name[k]=='\\') out_name[k]='/';
+#endif 
+
 }
 
 /*
