@@ -74,7 +74,7 @@ function [c,ka] = setdiff(a,b,ind_type="double",which="elements")
      error("setdiff not implemented for arrays of complex numbers")
   end
   
-  num = is_string_in_array(which, ["elements","rows","columns"], names=["which","union"])
+  num = is_string_in_array(which, ["elements","rows","columns"], names=["which","setdiff"])
 
   if num == 1 then   // setdiff elements
   
@@ -147,7 +147,7 @@ function [c,ka] = setdiff(a,b,ind_type="double",which="elements")
 	   
 	end
      else
-	error("setdiff of rows or columns not implemented for "+type_a)
+	error("set difference of rows or columns not implemented for "+type_a)
      end
   end
 endfunction

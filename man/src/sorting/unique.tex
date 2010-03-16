@@ -32,19 +32,21 @@ y = unique(x)
     \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
     which gives the type for the index vector  \verb+ind+. 
     \vname{which = str}: named optional argument, a string among \verb+{"elements","columns","rows"}+ (default is
-    \verb+"elements"+) or any non ambiguous abreviation. This option is useful only for matrices of floating 
-       point numbers (Mat) or integer numbers (IMat) for which the unique operation can be done also for
-       columns or rows.
+    \verb+"elements"+) or any non ambiguous abreviation.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  This function computes the unique components of a vector of numbers,
-  strings or cells. As the number of occurrences of each unique
-  component may be returned, it can be also useful for basic statistic
-  computations. Using the option \verb+which = "rows"+ or \verb+which = "columns"+ 
-  you got instead of the unique elements, the unique rows or columns of the entry 
-  matrix. 
+  This function computes the unique components of a vector or a matrix of numbers,
+  strings or cells.
+
+   Using the option \verb+which = "rows"+ or \verb+which = "columns"+ 
+  you can get, instead of the unique elements, the unique rows or columns of the entry 
+  matrix (this feature is only available for real matrix (Mat) or integer matrix (IMat)). 
+   
+   As the number of occurrences of each unique
+  component could be returned, this function can be also useful for basic statistic
+  computations.
 \end{mandescription}
 
 
