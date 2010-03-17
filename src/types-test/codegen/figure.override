@@ -333,8 +333,6 @@ static int nsp_figure_connect(NspFigure *F)
 {
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
-  BCG *Xgc;
-  
   if (F->obj->Xgc != NULL ) 
     {
       /* Figure is already connected */
@@ -407,9 +405,9 @@ static int nsp_figure_connect(NspFigure *F)
       return FAIL;
     }
   
-  Xgc->graphic_engine->xset_wresize(Xgc,F->obj->wresize);
+  F->obj->Xgc->graphic_engine->xset_wresize(F->obj->Xgc,F->obj->wresize);
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
-    Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
+    F->obj->Xgc->graphic_engine->setpopupname(F->obj->Xgc,F->obj->fname);
 
   return OK;
 }

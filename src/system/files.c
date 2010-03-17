@@ -214,8 +214,11 @@ static int get_env(char *var,char *buf,int buflen,int iflag);
 void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 {
   int  nc= FSIZE+1;
+#ifdef WIN32 
+  int k;
+#endif 
   static char SCI[FSIZE+1],HOME[FSIZE+1],TMP[FSIZE+1];
-  static int firstentry=0,k;
+  static int firstentry=0;
   if ( firstentry == 0 ) 
     {
       get_env("SCI",SCI,nc,1);
