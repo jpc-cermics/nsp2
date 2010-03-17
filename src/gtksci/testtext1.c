@@ -485,12 +485,12 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
 
 static gint timeout_command (void *v)
 {
-  GDK_THREADS_ENTER();
   if ( checkqueue_nsp_command() == TRUE) 
     {
+      gdk_threads_enter();
       gtk_main_quit();
+      gdk_threads_leave();
     }
-  GDK_THREADS_LEAVE();
   return TRUE;
 }
 
@@ -523,9 +523,10 @@ int Xorgetchar_textview(void)
     }
   timer=  g_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   
-  GDK_THREADS_ENTER();
+  /* this zone is already in a  gdk_threads_enter(); 
+   */
   gtk_main();
-  GDK_THREADS_LEAVE();
+  /* gdk_threads_leave(); */
   g_source_remove(timer);
   count=1;
   g_print ("char returned '%c'\n",nsp_expr[0]);
@@ -588,9 +589,10 @@ char *readline_textview(const char *prompt)
       nsp_insert_prompt(prompt);
     }
   timer=  g_timeout_add(100,  (GtkFunction) timeout_command , NULL);
-  GDK_THREADS_ENTER();
+  /* this zone is already in a: gdk_threads_enter(); 
+   */
   gtk_main();
-  GDK_THREADS_LEAVE();
+  /* gdk_threads_leave(); */
   g_source_remove(timer);
   if ( checkqueue_nsp_command() == TRUE) 
     {
