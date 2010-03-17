@@ -2169,10 +2169,9 @@ extern Gengine XFig_gengine, Pos_gengine, Gtk_gengine;
 
 static int nsp_figure_connect(NspFigure *F)
 {
+  BCG *Xgc;
   driver_initgraphic *initg = Gtk_gengine.initgraphic;
   int v1=-1, wdim[2], wpdim[2],  wpos[2];
-  BCG *Xgc;
-  
   if (F->obj->Xgc != NULL ) 
     {
       /* Figure is already connected */
@@ -2244,11 +2243,10 @@ static int nsp_figure_connect(NspFigure *F)
       Sciprintf("failed to connect figure\n");
       return FAIL;
     }
-  
+  Xgc = F->obj->Xgc;
   Xgc->graphic_engine->xset_wresize(Xgc,F->obj->wresize);
   if ( F->obj->fname != NULL && strcmp(F->obj->fname,"") != 0 )
-    Xgc->graphic_engine->setpopupname(Xgc,F->obj->fname);
-
+    Xgc->graphic_engine->setpopupname(F->obj->Xgc,F->obj->fname);
   return OK;
 }
 
@@ -3672,4 +3670,4 @@ int nsp_figure_remove_children(NspFigure *F)
 }
 
 
-#line 3676 "figure.c"
+#line 3674 "figure.c"
