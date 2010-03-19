@@ -31,7 +31,7 @@ function [c,ka,kb] = intersect(a,b,ind_type="double",which="elements")
 //       of row vectors or column vectors
 //
 //   which=... : optional argument (default is elements) telling if the
-//       intersection operation should be done on elements/rows or columns
+//       intersection operation should be done on elements, rows or columns
 //
 //       when which="elements" a or b could be matrices and in this case 
 //       each one is considered as a big column vector using the column
@@ -51,7 +51,7 @@ function [c,ka,kb] = intersect(a,b,ind_type="double",which="elements")
 //   ka: is an index vector such that c == a(ka), c == a(ka,:) or c == a(:,ka)
 //   kb: is an index vector such that c == b(kb), c == b(kb,:) or c == b(:,kb)
 //
-//   interesction for lists or cells are also available (only in the
+//   intersection for lists or cells are also available (only in the
 //   "elements" meaning), see the two last macros of this file.
 
    type_a = type(a,"string")

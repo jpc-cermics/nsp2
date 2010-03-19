@@ -2,76 +2,107 @@
 
 \mansection{setxor}
 \begin{mandesc}
-  \short{setxor}{computes elements exclusive to two vectors or two lists}
+  \short{setxor}{computes elements, rows or columns exclusive to two vectors, two matrices or two lists}
 \end{mandesc}
 
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
 C = setxor(A,B)
-[C, kA, kB] = setxor(A,B)
+[C, kA, kB] = setxor(A,B,ind_type=str, which=str)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A}: vector of numbers, strings or cells (if A is a matrix, it is
-    considered as a big column vector), or list.
-    \vname{B}: vector of same type than A, or list if A is a list. 
-    \vname{C}: vector or list with elements not in  $A \cap B$.
-    \vname{kA, kB}: vectors of indices such that $C$  is the union of
-    $A(kA)$ and $B(kB)$.
+    \vname{A, B}: vectors or matrices of numbers (Mat or IMat), strings or cells , or lists.
+    \vname{C}: vector, matrix or list with the components (elements, rows or columns) of A and B which are
+               not both in A and B.
+    \vname{kA, kB}: index vectors such that $C$ is the union of $A(kA)$ and $B(kB)$
+
+    \vname{ind_type = str}: named optional argument, a string among \verb+{"double","int"}+ (default is \verb+"double"+)
+    which gives the type for the index vectors  \verb+kA+ and \verb+kB+. 
+    \vname{which = str}: named optional argument, a string among \verb+{"elements","columns","rows"}+ (default is
+    \verb+"elements"+) or any non ambiguous abreviation. This option is useful only for matrices of floating 
+       point numbers (Mat) or integer numbers (IMat) for which the setxor operation can be done also for
+       columns or rows.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  This function computes the set $C = (A \cup B) \setminus (A \cap B)$
-  between 2 vectors (of numbers, strings or cells) or between 2
-  lists, considered as sets. For vectors of numbers or strings
-  $C$ is sorted in ascending order.
-
-  $C$, $kA$ and $kB$ are row vectors if both A and B are row vectors, otherwise they
-  are column vectors.
-  
+\begin{itemize}
+\item  By default (or when which option is "elements" )  this function computes the 
+set $C = (A \cup B) \setminus (A \cap B)$  between 2 vectors (of numbers, strings or cells) or between 2
+lists, considered as sets. For vectors of numbers or strings
+$C$ is sorted in ascending order.
+ If A or B are matrices, they  are considered as big 
+  column vectors.
+$C$, is a row vector if both A and B are row vectors, otherwise it is a column vector.
+ 
+\item  Using the option \verb+which = "rows"+ or \verb+which = "columns"+  the function 
+  computes the setxor of the rows or of the columns of the two entry 
+  matrices (feature available only for Mat and IMat matrices).
+\end{itemize}
+ 
 \end{mandescription}
 
 \begin{examples}
 
 \paragraph{example 1} with vectors of numbers:
-\begin{program}\HCode{A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];\Hnewline
-B = [2, 0.5, 3, 912];\Hnewline
-C = setxor(A,B)\Hnewline
-[C, kA, kB] = setxor(A,B)\Hnewline
-// we must have C = A(kA) U B(kB) \Hnewline
-C.equal[union(A(kA),B(kB))]}
-\end{program}
+\begin{Verbatim}
+A = [0.5, -1, 2, 1, 2, -1, 0.5, 2, -1, 2];
+B = [2, 0.5, 3, 912];
+C = setxor(A,B)
+[C, kA, kB] = setxor(A,B)
+// we must have C = A(kA) U B(kB) 
+C.equal[union(A(kA),B(kB))]
+\end{Verbatim}
 
 \paragraph{example 2} with vectors of strings:
-  \begin{program}\HCode{A = ["toto", "foo", "bar", "tumbi", "foobar", "bar", "toto", "foo", "bar"]\Hnewline
-B = [ "foo", "bar", "nsp", "tumbi" ]\Hnewline
-C = setxor(A,B)\Hnewline
-[C, kA, kB] = setxor(A,B)\Hnewline
-// we must have C = A(kA) U B(kB) \Hnewline
-C.equal[union(A(kA),B(kB))]}
-  \end{program}
+\begin{Verbatim}
+A = ["toto", "foo", "bar", "tumbi", "foobar", "bar", "toto", "foo", "bar"]
+B = [ "foo", "bar", "nsp", "tumbi" ]
+C = setxor(A,B)
+[C, kA, kB] = setxor(A,B)
+// we must have C = A(kA) U B(kB) 
+C.equal[union(A(kA),B(kB))]
+\end{Verbatim}
 
 \paragraph{example 3} with vectors of cells:
-  \begin{program}\HCode{A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}\Hnewline
-      B = {  "tumbi", 5 ,"foo", 2,  [0,1;1,0] }\Hnewline
-      C = setxor(A,B)\Hnewline
-      [C, kA, kB] = setxor(A,B)\Hnewline
-      // we must have C = A(kA) U B(kB) \Hnewline
-      C.equal[union(A(kA),B(kB))]}
-  \end{program}
+\begin{Verbatim}
+A = {"toto", [0,1;1,0], "foo", 1, 2, 1, "bar"}
+B = {  "tumbi", 5 ,"foo", 2,  [0,1;1,0] }
+C = setxor(A,B)
+[C, kA, kB] = setxor(A,B)
+// we must have C = A(kA) U B(kB) 
+C.equal[union(A(kA),B(kB))]
+\end{Verbatim}
 
 \paragraph{example 4} with lists:
-  \begin{program}\HCode{A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")\Hnewline
-    B = list(  "tumbi", 5 ,"foo", 2,  [0,1;1,0] )\Hnewline
-    C = setxor(A,B)\Hnewline
-    [C, kA, kB] = setxor(A,B)\Hnewline
-    // we must have C = A(kA) U B(kB) \Hnewline
-    C.equal[union(A.sublist[kA],B.sublist[kB])]}
-  \end{program}
+\begin{Verbatim}
+A = list("toto", [0,1;1,0], "foo", 1, 2, 1, "bar")
+B = list(  "tumbi", 5 ,"foo", 2,  [0,1;1,0] )
+C = setxor(A,B)
+[C, kA, kB] = setxor(A,B)
+// we must have C = A(kA) U B(kB) 
+C.equal[union(A.sublist[kA],B.sublist[kB])]
+\end{Verbatim}
+
+\paragraph{example 5} setdiff of rows or columns:
+\begin{Verbatim}
+// for columns
+A = grand(2,6,"uin",-1,1)
+B = grand(2,7,"uin",-1,1)
+[C,kA,kB] = setxor(A,B,which="columns",ind_type="int")
+C.equal[sort([A(:,kA),B(:,kB)],dir="i",type="ldc")]
+
+// for rows
+A = grand(8,2,"uin",-1,1)
+B = grand(5,2,"uin",-1,1)
+[C,kA,kB] = setxor(A,B,which="rows")  // or simply which="r"
+C.equal[sort([A(kA,:);B(kB,:)],dir="i",type="ldr")]
+
+\end{Verbatim}
 
 \end{examples}
 
