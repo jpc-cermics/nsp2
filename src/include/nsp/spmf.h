@@ -50,6 +50,7 @@ extern void nsp_convhull2d(int n, double *x, double *y, int *nhull, int *ind, in
 extern double nsp_pdf_normal(double x, double mu, double sigma);
 extern double nsp_pdf_lognormal(double x, double mu, double sigma);
 extern double nsp_pdf_chi2(double x, double nu);
+extern double nsp_pdf_nchi2(double x, double nu, double xnonc);
 extern double nsp_pdf_exp(double x, double Av);
 extern double nsp_pdf_cauchy(double x, double sigma);
 extern double nsp_pdf_pareto(double x, double a, double b);

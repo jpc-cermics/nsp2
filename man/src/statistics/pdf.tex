@@ -29,7 +29,7 @@ y=pdf(dist_type, x [,p1,...,pk])
 \begin{itemize}
 
 \item \itemdesc{\hypertarget{betapdf}{beta}}  \verb!y=pdf("bet",x,a,b)! computes the beta
-  density with parameters $a > 0$ and $b > 0$:
+  density with shape parameters $a > 0$ and $b > 0$:
 $$
      f(x; a, b) =
         \frac{1}{\beta(a,b)} x^{a-1}(1-x)^{b-1} \;
@@ -61,8 +61,16 @@ $$
 \item \itemdesc{\hypertarget{chipdf}{chi square}} \verb!y=pdf("chi",x,nu)! computes the chi square
   density with parameter $\nu > 0$ (number of dof):
 $$
-     f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}\; \mbox{for } x > 0 
+     f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}\; \mbox{ for } x > 0 
 $$
+
+\item \itemdesc{\hypertarget{nchipdf}{non central chi square}} \verb!y=pdf("nch",x,nu,xnonc)! computes the non central chi square
+  density with parameters $\nu > 0$ (number of dof) and $\lambda > 0$ (non centrality parameter):
+$$
+     f(x; \nu, \lambda) = \frac{1}{2} e^{-(x+\lambda)/2}\left(\frac{x}{\lambda}\right)^{\nu/4-1/2}
+     I_{\nu/2-1}(\sqrt{\lambda x}) \; \mbox{ for } x > 0 
+$$
+where $I$ is a modified Bessel function of the first kind.
 
 
 \item \itemdesc{\hypertarget{exppdf}{exponential}} \verb!y=pdf("exp",x,tau)! computes the exponential
@@ -138,7 +146,7 @@ $$
 
 
 \item \itemdesc{\hypertarget{parpdf}{Pareto}} \verb!y=pdf("par",x,a,b)! computes the Pareto
-  density with parameters $a > 0$ and $b > 0$:
+  density with shape parameter $a > 0$ and scale parameter $b > 0$:
 $$
      f(x; a, b) = \frac{ a/b }{ (x/b)^{a+1} }, \; \mbox{ for } x \ge b
 $$

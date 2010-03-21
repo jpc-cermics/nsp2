@@ -613,6 +613,30 @@ static int int_chi_part(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_nch_part(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  double nu, lambda;
+  int i;
+  if ( rhs != 4 ) 
+    { Scierror("Error: 2 parameters are required for 'nch' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
+  
+  if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
+
+  if (GetScalarDouble(stack,3,&nu) == FAIL) return RET_BUG;      
+
+  if (GetScalarDouble(stack,4,&lambda) == FAIL) return RET_BUG;      
+
+  if ( ! (nu > 0.0 && lambda > 0.0) )
+    { Scierror("Error: pdf('nch',x,nu,lambda), nu and lambda should be > 0\n"); return RET_BUG;}
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_pdf_nchi2(x->R[i], nu, lambda);
+
+  NSP_OBJECT(x)->ret_pos  = 1;
+  return 1;
+}
+
 static int int_exp_part(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
@@ -1038,6 +1062,7 @@ static OpTab pdf_table[]={
   {"nor", int_nor_part},
   {"gam", int_gam_part},
   {"chi", int_chi_part},
+  {"nch", int_nch_part},
   {"exp", int_exp_part},
   {"cau", int_cau_part},
   {"par", int_par_part},
