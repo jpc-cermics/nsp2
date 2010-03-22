@@ -168,7 +168,7 @@ L110:
 
 /*     S */
 
-  if (!(*s < 0.))
+  if (!(*s < 0.) || *which==1 )   /* add *which==1 to compute cdfnnbn with *s < 0 (bruno march,22,2010)) */ 
     {
       goto L120;
     }
@@ -305,8 +305,8 @@ L310:
     {
 
 /*     Calculating P */
-
-      cdf_cumnbn (s, xn, pr, ompr, p, q);
+      double sf = floor(*s);  /* add floor to compute the real cdfnbn (bruno march,22,2010)) */
+      cdf_cumnbn (&sf, xn, pr, ompr, p, q);
       *status = 0;
     }
   else if (2 == *which)

@@ -146,7 +146,7 @@ L110:
       goto L150;
     }
   /*     X */
-  if (!(*x < 0. || *x > 1.))
+  if (!(*x < 0. || *x > 1.) || *which==1 )   /* add *which==1 to compute cdfbet for every *x (bruno march,22,2010)) */
     {
       goto L140;
     }
@@ -168,7 +168,7 @@ L150:
       goto L190;
     }
   /*     Y */
-  if (!(*y < 0. || *y > 1.))
+  if (!(*y < 0. || *y > 1.) || *which==1 )   /* add *which==1 to compute cdfbet for every *y (y=1-x) (bruno march,22,2010)) */
     {
       goto L180;
     }

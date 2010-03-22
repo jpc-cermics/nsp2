@@ -119,7 +119,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
       goto L90;
     }
   /*     X */
-  if (!(*x < 0.))
+  if ( !(*x < 0.) || *which==1 )   /* add *which==1 to compute cdfchn with *x < 0 (bruno march,22,2010)) */
     {
       goto L80;
     }

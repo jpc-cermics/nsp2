@@ -303,7 +303,8 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 	}
       else 
 	{
-	  cdf_cumbin (s, xn, pr, ompr, p, q);
+	  double sf = floor(*s); /* add floor to compute the real cdfbin (bruno march,22,2010)) */
+	  cdf_cumbin (&sf, xn, pr, ompr, p, q);
 	  *status = 0;
 	}
     }

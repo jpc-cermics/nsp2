@@ -156,7 +156,7 @@ L110:
 
 /*     F */
 
-  if (!(*f < 0.))
+  if (!(*f < 0.) || *which==1 )   /* add *which==1 to compute cdff with *x < 0 (bruno march,22,2010)) */
     {
       goto L120;
     }

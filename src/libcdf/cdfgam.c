@@ -166,7 +166,7 @@ L110:
 
 /*     X */
 
-  if (!(*x < 0.))
+  if (!(*x < 0.) || *which==1 )   /* add *which==1 to compute cdfgam with *x < 0 (bruno march,22,2010)) */
     {
       goto L120;
     }
