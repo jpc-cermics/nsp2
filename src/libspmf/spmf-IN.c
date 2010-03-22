@@ -1062,7 +1062,7 @@ static OpTab pdf_table[]={
   {"nor", int_nor_part},
   {"gam", int_gam_part},
   {"chi", int_chi_part},
-  {"nch", int_nch_part},
+/*   {"nch", int_nch_part}, */
   {"exp", int_exp_part},
   {"cau", int_cau_part},
   {"par", int_par_part},

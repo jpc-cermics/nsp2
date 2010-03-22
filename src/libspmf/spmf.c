@@ -1047,14 +1047,14 @@ double nsp_pdf_chi2(double x, double nu)
  * use the direct formula
  *
  * Returns: a double
- *       
+ *
  **/
-extern double cephes_iv(double v, double x);
+/* extern double cephes_iv(double v, double x); */
 double nsp_pdf_nchi2(double x, double nu, double lambda)
 {
   double d = 0.0;
-  if ( ~( x <= 0.0) )
-    /* d = 0.5*exp(-0.5*(x+lambda))*pow((x/lambda),0.25*nu-0.5)*cephes_iv(0.5*nu-1.0,sqrt(lambda*x)); */
+/*   if ( ~( x <= 0.0) ) */
+/*     d = 0.5*exp(-0.5*(x+lambda))*pow((x/lambda),0.25*nu-0.5)*cephes_iv(0.5*nu-1.0,sqrt(lambda*x)); */
   return d;
 }
 
