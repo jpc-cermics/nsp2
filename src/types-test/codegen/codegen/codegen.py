@@ -1701,6 +1701,11 @@ class Wrapper:
                     funcname = getterprefix + fname
                     info = argtypes.WrapperInfo()
                     handler = argtypes.matcher.get(ftype)
+                    # we need the object type in write_return 
+                    # and the attribute name and byref flag 
+                    handler.c_name = self.objinfo.c_name;
+                    handler.fname = fname;
+                    handler.byref = self.byref;
                     # for attributes, we don't own the "return value"
                     handler.attr_write_return(ftype, 0, info,  pdef, psize, pcheck )
                     # for attributes get we return an NspObject
