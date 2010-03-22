@@ -29,7 +29,7 @@ int cdf_cumchn (double *x, double *df, double *pnonc, double *cum, double *ccum)
    * stop on ntired criterion. 
    */
   const int ntired = 1000;
-  const double eps = 1e-5;
+  const double eps = 1e-14;  /* was 1e-5 and so leads to innacurate results (bruno) */
   double d__1, term, chid2,  lfact, pcent, xnonc, pterm, centaj;
   double lcntaj, wt, sumadj, centwt, lcntwt, adj, sum, dfd2;
   int i__, icent, iterb,  iterf;
