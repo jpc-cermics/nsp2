@@ -492,6 +492,17 @@ void set_nsp_env (void)
   free(nsp_abs_path);
 }
 
+/*
+ *
+ */
+
+int nsp_main_in_text_view()
+{
+  return use_textview;
+}
+
+
+
 #ifdef FORTRAN_MAIN 
 
 /* utility */

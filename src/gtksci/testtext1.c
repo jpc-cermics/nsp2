@@ -868,6 +868,48 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 }
 
 
+/**
+ * configure_event:
+ * @widget: 
+ * @event: 
+ * @data: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int tv_rows = 24;
+static int tv_cols  = 80;
+
+static gint tv_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer xdata)
+{
+  View *view= xdata;
+  PangoLayout *layout;
+  GdkRectangle rect;
+  int width,height;
+  if ( view->text_view == NULL ) return FALSE;
+  gtk_text_view_get_visible_rect( GTK_TEXT_VIEW(view->text_view),
+				  &rect);
+  gtk_text_view_buffer_to_window_coords(GTK_TEXT_VIEW(view->text_view),
+					GTK_TEXT_WINDOW_WIDGET,
+					rect.width, rect.height, 
+					&width, &height);
+  layout = gtk_widget_create_pango_layout (view->text_view,"abcdefgh");
+  pango_layout_get_pixel_size (layout, &width, &height);
+  g_object_unref(layout);
+  tv_cols = 8*rect.width/width;
+  tv_rows = rect.height/height;
+  /* Sciprintf(" cols= %d rows = %d\n", tv_cols, tv_rows); */
+  return FALSE;
+}
+
+
+void  nsp_text_view_screen_size(int *rows,int *cols)
+{
+  *rows = tv_rows;
+  *cols = tv_cols; 
+}
 
 static View *
 create_view (Buffer *buffer)
@@ -890,6 +932,9 @@ create_view (Buffer *buffer)
   g_signal_connect (view->window, "delete_event",
 		    G_CALLBACK (delete_event_cb), NULL);
 
+  g_signal_connect( view->window, "configure_event",
+		    G_CALLBACK(tv_configure_event), view);
+
   /* 
   view->accel_group = gtk_accel_group_new ();
   gtk_window_add_accel_group (GTK_WINDOW (view->window), view->accel_group);
@@ -908,7 +953,7 @@ create_view (Buffer *buffer)
 
   view->text_view = gtk_text_view_new_with_buffer (buffer->buffer);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
-                               GTK_WRAP_WORD);
+                               GTK_WRAP_NONE); /* GTK_WRAP_WORD */
 
   gtk_container_set_border_width (GTK_CONTAINER (view->text_view),
                                   5);
