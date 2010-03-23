@@ -1766,6 +1766,7 @@ int nsp_edit(char *filename, int read_only)
   push_active_window (GTK_WINDOW (view->window));
   pop_active_window ();
   /* gtk_main (); */
+  /* nsp_edit_gtks(); */
   return 0;
 }
 #endif
