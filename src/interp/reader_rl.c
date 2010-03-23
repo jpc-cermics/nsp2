@@ -238,6 +238,7 @@ int nsp_write_history(void)
  * initialise the io sequences
  *----------------------------------------------------------------------*/
 
+extern int  nsp_main_in_text_view(void);
 extern void  nsp_text_view_screen_size(int *rows,int *cols);
 
 void sci_get_screen_size (int *rows,int *cols)
