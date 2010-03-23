@@ -76,12 +76,16 @@ int scig_click_handler_sci (int win,int x,int y,int ibut,int imask,int motion,in
   static char buf[256];
   BCG *SciGc;
   SciGc = window_list_search_new(win);
-  if (strlen(SciGc->EventHandler)!=0) {
-    sprintf(buf,"%s(%d,%d,%d,%d,%d)",SciGc->EventHandler,win,x,y,ibut,imask);
-    enqueue_nsp_command(buf);
-    return 1;}
+  if ( strlen(SciGc->EventHandler)!=0) 
+    {
+      sprintf(buf,"%s(%d,%d,%d,%d,%d)",SciGc->EventHandler,win,x,y,ibut,imask);
+      enqueue_nsp_command(buf);
+      return 1;
+    }
   else
-    return 0;
+    {
+      return 0;
+    }
 }
 
 /**
