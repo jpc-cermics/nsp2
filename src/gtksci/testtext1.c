@@ -1088,6 +1088,10 @@ static void nsp_insert_prompt(const char *prompt)
   GtkTextIter start, end;
   buffer = view->buffer->buffer;
   gtk_text_buffer_get_bounds (buffer, &start, &end);
+  /* scroll to be sure that the prompt will be visible */
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 0.0, 1.0);
   gtk_text_buffer_insert (buffer, &end,prompt,-1);
   if ( view->buffer->mark == NULL) 
     view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
@@ -1097,10 +1101,6 @@ static void nsp_insert_prompt(const char *prompt)
   gtk_text_buffer_apply_tag (view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
-  /* scroll if needed */
-  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
-				view->buffer->mark,
-				0, TRUE, 0.0, 1.0);
 }
 
 
