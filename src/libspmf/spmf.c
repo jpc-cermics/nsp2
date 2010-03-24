@@ -514,6 +514,13 @@ int nsp_kcdf(double x, double *res, int n)
   double lim_factor = pow(2.0,465);
   double scale_factor = 1.0/lim_factor;
 
+  if ( x <= 0.0 )
+    {
+      *res = 0.0; return OK;
+    }
+
+  if ( n < 1 ) return FAIL;
+
   d = x/sqrt_n;
   s = x*x;
 

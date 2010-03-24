@@ -104,7 +104,13 @@ static int int_nsp_kcdf(Stack stack, int rhs, int opt, int lhs)
   if ( (x = GetRealMat(stack, 1)) == NULLMAT )
     return RET_BUG;
 
-  if ( GetScalarInt(stack,2,&n) == FAIL ) return RET_BUG;      
+  if ( GetScalarInt(stack,2,&n) == FAIL ) return RET_BUG;
+
+  if ( n < 1 )
+    {
+      Scierror("%s: second argument should be an integer >= 1\n",NspFname(stack));
+      return RET_BUG;
+    }
 
   if ( (P = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT) return RET_BUG;
 
