@@ -28,7 +28,7 @@
 #include "nsp/command.h"
 #include "nsp/gtksci.h"
 #include "nsp/graphics-new/Graphics.h" 
-
+#include "nsp/object.h"
 /**
  * scig_click_handler_none:
  * @win: 
@@ -73,13 +73,45 @@ int scig_click_handler_none (int win,int x,int y,int ibut,
 
 int scig_click_handler_sci (int win,int x,int y,int ibut,int imask,int motion,int release)
 {
-  static char buf[256];
   BCG *SciGc;
   SciGc = window_list_search_new(win);
   if ( strlen(SciGc->EventHandler)!=0) 
     {
+      /* In the second part of the if the command is executed in the standard 
+       * eval loop in which presence of pending commands are checked. 
+       * Thus it can only work if the standard eval loop is active and it 
+       * gives a very slow execution when using nsp -tv. Thus we use here 
+       * a direct evaluation through  nsp_gtk_eval_function_by_name. 
+       * It could be usefull to have the possibility to errcatch or not 
+       * the execution of the given handler.
+       */
+#if 1 
+      const char *names[]={ "win","x","y","ibut","imask"};
+      static NspObject *args[5] = {0};
+      static int initialized=0;
+      int n_args = 5, i, n_ret=0;
+      if ( initialized == 0) 
+	{
+	  for ( i = 0 ; i < n_args ; i++)
+	    args[i]= (NspObject *) nsp_matrix_create(names[i],'r',1,1);
+	  initialized = 1;
+	}
+      ((NspMatrix *) args[0])->R[0] = win; 
+      ((NspMatrix *) args[1])->R[0] = x; 
+      ((NspMatrix *) args[2])->R[0] = y; 
+      ((NspMatrix *) args[3])->R[0] = ibut; 
+      ((NspMatrix *) args[4])->R[0] = imask; 
+      /* Maybe it could be usefull to make errcatch here XXX 
+       */
+      if ( nsp_gtk_eval_function_by_name(SciGc->EventHandler,args,n_args,NULL,&n_ret) == FAIL) 
+	{
+	  Sciprintf("Error: %s failed\n",SciGc->EventHandler);
+	}
+#else 
+      char buf[256];
       sprintf(buf,"%s(%d,%d,%d,%d,%d)",SciGc->EventHandler,win,x,y,ibut,imask);
       enqueue_nsp_command(buf);
+#endif
       return 1;
     }
   else
@@ -113,11 +145,21 @@ void reset_scig_click_handler(void)
   scig_click_handler = scig_click_handler_none;
 }
 
-/*
- * a queue for click/motion events.
- * each graphic window has its own queue. 
+/**
+ * nsp_enqueue:
+ * @q: an event queue attached to a graphic window
+ * @ev: an event 
+ * 
+ * This function is called to store in a queue click/motion events which 
+ * occur in a graphic window. Each graphic window has its own queue. 
  * see graphics/perigtk/events.c 
- */
+ * The events are queued when outise the xclick() function. The events 
+ * which are stored in the queue can be used by the xclick function. 
+ * If an event handler is attached to the graphic window then this 
+ * event handler is directly called. 
+ * 
+ * Returns: 0 
+ **/
 
 int nsp_enqueue(nsp_event_queue *q, nsp_gwin_event *ev)
 {
