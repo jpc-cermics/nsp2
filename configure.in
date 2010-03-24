@@ -66,6 +66,9 @@ AC_ARG_WITH(cairo,
 AC_ARG_WITH(fink,
     [  --with-fink             use /sw for searching packages instead of /opt/local (default=no) ])
 
+AC_ARG_WITH(openmp,
+    [  --with-openmp           use gcc openmp flags (default=no ])
+
 ###############################
 ## creating Path.incl if needed
 ###############################
@@ -240,6 +243,19 @@ if test "$ac_cv_c_ieee_flags" != "none" ; then
 else
    CFLAGS="$save_cflags"
 fi
+
+
+#####################################################
+## openmp
+#####################################################
+
+if test xx"$with_openmp" = xx; then	
+   with_openmp=no 
+fi 
+
+if test $with_openmp = yes; then	
+   CFLAGS="-fopenmp $CFLAGS"
+fi 
 
 ############################################
 # ieee lib check 
