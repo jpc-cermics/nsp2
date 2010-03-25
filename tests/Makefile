@@ -46,6 +46,7 @@ TESTS= \
 	trycatch.dia \
 	umfpack.dia \
 	unique.dia \
+	setfunctions.dia \
 	createbyset.dia \
 	sparse-mixed.dia \
 	extract_empty.dia \
