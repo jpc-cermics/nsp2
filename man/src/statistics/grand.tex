@@ -131,7 +131,7 @@ S=grand(action [,q1,....,ql])
   distribution} with (scale) parameter $a$ (positive real).
   
 \item \itemdesc{logistic} 
-  \verb!X=grand(m,n,"logi",a)! generates random variates from the \hyperlink{logipdf}{logistic 
+  \verb!X=grand(m,n,"logi",a,b)! generates random variates from the \hyperlink{logipdf}{logistic 
   distribution} with (location) parameter $a$ (real) and (scale) parameter $b$ (positive real).
   
 \item \itemdesc{log normal} 
@@ -162,12 +162,12 @@ S=grand(action [,q1,....,ql])
 \item \itemdesc{uniform (def)} \verb!X=grand(m,n,"def")! generates random variates from the uniform 
   distribution over $[0,1)$ (1 is never returned).
 
-\item \itemdesc{uniform (unf)} \verb!X=grand(m,n,"unf",low,high)! generates random reals uniformly distributed 
-    in $[low, high]$.
+\item \itemdesc{uniform (unf)} \verb!X=grand(m,n,"unf",a,b)! generates random reals uniformly distributed 
+    in $[a, b]$.
 
-\item \itemdesc{uniform (uin)} \verb!X=grand(m,n,"uin",low,high)! generates random integers uniformly 
-      distributed between \verb!low! and \verb!high! (included). \verb!high!
-      and \verb!low! must be integers such that \verb!high-low+1 > 2,147,483,561!.
+\item \itemdesc{uniform (uin)} \verb!X=grand(m,n,"uin",n1,n2)! generates random integers uniformly 
+      distributed between $n_1$ and $n_2$ (included). $n_1$ and $n_2$ must be integers such that 
+      $n_2-n_1+1 < 2,147,483,561$.
 
 \item \itemdesc{uniform (lgi)} \verb!X=grand(m,n,"lgi")! returns the basic output of the current generator : random integers  
       following a uniform distribution over : 

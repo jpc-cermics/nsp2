@@ -738,7 +738,7 @@ static int int_unf_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
   
  err:
-  Scierror("Error: grand(..'unf',low,high) : low (=%g) not inferior or equal to high (=%g)  \n",low->R[i1], high->R[i2]); 
+  Scierror("Error: grand(..'unf',a,b) : a (=%g) not inferior or equal to b (=%g)  \n",low->R[i1], high->R[i2]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -780,7 +780,7 @@ static int int_uin_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 
  err:
-  Scierror("Error: grand(..'uin',low,high) : low (=%d) not inferior or equal to high (=%d)  \n",a,b); 
+  Scierror("Error: grand(..'uin',n1,n2) : n1 (=%d) not inferior or equal to n2 (=%d)  \n",a,b); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }

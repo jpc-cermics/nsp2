@@ -1238,3 +1238,50 @@ double nsp_pdf_geometric(double x, double p)
     return p * pow(1.0-p,x-1.0);
 }
 
+
+/**
+ * nsp_pdf_uin
+ * @x: double
+ * @n1: double
+ * @n2: double
+ *
+ * compute the uin (uniform integer distribution) mass function at x
+ * n1 and n2 should be integre (stored as double) with n1 <= n2
+ * This should be verified at the calling level.
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_uin(double x, double n1, double n2)
+{
+  if ( x < n1 || x > n2 || floor(x) != x  )
+    return 0.0;
+  else if ( isnan(x) )
+    return x;
+  else
+    return 1.0/(n2 - n1 + 1.0);
+}
+
+/**
+ * nsp_pdf_unf
+ * @x: double
+ * @a: double
+ * @b: double
+ *
+ * compute the U(a,b) density function at x
+ * a and b should be such that a < b
+ * This should be verified at the calling level.
+ *
+ * Returns: a double
+ *       
+ **/
+double nsp_pdf_unf(double x, double a, double b)
+{
+  if ( x < a || x > b )
+    return 0.0;
+  else if ( isnan(x) )
+    return x;
+  else
+    return 1.0/(b - a);
+}
+

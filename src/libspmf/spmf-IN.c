@@ -1063,6 +1063,59 @@ static int int_t_part(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_uin_part(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  double n1, n2;
+  int i;
+  if ( rhs != 4 ) 
+    { Scierror("Error: 2 parameters are required for 'uin' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
+  
+  if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
+
+  if (GetScalarDouble(stack,3,&n1) == FAIL) return RET_BUG;      
+
+  if (GetScalarDouble(stack,4,&n2) == FAIL) return RET_BUG;      
+
+  if ( ! (n1 <= n2  &&  floor(n1) == n1  && floor(n2) == n2 ) )
+    { 
+      Scierror("Error: pdf('uin',x,n1,n2), invalid parameters: n1 and n2 should be integers with n1 <= n2\n"); 
+      return RET_BUG;
+    }
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_pdf_uin(x->R[i], n1, n2);
+
+  NSP_OBJECT(x)->ret_pos  = 1;
+  return 1;
+}
+
+static int int_unf_part(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  double a, b;
+  int i;
+  if ( rhs != 4 ) 
+    { Scierror("Error: 2 parameters are required for 'unf' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
+  
+  if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
+
+  if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
+
+  if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
+
+  if ( ! (a < b) )
+    { 
+      Scierror("Error: pdf('unf',x,a,b), invalid parameters: a and b should be real such that a < b\n"); 
+      return RET_BUG;
+    }
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_pdf_unf(x->R[i], a, b);
+
+  NSP_OBJECT(x)->ret_pos  = 1;
+  return 1;
+}
 
 static OpTab pdf_table[]={
   {"nor", int_nor_part},
@@ -1086,6 +1139,8 @@ static OpTab pdf_table[]={
   {"f", int_f_part},
   {"t", int_t_part},
   {"hyp", int_hyp_part},
+  {"uin", int_uin_part},
+  {"unf", int_unf_part},
   {(char *) 0, NULL}
 };
          

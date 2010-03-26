@@ -60,6 +60,9 @@ extern double nsp_pdf_weibull(double x, double a, double b);
 extern double nsp_pdf_rayleigh(double x, double sigma);
 extern double nsp_pdf_tailrayleigh(double x, double sigma, double a);
 extern double nsp_pdf_geometric(double x, double p);
+extern double nsp_pdf_uin(double x, double n1, double n2);
+extern double nsp_pdf_unf(double x, double a, double b);
+
 
 
 typedef struct Dxblk2_ Dxblk2; 
