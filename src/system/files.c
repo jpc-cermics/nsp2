@@ -24,6 +24,7 @@
 #include "nsp/object.h"
 #include "nsp/nsptcl.h"
 #ifdef WIN32 
+#include <process.h> /* for getpid */
 #include "tcl/generic/tclInt.h"
 #endif 
 
@@ -62,7 +63,9 @@ char *get_sci_data_strings(int n)
 
 void set_nsp_tmpdir(void)
 {
+#ifndef WIN32
   int status;
+#endif 
   static int first =0;
   if ( first == 0 ) 
     {
@@ -115,7 +118,9 @@ extern void hppa_sci_unlink_shared();
 
 void clean_tmpdir(void)
 {
+#ifndef WIN32 
   int status ;
+#endif 
   char *tmp_dir = get_nsp_tmpdir(); 
 #ifdef WIN32 
   nsp_remove_directory(tmp_dir,1,NULL);
@@ -213,16 +218,16 @@ static int get_env(char *var,char *buf,int buflen,int iflag);
 
 void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 {
-  int  nc= FSIZE+1;
+  int  nc= FSIZE+1, expanded = FALSE;
 #ifdef WIN32 
   int k;
 #endif 
   static char SCI[FSIZE+1],HOME[FSIZE+1],TMP[FSIZE+1];
-  static int firstentry=0;
+  static int firstentry=0,  ok_sci=FALSE, ok_home = FALSE;
   if ( firstentry == 0 ) 
     {
-      get_env("SCI",SCI,nc,1);
-      get_env("HOME",HOME,nc,1);
+      ok_sci= get_env("SCI",SCI,nc,1);
+      ok_home= get_env("HOME",HOME,nc,1);
       set_nsp_tmpdir();
       if ( get_env("NSP_TMPDIR",TMP,nc,0) == FAIL) 
 	{
@@ -230,11 +235,15 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
 	}
       firstentry++;
     }
-  if ( expand_aliases(SCI,SCI_a,in_name,out_name,out_size) == 0 )
-    if ( expand_aliases(HOME,HOME_a,in_name,out_name,out_size) == 0 )
-      if ( expand_aliases(TMP,TMP_a,in_name,out_name,out_size) == 0 )
-	strncpy(out_name,in_name, out_size);
-  /* strncpy(out_name,in_name,lout); */
+  /* try to expand */
+  if ( ok_sci == OK) 
+    expanded = expand_aliases(SCI,SCI_a,in_name,out_name,out_size);
+  if ( ok_home == OK && expanded == FALSE )
+    expanded = expand_aliases(HOME,HOME_a,in_name,out_name,out_size);
+  if ( expanded == FALSE ) 
+    expanded = expand_aliases(TMP,TMP_a,in_name,out_name,out_size);
+  if (expanded  == FALSE ) 
+    strncpy(out_name,in_name, out_size);
   /* just keep the unix style    */
 #ifdef WIN32 
   for (k=0 ; k < strlen(out_name) ;k++) if ( out_name[k]=='\\') out_name[k]='/';
@@ -247,7 +256,8 @@ void nsp_path_expand(const char *in_name, char *out_name, int out_size)
  *     try to find alias[i] at the begining of in_name 
  *     and replaces it by env in out_name 
  *     out_name must be large enough to get the result 
- *              else result is truncated 
+ *     else result is truncated 
+ * returns TRUE is alias expansion was performed else return FALSE 
  */
 
 static int expand_aliases(char *env, char **alias,const char *in_name, char *out_name,int out_size)
@@ -263,11 +273,11 @@ static int expand_aliases(char *env, char **alias,const char *in_name, char *out
 	  strncpy(out,env,(unsigned int) (out_last -out));
 	  out += strlen(env);
 	  strncpy(out,in_name+strlen(alias[i])-1,(unsigned int) (out_last -out));
-	  return 1;
+	  return TRUE ;
 	}
       i++;
     }
-  return 0;
+  return FALSE;
 }
 
 
