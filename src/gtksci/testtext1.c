@@ -358,6 +358,13 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	}
       goto def;
       break;
+    case 'c':
+      if ( event->state & GDK_CONTROL_MASK ) 
+	{
+	  goto ctrl_c;
+	}
+      goto def;
+      break;
     case 'l' :
       if ( event->state & GDK_CONTROL_MASK ) 
 	{
@@ -391,6 +398,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	}
       goto def; 
       break;
+    case GDK_Control_L :
+    case GDK_Control_R :
+      /* fprintf(stderr,"un controle \n"); */
+      return FALSE;
     default:
       goto def;
       break;
@@ -432,6 +443,9 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
   gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
   return TRUE;
+ ctrl_c: 
+  /* fprintf(stderr,"un controle C\n"); */
+  return FALSE;
  def: 
   /* if we are at a position when insertion is not possible 
    * we jump to end of text view where we are allowed 
