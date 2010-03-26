@@ -1261,6 +1261,54 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
 	  return newpos;
 	  break;
+	case PAUSE:
+	  /* 1-ary pause */
+	  PRINTTAG("pause");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case HELP:
+	  /* 1-ary help */
+	  PRINTTAG("help");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case WHO:
+	  /* 1-ary who */
+	  PRINTTAG("who");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case EXEC:
+	  /* 1-ary exec */
+	  PRINTTAG("exec");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case APROPOS:
+	  /* 1-ary apropos */
+	  PRINTTAG("apropos");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case CD_COMMAND:
+	  /* 1-ary cd */
+	  PRINTTAG("cd");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case LS_COMMAND:
+	  /* 1-ary ls */
+	  PRINTTAG("ls");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case PWD_COMMAND:
+	  /* 1-ary pwd */
+	  PRINTTAG("ls");Sciprintf(" ");
+	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
 	default:
 	  Sciprintf("Warning in PlistPrettyPrint :");
 	  s=nsp_astcode_to_name(L->type);
@@ -1380,6 +1428,18 @@ static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret)
       break;
     case WHO :
       return pos+NSP_PRINTF1_COLOR(i,p_blue,"who");
+      break;
+    case HELP:
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"help");
+      break;
+    case CD_COMMAND :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"cd");
+      break;
+    case LS_COMMAND :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"cd");
+      break;
+    case PWD_COMMAND :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"cd");
       break;
     case WHAT :
       return pos+NSP_PRINTF1_COLOR(i,p_blue,"what");

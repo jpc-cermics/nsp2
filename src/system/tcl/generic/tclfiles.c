@@ -1790,6 +1790,107 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
   return resultPtr->string;
 }
 
+/* list files from a pattern returning a string matrix 
+ * or printing result
+ */
+
+int nsp_glob(const char *pattern)
+{
+  NspSMatrix *S;
+  int noComplain=0;
+  char c;
+  int result = TCL_OK;
+  nsp_tcldstring buffer;
+  char *separators, *head, *tail,*str;
+
+  str = nsp_new_string(pattern,-1);
+  nsp_tcldstring_init(&buffer);
+  separators = NULL;		/* Needed only to prevent gcc warnings. */
+  
+  if ((S=nsp_smatrix_create(NVOID,0,0,".",0))== NULLSMAT) 
+    return FAIL;
+  switch (tclPlatform) {
+  case TCL_PLATFORM_UNIX:
+    separators = "/";
+    break;
+  case TCL_PLATFORM_WINDOWS:
+    separators = "/\\:";
+    break;
+  case TCL_PLATFORM_MAC:
+    separators = (strchr(str, ':') == NULL) ? "/" : ":";
+    break;
+  }
+  nsp_tcldstring_set_length(&buffer, 0);
+  /*
+   * Perform tilde substitution, if needed.
+   */
+  if (str[0] == '~') 
+    {
+      char *p;
+      /*
+       * Find the first path separator after the tilde.
+       */
+      for (tail = str; *tail != '\0'; tail++) {
+	if (*tail == '\\') {
+	  if (strchr(separators, tail[1]) != NULL) {
+	    break;
+	  }
+	} else if (strchr(separators, *tail) != NULL) {
+	  break;
+	}
+      }
+      /*
+       * Determine the home directory for the specified user.  Note that
+       * we don't allow special characters in the user name.
+       */
+      
+      c = *tail;
+      *tail = '\0';
+      p = strpbrk(str+1, "\\[]*?{}");
+      if (p == NULL) {
+	head = DoTildeSubst( str+1, &buffer);
+      } else {
+	if (!noComplain) 
+	  {
+	    Scierror("Error: globbing characters not supported in user names\n");
+	  }
+	head = NULL;
+      }
+      *tail = c;
+      if (head == NULL) {
+	if (noComplain) {
+	  goto done;
+	} else {
+	  result = TCL_ERROR;
+	  goto done;
+	}
+      }
+      if (head != nsp_tcldstring_value(&buffer)) {
+	nsp_tcldstring_append(&buffer, head, -1);
+      }
+    } else {
+    tail = str;
+  }
+  result = nsp_do_glob( separators, &buffer, tail,S);
+  if (result != TCL_OK) {
+    goto done;
+  }
+ done:
+  nsp_tcldstring_free(&buffer);
+  if ( result == TCL_OK ) 
+    {
+      nsp_smatrix_print(S,0,NULL,0);
+      nsp_smatrix_destroy(S);
+      nsp_string_destroy(&str);
+      return OK;
+    }
+  else
+    {
+      nsp_string_destroy(&str);
+      return FAIL;
+    }
+}
+
 
 /*
  * int_glob: interface to the glob command 
@@ -1804,11 +1905,11 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
   int result = TCL_OK;
   nsp_tcldstring buffer;
   char *separators, *head, *tail,*str;
-    
+  
   nsp_tcldstring_init(&buffer);
   separators = NULL;		/* Needed only to prevent gcc warnings. */
   
-  if ((S=nsp_smatrix_create("",0,0,".",0))== NULLSMAT) 
+  if ((S=nsp_smatrix_create(NVOID,0,0,".",0))== NULLSMAT) 
     return RET_BUG;
   
   for (i = 1 ; i <= rhs ; i++) 
@@ -1825,79 +1926,72 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
 	separators = (strchr(str, ':') == NULL) ? "/" : ":";
 	break;
       }
-      
-    nsp_tcldstring_set_length(&buffer, 0);
-
-    /*
-     * Perform tilde substitution, if needed.
-     */
-    if (str[0] == '~') 
-      {
-	char *p;
-	
-	/*
-	 * Find the first path separator after the tilde.
-	 */
-
-	for (tail = str; *tail != '\0'; tail++) {
-	  if (*tail == '\\') {
-	    if (strchr(separators, tail[1]) != NULL) {
+      nsp_tcldstring_set_length(&buffer, 0);
+      /*
+       * Perform tilde substitution, if needed.
+       */
+      if (str[0] == '~') 
+	{
+	  char *p;
+	  /*
+	   * Find the first path separator after the tilde.
+	   */
+	  for (tail = str; *tail != '\0'; tail++) {
+	    if (*tail == '\\') {
+	      if (strchr(separators, tail[1]) != NULL) {
+		break;
+	      }
+	    } else if (strchr(separators, *tail) != NULL) {
 	      break;
 	    }
-	  } else if (strchr(separators, *tail) != NULL) {
-	    break;
 	  }
-	}
 	
-	/*
-	 * Determine the home directory for the specified user.  Note that
-	 * we don't allow special characters in the user name.
-	 */
+	  /*
+	   * Determine the home directory for the specified user.  Note that
+	   * we don't allow special characters in the user name.
+	   */
 	
-	c = *tail;
-	*tail = '\0';
-	p = strpbrk(str+1, "\\[]*?{}");
-	if (p == NULL) {
-	  head = DoTildeSubst( str+1, &buffer);
-	} else {
-	  if (!noComplain) 
-	    {
-	      Scierror("Error: globbing characters not supported in user names\n");
-	    }
-	  head = NULL;
-	}
-	*tail = c;
-	if (head == NULL) {
-	  if (noComplain) {
-	    continue;
+	  c = *tail;
+	  *tail = '\0';
+	  p = strpbrk(str+1, "\\[]*?{}");
+	  if (p == NULL) {
+	    head = DoTildeSubst( str+1, &buffer);
 	  } else {
-	    result = TCL_ERROR;
-	    goto done;
+	    if (!noComplain) 
+	      {
+		Scierror("Error: globbing characters not supported in user names\n");
+	      }
+	    head = NULL;
 	  }
-	}
-	if (head != nsp_tcldstring_value(&buffer)) {
-	  nsp_tcldstring_append(&buffer, head, -1);
-	}
-      } else {
+	  *tail = c;
+	  if (head == NULL) {
+	    if (noComplain) {
+	      continue;
+	    } else {
+	      result = TCL_ERROR;
+	      goto done;
+	    }
+	  }
+	  if (head != nsp_tcldstring_value(&buffer)) {
+	    nsp_tcldstring_append(&buffer, head, -1);
+	  }
+	} else {
 	tail = str;
       }
-    result = nsp_do_glob( separators, &buffer, tail,S);
-    if (result != TCL_OK) {
-      if (noComplain) {
-	continue;
-      } else {
-	goto done;
+      result = nsp_do_glob( separators, &buffer, tail,S);
+      if (result != TCL_OK) {
+	if (noComplain) {
+	  continue;
+	} else {
+	  goto done;
+	}
       }
     }
-  }
  done:
   nsp_tcldstring_free(&buffer);
   if ( result == TCL_OK ) 
     {
-      if ( rhs >= 1) 
-	MoveObj(stack,1,(NspObject*)S);
-      else 
-	NthObj(1) = (NspObject*)S;
+      MoveObj(stack,1, NSP_OBJECT(S));
       return 1;
     }
   else

@@ -72,4 +72,5 @@ extern int nsp_change_curdir(char *path);
 extern char * nsp_get_curdir(void);
 extern void nsp_path_expand(const char *in_name, char *out_name, int out_size);
 
+
 #endif 

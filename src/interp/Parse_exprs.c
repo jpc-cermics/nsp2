@@ -414,6 +414,9 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case PAUSE:  
     case HELP  : 
     case WHO :   
+    case CD_COMMAND:
+    case LS_COMMAND:
+    case PWD_COMMAND:
       /* a set of commands with zero or one argument  */
       if ( T->tokenv.NextC == '(') 
 	{

@@ -48,19 +48,27 @@ char *tclExecutableName = NULL;
  * int_syscd: interface to process the chdir (cd) command.
  */
 
-int int_syscd(Stack stack,int rhs,int opt,int lhs) 
+int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name)
 {
-  char old[FSIZE+1];
-  char str_expanded[FSIZE+1];
+  char old[FSIZE+1], str[FSIZE+1], str_expanded[FSIZE+1];
   int result ;
   nsp_tcldstring buffer;
-  char *dirName,*str;
-  CheckRhs(1,1);
-  CheckLhs(0,1);
-  if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+  char *dirName;
   /* change current exec dir using str 
    */
-  nsp_expand_dir_and_update_exec_dir(&stack,old,str,str_expanded);
+  if ( dir_name != NULL ) 
+    {
+      strncpy(str,dir_name, FSIZE+1);
+    }
+  else 
+    {
+      char *home;
+      if ((home = nsp_getenv ("HOME")) == (char *) 0)
+	return FAIL;
+      strncpy(str,home, FSIZE+1);
+    }
+  
+  nsp_expand_dir_and_update_exec_dir(stack,old,str,str_expanded);
   /* since expansion has been performed what follows 
    * is certainly not that important 
    */
@@ -68,26 +76,47 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
   dirName = nsp_translate_file_name( str_expanded, &buffer);
   if (dirName == NULL)  
     {
-      nsp_reset_exec_dir(&stack,old);
-      return RET_BUG;
+      nsp_reset_exec_dir(stack,old);
+      return FAIL;
     }
   result = nsp_chdir(dirName);
   nsp_tcldstring_free(&buffer);
   if (result ==  TCL_ERROR) 
     {
-      nsp_reset_exec_dir(&stack,old);
-      return RET_BUG;
+      nsp_reset_exec_dir(stack,old);
+      return FAIL;
     }
   else 
     {
       /* we must be sure that current exec dir is absolute */
       if (nsp_get_path_type(str_expanded) != TCL_PATH_ABSOLUTE) 
 	{
-	  strncpy(stack.val->current_exec_dir,nsp_get_cwd(),FSIZE);
+	  strncpy(stack->val->current_exec_dir,nsp_get_cwd(),FSIZE);
 	}
       /* we set current exec dir to an absolute value */
-      return 0;
+      return OK;
     }
+  return OK;
+}
+
+
+int int_syscd(Stack stack,int rhs,int opt,int lhs) 
+{
+  char *str;
+  CheckRhs(0,1);
+  CheckLhs(0,1);
+  if (rhs == 1) 
+    {
+      if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+    }
+  else
+    {
+      if ((str = nsp_getenv ("HOME")) == (char *) 0)
+	return RET_BUG;
+    }
+  if ( nsp_chdir_and_update_exec_dir(&stack,str) == FAIL) 
+    return RET_BUG; 
+  return 0;
 }
 
 /*

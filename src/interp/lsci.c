@@ -490,10 +490,8 @@ void set_nsp_env (void)
     }
   nsp_setenv("SCI",nsp_abs_path);
   nsp_setenv("NSP",nsp_abs_path);
-#ifdef WIN32 
   /* be sure that home exists */
   set_nsp_home_env(nsp_abs_path);
-#endif 
   free(nsp_abs_path);
 }
 
@@ -501,17 +499,19 @@ void set_nsp_env (void)
 
 static void set_nsp_home_env(char *nsp_abs_path)
 {
+#ifdef WIN32 
   int k;
   char HOME[FSIZE+1], *hd, *hp;
   if ( nsp_getenv("HOME") != NULL)  return;
   hd = nsp_getenv ("HOMEDRIVE");
   hp = nsp_getenv ("HOMEPATH");
   if ( hp == NULL || hd == NULL) 
-    sprintf(HOME,nsp_abs_path);
+    sprintf(HOME,"%s",nsp_abs_path);
   else
     sprintf(HOME,"%s%s",hd,hp);
   for (k=0 ; k < strlen(HOME) ;k++) if ( HOME[k]=='\\') HOME[k]='/';
   nsp_setenv("HOME",HOME);
+#endif 
 }
 
 /*

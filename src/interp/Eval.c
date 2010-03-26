@@ -38,6 +38,9 @@
 
 /* XXX */
 extern int Sci_Help(char *mandir,char *locale,char *help_file) ;
+extern int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name);
+extern int nsp_glob(const char *pattern);
+extern char *nsp_get_cwd(void);
 
 static int EvalEqual (PList L1,Stack stack,int first);
 static int EvalOpt (PList L1,Stack stack,int first);
@@ -940,6 +943,23 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 #endif
 	  return 0;
 	  break;
+	case CD_COMMAND :
+	  /* 1-ary CD */
+	  loc = L1;
+	  if ( nsp_chdir_and_update_exec_dir(&stack,(char *) loc->O) == FAIL) 
+	    return RET_BUG;
+	  return 0;
+	  break;
+	case LS_COMMAND :
+	  /* 1-ary LS */
+	  nsp_glob((char *) L1->O);
+	  return 0;
+	  break;
+	case PWD_COMMAND :
+	  /* 1-ary PWD */
+	  Scierror("Error: pwd should be used without arguments\n");
+	  return RET_BUG;
+	  break;
 	case GLOBAL:
 	  /* n-ary global */
 	  loc = L1;
@@ -1166,6 +1186,16 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       Sciprintf("no man support in this version\n");
 #endif
 #endif
+      return 0;
+    case CD_COMMAND:
+      if ( nsp_chdir_and_update_exec_dir(stack,NULL) == FAIL)
+	return RET_BUG;
+      return 0;
+    case LS_COMMAND:
+      nsp_glob("*");
+      return 0;
+    case PWD_COMMAND:
+      Sciprintf("%s\n",nsp_get_cwd());
       return 0;
     case WHAT:
       Sciprintf("command without arguments\n");
