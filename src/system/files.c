@@ -272,7 +272,10 @@ static int expand_aliases(char *env, char **alias,const char *in_name, char *out
 	{
 	  strncpy(out,env,(unsigned int) (out_last -out));
 	  out += strlen(env);
-	  strncpy(out,in_name+strlen(alias[i])-1,(unsigned int) (out_last -out));
+	  if (alias[i][0] == '$' ) 
+	    strncpy(out,in_name+strlen(alias[i]),(unsigned int) (out_last -out));
+	  else 
+	    strncpy(out,in_name+strlen(alias[i])-1,(unsigned int) (out_last -out));
 	  return TRUE ;
 	}
       i++;
