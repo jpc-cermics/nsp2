@@ -4708,11 +4708,11 @@ NspBMatrix  *nsp_mat_isinf(NspMatrix *A)
   if ( Loc == NULLBMAT)  return(NULLBMAT);
   if ( A->rc_type == 'r') 
     {
-      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= isinf(A->R[i]);
+      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= (isinf(A->R[i]) != 0) ;
     }
   else 
     {
-      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= isinf(A->C[i].r) | isinf(A->C[i].i);
+      for ( i = 0 ; i < A->mn ; i++ ) Loc->B[i]= (isinf(A->C[i].r) !=0)  | ( isinf(A->C[i].i) != 0);
     }
   return(Loc);
 }
