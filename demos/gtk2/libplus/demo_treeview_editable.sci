@@ -95,9 +95,9 @@ function demo_treeview_editable()
   // create model 
   
   str = ["Chateau Margaud"; "Kg de pommes de terre"; "Boites de confit de canard"];
-  ls = list( [1;2;2], str, [%t;%t;%t]);
+  fls = list( [1;2;2], str, [%t;%t;%t]);
 
-  model = gtkliststore_new(ls) 
+  model = gtkliststore_new(fls) 
 
   // create tree view 
   treeview = gtktreeview_new(model);
