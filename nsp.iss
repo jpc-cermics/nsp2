@@ -51,7 +51,7 @@ BackColor=clPurple
 BackColor2=clBlack
 Compression=bzip/9
 OutputDir=..
-OutputBaseFilename=nsp2-2010-03-02
+OutputBaseFilename=nsp2-2010-03-25
 ;;[Registry]
 ;;Root: HKLM; Subkey: "Software\Nsp"; Flags: uninsdeletekeyifempty
 ;;Root: HKLM; Subkey: "Software\Nsp\1.0"; Flags: uninsdeletekey
@@ -65,6 +65,7 @@ Source: "src\include\*.*"; DestDir: "{app}\include"; Flags: recursesubdirs
 Source: "config\*.*"; DestDir: "{app}\config"; Flags: recursesubdirs
 Source: "lib\*.*"; DestDir: "{app}\lib"; Flags: recursesubdirs
 Source: "etc\*.*"; DestDir: "{app}\etc"; Flags: recursesubdirs
+Source: "share\*.*"; DestDir: "{app}\share"; Flags: recursesubdirs
 Source: "man\html\generated\*.*"; DestDir: "{app}\man\html\generated"; Flags: recursesubdirs
 Source: "macros\*.*"; DestDir: "{app}\macros\"; Flags: recursesubdirs
 Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
