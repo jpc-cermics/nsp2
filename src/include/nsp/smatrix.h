@@ -78,6 +78,8 @@ extern int nsp_smatrix_resize(NspSMatrix *A, int m, int n);
 extern void nsp_smatrix_destroy(NspSMatrix *A); 
 extern int nsp_smatrix_info(const NspSMatrix *Mat, int indent,const char *name, int rec_level); 
 extern int nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int rec_level); 
+extern int nsp_smatrix_print_multicols(const NspSMatrix *Mat, int indent,const char *name, int rec_level);
+
 extern int nsp_smatrix_redim(NspSMatrix *A, int m, int n); 
 extern int nsp_smatrix_enlarge(NspSMatrix *A, int m, int n); 
 extern int nsp_smatrix_concat_right(NspSMatrix *A,const NspSMatrix *B); 

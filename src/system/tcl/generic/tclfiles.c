@@ -1790,8 +1790,7 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
   return resultPtr->string;
 }
 
-/* list files from a pattern returning a string matrix 
- * or printing result
+/* list files from a pattern  printing result
  */
 
 int nsp_glob(const char *pattern)
@@ -1879,7 +1878,7 @@ int nsp_glob(const char *pattern)
   nsp_tcldstring_free(&buffer);
   if ( result == TCL_OK ) 
     {
-      nsp_smatrix_print(S,0,NULL,0);
+      nsp_smatrix_print_multicols(S,0,"ls",0);
       nsp_smatrix_destroy(S);
       nsp_string_destroy(&str);
       return OK;

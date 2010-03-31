@@ -31,7 +31,7 @@
 #include "nsp/matint.h"
 
 static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent);
-
+static int nsp_smatrix_print_multicols_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent);
 
 /**
  * nsp_smatrix_create:
@@ -445,6 +445,53 @@ int nsp_smatrix_print(const NspSMatrix *Mat, int indent,const char *name, int re
       nsp_num_formats fmt;
       nsp_init_pr_format (&fmt);
       rep = nsp_smatrix_print_internal(&fmt,Mat,indent);
+    }
+  return rep;
+}
+
+/**
+ * nsp_smatrix_print_multicols:
+ * @Mat:   #NspSMatrix
+ * @indent: indentation value 
+ * @name: NULL or new name to use for printing 
+ * @rec_level: depth counter 
+ * 
+ * prints the contents of @Mat but choose the number 
+ * of columns to use.
+ *
+ * Return value: %TRUE or %FALSE
+ **/
+
+int nsp_smatrix_print_multicols(const NspSMatrix *Mat, int indent,const char *name, int rec_level)
+{
+  int rep = TRUE;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=%s",pname,(Mat->mn==0 ) ? " m2s([])\n" : "" );
+	}
+      else 
+	{
+	  Sciprintf1(indent,"%s",(Mat->mn==0 ) ? " m2s([])\n" : "" );
+	}
+    }
+  else 
+    {
+      if ( user_pref.pr_depth  <= rec_level -1 ) 
+	{
+	  nsp_smatrix_info(Mat,indent,pname,rec_level);
+	  return rep;
+	}
+      Sciprintf1(indent,"%s\t=%s\t\ts (%dx%d)\n",pname,
+		 (Mat->mn==0 ) ? " []" : "",Mat->m,Mat->n);
+    }
+  if ( Mat->mn != 0) 
+    {
+      nsp_num_formats fmt;
+      nsp_init_pr_format (&fmt);
+      rep = nsp_smatrix_print_multicols_internal(&fmt,Mat,indent);
     }
   return rep;
 }
@@ -2430,7 +2477,6 @@ static void SMij_string_as_read(const nsp_num_formats *fmt,const void *m, int i,
 
 static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent)
 {
-  
   int *Iloc;
   int inc,column_width=2,total_width;
   int p_rows=0,col;
@@ -2526,6 +2572,82 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
 	  }
 	}
       col += inc;
+    }
+  FREE(Iloc);
+  return TRUE;
+}
+
+/* changes the columns in order to pretty print a string matrix 
+ */
+
+
+static int nsp_smatrix_print_multicols_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent)
+{
+  int *Iloc;
+  int inc,column_width=2,total_width, p_rows=0,col,ncolmax=10,rc=0;
+  int max_width ,winrows,offset;
+  int i,j,k;
+  int nr = m->m;
+  int nc = m->n;
+  if (nr == 0 || nc == 0) nsp_print_empty_matrix ( nr, nc);
+  sci_get_screen_size(&winrows,&max_width);
+  /* Allocate a table to store each column width */
+  if ((Iloc =nsp_alloc_int(ncolmax)) == (int*) 0) return TRUE;
+  /* set Iloc[j] to the max len of column j **/
+  for ( k = ncolmax ; k >= 0 ; k--)
+    {
+      rc = m->mn/Max(k,1);
+      if ( k*rc < m->mn ) rc++;
+      for ( j = 0 ; j < k ; j++)
+	{
+	  Iloc[j]=  ( j*rc >= m->mn ) ? 0 : strlen(m->S[j*rc]);
+	  for ( i = j*rc +1 ; i < Min((j+1)*rc,m->mn) ; i++ )
+	    {
+	      if ( Iloc[j] < (int) strlen(m->S[i]) ) Iloc[j]= strlen(m->S[i]);
+	    }
+	}
+      /* compute the necessary width */
+      total_width=0;
+      for ( j=0 ; j < k ; j++) 
+	{
+	  column_width = Iloc[j] + 2;
+	  total_width +=  column_width;
+	}
+      if (total_width <= max_width ) break ;
+    }
+  nc =Max(k,1);
+  offset =  indent + 4; /* 4 = " |...| " */
+  inc = nc;
+  Sciprintf("\n");
+  if ( user_pref.pr_as_read_syntax )
+    {
+      nsp_gen_matrix_as_read_syntax(fmt,m,nr,nc,inc,indent,SMij_string_as_read);
+      return TRUE;
+    }
+  col=0;
+  for ( i = 0; i < rc ; i++)
+    {
+      int imore;
+      p_rows++;
+      if ( p_rows >= winrows ) 
+	{
+	  scimore(&imore);
+	  if ( imore == 1) return TRUE;
+	  p_rows=0;
+	}
+      nsp_pr_white(indent);
+      {
+	for ( j = 0 ; j < nc ; j++)
+	  {
+	    if ( i+ rc*j < m->mn ) 
+	      {
+		Sciprintf("  ");
+		Sciprintf("%s",m->S[i+rc*j]);
+		nsp_pr_white(Iloc[j]-strlen(m->S[i+rc*j]));
+	      }
+	  }
+	Sciprintf("\n");
+      }
     }
   FREE(Iloc);
   return TRUE;
