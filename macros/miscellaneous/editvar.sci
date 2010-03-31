@@ -5,7 +5,19 @@
 //  3/ right-click to edit instead of double click. 
 
 function editvar(x,varargopt) 
-  if ~exists(x,'callers') then return;end 
+  if nargin == 0 then 
+    A=who('caller');
+    if size(A,'*') == 0 then return;end 
+    if size(A,'*') > 1  then 
+      nx=x_choose(A,'choose a variable to edit in the local frame');
+      if nx == 0 then return;end 
+      x= A(nx);
+    else
+      x= A;
+    end
+  else 
+    if ~exists(x,'callers') then return;end 
+  end
   M=acquire(x); 
   if ~varargopt.iskey['title'] then 
     varargopt.title=x+ " of type "+type(M,'string')+".";

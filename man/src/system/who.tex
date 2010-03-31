@@ -7,13 +7,17 @@
 \begin{calling_sequence}
 \begin{verbatim}
   who
-  x=who(tag,hash= %t|%f )  
+  who tag 
+  x=who( hash= %t|%f )
+  x=who( tag,hash= %t|%f )
 \end{verbatim}
 \end{calling_sequence}
 \begin{parameters}
   \begin{varlist}
     \vname{x}: a hash table or string matrix depending on the value of 
-    the optional named argument \verb+hash+ (default value is \verb+%t+).
+    the optional named argument \verb+hash+ (default value is \verb+%f+).
+    \vname{tag}: a string chosen among \verb+'local'+,  \verb+'global'+,
+    \verb+'caller'+, or  \verb+'constants'+.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
@@ -32,5 +36,14 @@
   named argument \verb+hash+ is set to \verb+%f+ then the function will 
   return a string matrix filled with variable names instead of a hash table.
 \end{mandescription} 
+\begin{examples}
+  \begin{Verbatim} 
+    for i=1:100; execstr('x'+string(i)+'='+string(i));end ;
+    who 
+    H= who(hash=%t);
+    editvar('H');
+  \end{Verbatim}
+\end{examples}
+
 
 

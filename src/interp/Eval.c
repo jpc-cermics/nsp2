@@ -943,10 +943,15 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 #endif
 	  return 0;
 	  break;
+	case WHO :
+	  /* 1-ary who */
+	  nsp_who(&stack,(const char *) L1->O,FALSE,TRUE,&rep);
+	  if (rep == TRUE ) return RET_BUG;
+	  return 0;
+	  break;
 	case CD_COMMAND :
 	  /* 1-ary CD */
-	  loc = L1;
-	  if ( nsp_chdir_and_update_exec_dir(&stack,(char *) loc->O) == FAIL) 
+	  if ( nsp_chdir_and_update_exec_dir(&stack,(char *) L1->O) == FAIL) 
 	    return RET_BUG;
 	  return 0;
 	  break;
@@ -1201,11 +1206,9 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       Sciprintf("command without arguments\n");
       return 0;
     case WHO:
-      Sciprintf("command without arguments\n");
       if ( Datas == NULLLIST ) return RET_BUG;
-      if ((stack->val->S[first] = (NspObject *) nsp_eframe_to_hash((NspFrame *) Datas->first->O)) == NULL) 
-	return RET_BUG;
-      return 1;
+      nsp_who(stack,"local",FALSE,TRUE,&rep);
+      return 0;
     case NSP_EXIT:
       Sciprintf("command without arguments\n");
       return 0;

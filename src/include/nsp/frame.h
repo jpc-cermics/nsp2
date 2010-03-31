@@ -82,6 +82,13 @@ int nsp_frame_print(NspFrame *H, int indent,const char *name, int rec_level);
 
 /* from FrameObj.c */
 
+typedef enum _nsp_frame_tag nsp_frame_tag;
+
+enum _nsp_frame_tag {
+  nsp_frame_local, nsp_frame_global, nsp_frame_caller, nsp_frame_constants};
+
+extern NspObject *nsp_who(Stack *stack,const char *frame, int as_hash, int print_only, int *error);
+
 extern NspFrame *nsp_frame_object (NspObject *O); 
 extern int IsFrameObj (Stack stack, int i); 
 extern int IsFrame(NspObject *O);
