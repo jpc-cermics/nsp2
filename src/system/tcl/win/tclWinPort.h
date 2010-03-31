@@ -528,5 +528,9 @@ extern Tcl_WideUInt	strtoull (const char *string,
 #undef TCL_STORAGE_CLASS
 #define TCL_STORAGE_CLASS DLLIMPORT
 
+/* declarations for win32 
+ */
+extern int lstat(const char *path,struct stat * buf);
+
 
 #endif /* _TCLWINPORT */
