@@ -302,7 +302,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     {
     case GDK_Return:
       {
-	gchar *search_string;
+	gchar *search_string=NULL;
 	GtkTextBuffer *buffer;
 	buffer = view->buffer->buffer;
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
@@ -614,6 +614,12 @@ char *readline_textview(const char *prompt)
       dequeue_nsp_command(buf,255);
       use_prompt=1;
       /* fprintf(stderr,"Something in queue %s\n",buf); */
+      /* we should check here if echo is done or not 
+       * depending on which command is echoed 
+       * it's not a good idea to echo event_handlers 
+       * but event handlers do not use the nsp_command 
+       * queue any more.
+       */
       Sciprintf("%s\n",buf);
       return g_strdup(buf);
     }
