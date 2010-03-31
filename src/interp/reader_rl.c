@@ -238,15 +238,25 @@ int nsp_write_history(void)
  * initialise the io sequences
  *----------------------------------------------------------------------*/
 
-extern int  nsp_main_in_text_view(void);
 extern void  nsp_text_view_screen_size(int *rows,int *cols);
+static int in_text_view = FALSE;
+
+void nsp_set_in_text_view(int value)
+{
+  in_text_view = value;
+}
 
 void sci_get_screen_size (int *rows,int *cols)
 {
-  if ( nsp_main_in_text_view() == TRUE )
-    nsp_text_view_screen_size(rows,cols);
+  if (   in_text_view  == TRUE )
+    {
+      nsp_text_view_screen_size(rows,cols);
+      /* Sciprintf("Using TRUE return r=%d c=%d\n",*rows,*cols); */
+    }
   else
-    rl_get_screen_size(rows,cols);
+    {
+      rl_get_screen_size(rows,cols);
+    }
 }
 
 /*-----------------------------------------------------

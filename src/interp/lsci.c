@@ -48,6 +48,7 @@ extern void nsp_init_function_table(void);
 extern void controlC_handler (int sig);
 extern void nsp_init_gtk_stack(void);
 extern int nsp_init_accelerated_tabs();
+extern void nsp_set_in_text_view(int value);
 
 /**/
 static int  no_startup= FALSE;
@@ -188,6 +189,8 @@ int main(int argc, char **argv)
       use_textview = TRUE;      
     }
 #endif 
+
+  nsp_set_in_text_view(use_textview);
 
 #if defined(THREAD_MAIN_VERSION) || defined(ACTIVATE_THREAD)
   /* init threads */
@@ -515,16 +518,6 @@ static void set_nsp_home_env(char *nsp_abs_path)
   nsp_setenv("HOME",HOME);
 #endif 
 }
-
-/*
- *
- */
-
-int nsp_main_in_text_view()
-{
-  return use_textview;
-}
-
 
 
 #ifdef FORTRAN_MAIN 
