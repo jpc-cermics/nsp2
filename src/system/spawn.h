@@ -26,7 +26,8 @@ struct _NspTypeSpawn {
 
 typedef struct _nsp_spawn nsp_spawn;
 struct _nsp_spawn {
-  int pid,active,out_smat;
+  GPid pid;
+  int active,out_smat;
   NspSMatrix *out;
   int ref_count;
   nsp_string prog;
