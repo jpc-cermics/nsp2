@@ -987,7 +987,7 @@ PERICAIRO=
 # check for WebKit 
 #---------------------
 
-PKG_CHECK_MODULES(WEBKIT, webkit-1.0 , have_webkit=yes, have_webkit=no)
+PKG_CHECK_MODULES(webkit, webkit-1.0 , have_webkit=yes, have_webkit=no)
 if test "x${have_webkit}" = "xyes" ; then
      GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS webkit-1.0"
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS webkit-1.0"
@@ -995,10 +995,23 @@ if test "x${have_webkit}" = "xyes" ; then
      GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
      HELP_OBJS="helpwebkit.o"
      AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
-     PKG_CHECK_MODULES(WEBKIT_ZOOM, webkit-1.0 >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
+     PKG_CHECK_MODULES(webkit_zoom, webkit-1.0 >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
      if test "x${have_webkit_zoom}" = "xyes" ; then
      	AC_DEFINE(HAVE_WEBKIT_ZOOM,[] , [Whether WebKit has zoom API])
      fi
+fi
+
+#--------------------
+# check for gthread-2.0 
+#---------------------
+
+PKG_CHECK_MODULES(gthread, gthread-2.0 , have_gthread=yes, have_gthread=no)
+if test "x${have_gthread}" = "xyes" ; then
+     GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gthread-2.0"
+     GTK_PKGS_LIBS="$GTK_PKGS_LIBS gthread-2.0"
+     GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     AC_DEFINE(HAVE_GTHREAD,[] , [Whether gthread-2.0 is available])
 fi
 
 #--------------------------

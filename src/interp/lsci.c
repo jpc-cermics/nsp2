@@ -67,8 +67,10 @@ static void set_nsp_env (void);
 static void nsp_syntax (char *badOption) ;
 static void set_nsp_home_env(char *nsp_abs_path);
 
-/* needed when wekbit-gtk is used */
+/* needed when wekbit-gtk is used (in fact just in recent versions) */
+#if defined(HAVE_GTHREAD) && defined(HAVE_WEBKIT)
 #define ACTIVATE_THREAD
+#endif 
 
 /* this is for a threaded main in nsp: still experimental */
 /* #define THREAD_MAIN_VERSION */
