@@ -289,12 +289,24 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   char *str; 
   if ( data == NULL) 
     {
+      int i;
+      HISTORY_STATE *state = history_get_history_state();
       data =malloc (sizeof(view_history));
       data->history = data->history_tail = NULL;
       data->history_cur = NULL;
       data->history_size = 0;     
       /* XXXXX A finir */
       g_object_set_data_full (G_OBJECT(widget),"myhistory",data,NULL);
+      /* we use the readline history to fill the initial 
+       * textview history 
+       */
+      /* pb en suspens: il faut inserer ici de l'utf8 pour gtk 
+	 for ( i = 0 ; i < state->length ; i++)
+	 {
+	 nsp_append_history(state->entries[i]->line,data);
+	 }
+      */
+
     }
 
   /* fprintf(stderr,"key pressed \n"); */
@@ -943,7 +955,6 @@ create_view (Buffer *buffer)
   GtkWidget *vbox;
   GtkWidget *menu;
   
-
   view = g_new0 (View, 1);
 
   view->buffer = buffer;
