@@ -160,6 +160,7 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 	  *eof = FALSE;
 	  use_prompt=0;
 	  *len_line = strlen(buffer);
+	  add_history (buffer);
 	  goto end;
 	}
     } 
@@ -171,7 +172,9 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
       signal (SIGINT, controlC_handler);
     }
   if (hist && line && *line != '\0') 
-    add_history (line);
+    {
+      add_history (line);
+    }
   
   if ( line == NULL) 
     {
