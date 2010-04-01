@@ -47,6 +47,7 @@ TESTS= \
 	umfpack.dia \
 	unique.dia \
 	setfunctions.dia \
+	ndind2ind.dia \
 	createbyset.dia \
 	sparse-mixed.dia \
 	extract_empty.dia \

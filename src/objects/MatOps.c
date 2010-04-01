@@ -5463,32 +5463,35 @@ err:
  **/
 int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspObject **Ind, char ind_type)
 {
-  int *j, i, k, p, ni, ip, K, ntot=1;
+  int *j, i, k, p, ni, ip, prod_dims, ntot, temp, K;
 
+  ntot=1;
   for ( i = 0 ; i < nd ; i++ )
     ntot *= ndind[i]->mn;
 
   if ( (*Ind = nsp_alloc_mat_or_imat(1, ntot, ind_type, &j)) == NULLOBJ )
     return FAIL;
 
-  K = ndind[nd-1]->mn;
-  for ( k = 0 ; k < K ; k++ )
+  ni = ndind[0]->mn;
+  for ( p = 0 ; p < ni ; p++ )
     {
-      j[k] = ((int) ndind[nd-1]->R[k]) - 1;
-      if ( j[k]  < 0  ||  j[k] >= dims[nd-1] )
+      ip = ((int) ndind[0]->R[p]) - 1;
+      if ( ip  < 0  ||  ip >= dims[0] )
 	{
-	  Scierror("Error: %d th index out of bounds in the last index vector\n", k+1);
+	  Scierror("Error: %d th index out of bounds in the %d th index vector\n", p+1, 1);
 	  goto err;
 	}
+      j[p] = ip;
     }
 
-  for ( i = nd-2 ; i >= 0 ; i-- )
+  prod_dims = dims[0]; K = ni;
+  for ( i = 1 ; i < nd ; i++ )
     {
       ni = ndind[i]->mn;
-      for ( k = 0 ; k < K ; k++ )
-	j[k] *= dims[i];
-
-      for ( p = ni-1 ; p >= 0 ; p-- )
+      for ( p = 0 ; p < ni-1 ; p++ )
+	memcpy(&j[K*p+K],&j[K*p],K*sizeof(int));
+  
+      for ( p = 0 ; p < ni ; p++ )
 	{
 	  ip = ((int) ndind[i]->R[p]) - 1;
 	  if ( ip  < 0  ||  ip >= dims[i] )
@@ -5496,14 +5499,16 @@ int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspObject **Ind, cha
 	      Scierror("Error: %d th index out of bounds in the %d th index vector\n", p+1, i+1);
 	      goto err;
 	    }
-	  if ( p > 0 ) memcpy(&j[K*p],j,K*sizeof(int));
+	  temp = prod_dims * ip;
 	  for ( k = K*p ; k < K*p+K ; k++ )
-	    j[k] += ip;
+	    j[k] += temp;
 	}
       K *= ni;
+      prod_dims *= dims[i];
     }
-
-  for ( i = 0 ; i < ntot ; i++ ) j[i]++;  /* got 1-based indices */
+  
+  for ( i = 0 ; i < ntot ; i++ )
+    j[i]++;  /* got 1-based indices */
 
   return OK;
 
@@ -5511,6 +5516,8 @@ int nsp_mat_ndind2ind(int *dims, int nd, NspMatrix **ndind, NspObject **Ind, cha
   nsp_object_destroy(Ind);
   return FAIL;
 }
+
+
 
   
 /**
