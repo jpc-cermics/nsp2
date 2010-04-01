@@ -8,36 +8,39 @@
 %-- Calling sequence section
 \begin{calling_sequence}
   \begin{verbatim}
-    path=xgetfile([title='string'])  
-    path=xgetfile(file_mask,[title='string'])  
-    path=xgetfile(file_mask,dir,[title='string'])  
-    path=xgetfile(file_mask,dir,'string')  
+    path=xgetfile(title='string',dir='dirname',masks=SMat,action=%t|%f,save=%t|%,open=%t|%f,folder=%t|%f)
   \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{file\_mask}: a character string which gives the file mask to use for file selection. \verb!file_mask! is written with Unix convention. the default value is '*'.
-    \vname{dir}: a character string which gives the initial directory used for file search. by default xgetfile uses the previously selected directory.
-    \vname{path}: is the user selected file path if user answers "Ok" or the " " string if user answers "Cancel"
-    \vname{title='string'}: optional arguments which gives the title for the xgetfile window.
+    \vname{masks}: a string matrix which gives the file mask to be used as filters for file selection. This matrix should be of size \verb+2xm+, the first line 
+gives a description of each filter and the second line gives each filter. 
+filters are given with Unix convention, the default value is '*' which matches all files.
+    \vname{dir}: a character string which gives the initial directory used in the dialog. 
+    \vname{path}: the selected file or folder path or an empty string if user selects the \verb+Cancel+ 
+    button.
+    \vname{title='string'}: optional arguments which gives a title for the xgetfile widget.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  Creates a dialog window for file selection
+  Creates and open a dialog window for file or folder selection. One of the optional arguments 
+  \verb+save+, \verb+open+, \verb+folder+ can be set to true to specify respectively a dialog 
+  for choosing a file path for a save operation, for an open operation or for choosing a folder. 
+  If \verb+save+, \verb+open+, \verb+folder+ a general widget is opened (and it contains a exec/load/
+  chdir menu if \verb+action+ is set to true), but this usage is not recommended since this 
+  widget is deprecated.
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{program}
-    \HCode{xgetfile()\Hnewline
-    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],save=\%t)\Hnewline
-    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],open=\%t)\Hnewline
-    xgetfile(dir="/tmp",masks=['foo','*'],title=['title'],action=\%t);
-    }
-  \end{program}
+  \begin{Verbatim} 
+    xgetfile()
+    xgetfile(dir="/tmp",title=['title'],save=%t)
+    masks=['C','Fortran','Nsp';'*.c','*.f','*.sce'];
+    xgetfile(dir="/tmp",masks=masks,title=['title'],open=%t)
+    xgetfile(dir="/tmp",title=['Choose a folder'],folder=%t)
+  \end{Verbatim} 
 \end{examples}
 %-- see also
-\begin{manseealso}
-  \manlink{x\_dialog}{x-dialog} \manlink{file}{file} \manlink{read}{read} \manlink{write}{write} \manlink{exec}{exec} \manlink{getf}{getf}  
-\end{manseealso}
+
 
