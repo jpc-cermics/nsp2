@@ -138,7 +138,7 @@ L70:
 
 /*     F */
 
-  if (!(*f < 0.))
+  if (!(*f < 0.) || *which==1 )   /* add *which==1 to compute cdffnc with *x < 0 (bruno april,01,2010)) */
     {
       goto L80;
     }
