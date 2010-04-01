@@ -630,7 +630,6 @@ char *readline_textview(const char *prompt)
        * queue any more.
        */
       Sciprintf("%s\n",buf);
-      ZZZ
       return g_strdup(buf);
     }
   else 
