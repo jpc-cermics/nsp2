@@ -198,3 +198,43 @@ char * nsp_get_filename_open(const char *title,const char *dirname,char **filter
   gtk_widget_destroy (dialog);
   return filename;
 }
+
+/**
+ * nsp_get_filename_folder:
+ * @title: 
+ * @dirname: 
+ * @filters: 
+ * @err: 
+ * 
+ * 
+ * returned value should be freed by g_free 
+ * 
+ * Return value: 
+ **/
+
+char * nsp_get_filename_folder(const char *title,const char *dirname)
+{
+  char *filename=NULL;
+  GtkWidget *dialog;
+  
+  dialog = gtk_file_chooser_dialog_new (title,
+					NULL,
+					GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+					GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					NULL);
+  if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    {
+#ifdef WIN32
+      int k;
+#endif 
+      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+#ifdef WIN32
+      for (k=0 ; k < strlen(filename) ;k++) if ( filename[k]=='\\') filename[k]='/';
+#endif 
+    }
+  gtk_widget_destroy (dialog);
+  return filename;
+}
+

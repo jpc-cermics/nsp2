@@ -743,7 +743,10 @@ static void * nsp_window_create_initial_menu(void)
   int n_control_entries;
   menu_entry *m = NULL;
   int winid = -1;
-  char *file_entries[] = { "File _Operations||$fileops",
+  char *file_entries[] = { "Exec File||$file_exec",
+			   "Load File||$file_load",
+			   "Change directory||$chdir",
+			   "Print current directory||$pwd",
 			   "_Edit||$editor",
 			   "_Kill||$kill",
 			   "_Quit|<control>Q|$quit|gtk-quit" };
@@ -771,7 +774,7 @@ static void * nsp_window_create_initial_menu(void)
   n_control_entries=4;
 #endif 
 
-  sci_menu_add(&m,winid,"_File",file_entries,4,0,"$file");
+  sci_menu_add(&m,winid,"_File",file_entries,7,0,"$file");
   sci_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
   sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
   sci_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
@@ -931,11 +934,13 @@ static void nspg_menu_load(BCG *Xgc, int winid)
     }
 }
 
-/*-----------------------------------------------------------------*
- * file operations 
- *-----------------------------------------------------------------*/
+/**
+ * nsp_menu_file_exec:
+ * 
+ * run the exec nsp command on selected file.
+ **/
 
-static void nsp_menu_fileops(void)
+static void nsp_menu_file_exec(void)
 {
   nsp_string loc;
   char * file = NULL;
@@ -948,6 +953,59 @@ static void nsp_menu_fileops(void)
   FREE(loc);
   FREE(file);
 }
+
+/**
+ * nsp_menu_file_load:
+ * 
+ * run the load nsp command on selected file.
+ **/
+
+static void nsp_menu_file_load(void)
+{
+  nsp_string loc;
+  char * file = NULL;
+  if ((file = nsp_get_filename_open("Load file",NULL,NULL)) == NULL) 
+    return; 
+  if ((loc =new_nsp_string_n(strlen(file)+strlen("load('');"))) == (nsp_string) 0)
+    return; 
+  sprintf(loc,"load('%s');",file);
+  enqueue_nsp_command(loc);
+  FREE(loc);
+  FREE(file);
+}
+
+/**
+ * nsp_menu_chdir:
+ * 
+ * run the chdir nsp command on selected path.
+ **/
+
+static void nsp_menu_chdir(void)
+{
+  nsp_string loc;
+  char * file = NULL;
+  if ((file = nsp_get_filename_folder("Select a folder",NULL)) == NULL) 
+    return; 
+  if ((loc =new_nsp_string_n(strlen(file)+strlen("chdir('');"))) == (nsp_string) 0)
+    return; 
+  sprintf(loc,"chdir('%s');",file);
+  enqueue_nsp_command(loc);
+  FREE(loc);
+  FREE(file);
+}
+
+/**
+ * nsp_menu_pwd:
+ * 
+ * run the pwd nsp command on selected file.
+ **/
+
+static void nsp_menu_pwd(void)
+{
+  enqueue_nsp_command("pwd");
+}
+
+
 
 /*-----------------------------------------------------------------**
  * 2D Zoom calback 
@@ -1149,7 +1207,10 @@ static int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
   else if (strcmp(name,"$stop_audio")== 0) nsp_menu_stop_audio();
   else if (strcmp(name,"$kill")== 0)   nsp_menu_kill();
   else if (strcmp(name,"$demos")== 0)  nsp_menu_demos();
-  else if (strcmp(name,"$fileops")== 0) nsp_menu_fileops();
+  else if (strcmp(name,"$file_exec")== 0) nsp_menu_file_exec();
+  else if (strcmp(name,"$file_load")== 0) nsp_menu_file_load();
+  else if (strcmp(name,"$chdir")== 0) nsp_menu_chdir();
+  else if (strcmp(name,"$pwd")== 0)    nsp_menu_pwd();
   else if (strcmp(name,"$gwselect")== 0) nsp_menu_gwcreate_or_select();
   else if (strcmp(name,"$gwraise")== 0) nsp_menu_gwraise();
   else if (strcmp(name,"$gwdelete")== 0) nsp_menu_gwdelete();

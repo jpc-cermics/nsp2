@@ -55,6 +55,7 @@ extern menu_answer nsp_dialog1(const char *title,const char *init,char **answer)
 extern menu_answer nsp_get_file_window(const char *title,const char *dirname,int action,char **file);
 extern char * nsp_get_filename_open(const char *title,const char *dirname,char **filters);
 extern char * nsp_get_filename_save(const char *title,const char *dirname);
+extern char * nsp_get_filename_folder(const char *title,const char *dirname);
 
 
 /* madialog */

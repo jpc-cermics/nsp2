@@ -333,7 +333,7 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
  
 int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 {
-  int action=FALSE,save=FALSE,open=FALSE,free_f=0;
+  int action=FALSE,save=FALSE,open=FALSE,folder=FALSE,free_f=0;
   NspObject *Rep;
   NspSMatrix *Masks=NULL;
   char *dirname = NULL,dir_expanded[FSIZE+1];
@@ -348,9 +348,10 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 		      { "action",s_bool,NULLOBJ,-1},
 		      { "save",s_bool,NULLOBJ,-1},
 		      { "open",s_bool,NULLOBJ,-1},
+		      { "folder",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&dirname,&Masks,&title,&action,&save,&open) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&opts,&dirname,&Masks,&title,&action,&save,&open,&folder) == FAIL) 
     return RET_BUG;
   if ( save == TRUE && open == TRUE ) 
     {
@@ -382,9 +383,9 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
   }
 
 #if defined(GTK_DISABLE_DEPRECATED)
-  if ( save == FALSE && open == FALSE ) 
+  if ( save == FALSE && open == FALSE && folder == FALSE ) 
     {
-      Sciprintf("Warning: gtk_file_selection is deprecated, you have to use save or open flag in %s\n",
+      Sciprintf("Warning: gtk_file_selection is deprecated, you have to use save, or open, or folder flag in %s\n",
 		NspFname(stack));
       return RET_BUG;
     }
@@ -411,6 +412,14 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 	  masks = Masks->S;
 	}
       if ((res = nsp_get_filename_open(title_utf8,dirname,masks)) != NULL)
+	free_f= 1;
+      else 
+	res = def_res;
+    }
+  else if (folder == TRUE )
+    {
+      /* specific dialog for saving */
+      if (( res= nsp_get_filename_folder(title_utf8,dirname)) != NULL)
 	free_f= 1;
       else 
 	res = def_res;
