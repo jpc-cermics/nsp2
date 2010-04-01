@@ -289,10 +289,8 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   char *str; 
   if ( data == NULL) 
     {
-      /*
       int i;
       HISTORY_STATE *state = history_get_history_state();
-      */
       data =malloc (sizeof(view_history));
       data->history = data->history_tail = NULL;
       data->history_cur = NULL;
@@ -302,13 +300,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       /* we use the readline history to fill the initial 
        * textview history 
        */
-      /* pb en suspens: il faut inserer ici de l'utf8 pour gtk 
-	 for ( i = 0 ; i < state->length ; i++)
-	 {
-	 nsp_append_history(state->entries[i]->line,data);
-	 }
-      */
-
+      for ( i = 0 ; i < state->length ; i++)
+	{
+	  nsp_append_history(state->entries[i]->line,data);
+	}
     }
 
   /* fprintf(stderr,"key pressed \n"); */
@@ -635,6 +630,7 @@ char *readline_textview(const char *prompt)
        * queue any more.
        */
       Sciprintf("%s\n",buf);
+      ZZZ
       return g_strdup(buf);
     }
   else 
@@ -1070,7 +1066,7 @@ int  Sciprint2textview(const char *fmt, va_list ap)
     }
   n= vsnprintf(buf,1024 , fmt, ap );
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-#if 1 
+#if 1
   while (1)
     {
       if ( *lbuf == '\0') break;
@@ -1099,11 +1095,15 @@ int  Sciprint2textview(const char *fmt, va_list ap)
 	}
       else 
 	{
+	  char *loc = lbuf; 
+	  int count = 0;
+	  while ( *loc != '\0' && *loc != '\033') loc++;
+	  count = loc -lbuf ;
 	  if ( tag != NULL) 
-	    gtk_text_buffer_insert_with_tags(view->buffer->buffer, &end,lbuf,1,tag,NULL);
+	    gtk_text_buffer_insert_with_tags(view->buffer->buffer, &end,lbuf,count,tag,NULL);
 	  else
-	    gtk_text_buffer_insert (view->buffer->buffer, &end,lbuf,1);
-	  lbuf++;
+	    gtk_text_buffer_insert (view->buffer->buffer, &end,lbuf,count);
+	  lbuf += count;
 	}
     }
 #else 
@@ -1278,6 +1278,7 @@ void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_s
 	  *eof = FALSE;
 	  use_prompt=0;
 	  *len_line = strlen(buffer);
+	  /* add_history (buffer); */
 	  goto end;
 	}
     } 
@@ -1289,7 +1290,9 @@ void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_s
       signal (SIGINT, controlC_handler);
     }
   if (hist && line && *line != '\0') 
-    add_history (line);
+    {
+      add_history (line);
+    }
   
   if ( line == NULL) 
     {
