@@ -289,8 +289,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   char *str; 
   if ( data == NULL) 
     {
+      /*
       int i;
       HISTORY_STATE *state = history_get_history_state();
+      */
       data =malloc (sizeof(view_history));
       data->history = data->history_tail = NULL;
       data->history_cur = NULL;
@@ -988,9 +990,12 @@ create_view (Buffer *buffer)
   view->text_view = gtk_text_view_new_with_buffer (buffer->buffer);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
                                GTK_WRAP_NONE); /* GTK_WRAP_WORD */
+    
+  PangoFontDescription* p = pango_font_description_from_string("Monospace");
+  gtk_widget_modify_font (GTK_WIDGET (view->text_view),p);
+  pango_font_description_free (p);
 
-  gtk_container_set_border_width (GTK_CONTAINER (view->text_view),
-                                  5);
+  gtk_container_set_border_width (GTK_CONTAINER (view->text_view), 5);
 
   g_signal_connect (view->text_view,
                     "key_press_event",
