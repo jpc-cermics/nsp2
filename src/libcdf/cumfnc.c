@@ -34,7 +34,7 @@
 
 int cdf_cumfnc (double *f, double *dfn, double *dfd, double *pnonc, double *cum, double *ccum)
 {
-  const double half=0.5E0, done=1.0E0, eps = 1e-4;
+  const double half=0.5E0, done=1.0E0, eps = 1e-14;
   double d__1, d__2, prod, dsum, b, betdn, betup, xnonc, dummy, xmult;
   double xx, yy, dnterm, centwt, upterm, adn, aup, sum;
   int ierr,  i__ ,  icent;
