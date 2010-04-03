@@ -45,7 +45,7 @@ function [p,q] = cdf(dist, x, varargin)
    select dist
      case "nor" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""nor"",x,mu,sigma)")
+	   error("bad number of input args, usage: cdf(""nor"",x,mu,sigma)")
 	end
 	mu = varargin(1); sigma = varargin(2)   
 	if ~( is(mu,%types.Mat) && isreal(mu) && isscalar(mu) &&
@@ -57,7 +57,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "chi" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""chi"",x,nu)")
+	   error("bad number of input args, usage: cdf(""chi"",x,nu)")
 	end
 	nu = varargin(1);
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 ) then
@@ -67,7 +67,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "nch" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""nch"",x,nu,lambda)")
+	   error("bad number of input args, usage: cdf(""nch"",x,nu,lambda)")
 	end
 	nu = varargin(1);
 	lambda = varargin(2);
@@ -80,7 +80,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "bet" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""bet"",x,a,b)")
+	   error("bad number of input args, usage: cdf(""bet"",x,a,b)")
 	end
 	a = varargin(1); b = varargin(2)   
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) && a > 0 &&
@@ -92,7 +92,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "bin" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""bin"",x,n,p)")
+	   error("bad number of input args, usage: cdf(""bin"",x,n,p)")
 	end
 	n = varargin(1); p = varargin(2)   
 	if ~( is(n,%types.Mat) && isreal(n) && isscalar(n) && n > 0 && floor(n)==n &&
@@ -104,7 +104,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "nbn" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""nbn"",x,r,p)")
+	   error("bad number of input args, usage: cdf(""nbn"",x,r,p)")
 	end
 	r = varargin(1); p = varargin(2)   
 	if ~( is(r,%types.Mat) && isreal(r) && isscalar(r) && r > 0 &&
@@ -116,7 +116,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "gam" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""gam"",x,a,b)")
+	   error("bad number of input args, usage: cdf(""gam"",x,a,b)")
 	end
 	a = varargin(1); b = varargin(2)   
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) && a > 0 &&
@@ -128,7 +128,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "logi" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""logi"",x,a,b)")
+	   error("bad number of input args, usage: cdf(""logi"",x,a,b)")
 	end
 	a = varargin(1); b = varargin(2)   
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) &&
@@ -142,7 +142,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "par" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""par"",x,a,b)")
+	   error("bad number of input args, usage: cdf(""par"",x,a,b)")
 	end
 	a = varargin(1); b = varargin(2)   
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) && a > 0 &&
@@ -156,19 +156,32 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "f" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""f"",x,nu1,nu2)")
+	   error("bad number of input args, usage: cdf(""f"",x,nu1,nu2)")
 	end
 	nu1 = varargin(1); nu2 = varargin(2)   
 	if ~( is(nu1,%types.Mat) && isreal(nu1) && isscalar(nu1) && nu1 > 0 &&
-	      is(nu2,%types.Mat) && isreal(nu2) && isscalar(nu2) && nu2 >= 0 ) then
+	      is(nu2,%types.Mat) && isreal(nu2) && isscalar(nu2) && nu2 > 0 ) then
 	      error("Error: for cdf(""f"",x,nu1,nu2), nu1 and nu2 should be positive real")
 	end
 	size_to_x  = ones(size(x));
 	[p,q] = cdff("PQ", x, nu1*size_to_x, nu2*size_to_x);
+	
+     case "nf" then
+	if numel(varargin) ~= 3 then
+	   error("bad number of input args, usage: cdf(""nf"",x,nu1,nu2,lambda)")
+	end
+	nu1 = varargin(1); nu2 = varargin(2); lambda = varargin(3);   
+	if ~( is(nu1,%types.Mat) && isreal(nu1) && isscalar(nu1) && nu1 > 0 &&
+	      is(nu2,%types.Mat) && isreal(nu2) && isscalar(nu2) && nu2 > 0 &&
+	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0 ) then
+	      error("Error: for cdf(""nf"",x,nu1,nu2,lambda), nu1 and nu2 should be positive and lambda non negative")
+	end
+	size_to_x  = ones(size(x));
+	[p,q] = cdffnc("PQ", x, nu1*size_to_x, nu2*size_to_x, lambda*size_to_x);
 
      case "t" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""t"",x,nu)")
+	   error("bad number of input args, usage: cdf(""t"",x,nu)")
 	end
 	nu = varargin(1);  
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0) then
@@ -178,7 +191,7 @@ function [p,q] = cdf(dist, x, varargin)
 
      case "exp" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""exp"",x,tau)")
+	   error("bad number of input args, usage: cdf(""exp"",x,tau)")
 	end
 	tau = varargin(1);
 	if ~( is(tau,%types.Mat) && isreal(tau) && isscalar(tau) && tau > 0 ) then
@@ -191,7 +204,7 @@ function [p,q] = cdf(dist, x, varargin)
 
      case "geom" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""geom"",x,p)")
+	   error("bad number of input args, usage: cdf(""geom"",x,p)")
 	end
 	pr = varargin(1);
 	if ~( is(pr,%types.Mat) && isreal(pr) && isscalar(pr) && 0 < pr && pr <= 1 ) then
@@ -204,7 +217,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "cau" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""cau"",x,sigma)")
+	   error("bad number of input args, usage: cdf(""cau"",x,sigma)")
 	end
 	sigma = varargin(1);
 	if ~( is(sigma,%types.Mat) && isreal(sigma) && isscalar(sigma) && sigma > 0 ) then
@@ -216,7 +229,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "k" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""k"",x,n)")
+	   error("bad number of input args, usage: cdf(""k"",x,n)")
 	end
 	n = varargin(1);
 	if ~( is(n,%types.Mat) && isreal(n) && isscalar(n) && n >= 1 && floor(n)==n) then
@@ -227,13 +240,13 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "klim" then
 	if numel(varargin) ~= 0 then
-	   error("Error: bad call, usage cdf(""klim"",x)")
+	   error("bad number of input args, usage: cdf(""klim"",x)")
 	end
 	[p,q] = kcdflim(x);
 	
      case "lap" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""lap"",x,a)")
+	   error("bad number of input args, usage: cdf(""lap"",x,a)")
 	end
 	a = varargin(1);
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) && a > 0 ) then
@@ -248,7 +261,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "logn" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""logn"",x,mu,sigma)")
+	   error("bad number of input args, usage: cdf(""logn"",x,mu,sigma)")
 	end
 	mu = varargin(1); sigma = varargin(2)   
 	if ~( is(mu,%types.Mat) && isreal(mu) && isscalar(mu) &&
@@ -262,7 +275,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
       case "ray" then
 	if numel(varargin) ~= 1 then
-	   error("Error: bad call, usage cdf(""ray"",x,sigma)")
+	   error("bad number of input args, usage: cdf(""ray"",x,sigma)")
 	end
 	sigma = varargin(1);
 	if ~( is(sigma,%types.Mat) && isreal(sigma) && isscalar(sigma) && sigma > 0 ) then
@@ -276,7 +289,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "tray" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""tray"",x,sigma,a)")
+	   error("bad number of input args, usage: cdf(""tray"",x,sigma,a)")
 	end
 	sigma = varargin(1); a = varargin(2);
 	if ~( is(sigma,%types.Mat) && isreal(sigma) && isscalar(sigma) &&  sigma > 0 &&
@@ -292,7 +305,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "uin" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""uin"",x,n1,n2)")
+	   error("bad number of input args, usage: cdf(""uin"",x,n1,n2)")
 	end
 	n1 = varargin(1); n2 = varargin(2)   
 	if ~( is(n1,%types.Mat) && isreal(n1) && isscalar(n1) && floor(n1)==n1 &&
@@ -306,7 +319,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "unf" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""unf"",x,a,b)")
+	   error("bad number of input args, usage: cdf(""unf"",x,a,b)")
 	end
 	a = varargin(1); b = varargin(2)   
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) &&
@@ -319,7 +332,7 @@ function [p,q] = cdf(dist, x, varargin)
 	
      case "wei" then
 	if numel(varargin) ~= 2 then
-	   error("Error: bad call, usage cdf(""wei"",x,a,b)")
+	   error("bad number of input args, usage: cdf(""wei"",x,a,b)")
 	end
 	a = varargin(1); b = varargin(2)   
 	if ~( is(a,%types.Mat) && isreal(a) && isscalar(a) && a > 0 &&
