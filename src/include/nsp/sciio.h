@@ -47,7 +47,7 @@ typedef int (*SciGetC) (void);
 extern SciGetC Scigetchar ;
 extern SciGetC nsp_set_nsp_getchar(SciGetC F);
 
-extern void SciReadClean (void);
+extern void nsp_read_clean_after_ctrc(void);
 extern void nsp_readline_clear_line(void);
 extern void set_echo_mode(int mode);
 extern int get_echo_mode(void); 

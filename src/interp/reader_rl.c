@@ -1,3 +1,28 @@
+/* Nsp
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * This file provides a way to use readline in nsp and dealing with 
+ * gtk events while waiting for characters. 
+ * The function my_getc is passed to readline as through the rl_getc_function;
+ * while in  my_getc we check for events, enqueued commands and typed characters. 
+ * 
+ *--------------------------------------------------------------------------*/
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
@@ -10,52 +35,61 @@
 #include <setjmp.h>
 #include <unistd.h> /* for isatty */
 #include <signal.h>
+#include <glib.h>
 
 #include "nsp/machine.h" 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h" 
-
-static int fd=0;              /* file number for standard in */
-static int use_prompt=1;
-static int hist = 1; /* flag to add to history */
-static void initialize_readline(void);
-
-/* FIXME: should be moved */
-extern int checkqueue_nsp_command(void) ;
-extern int dequeue_nsp_command(char *buf,int buf_len);
-
-/*-------------------------------------------------------------------
- * line editor: using readline 
- *-------------------------------------------------------------------*/
-
-/* my_getc just try to get one interactive character typed 
- * by scilab user while dealing with gtk/tcltk events 
- * if a soft menu is activated current edited line is aborted and we 
- * jump to quit readline 
- */
-
-
-void nsp_intialize_reader(void)
-{
-  /* initialize readline explicitely since 
-   * we may use rl_get_screen_size 
-   * before calling readline which is supposed 
-   * to call rl_initialize(); 
-   */
-  rl_initialize(); 
-  /* local initialization */
-  initialize_readline();
-}
-
-
-
 #ifdef WIN32
-/* XXXXXX */
 #define sigsetjmp(x,y) setjmp(x)
 #define siglongjmp(x,y) longjmp(x,y)
 #endif 
 
+/* FIXME: should be moved */
+extern int checkqueue_nsp_command(void) ;
+extern int dequeue_nsp_command(char *buf,int buf_len);
+extern void controlC_handler (int sig);
+extern void controlC_handler_void (int sig);
+
+static int fd=0;              /* file number for standard in */
+static int use_prompt=1;
+static int hist = 1; /* flag to add to history */
 static jmp_buf my_env;
+
+#define NSP_READLINE_COMPLETION
+
+#ifdef NSP_READLINE_COMPLETION
+static char *command_generator (const char *, int);
+static char **nsp_completion (const char *, int, int);
+#endif 
+
+/**
+ * nsp_intialize_reader:
+ * @void: 
+ * 
+ * initialize readline explicitely since we may use rl_get_screen_size 
+ * before calling readline which is supposed 
+ * to call rl_initialize(); 
+ *
+ **/
+
+void nsp_intialize_reader(void)
+{
+  rl_initialize(); 
+  /* local initialization */
+#ifdef NSP_READLINE_COMPLETION
+  rl_attempted_completion_function = nsp_completion;
+#endif 
+}
+
+/**
+ * my_getc:
+ * @dummy: 
+ * 
+ * This function is used by readline as rl_getc_function.
+ * 
+ * Returns: a character in an integer. 
+ **/
 
 static int my_getc (FILE *dummy) 
 { 
@@ -69,18 +103,33 @@ static int my_getc (FILE *dummy)
   return i;
 }
 
+/**
+ * using_readline:
+ * @void: 
+ * 
+ * 
+ * 
+ * Returns:  %TRUE or %FALSE 
+ **/
+
 int using_readline(void) { return 1;}
 
-/* Readline with gtk events 
+/**
+ * nsp_defscireadline_rl:
+ * @T: 
+ * @prompt: 
+ * @buffer: 
+ * @buf_size: 
+ * @len_line: 
+ * @eof: 
+ * 
+ * Readline with gtk events 
  * Note that readline is not supposed to be reentrant 
  * and nsp can lead to a reentrant call of readline 
  * (if a callback is activated while in readline and 
  *  this callback contains a pause)
- */
-
-extern void controlC_handler (int sig);
-extern void controlC_handler_void (int sig);
-
+ * 
+ **/
 
 void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
 {
@@ -212,20 +261,38 @@ void nsp_readline_clear_line(void)
   rl_delete_text(0,rl_end);
 }
 
-/*
+/**
+ * SciReadClean:
+ * @void: 
+ * 
  * used when reading is interupted by Ctrl-C 
- */
+ * 
+ **/
 
-void SciReadClean(void) {}
+void nsp_read_clean_after_ctrc(void) {}
 
-/*-------------------------------------------------
- *  history 
- *------------------------------------------------*/
+/**
+ * nsp_read_history:
+ * @void: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 int nsp_read_history(void)
 {
   return read_history (".nsp_history");
 }
+
+/**
+ * nsp_write_history:
+ * @void: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
 
 int nsp_write_history(void)
 {
@@ -262,49 +329,43 @@ void sci_get_screen_size (int *rows,int *cols)
     }
 }
 
-/*-----------------------------------------------------
- * interface to Readline Completion 
- *-----------------------------------------------------*/
-
 /* A structure which contains information on the commands this program
  * can understand. 
  */
 
-typedef char *hchar ; 
-hchar commands[] = {
+static char *commands_pool[] = {
 #include "reader.txt"
   (char *)NULL,
 };
 
-#if complete_commands  
-static char *command_generator (const char *, int);
-static char **scilab_completion (const char *, int, int);
-#endif 
-/* Tell the GNU Readline library how to complete. */ 
+#ifdef NSP_READLINE_COMPLETION
 
-static void initialize_readline (void)
-{
-  /* Tell the completer that we want a crack first. */
-  /* rl_attempted_completion_function = scilab_completion; FIXME: removed temporarily */
-}
+/**
+ * nsp_completion:
+ * @text: 
+ * @start: 
+ * @end: 
+ * 
+ * 
+ * 
+ * Returns: an array of strings 
+ **/
 
-#if complete_commands 
-
-static char **scilab_completion (const char * text,int start,int end)
+static char **nsp_completion (const char * text,int start,int end)
 {
   char **matches ; 
   matches = rl_completion_matches (text, command_generator);
   return (matches);
 }
 
-static char * dupstr (char *s)
-{
-  char *r;
-  r = malloc (strlen (s) + 1);
-  strcpy (r, s);
-  return (r);
-}
-
+/**
+ * command_generator:
+ * @text: 
+ * @state: 
+ * 
+ * 
+ * Returns: %NULL or a possible completion.
+ **/
 
 static char *command_generator (const char *text, int state)
 {
@@ -320,13 +381,14 @@ static char *command_generator (const char *text, int state)
       len = strlen (text);
     }
   /* Return the next name which partially matches from the command list. */
-  while ( (name = commands[list_index]))
+  while ( (name = commands_pool[list_index]))
     {
       list_index++;
       if (strncmp (name, text, len) == 0)
-        return (dupstr(name));
+        return ( g_strdup(name));
     }
   /* If no names matched, then return NULL. */
   return ((char *)NULL);
 }
+
 #endif 

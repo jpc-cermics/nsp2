@@ -604,8 +604,7 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 
  exit:
   /* copy to return buffer */
-  
-  SciReadClean();
+  nsp_read_clean_after_ctrc();
   if(get_echo_mode()==0)  
     {
       *len_line=cursor;

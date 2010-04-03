@@ -592,7 +592,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
   /* FIXME: reset the pause level to 0 
    */
   signal (SIGINT, controlC_handler_void);
-  SciReadClean();
+  nsp_read_clean_after_ctrc();
   Sciprintf("\nCtrl C\n");
   /* clean the stack after control-C: 
    * it is dangerous here to try to dealloc non null 
