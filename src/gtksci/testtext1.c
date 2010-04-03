@@ -272,7 +272,7 @@ char *nsp_xhistory_down(view_history *data)
 }
 
 /* delete the info text added when completion is inserted 
- *
+ * jpc
  */
 
 void nsp_delete_completion_infos(View *view)
@@ -297,9 +297,59 @@ void nsp_delete_completion_infos(View *view)
 			      view->buffer->completion_mark);
 }
 
+/* insert possible completions for pathnames using 
+ * readline to build the possible list.
+ */
+
+void nsp_insert_completions(View *view)
+{
+  GtkTextIter start, end,iter;
+  int i=1;
+  char **matches;
+  gchar *search_string=NULL;
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  /*
+   * search_string is the current statement inserted after the nsp prompt.
+   */
+  if ( view->buffer->mark != NULL )
+    {
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+      search_string = gtk_text_iter_get_text (&iter, &end);
+    }
+  else 
+    {
+      search_string = gtk_text_iter_get_text (&start, &end);
+    }
+  matches = rl_completion_matches (search_string, rl_filename_completion_function);
+  if ( matches == NULL || matches[0] == NULL ) return ;
+  /* we insert the proposed completion */
+  gtk_text_buffer_insert (view->buffer->buffer, &end, 
+			  matches[0] +strlen(search_string) ,-1);
+  if ( matches[1] != NULL ) 
+    {
+      int i=1;
+      /* fix the completion mark before inserting possible completions */
+      gtk_text_iter_backward_char (&end);
+      gtk_text_buffer_add_mark(view->buffer->buffer, view->buffer->completion_mark, &end);
+      gtk_text_iter_forward_char (&end);
+      gtk_text_buffer_insert (view->buffer->buffer, &end,"\n",-1);
+      while ( matches[i] != NULL) 
+	{
+	  gtk_text_buffer_insert (view->buffer->buffer, &end,matches[i],-1);
+	  gtk_text_buffer_insert (view->buffer->buffer, &end,"\n",-1);
+	  i++;
+	}
+      /* put the mark before the completion */
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+					view->buffer->completion_mark);
+      gtk_text_iter_forward_char (&iter);
+      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+    }
+  i=0;while ( matches[i] != NULL) { free(matches[i]);i++;} free(matches);
+}
+
+
 /* dealing with keypressed in text view 
- *
- *
  */
 
 static gchar *nsp_expr=NULL;
@@ -338,56 +388,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   switch ( event->keyval ) 
     {
     case GDK_Tab :
-      {
-	char *completion;
-	gchar *search_string=NULL;
-	gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-	if ( view->buffer->mark != NULL )
-	  {
-	    gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
-	    search_string = gtk_text_iter_get_text (&iter, &end);
-	  }
-	else 
-	  {
-	    search_string = gtk_text_iter_get_text (&start, &end);
-	  }
-	/* if just one path completion we insert it 
-	 *
-	 * A Faire: detecter le debut d'un path 
-	 * inserer la complétion au bon endroit. 
-	 */
-	completion =  rl_filename_completion_function (search_string, 0);
-	if ( completion  != NULL ) 
-	  {
-	    char *next= rl_filename_completion_function (search_string, 1);
-	    if ( next == NULL) 
-	      {
-		/* no ambiguity: we insert the proposed completion */
-		gtk_text_buffer_insert (view->buffer->buffer, &end, 
-					completion +strlen(search_string) ,-1);
-	      }
-	    else
-	      {
-		/* fix the completion mark before inserting possible completions */
-		gtk_text_iter_backward_char (&end);
-		gtk_text_buffer_add_mark(view->buffer->buffer, view->buffer->completion_mark, &end);
-		gtk_text_iter_forward_char (&end);
-		while (next != NULL )
-		  {
-		    gtk_text_buffer_insert (view->buffer->buffer, &end,"\n",-1);
-		    gtk_text_buffer_insert (view->buffer->buffer, &end,next,-1);
-		    next= rl_filename_completion_function (search_string, 1);
-		    
-		  }
-		/* put the mark before the completion */
-		gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
-						  view->buffer->completion_mark);
-		gtk_text_iter_forward_char (&iter);
-		gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
-	      }
-	    g_free(completion);
-	  }
-      }
+      nsp_insert_completions(view);
       return TRUE;
     case GDK_Return:
       {
