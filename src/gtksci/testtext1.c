@@ -20,7 +20,7 @@
  *
  * Adapted from the testtext.c file in gtk+/tests 
  * to be used as a terminal for Nsp.
- * jpc (2006-2009).
+ * jpc (2006-2010).
  * Note: you can use 
  *   gconftool-2 -s /desktop/gnome/interface/gtk_key_theme -t string Emacs
  * to set up emacs editing mode in gtk widgets but note that some editing 
@@ -65,6 +65,7 @@ struct _Buffer
   GtkTextTag *not_editable_tag;
   GtkTextTag *center_tag;
   GtkTextMark *mark;
+  GtkTextMark *completion_mark;
 };
 
 struct _View
@@ -149,6 +150,7 @@ create_buffer (void)
 				"justification", GTK_JUSTIFY_CENTER,NULL,
 				"editable",FALSE,"foreground", "purple", NULL);
   buffer->mark = NULL;
+  buffer->completion_mark = gtk_text_mark_new("completion",FALSE);
   return buffer;
 }
 
@@ -269,7 +271,31 @@ char *nsp_xhistory_down(view_history *data)
   return data->history_cur->data;
 }
 
+/* delete the info text added when completion is inserted 
+ *
+ */
 
+void nsp_delete_completion_infos(View *view)
+{
+  GtkTextIter start, end;
+  GtkTextMark *completion_mark;
+  /* test if we have a completion mark by testing if the text buffer contains a 
+   * mark named completion.
+   * if yes then delete the characters from the completion mark (in fact the completion mark + one 
+   * character) to the end of the buffer.
+   */
+  completion_mark = gtk_text_buffer_get_mark(view->buffer->buffer, "completion");
+  if ( completion_mark == NULL) return ;
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &start,
+				    completion_mark);
+  /* delete from start+1 to end of buffer 
+   */
+  gtk_text_iter_forward_char (&start);
+  gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
+  gtk_text_buffer_delete_mark(view->buffer->buffer, 
+			      view->buffer->completion_mark);
+}
 
 /* dealing with keypressed in text view 
  *
@@ -277,7 +303,6 @@ char *nsp_xhistory_down(view_history *data)
  */
 
 static gchar *nsp_expr=NULL;
-
 
 static gboolean
 key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
@@ -306,14 +331,68 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	}
     }
 
+  /* delete extra info added by completion  */
+  nsp_delete_completion_infos(view);
+
   /* fprintf(stderr,"key pressed \n"); */
   switch ( event->keyval ) 
     {
+    case GDK_Tab :
+      {
+	char *completion;
+	gchar *search_string=NULL;
+	gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+	if ( view->buffer->mark != NULL )
+	  {
+	    gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+	    search_string = gtk_text_iter_get_text (&iter, &end);
+	  }
+	else 
+	  {
+	    search_string = gtk_text_iter_get_text (&start, &end);
+	  }
+	/* if just one path completion we insert it 
+	 *
+	 * A Faire: detecter le debut d'un path 
+	 * inserer la complétion au bon endroit. 
+	 */
+	completion =  rl_filename_completion_function (search_string, 0);
+	if ( completion  != NULL ) 
+	  {
+	    char *next= rl_filename_completion_function (search_string, 1);
+	    if ( next == NULL) 
+	      {
+		/* no ambiguity: we insert the proposed completion */
+		gtk_text_buffer_insert (view->buffer->buffer, &end, 
+					completion +strlen(search_string) ,-1);
+	      }
+	    else
+	      {
+		/* fix the completion mark before inserting possible completions */
+		gtk_text_iter_backward_char (&end);
+		gtk_text_buffer_add_mark(view->buffer->buffer, view->buffer->completion_mark, &end);
+		gtk_text_iter_forward_char (&end);
+		while (next != NULL )
+		  {
+		    gtk_text_buffer_insert (view->buffer->buffer, &end,"\n",-1);
+		    gtk_text_buffer_insert (view->buffer->buffer, &end,next,-1);
+		    next= rl_filename_completion_function (search_string, 1);
+		    
+		  }
+		/* put the mark before the completion */
+		gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+						  view->buffer->completion_mark);
+		gtk_text_iter_forward_char (&iter);
+		gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+	      }
+	    g_free(completion);
+	  }
+      }
+      return TRUE;
     case GDK_Return:
       {
 	gchar *search_string=NULL;
-	GtkTextBuffer *buffer;
-	buffer = view->buffer->buffer;
+	GtkTextBuffer *buffer = view->buffer->buffer;
 	gtk_text_buffer_get_bounds (buffer, &start, &end);
 	if ( view->buffer->mark != NULL )
 	  {
@@ -484,6 +563,7 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
   gtk_widget_grab_focus (view->text_view);
 
+
   if (event->type == GDK_BUTTON_PRESS && event->button == 2 ) 
     {
       GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
@@ -492,6 +572,7 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
       /* fprintf(stderr,"A clipboard text: %s\n",str); */
       g_signal_stop_emission_by_name (text_view, "button_press_event");
       buffer = view->buffer->buffer;
+      nsp_delete_completion_infos(view);
       gtk_text_buffer_get_bounds (buffer, &start, &end);
       if ( str ) 
 	{
