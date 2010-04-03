@@ -304,9 +304,9 @@ void nsp_delete_completion_infos(View *view)
 void nsp_insert_completions(View *view)
 {
   GtkTextIter start, end,iter;
-  int i=1;
+  int i=1,ln;
   char **matches;
-  gchar *search_string=NULL;
+  gchar *search_string=NULL, *str;
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   /*
    * search_string is the current statement inserted after the nsp prompt.
@@ -320,11 +320,19 @@ void nsp_insert_completions(View *view)
     {
       search_string = gtk_text_iter_get_text (&start, &end);
     }
-  matches = rl_completion_matches (search_string, rl_filename_completion_function);
+
+  if ( (ln= strlen(search_string)) == 0) return;
+  str = search_string;
+  for ( i = ln -1 ; i >= 0 ; i--)
+    {
+      char c = search_string[i];
+      if ( c == '"' || c == '\'' || c == ' ' ) str = search_string + i+1;
+    }
+  matches = rl_completion_matches (str, rl_filename_completion_function);
   if ( matches == NULL || matches[0] == NULL ) return ;
   /* we insert the proposed completion */
   gtk_text_buffer_insert (view->buffer->buffer, &end, 
-			  matches[0] +strlen(search_string) ,-1);
+			  matches[0] +strlen(str) ,-1);
   if ( matches[1] != NULL ) 
     {
       int i=1;

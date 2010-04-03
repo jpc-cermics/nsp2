@@ -56,7 +56,7 @@ static int use_prompt=1;
 static int hist = 1; /* flag to add to history */
 static jmp_buf my_env;
 
-#define NSP_READLINE_COMPLETION
+/* #define NSP_READLINE_COMPLETION */
 
 #ifdef NSP_READLINE_COMPLETION
 static char *command_generator (const char *, int);
