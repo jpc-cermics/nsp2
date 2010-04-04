@@ -133,11 +133,6 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   return rep;
 }
 
-
-/****************************************************
- * Parse Eval from a string 
- ****************************************************/
-
 /**
  * nsp_parse_eval_from_string:
  * @Str: a string
@@ -192,7 +187,6 @@ int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatc
   nsp_set_echo_input_line(cur_echo);
   return rep ;
 }
-
 
 /**
  * nsp_parse_eval_from_smat:
@@ -255,6 +249,33 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
   NspFileName(SciStack) = file_name;
   nsp_set_echo_input_line(cur_echo);
   return rep ;
+}
+
+
+
+/**
+ * nsp_parse_eval_from_multistring:
+ * @Str: a string
+ * @display: %TRUE or %FALSE 
+ * @echo: %TRUE or %FALSE 
+ * @errcatch: %TRUE or %FALSE 
+ * @pause: %TRUE or %FALSE 
+ * 
+ * parses and evaluates the contents of the string given by @Str. 
+ * Since the string potentially contains '\n' the control is 
+ * passed to nsp_parse_eval_from_smat(). The return value is thus 
+ * similar to the one given by nsp_parse_eval_from_smat().
+
+ * Return value: an integer which gives the status of the execution.
+ **/
+
+int nsp_parse_eval_from_multistring(const char *Str,int display,int echo, int errcatch,int pause)
+{
+  int rep ;
+  NspSMatrix *S = nsp_smatrix_split_string(Str,"\n",1);
+  rep = nsp_parse_eval_from_smat(S,display,echo,errcatch,pause);
+  nsp_smatrix_destroy(S);
+  return rep;
 }
 
 /**

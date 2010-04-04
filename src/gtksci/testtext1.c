@@ -54,6 +54,18 @@
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
+extern const char * nsp_logo_xpm[];
+
+static gchar *nsp_expr=NULL;
+
+typedef struct _view_history view_history;
+
+struct _view_history {
+  GList *history, *history_tail, *history_cur;
+  int history_size, dir ; /* dir = 0,1,-1 */
+};
+
+#define MAX_HISTORY_SIZE 1000
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
@@ -74,23 +86,19 @@ struct _View
   GtkWidget *text_view;
   GtkAccelGroup *accel_group;
   Buffer *buffer;
+  view_history *view_history;
 };
 
-static Buffer * create_buffer      (void);
-static View *create_view      (Buffer *buffer);
-static void  check_close_view (View   *view);
-static void  close_view       (View   *view);
-static void nsp_insert_prompt(const char *prompt);
-
-static void nsp_eval_pasted_from_clipboard(gchar *nsp_expr,View   *view);
-
-
+static Buffer *create_buffer      (void);
+static View   *create_view      (Buffer *buffer);
+static void    check_close_view (View   *view);
+static void    close_view       (View   *view);
+static void    nsp_insert_prompt(const char *prompt);
+static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View   *view);
 
 /* insert the logo in textview at first position.
  *
  */
-
-extern const char * nsp_logo_xpm[];
 
 void fill_buffer_with_logo (View *view)
 {
@@ -205,14 +213,6 @@ cursor_set_callback (GtkTextBuffer     *buffer,
     }
 }
 
-typedef struct _view_history view_history;
-
-struct _view_history {
-  GList *history, *history_tail, *history_cur;
-  int history_size, dir ; /* dir = 0,1,-1 */
-};
-
-#define MAX_HISTORY_SIZE 1000
 
 static void nsp_append_history(char *text,view_history *data)
 {
@@ -360,34 +360,14 @@ void nsp_insert_completions(View *view)
 /* dealing with keypressed in text view 
  */
 
-static gchar *nsp_expr=NULL;
-
 static gboolean
 key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 {
   GtkTextIter start, end,iter;
-  static view_history *data  = NULL;
   GtkTextMark *cursor_mark;
   View *view= xdata;
   char *str; 
-  if ( data == NULL) 
-    {
-      int i;
-      HISTORY_STATE *state = history_get_history_state();
-      data =malloc (sizeof(view_history));
-      data->history = data->history_tail = NULL;
-      data->history_cur = NULL;
-      data->history_size = 0;     
-      /* XXXXX A finir */
-      g_object_set_data_full (G_OBJECT(widget),"myhistory",data,NULL);
-      /* we use the readline history to fill the initial 
-       * textview history 
-       */
-      for ( i = 0 ; i < state->length ; i++)
-	{
-	  nsp_append_history(state->entries[i]->line,data);
-	}
-    }
+  view_history *data  = view->view_history;
 
   /* delete extra info added by completion  */
   nsp_delete_completion_infos(view);
@@ -646,50 +626,37 @@ int Xorgetchar_textview(void)
   return nsp_expr[0];
 }
 
-
-/* used for evaluation of sequence obtained 
+/**
+ * nsp_eval_pasted_from_clipboard:
+ * @nsp_expr: a string to be evaluated
+ * @view: the view object. 
+ * 
+ * used for evaluation of sequence obtained 
  * by drag and drop or copy/paste 
- */
+ * 
+ **/
 
-void nsp_eval_pasted_from_clipboard(gchar *nsp_expr,View *view)
+void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view)
 {
-  int rep;
-  GtkTextIter start, end;
-  GtkTextBuffer *buffer= view->buffer->buffer;
-  gchar *str,*str1;
-  str = str1= nsp_expr;
-  while (1) 
+  int rep,  i;
+  NspSMatrix *S = nsp_smatrix_split_string(nsp_expr,"\n",1);
+  for ( i = 0 ; i < S->mn ; i++ ) 
     {
-      char *expr;
-      while (1) { if (*str1 == '\n' || *str1 == '\0' ) break; str1++;};
-      if ( *str1 == '\0' )
-	{
-	  /* last expression: do not evaluate  just paste   */
-	  gtk_text_buffer_get_bounds (buffer, &start, &end);
-	  gtk_text_buffer_insert (buffer, &end, str, -1);
-	  /* nsp_append_history(search_string,data); */
-	  break; 
-	}
-      /* we have more than one expression */
-      *str1 = '\0';
-      expr = g_strdup(str);
-      rep =nsp_parse_eval_from_string(expr,TRUE,FALSE,FALSE,FALSE);
-      g_free(expr);
-      if (  rep < 0 && rep != RET_QUIT ) 
-	return;
-      if ( rep == RET_QUIT) 
-	{
-	  Sciprintf("We want to quit from a pasted quit;");
-	  return;
-	}
-      str = str1+1;
-      str1 = str;
+      nsp_append_history(S->S[i], view->view_history);
     }
+  rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+  nsp_smatrix_destroy(S);
 }
 
-/* DefSciReadLine will enter here 
- *
- */
+/**
+ * readline_textview:
+ * @prompt: a string giving the prompt to be used
+ * 
+ * this is the function used to read lines when interaction 
+ * is performed in a textview. 
+ * 
+ * Returns: the next acquired character
+ **/
 
 char *readline_textview(const char *prompt)
 {
@@ -731,9 +698,6 @@ char *readline_textview(const char *prompt)
     }
   return NULL;
 }
-
-
-
 
 
 /* when we copy a zone : we change the zone to set it 
@@ -1033,16 +997,29 @@ void  nsp_text_view_screen_size(int *rows,int *cols)
   *cols = tv_cols; 
 }
 
-static View *
-create_view (Buffer *buffer)
+static View *create_view (Buffer *buffer)
 {
+  int i;
   View *view;
-  
   GtkWidget *sw;
   GtkWidget *vbox;
   GtkWidget *menu;
+  HISTORY_STATE *state = history_get_history_state();
   
   view = g_new0 (View, 1);
+
+  view->view_history= malloc (sizeof(view_history));
+  if ( view->view_history != NULL) 
+    {
+      view_history *data =  view->view_history;
+      data->history = data->history_tail = NULL;
+      data->history_cur = NULL;
+      data->history_size = 0;     
+      for ( i = 0 ; i < state->length ; i++)
+	{
+	  nsp_append_history(state->entries[i]->line,data);
+	}
+    }
 
   view->buffer = buffer;
   buffer_ref (buffer);
