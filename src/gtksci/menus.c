@@ -747,6 +747,7 @@ static void * nsp_window_create_initial_menu(void)
 			   "Load File||$file_load",
 			   "Change directory||$chdir",
 			   "Print current directory||$pwd",
+			   "Clear history||$clear_history",
 			   "_Edit||$editor",
 			   "_Kill||$kill",
 			   "_Quit|<control>Q|$quit|gtk-quit" };
@@ -774,7 +775,7 @@ static void * nsp_window_create_initial_menu(void)
   n_control_entries=4;
 #endif 
 
-  sci_menu_add(&m,winid,"_File",file_entries,7,0,"$file");
+  sci_menu_add(&m,winid,"_File",file_entries,8,0,"$file");
   sci_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
   sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
   sci_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
@@ -1223,6 +1224,7 @@ static int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
   else if (strcmp(name,"$quit")== 0) enqueue_nsp_command("quit;");
   else if (strcmp(name,"$scicos_stop")== 0) nsp_menu_scicos_stop ();
   else if (strcmp(name,"$editor")== 0) nsp_menu_start_editor();
+  else if (strcmp(name,"$clear_history")== 0) nsp_clear_history();
   else return 0;
   return 1;
 }

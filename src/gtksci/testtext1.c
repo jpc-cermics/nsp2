@@ -50,12 +50,23 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
+
+#ifdef WIN32
+/* XXXXXX */
+#define sigsetjmp(x,y) setjmp(x)
+#define siglongjmp(x,y) longjmp(x,y)
+#endif 
+
 /* XXXX */
+extern void controlC_handler (int sig);
+extern void controlC_handler_void (int sig);
 extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 extern const char * nsp_logo_xpm[];
 
+
+static jmp_buf my_env;
 static gchar *nsp_expr=NULL;
 
 typedef struct _view_history view_history;
@@ -95,12 +106,19 @@ static void    check_close_view (View   *view);
 static void    close_view       (View   *view);
 static void    nsp_insert_prompt(const char *prompt);
 static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View   *view);
+static int Xorgetchar_textview(void);
+static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
+static int  nsp_print_to_textview(const char *fmt, va_list ap);
 
-/* insert the logo in textview at first position.
+/**
+ * nsp_textview_insert_logo:
+ * @view: 
+ * 
+ * insert the nsp logo in textview at first position.
  *
- */
+ **/
 
-void fill_buffer_with_logo (View *view)
+static void nsp_textview_insert_logo (View *view)
 {
   GtkTextIter iter,start,end;
   GdkPixbuf *pixbuf;
@@ -115,8 +133,7 @@ void fill_buffer_with_logo (View *view)
   g_object_unref (pixbuf);
 }
 
-static gint
-delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
+static gint delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
   View *view = g_object_get_data (G_OBJECT (window), "view");      
   check_close_view (view);
@@ -137,8 +154,7 @@ enum
 
 #define N_COLORS 16
 
-static Buffer *
-create_buffer (void)
+static Buffer *create_buffer (void)
 {
   Buffer *buffer;
   buffer = g_new (Buffer, 1);
@@ -162,14 +178,12 @@ create_buffer (void)
   return buffer;
 }
 
-static void
-buffer_ref (Buffer *buffer)
+static void buffer_ref (Buffer *buffer)
 {
   buffer->refcount++;
 }
 
-static void
-buffer_unref (Buffer *buffer)
+static void buffer_unref (Buffer *buffer)
 {
   buffer->refcount--;
   if (buffer->refcount == 0)
@@ -179,26 +193,23 @@ buffer_unref (Buffer *buffer)
     }
 }
 
-static void
-close_view (View *view)
+static void close_view (View *view)
 {
   buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
   g_free (view);
 }
 
-static void
-check_close_view (View *view)
+static void check_close_view (View *view)
 {
   close_view (view);
 }
 
 
-static void
-cursor_set_callback (GtkTextBuffer     *buffer,
-                     const GtkTextIter *location,
-                     GtkTextMark       *mark,
-                     gpointer           user_data)
+static void cursor_set_callback (GtkTextBuffer     *buffer,
+				 const GtkTextIter *location,
+				 GtkTextMark       *mark,
+				 gpointer           user_data)
 {
   GtkTextView *text_view;
   /* Redraw tab windows if the cursor moves
@@ -214,33 +225,46 @@ cursor_set_callback (GtkTextBuffer     *buffer,
 }
 
 
-static void nsp_append_history(char *text,view_history *data)
+static void nsp_append_history(char *text,view_history *data, int readline_add)
 {
+  /* readline history */
+  if ( strncmp(text,"quit",4)==0) return;
+  if ( readline_add == TRUE)  add_history (text);
+  /* textview history */
   if ( data == NULL) return ;
-  if (data->history_tail == NULL) 
+  if ( data->history_tail == NULL) 
     {
+      /* first insertion. 
+       */
       data->history = g_list_append (NULL, g_strdup (text));
       data->history_tail =data->history_cur= data->history;
       data->dir = 0;
+      return;
     } 
-  else if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
+  if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
     {
-      GList *loc;
       /* do not insert repetitions */
+      GList *loc;
       loc =g_list_append (data->history_tail, g_strdup (text));
       data->history_tail =data->history_cur= data->history_tail->next;
       data->dir = 0;
     }
   else 
     {
+      /* no insertion */
       data->history_cur=data->history_tail;
       data->dir = 0;
+      return; 
     }
+  
   if (data->history_size == MAX_HISTORY_SIZE) 
     {
+      /* delete the first item in history 
+       * but we should only get here if an insertion 
+       * was performed.
+       */
       g_free (data->history->data);
       data->history = g_list_delete_link (data->history, data->history);
-      data->history_tail =data->history_cur= data->history;
       data->dir = 0;
     } 
   else 
@@ -249,7 +273,7 @@ static void nsp_append_history(char *text,view_history *data)
     }
 }
 
-char *nsp_xhistory_up(view_history *data)
+static char *nsp_xhistory_up(view_history *data)
 {
   if ( data == NULL) return NULL;
   if ( data->history_cur == NULL) return NULL;
@@ -260,7 +284,7 @@ char *nsp_xhistory_up(view_history *data)
   return data->history_cur->data;
 }
 
-char *nsp_xhistory_down(view_history *data)
+static char *nsp_xhistory_down(view_history *data)
 {
   if ( data == NULL) return NULL;
   if ( data->dir == 0 ) return NULL;
@@ -275,7 +299,7 @@ char *nsp_xhistory_down(view_history *data)
  * jpc
  */
 
-void nsp_delete_completion_infos(View *view)
+static void nsp_delete_completion_infos(View *view)
 {
   GtkTextIter start, end;
   GtkTextMark *completion_mark;
@@ -301,7 +325,7 @@ void nsp_delete_completion_infos(View *view)
  * readline to build the possible list.
  */
 
-void nsp_insert_completions(View *view)
+static void nsp_insert_completions(View *view)
 {
   GtkTextIter start, end,iter;
   int i=1,ln;
@@ -357,6 +381,45 @@ void nsp_insert_completions(View *view)
 }
 
 
+static void key_press_return(View *view,int stop_signal)
+{
+  GtkTextIter start, end,iter;
+  gchar *search_string=NULL;
+  GtkTextBuffer *buffer = view->buffer->buffer;
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  if ( view->buffer->mark != NULL )
+    {
+      gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
+      search_string = gtk_text_iter_get_text (&iter, &end);
+    }
+  else 
+    {
+      search_string = gtk_text_iter_get_text (&start, &end);
+    }
+  if ( search_string[0] != '\0' && search_string[0] != '\n' ) 
+    nsp_append_history(search_string,  view->view_history, TRUE);
+  if ( search_string[strlen(search_string)-1] != '\n')
+    {
+      gtk_text_buffer_insert (buffer, &end, "\n",-1);
+      gtk_text_buffer_get_bounds (buffer, &start, &end);
+      if ( view->buffer->mark == NULL) 
+	view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
+      else 
+	gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
+    }
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 0.0, 1.0);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
+  gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
+  if ( stop_signal == TRUE )
+    g_signal_stop_emission_by_name (view->text_view, "key_press_event");
+  nsp_expr= search_string;
+  gtk_main_quit();
+}
+
 /* dealing with keypressed in text view 
  */
 
@@ -379,41 +442,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       nsp_insert_completions(view);
       return TRUE;
     case GDK_Return:
-      {
-	gchar *search_string=NULL;
-	GtkTextBuffer *buffer = view->buffer->buffer;
-	gtk_text_buffer_get_bounds (buffer, &start, &end);
-	if ( view->buffer->mark != NULL )
-	  {
-	    gtk_text_buffer_get_iter_at_mark (buffer, &iter,view->buffer->mark);
-	    search_string = gtk_text_iter_get_text (&iter, &end);
-	  }
-	else 
-	  {
-	    search_string = gtk_text_iter_get_text (&start, &end);
-	  }
-	/* fprintf(stderr,"<%s>\n",search_string); */
-	nsp_append_history(search_string,data);
-	if ( search_string[strlen(search_string)-1] != '\n')
-	  {
-	    gtk_text_buffer_insert (buffer, &end, "\n",-1);
-	    gtk_text_buffer_get_bounds (buffer, &start, &end);
-	    if ( view->buffer->mark == NULL) 
-	      view->buffer->mark = gtk_text_buffer_create_mark (buffer, NULL, &end, TRUE);
-	    else 
-	      gtk_text_buffer_move_mark (buffer, view->buffer->mark, &end);
-	  }
-	gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
-				      view->buffer->mark,
-				      0, TRUE, 0.0, 1.0);
-	gtk_text_buffer_apply_tag (view->buffer->buffer,
-				   view->buffer->not_editable_tag,
-				   &start, &end);
-	gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
-	g_signal_stop_emission_by_name (widget, "key_press_event");
-	nsp_expr= search_string;
-	gtk_main_quit();
-      }
+      key_press_return(view,TRUE);
       return TRUE;
     case GDK_Up:
       goto up; 
@@ -519,6 +548,8 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
   gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
+  /* nsp_textview_insert_logo(view); */
+  key_press_return(view,TRUE);
   return TRUE;
  ctrl_c: 
   /* fprintf(stderr,"un controle C\n"); */
@@ -566,7 +597,7 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
       if ( str ) 
 	{
 	  /* gtk_text_buffer_insert (buffer, &end, str, -1); */
-	  /* nsp_append_history(search_string,data); */
+	  /* nsp_append_history(search_string,data, TRUE); */
 	  nsp_eval_pasted_from_clipboard(str,view);
 	  g_free(str);
 	}
@@ -587,12 +618,18 @@ static gint timeout_command (void *v)
   return TRUE;
 }
 
-/* enter a gtk_main waiting for char and 
- * dealing with events.
- */
+/**
+ * Xorgetchar_textview:
+ * @void: 
+ * 
+ * wait for a character when top level 
+ * is a textview. This function is only used 
+ * through  nsp_set_getchar_fun(Xorgetchar_textview). 
+ * 
+ * Returns: an integer
+ **/
 
-
-int Xorgetchar_textview(void)
+static int Xorgetchar_textview(void)
 {
   static int count=0;
   guint timer;
@@ -636,20 +673,30 @@ int Xorgetchar_textview(void)
  * 
  **/
 
-void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view)
+static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view)
 {
+  GtkTextIter start, end;
   int rep,  i;
   NspSMatrix *S = nsp_smatrix_split_string(nsp_expr,"\n",1);
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
   for ( i = 0 ; i < S->mn ; i++ ) 
     {
-      nsp_append_history(S->S[i], view->view_history);
+      nsp_append_history(S->S[i], view->view_history, TRUE);
     }
   rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
   nsp_smatrix_destroy(S);
+  if ( get_is_reading() == TRUE ) 
+    {
+      /* force a key_press_return, to scroll to end 
+       * and recover a prompt
+       */
+      key_press_return(view,FALSE);
+    }
 }
 
 /**
- * readline_textview:
+ * readline_textview_internal:
  * @prompt: a string giving the prompt to be used
  * 
  * this is the function used to read lines when interaction 
@@ -658,7 +705,7 @@ void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view)
  * Returns: the next acquired character
  **/
 
-char *readline_textview(const char *prompt)
+static char *readline_textview_internal(const char *prompt)
 {
   static int use_prompt=1;
   guint timer;
@@ -1004,20 +1051,19 @@ static View *create_view (Buffer *buffer)
   GtkWidget *sw;
   GtkWidget *vbox;
   GtkWidget *menu;
-  HISTORY_STATE *state = history_get_history_state();
   
   view = g_new0 (View, 1);
 
   view->view_history= malloc (sizeof(view_history));
   if ( view->view_history != NULL) 
     {
+      HISTORY_STATE *state = history_get_history_state();
       view_history *data =  view->view_history;
-      data->history = data->history_tail = NULL;
-      data->history_cur = NULL;
+      data->history_cur =  data->history_tail =data->history = NULL;
       data->history_size = 0;     
       for ( i = 0 ; i < state->length ; i++)
 	{
-	  nsp_append_history(state->entries[i]->line,data);
+	  nsp_append_history(state->entries[i]->line,data, FALSE);
 	}
     }
 
@@ -1105,7 +1151,7 @@ static View *create_view (Buffer *buffer)
   
   gtk_widget_show_all (view->window);
 
-  fill_buffer_with_logo (view);
+  nsp_textview_insert_logo (view);
 
   return view;
 }
@@ -1113,7 +1159,7 @@ static View *create_view (Buffer *buffer)
 static  View *view=NULL;
 static char buf[1025];
 
-int  Sciprint2textview(const char *fmt, va_list ap)
+static int  nsp_print_to_textview(const char *fmt, va_list ap)
 {
   const int ncolor=5;
   static int xtag = FALSE;
@@ -1216,11 +1262,9 @@ void nsp_create_main_text_view(void)
   buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
-  SetScilabIO(Sciprint2textview);
+  SetScilabIO(nsp_print_to_textview);
   nsp_set_getchar_fun(Xorgetchar_textview);
-  nsp_set_readline_fun(DefSciReadLine_textview);
-
-
+  nsp_set_readline_fun(readline_textview);
 }
 
 /* insert a graphic file in the textview 
@@ -1252,23 +1296,10 @@ int nsp_insert_pixbuf_from_file(char *filename)
   return 0;
 }
 
-#ifdef WIN32
-/* XXXXXX */
-#define sigsetjmp(x,y) setjmp(x)
-#define siglongjmp(x,y) longjmp(x,y)
-#endif 
-
-static jmp_buf my_env;
-
-extern void controlC_handler (int sig);
-extern void controlC_handler_void (int sig);
-
-static int fd=0;              /* file number for standard in */
-static int use_prompt=1;
-static int hist = 1; /* flag to add to history */
-
-void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
+static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
 {
+  static int fd=0;              /* file number for standard in */
+  static int use_prompt=1;
   static int tty =0, init_flag = TRUE, enter=0;
   char * line=NULL ; 
   if(init_flag) {
@@ -1283,7 +1314,7 @@ void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_s
     tty=1;
 #endif
   }
-  
+
   set_is_reading(TRUE);
   
   if( !tty) 
@@ -1344,22 +1375,17 @@ void DefSciReadLine_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_s
 	  *eof = FALSE;
 	  use_prompt=0;
 	  *len_line = strlen(buffer);
-	  /* add_history (buffer); */
 	  goto end;
 	}
     } 
   else 
     {
       signal (SIGINT, controlC_handler_void);
-      line = readline_textview((use_prompt) ? prompt : "" );
+      line = readline_textview_internal((use_prompt) ? prompt : "" );
       use_prompt=1;
       signal (SIGINT, controlC_handler);
     }
-  if (hist && line && *line != '\0') 
-    {
-      add_history (line);
-    }
-  
+
   if ( line == NULL) 
     {
       *len_line= 1;

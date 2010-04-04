@@ -40,13 +40,14 @@ extern int kill_process_group (int pid, int sig);
 extern void getcolordef (int *screenc); 
 extern void setcolordef (int screenc); 
 
-/* zzledt-rl.c */ 
+/* reader_rl */
 
 extern int using_readline (void); 
 extern int get_one_char (char *prompt); 
 extern void SciGtkReadLine (char *prompt, char *buffer, int *buf_size, int *len_line, int *eof); 
 extern int nsp_read_history (void); 
 extern int nsp_write_history (void); 
+extern int nsp_clear_history(void);
 
 /* menus.c */ 
 

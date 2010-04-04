@@ -40,6 +40,9 @@
 #include "nsp/machine.h" 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h" 
+#include "../system/files.h" /* FSIZE */
+
+
 #ifdef WIN32
 #define sigsetjmp(x,y) setjmp(x)
 #define siglongjmp(x,y) longjmp(x,y)
@@ -222,7 +225,8 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
     }
   if (hist && line && *line != '\0') 
     {
-      add_history (line);
+      if ( strncmp(line,"quit",4) != 0 )
+	add_history (line);
     }
   
   if ( line == NULL) 
@@ -275,18 +279,38 @@ void nsp_read_clean_after_ctrc(void) {}
  * nsp_read_history:
  * @void: 
  * 
- * 
- * 
  * Returns: 
  **/
 
 int nsp_read_history(void)
 {
-  return read_history (".nsp_history");
+  char history[FSIZE+1];
+  nsp_path_expand("$HOME/.nsp_history",history,FSIZE);
+  return read_history (history);
 }
 
 /**
  * nsp_write_history:
+ * @void: 
+ * 
+ * Returns: 
+ **/
+
+int nsp_write_history(void)
+{
+  int rep;
+  char history[FSIZE+1];
+  nsp_path_expand("$HOME/.nsp_history",history,FSIZE);
+  if ((rep= write_history (history)) != 0) 
+    {
+      Sciprintf("Error: unable to write history file %s\n",
+		"$HOME/.nsp_history");
+    }
+  return rep;
+}
+
+/**
+ * nsp_clear_history:
  * @void: 
  * 
  * 
@@ -294,14 +318,10 @@ int nsp_read_history(void)
  * Returns: 
  **/
 
-int nsp_write_history(void)
+int nsp_clear_history(void) 
 {
-  int rep = write_history (".nsp_history");
-  if ( rep != 0) 
-    {
-      perror("Pb with ~/.nsp_history ");
-    }
-  return rep;
+  /* */
+  clear_history ();
 }
 
 /*----------------------------------------------------------------------
@@ -333,12 +353,14 @@ void sci_get_screen_size (int *rows,int *cols)
  * can understand. 
  */
 
+#ifdef NSP_READLINE_COMPLETION
+
 static char *commands_pool[] = {
 #include "reader.txt"
   (char *)NULL,
 };
 
-#ifdef NSP_READLINE_COMPLETION
+
 
 /**
  * nsp_completion:
