@@ -114,10 +114,12 @@ int main(int argc, char **argv)
   /* MPI_Init(NULL,NULL); */
   /* Initialize data frame **/  
   if ( nsp_init_frames(argc,argv) == FAIL ) return 1;
-  /* reload history */
-  nsp_read_history();
-  /* provide a default SCI  */
+  /* provide a default SCI and HOME on win32  */
   set_nsp_env();
+  /* reload history: take care that this must be 
+   * called after set_nsp_env
+   */
+  nsp_read_history();
   /* ignore error message produced during intialization 
    * note that they are just warnings 
    */
@@ -493,6 +495,8 @@ void set_nsp_env (void)
 	  break;
 	}
     }
+  for ( i=0 ; i < strlen(nsp_abs_path) ;i++)
+    if ( nsp_abs_path[i]=='\\') nsp_abs_path[i] ='/';
   nsp_setenv("SCI",nsp_abs_path);
   nsp_setenv("NSP",nsp_abs_path);
   /* be sure that home exists */
