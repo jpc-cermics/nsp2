@@ -1,6 +1,10 @@
 SHELL=/bin/bash
 
 # voir http://john.regehr.org/latex/
+# unicode.4hf is a copy of 
+# /usr/share/texmf/tex4ht/ht-fonts/mozilla/charset/unicode.4hf
+# with a few changes at the end to allow copy/paste to nsp 
+# 
 
 all:: manual-silent index-silent manual2-silent  manualindex 
 
