@@ -105,7 +105,7 @@ static View   *create_view      (Buffer *buffer);
 static void    check_close_view (View   *view);
 static void    close_view       (View   *view);
 static void    nsp_insert_prompt(const char *prompt);
-static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View   *view);
+static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View   *view, int position, GtkTextIter iter);
 static int Xorgetchar_textview(void);
 static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
 static int  nsp_print_to_textview(const char *fmt, va_list ap);
@@ -133,6 +133,16 @@ static void nsp_textview_insert_logo (View *view)
   g_object_unref (pixbuf);
 }
 
+/**
+ * delete_event_cb:
+ * @window: 
+ * @event: 
+ * @data: 
+ * 
+ * delete callback for the text_view widget
+ * 
+ * Returns: 
+ **/
 static gint delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
   View *view = g_object_get_data (G_OBJECT (window), "view");      
@@ -153,6 +163,15 @@ enum
 };
 
 #define N_COLORS 16
+
+/**
+ * create_buffer:
+ * @void: 
+ * 
+ * GtkTextBuffer creation.
+ * 
+ * Returns: a new #Buffer object.
+ **/
 
 static Buffer *create_buffer (void)
 {
@@ -216,7 +235,7 @@ static void cursor_set_callback (GtkTextBuffer     *buffer,
    * on the mapped widget (windows may not exist before realization...
    */
   text_view = GTK_TEXT_VIEW (user_data);
-  
+
   if (GTK_WIDGET_MAPPED (text_view) &&
       mark == gtk_text_buffer_get_insert (buffer))
     {
@@ -577,7 +596,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 static gint
 gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpointer xdata)
 {
-  GtkTextIter start, end;
+  GtkTextIter iter;
   GtkTextBuffer *buffer;
   View *view= xdata;
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
@@ -586,19 +605,24 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
 
   if (event->type == GDK_BUTTON_PRESS && event->button == 2 ) 
     {
+      gint x,y;
       GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
 							    GDK_SELECTION_PRIMARY);
       gchar *str = gtk_clipboard_wait_for_text(clipboard);
       /* fprintf(stderr,"A clipboard text: %s\n",str); */
       g_signal_stop_emission_by_name (text_view, "button_press_event");
+      /* place the cursor mark at clicked position */
+      gtk_text_view_window_to_buffer_coords(text_view,GTK_TEXT_WINDOW_WIDGET,
+					    event->x,event->y,&x,&y);
+      gtk_text_view_get_iter_at_position (text_view,&iter,NULL,x,y);
+      gtk_text_iter_forward_char (&iter);
+
+      /* gtk_text_buffer_place_cursor (view->buffer->buffer,&iter); */
       buffer = view->buffer->buffer;
       nsp_delete_completion_infos(view);
-      gtk_text_buffer_get_bounds (buffer, &start, &end);
       if ( str ) 
 	{
-	  /* gtk_text_buffer_insert (buffer, &end, str, -1); */
-	  /* nsp_append_history(search_string,data, TRUE); */
-	  nsp_eval_pasted_from_clipboard(str,view);
+	  nsp_eval_pasted_from_clipboard(str,view,0,iter);
 	  g_free(str);
 	}
       return TRUE;
@@ -669,15 +693,38 @@ static int Xorgetchar_textview(void)
  * @view: the view object. 
  * 
  * used for evaluation of sequence obtained 
- * by drag and drop or copy/paste 
+ * by drag-drop or copy-paste. If the sequence 
+ * is a string without return we paste it into the textview 
+ * else we evaluate the sequence.
  * 
  **/
 
-static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view)
+static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
 {
   GtkTextIter start, end;
   int rep,  i;
   NspSMatrix *S = nsp_smatrix_split_string(nsp_expr,"\n",1);
+  if ( S->mn == 1 && strlen(nsp_expr) >=1 && nsp_expr[strlen(nsp_expr)-1] != '\n')
+    {
+      if (gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable)) 
+	{
+	  gtk_text_buffer_insert (view->buffer->buffer, &iter, nsp_expr,-1);
+	  /* set the cursor at the end of insertion : 
+	   * not done since it also has the effect that the selection is unselected
+	   */
+	  /* gtk_text_buffer_place_cursor (view->buffer->buffer,&iter); */
+	}
+      else
+	{
+	  /* insert at the end */
+	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+	  gtk_text_buffer_insert (view->buffer->buffer, &end, nsp_expr,-1);
+	  /* set the cursor at the end of insertion : 
+	   * not done since it also has the effect that the selection is unselected
+	   */
+	}
+      return;
+    }
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
   gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
   for ( i = 0 ; i < S->mn ; i++ ) 
@@ -757,13 +804,13 @@ static char *readline_textview_internal(const char *prompt)
 static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 {
   GtkClipboard *clipboard;
-  GtkTextIter start,end;
   View *view= user_data;
-  /* set the selection to be editable */
-  gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end);
-  gtk_text_buffer_remove_tag(view->buffer->buffer,
-			     view->buffer->not_editable_tag,
+  /* set the selection to be editable 
+     GtkTextIter start,end;
+     gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end);
+     gtk_text_buffer_remove_tag(view->buffer->buffer,view->buffer->not_editable_tag,
 			     &start, &end);
+  */
   clipboard = gtk_widget_get_clipboard (GTK_WIDGET(text_view),GDK_SELECTION_CLIPBOARD);
   gtk_text_buffer_copy_clipboard(view->buffer->buffer,clipboard);
 }
@@ -773,7 +820,7 @@ static void copy_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
  * gtk_text_buffer_paste_clipboard is asynchronous.
  */
 
-static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
+static void paste_clipboard_callback(GtkTextView *text_view, gpointer  user_data)
 {
   View *view= user_data;
   GtkClipboard *clipboard = gtk_widget_get_clipboard (GTK_WIDGET (text_view),
@@ -783,11 +830,14 @@ static void new_paste_clipboard_callback(GtkTextView *text_view, gpointer  user_
   g_signal_stop_emission_by_name (text_view, "paste_clipboard");
   if ( str ) 
     {
-      nsp_eval_pasted_from_clipboard(str,view);
+      GtkTextIter iter;
+      GtkTextMark *mark;
+      mark =  gtk_text_buffer_get_insert (view->buffer->buffer);
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, mark);
+      nsp_eval_pasted_from_clipboard(str,view,0,iter);
       g_free(str);
     }
 }
-
 
 /* change drag and drop behaviour because we want to 
  * be able to drop anywhere in the terminal window 
@@ -804,7 +854,7 @@ gtk_text_view_drag_end (GtkWidget        *widget,
   View *view= (View *) data;
   GtkTextBuffer *buffer = view->buffer->buffer;
   gtk_text_buffer_get_bounds (buffer, &start, &end);
-  gtk_text_buffer_apply_tag(buffer,   view->buffer->not_editable_tag,   &start, &end);
+  /* gtk_text_buffer_apply_tag(buffer,   view->buffer->not_editable_tag,   &start, &end); */
 }
 
 static gboolean
@@ -817,17 +867,18 @@ gtk_text_view_drag_motion (GtkWidget        *widget,
 {
   View *view= (View *) data;
   GtkTextBuffer *buffer = view->buffer->buffer;
-  GtkTextIter start;
-  GtkTextIter end;
-  /* during the drag motion we pretend all the textview is editable */
+  GtkTextIter start, end;
+  /* during the drag_motion we set all position to editable 
+   * to enable a drop anywhere 
+   */
   gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_get_iter_at_mark (buffer, &end, view->buffer->mark);
   gtk_text_buffer_remove_tag(buffer,   view->buffer->not_editable_tag,   &start, &end);
   /* TRUE return means don't propagate the drag motion to parent
    * widgets that may also be drop sites.
    */
   return FALSE;
 }
-
 
 static void
 gtk_text_view_drag_data_received (GtkWidget        *widget,
@@ -840,14 +891,23 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 				  gpointer data)
 {
   gboolean success = TRUE;
-  GtkTextIter drop_point;
+  GtkTextIter drop_point,start,end;
   View *view= (View *) data;
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
   GtkTextBuffer *buffer = view->buffer->buffer;
 
   g_signal_stop_emission_by_name (widget, "drag_data_received");
-  gtk_text_buffer_begin_user_action (buffer); 
+  /*
+   * reset the non editable zone 
+   */
+  gtk_text_buffer_get_bounds (buffer, &start, &end);
+  gtk_text_buffer_get_iter_at_mark (buffer, &end, view->buffer->mark);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
+  /* deals with the drop */
   
+  gtk_text_buffer_begin_user_action (buffer); 
   gtk_text_buffer_get_iter_at_mark (buffer,
                                     &drop_point,
                                     text_view->dnd_mark);
@@ -907,9 +967,12 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
                                                 &start,
                                                 &end))
         {
+	  GtkTextIter iter;
 	  gchar *str;
 	  str = gtk_text_iter_get_visible_text (&start, &end);
-	  nsp_eval_pasted_from_clipboard(str,view);
+	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+	  nsp_eval_pasted_from_clipboard(str,view,1,iter);
 	  g_free (str);
         }
     }
@@ -961,7 +1024,12 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
-	      nsp_eval_pasted_from_clipboard((gchar *) str,view);
+	      GtkTextIter iter;
+	      gchar *str;
+	      str = gtk_text_iter_get_visible_text (&start, &end);
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+	      nsp_eval_pasted_from_clipboard((gchar *) str,view,1,iter);
 	      g_free (str);
 	    }
 	}
@@ -986,7 +1054,12 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
-	      nsp_eval_pasted_from_clipboard((gchar *) str,view);
+	      GtkTextIter iter;
+	      gchar *str;
+	      str = gtk_text_iter_get_visible_text (&start, &end);
+	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
+					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+	      nsp_eval_pasted_from_clipboard((gchar *) str,view,1,iter);
 	      g_free (str);
 	    }
 #endif
@@ -1110,29 +1183,23 @@ static View *create_view (Buffer *buffer)
                     G_CALLBACK (key_press_text_view),
                     view);  
 
-  g_signal_connect (view->text_view,
-                    "button_press_event",
-                    G_CALLBACK (gtk_text_view_button_press_event),
-                    view);  
-
+  g_signal_connect(view->text_view,
+		   "button_press_event",
+		   G_CALLBACK (gtk_text_view_button_press_event),
+		   view);  
 
   g_signal_connect(view->text_view,"drag_data_received",G_CALLBACK (gtk_text_view_drag_data_received),view);
   g_signal_connect(view->text_view,"drag_end",G_CALLBACK (gtk_text_view_drag_end),view);
   g_signal_connect(view->text_view,"drag_motion",G_CALLBACK (gtk_text_view_drag_motion),view);
-    
+  
   g_signal_connect (view->text_view,
                     "copy_clipboard",
                     G_CALLBACK (copy_clipboard_callback),
                     view);
-  /* 
-  g_signal_connect_after (view->text_view,
-			  "paste_clipboard",
-			  G_CALLBACK (paste_clipboard_callback),
-			  view);
-  */
+
   g_signal_connect (view->text_view,
 			  "paste_clipboard",
-			  G_CALLBACK (new_paste_clipboard_callback),
+			  G_CALLBACK (paste_clipboard_callback),
 			  view);
 
 
