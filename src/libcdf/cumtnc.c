@@ -47,6 +47,7 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   double t2, pnonc2, bb, lambda, halfdf, alghdf, bbcent, xi, ss, tt;
   double dpnonc, sscent;
   double lnx, omx, dum1, dum2;
+  double eps=1e-14; /* add a parameter to stop summation (1e-7 was hardcoded). Bruno, april, 5, 2010 */
 
   if (Abs (*pnonc) <= 1e-10)
     {
@@ -174,7 +175,7 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   ss = ss * omx * (*df + twoi) / (twoi + 2.);
   xi += 1.;
   twoi = xi * 2.;
-  if (Abs (term) > *ccum * 1e-7)
+  if (Abs (term) > *ccum * eps)
     {
       goto L10;
     }
@@ -203,7 +204,7 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   twoi = xi * 2.;
   s = s * (twoi + 1.) / ((*df + twoi - 1.) * omx);
   ss = ss * (twoi + 2.) / ((*df + twoi) * omx);
-  if (Abs (term) > *ccum * 1e-7)
+  if (Abs (term) > *ccum * eps)
     {
       goto L20;
     }
