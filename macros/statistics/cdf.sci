@@ -189,6 +189,18 @@ function [p,q] = cdf(dist, x, varargin)
 	end
 	[p,q] = cdft("PQ", x, nu*ones(size(x)));
 
+     case "nt" then
+	if numel(varargin) ~= 2 then
+	   error("bad number of input args, usage: cdf(""nt"",x,nu,lambda)")
+	end
+	nu = varargin(1); lambda = varargin(2); 
+	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ...
+	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0) then
+	   error("Error: for cdf(""nt"",x,nu), nu should be positive and lambda non negative")
+	end
+	size_to_x  = ones(size(x));
+	[p,q] = cdftnc("PQ", x, nu*size_to_x, lambda*size_to_x);
+
      case "exp" then
 	if numel(varargin) ~= 1 then
 	   error("bad number of input args, usage: cdf(""exp"",x,tau)")
