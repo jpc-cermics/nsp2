@@ -786,7 +786,7 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr)
  * by drag-drop (drag/drop of a file). 
  * 
  **/
-
+#if 0
 static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
 {
   GtkTextIter start, pos=iter;
@@ -799,7 +799,7 @@ static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int p
   gtk_text_buffer_insert (view->buffer->buffer, &pos, nsp_expr ,-1);
   gtk_text_buffer_insert (view->buffer->buffer, &pos, "')",-1);
 }
-
+#endif 
 /**
  * readline_textview_internal:
  * @prompt: a string giving the prompt to be used
@@ -1046,6 +1046,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
     {
       if ( info == GTK_TEXT_BUFFER_TARGET_INFO_RICH_TEXT) 
 	{
+	  fprintf(stderr, "Selection contains rich text \n");
 	  /* 
 	     gboolean retval;
 	     GError *error = NULL;
@@ -1090,14 +1091,23 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
+#if 0
 	      int n = strlen((char *) str);
+#endif
 	      GtkTextIter iter;
 	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
 						GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+	      /* we get here after a drag/drop from help or a drag/drop from desktop 
+	       * we should find how to better detect each case
+	       */
+#if 1
+	      nsp_eval_pasted_from_clipboard((gchar *) str, view,1,iter);
+#else 
 	      /* remove trailing \r\n */
 	      if ( str[n-2] == '\r' ) str[n-2]='\0';
 	      if ( str[n-1] == '\n' ) str[n-2]='\0';
 	      nsp_eval_drag_drop_info_text((gchar *) str,view,1,iter);
+#endif
 	      g_free (str);
 	    }
 	}
