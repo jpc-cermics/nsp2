@@ -47,7 +47,7 @@ extern int get_one_char (char *prompt);
 extern void SciGtkReadLine (char *prompt, char *buffer, int *buf_size, int *len_line, int *eof); 
 extern int nsp_read_history (void); 
 extern int nsp_write_history (void); 
-extern int nsp_clear_history(void);
+extern void nsp_clear_history(void);
 
 /* menus.c */ 
 

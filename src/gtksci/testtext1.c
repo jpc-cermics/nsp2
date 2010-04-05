@@ -64,10 +64,7 @@ extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 extern const char * nsp_logo_xpm[];
-
-
-static jmp_buf my_env;
-static gchar *nsp_expr=NULL;
+extern void nsp_eval_str_in_textview(const gchar *nsp_expr) ;
 
 typedef struct _view_history view_history;
 
@@ -99,6 +96,11 @@ struct _View
   Buffer *buffer;
   view_history *view_history;
 };
+
+static jmp_buf my_env;
+static gchar *nsp_expr=NULL;
+static View *view=NULL;
+static char buf[1025];
 
 static Buffer *create_buffer      (void);
 static View   *create_view      (Buffer *buffer);
@@ -742,6 +744,38 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
     }
 }
 
+/**
+ * nsp_eval_str_in_textview:
+ * @nsp_expr: a string to be evaluated
+ * 
+ * used when an edit buffer is evaluated 
+ * 
+ **/
+
+void nsp_eval_str_in_textview(const gchar *nsp_expr) 
+{
+  GtkTextIter start, end;
+  int rep,  i;
+  NspSMatrix *S;
+  if ( view == NULL) return;
+  S = nsp_smatrix_split_string(nsp_expr,"\n",1);
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
+  for ( i = 0 ; i < S->mn ; i++ ) 
+    {
+      nsp_append_history(S->S[i], view->view_history, TRUE);
+    }
+  rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+  nsp_smatrix_destroy(S);
+  if ( get_is_reading() == TRUE ) 
+    {
+      /* force a key_press_return, to scroll to end 
+       * and recover a prompt
+       */
+      key_press_return(view,FALSE);
+    }
+}
+
 
 /**
  * nsp_eval_drag_drop_info_text: 
@@ -1255,8 +1289,6 @@ static View *create_view (Buffer *buffer)
   return view;
 }
 
-static  View *view=NULL;
-static char buf[1025];
 
 static int  nsp_print_to_textview(const char *fmt, va_list ap)
 {
@@ -1357,8 +1389,7 @@ static void nsp_insert_prompt(const char *prompt)
 
 void nsp_create_main_text_view(void)
 {
-  Buffer *buffer;
-  buffer = create_buffer ();
+  Buffer *buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
   SetScilabIO(nsp_print_to_textview);

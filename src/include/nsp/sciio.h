@@ -53,6 +53,8 @@ extern void set_echo_mode(int mode);
 extern int get_echo_mode(void); 
 extern void set_is_reading(int mode);
 extern int get_is_reading(void);
+extern void nsp_set_in_text_view(int value);
+extern int nsp_get_in_text_view(void);
 
 extern void nsp_error_message_show(void);
 extern void nsp_error_message_to_lasterror(void);

@@ -1106,8 +1106,14 @@ static int token_read_line(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
   buffer[len_line] ='\n';
   buffer[len_line+1] = '\0';
   buffer[len_line+2] = '\0'; /* ??? xxxx*/
-  if ( eof != NULL) 
+  
+  if ( eof != NULL && len_line != 0) 
     {
+      /* we do not echo empty lines. This is usefull 
+       * for not echoing extra prompt at the end when evaluation
+       * is done by nsp_eval_str_in_textview or 
+       * nsp_eval_pasted_from_clipboard.
+       */
       if ( nsp_get_echo_input_line() ) 
 	Sciprintf("%s%s",prompt,buffer);
       else 

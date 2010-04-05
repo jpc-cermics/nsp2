@@ -318,7 +318,7 @@ int nsp_write_history(void)
  * Returns: 
  **/
 
-int nsp_clear_history(void) 
+void nsp_clear_history(void) 
 {
   /* */
   clear_history ();
@@ -335,6 +335,13 @@ void nsp_set_in_text_view(int value)
 {
   in_text_view = value;
 }
+
+int nsp_get_in_text_view(void)
+{
+  return   in_text_view ;
+}
+
+
 
 void sci_get_screen_size (int *rows,int *cols)
 {

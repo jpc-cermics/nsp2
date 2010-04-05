@@ -37,6 +37,7 @@
 #include "../system/files.h" /* FSIZE */
 
 extern int nsp_edit(char *filename, int read_only);
+extern void nsp_eval_str_in_textview(const gchar *nsp_expr);
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
@@ -677,13 +678,10 @@ static void do_execute (GtkAction *action)
   gtk_text_buffer_remove_tag (view->buffer->buffer,  view->buffer->found_text_tag,
                               &start, &end );
 
-  if (!view->buffer->filename)
-    do_save_as (action);
-  else
-    save_buffer (view->buffer);
-  /* execute the contents */
   if (view->buffer->filename)
     {
+      save_buffer (view->buffer);
+      /* execute the file contents */
       rep =nsp_parse_eval_file(view->buffer->filename,display,echo,errcatch,
 			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
       if ( rep < 0 ) 
@@ -712,6 +710,49 @@ static void do_execute (GtkAction *action)
 	  */
 	  nsp_lasterror_clear();
 	}
+    }
+  else
+    {
+      /* execute the file contents through matrix */
+      const char *buf_str= gtk_text_iter_get_text (&start, &end);
+      if ( nsp_get_in_text_view() == TRUE ) 
+	{
+	  nsp_eval_str_in_textview(buf_str);
+	}
+      else
+	{
+	  NspSMatrix *S = nsp_smatrix_split_string(buf_str,"\n",1);
+	  rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+	  nsp_smatrix_destroy(S);
+	}
+    }
+  pop_active_window ();
+}
+
+static void do_execute_selection(GtkAction *action)
+{
+  GtkTextIter start,end;
+  const gchar *str;
+  View *view = view_from_action (action);
+  /* save first */
+  push_active_window (GTK_WINDOW (view->window));
+  
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_remove_tag (view->buffer->buffer,  view->buffer->found_text_tag,
+                              &start, &end );
+
+  if (! gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end)) 
+    return;
+  str = gtk_text_iter_get_visible_text (&start, &end);
+  if ( nsp_get_in_text_view() == TRUE ) 
+    {
+      nsp_eval_str_in_textview(str);
+    }
+  else
+    {
+      NspSMatrix *S = nsp_smatrix_split_string(str,"\n",1);
+      nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+      nsp_smatrix_destroy(S);
     }
   pop_active_window ();
 }
@@ -825,6 +866,7 @@ static GtkActionEntry menu_actions[] = {
   {"Save", GTK_STOCK_SAVE,"_Save","<control>S",NULL, G_CALLBACK (do_save)},
   {"SaveAs", GTK_STOCK_SAVE_AS, "Save _As...", NULL,NULL, G_CALLBACK (do_save_as)},
   {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (do_execute)},
+  {"ExecuteSelection",NULL, "Execute Selection", NULL,NULL, G_CALLBACK (do_execute_selection)},
   {"Close", GTK_STOCK_CLOSE, "_Close",NULL ,NULL,  G_CALLBACK (do_close)},
 #ifdef EXIT_USED 
   {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
@@ -843,6 +885,7 @@ static GtkActionEntry menu_actions_read[] = {
   {"New", GTK_STOCK_NEW, "_New", NULL, NULL, G_CALLBACK (do_new)}, 
   {"Open", GTK_STOCK_OPEN,"_Open","<control>O",NULL, G_CALLBACK (do_open)},
   {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (do_execute)},
+  {"ExecuteSelection",NULL, "Execute Selection", NULL,NULL, G_CALLBACK (do_execute_selection)},
   {"Close", GTK_STOCK_CLOSE, "_Close",NULL ,NULL,  G_CALLBACK (do_close)},
 #ifdef EXIT_USED 
   {"Exit", GTK_STOCK_EXIT,  "E_xit","<control>Q" ,NULL,  G_CALLBACK (do_exit)},
@@ -865,6 +908,7 @@ static const gchar *ui_info =
   "      <menuitem name=\"save\" action=\"Save\" />\n"
   "      <menuitem name=\"saveas\" action=\"SaveAs\" />\n"
   "      <menuitem name=\"execute\" action=\"Execute\" />\n"
+  "      <menuitem name=\"executeselection\" action=\"ExecuteSelection\" />\n"
   "      <separator name=\"sep1\" />\n"
   "      <menuitem name=\"close\" action=\"Close\" />\n"
   "    </menu>\n"
