@@ -1285,3 +1285,33 @@ double nsp_pdf_unf(double x, double a, double b)
     return 1.0/(b - a);
 }
 
+/**
+ * nsp_binomial_coef
+ * @n: double
+ * @k: double
+ *
+ *           / n \ 
+ * compute   |   |
+ *           \ k /
+ *
+ * Returns: FAIL if n and or k are not integer or 
+ * if k is not between 0 and n
+ *       
+ **/
+int nsp_binomial_coef(double n, double k, double *res)
+{
+  if ( ! (floor(n) == n && n >= 0.0 && floor(k) == k && 0 <= k && k <= n) )
+    return FAIL;
+  else
+    {
+      double d, r=1.0;
+      if ( k > n - k ) k = n - k;
+      for ( d=1.0 ; d <= k ; d++, n-- )
+	{
+	  r *= n; r /= d;
+	}
+      *res = floor(r+0.5);
+      return OK;
+    }
+}
+

@@ -26,6 +26,8 @@
 #include <nsp/bmatrix-in.h>
 #include <nsp/spmf.h>
 
+
+
 static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
@@ -40,6 +42,57 @@ static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
     x->R[i] = nsp_log1p(x->R[i]);
 
   NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
+static int int_nsp_binomial_coef(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *N, *K, *res;
+  int i, iN, iK, N_is_scalar, K_is_scalar, inc_N, inc_K, m, n;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ( ( N = GetRealMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+  N_is_scalar = N->mn == 1;
+
+  if ( ( K = GetRealMat(stack, 2)) == NULLMAT )
+    return RET_BUG;
+  K_is_scalar = K->mn == 1;
+
+  if ( !N_is_scalar && !K_is_scalar && !(N->m == K->m && N->n == K->n) )
+    {
+      Scierror("%s: arguments should be of same size or scalars\n",NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( N_is_scalar )
+    {
+      m = K->m; n = K->n;
+    }
+  else
+    {
+      m = N->m; n = N->n;
+    }
+
+  if ( ( res = nsp_matrix_create(NVOID, 'r', m, n) ) == NULLMAT )
+    return RET_BUG;
+
+  inc_N = N_is_scalar ? 0 : 1;
+  inc_K = K_is_scalar ? 0 : 1;
+
+  for ( i = 0, iN = 0, iK = 0 ; i < res->mn ; i++, iN+=inc_N, iK+=inc_K )
+    {
+      if ( nsp_binomial_coef(N->R[iN], K->R[iK], &(res->R[i])) == FAIL )
+	{
+	  Scierror("%s: arguments n(%d) and k(%d) should be non negative integers with 0 <= k <= n\n",
+		   NspFname(stack),iN+1,iK+1);
+	  nsp_matrix_destroy(res);
+	  return RET_BUG;
+	}
+    }
+
+  MoveObj(stack,1,(NspObject *) res);
   return 1;
 }
 
@@ -1153,6 +1206,7 @@ static int int_nsp_pdf( Stack stack, int rhs, int opt, int lhs)
 
 
 static OpTab Spmf_func[]={
+  {"bincoeff", int_nsp_binomial_coef},
   {"log1p_m", int_nsp_log1p},
   {"sinpi_m", int_nsp_sinpi},
   {"gammabr_m", int_nsp_gammabr},

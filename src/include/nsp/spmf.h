@@ -62,6 +62,7 @@ extern double nsp_pdf_tailrayleigh(double x, double sigma, double a);
 extern double nsp_pdf_geometric(double x, double p);
 extern double nsp_pdf_uin(double x, double n1, double n2);
 extern double nsp_pdf_unf(double x, double a, double b);
+extern int nsp_binomial_coef(double n, double k, double *res);
 
 
 
