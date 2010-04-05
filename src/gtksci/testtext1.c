@@ -742,6 +742,30 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
     }
 }
 
+
+/**
+ * nsp_eval_drag_drop_info_text: 
+ * @nsp_expr: a string to be evaluated
+ * @view: the view object. 
+ * 
+ * used for evaluation of sequence obtained 
+ * by drag-drop (drag/drop of a file). 
+ * 
+ **/
+
+static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
+{
+  GtkTextIter start, pos=iter;
+  if ( strlen(nsp_expr) == 0 ) return;
+  if ( ! gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable)) 
+    {
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &pos);
+    }
+  gtk_text_buffer_insert (view->buffer->buffer, &pos, "eval_drop('",-1);
+  gtk_text_buffer_insert (view->buffer->buffer, &pos, nsp_expr ,-1);
+  gtk_text_buffer_insert (view->buffer->buffer, &pos, "')",-1);
+}
+
 /**
  * readline_textview_internal:
  * @prompt: a string giving the prompt to be used
@@ -853,8 +877,14 @@ gtk_text_view_drag_end (GtkWidget        *widget,
   GtkTextIter start,end;
   View *view= (View *) data;
   GtkTextBuffer *buffer = view->buffer->buffer;
+  /*
+   * reset the non editable zone 
+   */
   gtk_text_buffer_get_bounds (buffer, &start, &end);
-  /* gtk_text_buffer_apply_tag(buffer,   view->buffer->not_editable_tag,   &start, &end); */
+  gtk_text_buffer_get_iter_at_mark (buffer, &end, view->buffer->mark);
+  gtk_text_buffer_apply_tag (view->buffer->buffer,
+			     view->buffer->not_editable_tag,
+			     &start, &end);
 }
 
 static gboolean
@@ -897,6 +927,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   GtkTextBuffer *buffer = view->buffer->buffer;
 
   g_signal_stop_emission_by_name (widget, "drag_data_received");
+
   /*
    * reset the non editable zone 
    */
@@ -905,6 +936,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
   gtk_text_buffer_apply_tag (view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
+
   /* deals with the drop */
   
   gtk_text_buffer_begin_user_action (buffer); 
@@ -927,7 +959,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
         return;
 
       g_return_if_fail (GTK_IS_TEXT_BUFFER (src_buffer));
-
+      
       if (gtk_text_buffer_get_tag_table (src_buffer) !=
           gtk_text_buffer_get_tag_table (buffer))
         {
@@ -1024,12 +1056,14 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  str = gtk_selection_data_get_text (selection_data);
 	  if (str)
 	    {
+	      int n = strlen((char *) str);
 	      GtkTextIter iter;
-	      gchar *str;
-	      str = gtk_text_iter_get_visible_text (&start, &end);
 	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
-					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
-	      nsp_eval_pasted_from_clipboard((gchar *) str,view,1,iter);
+						GTK_TEXT_VIEW(view->text_view)->dnd_mark );
+	      /* remove trailing \r\n */
+	      if ( str[n-2] == '\r' ) str[n-2]='\0';
+	      if ( str[n-1] == '\n' ) str[n-2]='\0';
+	      nsp_eval_drag_drop_info_text((gchar *) str,view,1,iter);
 	      g_free (str);
 	    }
 	}
@@ -1055,8 +1089,6 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
 	  if (str)
 	    {
 	      GtkTextIter iter;
-	      gchar *str;
-	      str = gtk_text_iter_get_visible_text (&start, &end);
 	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter, 
 					    GTK_TEXT_VIEW(view->text_view)->dnd_mark );
 	      nsp_eval_pasted_from_clipboard((gchar *) str,view,1,iter);
