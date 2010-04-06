@@ -64,7 +64,7 @@ extern GtkWidget *create_main_menu( GtkWidget  *window);
 extern Get_char nsp_set_getchar_fun(Get_char F);
 extern SciReadFunction nsp_set_readline_fun(SciReadFunction F);
 extern const char * nsp_logo_xpm[];
-extern void nsp_eval_str_in_textview(const gchar *nsp_expr) ;
+extern char *nsp_prompt(void);
 
 typedef struct _view_history view_history;
 
@@ -776,6 +776,24 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr)
     }
 }
 
+void nsp_eval_str_in_terminal(const gchar *str)
+{
+  if ( nsp_get_in_text_view() == TRUE ) 
+    {
+      nsp_eval_str_in_textview(str);
+    }
+  else
+    {
+      int rep;
+      NspSMatrix *S = nsp_smatrix_split_string(str,"\n",1);
+      nsp_readline_clear_line();
+      Sciprintf("\n");
+      rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+      nsp_smatrix_destroy(S);
+      /* restore a prompt */
+      Sciprintf(nsp_prompt());
+    }
+}
 
 /**
  * nsp_eval_drag_drop_info_text: 

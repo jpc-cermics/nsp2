@@ -37,14 +37,11 @@
 #include "../system/files.h" /* FSIZE */
 
 extern int nsp_edit(char *filename, int read_only);
-extern void nsp_eval_str_in_textview(const gchar *nsp_expr);
+extern char *nsp_prompt(void);
+extern void nsp_eval_str_in_terminal(const gchar *str);
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
-
-static gint untitled_serial = 1;
-
-GSList *active_window_stack = NULL;
 
 struct _Buffer
 {
@@ -114,8 +111,10 @@ gboolean filechooser_save_run (GtkWindow    *parent,
 			       FileselOKFunc func,
 			       gpointer      data);
 
-GSList *buffers = NULL;
-GSList *views = NULL;
+static gint untitled_serial = 1;
+static GSList *active_window_stack = NULL;
+static GSList *buffers = NULL;
+static GSList *views = NULL;
 
 static void
 push_active_window (GtkWindow *window)
@@ -140,78 +139,11 @@ get_active_window (void)
     return NULL;
 }
 
-/*
- * Filesel utility function
- */
-
-#if 0 
-/* deprecated code */
-static void
-filesel_ok_cb (GtkWidget *button, GtkWidget *filesel)
-{
-  FileselOKFunc ok_func = (FileselOKFunc)g_object_get_data (G_OBJECT (filesel), "ok-func");
-  gpointer data = g_object_get_data (G_OBJECT (filesel), "ok-data");
-  gint *result = g_object_get_data (G_OBJECT (filesel), "ok-result");
-  
-  gtk_widget_hide (filesel);
-  
-  if ((*ok_func) (gtk_file_selection_get_filename (GTK_FILE_SELECTION (filesel)), data))
-    {
-      gtk_widget_destroy (filesel);
-      *result = TRUE;
-    }
-  else
-    gtk_widget_show (filesel);
-}
-
-static gboolean filesel_run (GtkWindow    *parent, 
-			     const char   *title,
-			     const char   *start_file,
-			     FileselOKFunc func,
-			     gpointer      data)
-{
-  GtkWidget *filesel = gtk_file_selection_new (title);
-  gboolean result = FALSE;
-
-  if (!parent)
-    parent = get_active_window ();
-  
-  if (parent)
-    gtk_window_set_transient_for (GTK_WINDOW (filesel), parent);
-
-  if (start_file)
-    gtk_file_selection_set_filename (GTK_FILE_SELECTION (filesel), start_file);
-
-  
-  g_object_set_data (G_OBJECT (filesel), "ok-func", func);
-  g_object_set_data (G_OBJECT (filesel), "ok-data", data);
-  g_object_set_data (G_OBJECT (filesel), "ok-result", &result);
-
-  g_signal_connect (GTK_FILE_SELECTION (filesel)->ok_button,
-		    "clicked",
-		    G_CALLBACK (filesel_ok_cb), filesel);
-  g_signal_connect_swapped (GTK_FILE_SELECTION (filesel)->cancel_button,
-			    "clicked",
-			    G_CALLBACK (gtk_widget_destroy), filesel);
-
-  g_signal_connect (filesel, "destroy",
-		    G_CALLBACK (gtk_main_quit), NULL);
-
-  gtk_window_set_modal (GTK_WINDOW (filesel), TRUE);
-
-  gtk_widget_show (filesel);
-  gtk_main ();
-
-  return result;
-}
-#endif 
-
-static
-gboolean filechooser_open_run (GtkWindow    *parent, 
-			       const char   *title,
-			       const char   *start_file,
-			       FileselOKFunc func,
-			       gpointer      data)
+static gboolean filechooser_open_run (GtkWindow    *parent, 
+				      const char   *title,
+				      const char   *start_file,
+				      FileselOKFunc func,
+				      gpointer      data)
 {
   gboolean result = FALSE;
   char *filename=NULL;
@@ -252,12 +184,11 @@ gboolean filechooser_open_run (GtkWindow    *parent,
   return result;
 }
 
-static
-gboolean filechooser_save_run (GtkWindow    *parent, 
-			       const char   *title,
-			       const char   *start_file,
-			       FileselOKFunc func,
-			       gpointer      data)
+static gboolean filechooser_save_run (GtkWindow    *parent, 
+				      const char   *title,
+				      const char   *start_file,
+				      FileselOKFunc func,
+				      gpointer      data)
 {
   gboolean result = FALSE;
   char *filename=NULL;
@@ -299,21 +230,17 @@ gboolean filechooser_save_run (GtkWindow    *parent,
 }
 
 
-
-
 /*
  * MsgBox utility functions
  */
 
-static void
-msgbox_yes_cb (GtkWidget *widget, gboolean *result)
+static void msgbox_yes_cb (GtkWidget *widget, gboolean *result)
 {
   *result = 0;
   gtk_object_destroy (GTK_OBJECT (gtk_widget_get_toplevel (widget)));
 }
 
-static void
-msgbox_no_cb (GtkWidget *widget, gboolean *result)
+static void msgbox_no_cb (GtkWidget *widget, gboolean *result)
 {
   *result = 1;
   gtk_object_destroy (GTK_OBJECT (gtk_widget_get_toplevel (widget)));
@@ -715,16 +642,7 @@ static void do_execute (GtkAction *action)
     {
       /* execute the file contents through matrix */
       const char *buf_str= gtk_text_iter_get_text (&start, &end);
-      if ( nsp_get_in_text_view() == TRUE ) 
-	{
-	  nsp_eval_str_in_textview(buf_str);
-	}
-      else
-	{
-	  NspSMatrix *S = nsp_smatrix_split_string(buf_str,"\n",1);
-	  rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
-	  nsp_smatrix_destroy(S);
-	}
+      nsp_eval_str_in_terminal(buf_str);
     }
   pop_active_window ();
 }
@@ -744,16 +662,7 @@ static void do_execute_selection(GtkAction *action)
   if (! gtk_text_buffer_get_selection_bounds (view->buffer->buffer, &start, &end)) 
     return;
   str = gtk_text_iter_get_visible_text (&start, &end);
-  if ( nsp_get_in_text_view() == TRUE ) 
-    {
-      nsp_eval_str_in_textview(str);
-    }
-  else
-    {
-      NspSMatrix *S = nsp_smatrix_split_string(str,"\n",1);
-      nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
-      nsp_smatrix_destroy(S);
-    }
+  nsp_eval_str_in_terminal(str);
   pop_active_window ();
 }
 
