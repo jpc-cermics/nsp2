@@ -172,11 +172,20 @@ static char *nsp_gmarkup_node_type_short_string(NspObject *v)
 
 /*
  * A == B 
+ * XXXX unfinished 
  */
 
 static int nsp_gmarkup_node_eq(NspGMarkupNode *A, NspObject *B)
 {
-  /* XXXX */
+  NspGMarkupNode *nB = (NspGMarkupNode *)B;
+  if (check_cast (B,nsp_type_gmarkup_node_id) == FALSE)
+    return FALSE;
+  if (strcmp( A->name, nB->name) != 0 ) return FALSE; 
+  if ( NSP_OBJECT(A->children)->type->eq(A->children,nB->children) == FALSE )
+    return FALSE;
+  if ( NSP_OBJECT(A->attributes)->type->eq(A->attributes,nB->attributes) == FALSE )
+    return FALSE;
+  /* we do not compare the gm_father */
   return TRUE;
 }
 
@@ -587,7 +596,7 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
 {
   NspObject *Obj;
   GMarkupDomContext *dom_context = user_data;
-  printf("Entering a passthrough %s\n",text);
+  /* printf("Entering a passthrough %s\n",text); */
   if ((Obj = nsp_new_string_obj("text",text,-1)) == NULLOBJ ) return;
   if ( dom_context->current_root != NULL)
     {
