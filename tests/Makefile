@@ -72,7 +72,8 @@ TESTS= \
 	matops.dia \
 	min_max_minmax_int.dia \
 	statfuncs.dia \
-	smio.dia
+	smio.dia \
+	select.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \

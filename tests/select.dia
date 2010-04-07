@@ -1,0 +1,51 @@
+-nsp->// -*- Mode: scilab -*- 
+-nsp->function y=f(x)
+==>  z=56
+==>  global w
+==>  w=34
+==>  select x
+==>   case z then y=1;
+==>   case w then y=1.2;
+==>   case 'foo' then y=2;
+==>   case {'a','b'} then y=3;
+==>  else
+==>    y=6;
+==>  end	
+==>endfunction
+f	=		pl (file='select.tst')
+
+  [34mfunction[0m y=f(x)
+    z=56
+
+    [34mglobal[0m w
+    w=34
+
+    [34mselect[0m x
+      [34mcase[0m z [34mthen
+[0m        y=1;
+      [34mcase[0m w [34mthen
+[0m        y=1.2;
+      [34mcase[0m "foo" [34mthen
+[0m        y=2;
+      [34mcase[0m {"a","b"} [34mthen
+[0m        y=3;
+      [34melse
+[0m        y=6;
+    [34mend[0m
+  [34mendfunction[0m
+-nsp->x=34;
+-nsp->if f(x)<> 1.2 then pause;end 
+-nsp->if f(34)<> 1.2 then pause;end 
+-nsp->x=56;
+-nsp->if f(x)<> 1 then pause;end 
+-nsp->if f(56)<> 1 then pause;end 
+-nsp->if f('foo')<> 2 then pause;end 
+-nsp->x='foo';
+-nsp->if f(x)<> 2 then pause;end 
+-nsp->if f('a')<> 3 then pause;end 
+-nsp->x='a';
+-nsp->if f(x)<> 3 then pause;end 
+-nsp->if f('b')<> 3 then pause;end 
+-nsp->x='b';
+-nsp->if f(x)<> 3 then pause;end 
+-nsp->if f(560)<> 6 then pause;end 
