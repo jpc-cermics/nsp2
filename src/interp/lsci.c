@@ -41,6 +41,7 @@
 #include "../system/files.h"
 
 /* FIXME: these is to be in a .h file */
+extern void nsp_textview_destroy(void);
 extern void sci_clear_and_exit(int);
 extern void primitive_types_register(void);
 extern int  nsp_new_frame(void);
@@ -383,6 +384,8 @@ void sci_clear_and_exit(int n)
   }
 #endif 
 #endif 
+  /* clear the texview if we have one */
+  nsp_textview_destroy();
   /* really exit */
   exit(n);
 }

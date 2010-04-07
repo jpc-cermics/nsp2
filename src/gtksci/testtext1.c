@@ -73,7 +73,7 @@ struct _view_history {
   int history_size, dir ; /* dir = 0,1,-1 */
 };
 
-#define MAX_HISTORY_SIZE 1000
+#define MAX_HISTORY_SIZE 10
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
@@ -104,8 +104,6 @@ static char buf[1025];
 
 static Buffer *create_buffer      (void);
 static View   *create_view      (Buffer *buffer);
-static void    check_close_view (View   *view);
-static void    close_view       (View   *view);
 static void    nsp_insert_prompt(const char *prompt);
 static void    nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View   *view, int position, GtkTextIter iter);
 static int Xorgetchar_textview(void);
@@ -145,14 +143,14 @@ static void nsp_textview_insert_logo (View *view)
  * 
  * Returns: 
  **/
+
 static gint delete_event_cb (GtkWidget *window, GdkEventAny *event, gpointer data)
 {
-  View *view = g_object_get_data (G_OBJECT (window), "view");      
-  check_close_view (view);
   /* take care here that we want to quit the gtk_main */
   sci_clear_and_exit(0);
   return TRUE;
 }
+
 
 /*
  * Menu callbacks
@@ -212,18 +210,6 @@ static void buffer_unref (Buffer *buffer)
       g_object_unref (buffer->buffer);
       g_free (buffer);
     }
-}
-
-static void close_view (View *view)
-{
-  buffer_unref (view->buffer);
-  gtk_widget_destroy (view->window);
-  g_free (view);
-}
-
-static void check_close_view (View *view)
-{
-  close_view (view);
 }
 
 
@@ -291,6 +277,17 @@ static void nsp_append_history(char *text,view_history *data, int readline_add)
   else 
     {
       data->history_size++;
+    }
+}
+
+static void nsp_clear_textview_history(View *view)
+{
+  view_history *data = view->view_history;
+  GList *history = data->history; 
+  while ( history != NULL) 
+    {
+      g_free (history->data);
+      history = g_list_delete_link (history, history);
     }
 }
 
@@ -419,7 +416,7 @@ static void key_press_return(View *view,int stop_signal)
     }
   if ( search_string[0] != '\0' && search_string[0] != '\n' ) 
     nsp_append_history(search_string,  view->view_history, TRUE);
-  if ( search_string[strlen(search_string)-1] != '\n')
+  if (1) /* search_string[strlen(search_string)-1] != '\n') */
     {
       gtk_text_buffer_insert (buffer, &end, "\n",-1);
       gtk_text_buffer_get_bounds (buffer, &start, &end);
@@ -1571,3 +1568,22 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 
 
 
+
+/**
+ * nsp_textview_destroy:
+ * @void: 
+ * 
+ * this is to be called in  sci_clear_and_exit;
+ * 
+ **/
+
+void nsp_textview_destroy()
+{
+  if ( nsp_get_in_text_view() == FALSE ) return;
+  if ( view == NULL ) return;
+  nsp_clear_textview_history(view);
+  buffer_unref (view->buffer);
+  gtk_widget_destroy (view->window);
+  g_free (view);
+  view = NULL;
+}
