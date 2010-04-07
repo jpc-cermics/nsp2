@@ -98,7 +98,7 @@ void nsp_setenv(const char *name,const char *value)
 	 * when there are N interpreters there will be N! propagations
 	 * of the same value among the interpreters.
 	 */
-
+      
 	if (strcmp(value, environ[index]+length+1) == 0) {
 	    return;
 	}
@@ -292,7 +292,6 @@ static void ReplaceString(const char *oldStr, char *newStr)
 {
     int i;
     char **newCache;
-
     /*
      * Check to see if the old value was allocated by Tcl.  If so,
      * it needs to be deallocated to avoid memory leaks.  Note that this
@@ -301,43 +300,46 @@ static void ReplaceString(const char *oldStr, char *newStr)
      */
 
     for (i = 0; i < cacheSize; i++) {
-	if ((environCache[i] == oldStr) || (environCache[i] == NULL)) {
+      if ((environCache[i] == oldStr) || (environCache[i] == NULL)) {
 	    break;
 	}
     }
-    if (i < cacheSize) {
+    if (i < cacheSize) 
+      {
 	/*
 	 * Replace or delete the old value.
 	 */
-
 	if (environCache[i]) {
 	    ckfree(environCache[i]);
 	}
 	    
 	if (newStr) {
-	    environCache[i] = newStr;
+	  environCache[i] = newStr;
+	  /* jpc 2010 */
+	  if ( i+1 < cacheSize ) environCache[i+1] = NULL;
 	} else {
-	    for (; i < cacheSize-1; i++) {
-		environCache[i] = environCache[i+1];
-	    }
-	    environCache[cacheSize-1] = NULL;
+	  for (; i < cacheSize-1; i++) {
+	    environCache[i] = environCache[i+1];
+	  }
+	  environCache[cacheSize-1] = NULL;
 	}
-    } else {	
+      } 
+    else 
+      {	
 	/*
 	 * We need to grow the cache in order to hold the new string.
 	 */
-
 	newCache = (char **) ckalloc((cacheSize + 5) * sizeof(char *));
 	if (environCache) {
-	    memcpy((void *) newCache, (void *) environCache,
+	  memcpy((void *) newCache, (void *) environCache,
 		    (size_t) (cacheSize * sizeof(char*)));
-	    ckfree((char *) environCache);
+	  ckfree((char *) environCache);
 	}
 	environCache = newCache;
 	environCache[cacheSize] = (char *) newStr;
 	environCache[cacheSize+1] = NULL;
 	cacheSize += 5;
-    }
+      }
 }
 
 
