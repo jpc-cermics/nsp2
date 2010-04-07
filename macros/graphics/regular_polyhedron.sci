@@ -22,6 +22,14 @@ function [V,F] = regular_polyhedron(polyhedron_name)
 // AUTHOR
 //    Bruno Pincon <bruno.pincon@iecn.u-nancy.fr>
 //
+   if nargin ~= 1 then
+      error("Error: regular_polyhedron needs one input argument")
+   end
+   
+   if ~ ( is(polyhedron_name,%types.SMat) && numel(polyhedron_name)==1 ) then
+      error("Error: argument should be a (scalar) string")
+   end
+   
    if polyhedron_name == "hexahedron" then, polyhedron_name = "cube", end
 
    select polyhedron_name
@@ -72,6 +80,6 @@ function [V,F] = regular_polyhedron(polyhedron_name)
 	       4  1  5  1  7  2  6 12  3  8  9  4  5  7 12  7  8 10  9 12]
 	 
    else
-      error("bad argument")
+      error("bad regular polyhedron name")
    end
 endfunction
