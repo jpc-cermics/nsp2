@@ -1,0 +1,49 @@
+-nsp->// -*- Mode: scilab -*- 
+-nsp->// Copyright (C) 2010 Jean-Philippe Chancelier Cermics/Enpc
+-nsp->//
+-nsp->// This program is free software; you can redistribute it and/or modify
+-nsp->// it under the terms of the GNU General Public License as published by
+-nsp->// the Free Software Foundation; either version 2 of the License, or
+-nsp->// (at your option) any later version.
+-nsp->//
+-nsp->// This program is distributed in the hope that it will be useful,
+-nsp->// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-nsp->// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-nsp->// GNU General Public License for more details.
+-nsp->//
+-nsp->// You should have received a copy of the GNU General Public License
+-nsp->// along with this program; if not, write to the Free Software
+-nsp->// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+-nsp->//
+-nsp->// basic tests of markup. 
+-nsp->G=gmarkup("gmarkup.xml");
+-nsp->// G is a markup node 
+-nsp->if type(G,'short') <> 'gmn' then pause;end 
+-nsp->// top level node is a model 
+-nsp->if G.name <> 'model' then pause;end 
+-nsp->L=G.children;
+-nsp->if type(L(2),'short') <> 'gmn' then pause;end 
+-nsp->if type(L(6),'short') <> 'gmn' then pause;end 
+-nsp->H=L(6);
+-nsp->if H.name <> 'elements' then pause;end 
+-nsp->function node=get_node(G,node_name,depth)
+==>// search in node G of type Gmarkup the first subnode 
+==>// named node_name and returns the associated node 
+==>  L= G.children;
+==>  node=[];
+==>  for i=1:length(L)
+==>    elt = L(i);
+==>    if type(elt,'short') == 'gmn' then
+==>      if elt.name == node_name then node= elt;return;end;
+==>      node = get_node(elt,node_name,depth+1);
+==>      if ~node.equal[[]] then 
+==>	return;
+==>      end;
+==>    end
+==>  end
+==>endfunction;
+-nsp->node = get_node(G,"id",0);
+-nsp->if node.children(1) <> "Bache1.__der_Hm" then pause;end 
+-nsp->node2 = get_node(G,"id",0);
+-nsp->if ~node.equal[node2] then pause;end 
+-nsp->if ~node.equal[node2] then pause;end 

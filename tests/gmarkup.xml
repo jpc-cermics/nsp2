@@ -1,0 +1,50 @@
+<model>
+  <name>Hydraulics</name>
+  <![CDATA[ foo < 89 ]]> 
+  <elements foo="34" poo="foo" >
+    <struct>
+      <name>Bache1</name>
+      <subnodes>
+	<terminal>
+	  <name>__der_Hm</name>
+	  <kind>variable</kind>
+	  <id>Bache1.__der_Hm</id>
+	  <fixed value="false"/>
+	  <initial_value value="0."/>
+	  <comment value="Time derivative of Bache1.Hm"/>
+	  <selected value="y" />
+	</terminal>
+	<terminal>
+	  <name>__der_z</name>
+	  <kind>variable</kind>
+	  <id>Bache1.__der_z</id>
+	  <fixed value="false"/>
+	  <initial_value value="0."/>
+	  <comment value="Time derivative of Bache1.z"/>
+	  <selected value="y" />
+	</terminal>
+      </subnodes>
+    </struct>
+    <struct>
+      <name>Source1</name>
+      <subnodes>
+	<terminal>
+	  <name>Pm</name>
+	  <kind>variable</kind>
+	  <id>Source1.Pm</id>
+	  <fixed value="false"/>
+	  <initial_value value=""/>
+	  <comment value="Pression moyenne"/>
+	</terminal>
+	<terminal>
+	  <name>Q</name>
+	  <kind>variable</kind>
+	  <id>Source1.Q</id>
+	  <fixed value="false"/>
+	  <initial_value value=""/>
+	  <comment value="Débit"/>
+	</terminal>
+      </subnodes>
+    </struct>
+  </elements>
+</model>

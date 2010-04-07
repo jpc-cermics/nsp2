@@ -73,7 +73,8 @@ TESTS= \
 	min_max_minmax_int.dia \
 	statfuncs.dia \
 	smio.dia \
-	select.dia 
+	select.dia \
+	markup.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
