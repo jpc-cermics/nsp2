@@ -53,3 +53,16 @@ if node.children(1) <> "Bache1.__der_Hm" then pause;end
 node2 = get_node(G,"id",0);
 
 if ~node.equal[node2] then pause;end 
+
+// test of m2base64 and base642m 
+
+str = G.children(4);
+// get the string inside CDATA 
+str1=part(str,10:length(str)-3)
+val = base642m(str1)
+if ~val.equal[[%pi;%e;4]] then pause;end 
+str2=m2base64(val); 
+if str2 <> str1 then pause;end 
+
+
+

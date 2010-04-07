@@ -46,4 +46,19 @@
 -nsp->if node.children(1) <> "Bache1.__der_Hm" then pause;end 
 -nsp->node2 = get_node(G,"id",0);
 -nsp->if ~node.equal[node2] then pause;end 
--nsp->if ~node.equal[node2] then pause;end 
+-nsp->// test of m2base64 and base642m 
+-nsp->str = G.children(4);
+-nsp->// get the string inside CDATA 
+-nsp->str1=part(str,10:length(str)-3)
+str1	=		s (1x1)
+
+  QAkh+1RELRhABb8KixRXaUAQAAAAAAAA
+-nsp->val = base642m(str1)
+val	=		r (3x1)
+
+ |  3.1416 |
+ |  2.7183 |
+ |  4.0000 |
+-nsp->if ~val.equal[[%pi;%e;4]] then pause;end 
+-nsp->str2=m2base64(val); 
+-nsp->if str2 <> str1 then pause;end 
