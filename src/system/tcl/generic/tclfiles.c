@@ -1801,8 +1801,9 @@ int nsp_glob(const char *pattern)
   int result = TCL_OK;
   nsp_tcldstring buffer;
   char *separators, *head, *tail,*str;
-
-  str = nsp_new_string(pattern,-1);
+  char pattern1[FSIZE+1];
+  nsp_path_expand(pattern,pattern1,FSIZE);
+  str = nsp_new_string(pattern1,-1);
   nsp_tcldstring_init(&buffer);
   separators = NULL;		/* Needed only to prevent gcc warnings. */
   
