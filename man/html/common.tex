@@ -14,12 +14,8 @@
 
 %\newenvironment{mansectionunder}[2]{\newpage\section*{#1}\hypertarget{#2}{}}
 
-\newenvironment{mandesc-old}{%
-  \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\texttt{##1}}%
-  \HCode{<div class="manref">}\begin{description}}{\end{description}\HCode{</div>}}
-
 \newenvironment{mandesc}{%
-  \HCode{<div class="manref">}\begin{flushleft}}{\end{flushleft}\HCode{</div>}}
+  \begin{flushleft} \HCode{<div class="manref">}}{\HCode{</div>}\end{flushleft}}
 
 % \def\short#1#2{%
 %   \index{#1}\label{#1}%
