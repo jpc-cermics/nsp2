@@ -1903,7 +1903,7 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
   char c;
   int result = TCL_OK;
   nsp_tcldstring buffer;
-  char *separators, *head, *tail,*str;
+  char *separators, *head, *tail,*str1;
   
   nsp_tcldstring_init(&buffer);
   separators = NULL;		/* Needed only to prevent gcc warnings. */
@@ -1913,7 +1913,10 @@ int int_glob (Stack stack,int rhs,int opt,int lhs)
   
   for (i = 1 ; i <= rhs ; i++) 
     {
-      if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
+      char str[FSIZE+1];
+      if ((str1 = GetString(stack,i)) == (char*)0) return RET_BUG;
+      /* expand file */
+      nsp_path_expand(str1,str,FSIZE);
       switch (tclPlatform) {
       case TCL_PLATFORM_UNIX:
 	separators = "/";
