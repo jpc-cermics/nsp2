@@ -43,9 +43,8 @@
   <definitions>
 
     <!--
-      this is not yet supported by octave, but it's supported
+      this is not yet supported by nsp 
       by matlab - http://www.mathworks.com/access/helpdesk/help/techdoc/matlab_prog/f0-41244.html#f0-45380
-    -->
     <context id="multiline-comment" style-ref="comment" class="comment" class-disabled="no-spell-check">
       <start>^\s*%{\s*$</start>
       <end>^\s*%}\s*$</end>
@@ -53,6 +52,7 @@
         <context ref="def:in-comment"/>
       </include>
     </context>
+    -->
 
     <context id="line-comment" style-ref="comment" end-at-line-end="true" class="comment" class-disabled="no-spell-check">
       <start>//</start>
@@ -92,20 +92,36 @@
     </context>
 
     <context id="reserved-constant" style-ref="reserved-constant">
-      <keyword>%pi</keyword>
-      <keyword>%eps</keyword>
-      <keyword>%inf</keyword>
-      <keyword>%nan</keyword>
-      <keyword>%win32</keyword>
-      <keyword>%nsp</keyword>
+     <keyword>%argv</keyword>
+     <keyword>%e</keyword>
+     <keyword>%fftw</keyword>
+     <keyword>%inf</keyword>
+     <keyword>%nsp_version</keyword>
+     <keyword>%shext</keyword>
+     <keyword>%umfpack</keyword>
+     <keyword>GDK</keyword>
+     <keyword>%ast</keyword>
+     <keyword>%eps</keyword>
+     <keyword>%host</keyword>
+     <keyword>%nan</keyword>
+     <keyword>%null</keyword>
+     <keyword>%win32</keyword>
+     <keyword>GTK</keyword>
+     <keyword>%cholmod</keyword>
+     <keyword>%i</keyword>
+     <keyword>%nsp</keyword>
+     <keyword>%pi</keyword>
+     <keyword>%types</keyword>
+     <keyword>ATK</keyword>
+     <keyword>PANGO</keyword>
     </context>
-
+      
     <context id="keyword" style-ref="keyword">
       <keyword>break</keyword>
       <keyword>case</keyword>
       <keyword>catch</keyword>
       <keyword>continue</keyword>
-      <keyword>fo</keyword>
+      <keyword>do</keyword>
       <keyword>elseif</keyword>
       <keyword>else</keyword>
       <keyword>end</keyword>
@@ -121,6 +137,7 @@
       <keyword>return</keyword>
       <keyword>select</keyword>
       <keyword>try</keyword>
+      <keyword>then</keyword>
       <keyword>while</keyword>
     </context>
     
@@ -154,6 +171,8 @@
       <keyword>cumprod</keyword>
       <keyword>dims</keyword>
       <keyword>error</keyword>
+      <keyword>exec</keyword>
+      <keyword>execstr</keyword>
       <keyword>fclose</keyword>
       <keyword>floor</keyword>
       <keyword>fopen</keyword>
@@ -210,7 +229,9 @@
 
     <context id="nsp" class="no-spell-check">
       <include>
-        <context ref="multiline-comment"/>
+	<!--
+           <context ref="multiline-comment"/>
+	   -->
         <context ref="line-comment"/>
         <context ref="double-quoted-string"/>
         <context ref="single-quoted-string"/>

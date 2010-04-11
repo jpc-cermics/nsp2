@@ -46,6 +46,8 @@
 
 #include <nsp/object.h>
 #include <nsp/parse.h>
+#include <nsp/nsptcl.h>
+
 #include "../system/files.h" /* FSIZE */
 
 extern void nsp_eval_str_in_terminal(const gchar *str, int execute_silently);
@@ -393,7 +395,7 @@ get_language (GtkTextBuffer *buffer, const gchar *filename)
   GtkTextIter start, end;
   gchar *text;
   gchar *lang_string;
-  
+  const char *ext;
   gtk_text_buffer_get_start_iter (buffer, &start);
   end = start;
   gtk_text_iter_forward_line (&end);
@@ -416,10 +418,11 @@ get_language (GtkTextBuffer *buffer, const gchar *filename)
       g_strfreev (tokens);
     }
 
-  if (!language)
+  if (!language && filename != NULL )
     language = get_language_for_file (buffer, filename);
 
-  if (!language)
+  ext= nsp_get_extension(filename);
+  if (!language || strcmp(ext,".sci")== 0 || strcmp(ext,".sce")==0 )
     language = nsp_gtksource_language ();
 
   g_free (text);
@@ -452,18 +455,20 @@ open_file (GtkSourceBuffer *buffer, const gchar *filename)
   remove_all_marks (buffer);
   
   success = gtk_source_buffer_load_file (buffer, filename, NULL);
-  if (!success)
-    goto out;
-  
+
+  /* this will set language to nsp if filename == NULL */
+
   language = get_language (GTK_TEXT_BUFFER (buffer), filename);
   if (language == NULL)
     g_print ("No language found for file `%s'\n", filename);
   gtk_source_buffer_set_language (buffer, language);
-  g_object_set_data_full (G_OBJECT (buffer),
-			  "filename", g_strdup (filename),
-			  (GDestroyNotify) g_free);
-  
- out:
+
+  if ( success )
+    {
+      g_object_set_data_full (G_OBJECT (buffer),
+			      "filename", g_strdup (filename),
+			      (GDestroyNotify) g_free);
+    }
   g_free (freeme);
   return success;
 }
@@ -1278,7 +1283,7 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
 	
       g_free (chars);
     }
-
+  
   if (!result && have_backup)
     {
       if ( g_rename (bak_filename, filename) != 0)
@@ -1320,15 +1325,18 @@ save_as_ok_func (const char *filename, gpointer data)
 	  if (result != GTK_RESPONSE_ACCEPT ) return FALSE;
 	}
     }
-  
-  
+
   if (save_buffer (buffer, filename ))
     {
+      static GtkSourceLanguage *language;
       /* this will free old value */
       g_object_set_data_full (G_OBJECT (buffer),
 			      "filename", g_strdup (filename),
 			      (GDestroyNotify) g_free);
-      /* XX buffer_filename_set (buffer); */
+      /* language may have changed */
+      language = get_language (GTK_TEXT_BUFFER (buffer), filename);
+      if ( language != NULL)
+	gtk_source_buffer_set_language (buffer, language);
       return TRUE;
     }
   else
@@ -1353,8 +1361,10 @@ save_cb (GtkAction *action, gpointer user_data)
   char *filename = g_object_get_data (G_OBJECT (buffer), "filename");
   g_return_if_fail (GTK_IS_SOURCE_BUFFER (user_data));
   buffer = GTK_SOURCE_BUFFER (user_data);
-  if ( !filename ) save_as_cb(action,user_data);
-  save_buffer (buffer, filename );
+  if ( filename == NULL) 
+    save_as_cb(action,user_data);
+  else
+    save_buffer (buffer, filename );
 }
 
 /*  
