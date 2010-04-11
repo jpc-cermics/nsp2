@@ -1701,9 +1701,9 @@ char *nsp_translate_file_name(char *name,nsp_tcldstring *bufferPtr)
  * starts.  If there is no extension, returns %NULL.
  **/
 
-char *nsp_get_extension(char *name)
+const char *nsp_get_extension(const char *name)
 {
-  char *p, *lastSep;
+  const char *p, *lastSep;
 
   /*
    * First find the last directory separator.

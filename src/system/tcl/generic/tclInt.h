@@ -107,7 +107,7 @@ extern void		nsp_finalize_environment (void);
 
 extern char *		nsp_get_cwd (void);
 extern char *		nsp_getenv (const char *name);
-extern char *		nsp_get_extension (char *name);
+extern const char *	nsp_get_extension (const char *name);
 
 extern char *		nsp_get_user_home (char *name, nsp_tcldstring *bufferPtr);
 

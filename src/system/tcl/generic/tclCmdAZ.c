@@ -126,7 +126,8 @@ int int_syscd(Stack stack,int rhs,int opt,int lhs)
 
 int int_sysfile(Stack stack,int rhs,int opt,int lhs) 
 {
-  char *fileName, *extension, *errorString;
+  char *fileName, *errorString;
+  const char *extension;
   int statOp = 0;		/* Init. to avoid compiler warning. */
   int mode = 0;		/* Init. to avoid compiler warning. */
   struct stat statBuf;
