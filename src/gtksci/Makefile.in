@@ -12,7 +12,7 @@ LIBRARY = nsp.a
 OBJSC =	command.o  io.o \
 	menus.o  x_main.o \
 	about.o queue.o @HELP_OBJS@ @GTKPLUGBUG@ \
-	testtext1.o testtext.o @RC_FILE@
+	testtext1.o edit.o @RC_FILE@ 
 
 OBJSF  = 
 
@@ -47,7 +47,7 @@ distclean::
 nsp_ico.o: nsp.rc 
 	windres nsp.rc nsp_ico.o
 
-
+edit.o: gtktextview.c gtksourceview.c
 
 # generated with gcc -MMD 
 #--------------------------
