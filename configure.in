@@ -1018,6 +1018,7 @@ fi
 # check for libgtkhtml-2.0
 # if WebKit not found 
 #--------------------------
+
 GTKHTML=no
 
 if test "x${have_webkit}" = "xno" ; then
@@ -1039,9 +1040,24 @@ if test "x${have_webkit}" = "xno" ; then
    LIBS=$ac_save_LIBS
 fi
 
-# terminal library 
-# check first for vte then for zvt 
+#--------------------
+# check for WebKit 
+#---------------------
+
+PKG_CHECK_MODULES(gtksourceview, gtksourceview-2.0 , have_gtksourceview=yes, have_gtksourceview=no)
+if test "x${have_gtksourceview}" = "xyes" ; then
+     GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtksourceview-2.0"
+     GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtksourceview-2.0"
+     GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     GTKSOURCEVIEW_OBJS="gtksourceview.o"
+     AC_DEFINE(HAVE_GTKSOURCEVIEW,[] , [Whether gtksourceview-2.0 is available])
+fi
+
+#--------------------
+# check first for vte 
 # but not for mingw32 compilation. 
+#--------------------
 
 if test "$MINGW32" != "yes" ; then 
    ac_save_LIBS="$LIBS"
@@ -1651,6 +1667,7 @@ AC_SUBST(UFSPARSE_LIB)
 AC_SUBST(SYST_FILES)
 AC_SUBST(RC_FILE)
 AC_SUBST(ZLIB_LIBS)
+AC_SUBST(GTKSOURCEVIEW_OBJS)
 
 AC_OUTPUT(Makefile.incl Makefile scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl )
 
@@ -1729,6 +1746,7 @@ else
    echo "no browser !"
 fi
 fi
+
 echo 
 echo 
 echo "C compiler.............:" $CC
