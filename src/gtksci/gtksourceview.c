@@ -43,6 +43,7 @@
 #include <gtksourceview/gtksourcestyleschememanager.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
 #include <gtksourceview/gtksourceiter.h>
+#include <gtksourceview/gtksourcegutter.h> 
 
 #include <nsp/object.h>
 #include <nsp/parse.h>
