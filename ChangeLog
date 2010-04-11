@@ -1,3 +1,8 @@
+2010-04-11  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* src/gtksci/*: changes and addition in order to use 
+	gtksourceview for text editor widget
+
 2010-01-16  Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
 	* macros/statistics: add some options to mean, var, and std
