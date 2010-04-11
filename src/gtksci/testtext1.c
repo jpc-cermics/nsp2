@@ -749,7 +749,7 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
  * 
  **/
 
-void nsp_eval_str_in_textview(const gchar *nsp_expr) 
+void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently) 
 {
   GtkTextIter start, end;
   int rep,  i;
@@ -762,7 +762,10 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr)
     {
       nsp_append_history(S->S[i], view->view_history, TRUE);
     }
-  rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+  if ( execute_silently == TRUE ) 
+    rep = nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,FALSE);
+  else
+    rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
   nsp_smatrix_destroy(S);
   if ( get_is_reading() == TRUE ) 
     {
@@ -773,11 +776,11 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr)
     }
 }
 
-void nsp_eval_str_in_terminal(const gchar *str)
+void nsp_eval_str_in_terminal(const gchar *str, int execute_silently)
 {
   if ( nsp_get_in_text_view() == TRUE ) 
     {
-      nsp_eval_str_in_textview(str);
+      nsp_eval_str_in_textview(str,execute_silently);
     }
   else
     {
@@ -785,7 +788,10 @@ void nsp_eval_str_in_terminal(const gchar *str)
       NspSMatrix *S = nsp_smatrix_split_string(str,"\n",1);
       nsp_readline_clear_line();
       Sciprintf("\n");
-      rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+      if ( execute_silently == TRUE ) 
+	rep = nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,FALSE);
+      else 
+	rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
       nsp_smatrix_destroy(S);
       /* restore a prompt */
       Sciprintf(nsp_prompt());

@@ -48,11 +48,12 @@
 #include <nsp/parse.h>
 #include "../system/files.h" /* FSIZE */
 
-extern void nsp_eval_str_in_terminal(const gchar *str);
+extern void nsp_eval_str_in_terminal(const gchar *str, int execute_silently);
 
 /* Global list of open windows */
 static GList *windows = NULL;
 static GtkSourceStyleScheme *style_scheme = NULL;
+static int execute_silently= TRUE;
 
 /* Private data structures */
 #define MARK_TYPE_2      "two"
@@ -81,10 +82,15 @@ static void draw_spaces_toggled_cb(GtkAction *action, gpointer user_data);
 static void wrap_lines_toggled_cb (GtkAction *action, gpointer user_data);
 static void auto_indent_toggled_cb (GtkAction *action, gpointer user_data);
 static void insert_spaces_toggled_cb(GtkAction *action, gpointer user_data);
+static void silent_execute_toggled_cb (GtkAction *action, gpointer user_data);
 static void tabs_toggled_cb (GtkAction *action,GtkAction *current, gpointer user_data); 
 static void indent_toggled_cb(GtkAction *action,GtkAction *current, gpointer user_data); 
+
+
 static void forward_string_cb (GtkAction *action, gpointer user_data);
 static void backward_string_cb (GtkAction *action, gpointer user_data);
+
+
 static GtkWidget *create_view_window(GtkSourceBuffer *buffer, GtkSourceView  *from);
 
 /* Actions & UI definition ---------------------------------------------------- */
@@ -101,13 +107,14 @@ static GtkActionEntry buffer_action_entries[] = {
 
 static GtkActionEntry view_action_entries[] = {
   { "FileMenu", NULL, "_File", NULL, NULL, NULL },
-  { "Print", GTK_STOCK_PRINT, "_Print", "<control>P",
+  { "Print", GTK_STOCK_PRINT, "_Print", NULL /*"<control>P"*/ ,
     "Print the current file", G_CALLBACK (print_file_cb) },
   { "ViewMenu", NULL, "_View", NULL, NULL, NULL },
+  { "ExecMenu", NULL, "Tools", NULL, NULL, NULL },
   { "TabWidth", NULL, "_Tab Width", NULL, NULL, NULL },
   { "IndentWidth", NULL, "I_ndent Width", NULL, NULL, NULL },
   { "SmartHomeEnd", NULL, "_Smart Home/End", NULL, NULL, NULL },
-  { "Find", GTK_STOCK_FIND, "_Find", "<control>F",
+  { "Find", GTK_STOCK_FIND, "_Find", NULL /* "<control>F */,
     "Find", G_CALLBACK (find_cb) },
   { "Replace", GTK_STOCK_FIND_AND_REPLACE, "Search and _Replace", "<control>R",
     "Search and Replace", G_CALLBACK (replace_cb) },
@@ -144,7 +151,10 @@ static GtkToggleActionEntry toggle_entries[] = {
     G_CALLBACK (auto_indent_toggled_cb), FALSE },
   { "InsertSpaces", NULL, "Insert _Spaces Instead of Tabs", NULL,
     "Whether to insert space characters when inserting tabulations",
-    G_CALLBACK (insert_spaces_toggled_cb), FALSE }
+    G_CALLBACK (insert_spaces_toggled_cb), FALSE },
+  { "SilentExecute", NULL, "Execute code silently", NULL,
+    "Toggle silent execution code option",
+    G_CALLBACK (silent_execute_toggled_cb), TRUE }
 };
 
 static GtkRadioActionEntry tabs_radio_entries[] = {
@@ -235,8 +245,6 @@ static const gchar *buffer_ui_description =
   "      <menuitem action=\"Open\"/>"
   "      <menuitem action=\"Save\"/>"
   "      <menuitem action=\"SaveAs\"/>"
-  "      <menuitem action=\"Execute\" />\n"
-  "      <menuitem action=\"ExecuteSelection\" />\n"
   "      <menuitem action=\"Print\"/>"
   "      <menuitem action=\"Find\"/>"
   "      <menuitem action=\"Replace\"/>"
@@ -244,6 +252,11 @@ static const gchar *buffer_ui_description =
   "      <menuitem action=\"Close\"/>"
   "    </menu>"
   "    <menu action=\"ViewMenu\">"
+  "    </menu>"
+  "    <menu action=\"ExecMenu\">"
+  "      <menuitem action=\"Execute\" />\n"
+  "      <menuitem action=\"ExecuteSelection\" />\n"
+  "      <menuitem action=\"SilentExecute\" />\n"
   "    </menu>"
   "  </menubar>"
   "</ui>";
@@ -354,12 +367,12 @@ get_language_for_file (GtkTextBuffer *buffer, const gchar *filename)
   language = gtk_source_language_manager_guess_language (manager,
 							 filename,
 							 content_type);
-
+  /* 
   g_message ("Detected '%s' mime type for file %s, chose language %s",
 	     content_type ? content_type : "(null)",
 	     filename,
 	     language ? gtk_source_language_get_id (language) : "(none)");
-
+  */
   g_free (content_type);
   g_free (text);
   return language;
@@ -469,7 +482,8 @@ static void execute_cb (GtkAction *action, gpointer user_data)
   
   /* save first */
   /* push_active_window (GTK_WINDOW (view->window)); */
-  
+
+  remove_all_marks (buffer);
   gtk_text_buffer_get_bounds (GTK_TEXT_BUFFER (buffer), &start, &end);
   filename = g_object_get_data (G_OBJECT (buffer), "filename");
   
@@ -477,6 +491,10 @@ static void execute_cb (GtkAction *action, gpointer user_data)
     {
       if (  save_buffer (buffer,filename)== FALSE) return;
       /* execute the file contents */
+      if ( execute_silently == FALSE ) 
+	{
+	  display = echo = TRUE;
+	}
       rep =nsp_parse_eval_file(filename,display,echo,errcatch,
 			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
       if ( rep < 0 ) 
@@ -510,7 +528,7 @@ static void execute_cb (GtkAction *action, gpointer user_data)
     {
       /* execute the file contents through matrix */
       const char *buf_str= gtk_text_iter_get_text (&start, &end);
-      nsp_eval_str_in_terminal(buf_str);
+      nsp_eval_str_in_terminal(buf_str, execute_silently);
     }
   /* 
      pop_active_window ();
@@ -526,11 +544,12 @@ static void execute_selection_cb (GtkAction *action, gpointer user_data)
   g_return_if_fail (GTK_IS_SOURCE_BUFFER (user_data));
   /* save first */
   /* push_active_window (GTK_WINDOW (view->window)); */
+  remove_all_marks (buffer);
   
   if (! gtk_text_buffer_get_selection_bounds (GTK_TEXT_BUFFER (buffer), &start, &end)) 
     return;
   str = gtk_text_iter_get_visible_text (&start, &end);
-  nsp_eval_str_in_terminal(str);
+  nsp_eval_str_in_terminal(str,execute_silently);
   /* pop_active_window (); */
 }
 
@@ -657,6 +676,15 @@ insert_spaces_toggled_cb (GtkAction *action,
 }
 
 static void
+silent_execute_toggled_cb (GtkAction *action,
+			   gpointer user_data)
+{
+  g_return_if_fail (GTK_IS_TOGGLE_ACTION (action) && GTK_IS_SOURCE_VIEW (user_data));
+  execute_silently = gtk_toggle_action_get_active (GTK_TOGGLE_ACTION (action));
+
+}
+
+static void
 tabs_toggled_cb (GtkAction *action,
 		 GtkAction *current,
 		 gpointer user_data)
@@ -688,6 +716,8 @@ smart_home_end_toggled_cb (GtkAction *action,
 				      GTK_SOURCE_VIEW (user_data),
 				      gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action)));
 }
+
+
 
 
 static void
@@ -1783,7 +1813,7 @@ int nsp_edit(const char *fname)
   open_file (buffer, fname);
   /* create first window */
   window = create_main_window (buffer);
-  gtk_window_set_default_size (GTK_WINDOW (window), 500, 500);
+  gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_widget_show (window);
   return 0;
 }
