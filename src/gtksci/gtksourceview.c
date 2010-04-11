@@ -1908,7 +1908,6 @@ static GtkSourceLanguage *nsp_gtksource_language (void)
       gtk_source_language_manager_set_search_path (lm, lang_dirs);
     }
   nsp = gtk_source_language_manager_get_language(lm,"nsp");
-  g_assert (GTK_IS_SOURCE_LANGUAGE (nsp));
   return nsp;
 }
 
