@@ -43,8 +43,9 @@
 #include <gtksourceview/gtksourcestyleschememanager.h>
 #include <gtksourceview/gtksourceprintcompositor.h>
 #include <gtksourceview/gtksourceiter.h>
+#ifdef HAVE_GTKSOURCEVIEW_GUTTER
 #include <gtksourceview/gtksourcegutter.h> 
-
+#endif 
 #include <nsp/object.h>
 #include <nsp/parse.h>
 #include <nsp/nsptcl.h>
@@ -89,10 +90,10 @@ static void silent_execute_toggled_cb (GtkAction *action, gpointer user_data);
 static void tabs_toggled_cb (GtkAction *action,GtkAction *current, gpointer user_data); 
 static void indent_toggled_cb(GtkAction *action,GtkAction *current, gpointer user_data); 
 
-
+#ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
 static void forward_string_cb (GtkAction *action, gpointer user_data);
 static void backward_string_cb (GtkAction *action, gpointer user_data);
-
+#endif 
 
 static GtkWidget *create_view_window(GtkSourceBuffer *buffer, GtkSourceView  *from);
 
@@ -121,10 +122,12 @@ static GtkActionEntry view_action_entries[] = {
     "Find", G_CALLBACK (find_cb) },
   { "Replace", GTK_STOCK_FIND_AND_REPLACE, "Search and _Replace", "<control>R",
     "Search and Replace", G_CALLBACK (replace_cb) },
+#ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
   { "ForwardString", NULL, "_Forward to string toggle", "<control>S",
     "Forward to the start or end of the next string", G_CALLBACK (forward_string_cb) },
   { "BackwardString", NULL, "_Backward to string toggle", "<control><shift>S",
     "Backward to the start or end of the next string", G_CALLBACK (backward_string_cb) }
+#endif 
 };
 
 static GtkToggleActionEntry toggle_entries[] = {
@@ -234,9 +237,11 @@ static const gchar *view_ui_description =
   "        <menuitem action=\"SmartHomeEndAfter\"/>"
   "        <menuitem action=\"SmartHomeEndAlways\"/>"
   "      </menu>"
+#ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
   "      <separator/>"
   "      <menuitem action=\"ForwardString\"/>"
   "      <menuitem action=\"BackwardString\"/>"
+#endif 
   "    </menu>"
   "  </menubar>"
   "</ui>";
@@ -723,8 +728,8 @@ smart_home_end_toggled_cb (GtkAction *action,
 				      gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action)));
 }
 
-
-
+#ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
+/* 2.10.0 ? version */
 
 static void
 forward_string_cb (GtkAction *action,
@@ -781,6 +786,7 @@ backward_string_cb (GtkAction *action,
       gtk_text_view_scroll_mark_onscreen (GTK_TEXT_VIEW (view), insert);
     }
 }
+#endif 
 
 /* Buffer action callbacks ------------------------------------------------------------ */
 
@@ -1422,9 +1428,12 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
   GtkTextIter iter, start;
   GtkSourceView *view;
   GtkLabel *pos_label;
+  GString *str;
+#ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
   gchar **classes;
   gchar **classes_ptr;
-  GString *str;
+#endif 
+
 
   g_return_if_fail (GTK_IS_SOURCE_VIEW (user_data));
 
@@ -1455,10 +1464,11 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
       gtk_text_iter_forward_char (&start);
     }
 
+  str = g_string_new ("");
+
+#ifdef HAVE_GTKSOURCEVIEW_CONTEXT_CLASS
   classes = gtk_source_buffer_get_context_classes_at_iter (GTK_SOURCE_BUFFER (buffer),
 							   &iter);
-
-  str = g_string_new ("");
   classes_ptr = classes;
 
   while (classes_ptr && *classes_ptr)
@@ -1471,8 +1481,8 @@ update_cursor_position (GtkTextBuffer *buffer, gpointer user_data)
       g_string_append_printf (str, "%s", *classes_ptr);
       ++classes_ptr;
     }
-
   g_strfreev (classes);
+#endif 
 
   msg = g_strdup_printf ("char: %d, line: %d, column: %d, classes: %s", chars, row, col, str->str);
   gtk_label_set_text (pos_label, msg);
@@ -1513,6 +1523,7 @@ window_deleted_cb (GtkWidget *widget, GdkEvent *ev, gpointer user_data)
   return FALSE;
 }
 
+#ifdef HAVE_GTKSOURCEVIEW_GUTTER
 static void
 line_mark_activated (GtkSourceGutter *gutter, 
                      GtkTextIter     *iter,
@@ -1546,11 +1557,12 @@ line_mark_activated (GtkSourceGutter *gutter,
     }
   g_slist_free (mark_list);
 }
-
+#endif 
 
 
 /* Window creation functions -------------------------------------------------------- */
 
+#ifdef HAVE_GTKSOURCEVIEW_GUTTER
 static gchar *
 mark_tooltip_func (GtkSourceMark *mark,
 		   gpointer	  user_data)
@@ -1582,6 +1594,7 @@ add_source_mark_pixbufs (GtkSourceView *view)
 							 NULL,
 							 NULL);
 }
+#endif 
 
 static GtkWidget *
 create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
@@ -1610,7 +1623,10 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
 
   g_signal_connect (buffer, "mark-set", G_CALLBACK (move_cursor_cb), view);
   g_signal_connect (buffer, "changed", G_CALLBACK (update_cursor_position), view);
+#ifdef HAVE_GTKSOURCEVIEW_GUTTER
   g_signal_connect (view,   "line-mark-activated", G_CALLBACK (line_mark_activated), view);
+#endif 
+
   g_signal_connect (window, "delete-event", (GCallback) window_deleted_cb, view);
   
   /* action group and UI manager */
@@ -1730,7 +1746,9 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
       g_free (tmp);
     }
   
+#ifdef HAVE_GTKSOURCEVIEW_GUTTER
   add_source_mark_pixbufs (GTK_SOURCE_VIEW (view));
+#endif 
 
   /* update the name */
   view_set_title (GTK_SOURCE_VIEW (view),FALSE);

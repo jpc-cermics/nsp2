@@ -1041,7 +1041,7 @@ if test "x${have_webkit}" = "xno" ; then
 fi
 
 #--------------------
-# check for WebKit 
+# check for gtksourceview-2.0
 #---------------------
 
 PKG_CHECK_MODULES(gtksourceview, gtksourceview-2.0 , have_gtksourceview=yes, have_gtksourceview=no)
@@ -1052,6 +1052,14 @@ if test "x${have_gtksourceview}" = "xyes" ; then
      GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
      GTKSOURCEVIEW_OBJS="gtksourceview.o"
      AC_DEFINE(HAVE_GTKSOURCEVIEW,[] , [Whether gtksourceview-2.0 is available])
+     PKG_CHECK_MODULES(gtk_source_gutter_insert,  gtksourceview-2.0 >= 2.8.0 , have_gutter=yes, have_gutter=no)
+     if test "x${have_gutter}" = "xyes" ; then
+     	AC_DEFINE(HAVE_GTKSOURCEVIEW_GUTTER,[] , [Whether gtksourceview-2.0 has gutter API])
+     fi
+     PKG_CHECK_MODULES(gtk_source_buffer_get_context_classes_at_iter,  gtksourceview-2.0 >= 2.10.0 , have_context_class=yes, have_context_class=no)
+     if test "x${have_context_class}" = "xyes" ; then
+     	AC_DEFINE(HAVE_GTKSOURCEVIEW_CONTEXT_CLASS,[] , [Whether gtksourceview-2.0 has context_class API])
+     fi
 fi
 
 #--------------------
