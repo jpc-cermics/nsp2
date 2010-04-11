@@ -17,8 +17,10 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- *
- *  modified for a text editor for nsp 
+ *  This file is a modified version of the testfile testtext.c 
+ *  from gtk distribution, modified to build a small text editor 
+ *  for nsp 
+ *  Copyright (C) 2001-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  */
 
@@ -72,6 +74,7 @@ struct _View
 static void push_active_window (GtkWindow *window);
 static void pop_active_window (void);
 static GtkWindow *get_active_window (void);
+static void error_dialog (GtkWindow *parent, const gchar *msg, ...);
 
 static Buffer * create_buffer      (void);
 static gboolean check_buffer_saved (Buffer *buffer);
@@ -230,154 +233,6 @@ static gboolean filechooser_save_run (GtkWindow    *parent,
 }
 
 
-/*
- * MsgBox utility functions
- */
-
-static void msgbox_yes_cb (GtkWidget *widget, gboolean *result)
-{
-  *result = 0;
-  gtk_object_destroy (GTK_OBJECT (gtk_widget_get_toplevel (widget)));
-}
-
-static void msgbox_no_cb (GtkWidget *widget, gboolean *result)
-{
-  *result = 1;
-  gtk_object_destroy (GTK_OBJECT (gtk_widget_get_toplevel (widget)));
-}
-
-static gboolean
-msgbox_key_press_cb (GtkWidget *widget, GdkEventKey *event, gpointer data)
-{
-  /* fprintf(stderr,"key pressed \n"); */
-  if (event->keyval == GDK_Escape)
-    {
-      g_signal_stop_emission_by_name (widget, "key_press_event");
-      gtk_object_destroy (GTK_OBJECT (widget));
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-/* Don't copy this example, it's all crack-smoking - you can just use
- * GtkMessageDialog now
- */
-
-static gint
-msgbox_run (GtkWindow  *parent,
-	    const char *message,
-	    const char *yes_button,
-	    const char *no_button,
-	    const char *cancel_button,
-	    gint default_index)
-{
-  gboolean result = -1;
-  GtkWidget *dialog;
-  GtkWidget *button;
-  GtkWidget *label;
-  GtkWidget *vbox;
-  GtkWidget *button_box;
-  GtkWidget *separator;
-
-  g_return_val_if_fail (message != NULL, FALSE);
-  g_return_val_if_fail (default_index >= 0 && default_index <= 1, FALSE);
-
-  if (!parent)
-    parent = get_active_window ();
-  
-  /* Create a dialog
-   */
-  dialog = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-  if (parent)
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), parent);
-  gtk_window_set_position (GTK_WINDOW (dialog), GTK_WIN_POS_MOUSE);
-
-  /* Quit our recursive main loop when the dialog is destroyed.
-   */
-  g_signal_connect (dialog, "destroy",
-		    G_CALLBACK (gtk_main_quit), NULL);
-
-  /* Catch Escape key presses and have them destroy the dialog
-   */
-  g_signal_connect (dialog, "key_press_event",
-		    G_CALLBACK (msgbox_key_press_cb), NULL);
-
-  /* Fill in the contents of the widget
-   */
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (dialog), vbox);
-  
-  label = gtk_label_new (message);
-  gtk_misc_set_padding (GTK_MISC (label), 12, 12);
-  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-  gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
-
-  separator = gtk_hseparator_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), separator, FALSE, FALSE, 0);
-
-  button_box = gtk_hbutton_box_new ();
-  gtk_box_pack_start (GTK_BOX (vbox), button_box, FALSE, FALSE, 0);
-  gtk_container_set_border_width (GTK_CONTAINER (button_box), 8);
-  
-
-  /* When Yes is clicked, call the msgbox_yes_cb
-   * This sets the result variable and destroys the dialog
-   */
-  if (yes_button)
-    {
-      button = gtk_button_new_with_label (yes_button);
-      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-      gtk_container_add (GTK_CONTAINER (button_box), button);
-
-      if (default_index == 0)
-	gtk_widget_grab_default (button);
-      
-      g_signal_connect (button, "clicked",
-			G_CALLBACK (msgbox_yes_cb), &result);
-    }
-
-  /* When No is clicked, call the msgbox_no_cb
-   * This sets the result variable and destroys the dialog
-   */
-  if (no_button)
-    {
-      button = gtk_button_new_with_label (no_button);
-      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-      gtk_container_add (GTK_CONTAINER (button_box), button);
-
-      if (default_index == 0)
-	gtk_widget_grab_default (button);
-      
-      g_signal_connect (button, "clicked",
-			G_CALLBACK (msgbox_no_cb), &result);
-    }
-
-  /* When Cancel is clicked, destroy the dialog
-   */
-  if (cancel_button)
-    {
-      button = gtk_button_new_with_label (cancel_button);
-      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-      gtk_container_add (GTK_CONTAINER (button_box), button);
-      
-      if (default_index == 1)
-	gtk_widget_grab_default (button);
-      
-      g_signal_connect_swapped (button, "clicked",
-				G_CALLBACK (gtk_object_destroy), dialog);
-    }
-
-  gtk_widget_show_all (dialog);
-
-  /* Run a recursive main loop until a button is clicked
-   * or the user destroys the dialog through the window mananger */
-  gtk_main ();
-
-  return result;
-}
-
 #ifdef DO_BLINK
 /*
  * Example buffer filling code
@@ -412,10 +267,7 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
   
   if (f == NULL)
     {
-      gchar *err = g_strdup_printf ("Cannot open file '%s': %s",
-				    filename, g_strerror (errno));
-      msgbox_run (NULL, err, "OK", NULL, NULL, 0);
-      g_free (err);
+      error_dialog (NULL,"Cannot open file '%s': %s", filename, g_strerror (errno));
       return FALSE;
     }
   
@@ -1683,6 +1535,31 @@ create_view (Buffer *buffer,int read_only)
   return view;
 }
 
+/*
+ * utility function 
+ */
+
+static void error_dialog (GtkWindow *parent, const gchar *msg, ...)
+{
+  va_list ap;
+  gchar *tmp;
+  GtkWidget *dialog;
+
+  va_start (ap, msg);
+  tmp = g_strdup_vprintf (msg, ap);
+  va_end (ap);
+
+  dialog = gtk_message_dialog_new (parent,
+				   GTK_DIALOG_DESTROY_WITH_PARENT,
+				   GTK_MESSAGE_ERROR,
+				   GTK_BUTTONS_OK,
+				   "%s", tmp);
+  g_free (tmp);
+
+  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+}
+
 
 #ifdef ALONE 
 int
@@ -1718,10 +1595,9 @@ int nsp_edit(char *filename, int read_only)
     open_ok_func (filename, view);
   push_active_window (GTK_WINDOW (view->window));
   pop_active_window ();
-  /* gtk_main (); */
-  /* nsp_edit_gtks(); */
   return 0;
 }
+
 #endif
 
 

@@ -1,3 +1,4 @@
 *.d
 .archive_target
 Makefile
+helpbrowser
