@@ -295,9 +295,7 @@ fill_file_buffer (GtkTextBuffer *buffer, const char *filename)
 
   if (remaining)
     {
-      gchar *err = g_strdup_printf ("Invalid UTF-8 data encountered reading file '%s'", filename);
-      msgbox_run (NULL, err, "OK", NULL, NULL, 0);
-      g_free (err);
+      error_dialog (NULL,"Invalid UTF-8 data encountered reading file '%s'", filename);
     }
   
   /* We had a newline in the buffer to begin with. (The buffer always contains
@@ -697,10 +695,8 @@ static gboolean save_buffer (Buffer *buffer)
     {
       if (errno != ENOENT)
 	{
-	  gchar *err = g_strdup_printf ("Cannot back up '%s' to '%s': %s",
-					buffer->filename, bak_filename, g_strerror (errno));
-	  msgbox_run (NULL, err, "OK", NULL, NULL, 0);
-	  g_free (err);
+	  error_dialog (NULL,"Cannot back up '%s' to '%s': %s",
+			buffer->filename, bak_filename, g_strerror (errno));
           return FALSE;
 	}
     }
@@ -710,9 +706,8 @@ static gboolean save_buffer (Buffer *buffer)
   file = fopen (buffer->filename, "w");
   if (!file)
     {
-      gchar *err = g_strdup_printf ("Cannot back up '%s' to '%s': %s",
-				    buffer->filename, bak_filename, g_strerror (errno));
-      msgbox_run (NULL, err, "OK", NULL, NULL, 0);
+      error_dialog (NULL,"Cannot back up '%s' to '%s': %s",
+		    buffer->filename, bak_filename, g_strerror (errno));
     }
   else
     {
@@ -724,10 +719,8 @@ static gboolean save_buffer (Buffer *buffer)
       if (fputs (chars, file) == EOF ||
 	  fclose (file) == EOF)
 	{
-	  gchar *err = g_strdup_printf ("Error writing to '%s': %s",
-					buffer->filename, g_strerror (errno));
-	  msgbox_run (NULL, err, "OK", NULL, NULL, 0);
-	  g_free (err);
+	  error_dialog (NULL,"Error writing to '%s': %s",
+			buffer->filename, g_strerror (errno));
 	}
       else
 	{
@@ -744,10 +737,8 @@ static gboolean save_buffer (Buffer *buffer)
     {
       if ( g_rename (bak_filename, buffer->filename) != 0)
 	{
-	  gchar *err = g_strdup_printf ("Error restoring backup file '%s' to '%s': %s\nBackup left as '%s'",
-					buffer->filename, bak_filename, g_strerror (errno), bak_filename);
-	  msgbox_run (NULL, err, "OK", NULL, NULL, 0);
-	  g_free (err);
+	  error_dialog (NULL, "Error restoring backup file '%s' to '%s': %s\nBackup left as '%s'",
+			buffer->filename, bak_filename, g_strerror (errno), bak_filename);
 	}
     }
 
@@ -768,12 +759,21 @@ save_as_ok_func (const char *filename, gpointer data)
 
       if (stat (filename, &statbuf) == 0)
 	{
-	  gchar *err = g_strdup_printf ("Ovewrite existing file '%s'?", filename);
-	  gint result = msgbox_run (NULL, err, "Yes", "No", NULL, 1);
+	  gint result;
+	  gchar *err = g_strdup_printf ("Overwrite existing file '%s'?", filename);
+	  GtkWidget *dialog = gtk_dialog_new_with_buttons (err,
+							   NULL,
+							   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+							   GTK_STOCK_OK,
+							   GTK_RESPONSE_ACCEPT,
+							   GTK_STOCK_CANCEL,
+							   GTK_RESPONSE_REJECT,
+							   NULL);
+	  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+	  result = gtk_dialog_run (GTK_DIALOG (dialog));
 	  g_free (err);
-
-	  if (result != 0)
-	    return FALSE;
+	  gtk_widget_destroy (dialog);
+	  if (result != GTK_RESPONSE_ACCEPT ) return FALSE;
 	}
     }
   
@@ -803,15 +803,25 @@ static gboolean check_buffer_saved (Buffer *buffer)
 {
   if (gtk_text_buffer_get_modified (buffer->buffer))
     {
+      GtkWidget *dialog;
       char *pretty_name = buffer_pretty_name (buffer);
       char *msg = g_strdup_printf ("Save changes to '%s'?", pretty_name);
       gint result;
-      
       g_free (pretty_name);
-      
-      result = msgbox_run (NULL, msg, "Yes", "No", "Cancel", 0);
+      dialog = gtk_dialog_new_with_buttons (msg,
+					    NULL,
+					    GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					    GTK_STOCK_YES,
+					    0,
+					    GTK_STOCK_NO,
+					    1,
+					    GTK_STOCK_CANCEL,
+					    2,
+					    NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+      result = gtk_dialog_run (GTK_DIALOG (dialog));
       g_free (msg);
-  
+      gtk_widget_destroy (dialog);
       if (result == 0)
 	return save_as_buffer (buffer);
       else if (result == 1)

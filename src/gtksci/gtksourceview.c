@@ -1309,7 +1309,7 @@ save_as_ok_func (const char *filename, gpointer data)
       if (stat (filename, &statbuf) == 0)
 	{
 	  gint result;
-	  gchar *err = g_strdup_printf ("Ovewrite existing file '%s'?", filename);
+	  gchar *err = g_strdup_printf ("Overwrite existing file '%s'?", filename);
 	  GtkWidget *dialog = gtk_dialog_new_with_buttons (err,
 							   NULL,
 							   GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
