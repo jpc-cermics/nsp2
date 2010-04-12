@@ -1124,7 +1124,9 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  newpos =_nsp_plist_pretty_print_arg(List,1,newpos,posret);
 	  newpos += Sciprintf("=") ;
 	  newpos =_nsp_plist_pretty_print_arg(List->next,0,newpos,newpos+1);
-	  newpos += Sciprintf(" do\n");
+	  newpos += Sciprintf(" ");
+	  PRINTTAG("do");
+	  newpos += Sciprintf("\n");
 	  newpos =_nsp_plist_pretty_print_arg(List->next->next,posret+2,0,posret+2);
 	  if ( newpos != 0)  Sciprintf("\n");
 	  return NSP_PRINTF1_COLOR(posret,p_blue,"end");
