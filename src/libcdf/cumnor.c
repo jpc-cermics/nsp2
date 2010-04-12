@@ -94,7 +94,14 @@ int cdf_cumnor (double *arg, double *result, double *ccum)
 
   x = *arg;
   y = Abs (x);
-  if (y <= thrsh)
+
+  if ( isnan(x) )   /* bruno, april 2010 */
+    {
+      *result = x;
+      *ccum = x;
+    }
+
+  else if (y <= thrsh)
     {
       /* 
        *  Evaluate  anorm  for  |X| <= 0.66291 
@@ -116,6 +123,7 @@ int cdf_cumnor (double *arg, double *result, double *ccum)
       *result = half + temp;
       *ccum = half - temp;
     }
+
   else if (y <= root32)
     {
       /*
@@ -141,10 +149,10 @@ int cdf_cumnor (double *arg, double *result, double *ccum)
 	  *ccum = temp;
 	}
     }
-  else
+  else if (y <= 40.0)
     {
       /*
-       *  Evaluate  anorm  for |X| > sqrt(32) 
+       *  Evaluate  anorm  for  sqrt(32) < |X| <= 40 
        */
       *result = zero;
       xsq = one / (x * x);
@@ -168,6 +176,20 @@ int cdf_cumnor (double *arg, double *result, double *ccum)
 	  temp = *result;
 	  *result = *ccum;
 	  *ccum = temp;
+	}
+    }
+  else   /* case added to avoid result equal to Nan when x is +-Inf or near 
+            when using the previous block (bruno april 2010). */
+    {
+      if ( x > zero )
+	{
+	  *result= 1.0;
+	  *ccum = 0.0;
+	}
+      else
+	{
+	  *result= 0.0;
+	  *ccum = 1.0;
 	}
     }
 
