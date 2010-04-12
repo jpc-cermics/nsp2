@@ -83,7 +83,7 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
   static double c_b38 = .5;
   static double c_b40 = 5.;
   static double c_b59 = 1.;
-  const  double atol=1.0E-50, zero=1.0E-300, inf=1.0E300,one=1.0E0,tol=1.0E-8;
+  const  double atol=1.0E-50, zero=1.0E-300, inf=1.0E300,one=1.0E0,tol=1.0E-14;
 
   double d__1;
   double ccum;

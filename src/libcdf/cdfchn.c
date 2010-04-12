@@ -71,7 +71,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	    double *pnonc, int *status, double *bound)
 {
   static double c_b15 = 0., c_b16 = .5, c_b18 = 5.;
-  const double tent4=1.0E4, tol=1.0E-8, atol=1.0E-50;
+  const double tent4=1.0E4, tol=1.0E-13, atol=1.0E-50;
   const double zero=1.0E-300,one=1.0E0-1.0E-16,inf=1.0E300;
   double ccum, fx, cum;
   int qleft, qhi;

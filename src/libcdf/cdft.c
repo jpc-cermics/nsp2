@@ -61,7 +61,7 @@ cdf_cdft (int *which, double *p, double *q, double *t, double *df,
   static double c_b20 = .5;
   static double c_b22 = 5.;
   /* const double inf = 1.0D300;*/
-  const double tol=1.0E-8, atol=1.0E-50, zero=1.0E-300,rtinf=1.0E150, maxdf=1.0E10;
+  const double tol=1.0E-14, atol=1.0E-50, zero=1.0E-300,rtinf=1.0E150, maxdf=1.0E10;
   double d__1;
   double ccum;
   int qleft;

@@ -66,7 +66,7 @@ int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df,
   const double c_b25 = 0.;
   const double c_b26 = .5;
   const double c_b28 = 5.;
-  const double tol=1.0E-8,atol=1.0E-50,zero=1.0E-300,inf=1.0E300;
+  const double tol=1.0E-14,atol=1.0E-50,zero=1.0E-300,inf=1.0E300;
   double d__1;
   double ccum, porq;
   int qleft;

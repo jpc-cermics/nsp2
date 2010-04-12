@@ -63,7 +63,7 @@ static double c_b22 = 0.;
 static double c_b23 = .5;
 static double c_b25 = 5.;
 
-  const double tol=1.0E-8, atol=1.0E-50, inf=1.0E300;
+  const double tol=1.0E-14, atol=1.0E-50, inf=1.0E300;
   double d__1;
   double ccum;
   int qleft;
@@ -143,7 +143,7 @@ L110:
 
 /*     S */
 
-  if (!(*s < 0.))
+  if (!(*s < 0.) || *which==1 )   /* add *which==1 to compute cdfpoi with *s < 0 (bruno april,12,2010)) */
     {
       goto L120;
     }
@@ -205,9 +205,14 @@ L190:
       cdf_cumpoi (s, xlam, p, q);
       *status = 0;
     }
-  else if (2 == *which)
+  else if (2 == *which)       /*     Calculating S */
     {
-      /*     Calculating S */
+      if ( *p <= exp(-*xlam) ) /* bruno april 2010 (using the jpc 's workaround of cdfbin) */
+	{
+	  *status = 0; 
+	  *s =0.0;
+	  return 0;
+	}
       *s = 5.;
       cdf_dstinv (&c_b22, &inf, &c_b23, &c_b23, &c_b25, &atol, &tol);
       *status = 0;

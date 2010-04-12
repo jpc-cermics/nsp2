@@ -75,7 +75,7 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 {
   const double c_b46 = .5;
   const double c_b48 = 5.;
-  const double tol=1.0E-8, atol=1.0E-50,zero=1.0E-300,inf=1.0E300,one=1.0E0;
+  const double tol=1.0E-14, atol=1.0E-50,zero=1.0E-300,inf=1.0E300,one=1.0E0;
   const int c__1 = 1;
   double c_b35 = 0. , c_b36 = 1.;
   double ccum,  cum, xhi, xlo,  d__1, fx, pq,  xy;

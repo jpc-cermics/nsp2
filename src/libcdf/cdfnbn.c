@@ -1,6 +1,5 @@
 #include "cdf.h"
 
-
 /* ********************************************************************** */
 /*      SUBROUTINE CDFNBN ( WHICH, P,Q, S, XN, PR, STATUS, BOUND ) */
 /*               Cumulative Distribution Function */
@@ -84,7 +83,7 @@ static double c_b36 = .5;
 static double c_b38 = 5.;
 static double c_b58 = 1.;
 
-  const double tol=1.0E-8, atol=1.0E-50,inf=1.0E300, one=1.0E0;
+  const double tol=1.0E-14, atol=1.0E-50,inf=1.0E300, one=1.0E0;
   /* System generated locals */
   double d__1;
 
@@ -301,18 +300,24 @@ L310:
 
 /*     Calculate ANSWERS */
 
-  if (1 == *which)
+  if (1 == *which)            /* Calculating P */
     {
-
-/*     Calculating P */
       double sf = floor(*s);  /* add floor to compute the real cdfnbn (bruno march,22,2010)) */
       cdf_cumnbn (&sf, xn, pr, ompr, p, q);
       *status = 0;
     }
-  else if (2 == *which)
-    {
 
-/*     Calculating S */
+  else if (2 == *which)       /* Calculating S */
+    {
+      /* bruno april 2010 (using the jpc 's workaround of cdfbin) */
+      double p0, q0, s0=0.0;
+      cdf_cumnbn(&s0, xn, pr, ompr, &p0, &q0);
+      if ( *p <= p0 )
+	{
+	  *status = 0; 
+	  *s =0.0;
+	  return 0;
+	}
 
       *s = 5.;
       cdf_dstinv (&c_b35, &inf, &c_b36, &c_b36, &c_b38, &atol, &tol);

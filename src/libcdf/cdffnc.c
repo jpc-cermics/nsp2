@@ -83,7 +83,7 @@ static double c_b17 = 0.;
 static double c_b18 = .5;
 static double c_b20 = 5.;
 
-  const double tent4=1.0E4,tol=1.0E-8, atol=1.0E-50, zero=1.0E-300,one=1.0E0-1.0E-16,inf=1.0E300;
+  const double tent4=1.0E4,tol=1.0E-13, atol=1.0E-50, zero=1.0E-300,one=1.0E0-1.0E-16,inf=1.0E300;
 
   double ccum;
   int qleft;
