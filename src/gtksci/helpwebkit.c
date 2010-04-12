@@ -159,6 +159,7 @@ go_zoom_100_cb (GtkWidget* widget, gpointer data)
 static GtkWidget*
 create_browser ()
 {
+  WebKitWebSettings * settings;
   GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
@@ -170,6 +171,20 @@ create_browser ()
   g_signal_connect (G_OBJECT (web_view), "load-committed", G_CALLBACK (load_commit_cb), web_view);
   g_signal_connect (G_OBJECT (web_view), "hovering-over-link", G_CALLBACK (link_hover_cb), web_view);
 
+  /*  change default settings 
+   *
+   */
+  settings = webkit_web_settings_new();
+  g_object_set(G_OBJECT(settings),
+	       /*   "serif-font-family", x, 
+               "sans-serif-font-family", x,
+               "monospace-font-family", x, 
+               "default-font-family", x,
+	       */
+               "default-font-size", 10 ,
+               "default-monospace-font-size", 10 ,
+               NULL);
+  webkit_web_view_set_settings(WEBKIT_WEB_VIEW(web_view), settings);
   return scrolled_window;
 }
 
