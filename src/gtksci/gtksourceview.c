@@ -471,9 +471,13 @@ open_file (GtkSourceBuffer *buffer, const gchar *filename)
 
   if ( success )
     {
+      GtkWidget *view;
       g_object_set_data_full (G_OBJECT (buffer),
 			      "filename", g_strdup (filename),
 			      (GDestroyNotify) g_free);
+      view =  g_object_get_data (G_OBJECT (buffer), "buffer_view");
+      if ( view) 
+	view_set_title (GTK_SOURCE_VIEW(view), FALSE);
     }
   g_free (freeme);
   return success;
@@ -940,7 +944,6 @@ open_file_cb (GtkAction *action, gpointer user_data)
   GtkWidget *chooser;
   gint response;
   static gchar *last_dir = NULL;
-
   g_return_if_fail (GTK_IS_SOURCE_BUFFER (user_data));
 
   chooser = gtk_file_chooser_dialog_new ("Open file...",
@@ -955,13 +958,11 @@ open_file_cb (GtkAction *action, gpointer user_data)
 					 last_dir);
 
   response = gtk_dialog_run (GTK_DIALOG (chooser));
-
+  
   if (response == GTK_RESPONSE_OK)
     {
       gchar *filename;
-
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-
       if (filename != NULL)
 	{
 	  g_free (last_dir);
@@ -970,12 +971,10 @@ open_file_cb (GtkAction *action, gpointer user_data)
 	  g_free (filename);
 	}
     }
-
   gtk_widget_destroy (chooser);
 }
 
 #define NON_BLOCKING_PAGINATION
-
 #ifndef NON_BLOCKING_PAGINATION
 
 static void
