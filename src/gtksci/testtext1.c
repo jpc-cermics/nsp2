@@ -235,7 +235,6 @@ static void cursor_set_callback (GtkTextBuffer     *buffer,
 static void nsp_append_history(char *text,view_history *data, int readline_add)
 {
   /* readline history */
-  if ( strncmp(text,"quit",4)==0) return;
   if ( readline_add == TRUE)  add_history (text);
   /* textview history */
   if ( data == NULL) return ;

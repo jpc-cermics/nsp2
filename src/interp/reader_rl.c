@@ -225,8 +225,7 @@ void nsp_defscireadline_rl(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
     }
   if (hist && line && *line != '\0') 
     {
-      if ( strncmp(line,"quit",4) != 0 )
-	add_history (line);
+      add_history (line);
     }
   
   if ( line == NULL) 
