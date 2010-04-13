@@ -30,7 +30,16 @@ int cdf_cumnbn (double *s, double *xn, double *pr, double *ompr, double *cum,
 {
   double d__1;
   d__1 = *s + 1.;
-  cdf_cumbet (pr, ompr, xn, &d__1, cum, ccum);
+  if ( d__1 > DBL_MAX )  /* add this block because cumbet doesn't handle well Inf 
+                            as its 4 th parameter (return Nan). Bruno april 2010 */
+    {
+      *cum = 1.0;
+      *ccum = 0.0;
+    }
+  else
+    {
+      cdf_cumbet (pr, ompr, xn, &d__1, cum, ccum);
+    }
   return 0;
 }
 

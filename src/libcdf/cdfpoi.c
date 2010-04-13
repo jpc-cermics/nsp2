@@ -202,7 +202,8 @@ L190:
   if (1 == *which)
     {
       /*     Calculating P */
-      cdf_cumpoi (s, xlam, p, q);
+      double sf = floor(*s);  /* add floor to compute the real cdfpoi (bruno april 2010)) */
+      cdf_cumpoi (&sf, xlam, p, q);
       *status = 0;
     }
   else if (2 == *which)       /*     Calculating S */
