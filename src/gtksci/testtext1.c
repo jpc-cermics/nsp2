@@ -788,7 +788,7 @@ void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently)
       /* force a key_press_return, to scroll to end 
        * and recover a promp. 
        */
-      if ( execute_silently == FALSE || key_press=TRUE)
+      if ( execute_silently == FALSE || key_press==TRUE)
 	key_press_return(view,FALSE);
     }
 }
