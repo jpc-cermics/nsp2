@@ -744,34 +744,52 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
  * nsp_eval_str_in_textview:
  * @nsp_expr: a string to be evaluated
  * 
- * used when an edit buffer is evaluated 
+ * used when an execute selection is performed 
+ * from an edit buffer.
  * 
  **/
 
 void nsp_eval_str_in_textview(const gchar *nsp_expr, int execute_silently) 
 {
+  int key_press= FALSE;
   GtkTextIter start, end;
   int rep,  i;
   NspSMatrix *S;
   if ( view == NULL) return;
   S = nsp_smatrix_split_string(nsp_expr,"\n",1);
-  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-  gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
+  if ( execute_silently == FALSE )
+    {
+      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+      gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
+    }
   for ( i = 0 ; i < S->mn ; i++ ) 
     {
       nsp_append_history(S->S[i], view->view_history, TRUE);
     }
   if ( execute_silently == TRUE ) 
-    rep = nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,FALSE);
+    {
+      rep = nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,TRUE);
+      if ( rep < 0 ) 
+	{
+	  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+	  gtk_text_buffer_insert (view->buffer->buffer, &end, "\n",-1);
+	  nsp_error_message_show();
+	  key_press=TRUE;
+	}
+    }
   else
-    rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+    {
+      rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+    }
+
   nsp_smatrix_destroy(S);
   if ( get_is_reading() == TRUE ) 
     {
       /* force a key_press_return, to scroll to end 
-       * and recover a prompt
+       * and recover a promp. 
        */
-      key_press_return(view,FALSE);
+      if ( execute_silently == FALSE || key_press=TRUE)
+	key_press_return(view,FALSE);
     }
 }
 
