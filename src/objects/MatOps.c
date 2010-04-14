@@ -4489,7 +4489,7 @@ int nsp_mat_minus_maxplus(NspMatrix *A)
 static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 {
   static int c__1 = 1;
-  double d0 = 0.00;
+  /* double d0 = 0.00; */
   int p,k,j,k0,k1,k2,k3;
   for ( p = 0 ; p < A->n ; p++)
     {
@@ -4513,7 +4513,13 @@ static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 		    }
 		  else 
 		    {
-		      nsp_dzset(&B->m, &d0, DI, &c__1);
+		      int l;
+		      for ( l = 0 ; l < B->m; l++)
+			{
+			  DI[l].r = B->R[k2+l];
+			  DI[l].i = 0.0;
+			}
+		      /* nsp_dzset(&B->m, &d0, DI, &c__1); */
 		    }
 		  if ( A->rc_type == 'c' ) 
 		    {
