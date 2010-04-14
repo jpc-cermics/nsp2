@@ -301,27 +301,29 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
 /*
  * input('message',gui=%f,eval=%t,env=..)
  */
 
-static int int_input(Stack stack, int rhs, int opt, int lhs)
+static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_empty, int retval)
 {
   NspObject *Res;
   Tokenizer To;
-  char buf[1024],*prompt;
+  char buf[1024];
   int buf_size=1024, len_line, eof;
-  NspHash *E=NULL;
-  int display=FALSE,eval=TRUE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
-  int_types T[] = {string,new_opts, t_end} ;
-  nsp_option opts[] ={{ "eval",s_bool,NULLOBJ,-1},
-		      { "env", obj_check,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&prompt,&opts,&eval,&nsp_type_hash,&E) == FAIL) 
-    return RET_BUG;
+  int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
   nsp_init_tokenizer(&To);
   To.token_readline(&To,prompt,buf, &buf_size, &len_line, &eof);
+  if ( accept_empty == TRUE && buf[0]=='\0') 
+    {
+      if ( retval == TRUE ) 
+	{
+	  nsp_move_string(stack,1,"",-1);
+	  return 1;
+	}
+      else 
+	return 0;
+    }
   /* evaluate the string in a new frame and returns the 
    * frame as a hash table : take care that frame must be deleted 
    * at the end. 
@@ -355,8 +357,40 @@ static int int_input(Stack stack, int rhs, int opt, int lhs)
     }
   nsp_frame_delete();
   if ( rep < 0 )return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(Res));
-  return Max(1,lhs);
+  if ( retval == TRUE ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      return 1;
+    }
+  return 0;
+}
+
+
+static int int_input(Stack stack, int rhs, int opt, int lhs)
+{
+  char *prompt;
+  NspHash *E=NULL;
+  int accept_empty = FALSE, eval =FALSE,rep ;
+  int_types T[] = {string,new_opts, t_end} ;
+  nsp_option opts[] ={{ "eval",s_bool,NULLOBJ,-1},
+		      { "env", obj_check,NULLOBJ,-1},
+		      { "accept_empty", s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&prompt,&opts,&eval,&nsp_type_hash,&E,&accept_empty) == FAIL) 
+    return RET_BUG;
+  rep = _int_input(stack,prompt,eval,E,accept_empty,TRUE);
+  if ( rep == RET_BUG) return rep;
+  return Max(rep,lhs);
+}
+
+static int int_halt(Stack stack, int rhs, int opt, int lhs)
+{
+  int rep ;
+  CheckLhs(0,1);
+  CheckRhs(0,0);
+  rep = _int_input(stack,"Enter any key to continue:",FALSE,NULL,TRUE,FALSE);
+  if ( rep == RET_BUG) return rep;
+  return Max(rep,lhs);
 }
 
 
@@ -651,6 +685,7 @@ static OpTab Parse_func[]={
   {"error", int_error},
   {"astnode_create", int_astnode_create},
   {"input", int_input},
+  {"halt", int_halt},
   {(char *) 0, NULL}
 };
 
