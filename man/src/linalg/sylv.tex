@@ -1,0 +1,50 @@
+% -*- mode: latex -*-
+
+\mansection{rowcomp}
+\begin{mandesc}
+  \short{sylv}{Sylvester equation solver}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+X = sylv(A,B,C)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: matrix (size $m \times n$), real or complex.
+    \vname{B}: matrix (size $m \times n$), real or complex.
+    \vname{C}: matrix (size $m \times n$), real or complex.
+    \vname{X}: matrix
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function solves the Sylvester equation:
+$$
+ A X + X B - C = 0
+$$
+If \verb![mA,nA]=size(A);[mB,nB]=size(B);[mC,nC]=size(C);!
+\verb!mA! should be equal to \verb!mC! and \verb!nB!  should be equal to
+\verb!nC!. 
+Based on Lapack routines \verb!dtrsyl! and \verb!ztrsyl!.
+\end{mandescription}
+
+\begin{examples}
+  \begin{program}\HCode{n=4;m=3;\Hnewline
+  At=rand(n,n);Ct=rand(n,m);Bt=rand(m,m);\Hnewline
+  X = sylv(At,Bt,Ct);\Hnewline
+  norm(At*X+X*Bt-Ct)}
+  \end{program}
+\end{examples}
+
+%\begin{manseealso}
+%  \manlink{qr}{qr}
+%\end{manseealso}
+
+% -- Authors
+\begin{authors}
+   FD
+\end{authors}
