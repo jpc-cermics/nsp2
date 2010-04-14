@@ -114,7 +114,7 @@ NspIMatrix  *nsp_imatrix_create(const char *name, int m, int n,nsp_itype itype)
 NspIMatrix *nsp_imatrix_create_int_impl(NspIMatrix *First, NspIMatrix *Step,NspIMatrix *Last)
 {
   int i;
-  NspIMatrix *Loc;
+  NspIMatrix *Loc=NULL;
   NSP_ITYPE_SWITCH(First->itype,NSP_MAT_IMPL,void);
 #undef NSP_MAT_IMPL
   return Loc;
