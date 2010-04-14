@@ -1319,7 +1319,7 @@ static void nsp_string_readline_internal(char *prompt, char *buffer, int *buf_si
 
 #define MORESTR "[More (y or n ) ?] "
  
-void Defscimore(int *n)
+static void nsp_default_more(int *n)
 {
   Tokenizer T;
   char buf[2];
@@ -1335,7 +1335,17 @@ void scimore_void(int *n)
   *n=1;
 }
 
-MoreFun scimore = Defscimore;
+/**
+ * nsp_set_nsp_more:
+ * @F: a #Morefun 
+ * 
+ * used to change the interaction function activated 
+ * during output operation to ask for more output lines.
+ * 
+ * Returns: a #Morefun 
+ **/
+
+MoreFun scimore = nsp_default_more;
 
 MoreFun nsp_set_nsp_more(MoreFun F)
 {
@@ -1347,11 +1357,6 @@ MoreFun nsp_set_nsp_more(MoreFun F)
 /*
  * Input main routine !!!
  */
-
-int Defscigetchar (void)
-{
-  return getchar();
-}
 
 extern int Xorgetchar(void);
 
