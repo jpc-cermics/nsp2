@@ -162,7 +162,7 @@ function [P,Q] = cdf(dist, x, varargin)
 	if ~( is(mu,%types.Mat) && isreal(mu) && isscalar(mu) && mu >= 0 ) then
 	      error("Error: for cdf(""poi"",x,mu), mu should be a non negative real")
 	end
-	[P,Q] = cdfpoi("PQ",floor(x),mu*ones(size(x)))
+	[P,Q] = cdfpoi("PQ",x,mu*ones(size(x)))
 	
      case "f" then
 	if numel(varargin) ~= 2 then
