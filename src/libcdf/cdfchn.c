@@ -168,7 +168,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
   else if (2 == *which)
     {
       /*     Calculating X */
-      *x = 5.;
+      *x = *df + *pnonc;    /* start from the mean instead of 5, bruno april 2010 */
       cdf_dstinv (&c_b15, &inf, &c_b16, &c_b16, &c_b18, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, x, &fx, &qleft, &qhi);

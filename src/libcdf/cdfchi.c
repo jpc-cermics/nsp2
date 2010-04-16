@@ -238,7 +238,7 @@ L220:
 
 /*     Calculating X */
 
-      *x = 5.;
+      *x = *df;  /* start from the mean instead of 5, bruno april 2010 */
       cdf_dstinv (&c_b25, &inf, &c_b26, &c_b26, &c_b28, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, x, &fx, &qleft, &qhi);

@@ -319,7 +319,7 @@ L310:
 	  return 0;
 	}
 
-      *s = 5.;
+      *s = *xn *(*pr/(1.0 - *pr));  /* start from the mean instead of 5, bruno april 2010 */
       cdf_dstinv (&c_b35, &inf, &c_b36, &c_b36, &c_b38, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, s, &fx, &qleft, &qhi);

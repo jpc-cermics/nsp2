@@ -214,7 +214,7 @@ L190:
 	  *s =0.0;
 	  return 0;
 	}
-      *s = 5.;
+      *s = *xlam;  /* start from the mean instead of 5, bruno april 2010 */
       cdf_dstinv (&c_b22, &inf, &c_b23, &c_b23, &c_b25, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, s, &fx, &qleft, &qhi);
