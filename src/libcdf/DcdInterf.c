@@ -767,8 +767,8 @@ static void cdfchnErr(    int status,double bound, const int pos[])
   static char *param[7]={"WHICH", "P","Q","X","Df","Pnonc"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
       Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
