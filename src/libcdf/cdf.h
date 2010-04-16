@@ -81,6 +81,7 @@ extern int cdf_cumbet (double *x, double *y, double *a, double *b, double *cum, 
 extern int cdf_cumbin (double *s, double *xn, double *pr, double *ompr, double *cum, double *ccum);
 extern int cdf_cumchi (double *x, double *df, double *cum, double *ccum);
 extern int cdf_cumchn (double *x, double *df, double *pnonc, double *cum, double *ccum);
+extern int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *ccum);
 extern int cdf_cumf (double *f, double *dfn, double *dfd, double *cum, double *ccum);
 extern int cdf_cumfnc (double *f, double *dfn, double *dfd, double *pnonc, double *cum, double *ccum);
 extern int cdf_cumgam (double *x, double *a, double *cum, double *ccum);
