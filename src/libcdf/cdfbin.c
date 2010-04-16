@@ -318,7 +318,7 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 	  return 0;
 	}
       /*     Calculating S */
-      *s = 5.;
+      *s = *pr * *xn;  // start from the mean in place of 5. ! (bruno, april 2010)
       cdf_dstinv (&c_b37, xn, &c_b38, &c_b38, &c_b40, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, s, &fx, &qleft, &qhi);
