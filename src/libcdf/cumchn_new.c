@@ -18,6 +18,7 @@
  */
 
 #include <nsp/spmf.h>
+#include <nsp/sciio.h>
 #include "cdf.h"
 
 /**
@@ -59,6 +60,10 @@
  *   - for small non centrality parameter we use 26.4.27 of Abramowitz and Stegun
  *     in place of approximate non central chisquare directly by the central 
  *     chisquare. 
+ *
+ *   - add display of a warning message in the nsp console if the serie
+ *     is stopped by itermax instead of relative accuracy test (itermax
+ *     is also changed to 10000, was 1000 in the old code). 
  *
  *   - the new code is more readable than the old one (at least for me).
  *
@@ -138,10 +143,10 @@ int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *c
 
       double poi_wgh, current_poi_wgh, cor, current_cor, df, term, pchi2, qchi2;
       const double lhalf = 0.5*lambda, xhalf = 0.5*x, nuhalf = 0.5*nu; 
-      const int iter_max = 1000;
+      const int iter_max = 10000;
       const double eps = 1e-14;
       double sum, j, jmode;
-      int iter;
+      int iter, warning = 0;
 
       jmode = floor(lhalf);
       if (jmode == 0.0) jmode = 1.0;
@@ -179,6 +184,8 @@ int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *c
 	    }
 	  while ( j >= 0.0 && term > eps*sum && iter <= iter_max ); 
 
+	  if ( j >= 0.0 && term > eps*sum ) warning = 1;
+
 	  /* Sum forward from the central term towards infinity */
 	  current_poi_wgh = poi_wgh;
 	  current_pchi2 = pchi2; 
@@ -194,6 +201,8 @@ int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *c
 	      iter++; j++;	                    
 	    }
 	  while ( term > eps*sum && iter <= iter_max ); 
+
+	  if ( term > eps*sum ) warning = 1;
 
 	  *cum = sum;
 	  *ccum = 1.0 - sum;
@@ -222,6 +231,8 @@ int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *c
 	    }
 	  while ( j >= 0.0 && term > eps*sum && iter <= iter_max ); 
 
+	  if ( j >= 0.0 && term > eps*sum ) warning = 1;
+
 	  /* Sum forward from the central term towards infinity */
 	  current_poi_wgh = poi_wgh;
 	  current_qchi2 = qchi2; 
@@ -238,8 +249,15 @@ int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *c
 	    }
 	  while ( term > eps*sum && iter <= iter_max ); 
 
+	  if ( term > eps*sum ) warning = 1;
+
 	  *ccum = sum;
 	  *cum = 1.0 - sum;
+	}
+
+      if ( warning )
+	{
+	  Sciprintf("Warning: possible lost of accuracy in cdf('nch',..) or cdfchn('PQ',..) \n");
 	}
     }
 
