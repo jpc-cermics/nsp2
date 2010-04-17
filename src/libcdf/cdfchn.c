@@ -71,7 +71,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	    double *pnonc, int *status, double *bound)
 {
   static double c_b15 = 0., c_b16 = .5, c_b18 = 5.;
-  const double tent4=1.0E4, tol=1.0E-13, atol=1.0E-50;
+  const double tent4=1.0E4, tol=1.0E-14, atol=1.0E-50;
   const double zero=1.0E-300,one=1.0E0-1.0E-16,inf=1.0E300;
   double ccum, fx, cum;
   int qleft, qhi;
@@ -162,7 +162,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
   if (1 == *which)
     {
       /* Calculating P and Q */
-      cdf_cumchn (x, df, pnonc, p, q);
+      cdf_cumchn_new (x, df, pnonc, p, q);
       *status = 0;
     }
   else if (2 == *which)
@@ -177,7 +177,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	{
 	  goto L150;
 	}
-      cdf_cumchn (x, df, pnonc, &cum, &ccum);
+      cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
       fx = cum - *p;
       cdf_dinvr (status, x, &fx, &qleft, &qhi);
       goto L140;
@@ -212,7 +212,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	{
 	  goto L200;
 	}
-      cdf_cumchn (x, df, pnonc, &cum, &ccum);
+      cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
       fx = cum - *p;
       cdf_dinvr (status, df, &fx, &qleft, &qhi);
       goto L190;
@@ -247,7 +247,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	{
 	  goto L250;
 	}
-      cdf_cumchn (x, df, pnonc, &cum, &ccum);
+      cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
       fx = cum - *p;
       cdf_dinvr (status, pnonc, &fx, &qleft, &qhi);
       goto L240;
@@ -257,8 +257,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	  goto L280;
 	}
       if (!qleft)
-	{
-	  goto L260;
+	{goto L260;
 	}
       *status = 1;
       *bound = zero;
