@@ -5615,6 +5615,7 @@ static OpTab Matrix_func[] = {
   {"imag_m", int_mximagpart},
   {"isreal_m", int_matrix_isreal},
   {"dstd_m_m", int_mxkron},	/* operator:  .*. */
+  {"kron", int_mxkron},
   {"latexmat_m", int_mx2latexmat},
   {"latextab_m", int_mx2latextab},
   {"le_m_m", int_mxle},
