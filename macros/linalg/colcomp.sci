@@ -15,9 +15,9 @@ function [W,rk]=colcomp(A,flag,thres)
   if nargin ==2 then thres=sqrt(%eps)*norm(A,1)*max(ma,na),end
   if nargin==1 then flag='svd',thres=sqrt(%eps)*norm(A,1)*max(ma,na);end
   select flag
-  case 'qr' then [q,r,rk,e]=qr(A',thres);
+   case 'qr' then [q,r,rk,e]=qr(A',thres);
     W=q(:,na:-1:1)
-  case 'svd' then [u,s,v,rk]=svd(A',tol=thres);
+   case 'svd' then [u,s,v,rk]=svd(A',tol=thres);
     W=u(:,na:-1:1)
   end
 endfunction
