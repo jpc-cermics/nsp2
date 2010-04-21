@@ -6,6 +6,10 @@ function [X,dim,Y]=im_inv(A,B,tol)
 // The dim first columns de X span (A^-1) (B)
 // tol is a threshold to test if a  subspace is included in an other
 // default value tol = 100*%eps;
+// [Y*A*X,Y*B]=[A11 A12,B1
+//              0   A22,0]
+//with B1 full row rank and rank(B1) = rank(B), A22 full column rank and
+//dim = # columns of A11.
 // F.D.
 //!
   [nA,mA]=size(A);[nB,mB]=size(B);
