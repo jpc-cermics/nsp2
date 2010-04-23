@@ -41,12 +41,8 @@
 \newenvironment{authors}{\paragraph{Authors}}{}
 \newenvironment{secbiblio}{\paragraph{Bibliography}}{}
 
-\newenvironment{varlist}{%
-  \renewcommand{\descriptionlabel}[1]{\hspace{\labelsep}\texttt{##1}}%
-  \begin{description}}{\end{description}}
-
 \def\vname#1{\item \texttt{#1}}
-\renewenvironment{varlist}{%
+\newenvironment{varlist}{%
   \begin{itemize}}{\end{itemize}}
 
 \def\manlink#1#2{\hyperlink{#2}{#1}\quad}

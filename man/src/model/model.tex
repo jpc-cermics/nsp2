@@ -29,18 +29,37 @@ S=g(action [,q1,....,ql])
 \end{parameters}
 
 \begin{mandescription}
-  This function may be used to generate random numbers from various distributions. In this 
-  case you must apply one of the 
-  \verb!three first forms! of the possible calling sequences to get an \verb!m x n! matrix. 
-  The two firsts are equivalent if \verb!X! is a \verb!m x n! matrix, 
-  and the third form corresponds to 'multivalued' distributions (e.g. multinomial, multivariate
+  This function may be used to generate random numbers from various
+  distributions. In this case you must apply one of the \verb!three first forms!
+  of the possible calling sequences to get an \verb!m x n! matrix.  The two
+  firsts are equivalent if \verb!X! is a \verb!m x n! matrix, and the third form
+  corresponds to 'multivalued' distributions (e.g. multinomial, multivariate
   gaussian, etc...) where a sample is a column vector (says of dim \verb!m!)
-  and you get then \verb!n! such random vectors (as an \verb! m x n! matrix). 
-  \verb!The last form! is used to undertake various manipulations onto the base generators
-  like changing the base generator (since v 2.7 you may choose between several base generators), 
-  changing or retrieving its internal state (seeds), etc ... These base generators give random
-  integers following a uniform distribution on a large integer interval (lgi), all the others 
-  distributions being gotten from it (in general via a scheme lgi -$>$ U([0,1)) -$>$ wanted distribution).
+  and you get then \verb!n! such random vectors (as an \verb! m x n! matrix).
+  \verb!The last form! is used to undertake various manipulations onto the base
+  generators like changing the base generator (since v 2.7 you may choose
+  between several base generators), changing or retrieving its internal state
+  (seeds), etc ... These base generators give random integers following a
+  uniform distribution on a large integer interval (lgi), all the others
+  distributions being gotten from it (in general via a scheme lgi -$>$ U([0,1))
+  -$>$ wanted distribution).
+
+  \begin{itemize}
+  \item first item 
+  \item second item 
+  \end{itemize}
+
+  \begin{description}
+  \item['first'] item 
+  \item['second'] second item 
+  \end{description}
+
+  \begin{varlist}
+    \vname{m}: first varlist item 
+    \vname{n}: second varlist item
+  \end{varlist}
+
+
 \end{mandescription}
 
 \begin{examples}
