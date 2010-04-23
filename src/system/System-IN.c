@@ -492,6 +492,16 @@ static int int_localtime(Stack stack,int rhs,int opt,int lhs)
   return RET_BUG;
 }
 
+static int int_get_current_exec_file(Stack stack,int rhs,int opt,int lhs)
+{
+  char def_name[]= "unknown";
+  char *file_name = NspFileName(SciStack);
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+  if ( file_name == NULL) file_name = def_name;
+  nsp_move_string(stack,1,file_name,-1);
+  return 1;
+}
 
 
 /*
@@ -531,6 +541,7 @@ static OpTab System_func[]={
   {"realtime",int_realtime},
   {"realtimeinit",int_realtime_init},
   {"get_current_exec_dir", int_get_current_exec_dir},
+  {"get_current_exec_file",int_get_current_exec_file},
   {"spawn", int_spawn_create},
   {"spawn_sync", int_g_spawn_sync},
   {"spawn_async", int_g_spawn_async},
