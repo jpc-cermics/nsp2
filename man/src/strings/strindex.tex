@@ -2,27 +2,47 @@
 
 \mansection{strindex}
 \begin{mandesc}
-\short{strindex}{search occurences of a string in a string}
+\short{strindex}{search occurences of given string patterns in a string}
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-B=strindex(str1,str2)
+Ind=strindex(Str,patterns)
+[Ind,Match]=strindex(Str,patterns)
 \end{verbatim}
 \end{calling_sequence}
 
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{str1,str2}: two strings.
-    \vname{B}: a scalar matrix. 
+    \vname{Str}: a string in which patterns are searched.
+    \vname{patterns}: a set of strings given as a string matrix which gives the 
+    strings to search in \verb!Str!.
+    \vname{Ind,Match}: scalar matrices.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-returns in \verb+B(i)+, the position of the \verb+i+-th occurence 
-of string \verb+str2+ in string \verb+str1+. The length of \verb+B+ 
-gives the number of occurences of \verb+str2+ in string \verb+str1+.
+Search for occurences of the strings given by the string matrix \verb!patterns! 
+in the string \verb!Str!. The function returns a scalar matrix \verb!Ind!.
+The position in \verb!Str! of the \verb+i+-th match is stored in \verb+Ind(i)+.
+Moreover the indice in \verb!patterns! of the string which performs the \verb+i+-th 
+match is returned in  \verb+Match(i)+.
 \end{mandescription}
-% -- see also
-
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    str = 'The-night-has-a-thousand-stars';
+    k=strindex(str,'-');
+    part(str,k) == '-----' 
+    k=strindex(str,'-has') 
+    k=strindex('SCI/demos/scicos','!')
+    k=strindex('aaaaa','aa')
+    length(k)==2 
+    [k,w]=strindex(str,['-','h'])
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{string}{string} \manlink{regexp}{regexp}  
+\end{manseealso}
