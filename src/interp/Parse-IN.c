@@ -312,6 +312,7 @@ static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_e
   char buf[1024];
   int buf_size=1024, len_line, eof;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
+ again:
   nsp_init_tokenizer(&To);
   To.token_readline(&To,prompt,buf, &buf_size, &len_line, &eof);
   if ( accept_empty == TRUE && buf[0]=='\0') 
@@ -329,7 +330,7 @@ static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_e
    * at the end. 
    */
   if ( nsp_new_frame() == FAIL) return RET_BUG;
-  /* insert the contente of E in new frame */
+  /* insert the contents of E in new frame */
   if ( E != NULL) 
     {
       if ( nsp_frame_insert_hash_contents(E) == FAIL) 
@@ -345,18 +346,21 @@ static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_e
       /* get a copy of ans in the current frame and return it */
       if ((Res = nsp_frame_search_object("ans"))== NULLOBJ) 
 	{
-	  nsp_frame_delete();
-	  Scierror("Error: evaluation of expression '%s' should give a value to ans\n",buf);
-	  return RET_BUG; 
+	  Sciprintf("Error: evaluation of expression '%s' should give a value to ans\n",buf);
+	  rep = -1;
 	}
-      if ((Res = nsp_object_copy(Res))== NULLOBJ) 
+      else 
 	{
-	  nsp_frame_delete();
-	  return RET_BUG;
+	  if ((Res = nsp_object_copy(Res))== NULLOBJ) 
+	    {
+	      nsp_frame_delete();
+	      return RET_BUG;
+	    }
 	}
     }
   nsp_frame_delete();
-  if ( rep < 0 )return RET_BUG;
+  if ( rep < 0 ) goto again;
+  
   if ( retval == TRUE ) 
     {
       MoveObj(stack,1,NSP_OBJECT(Res));
