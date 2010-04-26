@@ -790,5 +790,12 @@ if norm(sqrt(a+0).^2-a)>100*%eps then pause,end
 if sqrt([])<>[] then pause,end
 a=[];if sqrt(a)<>[] then pause,end
 
+// issymmetric 
 
+a=triu(rand(4,4));
+if issymmetric(a) then pause;end 
+if ~issymmetric(a+a') then pause;end 
+b=a + %i*triu(rand(4,4));
+if issymmetric(b) then pause;end 
+if ~issymmetric(b+b') then pause;end 
 
