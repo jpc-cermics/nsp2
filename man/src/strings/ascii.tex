@@ -16,16 +16,18 @@ str=ascii(A)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{A}: a scalar matrix.
-    \vname{str}: a string
+    \vname{A}: row vector with ascii codes
+    \vname{str}: string
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
 \begin{itemize}
-  \item \verb+ascii(str)+ returns in a vector the ascii codes 
+  \item \verb+ascii(str)+ returns in a row vector the ascii codes 
     of the string \verb+str+. 
   \item \verb+ascii(A)+ returns the string obtained from the contents 
-    of the matrix \verb+A+ in a column order mode interpreted as 
-    ascii codes. 
+    of the row vector \verb+A+. If \verb+A+ is a matrix the codes are read
+    row by row to build the resulting string.
 \end{itemize}
+
+
 \end{mandescription}

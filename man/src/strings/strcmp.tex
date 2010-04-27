@@ -7,24 +7,25 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
- M=strcmp(S1,S2)  
+ res=strcmp(S1,S2)  
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{S1,S2}: two string matrices of same size (with the convention that 
-    scalar matrices are promoted).
-    \vname{Ind}: a numerical matrix.
+    \vname{S1,S2}: two string matrices of same size (with the convention that
+  scalar string are promoted).
+    \vname{res}: a numerical matrix( made of $-1$, $0$ and $1$).
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  \verb!M=strcmp(S1,S2)! returns in a scalar matrix the results of strcmp. 
+  \verb!res=strcmp(S1,S2)! returns in a matrix the results of strcmp.
 \end{mandescription}
 % --example 
 \begin{examples}
-  \begin{program}\HCode{c=strcmp(['atom','nsp','zen'],'nsp')}
-  \end{program}
+  \begin{Verbatim}
+     c=strcmp(['atom','nsp','zen'],'nsp')
+  \end{Verbatim}
 \end{examples}
 % -- see also
 \begin{manseealso}

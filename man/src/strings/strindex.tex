@@ -18,16 +18,18 @@ Ind=strindex(Str,patterns)
     \vname{Str}: a string in which patterns are searched.
     \vname{patterns}: a set of strings given as a string matrix which gives the 
     strings to search in \verb!Str!.
-    \vname{Ind,Match}: scalar matrices.
+    \vname{Ind,Match}: vectors of indices.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
 Search for occurences of the strings given by the string matrix \verb!patterns! 
-in the string \verb!Str!. The function returns a scalar matrix \verb!Ind!.
-The position in \verb!Str! of the \verb+i+-th match is stored in \verb+Ind(i)+.
-Moreover the indice in \verb!patterns! of the string which performs the \verb+i+-th 
-match is returned in  \verb+Match(i)+.
+in the string \verb!Str!. The function returns two row vectors of indices \verb!Ind!
+and  \verb!Match! with the following meaning: for the  \verb+i+-th match:
+\begin{itemize}
+\item \verb+Ind(i)+ gives its position in \verb!Str! ;
+\item \verb+Match(i)+ gives which pattern is matched (useful if \verb+patterns+ is made of several strings).
+\end{itemize}
 \end{mandescription}
 %--example 
 \begin{examples}
@@ -43,5 +45,5 @@ match is returned in  \verb+Match(i)+.
 \end{examples}
 %-- see also
 \begin{manseealso}
-  \manlink{string}{string} \manlink{regexp}{regexp}  
+  \manlink{string}{string}, \manlink{regexp}{regexp},  \manlink{strstr}{strstr}  
 \end{manseealso}

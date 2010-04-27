@@ -16,7 +16,7 @@ B=strstr(A,str)
   \begin{varlist}
     \vname{A}: a string matrix.
     \vname{str}: a string.
-    \vname{B}: a scalar matrix of same size as \verb+A+.
+    \vname{B}: a matrix of indices of same size as \verb+A+.
   \end{varlist}
 \end{parameters}
 
@@ -25,5 +25,8 @@ B=strstr(A,str)
   of string \verb+str+ in string \verb+A(i,j)+ or zero if \verb+str+ 
   is not a substring of \verb+A(i,j)+.
 \end{mandescription}
-% -- see also
 
+% -- see also
+\begin{manseealso}
+  \manlink{regexp}{regexp}, \manlink{strindex}{strindex}  
+\end{manseealso}
