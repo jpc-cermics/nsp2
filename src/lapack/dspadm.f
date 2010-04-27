@@ -1,6 +1,45 @@
 *
 * license and copyright : see expokit.txt file
 *
+c$$$ Permission to use, copy, modify, and distribute EXPOKIT and its
+c$$$ supporting documentation for non-commercial purposes, is hereby
+c$$$ granted without fee, provided that this permission message and
+c$$$ copyright notice appear in all copies. Approval must be sought for
+c$$$ commercial purposes.
+c$$$
+c$$$ Alternatively, EXPOKIT may be used under the terms of the GPL.
+c$$$
+c$$$ 
+c$$$ Neither the Institution (University of Queensland) nor the Authors
+c$$$ make any representations about the suitability of this software for
+c$$$ any purpose.  This software is provided ``as is'' without express or
+c$$$ implied warranty.
+c$$$
+c$$$ The work resulting from EXPOKIT has been published in ACM-Transactions 
+c$$$ on Mathematical Software, 24(1):130-156, 1998.
+c$$$
+c$$$ The bibtex record of the citation:
+c$$$
+c$$$ @ARTICLE{EXPOKIT,
+c$$$         AUTHOR  = {Sidje, R. B.},
+c$$$         TITLE   = {{\sc Expokit.} {S}oftware {P}ackage for
+c$$$ 		  {C}omputing {M}atrix {E}xponentials},
+c$$$         JOURNAL = {ACM Trans. Math. Softw.},
+c$$$         VOLUME  = {24},
+c$$$         NUMBER  = {1},
+c$$$         PAGES   = {130-156}
+c$$$         YEAR    = {1998}
+c$$$ }
+c$$$ 
+c$$$ Certain elements of the current software may include inadequacies
+c$$$ that may be corrected at any time, as they are discovered. The Web 
+c$$$ always contains the latest updates.
+c$$$
+c$$$
+c$$$                              Roger B. Sidje
+c$$$            Department of Mathematics, University of Queensland 
+c$$$      Brisbane, QLD-4072, Australia, (c) 1996-1999 All Rights Reserved
+c$$$
 *----------------------------------------------------------------------|
       subroutine DSPADM( ideg,m,t,H,ldh,wsp,lwsp,ipiv,iexph,ns,iflag )
 
