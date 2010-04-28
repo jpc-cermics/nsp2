@@ -50,6 +50,10 @@ function demo_images1()
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtkimage_new(''file'',.) with svg image",vbox)
 
+  fname = getenv('NSP')+'/demos/gtk2/libplus/nsp.jpg";
+  [image,ok]=demo_image_from_file(fname)
+  demo_add_image(image,ok,"gtkimage_new(''file'',.) with jpg image",vbox)
+  
   fname = getenv('NSP')+'/demos/gtk2/libplus/nsp.xxx";
   [image,ok]=demo_image_from_file(fname)
   demo_add_image(image,ok,"gtkimage_new(''file'',.) with unknown extension)",vbox)
