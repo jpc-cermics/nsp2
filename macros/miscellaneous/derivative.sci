@@ -95,24 +95,24 @@ function z=%DF_(x)
 endfunction 
 
 function g=%deriv1_(F_, x, h, order, Q, args)
-   n=size(x,'*') 
+   n=numel(x) 
    Dy=[];
    D = h*Q;
    select order
      case 1
 	y=%R_(F_,x, args);
-	for d=D, Dy=[Dy, %R_(F_,x+d,args)-y], end             
-	g=Dy*Q'/h                    
+	for d=D, Dy.concatr[%R_(F_,x+d,args)-y], end             
+	g=pmult(Dy,Q,2)/h                    
      case 2
-	for d=D, Dy=[Dy, %R_(F_,x+d,args)-%R_(F_,x-d,args)], end       
-	g=Dy*Q'/(2*h)
+	for d=D, Dy.concatr[%R_(F_,x+d,args)-%R_(F_,x-d,args)], end       
+	g=pmult(Dy,Q,2)/(2*h)
      case 4
 	for d=D
 	   dFh =  (%R_(F_,x+d,args)-%R_(F_,x-d,args))/(2*h)
 	   dF2h = (%R_(F_,x+2*d,args)-%R_(F_,x-2*d,args))/(4*h)
-	   Dy=[Dy, (4*dFh - dF2h)/3]
+	   Dy.concatr[(4*dFh - dF2h)/3]
 	end
-	g = Dy*Q'
+	g = pmult(Dy,Q,2)
    end//select
 endfunction
 
