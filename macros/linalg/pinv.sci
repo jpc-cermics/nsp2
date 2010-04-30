@@ -26,7 +26,7 @@ function [B] = pinv(A,tol=[])
 //   
       
    if nargin < 1 || nargin > 2 then
-      error("Error: pinv bad number of input arguments")
+      error("Error: bad number of input arguments")
    end
    
    if ~is(A,%types.Mat) then
@@ -36,7 +36,7 @@ function [B] = pinv(A,tol=[])
    if isempty(tol) then
       tol = max(size(A))*%eps
    else
-      if ~( is(tol,%types.Mat) && isreal(tol) && isscalar(tol) && && 0 < tol && tol <= 1 ) then
+      if ~( is(tol,%types.Mat) && isreal(tol) && isscalar(tol) && 0 < tol && tol <= 1 ) then
 	 error("Error: tol should be a real scalar in (0,1]")
       end
    end  

@@ -30,7 +30,6 @@ function [ImA] = orth(A,tol=[],meth="svd")
 //    src/lapack/lapack.c).
 //    
 //   
-      
    if nargin < 1 || nargin > 3 then
       error("Error: bad number of input arguments")
    end
@@ -42,7 +41,7 @@ function [ImA] = orth(A,tol=[],meth="svd")
    if isempty(tol) then
       tol = max(size(A))*%eps
    else
-      if ~( is(tol,%types.Mat) && isreal(tol) && isscalar(tol) && && 0 < tol && tol <= 1 ) then
+      if ~( is(tol,%types.Mat) && isreal(tol) && isscalar(tol) && 0 < tol && tol <= 1 ) then
 	 error("Error: tol should be a real scalar in (0,1]")
       end
    end  
