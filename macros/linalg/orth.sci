@@ -1,6 +1,6 @@
 function [ImA] = orth(A,tol=[],meth="svd")
 
-// Copyright (C) 2007 Bruno Pinçon
+// Copyright (C) 2007-2010 Bruno Pinçon
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,21 +30,32 @@ function [ImA] = orth(A,tol=[],meth="svd")
 //    src/lapack/lapack.c).
 //    
 //   
-  if type(A,"short")~="m" then
-    error("first arg must be a matrix of numbers") 
-  end
+      
+   if nargin < 1 || nargin > 3 then
+      error("Error: bad number of input arguments")
+   end
+   
+   if ~is(A,%types.Mat) then
+      error("Error: first argument should be of type Mat")
+   end
   
-  if isempty(tol) then, tol = max(size(A))*%eps, end
+   if isempty(tol) then
+      tol = max(size(A))*%eps
+   else
+      if ~( is(tol,%types.Mat) && isreal(tol) && isscalar(tol) && && 0 < tol && tol <= 1 ) then
+	 error("Error: tol should be a real scalar in (0,1]")
+      end
+   end  
   
-  if meth == "qr" then
+  if meth.equal["qr"] then
     [Q,R,p,rk] = qr(A,tol=tol)
     ImA = Q(:,1:rk)
-  elseif meth == "svd" then
+  elseif meth.equal["svd"] then
     [U,s,V] = svd(A)
     rk = max(find(s >= s(1)*tol))
     ImA = U(:,1:rk)
   else
-    error("bad optional arg meth")
+    error("bad optional argument meth (should be ""qr"" or ""svd"")")
   end
   
 endfunction
