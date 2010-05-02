@@ -1,50 +1,35 @@
-// -*- Mode: scilab -*- 
+// -*- Mode:scilab -*- 
+//
+// test for schur 
+
 function r=Err(x),r=norm(x,1),endfunction;
 //define tools
 rand('normal')
 exec('algebra-funs.sce');
 
-//==========================================================================
-//==============================    schur     ============================== 
-//==========================================================================
-// XXXXXXXXXXXX to be done 
-
 function t=sel(R),t=real(R)<0 ,endfunction;
-//Empty matrix
-A=[];
-if schur(A)<>[] then pause,end
-if schur(A,complex=%f)<>[] then pause,end
-if schur(A,complex=%t)<>[] then pause,end
 
-if schur(A,sort='c')<>[] then pause,end
-if schur(A,sort='d')<>[] then pause,end
-if schur(A,sort=sel)<>[] then pause,end
 
-[U,S]=schur(A);
-if U<>[]|S<>[] then pause,end
-[U,S]=schur(A,complex=%f);
-if U<>[]|S<>[] then pause,end
-[U,S]=schur(A,complex=%t);
-if U<>[]|S<>[] then pause,end
+//check for empty argument matrix 
+  
+args = ["",",complex=%t",",complex=%f",",sort=''c''",",sort=''d''",",sort=sel"];
+retargs=["U","[U,S]","[U,N,S]"];
+A=ones(5,0);
+N=A;U=A;S=A;
 
-[U,N]=schur(A,sort='c');
-if U<>[]|N<>0 then pause,end
-[U,N]=schur(A,sort='d');
-if U<>[]|N<>0 then pause,end
-[U,N]=schur(A,sort=sel);
-if U<>[]|N<>0 then pause,end
-
-[U,N,S]=schur(A,sort='c');
-if U<>[]|N<>0|S<>[] then pause,end
-[U,N,S]=schur(A,sort='d');
-if U<>[]|N<>0|S<>[] then pause,end
-[U,N,S]=schur(A,sort=sel);
-if U<>[]|N<>0|S<>[] then pause,end
+for arg=args
+  for ret=retargs
+    execstr(ret+'=schur(A'+arg+');');
+    if ~isempty(U)  then pause;end 
+    if ~(isempty(N) || N==0 ) then pause;end 
+    if ~(isempty(S) || S==0 ) then pause;end 
+    if ~size(U).equal[[5,0]] then pause,end
+  end
+end
 
 //Rectangular matrix
 if execstr('schur(rand(2,3))',errcatch=%t)==%t then pause,end
 if execstr('[U,S]=schur(rand(2,3))',errcatch=%t)==%t then pause,end
-
 if execstr('schur(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
 if execstr('[U,S]=schur(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
 

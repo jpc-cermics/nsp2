@@ -1,0 +1,99 @@
+-nsp->// -*- Mode: scilab -*- 
+-nsp->exec('algebra-funs.sce');
+-nsp->function A=testmat1(a,n)
+==>//eigen values are given by a dilation of nth roots of 1
+==>  A=diag(a*ones(1,n-1),1)+diag((1/a)*ones(1,n-1),-1)
+==>  A(1,n)=1/a;A(n,1)=a
+==>endfunction
+-nsp->function r=Checktestmat1(a,n)
+==>  A=testmat1(a,n);S=spec(A);
+==>  SR=real(S);SI=imag(S);
+==>  dt=2*%i*%pi/n;Z=exp(dt*(1:n)');ZR=real(Z*((1+a*a')/a));
+==>  ZI=-imag(Z*((a*a'-1)/a));
+==>  r=max(norm(sort(SR)-sort(ZR)),norm(sort(SI)-sort(ZI)))
+==>endfunction
+-nsp->function A=testmat2(a,n)
+==>//eigen values are given by a dilation of nth roots of 1
+==>  A=testmat1(a,n);A=A+A'
+==>endfunction
+-nsp->function r=Checktestmat2(a,n)
+==>  A=testmat2(a,n);S=spec(A);
+==>  SR=real(S);SI=imag(S);
+==>  dt=2*%i*%pi/n;Z=exp(dt*(1:n)');
+==>  ZR=2*real(Z*((1+a*a')/a));ZI=0*ZR;
+==>  r=max(norm(sort(SR)-sort(ZR)),norm(sort(SI)-sort(ZI)))
+==>endfunction
+-nsp->endfunction
+-nsp->rand('normal')
+-nsp->function t=sel(R),t=real(R)<0 ,endfunction;
+-nsp->function [ok,pb]=check(A,E,As,Es,Q,Z)
+==>  prec=400;
+==>  if isreal(A,%t) then triu_arg=-1; else triu_arg=0;end 
+==>  ok = %t;
+==>  if norm(triu(As,triu_arg)- As)> %eps then ok = %f,pb=1,return;end;
+==>  if norm(triu(Es,triu_arg)- Es)> %eps then ok = %f,pb=2,return;end;
+==>  if norm(Q*Q'-eye(size(Q)),1) > 400*%eps then ok=%f,pb=3,return;end
+==>  if norm(Z*Z'-eye(size(Z)),1) > 400*%eps then ok=%f,pb=4,return;end
+==>  if norm(As-Q'*A*Z,1) > 400*%eps then ok=%f,pb=5,return;end
+==>  if norm(Es-Q'*E*Z,1) > 400*%eps then ok=%f,pb=6,return;end  
+==>endfunction;
+-nsp->A=rand(0,4);
+-nsp->[As,Es,Q,Z,dim]=qz(A,A);
+-nsp->if ~isempty(As) then pause;end 
+-nsp->if ~isempty(Es) then pause;end 
+-nsp->if ~isempty(Q) then pause;end 
+-nsp->if ~isempty(Z) then pause;end
+-nsp->if dim<>0  then pause;end 
+-nsp->// detect wrong entries 
+-nsp->if execstr('[As,Es]=qz(rand(2,3),rand(2,3))',errcatch=%t)==%t then  pause,end
+-nsp->[As,Es]=qz(rand(2,3),rand(2,3))
+-nsp->if execstr('[As,Es,Q,Z]=qz(rand(2,3),rand(2,3))',errcatch=%t)==%t then  pause,end
+-nsp->[As,Es,Q,Z]=qz(rand(2,3),rand(2,3))
+-nsp->if execstr('[As,Es,dim]=qz(rand(2,3),rand(2,3),sort=''c'')',errcatch=%t)==%t then  pause,end
+-nsp->[As,Es,dim]=qz(rand(2,3),rand(2,3),sort='c')
+-nsp->if execstr('[Z,dim]=qz(rand(2,3),rand(2,3),sort=sel)',errcatch=%t)==%t then  pause,end
+-nsp->[Z,dim]=qz(rand(2,3),rand(2,3),sort=sel)
+-nsp->function t=sel(Alpha,Beta),t=real(Alpha) > -0.2*real(Beta) ,endfunction;
+-nsp->for N=[5,50] 
+==>  A=testmat1(1,N);E=testmat1(-2,N) ;
+==>  [As,Es,Q,Z,dim]=qz(A,E);
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  [As,Es,Q,Z]=qz(A,E);
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  [As,Es]=qz(A,E);
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  // Ordered sort='c'
+==>  [As,Es,Q,Z,dim]=qz(A,E,sort='c');
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  if dim<>N then pause;end 
+==>  [As,Es,Q,Z,dim]=qz(A,E,sort='d');
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  if dim<>N then pause;end 
+==>  //ordered sort=sel
+==>  [As,Es,Q,Z,dim]=qz(A,E,sort=sel);
+==>  dim1=size(find( real(spec(As)) > -0.2*spec(Es)))
+==>  if dim<>dim1 then pause;end 
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>end
+-nsp->function t=sel(Alpha,Beta),t=imag(Alpha)>0 ,endfunction;
+-nsp->for N=[5,50] do 
+==>  A=testmat1(1+%i,N);E=testmat1(-2-3*%i,N) ;
+==>  [As,Es,Q,Z,dim]=qz(A,E);
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  [As,Es,Q,Z]=qz(A,E);
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  [As,Es]=qz(A,E);
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  // Ordered sort='c'
+==>  [As,Es,Q,Z,dim]=qz(A,E,sort='c');
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  if dim<>N then pause;end 
+==>  [As,Es,Q,Z,dim]=qz(A,E,sort='d');
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>  if dim<>N then pause;end 
+==>  //ordered sort=sel
+==>  [As,Es,Q,Z,dim]=qz(A,E,sort=sel);
+==>  dim1=size(find( imag(spec(As)) > 0))
+==>  if dim<>dim1 then pause;end 
+==>  if ~check(A,E,As,Es,Q,Z) then pause;end 
+==>end

@@ -81,7 +81,7 @@ ALG=algebra-balanc.dia \
 	algebra-bslash.dia \
 	algebra-chol.dia \
 	algebra-det.dia \
-	algebra-gschur.dia \
+	algebra-qz.dia \
 	algebra-gspec.dia \
 	algebra-hess.dia \
 	algebra-inv.dia \
