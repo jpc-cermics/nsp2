@@ -1,0 +1,66 @@
+% -*- mode: latex -*-
+\mansection{svd}
+\begin{mandesc}
+  \short{svd}{singular value decomposition} \\ % 
+\end{mandesc}
+%\index{svd}\label{svd}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  S=svd(X,tol=tol,mode= str)  
+  [U,S,V,rk]=svd(X,tol=tol,mode= str)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{X}: a real or complex matrix.
+    \vname{tol}: a real number.
+    \vname{mode}: a string which can be \verb!''! or \verb!'e'!
+    \vname{S}: a real vector giving the singular values.
+    \vname{U,V}: orthogonal or unitary square matrices (singular vectors).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb![U,S,V] = svd(X)! produces a real vector \verb!S!, of dimension 
+  \verb!min(size(X))! with elements in decreasing order, and unitary
+  matrices \verb!U! and \verb!V! so that \verb!X = U*S1*V'! where 
+  \verb!S1=zeros(size(A));S1.set_diag[S,0]!. 
+  
+  When the optional argument \verb!mode! is given and set to \verb!'e'! 
+  the function returns an "economy size" decomposition. 
+  If \verb!X! is a m-by-n matrix with \verb!m > n! (resp. \verb!m < n!) 
+  then only the first \verb!n! (resp. \verb!m!) 
+  columns of \verb!U! (resp. of \verb!V!) are computed. 
+
+  \verb!rk! gives in addition the numerical rank of \verb!X! i.e. the number of
+  singular values larger than \verb!tol!. The default value of \verb!tol!  is
+  the same as in \verb!rank! and it cand be given throught the optional argument
+  \verb!tol!.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    X=rand(4,2)*rand(2,4)
+    s= svd(X)
+    sqrt(spec(X*X'))
+    [U,S,V,rk]=svd(X);
+    S1=zeros(size(X));S1.set_diag[S,0];
+    norm(U*S1*V' - X)
+  \end{Verbatim}
+  \begin{Verbatim}
+    X=rand(4,7);
+    [U,S,V]=svd(X,mode='e');
+    norm(U*diag(S)*V' -X) 
+  \end{Verbatim}
+  \begin{Verbatim}
+    X=rand(7,4);
+    [U,S,V]=svd(X,mode='e');
+    norm(U*diag(S)*V' -X) 
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{rank}{rank} \manlink{qr}{qr} \manlink{colcomp}{colcomp} \manlink{rowcomp}{rowcomp} \manlink{sva}{sva} \manlink{spec}{spec}  
+\end{manseealso}
+
