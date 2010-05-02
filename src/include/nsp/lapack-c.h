@@ -18,7 +18,7 @@ extern int C2F(dgecon) (char *norm, int *n, double *a, int *lda, double *anorm, 
 extern int C2F(dgbcon) (char *norm, int *n, int *kl, int *ku, double *a, int *lda, int *ipiv, double *anorm, double *rcond, double *work, int *iwork, int *info, int norm_len);
 extern int C2F(zgbcon) (char *norm, int *n, int *kl, int *ku, doubleC *a, int *lda, int *ipiv, double *anorm, double *rcond, doubleC *cwork, double *work, int *info, int norm_len);
 extern int C2F(dgeequ) (int *m, int *n, double *a, int *lda, double *r, double *c, double *rowcnd, double *colcnd, double *amax, int *info);
-extern int C2F(dgees) (char *jobvs, char *sort, int (*select)(double *,double *), int *n, double *a, int *lda, int *sdim, double *wr, double *wi, double *vs, int *ldvs, double *work, int *lwork, int *bwork, int *info, int jobvs_len, int sort_len);
+extern int C2F(dgees) (char *jobvs, char *sort, int (*select)(const double *,const double *), int *n, double *a, int *lda, int *sdim, double *wr, double *wi, double *vs, int *ldvs, double *work, int *lwork, int *bwork, int *info, int jobvs_len, int sort_len);
 extern int C2F(dgeesx) (char *jobvs, char *sort, L_fp select, char *sense, int *n, double *a, int *lda, int *sdim, double *wr, double *wi, double *vs, int *ldvs, double *rconde, double *rcondv, double *work, int *lwork, int *iwork, int *liwork, int *bwork, int *info, int jobvs_len, int sort_len, int sense_len);
 extern int C2F(dgeev) (char *jobvl, char *jobvr, int *n, double *a, int *lda, double *wr, double *wi, double *vl, int *ldvl, double *vr, int *ldvr, double *work, int *lwork, int *info, int jobvl_len, int jobvr_len);
 extern int C2F(dgegs) (char *jobvsl, char *jobvsr, int *n, double *a, int *lda, double *b, int *ldb, double *alphar, double *alphai, double *beta, double *vsl, int *ldvsl, double *vsr, int *ldvsr, double *work, int *lwork, int *info, int jobvsl_len, int jobvsr_len);
@@ -53,7 +53,7 @@ extern int C2F(dgbtrs) (char *trans, int *n, int *kl, int *ku, int *nrhs, double
 extern int C2F(dggbak) (char *job, char *side, int *n, int *ilo, int *ihi, double *lscale, double *rscale, int *m, double *v, int *ldv, int *info, int job_len, int side_len);
 extern int C2F(dggbal) (char *job, int *n, double *a, int *lda, double *b, int *ldb, int *ilo, int *ihi, double *lscale, double *rscale, double *work, int *info, int job_len);
 extern int C2F(dgges) (char *jobvsl, char *jobvsr, char *sort, 
-			       int (*F)(double *alphar,double *alphai,double *beta),
+			       int (*F)(const double *alphar,const double *alphai,const double *beta),
 			       int *n, double *a, int *lda, double *b, int *ldb, int *sdim, double *alphar, double *alphai, double *beta, double *vsl, int *ldvsl, double *vsr, int *ldvsr, double *work, int *lwork, int *bwork, int *info, int jobvsl_len, int jobvsr_len, int sort_len);
 extern int C2F(dlags2) (int *upper, double *a1, double *a2, double *a3, double *b1, double *b2, double *b3, double *csu, double *snu, double *csv, double *snv, double *csq, double *snq);
 extern int C2F(dlagv2) (double *a, int *lda, double *b, int *ldb, double *alphar, double *alphai, double *beta, double *csl, double *snl, double *csr, double *snr);
@@ -207,7 +207,7 @@ extern int C2F(zgebal) (char *job, int *n, doubleC *a, int *lda, int *ilo, int *
 extern int C2F(zgebd2) (int *m, int *n, doubleC *a, int *lda, double *d, double *e, doubleC *tauq, doubleC *taup, doubleC *work, int *info);
 extern int C2F(zgebrd) (int *m, int *n, doubleC *a, int *lda, double *d, double *e, doubleC *tauq, doubleC *taup, doubleC *work, int *lwork, int *info);
 extern int C2F(zgecon) (char *norm, int *n, doubleC *a, int *lda, double *anorm, double *rcond, doubleC *work, double *rwork, int *info, int norm_len);
-extern int C2F(zgees) (char *jobvs, char *sort,int (*select)(doubleC *), int *n, doubleC *a, int *lda, int *sdim, doubleC *w, doubleC *vs, int *ldvs, doubleC *work, int *lwork, double *rwork, int *bwork, int *info, int jobvs_len, int sort_len);
+extern int C2F(zgees) (char *jobvs, char *sort,int (*select)(const doubleC *), int *n, doubleC *a, int *lda, int *sdim, doubleC *w, doubleC *vs, int *ldvs, doubleC *work, int *lwork, double *rwork, int *bwork, int *info, int jobvs_len, int sort_len);
 extern int C2F(zgeev) (char *jobvl, char *jobvr, int *n, doubleC *a, int *lda, doubleC *w, doubleC *vl, int *ldvl, doubleC *vr, int *ldvr, doubleC *work, int *lwork, double *rwork, int *info, int jobvl_len, int jobvr_len);
 extern int C2F(zgehd2) (int *n, int *ilo, int *ihi, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *info);
 extern int C2F(zgehrd) (int *n, int *ilo, int *ihi, doubleC *a, int *lda, doubleC *tau, doubleC *work, int *lwork, int *info);
@@ -232,7 +232,7 @@ extern int C2F(zgbtrs) (char *trans, int *n, int *kl, int *ku, int *nrhs, double
 extern int C2F(zggbak) (char *job, char *side, int *n, int *ilo, int *ihi, double *lscale, double *rscale, int *m, doubleC *v, int *ldv, int *info, int job_len, int side_len);
 extern int C2F(zggbal) (char *job, int *n, doubleC *a, int *lda, doubleC *b, int *ldb, int *ilo, int *ihi, double *lscale, double *rscale, double *work, int *info, int job_len);
 extern int C2F(zgges) (char *jobvsl, char *jobvsr, char *sort,
-			       int (*F)(doubleC *alpha,doubleC *beta),
+			       int (*F)(const doubleC *alpha,const doubleC *beta),
 			       int *n, doubleC *a, int *lda, doubleC *b, int *ldb, int *sdim, doubleC *alpha, doubleC *beta, doubleC *vsl, int *ldvsl, doubleC *vsr, int *ldvsr, doubleC *work, int *lwork, double *rwork, int *bwork, int *info, int jobvsl_len, int jobvsr_len, int sort_len);
 extern int C2F(zggev) (char *jobvl, char *jobvr, int *n, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *alpha, doubleC *beta, doubleC *vl, int *ldvl, doubleC *vr, int *ldvr, doubleC *work, int *lwork, double *rwork, int *info, int jobvl_len, int jobvr_len);
 extern int C2F(zgghrd) (char *compq, char *compz, int *n, int *ilo, int *ihi, doubleC *a, int *lda, doubleC *b, int *ldb, doubleC *q, int *ldq, doubleC *z, int *ldz, int *info, int compq_len, int compz_len);

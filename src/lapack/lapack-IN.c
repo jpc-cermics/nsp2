@@ -30,6 +30,8 @@
 #include "nsp/approx.h"
 #include "nsp/nsp_lapack.h"
 #include "nsp/eval.h"
+#include "nsp/spmf.h"
+#include "nsp/cnumeric.h"
 
 /*
  * interface for nsp_qr 
@@ -102,6 +104,7 @@ static int int_qr( Stack stack, int rhs, int opt, int lhs)
 /*
  * interface for lsq : prévoir le choix de la méthode (qr ou svd) ?
  */
+
 static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *A, *B, *Rank;
@@ -719,14 +722,41 @@ static int int_solve_banded( Stack stack, int rhs, int opt, int lhs)
  * interface for schur 
  */
 
-extern int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(const double *re,const double *im),
-		     NspMatrix **Sdim);
-extern int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(const doubleC *w), NspMatrix **Sdim) ;
+/* 
+ *  selects the stable eigenvalues for continuous time. 
+ */
 
-extern int nsp_dschur_cont_stable(const double *reig,const double *ieig);
-extern int nsp_dschur_discr_stable(const double *reig,const double *ieig);
-extern int nsp_zschur_cont_stable(const doubleC *eig);
-extern int nsp_zschur_discr_stable(const doubleC *eig);
+static int nsp_dschur_cont_stable(const double *reig,const double *ieig)
+{
+  return  *reig < 0.0; 
+}
+
+/*
+ *    selects the stable eigenvalues for discrete-time 
+ */
+
+static int nsp_dschur_discr_stable(const double *reig,const double *ieig)
+{
+  return nsp_hypot(*reig, *ieig) < 1.;
+}
+
+/*
+ *  selects the stable eigenvalues for complex matrices and continuous time
+ */
+
+static int nsp_zschur_cont_stable(const doubleC *eig)
+{
+  return  eig->r < 0.;
+}
+
+/*
+ *  selects the stable eigenvalues for complex matrices and discrete time
+ */
+
+static int nsp_zschur_discr_stable(const doubleC *eig)
+{
+  return  nsp_abs_c(eig) < 1.;
+} 
 
 /* external function for schur where code is redirected 
  * to nsp evaluation. 
@@ -897,7 +927,7 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(1,1);
   CheckLhs(0,3);
   if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
-
+  
   if ( get_optional_args(stack,rhs,opt,opts,&select,&extra_args,&complex) == FAIL) return RET_BUG;
   
   if ( select != NULL) 
@@ -958,11 +988,11 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
 
   if ( A->rc_type == 'r' ) 
     {
-      rep =intdgees0(A,hU,F,hDim); 
+      rep =nsp_dgees0(A,hU,F,hDim); 
     }
   else 
     {
-      rep = intzgees0(A,hU,Fc,hDim);
+      rep =nsp_zgees0(A,hU,Fc,hDim);
     }
 
   if ( F == nsp_dschur_fun ) 
@@ -1008,6 +1038,358 @@ static int int_schur( Stack stack, int rhs, int opt, int lhs)
     }
   return Max(lhs,1);
 }
+
+/* interface for the qz algorithm 
+ * and ordqz algorithm.
+ * 
+ */
+
+/*
+ *   selects the stable generalized eigenvalues for continuous-time 
+ */
+
+static int nsp_dqz_cont_stable(const double *alphar,const  double *alphai,const  double *beta)
+{
+  return  ((*alphar < 0. && *beta > 0.) || ( *alphar > 0. && *beta < 0.)) 
+    && Abs(*beta) > Abs(*alphar) * nsp_dlamch("p");
+}
+
+/*
+ *   selects the stable generalized eigenvalues for discrete-time 
+ */
+
+
+static int nsp_dqz_discr_stable(const double *alphar,const  double *alphai, const  double *beta)
+{
+  return  nsp_hypot(*alphar, *alphai) <  Abs(*beta);
+}
+
+/*
+ *  selects the stable generalized eigenvalues for complex matrices and continuous time
+ */
+
+static int nsp_zqz_cont_stable(const doubleC *alpha,const doubleC *beta)
+{
+  doubleC z;
+  if (nsp_abs_c(beta) != 0.) 
+    {
+      nsp_div_cc(alpha,beta,&z);
+      return  z.r < 0.;
+    } 
+  else 
+    {
+      return 0;
+    }
+}
+
+/*
+ *  selects the stable generalized eigenvalues for complex matrices and discrete time
+ */
+
+static int nsp_zqz_discr_stable(const doubleC *alpha, const doubleC *beta)
+{
+  return  nsp_abs_c(alpha) < nsp_abs_c(beta);
+} 
+
+/* external function for qz where code is redirected 
+ * to nsp evaluation. 
+ */
+
+static int nsp_dqz_fun(const double *reig,const double *ieig,const  double *beta);
+static int nsp_zqz_fun(const doubleC *eig, const doubleC *beta);
+
+/* 
+ * data used when nsp is used to evaluate a qz function 
+ */
+
+typedef struct _qz_data qz_data;
+
+struct _qz_data
+{
+  NspObject *args; /* a list to pass extra arguments to the objective function */
+  NspMatrix *x;  /* value of x used for the first complex argument */
+  NspMatrix *y;  /* value of y used for a real second argument  */
+  NspMatrix *z;  /* value of z used for a complex secont argument */
+  NspObject *objective; /* qz function */
+};
+
+static qz_data qz_d= {NULL,NULL,NULL,NULL};
+static int qz_prepare(NspObject *f,NspObject *args,qz_data *obj);
+static void qz_clean(qz_data *obj);
+
+/**
+ * qz_prepare:
+ * @f: a #NspPList giving the nsp code of the function to be called
+ * @args: extra arguments which are transmited to the nsp objective function 
+ * @obj: a #qz_data structure used to store objective function nsp data.
+ * 
+ * fills @obj with data. @obj is used in nsp_dqz_fun() or nsp_zqz_fun() to evaluate the 
+ * nsp function @f.
+ * 
+ * Return value: %OK or %FAIL 
+ **/
+
+static int qz_prepare(NspObject *f,NspObject *args,qz_data *obj)
+{
+  if (( obj->objective =nsp_object_copy(f)) == NULL) return FAIL;
+  if (( nsp_object_set_name(obj->objective,"qz_f")== FAIL)) return FAIL;
+  if ( args != NULL ) 
+    {
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
+      if (( nsp_object_set_name((NspObject *) obj->args,"arg")== FAIL)) return FAIL;
+    }
+  else 
+    {
+      obj->args = NULL;
+    }
+
+  if ((obj->x = nsp_matrix_create("x",'c',1,1))== NULL) return FAIL;
+  if ((obj->y = nsp_matrix_create("y",'r',1,1))== NULL) return FAIL;
+  if ((obj->z = nsp_matrix_create("y",'c',1,1))== NULL) return FAIL;
+  return OK;
+}
+
+/**
+ * qz_clean:
+ * @obj: a #qz_data structure used to store objective function nsp data.
+ * 
+ * deallocate data stored in @obj
+ * 
+ **/
+
+static void qz_clean(qz_data *obj)
+{
+  if ( obj->args != NULL) nsp_object_destroy(&obj->args);
+  nsp_object_destroy(&obj->objective);
+  nsp_matrix_destroy(obj->x);
+  nsp_matrix_destroy(obj->y);
+  nsp_matrix_destroy(obj->z);
+}
+
+/**
+ * nsp_dqz_fun:
+ * @reig: a double pointer 
+ * @ieig: a double pointer 
+ * 
+ * evaluates the nsp function for given eigenvalue and returns 1 or 0 
+ * In case of problems in the function an error is raised but the program 
+ * is not stopped since we do not have control on it.
+ * 
+ * Returns: 0 or 1 
+ **/
+
+static int _nsp_dqz_fun(const double *reig,const double *ieig,const double *betar, const double *betai)
+{
+  int rep;
+  qz_data *qz = &qz_d;
+  NspObject *targs[3];/* arguments to be transmited to qz->objective */
+  NspObject *nsp_ret;
+  int nret = 1,nargs = 2;
+  /*
+   * targs[0]= NSP_OBJECT(qz->n); 
+   * qz->n->R[0] = *n;
+   */
+  targs[0]= NSP_OBJECT(qz->x); 
+  qz->x->C[0].r= *reig;
+  qz->x->C[0].i= *ieig;
+  if ( betai == NULL ) 
+    {
+      targs[1]= NSP_OBJECT(qz->y); 
+      qz->y->R[0] = *betar;
+    }
+  else
+    {
+      targs[1]= NSP_OBJECT(qz->z); 
+      qz->z->C[0].r= *betar;
+      qz->z->C[0].i= *betai;
+    }
+  if (qz->args != NULL ) 
+    {
+      targs[2]= NSP_OBJECT(qz->args);
+      nargs= 3;
+    }
+  /* FIXME : a changer pour metre une fonction eval standard */
+  if ( nsp_gtk_eval_function((NspPList *)qz->objective ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+    {
+      return FAIL;
+    }
+  if ( nret ==1 && IsBMat(nsp_ret) &&((NspBMatrix *) nsp_ret)->mn == 1 ) 
+    {
+      rep = ((NspBMatrix *) nsp_ret)->B[0];
+      nsp_object_destroy((NspObject **) &nsp_ret);
+    }
+  else 
+    {
+      Scierror("Error: qz objective function returned argument is wrong\n");
+      return 0;
+    }
+  return rep;
+ 
+}
+
+
+static int nsp_dqz_fun(const double *reig,const double *ieig,const double *betar)
+{
+  return  _nsp_dqz_fun( reig, ieig, betar,NULL );
+}
+
+
+/**
+ * nsp_zqz_fun:
+ * @reig: a double pointer 
+ * @ieig: a double pointer 
+ * 
+ * evaluates the nsp function for given eigenvalue and returns 1 or 0 
+ * In case of problems in the function an error is raised but the program 
+ * is not stopped since we do not have control on it.
+ * 
+ * Returns: 0 or 1 
+ **/
+
+static int nsp_zqz_fun(const doubleC *eig, const doubleC *beta)
+{
+  return  _nsp_dqz_fun( &eig->r, &eig->i,&beta->r, &beta->i );
+}
+
+
+static int int_qz( Stack stack, int rhs, int opt, int lhs)
+{
+  int complex=FALSE,rep ;
+  int (*F) (const double *reig,const double *ieig,const double *beta)= NULL;
+  int (*Fc)(const doubleC *reig, const doubleC *beta)= NULL;
+  nsp_option opts[] ={{ "sort",obj,NULLOBJ,-1},
+		      { "args",list,NULLOBJ,-1},
+		      { "complex", s_bool, NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspObject *select=NULL;
+  NspObject *extra_args=NULL;
+  NspMatrix *A,*B,*Q=NULL,**hQ=NULL,*Z=NULL,**hZ=NULL,*Dim=NULL,**hDim=NULL;
+  CheckStdRhs(2,2);
+  CheckLhs(0,5);
+  if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
+  if ((B = GetMatCopy (stack, 2)) == NULLMAT) return RET_BUG;
+
+  CheckSameDims(NspFname(stack),1,2,A,B);
+  if ( get_optional_args(stack,rhs,opt,opts,&select,&extra_args,&complex) == FAIL) return RET_BUG;
+
+  /* force complex result if requested */
+  if ( complex == TRUE && A->rc_type == 'r'  ) 
+    {
+      if (nsp_mat_complexify(A,0.0) == FAIL) return RET_BUG;
+    }
+  if ( complex == TRUE && B->rc_type == 'r'  ) 
+    {
+      if (nsp_mat_complexify(B,0.0) == FAIL) return RET_BUG;
+    }
+
+  /* check that both have same type */
+  if (  A->rc_type !=  B->rc_type )
+    {
+      /* both should be complex, note that nsp_mat_complexify 
+       * does nothing if matrix is already complex 
+       */
+      if (nsp_mat_complexify(A,0.0) == FAIL) return RET_BUG;
+      if (nsp_mat_complexify(B,0.0) == FAIL) return RET_BUG;
+    }
+  
+  if ( select != NULL) 
+    {
+      /* optional argument for eigenvalues selection */
+      if (IsString(select) )
+	{
+	  char *str = ((NspSMatrix *) select)->S[0];
+	  if ( strcmp(str,"c") ==0) 
+	    {
+	      F= nsp_dqz_cont_stable;
+	      Fc= nsp_zqz_cont_stable;
+	      hDim = &Dim;
+	    }
+	  else if ( strcmp(str,"d") ==0) 
+	    {
+	      F= nsp_dqz_discr_stable;
+	      Fc= nsp_zqz_discr_stable;
+	      hDim = &Dim;
+	    }
+	  else
+	    {
+	      Scierror("Error: optional argument sort, when given as a string should be 'c' or 'd'\n");
+	      return RET_BUG;
+	    }
+	}
+      else if ( IsNspPList(select) )
+	{
+	  F = nsp_dqz_fun;
+	  Fc =  nsp_zqz_fun;
+	}
+      else 
+	{
+	  Scierror("%s: sort optional argument should be a string or a function\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  /* check if U is requested */
+  if ( lhs >= 3 ) hQ = &Q;
+  if ( lhs >= 4 ) hZ = &Z;
+  /* check for dim */
+  if ( lhs >= 5) hDim = &Dim;
+  /* deals with external fun */
+  if ( F == nsp_dqz_fun ) 
+    {
+      if ( qz_prepare(select,extra_args,&qz_d) == FAIL ) 
+	return RET_BUG;
+    }
+  
+  if ( A->rc_type == 'r' ) 
+    {
+      rep =nsp_dgges(A,B,F,hQ,hZ,hDim); 
+    }
+  else 
+    {
+      rep = nsp_zgges(A,B,Fc,hQ,hZ,hDim);
+    }
+
+  if ( F == nsp_dqz_fun ) 
+    {
+      qz_clean(&qz_d);
+    }
+
+  if ( rep == FAIL) return RET_BUG;
+
+  /* return A */ 
+  NSP_OBJECT(A)->ret_pos = 1;
+  
+  if ( lhs >= 2 ) 
+    {
+      /* return also B */
+      NSP_OBJECT(B)->ret_pos = 2;
+    }
+  if ( lhs >= 3 ) 
+    {
+      /* Q */
+      MoveObj(stack,3,NSP_OBJECT(Q));
+    }
+  if ( lhs >= 4 ) 
+    {
+      /* Z */
+      MoveObj(stack,4,NSP_OBJECT(Z));
+    }
+  if ( lhs >= 5) 
+    {
+      MoveObj(stack,5,NSP_OBJECT(Dim));
+    }
+  else
+    {
+      if (  Dim != NULL ) nsp_matrix_destroy(Dim);
+    }
+  return Max(lhs,1);
+}
+
+
+
+
+
+
 
 /* interface for solve 
  *
@@ -1216,8 +1598,9 @@ static OpTab Lapack_func[] = {
   {"hess",int_hess},
   {"expm",int_expm},
   {"solve_banded",int_solve_banded},
-  {"rank_m",int_rank},
-  {"schur_m",int_schur},
+  {"rank",int_rank},
+  {"schur",int_schur},
+  {"qz",int_qz},
   {"solve_m",int_solve},
   {(char *) 0, NULL}
 };

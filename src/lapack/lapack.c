@@ -32,6 +32,8 @@
 #include "nsp/nsp_lapack.h"
 #include "nsp/matint.h"
 
+
+
 /**
  * nsp_mat_is_symmetric:
  * @A: a real or complex matrix
@@ -2794,16 +2796,9 @@ static int intzgesv4(NspMatrix *A,NspMatrix *B,NspMatrix **Sol,NspMatrix **rank,
 }
 #endif 
 
-/* FIXME: unchecked 
- * [U,T]=schur(A)  U*T*U' = A
- *     T is returned in A 
- *     U is computed if U != NULL 
- *     F can be null or can be a given function used for reordering 
- *     Sdim is computed if non null 
- * XXX  couvre le cas int C2F(intoschur)(fname, fname_len)
- *------------------------------*/
+/* interface for schur */
 
-int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMatrix **Sdim) 
+int nsp_dgees0(NspMatrix *A,NspMatrix **U,int (*F)(const double *re,const double *im), NspMatrix **Sdim) 
 {
   NspMatrix *wr=NULL,*wi=NULL,*dwork=NULL,*iwork=NULL;
   char jobN[]="N", *job= jobN;
@@ -2902,7 +2897,7 @@ int intdgees0(NspMatrix *A,NspMatrix **U,int (*F)(double *re,double *im), NspMat
  * complex case 
  */
 
-int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim) 
+int nsp_zgees0(NspMatrix *A,NspMatrix **U,int (*F)(const doubleC *w), NspMatrix **Sdim) 
 {
   char jobN[]="N", *job= jobN;
   doubleC *Uval=NULL, dwork_opt;
@@ -2951,7 +2946,7 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
       Uval = (*U)->C;
       job = "V";
     }
-
+  
   lworkMin = -1; 
   C2F(zgees)(job,sort, F, &n,A->C,&n, &sdim,W->C,Uval,
 	     &n, &dwork_opt, &lworkMin,rwork->R, Iwork, &info, 4L, 4L);
@@ -2959,7 +2954,7 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
     lworkMin = Max(dwork_opt.r,2*n);
   else 
     lworkMin = Max(1,2*n);
-
+  
   if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) goto fail;   
 
   C2F(zgees)(job,sort, F, &n,A->C,&n, &sdim,W->C,Uval,
@@ -3015,17 +3010,15 @@ int intzgees0(NspMatrix *A,NspMatrix **U,int (*F)(doubleC *w), NspMatrix **Sdim)
 }
 
 
-/*--------------------------------------------
- * A and B are overwriten by their schur form 
- *--------------------------------------------*/
+/* qz algorithm, schur for two matrices */
 
-int intdgges(NspMatrix *A,NspMatrix *B,
-	     int (*F)(double *alphar,double *alphai,double *beta),
-	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
+int nsp_dgges(NspMatrix *A,NspMatrix *B,
+	     int (*F)(const double *alphar,const double *alphai,const double *beta),
+		    NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
 {
-  double  *Vsl=NULL,*Vsr=NULL;
+  double  *Vsl=NULL,*Vsr=NULL, workopt;
   NspMatrix *alphar,*alphai,*beta,*dwork,*iwork=NULLMAT;
-  int info,lworkMin,sdim;
+  int info,lworkMin,sdim=0;
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   char *sort = "N",*jobvsl="N",*jobvsr= "N";
 
@@ -3036,7 +3029,7 @@ int intdgges(NspMatrix *A,NspMatrix *B,
       if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
     }
     if ( VSL != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
     }
     if ( Sdim != NULL) {
       if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
@@ -3065,9 +3058,6 @@ int intdgges(NspMatrix *A,NspMatrix *B,
   if (( alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
   if (( alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
   if (( beta   =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-
-  lworkMin = (n+1) * 7+16;
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;   
   
   if ( F != NULL ) 
     {
@@ -3088,39 +3078,55 @@ int intdgges(NspMatrix *A,NspMatrix *B,
       Vsr = (*VSR)->R;
       jobvsr = "V"; 
     }
+  
+  lworkMin = -1;
 
   C2F(dgges)(jobvsl, jobvsr, sort,F, &n, A->R, &n, B->R, &n, 
 	     &sdim,alphar->R, alphai->R, beta->R,Vsl, &n,Vsr, &n,
-	     dwork->R, &lworkMin, iwork->I, &info, 1L, 1L, 1L);
+	     &workopt, &lworkMin, (F!=NULL) ? iwork->I: NULL, &info, 1L, 1L, 1L);
+  
+  if ( info != 0) workopt = 1;
+  lworkMin = Max(8*(n)+16,workopt);
+  
+  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;   
+
+  C2F(dgges)(jobvsl, jobvsr, sort,F, &n, A->R, &n, B->R, &n, 
+	     &sdim,alphar->R, alphai->R, beta->R,Vsl, &n,Vsr, &n,
+	     dwork->R, &lworkMin, (F!=NULL) ? iwork->I: NULL, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
     if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
     (*Sdim)->R[0] = sdim;
   }
-
-  if (info > 0) {
-    if (info <= n) 
-      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
-    else if (info == n + 1) 
-      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
-    else if (info == n + 2) 
-      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
-    else if (info == n + 3) 
-      Scierror("Error: schur, reordering failed\n");
-    return FAIL;
-  }
+  
+  if (info > 0)
+    {
+      if (info <= n) 
+	Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
+      else if (info == n + 1) 
+	Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+      else if (info == n + 2) 
+	Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+      else if (info == n + 3) 
+	Scierror("Error: schur, reordering failed\n");
+      return FAIL;
+    }
+  else if ( info < 0 ) 
+    {
+      Scierror("Error: qz, the %d-th argument had an illegal value\n",-info);
+      return FAIL;
+    }
   /* menage XXXX */ 
-
   return OK ;
 }
 
 
-int intzgges(NspMatrix *A,NspMatrix *B,
-	     int (*F)(doubleC *alpha,doubleC *beta),
-	     NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
+int nsp_zgges(NspMatrix *A,NspMatrix *B,
+	      int (*F)(const doubleC *alpha, const doubleC *beta),
+	      NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim)
 {
-  doubleC  *Vsl=NULL,*Vsr=NULL;
-  NspMatrix *alpha,*beta,*dwork,*iwork=NULLMAT,*rwork;
+  doubleC  *Vsl=NULL,*Vsr=NULL, workopt;
+  NspMatrix *alpha=NULLMAT,*beta=NULLMAT,*dwork=NULLMAT,*iwork=NULLMAT,*rwork=NULLMAT;
   int info,lworkMin,sdim;
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   char *sort = "N",*jobvsl="N",*jobvsr= "N";
@@ -3132,7 +3138,7 @@ int intzgges(NspMatrix *A,NspMatrix *B,
       if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
     }
     if ( VSL != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
     }
     if ( Sdim != NULL) {
       if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
@@ -3159,17 +3165,13 @@ int intzgges(NspMatrix *A,NspMatrix *B,
 
   if (( alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
   if (( beta  =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
-
   if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;   
-  lworkMin = 2*n;
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;   
   
   if ( F != NULL ) 
     {
       if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
       sort = "S";
     }
-
   if ( VSL != NULL ) 
     {
       if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
@@ -3181,29 +3183,46 @@ int intzgges(NspMatrix *A,NspMatrix *B,
     {
       if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
       Vsr = (*VSR)->C;
-      jobvsl = "V"; 
+      jobvsr = "V"; 
     }
+
+  lworkMin=-1;
+
 
   C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->C, &n, B->C, &n, 
 	     &sdim,alpha->C, beta->C,Vsl, &n,Vsr, &n,
-	     dwork->C, &lworkMin,rwork->R,iwork->I, &info, 1L, 1L, 1L);
+	     &workopt, &lworkMin,rwork->R, (F!= NULL) ? iwork->I: NULL, &info, 1L, 1L, 1L);
+  
+  if ( info != 0) workopt.r = 1;
+  lworkMin = Max(2*(n),workopt.r);
+  
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;   
+  C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->C, &n, B->C, &n, 
+	     &sdim,alpha->C, beta->C,Vsl, &n,Vsr, &n,
+	     dwork->C, &lworkMin,rwork->R, (F!= NULL) ? iwork->I: NULL, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
     if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
     (*Sdim)->R[0] = sdim;
   }
 
-  if (info > 0) {
-    if (info <= n) 
-      Scierror("Error: schur, the QR algorithm failed to compute all the eigenvalues;\n");
-    else if (info == n + 1) 
-      Scierror("Error: schur, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
-    else if (info == n + 2) 
-      Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
-    else if (info == n + 3) 
-      Scierror("Error: schur, reordering failed\n");
-    return FAIL;
-  }
+  if (info > 0) 
+    {
+      if (info <= n) 
+	Scierror("Error:the qz iteration failed to compute all the eigenvalues;\n");
+      else if (info == n + 1) 
+	Scierror("Error: qz, eigenvalues could not be reordered (the problem is very ill-conditioned)\n");
+      else if (info == n + 2) 
+	Scierror("Error: qz, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
+      else if (info == n + 3) 
+	Scierror("Error: reordering failed in qz\n");
+      return FAIL;
+    }
+  else if ( info < 0 ) 
+    {
+      Scierror("Error: qz, the %d-th argument had an illegal value\n",-info);
+      return FAIL;
+    }
   /* menage XXXX */ 
   return OK ;
 }
@@ -4284,90 +4303,6 @@ NspMatrix *nsp_increase_banded_mat(NspMatrix *A, int kl, char flag)
 }
 
 
-
-
-/* 
- *  selects the stable eigenvalues for continuous time. 
- */
-
-int nsp_dschur_cont_stable(const double *reig,const double *ieig)
-{
-  return  *reig < 0.0; 
-}
-
-/*
- *    selects the stable eigenvalues for discrete-time 
- */
-
-int nsp_dschur_discr_stable(const double *reig,const double *ieig)
-{
-  return hypot(*reig, *ieig) < 1.;
-}
-
-/*
- *   selects the stable generalized eigenvalues for continuous-time 
- */
-
-int nsp_dgschur_cont_stable(double *alphar, double *alphai, double *beta)
-{
-  return  ((*alphar < 0. && *beta > 0.) ||( *alphar > 0. && *beta < 0.)) 
-    && abs(*beta) > abs(*alphar) * nsp_dlamch("p");
-}
-
-/*
- *   selects the stable generalized eigenvalues for discrete-time 
- */
-
-
-int nsp_dgschur_discr_stable(double *alphar, double *alphai, double *beta)
-{
-  return  hypot(*alphar, *alphai) < abs(*beta);
-}
-
-/*
- *  selects the stable eigenvalues for complex matrices and continuous time
- */
-
-int nsp_zschur_cont_stable(const doubleC *eig)
-{
-  return  eig->r < 0.;
-}
-
-/*
- *  selects the stable eigenvalues for complex matrices and discrete time
- */
-
-int nsp_zschur_discr_stable(const doubleC *eig)
-{
-  return  nsp_abs_c(eig) < 1.;
-} 
-
-/*
- *  selects the stable generalized eigenvalues for complex matrices and continuous time
- */
-
-int nsp_zgschur_cont_stable(const doubleC *alpha, doubleC *beta)
-{
-  doubleC z;
-  if (nsp_abs_c(beta) != 0.) 
-    {
-      nsp_div_cc(alpha,beta,&z);
-      return  z.r < 0.;
-    } 
-  else 
-    {
-      return 0;
-    }
-}
-
-/*
- *  selects the stable generalized eigenvalues for complex matrices and discrete time
- */
-
-int nsp_zgschur_discr_stable(const doubleC *alpha, const doubleC *beta)
-{
-  return  nsp_abs_c(alpha) < nsp_abs_c(beta);
-} 
 
 /*  symmetric positive definite matrix 
  *  or hermitian positive definite matrix
