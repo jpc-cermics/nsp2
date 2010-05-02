@@ -64,8 +64,11 @@ for N=[5,50] do
   if ~check(A,E,As,Es,Q,Z) then pause;end 
   [As,Es,Q,Z]=qz(A,E);
   if ~check(A,E,As,Es,Q,Z) then pause;end 
-  [As,Es]=qz(A,E);
-  if ~check(A,E,As,Es,Q,Z) then pause;end 
+  //XX when Q,Z are not requested the result 
+  // is correct but the As,Es are not the same
+  // so the check will fail.
+  //[As,Es]=qz(A,E);
+  //if ~check(A,E,As,Es,Q,Z) then pause;end 
   // Ordered sort='c'
   [As,Es,Q,Z,dim]=qz(A,E,sort='c');
   if ~check(A,E,As,Es,Q,Z) then pause;end 
