@@ -259,7 +259,7 @@ function x = icdf(dist, P, varargin, Q=[])
 	nu = varargin(1); lambda = varargin(2); 
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ...
 	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0) then
-	   error("Error: for icdf(""nt"",P,nu,lambda), nu should be positive and lambda non negative")
+	   error("Error: for icdf(""nt"",P,nu,lambda), nu should be positive and lambda a real scalar")
 	end
 	x(ind0) = -%inf
 	x(ind) = cdftnc("T", nu*size_to_Pind, lambda*size_to_Pind, Pind, Qind);

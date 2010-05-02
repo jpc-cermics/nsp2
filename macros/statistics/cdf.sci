@@ -205,8 +205,8 @@ function [P,Q] = cdf(dist, x, varargin)
 	end
 	nu = varargin(1); lambda = varargin(2); 
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ...
-	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0) then
-	   error("Error: for cdf(""nt"",x,nu,lambda), nu should be positive and lambda non negative")
+	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda)) then
+	   error("Error: for cdf(""nt"",x,nu,lambda), nu should be positive and lambda a real scalar")
 	end
 	size_to_x  = ones(size(x));
 	[P,Q] = cdftnc("PQ", x, nu*size_to_x, lambda*size_to_x);
