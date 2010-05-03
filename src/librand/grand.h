@@ -207,7 +207,7 @@ extern double nsp_rand_tailrayleigh(double sigma, double a);
 extern double nsp_rand_weibull(double a, double b);
 extern double nsp_rand_laplace(double a);
 extern double nsp_rand_lognormal(double mu, double sigma);
-extern double nsp_rand_t(double nu);
+extern double nsp_rand_t(double nu, double delta);
 
 
 

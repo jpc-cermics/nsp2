@@ -223,8 +223,9 @@ double nsp_rand_beta_direct(double a, double b)
 /**
  * nsp_rand_t:
  * @nu:  parameter of the t distribution
+ * @delta: non centrality parameter (0 for usual student distribution)
  * 
- * generates a random number from t(nu).
+ * generates a random number from t(nu,delta).
  *
  * method: page 15 of Luc Devroye,
  * Non-Uniform Random Variate Generation.  Springer-Verlag,
@@ -234,10 +235,10 @@ double nsp_rand_beta_direct(double a, double b)
  *
  * Returns: a double
  **/
-double nsp_rand_t(double nu)
+double nsp_rand_t(double nu, double delta)
 {
   double x, y;
-  x = nsp_rand_nor_core();
+  x = nsp_rand_nor_core() + delta;
   y = 2.0*nsp_rand_gamma_direct(0.5*nu);
   return x / sqrt( y / nu );
 }

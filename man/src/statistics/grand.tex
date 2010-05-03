@@ -157,7 +157,11 @@ S=grand(action [,q1,....,ql])
 
 \item \itemdesc{Student's t} 
   \verb!X=grand(m,n,"t", nu)! generates random variates from the  \hyperlink{tpdf}{t distribution} 
-  with $nu$ (positive real) degrees of freedom. 
+  with $\nu$ (positive real) degrees of freedom. 
+
+\item \itemdesc{Non central Student's t} 
+  \verb!X=grand(m,n,"nt", nu,delta)! generates random variates from the non central Student t distribution
+  with $\nu$ (positive real) degrees of freedom and non centrality parameter $\delta$. 
 
 \item \itemdesc{uniform (def)} \verb!X=grand(m,n,"def")! generates random variates from the uniform 
   distribution over $[0,1)$ (1 is never returned).

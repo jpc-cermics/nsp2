@@ -962,13 +962,13 @@ static int int_t_part(Stack stack, int rhs, int opt, int lhs, int suite, int Res
     {
       if ( ! (nu->R[0] > 0) ) goto err;
       for ( i=0 ; i < M->mn ; i++) 
-	M->R[i]= nsp_rand_t(nu->R[0]);
+	M->R[i]= nsp_rand_t(nu->R[0],0.0);
     }
   else               /* varying parameter case */      
     for ( i=0 ; i < M->mn ; i++) 
       {
 	if ( ! (nu->R[i] > 0) ) goto err;
-	M->R[i]= nsp_rand_t(nu->R[i]);
+	M->R[i]= nsp_rand_t(nu->R[i],0.0);
       }
   
   MoveObj(stack,1,(NspObject *) M);
@@ -976,6 +976,46 @@ static int int_t_part(Stack stack, int rhs, int opt, int lhs, int suite, int Res
 
  err:
   Scierror("Error: grand(..'t',nu) : nu (=%g) <= 0.0 \n",nu->R[i]); 
+  nsp_matrix_destroy(M);
+  return RET_BUG;
+}
+
+static int int_nt_part(Stack stack, int rhs, int opt, int lhs, int suite, int ResL, int ResC)
+{
+  NspMatrix *M, *nu, *delta;
+  int i=0;
+  if ( rhs != suite+1) 
+    { Scierror("Error: 2 parameters required for 'nt' option (got %d)\n",rhs-suite+1); return RET_BUG;}
+  
+  if ( (nu = GetRealMat(stack,suite)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,nu,ResL,ResC);
+  
+  if ( (delta = GetRealMat(stack,suite+1)) == NULLMAT) return RET_BUG;
+  CheckScalarOrDims(NspFname(stack),suite,delta,ResL,ResC);
+
+  if ( (M = nsp_matrix_create(NVOID,'r',ResL,ResC)) == NULLMAT) return RET_BUG;
+
+  if ( nu->mn == 1 && delta->mn == 1 )  /* fixed parameter case */
+    {
+      if ( ! (nu->R[0] > 0) ) goto err;
+      for ( i=0 ; i < M->mn ; i++) 
+	M->R[i]= nsp_rand_t(nu->R[0],delta->R[0]);
+    }
+  else               /* varying parameter case */
+    {
+      int i1, i2, inc1 = nu->mn == 1 ? 0 : 1, inc2 = delta->mn == 1 ? 0 : 1;
+      for ( i=0, i1=0, i2=0 ; i < M->mn ; i++, i1+=inc1, i2+=inc2 ) 
+	{
+	  if ( ! (nu->R[i1] > 0) ) goto err;
+	  M->R[i]= nsp_rand_t(nu->R[i1],delta->R[i2]);
+	}
+    }
+  
+  MoveObj(stack,1,(NspObject *) M);
+  return 1;
+
+ err:
+  Scierror("Error: grand(..'nt',nu,delta) : nu (=%g) <= 0.0 \n",nu->R[i]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
@@ -1854,6 +1894,9 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
 
   else if ( strcmp(rand_dist,"t")==0)
     return int_t_part(stack, rhs, opt, lhs, suite, ResL, ResC);
+
+  else if ( strcmp(rand_dist,"nt")==0)
+    return int_nt_part(stack, rhs, opt, lhs, suite, ResL, ResC);
 
   else 
     {
