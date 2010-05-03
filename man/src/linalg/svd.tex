@@ -23,8 +23,8 @@
 \end{parameters}
 \begin{mandescription}
   \verb![U,S,V] = svd(X)! produces a real vector \verb!S!, of dimension 
-  \verb!min(size(X))! with elements in decreasing order, and unitary
-  matrices \verb!U! and \verb!V! so that \verb!X = U*S1*V'! where 
+  \verb!min(size(X))! with elements in decreasing order, and unitary matrices
+  \verb!U! and \verb!V! so that \verb!X = U*S1*V'! where 
   \verb!S1=zeros(size(A));S1.set_diag[S,0]!. 
   
   When the optional argument \verb!mode! is given and set to \verb!'e'! 
@@ -34,8 +34,8 @@
   columns of \verb!U! (resp. of \verb!V!) are computed. 
 
   \verb!rk! gives in addition the numerical rank of \verb!X! i.e. the number of
-  singular values larger than \verb!tol!. The default value of \verb!tol!  is
-  the same as in \verb!rank! and it cand be given throught the optional argument
+  singular values larger than \verb!tol*S(1)!. The default value of \verb!tol!  is
+  the same as in \verb!rank! and it can be given throught the optional argument
   \verb!tol!.
 \end{mandescription}
 %--example 
