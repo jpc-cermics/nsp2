@@ -58,6 +58,8 @@ function F = nchoosek(E, k)
 	 F = zeros(0,k);
       elseif n == k then
 	 F = E
+      elseif k == 0 then
+	 F = repmat(E,1,0) 
       else  // use a triangular like algorithm to avoid the inefficient
 	    // basic recursive algorithm
 	 p = n-k+1      
