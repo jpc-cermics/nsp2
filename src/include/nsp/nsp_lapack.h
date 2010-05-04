@@ -18,7 +18,7 @@ extern double nsp_vector_norm(NspMatrix *A, double p);
 extern int nsp_balanc(NspMatrix *A,NspMatrix **D);
 extern int nsp_gbalanc(NspMatrix *A,NspMatrix *B,NspMatrix **X,NspMatrix **Y);
 extern int nsp_hess(NspMatrix *A,NspMatrix **U) ;
-extern int nsp_mat_is_symmetric(NspMatrix *A);
+extern int nsp_mat_is_symmetric(const NspMatrix *A);
 extern int nsp_mat_is_upper_triangular(NspMatrix *A);
 extern int nsp_mat_is_lower_triangular(NspMatrix *A);
 extern int nsp_mat_have_nan_or_inf(NspMatrix *A);
