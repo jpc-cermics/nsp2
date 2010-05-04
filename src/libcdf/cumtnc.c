@@ -112,7 +112,8 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   /*    Case bcent and bbcent are essentially zero 
    *    Thus t is effectively infinite 
    */
-  if (bcent + bbcent < 1e-10)
+  if (bcent + bbcent < 1e-20)  /* this threshold was changed (old value: 1e-10), bruno, may 2010 */
+                               /* such that p grows more smoothly to 1 (and q to 0)  */
     {
       if (qrevs)
 	{
@@ -129,7 +130,7 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   /*    Case bcent and bbcent are essentially one 
    *    Thus t is effectively zero 
    */
-  if (dum1 + dum2 < 1e-10)
+  if (dum1 + dum2 < 1e-20)  /* this threshold was changed (old value: 1e-10), bruno, may 2010 */  
     {
       d__1 = -(*pnonc);
       cdf_cumnor (&d__1, cum, ccum);
