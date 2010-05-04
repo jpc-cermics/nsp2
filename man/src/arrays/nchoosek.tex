@@ -1,0 +1,79 @@
+% -*- mode: latex -*-
+
+\mansection{nchoosek}
+\begin{mandesc}
+   \short{nchoosek}{compute a binomial coefficient or all k-subsets of a set}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ cnk = nchoosek(n,k)  // first form
+ Ek = nchoosek(E,k)   // second form
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{n}: non negative integer scalar
+   \vname{E}: vector (of numbers, strings, cells,...) with at least 2 elements (if $E$ reduces to a 
+              scalar then the first form is considered)
+   \vname{k}: non negative integer scalar less or equal to $n$ or to the number of elements of $E$
+   \vname{cnk}: binomial coefficient
+   \vname{Ek}: matrix with all k-subsets elements of $E$
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+  This function has two differents behaviors depending of the size of the first argument:
+\begin{enumerate}
+\item if it is a scalar it should be a non negative integer and the binomial coefficient :
+$$
+  \left( \begin{array}{c} n \\ k \end{array} \right) = \frac{n!}{k!(n-k)!} =  \left( \begin{array}{c} n \\ n-k \end{array} \right)
+$$
+is computed.
+\item if it is not a scalar then all the subsets with $k$ elements of the vector $E$ are computed
+      (it is supposed that all components of $E$ are unique) ; $Ek$ should have 
+      $ \left( \begin{array}{c} n \\ k \end{array} \right)$ rows and $k$ columns, each
+      row corresponding to a subset.
+\end{enumerate}
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\paragraph{first form examples}
+\begin{Verbatim}
+nchoosek(6,4)
+
+// should be equal to 6!/(4!*2!) and n! could be computed by prod(1:n)
+prod(1:6)/(prod(1:4)*prod(1:2))
+
+// test symmetry
+nchoosek(6,2)
+\end{Verbatim}
+\end{examples}
+
+\begin{examples}
+\paragraph{second form}
+\begin{Verbatim}
+// all subsets with 3 elements of {1,2,3,4,5}
+nchoosek(1:5,3)
+
+// all subsets with 2 elements of {"biniou","grand-mere","gratte"}
+nchoosek(["biniou","grand-mere","gratte"],2)
+\end{Verbatim}
+\end{examples}
+
+
+%-- see also
+\begin{manseealso}
+\manlink{perms}{perms}
+\end{manseealso}
+
+%-- Author
+\begin{authors}
+F. Delebecque, B. Pincon
+\end{authors}
+
