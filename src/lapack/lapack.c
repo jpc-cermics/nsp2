@@ -4554,6 +4554,13 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 	      if ( nsp_mat_complexify(vp, 0.0) == FAIL ) return NULL;
 	      if ( nsp_mat_complexify(U, 0.0) == FAIL ) return NULL;
 	    }
+	  if ( U->rc_type == 'c' )
+	    {
+	      /* This should be changed in  nsp_spec, if vp is 
+	       * real then U should be real.
+	       */
+	      if ( nsp_mat_complexify(vp, 0.0) == FAIL ) return NULL;
+	    }
 	}
       if ( vp->rc_type == 'r' )
 	{
