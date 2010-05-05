@@ -1175,7 +1175,7 @@ int nsp_putstr(NspFile *F, char *str)
 
 
 /*
- * nsp_fscan_matrix 
+ * nsp_fscanf_matrix 
  */ 
 
 #define INFOSIZE 1024
@@ -1275,7 +1275,6 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
 	{
 	  if (((*S)->S[i]=new_nsp_string(Info))==NULL) return FAIL;
 	}
-      
     }
 
   /* numeric data in M */
@@ -1286,7 +1285,7 @@ int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix 
 	{ 
 	  int n;
 	  double xloc;
-	  n = fscanf(F->obj->file,"%lf",&xloc);
+	  n = fscanf(F->obj->file,"%lf%*[ ,;\t]",&xloc); /* add %*[ ,;\t] to read also , and ; separated values (bruno, May 2010) */
 	  (*M)->R[i+rows*j]=( n != 1) ? 0.0: xloc;
 	}
     }
@@ -1368,7 +1367,8 @@ static int count_tokens_bug(char *string)
 }
 #endif 
 
-static int count_tokens(char *string)
+#if 0 
+static int count_tokens_old(char *string)
 {
   char *copy = string; 
   int ntok=0;
@@ -1378,10 +1378,39 @@ static int count_tokens(char *string)
   while (1) 
     {
       /* gobble token */
-      while ( *copy != '\0' && *copy !=' ' && *copy !='\t' && *copy !='\n') copy++;
+      while ( *copy != '\0' && *copy !=' ' && *copy !='\t' && *copy !='\n' ) copy++;
       ntok++;
       /* gobble spaces */
-      while ( *copy==' ' || *copy=='\t' || *copy=='\n') copy++;
+      while ( *copy==' ' || *copy=='\t' || *copy=='\n' ) copy++;
+      if ( *copy == '\0' ) 
+	return ntok;
+    }
+  return -1;
+}
+#endif 
+
+static int count_tokens(char *string)
+{
+  /* add this one to try to detect an eventual separator (, or ;) (Bruno, May 2010) */
+  char *copy = string; 
+  int ntok=0;
+  /* gobble spaces */
+  while ( *copy==' ' || *copy=='\t' || *copy=='\n') copy++;
+  if ( *copy == '\0') return 0;
+  while (1) 
+    {
+      /* gobble token */
+      while ( *copy != '\0' && *copy !=' ' && *copy !='\t' && *copy !='\n' && *copy !=',' && *copy !=';') copy++;
+      ntok++;
+      /* gobble spaces */
+      while ( *copy==' ' || *copy=='\t' || *copy=='\n' ) copy++;
+      /* gobble eventual separator */
+      if ( *copy==',' || *copy==';' ) 
+	{
+	  copy++;
+	  /* gobble spaces after the separator */
+	  while ( *copy==' ' || *copy=='\t' || *copy=='\n' ) copy++;
+	}
       if ( *copy == '\0' ) 
 	return ntok;
     }
@@ -1543,10 +1572,16 @@ int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix
 
   for (i = 0 ; i < M->m ; i++ ) 
     {
-      for ( j = 0 ; j < M->n ; j++) 
+      if ( M->n > 0 )     /* change a little the internal loop such as to avoid */
+                          /* printing separator at the end of the line (Bruno, May 2010) */
+                          /* (note: the test  M->n > 0 avoid crash on matrix with 0 columns) */
 	{
-	  fprintf(F->obj->file,fmt,M->R[i+M->m*j]);
-	  fprintf(F->obj->file,"%s",separator);
+	  fprintf(F->obj->file,fmt,M->R[i]);  /* first numerical value of the line */
+	  for ( j = 1 ; j < M->n ; j++) 
+	    {
+	      fprintf(F->obj->file,"%s",separator);    
+	      fprintf(F->obj->file,fmt,M->R[i+M->m*j]);
+	    }
 	}
       fprintf(F->obj->file,"\n");
     }
