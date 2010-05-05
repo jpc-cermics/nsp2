@@ -1595,6 +1595,25 @@ static int int_logm( Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern NspMatrix *nsp_matrix_sqrtm(NspMatrix *A);
+
+static int int_sqrtm( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A,*B;
+  CheckStdRhs(1,1); 
+  CheckLhs (0, 1);
+  if ((A = GetMat (stack, 1)) == NULLMAT)    return RET_BUG;
+  if ( A->m != A->n ) 
+    {
+      Scierror("Error: argument of %s should be square\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ((B = nsp_matrix_sqrtm(A)) == NULLMAT)
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(B));
+  return 1;
+}
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -1620,6 +1639,7 @@ static OpTab Lapack_func[] = {
   {"qz",int_qz},
   {"solve_m",int_solve},
   {"logm", int_logm},
+  {"sqrtm", int_sqrtm},
   {(char *) 0, NULL}
 };
 

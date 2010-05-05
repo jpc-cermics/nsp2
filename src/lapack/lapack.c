@@ -4472,74 +4472,78 @@ int nsp_mat_bdiv_square_symmetric(NspMatrix *A, NspMatrix *B, double *rcond, dou
 
 }
 
+typedef double (*funFr)(double arg);
+typedef void (*funFc)(const doubleC *arg, doubleC *val);
 
-NspMatrix *nsp_matrix_logm(NspMatrix *A)
+NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag)
 {
   int i,j;
-  NspMatrix *LogA= NULL, *vp = NULL, *Res= NULL, *U=NULL;
+  NspMatrix *B= NULL, *vp = NULL, *Res= NULL, *U=NULL;
   if ( A->m != A->n )
     {
-      Scierror("Error: logm argument should be a square matrix\n"); 
+      Scierror("Error: %s argument should be a square matrix\n",name); 
       return NULL;
     }
-  if ( ( LogA= nsp_matrix_copy(A)) == NULLMAT) return NULLMAT;
+  if ( ( B= nsp_matrix_copy(A)) == NULLMAT) return NULLMAT;
   if ( nsp_mat_is_symmetric(A)== TRUE ) 
     {
       if ( ( vp =nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT ) return NULLMAT;
       if ( A->rc_type == 'r') 
 	{
-	  if ( nsp_dgees0(LogA,&U,NULL,NULL) == FAIL)
+	  if ( nsp_dgees0(B,&U,NULL,NULL) == FAIL)
 	    return NULL;
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    {
-	      if ( LogA->R[i+LogA->m*i]== 0.0 ) 
-		{
-		  Sciprintf("Warning: computing logm of a singular matrix \n");
-		  break;
-		}
-	    }
-	  for ( i = 0 ; i < LogA->m ; i++) vp->R[i]= log(LogA->R[i+LogA->m*i]);
+	  if ( flag ) 
+	    for ( i = 0 ; i < B->m ; i++)
+	      {
+		if ( B->R[i+B->m*i]== 0.0 ) 
+		  {
+		    Sciprintf("Warning: computing %s of a singular matrix \n",name);
+		    break;
+		  }
+	      }
+	  for ( i = 0 ; i < B->m ; i++) vp->R[i]= Fr(B->R[i+B->m*i]);
 	  /* now compute U*diag(log(vp))*U' */
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    for ( j = 0 ; j < LogA->n ; j++)
-	      LogA->R[i+j*U->m]= vp->R[j]*U->R[i+j*U->m];
-	  if ( (Res = nsp_mat_mult(LogA,U,2)) == NULL) return NULL;
+	  for ( i = 0 ; i < B->m ; i++)
+	    for ( j = 0 ; j < B->n ; j++)
+	      B->R[i+j*U->m]= vp->R[j]*U->R[i+j*U->m];
+	  if ( (Res = nsp_mat_mult(B,U,2)) == NULL) return NULL;
 	}
       else
 	{
-	  if ( nsp_zgees0(LogA,&U,NULL,NULL) == FAIL)
+	  if ( nsp_zgees0(B,&U,NULL,NULL) == FAIL)
 	    return NULL;
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    {
-	      if ( LogA->C[i+LogA->m*i].r == 0.0 && LogA->C[i+LogA->m*i].i == 0.0 ) 
-		{
-		  Sciprintf("Warning: computing logm of a singular matrix \n");
-		  break;
-		}
-	    }
-	  for ( i = 0 ; i < LogA->m ; i++) nsp_log_c(&LogA->C[i+LogA->m*i],&vp->C[i]);
-	  /* now compute U*diag(log(vp))*U' */
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    for ( j = 0 ; j < LogA->n ; j++)
+	  if ( flag ) 
+	    for ( i = 0 ; i < B->m ; i++)
 	      {
-		LogA->C[i+j*U->m].r = vp->C[j].r * U->C[i+j*U->m].r 
+		if ( B->C[i+B->m*i].r == 0.0 && B->C[i+B->m*i].i == 0.0 ) 
+		  {
+		    Sciprintf("Warning: computing %s of a singular matrix \n",name);
+		    break;
+		  }
+	      }
+	  for ( i = 0 ; i < B->m ; i++) Fc(&B->C[i+B->m*i],&vp->C[i]);
+	  /* now compute U*diag(log(vp))*U' */
+	  for ( i = 0 ; i < B->m ; i++)
+	    for ( j = 0 ; j < B->n ; j++)
+	      {
+		B->C[i+j*U->m].r = vp->C[j].r * U->C[i+j*U->m].r 
 		  - vp->C[j].i *U->C[i+j*U->m].i ;
-		LogA->C[i+j*U->m].i = vp->C[j].r *U->C[i+j*U->m].i 
+		B->C[i+j*U->m].i = vp->C[j].r *U->C[i+j*U->m].i 
 		  +  vp->C[j].i * U->C[i+j*U->m].r;
 	      }
-	  if ( (Res = nsp_mat_mult(LogA,U,2)) == NULL) return NULL;
+	  if ( (Res = nsp_mat_mult(B,U,2)) == NULL) return NULL;
 	}
     }
   else
     {
       double  tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
-      if ( nsp_mat_complexify(LogA, 0.0) == FAIL ) return NULL;
-      if ( nsp_spec(LogA,&vp,&U) == FAIL) 
+      if ( nsp_mat_complexify(B, 0.0) == FAIL ) return NULL;
+      if ( nsp_spec(B,&vp,&U) == FAIL) 
 	return NULL;
       if ( vp->rc_type == 'r' )
 	{
 	  int complex= FALSE;
-	  for ( i = 0 ; i < LogA->m ; i++) 
+	  for ( i = 0 ; i < B->m ; i++) 
 	    if ( vp->R[i] < 0 ) 
 	      {
 		complex= TRUE; 
@@ -4553,50 +4557,64 @@ NspMatrix *nsp_matrix_logm(NspMatrix *A)
 	}
       if ( vp->rc_type == 'r' )
 	{
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    {
-	      if ( vp->R[i] == 0.0 )
-		{
-		  Sciprintf("Warning: computing logm of a singular matrix \n");
-		  break;
-		}
-	    }
-	  for ( i = 0 ; i < LogA->m ; i++) vp->R[i]= log(vp->R[i]);
+	  if ( flag ) 
+	    for ( i = 0 ; i < B->m ; i++)
+	      {
+		if ( vp->R[i] == 0.0 )
+		  {
+		    Sciprintf("Warning: computing %s of a singular matrix \n",name);
+		    break;
+		  }
+	      }
+	  for ( i = 0 ; i < B->m ; i++) vp->R[i]= Fr(vp->R[i]);
 	  /* now compute U*diag(log(vp))*U' */
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    for ( j = 0 ; j < LogA->n ; j++)
-	      LogA->R[i+j*U->m] = vp->R[j]* U->R[i+j*U->m];
-	  if ((Res = nsp_matrix_bdiv(LogA,U, tol_rcond)) == NULL) return NULL;
+	  for ( i = 0 ; i < B->m ; i++)
+	    for ( j = 0 ; j < B->n ; j++)
+	      B->R[i+j*U->m] = vp->R[j]* U->R[i+j*U->m];
+	  if ((Res = nsp_matrix_bdiv(B,U, tol_rcond)) == NULL) return NULL;
 	  if ( nsp_inv(U) == FAIL) return NULL;
-	  if ( (Res = nsp_mat_mult(LogA,U,0)) == NULL) return NULL;
+	  if ( (Res = nsp_mat_mult(B,U,0)) == NULL) return NULL;
 	}
       else
 	{
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    {
-	      if ( vp->C[i].r == 0.0 && vp->C[i].i == 0.0 ) 
-		{
-		  Sciprintf("Warning: computing logm of a singular matrix \n");
-		  break;
-		}
-	    }
-	  for ( i = 0 ; i < LogA->m ; i++) nsp_log_c(&vp->C[i],&vp->C[i]);
-	  /* now compute U*diag(log(vp))*U' */
-	  for ( i = 0 ; i < LogA->m ; i++)
-	    for ( j = 0 ; j < LogA->n ; j++)
+	  if ( flag )
+	    for ( i = 0 ; i < B->m ; i++)
 	      {
-		LogA->C[i+j*U->m].r = vp->C[j].r * U->C[i+j*U->m].r 
+		if ( vp->C[i].r == 0.0 && vp->C[i].i == 0.0 ) 
+		  {
+		    Sciprintf("Warning: computing %s of a singular matrix \n",name);
+		    break;
+		  }
+	      }
+	  for ( i = 0 ; i < B->m ; i++) Fc(&vp->C[i],&vp->C[i]);
+	  /* now compute U*diag(log(vp))*U' */
+	  for ( i = 0 ; i < B->m ; i++)
+	    for ( j = 0 ; j < B->n ; j++)
+	      {
+		B->C[i+j*U->m].r = vp->C[j].r * U->C[i+j*U->m].r 
 		  - vp->C[j].i *U->C[i+j*U->m].i ;
-		LogA->C[i+j*U->m].i = vp->C[j].r *U->C[i+j*U->m].i 
+		B->C[i+j*U->m].i = vp->C[j].r *U->C[i+j*U->m].i 
 		  +  vp->C[j].i * U->C[i+j*U->m].r;
 	      }
 	  if ( nsp_inv(U) == FAIL) return NULL;
-	  if ( (Res = nsp_mat_mult(LogA,U,0)) == NULL) return NULL;
+	  if ( (Res = nsp_mat_mult(B,U,0)) == NULL) return NULL;
 	}
     }
-  nsp_matrix_destroy(LogA);
+  nsp_matrix_destroy(B);
   nsp_matrix_destroy(U);
   nsp_matrix_destroy(vp);
   return Res;
 }
+
+
+NspMatrix *nsp_matrix_logm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag)
+{
+  return nsp_matrix_funm(A,log,nsp_log_c,"logm",TRUE);
+}
+
+NspMatrix *nsp_matrix_sqrtm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag)
+{
+  return nsp_matrix_funm(A,sqrt,nsp_sqrt_c,"logm",TRUE);
+}
+
 
