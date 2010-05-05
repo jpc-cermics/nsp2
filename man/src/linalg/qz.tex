@@ -1,0 +1,75 @@
+% -*- mode: latex -*-
+\mansection{qz}
+\begin{mandesc}
+  \short{qz}{Schur decomposition of pencils} \\ % 
+\end{mandesc}
+%\index{qz}\label{qz}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [As,Es,Q,Z,dim] = qz(A,E,  sort= sel, args= obj, complex=%t|%f)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,E}: two real or complex square matrix of same dimensions.
+    \vname{Q,Z}: orthogonal or unitary square matrices.
+    \vname{As}: upper triangular or quasi-triangular square matrix
+    \vname{Es}: upper triangular  square matrix
+    \vname{dim}: integer
+    \vname{obj}: a list.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  returns a quasi triangular matrix \verb!As! and a triangular matrix
+  \verb!Es! which are the generalized Schur form of the pair 
+  \verb!(A, E)! (i.e the Schur form of the pencil \verb!s*E-A!). 
+  Moreover, \verb!Q! and \verb!Z! are two unitary matrices such that~:
+\begin{verbatim}
+      As=Q'*A*Z   and  Es=Q'*E*Z 
+\end{verbatim}
+
+    It is possible to obtain the complex Schur form of a real matrix 
+    by adding an optional argument \verb!complex=%t! when calling function
+    \verb!schur!.
+
+    if and optional argument \verb!sort! is given, then an ordered 
+    qz transformation is performed in such a way that generalized eigenvalues 
+    selected by the sort function appear in the leading (upper left) 
+    diagonal blocks of the quasi-triangular matrices \verb!As! and 
+    \verb!Es!. The corresponding right eigenspace 
+    has dimension \verb!dim! and is given by the 
+    leading \verb!dim! columns of \verb!Z!. Using:
+    \begin{itemize}
+      \item \verb!sort='c'!: the right  eigenspace associated with
+      generalized eigenvalues with negative real parts (stable continuous time eigenspace) is selected.
+      \item \verb!sort='d'!: The right eigenspace associated with
+      generalized eigenvalues with magnitude lower than 1 (stable discrete time eigenspace) is selected.
+      \item \verb!sort=sel'!: The right  eigenspace associated with
+      generalized eigenvalues for which the function \verb!sel(r,c,obj)! returns true 
+      is selected. Extra arguments to the function \verb!sel! are given 
+      by the optional argument \verb!obj! which is a list transmited with \verb!args=obj!.
+    \end{itemize}
+  \end{mandescription}
+  % --example 
+\begin{examples}
+  \begin{Verbatim}
+ A = [ -1.  0. 0.  1. 
+        0. -1. 5.  0. 
+        0.  0. 2.  0. 
+        1.  0. 0. -2.];
+ E = [  0.  1.  0. 0. 
+        0.  0. -1. 0. 
+        0.  0.  1. 0. 
+        0.  0.  0. 1. ];
+      [As,Es,Q,Z]=qz(A,E);
+      Q'*A*Z 
+      Q'*E*Z 
+      [As,Es,Q,Z,dim] = qz(A,E,sort='c')
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{spec}{spec} \manlink{schur}{schur} 
+\end{manseealso}
