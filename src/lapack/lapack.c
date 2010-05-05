@@ -4614,7 +4614,7 @@ NspMatrix *nsp_matrix_logm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 
 NspMatrix *nsp_matrix_sqrtm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag)
 {
-  return nsp_matrix_funm(A,sqrt,nsp_sqrt_c,"logm",TRUE);
+  return nsp_matrix_funm(A,sqrt,nsp_sqrt_c,"sqrtm",TRUE);
 }
 
 
