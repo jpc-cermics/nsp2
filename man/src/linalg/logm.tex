@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+\mansection{logm}
+\begin{mandesc}
+  \short{logm}{logarithm of a square matrix} \\ % 
+  \short{sqrtm}{square root of a square matrix} \\ % 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  B=logm(A)  
+  B=sqrtm(A)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A,B}: square numerical matrices.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!logm(A)! returns the matrix logarithm of matrix \verb!A! and 
+  \verb!sqrtm(A)! returns the square root of matrix \verb!A!. 
+  If matrix \verb!A! is a symmetric (hermitian) matrix, the 
+  computation is performed using the schur decomposition of matrix \verb!A!.
+  Otherwise, \verb!A! is turned to a complex matrix, the function 
+  \verb!spec! is used to diagonalize the matrix and if possible 
+  the result is turned back to a real matrix. Thus, the result will be 
+  complex in both cases  if \verb!A! is not positive-semidefinite.
+\end{mandescription}
+%--example 
+\begin{examples}
+\begin{itemize}
+  \item \verb!logm!
+  \begin{Verbatim}
+    A=rand(4,4); 
+    A=A*diag([1:4])*inv(A);
+    B=logm(A)
+    isreal(B,%t)
+    norm(expm(B)-A)
+    A=rand(4,4);
+    A=A*A';
+    norm(expm(logm(A))-A)
+    A=rand(4,4)+%i*rand(4,4);
+    A=A*A';
+    norm(expm(logm(A))-A)
+  \end{Verbatim}
+  \item \verb!sqrtm!
+  \begin{Verbatim}
+    A=rand(4,4); 
+    A=A*diag([1:4])*inv(A);
+    B=sqrtm(A)
+    isreal(B,%t)
+    norm(B*B-A)
+    A=rand(4,4); A=A*A';
+    B=sqrtm(A);
+    norm(B*B-A)
+  \end{Verbatim}
+\end{itemize}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{expm}{expm} \manlink{schur}{schur}  \manlink{spec}{spec}  
+\end{manseealso}
