@@ -1,7 +1,23 @@
-/*------------------------------------------------------------------------
- *    Copyright (C) 2001-2009 Enpc/Jean-Philippe Chancelier
- *    jpc@cermics.enpc.fr 
- * Gtk widgets for Scilab help 
+/* Nsp
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * help widget 
+ * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -29,9 +45,6 @@ static void my_gtk_list_change(GtkWidget * list,char ** help,int nhelp);
 static void create_page (GtkNotebook *notebook,char *path, char *name) ;
 static void create_init_page (GtkNotebook *notebook,char *name);
 static void create_notebook (char *pathname,char *name);
-/*------------------------------------------------------------
- * Help Popup 
- *------------------------------------------------------------*/
 
 static GtkWidget *notebook_window = NULL; /* help widow */ 
 
@@ -39,9 +52,7 @@ static GtkWidget *notebook_window = NULL; /* help widow */
  * activate help on topic Topic 
  *------------------------------------------------------------*/
 
-void SciCallHelp(helpPath,Topic)
-     char *Topic;
-     char *helpPath;
+void SciCallHelp(char *helpPath,char *Topic)
 {
   static char format1[]= "%s/%s.cat";
   char *buf = (char *) MALLOC((strlen(helpPath)+strlen(Topic)+6) * (sizeof(char)));
@@ -121,8 +132,7 @@ GtkWidget *sample_notebook;
 
 /* callback activated when a page is selected */ 
 
-static void
-page_switch (GtkWidget *widget, GtkNotebookPage *page, gint page_num)
+static void page_switch (GtkWidget *widget, GtkNotebookPage *page, gint page_num)
 {
   GtkNotebookPage *oldpage;
   GtkWidget *pixwid;
@@ -157,7 +167,7 @@ static void notebook_destroyed (GtkWidget *widget, GtkWidget **window)
 
 /* notebook creation */ 
 
-void create_notebook (char *pathname,char *name)
+static void create_notebook (char *pathname,char *name)
 {
   GtkWidget *box1;
   GtkWidget *button;
@@ -420,7 +430,7 @@ static void initHelpWidgets(GtkWidget *container)
 
 /* meme chose mais appel r'eduit pour appel a partir de C */
 
-void help_info(message,str1,str2)
+void help_info(char *message,char *str1, char *str2)
      char *message,*str1,*str2;
 {
   /* XXXXXXX 

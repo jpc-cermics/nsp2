@@ -433,7 +433,29 @@ static int nsp_help_fill_help_table(const char *index_file)
 int nsp_help_topic(const char *topic, char *buf)
 {
   NspObject *Obj;
-  if ( nsp_help_table == NULLHASH)
+  if ( strcmp(topic, "nsp")==0 )
+    {
+      /* re-initialize to scilab */
+      if ( nsp_help_fill_help_table(NULL) == FAIL 
+	   || nsp_help_table == NULLHASH)
+	{
+	  Scierror("Error: cannot build help table \n");
+	  return FAIL;
+	}
+      return OK;
+    }
+  if ( strcmp(topic, "scicoslab")==0 )
+    {
+      if ( nsp_help_fill_help_table("NSP/contrib/scicoslab/man/html/generated/manual.4dx") 
+	   || nsp_help_table == NULLHASH)
+	{
+	  Scierror("Error: cannot build help table \n");
+	  return FAIL;
+	}
+      return OK;
+    }
+
+  if ( nsp_help_table == NULLHASH ) 
     {
       /* initialize */
       if ( nsp_help_fill_help_table(NULL) == FAIL 
