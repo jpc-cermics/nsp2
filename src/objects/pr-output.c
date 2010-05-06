@@ -259,6 +259,8 @@ void gen_pr_min_max_internal(const void *M, char flag, double *dmin, double *dma
 void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_inf_or_nan,
                      pr_mima min_max, it_gen_f all_iin, nsp_it_init Init)
 {
+  int real_is_zero = FALSE;
+  int imag_is_zero = FALSE;
   double d_epsr=DBL_EPSILON;
   int work[2];
   int sign,inf_or_nan, r_x_max,r_x_min,i_x_max,i_x_min;
@@ -279,8 +281,6 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
     }
   else 
     {
-      int real_is_zero = FALSE;
-      int imag_is_zero = FALSE;
       (*min_max)(M,'r',&r_min_abs,&r_max_abs); 
       if (r_max_abs == 0.0 && r_min_abs == 0.0 ) real_is_zero = TRUE;
       if (r_max_abs == 0.0) r_max_abs = d_epsr;
@@ -396,7 +396,7 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
       sprintf (fmt->curr_real_fmt, "%%%d.%df", fmt->curr_real_fw, rd);
       sprintf (fmt->curr_imag_fmt, "%%%d.%df", fmt->curr_imag_fw, rd);
     }
-  if ( type == 'r' ) fmt->curr_imag_fw =0;
+  if ( type == 'r' || imag_is_zero ) fmt->curr_imag_fw =0;
 }
 
 
