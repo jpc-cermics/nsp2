@@ -1,22 +1,57 @@
 \chapter*{linear algebra}\addcontentsline{toc}{chapter}{linear algebra}
 
+\HCode{<hr>}
+Linear system solving
+
 \begin{quote}
 \noindent
 \hyperlink{solve}{solve} - solve a linear system\\
+\end{quote}
+
+\HCode{<hr>}
+Matrix factorizations
+
+\begin{quote}
+\noindent
 \hyperlink{lu}{lu} - LU factorization (for full matrix) \\
 \hyperlink{umfpack_create}{umfpack\_create},\;
 \hyperlink{umfpack_solve}{umfpack\_solve} - LU factorization (for sparse matrix) \\
 \hyperlink{chol}{chol} - Cholesky factorization (for full matrix) \\
 \hyperlink{Cholmod}{Cholmod},\;
 \hyperlink{cholmod_create}{cholmod\_create} - Cholesky or LDLt factorization (for sparse matrix) \\
-\hyperlink{qr}{qr} - QR factorization \\
+\hyperlink{qr}{qr} - QR factorization
+\end{quote}
+
+
+\HCode{<hr>}
+Eigenvalues, Singular values and associated factorizations
+
+\begin{quote}
+\noindent
 \hyperlink{svd}{svd} - singular value decomposition \\
 \hyperlink{spec}{spec} - matrix spectrum, eigenvalues and eigenvectors\\
 \hyperlink{schur}{schur} - Schur decomposition of a matrix \\
 \hyperlink{qz}{qz} - Schur decomposition of pencils \\
-\hyperlink{rank}{rank} - Numerical rank calculation \\
+\end{quote}
+
+
+\HCode{<hr>}
+Matrix functions
+
+\begin{quote}
+\noindent
+\hyperlink{expm}{expm} - exponential of a square matrix \\ %
 \hyperlink{sqrtm}{sqrtm} - square root of a square matrix \\ %
 \hyperlink{logm}{logm} - logarithm of a square matrix \\ %
+\end{quote}
+
+
+\HCode{<hr>}
+Matrix subspaces, properties, norm functions
+
+\begin{quote}
+\noindent
+\hyperlink{rank}{rank} - Numerical rank calculation \\
 \hyperlink{kernel}{kernel} - computes an orthonormal basis of the null space of a matrix\\
 \hyperlink{orth}{orth} - computes an orthonormal basis of the range of a matrix\\
 \hyperlink{norm}{norm} - vector and matrix norm\\
@@ -37,6 +72,7 @@
 \input linalg/qz.tex
 \input linalg/rank.tex
 \input linalg/logm.tex
+\input linalg/expm.tex
 \input linalg/kernel.tex
 \input linalg/orth.tex
 \input linalg/norm.tex 

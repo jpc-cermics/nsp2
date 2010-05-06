@@ -1,0 +1,84 @@
+% -*- mode: latex -*-
+
+\mansection{expm}
+\begin{mandesc}
+  \short{expm}{exponential of a square matrix}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+B = expm(A)
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}:  square real or complex matrix.
+    \vname{B}:  the exponential of \verb+A+
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function computes (an approximation of) the exponential of a (full) square matrix $A$ :
+$$
+   B = e^A = \sum_{k=0}^{+\infty} \frac{A^k}{k !} = I + A + \frac{A^2}{2} + \frac{A^3}{6} + \dots
+$$
+using routines from R. B. Sidje 's expokit package.
+\end{mandescription}
+
+\begin{examples}
+
+\paragraph{simple example}
+\begin{Verbatim}
+M = randn(4,4);
+lambda = [-5; -0.2; 3; 10];
+A = M*diag(lambda)*inv(M);
+// compute exp(A) using expm 
+B = expm(A)
+// compute exp(A) using the fact we know the spectral factorization
+C =  M*diag(exp(lambda))*inv(M);
+// compare
+abs(B-C)
+err = norm(B-C)/norm(C)
+\end{Verbatim}
+
+\paragraph{Using expm to solve an ode.} The solution of the linear ode, $\dot{u}(t) = A u(t)$, $u(0)=u_0$,
+is $u(t) = e^{tA} u(0)$. The solution at time instants $t_k = k \Delta t$ could be
+obtained by computing the exponential of the matrix $\Delta t A$ and the recurrence 
+$u(t_k) = \exp(\Delta t A) u(t_{k-1})$:  
+\begin{Verbatim}
+A = [-0.1 -1    0;...
+      1   -0.1  1;...
+      0   -1   -0.1];
+dt = 0.05;
+n = 1000;
+t = 0:dt:n*dt;
+u0 = [0;0;1];
+expAdt = expm(dt*A);
+u = zeros(3,n+1);
+u(:,1) = u0;
+for k=2:n+1
+  u(:,k) = expAdt*u(:,k-1);
+end
+// display the trajectory
+xbasc()
+param3d(u(1,:)',u(2,:)',u(3,:)', style=2, flag = [4,4])
+
+col = xget("color")
+th = xget("thickness")
+xset("thickness",4)  // symbole + gros
+xset("color",5) // red
+param3d(u0(1),u0(2),u0(3),style=-3,flag=[0,0]) 
+xset("thickness",th); xset("color",col)
+\end{Verbatim}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{sqrtm}{sqrtm}, \manlink{logm}{logm}, \manlink{ode}{ode}  
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+  This function uses Roger B. Sidje 's routines dgpadm.f, dspadm.f, zgpadm.f and zhpadm.f.
+\end{authors}
