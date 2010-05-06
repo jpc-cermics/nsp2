@@ -1,14 +1,7 @@
 // -*- Mode: scilab -*- 
-
-// fonction temporaires 
-// -------------------------------------------------------
-function y=kron(a,b) ; y = a.*.b ; endfunction 
-
-//-------------------------------------------------------
 eps=1.e-8
 
 //test of elementary functions
-
 a=[1 2;3 4];
 if or(size(a)<>[2 2]) then pause,end
 if or(size(a+0)<>[2 2]) then pause,end
