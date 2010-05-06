@@ -2617,15 +2617,15 @@ int_mxseti (Stack stack, int rhs, int opt, int lhs)
 /*
  * A = Matclean(a [,epsa,[epsr]]) clean A according to eps 
  * A is changed : 
- * XXXX A Changer : mettre le vrai eps 
  */
 
 int
 int_mxclean (Stack stack, int rhs, int opt, int lhs)
 {
-  double epsa =1.e-10, epsr = 1.e-10;
+  double epsr=DBL_EPSILON;
+  double epsa=DBL_EPSILON;
   NspMatrix *HMat;
-  CheckRhs (1, 3);
+  CheckStdRhs (1, 3);
   CheckLhs (1, 1);
   if (rhs >= 2)
     {
