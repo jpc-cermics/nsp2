@@ -3,10 +3,9 @@
 function [rep]=scr_configure_event(widget, event)
   win = widget.window;
   wh=win.get_size[];
-  pixmap= gdkpixmap_new(win,wh(1),wh(2),depth= -1)	
+  pixmap= gdkpixmap_new(drawable=win,width=wh(1),height=wh(2),depth= -1)	
   // attach the pixmap to the widget 
   widget.set_data[pixmap=pixmap]; 
-  
   //draw_rectangle(pixmap, widget.get_style().white_gc, %t,
   //	       0, 0, win.width, win.height)
   pixmap.draw_rectangle[ widget.style.white_gc,%t,0,0,wh(1),wh(2)];

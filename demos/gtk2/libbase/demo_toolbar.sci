@@ -58,7 +58,7 @@ function [toolbar]=make_toolbar(win)
   toolbar.append_space[]
   entry = gtkentry_new()
   entry.show[]
-  toolbar.append_widget[entry, "", ""]
+  toolbar.append_widget[entry,tooltip_text="", tooltip_private_text=""];
   toolbar.append_space[]
   pixmap = gtkimage_new("pixmap",pix,mask);
   toolbar.append_item[text="Small",tooltip_text= "Use small spaces",tooltip_private_text="Small spaces",...
