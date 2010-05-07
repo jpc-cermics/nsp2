@@ -20,7 +20,7 @@ function take_snapshot (button, data)
   printf("rectangle target1 %d %d %d %d\n",target1(1) , target1(2), target1(3), target1(4));
 
   shot = data(2).window.get_image[target1(1), target1(2),target1(3), target1(4)];
-  data(3).set_from_image[shot,none_create()];
+  data(3).set_from_image[gdk_image=shot,mask=none_create()];
 
   //  data(2).window.begin_paint_rect[target];
   data(2).window.draw_rectangle[ black_gc, %f, target1(1), target1(2), target1(3), target1(4)];
