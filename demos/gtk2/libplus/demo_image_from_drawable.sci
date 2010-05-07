@@ -14,7 +14,7 @@ function take_snapshot (button, data)
 
   // Screen shot area 
 
-  target=[ visible.x +xh , visible.y +yv , visible.width, visible.height];
+  target=[ visible.x+xh , visible.y+yv , visible.width, visible.height];
   target1 = target + [ visible.width/5,visible.height/5,- 2* visible.width/5, - 2* visible.height/5];
 
   printf("rectangle target1 %d %d %d %d\n",target1(1) , target1(2), target1(3), target1(4));
