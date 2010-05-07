@@ -55,18 +55,14 @@
   % --example 
 \begin{examples}
   \begin{Verbatim}
- A = [ -1.  0. 0.  1. 
-        0. -1. 5.  0. 
-        0.  0. 2.  0. 
-        1.  0. 0. -2.];
- E = [  0.  1.  0. 0. 
-        0.  0. -1. 0. 
-        0.  0.  1. 0. 
-        0.  0.  0. 1. ];
-      [As,Es,Q,Z]=qz(A,E);
-      Q'*A*Z 
-      Q'*E*Z 
-      [As,Es,Q,Z,dim] = qz(A,E,sort='c')
+ A = [ -1.,  0., 0.,  1. ; 0., -1., 5.,  0. 
+        0.,  0., 2.,  0. ; 1.,  0., 0., -2.];
+ E = [  0.,  1.,  0., 0. ; 0.,  0., -1., 0. 
+        0.,  0.,  1., 0. ; 0.,  0.,  0., 1. ];
+ [As,Es,Q,Z]=qz(A,E);
+ Q'*A*Z 
+ Q'*E*Z 
+ [As,Es,Q,Z,dim] = qz(A,E,sort='c')
   \end{Verbatim}
 \end{examples}
 %-- see also
