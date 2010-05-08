@@ -42,21 +42,31 @@ S=grand(action [,q1,....,ql])
   like changing the base generator or changing or retrieving its internal state (seeds), 
   etc ... These base generators give random integers following a
   uniform distribution on a large integer interval of the form $[0,n)$
-  (with $n=2^{32}$ in most cases). Others distributions are got from
+  (with $n=2^{32}$ in most cases).  Others distributions are got from
   this one through various transformations.
+
 \end{mandescription}
 
 %-- section-Getting random numbers from a given distribution
 \paragraph{Getting random numbers from a given distribution}
 
-\begin{description}
-\item[univariate distributions] Rmk: 
+%\begin{description}
+%\item[univariate distributions] Rmk: 
+%\begin{enumerate}
+%\item distribution parameters could be either scalars or vectors or
+%  matrices of same dimensions than the wanted output matrix
+%\item densities or mass functions for most these distributions are
+%  explicited in the \manlink{pdf}{pdf} help page.
+%\end{enumerate}
+
 \begin{enumerate}
-\item distribution parameters could be either scalars or vectors or
-  matrices of same dimensions than the wanted output matrix
-\item densities or mass functions for most these distributions are
-  explicited in the \manlink{pdf}{pdf} help page.
-\end{enumerate}
+\item {\bf univariate distributions:} 
+
+\begin{quote}
+    For univariate distributions, distribution parameters could be either scalars or vectors or
+    matrices of same dimensions than the wanted output matrix. Densities or mass functions for most 
+    these distributions are explicited in the \manlink{pdf}{pdf} help page.
+\end{quote}
 
 \begin{itemize}
 \item \itemdesc{beta} \verb!X=grand(m,n,"bet",a,b)! generates random variates from 
@@ -189,7 +199,9 @@ S=grand(action [,q1,....,ql])
   distribution} with (scale) parameter $a$ (positive real) and (shape) parameter $b$ (positive real).
 \end{itemize}
 
-\item[multivariate distributions]
+~~~~
+
+\item {\bf multivariate distributions:}
 \begin{itemize}
 \item \itemdesc{multivariate gaussian (multivariate normal)}
   \verb!X=grand(n,"mn",Mean,Cov)! generates  $n$ multivariate normal random variates ; 
@@ -249,14 +261,19 @@ S=grand(action [,q1,....,ql])
 
 \end{itemize}
 
-\end{description}
-
+\end{enumerate}
 
 %-- section-Set/get the current generator and its state
 \paragraph{Set/get the current generator and its state}
+~~\\
+
 You have the possibility to choose between different base 
 generators (which give random integers following the \verb!"lgi"!
-distribution) :
+distribution). Each one provides its own sequence which is ultimately 
+periodic. By default, the sequence is started from the same fixed 
+internal state and so gives the same ``random numbers'' each time you 
+start nsp (see here after ``How to set ``randomly'' the initial state'' 
+to change this behavior). The available base generators are:
 \begin{itemize}
 \item \itemdesc{mt}  the Mersenne-Twister of M. Matsumoto and T. Nishimura, period about \verb!2^19937!, 
   state given by an array of \verb!624! integers (plus an index onto this array); this  
@@ -278,31 +295,60 @@ distribution) :
   state given by an array of 37 integers (plus an index onto this array, a flag (0 or 1)
   and another integer). 
 \end{itemize}
-The differents actions common to all the generators, are:
+
+Actions common to all generators are:
 \begin{itemize}
 
-\item \itemdesc{action= "getgen"}  \verb!S=grand("getgen")! returns the current base generator ( \verb!S! is
+\item \itemdesc{"getgen"}  \verb!S=grand("getgen")! returns the current base generator ( \verb!S! is
   a string among "mt", "kiss", "clcg2", "clcg4", "well1024a", "fsultra").
 \item \itemdesc{action= "setgen"} \verb!grand("setgen",gen)! sets the current base generator to be \verb!gen!
   a string among "mt", "kiss", "clcg2", "clcg4", "well1024a", "fsultra" (notes that this call 
   returns the new current generator, ie gen).
-\item \itemdesc{action= "getsd"} \verb!S=grand("getsd")! gets the current state of the current base
+\item \itemdesc{"getsd"} \verb!S=grand("getsd")! gets the current state of the current base
   generator ; \verb!S! is given as a column vector (of integers) of dimension \verb!625! 
   for mt (the first being an index in \verb![1,624]!), \verb!4! for kiss, \verb!2! 
   for clcg2,  \verb!40! for fsultra, \verb!4! for clcg4 (for this one
   you get the current state of the current virtual generator), \verb!33! for
   well1024a (the first being an index in \verb![1,32]!).
-\item \itemdesc{action= "setsd"} \verb!grand("setsd",S)! sets the state of the current 
+\item \itemdesc{"setsd"} \verb!grand("setsd",S)! sets the state of the current 
   base generator (the new seeds). $S$ is either a vector describing a
   complete state or only one integer (in this case a complete state for each
   generator is got from another random generator). 
-\item \itemdesc{action= "phr2sd"} \verb!Sd=grand("phr2sd", phrase)! given a \verb!phrase! (character string) generates 
+\item \itemdesc{"phr2sd"} \verb!Sd=grand("phr2sd", phrase)! given a \verb!phrase! (character string) generates 
   a \verb!1 x 2! vector \verb!Sd! which may be used as seeds to change the state of a 
   base generator (initialy suited for clcg2). 
 \end{itemize}
 
+\paragraph{How to set ``randomly'' the initial state}
+~~\\
+
+  To start the sequence from another point (that the one given by
+ the default internally coded initial state), you can change the initial state using 
+  \verb+grand("setsd",k)+ with a simple positive integer $k$ built from 
+  the current day and time. This could be done this way:
+\begin{Verbatim}
+//  To start ``randomly'' only the current generator
+time = localtime(); 
+// sum all entries of time
+k=0; for key = time.__keys',k = k + time.find[key]; end 
+// apply the new state
+grand("setsd",k)
+
+// To start ``randomly'' all the generators
+time = localtime(); 
+// sum all entries of time
+k=0; for key = time.__keys',k = k + time.find[key]; end 
+// apply the new state
+gen = ["mt", "kiss", "clcg2", "clcg4", "well1024a", "fsultra"];
+for g=gen; grand("setgen",g);grand("setsd",k);end
+\end{Verbatim}
+
+
+
 %-- section-Options specific to clcg4
 \paragraph{Options specific to clcg4}
+~~\\
+
 The clcg4 generator may be used as the others generators but it offers the advantage 
 to be splitted in several (\verb!101!) virtual generators with non over-lapping 
 sequences (when you use a classic generator you may change the initial state (seeds) 
@@ -318,22 +364,22 @@ the initial state of gen \verb!1..100! are recomputed so as to get \verb!101!
 non over-lapping sequences.   
 
 \begin{itemize}
-\item \itemdesc{action= "setcgn"} \verb!grand("setcgn",G)! sets the current virtual generator for clcg4 (when clcg4
+\item \itemdesc{"setcgn"} \verb!grand("setcgn",G)! sets the current virtual generator for clcg4 (when clcg4
   is set, this is the virtual (clcg4) generator number \verb!G! which is used);  the virtual clcg4 
   generators are numbered from \verb!0,1,..,100! (and so \verb!G! must be an integer 
   in  \verb![0,100]!) ; by default the current virtual generator is \verb!0!.
-\item \itemdesc{action= "getcgn"} \verb!S=grand("getcgn")! returns the number of the current virtual clcg4 generator.
-\item \itemdesc{action= "initgn"} \verb!grand("initgn",I)!
+\item \itemdesc{"getcgn"} \verb!S=grand("getcgn")! returns the number of the current virtual clcg4 generator.
+\item \itemdesc{"initgn"} \verb!grand("initgn",I)!
   reinitializes the state of the current virtual generator :
       \begin{itemize}
       \item \verb!I = -1! :sets the state to the initial seed
       \item \verb!I = 0! :sets the state to the beginning of the current segment
       \item \verb!I = 1! :sets the state to the beginning of the next segment
       \end{itemize}
-\item \itemdesc{action= "setall"} \verb!grand("setall",s1,s2,s3,s4)! sets the initial state of generator \verb!0! 
+\item \itemdesc{"setall"} \verb!grand("setall",s1,s2,s3,s4)! sets the initial state of generator \verb!0! 
   to \verb!s1,s2,s3,s4!. The initial seeds of the other generators are set accordingly 
   to have synchronisation. For constraints on \verb!s1, s2, s3, s4! see the "setsd" action.
-\item \itemdesc{action= "advnst"} \verb!grand("advnst",K)! advances the state of the current generator by \verb!2^K! values 
+\item \itemdesc{"advnst"} \verb!grand("advnst",K)! advances the state of the current generator by \verb!2^K! values 
   and  resets the initial seed to that value. 
 \end{itemize}
 
@@ -360,7 +406,7 @@ that used by  method  one.  When both  have concluded,  advance the block for bo
 %-- see also
 
 \begin{manseealso}
-  \manlink{rand}{rand}  
+  \manlink{randn}{randn}, \manlink{pdf}{pdf}   
 \end{manseealso}
 
 %-- Authors
