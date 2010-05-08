@@ -1,0 +1,52 @@
+% -*- mode: latex -*-
+% -*- mode: latex -*-
+\mansection{ls, glob, pwd, getcwd, chdir, cd}
+\begin{mandesc}
+  \short{ls}{list directory contents} \\ % 
+  \short{glob}{list directory contents} \\ % 
+  \short{pwd}{print current directory} \\ % 
+  \short{getcwd}{get current directory} \\ %
+  \short{chdir}{changes current directory} \\ % 
+  \short{cd}{changes current directory} \\ % 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  ls pattern 
+  Str=glob('pattern1','pattern2',...)
+  pwd  
+  str=getcwd();
+  cd path 
+  chdir('path')
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{Str}: a string matrix. 
+    \vname{str}: a string which gives the current directory pathname.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb!ls! or \verb!glob! can be used to list files matching 
+  given patterns. These command work on all operating systems 
+  with the same syntax. 
+
+\noindent  \verb!pwd! or \verb!str=getcwd()! can be used to get the 
+  path of the current directory. 
+
+\noindent  \verb!cd! or \verb!chdir! can be used to change the current 
+  directory. Pathnames can be given using slashes on all 
+  supported operating systems. 
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    glob('NSP/macros/sc?cos*/[a-c]*.sci')
+    pwd 
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{file}{file}  
+\end{manseealso}
