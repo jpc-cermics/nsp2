@@ -48,9 +48,9 @@ is $u(t) = e^{tA} u(0)$. The solution at time instants $t_k = k \Delta t$ could 
 obtained by computing the exponential of the matrix $\Delta t A$ and the recurrence 
 $u(t_k) = \exp(\Delta t A) u(t_{k-1})$:  
 \begin{Verbatim}
-A = [-0.1 -1    0;...
-      1   -0.1  1;...
-      0   -1   -0.1];
+A = [-0.1, -1  ,  0;...
+      1  , -0.1,  1;...
+      0  , -1  , -0.1];
 dt = 0.05;
 n = 1000;
 t = 0:dt:n*dt;
@@ -66,11 +66,9 @@ xbasc()
 param3d(u(1,:)',u(2,:)',u(3,:)', style=2, flag = [4,4])
 
 col = xget("color")
-th = xget("thickness")
-xset("thickness",4)  // symbole + gros
 xset("color",5) // red
 param3d(u0(1),u0(2),u0(3),style=-3,flag=[0,0]) 
-xset("thickness",th); xset("color",col)
+xset("color",col)
 \end{Verbatim}
 \end{examples}
 
