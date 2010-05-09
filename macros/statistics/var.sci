@@ -84,7 +84,7 @@ function [V] = var(x, varargin, varargopt)
       end   
 
       if numel(varargopt) > narg_opt then
-	 error("Error: only ''dim'', ''skip_nan'' and ''unbiased'' could be optional named arguments")
+	 error("Error: only ''dim'', ''skip_nan'',''weights'' and ''unbiased'' could be optional named arguments")
       end
    end
 
