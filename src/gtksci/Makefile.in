@@ -12,7 +12,7 @@ LIBRARY = nsp.a
 OBJSC =	command.o  io.o \
 	menus.o  x_main.o \
 	about.o queue.o @HELP_OBJS@ @GTKPLUGBUG@ \
-	testtext1.o edit.o @RC_FILE@ 
+	testtext1.o edit.o @RC_FILE@ eggfindbar.o
 
 OBJSF  = 
 
