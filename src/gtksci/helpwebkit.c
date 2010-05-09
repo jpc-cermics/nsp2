@@ -38,6 +38,9 @@
 #include "../system/files.h"
 #include "../system/regexp.h"
 #include "nsp/object.h"
+#include "eggfindbar.h"
+
+#define N_(x) x
 
 /* on windows TRUE and FALSE are undef by 
  * "nsp/object.h"
@@ -50,17 +53,30 @@
 #define FALSE (0)
 #endif 
 
-
 #include "nsp/interf.h"
 #include "nsp/nsptcl.h"
 
 static GtkWidget* main_window=NULL;
 static GtkWidget* uri_entry;
 static GtkStatusbar* main_statusbar;
-static WebKitWebView* web_view;
+static WebKitWebView* web_view=NULL;
 static gchar* main_title;
 static gint load_progress;
 static guint status_context_id;
+static GtkWidget* find_bar = NULL;
+
+static void  window_find_search_changed_cb  (GObject         *object,
+					     GParamSpec      *arg1,
+					     void        *window);
+static void  window_find_case_changed_cb    (GObject         *object,
+					     GParamSpec      *arg1,
+					     void        *window);
+static void  window_find_previous_cb        (GtkEntry        *entry,
+					     void        *window);
+static void  window_find_next_cb            (GtkEntry        *entry,
+					     void        *window);
+static void  window_findbar_close_cb        (GtkWidget       *widget,
+					     void        *window);
 
 static void
 activate_uri_entry_cb (GtkWidget* entry, gpointer data)
@@ -131,6 +147,7 @@ go_back_cb (GtkWidget* widget, gpointer data)
 static void
 go_forward_cb (GtkWidget* widget, gpointer data)
 {
+
   webkit_web_view_go_forward (web_view);
 }
 
@@ -261,22 +278,224 @@ create_window ()
 }
 
 
+extern GtkWidget *egg_find_bar_new (void);
+
+static void
+window_activate_print (GtkAction *action,  void  *window)
+{
+  webkit_web_view_execute_script (web_view, "print();");
+}
+
+static void
+window_activate_close (GtkAction *action,  void  *window)
+{
+  gtk_widget_destroy(main_window); 
+  main_window=NULL;
+}
+
+static void
+window_activate_copy (GtkAction *action,  void  *window)
+{
+  /* window is main_window */
+  GtkWidget *widget;
+  widget = gtk_window_get_focus (GTK_WINDOW (window));
+  if (GTK_IS_EDITABLE (widget)) 
+    {
+      gtk_editable_copy_clipboard (GTK_EDITABLE (widget));
+    }
+  else
+    {
+      webkit_web_view_copy_clipboard (web_view);
+    }
+}
+
+
+
+static void
+window_activate_find (GtkAction *action,void  *window)
+{
+  gtk_widget_show (find_bar);
+  gtk_widget_grab_focus (find_bar);
+  webkit_web_view_set_highlight_text_matches (web_view, TRUE);
+}
+
+/* int window_activate_preferences(){}; */
+
+static void  window_activate_back(GtkAction *action,  void  *window)
+{
+  webkit_web_view_go_back (web_view);
+}
+
+static void  window_activate_forward(GtkAction *action,  void  *window)
+{
+  webkit_web_view_go_forward (web_view);
+}
+
+#ifdef HAVE_WEBKIT_ZOOM
+static void window_activate_zoom_in(GtkAction *action,  void  *window)
+{
+  webkit_web_view_zoom_in (web_view);
+}
+
+static void window_activate_zoom_out(GtkAction *action,  void  *window)
+{
+  webkit_web_view_zoom_out (web_view);
+}
+
+static void window_activate_zoom_default(GtkAction *action,  void  *window)
+{
+  double zl=webkit_web_view_get_zoom_level(web_view);
+  if ( zl != 1.0) 
+    webkit_web_view_set_zoom_level(web_view,1.0);
+}
+#endif 
+
+
+static const GtkActionEntry actions[] = {
+  { "FileMenu", NULL, N_("_File") },
+  { "EditMenu", NULL, N_("_Edit") },
+  { "ViewMenu", NULL, N_("_View") },
+  { "GoMenu",   NULL, N_("_Go") },
+  { "HelpMenu", NULL, N_("_Help") },
+  /* File menu */
+  { "Print", GTK_STOCK_PRINT, N_("_Print"), "<control>P", NULL,
+    G_CALLBACK (window_activate_print) },
+  { "Close", GTK_STOCK_CLOSE, NULL, NULL, NULL,
+    G_CALLBACK (window_activate_close) },
+  /* Edit menu */
+  { "Copy", GTK_STOCK_COPY, NULL, "<control>C", NULL,
+    G_CALLBACK (window_activate_copy) },
+  { "Find", GTK_STOCK_FIND, NULL, "<control>F", NULL,
+    G_CALLBACK (window_activate_find) },
+  { "Find Next", GTK_STOCK_GO_FORWARD, N_("Find Next"), "<control>G", NULL,
+    G_CALLBACK (window_find_next_cb) },
+  { "Find Previous", GTK_STOCK_GO_BACK, N_("Find Previous"), "<shift><control>G", NULL,
+    G_CALLBACK (window_find_previous_cb) },
+  /* 
+  { "Preferences", GTK_STOCK_PREFERENCES, NULL, NULL, NULL,
+    G_CALLBACK (window_activate_preferences) },
+  */
+  /* Go menu */
+  { "Back", GTK_STOCK_GO_BACK, NULL, "<alt>Left",
+    N_("Go to the previous page"),
+    G_CALLBACK (window_activate_back) },
+  { "Forward", GTK_STOCK_GO_FORWARD, NULL, "<alt>Right",
+    N_("Go to the next page"),
+    G_CALLBACK (window_activate_forward) },
+  /* View menu */
+#ifdef HAVE_WEBKIT_ZOOM
+  { "ZoomIn", GTK_STOCK_ZOOM_IN, N_("_Larger Text"), "<ctrl>plus",
+    N_("Increase the text size"),
+    G_CALLBACK (window_activate_zoom_in) },
+  { "ZoomOut", GTK_STOCK_ZOOM_OUT, N_("S_maller Text"), "<ctrl>minus",
+    N_("Decrease the text size"),
+    G_CALLBACK (window_activate_zoom_out) },
+  { "ZoomDefault", GTK_STOCK_ZOOM_100, N_("_Normal Size"), "<ctrl>0",
+    N_("Use the normal text size"),
+    G_CALLBACK (window_activate_zoom_default) },
+#endif 
+
+};
+
+static const gchar *view_ui_description =
+  "<ui>"
+  "  <menubar name=\"MenuBar\">"
+  "    <menu action=\"FileMenu\">"
+  "      <menuitem action=\"Print\"/>"
+  "      <separator/>"
+  "      <menuitem action=\"Close\"/>"
+  "    </menu>"
+  "    <menu action=\"EditMenu\">"
+  "      <menuitem action=\"Copy\"/>"
+  "      <separator/>"
+  "      <menuitem action=\"Find\"/>"
+  "      <menuitem action=\"Find Next\"/>"
+  "      <menuitem action=\"Find Previous\"/>"
+  /* 
+  "      <separator/>"
+  "      <menuitem action=\"Preferences\"/>" 
+  */
+  "    </menu>"
+  "    <menu action=\"ViewMenu\">"
+  "      <menuitem action=\"ZoomIn\"/>"
+  "      <menuitem action=\"ZoomOut\"/>"
+  "      <menuitem action=\"ZoomDefault\"/>"
+  "    </menu>"
+  "    <menu action=\"GoMenu\">"
+  "      <menuitem action=\"Back\"/>"
+  "      <menuitem action=\"Forward\"/>"
+  "    </menu>"
+  "  </menubar>"
+  "</ui>";
+
 static int open_webkit_window (const gchar *help_path,const gchar *locale,const gchar *help_file)
 {
-  GtkWidget* vbox; 
+  GtkUIManager   *manager;
+  GtkAccelGroup   *accel_group;
+  GtkWidget* vbox, *menubar;
+  GError *error;
 
   start_sci_gtk(); /* in case gtk was not initialized */
 
   if ( main_window == NULL) 
     {
+      GtkActionGroup *action_group;
       main_window = create_window ();
+      manager = gtk_ui_manager_new ();
+      accel_group = gtk_ui_manager_get_accel_group (manager);
+      gtk_window_add_accel_group (GTK_WINDOW (main_window), accel_group);
+      action_group = gtk_action_group_new ("MainWindow");
+      /* gtk_action_group_set_translation_domain (action_group, GETTEXT_PACKAGE);
+       */
+      gtk_action_group_add_actions (action_group,actions,G_N_ELEMENTS (actions),main_window);
+      gtk_ui_manager_insert_action_group (manager,action_group,    0);
+      g_object_unref (action_group);
+
+      error = NULL;
+      if (!gtk_ui_manager_add_ui_from_string (manager, view_ui_description, -1, &error))
+	{
+	  g_message ("building view ui failed: %s", error->message);
+	  g_error_free (error);
+	}
+      /* directly build a menu: 
+      gtk_ui_manager_add_ui(manager,gtk_ui_manager_new_merge_id (manager),
+			    "/MenuBar/GoMenu","poo",
+			    "Print",
+			    GTK_UI_MANAGER_AUTO,TRUE);
+      gtk_ui_manager_ensure_update (manager);
+      */
+      menubar = gtk_ui_manager_get_widget (manager, "/MenuBar");
       vbox = gtk_vbox_new (FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (vbox), create_toolbar (), FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (vbox), create_browser (), TRUE, TRUE, 0);
+      find_bar = egg_find_bar_new ();
       gtk_box_pack_start (GTK_BOX (vbox), create_statusbar (), FALSE, FALSE, 0);
       gtk_container_add (GTK_CONTAINER (main_window), vbox);
+      gtk_box_pack_start (GTK_BOX (vbox), find_bar, FALSE, FALSE, 0);
+      /* gtk_widget_set_no_show_all ( find_bar, TRUE); */
       /* uri = g_strconcat ("file://", help_path, "/", locale, "/", NULL); */
       webkit_web_view_open (web_view, help_file );
+      g_signal_connect (find_bar,
+			"notify::search-string",
+			G_CALLBACK(window_find_search_changed_cb),
+			main_window);
+      g_signal_connect (find_bar,
+			"notify::case-sensitive",
+			G_CALLBACK (window_find_case_changed_cb),
+			main_window);
+      g_signal_connect (find_bar,
+			"previous",
+			G_CALLBACK (window_find_previous_cb),
+			main_window);
+      g_signal_connect (find_bar,
+			"next",
+			G_CALLBACK (window_find_next_cb),
+			main_window);
+      g_signal_connect (find_bar,
+			"close",
+			G_CALLBACK (window_findbar_close_cb),
+			main_window);
       /* gtk_widget_grab_focus (GTK_WIDGET (web_view)); */
       gtk_widget_show_all (main_window);
     }
@@ -489,4 +708,73 @@ int nsp_help_topic(const char *topic, char *buf)
   return OK;
 }
 
+/* handlers to interact with the egg_find_bar 
+ *
+ */
 
+static void
+window_find_search_changed_cb (GObject    *object,
+                               GParamSpec *pspec,
+                               void    *window)
+{
+  
+  webkit_web_view_unmark_text_matches (web_view);
+  webkit_web_view_mark_text_matches (
+				     web_view,
+				     egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar)),
+				     egg_find_bar_get_case_sensitive (EGG_FIND_BAR (find_bar)), 0);
+  webkit_web_view_set_highlight_text_matches (web_view, TRUE);
+
+        webkit_web_view_search_text (
+                web_view, egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar)),
+                egg_find_bar_get_case_sensitive (EGG_FIND_BAR (find_bar)),
+                TRUE, TRUE);
+}
+
+static void
+window_find_case_changed_cb (GObject    *object,
+                             GParamSpec *pspec,
+			     void *window)
+{
+  const gchar   *string;
+  gboolean       case_sensitive;
+  string = egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar));
+  case_sensitive = egg_find_bar_get_case_sensitive (EGG_FIND_BAR (find_bar));
+  
+  webkit_web_view_unmark_text_matches (web_view);
+  webkit_web_view_mark_text_matches (web_view, string, case_sensitive, 0);
+  webkit_web_view_set_highlight_text_matches (web_view, TRUE);
+}
+
+static void
+window_find_next_cb (GtkEntry *entry,void *window)
+{
+  const gchar   *string;
+  gboolean       case_sensitive;
+  gtk_widget_show (find_bar);
+  string = egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar));
+  case_sensitive = egg_find_bar_get_case_sensitive (EGG_FIND_BAR (find_bar));
+  webkit_web_view_search_text (web_view, string, case_sensitive, TRUE, TRUE);
+}
+
+static void
+window_find_previous_cb (GtkEntry *entry, void *window)
+{
+  const gchar   *string;
+  gboolean       case_sensitive;
+  gtk_widget_show (find_bar);
+  string = egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar));
+  case_sensitive = egg_find_bar_get_case_sensitive (EGG_FIND_BAR (find_bar));
+  webkit_web_view_search_text (web_view, string, case_sensitive, FALSE, TRUE);
+}
+
+static void
+window_findbar_close_cb (GtkWidget *widget, void  *window)
+{
+  gtk_widget_hide (find_bar);
+  webkit_web_view_set_highlight_text_matches (web_view, FALSE);
+}
+
+
+/* menu actions 
+ */
