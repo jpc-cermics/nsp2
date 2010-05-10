@@ -108,7 +108,7 @@ function [P,Q] = cdf(dist, x, varargin)
 	end
 	r = varargin(1); p = varargin(2)   
 	if ~( is(r,%types.Mat) && isreal(r) && isscalar(r) && r > 0 &&
-	      is(p,%types.Mat) && isreal(p) && isscalar(p) && 0 <= p && p <= 1 ) then
+	      is(p,%types.Mat) && isreal(p) && isscalar(p) && 0 < p && p <= 1 ) then
 	      error("Error: for cdf(""nbn"",x,r,p), bad parameters r and/or p")
 	end
 	size_to_x  = ones(size(x));
@@ -201,15 +201,15 @@ function [P,Q] = cdf(dist, x, varargin)
 
      case "nt" then
 	if numel(varargin) ~= 2 then
-	   error("bad number of input args, usage: cdf(""nt"",x,nu,lambda)")
+	   error("bad number of input args, usage: cdf(""nt"",x,nu,delta)")
 	end
-	nu = varargin(1); lambda = varargin(2); 
+	nu = varargin(1); delta = varargin(2); 
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ...
-	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda)) then
-	   error("Error: for cdf(""nt"",x,nu,lambda), nu should be positive and lambda a real scalar")
+	      is(delta,%types.Mat) && isreal(delta) && isscalar(delta)) then
+	   error("Error: for cdf(""nt"",x,nu,delta), nu should be positive and delta a real scalar")
 	end
 	size_to_x  = ones(size(x));
-	[P,Q] = cdftnc("PQ", x, nu*size_to_x, lambda*size_to_x);
+	[P,Q] = cdftnc("PQ", x, nu*size_to_x, delta*size_to_x);
 
      case "exp" then
 	if numel(varargin) ~= 1 then

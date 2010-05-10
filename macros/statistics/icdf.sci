@@ -151,7 +151,7 @@ function x = icdf(dist, P, varargin, Q=[])
 	end
 	r = varargin(1); p = varargin(2)   
 	if ~( is(r,%types.Mat) && isreal(r) && isscalar(r) && r > 0 &&
-	      is(p,%types.Mat) && isreal(p) && isscalar(p) && 0 <= p && p <= 1 ) then
+	      is(p,%types.Mat) && isreal(p) && isscalar(p) && 0 < p && p <= 1 ) then
 	      error("Error: for icdf(""nbn"",P,r,p), bad parameters r and/or p")
 	end
 	x(ind0) = -1
@@ -254,12 +254,12 @@ function x = icdf(dist, P, varargin, Q=[])
 
      case "nt" then
 	if numel(varargin) ~= 2 then
-	   error("bad number of input args, usage: icdf(""nt"",x,nu,lambda)")
+	   error("bad number of input args, usage: icdf(""nt"",x,nu,delta)")
 	end
-	nu = varargin(1); lambda = varargin(2); 
+	nu = varargin(1); delta = varargin(2); 
 	if ~( is(nu,%types.Mat) && isreal(nu) && isscalar(nu) && nu > 0 && ...
-	      is(lambda,%types.Mat) && isreal(lambda) && isscalar(lambda) && lambda >= 0) then
-	   error("Error: for icdf(""nt"",P,nu,lambda), nu should be positive and lambda a real scalar")
+	      is(delta,%types.Mat) && isreal(delta) && isscalar(delta) ) then
+	   error("Error: for icdf(""nt"",P,nu,delta), nu should be positive and delta a real scalar")
 	end
 	x(ind0) = -%inf
 	x(ind) = cdftnc("T", nu*size_to_Pind, lambda*size_to_Pind, Pind, Qind);
@@ -313,11 +313,12 @@ function x = icdf(dist, P, varargin, Q=[])
 // $$$ 	if ~( is(n,%types.Mat) && isreal(n) && isscalar(n) && n >= 1 && floor(n)==n) then
 // $$$ 	      error("Error: for icdf(""k"",P,n), n should be a positive integer")
 // $$$ 	end
-// $$$ 	
-// $$$      case "klim" then
-// $$$ 	if numel(varargin) ~= 0 then
-// $$$ 	   error("bad number of input args, usage: icdf(""klim"",P)")
-// $$$ 	end
+	
+     case "klim" then
+	if numel(varargin) ~= 0 then
+	   error("bad number of input args, usage: icdf(""klim"",P)")
+	end
+	x = invkcdflim(P,Q);
 	
      case "lap" then
 	if numel(varargin) ~= 1 then
