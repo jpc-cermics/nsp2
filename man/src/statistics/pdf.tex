@@ -45,13 +45,13 @@ $$
 
 \item \itemdesc{\hypertarget{nbnpdf}{negative binomial}} \verb!y=pdf("nbn",x,r,p)!. Computes
   the negative binomial mass function with parameters $r > 0$ ($r$ not
-  necessarily integer) and $p \in [0,1]$:
+  necessarily integer) and $p \in (0,1]$:
 $$
      f(x; r, p) = \frac{ \Gamma(r+x) }{ x! \Gamma(r)} p^r (1-p)^x \;\mbox{for } x \in \{0,1,\dots\}
 $$
   When $r$ is integer, $f(x; r, p)$ is the probability to get $x$ failures among 
  independant Bernoulli trials (each one with probability $p$ of success) which are
- stopped when $r$ success have occured (so the number of Bernoulli trials is $r+x$).  
+ stopped when $r$ success has occured (so the number of Bernoulli trials is $r+x$).  
 
 \item \itemdesc{\hypertarget{caupdf}{Cauchy}} \verb!y=pdf("cau",x,sigma)! computes the Cauchy
   density with parameter $\sigma > 0$:
