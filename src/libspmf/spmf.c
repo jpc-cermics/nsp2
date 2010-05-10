@@ -23,6 +23,7 @@
 #include <nsp/sciio.h>
 #include <nsp/spmf.h>
 #include <string.h>
+#include "../libcdf/cdf.h"
 
 /**
  * SECTION:spmf
@@ -662,6 +663,46 @@ double nsp_kcdflim(double x, double *q)
   return p;
 }
 
+
+int nsp_invkcdflim(double p, double q, double *x)
+{
+  int pq_flag = p <= 0.3728 ? 1 : 0, status = 0, qleft, qhi;
+  double pp,qq, fx, xinf = 0.04, xsup = 20, atol=1e-50, tol=1e-15, step=0.1, rstep=0.5, step_inc=2.0; 
+  
+  /* extreme values */
+  if ( p == 0.0 )
+    {
+      *x = 0.0; return OK;
+    }
+  if ( q == 0.0 )
+    {
+      *x = 2.0*DBL_MAX; /* for Inf */ return OK;
+    }
+
+  /* init for inversion routine */
+  cdf_dstinv (&xinf, &xsup, &step, &rstep, &step_inc, &atol, &tol);
+
+  *x = 0.828; /* this is approximately the mode */
+ 
+  cdf_dinvr (&status, x, &fx, &qleft, &qhi);
+
+  while ( status == 1 )
+    {
+      pp = nsp_kcdflim(*x, &qq);
+      if ( pq_flag )
+	fx = pp - p;
+      else
+	fx = qq - q;
+      cdf_dinvr (&status, x, &fx, &qleft, &qhi);
+    }
+
+  if ( status == 0 )
+    return OK;
+  else
+    return FAIL;
+}
+
+
 /* Marsaglia, Tang, K cdf for test comparizon and test purpose only 
  * (this will be removed after)
  */
@@ -1289,14 +1330,15 @@ double nsp_pdf_unf(double x, double a, double b)
  * nsp_binomial_coef
  * @n: double
  * @k: double
+ * @res: hold the result
  *
  *           / n \ 
  * compute   |   |
  *           \ k /
  *
- * Returns: FAIL if n and or k are not integer or 
- * if k is not between 0 and n
- *       
+ * Returns: FAIL if n or k are not integer or 
+ *                if k is not between 0 and n
+ *          otherwise OK
  **/
 int nsp_binomial_coef(double n, double k, double *res)
 {
@@ -1314,4 +1356,3 @@ int nsp_binomial_coef(double n, double k, double *res)
       return OK;
     }
 }
-

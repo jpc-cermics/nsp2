@@ -41,6 +41,7 @@ extern double nsp_gamma(double x);
 extern double nsp_lngamma(double x);
 extern int nsp_kcdf(double x, double *res, int n);
 extern double nsp_kcdflim(double x, double *q);
+extern int nsp_invkcdflim(double p, double q, double *x);
 extern double marsaglia_K(double x, int n);
 extern double nsp_hypot(double x, double y);
 extern void nsp_primefactors(unsigned int n, unsigned int *factors, int *powers, int *nb_factors);

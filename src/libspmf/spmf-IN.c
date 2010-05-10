@@ -211,6 +211,49 @@ static int int_nsp_kcdflim(Stack stack, int rhs, int opt, int lhs)
   return lhs;
 }
 
+static int int_nsp_invkcdflim(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x, *P, *Q;
+  int i;
+  double temp;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+
+  if ( (P = GetRealMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  if ( (Q = GetRealMat(stack, 2)) == NULLMAT )
+    return RET_BUG;
+
+  CheckSameDims( NspFname(stack),1,2,P,Q);
+
+  /* test argument */
+  for ( i = 0 ; i < P->mn ; i++ )
+    {
+      temp = P->R[i] + Q->R[i];
+      if ( ! ( 0 <= P->R[i] &&  P->R[i] <= 1.0 && 0 <= Q->R[i] && Q->R[i] <= 1.0 && fabs(temp - 1.0) <= 1e-17 ) )
+	{
+	  Scierror("%s: bad first or second argument (component %d)\n",NspFname(stack),i+1);
+	  return RET_BUG;
+	} 
+    }
+
+  if ( (x = nsp_matrix_create(NVOID,'r',P->m,P->n)) == NULLMAT) return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    {
+      if ( nsp_invkcdflim(P->R[i], Q->R[i], x->R+i) == FAIL )
+	{
+	  Scierror("%s: inversion process fails (for p=%g, q=%g, component %d)\n",NspFname(stack),P->R[i],Q->R[i],i+1);
+	  nsp_matrix_destroy(x);
+	  return RET_BUG;
+	}
+    }
+
+  MoveObj(stack,1,(NspObject *) x);
+  return lhs;
+}
+
 static int int_nsp_kcdfbis(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x, *P;
@@ -1213,6 +1256,7 @@ static OpTab Spmf_func[]={
   {"lngamma_m", int_nsp_lngamma},
   {"kcdf_m_m", int_nsp_kcdf},
   {"kcdflim_m", int_nsp_kcdflim},
+  {"invkcdflim_m", int_nsp_invkcdflim},
   {"kcdfbis_m", int_nsp_kcdfbis},
   {"legendre_m_m", int_legendre},
   {"hypot_m_m", int_nsp_hypot},
