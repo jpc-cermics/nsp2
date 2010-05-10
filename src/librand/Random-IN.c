@@ -1195,7 +1195,7 @@ static int int_nbn_part(Stack stack, int rhs, int opt, int lhs, int suite, int R
   return 1;
 
  err:
-  Scierror("Error: grand(..'nbn',r,p) : r (=%d) <= 0 or p (=%g) not in (0,1] \n", r->R[i1], p->R[i2]); 
+  Scierror("Error: grand(..'nbn',r,p) : r (=%g) <= 0 or p (=%g) not in (0,1] \n", r->R[i1], p->R[i2]); 
   nsp_matrix_destroy(M);
   return RET_BUG;
 }
