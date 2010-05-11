@@ -231,9 +231,9 @@ static int int_nsp_invkcdflim(Stack stack, int rhs, int opt, int lhs)
   for ( i = 0 ; i < P->mn ; i++ )
     {
       temp = P->R[i] + Q->R[i];
-      if ( ! ( 0 <= P->R[i] &&  P->R[i] <= 1.0 && 0 <= Q->R[i] && Q->R[i] <= 1.0 && fabs(temp - 1.0) <= 1e-17 ) )
+      if ( ! ( 0 <= P->R[i] &&  P->R[i] <= 1.0 && 0 <= Q->R[i] && Q->R[i] <= 1.0 && fabs(temp - 1.0) <= 0.5*DBL_EPSILON ) )
 	{
-	  Scierror("%s: bad first or second argument (component %d)\n",NspFname(stack),i+1);
+	  Scierror("%s: bad first or second argument, P=%g, Q=%g (component %d)\n",NspFname(stack), P->R[i], Q->R[i], i+1);
 	  return RET_BUG;
 	} 
     }
