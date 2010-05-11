@@ -1,6 +1,6 @@
 % -*- mode: latex -*-
 
-\mansection{print}
+\mansection{print, fprint, sprint}
 
 \begin{mandesc}
   \short{print}{print variable value  in the current output stream}\\
@@ -37,19 +37,24 @@
   prints the given variable in the current output stream (\verb+print+), 
   or in a file steam (\verb+fprint+), or in a string matric (\verb+sprint+).
   The file stream \verb+fd+ is an object of type \manlink{File}{File} which 
-  is created with \manlink{fopen}{fopen}.
+  is created with \manlink{fopen}{fopen}. For object with double precision numbers
+  the output format/precision can be changed with the \manlink{format}{format} function. 
 \end{mandescription}
 % --example 
 \begin{examples}
   \begin{Verbatim}
     l =list(rand(3,3),%t, 67, "scilab",list(5,6));
     print(l,depth=0);
+
+    print(l,depth=1);
+
+    // display the first list object with more digits (default format is short)
+    format('medium')
+    print(l,depth=1);
   \end{Verbatim}
 \end{examples}
 % -- see also
 \begin{manseealso}
-  \manlink{file}{file}  
-  \manlink{fopen}{fopen}  
-  \manlink{File}{File}  
+  \manlink{file}{file}, \manlink{fopen}{fopen}, \manlink{File}{File}, \manlink{format}{format}
 \end{manseealso}
 
