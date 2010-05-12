@@ -12,7 +12,7 @@ extern int nsp_rcond(NspMatrix *A,double *rcond) ;
 extern int nsp_cholesky(NspMatrix *A, int *minor) ;
 extern int nsp_lu(NspMatrix *A,NspMatrix **L,NspMatrix **E, NspMatrix **Rcond);
 extern int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
-extern int nsp_inv(NspMatrix *A) ;
+extern int nsp_inv(NspMatrix *A, double *rcond, Boolean warning) ;
 extern double nsp_matrix_norm(NspMatrix *A, char flag);
 extern double nsp_vector_norm(NspMatrix *A, double p); 
 extern int nsp_balanc(NspMatrix *A,NspMatrix **D);

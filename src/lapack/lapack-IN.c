@@ -339,11 +339,17 @@ static int int_gspec( Stack stack, int rhs, int opt, int lhs)
 static int int_inv( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
+  double rcond;
   int_types T[] = {matcopy,t_end} ;
   if ( GetArgs(stack,rhs,opt,T,&A) == FAIL) return RET_BUG;
-  CheckLhs(0,1);
-  if ( nsp_inv(A)== FAIL) return RET_BUG;
+  CheckLhs(0,2);
+  if ( nsp_inv(A,&rcond,TRUE) == FAIL ) return RET_BUG;
   NSP_OBJECT(A)->ret_pos=1;
+  if ( lhs == 2 )
+    {
+      if ( nsp_move_double(stack,2,(double)rcond )== FAIL) 
+	return RET_BUG;
+    }
   return Max(lhs,1);
 }
 

@@ -1783,8 +1783,9 @@ static int intzggev(NspMatrix *A, NspMatrix *B, NspMatrix **Vl, NspMatrix **Vr,
 } 
 
 
-static int intdgetri(NspMatrix *A);
-static int intzgetri(NspMatrix *A);
+static int intdgetri(NspMatrix *A, double *rcond, Boolean warning);
+static int intzgetri(NspMatrix *A, double *rcond, Boolean warning);
+static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
 
 /**
  * nsp_inv:
@@ -1797,7 +1798,7 @@ static int intzgetri(NspMatrix *A);
  * Return value: %OK or %FAIL
  **/
 
-int nsp_inv(NspMatrix *A) 
+int nsp_inv(NspMatrix *A, double *rcond, Boolean warning) 
 {
   char tflag;  /* N : non triangular, U : upper triangular, L : lower triangular */
   int n=A->n, m = A->m, info;
@@ -1821,19 +1822,25 @@ int nsp_inv(NspMatrix *A)
   if ( tflag == 'N' )
     {
       if ( A->rc_type == 'r')
-	return intdgetri(A);
+	return intdgetri(A, rcond, warning);
       else
-	return intzgetri(A);
+	return intzgetri(A, rcond, warning);
     }
   else  /* triangular case */
     {
+      if ( rcond != NULL )
+	inttrcon(A, tflag, rcond);
       if ( A->rc_type == 'r')
 	C2F(dtrtri) (&tflag, "N", &n, A->R, &n, &info, 1L, 1L);
       else
 	C2F(ztrtri) (&tflag, "N", &n, A->C, &n, &info, 1L, 1L);
 
       if (info == 0) 
-	return OK; 
+	{
+	  if ( warning && *rcond <= n*nsp_dlamch("eps") )
+	    Sciprintf("Warning: matrix is numerically singular (rcond = %e)\n",*rcond);
+ 	  return OK;
+	} 
       else 
 	{
 	  Scierror("inv: matrix is singular\n");
@@ -1842,15 +1849,19 @@ int nsp_inv(NspMatrix *A)
     }
 }
 
-static int intdgetri(NspMatrix *A)
+static int intdgetri(NspMatrix *A, double *rcond, Boolean warning)
 {
   int *ipiv=NULL;
-  double *dwork=NULL, qwork[1];
+  double *dwork=NULL, qwork[1], anorm;
   int info, lwork, n=A->n ;
 
   if ( (ipiv = nsp_alloc_int(n)) == NULL ) goto err;
 
+  if ( rcond != NULL )
+    anorm = C2F(dlange)("1", &n, &n, A->R, &n, NULL, 1L);
+
   C2F(dgetrf)(&n, &n, A->R, &n, ipiv, &info);
+
   if (info != 0) 
     {
       Scierror("inv: matrix is singular\n");
@@ -1860,7 +1871,16 @@ static int intdgetri(NspMatrix *A)
   lwork = -1;
   C2F(dgetri)(&n, A->R, &n, ipiv, qwork, &lwork, &info);
   lwork = (int) qwork[0];
-  if ( (dwork = nsp_alloc_doubles(lwork)) == NULL ) goto err;
+  lwork = Max ( lwork, 4*n );
+  if ( (dwork =nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+
+  if ( rcond != NULL )
+    {
+      C2F(dgecon)("1", &n, A->R, &n, &anorm, rcond, dwork, ipiv, &info, 1L);
+      if ( warning && *rcond <= n*nsp_dlamch("eps") )
+	Sciprintf("Warning: matrix is numerically singular (rcond = %e)\n",*rcond);
+    }
+
   C2F(dgetri)(&n, A->R, &n, ipiv, dwork, &lwork, &info);
 
   FREE(dwork); FREE(ipiv);
@@ -1871,13 +1891,17 @@ static int intdgetri(NspMatrix *A)
   return FAIL;
 } 
 
-static int intzgetri(NspMatrix *A)
+static int intzgetri(NspMatrix *A, double *rcond, Boolean warning)
 {
   int *ipiv=NULL;
   doubleC *cwork=NULL, qwork[1];
+  double anorm;
   int info, lwork, n = A->n;
 
   if ( (ipiv = nsp_alloc_int(n)) == NULL ) goto err;
+
+  if ( rcond != NULL )
+    anorm = C2F(zlange)("1", &n, &n, A->C, &n, NULL, 1L);
 
   C2F(zgetrf)(&n, &n, A->C, &n, ipiv, &info);
   if (info != 0) 
@@ -1889,7 +1913,17 @@ static int intzgetri(NspMatrix *A)
   lwork = -1;
   C2F(zgetri)(&n, A->C, &n, ipiv, qwork, &lwork, &info);
   lwork = (int) qwork[0].r;
-  if ( (cwork = nsp_alloc_doubleC(lwork)) == NULL ) goto err;
+  lwork = Max ( lwork, 3*n );
+
+  if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
+
+  if ( rcond != NULL )
+    {
+      C2F(zgecon)("1", &n, A->C, &n, &anorm, rcond, cwork, (double *) &(cwork[2*n]), &info, 1L);
+      if ( warning && *rcond <= n*nsp_dlamch("eps") )
+	Sciprintf("Warning: matrix is numerically singular (rcond = %e)\n",*rcond);
+    }
+
   C2F(zgetri)(&n, A->C, &n, ipiv, cwork, &lwork, &info);
 
   FREE(cwork); FREE(ipiv);
@@ -1903,7 +1937,6 @@ static int intzgetri(NspMatrix *A)
 
 static int intdgecon(NspMatrix *A,double *rcond);
 static int intzgecon(NspMatrix *A,double *rcond);
-static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
 
 /**
  * nsp_rcond:
@@ -4482,16 +4515,16 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
   if ( A->m != A->n )
     {
       Scierror("Error: %s argument should be a square matrix\n",name); 
-      return NULL;
+      return NULLMAT;
     }
   if ( ( B= nsp_matrix_copy(A)) == NULLMAT) return NULLMAT;
   if ( nsp_mat_is_symmetric(A)== TRUE ) 
     {
-      if ( ( vp =nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT ) return NULLMAT;
+      if ( ( vp =nsp_matrix_create(NVOID,A->rc_type,A->m,1)) == NULLMAT ) goto err;
       if ( A->rc_type == 'r') 
 	{
 	  if ( nsp_dgees0(B,&U,NULL,NULL) == FAIL)
-	    return NULL;
+	    goto err;
 	  if ( flag ) 
 	    for ( i = 0 ; i < B->m ; i++)
 	      {
@@ -4506,12 +4539,12 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 	  for ( i = 0 ; i < B->m ; i++)
 	    for ( j = 0 ; j < B->n ; j++)
 	      B->R[i+j*U->m]= vp->R[j]*U->R[i+j*U->m];
-	  if ( (Res = nsp_mat_mult(B,U,2)) == NULL) return NULL;
+	  if ( (Res = nsp_mat_mult(B,U,2)) == NULL) goto err;
 	}
       else
 	{
 	  if ( nsp_zgees0(B,&U,NULL,NULL) == FAIL)
-	    return NULL;
+	    goto err;
 	  if ( flag ) 
 	    for ( i = 0 ; i < B->m ; i++)
 	      {
@@ -4531,15 +4564,15 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 		B->C[i+j*U->m].i = vp->C[j].r *U->C[i+j*U->m].i 
 		  +  vp->C[j].i * U->C[i+j*U->m].r;
 	      }
-	  if ( (Res = nsp_mat_mult(B,U,2)) == NULL) return NULL;
+	  if ( (Res = nsp_mat_mult(B,U,2)) == NULL) goto err;
 	}
     }
   else
     {
-      double  tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
-      if ( nsp_mat_complexify(B, 0.0) == FAIL ) return NULL;
+      double  rcond, tol_rcond = Max(A->m,A->n)*nsp_dlamch("eps");
+      if ( nsp_mat_complexify(B, 0.0) == FAIL ) goto err;
       if ( nsp_spec(B,&vp,&U) == FAIL) 
-	return NULL;
+	goto err;
       if ( vp->rc_type == 'r' )
 	{
 	  int complex= FALSE;
@@ -4551,15 +4584,15 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 	      }
 	  if ( complex == TRUE ) 
 	    {
-	      if ( nsp_mat_complexify(vp, 0.0) == FAIL ) return NULL;
-	      if ( nsp_mat_complexify(U, 0.0) == FAIL ) return NULL;
+	      if ( nsp_mat_complexify(vp, 0.0) == FAIL ) goto err;
+	      if ( nsp_mat_complexify(U, 0.0) == FAIL ) goto err;
 	    }
 	  if ( U->rc_type == 'c' )
 	    {
 	      /* This should be changed in  nsp_spec, if vp is 
 	       * real then U should be real.
 	       */
-	      if ( nsp_mat_complexify(vp, 0.0) == FAIL ) return NULL;
+	      if ( nsp_mat_complexify(vp, 0.0) == FAIL ) goto err;
 	    }
 	}
       if ( vp->rc_type == 'r' )
@@ -4578,9 +4611,10 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 	  for ( i = 0 ; i < B->m ; i++)
 	    for ( j = 0 ; j < B->n ; j++)
 	      B->R[i+j*U->m] = vp->R[j]* U->R[i+j*U->m];
-	  if ((Res = nsp_matrix_bdiv(B,U, tol_rcond)) == NULL) return NULL;
-	  if ( nsp_inv(U) == FAIL) return NULL;
-	  if ( (Res = nsp_mat_mult(B,U,0)) == NULL) return NULL;
+	  if ((Res = nsp_matrix_bdiv(B,U, tol_rcond)) == NULL) goto err;
+	  if ( nsp_inv(U, &rcond, FALSE) == FAIL || rcond <= tol_rcond )
+	      goto err;
+	  if ( (Res = nsp_mat_mult(B,U,0)) == NULL) goto err;
 	}
       else
 	{
@@ -4603,14 +4637,22 @@ NspMatrix *nsp_matrix_funm(NspMatrix *A, funFr Fr, funFc Fc,char *name, int flag
 		B->C[i+j*U->m].i = vp->C[j].r *U->C[i+j*U->m].i 
 		  +  vp->C[j].i * U->C[i+j*U->m].r;
 	      }
-	  if ( nsp_inv(U) == FAIL) return NULL;
-	  if ( (Res = nsp_mat_mult(B,U,0)) == NULL) return NULL;
+	  if ( nsp_inv(U, &rcond, FALSE) == FAIL || rcond <= tol_rcond ) goto err;
+	  if ( (Res = nsp_mat_mult(B,U,0)) == NULL) goto err;
 	}
     }
   nsp_matrix_destroy(B);
   nsp_matrix_destroy(U);
   nsp_matrix_destroy(vp);
   return Res;
+
+ err:
+  Scierror("Error: %s fails\n",name); 
+  nsp_matrix_destroy(B);
+  nsp_matrix_destroy(U);
+  nsp_matrix_destroy(vp);
+  nsp_matrix_destroy(Res);
+  return NULLMAT;
 }
 
 
