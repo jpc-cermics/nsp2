@@ -164,8 +164,8 @@ static int int_parseevalfile_gen(Stack stack, int rhs, int opt, int lhs,int mtlb
 		      { "errcatch",s_bool,NULLOBJ,-1},
 		      { "pausecatch",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  if ( rhs >=1 && IsNspPListObj(stack,1) ) 
-    return int_execf(stack,rhs,opt,lhs);
+  if ( rhs >=1 && IsNspPListObj(stack,1) )  return int_execf(stack,rhs,opt,lhs);
+  CheckLhs(0,2);
   if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
     return RET_BUG;
   /* update the current exec dir in stack, old value is returned in old 
@@ -431,36 +431,77 @@ static int int_lasterror(Stack stack, int rhs, int opt, int lhs)
  * execute a macros in the current frame 
  */
 
-static int int_execf(Stack stack, int rhs, int opt, int lhs)
+static int nsp_execf(Stack stack,int rhs, int opt, int lhs, 
+		     NspPList *PL, int echo, int display, int pausecatch)
 {
-  int ans = OK;
-  NspPList *PL;
+  int rep;
 #ifdef  WITH_SYMB_TABLE
   NspPList *PL1;
 #endif 
-  NspObject *Ob;
-  int display=FALSE,echo =FALSE,errcatch=FALSE,rep;
-  int_types T[] = {obj ,new_opts, t_end} ;
-  nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
-		      { "echo",s_bool,NULLOBJ,-1},
-		      { "errcatch",s_bool,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&PL,&opts,&display,&echo,&errcatch) == FAIL) return RET_BUG;
-  if ( IsNspPList(NSP_OBJECT(PL)) == FALSE ) return RET_BUG;
-  NthObj(rhs+1)=NthObj(1);
+  int cur_echo= nsp_set_echo_input_line(echo);
   NspFname(stack) = ((NspObject *) PL)->name;
   NspFileName(stack) = ((NspPList *) PL)->file_name;
+  stack.val->pause = (pausecatch== TRUE) ? FALSE: TRUE;
 #ifdef  WITH_SYMB_TABLE
   /* we cannot execute macro code in a context were its 
    * symbol table is not present 
    * thus we must copy the code and untag local variables
    */
   if ((PL1= NspPListCopy_no_local_vars(PL))== NULL) return RET_BUG;
-  rep=nsp_eval_macro_body((NspObject *) PL1,stack,stack.first+rhs+1,0,0,0);
+  rep=nsp_eval_macro_body((NspObject *) PL1,stack,stack.first+rhs+1,0,0,0,display);
   NspPListDestroy(PL1);
 #else
-  rep=nsp_eval_macro_body((NspObject *) PL,stack,stack.first+rhs+1,0,0,0);
+  rep=nsp_eval_macro_body((NspObject *) PL,stack,stack.first+rhs+1,0,0,0,display);
 #endif 
+  nsp_set_echo_input_line(cur_echo);
+  return rep;
+}
+
+static int int_execf(Stack stack, int rhs, int opt, int lhs)
+{
+  NspHash *H=NULL,*E=NULL;
+  NspPList *PL;
+  NspObject *Ob;
+  int display=FALSE,echo =FALSE,errcatch=FALSE,pausecatch=FALSE,rep, ans = OK ;
+  int_types T[] = {obj ,new_opts, t_end} ;
+  nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
+		      { "echo",s_bool,NULLOBJ,-1},
+		      { "env", obj_check,NULLOBJ,-1},
+		      { "errcatch",s_bool,NULLOBJ,-1},
+		      { "pausecatch",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckLhs(0,2);
+  if ( GetArgs(stack,rhs,opt,T,&PL,&opts,&display,&echo,&nsp_type_hash,&E,
+	       &errcatch,&pausecatch) == FAIL) return RET_BUG;
+  if ( IsNspPList(NSP_OBJECT(PL)) == FALSE ) return RET_BUG;
+  NthObj(rhs+1)=NthObj(1);
+  
+  if ( lhs == 2 ||  E != NULL )
+    {
+      /* evaluate the function in a new frame and returns the 
+       * frame as a hash table : take care that frame must be deleted 
+       * at the end. 
+       */
+      if ( nsp_new_frame() == FAIL) return RET_BUG;
+      /* insert the contente of E in new frame */
+      if ( E != NULL) 
+	{
+	  if ( nsp_frame_insert_hash_contents(E) == FAIL) 
+	    {
+	      Scierror("Error: inserting values in environement failed\n");
+	      nsp_frame_delete();
+	      return RET_BUG;
+	    }
+	}
+      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,pausecatch);
+      if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
+      nsp_frame_delete();
+    }
+  else 
+    {
+      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,pausecatch);
+    }
+  
   if ( rep == RET_CTRLC ) 
     {
       Scierror("Error:\tExecution of function %s interupted\n",NSP_OBJECT(PL)->name);
@@ -481,7 +522,12 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
   if (( Ob =nsp_create_boolean_object(NVOID,(ans == FAIL) ? FALSE: TRUE)) == NULLOBJ )
     return RET_BUG;
   MoveObj(stack,1,Ob);
-  return 1;
+  if ( lhs == 2) 
+    {
+      if ( H == NULL && (H = nsp_hcreate(NVOID,1))==NULL) return RET_BUG;
+      MoveObj(stack,2,NSP_OBJECT(H));
+    }
+  return  Max(1,lhs);
 }
 
 

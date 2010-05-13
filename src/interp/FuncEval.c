@@ -45,7 +45,7 @@ static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix
 static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_pos);
 static int frame_insert_var(int rhs,int opt,int lhs);
 static int extract_varargout(Stack stack,NspObject *O,int *j,int Lhs);
-static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs);
+static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs,int display);
 static void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int rhs, char *name,char **tag);
 
 /*
@@ -604,7 +604,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
   nsp_new_frame(); 
 #endif 
   stack.first = first;
-  if ((rep= MacroEval_Base(OF,stack,first,rhs,opt,lhs) ) == RET_BUG) 
+  if ((rep= MacroEval_Base(OF,stack,first,rhs,opt,lhs,0) ) == RET_BUG) 
     {
       /*clean the stack */
       reorder_stack(stack,0);
@@ -614,7 +614,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
   return rep;
 }
 
-static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs)
+static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs, int display)
 {
   int count_ret, nargs,j,js=0,i,n,posi,nret,body_ret, varargin_case=0,option_case =0,
     less_args_case = 0 ;
@@ -959,7 +959,7 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
     }
   
   /* Body Evaluation */
-  body_ret =nsp_eval(Body,stack,first,0,0,0);
+  body_ret =nsp_eval(Body,stack,first,0,0,display);
   if ( body_ret < 0 ) 
     {
       char *filename =( (NspPList *) OF)->file_name ; 
@@ -1123,7 +1123,7 @@ static int extract_varargout(Stack stack,NspObject *O,int *j,int Lhs)
  *   value in case of error.
  **/
 
-int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs)
+int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs,int display)
 {
   int nret,body_ret ;
   PList Lhs,Feval,Body;
@@ -1134,7 +1134,7 @@ int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt,
   /*Test on Lhs */
   stack.first = first;
   nret = Lhs->arity ; 
-  body_ret =nsp_eval(Body,stack,first,0,0,0);
+  body_ret =nsp_eval(Body,stack,first,0,0,display);
   if ( body_ret < 0 && body_ret != RET_RETURN ) return body_ret ;
   return 0 ;
 }
