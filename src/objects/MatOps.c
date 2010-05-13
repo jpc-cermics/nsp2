@@ -2492,7 +2492,7 @@ int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B)
 
   if ( p < 0 )
     {
-      if ( nsp_inv(A) == FAIL ) return FAIL;
+      if ( nsp_inv(A,NULL,FALSE) == FAIL ) return FAIL;
       p = -p;
     }
 
