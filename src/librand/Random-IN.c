@@ -1763,29 +1763,30 @@ static int int_nsp_grandm( Stack stack, int rhs, int opt, int lhs)
   NspMatrix *M=NULL;
   int ResL,ResC,suite;
 
-  if ( rhs >= 2  &&  IsMatObj(stack,2) ) 
+  if ( rhs >= 3  &&  IsSMatObj(stack,3) )     /* grand(m,n,"dist",....)  */
     {
       if (GetScalarInt(stack,1,&ResL) == FAIL) return RET_BUG;
       CheckNonNegative(NspFname(stack),ResL,1);
       if (GetScalarInt(stack,2,&ResC) == FAIL) return RET_BUG;
       CheckNonNegative(NspFname(stack),ResC,2);
 
-      if (rhs == 2 )    /* grand(m,n) equivalent to grand(m,n,"def") */ 
-	return int_def_part(stack, rhs, opt, lhs, 3, ResL, ResC);
-
       if ((rand_dist = GetString(stack,3)) == (char*)0) return RET_BUG;
       suite=4;
     }
-  else /* if ( rhs >= 1 ) */
+  else if ( rhs >= 2 &&  IsSMatObj(stack,2) )  /* grand(n,"dist",....) or grand(Mat,"dist",...)  */
     {
       if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
       ResL=M->m; ResC=M->n;
-      if (rhs == 1 )    /* grand(Mat) equivalent to grand(Mat,"def") */ 
-	return int_def_part(stack, rhs, opt, lhs, 2, ResL, ResC);
 
       if ((rand_dist = GetString(stack,2)) == (char*)0) return RET_BUG;
       suite=3;
     }
+  else
+    {
+      Scierror("Error: %s bad calling sequence\n",NspFname(stack));
+      return RET_BUG;
+    }
+
   
   if ( strcmp(rand_dist,"bet")==0 ) 
     return int_bet_part(stack, rhs, opt, lhs, suite, ResL, ResC);
@@ -1938,6 +1939,44 @@ static int int_nsp_randn(Stack stack, int rhs, int opt, int lhs)
 
   for ( k = 0 ; k < A->mn ; k++ )
     A->R[k] = nsp_rand_nor_core();
+
+  MoveObj(stack,1,(NspObject *) A);
+  return 1;
+}
+
+static int int_nsp_rand(Stack stack, int rhs, int opt, int lhs)
+{
+  int m, n, k;
+  NspMatrix *A;
+  CheckRhs (0, 2);
+  CheckLhs (1, 1);
+
+  switch (rhs)
+    {
+    case 0:
+      m = 1; n = 1;
+      break;
+    case 1:
+      if (! IsMatObj (stack, 1) )
+	{
+	  Scierror("Error: %s when used with one arg this one must be a matrix\n",NspFname(stack));
+	  return RET_BUG;
+	}      
+      m = nsp_object_get_size (NthObj (1), 1);
+      n = nsp_object_get_size (NthObj (1), 2);
+      break;
+    case 2:
+      if (GetScalarInt(stack,1,&m) == FAIL) return RET_BUG;
+      CheckNonNegative(NspFname(stack),m,1);
+      if (GetScalarInt(stack,2,&n) == FAIL) return RET_BUG;
+      CheckNonNegative(NspFname(stack),n,2);
+    }
+
+  if ( (A  =nsp_matrix_create(NVOID,'r',m, n)) == NULLMAT )
+    return RET_BUG;
+
+  for ( k = 0 ; k < A->mn ; k++ )
+    A->R[k] = rand_ranf();
 
   MoveObj(stack,1,(NspObject *) A);
   return 1;
@@ -2098,7 +2137,7 @@ static int int_nsp_rand_discrete(Stack stack, int rhs, int opt, int lhs)
 static OpTab Random_func[]={
   {"grand_s", int_nsp_grands},
   {"grand_m", int_nsp_grandm},
-  /*     {"rand", int_nsp_rand}, */
+  {"rand", int_nsp_rand},
   {"randn", int_nsp_randn},
   {"rand_discrete", int_nsp_rand_discrete},
   {(char *) 0, NULL}

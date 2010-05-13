@@ -1494,38 +1494,6 @@ NspIMatrix *nsp_imatrix_zeros(int m, int n, nsp_itype itype)
   return(Loc);
 }
 
-/*
- *nsp_imatrix_rand: A=rand(m,n)
- * A is changed  
- */
-
-/**
- * nsp_imatrix_rand:
- * @m: number of rows
- * @n: number of columns
- * @itype: a #nsp_itype
- * 
- * returns a  @m x @n matrix filled with random samples of normal or 
- * uniform law.
- * 
- * Return value: a new #NspIMatrix or %NULL.
- **/
-
-static int rand_data[] = {1,0};
-
-NspIMatrix *nsp_imatrix_rand(int m, int n, nsp_itype itype)
-{
-  NspIMatrix *Loc;
-  int i;
-  if (( Loc= nsp_imatrix_create(NVOID,m,n,itype))  == NULLIMAT) return(NULLIMAT);
-#define IMAT_RAND(name,type,arg)							\
-  for ( i = 0 ; i < Loc->mn ; i++ ) Loc->name[i]= nsp_urand( rand_data);	\
-  break;
-  NSP_ITYPE_SWITCH(Loc->itype,IMAT_RAND,"");
-#undef IMAT_RAND
-  return(Loc);
-}
-
 
 /**
  * nsp_imatrix_pow_matscalar:

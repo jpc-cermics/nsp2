@@ -238,10 +238,8 @@ extern NspMatrix *nsp_mat_eye(int m, int n);
 extern NspMatrix *nsp_mat_ones(int m, int n); 
 extern NspMatrix *nsp_mat_zeros(int m, int n); 
 extern NspMatrix *nsp_mat_rand(int m, int n); 
-extern void nsp_set_urandseed(int m); 
-extern int nsp_get_urandseed(void); 
-extern void nsp_set_urandtype(int m); 
-extern int nsp_get_urandtype(void); 
+extern NspMatrix *nsp_mat_randn(int m, int n); 
+
 extern int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_pow_matmat(NspMatrix *A, NspMatrix *B); 
 extern int nsp_mat_pow_scalarmat(NspMatrix *A, NspMatrix *B); 

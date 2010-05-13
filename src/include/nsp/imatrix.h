@@ -409,7 +409,6 @@ extern void nsp_imatrix_tril(NspIMatrix *A, int k);
 extern NspIMatrix *nsp_imatrix_eye(int m, int n,nsp_itype itype); 
 extern NspIMatrix *nsp_imatrix_ones(int m, int n,nsp_itype itype); 
 extern NspIMatrix *nsp_imatrix_zeros(int m, int n,nsp_itype itype); 
-extern NspIMatrix *nsp_imatrix_rand(int m, int n,nsp_itype itype); 
 extern int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_pow_matmat(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_pow_scalarmat(NspIMatrix *A, NspIMatrix *B); 

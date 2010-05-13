@@ -29,6 +29,7 @@
 #include "nsp/gsort-p.h"
 #include "nsp/nsp_lapack.h"
 #include "nsp/lapack-c.h"
+#include "../librand/grand.h"
 
 #include <nsp/blas.h>
 #include <nsp/matutil.h>
@@ -2336,98 +2337,54 @@ NspMatrix *nsp_mat_zeros(int m, int n)
   return(Loc);
 }
 
-/*
- *nsp_mat_rand: A=rand(m,n)
- * A is changed  
- */
-
 /**
  * nsp_mat_rand:
  * @m: number of rows
  * @n: number of columns
  * 
- * returns a  @m x @n matrix filled with random samples of normal or 
- * uniform law.
+ * returns a  @m x @n matrix filled with random samples of uniform distribution
  * 
- * Return value: a new #NspMatrix or %NULL.
+ * Return value: a new #NspMatrix or %NULLMAT.
  **/
-
-static int rand_data[] = {1,0};
 
 NspMatrix *nsp_mat_rand(int m, int n)
 {
-  NspMatrix *Loc;
-  int i;
-  /* test2DD();*/ /* XXXXX*/
+  NspMatrix *A;
+  int k;
 
-  if (( Loc= nsp_matrix_create(NVOID,'r',m,n))  == NULLMAT) return(NULLMAT);
-  for ( i = 0 ; i < Loc->mn ; i++ ) 
-    {
-      Loc->R[i]= nsp_urand( rand_data);
-      if (rand_data[1] == 1) 
-	{
-	  double sr,si,t=2.0;
-	  while ( t > 1.00) 
-	    {
-	      sr=2.0*nsp_urand(rand_data)-1.0;
-	      si=2.0*nsp_urand(rand_data)-1.0;
-	      t = sr*sr+si*si;
-	    }
-	  Loc->R[i] = sr*sqrt(-2.0*log(t)/t);
-	}
-    }
-  return(Loc);
+  if ( (A  =nsp_matrix_create(NVOID,'r',m, n)) == NULLMAT )
+    return NULLMAT;
+
+  for ( k = 0 ; k < A->mn ; k++ )
+    A->R[k] = rand_ranf();
+
+  return A;
 }
 
 /**
- * nsp_set_urandseed:
- * @m: integer 
+ * nsp_mat_randn:
+ * @m: number of rows
+ * @n: number of columns
  * 
- * sets the seed of the default random generator.
+ * returns a  @m x @n matrix filled with random samples of normal distribution
+ * 
+ * Return value: a new #NspMatrix or %NULLMAT.
  **/
 
-void nsp_set_urandseed(int m)
+NspMatrix *nsp_mat_randn(int m, int n)
 {
-  rand_data[0] = Max(m,0);
+  NspMatrix *A;
+  int k;
+
+  if ( (A  =nsp_matrix_create(NVOID,'r',m, n)) == NULLMAT )
+    return NULLMAT;
+
+  for ( k = 0 ; k < A->mn ; k++ )
+    A->R[k] = nsp_rand_nor_core();
+
+  return A;
 }
 
-/**
- * nsp_get_urandseed:
- * 
- * gets the seed of the default random generator.
- * 
- * Return value: the seed value as an integer.
- **/
-
-int nsp_get_urandseed(void)
-{
-  return rand_data[0];
-}
-
-/**
- * nsp_set_urandtype:
- * @m: integer
- * 
- * sets the default random generator to normal (@m=1) or uniform (@m=0).
- **/
-
-void nsp_set_urandtype(int m)
-{
-  rand_data[1]=m;
-}
-
-/**
- * nsp_get_urandtype:
- * 
- * gets the default genetor law (1 for normal law and 0 for uniform law)
- * 
- * Return value: 1 or 0.
- **/
-
-int nsp_get_urandtype(void)
-{
-  return rand_data[1];
-}
 
 /**
  * nsp_mat_pow_matscalar:
@@ -2492,7 +2449,9 @@ int nsp_mat_pow_matscalar(NspMatrix *A, NspMatrix *B)
 
   if ( p < 0 )
     {
-      if ( nsp_inv(A,NULL,FALSE) == FAIL ) return FAIL;
+      double rcond;
+      if ( nsp_inv(A, &rcond, TRUE ) == FAIL  ||  rcond <= A->n*nsp_dlamch("eps") ) 
+	return FAIL;
       p = -p;
     }
 

@@ -2360,10 +2360,6 @@ NspSpRowMatrix *nsp_sprowmatrix_zeros(int m, int n)
   return nsp_sprowmatrix_create(NVOID,'r',m,n);
 }
 
-/*
- *nsp_mat_rand: A=rand(m,n)
- * A is changed  a 'ecrire ? 
- */
 
 /*
   A Set of term to term function on Matrices (complex or real)
