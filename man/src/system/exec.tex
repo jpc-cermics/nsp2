@@ -1,0 +1,70 @@
+% -*- mode: latex -*-
+\mansection{exec}
+\begin{mandesc}
+  \short{exec}{execute file contents} \\ % 
+\end{mandesc}
+%\index{exec}\label{exec}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [ok,renv]=exec(pathname, display=%t|%f, echo=%t|%f,
+                 env=hashtable,
+                 errcatch=%t| %f,
+                 pausecatch=%t|%f)
+  ok=exec(fname, display=%t|%f, echo=%t|%f,
+           errcatch=%t| %f) 
+  exec pathname
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{pathname}: a string giving the path of the file to be executed.
+    \vname{fname}: a function name (not a primitive).
+    \vname{display, echo, errcatch, pausecatch}: booleans optional values
+    \vname{env, renv}: hash tables. 
+    \vname{ok}: a boolean returned when \verb!errcatch! is et to \verb!%t!.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  executes the contents of the file given by \verb!pathname! or execute 
+  the body of a function given by \verb!fname!. 
+  During execution of scripts the value of the current exec dir is 
+  changed using the directory name of the given \verb!pathname!. 
+  The current exec directory can be obtained with \verb!get_current_exec_dir! 
+  which gives the current exec dir pathname relative to the current directory. 
+
+  The evaluation can be controled by optional arguments. 
+  
+  \begin{itemize}
+    \item \verb!display!: default value is false. When set to true the 
+      display of evaluated expressions is done. 
+    \item \verb!echo!: default value is false. When set to true the 
+      command are echoed as the are parsed and evaluated. 
+    \item \verb!errcatch!: default value is false. When set to true, 
+      execution errors are catched and the status of the execution is 
+      returned in the boolean variable \verb!ok!. In that case the 
+      error message can be obtained with the \verb!lasterror! function.
+    \item \verb!pausecatch!: default value is false. When set to true, 
+      pause are not evaluated during the code execution. 
+    \item \verb!env!: when given it gives an environment in which the 
+      evaluation has to be done. In that case, the execution will 
+      be performed in a private environment and the execution script 
+      will not change the values stored in the current environement 
+      (execept if values are returned throught the use of the function
+      \verb!resume!).
+    \item \verb!renv!: When \verb!renv! is requested the evaluation 
+      is performed in a private environment which is enriched with 
+      \verb!env! if \verb!env! is given and is returned by the function.
+  \end{itemize}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{execstr}{execstr}
+\end{manseealso}
