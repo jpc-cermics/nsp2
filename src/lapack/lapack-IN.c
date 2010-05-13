@@ -347,7 +347,7 @@ static int int_inv( Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(A)->ret_pos=1;
   if ( lhs == 2 )
     {
-      if ( nsp_move_double(stack,2,(double)rcond )== FAIL) 
+      if ( nsp_move_double(stack,2,rcond )== FAIL) 
 	return RET_BUG;
     }
   return Max(lhs,1);

@@ -287,18 +287,23 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   int i, j;
   NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT, *rank=NULLMAT, *sval=NULLMAT;
   double *work=NULL, qwork[1], *tau=NULL;
-  int lwork, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
+  int lwork, lworkbis, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
 
   if ( (r=nsp_matrix_copy(A)) == NULLMAT ) return FAIL ; 
 
   if ( (tau=nsp_alloc_work_doubles(Minmn)) == NULL ) goto err;
 
   lwork = -1;
+  lworkbis = -1;
 
   if ( E == NULL ) 
     {
+      /* query optimal size for dgeqrf but also for dorgqr */
       C2F(dgeqrf)(&m, &n, r->R, &m, tau, qwork, &lwork, &info);
       lwork = (int) qwork[0];
+      C2F(dorgqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, NULL, &m, NULL, qwork, &lworkbis, &info);
+      lworkbis = (int) qwork[0];
+      lwork = Max( lwork, lworkbis );
       if ( (work=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
       C2F(dgeqrf)(&m, &n, r->R, &m, tau, work, &lwork, &info);
     } 
@@ -306,8 +311,12 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
     {
       if ( (jpvt=nsp_alloc_work_int(n)) == NULL ) goto err;
       for (i = 0; i < n ; i++) jpvt[i]= 0;
+      /* query optimal size for dgeqp3 but also for dorgqr */
       C2F(dgeqp3)(&m, &n, r->R, &m, jpvt, tau, qwork, &lwork, &info);
       lwork = (int) qwork[0];
+      C2F(dorgqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, NULL, &m, NULL, qwork, &lworkbis, &info);
+      lworkbis = (int) qwork[0];
+      lwork = Max( lwork, lworkbis );
       if ( (work=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
       C2F(dgeqp3)(&m, &n, r->R, &m, jpvt, tau, work, &lwork, &info);
       if ( (e=nsp_matrix_create(NVOID,'r', n, 1)) == NULLMAT ) goto err; 
@@ -318,6 +327,7 @@ static int intdgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   if ( (q=nsp_matrix_create(NVOID,'r',m, (flag=='e') ? Minmn:m)) == NULLMAT ) 
     goto err;
   memcpy(q->R, r->R, m*Minmn*sizeof(double));
+
   C2F(dorgqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, q->R, &m, tau, work, &lwork, &info);
 
   /* make R */ 
@@ -400,18 +410,23 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
   NspMatrix *q=NULLMAT, *r=NULLMAT, *e=NULLMAT, *rank=NULLMAT, *sval=NULLMAT;
   double *rwork=NULL;
   doubleC *cwork=NULL, qwork[1], *tau=NULL;
-  int lwork, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
+  int lwork, lworkbis, info, *jpvt=NULL, m=A->m, n=A->n, Minmn=Min(m,n);
 
   if ( (r=nsp_matrix_copy(A)) == NULLMAT ) return FAIL ; 
 
   if ( (tau=nsp_alloc_work_doubleC(Minmn)) == NULL ) goto err;
 
   lwork = -1;
+  lworkbis = -1;
 
   if ( E == NULL ) 
     {
+      /* query optimal work size for zgeqrf but also for zungqr */
       C2F(zgeqrf)(&m, &n, r->C, &m, tau, qwork, &lwork, &info);
       lwork = (int) qwork[0].r;
+      C2F(zungqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, NULL, &m, NULL, qwork, &lworkbis, &info);
+      lworkbis = (int) qwork[0].r;
+      lwork = Max ( lwork, lworkbis );
       if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
       C2F(zgeqrf)(&m, &n, r->C, &m, tau, cwork, &lwork, &info);
     } 
@@ -420,8 +435,12 @@ static int intzgeqrpf(NspMatrix *A,NspMatrix **Q,NspMatrix **R,NspMatrix **E,
       if ( (rwork=nsp_alloc_work_doubles(2*n)) == NULL ) goto err;
       if ( (jpvt=nsp_alloc_work_int(n)) == NULL ) goto err;
       for (i = 0; i < n ; i++) jpvt[i]= 0;
+      /* query optimal work size for zgeqp3 but also for zungqr */
       C2F(zgeqp3)(&m, &n, r->C, &m, jpvt, tau, qwork, &lwork, rwork, &info);
       lwork = (int) qwork[0].r;
+      C2F(zungqr)(&m, (flag=='e') ? (&Minmn):(&m), &Minmn, NULL, &m, NULL, qwork, &lworkbis, &info);
+      lworkbis = (int) qwork[0].r;
+      lwork = Max ( lwork, lworkbis );
       if ( (cwork=nsp_alloc_work_doubleC(lwork)) == NULL ) goto err;
       C2F(zgeqp3)(&m, &n, r->C, &m, jpvt, tau, cwork, &lwork, rwork, &info);
       if ( (e=nsp_matrix_create(NVOID,'r', n, 1)) == NULLMAT ) goto err; 
@@ -1853,7 +1872,7 @@ int nsp_inv(NspMatrix *A, double *rcond, Boolean warning)
 
 static int intdgetri(NspMatrix *A, double *rcond, Boolean warning)
 {
-  int *ipiv=NULL;
+  int *ipiv=NULL, *iwork=NULL;
   double *dwork=NULL, qwork[1], anorm;
   int info, lwork, n=A->n ;
 
@@ -1878,18 +1897,19 @@ static int intdgetri(NspMatrix *A, double *rcond, Boolean warning)
 
   if ( rcond != NULL )
     {
-      C2F(dgecon)("1", &n, A->R, &n, &anorm, rcond, dwork, ipiv, &info, 1L);
+      if ( (iwork = nsp_alloc_int(n)) == NULL ) goto err;
+      C2F(dgecon)("1", &n, A->R, &n, &anorm, rcond, dwork, iwork, &info, 1L);
       if ( warning && *rcond <= n*nsp_dlamch("eps") )
 	Sciprintf("Warning: matrix is numerically singular (rcond = %e)\n",*rcond);
     }
 
   C2F(dgetri)(&n, A->R, &n, ipiv, dwork, &lwork, &info);
 
-  FREE(dwork); FREE(ipiv);
+  FREE(dwork); FREE(ipiv); FREE(iwork);
   return OK;
 
  err:
-  FREE(dwork); FREE(ipiv);
+  FREE(dwork); FREE(ipiv); FREE(iwork);
   return FAIL;
 } 
 
