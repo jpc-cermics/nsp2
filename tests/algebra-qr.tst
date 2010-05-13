@@ -1,6 +1,5 @@
 // -*- Mode: scilab -*- 
 function r=Err(x),r=norm(x,1),endfunction
-rand('normal')
 //==========================================================================
 //==============================      qr      ============================== 
 //==========================================================================
@@ -21,7 +20,7 @@ if Q<>[]|R<>[]|~isempty(x) then pause,end
 
 //Small dimension
 //---------------
-A=rand(3,2);Ac=A+rand(A)*%i;
+A=randn(3,2);Ac=A+randn(A)*%i;
 
 //Real Case
 Q=qr(A);
@@ -99,7 +98,7 @@ if Err(Q*R-Ac(:,x))> 200*%eps | rk<>2  then pause,end
 
 //Large dimension
 //---------------
-A=rand(150,60);Ac=A+rand(A)*%i;
+A=randn(150,60);Ac=A+randn(A)*%i;
 //Real Case
 Q=qr(A);
 if Err(Q*Q'-eye(size(Q*Q')))> 1000*%eps then pause,end

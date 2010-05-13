@@ -1,6 +1,5 @@
 // -*- Mode: scilab -*- 
 function r=Err(x),r=norm(x,1),endfunction
-rand('normal')
 
 //==========================================================================
 //==============================   bdiag      ============================== 
@@ -87,7 +86,7 @@ if or(bs<=0) then pause,end
 //Large dimension
 //---------------
 //Real case
-A=rand(25,25);
+A=randn(25,25);
 Ab1=bdiag(A);
 if or(triu(Ab1,-1)<>Ab1) then pause,end
 [Ab2,X]=bdiag(A);
@@ -102,7 +101,7 @@ if sum(bs)<>size(A,1) then pause,end
 if or(bs<=0) then pause,end
 
 //Complex case
-A=rand(25,25)+%i*rand(25,25);
+A=randn(25,25)+%i*randn(25,25);
 Ab1=bdiag(A);
 if or(triu(Ab1)<>Ab1) then pause,end
 [Ab2,X]=bdiag(A);

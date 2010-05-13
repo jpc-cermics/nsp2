@@ -23,7 +23,7 @@
 //------------------------------------
 
 n=50;
-a=rand(n,n,'u');
+a=rand(n,n);
 // now the data 
 fd=fopen('TMPDIR/Mat',mode='w');
 texte=['Some text ';'Some more text'];
@@ -67,7 +67,7 @@ if max(a1-a) > 1.e-1 then pause,end
 //------------------------------------
 
 n=50;
-a=rand(n,n,'u');
+a=rand(n,n);
 // now the data 
 fd=fopen('TMPDIR/Mat',mode='w');
 texte=['Some text ';'Some more text'];
@@ -110,7 +110,7 @@ if max(a1-a) > 1.e-1 then pause,end
 // write matrix  with put_matrix method 
 //--------------------------------------
 
-a=rand(n,n,'u');
+a=rand(n,n);
 fd=fopen('TMPDIR/Mat',mode='w');
 // options 
 // fd.put_matrix[a,format='%5.2f',title="// poo",sep=' '];
@@ -129,7 +129,7 @@ if max(a1-a) > 1.e-1 then pause,end
 // with options 
 // ---------------------------------------
 
-a=rand(n,n,'u');
+a=rand(n,n);
 fd=fopen('TMPDIR/Mat',mode='w');
 text="// my title ";
 fd.put_matrix[a,format='%5.2f',title=texte,sep=' '];
@@ -145,7 +145,7 @@ if max(a1-a) > 1.e-1 then pause,end
 // write matrix  with print  method option as_read 
 // ---------------------------------------------
 
-a=rand(n,n,'u');
+a=rand(n,n);
 fd=fopen('TMPDIR/Mat',mode='w');
 text="// my title ";
 fd.print[a,as_read=%t];
@@ -162,7 +162,7 @@ if max(a1-a) > 1.e-1 then pause,end
 // ------------------------------- 
 
 n=5;
-a=rand(n,n,'u');
+a=rand(n,n);
 // now the data 
 fd=fopen('TMPDIR/Mat',mode='w');
 texte=['Some text ';'Some more text'];

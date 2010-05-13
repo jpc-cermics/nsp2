@@ -1,6 +1,5 @@
 // -*- Mode: scilab -*- 
 function r=Err(x),r=norm(x,1),endfunction
-rand('normal')
 //define tools
 exec('algebra-funs.sce');
 
@@ -14,8 +13,8 @@ if inv(A)<>[] then pause,end
 if execstr('inv([0 0;2 3])',errcatch=%t)==%t then pause,end
 if execstr('inv([0 0;%i 3])',errcatch=%t)==%t then pause,end
 //Rectangular matrix
-if execstr('inv(rand(2,3))',errcatch=%t)==%t then pause,end
-if execstr('inv(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
+if execstr('inv(randn(2,3))',errcatch=%t)==%t then pause,end
+if execstr('inv(randn(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
 //Small dimension
 //---------------
 //Unsymetric

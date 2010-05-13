@@ -26,7 +26,7 @@ for n = nn
    er = [er ; [el es2 es3 es4 es5] ];
 end
 
-xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
+//xlfont("-adobe-helvetica-medium-r-normal--*-%s0-*-*-p-*-iso8859-1",6)
 xbasc()
 hh = (b-a)./(nn');
 

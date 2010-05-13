@@ -1,7 +1,6 @@
 // -*- Mode: scilab -*- 
 
 exec('algebra-funs.sce');
-rand('normal')
 
 function t=sel(R),t=real(R)<0 ,endfunction;
 
@@ -17,7 +16,7 @@ function [ok,pb]=check(A,E,As,Es,Q,Z)
   if norm(Es-Q'*E*Z,1) > 400*%eps then ok=%f,pb=6,return;end  
 endfunction;
 
-A=rand(0,4);
+A=randn(0,4);
 [As,Es,Q,Z,dim]=qz(A,A);
 if ~isempty(As) then pause;end 
 if ~isempty(Es) then pause;end 
@@ -27,10 +26,10 @@ if dim<>0  then pause;end
 
 // detect wrong entries 
 
-if execstr('[As,Es]=qz(rand(2,3),rand(2,3))',errcatch=%t)==%t then  pause,end
-if execstr('[As,Es,Q,Z]=qz(rand(2,3),rand(2,3))',errcatch=%t)==%t then  pause,end
-if execstr('[As,Es,dim]=qz(rand(2,3),rand(2,3),sort=''c'')',errcatch=%t)==%t then  pause,end
-if execstr('[Z,dim]=qz(rand(2,3),rand(2,3),sort=sel)',errcatch=%t)==%t then  pause,end
+if execstr('[As,Es]=qz(randn(2,3),randn(2,3))',errcatch=%t)==%t then  pause,end
+if execstr('[As,Es,Q,Z]=qz(randn(2,3),randn(2,3))',errcatch=%t)==%t then  pause,end
+if execstr('[As,Es,dim]=qz(randn(2,3),randn(2,3),sort=''c'')',errcatch=%t)==%t then  pause,end
+if execstr('[Z,dim]=qz(randn(2,3),randn(2,3),sort=sel)',errcatch=%t)==%t then  pause,end
 
 function t=sel(Alpha,Beta),t=real(Alpha) > -0.2*real(Beta) ,endfunction;
 

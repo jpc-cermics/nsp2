@@ -1,6 +1,5 @@
 // -*- Mode: scilab -*- 
 function r=Err(x),r=norm(x,1),endfunction
-rand('normal')
 
 //==========================================================================
 //==============================   det        ============================== 
@@ -22,14 +21,14 @@ if Err(det(A)-1-%i)>10*%eps then pause,end
 if e<>0 |Err(m-1-%i)>10*%eps then pause,end
 //Large dimension
 //Real
-v=rand(1,21);
-A=rand(21,21); A=(triu(A,1)+diag(v))*(tril(A,-1)+diag(ones_new(1,21)));
+v=randn(1,21);
+A=randn(21,21); A=(triu(A,1)+diag(v))*(tril(A,-1)+diag(ones_new(1,21)));
 if Err(det(A)-prod(v))>400000*%eps then pause,end
 [e,m]=det(A);
 if Err(m*(10^e)-prod(v))>400000*%eps then pause,end
 //Complex
-v=(v+rand(v)*%i)/2;
-A=rand(21,21); A=(triu(A,1)+diag(v))*(tril(A,-1)+diag(ones_new(1,21)));
+v=(v+randn(v)*%i)/2;
+A=randn(21,21); A=(triu(A,1)+diag(v))*(tril(A,-1)+diag(ones_new(1,21)));
 if Err(det(A)-prod(v))>10000*%eps then pause,end
 [e,m]=det(A);
 if Err(m*(10^e)-prod(v))>10000*%eps then pause,end

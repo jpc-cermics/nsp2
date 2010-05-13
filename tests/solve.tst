@@ -1,11 +1,9 @@
 // -*- Mode: scilab -*- 
 // basics tests for solve
 
-rand('normal')
-
 //Small dimensions real
 n=10;
-b=rand(n,2);A=rand(n,n);
+b=randn(n,2);A=randn(n,n);
 
 // lu 
 x=solve(A,b,mode="std"); 
@@ -48,8 +46,8 @@ if norm(A*A'*x-b) > 1.5e-12 then pause;end
 
 //Small dimensions complex
 
-b=rand(n,2);A=rand(n,n);
-A= A + %i*rand(n,n);
+b=randn(n,2);A=randn(n,n);
+A= A + %i*randn(n,n);
 
 // lu 
 x=solve(A,b,mode="std"); 

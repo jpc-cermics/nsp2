@@ -4,11 +4,11 @@
 
 N=10;
 M=8;
-a=int(10*rand(N,M,'uniform'));
+a=int(10*rand(N,M));
 a(a>= 8) = 0.0;
 asp=sparse(a);
 
-b=int(10*rand(N,M,'uniform'));
+b=int(10*rand(N,M));
 b(b>= 8) = 0.0;
 bsp=sparse(b);
 

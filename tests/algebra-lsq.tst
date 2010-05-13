@@ -1,6 +1,5 @@
 // -*- Mode: scilab -*- 
 function r=Err(x),r=norm(x,1),endfunction
-rand('normal')
 
 //==========================================================================
 //==============================     lsq      ============================== 
@@ -11,11 +10,11 @@ rand('normal')
 if lsq([],[])<>[] then pause,end
 if execstr('lsq([],1)',errcatch=%t)==%t then pause,end
 if execstr('lsq(1,[])',errcatch=%t)==%t then pause,end
-if execstr('lsq(rand(3,2),rand(2,1))',errcatch=%t)==%t then pause,end
+if execstr('lsq(randn(3,2),randn(2,1))',errcatch=%t)==%t then pause,end
 
 //Small dimensions
 //Real full rank fat
-A=rand(3,5);b=rand(3,2);
+A=randn(3,5);b=randn(3,2);
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 //Real rank deficient fat
@@ -28,15 +27,15 @@ X=lsq(A,b);
 [Q,R]=qr(A);b1=Q'*b;X1=inv(R(1:2,:))*b1(1:2);
 if Err(X-X1)>200*%eps then pause,end
 //Complex full rank fat
-A=rand(3,5)+%i*rand(3,5);b=rand(3,2);
+A=randn(3,5)+%i*randn(3,5);b=randn(3,2);
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 
-A=rand(3,5);b=rand(3,2)+%i*rand(3,2);
+A=randn(3,5);b=randn(3,2)+%i*randn(3,2);
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 
-A=rand(3,5)+%i*rand(3,5);b=rand(3,2)+%i*rand(3,2);
+A=randn(3,5)+%i*randn(3,5);b=randn(3,2)+%i*randn(3,2);
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 //Complex  rank deficient fat
@@ -71,37 +70,37 @@ if Err(X-X1)>200*%eps then pause,end
 
 //LArge dimension
 //Real full rank fat
-A=rand(3,50);b=rand(3,2);
+A=randn(3,50);b=randn(3,2);
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 //Real full rank tall
-A=rand(50,3);b=rand(50,2);
+A=randn(50,3);b=randn(50,2);
 X=lsq(A,b);
 [Q,R]=qr(A);b1=Q'*b;X1=inv(R(1:3,:))*b1(1:3,:);
 if Err(X-X1)>200*%eps then pause,end
 
 //Complex full rank fat
-A=rand(3,50)+%i;b=rand(3,2);
+A=randn(3,50)+%i;b=randn(3,2);
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
-A=rand(3,50);b=rand(3,2)+%i;
+A=randn(3,50);b=randn(3,2)+%i;
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 
-A=rand(3,50);b=rand(3,2)+%i;
+A=randn(3,50);b=randn(3,2)+%i;
 X=lsq(A,b);
 if Err(A*X-b)>200*%eps then pause,end
 //Complex full rank tall
-A=rand(50,3)+%i;b=rand(50,2);
+A=randn(50,3)+%i;b=randn(50,2);
 X=lsq(A,b);
 [Q,R]=qr(A);b1=Q'*b;X1=inv(R(1:3,:))*b1(1:3,:);
 if Err(X-X1)>200*%eps then pause,end
 
-A=rand(50,3);b=rand(50,2)+%i;
+A=randn(50,3);b=randn(50,2)+%i;
 X=lsq(A,b);
 [Q,R]=qr(A);b1=Q'*b;X1=inv(R(1:3,:))*b1(1:3,:);
 if Err(X-X1)>200*%eps then pause,end
-A=rand(50,3)+%i;b=rand(50,2)+%i;
+A=randn(50,3)+%i;b=randn(50,2)+%i;
 X=lsq(A,b);
 [Q,R]=qr(A);b1=Q'*b;X1=inv(R(1:3,:))*b1(1:3,:);
 if Err(X-X1)>200*%eps then pause,end

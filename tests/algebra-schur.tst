@@ -4,7 +4,6 @@
 
 function r=Err(x),r=norm(x,1),endfunction;
 //define tools
-rand('normal')
 exec('algebra-funs.sce');
 
 function t=sel(R),t=real(R)<0 ,endfunction;
@@ -28,10 +27,10 @@ for arg=args
 end
 
 //Rectangular matrix
-if execstr('schur(rand(2,3))',errcatch=%t)==%t then pause,end
-if execstr('[U,S]=schur(rand(2,3))',errcatch=%t)==%t then pause,end
-if execstr('schur(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
-if execstr('[U,S]=schur(rand(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
+if execstr('schur(randn(2,3))',errcatch=%t)==%t then pause,end
+if execstr('[U,S]=schur(randn(2,3))',errcatch=%t)==%t then pause,end
+if execstr('schur(randn(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
+if execstr('[U,S]=schur(randn(2,3)+%i*eye(2,3))',errcatch=%t)==%t then pause,end
 
 //Small dimension
 A=testmat1(3,5);Ac=testmat1(3+%i,5);

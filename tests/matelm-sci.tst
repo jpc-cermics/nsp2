@@ -142,8 +142,6 @@ a=string([1 2;3 4]);
 a=[1 2;3 4]>1;
 //AFAIRE if or(size(rand(a))<>size(a)) then pause,end
 //AFAIRE if or(size(rand(a+a))<>size(a)) then pause,end
-rand('seed',1);if rand('seed')<>1 then pause,end
-a=2;rand('seed',a);if rand('seed')<>a then pause,end
 
 //diagcre
 //AFAIRE : faire une fonction diag 

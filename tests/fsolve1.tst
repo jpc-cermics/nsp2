@@ -10,7 +10,7 @@ b=rand(m,1);
 
 function y=f(x);  y=A*x-b; endfunction;
 [xf,ff,info]=fsolve_lsq(ones(3,1),f,m);
-if norm(A*xf-b) > 10*%eps then;pause;end
+if norm(A*xf-b)/norm(b) > 100*%eps then;pause;end
 
 // 2-
 

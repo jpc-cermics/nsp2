@@ -41,53 +41,52 @@ function [x,e,er]=test_bdiv(A,b,num_test,normtype)
 //    for i=1:size(x,2), printf(" %e , ",er(i)), end
 endfunction
 
-rand('normal')
 normtype="l1";
 
 // square matrices
 
 //Small dimensions real
 n=5;
-b=rand(n,2);A=rand(n,n);
+b=randn(n,2);A=randn(n,n);
 num_test = 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 //Small dimensions complex
-b=rand(n,2)+%i;A=rand(n,n);
+b=randn(n,2)+%i;A=randn(n,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
-b=rand(n,2);A=rand(n,n)+%i;
+b=randn(n,2);A=randn(n,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
-b=rand(n,2)+%i;A=rand(n,n)+%i;
+b=randn(n,2)+%i;A=randn(n,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 //Large dimensions real
 n=50;
-b=rand(n,2);A=rand(n,n);
+b=randn(n,2);A=randn(n,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 //Large dimensions complex
-b=rand(n,2)+%i;A=rand(n,n);
+b=randn(n,2)+%i;A=randn(n,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
-b=rand(n,2);A=rand(n,n)+%i;
+b=randn(n,2);A=randn(n,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
-b=rand(n,2)+%i;A=rand(n,n)+%i;
+b=randn(n,2)+%i;A=randn(n,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
@@ -97,25 +96,25 @@ if err > eps_bdiv then pause;end
 
 // A and b real
 n=50;
-b=rand(n,2);A=tril(triu(rand(n,n),-2),2);
+b=randn(n,2);A=tril(triu(randn(n,n),-2),2);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 // A real, b complex
-b= b + %i*rand(n,2);
+b= b + %i*randn(n,2);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 // A complex, b complex
-A=A+%i*tril(triu(rand(n,n),-2),2);
+A=A+%i*tril(triu(randn(n,n),-2),2);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 // A complex, b real
-b=rand(n,2);
+b=randn(n,2);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
@@ -125,14 +124,14 @@ if err > eps_bdiv then pause;end
 
 //Small dimensions real
 n=5;m=3;
-b=rand(m,2);A=rand(m,n);
+b=randn(m,2);A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
 n=3;m=5;
-b=rand(m,2);A=rand(m,n);
+b=randn(m,2);A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
@@ -140,41 +139,41 @@ if err > eps_bdiv then pause;end
 
 //Small dimensions complex
 n=5;m=3;
-b=rand(m,2)+%i;A=rand(m,n);
+b=randn(m,2)+%i;A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
 n=5;m=3;
-b=rand(m,2);A=rand(m,n)+%i;
+b=randn(m,2);A=randn(m,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
-b=rand(m,2)+%i;A=rand(m,n)+%i;
-num_test = num_test + 1;
-[x,e,err]=test_bdiv(A,b,num_test,normtype);
-if err > eps_bdiv then pause;end
-
-
-n=3;m=5;
-b=rand(m,2)+%i;A=rand(m,n);
+b=randn(m,2)+%i;A=randn(m,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
 n=3;m=5;
-b=rand(m,2);A=rand(m,n)+%i;
+b=randn(m,2)+%i;A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
 n=3;m=5;
-b=rand(m,2)+%i;A=rand(m,n)+%i;
+b=randn(m,2);A=randn(m,n)+%i;
+num_test = num_test + 1;
+[x,e,err]=test_bdiv(A,b,num_test,normtype);
+if err > eps_bdiv then pause;end
+
+
+n=3;m=5;
+b=randn(m,2)+%i;A=randn(m,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
@@ -183,49 +182,49 @@ if err > eps_bdiv then pause;end
 //LArge dimension real
 
 n=40;m=20;
-b=rand(m,2);A=rand(m,n);
+b=randn(m,2);A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
-b=rand(m,2);A=rand(m,n);
+b=randn(m,2);A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 //Large dimensions complex
 
-b=rand(m,2)+%i;A=rand(m,n);
+b=randn(m,2)+%i;A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
-b=rand(m,2);A=rand(m,n)+%i;
-num_test = num_test + 1;
-[x,e,err]=test_bdiv(A,b,num_test,normtype);
-if err > eps_bdiv then pause;end
-
-
-b=rand(m,2)+%i;A=rand(m,n)+%i;
+b=randn(m,2);A=randn(m,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
-b=rand(m,2)+%i;A=rand(m,n);
+b=randn(m,2)+%i;A=randn(m,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
-b=rand(m,2);A=rand(m,n)+%i;
+b=randn(m,2)+%i;A=randn(m,n);
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end
 
 
-b=rand(m,2)+%i;A=rand(m,n)+%i;
+b=randn(m,2);A=randn(m,n)+%i;
+num_test = num_test + 1;
+[x,e,err]=test_bdiv(A,b,num_test,normtype);
+if err > eps_bdiv then pause;end
+
+
+b=randn(m,2)+%i;A=randn(m,n)+%i;
 num_test = num_test + 1;
 [x,e,err]=test_bdiv(A,b,num_test,normtype);
 if err > eps_bdiv then pause;end

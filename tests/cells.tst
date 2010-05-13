@@ -177,7 +177,7 @@ if C{3,4}<>6 then pause;end
 
 // function map 
 
-A=rand(4,5,'n');
+A=randn(4,5);
 
 function y=myabs(x);y=abs(x);endfunction 
   

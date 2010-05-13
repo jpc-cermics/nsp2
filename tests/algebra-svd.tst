@@ -1,6 +1,5 @@
 // -*- Mode: scilab -*- 
 function r=Err(x),r=norm(x,1),endfunction
-rand('normal')
 
 //==========================================================================
 //==============================     svd      ============================== 
@@ -27,7 +26,7 @@ if execstr('svd([%i %i;%nan 3])',errcatch=%t)==%t then pause,end
 
 //Small dimension
 //---------------
-A=rand(3,5);Ac=A+%i*rand(A);
+A=randn(3,5);Ac=A+%i*randn(A);
 
 //Real Case
 [U,S,V]=svd(A);
@@ -73,7 +72,7 @@ if Err(XX-Ac)>200*%eps then pause,end
 //Large dimension
 //---------------
 
-A=rand(150,60);Ac=A+rand(A)*%i;
+A=randn(150,60);Ac=A+randn(A)*%i;
 //Real Case
 [U,S,V]=svd(A);
 XX= U*[diag(S);zeros_new(150-60,60)]*V';
@@ -137,7 +136,7 @@ if execstr('[U,S,V,rk]=svd([],mode='"e'")',errcatch=%t) == %f then pause,end
 
 //Small dimension
 //Real Case Fat
-A=rand(3,5);
+A=randn(3,5);
 S=svd(A);
 if or(S<0) then pause,end
 if sort(S)<>S  then pause,end
@@ -168,7 +167,7 @@ if Err(V-V1) >200*%eps  then pause,end
 if rk<>3 then pause,end
 
 //Real Case Tall
-A=rand(5,3);
+A=randn(5,3);
 
 S=svd(A);
 if or(S<0) then pause,end
@@ -199,7 +198,7 @@ if Err(V-V1) >200*%eps  then pause,end
 if rk<>3 then pause,end
 
 //Complex Case Fat
-A=rand(3,5)+%i*rand(3,5);
+A=randn(3,5)+%i*randn(3,5);
 S=svd(A);
 if or(S<0) then pause,end
 if sort(S)<>S  then pause,end
@@ -229,7 +228,7 @@ if Err(V-V1) >200*%eps  then pause,end
 if rk<>3 then pause,end
 
 //Complex Case Tall
-A=rand(5,3)+%i*rand(5,3);
+A=randn(5,3)+%i*randn(5,3);
 
 S=svd(A);
 if or(S<0) then pause,end
@@ -262,7 +261,7 @@ if rk<>3 then pause,end
 
 //Large dimension
 //Real Case Fat
-A=rand(30,50);
+A=randn(30,50);
 S=svd(A);
 if or(S<0) then pause,end
 if sort(S)<>S  then pause,end
@@ -292,7 +291,7 @@ if Err(V-V1) >5000*%eps  then pause,end
 if rk<>30 then pause,end
 
 //Real Case Tall
-A=rand(50,30);
+A=randn(50,30);
 
 S=svd(A);
 if or(S<0) then pause,end
@@ -324,7 +323,7 @@ if rk<>30 then pause,end
 
 //Complex Case Fat
 //ZZZZ 
-A=rand(30,50)+%i*rand(30,50);
+A=randn(30,50)+%i*randn(30,50);
 S=svd(A);
 if or(S<0) then pause,end
 if sort(S)<>S  then pause,end
@@ -354,7 +353,7 @@ if Err(V-V1) >5000*%eps  then pause,end
 if rk<>30 then pause,end
 
 //Complex Case Tall
-A=rand(50,30)+%i*rand(50,30);
+A=randn(50,30)+%i*randn(50,30);
 
 S=svd(A);
 if or(S<0) then pause,end

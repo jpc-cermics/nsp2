@@ -7,7 +7,7 @@ name = file('join',[getenv('NSP_TMPDIR'),'test.bin']);
 // test the save/load of mat bmat smat 
 
 for i=1:10
-  A=rand(3,7,'n');
+  A=randn(3,7);
   sci_save('test.bin',A1=A,A2=string(A),A3=A>=0,A4=A+%i*A);
   sci_load('test.bin');
   if norm(A-A1)<>0 then pause;end 
@@ -19,7 +19,7 @@ end
 // the same inside a list 
 
 for i=1:10
-  A=rand(3,7,'n');
+  A=randn(3,7);
   L=list(A,string(A),A>=0,A+%i*A);
   sci_save('test.bin',L=L);
   sci_load('test.bin');
@@ -32,7 +32,7 @@ end
 // the same inside a hash 
 
 for i=1:10
-  A=rand(3,7,'n');
+  A=randn(3,7);
   L=hash_create(A=A,B=string(A),C=A>=0,D=A+%i*A);
   sci_save('test.bin',L=L);
   sci_load('test.bin');

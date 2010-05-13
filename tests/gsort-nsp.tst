@@ -6,7 +6,7 @@ endfunction;
 
 N=4;P=5;
 // a random permutation 
-[ax,perm]=sort(rand(1,N*P,'uniform'));
+[ax,perm]=sort(rand(1,N*P));
 a=matrix(perm,N,P);
 
 //  global sort decreasing
@@ -173,7 +173,7 @@ if ~ind1.equal[ind2] then pause;end
 //-------------------------------------
 
 N=10;P=20;
-a=int(10*rand(N,P,'uniform'));
+a=int(10*rand(N,P));
 
 //  global sort decreasing 
 
@@ -203,7 +203,7 @@ alr=[1,2,2;
      1,1,2;
      1,1,1];
 // a random permutation 
-[ax,perm]=sort(rand(1,N,'uniform'));
+[ax,perm]=sort(rand(1,N));
 a=alr(perm,:);
 [a1,ind]=gsort(string(a),'lr') ;        
 [a2,ind]=gsort(a,'lr') ;
@@ -216,7 +216,7 @@ if or(a1<>string(a2) )  then pause,end;
 N=3;P=4;
 alr=alr';
 // a random permutation 
-[ax,perm]=sort(rand(1,P,'uniform'));
+[ax,perm]=sort(rand(1,P));
 a=alr(:,perm);
 
 [a1,ind]=gsort(string(a),'lc');                   
