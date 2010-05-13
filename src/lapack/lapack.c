@@ -1790,7 +1790,7 @@ static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
 /**
  * nsp_inv:
  * @A: (input/output) a square real or complex matrix 
- * @rcond: double 
+ * @rcond: a double pointer (can be set to NULL).
  * @warning: boolean 
  * 
  * Computes the inverse matrix of the matrix @A. nsp_inv tests if
