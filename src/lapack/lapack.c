@@ -1790,6 +1790,8 @@ static int inttrcon(NspMatrix *A, char tri_type, double *rcond);
 /**
  * nsp_inv:
  * @A: (input/output) a square real or complex matrix 
+ * @rcond: double 
+ * @warning: boolean 
  * 
  * Computes the inverse matrix of the matrix @A. nsp_inv tests if
  * @A is lower or upper triangular (to speed up the computation in theses
@@ -1837,7 +1839,7 @@ int nsp_inv(NspMatrix *A, double *rcond, Boolean warning)
 
       if (info == 0) 
 	{
-	  if ( warning && *rcond <= n*nsp_dlamch("eps") )
+	  if ( warning && rcond != NULL && *rcond <= n*nsp_dlamch("eps") )
 	    Sciprintf("Warning: matrix is numerically singular (rcond = %e)\n",*rcond);
  	  return OK;
 	} 
