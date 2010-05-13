@@ -20,7 +20,8 @@ xopt = fsolve_lsq(x0, f, m)
     \vname{x0}: real vector (says of length $n$), initial estimate of the optimal vector
     \vname{f}: nsp function (or string for an C or fortran external)
     \vname{m}: integer, number of equations
-    \vname{xtol=er, ftol=er, gtol=ea}: optional named arguments relative to the stopping test.
+    \vname{xtol=er, ftol=er, gtol=ea}: optional named arguments relative to the stopping test (default:
+    \verb+xtol=ftol=sqrt(2*%eps)+, \verb+gtol=0+).
     \vname{jac=Jf}: optional named argument. Jf should be a nsp function (the Jacobian of \verb+f+)
     \vname{args=obj}: optional named argument (could be any nsp object), useful to pass additional parameters for \verb+f+ (and
     Jf if provided).

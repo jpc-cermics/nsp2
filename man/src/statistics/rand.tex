@@ -1,0 +1,58 @@
+% -*- mode: latex -*-
+\mansection{rand}
+\begin{mandesc}
+  \short{rand}{generates random variates from the uniform distribution on [0,1)}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+X = rand()     // output only one random number 
+X = rand(m, n)
+X = rand(Mat)
+\end{verbatim}
+\end{calling_sequence}
+  %-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{m, n}: integers, size of the wanted matrix \verb!X!
+   \vname{Mat}: a matrix whom only the dimensions (say \verb!m x n!) are used
+   \vname{X}: the resulting \verb!m x n! random matrix
+  \end{varlist}
+  \end{parameters}
+  
+\begin{mandescription}
+  This function generates random variates from the  \hyperlink{unfpdf}{uniform distribution} on $[0,1)$
+ ($1$ is never returned). It is a shortcut for \verb+grand(m,n,"def")+ or
+\verb+grand(m,n,"unf",0,1)+
+  The first calling sequence \verb+rand()+ returns only one random number. The
+ third calling sequence \verb+rand(Mat)+ is equivalent to the second  
+ \verb+rand(m,n)+ with the dimensions $m$ and $n$ from the matrix $Mat$.
+
+  The uniform distribution is got from the output of the basic generators which
+ give random integers on $[0,n)$ (with $n = 2^{-32}$ in most cases) divided by $n$.
+ 
+\end{mandescription}
+
+%-- see also
+%--example 
+\begin{examples}
+\begin{Verbatim}
+n = 1e5;
+X = rand(n,1);  // a sample from U(0,1)
+
+// draw an histogram
+xbasc()
+histplot(20,X,rect=[-0.2,0,1.2,1.2])
+// superpose the uniform density
+x = [-0.2,0,0,1,1,1.2];
+y = [ 0  ,0,1,1,0,0];
+xpoly(x,y,color=5,thickness=3)
+\end{Verbatim}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{grand}{grand}, \manlink{randn}{randn}, \manlink{pdf}{pdf}   
+\end{manseealso}
+
+
+
