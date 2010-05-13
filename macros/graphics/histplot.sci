@@ -9,13 +9,13 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
 // 
   if nargin <= 0, 
     if new_graphics() then 
-      s_mat=['histplot([-6:0.2:6],rand(1,2000,''n''));';
+      s_mat=['histplot([-6:0.2:6],randn(1,2000));';
 	     'function [y]=f(x); y=exp(-x.*x/2)/sqrt(2*%pi);endfunction';
 	     'x=-6:0.1:6;x=x'';plot2d(x,f(x),style=2)';
 	     'titre= ''macro histplot : Histogram plot'';';
 	     'xtitle(titre,''Classes'',''N(C)/Nmax'');'];
     else
-      s_mat=['histplot([-6:0.2:6],rand(1,2000,''n''));';
+      s_mat=['histplot([-6:0.2:6],randn(1,2000));';
 	     'function [y]=f(x); y=exp(-x.*x/2)/sqrt(2*%pi);endfunction';
 	     'x=-6:0.1:6;x=x'';plot2d(x,f(x),style=1,strf='"000'");';
 	     'titre= ''macro histplot : Histogram plot'';';
