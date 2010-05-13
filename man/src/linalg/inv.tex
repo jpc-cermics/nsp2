@@ -1,0 +1,36 @@
+% -*- mode: latex -*-
+\mansection{inv}
+\begin{mandesc}
+  \short{inv}{inverse of a square matrix} \\ % 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  B= inv(A)  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: real or complex square matrix (n x n).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  Compute the inverse of the square matrix \verb!A!. 
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(4,4);
+    norm(inv(A)*A)
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{pinv}{pinv} 
+\end{manseealso}
+% -- Authors
+\begin{authors}
+   interface : Bruno Pincon and Jean-Philippe Chancelier. 
+   Internally, if the matrice is triangular and real (resp. complex) the lapack routine dtrtri (resp. ztrtri) is used and otherwise dgetri (resp. zgetri) is used.
+\end{authors}
