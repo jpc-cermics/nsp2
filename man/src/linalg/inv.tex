@@ -6,23 +6,27 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  B= inv(A)  
+  [B,rcond]= inv(A)  
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
     \vname{A}: real or complex square matrix (n x n).
+    \vname{rcond}: a real scalar.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  Compute the inverse of the square matrix \verb!A!. 
+  Compute the inverse of the square matrix \verb!A!. If requested 
+  the estimation of the reciprocal condition number is returned. 
 \end{mandescription}
 %--example 
 \begin{examples}
   \begin{Verbatim}
     A=rand(4,4);
     norm(inv(A)*A)
+    T = triu(rand(600,600));  // A badly conditioned matrix 
+    [U,rcond] = inv(T);
   \end{Verbatim}
 \end{examples}
 %-- see also
