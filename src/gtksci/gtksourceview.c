@@ -299,7 +299,7 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
 			     GError         **error)
 {
   GtkTextIter iter;
-  gchar *buffer;
+  gchar *buffer,*buffer_utf8 ;
   GError *error_here = NULL;
 
   g_return_val_if_fail (GTK_IS_SOURCE_BUFFER (source_buffer), FALSE);
@@ -311,9 +311,15 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
       g_propagate_error (error, error_here);
       return FALSE;
     }
-
+  if ((buffer_utf8= nsp_string_to_utf8(buffer)) == NULL)
+    {
+      Sciprintf("File %s is not utf8 \n",filename);
+      g_free(buffer);
+      return FALSE;
+    }
+  
   gtk_source_buffer_begin_not_undoable_action (source_buffer);
-  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (source_buffer), buffer, -1);
+  gtk_text_buffer_set_text (GTK_TEXT_BUFFER (source_buffer), buffer_utf8, -1);
   gtk_source_buffer_end_not_undoable_action (source_buffer);
   gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (source_buffer), FALSE);
 
@@ -321,6 +327,7 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (source_buffer), &iter);
   gtk_text_buffer_place_cursor (GTK_TEXT_BUFFER (source_buffer), &iter);
 
+  /* 
   {
     GtkTextIter start, end;
     char *text;
@@ -329,8 +336,9 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
     g_assert (!strcmp (text, buffer));
     g_free (text);
   }
-
+  */
   g_free (buffer);
+  if ( buffer_utf8 != buffer) g_free (buffer_utf8);
   return TRUE;
 }
 
