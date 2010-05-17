@@ -3500,7 +3500,7 @@ int nsp_imatrix_unique(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean 
  **/
 int nsp_imatrix_unique_rows(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
 {
-  int i0, i, j, i_old, *index;
+  int i0=0, i, j, i_old, *index;
   NspMatrix *occ=NULLMAT;
   Boolean equal;
 
@@ -3600,7 +3600,7 @@ int nsp_imatrix_unique_rows(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, cha
  **/
 int nsp_imatrix_unique_columns(NspIMatrix *x, NspObject **Ind, NspMatrix **Occ, char ind_type)
 {
-  int j0, i, j, j_old, *index, pj0, pj;
+  int j0=0, i, j, j_old=0, *index, pj0, pj;
   NspMatrix *occ=NULLMAT;
   Boolean equal;
 
