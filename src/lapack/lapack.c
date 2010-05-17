@@ -3071,8 +3071,9 @@ int nsp_dgges(NspMatrix *A,NspMatrix *B,
 	     int (*F)(const double *alphar,const double *alphai,const double *beta),
 		    NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim) 
 {
+  int ret=FAIL;
   double  *Vsl=NULL,*Vsr=NULL, workopt;
-  NspMatrix *alphar,*alphai,*beta,*dwork,*iwork=NULLMAT;
+  NspMatrix *alphar=NULL,*alphai=NULL,*beta=NULL,*dwork=NULLMAT,*iwork=NULLMAT;
   int info,lworkMin,sdim=0;
   int m = A->m, n = A->n, mb = B->m,nb = B->n ;  
   char *sort = "N",*jobvsl="N",*jobvsr= "N";
@@ -3081,13 +3082,13 @@ int nsp_dgges(NspMatrix *A,NspMatrix *B,
   
   if ( A->mn == 0 ) {
     if ( VSR != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;   
     }
     if ( VSL != NULL) {
-      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;   
     }
     if ( Sdim != NULL) {
-      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto error;   
       (*Sdim)->R[0] = 0;
     }
     return OK ; 
@@ -3096,40 +3097,40 @@ int nsp_dgges(NspMatrix *A,NspMatrix *B,
   if (m != n) { 
     Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
 	     m,n);
-    return FAIL;
+    goto error;
   }
 
   if (mb != nb) { 
     Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n", 
 	     mb,nb);
-    return FAIL;
+    goto error;
   }
 
   if (m != mb || n != nb ) {
     Scierror("Error: gschur, first and second arguments must have equal size\n");
-    return FAIL;
+    goto error;
   }
 
-  if (( alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
-  if (( beta   =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) return FAIL;
+  if (( alphar =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto error;
+  if (( alphai =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto error;
+  if (( beta   =nsp_matrix_create(NVOID,'r',n,1)) == NULLMAT) goto error;
   
   if ( F != NULL ) 
     {
-      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
+      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) goto error;   
       sort = "S";
     }
 
   if ( VSL != NULL ) 
     {
-      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;  
       Vsl = (*VSL)->R;
       jobvsl = "V"; 
     }
 
   if ( VSR != NULL ) 
     {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;  
       Vsr = (*VSR)->R;
       jobvsr = "V"; 
     }
@@ -3143,14 +3144,14 @@ int nsp_dgges(NspMatrix *A,NspMatrix *B,
   if ( info != 0) workopt = 1;
   lworkMin = Max(8*(n)+16,workopt);
   
-  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) return FAIL;   
+  if (( dwork =nsp_matrix_create(NVOID,'r',1,lworkMin)) == NULLMAT) goto error;   
 
   C2F(dgges)(jobvsl, jobvsr, sort,F, &n, A->R, &n, B->R, &n, 
 	     &sdim,alphar->R, alphai->R, beta->R,Vsl, &n,Vsr, &n,
 	     dwork->R, &lworkMin, (F!=NULL) ? iwork->I: NULL, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
-    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto error;   
     (*Sdim)->R[0] = sdim;
   }
   
@@ -3164,15 +3165,21 @@ int nsp_dgges(NspMatrix *A,NspMatrix *B,
 	Scierror("Error: schur, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
       else if (info == n + 3) 
 	Scierror("Error: schur, reordering failed\n");
-      return FAIL;
+      goto error;
     }
   else if ( info < 0 ) 
     {
       Scierror("Error: qz, the %d-th argument had an illegal value\n",-info);
-      return FAIL;
+      goto error;
     }
-  /* menage XXXX */ 
-  return OK ;
+  ret = OK;
+ error :
+  if ( iwork != NULL) nsp_matrix_destroy(iwork); 
+  if ( dwork != NULL) nsp_matrix_destroy(dwork); 
+  if ( alphar != NULL) nsp_matrix_destroy(alphar); 
+  if ( alphai != NULL) nsp_matrix_destroy(alphai); 
+  if ( beta != NULL) nsp_matrix_destroy(beta); 
+  return ret ;
 }
 
 
@@ -3180,6 +3187,7 @@ int nsp_zgges(NspMatrix *A,NspMatrix *B,
 	      int (*F)(const doubleC *alpha, const doubleC *beta),
 	      NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim)
 {
+  int ret = FAIL;
   doubleC  *Vsl=NULL,*Vsr=NULL, workopt;
   NspMatrix *alpha=NULLMAT,*beta=NULLMAT,*dwork=NULLMAT,*iwork=NULLMAT,*rwork=NULLMAT;
   int info,lworkMin,sdim;
@@ -3190,13 +3198,13 @@ int nsp_zgges(NspMatrix *A,NspMatrix *B,
   
   if ( A->mn == 0 ) {
     if ( VSR != NULL) {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;   
     }
     if ( VSL != NULL) {
-      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;   
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;   
     }
     if ( Sdim != NULL) {
-      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+      if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto error;   
       (*Sdim)->R[0] = 0;
     }
     return OK ; 
@@ -3205,38 +3213,38 @@ int nsp_zgges(NspMatrix *A,NspMatrix *B,
   if (m != n) { 
     Scierror("Error: first argument of gschur should be square and it is (%dx%d)\n", 
 	     m,n);
-    return FAIL;
+    goto error;
   }
 
   if (mb != nb) { 
     Scierror("Error: second argument of gschur should be square and it is (%dx%d)\n",mb,nb);
-    return FAIL;
+    goto error;
   }
 
   if (m != mb || n != nb ) {
     Scierror("Error: gschur, first and second arguments must have equal size\n");
-    return FAIL;
+    goto error;
   }
 
-  if (( alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
-  if (( beta  =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) return FAIL;
-  if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) return FAIL;   
+  if (( alpha =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) goto error;
+  if (( beta  =nsp_matrix_create(NVOID,'c',n,1)) == NULLMAT) goto error;
+  if (( rwork =nsp_matrix_create(NVOID,'r',1,8*n)) == NULLMAT) goto error;   
   
   if ( F != NULL ) 
     {
-      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) return FAIL;   
+      if (( iwork =nsp_matrix_create(NVOID,'r',2*n,1)) == NULLMAT) goto error;   
       sort = "S";
     }
   if ( VSL != NULL ) 
     {
-      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      if (( *VSL =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;  
       Vsl = (*VSL)->C;
       jobvsl = "V"; 
     }
 
   if ( VSR != NULL ) 
     {
-      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) return FAIL;  
+      if (( *VSR =nsp_matrix_create(NVOID,A->rc_type,m,n)) == NULLMAT) goto error;  
       Vsr = (*VSR)->C;
       jobvsr = "V"; 
     }
@@ -3251,13 +3259,13 @@ int nsp_zgges(NspMatrix *A,NspMatrix *B,
   if ( info != 0) workopt.r = 1;
   lworkMin = Max(2*(n),workopt.r);
   
-  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) return FAIL;   
+  if (( dwork =nsp_matrix_create(NVOID,'c',1,lworkMin)) == NULLMAT) goto error;   
   C2F(zgges)(jobvsl, jobvsr, sort,F, &n, A->C, &n, B->C, &n, 
 	     &sdim,alpha->C, beta->C,Vsl, &n,Vsr, &n,
 	     dwork->C, &lworkMin,rwork->R, (F!= NULL) ? iwork->I: NULL, &info, 1L, 1L, 1L);
   
   if ( Sdim != NULL ) {
-    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) return FAIL;   
+    if (( *Sdim =nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT) goto error;   
     (*Sdim)->R[0] = sdim;
   }
 
@@ -3271,15 +3279,21 @@ int nsp_zgges(NspMatrix *A,NspMatrix *B,
 	Scierror("Error: qz, roundoff errors make leading eigenvalues no longer satisfy criterion\n");
       else if (info == n + 3) 
 	Scierror("Error: reordering failed in qz\n");
-      return FAIL;
+      goto error;
     }
   else if ( info < 0 ) 
     {
       Scierror("Error: qz, the %d-th argument had an illegal value\n",-info);
-      return FAIL;
+      goto error;
     }
-  /* menage XXXX */ 
-  return OK ;
+  ret = OK;
+ error :
+  if ( iwork != NULL) nsp_matrix_destroy(iwork); 
+  if ( dwork != NULL) nsp_matrix_destroy(dwork); 
+  if ( rwork != NULL) nsp_matrix_destroy(rwork); 
+  if ( alpha != NULL) nsp_matrix_destroy(alpha); 
+  if ( beta != NULL) nsp_matrix_destroy(beta); 
+  return ret ;
 }
 
 
