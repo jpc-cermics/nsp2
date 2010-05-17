@@ -5,15 +5,15 @@ exec('algebra-funs.sce');
 function t=sel(R),t=real(R)<0 ,endfunction;
 
 function [ok,pb]=check(A,E,As,Es,Q,Z)
-  prec=400;
+  prec=4000;
   if isreal(A,%t) then triu_arg=-1; else triu_arg=0;end 
   ok = %t;
   if norm(triu(As,triu_arg)- As)> %eps then ok = %f,pb=1,return;end;
   if norm(triu(Es,triu_arg)- Es)> %eps then ok = %f,pb=2,return;end;
-  if norm(Q*Q'-eye(size(Q)),1) > 400*%eps then ok=%f,pb=3,return;end
-  if norm(Z*Z'-eye(size(Z)),1) > 400*%eps then ok=%f,pb=4,return;end
-  if norm(As-Q'*A*Z,1) > 400*%eps then ok=%f,pb=5,return;end
-  if norm(Es-Q'*E*Z,1) > 400*%eps then ok=%f,pb=6,return;end  
+  if norm(Q*Q'-eye(size(Q)),1) > prec*%eps then ok=%f,pb=3,return;end
+  if norm(Z*Z'-eye(size(Z)),1) > prec*%eps then ok=%f,pb=4,return;end
+  if norm(As-Q'*A*Z,1) > prec*%eps then ok=%f,pb=5,return;end
+  if norm(Es-Q'*E*Z,1) > prec*%eps then ok=%f,pb=6,return;end  
 endfunction;
 
 A=randn(0,4);
