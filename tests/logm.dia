@@ -1,0 +1,112 @@
+-nsp->// -*- Mode: scilab -*-
+-nsp->// Copyright (C) 2010 J.P Chancelier Cermics/Enpc
+-nsp->//
+-nsp->// This program is free software; you can redistribute it and/or modify
+-nsp->// it under the terms of the GNU General Public License as published by
+-nsp->// the Free Software Foundation; either version 2 of the License, or
+-nsp->// (at your option) any later version.
+-nsp->//
+-nsp->// This program is distributed in the hope that it will be useful,
+-nsp->// but WITHOUT ANY WARRANTY; without even the implied warranty of
+-nsp->// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-nsp->// GNU General Public License for more details.
+-nsp->//
+-nsp->// You should have received a copy of the GNU General Public License
+-nsp->// along with this program; if not, write to the Free Software
+-nsp->// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-nsp->// logm 
+-nsp->tol=1.e4;
+-nsp->m=20
+m	=		r (1x1)
+
+ |  20 |
+-nsp->for j=1:m
+==>  n=10;
+==>  A=rand(n,n);
+==>  A=A*A';
+==>  B=logm(A);
+==>  if ~isreal(B) then pause,end
+==>  if norm(expm(B)-A) > tol*%eps  then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=10;
+==>  s=rand(1,n,'u');
+==>  [Q,R]=qr(rand(n,n));
+==>  A=Q*diag(s)*Q'
+==>  B=logm(A);
+==>  if ~isreal(B) then pause,end
+==>  if norm(expm(B)-A) > tol*%eps  then pause,end
+==>  if norm(B - Q*diag(log(s))*Q') > tol*%eps   then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=10;
+==>  A=rand(n,n)+%i*rand(n,n);
+==>  A=A*A';
+==>  B=logm(A);
+==>  if norm(expm(B)-A) > 1.e-11 then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=10;
+==>  s=rand(1,n,'u')+%i*rand(1,n,'u');
+==>  [Q,R]=qr(rand(n,n));
+==>  A=Q*diag(s)*Q'
+==>  B=logm(A);
+==>  if norm(expm(B)-A) > tol*%eps  then pause,end
+==>  if norm(B - Q*diag(log(s))*Q') > tol*%eps   then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=4;
+==>  U=rand(n,n);
+==>  v=1:n;
+==>  A=U*diag(v)*inv(U);
+==>  B=logm(A);
+==>  //if ~isreal(B) then pause,end
+==>  if norm(expm(B)-A) > 1.e-4 then pause,end
+==>  if norm(B- U*diag(log(v))*inv(U))  > 1.e-4 then pause,end
+==>end
+-nsp->// sqrtm 
+-nsp->// -------
+-nsp->for j=1:m
+==>  n=10;
+==>  A=rand(n,n);
+==>  A=A*A';
+==>  B=sqrtm(A);
+==>  if ~isreal(B) then pause,end
+==>  if norm(B*B -A) > tol*%eps then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=10;
+==>  s=rand(1,n,'u');
+==>  [Q,R]=qr(rand(n,n));
+==>  A=Q*diag(s)*Q'
+==>  B=sqrtm(A);
+==>  if ~isreal(B) then pause,end
+==>  if norm(B*B -A) > tol*%eps  then pause,end
+==>  if norm(B - Q*diag(sqrt(s))*Q') > tol*%eps   then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=10;
+==>  A=rand(n,n)+%i*rand(n,n);
+==>  A=A*A';
+==>  B=sqrtm(A);
+==>  if norm(B*B -A) > tol*%eps then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=10;
+==>  s=rand(1,n,'u')+%i*rand(1,n,'u');
+==>  [Q,R]=qr(rand(n,n));
+==>  A=Q*diag(s)*Q'
+==>  B=sqrtm(A);
+==>  if norm(B*B-A) > tol*%eps  then pause,end
+==>  if norm(B - Q*diag(sqrt(s))*Q') > tol*%eps   then pause,end
+==>end
+-nsp->for j=1:m
+==>  n=4;
+==>  U=rand(n,n);
+==>  v=1:n
+==>  A=U*diag(v)*inv(U);
+==>  B=sqrtm(A);
+==>  //if ~isreal(B) then pause,end
+==>  if norm(B*B -A) > 1.e-5 then pause,end
+==>  if norm(B - U*diag(sqrt(v))*inv(U))  > 1.e-5 then pause,end
+==>end
