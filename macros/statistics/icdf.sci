@@ -262,7 +262,7 @@ function x = icdf(dist, P, varargin, Q=[])
 	   error("Error: for icdf(""nt"",P,nu,delta), nu should be positive and delta a real scalar")
 	end
 	x(ind0) = -%inf
-	x(ind) = cdftnc("T", nu*size_to_Pind, lambda*size_to_Pind, Pind, Qind);
+	x(ind) = cdftnc("T", nu*size_to_Pind, delta*size_to_Pind, Pind, Qind);
 	x(ind1) = %inf
 
      case "exp" then
