@@ -208,7 +208,7 @@ static int int_nsp_kcdflim(Stack stack, int rhs, int opt, int lhs)
   if ( lhs == 2 )
     MoveObj(stack,2,(NspObject *) Q);
 
-  return lhs;
+  return Max(1,lhs);
 }
 
 static int int_nsp_invkcdflim(Stack stack, int rhs, int opt, int lhs)
@@ -251,7 +251,7 @@ static int int_nsp_invkcdflim(Stack stack, int rhs, int opt, int lhs)
     }
 
   MoveObj(stack,1,(NspObject *) x);
-  return lhs;
+  return Max(1,lhs);
 }
 
 static int int_nsp_kcdfbis(Stack stack, int rhs, int opt, int lhs)
