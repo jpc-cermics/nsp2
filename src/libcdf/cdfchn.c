@@ -123,7 +123,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	  return 0;   
 	}
 
-      if ( fabs(pq - 1.0) >= 0.25*DBL_EPSILON )
+      if ( fabs(pq - 1.0) >= 0.5*DBL_EPSILON )
 	{
 	  *status = 3;
 	  *bound = 1.0;
@@ -175,8 +175,11 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
   else if (2 == *which)        /* Calculating X */
     {
       int pq_flag = *p <= *q ? 1 : 0;
+      double step = sqrt(*df+2**pnonc);  /* a step proportionnal to the std */
+      double zero = 0.0;
+      double inc_step = 2;
       *x = *df + *pnonc;       /* start from the mean instead of 5  (bruno, april 2010) */ 
-      cdf_dstinv (&c_b15, &inf, &c_b16, &c_b16, &c_b18, &atol, &tol);
+      cdf_dstinv (&c_b15, &inf, &step, &zero, &inc_step, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, x, &fx, &qleft, &qhi);
 

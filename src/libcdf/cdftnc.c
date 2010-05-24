@@ -159,7 +159,7 @@ int cdf_cdftnc (int *which, double *p, double *q, double *t, double *df,
     }
   else if (2 == *which)
     {
-      *t = 5.;
+      *t = *pnonc;    /* start near the mode */
       cdf_dstinv (&c_b12, &c_b13, &c_b14, &c_b14, &c_b16, &c_b17, &c_b18);
       *status = 0;
       cdf_dinvr (status, t, &fx, &qleft, &qhi);
