@@ -57,6 +57,7 @@
 #define SciFile_xdr_save_string /* locally change the header */
 #include "nsp/object.h"
 #include "nsp/interf.h"
+#include "nsp/pr-output.h"   /* nsp_get_format */
 #include "../system/files.h" /* FSIZE */
 
 #if defined(__APPLE_CC__)
@@ -1556,12 +1557,38 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix *S)
+int nsp_fprintf_matrix(NspFile *F, char *format, char *sep, NspMatrix *M, NspSMatrix *S)
 {
   int i,j;
-  const char *fmt = "%f"; 
+  char *fmt, buf[8];
   const char *separator = " ";
-  if ( format != NULL) fmt= format; 
+  char *def = "%19.12g";
+
+  if ( format != NULL ) 
+    fmt = format;
+  else  /* build the format from the current internal format */
+    {
+      int m, p, e;
+      nsp_get_format(&m, &p, &e);
+      if ( m <= 0 || m > 99 || p >= m || p < 0 ) /* strange... switch to def */
+	fmt = def;
+      else   /* at max the format will take 7 chars so use a buffer of 8 to put the '\0' */
+	{
+	  int n1, n2;
+	  buf[0] = '%';
+/* 	  n1 = sprintf(&buf[1],"%d",m); */
+	  n1 = 0;  /* well the format will use 5 chars max...*/
+	  buf[n1+1] = '.';
+	  n2 = sprintf(&buf[n1+2],"%d",p);
+	  if ( e == 1 )
+	    buf[n1+2+n2] = 'e';
+	  else
+	    buf[n1+2+n2] = 'g';
+	  buf[n1+3+n2] = '\0';
+	  fmt = buf;
+	}
+    }
+  
   if ( sep != NULL) separator = sep;
   if ( !IS_OPENED(F->obj->flag)) 
     {
@@ -1570,20 +1597,43 @@ int nsp_fprintf_matrix(NspFile *F,char *format,char *sep,NspMatrix *M,NspSMatrix
     }
   if ( S != NULL) for ( i=0 ; i < S->mn ; i++) fprintf(F->obj->file,"%s\n",S->S[i]);
 
-  for (i = 0 ; i < M->m ; i++ ) 
+  if ( M->rc_type == 'r' )
     {
-      if ( M->n > 0 )     /* change a little the internal loop such as to avoid */
-                          /* printing separator at the end of the line (Bruno, May 2010) */
-                          /* (note: the test  M->n > 0 avoid crash on matrix with 0 columns) */
+      for (i = 0 ; i < M->m ; i++ ) 
 	{
-	  fprintf(F->obj->file,fmt,M->R[i]);  /* first numerical value of the line */
-	  for ( j = 1 ; j < M->n ; j++) 
+	  if ( M->n > 0 )     /* change a little the internal loop such as to avoid */
+	                      /* printing separator at the end of the line (Bruno, May 2010) */
+	                      /* (note: the test  M->n > 0 avoid crash on matrix with 0 columns) */
 	    {
-	      fprintf(F->obj->file,"%s",separator);    
-	      fprintf(F->obj->file,fmt,M->R[i+M->m*j]);
+	      fprintf(F->obj->file,fmt,M->R[i]);  /* first numerical value of the line */
+	      for ( j = 1 ; j < M->n ; j++) 
+		{
+		  fprintf(F->obj->file,"%s",separator);    
+		  fprintf(F->obj->file,fmt,M->R[i+M->m*j]);
+		}
 	    }
+	  fprintf(F->obj->file,"\n");
 	}
-      fprintf(F->obj->file,"\n");
+    }
+  else                 /* add complex case (Bruno May 2010) */
+    {
+      for (i = 0 ; i < M->m ; i++ ) 
+	{
+	  if ( M->n > 0 )
+	    {
+	      fprintf(F->obj->file,fmt,M->C[i].r);
+	      fprintf(F->obj->file,"%s",separator);    
+	      fprintf(F->obj->file,fmt,M->C[i].i);
+	      for ( j = 1 ; j < M->n ; j++) 
+		{
+		  fprintf(F->obj->file,"%s",separator);    
+		  fprintf(F->obj->file,fmt,M->C[i+M->m*j].r);
+		  fprintf(F->obj->file,"%s",separator);    
+		  fprintf(F->obj->file,fmt,M->C[i+M->m*j].i);
+		}
+	    }
+	  fprintf(F->obj->file,"\n");
+	}
     }
   return OK;
 }  

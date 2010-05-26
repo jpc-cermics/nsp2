@@ -62,6 +62,7 @@ extern void nsp_matrix_plus_format(const void *m, int nr, int nc, Mijplus F, int
 extern int nsp_matrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F);
 
 extern void nsp_set_format(int output_max_field_width, int output_precision,int e);
+extern void nsp_get_format(int *output_max_field_width, int *output_precision,int *e);
 
 #endif 
 
