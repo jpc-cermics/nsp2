@@ -24,6 +24,7 @@
 
 #ifdef WITH_FFTW3
 #include <fftw3.h>
+static int hermitian_redundancy_1d_test(NspMatrix *x, int dim);
 #else
 /* headers for fftpack */
 void C2F(zffti)(int *, double *);
@@ -50,6 +51,118 @@ static void transpose_cmplx_mat(NspMatrix *x, NspMatrix *y)
 
 
 #ifdef WITH_FFTW3
+
+NspMatrix *nsp_fft(NspMatrix *x)
+{
+  NspMatrix *y;
+  int i ;
+  static fftw_plan forward_plan=NULL, forward_r2c_plan=NULL;
+  static int last_forward_n=-1, last_forward_r2c_n=-1;
+
+  if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
+    return NULL;
+  
+  if ( x->rc_type == 'r' )
+    {
+      if ( x->mn != last_forward_r2c_n )
+	{  
+	  fftw_destroy_plan(forward_r2c_plan);
+	  forward_r2c_plan = fftw_plan_dft_r2c_1d(x->mn, x->R, (fftw_complex *)y->C, 
+						  FFTW_ESTIMATE | FFTW_UNALIGNED );
+	  last_forward_r2c_n = x->mn;
+	}
+      fftw_execute_dft_r2c(forward_r2c_plan, x->R , (fftw_complex *)y->C);
+      /* complete the vector by hermitian symetry */
+      for ( i = 1 ; i < (1+x->mn)/2 ; i++ )
+	{
+	  y->C[x->mn-i].r = y->C[i].r;
+	  y->C[x->mn-i].i =-y->C[i].i;
+	}
+    }
+  else
+    {
+      if ( x->mn != last_forward_n )
+	{  
+	  fftw_destroy_plan(forward_plan);
+	  forward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->C, (fftw_complex *)y->C, 
+					  -1, FFTW_ESTIMATE | FFTW_UNALIGNED );
+	  last_forward_n = x->mn;
+	}
+      fftw_execute_dft(forward_plan, (fftw_complex *)x->C , (fftw_complex *)y->C);
+    }
+  return y;
+}
+
+
+NspMatrix *nsp_ifft( NspMatrix *x)
+{ 
+  NspMatrix *xx=NULLMAT, *y;
+  double invn=0;
+  int k, dim_flag=0, have_hermitian_redundancy=0;
+  static fftw_plan backward_plan=NULL, backward_c2r_plan=NULL;
+  static int last_backward_n=-1, last_backward_c2r_n=-1;
+
+  if ( x->rc_type == 'r' )
+    {
+      if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT )
+	return NULL;
+      for ( k = 0 ; k < x->mn ; k++ )
+	{
+	  xx->C[k].r = x->R[k];
+	  xx->C[k].i = 0.0;
+	}
+      x = xx;
+    }
+
+  /* test if x have the hermitian redundancy (if yes the backward transform leads to a 
+   * pure real vector (dim_flag=0) or to pure real vectors (dim_flag=1 or 2) 
+   */
+  have_hermitian_redundancy = hermitian_redundancy_1d_test(x, dim_flag);
+
+  invn = 1.0 / x->mn;
+
+  if ( have_hermitian_redundancy )
+    { 
+      if ( (y = nsp_matrix_create(NVOID,'r',x->m,x->n)) == NULLMAT )
+	{
+	  nsp_matrix_destroy(xx); return NULL;
+	}
+
+      if ( x->mn != last_backward_c2r_n )
+	{  
+	  fftw_destroy_plan(backward_c2r_plan);
+	  backward_c2r_plan = fftw_plan_dft_c2r_1d(x->mn, (fftw_complex *)x->C, y->R, 
+						   FFTW_ESTIMATE | FFTW_UNALIGNED | FFTW_PRESERVE_INPUT);
+	  last_backward_c2r_n = x->mn;
+	} 
+      fftw_execute_dft_c2r(backward_c2r_plan, (fftw_complex *)x->C , y->R); 
+    }
+  else
+    {
+      if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
+	{
+	  nsp_matrix_destroy(xx); return NULL;
+	}
+
+      if ( x->mn != last_backward_n )
+	{  
+	  fftw_destroy_plan(backward_plan);
+	  backward_plan = fftw_plan_dft_1d(x->mn, (fftw_complex *)x->C, (fftw_complex *)y->C, 
+					   1, FFTW_ESTIMATE | FFTW_UNALIGNED);
+	  last_backward_n = x->mn;
+	}
+      fftw_execute_dft(backward_plan, (fftw_complex *)x->C , (fftw_complex *)y->C);
+    }
+
+  /* apply normalisation */
+  if ( have_hermitian_redundancy )
+    for (k = 0 ; k < y->mn ; k++) y->R[k] *= invn;
+  else
+    for (k = 0 ; k < y->mn ; k++) { y->C[k].r *= invn; y->C[k].i *= invn; }
+
+  return y;
+}
+
 
 int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
 { 
@@ -164,6 +277,7 @@ int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT (x)->ret_pos = 1;
   return 1;
 }
+
 
 
 int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
@@ -325,6 +439,7 @@ int int_nsp_fftnew( Stack stack, int rhs, int opt, int lhs)
   MoveObj (stack, 1, (NspObject *) y);
   return 1;
 }
+
 
 static int hermitian_redundancy_1d_test(NspMatrix *x, int dim)
 {
@@ -819,6 +934,87 @@ int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
 }
 
 #else
+
+
+NspMatrix *nsp_fftnew(Nspmatrix *x)
+{ 
+  /*  using the fftpack lib   */
+  NspMatrix *xx, *y;
+  int k, n, dim_flag=0;
+  static double *wsave = NULL;
+  static int last_n=-1;
+
+  n = x->mn;
+  
+  if ( x->rc_type == 'c' )
+    {
+      if ( (xx = nsp_matrix_copy(x)) == NULLMAT ) 
+	return RET_BUG;
+    }
+  else
+    {
+      if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT ) 
+	return RET_BUG;
+      for ( k = 0 ; k < x->mn ; k++ ) { xx->C[k].r = x->R[k]; xx->C[k].i = 0.0; }
+    }
+
+  if ( n != last_n )
+    {
+      free(wsave);
+      if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
+	goto err;
+      C2F(zffti)(&n, wsave);
+      last_n = n;
+    }
+
+  C2F(zfftf)(&n, xx->C, wsave);
+  return xx;
+ err:
+  nsp_matrix_destroy(xx);
+  return NULL;
+}
+
+
+NspMatrix *int_nsp_ifftnew(NspMatrix *x)
+{ 
+  /*  using the fftpack lib  */
+  NspMatrix *xx, *y;
+  int k, n; 
+  static double *wsave = NULL, invn;
+  static int last_n=-1;
+
+  n = x->mn;
+  
+  if ( x->rc_type == 'c' )
+    {
+      if ( (xx = nsp_matrix_copy(x)) == NULLMAT ) 
+	return RET_BUG;
+    }
+  else
+    {
+      if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT ) 
+	return RET_BUG;
+      for ( k = 0 ; k < x->mn ; k++ ) { xx->C[k].r = x->R[k]; xx->C[k].i = 0.0; }
+    }
+
+  if ( n != last_n )
+    {
+      free(wsave);
+      if ( (wsave = malloc((4*n+15)*sizeof(double))) == NULL )
+	goto err;
+      C2F(zffti)(&n, wsave);
+      last_n = n;
+      invn = 1.0 / (double) n;
+    }
+
+  C2F(zfftb)(&n, xx->C, wsave);
+  for (k = 0 ; k < x->mn ; k++) { xx->C[k].r *= invn; xx->C[k].i *= invn; }
+  return xx;
+ err:
+  nsp_matrix_destroy(xx);
+  return NULL;
+}
+
 
 
 int int_nsp_fft_deprecated( Stack stack, int rhs, int opt, int lhs)
