@@ -298,7 +298,7 @@ NspMatrix *nsp_mat_mult(NspMatrix *A, NspMatrix *B, int flag)
  * @B: a #NspMatrix
  * 
  * computes in @A the sum @A + @B (i.e @A= @A+@B) taking care 
- * of the limit cases, when on of the matrix is sero sized or scalar.
+ * of the limit cases, when one of the matrix is sero sized or scalar.
  * 
  * Return value:   %OK or %FAIL.
  **/

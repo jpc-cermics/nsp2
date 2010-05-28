@@ -95,6 +95,14 @@ extern void nsp_pmatrix_destroy(NspPMatrix *A);
 extern int nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
 extern int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
 extern void nsp_polynom_destroy(nsp_polynom *P); 
+extern nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q);
+extern NspPMatrix *nsp_pmatrix_add(NspPMatrix *A, NspPMatrix *B);
+extern nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q);
+extern NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B);
+extern NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B);
+extern nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b);
+extern NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B);
+extern int nsp_polynom_resize(nsp_polynom poly);
 
 extern int IsPMatObj (Stack stack, int i); 
 extern int IsPMat (NspObject *O); 
@@ -106,6 +114,7 @@ extern NspBMatrix *PMatCompOp (NspPMatrix *A, NspPMatrix *B, char *op);
 extern int PMatFullComp (NspPMatrix *A, NspPMatrix *B, char *op, int *err); 
 extern NspMatrix *nsp_matrix_companion(NspMatrix *A);
 extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
+extern NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M);
 
 #endif 
 
@@ -119,4 +128,6 @@ int nsp_pmatrix_eq(NspObject *A,NspObject *B);
 int nsp_pmatrix_neq(NspObject *A,NspObject *B);
 static int nsp_pmatrix_xdr_save(XDR  *F, NspMatrix *M);
 static NspPMatrix *nsp_pmatrix_xdr_load(XDR  *F);
+static AttrTab pmatrix_attrs[] ;
+static NspMethods *pmatrix_get_methods(void);
 #endif 

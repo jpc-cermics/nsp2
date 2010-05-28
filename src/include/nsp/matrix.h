@@ -330,6 +330,10 @@ extern int nsp_get_index_vector_cache(index_vector *index);
 extern int nsp_get_index_vector_from_object(NspObject *Obj,index_vector *index) ;
 extern int nsp_get_index_vector(Stack stack, int ipos,NspObject **Obj,index_vector *index);
 
+extern NspMatrix *nsp_fft(NspMatrix *x);
+extern NspMatrix *nsp_ifft(NspMatrix *x);
+
+
 /*
  * inlined functions 
  */

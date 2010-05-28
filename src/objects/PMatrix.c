@@ -41,7 +41,7 @@ nsp_polynom nsp_polynom_copy(nsp_polynom P)
 nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P)
 {
   NspObject *Obj = (NspObject *) P;
-  return (nsp_polynom ) nsp_object_copy(Obj);
+  return (nsp_polynom ) nsp_object_copy_with_name(Obj);
 }
 
 /*
@@ -82,10 +82,33 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
   NspPMatrix *loc;
   if ((loc =nsp_pmatrix_create(NVOID,1,1,NULL,-1))== NULLPMAT) return(NULLPMAT);
   if (( loc->S[0] = nsp_matrix_copy(M))== NULLPOLY ) return(NULLPMAT);
+  if (( nsp_polynom_resize(loc->S[0]))== FAIL ) return(NULLPMAT);
   return(loc);
 }
 
 
+/**
+ * nsp_pmatrix_to_cells:
+ * @M: 
+ * 
+ * returns the coefficients of each 
+ * 
+ * Returns: 
+ **/
+
+NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M)
+{
+  int i;
+  NspCells *loc;
+  if ((loc = nsp_cells_create(name,M->m,M->n)) == NULL) 
+    return NULL;
+  for ( i = 0 ; i < M->mn ; i++)
+    {
+      if ((loc->objs[i] =(NspObject *) nsp_matrix_copy(M->S[i]))== NULL) 
+	return NULL;
+    }
+  return(loc);
+}
 
 /*
  * PMatInfo : display Info on NspPMatrix PMat 
@@ -174,7 +197,7 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
   Loc->var = NULL;
   if ( Loc -> mn == 0 ) 
     {
-      /* empty string Matrix */
+      /* empty pmatrix */
       Loc->S = (nsp_polynom *) 0;
       return(Loc);
     }
@@ -315,9 +338,8 @@ unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M)
  * elements : the previous datas are not moved and 
  * occupy the first array cells 
  * The NspPMatrix is changed 
- * return 0 on failure 
+ * return FAIL on failure 
  */
-
 
 int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
 {
@@ -642,6 +664,47 @@ NspMatrix *nsp_matrix_companion(NspMatrix *A)
   return B;
 }
 
+
+/**
+ * nsp_polynom_resize:
+ * @poly: a #nsp_polynom
+ * 
+ * Remove leading zeros from a polynom 
+ * representation.
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_polynom_resize(nsp_polynom poly)
+{
+  int size = poly->mn ,i;
+  /* remove leading zeros */
+  if ( poly->rc_type == 'r') 
+    {
+      for ( i = poly->mn -1 ; i >= 1 ; i--) 
+	{
+	  if ( poly->R[i] != 0 ) break;
+	  size--;
+	}
+    }
+  else
+    {
+      for ( i = poly->mn -1 ; i >= 1 ; i--) 
+	{
+	  if ( poly->C[i].r != 0 && poly->C[i].i != 0 ) break;
+	  size--;
+	}
+    }
+  if ( size != poly->mn )
+    {
+      if ( nsp_matrix_resize(poly, 1, size) == FAIL) return FAIL;
+    }
+  return OK;
+}
+
+
+
+
 NspMatrix *nsp_polynom_roots(nsp_polynom poly)
 {
   NspMatrix *companion,*roots=NULL;
@@ -652,6 +715,287 @@ NspMatrix *nsp_polynom_roots(nsp_polynom poly)
   nsp_matrix_destroy(companion);
   return roots; 
 }
+
+
+
+NspPMatrix *nsp_pmatrix_add(NspPMatrix *A, NspPMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( SameDim(A,B) ) 
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	if ((loc->S[i] = nsp_polynom_add(A->S[i],B->S[i]))== NULL) 
+	  return NULL;
+      return loc;
+    }
+  else if ( A->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	if ((loc->S[i] = nsp_polynom_add(A->S[0],B->S[i]))== NULL) 
+	  return NULL;
+      return loc;
+    }
+  else if ( B->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	if ((loc->S[i] = nsp_polynom_add(A->S[i],B->S[0]))== NULL) 
+	  return NULL;
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return NULL;
+    }
+}
+
+
+nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q)
+{
+  NspMatrix *A,*B,*C;
+  int min,max,i;
+  if ( P->mn >= Q->mn) 
+    {
+      min = Q->mn;max =  P->mn;
+      B = Q; C = P;
+    }
+  else 
+    {
+      min = P->mn;max =  Q->mn;
+      B = P; C = Q;
+    }
+  if ( (A =nsp_matrix_copy(B)) == NULLMAT) return NULL;
+  if ( nsp_matrix_resize(A, 1,max) == FAIL) return NULL;
+  if ( A->rc_type == 'r' ) 
+    for (i= min ; i < max ; i++) A->R[i]=0 ;
+  else
+    for (i= min ; i < max ; i++) A->C[i].r = A->C[i].i =0;
+  if ( nsp_mat_dadd((NspMatrix *) A, (NspMatrix *) C)== FAIL)
+    {
+      nsp_matrix_destroy(A);
+      return NULL;
+    }
+  /* remove leading zeros */
+  if ( nsp_polynom_resize(A) == FAIL) return NULL;
+  return A;
+}
+
+NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( SameDim(A,B) ) 
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	if ((loc->S[i] = nsp_polynom_minus(A->S[i],B->S[i]))== NULL) 
+	  return NULL;
+      return loc;
+    }
+  else if ( A->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	if ((loc->S[i] = nsp_polynom_minus(A->S[0],B->S[i]))== NULL) 
+	  return NULL;
+      return loc;
+    }
+  else if ( B->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	if ((loc->S[i] = nsp_polynom_minus(A->S[i],B->S[0]))== NULL) 
+	  return NULL;
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return NULL;
+    }
+}
+
+
+nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q)
+{
+  NspMatrix *A,*B,*C;
+  int min,max,i;
+  if ( P->mn >= Q->mn) 
+    {
+      min = Q->mn;max =  P->mn;
+      B = Q; C = P;
+    }
+  else 
+    {
+      min = P->mn;max =  Q->mn;
+      B = P; C = Q;
+    }
+  if ( (A =nsp_matrix_copy(B)) == NULLMAT) return NULL;
+  if ( nsp_matrix_resize(A, 1,max) == FAIL) return NULL;
+  if ( A->rc_type == 'r' ) 
+    for (i= min ; i < max ; i++) A->R[i]=0 ;
+  else
+    for (i= min ; i < max ; i++) A->C[i].r = A->C[i].i =0;
+  if ( nsp_mat_dsub((NspMatrix *) A, (NspMatrix *) C)== FAIL)
+    {
+      nsp_matrix_destroy(A);
+      return NULL;
+    }
+  if ( P->mn >= Q->mn) nsp_mat_minus(A);
+  /* remove leading zeros */
+  if ( nsp_polynom_resize(A) == FAIL) return NULL;
+  return A;
+}
+
+
+NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( A->mn == 1 ) 
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	{
+	  if ((loc->S[i] = nsp_polynom_copy(B->S[i]))== NULL) 
+	    return NULL;
+	  if ( nsp_mat_mult_scalar(loc->S[i],A) == FAIL )
+	    return NULL;
+	}
+      return loc;
+    }
+  else if ( B->mn == 1 )
+    {
+      NspMatrix *C;
+      int i;
+      if ((C = nsp_matrix_create(NVOID,A->rc_type,1,1))== NULLMAT)
+	return NULL;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	{
+	  if ((loc->S[i] = nsp_polynom_copy(B->S[0]))== NULL) 
+	    return NULL;
+	  if ( C->rc_type =='r' ) 
+	    C->R[0]=A->R[i];
+	  else 
+	    C->C[0]=A->C[i];
+	  if ( nsp_mat_mult_scalar(loc->S[i],C) == FAIL )
+	    return NULL;
+	}
+      nsp_matrix_destroy(C);
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\tOne of the two arguments should be 1x1\n");
+      return NULL;
+    }
+}
+
+NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( SameDim(A,B) )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	{
+	  loc->S[i]=  nsp_polynom_mult( A->S[i], B->S[i]);
+	  if ( loc->S[i] == NULL) return NULL;
+	}
+      return loc;
+    }
+  else if ( A->mn == 1 ) 
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	{
+	  loc->S[i]= nsp_polynom_mult( A->S[0], B->S[i]);
+	  if ( loc->S[i] == NULL)     return NULL;
+	}
+      return loc;
+    }
+  else if ( B->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	{
+	  if ((loc->S[i] =  nsp_polynom_mult( A->S[i], B->S[0] )) == NULL) 
+	    return NULL;
+	}
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\targuments should have the same size\n");
+      return NULL;
+    }
+}
+
+
+nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b)
+{
+  int i;
+  NspMatrix *A=NULL,*B=NULL,*Af=NULL,*Bf=NULL,*R=NULL;
+  if ((A= nsp_matrix_create(NVOID,a->rc_type,(int)1,a->mn+b->mn-1))==NULLMAT)
+    goto err;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i=0; i< Min(a->mn,A->mn); i++) A->R[i] = a->R[i];
+      for ( i=a->mn; i < A->mn;i++)A->R[i] = 0;
+    }
+  else 
+    {
+      for ( i=0; i<  Min(a->mn,A->mn); i++) A->C[i] = a->C[i];
+      for ( i=a->mn; i < A->mn;i++) A->C[i].r = A->C[i].i=0;
+    }
+  if ((B= nsp_matrix_create(NVOID,b->rc_type,(int)1,a->mn+b->mn-1))==NULLMAT)
+    goto err;
+  if ( B->rc_type == 'r') 
+    {
+      for ( i=0; i< Min(b->mn,B->mn); i++) B->R[i] = b->R[i];
+      for ( i=b->mn; i < B->mn;i++)B->R[i] = 0;
+    }
+  else 
+    {
+      for ( i=0; i< Min(b->mn,B->mn); i++) B->C[i] = b->C[i];
+      for ( i=b->mn; i < B->mn;i++) B->C[i].r = B->C[i].i=0;
+    }
+  if ((Af= nsp_fft(A))==NULL) goto err;
+  if ((Bf= nsp_fft(B))==NULL) goto err;
+  if ( nsp_mat_mult_el(Af,Bf) == FAIL) goto err;
+  if ((R = nsp_ifft(Af))==NULL) goto err;
+ err:
+  if ( A != NULL) nsp_matrix_destroy(A);
+  if ( B != NULL) nsp_matrix_destroy(B);
+  if ( Af != NULL) nsp_matrix_destroy(Af);
+  if ( Bf != NULL) nsp_matrix_destroy(Bf);
+  return R;
+}
+
+
 
 
 /*
@@ -719,7 +1063,7 @@ static void Mp_pr_min_max_internal (const void *M, char flag, double *dmin, doub
   for ( i = 1 ; i < ((NspPMatrix*)M)->mn ; i++ ) 
     {
       double max1,min1;
-      nsp_matrix_pr_min_max_internal (((NspPMatrix*)M)->S[i],'r',&max1,&min1);
+      nsp_matrix_pr_min_max_internal (((NspPMatrix*)M)->S[i],'r',&min1,&max1);
       if ( max1 > *dmax ) *dmax=max1;
       if ( min1 < *dmin ) *dmin=min1;
     }
@@ -738,12 +1082,13 @@ static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M)
 
 
 /*
- * Printing Scilab Polynomial Matrices 
+ * Printing Nsp Polynomial Matrices 
  */
 
-static int  poly_size (int fw, int length);
 static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length);
 static void pr_poly_exp  (NspMatrix *m, int fw, int length);
+static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw);
+static int pr_poly_exp_size(int i);
 
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent)
 {
@@ -762,22 +1107,23 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   /* XXXXXX need to write the complex case **/
   Mp_set_format (fmt,M);
   fw= fmt->curr_real_fw;
-  /* Sciprintf("prec= %d,Format [%s]\n",  user_pref.output_precision,  curr_real_fmt);*/
-  /* Allocate a table to store the column width **/
-  /* Iloc[j]= degree max of column j **/
+  /* Allocate a table to store the column width 
+   * Iloc[j]= degree max of column j 
+   */
   if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return(FAIL);
   for ( j=0 ; j < M->n ; j++ )
     {
-      Iloc[j]=M->S[j*M->m]->mn;
+      Iloc[j]= pr_poly_print_size (fmt,M->S[j*M->m],fw);
       for ( i = 1 ; i < M->m ; i++) 
 	{
-	  if ( Iloc[j] < M->S[i+j*M->m]->mn ) Iloc[j]= M->S[i+j*M->m]->mn;
+	  int size = pr_poly_print_size (fmt,M->S[i+j*M->m],fw);
+	  if ( Iloc[j] < size ) Iloc[j]= size;
 	}
     }
   total_width=0;
   for ( j=0 ; j < M->n ; j++) 
     {
-      column_width = Iloc[j]*(fw+2) + 2;
+      column_width = Iloc[j] + 2;
       total_width +=  column_width;
     }
   col=0;
@@ -788,7 +1134,7 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
       t_width = 0;
       for ( j= col ; j < M->n ; j++) 
 	{
-	  t_width +=  poly_size(fw,Iloc[j]);
+	  t_width +=  Iloc[j];
 	  if ( t_width < max_width) inc++;
 	  else break;
 	}
@@ -844,6 +1190,16 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   return(OK);
 }
 
+/**
+ * poly_size:
+ * @fw: 
+ * @length: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+#if 0
 static int  poly_size(int fw, int length)
 {
   int ps=2 + length*fw,k;
@@ -854,55 +1210,101 @@ static int  poly_size(int fw, int length)
     }
   return(ps);
 }
+#endif 
+
+/**
+ * pr_poly_print_size:
+ * @fmt: 
+ * @m: 
+ * @fw: 
+ * @length: 
+ * 
+ * compute the size requested for printing polynom @m.
+ * 
+ * Returns: 
+ **/
+
+static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw) 
+{
+  int i, size=0;
+  for ( i=0 ; i < m->mn ; i++) 
+    {
+      if ( m->rc_type == 'r') 
+	{
+	  if (  m->R[i] != 0.00 )
+	    {
+	      size += fw + 2 + pr_poly_exp_size(i);
+	    }
+	}
+    }
+  return size;
+}
+
+/**
+ * pr_poly:
+ * @fmt: 
+ * @m: 
+ * @fw: 
+ * @length: 
+ * 
+ * print a polynom. 
+ **/
 
 static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
 {
-  int i ; 
+  int i ,count = 0, leading = TRUE,nw;
   for ( i=0 ; i < m->mn ; i++) 
     {
-      /* xxxxxxxx : */
       if ( m->rc_type == 'r') 
 	{
-	  if ( i != 0 && m->R[i] >= 0.00 ) Sciprintf("+");
-	  else Sciprintf(" ");
-	  nsp_pr_any_float (fmt->curr_real_fmt, m->R[i], fw);
+	  if (  m->R[i] != 0.00 )
+	    {
+	      if ( leading == FALSE && m->R[i] >= 0.00 ) Sciprintf("+");
+	      else Sciprintf(" ");
+	      nsp_pr_any_float (fmt->curr_real_fmt, m->R[i], fw);
+	      leading = FALSE;
+	      if ( i > 0 ) Sciprintf("x");
+	      nw= pr_poly_exp_size(i);
+	      nsp_pr_white(nw);
+	      count += fw+2 + nw;
+	    }
 	}
-      if ( i > 0 ) Sciprintf("x");
-      if ( i < 10 ) nsp_pr_white(1);
-      else if ( 10 <= i && i  < 99) nsp_pr_white(2); else nsp_pr_white(3);
-
     }
-  for ( i= m->mn ; i < length ; i++) 
-    {
-      nsp_pr_white(fw);
-      if ( i < 10 ) nsp_pr_white(3);
-      else if ( 10 <= i && i  < 99)  nsp_pr_white(4); else  nsp_pr_white(5);
-    }
+  nsp_pr_white(length-count);
 }
 
+/**
+ * pr_poly_exp:
+ * @m: 
+ * @fw: 
+ * @length: 
+ * 
+ * prints the exponent part of the polynom.
+ **/
 
 static void pr_poly_exp (NspMatrix *m, int fw, int length)
 {
-  int i ; 
+  int i ,count = 0;
   for ( i=0 ; i < m->mn ; i++) 
     {
-      /* xxxxxxxx : */
       if ( m->rc_type == 'r') 
 	{
-	   nsp_pr_white(fw+2);
+	  if (  m->R[i] != 0.00 )
+	    {
+	      count += fw+2 + pr_poly_exp_size(i);
+	      nsp_pr_white(fw+2);
+	      if ( i > 0 ) Sciprintf("%d",i);
+	    }
 	}
-      if ( i > 0 ) Sciprintf("%d",i);
     }
-  for ( i= m->mn ; i < length ; i++) 
-    {
-      nsp_pr_white(fw);
-      if ( i < 10 )  nsp_pr_white(3);
-      else if ( 10 <= i && i  < 99)  nsp_pr_white(4); else  nsp_pr_white(5);
-      
-    }
+  nsp_pr_white(length-count);
 }
 
-
-
+static int pr_poly_exp_size(int i)
+{
+  if ( i < 10 ) return 1;
+  else if ( 10 <= i && i  < 99) return 2;
+  else return 3;
+}
 
 

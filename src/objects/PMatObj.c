@@ -53,10 +53,10 @@ NspTypePMatrix *new_type_pmatrix(type_mode mode)
   type->interface = NULL;
   type->surtype =(NspTypeBase *) new_type_object(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = NULL; /* pmatrix_attrs ; */
+  type->attrs = pmatrix_attrs; 
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
-  type->methods = NULL; /*pmatrix_get_methods; */
+  type->methods = pmatrix_get_methods;
   type->new = (new_func *) new_pmatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);
@@ -330,7 +330,7 @@ nsp_polynom GetPolynom(Stack stack, int i)
     {
       Scierror("Error:\t%s", ArgPosition(i));
       ArgName(stack,i);
-      Scierror(" of function %s should be a string\n",NspFname(stack));
+      Scierror(" of function %s should be a polynom (i.e 1x1 pmat)\n",NspFname(stack));
       return NULLPOLY ;
     }
   return M->S[0];
@@ -378,6 +378,91 @@ static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) P);
   return 1;
 }
+
+
+/*------------------------------------------------------
+ * attributes  
+ *------------------------------------------------------*/
+
+/* return all the keys H.keys entered in the hash table as a string matrice  */
+
+static NspObject * int_pmatrix_get_coeffs(void *Hv,const char *attr)
+{
+  return (NspObject *) nsp_pmatrix_to_cells(NVOID,Hv);
+}
+
+static int int_pmatrix_set_coeffs(void *Hv,const char *attr, NspObject *O)
+{
+  Scierror("attribute __keys of hash instances cannot be set !\n");
+  return FAIL;
+}
+
+static AttrTab pmatrix_attrs[] = {
+  { "coeffs", 	int_pmatrix_get_coeffs , int_pmatrix_set_coeffs , 	NULL, NULL  },
+  { (char *) 0, NULL, NULL , NULL , NULL }
+};
+
+
+/*------------------------------------------------------
+ * methods 
+ *------------------------------------------------------*/
+
+static int int_meth_degree(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *D;
+  NspPMatrix *P=self;
+  int i;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((D= nsp_matrix_create(NVOID,'r', P->m , P->n))==NULLMAT)
+    return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++ ) 
+    {
+      D->R[i]= Max(P->S[i]->mn -1,0); 
+    }
+  MoveObj(stack,1,NSP_OBJECT(D));
+  return 1;
+}
+
+static int int_meth_shift(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P=self;
+  int n,i;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+  if ( n <= 0 ) return 0;
+  for ( i = 0 ; i < P->mn ; i++) 
+    {
+      NspMatrix *A= P->S[i];
+      int k= A->mn,j ;
+      if ( nsp_matrix_resize(A, 1, A->n+n)== FAIL) return RET_BUG;
+      if ( A->rc_type == 'r') 
+	{
+	  for ( j = 0 ; j < k ; j++) A->R[A->mn-1-j]= A->R[k-1-j];
+	  for ( j = 0 ; j < n ; j++) A->R[j]= 0.0;
+	}
+      else
+	{
+	  for ( j = 0 ; j < k ; j++) A->C[A->mn-1-j]= A->C[k-1-j];
+	  for ( j = 0 ; j < n ; j++) A->C[j].r= A->C[j].i= 0.0;
+	}
+    }
+  return 0;
+}
+
+
+static NspMethods pmatrix_methods[] = {
+  { "degree", int_meth_degree},
+  { "shift", int_meth_shift},
+  { (char *) 0, NULL}
+};
+
+static NspMethods *pmatrix_get_methods(void) { return pmatrix_methods;};
+
+/*----------------------------------
+ * Interfaces 
+ *----------------------------------*/
 
 /*
  * Right Concatenation 
@@ -810,6 +895,62 @@ int int_pmatrix_roots(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int int_pmatrix_add(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P= GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_add(P,Q))== NULLPMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+int int_pmatrix_minus(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P= GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_minus(P,Q))== NULLPMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+int int_pmatrix_mult_m_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *P;
+  NspPMatrix *Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P= GetMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_mult_m_p(P,Q))== NULLPMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+/* test : mult by fft */
+
+int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_mult_tt(P,Q))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -857,6 +998,10 @@ static OpTab PMatrix_func[]={
   {"companion_m",int_pmatrix_companion_m},
   {"companion_p",int_pmatrix_companion_p},
   {"roots_p",int_pmatrix_roots},
+  {"plus_p_p",int_pmatrix_add},
+  {"minus_p_p",int_pmatrix_minus},
+  {"mult_m_p",int_pmatrix_mult_m_p},
+  {"dst_p_p",int_pmatrix_mult_tt},
   {(char *) 0, NULL}
 };
 

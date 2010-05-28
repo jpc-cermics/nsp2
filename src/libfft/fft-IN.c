@@ -61,7 +61,8 @@ NspMatrix *nsp_fft(NspMatrix *x)
 
   if ( (y = nsp_matrix_create(NVOID,'c',x->m,x->n)) == NULLMAT )
     return NULL;
-  
+  if ( y->mn == 0) return y;
+
   if ( x->rc_type == 'r' )
     {
       if ( x->mn != last_forward_r2c_n )
@@ -102,6 +103,11 @@ NspMatrix *nsp_ifft( NspMatrix *x)
   static fftw_plan backward_plan=NULL, backward_c2r_plan=NULL;
   static int last_backward_n=-1, last_backward_c2r_n=-1;
 
+  if ( x->mn == 0 ) 
+    {
+      return nsp_matrix_create(NVOID,x->rc_type,x->m,x->n);
+    }
+
   if ( x->rc_type == 'r' )
     {
       if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT )
@@ -113,7 +119,7 @@ NspMatrix *nsp_ifft( NspMatrix *x)
 	}
       x = xx;
     }
-
+  
   /* test if x have the hermitian redundancy (if yes the backward transform leads to a 
    * pure real vector (dim_flag=0) or to pure real vectors (dim_flag=1 or 2) 
    */
@@ -127,7 +133,7 @@ NspMatrix *nsp_ifft( NspMatrix *x)
 	{
 	  nsp_matrix_destroy(xx); return NULL;
 	}
-
+      
       if ( x->mn != last_backward_c2r_n )
 	{  
 	  fftw_destroy_plan(backward_c2r_plan);
@@ -936,7 +942,7 @@ int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
 #else
 
 
-NspMatrix *nsp_fftnew(Nspmatrix *x)
+NspMatrix *nsp_fft(Nspmatrix *x)
 { 
   /*  using the fftpack lib   */
   NspMatrix *xx, *y;
@@ -975,7 +981,7 @@ NspMatrix *nsp_fftnew(Nspmatrix *x)
 }
 
 
-NspMatrix *int_nsp_ifftnew(NspMatrix *x)
+NspMatrix *int_nsp_ifft(NspMatrix *x)
 { 
   /*  using the fftpack lib  */
   NspMatrix *xx, *y;
