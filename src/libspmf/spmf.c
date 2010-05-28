@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 2006-2009 Bruno Pincon Esial/Iecn
+ * nsp_expm1 code: Copyright (C) 2002 The R Development Core Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -110,6 +111,35 @@ double nsp_log1p(double x)
     }
 } 
 
+
+/**
+ * nsp_expm1:
+ * @x:  a double 
+ * 
+ * computes exp(x)-1 with accuracy near x = 0
+ * code origin:
+ *     Mathlib : A C Library of Special Functions
+ *     Copyright (C) 2002 The R Development Core Team
+ * 
+ * Returns: a double
+ **/
+double nsp_expm1(double x)
+{
+    double y, a = fabs(x);
+
+    if (a < DBL_EPSILON) return x;
+    if (a > 0.697) return exp(x) - 1.0;  /* negligible cancellation */
+
+    /* initial value for the Newton step: */
+    if (a > 1e-8)
+	y = exp(x) - 1.0;
+    else /* Taylor expansion, more accurate in this range */
+	y = (0.5*x + 1.0) * x;
+
+    /* Newton step for solving   log(1 + y) = x   for y : */
+    y -= (1.0 + y) * (nsp_log1p(y) - x);
+    return y;
+}
 
 
 /**
@@ -667,8 +697,9 @@ double nsp_kcdflim(double x, double *q)
 int nsp_invkcdflim(double p, double q, double *x)
 {
   int pq_flag = p <= 0.3728 ? 1 : 0, status = 0, qleft, qhi;
-  double pp,qq, fx, xinf = 0.04, xsup = 20, atol=1e-50, tol=1e-15, step=0.1, rstep=0.5, step_inc=2.0; 
-  
+  double pp,qq, fx, xinf = 0.04, xsup = 20, atol=1e-50, tol=1e-14, step=0.4, rstep=0.0, step_inc=2.0; 
+  int iter=0;
+
   /* extreme values */
   if ( p == 0.0 )
     {
@@ -682,19 +713,22 @@ int nsp_invkcdflim(double p, double q, double *x)
   /* init for inversion routine */
   cdf_dstinv (&xinf, &xsup, &step, &rstep, &step_inc, &atol, &tol);
 
-  *x = 0.828; /* this is approximately the mode */
+  *x = 0.828; /* this is approximately the median */
  
   cdf_dinvr (&status, x, &fx, &qleft, &qhi);
 
   while ( status == 1 )
     {
-      pp = nsp_kcdflim(*x, &qq);
+      pp = nsp_kcdflim(*x, &qq); 
+      iter++;
       if ( pq_flag )
 	fx = pp - p;
       else
 	fx = qq - q;
       cdf_dinvr (&status, x, &fx, &qleft, &qhi);
     }
+
+  Sciprintf(" iter = %d\n",iter);
 
   if ( status == 0 )
     return OK;

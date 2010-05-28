@@ -45,6 +45,24 @@ static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+static int int_nsp_expm1(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_expm1(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
 static int int_nsp_binomial_coef(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *N, *K, *res;
@@ -1251,6 +1269,7 @@ static int int_nsp_pdf( Stack stack, int rhs, int opt, int lhs)
 static OpTab Spmf_func[]={
   {"bincoeff", int_nsp_binomial_coef},
   {"log1p_m", int_nsp_log1p},
+  {"expm1_m", int_nsp_expm1},
   {"sinpi_m", int_nsp_sinpi},
   {"gammabr_m", int_nsp_gammabr},
   {"lngamma_m", int_nsp_lngamma},
