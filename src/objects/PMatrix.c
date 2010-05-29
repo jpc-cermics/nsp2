@@ -1160,7 +1160,12 @@ NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
 {
   int i;
   NspMatrix *loc; 
-  char type = ( P->rc_type == 'c' || V->rc_type == 'c') ? 'c' : 'r';
+  char type = (V->rc_type == 'c') ? 'c' : 'r';
+  for ( i = 0 ; i < P->mn ; i++) 
+    if ( P->S[i]->rc_type == 'c') 
+      {
+	type = 'c'; break;
+      }
   if ((loc = nsp_matrix_create(NVOID,type,P->m,P->n))==NULLMAT)
     return NULL;
   if ( loc->rc_type == 'r' )
@@ -1172,30 +1177,30 @@ NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
     }
   else if ( V->rc_type == 'r' )
     {
-      /* polynom is complex */
+      /* polynom is complex or real */
       for ( i = 0 ; i < loc->mn ; i++)
 	{
-	  loc->C[i] = nsp_hornercd(P->S[i]->C,P->S[i]->m,V->R[k]);
+	  if ( P->S[i]->rc_type == 'r') 
+	    {
+	      loc->C[i].r = nsp_hornerdd(P->S[i]->R,P->S[i]->mn,V->R[k]);
+	      loc->C[i].i = 0;
+	    }
+	  else
+	    loc->C[i] = nsp_hornercd(P->S[i]->C,P->S[i]->mn,V->R[k]);
 	}
     }
-  else if ( P->rc_type == 'r' )
+  else 
     {
       /* V is complex */
       for ( i = 0 ; i < loc->mn ; i++)
 	{
-	  loc->C[i] = nsp_hornerdc(P->S[i]->R,P->S[i]->mn,V->C[k]);
-	}
-    }
-  else
-    {
-      /* Voth are complex */
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  loc->C[i] = nsp_hornercc(P->S[i]->C,P->S[i]->mn,V->C[k]);
+	  if ( P->S[i]->rc_type == 'r') 
+	    loc->C[i] = nsp_hornerdc(P->S[i]->R,P->S[i]->mn,V->C[k]);
+	  else 
+	    loc->C[i] = nsp_hornercc(P->S[i]->C,P->S[i]->mn,V->C[k]);
 	}
     }
   return loc;
-  
 }
 
 

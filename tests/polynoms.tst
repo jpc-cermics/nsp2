@@ -63,6 +63,63 @@ C=horner(p,A);
 V=vc(1)+A.*(vc(2)+A*vc(3));
 if norm(C{1}-V) > 10*%eps then pause;end 
 
+// horner (vdim=%t)
+//---------
+// (r,r)
+v=1:3;
+p=m2p(v);
+A=testmatrix('magic',4);
+C=horner(p,A,vdim=%t);
+M=ce2m(C);
+V=v(1)+A.*(v(2)+A*v(3));
+if norm(M-V) > 10*%eps then pause;end 
+
+// (c,r)
+vc=[1:3] + [4:6]*%i;
+p=m2p(vc);
+A=testmatrix('magic',4);
+C=horner(p,A,vdim=%t);
+M=ce2m(C);
+V=vc(1)+A.*(vc(2)+A*vc(3));
+if norm(M-V) > 10*%eps then pause;end 
+
+// (r,c) 
+v=[1:3];
+p=m2p(v);
+A=testmatrix('magic',4);
+A= A+ %i*testmatrix('franck',4);
+C=horner(p,A,vdim=%t);
+M=ce2m(C);
+V=v(1)+A.*(v(2)+A*v(3));
+if norm(M-V) > 10*%eps then pause;end 
+
+// (c,c)
+vc=[1:3] + [4:6]*%i;
+p=m2p(vc);
+A=testmatrix('magic',4);
+A= A+ %i*testmatrix('franck',4);
+C=horner(p,A,vdim=%t);
+M=ce2m(C);
+V=vc(1)+A.*(vc(2)+A*vc(3));
+if norm(M-V) > 10*%eps then pause;end 
+
+// horner (vdim=%t)
+//---------
+// (r,r)
+v=1:3;
+p=m2p(v);
+vc=[1:3] + [4:6]*%i;
+q=m2p(vc);
+P=[p,q];
+A=testmatrix('magic',3);
+C=horner(P,A,vdim=%t);
+Vp=v(1)+A.*(v(2)+A*v(3));
+Vq=vc(1)+A.*(vc(2)+A*vc(3));
+Mp=ce2m(C,indice=1);
+Mq=ce2m(C,indice=2);
+if norm(Mp-Vp) > 10*%eps then pause;end 
+if norm(Mq-Vq) > 10*%eps then pause;end 
+
 //roots
 //---------
 r=[1:5]';
