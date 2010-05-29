@@ -1154,6 +1154,49 @@ NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
   return loc;
 }
 
+/* P evaluated for x= V(i);  */
+
+NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
+{
+  int i;
+  NspMatrix *loc; 
+  char type = ( P->rc_type == 'c' || V->rc_type == 'c') ? 'c' : 'r';
+  if ((loc = nsp_matrix_create(NVOID,type,P->m,P->n))==NULLMAT)
+    return NULL;
+  if ( loc->rc_type == 'r' )
+    {
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->R[i] = nsp_hornerdd(P->S[i]->R,P->S[i]->mn,V->R[k]);
+	}
+    }
+  else if ( V->rc_type == 'r' )
+    {
+      /* polynom is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornercd(P->S[i]->C,P->S[i]->m,V->R[k]);
+	}
+    }
+  else if ( P->rc_type == 'r' )
+    {
+      /* V is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornerdc(P->S[i]->R,P->S[i]->mn,V->C[k]);
+	}
+    }
+  else
+    {
+      /* Voth are complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornercc(P->S[i]->C,P->S[i]->mn,V->C[k]);
+	}
+    }
+  return loc;
+  
+}
 
 
 

@@ -122,6 +122,7 @@ extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
 extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);
 extern doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x);
 extern NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b);
+extern NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k);
 
 #endif 
 

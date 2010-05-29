@@ -966,21 +966,40 @@ int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
 
 int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
 {
-  int i;
+  int i,flag = FALSE;
   NspCells *Res;
   NspPMatrix *P;
   NspMatrix *V;
-  CheckRhs(2,2);
+  CheckStdRhs(2,2);
   CheckLhs(1,1);
+  nsp_option opts[] ={{"vdim",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
   if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
   if ((V=GetMat(stack,2))== NULL) return RET_BUG;
-
-  if ((Res = nsp_cells_create(NVOID,P->m,P->n)) == NULL) 
+  if ( get_optional_args(stack, rhs, opt, opts, &flag) == FAIL )
     return RET_BUG;
-  for ( i = 0 ; i < Res->mn ; i++)
+  if ( flag == FALSE ) 
     {
-      Res->objs[i] =(NspObject *) nsp_polynom_horner(P->S[i],V);
-      if ( V == NULL ) return RET_BUG;
+      /* result is a cell dimensioned by P */
+      if ((Res = nsp_cells_create(NVOID,P->m,P->n)) == NULL) 
+	return RET_BUG;
+      for ( i = 0 ; i < Res->mn ; i++)
+	{
+	  Res->objs[i] =(NspObject *) nsp_polynom_horner(P->S[i],V);
+	  if ( Res->objs[i] == NULL ) return RET_BUG;
+	}
+    }
+  else
+    {
+      /* result is a cell dimensioned by V */
+      if ((Res = nsp_cells_create(NVOID,V->m,V->n)) == NULL) 
+	return RET_BUG;
+      for ( i = 0 ; i < Res->mn ; i++)
+	{
+	  Res->objs[i] =(NspObject *) nsp_pmatrix_horner(P,V,i);
+	  if ( Res->objs[i] == NULL ) return RET_BUG;
+	}
     }
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
