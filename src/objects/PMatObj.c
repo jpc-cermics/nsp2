@@ -950,6 +950,42 @@ int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_mult_p_p(P,Q))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+
+int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspCells *Res;
+  NspPMatrix *P;
+  NspMatrix *V;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((V=GetMat(stack,2))== NULL) return RET_BUG;
+
+  if ((Res = nsp_cells_create(NVOID,P->m,P->n)) == NULL) 
+    return RET_BUG;
+  for ( i = 0 ; i < Res->mn ; i++)
+    {
+      Res->objs[i] =(NspObject *) nsp_polynom_horner(P->S[i],V);
+      if ( V == NULL ) return RET_BUG;
+    }
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
 
 
 /*
@@ -1001,7 +1037,9 @@ static OpTab PMatrix_func[]={
   {"plus_p_p",int_pmatrix_add},
   {"minus_p_p",int_pmatrix_minus},
   {"mult_m_p",int_pmatrix_mult_m_p},
+  {"mult_p_p",int_pmatrix_mult_p_p},
   {"dst_p_p",int_pmatrix_mult_tt},
+  {"horner", int_pmatrix_horner},
   {(char *) 0, NULL}
 };
 

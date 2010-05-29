@@ -691,7 +691,7 @@ int nsp_polynom_resize(nsp_polynom poly)
     {
       for ( i = poly->mn -1 ; i >= 1 ; i--) 
 	{
-	  if ( poly->C[i].r != 0 && poly->C[i].i != 0 ) break;
+	  if ( poly->C[i].r != 0 || poly->C[i].i != 0 ) break;
 	  size--;
 	}
     }
@@ -861,6 +861,9 @@ nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q)
   return A;
 }
 
+/* A*B A matrix B PMatrix 
+ * just the case A 1x1 or B 1x1 
+ */
 
 NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
 {
@@ -907,6 +910,51 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
       return NULL;
     }
 }
+
+
+NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( A->n == B->m  )
+    {
+      int i,j,k;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < loc->m ; i++) 
+	for ( j = 0 ; j < loc->n ; j++)
+	  {
+	    nsp_polynom l = NULL,l1,l2;
+	    k= 0;
+	    l = nsp_polynom_mult( A->S[i+A->m*k], B->S[k+B->m*j]);
+	    if ( l == NULL) return NULL;
+	    for ( k = 1 ; k < A->n ; k++)
+	      {
+		l1 =  nsp_polynom_mult( A->S[i+A->m*k], B->S[k+B->m*j]);
+		if ( l1 == NULL ) return NULL;
+		if (( l2 =  nsp_polynom_add(l, l1))==NULL) return NULL;
+		nsp_polynom_destroy(&l);
+		nsp_polynom_destroy(&l1);
+		l= l2;
+	      }
+	    loc->S[i+loc->m*j]=l;
+	  }
+      return loc;
+    }
+  else if ( A->mn == 1 ) 
+    {
+      return nsp_pmatrix_mult_tt(A,B);
+    }
+  else if ( B->mn == 1 )
+    {
+      return nsp_pmatrix_mult_tt(A,B);
+    }
+  else
+    {
+      Scierror("Error:\tUncompatible dimensions\n");
+      return NULL;
+    }
+}
+
 
 NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B)
 {
@@ -997,6 +1045,117 @@ nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b)
 
 
 
+/**
+ * nsp_hornerdd:
+ * @a: Array of coefficients of the polynomial.
+ * @n: Length of A, also degree of polynomial - 1.
+ * @x: Point at which the polynomial is to be evaluated. 
+ * 
+ * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
+ * 
+ * Returns: a double 
+ **/
+
+double nsp_hornerdd (const double *a,const int n, double x)
+{
+  double term;
+  int i;
+  term = a[n -1];
+  for (i = n - 2; i >= 0; --i)
+    {
+      term = a[i] + term * x;
+    }
+  return  term;
+}
+
+doubleC nsp_hornercd(const doubleC *a,const int n, double x)
+{
+  doubleC term = a[n -1];
+  int i;
+  for (i = n - 2; i >= 0; --i)
+    {
+      term.r *= x;
+      term.i *= x;
+      term.r += a[i].r;
+      term.i += a[i].i;
+    }
+  return  term;
+}
+
+doubleC nsp_hornerdc (const double *a,const int n, doubleC x)
+{
+  doubleC term={a[n -1],0};
+  int i;
+  for (i = n - 2; i >= 0; --i)
+    {
+      /* term*x */
+      nsp_prod_c(&term,&x); 
+      term.r += a[i];
+    }
+  return  term;
+}
+
+doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x)
+{
+  doubleC term = a[n -1];
+  int i;
+  for (i = n - 2; i >= 0; --i)
+    {
+      /* term*x */
+      nsp_prod_c(&term,&x); 
+      term.r += a[i].r;
+      term.i += a[i].i;
+    }
+  return  term;
+}
+
+/* res(i,j)= P(b(i,j))
+ *
+ */
+
+NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
+{
+  int i;
+  NspMatrix *loc; 
+  char type = ( P->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
+  if ((loc = nsp_matrix_create(NVOID,type,b->m,b->n))==NULLMAT)
+    return NULL;
+  if ( loc->rc_type == 'r' )
+    {
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->R[i] = nsp_hornerdd(P->R,P->mn,b->R[i]);
+	}
+    }
+  else if ( b->rc_type == 'r' )
+    {
+      /* polynom is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornercd(P->C,P->mn,b->R[i]);
+	}
+    }
+  else if ( P->rc_type == 'r' )
+    {
+      /* b is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornerdc(P->R,P->mn,b->C[i]);
+	}
+    }
+  else
+    {
+      /* both are complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornercc(P->C,P->mn,b->C[i]);
+	}
+    }
+  return loc;
+}
+
+
+
 
 /*
  * routines for output of polynomial matrices 
@@ -1069,7 +1228,7 @@ static void Mp_pr_min_max_internal (const void *M, char flag, double *dmin, doub
     }
 }
 
-/* Polynomial Matrix **/
+/* Polynomial Matrix */
 
 static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M)
 {
@@ -1231,7 +1390,7 @@ static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw)
     {
       if ( m->rc_type == 'r') 
 	{
-	  if (  m->R[i] != 0.00 )
+	  if (  m->R[i] != 0.00 || m->mn == 1 )
 	    {
 	      size += fw + 2 + pr_poly_exp_size(i);
 	    }
@@ -1257,7 +1416,7 @@ static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
     {
       if ( m->rc_type == 'r') 
 	{
-	  if (  m->R[i] != 0.00 )
+	  if (  m->R[i] != 0.00 || m->mn == 1  )
 	    {
 	      if ( leading == FALSE && m->R[i] >= 0.00 ) Sciprintf("+");
 	      else Sciprintf(" ");
@@ -1289,7 +1448,7 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
     {
       if ( m->rc_type == 'r') 
 	{
-	  if (  m->R[i] != 0.00 )
+	  if (  m->R[i] != 0.00 || m->mn == 1 )
 	    {
 	      count += fw+2 + pr_poly_exp_size(i);
 	      nsp_pr_white(fw+2);

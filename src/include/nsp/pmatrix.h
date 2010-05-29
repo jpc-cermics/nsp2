@@ -102,6 +102,7 @@ extern NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B);
 extern nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b);
 extern NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B);
+extern NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B);
 extern int nsp_polynom_resize(nsp_polynom poly);
 
 extern int IsPMatObj (Stack stack, int i); 
@@ -115,6 +116,12 @@ extern int PMatFullComp (NspPMatrix *A, NspPMatrix *B, char *op, int *err);
 extern NspMatrix *nsp_matrix_companion(NspMatrix *A);
 extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 extern NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M);
+
+extern double nsp_hornerdd (const double *a,const int n, double x);
+extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
+extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);
+extern doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x);
+extern NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b);
 
 #endif 
 
