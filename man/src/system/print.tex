@@ -12,10 +12,11 @@
 \begin{calling_sequence}
 \begin{verbatim}
    print(object [,options])
-   fprint(fd,object [,options]) 
+   fprint(fd,object [,options]) // or fd.print[object [,options]]
    S=sprint(fd,object [,options]) 
-   where named options are 
-   as_read=boolean, depth=int,indent=int, latex=boolean,name=string,table=boolean) 
+
+   where possible named options are: 
+   as_read=boolean, depth=int,indent=int, latex=boolean,name=string, table=boolean
 \end{verbatim}
 \end{calling_sequence}
 
@@ -34,11 +35,15 @@
 \end{parameters}
 
 \begin{mandescription}
-  prints the given variable in the current output stream (\verb+print+), 
-  or in a file steam (\verb+fprint+), or in a string matric (\verb+sprint+).
-  The file stream \verb+fd+ is an object of type \manlink{File}{File} which 
-  is created with \manlink{fopen}{fopen}. For object with double precision numbers
-  the output format/precision can be changed with the \manlink{format}{format} function. 
+  prints the given variable in:
+\begin{itemize}
+\item the current output stream (\verb+print+), 
+\item in a file steam (\verb+fprint+ or with \verb+print+ used as a method),
+\item or in a string matric (\verb+sprint+).
+\end{itemize}
+The file stream \verb+fd+ is an object of type \manlink{File}{File} which 
+is created with \manlink{fopen}{fopen}. For object with double precision numbers
+the output format/precision can be changed with the \manlink{format}{format} function. 
 \end{mandescription}
 % --example 
 \begin{examples}
