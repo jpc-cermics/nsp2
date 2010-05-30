@@ -1,0 +1,161 @@
+% -*- mode: latex -*-
+
+\mansection{put\_matrix, get\_matrix, fprintfMat, fscanfMat}
+
+\begin{mandesc}
+  \short{put_matrix}{(method) print a matrix in a file stream}\\
+  \short{fprintfMat}{print a matrix in a file}\\
+  \short{get_matrix}{(method) read a matrix from a file stream}\\
+  \short{fscanfMat}{read a matrix in a file} 
+\end{mandesc}
+\index{print}\label{print}
+  %-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+   F.put_matrix[M,format=str1,sep=str2,header=title]
+   fprintfMat(filename,format=str1,sep=str2,header=title)
+
+   [M,title] = F.get_matrix[]
+   [M,title] = fscanfMat(filename)
+\end{verbatim}
+\end{calling_sequence}
+
+\begin{parameters}
+  \begin{varlist}
+    \vname{M}: numerical matrix (Mat)
+    \vname{header=title}: string matrix (SMat)
+    \vname{F}: file stream
+    \vname{filename}: path
+    \vname{format=str1}: a C-like format
+    \vname{sep=str2}: string to be used as a separator between 2 numbers (default is \verb+" "+)
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+ The functions \verb+fprintfMat+ and \verb+fscanfMat+ are shortcuts for respectively:
+\begin{Verbatim}
+// fprintfMat
+F = fopen(filename,mode="w")
+F.put_matrix[M,format=str1,sep=str2,header=title]
+F.close[]
+
+// fscanfMat
+F = fopen(filename,mode="r")
+[M,title] = F.get_matrix[]
+F.close[]
+\end{Verbatim}
+so we will only try to explain how \verb+put_matrix+ and \verb+get_matrix+ work.
+\end{mandescription}
+
+\paragraph{put\_matrix}
+
+  This method outputs the matrix \verb+M+ in the file stream, using a line for each 
+row of the matrix (that is a end line character is printed after the last number of
+each row):
+
+\begin{itemize}
+
+\item \itemdesc{header option} if given the string matrix \verb+title+ is output in the
+file stream before the matrix \verb+M+ ; 
+
+\item \itemdesc{sep option} if given the string \verb+str2+ will be printed between
+2 numbers of the same row in place of a blank character (if you want that your
+matrix can be read back into nsp by \verb+fscanfMatrix+ use only blank, tab, coma 
+or semicolon).
+
+\item \itemdesc{format option} each number is converted following the format 
+given by the string  \verb+str1+ which must be a C format. When format is not
+provided a format based on the current output nsp format (see the 
+\manlink{format}{format} help page) is used. The three kind of formats are  
+\verb+"%f"+,  \verb+"%e"+ and  \verb+"%g"+:
+\begin{itemize}
+\item \verb+"%f"+ this one converts a binary floating point number into a fixed
+point decimal number (with 6 digits after the point by default). This format is not 
+adapted for numbers with a small magnitude (which are truncated to 0) and take many 
+places for numbers with a large magnitude (use \verb+"%e"+ or   \verb+"%g"+ formats
+in this cases). Some variations:
+\begin{itemize}
+\item  \verb+"%.9f"+ specify 9 digits after the point
+\item  \verb+"%.0f"+ in this case the point is not printed (useful for matrix with 
+integer values)
+\item  \verb+"%13.9f"+ specify 9 digits after the point and a total of 13 characters.
+Notes that specifying the total number of characters lets to print
+a file which is more human readable (as all columns will be well aligned).
+\end{itemize}
+
+\item \verb+"%e"+ this one converts a binary floating point number into a decimal
+floating point number, that is using a sign, a significant part and an exponent
+part. So it is adapted to large and small magnitudes. Note that  \verb+"%e"+ have 
+only 6 decimal digits accuracy (it corresponds to  \verb+"%.6e"+). Some variations: 
+\begin{itemize}
+\item \verb+"%.17e"+ this one should have the property to be exactly back converted 
+for any double floating point number.
+\item \verb+"%24.17e"+ same than before but with specifying the total number of characters
+(so the columns will be well aligned). Note that when you give the total number of 
+characters the converted number can use less and by default it will be right justified 
+in the field. If you want the number to be left justified you can use  \verb+"%-24.17e"+
+\item if you want only 10 decimal digits accuray you can use  \verb+"%.10e"+ or
+\verb+"%17.10e"+
+\end{itemize}
+\item  \verb+"%g"+ this format could be interesting because it converts a binary
+floating point number using the \verb+"%f"+ format if the magnitude number is not too
+large or too small (without the fractional part if the number is an integer) and 
+otherwise it uses the \verb+"%e"+ format.
+
+\item finally if you want to print positive numbers with the \verb-+- sign (which is
+omitted by default) you should add a  \verb-+- just before the format letter (\verb+f+,
+\verb+e+ or \verb+g+). Examples: \verb/"%-24.17+e"/, \verb/"%-24.17+g"/
+\end{itemize}
+\end{itemize}
+
+Note that  if \verb+M+ is a complex matrix, the printed matrix will have twice the number
+of columns, each original column giving 2 successive columns with the real part coming first
+followed by the imaginary part.
+
+
+\paragraph{get\_matrix}
+
+ This method tries to read a matrix in the given file stream. The matrix can be preceded by
+any number of text lines which can be recovered in a string matrix as second output argument.
+
+The first numeric line establishes the number of columns of the matrix and next lines
+are considered as the next matrix rows as long as they are ``numeric'' with the same
+number of values (that is of columns).
+
+Among a line, 2 numbers can be separated by
+any number of blank or tab characters and/or one coma or semicolon.
+
+
+% --example 
+\begin{examples}
+\begin{Verbatim}
+x = (1:9)'; pr = pdf("geom",n,0.7);
+Mat = [x,pr];
+title = ["some probabilities of G(0.7) (the geometric distribution)";
+         "X pr(X)"];
+fprintfMat("toto.dat",Mat,header=title)
+
+// read  back into nsp
+[M,title] = fscanfMat("toto.dat")
+max(abs((M-Mat)./Mat))  // should not be 0
+
+// use the nsp long format (it uses 16 decimal digits for the significant part)
+format("long")
+fprintfMat("toto.dat",Mat,header=comment)
+// read  back to nsp
+M = fscanfMat("toto.dat")
+max(abs((M-Mat)./Mat))  // error should be less than before but not 0
+
+// to recover back exactly one needs 17 decimal digits for the significant part
+fprintfMat("toto.dat",Mat,header=comment,format="%.17g")
+// read  back to nsp
+M = fscanfMat("toto.dat")
+max(abs((M-Mat)./Mat))  // error should be 0
+\end{Verbatim}
+\end{examples}
+
+% -- see also
+\begin{manseealso}
+  \manlink{fopen}{fopen}, \manlink{File}{File}
+\end{manseealso}
+

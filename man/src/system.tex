@@ -7,6 +7,27 @@ Control execution
 \hyperlink{exec}{exec} - {executes file contents} \\ % 
 \end{quote}
 
+
+\HCode{<hr>}
+Input/Output
+\begin{quote}
+\noindent
+\hyperlink{File}{File} - file data type  \\
+\hyperlink{fopen}{fopen} - creates a file stream \\
+\hyperlink{print}{print} - print variable value in the current output stream\\
+\hyperlink{fprint}{fprint} - print variable value in a file stream\\
+\hyperlink{sprint}{sprint} - print variable value in a string matrix \\
+\hyperlink{put_matrix}{put_matrix} - (method) print a matrix in a file stream\\
+\hyperlink{fprintfMat}{fprintfMat} - print a matrix in a file\\
+\hyperlink{scanf}{scanf} - scanf input format conversion \\
+\hyperlink{fscanf}{fscanf} - fscanf input format conversion \\
+\hyperlink{sscanf}{sscanf} - sscanf input format conversion \\
+\hyperlink{get_matrix}{get_matrix} - (method) read a matrix from a file stream\\
+\hyperlink{fscanfMat}{fscanfMat} - read a matrix in a file\\ 
+\hyperlink{save}{save} - machine independent binary save of variables\\
+\hyperlink{load}{load} - load saved objects with save\\
+\end{quote}
+
 \HCode{<hr>}
 Files and pathnames
 \begin{quote}
@@ -14,18 +35,10 @@ Files and pathnames
 \hyperlink{cd}{cd} - {changes current directory} \\ % 
 \hyperlink{chdir}{chdir} - {changes current directory} \\ % 
 \hyperlink{file}{file} - file and pathnames\\
-\hyperlink{fprint}{fprint} - print variable value in a file stream\\
-\hyperlink{fscanf}{fscanf} - fscanf input format conversion \\
 \hyperlink{getcwd}{getcwd} - {get current directory} \\
-\hyperlink{load}{load} - load saved objects\\
 \hyperlink{ls}{ls} - {list directory contents} \\ % 
-\hyperlink{print}{print} - print variable value  in the current output stream\\
 \hyperlink{pwd}{pwd} - {print current directory} \\ % 
 \hyperlink{registry}{registry} - get and set values of the windows registry\\
-\hyperlink{save}{save} - machine independent binary save of variables\\
-\hyperlink{scanf}{scanf} - scanf input format conversion \\
-\hyperlink{sscanf}{sscanf} - sscanf input format conversion \\
-\hyperlink{sprint}{sprint} - print variable value in a string matrix \\
 \hyperlink{who}{who} - get current variables\\
 \end{quote}
 
@@ -50,12 +63,14 @@ Miscellaneous
 \input system/exec.tex
 \input system/addinter.tex
 \input system/file.tex
+\input datatypes/file.tex 
 \input system/ilib_for_link.tex  
 \input system/link.tex  
 \input system/load.tex
 \input system/localtime.tex 
 \input system/ls.tex
 \input system/print.tex 
+\input system/putgetmatrix.tex 
 \input system/registry.tex
 \input system/save.tex 
 \input system/scanf.tex 
