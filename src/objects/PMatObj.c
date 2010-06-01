@@ -1006,6 +1006,29 @@ int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
+{
+  int i,strict = FALSE,ans=TRUE;
+  NspPMatrix *P;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if (rhs==2) 
+    {
+      if ( GetScalarBool (stack,2,&strict) == FAIL) return RET_BUG;
+    }
+  for ( i = 0 ; i < P->mn ; i++)
+    {
+      ans = nsp_mat_isreal(P->S[i],strict);  
+      if ( ans == FALSE ) break;
+    }
+  if ( nsp_move_boolean(stack,1,ans) == FAIL)
+    return RET_BUG;
+  return 1;
+}
+
+
+
 
 /*
  * The Interface for basic matrices operation 
@@ -1059,6 +1082,7 @@ static OpTab PMatrix_func[]={
   {"mult_p_p",int_pmatrix_mult_p_p},
   {"dst_p_p",int_pmatrix_mult_tt},
   {"horner", int_pmatrix_horner},
+  {"isreal_p", int_pmatrix_isreal},
   {(char *) 0, NULL}
 };
 

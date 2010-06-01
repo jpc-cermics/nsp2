@@ -457,7 +457,7 @@ int GetScalarBool(Stack stack, int i, int *val)
     {
       Scierror("Error:\t%s", ArgPosition(i));
       ArgName(stack,i);
-      Scierror(" of function %s should be an integer\n",NspFname(stack));
+      Scierror(" of function %s should be a boolean\n",NspFname(stack));
       return FAIL;
     }
   *val =M->B[0];
