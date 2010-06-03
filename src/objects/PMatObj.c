@@ -424,28 +424,59 @@ static int int_meth_degree(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* P.shift[k] or P.shift[k,'r'] -> P*x^k (k>=0) 
+ * P.shift[k,'l'] -> P/x^k 
+ */
+
 static int int_meth_shift(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  char dir='r'; 
   NspPMatrix *P=self;
   int n,i;
-  CheckRhs(1,1);
+  CheckRhs(1,2);
   CheckLhs(0,1);
   if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
   if ( n <= 0 ) return 0;
-  for ( i = 0 ; i < P->mn ; i++) 
+  if (rhs >= 2)
     {
-      NspMatrix *A= P->S[i];
-      int k= A->mn,j ;
-      if ( nsp_matrix_resize(A, 1, A->n+n)== FAIL) return RET_BUG;
-      if ( A->rc_type == 'r') 
+      int rep;
+      char *shift_options1[] = { "r", "l", NULL };
+      if ((rep = GetStringInArray (stack,2, shift_options1, 1)) == -1)
+	return RET_BUG;
+      dir = shift_options1[rep][0];
+    }
+  if ( dir == 'r') 
+    for ( i = 0 ; i < P->mn ; i++) 
+      {
+	NspMatrix *A= P->S[i];
+	int k= A->mn,j ;
+	if ( nsp_matrix_resize(A, 1, A->n+n)== FAIL) return RET_BUG;
+	if ( A->rc_type == 'r') 
+	  {
+	    for ( j = 0 ; j < k ; j++) A->R[A->mn-1-j]= A->R[k-1-j];
+	    for ( j = 0 ; j < n ; j++) A->R[j]= 0.0;
+	  }
+	else
+	  {
+	    for ( j = 0 ; j < k ; j++) A->C[A->mn-1-j]= A->C[k-1-j];
+	    for ( j = 0 ; j < n ; j++) A->C[j].r= A->C[j].i= 0.0;
+	  }
+      }
+  else 
+    {
+      for ( i = 0 ; i < P->mn ; i++) 
 	{
-	  for ( j = 0 ; j < k ; j++) A->R[A->mn-1-j]= A->R[k-1-j];
-	  for ( j = 0 ; j < n ; j++) A->R[j]= 0.0;
-	}
-      else
-	{
-	  for ( j = 0 ; j < k ; j++) A->C[A->mn-1-j]= A->C[k-1-j];
-	  for ( j = 0 ; j < n ; j++) A->C[j].r= A->C[j].i= 0.0;
+	  NspMatrix *A= P->S[i];
+	  int j;
+	  if ( A->rc_type == 'r') 
+	    {
+	      for ( j = 0 ; j < A->mn - n  ; j++) A->R[j]= A->R[j+n];
+	    }
+	  else
+	    {
+	      for ( j = 0 ; j < A->mn - n  ; j++) A->C[j]= A->C[j+n];
+	    }
+	  if ( nsp_matrix_resize(A, 1,Max(1,A->mn-n))== FAIL) return RET_BUG;
 	}
     }
   return 0;
@@ -966,19 +997,28 @@ int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
 
 int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
 {
-  int i,flag = FALSE;
+  int i,flag = FALSE, ttmode = FALSE;
   NspCells *Res;
   NspPMatrix *P;
   NspMatrix *V;
   CheckStdRhs(2,2);
   CheckLhs(1,1);
   nsp_option opts[] ={{"vdim",s_bool,NULLOBJ,-1},
+		      {"ttmode",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
   if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
   if ((V=GetMat(stack,2))== NULL) return RET_BUG;
-  if ( get_optional_args(stack, rhs, opt, opts, &flag) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &flag,&ttmode) == FAIL )
     return RET_BUG;
+  if ( ttmode == TRUE ) 
+    {
+      /* term to term mode */
+      NspMatrix *R=nsp_pmatrix_horner_tt(P,V);
+      if ( R == NULL) return RET_BUG;
+      MoveObj(stack,1,(NspObject *) R);
+      return 1;
+    }
   if ( flag == FALSE ) 
     {
       /* result is a cell dimensioned by P */
@@ -1005,7 +1045,6 @@ int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
 int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
 {
   int i,strict = FALSE,ans=TRUE;
@@ -1028,7 +1067,77 @@ int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+int int_pmatrix_clean (Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  double epsr=DBL_EPSILON;
+  double epsa=DBL_EPSILON;
+  NspPMatrix *P;
+  CheckStdRhs (1, 3);
+  CheckLhs (1, 1);
+  if (rhs >= 2)
+    {
+      if (GetScalarDouble (stack, 2, &epsa) == FAIL)
+	return RET_BUG;
+    }
+  if (rhs >= 3)
+    {
+      if (GetScalarDouble (stack, 3, &epsr) == FAIL)
+	return RET_BUG;
+    }
 
+  if ((P = GetPMatCopy (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  
+  for ( i = 0 ; i < P->mn ; i++)
+    {
+      nsp_mat_clean(P->S[i],rhs, epsa, epsr);
+      if ( nsp_polynom_resize(P->S[i]) == FAIL) 
+	return RET_BUG;
+    }
+  NSP_OBJECT (P)->ret_pos = 1;
+  return 1;
+}
+
+typedef void (Fmat)(NspMatrix *A);
+
+static int int_pmatrix_map (Stack stack, int rhs, int opt, int lhs, Fmat f)
+{
+  NspPMatrix *P;
+  int i;
+  CheckStdRhs(1,1);
+  CheckLhs (1, 1);
+  if ((P = GetPMatCopy (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++)
+    {
+      (*f)(P->S[i]);
+      if ( nsp_polynom_resize(P->S[i]) == FAIL) 
+	return RET_BUG;
+    }
+  NSP_OBJECT (P)->ret_pos = 1;
+  return 1;
+}
+
+int int_pmatrix_ceil (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_ceil);
+}
+
+int int_pmatrix_int (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_int);
+}
+
+int int_pmatrix_floor (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_floor);
+}
+
+int int_pmatrix_round (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_round);
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -1083,6 +1192,11 @@ static OpTab PMatrix_func[]={
   {"dst_p_p",int_pmatrix_mult_tt},
   {"horner", int_pmatrix_horner},
   {"isreal_p", int_pmatrix_isreal},
+  {"clean_p",  int_pmatrix_clean},
+  {"ceil_p", int_pmatrix_ceil},
+  {"int_p",    int_pmatrix_int},
+  {"floor_p",     int_pmatrix_floor},
+  {"round_p",      int_pmatrix_round},
   {(char *) 0, NULL}
 };
 

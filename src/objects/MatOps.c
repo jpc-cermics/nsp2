@@ -775,10 +775,6 @@ void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
     }
 }
 
-
-/*
- */
-
 /**
  * nsp_mat_maxitt1:
  * @A: a #NspMatrix 

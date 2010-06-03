@@ -5415,7 +5415,6 @@ static int int_getticks(Stack stack, int rhs, int opt, int lhs)
   MoveObj (stack, 1, (NspObject *) xticks);
   return 1;
 }
-
  
 /*
  * The Interface for basic matrices operation 

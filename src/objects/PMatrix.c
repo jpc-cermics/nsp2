@@ -1154,7 +1154,7 @@ NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
   return loc;
 }
 
-/* P evaluated for x= V(i);  */
+/* P evaluated for x= V(k);  */
 
 NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
 {
@@ -1199,6 +1199,74 @@ NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
 	  else 
 	    loc->C[i] = nsp_hornercc(P->S[i]->C,P->S[i]->mn,V->C[k]);
 	}
+    }
+  return loc;
+}
+
+/* P(i) evaluated for x= V(k);  */
+
+NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V)
+{
+  int i;
+  NspMatrix *loc; 
+  /* compute the rc_type for result */
+  char type = (V->rc_type == 'c') ? 'c' : 'r';
+  for ( i = 0 ; i < P->mn ; i++) 
+    if ( P->S[i]->rc_type == 'c') 
+      {
+	type = 'c'; break;
+      }
+#define TT_HORNER(s1,s2,i1,i2)						\
+  if ((loc = nsp_matrix_create(NVOID,type,s1,s2))==NULLMAT)		\
+    return NULL;							\
+  if ( loc->rc_type == 'r' )						\
+    {									\
+      for ( i = 0 ; i < loc->mn ; i++)					\
+	{								\
+	  loc->R[i] = nsp_hornerdd(P->S[i1]->R,P->S[i1]->mn,V->R[i2]);	\
+	}								\
+    }									\
+  else if ( V->rc_type == 'r' )						\
+    {									\
+      /* polynom is complex or real */					\
+      for ( i = 0 ; i < loc->mn ; i++)					\
+	{								\
+	  if ( P->S[i]->rc_type == 'r')					\
+	    {								\
+	      loc->C[i].r = nsp_hornerdd(P->S[i1]->R,P->S[i1]->mn,V->R[i2]); \
+	      loc->C[i].i = 0;						\
+	    }								\
+	  else								\
+	    loc->C[i] = nsp_hornercd(P->S[i1]->C,P->S[i1]->mn,V->R[i2]); \
+	}								\
+    }									\
+  else									\
+    {									\
+      /* V is complex */						\
+      for ( i = 0 ; i < loc->mn ; i++)					\
+	{								\
+	  if ( P->S[i]->rc_type == 'r')					\
+	    loc->C[i] = nsp_hornerdc(P->S[i1]->R,P->S[i1]->mn,V->C[i2]); \
+	  else								\
+	    loc->C[i] = nsp_hornercc(P->S[i1]->C,P->S[i1]->mn,V->C[i2]); \
+	}								\
+    }									
+  if ( P->mn == V->mn ) 
+    {
+      TT_HORNER(P->m,P->n,i,i);
+    }
+  else if ( P->mn == 1 )
+    {
+      TT_HORNER(V->m,V->n,0,i);
+    }
+  else if ( V->mn == 1 )
+    {
+      TT_HORNER(P->m,P->n,i,0);
+    }
+  else
+    {
+      Scierror("Error: arguments with incompatible dimensions\n");
+      return NULL;
     }
   return loc;
 }
