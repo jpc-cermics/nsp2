@@ -87,7 +87,7 @@ The \emph{File} data type is used for file I/O operations.
   \vname{F.clearerr[]}: clears any previously raised error.
   \vname{F.error[]}: returns \verb+%t+ if an error was encountered during previous read/write 
   operations 
-  \vname{[M,S]F.get_matrix[]}: read a numerical matrix from file current position. 
+  \vname{[M,S]=F.get_matrix[]}: read a numerical matrix from file current position. 
   First lines can be non-numeric and are then returned in S. The read stops when current 
   line read is not compatible with previous ones (see  \manlink{get_matrix}{get_matrix} help page)
   \vname{S=F.get_lines[n]}: acquires \verb+n+ lines from the file stream \verb+F+ and returns 
