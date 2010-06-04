@@ -22,29 +22,32 @@ F = fopen(file-name,mode='string',xdr=boolean,swap=boolean)
     \verb+"stdout"+, or \verb+"stderr"+ in order to use the standard input, output or output error 
     stream.
     \vname{mode}: The argument \verb+mode+ is a string beginning  with  one  of  the  following  sequences
-    \begin{description}
-      \item[r]: open text file for reading. The stream is positioned at the beginning of the
-        file. 
-      \item[r+]: open text file for reading and writing. The stream is positioned at the beginning of the
-        file. 
-      \item[w] truncate  file  to  zero  length  or create text file for writing.  The stream is
+    \begin{itemize}
+      \item \verb!r!: open text file for reading. The stream is positioned at
+        the beginning of the file.
+      \item \verb!r+!: open text file for reading and writing. The stream is
         positioned at the beginning of the file.
-      \item[w+] open for reading and writing.  The file is created if it  does  not
-        exist,  otherwise it is truncated.  The stream is positioned at the beginning of the file.
-      \item[a] open for appending (writing at end of file).  The file is created if it does not 
-	exist.  The stream is positioned at the end of the file.
-      \item[a+]  Open for reading and appending (writing at end of file).  The  file
-        is  created  if  it  does not exist.  The initial file position for
-        reading is at the beginning of  the  file,  but  output  is  always
-        appended to the end of the file.
-    \end{description}
-    The mode string can also include the letter \verb+b+ as a last character. 
-    Adding \verb+b+ b is used if you do I/O to a binary file 
-    (but note that \verb+b+ is ignored on all POSIX conforming systems, including Linux).
-    \vname{swap} If true (the default value) then byte swaping is forced when using the \verb+get+ and 
-    \verb+put+ methods in order to have binary files always filed with data coded as little endian. 
-    If \verb+swap+ is false then data is writen in the machine native mode. 
-    \vname{xdr} If true then reading and writing is used using \verb+xdr+.
+      \item \verb!w!: truncate file to zero length or create text file for
+        writing.  The stream is positioned at the beginning of the file.
+      \item \verb!w+!: open for reading and writing.  The file is created if it
+        does not exist, otherwise it is truncated.  The stream is positioned at
+        the beginning of the file.
+      \item \verb!a!: open for appending (writing at end of file).  The file is
+        created if it does not exist.  The stream is positioned at the end of
+        the file.
+      \item \verb!a+!: open for reading and appending (writing at end of file).
+        The file is created if it does not exist.  The initial file position for
+        reading is at the beginning of the file, but output is always appended
+        to the end of the file.
+    \end{itemize}
+    The mode string can also include the letter \verb+b+ as a last character.
+    Adding \verb+b+ b is used if you do I/O to a binary file (but note that
+    \verb+b+ is ignored on all POSIX conforming systems, including Linux).
+    \vname{swap} If true (the default value) then byte swaping is forced when
+    using the \verb+get+ and \verb+put+ methods in order to have binary files
+    always filed with data coded as little endian.  If \verb+swap+ is false then
+    data is writen in the machine native mode.  \vname{xdr} If true then reading
+    and writing is used using \verb+xdr+.
   \end{varlist}
 \end{parameters}
 
