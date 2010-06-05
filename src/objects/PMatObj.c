@@ -29,6 +29,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/matint.h"
+#include "nsp/nsp_lapack.h" /* vector norm declaration */
 
 /*
  * NspPMatrix inherits from NspObject 
@@ -1140,6 +1141,57 @@ int int_pmatrix_round (Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ *
+ */
+
+static int int_pmatrix_norm( Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *A;
+  NspPMatrix *P;
+  double p=2.0;
+  int id=1, i;
+  char *norm_table[] =       {"1","2","inf",NULL};
+  CheckRhs(1,2);
+  CheckLhs(0,1);
+  if ( (P=GetPMat(stack, 1)) == NULLPMAT ) return RET_BUG;
+  if (rhs == 2)
+    {
+      if (IsMatObj(stack,2))
+	{
+	  if ( GetScalarDouble(stack, 2, &p) == FAIL ) return RET_BUG; 
+	  if ( p < 1 || isnan(p) ) 
+	    { 
+	      Scierror("%s: second argument must be >= 1\n",NspFname(stack));
+	      return RET_BUG;
+	    }
+	}
+      else if ( IsSMatObj(stack,2))
+	{
+	  if ( (id=GetStringInArray(stack,2,norm_table,1)) == -1) return RET_BUG; 
+	  p = id+1;
+	  if ( id == 2 ) p = 1.0/(3.0 - p);
+	}
+      else
+	{
+	  Scierror("%s: second argument must be any real >= 1 or '1','2','inf','Inf'\n\n",
+		   NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  if ((A= nsp_matrix_create(NVOID,'r', P->m , P->n))==NULLMAT)
+    return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++)
+    {
+      A->R[i] = nsp_vector_norm(P->S[i], p);
+      if (A->R[i] < 0 ) return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(A));
+  return 1;
+}
+
+
+
+/*
  * The Interface for basic matrices operation 
  */
 
@@ -1197,6 +1249,7 @@ static OpTab PMatrix_func[]={
   {"int_p",    int_pmatrix_int},
   {"floor_p",     int_pmatrix_floor},
   {"round_p",      int_pmatrix_round},
+  {"norm_p",      int_pmatrix_norm},
   {(char *) 0, NULL}
 };
 
