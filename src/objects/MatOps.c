@@ -4512,6 +4512,9 @@ NspMatrix *nsp_mat_magic(int n)
 {
   NspMatrix *Loc;
   if (( Loc = nsp_matrix_create(NVOID,'r',n,n))  == NULLMAT) return(NULLMAT);
+  if ( n == 1 ) { Loc->R[0]=0; return Loc;}
+  else if ( n == 2 ) { Loc->R[0]=0; Loc->R[1]=0; Loc->R[2]=0; Loc->R[3]=0; return Loc;}
+  
   if ( Loc->mn != 0) 
     {
 #if 0 

@@ -940,7 +940,7 @@ int int_pmatrix_add(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_minus(Stack stack, int rhs, int opt, int lhs)
+int int_pmatrix_minus_p_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*Q,*R;
   CheckRhs(2,2);
@@ -1140,10 +1140,6 @@ int int_pmatrix_round (Stack stack, int rhs, int opt, int lhs)
   return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_round);
 }
 
-/*
- *
- */
-
 static int int_pmatrix_norm( Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
@@ -1188,6 +1184,389 @@ static int int_pmatrix_norm( Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(A));
   return 1;
 }
+
+static int int_pmatrix_minus (Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P;
+  int i;
+  CheckStdRhs(1,1);
+  CheckLhs (1, 1);
+  if ((P = GetPMatCopy (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++)
+    {
+      nsp_mat_minus(P->S[i]);
+    }
+  NSP_OBJECT (P)->ret_pos = 1;
+  return 1;
+}
+
+#define nsp_polynom_mult nsp_polynom_mult_std
+
+nsp_polynom nsp_polynom_power(nsp_polynom p,int n)
+{
+  NspMatrix *P = (NspMatrix *) p;
+  NspMatrix *R = NULL;
+  NspMatrix *Q = NULL;
+  NspMatrix *loc = NULL;
+  if ( P->mn == 2 && P->rc_type == 'r' && P->R[0]==0 && P->R[1]== 1) 
+    {
+      /* detect the special case where P=x^n */
+      int i;
+      if ((loc= nsp_matrix_create(NVOID,'r', 1 , n+1))==NULLMAT)
+	return NULL;
+      for ( i = 0 ; i < loc->mn;i++ ) loc->R[i]=0.0;
+      loc->R[n]=1;
+      return loc;
+    }
+  /* general case: power by repeated squaring */
+  if ((Q = nsp_polynom_copy(p))== NULL) 
+    return NULL;
+  while  ( n > 1 )
+    {
+      if ( n % 2 ) 
+	{
+	  if ( R == NULL) 
+	    {
+	      if ((R = nsp_polynom_copy(Q))== NULL) goto err;
+	    }
+	  else
+	    {
+	      if ((loc = nsp_polynom_mult(R,Q)) == NULL) goto err;
+	      nsp_polynom_destroy(&R);
+	      R=loc;
+	    }
+	}
+      n /= 2;
+      if ((loc = nsp_polynom_mult(Q,Q)) == NULL) goto err;
+      nsp_polynom_destroy(&Q);
+      Q=loc;
+    }
+  if ( R != NULL) 
+    {
+      if ((loc = nsp_polynom_mult(Q,R)) == NULL) goto err;
+      nsp_polynom_destroy(&R);
+      nsp_polynom_destroy(&Q);
+    }
+  else 
+    {
+      loc = Q;
+    }
+  return loc;
+ err:
+  if ( Q != NULL) nsp_polynom_destroy(&Q);
+  if ( R != NULL) nsp_polynom_destroy(&R);
+  return NULL;
+}
+
+NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M) 
+{
+  int i;
+  NspPMatrix *loc;
+#define P_POWER(s1,s2,i1,i2)						\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
+    return(NULLPMAT);							\
+  for (i=0; i < loc->mn ; i++)						\
+    {									\
+      if ( floor(M->R[i]) == M->R[i] ) {				\
+	loc->S[i]= nsp_polynom_power( P->S[i1], M->R[i2]);		\
+	if ( loc->S[i] == NULL) return NULL;				\
+      } else {								\
+	Scierror("Error: exponent at indice %d is not an integer\n",i2); \
+	nsp_pmatrix_destroy(loc);					\
+	return NULL;							\
+      }									\
+    }					
+  if ( P->mn == M->mn ) 
+    {
+      P_POWER(P->m,P->n,i,i);
+    }
+  else if ( P->mn == 1 )
+    {
+      P_POWER(M->m,M->n,0,i);
+    }
+  else if ( M->mn == 1 )
+    {
+      P_POWER(P->m,P->n,i,0);
+    }
+  else
+    {
+      Scierror("Error: arguments with incompatible dimensions\n");
+      return NULL;
+    }
+  return loc;
+}
+
+static int int_pmatrix_dh_p_m (Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *M;
+  CheckStdRhs(2,2);
+  CheckLhs (1, 1);
+  if ((P = GetPMat(stack, 1)) == NULLPMAT)    return RET_BUG;
+  if ((M = GetRealMat(stack, 2)) == NULLMAT)    return RET_BUG;
+  if ((R= nsp_pmatrix_dh_p_m(P,M)) == NULLPMAT)return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(R));
+  return Max(lhs,1);
+}
+
+NspPMatrix *nsp_pmatrix_hat_p_m(NspPMatrix *P,int n)
+{
+  NspPMatrix *Q=NULL,*R=NULL,*loc=NULL;
+  /* general case: power by repeated squaring */
+  if ((Q = nsp_pmatrix_copy(P)) == NULL  )
+    return NULL;
+  while  ( n > 1 )
+    {
+      if ( n % 2 ) 
+	{
+	  if ( R == NULL) 
+	    {
+	      if ((R = nsp_pmatrix_copy(Q))== NULL) goto err;
+	    }
+	  else
+	    {
+	      if ((loc = nsp_pmatrix_mult_p_p(R,Q)) == NULL) goto err;
+	      nsp_pmatrix_destroy(R);
+	      R=loc;
+	    }
+	}
+      n /= 2;
+      if ((loc = nsp_pmatrix_mult_p_p(Q,Q)) == NULL) goto err;
+      nsp_pmatrix_destroy(Q);
+      Q=loc;
+    }
+  if ( R != NULL) 
+    {
+      if ((loc = nsp_pmatrix_mult_p_p(Q,R)) == NULL) goto err;
+      nsp_pmatrix_destroy(R);
+      nsp_pmatrix_destroy(Q);
+    }
+  else 
+    {
+      loc = Q;
+    }
+  return loc;
+ err:
+  if ( Q != NULL) nsp_pmatrix_destroy(Q);
+  if ( R != NULL) nsp_pmatrix_destroy(R);
+  return NULL;
+
+}
+
+
+
+static int int_pmatrix_hat_p_m (Stack stack, int rhs, int opt, int lhs)
+{
+  double d;
+  NspPMatrix *P,*R;
+  CheckStdRhs(2,2);
+  CheckLhs (1, 1);
+  if ((P = GetPMat(stack, 1)) == NULLPMAT)    return RET_BUG;
+  if ( GetScalarDouble (stack, 2, &d) == FAIL) return RET_BUG;
+  if ( !(floor(d) == d )) 
+    {
+      Scierror("Error: exponent should be an integer (%f found)\n",d);
+      return RET_BUG;
+    }
+  if ( d < 0 ) 
+    {
+      Scierror("Error: exponent should be a positive integer (%f found)\n",d);
+      return RET_BUG;
+    }
+  if ((R= nsp_pmatrix_hat_p_m(P,floor(d))) == NULLPMAT) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(R));
+  return Max(lhs,1);
+}
+
+
+nsp_polynom nsp_polynom_add_m(nsp_polynom p, void *v, char type)
+{
+  nsp_polynom loc;
+  if ((loc = nsp_polynom_copy(p))== NULL) 
+    return NULL;
+  if ( loc->mn == 0) return loc;
+  if ( type == 'c') 
+    {
+      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
+	return NULL;
+    }
+  if ( loc->rc_type == 'r' ) 
+    {
+      loc->R[0] += *((double *) v);
+    }
+  else
+    {
+      if ( type == 'r')
+	{
+	  loc->C[0].r += *((double *) v);
+	}
+      else
+	{
+	  doubleC x= * (doubleC *) v;
+	  loc->C[0].r += x.r;
+	  loc->C[0].i += x.i;
+	}
+    }
+  return loc;
+}
+
+#define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
+
+NspPMatrix * nsp_pmatrix_add_m(NspPMatrix *A,NspMatrix *B)
+{
+  int i;
+  NspPMatrix *loc;
+#define PM_ADDM(s1,s2,i1,i2)						\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
+    return(NULLPMAT);							\
+  for (i=0; i < loc->mn ; i++)						\
+    {									\
+      if ((loc->S[i] = nsp_polynom_add_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
+	return NULL;							\
+    }								
+  if ( SameDim(A,B) ) 
+    {
+      PM_ADDM(A->m,A->n,i,i);
+    }
+  else if ( A->mn == 1 )
+    {
+      PM_ADDM(B->m,B->n,0,i);
+    }
+  else if ( B->mn == 1 )
+    {
+      PM_ADDM(A->m,A->n,i,0);
+    }
+  else
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return NULL;
+    }
+  return loc;
+}
+
+
+int int_pmatrix_add_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *M;
+  CheckStdRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((M=GetMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_add_m(P,M)) == NULL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+int int_pmatrix_add_m_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *M;
+  CheckStdRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((M=GetMat(stack,1))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_add_m(P,M)) == NULL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+
+nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type)
+{
+  nsp_polynom loc;
+  if ((loc = nsp_polynom_copy(p))== NULL) 
+    return NULL;
+  if ( loc->mn == 0) return loc;
+  if ( type == 'c') 
+    {
+      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
+	return NULL;
+    }
+  if ( loc->rc_type == 'r' ) 
+    {
+      loc->R[0] -= *((double *) v);
+    }
+  else
+    {
+      if ( type == 'r')
+	{
+	  loc->C[0].r -= *((double *) v);
+	}
+      else
+	{
+	  doubleC x= * (doubleC *) v;
+	  loc->C[0].r -= x.r;
+	  loc->C[0].i -= x.i;
+	}
+    }
+  return loc;
+}
+
+#define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
+
+NspPMatrix * nsp_pmatrix_minus_m(NspPMatrix *A,NspMatrix *B, int flag)
+{
+  int i;
+  NspPMatrix *loc;
+#define PM_MINUSM(s1,s2,i1,i2)						\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
+    return(NULLPMAT);							\
+  for (i=0; i < loc->mn ; i++)						\
+    {									\
+      if ((loc->S[i] = nsp_polynom_minus_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
+	return NULL;							\
+      if ( flag == FALSE ) nsp_mat_minus(loc->S[i]);			\
+    }								
+  if ( SameDim(A,B) ) 
+    {
+      PM_MINUSM(A->m,A->n,i,i);
+    }
+  else if ( A->mn == 1 )
+    {
+      PM_MINUSM(B->m,B->n,0,i);
+    }
+  else if ( B->mn == 1 )
+    {
+      PM_MINUSM(A->m,A->n,i,0);
+    }
+  else
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return NULL;
+    }
+  return loc;
+}
+
+int int_pmatrix_minus_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *M;
+  CheckStdRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((M=GetMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_minus_m(P,M,TRUE)) == NULL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+int int_pmatrix_minus_m_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *M;
+  CheckStdRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((M=GetMat(stack,1))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_minus_m(P,M,FALSE)) == NULL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+
 
 
 
@@ -1238,10 +1617,13 @@ static OpTab PMatrix_func[]={
   {"companion_p",int_pmatrix_companion_p},
   {"roots_p",int_pmatrix_roots},
   {"plus_p_p",int_pmatrix_add},
-  {"minus_p_p",int_pmatrix_minus},
+  {"plus_p_m",int_pmatrix_add_p_m},
+  {"plus_m_p",int_pmatrix_add_m_p},
   {"mult_m_p",int_pmatrix_mult_m_p},
   {"mult_p_p",int_pmatrix_mult_p_p},
   {"dst_p_p",int_pmatrix_mult_tt},
+  {"minus_p_p",int_pmatrix_minus_p_p},
+  {"minus_p", int_pmatrix_minus},
   {"horner", int_pmatrix_horner},
   {"isreal_p", int_pmatrix_isreal},
   {"clean_p",  int_pmatrix_clean},
@@ -1250,6 +1632,10 @@ static OpTab PMatrix_func[]={
   {"floor_p",     int_pmatrix_floor},
   {"round_p",      int_pmatrix_round},
   {"norm_p",      int_pmatrix_norm},
+  {"dh_p_m",  int_pmatrix_dh_p_m},
+  {"hat_p_m",  int_pmatrix_hat_p_m},
+  {"minus_m_p",  int_pmatrix_minus_m_p},
+  {"minus_p_m",  int_pmatrix_minus_p_m},
   {(char *) 0, NULL}
 };
 

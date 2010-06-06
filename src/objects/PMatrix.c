@@ -911,6 +911,8 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
     }
 }
 
+#define nsp_polynom_mult nsp_polynom_mult_std
+
 
 NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B)
 {
@@ -1002,8 +1004,9 @@ NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B)
     }
 }
 
+/* using fft */
 
-nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b)
+nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b)
 {
   int i;
   NspMatrix *A=NULL,*B=NULL,*Af=NULL,*Bf=NULL,*R=NULL;
@@ -1042,6 +1045,66 @@ nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b)
   if ( Bf != NULL) nsp_matrix_destroy(Bf);
   return R;
 }
+
+/* std mult */
+
+nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b)
+{
+  int i,j;
+  NspMatrix *M=NULL;
+  NspMatrix *A = (NspMatrix *)a;
+  NspMatrix *B = (NspMatrix *)b;
+  char type = (a->rc_type == 'c' || b->rc_type == 'c') ? 'c':'r';
+  if ((M= nsp_matrix_create(NVOID,type,1,(a->mn+b->mn-1)))==NULLMAT)
+    return NULL;
+  if ( M->rc_type == 'r') 
+    {
+      for ( i=0; i < M->mn; i++)
+	{
+	  M->R[i] =0.0;
+	  for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	    M->R[i] += A->R[j]*B->R[i-j];
+	}
+    }
+  else 
+    {
+      if ( A->rc_type == 'c' &&  B->rc_type == 'c') 
+	for ( i=0; i < M->mn; i++)
+	  {
+	    M->C[i].r=M->C[i].i =0.0;
+	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	      {
+		doubleC x= A->C[j];
+		nsp_prod_c(&x,&B->C[i-j]);
+		M->C[i].r += x.r;
+		M->C[i].i += x.i;
+	      }
+	  }
+      else if ( A->rc_type == 'c') 
+	for ( i=0; i < M->mn; i++)
+	  {
+	    M->C[i].r=M->C[i].i =0.0;
+	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	      {
+		M->C[i].r += A->C[i].r*B->R[i-j];
+		M->C[i].i += A->C[i].i*B->R[i-j];
+	      }
+	  }
+      else 
+	for ( i=0; i < M->mn; i++)
+	  {
+	    M->C[i].r=M->C[i].i =0.0;
+	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	      {
+		M->C[i].r += A->R[i]*B->C[i-j].r;
+		M->C[i].i += A->R[i]*B->C[i-j].i;
+	      }
+	  }
+    }
+  return M;
+}
+
+
 
 
 
@@ -1286,8 +1349,15 @@ void nsp_matrix_pr_min_max_internal (const void *M, char flag, double *dmin, dou
 
 static char MpInit(const void *M,int *work)
 {
+  char type = 'r';
+  int i;
   *work  = 0;
-  return ( (NspPMatrix *) M)->rc_type;
+  for ( i = 0 ; i < ((NspPMatrix *) M)->mn ; i++) 
+    if ( ((NspPMatrix *) M)->S[i]->rc_type == 'c') 
+      {
+	type = 'c'; break;
+      }
+  return type;
 }
 
 /* Polynomial matrix specific code */

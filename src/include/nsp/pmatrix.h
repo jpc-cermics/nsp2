@@ -101,6 +101,8 @@ extern nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q);
 extern NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B);
 extern nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b);
+extern nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b);
+extern nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b);
 extern NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B);
 extern int nsp_polynom_resize(nsp_polynom poly);
