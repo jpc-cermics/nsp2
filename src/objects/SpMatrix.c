@@ -330,7 +330,7 @@ int nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_lev
 NspSpRowMatrix *nsp_sprowmatrix_redim(NspSpRowMatrix *A, int m, int n)
 {
   NspSpColMatrix *loc;
-  if ((loc=nsp_spcolmatrix_redim((NspSpColMatrix *) A,n,m))==NULL) return NULLSPROW;
+  if ((loc=nsp_spcolmatrix_redim((NspSpColMatrix *) A,n,m,FALSE))==NULL) return NULLSPROW;
   return nsp_spcolmatrix_cast_to_sprow(loc);
 }
 

@@ -594,15 +594,49 @@ int nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_lev
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
+NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n, Boolean inplace)
 {
   int i,k;
   NspSpColMatrix *Loc;
-  if ( A->m*A->n !=  m*n )  /* possible overflow */
+  double mn = ((double) A->m)*((double) A->n);
+
+  if ( m == -1 ) 
     {
-      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %d elements\n",m,n,A->m*A->n);
-      return(NULLSPCOL);
+      if ( n > 0 )
+	{
+	  double mm = floor( mn / (double) n);
+	  if ( mm > INT_MAX )
+	    {
+	      Scierror("Error:\tCannot change size to (%gx%d) because of integer overflow\n",mm,n);
+	      return NULLSPCOL;
+	    }
+	  m = (int) mm;
+	}
+      else
+	m = 0;
     }
+  else if ( n == -1 )
+    {
+      if ( m > 0 )
+	{
+	  double nn = floor( mn / (double) m);
+	  if ( nn > INT_MAX )
+	    {
+	      Scierror("Error:\tCannot change size to (%dx%g) because of integer overflow\n",m,nn);
+	      return NULLSPCOL;
+	    }
+	  n = (int) nn;
+	}
+      else
+	n = 0;
+    }
+
+  if ( mn !=  ((double)m)*((double)n) )
+    {
+      Scierror("Error:\tCannot change size to (%dx%d) since matrix has %g elements\n",m, n, mn);
+      return NULLSPCOL;
+    }
+
   if ((Loc =nsp_spcolmatrix_create(NVOID,A->rc_type,m,n))== NULLSPCOL ) 
     return NULLSPCOL;
   /* initialize iw */
@@ -649,12 +683,21 @@ NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
 	  Loc->D[i1]->iw++;
 	}
     }
-  
-  return Loc;
-}
 
-/*
- */
+  if ( inplace )
+    {
+      /* destroy A sub-objects */
+      for ( k = 0 ; k < A->n ; k++ )
+	nsp_spcolmatrix_col_destroy(A->D[k]);
+      free(A->D);
+      A->m = Loc->m; A->n = Loc->n;
+      A->D = Loc->D;
+      free(Loc);
+      return A;
+    }
+  else
+    return Loc;
+}
 
 /**
  * nsp_spcolmatrix_enlarge_cols:

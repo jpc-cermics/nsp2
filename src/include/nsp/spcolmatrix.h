@@ -104,7 +104,7 @@ extern NspSpColMatrix   *nsp_spcolmatrix_object(NspObject *O);
  extern int nsp_spcolmatrix_get(NspSpColMatrix *A, NspMatrix **RC, NspMatrix **Values); 
  extern int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n); 
  extern void SpColRowDestroy (SpCol *Row); 
- extern NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n); 
+extern NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n, Boolean inplace); 
  extern int nsp_spcolmatrix_enlarge_cols(NspSpColMatrix *Sp, int n); 
  extern int nsp_spcolmatrix_enlarge(NspSpColMatrix *A, int m, int n); 
  extern int nsp_spcolmatrix_concatr(NspSpColMatrix *A, NspSpColMatrix *B); 

@@ -416,6 +416,44 @@ static int int_meth_spcolmatrix_scale_cols(void *self, Stack stack,int rhs,int o
   return 0;
 }
 
+static int int_meth_spcolmatrix_redim(void *self, Stack stack,int rhs,int opt,int lhs)
+{
+  NspSpColMatrix *A = (NspSpColMatrix *) self;
+  int mm, nn;
+  CheckLhs(0,0);
+  CheckRhs (1,2);
+
+  if ( rhs == 1 )
+    {
+      NspMatrix *B;
+      if ((B = GetRealMat (stack, 1)) == NULLMAT)
+	return RET_BUG;
+      if (B->mn != 2)
+	{
+	  Scierror ("Error:\t expecting a vector of size 2\n");
+	  return RET_BUG;
+	}
+      mm = (int) B->R[0];
+      nn = (int) B->R[1];
+    }
+  else
+    {
+      if (GetScalarInt (stack, 1, &mm) == FAIL) return RET_BUG;
+      if (GetScalarInt (stack, 2, &nn) == FAIL) return RET_BUG;
+    }
+
+  if ( mm < -1 || nn < -1 || (mm == -1 && nn == -1) )
+    {
+      Scierror("Error:\tBad arguments (must be >= -1) or not both equal to -1\n");
+      return RET_BUG;
+    }
+
+  if ( nsp_spcolmatrix_redim(A,mm,nn,TRUE) == NULLSPCOL )
+    return RET_BUG;
+
+  return 0;
+}
+
 /* 
  * get_nnz 
  */
@@ -454,6 +492,7 @@ static NspMethods spcolmatrix_methods[] = {
   { "scale_cols",int_meth_spcolmatrix_scale_cols}, 
   { "get_nnz", int_meth_spcolmatrix_get_nnz},
   { "set_diag", int_meth_spcolmatrix_set_diag},
+  { "redim", int_meth_spcolmatrix_redim},
   { (char *) 0, NULL}
 };
 
@@ -734,14 +773,52 @@ static int int_spcolmatrix_from_mtlb(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_redim(Stack stack, int rhs, int opt, int lhs)
 {
-  int m1,n1;
+  int mm,nn;
   NspSpColMatrix  *A;
-  CheckRhs(3,3);
+  CheckRhs(2,3);
   CheckLhs(1,1);
+
   if ( (A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
-  if ( GetScalarInt(stack,2,&m1) == FAIL) return RET_BUG;
-  if ( GetScalarInt(stack,3,&n1) == FAIL) return RET_BUG;
-  if (( A =nsp_spcolmatrix_redim(A,m1,n1)) == NULLSPCOL) return RET_BUG;
+
+  if ( rhs == 2 )
+    {
+      NspMatrix *B;
+      if ((B = GetRealMat (stack, 2)) == NULLMAT)
+	return RET_BUG;
+      if (B->mn != 2)
+	{
+	  Scierror ("Error:\t expecting a vector of size 2\n");
+	  return RET_BUG;
+	}
+      mm = (int) B->R[0];
+      nn = (int) B->R[1];
+    }
+  else
+    {
+      if (GetScalarInt (stack, 2, &mm) == FAIL) return RET_BUG;
+      if (GetScalarInt (stack, 3, &nn) == FAIL) return RET_BUG;
+    }
+
+  if ( mm < -1 || nn < -1 || (mm == -1 && nn == -1) )
+    {
+      Scierror("Error:\tBad arguments (must be >= -1) or not both equal to -1\n");
+      return RET_BUG;
+    }
+
+  if (( A =nsp_spcolmatrix_redim(A,mm,nn,FALSE)) == NULLSPCOL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) A);
+  return 1;
+}
+
+static int int_spcolmatrix_resize2vect(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix  *A;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+
+  if ( (A=GetSpCol(stack,1))== NULLSPCOL) return RET_BUG;
+
+  if (( A =nsp_spcolmatrix_redim(A,-1,1,FALSE)) == NULLSPCOL) return RET_BUG;
   MoveObj(stack,1,(NspObject *) A);
   return 1;
 }
@@ -3141,6 +3218,7 @@ static OpTab SpColMatrix_func[]={
   {"redim_sp",int_spcolmatrix_redim},
   {"matrix_sp",int_spcolmatrix_redim},
   {"reshape_sp",int_spcolmatrix_redim},
+  {"resize2vect_sp", int_spcolmatrix_resize2vect},
   {"concatd_sp_sp" ,  int_spcolmatrix_concatd },
   {"concatr_sp_sp" ,  int_spcolmatrix_concatr },
   {"concatdiag_sp_sp" ,  int_spcolmatrix_concatdiag },
