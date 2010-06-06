@@ -583,13 +583,12 @@ int nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_lev
  * @A: a #NspSpColMatrix
  * @m: an integer 
  * @n: an integer
- * 
- * If the product @mx@n is equal to @A->mw@A->n, 
+ * @inplace: should be TRUE if the operation should be done 
+ *           "in place" (in this case the returned value is *A) 
+ * If the product @mx@n is equal to @A->m x @A->n, 
  * returns a new sparse matrix of size @mx@n. The new 
  * matrix is filled with the values of @A assuming 
- * columnwize order. This operation can be done 
- * without copy on full matrices by here we have to create 
- * a new sparse.
+ * columnwize order. 
  * 
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
