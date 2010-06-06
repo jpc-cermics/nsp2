@@ -596,7 +596,6 @@ int nsp_spcolmatrix_print(NspSpColMatrix *Sp, int indent,char *name, int rec_lev
 
 NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
 {
-  int *xb;
   int i,k;
   NspSpColMatrix *Loc;
   if ( A->m*A->n !=  m*n )  /* possible overflow */
@@ -651,20 +650,6 @@ NspSpColMatrix *nsp_spcolmatrix_redim(NspSpColMatrix *A, int m, int n)
 	}
     }
   
-  /* we sort each col in increasing column order **/
-  if ( (xb =nsp_alloc_int(Loc->m)) == (int*) 0) return(NULLSPCOL);
-  for (i = 0 ; i < Loc->n ; ++i) 
-    {
-      if (Loc->D[i]->size > 1) 
-	{
-	  nsp_qsort_int(Loc->D[i]->J,xb,TRUE,Loc->D[i]->size,'i');
-	  if ( Loc->rc_type == 'r' ) 
-	    C2F(dperm)(Loc->D[i]->R,&Loc->D[i]->size,xb);
-	  else 
-	    C2F(zperm)(Loc->D[i]->C,&Loc->D[i]->size,xb);
-	}
-    }
-  FREE(xb);
   return Loc;
 }
 
