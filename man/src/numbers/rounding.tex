@@ -1,18 +1,16 @@
 % -*- mode: latex -*-
 \mansection{rounding}
 \begin{mandesc} 
-  \short{ceil}{smallest integral value not less than argument} \\
-  \short{fix}{integer part}\\
-  \short{floor}{largest integral value not greater than argument}
-  \short{int}{integer part} \\
-  \short{round}{round to nearest integer, away from zero}
+  \short{ceil}{smallest integer value not less than argument (round toward $+\infty$) } \\
+  \short{floor}{largest integer value not greater than argument (round toward $-\infty$)}\\
+  \short{int}{or} \short{fix}{integer part (round toward $0$)}\\
+  \short{round}{round to nearest integer}
 \end{mandesc}
 \begin{calling_sequence}
 \begin{verbatim}
   y=ceil(x)  
-  y=fix(x)  
+  y=int(x)   // or  y=fix(x)
   y=floor(x)  
-  y=int(x)  
   y=round(x)  
 \end{verbatim}
 \end{calling_sequence}
@@ -24,22 +22,35 @@
 \end{parameters}
 \begin{mandescription}
   these functions return a new matrix with same type as \verb!x! filled 
-  with rounded elements of \verb!x!. For complex numbers, roundind is mapped to the 
+  with rounded elements (to integers) of \verb!x!. For complex numbers, roundind is mapped to the 
   real and complex part of the number. For polynomial matrices round is 
   mapped to the  coefficients of each polynomial.
   \begin{itemize}
-  \item \verb!ceil! returns the smallest integral value that is not less than its
-    argument.
-  \item \verb!fix!, \verb!int! round their argument to their integer part i.e using \verb!floor! for 
-    positive values and \verb!ceil! for strictly negative value.
-  \item \verb!floor! returns the largest integral value that is not greater than
-    its argument.
+  \item \verb!ceil! returns the smallest integer value that is not less than its
+    argument, this is equivalent to rounding toward positive infinity.
+  \item \verb!floor! returns the largest integer value that is not greater than
+    its argument. This is equivalent to rounding toward negative infinity.
+  \item \verb!int! or \verb!fix! round their argument to their integer part i.e using \verb!floor! for 
+    positive values and \verb!ceil! for strictly negative value. This is equivalent to rounding toward zero.
   \item \verb!round! rounds its argument to the nearest integers where halfway cases are rounded
     away from zero.
   \end{itemize}
 \end{mandescription}
-%% \begin{examples}
-%%   \begin{Verbatim}
-    
-%%   \end{Verbatim}
-%% \end{examples}
+
+\begin{examples}
+  \begin{Verbatim}
+x = [-3.2, -2.8, -1.5, -0.9, 0.9, 1.5, 2.8, 3.2]
+
+// round toward infinity
+ceil(x)
+
+// round toward negative infinity
+floor(x)
+
+// round toward zero
+int(x) // or fix(x)
+
+// round to nearest integer
+round(x)   
+  \end{Verbatim}
+\end{examples}
