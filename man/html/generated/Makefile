@@ -14,14 +14,14 @@ all:: manual-silent index-silent manual2-silent  manualindex
 manual2-silent manual-silent:
 	@echo -n "running htlatex..."
 	@export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*'  >& /dev/null
+	htlatex ../manual 'manual,xhtml,uni-html4,3,section+,next,notoc*'  >& /dev/null
 	@cp ../manual.css manual.css
 	@echo "done"
 
 manual:
 	@echo "running htlatex"
 	@export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' 
+	htlatex ../manual 'manual,xhtml,uni-html4,3,section+,next,notoc*' 
 	@cp ../manual.css manual.css
 
 index-silent: 
