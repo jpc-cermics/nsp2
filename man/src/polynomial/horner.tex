@@ -6,7 +6,7 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  R=horner(P,V, vdim=%f, ttmode=%f)
+  R=horner(P,Q, vdim=%f, ttmode=%f)
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -14,9 +14,9 @@
   \begin{varlist}
     \vname{P}: polynomial matrix
     \vname{Q}: a polynomial or numerical matrix
-    \vname{vdim, ttmode}: optional boolean arguments.
-    \vname{R}: a cell whose elements are  polynomial matrices 
-    if \verb!ttmode! is false and a  polynomial matrice if 
+    \vname{vdim, ttmode}: optional named boolean arguments.
+    \vname{R}: a cell whose elements are  polynomial or numerical matrices 
+    if \verb!ttmode! is false and a  polynomial or a numerical matrice if 
     \verb!ttmode! is true.
   \end{varlist}
 \end{parameters}
