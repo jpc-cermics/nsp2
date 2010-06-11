@@ -224,8 +224,9 @@ int nsp_pmatrix_neq(NspObject *A, NspObject *B)
  * Save a Matrix in a file stream 
  */
 
-static int nsp_pmatrix_xdr_save(XDR *xdrs, NspMatrix *M)
+static int nsp_pmatrix_xdr_save(XDR *xdrs, NspPMatrix *M)
 {
+  int i;
 #if 1 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_pmatrix)) == FAIL) return FAIL;
@@ -233,6 +234,14 @@ static int nsp_pmatrix_xdr_save(XDR *xdrs, NspMatrix *M)
   if (nsp_xdr_save_i(xdrs, M->type->id) == FAIL)    return FAIL;
 #endif 
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->m) == FAIL)    return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->n) == FAIL)    return FAIL;
+  if (nsp_xdr_save_c(xdrs, M->rc_type) == FAIL)  return FAIL;
+  for ( i = 0 ; i < M->mn ; i++ ) 
+    {
+      if (nsp_object_xdr_save(xdrs,(NspObject *) M->S[i]) == FAIL) return FAIL;
+    }
+  
   Scierror("pmat_xdr_save: to be implemented \n");
   return OK;
 }
@@ -243,10 +252,23 @@ static int nsp_pmatrix_xdr_save(XDR *xdrs, NspMatrix *M)
 
 static NspPMatrix *nsp_pmatrix_xdr_load(XDR *xdrs)
 {
+  char c;
+  int m, n,i;
+  NspPMatrix *M;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLPMAT;
-  Scierror("pmat_xdr_load: to be implemented \n");
-  return NULLPMAT;
+  if (nsp_xdr_load_i(xdrs, &m) == FAIL) return NULLPMAT;
+  if (nsp_xdr_load_i(xdrs, &n) == FAIL) return NULLPMAT;
+  if (nsp_xdr_load_c(xdrs, &c) == FAIL) return NULLPMAT;
+  if ((M =nsp_pmatrix_create(NVOID,m,n,NULL,-1))== NULLPMAT)
+    return NULLPMAT;
+  for ( i = 0 ; i < M->mn ; i++ ) 
+    {
+      NspObject *Obj =nsp_object_xdr_load(xdrs); 
+      if ( Obj == NULLOBJ ) return NULLPMAT;
+      M->S[i]= (nsp_polynom) Obj;
+    }
+  return M;
 }
 
 

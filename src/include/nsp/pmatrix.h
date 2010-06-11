@@ -137,7 +137,7 @@ char *nsp_pmatrix_type_short_string(NspObject *v);
 NspObject *nsp_pmatrix_loop_extract(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 int nsp_pmatrix_eq(NspObject *A,NspObject *B);
 int nsp_pmatrix_neq(NspObject *A,NspObject *B);
-static int nsp_pmatrix_xdr_save(XDR  *F, NspMatrix *M);
+static int nsp_pmatrix_xdr_save(XDR  *F, NspPMatrix *M);
 static NspPMatrix *nsp_pmatrix_xdr_load(XDR  *F);
 static AttrTab pmatrix_attrs[] ;
 static NspMethods *pmatrix_get_methods(void);
