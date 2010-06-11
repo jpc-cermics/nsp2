@@ -2,9 +2,12 @@
 
 \hypertarget{arrays}{}
 
-This chapter is devoted to basic operations, functions or methods which apply on
-any kind of matrices (numerical, strings, arrrays of cells, ...) and sometimes
-on other nsp objects (list, hash table,...).
+Basic operations, functions or methods which apply on any kind of matrices 
+(numerical, strings, arrrays of cells, ...) and sometimes on other 
+nsp objects (list, hash table,...).
+
+\HCode{<hr>}
+basic array operations
 
 \begin{quote}
 \noindent
@@ -15,20 +18,37 @@ on other nsp objects (list, hash table,...).
 \hyperlink{concatr}{concatr} - method, catenate a matrix by another one on the right side\\   
 \hyperlink{concatd}{concatd} - method, catenate a matrix by another one on the down side\\   
 \hyperlink{set_diag}{set\_diag} - (method) set a diagonal of a matrix \\
+\hyperlink{repmat}{repmat} - replicate a matrix\\
+\end{quote}
+
+
+\HCode{<hr>}
+sizes, tests, reshape 
+
+\begin{quote}
+\noindent
 \hyperlink{size}{size} - dimensions of an array, size of some objects \\
 \hyperlink{length}{length} - length of an object  \\
 \hyperlink{numel}{numel} - length of an object, number of elements of an object  \\
-\hyperlink{repmat}{repmat} - replicate a matrix\\
-\hyperlink{perms}{perms} - generate all permutations of a vector\\
-\hyperlink{nchoosek}{nchoosek} - compute a binomial coefficient or all k-subsets of a set \\
-\hyperlink{perm_elem}{perm\_elem} - (method) apply (in place) an elementary permutation to a vector or matrix \\
-\hyperlink{redim}{redim} - reshape a matrix\\
-\hyperlink{matrix}{matrix} - reshape a matrix\\
-\hyperlink{reshape}{reshape} - reshape a matrix\\
 \hyperlink{isvector}{isvector} - vector test\\
 \hyperlink{isscalar}{isscalar} - scalar test\\
 \hyperlink{isempty}{isempty} - empty matrix or object test\\
+\hyperlink{redim}{redim} - reshape a matrix\\
+\hyperlink{matrix}{matrix} - reshape a matrix\\
+\hyperlink{reshape}{reshape} - reshape a matrix\\
 \end{quote}
+
+
+\HCode{<hr>}
+permutations and subsets
+
+\begin{quote}
+\noindent
+\hyperlink{perms}{perms} - generate all permutations of a vector\\
+\hyperlink{nchoosek}{nchoosek} - compute a binomial coefficient or all k-subsets of a set \\
+\hyperlink{perm_elem}{perm\_elem} - (method) apply (in place) an elementary permutation to a vector or matrix \\
+\end{quote}
+
 
 \input arrays/indexing.tex
 \input arrays/matconcat.tex
