@@ -99,8 +99,6 @@ intmax(1u64)
 \begin{itemize}
 \item \verb+A.itype[]+ returns the integer type of the \emph{IMat} A.
 \item \verb+A.retype[int_type_str]+ in place cast of A onto the integer type specified by the string \verb+int_type_str+.
-\item \verb+A.intmin[]+ returns the min integer corresponding to the integer type of A.
-\item \verb+A.intmax[]+ returns the max integer corresponding to the integer type of A.
 \item \verb+A.add[B]+  add the IMat matrix \verb+B+ to the IMat matrix \verb+A+ (\verb+A+ and \verb+B+ must have
 the same  integer type).
 \item \verb+A.scale_rows[x]+ multiplies each row i of A with the scalar \verb+x(i)+:
@@ -200,6 +198,8 @@ variable  \verb+col+ being equal to the ith column of \verb+A+ at the i-th itera
 
 \itemdesc{Some functions}
 \begin{itemize}
+   \item \verb+intmin(A)+ returns the min integer corresponding to the integer type of A.
+   \item \verb+intmax(A)+ returns the max integer corresponding to the integer type of A.
    \item \verb+numel(A)+ or \verb+length(A)+ returns the number of entries in \verb+A+.
    \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
 of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
