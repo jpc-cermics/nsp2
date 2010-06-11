@@ -138,4 +138,9 @@ h4,h3,h2, .likesubsectionHead {
 
 .xxul  { list-style: none;  margin-left:0em;}
 .itemdesc { color: #000066 ;}
+
+/* colored itemize without bullets */
+.bitem { color: #000066 ;}
+ul.nbitemize {list-style-type: none;}
+
 /* end css.sty */

@@ -42,7 +42,13 @@
 \newenvironment{secbiblio}{\paragraph{Bibliography}}{}
 
 \def\vname#1{\item \texttt{#1}}
+
 \newenvironment{varlist}{%
+  \begin{itemize}}{\end{itemize}}
+
+\def\coloritem#1{\item \HCode{<span class="bitem">}#1{\HCode{</span>}}}%
+
+\newenvironment{nbitemize}{%
   \begin{itemize}}{\end{itemize}}
 
 \def\manlink#1#2{\hyperlink{#2}{#1}\quad}
@@ -51,17 +57,12 @@
  {\HCode{<div class="programlisting">}\verbatim}%
  {\endverbatim\HCode{</div>}}
 
-\def\itemdesc#1{\HCode{<div class="itemdesc">}#1{\HCode{</div>}}}
+\def\itemdesc#1{\HCode{<div class="itemdesc">}#1{\HCode{</div>}}}%
 
 \newenvironment{program}%
  {\HCode{<div class="programlisting"><pre>}}%
  {\HCode{</pre></div>}}
 
-
 \def\R{\mathbb R}
-
-
-
-
 \def\mansep{ -- \hfill}
 

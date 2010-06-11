@@ -6,14 +6,14 @@ MANPAGE=model/model.tex
 
 manual::
 	export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,3,section+,next,notoc*' '-cunihtf' '' '\def\manname{$(MANPAGE)}'
+	htlatex ../manual 'manual,xhtml,3,section+,next,notoc*' '-cunihtf' '' '\def\manname{$(MANPAGE)}'
 	$(RM) -f  manual.css
 	cp ../../html/manual.css manual.css
 
 manual-1:
 	@echo "running htlatex"
 	@export TEXINPUTS=`pwd`/../../src//:: ; \
-	htlatex ../manual 'xhtml,uni-html4,3,section+,next,notoc*' '-cunihtf' '' '\def\manname{$(MANPAGE)}'
+	htlatex ../manual 'manual,xhtml,uni-html4,3,section+,next,notoc*' '-cunihtf' '' '\def\manname{$(MANPAGE)}'
 	cp ../../html/manual.css manual.css
 
 index: 
