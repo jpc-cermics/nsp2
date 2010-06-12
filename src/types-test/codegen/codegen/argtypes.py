@@ -2901,6 +2901,7 @@ else:
 
 arg = ULongArg()
 matcher.register('gulong', arg)
+matcher.register('size_t', arg)
 
 arg = Int64Arg()
 matcher.register('gint64', arg)
