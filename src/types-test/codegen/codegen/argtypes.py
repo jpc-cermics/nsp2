@@ -1928,18 +1928,25 @@ class GdkRectangleArg(ArgType):
         info.attrcodeafter.append('  return (NspObject *) gboxed_create(NVOID,GDK_TYPE_RECTANGLE, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle);')
 
 class NspObjectArg(ArgType):
+    def __init__(self,fullname,name,shortname,nsp_arg_type):
+        self.name = name
+	self.fullname = fullname
+	self.shortname = shortname
+        self.shortname_uc = string.upper(shortname)
+        self.nsp_arg_type = nsp_arg_type
 
     def write_param(self,upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref):
         info.varlist.add('NspObject', '*' + pname)
         info.add_parselist('obj', ['&' + pname], [pname])
         info.arglist.append(pname)
+
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :
-            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+            pset_name  ='zz((%s *) self)->obj->%s' % (upinfo,pname) 
         else:
-            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+            pset_name  ='zz((%s *) self)->%s' % (upinfo,pname) 
         self.write_param(upinfo, ptype, pname, pdflt, pnull, psize,info, pos, byref)
-        info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
+        info.attrcodebefore.append('ZZZ  %s= %s;\n' % (pset_name,pname))
 
     def write_return(self, ptype, ownsreturn, info):
         info.varlist.add("NspObject", "*ret")
@@ -1959,6 +1966,54 @@ class NspObjectArg(ArgType):
     def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be printed """
         return  '        if ( %s->%s->type->pr(%s->%s,indent+2,"%s",rec_level+1)==FALSE) return FALSE;\n' % (varname,pname,varname,pname,pname)
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef, psize, pcheck ):
+	"""used when a field is to be initialized """
+        return '  %s->%s = NULL%s;\n' % (varname,pname,self.shortname_uc);
+
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( NSP_OBJECT(A->%s)->type->eq(A->%s,loc->%s) == FALSE ) return FALSE;\n' % (pname,pname,pname)
+
+    def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+        return '  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(%s->%s)) == FAIL) return FAIL;\n' % (varname,pname)
+
+    def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        return '  if ((%s->%s =(%s *) nsp_object_xdr_load(xdrs))== NULL%s) return NULL;\n' % (varname,pname,self.fullname,self.shortname_uc)
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+	"""used to free allocated fields  """
+        if byref == 't':
+            ind = '  ' 
+        else:
+            ind = ''
+        str = ind + ('  if ( %s->%s != NULL ) \n' % (varname,pname))
+        return str + ind + ('    nsp_%s_destroy(&%s->%s);\n' % (string.lower(self.name),varname,pname))
+
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+	"""used when a variable is to be copied """
+        if right_varname:
+            # this part is used in copy or full_copy 
+            str =  '  if ( %s->%s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (right_varname,pname,left_varname,pname)
+            str = str + '      if ((%s->%s = (%s *) %s_and_name("%s",NSP_OBJECT(%s->%s))) == NULL%s) return NULL;\n    }\n' \
+                % (left_varname,pname,self.fullname,f_copy_name, pname,right_varname,pname,self.shortname_uc)
+        else:
+            # this part is only used on create and we do not want to copy objects. 
+            str =  '  if ( %s == NULL )\n    { %s->%s = NULL;}\n  else\n    {\n' % (pname,left_varname,pname)
+            str = str + '      if ((%s->%s = (%s *)  zzz%s_and_name("%s",NSP_OBJECT(%s))) == NULL%s) return NULL;\n    }\n' \
+                % (left_varname,pname,self.fullname,f_copy_name,pname,pname,self.shortname_uc)
+            str = '  %s->%s= %s;\n' % (left_varname,pname,pname)
+        return str
+
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        str = '  if ( %s->%s == NULL%s) \n    {\n' % (varname,pname,self.shortname_uc);    
+        str = str + '     if (( %s->%s =(NspObject*) nsp_matrix_create("%s",\'r\',0,0)) == NULL)\n       return FAIL;\n    }\n' \
+            % (varname,pname,pname)
+        return str
 
 
 # generic for NspXXX
@@ -2877,10 +2932,8 @@ matcher.register('GtkTreePath*', GtkTreePathArg())
 matcher.register('GdkRectangle*', GdkRectanglePtrArg())
 matcher.register('GtkAllocation*', GdkRectanglePtrArg())
 matcher.register('GdkRectangle', GdkRectangleArg())
-matcher.register('NspObject*', NspObjectArg())
 matcher.register('GdkNativeWindow', ULongArg())
 matcher.register_object('GObject','GObject', None, 'G_TYPE_OBJECT')
-
-
+matcher.register('NspObject*', NspObjectArg('NspObject','Object','Obj','object'))
 
 del arg
