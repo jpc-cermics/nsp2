@@ -78,6 +78,7 @@ NspSpColMatrix *new_spcolmatrix();
 
 
 #define NULLSPCOL (  NspSpColMatrix *) 0
+#define NULLSPCOLMAT (  NspSpColMatrix *) 0
 
 /* SpColMatObj.c */
 
