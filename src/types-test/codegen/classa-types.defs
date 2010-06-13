@@ -27,7 +27,7 @@
    '("NspBMatrix*" "cla_bval")
    '("NspList*" "cla_lval")
    ;;'("NspObject*" "spval")
-   '("NspSpColMatrix*" "spval1")
+   ;;'("NspSpColMatrix*" "spval1")
    ;;'("gboolean" "bzzz")
    ;;'("hfoo*" "zz" "hidden")
    ;;'("hfoo" "xx" "hidden" )

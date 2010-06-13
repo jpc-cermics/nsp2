@@ -47,7 +47,6 @@ struct _NspClassA {
   NspMatrix* cla_val;
   NspBMatrix* cla_bval;
   NspList* cla_lval;
-  NspSpColMatrix* spval1;
 };
 
 extern int nsp_type_classa_id;
@@ -68,7 +67,7 @@ NspClassA *new_classa();
 
 #define NULLCLASSA (NspClassA*) 0
 
-extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspSpColMatrix* spval1,NspTypeBase *type);
+extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
 extern NspClassA *nsp_classa_create_default(char *name);
 
 /* from NspClassAObj.c */
@@ -99,7 +98,7 @@ extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
  * of classa.h
  */
 
-#line 103 "./classa.h"
+#line 102 "./classa.h"
 #endif /* NSP_INC_NspClassA */ 
 
 #ifdef NspClassA_Private 
@@ -120,6 +119,6 @@ static NspClassA *nsp_classa_create_void(char *name,NspTypeBase *type);
  * of classa.h
  */
 
-#line 124 "./classa.h"
+#line 123 "./classa.h"
 #endif /* NspClassA_Private */
 
