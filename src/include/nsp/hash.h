@@ -105,7 +105,7 @@ extern int nsp_hash_merge(NspHash *H1, NspHash *H2);
 extern int nsp_hash_get_next_object(NspHash *H, int *i, NspObject **O); 
 extern int nsp_hash_enter_copy(NspHash *H, NspObject *O); 
 extern int nsp_hash_enter(NspHash *H, NspObject *O); 
-extern void nsp_hash_remove(NspHash *H, char *str); 
+extern void nsp_hash_remove(NspHash *H, const char *str); 
 extern int nsp_hash_find_and_copy(NspHash *H, char *str, NspObject **O); 
 extern int nsp_hash_find(NspHash *H,const char *str, NspObject **O);
 extern NspBMatrix  *nsp_hash_equal(NspHash *L1, NspHash *L2);

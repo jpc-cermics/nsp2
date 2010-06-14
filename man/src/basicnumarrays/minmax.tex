@@ -35,65 +35,61 @@
 \end{parameters}
 
 \begin{mandescription}
-
-  These functions have 2 differents forms.
-\begin{itemize}
-\item \itemdesc{form 1}
-Applied on only one matrix (of size $m \times n$) with the optional argument \verb+dim=mode+ 
-(if not provided 'full' is assumed) they compute the $min$ or $max$ element(s):
+These functions have 2 differents forms. In the first form the min, max operators are 
+applied to the entries of a unique matrix, in the second form the  min, max operators are 
+applied to entries from a set of matrices. More precisely:
+\begin{description}
+\item[form 1]: is used when only one $m \times n$ sized matrix is given as argument. Depending on the value of the 
+           optional argument \verb+dim=mode+ (with 'full' as default value) they compute the $min$ or $max$ element(s):
   \begin{itemize}
     \item among all the matrix elements if dim='full' or 0:
      $$
-           m = \min_{i,j} A_{i,j}; \; M = \max_{i,j} A_{i,j}
+           m = \min_{i,j} A_{i,j}\,; \; M = \max_{i,j} A_{i,j}\, ;
      $$
     \item along the dimension 1 when dim=1 or 'row' (we get the min or max of each column);
      $$
-           m_j = \min_i A_{i,j}; \; M_j = \max_i A_{i,j}; 
+           m_{1,j} = \min_i A_{i,j}\,; \; M_{1,j} = \max_i A_{i,j}\, ;
      $$
      $m$ and $M$ are then row vectors ($1 \times n$).
     \item along the dimension 2 when dim=2 or 'col' (we get the min or max of each row);
      $$
-           m_i = \min_j A_{i,j}; \; M_i = \max_j A_{i,j}; 
+           m_{i,1} = \min_j A_{i,j}\,; \; M_{i,1} = \max_j A_{i,j}\,; 
      $$
      $m$ and $M$ are then column vectors ($m \times 1$).
     \item along the first non singleton dimension of the given matrix if dim='m' (matlab compatibility).
   \end{itemize}
-Additionnaly the first index of the corresponding min or max could be provided (when dim=0, it is 
+
+Additionnaly the first index of the corresponding min or max is provided in the returned values (when dim=0, it is 
 given in the ``one way indexing'' meaning of the matrix). The \verb+minmax+ function behave exactly
 as described. It is practical since very often one needs both the min and max of a vector or matrix.  
-     
-\item \itemdesc{form2}
-  This form (which don't have the optional argument dim) applies on any number of matrices of {\bf same
-  sizes} says $m \times n$ (with the usual short cut that you can use any scalar in place of such a matrix). 
-  The result is a matrix of size  $m \times n$ with:
-  $$
-      m_{i,j} = \min_k Ak_{i,j}, \;  M_{i,j} = \max_k Ak_{i,j}
-  $$
-  and $km_{i,j}$ or $kM_{i,j}$ gives the (first) matrix number where the min or max is got.
-  There is no second form for the minmax function.
 
-\item \itemdesc{Remarks}
+\item[form2]: is used when the argument list contains more than one matrix. It applies on any number of matrices of 
+             the {\bf same size}, says $m \times n$ (with the usual short cut that you can use any scalar in place of such a matrix). 
+  The result is a $m \times n$ sized matrix with entries given by:
+    $$
+        m_{i,j} = \min_k Ak_{i,j}\,,  M_{i,j} = \max_k Ak_{i,j}\,,
+  $$    
+  and $km_{i,j}$ or $kM_{i,j}$ gives the (first) matrix number where the min or max is got.
+  Note that this second form is not implemented for the minmax function.
+\end{description}
+\itemdesc{Remarks}
 \begin{itemize} 
 \item Nan values are not taking into account in these functions except when the min or max is to 
-be taken among only Nan values. 
-\item For the first form you can use the syntax \verb+min(A,mode)+ (in place of \verb+min(A,dim=mode)+)
-if you use a string ('row', 'col',..) as dim descriptor (if you use an integer the interpretor will 
-recognize a call of the second form). This could be useful for scilab compatibility.
+  be taken among only Nan values. 
+\item In the first form you can use the syntax \verb+min(A,mode)+ (in place of \verb+min(A,dim=mode)+)
+  if you use a string ('row', 'col',..) as dim descriptor (if you use an integer the interpretor will 
+  recognize a call of the second form). This can be useful for scilab compatibility.
 \item for sparse matrices: 
-\begin{itemize}
-\item \verb+minmax+ is not defined
-\item the second form is (currently) limited to two matrices. Use \verb+max(A1,max(A2,A3))+ to
-simulate \verb+max(A1,A2,A3)+. 
-\item for the second form \verb+[m,km]=min(A1,A2)+, \verb+[M,kM]=max(A1,A2)+ the matrices 
-      of indices $km$ or $kM$ are sparse matrices as  no index (1 or 2) is provided when 
-      both $A1_{i,j}$ and  $A2_{i,j}$ are null.
+  \begin{itemize}
+  \item \verb+minmax+ is not defined
+  \item the second form is (currently) limited to two matrices. Use \verb+max(A1,max(A2,A3))+ to
+    simulate \verb+max(A1,A2,A3)+. 
+  \item for the second form \verb+[m,km]=min(A1,A2)+, \verb+[M,kM]=max(A1,A2)+ the matrices 
+    of indices $km$ or $kM$ are sparse matrices as  no index (1 or 2) is provided when 
+    both $A1_{i,j}$ and  $A2_{i,j}$ are null.
+  \end{itemize}
 \end{itemize}
-\end{itemize}
-
-\end{itemize}
-
 \end{mandescription}
-
 
 %--example 
 \begin{examples}

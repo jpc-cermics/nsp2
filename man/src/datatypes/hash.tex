@@ -42,9 +42,11 @@ objects.
 
 \itemdesc{methods}
   \begin{varlist}
-  \vname{.delete[S1,...,Sn]}: delete the entries whose keys are present in the string matrices 
-  \verb+S1,...,Sn+.
-  \vname{.remove[S1,...,Sn]}: same as delete for compatibility with list.
+  \vname{.delete[O1,...,On]}: delete the entries whose keys are present in the objects
+  \verb+O1,...,On+. \verb+Oi+ can be string matrices or hash tables. If \verb+Oi+ is 
+  a string matrix the keys are the entries of \verb+Oi+, if \verb+Oi+ is a hash table the 
+  keys are given by the hash table keys i.e \verb+Oi.__keys+.
+  \vname{.remove[O1,...,On]}: same as delete for compatibility with list.
   \vname{.enter[var1,...,varn,name1=val1,...]}: enter new objects in the hash table with keys 
   given by their names or by explicit naming (\verb+name=val+). Note that if some keys 
   already preexist in the hash table, their value are replaced by new ones. 

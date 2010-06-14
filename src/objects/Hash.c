@@ -235,7 +235,7 @@ int nsp_hash_enter(NspHash *H, NspObject *O)
  * 
  **/
 
-void nsp_hash_remove(NspHash *H, char *str)
+void nsp_hash_remove(NspHash *H,const char *str)
 {
   NspObject *O= NULLOBJ;
   nsp_hsearch(H,str,&O,H_REMOVE);

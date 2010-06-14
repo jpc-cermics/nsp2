@@ -739,9 +739,27 @@ static int int_htdelete(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   for ( j = 1; j <= rhs ; j++ )
     {
-      if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
-      for ( i = 0 ; i < S->mn ; i++ ) 
-	nsp_hash_remove(H,S->S[i]);
+      if ( IsSMatObj(stack,j)) 
+	{
+	  if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
+	  for ( i = 0 ; i < S->mn ; i++ ) 
+	    nsp_hash_remove(H,S->S[i]);
+	}
+      else
+	{
+	  NspHash *H1;
+	  NspObject *O1;
+	  if ((H1 = GetHash(stack,j)) == NULLHASH) return RET_BUG;        
+	  while (1) 
+	    {
+	      int rep =nsp_hash_get_next_object(H1,&i,&O1);
+	      if ( O1 != NULLOBJ )
+		{ 
+		  nsp_hash_remove(H, NSP_OBJECT(O1)->name);
+		}
+	      if ( rep == FAIL) break;
+	    }
+	}
     }
   return 0;
 }
