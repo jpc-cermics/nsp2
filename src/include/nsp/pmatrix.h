@@ -60,23 +60,20 @@ NspPMatrix *new_pmatrix();
 
 extern NspPMatrix *nsp_pmatrix_object(NspObject *O); 
 
-
-
 /* NspPMatrix.c */
 
 extern NspMatrix *nsp_pmatrix_length(NspPMatrix *A); 
-extern NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A, nsp_const_string str, int flag); 
+extern NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A);
 extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M); 
 extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 
-extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag); 
+extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int flag); 
 extern NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init);
 extern NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
 extern NspPMatrix *nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err); 
 extern NspPMatrix *nsp_pmatrix_extract_elements(NspPMatrix *A, NspMatrix *Elts, int *err); 
 extern NspPMatrix *nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err); 
 extern NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A); 
-extern int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2); 
 extern int nsp_pmatrix_add_columns(NspPMatrix *A, int n); 
 extern int nsp_pmatrix_add_rows(NspPMatrix *A, int m); 
 extern int nsp_pmatrix_concat_right(NspPMatrix *A,const NspPMatrix *B); 
@@ -86,26 +83,16 @@ extern int nsp_pmatrix_resize(NspPMatrix *A, int m, int n);
 extern int nsp_pmatrix_set_rows(NspPMatrix *A, NspMatrix *Rows, NspPMatrix *B); 
 extern int nsp_pmatrix_set_submatrix(NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B); 
 extern int nsp_pmatrix_setrc(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B); 
-extern int nsp_pset_polynom(int n, doubleC *s1, nsp_polynom *s2); 
-extern nsp_polynom nsp_basic_to_polynom(doubleC *d, char type); 
-extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 
-extern nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P); 
 extern unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M);
 extern void nsp_pmatrix_destroy(NspPMatrix *A); 
 extern int nsp_pmatrix_info(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
 extern int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_level); 
 extern void nsp_polynom_destroy(nsp_polynom *P); 
-extern nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q);
 extern NspPMatrix *nsp_pmatrix_add(NspPMatrix *A, NspPMatrix *B);
-extern nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q);
 extern NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B);
-extern nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b);
-extern nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b);
-extern nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b);
 extern NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B);
-extern int nsp_polynom_resize(nsp_polynom poly);
 
 extern int IsPMatObj (Stack stack, int i); 
 extern int IsPMat (NspObject *O); 
@@ -116,16 +103,31 @@ extern nsp_polynom GetPolynom (Stack stack, int i);
 extern NspBMatrix *PMatCompOp (NspPMatrix *A, NspPMatrix *B, char *op); 
 extern int PMatFullComp (NspPMatrix *A, NspPMatrix *B, char *op, int *err); 
 extern NspMatrix *nsp_matrix_companion(NspMatrix *A);
-extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 extern NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M);
+extern NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k);
+extern NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V);
+
+/* polynomials */
+extern int nsp_polynom_resize(nsp_polynom poly);
+extern nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q);
+extern nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q);
+extern nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b);
+extern nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b);
+extern nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b);
+extern int nsp_pset_polynom(int n, const doubleC *s1, nsp_polynom *s2); 
+extern nsp_polynom nsp_basic_to_polynom(const doubleC *d, char type); 
+extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 
+extern nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P); 
+extern nsp_polynom nsp_polynom_power(nsp_polynom p,int n);
+extern nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type);
+extern nsp_polynom nsp_polynom_add_m(nsp_polynom p, void *v, char type);
+extern NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b);
+extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
 
 extern double nsp_hornerdd (const double *a,const int n, double x);
 extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
 extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);
 extern doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x);
-extern NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b);
-extern NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k);
-extern NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V);
 
 #endif 
 
@@ -141,4 +143,5 @@ static int nsp_pmatrix_xdr_save(XDR  *F, NspPMatrix *M);
 static NspPMatrix *nsp_pmatrix_xdr_load(XDR  *F);
 static AttrTab pmatrix_attrs[] ;
 static NspMethods *pmatrix_get_methods(void);
+
 #endif 

@@ -241,8 +241,6 @@ static int nsp_pmatrix_xdr_save(XDR *xdrs, NspPMatrix *M)
     {
       if (nsp_object_xdr_save(xdrs,(NspObject *) M->S[i]) == FAIL) return FAIL;
     }
-  
-  Scierror("pmat_xdr_save: to be implemented \n");
   return OK;
 }
 
@@ -369,7 +367,7 @@ nsp_polynom GetPolynom(Stack stack, int i)
  * with one polynom of degree n-1
  */
 
-static int int_matrix_to_pmatrix(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P; NspMatrix *A;
   CheckRhs(1,1);
@@ -570,7 +568,7 @@ int int_pmatrix_concatr_m_s(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   if ((HMat2 = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if (( Res=nsp_matrix_to_pmatrix(HMat1,NULL,0)) == NULLPMAT) return RET_BUG;
+  if (( Res=nsp_matrix_to_pmatrix(HMat1)) == NULLPMAT) return RET_BUG;
 
   if ( HMat2->mn != 0)
     {
@@ -641,7 +639,7 @@ int int_pmatrix_concatd_m_s(Stack stack, int rhs, int opt, int lhs)
       return 1;
     }
   if ((HMat2 = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if (( Res=nsp_matrix_to_pmatrix(HMat1,NULL,0)) == NULLPMAT) return RET_BUG;
+  if (( Res=nsp_matrix_to_pmatrix(HMat1)) == NULLPMAT) return RET_BUG;
 
   if ( HMat2->mn != 0)
     {
@@ -1225,61 +1223,6 @@ static int int_pmatrix_minus (Stack stack, int rhs, int opt, int lhs)
 
 #define nsp_polynom_mult nsp_polynom_mult_std
 
-nsp_polynom nsp_polynom_power(nsp_polynom p,int n)
-{
-  NspMatrix *P = (NspMatrix *) p;
-  NspMatrix *R = NULL;
-  NspMatrix *Q = NULL;
-  NspMatrix *loc = NULL;
-  if ( P->mn == 2 && P->rc_type == 'r' && P->R[0]==0 && P->R[1]== 1) 
-    {
-      /* detect the special case where P=x^n */
-      int i;
-      if ((loc= nsp_matrix_create(NVOID,'r', 1 , n+1))==NULLMAT)
-	return NULL;
-      for ( i = 0 ; i < loc->mn;i++ ) loc->R[i]=0.0;
-      loc->R[n]=1;
-      return loc;
-    }
-  /* general case: power by repeated squaring */
-  if ((Q = nsp_polynom_copy(p))== NULL) 
-    return NULL;
-  while  ( n > 1 )
-    {
-      if ( n % 2 ) 
-	{
-	  if ( R == NULL) 
-	    {
-	      if ((R = nsp_polynom_copy(Q))== NULL) goto err;
-	    }
-	  else
-	    {
-	      if ((loc = nsp_polynom_mult(R,Q)) == NULL) goto err;
-	      nsp_polynom_destroy(&R);
-	      R=loc;
-	    }
-	}
-      n /= 2;
-      if ((loc = nsp_polynom_mult(Q,Q)) == NULL) goto err;
-      nsp_polynom_destroy(&Q);
-      Q=loc;
-    }
-  if ( R != NULL) 
-    {
-      if ((loc = nsp_polynom_mult(Q,R)) == NULL) goto err;
-      nsp_polynom_destroy(&R);
-      nsp_polynom_destroy(&Q);
-    }
-  else 
-    {
-      loc = Q;
-    }
-  return loc;
- err:
-  if ( Q != NULL) nsp_polynom_destroy(&Q);
-  if ( R != NULL) nsp_polynom_destroy(&R);
-  return NULL;
-}
 
 NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M) 
 {
@@ -1403,36 +1346,6 @@ static int int_pmatrix_hat_p_m (Stack stack, int rhs, int opt, int lhs)
 }
 
 
-nsp_polynom nsp_polynom_add_m(nsp_polynom p, void *v, char type)
-{
-  nsp_polynom loc;
-  if ((loc = nsp_polynom_copy(p))== NULL) 
-    return NULL;
-  if ( loc->mn == 0) return loc;
-  if ( type == 'c') 
-    {
-      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
-	return NULL;
-    }
-  if ( loc->rc_type == 'r' ) 
-    {
-      loc->R[0] += *((double *) v);
-    }
-  else
-    {
-      if ( type == 'r')
-	{
-	  loc->C[0].r += *((double *) v);
-	}
-      else
-	{
-	  doubleC x= * (doubleC *) v;
-	  loc->C[0].r += x.r;
-	  loc->C[0].i += x.i;
-	}
-    }
-  return loc;
-}
 
 #define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
 
@@ -1496,36 +1409,6 @@ int int_pmatrix_add_m_p(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type)
-{
-  nsp_polynom loc;
-  if ((loc = nsp_polynom_copy(p))== NULL) 
-    return NULL;
-  if ( loc->mn == 0) return loc;
-  if ( type == 'c') 
-    {
-      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
-	return NULL;
-    }
-  if ( loc->rc_type == 'r' ) 
-    {
-      loc->R[0] -= *((double *) v);
-    }
-  else
-    {
-      if ( type == 'r')
-	{
-	  loc->C[0].r -= *((double *) v);
-	}
-      else
-	{
-	  doubleC x= * (doubleC *) v;
-	  loc->C[0].r -= x.r;
-	  loc->C[0].i -= x.i;
-	}
-    }
-  return loc;
-}
 
 #define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
 
@@ -1633,7 +1516,7 @@ static OpTab PMatrix_func[]={
   {"le_p_p" ,  int_pmatrix_le },
   {"lt_p_p" ,  int_pmatrix_lt },
   {"ne_p_p" ,  int_pmatrix_neq },
-  {"m2p", int_matrix_to_pmatrix},
+  {"m2p", int_pmatrix_m2p},
   {"quote_p", int_pmatrix_transpose},
   {"companion_m",int_pmatrix_companion_m},
   {"companion_p",int_pmatrix_companion_p},

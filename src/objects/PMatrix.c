@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -28,15 +28,30 @@
 #include "nsp/nsp_lapack.h"
 
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent);
+static int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2);
 
-/*
- * Copies a polynom which is nothing but a matrix 1xn
- */
+/**
+ * nsp_polynom_copy:
+ * @P: a nsp_polynom pointer 
+ * 
+ * returns a polynom copy which is nothing but a matrix 1xn
+ * 
+ * Return value: a new #nsp_polynom or %NULL
+ **/
 
 nsp_polynom nsp_polynom_copy(nsp_polynom P)
 {
   return((nsp_polynom ) nsp_matrix_copy((NspMatrix *) P));
 }
+
+/**
+ *nsp_polynom_copy_with_name:
+ * @P: a nsp_polynom pointer 
+ * 
+ * returns a polynom copy of @P with the same name.
+ * 
+ * Return value: a new #nsp_polynom or %NULL
+ **/
 
 nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P)
 {
@@ -44,14 +59,36 @@ nsp_polynom nsp_polynom_copy_with_name(nsp_polynom P)
   return (nsp_polynom ) nsp_object_copy_with_name(Obj);
 }
 
-/*
- * doubleC --> poly 
- */
+/**
+ *nsp_polynom_copy_and_name:
+ * @name: string for the name to give to the copy 
+ * @P: a nsp_polynom pointer 
+ *
+ * returns a copy of polynom @P with name given by @name.
+ * 
+ * 
+ * Return value: a new #nsp_polynom or %NULL
+ **/
 
-nsp_polynom nsp_basic_to_polynom(doubleC *d, char type)
+nsp_polynom nsp_polynom_copy_and_name(const char *name, nsp_polynom P)
+{
+  return (nsp_polynom) nsp_object_copy_and_name(name,(NspObject *) P);
+}
+
+/**
+ * nsp_basic_to_polynom:
+ * @d: a double or doubleC pointer 
+ * @type: a characterwhich gives the type of @d
+ * 
+ * returns a polynom of 0 degree with coefficient set to@d.
+ * 
+ * Return value: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_basic_to_polynom(const doubleC *d, char type)
 {
   NspMatrix *A;
-  if ((A= nsp_matrix_create(NVOID,type,(int)1,(int)1))==NULLMAT)
+  if ((A= nsp_matrix_create("pe",type,(int)1,(int)1))==NULLMAT)
     return((nsp_polynom ) 0);
   if ( type == 'r') 
     {
@@ -65,23 +102,37 @@ nsp_polynom nsp_basic_to_polynom(doubleC *d, char type)
   return((nsp_polynom ) A);
 }
 
+/**
+ * nsp_polynom_destroy:
+ * @P: a nsp_polynom pointer 
+ * 
+ * delete a polynom 
+ **/
+
 void nsp_polynom_destroy(nsp_polynom *P)
 {
   nsp_matrix_destroy((NspMatrix *) *P);
   *P=NULL;
 }
 
-/*
- * Matrix 1xn --> Polynom of degree n-1
- * Rajouter un redim sur loc->S[1] pour avoir une 1xmn Matrix
- * xxxxxxxx
- */
+/**
+ * nsp_matrix_to_polynom:
+ * @M: a #NspMatrix 
+ * 
+ * returns a 1x1 polynomial matrix. The coefficient 
+ * of the polynom being given by @M.
+ * 
+ * Returns:  a new #NspPMatrix or %NULLPMAT
+ **/
 
 NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
 {
   NspPMatrix *loc;
   if ((loc =nsp_pmatrix_create(NVOID,1,1,NULL,-1))== NULLPMAT) return(NULLPMAT);
-  if (( loc->S[0] = nsp_matrix_copy(M))== NULLPOLY ) return(NULLPMAT);
+  /* we need to give a name to each elts of a polynomial matrix */
+  if ((loc->S[0] = nsp_polynom_copy_and_name("pe",M))== NULLPOLY ) return(NULLPMAT);
+  loc->S[0]->m = 1;
+  loc->S[0]->mn = M->mn;
   if (( nsp_polynom_resize(loc->S[0]))== FAIL ) return(NULLPMAT);
   return(loc);
 }
@@ -89,11 +140,13 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
 
 /**
  * nsp_pmatrix_to_cells:
- * @M: 
+ * @M: a #NspPMatrix of size mxn
  * 
- * returns the coefficients of each 
+ * returns a mxn cell array. Each element of the 
+ * cell is a row vector which contains the coefficient of 
+ * the corresponding polynomial in @M.
  * 
- * Returns: 
+ * Returns: a #NspCells object or %NULL
  **/
 
 NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M)
@@ -161,22 +214,37 @@ int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_leve
   return rep;
 }
 
-
-
-
 /*
  * Creation of a NspPMatrix all the elements
  *	 are created with &Czero value 
  *       when flag == -1 the array elements are NULL
  */
 
-static doubleC Czero={0.00,0.00};
+/**
+ * nsp_pmatrix_create:
+ * @name: name of object
+ * @m: number of rows
+ * @n: number of columns 
+ * @cval: pointer to double or doubleC
+ * @flag: an integer 
+ * 
+ * returns a new mxn #NspPMatrix. if @flag 
+ * is stricly negative the elements of the Matrix 
+ * are initialized with %NULL. if @flag is null 
+ * the elements are initilialized to zero. If flag 
+ * is one or two, @cval is used for initialization 
+ * (one for real values, two for complex values.
+ * 
+ * Returns:  a new #NspPMatrix or %NULL
+ **/
 
-NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag)
+static const doubleC Czero={0.00,0.00};
+
+NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int flag)
 {
   int i;
   NspPMatrix *Loc;
-  static doubleC *init,*def=&Czero;
+  static const doubleC *init,*def=&Czero;
   Loc = new_pmatrix();
   if ( Loc == NULLPMAT) 
     { 
@@ -185,11 +253,7 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n, doubleC *cval, int flag
     }
   if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
     return(NULLPMAT);
-  NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
-  /*
-    Loc->otype = PMATRIX;
-    Loc->ftype = PMatrix_Type;
-  */
+  NSP_OBJECT(Loc)->ret_pos = -1 ; 
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
@@ -260,22 +324,26 @@ NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A)
 {
   int i;
   NspPMatrix *Loc;
-  if ( ( Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(int)0) ) == NULLPMAT) return(NULLPMAT);
+  if ( ( Loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1)) == NULLPMAT) return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      nsp_polynom_destroy(&Loc->S[i]);
-      if ((Loc->S[ i] =nsp_polynom_copy(A->S[i])) == (nsp_polynom ) 0)  return(NULLPMAT);
+      if ( A->S[i] != NULL)
+	{
+	  if ((Loc->S[ i] =nsp_polynom_copy_with_name(A->S[i])) == (nsp_polynom ) 0)  return(NULLPMAT);
+	}
     }
   return(Loc);
 }
 
-
-/*
- * Res= length(A) 
- * return a matrix which contains the length of the strings 
- * contained in A  A unchanged 
- * for Poly length menas degre of each polynom 
- */
+/**
+ * nsp_pmatrix_length:
+ * @A: a #NspPMatrix of size mxn
+ * 
+ * returns in a #NspMatrix of size mxn the degree of each polynom 
+ * contained in @A.
+ * 
+ * Returns: a #NspMatrix or %NULL
+ **/
 
 NspMatrix *nsp_pmatrix_length(NspPMatrix *A)
 {
@@ -290,28 +358,32 @@ NspMatrix *nsp_pmatrix_length(NspPMatrix *A)
   return(Loc);
 }
 
+/**
+ * nsp_matrix_to_pmatrix:
+ * @A: a #NspMatrix
+ * 
+ * return a new mxn polynomial matrix if @A is 
+ * of size mxn. The (i,j)-th element of the result is the 
+ * polynomial of degree 0 equal to @A(i,j).
+ * 
+ * Returns: a new #NspPMatrix or %NULL
+ **/
 
-/*
- *  Res=nsp_matrix_to_pmatrix(A) 
- *  A s not changed 
- *  pour l'instant on utilise %f ou le format pass'e 
- *  en deuxieme argument
- */
-
-
-NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A,nsp_const_string str, int flag)
+NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A) 
 {
   int i;
   NspPMatrix *Loc;
   doubleC d={0,0};
-  if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,&Czero,(int)0) ) == NULLPMAT) 
+  if ((Loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1)) == NULLPMAT) 
     return(NULLPMAT);
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      nsp_polynom_destroy(&Loc->S[i]);
       if ( A->rc_type == 'r') 
-	d.r= A->R[i];
-      else { d.r= A->C[i].r; d.i= A->C[i].i;}
+	{
+	  d.r= A->R[i];
+	}
+      else
+	{ d.r= A->C[i].r; d.i= A->C[i].i;}
       if ((Loc->S[i] =nsp_basic_to_polynom(&d,A->rc_type)) == (nsp_polynom ) 0)  return(NULLPMAT);
     }
   return(Loc);
@@ -331,14 +403,20 @@ unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M)
   return sizeof(nsp_polynom);
 }
 
-/*
- * PMatResize : Changes NspPMatrix dimensions
- * Warning : this routine only enlarges the array 
- * of the NspPMatrix storage so as to contain mxn 
- * elements : the previous datas are not moved and 
- * occupy the first array cells 
- * The NspPMatrix is changed 
- * return FAIL on failure 
+/**
+ * nsp_pmatrix_resize:
+ * @A: a #NspPMatrix 
+ * @m: number of rows 
+ * @n: number of columns 
+ * 
+ * The #NspPMatrix @A dimensions are changed to be @m x @n. 
+ * This routine only enlarges or shrink (using realloc()) 
+ * the data array of @A to size mxn. The previous data are not moved and 
+ * occupy the first array cells. Note that @A can be 
+ * and empty matrix when calling this routine ( malloc() is used in that 
+ * case ). The new elements of @A are filled with polynomial 0.
+ *
+ * returns: : %OK or %FAIL. When %OK is returned @A is changed. 
  */
 
 int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
@@ -353,7 +431,7 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
   if ( m*n < 0) return FAIL;
   if ( m*n < A->mn )
     {
-      /* Clear before Realloc **/
+      /* Clear before Realloc */
       for ( i = m*n ; i < A->mn ; i++ )
 	nsp_polynom_destroy(&(A->S[i]));
     }
@@ -421,15 +499,15 @@ int nsp_pmatrix_concat_right(NspPMatrix *A,const NspPMatrix *B)
   return(OK);
 }
 
-int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2)
+static int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2)
 {
   int i;
-  /* Copie ds l'ordre inverse car de temps en temps on fait
-     des copies sur place **/
+  /* copy is performed backward since this function is used for on place copy. 
+   */
   for ( i = n-1 ; i >= 0 ; i--) 
     {
       nsp_polynom_destroy(&s2[i]);
-      if ((s2[ i] =nsp_polynom_copy(s1[i])) == (nsp_polynom ) 0)  return(FAIL);
+      if ((s2[ i] =nsp_polynom_copy_with_name(s1[i])) == (nsp_polynom ) 0)  return(FAIL);
     }
   return(OK);
 }
@@ -453,7 +531,7 @@ int nsp_pmatrix_add_columns(NspPMatrix *A, int n)
   return(OK);
 }
 
-int nsp_pset_polynom(int n, doubleC *s1, nsp_polynom *s2)
+int nsp_pset_polynom(int n,const doubleC *s1, nsp_polynom *s2)
 {
   int i;
   for ( i = 0 ; i < n ; i++) 
@@ -471,7 +549,7 @@ int nsp_pset_polynom(int n, doubleC *s1, nsp_polynom *s2)
  * A and B are left unchanged 
  */
 
-NspPMatrix*nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B)
+NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B)
 {
   NspPMatrix *Loc;
   int j;
@@ -483,7 +561,7 @@ NspPMatrix*nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B)
   Loc =nsp_pmatrix_create(NVOID,A->m+B->m,A->n,&Czero,(int) 0);
   if ( Loc == NULLPMAT) 
     {
-      Scierror("No More Place ");
+      Scierror("Error: running out of memory\n");
       return(NULLPMAT);
     }
   for ( j = 0 ; j < A->n ; j++ ) 
@@ -606,12 +684,13 @@ NspBMatrix  *PMatCompOp(NspPMatrix *A, NspPMatrix *B, char *op)
   return NULL;
 }
 
-
-
-
-/*
- * Res =nsp_smatrix_transpose(A) 
- * Transpose A 
+/**
+ * nsp_pmatrix_transpose: 
+ * @A: a #NspPMatrix
+ *
+ * return the transpose of A
+ * 
+ * returns:  a new #MspPMatrix or %NULLMAT 
  */
 
 NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A)
@@ -624,7 +703,7 @@ NspPMatrix *nsp_pmatrix_transpose(const NspPMatrix *A)
   for ( i = 0 ; i < Loc->m ; i++ )
     for ( j = 0 ; j < Loc->n ; j++ )
       {
-	if ((Loc->S[i+(Loc->m)*j] =nsp_polynom_copy(A->S[j+(A->m)*i])) == NULLPOLY ) return(NULLPMAT);
+	if ((Loc->S[i+(Loc->m)*j] =nsp_polynom_copy_with_name(A->S[j+(A->m)*i])) == NULLPOLY ) return(NULLPMAT);
       }
   return(Loc);
 }
@@ -702,8 +781,15 @@ int nsp_polynom_resize(nsp_polynom poly)
   return OK;
 }
 
-
-
+/**
+ * nsp_polynom_roots:
+ * @poly: a #nsp_polynom
+ * 
+ * compute the roots of a polynom by computing the 
+ * eigenvalues of the associated companion matrix.
+ * 
+ * Returns: a new #NspMatrix or %NULL
+ **/
 
 NspMatrix *nsp_polynom_roots(nsp_polynom poly)
 {
@@ -716,7 +802,15 @@ NspMatrix *nsp_polynom_roots(nsp_polynom poly)
   return roots; 
 }
 
-
+/**
+ * nsp_pmatrix_add:
+ * @A: a #NspPMatrix 
+ * @B: a #NspPMatrix 
+ * 
+ * return the sum of @A and @B.
+ * 
+ * Returns: a nex #NspPMatrix  or %NULL
+ **/
 
 NspPMatrix *nsp_pmatrix_add(NspPMatrix *A, NspPMatrix *B)
 {
@@ -759,36 +853,6 @@ NspPMatrix *nsp_pmatrix_add(NspPMatrix *A, NspPMatrix *B)
 }
 
 
-nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q)
-{
-  NspMatrix *A,*B,*C;
-  int min,max,i;
-  if ( P->mn >= Q->mn) 
-    {
-      min = Q->mn;max =  P->mn;
-      B = Q; C = P;
-    }
-  else 
-    {
-      min = P->mn;max =  Q->mn;
-      B = P; C = Q;
-    }
-  if ( (A =nsp_matrix_copy(B)) == NULLMAT) return NULL;
-  if ( nsp_matrix_resize(A, 1,max) == FAIL) return NULL;
-  if ( A->rc_type == 'r' ) 
-    for (i= min ; i < max ; i++) A->R[i]=0 ;
-  else
-    for (i= min ; i < max ; i++) A->C[i].r = A->C[i].i =0;
-  if ( nsp_mat_dadd((NspMatrix *) A, (NspMatrix *) C)== FAIL)
-    {
-      nsp_matrix_destroy(A);
-      return NULL;
-    }
-  /* remove leading zeros */
-  if ( nsp_polynom_resize(A) == FAIL) return NULL;
-  return A;
-}
-
 NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B)
 {
   NspPMatrix *loc;
@@ -830,6 +894,62 @@ NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B)
 }
 
 
+
+/**
+ * nsp_polynom_add:
+ * @P: a nsp_polynom 
+ * @Q: a nsp_polynom
+ * 
+ * return a new polynom @P + @Q.
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q)
+{
+  NspMatrix *A,*B,*C;
+  int min,max,i;
+  if ( P->mn >= Q->mn) 
+    {
+      min = Q->mn;max =  P->mn;
+      B = Q; C = P;
+    }
+  else 
+    {
+      min = P->mn;max =  Q->mn;
+      B = P; C = Q;
+    }
+  if ( (A =nsp_matrix_copy(B)) == NULLMAT) return NULL;
+  if ( nsp_matrix_resize(A, 1,max) == FAIL) return NULL;
+  if ( A->rc_type == 'r' ) 
+    for (i= min ; i < max ; i++) A->R[i]=0 ;
+  else
+    for (i= min ; i < max ; i++) A->C[i].r = A->C[i].i =0;
+  if ( nsp_mat_dadd((NspMatrix *) A, (NspMatrix *) C)== FAIL)
+    {
+      nsp_matrix_destroy(A);
+      return NULL;
+    }
+  /* remove leading zeros */
+  if ( nsp_polynom_resize(A) == FAIL) return NULL;
+  if (nsp_object_set_name(NSP_OBJECT(A),"pe") == FAIL) 
+    {
+      nsp_matrix_destroy(A);
+      return NULL;
+    }
+  return A;
+}
+
+/**
+ * nsp_polynom_minus:
+ * @P: a nsp_polynom 
+ * @Q: a nsp_polynom
+ * 
+ * return a new polynom @P - @Q.
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
 nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q)
 {
   NspMatrix *A,*B,*C;
@@ -858,6 +978,12 @@ nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q)
   if ( P->mn >= Q->mn) nsp_mat_minus(A);
   /* remove leading zeros */
   if ( nsp_polynom_resize(A) == FAIL) return NULL;
+  /* give a name to the polynom */
+  if (nsp_object_set_name(NSP_OBJECT(A),"pe") == FAIL) 
+    {
+      nsp_matrix_destroy(A);
+      return NULL;
+    }
   return A;
 }
 
@@ -875,7 +1001,7 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
 	return(NULLPMAT);
       for (i=0; i < B->mn ; i++) 
 	{
-	  if ((loc->S[i] = nsp_polynom_copy(B->S[i]))== NULL) 
+	  if ((loc->S[i] = nsp_polynom_copy_with_name(B->S[i]))== NULL) 
 	    return NULL;
 	  if ( nsp_mat_mult_scalar(loc->S[i],A) == FAIL )
 	    return NULL;
@@ -892,7 +1018,7 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
 	return(NULLPMAT);
       for (i=0; i < A->mn ; i++) 
 	{
-	  if ((loc->S[i] = nsp_polynom_copy(B->S[0]))== NULL) 
+	  if ((loc->S[i] = nsp_polynom_copy_with_name(B->S[0]))== NULL) 
 	    return NULL;
 	  if ( C->rc_type =='r' ) 
 	    C->R[0]=A->R[i];
@@ -1004,267 +1130,7 @@ NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B)
     }
 }
 
-/* using fft */
 
-nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b)
-{
-  int i;
-  NspMatrix *A=NULL,*B=NULL,*Af=NULL,*Bf=NULL,*R=NULL;
-  if ((A= nsp_matrix_create(NVOID,a->rc_type,(int)1,a->mn+b->mn-1))==NULLMAT)
-    goto err;
-  if ( A->rc_type == 'r') 
-    {
-      for ( i=0; i< Min(a->mn,A->mn); i++) A->R[i] = a->R[i];
-      for ( i=a->mn; i < A->mn;i++)A->R[i] = 0;
-    }
-  else 
-    {
-      for ( i=0; i<  Min(a->mn,A->mn); i++) A->C[i] = a->C[i];
-      for ( i=a->mn; i < A->mn;i++) A->C[i].r = A->C[i].i=0;
-    }
-  if ((B= nsp_matrix_create(NVOID,b->rc_type,(int)1,a->mn+b->mn-1))==NULLMAT)
-    goto err;
-  if ( B->rc_type == 'r') 
-    {
-      for ( i=0; i< Min(b->mn,B->mn); i++) B->R[i] = b->R[i];
-      for ( i=b->mn; i < B->mn;i++)B->R[i] = 0;
-    }
-  else 
-    {
-      for ( i=0; i< Min(b->mn,B->mn); i++) B->C[i] = b->C[i];
-      for ( i=b->mn; i < B->mn;i++) B->C[i].r = B->C[i].i=0;
-    }
-  if ((Af= nsp_fft(A))==NULL) goto err;
-  if ((Bf= nsp_fft(B))==NULL) goto err;
-  if ( nsp_mat_mult_el(Af,Bf) == FAIL) goto err;
-  if ((R = nsp_ifft(Af))==NULL) goto err;
- err:
-  if ( A != NULL) nsp_matrix_destroy(A);
-  if ( B != NULL) nsp_matrix_destroy(B);
-  if ( Af != NULL) nsp_matrix_destroy(Af);
-  if ( Bf != NULL) nsp_matrix_destroy(Bf);
-  return R;
-}
-
-/* std mult */
-
-nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b)
-{
-  int i,j;
-  NspMatrix *M=NULL;
-  NspMatrix *A = (NspMatrix *)a;
-  NspMatrix *B = (NspMatrix *)b;
-  char type = (a->rc_type == 'c' || b->rc_type == 'c') ? 'c':'r';
-  if ((M= nsp_matrix_create(NVOID,type,1,(a->mn+b->mn-1)))==NULLMAT)
-    return NULL;
-  if ( M->rc_type == 'r') 
-    {
-      for ( i=0; i < M->mn; i++)
-	{
-	  M->R[i] =0.0;
-	  for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
-	    M->R[i] += A->R[j]*B->R[i-j];
-	}
-    }
-  else 
-    {
-      if ( A->rc_type == 'c' &&  B->rc_type == 'c') 
-	for ( i=0; i < M->mn; i++)
-	  {
-	    M->C[i].r=M->C[i].i =0.0;
-	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
-	      {
-		doubleC x= A->C[j];
-		nsp_prod_c(&x,&B->C[i-j]);
-		M->C[i].r += x.r;
-		M->C[i].i += x.i;
-	      }
-	  }
-      else if ( A->rc_type == 'c') 
-	for ( i=0; i < M->mn; i++)
-	  {
-	    M->C[i].r=M->C[i].i =0.0;
-	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
-	      {
-		M->C[i].r += A->C[i].r*B->R[i-j];
-		M->C[i].i += A->C[i].i*B->R[i-j];
-	      }
-	  }
-      else 
-	for ( i=0; i < M->mn; i++)
-	  {
-	    M->C[i].r=M->C[i].i =0.0;
-	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
-	      {
-		M->C[i].r += A->R[i]*B->C[i-j].r;
-		M->C[i].i += A->R[i]*B->C[i-j].i;
-	      }
-	  }
-    }
-  return M;
-}
-
-
-
-
-
-/**
- * nsp_hornerdd:
- * @a: Array of coefficients of the polynomial.
- * @n: Length of A, also degree of polynomial - 1.
- * @x: Point at which the polynomial is to be evaluated. 
- * 
- * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
- * 
- * Returns: a double 
- **/
-
-double nsp_hornerdd (const double *a,const int n, double x)
-{
-  double term;
-  int i;
-  term = a[n -1];
-  for (i = n - 2; i >= 0; --i)
-    {
-      term = a[i] + term * x;
-    }
-  return  term;
-}
-
-doubleC nsp_hornercd(const doubleC *a,const int n, double x)
-{
-  doubleC term = a[n -1];
-  int i;
-  for (i = n - 2; i >= 0; --i)
-    {
-      term.r *= x;
-      term.i *= x;
-      term.r += a[i].r;
-      term.i += a[i].i;
-    }
-  return  term;
-}
-
-doubleC nsp_hornerdc (const double *a,const int n, doubleC x)
-{
-  doubleC term={a[n -1],0};
-  int i;
-  for (i = n - 2; i >= 0; --i)
-    {
-      /* term*x */
-      nsp_prod_c(&term,&x); 
-      term.r += a[i];
-    }
-  return  term;
-}
-
-doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x)
-{
-  doubleC term = a[n -1];
-  int i;
-  for (i = n - 2; i >= 0; --i)
-    {
-      /* term*x */
-      nsp_prod_c(&term,&x); 
-      term.r += a[i].r;
-      term.i += a[i].i;
-    }
-  return  term;
-}
-
-/* res(i,j)= P(b(i,j))
- *
- */
-
-NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
-{
-  int i;
-  NspMatrix *loc; 
-  char type = ( P->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
-  if ((loc = nsp_matrix_create(NVOID,type,b->m,b->n))==NULLMAT)
-    return NULL;
-  if ( loc->rc_type == 'r' )
-    {
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  loc->R[i] = nsp_hornerdd(P->R,P->mn,b->R[i]);
-	}
-    }
-  else if ( b->rc_type == 'r' )
-    {
-      /* polynom is complex */
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  loc->C[i] = nsp_hornercd(P->C,P->mn,b->R[i]);
-	}
-    }
-  else if ( P->rc_type == 'r' )
-    {
-      /* b is complex */
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  loc->C[i] = nsp_hornerdc(P->R,P->mn,b->C[i]);
-	}
-    }
-  else
-    {
-      /* both are complex */
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  loc->C[i] = nsp_hornercc(P->C,P->mn,b->C[i]);
-	}
-    }
-  return loc;
-}
-
-/* P evaluated for x= V(k);  */
-
-NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
-{
-  int i;
-  NspMatrix *loc; 
-  char type = (V->rc_type == 'c') ? 'c' : 'r';
-  for ( i = 0 ; i < P->mn ; i++) 
-    if ( P->S[i]->rc_type == 'c') 
-      {
-	type = 'c'; break;
-      }
-  if ((loc = nsp_matrix_create(NVOID,type,P->m,P->n))==NULLMAT)
-    return NULL;
-  if ( loc->rc_type == 'r' )
-    {
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  loc->R[i] = nsp_hornerdd(P->S[i]->R,P->S[i]->mn,V->R[k]);
-	}
-    }
-  else if ( V->rc_type == 'r' )
-    {
-      /* polynom is complex or real */
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  if ( P->S[i]->rc_type == 'r') 
-	    {
-	      loc->C[i].r = nsp_hornerdd(P->S[i]->R,P->S[i]->mn,V->R[k]);
-	      loc->C[i].i = 0;
-	    }
-	  else
-	    loc->C[i] = nsp_hornercd(P->S[i]->C,P->S[i]->mn,V->R[k]);
-	}
-    }
-  else 
-    {
-      /* V is complex */
-      for ( i = 0 ; i < loc->mn ; i++)
-	{
-	  if ( P->S[i]->rc_type == 'r') 
-	    loc->C[i] = nsp_hornerdc(P->S[i]->R,P->S[i]->mn,V->C[k]);
-	  else 
-	    loc->C[i] = nsp_hornercc(P->S[i]->C,P->S[i]->mn,V->C[k]);
-	}
-    }
-  return loc;
-}
 
 /* P(i) evaluated for x= V(k);  */
 
@@ -1334,18 +1200,504 @@ NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V)
   return loc;
 }
 
+/* P evaluated for x= V(k);  */
+
+NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
+{
+  int i;
+  NspMatrix *loc; 
+  char type = (V->rc_type == 'c') ? 'c' : 'r';
+  for ( i = 0 ; i < P->mn ; i++) 
+    if ( P->S[i]->rc_type == 'c') 
+      {
+	type = 'c'; break;
+      }
+  if ((loc = nsp_matrix_create(NVOID,type,P->m,P->n))==NULLMAT)
+    return NULL;
+  if ( loc->rc_type == 'r' )
+    {
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->R[i] = nsp_hornerdd(P->S[i]->R,P->S[i]->mn,V->R[k]);
+	}
+    }
+  else if ( V->rc_type == 'r' )
+    {
+      /* polynom is complex or real */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  if ( P->S[i]->rc_type == 'r') 
+	    {
+	      loc->C[i].r = nsp_hornerdd(P->S[i]->R,P->S[i]->mn,V->R[k]);
+	      loc->C[i].i = 0;
+	    }
+	  else
+	    loc->C[i] = nsp_hornercd(P->S[i]->C,P->S[i]->mn,V->R[k]);
+	}
+    }
+  else 
+    {
+      /* V is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  if ( P->S[i]->rc_type == 'r') 
+	    loc->C[i] = nsp_hornerdc(P->S[i]->R,P->S[i]->mn,V->C[k]);
+	  else 
+	    loc->C[i] = nsp_hornercc(P->S[i]->C,P->S[i]->mn,V->C[k]);
+	}
+    }
+  return loc;
+}
+
+
+/**
+ * nsp_polynom_mult_fft:
+ * @a: a nsp_polynom 
+ * @b: a nsp_polynom
+ * 
+ * return a new polynom @a * @b. The product is 
+ * computed with fft. 
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b)
+{
+  int i;
+  NspMatrix *A=NULL,*B=NULL,*Af=NULL,*Bf=NULL,*R=NULL;
+  if ((A= nsp_matrix_create(NVOID,a->rc_type,(int)1,a->mn+b->mn-1))==NULLMAT)
+    goto err;
+  if ( A->rc_type == 'r') 
+    {
+      for ( i=0; i< Min(a->mn,A->mn); i++) A->R[i] = a->R[i];
+      for ( i=a->mn; i < A->mn;i++)A->R[i] = 0;
+    }
+  else 
+    {
+      for ( i=0; i<  Min(a->mn,A->mn); i++) A->C[i] = a->C[i];
+      for ( i=a->mn; i < A->mn;i++) A->C[i].r = A->C[i].i=0;
+    }
+  if ((B= nsp_matrix_create(NVOID,b->rc_type,(int)1,a->mn+b->mn-1))==NULLMAT)
+    goto err;
+  if ( B->rc_type == 'r') 
+    {
+      for ( i=0; i< Min(b->mn,B->mn); i++) B->R[i] = b->R[i];
+      for ( i=b->mn; i < B->mn;i++)B->R[i] = 0;
+    }
+  else 
+    {
+      for ( i=0; i< Min(b->mn,B->mn); i++) B->C[i] = b->C[i];
+      for ( i=b->mn; i < B->mn;i++) B->C[i].r = B->C[i].i=0;
+    }
+  if ((Af= nsp_fft(A))==NULL) goto err;
+  if ((Bf= nsp_fft(B))==NULL) goto err;
+  if ( nsp_mat_mult_el(Af,Bf) == FAIL) goto err;
+  if ((R = nsp_ifft(Af))==NULL) goto err;
+ err:
+  if ( A != NULL) nsp_matrix_destroy(A);
+  if ( B != NULL) nsp_matrix_destroy(B);
+  if ( Af != NULL) nsp_matrix_destroy(Af);
+  if ( Bf != NULL) nsp_matrix_destroy(Bf);
+  if ( R != NULL ) 
+    {
+      if ( nsp_object_set_name(NSP_OBJECT(R),"pe") == FAIL) 
+	{
+	  nsp_matrix_destroy(R);
+	  return NULL;
+	}
+    }
+  return R;
+}
+
+
+/**
+ * nsp_polynom_mult_std:
+ * @a: a nsp_polynom 
+ * @b: a nsp_polynom
+ * 
+ * return a new polynom @a * @b. The product is 
+ * computed with standard product. 
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b)
+{
+  int i,j;
+  NspMatrix *M=NULL;
+  NspMatrix *A = (NspMatrix *)a;
+  NspMatrix *B = (NspMatrix *)b;
+  char type = (a->rc_type == 'c' || b->rc_type == 'c') ? 'c':'r';
+  if ((M= nsp_matrix_create(NVOID,type,1,(a->mn+b->mn-1)))==NULLMAT)
+    return NULL;
+  if ( M->rc_type == 'r') 
+    {
+      for ( i=0; i < M->mn; i++)
+	{
+	  M->R[i] =0.0;
+	  for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	    M->R[i] += A->R[j]*B->R[i-j];
+	}
+    }
+  else 
+    {
+      if ( A->rc_type == 'c' &&  B->rc_type == 'c') 
+	for ( i=0; i < M->mn; i++)
+	  {
+	    M->C[i].r=M->C[i].i =0.0;
+	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	      {
+		doubleC x= A->C[j];
+		nsp_prod_c(&x,&B->C[i-j]);
+		M->C[i].r += x.r;
+		M->C[i].i += x.i;
+	      }
+	  }
+      else if ( A->rc_type == 'c') 
+	for ( i=0; i < M->mn; i++)
+	  {
+	    M->C[i].r=M->C[i].i =0.0;
+	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	      {
+		M->C[i].r += A->C[i].r*B->R[i-j];
+		M->C[i].i += A->C[i].i*B->R[i-j];
+	      }
+	  }
+      else 
+	for ( i=0; i < M->mn; i++)
+	  {
+	    M->C[i].r=M->C[i].i =0.0;
+	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
+	      {
+		M->C[i].r += A->R[i]*B->C[i-j].r;
+		M->C[i].i += A->R[i]*B->C[i-j].i;
+	      }
+	  }
+    }
+  if ( M != NULL ) 
+    {
+      if ( nsp_object_set_name(NSP_OBJECT(M),"pe") == FAIL) 
+	{
+	  nsp_matrix_destroy(M);
+	  return NULL;
+	}
+    }
+  return M;
+}
+
+/**
+ * nsp_hornerdd:
+ * @a: Array of double, coefficients of the polynomial.
+ * @n: Length of A, also degree of polynomial - 1.
+ * @x: a double, point at which the polynomial is to be evaluated. 
+ * 
+ * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
+ * 
+ * Returns: a double 
+ **/
+
+double nsp_hornerdd (const double *a,const int n, double x)
+{
+  double term;
+  int i;
+  term = a[n -1];
+  for (i = n - 2; i >= 0; --i)
+    {
+      term = a[i] + term * x;
+    }
+  return  term;
+}
+
+/**
+ * nsp_hornercd:
+ * @a: Array of complex, coefficients of the polynomial.
+ * @n: Length of A, also degree of polynomial - 1.
+ * @x: a double, point at which the polynomial is to be evaluated. 
+ * 
+ * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
+ * 
+ * Returns: a doubleC 
+ **/
+
+
+doubleC nsp_hornercd(const doubleC *a,const int n, double x)
+{
+  doubleC term = a[n -1];
+  int i;
+  for (i = n - 2; i >= 0; --i)
+    {
+      term.r *= x;
+      term.i *= x;
+      term.r += a[i].r;
+      term.i += a[i].i;
+    }
+  return  term;
+}
+
+
+/**
+ * nsp_hornerdc:
+ * @a: Array of double, coefficients of the polynomial.
+ * @n: Length of A, also degree of polynomial - 1.
+ * @x: a complex, point at which the polynomial is to be evaluated. 
+ * 
+ * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
+ * 
+ * Returns: a doubleC 
+ **/
+
+doubleC nsp_hornerdc (const double *a,const int n, doubleC x)
+{
+  doubleC term={a[n -1],0};
+  int i;
+  for (i = n - 2; i >= 0; --i)
+    {
+      /* term*x */
+      nsp_prod_c(&term,&x); 
+      term.r += a[i];
+    }
+  return  term;
+}
+
+
+/**
+ * nsp_hornercc:
+ * @a: Array of complex, coefficients of the polynomial.
+ * @n: Length of A, also degree of polynomial - 1.
+ * @x: a complex, point at which the polynomial is to be evaluated. 
+ * 
+ * computes a(1) + a(2)*x + ... + a(n)*x^(n-1) with horner method.
+ * 
+ * Returns: a doubleC
+ **/
+
+doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x)
+{
+  doubleC term = a[n -1];
+  int i;
+  for (i = n - 2; i >= 0; --i)
+    {
+      /* term*x */
+      nsp_prod_c(&term,&x); 
+      term.r += a[i].r;
+      term.i += a[i].i;
+    }
+  return  term;
+}
+
+/**
+ * nsp_polynom_horner:
+ * @P: a #nsp_polynom 
+ * @b: a #NspMatrix
+ * 
+ * return a #NspMatrix, with the same size as @b. 
+ * element (i,j) of the result is filled with @P(@b(i,j)).
+ * 
+ * Returns: a new #NspMatrix or %NULL
+ **/
+
+NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
+{
+  int i;
+  NspMatrix *loc; 
+  char type = ( P->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
+  if ((loc = nsp_matrix_create(NVOID,type,b->m,b->n))==NULLMAT)
+    return NULL;
+  if ( loc->rc_type == 'r' )
+    {
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->R[i] = nsp_hornerdd(P->R,P->mn,b->R[i]);
+	}
+    }
+  else if ( b->rc_type == 'r' )
+    {
+      /* polynom is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornercd(P->C,P->mn,b->R[i]);
+	}
+    }
+  else if ( P->rc_type == 'r' )
+    {
+      /* b is complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornerdc(P->R,P->mn,b->C[i]);
+	}
+    }
+  else
+    {
+      /* both are complex */
+      for ( i = 0 ; i < loc->mn ; i++)
+	{
+	  loc->C[i] = nsp_hornercc(P->C,P->mn,b->C[i]);
+	}
+    }
+  return loc;
+}
+
+
+/**
+ * nsp_polynom_power:
+ * @p: a #nsp_polynom 
+ * @n: an integer 
+ * 
+ * returns the polynomial p^n using repeated 
+ * squaring. 
+ * 
+ * Returns: a new polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_power(nsp_polynom p,int n)
+{
+  NspMatrix *P = (NspMatrix *) p;
+  NspMatrix *R = NULL;
+  NspMatrix *Q = NULL;
+  NspMatrix *loc = NULL;
+  if ( P->mn == 2 && P->rc_type == 'r' && P->R[0]==0 && P->R[1]== 1) 
+    {
+      /* detect the special case where P=x^n */
+      int i;
+      if ((loc= nsp_matrix_create("pe",'r', 1 , n+1))==NULLMAT)
+	return NULL;
+      for ( i = 0 ; i < loc->mn;i++ ) loc->R[i]=0.0;
+      loc->R[n]=1;
+      return loc;
+    }
+  /* general case: power by repeated squaring */
+  if ((Q = nsp_polynom_copy(p))== NULL) 
+    return NULL;
+  while  ( n > 1 )
+    {
+      if ( n % 2 ) 
+	{
+	  if ( R == NULL) 
+	    {
+	      if ((R = nsp_polynom_copy(Q))== NULL) goto err;
+	    }
+	  else
+	    {
+	      if ((loc = nsp_polynom_mult(R,Q)) == NULL) goto err;
+	      nsp_polynom_destroy(&R);
+	      R=loc;
+	    }
+	}
+      n /= 2;
+      if ((loc = nsp_polynom_mult(Q,Q)) == NULL) goto err;
+      nsp_polynom_destroy(&Q);
+      Q=loc;
+    }
+  if ( R != NULL) 
+    {
+      if ((loc = nsp_polynom_mult(Q,R)) == NULL) goto err;
+      nsp_polynom_destroy(&R);
+      nsp_polynom_destroy(&Q);
+    }
+  else 
+    {
+      loc = Q;
+    }
+  return loc;
+ err:
+  if ( Q != NULL) nsp_polynom_destroy(&Q);
+  if ( R != NULL) nsp_polynom_destroy(&R);
+  return NULL;
+}
+
+/**
+ * nsp_polynom_add_m:
+ * @p: a #nsp_polynom
+ * @v: pointer to a double or doubleC 
+ * @type: type of @v coded in a character
+ * 
+ * returns in a new polynomial @p + @v.
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_add_m(nsp_polynom p, void *v, char type)
+{
+  nsp_polynom loc;
+  if ((loc = nsp_polynom_copy_and_name("pe",p))== NULL) 
+    return NULL;
+  if ( loc->mn == 0) return loc;
+  if ( type == 'c') 
+    {
+      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
+	return NULL;
+    }
+  if ( loc->rc_type == 'r' ) 
+    {
+      loc->R[0] += *((double *) v);
+    }
+  else
+    {
+      if ( type == 'r')
+	{
+	  loc->C[0].r += *((double *) v);
+	}
+      else
+	{
+	  doubleC x= * (doubleC *) v;
+	  loc->C[0].r += x.r;
+	  loc->C[0].i += x.i;
+	}
+    }
+  return loc;
+}
+
+/**
+ * nsp_polynom_minus_m:
+ * @p: a #nsp_polynom
+ * @v: pointer to a double or doubleC 
+ * @type: type of @v coded in a character
+ * 
+ * returns in a new polynomial @p - @v.
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type)
+{
+  nsp_polynom loc;
+  if ((loc = nsp_polynom_copy_and_name("pe",p))== NULL) 
+    return NULL;
+  if ( loc->mn == 0) return loc;
+  if ( type == 'c') 
+    {
+      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
+	return NULL;
+    }
+  if ( loc->rc_type == 'r' ) 
+    {
+      loc->R[0] -= *((double *) v);
+    }
+  else
+    {
+      if ( type == 'r')
+	{
+	  loc->C[0].r -= *((double *) v);
+	}
+      else
+	{
+	  doubleC x= * (doubleC *) v;
+	  loc->C[0].r -= x.r;
+	  loc->C[0].i -= x.i;
+	}
+    }
+  return loc;
+}
 
 
 /*
  * routines for output of polynomial matrices 
  */
-
-/* XXXX */
-int nsp_matrix_any_element_is_negative (const void *M);
-int nsp_matrix_any_element_is_inf_or_nan (const void *M);
-int nsp_matrix_all_elements_are_int_or_inf_or_nan (const void *M);
-void nsp_matrix_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax);
-
+/* XXX */
+extern int nsp_matrix_any_element_is_negative (const void *M);
+extern int nsp_matrix_any_element_is_inf_or_nan (const void *M);
+extern int nsp_matrix_all_elements_are_int_or_inf_or_nan (const void *M);
+extern void nsp_matrix_pr_min_max_internal (const void *M, char flag, double *dmin, double *dmax);
 
 static char MpInit(const void *M,int *work)
 {

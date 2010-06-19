@@ -942,11 +942,11 @@ int int_nsp_ifft2new( Stack stack, int rhs, int opt, int lhs)
 #else
 
 
-NspMatrix *nsp_fft(Nspmatrix *x)
+NspMatrix *nsp_fft(NspMatrix *x)
 { 
   /*  using the fftpack lib   */
-  NspMatrix *xx, *y;
-  int k, n, dim_flag=0;
+  NspMatrix *xx;
+  int k, n;
   static double *wsave = NULL;
   static int last_n=-1;
 
@@ -955,12 +955,12 @@ NspMatrix *nsp_fft(Nspmatrix *x)
   if ( x->rc_type == 'c' )
     {
       if ( (xx = nsp_matrix_copy(x)) == NULLMAT ) 
-	return RET_BUG;
+	return NULL;
     }
   else
     {
       if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT ) 
-	return RET_BUG;
+	return NULL;
       for ( k = 0 ; k < x->mn ; k++ ) { xx->C[k].r = x->R[k]; xx->C[k].i = 0.0; }
     }
 
@@ -984,7 +984,7 @@ NspMatrix *nsp_fft(Nspmatrix *x)
 NspMatrix *int_nsp_ifft(NspMatrix *x)
 { 
   /*  using the fftpack lib  */
-  NspMatrix *xx, *y;
+  NspMatrix *xx;
   int k, n; 
   static double *wsave = NULL, invn;
   static int last_n=-1;
@@ -994,12 +994,12 @@ NspMatrix *int_nsp_ifft(NspMatrix *x)
   if ( x->rc_type == 'c' )
     {
       if ( (xx = nsp_matrix_copy(x)) == NULLMAT ) 
-	return RET_BUG;
+	return NULL;
     }
   else
     {
       if ( (xx = nsp_matrix_create(NVOID, 'c', x->m, x->n)) == NULLMAT ) 
-	return RET_BUG;
+	return NULL;
       for ( k = 0 ; k < x->mn ; k++ ) { xx->C[k].r = x->R[k]; xx->C[k].i = 0.0; }
     }
 

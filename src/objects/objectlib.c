@@ -132,9 +132,6 @@ NspObject *nsp_object_copy_with_name(NspObject *O)
   return l;
 }
 
-/*
- */
-
 /**
  *nsp_object_copy_and_name:
  * @name: string for the name to give to the copy 
