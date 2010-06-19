@@ -1537,6 +1537,87 @@ NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b)
   return loc;
 }
 
+/**
+ * nsp_polynom_hornerm:
+ * @P: a #nsp_polynom 
+ * @b: a #NspMatrix
+ * 
+ * return a #NspMatrix, with the same size as @b and equal 
+ * to p(b) = p_0 *Id + p_1*b +p_2*b^2..... p_n b^n.
+ *
+ * Returns: a new #NspMatrix or %NULL
+ **/
+
+NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b)
+{
+  NspMatrix *res=NULL,*coef=NULL,*term=NULL;
+  int i,j;
+  char type = ( P->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
+
+  if ((coef= nsp_matrix_create(NVOID,P->rc_type,(int)1,(int)1))==NULLMAT)
+    goto err;
+  if ((res= nsp_matrix_create(NVOID,type,b->m,b->n))==NULLMAT)
+    goto err;
+  
+  for (i = P->mn - 1; i > 0; --i)
+    {
+      if (  i < P->mn -1 ) term = nsp_mat_mult(res, b, 0);
+      if ( coef->rc_type == 'r' )
+	coef->R[0]= P->R[i];	
+      else				
+	coef->C[0] = P->C[i];	
+      /* res <- b */
+      if (res->rc_type == 'r' ) 
+	{
+	  memcpy(res->R, b->R, b->mn*sizeof(double));
+	}
+      else
+	{
+	  if ( b->rc_type == 'c' ) 
+	    memcpy(res->C, b->C, 2*b->mn*sizeof(double));
+	  else 
+	    for ( j = 0 ; j < res->mn ; j++ )
+	      { res->C[j].r = b->R[j]; res->C[j].i = 0; }
+	}
+      if ( nsp_mat_mult_scalar_bis(res,coef) == FAIL ) goto err;
+      if ( i < P->mn -1 ) 
+	{
+	  if ( nsp_mat_add(res,term)  == FAIL ) goto err;
+	  nsp_matrix_destroy(term);
+	}
+    }
+  /* need here to add P_0 */
+  if ( res->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < res->m ; i++ )
+	{ 
+	  res->R[i+res->m*i] += P->R[0];
+	}
+    }
+  else
+    {
+      if ( P->rc_type == 'r' ) 
+	{
+	  for ( i = 0 ; i < res->m ; i++ )
+	    { 
+	      res->C[i+res->m*i].r += P->R[0];
+	    }
+	}
+      else
+	{
+	  for ( i = 0 ; i < res->m ; i++ )
+	    { 
+	      res->C[i+res->m*i].r += P->C[0].r;
+	      res->C[i+res->m*i].i += P->C[0].i;
+	    }
+	}
+    }
+  return res;
+ err:
+  if ( term != NULL ) nsp_matrix_destroy(term);
+  if ( res != NULL ) nsp_matrix_destroy(res);
+  return NULL;
+}
 
 /**
  * nsp_polynom_power:

@@ -258,7 +258,7 @@ static NspPMatrix *nsp_pmatrix_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs, &m) == FAIL) return NULLPMAT;
   if (nsp_xdr_load_i(xdrs, &n) == FAIL) return NULLPMAT;
   if (nsp_xdr_load_c(xdrs, &c) == FAIL) return NULLPMAT;
-  if ((M =nsp_pmatrix_create(NVOID,m,n,NULL,-1))== NULLPMAT)
+  if ((M =nsp_pmatrix_create(name,m,n,NULL,-1))== NULLPMAT)
     return NULLPMAT;
   for ( i = 0 ; i < M->mn ; i++ ) 
     {
@@ -1066,6 +1066,35 @@ int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+int int_pmatrix_hornerm(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspCells *Res;
+  NspPMatrix *P;
+  NspMatrix *V;
+  CheckStdRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((V=GetMat(stack,2))== NULL) return RET_BUG;
+  if ( V->m != V->n  )
+    {
+      Scierror("Error: second argument of function %s should be square\n",
+	       NspFname(stack));
+      return RET_BUG;
+    }
+  /* result is a cell dimensioned by P */
+  if ((Res = nsp_cells_create(NVOID,P->m,P->n)) == NULL) 
+    return RET_BUG;
+  for ( i = 0 ; i < Res->mn ; i++)
+    {
+      Res->objs[i] =(NspObject *) nsp_polynom_hornerm(P->S[i],V);
+      if ( Res->objs[i] == NULL ) return RET_BUG;
+    }
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+
 int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
 {
   int i,strict = FALSE,ans=TRUE;
@@ -1530,6 +1559,7 @@ static OpTab PMatrix_func[]={
   {"minus_p_p",int_pmatrix_minus_p_p},
   {"minus_p", int_pmatrix_minus},
   {"horner", int_pmatrix_horner},
+  {"hornerm", int_pmatrix_hornerm},
   {"isreal_p", int_pmatrix_isreal},
   {"clean_p",  int_pmatrix_clean},
   {"ceil_p", int_pmatrix_ceil},

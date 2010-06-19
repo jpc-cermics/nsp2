@@ -122,8 +122,8 @@ extern nsp_polynom nsp_polynom_power(nsp_polynom p,int n);
 extern nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type);
 extern nsp_polynom nsp_polynom_add_m(nsp_polynom p, void *v, char type);
 extern NspMatrix *nsp_polynom_horner(nsp_polynom P,NspMatrix *b);
+extern NspMatrix *nsp_polynom_hornerm(nsp_polynom P,NspMatrix *b);
 extern NspMatrix *nsp_polynom_roots(nsp_polynom poly);
-
 extern double nsp_hornerdd (const double *a,const int n, double x);
 extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
 extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);

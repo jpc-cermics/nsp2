@@ -120,6 +120,24 @@ Mq=ce2m(C,indice=2);
 if norm(Mp-Vp) > 10*%eps then pause;end 
 if norm(Mq-Vq) > 10*%eps then pause;end 
 
+// hornerm 
+
+v=1:3;
+vc=[1:3] + [4:6]*%i;
+P={m2p(v), m2p(vc)};
+A={ rand(4,4), rand(4,4)+%i*rand(4,4)};
+for i=1:2
+  for j=1:2 
+    p=P{i}; a= A{j}; v =p.coeffs{1};
+    C=hornerm(p,a);
+    res = 0;
+    for k=1:length(v)
+      res = res + v(k)*a^(k-1);
+    end;
+    if norm(res - C{1} ) > 100*%eps then pause;end 
+  end
+end
+
 //roots
 //---------
 r=[1:5]';
