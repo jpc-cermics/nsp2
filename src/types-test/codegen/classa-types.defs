@@ -28,6 +28,7 @@
    '("NspList*" "cla_lval")
    ;;'("NspObject*" "spval")
    ;;'("NspSpColMatrix*" "spval1")
+   ;;'("NspCells*" "cla_cval")
    ;;'("gboolean" "bzzz")
    ;;'("hfoo*" "zz" "hidden")
    ;;'("hfoo" "xx" "hidden" )

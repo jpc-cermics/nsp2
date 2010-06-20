@@ -2192,6 +2192,14 @@ class NspGenericArgSpCol(NspGenericArg):
             % (varname,pname,pname,self.shortname_uc)
         return str
 
+class NspGenericArgCells(NspGenericArg):
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        str = '  if ( %s->%s == NULL%s) \n    {\n' % (varname,pname,self.shortname_uc);    
+        str = str + '     if (( %s->%s = nsp_cells_create("%s",0,0) ) == NULL%s)\n       return FAIL;\n    }\n' \
+            % (varname,pname,pname,self.shortname_uc)
+        return str
+
 # added for nsp : matrix
 # -------------------------
     
@@ -2865,6 +2873,9 @@ matcher.register('NspList*', arg)
 
 arg = NspGenericArgSpCol('NspSpColMatrix','SpColMatrix','SpColMat','sp')
 matcher.register('NspSpColMatrix*', arg)
+
+arg = NspGenericArgCells('NspCells','Cells','Cells','ce')
+matcher.register('NspCells*', arg)
 
 arg= NspMatArg()
 matcher.register('mat', arg)
