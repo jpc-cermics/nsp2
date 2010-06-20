@@ -27,6 +27,14 @@
 #include "nsp/cnumeric.h"
 #include "nsp/nsp_lapack.h"
 
+#if 1 
+#define nsp_polynom_mult nsp_polynom_mult_std
+#else 
+#define nsp_polynom_mult nsp_polynom_mult_fft 
+#endif 
+
+#define POLY_EXP /* use utf8 exponents */ 
+
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent);
 static int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2);
 
@@ -744,6 +752,184 @@ NspMatrix *nsp_matrix_companion(NspMatrix *A)
 }
 
 
+#define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
+
+NspPMatrix * nsp_pmatrix_minus_m(NspPMatrix *A,NspMatrix *B, int flag)
+{
+  int i;
+  NspPMatrix *loc;
+#define PM_MINUSM(s1,s2,i1,i2)						\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
+    return(NULLPMAT);							\
+  for (i=0; i < loc->mn ; i++)						\
+    {									\
+      if ((loc->S[i] = nsp_polynom_minus_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
+	return NULL;							\
+      if ( flag == FALSE ) nsp_mat_minus(loc->S[i]);			\
+    }								
+  if ( SameDim(A,B) ) 
+    {
+      PM_MINUSM(A->m,A->n,i,i);
+    }
+  else if ( A->mn == 1 )
+    {
+      PM_MINUSM(B->m,B->n,0,i);
+    }
+  else if ( B->mn == 1 )
+    {
+      PM_MINUSM(A->m,A->n,i,0);
+    }
+  else
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return NULL;
+    }
+  return loc;
+}
+
+
+NspPMatrix * nsp_pmatrix_add_m(NspPMatrix *A,NspMatrix *B)
+{
+  int i;
+  NspPMatrix *loc;
+#define PM_ADDM(s1,s2,i1,i2)						\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
+    return(NULLPMAT);							\
+  for (i=0; i < loc->mn ; i++)						\
+    {									\
+      if ((loc->S[i] = nsp_polynom_add_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
+	return NULL;							\
+    }								
+  if ( SameDim(A,B) ) 
+    {
+      PM_ADDM(A->m,A->n,i,i);
+    }
+  else if ( A->mn == 1 )
+    {
+      PM_ADDM(B->m,B->n,0,i);
+    }
+  else if ( B->mn == 1 )
+    {
+      PM_ADDM(A->m,A->n,i,0);
+    }
+  else
+    {
+      Scierror("Error:\tArguments must have the same size\n");
+      return NULL;
+    }
+  return loc;
+}
+
+/* returns eye(P)
+ */
+
+NspPMatrix *nsp_pmatrix_identity(NspPMatrix *P)
+{
+  NspPMatrix *Q=NULL;
+  /* return identity */
+  int i,j;
+  doubleC zero={0,0},un={1,0},*val=&zero;
+  if ((Q =nsp_pmatrix_create(NVOID,P->m,P->n,NULL,-1)) == NULLPMAT) 
+    return(NULLPMAT);
+  for ( i = 0 ; i < Q->m ; i++ )
+    for (  j = 0 ; j < Q->n ; j++ )
+      {
+	val= ( i==j ) ? &un :&zero;
+	if ((Q->S[i+Q->m*j] =nsp_basic_to_polynom(val,P->S[i+P->m*j]->rc_type)) == (nsp_polynom ) 0) 
+	  return NULLPMAT;
+      }
+  return Q;
+}
+
+NspPMatrix *nsp_pmatrix_hat_p_m(NspPMatrix *P,int n)
+{
+  NspPMatrix *Q=NULL,*R=NULL,*loc=NULL;
+  /* general case: power by repeated squaring */
+  if ( n == 0 )
+    {
+      return nsp_pmatrix_identity(P);
+    }
+  if ((Q = nsp_pmatrix_copy(P)) == NULL  )
+    return NULL;
+  while  ( n > 1 )
+    {
+      if ( n % 2 ) 
+	{
+	  if ( R == NULL) 
+	    {
+	      if ((R = nsp_pmatrix_copy(Q))== NULL) goto err;
+	    }
+	  else
+	    {
+	      if ((loc = nsp_pmatrix_mult_p_p(R,Q)) == NULL) goto err;
+	      nsp_pmatrix_destroy(R);
+	      R=loc;
+	    }
+	}
+      n /= 2;
+      if ((loc = nsp_pmatrix_mult_p_p(Q,Q)) == NULL) goto err;
+      nsp_pmatrix_destroy(Q);
+      Q=loc;
+    }
+  if ( R != NULL) 
+    {
+      if ((loc = nsp_pmatrix_mult_p_p(Q,R)) == NULL) goto err;
+      nsp_pmatrix_destroy(R);
+      nsp_pmatrix_destroy(Q);
+    }
+  else 
+    {
+      loc = Q;
+    }
+  return loc;
+ err:
+  if ( Q != NULL) nsp_pmatrix_destroy(Q);
+  if ( R != NULL) nsp_pmatrix_destroy(R);
+  return NULL;
+
+}
+
+
+
+NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M) 
+{
+  int i;
+  NspPMatrix *loc;
+#define P_POWER(s1,s2,i1,i2)						\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
+    return(NULLPMAT);							\
+  for (i=0; i < loc->mn ; i++)						\
+    {									\
+      if ( floor(M->R[i2]) == M->R[i2] &&  M->R[i2] >= 0) {		\
+	loc->S[i]= nsp_polynom_power( P->S[i1], M->R[i2]);		\
+	if ( loc->S[i] == NULL) return NULL;				\
+      } else {								\
+	Scierror("Error: exponent should be a positive integer \n");	\
+	nsp_pmatrix_destroy(loc);					\
+	return NULL;							\
+      }									\
+    }					
+  if ( P->mn == M->mn ) 
+    {
+      P_POWER(P->m,P->n,i,i);
+    }
+  else if ( P->mn == 1 )
+    {
+      P_POWER(M->m,M->n,0,i);
+    }
+  else if ( M->mn == 1 )
+    {
+      P_POWER(P->m,P->n,i,0);
+    }
+  else
+    {
+      Scierror("Error: arguments with incompatible dimensions\n");
+      return NULL;
+    }
+  return loc;
+}
+
+
 /**
  * nsp_polynom_resize:
  * @poly: a #nsp_polynom
@@ -1037,7 +1223,6 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
     }
 }
 
-#define nsp_polynom_mult nsp_polynom_mult_std
 
 
 NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B)
@@ -1636,6 +1821,13 @@ nsp_polynom nsp_polynom_power(nsp_polynom p,int n)
   NspMatrix *R = NULL;
   NspMatrix *Q = NULL;
   NspMatrix *loc = NULL;
+  if ( n == 0 ) 
+    {
+      doubleC d={1,0};
+      if ((loc =nsp_basic_to_polynom(&d,p->rc_type)) == (nsp_polynom ) 0)
+	return NULL;
+      return loc;
+    }
   if ( P->mn == 2 && P->rc_type == 'r' && P->R[0]==0 && P->R[1]== 1) 
     {
       /* detect the special case where P=x^n */
@@ -1864,7 +2056,9 @@ static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M)
  */
 
 static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length);
+#ifndef POLY_EXP 
 static void pr_poly_exp  (NspMatrix *m, int fw, int length);
+#endif 
 static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw);
 static int pr_poly_exp_size(int i);
 
@@ -1885,6 +2079,8 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   /* XXXXXX need to write the complex case **/
   Mp_set_format (fmt,M);
   fw= fmt->curr_real_fw;
+  
+  Sciprintf("\n");
   /* Allocate a table to store the column width 
    * Iloc[j]= degree max of column j 
    */
@@ -1940,26 +2136,37 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
 	      if ( imore == 1) return(OK);
 	      p_rows=0;
 	    }
-	  /*
-	    if (  lim - col == 1 && 	  t_width > max_width ) 
-	    {
-	    Sciprintf("Must try to cut thhe column \n");
-	    }
-	    else 
-	  */
 	  {
+#ifndef  POLY_EXP
 	    for ( j = col; j < lim; j++)
 	      {
-		Sciprintf("  ");
+		if (j == 0 )
+		  {
+		    nsp_pr_white(indent);Sciprintf(" |");
+		  }
+		else
+		  Sciprintf(", ");
 		pr_poly_exp ( M->S[i+(M->m)*j], fw,Iloc[j]);
 	      }
-	    Sciprintf("\n");
+	    if ( j == nc -1 ) 
+	      Sciprintf("\n",j,nc-1);
+	    else
+	      Sciprintf(" |\n");
+#endif 
 	    for ( j = col; j < lim; j++)
 	      {
-		Sciprintf("  ");
+		if ( j == 0 )
+		  {
+		    nsp_pr_white(indent);Sciprintf(" |");
+		  }
+		else
+		  Sciprintf(", ");
 		pr_poly (fmt, M->S[i+(M->m)*j], fw,Iloc[j]);
 	      }
-	    Sciprintf("\n");
+	    if ( j == nc  ) 
+	      Sciprintf(" |\n",j,nc-1);
+	    else
+	      Sciprintf("\n",j,nc-1);
 	  }
 	}
       col += inc;
@@ -2018,6 +2225,29 @@ static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw)
   return size;
 }
 
+static int nsp_print_exponent_utf8(int i)
+{
+  int j;
+  char str[8];
+  static unsigned char codes[][4]={{226,   129,   176,0},
+				   {194,   185,   0,  0},
+				   {194,   178,   0,  0},
+				   {194,   179,   0,  0},
+				   {226,   129,   180,0},
+				   {226,   129,   181,0},
+				   {226,   129,   182,0},
+				   {226,   129,   183,0},
+				   {226,   129,   184,0},
+				   {226,   129,   185,0}
+  };
+  sprintf(str,"%d",i);
+  if ( str[0] == '0') return 0;
+  if ( strcmp(str,"1")==0 ) return 0;
+  for ( j = 0 ; j < strlen(str); j++)
+    Sciprintf("%s",codes[Min(Max(str[j]- '0',0),9)]);
+  return strlen(str);
+}
+
 /**
  * pr_poly:
  * @fmt: 
@@ -2030,6 +2260,7 @@ static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw)
 
 static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
 {
+  int colors[]={ 34,32,31,35,36};
   int i ,count = 0, leading = TRUE,nw;
   for ( i=0 ; i < m->mn ; i++) 
     {
@@ -2041,9 +2272,15 @@ static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
 	      else Sciprintf(" ");
 	      nsp_pr_any_float (fmt->curr_real_fmt, m->R[i], fw);
 	      leading = FALSE;
+	      Sciprintf("\033[%dm",colors[0]);
 	      if ( i > 0 ) Sciprintf("x");
+#ifdef POLY_EXP 
+	      nw= nsp_print_exponent_utf8(i);
+#else 
 	      nw= pr_poly_exp_size(i);
 	      nsp_pr_white(nw);
+#endif 
+	      Sciprintf("\033[0m");
 	      count += fw+2 + nw;
 	    }
 	}
@@ -2059,7 +2296,7 @@ static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
  * 
  * prints the exponent part of the polynom.
  **/
-
+#ifndef POLY_EXP
 static void pr_poly_exp (NspMatrix *m, int fw, int length)
 {
   int i ,count = 0;
@@ -2078,11 +2315,16 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
   nsp_pr_white(length-count);
 }
 
+#endif 
+
+
+
 static int pr_poly_exp_size(int i)
 {
   if ( i < 10 ) return 1;
   else if ( 10 <= i && i  < 99) return 2;
   else return 3;
 }
+
 
 

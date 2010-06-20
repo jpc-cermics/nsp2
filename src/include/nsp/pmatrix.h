@@ -93,6 +93,10 @@ extern NspPMatrix *nsp_pmatrix_minus(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B);
 extern NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B);
+extern NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M) ;
+extern NspPMatrix *nsp_pmatrix_hat_p_m(NspPMatrix *P,int n);
+extern NspPMatrix * nsp_pmatrix_minus_m(NspPMatrix *A,NspMatrix *B, int flag);
+extern NspPMatrix * nsp_pmatrix_add_m(NspPMatrix *A,NspMatrix *B);
 
 extern int IsPMatObj (Stack stack, int i); 
 extern int IsPMat (NspObject *O); 

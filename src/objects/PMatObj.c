@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -517,137 +517,194 @@ static NspMethods *pmatrix_get_methods(void) { return pmatrix_methods;};
  *----------------------------------*/
 
 /*
- * Right Concatenation 
- * A= [A,B] 
- * return 0 on failure ( incompatible size or No more space )
+ * Res = [A,P]  when A is a scalar matrix 
  */
 
-int int_pmatrix_concatr(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_concatr_m_p(Stack stack, int rhs, int opt, int lhs)
 {
-  NspPMatrix *HMat1,*HMat2;
+  NspPMatrix *B,*Res;
+  NspMatrix * A;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetPMat(stack,1))  == NULLPMAT) return RET_BUG;
-  if ( HMat1->mn == 0)
+  if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
+  if ( A->mn == 0)
     {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
+      /* A and B must have compatible rows */
+      if (A->m != B->m && A->m != A->n ) 
+	{
+	  Scierror("Error: matrices should have same number of rows found %d and %d\n",
+		   A->m, B->m);
+	  return RET_BUG;
+	}
+      if ( B->mn == 0) 
+	{
+	  if ((B = GetPMatCopy(stack,2)) == NULLPMAT) return RET_BUG;
+	  B->n += A->n;
+	}
+      NSP_OBJECT(B)->ret_pos = 1;
       return 1;
     }
-  if ((HMat2 = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if ( HMat2->mn == 0)
+  if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
+  if (( Res=nsp_matrix_to_pmatrix(A)) == NULLPMAT) return RET_BUG;
+  if ( B->mn != 0)
     {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
+      if (nsp_pmatrix_concat_right(Res,B)!= OK) return RET_BUG;
     }
   else
     {
-      if ((HMat1 = GetPMatCopy(stack,1))  == NULLPMAT) return RET_BUG;
-      if (nsp_pmatrix_concat_right(HMat1,HMat2)!= OK) return RET_BUG;
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
-    }
-  return 1;
-}
-
-/*
- * Right Concatenation 
- * Res = [A,B]  when A is a scalar matrix 
- * usefull when A=[]
- */
-
-int int_pmatrix_concatr_m_s(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPMatrix *HMat2,*Res;
-  NspMatrix * HMat1;
-  CheckRhs(2,2);
-  CheckLhs(1,1);
-  if ((HMat1 = GetMat(stack,1))  == NULLMAT) return RET_BUG;
-  if ( HMat1->mn == 0)
-    {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
-      return 1;
-    }
-  if ((HMat2 = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if (( Res=nsp_matrix_to_pmatrix(HMat1)) == NULLPMAT) return RET_BUG;
-
-  if ( HMat2->mn != 0)
-    {
-      if (nsp_pmatrix_concat_right(Res,HMat2)!= OK) return RET_BUG;
+      if ( Res->m != B->m && B->m != B->n ) 
+	{
+	  Scierror("Error: matrices should have same number of rows found %d and %d\n",
+		   A->m, B->m);
+	  return RET_BUG;
+	}
+      if ( Res->m == 0 )  Res->n += B->n;
     }
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
 
-/*
- * Down Concatenation 
- * Res = [A;B] 
- * return NULLSMat on failure ( incompatible size or No more space )
- * A and B are left unchanged 
- */
+/* Res = [P,A] */
 
-typedef NspPMatrix * (*FSconcat) (const NspPMatrix *,const NspPMatrix *);
-
-int int_pmatrix__concat(Stack stack, int rhs, int opt, int lhs, FSconcat F)
+static int int_pmatrix_concatr_p_m(Stack stack, int rhs, int opt, int lhs)
 {
-  NspPMatrix *HMat1,*HMat2;
+  NspPMatrix *A,*P2;
+  NspMatrix *B;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetPMat(stack,1))  == NULLPMAT) return RET_BUG;
-  if ( HMat1->mn == 0)
+  if ((A = GetPMatCopy(stack,1))  == NULLPMAT) return RET_BUG;
+  if ( A->mn == 0)
     {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if (A->m != P2->m && A->m != A->n ) 
+	{
+	  Scierror("Error: matrices should have same number of rows found %d and %d\n",
+		   A->m, P2->m);
+	  return RET_BUG;
+	}
+      if ( P2->mn == 0 ) 
+	{
+	  P2->n += A->n;
+	}
+      MoveObj(stack,1,NSP_OBJECT(P2));
       return 1;
     }
-  if ((HMat2 = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if ( HMat2->mn == 0)
+  if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( B->mn != 0 )
     {
-      NSP_OBJECT(HMat1)->ret_pos = 1;
-      return 1;
+      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if (nsp_pmatrix_concat_right(A,P2) != OK) return RET_BUG;
+      nsp_pmatrix_destroy(P2);
     }
   else
     {
-      NspPMatrix *HMat3;
-      if (( HMat3 = (*F)(HMat1,HMat2)) == NULLPMAT)  return RET_BUG;
-      MoveObj(stack,1,(NspObject *) HMat3);
+      if (A->m != B->m && B->m != B->n ) 
+	{
+	  Scierror("Error: matrices should have same number of rows found %d and %d\n",
+		   A->m, B->m);
+	  return RET_BUG;
+	}
     }
+  NSP_OBJECT(A)->ret_pos =1;
   return 1;
 }
 
-int int_pmatrix_concatd(Stack stack, int rhs, int opt, int lhs)
+/* Res = [A;P]; */
+
+static int int_pmatrix_concatd_m_p(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_concat_down(stack,rhs,opt,lhs,(Fconcat_d)nsp_matint_concat_down);
-  /* return int_pmatrix__concat(stack,rhs,opt,lhs,nsp_pmatrix_concat_down); */
-}
-
-
-/*
- * Down Concatenation 
- * Res = [A;B]  when A is a scalar matrix 
- * usefull when A=[]
- */
-
-int int_pmatrix_concatd_m_s(Stack stack, int rhs, int opt, int lhs)
-{
-  NspPMatrix *HMat2,*Res;
-  NspMatrix * HMat1;
+  NspPMatrix *B,*Res;
+  NspMatrix * A;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetMat(stack,1))  == NULLMAT) return RET_BUG;
-  if ( HMat1->mn == 0)
+  if ((A = GetMat(stack,1))  == NULLMAT) return RET_BUG;
+  if ( A->mn == 0)
     {
-      NSP_OBJECT(NthObj(2))->ret_pos = 1;
+      if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
+      if (A->n != B->n && A->m != A->n ) 
+	{
+	  Scierror("Error: matrices should have same number of columns found %d and %d\n",
+		   A->n, B->n);
+	  return RET_BUG;
+	}
+      if ( B->mn == 0 ) 
+	{
+	  if ((B = GetPMatCopy(stack,2)) == NULLPMAT) return RET_BUG;
+	  B->m += A->m;
+	}
+      NSP_OBJECT(B)->ret_pos= 1;
       return 1;
     }
-  if ((HMat2 = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  if (( Res=nsp_matrix_to_pmatrix(HMat1)) == NULLPMAT) return RET_BUG;
-
-  if ( HMat2->mn != 0)
+  if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
+  if (( Res=nsp_matrix_to_pmatrix(A)) == NULLPMAT) return RET_BUG;
+  if ( B->mn != 0)
     {
-      if ((Res=nsp_pmatrix_concat_down(Res,HMat2))== NULLPMAT ) return RET_BUG;
+      if ((Res=nsp_pmatrix_concat_down(Res,B))== NULLPMAT ) return RET_BUG;
+    }
+  else
+    {
+      if (A->n != B->n && B->m != B->n ) 
+	{
+	  Scierror("Error: matrices should have same number of columns found %d and %d\n",
+		   A->n, B->n);
+	  return RET_BUG;
+	}
     }
   MoveObj(stack,1,(NspObject *) Res);
   return 1;
 }
+
+/* Res = [P;A] */
+
+static int int_pmatrix_concatd_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *A,*P2;
+  NspMatrix *B;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((A = GetPMat(stack,1))  == NULLPMAT) return RET_BUG;
+  if ( A->mn == 0)
+    {
+      if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if (A->n != P2->n && A->m != A->n ) 
+	{
+	  Scierror("Error: matrices should have same number of columns found %d and %d\n",
+		   A->n, P2->n);
+	  return RET_BUG;
+	}
+      if ( P2->mn == 0 ) 
+	{
+	  P2->m += A->m;
+	}
+      MoveObj(stack,1,NSP_OBJECT(P2));
+      return 1;
+    }
+  if ((B = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ( B->mn != 0 )
+    {
+      NspPMatrix *Res;
+      if ((P2=nsp_matrix_to_pmatrix(B)) == NULLPMAT) return RET_BUG;
+      if ((Res=nsp_pmatrix_concat_down(A,P2))== NULLPMAT ) return RET_BUG;
+      nsp_pmatrix_destroy(P2);
+      MoveObj(stack,1,NSP_OBJECT(Res));
+      return 1;
+    }
+  else
+    {
+      if (A->n != B->n && B->m != B->n ) 
+	{
+	  Scierror("Error: matrices should have same number of columns found %d and %d\n",
+		   A->n, B->n);
+	  return RET_BUG;
+	}
+    }
+  NSP_OBJECT(A)->ret_pos =1;
+  return 1;
+}
+
 
 
 /*
@@ -657,7 +714,7 @@ int int_pmatrix_concatd_m_s(Stack stack, int rhs, int opt, int lhs)
  * A is changed 
  */
 
-int int_pmatrix_addcols(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_addcols(Stack stack, int rhs, int opt, int lhs)
 {
   int n1;
   NspPMatrix *HMat;
@@ -677,7 +734,7 @@ int int_pmatrix_addcols(Stack stack, int rhs, int opt, int lhs)
  * A and B are left unchanged 
  */
 
-int int_pmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
 {
   int m1;
   NspPMatrix *HMat;
@@ -701,7 +758,7 @@ int int_pmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
  * return 0 on failure 
  */
 
-int int_pmatrix_resize(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_resize(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
   NspPMatrix  *HMat;
@@ -724,7 +781,7 @@ int int_pmatrix_resize(Stack stack, int rhs, int opt, int lhs)
  * WARNING : no copy 
  */
 
-int int_pmatrix_enlarge(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_enlarge(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *A;
   int m1,n1;
@@ -738,15 +795,13 @@ int int_pmatrix_enlarge(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-
-
 /*
  * Operation leading to Boolean result 
  */
 
 /* A < B */ 
 
-int int_pmatrix_lt(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_lt(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -759,7 +814,7 @@ int int_pmatrix_lt(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_le(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_le(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -772,7 +827,7 @@ int int_pmatrix_le(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_neq(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_neq(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -785,7 +840,7 @@ int int_pmatrix_neq(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_eq(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_eq(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *A,*B;
   NspBMatrix *Res;
@@ -799,7 +854,7 @@ int int_pmatrix_eq(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_gt(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_gt(Stack stack, int rhs, int opt, int lhs)
 {
 
   NspPMatrix *A,*B; NspBMatrix *Res;
@@ -814,7 +869,7 @@ int int_pmatrix_gt(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_pmatrix_ge(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_ge(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *A,*B; NspBMatrix *Res;
   CheckRhs(2,2);
@@ -857,33 +912,33 @@ static int int_pmatrix_f_gen(Stack stack, int rhs, int opt, int lhs,char *op)
   return 1;
 }
 
-int int_pmatrix_flt(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_flt(Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_f_gen(stack,rhs,opt,lhs,"<");
 }
 
-int int_pmatrix_fle(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_fle(Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_f_gen(stack,rhs,opt,lhs,"<=");
 }
 
 
-int int_pmatrix_fneq(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_fneq(Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_f_gen(stack,rhs,opt,lhs,"<>");
 }
 
-int int_pmatrix_feq(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_feq(Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_f_gen(stack,rhs,opt,lhs,"==");
 }
 
-int int_pmatrix_fgt(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_fgt(Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_f_gen(stack,rhs,opt,lhs,">");
 }
 
-int int_pmatrix_fge(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_fge(Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_f_gen(stack,rhs,opt,lhs,">=");
 }
@@ -894,7 +949,7 @@ int int_pmatrix_fge(Stack stack, int rhs, int opt, int lhs)
  * Creates a Copy of NspPMatrix A : A is not checked 
  */
 
-int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *HMat1,*HMat2;
   CheckRhs(1,1);
@@ -909,7 +964,7 @@ int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
  *
  */
 
-int int_pmatrix_companion_p(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_companion_p(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_polynom P;
   NspMatrix *A;
@@ -922,7 +977,7 @@ int int_pmatrix_companion_p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_companion_m(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_companion_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A,*P;
   CheckRhs(1,1);
@@ -934,7 +989,7 @@ int int_pmatrix_companion_m(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_roots(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_roots(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_polynom P;
   NspMatrix *A;
@@ -947,7 +1002,7 @@ int int_pmatrix_roots(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_add(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_add(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*Q,*R;
   CheckRhs(2,2);
@@ -960,7 +1015,7 @@ int int_pmatrix_add(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_minus_p_p(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_minus_p_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*Q,*R;
   CheckRhs(2,2);
@@ -973,7 +1028,7 @@ int int_pmatrix_minus_p_p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_mult_m_p(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_mult_m_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *P;
   NspPMatrix *Q,*R;
@@ -989,7 +1044,7 @@ int int_pmatrix_mult_m_p(Stack stack, int rhs, int opt, int lhs)
 
 /* test : mult by fft */
 
-int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*Q,*R;
   CheckRhs(2,2);
@@ -1002,7 +1057,7 @@ int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*Q,*R;
   CheckRhs(2,2);
@@ -1016,7 +1071,7 @@ int int_pmatrix_mult_p_p(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
 {
   int i,flag = FALSE, ttmode = FALSE;
   NspCells *Res;
@@ -1066,7 +1121,7 @@ int int_pmatrix_horner(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_hornerm(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_hornerm(Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   NspCells *Res;
@@ -1095,7 +1150,7 @@ int int_pmatrix_hornerm(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
 {
   int i,strict = FALSE,ans=TRUE;
   NspPMatrix *P;
@@ -1117,7 +1172,7 @@ int int_pmatrix_isreal(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int int_pmatrix_clean (Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_clean (Stack stack, int rhs, int opt, int lhs)
 {
   int i;
   double epsr=DBL_EPSILON;
@@ -1169,22 +1224,22 @@ static int int_pmatrix_map (Stack stack, int rhs, int opt, int lhs, Fmat f)
   return 1;
 }
 
-int int_pmatrix_ceil (Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_ceil (Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_ceil);
 }
 
-int int_pmatrix_int (Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_int (Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_int);
 }
 
-int int_pmatrix_floor (Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_floor (Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_floor);
 }
 
-int int_pmatrix_round (Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_round (Stack stack, int rhs, int opt, int lhs)
 {
   return int_pmatrix_map(stack, rhs, opt, lhs, nsp_mat_round);
 }
@@ -1250,47 +1305,6 @@ static int int_pmatrix_minus (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#define nsp_polynom_mult nsp_polynom_mult_std
-
-
-NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M) 
-{
-  int i;
-  NspPMatrix *loc;
-#define P_POWER(s1,s2,i1,i2)						\
-  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
-    return(NULLPMAT);							\
-  for (i=0; i < loc->mn ; i++)						\
-    {									\
-      if ( floor(M->R[i]) == M->R[i] ) {				\
-	loc->S[i]= nsp_polynom_power( P->S[i1], M->R[i2]);		\
-	if ( loc->S[i] == NULL) return NULL;				\
-      } else {								\
-	Scierror("Error: exponent at indice %d is not an integer\n",i2); \
-	nsp_pmatrix_destroy(loc);					\
-	return NULL;							\
-      }									\
-    }					
-  if ( P->mn == M->mn ) 
-    {
-      P_POWER(P->m,P->n,i,i);
-    }
-  else if ( P->mn == 1 )
-    {
-      P_POWER(M->m,M->n,0,i);
-    }
-  else if ( M->mn == 1 )
-    {
-      P_POWER(P->m,P->n,i,0);
-    }
-  else
-    {
-      Scierror("Error: arguments with incompatible dimensions\n");
-      return NULL;
-    }
-  return loc;
-}
-
 static int int_pmatrix_dh_p_m (Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*R;
@@ -1303,51 +1317,6 @@ static int int_pmatrix_dh_p_m (Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(R));
   return Max(lhs,1);
 }
-
-NspPMatrix *nsp_pmatrix_hat_p_m(NspPMatrix *P,int n)
-{
-  NspPMatrix *Q=NULL,*R=NULL,*loc=NULL;
-  /* general case: power by repeated squaring */
-  if ((Q = nsp_pmatrix_copy(P)) == NULL  )
-    return NULL;
-  while  ( n > 1 )
-    {
-      if ( n % 2 ) 
-	{
-	  if ( R == NULL) 
-	    {
-	      if ((R = nsp_pmatrix_copy(Q))== NULL) goto err;
-	    }
-	  else
-	    {
-	      if ((loc = nsp_pmatrix_mult_p_p(R,Q)) == NULL) goto err;
-	      nsp_pmatrix_destroy(R);
-	      R=loc;
-	    }
-	}
-      n /= 2;
-      if ((loc = nsp_pmatrix_mult_p_p(Q,Q)) == NULL) goto err;
-      nsp_pmatrix_destroy(Q);
-      Q=loc;
-    }
-  if ( R != NULL) 
-    {
-      if ((loc = nsp_pmatrix_mult_p_p(Q,R)) == NULL) goto err;
-      nsp_pmatrix_destroy(R);
-      nsp_pmatrix_destroy(Q);
-    }
-  else 
-    {
-      loc = Q;
-    }
-  return loc;
- err:
-  if ( Q != NULL) nsp_pmatrix_destroy(Q);
-  if ( R != NULL) nsp_pmatrix_destroy(R);
-  return NULL;
-
-}
-
 
 
 static int int_pmatrix_hat_p_m (Stack stack, int rhs, int opt, int lhs)
@@ -1374,44 +1343,7 @@ static int int_pmatrix_hat_p_m (Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-
-
-#define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
-
-NspPMatrix * nsp_pmatrix_add_m(NspPMatrix *A,NspMatrix *B)
-{
-  int i;
-  NspPMatrix *loc;
-#define PM_ADDM(s1,s2,i1,i2)						\
-  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
-    return(NULLPMAT);							\
-  for (i=0; i < loc->mn ; i++)						\
-    {									\
-      if ((loc->S[i] = nsp_polynom_add_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
-	return NULL;							\
-    }								
-  if ( SameDim(A,B) ) 
-    {
-      PM_ADDM(A->m,A->n,i,i);
-    }
-  else if ( A->mn == 1 )
-    {
-      PM_ADDM(B->m,B->n,0,i);
-    }
-  else if ( B->mn == 1 )
-    {
-      PM_ADDM(A->m,A->n,i,0);
-    }
-  else
-    {
-      Scierror("Error:\tArguments must have the same size\n");
-      return NULL;
-    }
-  return loc;
-}
-
-
-int int_pmatrix_add_p_m(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_add_p_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*R;
   NspMatrix *M;
@@ -1424,7 +1356,7 @@ int int_pmatrix_add_p_m(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_add_m_p(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_add_m_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*R;
   NspMatrix *M;
@@ -1439,42 +1371,7 @@ int int_pmatrix_add_m_p(Stack stack, int rhs, int opt, int lhs)
 
 
 
-#define SameDim(PMAT1,PMAT2) ( PMAT1->m == PMAT2->m && PMAT1->n == PMAT2->n  )
-
-NspPMatrix * nsp_pmatrix_minus_m(NspPMatrix *A,NspMatrix *B, int flag)
-{
-  int i;
-  NspPMatrix *loc;
-#define PM_MINUSM(s1,s2,i1,i2)						\
-  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1))== NULLPMAT)	\
-    return(NULLPMAT);							\
-  for (i=0; i < loc->mn ; i++)						\
-    {									\
-      if ((loc->S[i] = nsp_polynom_minus_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
-	return NULL;							\
-      if ( flag == FALSE ) nsp_mat_minus(loc->S[i]);			\
-    }								
-  if ( SameDim(A,B) ) 
-    {
-      PM_MINUSM(A->m,A->n,i,i);
-    }
-  else if ( A->mn == 1 )
-    {
-      PM_MINUSM(B->m,B->n,0,i);
-    }
-  else if ( B->mn == 1 )
-    {
-      PM_MINUSM(A->m,A->n,i,0);
-    }
-  else
-    {
-      Scierror("Error:\tArguments must have the same size\n");
-      return NULL;
-    }
-  return loc;
-}
-
-int int_pmatrix_minus_p_m(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_minus_p_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*R;
   NspMatrix *M;
@@ -1487,7 +1384,7 @@ int int_pmatrix_minus_p_m(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int int_pmatrix_minus_m_p(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_minus_m_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*R;
   NspMatrix *M;
@@ -1499,9 +1396,6 @@ int int_pmatrix_minus_m_p(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) R);
   return 1;
 }
-
-
-
 
 
 /*
@@ -1524,10 +1418,12 @@ static OpTab PMatrix_func[]={
   {"matrix_p",int_matint_redim},
   {"reshape_p",int_matint_redim},
   {"concatr_p_p", int_matint_concatr}, /* int_pmatrix_concatr}, */
-  {"concatr_m_p",int_pmatrix_concatr_m_s},
+  {"concatr_m_p",int_pmatrix_concatr_m_p},
+  {"concatr_p_m",int_pmatrix_concatr_p_m},
   {"addcols_p_m",int_pmatrix_addcols},
   {"concatd_p_p",int_matint_concatd}, /*  int_pmatrix_concatd}, */
-  {"concatd_m_p",int_pmatrix_concatd_m_s},
+  {"concatd_m_p",int_pmatrix_concatd_m_p},
+  {"concatd_p_m",int_pmatrix_concatd_p_m},
   {"concatdiag_p_p",int_matint_concat_diag},
   {"isvector_p", int_matint_isvector},
   {"addrows_p",int_pmatrix_addrows},
