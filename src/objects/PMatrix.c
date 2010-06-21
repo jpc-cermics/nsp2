@@ -197,7 +197,6 @@ int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_leve
 	{
 	  Sciprintf1(indent,"%s=%s",pname,(Mat->mn==0 ) ? " m2p([])\n" : "" );
 	}
-
       else 
 	{
 	  Sciprintf1(indent,"%s",(Mat->mn==0 ) ? " m2p([])\n" : "" );
@@ -2084,7 +2083,7 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   /* Allocate a table to store the column width 
    * Iloc[j]= degree max of column j 
    */
-  if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return(FAIL);
+  if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return FALSE;
   for ( j=0 ; j < M->n ; j++ )
     {
       Iloc[j]= pr_poly_print_size (fmt,M->S[j*M->m],fw);
@@ -2133,7 +2132,7 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
 	  if ( p_rows >= winrows ) 
 	    {
 	      scimore(&imore);
-	      if ( imore == 1) return(OK);
+	      if ( imore == 1) return TRUE;
 	      p_rows=0;
 	    }
 	  {
@@ -2172,7 +2171,7 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
       col += inc;
     }
   FREE(Iloc);
-  return(OK);
+  return TRUE ;
 }
 
 /**
