@@ -708,9 +708,31 @@ static int int_meth_smatrix_has(void *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
+static int int_meth_smatrix_to_utf8(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ( nsp_smatrix_to_utf8(self) == FAIL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(self));
+  return Max(lhs,1);
+}
+
+static int int_meth_smatrix_is_utf8(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if (nsp_move_boolean(stack,1,nsp_smatrix_utf8_validate(self))== FAIL)
+    return RET_BUG;
+  return Max(lhs,1);
+}
+
+
+
 static NspMethods smatrix_methods[] = {
   {"concatd",(nsp_method *) int_smatrix_concat_down},
   {"has",(nsp_method *) int_meth_smatrix_has},
+  {"to_utf8",(nsp_method *) int_meth_smatrix_to_utf8},
+  {"is_utf8",(nsp_method *) int_meth_smatrix_is_utf8},
   { NULL, NULL}
 };
 
