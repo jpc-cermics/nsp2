@@ -633,11 +633,17 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	    int return_ = 0;
 	    /* try/catch/finally */
 	    /* evaluates the try */
+	    int errcatch_cur = stack.val->errcatch;
+	    int pause_cur = stack.val->pause;
+	    stack.val->errcatch = TRUE;
+	    stack.val->pause = TRUE;
 	    nargs=nsp_eval_arg(L1,&stack,first,0,1,display);
+	    stack.val->errcatch = errcatch_cur;
+	    stack.val->pause = pause_cur;
 	    L1 = L1->next ;
 	    if ( nargs > 0)  
 	      {
-		fprintf(stderr,"strange: last if evaluation returns  %d \n",nargs);
+		fprintf(stderr,"strange: try evaluation returns %d\n",nargs);
 	      }
 	    if ( nargs < 0 ) 
 	      {

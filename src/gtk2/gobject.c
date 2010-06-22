@@ -1507,25 +1507,49 @@ nspg_closure_marshal(GClosure *closure,
  *   or a negative number (error code) in case of error 
  * 
  * evaluates the macro @func using the gtk stack.
+ * this function should be replaced by #nsp_gtk_eval_function_catch which gives 
+ * more execution control.
  * 
  * Return value: %OK or %FAIL
  **/
 
-static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret);
+static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret, int errcatch, int pausecatch);
 
 int nsp_gtk_eval_function(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
 {
   /* XXX replace "gtk_eval" by the f name */
-  return _nsp_gtk_eval_function(func,"gtk_eval",args,n_args,ret,nret);
+  return _nsp_gtk_eval_function(func,"gtk_eval",args,n_args,ret,nret, FALSE, FALSE);
 }
 
-static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret)
+/* similar to the previous function but in a context 
+ * where  errcatch and  pausecatch can be used 
+ */
+
+int nsp_gtk_eval_function_catch(NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret,
+				int errcatch, int pausecatch)
+{
+  /* XXX replace "gtk_eval" by the f name */
+  return _nsp_gtk_eval_function(func,"gtk_eval",args,n_args,ret,nret, errcatch, pausecatch);
+}
+
+
+
+
+
+static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *args[],int n_args,NspObject  *ret[],int *nret, int errcatch, int pausecatch)
 {
   /* make a copy to be sure that some 
    * values are preserved through recursion
    */
   Stack stack = Marshal_stack; 
   int nargs = 0, i, n=0,rep =FAIL;
+  /* save current values */
+  int errcatch_cur = Marshal_stack.val->errcatch;
+  int pause_cur = Marshal_stack.val->pause;
+  /* must be reset at the end */
+  stack.val->errcatch = errcatch; 
+  stack.val->pause = pausecatch; 
+  
   stack_count++;
   nspg_block_threads();
   if ( func  == NULLP_PLIST && fname == NULL) 
@@ -1550,7 +1574,7 @@ static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *ar
   /*Calling func is a macro coded in P_PList **/
   if ((n=nsp_eval_func((NspObject *) func,  NspFname(stack),2,stack,stack.first,nargs,0,*nret)) < 0 )
     {
-      nsp_error_message_show();
+      if ( errcatch == FALSE ) nsp_error_message_show();
       goto end; 
     }
   /*FuncEval fait-il le menage tout seul ? XXXXX **/
@@ -1571,6 +1595,8 @@ static int _nsp_gtk_eval_function(NspPList *func,const char *fname,NspObject *ar
   end : 
     {
       stack_count--;
+      Marshal_stack.val->errcatch= errcatch_cur;
+      Marshal_stack.val->pause = pause_cur;
       nspg_unblock_threads();
       /* if FAIL returns the error code in *nret */
       if ( rep == FAIL) *nret = n;
@@ -1598,7 +1624,7 @@ int nsp_gtk_eval_function_by_name(const char *name,NspObject *args[],int n_args,
    * since it is used by scicos or mexcallmatlab.
    */
   NspObject *Obj= nsp_frames_search_object(name);
-  return  _nsp_gtk_eval_function((NspPList *)Obj,name,args,n_args,ret,nret);
+  return  _nsp_gtk_eval_function((NspPList *)Obj,name,args,n_args,ret,nret, FALSE,FALSE);
 }
 
 

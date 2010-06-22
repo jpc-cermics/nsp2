@@ -22,7 +22,7 @@
 #include <setjmp.h>
 #include "nsp/interf.h"
 #include "minpack.h"
-#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
+#include "nsp/eval.h" 
 
 /* 
  * data used when nsp is used to evaluate an  
@@ -43,6 +43,8 @@ struct _hybr_data
   minpack_fcn6 f_jac;
   minpack_fcn2 f_lfcn;
   minpack_fcn7 f_ljac;
+  int errcatch;
+  int pausecatch;
 };
 
 static void hybr_clean(hybr_data *obj);
@@ -82,7 +84,13 @@ static int int_minpack_fsolve (Stack stack, int rhs, int opt, int lhs)
   
   CheckStdRhs(2,2);
   CheckLhs(1,5);
-    
+
+  /* we must propagate errcatch and pausecatch to 
+   * function evaluation 
+   */
+  Hybr_data.errcatch = stack.val->errcatch ;
+  Hybr_data.pausecatch = stack.val->pause ;
+  
   epsm = minpack_dpmpar (1);
   xtol = sqrt (epsm); 
   ftol = pow(epsm,2./3.);
@@ -664,7 +672,8 @@ static int hybr_lfcn(const int *m,const int *n, double *x, double *fvec, int *if
   NspObject *targs[2];/* arguments to be transmited to hybr_obj->objective */
   NspObject *nsp_ret;
   int nret = 1,nargs = 1, nres;
-  
+  int errcatch = hybr_obj->errcatch;
+  int pausecatch = hybr_obj->pausecatch;
   targs[0]= NSP_OBJECT(hybr_obj->x); 
   memcpy(hybr_obj->x->R,x,hybr_obj->x->mn*sizeof(double));
   /* for ( i= 0 ; i < hybr_obj->x->mn ; i++) hybr_obj->x->R[i]= x[i];*/
@@ -675,7 +684,7 @@ static int hybr_lfcn(const int *m,const int *n, double *x, double *fvec, int *if
       nargs= 2;
     }
   /* FIXME : a changer pour metre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)hybr_obj->fcn ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)hybr_obj->fcn ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       *iflag= -1;
       return FAIL;
@@ -713,13 +722,15 @@ static int hybr_fcn(const int *n, double *x, double *fvec, int *iflag,void *hybr
  * soft evaluation of jacobian. 
  */
 
-static int hybr_ljac(const int *m,const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *hybr_obj_d)
+static int hybr_ljac(const int *m,const int *n, double *x, double *fjac, int *ldfjac,
+		     int *iflag, void *hybr_obj_d)
 {
   hybr_data *hybr_obj = hybr_obj_d;
   NspObject *targs[2];/* arguments to be transmited to hybr_obj->objective */
   NspObject *nsp_ret;
   int nret = 1, nargs = 1, nres;
-  
+  int errcatch = hybr_obj->errcatch;
+  int pausecatch = hybr_obj->pausecatch;
   targs[0]= NSP_OBJECT(hybr_obj->x); 
   memcpy(hybr_obj->x->R,x,hybr_obj->x->mn*sizeof(double));
   /* for ( i= 0 ; i < hybr_obj->x->mn ; i++) hybr_obj->x->R[i]= x[i]; */
@@ -731,7 +742,7 @@ static int hybr_ljac(const int *m,const int *n, double *x, double *fjac, int *ld
       nargs= 2;
     }
   /* FIXME : a changer pour metre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)hybr_obj->jac ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)hybr_obj->jac ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       *iflag= -1;
       return FAIL;
@@ -752,7 +763,6 @@ static int hybr_ljac(const int *m,const int *n, double *x, double *fjac, int *ld
     }
   return OK;
 }
-
 
 static int hybr_jac(const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *hybr_obj_d)
 {
