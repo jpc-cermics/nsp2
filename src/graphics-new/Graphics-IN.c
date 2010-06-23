@@ -5219,7 +5219,7 @@ static int int_xdel_new(Stack stack, int rhs, int opt, int lhs)
     {
       NspFigure *F = nsp_get_current_figure(); 
       if ( F == NULL) return 0;
-      ((BCG *) F->obj->Xgc)->actions->delete(F->obj->Xgc);
+      ((BCG *) F->obj->Xgc)->actions->destroy(F->obj->Xgc);
     }
   return 0;
 }

@@ -31,7 +31,7 @@ struct _nsp_gc_actions {
   driver_gc_change *change ;
   driver_gc_2dzoom *zoom ;
   driver_gc_3drot  *rotation ;
-  driver_gc_delete *delete ;
+  driver_gc_delete *destroy ;
   driver_gc_erase  *erase ;
   driver_gc_expose *expose ;
   driver_gc_loadsg *loadsg; 

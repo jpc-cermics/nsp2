@@ -426,7 +426,7 @@ static int nsp_figure_connect(NspFigure *F)
 static int nsp_figure_unconnect(NspFigure *F)
 {
   BCG *Xgc =  F->obj->Xgc;
-  if ( Xgc != NULL)  Xgc->actions->delete(Xgc);
+  if ( Xgc != NULL)  Xgc->actions->destroy(Xgc);
   F->obj->Xgc = NULL;
   return OK ;
 }

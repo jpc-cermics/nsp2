@@ -107,7 +107,7 @@ void nsp_gr_delete(int winid)
 {
   BCG *Xgc;
   if ( (Xgc= window_list_search(winid)) == NULL) return;
-  Xgc->actions->delete(Xgc);
+  Xgc->actions->destroy(Xgc);
 }
 
 /**
