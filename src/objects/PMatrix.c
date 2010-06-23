@@ -1543,8 +1543,8 @@ nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b)
 	    M->C[i].r=M->C[i].i =0.0;
 	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
 	      {
-		M->C[i].r += A->C[i].r*B->R[i-j];
-		M->C[i].i += A->C[i].i*B->R[i-j];
+		M->C[i].r += A->C[j].r*B->R[i-j];
+		M->C[i].i += A->C[j].i*B->R[i-j];
 	      }
 	  }
       else 
@@ -1553,8 +1553,8 @@ nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b)
 	    M->C[i].r=M->C[i].i =0.0;
 	    for (j = Max(0, i - B->mn +1) ; j <= Min(i,A->mn -1) ; j++)
 	      {
-		M->C[i].r += A->R[i]*B->C[i-j].r;
-		M->C[i].i += A->R[i]*B->C[i-j].i;
+		M->C[i].r += A->R[j]*B->C[i-j].r;
+		M->C[i].i += A->R[j]*B->C[i-j].i;
 	      }
 	  }
     }
