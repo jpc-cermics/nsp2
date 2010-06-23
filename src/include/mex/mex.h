@@ -141,6 +141,8 @@ extern mxClassID mxGetClassID(const mxArray *ptr) ;
 
 extern void *mxMalloc(size_t n);
 extern void mxDestroyArray(mxArray *ptr);
+extern void mxDestroyNamedArray(mxArray *ptr);
+
 extern mxArray *mxCreateCellArray(int ndim, const int *dims);
 extern int mxCalcSingleSubscript(const mxArray *ptr, int nsubs,const int *subs);extern const char * mxGetName(const mxArray *ptr) ;
 

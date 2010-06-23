@@ -1275,12 +1275,25 @@ void *mxMalloc(size_t n)
  * @ptr: an #mxArray
  * 
  * destroy the object @ptr.
- * Note that objects are destroyed isthey have no names. 
+ * Note that objects are destroyed if they have no names. 
  * Thus we preserve array which are stored in a struct 
  * via mxSetField(). 
  **/
 
 void mxDestroyArray(mxArray *ptr)
+{
+  nsp_void_object_destroy(&ptr);
+}
+
+/**
+ * mxDestroyNamedArray:
+ * @ptr: an #mxArray
+ * 
+ * destroy the object @ptr even if object has a name. 
+ * see #mxDestroyArray for the named case.
+ **/
+
+void mxDestroyNamedArray(mxArray *ptr)
 {
   nsp_void_object_destroy(&ptr);
 }
