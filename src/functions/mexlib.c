@@ -1295,7 +1295,7 @@ void mxDestroyArray(mxArray *ptr)
 
 void mxDestroyNamedArray(mxArray *ptr)
 {
-  nsp_void_object_destroy(&ptr);
+  nsp_object_destroy(&ptr);
 }
 
 /**
