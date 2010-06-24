@@ -74,7 +74,6 @@ extern NspObject * mpmatrix_loop_extract (char *str, NspObject *O, NspObject *O1
 extern NspMaxpMatrix *mpmatrix_copy (const NspMaxpMatrix *A); 
 extern NspMaxpMatrix  *mpmatrix_object(NspObject *O);
 
-extern int nsp_mpmat_fullcomp();
 extern NspMaxpMatrix *mpmatrix_object(NspObject *O); 
 extern int IsMpMatObj (Stack stack, int i); 
 extern int IsMpMat (NspObject *O); 

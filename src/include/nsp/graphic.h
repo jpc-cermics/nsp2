@@ -25,7 +25,7 @@ typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 #line 57 "codegen/graphic.override"
 
-typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const const GdkRectangle *rect, void *data);
+typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
 typedef void rotate_func(NspGraphic *Obj,double *R);
 typedef void scale_func(NspGraphic *Obj,double *alpha);
