@@ -1894,8 +1894,24 @@ mxArray *mxCreateSparseLogicalMatrix(int m, int n, int nzmax)
 mxArray *mxGetFieldByNumber(const mxArray *array_ptr, int index, 
 			    int field_number)
 {
-  Scierror("Error: mxGetFieldByNumber not implemented\n");
-  nsp_mex_errjump();      
+  int i, count=-1;
+  NspHash *H = (NspHash *) array_ptr;
+  if ( index != 0 )
+    {
+      Scierror("Struct just have a zero index \n");
+      nsp_mex_errjump();
+    }
+  if ( ! IsHash(array_ptr) ) nsp_mex_errjump();
+  for ( i =0 ; i <= H->hsize  ; i ++) 
+    {
+      Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
+      if ( loc->used && loc->data != NULLOBJ) 
+	{
+	  count++;
+	  if ( count == field_number ) 
+	    return    loc->data;
+	}
+    }
   return NULL;
 }
 
@@ -2149,8 +2165,19 @@ void mxSetFieldByNumber(mxArray *array_ptr, int index,
 const char *mxGetFieldNameByNumber(const mxArray *array_ptr, 
 				   int field_number)
 {
-  Scierror("Error: mxGetFieldNameByNumber is not implemented\n");
-  nsp_mex_errjump();      
+  int i, count=-1;
+  NspHash *H = (NspHash *) array_ptr;
+  if ( ! IsHash(array_ptr) ) nsp_mex_errjump();
+  for ( i =0 ; i <= H->hsize  ; i ++) 
+    {
+      Hash_Entry *loc = ((Hash_Entry *) H->htable) + i;
+      if ( loc->used && loc->data != NULLOBJ) 
+	{
+	  count++;
+	  if ( count == field_number ) 
+	    return nsp_object_get_name(loc->data);
+	}
+    }
   return NULL;
 }
 
