@@ -20,8 +20,8 @@
  *--------------------------------------------------------------------------*/
 
 #include "nsp/interf.h"
+#include "nsp/eval.h" /* nsp_gtk_eval_function */
 #include "optim.h"
-#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 
 static void n1qn1_clean(opt_simul_data *obj);
 static int n1qn1_prepare(int n,NspObject *fcn,NspObject *args,opt_simul_data *obj);
@@ -62,6 +62,11 @@ int int_optim (Stack stack, int rhs, int opt, int lhs)
   
   CheckStdRhs(2,2);
   CheckLhs(1,1);
+
+  /* inherits values from stack */
+  optim_data.errcatch = stack.val->errcatch ;
+  optim_data.pausecatch = stack.val->pause ;
+
 
   if ((fcn = get_function(stack,1,&optim_data))==NULL)  return RET_BUG;
   if ((X = GetRealMatCopy(stack,2)) == NULLMAT) return RET_BUG;
@@ -382,7 +387,9 @@ static void n1qn1_lfcn(int *ind, int *n, double *x, double *f, double *g,void *n
   NspObject *targs[3];/* arguments to be transmited to n1qn1_obj->objective */
   NspObject *nsp_ret[3];
   int nret = 3,nargs = 2,ret=FAIL,i;
-  
+  int errcatch =  n1qn1_obj->errcatch;
+  int pausecatch = n1qn1_obj->pausecatch;
+
   targs[0]= NSP_OBJECT(n1qn1_obj->x); 
   memcpy(n1qn1_obj->x->R,x,n1qn1_obj->x->mn*sizeof(double));
   targs[1]= NSP_OBJECT(n1qn1_obj->ind); 
@@ -393,7 +400,7 @@ static void n1qn1_lfcn(int *ind, int *n, double *x, double *f, double *g,void *n
       nargs= 3;
     }
   /* FIXME : a changer pour metre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)n1qn1_obj->fcn ,targs,nargs,nsp_ret,&nret)== FAIL)
+  if ( nsp_gtk_eval_function_catch((NspPList *)n1qn1_obj->fcn ,targs,nargs,nsp_ret,&nret,errcatch,pausecatch)== FAIL)
     {
       goto stop;
     }

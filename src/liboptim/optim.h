@@ -28,6 +28,8 @@ struct _opt_simul_data
   NspMatrix *ind;  /* value of ind */
   NspObject *fcn;
   opt_simul f_fcn;
+  int errcatch ; 
+  int pausecatch ;
 };
 
 

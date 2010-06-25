@@ -21,16 +21,14 @@
 #include <stdio.h>
 #include <string.h> 
 #include "nsp/interf.h"
-#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
 #include "nsp/ode_solvers.h"
+#include "nsp/eval.h"
 #include "integ.h"
-
 
 /*
  * ode interface
  * Authors:  Jean-Philippe Chancelier, Bruno Pincon. 
  *
- * ode en préparation 
  * we use a global variable to transmit information to 
  * ode_system. 
  * we could use the possibility to transmit this information 
@@ -43,14 +41,16 @@ typedef struct _ode_data ode_data;
 struct _ode_data
 {
   NspObject *args; /* extra argument to the integrator (a simple Mat, a List,...) */
-  int neq;       /* number of equations if neq <  y->mn y can be used to pass 
-		  * extra informations to f
-		  */
+  int neq;         /* number of equations if neq <  y->mn y can be used to pass 
+		    * extra informations to f
+		    */
   NspMatrix *y,*t; /* state of ode y->mn >= neq , t : 1x1 matrix the time */
   NspObject *func; /* (pointer to nsp code of the ode function (if provided as nsp function) */
   NspObject *jac;  /* (pointer to nsp code of its jacobian (if provided as nsp function) */
   ode_f c_func;    /* pointer onto the C (or fortran) code (ode function to integrate)  */ 
   ode_jac c_jac;   /* pointer onto the C (or fortran) code (jacobian of the ode function) */ 
+  int errcatch;
+  int pausecatch;
 };
 
 static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL}; 
@@ -59,14 +59,13 @@ extern struct {
   int mesflg, lunit;
 } C2F(eh0001);
 
-
-
 /**
  * ode_clean:
  * @ode: 
  * 
  * clean after integration 
  **/
+
 static void ode_clean(ode_data *obj)
 {
   if ( obj->args != NULL) nsp_object_destroy(&obj->args);
@@ -93,13 +92,14 @@ static void ode_clean(ode_data *obj)
  * 
  **/
 
-
 static int ode_system(int *neq,const double *t,const double y[],double ydot[], void *param)
 {
   ode_data *ode = &ode_d;
   NspObject *targs[4];/* arguments to be transmited to ode->func */
   NspObject *nsp_ret;
   int nret = 1,nargs = 2, i;
+  int errcatch =  ode->errcatch;
+  int pausecatch = ode->pausecatch;
   targs[0]= NSP_OBJECT(ode->t); 
   ode->t->R[0] = *t;
   targs[1]= NSP_OBJECT(ode->y); 
@@ -110,7 +110,7 @@ static int ode_system(int *neq,const double *t,const double y[],double ydot[], v
       nargs= 3;
     }
   /* FIXME : a changer pour metre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)ode->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)ode->func ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       ierode_1.iero = 1;
       return FAIL;
@@ -150,6 +150,8 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
   NspObject *targs[4];/* arguments to be transmited to ode->func */
   NspObject *nsp_ret;
   int nret = 1,nargs = 2, i, j, k, dim = ode->y->mn;
+  int errcatch =  ode->errcatch;
+  int pausecatch = ode->pausecatch;
   targs[0]= NSP_OBJECT(ode->t); 
   ode->t->R[0] = *t;
   targs[1]= NSP_OBJECT(ode->y); 
@@ -161,7 +163,7 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
     }
 
   /* FIXME : a changer pour metre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)ode->jac ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)ode->jac ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       ierode_1.iero = 1;
       return FAIL;
@@ -371,6 +373,11 @@ int int_ode(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&y0,&t0,&time,&f,&opts,&task,&warn,&args,&Matol,&g,
 	       &gargs,&iw,&jac,&ng,&odeoptions,&rtol,&type,&w) == FAIL) return RET_BUG;
 
+  /* inherits values from stack */
+  ode_d.errcatch = stack.val->errcatch ;
+  ode_d.pausecatch = stack.val->pause ;
+
+
   /* search for given integration method */
   if ( type != NULL) 
     {
@@ -468,6 +475,10 @@ static int int_ode_lsode(Stack stack,NspObject *f, NspObject *jac,NspObject *arg
   double *rwork = NULL;
   int *iwork = NULL;
   NspMatrix *res = NULLMAT, *tt = NULLMAT;
+
+  /* inherits values from stack */
+  ode_d.errcatch = stack.val->errcatch ;
+  ode_d.pausecatch = stack.val->pause ;
 
   if ( rtol <= 0.0 ) rtol = defrtol;
 
@@ -848,6 +859,10 @@ static int int_ode_dopri5(Stack stack, NspObject *f, NspObject *args, NspMatrix 
   const double *atol=&defatol;
   NspMatrix *res = NULLMAT, *tt = NULLMAT;
 
+  /* inherits values from stack */
+  ode_d.errcatch = stack.val->errcatch ;
+  ode_d.pausecatch = stack.val->pause ;
+
   if ( rtol <= 0.0 ) rtol = defrtol;
 
   if ( Matol != NULL) 
@@ -973,6 +988,10 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
   if (( res = nsp_matrix_create(NVOID,'r',y0->mn,time->mn))== NULLMAT) 
     goto err;
 
+  /* inherits values from stack */
+  ode_d.errcatch = stack.val->errcatch ;
+  ode_d.pausecatch = stack.val->pause ;
+
   ierode_1.iero = 0;
 
   for ( i= 0 ; i < time->mn ; i++ )
@@ -1041,8 +1060,10 @@ typedef struct _intg_data intg_data;
 struct _intg_data
 {
   NspObject *args;   /* the extra argument to the integrator (a simple Mat, or a List, ... */
-  NspMatrix *x;    /* current evaluation point or vector, x is a 1x1 or 21x1 or 15x1 or 30x1 */
-  NspObject *func; /* function to integrate */
+  NspMatrix *x;      /* current evaluation point or vector, x is a 1x1 or 21x1 or 15x1 or 30x1 */
+  NspObject *func;   /* function to integrate */
+  int errcatch;
+  int pausecatch;
 };
 
 static intg_data intg_d ={NULLOBJ, NULLMAT, NULLOBJ}; 
@@ -1117,7 +1138,8 @@ static int intg_func(const double *x, double *y, int *n)
   NspObject *nsp_ret;
   int k, nret = 1,nargs = 1;
   int mn_save = intg->x->mn, m_save = intg->x->m;
-
+  int errcatch =  intg->errcatch;
+  int pausecatch = intg->pausecatch;
   intg->x->mn = *n;   intg->x->m = *n; 
 
   targs[0]= NSP_OBJECT(intg->x);
@@ -1132,7 +1154,7 @@ static int intg_func(const double *x, double *y, int *n)
     }
 
   /* FIXME : a changer pour mettre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)intg->func ,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)intg->func ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       Scierror("Error: intg: failure in function evaluation\n");
       return -1;
@@ -1201,6 +1223,10 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
 
   if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &limit, &vect_flag) == FAIL ) 
     return RET_BUG;
+
+  /* inherits values from stack */
+  intg_d.errcatch = stack.val->errcatch ;
+  intg_d.pausecatch = stack.val->pause ;
 
   if ( isnan(a) || isnan(b) )
     {
@@ -1345,6 +1371,8 @@ struct _int2d_data
   NspMatrix *x;    /* current evaluation point abscissae, x is a 1x1 or 28x1 or 46x1 */
   NspMatrix *y;    /* current evaluation point ordinates, y is a 1x1 or 28x1 or 46x1 */
   NspObject *func; /* function to integrate */
+  int errcatch;
+  int pausecatch;
 };
 
 static int2d_data int2d_d ={NULLOBJ, NULLMAT, NULLMAT, NULLOBJ}; 
@@ -1419,6 +1447,8 @@ static int int2d_func(const double *x, const double *y, double *z, int *n)
   NspObject *targs[3];/* arguments to be transmited to intg->func */
   NspObject *nsp_ret;
   int k, nret = 1,nargs = 2;
+  int errcatch =  int2d->errcatch;
+  int pausecatch = int2d->pausecatch;
   targs[0]= NSP_OBJECT(int2d->x);
   for ( k = 0 ; k < *n ; k++ )
     int2d->x->R[k] = x[k];
@@ -1433,7 +1463,7 @@ static int int2d_func(const double *x, const double *y, double *z, int *n)
     }
 
   /* FIXME : a changer pour mettre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)int2d->func,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)int2d->func,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       Scierror("Error: int2d: failure in function evaluation\n");
       return -1;
@@ -1557,7 +1587,12 @@ int int_int2d(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt, T, &x, &y, &f, &opts, &args, &tol, &iflag, &limit, &iclose, &vect_flag) == FAIL ) 
     return RET_BUG;
   
+  /* inherits values from stack */
+  int2d_d.errcatch = stack.val->errcatch ;
+  int2d_d.pausecatch = stack.val->pause ;
+
   CheckSameDims (NspFname(stack), 1, 2, x, y);
+
   if ( x->mn == 2 )
     {
       on_triangles = FALSE;
@@ -1676,6 +1711,8 @@ struct _int3d_data
   NspMatrix *y;    /* current evaluation point ordinates, y is a 1x1 or npx1 */
   NspMatrix *z;    /* current evaluation point elevation, z is a 1x1 or npx1 */
   NspObject *func; /* function to integrate */
+  int errcatch;
+  int pausecatch;
 };
 
 static int3d_data int3d_d ={NULLOBJ, NULLMAT, NULLMAT, NULLMAT, NULLOBJ}; 
@@ -1747,6 +1784,8 @@ static int int3d_func(const double *x, const double *y, const double *z, double 
   NspObject *nsp_ret;
   int k, nret = 1,nargs = 3;
   int mn_saved = int3d->x->mn, m_saved = int3d->x->m;   /* to be explained... */
+  int errcatch =  int3d->errcatch;
+  int pausecatch = int3d->pausecatch;
 
   targs[0]= NSP_OBJECT(int3d->x);
   for ( k = 0 ; k < *n ; k++ )
@@ -1768,7 +1807,7 @@ static int int3d_func(const double *x, const double *y, const double *z, double 
     }
 
   /* FIXME : a changer pour mettre une fonction eval standard */
-  if ( nsp_gtk_eval_function((NspPList *)int3d->func,targs,nargs,&nsp_ret,&nret)== FAIL) 
+  if ( nsp_gtk_eval_function_catch((NspPList *)int3d->func,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
       Scierror("Error: int3d: failure in function evaluation\n");
       return 0;
@@ -1863,6 +1902,12 @@ int int_int3d(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt, T, &x, &y, &z, &f, &opts, &args, &atol, &rtol, &limit, &vecteval) == FAIL ) 
     return RET_BUG;
   
+
+  /* inherits values from stack */
+  int3d_d.errcatch = stack.val->errcatch ;
+  int3d_d.pausecatch = stack.val->pause ;
+
+
   CheckSameDims (NspFname(stack), 1, 2, x, y);
   CheckSameDims (NspFname(stack), 1, 3, x, z);
   if ( x->mn == 2 )
