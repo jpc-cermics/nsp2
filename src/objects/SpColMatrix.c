@@ -467,6 +467,7 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
   int i;
   if ( Mat != NULLSPCOL )
     {
+      nsp_spcol_free_triplet(Mat);
       nsp_object_destroy_name(NSP_OBJECT(Mat));
       if ( Mat->D != NULL) 
 	for ( i = 0  ; i < Mat->n ; i++) 

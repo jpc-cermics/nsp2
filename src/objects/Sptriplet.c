@@ -322,11 +322,14 @@ static int nsp_sprow_fill_zi_triplet(const NspSpRowMatrix *M)
 
 static void nsp_sprow_free_triplet(NspSpRowMatrix *M)
 {
-  M->convert = 'v';
-  FREE(M->triplet.Jc);
-  FREE(M->triplet.Ir);
-  FREE(M->triplet.Pr);
-  FREE(M->triplet.Pi);
+  if ( M->convert == 't') 
+    {
+      M->convert = 'v';
+      FREE(M->triplet.Jc);
+      FREE(M->triplet.Ir);
+      FREE(M->triplet.Pr);
+      FREE(M->triplet.Pi);
+    }
 }
 
 /**
