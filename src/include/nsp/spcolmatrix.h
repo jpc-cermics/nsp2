@@ -222,7 +222,7 @@ extern NspSpColMatrix *nsp_spcolmatrix_scal_div_tt(NspSpColMatrix *A, NspSpColMa
 extern NspSpColMatrix *nsp_spcolmatrix_isnan(NspSpColMatrix *A,int flag);
 extern NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag);
 
-extern Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A);
+extern Boolean nsp_spcolmatrix_is_lower_triangular(const NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A);
 extern Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A);
 extern int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *Ku);

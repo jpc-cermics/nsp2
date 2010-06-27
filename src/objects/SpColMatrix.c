@@ -7749,7 +7749,7 @@ NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag)
  * Return value: %TRUE or %FALSE
  **/
 /* added by Bruno */
-Boolean nsp_spcolmatrix_is_lower_triangular(NspSpColMatrix *A)
+Boolean nsp_spcolmatrix_is_lower_triangular(const NspSpColMatrix *A)
 {
   int i, j, k;
 
