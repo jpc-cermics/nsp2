@@ -1215,13 +1215,49 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
       nsp_matrix_destroy(C);
       return loc;
     }
+  else if ( A->n == B->m  )
+    {
+      NspMatrix *As;
+      int i,j,k;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      if ((As = nsp_matrix_create(NVOID,A->rc_type,1,1)) == NULLMAT) 
+	return NULLPMAT;
+      for (i=0; i < loc->m ; i++) 
+	for ( j = 0 ; j < loc->n ; j++)
+	  {
+	    nsp_polynom l = NULL,l1,l2;
+	    k= 0;
+	    if ( As->rc_type == 'r' )
+	      As->R[0] = A->R[i+A->m*k];
+	    else
+	      As->C[0] = A->C[i+A->m*k];
+	    l = nsp_polynom_mult( As, B->S[k+B->m*j]);
+	    if ( l == NULL) return NULL;
+	    for ( k = 1 ; k < A->n ; k++)
+	      {
+		if ( As->rc_type == 'r' )
+		  As->R[0] = A->R[i+A->m*k];
+		else
+		  As->C[0] = A->C[i+A->m*k];
+		l1 =  nsp_polynom_mult( As, B->S[k+B->m*j]);
+		if ( l1 == NULL ) return NULL;
+		if (( l2 =  nsp_polynom_add(l, l1))==NULL) return NULL;
+		nsp_polynom_destroy(&l);
+		nsp_polynom_destroy(&l1);
+		l= l2;
+	      }
+	    loc->S[i+loc->m*j]=l;
+	  }
+      nsp_matrix_destroy(As);
+      return loc;
+    }
   else
     {
-      Scierror("Error:\tOne of the two arguments should be 1x1\n");
+      Scierror("Error:\tIncompatible dimensions for product (%d,%d)*(%d,%d)\n",A->m,A->n,B->m,B->n);
       return NULL;
     }
 }
-
 
 
 NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B)
