@@ -813,7 +813,7 @@ static void nspg_menu_select(BCG *Xgc, int winid)
 
 static void nspg_menu_delete(BCG *Xgc, int winid) 
 {
-  if ( Xgc != NULL )  Xgc->actions->delete(Xgc);
+  if ( Xgc != NULL )  Xgc->actions->destroy(Xgc);
 }
 
 /*-----------------------------------------------------------------*

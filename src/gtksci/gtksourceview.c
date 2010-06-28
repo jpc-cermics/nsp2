@@ -33,6 +33,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+#include <nsp/config.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gio/gio.h>
@@ -1566,8 +1567,24 @@ line_mark_activated (GtkSourceGutter *gutter,
 }
 #endif 
 
+#if 0 
+static void
+drag_data_received_cb (GtkWidget        *widget,
+		       GdkDragContext   *context,
+		       gint              x,
+		       gint              y,
+		       GtkSelectionData *selection_data,
+		       guint             info,
+		       guint             timestamp,
+		       gpointer          data)
+{
+  /* GtkSourceView *view = GTK_SOURCE_VIEW (data); */
+  char *drop= (gchar *) gtk_selection_data_get_data (selection_data);
+  Sciprintf("drop: %s\n",drop);
+}
+#endif 
 
-/* Window creation functions -------------------------------------------------------- */
+/* Window creation functions  */
 
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
 static gchar *
@@ -1632,6 +1649,12 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
   g_signal_connect (buffer, "changed", G_CALLBACK (update_cursor_position), view);
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
   g_signal_connect (view,   "line-mark-activated", G_CALLBACK (line_mark_activated), view);
+#endif 
+#if 0
+  g_signal_connect (view,
+		    "drag_data_received",
+		    G_CALLBACK (drag_data_received_cb), 
+		    view);
 #endif 
 
   g_signal_connect (window, "delete-event", (GCallback) window_deleted_cb, view);
