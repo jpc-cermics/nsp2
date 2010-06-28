@@ -187,30 +187,30 @@ char *nsp_pmatrix_type_short_string(NspObject *v)
 }
 
 
-int PMatFullComp(NspPMatrix * A,NspPMatrix * B,char *op,int *err)
+static int nsp_pmatrix_full_comp(NspPMatrix * A,NspPMatrix * B,char *op,int *err)
 {
-  Scierror("PMatFullComp: to be implemented \n");
-  return FALSE;
+  int i, rep;
+  if ( A->m != B->m || A->n != B->n) return FALSE;
+  for ( i = 0 ; i < A->mn ; i++ ) 
+    {
+      rep = nsp_mat_fullcomp (A->S[i],B->S[i],"==", err);
+      if ( *err == TRUE || rep == FALSE ) return FALSE;
+    }
+  return TRUE;
 }
-
-
 
 int nsp_pmatrix_eq(NspObject *A, NspObject *B)
 {
   int err,rep;
   if ( check_cast(B,nsp_type_pmatrix_id) == FALSE) return FALSE ;
-  rep = PMatFullComp((NspPMatrix *) A,(NspPMatrix *) B,"==",&err);
+  rep = nsp_pmatrix_full_comp((NspPMatrix *) A,(NspPMatrix *) B,"==",&err);
   if ( err == 1) return FALSE ; 
   return rep;
 }
 
 int nsp_pmatrix_neq(NspObject *A, NspObject *B)
 {
-  int err=0,rep;
-  if ( check_cast(B,nsp_type_pmatrix_id) == FALSE) return TRUE;
-  rep = PMatFullComp((NspPMatrix *) A,(NspPMatrix *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return ( nsp_pmatrix_eq(A,B) == TRUE ) ? FALSE : TRUE ;
 }
 
 /*
@@ -894,7 +894,7 @@ static int int_pmatrix_f_gen(Stack stack, int rhs, int opt, int lhs,char *op)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  rep = PMatFullComp(A,B,op,&err);
+  rep = nsp_pmatrix_full_comp(A,B,op,&err);
   if ( err == 1) 
     {
       Scierror("Error: operator %s , arguments with incompatible dimensions\n",op);

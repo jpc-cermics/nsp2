@@ -274,7 +274,6 @@ matrix_eq (NspObject * A, NspObject * B)
 #else
   char *op = "=nan="; 
 #endif 
-
   int err, rep;
   if (check_cast (B, nsp_type_matrix_id) == FALSE)     return FALSE;
   if ( ! ( ((NspMatrix *) A)->m == ((NspMatrix *) B)->m 
