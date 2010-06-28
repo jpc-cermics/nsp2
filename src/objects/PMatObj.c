@@ -944,19 +944,46 @@ static int int_pmatrix_fge(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/*
- * Res =nsp_pmatrix_copy(A) 
- * Creates a Copy of NspPMatrix A : A is not checked 
- */
-
-static int int_pmatrix_transpose(Stack stack, int rhs, int opt, int lhs)
+static int int_pmatrix_dprim_p(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *HMat1,*HMat2;
   CheckRhs(1,1);
-  CheckLhs(1,1);
+  CheckLhs(0,1);
   if (( HMat1 = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if (( HMat2 =nsp_pmatrix_transpose(HMat1))  == NULLPMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat2);
+  return 1;
+}
+
+static int int_pmatrix_quote_p(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspPMatrix *HMat1,*HMat2;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if (( HMat1 = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
+  if (( HMat2 =nsp_pmatrix_transpose(HMat1))  == NULLPMAT) return RET_BUG;
+  for ( i = 0 ; i < HMat2->mn ; i++)
+    {
+      nsp_mat_conj(HMat2->S[i]);
+    }
+  MoveObj(stack,1,(NspObject *) HMat2);
+  return 1;
+}
+
+
+static int int_pmatrix_conj(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspPMatrix *A;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((A = GetPMatCopy(stack,1)) == NULLPMAT) return RET_BUG;
+  for ( i = 0 ; i < A->mn ; i++)
+    {
+      nsp_mat_conj(A->S[i]);
+    }
+  NSP_OBJECT(A)->ret_pos =1;
   return 1;
 }
 
@@ -1042,6 +1069,20 @@ static int int_pmatrix_mult_m_p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_pmatrix_mult_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *Q;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P= GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_mult_p_m(P,Q))== NULLPMAT)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
 /* test : mult by fft */
 
 static int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
@@ -1052,6 +1093,33 @@ static int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
   if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
   if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
   if ((R= nsp_pmatrix_mult_tt(P,Q))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+static int int_pmatrix_mult_tt_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *Q;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_mult_tt_p_m(P,Q))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+static int int_pmatrix_mult_tt_m_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *P;
+  NspPMatrix *Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_mult_tt_m_p(P,Q))== NULL)
     return RET_BUG;
   MoveObj(stack,1,(NspObject *) R);
   return 1;
@@ -1442,7 +1510,8 @@ static OpTab PMatrix_func[]={
   {"lt_p_p" ,  int_pmatrix_lt },
   {"ne_p_p" ,  int_pmatrix_neq },
   {"m2p", int_pmatrix_m2p},
-  {"quote_p", int_pmatrix_transpose},
+  {"quote_p", int_pmatrix_quote_p},
+  {"dprim_p", int_pmatrix_dprim_p},
   {"companion_m",int_pmatrix_companion_m},
   {"companion_p",int_pmatrix_companion_p},
   {"roots_p",int_pmatrix_roots},
@@ -1450,8 +1519,11 @@ static OpTab PMatrix_func[]={
   {"plus_p_m",int_pmatrix_add_p_m},
   {"plus_m_p",int_pmatrix_add_m_p},
   {"mult_m_p",int_pmatrix_mult_m_p},
+  {"mult_p_m",int_pmatrix_mult_p_m},
   {"mult_p_p",int_pmatrix_mult_p_p},
   {"dst_p_p",int_pmatrix_mult_tt},
+  {"dst_p_m",int_pmatrix_mult_tt_p_m},
+  {"dst_m_p",int_pmatrix_mult_tt_m_p},
   {"minus_p_p",int_pmatrix_minus_p_p},
   {"minus_p", int_pmatrix_minus},
   {"horner", int_pmatrix_horner},
@@ -1467,6 +1539,7 @@ static OpTab PMatrix_func[]={
   {"hat_p_m",  int_pmatrix_hat_p_m},
   {"minus_m_p",  int_pmatrix_minus_m_p},
   {"minus_p_m",  int_pmatrix_minus_p_m},
+  {"conj_p", int_pmatrix_conj},
   {(char *) 0, NULL}
 };
 

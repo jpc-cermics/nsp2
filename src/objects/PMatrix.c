@@ -1172,8 +1172,8 @@ nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q)
   return A;
 }
 
-/* A*B A matrix B PMatrix 
- * just the case A 1x1 or B 1x1 
+/* 
+ * A*B A matrix B PMatrix 
  */
 
 NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
@@ -1258,6 +1258,91 @@ NspPMatrix *nsp_pmatrix_mult_m_p(NspMatrix *A, NspPMatrix *B)
       return NULL;
     }
 }
+
+NspPMatrix *nsp_pmatrix_mult_p_m(NspPMatrix *A, NspMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( A->mn == 1 ) 
+    {
+      NspMatrix *C;
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return NULLPMAT;
+      if ((C = nsp_matrix_create(NVOID,B->rc_type,1,1))== NULLMAT)
+	return NULLPMAT;
+      for (i=0; i < B->mn ; i++) 
+	{
+	  if ((loc->S[i] = nsp_polynom_copy_with_name(A->S[0]))== NULL) goto err;
+	  if ( C->rc_type =='r' ) 
+	    C->R[0]=B->R[i];
+	  else 
+	    C->C[0]=B->C[i];
+	  if ( nsp_mat_mult_scalar(loc->S[i],C) == FAIL ) goto err;
+	}
+      nsp_matrix_destroy(C);
+      return loc;
+    err: 
+      nsp_matrix_destroy(C);
+      return NULL;
+    }
+  else if ( B->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	{
+	  if ((loc->S[i] = nsp_polynom_copy_with_name(A->S[i]))== NULL) 
+	    return NULL;
+	  if ( nsp_mat_mult_scalar(loc->S[i],B) == FAIL )
+	    return NULL;
+	}
+      return loc;
+    }
+  else if ( A->n == B->m  )
+    {
+      NspMatrix *Bs;
+      int i,j,k;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      if ((Bs = nsp_matrix_create(NVOID,B->rc_type,1,1)) == NULLMAT) 
+	return NULLPMAT;
+      for (i=0; i < loc->m ; i++) 
+	for ( j = 0 ; j < loc->n ; j++)
+	  {
+	    nsp_polynom l = NULL,l1,l2;
+	    k= 0;
+	    if ( Bs->rc_type == 'r' )
+	      Bs->R[0] =  B->R[k+B->m*j];
+	    else
+	      Bs->C[0] =  B->C[k+B->m*j];
+	    l = nsp_polynom_mult(A->S[i+A->m*k] , Bs);
+	    if ( l == NULL) return NULL;
+	    for ( k = 1 ; k < A->n ; k++)
+	      {
+		if ( Bs->rc_type == 'r' )
+		  Bs->R[0] =  B->R[k+B->m*j];
+		else
+		  Bs->C[0] =  B->C[k+B->m*j];
+		l1 =  nsp_polynom_mult(A->S[i+A->m*k] , Bs);
+		if ( l1 == NULL ) return NULL;
+		if (( l2 =  nsp_polynom_add(l, l1))==NULL) return NULL;
+		nsp_polynom_destroy(&l);
+		nsp_polynom_destroy(&l1);
+		l= l2;
+	      }
+	    loc->S[i+loc->m*j]=l;
+	  }
+      nsp_matrix_destroy(Bs);
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\tIncompatible dimensions for product (%d,%d)*(%d,%d)\n",A->m,A->n,B->m,B->n);
+      return NULL;
+    }
+}
+
 
 
 NspPMatrix *nsp_pmatrix_mult_p_p(NspPMatrix *A, NspPMatrix *B)
@@ -1348,6 +1433,59 @@ NspPMatrix *nsp_pmatrix_mult_tt(NspPMatrix *A, NspPMatrix *B)
       Scierror("Error:\targuments should have the same size\n");
       return NULL;
     }
+}
+
+
+NspPMatrix *nsp_pmatrix_mult_tt_p_m(NspPMatrix *A, NspMatrix *B)
+{
+  NspPMatrix *loc;
+  if ( SameDim(A,B) )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	{
+	  loc->S[i]=  nsp_polynom_mult_m( A->S[i], B->R+i,B->rc_type );
+	  if ( loc->S[i] == NULL) return NULL;
+	}
+      return loc;
+    }
+  else if ( A->mn == 1 ) 
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	{
+	  loc->S[i]= nsp_polynom_mult_m( A->S[0], B->R+i,B->rc_type);
+	  if ( loc->S[i] == NULL)     return NULL;
+	}
+      return loc;
+    }
+  else if ( B->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	{
+	  if ((loc->S[i] =  nsp_polynom_mult_m( A->S[i], B->R,B->rc_type  )) == NULL) 
+	    return NULL;
+	}
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\targuments should have the same size\n");
+      return NULL;
+    }
+}
+
+
+NspPMatrix *nsp_pmatrix_mult_tt_m_p(NspMatrix *A, NspPMatrix *B)
+{
+  return nsp_pmatrix_mult_tt_p_m(B,A);
 }
 
 
@@ -1996,6 +2134,55 @@ nsp_polynom nsp_polynom_minus_m(nsp_polynom p, void *v, char type)
     }
   return loc;
 }
+
+/**
+ * nsp_polynom_mult_m:
+ * @p: a #nsp_polynom
+ * @v: pointer to a double or doubleC 
+ * @type: type of @v coded in a character
+ * 
+ * returns in a new polynomial @p * @v.
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_mult_m(nsp_polynom p, void *v, char type)
+{
+  int i;
+  nsp_polynom loc;
+  if ((loc = nsp_polynom_copy_and_name("pe",p))== NULL) 
+    return NULL;
+  if ( loc->mn == 0) return loc;
+  if ( type == 'c') 
+    {
+      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
+	return NULL;
+    }
+  if ( loc->rc_type == 'r' ) 
+    {
+      for ( i = 0 ; i < loc->mn ; i++)
+	loc->R[i] *= *((double *) v);
+    }
+  else
+    {
+      if ( type == 'r')
+	{
+	  for ( i = 0 ; i < loc->mn ; i++)
+	    {
+	      loc->C[i].r *= *((double *) v);
+	      loc->C[i].i *= *((double *) v);
+	    }
+	}
+      else
+	{
+	  doubleC x= * (doubleC *) v;
+	  for ( i = 0 ; i < loc->mn ; i++)
+	    nsp_prod_c(&loc->C[i],&x);
+	}
+    }
+  return loc;
+}
+
 
 
 /*
