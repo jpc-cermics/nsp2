@@ -685,12 +685,6 @@ NspPMatrix*nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err)
 }
 
 
-NspBMatrix  *PMatCompOp(NspPMatrix *A, NspPMatrix *B, char *op)
-{
-  Scierror("PMatCompOp: to be implemented \n");
-  return NULL;
-}
-
 /**
  * nsp_pmatrix_transpose: 
  * @A: a #NspPMatrix
@@ -926,6 +920,125 @@ NspPMatrix *nsp_pmatrix_dh_p_m(const NspPMatrix *P,const NspMatrix *M)
       return NULL;
     }
   return loc;
+}
+
+
+
+/**
+ * nsp_pmatrix_comp:
+ * @A: a #NspPMatrix 
+ * @B: a #NspPMatrix 
+ * @op: the code for the comparison as a string
+ * 
+ * Operation on Matrices leading to Boolean Matrices results 
+ * Res = A(i,j) op B(i;j). A and B must be size compatible with 
+ * the standard promotion of scalars i.e 1x1 matrices. 
+ * A and B are unchanged : Res is created 
+ * 
+ * Return value: a new #NspBMatrix
+ **/
+
+static int nsp_polynom_eq(nsp_polynom p, nsp_polynom q)
+{
+  int err;
+  int rep = nsp_mat_fullcomp (p,q,"==", &err);
+  if ( err == TRUE || rep == FALSE ) return FALSE;
+  return TRUE;
+}
+
+NspBMatrix  *nsp_pmatrix_comp(NspPMatrix *A, NspPMatrix *B,const char *op)
+{
+  int i;
+  NspBMatrix *Loc ;
+  if ( !( A->m == B->m && A->n == B->n ) )
+    {
+      /* dimensions are not the same */
+      if ( B->mn == 1 ) 
+	{
+	  /* Special case B is a 1x1 constant, size of result is controled by A 
+	   * even the 0xn and nx0 cases 
+	   */
+	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
+	  if ( Loc == NULLBMAT) { return(NULLBMAT);   }
+	  if ( strcmp(op,"==")==0 ) 
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ )  
+		if ( ! nsp_polynom_eq(A->S[i],B->S[0]) ) Loc->B[i] = FALSE;
+	    }
+	  else if ( strcmp(op,"<>")==0 ) 
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ )  
+		if (  nsp_polynom_eq(A->S[i],B->S[0])  ) Loc->B[i] = FALSE;
+	    }
+	  else goto wrong;
+	  return Loc;
+	}
+      if ( A->mn == 1 )
+	{
+	  /* Special case A is a constant */
+	  Loc =nsp_bmatrix_create(NVOID,B->m,B->n);
+	  if ( Loc == NULLBMAT)     { return(NULLBMAT);  }
+	  if ( strcmp(op,"==")==0 ) 
+	    {
+	      for ( i = 0 ; i < B->mn ; i++ )  
+		if ( ! nsp_polynom_eq(A->S[0],B->S[i])  ) Loc->B[i] = FALSE;
+	    }
+	  else if ( strcmp(op,"<>")==0 ) 
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ )  
+		if ( nsp_polynom_eq(A->S[i],B->S[0])  ) Loc->B[i] = FALSE;
+	    }
+	  else goto wrong;
+	  return(Loc);
+	}
+      /* Incompatible dimensions: we return a boolean scalar as in Scilab 
+       * this is not the matlab way.
+       */
+      if ( strcmp(op,"==") == 0) 
+	{
+	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
+	  Loc->B[0] = FALSE;
+	  return Loc;
+	}
+      else if ( strcmp(op,"<>") == 0) 
+	{
+	  if ((Loc =nsp_bmatrix_create(NVOID,1,1))== NULLBMAT)return(NULLBMAT);
+	  Loc->B[0] = TRUE ;
+	  return Loc;
+	}
+      else goto wrong;
+    }
+  else 
+    {
+      /* A and B are of same dimensions */
+      if ( A->mn == 0) 
+	{
+	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
+	  if ( Loc == NULLBMAT) return(NULLBMAT);
+	}
+      else
+	{
+	  Loc =nsp_bmatrix_create(NVOID,A->m,A->n);
+	  if ( Loc == NULLBMAT) return(NULLBMAT);
+	  if ( strcmp(op,"==")==0 ) 
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ )  
+		if ( ! nsp_polynom_eq(A->S[i],B->S[i]) ) Loc->B[i] = FALSE;
+	    }
+	  else if ( strcmp(op,"<>")==0 ) 
+	    {
+	      for ( i = 0 ; i < A->mn ; i++ )  
+		if (  nsp_polynom_eq(A->S[i],B->S[i]) ) Loc->B[i] = FALSE;
+	    }
+	  else goto wrong;
+	}
+    }
+  return(Loc);
+ wrong:
+  Scierror("Error: operation %s is not implemented for polynomial matrices\n",op);
+  return NULLBMAT ;
+	
+
 }
 
 

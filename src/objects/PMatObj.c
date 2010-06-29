@@ -193,7 +193,7 @@ static int nsp_pmatrix_full_comp(NspPMatrix * A,NspPMatrix * B,char *op,int *err
   if ( A->m != B->m || A->n != B->n) return FALSE;
   for ( i = 0 ; i < A->mn ; i++ ) 
     {
-      rep = nsp_mat_fullcomp (A->S[i],B->S[i],"==", err);
+      rep = nsp_mat_fullcomp (A->S[i],B->S[i],op, err);
       if ( *err == TRUE || rep == FALSE ) return FALSE;
     }
   return TRUE;
@@ -808,7 +808,7 @@ static int int_pmatrix_lt(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  Res = PMatCompOp(A,B,"<");
+  Res = nsp_pmatrix_comp(A,B,"<");
   if ( Res == NULLBMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
@@ -821,7 +821,7 @@ static int int_pmatrix_le(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  Res = PMatCompOp(A,B,"<=");
+  Res = nsp_pmatrix_comp(A,B,"<=");
   if ( Res == NULLBMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
@@ -834,7 +834,7 @@ static int int_pmatrix_neq(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  Res = PMatCompOp(A,B,"<>");
+  Res = nsp_pmatrix_comp(A,B,"<>");
   if ( Res == NULLBMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
@@ -848,7 +848,8 @@ static int int_pmatrix_eq(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  Res = PMatCompOp(A,B,"==");
+  Res = nsp_pmatrix_comp(A,B,"==");
+  
   if ( Res == NULLBMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
@@ -862,7 +863,7 @@ static int int_pmatrix_gt(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  Res = PMatCompOp(A,B,">");
+  Res = nsp_pmatrix_comp(A,B,">");
   if ( Res == NULLBMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;
@@ -876,7 +877,7 @@ static int int_pmatrix_ge(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(1,1);
   if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
   if ((B = GetPMat(stack,2)) == NULLPMAT) return RET_BUG;
-  Res = PMatCompOp(A,B,">=");
+  Res = nsp_pmatrix_comp(A,B,">=");
   if ( Res == NULLBMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *)Res);
   return 1;

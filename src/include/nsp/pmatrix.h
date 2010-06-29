@@ -107,12 +107,12 @@ extern NspPMatrix *GetPMatCopy (Stack stack, int i);
 extern NspPMatrix *GetPMat (Stack stack, int i); 
 extern nsp_polynom GetPolynom (Stack stack, int i); 
 
-extern NspBMatrix *PMatCompOp (NspPMatrix *A, NspPMatrix *B, char *op); 
 extern int PMatFullComp (NspPMatrix *A, NspPMatrix *B, char *op, int *err); 
 extern NspMatrix *nsp_matrix_companion(NspMatrix *A);
 extern NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M);
 extern NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k);
 extern NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V);
+extern NspBMatrix  *nsp_pmatrix_comp(NspPMatrix *A, NspPMatrix *B,const char *op);
 
 /* polynomials */
 extern int nsp_polynom_resize(nsp_polynom poly);
@@ -136,6 +136,8 @@ extern double nsp_hornerdd (const double *a,const int n, double x);
 extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
 extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);
 extern doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x);
+
+
 
 #endif 
 
