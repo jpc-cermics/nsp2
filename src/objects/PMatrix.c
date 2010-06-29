@@ -1442,11 +1442,12 @@ NspPMatrix *nsp_pmatrix_mult_tt_p_m(NspPMatrix *A, NspMatrix *B)
   if ( SameDim(A,B) )
     {
       int i;
+      int flag = (B->rc_type == 'r') ? 1: 2;
       if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
 	return(NULLPMAT);
       for (i=0; i < B->mn ; i++) 
 	{
-	  loc->S[i]=  nsp_polynom_mult_m( A->S[i], B->R+i,B->rc_type );
+	  loc->S[i]=  nsp_polynom_mult_m( A->S[i], B->R+i*flag,B->rc_type );
 	  if ( loc->S[i] == NULL) return NULL;
 	}
       return loc;
