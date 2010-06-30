@@ -153,6 +153,10 @@ function [P,Q] = cdf(dist, x, varargin)
 	ind = find(~(x < b),ind_type="int");  // use ~(x < b) to transmit %nan
 	Q(ind) = (b./x(ind)).^a
 	P(ind) = 1 - Q(ind)
+// $$$ 	// for x near b use another formula for P
+// $$$ 	ind = find(x > b & P < 0.1)
+// $$$ 	P(ind) = -cdf_expm1(-a*log1p((x(ind)-b)/b))
+// $$$ 	Q(ind) = 1 - P(ind)
 	
      case "poi" then
 	if numel(varargin) ~= 1 then
@@ -220,9 +224,9 @@ function [P,Q] = cdf(dist, x, varargin)
 	      error("Error: for cdf(""exp"",x,tau), tau should be a positive real")
 	end
 	P = zeros(size(x)); Q = ones(size(x));
-	ind = find(~(x <= 0),ind_type="int")  // use ~(x <= 0) to transmit %nan
-	Q(ind) = exp(-x(ind)/tau)
-	P(ind) = 1 - Q(ind);
+	[ineg,ip,iq] = mfind(x,"<=",0,"<=",0.7*tau,ind_type="int")
+	P(ip) = -expm1(-x(ip)/tau); Q(ip) = 1 - P(ip);
+	Q(iq) = exp(-x(iq)/tau); P(iq) = 1 - Q(iq);
 
      case "geom" then
 	if numel(varargin) ~= 1 then
@@ -303,11 +307,10 @@ function [P,Q] = cdf(dist, x, varargin)
 	if ~( is(sigma,%types.Mat) && isreal(sigma) && isscalar(sigma) && sigma > 0 ) then
 	      error("Error: for cdf(""ray"",x,sigma), sigma should be a positive real")
 	end
-	P = zeros(size(x)); Q = ones(size(x));
-	ind = find(~(x <= 0),ind_type="int")
-	temp = exp(-0.5*(x(ind)/sigma).^2)
-	Q(ind) = temp;
-	P(ind) = 1 - temp;
+	P = zeros(size(x)); Q = ones(size(x)); // median = sigma*1.1774
+	[ineg,ip,iq] = mfind(x,"<=",0,"<=",1.1774*sigma,ind_type="int")
+	P(ip) = -expm1(-0.5*(x(ip)/sigma).^2); Q(ip) = 1 - P(ip);
+	Q(iq) = exp(-0.5*(x(iq)/sigma).^2); P(iq) = 1 - Q(iq);
 	
      case "tray" then
 	if numel(varargin) ~= 2 then
@@ -319,11 +322,12 @@ function [P,Q] = cdf(dist, x, varargin)
 	      error("Error: for cdf(""tray"",x,sigma,a), sigma should be positive and a non negative")
 	end
 	P = zeros(size(x)); Q = ones(size(x));
-	ind = find(~(x <= a),ind_type="int")
-	xind = x(ind);
-	temp =  exp(-0.5*((xind-a).*(xind+a)/sigma^2))
-	Q(ind) = temp;
-	P(ind) = 1 - temp;
+	md = a*sqrt(1 - 2*(sigma/a)^2*log(0.5)); // median
+	[ia,ip,iq] = mfind(x,"<=",a,"<=",md,ind_type="int")
+	temp =  -0.5*((x(ip)-a).*(x(ip)+a)/sigma^2)
+	P(ip) = -expm1(temp); Q(ip)=1-P(ip);
+	temp =  -0.5*((x(iq)-a).*(x(iq)+a)/sigma^2)	
+	Q(iq) = exp(temp); P(iq) = 1 - Q(iq)
 	
      case "uin" then
 	if numel(varargin) ~= 2 then
@@ -350,7 +354,11 @@ function [P,Q] = cdf(dist, x, varargin)
 	end
 	P = max(0, min( (x-a)/(b-a), 1 ) )
 	P(isnan(x)) = %nan;
-	Q = 1 - P;
+	Q = 1-P;
+// $$$ 	ind = find(P > 0.5)
+// $$$ 	temp =  max(0, (b-x(ind))/(b-a) )
+// $$$ 	Q(ind) = temp
+// $$$ 	P(ind) = 1 - temp
 	
      case "wei" then
 	if numel(varargin) ~= 2 then
@@ -362,12 +370,14 @@ function [P,Q] = cdf(dist, x, varargin)
 	      error("Error: for cdf(""wei"",x,a,b), a and b should be positive real")
 	end
 	P = zeros(size(x)); Q = ones(size(x));
-	ind = find(~(x <= 0),ind_type="int")
-	temp =  exp(-(x(ind)/a).^b)
-	Q(ind) = temp;
-	P(ind) = 1 - temp;
-	
-     else
+	md = a*log(2)^(1/b)  // median
+	[ineg,ip,iq] = mfind(x,"<=",0,"<=",md,ind_type="int")
+	temp =  -(x(ip)/a).^b
+	P(ip) = -expm1(temp); Q(ip) = 1 - P(ip)
+	temp =  -(x(iq)/a).^b
+	Q(iq) = exp(temp); P(iq) = 1 - Q(iq)
+   
+   else
 	error("Error: unknown or not implemented distribution")
 	
    end
