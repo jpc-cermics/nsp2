@@ -37,6 +37,7 @@ extern double nsp_pdf_t(double x, NTYPE df, int give_log);
 extern double lnp1m1(double s);
 extern double nsp_log1p(double x);
 extern double nsp_expm1(double x);
+extern double nsp_erfcx(double x);
 extern double nsp_sinpi(double x);
 extern double nsp_gamma(double x);
 extern double nsp_lngamma(double x);

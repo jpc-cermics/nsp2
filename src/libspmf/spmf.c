@@ -419,6 +419,7 @@ static double lngamma_in_0p68_1p5(double x)
 }
 
 
+
 /**
  * nsp_lngamma:
  * @x: a double 
@@ -452,6 +453,75 @@ double nsp_lngamma(double x)
       else
 	return log(fabs(nsp_gamma(x)));
     }
+}
+
+
+/**
+ * nsp_erfcx:
+ * @x: a double 
+ *
+ * computes the scaled complementary error function
+ * erfcx(x) = exp(x^2)*erfc(x). 
+ * This code uses Cody's specfun calerf rationnal approximations
+ *
+ * Returns: a double
+ **/
+double nsp_erfcx(double x)
+{
+  double y = fabs(x);
+  double res;
+
+  if ( y <= 0.46875 )
+    {
+      double const a1=3.16112374387056560, a2=1.13864154151050156e02, a3=3.77485237685302021e02,
+	a4=3.20937758913846947e03, a5=1.85777706184603153e-1;
+      double const b1=2.36012909523441209e01,b2=2.44024637934444173e02, b3=1.28261652607737228e03,
+	b4=2.84423683343917062e03;
+      double yy = y*y;
+
+      res =  x * (((((a5*yy+a1)*yy+a2)*yy+a3)*yy+a4) / ((((yy+b1)*yy+b2)*yy+b3)*yy+b4));
+      return exp(yy)*(1.0 - res);
+     }
+
+  if ( y <= 4.0 )
+    {
+      double const c1=5.64188496988670089e-1, c2=8.88314979438837594, c3=6.61191906371416295e01,
+	c4=2.98635138197400131e02, c5=8.81952221241769090e02, c6=1.71204761263407058e03,
+	c7=2.05107837782607147e03, c8=1.23033935479799725e03, c9=2.15311535474403846e-8;
+      double const d1=1.57449261107098347e01, d2=1.17693950891312499e02, d3=5.37181101862009858e02,
+	d4=1.62138957456669019e03, d5=3.29079923573345963e03, d6=4.36261909014324716e03,
+	d7=3.43936767414372164e03, d8=1.23033935480374942e03;
+      
+      res =   ((((((((c9*y+c1)*y+c2)*y+c3)*y+c4)*y+c5)*y+c6)*y+c7)*y+c8)
+	    / ((((((((   y+d1)*y+d2)*y+d3)*y+d4)*y+d5)*y+d6)*y+d7)*y+d8);
+    }
+  else 
+    {
+      double const inv_sqrt_pi=0.5641895835477562869480794516;
+      if ( y < 6.71e7 )
+	{
+	  double const p1=3.05326634961232344e-1, p2=3.60344899949804439e-1, p3=1.25781726111229246e-1,
+	    p4=1.60837851487422766e-2, p5=6.58749161529837803e-4, p6=1.63153871373020978e-2;
+	  double const q1=2.56852019228982242, q2=1.87295284992346047, q3=5.27905102951428412e-1,
+	    q4=6.05183413124413191e-2, q5=2.33520497626869185e-3;
+	  double yy = 1.0/(y*y);
+	  res = (((((p6*yy+p1)*yy+p2)*yy+p3)*yy+p4)*yy+p5)*yy / (((((yy+q1)*yy+q2)*yy+q3)*yy+q4)*yy+q5);
+	  res = (inv_sqrt_pi - res) / y;
+	}
+      else
+	{
+	  res = inv_sqrt_pi / y;
+	}
+    }
+
+  if ( x < 0.0 )
+    {
+      float xf = (float) x;
+      double z = (double) xf;
+      res = 2.0*exp((x-z)*(x+z))*exp(z*z) - res;
+    }
+
+  return res;
 }
 
 
@@ -697,7 +767,7 @@ double nsp_kcdflim(double x, double *q)
 int nsp_invkcdflim(double p, double q, double *x)
 {
   int pq_flag = p <= 0.3728 ? 1 : 0, status = 0, qleft, qhi;
-  double pp,qq, fx, xinf = 0.04, xsup = 20, atol=1e-50, tol=1e-14, step=0.4, rstep=0.0, step_inc=2.0; 
+  double pp,qq, fx, xinf = 0.04, xsup = 20, atol=1e-50, tol=1e-15, step=0.4, rstep=0.0, step_inc=2.0; 
   int iter=0;
 
   /* extreme values */
@@ -728,7 +798,7 @@ int nsp_invkcdflim(double p, double q, double *x)
       cdf_dinvr (&status, x, &fx, &qleft, &qhi);
     }
 
-  Sciprintf(" iter = %d\n",iter);
+/*   Sciprintf(" iter = %d\n",iter); */
 
   if ( status == 0 )
     return OK;
