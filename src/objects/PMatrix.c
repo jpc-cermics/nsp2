@@ -2391,12 +2391,11 @@ static void Mp_set_format(nsp_num_formats *fmt,NspPMatrix *M)
  * Printing Nsp Polynomial Matrices 
  */
 
-static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length);
+static int pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length, int do_print);
 #ifndef POLY_EXP 
 static void pr_poly_exp  (NspMatrix *m, int fw, int length);
 #endif 
-static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw);
-static int pr_poly_exp_size(int i);
+
 
 static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int indent)
 {
@@ -2423,10 +2422,10 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   if ((Iloc =nsp_alloc_int(M->n)) == (int*) 0) return FALSE;
   for ( j=0 ; j < M->n ; j++ )
     {
-      Iloc[j]= pr_poly_print_size (fmt,M->S[j*M->m],fw);
+      Iloc[j]= pr_poly(fmt,M->S[j*M->m],fw,0,FALSE);
       for ( i = 1 ; i < M->m ; i++) 
 	{
-	  int size = pr_poly_print_size (fmt,M->S[i+j*M->m],fw);
+	  int size = pr_poly(fmt,M->S[i+j*M->m],fw,0,FALSE);
 	  if ( Iloc[j] < size ) Iloc[j]= size;
 	}
     }
@@ -2497,7 +2496,7 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
 		  }
 		else
 		  Sciprintf(", ");
-		pr_poly (fmt, M->S[i+(M->m)*j], fw,Iloc[j]);
+		pr_poly (fmt, M->S[i+(M->m)*j], fw,Iloc[j], TRUE);
 	      }
 	    if ( j == nc  ) 
 	      Sciprintf(" |\n",j,nc-1);
@@ -2511,57 +2510,8 @@ static int nsp_pmatrix_print_internal (nsp_num_formats *fmt,NspPMatrix *M, int i
   return TRUE ;
 }
 
-/**
- * poly_size:
- * @fw: 
- * @length: 
- * 
- * 
- * 
- * Returns: 
- **/
-#if 0
-static int  poly_size(int fw, int length)
-{
-  int ps=2 + length*fw,k;
-  for ( k= 1 ; k <= length ; k++) 
-    {
-      if ( k < 10 ) ps += 3;
-      else ps +=4;
-    }
-  return(ps);
-}
-#endif 
 
-/**
- * pr_poly_print_size:
- * @fmt: 
- * @m: 
- * @fw: 
- * @length: 
- * 
- * compute the size requested for printing polynom @m.
- * 
- * Returns: 
- **/
-
-static int pr_poly_print_size (nsp_num_formats *fmt,NspMatrix *m, int fw) 
-{
-  int i, size=0;
-  for ( i=0 ; i < m->mn ; i++) 
-    {
-      if ( m->rc_type == 'r') 
-	{
-	  if (  m->R[i] != 0.00 || m->mn == 1 )
-	    {
-	      size += fw + 2 + pr_poly_exp_size(i);
-	    }
-	}
-    }
-  return size;
-}
-
-static int nsp_print_exponent_utf8(int i)
+static int nsp_print_exponent_utf8(int i, int do_print)
 {
   int j;
   char str[8];
@@ -2579,8 +2529,9 @@ static int nsp_print_exponent_utf8(int i)
   sprintf(str,"%d",i);
   if ( str[0] == '0') return 0;
   if ( strcmp(str,"1")==0 ) return 0;
-  for ( j = 0 ; j < strlen(str); j++)
-    Sciprintf("%s",codes[Min(Max(str[j]- '0',0),9)]);
+  if ( do_print )
+    for ( j = 0 ; j < strlen(str); j++)
+      Sciprintf("%s",codes[Min(Max(str[j]- '0',0),9)]);
   return strlen(str);
 }
 
@@ -2589,39 +2540,79 @@ static int nsp_print_exponent_utf8(int i)
  * @fmt: 
  * @m: 
  * @fw: 
- * @length: 
+ * @length: length to be used. if positive it gives 
+ *     the length that pr_poly should fill, completion by 
+ *     white spaces is required.
  * 
  * print a polynom. 
  **/
 
-static void pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length)
+static int pr_poly (nsp_num_formats *fmt,NspMatrix *m, int fw, int length, int do_print)
 {
   int colors[]={ 34,32,31,35,36};
-  int i ,count = 0, leading = TRUE,nw;
+  int i ,count = 0, leading = TRUE;
   for ( i=0 ; i < m->mn ; i++) 
     {
       if ( m->rc_type == 'r') 
 	{
 	  if (  m->R[i] != 0.00 || m->mn == 1  )
 	    {
-	      if ( leading == FALSE && m->R[i] >= 0.00 ) Sciprintf("+");
-	      else Sciprintf(" ");
-	      nsp_pr_any_float (fmt->curr_real_fmt, m->R[i], fw);
+	      if ( leading == FALSE && m->R[i] >= 0.00 ) 
+		{
+		  if (do_print) Sciprintf("+");
+		  count++;
+		}
+	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->R[i], fw,do_print);
 	      leading = FALSE;
-	      Sciprintf("\033[%dm",colors[0]);
-	      if ( i > 0 ) Sciprintf("x");
+	       if (do_print) Sciprintf("\033[%dm",colors[0]);
+	      if ( i > 0 ) 
+		{
+		  if (do_print) Sciprintf("x");count++;
+		}
 #ifdef POLY_EXP 
-	      nw= nsp_print_exponent_utf8(i);
+	      count += nsp_print_exponent_utf8(i,do_print);
 #else 
-	      nw= pr_poly_exp_size(i);
-	      nsp_pr_white(nw);
+	      count += pr_poly_exp_size(i);
+	      if (do_print) nsp_pr_white(count);
 #endif 
-	      Sciprintf("\033[0m");
-	      count += fw+2 + nw;
+	       if (do_print) Sciprintf("\033[0m");
+	    }
+	}
+      else
+	{
+	  if ( ( m->C[i].r != 0.00 || m->C[i].i != 0.00)  || m->mn == 1  )
+	    {
+	      if ( leading == FALSE ) 
+		{
+		  if (do_print) Sciprintf("+");
+		  count++;
+		}
+	      if (do_print)Sciprintf("(");count++;
+	      count +=nsp_pr_any_float_vs(fmt->curr_real_fmt, m->C[i].r, fw,do_print);
+	      if (do_print)Sciprintf("+");count++;
+	      count +=nsp_pr_any_float_vs(fmt->curr_imag_fmt, m->C[i].i, fw,do_print);
+	      if (do_print)Sciprintf("i)");count++;
+	      leading = FALSE;
+	       if (do_print) Sciprintf("\033[%dm",colors[0]);
+	      if ( i > 0 ) 
+		{
+		  if (do_print) Sciprintf("x");count++;
+		}
+#ifdef POLY_EXP 
+	      count += nsp_print_exponent_utf8(i,do_print);
+#else 
+	      count += pr_poly_exp_size(i);
+	      if (do_print) nsp_pr_white(count);
+#endif 
+	       if (do_print) Sciprintf("\033[0m");
 	    }
 	}
     }
-  nsp_pr_white(length-count);
+  if ( length > 0 ) 
+    {
+      if (do_print)  nsp_pr_white(length-count);
+    }
+  return count;
 }
 
 /**
@@ -2653,14 +2644,6 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
 
 #endif 
 
-
-
-static int pr_poly_exp_size(int i)
-{
-  if ( i < 10 ) return 1;
-  else if ( 10 <= i && i  < 99) return 2;
-  else return 3;
-}
 
 
 

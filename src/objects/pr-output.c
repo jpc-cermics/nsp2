@@ -401,11 +401,6 @@ void gen_set_format (nsp_num_formats *fmt,void *M, it_gen_f is_neg, it_gen_f is_
 
 
 /*
- * used to print any float with format 
- * fmt 
- * fw : the number of column used by format fmt 
- *      is only used for Inf or Nan to fix the 
- *      field width 
  */
 
 
@@ -507,6 +502,71 @@ void nsp_pr_any_float (const char *fmt, double d, int fw)
     {
       Sciprintf("%f",d);
     }
+}
+
+/* print a double using less than width fw when possible 
+ * and return the number of spaces used.
+ */
+
+int nsp_pr_any_float_vs (const char *fmt, double d, int fw, int do_print)
+{
+  if (d == -0.0) d = 0.0;
+  if (isinf (d))
+    {
+      char *s = (d < 0.00) ? "-Inf" : "Inf";
+      if (user_pref.pr_as_read_syntax)
+	{
+	  if (do_print) Sciprintf("%%inf");
+	  return 4;
+	}
+      else
+	{
+	  if (do_print) Sciprintf(s);
+	  return strlen(s);
+	}
+    }
+  else if (isnan (d))
+    {
+      if (user_pref.pr_as_read_syntax)
+	{
+	  if (do_print)	  Sciprintf("%%nan");
+	  return 4;
+	}
+      else
+	{
+	  if (do_print)	  Sciprintf("NaN");
+	  return 3;
+	}
+    }
+  else
+    {
+      /* special case for zero as in matlab */
+      if ( d == 0 ) 
+	{
+	  if (do_print)	  Sciprintf("0");
+	  return 1;
+	}
+      else
+	{
+	  int i;
+	  char str[128],*tail;
+	  sprintf(str,(fmt) ? fmt: "%f" ,d);
+	  if ((tail=strstr(str,"."))!= 0) 
+	    {
+	      for ( i = strlen(tail)-1; i >= 0 ; i--)
+		{
+		  if (tail[i]== '0' ) tail[i]='\0';
+		  else break;
+		}
+	      if (tail[i]== '.') tail[i]='\0';
+	    }
+	  i=0;
+	  while (str[i]==' ' && i < strlen(str)) i++;
+	  if (do_print)	  Sciprintf("%s",str+i);
+	  return strlen(str);
+	}
+    }
+  return 0;
 }
 
 
