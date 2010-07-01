@@ -549,21 +549,22 @@ int nsp_pr_any_float_vs (const char *fmt, double d, int fw, int do_print)
       else
 	{
 	  int i;
-	  char str[128],*tail;
+	  char str[128],*str1;
 	  sprintf(str,(fmt) ? fmt: "%f" ,d);
-	  if ((tail=strstr(str,"."))!= 0) 
+	  if ((str1=strstr(str,"."))!= 0) 
 	    {
-	      for ( i = strlen(tail)-1; i >= 0 ; i--)
+	      for ( i = strlen(str1)-1; i >= 0 ; i--)
 		{
-		  if (tail[i]== '0' ) tail[i]='\0';
+		  if (str1[i]== '0' ) str1[i]='\0';
 		  else break;
 		}
-	      if (tail[i]== '.') tail[i]='\0';
+	      if (str1[i]== '.') str1[i]='\0';
 	    }
 	  i=0;
 	  while (str[i]==' ' && i < strlen(str)) i++;
-	  if (do_print)	  Sciprintf("%s",str+i);
-	  return strlen(str);
+	  str1 = str+i;
+	  if (do_print)	  Sciprintf("%s",str1);
+	  return strlen(str1);
 	}
     }
   return 0;

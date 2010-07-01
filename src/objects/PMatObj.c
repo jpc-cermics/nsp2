@@ -1098,6 +1098,7 @@ static int int_pmatrix_mult_tt(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject *) R);
   return 1;
 }
+
 static int int_pmatrix_mult_tt_p_m(Stack stack, int rhs, int opt, int lhs)
 {
   NspPMatrix *P,*R;
@@ -1121,6 +1122,48 @@ static int int_pmatrix_mult_tt_m_p(Stack stack, int rhs, int opt, int lhs)
   if ((P=GetMat(stack,1))== NULL) return RET_BUG;
   if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
   if ((R= nsp_pmatrix_mult_tt_m_p(P,Q))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+static int int_pmatrix_div_tt_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *Q;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_div_tt_p_m(P,Q,FALSE))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+static int int_pmatrix_dsl_tt_p_m(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P,*R;
+  NspMatrix *Q;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_div_tt_p_m(P,Q,TRUE))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,(NspObject *) R);
+  return 1;
+}
+
+static int int_pmatrix_div_tt_m_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *P;
+  NspPMatrix *Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ((P=GetMat(stack,1))== NULL) return RET_BUG;
+  if ((Q=GetPMat(stack,2))== NULL) return RET_BUG;
+  if ((R= nsp_pmatrix_div_tt_m_p(P,Q))== NULL)
     return RET_BUG;
   MoveObj(stack,1,(NspObject *) R);
   return 1;
@@ -1291,6 +1334,40 @@ static int int_pmatrix_map (Stack stack, int rhs, int opt, int lhs, Fmat f)
     }
   NSP_OBJECT (P)->ret_pos = 1;
   return 1;
+}
+
+typedef int (Fmatc)(NspMatrix *A);
+
+static int int_pmatrix_map_c (Stack stack, int rhs, int opt, int lhs, Fmatc f)
+{
+  NspPMatrix *P;
+  int i;
+  CheckStdRhs(1,1);
+  CheckLhs (1, 1);
+  if ((P = GetPMatCopy (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++)
+    {
+      if ( (*f)(P->S[i]) != OK ) 
+	{
+	  return RET_BUG;
+	}
+      if ( nsp_polynom_resize(P->S[i]) == FAIL) 
+	return RET_BUG;
+    }
+  NSP_OBJECT (P)->ret_pos = 1;
+  return 1;
+}
+
+
+static int int_pmatrix_real (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map_c(stack, rhs, opt, lhs, nsp_mat_get_real);
+}
+
+static int int_pmatrix_imag (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_pmatrix_map_c(stack, rhs, opt, lhs, nsp_mat_get_imag);
 }
 
 static int int_pmatrix_ceil (Stack stack, int rhs, int opt, int lhs)
@@ -1525,6 +1602,10 @@ static OpTab PMatrix_func[]={
   {"dst_p_p",int_pmatrix_mult_tt},
   {"dst_p_m",int_pmatrix_mult_tt_p_m},
   {"dst_m_p",int_pmatrix_mult_tt_m_p},
+  {"div_p_m",int_pmatrix_div_tt_p_m},
+  {"div_m_p",int_pmatrix_div_tt_m_p},
+  {"dsl_p_m",int_pmatrix_dsl_tt_p_m},
+  {"dsl_m_p",int_pmatrix_div_tt_m_p},
   {"minus_p_p",int_pmatrix_minus_p_p},
   {"minus_p", int_pmatrix_minus},
   {"horner", int_pmatrix_horner},
@@ -1541,6 +1622,8 @@ static OpTab PMatrix_func[]={
   {"minus_m_p",  int_pmatrix_minus_m_p},
   {"minus_p_m",  int_pmatrix_minus_p_m},
   {"conj_p", int_pmatrix_conj},
+  {"real_p", int_pmatrix_real},
+  {"imag_p", int_pmatrix_imag},
   {(char *) 0, NULL}
 };
 

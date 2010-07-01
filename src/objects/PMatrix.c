@@ -1602,6 +1602,66 @@ NspPMatrix *nsp_pmatrix_mult_tt_m_p(NspMatrix *A, NspPMatrix *B)
   return nsp_pmatrix_mult_tt_p_m(B,A);
 }
 
+NspPMatrix *nsp_pmatrix_div_tt_p_m(NspPMatrix *A, NspMatrix *B,int flag )
+{
+  NspPMatrix *loc;
+  if ( SameDim(A,B) && A->mn != 1 )
+    {
+      if ( flag ) 
+	{
+	  int i;
+	  if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	    return(NULLPMAT);
+	  for (i=0; i < B->mn ; i++) 
+	    {
+	      loc->S[i]= nsp_polynom_div_m( A->S[i], B->R+i,B->rc_type);
+	      if ( loc->S[i] == NULL)     return NULL;
+	    }
+	  return loc;
+	}
+      else
+	{
+	  Scierror("Error: unimplemented \n");
+	  return NULL;
+	}
+    }
+  else if ( A->mn == 1 ) 
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,B->m,B->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < B->mn ; i++) 
+	{
+	  loc->S[i]= nsp_polynom_div_m( A->S[0], B->R+i,B->rc_type);
+	  if ( loc->S[i] == NULL)     return NULL;
+	}
+      return loc;
+    }
+  else if ( B->mn == 1 )
+    {
+      int i;
+      if ((loc =nsp_pmatrix_create(NVOID,A->m,A->n,NULL,-1))== NULLPMAT) 
+	return(NULLPMAT);
+      for (i=0; i < A->mn ; i++) 
+	{
+	  if ((loc->S[i] =  nsp_polynom_div_m( A->S[i], B->R,B->rc_type  )) == NULL) 
+	    return NULL;
+	}
+      return loc;
+    }
+  else
+    {
+      Scierror("Error:\targuments should have the same size\n");
+      return NULL;
+    }
+}
+
+NspPMatrix *nsp_pmatrix_div_tt_m_p(NspMatrix *A, NspPMatrix *B)
+{
+  Scierror("Error: unimplemented \n");
+  return NULL;
+}
+
 
 
 /* P(i) evaluated for x= V(k);  */
@@ -2292,6 +2352,54 @@ nsp_polynom nsp_polynom_mult_m(nsp_polynom p, void *v, char type)
 	  doubleC x= * (doubleC *) v;
 	  for ( i = 0 ; i < loc->mn ; i++)
 	    nsp_prod_c(&loc->C[i],&x);
+	}
+    }
+  return loc;
+}
+
+/**
+ * nsp_polynom_div_m:
+ * @p: a #nsp_polynom
+ * @v: pointer to a double or doubleC 
+ * @type: type of @v coded in a character
+ * 
+ * returns in a new polynomial @p / @v.
+ * 
+ * Returns: a new #nsp_polynom or %NULL
+ **/
+
+nsp_polynom nsp_polynom_div_m(nsp_polynom p, void *v, char type)
+{
+  int i;
+  nsp_polynom loc;
+  if ((loc = nsp_polynom_copy_and_name("pe",p))== NULL) 
+    return NULL;
+  if ( loc->mn == 0) return loc;
+  if ( type == 'c') 
+    {
+      if (nsp_mat_complexify(loc,0.00) == FAIL ) 
+	return NULL;
+    }
+  if ( loc->rc_type == 'r' ) 
+    {
+      for ( i = 0 ; i < loc->mn ; i++)
+	loc->R[i] /= *((double *) v);
+    }
+  else
+    {
+      if ( type == 'r')
+	{
+	  for ( i = 0 ; i < loc->mn ; i++)
+	    {
+	      loc->C[i].r /= *((double *) v);
+	      loc->C[i].i /= *((double *) v);
+	    }
+	}
+      else
+	{
+	  doubleC x= * (doubleC *) v;
+	  for ( i = 0 ; i < loc->mn ; i++)
+	    nsp_div_cc(&loc->C[i],&x,&loc->C[i]);
 	}
     }
   return loc;
