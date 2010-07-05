@@ -152,10 +152,8 @@ double nsp_expm1(double x)
  **/
 double nsp_sinpi(double x)
 {
-  unsigned int n;
-  int odd;
-  double a, t, res;
-  static double
+  double t, sign = 1.0, res;
+  static const double
     /* sinus polynomial approx (computed with pari-gp) */
     A1 =  3.141592653589793238462643383,  /* Pi in fact */
     A3 = -5.167712780049960279993726290,
@@ -172,50 +170,89 @@ double nsp_sinpi(double x)
     B10 =-0.02580498183722295980687186645,
     B12 = 0.001907004403665643602371240441;
 
-  a = fabs(x);
+  /* reduce to [0, +oo) par odd parity */
+  if ( x < 0.0 )
+    sign = -1.0;
+  x = fabs(x);
 
-  if ( a <= 2.0 )
+  /* reduce to [0,2) using periodicity */
+  if ( x >= 2.0 )   
+    x = x - 2.0*floor(0.5*x);
+
+  if ( x > 1.0 )    /* reduce to [0,1] using odd parity around 1 */
     {
-      if ( a <= 1.0 )
-	odd = 0;
-      else
-	{
-	  a -= 1.0; odd = 1;
-	}
-    }
-  else
-    {
-      t = floor(a);
-      if ( t <= UINT_MAX )
-	{
-	  n = (unsigned int) t;
-	  odd = n%2;
-	}
-      else
-	{
-	  odd = 0.0 != t - 2.0*floor(0.5*t);
-	}
-      a -= t;
+      x = 2.0 - x;
+      sign = -sign;
     }
 
-  if ( 0.25 <= a  &&  a <= 0.75 )
+  if ( 0.25 <= x  &&  x <= 0.75 )
     {
-      a = 0.5 - a;
-      t = a*a;
+      x = x - 0.5;
+      t = x*x;
       res = 1.0 + t*(B2 + t*(B4 + t*(B6 + t*(B8 + t*(B10 + t*B12)))));
     }
   else  /* 0 <= a < 0.25  or  0.75 < a < 1.0 */
     {
-      if ( a > 0.75 ) a = 1.0 - a;
-      t = a*a;
-      res = a*(A1 + t*(A3 + t*(A5 + t*(A7 + t*(A9 + t*(A11 + t*A13))))));
+      if ( x > 0.75 ) x = 1.0 - x;
+      t = x*x;
+      res = x*(A1 + t*(A3 + t*(A5 + t*(A7 + t*(A9 + t*(A11 + t*A13))))));
     }
 
-  if ( x < 0.0 )
-    res = -res;
-  if ( odd )
-    res = -res;
+  return sign*res;
+}
 
+/**
+ * nsp_cospi:
+ * @x: a double 
+ * 
+ * computes cos(pi x) with accuracy even for |x| big
+ * 
+ * Returns: a double
+ **/
+double nsp_cospi(double x)
+{
+  double t, res, sign=1.0;
+  static const double
+    /* sinus polynomial approx (computed with pari-gp) */
+    A1 =  3.141592653589793238462643383,  /* Pi in fact */
+    A3 = -5.167712780049960279993726290,
+    A5 =  2.550164039874133978126524173,
+    A7 = -0.5992645289803753056280813802,
+    A9 =  0.08214587022916833811426663266,
+    A11= -0.007370034512922470592483313766,
+    A13=  0.0004615931209034139599168587169,
+    /* cosinus polynomial approx (computed with pari-gp) */
+    B2 = -4.934802200544630057169486610,
+    B4 =  4.058712126400859221869361610,
+    B6 = -1.335262767189179924892238186,
+    B8 =  0.2353305509220838948431767241,
+    B10 =-0.02580498183722295980687186645,
+    B12 = 0.001907004403665643602371240441;
+
+  x = fabs(x);
+
+  if ( x >= 2.0 )   /* reduce to [0,2) using periodicity */
+    x = x - 2.0*floor(0.5*x);
+
+  if ( x > 1.0 )    /* reduce to [0,1] using parity around 1 */
+    x = 2.0 - x;
+
+  if ( 0.25 <= x  &&  x <= 0.75 )
+    {
+      x = 0.5 - x;
+      t = x*x;
+      res = x*(A1 + t*(A3 + t*(A5 + t*(A7 + t*(A9 + t*(A11 + t*A13))))));
+    }      
+  else  /* 0 <= a < 0.25  or  0.75 < a < 1.0 */
+    {
+      if ( x > 0.75 ) 
+	{
+	  x = 1.0 - x;
+	  sign = -1.0;
+	}
+      t = x*x;
+      res = sign*(1.0 + t*(B2 + t*(B4 + t*(B6 + t*(B8 + t*(B10 + t*B12))))));
+    }
   return res;
 }
 

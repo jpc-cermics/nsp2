@@ -39,6 +39,7 @@ extern double nsp_log1p(double x);
 extern double nsp_expm1(double x);
 extern double nsp_erfcx(double x);
 extern double nsp_sinpi(double x);
+extern double nsp_cospi(double x);
 extern double nsp_gamma(double x);
 extern double nsp_lngamma(double x);
 extern int nsp_kcdf(double x, double *res, int n);
