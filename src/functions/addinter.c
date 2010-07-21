@@ -46,21 +46,23 @@ static void nsp_interfaces_initialize(void);
 
 /**
  * nsp_dynamic_interface:
- * @shared_lib: 
- * @interface: 
+ * @shared_lib: a string which gives the path to a shared library 
+ * @interface: name of the interface to be searched in @shared_lib
  * @ilib: 
  * 
- * if @shared_lib is non null 
- * tries to link @shared_lib and try to get 
- * interface symbols related to interface in the 
- * shared library. 
+ * if @shared_lib is non null it is dynamically linked 
+ * and @interface symbols are searched in the library and added in 
+ * the function table. 
  * if @shared_lib is NULL then ilib gives an already 
- * linked shared library in which to search symbols 
+ * linked shared library in which symbols are searched.
+ * 
+ * ilib is also used to return the integer id associated to the shared 
+ * library in case of successful link.
  * 
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int ilib)
+int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int *ilib)
 {
   const char interf[]="_Interf";
   const char interf_info[]="_Interf_Info";
@@ -96,7 +98,6 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
     {
       Scierror("Error: Maximum number of dynamic interfaces %d\n",MAXINTERF);
       Scierror("has been reached\n");
-      ret= 1;
       goto err;
     }
   
@@ -105,27 +106,24 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
    * shared_lib
    */
   
-  nsp_dynamic_load(shared_lib,names,'c',&ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
-
+  nsp_dynamic_load(shared_lib,names,'c',ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
+  
   if ( ilib < 0 )
     {
-      ret = ilib;
       goto err;
     }
-
+  
   /* store the linked function in the interface function table DynInterf */
-  DynInterf[inum].Nshared = ilib;
-
+  DynInterf[inum].Nshared = *ilib;
+  
   if ( SearchInDynLinks(names[0],&DynInterf[inum].func) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[0]);
-      ret =  -5;
       goto err;
     }
   if ( SearchInDynLinks(names[1],&DynInterf[inum].func_info) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[1]);
-      ret =  -5;
       goto err;
     }
   strncpy(DynInterf[inum].name,names[0],NAME_MAXL);
@@ -149,18 +147,19 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
       if ( fname == NULL) break;
       if ( nsp_enter_function(fname,ninterf,k) == FAIL)
 	{
-	  printf("Error: Table for nsp functions is too small \n");
+	  Scierror("Error: Table for nsp functions is too small \n");
+	  goto err;
 	}	  
       k++;
     }
   /* 
    * ShowInterf();
    */
-  ret = inum;
+  ret = OK;
  err:
   nsp_string_destroy(&names[0]);
   nsp_string_destroy(&names[1]);
-  return inum;
+  return ret;
 }
 
 

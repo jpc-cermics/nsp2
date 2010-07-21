@@ -189,7 +189,7 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
        */
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
-      ilib = nsp_dynamic_interface(NULL,Str,ilib);
+      if ( nsp_dynamic_interface(NULL,Str,&ilib) == FAIL) return RET_BUG;
     }
   else
     {
@@ -200,13 +200,8 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
       /* expand keys in path name result in buf */
       nsp_expand_file_with_exec_dir(&stack,file,file_expanded);
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
-      ilib = nsp_dynamic_interface(file_expanded,Str,ilib);
-    }
-
-  if ( ilib < 0 ) 
-    {
-      link_bug(ilib);
-      return RET_BUG;
+      if ( nsp_dynamic_interface(file_expanded,Str,&ilib) == FAIL) 
+	return RET_BUG;
     }
   if ( nsp_move_double(stack,1,(double) ilib)== FAIL) return RET_BUG;
   return 1;

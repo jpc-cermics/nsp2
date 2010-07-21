@@ -36,7 +36,7 @@ typedef struct
 extern Iel DynInterf[MAXINTERF];
 extern int LastInterf;
 
-int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int ilib);
+int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int *ilib);
 int BlankInterface (int i, char *fname, int first, int rhs, int opt, int lhs);
 void RemoveInterf (int Nshared);
 
