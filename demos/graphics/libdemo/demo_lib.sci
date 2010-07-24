@@ -167,7 +167,7 @@ function demo_3d_11_old()
 endfunction
 
 function demo_3d_11() 
-  u = %pi*(-1:0.2:1)/2;
+  u = %pi/2*(-1:0.2:1);
   v = %pi/2*(-1:0.2:1);
   n = size(u,'*');
   x= cos(u)'*exp(cos(v));
@@ -179,7 +179,7 @@ function demo_3d_11()
   [xx,yy,zz]=nf3d(x,y,z);
   [xx,yy,zzcol]=nf3d(x,y,col); 
   xx=[xx,-xx];yy=[yy,-yy];zz=[zz,zz];zzcol=[zzcol,zzcol]; 
-  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110,flag=[0,2,0]); 
+  plot3d(xx,yy,zz,colors=zzcol,alpha=55,theta=110,flag=[3,2,0]); 
 endfunction
 
 
@@ -480,8 +480,9 @@ function demo_anim_1()
     for i=35 : st : 80 do
       A.theta = 2*i;
       A.alpha = i;
-      A.invalidate[];
+      A.invalidate[]; // signal that Axis should be redrawn.
       F.draw_now[]; // will activate a process_updates
+      xpause(100000,%t)// slow down animation
     end
   else
     t=%pi*(-5:5)/5;
@@ -517,6 +518,7 @@ function demo_anim_2()
       // P.invalidate[]; // A revoir.
       A.invalidate[];
       F.draw_now[]; // will activate a process_updates
+      xpause(100000,%t)// slow down animation
     end
   else
     np=10;
@@ -531,16 +533,37 @@ function demo_anim_2()
 endfunction
 
 function demo_anim_3()
-  t=-%pi:0.3:%pi;
-  for i=35:80,
-    xclear();
-    contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[1,2,4])
-    xset("wshow");
-  end
-  for i=45:80,
-    xclear();
-    contour(t,t,sin(t)'*cos(t),10,alpha=80,theta=i,flag=[1,2,4])
-    xset("wshow");
+  if new_graphics() then 
+    t=-%pi:0.3:%pi;
+    i=35;
+    contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[0,2,4])
+    F=get_current_figure();
+    A=F(1);
+    A.box_style = 1;
+    for i=35:80
+      A.theta = 45;  A.alpha = i;
+      A.invalidate[]; // signal that Axis should be redrawn.
+      F.draw_now[]; // will activate a process_updates
+      xpause(10000,%t)// slow down animation
+    end
+    for i=45:80,
+      A.theta = i;  A.alpha = 80;
+      A.invalidate[]; // signal that Axis should be redrawn.
+      F.draw_now[]; // will activate a process_updates
+      xpause(10000,%t)// slow down animation
+    end
+  else
+    t=-%pi:0.3:%pi;
+    for i=35:80,
+      xclear();
+      contour(t,t,sin(t)'*cos(t),10,alpha=i,theta=45,flag=[1,2,4])
+      xset("wshow");
+    end
+    for i=45:80,
+      xclear();
+      contour(t,t,sin(t)'*cos(t),10,alpha=80,theta=i,flag=[1,2,4])
+      xset("wshow");
+    end
   end
 endfunction
 
@@ -549,12 +572,16 @@ function demo_anim_4()
     t=%pi*(-1:0.1:1);
     I=20:-1:1;
     ebox=[min(t),max(t),min(t),max(t),-1,1];
-    //realtimeinit(0.1)
+    i=1;
+    plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=80,theta=62,flag=[2,1,0],ebox=ebox)
+    F=get_current_figure();
+    A=F(1);
     for i=1:size(I,'*')
-      //realtime(i)
-      xclear();
-      plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=35,theta=45,flag=[2,1,0],ebox=ebox)
-      xset("wshow");
+      F.children.remove_first[];
+      plot3d1(t,t,sin((I(i)/10)*t)'*cos((I(i)/10)*t),alpha=80,theta=62,flag=[2,1,0],ebox=ebox)
+      A.invalidate[]; // signal that Axis should be redrawn.
+      F.draw_now[]; // will activate a process_updates
+      xpause(100000,%t)// slow down animation
     end
   else
     t=%pi*(-1:0.1:1);
@@ -577,10 +604,13 @@ function demo_anim_5()
   theta=45 + (0:2:60)
   if new_graphics() then
     F=get_current_figure();
+    A=F(1);
     for i=1:size(alpha,'*')
       F.children(1).alpha = alpha(i);
       F.children(1).theta = theta(i);
+      A.invalidate[];
       F.draw_now[];
+      xpause(100000,%t)// slow down animation
     end
   else
     w=xget('window')
