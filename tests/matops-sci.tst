@@ -142,7 +142,7 @@ end
 deff('[b]=Abs(a)',['if a==[] then b=[];else b=maxi(a,0)+maxi(-a,0);end;']);
 
 for i=1:6, m=M(i);n=N(i);
-     A=rand(m,n,'normal');
+     A=randn(m,n);
      if test(abs(A),Abs(A)) then pause,end
      if test(abs(A+[]),Abs(A)) then pause,end
 end 
@@ -150,7 +150,7 @@ end
 //--------- test of real 
 
 for i=1:6, m=M(i);n=N(i);
-     A=rand(m,n,'normal');
+     A=randn(m,n);
      if test(real(A),A) then pause,end
      if test(real(A+[]),A) then pause,end
 end 
@@ -158,7 +158,7 @@ end
 //--------- test of imag
 
 for i=1:6, m=M(i);n=N(i);
-     A=rand(m,n,'normal');
+     A=randn(m,n);
      if test(imag(A),0*A) then pause,end
      if test(imag(A+[]),0*A) then pause,end
 end 
@@ -166,7 +166,7 @@ end
 //--------- test of conj 
 
 for i=1:6, m=M(i);n=N(i);
-     A=rand(m,n,'normal');
+     A=randn(m,n);
      if test(conj(A),A) then pause,end
      if test(conj(A+[]),A) then pause,end
 end 
@@ -212,7 +212,7 @@ end
 deff('[y]=Mceil(x)','if x==[] then y=[];else y=int(x)+1;y(x<0)=y(x<0)-1;end');
 
 for i=1:6, m=M(i);n=N(i);
-     A=10*rand(m,n,'normal');
+     A=10*randn(m,n);
      if test(ceil(A),Mceil(A)) then pause,end
      if test(ceil(A+[]),Mceil(A)) then pause,end
 end 
@@ -222,7 +222,7 @@ end
 deff('[y]=Mfloor(x)','if x==[] then y=[];else y=int(x);y(x<0)=y(x<0)-1;end');
 
 for i=1:6, m=M(i);n=N(i);
-     A=10*rand(m,n,'normal');
+     A=10*randn(m,n);
      if test(floor(A),Mfloor(A)) then pause,end
      if test(floor(A+[]),Mfloor(A)) then pause,end
 end 
@@ -234,7 +234,7 @@ deff('[y]=Msign(x)','z=x(x<>0);z=z./abs(z);y=x;y(x<>0)=z');
 if sign(0)<>0 then pause,end
 
 for i=1:6, m=M(i);n=N(i);
-     A=rand(m,n,'normal');
+     A=randn(m,n);
      if test(sign(A),Msign(A)) then pause,end
      if test(sign(A+[]),Msign(A)) then pause,end
 end 
@@ -248,7 +248,7 @@ deff('[y]=Msum(x,j)',['[m,n]=size(x);if j==''c'', y= x*ones_new(n,1);';
 deff('[y]=MsumG(x,j)',['if and([x==[],j==''f'']) then y=0;else y=Msum(x,j);end']);
 
 for i=1:6, m=M(i);n=N(i);
-     A=10*rand(m,n,'normal');
+     A=10*randn(m,n);
      if testN(sum(A),MsumG(A,'f'),0.1) then pause,end
      if testN(sum(A+[]),MsumG(A,'f'),0.1) then pause,end
      if testN(sum(A,'c'),MsumG(A,'c'),0.1) then pause,end
@@ -301,7 +301,7 @@ deff('[y]=Mcumsum(x,j)',['[m,n]=size(x);'
 deff('[y]=McumsumG(x,j)',['if x==[] then y=[];else y=Mcumsum(x,j);end']);
 
 for i=1:6, m=M(i);n=N(i);
-     A=10*rand(m,n,'normal');
+     A=10*randn(m,n);
      if test(cumsum(A),McumsumG(A,'f')) then pause,end
      if test(cumsum(A+[]),McumsumG(A,'f')) then pause,end
      if test(cumsum(A,'c'),McumsumG(A,'c')) then pause,end
@@ -411,7 +411,7 @@ deff('[y,k]=MmaxiG(x,j)',['[m,n]=size(x);';
 	'y(i)=yi;k(i)=ki;end;end']);
 
 for i=1:6, m=M(i);n=N(i);
-     A=10*rand(m,n,'normal');
+     A=10*randn(m,n);
      if test(maxi(A),Mmaxi(A)) then pause,end
      if test(maxi(A+[]),Mmaxi(A)) then pause,end
      [Am,Km]=maxi(A);[Am1,Km1]=Mmaxi(A);

@@ -177,28 +177,28 @@ function [b]=Abs(a)
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
-  A=rand(m,n,'normal');
+  A=randn(m,n);
   if test(abs(A),Abs(A)) then pause,end
 end 
 
 //--------- test of real 
 
 for i=1:6, m=M(i);n=N(i);
-  A=rand(m,n,'normal');
+  A=randn(m,n);
   if test(real(A),A) then pause,end
 end 
 
 //--------- test of imag
 
 for i=1:6, m=M(i);n=N(i);
-  A=rand(m,n,'normal');
+  A=randn(m,n);
   if test(imag(A),0*A) then pause,end
 end 
 
 //--------- test of conj 
 
 for i=1:6, m=M(i);n=N(i);
-  A=rand(m,n,'normal');
+  A=randn(m,n);
   if test(conj(A),A) then pause,end
 end 
 
@@ -243,7 +243,7 @@ function [y]=Mceil(x)
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
-  A=10*rand(m,n,'normal');
+  A=10*randn(m,n);
   if test(ceil(A),Mceil(A)) then pause,end
 end 
 
@@ -254,7 +254,7 @@ function [y]=Mfloor(x)
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
-  A=10*rand(m,n,'normal');
+  A=10*randn(m,n);
   if test(floor(A),Mfloor(A)) then pause,end
 end 
 
@@ -267,7 +267,7 @@ endfunction
 if sign(0)<>0 then pause,end
 
 for i=1:6, m=M(i);n=N(i);
-  A=rand(m,n,'normal');
+  A=randn(m,n);
   if test(sign(A),Msign(A)) then pause,end
 end 
 
@@ -285,7 +285,7 @@ function [y]=MsumG(x,j)
 endfunction;
 
 for i=1:6, m=M(i);n=N(i);
-  A=int(10*rand(m,n,'normal'));
+  A=int(10*randn(m,n));
   if testN(sum(A),MsumG(A,0),0.1) then pause,end
   if testN(sum(A,'c'),MsumG(A,2),0.1) then pause,end
   //AFAIRE if testN(sum(A,2),MsumG(A,2),0.1) then pause,end
@@ -339,7 +339,7 @@ function [y]=McumsumG(x,j)
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
-  A=10*rand(m,n,'normal');
+  A=10*randn(m,n);
   if testN(cumsum(A),McumsumG(A,0),1.e-8) then pause,end
   if testN(cumsum(A,'c'),McumsumG(A,2),1.e-8) then pause,end
   if testN(cumsum(A,2),McumsumG(A,2),1.e-8) then pause,end
@@ -457,7 +457,7 @@ function [y,k]=MmaxG(x,j)
 endfunction
 
 for i=1:6, m=M(i);n=N(i);
-  A=10*rand(m,n,'normal');
+  A=10*randn(m,n);
   if test(max(A),Mmax(A)) then pause,end
   [Am,Km]=max(A);[Am1,Km1]=Mmax(A);
   if test(Am,Am1) then pause,end
