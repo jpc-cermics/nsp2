@@ -5,7 +5,7 @@ function partie(f,xmin,xmax,couleur)
   xfpoly(x',y',couleur);
 endfunction
 
-histplot([-6:0.4:6],rand(1,2000,'n'),rect=[-6,0,6,0.5])
+histplot([-6:0.4:6],randn(1,2000),rect=[-6,0,6,0.5])
 function [y]=f(x) ; y=exp(-x.*x/2)/sqrt(2*%pi);endfunction 
 x=-6:0.1:6;x=x';
 y=f(x);

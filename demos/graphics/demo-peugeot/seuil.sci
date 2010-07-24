@@ -2,7 +2,7 @@
 //a.font_size=2;
 xset('font size',2);
 x=linspace(0,100,100)';
-y= rand(1,100,'n');
+y= randn(1,100);
 plot2d(x,y,style=2);
 xset('mark size',3)
 plot2d(x,y,style=-2,strf='000');

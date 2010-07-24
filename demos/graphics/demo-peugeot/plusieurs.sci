@@ -20,7 +20,7 @@ histplot()
 xsetech(wrect=[1/2,h+1/5,1/2,h]);
 sig=2.34;
 m=0.0;
-y=sig*rand(1,200,'n');
+y=sig*randn(1,200);
 histplot(20,y,rect=[-4,0,4,0.3]);
 function [y]=f(x,m,sig) 
   y=exp(-(x-m).*(x-m)/(2*sig.^2))/(sqrt(2*%pi)*sig);

@@ -21,12 +21,12 @@ function demo_2d_3()
   n=32-1;t=(0:n)./n;
   xset("font size",2);
   u=sin(80*%pi*t)+sin(100*%pi*t);
-  plot2d3([],rand(100,1,"n"));
+  plot2d3([],randn(100,1));
   xtitle("plot2d3 (vertical bars plot)","t","f(t)");
 endfunction
 
 function demo_2d_4()
-  v=(1:20)+(1:20).*rand(1,20,"n");
+  v=(1:20)+(1:20).*randn(1,20);
   xset("font size",2);
   plot2d([],v);
   plot2d([],(1:20),style=[2],strf="100",leg="estimated");

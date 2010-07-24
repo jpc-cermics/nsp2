@@ -18,7 +18,7 @@
 // 
 // Boolean matrices 
 
-A = rand(10,10,'n')>=0 ;
+A = randn(10,10)>=0 ;
 B=ex3c_1(A);
 if (~B)<>A then pause,end
 
