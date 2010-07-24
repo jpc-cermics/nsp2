@@ -1,5 +1,55 @@
 // -*- Mode: scilab -*- 
 
+
+function y=pcompare(p1,p2)
+   q=p1-p2;
+   y=norm( q.coeffs{1}) > 10*%eps;
+endfunction 
+
+function q=p_op(p,op)
+  x=p.coeffs{1};
+  execstr('x=x'+op);
+  q=m2p(x);
+endfunction
+
+function p3=pprod(p1,p2)
+  [m1,n1]=size(p1);
+  [m2,n2]=size(p2);
+  if size(p1,'*')==1 then 
+    p3=p1*p2;return;
+  end
+  if size(p2,'*')==1 then 
+    p3=p1*p2;return;
+  end
+  p3=pmat_create(m1,n2);
+  for i=1:m1
+    for j=1:n2
+      for k=1:n1
+	p3(i,j)=p3(i,j)+p1(i,k)*p2(k,j);
+      end
+    end
+  end
+endfunction
+
+function p3=pdotstar(p1,p2)
+  [m1,n1]=size(p1);
+  [m2,n2]=size(p2);
+  if size(p1,'*')==1 then 
+    p3=p1*p2;return;
+  end
+  if size(p2,'*')==1 then 
+    p3=p1*p2;return;
+  end
+  p3=pmat_create(m1,n1);
+  for i=1:m1
+    for j=1:n1
+      p3(i,j)=p1(i,j)*p2(i,j);
+    end
+  end
+endfunction
+
+x=m2p([0,1]);
+
 // creation 
 //---------
 v=1:3;
@@ -121,7 +171,7 @@ if norm(Mp-Vp) > 10*%eps then pause;end
 if norm(Mq-Vq) > 10*%eps then pause;end 
 
 // hornerm 
-
+//---------
 v=1:3;
 vc=[1:3] + [4:6]*%i;
 P={m2p(v), m2p(vc)};
@@ -184,8 +234,53 @@ if ~p.coeffs{1}.equal[[0,0,0,1:5]] then pause;end
 
 // + 
 // - 
+
 // .* 
+//----
+
+
+a1=int(10*rand(3,3));
+b1=int(10*rand(3,3))+int(10*rand(3,3))*%i;
+p1={ [1+2*x,2+5*x**2, 0;1, x, x+1; 0, x**4, 1+x**2],...
+     [1+(2+3*%i)*x,2+(5+%i)*x**2, 0;1, x+6*%i, x+1; 0, x**4, 1+x**2 ], a1, b1, 8, 8+7*%i, 1+x**2};
+for i=1:size(p1,'*')
+  p3=pdotstar(p1{i},p1{1})
+  if ~p3.equal[p1{i}.*p1{1}] then pause;end 
+end
+
 // *
+//----
+a1=int(10*rand(2,3));
+b1=int(10*rand(2,3))+int(10*rand(2,3))*%i;
+p1={ [1+2*x,2+5*x**2, 0;1 x x+1], [1+(2+3*%i)*x,2+(5+%i)*x**2, 0;1, x+6*%i, x+1], a1, b1, 8, 8+7*%i, 1+x**2};
+a2=int(10*rand(3,2));
+b2=int(10*rand(3,2))+%i*int(10*rand(3,2));
+p2={ [1,x;-1,2*x;2,0] ,[1,x+3*%i;-1+7*%i,2*x+%i;2,%i], a2, b2, 8, 8+7*%i, 1+x**2 };
+for i=1:size(p1,'*')
+  p3=pprod(p1{i},p2{1})
+  if ~p3.equal[p1{i}*p2{1}] then pause;end 
+end
+for j=1:size(p2,'*')
+  p3=pprod(p1{1},p2{j})
+  if ~p3.equal[p1{1}*p2{j}] then pause;end 
+end
+
+// transpose (')
+p1={ [1+2*x,2+5*x**2, 0;1, x, x+1 ],[1+(2+3*%i)*x,2+(5+%i)*x**2, 0;1, x+6*%i, x+1; 0, x**4, 1+x**2 ]};
+p2={ [1+2*x,1;2+5*x**2, x;0, x+1 ],[1+(2-3*%i)*x,1,0; 2+(5-%i)*x**2, x-6*%i, x**4;0, x+1,  1+x**2]};
+for i=1:size(p1,'*')
+  p3 = p1{i}';
+  if ~p3.equal[p2{i}] then pause;end 
+end
+
+// transpose (.')
+p1={ [1+2*x,2+5*x**2, 0;1, x, x+1 ],[1+(2+3*%i)*x,2+(5+%i)*x**2, 0;1, x+6*%i, x+1; 0, x**4, 1+x**2 ]};
+p2={ [1+2*x,1;2+5*x**2, x;0, x+1 ],[1+(2+3*%i)*x,1,0; 2+(5+%i)*x**2, x+6*%i, x**4;0, x+1,  1+x**2]};
+for i=1:size(p1,'*')
+  p3 = p1{i}.';
+  if ~p3.equal[p2{i}] then pause;end 
+end
+
 // ^
 
 //sum 
@@ -199,3 +294,4 @@ if ~p.coeffs{1}.equal[[0,0,0,1:5]] then pause;end
 //pdiv
 //bezout
 //sfact
+
