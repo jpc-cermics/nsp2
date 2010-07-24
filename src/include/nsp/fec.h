@@ -133,7 +133,9 @@ static void nsp_rotate_fec(NspGraphic *o,double *R);
 static void nsp_scale_fec(NspGraphic *o,double *alpha);
 static int nsp_getbounds_fec(NspGraphic *o,double *bounds);
 static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
+static void PermutOfSort_d(const double *tab, int *perm);
+static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 
-#line 138 "./fec.h"
+#line 140 "./fec.h"
 #endif /* NspFec_Private */
 

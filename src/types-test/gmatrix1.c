@@ -1447,6 +1447,7 @@ void PermutOfSort (const int *tab, int *perm)
  * (see Plo3d.c) but a little different as in shade a color is directly
  * associated with each vertex.
  *
+ * Note that zxy is increasing when entering this function. 
  **/
 
 void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
@@ -1698,4 +1699,4 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
 }
 
 
-#line 1702 "gmatrix1.c"
+#line 1703 "gmatrix1.c"
