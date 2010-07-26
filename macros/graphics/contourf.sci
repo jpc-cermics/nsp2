@@ -1,5 +1,5 @@
 function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,10,1,10])
-
+  
   if nargin==0,
     s_mat=['t=-%pi:0.1:%pi;m=sin(t)''*cos(t);contourf(t,t,m);'];
     print(s_mat);
@@ -23,6 +23,20 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   [mz,nz] = size(z);
   minz = min(z);
   maxz = max(z);
+  
+  if new_graphics() then 
+    lp=xget('lastpattern');
+    if nvs > lp ; printf('Colormap is too small\n');return ;end 
+    min_nv=min(nv);
+    max_nv=max(nv);
+    // fill the contours 
+    grayplot(x,y,z,shade=%t,colminmax=[1,nvs-1],colout=[0,nvs],...
+	     zminmax=[min(nv),max(nv)], strf=strf,rect=rect,nax=nax);
+    // draw the boundaries 
+    contour2d(x,y,z,nv,style=style,strf="000",leg=leg,rect=rect,nax=nax);
+    return 
+  end
+    
   // Surround the matrix by a very low region to get closed contours, and
   // replace any NaN with low numbers as well.
   zz=[ %nan*ones_new(1,nz+2); %nan*ones_new(mz,1),z,%nan*ones_new(mz,1);%nan*ones_new(1,nz+2)];
@@ -61,11 +75,6 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
   max_nv=max(nv);
 
   plot2d([min(xx);max(xx)],[min(yy);max(yy)],style=0,strf=strf,leg=leg,rect=rect,nax=nax);
-  
-  if new_graphics() then 
-    F=get_current_figure[]
-    F.draw_latter[];
-  end
     
   // Plot patches in order of decreasing size. This makes sure that
   // all the levels get drawn, not matter if we are going up a hill or
@@ -96,11 +105,6 @@ function contourf(x,y,z,nv=[],style=[],strf="121",leg="",rect=[0,0,1,1],nax=[1,1
     contour2d(xx,yy,zz,nv,style=style,strf="000",leg=leg,rect=rect,nax=nax);
   end
   
-  if new_graphics() then 
-    F.draw_now[];
-  end
 
 endfunction
-
-
 
