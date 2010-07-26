@@ -1,4 +1,5 @@
-mode(-1)
+// -*- Mode: scilab -*- 
+// mode(-1)
 // Copyright ENPC 
 path=get_absolute_file_path('fec.dem');
 oldln=lines();lines(0)
@@ -7,7 +8,6 @@ demolist=['Finite Element display',              'fec.ex1';
 	  'Finite Element display',              'fec.ex2';
 	  'Sfgrayplot ',                         'fec.ex3';
 	  'Finite Element display with colorbar','fec.ex4'];
-
 
 deff('[]=demoex(num)','exec(path+demolist(num,2),-1)')
 
