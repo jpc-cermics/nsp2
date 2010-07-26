@@ -138,7 +138,7 @@ function [gate,names,cast,declar,have_mex]=new_names(table)
       names(i) = "C2F(" + table(i,2) + ")"
      case 'direct'  then 
       names(i) = "C2F(" + table(i,2) + ")"
-    else error(999,"wrong interface type "+table(i,3)); 
+    else error("wrong interface type "+table(i,3)); 
     end 
   end 
 endfunction

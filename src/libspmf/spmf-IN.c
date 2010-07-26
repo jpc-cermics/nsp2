@@ -21,7 +21,7 @@
 
 #include <math.h>
 #include <string.h>
-#include <fpu_control.h>
+/* #include <fpu_control.h> */
 #include <nsp/machine.h>
 #include <nsp/matrix-in.h>
 #include <nsp/bmatrix-in.h>
@@ -98,7 +98,8 @@ static int int_nsp_binomial_coef(Stack stack, int rhs, int opt, int lhs)
 
   if ( !N_is_scalar && !K_is_scalar && !(N->m == K->m && N->n == K->n) )
     {
-      Scierror("%s: arguments should be of same size or scalars\n",NspFname(stack));
+      Scierror("%s: arguments should be of same size or scalars\n",
+	       NspFname(stack));
       return RET_BUG;
     }
 
@@ -284,9 +285,11 @@ static int int_nsp_invkcdflim(Stack stack, int rhs, int opt, int lhs)
   for ( i = 0 ; i < P->mn ; i++ )
     {
       temp = P->R[i] + Q->R[i];
-      if ( ! ( 0 <= P->R[i] &&  P->R[i] <= 1.0 && 0 <= Q->R[i] && Q->R[i] <= 1.0 && fabs(temp - 1.0) <= 0.5*DBL_EPSILON ) )
+      if ( ! ( 0 <= P->R[i] &&  P->R[i] <= 1.0 && 0 <= Q->R[i] 
+	       && Q->R[i] <= 1.0 && fabs(temp - 1.0) <= 0.5*DBL_EPSILON ) )
 	{
-	  Scierror("%s: bad first or second argument, P=%g, Q=%g (component %d)\n",NspFname(stack), P->R[i], Q->R[i], i+1);
+	  Scierror("%s: bad first or second argument, P=%g, Q=%g (component %d)\n",
+		   NspFname(stack), P->R[i], Q->R[i], i+1);
 	  return RET_BUG;
 	} 
     }
@@ -297,7 +300,8 @@ static int int_nsp_invkcdflim(Stack stack, int rhs, int opt, int lhs)
     {
       if ( nsp_invkcdflim(P->R[i], Q->R[i], x->R+i) == FAIL )
 	{
-	  Scierror("%s: inversion process fails (for p=%g, q=%g, component %d)\n",NspFname(stack),P->R[i],Q->R[i],i+1);
+	  Scierror("%s: inversion process fails (for p=%g, q=%g, component %d)\n",
+		   NspFname(stack),P->R[i],Q->R[i],i+1);
 	  nsp_matrix_destroy(x);
 	  return RET_BUG;
 	}
@@ -479,14 +483,14 @@ static int int_legendre(Stack stack, int rhs, int opt, int lhs)
 	    }
 	}
     }
-   FREE(ipqa);
-   MoveObj(stack,1,(NspObject *) y);
-   return 1;
+  FREE(ipqa);
+  MoveObj(stack,1,(NspObject *) y);
+  return 1;
 
  err:
-   FREE(ipqa);
-   nsp_matrix_destroy(y);
-   return RET_BUG;
+  FREE(ipqa);
+  nsp_matrix_destroy(y);
+  return RET_BUG;
 }
 
 static int int_nsp_hypot(Stack stack, int rhs, int opt, int lhs)
@@ -521,8 +525,8 @@ static int int_nsp_hypot(Stack stack, int rhs, int opt, int lhs)
   for ( i = 0, ix = 0, iy = 0 ; i < Max(x->mn,y->mn) ; i++, ix+=incx, iy+=incy )
     z->R[i] = nsp_hypot(x->R[ix],y->R[iy]);
 
-   MoveObj(stack,1,(NspObject *) z);
-   return 1;
+  MoveObj(stack,1,(NspObject *) z);
+  return 1;
 }
 
 static int int_nsp_primefactors(Stack stack, int rhs, int opt, int lhs)
@@ -704,17 +708,19 @@ static int int_nor_part(Stack stack, int rhs, int opt, int lhs)
   double mu, sigma;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'nor' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'nor' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&mu) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&sigma) == FAIL) return RET_BUG;      
-
   if ( ! (sigma > 0.0) )
-    { Scierror("Error: pdf('nor',x,mu,sigma), sigma should be > 0\n"); return RET_BUG;}
-
+    { 
+      Scierror("Error: pdf('nor',x,mu,sigma), sigma should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_normal(x->R[i], mu, sigma);
 
@@ -728,20 +734,21 @@ static int int_gam_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'gam' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'gam' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2);
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
-
   if ( ! (a > 0.0 && b >= 0.0) )
-    { Scierror("Error: pdf('gam',x,a,b), a should be > 0 and b should be >= 0\n"); return RET_BUG;}
-
+    { 
+      Scierror("Error: pdf('gam',x,a,b), a should be > 0 and b should be >= 0\n");
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_gamma(x->R[i], a, b, 0);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -752,15 +759,18 @@ static int int_chi_part(Stack stack, int rhs, int opt, int lhs)
   double nu;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'chi' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 1 parameter is required for 'chi' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&nu) == FAIL) return RET_BUG;      
-
   if ( ! (nu > 0.0) )
-    { Scierror("Error: pdf('chi',x,nu), nu should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('chi',x,nu), nu should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_chi2(x->R[i], nu);
 
@@ -768,29 +778,28 @@ static int int_chi_part(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+#if 0
 static int int_nch_part(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
   double nu, lambda;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'nch' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'nch' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&nu) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&lambda) == FAIL) return RET_BUG;      
-
   if ( ! (nu > 0.0 && lambda > 0.0) )
     { Scierror("Error: pdf('nch',x,nu,lambda), nu and lambda should be > 0\n"); return RET_BUG;}
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_nchi2(x->R[i], nu, lambda);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
+#endif 
 
 static int int_exp_part(Stack stack, int rhs, int opt, int lhs)
 {
@@ -798,18 +807,19 @@ static int int_exp_part(Stack stack, int rhs, int opt, int lhs)
   double tau;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'exp' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    {
+      Scierror("Error: 1 parameter is required for 'exp' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&tau) == FAIL) return RET_BUG;      
-
   if ( ! (tau > 0.0) )
-    { Scierror("Error: pdf('exp',x,tau), tau should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('exp',x,tau), tau should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_exp(x->R[i], tau);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -820,18 +830,19 @@ static int int_cau_part(Stack stack, int rhs, int opt, int lhs)
   double sigma;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'cau' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 1 parameter is required for 'cau' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&sigma) == FAIL) return RET_BUG;      
-
   if ( ! (sigma > 0.0) )
-    { Scierror("Error: pdf('cau',x,sigma), sigma should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('cau',x,sigma), sigma should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_cauchy(x->R[i], sigma);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -842,20 +853,20 @@ static int int_par_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'par' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'par' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
-
   if ( ! (a > 0.0 && b > 0.0) )
-    { Scierror("Error: pdf('par',x,a,b), both a and b should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('par',x,a,b), both a and b should be > 0\n");
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_pareto(x->R[i], a, b);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -866,15 +877,17 @@ static int int_ray_part(Stack stack, int rhs, int opt, int lhs)
   double sigma;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'ray' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    {
+      Scierror("Error: 1 parameter is required for 'ray' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&sigma) == FAIL) return RET_BUG;      
-
   if ( ! (sigma > 0.0) )
-    { Scierror("Error: pdf('ray',x,sigma), sigma should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('ray',x,sigma), sigma should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_rayleigh(x->R[i], sigma);
 
@@ -888,17 +901,19 @@ static int int_tray_part(Stack stack, int rhs, int opt, int lhs)
   double sigma, a;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameter are required for 'tray' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameter are required for 'tray' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&sigma) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&a) == FAIL) return RET_BUG;      
-
   if ( ! (sigma > 0.0 && a >= 0.0) )
-    { Scierror("Error: pdf('tray',x,sigma,a), sigma should be > 0 and a should be >= 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('tray',x,sigma,a), sigma should be > 0 and a should be >= 0\n");
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_tailrayleigh(x->R[i], sigma, a);
 
@@ -912,20 +927,21 @@ static int int_wei_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'wei' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'wei' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
-
   if ( ! (a > 0.0 && b > 0.0) )
-    { Scierror("Error: pdf('wei',x,a,b), both a and b should be > 0\n"); return RET_BUG;}
-
+    { 
+      Scierror("Error: pdf('wei',x,a,b), both a and b should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_weibull(x->R[i], a, b);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -936,18 +952,20 @@ static int int_lap_part(Stack stack, int rhs, int opt, int lhs)
   double a;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'lap' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    {
+      Scierror("Error: 1 parameter is required for 'lap' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if ( ! (a > 0.0) )
-    { Scierror("Error: pdf('lap',x,a), a should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('lap',x,a), a should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_laplace(x->R[i], a);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -958,17 +976,19 @@ static int int_logn_part(Stack stack, int rhs, int opt, int lhs)
   double mu, sigma;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'logn' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'logn' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&mu) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&sigma) == FAIL) return RET_BUG;      
-
   if ( ! (sigma > 0.0) )
-    { Scierror("Error: pdf('logn',x,mu,sigma), sigma should be > 0\n"); return RET_BUG;}
-
+    {
+      Scierror("Error: pdf('logn',x,mu,sigma), sigma should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_lognormal(x->R[i], mu, sigma);
 
@@ -982,20 +1002,21 @@ static int int_logi_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'logi' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    {
+      Scierror("Error: 2 parameters are required for 'logi' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
-
   if ( ! (b > 0.0) )
-    { Scierror("Error: pdf('logi',x,a,b), b should be > 0\n"); return RET_BUG;}
-
+    { 
+      Scierror("Error: pdf('logi',x,a,b), b should be > 0\n"); 
+      return RET_BUG;
+    }
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_logistic(x->R[i], a, b);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -1006,14 +1027,14 @@ static int int_bin_part(Stack stack, int rhs, int opt, int lhs)
   double p, n;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'bin' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    {
+      Scierror("Error: 2 parameters are required for 'bin' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2);
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&n) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&p) == FAIL) return RET_BUG;      
-
   if ( ! ( n >= 1.0  &&  n == floor(n)  &&  0.0 <= p  && p <= 1.0 ) )
     { 
       Scierror("Error: pdf('bin',x,n,p), invalid parameters: n should be a positive int and p a real in [0,1]\n"); 
@@ -1033,25 +1054,23 @@ static int int_hyp_part(Stack stack, int rhs, int opt, int lhs)
   double n, r, b;
   int i;
   if ( rhs != 5 ) 
-    { Scierror("Error: 3 parameters are required for 'hyp' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 3 parameters are required for 'hyp' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&n) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&r) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,5,&b) == FAIL) return RET_BUG;      
-
   if ( ! ( n >= 1.0  &&  n == floor(n)  &&  r >= 0.0  &&  r == floor(r) 
            && b >= 0.0 && b == floor(b) && n <= r + b) )
     { 
       Scierror("Error: pdf('hyp',x,n,r,b), invalid parameters\n"); 
       return RET_BUG;
     }
- 
   for ( i = 0 ; i < x->mn ; i++ )
-     x->R[i] = nsp_pdf_hyper(x->R[i], r, b, n, 0);
+    x->R[i] = nsp_pdf_hyper(x->R[i], r, b, n, 0);
 
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
@@ -1063,18 +1082,18 @@ static int int_poi_part(Stack stack, int rhs, int opt, int lhs)
   double mu;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'poi' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 1 parameter is required for 'poi' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&mu) == FAIL) return RET_BUG;      
-
   if ( ! ( mu >= 0.0 ) )
     { 
       Scierror("Error: pdf('poi',x,mu), invalid parameter: mu should be >= 0\n"); 
       return RET_BUG;
     }
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_pois(x->R[i], mu, 0);
 
@@ -1088,12 +1107,13 @@ static int int_geom_part(Stack stack, int rhs, int opt, int lhs)
   double p;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 'geom' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 1 parameter is required for 'geom' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&p) == FAIL) return RET_BUG;      
-
   if ( ! ( 0 < p && p <= 1.0 ) )
     { 
       Scierror("Error: pdf('geom',x,p), invalid parameter: p should be in (0,1]\n"); 
@@ -1112,20 +1132,19 @@ static int int_nbn_part(Stack stack, int rhs, int opt, int lhs)
   double p, r;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'nbn' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'nbn' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&r) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&p) == FAIL) return RET_BUG;      
-
   if ( !( r > 0.0  &&  0.0 <= p  &&  p <= 1.0) )
     { 
       Scierror("Error: pdf('nbn',x,r,p), invalid parameters: r should be positive and p in [0,1]\n"); 
       return RET_BUG;
     }
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_nbinom(x->R[i], r, p, 0);
 
@@ -1139,20 +1158,19 @@ static int int_bet_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'bet' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'bet' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
-
   if ( !(a > 0.0  &&  b > 0.0) )
     { 
       Scierror("Error: pdf('bet',x,a,b), invalid parameters: a and b should be positive\n"); 
       return RET_BUG;
     }
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_beta(x->R[i], a, b, 0);
 
@@ -1166,14 +1184,14 @@ static int int_f_part(Stack stack, int rhs, int opt, int lhs)
   double nu1, nu2;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'f' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'f' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2);
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&nu1) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&nu2) == FAIL) return RET_BUG;      
-
   if ( !(nu1 > 0.0 && nu2 > 0.0) )
     { 
       Scierror("Error: pdf('f',x,nu1,nu2), invalid parameters: nu1 and nu2 should be positive\n"); 
@@ -1193,21 +1211,19 @@ static int int_t_part(Stack stack, int rhs, int opt, int lhs)
   double nu;
   int i;
   if ( rhs != 3 ) 
-    { Scierror("Error: 1 parameter is required for 't' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 1 parameter is required for 't' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;}
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&nu) == FAIL) return RET_BUG;      
-
   if ( !(nu > 0.0) )
     { 
       Scierror("Error: pdf('t',x,nu), invalid parameter: nu should be positive\n"); 
       return RET_BUG;
     }
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_t(x->R[i], nu, 0);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -1218,23 +1234,21 @@ static int int_uin_part(Stack stack, int rhs, int opt, int lhs)
   double n1, n2;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'uin' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'uin' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&n1) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&n2) == FAIL) return RET_BUG;      
-
   if ( ! (n1 <= n2  &&  floor(n1) == n1  && floor(n2) == n2 ) )
     { 
       Scierror("Error: pdf('uin',x,n1,n2), invalid parameters: n1 and n2 should be integers with n1 <= n2\n"); 
       return RET_BUG;
     }
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_uin(x->R[i], n1, n2);
-
   NSP_OBJECT(x)->ret_pos  = 1;
   return 1;
 }
@@ -1245,20 +1259,19 @@ static int int_unf_part(Stack stack, int rhs, int opt, int lhs)
   double a, b;
   int i;
   if ( rhs != 4 ) 
-    { Scierror("Error: 2 parameters are required for 'unf' option of function %s (got %d)\n",NspFname(stack),rhs-2); return RET_BUG;}
-  
+    { 
+      Scierror("Error: 2 parameters are required for 'unf' option of function %s (got %d)\n",
+	       NspFname(stack),rhs-2); 
+      return RET_BUG;
+    }
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
-
   if (GetScalarDouble(stack,3,&a) == FAIL) return RET_BUG;      
-
   if (GetScalarDouble(stack,4,&b) == FAIL) return RET_BUG;      
-
   if ( ! (a < b) )
     { 
       Scierror("Error: pdf('unf',x,a,b), invalid parameters: a and b should be real such that a < b\n"); 
       return RET_BUG;
     }
-
   for ( i = 0 ; i < x->mn ; i++ )
     x->R[i] = nsp_pdf_unf(x->R[i], a, b);
 
@@ -1270,7 +1283,7 @@ static OpTab pdf_table[]={
   {"nor", int_nor_part},
   {"gam", int_gam_part},
   {"chi", int_chi_part},
-/*   {"nch", int_nch_part}, */
+  /*   {"nch", int_nch_part}, */
   {"exp", int_exp_part},
   {"cau", int_cau_part},
   {"par", int_par_part},
