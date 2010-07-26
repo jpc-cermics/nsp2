@@ -220,28 +220,21 @@ int nsp_contour2d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
 {
   int err=0,i;
   int N[3]= {n1, n2, nz}; 
-  
   if ( zz == NULL )
     {
-      double *zconst;
       double zmin,zmax;
       zmin=(double) Mini(z,n1*(n2)); 
       zmax=(double) Maxi(z,n1*(n2));
       /* we draw nz level curves */
-      if ((zconst = graphic_alloc(6,nz,sizeof(double)))== 0) 
+      if ((zz = graphic_alloc(6,nz,sizeof(double)))== 0) 
 	{
-	  sciprint("Running out of memory\r\n");
+	  sciprint("Running out of memory\n");
 	  return 0;
 	}
       for ( i =0 ; i < nz ; i++) 
-	zconst[i]=zmin + (i+1)*(zmax-zmin)/(nz+1);
-      contourI(Xgc,Contstore_2,x,y,z,zconst,N,style,&err);
+	zz[i]=zmin + (i+1)*(zmax-zmin)/(nz+1);
     }
-  else
-    {
-      N[0]= n1;N[1]= n2;N[2]= nz;
-      contourI(Xgc,Contstore_2,x,y,z,zz,N,style,&err);
-    }
+  contourI(Xgc,Contstore_2,x,y,z,zz,N,style,&err);
   return(0);
 }
 
@@ -535,7 +528,8 @@ static void look(BCG *Xgc,ptr_level_f func, int i, int j, int ib, int jb, int qq
  *       suivant a explorer 
  *-----------------------------------------------------------------------*/
 
-static int ffnd (BCG *Xgc,ptr_level_f func, int i1, int i2, int i3, int i4, int jj1, int jj2, int jj3, int jj4, int ent, int qq, double Cont, int *zds)
+static int ffnd (BCG *Xgc,ptr_level_f func, int i1, int i2, int i3, int i4,
+		 int jj1, int jj2, int jj3, int jj4, int ent, int qq, double Cont, int *zds)
 {
   double phi1,phi2,phi3,phi4,xav,yav,phiav;
   int revflag,i;
