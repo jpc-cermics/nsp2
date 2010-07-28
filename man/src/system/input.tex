@@ -1,0 +1,42 @@
+% -*- mode: latex -*-
+\mansection{input}
+\begin{mandesc}
+  \short{input}{wait for user keyboard input}
+\end{mandesc}
+%\index{input}\label{input}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  [x]=input(str, eval=%f|%t, env = H, accept_empy=%f|%t)     
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{str}: a character string giving the prompt.
+    \vname{eval}: a boolean (default value is true).
+    \vname{env}: a hash table.
+    \vname{accept_empty}: a boolean (default value is false).
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  displays the string \verb!str! in the console and waits for a sequence 
+  of characters (ended by a new line) entered in the main interaction 
+  window. If \verb!eval=%f!, then the string entered by the user is 
+  returned directly. If \verb!eval=%t!, the the string entered by the 
+  user is first evaluated and the value of \verb!ans! is returned by 
+  the function. If the flag \verb!accept_empy=%t! then an empty string 
+  is returned by the function when the user enter an empty answer. 
+  If \verb!env! is given, it must be a hash table which is used as a 
+  context when evaluating the user answer.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    // yes or no ? empty answer considered as no 
+    x=input("yes or no ? ",accept_empty=%t, env=hash(yes=1,no=0));
+    // if x.equal[1] then ... end 
+  \end{Verbatim}
+\end{examples}
+%-- see also
+
