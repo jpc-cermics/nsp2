@@ -181,6 +181,7 @@ struct _scicos_sim {
   double *alpha;
   double *beta;
   double *g;
+  double *xd;
   /* constants */
   int nlnkptr ;/* lnkptr */
   int nordptr;/* ordptr  */
@@ -218,6 +219,7 @@ struct _scicos_params {
   int *neq;
   double Atol, rtol, ttol, deltat,hmax;
   int hot;
+  int phase; 
 };
 
 
