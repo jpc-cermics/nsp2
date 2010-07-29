@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -95,22 +95,22 @@ struct  _scicos_block {
   double *beta;
 };
 
-/* Warning: take care to follow the same order as in 
- * the state variable of the interface 
- */
+typedef struct _scicos_sim scicos_sim ;
 
-typedef struct _scicos_state scicos_state ;
-
-struct _scicos_state {
-  /* arguments in the same order as in state */
-  double *x;
-  double *z;
-  void *ozl; /* list of nsp objects */
-  double *iz;
+struct _scicos_sim {
+  /* WARNING arguments following here must be in the same order as state names 
+   * in scicos_fill_state 
+   */
+  /* --- start of state list followin state names */
+  double *x;      /* continuous state */
+  double *z;      /* 5  - discrete state */
+  void *ozl;      /* list of nsp objects */
+  double *iz;     /* 18 - vectors of labels */
   double *tevts;
   int *evtspt;
   int *pointi;
-  void *outtbl; /* list of nsp objects */
+  void *outtbl;   /* list of nsp objects */
+  /* -- end of state list */
   /* extra arguments for outtb */
   int nlnk;        /* length of outtbl */
   void **outtbptr; /* array of pointers to outtb data */
@@ -127,18 +127,11 @@ struct _scicos_state {
   void * State; /* original hash table */
   void * State_elts[8]; /* keep track of original data */
   int nevts; 
-  /* int nout; */
   int *iwa;
-};
-
-typedef struct _scicos_sim scicos_sim ;
-
-/* Warning: take care to follow the same order as in 
- * the sim variable of the interface 
- */
-
-struct _scicos_sim {
-  /* arguments in the same order as in sim */
+  /* WARNING arguments following here must be in the same order as sim names 
+   * in scicos_fill_sim
+   */
+  /* --- start of sim list */
   void *funs;
   int *xptr;
   int *zptr;
@@ -147,7 +140,7 @@ struct _scicos_sim {
   int *outptr;
   int *inplnk;
   int *outlnk;
-  /* int *lnkptr; removed in 4.4 */
+  int *oziptr; /* used for keeping tracks of oz: it is called ozptr in nsp csim */
   double *rpar;
   int *rpptr;
   int *ipar;
@@ -169,18 +162,17 @@ struct _scicos_sim {
   int *iord;
   nsp_string *labels;
   int *modptr;
-  /* added in 4.4 */
-  int *ozptr;
-  int *opptr;
   void *opar; /* list of objects */
+  int *opptr; /* keep track of opar list */
+  /* --- end of sim list */
   /* extra elements for opar */
   int nopar;
   void **oparptr;
   int *oparsz;
   int *opartyp;
   /* extra elements */
-  void * Sim; /* original hash table */
-  void *Sim_elts[32]; /* keep track of original data */
+  void *Sim; /* original hash table */
+  void *Sim_elts[32]; /* pointers to NspObjects of Sim  */
   /* extra arguments allocated  */
   int *funflag;
   void **funptr; 
@@ -205,7 +197,6 @@ struct _scicos_sim {
   int nz;   /*     number of  discrete real states */
   int nx;   /*     number of continuous states */
   int debug_block ; /* debug block id */
-  
 };
 
 /*
@@ -236,7 +227,6 @@ typedef enum { run_on , run_off } scicos_run_status;
 struct _scicos_run {
   scicos_run_status  status ;
   scicos_sim sim;
-  scicos_state state;
   scicos_block *Blocks;
   scicos_params params;
 };
