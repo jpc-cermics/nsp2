@@ -75,14 +75,23 @@ typedef void (*voidf)();
 
 typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMULATOR;
 
-#define DoColdRestart(block)        (do_cold_restart()) 
-#define GetSimulationPhase(block)   (get_phase_simulation())
-#define GetScicosTime(block)        (get_scicos_time())
-#define GetFinalTime(block)         (get_final_time())
-#define GetBlockNum(block)          (get_block_number())
-#define SetBlockNum(block,val)      (set_block_number(val))
-#define GetBlockError(block)        (get_block_error())
-#define SetBlockError(block,val)    (set_block_error(val))
+#define do_cold_restart             scicos_do_cold_restart
+#define DoColdRestart(block)        (scicos_do_cold_restart()) 
+#define get_phase_simulation        scicos_get_phase_simulation
+#define GetSimulationPhase(block)   (scicos_get_phase_simulation())
+#define get_scicos_time             scicos_get_scicos_time
+#define GetScicosTime(block)        (scicos_get_scicos_time())
+#define get_final_time              scicos_get_final_time
+#define GetFinalTime(block)         (scicos_get_final_time())
+#define get_block_number            scicos_get_block_number
+#define GetBlockNum(block)          (scicos_get_block_number())
+#define set_block_number            scicos_set_block_number
+#define SetBlockNum(block,val)      (scicos_set_block_number(val))
+#define get_block_error             scicos_get_block_error
+#define GetBlockError(block)        (scicos_get_block_error())
+#define set_block_error             scicos_set_block_error
+#define SetBlockError(block,val)    (scicos_set_block_error(val))
+
 #define StopSimulation(block,val)   (end_scicos_sim()) 
 #define IsHotReStart(block)         (what_is_hot())
 #define isinTryPhase(block)         ( GetSimulationPhase(block)==PHASE_TRY_MFX  )

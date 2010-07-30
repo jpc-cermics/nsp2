@@ -98,7 +98,7 @@ extern double C2F(dlansy) (char *norm, char *uplo, int *n, double *a, int *lda, 
 extern double C2F(dlantr) (char *norm, char *uplo, char *diag, int *m, int *n, double *a, int *lda, double *work, int norm_len, int uplo_len, int diag_len);
 extern int C2F(dlanv2) (double *a, double *b, double *c, double *d, double *rt1r, double *rt1i, double *rt2r, double *rt2i, double *cs, double *sn);
 extern int C2F(dlapmt) (int *forwrd, int *m, int *n, double *x, int *ldx, int *k);
-extern double C2F(dlapy2) (double *x, double *y);
+extern double C2F(dlapy2) (const double *x,const double *y);
 extern double C2F(dlapy3) (double *x, double *y, double *z);
 extern int C2F(dlaqge) (int *m, int *n, double *a, int *lda, double *r, double *c, double *rowcnd, double *colcnd, double *amax, char *equed, int equed_len);
 extern int C2F(dlaqp2) (int *m, int *n, int *offset, double *a, int *lda, int *jpvt, double *tau, double *vn1, double *vn2, double *work);

@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 # CFLAGS IS CHANGED LOCALLY FOR EACH SUBDIR 
 # CFLAGS = $(CC_OPTIONS) 
 # or 

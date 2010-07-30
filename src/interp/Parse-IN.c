@@ -325,6 +325,16 @@ static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_e
       else 
 	return 0;
     }
+  if ( eval == FALSE ) 
+    {
+      if ( retval == TRUE ) 
+	{
+	  nsp_move_string(stack,1,buf,-1);
+	  return 1;
+	}
+      else 
+	return 0;
+    }
   /* evaluate the string in a new frame and returns the 
    * frame as a hash table : take care that frame must be deleted 
    * at the end. 

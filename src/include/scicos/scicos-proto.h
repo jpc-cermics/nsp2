@@ -32,6 +32,8 @@ extern  int scicos_unsfdcopy (int *, double *, int *, double *, int *);
 extern  int scicos_isort (int *, int *, int *);
 extern int  dmmul_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
 extern int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
+extern int wmmul_scicos(double *ar, double *ai, int *na, double *br, double *bi, int *nb, double *cr, double *ci, int *nc, int *l, int *m, int *n);
+
 extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
 extern int scicos_getscilabel(int kfun,char **label);
 extern void scicos_clip(BCG *Xgc,int n) ;
@@ -39,13 +41,17 @@ extern BCG *scicos_set_win(int wid,int *oldwid);
 extern void *scicos_get_function(char * fname);
 extern void scicos_do_cold_restart(void);
 extern int scicos_get_phase_simulation(void);
-extern double scicos_get_time(void);
+extern double scicos_get_scicos_time(void);
 extern int scicos_get_block_number(void);
 extern void scicos_set_block_error(int);
 extern void scicos_set_pointer_xproperty(int* pointer);
-
 /* FIXME should be defined elsewhere */
 extern int nsp_check_events_activated(void);
 extern int nsp_check_gtk_events(void);
+
+
+extern void * scicos_malloc(size_t size);
+extern void scicos_free(void *p);
+extern int scicos_mtran(double *a, int na, double *b, int nb, int m, int n);
 
 #endif 
