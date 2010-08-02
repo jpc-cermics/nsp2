@@ -20,6 +20,9 @@
 
 #include "optim.h"
 
+static int nsp_icse2_dmmul(double *a, int *na, double *b, int *nb, 
+			   double *c, int *nc, int *l, int *m, int *n);
+
 /* 
  * 
  *    critere standard des moindres carres 
@@ -96,7 +99,7 @@ int optim_icsec2 (int *indc, int *nu, double *tob, double *obs, double *cof,
   --dtu;
 
   /* Function Body */
-  dmmul_scicos (&obs[obs_offset], nob, &ytob[ytob_offset], ny,
+  nsp_icse2_dmmul (&obs[obs_offset], nob, &ytob[ytob_offset], ny,
 		&yob[yob_offset], nob, nob, ny, ntob);
   if (*indc == 1)
     {
@@ -145,10 +148,20 @@ int optim_icsec2 (int *indc, int *nu, double *tob, double *obs, double *cof,
 		}
 	      /* L25: */
 	    }
-	  dmmul_scicos (&d__[1], &c__1, &obs[obs_offset], nob,
+	  nsp_icse2_dmmul (&d__[1], &c__1, &obs[obs_offset], nob,
 			&cy[j * cy_dim1 + 1], &c__1, &c__1, nob, ny);
 	  /* L20: */
 	}
     }
   return 0;
 }				/* icsec2_ */
+
+
+
+static int nsp_icse2_dmmul(double *a, int *na, double *b, int *nb, 
+			  double *c, int *nc, int *l, int *m, int *n)
+{
+  double c_b4 = 1.0, c_b5 = 0.0;
+  C2F(dgemm)("n", "n", l, n, m, &c_b4, a, na,b, nb,&c_b5,c, nc, 1L, 1L);
+  return 0;
+} 

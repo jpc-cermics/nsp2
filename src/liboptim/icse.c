@@ -328,6 +328,8 @@ struct
 
 #define nird_1 nird_
 
+static int nsp_icse_dmmul(double *a, int *na, double *b, int *nb, 
+			  double *c, int *nc, int *l, int *m, int *n);
 
 int optim_icse (int *ind, int *nu, double *u, double *co, double *g, int *itv,
 		double *rtv, double *dtv, U_fp icsef, U_fp icsec2, U_fp icsei)
@@ -956,7 +958,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 		  p[i__] = 0.;
 		}
 	    }
-	  dmmul_scicos (&p[1], &c__1, &smy[smy_offset], ny, &p0[1], &c__1,
+	  nsp_icse_dmmul (&p[1], &c__1, &smy[smy_offset], ny, &p0[1], &c__1,
 			&c__1, ny, ny);
 	  /* 
 	   */
@@ -1044,7 +1046,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 	  if (kt < *nti + *ntf)
 	    {
 	      i__2 = *nuc + *nuv;
-	      dmmul_scicos (&oldp[1], &c__1, &oldmu[oldmu_offset], ny, &gt[1],
+	      nsp_icse_dmmul (&oldp[1], &c__1, &oldmu[oldmu_offset], ny, &gt[1],
 			    &c__1, &c__1, ny, &i__2);
 	      i__2 = *nuc + *nuv;
 	      C2F(dscal) (&i__2, &dt2, &gt[1], &c__1);
@@ -1072,7 +1074,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 		    }
 		}
 	      i__2 = *nuc + *nuv;
-	      dmmul_scicos (&oldp[1], &c__1, &fu[fu_offset], ny, &gt[1], &c__1,
+	      nsp_icse_dmmul (&oldp[1], &c__1, &fu[fu_offset], ny, &gt[1], &c__1,
 			    &c__1, ny, &i__2);
 	      i__2 = *nuc + *nuv;
 	      C2F(dscal) (&i__2, &dt2, &gt[1], &c__1);
@@ -1123,7 +1125,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 		  return 0;
 		}
 	      i__2 = *nuc + *nuv;
-	      dmmul_scicos (&p[1], &c__1, &oldmu[oldmu_offset], ny, &gt[1],
+	      nsp_icse_dmmul (&p[1], &c__1, &oldmu[oldmu_offset], ny, &gt[1],
 			    &c__1, &c__1, ny, &i__2);
 	      i__2 = *nuc + *nuv;
 	      C2F(dscal) (&i__2, &dt2, &gt[1], &c__1);
@@ -1151,7 +1153,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 		    }
 		}
 	      i__2 = *nuc + *nuv;
-	      dmmul_scicos (&p[1], &c__1, &fu[fu_offset], ny, &gt[1], &c__1,
+	      nsp_icse_dmmul (&p[1], &c__1, &fu[fu_offset], ny, &gt[1], &c__1,
 			    &c__1, ny, &i__2);
 	      i__2 = *nuc + *nuv;
 	      C2F(dscal) (&i__2, &dt2, &gt[1], &c__1);
@@ -1218,7 +1220,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 	      p[i__] = 0.;
 	    }
 	}
-      dmmul_scicos (&p[1], &c__1, &smy[smy_offset], ny, &p0[1], &c__1, &c__1,
+      nsp_icse_dmmul (&p[1], &c__1, &smy[smy_offset], ny, &p0[1], &c__1, &c__1,
 		    ny, ny);
       /*    incrementation du gradient 
        */
@@ -1232,7 +1234,7 @@ int optim_icse2 (int *ind, int *nu, double *u, double *co, double *g, U_fp icsef
 	  *ind = indi;
 	  return 0;
 	}
-      dmmul_scicos (&p0[1], &c__1, &y0u[y0u_offset], ny, &gt[1], &c__1, &c__1,
+      nsp_icse_dmmul (&p0[1], &c__1, &y0u[y0u_offset], ny, &gt[1], &c__1, &c__1,
 		    &nui, &nui);
       i__1 = nui;
       for (i__ = 1; i__ <= i__1; ++i__)
@@ -1591,3 +1593,14 @@ int optim_icse1 (int *ind, int *nu, double *u, U_fp icsef, double *y0,
     }
   return 0;
 }				/* icse1_ */
+
+
+
+static int nsp_icse_dmmul(double *a, int *na, double *b, int *nb, 
+			  double *c, int *nc, int *l, int *m, int *n)
+{
+  double c_b4 = 1.0, c_b5 = 0.0;
+  C2F(dgemm)("n", "n", l, n, m, &c_b4, a, na,b, nb,&c_b5,c, nc, 1L, 1L);
+  return 0;
+} 
+
