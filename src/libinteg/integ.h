@@ -100,7 +100,7 @@
 
 typedef int (*xxode_f) (const int *neq,const double *t ,const double *y,double *yp, void *param);
 typedef int (*xxode_jac)(const int *neq,const double * t,const double * y,const int* ml,
-		       const int *mu, double * p, const int *nrowp, void *param);
+			 const int *mu, double * p, const int *nrowp, void *param);
 
 /* dassrt and dassl */
 
@@ -138,7 +138,7 @@ typedef int (*Pjac1)(int *neq, double *y, double *yh, int *nyh,
 /* lsodar */
 
 typedef int (*lsodar_g)(const int *neq,const double *t,const  double *y,const int *ng,
-		  double *gout,double *param);
+			double *gout,double *param);
 
 
 typedef int (*Dres)(double *T,double * Y,double * YPRIME,double * CJ,double *DELTA,
@@ -224,8 +224,8 @@ extern int C2F(lsodar2) (ode_f f, int *neq, double *y, double *t, double *tout,
 			 int *iwork, int *liw, ode_jac jac, int *jt, lsodar_g g, int *ng,
 			 int *jroot, void *param);
 
-extern int C2F(xerrwv)(char *, int *, int *, int *,  int *, int *, int *, int *,
-		       double *, double *, long int);
+extern int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, int *i2, 
+		       int *nr, double *r1, double *r2, unsigned int  msg_len);
 
 extern int C2F(xerrwvb)(char *msg, int *nmes, int *nerr, int *iert, int *ni,
 			int *i1, int *i2, 
@@ -541,6 +541,9 @@ typedef union {
 
 extern ode_lsa lsa001_;
 
+
+/* used to transmit errors to caller  */
+
 typedef struct _ode_err ode_err;
 struct _ode_err
 {
@@ -548,9 +551,15 @@ struct _ode_err
 };
 
 extern ode_err ierode_;
-
-
 #define ierode_1 ierode_
 
+typedef struct _ode_callerid ode_callerid;
+struct _ode_callerid 
+{
+  int fcallerid;
+};
+
+extern ode_callerid callerid_;
+#define callerid_1 callerid_
 
 #endif 

@@ -374,6 +374,7 @@ nsp_ode_stoda (int *neq, double *y, double *yh, int *nyh, double *yh1,
       /* L230: */
       y[i__] = yh[i__ + yh_dim1];
     }
+  callerid_1.fcallerid = 4;
   (*f) (&neq[1], &ls0001_1.tn, &y[1], &savf[1], param);
   if (ierode_1.iero > 0)
     {
@@ -541,6 +542,7 @@ nsp_ode_stoda (int *neq, double *y, double *yh, int *nyh, double *yh1,
       goto L410;
     }
   delp = del;
+  callerid_1.fcallerid = -3;
   (*f) (&neq[1], &ls0001_1.tn, &y[1], &savf[1], param);
   if (ierode_1.iero > 0)
     {
@@ -1034,6 +1036,7 @@ nsp_ode_stoda (int *neq, double *y, double *yh, int *nyh, double *yh1,
       /* L645: */
       y[i__] = yh[i__ + yh_dim1];
     }
+  callerid_1.fcallerid = 2;
   (*f) (&neq[1], &ls0001_1.tn, &y[1], &savf[1], param);
   if (ierode_1.iero > 0)
     {

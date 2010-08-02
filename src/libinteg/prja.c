@@ -139,6 +139,7 @@ nsp_ode_prja (int *neq, double *y, double *yh, int *nyh, double *ewt,
       r__ = Max (d__1, d__2);
       y[j] += r__;
       fac = -hl0 / r__;
+      callerid_1.fcallerid = -6;
       (*f) (&neq[1], &ls0001_1.tn, &y[1], &ftem[1], param);
       if (ierode_1.iero > 0)
 	{
@@ -241,6 +242,7 @@ nsp_ode_prja (int *neq, double *y, double *yh, int *nyh, double *ewt,
 	  /* L530: */
 	  y[i__] += r__;
 	}
+      callerid_1.fcallerid = -5;
       (*f) (&neq[1], &ls0001_1.tn, &y[1], &ftem[1], param);
       if (ierode_1.iero > 0)
 	{

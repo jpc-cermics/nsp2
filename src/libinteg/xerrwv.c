@@ -24,14 +24,12 @@
 #include <stdio.h>
 #include <string.h> 
 #include "nsp/interf.h"
+#include "integ.h"
 
 struct {
     int mesflg, lunit;
 } C2F(eh0001);
 
-extern struct {
-  int iero;
-} C2F(ierode);
 
 /*----------------------------------------------------------------------- 
  * %purpose 

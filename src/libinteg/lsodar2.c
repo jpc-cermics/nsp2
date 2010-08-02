@@ -1626,6 +1626,7 @@ C2F(lsodar2) (ode_f f, int *neq, double *y, double *t, double *tout,
   /*initial call to f.  (lf0 points to yh(*,2).) ------------------------- 
    */
   lf0 = ls0001_1.lyh + ls0001_1.nyh;
+  callerid_1.fcallerid = 1;
   (*f) (&neq[1], t, &y[1], &rwork[lf0], param);
   if (ierode_1.iero > 0)
     {
