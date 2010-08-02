@@ -5,7 +5,7 @@
  * block prototypes and block table 
  */
 
-#define scicos_args_base  int *flag__, int *nevprt, double *t, double *xd, double *x, \
+#define scicos_args_base  int *flag__, int *nevprt, const double *t, double *xd, double *x, \
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,\
 	       double *rpar, int *nrpar, int *ipar, int *nipar 
 
@@ -27,7 +27,7 @@
 #define scicos_args_F2z scicos_args_F2 , double *g , int *ng
 
 /* flag  nclock t residual xd   x    nx   z   nz   tvec   ntvec  rpar  nrpar ipar  nipar */
-#define scicos_args_base_i  int *flag__, int *nevprt, double *t,double *res, double *xd, double *x, \
+#define scicos_args_base_i  int *flag__, int *nevprt,const double *t,double *res, double *xd, double *x, \
 	       int *nx, double *z__, int *nz, double *tvec, int *ntvec,\
 	       double *rpar, int *nrpar, int *ipar, int *nipar 
 
