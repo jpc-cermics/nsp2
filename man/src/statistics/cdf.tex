@@ -1,0 +1,189 @@
+% -*- mode: latex -*-
+\mansection{cdf, icdf}
+\begin{mandesc}
+  \short{cdf}{cumulative distribution functions} \\
+  \short{icdf}{inverse cumulative distribution (aka quantile) functions} \\
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[P,Q]=cdf(dist_type, x [,p1,...,pk])  
+x=icdf(dist_type, P, [,p1,...,pk], Q=Q)
+\end{verbatim}
+\end{calling_sequence}
+  %-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{dist\_type}: a string giving the probability distribution (\verb!"bin"! for binomial, \verb!"nor"!
+   for normal, \verb!"poi"! for Poisson, etc ...)
+   \vname{p1, ..., pk}: (scalar) parameters (reals or integers) required to define the distribution \verb!dist_type!
+    \vname{x}: scalar or vector or matrix with abscissae where the cdf function must be evaluated or
+               result for the icdf function.
+   \vname{P,Q}: results of the cdf function (in this case \verb+P+ and \verb+Q+ have the same dimensions than \verb+x+)
+                or inputs of the icdf function ($Q$ being given through the named optional argument \verb+Q=+)
+  \end{varlist}
+  \end{parameters}
+  
+\begin{mandescription}
+
+For a given distribution \verb+dist_type+ and its associated parameter(s) \verb+p1, ..., pk+ :
+\begin{itemize}
+\item \verb![P,Q]=cdf(dist,x[,p1,...,pk])! computes the cumulative distribution function at \verb+x+, that
+is if $X$ is a random variate of the given distribution :
+$$
+       P = F(x) := Pr ( X \le x ); \quad Q = Pr ( X > x ) = 1 - P
+$$
+
+\item and \verb!x=icdf(dist_type, P, [,p1,...,pk], Q=Q)! computes the inverse cumulative distribution function
+(aka the quantile function) at \verb+P+ (\verb+Q+ can be also provided, see here after). If $F$ is the associated
+cdf, its (generalized) ``inverse'' is defined by:: 
+$$
+\mbox{ for } P \in (0,1), \qquad   icdf(P) = F^{-1}(P) := inf \{ x \in \R : P \le F(x) \} 
+$$
+\end{itemize}
+
+\paragraph{Remarks}
+\begin{itemize}
+\item In exact arithmetic it is equivalent to compute (for cdf) or to provide (for icdf) $P$ or $Q$ as they are
+      linked by the relation $P+Q=1$ and the default is to use only $P$ ($Q$ is the second output of cdf and
+      an optional input for icdf). {\bf But} as the effective computation use floating point arithmetic it 
+      can be useful to compute or provide $Q$ when $P$ is near $1$ to get better accuracy (see examples).
+\item When \verb+dist_type = "bet" | "bin" | "nbn" | "chi" | "nch" | "f" | "nf" | "gam" | "nor" | "poi" | "t" | "nt"+ 
+      the cdf and icdf functions are just easy drivers onto the corresponding cdfxxx functions and in
+      most cases :
+      \begin{quote}
+         \verb+[P,Q]=cdf("xxx",x,p1,..,pk)+ is equivalent to \verb+[P,Q]=cdfxxx("PQ",x,p1,..,pk)+\\
+         \verb+x=icdf("xxx",P,p1,..,pk,Q=Q)+ is equivalent to \verb+x=cdfxxx("X",p1,..,pk,P,Q)+
+      \end{quote}
+      But note that:
+      \begin{enumerate}
+      \item \verb+"X"+ is not always the switch key to get the inverse cdf with the cdfxxx functions.
+      \item For cdf and icdf functions the parameters p1,..,pk should be scalars while they should have
+            the same dimensions than x, P, and Q for the cdfxxx functions.
+      \item There are some slight differences for the icdf of discrete distributions (\verb+"bin", "nbn", "poi"+): 
+            the associated cdfxxx functions (cdfbin, cdfnbn and cdfpoi) use internally a continuous extension of 
+            the discrete cdf which is considered to compute the inverse cdf (but not the cdf as 
+            \verb+cdfxxx("PQ",x,...)+ is applied internally on floor(x)). With the icdf function an additionnal 
+            step is done to apply the definition of the generalized inverse given before and integer values are returned.
+      \item The cdfxxx functions have the additionnal following feature : the value of a distribution parameter 
+            can be computed when $x$ and $P$ (and the eventual  other distribution parameters) are known.
+      \end{enumerate}
+\end{itemize}
+
+\paragraph{Supported distributions}
+\begin{itemize}
+
+\item \itemdesc{beta}  
+\verb![P,Q]=cdf("bet",x,a,b)! and \verb!x=icdf("bet",P,a,b,Q=Q)! compute the
+  cdf and icdf of the \hyperlink{betapdf}{beta distribution} with shape parameters $a > 0$ and $b > 0$.
+ 
+\item \itemdesc{binomial}
+\item \verb![P,Q]=cdf("bin",x,n,p)! and \verb!x=icdf("bin",P,n,p,Q=Q)! compute the cdf and icdf
+  of the  \hyperlink{binpdf}{binomial distribution} with parameters $p \in [0,1]$ and $n$
+  (positive integer). 
+
+\item \itemdesc{negative binomial} \verb![P,Q]=cdf("nbn",x,r,p)! and \verb!x=icdf("bin",P,n,p,Q=Q)! compute
+  the cdf and icdf of the \hyperlink{nbnpdf}{negative binomial distribution} with parameters $r > 0$ ($r$ not
+  necessarily integer) and $p \in (0,1]$. 
+
+
+\item \itemdesc{Cauchy} \verb![P,Q]=cdf("cau",x,sigma)! and  \verb!x=icdf("cau",P,sigma,Q=Q)! compute the 
+  cdf and icdf of the  \hyperlink{caupdf}{Cauchy distribution} parameter $\sigma > 0$.
+
+\item \itemdesc{chi square} \verb![P,Q]=cdf("chi",x,nu)! and  \verb!x=icdf("chi",P,nu,Q=Q)! compute the
+cdf and icdf of the \hyperlink{chipdf}{chisquare distribution} with parameter $\nu > 0$ (number of dof).
+
+\item \itemdesc{non central chi square} \verb![P,Q]=cdf("nch",x,nu,lambda)! and  \verb!x=icdf("nch",P,nu,lambda,Q=Q)! compute the
+cdf and icdf of the non central chi square distribution %\hyperlink{chipdf}{chisquare distribution} 
+with parameter $\nu > 0$ (number of dof) and  $\lambda > 0$ (non centrality parameter).
+
+\item \itemdesc{exponential} \verb![P,Q]=cdf("exp",x,tau)! and \verb!x=icdf("exp",P,tau,Q=Q)! compute the cdf
+and icdf of the  \hyperlink{exppdf}{exponential distribution} with parameter $\tau > 0$.
+Caution: the parameter is more frequently $\lambda = 1/\tau$.
+
+\item \itemdesc{F variance ratio} \verb![P,Q]=cdf("f",x,nu1,nu2)! and \verb!x=icdf("f",P,nu1,nu2,Q=Q)! compute
+the cdf and icdf of the variance ratio distribution with parameters $\nu_1 > 0$ and $\nu_2 >
+  0$ (respectively number of dof in the numerator and denominator). 
+
+\item \itemdesc{non central F variance ratio} \verb![P,Q]=cdf("nf",x,nu1,nu2,lambda)! and \verb!x=icdf("f",P,nu1,nu2,lambda,Q=Q)! compute
+the cdf and icdf of the non central F variance ratio distribution with parameters $\nu_1 > 0$, $\nu_2 > 0$ 
+(respectively number of dof in the numerator and denominator) and $lambda \ge 0$ (non  centrality parameter).
+
+
+\item \itemdesc{gamma} \verb![P,Q]=cdf("gam",x,a,b)! and  \verb!x=icdf("gam",P,a,b,Q=Q)! compute the cdf
+ and icdf of the \hyperlink{gampdf}{gamma distribution} with parameters $a > 0$ (shape parameter) and $b \ge 0$
+  (rate parameter). Caution: second parameter is often a scale parameter, says $s = 1/b$.
+
+
+\item \itemdesc{Gauss Laplace} \verb![P,Q]=cdf("nor",x,mu,sigma)! and \verb!x=icdf("nor",P,mu,sigma,Q=Q)! compute
+the cdf and icdf of the  \hyperlink{norpdf}{normal distribution} with parameters $\mu$ and $\sigma > 0$.
+
+
+\item \itemdesc{geometric} \verb![P,Q]=cdf("geom",x,p)! and \verb!x=icdf("geom",P,p,Q=Q)! compute
+the cdf and icdf of the \hyperlink{geompdf}{geometric distribution} with parameter $p \in (0,1]$.
+
+\item \itemdesc{Kolmogorov} \verb![P,Q]=cdf("k",x,n)! computes the cdf of the Kolmogorov distribution 
+with parameter $n$ (positive integer). Note that the icdf is not supported.
+
+\item \itemdesc{limit Kolmogorov} \verb![P,Q]=cdf("klim",x)! and  \verb!x=icdf("klim",P,Q=Q)! compute the cdf 
+and icdf of the limit Kolmogorov distribution (Kolmogorov distribution when $n \rightarrow \infty$). 
+
+\item \itemdesc{Laplace} \verb![P,Q]=cdf("lap",x,a)! and \verb!x=icdf("lap",P,a,Q=Q)! compute the cdf
+and icdf of the \hyperlink{lappdf}{Laplace distribution} with parameter $a > 0$.
+
+\item \itemdesc{logistic} \verb![P,Q]=cdf("logi",x,a,b)! and \verb!x=icdf("logi",P,a,b,Q=Q)! compute the
+cdf and icdf of the \hyperlink{logipdf}{logistic distribution} with parameter $a$ and $b > 0$.
+
+\item \itemdesc{log normal} \verb![P,Q]=cdf("logn",x,mu,sigma)! and  \verb!x=icdf("logn",P,mu,sigma,Q=Q)! compute
+the cdf and icdf of the  \hyperlink{lognpdf}{log normal distribution} with parameters $\mu$ and $\sigma > 0$.
+
+\item \itemdesc{Pareto} \verb![P,Q]=cdf("par",x,a,b)! and  \verb!x=icdf("par",P,a,b,Q=Q)! compute the
+cdf and icdf of the \hyperlink{parpdf}{Pareto  distribution} with shape parameter $a > 0$ and scale parameter $b > 0$.
+
+\item \itemdesc{Poisson} \verb![P,Q]=cdf("poi",x,mu)! and \verb!x=icdf("poi",P,mu,Q=Q)! compute the
+cdf and icdf of the \hyperlink{poipdf}{Poisson distribution} with parameter $\mu \ge 0$.
+
+
+\item \itemdesc{Rayleigh} \verb![P,Q]=cdf("ray",x,sigma)! and \verb!x=icdf("ray",P,sigma,Q=Q)! compute
+the cdf and icdf of the \hyperlink{raypdf}{Rayleigh distribution} with parameter $\sigma > 0$.
+
+\item \itemdesc{tail Rayleigh} \verb![P,Q]=cdf("tray",x,sigma, a)! and \verb!x=icdf("tray",P,sigma,a,Q=Q)! compute
+the cdf and icdf of the \hyperlink{traypdf}{tail (from $a$) of the Rayleigh distribution} with parameters $\sigma > 0$ 
+and $a \ge 0$.
+
+\item \itemdesc{Student's t} \verb![P,Q]=cdf("t",x,nu)! and \verb!x=icdf("t",P,nu,Q=Q)! compute the
+cdf and icdf of the \hyperlink{tpdf}{t distribution} with parameter $\nu > 0$ (number of dof).
+
+
+\item \itemdesc{non central Student's t} \verb![P,Q]=cdf("t",x,nu,delta)! and \verb!x=icdf("t",P,nu,delta,Q=Q)! compute the
+cdf and icdf of the non central t distribution with parameters $\nu > 0$ (number of dof) and
+$\delta$ (non centrality parameter).
+
+
+\item \itemdesc{uniform (uin)} \verb![P,Q]=cdf("uin",x,n1,n2)! and \verb!x=icdf("uin",P,n1,n2,Q=Q)! compute
+the cdf and icdf of the \hyperlink{uinpdf}{uniform distribution on integers $n_1,n_1+1,\dots,n_2$}.
+
+\item \itemdesc{uniform (unf)} \verb![P,Q]=cdf("unf",x,a,b)!  and \verb!x=icdf("unf",P,a,b,Q=Q)! compute
+the cdf and icdf of the \hyperlink{unfpdf}{uniform distribution on the interval $[a,b]$} ($a < b$).
+
+\item \itemdesc{Weibull} \verb![P,Q]=cdf("wei",x,a,b)! and \verb!x=cdf("wei",P,a,b,Q=Q)! compute the
+cdf and icdf of the \hyperlink{weipdf}{Weibull  distribution} with scale parameter $a > 0$ and shape parameter 
+$b > 0$.
+
+\end{itemize}
+
+\end{mandescription}
+
+
+\begin{manseealso}
+  \manlink{grand}{grand}, \manlink{pdf}{pdf}, \manlink{cdfbet}{cdfbet}, \manlink{cdfbin}{cdfbin}, \manlink{cdfnbn}{cdfnbn},
+  \manlink{cdfchi}{cdfchi}, \manlink{cdfchn}{cdfchn}, \manlink{cdff}{cdff}, \manlink{cdffnc}{cdffnc}, 
+  \manlink{cdfgam}{cdfgam}, \manlink{cdfnor}{cdfnor}, \manlink{cdfpoi}{cdfpoi}, \manlink{cdft}{cdft}, \manlink{cdftnc}{cdftnc}.
+\end{manseealso}
+
+%-- Authors
+
+\begin{authors}
+  Buno Pincon
+\end{authors}
+

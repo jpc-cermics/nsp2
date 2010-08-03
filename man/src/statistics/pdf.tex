@@ -181,12 +181,6 @@ $$
 $$
 
 
-\item \itemdesc{\hypertarget{weipdf}{Weibull}} \verb!y=pdf("wei",x,a,b)! computes the Weibull
-  density with parameters $a > 0$ and $b > 0$:
-$$
-     f(x; a, b) = \frac{b}{a} e^{ (b-1)\log(x/a) - (x/a)^b }, \; \mbox{ for } x > 0
-$$
-
 \item \itemdesc{\hypertarget{uinpdf}{Uniform (uin)}} \verb!y=pdf("uin",x,n1,n2)! computes
   the  uniform ($U\{n_1,n_1+1,\dots,n_2\}$) mass function with parameters $n_1$ and $n_2$
   (integers such that $n_1 \le n_2$).
@@ -197,7 +191,14 @@ $$
 \item \itemdesc{\hypertarget{unfpdf}{Uniform (unf)}} \verb!y=pdf("unf",x,a,b)! computes
   the  uniform ($U(a,b)$) density function with parameters $a$ and $b$ ($a < b$).
 $$
-     f(x; a, b) = 1 \;\mbox{for } x \in [a,b]
+     f(x; a, b) = \frac{1}{b-a} \;\mbox{for } x \in [a,b]
+$$
+
+
+\item \itemdesc{\hypertarget{weipdf}{Weibull}} \verb!y=pdf("wei",x,a,b)! computes the Weibull
+  density with parameters $a > 0$ and $b > 0$:
+$$
+     f(x; a, b) = \frac{b}{a} e^{ (b-1)\log(x/a) - (x/a)^b }, \; \mbox{ for } x > 0
 $$
 
 \end{itemize}
@@ -271,7 +272,7 @@ xtitle("H(600,700,800) with grand(..,""disc"",...)")
 
 
 \begin{manseealso}
-  \manlink{grand}{grand}  
+  \manlink{grand}{grand}, \manlink{cdf}{cdf}, \manlink{icdf}{icdf}  
 \end{manseealso}
 
 %-- Authors
