@@ -43,6 +43,9 @@ extern void scicos_set_block_error(int);
 extern void scicos_set_pointer_xproperty(int* pointer);
 extern char *scicos_get_label(int kf);
 extern int scicos_get_block_by_label(const char *label);
+extern int scicos_get_fcaller_id(void);
+
+/* nsp events */
 
 extern int nsp_check_events_activated(void);
 extern int nsp_check_gtk_events(void);
@@ -52,9 +55,5 @@ extern int nsp_check_gtk_events(void);
 extern void *scicos_malloc(size_t size);
 extern void scicos_free(void *p);
 extern int scicos_mtran(double *a, int na, double *b, int nb, int m, int n);
-extern int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
-extern int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
-extern int wmmul_scicos(double *ar, double *ai, int *na, double *br, double *bi, int *nb, double *cr, double *ci, 
-			int *nc, int *l, int *m, int *n);
 
 #endif 

@@ -1223,7 +1223,6 @@ static int int_smxlength(Stack stack, int rhs, int opt, int lhs)
 /*
  * Res=nsp_matrix_to_smatrix(A) 
  * A is not changed 
- * pour l'instant on utilise %f xxxxx
  */
 
 static int int_smxm2sm(Stack stack, int rhs, int opt, int lhs)
