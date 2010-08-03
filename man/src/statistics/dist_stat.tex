@@ -1,0 +1,136 @@
+% -*- mode: latex -*-
+\mansection{dist\_stat}
+\begin{mandesc}
+  \short{dist_stat}{compute mean and standard deviation of some probability distributions}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[m,sd]=dist_stat(dist_type [,p1,...,pk])  
+\end{verbatim}
+\end{calling_sequence}
+  %-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{dist\_type}: a string giving the probability distribution (\verb!"bin"! for binomial, \verb!"nor"!
+   for normal, \verb!"poi"! for Poisson, etc ...)
+   \vname{p1, ..., pk}: (scalar) parameters (reals or integers) required to define the distribution \verb!dist_type!
+    \vname{m,sd}: respectively the mean and standard deviation of the selected distribution
+  \end{varlist}
+  \end{parameters}
+  
+\begin{mandescription}
+
+For a given distribution \verb+dist_type+ and its associated parameter(s) \verb+p1, ..., pk+ this
+function computes its mean and its standard deviation.
+
+\paragraph{Supported distributions}
+\begin{itemize}
+
+\item \itemdesc{beta}  
+\verb![m,sd]=dist_stat("bet",a,b)! mean and std the \hyperlink{betapdf}{beta distribution} with 
+shape parameters $a > 0$ and $b > 0$.
+ 
+\item \itemdesc{binomial}
+\item \verb![m,sd]=dist_stat("bin",n,p)! mean and std
+  of the  \hyperlink{binpdf}{binomial distribution} with parameters $p \in [0,1]$ and $n$
+  (positive integer). 
+
+\item \itemdesc{negative binomial} \verb![m,sd]=dist_stat("nbn",r,p)! mean and std 
+of the \hyperlink{nbnpdf}{negative binomial distribution} with parameters $r > 0$ ($r$ not
+  necessarily integer) and $p \in (0,1]$. 
+
+
+\item \itemdesc{Cauchy} \verb![m,sd]=dist_stat("cau",sigma)! mean and std of the  
+\hyperlink{caupdf}{Cauchy distribution} parameter $\sigma > 0$.
+
+\item \itemdesc{chi square} \verb![m,sd]=dist_stat("chi",nu)! mean and std of the 
+\hyperlink{chipdf}{chisquare distribution} with parameter $\nu > 0$ (number of dof).
+
+\item \itemdesc{non central chi square} \verb![m,sd]=dist_stat("nch",nu,lambda)! mean 
+nd std of the non central chi square  distribution 
+%\hyperlink{chipdf}{chisquare distribution} 
+with parameter $\nu > 0$ (number of dof) and  $\lambda > 0$ (non centrality parameter).
+
+\item \itemdesc{exponential} \verb![m,sd]=dist_stat("exp",tau)! mean and std of the  
+\hyperlink{exppdf}{exponential distribution} with parameter $\tau > 0$.
+Caution: the parameter is more frequently $\lambda = 1/\tau$.
+
+\item \itemdesc{F variance ratio} \verb![m,sd]=dist_stat("f",nu1,nu2)! mean and std 
+of the variance ratio distribution with parameters $\nu_1 > 0$ and $\nu_2 > 0$ 
+(respectively number of dof in the numerator and denominator). 
+
+\item \itemdesc{non central F variance ratio} \verb![m,sd]=dist_stat("nf",nu1,nu2,lambda)! 
+mean and std of the non central F variance ratio distribution with parameters $\nu_1 > 0$, $\nu_2 > 0$ 
+(respectively number of dof in the numerator and denominator) and $lambda \ge 0$ (non  centrality parameter).
+
+
+\item \itemdesc{gamma} \verb![m,sd]=dist_stat("gam",a,b)! mean and std  of the 
+\hyperlink{gampdf}{gamma distribution} with parameters $a > 0$ (shape parameter) and $b \ge 0$
+  (rate parameter). Caution: second parameter is often a scale parameter, says $s = 1/b$.
+
+
+\item \itemdesc{Gauss Laplace} \verb![m,sd]=dist_stat("nor",mu,sigma)! mean and std 
+of the  \hyperlink{norpdf}{normal distribution} with parameters $\mu$ and $\sigma > 0$.
+
+
+\item \itemdesc{geometric} \verb![m,sd]=dist_stat("geom",p)! mean and std 
+of the \hyperlink{geompdf}{geometric distribution} with parameter $p \in (0,1]$.
+
+
+\item \itemdesc{Laplace} \verb![m,sd]=dist_stat("lap",a)! mean and std 
+of the \hyperlink{lappdf}{Laplace distribution} with parameter $a > 0$.
+
+\item \itemdesc{logistic} \verb![m,sd]=dist_stat("logi",a,b)! mean and std 
+of the \hyperlink{logipdf}{logistic distribution} with parameter $a$ and $b > 0$.
+
+\item \itemdesc{log normal} \verb![m,sd]=dist_stat("logn",mu,sigma)! mean and std 
+of the  \hyperlink{lognpdf}{log normal distribution} with parameters $\mu$ and $\sigma > 0$.
+
+\item \itemdesc{Pareto} \verb![m,sd]=dist_stat("par",a,b)! mean and std 
+of the \hyperlink{parpdf}{Pareto  distribution} with shape parameter $a > 0$ and scale parameter $b > 0$.
+
+\item \itemdesc{Poisson} \verb![m,sd]=dist_stat("poi",mu)! mean and std 
+of the \hyperlink{poipdf}{Poisson distribution} with parameter $\mu \ge 0$.
+
+
+\item \itemdesc{Rayleigh} \verb![m,sd]=dist_stat("ray",sigma)! mean and std 
+of the \hyperlink{raypdf}{Rayleigh distribution} with parameter $\sigma > 0$.
+
+\item \itemdesc{tail Rayleigh} \verb![m,sd]=dist_stat("tray",sigma, a)! mean and std 
+of the \hyperlink{traypdf}{tail (from $a$) of the Rayleigh distribution} with parameters $\sigma > 0$ 
+and $a \ge 0$.
+
+\item \itemdesc{Student's t} \verb![m,sd]=dist_stat("t",nu)! mean and std of 
+the \hyperlink{tpdf}{t distribution} with parameter $\nu > 0$ (number of dof).
+
+
+\item \itemdesc{non central Student's t} \verb![m,sd]=dist_stat("t",nu,delta)! 
+mean and std of the non central t distribution with parameters $\nu > 0$ (number of dof) and
+$\delta$ (non centrality parameter).
+
+
+\item \itemdesc{uniform (uin)} \verb![m,sd]=dist_stat("uin",n1,n2)! mean and std 
+of the \hyperlink{uinpdf}{uniform distribution on integers $n_1,n_1+1,\dots,n_2$}.
+
+\item \itemdesc{uniform (unf)} \verb![m,sd]=dist_stat("unf",a,b)! mean and std  
+of the \hyperlink{unfpdf}{uniform distribution on the interval $[a,b]$} ($a < b$).
+
+\item \itemdesc{Weibull} \verb![m,sd]=dist_stat("wei",a,b)! mean and std of 
+the \hyperlink{weipdf}{Weibull  distribution} with scale parameter $a > 0$ and shape parameter $b > 0$.
+
+\end{itemize}
+
+\end{mandescription}
+
+
+\begin{manseealso}
+  \manlink{pdf}{pdf}, \manlink{cdf}{cdf}, \manlink{icdf}{icdf}, \manlink{grand}{grand}
+\end{manseealso}
+
+%-- Authors
+
+\begin{authors}
+  Buno Pincon
+\end{authors}
+
