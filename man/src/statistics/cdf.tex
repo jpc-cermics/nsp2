@@ -175,6 +175,61 @@ $b > 0$.
 \end{mandescription}
 
 
+\begin{examples}
+  
+\paragraph{example 1} an example with the gaussian distribution
+\begin{Verbatim}
+// plot pdf and cdf on [-5,5]
+x = linspace(-5,5,200)';
+y = pdf("nor",x,0,1);
+p = cdf("nor",x,0,1);
+xclear(); plot2d(x,[y,p],style=[2,5],leg="pdf@cdf");
+xtitle("The N(0,1) density and cumulative distribution functions")
+
+// apply icdf on p should return x
+xx = icdf("nor",p,0,1);
+max(abs(x-xx)./abs(x))  // max relative error
+// if one use q, the error between x and xx should be lower
+[p,q] = cdf("nor",x,0,1);
+xx = icdf("nor",p,0,1,Q=q);
+max(abs(x-xx)./abs(x))
+\end{Verbatim}
+  
+\paragraph{example 2} an example with the binomial distribution
+\begin{Verbatim}
+n = 50; p = 0.45; // we work with Bin(n=50,p=0.45)
+X = -1:n+1; Xp = nearfloat("pred",X);
+x = redim([Xp;X],-1,1);
+[P,Q] = cdf("bin",x,n,p);
+// compare with the N(n*p,sqrt(n*p*(1-p))
+mu = n*p; sigma = sqrt(n*p*(1-p));
+[Pn,Qn] = cdf("nor",x,mu,sigma);
+xclear(); plot2d(x,[P,Pn],style=[2,5],leg="bin@nor");
+xtitle("The Bin(n,p) and N(n*p,sqrt(n*p*(1-p)) cumulative distribution functions")
+
+// differences between icdf("bin",..) and cdfbin("S",...)
+// (cdfbin use a continuous extension) 
+m = 2^13+1;
+P = linspace(0,1,m)';
+x = icdf("bin",P,n,p);
+xx = cdfbin("S",n*ones(m,1),p*ones(m,1),(1-p)*ones(m,1),P,1-P);
+xclear(); plot2d(P,[x,xx],style=[2,5],leg="icdf(''bin'',..)@cdfbin(''S'',...)");
+xtitle("differences between icdf(""bin"",..) and cdfbin(""S"",...)")
+
+// with x=0:n, icdf(cdf(x)) should be equal to x
+// 1/ try without using Q for icdf
+x = 0:n;
+[P,Q] = cdf("bin",x,n,p);
+xx = icdf("bin",P,n,p);
+// we don't recover x due to numerical floating point computation:
+x.equal[xx]
+// 2/ now use Q: we get additionnal accuracy and we recover x
+xx = icdf("bin",P,n,p,Q=Q);
+x.equal[xx]
+\end{Verbatim}
+ 
+\end{examples}
+
 \begin{manseealso}
   \manlink{grand}{grand}, \manlink{pdf}{pdf}, \manlink{cdfbet}{cdfbet}, \manlink{cdfbin}{cdfbin}, \manlink{cdfnbn}{cdfnbn},
   \manlink{cdfchi}{cdfchi}, \manlink{cdfchn}{cdfchn}, \manlink{cdff}{cdff}, \manlink{cdffnc}{cdffnc}, 
