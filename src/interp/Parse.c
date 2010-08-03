@@ -389,7 +389,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       NspFileName(SciStack) = file_name;
       if ( rep < 0 ) 
 	{
-	  Sciprintf("Error while processing file: %s\n",F1);
+	  Sciprintf("Error at line %d while processing file: %s\n",T.tokenv.Line,F1);
 	  break;
 	}
     }
@@ -478,7 +478,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      NspFileName(SciStack) = file_name;
 	      if ( rep < 0 ) 
 		{
-		  Sciprintf("Error while processing file: %s\n",F1);
+		  Sciprintf("Error at line %d while processing file: %s\n",T.tokenv.Line,F1);
 		  break;
 		}
 	    }
