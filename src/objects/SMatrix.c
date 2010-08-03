@@ -147,7 +147,6 @@ NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, i
   Loc->mn=m*n;
   if ( Loc->mn == 0 ) 
     {
-      Loc->m = Loc->n = 0;
       /* empty string Matrix */
       Loc->S = (nsp_string *) 0;
       return(Loc);
