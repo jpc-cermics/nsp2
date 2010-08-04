@@ -24,6 +24,9 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 #include "frame.h"
+#include "../interp/LibsTab.h"
+
+
 
 extern NspObject *Reserved;
 extern NspFrame  *GlobalFrame;
@@ -182,8 +185,8 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
  * in the current env if this macros is in the search list 
  */
 
-static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", NULL};
-typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function} _exist_tag;
+static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", NULL};
+typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, in_macro } _exist_tag;
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
 {
@@ -214,6 +217,9 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
     break;
   case in_caller:
     if ((O= nsp_frames_search_local_in_calling(Name,TRUE)) != NULLOBJ) irep=1;
+    break;
+  case in_macro :
+    if ((O= nsp_find_macro(Name)) != NULLOBJ) irep=1;
     break;
   } 
   if ( irep == 1 )
