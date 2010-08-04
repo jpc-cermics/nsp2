@@ -37,7 +37,7 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
  * @m: number of rows 
  * @n: number of columns 
  * 
- * Creates a new boolean matrix filled with %TRUE values.
+ * Creates a new int matrix filled with 0 values.
  * 
  * Return value: a #NspMatrix or %NULLMAT in case of allocation failure.
  */
