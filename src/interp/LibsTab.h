@@ -1,5 +1,5 @@
-#ifndef SCI_MACROTAB
-#define SCI_MACROTAB
+#ifndef NSP_MACROS_H
+#define NSP_MACROS_H
 
 extern int nsp_enter_macros(const char *dirname,int recursive,int compile);
 extern int nsp_delete_macros(const char *Dir);
