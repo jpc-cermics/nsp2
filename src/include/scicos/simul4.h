@@ -61,6 +61,7 @@ struct  _scicos_block {
   double *x;
   double *xd;
   double *res;
+  double *res_init; /* keep track of initialy allocated res */
   int nin;
   int *insz;
   double **inptr;
