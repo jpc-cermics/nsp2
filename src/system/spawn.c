@@ -187,7 +187,24 @@ void nsp_spawn_destroy(NspSpawn *H)
      nsp_smatrix_destroy(H->obj->out);
      if ( H->obj->active == TRUE )
        {
-	 /* fprintf(stderr,"Closing the spawned child"); */
+	 H->obj->active = FALSE;
+	 if ( H->obj->channel_in != NULL) 
+	   {
+	     g_io_channel_unref(H->obj->channel_in);
+	     H->obj->channel_in=NULL;
+	   } 
+	 if ( H->obj->channel_err != NULL) 
+	   {
+	     g_source_remove(H->obj->err_id);
+	     g_io_channel_unref(H->obj->channel_err);
+	     H->obj->channel_err=NULL;
+	   }
+	 if ( H->obj->channel_out != NULL) 
+	   {
+	     g_source_remove(H->obj->out_id);
+	     g_io_channel_unref(H->obj->channel_out);
+	     H->obj->channel_out=NULL;
+	   }
 	 g_spawn_close_pid(H->obj->pid);
        }
      FREE(H->obj->prog);
@@ -305,6 +322,12 @@ NspSpawn *spawn_create(char *name,NspTypeBase *type)
   H->obj->prog = NULL;
   H->obj->prompt_check = NULL;
   H->obj->out = NULL;
+  H->obj->channel_in = NULL;
+  H->obj->channel_out = NULL;
+  H->obj->channel_err = NULL;
+  H->obj->out_id = 0;
+  H->obj->err_id = 0;
+  H->obj->err = FALSE;
   return H;
 }
 
@@ -357,6 +380,10 @@ int int_spawn_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
+/* method send:
+ * send a string to a spawned process
+ */
+
 static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
 {
   nsp_string str,str_res;
@@ -379,12 +406,32 @@ static int _wrap_spawn_send(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+/* method close: close a spawned process. 
+ */
+
 static int _wrap_spawn_close(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckLhs(0,0);
   CheckRhs(0,0);
-  g_spawn_close_pid(self->obj->pid);
   self->obj->active = FALSE;
+  if ( self->obj->channel_in != NULL) 
+    {
+      g_io_channel_unref(self->obj->channel_in);
+      self->obj->channel_in=NULL;
+    } 
+  if ( self->obj->channel_err != NULL) 
+    {
+      g_source_remove(self->obj->err_id);
+      g_io_channel_unref(self->obj->channel_err);
+      self->obj->channel_err=NULL;
+    }
+  if ( self->obj->channel_out != NULL) 
+    {
+      g_source_remove(self->obj->out_id);
+      g_io_channel_unref(self->obj->channel_out);
+      self->obj->channel_out=NULL;
+    }
+  g_spawn_close_pid(self->obj->pid);
   return 0;
 }
 
@@ -414,7 +461,7 @@ static AttrTab spawn_attrs[] = {
 /* the call is in fact in System-IN.c XXXXX */
 
 static OpTab spawn_func[]={
-  { "spawn", int_spawn_create},
+  {"spawn", int_spawn_create},
   { NULL, NULL}
 };
 
@@ -449,12 +496,11 @@ static gboolean stderr_read( GIOChannel *source, GIOCondition condition, gpointe
 
 static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 {
-  GIOChannel  *channel_out, *channel_err, *channel_in=NULL;
+  GIOChannel  *channel_out=NULL, *channel_err=NULL, *channel_in=NULL;
   GPid pid;
   nsp_string res,pr;
   int stdout_pipe=0, stderr_pipe=0,stdin_pipe=0;
   GError *error = NULL;
-  guint stdout_tag, stderr_tag;
   gboolean rep;
   if ( H->obj->prompt_check == NULL) 
     {
@@ -493,6 +539,7 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 	  g_io_channel_set_flags(channel_in, G_IO_FLAG_NONBLOCK, NULL);
 	  g_io_channel_flush( channel_in,NULL);
 	  g_io_channel_set_buffered(channel_in, FALSE);
+	  g_io_channel_set_close_on_unref (channel_in,TRUE);
 	}
       if ( stdout_pipe != 0 ) 
 	{
@@ -501,11 +548,13 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 	  g_io_channel_set_flags(channel_out, G_IO_FLAG_NONBLOCK, NULL);
 	  g_io_channel_flush( channel_out,NULL);
 	  g_io_channel_set_buffered(channel_out, FALSE);
-	  stdout_tag = g_io_add_watch( channel_out,
-				       (G_IO_IN|G_IO_PRI|G_IO_ERR|G_IO_HUP|G_IO_NVAL),
-				       stdout_read,
-				       H);
+	  H->obj->out_id = g_io_add_watch( channel_out,
+					   (G_IO_IN|G_IO_PRI|G_IO_ERR|G_IO_HUP|G_IO_NVAL),
+					   stdout_read,
+					   H);
 	  g_io_channel_unref( channel_out );
+	  g_io_channel_set_close_on_unref (channel_out,TRUE);
+
 	}
       if ( stderr_pipe != 0 ) 
 	{
@@ -514,21 +563,39 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
 	  g_io_channel_set_flags(channel_err, G_IO_FLAG_NONBLOCK, NULL);
 	  g_io_channel_flush( channel_err,NULL);
 	  g_io_channel_set_buffered(channel_err, FALSE);
-	  stderr_tag = g_io_add_watch ( channel_err,
-					(G_IO_IN|G_IO_PRI|G_IO_ERR|G_IO_HUP|G_IO_NVAL),
-					stderr_read,
-					H );
+	  H->obj->err_id = g_io_add_watch ( channel_err,
+					    (G_IO_IN|G_IO_PRI|G_IO_ERR|G_IO_HUP|G_IO_NVAL),
+					    stderr_read,
+					    H );
 	  g_io_channel_unref( channel_err );
+	  g_io_channel_set_close_on_unref (channel_err,TRUE);
 	}
     } 
+
   H->obj->active = TRUE;
   H->obj->pid = pid;
   H->obj->channel_in = channel_in;
+  H->obj->channel_out = channel_out;
+  H->obj->channel_err = channel_err;
   if ((H->obj->prog = nsp_string_copy(cmd[0])) == (nsp_string) 0) return FAIL;
   /* wait for the first prompt of child */
   gtk_main();
+  if ( H->obj->err == TRUE) 
+    {
+      g_source_remove(H->obj->err_id);
+      H->obj->channel_err=NULL;
+      g_source_remove(H->obj->out_id); 
+      H->obj->channel_out=NULL;
+      H->obj->active = FALSE;
+      if ( H->obj->channel_in !=NULL) 
+	g_io_channel_unref( channel_in );
+      H->obj->channel_in=NULL;
+      g_spawn_close_pid(H->obj->pid);
+    }
+  
   if ( H->obj->out_smat == FALSE) return OK ;
   if ( H->obj->out  == NULL ) return OK;
+
   res = nsp_smatrix_elts_concat(H->obj->out,NULL,0,NULL,0);
   nsp_smatrix_resize(H->obj->out,0,0);
   if ( res != NULL && ((pr=strstr(res,"(%i")) != NULL)) 
@@ -537,7 +604,16 @@ static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H)
       else *pr='\0';
     }
   if ( res != NULL) 
-    fprintf(stderr,"%s\n",res);
+    {
+      fprintf(stderr,"%s\n",res);
+    }
+  /* 
+  if ( H->obj->active == TRUE ) 
+    {
+      H->obj->active = FALSE;
+      g_spawn_close_pid(H->obj->pid);
+    }
+  */
   return OK;
 }
 
@@ -589,7 +665,7 @@ static gboolean stdout_read( GIOChannel *source, GIOCondition condition, gpointe
     }
   return TRUE;
  err:
-  S->obj->active = FALSE;
+  S->obj->err = TRUE;
   if ( gtk_main_level() != 0)  gtk_main_quit();
   return FALSE;
 }
@@ -610,7 +686,7 @@ static gboolean stderr_read( GIOChannel *source, GIOCondition condition, gpointe
   Sciprintf( "%s",buf );
   return TRUE;
  err:
-  S->obj->active = FALSE;
+  S->obj->err = TRUE;
   if ( gtk_main_level() != 0)  gtk_main_quit();
   return FALSE;
 }
@@ -642,6 +718,7 @@ static nsp_string send_string_to_child(NspSpawn *H,const char *str)
 
 
 /* interface to the g_spawn_sync function 
+ *
  */
 
 int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
@@ -659,7 +736,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   
   CheckStdRhs(1,2);
-  CheckLhs(1,4);
+  CheckLhs(0,4);
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) 
     {
@@ -677,6 +754,12 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 		     &standard_error,
 		     &exit_status,
 		     &error);
+  
+  if ( lhs <= 0 && rep == 0) 
+    {
+      if (error != NULL) Scierror("Error: %s\n",error->message);
+      return RET_BUG;
+    }
 
   if ( nsp_move_boolean(stack,1,rep)  == FAIL ) return RET_BUG;
 
@@ -718,7 +801,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-/* interface to the g_spawn_sync function 
+/* interface to the g_spawn_async function 
  */
 
 int int_g_spawn_async(Stack stack, int rhs, int opt, int lhs)
@@ -734,7 +817,7 @@ int int_g_spawn_async(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   
   CheckStdRhs(1,2);
-  CheckLhs(1,2);
+  CheckLhs(0,2);
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) 
     {
@@ -748,7 +831,13 @@ int int_g_spawn_async(Stack stack, int rhs, int opt, int lhs)
   rep = g_spawn_async(working_directory,S->S,NULL,flags,
 		      NULL, NULL, &pid,  &error);
   g_spawn_close_pid(pid);
-  
+
+  if ( lhs <= 0 && rep == 0) 
+    {
+      if (error != NULL) Scierror("Error: %s\n",error->message);
+      return RET_BUG;
+    }
+
   if ( nsp_move_boolean(stack,1,rep)  == FAIL ) return RET_BUG;
 
   if ( lhs >= 2)

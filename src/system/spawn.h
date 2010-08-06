@@ -33,7 +33,10 @@ struct _nsp_spawn {
   nsp_string prog;
   nsp_string prompt_check;
   void *channel_in;
-  
+  void *channel_out;
+  void *channel_err;
+  int out_id, err_id; 
+  int err;
 };
 
 struct _NspSpawn {

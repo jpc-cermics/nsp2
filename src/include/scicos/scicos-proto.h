@@ -44,6 +44,7 @@ extern void scicos_set_pointer_xproperty(int* pointer);
 extern char *scicos_get_label(int kf);
 extern int scicos_get_block_by_label(const char *label);
 extern int scicos_get_fcaller_id(void);
+extern void scicos_end_scicos_sim(void);
 
 /* nsp events */
 
