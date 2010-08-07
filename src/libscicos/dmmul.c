@@ -26,7 +26,7 @@
 #include "nsp/blas.h"
 
 /**
- * dmmul_scicos:
+ * nsp_calpack_dmmul:
  * @a: array of double 
  * @na: int pointer
  * @b:  array of double 
@@ -43,7 +43,7 @@
  * Returns: 0 
  **/
 
-int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
+int nsp_calpack_dmmul(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
 {
   double c_b4 = 1.0, c_b5 = 0.0;
   C2F(dgemm)("n", "n", l, n, m, &c_b4, a, na,b, nb,&c_b5,c, nc, 1L, 1L);
@@ -51,7 +51,7 @@ int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int
 } 
 
 /**
- * dmmul1_scicos:
+ * nsp_calpack_dmmul1:
  * @a: array of double 
  * @na: int pointer
  * @b:  array of double 
@@ -68,7 +68,7 @@ int dmmul_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int
  * Returns: 0 
  **/
 
-int dmmul1_scicos(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
+int nsp_calpack_dmmul1(double *a, int *na, double *b, int *nb, double *c, int *nc, int *l, int *m, int *n)
 {
   /* 
   int i1=*n , i2=*l , i, j, ib=0, ic=0 , c1 = 1;

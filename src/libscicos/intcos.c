@@ -428,7 +428,7 @@ static int int_time_scicos(Stack stack, int rhs, int opt, int lhs)
 { 
   CheckRhs(-1,0);
   CheckLhs(1,1);
-  if ( nsp_move_double(stack,1,(double) scicos_get_time() )== FAIL) return RET_BUG;
+  if ( nsp_move_double(stack,1,(double) scicos_get_scicos_time() )== FAIL) return RET_BUG;
   return 1;
 }
 

@@ -53,11 +53,8 @@ extern int nsp_check_gtk_events(void);
 
 /* utility functions used in blocks */
 
+extern void *scicos_malloc(size_t size);
+extern void scicos_free(void *p);
 extern int scicos_mtran(double *a, int na, double *b, int nb, int m, int n);
-
-extern int nsp_calpack_dmmul1(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
-extern int nsp_calpack_dmmul(double *a, int *na, double *b, int *nb, double *c__, int *nc, int *l, int *m, int *n);
-
-
 
 #endif 

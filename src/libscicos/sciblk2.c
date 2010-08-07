@@ -385,7 +385,7 @@ void scicos_sciblk4(scicos_block *Blocks, int flag)
   NspHash *H=NULL,*Hi=NULL;
   NspObject *Hel[32], *Args[2],*Ret[1];
   int p = 0,i;
-  double time= scicos_get_time();
+  double time= scicos_get_scicos_time();
   if ((Hel[p++]=   scicos_dtosci("time",&time,1,1))== NULL) goto err;
   if ((Hel[p++]=   scicos_itosci("nevprt",&Blocks->nevprt,1,1))== NULL) goto err;
   if ((Hel[p++]=   scicos_itosci("nevprt",&Blocks->nevprt,1,1))== NULL) goto err;

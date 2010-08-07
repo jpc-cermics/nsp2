@@ -60,7 +60,7 @@ typedef void (*voidf)();
 
 /* function prototypes */
 
-#include "scicos-proto.h"
+#include "scicos-proto4.h"
 
 /* a set of macros */
 
