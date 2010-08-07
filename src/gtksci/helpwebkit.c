@@ -56,14 +56,15 @@
 #include "nsp/interf.h"
 #include "nsp/nsptcl.h"
 
+/* XXX*/
+extern nsp_string nsp_dirname(char *fileName);
+extern GtkWidget *egg_find_bar_new (void);
+
+/*
+ *
+ */ 
+
 static GtkWidget* main_window=NULL;
-static GtkWidget* uri_entry;
-static GtkStatusbar* main_statusbar;
-static WebKitWebView* web_view=NULL;
-static gchar* main_title;
-static gint load_progress;
-static guint status_context_id;
-static GtkWidget* find_bar = NULL;
 
 static void  window_find_search_changed_cb  (GObject         *object,
 					     GParamSpec      *arg1,
@@ -81,15 +82,19 @@ static void  window_findbar_close_cb        (GtkWidget       *widget,
 static void
 activate_uri_entry_cb (GtkWidget* entry, gpointer data)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   const gchar* uri = gtk_entry_get_text (GTK_ENTRY (entry));
   g_assert (uri);
   webkit_web_view_open (web_view, uri);
 }
 
 static void
-update_title (GtkWindow* window)
+update_title (GtkWindow* window, gint load_progress)
 {
-  GString* string = g_string_new (main_title);
+  gchar* main_title = g_object_get_data(G_OBJECT (main_window),"help_title");
+  GString* string;
+  if ( main_title == NULL) return;
+  string = g_string_new (main_title);
   g_string_append (string, " - nsp help (webkit)");
   if (load_progress < 100)
     g_string_append_printf (string, " (%d%%)", load_progress);
@@ -101,6 +106,8 @@ update_title (GtkWindow* window)
 static void
 link_hover_cb (WebKitWebView* page, const gchar* title, const gchar* link, gpointer data)
 {
+  GtkStatusbar* main_statusbar = g_object_get_data(G_OBJECT (main_window),"help_main_statusbar");
+  guint status_context_id = GPOINTER_TO_UINT(g_object_get_data(G_OBJECT (main_window),"help_status_context_id"));
   /* underflow is allowed */
   gtk_statusbar_pop (main_statusbar, status_context_id);
   if (link)
@@ -110,22 +117,22 @@ link_hover_cb (WebKitWebView* page, const gchar* title, const gchar* link, gpoin
 static void
 title_change_cb (WebKitWebView* web_view, WebKitWebFrame* web_frame, const gchar* title, gpointer data)
 {
-  if (main_title)
-    g_free (main_title);
-  main_title = g_strdup (title);
-  update_title (GTK_WINDOW (main_window));
+  g_object_set_data_full (G_OBJECT (main_window),"help_title", g_strdup (title),
+			  (GDestroyNotify) g_free);
+  update_title (GTK_WINDOW (main_window),100);
 }
 
 static void
 progress_change_cb (WebKitWebView* page, gint progress, gpointer data)
 {
-  load_progress = progress;
-  update_title (GTK_WINDOW (main_window));
+  update_title (GTK_WINDOW (main_window),progress);
 }
 
 static void
 load_commit_cb (WebKitWebView* page, WebKitWebFrame* frame, gpointer data)
 {
+  GtkWidget* uri_entry = g_object_get_data (G_OBJECT(main_window),
+					    "help_uri_entry");
   const gchar* uri = webkit_web_frame_get_uri(frame);
   if (uri)
     gtk_entry_set_text (GTK_ENTRY (uri_entry), uri);
@@ -141,13 +148,14 @@ destroy_cb (GtkWidget* widget, gpointer data)
 static void
 go_back_cb (GtkWidget* widget, gpointer data)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_go_back (web_view);
 }
 
 static void
 go_forward_cb (GtkWidget* widget, gpointer data)
 {
-
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_go_forward (web_view);
 }
 
@@ -155,32 +163,35 @@ go_forward_cb (GtkWidget* widget, gpointer data)
 static void
 go_zoom_in_cb (GtkWidget* widget, gpointer data)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_zoom_in (web_view);
 }
 
 static void
 go_zoom_out_cb (GtkWidget* widget, gpointer data)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_zoom_out (web_view);
 }
 
 static void
 go_zoom_100_cb (GtkWidget* widget, gpointer data)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   double zl=webkit_web_view_get_zoom_level(web_view);
   if ( zl != 1.0) 
     webkit_web_view_set_zoom_level(web_view,1.0);
 }
 #endif
 
-static GtkWidget*
-create_browser ()
+static GtkWidget*create_browser (WebKitWebView **web_view_p)
 {
+  WebKitWebView *web_view;
   WebKitWebSettings * settings;
   GtkWidget* scrolled_window = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
-
-  web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
+  *web_view_p= web_view = WEBKIT_WEB_VIEW (webkit_web_view_new ());
+  g_object_set_data(G_OBJECT (main_window),"help_web_view",web_view);
   gtk_container_add (GTK_CONTAINER (scrolled_window), GTK_WIDGET (web_view));
 
   g_signal_connect (G_OBJECT (web_view), "title-changed", G_CALLBACK (title_change_cb), web_view);
@@ -208,15 +219,18 @@ create_browser ()
 static GtkWidget*
 create_statusbar ()
 {
-  main_statusbar = GTK_STATUSBAR (gtk_statusbar_new ());
+  guint status_context_id;
+  GtkStatusbar*  main_statusbar = GTK_STATUSBAR (gtk_statusbar_new ());
+  g_object_set_data(G_OBJECT(main_window),"help_main_statusbar",main_statusbar);
   status_context_id = gtk_statusbar_get_context_id (main_statusbar, "Link Hover");
+  g_object_set_data(G_OBJECT (main_window),"help_status_context_id",GUINT_TO_POINTER (status_context_id));
 
   return (GtkWidget*)main_statusbar;
 }
 
-static GtkWidget*
-create_toolbar ()
+static GtkWidget*create_toolbar ()
 {
+  GtkWidget* uri_entry;
   GtkWidget* toolbar = gtk_toolbar_new ();
 
   gtk_toolbar_set_orientation (GTK_TOOLBAR (toolbar), GTK_ORIENTATION_HORIZONTAL);
@@ -254,8 +268,9 @@ create_toolbar ()
   item = gtk_tool_item_new ();
   gtk_tool_item_set_expand (item, TRUE);
   uri_entry = gtk_entry_new ();
+  g_object_set_data(G_OBJECT(main_window), "help_uri_entry",uri_entry);
   gtk_container_add (GTK_CONTAINER (item), uri_entry);
-  g_signal_connect (G_OBJECT (uri_entry), "activate", G_CALLBACK (activate_uri_entry_cb), NULL);
+  g_signal_connect (G_OBJECT (uri_entry), "activate", G_CALLBACK (activate_uri_entry_cb),  (gpointer)uri_entry);
   gtk_toolbar_insert (GTK_TOOLBAR (toolbar), item, -1);
 
   /* The go button */
@@ -278,11 +293,10 @@ create_window ()
 }
 
 
-extern GtkWidget *egg_find_bar_new (void);
-
 static void
 window_activate_print (GtkAction *action,  void  *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_execute_script (web_view, "print();");
 }
 
@@ -297,8 +311,8 @@ static void
 window_activate_copy (GtkAction *action,  void  *window)
 {
   /* window is main_window */
-  GtkWidget *widget;
-  widget = gtk_window_get_focus (GTK_WINDOW (window));
+  GtkWidget *widget =  gtk_window_get_focus (GTK_WINDOW (window));
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   if (GTK_IS_EDITABLE (widget)) 
     {
       gtk_editable_copy_clipboard (GTK_EDITABLE (widget));
@@ -314,6 +328,9 @@ window_activate_copy (GtkAction *action,  void  *window)
 static void
 window_activate_find (GtkAction *action,void  *window)
 {
+  GtkWidget* find_bar = g_object_get_data(G_OBJECT (main_window),"help_find_bar");
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
+  if ( find_bar == NULL) return;
   gtk_widget_show (find_bar);
   gtk_widget_grab_focus (find_bar);
   webkit_web_view_set_highlight_text_matches (web_view, TRUE);
@@ -323,27 +340,32 @@ window_activate_find (GtkAction *action,void  *window)
 
 static void  window_activate_back(GtkAction *action,  void  *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_go_back (web_view);
 }
 
 static void  window_activate_forward(GtkAction *action,  void  *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_go_forward (web_view);
 }
 
 #ifdef HAVE_WEBKIT_ZOOM
 static void window_activate_zoom_in(GtkAction *action,  void  *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_zoom_in (web_view);
 }
 
 static void window_activate_zoom_out(GtkAction *action,  void  *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   webkit_web_view_zoom_out (web_view);
 }
 
 static void window_activate_zoom_default(GtkAction *action,  void  *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   double zl=webkit_web_view_get_zoom_level(web_view);
   if ( zl != 1.0) 
     webkit_web_view_set_zoom_level(web_view,1.0);
@@ -430,6 +452,7 @@ static const gchar *view_ui_description =
 
 static int open_webkit_window (const gchar *help_path,const gchar *locale,const gchar *help_file)
 {
+  GtkWidget* find_bar;
   GtkUIManager   *manager;
   GtkAccelGroup   *accel_group;
   GtkWidget* vbox, *menubar;
@@ -439,6 +462,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 
   if ( main_window == NULL) 
     {
+      WebKitWebView *web_view;
       GtkActionGroup *action_group;
       main_window = create_window ();
       manager = gtk_ui_manager_new ();
@@ -468,8 +492,10 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
       vbox = gtk_vbox_new (FALSE, 0);
       gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
       gtk_box_pack_start (GTK_BOX (vbox), create_toolbar (), FALSE, FALSE, 0);
-      gtk_box_pack_start (GTK_BOX (vbox), create_browser (), TRUE, TRUE, 0);
+      gtk_box_pack_start (GTK_BOX (vbox), create_browser (&web_view), TRUE, TRUE, 0);
       find_bar = egg_find_bar_new ();
+      g_object_set_data(G_OBJECT (main_window),"help_find_bar",find_bar);
+
       gtk_box_pack_start (GTK_BOX (vbox), create_statusbar (), FALSE, FALSE, 0);
       gtk_container_add (GTK_CONTAINER (main_window), vbox);
       gtk_box_pack_start (GTK_BOX (vbox), find_bar, FALSE, FALSE, 0);
@@ -501,6 +527,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
     }
   else 
     {
+      WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
       webkit_web_view_open (web_view, help_file );
     }
   return 0;
@@ -556,9 +583,6 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 }
 
 static NspHash *nsp_help_table = NULLHASH;
-
-/* XXX*/
-extern nsp_string nsp_dirname(char *fileName);
 
 static int nsp_help_fill_help_table(const char *index_file)
 {
@@ -717,7 +741,8 @@ window_find_search_changed_cb (GObject    *object,
                                GParamSpec *pspec,
                                void    *window)
 {
-  
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
+  GtkWidget* find_bar = g_object_get_data(G_OBJECT (main_window),"help_find_bar");
   webkit_web_view_unmark_text_matches (web_view);
   webkit_web_view_mark_text_matches (
 				     web_view,
@@ -736,6 +761,8 @@ window_find_case_changed_cb (GObject    *object,
                              GParamSpec *pspec,
 			     void *window)
 {
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
+  GtkWidget* find_bar = g_object_get_data(G_OBJECT (main_window),"help_find_bar");
   const gchar   *string;
   gboolean       case_sensitive;
   string = egg_find_bar_get_search_string (EGG_FIND_BAR (find_bar));
@@ -749,6 +776,8 @@ window_find_case_changed_cb (GObject    *object,
 static void
 window_find_next_cb (GtkEntry *entry,void *window)
 {
+  GtkWidget* find_bar = g_object_get_data(G_OBJECT (main_window),"help_find_bar");
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   const gchar   *string;
   gboolean       case_sensitive;
   gtk_widget_show (find_bar);
@@ -760,6 +789,8 @@ window_find_next_cb (GtkEntry *entry,void *window)
 static void
 window_find_previous_cb (GtkEntry *entry, void *window)
 {
+  GtkWidget* find_bar = g_object_get_data(G_OBJECT (main_window),"help_find_bar");
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   const gchar   *string;
   gboolean       case_sensitive;
   gtk_widget_show (find_bar);
@@ -771,6 +802,8 @@ window_find_previous_cb (GtkEntry *entry, void *window)
 static void
 window_findbar_close_cb (GtkWidget *widget, void  *window)
 {
+  GtkWidget* find_bar = g_object_get_data(G_OBJECT (main_window),"help_find_bar");
+  WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   gtk_widget_hide (find_bar);
   webkit_web_view_set_highlight_text_matches (web_view, FALSE);
 }
