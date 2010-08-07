@@ -998,9 +998,13 @@ C2F(lsode) (ode_f f, int *neq, double *y, double *t, double *tout,
    * svcom and rscom   are user-callable routines to save and restore, 
    *          respectively, the contents of the internal common blocks. 
    * dgefa and dgesl   are routines from linpack for solving full 
-   *          systems of linear algebraic equations. 
+   *          systems of linear algebraic equations.
+   * Note: dgefa and dgesl replaced by lapack routines dgetrf et dgetrs
+   *       (bruno le 6/08/2010) 
    * dgbfa and dgbsl   are routines from linpack for solving banded 
    *          linear systems. 
+   * Note: dgbfa and dgbsl replaced by lapack routines dgbtrf et dgbtrs
+   *       (bruno le 6/08/2010) 
    * daxpy, dscal, idamax, and ddot   are basic linear algebra modules 
    *          (blas) used by the above linpack routines. 
    * dlamch   computes the unit roundoff in a machine-independent manner. 

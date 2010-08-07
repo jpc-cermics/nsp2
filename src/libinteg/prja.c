@@ -1,4 +1,5 @@
 #include "integ.h"
+#include "nsp/lapack-c.h"
 
 /* Common Block Declarations */
 
@@ -21,6 +22,7 @@ static int c_n1 = -1;
  * subjected to lu decomposition in preparation for later solution 
  * of linear systems with p as coefficient matrix. this is done 
  * by dgefa if miter = 1 or 2, and by dgbfa if miter = 4 or 5. 
+ *  Note: dgefa and dgbfa replaced by lapack dgetrf and dgbtrf
  * 
  * %additional  parameters 
  * in addition to variables described previously, communication 
@@ -173,7 +175,9 @@ nsp_ode_prja (int *neq, double *y, double *yh, int *nyh, double *ewt,
     }
   /*do lu decomposition on p. -------------------------------------------- 
    */
-  C2F(dgefa) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &ier);
+/*   C2F(dgefa) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &ier); */
+/* Note: dgefa replaced by lapack dgetrf */
+  C2F(dgetrf) (&ls0001_1.n, &ls0001_1.n, &wm[3], &ls0001_1.n, &iwm[21], &ier);
   if (ier != 0)
     {
       ls0001_1.ierpj = 1;
@@ -297,7 +301,9 @@ nsp_ode_prja (int *neq, double *y, double *yh, int *nyh, double *ewt,
     }
   /*do lu decomposition of p. -------------------------------------------- 
    */
-  nsp_ode_dgbfa (&wm[3], &meband, &ls0001_1.n, &ml, &mu, &iwm[21], &ier);
+/*   nsp_ode_dgbfa (&wm[3], &meband, &ls0001_1.n, &ml, &mu, &iwm[21], &ier); */
+/* Note: dgbfa replaced by lapack dgetrf */
+  C2F(dgbtrf) (&ls0001_1.n, &ls0001_1.n, &ml, &mu, &wm[3], &meband, &iwm[21], &ier);
   if (ier != 0)
     {
       ls0001_1.ierpj = 1;

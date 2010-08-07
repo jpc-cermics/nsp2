@@ -1,4 +1,5 @@
 #include "integ.h"
+#include "nsp/lapack-c.h"
 
 /* Common Block Declarations */
 
@@ -11,9 +12,11 @@
  *this routine manages the solution of the linear system arising from 
  *a chord iteration.  it is called if miter .ne. 0. 
  *if miter is 1 or 2, it calls dgesl to accomplish this. 
+ * Note: dgesl replaced bu dgetrs (Bruno 6/08/2010)
  *if miter = 3 it updates the coefficient h*el0 in the diagonal 
  *matrix, and then computes the solution. 
  *if miter is 4 or 5, it calls dgbsl. 
+ * Note: dgbsl replaced bu dgbtrs (Bruno 6/08/2010)
  *%calling sequence 
  *communication with solsy uses the following variables.. 
  *wm    = real work space containing the inverse diagonal matrix if 
@@ -35,9 +38,10 @@
 
 int nsp_ode_solsy (double *wm, int *iwm, double *x, double *tem)
 {
-  int c0 = 0, i1, i;
+  int i1, i;
   double r, di, hl0, phl0;
   int meband, ml, mu;
+  int one=1, rien;
 
   /* Parameter adjustments */
   --tem;
@@ -61,7 +65,9 @@ int nsp_ode_solsy (double *wm, int *iwm, double *x, double *tem)
       goto L400;
     }
  L100:
-  C2F(dgesl) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &x[1], &c0);
+/*   C2F(dgesl) (&wm[3], &ls0001_1.n, &ls0001_1.n, &iwm[21], &x[1], &c0); */
+/*  Note dgesl replaced by dgetrs (Bruno 6/08/2010) */
+  C2F(dgetrs) ("N", &ls0001_1.n, &one, &wm[3], &ls0001_1.n, &iwm[21], &x[1], &ls0001_1.n, &rien, 1);
   return 0;
   /* 
    */
@@ -102,7 +108,8 @@ int nsp_ode_solsy (double *wm, int *iwm, double *x, double *tem)
   ml = iwm[1];
   mu = iwm[2];
   meband = (ml << 1) + mu + 1;
-  nsp_ode_dgbsl (&wm[3], &meband, &ls0001_1.n, &ml, &mu, &iwm[21], &x[1],
-		    &c0);
+/*   nsp_ode_dgbsl (&wm[3], &meband, &ls0001_1.n, &ml, &mu, &iwm[21], &x[1], &c0); */
+/*  Note dgbsl replaced by dgbtrs (Bruno 6/08/2010) */
+  C2F(dgbtrs)("N", &ls0001_1.n, &ml, &mu, &one, &wm[3], &meband, &iwm[21], &x[1], &ls0001_1.n, &rien,1);
   return 0;
 }

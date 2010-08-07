@@ -36,7 +36,7 @@
 #define nsp_ode_dhels C2F(dhels)
 #define nsp_ode_dheqr C2F(dheqr)
 #define nsp_ode_dinvwt C2F(dinvwt)
-#define nsp_ode_dlamch C2F(dlamch)
+/* #define nsp_ode_dlamch C2F(dlamch) */
 #define nsp_ode_dorth C2F(dorth)
 #define nsp_ode_drchek C2F(drchek)
 #define nsp_ode_droots C2F(droots)
@@ -426,7 +426,7 @@ extern int nsp_ode_greatr (double *a, double *b, int *nwds);
 
 extern double nsp_ode_vmnorm (const int *n,const double *v,const double *w);
 extern double nsp_ode_vnorm ( const int *n,const double *v,const  double *w);
-extern double nsp_ode_dlamch (char *, long int);
+/* extern double nsp_ode_dlamch (char *, long int); */
 extern int nsp_ode_dcopy (int *, double *, int *,  double *, int *);
 extern int nsp_ode_dscal (int *, double *, double *, int *);
 extern double nsp_ode_ddot (int *, double *, int *, double *, int *);
