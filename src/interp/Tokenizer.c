@@ -77,6 +77,7 @@ extern void nsp_init_tokenizer(Tokenizer *T)
   T->ParseError=parse_error;
   T->code2name=code2name;
   T->tokenv.Line = 0;
+  T->io = nsp_tok_stdio;
   T->token_readline = DefSciReadLine;
   T->mtlb = FALSE;
 }
@@ -85,6 +86,7 @@ extern void nsp_init_tokenizer(Tokenizer *T)
 void nsp_tokeniser_file(Tokenizer *T,FILE *f)
 {
   T->file = f;
+  T->io = nsp_tok_file;
   T->token_readline = SciFileReadLine;
 }
 
@@ -92,6 +94,7 @@ void nsp_tokeniser_string(Tokenizer *T,const char *str)
 {
   T->string.str = str;
   T->string.pos = 0;
+  T->io = nsp_tok_string;
   T->token_readline = SciStringReadLine;
 
 }
@@ -106,6 +109,7 @@ void nsp_tokeniser_strings(Tokenizer *T,char **S)
   T->strings.pos = 0;
   T->strings.ind = -1;
   T->strings.line = NULL;
+  T->io = nsp_tok_strings;
   T->token_readline = SciSMatReadLine;
 
 }

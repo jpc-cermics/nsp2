@@ -87,6 +87,11 @@ struct _string_tokenizer {
   int pos;
 } ;
 
+typedef enum { 
+  nsp_tok_stdio, nsp_tok_file, nsp_tok_string, nsp_tok_strings
+}  token_io;
+
+
 struct _tokenizer {
   /* data */
   Curline curline; 
@@ -121,6 +126,8 @@ struct _tokenizer {
   token_ParseComment *ParseComment;
   token_ParseError *ParseError;
   token_code2name *code2name;
+  /* type of io */
+  token_io io;
 };
 
 extern void nsp_init_tokenizer(Tokenizer *T);

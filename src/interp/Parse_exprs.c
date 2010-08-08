@@ -1487,7 +1487,7 @@ static int parse_equal(Tokenizer *T,NspBHash *symb_table,PList *plist, int flag)
       else 
 	{
 	  /* XXXXX must clear plist3 **/
-	  Sciprintf("Warning : Obsolete use of =, assuming == \n");
+	  Sciprintf("Warning: Obsolete use of =, assuming == \n");
 	  op = EQ;
 	}
     }
@@ -2621,12 +2621,16 @@ static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
   if ( T->tokenv.id == stop ) 
     {
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
-      Sciprintf("Warning : ;] should not be used \n");
+      Sciprintf("Warning: ;] should not be used \n");
+      if (  T->io == nsp_tok_file )
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
     }
   else if ( T->tokenv.id == SEMICOLON_OP )
     {
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
-      Sciprintf("Warning : ;; should not be used \n");
+      Sciprintf("Warning: ;; should not be used \n");
+      if (  T->io == nsp_tok_file )
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
     }
   else
     {
@@ -2740,13 +2744,19 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
     {
       /* row is empty and ended by ] */
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
-      Sciprintf("Warning : ;] should not be used \n");
+      Sciprintf("Warning: ;] should not be used \n");
+      if (  T->io == nsp_tok_file )
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
+
     }
   else if ( T->tokenv.id == SEMICOLON_OP )
     {
       /* row is empty and ended by ; */
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
-      Sciprintf("Warning : ;; should not be used \n");
+      Sciprintf("Warning: ;; should not be used \n");
+      if (  T->io == nsp_tok_file )
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
+
     }
   else
     {
