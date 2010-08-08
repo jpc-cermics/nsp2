@@ -1625,8 +1625,8 @@ static cholmod_sparse *cholmod_pattern_from_object(NspObject *Obj,cholmod_sparse
  * Timothy A. Davis
  */ 
 
-static void nsp_sputil_error_handler_mex (int status, char *file, int line, char *message);
-static void nsp_sputil_error_handler (int status, char *file, int line, char *message);
+static void nsp_sputil_error_handler_mex (int status,const char *file, int line,const char *message);
+static void nsp_sputil_error_handler (int status, const char *file, int line,const char *message);
 
 static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 {
@@ -1684,7 +1684,7 @@ static void nsp_sputil_config (int spumoni, cholmod_common *cm, int in_mex )
 }
 
 
-static void nsp_sputil_error_handler_mex (int status, char *file, int line, char *message)
+static void nsp_sputil_error_handler_mex (int status,const char *file, int line,const char *message)
 {
   if (status < CHOLMOD_OK)
     {
@@ -1698,7 +1698,7 @@ static void nsp_sputil_error_handler_mex (int status, char *file, int line, char
     }
 }
 
-static void nsp_sputil_error_handler (int status, char *file, int line, char *message)
+static void nsp_sputil_error_handler (int status,const char *file, int line,const char *message)
 {
   if (status < CHOLMOD_OK)
     {
