@@ -2488,10 +2488,11 @@ void scicos_do_cold_restart(void)
   return;
 }
 
-double scicos_get_time(void)
+double scicos_get_scicos_time(void)
 {
   return scicos_time;
 }
+
 
 int scicos_get_block_number(void)
 {

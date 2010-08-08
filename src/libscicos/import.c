@@ -128,7 +128,7 @@ int  scicos_getscicosvars(int what, double **v, int *nv, int *type)
 }
 
 
-char *scicos_getlabel(int kf)
+char *scicos_get_label(int kf)
 {
   return Scicos->Blocks[kf-1].label;
 }
