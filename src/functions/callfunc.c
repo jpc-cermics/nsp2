@@ -239,20 +239,12 @@ InterfTab Interfaces[]={
 #endif 
   {Cells_Interf, Cells_Interf_Info},
   {PMatrix_Interf,PMatrix_Interf_Info},
-  {Scicos_Interf,Scicos_Interf_Info},
-  /* 
-  {Sound_Interf , Sound_Interf_Info},
-  {kiko_Interf , kiko_Interf_Info},
-  {mpz_Interf , mpz_Interf_Info},
-  */
 #ifdef WITH_PVM
   {Pvm_Interf , Pvm_Interf_Info},
 #endif 
-
 #ifdef WITH_SNDFILE
   {SndFile_Interf , SndFile_Interf_Info},
 #endif
-
   {BHash_Interf , BHash_Interf_Info},
 #ifdef WITH_UMFPACK
   {umfpack_Interf , umfpack_Interf_Info},

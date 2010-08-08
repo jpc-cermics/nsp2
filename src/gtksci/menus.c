@@ -1103,11 +1103,11 @@ static void nsp_menu_stop_audio (void)
  * make a stop for scicos 
  *-----------------------------------------------------------------*/
 
-extern void scicos_send_halt(void);
+/* extern void scicos_send_halt(void); */
 
 static void nsp_menu_scicos_stop (void)
 {
-  scicos_send_halt();
+  /* scicos_send_halt(); */
 }
 
 /*-----------------------------------------------------------------
