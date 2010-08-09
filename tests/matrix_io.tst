@@ -126,6 +126,44 @@ if ~and(txt==texte) then pause,end
 if max(a1-a) > 1.e-1 then pause,end 
 
 // write matrix  with put_matrix method 
+//--------------------------------------
+
+a=[56,%pi,%e, 1.e-7,1.5678e-8];
+fd=fopen('TMPDIR/Mat',mode='w');
+// options: we use the default format which 
+// is equivalent to the default format used 
+// when displaying the matrix 
+fd.put_matrix[a]
+fd.close[];
+
+// read back to test 
+fd=fopen('TMPDIR/Mat',mode='r');
+a1=fd.get_matrix[];
+fd.close[];
+
+if ~and(txt==texte) then pause,end 
+if max(a1-a) > 1.e-2 then pause,end 
+
+// the same but with a longer format 
+
+format('long');
+a=[56,%pi,%e, 1.e-7,1.5678e-8];
+fd=fopen('TMPDIR/Mat',mode='w');
+// options: we use the default format which 
+// is equivalent to the default format used 
+// when displaying the matrix 
+fd.put_matrix[a]
+fd.close[];
+
+// read back to test 
+fd=fopen('TMPDIR/Mat',mode='r');
+a1=fd.get_matrix[];
+fd.close[];
+
+if ~and(txt==texte) then pause,end 
+if max(a1-a) > %eps then pause,end 
+
+// write matrix  with put_matrix method 
 // with options 
 // ---------------------------------------
 
