@@ -74,7 +74,7 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
 				  int *wdim,int *wpdim,double *viewport_pos,int *wpos, void *data,void *Fig)
 {
   char *name=NULL,*driver=NULL;
-  const gchar *gname;
+  const gchar *gname = "unknown";
   int i;
   GdkColor white={0,0,0,0};
   GdkColor black={0,65535,65535,65535};
@@ -197,7 +197,11 @@ static NspFigure *nsp_initgraphic(const char *string,GtkWidget *win,GtkWidget *b
   NewXgc->graphic_engine->xset_wresize(NewXgc,1);
 
   /* attach a figure to the graphic window */
-  gname = gtk_window_get_title (GTK_WINDOW(private->window));
+  if ( private->window != NULL) 
+    {
+      gname = gtk_window_get_title (GTK_WINDOW(private->window));
+    }
+
   if (( name =new_nsp_string(gname)) == NULLSTRING)
     return NULL;
   if (( driver =new_nsp_string("Gtk")) == NULLSTRING)
