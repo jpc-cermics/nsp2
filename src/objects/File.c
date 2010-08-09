@@ -1560,34 +1560,35 @@ int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S)
 int nsp_fprintf_matrix(NspFile *F, char *format, char *sep, NspMatrix *M, NspSMatrix *S)
 {
   int i,j;
-  char *fmt, buf[8];
+  char *fmt = format; 
   const char *separator = " ";
-  char *def = "%19.12g";
-
-  if ( format != NULL ) 
-    fmt = format;
-  else  /* build the format from the current internal format */
+#if 1
+  nsp_num_formats nfmt;
+  if ( fmt == NULL ) 
+    {
+      /* build the format using the format using when displaying the matrix */
+      nsp_init_pr_format (&nfmt);
+      nsp_matrix_set_format(&nfmt,M);
+      fmt = nfmt.curr_real_fmt;
+    }
+#else 
+  char *def = "%19.12g", buf[8];
+  if ( fmt == NULL ) 
     {
       int m, p, e;
       nsp_get_format(&m, &p, &e);
       if ( m <= 0 || m > 99 || p >= m || p < 0 ) /* strange... switch to def */
-	fmt = def;
-      else   /* at max the format will take 7 chars so use a buffer of 8 to put the '\0' */
 	{
-	  int n1, n2;
-	  buf[0] = '%';
-/* 	  n1 = sprintf(&buf[1],"%d",m); */
-	  n1 = 0;  /* well the format will use 5 chars max...*/
-	  buf[n1+1] = '.';
-	  n2 = sprintf(&buf[n1+2],"%d",p);
-	  if ( e == 1 )
-	    buf[n1+2+n2] = 'e';
-	  else
-	    buf[n1+2+n2] = 'g';
-	  buf[n1+3+n2] = '\0';
+	  fmt = def;
+	}
+      else
+	{
+	  /* at max the format will take 7 chars so use a buffer of 8 to put the '\0' */
+	  sprintf(buf,"%%.%d%s",p,( e == 1 ) ? "e": "g");
 	  fmt = buf;
 	}
     }
+#endif 
   
   if ( sep != NULL) separator = sep;
   if ( !IS_OPENED(F->obj->flag)) 
