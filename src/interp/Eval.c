@@ -907,14 +907,31 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 	case PAUSE:  
 	  /* 1-ary pause 
-	   * FIXME: unused 
 	   */
-	  Sciprintf("pause [%s]\n",(char *) L1->O);
-	  /* We enter a new scilab evaluation loop  */
-	  inc_pause_prompt();
-	  rep =nsp_parse_eval_from_std(1);
-	  dec_pause_prompt();
-	  return rep;
+	  if ( stack.val->pause == TRUE ) 
+	    {
+	      Sciprintf("pause [%s]",(char *) L1->O);
+	      if ( NspFileName(stack) != NULL) 
+		{
+		  int line= nsp_parser_get_line(L1);
+		  if ( line != -1 ) 
+		    Sciprintf(" at line %d of file %s", line,NspFileName(stack));
+		}
+	      Sciprintf("\n");
+	      /* We enter a new scilab evaluation loop  */
+	      inc_pause_prompt();
+	      rep =nsp_parse_eval_from_std(1);
+	      dec_pause_prompt();
+	      return rep;
+	    }
+	  else 
+	    {
+	      /* explicit pause considered as RET_BUG 
+	       * in this case we are are in a pausecatch=%t
+	       */
+	      Scierror("Error: Catching a pause\n");
+	      return RET_BUG;
+	    }
 	  break;
 	case CLEAR:  
 	  /* n-ary clear n>= 1 */
@@ -1168,6 +1185,12 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
        */
       if ( stack->val->pause == TRUE ) 
 	{
+	  if ( stack->file_name  != NULL) 
+	    {
+	      int line= nsp_parser_get_line(L);
+	      if ( line != -1 ) 
+		Sciprintf("pause at line %d of file %s\n", line,stack->file_name);
+	    }
 	  inc_pause_prompt();
 	  rep =nsp_parse_eval_from_std(1);
 	  dec_pause_prompt();
@@ -1175,7 +1198,9 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 	}
       else 
 	{
-	  /* explicit pause considered as RET_BUG  */
+	  /* explicit pause considered as RET_BUG 
+	   * in this case we are are in a pausecatch=%t
+	   */
 	  Scierror("Error: Catching a pause\n");
 	  return RET_BUG;
 	}
