@@ -1,3 +1,7 @@
+2010-08-09  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
+
+	* scicos moved in toolboxes. remove old directories.
+
 2010-04-11  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/gtksci/*: changes and addition in order to use 
