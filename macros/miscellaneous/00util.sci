@@ -23,7 +23,10 @@ endfunction
 
 function y=typeof(x)
   y=type(x,'short');
-  if y == 'l'; y = x(1)(1);end
+  if y == 'l' then  y = x(1)(1);
+  elseif y== 'i' then
+    y=x.itype[];
+  end
 endfunction
 
 // function y=isempty(x)
