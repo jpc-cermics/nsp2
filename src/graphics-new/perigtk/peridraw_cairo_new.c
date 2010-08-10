@@ -486,29 +486,26 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
     }
 }
 
-/* pango layout + cairo */
 
-static void displaystring(BCG *Xgc,const char *string, int x, int y,  int flag, double angle,
+
+static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,double angle,
 			  gr_str_posx posx, gr_str_posy posy )
-{ 
-  int width,height;
+{
+  PangoRectangle ink_rect,logical_rect;
+  int  height,width;
   cairo_t *cr =  Xgc->private->cairo_cr;
-  pango_layout_set_text (Xgc->private->layout, string, -1);
+  pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
-  if ( Abs(angle) <= 0.1) 
+  if ( posy == GR_STR_YBASELINE ) 
     {
-      cairo_move_to (cr, x,y-height);
-      pango_cairo_update_layout (cr,Xgc->private->layout);
-      pango_cairo_show_layout (cr,Xgc->private->layout);
-      /* horizontal string */
-      if ( flag == 1) /*  flag == 1)  */
-	{
-	  cairo_rectangle (cr,x,y-height,width,height);
-	  cairo_stroke (cr);
-	}
+      /* we want (x,y) to be at the baseline of the first layout line 
+       */
+      PangoLayoutLine *line;
+      line = pango_layout_get_line(Xgc->private->layout,0);
+      pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
     }
-  else 
+  if ( Abs(angle) >= 0.1) 
     {
       double rad_angle = angle * M_PI/180.0;
       /* cairo_text_extents_t extents; */
@@ -517,7 +514,7 @@ static void displaystring(BCG *Xgc,const char *string, int x, int y,  int flag, 
       cairo_translate (cr, x,y);
       cairo_rotate (cr, rad_angle);
       cairo_move_to (cr, 0,-height);
-      pango_layout_set_text (Xgc->private->layout,string, -1);
+      pango_layout_set_text (Xgc->private->layout,str, -1);
       pango_cairo_update_layout (cr,Xgc->private->layout);
       pango_cairo_show_layout (cr,Xgc->private->layout);
       if ( flag == 1)  
@@ -526,6 +523,33 @@ static void displaystring(BCG *Xgc,const char *string, int x, int y,  int flag, 
 	  cairo_stroke (cr);
 	}
       cairo_restore (cr);
+    }
+  else
+    {
+      int xpos=x,ypos=y;
+      /* horizontal string */
+      switch( posx ) 
+	{
+	case GR_STR_XLEFT: xpos = x; break;
+	case GR_STR_XCENTER: xpos = x - width/2; break;
+	case GR_STR_XRIGHT: xpos = x - width; break;
+	}
+      switch( posy ) 
+	{
+	case GR_STR_YBOTTOM: ypos = y -height; break;
+	case GR_STR_YCENTER:  ypos = y - height/2; break;
+	case GR_STR_YBASELINE: ypos = y + logical_rect.y; break;
+	case GR_STR_YUP:  ypos = y ; break;
+	} 
+      cairo_move_to (cr, xpos,ypos);
+      pango_cairo_update_layout (cr,Xgc->private->layout);
+      pango_cairo_show_layout (cr,Xgc->private->layout);
+      /* horizontal string */
+      if ( flag == TRUE ) /*  flag == 1)  */
+	{
+	  cairo_rectangle (cr,xpos,ypos,width,height);
+	  cairo_stroke (cr);
+	}
     }
 }
 
@@ -1087,6 +1111,7 @@ static void nsp_fonts_finalize(BCG *Xgc)
 {
   if ( Xgc->private->layout != NULL) 
     {
+      Xgc->private->context=NULL; /* unused */
       g_object_unref ( Xgc->private->layout);Xgc->private->layout=NULL;
       g_object_unref ( Xgc->private->mark_layout);Xgc->private->mark_layout=NULL;
       pango_font_description_free ( Xgc->private->desc); Xgc->private->desc=NULL;
@@ -1098,6 +1123,8 @@ static void nsp_fonts_initialize(BCG *Xgc)
 {
   if ( Xgc->private->layout == NULL) 
     {
+      /* cairo is not always used for a widget */
+      Xgc->private->context= NULL;
       Xgc->private->layout = pango_cairo_create_layout(Xgc->private->cairo_cr);
       Xgc->private->mark_layout = pango_cairo_create_layout(Xgc->private->cairo_cr);
       Xgc->private->desc = pango_font_description_new();

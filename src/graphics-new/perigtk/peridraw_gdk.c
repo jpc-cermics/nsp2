@@ -788,8 +788,7 @@ static const int symbols[] =
 
 /* utility to rotate a string */
 
-static void get_rotated_layout_bounds (PangoLayout  *layout,PangoContext *context,
-				       const PangoMatrix *matrix, GdkRectangle *rect)
+static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *matrix, GdkRectangle *rect)
 {
   gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
   PangoRectangle logical_rect;
@@ -876,8 +875,7 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
        */
       xt = 0 * matrix.xx + -height * matrix.xy + matrix.x0;
       yt = 0 * matrix.yx + -height * matrix.yy + matrix.y0;
-      get_rotated_layout_bounds (Xgc->private->layout,Xgc->private->context, 
-				 &matrix,&rect);
+      get_rotated_layout_bounds (Xgc->private->layout, &matrix,&rect);
       gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
 		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
       pango_context_set_matrix (Xgc->private->context,NULL);
