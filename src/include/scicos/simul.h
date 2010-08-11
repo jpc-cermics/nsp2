@@ -61,6 +61,7 @@ struct  _scicos_block {
   void **work;
   int nmode;
   int *mode;
+  double *res_init; /* keep track of initialy allocated res */
 };
 
 typedef struct _scicos_state scicos_state ;
