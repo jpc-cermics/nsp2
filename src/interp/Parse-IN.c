@@ -32,6 +32,13 @@
 #include "Eval.h"
 #include "nsp/menus.h"
 
+extern void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
+extern void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
+extern NspSMatrix *nsp_lasterror_get(void) ;
+extern void nsp_lasterror_clear(void) ;
+extern nsp_string   nsp_absolute_file_name( char *fname);
+
+
 static function  int_parseevalfile;
 static function  int_add_lib;
 static function  int_remove_lib;
@@ -39,10 +46,6 @@ static function  int_find_macro;
 static function  int_execf;
 static function  int_lasterror;
 static function  int_error;
-
-
-void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
-void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
 
 /**
  * nsp_expand_file_and_update_exec_dir:
@@ -156,6 +159,7 @@ static int int_parseevalfile_gen(Stack stack, int rhs, int opt, int lhs,int mtlb
   NspObject *Ob;
   NspHash *H=NULL,*E=NULL;
   char *fname= NULL;
+  int errcatch_all, pausecatch_all;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE,ret=RET_BUG;
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
@@ -168,10 +172,16 @@ static int int_parseevalfile_gen(Stack stack, int rhs, int opt, int lhs,int mtlb
   CheckLhs(0,2);
   if ( GetArgs(stack,rhs,opt,T,&fname,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
     return RET_BUG;
+
   /* update the current exec dir in stack, old value is returned in old 
    * fname_expanded contains the file name after expansion using current_exec_dir
    */
   nsp_expand_file_and_update_exec_dir(&stack,old,fname,fname_expanded);
+
+  /* take care that this execstr can be enclosed in a errcatch protected evaluation */
+  errcatch_all =( stack.val->errcatch == TRUE ) ? TRUE :  errcatch;
+  pausecatch_all = ( stack.val->pause == FALSE ) ? TRUE: pausecatch;
+
   if ( lhs == 2 ||  E != NULL )
     {
       /* evaluate the string in a new frame and returns the 
@@ -189,15 +199,15 @@ static int int_parseevalfile_gen(Stack stack, int rhs, int opt, int lhs,int mtlb
 	      goto err;
 	    }
 	}
-      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,
-			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
+      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch_all,
+			       (pausecatch_all == TRUE) ? FALSE: TRUE,mtlb);
       if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
       nsp_frame_delete();
     }
   else 
     {
-      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch,
-			       (pausecatch == TRUE) ? FALSE: TRUE,mtlb);
+      rep =nsp_parse_eval_file(fname_expanded,display,echo,errcatch_all,
+			       (pausecatch_all == TRUE) ? FALSE: TRUE,mtlb);
     }
   if ( rep < 0 )
     {
@@ -418,11 +428,6 @@ static int int_halt(Stack stack, int rhs, int opt, int lhs)
  * lasterror
  */
 
-/* FIXME */
-
-NspSMatrix *nsp_lasterror_get() ;
-void nsp_lasterror_clear() ;
-
 static int int_lasterror(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *rep = nsp_lasterror_get();
@@ -448,16 +453,22 @@ static int int_lasterror(Stack stack, int rhs, int opt, int lhs)
  */
 
 static int nsp_execf(Stack stack,int rhs, int opt, int lhs, 
-		     NspPList *PL, int echo, int display, int pausecatch)
+		     NspPList *PL, int display, int echo,int errcatch, int pause)
 {
   int rep;
 #ifdef  WITH_SYMB_TABLE
   NspPList *PL1;
 #endif 
   int cur_echo= nsp_set_echo_input_line(echo);
+  int errcatch_cur = stack.val->errcatch;
+  int pause_cur = stack.val->pause;
+
   NspFname(stack) = ((NspObject *) PL)->name;
   NspFileName(stack) = ((NspPList *) PL)->file_name;
-  stack.val->pause = (pausecatch== TRUE) ? FALSE: TRUE;
+
+  /* must be reset at the end */
+  stack.val->errcatch = errcatch; 
+  stack.val->pause = pause; 
 #ifdef  WITH_SYMB_TABLE
   /* we cannot execute macro code in a context were its 
    * symbol table is not present 
@@ -470,6 +481,8 @@ static int nsp_execf(Stack stack,int rhs, int opt, int lhs,
   rep=nsp_eval_macro_body((NspObject *) PL,stack,stack.first+rhs+1,0,0,0,display);
 #endif 
   nsp_set_echo_input_line(cur_echo);
+  stack.val->errcatch= errcatch_cur; 
+  stack.val->pause= pause_cur;
   return rep;
 }
 
@@ -478,6 +491,7 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
   NspHash *H=NULL,*E=NULL;
   NspPList *PL;
   NspObject *Ob;
+  int errcatch_all, pausecatch_all;
   int display=FALSE,echo =FALSE,errcatch=FALSE,pausecatch=FALSE,rep, ans = OK ;
   int_types T[] = {obj ,new_opts, t_end} ;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
@@ -492,6 +506,10 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
   if ( IsNspPList(NSP_OBJECT(PL)) == FALSE ) return RET_BUG;
   NthObj(rhs+1)=NthObj(1);
   
+  /* take care that this execstr can be enclosed in a errcatch protected evaluation */
+  errcatch_all =( stack.val->errcatch == TRUE ) ? TRUE :  errcatch;
+  pausecatch_all = ( stack.val->pause == FALSE ) ? TRUE: pausecatch;
+
   if ( lhs == 2 ||  E != NULL )
     {
       /* evaluate the function in a new frame and returns the 
@@ -509,13 +527,15 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
 	      return RET_BUG;
 	    }
 	}
-      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,pausecatch);
+      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,errcatch_all,
+		      (pausecatch_all == TRUE) ? FALSE: TRUE);
       if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
       nsp_frame_delete();
     }
   else 
     {
-      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,pausecatch);
+      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,errcatch_all,
+		      (pausecatch_all == TRUE) ? FALSE: TRUE);
     }
   
   if ( rep == RET_CTRLC ) 
@@ -531,10 +551,13 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
     }
   if ( ans == FAIL && errcatch == FALSE )
     {
-      nsp_error_message_show();
+      /* nsp_error_message_show(); */
       return RET_BUG;
     }
-  if ( errcatch == TRUE )  nsp_error_message_to_lasterror();
+  if ( errcatch == TRUE ) 
+    {
+      nsp_error_message_to_lasterror();
+    }
   if (( Ob =nsp_create_boolean_object(NVOID,(ans == FAIL) ? FALSE: TRUE)) == NULLOBJ )
     return RET_BUG;
   MoveObj(stack,1,Ob);
@@ -553,7 +576,6 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
  */
 
 /* XXX */
-extern nsp_string       nsp_absolute_file_name( char *fname);
 
 static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
 {
@@ -621,7 +643,6 @@ static int int_find_macro(Stack stack, int rhs, int opt, int lhs)
 /* FIXME: juste here for testing 
  * 
  */
-
 extern double nsp_timer(void);
 
 static int int_find_macro_symbol(Stack stack, int rhs, int opt, int lhs)

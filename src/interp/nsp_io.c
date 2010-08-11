@@ -493,9 +493,14 @@ void nsp_error_message_to_lasterror(void)
 {
   int i;
   if ( lasterror== NULLSMAT ) 
-    lasterror =  nsp_smatrix_create(NVOID,0,0,NULL,0);
+    {
+      lasterror =  nsp_smatrix_create(NVOID,0,0,NULL,0);
+    }
   else 
-    nsp_smatrix_resize(lasterror,0,0);
+    {
+      /* keep previous messages */
+      /* nsp_smatrix_resize(lasterror,0,0); */
+    }
   if ( lasterror != NULLSMAT ) 
     for ( i = 0 ; i < ((NspSMatrix *)SciStack.val->error_msg)->mn; i++) 
       nsp_row_smatrix_append_string(lasterror,((NspSMatrix *)SciStack.val->error_msg)->S[i]);
