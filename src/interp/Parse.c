@@ -53,6 +53,7 @@ int debugI =0 ;
 #endif
 
 static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause);
+static int DirParseAndXdrSave (Tokenizer *T,const char *Dir);
 
 /*
  * Set Ctrl_C action while parsing 
@@ -242,9 +243,15 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
     }
 
   if ( errcatch == FALSE ) 
-    nsp_error_message_show();
+    {
+      /* nothing to do, we propagate the error messages */
+      /* nsp_error_message_show(); */
+    }
   else 
-    nsp_error_message_to_lasterror();
+    {
+      /* fill the contents of lasterror */
+      nsp_error_message_to_lasterror();
+    }
   /* restore current input function */
   NspFileName(SciStack) = file_name;
   nsp_set_echo_input_line(cur_echo);
@@ -311,7 +318,6 @@ int nsp_parse_eval_from_std(int display)
   return 0;
 }
 
-static int DirParseAndXdrSave (Tokenizer *T,const char *Dir);
 
 /**
  * nsp_parse_eval_dir:

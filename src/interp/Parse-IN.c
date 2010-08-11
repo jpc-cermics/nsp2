@@ -235,13 +235,7 @@ static int int_parseevalfile_mtlb(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * execstr(...) 
- * we must copy the argument since it can be 
- * changed by execstr as in 
- * x=['x=90';'z=80']
- * execstr(x);
- * XXXX a revoir pour les pbs de recursions 
- * dans ParseEvalLoop
+ * interface for execstr.
  */
 
 static int int_execstr(Stack stack, int rhs, int opt, int lhs)
@@ -250,15 +244,27 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
   NspObject *Ob;
   NspSMatrix *S= NULL;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
-  int_types T[] = {smat,new_opts, t_end} ;
+  int errcatch_all, pausecatch_all;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
 		      { "echo",s_bool,NULLOBJ,-1},
 		      { "env", obj_check,NULLOBJ,-1},
 		      { "errcatch",s_bool,NULLOBJ,-1},
 		      { "pausecatch",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  if ( GetArgs(stack,rhs,opt,T,&S,&opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
+  /*
+   * we must take care to copy the argument here in order 
+   * to remove a named variable from the stack, just in 
+   * case the variable value is changed by the parse eval 
+   * below as for example in  x=['x=90';'z=80']; execstr(x);
+   */
+  if ((S=GetSMatCopy(stack,1))== NULLSMAT) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
     return RET_BUG;
+  if ((S = nsp_smatrix_copy(S)) == NULLSMAT ) return RET_BUG ;
+
+  /* take care that this execstr can be enclosed in a errcatch protected evaluation */
+  errcatch_all =( stack.val->errcatch == TRUE ) ? TRUE :  errcatch;
+  pausecatch_all = ( stack.val->pause == FALSE ) ? TRUE: pausecatch;
 
   if ( lhs == 2 ||  E != NULL )
     {
@@ -277,13 +283,13 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 	      return RET_BUG; 
 	    }
 	}
-      rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
+      rep =nsp_parse_eval_from_smat(S,display,echo,errcatch_all,(pausecatch_all == TRUE) ? FALSE: TRUE );
       if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
       nsp_frame_delete();
     }
   else 
     {
-      rep =nsp_parse_eval_from_smat(S,display,echo,errcatch,(pausecatch == TRUE) ? FALSE: TRUE );
+      rep =nsp_parse_eval_from_smat(S,display,echo,errcatch_all,(pausecatch_all == TRUE) ? FALSE: TRUE );
     }
   if ( rep < 0 )
     {
