@@ -1289,7 +1289,7 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
 	  if ( mesh == TRUE ) 
 	    {
 	      Xgc->graphic_engine->xset_pattern(Xgc,cpat);
-	      draw_triangle(Xgc,sx,sy);
+	      draw_triangle(Xgc,sx,sy); 
 	    }
 	}
       Xgc->graphic_engine->xset_pattern(Xgc,cpat);
@@ -1341,8 +1341,8 @@ static void nsp_draw_fec(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void
     {
       nsp_draw_colorbar(Xgc,((NspGraphic *) P)->obj->Axe,zmin ,zmax, colors_minmax);
     }
-  nsp_draw_fec_levels(Xgc,Obj,rect,data);
-
+  if ( FALSE ) 
+    nsp_draw_fec_levels(Xgc,Obj,rect,data);
 }
 
 
