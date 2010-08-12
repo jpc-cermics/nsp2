@@ -195,6 +195,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
       break;
     case curve_stem:
       {
+	int iflag=0;
 	double *xm=NULL,*ym=NULL;
 	int n= 2*M->m,i;
 	xm = graphic_alloc(0,n,sizeof(double));
@@ -211,11 +212,7 @@ static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	    xm[2*i+1]= M->R[i];
 	    ym[2*i+1]= M->R[i+M->m];
 	  }
-	for ( i = 0 ; i < M->m ; i++)
-	  {
-	    int iflag=0;
-	    Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,&P->obj->color,iflag);
-	  }
+	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*M->m,&P->obj->color,iflag);
       }
       break;
     case curve_arrow: 
