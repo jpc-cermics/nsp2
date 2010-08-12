@@ -970,7 +970,7 @@ void GMatrix1_Interf_Info(int i, char **fname, function (**f))
  *  and the rectangle is painted with a color which depends on 
  *  the value of zmoy 
  *  the z values, or values from zminmax=[zmin,zmax] if @zminmax is non NULL
- *  are linearly remapped to the min and max values of clors in 
+ *  are linearly remapped to the min and max values of colors in 
  *  the current colormap or to [colormin,colormax] if @colminmax is non NULL.
  *  if remap is set to false @z values are directly casted to color values. 
  *  colout can be used to give the colors for z values which are below 

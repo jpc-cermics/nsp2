@@ -889,9 +889,7 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
   
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
-
-  /* check if the block is inside drawing rectangle
-   */
+  /* check if the block is inside drawing rectangle   */
 
   if ( ! nsp_graphic_intersect_rectangle(Obj, rect))
     {
@@ -902,7 +900,6 @@ static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,
   Mat2int(P->obj->style);
   nsp_contour2d_draw(Xgc,x,y,z,n1,n2,P->obj->nlevels,P->obj->levels->R,P->obj->style->I);
 }
-
 
 static void nsp_translate_contour(NspGraphic *Obj,const double *tr)
 {
@@ -932,7 +929,6 @@ static void nsp_scale_contour(NspGraphic *Obj,double *alpha)
   for ( i = 0 ; i < P->obj->y->mn ; i++) 
     P->obj->x->R[i] *= alpha[1];
   nsp_graphic_invalidate((NspGraphic *) Obj);
-
 }
 
 /* compute in bounds the enclosing rectangle of contour 
@@ -959,4 +955,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 963 "contour.c"
+#line 959 "contour.c"
