@@ -30,7 +30,7 @@
 [Setup]
 AppName=Nsp
 AppVerName=Nsp 1.0
-AppVersion=1.0-2
+AppVersion=1.0-4
 AppPublisherURL=http://www.gtk.org
 AppSupportURL=http://www.gtk.org
 AppUpdatesURL=http://www.gtk.org
@@ -51,7 +51,7 @@ BackColor=clPurple
 BackColor2=clBlack
 Compression=bzip/9
 OutputDir=..
-OutputBaseFilename=nsp2-2010-03-25
+OutputBaseFilename=nsp2-2010-08-12
 ;;[Registry]
 ;;Root: HKLM; Subkey: "Software\Nsp"; Flags: uninsdeletekeyifempty
 ;;Root: HKLM; Subkey: "Software\Nsp\1.0"; Flags: uninsdeletekey
