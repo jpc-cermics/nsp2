@@ -87,5 +87,12 @@ extern menu_answer nsp_multi_dialog_(const char *title,char **pszTitle, char **p
 
 extern void nsp_dialogs_insert_title(const char *title,GtkWidget *vbox);
 
+/* set the stop button handler */
+
+typedef void (*Stop_menu_handler) (void);
+
+extern Stop_menu_handler set_stop_menu_handler( Stop_menu_handler f) ;
+extern void reset_stop_menu_handler(void);
+
 #endif 
 

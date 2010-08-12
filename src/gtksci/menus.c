@@ -1097,17 +1097,40 @@ static void nsp_menu_stop_audio (void)
 #endif 
 }
 
-
-
 /*-----------------------------------------------------------------
  * make a stop for scicos 
  *-----------------------------------------------------------------*/
+
+/**
+ * set_stop_button_handler:
+ * @f: 
+ * 
+ * changes the default stop_button handler 
+ * 
+ * Return value: the previous stop_button   handler
+ **/
+
+void nsp_stop_menu_handler_void(void) {};
+
+static Stop_menu_handler nsp_stop_menu_handler = nsp_stop_menu_handler_void;
+
+Stop_menu_handler set_stop_menu_handler( Stop_menu_handler f) 
+{
+  Stop_menu_handler old =  nsp_stop_menu_handler;
+  nsp_stop_menu_handler=f;
+  return old;
+}
+
+void reset_stop_menu_handler(void)
+{
+  nsp_stop_menu_handler=  nsp_stop_menu_handler_void;
+}
 
 /* extern void scicos_send_halt(void); */
 
 static void nsp_menu_scicos_stop (void)
 {
-  /* scicos_send_halt(); */
+  nsp_stop_menu_handler();
 }
 
 /*-----------------------------------------------------------------
