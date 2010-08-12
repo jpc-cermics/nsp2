@@ -15,6 +15,8 @@
 -nsp->// along with this program; if not, write to the Free Software
 -nsp->// Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 -nsp->//
+-nsp->// test of varargin,varargopt 
+-nsp->//--------------------------
 -nsp->H=hash_create(A=1,B=2,C=3);
 -nsp->function y=f(x,varargopt);y=varargopt;endfunction;
 -nsp->function y=g(x,varargopt);y=f(x,varargopt(:));endfunction;
@@ -52,5 +54,59 @@
 -nsp->if z<>4 | ~w.equal[hash_create(A=100,B=2,C=3)] then pause;end 
 -nsp->[z,w]=f(4,5,c=100);
 -nsp->if z<>4 | ~w.equal[hash_create(A=1,B=2,C=100)] then pause;end 
--nsp->  
--nsp->  
+-nsp->// test of varargout 
+-nsp->// -------------------
+-nsp->function varargout=f() 
+==>    varargout=list();
+==>    for i=1:nargout 
+==>      varargout(i)=i
+==>    end
+==>endfunction
+f	=		pl (file='function.tst')
+
+  [34mfunction[0m varargout=f()
+    varargout=list();
+
+    [34mfor[0m i=1:nargout 
+    [34mdo[0m
+      varargout(i)=i
+    [34mend[0m
+  [34mendfunction[0m
+-nsp->[a,b]=f();
+-nsp->[a,b,c]=f();
+-nsp->if a <> 1 then pause;end 
+-nsp->if b <> 2 then pause;end 
+-nsp->if c <> 3 then pause;end 
+-nsp->// test of function redefinition 
+-nsp->// -----------------------------
+-nsp->// perms is a library function which can be redefined 
+-nsp->// when called through f. 
+-nsp->// Unfortunately this ugly feature is used by scicos !
+-nsp->function y=f(x)
+==>  function y=perms(x)
+==>    y="redefined"
+==>  endfunction
+==>  y=g(x);
+==>endfunction
+f	=		pl (file='function.tst')
+
+  [34mfunction[0m y=f(x)
+    [34mfunction[0m y=perms(x)
+      y="redefined"
+    [34mendfunction[0m
+    y=g(x);
+  [34mendfunction[0m
+-nsp->function y=g(x)
+==>  y=perms(x)
+==>endfunction
+g	=		pl (file='function.tst')
+
+  [34mfunction[0m y=g(x)
+    y=perms(x)
+  [34mendfunction[0m
+-nsp->// g used the perms defines in lib 
+-nsp->y=g(1:2);
+-nsp->if ~y.equal[[1,2;2,1]] then pause;end 
+-nsp->// perms redefined locally inside f 
+-nsp->y=f(1:2);
+-nsp->if y~="redefined" then pause;end 

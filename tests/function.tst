@@ -16,6 +16,9 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 //
 
+// test of varargin,varargopt 
+//--------------------------
+
 H=hash_create(A=1,B=2,C=3);
 function y=f(x,varargopt);y=varargopt;endfunction;
 function y=g(x,varargopt);y=f(x,varargopt(:));endfunction;
@@ -60,11 +63,44 @@ if z<>4 | ~w.equal[hash_create(A=100,B=2,C=3)] then pause;end
 [z,w]=f(4,5,c=100);
 if z<>4 | ~w.equal[hash_create(A=1,B=2,C=100)] then pause;end 
 
+// test of varargout 
+// -------------------
 
+function varargout=f() 
+    varargout=list();
+    for i=1:nargout 
+      varargout(i)=i
+    end
+endfunction
 
-  
+[a,b]=f();
+[a,b,c]=f();
+if a <> 1 then pause;end 
+if b <> 2 then pause;end 
+if c <> 3 then pause;end 
 
-  
+// test of function redefinition 
+// -----------------------------
+// perms is a library function which can be redefined 
+// when called through f. 
+// Unfortunately this ugly feature is used by scicos !
 
+function y=f(x)
+  function y=perms(x)
+    y="redefined"
+  endfunction
+  y=g(x);
+endfunction
 
+function y=g(x)
+  y=perms(x)
+endfunction
+
+// g used the perms defines in lib 
+y=g(1:2);
+if ~y.equal[[1,2;2,1]] then pause;end 
+
+// perms redefined locally inside f 
+y=f(1:2);
+if y~="redefined" then pause;end 
 
