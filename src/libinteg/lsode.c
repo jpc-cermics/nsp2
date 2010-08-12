@@ -1,5 +1,5 @@
+#include <nsp/machine.h> 
 #include "integ.h"
-
 
 #define ls0001_1 ls0001_._1
 
@@ -8,8 +8,11 @@
 ode_ls0001 ls0001_;
 ode_lsa lsa001_;
 ode_lsr lsr001_;
-ode_err ierode_;
 ode_callerid callerid_;
+
+/* we export this symbol */
+EXPORT ode_err ierode_;
+
 
 /* Table of constant values */
 

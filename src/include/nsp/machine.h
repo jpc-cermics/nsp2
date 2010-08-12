@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 /* Nsp
- * Copyright (C) 1998-2007 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -299,5 +299,17 @@ typedef int integer;
 
 /* use relative exec directories */
 #define UPDATE_EXEC_DIR 1
+
+
+#if defined(WIN32) || defined(__MINGW32__)
+/* to be used when compiling libraries which need 
+ * to import nsp data.
+ */
+#define IMPORT extern  __declspec (dllimport)
+#define EXPORT __declspec (dllexport) 
+#else 
+#define IMPORT extern
+#define EXPORT 
+#endif
 
 #endif /* MACHINE_H  */
