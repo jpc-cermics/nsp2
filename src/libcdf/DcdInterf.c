@@ -100,12 +100,12 @@ static void cdfbetErr( int status, double bound, const int pos[])
   static char param[]="-PQXYAB";
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     case 4 : Scierror(" X + Y .ne. 1 \n");break;
     default : 
-      Scierror("input parameter %c is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %c is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -165,12 +165,12 @@ static void cdfbinErr(     int status,   double bound, const int pos[])
   static char *param[7]={"Which","P","Q","S" ,"Xn","PrOmpr"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     case 4 : Scierror(" Pr + Ompr .ne. 1 \n");break;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -223,12 +223,12 @@ static void cdfchiErr(     int status,   double bound, const int pos[])
   static char *param[7]={"X","P","Q","X","Df"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     case 10 : Scierror("cdfchi: Error in  cumgam\n");break;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -286,11 +286,11 @@ static void cdffErr(     int status,   double bound, const int pos[])
   static char *param[7]={"WHICH","P","Q","F","Dfn","Dfd"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -354,11 +354,11 @@ static void cdffncErr(     int status,   double bound, const int pos[])
   static char *param[7]={"WHICH","P","Q","F","Dfn","Dfd","Pnonc"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -416,12 +416,12 @@ static void cdfgamErr(int status,double bound, const int pos[])
   static char *param[7]={"WHICH","P","Q","X","Shape","Scale"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror("P + Q .ne. 1 \n");break ;
     case 10 : Scierror(" cannot compute the answer \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -478,12 +478,12 @@ static void cdfnbnErr(    int status,double bound, const int pos[])
   static char *param[]={"WHICH", "P","Q","S","Xn","PrOmpr"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     case 4 : Scierror(" Pr + Ompr .ne. 1 \n");break;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -540,13 +540,13 @@ static void cdfnorErr(    int status,double bound, const int pos[])
   static char *param[]={"WHICH", "P","Q","X","Mean","Std"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     case 4 : Scierror(" Std must not be zero \n");break ;
     default : 
       iname = Max(0,Min(5,-status -1));
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",param[iname],bound);
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",param[iname],bound);
     }
 }
 
@@ -595,11 +595,11 @@ static void cdfpoiErr(    int status,double bound, const int pos[])
   static char *param[7]={"WHICH", "P","Q","S","Xlam"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -649,11 +649,11 @@ static void cdftErr(    int status,double bound, const int pos[])
   static char *param[7]={"WHICH", "P","Q","T","Df"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -707,11 +707,11 @@ static void cdftncErr(    int status,double bound, const int pos[])
   static char *param[7]={"WHICH", "P","Q","T","Df"};
   switch ( status ) 
     {
-    case 1 : Scierror("answer appears to be lower than lowest search bound %f\n",bound);break;
-    case 2 : Scierror("answer appears to be higher than greatest search bound %f\n",bound);break;
+    case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
+    case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
@@ -771,7 +771,7 @@ static void cdfchnErr(    int status,double bound, const int pos[])
     case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
     default : 
-      Scierror("input parameter %s is out of range \n\tbound exceeded: %f\n",
+      Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
     }
 }
