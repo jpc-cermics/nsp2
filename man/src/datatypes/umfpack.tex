@@ -32,7 +32,7 @@ can then be used to solve linear systems. \emph{Umfpack} data type are usefull i
 repeated use of the \verb+solve+ method for the same matrix is to be used, 
 since the factorization is kept in the \emph{Umfpack} object. When just one linear 
 system is to be solved the simplified version \verb+xf=umfpack_solve(As,Bf)+ can be used. 
-The optional arguments of \verb+umfpack_solve+ are described below in the umfpack methode 
+The optional arguments of \verb+umfpack_solve+ are described below in the umfpack method
 \verb+solve+.
 
 \paragraph{Operations on umfpack}
@@ -64,17 +64,23 @@ The following methods are available for Umfpack objects:
   \end{varlist}
 
 \begin{examples}
-  \begin{program}\HCode{Af = sprand(10,10,0.8);\Hnewline
-      A= umfpack_create(Af);\Hnewline
-      A.isreal[]\Hnewline
-      A.det[] \Hnewline
-      A.rcond[] \Hnewline
-      b=rand(10,2);\Hnewline 
-      xu= A.solve[b];\Hnewline 
-      norm(Af*xu- b)\Hnewline 
-      xu1 = umfpack_solve(Af,b);} 
-  \end{program}
- \end{examples}
+\begin{Verbatim}
+Af = sprand(10,10,0.8);
+A= umfpack_create(Af);
+A.isreal[]
+A.det[] 
+A.rcond[] 
+b=rand(10,2); 
+xu= A.solve[b]; 
+norm(Af*xu- b) 
+xu1 = umfpack_solve(Af,b);
+\end{Verbatim}
+\end{examples}
+
+\begin{manseealso}
+\manlink{Cholmod}{Cholmod}, \manlink{lu}{lu}
+\end{manseealso}
+
 
 % -- Authors
 \begin{authors}

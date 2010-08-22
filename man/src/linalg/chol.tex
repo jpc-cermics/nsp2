@@ -23,9 +23,10 @@ not positive definite).
 \end{parameters}
 
 \begin{mandescription}
-This function computes the Cholesky factorization of a symmetric positive 
+This function computes the Cholesky factorization of a (full) symmetric positive 
 definite real or complex matrix, or a partial factorization if the matrix is not 
-positive definite.
+positive definite (for Cholesky factorization of sparse matrices see  
+\manlink{cholmod\_create}{chomod_create}).
 
 When called as \verb+R = chol(A)+, if \verb+A+ is positive definite, an upper triangular 
 matrix \verb+R+ such that \verb+R'*R = X+ is returned, if not an error exception is 
@@ -44,23 +45,26 @@ matrices and \verb+zpotrf+ for the complex case.
 
 \begin{examples}
 \paragraph{example 1} with positive definite matrices 
-  \begin{program}\HCode{A=rand(5,5);A=A*A';\Hnewline
-      R = chol(A);\Hnewline
-      norm(R'*R-A)\Hnewline
-      A=rand(5,5)+\%i*rand(5,5);\Hnewline
-      A=A*A';\Hnewline
-      R=chol(A);\Hnewline
-      norm(R'*R-A)}
-  \end{program}
-  \paragraph{example 2} Example with a not positive definite matrix
-  \begin{program}\HCode{A=rand(5,3);A=A*A';\Hnewline
-      [R,p] = chol(A);\Hnewline
-      q=p-1;norm(R'*R-A(1:q,1:q))}
-  \end{program}
+\begin{Verbatim}
+A=rand(5,5);A=A*A';
+R = chol(A);
+norm(R'*R-A)
+A=rand(5,5)+%i*rand(5,5);
+A=A*A';
+R=chol(A);
+norm(R'*R-A)
+\end{Verbatim}
+
+\paragraph{example 2} Example with a not positive definite matrix
+\begin{Verbatim}
+A=rand(5,3);A=A*A';
+[R,p] = chol(A);
+q=p-1;norm(R'*R-A(1:q,1:q))
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}
-  \manlink{qr}{qr} 
+  \manlink{cholmod\_create}{chomod_create}, \manlink{lu}{lu},\manlink{qr}{qr},  \manlink{solve}{solve} 
 \end{manseealso}
 
 % -- Authors
