@@ -68,7 +68,8 @@ function F = nchoosek(E, k)
 	 for i=2:k
 	    T{1} = E(n-i+1:n) 
 	    for j=2:p
-	       T{j} = [ repmat(E(n-i+2-j),size(T{j},1),1) , T{j} ; T{j-1} ]
+	       Tj = T{j};
+	       T{j} = [ repmat(E(n-i+2-j),size(Tj,1),1) , Tj ; T{j-1} ]
 	    end
 	 end
 	 F = T{$};
