@@ -507,7 +507,7 @@ static int int_nsp_macro_get_args(NspPList *self,Stack stack, int rhs, int opt, 
 
 /* XXXXX: to be moved in .h */
 
-extern NspList *nsp_plist_to_list(PList L);
+extern NspList *nsp_plist_to_list(const char *name,PList L);
 
 
 static int int_nsp_macro_to_list(NspPList *self,Stack stack, int rhs, int opt, int lhs)
@@ -515,7 +515,7 @@ static int int_nsp_macro_to_list(NspPList *self,Stack stack, int rhs, int opt, i
   NspList *L;
   CheckRhs(0,0);
   CheckLhs(0,1);
-  if ((L= nsp_plist_to_list(self->D))== NULLLIST ) return RET_BUG;
+  if ((L= nsp_plist_to_list(NVOID,self->D))== NULLLIST ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(L));
   return 1;
 }
@@ -600,7 +600,7 @@ static int int_plist_to_list(Stack stack, int rhs, int opt, int lhs)
   NspPList *PL;
   CheckRhs(1,1);
   if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
-  if ((L= nsp_plist_to_list(PL->D))== NULLLIST ) return RET_BUG;
+  if ((L= nsp_plist_to_list(NVOID,PL->D))== NULLLIST ) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(L));
   return 1;
 }

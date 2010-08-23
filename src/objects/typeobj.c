@@ -62,6 +62,7 @@ extern void *new_type_spolyhedron(type_mode mode);
 extern void *new_type_string3d(type_mode mode);
 extern void *new_type_surf(type_mode mode);
 extern void *new_type_vfield(type_mode mode);
+extern void *new_type_astnode(type_mode mode);
 
 /* 
  * NspType inherits from NspObject
@@ -576,6 +577,7 @@ void primitive_types_register(void)
   new_type_mpmatrix(T_BASE);
   new_type_classaref(T_BASE);
   new_type_classbref(T_BASE);
+  new_type_astnode(T_BASE);
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */

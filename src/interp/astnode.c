@@ -213,7 +213,28 @@ static int nsp_astnode_xdr_save(XDR *xdrs, NspAstNode *M)
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->op) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->arity) == FAIL) return FAIL;
-  if (nsp_xdr_save_i(xdrs, NSP_POINTER_TO_INT(M->obj->obj)) == FAIL) return FAIL;
+  switch ( M->obj->op ) 
+    {
+    case NUMBER:
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
+    case NAME :
+    case OPNAME :
+      if (nsp_xdr_save_string(xdrs,(char *) M->obj->obj) == FAIL) return FAIL;
+      break;
+    case STRING:
+    case COMMENT:
+      if (nsp_xdr_save_i(xdrs,strlen( M->obj->obj))== FAIL) return FAIL;
+      if (nsp_xdr_save_array_c(xdrs,(char *) M->obj->obj, strlen( M->obj->obj)) == FAIL) return FAIL;
+      break;
+    case OBJECT :
+      if (nsp_object_xdr_save(xdrs,(NspObject *) M->obj->obj) == FAIL) return FAIL;
+      break;
+    default:
+      if (nsp_xdr_save_i(xdrs, NSP_POINTER_TO_INT(M->obj->obj)) == FAIL) return FAIL;
+    }
   return OK;
 }
 
@@ -223,16 +244,45 @@ static int nsp_astnode_xdr_save(XDR *xdrs, NspAstNode *M)
 
 static NspAstNode  *nsp_astnode_xdr_load(XDR *xdrs)
 {
-  int line;
+  NspObject *Obj;
+  int line,lstr;
   NspAstNode *M = NULL;
   static char name[NAME_MAXL];
+  char *str;
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLASTNODE;
-  if ((M  = astnode_create_void(name,(NspTypeBase *) nsp_type_astnode))== NULLASTNODE) return M;
-  if ((M->obj = malloc(sizeof(nsp_astnode))) == NULL) return NULL;
+  if ((M  = astnode_create_void(name,(NspTypeBase *) nsp_type_astnode))== NULLASTNODE)
+    return M;
+  if((M->obj = calloc(1,sizeof(nsp_astnode)))== NULL ) return NULL;
+  M->obj->ref_count = 1;
   if (nsp_xdr_load_i(xdrs, &M->obj->op) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->arity) == FAIL) return NULL;
-  if (nsp_xdr_load_i(xdrs, &line) == FAIL) return NULL;
-  M->obj->obj = NSP_INT_TO_POINTER(line);
+  switch ( M->obj->op ) 
+    {
+    case NUMBER:
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
+    case NAME :
+    case OPNAME :
+      if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLASTNODE;
+      if ((str = nsp_string_copy(name)) ==NULL) return NULLASTNODE;
+      M->obj->obj = str;
+      break;
+    case STRING:
+    case COMMENT:
+      if (nsp_xdr_load_i(xdrs,&lstr) == FAIL) return  NULLASTNODE;
+      if ((M->obj->obj  = new_nsp_string_n(lstr)) == NULLSTRING ) return NULLASTNODE; 
+      if (nsp_xdr_load_array_c(xdrs,M->obj->obj, lstr) == FAIL) return  NULLASTNODE;
+      break;
+    case OBJECT :
+      if ((Obj =nsp_object_xdr_load(xdrs)) == NULL) return NULLASTNODE;
+      M->obj->obj = Obj;
+      break;
+    default:
+      if (nsp_xdr_load_i(xdrs, &line) == FAIL) return NULL;
+      M->obj->obj = NSP_INT_TO_POINTER(line);
+    }
   return M;
 }
 
@@ -246,6 +296,25 @@ void nsp_astnode_destroy(NspAstNode *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
     {
+      NspObject *Obj;
+      switch ( H->obj->op ) 
+	{
+	case NUMBER:
+	case INUMBER32:
+	case INUMBER64:
+	case UNUMBER32:
+	case UNUMBER64:
+	case NAME :
+	case OPNAME :
+	case STRING:
+	case COMMENT:
+	  FREE(H->obj->obj);
+	  break;
+	case OBJECT :
+	  Obj = (NspObject *) H->obj->obj;
+	  nsp_object_destroy(&Obj);
+	  break;
+	}
       FREE(H->obj);
     }
   FREE(H);
@@ -434,6 +503,9 @@ int int_astnode_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if((H->obj = calloc(1,sizeof(nsp_astnode)))== NULL ) return RET_BUG;
   H->obj->ref_count = 1;
+  H->obj->op= 0;
+  H->obj->arity=0;
+  H->obj->obj= NULL;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;

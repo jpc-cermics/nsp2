@@ -200,6 +200,7 @@ int nsp_parse_add_object(PList *plist, NspObject *obj )
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   loc1->O = obj;
   loc1->type = OBJECT ;
+  loc1->arity = 0; /* for names arity can be used as a work integer */
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -231,6 +232,7 @@ int nsp_parse_add_string(PList *plist, char *str)
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   if (( loc1->O =new_nsp_string(str)) == NULLSTRING) return(FAIL);
   loc1->type = STRING;
+  loc1->arity = 0; /* for names arity can be used as a work integer */
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -262,6 +264,7 @@ int nsp_parse_add_comment(PList *plist, char *str)
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   if (( loc1->O =new_nsp_string(str)) == NULLSTRING) return(FAIL);
   loc1->type = COMMENT;
+  loc1->arity = 0; /* for names arity can be used as a work integer */
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -301,6 +304,7 @@ int nsp_parse_add_list(PList *plist, PList *l)
 	return(FAIL);
       loc1->O = *l;
       loc1->type = PLIST;
+      loc1->arity= 0;
     }
   if ( loc == NULLPLIST) 
     {
@@ -360,6 +364,7 @@ int nsp_parse_add_list1(PList *plist, PList *l)
   PList loc1;
   if ((loc1 =nsp_eplist_create()) == NULLPLIST )  return(FAIL);
   loc1->type = PLIST ;
+  loc1->arity= 0;
   loc1->O = *l;
   *plist = loc1;
   return(OK);
@@ -400,6 +405,7 @@ int nsp_parse_add_doublei(PList *plist, char *str)
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   if (( loc1->O = new_nsp_parsed_double(str)) == NULLSTRING) return(FAIL);
   loc1->type = NUMBER;
+  loc1->arity= 0;
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -467,6 +473,7 @@ int nsp_parse_add_inti(PList *plist, char *str, int type)
   if ( (loc1 =nsp_eplist_create()) == NULLPLIST ) return(FAIL);
   if (( loc1->O = new_nsp_parsed_int(str,type)) == NULLSTRING) return(FAIL);
   loc1->type = type;
+  loc1->arity= 0;
   if ( loc == NULLPLIST) 
     {
       *plist = loc1;
@@ -642,17 +649,20 @@ PList nsp_plist_copy_no_local_vars(PList L)
 
 /**
  * _nsp_list_add:
+ * @name:
  * @list: 
  * @op: 
  * @arity: 
  * @data: 
  * 
- * creates a new astnode and insert it in a #NspList 
+ * creates a new astnode and insert it in a #NspList at 
+ * the end if @list is non NULL or creates a new list if 
+ * @list is %NULL.
  * 
  * Return value: %OK or %FAIL.
  **/
 
-static int _nsp_list_add(NspList **list, int op, int arity,void *data)
+static int _nsp_list_add(const char *name,NspList **list, int op, int arity,void *data)
 {
   int_types T[]={obj,t_end} ;
   NspAstNode *astn;
@@ -661,7 +671,7 @@ static int _nsp_list_add(NspList **list, int op, int arity,void *data)
     return FAIL;
   if ( *list == NULL )
     {
-      if (( Obj = (NspObject *) BuildListFromArgs("lel",T,astn)) == NULLOBJ ) 
+      if (( Obj = (NspObject *) BuildListFromArgs(name,T,astn)) == NULLOBJ ) 
 	return FAIL;
       *list = (NspList *) Obj;
       return OK;
@@ -701,8 +711,9 @@ static int _nsp_list_add_list(NspList **list,NspList *L)
  * Return value: a new #NspList or %NULLIST.
  **/
 
-NspList *nsp_plist_to_list(PList L)
+NspList *nsp_plist_to_list(const char *name,PList L)
 {
+  char *str;
   NspObject *obj;
   NspList *Res = NULL,*loc=NULL;
   while ( L  != NULLPLIST ) 
@@ -710,27 +721,40 @@ NspList *nsp_plist_to_list(PList L)
       switch ( L->type) 
 	{
 	case OBJECT :
-	  if ((obj=nsp_object_copy(L->O)) == NULLOBJ) return(NULLLIST); 
-	  if ( _nsp_list_add(&Res,L->type,L->arity,obj)==FAIL) return(NULLLIST);
+	  if ((obj=nsp_object_copy_with_name(L->O)) == NULLOBJ) return(NULLLIST); 
+	  if ( _nsp_list_add(name,&Res,L->type,L->arity,obj)==FAIL) return(NULLLIST);
 	  break;
 	case NUMBER :
-	  if ( _nsp_list_add(&Res,L->type,L->arity,((parse_double *) L->O)->str)==FAIL) 
-	    return(NULLLIST);
+	  if ((str = nsp_string_copy(((parse_double *) L->O)->str)) ==NULL)
+	    return NULLLIST;
+	  if ( _nsp_list_add(name,&Res,L->type,L->arity,str) ==FAIL) 
+	    return NULLLIST;
 	  break;
 	case INUMBER32 :
 	case INUMBER64 :
 	case UNUMBER32 :
 	case UNUMBER64 :
-	  if ( _nsp_list_add(&Res,L->type,L->arity,((parse_int *) L->O)->str)==FAIL) 
-	    return(NULLLIST);
+	  if ((str = nsp_string_copy(((parse_int *) L->O)->str)) ==NULL)
+	    return NULLLIST;
+	  if ( _nsp_list_add(name,&Res,L->type,L->arity,str) ==FAIL) 
+	    return NULLLIST;
+	  break;
+	case STRING:
+	case COMMENT:
+	case NAME :
+	case OPNAME :
+	  if ((str = nsp_string_copy((char *) L->O)) ==NULL)
+	    return NULLLIST;
+	  if ( _nsp_list_add(name,&Res,L->type,L->arity,str) ==FAIL) 
+	    return NULLLIST;
 	  break;
 	case PLIST: 
-	  if ((loc= nsp_plist_to_list((PList) L->O)) == NULLLIST) return(NULLLIST);
+	  if ((loc= nsp_plist_to_list("lel",(PList) L->O)) == NULLLIST) return(NULLLIST);
 	  /* if ( _nsp_list_add_list1(&loc1,loc) == FAIL) return (NULLLIST); */
 	  if ( _nsp_list_add_list(&Res,loc)== FAIL) return(NULLLIST);
 	  break;
 	default: 
-	  if ( _nsp_list_add(&Res,L->type,L->arity,L->O)==FAIL) return(NULLLIST);
+	  if ( _nsp_list_add(name,&Res,L->type,L->arity,L->O)==FAIL) return(NULLLIST);
 	}
       L= L->next;
     }
