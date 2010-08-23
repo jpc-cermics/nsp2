@@ -78,24 +78,25 @@ matrix with \manlink{lu}{lu} or \manlink{chol}{chol} (or \manlink{qr}{qr}) you c
 use the backslash operator \verb+\+ to solve the triangular systems with efficiency
 (backslash detects the triangular matrix structure and call the good routine) but 
 using directly \verb+solve+ (with the good option) is faster.
-  \begin{program}\HCode{n=800;b=rand(n,2);A=randn(n,n);\Hnewline
-    [L,U,p] = lu(A); \Hnewline
-    // solving the 2 triangular system with backslash\Hnewline
-    tic(); x = U}\verb+\+\HCode{(L}\verb+\+\HCode{b(p,:)); toc()\Hnewline
-    norm(A*x-b,1)/norm(b) \Hnewline
-    // solving the 2 triangular system with solve\Hnewline
-    tic(); x = solve(U, solve(L,b(p,:),mode="lo"), mode="up"); toc()\Hnewline
-    norm(A*x-b,1)/norm(b) \Hnewline
-    // form a symetric positive definite matrix\Hnewline
-    A = A'*A; // you can use pmult(A,A)\Hnewline
-    C = chol(A); // C'C=A with C upper triangular  \Hnewline
-    // solving the 2 triangular system with backslash\Hnewline
-    tic(); x = C}\verb+\+\HCode{(C'}\verb+\+\HCode{b); toc()\Hnewline
-    norm(A*x-b,1)/norm(b) \Hnewline
-    // solving the 2 triangular system with solve\Hnewline
-    tic(); x = solve(C, solve(C,b,mode="upT"), mode="up"); toc()\Hnewline
-    norm(A*x-b,1)/norm(b)}
-  \end{program}
+  \begin{Verbatim}
+n=800;b=rand(n,2);A=randn(n,n);
+[L,U,p] = lu(A); 
+// solving the 2 triangular system with backslash
+tic(); x = U\(L\b(p,:)); toc()
+norm(A*x-b,1)/norm(b) 
+// solving the 2 triangular system with solve
+tic(); x = solve(U, solve(L,b(p,:),mode="lo"), mode="up"); toc()
+norm(A*x-b,1)/norm(b) 
+// form a symetric positive definite matrix
+A = A'*A; // you can use pmult(A,A)
+C = chol(A); // C'C=A with C upper triangular  
+// solving the 2 triangular system with backslash
+tic(); x = C\(C'\b); toc()
+norm(A*x-b,1)/norm(b) 
+// solving the 2 triangular system with solve
+tic(); x = solve(C, solve(C,b,mode="upT"), mode="up"); toc()
+norm(A*x-b,1)/norm(b)
+  \end{Verbatim}
 
 \end{examples}
 
