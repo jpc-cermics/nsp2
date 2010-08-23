@@ -592,10 +592,53 @@ static int int_astnode_meth_get_opname(NspAstNode *self, Stack stack, int rhs, i
   return Max(lhs,1);
 }
 
+static int int_astnode_meth_is(NspAstNode *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int rep = FALSE;
+  const char *str,*str1;
+  CheckRhs(1,1);
+  CheckLhs(1,1); 
+  if ((str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
+  switch ( ((int) self->obj->op)) 
+    {
+    case STRING: if ( strcmp(str1,"STRING")== 0) rep=TRUE;break;
+    case COMMENT: if ( strcmp(str1,"COMMENT")== 0) rep=TRUE;break;
+    case NUMBER: if ( strcmp(str1,"NUMBER")== 0) rep=TRUE;break;
+    case INUMBER32: if ( strcmp(str1,"INUMBER32")== 0) rep=TRUE;break;
+    case INUMBER64: if ( strcmp(str1,"INUMBER64")== 0) rep=TRUE;break;
+    case UNUMBER32: if ( strcmp(str1,"UNUMBER32")== 0) rep=TRUE;break;
+    case UNUMBER64: if ( strcmp(str1,"UNUMBER64")== 0)rep=TRUE;break;
+    case NAME : if ( strcmp(str1,"NAME")== 0) rep=TRUE;break;
+    case OPNAME : if ( strcmp(str1,"OPNAME")== 0) rep=TRUE;break;
+    case OBJECT :  if ( strcmp(str1,"OBJECT")== 0) rep=TRUE;break;
+    default:
+      str=nsp_astcode_to_name(self->obj->op);
+      if ( str != (char *) 0 && strcmp(str,str1)==0 ) rep = TRUE;
+    }
+  if ( nsp_move_boolean(stack,1, rep) == FAIL)  return RET_BUG;
+  return Max(lhs,1);
+}
+
+static int int_astnode_meth_get_obj(NspAstNode *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( ((int) self->obj->op) != OBJECT )
+    {
+      Scierror("Error: an object can be returned only for astnode of id OBJECT\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1, self->obj->obj);
+  return Max(lhs,1);
+}
+
+
 static NspMethods astnode_methods[] = {
   {"get_id",(nsp_method *) int_astnode_meth_get_op},
   {"get_str",(nsp_method *) int_astnode_meth_get_str},
   {"get_idname",(nsp_method *) int_astnode_meth_get_opname},
+  {"is", (nsp_method *) int_astnode_meth_is},
+  {"get_obj", (nsp_method *) int_astnode_meth_get_obj},
   { NULL, NULL}
 };
 
@@ -647,6 +690,21 @@ static int _wrap_astnode_set_line(void *self, char *attr, NspObject *O)
 {
   int line;
   if ( IntScalar(O,&line) == FAIL) return FAIL;
+  switch (((NspAstNode *) self)->obj->op ) 
+    {
+    case NUMBER:
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
+    case NAME :
+    case OPNAME :
+    case STRING:
+    case COMMENT:
+    case OBJECT :
+      Scierror("Error: cannot set line for this type of astnode\n");
+      return RET_BUG;
+    }
   ((NspAstNode *) self)->obj->obj =(void *) NSP_INT_TO_POINTER(line);
   return OK;
 }
@@ -658,13 +716,9 @@ static AttrTab astnode_attrs[] = {
   { NULL,NULL,NULL,NULL, NULL  },
 };
 
-
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-
-
-
 
 /*----------------------------------------------------
  * Interface 

@@ -491,12 +491,12 @@ static int int_nsp_macro_get_name(NspPList *self,Stack stack, int rhs, int opt, 
   return 1;
 }
 
-static int int_nsp_macro_get_args(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_macro_get_nargs(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
   int pl_lhs,pl_rhsp1;
   CheckRhs(0,0);
   CheckLhs(0,2);
-  plist_get_nargs(self->D,&pl_lhs,&pl_rhsp1);
+  plist_get_nargs(self->D,&pl_lhs,&pl_rhsp1,NULL,NULL);
   if ( nsp_move_double(stack,1,(double) pl_lhs )== FAIL) return RET_BUG;
   if ( lhs == 2 ) 
     {
@@ -505,10 +505,31 @@ static int int_nsp_macro_get_args(NspPList *self,Stack stack, int rhs, int opt, 
   return Max(lhs,1);
 }
 
+static int int_nsp_macro_get_args(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *in=NULL,*out=NULL;
+  int pl_lhs,pl_rhsp1;
+  CheckRhs(0,0);
+  CheckLhs(0,2);
+  if ( lhs >= 1) 
+    {
+      in = nsp_smatrix_create(NVOID,0,0,"v",0);
+    }
+  if ( lhs >= 2) 
+    {
+      out = nsp_smatrix_create(NVOID,0,0,"v",0);
+    }
+  plist_get_nargs(self->D,&pl_lhs,&pl_rhsp1,in,out);
+  if ( lhs >= 1) 
+    MoveObj(stack,1,NSP_OBJECT(in));
+  if ( lhs >= 2) 
+    MoveObj(stack,2,NSP_OBJECT(out));
+  return Max(lhs,0);
+}
+
 /* XXXXX: to be moved in .h */
 
 extern NspList *nsp_plist_to_list(const char *name,PList L);
-
 
 static int int_nsp_macro_to_list(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -533,7 +554,8 @@ static int int_nsp_macro_to_string(NspPList *self,Stack stack, int rhs, int opt,
 
 
 static NspMethods nsp_macro_methods[] = {
-  {"get_name",(nsp_method *) int_nsp_macro_get_name },
+  {"get_fname",(nsp_method *) int_nsp_macro_get_name },
+  {"get_nargs",(nsp_method *) int_nsp_macro_get_nargs },
   {"get_args",(nsp_method *) int_nsp_macro_get_args },
   {"to_list",(nsp_method *) int_nsp_macro_to_list },
   {"to_string",(nsp_method *) int_nsp_macro_to_string },
@@ -575,7 +597,7 @@ static int int_inout(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(1,1);
   CheckLhs(1,2);
   if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
-  plist_get_nargs(PL->D,&pl_lhs,&pl_rhsp1);
+  plist_get_nargs(PL->D,&pl_lhs,&pl_rhsp1,NULL,NULL);
   if ( nsp_move_double(stack,1,(double)pl_lhs )== FAIL) return RET_BUG;
   if ( lhs == 2 ) 
     {

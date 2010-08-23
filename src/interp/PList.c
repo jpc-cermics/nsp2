@@ -2028,9 +2028,7 @@ NspSMatrix *nsp_plist2smatrix(PList L, int indent)
  * 
  */
 
-static void plist_arg_get_nargs(PList L,int *lhs , int *rhsp1);
-
-void plist_get_nargs(PList List,int *lhs , int *rhsp1)
+int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out)
 {
   if ( List->type > 0 )
     {
@@ -2040,43 +2038,66 @@ void plist_get_nargs(PList List,int *lhs , int *rhsp1)
     {
       switch ( List->type ) 
 	{
-	case EQUAL_OP:
 	case OPT:
-	  plist_arg_get_nargs(List->next,lhs,rhsp1);
-	  plist_arg_get_nargs(List->next->next,lhs,rhsp1);
+	  nsp_plist_print_internal(List);
+	  List = List->next ;
+	  if ( in != NULL) 
+	    if ( nsp_row_smatrix_append_string(in,(char *) List->O)  == FAIL) return FAIL;
+	  break;
+	case EQUAL_OP:
+	  List = List->next ;
+	  if ( List != NULLPLIST && List->type == PLIST ) 
+	    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+	  List = List->next ;
+	  if ( List != NULLPLIST && List->type == PLIST ) 
+	    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  break;
 	case MLHS  :
 	  *lhs = List->arity;
+	  if ( out != NULL) 
+	    while ( List->next != NULL ) 
+	      {
+		List = List->next ;
+		if ( nsp_row_smatrix_append_string(out,(char *) List->O) == FAIL)
+		  return FAIL;
+		/* printf("name: %s\n",(char *) List->O); */
+	      }
 	  break;
 	case FEVAL :
 	  *rhsp1 = List->arity ;
+	  List = List->next ; /* ignore the function name */
+	  if ( in != NULL) 
+	    while ( List->next != NULL ) 
+	      {
+		List = List->next ;
+		if ( List->type == NAME )
+		  {
+		    if ( nsp_row_smatrix_append_string(in,(char *) List->O)  == FAIL) 
+		      return FAIL;
+		    /* printf("name: %s\n",(char *) List->O); */
+		  }
+		else
+		  {
+		    /* collect the optional arguments */
+		    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+		  }
+	      }
 	  break;
 	case PLIST : 
-	  plist_arg_get_nargs(List,lhs,rhsp1);
+	  plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  break;
 	case FUNCTION:
-	  plist_arg_get_nargs(List->next,lhs,rhsp1);
+	  List = List->next ;
+	  if ( List != NULLPLIST && List->type == PLIST ) 
+	    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  break;
 	default:
 	  /* ignore */
 	  break;
 	}
     }
+  return OK;
 }
-
-static void plist_arg_get_nargs(PList L,int *lhs , int *rhsp1)
-{
-  if ( L == NULLPLIST ) return ;
-  switch (L->type) 
-    {
-    case PLIST :
-      plist_get_nargs((PList) L->O,lhs,rhsp1);
-      break;
-    default: 
-      break;
-    }
-}
-
 
 static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
 
@@ -2092,7 +2113,7 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
  * 
  * walk through a #PList and tags symbols with their ids found in 
  * the hash table @H. This function is used to tag local variables
- * of a function. Note that when should not walk inside the 
+ * of a function. Note that we should not walk inside the 
  * functions defined in the function. 
  **/
 
@@ -2116,13 +2137,14 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	    case  SEMICOLON_OP  :
 	      Arg_name_to_local_name(rec,List,H);
 	      break;
-	    case QUOTE_OP : 
-	      Arg_name_to_local_name(rec,List,H);
-	      break;
-	    case TILDE_OP : 
+	    case QUOTE_OP :
+	    case DOTPRIM: 
 	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    case RETURN_OP : 
+	      Arg_name_to_local_name(rec,List,H);
+	      break;
+	    case TILDE_OP : 
 	      Arg_name_to_local_name(rec,List,H);
 	      break;
 	    default:
@@ -2146,8 +2168,8 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
     {
       switch ( L->type ) 
 	{
-	case EQUAL_OP:
 	case OPT:
+	case EQUAL_OP:
 	  Arg_name_to_local_name(rec,List,H);
 	  Arg_name_to_local_name(rec,List->next,H);
 	  break;
@@ -2277,14 +2299,23 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	case LASTCASE :
 	  Arg_name_to_local_name(rec,List,H);
 	  break;
-	case CLEAR:
 	case GLOBAL:
+	case CLEAR:
 	case CLEARGLOBAL:
 	  for ( j =  0 ; j < L->arity ; j++)
 	    {
 	      Arg_name_to_local_name(rec,List,H);
 	      List = List->next;
 	    }
+	  break;
+	case PAUSE:
+	case HELP:
+	case WHO:
+	case EXEC:
+	case APROPOS:
+	case CD_COMMAND:
+	case LS_COMMAND:
+	case PWD_COMMAND:
 	  break;
 	default:
 	  s=nsp_astcode_to_name(L->type);
@@ -2312,220 +2343,41 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H)
 	  L->arity = val ; /*  (int) ((NspMatrix *) obj)->R[0]; */
 	}
       break;
+
+    case NUMBER:
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+    case OPNAME :
+    case OBJECT :
+    case STRING:
+    case COMMENT:
+    case EMPTYMAT:
+    case EMPTYCELL:
+    case BREAK:
+      /* nothing to do */
+      break;
     case PLIST :
       plist_name_to_local_id((PList) L->O,H,rec);
       break;
-    }
-}
-
-
-/* Search a symbol in a plist 
- *
- */
-
-static void _plist_name(PList List,const char *name,int *res) ;
-
-
-void plist_name_search(PList List,const char *name,int *res) 
-{
-  PList L=List,L1;
-  const char *s;
-  int j;
-  List = List->next;
-  if ( L->type > 0 )
-    {
-      /* operators **/
-      switch ( L->arity ) 
-	{
-	case 0:
-	  break;
-	case 1:
-	  switch ( L->type ) 
-	    {
-	    case  COMMA_OP : 
-	    case  SEMICOLON_OP  :
-	      _plist_name(List,name,res);
-	      break;
-	    case QUOTE_OP : 
-	      _plist_name(List,name,res);
-	      break;
-	    case TILDE_OP : 
-	      _plist_name(List,name,res);
-	      break;
-	    case RETURN_OP : 
-	      _plist_name(List,name,res);
-	      break;
-	    default:
-	      _plist_name(List,name,res);
-	    }
-	  break;
-	case 2:
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  break;
-	default :
-	  for ( j =  0 ; j < L->arity ; j++)
-	    {
-	      _plist_name(List,name,res);
-	      List = List->next;
-	    }
-	  break;
-	}
-    }
-  else 
-    {
-      switch ( L->type ) 
-	{
-	case EQUAL_OP:
-	case OPT:
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  break;
-	case MLHS  :
-	case ARGS :
-	case CELLARGS :
-	case METARGS :
-	  for ( j =  0 ; j < L->arity ; j++)
-	    {
-	      _plist_name(List,name,res);
-	      List = List->next;
-	    }
-	  break;
-	case DOTARGS :
-	  _plist_name(List,name,res);
-	  break;
-	case CALLEVAL:
-	case LISTEVAL :
-	case FEVAL :
-	  for ( j =  0 ; j < L->arity ; j++)
-	    {
-	      _plist_name(List,name,res);
-	      List = List->next;
-	    }
-	  break;
-	case PLIST :
-	  if (L->next == NULLPLIST )
-	    _plist_name(L,name,res);/* XXXXXXX */
-	  break;
-	case COMMENT :
-	case NAME :
-	case OPNAME :
-	case NUMBER:
-	case STRING:
-	case INUMBER32 :
-	case INUMBER64 :
-	case UNUMBER32 :
-	case UNUMBER64 :
-	  _plist_name(L,name,res);
-	  break;
-	case OBJECT :
-	  break;
-	case EMPTYMAT:
-	  break;
-	case EMPTYCELL:
-	  break;
-	case P_MATRIX :
-	case P_CELL :
-	  _plist_name(List,name,res);
-	  break;
-	case ROWCONCAT:
-	case COLCONCAT:
-	case DIAGCONCAT:
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  break;
-	case CELLROWCONCAT:
-	case CELLCOLCONCAT:
-	case CELLDIAGCONCAT:
-	  for ( j = 0 ; j < L->arity ; j++)
-	    {
-	      _plist_name(List,name,res);
-	      List = List->next;
-	    }
-	  break;
-	case WHILE:
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  break;
-	case FUNCTION:
-	  /* the function prototype (= (ret-args) (feval (args))) 
-	   * here we want to gather (ret-args) but also args 
-	   */
-	  /* this will gather ret-args */
-	  _plist_name(List,name,res);
-	  /* function call prototype */
-	  L1 = ((PList) List->O)->next->next;
-	  /* the function body i.e statements */
-	  _plist_name(List->next,name,res);
-	  break;
-	case FOR:
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  _plist_name(List->next->next,name,res);
-	  break;
-	case IF :
-	  for ( j = 0 ; j < L->arity  ; j += 2 )
-	    {
-	      if ( j == L->arity-1 ) 
-		{
-		  _plist_name(List,name,res);
-		}
-	      else 
-		{ 
-		  _plist_name(List,name,res);
-		  List = List->next ;
-		  _plist_name(List,name,res);
-		  List = List->next ;
-		}
-	    }
-	  break;
-	case TRYCATCH :
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  if ( L->arity == 3 ) 
-	    {
-	      _plist_name(List->next->next,name,res);
-	    }
-	  break;
-	case SELECT :
-	case STATEMENTS :
-	case STATEMENTS1 :
-	case PARENTH :
-	  for ( j = 0 ; j < L->arity ; j++)
-	    {
-	      _plist_name(List,name,res);
-	      List = List->next;
-	    }
-	  break;
-	case CASE :
-	  _plist_name(List,name,res);
-	  _plist_name(List->next,name,res);
-	  break;
-	case LASTCASE :
-	  _plist_name(List,name,res);
-	  break;
-	default:
-	  s=nsp_astcode_to_name(L->type);
-	}
-    }
-}
-
-
-static void _plist_name(PList List,const char *name,int *res) 
-{
-  if ( List == NULLPLIST ) 
-    {
-      Scierror("Something Strange: nullplist ....\n");
-      return ; /* exit(1); */
-    }
-  switch (List->type) 
-    {
-    case NAME :
-      if ( strcmp(name,(char *) List->O) == 0 ) *res = TRUE;
-      break;
-    case PLIST :
-      plist_name_search((PList) List->O,name,res);
+    case PRETURN: 
+    case QUIT :
+    case NSP_EXIT :
+    case PAUSE :
+    case ABORT :
+    case CONTINUE :
+    case WHO :
+    case HELP:
+    case CD_COMMAND :
+    case LS_COMMAND :
+    case PWD_COMMAND :
+    case WHAT :
+    case CLEAR :
+    case CLEARGLOBAL :
+      /* nothing to do */
       break;
     }
 }
+
 

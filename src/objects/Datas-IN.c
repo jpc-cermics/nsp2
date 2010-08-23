@@ -25,8 +25,7 @@
 #include "nsp/datas.h"
 #include "frame.h"
 #include "../interp/LibsTab.h"
-
-
+#include "../functions/FunTab.h"
 
 extern NspObject *Reserved;
 extern NspFrame  *GlobalFrame;
@@ -181,8 +180,6 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * Interface for exists 
- * XXX shoul be changed in order to load a macro 
- * in the current env if this macros is in the search list 
  */
 
 static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", NULL};
@@ -190,15 +187,21 @@ typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, 
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_option opts[] ={{"args",list,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspList *args = NULL;
   NspObject *O=NULLOBJ;
-  int rep=0, irep=0;
+  int rep=0, irep=0, vi=0,vn=0;
   char *Name=0;
-  CheckRhs(1,2);
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
   if ((Name = GetString(stack,1)) == (char*)0) return RET_BUG;
   if (rhs == 2) { 
     if ((rep= GetStringInArray(stack,2,exists_list,1)) == -1) return RET_BUG; 
   }
+
+  if ( get_optional_args(stack, rhs, opt, opts, &args) == FAIL )
+    return RET_BUG;
   switch (rep) {
   case in_all: 
     if ((O=nsp_frames_search_object(Name)) != NULLOBJ) irep=1;
@@ -209,8 +212,9 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
   case in_global:    
     if ((O=nsp_global_frame_search_object(Name)) != NULLOBJ) irep=1;
     break;
-  case in_function:  /* XXX */
-    if ((O=nsp_global_frame_search_object(Name)) != NULLOBJ) irep=1;
+  case in_function: 
+    /* to be improved using the args optional argument if given */
+    if ( nsp_find_function(Name,&vi,&vn) == OK) irep = 1;
     break;
   case in_callers: 
     if ((O= nsp_frames_search_local_in_calling(Name,FALSE)) != NULLOBJ) irep=1;
@@ -222,7 +226,7 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
     if ((O= nsp_find_macro(Name)) != NULLOBJ) irep=1;
     break;
   } 
-  if ( irep == 1 )
+  if ( irep == 1 && O != NULLOBJ  )
     {
       /* take care that we can have in a local frame a pointer 
        * to a non existant global variable 
