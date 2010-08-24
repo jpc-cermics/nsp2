@@ -182,63 +182,80 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
  * Interface for exists 
  */
 
-static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", NULL};
-typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, in_macro } _exist_tag;
+static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", "callable", NULL};
+typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, in_macro, in_callable} _exist_tag;
 
-static int int_exists(Stack stack, int rhs, int opt, int lhs)
+static int nsp_exists(const char *Name, _exist_tag type)
 {
-  nsp_option opts[] ={{"args",list,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  NspList *args = NULL;
   NspObject *O=NULLOBJ;
-  int rep=0, irep=0, vi=0,vn=0;
-  char *Name=0;
-  CheckStdRhs(1,2);
-  CheckLhs(1,1);
-  if ((Name = GetString(stack,1)) == (char*)0) return RET_BUG;
-  if (rhs == 2) { 
-    if ((rep= GetStringInArray(stack,2,exists_list,1)) == -1) return RET_BUG; 
-  }
-
-  if ( get_optional_args(stack, rhs, opt, opts, &args) == FAIL )
-    return RET_BUG;
-  switch (rep) {
+  int irep=FALSE, vi=0,vn=0;
+  switch (type) {
   case in_all: 
-    if ((O=nsp_frames_search_object(Name)) != NULLOBJ) irep=1;
+    if ((O=nsp_frames_search_object(Name)) != NULLOBJ) irep=TRUE;
     break;
   case in_local:
-    if ((O=nsp_frame_search_object(Name)) != NULLOBJ)  irep = 1;
+    if ((O=nsp_frame_search_object(Name)) != NULLOBJ)  irep=TRUE;
     break;
   case in_global:    
-    if ((O=nsp_global_frame_search_object(Name)) != NULLOBJ) irep=1;
+    if ((O=nsp_global_frame_search_object(Name)) != NULLOBJ) irep=TRUE;
     break;
   case in_function: 
     /* to be improved using the args optional argument if given */
-    if ( nsp_find_function(Name,&vi,&vn) == OK) irep = 1;
+    if ( nsp_find_function(Name,&vi,&vn) == OK) irep=TRUE;
     break;
   case in_callers: 
-    if ((O= nsp_frames_search_local_in_calling(Name,FALSE)) != NULLOBJ) irep=1;
+    if ((O= nsp_frames_search_local_in_calling(Name,FALSE)) != NULLOBJ) irep=TRUE;
     break;
   case in_caller:
-    if ((O= nsp_frames_search_local_in_calling(Name,TRUE)) != NULLOBJ) irep=1;
+    if ((O= nsp_frames_search_local_in_calling(Name,TRUE)) != NULLOBJ) irep=TRUE;
     break;
   case in_macro :
-    if ((O= nsp_find_macro(Name)) != NULLOBJ) irep=1;
+    if ((O= nsp_find_macro(Name)) != NULLOBJ) irep=TRUE;
+    break;
+  case in_callable:
+    /* to be improved using the args optional argument if given */
+    if ( nsp_find_function(Name,&vi,&vn) == OK 
+	 || (O= nsp_find_macro(Name)) != NULLOBJ) 
+      irep=TRUE;
     break;
   } 
-  if ( irep == 1 && O != NULLOBJ  )
+  if ( irep == TRUE && O != NULLOBJ  )
     {
       /* take care that we can have in a local frame a pointer 
        * to a non existant global variable 
        */
       if ( IsHobj(O) && ((NspHobj *) O)->htype == 'g' )
 	{
-	  if ((nsp_global_frame_search_object(Name)) == NULLOBJ)  irep=0;
+	  if ((nsp_global_frame_search_object(Name)) == NULLOBJ)  irep=FALSE;
 	}
     }
-  if ((O = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
-  /* if (( O =nsp_create_object_from_double(NVOID,irep))== NULLOBJ ) return RET_BUG;*/
-  MoveObj(stack,1,O);
+  return irep;
+}
+
+
+
+static int int_exists(Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_option opts[] ={{"args",list,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspList *args = NULL;
+  NspSMatrix *Names;
+  NspBMatrix *B;
+  int rep=0,i;
+  CheckStdRhs(1,2);
+  CheckLhs(1,1);
+  if ((Names = GetSMat(stack,1)) == NULLSMAT)  return RET_BUG;
+  if (rhs == 2) { 
+    if ((rep= GetStringInArray(stack,2,exists_list,1)) == -1) return RET_BUG; 
+  }
+  if ( get_optional_args(stack, rhs, opt, opts, &args) == FAIL )
+    return RET_BUG;
+  if (( B = nsp_bmatrix_create(NVOID,Names->m,Names->n)) ==NULL) return FAIL;
+  for ( i= 0 ; i < Names->mn ; i++)
+    {
+      B->B[i] = nsp_exists(Names->S[i],rep);
+    }
+  MoveObj(stack,1,NSP_OBJECT(B));
   return 1;
 }
 
