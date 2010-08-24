@@ -614,7 +614,7 @@ static int int_remove_lib(Stack stack, int rhs, int opt, int lhs)
   if ((dirname= GetString(stack,1)) == (char*)0) return RET_BUG;
   nsp_expand_file_with_exec_dir(&stack,dirname,dirname_expanded);
   dir = nsp_absolute_file_name(dirname_expanded);
-  if (nsp_delete_macros(dirname_expanded) == FAIL ) rep=RET_BUG;
+  if (nsp_delete_macros(dir) == FAIL ) rep=RET_BUG;
   nsp_string_destroy(&dir);
   return rep;
 }

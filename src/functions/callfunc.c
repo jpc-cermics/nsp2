@@ -309,18 +309,16 @@ InterfTab Interfaces[]={
   {NULL,NULL}
 }; 
 
-/**********************************************
+/*
  * Call function number num in interface i 
- **********************************************/
-
+ */
 
 static int show_returned_positions(Stack stack,int pos);
-/* static int  reorder_follow_cycle(Stack stack,int pos); */
-int reorder_stack(Stack stack, int ret) ;
+extern int reorder_stack(Stack stack, int ret) ;
 
-/* XXXXX Only in DEBUG Mode */
-
-void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char *name)
+/* Only used in DEBUG Mode */
+#ifdef DEBUG_STACK
+static void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char *name)
 {
   int count=0;
   NspObject**O;
@@ -376,19 +374,21 @@ void nsp_check_stack( Stack stack, int rhs, int opt, int lhs,char *message,char 
       O++;
     }  
 }
-
+#endif 
 
 int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
 {
   int ret;
-
+#ifdef DEBUG_STACK 
   /* debug */ 
   static int first = 0;
   static char buf[128];
-/*   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf); */
+  nsp_check_stack(stack,rhs,opt,lhs,
+		  "Something wrong before entering interface for",
+		  (first == 0) ? NULL: buf); 
   first=1; 
   strcpy(buf,NspFname(stack));
-  
+#endif 
   if ( i >= DYN_INTERF_START ) 
     {
       /** interface is a dynamically linked one **/
@@ -434,15 +434,16 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
 int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 {
   int ret;
-
+#ifdef DEBUG_STACK 
   /* debug */ 
-  static int first = 0;
   static char buf[128];
-/*   nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",(first == 0) ? NULL: buf); */
+  static int first = 0;
+  nsp_check_stack(stack,rhs,opt,lhs,"Something wrong before entering interface for",
+		  (first == 0) ? NULL: buf);
   first=1; 
   strcpy(buf,NspFname(stack));
-  
-  /** Standard interfaces **/
+#endif 
+  /* Standard interfaces */
   ret = (*f)(stack,rhs,opt,lhs);
   
   if ( ret == RET_BUG ) 
@@ -468,10 +469,6 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 
   return ret;
 }
-
-/*------------------------------------------------------
- * reorder the stack after a function call 
- *------------------------------------------------------*/
 
 
 int  reorder_stack(Stack stack, int ret)

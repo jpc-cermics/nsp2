@@ -44,7 +44,7 @@ static int nsp_link_status (void) ;
  * i.e a function pointer, a name and a shared lib id 
  */
 
-#define ENTRYMAX 200         /* maximum number of loaded shared libary 
+#define ENTRYMAX 512         /* maximum number of loaded shared libary 
 			      * and maximum number of entries in a shared library
 			      */
 typedef int (*l_function) ();
@@ -203,20 +203,6 @@ int nsp_is_linked(nsp_const_string name,int *ilib)
 }
 
 
-/* get a function in @realop given 
- * its position in the dynamically 
- * linked entry points table. 
- * In case of failure the returned value is NULL.
- */
-
-void GetDynFunc_obsolete(int ii, int (**realop)())
-{
-  if ( EP[ii].Nshared != -1 ) 
-    *realop = EP[ii].epoint;
-  else
-    *realop = (l_function) 0;
-}
-
 /*
  * Search an entry point named @op in the dynamically 
  * linked entry points. Search is performed from end to top 
@@ -253,8 +239,8 @@ static int SearchFandS(nsp_const_string op, int ilib)
     {
       if ( strcmp(op,EP[i].name) == 0 && EP[i].Nshared == ilib)
 	{
-	   return(i);
-	 }
+	  return(i);
+	}
     }
   return(-1);
 }
