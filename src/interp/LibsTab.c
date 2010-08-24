@@ -19,7 +19,6 @@
  * 
  * Htable for macros 
  * Htable for functions
- * FIXME: work in progress 
  *********************************************************************/
 
 #include <string.h>
@@ -194,15 +193,16 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_delete_macros(const char *Dir)
+int nsp_delete_macros(const char *dirname)
 {
-  char F[FSIZE+1];
-  FILE *f;
+  int  flen;
+  GDir *dir;
+  char filename[FSIZE+1];
   int i,flag=-1;
-  /* Search if we already know directory Dir **/
+  /* Search if we already know directory dirname **/
   for ( i = 0 ; i < LibDirs->mn -1 ; i++) 
     {
-      if (strcmp(Dir,LibDirs->S[i])==0) 
+      if (strcmp(dirname,LibDirs->S[i])==0) 
 	{
 	  flag=i;break;
 	}
@@ -212,24 +212,43 @@ int nsp_delete_macros(const char *Dir)
       /* nothing to do */
       return OK;
     }
+
+  /* reset the cache since we are destroying macros */
+  nsp_macro_table_reset_cache();
+
   /* if flag != -1 : we keep the dir name in LibDirs */
-  /* Open the file Dir/names  **/
-  strcpy(F,Dir); strcat(F,"/names");
-  if (( f= fopen(F,"r") ) == (FILE *)0 )
+  dir =  g_dir_open(dirname,0,NULL);
+  if ( dir == NULL) 
     {
-      Scierror("Error:\t:Can't open file %s\n",F);
+      Scierror("Error:\t:Can't open directory %s\n",dirname);
       return FAIL;
     }
+  strcpy(filename,dirname);
+  flen=strlen(filename);
   while (1) 
     {
-      Mdata data;
-      int rep;
-      char name[NAME_MAXL];
-      rep = fscanf(f,"%s",name);
-      if ( rep == 0 || rep == EOF ) break;
-      myhsearch(name,&data,REMOVE);
+      const gchar *fname=  g_dir_read_name(dir);
+      if (fname == NULL) break;
+      filename[flen]='/'; 
+      filename[flen+1]='\0'; 
+      strcat(filename,fname);
+      if (g_file_test (filename, G_FILE_TEST_IS_DIR))
+	{
+	  nsp_delete_macros(filename);
+	}
+      else 
+	{
+	  if ( strlen(fname) >= 4 && strncmp(".bin",fname + strlen(fname)-4,4)==0)
+	    {
+	      Mdata data;
+	      char name[NAME_MAXL];
+	      strcpy(name,fname);
+	      name[strlen(fname)-4]='\0';
+	      myhsearch(name,&data,REMOVE);
+	    }
+	}
     }
-  fclose(f);
+  g_dir_close (dir);
   return OK;
 }
 
