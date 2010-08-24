@@ -136,6 +136,10 @@ extern void NspPListPrint (NspPList *P_L, int indent,const char *name, int rec_l
 extern int NspPListSave (NspPList *P_L); 
 extern NspSMatrix * NspPList2SMatrix (NspPList *P_L, int indent); 
 
+extern int nsp_plist_get_path(char *fname,NspPList *P_L);
+
+
+
 /* PList.c */
 
 extern int nsp_parse_add(PList *plist, int op, int arity, int line);

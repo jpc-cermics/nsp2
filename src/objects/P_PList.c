@@ -139,34 +139,53 @@ void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
 /* XXX */
 extern nsp_string nsp_tail(char *fileName);
 
-void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
+int nsp_plist_get_path(char *fname,NspPList *P_L)
 {
+  int rep = OK;
   nsp_string tail;
-  char fname[FSIZE+1], *file_name=NULL;
-  const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
   const char *dir= nsp_get_libdir(P_L->dir);
   /* get the name of the source file */
   if ( dir != NULL) 
     {
       /* if dir is non-null then the macros is from library */
-      if ((tail = nsp_tail(P_L->file_name))==NULL) return;
-      snprintf(fname,FSIZE,"%s/%s",dir,tail);
-      nsp_string_destroy(&tail);
-      file_name = fname;
+      if ((tail = nsp_tail(P_L->file_name)) !=NULL) 
+	{
+	  snprintf(fname,FSIZE,"%s/%s",dir,tail);
+	  nsp_string_destroy(&tail);
+	}
+      else 
+	{
+	  strcpy(fname,"");
+	  rep = FAIL;
+	}
+    }
+  else if ( P_L->file_name != NULL) 
+    {
+      /* interactive macro or loaded by exec */
+      strncpy(fname,P_L->file_name,FSIZE);
     }
   else 
     {
-      /* interactive macro or loaded by exec */
-      file_name = P_L->file_name;
+      strcpy(fname,"");
+      rep = FAIL;
     }
+  return rep;
+}
+
+void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
+{
+  int ok;
+  char fname[FSIZE+1];
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
+  ok = nsp_plist_get_path(fname,P_L);
   if (user_pref.pr_as_read_syntax)
     {
       nsp_plist_pretty_print(P_L->D,indent+2);
     }
   else
     {
-      if ( file_name != NULL )
-	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,file_name);
+      if ( ok == OK ) 
+	Sciprintf1(indent,"%s\t=\t\tpl (file='%s')\n",pname,fname);
       else 
 	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
       if ( user_pref.pr_depth  <= rec_level -1 ) return;

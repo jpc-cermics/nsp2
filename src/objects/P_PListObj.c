@@ -551,12 +551,23 @@ static int int_nsp_macro_to_string(NspPList *self,Stack stack, int rhs, int opt,
   return 1;
 }
 
+static int int_nsp_macro_get_path(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  char fname[FSIZE+1];
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  nsp_plist_get_path(fname,self);
+  if (nsp_move_string(stack,1,fname,-1)==FAIL) return RET_BUG;
+  return 1;
+}
+
 
 
 static NspMethods nsp_macro_methods[] = {
   {"get_fname",(nsp_method *) int_nsp_macro_get_name },
   {"get_nargs",(nsp_method *) int_nsp_macro_get_nargs },
   {"get_args",(nsp_method *) int_nsp_macro_get_args },
+  {"get_path",(nsp_method *) int_nsp_macro_get_path },
   {"to_list",(nsp_method *) int_nsp_macro_to_list },
   {"to_string",(nsp_method *) int_nsp_macro_to_string },
   { NULL, NULL}
