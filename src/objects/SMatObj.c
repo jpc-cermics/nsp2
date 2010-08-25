@@ -1378,10 +1378,10 @@ static int int_smxstrstr(Stack stack, int rhs, int opt, int lhs)
   char *Str;
   NspSMatrix *A;
   NspMatrix *B;
-  CheckRhs(1,2);
+  CheckRhs(2,2);
   CheckLhs(1,1);
   if (( A = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;  
-  if ((Str = GetString(stack,2)) == (char*)0) return RET_BUG;
+  if (( Str = GetString(stack,2)) == (char*)0) return RET_BUG;
   if (( B =nsp_smatrix_strstr(A,Str)) == NULLMAT ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) B);
   return 1;
