@@ -1331,7 +1331,7 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  break;
 	case PWD_COMMAND:
 	  /* 1-ary pwd */
-	  PRINTTAG("ls");Sciprintf(" ");
+	  PRINTTAG("pwd");Sciprintf(" ");
 	  newpos = _nsp_plist_pretty_print_args(List,L->arity,0,newpos,newpos,",");
 	  return newpos;
 	  break;

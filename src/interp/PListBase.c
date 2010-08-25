@@ -42,81 +42,82 @@ struct _operator {
   const char *name;
   const char *nickname;
   const int code; 
+  const char *codename;
 };
 
 static OpWordTab Ops[]={
-  {"@","noop",   NOTCODE_OP},
+  {"@","noop",NOTCODE_OP,"NOTCODE_OP"},
   /* operators 
    *--------------------------------------*/
-  {"'","quote",  QUOTE_OP},  
-  {"*","mult",   STAR_OP }, 	
-  {"+","plus",   PLUS_OP },  
-  {"^","hat",   HAT_OP},   
-  {":","impl",   COLON_OP},
-  {"|","or",   OR_OP},    
-  {"&","and",   AND_OP},  
-  {"~","not",   TILDE_OP},
-  {"\\n","ret", RETURN_OP},
-  {",","virg", COMMA_OP}, 
-  {";","pvirg", SEMICOLON_OP},
-  {"-","minus", MINUS_OP},   
-  {"/","div", SLASH_OP},     
-  {"\\","bdiv", BACKSLASH_OP},
-  {".*","dst", DOTSTAR},			          
-  {"./","dsl",DOTSLASH},			          
-  {".\\","dbs",DOTBSLASH},			        
-  {".+","dplus",   DOTPLUS},			          
-  {"*.", "std", STARDOT},			        
-  {"/.", "sld",SLASHDOT},			          
-  {"\\.", "bsd",BSLASHDOT},			          
-  {".*.", "dstd",DOTSTARDOT},			          
-  {"./.", "dsld",DOTSLASHDOT},			          
-  {".\\.", "dbsd",DOTBSLASHDOT},		          
-  {".^","dh", DOTHAT},				          
-  {"==", "eq",EQ },				          
-  {"<=", "le", LEQ},				          
-  {">=", "ge",GEQ},				          
-  {"<>", "ne",NEQ} ,				          
-  {".==", "deq",DOTEQ },			          
-  {".<=", "dle", DOTLEQ},			          
-  {".<","dlt", DOTLT},				        
-  {".>=", "dge",DOTGEQ},			        
-  {".>","dgt", DOTGT},					
-  {".<>", "dne",DOTNEQ} ,			          
-  {".'","dprim", DOTPRIM},			          
-  {"-",  "m",MOINS}, 
-  {"&&","seq_and",  SEQAND},			          
-  {"||","seq_or", SEQOR},			          
-  {"<","lt",(int) LT_OP},				          
-  {">","gt",(int) GT_OP},				          
-  {"@","noop", LASTCODE_OP},
+  {"'","quote",QUOTE_OP,"QUOTE_OP"}, 
+  {"*","mult",STAR_OP,"STAR_OP"}, 	
+  {"+","plus",PLUS_OP,"PLUS_OP"}, 
+  {"^","hat",HAT_OP,"HAT_OP"}, 
+  {":","impl",COLON_OP,"COLON_OP"},
+  {"|","or",OR_OP,"OR_OP"},  
+  {"&","and",AND_OP,"AND_OP"}, 
+  {"~","not",TILDE_OP,"TILDE_OP"},
+  {"\\n","ret",RETURN_OP,"RETURN_OP"},
+  {",","virg",COMMA_OP,"COMMA_OP"}, 
+  {";","pvirg",SEMICOLON_OP,"SEMICOLON_OP"},
+  {"-","minus",MINUS_OP,"MINUS_OP"}, 
+  {"/","div",SLASH_OP,"SLASH_OP"},   
+  {"\\","bdiv",BACKSLASH_OP,"BACKSLASH_OP"},
+  {".*","dst",DOTSTAR,"DOTSTAR"},			          
+  {"./","dsl",DOTSLASH,"DOTSLASH"},			          
+  {".\\","dbs",DOTBSLASH,"DOTBSLASH"},			        
+  {".+","dplus",DOTPLUS,"DOTPLUS"},			          
+  {"*.","std",STARDOT,"STARDOT"},			        
+  {"/.","sld",SLASHDOT,"SLASHDOT"},			          
+  {"\\.","bsd",BSLASHDOT,"BSLASHDOT"},			          
+  {".*.","dstd",DOTSTARDOT,"DOTSTARDOT"},			          
+  {"./.","dsld",DOTSLASHDOT,"DOTSLASHDOT"},			          
+  {".\\.","dbsd",DOTBSLASHDOT,"DOTBSLASHDOT"},		          
+  {".^","dh",DOTHAT,"DOTHAT"},				          
+  {"==","eq",EQ,"EQ"},				          
+  {"<=","le",LEQ,"LEQ"},				          
+  {">=","ge",GEQ,"GEQ"},				          
+  {"<>","ne",NEQ,"NEQ"} ,				          
+  {".==","deq",DOTEQ,"DOTEQ"},			          
+  {".<=","dle",DOTLEQ,"DOTLEQ"},			          
+  {".<","dlt",DOTLT,"DOTLT"},				        
+  {".>=","dge",DOTGEQ,"DOTGEQ"},			        
+  {".>","dgt",DOTGT,"DOTGT"},					
+  {".<>","dne",DOTNEQ,"DOTNEQ"} ,			          
+  {".'","dprim",DOTPRIM,"DOTPRIM"},			          
+  {"-","m",MOINS,"MOINS"}, 
+  {"&&","seq_and",SEQAND,"SEQAND"},			          
+  {"||","seq_or",SEQOR,"SEQOR"},			          
+  {"<","lt",(int) LT_OP,"LT_OP"},				          
+  {">","gt",(int) GT_OP,"GT_OP"},				          
+  {"@","noop",LASTCODE_OP,"LASTCODE_OP"},
   /* negative code from FEVAL to LASTCODE_NEG_OP 
    *--------------------------------------------*/
-  {"FEVAL","fe",FEVAL},
-  {";",  "rc", ROWCONCAT},
-  {",",  "cc", COLCONCAT},
-  {"LASTCASE","lc",LASTCASE},
-  {"MLHS","mlhs",MLHS},
-  {"MATRIX","mat",P_MATRIX},
-  {"STATEMENTS","stm",STATEMENTS},
-  {"STATEMENTS1","stm1",STATEMENTS1},
-  {"OPT","opt",OPT},
-  {"#",  "dc", DIAGCONCAT},
-  {"LISTEVAL","listev",LISTEVAL},
-  {"ARGS","args",ARGS},
-  {"PARENTH","par",PARENTH},
-  {"DOTARGS","dotargs",DOTARGS},
-  {"METARGS","metargs",METARGS},
-  {";",  "rce",CELLROWCONCAT},
-  {",",  "cce",CELLCOLCONCAT},
-  {"#",  "dce",CELLDIAGCONCAT},
-  {"CELL","cells",P_CELL},
-  {"CELLARGS","cellargs",CELLARGS},
-  {"CALLEVAL","callev",CALLEVAL},
-  {"=", "equal",EQUAL_OP},
-  {"{}","ecell",EMPTYCELL},
-  {"[]","emath",EMPTYMAT},
-  {"PLIST","plist",  PLIST},
+  {"FEVAL","fe",FEVAL,"FEVAL"},
+  {";","rc",ROWCONCAT,"ROWCONCAT"},
+  {",","cc",COLCONCAT,"COLCONCAT"},
+  {"LASTCASE","lc",LASTCASE,"LASTCASE"},
+  {"MLHS","mlhs",MLHS,"MLHS"},
+  {"MATRIX","mat",P_MATRIX,"P_MATRIX"},
+  {"STATEMENTS","stm",STATEMENTS,"STATEMENTS"},
+  {"STATEMENTS1","stm1",STATEMENTS1,"STATEMENTS1"},
+  {"OPT","opt",OPT,"OPT"},
+  {"#","dc",DIAGCONCAT,"DIAGCONCAT"},
+  {"LISTEVAL","listev",LISTEVAL,"LISTEVAL"},
+  {"ARGS","args",ARGS,"ARGS"},
+  {"PARENTH","par",PARENTH,"PARENTH"},
+  {"DOTARGS","dotargs",DOTARGS,"DOTARGS"},
+  {"METARGS","metargs",METARGS,"METARGS"},
+  {";","rce",CELLROWCONCAT,"CELLROWCONCAT"},
+  {",","cce",CELLCOLCONCAT,"CELLCOLCONCAT"},
+  {"#","dce",CELLDIAGCONCAT,"CELLDIAGCONCAT"},
+  {"CELL","cells",P_CELL,"P_CELL"},
+  {"CELLARGS","cellargs",CELLARGS,"CELLARGS"},
+  {"CALLEVAL","callev",CALLEVAL,"CALLEVAL"},
+  {"=","equal",EQUAL_OP,"EQUAL_OP"},
+  {"{}","ecell",EMPTYCELL,"EMPTYCELL"},
+  {"[]","emath",EMPTYMAT,"EMPTYMAT"},
+  {"PLIST","plist",PLIST,"PLIST"},
   /* negative keys for keywords the table is just used to get their names 
    * Warning: take care that the nex lines are to be sorted alphabetically 
    * using first name and the keywords appearing in the last column are to 
@@ -124,41 +125,41 @@ static OpWordTab Ops[]={
    * Note that ABORT is the first one and this is used in PListBase.c
    * ------------------------------------------
    */
-  {"abort","noop",	ABORT },   
-  {"apropos","noop",	APROPOS},
-  {"break","noop",	BREAK }, 
-  {"case","noop",	CASE },  
-  {"catch","noop",	CATCH },  
-  {"cd","noop",	        CD_COMMAND },  
-  {"clear","noop",	CLEAR},  
-  {"clearglobal","noop",CLEARGLOBAL},  
-  {"continue","noop",   CONTINUE},  
-  {"do" ,"noop",	DO  },   
-  {"else","noop",	ELSE},   
-  {"elseif","noop",	ELSEIF}, 
-  {"end","noop",	END},    
-  {"endfunction","noop",ENDFUNCTION},
-  {"exec","noop",       EXEC},
-  {"exit","noop",       NSP_EXIT},
-  {"finally","noop",    FINALLY},
-  {"for","noop",	FOR},    
-  {"function","noop",   FUNCTION},
-  {"global","noop",     GLOBAL},
-  {"help","noop",	HELP  }, 
-  {"if","noop",         IF},     
-  {"ls","noop",         LS_COMMAND},     
-  {"pause","noop",	PAUSE},  
-  {"pwd","noop",	PWD_COMMAND},  
-  {"quit","noop",	QUIT },  
-  {"return","noop",     PRETURN},
-  {"select","noop",	SELECT}, 
-  {"then","noop",       THEN},
-  {"try","noop",        TRYCATCH},
-  {"what","noop",	WHAT },  
-  {"while","noop",	WHILE},  
-  {"who","noop",	WHO },   
-  {"@","noop",          LASTCODE_NEG_OP},
-  {(char *) 0,(char *)0, 0}
+  {"abort","noop",ABORT,"ABORT"}, 
+  {"apropos","noop",APROPOS,"APROPOS"},
+  {"break","noop",BREAK,"BREAK"}, 
+  {"case","noop",CASE,"CASE"}, 
+  {"catch","noop",CATCH,"CATCH"}, 
+  {"cd","noop",CD_COMMAND,"CD_COMMAND"}, 
+  {"clear","noop",CLEAR,"CLEAR"}, 
+  {"clearglobal","noop",CLEARGLOBAL,"CLEARGLOBAL"}, 
+  {"continue","noop",CONTINUE,"CONTINUE"}, 
+  {"do","noop",DO,"DO"}, 
+  {"else","noop",ELSE,"ELSE"}, 
+  {"elseif","noop",ELSEIF,"ELSEIF"}, 
+  {"end","noop",END,"END"},  
+  {"endfunction","noop",ENDFUNCTION,"ENDFUNCTION"},
+  {"exec","noop",EXEC,"EXEC"},
+  {"exit","noop",NSP_EXIT,"NSP_EXIT"},
+  {"finally","noop",FINALLY,"FINALLY"},
+  {"for","noop",FOR,"FOR"},  
+  {"function","noop",FUNCTION,"FUNCTION"},
+  {"global","noop",GLOBAL,"GLOBAL"},
+  {"help","noop",HELP,"HELP"}, 
+  {"if","noop",IF,"IF"},   
+  {"ls","noop",LS_COMMAND,"LS_COMMAND"},   
+  {"pause","noop",PAUSE,"PAUSE"}, 
+  {"pwd","noop",PWD_COMMAND,"PWD_COMMAND"}, 
+  {"quit","noop",QUIT,"QUIT"}, 
+  {"return","noop",PRETURN,"PRETURN"},
+  {"select","noop",SELECT,"SELECT"}, 
+  {"then","noop",THEN,"THEN"},
+  {"try","noop",TRYCATCH,"TRYCATCH"},
+  {"what","noop",WHAT,"WHAT"}, 
+  {"while","noop",WHILE,"WHILE"}, 
+  {"who","noop",WHO,"WHO"}, 
+  {"@","noop",LASTCODE_NEG_OP,"LASTCODE_NEG_OP"},
+  {(char *) 0,(char *)0, 0, (char *)0 }
 };
 
 
@@ -168,10 +169,8 @@ static OpWordTab Ops[]={
  * @code: 
  * 
  * returns the nickname of operators or keywords from their id code. 
- * 
- * 
+ *
  * Return value: a char pointer to the requested name or a pointer to "unknown";
- * 
  **/
 
 const char *nsp_astcode_to_nickname(int code)
@@ -204,6 +203,28 @@ const char *nsp_astcode_to_name(int code)
     }
   return NULL;
 }
+
+
+/**
+ * nsp_astcode_to_codename:
+ * @code: 
+ * 
+ * returns the code as a string of operators or keywords from their id code. 
+ *
+ * Return value: a char pointer to the requested name or a pointer to "unknown";
+ **/
+
+const char *nsp_astcode_to_codename(int code)
+{
+  if ( code > NOTCODE_OP && code < LASTCODE_OP ) 
+    return Ops[code-NOTCODE_OP].codename;
+  if ( code < LASTCODE_NEG_OP && code >= FEVAL )
+    {
+      return Ops[(code-FEVAL)+LASTCODE_OP+1-NOTCODE_OP].codename;
+    }
+  return("unknown");
+}
+
 
 /**
  * nsp_is_nsp_keyword:

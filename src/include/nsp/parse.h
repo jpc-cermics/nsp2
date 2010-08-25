@@ -17,6 +17,7 @@ extern char * nsp_check_unique_name_in_mlhs(PList L);
 
 extern const char *nsp_astcode_to_nickname(int code);
 extern const char *nsp_astcode_to_name(int code);
+extern const char *nsp_astcode_to_codename(int code);
 extern char * nsp_astcode_to_string(int type);
 extern int nsp_is_nsp_keyword(const char *id);
 extern int nsp_is_code_keyword(int keyc);

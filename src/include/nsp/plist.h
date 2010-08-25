@@ -125,7 +125,7 @@ extern NspPList *GetNspPList (Stack stack, int i);
 
 /* P_PList.c */
 
-extern NspPList *NspPListCreate (char *name, PList L, char *filename); 
+extern NspPList *NspPListCreate (const char *name, PList L, char *filename); 
 extern NspPList *NspPListCopy (NspPList *A); 
 extern NspPList *NspPListCopy_no_local_vars(NspPList *A);
 

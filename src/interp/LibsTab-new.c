@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -177,15 +177,17 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_delete_macros(const char *Dir)
+
+int nsp_delete_macros(const char *dirname)
 {
-  char F[FSIZE+1];
-  FILE *f;
+  int  flen;
+  GDir *dir;
+  char filename[FSIZE+1];
   int i,flag=-1;
-  /* Search if we already know directory Dir **/
+  /* Search if we already know directory dirname **/
   for ( i = 0 ; i < LibDirs->mn -1 ; i++) 
     {
-      if (strcmp(Dir,LibDirs->S[i])==0) 
+      if (strcmp(dirname,LibDirs->S[i])==0) 
 	{
 	  flag=i;break;
 	}
@@ -195,23 +197,39 @@ int nsp_delete_macros(const char *Dir)
       /* nothing to do */
       return OK;
     }
+
   /* if flag != -1 : we keep the dir name in LibDirs */
-  /* Open the file Dir/names  **/
-  strcpy(F,Dir); strcat(F,"/names");
-  if (( f= fopen(F,"r") ) == (FILE *)0 )
+  dir =  g_dir_open(dirname,0,NULL);
+  if ( dir == NULL) 
     {
-      Scierror("Error:\t:Can't open file %s\n",F);
+      Scierror("Error:\t:Can't open directory %s\n",dirname);
       return FAIL;
     }
+  strcpy(filename,dirname);
+  flen=strlen(filename);
   while (1) 
     {
-      int rep;
-      char name[NAME_MAXL];
-      rep = fscanf(f,"%s",name);
-      if ( rep == 0 || rep == EOF ) break;
-      nsp_hash_remove(nsp_functions_table,name);
+      const gchar *fname=  g_dir_read_name(dir);
+      if (fname == NULL) break;
+      filename[flen]='/'; 
+      filename[flen+1]='\0'; 
+      strcat(filename,fname);
+      if (g_file_test (filename, G_FILE_TEST_IS_DIR))
+	{
+	  nsp_delete_macros(filename);
+	}
+      else 
+	{
+	  if ( strlen(fname) >= 4 && strncmp(".bin",fname + strlen(fname)-4,4)==0)
+	    {
+	      char name[NAME_MAXL];
+	      strcpy(name,fname);
+	      name[strlen(fname)-4]='\0';
+	      nsp_hash_remove(nsp_functions_table,name);
+	    }
+	}
     }
-  fclose(f);
+  g_dir_close (dir);
   return OK;
 }
 
@@ -235,6 +253,8 @@ NspObject *nsp_find_macro(char *str)
   char Name[FSIZE+1];
   if ( nsp_hash_find(nsp_functions_table,str,&Ob) == FAIL) 
     return NULLOBJ;
+  if ( IsFunction(Ob) ) return NULLOBJ;
+
   M= (NspPList *) Ob;
   if ( M->D != NULL )
     {
@@ -252,12 +272,13 @@ NspObject *nsp_find_macro(char *str)
   while (1) 
     {
       NspObject *Ob1;
-      if ((Ob1=nsp_object_xdr_load(F->xdrs))== NULLOBJ ) break;
+      if ((Ob1=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
       if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
 	{
 	  found = TRUE;
 	  /* switch values */
 	  M->D = ((NspPList *) Ob1)->D;
+	  M->file_name =  ((NspPList *) Ob1)->file_name;
 	  /* Sciprintf("Macro %s found in %s/%s.bin\n",str,LibDirs->S[M->dir],str); */
 	}
     }
@@ -426,9 +447,13 @@ int nsp_find_function(const char *str, int *Int, int *Num)
 {
   NspObject *Obj;
   if (nsp_hash_find(nsp_functions_table,str,&Obj) == FAIL) return FAIL;
-  *Int = ((NspFunction *)Obj)->iface;
-  *Num = ((NspFunction *)Obj)->pos;
-  return OK;
+  if ( IsFunction(Obj) )
+    {
+      *Int = ((NspFunction *)Obj)->iface;
+      *Num = ((NspFunction *)Obj)->pos;
+      return OK;
+    }
+  return FAIL;
 }
 
 /**
@@ -539,7 +564,7 @@ NspObject *nsp_find_macro_or_func(char *str,int *type)
   while (1) 
     {
       NspObject *Ob1;
-      if ((Ob1=nsp_object_xdr_load(F->xdrs))== NULLOBJ ) break;
+      if ((Ob1=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
       if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
 	{
 	  found = TRUE;

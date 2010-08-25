@@ -58,7 +58,7 @@ NspFunction *new_function();
 
 #define NULLFUNC (NspFunction*) 0
 
-extern NspFunction *function_create(char *name,char *fname,int iface,int pos,int status,NspTypeBase *type);
+extern NspFunction *function_create(const char *name,const char *fname,int iface,int pos,int status,NspTypeBase *type);
 extern NspFunction *function_copy(NspFunction *H);
 extern void function_destroy(NspFunction *H);
 extern int function_info(NspFunction *H, int indent,const char *name, int rec_level);

@@ -32,7 +32,7 @@
  * The given PList is stored inside the NspPList
  */
 
-NspPList *NspPListCreate(char *name, PList L,char *filename)
+NspPList *NspPListCreate(const char *name, PList L,char *filename)
 {
   NspPList *P_L = new_plist();
 

@@ -351,7 +351,7 @@ NspFunction  *GetFunction(Stack stack, int i)
  * create a NspFunction instance 
  *-----------------------------------------------------*/
 
-NspFunction *function_create(char *name,char *fname,int iface,int pos,int status,NspTypeBase *type)
+NspFunction *function_create(const char *name,const char *fname,int iface,int pos,int status,NspTypeBase *type)
 {
   NspFunction *H  = (type == NULL) ? new_function() : type->new();
   if ( H ==  NULLFUNC)
