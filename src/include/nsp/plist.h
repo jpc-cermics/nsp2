@@ -176,6 +176,5 @@ extern int nsp_plist_load(PList *L);
 extern NspSMatrix *nsp_plist2smatrix(PList L, int indent) ;
 extern int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out);
 
-
 #endif /*  PLIST_H  */
 

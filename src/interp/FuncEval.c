@@ -32,15 +32,12 @@
 #include "nsp/matint.h" 
 #include "nsp/accelerated_tab.h"
 #include "../objects/frame.h" /* XXX */
-#include "Functions.h" 
-#include "Eval.h" 
+#include "nsp/seval.h" 
+#include "nsp/libstab.h" 
 #include "../functions/FunTab.h"
 
 /* FIXME */
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
-extern int nsp_eval_macro(NspObject *OF,Stack,int first,int rhs,int opt,int lhs);
-extern NspObject *nsp_find_macro(const char *str);
-
 static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
 static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_pos);
 static int frame_insert_var(int rhs,int opt,int lhs);
@@ -100,8 +97,6 @@ static void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int
  **/
 
 /* #define LIBSTAB_NEW */
-
-extern NspObject *nsp_find_macro_or_func(char *str,int *type); /* XXX */
 
 int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int first, int rhs, int opt, int lhs)
 {

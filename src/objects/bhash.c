@@ -32,7 +32,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "../interp/Eval.h"
+#include "nsp/seval.h"
 
 #include "nsp/bhash.h"
 

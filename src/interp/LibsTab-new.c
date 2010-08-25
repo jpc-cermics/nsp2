@@ -34,7 +34,7 @@
 #include "nsp/datas.h"
 #include "../system/files.h" /* FSIZE+1 */
 #include "Functions.h"
-#include "Eval.h"
+#include "nsp/seval.h"
 
 #include "../functions/FunTab.h"
 #include "../functions/callfunc.h" 

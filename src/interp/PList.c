@@ -36,7 +36,6 @@
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
 #include "nsp/pr-output.h"
-#include "Functions.h" 
 
 /**
  * nsp_parse_add:

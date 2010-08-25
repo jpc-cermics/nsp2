@@ -25,7 +25,7 @@
 #include "nsp/plistc.h"
 #include "nsp/version.h"
 #include "../functions/FunTab.h"
-#include "../interp/LibsTab.h"
+#include "nsp/libstab.h"
 
 #include "frame.h"
 

@@ -32,11 +32,11 @@
 #include "nsp/object.h" 
 #include "nsp/interf.h"
 #include "nsp/datas.h"
+#include "nsp/libstab.h"
 #include "../system/files.h" /* FSIZE+1 */
 #include "../functions/callfunc.h" 
 #include "../functions/addinter.h" 
-#include "Functions.h"
-#include "Eval.h"
+#include "nsp/seval.h"
 
 /*
  * maximum number of entries in the htable 
@@ -1000,8 +1000,9 @@ static int nsp_hash_func_hcreate(unsigned int nel)
  * After using the hash table it has to be destroyed. The used memory can
  * be freed and the local static variable can be marked as not used.
  */
-/* Unused : cleaned at scilab exit 
 
+/*
+ Unused : cleaned at nsp exit 
 static void
 nsp_hash_func_hdestroy()
 {
@@ -1012,9 +1013,18 @@ nsp_hash_func_hdestroy()
 }
 **/
 
-/* from data to key : find function given (Int and Num ) */
+/**
+ * nsp_find_function_by_id:
+ * @key: 
+ * @Int: 
+ * @Num: 
+ * 
+ * find a function given @Int and @Num
+ * 
+ * Returns: %OK or %FAIL 
+ **/
 
-int FindFunctionB(char *key, int Int, int Num)
+int nsp_find_function_by_id(char *key, int Int, int Num)
 {
   unsigned int i;
   for ( i = 0 ; i <= hsize ; i++ ) 

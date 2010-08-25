@@ -21,7 +21,7 @@
 #define  Function_Private 
 #include "nsp/function.h"
 #include "nsp/interf.h"
-#include "../interp/Eval.h" /* FIXME: FuncEval */
+#include "nsp/seval.h" /* FIXME: FuncEval */
 
 
 /**

@@ -30,6 +30,7 @@
 #include "nsp/astnode.h"
 #include "nsp/interf.h"
 #include "nsp/plistc.h"
+#include "nsp/parse.h"
 
 /* 
  * NspAstNode inherits from NspObject 

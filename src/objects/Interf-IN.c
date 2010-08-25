@@ -28,7 +28,7 @@
 
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
-#include "../interp/Eval.h"
+#include "nsp/seval.h"
 
 /*
  * A short example 

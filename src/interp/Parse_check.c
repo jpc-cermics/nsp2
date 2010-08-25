@@ -27,7 +27,6 @@
 #include "nsp/object.h"
 #include "nsp/plistc.h"
 #include "nsp/parse.h"
-#include "Functions.h" 
 
 static int IsColConc (PList plist, PList *plist1, int *kount);
 static int Isname (PList plist, PList *plist1, int *kount);

@@ -26,7 +26,8 @@
 #include "nsp/plistc.h"
 #include "nsp/interf.h"
 #include "nsp/parse.h"
-#include "Functions.h" 
+
+extern void plist_name_to_local_id(PList List,NspBHash *H,int rec);
 
 typedef int (*ExprsStop) (Tokenizer *T,int token);
 static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F);

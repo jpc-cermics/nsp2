@@ -25,7 +25,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "../interp/Eval.h"
+#include "nsp/seval.h"
 
 /* class NspGObject 
  * NspGObject inherits from NspObject 

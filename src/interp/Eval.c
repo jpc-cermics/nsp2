@@ -31,9 +31,8 @@
 #include "nsp/parse.h" 
 #include "../objects/frame.h" /* XXX */
 #include "../system/files.h" /* XXX */
-#include "Functions.h" 
-#include "LibsTab.h" 
-#include "Eval.h" 
+#include "nsp/libstab.h" 
+#include "nsp/seval.h" 
 #include "../functions/FunTab.h"
 
 /* XXX */

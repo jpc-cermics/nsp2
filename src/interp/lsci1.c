@@ -27,7 +27,7 @@
 #include "nsp/object.h"
 #include "nsp/interf.h"
 #include "nsp/parse.h"
-#include "Eval.h"
+#include "nsp/seval.h"
 #include "Functions.h" 
 
 #include "nsp/version.h"

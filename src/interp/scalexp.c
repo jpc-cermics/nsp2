@@ -32,7 +32,6 @@
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
 #include "../objects/frame.h" /* XXX */
-#include "Functions.h" 
 #include "nsp/gsort-p.h" 
 
 static int nsp_scalexp_byte_comp(NspScalExp *Se,int check);

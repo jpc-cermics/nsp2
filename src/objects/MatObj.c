@@ -4762,7 +4762,7 @@ static int int_mx_to_seq (Stack stack, int rhs, int opt, int lhs)
  * FIXME : to be removed 
  */
 
-#include "../interp/Eval.h"
+#include "nsp/seval.h"
 
 int int_harmloop1(Stack stack, int rhs, int opt, int lhs)
 {

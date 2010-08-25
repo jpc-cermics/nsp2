@@ -24,12 +24,12 @@
 #include <stdio.h>
 #include <string.h>
 #include "nsp/interf.h"
-#include "LibsTab.h"
+#include "nsp/libstab.h"
 #include "../system/files.h"
 #include "nsp/datas.h"
 #include "nsp/parse.h"
 #include "nsp/stack.h"
-#include "Eval.h"
+#include "nsp/seval.h"
 #include "nsp/menus.h"
 
 extern void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);

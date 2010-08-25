@@ -28,17 +28,12 @@
 #include "nsp/sciio.h"
 #include "nsp/plistc.h"
 #include "nsp/parse.h"
-
 #define Private_Tokenizer 
 #include "nsp/tokenizer.h" 
 
-/* ca be static ? FIXME */
 static SciReadFunc SciFileReadLine;
 static SciReadFunc SciStringReadLine;
 static SciReadFunc SciSMatReadLine;
-
-/* FIXME : */
-extern char *nsp_force_prompt(void);
 
 #define PERCENT_CHECK(c) (((c) == '%') && (T->mtlb == FALSE) )
 
@@ -50,7 +45,7 @@ extern char *nsp_force_prompt(void);
  *
  **/
 
-extern void nsp_init_tokenizer(Tokenizer *T)
+void nsp_init_tokenizer(Tokenizer *T)
 {
   T->NextToken=next_token;
   T->ParseCommandArg=parse_command_arg;
@@ -126,8 +121,6 @@ void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof)
   buffer[len_line+1] = '\0';
   buffer[len_line+2] = '\0'; /* ??? xxxx*/
 }
-
-
 
 /**
  * next_token:
@@ -1397,14 +1390,14 @@ char *nsp_force_prompt(void)
   return  SciForcePrompt;
 } 
 
-void inc_pause_prompt()
+void inc_pause_prompt(void)
 {
   nsp_pause++;
   nsp_pause = Max(0,Min(nsp_pause,999));
   sprintf(SciPausePrompt,"-nsp-%d->",nsp_pause);
 }
 
-void dec_pause_prompt()
+void dec_pause_prompt(void)
 {
   nsp_pause--; 
   nsp_pause = Max(0,Min(nsp_pause,999));
@@ -1413,7 +1406,7 @@ void dec_pause_prompt()
   nsp_readline_clear_line();
 }
 
-void zero_pause_prompt()
+void zero_pause_prompt(void)
 {
   nsp_pause = 0;
 }

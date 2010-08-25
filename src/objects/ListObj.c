@@ -29,7 +29,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/plisttoken.h" /* for name_maxl **/
-#include "../interp/Eval.h"
+#include "nsp/seval.h"
 
 /**
  * SECTION:list

@@ -27,9 +27,8 @@
 #include "nsp/object.h"
 #include "nsp/interf.h"
 #include "nsp/parse.h"
-#include "Eval.h"
-#include "Functions.h" 
-
+#include "nsp/seval.h"
+#include "nsp/libstab.h"
 #include "nsp/version.h"
 #include "nsp/machine.h"
 #ifdef WITH_GTKGLEXT

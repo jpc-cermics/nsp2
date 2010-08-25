@@ -28,9 +28,7 @@
 #include "nsp/matrix-in.h"
 #include "nsp/smatrix-in.h"
 #include "nsp/bmatrix-in.h"
-#include "../interp/Eval.h"
-
-/* #include "nsp/graphics/Graphics.h" */
+#include "nsp/seval.h"
 #include "nsp/gsort-p.h"
 #include "nsp/imatrix.h"
 

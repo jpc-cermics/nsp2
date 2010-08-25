@@ -24,7 +24,7 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 #include "frame.h"
-#include "../interp/LibsTab.h"
+#include "nsp/libstab.h"
 #include "../functions/FunTab.h"
 
 extern NspObject *Reserved;

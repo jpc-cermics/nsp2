@@ -139,7 +139,13 @@ extern void nsp_tokeniser_strings(Tokenizer *T,char **S);
 typedef void (*MoreFun) (int *n);
 extern MoreFun scimore ;
 extern void scimore_void(int *n);
-MoreFun nsp_set_nsp_more(MoreFun F);
+extern MoreFun nsp_set_nsp_more(MoreFun F);
+
+extern char *nsp_prompt(void);
+extern char *nsp_force_prompt(void);
+extern void inc_pause_prompt(void);
+extern void dec_pause_prompt(void);
+extern void zero_pause_prompt(void);
 
 #endif /*  NSP_TOKENIZER  */
 
@@ -173,3 +179,4 @@ static void nsp_string_readline_internal(char *prompt, char *buffer, int *buf_si
 					 int *len_line, int *eof, 
 					 nsp_const_string *nsp_input_string,  int *nsp_input_pos );
 #endif 
+

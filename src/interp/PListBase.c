@@ -22,7 +22,7 @@
 #include <math.h>
 #include "nsp/object.h"
 #include "nsp/plistc.h"
-
+#include "nsp/parse.h"
 /*
  * Scilab keywords an operators
  */

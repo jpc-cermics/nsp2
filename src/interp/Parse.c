@@ -33,8 +33,7 @@
 #include "nsp/datas.h"
 #include "nsp/parse.h"
 #include "../system/files.h" /* FSIZE */
-#include "Functions.h" 
-#include "Eval.h"
+#include "nsp/seval.h"
 #include "../objects/frame.h" /* to be moved in include */
 
 #include <signal.h>
