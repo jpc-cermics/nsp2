@@ -58,7 +58,7 @@ typedef struct mdata {
 
 static int   myhcreate (unsigned int);
 /* static void	 myhdestroy(); */
-static int   myhsearch (char *str,Mdata *d,ACTION);
+static int   myhsearch (const char *str,Mdata *d,ACTION);
 
 /* table of directory that contains searched 
  * macros
@@ -263,7 +263,7 @@ int nsp_delete_macros(const char *dirname)
  * Return value: %NULLOBJ or an %NspObject filled with the macro code.
  **/
 
-NspObject *nsp_find_macro(char *str)
+NspObject *nsp_find_macro(const char *str)
 {
   NspObject *Ob;
   Mdata data;
@@ -532,13 +532,13 @@ static int myhcreate(unsigned int nel)
 #define HSEARCH_DEBUG(x) 
 #define Eqid(x,y) strncmp(x,y,NAME_MAXL) 
 
-static int myhsearch(char *key, Mdata *data, ACTION action)
+static int myhsearch(const char *key, Mdata *data, ACTION action)
 {
   register unsigned hval;
   register unsigned hval2;
   register unsigned len = NAME_MAXL;
   register unsigned idx;
-  register char *str;
+  register const char *str;
   /*
    * If table is full and another entry should be entered return with 
    * error.
