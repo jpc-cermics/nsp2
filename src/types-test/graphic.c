@@ -30,7 +30,7 @@
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
-#include "../interp/Eval.h"
+#include <nsp/seval.h>
 
 #line 36 "graphic.c"
 
