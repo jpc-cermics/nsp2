@@ -563,6 +563,40 @@ static int int_astnode_meth_get_op(NspAstNode *self, Stack stack, int rhs, int o
   return Max(lhs,1);
 }
 
+static int int_astnode_meth_get_codename(NspAstNode *self, Stack stack, int rhs, int opt, int lhs)
+{
+  const char *str;
+  NspObject *Ret;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  switch ( ((int) self->obj->op)) 
+    {
+    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
+    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
+    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
+    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
+    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
+    default:
+      str=nsp_astcode_to_codename(self->obj->op);
+      if ( str != (char *) 0 )
+	{
+	  if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
+	}
+      else 
+	{
+	  if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
+	    return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
 static int int_astnode_meth_get_opname(NspAstNode *self, Stack stack, int rhs, int opt, int lhs)
 {
   const char *str;
@@ -596,6 +630,7 @@ static int int_astnode_meth_get_opname(NspAstNode *self, Stack stack, int rhs, i
   MoveObj(stack,1,Ret);
   return Max(lhs,1);
 }
+
 
 static int int_astnode_meth_is(NspAstNode *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -641,7 +676,8 @@ static int int_astnode_meth_get_obj(NspAstNode *self, Stack stack, int rhs, int 
 static NspMethods astnode_methods[] = {
   {"get_id",(nsp_method *) int_astnode_meth_get_op},
   {"get_str",(nsp_method *) int_astnode_meth_get_str},
-  {"get_idname",(nsp_method *) int_astnode_meth_get_opname},
+  {"get_idname",(nsp_method *) int_astnode_meth_get_codename},
+  {"get_opname",(nsp_method *) int_astnode_meth_get_opname},
   {"is", (nsp_method *) int_astnode_meth_is},
   {"get_obj", (nsp_method *) int_astnode_meth_get_obj},
   { NULL, NULL}
