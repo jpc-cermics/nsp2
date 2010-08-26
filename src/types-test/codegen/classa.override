@@ -24,6 +24,8 @@ include-private ClassA
 
 %%
 headers
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
 
 %%
 init 

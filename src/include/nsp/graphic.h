@@ -8,9 +8,10 @@
  */
 
 #line 4 "codegen/graphic.override"
+/* inserted at the start of include file */
 #include <gdk/gdk.h>
 
-#line 14 "./graphic.h"
+#line 15 "./graphic.h"
 /* NspGraphic */
 
 #include <nsp/object.h>
@@ -23,7 +24,7 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 57 "codegen/graphic.override"
+#line 60 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
@@ -37,14 +38,14 @@ typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, i
 typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 typedef void invalidate_func(NspGraphic *G);
 
-#line 41 "./graphic.h"
+#line 42 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 42 "codegen/graphic.override"
+#line 45 "codegen/graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
@@ -59,7 +60,7 @@ struct _NspTypeGraphic {
   invalidate_func *invalidate;
 
 
-#line 63 "./graphic.h"
+#line 64 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
@@ -122,13 +123,13 @@ extern int int_graphic_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGraphic *nsp_graphic_xdr_load_partial(XDR *xdrs, NspGraphic *M);
 extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 
-#line 8 "codegen/graphic.override"
+#line 9 "codegen/graphic.override"
 
 /* inserted at the end of public part of include file */
 extern void nsp_graphic_invalidate(NspGraphic *G);
 extern int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect);
 
-#line 132 "./graphic.h"
+#line 133 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -143,10 +144,10 @@ static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
 /* static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
-#line 15 "codegen/graphic.override"
+#line 16 "codegen/graphic.override"
 
 /* inserted in the private part of include file */
 
-#line 151 "./graphic.h"
+#line 152 "./graphic.h"
 #endif /* NspGraphic_Private */
 

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,8 +19,18 @@
  * frames for storing evaluation environments.
  */
 
-#include "nsp/object.h"
+
 #define  Frame_Private 
+#include <nsp/object.h> 
+#include <nsp/type.h> 
+#include <nsp/file.h> 
+#include <nsp/hobj.h> 
+#include <nsp/cells.h> 
+#include <nsp/list.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/hash.h> 
+#include <nsp/bhash.h> 
+
 #include "frame.h"
 #include "nsp/interf.h"
 #include "nsp/datas.h"

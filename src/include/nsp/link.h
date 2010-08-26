@@ -9,8 +9,8 @@
 
 #line 4 "codegen/link.override"
 /* inserted at the start of include file */
-
 #include <stdio.h>   /* for file declaration */
+#include <nsp/figure.h>
 #include "nsp/grint.h" /* interface definition */
 
 /**

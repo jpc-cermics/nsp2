@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/box3d.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./box3d.h"
 /* NspBox3d */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspBox3d NspBox3d ;
 typedef struct _NspTypeBox3d NspTypeBox3d ;
 
-#line 22 "./box3d.h"
+#line 27 "./box3d.h"
 
 struct _NspTypeBox3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./box3d.h"
+#line 34 "./box3d.h"
 };
 
 typedef struct _nsp_box3d nsp_box3d;
@@ -90,11 +95,10 @@ extern int int_box3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspBox3d *nsp_box3d_xdr_load_partial(XDR *xdrs, NspBox3d *M);
 extern int nsp_box3d_xdr_save(XDR  *xdrs, NspBox3d *M);
 
-#line 4 "codegen/box3d.override"
-
+#line 9 "codegen/box3d.override"
 /* inserted at the end of public part of include file */
 
-#line 98 "./box3d.h"
+#line 102 "./box3d.h"
 #endif /* NSP_INC_NspBox3d */ 
 
 #ifdef NspBox3d_Private 
@@ -109,8 +113,7 @@ static AttrTab box3d_attrs[];
 static NspMethods *box3d_get_methods(void);
 /* static int int_box3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspBox3d *nsp_box3d_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/box3d.override"
-
+#line 13 "codegen/box3d.override"
 /* inserted in the private part of include file */
 
 static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -119,6 +122,6 @@ static void nsp_rotate_box3d(NspGraphic *o,double *R);
 static void nsp_scale_box3d(NspGraphic *o,double *alpha);
 static int nsp_getbounds_box3d(NspGraphic *o,double *bounds);
 
-#line 123 "./box3d.h"
+#line 126 "./box3d.h"
 #endif /* NspBox3d_Private */
 

@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -25,8 +25,8 @@
 
 
 #line 87 "codegen/diagram.override"
-
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"
@@ -41,7 +41,7 @@
 
 
 #define  NspDiagram_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/diagram.h>
 #include <nsp/interf.h>
 

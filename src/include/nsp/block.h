@@ -9,10 +9,11 @@
 
 #line 4 "codegen/block.override"
 /* inserted at the start of include file */
-
 #include <stdio.h>   /* for file declaration */
+#include <nsp/figure.h>
 #include "nsp/grint.h" /* interface definition */
 #include "nsp/eval.h" /* interface definition */
+
 /**
  * NspBlock:
  * @obj: a #nsp_block pointer 
@@ -59,7 +60,7 @@ struct b_lock {
  */
 
 
-#line 63 "./block.h"
+#line 64 "./block.h"
 /* NspBlock */
 
 #include <nsp/graphic.h>
@@ -71,14 +72,14 @@ struct b_lock {
 typedef struct _NspBlock NspBlock ;
 typedef struct _NspTypeBlock NspTypeBlock ;
 
-#line 75 "./block.h"
+#line 76 "./block.h"
 
 struct _NspTypeBlock {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 82 "./block.h"
+#line 83 "./block.h"
 };
 
 typedef struct _nsp_block nsp_block;
@@ -146,11 +147,11 @@ extern int int_block_create(Stack stack, int rhs, int opt, int lhs);
 extern NspBlock *nsp_block_xdr_load_partial(XDR *xdrs, NspBlock *M);
 extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
 
-#line 57 "codegen/block.override"
+#line 58 "codegen/block.override"
 
 /* inserted at the end of public part of include file */
 
-#line 154 "./block.h"
+#line 155 "./block.h"
 #endif /* NSP_INC_NspBlock */ 
 
 #ifdef NspBlock_Private 
@@ -165,7 +166,7 @@ static AttrTab block_attrs[];
 static NspMethods *block_get_methods(void);
 /* static int int_block_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
-#line 62 "codegen/block.override"
+#line 63 "codegen/block.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
@@ -224,6 +225,6 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
 
-#line 228 "./block.h"
+#line 229 "./block.h"
 #endif /* NspBlock_Private */
 

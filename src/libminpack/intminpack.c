@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2008-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2008-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,6 +20,11 @@
  *--------------------------------------------------------------------------*/
 
 #include <setjmp.h>
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
+
 #include "nsp/interf.h"
 #include "minpack.h"
 #include "nsp/eval.h" 

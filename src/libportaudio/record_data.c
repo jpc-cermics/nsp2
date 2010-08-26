@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2009-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -25,9 +25,11 @@
 #include <sndfile.h>
 #include <portaudio.h>
 #include <signal.h> 
+
 #include <nsp/interf.h>
 #include <nsp/matutil.h>
-
+#include <nsp/object.h>
+#include <nsp/matrix.h>
 #include "pansp.h"
 
 #define FRAMES_PER_BUFFER   (1024)

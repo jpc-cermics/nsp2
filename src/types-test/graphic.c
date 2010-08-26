@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,21 +24,23 @@
 
 
 
-#line 20 "codegen/graphic.override"
+#line 21 "codegen/graphic.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
+#include <nsp/graphic.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/seval.h>
 
-#line 36 "graphic.c"
+#line 38 "graphic.c"
 
 /* ----------- NspGraphic ----------- */
 
 
 #define  NspGraphic_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/graphic.h>
 #include <nsp/interf.h>
 
@@ -104,7 +106,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
   type->init = (init_func *) init_graphic;
 
-#line 72 "codegen/graphic.override"
+#line 75 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we define the default values for graphic methods 
@@ -123,7 +125,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->n_faces = NULL;
   type->invalidate = nsp_graphic_invalidate;
 
-#line 127 "graphic.c"
+#line 129 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -526,7 +528,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 92 "codegen/graphic.override"
+#line 95 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -540,10 +542,10 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 544 "graphic.c"
+#line 546 "graphic.c"
 
 
-#line 107 "codegen/graphic.override"
+#line 110 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -555,10 +557,10 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 559 "graphic.c"
+#line 561 "graphic.c"
 
 
-#line 120 "codegen/graphic.override"
+#line 123 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -569,10 +571,10 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 573 "graphic.c"
+#line 575 "graphic.c"
 
 
-#line 142 "codegen/graphic.override"
+#line 145 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -581,10 +583,10 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 585 "graphic.c"
+#line 587 "graphic.c"
 
 
-#line 132 "codegen/graphic.override"
+#line 135 "codegen/graphic.override"
 static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -593,7 +595,7 @@ static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt
   return 0;
 }
 
-#line 597 "graphic.c"
+#line 599 "graphic.c"
 
 
 static NspMethods graphic_methods[] = {
@@ -684,7 +686,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 152 "codegen/graphic.override"
+#line 155 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -949,4 +951,4 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
 }
 
 
-#line 953 "graphic.c"
+#line 955 "graphic.c"

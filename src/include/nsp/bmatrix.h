@@ -7,10 +7,10 @@
  */
   
 /* Boolean Matrix */
-typedef int Boolean;
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
+#include "nsp/objectf.h" 
 
 /*
  * NspBMatrix inherits from NspObject 
@@ -26,7 +26,7 @@ typedef int Boolean;
  * inherits from #NspObject 
  */
 
-typedef struct _NspBMatrix NspBMatrix;
+/* typedef struct _NspBMatrix NspBMatrix; */
 typedef struct _NspTypeBMatrix  NspTypeBMatrix;
 
 struct _NspTypeBMatrix { 
@@ -42,10 +42,6 @@ struct _NspBMatrix {
   int m,n,mn;
   Boolean *B;	
 };
-
-#include "nsp/matrix.h" 
-#include "nsp/imatrix.h" 
-#include "nsp/smatrix.h" 
 
 /**
  * nsp_type_bmatrix_id:

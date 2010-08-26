@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,8 +24,9 @@
 
 
 
-#line 28 "codegen/gmatrix1.override"
+#line 34 "codegen/gmatrix1.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -34,13 +35,13 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 38 "gmatrix1.c"
+#line 39 "gmatrix1.c"
 
 /* ----------- NspGMatrix1 ----------- */
 
 
 #define  NspGMatrix1_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/gmatrix1.h>
 #include <nsp/interf.h>
 
@@ -106,7 +107,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
 
   type->init = (init_func *) init_gmatrix1;
 
-#line 44 "codegen/gmatrix1.override"
+#line 51 "codegen/gmatrix1.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix1;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix1 ;
@@ -117,7 +118,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 121 "gmatrix1.c"
+#line 122 "gmatrix1.c"
   /* 
    * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -908,7 +909,7 @@ static AttrTab gmatrix1_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 65 "codegen/gmatrix1.override"
+#line 72 "codegen/gmatrix1.override"
 
 extern function int_nspgraphic_extract;
 
@@ -917,10 +918,10 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 921 "gmatrix1.c"
+#line 922 "gmatrix1.c"
 
 
-#line 75 "codegen/gmatrix1.override"
+#line 82 "codegen/gmatrix1.override"
 
 extern function int_graphic_set_attribute;
 
@@ -929,7 +930,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 933 "gmatrix1.c"
+#line 934 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -960,7 +961,7 @@ void GMatrix1_Interf_Info(int i, char **fname, function (**f))
   *f = GMatrix1_func[i].fonc;
 }
 
-#line 85 "codegen/gmatrix1.override"
+#line 92 "codegen/gmatrix1.override"
 
 /* inserted verbatim at the end */
 
@@ -1699,4 +1700,4 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
 }
 
 
-#line 1703 "gmatrix1.c"
+#line 1704 "gmatrix1.c"

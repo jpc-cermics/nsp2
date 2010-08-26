@@ -1,6 +1,6 @@
 /* 
  * interface for approximation/interpolation of Nsp 
- * Copyright (C) 2005-2009  Bruno Pincon
+ * Copyright (C) 2005-2010  Bruno Pincon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,9 +24,13 @@
 #include <limits.h>
 #include <strings.h>
 #include <nsp/machine.h>
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
 #include <nsp/math.h>
-#include "nsp/matrix-in.h"
-#include "nsp/bmatrix-in.h"
+#include <nsp/interf.h>
 #include "nsp/approx.h"
 
 static int good_order(const double x[], int n)

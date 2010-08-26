@@ -7,6 +7,12 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/contour.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+#line 16 "./contour.h"
 /* NspContour */
 
 #include <nsp/graphic.h>
@@ -18,14 +24,14 @@
 typedef struct _NspContour NspContour ;
 typedef struct _NspTypeContour NspTypeContour ;
 
-#line 22 "./contour.h"
+#line 28 "./contour.h"
 
 struct _NspTypeContour {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./contour.h"
+#line 35 "./contour.h"
 };
 
 typedef struct _nsp_contour nsp_contour;
@@ -90,14 +96,14 @@ extern int int_contour_create(Stack stack, int rhs, int opt, int lhs);
 extern NspContour *nsp_contour_xdr_load_partial(XDR *xdrs, NspContour *M);
 extern int nsp_contour_xdr_save(XDR  *xdrs, NspContour *M);
 
-#line 4 "codegen/contour.override"
+#line 10 "codegen/contour.override"
 
 extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
 			    int *flagnz, int *nz, double *zz, int *style);
 
 /* inserted at the end of public part of include file */
 
-#line 101 "./contour.h"
+#line 107 "./contour.h"
 #endif /* NSP_INC_NspContour */ 
 
 #ifdef NspContour_Private 
@@ -112,7 +118,7 @@ static AttrTab contour_attrs[];
 static NspMethods *contour_get_methods(void);
 /* static int int_contour_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type);
-#line 12 "codegen/contour.override"
+#line 18 "codegen/contour.override"
 
 /* inserted in the private part of include file */
 
@@ -122,6 +128,6 @@ static void nsp_rotate_contour(NspGraphic *o,double *R);
 static void nsp_scale_contour(NspGraphic *o,double *alpha);
 static int nsp_getbounds_contour(NspGraphic *o,double *bounds);
 
-#line 126 "./contour.h"
+#line 132 "./contour.h"
 #endif /* NspContour_Private */
 

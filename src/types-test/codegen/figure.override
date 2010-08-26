@@ -1,6 +1,9 @@
 /* -*- Mode: C -*- */
 %%
 include-start Figure 
+/* inserted at the start of include file */
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 
 %%
@@ -60,6 +63,7 @@ static void nsp_figure_process_updates(NspFigure *F);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>

@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/curve.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./curve.h"
 /* NspCurve */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspCurve NspCurve ;
 typedef struct _NspTypeCurve NspTypeCurve ;
 
-#line 22 "./curve.h"
+#line 27 "./curve.h"
 
 struct _NspTypeCurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./curve.h"
+#line 34 "./curve.h"
 };
 
 typedef struct _nsp_curve nsp_curve;
@@ -91,11 +96,10 @@ extern int int_curve_create(Stack stack, int rhs, int opt, int lhs);
 extern NspCurve *nsp_curve_xdr_load_partial(XDR *xdrs, NspCurve *M);
 extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 
-#line 4 "codegen/curve.override"
-
+#line 9 "codegen/curve.override"
 /* inserted at the end of public part of include file */
 
-#line 99 "./curve.h"
+#line 103 "./curve.h"
 #endif /* NSP_INC_NspCurve */ 
 
 #ifdef NspCurve_Private 
@@ -110,7 +114,7 @@ static AttrTab curve_attrs[];
 static NspMethods *curve_get_methods(void);
 /* static int int_curve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/curve.override"
+#line 13 "codegen/curve.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_curve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -119,6 +123,6 @@ static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
 
-#line 123 "./curve.h"
+#line 127 "./curve.h"
 #endif /* NspCurve_Private */
 

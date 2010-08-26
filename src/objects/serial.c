@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2006-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,11 +19,19 @@
  * Serial Object. 
  */
 
-#include "nsp/object.h"
 #define  Serial_Private 
-#include "nsp/serial.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/serial.h>
+#include <nsp/smio.h> /* zlib.h */
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+
 #include "nsp/interf.h"
-#include "nsp/smio.h" /* zlib.h */
+
 /* 
  * NspSerial inherits from NspObject
  */

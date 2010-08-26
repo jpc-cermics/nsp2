@@ -1,6 +1,6 @@
 /* 
  * 3d integration routine for Nsp
- * Copyright (C) 2009  Bruno Pincon
+ * Copyright (C) 2010  Bruno Pincon
  * 
  * The code uses the method described in:
  * Algorithm 720, TOMS, ACM

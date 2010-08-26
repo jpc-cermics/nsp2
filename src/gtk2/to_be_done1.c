@@ -1,5 +1,9 @@
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
+#include <nsp/object.h>
+#include <nsp/hash.h>
+#include <nsp/matrix.h>
+
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 

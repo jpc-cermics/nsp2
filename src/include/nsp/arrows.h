@@ -9,8 +9,9 @@
 
 #line 4 "codegen/arrows.override"
 /* inserted at the start of include file */
+#include <nsp/figure.h>
 
-#line 14 "./arrows.h"
+#line 15 "./arrows.h"
 /* NspArrows */
 
 #include <nsp/graphic.h>
@@ -22,14 +23,14 @@
 typedef struct _NspArrows NspArrows ;
 typedef struct _NspTypeArrows NspTypeArrows ;
 
-#line 26 "./arrows.h"
+#line 27 "./arrows.h"
 
 struct _NspTypeArrows {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 33 "./arrows.h"
+#line 34 "./arrows.h"
 };
 
 typedef struct _nsp_arrows nsp_arrows;
@@ -92,11 +93,11 @@ extern int int_arrows_create(Stack stack, int rhs, int opt, int lhs);
 extern NspArrows *nsp_arrows_xdr_load_partial(XDR *xdrs, NspArrows *M);
 extern int nsp_arrows_xdr_save(XDR  *xdrs, NspArrows *M);
 
-#line 8 "codegen/arrows.override"
+#line 9 "codegen/arrows.override"
 
 /* inserted at the end of public part of include file */
 
-#line 100 "./arrows.h"
+#line 101 "./arrows.h"
 #endif /* NSP_INC_NspArrows */ 
 
 #ifdef NspArrows_Private 
@@ -111,7 +112,7 @@ static AttrTab arrows_attrs[];
 static NspMethods *arrows_get_methods(void);
 /* static int int_arrows_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspArrows *nsp_arrows_create_void(char *name,NspTypeBase *type);
-#line 13 "codegen/arrows.override"
+#line 14 "codegen/arrows.override"
 
 /* inserted in the private part of include file */
 
@@ -121,6 +122,6 @@ static void nsp_rotate_arrows(NspGraphic *o,double *R);
 static void nsp_scale_arrows(NspGraphic *o,double *alpha);
 static int nsp_getbounds_arrows(NspGraphic *o,double *bounds);
 
-#line 125 "./arrows.h"
+#line 126 "./arrows.h"
 #endif /* NspArrows_Private */
 

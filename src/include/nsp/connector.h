@@ -8,10 +8,9 @@
  */
 
 #line 4 "codegen/connector.override"
-
 /* inserted at the start of include file */
-
 #include <stdio.h>   /* for file declaration */
+#include <nsp/figure.h>
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -36,7 +35,7 @@ struct _gr_lock {
 
 
 
-#line 40 "./connector.h"
+#line 39 "./connector.h"
 /* NspConnector */
 
 #include <nsp/graphic.h>
@@ -48,14 +47,14 @@ struct _gr_lock {
 typedef struct _NspConnector NspConnector ;
 typedef struct _NspTypeConnector NspTypeConnector ;
 
-#line 52 "./connector.h"
+#line 51 "./connector.h"
 
 struct _NspTypeConnector {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 59 "./connector.h"
+#line 58 "./connector.h"
 };
 
 typedef struct _nsp_connector nsp_connector;
@@ -120,11 +119,11 @@ extern int int_connector_create(Stack stack, int rhs, int opt, int lhs);
 extern NspConnector *nsp_connector_xdr_load_partial(XDR *xdrs, NspConnector *M);
 extern int nsp_connector_xdr_save(XDR  *xdrs, NspConnector *M);
 
-#line 34 "codegen/connector.override"
+#line 33 "codegen/connector.override"
 
 /* inserted at the end of public part of include file */
 
-#line 128 "./connector.h"
+#line 127 "./connector.h"
 #endif /* NSP_INC_NspConnector */ 
 
 #ifdef NspConnector_Private 
@@ -139,7 +138,7 @@ static AttrTab connector_attrs[];
 static NspMethods *connector_get_methods(void);
 /* static int int_connector_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspConnector *nsp_connector_create_void(char *name,NspTypeBase *type);
-#line 39 "codegen/connector.override"
+#line 38 "codegen/connector.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 
 static int lock_color=10;
@@ -190,6 +189,6 @@ static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M);
 
-#line 194 "./connector.h"
+#line 193 "./connector.h"
 #endif /* NspConnector_Private */
 

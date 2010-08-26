@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,9 +24,9 @@
 
 
 
-#line 20 "codegen/grarc.override"
+#line 25 "codegen/grarc.override"
 #include <gdk/gdk.h>
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/grarc.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
@@ -37,7 +37,7 @@
 
 
 #define  NspGrArc_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/grarc.h>
 #include <nsp/interf.h>
 
@@ -103,7 +103,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
 
   type->init = (init_func *) init_grarc;
 
-#line 33 "codegen/grarc.override"
+#line 38 "codegen/grarc.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -767,7 +767,7 @@ static AttrTab grarc_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 55 "codegen/grarc.override"
+#line 60 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -779,7 +779,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
 #line 780 "grarc.c"
 
 
-#line 65 "codegen/grarc.override"
+#line 70 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -820,7 +820,7 @@ void GrArc_Interf_Info(int i, char **fname, function (**f))
   *f = GrArc_func[i].fonc;
 }
 
-#line 76 "codegen/grarc.override"
+#line 81 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 

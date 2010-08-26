@@ -1,5 +1,11 @@
 /* -*- Mode: C -*- */
 %%
+include-start GrImage
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+%%
 include-public GrImage
 
 /* inserted at the end of public part of include file */
@@ -17,6 +23,7 @@ static int nsp_getbounds_grimage(NspGraphic *o,double *bounds);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 

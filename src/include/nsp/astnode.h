@@ -15,7 +15,7 @@
  * NspAstNode inherits from NspObject
  */
 
-typedef struct _NspAstNode NspAstNode ;
+/* typedef struct _NspAstNode NspAstNode ;*/
 typedef struct _NspTypeAstNode NspTypeAstNode ;
 
 struct _NspTypeAstNode {

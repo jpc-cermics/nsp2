@@ -1,12 +1,15 @@
 /* -*- Mode: C -*- */
 %%
-include-public Box3d
+include-start Box3d
+/* inserted at the start of include file */
+#include <nsp/figure.h>
 
+%%
+include-public Box3d
 /* inserted at the end of public part of include file */
 
 %%
 include-private Box3d
-
 /* inserted in the private part of include file */
 
 static void nsp_draw_box3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -17,7 +20,8 @@ static int nsp_getbounds_box3d(NspGraphic *o,double *bounds);
 
 %%
 headers
-
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
 %%
 init 
 

@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/grstring.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./grstring.h"
 /* NspGrstring */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspGrstring NspGrstring ;
 typedef struct _NspTypeGrstring NspTypeGrstring ;
 
-#line 22 "./grstring.h"
+#line 27 "./grstring.h"
 
 struct _NspTypeGrstring {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grstring.h"
+#line 34 "./grstring.h"
 };
 
 typedef struct _nsp_grstring nsp_grstring;
@@ -95,11 +100,11 @@ extern int int_grstring_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrstring *nsp_grstring_xdr_load_partial(XDR *xdrs, NspGrstring *M);
 extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
-#line 4 "codegen/grstring.override"
+#line 9 "codegen/grstring.override"
 
 /* inserted at the end of public part of include file */
 
-#line 103 "./grstring.h"
+#line 108 "./grstring.h"
 #endif /* NSP_INC_NspGrstring */ 
 
 #ifdef NspGrstring_Private 
@@ -114,7 +119,7 @@ static AttrTab grstring_attrs[];
 static NspMethods *grstring_get_methods(void);
 /* static int int_grstring_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrstring *nsp_grstring_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/grstring.override"
+#line 14 "codegen/grstring.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -123,6 +128,6 @@ static void nsp_rotate_grstring(NspGraphic *o,double *R);
 static void nsp_scale_grstring(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 
-#line 127 "./grstring.h"
+#line 132 "./grstring.h"
 #endif /* NspGrstring_Private */
 

@@ -15,7 +15,7 @@
 
 /* typedef struct { double r, i; } doubleC; */
 
-typedef struct _NspMpmatrix NspMaxpMatrix;
+/* typedef struct _NspMpmatrix NspMaxpMatrix; */
 
 typedef struct _NspTypeMaxpMatrix { 
   NSP_TYPE_OBJECT__ 

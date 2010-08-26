@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start Grstring
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public  Grstring
 
 /* inserted at the end of public part of include file */
@@ -17,6 +22,7 @@ static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/axes.h>

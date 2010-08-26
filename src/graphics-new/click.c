@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2001-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -28,7 +28,10 @@
 #include "nsp/command.h"
 #include "nsp/gtksci.h"
 #include "nsp/graphics-new/Graphics.h" 
-#include "nsp/object.h"
+#include <nsp/object.h>
+#include <nsp/matrix.h>
+#include <nsp/eval.h>
+
 /**
  * scig_click_handler_none:
  * @win: 

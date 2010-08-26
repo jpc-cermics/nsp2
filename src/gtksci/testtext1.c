@@ -39,6 +39,12 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "nsp/machine.h"
+
+#include <nsp/object.h> 
+#include <nsp/hash.h> 
+#include <nsp/file.h> 
+#include <nsp/smatrix.h> 
+
 #include "nsp/math.h"
 #include "nsp/tokenizer.h" 
 #include "nsp/gtksci.h" 

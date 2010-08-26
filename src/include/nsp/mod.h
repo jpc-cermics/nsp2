@@ -15,7 +15,7 @@
  * NspMod inherits from NspObject 
  */
 
-typedef struct _NspMod NspMod;
+/* typedef struct _NspMod NspMod; */
 
 typedef struct _NspTypeMod { 
   NSP_TYPE_OBJECT__ 

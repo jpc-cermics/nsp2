@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,7 +24,10 @@
 #include <gtk/gtk.h> 
 #include <gdk/gdk.h>
 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/list.h> 
+#include <nsp/cells.h> 
+#include <nsp/matrix.h> 
 #include "nsp/gtk/gdkpixbuf.h"
 #include "nsp/interf.h"
 

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -23,13 +23,15 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
+#include <glib.h> /* for int64 */
+
 #include "nsp/machine.h" 
 #include "nsp/gsort-p.h"
 
 #define ELT_TYPE int
 #include "qsort1-gen.c"
 #undef  ELT_TYPE
-
 
 /*
  * double arrays or matrices 

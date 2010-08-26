@@ -7,12 +7,25 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/list.h> 
+#include <nsp/hobj.h> 
+#include <nsp/type.h> 
+#include <nsp/hash.h> 
+#include <nsp/file.h> 
+
 #include "nsp/datas.h"
 #include "nsp/interf.h" 
+
+#include "nsp/mod.h" 
 #include "nsp/module.h" 
 #include "nsp/modulelt.h" 
-
+#include "nsp/me.h" 
 
 /*********************************************
  * Search module mname in module list L 

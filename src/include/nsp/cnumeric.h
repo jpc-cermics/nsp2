@@ -7,6 +7,7 @@
  */
 
 #include "machine.h"
+#include "complex.h"
 
 extern double nsp_abs_c(const  doubleC *x);
 extern double nsp_arg_c( const doubleC *x);

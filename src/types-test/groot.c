@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -25,7 +25,7 @@
 
 
 #line 4 "codegen/groot.override"
-
+#include <nsp/objects.h> 
 #include <nsp/figuredata.h>
 #include <nsp/figure.h>
 
@@ -35,7 +35,7 @@
 
 
 #define  NspGRoot_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/groot.h>
 #include <nsp/interf.h>
 

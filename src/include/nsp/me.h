@@ -15,7 +15,7 @@
  * NspMe inherits from NspObject 
  */
 
-typedef struct _NspMe  NspMe;
+/* typedef struct _NspMe  NspMe; */
 
 typedef struct _NspTypeMe { 
   NSP_TYPE_OBJECT__ 

@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/surf.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./surf.h"
 /* NspSurf */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspSurf NspSurf ;
 typedef struct _NspTypeSurf NspTypeSurf ;
 
-#line 22 "./surf.h"
+#line 27 "./surf.h"
 
 struct _NspTypeSurf {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./surf.h"
+#line 34 "./surf.h"
 };
 
 typedef struct _nsp_surf nsp_surf;
@@ -92,11 +97,11 @@ extern int int_surf_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSurf *nsp_surf_xdr_load_partial(XDR *xdrs, NspSurf *M);
 extern int nsp_surf_xdr_save(XDR  *xdrs, NspSurf *M);
 
-#line 4 "codegen/surf.override"
+#line 9 "codegen/surf.override"
 
 /* inserted at the end of public part of include file */
 
-#line 100 "./surf.h"
+#line 105 "./surf.h"
 #endif /* NSP_INC_NspSurf */ 
 
 #ifdef NspSurf_Private 
@@ -111,7 +116,7 @@ static AttrTab surf_attrs[];
 static NspMethods *surf_get_methods(void);
 /* static int int_surf_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSurf *nsp_surf_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/surf.override"
+#line 14 "codegen/surf.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_surf(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -120,6 +125,6 @@ static void nsp_rotate_surf(NspGraphic *o,double *R);
 static void nsp_scale_surf(NspGraphic *o,double *alpha);
 static int nsp_getbounds_surf(NspGraphic *o,double *bounds);
 
-#line 124 "./surf.h"
+#line 129 "./surf.h"
 #endif /* NspSurf_Private */
 

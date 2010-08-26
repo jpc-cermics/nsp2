@@ -9,14 +9,12 @@
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
-
 #include "nsp/object.h"
 
 /*
  * NspList inherits from NspObject 
  */
-
-typedef struct _NspList  NspList;
+/* typedef struct _NspList  NspList; */
 
 typedef struct _NspTypeList { 
   NSP_TYPE_OBJECT__ 
@@ -58,7 +56,6 @@ NspList *new_list();
 
 #define NULLLIST ( NspList *) 0 
 #define NULLCELL ( Cell *) 0 
-#define NULLOBJ  ( NspObject *) 0 
 
 /* Functions declaration */
 

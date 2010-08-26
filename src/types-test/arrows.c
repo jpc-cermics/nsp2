@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,15 +24,17 @@
 
 
 
-#line 24 "codegen/arrows.override"
+#line 25 "codegen/arrows.override"
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
 
-#line 30 "arrows.c"
+#line 32 "arrows.c"
 
 /* ----------- NspArrows ----------- */
 
 
 #define  NspArrows_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/arrows.h>
 #include <nsp/interf.h>
 
@@ -98,7 +100,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
 
   type->init = (init_func *) init_arrows;
 
-#line 32 "codegen/arrows.override"
+#line 35 "codegen/arrows.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -111,7 +113,7 @@ NspTypeArrows *new_type_arrows(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 115 "arrows.c"
+#line 117 "arrows.c"
   /* 
    * NspArrows interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -709,7 +711,7 @@ static AttrTab arrows_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 54 "codegen/arrows.override"
+#line 57 "codegen/arrows.override"
 
 extern function int_nspgraphic_extract;
 
@@ -718,10 +720,10 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 722 "arrows.c"
+#line 724 "arrows.c"
 
 
-#line 64 "codegen/arrows.override"
+#line 67 "codegen/arrows.override"
 
 extern function int_graphic_set_attribute;
 
@@ -731,7 +733,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 735 "arrows.c"
+#line 737 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -762,7 +764,7 @@ void Arrows_Interf_Info(int i, char **fname, function (**f))
   *f = Arrows_func[i].fonc;
 }
 
-#line 75 "codegen/arrows.override"
+#line 78 "codegen/arrows.override"
 
 /* inserted verbatim at the end */
 
@@ -877,4 +879,4 @@ static int nsp_getbounds_arrows(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 881 "arrows.c"
+#line 883 "arrows.c"

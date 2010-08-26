@@ -1,11 +1,24 @@
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2009 )                          
+ * This Software is ( Copyright ENPC 1998-2010 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  PangoAttribute_Private 
+#include <nsp/object.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/hash.h>
+#include <nsp/list.h>
+#include <nsp/cells.h>
+#include <nsp/none.h>
+#include <nsp/mpmatrix.h>
+#include <nsp/matrix.h>
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+
 #include <pango/pango.h>
 #include "nsp/gtk/pangoattribute.h"
 #include "nsp/interf.h"

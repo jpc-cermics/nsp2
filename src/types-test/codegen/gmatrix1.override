@@ -1,5 +1,11 @@
 /* -*- Mode: C -*- */
 %%
+include-start GMatrix1
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+%%
 include-public GMatrix1
 
 /* inserted at the end of public part of include file */
@@ -26,6 +32,7 @@ static void FindIntersection(const double *sx,const double *sy,const double *fxy
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>

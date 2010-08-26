@@ -7,6 +7,12 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/gmatrix1.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+#line 16 "./gmatrix1.h"
 /* NspGMatrix1 */
 
 #include <nsp/graphic.h>
@@ -18,14 +24,14 @@
 typedef struct _NspGMatrix1 NspGMatrix1 ;
 typedef struct _NspTypeGMatrix1 NspTypeGMatrix1 ;
 
-#line 22 "./gmatrix1.h"
+#line 28 "./gmatrix1.h"
 
 struct _NspTypeGMatrix1 {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./gmatrix1.h"
+#line 35 "./gmatrix1.h"
 };
 
 typedef struct _nsp_gmatrix1 nsp_gmatrix1;
@@ -92,7 +98,7 @@ extern int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix1 *nsp_gmatrix1_xdr_load_partial(XDR *xdrs, NspGMatrix1 *M);
 extern int nsp_gmatrix1_xdr_save(XDR  *xdrs, NspGMatrix1 *M);
 
-#line 4 "codegen/gmatrix1.override"
+#line 10 "codegen/gmatrix1.override"
 
 /* inserted at the end of public part of include file */
 
@@ -100,7 +106,7 @@ extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
 
-#line 104 "./gmatrix1.h"
+#line 110 "./gmatrix1.h"
 #endif /* NSP_INC_NspGMatrix1 */ 
 
 #ifdef NspGMatrix1_Private 
@@ -115,7 +121,7 @@ static AttrTab gmatrix1_attrs[];
 static NspMethods *gmatrix1_get_methods(void);
 /* static int int_gmatrix1_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGMatrix1 *nsp_gmatrix1_create_void(char *name,NspTypeBase *type);
-#line 13 "codegen/gmatrix1.override"
+#line 19 "codegen/gmatrix1.override"
 
 /* inserted in the private part of include file */
 
@@ -129,6 +135,6 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
 
-#line 133 "./gmatrix1.h"
+#line 139 "./gmatrix1.h"
 #endif /* NspGMatrix1_Private */
 

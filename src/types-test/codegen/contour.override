@@ -1,5 +1,11 @@
 /* -*- Mode: C -*- */
 %%
+include-start Contour
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+%%
 include-public Contour
 
 extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, int *n2, 
@@ -21,6 +27,7 @@ static int nsp_getbounds_contour(NspGraphic *o,double *bounds);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>

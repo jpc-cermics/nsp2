@@ -48,6 +48,9 @@
 #include <gtksourceview/gtksourcegutter.h> 
 #endif 
 #include <nsp/object.h>
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
+
 #include <nsp/parse.h>
 #include <nsp/nsptcl.h>
 

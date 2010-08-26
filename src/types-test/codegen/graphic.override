@@ -1,6 +1,7 @@
 /* -*- Mode: C -*- */
 %%
 include-start Graphic
+/* inserted at the start of include file */
 #include <gdk/gdk.h>
 
 %%
@@ -18,8 +19,10 @@ include-private Graphic
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
+#include <nsp/graphic.h>
 #include <nsp/axes.h>
 #include <nsp/objs3d.h>
 #include <nsp/seval.h>

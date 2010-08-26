@@ -54,7 +54,7 @@ struct _NspTypeHash {
  * inherits from #NspObject, used to store hash tables.
  */
 
-typedef struct _NspHash NspHash;
+/* typedef struct _NspHash NspHash; */
 
 struct _NspHash {
   /*< private >*/

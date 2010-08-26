@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2009-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -21,13 +21,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-  
-#include "nsp/object.h" 
+#include <ctype.h> 
+
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/matint.h> 
+
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h" /* for ret_endfor */
 #include <nsp/matutil.h> /* icopy iset */
-#include <nsp/imatrix.h>
-#include <ctype.h> /* isxxxx */
 
 static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int indent);
 

@@ -7,21 +7,12 @@
  */
 
 #include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-
+#include <nsp/sciio.h>
+#include <nsp/objectf.h>
+#include <nsp/complex.h>
 /*
  * NspMatrix inherits from NspObject 
  */
-
-/**
- * doubleC: 
- * @r: real part 
- * @i: imaginary part
- * 
- * structure used to store complex values i.e two doubles.
- */
-
-typedef struct { double r, i; } doubleC;
 
 /**
  * NspMatrix: 
@@ -35,7 +26,7 @@ typedef struct { double r, i; } doubleC;
  * inherits from #NspObject 
  */
 
-typedef struct _NspMatrix NspMatrix;
+/* typedef struct _NspMatrix NspMatrix; */
 
 typedef struct _NspTypeMatrix { 
   NSP_TYPE_OBJECT__ 
@@ -60,9 +51,6 @@ struct _NspMatrix {
 		    */
   int impl[2];     /* start, step */
 };
-
-#include "nsp/bmatrix.h" 
-#include "nsp/smatrix.h" 
 
 extern int nsp_type_matrix_id;
 extern NspTypeMatrix *nsp_type_matrix;

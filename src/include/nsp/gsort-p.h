@@ -6,6 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#include <glib.h> /* for integers */
 #include "nsp/string.h" 
 #include "nsp/object.h" 
 

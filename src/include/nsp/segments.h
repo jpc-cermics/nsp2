@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/segments.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./segments.h"
 /* NspSegments */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspSegments NspSegments ;
 typedef struct _NspTypeSegments NspTypeSegments ;
 
-#line 22 "./segments.h"
+#line 27 "./segments.h"
 
 struct _NspTypeSegments {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./segments.h"
+#line 34 "./segments.h"
 };
 
 typedef struct _nsp_segments nsp_segments;
@@ -87,11 +92,11 @@ extern int int_segments_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSegments *nsp_segments_xdr_load_partial(XDR *xdrs, NspSegments *M);
 extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 
-#line 4 "codegen/segments.override"
+#line 9 "codegen/segments.override"
 
 /* inserted at the end of public part of include file */
 
-#line 95 "./segments.h"
+#line 100 "./segments.h"
 #endif /* NSP_INC_NspSegments */ 
 
 #ifdef NspSegments_Private 
@@ -106,7 +111,7 @@ static AttrTab segments_attrs[];
 static NspMethods *segments_get_methods(void);
 /* static int int_segments_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSegments *nsp_segments_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/segments.override"
+#line 14 "codegen/segments.override"
 
 /* inserted in the private part of include file */
 
@@ -116,6 +121,6 @@ static void nsp_rotate_segments(NspGraphic *o,double *R);
 static void nsp_scale_segments(NspGraphic *o,double *alpha);
 static int nsp_getbounds_segments(NspGraphic *o,double *bounds);
 
-#line 120 "./segments.h"
+#line 125 "./segments.h"
 #endif /* NspSegments_Private */
 

@@ -14,7 +14,7 @@
 /*
  * NspIVect inherits from NspObject 
  */
-typedef struct _NspIvect  NspIVect;
+/* typedef struct _NspIvect  NspIVect; */
 
 typedef struct _NspTypeIVect { 
   NSP_TYPE_OBJECT__ 

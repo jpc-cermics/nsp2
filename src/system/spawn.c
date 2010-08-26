@@ -1,8 +1,14 @@
+
 #include <gtk/gtk.h>
 #define  Spawn_Private 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/interf.h> 
+#include <nsp/hobj.h> 
+#include <nsp/type.h> 
 #include "spawn.h"
-#include "nsp/interf.h"
 
 static nsp_string send_string_to_child(NspSpawn *H,const char *str);
 static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H);

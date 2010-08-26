@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2006-2010 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -18,6 +18,10 @@
  */
 
 #include "grand.h"
+#include <nsp/object.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/matrix.h> 
+#include <nsp/matint.h> 
 #include "nsp/gsort-p.h"
 #include "nsp/spmf.h"
 #include <math.h>

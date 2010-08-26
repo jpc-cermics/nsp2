@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1985-2009 Frederic Bonnans, INRIA.
+ * Copyright (C) 1985-2010 Frederic Bonnans, INRIA.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

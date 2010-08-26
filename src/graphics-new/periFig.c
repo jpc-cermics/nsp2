@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -27,6 +27,8 @@
 #include <stdlib.h>
 
 #define PERI_PRIVATE 1
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
 #include "nsp/sciio.h"
 #include "nsp/math.h"
 #include "nsp/graphics-new/periFig.h"

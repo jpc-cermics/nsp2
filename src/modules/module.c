@@ -4,11 +4,24 @@
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
-#include "nsp/object.h"
+
 #define  Module_Private 
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/list.h>  
+#include <nsp/hobj.h> 
+#include <nsp/type.h> 
+#include <nsp/file.h> 
+#include <nsp/hash.h> 
+
 #include "nsp/module.h"
 #include "nsp/modulelt.h"
 #include "nsp/interf.h"
+#include "nsp/lmo.h"
 
 /* 
  * NspModule inherits from NspObject

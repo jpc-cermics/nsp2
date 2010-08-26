@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,8 +22,39 @@
  */
 
 #define  Type_Private 
-#include "nsp/object.h"
-#include "nsp/type.h"
+#include <nsp/object.h> 
+#include <nsp/type.h> 
+#include <nsp/hobj.h> 
+#include <nsp/list.h> 
+#include <nsp/none.h> 
+#include <nsp/hash.h> 
+#include <nsp/cells.h> 
+#include <nsp/plist.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/sprowmatrix.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/file.h> 
+#include <nsp/hash.h> 
+#include <nsp/function.h> 
+#include <nsp/ivect.h> 
+#include <nsp/module.h> 
+#include <nsp/modulelt.h> 
+#include <nsp/pmatrix.h> 
+#include <nsp/classa.h> 
+#include <nsp/classb.h> 
+#include <nsp/classaref.h> 
+#include <nsp/classbref.h> 
+#include <nsp/serial.h> 
+#include <nsp/bhash.h> 
+#include <nsp/mpmatrix.h> 
+#include <nsp/classaref.h> 
+#include <nsp/classbref.h> 
+#include <nsp/astnode.h> 
+
 #include "nsp/interf.h"
 
 /* FIXME */
@@ -62,7 +93,8 @@ extern void *new_type_spolyhedron(type_mode mode);
 extern void *new_type_string3d(type_mode mode);
 extern void *new_type_surf(type_mode mode);
 extern void *new_type_vfield(type_mode mode);
-extern void *new_type_astnode(type_mode mode);
+extern void *new_type_graphic(type_mode mode);
+/* extern void *new_type_astnode(type_mode mode); */
 
 /* 
  * NspType inherits from NspObject
@@ -581,7 +613,7 @@ void primitive_types_register(void)
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */
-  nsp_last_static_id_ = nsp_type_classbref_id;
+  nsp_last_static_id_ = nsp_type_astnode_id;
 }
 
 

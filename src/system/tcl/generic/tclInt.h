@@ -16,9 +16,12 @@
 #ifndef _TCLINT
 #define _TCLINT
 
-#include "nsp/object.h"
-#include "nsp/stack.h"
-#include "nsp/interf.h"
+#include <nsp/object.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/matrix.h>
+#include <nsp/stack.h>
+#include <nsp/interf.h>
 #include "../../files.h"
 
 /*

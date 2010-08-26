@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,19 +24,20 @@
 
 
 
-#line 19 "codegen/grstring.override"
+#line 24 "codegen/grstring.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
 #include <nsp/axes.h>
 
-#line 34 "grstring.c"
+#line 35 "grstring.c"
 
 /* ----------- NspGrstring ----------- */
 
 
 #define  NspGrstring_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/grstring.h>
 #include <nsp/interf.h>
 
@@ -102,7 +103,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
 
   type->init = (init_func *) init_grstring;
 
-#line 31 "codegen/grstring.override"
+#line 37 "codegen/grstring.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -115,7 +116,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 119 "grstring.c"
+#line 120 "grstring.c"
   /* 
    * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -854,7 +855,7 @@ static AttrTab grstring_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/grstring.override"
+#line 59 "codegen/grstring.override"
 
 extern function int_nspgraphic_extract;
 
@@ -863,10 +864,10 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 867 "grstring.c"
+#line 868 "grstring.c"
 
 
-#line 63 "codegen/grstring.override"
+#line 69 "codegen/grstring.override"
 
 extern function int_graphic_set_attribute;
 
@@ -876,7 +877,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 880 "grstring.c"
+#line 881 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -907,7 +908,7 @@ void Grstring_Interf_Info(int i, char **fname, function (**f))
   *f = Grstring_func[i].fonc;
 }
 
-#line 74 "codegen/grstring.override"
+#line 80 "codegen/grstring.override"
 
 /* inserted verbatim at the end */
 static void nsp_draw_grstring_in_box(BCG *Xgc,NspGrstring *P, const char *str);
@@ -1158,4 +1159,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1162 "grstring.c"
+#line 1163 "grstring.c"

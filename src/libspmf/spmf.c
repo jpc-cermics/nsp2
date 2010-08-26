@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2006-2010 Bruno Pincon Esial/Iecn
  * nsp_expm1 code: Copyright (C) 2002 The R Development Core Team
  *
  * This library is free software; you can redistribute it and/or

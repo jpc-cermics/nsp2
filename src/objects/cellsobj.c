@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -23,12 +23,22 @@
 #include <string.h>
 
 #define Cells_Private 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/cells.h> 
+#include <nsp/matint.h> 
+#include <nsp/hobj.h> 
+#include <nsp/file.h> 
+#include <nsp/type.h> 
+#include <nsp/list.h> 
+#include <nsp/plist.h> 
 
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "nsp/matint.h"
 
 /**
  * SECTION:cells

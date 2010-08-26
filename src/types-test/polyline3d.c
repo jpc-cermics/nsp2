@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,9 +24,9 @@
 
 
 
-#line 28 "codegen/polyline3d.override"
+#line 33 "codegen/polyline3d.override"
 #include <gdk/gdk.h>
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/polyline3d.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
@@ -41,7 +41,7 @@
 
 
 #define  NspPolyline3d_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/polyline3d.h>
 #include <nsp/interf.h>
 
@@ -107,7 +107,7 @@ NspTypePolyline3d *new_type_polyline3d(type_mode mode)
 
   type->init = (init_func *) init_polyline3d;
 
-#line 45 "codegen/polyline3d.override"
+#line 50 "codegen/polyline3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -282,7 +282,7 @@ static NspPolyline3d  *nsp_polyline3d_xdr_load(XDR *xdrs)
   if ( nsp_polyline3d_create_partial(H) == FAIL) return NULLPOLYLINE3D;
   if ((H  = nsp_polyline3d_xdr_load_partial(xdrs,H))== NULLPOLYLINE3D) return H;
   if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
-#line 69 "codegen/polyline3d.override"
+#line 74 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
@@ -300,7 +300,7 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 74 "codegen/polyline3d.override"
+#line 79 "codegen/polyline3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
@@ -500,7 +500,7 @@ NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
   if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
-#line 69 "codegen/polyline3d.override"
+#line 74 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
@@ -570,7 +570,7 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_full_copy_partial(H,self)== NULL) return NULLPOLYLINE3D;
-#line 69 "codegen/polyline3d.override"
+#line 74 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
@@ -594,7 +594,7 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline3d_check_values(H) == FAIL) return RET_BUG;
-#line 69 "codegen/polyline3d.override"
+#line 74 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
@@ -679,7 +679,7 @@ static AttrTab polyline3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 79 "codegen/polyline3d.override"
+#line 84 "codegen/polyline3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -691,7 +691,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
 #line 692 "polyline3d.c"
 
 
-#line 89 "codegen/polyline3d.override"
+#line 94 "codegen/polyline3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -732,7 +732,7 @@ void Polyline3d_Interf_Info(int i, char **fname, function (**f))
   *f = Polyline3d_func[i].fonc;
 }
 
-#line 100 "codegen/polyline3d.override"
+#line 105 "codegen/polyline3d.override"
 
 /* inserted verbatim at the end */
 

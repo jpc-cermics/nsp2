@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,15 +24,16 @@
 
 
 
-#line 20 "codegen/box3d.override"
-
-#line 30 "box3d.c"
+#line 23 "codegen/box3d.override"
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
+#line 31 "box3d.c"
 
 /* ----------- NspBox3d ----------- */
 
 
 #define  NspBox3d_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/box3d.h>
 #include <nsp/interf.h>
 
@@ -98,7 +99,7 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
 
   type->init = (init_func *) init_box3d;
 
-#line 28 "codegen/box3d.override"
+#line 32 "codegen/box3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -111,7 +112,7 @@ NspTypeBox3d *new_type_box3d(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 115 "box3d.c"
+#line 116 "box3d.c"
   /* 
    * NspBox3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -761,7 +762,7 @@ static AttrTab box3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 50 "codegen/box3d.override"
+#line 54 "codegen/box3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -770,10 +771,10 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 774 "box3d.c"
+#line 775 "box3d.c"
 
 
-#line 60 "codegen/box3d.override"
+#line 64 "codegen/box3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -783,7 +784,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 787 "box3d.c"
+#line 788 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -814,7 +815,7 @@ void Box3d_Interf_Info(int i, char **fname, function (**f))
   *f = Box3d_func[i].fonc;
 }
 
-#line 71 "codegen/box3d.override"
+#line 75 "codegen/box3d.override"
 
 /* inserted verbatim at the end */
 
@@ -871,4 +872,4 @@ static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 875 "box3d.c"
+#line 876 "box3d.c"

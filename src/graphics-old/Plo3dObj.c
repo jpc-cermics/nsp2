@@ -1,6 +1,6 @@
 /* plotting a set of 3d objects routine for Nsp 
  *
- * Copyright (C) 2008-2009  Bruno Pincon
+ * Copyright (C) 2008-2010  Bruno Pincon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -29,6 +29,14 @@
 #include "nsp/math.h"
 #include "nsp/graphics-old/Graphics.h"
 #include "nsp/interf.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/list.h> 
+#include <nsp/hash.h> 
+#include <nsp/interf.h> 
+
 #include "Plo3dObj.h"
 
 extern Stack SciStack; 

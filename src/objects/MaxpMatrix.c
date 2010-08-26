@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,13 +22,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "nsp/object.h"
+
+#include <nsp/object.h>
+#include <nsp/mpmatrix.h>
+#include <nsp/matint.h>
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"    /* for ret_endfor **/
 #include "nsp/cnumeric.h" 
-#include "nsp/mpmatrix.h" /* FIXME: to be added in object */
-/* extern functions from other scilab sections **/
-
+#include "nsp/mpmatrix.h" 
 #include "nsp/blas.h"
 #include "nsp/matutil.h"
 

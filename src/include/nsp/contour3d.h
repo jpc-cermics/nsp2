@@ -7,6 +7,12 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/contour3d.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+#line 16 "./contour3d.h"
 /* NspContour3d */
 
 #include <nsp/graphic.h>
@@ -18,14 +24,14 @@
 typedef struct _NspContour3d NspContour3d ;
 typedef struct _NspTypeContour3d NspTypeContour3d ;
 
-#line 22 "./contour3d.h"
+#line 28 "./contour3d.h"
 
 struct _NspTypeContour3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./contour3d.h"
+#line 35 "./contour3d.h"
 };
 
 typedef struct _nsp_contour3d nsp_contour3d;
@@ -90,11 +96,11 @@ extern int int_contour3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspContour3d *nsp_contour3d_xdr_load_partial(XDR *xdrs, NspContour3d *M);
 extern int nsp_contour3d_xdr_save(XDR  *xdrs, NspContour3d *M);
 
-#line 4 "codegen/contour3d.override"
+#line 10 "codegen/contour3d.override"
 
 /* inserted at the end of public part of include file */
 
-#line 98 "./contour3d.h"
+#line 104 "./contour3d.h"
 #endif /* NSP_INC_NspContour3d */ 
 
 #ifdef NspContour3d_Private 
@@ -109,7 +115,7 @@ static AttrTab contour3d_attrs[];
 static NspMethods *contour3d_get_methods(void);
 /* static int int_contour3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspContour3d *nsp_contour3d_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/contour3d.override"
+#line 15 "codegen/contour3d.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_contour3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -124,6 +130,6 @@ static int nsp_check_contour3d(NspContour3d *P);
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 128 "./contour3d.h"
+#line 134 "./contour3d.h"
 #endif /* NspContour3d_Private */
 

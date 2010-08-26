@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,8 +24,9 @@
 
 
 
-#line 19 "codegen/gmatrix.override"
+#line 25 "codegen/gmatrix.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -34,13 +35,13 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 38 "gmatrix.c"
+#line 39 "gmatrix.c"
 
 /* ----------- NspGMatrix ----------- */
 
 
 #define  NspGMatrix_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/gmatrix.h>
 #include <nsp/interf.h>
 
@@ -106,7 +107,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
 
   type->init = (init_func *) init_gmatrix;
 
-#line 35 "codegen/gmatrix.override"
+#line 42 "codegen/gmatrix.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix ;
@@ -117,7 +118,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 121 "gmatrix.c"
+#line 122 "gmatrix.c"
   /* 
    * NspGMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -771,7 +772,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 55 "codegen/gmatrix.override"
+#line 62 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -780,10 +781,10 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 784 "gmatrix.c"
+#line 785 "gmatrix.c"
 
 
-#line 65 "codegen/gmatrix.override"
+#line 72 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -792,7 +793,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 796 "gmatrix.c"
+#line 797 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -823,7 +824,7 @@ void GMatrix_Interf_Info(int i, char **fname, function (**f))
   *f = GMatrix_func[i].fonc;
 }
 
-#line 75 "codegen/gmatrix.override"
+#line 82 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -961,4 +962,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
 }
 
 
-#line 965 "gmatrix.c"
+#line 966 "gmatrix.c"

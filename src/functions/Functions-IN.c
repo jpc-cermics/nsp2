@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -26,6 +26,10 @@
 #include <string.h>
 #include <ctype.h> /* isxxxx */
 
+#include <nsp/object.h>
+#include <nsp/hash.h>
+#include <nsp/matrix.h>
+#include <nsp/smatrix.h>
 #include "nsp/interf.h"
 #include "nsp/stack.h"
 #include "../system/files.h"

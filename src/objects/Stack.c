@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -21,6 +21,7 @@
 #include "nsp/stack.h"
 #include "nsp/interf.h"
 #include "../system/files.h" /* FSIZE */
+#include <nsp/smatrix.h>
 
 static void error(Stack *stack,char *fmt,...);
 

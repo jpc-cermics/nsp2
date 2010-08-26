@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,8 +22,19 @@
 
 #include <gtk/gtk.h>
 #define  Umfpack_Private 
-#include "nsp/object.h"
-#include "nsp/umfpack.h"
+#include <nsp/object.h>
+#include <nsp/matrix.h>
+#include <nsp/spcolmatrix.h>
+#include <nsp/sprowmatrix.h>
+#include <nsp/umfpack.h>
+#include <nsp/type.h>
+#include <nsp/file.h>
+#include <nsp/hobj.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include "nsp/interf.h"
+#include "mex/mex.h"
+
 #include "nsp/interf.h"
 #include <umfpack.h>
 #include "nsp/lapack-c.h"

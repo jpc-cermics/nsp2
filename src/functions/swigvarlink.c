@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2007-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007-2010 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * This library emulates Matlab' API functions.
  * It is a fully rewriten version of Scilab mexlib.c file 
@@ -31,6 +31,17 @@
 #include <gtk/gtk.h>
 
 #define SwigVarLink_Private
+#include <nsp/object.h>
+#include <nsp/hash.h>
+#include <nsp/matrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/smatrix.h>
+#include <nsp/imatrix.h>
+#include <nsp/matint.h>
+#include <nsp/interf.h>
+#include <nsp/hobj.h>
+#include <nsp/type.h>
+
 #include "swiglib.h"
 #include "swigvarlink.h"
 #include "swigglobalvar.h"

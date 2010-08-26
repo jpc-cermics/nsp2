@@ -1,6 +1,6 @@
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2009 )                          
+ * This Software is ( Copyright ENPC 1998-2010 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 

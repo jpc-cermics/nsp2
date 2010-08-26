@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -55,7 +55,13 @@
 #include <ctype.h>  /* isdigit */
 
 #define SciFile_xdr_save_string /* locally change the header */
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/file.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+
 #include "nsp/interf.h"
 #include "nsp/pr-output.h"   /* nsp_get_format */
 #include "../system/files.h" /* FSIZE */

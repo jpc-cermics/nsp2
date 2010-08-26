@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -28,8 +28,16 @@
 #include <glib.h>
 
 #include "nsp/math.h"
-#include "nsp/object.h" 
-#include "nsp/plistc.h"
+
+#include <nsp/object.h> 
+#include <nsp/plist.h> 
+#include <nsp/plistc.h> 
+#include <nsp/bhash.h> 
+#include <nsp/cells.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/list.h> 
+#include <nsp/file.h> 
+
 #include "nsp/datas.h"
 #include "nsp/parse.h"
 #include "../system/files.h" /* FSIZE */

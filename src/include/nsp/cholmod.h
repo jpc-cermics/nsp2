@@ -31,7 +31,7 @@
  * NspCholmod inherits from NspObject
  */
 
-typedef struct _NspCholmod NspCholmod ;
+/* typedef struct _NspCholmod NspCholmod ; */
 typedef struct _NspTypeCholmod NspTypeCholmod ;
 
 struct _NspTypeCholmod {

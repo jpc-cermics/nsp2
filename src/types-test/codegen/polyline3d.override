@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start Polyline3d
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public  Polyline3d
 
 /* inserted at the end of public part of include file */
@@ -26,7 +31,7 @@ static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 %%
 headers
 #include <gdk/gdk.h>
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/polyline3d.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 

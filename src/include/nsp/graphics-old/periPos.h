@@ -7,7 +7,7 @@
 
 typedef void gui_private ;
 
-#if defined(THINK_C) || defined (__MWERKS__)|| defined(WIN32)
+#if 1 || defined(THINK_C) || defined (__MWERKS__)|| defined(WIN32) 
 #define CoordModePrevious 0
 #define CoordModeOrigin 1
 #define GXclear 0

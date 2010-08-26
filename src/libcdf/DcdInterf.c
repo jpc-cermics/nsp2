@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Cermics/Enpc 
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Cermics/Enpc 
  * 
  * This file is part of <NSP> a free cacsd package 
  *
@@ -26,7 +26,10 @@
 
 #include <string.h>
 #include <nsp/machine.h> 
-#include "nsp/matrix-in.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/interf.h> 
 #include "cdf.h" 
 
 static int CdfBase(Stack stack,int rhs, int opt, int lhs,

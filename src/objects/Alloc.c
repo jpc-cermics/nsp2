@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -23,7 +23,10 @@
 #include <string.h>
 
 #include "nsp/math.h"
-#include "nsp/object.h" 
+
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/imatrix.h> 
 
 /*
  * Allocation or Reallocation 

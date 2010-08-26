@@ -1,7 +1,7 @@
 /* 
  * interface of lapack for Nsp 
- * Copyright (C) 2005-2009 Jean-Philippe Chancelier
- * Copyright (C) 2005-2009 Bruno Pinçon
+ * Copyright (C) 2005-2010 Jean-Philippe Chancelier
+ * Copyright (C) 2005-2010 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -25,8 +25,15 @@
 #include <strings.h>
 #include <nsp/machine.h>
 #include <nsp/math.h>
-#include "nsp/matrix-in.h"
-#include "nsp/bmatrix-in.h"
+
+#include <nsp/object.h> 
+#include <nsp/matint.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/plist.h> 
+#include <nsp/interf.h> 
+
 #include "nsp/approx.h"
 #include "nsp/nsp_lapack.h"
 #include "nsp/eval.h"

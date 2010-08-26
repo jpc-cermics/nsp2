@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/grarc.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./grarc.h"
 /* NspGrArc */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspGrArc NspGrArc ;
 typedef struct _NspTypeGrArc NspTypeGrArc ;
 
-#line 22 "./grarc.h"
+#line 27 "./grarc.h"
 
 struct _NspTypeGrArc {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grarc.h"
+#line 34 "./grarc.h"
 };
 
 typedef struct _nsp_grarc nsp_grarc;
@@ -93,11 +98,11 @@ extern int int_grarc_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrArc *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M);
 extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
-#line 4 "codegen/grarc.override"
+#line 9 "codegen/grarc.override"
 
 /* inserted at the end of public part of include file */
 
-#line 101 "./grarc.h"
+#line 106 "./grarc.h"
 #endif /* NSP_INC_NspGrArc */ 
 
 #ifdef NspGrArc_Private 
@@ -112,7 +117,7 @@ static AttrTab grarc_attrs[];
 static NspMethods *grarc_get_methods(void);
 /* static int int_grarc_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrArc *nsp_grarc_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/grarc.override"
+#line 14 "codegen/grarc.override"
 
 /* inserted in the private part of include file */
 
@@ -122,6 +127,6 @@ static void nsp_rotate_grarc(NspGraphic *o,double *R);
 static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
 
-#line 126 "./grarc.h"
+#line 131 "./grarc.h"
 #endif /* NspGrArc_Private */
 

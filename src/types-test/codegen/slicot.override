@@ -1,10 +1,8 @@
 /* -*- Mode: C -*- */
 %%
 headers
-
 #include <nsp/interf.h> 
 #include "slicot.h"
-
 
 int int_slicot_create(Stack stack, int rhs, int opt, int lhs)
 {

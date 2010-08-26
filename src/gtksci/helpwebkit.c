@@ -1,7 +1,7 @@
 /*
- * Copyright (C) 2009, 2007 Apple Inc.
+ * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2008-2009 Jean-Philippe Chancelier <jpc@cermics.enpc.fr>
+ * Copyright (C) 2008-2010 Jean-Philippe Chancelier <jpc@cermics.enpc.fr>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -37,7 +37,10 @@
 #include "uri.h"
 #include "../system/files.h"
 #include "../system/regexp.h"
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/hash.h> 
+#include <nsp/file.h> 
+#include <nsp/smatrix.h> 
 #include "eggfindbar.h"
 
 #define N_(x) x

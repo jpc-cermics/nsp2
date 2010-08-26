@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -16,15 +16,14 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-
-#include "nsp/object.h"
-#define  GPointer_Private 
-#include "nsp/gtk/gpointer.h"
-#include "nsp/interf.h"
-
-/* XXXXX : temporaire ici */ 
-
 #include <gtk/gtk.h>
+
+#define  GPointer_Private 
+#include <nsp/object.h>
+#include <nsp/hobj.h>
+#include <nsp/type.h>
+#include <nsp/gtk/gpointer.h>
+#include <nsp/interf.h>
 
 /* 
  * NspGPointer inherits from NspObject

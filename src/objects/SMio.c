@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -33,10 +33,16 @@
 #include <string.h>
 #include <ctype.h>  /* isdigit */
 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/smio.h> 
+#include <nsp/file.h>
+#include <nsp/type.h>
+#include <nsp/hobj.h>
+
 #include "nsp/interf.h"
 #include "../system/files.h" /* FSIZE */
-#include "nsp/smio.h"
 
 static void swapb(const char *l, char *f, int n);
 static unsigned short swapw(unsigned short us);

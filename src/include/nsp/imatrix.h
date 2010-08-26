@@ -8,6 +8,7 @@
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
+#include "nsp/ints.h" 
 #include <glib.h> 
 
 /*
@@ -24,7 +25,7 @@
  * inherits from #NspObject 
  */
 
-typedef struct _NspIMatrix NspIMatrix;
+/* typedef struct _NspIMatrix NspIMatrix; */
 typedef struct _NspTypeIMatrix  NspTypeIMatrix;
 
 struct _NspTypeIMatrix { 
@@ -32,13 +33,6 @@ struct _NspTypeIMatrix {
   /*< public >*/
 };
 
-
-/* all the integer types */
-
-typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
-		 nsp_gulong, nsp_gint8, nsp_guint8, nsp_gint16,
-		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
-		 nsp_guint64 } nsp_itype;
 
 /* format to use for printing the integer types */
 
@@ -55,41 +49,6 @@ typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong ,
                    "ulong", "int8", "uint8", "int16",           \
                    "uint16", "int32", "uint32", "int64",        \
                    "uint64",NULL};
-
-typedef union { 
-    gint     Gint;
-    guint     Guint;
-    gshort     Gshort;
-    gushort     Gushort;
-    glong     Glong;
-    gulong     Gulong;
-    gint8     Gint8;
-    guint8     Guint8;
-    gint16     Gint16;
-    guint16     Guint16;
-    gint32     Gint32;
-    guint32     Guint32;
-    gint64     Gint64;
-    guint64     Guint64;
-} nsp_int_union ;
-
-typedef union { 
-    void *    Iv;
-    gint     *Gint;
-    guint     *Guint;
-    gshort     *Gshort;
-    gushort     *Gushort;
-    glong     *Glong;
-    gulong     *Gulong;
-    gint8     *Gint8;
-    guint8     *Guint8;
-    gint16     *Gint16;
-    guint16     *Guint16;
-    gint32     *Gint32;
-    guint32     *Guint32;
-    gint64     *Gint64;
-    guint64     *Guint64;
-} nsp_int_union_ptr ;
 
 struct _NspIMatrix {
   /*< private >*/
@@ -452,7 +411,6 @@ extern NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspMat
 
 extern nsp_int_union nsp_imatrix_intmax(const NspIMatrix *A);
 extern nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A);
-
 
 #endif 
 

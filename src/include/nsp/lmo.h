@@ -15,7 +15,7 @@
  * NspLmo inherits from NspObject 
  */
 
-typedef struct _NspLmo  NspLmo;
+/* typedef struct _NspLmo  NspLmo; */
 
 typedef struct _NspTypeLmo { 
   NSP_TYPE_OBJECT__ 

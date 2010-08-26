@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start  PPolyhedron
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public  Polyhedron
 /* inserted at the end of public part of include file */
 
@@ -28,6 +33,7 @@ static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figure.h> 
 #include <nsp/polyhedron.h>
 #include <nsp/spolyhedron.h>

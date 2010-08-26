@@ -50,7 +50,7 @@ struct _NspTypeBHash {
  * strings and values are integers.
  */
 
-typedef struct _NspBHash NspBHash;
+/* typedef struct _NspBHash NspBHash; */
 
 struct _NspBHash {
   /*< private >*/

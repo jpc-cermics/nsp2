@@ -24,7 +24,7 @@
 
 
 
-#line 19 "codegen/surf.override"
+#line 24 "codegen/surf.override"
 
 #line 30 "surf.c"
 
@@ -32,7 +32,7 @@
 
 
 #define  NspSurf_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/surf.h>
 #include <nsp/interf.h>
 
@@ -98,7 +98,7 @@ NspTypeSurf *new_type_surf(type_mode mode)
 
   type->init = (init_func *) init_surf;
 
-#line 27 "codegen/surf.override"
+#line 32 "codegen/surf.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -844,7 +844,7 @@ static AttrTab surf_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 50 "codegen/surf.override"
+#line 55 "codegen/surf.override"
 
 extern function int_nspgraphic_extract;
 
@@ -856,7 +856,7 @@ int _wrap_nsp_extractelts_surf(Stack stack, int rhs, int opt, int lhs)
 #line 857 "surf.c"
 
 
-#line 60 "codegen/surf.override"
+#line 65 "codegen/surf.override"
 
 extern function int_graphic_set_attribute;
 
@@ -897,7 +897,7 @@ void Surf_Interf_Info(int i, char **fname, function (**f))
   *f = Surf_func[i].fonc;
 }
 
-#line 71 "codegen/surf.override"
+#line 76 "codegen/surf.override"
 
 /* inserted verbatim at the end */
 

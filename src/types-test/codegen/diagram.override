@@ -84,8 +84,8 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
 %%
 headers
-
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include "nsp/link.h"
 #include "nsp/block.h"
 #include "nsp/connector.h"

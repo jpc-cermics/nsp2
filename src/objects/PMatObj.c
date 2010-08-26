@@ -23,7 +23,17 @@
 #include <string.h>
 
 #define PMatrix_Private 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/pmatrix.h> 
+#include <nsp/cells.h> 
+#include <nsp/matint.h> 
+#include <nsp/hobj.h> 
+#include <nsp/file.h> 
+#include <nsp/type.h> 
+
 
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"

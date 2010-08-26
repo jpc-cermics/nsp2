@@ -14,7 +14,7 @@
  * NspPMatrix inherits from NspObject 
  */
 
-typedef struct _NspPmatrix  NspPMatrix;
+/* typedef struct _NspPmatrix  NspPMatrix; */
 
 typedef struct _NspTypePMatrix NspTypePMatrix;
 

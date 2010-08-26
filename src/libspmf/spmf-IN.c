@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 2007-2009 Bruno Pinçon Esial/Iecn
- * Copyright (C) 2007-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2007-2010 Bruno Pinçon Esial/Iecn
+ * Copyright (C) 2007-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -23,10 +23,13 @@
 #include <string.h>
 /* #include <fpu_control.h> */
 #include <nsp/machine.h>
-#include <nsp/matrix-in.h>
-#include <nsp/bmatrix-in.h>
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
 #include <nsp/spmf.h>
-
+#include <nsp/interf.h> 
 
 
 static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)

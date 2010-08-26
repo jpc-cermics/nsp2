@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,8 +24,9 @@
 
 
 
-#line 23 "codegen/contour.override"
+#line 29 "codegen/contour.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -35,13 +36,13 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 39 "contour.c"
+#line 40 "contour.c"
 
 /* ----------- NspContour ----------- */
 
 
 #define  NspContour_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/contour.h>
 #include <nsp/interf.h>
 
@@ -107,7 +108,7 @@ NspTypeContour *new_type_contour(type_mode mode)
 
   type->init = (init_func *) init_contour;
 
-#line 40 "codegen/contour.override"
+#line 47 "codegen/contour.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_contour;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_contour ;
@@ -118,7 +119,7 @@ NspTypeContour *new_type_contour(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 122 "contour.c"
+#line 123 "contour.c"
   /* 
    * NspContour interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -824,7 +825,7 @@ static AttrTab contour_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 61 "codegen/contour.override"
+#line 68 "codegen/contour.override"
 
 extern function int_nspgraphic_extract;
 
@@ -833,10 +834,10 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 837 "contour.c"
+#line 838 "contour.c"
 
 
-#line 71 "codegen/contour.override"
+#line 78 "codegen/contour.override"
 
 extern function int_graphic_set_attribute;
 
@@ -845,7 +846,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 849 "contour.c"
+#line 850 "contour.c"
 
 
 /*----------------------------------------------------
@@ -876,7 +877,7 @@ void Contour_Interf_Info(int i, char **fname, function (**f))
   *f = Contour_func[i].fonc;
 }
 
-#line 81 "codegen/contour.override"
+#line 88 "codegen/contour.override"
 
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
@@ -955,4 +956,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 959 "contour.c"
+#line 960 "contour.c"

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -26,6 +26,37 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <nsp/object.h> 
+#include <nsp/type.h> 
+#include <nsp/hobj.h> 
+#include <nsp/list.h> 
+#include <nsp/none.h> 
+#include <nsp/hash.h> 
+#include <nsp/cells.h> 
+#include <nsp/plist.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/sprowmatrix.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/file.h> 
+#include <nsp/hash.h> 
+#include <nsp/function.h> 
+#include <nsp/ivect.h> 
+#include <nsp/module.h> 
+#include <nsp/modulelt.h> 
+#include <nsp/pmatrix.h> 
+#include <nsp/classa.h> 
+#include <nsp/classb.h> 
+#include <nsp/serial.h> 
+#include <nsp/bhash.h> 
+#include <nsp/mpmatrix.h> 
+#include <nsp/classaref.h> 
+#include <nsp/classbref.h> 
+
+#include "nsp/interf.h"
 #include "nsp/matrix-in.h"
 #include "nsp/bmatrix-in.h"
 #include "nsp/seval.h"

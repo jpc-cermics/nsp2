@@ -7,6 +7,12 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/grimage.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+#line 16 "./grimage.h"
 /* NspGrImage */
 
 #include <nsp/graphic.h>
@@ -18,14 +24,14 @@
 typedef struct _NspGrImage NspGrImage ;
 typedef struct _NspTypeGrImage NspTypeGrImage ;
 
-#line 22 "./grimage.h"
+#line 28 "./grimage.h"
 
 struct _NspTypeGrImage {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grimage.h"
+#line 35 "./grimage.h"
 };
 
 typedef struct _nsp_grimage nsp_grimage;
@@ -93,11 +99,11 @@ extern int int_grimage_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrImage *nsp_grimage_xdr_load_partial(XDR *xdrs, NspGrImage *M);
 extern int nsp_grimage_xdr_save(XDR  *xdrs, NspGrImage *M);
 
-#line 4 "codegen/grimage.override"
+#line 10 "codegen/grimage.override"
 
 /* inserted at the end of public part of include file */
 
-#line 101 "./grimage.h"
+#line 107 "./grimage.h"
 #endif /* NSP_INC_NspGrImage */ 
 
 #ifdef NspGrImage_Private 
@@ -112,7 +118,7 @@ static AttrTab grimage_attrs[];
 static NspMethods *grimage_get_methods(void);
 /* static int int_grimage_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrImage *nsp_grimage_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/grimage.override"
+#line 15 "codegen/grimage.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_grimage(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -121,6 +127,6 @@ static void nsp_rotate_grimage(NspGraphic *o,double *R);
 static void nsp_scale_grimage(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grimage(NspGraphic *o,double *bounds);
 
-#line 125 "./grimage.h"
+#line 131 "./grimage.h"
 #endif /* NspGrImage_Private */
 

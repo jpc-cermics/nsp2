@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/vfield.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./vfield.h"
 /* NspVField */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspVField NspVField ;
 typedef struct _NspTypeVField NspTypeVField ;
 
-#line 22 "./vfield.h"
+#line 27 "./vfield.h"
 
 struct _NspTypeVField {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./vfield.h"
+#line 34 "./vfield.h"
 };
 
 typedef struct _nsp_vfield nsp_vfield;
@@ -89,11 +94,10 @@ extern int int_vfield_create(Stack stack, int rhs, int opt, int lhs);
 extern NspVField *nsp_vfield_xdr_load_partial(XDR *xdrs, NspVField *M);
 extern int nsp_vfield_xdr_save(XDR  *xdrs, NspVField *M);
 
-#line 4 "codegen/vfield.override"
-
+#line 9 "codegen/vfield.override"
 /* inserted at the end of public part of include file */
 
-#line 97 "./vfield.h"
+#line 101 "./vfield.h"
 #endif /* NSP_INC_NspVField */ 
 
 #ifdef NspVField_Private 
@@ -108,7 +112,7 @@ static AttrTab vfield_attrs[];
 static NspMethods *vfield_get_methods(void);
 /* static int int_vfield_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/vfield.override"
+#line 13 "codegen/vfield.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -121,6 +125,6 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
 			     double *brect, double *arfact);
 static double min_of_doubles (const double *x,int n);
 
-#line 125 "./vfield.h"
+#line 129 "./vfield.h"
 #endif /* NspVField_Private */
 

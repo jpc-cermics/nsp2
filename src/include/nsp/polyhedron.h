@@ -91,7 +91,7 @@ extern int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyhedron *nsp_polyhedron_xdr_load_partial(XDR *xdrs, NspPolyhedron *M);
 extern int nsp_polyhedron_xdr_save(XDR  *xdrs, NspPolyhedron *M);
 
-#line 4 "codegen/polyhedron.override"
+#line 9 "codegen/polyhedron.override"
 /* inserted at the end of public part of include file */
 
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
@@ -117,7 +117,7 @@ static AttrTab polyhedron_attrs[];
 static NspMethods *polyhedron_get_methods(void);
 /* static int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyhedron *nsp_polyhedron_create_void(char *name,NspTypeBase *type);
-#line 16 "codegen/polyhedron.override"
+#line 21 "codegen/polyhedron.override"
 /* inserted in the private part of include file */
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_polyhedron(NspGraphic *o,const double *tr);

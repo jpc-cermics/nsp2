@@ -20,7 +20,7 @@
  * arrays of nsp objects. 
  */
 
-typedef struct _NspCells NspCells ;
+/* typedef struct _NspCells NspCells ; */
 
 typedef struct _NspTypeCells { 
   NSP_TYPE_OBJECT__ 

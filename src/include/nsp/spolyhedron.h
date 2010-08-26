@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/spolyhedron.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./spolyhedron.h"
 /* NspSPolyhedron */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspSPolyhedron NspSPolyhedron ;
 typedef struct _NspTypeSPolyhedron NspTypeSPolyhedron ;
 
-#line 22 "./spolyhedron.h"
+#line 27 "./spolyhedron.h"
 
 struct _NspTypeSPolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./spolyhedron.h"
+#line 34 "./spolyhedron.h"
 };
 
 typedef struct _nsp_spolyhedron nsp_spolyhedron;
@@ -102,13 +107,13 @@ extern int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);
 extern NspSPolyhedron *nsp_spolyhedron_xdr_load_partial(XDR *xdrs, NspSPolyhedron *M);
 extern int nsp_spolyhedron_xdr_save(XDR  *xdrs, NspSPolyhedron *M);
 
-#line 4 "codegen/spolyhedron.override"
+#line 9 "codegen/spolyhedron.override"
 /* inserted at the end of public part of include file */
 
 extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol );
 extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n, double *col,int ncol);
 
-#line 112 "./spolyhedron.h"
+#line 117 "./spolyhedron.h"
 #endif /* NSP_INC_NspSPolyhedron */ 
 
 #ifdef NspSPolyhedron_Private 
@@ -123,7 +128,7 @@ static AttrTab spolyhedron_attrs[];
 static NspMethods *spolyhedron_get_methods(void);
 /* static int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type);
-#line 11 "codegen/spolyhedron.override"
+#line 16 "codegen/spolyhedron.override"
 /* inserted in the private part of include file */
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_spolyhedron(NspGraphic *o,const double *tr);
@@ -142,6 +147,6 @@ static void permut_of_sort(int *tab, int *perm);
 static void find_intersection(int *sx, int *sy, double *fxy, double z, 
 			      int inda, int indb, int *xint, int *yint);
 
-#line 146 "./spolyhedron.h"
+#line 151 "./spolyhedron.h"
 #endif /* NspSPolyhedron_Private */
 

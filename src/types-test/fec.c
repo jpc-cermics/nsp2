@@ -3,8 +3,8 @@
 /* This file is generated, please do not edit */
 /* Nsp
 #line 4 "codegen/fec.override"
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2001-2009 Bruno Pinçon Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2010 Bruno Pinçon Enpc/Cermics
 #line 9 "fec.c"
  *
  * This library is free software; you can redistribute it and/or
@@ -29,6 +29,7 @@
 
 #line 37 "codegen/fec.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>
@@ -37,13 +38,13 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 41 "fec.c"
+#line 42 "fec.c"
 
 /* ----------- NspFec ----------- */
 
 
 #define  NspFec_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/fec.h>
 #include <nsp/interf.h>
 
@@ -109,7 +110,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 53 "codegen/fec.override"
+#line 54 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -120,7 +121,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 124 "fec.c"
+#line 125 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -994,7 +995,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 73 "codegen/fec.override"
+#line 74 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1003,10 +1004,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1007 "fec.c"
+#line 1008 "fec.c"
 
 
-#line 83 "codegen/fec.override"
+#line 84 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1015,7 +1016,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1019 "fec.c"
+#line 1020 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1046,7 +1047,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 93 "codegen/fec.override"
+#line 94 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1580,4 +1581,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1584 "fec.c"
+#line 1585 "fec.c"

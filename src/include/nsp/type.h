@@ -14,7 +14,7 @@
  * NspType inherits from NspObject
  */
 
-typedef struct _NspType NspType;
+/* typedef struct _NspType NspType; */
 
 typedef struct _NspTypeType { 
   NSP_TYPE_OBJECT__ 

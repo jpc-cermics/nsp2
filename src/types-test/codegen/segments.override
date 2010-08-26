@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start Segments
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public  Segments
 
 /* inserted at the end of public part of include file */

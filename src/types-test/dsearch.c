@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2004-2009 Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
+ * Copyright (C) 2004-2010 Bruno Pincon  Bruno.Pincon@iecn.u-nancy.fr
  *              Jean-Philippe Chancelier Enpc/Cermics jpc@cermics.enpc.fr 
  *
  * This library is free software; you can redistribute it and/or
@@ -25,9 +25,14 @@
 #include <stdio.h>
 #include <string.h> 
 
-#include "nsp/matrix-in.h"
-#include "nsp/smatrix-in.h"
-#include "nsp/bmatrix-in.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/list.h> 
+#include <nsp/hobj.h> 
+#include <nsp/type.h> 
+
 #include "nsp/seval.h"
 #include "nsp/gsort-p.h"
 #include "nsp/imatrix.h"

@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,9 +24,9 @@
 
 
 
-#line 31 "codegen/spolyhedron.override"
-
+#line 36 "codegen/spolyhedron.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h> 
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
 #include <nsp/figure.h> 
@@ -38,7 +38,7 @@
 
 
 #define  NspSPolyhedron_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/spolyhedron.h>
 #include <nsp/interf.h>
 
@@ -104,7 +104,7 @@ NspTypeSPolyhedron *new_type_spolyhedron(type_mode mode)
 
   type->init = (init_func *) init_spolyhedron;
 
-#line 45 "codegen/spolyhedron.override"
+#line 50 "codegen/spolyhedron.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -323,7 +323,7 @@ static NspSPolyhedron  *nsp_spolyhedron_xdr_load(XDR *xdrs)
   if ( nsp_spolyhedron_create_partial(H) == FAIL) return NULLSPOLYHEDRON;
   if ((H  = nsp_spolyhedron_xdr_load_partial(xdrs,H))== NULLSPOLYHEDRON) return H;
   if ( nsp_spolyhedron_check_values(H) == FAIL) return NULLSPOLYHEDRON;
-#line 68 "codegen/spolyhedron.override"
+#line 73 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
@@ -341,7 +341,7 @@ void nsp_spolyhedron_destroy_partial(NspSPolyhedron *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 73 "codegen/spolyhedron.override"
+#line 78 "codegen/spolyhedron.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
@@ -609,7 +609,7 @@ NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* M
   H->obj->vlevel_length = vlevel_length;
   H->obj->coldef=coldef;
   if ( nsp_spolyhedron_check_values(H) == FAIL) return NULLSPOLYHEDRON;
-#line 68 "codegen/spolyhedron.override"
+#line 73 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
@@ -702,7 +702,7 @@ NspSPolyhedron *nsp_spolyhedron_full_copy(NspSPolyhedron *self)
   if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSPOLYHEDRON;
   if ( nsp_spolyhedron_full_copy_partial(H,self)== NULL) return NULLSPOLYHEDRON;
-#line 68 "codegen/spolyhedron.override"
+#line 73 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return NULL; 
 
@@ -726,7 +726,7 @@ int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_spolyhedron_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_spolyhedron_check_values(H) == FAIL) return RET_BUG;
-#line 68 "codegen/spolyhedron.override"
+#line 73 "codegen/spolyhedron.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_spolyhedron(NULL,H)== FAIL) return RET_BUG; 
 
@@ -1049,7 +1049,7 @@ static AttrTab spolyhedron_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 78 "codegen/spolyhedron.override"
+#line 83 "codegen/spolyhedron.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1061,7 +1061,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
 #line 1062 "spolyhedron.c"
 
 
-#line 88 "codegen/spolyhedron.override"
+#line 93 "codegen/spolyhedron.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1101,7 +1101,7 @@ void SPolyhedron_Interf_Info(int i, char **fname, function (**f))
   *f = SPolyhedron_func[i].fonc;
 }
 
-#line 98 "codegen/spolyhedron.override"
+#line 103 "codegen/spolyhedron.override"
 
 /* inserted verbatim at the end */
 

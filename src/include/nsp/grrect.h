@@ -7,6 +7,12 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/grrect.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+#line 16 "./grrect.h"
 /* NspGrRect */
 
 #include <nsp/graphic.h>
@@ -18,14 +24,14 @@
 typedef struct _NspGrRect NspGrRect ;
 typedef struct _NspTypeGrRect NspTypeGrRect ;
 
-#line 22 "./grrect.h"
+#line 28 "./grrect.h"
 
 struct _NspTypeGrRect {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grrect.h"
+#line 35 "./grrect.h"
 };
 
 typedef struct _nsp_grrect nsp_grrect;
@@ -91,11 +97,11 @@ extern int int_grrect_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGrRect *nsp_grrect_xdr_load_partial(XDR *xdrs, NspGrRect *M);
 extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 
-#line 4 "codegen/grrect.override"
+#line 10 "codegen/grrect.override"
 
 /* inserted at the end of public part of include file */
 
-#line 99 "./grrect.h"
+#line 105 "./grrect.h"
 #endif /* NSP_INC_NspGrRect */ 
 
 #ifdef NspGrRect_Private 
@@ -110,7 +116,7 @@ static AttrTab grrect_attrs[];
 static NspMethods *grrect_get_methods(void);
 /* static int int_grrect_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGrRect *nsp_grrect_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/grrect.override"
+#line 15 "codegen/grrect.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -119,6 +125,6 @@ static void nsp_rotate_grrect(NspGraphic *o,double *R);
 static void nsp_scale_grrect(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grrect(NspGraphic *o,double *bounds);
 
-#line 123 "./grrect.h"
+#line 129 "./grrect.h"
 #endif /* NspGrRect_Private */
 

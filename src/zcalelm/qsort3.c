@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *                         Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
@@ -24,6 +24,9 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
+#include <glib.h> /* for int64 */
+
 #include "nsp/machine.h" 
 #include "nsp/gsort-p.h"
 

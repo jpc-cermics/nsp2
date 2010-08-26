@@ -8,9 +8,9 @@
 
 #include <stdio.h>   /* for file declaration **/
 #include <portaudio.h>
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
-#include "nsp/xdr.h"
+#include <nsp/sciio.h>
+#include <nsp/object.h>
+#include <nsp/xdr.h>
 
 /*
  *

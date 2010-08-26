@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,8 +19,13 @@
  * n1qn1 : interface 
  *--------------------------------------------------------------------------*/
 
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
 #include "nsp/interf.h"
 #include "nsp/eval.h" /* nsp_gtk_eval_function */
+
 #include "optim.h"
 
 static void n1qn1_clean(opt_simul_data *obj);

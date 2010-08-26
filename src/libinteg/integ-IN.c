@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,10 +20,16 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h> 
-#include "nsp/interf.h"
 #include "nsp/ode_solvers.h"
 #include "nsp/eval.h"
 #include "integ.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
+#include <nsp/spmf.h>
+#include <nsp/interf.h> 
 
 /*
  * ode interface

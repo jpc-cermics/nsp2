@@ -1,6 +1,6 @@
 /* 
  * some interpolation routines for Nsp 
- * Copyright (C) 2006-2009  Bruno Pincon
+ * Copyright (C) 2006-2010  Bruno Pincon
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as      
@@ -23,7 +23,8 @@
 #include <string.h>
 #include <nsp/math.h>
 #include "nsp/approx.h"
-#include "nsp/matrix-in.h"
+#include <nsp/object.h>
+#include <nsp/matrix.h>
 
 /**
  * SECTION:approx

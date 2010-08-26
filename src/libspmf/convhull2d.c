@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2008-2009 Bruno Pincon Esial/Iecn 
+ * Copyright (C) 2008-2010 Bruno Pincon Esial/Iecn 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

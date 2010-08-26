@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start  Points3d
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public  Points3d
 
 #include "../graphics-new/Plo3dObj.h"
@@ -28,6 +33,7 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/polyhedron.h>

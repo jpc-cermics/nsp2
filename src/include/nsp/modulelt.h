@@ -14,7 +14,7 @@
  * NspModuleElt inherits from NspObject
  */
 
-typedef struct _NspModulelt NspModuleElt;
+/* typedef struct _NspModulelt NspModuleElt; */
 
 typedef struct _NspTypeModuleElt { 
   NSP_TYPE_OBJECT__ 

@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,9 +24,9 @@
 
 
 
-#line 19 "codegen/curve.override"
+#line 23 "codegen/curve.override"
 #include <gdk/gdk.h>
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/curve.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h>
@@ -37,7 +37,7 @@
 
 
 #define  NspCurve_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/curve.h>
 #include <nsp/interf.h>
 
@@ -103,7 +103,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
   type->init = (init_func *) init_curve;
 
-#line 32 "codegen/curve.override"
+#line 36 "codegen/curve.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_curve;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_curve ;
@@ -658,7 +658,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 52 "codegen/curve.override"
+#line 56 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -681,7 +681,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 67 "codegen/curve.override"
+#line 71 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -767,7 +767,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 97 "codegen/curve.override"
+#line 101 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -779,7 +779,7 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
 #line 780 "curve.c"
 
 
-#line 107 "codegen/curve.override"
+#line 111 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -820,7 +820,7 @@ void Curve_Interf_Info(int i, char **fname, function (**f))
   *f = Curve_func[i].fonc;
 }
 
-#line 118 "codegen/curve.override"
+#line 122 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /* 

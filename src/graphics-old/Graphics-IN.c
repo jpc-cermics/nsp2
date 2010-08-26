@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,9 +24,15 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h> 
+
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/plist.h> 
+#include <nsp/interf.h> 
+
 #include "nsp/graphics-old/Graphics.h"
-#include "nsp/matrix-in.h"
-#include "nsp/bmatrix-in.h"
 #include "nsp/parse.h"
 #include "nsp/gsort-p.h"
 #include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */

@@ -24,7 +24,23 @@
 #include <string.h>
 
 #define List_Private 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/sprowmatrix.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/file.h> 
+#include <nsp/type.h> 
+#include <nsp/hobj.h> 
+#include <nsp/list.h> 
+#include <nsp/none.h> 
+#include <nsp/hash.h> 
+#include <nsp/cells.h> 
+#include <nsp/plist.h> 
+
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"

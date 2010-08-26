@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Bruno Pinçon
+ * Copyright (C) 2006-2010 Bruno Pinçon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,6 +22,7 @@
 #include "nsp/plisttoken.h" /*for name_maxl */
 #include "callfunc.h"
 #include "nsp/plistc.h"
+#include <nsp/type.h>
 
 static const char *xmatint_types[]={ "Mat","SMat","BMat","PMat","Cells",NULL};
 static const char *xnum_and_str_types[]={ "Mat","SMat",NULL};

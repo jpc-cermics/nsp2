@@ -31,7 +31,7 @@
  * NspUmfpack inherits from NspObject
  */
 
-typedef struct _NspUmfpack NspUmfpack ;
+/* typedef struct _NspUmfpack NspUmfpack ; */
 typedef struct _NspTypeUmfpack NspTypeUmfpack ;
 
 struct _NspTypeUmfpack {

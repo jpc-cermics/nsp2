@@ -46,7 +46,7 @@ struct _nsp_smio {
  * for files.
  */
 
-typedef struct _NspSMio NspSMio;
+/* typedef struct _NspSMio NspSMio; */
 
 typedef struct _NspTypeSMio { 
   NSP_TYPE_OBJECT__ 

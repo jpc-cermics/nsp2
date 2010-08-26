@@ -58,7 +58,7 @@ class Wrapper:
     type_tmpl_1_0 = \
               '\n'  \
               '#define  %(typename)s_Private \n'  \
-              '#include <nsp/object.h>\n'  \
+              '#include <nsp/objects.h>\n'  \
               '#include <nsp/%(typename_dc)s.h>\n'  \
               '#include <nsp/interf.h>\n'  \
               '\n'  \

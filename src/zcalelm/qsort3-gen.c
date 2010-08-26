@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 B. Pincon 
+ * Copyright (C) 1998-2010 B. Pincon 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public

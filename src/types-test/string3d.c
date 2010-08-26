@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,7 +24,7 @@
 
 
 
-#line 28 "codegen/string3d.override"
+#line 33 "codegen/string3d.override"
 #include <gdk/gdk.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
@@ -39,7 +39,7 @@ extern Gengine GL_gengine;
 
 
 #define  NspString3d_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/string3d.h>
 #include <nsp/interf.h>
 
@@ -105,7 +105,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
 
   type->init = (init_func *) init_string3d;
 
-#line 43 "codegen/string3d.override"
+#line 48 "codegen/string3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method of its father class i.e Graphic
    */
@@ -285,7 +285,7 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   if ( nsp_string3d_create_partial(H) == FAIL) return NULLSTRING3D;
   if ((H  = nsp_string3d_xdr_load_partial(xdrs,H))== NULLSTRING3D) return H;
   if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
-#line 66 "codegen/string3d.override"
+#line 71 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
@@ -303,7 +303,7 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 71 "codegen/string3d.override"
+#line 76 "codegen/string3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
@@ -505,7 +505,7 @@ NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,cha
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
   if ( nsp_string3d_check_values(H) == FAIL) return NULLSTRING3D;
-#line 66 "codegen/string3d.override"
+#line 71 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
@@ -572,7 +572,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   if ( H ==  NULLSTRING3D) return NULLSTRING3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLSTRING3D;
   if ( nsp_string3d_full_copy_partial(H,self)== NULL) return NULLSTRING3D;
-#line 66 "codegen/string3d.override"
+#line 71 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
@@ -596,7 +596,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_string3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_string3d_check_values(H) == FAIL) return RET_BUG;
-#line 66 "codegen/string3d.override"
+#line 71 "codegen/string3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
@@ -709,7 +709,7 @@ static AttrTab string3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 76 "codegen/string3d.override"
+#line 81 "codegen/string3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -721,7 +721,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
 #line 722 "string3d.c"
 
 
-#line 86 "codegen/string3d.override"
+#line 91 "codegen/string3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -762,7 +762,7 @@ void String3d_Interf_Info(int i, char **fname, function (**f))
   *f = String3d_func[i].fonc;
 }
 
-#line 97 "codegen/string3d.override"
+#line 102 "codegen/string3d.override"
 
 /* inserted verbatim at the end */
 

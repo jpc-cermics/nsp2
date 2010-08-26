@@ -23,7 +23,7 @@
  * NspFunction inherits from NspObject
  */
 
-typedef struct _NspFunction NspFunction;
+/* typedef struct _NspFunction NspFunction; */
 
 typedef struct _NspTypeFunction { 
   NSP_TYPE_OBJECT__ 

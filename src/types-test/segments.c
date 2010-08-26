@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,7 +24,7 @@
 
 
 
-#line 20 "codegen/segments.override"
+#line 25 "codegen/segments.override"
 
 #line 30 "segments.c"
 
@@ -32,7 +32,7 @@
 
 
 #define  NspSegments_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/segments.h>
 #include <nsp/interf.h>
 
@@ -98,7 +98,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
 
   type->init = (init_func *) init_segments;
 
-#line 28 "codegen/segments.override"
+#line 33 "codegen/segments.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -681,7 +681,7 @@ static AttrTab segments_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 51 "codegen/segments.override"
+#line 56 "codegen/segments.override"
 
 extern function int_nspgraphic_extract;
 
@@ -693,7 +693,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
 #line 694 "segments.c"
 
 
-#line 61 "codegen/segments.override"
+#line 66 "codegen/segments.override"
 
 extern function int_graphic_set_attribute;
 
@@ -734,7 +734,7 @@ void Segments_Interf_Info(int i, char **fname, function (**f))
   *f = Segments_func[i].fonc;
 }
 
-#line 72 "codegen/segments.override"
+#line 77 "codegen/segments.override"
 
 /* inserted verbatim at the end */
 

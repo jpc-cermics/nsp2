@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/polyline3d.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./polyline3d.h"
 /* NspPolyline3d */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspPolyline3d NspPolyline3d ;
 typedef struct _NspTypePolyline3d NspTypePolyline3d ;
 
-#line 22 "./polyline3d.h"
+#line 27 "./polyline3d.h"
 
 struct _NspTypePolyline3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./polyline3d.h"
+#line 34 "./polyline3d.h"
 };
 
 typedef struct _nsp_polyline3d nsp_polyline3d;
@@ -88,12 +93,12 @@ extern int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline3d *nsp_polyline3d_xdr_load_partial(XDR *xdrs, NspPolyline3d *M);
 extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 
-#line 4 "codegen/polyline3d.override"
+#line 9 "codegen/polyline3d.override"
 
 /* inserted at the end of public part of include file */
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 
-#line 97 "./polyline3d.h"
+#line 102 "./polyline3d.h"
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
@@ -108,7 +113,7 @@ static AttrTab polyline3d_attrs[];
 static NspMethods *polyline3d_get_methods(void);
 /* static int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline3d *nsp_polyline3d_create_void(char *name,NspTypeBase *type);
-#line 10 "codegen/polyline3d.override"
+#line 15 "codegen/polyline3d.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -125,6 +130,6 @@ static int nsp_check_polyline3d(NspPolyline3d *P);
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 129 "./polyline3d.h"
+#line 134 "./polyline3d.h"
 #endif /* NspPolyline3d_Private */
 

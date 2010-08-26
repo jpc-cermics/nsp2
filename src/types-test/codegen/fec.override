@@ -35,6 +35,7 @@ static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h>

@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2009 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2010 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -23,7 +23,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "nsp/object.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/matint.h> 
+
 #include "nsp/cnumeric.h"
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"

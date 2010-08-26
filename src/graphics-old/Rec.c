@@ -39,6 +39,10 @@
 #include <string.h> /* in case of dbmalloc use */
 #include <stdio.h>
 #include <math.h>
+
+#include <nsp/object.h> 
+#include <nsp/list.h> 
+
 #include "nsp/math.h"
 #include "nsp/graphics-old/Graphics.h"
 #include "nsp/graphics-old/Rec_private.h"

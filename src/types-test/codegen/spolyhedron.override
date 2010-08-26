@@ -1,5 +1,10 @@
 /* -*- Mode: C -*- */
 %%
+include-start  SPolyhedron
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+%%
 include-public  SPolyhedron
 /* inserted at the end of public part of include file */
 
@@ -28,8 +33,8 @@ static void find_intersection(int *sx, int *sy, double *fxy, double z,
 
 %%
 headers
-
 #include <gdk/gdk.h>
+#include <nsp/objects.h> 
 #include <nsp/spolyhedron.h>
 #include <nsp/polyhedron.h>
 #include <nsp/figure.h> 

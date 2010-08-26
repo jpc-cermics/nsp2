@@ -1,12 +1,15 @@
 /* -*- Mode: C -*- */
 %%
-include-public  Polyline
+include-start  Polyline
+/* inserted at the start of include file */
+#include <nsp/figure.h>
 
+%%
+include-public  Polyline
 /* inserted at the end of public part of include file */
 
 %%
 include-private  Polyline
-
 /* inserted in the private part of include file */
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_polyline(NspGraphic *o,const double *tr);
@@ -17,6 +20,7 @@ static int nsp_getbounds_polyline(NspGraphic *o,double *bounds);
 %%
 headers
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 

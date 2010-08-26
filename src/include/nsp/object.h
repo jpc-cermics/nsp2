@@ -2,7 +2,7 @@
 #define NSP_INC_TYPE_OBJECT 
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2010) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -13,8 +13,12 @@
 #include "nsp/math.h" 
 #include "nsp/string.h" 
 #include "nsp/index.h" 
+#include "nsp/xdr.h"
+#include "nsp/ints.h" 
+#include "nsp/objectf.h" 
 
-typedef struct  _NspObject  NspObject; 
+/* typedef struct  _NspObject  NspObject;  */
+
 typedef struct  _AttrTab AttrTab;
 typedef struct  _NspMethods NspMethods;
 
@@ -43,8 +47,6 @@ typedef void *(new_func) (void);
 typedef void *(attrs_func) (void);
 typedef void *(create_func) (void);
 typedef int (get_index_vector_func)(void *, index_vector *); 
-
-
 typedef struct _NspTypeBase  NspTypeBase ;
 
 #ifdef __cplusplus				
@@ -250,7 +252,6 @@ typedef NspObject * (attr_get_object_function) (void *o,const char *str, int *co
 typedef int (attr_set_object_function) (void *o, NspObject *val);
 
 extern NspObject * int_get_failed(NspObject *self, char *attr);
-
 extern int int_set_failed(NspObject *self,char *attr, NspObject *val);
 extern NspObject * int_get_object_failed(NspObject *self, char *attr, int *copy);
 extern NspObject * int_set_object_failed(NspObject *self, NspObject *val);
@@ -268,7 +269,6 @@ struct _AttrTab {
 extern int attr_search (const char *key,AttrTab Table[]);
 extern int int_check_attr (char *key,AttrTab attrs[],Stack stack,int rhs,int opt,int lhs);
 extern int attrs_to_stack (char *key,AttrTab attrs[],Stack stack,int pos);
-
 extern int set_attribute_util(NspObject *ob, NspTypeBase *type, char *attr,NspObject *val);
 extern int int_set_attribute(Stack stack, int rhs, int opt, int lhs);
 extern int int_set_attributes(Stack stack, int rhs, int opt, int lhs);
@@ -280,7 +280,6 @@ extern NspObject *nsp_get_attribute_util(NspObject *ob,NspTypeBase *type,const c
 extern NspObject *nsp_get_attribute_object(NspObject *ob,NspTypeBase *type,const char *attr, int *copy) ;
 extern int nsp_set_attribute_object(NspObject *ob,NspTypeBase *type,NspObject *val);
 extern NspObject *object_path_extract(NspObject *a,int n, NspObject **ob, int *copy);
-
 
 /*-----------------------------------------------------------
  * Object methods 
@@ -332,62 +331,16 @@ typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
 
 extern void ArgMessage(Stack stack, int i );
 extern void *MaybeObjCopy(NspObject **Obj);
-#include "nsp/string.h"
 extern NspObject *nsp_global_frame_search_object(nsp_const_string str);
 
-/* 
- *  objects 
- */
-
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/hobj.h"
-#include "nsp/plisttoken.h"
-#include "nsp/file.h"
-#include "nsp/matrix.h"
-#include "nsp/imatrix.h"
-#include "nsp/mpmatrix.h"
-#include "nsp/smatrix.h"
-#include "nsp/sprowmatrix.h"
-#include "nsp/spcolmatrix.h"
-#include "nsp/plist.h"
-#include "nsp/list.h"
-#include "nsp/cells.h"
-#include "nsp/bmatrix.h"
-#include "nsp/pmatrix.h"
-#include "nsp/hash.h"
-#include "nsp/function.h"
-#include "nsp/ivect.h"
-#include "nsp/mod.h" 
-#include "nsp/me.h" 
-#include "nsp/lmo.h" 
-/*
-#include "nsp/rect.h" 
-#include "nsp/block.h" 
-#include "nsp/connector.h" 
-#include "nsp/link.h" 
-#include "nsp/diagram.h" 
-*/
-#include "nsp/graphic.h" 
-#include "nsp/none.h" 
-#include "nsp/type.h" 
-#include "nsp/module.h"
-#include "nsp/modulelt.h"
-#include "nsp/classa.h"
-#include "nsp/classb.h"
-#include "nsp/classaref.h"
-#include "nsp/classbref.h"
-#include "nsp/matint.h"
-#include "nsp/serial.h"
-#include "nsp/bhash.h"
-
 /*----------------------------------------------------------
- * A set of prototypes 
+ * A set of prototypes and defines 
  *----------------------------------------------------------*/
 
-void nsp_void_object_destroy(NspObject **O);
-
 #define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
+#define NULLOBJ  ( NspObject *) 0 
 
+extern void nsp_void_object_destroy(NspObject **O);
 extern int nsp_object_xdr_save(XDR *F, NspObject *O);
 extern int nsp_xdr_save_id(XDR *xdrs, NspTypeBase *type);
 extern NspObject *nsp_object_xdr_load(XDR *F); 
@@ -418,8 +371,7 @@ extern NspObject *nsp_complexi_object_(const char *name);
 extern NspObject *nsp_create_object_from_str(const char *name,const char *str); 
 extern NspObject *nsp_create_object_from_str_and_size(const char *name,const char *str, int lstr);
 extern NspObject *nsp_create_object_from_doubles(const char *name,int m, int n,double *rtab, double *itab);
-extern NspObject *nsp_create_object_from_tint(const char *name, nsp_int_union val, int type);
-
+extern NspObject *nsp_create_object_from_tint(const char *name, nsp_int_union val, int type); 
 extern NspObject *nsp_create_empty_matrix_object(const char *name); 
 extern NspObject *nsp_create_true_object(const char *name); 
 extern NspObject *nsp_create_boolean_object(const char *name,int val);
@@ -430,9 +382,6 @@ extern int print_count_rows(Stack stack,int first_arg,int last_arg);
 extern const char *nsp_object_set_initial_name(NspObject *ob,const char *name);
 extern void nsp_object_destroy_name(NspObject *ob);
 extern const char *nsp_get_short_string_from_id(int id);
-
-
-
 
 #endif /*  NSP_INC_TYPE_OBJECT  */
 

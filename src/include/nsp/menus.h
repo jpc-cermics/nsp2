@@ -11,7 +11,7 @@
 #include "nsp/machine.h"
 #include "nsp/math.h"
 #include "nsp/graphics-new/Graphics.h"
-#include "nsp/object.h"
+#include "nsp/objects.h"
 #include <nsp/gtk/gtkcombobox.h>
 
 #if defined(__MWERKS__)||defined(THINK_C)

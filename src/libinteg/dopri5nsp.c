@@ -3,6 +3,7 @@
 #include <float.h>
 
 #include "nsp/math.h"
+#include "nsp/sciio.h"
 #include "nsp/ode_solvers.h"
 
 /*
@@ -51,7 +52,7 @@
  *
  * The new resulting file are subject to the same license.
  * Copyright (c) 2004, Ernst Hairer
- * Copyright (c) 2009, Bruno Pincon
+ * Copyright (c) 2010, Bruno Pincon
  *     
  */
 

@@ -14,7 +14,7 @@
  * NspMatrix inherits from NspObject 
  */
 
-typedef struct _NspSmatrix NspSMatrix ;
+/* typedef struct _NspSmatrix NspSMatrix ; */
 
 typedef struct _NspTypeSMatrix { 
   NSP_TYPE_OBJECT__ 
@@ -29,9 +29,6 @@ struct _NspSmatrix {
   int m,n,mn;
   nsp_string *S;  /* a table of mn+1 strings the last one is NULL */
 };
-
-#include "nsp/matrix.h" 
-#include "nsp/bmatrix.h" 
 
 extern int nsp_type_smatrix_id;
 extern NspTypeSMatrix *nsp_type_smatrix;

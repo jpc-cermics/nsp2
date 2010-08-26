@@ -7,6 +7,12 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/gmatrix.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+
+#line 16 "./gmatrix.h"
 /* NspGMatrix */
 
 #include <nsp/graphic.h>
@@ -18,14 +24,14 @@
 typedef struct _NspGMatrix NspGMatrix ;
 typedef struct _NspTypeGMatrix NspTypeGMatrix ;
 
-#line 22 "./gmatrix.h"
+#line 28 "./gmatrix.h"
 
 struct _NspTypeGMatrix {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./gmatrix.h"
+#line 35 "./gmatrix.h"
 };
 
 typedef struct _nsp_gmatrix nsp_gmatrix;
@@ -89,11 +95,11 @@ extern int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);
 extern NspGMatrix *nsp_gmatrix_xdr_load_partial(XDR *xdrs, NspGMatrix *M);
 extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 
-#line 4 "codegen/gmatrix.override"
+#line 10 "codegen/gmatrix.override"
 
 /* inserted at the end of public part of include file */
 
-#line 97 "./gmatrix.h"
+#line 103 "./gmatrix.h"
 #endif /* NSP_INC_NspGMatrix */ 
 
 #ifdef NspGMatrix_Private 
@@ -108,7 +114,7 @@ static AttrTab gmatrix_attrs[];
 static NspMethods *gmatrix_get_methods(void);
 /* static int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspGMatrix *nsp_gmatrix_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/gmatrix.override"
+#line 15 "codegen/gmatrix.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_gmatrix(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -117,6 +123,6 @@ static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);
 static int nsp_getbounds_gmatrix(NspGraphic *o,double *bounds);
 
-#line 121 "./gmatrix.h"
+#line 127 "./gmatrix.h"
 #endif /* NspGMatrix_Private */
 

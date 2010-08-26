@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,7 +24,7 @@
 
 
 
-#line 23 "codegen/vfield.override"
+#line 27 "codegen/vfield.override"
 
 #line 30 "vfield.c"
 
@@ -32,7 +32,7 @@
 
 
 #define  NspVField_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/vfield.h>
 #include <nsp/interf.h>
 
@@ -98,7 +98,7 @@ NspTypeVField *new_type_vfield(type_mode mode)
 
   type->init = (init_func *) init_vfield;
 
-#line 31 "codegen/vfield.override"
+#line 35 "codegen/vfield.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_vfield;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_vfield ;
@@ -762,7 +762,7 @@ static AttrTab vfield_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/vfield.override"
+#line 56 "codegen/vfield.override"
 
 extern function int_nspgraphic_extract;
 
@@ -774,7 +774,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
 #line 775 "vfield.c"
 
 
-#line 62 "codegen/vfield.override"
+#line 66 "codegen/vfield.override"
 
 extern function int_graphic_set_attribute;
 
@@ -814,7 +814,7 @@ void VField_Interf_Info(int i, char **fname, function (**f))
   *f = VField_func[i].fonc;
 }
 
-#line 72 "codegen/vfield.override"
+#line 76 "codegen/vfield.override"
 
 static void nsp_draw_vfield(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {

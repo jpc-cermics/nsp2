@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2001-2009 Bruno Pinçon Esial/Iecn
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2010 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,8 +22,13 @@
 #include <math.h>
 #include <string.h>
 #include <nsp/machine.h>
-#include "nsp/matrix-in.h"
-#include "nsp/bmatrix-in.h"
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/list.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/interf.h> 
 
 extern int C2F(dpotrf) (char *uplo, int *n, double *a, int *lda, int *info, int uplo_len);
 

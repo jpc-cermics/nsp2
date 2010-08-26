@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,18 +24,19 @@
 
 
 
-#line 19 "codegen/polyline.override"
+#line 22 "codegen/polyline.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 33 "polyline.c"
+#line 34 "polyline.c"
 
 /* ----------- NspPolyline ----------- */
 
 
 #define  NspPolyline_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/polyline.h>
 #include <nsp/interf.h>
 
@@ -101,7 +102,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
 
   type->init = (init_func *) init_polyline;
 
-#line 30 "codegen/polyline.override"
+#line 34 "codegen/polyline.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +115,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "polyline.c"
+#line 119 "polyline.c"
   /* 
    * NspPolyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -787,7 +788,7 @@ static AttrTab polyline_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 52 "codegen/polyline.override"
+#line 56 "codegen/polyline.override"
 
 extern function int_nspgraphic_extract;
 
@@ -796,10 +797,10 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 800 "polyline.c"
+#line 801 "polyline.c"
 
 
-#line 62 "codegen/polyline.override"
+#line 66 "codegen/polyline.override"
 
 extern function int_graphic_set_attribute;
 
@@ -809,7 +810,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 813 "polyline.c"
+#line 814 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -840,7 +841,7 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
   *f = Polyline_func[i].fonc;
 }
 
-#line 73 "codegen/polyline.override"
+#line 77 "codegen/polyline.override"
 
 /* inserted verbatim at the end */
 
@@ -1003,4 +1004,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1007 "polyline.c"
+#line 1008 "polyline.c"

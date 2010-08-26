@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
- *               2007-2009 Bruno Pincon Esial/Iecn (changes in GetDimArg func) 
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ *               2007-2010 Bruno Pincon Esial/Iecn (changes in GetDimArg func) 
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -27,10 +27,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "nsp/object.h"
+#include <nsp/object.h>
+#include <nsp/matrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/smatrix.h>
+#include <nsp/spcolmatrix.h>
+#include <nsp/matint.h>
+#include <nsp/hash.h>
+
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include "nsp/matint.h"
 
 
 /* mtlb issparse

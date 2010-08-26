@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -23,8 +23,20 @@
  * which stands for matlab internal storage convention (Jc,Ir,Pr) and NOT for the 
  * triplet convention (I,J,Val).
  */
-  
-#include "nsp/object.h"
+
+#include <nsp/object.h> 
+#include <nsp/matint.h> 
+#include <nsp/matrix.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/sprowmatrix.h> 
+#include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/cells.h> 
+#include <nsp/matint.h> 
+#include <nsp/hobj.h> 
+#include <nsp/file.h> 
+#include <nsp/type.h> 
 
 static int nsp_sprow_fill_zi_triplet(const NspSpRowMatrix *M);
 static void nsp_sprow_free_triplet( NspSpRowMatrix *M);

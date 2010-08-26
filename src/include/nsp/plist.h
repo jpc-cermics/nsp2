@@ -14,7 +14,7 @@
 /*
  * NspPList inherits from NspObject 
  */
-typedef struct _NspPlist  NspPList;
+/* typedef struct _NspPlist  NspPList; */
 
 typedef struct _NspTypePList NspTypePList;
 

@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,18 +24,19 @@
 
 
 
-#line 19 "codegen/grrect.override"
+#line 25 "codegen/grrect.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 33 "grrect.c"
+#line 34 "grrect.c"
 
 /* ----------- NspGrRect ----------- */
 
 
 #define  NspGrRect_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/grrect.h>
 #include <nsp/interf.h>
 
@@ -101,7 +102,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
 
   type->init = (init_func *) init_grrect;
 
-#line 30 "codegen/grrect.override"
+#line 37 "codegen/grrect.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +115,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "grrect.c"
+#line 119 "grrect.c"
   /* 
    * NspGrRect interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -709,7 +710,7 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/grrect.override"
+#line 60 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -718,10 +719,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 722 "grrect.c"
+#line 723 "grrect.c"
 
 
-#line 63 "codegen/grrect.override"
+#line 70 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -731,7 +732,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 735 "grrect.c"
+#line 736 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -762,7 +763,7 @@ void GrRect_Interf_Info(int i, char **fname, function (**f))
   *f = GrRect_func[i].fonc;
 }
 
-#line 74 "codegen/grrect.override"
+#line 81 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -879,4 +880,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 883 "grrect.c"
+#line 884 "grrect.c"

@@ -14,7 +14,7 @@
 /*
  * NspHobj inherits from NspObject 
  */
-typedef struct _NspHobj  NspHobj;
+/* typedef struct _NspHobj  NspHobj; */
 
 typedef struct _NspTypeHobj { 
   NSP_TYPE_OBJECT__ 

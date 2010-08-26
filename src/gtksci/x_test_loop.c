@@ -1,4 +1,4 @@
-/* Copyright (C) 1998-2009 Chancelier Jean-Philippe */
+/* Copyright (C) 1998-2010 Chancelier Jean-Philippe */
 #include <stdio.h>
 #include <setjmp.h>
 #include <signal.h>

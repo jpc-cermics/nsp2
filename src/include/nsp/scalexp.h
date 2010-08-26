@@ -15,7 +15,7 @@
  * NspScalExp inherits from NspObject
  */
 
-typedef struct _NspScalExp NspScalExp ;
+/* typedef struct _NspScalExp NspScalExp ; */
 typedef struct _NspTypeScalExp NspTypeScalExp ;
 
 struct _NspTypeScalExp {

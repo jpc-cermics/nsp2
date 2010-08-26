@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -26,10 +26,24 @@
 #include <stdio.h>
 #include <glib.h>
 
+#include <nsp/object.h> 
+#include <nsp/plist.h> 
+#include <nsp/plistc.h> 
+#include <nsp/bhash.h> 
+#include <nsp/cells.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/matrix.h> 
+#include <nsp/list.h> 
+#include <nsp/file.h> 
+#include <nsp/hobj.h> 
+#include <nsp/function.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/hash.h> 
+#include <nsp/ivect.h> 
+
 #include "nsp/machine.h"
 #include "nsp/math.h" 
 #include "nsp/plisttoken.h" /* for name_maxl */
-#include "nsp/object.h" 
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 #include "nsp/libstab.h"
@@ -691,7 +705,7 @@ static int myhsearch(const char *key, Mdata *data, ACTION action)
 
 
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * See also the Copyright below for hash table routines 
  *

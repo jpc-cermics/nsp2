@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -25,14 +25,16 @@
 
 
 #line 27 "codegen/classa.override"
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
 
-#line 30 "classa.c"
+#line 32 "classa.c"
 
 /* ----------- NspClassA ----------- */
 
 
 #define  NspClassA_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/classa.h>
 #include <nsp/interf.h>
 
@@ -253,9 +255,9 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
   if ( nsp_classa_create_partial(H) == FAIL) return NULLCLASSA;
   if ((H  = nsp_classa_xdr_load_partial(xdrs,H))== NULLCLASSA) return H;
   if ( nsp_classa_check_values(H) == FAIL) return NULLCLASSA;
-#line 43 "codegen/classa.override"
+#line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 259 "classa.c"
+#line 261 "classa.c"
   return H;
 }
 
@@ -265,9 +267,9 @@ static NspClassA  *nsp_classa_xdr_load(XDR *xdrs)
 
 void nsp_classa_destroy_partial(NspClassA *H)
 {
-#line 46 "codegen/classa.override"
+#line 48 "codegen/classa.override"
   /* verbatim in destroy */
-#line 271 "classa.c"
+#line 273 "classa.c"
   if ( H->cla_val != NULL ) 
     nsp_matrix_destroy(H->cla_val);
   if ( H->cla_bval != NULL ) 
@@ -463,9 +465,9 @@ NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatri
   H->cla_bval= cla_bval;
   H->cla_lval= cla_lval;
   if ( nsp_classa_check_values(H) == FAIL) return NULLCLASSA;
-#line 43 "codegen/classa.override"
+#line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 469 "classa.c"
+#line 471 "classa.c"
   return H;
 }
 
@@ -550,9 +552,9 @@ NspClassA *nsp_classa_full_copy(NspClassA *self)
   if ( H ==  NULLCLASSA) return NULLCLASSA;
   if ( nsp_classa_full_copy_partial(H,self)== NULL) return NULLCLASSA;
 
-#line 43 "codegen/classa.override"
+#line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 556 "classa.c"
+#line 558 "classa.c"
   return H;
 }
 
@@ -571,9 +573,9 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_classa_check_values(H) == FAIL) return RET_BUG;
-#line 43 "codegen/classa.override"
+#line 45 "codegen/classa.override"
   /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 577 "classa.c"
+#line 579 "classa.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -581,7 +583,7 @@ int int_classa_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 49 "codegen/classa.override"
+#line 51 "codegen/classa.override"
 static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
@@ -590,10 +592,10 @@ static int _wrap_classa_color_change(NspClassA *self,Stack stack,int rhs,int opt
   self->cla_color = color;
   return 0;
 }
-#line 594 "classa.c"
+#line 596 "classa.c"
 
 
-#line 59 "codegen/classa.override"
+#line 61 "codegen/classa.override"
 /* a method can be overriden by giving its name or 
  * class.name 
  */
@@ -602,7 +604,7 @@ static int _wrap_classa_color_show(NspClassA *self,Stack stack,int rhs,int opt,i
   Sciprintf("color: %d\n",self->cla_color);
   return 0;
 }
-#line 606 "classa.c"
+#line 608 "classa.c"
 
 
 static NspMethods classa_methods[] = {
@@ -708,7 +710,7 @@ static int _wrap_classa_set_cla_bval(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 95 "codegen/classa.override"
+#line 97 "codegen/classa.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -736,7 +738,7 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 740 "classa.c"
+#line 742 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
@@ -770,7 +772,7 @@ static AttrTab classa_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 75 "codegen/classa.override"
+#line 77 "codegen/classa.override"
 /* XXXX : the generated code should be corrected */
 static int clatest(NspClassA *A)
 {
@@ -789,15 +791,15 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 793 "classa.c"
+#line 795 "classa.c"
 
 
-#line 69 "codegen/classa.override"
+#line 71 "codegen/classa.override"
 static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 801 "classa.c"
+#line 803 "classa.c"
 
 
 /*----------------------------------------------------
@@ -828,4 +830,4 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
   *f = ClassA_func[i].fonc;
 }
 
-#line 832 "classa.c"
+#line 834 "classa.c"

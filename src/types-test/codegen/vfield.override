@@ -1,7 +1,11 @@
 /* -*- Mode: C -*- */
 %%
-include-public  VField
+include-start VField
+/* inserted at the start of include file */
+#include <nsp/figure.h>
 
+%%
+include-public  VField
 /* inserted at the end of public part of include file */
 
 %%

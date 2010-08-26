@@ -15,7 +15,7 @@
  * NspSpRowMatrix inherits from NspObject 
  */
 
-typedef struct _NspSpRowmatrix NspSpRowMatrix;
+/* typedef struct _NspSpRowmatrix NspSpRowMatrix; */
 
 typedef struct _NspTypeSpRowMatrix  NspTypeSpRowMatrix;
 

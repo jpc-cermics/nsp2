@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/string3d.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./string3d.h"
 /* NspString3d */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspString3d NspString3d ;
 typedef struct _NspTypeString3d NspTypeString3d ;
 
-#line 22 "./string3d.h"
+#line 27 "./string3d.h"
 
 struct _NspTypeString3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./string3d.h"
+#line 34 "./string3d.h"
 };
 
 typedef struct _nsp_string3d nsp_string3d;
@@ -90,7 +95,7 @@ extern int int_string3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspString3d *nsp_string3d_xdr_load_partial(XDR *xdrs, NspString3d *M);
 extern int nsp_string3d_xdr_save(XDR  *xdrs, NspString3d *M);
 
-#line 4 "codegen/string3d.override"
+#line 9 "codegen/string3d.override"
 
 #include "../graphics-new/Plo3dObj.h"
 /* inserted at the end of public part of include file */
@@ -98,7 +103,7 @@ extern BCG *nsp_check_graphic_context(void);
 extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 
-#line 102 "./string3d.h"
+#line 107 "./string3d.h"
 #endif /* NSP_INC_NspString3d */ 
 
 #ifdef NspString3d_Private 
@@ -113,7 +118,7 @@ static AttrTab string3d_attrs[];
 static NspMethods *string3d_get_methods(void);
 /* static int int_string3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspString3d *nsp_string3d_create_void(char *name,NspTypeBase *type);
-#line 13 "codegen/string3d.override"
+#line 18 "codegen/string3d.override"
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_string3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_string3d(NspGraphic *o,double *R);
@@ -127,6 +132,6 @@ static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 131 "./string3d.h"
+#line 136 "./string3d.h"
 #endif /* NspString3d_Private */
 

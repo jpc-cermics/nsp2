@@ -6,6 +6,8 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#include <nsp/complex.h> 
+
 extern int nsp_double2int (int *n, double *dx, int *ix); 
 extern int nsp_float2int (int *n, float *dx, int *ix); 
 extern int nsp_double2float (int *n, double *dx, float *rx); 

@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,18 +24,19 @@
 
 
 
-#line 19 "codegen/grimage.override"
+#line 25 "codegen/grimage.override"
 #include <gdk/gdk.h>
+#include <nsp/objects.h>
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 
-#line 33 "grimage.c"
+#line 34 "grimage.c"
 
 /* ----------- NspGrImage ----------- */
 
 
 #define  NspGrImage_Private 
-#include <nsp/object.h>
+#include <nsp/objects.h>
 #include <nsp/grimage.h>
 #include <nsp/interf.h>
 
@@ -101,7 +102,7 @@ NspTypeGrImage *new_type_grimage(type_mode mode)
 
   type->init = (init_func *) init_grimage;
 
-#line 30 "codegen/grimage.override"
+#line 37 "codegen/grimage.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -114,7 +115,7 @@ NspTypeGrImage *new_type_grimage(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "grimage.c"
+#line 119 "grimage.c"
   /* 
    * NspGrImage interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -753,7 +754,7 @@ static AttrTab grimage_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 53 "codegen/grimage.override"
+#line 60 "codegen/grimage.override"
 
 extern function int_nspgraphic_extract;
 
@@ -762,10 +763,10 @@ int _wrap_nsp_extractelts_grimage(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 766 "grimage.c"
+#line 767 "grimage.c"
 
 
-#line 63 "codegen/grimage.override"
+#line 70 "codegen/grimage.override"
 
 extern function int_graphic_set_attribute;
 
@@ -775,7 +776,7 @@ int _wrap_nsp_setrowscols_grimage(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 779 "grimage.c"
+#line 780 "grimage.c"
 
 
 /*----------------------------------------------------
@@ -806,7 +807,7 @@ void GrImage_Interf_Info(int i, char **fname, function (**f))
   *f = GrImage_func[i].fonc;
 }
 
-#line 74 "codegen/grimage.override"
+#line 81 "codegen/grimage.override"
 
 /* inserted verbatim at the end */
 
@@ -918,4 +919,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 922 "grimage.c"
+#line 923 "grimage.c"

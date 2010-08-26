@@ -2,7 +2,7 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
- * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,8 +20,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
 #include <nsp/interf.h> 
 #include <nsp/lapack-c.h>
+
+
 
 /*-------------------------------------------
  * functions 

@@ -5,6 +5,7 @@
 #include <nsp/datas.h> 
 #include <nsp/accelerated_tab.h> 
 #include <nsp/eval.h> 
+#include <nsp/plist.h> 
 
 extern int nsp_eval(PList L1,Stack, int first, int rhs,int lhs,int display);
 extern int nsp_eval_arg(PList L,Stack *stack, int i,int rhs,int lhs,int display);

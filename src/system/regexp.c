@@ -13,7 +13,9 @@
  *	Written by Henry Spencer.  Not derived from licensed software.
  */
 
-#include "nsp/object.h" 
+#include <nsp/object.h> 
+#include <nsp/sciio.h> 
+
 #include "regexp.h"
 
 /*

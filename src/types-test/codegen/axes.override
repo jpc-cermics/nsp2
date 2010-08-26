@@ -65,6 +65,8 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
 %%
 headers
+#include <nsp/objects.h>
+#include <nsp/graphics-new/Graphics.h> 
 #include <nsp/objs3d.h>
 #include <nsp/curve.h>
 

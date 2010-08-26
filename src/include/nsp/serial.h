@@ -24,7 +24,7 @@
  */
 
 
-typedef struct _NspSerial NspSerial;
+/* typedef struct _NspSerial NspSerial; */
 typedef struct _NspTypeSerial NspTypeSerial;
 
 typedef int (*serial_save) (XDR  *xdrs, NspSerial *M);

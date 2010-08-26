@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -24,15 +24,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <glib.h> /* for gint */
+#include <sndfile.h>
+#include <portaudio.h>
 
 #define Pa_Private 
-#include "nsp/object.h"
+#include <nsp/object.h>
+#include <nsp/matrix.h>
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
-#include <sndfile.h>
-#include <portaudio.h>
 #include "pansp.h" 
+#include <nsp/ivect.h> 
+#include <nsp/hobj.h> 
+#include <nsp/type.h> 
 
 #define FRAMES_PER_BUFFER   (1024)
 

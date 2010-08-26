@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/polyline.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./polyline.h"
 /* NspPolyline */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspPolyline NspPolyline ;
 typedef struct _NspTypePolyline NspTypePolyline ;
 
-#line 22 "./polyline.h"
+#line 27 "./polyline.h"
 
 struct _NspTypePolyline {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./polyline.h"
+#line 34 "./polyline.h"
 };
 
 typedef struct _nsp_polyline nsp_polyline;
@@ -92,11 +97,10 @@ extern int int_polyline_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPolyline *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M);
 extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 
-#line 4 "codegen/polyline.override"
-
+#line 9 "codegen/polyline.override"
 /* inserted at the end of public part of include file */
 
-#line 100 "./polyline.h"
+#line 104 "./polyline.h"
 #endif /* NSP_INC_NspPolyline */ 
 
 #ifdef NspPolyline_Private 
@@ -111,8 +115,7 @@ static AttrTab polyline_attrs[];
 static NspMethods *polyline_get_methods(void);
 /* static int int_polyline_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type);
-#line 9 "codegen/polyline.override"
-
+#line 13 "codegen/polyline.override"
 /* inserted in the private part of include file */
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_polyline(NspGraphic *o,const double *tr);
@@ -120,6 +123,6 @@ static void nsp_rotate_polyline(NspGraphic *o,double *R);
 static void nsp_scale_polyline(NspGraphic *o,double *alpha);
 static int nsp_getbounds_polyline(NspGraphic *o,double *bounds);
 
-#line 124 "./polyline.h"
+#line 127 "./polyline.h"
 #endif /* NspPolyline_Private */
 

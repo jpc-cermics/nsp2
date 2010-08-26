@@ -42,7 +42,7 @@ struct _nsp_file {
  * for files.
  */
 
-typedef struct _NspFile NspFile;
+/* typedef struct _NspFile NspFile; */
 
 typedef struct _NspTypeSciFile { 
   NSP_TYPE_OBJECT__ 

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2006-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2010 Jean-Philippe Chancelier Enpc/Cermics
  * 
  * Some routines at the end are copied from CHOLMOD/MATLAB Module. 
  * They are copyrighted by Timothy A. Davis Version 1.2.  Copyright (C) 2005-2006,
@@ -35,8 +35,16 @@
 
 #include <cholmod.h>
 #define  Cholmod_Private 
-#include "nsp/object.h"
-#include "nsp/cholmod.h"
+#include <nsp/object.h>
+#include <nsp/cholmod.h>
+#include <nsp/type.h>
+#include <nsp/file.h>
+#include <nsp/hobj.h>
+#include <nsp/matrix.h>
+#include <nsp/smatrix.h>
+#include <nsp/bmatrix.h>
+#include <nsp/spcolmatrix.h>
+#include <nsp/sprowmatrix.h>
 #include "nsp/interf.h"
 #include "mex/mex.h"
 

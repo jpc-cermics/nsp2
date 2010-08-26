@@ -7,6 +7,11 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
+#line 4 "codegen/points3d.override"
+/* inserted at the start of include file */
+#include <nsp/figure.h>
+
+#line 15 "./points3d.h"
 /* NspPoints3d */
 
 #include <nsp/graphic.h>
@@ -18,14 +23,14 @@
 typedef struct _NspPoints3d NspPoints3d ;
 typedef struct _NspTypePoints3d NspTypePoints3d ;
 
-#line 22 "./points3d.h"
+#line 27 "./points3d.h"
 
 struct _NspTypePoints3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./points3d.h"
+#line 34 "./points3d.h"
 };
 
 typedef struct _nsp_points3d nsp_points3d;
@@ -90,7 +95,7 @@ extern int int_points3d_create(Stack stack, int rhs, int opt, int lhs);
 extern NspPoints3d *nsp_points3d_xdr_load_partial(XDR *xdrs, NspPoints3d *M);
 extern int nsp_points3d_xdr_save(XDR  *xdrs, NspPoints3d *M);
 
-#line 4 "codegen/points3d.override"
+#line 9 "codegen/points3d.override"
 
 #include "../graphics-new/Plo3dObj.h"
 /* inserted at the end of public part of include file */
@@ -98,7 +103,7 @@ extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double 
 extern BCG *nsp_check_graphic_context(void);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
-#line 102 "./points3d.h"
+#line 107 "./points3d.h"
 #endif /* NSP_INC_NspPoints3d */ 
 
 #ifdef NspPoints3d_Private 
@@ -113,7 +118,7 @@ static AttrTab points3d_attrs[];
 static NspMethods *points3d_get_methods(void);
 /* static int int_points3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPoints3d *nsp_points3d_create_void(char *name,NspTypeBase *type);
-#line 13 "codegen/points3d.override"
+#line 18 "codegen/points3d.override"
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_points3d(NspGraphic *o,double *R);
@@ -129,6 +134,6 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 133 "./points3d.h"
+#line 138 "./points3d.h"
 #endif /* NspPoints3d_Private */
 

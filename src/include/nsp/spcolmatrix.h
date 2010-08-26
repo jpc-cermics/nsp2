@@ -15,7 +15,7 @@
  * NspSpColMatrix inherits from NspObject 
  */
 
-typedef struct _NspSpColmatrix NspSpColMatrix;
+/* typedef struct _NspSpColmatrix NspSpColMatrix; */
 
 typedef struct _NspTypeSpColMatrix { 
   NSP_TYPE_OBJECT__ 

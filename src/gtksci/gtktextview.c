@@ -35,6 +35,10 @@
 #include <glib/gstdio.h>
 
 #include <nsp/object.h>
+#include <nsp/plist.h> 
+#include <nsp/file.h> 
+#include <nsp/smatrix.h> 
+
 #include <nsp/parse.h>
 #include "../system/files.h" /* FSIZE */
 

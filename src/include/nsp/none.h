@@ -14,7 +14,7 @@
  * NspNone inherits from NspObject
  */
 
-typedef struct _NspNone NspNone;
+/* typedef struct _NspNone NspNone; */
 
 typedef struct _NspTypeNone { 
   NSP_TYPE_OBJECT__ 

@@ -2,8 +2,8 @@
 %%
 include-start Link 
 /* inserted at the start of include file */
-
 #include <stdio.h>   /* for file declaration */
+#include <nsp/figure.h>
 #include "nsp/grint.h" /* interface definition */
 
 /**
@@ -111,6 +111,7 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
 %%
 headers
+#include <nsp/objects.h>
 #include "nsp/block.h"
 #include "nsp/link.h"
 #include "nsp/connector.h"
