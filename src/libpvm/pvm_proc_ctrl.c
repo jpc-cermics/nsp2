@@ -8,6 +8,7 @@
 #include <unistd.h>
 #include "nsp/machine.h"
 #include "nsp/object.h"
+#include "nsp/sciio.h"
 #include "nsp/nsptcl.h"
 #include "../system/files.h" /* FSIZE+1 */
 #include "../../pvm3/include/pvm3.h"
