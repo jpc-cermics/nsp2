@@ -77,7 +77,7 @@ int nsp_pvm_start(char *hostfile)
 	}
       else 
 	{
-	  sciprint("%s: No such file or directory\n", hostfile);
+	  Sciprintf("%s: No such file or directory\n", hostfile);
 	  return -1;
 	}
     }
