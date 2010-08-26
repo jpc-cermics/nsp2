@@ -2,7 +2,7 @@
 #define NSP_INC_STACK 
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2005) 
+ * This Software is GPL (Copyright ENPC 1998-2010) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

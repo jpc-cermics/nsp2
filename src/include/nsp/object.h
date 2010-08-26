@@ -295,36 +295,6 @@ struct _NspMethods {
 extern int method_search(char *key, NspMethods *Table);
 int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs);
 
-/*----------------------------------------------------------
- NOOBJ     : used for load/save 
- LIST      : Scilab Lists 
- MATRIX    : usual matrices 
- SMATRIX   : matrix of string 
- BMATRIX   : boolean matrix 
- LIB       : library 
- PMATRIX   : Matrix of polynoms 
- SPMATRIX  : Sparse Matrix 
- P_PLIST   : Scilab Parsed Expressions 
- HASH      : Scilab Hash Table  
- HOBJ     : Pointer to a Scilab Obj 
- FUNC     : Scilab internal function i.e inside an interface 
- IVECT    : Scilab implicit vectors 
- SCIFILE  : file 
- GTKE     : Gtk/gdk object 
- VOIDPT   : void * to a C object 
- ARRAY  : 
- MODULE :   internal use for modules 
- ME     :   internal use for modules elts 
- LMO    :   internal usr list of modules 
- *----------------------------------------------------------*/
-/* 
-
-typedef enum { NOOBJ,LIST,MATRIX,SMATRIX,BMATRIX,LIB,
-	       PMATRIX,SPMATRIX,P_PLIST,HASH,HOBJ,FUNC,
-	       IVECT,SCIFILE,GTKE,VOIDPT,ARRAY,MODULE,ME,LMO,RECT,GFRAME,BLOCK,LINK
-} SciType;
-*/
-
 /*
  * needed in object definitions 
  */
