@@ -46,7 +46,7 @@ int nsp_pvm_start(char *hostfile)
 	    {
 	      argc = 1;
 	      argv[0] = path;
-	      sciprint_nd("pvm: using %s\n", path);
+	      Sciprintf("pvm: using %s\n", path);
 	    }
 	};
       if ( argc != 1 &&  sci != NULL)
@@ -56,16 +56,16 @@ int nsp_pvm_start(char *hostfile)
 	    {
 	      argc = 1;
 	      argv[0]= path;
-	      sciprint_nd("pvm: using $SCI/.pvmd.conf\n\t$SCI=%s\n",sci);
-	      sciprint_nd("\tSCI will have to be set on remote hosts \n");
-	      sciprint_nd("\tin order to spawn scilab\n");
+	      Sciprintf("pvm: using $SCI/.pvmd.conf\n\t$SCI=%s\n",sci);
+	      Sciprintf("\tSCI will have to be set on remote hosts \n");
+	      Sciprintf("\tin order to spawn scilab\n");
 	    }
 	}
       if ( argc != 1 ) 
 	{
-	  sciprint_nd("Warning: $HOME/.pvmd.conf or $SCI/.pvmd.conf not found.\n");
-	  sciprint_nd("\tassuming that PVM and scilab are in standard place on your net\n");
-	  sciprint_nd("\t (Cf. man pvmd3)\n");
+	  Sciprintf("Warning: $HOME/.pvmd.conf or $SCI/.pvmd.conf not found.\n");
+	  Sciprintf("\tassuming that PVM and scilab are in standard place on your net\n");
+	  Sciprintf("\t (Cf. man pvmd3)\n");
 	}
     }
   else 
@@ -94,7 +94,7 @@ int nsp_pvm_halt(void)
   int res ;
   /* Catch the SIGTERM */
   if (SIG_ERR == signal(SIGTERM,SIG_IGN)){
-    sciprint_nd("Error: pvm_halt - signal\n");
+    Sciprintf("Error: pvm_halt - signal\n");
     return -1;
   }
   res =  pvm_halt(); 
@@ -104,12 +104,12 @@ int nsp_pvm_halt(void)
   /* Catch the SIGPIPE and deflect SIGTERM */
 #ifdef SIGPIPE
   if (SIG_ERR == signal(SIGPIPE,SIG_IGN)){
-    sciprint_nd("Error: pvm_halt - signal\n");
+    Sciprintf("Error: pvm_halt - signal\n");
     return -1;
   }
 #endif 
   if (SIG_ERR == signal(SIGTERM,SIG_DFL)){
-    sciprint_nd("Error: pvm_halt - signal\n");
+    Sciprintf("Error: pvm_halt - signal\n");
     return -1;
   }   
   return res;
