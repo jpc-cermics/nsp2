@@ -3448,14 +3448,22 @@ NspObject *nsp_get_list_from_list_store(GtkListStore *model)
   return nsp_get_list_from_list_or_tree_store(GTK_TREE_MODEL(model));
 }
 
+
 NspObject *nsp_get_list_from_tree_store(GtkTreeStore *model)
 {
   return nsp_get_list_from_list_or_tree_store(GTK_TREE_MODEL(model));
 }
 
-/*--------------------------------------------------------------------------
- * utilities for editvar 
- * --------------------------------------------------------------------------*/
+/**
+ * nsp_cells_to_string:
+ * @ce: a #NspCells 
+ * 
+ * A utility function for editvar, which converts the cells elements 
+ * to string. This is mainly used in editvar to fill the value field 
+ * of list or hash elements. 
+ * 
+ * Returns: a new #NspSMatrix
+ **/
 
 NspSMatrix * nsp_cells_to_string(NspCells *ce)
 {

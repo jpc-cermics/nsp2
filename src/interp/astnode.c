@@ -406,11 +406,13 @@ int nsp_astnode_print(NspAstNode *M, int indent,const char *name, int rec_level)
 	    Sciprintf("%s",s);
 	  else 
 	    Sciprintf("UNKNOWN->%d", M->obj->op);
-	  s=nsp_astcode_to_nickname( M->obj->op);
+	  /* 
+	  s=nsp_astcode_to_codename( M->obj->op);
 	  if ( s != (char *) 0 )
 	    Sciprintf("(%s)",s);
 	  else 
 	    Sciprintf("(UNKNOWN->%d)", M->obj->op);
+	  */
 	}
       Sciprintf("}\t\t%s\n",nsp_astnode_type_short_string(NSP_OBJECT(M)));
     }
