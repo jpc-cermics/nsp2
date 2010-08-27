@@ -1,9 +1,10 @@
 #ifndef NSP_INC_LIBAPPROX 
 #define NSP_INC_LIBAPPROX 
 
-enum {NOT_A_KNOT, NATURAL, CLAMPED, PERIODIC, FAST, FAST_PERIODIC, 
-      MONOTONE, BY_ZERO, C0, LINEAR, BY_NAN, UNDEFINED};
-
+typedef enum {
+  NOT_A_KNOT, NATURAL, CLAMPED, PERIODIC, FAST, FAST_PERIODIC, 
+  MONOTONE, BY_ZERO, C0, LINEAR, BY_NAN, UNDEFINED 
+} nsp_spline_enum;
 
 extern void nsp_eval_piecewise_hermite(double *t, double *st, double *dst, double *d2st, 
 				       double *d3st, int m, double *x, double *y, double *d, 

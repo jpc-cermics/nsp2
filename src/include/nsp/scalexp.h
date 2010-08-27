@@ -8,7 +8,6 @@
  */
 
 /* ScalExp */
-
 #include "nsp/object.h"
 
 /*
