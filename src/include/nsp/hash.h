@@ -10,7 +10,7 @@
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * We need a local static variable which contains the pointer to the

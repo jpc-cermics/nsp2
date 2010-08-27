@@ -8,7 +8,7 @@
   
 /* interface Matint */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 typedef int matint_redim(NspObject *M,int m,int n); 
 typedef int matint_resize(void *M,int m,int n); 

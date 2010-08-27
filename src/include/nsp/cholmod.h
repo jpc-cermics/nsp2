@@ -24,8 +24,8 @@
  */
 
 /* Cholmod */
-
-#include "nsp/object.h"
+#include <nsp/objectf.h> 
+#include <cholmod.h>
 
 /*
  * NspCholmod inherits from NspObject

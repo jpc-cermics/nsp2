@@ -8,7 +8,7 @@
   
 /* ModuleElt */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspModuleElt inherits from NspObject

@@ -120,7 +120,7 @@ static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   /* Follow pointer **/
-  HOBJ_GET_OBJECT(Obj,NULL);
+  HOBJ_GET_OBJECT(Obj,RET_BUG);
   if (( Obj = nsp_object_copy(Obj)) == NULLOBJ) 
     return RET_BUG;
   MoveObj(stack,1,Obj);

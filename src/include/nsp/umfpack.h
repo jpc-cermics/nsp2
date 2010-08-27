@@ -25,7 +25,8 @@
 
 /* Umfpack */
 
-#include "nsp/object.h"
+#include <nsp/object.h>
+#include <nsp/spcolmatrix.h>
 
 /*
  * NspUmfpack inherits from NspObject

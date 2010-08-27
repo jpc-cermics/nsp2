@@ -8,7 +8,7 @@
 
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 #include "nsp/triplet.h"
 
 /*

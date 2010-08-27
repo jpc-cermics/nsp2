@@ -3,15 +3,29 @@
 #define NSP_INC_NspGrArc
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/grarc.override"
 /* inserted at the start of include file */
 #include <nsp/figure.h>
 
-#line 15 "./grarc.h"
+#line 29 "./grarc.h"
 /* NspGrArc */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspGrArc NspGrArc ;
 typedef struct _NspTypeGrArc NspTypeGrArc ;
 
-#line 27 "./grarc.h"
+#line 41 "./grarc.h"
 
 struct _NspTypeGrArc {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./grarc.h"
+#line 48 "./grarc.h"
 };
 
 typedef struct _nsp_grarc nsp_grarc;
@@ -102,7 +116,7 @@ extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
 /* inserted at the end of public part of include file */
 
-#line 106 "./grarc.h"
+#line 120 "./grarc.h"
 #endif /* NSP_INC_NspGrArc */ 
 
 #ifdef NspGrArc_Private 
@@ -127,6 +141,6 @@ static void nsp_rotate_grarc(NspGraphic *o,double *R);
 static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
 
-#line 131 "./grarc.h"
+#line 145 "./grarc.h"
 #endif /* NspGrArc_Private */
 

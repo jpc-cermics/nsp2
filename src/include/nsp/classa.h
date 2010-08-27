@@ -3,8 +3,22 @@
 #define NSP_INC_NspClassA
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/classa.override"
@@ -15,7 +29,7 @@ struct _hfoo {
   double *val;
 };
 
-#line 19 "./classa.h"
+#line 33 "./classa.h"
 /* NspClassA */
 
 #include <nsp/object.h>
@@ -27,14 +41,14 @@ struct _hfoo {
 typedef struct _NspClassA NspClassA ;
 typedef struct _NspTypeClassA NspTypeClassA ;
 
-#line 31 "./classa.h"
+#line 45 "./classa.h"
 
 struct _NspTypeClassA {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 38 "./classa.h"
+#line 52 "./classa.h"
 };
 
 struct _NspClassA {
@@ -98,7 +112,7 @@ extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
  * of classa.h
  */
 
-#line 102 "./classa.h"
+#line 116 "./classa.h"
 #endif /* NSP_INC_NspClassA */ 
 
 #ifdef NspClassA_Private 
@@ -119,6 +133,6 @@ static NspClassA *nsp_classa_create_void(char *name,NspTypeBase *type);
  * of classa.h
  */
 
-#line 123 "./classa.h"
+#line 137 "./classa.h"
 #endif /* NspClassA_Private */
 

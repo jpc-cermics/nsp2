@@ -3,8 +3,22 @@
 #define NSP_INC_NspFigure
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/figure.override"
@@ -13,7 +27,7 @@
 #include <nsp/graphics-new/Graphics.h>
 #include <nsp/figuredata.h>
 
-#line 17 "./figure.h"
+#line 31 "./figure.h"
 /* NspFigure */
 
 #include <nsp/graphic.h>
@@ -25,14 +39,14 @@
 typedef struct _NspFigure NspFigure ;
 typedef struct _NspTypeFigure NspTypeFigure ;
 
-#line 29 "./figure.h"
+#line 43 "./figure.h"
 
 struct _NspTypeFigure {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 36 "./figure.h"
+#line 50 "./figure.h"
 };
 
 typedef struct _nsp_figure nsp_figure;
@@ -132,7 +146,7 @@ extern NspFigure *nsp_check_for_current_figure(void);
 extern void nsp_figure_data_reset(NspFigure *F);
 
 
-#line 136 "./figure.h"
+#line 150 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -169,6 +183,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 173 "./figure.h"
+#line 187 "./figure.h"
 #endif /* NspFigure_Private */
 

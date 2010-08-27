@@ -3,8 +3,22 @@
 #define NSP_INC_NspBlock
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/block.override"
@@ -60,7 +74,7 @@ struct b_lock {
  */
 
 
-#line 64 "./block.h"
+#line 78 "./block.h"
 /* NspBlock */
 
 #include <nsp/graphic.h>
@@ -72,14 +86,14 @@ struct b_lock {
 typedef struct _NspBlock NspBlock ;
 typedef struct _NspTypeBlock NspTypeBlock ;
 
-#line 76 "./block.h"
+#line 90 "./block.h"
 
 struct _NspTypeBlock {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 83 "./block.h"
+#line 97 "./block.h"
 };
 
 typedef struct _nsp_block nsp_block;
@@ -151,7 +165,7 @@ extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
 
 /* inserted at the end of public part of include file */
 
-#line 155 "./block.h"
+#line 169 "./block.h"
 #endif /* NSP_INC_NspBlock */ 
 
 #ifdef NspBlock_Private 
@@ -225,6 +239,6 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
 
-#line 229 "./block.h"
+#line 243 "./block.h"
 #endif /* NspBlock_Private */
 

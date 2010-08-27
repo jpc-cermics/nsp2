@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <math.h>
-#include "machine.h"
+#include <nsp/machine.h> 
 
 #ifndef TRUE
 #define TRUE (1)

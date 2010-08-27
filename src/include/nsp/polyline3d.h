@@ -3,15 +3,29 @@
 #define NSP_INC_NspPolyline3d
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/polyline3d.override"
 /* inserted at the start of include file */
 #include <nsp/figure.h>
 
-#line 15 "./polyline3d.h"
+#line 29 "./polyline3d.h"
 /* NspPolyline3d */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspPolyline3d NspPolyline3d ;
 typedef struct _NspTypePolyline3d NspTypePolyline3d ;
 
-#line 27 "./polyline3d.h"
+#line 41 "./polyline3d.h"
 
 struct _NspTypePolyline3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./polyline3d.h"
+#line 48 "./polyline3d.h"
 };
 
 typedef struct _nsp_polyline3d nsp_polyline3d;
@@ -98,7 +112,7 @@ extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 /* inserted at the end of public part of include file */
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 
-#line 102 "./polyline3d.h"
+#line 116 "./polyline3d.h"
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
@@ -130,6 +144,6 @@ static int nsp_check_polyline3d(NspPolyline3d *P);
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 134 "./polyline3d.h"
+#line 148 "./polyline3d.h"
 #endif /* NspPolyline3d_Private */
 

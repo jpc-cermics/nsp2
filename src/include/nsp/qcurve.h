@@ -3,15 +3,29 @@
 #define NSP_INC_NspQcurve
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/qcurve.override"
 /* inserted at the start of the include file */
 #include <nsp/axes.h> 
 
-#line 15 "./qcurve.h"
+#line 29 "./qcurve.h"
 /* NspQcurve */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspQcurve NspQcurve ;
 typedef struct _NspTypeQcurve NspTypeQcurve ;
 
-#line 27 "./qcurve.h"
+#line 41 "./qcurve.h"
 
 struct _NspTypeQcurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./qcurve.h"
+#line 48 "./qcurve.h"
 };
 
 typedef struct _nsp_qcurve nsp_qcurve;
@@ -105,7 +119,7 @@ extern NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,in
 				  double ymin,double ymax,NspList **Lc);
 extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 
-#line 109 "./qcurve.h"
+#line 123 "./qcurve.h"
 #endif /* NSP_INC_NspQcurve */ 
 
 #ifdef NspQcurve_Private 
@@ -135,6 +149,6 @@ static int nsp_qcurve_get_len(NspQcurve *C);
 static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy);
 static void oscillo_test();
 
-#line 139 "./qcurve.h"
+#line 153 "./qcurve.h"
 #endif /* NspQcurve_Private */
 

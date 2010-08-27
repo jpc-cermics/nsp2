@@ -1,7 +1,7 @@
 #ifndef SCI_ODE_SOLVERS
 #define SCI_ODE_SOLVERS
 
-#include "nsp/object.h"   /* for Boolean Type */
+#include <nsp/objectf.h>   /* for Boolean Type */
 
 /* return flag values */
 #define COMPLETED 0

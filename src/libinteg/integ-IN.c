@@ -20,9 +20,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h> 
-#include "nsp/ode_solvers.h"
-#include "nsp/eval.h"
-#include "integ.h"
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
@@ -30,6 +27,11 @@
 #include <nsp/plist.h> 
 #include <nsp/spmf.h>
 #include <nsp/interf.h> 
+
+#include "nsp/ode_solvers.h"
+#include "nsp/eval.h"
+#include "integ.h"
+
 
 /*
  * ode interface

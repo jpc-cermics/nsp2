@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include <nsp/machine.h> 
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 #include "nsp/stack.h"
 #include "nsp/interf.h"
 #include "nsp/dstring.h"

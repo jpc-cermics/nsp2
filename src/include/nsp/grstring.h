@@ -3,15 +3,29 @@
 #define NSP_INC_NspGrstring
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/grstring.override"
 /* inserted at the start of include file */
 #include <nsp/figure.h>
 
-#line 15 "./grstring.h"
+#line 29 "./grstring.h"
 /* NspGrstring */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspGrstring NspGrstring ;
 typedef struct _NspTypeGrstring NspTypeGrstring ;
 
-#line 27 "./grstring.h"
+#line 41 "./grstring.h"
 
 struct _NspTypeGrstring {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./grstring.h"
+#line 48 "./grstring.h"
 };
 
 typedef struct _nsp_grstring nsp_grstring;
@@ -104,7 +118,7 @@ extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
 /* inserted at the end of public part of include file */
 
-#line 108 "./grstring.h"
+#line 122 "./grstring.h"
 #endif /* NSP_INC_NspGrstring */ 
 
 #ifdef NspGrstring_Private 
@@ -128,6 +142,6 @@ static void nsp_rotate_grstring(NspGraphic *o,double *R);
 static void nsp_scale_grstring(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 
-#line 132 "./grstring.h"
+#line 146 "./grstring.h"
 #endif /* NspGrstring_Private */
 

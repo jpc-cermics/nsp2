@@ -27,8 +27,8 @@
 #include <string.h>
 #include <glib.h> /* for int64 */
 
-#include "nsp/machine.h" 
-#include "nsp/gsort-p.h"
+#include <nsp/math.h> 
+#include <nsp/gsort-p.h> 
 
 #define ELT_TYPE int
 #include "qsort3-gen.c"

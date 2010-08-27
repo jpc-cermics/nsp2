@@ -11,7 +11,7 @@
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /* to code in a same var lock_dir and lock_type 
  * lock_dir = type & LOCK_DIR_FLAG

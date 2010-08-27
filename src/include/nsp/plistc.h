@@ -9,7 +9,7 @@
 #include "nsp/math.h"
 #include "nsp/sciio.h" 
 #include "nsp/plisttoken.h"
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 extern int debug; 
 extern int debugI;

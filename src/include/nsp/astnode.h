@@ -9,7 +9,7 @@
 
 /* AstNode */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspAstNode inherits from NspObject

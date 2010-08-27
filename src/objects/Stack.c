@@ -18,8 +18,8 @@
  */
 
 #include <math.h>
-#include "nsp/stack.h"
-#include "nsp/interf.h"
+#include <nsp/stack.h>
+#include <nsp/interf.h>
 #include "../system/files.h" /* FSIZE */
 #include <nsp/smatrix.h>
 

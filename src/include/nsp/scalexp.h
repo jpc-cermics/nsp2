@@ -8,7 +8,8 @@
  */
 
 /* ScalExp */
-#include "nsp/object.h"
+#include <nsp/object.h>
+#include <nsp/plist.h>
 
 /*
  * NspScalExp inherits from NspObject

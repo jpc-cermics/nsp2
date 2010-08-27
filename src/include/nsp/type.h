@@ -8,7 +8,7 @@
   
 /* Nsp Types as Nsp Objects  */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspType inherits from NspObject

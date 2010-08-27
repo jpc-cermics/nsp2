@@ -26,9 +26,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "nsp/math.h"
-#include "nsp/interf.h"
-
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
@@ -46,6 +43,9 @@
 #include <nsp/cells.h> 
 #include <nsp/plist.h> 
 #include <nsp/serial.h> 
+
+#include <nsp/math.h>
+#include <nsp/interf.h>
 
 /**
  *nsp_object_destroy:

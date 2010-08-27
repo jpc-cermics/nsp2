@@ -3,15 +3,29 @@
 #define NSP_INC_NspGraphic
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/graphic.override"
 /* inserted at the start of include file */
 #include <gdk/gdk.h>
 
-#line 15 "./graphic.h"
+#line 29 "./graphic.h"
 /* NspGraphic */
 
 #include <nsp/object.h>
@@ -38,7 +52,7 @@ typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, i
 typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 typedef void invalidate_func(NspGraphic *G);
 
-#line 42 "./graphic.h"
+#line 56 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
@@ -60,7 +74,7 @@ struct _NspTypeGraphic {
   invalidate_func *invalidate;
 
 
-#line 64 "./graphic.h"
+#line 78 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
@@ -129,7 +143,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 extern void nsp_graphic_invalidate(NspGraphic *G);
 extern int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect);
 
-#line 133 "./graphic.h"
+#line 147 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -148,6 +162,6 @@ static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
 
 /* inserted in the private part of include file */
 
-#line 152 "./graphic.h"
+#line 166 "./graphic.h"
 #endif /* NspGraphic_Private */
 

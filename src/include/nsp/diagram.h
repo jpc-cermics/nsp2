@@ -3,15 +3,29 @@
 #define NSP_INC_NspDiagram
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/diagram.override"
 /* inserted at the start of include file */
  #include <nsp/figure.h>
 
-#line 15 "./diagram.h"
+#line 29 "./diagram.h"
 /* NspDiagram */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspDiagram NspDiagram ;
 typedef struct _NspTypeDiagram NspTypeDiagram ;
 
-#line 27 "./diagram.h"
+#line 41 "./diagram.h"
 
 struct _NspTypeDiagram {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./diagram.h"
+#line 48 "./diagram.h"
 };
 
 typedef struct _nsp_diagram nsp_diagram;
@@ -138,7 +152,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 
-#line 142 "./diagram.h"
+#line 156 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -182,6 +196,6 @@ static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 186 "./diagram.h"
+#line 200 "./diagram.h"
 #endif /* NspDiagram_Private */
 

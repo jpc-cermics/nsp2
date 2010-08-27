@@ -3,8 +3,8 @@
 /* This file is generated, please do not edit */
 /* Nsp
 #line 4 "codegen/fec.override"
- * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2001-2010 Bruno Pinçon Enpc/Cermics
+ * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2009 Bruno Pinçon Enpc/Cermics
 #line 9 "fec.c"
  *
  * This library is free software; you can redistribute it and/or

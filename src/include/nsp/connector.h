@@ -3,8 +3,22 @@
 #define NSP_INC_NspConnector
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/connector.override"
@@ -35,7 +49,7 @@ struct _gr_lock {
 
 
 
-#line 39 "./connector.h"
+#line 53 "./connector.h"
 /* NspConnector */
 
 #include <nsp/graphic.h>
@@ -47,14 +61,14 @@ struct _gr_lock {
 typedef struct _NspConnector NspConnector ;
 typedef struct _NspTypeConnector NspTypeConnector ;
 
-#line 51 "./connector.h"
+#line 65 "./connector.h"
 
 struct _NspTypeConnector {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 58 "./connector.h"
+#line 72 "./connector.h"
 };
 
 typedef struct _nsp_connector nsp_connector;
@@ -123,7 +137,7 @@ extern int nsp_connector_xdr_save(XDR  *xdrs, NspConnector *M);
 
 /* inserted at the end of public part of include file */
 
-#line 127 "./connector.h"
+#line 141 "./connector.h"
 #endif /* NSP_INC_NspConnector */ 
 
 #ifdef NspConnector_Private 
@@ -189,6 +203,6 @@ static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M);
 
-#line 193 "./connector.h"
+#line 207 "./connector.h"
 #endif /* NspConnector_Private */
 

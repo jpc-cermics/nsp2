@@ -3,8 +3,22 @@
 #define NSP_INC_NspContour
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/contour.override"
@@ -12,7 +26,7 @@
 #include <nsp/figure.h>
 
 
-#line 16 "./contour.h"
+#line 30 "./contour.h"
 /* NspContour */
 
 #include <nsp/graphic.h>
@@ -24,14 +38,14 @@
 typedef struct _NspContour NspContour ;
 typedef struct _NspTypeContour NspTypeContour ;
 
-#line 28 "./contour.h"
+#line 42 "./contour.h"
 
 struct _NspTypeContour {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 35 "./contour.h"
+#line 49 "./contour.h"
 };
 
 typedef struct _nsp_contour nsp_contour;
@@ -103,7 +117,7 @@ extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, i
 
 /* inserted at the end of public part of include file */
 
-#line 107 "./contour.h"
+#line 121 "./contour.h"
 #endif /* NSP_INC_NspContour */ 
 
 #ifdef NspContour_Private 
@@ -128,6 +142,6 @@ static void nsp_rotate_contour(NspGraphic *o,double *R);
 static void nsp_scale_contour(NspGraphic *o,double *alpha);
 static int nsp_getbounds_contour(NspGraphic *o,double *bounds);
 
-#line 132 "./contour.h"
+#line 146 "./contour.h"
 #endif /* NspContour_Private */
 

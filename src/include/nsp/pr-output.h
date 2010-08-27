@@ -7,7 +7,7 @@
  */
 
 #include <stdio.h>
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 typedef struct _nsp_num_formats nsp_num_formats ;
 

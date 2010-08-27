@@ -3,8 +3,22 @@
 #define NSP_INC_NspGMatrix
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/gmatrix.override"
@@ -12,7 +26,7 @@
 #include <nsp/figure.h>
 
 
-#line 16 "./gmatrix.h"
+#line 30 "./gmatrix.h"
 /* NspGMatrix */
 
 #include <nsp/graphic.h>
@@ -24,14 +38,14 @@
 typedef struct _NspGMatrix NspGMatrix ;
 typedef struct _NspTypeGMatrix NspTypeGMatrix ;
 
-#line 28 "./gmatrix.h"
+#line 42 "./gmatrix.h"
 
 struct _NspTypeGMatrix {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 35 "./gmatrix.h"
+#line 49 "./gmatrix.h"
 };
 
 typedef struct _nsp_gmatrix nsp_gmatrix;
@@ -99,7 +113,7 @@ extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 
 /* inserted at the end of public part of include file */
 
-#line 103 "./gmatrix.h"
+#line 117 "./gmatrix.h"
 #endif /* NSP_INC_NspGMatrix */ 
 
 #ifdef NspGMatrix_Private 
@@ -123,6 +137,6 @@ static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);
 static int nsp_getbounds_gmatrix(NspGraphic *o,double *bounds);
 
-#line 127 "./gmatrix.h"
+#line 141 "./gmatrix.h"
 #endif /* NspGMatrix_Private */
 

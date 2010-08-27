@@ -3,15 +3,29 @@
 #define NSP_INC_NspPoints3d
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/points3d.override"
 /* inserted at the start of include file */
 #include <nsp/figure.h>
 
-#line 15 "./points3d.h"
+#line 29 "./points3d.h"
 /* NspPoints3d */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspPoints3d NspPoints3d ;
 typedef struct _NspTypePoints3d NspTypePoints3d ;
 
-#line 27 "./points3d.h"
+#line 41 "./points3d.h"
 
 struct _NspTypePoints3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./points3d.h"
+#line 48 "./points3d.h"
 };
 
 typedef struct _nsp_points3d nsp_points3d;
@@ -103,7 +117,7 @@ extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double 
 extern BCG *nsp_check_graphic_context(void);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
-#line 107 "./points3d.h"
+#line 121 "./points3d.h"
 #endif /* NSP_INC_NspPoints3d */ 
 
 #ifdef NspPoints3d_Private 
@@ -134,6 +148,6 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 138 "./points3d.h"
+#line 152 "./points3d.h"
 #endif /* NspPoints3d_Private */
 

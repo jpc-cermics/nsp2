@@ -3,8 +3,22 @@
 #define NSP_INC_NspObjs3d
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/objs3d.override"
@@ -16,7 +30,7 @@
 #include "../graphics-new/Plo3dObj.h"
 #include <nsp/grcommon.h>
 
-#line 20 "./objs3d.h"
+#line 34 "./objs3d.h"
 /* NspObjs3d */
 
 #include <nsp/graphic.h>
@@ -28,14 +42,14 @@
 typedef struct _NspObjs3d NspObjs3d ;
 typedef struct _NspTypeObjs3d NspTypeObjs3d ;
 
-#line 32 "./objs3d.h"
+#line 46 "./objs3d.h"
 
 struct _NspTypeObjs3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 39 "./objs3d.h"
+#line 53 "./objs3d.h"
 };
 
 typedef struct _nsp_objs3d nsp_objs3d;
@@ -121,7 +135,7 @@ extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,co
 extern NspObjs3d *nsp_check_for_current_objs3d(void);
 extern NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect);
 
-#line 125 "./objs3d.h"
+#line 139 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -172,6 +186,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 176 "./objs3d.h"
+#line 190 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

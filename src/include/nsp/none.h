@@ -8,7 +8,7 @@
   
 /* None */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspNone inherits from NspObject

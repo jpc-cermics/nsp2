@@ -3,8 +3,22 @@
 #define NSP_INC_NspFec
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 /* NspFec */
@@ -18,14 +32,14 @@
 typedef struct _NspFec NspFec ;
 typedef struct _NspTypeFec NspTypeFec ;
 
-#line 22 "./fec.h"
+#line 36 "./fec.h"
 
 struct _NspTypeFec {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./fec.h"
+#line 43 "./fec.h"
 };
 
 typedef struct _nsp_fec nsp_fec;
@@ -108,7 +122,7 @@ extern void FindIntersection(const double *sx,const double *sy,const double *fxy
 
 /* inserted at the end of public part of include file */
 
-#line 112 "./fec.h"
+#line 126 "./fec.h"
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
@@ -136,6 +150,6 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 static void PermutOfSort_d(const double *tab, int *perm);
 static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 
-#line 140 "./fec.h"
+#line 154 "./fec.h"
 #endif /* NspFec_Private */
 

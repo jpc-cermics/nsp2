@@ -47,6 +47,7 @@ typedef void *(new_func) (void);
 typedef void *(attrs_func) (void);
 typedef void *(create_func) (void);
 typedef int (get_index_vector_func)(void *, index_vector *); 
+
 typedef struct _NspTypeBase  NspTypeBase ;
 
 #ifdef __cplusplus				

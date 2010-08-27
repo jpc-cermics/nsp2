@@ -3,8 +3,22 @@
 #define NSP_INC_NspLink
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/link.override"
@@ -56,7 +70,7 @@ struct _grl_lock {
  */
 
 
-#line 60 "./link.h"
+#line 74 "./link.h"
 /* NspLink */
 
 #include <nsp/graphic.h>
@@ -68,14 +82,14 @@ struct _grl_lock {
 typedef struct _NspLink NspLink ;
 typedef struct _NspTypeLink NspTypeLink ;
 
-#line 72 "./link.h"
+#line 86 "./link.h"
 
 struct _NspTypeLink {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 79 "./link.h"
+#line 93 "./link.h"
 };
 
 typedef struct _nsp_link nsp_link;
@@ -148,7 +162,7 @@ extern int link_add_control(NspLink *L,const double pt[2]);
 extern int link_remove_control(NspLink *L,const double pt[2]);
 extern NspLink *link_create_n(char *name,int n,int color,int thickness);
 
-#line 152 "./link.h"
+#line 166 "./link.h"
 #endif /* NSP_INC_NspLink */ 
 
 #ifdef NspLink_Private 
@@ -214,6 +228,6 @@ static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
 static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
-#line 218 "./link.h"
+#line 232 "./link.h"
 #endif /* NspLink_Private */
 

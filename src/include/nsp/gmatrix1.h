@@ -3,8 +3,22 @@
 #define NSP_INC_NspGMatrix1
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/gmatrix1.override"
@@ -12,7 +26,7 @@
 #include <nsp/figure.h>
 
 
-#line 16 "./gmatrix1.h"
+#line 30 "./gmatrix1.h"
 /* NspGMatrix1 */
 
 #include <nsp/graphic.h>
@@ -24,14 +38,14 @@
 typedef struct _NspGMatrix1 NspGMatrix1 ;
 typedef struct _NspTypeGMatrix1 NspTypeGMatrix1 ;
 
-#line 28 "./gmatrix1.h"
+#line 42 "./gmatrix1.h"
 
 struct _NspTypeGMatrix1 {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 35 "./gmatrix1.h"
+#line 49 "./gmatrix1.h"
 };
 
 typedef struct _nsp_gmatrix1 nsp_gmatrix1;
@@ -106,7 +120,7 @@ extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
 
-#line 110 "./gmatrix1.h"
+#line 124 "./gmatrix1.h"
 #endif /* NSP_INC_NspGMatrix1 */ 
 
 #ifdef NspGMatrix1_Private 
@@ -135,6 +149,6 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
 
-#line 139 "./gmatrix1.h"
+#line 153 "./gmatrix1.h"
 #endif /* NspGMatrix1_Private */
 

@@ -6,16 +6,17 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#include <stdio.h>   /* for file declaration **/
-#include "nsp/sciio.h" 
-#include "nsp/object.h"
-#include "nsp/triplet.h"
+#include <stdio.h>  
+#include <nsp/sciio.h>
+#include <nsp/objectf.h>
+#include <nsp/matrix.h>
+#include <nsp/triplet.h>
 
 /*
  * NspSpColMatrix inherits from NspObject 
  */
 
-/* typedef struct _NspSpColmatrix NspSpColMatrix; */
+/* defined in <nsp/objectf.h>: typedef struct _NspSpColmatrix NspSpColMatrix; */
 
 typedef struct _NspTypeSpColMatrix { 
   NSP_TYPE_OBJECT__ 

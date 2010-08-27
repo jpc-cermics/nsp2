@@ -8,7 +8,7 @@
   
 /* Module */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspModule inherits from NspObject

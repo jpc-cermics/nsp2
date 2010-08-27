@@ -1,4 +1,7 @@
 /* -*- Mode: C -*- */
+#ifndef MACHINE_H 
+#define MACHINE_H 
+
 /* Nsp
  * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
@@ -17,9 +20,6 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *--------------------------------------------------------------------------*/
-
-#ifndef MACHINE_H 
-#define MACHINE_H 
 
 #include "config.h" 
 

@@ -20,16 +20,15 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
-#include "nsp/math.h"
 #include <string.h>
 #include <glib.h> /* for int64 */
 
 #include <nsp/object.h> 
+#include <nsp/math.h> 
 #include <nsp/matrix.h> 
 #include <nsp/imatrix.h> 
 #include <nsp/smatrix.h> 
 #include "nsp/gsort-p.h"
-
 
 /*
  * General sorting routines 

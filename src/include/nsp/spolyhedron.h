@@ -3,15 +3,29 @@
 #define NSP_INC_NspSPolyhedron
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/spolyhedron.override"
 /* inserted at the start of include file */
 #include <nsp/figure.h>
 
-#line 15 "./spolyhedron.h"
+#line 29 "./spolyhedron.h"
 /* NspSPolyhedron */
 
 #include <nsp/graphic.h>
@@ -23,14 +37,14 @@
 typedef struct _NspSPolyhedron NspSPolyhedron ;
 typedef struct _NspTypeSPolyhedron NspTypeSPolyhedron ;
 
-#line 27 "./spolyhedron.h"
+#line 41 "./spolyhedron.h"
 
 struct _NspTypeSPolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./spolyhedron.h"
+#line 48 "./spolyhedron.h"
 };
 
 typedef struct _nsp_spolyhedron nsp_spolyhedron;
@@ -113,7 +127,7 @@ extern int nsp_spolyhedron_xdr_save(XDR  *xdrs, NspSPolyhedron *M);
 extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol );
 extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n, double *col,int ncol);
 
-#line 117 "./spolyhedron.h"
+#line 131 "./spolyhedron.h"
 #endif /* NSP_INC_NspSPolyhedron */ 
 
 #ifdef NspSPolyhedron_Private 
@@ -147,6 +161,6 @@ static void permut_of_sort(int *tab, int *perm);
 static void find_intersection(int *sx, int *sy, double *fxy, double z, 
 			      int inda, int indb, int *xint, int *yint);
 
-#line 151 "./spolyhedron.h"
+#line 165 "./spolyhedron.h"
 #endif /* NspSPolyhedron_Private */
 

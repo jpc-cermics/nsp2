@@ -7,8 +7,8 @@
  */
 
 #include <glib.h> /* for integers */
-#include "nsp/string.h" 
-#include "nsp/object.h" 
+#include <nsp/string.h>
+#include <nsp/objectf.h> 
 
 /* kept for compatibility */
 extern int nsp_gsort(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,nsp_const_string type,nsp_const_string iord);

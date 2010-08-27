@@ -6,7 +6,7 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 enum { RET_OK=0, RET_ENDFOR=-1,  RET_BREAK=-2,   RET_QUIT=-3,  RET_EOF= -4 ,  
        RET_CTRLC=-5, RET_RETURN=-6, RET_ABORT=-7, RET_CONTINUE = -8 , 

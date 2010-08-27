@@ -28,7 +28,6 @@
 
 #include "nsp/math.h"
 #include "nsp/graphics-old/Graphics.h"
-#include "nsp/interf.h"
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 

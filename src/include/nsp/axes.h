@@ -3,8 +3,22 @@
 #define NSP_INC_NspAxes
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2009) 
- * Jean-Philippe Chancelier Enpc/Cermics         
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
  */
 
 #line 4 "codegen/axes.override"
@@ -18,7 +32,7 @@
  * inherits from #NspGraphics 
  */
 
-#line 22 "./axes.h"
+#line 36 "./axes.h"
 /* NspAxes */
 
 #include <nsp/graphic.h>
@@ -30,14 +44,14 @@
 typedef struct _NspAxes NspAxes ;
 typedef struct _NspTypeAxes NspTypeAxes ;
 
-#line 34 "./axes.h"
+#line 48 "./axes.h"
 
 struct _NspTypeAxes {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 41 "./axes.h"
+#line 55 "./axes.h"
 };
 
 typedef struct _nsp_axes nsp_axes;
@@ -144,7 +158,7 @@ extern NspAxes *nsp_check_for_current_axes(void);
 extern NspAxes * nsp_check_for_axes_in_figure(NspFigure *F,const double *wrect);
 
 
-#line 148 "./axes.h"
+#line 162 "./axes.h"
 #endif /* NSP_INC_NspAxes */ 
 
 #ifdef NspAxes_Private 
@@ -186,6 +200,6 @@ static int nsp_nsp_gcscale_full_copy(NspAxes *C,nsp_gcscale *locks,NspAxes *M);
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 190 "./axes.h"
+#line 204 "./axes.h"
 #endif /* NspAxes_Private */
 

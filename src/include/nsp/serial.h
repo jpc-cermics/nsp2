@@ -9,7 +9,7 @@
   
 /* Serial */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspSerial inherits from NspObject

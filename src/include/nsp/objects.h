@@ -9,6 +9,7 @@
 #include <nsp/matint.h> 
 #include <nsp/list.h> 
 #include <nsp/hobj.h> 
+#include <nsp/hash.h> 
 #include <nsp/type.h> 
 #include <nsp/file.h> 
 

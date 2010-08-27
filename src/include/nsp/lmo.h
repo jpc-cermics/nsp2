@@ -9,7 +9,7 @@
 #include <stdio.h>   /* for FILE declaration **/
 #include "nsp/sciio.h" 
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspLmo inherits from NspObject 

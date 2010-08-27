@@ -10,6 +10,7 @@
 #include <nsp/sciio.h>
 #include <nsp/objectf.h>
 #include <nsp/complex.h>
+
 /*
  * NspMatrix inherits from NspObject 
  */
@@ -26,7 +27,7 @@
  * inherits from #NspObject 
  */
 
-/* typedef struct _NspMatrix NspMatrix; */
+/* defined in <nsp/objectf.h>: typedef struct _NspMatrix NspMatrix; */
 
 typedef struct _NspTypeMatrix { 
   NSP_TYPE_OBJECT__ 

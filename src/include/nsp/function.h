@@ -17,7 +17,7 @@
  * a primitive. 
  */
 
-#include "nsp/object.h"
+#include <nsp/objectf.h>
 
 /*
  * NspFunction inherits from NspObject
