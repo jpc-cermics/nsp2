@@ -40,7 +40,7 @@
 #include <nsp/smatrix.h> 
 
 #include <nsp/parse.h>
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 extern int nsp_edit(char *filename, int read_only);
 extern char *nsp_prompt(void);

@@ -19,15 +19,15 @@
  * system utilities.
  *------------------------------------------------------------------*/
 
-#include "files.h" 
-#include "nsp/sciio.h"
-#include "nsp/object.h"
-#include "nsp/nsptcl.h"
+#include <nsp/sciio.h> 
+#include <nsp/object.h> 
+#include <nsp/system.h> 
+#include <nsp/nsptcl.h> 
+
 #ifdef WIN32 
 #include <process.h> /* for getpid */
 #include "tcl/generic/tclInt.h"
 #endif 
-
 
 static char tmp_dir[FSIZE+1],buf[FSIZE+1],cur_dir[FSIZE+1];
 

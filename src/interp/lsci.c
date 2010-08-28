@@ -50,7 +50,7 @@
 #include <gtk/gtk.h>
 #include "nsp/gtksci.h"
 #include "nsp/nsptcl.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 
 /* FIXME: these is to be in a .h file */
 extern void nsp_textview_destroy(void);

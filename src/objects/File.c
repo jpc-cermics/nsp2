@@ -64,7 +64,7 @@
 
 #include "nsp/interf.h"
 #include "nsp/pr-output.h"   /* nsp_get_format */
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 #if defined(__APPLE_CC__)
 #define xdr_uint8_t xdr_u_char

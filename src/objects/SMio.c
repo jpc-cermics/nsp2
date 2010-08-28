@@ -42,7 +42,7 @@
 #include <nsp/hobj.h>
 
 #include "nsp/interf.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 static void swapb(const char *l, char *f, int n);
 static unsigned short swapw(unsigned short us);

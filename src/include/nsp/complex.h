@@ -21,8 +21,7 @@
  */
 
 #include <stdio.h>   /* for file declaration */
-#include "nsp/sciio.h" 
-#include "nsp/objectf.h"  /* forward declarations */
+#include <nsp/objectf.h>  /* forward declarations */
 
 /**
  * doubleC: 

@@ -35,7 +35,7 @@
 #include "nsp/menus.h" 
 #include "nsp/math.h"
 #include "nsp/config.h"
-#include "../system/files.h" 
+#include <nsp/system.h> 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h"
 #include "nsp/nsptcl.h"

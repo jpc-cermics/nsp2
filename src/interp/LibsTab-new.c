@@ -32,7 +32,7 @@
 #include "nsp/object.h" 
 #include "nsp/interf.h"
 #include "nsp/datas.h"
-#include "../system/files.h" /* FSIZE+1 */
+#include <nsp/system.h> /* FSIZE+1 */
 #include "Functions.h"
 #include "nsp/seval.h"
 

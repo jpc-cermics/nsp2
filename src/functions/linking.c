@@ -34,7 +34,7 @@
 #include <nsp/nsptcl.h>
 
 #include "linking.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 static void Underscores(int isfor,nsp_const_string ename, char *ename1);
 static int SearchFandS(nsp_const_string op, int ilib);

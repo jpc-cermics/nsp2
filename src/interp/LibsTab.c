@@ -47,7 +47,7 @@
 #include "nsp/interf.h"
 #include "nsp/datas.h"
 #include "nsp/libstab.h"
-#include "../system/files.h" /* FSIZE+1 */
+#include <nsp/system.h> /* FSIZE+1 */
 #include "../functions/callfunc.h" 
 #include "../functions/addinter.h" 
 #include "nsp/seval.h"

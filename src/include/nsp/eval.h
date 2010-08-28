@@ -1,7 +1,7 @@
 #ifndef NSP_INC_EVAL 
 #define NSP_INC_EVAL 
 
-#include <nsp/object.h> 
+#include <nsp/objectf.h> 
 
 extern int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause,int mtlb);
 extern int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatch,int pause);

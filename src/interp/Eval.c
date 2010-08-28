@@ -46,7 +46,7 @@
 #include "nsp/stack.h" 
 #include "nsp/parse.h" 
 #include "../objects/frame.h" /* XXX */
-#include "../system/files.h" /* XXX */
+#include <nsp/system.h> /* XXX */
 #include "nsp/libstab.h" 
 #include "nsp/seval.h" 
 #include "../functions/FunTab.h"

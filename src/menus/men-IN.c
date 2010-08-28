@@ -27,7 +27,7 @@
 #include "nsp/menus.h" 
 #include "nsp/stack.h" 
 #include "nsp/interf.h" 
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "nsp/gtksci.h"
 
 /*

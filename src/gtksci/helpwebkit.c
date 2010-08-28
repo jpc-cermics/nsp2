@@ -35,7 +35,7 @@
 #include "nsp/gtksci.h"
 #include "queue.h"
 #include "uri.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "../system/regexp.h"
 #include <nsp/object.h> 
 #include <nsp/hash.h> 

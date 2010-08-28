@@ -33,7 +33,7 @@
 #include <nsp/file.h> 
 #include <nsp/list.h> 
 
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"

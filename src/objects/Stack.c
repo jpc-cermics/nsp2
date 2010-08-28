@@ -20,7 +20,7 @@
 #include <math.h>
 #include <nsp/stack.h>
 #include <nsp/interf.h>
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 #include <nsp/smatrix.h>
 
 static void error(Stack *stack,char *fmt,...);

@@ -26,7 +26,7 @@
 #define PERI_ACTION_PRIVATE 
 #include "nsp/graphics-new/actions.h"
 #include "nsp/command.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 #include <nsp/figuredata.h> 
 #include <nsp/figure.h> 
 #include <nsp/axes.h> 

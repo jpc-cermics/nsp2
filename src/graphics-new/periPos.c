@@ -33,7 +33,7 @@
 #include "nsp/graphics-new/periPos.h"
 #include "nsp/version.h"
 #include "nsp/graphics-new/color.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 extern char *nsp_getenv (const char *name);
 static void WriteGeneric1(char *string, int nobjpos, int objbeg, int sizeobj,const int *vx,const int *vy, int flag,const int *fvect);

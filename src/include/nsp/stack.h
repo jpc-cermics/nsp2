@@ -1,5 +1,5 @@
-#ifndef NSP_INC_STACK 
-#define NSP_INC_STACK 
+#ifndef NSP_INC_STACK_H
+#define NSP_INC_STACK_H 
 
 /*
  * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
@@ -21,7 +21,7 @@
  */
 
 #include <nsp/math.h>
-#include <nsp/object.h>
+#include <nsp/objectf.h>
 
 extern void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
 extern void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);

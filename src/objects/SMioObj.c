@@ -38,7 +38,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/stack.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 /**
  * SECTION: string stream 

@@ -32,7 +32,7 @@
 #include <nsp/smatrix.h>
 #include "nsp/interf.h"
 #include "nsp/stack.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "callfunc.h"
 #include "linking.h"
 #include "addinter.h"

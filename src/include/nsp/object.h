@@ -210,8 +210,13 @@ extern int  nsp_object_save_def(void * F, NspObject * M);
  * we want to pass Stack by value 
  *-----------------------------------------------------------*/
 
+/* defined in <nsp/objectf.h> */
+#ifndef NSP_INC_Stack
+#define NSP_INC_Stack
 typedef struct _Stack Stack;
 typedef struct _Stack_ref Stack_ref;
+#endif 
+
 
 typedef void stack_error(Stack *S,char *fmt,...);
 

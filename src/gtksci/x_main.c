@@ -36,7 +36,7 @@
 #endif
 #include <gtk/gtk.h>
 #include "nsp/sciio.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "nsp/gtksci.h"
 #include "nsp/nsptcl.h"
 

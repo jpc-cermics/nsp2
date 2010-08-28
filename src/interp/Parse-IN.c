@@ -42,7 +42,7 @@
 
 #include "nsp/interf.h"
 #include "nsp/libstab.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "nsp/datas.h"
 #include "nsp/parse.h"
 #include "nsp/stack.h"

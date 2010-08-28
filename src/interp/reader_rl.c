@@ -40,7 +40,7 @@
 #include "nsp/machine.h" 
 #include "nsp/sciio.h" 
 #include "nsp/gtksci.h" 
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 
 #ifdef WIN32

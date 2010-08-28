@@ -49,7 +49,7 @@ extern gchar *html_selection_get_text (HtmlView *view);
 #include "nsp/gtksci.h"
 #include "queue.h"
 #include "uri.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 #include "../system/regexp.h"
 #include "nsp/object.h"
 #include "nsp/interf.h"

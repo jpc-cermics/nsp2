@@ -50,7 +50,7 @@
 
 #include "nsp/stack.h"
 #include "nsp/interf.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 #include "nsp/plistc.h" /* scigetline */
 #include  "nsp/datas.h" 
 

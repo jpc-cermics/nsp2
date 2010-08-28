@@ -40,7 +40,7 @@
 
 #include "nsp/datas.h"
 #include "nsp/parse.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 #include "nsp/seval.h"
 #include "../objects/frame.h" /* to be moved in include */
 

@@ -35,7 +35,7 @@
 #include <nsp/hash.h> 
 #include <nsp/interf.h> 
 
-#include "nsp/system.h"
+#include <nsp/system.h>
 #include "nsp/nsptcl.h"
 #include "regexp.h"
 #include "files.h" /* FSIZE */

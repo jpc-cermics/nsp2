@@ -157,6 +157,15 @@ typedef struct _NspType NspType;
 typedef struct _NspUmfpack NspUmfpack;
 #endif
 
+/* forward declaration of Stack */
+
+#ifndef NSP_INC_Stack
+#define NSP_INC_Stack
+typedef struct _Stack Stack;
+typedef struct _Stack_ref Stack_ref;
+#endif 
+
+
 #endif 
 
 

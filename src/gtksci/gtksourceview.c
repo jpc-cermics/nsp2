@@ -54,7 +54,7 @@
 #include <nsp/parse.h>
 #include <nsp/nsptcl.h>
 
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 extern void nsp_eval_str_in_terminal(const gchar *str, int execute_silently);
 

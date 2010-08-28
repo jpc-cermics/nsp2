@@ -1,7 +1,9 @@
-#ifndef NUMERIC_VALUES_DEFS
-#define NUMERIC_VALUES_DEFS
+#ifndef NSP_INC_NUMERIC
+#define NSP_INC_NUMERIC
 
-#include "machine.h"
+#include <math.h> 
+#include <nsp/machine.h>  
+#include <nsp/complex.h>  
 
 #endif 
 

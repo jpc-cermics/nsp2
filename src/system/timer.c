@@ -25,7 +25,7 @@
 #include <time.h>
 #include "nsp/machine.h"
 #include "nsp/math.h"
-#include "nsp/system.h"
+#include <nsp/system.h>
 #include "nsp/sciio.h"
 
 #ifdef HAVE_SYS_RESOURCE_H 

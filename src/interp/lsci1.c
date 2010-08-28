@@ -37,7 +37,7 @@
 #endif
 #include <gtk/gtk.h>
 #include "nsp/gtksci.h"
-#include "../system/files.h"
+#include <nsp/system.h>
 
 /* FIXME: these is to be in a .h file */
 extern void sci_clear_and_exit(int);

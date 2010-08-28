@@ -39,7 +39,7 @@
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
 #include "nsp/stack.h"
-#include "../system/files.h" /* FSIZE */
+#include <nsp/system.h> /* FSIZE */
 
 /* FIXME */
 extern int nsp_fscanf_matrix(NspFile *F,char *fmt,NspMatrix **M,int flag,NspSMatrix **S); 

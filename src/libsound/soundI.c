@@ -7,7 +7,7 @@
 #include "nsp/machine.h"
 #include "nsp/interf.h"
 #include "sox.h" 
-#include "../system/files.h" /* FSIZE+1 */
+#include <nsp/system.h> /* FSIZE+1 */
 
 static int int_savewave(Stack stack, int rhs, int opt, int lhs)
 {

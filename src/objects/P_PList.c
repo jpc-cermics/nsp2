@@ -31,7 +31,7 @@
 #include <nsp/smatrix.h> 
 #include "nsp/interf.h"
 
-#include "../system/files.h"
+#include <nsp/system.h>
 
 /*
  * Creation of a NspPList 
