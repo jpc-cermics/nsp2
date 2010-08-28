@@ -70,6 +70,7 @@ Source: "man\html\generated\*.*"; DestDir: "{app}\man\html\generated"; Flags: re
 Source: "macros\*.*"; DestDir: "{app}\macros\"; Flags: recursesubdirs
 Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
 Source: "demos\*.*"; DestDir: "{app}\demos\"; Flags: recursesubdirs
+Source: "toolboxes\*.*"; DestDir: "{app}\toolboxes\"; Flags: recursesubdirs
 Source: "libs\NperiPos.ps"; DestDir: "{app}\libs\"; Flags: recursesubdirs
 Source: "..\nsp2-jpc\scicos_work\*.*"; DestDir: "{app}\demos\scicos_work"; Flags: recursesubdirs
 
