@@ -5,7 +5,7 @@ function ilib_path_incl()
   nsp=getenv('SCI');
   nsp_s = file('split',nsp);
   dir_s = file('split',dir);
-  if nsp_s==dir_s(1:size(nsp_s,'*')) then 
+  if numel(dir_s) >= numel(nsp_s) && nsp_s.equal[dir_s(1:size(nsp_s,'*'))] then 
     // dir is a subdir of nsp 
     // compute a relative path 
     k = size(dir_s,'*') - size(nsp_s,'*');
