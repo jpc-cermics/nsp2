@@ -50,10 +50,11 @@ objects.
   \vname{.enter[var1,...,varn,name1=val1,...]}: enter new objects in the hash table with keys 
   given by their names or by explicit naming (\verb+name=val+). Note that if some keys 
   already preexist in the hash table, their value are replaced by new ones. 
-  \vname{.find[S1,...,Sn]}: returns on the calling stack for each key given by the values of 
+  \vname{.find[S1,...,Sn,def=obj]}: returns on the calling stack for each key given by the values of 
   the string matrices \verb+S1,...,Sn+ the corresponding stored objet if present or an 
   error if one key is not present in the hash table. Thus, this method returns a variable 
-  number of values. 
+  number of values. If an optional argument \verb+def+ is given, then its value will be 
+  returned as a default value for keys not found in the hash table.
   \vname{.iskey[S1,...,Sn]}: returns on the calling stack for each given entry key a boolean 
   which states if the given key is present or not in the hash table.
   \vname{.merge[H]}: insert the entries of hash table \verb+H+ in the hash table object.

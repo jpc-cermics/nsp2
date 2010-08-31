@@ -787,14 +787,18 @@ static int int_htdelete(void *self,Stack stack, int rhs, int opt, int lhs)
  *         to change the Hashtable 
  */
 
-static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, int j_init);
+static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, int j_init, NspObject *def);
 
 static int int_meth_htfind(void *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *Def=NULL;
   NspHash *H=self;
-  CheckRhs(1,1000);
+  CheckStdRhs(1,1000);
   CheckLhs(1,1000);
-  return int_hash_find_gen(H,stack,rhs,opt,lhs,1);
+  nsp_option opts[] ={{ "def",objcopy,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( get_optional_args(stack,rhs,opt,opts,&Def) == FAIL) return RET_BUG;
+  return int_hash_find_gen(H,stack,rhs,opt,lhs,1,Def);
 }
 
 /*
@@ -853,41 +857,43 @@ static NspMethods *hash_get_methods(void) { return hash_methods;};
 
 static int int_htfind(Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *Def=NULL;
   NspHash *H;
-  CheckRhs(2,1000);
+  CheckStdRhs(2,1000);
   CheckLhs(1,1);
   if ((H   = GetHash(stack,1)) == NULLHASH) return RET_BUG;
-  return int_hash_find_gen(H,stack,rhs,opt,lhs,2);
+  nsp_option opts[] ={{ "def",objcopy,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( get_optional_args(stack,rhs,opt,opts,&Def) == FAIL) return RET_BUG;
+  return int_hash_find_gen(H,stack,rhs,opt,lhs,2,Def);
 }
 
 /* utility function 
  */
 
-static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, int j_init)
+static int int_hash_find_gen(NspHash *H,Stack stack, int rhs, int opt, int lhs, int j_init,NspObject *def)
 {
   NspSMatrix *S;
   int i,j,count=0;
   NspObject *O=NULLOBJ;
   lhs=Max(lhs,1);
-  for ( j = j_init ; j <= rhs ; j++ )
+  for ( j = j_init ; j <= rhs -opt ; j++ )
     {
       if ( IsSMatObj(stack,j) ) 
 	{
 	  if ((S = GetSMat(stack,j)) == NULLSMAT) return RET_BUG;        
 	  for ( i = 0 ; i < S->mn ; i++ ) 
 	    {
-	      /* 
-	      if (nsp_hash_find_and_copy(H,S->S[i],&O) == FAIL)   
-		{
-		  Scierror("%s: key %s not found in hash table \n",NspFname(stack),S->S[i]);
-		  nsp_void_object_destroy(&O);
-		  return RET_BUG  ;
-		}
-	      */
 	      if (nsp_hash_find(H,S->S[i],&O) == FAIL)   
 		{
-		  Scierror("%s: key %s not found in hash table \n",NspFname(stack),S->S[i]);
-		  return RET_BUG  ;
+		  if ( def == NULL ) 
+		    {
+		      Scierror("%s: key %s not found in hash table \n",NspFname(stack),S->S[i]);
+		      return RET_BUG  ;
+		    }
+		  O=def;
+		  NthObj(rhs+ ++count) = O ;
+		  NSP_OBJECT(O)->ret_pos = count;
 		}
 	      else
 		{

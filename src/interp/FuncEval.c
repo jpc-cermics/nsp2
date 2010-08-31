@@ -313,22 +313,21 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 {
   int n;
   stack.first = first;
-
-  if ( rhs == 2 )
+  if ( rhs - opt == 2 )
     {
       if ( IsIVect(stack.val->S[stack.first+1] ))       /* x(:) */
 	{
 	  nsp_void_seq_object_destroy(stack,stack.first+1,stack.first+2);
 	  n = nsp_eval_maybe_accelerated_op("resize2vect", 1, resize2vect_tab, 
-					    stack,stack.first, 1, 0, 1);
+					    stack,stack.first, rhs-1, opt , 1);
 	}
       else                                              /* x(i) */           
 	{
 	  n = nsp_eval_maybe_accelerated_op("extractelts", 1, extractelts_tab,
-					    stack,stack.first, 2, 0, 1);
+					    stack,stack.first, rhs,  opt, 1);
 	}
     }
-  else if ( rhs == 3 )
+  else if ( rhs-opt == 3 )
     {
       if (IsIVect(stack.val->S[stack.first+1]) )
 	{
@@ -343,7 +342,7 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 	      stack.val->S[stack.first+1] = stack.val->S[stack.first+2];
 	      stack.val->S[stack.first+2] = NULLOBJ;
 	      n = nsp_eval_maybe_accelerated_op("extractcols", 1, extractcols_tab,
-						stack,stack.first, 2, 0, 1);
+						stack,stack.first, rhs-1, opt, 1);
 	    }
 	}
       else 
@@ -352,16 +351,16 @@ int nsp_eval_extract(Stack stack, int first, int rhs, int opt, int lhs)
 	    {
 	      nsp_void_seq_object_destroy(stack,stack.first+2,stack.first+3);
 	      n = nsp_eval_maybe_accelerated_op("extractrows", 1, extractrows_tab,
-						stack,stack.first, 2, 0, 1);
+						stack,stack.first, rhs-1, opt, 1);
 	    }
 	  else                                          /* x(i,j) */
 	    {
 	      n = nsp_eval_maybe_accelerated_op("extract", 1, extract_tab,
-						stack,stack.first, 3, 0, 1);
+						stack,stack.first, rhs, opt, 1);
 	    }
 	}
     }
-  else  /* rhs > 3  currently not implemented */
+  else  /* rhs -opt > 3  currently not implemented */
     {
       Scierror("Error: multi-dimensionnal arrays not currently supported\n");
       /* voir pour le message d'erreur */
