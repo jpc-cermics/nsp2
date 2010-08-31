@@ -25,7 +25,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "nsp/interf.h"
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/interf.h>
+
 
 static void f99(NspMatrix *M);
 
