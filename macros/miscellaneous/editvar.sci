@@ -981,3 +981,65 @@ function x=edit_cells(x,with_scroll=%f,title="Edit cell",size_request=[],headers
     window.destroy[];
   end
 endfunction 
+
+function x=edit_object_astnode(x,with_scroll=%f,title="Edit astnode",size_request=[],headers=%t,top=[],parent=[]) 
+  
+  hbox = gtkhbox_new(homogeneous=%f,spacing=8);
+  
+  if top.equal[[]] then 
+    // we want a top level windows 
+    flags = ior(GTK.DIALOG_MODAL, GTK.DIALOG_DESTROY_WITH_PARENT),
+    window = gtkdialog_new(title= title,flags = flags,...
+			   buttons = ["gtk-ok","gtk-cancel"]);
+    ok_rep = 1; // buttons return code is their indice in buttons matrix
+    
+    // window.set_border_width[  5]
+    // window.connect[  "destroy",gtk_widget_destroyed, &window]
+    window.vbox.pack_start[hbox,expand=%f,fill=%f,padding=0]
+    vbox = window.vbox;
+  else
+    vbox = top;
+  end
+  
+  stock = gtkimage_new("stock","gtk-edit" , GTK.ICON_SIZE_DIALOG);
+  hbox.pack_start[stock,expand=%f,fill=%f,padding=0]
+  label=gtklabel_new(str=catenate(title));
+  hbox.pack_start[label,expand=%t,fill=%t,padding=0]
+    
+  if with_scroll then 
+    // insert the matrix edition in a scrolled window 
+    sw = gtkscrolledwindow_new();
+    sw.set_shadow_type[ GTK.SHADOW_ETCHED_IN]
+    sw.set_policy[ GTK.POLICY_AUTOMATIC,  GTK.POLICY_AUTOMATIC]
+    // sw.add[treeview]
+    vbox.pack_start[ sw,expand=%t,fill=%t,padding=0];
+    if isempty(size_request) then
+      size_request=[400,400];
+    end
+    sw.set_size_request[min(60*size(x,2),size_request(1)),min(30*(size(x,1)+1),size_request(2))]
+  else
+    vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
+    // vbox.pack_start[treeview,expand=%f,fill=%f,padding=0];
+  end
+    
+  if %f && type_x == 's' then 
+    vbox.pack_start[gtkhseparator_new(),expand=%f,fill=%t];
+    evaluate_str_check = gtkcheckbutton_new(label="Evaluate entries");
+    vbox.pack_start[ evaluate_str_check,expand=%f,fill=%t,padding=0]
+    evaluate_str_check.connect[  "toggled",entry_toggle_evaluate_str, list(treeview)]
+    val = %f;
+    evaluate_str_check.set_active[val];
+    treeview.set_data[evaluate_str=val];
+  end 
+  
+  if top.equal[[]] then 
+    window.show_all[];
+    // treeview.columns_autosize[];
+    // a modal window undestroyed at end of run. 
+    response = window.run[];
+    if response == ok_rep; // GTK.RESPONSE_OK 
+      //treeview.user_data ;
+    end
+    window.destroy[];
+  end
+endfunction 

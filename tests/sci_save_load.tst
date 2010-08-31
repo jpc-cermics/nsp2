@@ -42,7 +42,6 @@ for i=1:10
   if ~L.C.equal[A>=0] then pause;end 
 end 
 
-
 //------------------------------
 // sparse matrices 
 // test the conversion back and forward to matlab triplet.
