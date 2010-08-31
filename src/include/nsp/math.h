@@ -157,7 +157,7 @@ extern  double nsp_dlamch (char *cmach);
  * software is freely granted, provided that this notice
  * is preserved.
  * 
- * This union and SET_LOW_WORD are used to imporve the computation of exp(x*x) 
+ * This union and SET_LOW_WORD are used to improve the computation of exp(x*x) 
  * as in libc (See below).
  */
 
