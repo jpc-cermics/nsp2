@@ -30,7 +30,10 @@
 #undef interface 
 #endif 
 
-#include "nsp/interf.h"
+#include <nsp/nsp.h>
+#include <nsp/matrix.h>
+#include <nsp/smatrix.h>
+#include <nsp/interf.h>
 #include <nsp/system.h>
 
 #define MAX_KEY_LENGTH 255
