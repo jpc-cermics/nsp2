@@ -5554,6 +5554,103 @@ int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspObject 
   nsp_object_destroy(Ind);
   return FAIL;
 }
+  
+  
+/**
+ * nsp_mat_ind2sub:
+ * @dims: (input) int vector with successive dimension lengths (of a supposed n-dimensional matrix)
+ * @nd: (input) size of dims, number of dimensions of the supposed n-dimensional matrix)
+ * @ndind: (output) array of pointers onto nd #NspMatrix or #NspIMatrix each one having the role of an index vector
+ *         all the index vectors have the same number of components (@nb_ind). This array of pointers should
+ *         be allocated by the caller routine (the individual arrays are allocated in this routine)
+ * @nb_ind: (input)  number of components of the index vectors
+ * @Ind: (input) a #NspObject (#NspMatrix or #NspIMatrix (of int32)) having the role of a one-way index 
+ *       vector equivalent to the nb_ind multiple indices Ind_equ(k) <-> (i_1(k),i_2(k),....,i_nd(k))
+ *
+ * (the supposed n-dimensional matrix having the fortran indexing scheme) 
+ * 
+ * [I_1, I_2, ..., I_nd] = ind2sub(dims, ind)
+ *
+ * Return value: %OK or %FAIL
+ *
+ **/
+int nsp_mat_ind2sub(int *dims, int nd, NspObject **ndind, int nb_ind, NspObject *Obj, char ind_type)
+{
+  int **j, i, k, p, pdims=1, d, q;
+
+
+  if ( ( j = malloc( nd*sizeof(int *))) == NULL )
+    {
+      Scierror("Error: running out of memory\n");
+      return FAIL;
+    }
+
+  for ( k = 0 ; k < nd ; k++ )
+    {
+      if ( (ndind[k] = nsp_alloc_mat_or_imat(1, nb_ind, ind_type, &(j[k]))) == NULLOBJ )
+	goto err;
+      pdims *= dims[k];
+    }
+
+  if ( IsMat(Obj) )
+    {
+      NspMatrix *Ind = (NspMatrix *) Obj; 
+      for ( k = 0 ; k < nb_ind ; k++ )
+	{
+	  p = (int) Ind->R[k];
+	  
+	  if ( p  < 1  ||  p > pdims )
+	    {
+	      Scierror("Error: component %d of vector index is out of bounds\n", k+1);
+	      goto err;
+	    }
+
+	  p--;   /* use 0 based index */
+	  d = pdims;
+	  for ( i = nd-1 ; i >= 0 ; i-- )
+	    {
+	      d = d/dims[i];
+	      q = p / d;
+	      p -= d*q; 
+	      j[i][k] = q + 1;   /* return to 1-based index */
+	    }
+	}
+    }
+  else   /* input index vector is an IMat int32 */
+    {
+      NspIMatrix *Ind = (NspIMatrix *) Obj; 
+      for ( k = 0 ; k < nb_ind ; k++ )
+	{
+	  p = Ind->Gint32[k];
+	  
+	  if ( p  < 1  ||  p > pdims )
+	    {
+	      Scierror("Error: component %d of vector index is out of bounds\n", k+1);
+	      goto err;
+	    }
+
+	  p--;   /* use 0 based index */
+	  d = pdims;
+	  for ( i = nd-1 ; i >= 0 ; i-- )
+	    {
+	      d /= dims[i];
+	      q = p / d;
+	      p -= d*q; 
+	      j[i][k] = q + 1;   /* return to 1-based index */
+	    }
+	}
+    }
+
+  free(j);
+  return OK;
+
+ err:
+  free(j);
+  for ( k = 0 ; k < nd && ndind[k] != NULLOBJ ; k++ )
+    nsp_object_destroy(&(ndind[k]));
+  return FAIL;
+}
+  
 
   
 /*

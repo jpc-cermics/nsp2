@@ -4526,6 +4526,120 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
   free(ndind);
   return RET_BUG;
 }
+/*
+ *  sub2ind
+ *
+ *  [ind1, ind2, ..., indk] = sub2ind( dims, ind , ind_type)
+ *
+ *  dims must be a vector of length k
+ */
+
+int
+int_ind2sub (Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Dims;
+  NspObject **ndind = NULL;
+  NspObject *Obj = NULLOBJ;
+  int nd, *dims=NULL, i, nb_ind;
+  nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL;
+  char itype = 'd';
+
+  CheckStdRhs (2,2);
+
+  if ( (Dims = GetRealMat(stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  nd = Dims->mn; 
+
+  if ( lhs != nd )
+    {
+      Scierror ("%s: waiting for %d output index vectors, got %d\n", NspFname(stack), nd, lhs);
+      return RET_BUG;
+    }
+
+  /* parse Dims */
+  if ( (dims = malloc(nd*sizeof(int))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      return RET_BUG;
+    }
+  for ( i = 0 ; i < nd ; i++ )
+    {
+      dims[i] = (int) Dims->R[i];
+      if ( dims[i] < 0 )
+	{
+	  Scierror ("%s: length in the %d th dimension is negative\n", NspFname(stack), i+1);
+	  goto err;
+	}
+    }
+
+  if ( (ndind = malloc(nd*sizeof(NspObject **))) == NULL )
+    {
+      Scierror ("%s: running out of memory\n", NspFname(stack));
+      goto err;
+    }
+
+  if ( (Obj = nsp_get_object(stack, 2)) == NULLOBJ )
+    goto err;
+
+  if ( IsIMat(Obj) )
+    {
+      /* verify that Obj is an int32 IMat */
+      NspIMatrix *Ind = (NspIMatrix *) Obj;
+      if (  Ind->itype !=  nsp_gint32 ) 
+	{
+	  Scierror("Error:\twhen index vector is an imatrix it should be of int32 subtype\n");
+	  goto err;
+	}
+      nb_ind = Ind->mn;
+    }
+  else if ( IsMat(Obj) )
+    {
+      nb_ind = ((NspMatrix *) Obj)->mn;
+    }
+  else
+    {
+      Scierror("Error:\tindex vector should be a matrix or an imatrix (of int32 subtype)\n");
+      goto err;
+    }
+
+  if ( opt > 0 )
+    {
+      int rep;
+      if ( get_optional_args(stack, rhs, opt, opts, &ind_type) == FAIL )
+	return RET_BUG;
+      rep = is_string_in_array(ind_type, ind_type_possible_choices, 1);
+      if ( rep < 0 )
+	{
+	  string_not_in_array(stack, ind_type, ind_type_possible_choices, "optional argument ind_type");
+	  return RET_BUG;
+	}
+      itype = ind_type_possible_choices[rep][0];
+    }
+
+  if ( nsp_mat_ind2sub(dims, nd, ndind, nb_ind, Obj, itype) == FAIL )
+    goto err;
+
+  if ( itype == 'd' )
+    for ( i = 0 ; i < nd ; i++ )
+      ndind[i] = (NspObject *) Mat2double((NspMatrix *) ndind[i]);
+
+  for ( i = 0 ; i < nd ; i++ ) 
+    MoveObj (stack, i+1, ndind[i]);
+
+  free(ndind);
+  free(dims);
+  return nd;
+
+ err:
+  free(dims);
+  free(ndind);
+  return RET_BUG;
+}
+
 
 
 /*
@@ -5580,6 +5694,7 @@ static OpTab Matrix_func[] = {
   {"mfind_m", int_mxmfind},
   {"ndind2ind_m_m", int_ndind2ind},
   {"sub2ind_m_m", int_sub2ind},
+  {"ind2sub", int_ind2sub},
   {"isinf", int_mx_isinf},
   {"isnan", int_mx_isnan},
   {"finite", int_mx_finite},
