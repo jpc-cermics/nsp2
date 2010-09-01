@@ -502,7 +502,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
   if %win32 then
     // check if we have a msvc compiler 
     [msvc,path,is64] = msvc_get_compiler();
-    with_msvc == msvc <> "unknown";
+    with_msvc = msvc <> "unknown";
     if with_msvc then 
       lib_name=lib_name+'.dll'
       lib_name_make=lib_name;
