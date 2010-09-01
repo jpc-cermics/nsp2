@@ -242,8 +242,9 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway, ...
   fprintf(fd,"# ------------------------------------------------------\n");
   // get nsp path 
   NSP = getenv('SCI');
-  if part(NSP,2)==":" then NSP=part(NSP,3:length(NSP));end
-  fprintf(fd,"SCIDIR = %s\n",getenv('SCI'));
+  // do not use a win32 path when cross compiling
+  if %win32 && part(NSP,2)==":" then NSP=part(NSP,3:length(NSP));end
+  fprintf(fd,"SCIDIR = %s\n",NSP);
   fprintf(fd,"OBJS = ")
   for x=files(:)' ; 
     fprintf(fd," %s.o",x);
@@ -515,7 +516,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       // assume that we are cross compiling or using cygwin 
       lib_name = lib_name+'.la'; 
       lib_name_make=lib_name+%shext ;
-      make_command = 'make -f ';
+      make_command = '/usr/bin/make -f ';
       if ~isempty(files)  then 
 	files = files + '.o';
       end
