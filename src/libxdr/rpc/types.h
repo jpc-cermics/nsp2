@@ -56,7 +56,7 @@
 #ifdef __MSC__ 
 /* #undef FALSE */
 /* #undef TRUE */
-#include <winsock.h>
+#include <winsock2.h>
 typedef char * caddr_t;
 #define bzero(x,n) memset(x,0,n)
 #define bcopy(x,y,n) memcpy(x,y,n)
