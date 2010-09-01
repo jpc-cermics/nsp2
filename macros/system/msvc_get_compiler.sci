@@ -57,18 +57,19 @@ function [name,path,is64] = msvc_get_compiler()
 	      "vc80pro", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Pro" 
 	      "vc80std", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Std"
 	      "vc80express", "Software\\Microsoft\\VCExpress\\8.0\\Setup\\VS" 
-	      "vc70","SOFTWARE\\Microsoft\\VisualStudio\\7.0\\Setup\\VC" 
-	      "vc71", "SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC"]
+	      "vc71", "SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC"
+	      "vc70","SOFTWARE\\Microsoft\\VisualStudio\\7.0\\Setup\\VC"  ]
+    
     vals=1:size(table,1);
     if nargin >=1 then vals=find(query_name == table(:,1));end 
     for i=vals
       key=table(i,2);
       ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'',key,''ProductDir'')",errcatch=%t);
       if ~ok then 
-				lasterror();
+	lasterror();
       else
-				name = table(i,1); 
-				return;
+	name = table(i,1); 
+	return;
       end
     end
   endfunction
