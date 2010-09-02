@@ -461,18 +461,12 @@ function libn=ilib_compile(lib_name,makename,files)
 // if files is given the make is performed on each 
 // target contained in files then a whole make is performed 
 //-------------------------------------------------
-  if nargin < 3 then files=[]; end 
+  if nargin < 3 || isempty(files) then files=m2s([]); end 
   if type(lib_name,'short')<>'s' then
     error('ilib_compile: first argument must be a string');
     return ;
   end
   oldpath=getcwd();
-  files=files(:)';
-  if ~isempty(files) then 
-    files1=strsubst(strsubst(files,'.obj','') ,'.o','');
-  else 
-    files1=m2s([]);
-  end
   [make_command,lib_name_make,lib_name,path,makename,files]= ...
       ilib_compile_get_names(lib_name,makename,files)  
   if path=="." then path = "./";end 
@@ -480,22 +474,28 @@ function libn=ilib_compile(lib_name,makename,files)
   // first try to build each file step by step 
   nf = size(files,'*');
   for i=1:nf 
-    printf('   compilation of '+files1(i)+'\n');
-    system(make_command+makename + ' '+ files(i)); 
+    str = make_command+makename + ' '+ files(i);
+    printf(str + '\n');
+    system(str); 
   end
   // then the shared library 
   printf('   building shared library (be patient)\n');
-  system(make_command+makename + ' '+ lib_name); 
+  str = make_command+makename + ' '+ lib_name;
+  system(str); 
   // a revoir 
   libn= file('join',[path,lib_name_make]);
   chdir(oldpath)
 endfunction
 
+
+
+
 function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_get_names(lib_name,makename,files) 
 // return is res the correct name for 
 // makefile, libname, files 
+// get file names with suffixes 
   if ~isempty(files) then 
-    files=strsubst(strsubst(files,'.obj','') ,'.o',''); //compat
+    files=strsubst(strsubst(files,'.obj','') ,'.o','');
   end
   arg_makename=makename;
   makename=file('tail',makename);
@@ -518,7 +518,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       lib_name_make=lib_name+%shext ;
       make_command = '/usr/bin/make -f ';
       if ~isempty(files)  then 
-	files = files + '.o';
+	files = files + '.lo';
       end
     end
     if %f then 
@@ -534,7 +534,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
   else
     // Unixes 
     if ~isempty(files)  then 
-      files = files + '.o';
+      files = files + '.lo';
     end
     lib_name_make=lib_name+%shext ;
     lib_name = lib_name+'.la'; 
