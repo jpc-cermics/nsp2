@@ -4540,7 +4540,7 @@ int_ind2sub (Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Dims;
   NspObject **ndind = NULL;
   NspObject *Obj = NULLOBJ;
-  int nd, *dims=NULL, i, nb_ind;
+  int nd, *dims=NULL, i;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   char *ind_type_possible_choices[]={ "double", "int",  NULL };
@@ -4594,13 +4594,8 @@ int_ind2sub (Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error:\twhen index vector is an imatrix it should be of int32 subtype\n");
 	  goto err;
 	}
-      nb_ind = Ind->mn;
     }
-  else if ( IsMat(Obj) )
-    {
-      nb_ind = ((NspMatrix *) Obj)->mn;
-    }
-  else
+  else if ( ! IsMat(Obj) )
     {
       Scierror("Error:\tindex vector should be a matrix or an imatrix (of int32 subtype)\n");
       goto err;
@@ -4620,7 +4615,7 @@ int_ind2sub (Stack stack, int rhs, int opt, int lhs)
       itype = ind_type_possible_choices[rep][0];
     }
 
-  if ( nsp_mat_ind2sub(dims, nd, ndind, nb_ind, Obj, itype) == FAIL )
+  if ( nsp_mat_ind2sub(dims, nd, ndind, Obj, itype) == FAIL )
     goto err;
 
   if ( itype == 'd' )

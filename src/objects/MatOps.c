@@ -5563,7 +5563,6 @@ int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspObject 
  * @ndind: (output) array of pointers onto nd #NspMatrix or #NspIMatrix each one having the role of an index vector
  *         all the index vectors have the same number of components (@nb_ind). This array of pointers should
  *         be allocated by the caller routine (the individual arrays are allocated in this routine)
- * @nb_ind: (input)  number of components of the index vectors
  * @Ind: (input) a #NspObject (#NspMatrix or #NspIMatrix (of int32)) having the role of a one-way index 
  *       vector equivalent to the nb_ind multiple indices Ind_equ(k) <-> (i_1(k),i_2(k),....,i_nd(k))
  *
@@ -5574,7 +5573,7 @@ int nsp_mat_sub2ind(int *dims, int nd, NspMatrix **ndind, int nb_ind, NspObject 
  * Return value: %OK or %FAIL
  *
  **/
-int nsp_mat_ind2sub(int *dims, int nd, NspObject **ndind, int nb_ind, NspObject *Obj, char ind_type)
+int nsp_mat_ind2sub(int *dims, int nd, NspObject **ndind, NspObject *Obj, char ind_type)
 {
   int **j, i, k, p, pdims=1, d, q;
 
@@ -5585,17 +5584,18 @@ int nsp_mat_ind2sub(int *dims, int nd, NspObject **ndind, int nb_ind, NspObject 
       return FAIL;
     }
 
-  for ( k = 0 ; k < nd ; k++ )
-    {
-      if ( (ndind[k] = nsp_alloc_mat_or_imat(1, nb_ind, ind_type, &(j[k]))) == NULLOBJ )
-	goto err;
-      pdims *= dims[k];
-    }
-
   if ( IsMat(Obj) )
     {
       NspMatrix *Ind = (NspMatrix *) Obj; 
-      for ( k = 0 ; k < nb_ind ; k++ )
+
+      for ( k = 0 ; k < nd ; k++ )
+	{
+	  if ( (ndind[k] = nsp_alloc_mat_or_imat(Ind->m, Ind->n, ind_type, &(j[k]))) == NULLOBJ )
+	    goto err;
+	  pdims *= dims[k];
+	}
+
+      for ( k = 0 ; k < Ind->mn ; k++ )
 	{
 	  p = (int) Ind->R[k];
 	  
@@ -5619,7 +5619,15 @@ int nsp_mat_ind2sub(int *dims, int nd, NspObject **ndind, int nb_ind, NspObject 
   else   /* input index vector is an IMat int32 */
     {
       NspIMatrix *Ind = (NspIMatrix *) Obj; 
-      for ( k = 0 ; k < nb_ind ; k++ )
+
+      for ( k = 0 ; k < nd ; k++ )
+	{
+	  if ( (ndind[k] = nsp_alloc_mat_or_imat(Ind->m, Ind->n, ind_type, &(j[k]))) == NULLOBJ )
+	    goto err;
+	  pdims *= dims[k];
+	}
+
+      for ( k = 0 ; k < Ind->mn ; k++ )
 	{
 	  p = Ind->Gint32[k];
 	  
