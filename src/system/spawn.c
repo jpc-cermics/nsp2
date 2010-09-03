@@ -752,7 +752,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 
   if ( get_optional_args(stack, rhs, opt, opts, &working_directory) == FAIL )
     return RET_BUG;
-
+  
   rep = g_spawn_sync(working_directory,S->S,NULL,flags,
 		     NULL,
 		     NULL,
@@ -771,8 +771,9 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 
   if ( lhs <= 1 )
     {
-      if (standard_output != NULL) Sciprintf("%s\n",standard_output );
-      if (standard_error != NULL)  Sciprintf("%s\n",standard_error );
+      if (standard_output != NULL) Sciprintf("%s",standard_output );
+      if (standard_error != NULL && strlen(standard_error) != 0)
+	Sciprintf("%s",standard_error );
       if (error != NULL) Sciprintf("%s\n",error->message);
     }
 

@@ -471,23 +471,35 @@ function libn=ilib_compile(lib_name,makename,files)
       ilib_compile_get_names(lib_name,makename,files)  
   if path=="." then path = "./";end 
   if path<>"" && path<>"./" then chdir(path);  end 
+  
+  // perform the make with system function 
+  // step by step 
   // first try to build each file step by step 
   nf = size(files,'*');
   for i=1:nf 
-    str = make_command+makename + ' '+ files(i);
-    printf(str + '\n');
-    system(str); 
+    str = [make_command,makename,files(i)];
+    strc = catenate(str,sep=" ");
+    printf('   '+strc + '\n');
+    if %f then 
+      system(strc); 
+    else
+      ok = spawn_sync(str);
+      if ~ok then break ; end 
+    end
   end
   // then the shared library 
-  printf('   building shared library (be patient)\n');
-  str = make_command+makename + ' '+ lib_name;
-  system(str); 
+  printf('   building shared library\n');
+  str = [make_command, makename, lib_name];
+  strc=  catenate(str,sep=" ");
+  if %f then 
+    system(strc); 
+  else
+    ok = spawn_sync(str);
+  end
   // a revoir 
   libn= file('join',[path,lib_name_make]);
-  chdir(oldpath)
+  chdir(oldpath); 
 endfunction
-
-
 
 
 function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_get_names(lib_name,makename,files) 
@@ -508,7 +520,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       lib_name=lib_name+'.dll'
       lib_name_make=lib_name;
       makename = makename + '.mak' ; 
-      make_command = 'nmake /nologo /f '
+      make_command = ['nmake','/nologo','/f'];
       if ~isempty(files) then 
 	files = files + '.obj' ;
       end
@@ -516,7 +528,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       // assume that we are cross compiling or using cygwin 
       lib_name = lib_name+'.la'; 
       lib_name_make=lib_name+%shext ;
-      make_command = '/usr/bin/make -f ';
+      make_command = ['/usr/bin/make','-f'];
       if ~isempty(files)  then 
 	files = files + '.lo';
       end
@@ -526,7 +538,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       lib_name=lib_name+'.dll'
       lib_name_make=lib_name;
       makename = makename + '.lcc' ; 
-      make_command = 'make -f '
+      make_command = ['make','-f'];
       if ~isempty(files) then 
 	files = files + '.obj' ;
       end
@@ -538,7 +550,7 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
     end
     lib_name_make=lib_name+%shext ;
     lib_name = lib_name+'.la'; 
-    make_command = 'make -f ';
+    make_command = ['make','-f'];
   end
 endfunction 
 
