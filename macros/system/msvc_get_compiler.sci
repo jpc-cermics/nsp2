@@ -49,16 +49,16 @@ function [name,path,is64] = msvc_get_compiler()
   // if query_name is given then only query for the 
   // given compiler 
     name="unknown";path="";
-    table = [ "vc100pro", "Software\\Microsoft\\VisualStudio\\10.0\\Setup\\VS" 
-	      "vc100express", "Software\\Microsoft\\VCExpress\\10.0\\Setup\\VS" 
-	      "vc90pro", "Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Pro" 
-	      "vc90std", "Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Std"
-	      "vc90express", "Software\\Microsoft\\VCExpress\\9.0\\Setup\\VS" 
-	      "vc80pro", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Pro" 
-	      "vc80std", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Std"
-	      "vc80express", "Software\\Microsoft\\VCExpress\\8.0\\Setup\\VS" 
-	      "vc71", "SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC"
-	      "vc70","SOFTWARE\\Microsoft\\VisualStudio\\7.0\\Setup\\VC"  ]
+    table = [ "msvc100pro", "Software\\Microsoft\\VisualStudio\\10.0\\Setup\\VS" 
+	      "msvc100express", "Software\\Microsoft\\VCExpress\\10.0\\Setup\\VS" 
+	      "msvc90pro", "Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Pro" 
+	      "msvc90std", "Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Std"
+	      "msvc90express", "Software\\Microsoft\\VCExpress\\9.0\\Setup\\VS" 
+	      "msvc80pro", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Pro" 
+	      "msvc80std", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Std"
+	      "msvc80express", "Software\\Microsoft\\VCExpress\\8.0\\Setup\\VS" 
+	      "msvc71", "SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC"
+	      "msvc70","SOFTWARE\\Microsoft\\VisualStudio\\7.0\\Setup\\VC"  ]
     
     vals=1:size(table,1);
     if nargin >=1 then vals=find(query_name == table(:,1));end 
