@@ -343,7 +343,7 @@ function ilib_gen_Make_win32(name,tables,files,libs,Makename,with_gateway,ldflag
   fprintf(fd,"OTHERLIBS = ");
   for x=libs(:)' ; fprintf(fd," %s.ilib",x);end
   fprintf(fd,"\n");
-  fprintf(fd,"!include $(SCIDIR1)\\Makefile.incl.mak\n");
+  fprintf(fd,"!include $(SCIDIR1)\\config\\Makefile.incl.mak\n");
   fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
 	  " -Dmexfunction_=mex$*_  -DmexFunction=mex_$* "+ cflags +" \n"); 
   fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -I\""$(SCIDIR)/include\"""+...
