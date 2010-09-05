@@ -526,7 +526,8 @@ static void set_nsp_home_env(char *nsp_abs_path)
 {
 #ifdef WIN32 
   int k;
-  char HOME[FSIZE+1], *hd, *hp;
+  char HOME[FSIZE+1];
+  const char *hd, *hp;
   if ( nsp_getenv("HOME") != NULL)  return;
   hd = nsp_getenv ("HOMEDRIVE");
   hp = nsp_getenv ("HOMEPATH");
