@@ -314,7 +314,7 @@ typedef int integer;
 
 /* msvc compiler */
 
-#if defined(__MSC__)
+#if defined(__MSC__) && defined(_MSC_VER)
 #undef HAVE_VALUES_H
 #undef HAVE_INLINE 
 #endif 

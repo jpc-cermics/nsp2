@@ -21,7 +21,7 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
-#if defined(__MSC__) 
+#if defined(__MSC__) && defined(_MSC_VER)
 typedef int gint    ;
 typedef unsigned int guint   ;
 typedef short gshort  ;
