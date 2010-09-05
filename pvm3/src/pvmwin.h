@@ -109,8 +109,9 @@
 #endif
 /* sys/param.h doesn't exist: */
 #define MAXHOSTNAMELEN 64
+#ifndef MAXPATHLEN 
 #define MAXPATHLEN 64
-	   
+#endif 	   
 /* 
 #ifndef TIME
 #define TIME
