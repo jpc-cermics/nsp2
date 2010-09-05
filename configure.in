@@ -295,7 +295,8 @@ fi
 
 # extra resource file used for win32 
 RC_FILE= 
-
+# dumpexts executable used for win32
+DUMPEXTS=
 
 #echo PPPPPPPPPP $lt_lt_prog_compiler_pic $lt_prog_compiler_pic_works
 #echo QQQQQQQQQQ $lt_lt_prog_compiler_pic_F77 $lt_prog_compiler_pic_F77_works
@@ -519,6 +520,7 @@ case "$host" in
     MAKEFILE_TARGET=Makefile.mingw32
     # resource file 
     RC_FILE=nsp_ico.o    
+    DUMPEXTS='all :: ../../bin/dumpexts.exe'
     FLIBS_SH='-module -no-undefined  -L$(SCIDIR)/bin -lnsp'
     ;;
 # FreeBSD  systems 
@@ -1674,6 +1676,7 @@ AC_SUBST(GTK_PKGS_CFLAGS)
 AC_SUBST(UFSPARSE_LIB)
 AC_SUBST(SYST_FILES)
 AC_SUBST(RC_FILE)
+AC_SUBST(DUMPEXTS)
 AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GTKSOURCEVIEW_OBJS)
 

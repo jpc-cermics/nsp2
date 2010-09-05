@@ -52,7 +52,7 @@ edit.o: gtktextview.c gtksourceview.c
 # to be added when target is win32 
 # 
 
-# all:: ../../bin/dumpexts.exe
+@DUMPEXTS@
 
 ../../bin/dumpexts.exe 	:  winDumpExts.o
 	@echo "compilation of dumpext.exe"
