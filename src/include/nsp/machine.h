@@ -312,4 +312,12 @@ typedef int integer;
 #define EXPORT 
 #endif
 
+/* msvc compiler */
+
+#if defined(__MSC__)
+#undef HAVE_VALUES_H
+#undef HAVE_INLINE 
+#endif 
+
+
 #endif /* MACHINE_H  */

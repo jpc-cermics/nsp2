@@ -200,10 +200,14 @@ typedef union
     (d) = sl_u.value;						\
   } while (0)
 
-#else 
+#else /* WIN32 */
 
 /* here we use a runntime check */
+#if defined(__MSC__)
+typedef unsigned int uint32_t;
+#else
 #include <stdint.h> 
+#endif 
 
 typedef union
 {

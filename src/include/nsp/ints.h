@@ -21,7 +21,29 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
+#if defined(__MSC__) 
+typedef int gint    ;
+typedef unsigned int guint   ;
+typedef short gshort  ;
+typedef unsigned short gushort ;
+typedef long int glong   ;
+typedef unsigned long int gulong  ;
+typedef signed char gint8   ;
+typedef unsigned char guint8  ;
+typedef signed short gint16  ;
+typedef unsigned short guint16 ;
+typedef int gint32  ;
+typedef unsigned int guint32 ;
+#ifdef _WIN64 
+typedef __int64 gint64;
+typedef unsigned __int64 guint64;
+#else 
+typedef long long int gint64;
+typedef unsigned long long int guint64;
+#endif 
+#else /* __MSC__ */
 #include <glib.h> 
+#endif 
 
 /* all the integer types */
 

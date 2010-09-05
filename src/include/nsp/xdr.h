@@ -2,7 +2,7 @@
 #define NSP_INC_XDR_H
 
 #ifdef WIN32 
-#include "../../libxdr/rpc/xdr_inc.h"
+#include "rpc/xdr_inc.h"
 #ifdef interface 
 #undef interface 
 #endif 
