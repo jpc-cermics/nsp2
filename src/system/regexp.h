@@ -29,8 +29,8 @@ typedef struct Tcl_RegExp_ *Tcl_RegExp;
 #define NSUBEXP  20
 
 typedef struct regexp {
-  char *startp[NSUBEXP];
-  char *endp[NSUBEXP];
+  const char *startp[NSUBEXP];
+  const char *endp[NSUBEXP];
   char regstart;		/* Internal use only. */
   char reganch;		/* Internal use only. */
   char *regmust;		/* Internal use only. */
@@ -40,12 +40,12 @@ typedef struct regexp {
 
 
 extern Tcl_RegExp	nsp_tclregexp_compile( char *string);
-extern int		nsp_tclregexp_exec( Tcl_RegExp regexp, char *string, char *start);
+extern int		nsp_tclregexp_exec( Tcl_RegExp regexp,const char *string, char *start);
 extern int		nsp_tclregexp_match( char *string, char *pattern);
-extern void		nsp_tclregexp_range(Tcl_RegExp regexp, int index, char **startPtr, char **endPtr);
+extern void		nsp_tclregexp_range(Tcl_RegExp regexp, int index,const char **startPtr,const char **endPtr);
 
 extern regexp *tcl_reg_comp (char *exp);
-extern int tcl_reg_exec (regexp *prog, char *string, char *start);
+extern int tcl_reg_exec (regexp *prog,const char *string, const char *start);
 /* extern void TclRegSub (regexp *prog, char *source, char *dest); */
 extern void tcl_reg_error (char *msg);
 extern char *tcl_get_reg_error (void);

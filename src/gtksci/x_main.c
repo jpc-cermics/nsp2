@@ -69,7 +69,7 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
 {
   if ( no_window == FALSE ) 
     {
-      char *shmid= nsp_getenv("SHMID");
+      const char *shmid= nsp_getenv("SHMID");
       /* we are using a gtk widget app */
       nsp_in_gtk_window();
       /* initialise gtk */
@@ -225,7 +225,7 @@ static char *get_shared(void)
 {
   int shmid;
   char *shm;
-  char *s= nsp_getenv("SHMID");
+  const char *s= nsp_getenv("SHMID");
   
   if ( s == NULL) 
     {

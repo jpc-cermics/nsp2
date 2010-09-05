@@ -31,8 +31,9 @@ int nsp_tcl_regsub(char *str,Tcl_RegExp regExpr,char *subSpec,nsp_tcldstring *re
 		   int *nmatch,int all)
 {
   int match, code=FAIL, numMatches;
-  char *string,*stringI, *p, *firstChar;
-  char *start, *end, *subStart, *subEnd;
+  char *string,*stringI, *firstChar;
+  const char *p;
+  const char *start, *end, *subStart, *subEnd;
   register char *src, c;
 
   string = stringI= str;
@@ -277,7 +278,7 @@ nsp_tclregexp_compile(char * string)
  */
 
 int
-nsp_tclregexp_exec(Tcl_RegExp  re,char * string,char * start)
+nsp_tclregexp_exec(Tcl_RegExp  re,const char * string,char * start)
      /*     Tcl_RegExp re;		/\* Compiled regular expression;  must have 
       * 				 * been returned by previous call to 
       * 				 * nsp_tclregexp_compile. *\/ 
@@ -319,7 +320,7 @@ nsp_tclregexp_exec(Tcl_RegExp  re,char * string,char * start)
  */
 
 void
-nsp_tclregexp_range(Tcl_RegExp re,int index,char ** startPtr,char ** endPtr)
+nsp_tclregexp_range(Tcl_RegExp re,int index,const char ** startPtr,const char ** endPtr)
      /*     Tcl_RegExp re;		* Compiled regular expression that has 
       * 				 * been passed to nsp_tclregexp_exec. *\/ 
       *     int index;			/\* 0 means give the range of the entire 
@@ -1082,21 +1083,21 @@ static void regoptail( char *p, char *val)
  * Global work variables for tcl_reg_exec().
  */
 struct regexec_state  {
-  char *reginput;		/* String-input pointer. */
-  char *regbol;		/* Beginning of input, for ^ check. */
-  char **regstartp;	/* Pointer to startp array. */
-  char **regendp;		/* Ditto for endp. */
+  const char *reginput;		/* String-input pointer. */
+  const char *regbol;		/* Beginning of input, for ^ check. */
+  const char **regstartp;	/* Pointer to startp array. */
+  const char **regendp;		/* Ditto for endp. */
 };
 
 /*
  * Forwards.
  */
-static int 		regtry(regexp *prog, char *string,
-					    struct regexec_state *restate);
+static int 		regtry(regexp *prog, const char *string,
+			       struct regexec_state *restate);
 static int 		regmatch(char *prog,
-					      struct regexec_state *restate);
+				 struct regexec_state *restate);
 static int 		regrepeat(char *p,
-					       struct regexec_state *restate);
+				  struct regexec_state *restate);
 
 #ifdef DEBUG
 int regnarrate = 0;
@@ -1109,10 +1110,10 @@ static char *regprop(char *op);
  */
 
 int tcl_reg_exec( register regexp *prog,
-		register char *string,
-		char *start)
+		  register const char *string,
+		  const char *start)
 {
-  register char *s;
+  register const char *s;
   struct regexec_state state;
   struct regexec_state *restate= &state;
 
@@ -1172,11 +1173,11 @@ int tcl_reg_exec( register regexp *prog,
  - regtry - try match at specific point
  */
 static int			/* 0 failure, 1 success */
-regtry( regexp *prog, char *string, struct regexec_state *restate)
+regtry( regexp *prog, const char *string, struct regexec_state *restate)
 {
   register int i;
-  register char **sp;
-  register char **ep;
+  register const char **sp;
+  register const char **ep;
 
   restate->reginput = string;
   restate->regstartp = prog->startp;
@@ -1287,7 +1288,7 @@ regmatch( char *prog, struct regexec_state *restate)
     case OPEN+8:
     case OPEN+9: {
       register int no;
-      register char *save;
+      register const char *save;
 
     doOpen:
       no = OP(scan) - OPEN;
@@ -1316,7 +1317,7 @@ regmatch( char *prog, struct regexec_state *restate)
     case CLOSE+8:
     case CLOSE+9: {
       register int no;
-      register char *save;
+      register const char *save;
 
     doClose:
       no = OP(scan) - CLOSE;
@@ -1336,7 +1337,7 @@ regmatch( char *prog, struct regexec_state *restate)
       }
     }
     case BRANCH: {
-      register char *save;
+      register const char *save;
 
       if (OP(next) != BRANCH) { /* No choice. */
 	next = OPERAND(scan); /* Avoid recursion. */
@@ -1356,7 +1357,7 @@ regmatch( char *prog, struct regexec_state *restate)
     case PLUS: {
       register char nextch;
       register int no;
-      register char *save;
+      register const char *save;
       register int min;
 
       /*
@@ -1410,7 +1411,7 @@ static int
 regrepeat(   char *p,  struct regexec_state *restate)
 {
   register int count = 0;
-  register char *scan;
+  register const char *scan;
   register char *opnd;
 
   scan = restate->reginput;

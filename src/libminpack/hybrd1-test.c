@@ -56,6 +56,7 @@
 
 
 #include "nsp/interf.h"
+#include "nsp/sciio.h"
 #include "minpack.h"
 
 /*     subroutine vecfcn 

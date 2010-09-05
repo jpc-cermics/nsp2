@@ -62,7 +62,7 @@ int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name)
     }
   else 
     {
-      char *home;
+      const char *home;
       if ((home = nsp_getenv ("HOME")) == (char *) 0)
 	return FAIL;
       strncpy(str,home, FSIZE+1);
@@ -102,7 +102,7 @@ int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name)
 
 int int_syscd(Stack stack,int rhs,int opt,int lhs) 
 {
-  char *str;
+  const char *str;
   CheckRhs(0,1);
   CheckLhs(0,1);
   if (rhs == 1) 

@@ -647,7 +647,7 @@ TclPlatformType tclPlatform = TCL_PLATFORM_UNIX;
  */
 
 static char *		DoTildeSubst ( char *user, nsp_tcldstring *resultPtr);
-static char *		ExtractWinRoot (char *path,  nsp_tcldstring *resultPtr, int offset);
+static const char *		ExtractWinRoot (char *path,  nsp_tcldstring *resultPtr, int offset);
 static void		FileNameCleanup (ClientData clientData);
 static int		SkipToChar (char **stringPtr,char *match);
 static char *		SplitMacPath (char *path, nsp_tcldstring *bufPtr);
@@ -902,7 +902,7 @@ static void FileNameCleanup(ClientData clientData)
  *
  **/
 
-static char *
+static const char *
 ExtractWinRoot( char *path,nsp_tcldstring * resultPtr,int  offset)
 
 {
@@ -1196,7 +1196,8 @@ static char *SplitUnixPath(const char *path, nsp_tcldstring *bufPtr)
 static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
 {
   int length;
-  char *p, *elementStart;
+  const char *p;
+  const char *elementStart;
 
   p = ExtractWinRoot(path, bufPtr, 0);
 
@@ -1420,7 +1421,8 @@ char *nsp_join_path( int argc, char **argv,  nsp_tcldstring *resultPtr)
 {
   int oldLength, length, i, needsSep;
   nsp_tcldstring buffer;
-  char *p, c, *dest;
+  const char *p;
+  char c, *dest;
 
   nsp_tcldstring_init(&buffer);
   oldLength = nsp_tcldstring_length(resultPtr);
@@ -1770,23 +1772,26 @@ const char *nsp_get_extension(const char *name)
 
 static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
 {
-  char *dir;
-
-  if (*user == '\0') {
-    dir = nsp_getenv("HOME");
-    if (dir == NULL) {
-      Scierror("Error: couldn't find HOME environment variable to expand path\n");
-      return NULL;
+  if (*user == '\0') 
+    {
+      char *dir1;
+      const char *dir = nsp_getenv("HOME");
+      if (dir == NULL) {
+	Scierror("Error: couldn't find HOME environment variable to expand path\n");
+	return NULL;
+      }
+      dir1 = nsp_new_string(dir,-1);
+      nsp_join_path(1, &dir1, resultPtr);
+      nsp_string_destroy(&dir1);
+    } 
+  else 
+    {
+      /* lint, TclGetuserHome() always NULL under windows. */
+      if (nsp_get_user_home(user, resultPtr) == NULL) {	
+	Scierror("Error: user \"%s\" doesn't exist\n",user);
+	return NULL;
+      }
     }
-    nsp_join_path(1, &dir, resultPtr);
-  } else {
-	
-    /* lint, TclGetuserHome() always NULL under windows. */
-    if (nsp_get_user_home(user, resultPtr) == NULL) {	
-      Scierror("Error: user \"%s\" doesn't exist\n",user);
-      return NULL;
-    }
-  }
   return resultPtr->string;
 }
 

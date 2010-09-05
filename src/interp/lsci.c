@@ -484,7 +484,8 @@ extern nsp_string nsp_absolute_file_name( char *fname);
 void set_nsp_env (void)
 {
   int i;
-  char *p1, *nsp_abs_path=NULL; 
+  const char *p1;
+  char *nsp_abs_path=NULL; 
   /* TMPDIR */
   set_nsp_tmpdir();
   /* SCI  */

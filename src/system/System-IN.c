@@ -141,6 +141,11 @@ static int int_system(Stack stack,int rhs,int opt,int lhs)
  * Interface for getenv(A [,def ] ) 
  */
 
+const char * nsp_getenv(const char *name)
+{
+  return g_getenv(name);
+}
+
 static int int_getenv(Stack stack,int rhs,int opt,int lhs) 
 {
   NspSMatrix *S;
@@ -151,11 +156,7 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ( rhs == 2 ) 
     if ((def = GetString(stack,2)) == (char*)0) return RET_BUG;
-#if 0 
   env = nsp_getenv(envname);
-#else 
-  env = g_getenv(envname);
-#endif 
   if ( env != NULL ) 
     {
       if ((S=nsp_smatrix_create(NVOID,1,1,env,(integer)1)) == NULLSMAT ) 
@@ -182,6 +183,22 @@ static int int_getenv(Stack stack,int rhs,int opt,int lhs)
  * Interface for setenv(A,value)
  */
 
+/**
+ * nsp_setenv:
+ * @name: Name of variable whose value is to be set.
+ * @value:  New value for variable.
+ * 
+ *	Set an environment variable, replacing an existing value
+ *	or creating a new variable if there doesn't exist a variable
+ *	by the given @name.
+ **/
+
+int nsp_setenv(const char *name,const char *value)
+{
+  return g_setenv(name,value,TRUE);
+}
+
+
 static int int_setenv(Stack stack,int rhs,int opt,int lhs) 
 {
   char *envname,*val;
@@ -189,16 +206,11 @@ static int int_setenv(Stack stack,int rhs,int opt,int lhs)
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
   if ((val = GetString(stack,2)) == (char*)0) return RET_BUG;
-#if 0 
-  nsp_setenv(envname, val);
-  nsp_tclplatform_init() ; 
-#else 
-  if ( g_setenv(envname,val,TRUE ) == FALSE )
+  if ( nsp_setenv(envname,val) == FALSE )
     {
       Scierror("Error: setenv failed for %s\n",envname);
       return RET_BUG;
     }
-#endif 
   return 0;
 }
 
@@ -206,17 +218,25 @@ static int int_setenv(Stack stack,int rhs,int opt,int lhs)
  * Interface for unsetenv(A)
  */
 
+/**
+ * nsp_unsetenv:
+ * @name: Name of variable to remove.
+ * 
+ *	Remove an environment variable. 
+ **/
+
+void nsp_unsetenv(const char *name)
+{
+  g_unsetenv(name);
+}
+
 static int int_unsetenv(Stack stack,int rhs,int opt,int lhs) 
 {
   char *envname;
   CheckRhs(1,1);
   CheckLhs(0,1);
   if ((envname = GetString(stack,1)) == (char*)0) return RET_BUG;
-#if 0
   nsp_unsetenv(envname);
-#else 
-  g_unsetenv(envname);
-#endif 
   return 0;
 }
 
@@ -377,7 +397,8 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
 {
   int noCase = FALSE;
   Tcl_RegExp regExpr;
-  char  *string, *pattern, *start, *end,*p;
+  char  *string, *pattern,*p;
+  const char *start, *end;
   int match = 0;			/* Initialization needed only to
 					 * prevent compiler warning. */
   int i;

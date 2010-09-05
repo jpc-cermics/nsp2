@@ -69,7 +69,7 @@ void create_plugged_main_menu(void)
   static int first = 0; 
   static GtkWidget *Plug;
   GtkAccelGroup *accel_group = NULL ; 
-  char * plug_info = nsp_getenv("SCIWIN");
+  const char * plug_info = nsp_getenv("SCIWIN");
 
   if ( plug_info == NULL) return ;
   if ( first == 0 ) {
@@ -830,7 +830,8 @@ static void nspg_menu_print(BCG *Xgc, int winid)
 #if TEST_GTK_PRINT
   do_print (NULL,winid);
 #else 
-  char *printer,*p1;
+  char *printer;
+  const char *p1;
   int colored,orientation,type;
   if ( nsp_print_dialog(&printer,&colored,&orientation,&type)== FAIL) return;
   if ( ( p1 = nsp_getenv("NSP_TMPDIR"))  == (char *) 0 )

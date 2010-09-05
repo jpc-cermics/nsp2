@@ -83,7 +83,7 @@ void set_nsp_tmpdir(void)
       status = system(buf);
 #endif 
       sprintf(buf,"NSP_TMPDIR=%s",tmp_dir);
-      nsp_putenv(buf);
+      nsp_setenv("NSP_TMPDIR",tmp_dir);
     }
 }
 
@@ -290,7 +290,7 @@ static int expand_aliases(char *env, char **alias,const char *in_name, char *out
 
 static int get_env(char *var,char *buf,int buflen,int iflag)
 {
-  char *local;
+  const char *local;
   if (( local=nsp_getenv(var)) == NULL)
     {
       if ( iflag == 1 ) Sciprintf("Warning: environment variable %s not found\n",var);

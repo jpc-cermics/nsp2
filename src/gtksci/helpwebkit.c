@@ -549,7 +549,7 @@ int nsp_help_topic(const char *topic,char *buf);
 int Sci_Help(char *mandir,char *locale,char *help_file) 
 {
   char buf[FSIZE+1];
-  char *sci = nsp_getenv("SCI"); 
+  const char *sci = nsp_getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);

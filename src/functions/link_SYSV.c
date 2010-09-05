@@ -67,9 +67,11 @@
 static void nsp_delete_symbols (int );
 static int nsp_dlopen(nsp_const_string shared_path,int global);
 static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
-static int SetArgv  (char *argv[], char *files[],int first,int max,int *err);
-static int SetArgv1  (char *argv[], char *files,int first,int max,int *err);
+#if 0
+static int SetArgv  (const char *argv[], char *files[],int first,int max,int *err);
+static int SetArgv1  (const char *argv[],const char *files,int first,int max,int *err);
 int CreateShared_unused  ( char *loaded_files[], char *tmp_file);
+#endif 
 
 /*************************************
  * New version : link entry names 
@@ -318,17 +320,17 @@ static void nsp_delete_symbols(int ishared)
 }
 
   
-
 /*
  * creates a shared executable from the set of files 
  */
 
+#if 0 
 int CreateShared_unused (char **loaded_files, char *tmp_file)
 {
   int argc=3,err=0;
   static int count=0;
   int i=0;
-  char *libs;
+  const char *libs;
   libs=nsp_getenv("SYSLIBS");
   Sciprintf("linking files ");
   while ( loaded_files[i] != NULL) 
@@ -350,7 +352,7 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
 #endif
   {
     int pid, status, wpid;
-    static char *argv[MAXARGV] = {
+    static const char *argv[MAXARGV] = {
       /*   0        1         2    3  4   */
 #ifdef sun
 #if defined(SYSV)
@@ -418,7 +420,7 @@ int CreateShared_unused (char **loaded_files, char *tmp_file)
  */
 
 
-static int SetArgv(char **argv, char **files, int first, int max, int *err)
+static int SetArgv(const char **argv, char **files, int first, int max, int *err)
 {
   int i=0,j=first;
   *err=0;
@@ -431,10 +433,10 @@ static int SetArgv(char **argv, char **files, int first, int max, int *err)
   return(j);
 }
 
-static int SetArgv1(char **argv, char *files, int first, int max, int *err)
+static int SetArgv1(const char **argv,const char *files, int first, int max, int *err)
 {
   int j=first;
-  char *loc = files;
+  const char *loc = files;
   while ( *loc == ' ' && *loc != '\0'  ) loc++;
   while ( *loc != '\0' )
     {
@@ -458,3 +460,4 @@ static int SetArgv1(char **argv, char *files, int first, int max, int *err)
   return(j);
 }
   
+#endif 

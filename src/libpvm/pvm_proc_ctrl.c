@@ -29,7 +29,7 @@ int nsp_pvm_start(char *hostfile)
 {
   char path[FSIZE+1];
   struct stat buf;
-  char *home =nsp_getenv("HOME") , *sci = nsp_getenv("SCI");
+  const char *home =nsp_getenv("HOME") , *sci = nsp_getenv("SCI");
   char * argv[2];
   int argc=0;
   argv[0] = "";

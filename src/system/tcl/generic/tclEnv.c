@@ -36,8 +36,8 @@ static int environSize = 0;	/* Non-zero means that the environ array was
 
 static int		FindVariable (const char *name,  int *lengthPtr);
 static void		ReplaceString (const char *oldStr,  char *newStr);
-void			nsp_setenv (const char *name, const char *value);
-void			nsp_unsetenv (const char *name);
+void			nsp_setenv_deprecated (const char *name, const char *value);
+void			nsp_unsetenv_deprecated (const char *name);
 
 
 /**
@@ -53,7 +53,7 @@ void			nsp_unsetenv (const char *name);
  *      @name and @value are copied in the routine. 
  **/
 
-void nsp_setenv(const char *name,const char *value)
+void nsp_setenv_deprecated(const char *name,const char *value)
 {
     int index, length, nameLength;
     char *p, *oldValue;
@@ -146,7 +146,7 @@ void nsp_setenv(const char *name,const char *value)
  * Return value: unused.
  **/
 
-int nsp_putenv(const char *string)
+int nsp_putenv_deprecated(const char *string)
 {
     int nameLength;
     char *name, *value;
@@ -184,7 +184,7 @@ int nsp_putenv(const char *string)
  *	This function is intended to replace the UNIX "unsetenv" function.
  **/
 
-void nsp_unsetenv(const char *name)
+void nsp_unsetenv_deprecated(const char *name)
 	
 {
   char *oldValue;
@@ -257,7 +257,7 @@ void nsp_unsetenv(const char *name)
  *	or NULL if the value was not found.
  **/
 
-char * nsp_getenv(const char *name)
+char * nsp_getenv_deprecated(const char *name)
 {
     int length, index;
 
