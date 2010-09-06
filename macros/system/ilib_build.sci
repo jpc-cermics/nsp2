@@ -500,8 +500,8 @@ function libn=ilib_compile(lib_name,makename,files)
   else
     ok = spawn_sync(str);
   end
+  // spawn_sync('pipo.bat');
   // a revoir 
-  spawn_sync('pipo.bat');
   libn= file('join',[path,lib_name_make]);
   chdir(oldpath); 
 endfunction
