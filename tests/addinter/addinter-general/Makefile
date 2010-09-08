@@ -1,5 +1,5 @@
 #/* -*- Mode: Makefile -*- */
-# Copyright (C) 2007 Jean-Philippe Chancelier Enpc/Cermics
+# Copyright (C) 2007-2010 Jean-Philippe Chancelier Enpc/Cermics
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License.
 

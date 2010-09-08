@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2005 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -21,11 +21,10 @@
  * Interface demo file 
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "nsp/interf.h"
+#include <nsp/nsp.h> 
+#include <nsp/objects.h> 
+#include <nsp/interf.h> 
+
 
 static void plus(NspMatrix *M);
 

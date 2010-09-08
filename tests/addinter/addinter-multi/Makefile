@@ -1,5 +1,5 @@
 #/* -*- Mode: Makefile -*- */
-# Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
+# Copyright (C) 2005-2010 Jean-Philippe Chancelier Enpc/Cermics
 # This file is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License.
 
@@ -23,7 +23,7 @@ tests	: all
 
 clean	::
 	@echo Cleaning 
-	@$(RM) -f -r *.o *.lo *.la *.so *.dll *.sl *.a *.dia .job.sce so_locations
+	@$(RM) -f -r *.o *.lo *.la *.so *.dll *.sl *.a *.dia .job.sce so_locations Makelib
 	@$(RM) -f -r .libs libmulti[0-9]*.c 
 	@cd lib ; make clean
 

@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 2005 Jean-Philippe Chancelier Enpc/Cermics
- *                    François Delebecque Metalau/Inria
+ * Copyright (C) 2005-2010 Jean-Philippe Chancelier Enpc/Cermics
+ *                         François Delebecque Metalau/Inria
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
@@ -21,11 +21,11 @@
  * Interface demo file 
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "nsp/interf.h"
+#include <nsp/nsp.h> 
+#include <nsp/objects.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/plist.h> 
+#include <nsp/interf.h> 
 
 static int ex1c (char *ch, int *a, int ia, float *b, int ib, double *c, int mc,
 		 int nc, double *d, double *w, int *err);
