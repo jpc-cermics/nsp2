@@ -487,7 +487,7 @@ function libn=ilib_compile(lib_name,makename,files)
     if %f then 
       system(strc); 
     else
-      ok = spawn_sync(str);
+      ok = ilib_spawn_sync(str);
       if ~ok then break ; end 
     end
   end
@@ -498,7 +498,7 @@ function libn=ilib_compile(lib_name,makename,files)
   if %f then 
     system(strc); 
   else
-    ok = spawn_sync(str);
+    ok = ilib_spawn_sync(str);
   end
   // spawn_sync('pipo.bat');
   // a revoir 
@@ -559,6 +559,31 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
   end
 endfunction 
 
+function ok=ilib_spawn_sync(str)
+  msok = msvc_configure();
+  if ~msok then
+    ok=spawn_sync(str);
+    return;
+  end;
+  // a modified version of spawn_sync 
+  // for win32 version i.e with msvc 
+  // because stdout and stderr are 
+  // not properly redirected when using 
+  // nmake. 
+  // 
+  tmp=getenv('NSP_TMPDIR');
+  sto = file('native',file('join',[tmp,'spawn_out']));
+  ste = file('native',file('join',[tmp,'spawn_err']));
+  ok=spawn_sync([str,'>',sto,'2>',ste]);
+  fd=fopen(sto,mode="r");
+  So=fd.get_smatrix[];
+  fd.close[];
+  fd=fopen(ste,mode="r");
+  Se=fd.get_smatrix[];
+  fd.close[];
+  printf('%s\n',So);
+  printf('%s\n',Se);
+endfunction
 
 
 
