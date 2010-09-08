@@ -1,4 +1,7 @@
-#include "nsp/interf.h"
+
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/interf.h>
 
 static void not(NspBMatrix *B) ;
 
