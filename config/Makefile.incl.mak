@@ -13,6 +13,7 @@ MAKE=nmake /f Makefile.mak
 # compiler flags: -MT or -MD  only needed if tcl/tk is used
 
 DTK=-DWITH_TK
+DTK=
 
 !IF "$(DTK)" == "-DWITH_TK"
 # -MT can be added here (note that DPVM=-DWITH_PVM will remove it)
@@ -33,6 +34,7 @@ TCL_INCLUDES=-I"$(TCLTK)\include" -I"$(TCLTK)\include\X11"
 # the good pathname for PVM_ROOT.
 #
 DPVM=-DWITH_PVM
+DPVM=
 
 !IF "$(DPVM)" == "-DWITH_PVM"
 # compiler flags: -MT should be removed for pvm 
@@ -51,6 +53,7 @@ PVM_CCOMPILER=VISUALC++
 # If you use DLPVM=YES you will have to edit and customize
 # pvm3/conf/WIN32.def 
 DLPVM=YES
+DLPVM=NO
 
 #--------------------------
 # to generate blas symbols compatible with 
@@ -75,7 +78,7 @@ CC_COMMON=-D__MSC__ -DWIN32 -c -DSTRICT -nologo $(INCLUDES) $(DTK) $(DPVM) $(DMK
 # debug 
 CC_OPTIONS =  $(CC_COMMON) -Z7 -W3 -Od 
 # standard option ( replace Od->O2 for optimization but note that optimization does not work )
-CC_OPTIONS = $(CC_COMMON) -Od  -GB -Gd -W3
+CC_OPTIONS = $(CC_COMMON) -Od  -Gd -W3
 CC_LDFLAGS = 
 #---------------------
 # Fortran Compiler 
