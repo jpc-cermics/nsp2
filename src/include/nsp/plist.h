@@ -7,7 +7,6 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
-#include <glib.h> 
 #include "nsp/sciio.h" 
 #include <nsp/objectf.h>
 

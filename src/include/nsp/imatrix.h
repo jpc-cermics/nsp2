@@ -23,7 +23,6 @@
 #include <stdio.h>   /* for file declaration **/
 #include "nsp/sciio.h" 
 #include "nsp/ints.h" 
-#include <glib.h> 
 
 /*
  * NspIMatrix inherits from NspObject 
