@@ -530,16 +530,13 @@ static int int_file_error(void *self, Stack stack, int rhs, int opt, int lhs)
 
 static int int_file_get_lines(void *self, Stack stack, int rhs, int opt, int lhs)
 {
-  int lines; 
+  int lines=1; 
   NspSMatrix *S = NULL;
   int_types T[] = {s_int , t_end} ;
   if ( rhs >= 1 ) 
     {
       if ( GetArgs(stack,rhs,opt,T,&lines) == FAIL) return RET_BUG;
     }
-  else
-    lines = 1;
-  lines=Max(1,lines);
   if ( nsp_read_lines(self,&S,lines) == FAIL) return RET_BUG; 
   MoveObj(stack,1,(NspObject *) S);
   return 1;

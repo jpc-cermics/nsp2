@@ -91,8 +91,8 @@ The \emph{File} data type is used for file I/O operations.
   First lines can be non-numeric and are then returned in S. The read stops when current 
   line read is not compatible with previous ones (see  \manlink{get_matrix}{get_matrix} help page)
   \vname{S=F.get_lines[n]}: acquires \verb+n+ lines from the file stream \verb+F+ and returns 
-  the result in a string matrix. If \verb+n+ is omitted or negative it is assumed to be equal to 
-  one. 
+  the result in a string matrix. If \verb+n+ is omitted it is assumed to be equal to 
+  one if it is strictly negative then all the lines are acquired.
   \vname{S=F.get_smatrix[]}: read the whole file contents from current position
   and return a column string vector. Each line read giving a row of the column vector.
   \vname{F.put_matrix[M,format='string',sep='string',title=S]}: 

@@ -1437,6 +1437,8 @@ static int count_tokens(char *string)
  * Return value: %OK or %FAIL.
  **/
 
+static int nsp_read_lines_eof(NspFile *F,NspSMatrix **S);
+
 int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
 {
   int mem=0,i,n;
@@ -1447,6 +1449,9 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
     }
   if ( Info == NULL && (Info =new_nsp_string_n(INFOSIZE)) == NULLSTRING) return FAIL;
   Info_size = INFOSIZE;
+
+  if ( nlines < 0 )  return nsp_read_lines_eof(F,S);
+
   if ((*S =nsp_smatrix_create_with_length(NVOID,nlines,1,-1))== NULLSMAT) return FAIL;
   for ( i= 0 ; i < nlines ; i++)
     {
@@ -1479,6 +1484,31 @@ int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines)
     }
   return OK;
 }
+
+/* read lines up to end of file */
+
+static int nsp_read_lines_eof(NspFile *F,NspSMatrix **S)
+{
+  int mem=0,n;
+  if ((*S =nsp_smatrix_create_with_length(NVOID,0,1,-1))== NULLSMAT) return FAIL;
+  while ( 1 ) 
+    {
+      n = nsp_read_line(F->obj->file,&mem);
+      if ( mem == 1) return FAIL;
+      if ( n == EOF ||  n == 0 ) break;
+      if ( nsp_row_smatrix_append_string(*S,Info) == FAIL) return FAIL;
+    }
+  /* just in case Info is too Big */ 
+  if ( Info_size > INFOSIZE ) 
+    {
+      Info_size = INFOSIZE;
+      Info = realloc(Info,(Info_size+1)*sizeof(char));
+    }
+  return OK;
+}
+
+
+
 
 /**
  * nsp_fscanf_smatrix:
