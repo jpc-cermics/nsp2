@@ -244,7 +244,7 @@ DumpExternals(PIMAGE_SYMBOL pSymbolTable, FILE *fout, unsigned cSymbols)
 		if (f) {
 		    *f = 0;
 		}
-#if (defined(_MSC_VER) && defined(_X86_)) || defined (_MINGW32_)
+#if (defined(_MSC_VER) && defined(_X86_)) || defined (__MINGW32__)
 		if (symbol[0] == '_') {
 		    s = &symbol[1];
 		}

@@ -109,6 +109,7 @@ GUILIBS=-NODEFAULTLIB:libc.lib -NODEFAULTLIB:libcmt.lib $(GUI)  msvcrt.lib
 !ELSE 
 GUILIBS=-NODEFAULTLIB:libcmt.lib $(GUI) libc.lib msvcrt.lib
 !ENDIF
+GUILIBS=
 
 # XLIBS is used for linking Scilab
 XLIBS=$(TKLIBS) $(PVMLIB) $(GUILIBS)

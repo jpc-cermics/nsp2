@@ -484,22 +484,14 @@ function libn=ilib_compile(lib_name,makename,files)
     str = [make_command,makename,files(i)];
     strc = catenate(str,sep=" ");
     printf('   '+strc + '\n');
-    if %f then 
-      system(strc); 
-    else
-      ok = ilib_spawn_sync(str);
-      if ~ok then break ; end 
-    end
+    ok = ilib_spawn_sync(str);
+    if ~ok then break ; end 
   end
   // then the shared library 
   printf('   building shared library\n');
   str = [make_command, makename, lib_name];
   strc=  catenate(str,sep=" ");
-  if %f then 
-    system(strc); 
-  else
-    ok = ilib_spawn_sync(str);
-  end
+  ok = ilib_spawn_sync(str);
   // spawn_sync('pipo.bat');
   // a revoir 
   libn= file('join',[path,lib_name_make]);
@@ -549,17 +541,18 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
       end
     end
   else
-    // Unixes 
-    if ~isempty(files)  then 
-      files = files + '.lo';
-    end
-    lib_name = lib_name+'.la'; 
-    lib_name_make=lib_name+%shext ;
-    make_command = ['make','-f'];
+     // Unixes 
+     if ~isempty(files)  then 
+       files = files + '.lo';
+     end
+     lib_name = lib_name+'.la'; 
+     lib_name_make=lib_name+%shext ;
+     make_command = ['make','-f'];
   end
 endfunction 
 
 function ok=ilib_spawn_sync(str)
+  ok=%t
   msok = msvc_configure();
   if ~msok then
     ok=spawn_sync(str);
@@ -572,20 +565,29 @@ function ok=ilib_spawn_sync(str)
   // nmake. 
   // 
   tmp=getenv('NSP_TMPDIR');
-  sto = file('native',file('join',[tmp,'spawn_out']));
-  ste = file('native',file('join',[tmp,'spawn_err']));
-  ok=spawn_sync([str,'>',sto,'2>',ste]);
-  fd=fopen(sto,mode="r");
-  So=fd.get_smatrix[];
-  fd.close[];
-  fd=fopen(ste,mode="r");
-  Se=fd.get_smatrix[];
-  fd.close[];
-  printf('%s\n',So);
-  printf('%s\n',Se);
+  tmp='c:/temp';
+  nsp=getenv('NSP');
+  cmd=file('join',[nsp,'config/makedll.bat']);
+  sto = file('join',[tmp,'spawn_out']);
+  ste = file('join',[tmp,'spawn_err']);
+  file('delete',sto);
+  file('delete',ste);
+  ok=spawn_sync([cmd,str($),'>',sto,'2>',ste]);
+  if  file('exists',sto) then
+    fd=fopen(sto,mode="r");
+    So=fd.get_smatrix[];
+    fd.close[];
+    So.to_utf8[];
+    printf('%s\n',So);
+  end
+  if  file('exists',ste) then
+    fd=fopen(ste,mode="r");
+    So=fd.get_smatrix[];
+    fd.close[];
+    So.to_utf8[];
+    printf('%s\n',So);
+  end
 endfunction
-
-
 
 
 

@@ -1,14 +1,14 @@
 #--- see examples/addinter-tutorial-so ----------
 
 DUMPEXTS="$(SCIDIR1)\bin\dumpexts"
-SCIIMPLIB="$(SCIDIR)/bin/LibScilab.lib"
+SCIIMPLIB="$(SCIDIR)/bin/libnsp.lib"
 
 all :: $(LIBRARY).dll
 
 $(LIBRARY).dll: $(OBJS)
 	@echo Creation of dll $(LIBRARY).dll and import lib from ...
 	@$(DUMPEXTS) -o "$*.def" "$*.dll" $**
-	@$(LINKER) $(LINKER_FLAGS) $(OBJS) $(OTHERLIBS) $(SCIIMPLIB) $(XLIBSBIN) $(TERMCAPLIB) $(EXTRA_LDFLAGS) /nologo /dll /out:"$*.dll" /implib:"$*.ilib" /def:"$*.def" 
+	$(LINKER) $(LINKER_FLAGS) $(OBJS) $(OTHERLIBS) $(SCIIMPLIB) $(XLIBSBIN) $(TERMCAPLIB) $(EXTRA_LDFLAGS) /nologo /dll /out:"$*.dll" /implib:"$*.ilib" /def:"$*.def" 
 
 clean	::
 	-del $(OBJS)
