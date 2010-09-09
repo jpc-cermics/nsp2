@@ -17,6 +17,8 @@
  *           full dump of an object file, use the -f option.  This can
  *           help determine the something that may be different with a
  *           compiler other than Visual C++.
+ *           
+ *           This seams the same for gcc when cross compiling 
  *----------------------------------------------------------------------
  *
  * SCCS: @(#) winDumpExts.c 1.11 96/09/18 15:25:11
@@ -242,7 +244,7 @@ DumpExternals(PIMAGE_SYMBOL pSymbolTable, FILE *fout, unsigned cSymbols)
 		if (f) {
 		    *f = 0;
 		}
-#if defined(_MSC_VER) && defined(_X86_)
+#if (defined(_MSC_VER) && defined(_X86_)) || defined (_MINGW32_)
 		if (symbol[0] == '_') {
 		    s = &symbol[1];
 		}
