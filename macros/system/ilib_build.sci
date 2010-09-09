@@ -575,14 +575,14 @@ function ok=ilib_spawn_sync(str)
   ok=spawn_sync([cmd,str($),'>',sto,'2>',ste]);
   if  file('exists',sto) then
     fd=fopen(sto,mode="r");
-    So=fd.get_smatrix[];
+    So=fd.get_lines[-1];
     fd.close[];
     So.to_utf8[];
     printf('%s\n',So);
   end
   if  file('exists',ste) then
     fd=fopen(ste,mode="r");
-    So=fd.get_smatrix[];
+    So=fd.get_lines[-1];
     fd.close[];
     So.to_utf8[];
     printf('%s\n',So);
