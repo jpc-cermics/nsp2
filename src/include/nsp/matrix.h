@@ -326,30 +326,25 @@ extern NspMatrix *nsp_ifft(NspMatrix *x);
 
 /*
  * inlined functions 
+ * even if the function is inlined we need a version 
+ * which is not inlined just in case we will use latter 
+ * a dynamically linked library using the defined functions 
+ * not in inlined mode. 
+ * Thus a version non inlined is inserted in MatObj.c 
+ * where Matrix_Private is in use 
  */
 
-#ifndef HAVE_INLINE 
+#if defined(HAVE_INLINE) && !defined(Matrix_Private) 
+/* include an inlined version */ 
+#define NSP_MATRIX_INLINED static inline 
+#include "matrix-inlined.h"
+#undef NSP_MATRIX_INLINED
+#else 
 extern NspMatrix *GetMatCopy (Stack stack, int i); 
 extern NspMatrix *GetMat (Stack stack, int i); 
-#else 
-static inline NspMatrix *GetMatCopy(Stack stack, int i)
-{
-  NspMatrix *M= Mat2double(matrix_object(stack.val->S[stack.first+i-1]));
-  if ( M== NULLMAT) { ArgMessage (stack, i);return M;}
-  /**/ return (NspMatrix *)  MaybeObjCopy (&stack.val->S[stack.first+i-1]);
-}
-
-static inline NspMatrix *GetMat(Stack stack, int i)
-{
-  NspMatrix *M= Mat2double(matrix_object(stack.val->S[stack.first+i-1]));
-  if ( M== NULLMAT) ArgMessage (stack, i);
-  return M;
-}
 #endif 
 
-
-#endif 
-
+#endif /* NSP_INC_MATRIX */
 
 #ifdef Matrix_Private
 static int init_matrix(NspMatrix *ob,NspTypeMatrix *type);

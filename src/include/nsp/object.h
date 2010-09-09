@@ -187,14 +187,14 @@ int nsp_type_object_init(void);
 
 /* is it safe to cast instance o to object with id as type id */
 
-#ifndef HAVE_INLINE 
-extern int check_cast(void *obj,NspTypeId id);
-extern int nsp_get_id_from_object(NspObject *Obj);
-#else
+#if defined(HAVE_INLINE) && !defined(Object_Private) 
 /* include an inlined version */ 
 #define NSP_OBJECT_INLINED static inline 
 #include "object-inlined.h"
 #undef NSP_OBJECT_INLINED
+#else 
+extern int check_cast(const void *obj,NspTypeId id);
+extern int nsp_get_id_from_object(NspObject *Obj);
 #endif
 
 

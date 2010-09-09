@@ -38,7 +38,7 @@
 #include <stdio.h> 
 #include <stdlib.h> 
 #include <glib.h>
-
+#define Object_Private
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
 #include <nsp/matrix.h>
