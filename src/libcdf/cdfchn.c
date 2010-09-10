@@ -175,37 +175,41 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
   else if (2 == *which)        /* Calculating X */
     {
       int pq_flag = *p <= *q ? 1 : 0;
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      zsearch_monotonicity monotonicity = pq_flag ? INCREASING : DECREASING;
       double step = sqrt(*df+2**pnonc);  /* a step proportionnal to the std */
       double zero = 0.0;
       double inc_step = 2;
       *x = *df + *pnonc;       /* start from the mean instead of 5  (bruno, april 2010) */ 
-      cdf_dstinv (&c_b15, &inf, &step, &zero, &inc_step, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, x, &fx, &qleft, &qhi);
+      nsp_zsearch_init(*x, 0, inf, step, zero, inc_step, atol, tol, monotonicity, &S);
 
-      while ( *status == 1 )
+      do
 	{
 	  cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
 	    fx = ccum - *q;
-	  cdf_dinvr (status, x, &fx, &qleft, &qhi);
+	  ret_val = nsp_zsearch(x, fx, &S);
 	}
+      while ( ret_val == EVAL_FX );
 
-      /* on output:  status==0  means success
-       *             status==-1 failure (in this case there 2 sub-cases) 
-       */
-      if ( *status == -1 )
+      switch ( ret_val )
 	{
-	  if ( qleft )
-	    {
-	      *status = 1; *bound = 0.;
-	    }
-	  else
-	    {
-	      *status = 2; *bound = inf;
-	    }
+	case SUCCESS:
+	  *status = 0;
+	  break;
+	case LEFT_BOUND_EXCEEDED:
+	  *status = 1;
+	  *bound = zero;
+	  break;
+	case RIGHT_BOUND_EXCEEDED:
+	  *status = 2;
+	  *bound = inf;
+	  break;
+	default:
+	  *status = 4;
 	}
     }
 

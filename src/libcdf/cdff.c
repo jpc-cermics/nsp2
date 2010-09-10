@@ -285,50 +285,39 @@ L210:
     L280:
       ;
     }
-  else if (3 == *which)
+  else if (3 == *which)   /* Calculating DFN */
     {
-
-/*     Calculating DFN */
-
+      ZsearchStruct S;
+      zsearch_ret ret_val;
       *dfn = 5.;
-      cdf_dstinv (&zero, &inf, &c_b25, &c_b25, &c_b27, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, dfn, &fx, &qleft, &qhi);
-    L290:
-      if (!(*status == 1))
+      nsp_zsearch_init(*dfn, zero, inf, c_b25, c_b25, c_b27, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L320;
+	  cdf_cumf (f, dfn, dfd, &cum, &ccum);
+	  if ( qporq )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
+	  ret_val = nsp_zsearch(dfn, fx, &S);
 	}
-      cdf_cumf (f, dfn, dfd, &cum, &ccum);
-      if (!qporq)
+      while ( ret_val == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L300;
+	case SUCCESS:
+	  *status = 0;
+	  break;
+	case LEFT_BOUND_EXCEEDED:
+	  *status = 1;
+	  *bound = zero;
+	  break;
+	case RIGHT_BOUND_EXCEEDED:
+	  *status = 2;
+	  *bound = inf;
+	  break;
+	default:
+	  *status = 4;
 	}
-      fx = cum - *p;
-      goto L310;
-    L300:
-      fx = ccum - *q;
-    L310:
-      cdf_dinvr (status, dfn, &fx, &qleft, &qhi);
-      goto L290;
-    L320:
-      if (!(*status == -1))
-	{
-	  goto L350;
-	}
-      if (!qleft)
-	{
-	  goto L330;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L340;
-    L330:
-      *status = 2;
-      *bound = inf;
-    L340:
-    L350:
-      ;
     }
   else if (4 == *which)
     {

@@ -292,6 +292,7 @@ static void cdffErr(     int status,   double bound, const int pos[])
     case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
     case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
+    case 4 : Scierror("unexpected failure (should not occur)\n");break ;
     default : 
       Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);
@@ -773,6 +774,7 @@ static void cdfchnErr(    int status,double bound, const int pos[])
     case 1 : Scierror("answer appears to be lower than lowest search bound %g\n",bound);break;
     case 2 : Scierror("answer appears to be higher than greatest search bound %g\n",bound);break;
     case 3 : Scierror(" P + Q .ne. 1 \n");break ;
+    case 4 : Scierror("unexpected failure (should not occur)\n");break ;
     default : 
       Scierror("input parameter %s is out of range \n\tbound exceeded: %g\n",
 	       param[-status-1],bound);

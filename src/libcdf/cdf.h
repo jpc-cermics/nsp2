@@ -9,6 +9,45 @@ extern   double pow_di (double *, int *);
 #define D_SIGN(a,b) ( b >= 0 ? (a >= 0 ? a : - a) : -(a >= 0 ? a : -a))
 #define D_INT(x) ( (x>0) ? floor(x) : -floor(- x) )
 
+
+/*
+ *    for the new zero search routine
+ */
+typedef enum {
+  INCREASING, DECREASING, UNKNOWN
+} zsearch_monotonicity;
+
+typedef enum {
+  START, DETERMINE_SEARCH_DIR, SEARCH_LEFT, SEARCH_RIGHT, BRACKETED
+} zsearch_state;
+
+typedef enum {
+  EVAL_FX, SUCCESS, LEFT_BOUND_EXCEEDED, RIGHT_BOUND_EXCEEDED, OTHER_FAILURE
+} zsearch_ret;
+
+typedef struct _ZsearchStruct ZsearchStruct;
+struct _ZsearchStruct
+{
+  double small;
+  double big;
+  double absstp;
+  double relstp;
+  double stpmul;
+  double abstol;
+  double reltol;
+  double step;
+  double xinit, fxinit, xlb, xhi, fxlb, fxhi;
+  zsearch_monotonicity monotonicity;
+  zsearch_state state;
+} ;
+
+extern int nsp_zsearch_init(double xinit, double small, double big, double absstp, double relstp, double stpmul, 
+			    double abstol, double reltol, zsearch_monotonicity monotonicity, ZsearchStruct *S);
+extern zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S);
+/*
+ *    end (for the new zero search routine)
+ */
+
 extern double cdf_algdiv (double a, double b);
 extern double cdf_algdiv_old (double a, double b);
 extern double cdf_alngam (double x);
