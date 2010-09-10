@@ -9,10 +9,14 @@
 \begin{calling_sequence}
 \begin{verbatim}
   V = var(X)
+  [V,mu] = var(X)
   V = var(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
-  V = var(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
+  [V,mu] =  var(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)    
+  V = var(X, dimarg, skip_nan=b, weights=w, unbiaised=b)
   sd = std(X)
+  [sd,mu] = std(X)
   sd = std(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
+  [sd,mu] = std(X, dim=dimarg, skip_nan=b, weights=w, unbiaised=b)  
   sd = std(X, dimarg, skip_nan=b, weights=w, unbiaised=b)  
 \end{verbatim}
 \end{calling_sequence}
@@ -26,6 +30,7 @@
     \vname{skip_nan=b}: boolean scalar (default is \verb+%f+).
     \vname{weights=w}: non negative vector or matrix of same dimensions than \verb+X+ 
     \vname{unbiased=b}:  boolean scalar (default is \verb+%t+).
+    \vname{V,sd,mu}: outputs (the mean mu can be retrieved as second output argument for both functions)
   \end{varlist}
 \end{parameters}
 
@@ -42,7 +47,9 @@ $$
    \quad \mbox{ and } \quad  c = \left\{ \begin{array}{cl} \sum_{j=1}^n w_j^2  & \mbox{ if unbiased is true}\\
                                                        0   & \mbox{ otherwise} \end{array}\right.
 $$
-Standard deviation is simply computed as the square root of the variance.
+Standard deviation is simply computed as the square root of the variance. As the mean is
+computed internally, it could be retrieved as the second output argument (for both var and
+std functions).
 
 Using the dim option you can compute either the variance or standard deviation
 of all the elements or of each row or each column. 
@@ -81,10 +88,14 @@ n = 500;
 X = randn(n,1);  // a sample from N(0,1)
 var(X)   // should tend to 1 when n -> +oo
 std(X)   // should tend to 1 when n -> +oo
+// the mean can be retrieved as second output
+[V,mu] = var(X)  // mu should be near 0
 
 X = grand(n,1,"bin",100,0.35); // a sample from Bin(100,0.35)
 var(X)   // should tend to 100*0.35*0.65=22.75  when n -> +oo
 std(X)   // should tend to sqrt(100*0.35*0.65)  when n -> +oo
+// the mean can be retrieved as second output
+[V,mu] = var(X)  // mu should be near 35
 
 X = grand(n,1,"geom",0.2); // a sample from G(0.2)
 var(X)   // should tend to (1-0.2)/0.2^2 = 20 when n -> +oo
@@ -96,8 +107,12 @@ std(X)   // should tend to sqrt(20) when n -> +oo
 X = rand(6,4);
 // var of the columns
 var(X,dim=1)
+// var and mean of the columns
+[V,mu] = var(X,dim=1)
 // var of the rows
 var(X,dim=2)
+// var and mean of the rows
+[V,mu] = var(X,dim=2)
 \end{Verbatim}
 
 \paragraph{example 3} weighted variance
@@ -106,6 +121,8 @@ n = 20; p = 0.4
 X = 0:n;
 wgt = pdf("bin",X, n,p);
 var(X, weights=wgt, unbiased=%f)  // should be exactly n*p*(1-p)=4.8
+// var and (mean mean should be exactly n*p=8)
+[V,mu] = var(X, weights=wgt, unbiased=%f) 
 \end{Verbatim}
 
 
@@ -113,7 +130,7 @@ var(X, weights=wgt, unbiased=%f)  // should be exactly n*p*(1-p)=4.8
 
 %-- see also
 \begin{manseealso}
-  \manlink{mean}{mean}, \manlink{median}{median}
+  \manlink{mean}{mean}, \manlink{median}{median}, \manlink{cov}{cov}
 \end{manseealso}
 
 % -- Authors
