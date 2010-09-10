@@ -316,6 +316,7 @@ static double gamma_for_x_big(double x)
   q = pow(x,0.5*x);
   res = (q*exp(-x))*q;
   res = (sqrt_twopi * (res/sqrt(x))) * exp(w);
+  
   return res;
 }
 
@@ -803,9 +804,11 @@ double nsp_kcdflim(double x, double *q)
 
 int nsp_invkcdflim(double p, double q, double *x)
 {
-  int pq_flag = p <= 0.3728 ? 1 : 0, status = 0, qleft, qhi;
+  int pq_flag = p <= 0.3728 ? 1 : 0;
   double pp,qq, fx, xinf = 0.04, xsup = 20, atol=1e-50, tol=1e-15, step=0.4, rstep=0.0, step_inc=2.0; 
-  int iter=0;
+  ZsearchStruct S;
+  zsearch_monotonicity monotonicity = pq_flag ? INCREASING : DECREASING;
+  zsearch_ret ret_val;
 
   /* extreme values */
   if ( p == 0.0 )
@@ -818,26 +821,21 @@ int nsp_invkcdflim(double p, double q, double *x)
     }
 
   /* init for inversion routine */
-  cdf_dstinv (&xinf, &xsup, &step, &rstep, &step_inc, &atol, &tol);
-
   *x = 0.828; /* this is approximately the median */
- 
-  cdf_dinvr (&status, x, &fx, &qleft, &qhi);
-
-  while ( status == 1 )
+  nsp_zsearch_init(*x, xinf, xsup, step, rstep, step_inc,
+		   atol, tol, monotonicity, &S);
+  do
     {
-      pp = nsp_kcdflim(*x, &qq); 
-      iter++;
+      pp = nsp_kcdflim(*x, &qq);
       if ( pq_flag )
 	fx = pp - p;
       else
 	fx = qq - q;
-      cdf_dinvr (&status, x, &fx, &qleft, &qhi);
+      ret_val = nsp_zsearch(x, fx, &S);
     }
+  while ( ret_val == EVAL_FX );
 
-/*   Sciprintf(" iter = %d\n",iter); */
-
-  if ( status == 0 )
+  if ( ret_val == SUCCESS )
     return OK;
   else
     return FAIL;
@@ -845,8 +843,7 @@ int nsp_invkcdflim(double p, double q, double *x)
 
 
 /* Marsaglia, Tang, K cdf for test comparizon and test purpose only 
- * (this will be removed after)
- */
+ * (this will be removed after)  */
 static void mMultiply(double *A,double *B,double *C,int m)
 {
   int i,j,k;
