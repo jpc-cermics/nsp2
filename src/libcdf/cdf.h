@@ -28,8 +28,8 @@ typedef enum {
 typedef struct _ZsearchStruct ZsearchStruct;
 struct _ZsearchStruct
 {
-  double small;
-  double big;
+  double zsmall;
+  double zbig;
   double absstp;
   double relstp;
   double stpmul;
@@ -41,7 +41,7 @@ struct _ZsearchStruct
   zsearch_state state;
 } ;
 
-extern int nsp_zsearch_init(double xinit, double small, double big, double absstp, double relstp, double stpmul, 
+extern int nsp_zsearch_init(double xinit, double zsmall, double zbig, double absstp, double relstp, double stpmul, 
 			    double abstol, double reltol, zsearch_monotonicity monotonicity, ZsearchStruct *S);
 extern zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S);
 /*

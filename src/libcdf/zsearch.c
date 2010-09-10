@@ -100,14 +100,14 @@
  *      }
  *       
  */
-int nsp_zsearch_init(double xinit, double small, double big, double absstp, double relstp, double stpmul, 
+int nsp_zsearch_init(double xinit, double zsmall, double zbig, double absstp, double relstp, double stpmul, 
 		     double abstol, double reltol, zsearch_monotonicity monotonicity, ZsearchStruct *S)
 {
-  if ( ! ( small < xinit && xinit < big ) )
+  if ( ! ( zsmall < xinit && xinit < zbig ) )
     return -1;
   S->xinit = xinit;
-  S->small = small;
-  S->big = big;
+  S->zsmall = zsmall;
+  S->zbig = zbig;
   S->absstp = absstp;
   S->relstp = relstp;
   S->stpmul = stpmul;
@@ -147,20 +147,20 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
       if ( S->monotonicity == UNKNOWN )
 	{
 	  S->state = DETERMINE_SEARCH_DIR;
-	  *x = Min( S->xinit + S->step, S->big);
+	  *x = Min( S->xinit + S->step, S->zbig);
 	}
       else if ( ( fx <= 0  &&  S->monotonicity == INCREASING ) ||
 		( fx >= 0  &&  S->monotonicity == DECREASING ) )
 	{
 	  S->state = SEARCH_RIGHT;
 	  S->xlb =  S->xinit; S->fxlb = S->fxinit;
-	  *x = Min(S->xinit + S->step, S->big);
+	  *x = Min(S->xinit + S->step, S->zbig);
 	}
       else
 	{
 	  S->state = SEARCH_LEFT;
 	  S->xhi = S->xinit; S->fxhi =  S->fxinit;
-	  *x = Max(  S->xinit - S->step, S->small);
+	  *x = Max(  S->xinit - S->step, S->zsmall);
 	}
       return EVAL_FX;
 
@@ -187,13 +187,13 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 	    {
 	      S->state = SEARCH_RIGHT;
 	      S->xlb = *x; S->fxlb = fx;
-	      *x = Min( *x + S->step, S->big);
+	      *x = Min( *x + S->step, S->zbig);
 	    }
 	  else
 	    {
 	      S->state = SEARCH_LEFT;
 	      S->xhi = S->xinit; S->fxhi = S->fxinit;
-	      *x = Max( S->xinit - S->step, S->small);
+	      *x = Max( S->xinit - S->step, S->zsmall);
 	    }
 	  return EVAL_FX;
 	}
@@ -209,11 +209,11 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 	}
       else
 	{
-	  if ( *x == S->big )
+	  if ( *x == S->zbig )
 	    return RIGHT_BOUND_EXCEEDED;
 	  /* ici on pourrait tester la non monotonie */
 	  S->xlb = *x; S->fxlb = fx;
-	  *x = Min( *x + S->step, S->big);
+	  *x = Min( *x + S->step, S->zbig);
 	  return EVAL_FX;
 	}
       
@@ -228,11 +228,11 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 	}
       else
 	{
-	  if ( *x == S->small )
+	  if ( *x == S->zsmall )
 	    return LEFT_BOUND_EXCEEDED;
 	  /* ici on pourrait tester la non monotonie */
 	  S->xhi = *x; S->fxhi = fx;
-	  *x = Max( *x - S->step, S->small);
+	  *x = Max( *x - S->step, S->zsmall);
 	  return EVAL_FX;
 	}
       

@@ -16,7 +16,7 @@ OBJSC = DcdInterf.obj dlamch.obj algdiv.obj alngam.obj \
 	dlnbet.obj dlngam.obj dstrem.obj dt1.obj dzror.obj \
 	erf.obj exparg.obj \
 	gam1.obj gaminv.obj gamln.obj gamln1.obj gamma.obj grat1.obj gratio.obj gsumln.obj \
-	ipmpar.obj psi.obj rcomp.obj rexp.obj rlog.obj rlog1.obj spmpar.obj stvaln.obj cumchn_new.obj
+	ipmpar.obj psi.obj rcomp.obj rexp.obj rlog.obj rlog1.obj spmpar.obj stvaln.obj cumchn_new.obj zsearch.obj
 
 OBJSF=
 
