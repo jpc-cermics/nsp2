@@ -1,4 +1,3 @@
-
 #include <gtk/gtk.h>
 #include <nsp/nsp.h>
 #define  Spawn_Private 
@@ -9,6 +8,11 @@
 
 #ifdef WIN32
 #include <windows.h>
+extern char *nsp_translate_file_name ( char *name, nsp_tcldstring *bufferPtr);
+static int nsp_spawn_showfile(const char *fname);
+static NspSMatrix *nsp_file2SMatrix(const char *fname);
+static int nsp_win32_system(const char *working_dir, const char *command,BOOL WaitInput, char *std_o,char *std_e, int *ret);
+static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs);
 #endif
 
 static nsp_string send_string_to_child(NspSpawn *H,const char *str);
@@ -748,7 +752,7 @@ static nsp_string send_string_to_child(NspSpawn *H,const char *str)
 
 int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 {
-  int ret =  RET_BUG;
+  int ret =  RET_BUG, w32mode= TRUE ;
   GSpawnFlags flags = G_SPAWN_SEARCH_PATH 
     | G_SPAWN_CHILD_INHERITS_STDIN;
   gboolean rep;
@@ -758,7 +762,9 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
   int exit_status;
   GError *error=NULL;
   NspSMatrix *S;
+
   nsp_option opts[] ={{"wd",string,NULLOBJ,-1},
+		      {"w32mode", s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckStdRhs(1,2);
   CheckLhs(0,4);
@@ -769,9 +775,14 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
   
-  if ( get_optional_args(stack, rhs, opt, opts, &working_directory) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &working_directory, &w32mode) == FAIL )
     return RET_BUG;
-  
+
+#ifdef WIN32 
+  if ( w32mode == TRUE ) 
+    return  int_g_spawn_sync_win32(stack,rhs,opt,lhs);
+#endif
+
   rep = g_spawn_sync(working_directory,S->S,NULL,flags,
 		     NULL,
 		     NULL,
@@ -779,6 +790,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 		     &standard_error,
 		     &exit_status,
 		     &error);
+
   if ( lhs <= 0 && rep == FALSE ) 
     {
       if (error != NULL) Scierror("Error: %s\n",error->message);
@@ -845,28 +857,126 @@ static void nsp_spawn_showstr(char *str,const char *msg)
   if ( str_utf8 != str )  nsp_string_destroy(&str_utf8);
 }
 
-/* 
-*/
+
+/**
+ * int_g_spawn_sync_win32:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * used for win32 to avoid the console 
+ * note that the given command is evaluated 
+ * by Comspec and io are redirected. Thus 
+ * this function is a bit different from the 
+ * previous one 
+ * 
+ * Returns: 
+ **/
 
 #ifdef WIN32
 
-extern char *nsp_translate_file_name ( char *name, nsp_tcldstring *bufferPtr);
-static NspSMatrix *nsp_file2SMatrix(const char *fname);
-
-int nsp_win32_system(char *command,BOOL WaitInput, int *ret)
+static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSMatrix *command_out;
+  char std_o[_MAX_PATH];
+  char std_e[_MAX_PATH];
+  char *TMPDir=NULL;
+  char *cmd;
+  int ret =  RET_BUG;
+  int w32mode= TRUE;
+  gboolean rep;
+  gchar *working_directory=NULL;
+  GError *error=NULL;
+  NspSMatrix *S;
+  nsp_option opts[] ={{"wd",string,NULLOBJ,-1},
+		      {"w32mode", s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(1,2);
+  CheckLhs(0,4);
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( S->mn == 0 ) 
+    {
+      Scierror("Error: first argument of %s should be of size > 0\n",NspFname(stack));
+      return RET_BUG;
+    }
+  
+  if ( get_optional_args(stack, rhs, opt, opts, &working_directory,&w32mode) == FAIL )
+    return RET_BUG;
+  
+  TMPDir=getenv("NSP_TMPDIR");
+  sprintf(std_o,"%s\\std_o",TMPDir);
+  sprintf(std_e,"%s\\std_e",TMPDir);
+
+  if (( cmd = nsp_smatrix_elts_concat(S," ",0," ",0))== NULL) 
+    return RET_BUG;
+  
+  rep = nsp_win32_system(working_directory,cmd,FALSE, std_o,std_e,&ret);
+  
+  if ( lhs <= 0 && rep == FAIL ) 
+    {
+      if (error != NULL) Scierror("Error: %s\n",error->message);
+      goto end;
+    }
+
+  if ( nsp_move_boolean(stack,1,(rep== OK) ? TRUE:FALSE)  == FAIL ) goto end;
+
+  if ( lhs <= 1 )
+    {
+      if ( nsp_spawn_showfile(std_o ) == FAIL) 	goto end;
+      if ( nsp_spawn_showfile(std_e )== FAIL)	goto end;
+      if (error != NULL) 
+	nsp_spawn_showstr(error->message, "cannot convert error message to utf8\n" );
+    }
+  if ( lhs >= 2)
+    {
+      /* return the standard output as second argument */
+      NspSMatrix *S = nsp_file2SMatrix(std_o);
+      if ( S == NULL) goto end;
+      MoveObj(stack,2,NSP_OBJECT(S));
+    }
+  if ( lhs >= 3 )
+    {
+      /* return the standard error as third argument */
+      NspSMatrix *S = nsp_file2SMatrix(std_e);
+      if ( S == NULL) goto end;
+      MoveObj(stack,3,NSP_OBJECT(S));
+    }
+  if ( lhs >= 4)
+    {
+      /* return the error message as third argument */
+      char *st = (error != NULL) ? error->message : "";
+      if ( nsp_spawn_move(stack,st,"xxx",4) == FAIL) goto end;
+    }
+  ret = Max(lhs,1);
+ end:
+  if (cmd != NULL) free(cmd);
+  if (error != NULL) g_error_free (error);
+  return ret;
+} 
+
+static int nsp_spawn_showfile(const char *fname)
+{
+  int i;
+  NspSMatrix *S = NULL;
+  if ((S = nsp_file2SMatrix(fname) ) == NULL ) return FAIL;
+  for ( i = 0 ; i < S->mn ; i++) 
+    Sciprintf("%s\n",S->S[i]);
+  nsp_smatrix_destroy(S);
+  return OK;
+}
+
+
+static int nsp_win32_system(const char *working_dir, const char *command,BOOL WaitInput, char *std_o,char *std_e, int *ret)
+{
+  const char *wd;
   /* /u unicode /a ansi */
   char cmd_args[]= "%s /a /c \"%s\" > %s 2> %s";
   char shellCmd[_MAX_PATH];
-  char std_o[_MAX_PATH];
-  char std_e[_MAX_PATH];
   char *CmdLine=NULL;
   PROCESS_INFORMATION piProcInfo; 
   STARTUPINFO siStartInfo;
   SECURITY_ATTRIBUTES saAttr; 
   DWORD ExitCode=0;
-  char *TMPDir=NULL;
   char *dirname=nsp_get_cwd();
   char *dirname_native = NULL;
   nsp_tcldstring buffer;
@@ -908,19 +1018,19 @@ int nsp_win32_system(char *command,BOOL WaitInput, int *ret)
   siStartInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);
 
   GetEnvironmentVariable("ComSpec", shellCmd, _MAX_PATH);
-  TMPDir=getenv("NSP_TMPDIR");
-  sprintf(std_o,"%s\\std_o",TMPDir);
-  sprintf(std_e,"%s\\std_e",TMPDir);
 
   CmdLine= malloc( (strlen(shellCmd)+strlen(command)+strlen(cmd_args)
 		    +strlen(std_o)+strlen(std_e)+1)*sizeof(char) );
   sprintf(CmdLine,cmd_args,shellCmd,command,std_o,std_e);
-
+#if 0 
   Sciprintf("running %s\n",CmdLine);
   Sciprintf("in native [%s]\n",dirname_native);
   Sciprintf("in %s\n",dirname);
+#endif 
 
-  if (CreateProcess(NULL, CmdLine, NULL, NULL, TRUE,0, NULL, dirname_native, &siStartInfo, &piProcInfo))
+  wd = ( working_dir != NULL) ? working_dir : dirname_native;
+
+  if (CreateProcess(NULL, CmdLine, NULL, NULL, TRUE,0, NULL, wd , &siStartInfo, &piProcInfo))
     {
       WaitForSingleObject(piProcInfo.hProcess,INFINITE);
 
@@ -933,6 +1043,7 @@ int nsp_win32_system(char *command,BOOL WaitInput, int *ret)
       if (CmdLine) { free(CmdLine);CmdLine=NULL;}
       nsp_tcldstring_free(&buffer);
       *ret =  ExitCode;
+      return OK;
     }
   else
     {
@@ -940,14 +1051,6 @@ int nsp_win32_system(char *command,BOOL WaitInput, int *ret)
       if (CmdLine) { free(CmdLine);CmdLine=NULL;}
       nsp_tcldstring_free(&buffer);
       return FAIL;
-    }
-
-  command_out = nsp_file2SMatrix(std_o);
-  if ( command_out != NULL) 
-    {
-      int i;
-      for (i=0; i < command_out->mn ; i++)
-	Sciprintf("%s\n",command_out->S[i]);
     }
   return OK;
 }

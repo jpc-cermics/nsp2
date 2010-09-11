@@ -123,34 +123,15 @@ static int int_toc(Stack stack,int rhs,int opt,int lhs)
  * Interface for system(str)
  */
 
-#ifdef WIN32
-extern int nsp_win32_system(char *command,BOOL WaitInput, int *ret);
-#endif 
-
 static int int_system(Stack stack,int rhs,int opt,int lhs) 
 {
-#ifdef WIN32
-  int ret;
-#endif 
   NspObject *OM;
   int rep;
   char *command;
   CheckRhs(1,2);
   CheckLhs(0,1);
   if ((command = GetString(stack,1)) == (char*)0) return RET_BUG;
-#ifdef WIN32
-  if ( rhs == 2 ) 
-    {
-      rep = nsp_win32_system(command,FALSE,&ret);
-      if ( rep == OK ) rep = ret;
-    }
-  else
-    {
-      rep = system(command);
-    }
-#else 
   rep = system(command);
-#endif 
   if ( (OM=nsp_create_object_from_double(NVOID,rep)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1, OM);
   return 1;
