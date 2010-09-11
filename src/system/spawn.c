@@ -734,7 +734,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
   gboolean rep;
   gchar *working_directory=NULL;
   gchar *standard_output=NULL;
-  gchar *standard_error=NULL;
+  gchar *standard_error=NULL; 
   int exit_status;
   GError *error=NULL;
   NspSMatrix *S;
@@ -749,7 +749,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: first argument of %s should be of size > 0\n",NspFname(stack));
       return RET_BUG;
     }
-
+  
   if ( get_optional_args(stack, rhs, opt, opts, &working_directory) == FAIL )
     return RET_BUG;
   
@@ -760,8 +760,8 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 		     &standard_error,
 		     &exit_status,
 		     &error);
-  
-  if ( lhs <= 0 && rep == 0) 
+
+  if ( lhs <= 0 && rep == FALSE) 
     {
       if (error != NULL) Scierror("Error: %s\n",error->message);
       return RET_BUG;
@@ -771,10 +771,30 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 
   if ( lhs <= 1 )
     {
-      if (standard_output != NULL) Sciprintf("%s",standard_output );
+      if (standard_output != NULL) 
+	{
+	  gchar *standard_output_utf8= nsp_string_to_utf8(standard_output);
+	  Sciprintf("%s",(standard_output_utf8 != NULL) ? standard_output_utf8 : 
+		    "cannot convert standard output to utf8\n" );
+	  if ( standard_output_utf8 != standard_output) 
+	    nsp_string_destroy(&standard_output_utf8);
+	}
       if (standard_error != NULL && strlen(standard_error) != 0)
-	Sciprintf("%s",standard_error );
-      if (error != NULL) Sciprintf("%s\n",error->message);
+	{
+	  gchar *standard_error_utf8= nsp_string_to_utf8(standard_error);
+	  Sciprintf("%s",(standard_error_utf8 != NULL) ? standard_error_utf8 : 
+		    "cannot convert standard error to utf8\n" );
+	  if ( standard_error_utf8 != standard_error) 
+	    nsp_string_destroy(&standard_error_utf8);
+	}
+      if (error != NULL) 
+	{
+	  gchar *err_utf8 = nsp_string_to_utf8(error->message);
+	  Sciprintf("%s",(err_utf8 != NULL) ? err_utf8: 
+		    "cannot convert error message to utf8\n" );
+	  if ( err_utf8 != error->message) 
+	    nsp_string_destroy(&err_utf8);
+	}
     }
 
   if ( lhs >= 2)
@@ -784,6 +804,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
       /* return the standard output */
       if ((R=nsp_smatrix_split_string(st,"\n",0))==NULL) return RET_BUG;
       R->m=R->n;R->n=1;
+      if ( nsp_smatrix_to_utf8(R) == FAIL ) return RET_BUG;
       MoveObj(stack,2,NSP_OBJECT(R));
     }
   if ( lhs >= 3 )
@@ -793,13 +814,17 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
       /* return the standard error */
       if ((R=nsp_smatrix_split_string(st,"\n",0))==NULL) return RET_BUG;
       R->m=R->n;R->n=1;
+      if ( nsp_smatrix_to_utf8(R) == FAIL ) return RET_BUG;
       MoveObj(stack,3,NSP_OBJECT(R));
     }
   if ( lhs >= 4)
     {
+      NspSMatrix *R;
       char *st = (error != NULL) ? error->message : "";
+      if ((R=nsp_smatrix_split_string(st,"xxx",0))==NULL) return RET_BUG;
+      R->m=R->n;R->n=1;
+      if ( nsp_smatrix_to_utf8(R) == FAIL ) return RET_BUG;
       if ( nsp_move_string(stack,4, st,-1) ==FAIL) return RET_BUG;
-
     }
   if (standard_output != NULL) g_free(standard_output);
   if (standard_error != NULL) g_free(standard_error);
@@ -839,7 +864,7 @@ int int_g_spawn_async(Stack stack, int rhs, int opt, int lhs)
 		      NULL, NULL, &pid,  &error);
   g_spawn_close_pid(pid);
 
-  if ( lhs <= 0 && rep == 0) 
+  if ( lhs <= 0 && rep == FALSE ) 
     {
       if (error != NULL) Scierror("Error: %s\n",error->message);
       return RET_BUG;
