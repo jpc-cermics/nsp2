@@ -1,17 +1,20 @@
 
 #include <gtk/gtk.h>
+#include <nsp/nsp.h>
 #define  Spawn_Private 
-#include <nsp/object.h> 
-#include <nsp/matrix.h> 
-#include <nsp/bmatrix.h> 
-#include <nsp/smatrix.h> 
+#include <nsp/objects.h> 
 #include <nsp/interf.h> 
-#include <nsp/hobj.h> 
-#include <nsp/type.h> 
+#include <nsp/nsptcl.h>
 #include "spawn.h"
+
+#ifdef WIN32
+#include <windows.h>
+#endif
 
 static nsp_string send_string_to_child(NspSpawn *H,const char *str);
 static int nsp_g_spawn_cmd(char **cmd,NspSpawn *H);
+static int nsp_spawn_move(Stack stack,const char *str,const char *split_str, int pos);
+static void nsp_spawn_showstr(char *str,const char *msg) ;
 
 /* 
  * NspSpawn inherits from NspObject 
@@ -722,13 +725,30 @@ static nsp_string send_string_to_child(NspSpawn *H,const char *str)
   return res;
 }
 
-
-/* interface to the g_spawn_sync function 
+/**
+ * int_g_spawn_sync:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface to g_spawn_sync(). Note that we do not get 
+ * control until the spawned process terminate. Thus it 
+ * could be usefull to make an other function to at least 
+ * check for gtk_events while the spawned process is running.
  *
- */
+ * On windows the functions have the following problems 
+ * - a console will pop up for non gui programs 
+ * - in some situation the standard output or standard error 
+ *   are not collected. This happens for example when 
+ *   spawning nmake. 
+ * 
+ * Returns: 
+ **/
 
 int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 {
+  int ret =  RET_BUG;
   GSpawnFlags flags = G_SPAWN_SEARCH_PATH 
     | G_SPAWN_CHILD_INHERITS_STDIN;
   gboolean rep;
@@ -740,7 +760,6 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S;
   nsp_option opts[] ={{"wd",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  
   CheckStdRhs(1,2);
   CheckLhs(0,4);
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
@@ -760,8 +779,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 		     &standard_error,
 		     &exit_status,
 		     &error);
-
-  if ( lhs <= 0 && rep == FALSE) 
+  if ( lhs <= 0 && rep == FALSE ) 
     {
       if (error != NULL) Scierror("Error: %s\n",error->message);
       return RET_BUG;
@@ -771,70 +789,210 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 
   if ( lhs <= 1 )
     {
-      if (standard_output != NULL) 
-	{
-	  gchar *standard_output_utf8= nsp_string_to_utf8(standard_output);
-	  Sciprintf("%s",(standard_output_utf8 != NULL) ? standard_output_utf8 : 
-		    "cannot convert standard output to utf8\n" );
-	  if ( standard_output_utf8 != standard_output) 
-	    nsp_string_destroy(&standard_output_utf8);
-	}
-      if (standard_error != NULL && strlen(standard_error) != 0)
-	{
-	  gchar *standard_error_utf8= nsp_string_to_utf8(standard_error);
-	  Sciprintf("%s",(standard_error_utf8 != NULL) ? standard_error_utf8 : 
-		    "cannot convert standard error to utf8\n" );
-	  if ( standard_error_utf8 != standard_error) 
-	    nsp_string_destroy(&standard_error_utf8);
-	}
+      nsp_spawn_showstr(standard_output, "cannot convert standard output to utf8\n" );
+      nsp_spawn_showstr(standard_error, "cannot convert standard error to utf8\n" );
       if (error != NULL) 
-	{
-	  gchar *err_utf8 = nsp_string_to_utf8(error->message);
-	  Sciprintf("%s",(err_utf8 != NULL) ? err_utf8: 
-		    "cannot convert error message to utf8\n" );
-	  if ( err_utf8 != error->message) 
-	    nsp_string_destroy(&err_utf8);
-	}
+	nsp_spawn_showstr(error->message, "cannot convert error message to utf8\n" );
     }
 
   if ( lhs >= 2)
     {
-      NspSMatrix *R;
+      /* return standard_output as second argument */
       char *st = (standard_output != NULL) ? standard_output : "";
-      /* return the standard output */
-      if ((R=nsp_smatrix_split_string(st,"\n",0))==NULL) return RET_BUG;
-      R->m=R->n;R->n=1;
-      if ( nsp_smatrix_to_utf8(R) == FAIL ) return RET_BUG;
-      MoveObj(stack,2,NSP_OBJECT(R));
+      if ( nsp_spawn_move(stack,st,"\n",2) == FAIL) goto end;
     }
   if ( lhs >= 3 )
     {
-      NspSMatrix *R;
+      /* return the standard error as third argument */
       char *st = (standard_error != NULL) ? standard_error : "";
-      /* return the standard error */
-      if ((R=nsp_smatrix_split_string(st,"\n",0))==NULL) return RET_BUG;
-      R->m=R->n;R->n=1;
-      if ( nsp_smatrix_to_utf8(R) == FAIL ) return RET_BUG;
-      MoveObj(stack,3,NSP_OBJECT(R));
+      if ( nsp_spawn_move(stack,st,"\n",3) == FAIL) goto end;
     }
   if ( lhs >= 4)
     {
-      NspSMatrix *R;
+      /* return the error message as third argument */
       char *st = (error != NULL) ? error->message : "";
-      if ((R=nsp_smatrix_split_string(st,"xxx",0))==NULL) return RET_BUG;
-      R->m=R->n;R->n=1;
-      if ( nsp_smatrix_to_utf8(R) == FAIL ) return RET_BUG;
-      if ( nsp_move_string(stack,4, st,-1) ==FAIL) return RET_BUG;
+      if ( nsp_spawn_move(stack,st,"xxx",4) == FAIL) goto end;
     }
+  ret = Max(lhs,1);
+ end:
   if (standard_output != NULL) g_free(standard_output);
   if (standard_error != NULL) g_free(standard_error);
-  if ( error != NULL) g_error_free (error);
-  return Max(lhs,1);
+  if (error != NULL) g_error_free (error);
+  return ret;
 } 
 
-
-/* interface to the g_spawn_async function 
+/* convert a string to a utf8 string matrix 
+ * then move the matrix on the stack 
  */
+
+static int nsp_spawn_move(Stack stack,const char *str,const char *split_str, int pos)
+{
+  NspSMatrix *R;
+  if ((R=nsp_smatrix_split_string(str,split_str,0))==NULL) 
+    return FAIL;
+  R->m=R->n;R->n=1;
+  if ( nsp_smatrix_to_utf8(R) == FAIL ) return FAIL;
+  MoveObj(stack,pos,NSP_OBJECT(R));
+  return OK;
+}
+
+static void nsp_spawn_showstr(char *str,const char *msg) 
+{
+  gchar *str_utf8;
+  if (str == NULL || strlen(str) == 0 ) return;
+  str_utf8= nsp_string_to_utf8(str);
+  Sciprintf("%s",(str_utf8 != NULL) ? str_utf8 : msg);
+  if ( str_utf8 != str )  nsp_string_destroy(&str_utf8);
+}
+
+/* 
+*/
+
+#ifdef WIN32
+
+extern char *nsp_translate_file_name ( char *name, nsp_tcldstring *bufferPtr);
+static NspSMatrix *nsp_file2SMatrix(const char *fname);
+
+int nsp_win32_system(char *command,BOOL WaitInput, int *ret)
+{
+  NspSMatrix *command_out;
+  /* /u unicode /a ansi */
+  char cmd_args[]= "%s /a /c \"%s\" > %s 2> %s";
+  char shellCmd[_MAX_PATH];
+  char std_o[_MAX_PATH];
+  char std_e[_MAX_PATH];
+  char *CmdLine=NULL;
+  PROCESS_INFORMATION piProcInfo; 
+  STARTUPINFO siStartInfo;
+  SECURITY_ATTRIBUTES saAttr; 
+  DWORD ExitCode=0;
+  char *TMPDir=NULL;
+  char *dirname=nsp_get_cwd();
+  char *dirname_native = NULL;
+  nsp_tcldstring buffer;
+
+  /* take care that dirname_native is an adress 
+   * in buffer. buffer must be freed when dirname_native 
+   * is no more used.
+   * Note also that changing to dirname seams not to 
+   * work when using wine 1.1 !
+   */
+  dirname_native = nsp_translate_file_name(dirname,&buffer);
+
+  if (dirname_native == NULL)
+    {
+      Scierror("Failed to convert to native name %s\n",nsp_get_cwd());
+      return FAIL;
+    }
+  saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
+  saAttr.bInheritHandle = TRUE; 
+  saAttr.lpSecurityDescriptor = NULL; 
+
+  ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
+  ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
+
+  siStartInfo.cb = sizeof(STARTUPINFO); 
+  siStartInfo.dwFlags      = STARTF_USESHOWWINDOW | STARTF_USESTDHANDLES;
+  siStartInfo.wShowWindow  = SW_HIDE; /* Hide the console window */
+  
+  if (WaitInput)
+    {
+      siStartInfo.hStdInput=GetStdHandle(STD_INPUT_HANDLE);
+    }
+  else
+    {
+      siStartInfo.hStdInput=NULL;
+    }
+
+  siStartInfo.hStdOutput = GetStdHandle(STD_OUTPUT_HANDLE);
+  siStartInfo.hStdError = GetStdHandle(STD_ERROR_HANDLE);
+
+  GetEnvironmentVariable("ComSpec", shellCmd, _MAX_PATH);
+  TMPDir=getenv("NSP_TMPDIR");
+  sprintf(std_o,"%s\\std_o",TMPDir);
+  sprintf(std_e,"%s\\std_e",TMPDir);
+
+  CmdLine= malloc( (strlen(shellCmd)+strlen(command)+strlen(cmd_args)
+		    +strlen(std_o)+strlen(std_e)+1)*sizeof(char) );
+  sprintf(CmdLine,cmd_args,shellCmd,command,std_o,std_e);
+
+  Sciprintf("running %s\n",CmdLine);
+  Sciprintf("in native [%s]\n",dirname_native);
+  Sciprintf("in %s\n",dirname);
+
+  if (CreateProcess(NULL, CmdLine, NULL, NULL, TRUE,0, NULL, dirname_native, &siStartInfo, &piProcInfo))
+    {
+      WaitForSingleObject(piProcInfo.hProcess,INFINITE);
+
+      if ( GetExitCodeProcess(piProcInfo.hProcess,&ExitCode) == STILL_ACTIVE )
+	{
+	  TerminateProcess(piProcInfo.hProcess,0);
+	}
+
+      CloseHandle(piProcInfo.hProcess);
+      if (CmdLine) { free(CmdLine);CmdLine=NULL;}
+      nsp_tcldstring_free(&buffer);
+      *ret =  ExitCode;
+    }
+  else
+    {
+      CloseHandle(piProcInfo.hProcess);
+      if (CmdLine) { free(CmdLine);CmdLine=NULL;}
+      nsp_tcldstring_free(&buffer);
+      return FAIL;
+    }
+
+  command_out = nsp_file2SMatrix(std_o);
+  if ( command_out != NULL) 
+    {
+      int i;
+      for (i=0; i < command_out->mn ; i++)
+	Sciprintf("%s\n",command_out->S[i]);
+    }
+  return OK;
+}
+
+
+static NspSMatrix *nsp_file2SMatrix(const char *fname)
+{
+  NspSMatrix *S = NULL;
+  NspFile *F=NULL;
+  if ((F=nsp_file_open(fname,"rb",FALSE,TRUE)) == NULLSCIFILE)
+    {
+      Scierror("Failed to open file %s\n",fname);
+      return NULL;
+    }
+  if ( nsp_read_lines(F,&S,-1) == FAIL)
+    {
+      Scierror("Failed to read contents of file %s\n",fname);
+      return NULL;
+    }
+  if ( nsp_smatrix_to_utf8(S) == FAIL ) 
+    {
+      Scierror("Failed to converts contents of file %s to utf8\n",fname);
+      return NULL;
+    }
+  return S;
+}
+
+
+
+#endif
+
+
+
+
+/**
+ * int_g_spawn_async:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface to the g_spawn_async function 
+ *
+ * Returns: 
+ **/
 
 int int_g_spawn_async(Stack stack, int rhs, int opt, int lhs)
 {

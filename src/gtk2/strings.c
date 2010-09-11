@@ -78,9 +78,12 @@ NspSMatrix* nsp_smatrix_convert(const char *name,NspSMatrix *A,const char *to_co
   return(Loc);
 }
 
+#if 1
 #define DEBUG_STR(x) 
-/* #define DEBUG_STR(x) sciprint(x) */
-  
+#else 
+#define DEBUG_STR(x) Sciprintf(x) 
+#endif
+
 /**
  * nsp_smatrix_to_utf8:
  * @A: a #NspSMatrix 
@@ -133,7 +136,8 @@ nsp_string nsp_string_to_utf8(nsp_string str)
     }
   else
     {
-      if (g_get_charset (NULL)) 
+      const char *charset_cl=NULL;
+      if (g_get_charset (&charset_cl)) 
 	{
 	  DEBUG_STR("xname: gtk_window_set_title is used with a non utf8 string and your locale is UTF8\r\n");
 	  DEBUG_STR("       assuming that your string is ISO-8859-15\r\n");
@@ -142,6 +146,7 @@ nsp_string nsp_string_to_utf8(nsp_string str)
 	}
       else 
 	{
+	  DEBUG_STR("xnam: the locale charset : ");DEBUG_STR(charset_cl);DEBUG_STR("\r\n");
 	  str_utf8 =g_locale_to_utf8 (str, -1, NULL, NULL, NULL);
 	  DEBUG_STR("xname: from locale to UTF8\r\n");
 	  if ( str_utf8 == NULL) DEBUG_STR("xname: convertion to UTF-8 failed\r\n");
