@@ -101,7 +101,7 @@ extern NspFile *GetSciFileCopy (Stack stack, int i);
 extern NspFile *GetSciFile (Stack stack, int i);
 
 /* File.c */
-NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on);
+NspFile *nsp_file_open(const char *fname, char *mode,int xdr_on,int swap_on);
 extern int nsp_file_close(NspFile *F);
 extern NspFile *nsp_file_open_xdr_r(const char *fname);
 extern int nsp_file_close_xdr_r(NspFile *F);

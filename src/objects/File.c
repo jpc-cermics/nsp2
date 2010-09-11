@@ -87,7 +87,7 @@
  * Return value: a #Nspfile or %NULLSCIFILE
  **/
 
-NspFile *nsp_file_open(char *fname, char *mode,int xdr_on,int swap_on)
+NspFile *nsp_file_open(const char *fname, char *mode,int xdr_on,int swap_on)
 {
   FILE *f;
   NspFile *F;
