@@ -907,7 +907,7 @@ static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs)
   sprintf(std_o,"%s\\std_o",TMPDir);
   sprintf(std_e,"%s\\std_e",TMPDir);
 
-  if (( cmd = nsp_smatrix_elts_concat(S," ",0," ",0))== NULL) 
+  if (( cmd = nsp_smatrix_elts_concat(S," ",1," ",1))== NULL) 
     return RET_BUG;
   
   rep = nsp_win32_system(working_directory,cmd,FALSE, std_o,std_e,&ret);
