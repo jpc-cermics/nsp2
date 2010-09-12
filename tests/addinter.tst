@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*-
-// Copyright (C) 2005 J.P Chancelier Cermics/Enpc
+// Copyright (C) 2005-2010 J.P Chancelier Cermics/Enpc
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -43,10 +43,18 @@ rep=system('../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean > /d
 if c_link('libaddinter_Interf') then pause,end
 
 // check if we can access nsp symbols 
-// with dynamic linking.
-// 
-rep=execstr('ilib=link(''nsp'',''nsp_matrix_print'')',errcatch=%t);
-if rep == %f then pause,end
-// access other symbols through ilib 
-link(ilib,'nsp_matrix_info');
-ulink(ilib);
+// with dynamic linking. 
+// we should change internal code for 
+// %win32 to enable "nsp" 
+
+if %win32 then 
+  nsplib = 'NSP/bin/libnsp.dll';
+  rep = execstr('ilib=link(nsplib,''nsp_matrix_print'')',errcatch=%t);
+else
+  rep=execstr('ilib=link(''nsp'',''nsp_matrix_print'')',errcatch=%t);
+  if rep == %f then pause,end
+  // access other symbols through ilib 
+  link(ilib,'nsp_matrix_info');
+  ulink(ilib);
+end 
+
