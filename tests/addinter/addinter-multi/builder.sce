@@ -30,6 +30,20 @@ table2 =['f2',		'fmex2',	'cmex';
 	 
 table = list(table1,table2);
 
-ilib_build(ilib_name,table,files,libs)
+
+if %win32 then 
+  msvc = msvc_get_compiler();
+  if msvc <> "unknown" then 
+    ldflags = "lib/libutil.lib" 
+  else
+    // cross compilation 
+    ldflags = "lib/libutil.la" 
+  end
+end
+
+// do not modify below 
+// ----------------------------------------------
+ilib_build(ilib_name,table,files,libs,ldflags=ldflags)
+
 
 

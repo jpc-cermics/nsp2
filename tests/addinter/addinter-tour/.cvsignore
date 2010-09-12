@@ -2,5 +2,7 @@
 .nsp_history
 Makelib
 *.lo
+*.dll
 *.la
 builder.dia
+loader.sce 
