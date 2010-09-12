@@ -30,6 +30,16 @@ table =['f1',		'fmex1',	'cmex';
 	'f3',		'foof',		'Fmex';
 	'f4',		'int_f4'        'csci'];
 
+if %win32 then 
+  msvc = msvc_get_compiler();
+  if msvc <> "unknown" then 
+    ldflags = "lib/libutil.lib" 
+  else
+    // cross compilation 
+    ldflags = "lib/libutil.la" 
+  end
+end
+
 // do not modify below 
 // ----------------------------------------------
 ilib_build(ilib_name,table,files,libs)
