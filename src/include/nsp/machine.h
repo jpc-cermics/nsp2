@@ -300,17 +300,28 @@ typedef int integer;
 /* use relative exec directories */
 #define UPDATE_EXEC_DIR 1
 
-
-#if defined(WIN32) || defined(__MINGW32__)
-/* to be used when compiling libraries which need 
- * to import nsp data.
- */
+#if defined(__MSC__) && defined(_MSC_VER)
 #define IMPORT extern  __declspec (dllimport)
 #define EXPORT __declspec (dllexport) 
+#elif defined(__GNUC__) && defined(__declspec)
+#define IMPORT extern __attribute__ ((__dllimport__))
+#define EXPORT extern 
 #else 
 #define IMPORT extern
-#define EXPORT 
+#define EXPORT extern
 #endif
+
+/* symbols in libnsp which are to be exported 
+ * can be preceeded by INLIBNSP. 
+ * This is only usefull for data that could possibly 
+ * be used in shared libraries 
+ */
+
+#if defined(FORDLL) 
+#define INLIBNSP IMPORT
+#else 
+#define INLIBNSP EXPORT
+#endif 
 
 /* msvc compiler */
 

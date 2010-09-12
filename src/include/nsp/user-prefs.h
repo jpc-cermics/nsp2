@@ -1,6 +1,8 @@
 #ifndef NSP_INC_USER_PREFS
 #define NSP_INC_USER_PREFS
 
+#include <nsp/machine.h>
+
 /* FIXME: 
  *   should be moved to scilab data 
  */
@@ -23,7 +25,7 @@ struct _user_preferences
   int color;            /* use terminal coded colors */
 };
 
-extern user_preferences user_pref;
+INLIBNSP user_preferences user_pref;
 
 #endif 
 

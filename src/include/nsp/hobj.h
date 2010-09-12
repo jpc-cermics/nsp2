@@ -7,8 +7,8 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
-#include "nsp/sciio.h" 
-
+#include <nsp/machine.h>
+#include <nsp/sciio.h>
 #include <nsp/objectf.h>
 
 /*
@@ -33,7 +33,7 @@ struct _NspHobj {
   NspObject *O;        /* pointed object */
 };
 
-extern int nsp_type_hobj_id;
+INLIBNSP int nsp_type_hobj_id;
 extern NspTypeHobj *nsp_type_hobj;
 
 NspTypeHobj *new_type_hobj(type_mode mode);
