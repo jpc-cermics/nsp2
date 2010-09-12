@@ -79,7 +79,7 @@ struct _view_history {
   int history_size, dir ; /* dir = 0,1,-1 */
 };
 
-#define MAX_HISTORY_SIZE 10
+#define MAX_HISTORY_SIZE 512
 
 typedef struct _Buffer Buffer;
 typedef struct _View View;
