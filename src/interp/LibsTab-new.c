@@ -26,15 +26,16 @@
 #include <stdio.h>
 #include <glib.h>
 
-#include "nsp/machine.h"
-#include "nsp/math.h" 
-#include "nsp/plisttoken.h" /** for name_maxl **/
-#include "nsp/object.h" 
-#include "nsp/interf.h"
-#include "nsp/datas.h"
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/function.h>
+#include <nsp/hash.h> 
+
+#include <nsp/plisttoken.h> /** for name_maxl **/
+#include <nsp/interf.h>
+#include <nsp/datas.h>
 #include <nsp/system.h> /* FSIZE+1 */
-#include "Functions.h"
-#include "nsp/seval.h"
+#include <nsp/seval.h>
 
 #include "../functions/FunTab.h"
 #include "../functions/callfunc.h" 
@@ -42,6 +43,8 @@
 
 void nsp_init_macro_table(void);
 
+static void nsp_remove_macro_or_func(const char *name,int type);
+static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj);
 static NspSMatrix *LibDirs = NULLSMAT;
 
 /**
@@ -67,10 +70,9 @@ const char *nsp_get_libdir(int num)
 int nsp_enter_macro(const char *str,int dir)
 {
   NspPList *loc; 
-  if ((loc = NspPListCreate(str,NULL,NULL)) == NULL) 
-    return FAIL;
+  if ((loc = NspPListCreate(str,NULL,NULL)) == NULL) return FAIL;
   loc->dir = dir;
-  return  nsp_hash_enter(nsp_functions_table,NSP_OBJECT(loc));
+  return  nsp_hash_enter_multiple(nsp_functions_table,NSP_OBJECT(loc));
 }
 
 
@@ -225,7 +227,7 @@ int nsp_delete_macros(const char *dirname)
 	      char name[NAME_MAXL];
 	      strcpy(name,fname);
 	      name[strlen(fname)-4]='\0';
-	      nsp_hash_remove(nsp_functions_table,name);
+	      nsp_remove_macro_or_func(name,0);
 	    }
 	}
     }
@@ -374,7 +376,7 @@ int  nsp_enter_function(const char *str, int Int, int Num)
   NspFunction *loc;
   if ((loc = function_create(str,str,Int,Num,0,NULL))== NULL)
     return FAIL;
-  return  nsp_hash_enter(nsp_functions_table,NSP_OBJECT(loc));
+  return  nsp_hash_enter_multiple(nsp_functions_table,NSP_OBJECT(loc));
 }
 
 /**
@@ -386,7 +388,7 @@ int  nsp_enter_function(const char *str, int Int, int Num)
 
 void nsp_delete_function(const char *str)
 {
-  nsp_hash_remove(nsp_functions_table,str);
+  nsp_remove_macro_or_func(str,1);
 }
 
 /**
@@ -531,8 +533,20 @@ void nsp_init_function_table(void)
 }
 
 
+/**
+ * nsp_find_macro_or_func:
+ * @str: a string 
+ * @type: an integer pointer 
+ * 
+ * searches the function table for a function or a macro named 
+ * @str. If multiple definitions exists for a function only 
+ * the first one is returned. @type is set to 1 for functions 
+ * and to zero for macros.
+ * 
+ * Returns: a #NspObject or %NULLOBJ
+ **/
 
-NspObject *nsp_find_macro_or_func(char *str,int *type)
+NspObject *nsp_find_macro_or_func(const char *str,int *type)
 {
   NspObject *Ob;
   NspPList *M;
@@ -540,7 +554,14 @@ NspObject *nsp_find_macro_or_func(char *str,int *type)
   NspFile *F;
   char Name[FSIZE+1];
   if ( nsp_hash_find(nsp_functions_table,str,&Ob) == FAIL) 
-    return NULLOBJ;
+    {
+      return NULLOBJ;
+    }
+  if ( IsList(Ob) ) 
+    {
+      Ob = nsp_list_get_element((NspList *) Ob,0);
+      if ( Ob == NULLOBJ ) return NULLOBJ;
+    }
   if ( IsFunction(Ob) )
     {
       *type=1;
@@ -586,4 +607,73 @@ NspObject *nsp_find_macro_or_func(char *str,int *type)
       Sciprintf("Macro %s NOT found in %s/%s.bin !\n",str,LibDirs->S[M->dir],str);
     }
   return NULLOBJ;
+}
+
+/* XXX: should be improved not to insert twice the same def 
+ *
+ */
+
+static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj) 
+{
+  NspObject *O1;
+  const char *name= nsp_object_get_name(Obj);
+  if ( nsp_hash_find(nsp_functions_table,name,&O1) == FAIL)
+    {
+      return nsp_hash_enter(nsp_functions_table,NSP_OBJECT(Obj));
+    }
+  if ( IsList(O1) )
+    {
+      /* just add the new definition */
+      if ( nsp_list_insert((NspList *) O1,Obj,0) == FAIL) return FAIL;
+    }
+  else
+    {
+      /* create a list and insert old and new definition */
+      NspList* L=nsp_list_create(name);
+      if ( L == NULL) return FAIL;
+      if ((O1 = nsp_object_copy_with_name(O1)) == NULL) return FAIL;
+      if ( nsp_list_insert(L,O1,0) == FAIL) return FAIL;
+      if ( nsp_list_insert(L,Obj,0) == FAIL) return FAIL;
+      return nsp_hash_enter(H,NSP_OBJECT(L));
+    }
+  return OK;
+}
+
+
+static void nsp_remove_macro_or_func(const char *name,int type)
+{
+  NspObject *O1;
+  if ( nsp_hash_find(nsp_functions_table,name,&O1) == FAIL)
+    return;
+  if ( IsFunction(O1)) 
+    {
+      /* function */
+      if ( type == 1 ) 
+	nsp_hash_remove(nsp_functions_table,name);
+    }
+  else if (IsNspPList(O1))
+    {
+      /* macro */
+      if ( type == 0) 
+	nsp_hash_remove(nsp_functions_table,name);
+    }
+  else if ( IsList(O1) )
+    {
+      NspObject *Ob;
+      Ob = nsp_list_get_element((NspList *) O1,0);
+      if ( IsFunction(Ob) ) 
+	{
+	  if ( type == 1) 
+	    nsp_list_remove_first((NspList *) O1);
+	}
+      else
+	{
+	  if ( type == 0 )
+	    nsp_list_remove_first((NspList *) O1);
+	}
+      if ( nsp_list_length((NspList *) O1) == 0 )
+	{
+	  nsp_hash_remove(nsp_functions_table,name);
+	}
+    }
 }
