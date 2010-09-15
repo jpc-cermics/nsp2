@@ -99,7 +99,7 @@ int C2F(xerrwv)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, in
 	}
     }
   /* abort the run if iert = 2.*/
-  if ( *iert == 2 ) C2F(ierode).iero = 1;
+  if ( *iert == 2 ) ierode_1.iero = 1;
   return 0;
 }
 
@@ -146,7 +146,7 @@ int C2F(xerrwvb)(char *msg, int *nmes, int *nerr, int *iert, int *ni, int *i1, i
     }
   
   /* abort the run if iert = 2.*/
-  if ( *iert == 2 ) C2F(ierode).iero = 1;
+  if ( *iert == 2 ) ierode_1.iero = 1;
   return 0;
 }
 

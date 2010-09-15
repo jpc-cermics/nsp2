@@ -305,10 +305,10 @@ typedef int integer;
 #define EXPORT __declspec (dllexport) 
 #elif defined(__GNUC__) && defined(__declspec)
 #define IMPORT extern __attribute__ ((__dllimport__))
-#define EXPORT
+#define EXPORT extern 
 #else 
 #define IMPORT extern
-#define EXPORT
+#define EXPORT extern
 #endif
 
 /* symbols in libnsp which are to be exported 

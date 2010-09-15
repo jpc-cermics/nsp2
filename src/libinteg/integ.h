@@ -1,11 +1,12 @@
 #ifndef INTEG_H
 #define INTEG_H
 
-#include "nsp/math.h"
-#include "nsp/sciio.h"
-#include "nsp/interf.h"
-#include "nsp/blas.h"
-#include "nsp/ode_solvers.h"
+#include <nsp/math.h>
+#include <nsp/machine.h>
+#include <nsp/sciio.h>
+#include <nsp/interf.h>
+#include <nsp/blas.h>
+#include <nsp/ode_solvers.h>
 
 #define FORTRAN_NAMES
 
@@ -550,8 +551,9 @@ struct _ode_err
   int iero;
 };
 
-extern ode_err ierode_;
-#define ierode_1 ierode_
+/* export this symbol */
+INLIBNSP ode_err ierode_;
+#define ierode_1 C2F(ierode)
 
 typedef struct _ode_callerid ode_callerid;
 struct _ode_callerid 

@@ -10,8 +10,8 @@ ode_lsa lsa001_;
 ode_lsr lsr001_;
 ode_callerid callerid_;
 
-/* we export this symbol */
-EXPORT ode_err ierode_;
+/* this symbol is exported see integ.h */
+ode_err ierode_;
 
 
 /* Table of constant values */
