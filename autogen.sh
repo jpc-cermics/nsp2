@@ -1,9 +1,17 @@
-#!/bin/sh
+#!/bin/bash
 # Run this to generate all the initial makefiles, etc.
 
 ACLOCAL_FLAGS="-I config"
 srcdir=`dirname $0`
 test -z "$srcdir" && srcdir=.
+
+if test `uname -s` = Darwin ; then
+    LIBTOOL=glibtool
+    LIBTOOLIZE=glibtoolize
+else
+    LIBTOOL=glibtool
+    LIBTOOLIZE=glibtoolize
+fi
 
 DIE=0
 
@@ -45,7 +53,7 @@ DIE=0
 }
 
 (grep "^A[CM]_PROG_LIBTOOL" $srcdir/configure.in >/dev/null) && {
-  (libtool --version) < /dev/null > /dev/null 2>&1 || {
+  ("$LIBTOOL" --version) < /dev/null > /dev/null 2>&1  || {
     echo
     echo "**Error**: You must have \`libtool' installed."
     echo "You can get it from: ftp://ftp.gnu.org/pub/gnu/"
@@ -71,7 +79,7 @@ DIE=0
   NO_AUTOMAKE=yes
 }
 
-(libtoolize --version) < /dev/null > /dev/null 2>&1 || {
+("$LIBTOOLIZE" --version) < /dev/null > /dev/null 2>&1 || {
   echo
   echo "**Error**: You must have \`libtoolize' installed."
   DIE=1
@@ -108,7 +116,7 @@ esac
 # for coin in `find $srcdir -path $srcdir/CVS -prune -o -name configure.in -print`
 
 echo Cleaning files...
-find -type d -name autom4te.cache -print0 | xargs -0 rm -rf \;
+find . -type d -name autom4te.cache -print0 | xargs -0 rm -rf \;
 rm config/ltmain.sh 
 
 for coin in  configure.in
@@ -139,8 +147,8 @@ do
 	xml-i18n-toolize --copy --force --automake
       fi
       if grep "^A[CM]_PROG_LIBTOOL" configure.in >/dev/null; then
-	  echo "Running libtoolize --force --copy"
-	  libtoolize --force --copy
+	  echo "Running $LIBTOOLIZE --force --copy"
+	  "$LIBTOOLIZE" --force --copy
       fi
       # old versions of libtoolize do not copy libtool.m4 
       if test -f  config/libtool.m4 ; then
