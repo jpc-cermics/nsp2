@@ -9,8 +9,8 @@ if test `uname -s` = Darwin ; then
     LIBTOOL=glibtool
     LIBTOOLIZE=glibtoolize
 else
-    LIBTOOL=glibtool
-    LIBTOOLIZE=glibtoolize
+    LIBTOOL=libtool
+    LIBTOOLIZE=libtoolize
 fi
 
 DIE=0
