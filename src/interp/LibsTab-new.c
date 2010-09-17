@@ -584,25 +584,33 @@ static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj)
     {
       return nsp_hash_enter(nsp_functions_table,NSP_OBJECT(Obj));
     }
+#ifdef DEBUG   
   Sciprintf("Already present in the table  %s\n",name);
+#endif 
   if ( IsList(O1) )
     {
       /* just add the new definition */
-      Sciprintf("\t add a new definition to a list\n");
+#ifdef DEBUG   
+      Sciprintf("\t add a new definition to a list\n"); 
+#endif 
       if ( nsp_list_insert((NspList *) O1,Obj,0) == FAIL) return FAIL;
     }
   else
     {
       /* create a list and insert old and new definition */
       NspList* L=nsp_list_create(name);
+#ifdef DEBUG   
       Sciprintf("\t list create\n");
+#endif 
       if ( L == NULL) return FAIL;
       if ((O1 = nsp_object_copy_with_name(O1)) == NULL) return FAIL;
       if ( nsp_list_insert(L,O1,0) == FAIL) return FAIL;
       if ( nsp_list_insert(L,Obj,0) == FAIL) return FAIL;
+#ifdef DEBUG   
       Sciprintf("\t add a new %s previous was %s\n", 
 		IsFunction(Obj) ? "a function" : " a macro",
 		IsFunction(O1) ? "a function" : " a macro");
+#endif 
       return nsp_hash_enter(H,NSP_OBJECT(L));
     }
   return OK;
