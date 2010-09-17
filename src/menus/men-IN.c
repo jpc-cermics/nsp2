@@ -913,7 +913,6 @@ static OpTab Menus_func[]={
   {"unsetmenu",int_unset_menu},
   {"delmenu",int_delmenu},
   {"xgetfile", int_xgetfile},
-  {"x_choices",int_x_choices},
   {"gtk_combo_colormap_new",int_nsp_gtkcombobox_colormap_new},
   {"choose_color",int_nsp_choose_color},
   {(char *) 0, NULL}

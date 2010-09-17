@@ -42,6 +42,7 @@
 #include "../functions/addinter.h" 
 
 void nsp_init_macro_table(void);
+NspObject *nsp_find_macro_or_func(const char *str,int *type);
 
 static void nsp_remove_macro_or_func(const char *name,int type);
 static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj);
@@ -248,55 +249,11 @@ int nsp_delete_macros(const char *dirname)
 
 NspObject *nsp_find_macro(char *str)
 {
-  NspObject *Ob;
-  NspPList *M;
-  int found=FALSE;
-  NspFile *F;
-  char Name[FSIZE+1];
-  if ( nsp_hash_find(nsp_functions_table,str,&Ob) == FAIL) 
-    return NULLOBJ;
-  if ( IsFunction(Ob) ) return NULLOBJ;
-
-  M= (NspPList *) Ob;
-  if ( M->D != NULL )
-    {
-      /* Sciprintf("Macro %s found in the cache\n",str); */
-      return Ob;
-    }
-  if ( M->dir < 0 ) 
-    {
-      /* Sciprintf("Macro %s found but dir is wrong\n",str); */
-      return NULLOBJ;
-    }
-  sprintf(Name,"%s/%s.bin",LibDirs->S[M->dir],str);
-  if (( F =nsp_file_open_xdr_r(Name)) == NULLSCIFILE) return NULLOBJ;
-  /* bin files are supposed to contain only one object */
-  while (1) 
-    {
-      NspObject *Ob1;
-      if ((Ob1=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
-      if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
-	{
-	  found = TRUE;
-	  /* switch values */
-	  M->D = ((NspPList *) Ob1)->D;
-	  M->file_name =  ((NspPList *) Ob1)->file_name;
-	  /* Sciprintf("Macro %s found in %s/%s.bin\n",str,LibDirs->S[M->dir],str); */
-	}
-    }
-  if (nsp_file_close_xdr_r(F) == FAIL) 
-    {
-      nsp_file_destroy(F);
-      return NULLOBJ;
-    }
-  nsp_file_destroy(F);
-  if ( found == TRUE ) 
-    return Ob;
-  else 
-    {
-      Sciprintf("Macro %s NOT found in %s/%s.bin !\n",str,LibDirs->S[M->dir],str);
-    }
-  return NULLOBJ;
+  int type;
+  NspObject *Obj;
+  Obj = nsp_find_macro_or_func(str,&type);
+  if ( Obj != NULL && type == 1 ) return NULL;
+  return Obj;
 }
 
 
@@ -448,8 +405,9 @@ void nsp_delete_interface_functions(int Int)
 int nsp_find_function(const char *str, int *Int, int *Num)
 {
   NspObject *Obj;
-  if (nsp_hash_find(nsp_functions_table,str,&Obj) == FAIL) return FAIL;
-  if ( IsFunction(Obj) )
+  int type;
+  Obj = nsp_find_macro_or_func(str,&type);
+  if ( Obj != NULL &&  type == 1) 
     {
       *Int = ((NspFunction *)Obj)->iface;
       *Num = ((NspFunction *)Obj)->pos;
@@ -559,7 +517,7 @@ NspObject *nsp_find_macro_or_func(const char *str,int *type)
     }
   if ( IsList(Ob) ) 
     {
-      Ob = nsp_list_get_element((NspList *) Ob,0);
+      Ob = nsp_list_get_element((NspList *) Ob,1);
       if ( Ob == NULLOBJ ) return NULLOBJ;
     }
   if ( IsFunction(Ob) )
@@ -591,6 +549,11 @@ NspObject *nsp_find_macro_or_func(const char *str,int *type)
 	  found = TRUE;
 	  /* switch values */
 	  M->D = ((NspPList *) Ob1)->D;
+	  M->file_name = ((NspPList *) Ob1)->file_name;
+	  ((NspPList *) Ob1)->D = NULL;
+	  ((NspPList *) Ob1)->file_name= NULL;
+	  nsp_object_destroy(&Ob1);
+	  /* we should here destroy Ob1 */
 	  /* Sciprintf("Macro %s found in %s/%s.bin\n",str,LibDirs->S[M->dir],str); */
 	}
     }
@@ -621,19 +584,25 @@ static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj)
     {
       return nsp_hash_enter(nsp_functions_table,NSP_OBJECT(Obj));
     }
+  Sciprintf("Already present in the table  %s\n",name);
   if ( IsList(O1) )
     {
       /* just add the new definition */
+      Sciprintf("\t add a new definition to a list\n");
       if ( nsp_list_insert((NspList *) O1,Obj,0) == FAIL) return FAIL;
     }
   else
     {
       /* create a list and insert old and new definition */
       NspList* L=nsp_list_create(name);
+      Sciprintf("\t list create\n");
       if ( L == NULL) return FAIL;
       if ((O1 = nsp_object_copy_with_name(O1)) == NULL) return FAIL;
       if ( nsp_list_insert(L,O1,0) == FAIL) return FAIL;
       if ( nsp_list_insert(L,Obj,0) == FAIL) return FAIL;
+      Sciprintf("\t add a new %s previous was %s\n", 
+		IsFunction(Obj) ? "a function" : " a macro",
+		IsFunction(O1) ? "a function" : " a macro");
       return nsp_hash_enter(H,NSP_OBJECT(L));
     }
   return OK;
@@ -660,7 +629,7 @@ static void nsp_remove_macro_or_func(const char *name,int type)
   else if ( IsList(O1) )
     {
       NspObject *Ob;
-      Ob = nsp_list_get_element((NspList *) O1,0);
+      Ob = nsp_list_get_element((NspList *) O1,1);
       if ( IsFunction(Ob) ) 
 	{
 	  if ( type == 1) 

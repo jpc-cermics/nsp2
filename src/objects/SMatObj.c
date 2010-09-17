@@ -2228,7 +2228,7 @@ static OpTab SMatrix_func[]={
   {"stripblanks",int_smxstripblanks},
   {"sort_s", int_smatrix_sort},
   {"gsort_s", int_smatrix_sort},
-  {"new_sort", int_smatrix_sort },
+  {"new_sort_s", int_smatrix_sort },
   {"unichar_to_utf8", int_smatrix_utf8_from_unichar},
   {"strtod",int_smatrix_strtod},
   {"protect",int_smatrix_protect}, /* test */

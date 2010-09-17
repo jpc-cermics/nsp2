@@ -7038,7 +7038,6 @@ OpGrTab GraphicsOld_func[]={
   {NAMES("xs2eps" ),int_xs2ps},
   {NAMES("xs2svg" ),int_xs2svg},
   {NAMES("xexport" ),int_xexport},
-  {NAMES("bsearch" ), int_bsearch},
   {NAMES("xget_image" ),int_get_image},
   {NAMES("xget_pixbuf" ),int_get_pixbuf},
   {NAMES("xdraw_pixbuf" ),int_draw_pixbuf},

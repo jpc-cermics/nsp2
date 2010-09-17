@@ -275,7 +275,7 @@ InterfTab Interfaces[]={
   {Contour3d_Interf, Contour3d_Interf_Info},
   {Contour_Interf, Contour_Interf_Info},
   {Curve_Interf, Curve_Interf_Info},
-  {Diagram_Interf, Diagram_Interf_Info},
+  /* {Diagram_Interf, Diagram_Interf_Info}, */
   {Fec_Interf, Fec_Interf_Info},
   {Figure_Interf, Figure_Interf_Info},
   {GMatrix1_Interf, GMatrix1_Interf_Info},

@@ -3094,7 +3094,6 @@ static OpTab IMatrix_func[]={
   {"diag_i_m", int_imatrix_diag},
   {"diagcre_i",int_imatrix_diagcre},
   {"diage_i",int_imatrix_diage},
-  {"find_i",int_imatrix_find},
   {"m2i",int_imatrix_m2i},
   {"redim_i",int_matint_redim}, 
   {"reshape_i",int_matint_redim}, 

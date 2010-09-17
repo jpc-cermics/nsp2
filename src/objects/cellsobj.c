@@ -1365,7 +1365,7 @@ static OpTab Cells_func[]={
   {"extractcols_ce", int_matint_extractcols}, 
   {"extractrows_ce", int_matint_extractrows_pointer}, 
   {"resize2vect_ce", int_matint_resize2vect},
-  {"setrowscols_ce", int_matint_setrowscols},
+  {"setrowscols_ce", int_matint_setrowscols}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
   {"deleteelts_ce", int_matint_deleteelts},
   {"deleterows_ce", int_matint_deleterows},
   {"deletecols_ce", int_matint_deletecols},
@@ -1406,7 +1406,6 @@ static OpTab Cells_func[]={
   {"ce2m",int_ce2m},
   {"object2seq_ce",int_cells_to_seq}, /* C{...} : extract +object2seq */
   {"cells_setrowscols_ce",int_cells_setrowscols}, /* C{..}=(....) */
-  {"setrowscols_ce", int_matint_setrowscols}, /* still used in EvalEqual2 : pb in the test in EvalEqual */
   {"unique_ce" ,  int_cells_unique },
   {"map_ce", int_cells_map},
   {"diagcre_ce",int_cells_diagcre},
