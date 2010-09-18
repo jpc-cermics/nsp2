@@ -37,7 +37,6 @@
 #include <nsp/system.h> /* FSIZE */
 
 static void Underscores(int isfor,nsp_const_string ename, char *ename1);
-static int SearchFandS(nsp_const_string op, int ilib);
 static int nsp_find_shared(nsp_const_string shared_path);
 static int nsp_link_status (void) ;
 
@@ -193,7 +192,9 @@ int nsp_is_linked(nsp_const_string name,int *ilib)
 {
   int (*loc)();
   if ( *ilib  != -1 ) 
-    return SearchFandS(name,*ilib);
+    {
+      return  nsp_link_search(name,*ilib,&loc);
+    }
   else
     {
       int rep= SearchInDynLinks(name,&loc);
@@ -226,20 +227,28 @@ int SearchInDynLinks(nsp_const_string op, int (**realop) ())
   return(-1);
 }
 
-/*
+/**
+ * nsp_link_search:
+ * @op: name of entry point 
+ * @ilib: index of shared library 
+ * 
  * Search an entry point named @op in the shared 
- * library ilib. Search is performed from end to top 
- * returns -1 in case of failure or the entry point 
- * indice in the entry points table 
- */
+ * library @ilib. Search is performed from end to top 
+ * returns -1 in case of failure or the entry point id 
+ * in the entry point table. In case of success 
+ * the associated function is returned in @realop.
+ * 
+ * Returns: an integer 
+ **/
 
-static int SearchFandS(nsp_const_string op, int ilib)
+int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ())
 {
   int i=0;
   for ( i = NEpoints-1 ; i >=0 ; i--) 
     {
       if ( strcmp(op,EP[i].name) == 0 && EP[i].Nshared == ilib)
 	{
+	  *realop = EP[i].epoint;
 	  return(i);
 	}
     }
@@ -324,5 +333,5 @@ void nsp_unlink_shared(int ilib)
   /* delete entry points in shared lib *i */
   nsp_delete_symbols(ilib);
   /* delete entry points used in addinter in shared lib *i */
-  nsp_delete_interface_functions(ilib);
+  nsp_remove_interface(ilib);
 }

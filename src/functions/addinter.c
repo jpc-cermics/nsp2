@@ -84,7 +84,7 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   nsp_link_initialize(); 
   nsp_interfaces_initialize();
 
-  /* Try to find a free position in the interface table : inum **/
+  /* Try to find a free position in the interface table : inum */
   inum=-1;
   for ( i = 0 ; i < LastInterf ; i++) 
     {
@@ -97,7 +97,7 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   if ( inum >=  MAXINTERF ) 
     {
       Scierror("Error: Maximum number of dynamic interfaces %d\n",MAXINTERF);
-      Scierror("has been reached\n");
+      Scierror("       has been reached\n");
       goto err;
     }
   
@@ -115,13 +115,12 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
   
   /* store the linked function in the interface function table DynInterf */
   DynInterf[inum].Nshared = *ilib;
-  
-  if ( SearchInDynLinks(names[0],&DynInterf[inum].func) < 0 ) 
+  if ( nsp_link_search(names[0],*ilib,&DynInterf[inum].func) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[0]);
       goto err;
     }
-  if ( SearchInDynLinks(names[1],&DynInterf[inum].func_info) < 0 ) 
+  if ( nsp_link_search(names[1],*ilib,&DynInterf[inum].func_info) < 0 ) 
     {
       Scierror("Error: addinter failed, %s not  found!\n",names[1]);
       goto err;

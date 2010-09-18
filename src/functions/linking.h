@@ -32,5 +32,7 @@ extern void nsp_unlink_shared(int ilib);
 extern void nsp_remove_interface(int Nshared);
 extern void nsp_link_initialize(void);
 extern void nsp_delete_interface_functions(int Int);
+extern int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ());
+
 
 #endif 

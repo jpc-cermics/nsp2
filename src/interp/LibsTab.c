@@ -1085,7 +1085,7 @@ void nsp_delete_interface_functions(int Int)
   unsigned int i;
   for ( i = 0 ; i <= hsize ; i++ ) 
     if ( f_htable[i].used 
-	 &&  f_htable[i].entry.data.Int == Int+ DYN_INTERF_START )
+	 &&  f_htable[i].entry.data.Int == Int )
       {
 	f_htable[i].used = 0;
 	filled--;

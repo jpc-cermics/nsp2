@@ -42,8 +42,9 @@
 #include "../functions/addinter.h" 
 
 void nsp_init_macro_table(void);
-NspObject *nsp_find_macro_or_func(const char *str,int *type);
 
+NspObject *nsp_find_macro_or_func(const char *str,int *type);
+int nsp_delete_macros(const char *dirname);
 static void nsp_remove_macro_or_func(const char *name,int type);
 static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj);
 static NspSMatrix *LibDirs = NULLSMAT;
@@ -126,6 +127,12 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
       if (nsp_string_resize(&(LibDirs->S[flag]),strlen(dirname)) == FAIL)
 	return FAIL;
       strcpy(LibDirs->S[flag],dirname);
+    }
+  else 
+    {
+      /* delete entries in macro_table before re-entering */
+      if ( nsp_delete_macros(dirname) == FAIL) 
+	return FAIL;
     }
 
   /* update binaries if requested 
@@ -268,15 +275,6 @@ void nsp_init_macro_table(void)
 {
   static int firstentry = 0;
   if ( firstentry != 0 ) return;
-  /* a cache */
-  /* 
-  if ( (nsp_functions_table = nsp_hcreate("cache",MAXTAB)) == NULLHASH ) 
-    {
-      Sciprintf("Fatal Error:\tCan't create table for Scilab libraries\n");
-      exit(1);
-    }
-  */
-
   if ((LibDirs =nsp_smatrix_create("libs",1,1,(char *)0,0))== NULLSMAT) 
     {
       Sciprintf("Fatal Error:\tCan't create table for Scilab libraries\n");
@@ -349,45 +347,63 @@ void nsp_delete_function(const char *str)
 }
 
 /**
- * nsp_delete_function_by_interface:
- * @Int: interface id 
- * 
- * Delete functions associated to interface number @Int.
- * by walking through the whole hash table.
- * 
- **/
-
-void nsp_delete_function_by_interface(int Int)
-{
-  NspObject *Obj;
-  int i=0;
-  while (1) 
-    {
-      int rep =nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
-      if ( Obj != NULLOBJ )
-	{ 
-	  if (Int == ((NspFunction *)Obj)->iface ) 
-	    {
-	      nsp_delete_function(nsp_object_get_name(Obj));
-	    }
-	}
-      if ( rep == FAIL) break;
-    }
-}
-
-/**
  * nsp_delete_interface_functions:
- * @Int: dynamic interface number.
+ * @interface: dynamic interface number.
  * 
  * deletes entries associated to interface number @Int by walking through 
  * the whole hash table. 
  * 
  **/
 
-void nsp_delete_interface_functions(int Int)
+void nsp_delete_interface_functions(int interface)
 {
-  return nsp_delete_function_by_interface(Int+ DYN_INTERF_START);
+  NspObject *Obj;
+  int i=0;
+  int iface = interface;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  if ( IsFunction(Obj)) 
+	    {
+	      /* function */
+	      if ( iface == ((NspFunction *) Obj)->iface ) 
+		{
+		  Sciprintf("removing %s in interface %d\n",nsp_object_get_name(Obj),interface);
+		  nsp_hash_remove(nsp_functions_table,nsp_object_get_name(Obj));
+		}
+	    }
+	  else if (IsNspPList(Obj))
+	    {
+	      /* macro */
+	    }
+	  else if ( IsList(Obj) )
+	    {
+	      /* multiple */
+	      NspList *L = (NspList *) Obj;
+	      NspObject *Elt;
+	      int l = nsp_list_length(L),i;
+	      for ( i = 1 ; i <= l ; i++)
+		{
+		  Elt = nsp_list_get_element(L,i);
+		  if ( IsFunction(Elt) ) 
+		    {
+		      if ( iface == ((NspFunction *) Elt)->iface ) 
+			nsp_list_delete_elt(L,i);
+		    }
+		}
+	      if ( nsp_list_length(L) == 0 )
+		{
+		  nsp_hash_remove(nsp_functions_table,nsp_object_get_name(Obj));
+		}
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+  return 0;
 }
+
 
 /**
  * nsp_find_function:
@@ -480,7 +496,7 @@ void nsp_init_function_table(void)
 	  if ( fname == NULL) break;
 	  if ( nsp_enter_function(fname,i,k) == FAIL)
 	    {
-	      printf("Fatal Error : Table for scilab functions is too small \n");
+	      printf("Fatal Error : Table for nsp functions is too small \n");
 	      exit(1);
 	    }	  
 	  k++;
@@ -617,6 +633,14 @@ static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj)
 }
 
 
+/**
+ * nsp_remove_macro_or_func:
+ * @name: 
+ * @type: 
+ * 
+ * 
+ **/
+
 static void nsp_remove_macro_or_func(const char *name,int type)
 {
   NspObject *O1;
@@ -654,3 +678,4 @@ static void nsp_remove_macro_or_func(const char *name,int type)
 	}
     }
 }
+

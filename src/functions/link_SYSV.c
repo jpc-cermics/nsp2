@@ -238,6 +238,7 @@ static int nsp_dlopen(nsp_const_string shared_path,int global)
 
 static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
 {
+  int (*loc)();
   int ish = Min(Max(0,ishared),ENTRYMAX-1);
   char enamebuf[NAME_MAXL];
   if ( strf == 'f' )
@@ -257,7 +258,7 @@ static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
       return(FAIL);
     }
   /* entry was previously loaded */
-  if ( SearchFandS(ename,ish) >= 0 ) 
+  if (  nsp_link_search(ename,ish,&loc) >= 0 ) 
     {
       Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
       return(OK);
