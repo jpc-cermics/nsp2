@@ -1,0 +1,16 @@
+;; -*- scheme -*-
+
+(define-objectref Epoints
+  (in-module "Epoints")
+  (parent "Object")
+  (c-name "NspEpoints")
+  (fields
+   '("void*" "func" "hidden" "NULL" "");;
+   '("int" "shid" "hidden" "-1" ) ;;
+   )
+  (gtype-id "Epoints")
+)
+
+
+
+

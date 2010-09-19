@@ -23,7 +23,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
-	../diagram.c ../grimage.c
+	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c
 
 all:: $(ALL)
 	cd ../; make all
@@ -267,6 +267,18 @@ clean ::
 	($(PYTHON) codegen/codegen.py \
 	   	 \
 	    --prefix Interface interface.defs) > $*.c 
+
+../epoints.c : epoints.defs epoints-types.defs epoints.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override epoints.override \
+	    --prefix Epoints epoints.defs) > $*.c \
+	&& mv epoints.h ../../include/nsp 
+
+../sharedlib.c : sharedlib.defs sharedlib-types.defs sharedlib.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override sharedlib.override \
+	    --prefix Sharedlib sharedlib.defs) > $*.c \
+	&& mv sharedlib.h ../../include/nsp 
 
 
 

@@ -1,0 +1,17 @@
+;; -*- scheme -*-
+
+(define-objectref Sharedlib
+  (in-module "Sharedlib")
+  (parent "Object")
+  (c-name "NspSharedlib")
+  (fields
+   '("void*" "shd" "hidden" "NULL" "");;
+   '("int" "id" "hidden" "-1" ) ;;
+   '("char*" "path" "hidden" "NULL" ) ;;
+   )
+  (gtype-id "Sharedlib")
+)
+
+
+
+

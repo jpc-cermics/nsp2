@@ -476,8 +476,8 @@ class Wrapper:
         '\n' \
         '#define NULL%(typename_uc)s (%(typename)s*) 0\n' \
         '\n' \
-        'extern %(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type);\n' \
-        'extern %(typename)s *nsp_%(typename_dc)s_create_default(char *name);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_create(const char *name,%(fields_list)s,NspTypeBase *type);\n' \
+        'extern %(typename)s *nsp_%(typename_dc)s_create_default(const char *name);\n' \
         '\n' \
         '/* from %(typename)sObj.c */\n' \
         '\n' \
@@ -515,7 +515,7 @@ class Wrapper:
         'static AttrTab %(typename_dc)s_attrs[];\n' \
         'static NspMethods *%(typename_dc)s_get_methods(void);\n' \
         '/* static int int_%(typename_dc)s_create(Stack stack, int rhs, int opt, int lhs);*/ \n' \
-        'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type);\n' 
+        'static %(typename)s *nsp_%(typename_dc)s_create_void(const char *name,NspTypeBase *type);\n' 
     
     type_header_4 = \
         '#endif /* %(typename)s_Private */\n\n'
@@ -1912,7 +1912,7 @@ class NspObjectWrapper(Wrapper):
 
     type_tmpl_create_0 = \
         '\n' \
-        'static %(typename)s *nsp_%(typename_dc)s_create_void(char *name,NspTypeBase *type)\n' \
+        'static %(typename)s *nsp_%(typename_dc)s_create_void(const char *name,NspTypeBase *type)\n' \
         '{\n' \
         ' %(typename)s *H  = (type == NULL) ? new_%(typename_dc)s() : type->new();\n' \
         ' if ( H ==  NULL%(typename_uc)s)\n' \
@@ -1935,7 +1935,7 @@ class NspObjectWrapper(Wrapper):
         '  return OK;\n' \
         '}\n' \
         '\n' \
-        '%(typename)s *nsp_%(typename_dc)s_create(char *name,%(fields_list)s,NspTypeBase *type)\n' \
+        '%(typename)s *nsp_%(typename_dc)s_create(const char *name,%(fields_list)s,NspTypeBase *type)\n' \
         '{\n' \
         '  %(typename)s *H  = nsp_%(typename_dc)s_create_void(name,type);\n' \
         '  if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \
@@ -1947,7 +1947,7 @@ class NspObjectWrapper(Wrapper):
         '}\n' \
         '\n' \
         '\n' \
-        '%(typename)s *nsp_%(typename_dc)s_create_default(char *name)\n' \
+        '%(typename)s *nsp_%(typename_dc)s_create_default(const char *name)\n' \
         '{\n' \
         ' %(typename)s *H  = nsp_%(typename_dc)s_create_void(name,NULL);\n' \
         ' if ( H ==  NULL%(typename_uc)s) return NULL%(typename_uc)s;\n' \

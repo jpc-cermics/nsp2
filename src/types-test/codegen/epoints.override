@@ -1,0 +1,80 @@
+/* -*- Mode: C -*- */
+%%
+include-start Epoints 
+/* inserted at the start of include file */
+
+%%
+include-public Epoints
+/* inserted at the end of public part of include file */
+extern int  nsp_insert_epoint(const char *name, void *func, int sharedid);
+extern NspEpoints *nsp_find_epoint(const char *name) ;
+
+%%
+include-private Epoints
+/* inserted in the private part of include file */
+
+%%
+headers
+/* headers in C-file */
+
+%%
+init 
+
+Init portion 
+
+%%
+override-type Epoints
+  /* inserted verbatim in the type definition */
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+last
+/* inserted verbatim at the end */
+
+static NspHash *Epoints = NULL;
+
+static int nsp_init_shared_epoints_table(void)
+{
+  if ( Epoints != NULL ) return OK;
+  if (( Epoints = nsp_hash_create("epoints",256)) == NULL) 
+    {
+      return FAIL;
+    }
+  return OK;
+}
+
+int  nsp_insert_epoint(const char *name, void *func, int sharedid)
+{
+  NspEpoints *ep = NULL;
+  if ( Epoints == NULL ) 
+    {
+      if ( nsp_init_shared_epoints_table() == FAIL) return FAIL;
+    }
+  if ((ep = nsp_epoints_create(name,func,sharedid, NULL))== NULL) 
+    {
+      return FAIL;
+    }
+  if ( nsp_hash_enter(Epoints,NSP_OBJECT(ep)) == FAIL ) 
+    {
+      nsp_epoints_destroy(ep);
+      return FAIL;
+    }
+  return OK;
+}
+
+NspEpoints *nsp_find_epoint(const char *name) 
+{
+  NspObject *Obj;
+  if ( Epoints == NULL ) return NULL;
+  if ( nsp_hash_find(Epoints,name,&Obj) == FAIL) 
+    return NULL;
+  return ( NspEpoints *) Obj;
+}
+
