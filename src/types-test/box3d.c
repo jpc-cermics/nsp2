@@ -444,7 +444,7 @@ NspBox3d  *GetBox3d(Stack stack, int i)
  * create a NspBox3d instance 
  *-----------------------------------------------------*/
 
-static NspBox3d *nsp_box3d_create_void(char *name,NspTypeBase *type)
+static NspBox3d *nsp_box3d_create_void(const char *name,NspTypeBase *type)
 {
  NspBox3d *H  = (type == NULL) ? new_box3d() : type->new();
  if ( H ==  NULLBOX3D)
@@ -495,7 +495,7 @@ int nsp_box3d_check_values(NspBox3d *H)
   return OK;
 }
 
-NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type)
+NspBox3d *nsp_box3d_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type)
 {
   NspBox3d *H  = nsp_box3d_create_void(name,type);
   if ( H ==  NULLBOX3D) return NULLBOX3D;
@@ -511,7 +511,7 @@ NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gbo
 }
 
 
-NspBox3d *nsp_box3d_create_default(char *name)
+NspBox3d *nsp_box3d_create_default(const char *name)
 {
  NspBox3d *H  = nsp_box3d_create_void(name,NULL);
  if ( H ==  NULLBOX3D) return NULLBOX3D;

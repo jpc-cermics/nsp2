@@ -427,7 +427,7 @@ NspDiagram  *GetDiagram(Stack stack, int i)
  * create a NspDiagram instance 
  *-----------------------------------------------------*/
 
-static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type)
+static NspDiagram *nsp_diagram_create_void(const char *name,NspTypeBase *type)
 {
  NspDiagram *H  = (type == NULL) ? new_diagram() : type->new();
  if ( H ==  NULLDIAGRAM)
@@ -468,7 +468,7 @@ int nsp_diagram_check_values(NspDiagram *H)
   return OK;
 }
 
-NspDiagram *nsp_diagram_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type)
+NspDiagram *nsp_diagram_create(const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type)
 {
   NspDiagram *H  = nsp_diagram_create_void(name,type);
   if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;
@@ -485,7 +485,7 @@ NspDiagram *nsp_diagram_create(char *name,NspMatrix* bounds,NspList* children,Ns
 }
 
 
-NspDiagram *nsp_diagram_create_default(char *name)
+NspDiagram *nsp_diagram_create_default(const char *name)
 {
  NspDiagram *H  = nsp_diagram_create_void(name,NULL);
  if ( H ==  NULLDIAGRAM) return NULLDIAGRAM;

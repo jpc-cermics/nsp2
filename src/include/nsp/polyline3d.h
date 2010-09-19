@@ -82,8 +82,8 @@ NspPolyline3d *new_polyline3d();
 
 #define NULLPOLYLINE3D (NspPolyline3d*) 0
 
-extern NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type);
-extern NspPolyline3d *nsp_polyline3d_create_default(char *name);
+extern NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type);
+extern NspPolyline3d *nsp_polyline3d_create_default(const char *name);
 
 /* from NspPolyline3dObj.c */
 
@@ -126,7 +126,7 @@ static NspPolyline3d *nsp_polyline3d_xdr_load(XDR *xdrs);
 static AttrTab polyline3d_attrs[];
 static NspMethods *polyline3d_get_methods(void);
 /* static int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspPolyline3d *nsp_polyline3d_create_void(char *name,NspTypeBase *type);
+static NspPolyline3d *nsp_polyline3d_create_void(const char *name,NspTypeBase *type);
 #line 15 "codegen/polyline3d.override"
 
 /* inserted in the private part of include file */

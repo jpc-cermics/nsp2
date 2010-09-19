@@ -87,8 +87,8 @@ NspQcurve *new_qcurve();
 
 #define NULLQCURVE (NspQcurve*) 0
 
-extern NspQcurve *nsp_qcurve_create(char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type);
-extern NspQcurve *nsp_qcurve_create_default(char *name);
+extern NspQcurve *nsp_qcurve_create(const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type);
+extern NspQcurve *nsp_qcurve_create_default(const char *name);
 
 /* from NspQcurveObj.c */
 
@@ -133,7 +133,7 @@ static NspQcurve *nsp_qcurve_xdr_load(XDR *xdrs);
 static AttrTab qcurve_attrs[];
 static NspMethods *qcurve_get_methods(void);
 /* static int int_qcurve_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspQcurve *nsp_qcurve_create_void(char *name,NspTypeBase *type);
+static NspQcurve *nsp_qcurve_create_void(const char *name,NspTypeBase *type);
 #line 17 "codegen/qcurve.override"
 /* inserted in the private part of include file */
 

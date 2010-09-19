@@ -84,8 +84,8 @@ NspString3d *new_string3d();
 
 #define NULLSTRING3D (NspString3d*) 0
 
-extern NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type);
-extern NspString3d *nsp_string3d_create_default(char *name);
+extern NspString3d *nsp_string3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type);
+extern NspString3d *nsp_string3d_create_default(const char *name);
 
 /* from NspString3dObj.c */
 
@@ -131,7 +131,7 @@ static NspString3d *nsp_string3d_xdr_load(XDR *xdrs);
 static AttrTab string3d_attrs[];
 static NspMethods *string3d_get_methods(void);
 /* static int int_string3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspString3d *nsp_string3d_create_void(char *name,NspTypeBase *type);
+static NspString3d *nsp_string3d_create_void(const char *name,NspTypeBase *type);
 #line 18 "codegen/string3d.override"
 static void nsp_draw_string3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_string3d(NspGraphic *o,const double *tr);

@@ -110,8 +110,8 @@ NspAxes *new_axes();
 
 #define NULLAXES (NspAxes*) 0
 
-extern NspAxes *nsp_axes_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type);
-extern NspAxes *nsp_axes_create_default(char *name);
+extern NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type);
+extern NspAxes *nsp_axes_create_default(const char *name);
 
 /* from NspAxesObj.c */
 
@@ -172,7 +172,7 @@ static NspAxes *nsp_axes_xdr_load(XDR *xdrs);
 static AttrTab axes_attrs[];
 static NspMethods *axes_get_methods(void);
 /* static int int_axes_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type);
+static NspAxes *nsp_axes_create_void(const char *name,NspTypeBase *type);
 #line 40 "codegen/axes.override"
 
 /* inserted in the private part of include file

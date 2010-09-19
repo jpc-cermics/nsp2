@@ -445,7 +445,7 @@ NspGrArc  *GetGrArc(Stack stack, int i)
  * create a NspGrArc instance 
  *-----------------------------------------------------*/
 
-static NspGrArc *nsp_grarc_create_void(char *name,NspTypeBase *type)
+static NspGrArc *nsp_grarc_create_void(const char *name,NspTypeBase *type)
 {
  NspGrArc *H  = (type == NULL) ? new_grarc() : type->new();
  if ( H ==  NULLGRARC)
@@ -481,7 +481,7 @@ int nsp_grarc_check_values(NspGrArc *H)
   return OK;
 }
 
-NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type)
+NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type)
 {
   NspGrArc *H  = nsp_grarc_create_void(name,type);
   if ( H ==  NULLGRARC) return NULLGRARC;
@@ -500,7 +500,7 @@ NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double
 }
 
 
-NspGrArc *nsp_grarc_create_default(char *name)
+NspGrArc *nsp_grarc_create_default(const char *name)
 {
  NspGrArc *H  = nsp_grarc_create_void(name,NULL);
  if ( H ==  NULLGRARC) return NULLGRARC;

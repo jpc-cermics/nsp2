@@ -87,8 +87,8 @@ NspGrArc *new_grarc();
 
 #define NULLGRARC (NspGrArc*) 0
 
-extern NspGrArc *nsp_grarc_create(char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type);
-extern NspGrArc *nsp_grarc_create_default(char *name);
+extern NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type);
+extern NspGrArc *nsp_grarc_create_default(const char *name);
 
 /* from NspGrArcObj.c */
 
@@ -130,7 +130,7 @@ static NspGrArc *nsp_grarc_xdr_load(XDR *xdrs);
 static AttrTab grarc_attrs[];
 static NspMethods *grarc_get_methods(void);
 /* static int int_grarc_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGrArc *nsp_grarc_create_void(char *name,NspTypeBase *type);
+static NspGrArc *nsp_grarc_create_void(const char *name,NspTypeBase *type);
 #line 14 "codegen/grarc.override"
 
 /* inserted in the private part of include file */

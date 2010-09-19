@@ -469,7 +469,7 @@ NspContour3d  *GetContour3d(Stack stack, int i)
  * create a NspContour3d instance 
  *-----------------------------------------------------*/
 
-static NspContour3d *nsp_contour3d_create_void(char *name,NspTypeBase *type)
+static NspContour3d *nsp_contour3d_create_void(const char *name,NspTypeBase *type)
 {
  NspContour3d *H  = (type == NULL) ? new_contour3d() : type->new();
  if ( H ==  NULLCONTOUR3D)
@@ -526,7 +526,7 @@ int nsp_contour3d_check_values(NspContour3d *H)
   return OK;
 }
 
-NspContour3d *nsp_contour3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type)
+NspContour3d *nsp_contour3d_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type)
 {
   NspContour3d *H  = nsp_contour3d_create_void(name,type);
   if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;
@@ -547,7 +547,7 @@ NspContour3d *nsp_contour3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatri
 }
 
 
-NspContour3d *nsp_contour3d_create_default(char *name)
+NspContour3d *nsp_contour3d_create_default(const char *name)
 {
  NspContour3d *H  = nsp_contour3d_create_void(name,NULL);
  if ( H ==  NULLCONTOUR3D) return NULLCONTOUR3D;

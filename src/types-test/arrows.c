@@ -435,7 +435,7 @@ NspArrows  *GetArrows(Stack stack, int i)
  * create a NspArrows instance 
  *-----------------------------------------------------*/
 
-static NspArrows *nsp_arrows_create_void(char *name,NspTypeBase *type)
+static NspArrows *nsp_arrows_create_void(const char *name,NspTypeBase *type)
 {
  NspArrows *H  = (type == NULL) ? new_arrows() : type->new();
  if ( H ==  NULLARROWS)
@@ -484,7 +484,7 @@ int nsp_arrows_check_values(NspArrows *H)
   return OK;
 }
 
-NspArrows *nsp_arrows_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type)
+NspArrows *nsp_arrows_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type)
 {
   NspArrows *H  = nsp_arrows_create_void(name,type);
   if ( H ==  NULLARROWS) return NULLARROWS;
@@ -498,7 +498,7 @@ NspArrows *nsp_arrows_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* col
 }
 
 
-NspArrows *nsp_arrows_create_default(char *name)
+NspArrows *nsp_arrows_create_default(const char *name)
 {
  NspArrows *H  = nsp_arrows_create_void(name,NULL);
  if ( H ==  NULLARROWS) return NULLARROWS;

@@ -412,7 +412,7 @@ NspGraphic  *GetGraphic(Stack stack, int i)
  * create a NspGraphic instance 
  *-----------------------------------------------------*/
 
-static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type)
+static NspGraphic *nsp_graphic_create_void(const char *name,NspTypeBase *type)
 {
  NspGraphic *H  = (type == NULL) ? new_graphic() : type->new();
  if ( H ==  NULLGRAPHIC)
@@ -441,7 +441,7 @@ int nsp_graphic_check_values(NspGraphic *H)
   return OK;
 }
 
-NspGraphic *nsp_graphic_create(char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type)
+NspGraphic *nsp_graphic_create(const char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type)
 {
   NspGraphic *H  = nsp_graphic_create_void(name,type);
   if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;
@@ -455,7 +455,7 @@ NspGraphic *nsp_graphic_create(char *name,gboolean hilited,gboolean show,void* F
 }
 
 
-NspGraphic *nsp_graphic_create_default(char *name)
+NspGraphic *nsp_graphic_create_default(const char *name)
 {
  NspGraphic *H  = nsp_graphic_create_void(name,NULL);
  if ( H ==  NULLGRAPHIC) return NULLGRAPHIC;

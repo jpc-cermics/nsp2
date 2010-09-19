@@ -84,8 +84,8 @@ NspPoints3d *new_points3d();
 
 #define NULLPOINTS3D (NspPoints3d*) 0
 
-extern NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type);
-extern NspPoints3d *nsp_points3d_create_default(char *name);
+extern NspPoints3d *nsp_points3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type);
+extern NspPoints3d *nsp_points3d_create_default(const char *name);
 
 /* from NspPoints3dObj.c */
 
@@ -131,7 +131,7 @@ static NspPoints3d *nsp_points3d_xdr_load(XDR *xdrs);
 static AttrTab points3d_attrs[];
 static NspMethods *points3d_get_methods(void);
 /* static int int_points3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspPoints3d *nsp_points3d_create_void(char *name,NspTypeBase *type);
+static NspPoints3d *nsp_points3d_create_void(const char *name,NspTypeBase *type);
 #line 18 "codegen/points3d.override"
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);

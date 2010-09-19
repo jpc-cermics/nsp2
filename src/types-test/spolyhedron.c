@@ -519,7 +519,7 @@ NspSPolyhedron  *GetSPolyhedron(Stack stack, int i)
  * create a NspSPolyhedron instance 
  *-----------------------------------------------------*/
 
-static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type)
+static NspSPolyhedron *nsp_spolyhedron_create_void(const char *name,NspTypeBase *type)
 {
  NspSPolyhedron *H  = (type == NULL) ? new_spolyhedron() : type->new();
  if ( H ==  NULLSPOLYHEDRON)
@@ -582,7 +582,7 @@ int nsp_spolyhedron_check_values(NspSPolyhedron *H)
   return OK;
 }
 
-NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type)
+NspSPolyhedron *nsp_spolyhedron_create(const char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type)
 {
   NspSPolyhedron *H  = nsp_spolyhedron_create_void(name,type);
   if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;
@@ -618,7 +618,7 @@ NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* M
 }
 
 
-NspSPolyhedron *nsp_spolyhedron_create_default(char *name)
+NspSPolyhedron *nsp_spolyhedron_create_default(const char *name)
 {
  NspSPolyhedron *H  = nsp_spolyhedron_create_void(name,NULL);
  if ( H ==  NULLSPOLYHEDRON) return NULLSPOLYHEDRON;

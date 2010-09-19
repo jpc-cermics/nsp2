@@ -74,8 +74,8 @@ NspGRoot *new_groot();
 
 #define NULLGROOT (NspGRoot*) 0
 
-extern NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type);
-extern NspGRoot *nsp_groot_create_default(char *name);
+extern NspGRoot *nsp_groot_create(const char *name,NspList* figures,NspTypeBase *type);
+extern NspGRoot *nsp_groot_create_default(const char *name);
 
 /* from NspGRootObj.c */
 
@@ -112,6 +112,6 @@ static NspGRoot *nsp_groot_xdr_load(XDR *xdrs);
 static AttrTab groot_attrs[];
 static NspMethods *groot_get_methods(void);
 /* static int int_groot_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGRoot *nsp_groot_create_void(char *name,NspTypeBase *type);
+static NspGRoot *nsp_groot_create_void(const char *name,NspTypeBase *type);
 #endif /* NspGRoot_Private */
 

@@ -487,7 +487,7 @@ NspFigure  *GetFigure(Stack stack, int i)
  * create a NspFigure instance 
  *-----------------------------------------------------*/
 
-static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type)
+static NspFigure *nsp_figure_create_void(const char *name,NspTypeBase *type)
 {
  NspFigure *H  = (type == NULL) ? new_figure() : type->new();
  if ( H ==  NULLFIGURE)
@@ -563,7 +563,7 @@ int nsp_figure_check_values(NspFigure *H)
   return OK;
 }
 
-NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type)
+NspFigure *nsp_figure_create(const char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type)
 {
   NspFigure *H  = nsp_figure_create_void(name,type);
   if ( H ==  NULLFIGURE) return NULLFIGURE;
@@ -589,7 +589,7 @@ NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatri
 }
 
 
-NspFigure *nsp_figure_create_default(char *name)
+NspFigure *nsp_figure_create_default(const char *name)
 {
  NspFigure *H  = nsp_figure_create_void(name,NULL);
  if ( H ==  NULLFIGURE) return NULLFIGURE;
@@ -1502,7 +1502,7 @@ NspFigureData  *GetFigureData(Stack stack, int i)
  * create a NspFigureData instance 
  *-----------------------------------------------------*/
 
-static NspFigureData *nsp_figuredata_create_void(char *name,NspTypeBase *type)
+static NspFigureData *nsp_figuredata_create_void(const char *name,NspTypeBase *type)
 {
  NspFigureData *H  = (type == NULL) ? new_figuredata() : type->new();
  if ( H ==  NULLFIGUREDATA)
@@ -1531,7 +1531,7 @@ int nsp_figuredata_check_values(NspFigureData *H)
   return OK;
 }
 
-NspFigureData *nsp_figuredata_create(char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type)
+NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type)
 {
   NspFigureData *H  = nsp_figuredata_create_void(name,type);
   if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;
@@ -1557,7 +1557,7 @@ NspFigureData *nsp_figuredata_create(char *name,int color,int background,NspMatr
 }
 
 
-NspFigureData *nsp_figuredata_create_default(char *name)
+NspFigureData *nsp_figuredata_create_default(const char *name)
 {
  NspFigureData *H  = nsp_figuredata_create_void(name,NULL);
  if ( H ==  NULLFIGUREDATA) return NULLFIGUREDATA;

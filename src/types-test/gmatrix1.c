@@ -478,7 +478,7 @@ NspGMatrix1  *GetGMatrix1(Stack stack, int i)
  * create a NspGMatrix1 instance 
  *-----------------------------------------------------*/
 
-static NspGMatrix1 *nsp_gmatrix1_create_void(char *name,NspTypeBase *type)
+static NspGMatrix1 *nsp_gmatrix1_create_void(const char *name,NspTypeBase *type)
 {
  NspGMatrix1 *H  = (type == NULL) ? new_gmatrix1() : type->new();
  if ( H ==  NULLGMATRIX1)
@@ -549,7 +549,7 @@ int nsp_gmatrix1_check_values(NspGMatrix1 *H)
   return OK;
 }
 
-NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type)
+NspGMatrix1 *nsp_gmatrix1_create(const char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type)
 {
   NspGMatrix1 *H  = nsp_gmatrix1_create_void(name,type);
   if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;
@@ -567,7 +567,7 @@ NspGMatrix1 *nsp_gmatrix1_create(char *name,NspMatrix* data,gboolean remap,gbool
 }
 
 
-NspGMatrix1 *nsp_gmatrix1_create_default(char *name)
+NspGMatrix1 *nsp_gmatrix1_create_default(const char *name)
 {
  NspGMatrix1 *H  = nsp_gmatrix1_create_void(name,NULL);
  if ( H ==  NULLGMATRIX1) return NULLGMATRIX1;

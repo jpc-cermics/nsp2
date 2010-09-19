@@ -443,7 +443,7 @@ NspGrImage  *GetGrImage(Stack stack, int i)
  * create a NspGrImage instance 
  *-----------------------------------------------------*/
 
-static NspGrImage *nsp_grimage_create_void(char *name,NspTypeBase *type)
+static NspGrImage *nsp_grimage_create_void(const char *name,NspTypeBase *type)
 {
  NspGrImage *H  = (type == NULL) ? new_grimage() : type->new();
  if ( H ==  NULLGRIMAGE)
@@ -484,7 +484,7 @@ int nsp_grimage_check_values(NspGrImage *H)
   return OK;
 }
 
-NspGrImage *nsp_grimage_create(char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type)
+NspGrImage *nsp_grimage_create(const char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type)
 {
   NspGrImage *H  = nsp_grimage_create_void(name,type);
   if ( H ==  NULLGRIMAGE) return NULLGRIMAGE;
@@ -503,7 +503,7 @@ NspGrImage *nsp_grimage_create(char *name,double x,double y,double w,double h,gb
 }
 
 
-NspGrImage *nsp_grimage_create_default(char *name)
+NspGrImage *nsp_grimage_create_default(const char *name)
 {
  NspGrImage *H  = nsp_grimage_create_void(name,NULL);
  if ( H ==  NULLGRIMAGE) return NULLGRIMAGE;

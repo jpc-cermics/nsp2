@@ -96,8 +96,8 @@ NspSPolyhedron *new_spolyhedron();
 
 #define NULLSPOLYHEDRON (NspSPolyhedron*) 0
 
-extern NspSPolyhedron *nsp_spolyhedron_create(char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type);
-extern NspSPolyhedron *nsp_spolyhedron_create_default(char *name);
+extern NspSPolyhedron *nsp_spolyhedron_create(const char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type);
+extern NspSPolyhedron *nsp_spolyhedron_create_default(const char *name);
 
 /* from NspSPolyhedronObj.c */
 
@@ -141,7 +141,7 @@ static NspSPolyhedron *nsp_spolyhedron_xdr_load(XDR *xdrs);
 static AttrTab spolyhedron_attrs[];
 static NspMethods *spolyhedron_get_methods(void);
 /* static int int_spolyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspSPolyhedron *nsp_spolyhedron_create_void(char *name,NspTypeBase *type);
+static NspSPolyhedron *nsp_spolyhedron_create_void(const char *name,NspTypeBase *type);
 #line 16 "codegen/spolyhedron.override"
 /* inserted in the private part of include file */
 static void nsp_draw_spolyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);

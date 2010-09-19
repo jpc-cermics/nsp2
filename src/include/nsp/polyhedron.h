@@ -80,8 +80,8 @@ NspPolyhedron *new_polyhedron();
 
 #define NULLPOLYHEDRON (NspPolyhedron*) 0
 
-extern NspPolyhedron *nsp_polyhedron_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* pos, int pos_length,NspTypeBase *type);
-extern NspPolyhedron *nsp_polyhedron_create_default(char *name);
+extern NspPolyhedron *nsp_polyhedron_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* pos, int pos_length,NspTypeBase *type);
+extern NspPolyhedron *nsp_polyhedron_create_default(const char *name);
 
 /* from NspPolyhedronObj.c */
 
@@ -130,7 +130,7 @@ static NspPolyhedron *nsp_polyhedron_xdr_load(XDR *xdrs);
 static AttrTab polyhedron_attrs[];
 static NspMethods *polyhedron_get_methods(void);
 /* static int int_polyhedron_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspPolyhedron *nsp_polyhedron_create_void(char *name,NspTypeBase *type);
+static NspPolyhedron *nsp_polyhedron_create_void(const char *name,NspTypeBase *type);
 #line 21 "codegen/polyhedron.override"
 /* inserted in the private part of include file */
 static void nsp_draw_polyhedron(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);

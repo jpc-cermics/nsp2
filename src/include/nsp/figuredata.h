@@ -84,8 +84,8 @@ NspFigureData *new_figuredata();
 
 #define NULLFIGUREDATA (NspFigureData*) 0
 
-extern NspFigureData *nsp_figuredata_create(char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type);
-extern NspFigureData *nsp_figuredata_create_default(char *name);
+extern NspFigureData *nsp_figuredata_create(const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type);
+extern NspFigureData *nsp_figuredata_create_default(const char *name);
 
 /* from NspFigureDataObj.c */
 
@@ -122,6 +122,6 @@ static NspFigureData *nsp_figuredata_xdr_load(XDR *xdrs);
 static AttrTab figuredata_attrs[];
 static NspMethods *figuredata_get_methods(void);
 /* static int int_figuredata_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspFigureData *nsp_figuredata_create_void(char *name,NspTypeBase *type);
+static NspFigureData *nsp_figuredata_create_void(const char *name,NspTypeBase *type);
 #endif /* NspFigureData_Private */
 

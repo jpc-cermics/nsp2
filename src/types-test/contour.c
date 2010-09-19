@@ -463,7 +463,7 @@ NspContour  *GetContour(Stack stack, int i)
  * create a NspContour instance 
  *-----------------------------------------------------*/
 
-static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type)
+static NspContour *nsp_contour_create_void(const char *name,NspTypeBase *type)
 {
  NspContour *H  = (type == NULL) ? new_contour() : type->new();
  if ( H ==  NULLCONTOUR)
@@ -526,7 +526,7 @@ int nsp_contour_check_values(NspContour *H)
   return OK;
 }
 
-NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type)
+NspContour *nsp_contour_create(const char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type)
 {
   NspContour *H  = nsp_contour_create_void(name,type);
   if ( H ==  NULLCONTOUR) return NULLCONTOUR;
@@ -542,7 +542,7 @@ NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y
 }
 
 
-NspContour *nsp_contour_create_default(char *name)
+NspContour *nsp_contour_create_default(const char *name)
 {
  NspContour *H  = nsp_contour_create_void(name,NULL);
  if ( H ==  NULLCONTOUR) return NULLCONTOUR;

@@ -402,7 +402,7 @@ NspClassBRef  *GetClassBRef(Stack stack, int i)
  * create a NspClassBRef instance 
  *-----------------------------------------------------*/
 
-static NspClassBRef *nsp_classbref_create_void(char *name,NspTypeBase *type)
+static NspClassBRef *nsp_classbref_create_void(const char *name,NspTypeBase *type)
 {
  NspClassBRef *H  = (type == NULL) ? new_classbref() : type->new();
  if ( H ==  NULLCLASSBREF)
@@ -438,7 +438,7 @@ int nsp_classbref_check_values(NspClassBRef *H)
   return OK;
 }
 
-NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
+NspClassBRef *nsp_classbref_create(const char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
   NspClassBRef *H  = nsp_classbref_create_void(name,type);
   if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;
@@ -451,7 +451,7 @@ NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,Ns
 }
 
 
-NspClassBRef *nsp_classbref_create_default(char *name)
+NspClassBRef *nsp_classbref_create_default(const char *name)
 {
  NspClassBRef *H  = nsp_classbref_create_void(name,NULL);
  if ( H ==  NULLCLASSBREF) return NULLCLASSBREF;

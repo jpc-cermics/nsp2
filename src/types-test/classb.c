@@ -397,7 +397,7 @@ NspClassB  *GetClassB(Stack stack, int i)
  * create a NspClassB instance 
  *-----------------------------------------------------*/
 
-static NspClassB *nsp_classb_create_void(char *name,NspTypeBase *type)
+static NspClassB *nsp_classb_create_void(const char *name,NspTypeBase *type)
 {
  NspClassB *H  = (type == NULL) ? new_classb() : type->new();
  if ( H ==  NULLCLASSB)
@@ -427,7 +427,7 @@ int nsp_classb_check_values(NspClassB *H)
   return OK;
 }
 
-NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
+NspClassB *nsp_classb_create(const char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type)
 {
   NspClassB *H  = nsp_classb_create_void(name,type);
   if ( H ==  NULLCLASSB) return NULLCLASSB;
@@ -439,7 +439,7 @@ NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatri
 }
 
 
-NspClassB *nsp_classb_create_default(char *name)
+NspClassB *nsp_classb_create_default(const char *name)
 {
  NspClassB *H  = nsp_classb_create_void(name,NULL);
  if ( H ==  NULLCLASSB) return NULLCLASSB;

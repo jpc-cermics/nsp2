@@ -86,8 +86,8 @@ NspGrRect *new_grrect();
 
 #define NULLGRRECT (NspGrRect*) 0
 
-extern NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type);
-extern NspGrRect *nsp_grrect_create_default(char *name);
+extern NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type);
+extern NspGrRect *nsp_grrect_create_default(const char *name);
 
 /* from NspGrRectObj.c */
 
@@ -129,7 +129,7 @@ static NspGrRect *nsp_grrect_xdr_load(XDR *xdrs);
 static AttrTab grrect_attrs[];
 static NspMethods *grrect_get_methods(void);
 /* static int int_grrect_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGrRect *nsp_grrect_create_void(char *name,NspTypeBase *type);
+static NspGrRect *nsp_grrect_create_void(const char *name,NspTypeBase *type);
 #line 15 "codegen/grrect.override"
 
 /* inserted in the private part of include file */

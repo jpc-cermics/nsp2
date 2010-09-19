@@ -136,8 +136,8 @@ NspBlock *new_block();
 
 #define NULLBLOCK (NspBlock*) 0
 
-extern NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic* icon,int draw_mode,NspTypeBase *type);
-extern NspBlock *nsp_block_create_default(char *name);
+extern NspBlock *nsp_block_create(const char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic* icon,int draw_mode,NspTypeBase *type);
+extern NspBlock *nsp_block_create_default(const char *name);
 
 /* from NspBlockObj.c */
 
@@ -179,7 +179,7 @@ static NspBlock *nsp_block_xdr_load(XDR *xdrs);
 static AttrTab block_attrs[];
 static NspMethods *block_get_methods(void);
 /* static int int_block_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type);
+static NspBlock *nsp_block_create_void(const char *name,NspTypeBase *type);
 #line 63 "codegen/block.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 

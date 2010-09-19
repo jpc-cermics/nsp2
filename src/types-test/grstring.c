@@ -462,7 +462,7 @@ NspGrstring  *GetGrstring(Stack stack, int i)
  * create a NspGrstring instance 
  *-----------------------------------------------------*/
 
-static NspGrstring *nsp_grstring_create_void(char *name,NspTypeBase *type)
+static NspGrstring *nsp_grstring_create_void(const char *name,NspTypeBase *type)
 {
  NspGrstring *H  = (type == NULL) ? new_grstring() : type->new();
  if ( H ==  NULLGRSTRING)
@@ -510,7 +510,7 @@ int nsp_grstring_check_values(NspGrstring *H)
   return OK;
 }
 
-NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type)
+NspGrstring *nsp_grstring_create(const char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type)
 {
   NspGrstring *H  = nsp_grstring_create_void(name,type);
   if ( H ==  NULLGRSTRING) return NULLGRSTRING;
@@ -531,7 +531,7 @@ NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMat
 }
 
 
-NspGrstring *nsp_grstring_create_default(char *name)
+NspGrstring *nsp_grstring_create_default(const char *name)
 {
  NspGrstring *H  = nsp_grstring_create_void(name,NULL);
  if ( H ==  NULLGRSTRING) return NULLGRSTRING;

@@ -84,8 +84,8 @@ NspGMatrix *new_gmatrix();
 
 #define NULLGMATRIX (NspGMatrix*) 0
 
-extern NspGMatrix *nsp_gmatrix_create(char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type);
-extern NspGMatrix *nsp_gmatrix_create_default(char *name);
+extern NspGMatrix *nsp_gmatrix_create(const char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type);
+extern NspGMatrix *nsp_gmatrix_create_default(const char *name);
 
 /* from NspGMatrixObj.c */
 
@@ -127,7 +127,7 @@ static NspGMatrix *nsp_gmatrix_xdr_load(XDR *xdrs);
 static AttrTab gmatrix_attrs[];
 static NspMethods *gmatrix_get_methods(void);
 /* static int int_gmatrix_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGMatrix *nsp_gmatrix_create_void(char *name,NspTypeBase *type);
+static NspGMatrix *nsp_gmatrix_create_void(const char *name,NspTypeBase *type);
 #line 15 "codegen/gmatrix.override"
 
 /* inserted in the private part of include file */

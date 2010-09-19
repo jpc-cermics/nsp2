@@ -82,8 +82,8 @@ NspArrows *new_arrows();
 
 #define NULLARROWS (NspArrows*) 0
 
-extern NspArrows *nsp_arrows_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type);
-extern NspArrows *nsp_arrows_create_default(char *name);
+extern NspArrows *nsp_arrows_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type);
+extern NspArrows *nsp_arrows_create_default(const char *name);
 
 /* from NspArrowsObj.c */
 
@@ -125,7 +125,7 @@ static NspArrows *nsp_arrows_xdr_load(XDR *xdrs);
 static AttrTab arrows_attrs[];
 static NspMethods *arrows_get_methods(void);
 /* static int int_arrows_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspArrows *nsp_arrows_create_void(char *name,NspTypeBase *type);
+static NspArrows *nsp_arrows_create_void(const char *name,NspTypeBase *type);
 #line 14 "codegen/arrows.override"
 
 /* inserted in the private part of include file */

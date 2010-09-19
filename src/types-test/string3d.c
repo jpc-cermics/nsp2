@@ -448,7 +448,7 @@ NspString3d  *GetString3d(Stack stack, int i)
  * create a NspString3d instance 
  *-----------------------------------------------------*/
 
-static NspString3d *nsp_string3d_create_void(char *name,NspTypeBase *type)
+static NspString3d *nsp_string3d_create_void(const char *name,NspTypeBase *type)
 {
  NspString3d *H  = (type == NULL) ? new_string3d() : type->new();
  if ( H ==  NULLSTRING3D)
@@ -492,7 +492,7 @@ int nsp_string3d_check_values(NspString3d *H)
   return OK;
 }
 
-NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type)
+NspString3d *nsp_string3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type)
 {
   NspString3d *H  = nsp_string3d_create_void(name,type);
   if ( H ==  NULLSTRING3D) return NULLSTRING3D;
@@ -514,7 +514,7 @@ NspString3d *nsp_string3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,cha
 }
 
 
-NspString3d *nsp_string3d_create_default(char *name)
+NspString3d *nsp_string3d_create_default(const char *name)
 {
  NspString3d *H  = nsp_string3d_create_void(name,NULL);
  if ( H ==  NULLSTRING3D) return NULLSTRING3D;

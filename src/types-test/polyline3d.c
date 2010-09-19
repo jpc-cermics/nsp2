@@ -446,7 +446,7 @@ NspPolyline3d  *GetPolyline3d(Stack stack, int i)
  * create a NspPolyline3d instance 
  *-----------------------------------------------------*/
 
-static NspPolyline3d *nsp_polyline3d_create_void(char *name,NspTypeBase *type)
+static NspPolyline3d *nsp_polyline3d_create_void(const char *name,NspTypeBase *type)
 {
  NspPolyline3d *H  = (type == NULL) ? new_polyline3d() : type->new();
  if ( H ==  NULLPOLYLINE3D)
@@ -489,7 +489,7 @@ int nsp_polyline3d_check_values(NspPolyline3d *H)
   return OK;
 }
 
-NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type)
+NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type)
 {
   NspPolyline3d *H  = nsp_polyline3d_create_void(name,type);
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
@@ -509,7 +509,7 @@ NspPolyline3d *nsp_polyline3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l
 }
 
 
-NspPolyline3d *nsp_polyline3d_create_default(char *name)
+NspPolyline3d *nsp_polyline3d_create_default(const char *name)
 {
  NspPolyline3d *H  = nsp_polyline3d_create_void(name,NULL);
  if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;

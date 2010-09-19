@@ -112,8 +112,8 @@ NspGraphic *new_graphic();
 
 #define NULLGRAPHIC (NspGraphic*) 0
 
-extern NspGraphic *nsp_graphic_create(char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type);
-extern NspGraphic *nsp_graphic_create_default(char *name);
+extern NspGraphic *nsp_graphic_create(const char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type);
+extern NspGraphic *nsp_graphic_create_default(const char *name);
 
 /* from NspGraphicObj.c */
 
@@ -157,7 +157,7 @@ static NspGraphic *nsp_graphic_xdr_load(XDR *xdrs);
 static AttrTab graphic_attrs[];
 static NspMethods *graphic_get_methods(void);
 /* static int int_graphic_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGraphic *nsp_graphic_create_void(char *name,NspTypeBase *type);
+static NspGraphic *nsp_graphic_create_void(const char *name,NspTypeBase *type);
 #line 16 "codegen/graphic.override"
 
 /* inserted in the private part of include file */

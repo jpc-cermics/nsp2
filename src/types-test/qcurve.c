@@ -441,7 +441,7 @@ NspQcurve  *GetQcurve(Stack stack, int i)
  * create a NspQcurve instance 
  *-----------------------------------------------------*/
 
-static NspQcurve *nsp_qcurve_create_void(char *name,NspTypeBase *type)
+static NspQcurve *nsp_qcurve_create_void(const char *name,NspTypeBase *type)
 {
  NspQcurve *H  = (type == NULL) ? new_qcurve() : type->new();
  if ( H ==  NULLQCURVE)
@@ -488,7 +488,7 @@ int nsp_qcurve_check_values(NspQcurve *H)
   return OK;
 }
 
-NspQcurve *nsp_qcurve_create(char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type)
+NspQcurve *nsp_qcurve_create(const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type)
 {
   NspQcurve *H  = nsp_qcurve_create_void(name,type);
   if ( H ==  NULLQCURVE) return NULLQCURVE;
@@ -507,7 +507,7 @@ NspQcurve *nsp_qcurve_create(char *name,int mark,int width,int style,int color,i
 }
 
 
-NspQcurve *nsp_qcurve_create_default(char *name)
+NspQcurve *nsp_qcurve_create_default(const char *name)
 {
  NspQcurve *H  = nsp_qcurve_create_void(name,NULL);
  if ( H ==  NULLQCURVE) return NULLQCURVE;

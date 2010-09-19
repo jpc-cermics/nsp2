@@ -470,7 +470,7 @@ NspConnector  *GetConnector(Stack stack, int i)
 /* override the code for connector creation */
 
 
-static NspConnector *nsp_connector_create_void(char *name,NspTypeBase *type)
+static NspConnector *nsp_connector_create_void(const char *name,NspTypeBase *type)
 {
  NspConnector *H  = (type == NULL) ? new_connector() : type->new();
  if ( H ==  NULLCONNECTOR)
@@ -507,7 +507,7 @@ int nsp_connector_check_values(NspConnector *H)
   return OK;
 }
 
-NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type)
+NspConnector *nsp_connector_create(const char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type)
 {
  NspConnector *H  = nsp_connector_create_void(name,type);
  if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;
@@ -524,7 +524,7 @@ NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int col
 }
 
 
-NspConnector *nsp_connector_create_default(char *name)
+NspConnector *nsp_connector_create_default(const char *name)
 {
  NspConnector *H  = nsp_connector_create_void(name,NULL);
  if ( H ==  NULLCONNECTOR) return NULLCONNECTOR;

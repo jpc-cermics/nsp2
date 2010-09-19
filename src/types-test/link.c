@@ -487,7 +487,7 @@ NspLink  *GetLink(Stack stack, int i)
 #line 235 "codegen/link.override"
 /* override the code for link creation */
 
-static NspLink *nsp_link_create_void(char *name,NspTypeBase *type)
+static NspLink *nsp_link_create_void(const char *name,NspTypeBase *type)
 {
  NspLink *H  = (type == NULL) ? new_link() : type->new();
  if ( H ==  NULLLINK)
@@ -528,7 +528,7 @@ int nsp_link_check_values(NspLink *H)
   return OK;
 }
 
-NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,NspTypeBase *type)
+NspLink *nsp_link_create(const char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,NspTypeBase *type)
 {
  NspLink *H  = nsp_link_create_void(name,type);
  if ( H ==  NULLLINK) return NULLLINK;
@@ -550,7 +550,7 @@ NspLink *nsp_link_create(char *name,void* object_sid,int color,int thickness,int
   return H;
 }
 
-NspLink *nsp_link_create_default(char *name)
+NspLink *nsp_link_create_default(const char *name)
 {
  NspLink *H  = nsp_link_create_void(name,NULL);
  if ( H ==  NULLLINK) return NULLLINK;
@@ -993,7 +993,7 @@ static void dist_2_polyline(const NspMatrix *poly,const double pt[2],
  * Create a graphic link
  *********************************************************************/
 
-NspLink *link_create_n(char *name,int n,int color,int thickness)
+NspLink *link_create_n(const char *name,int n,int color,int thickness)
 {
   NspMatrix *P;
   grl_lock l;

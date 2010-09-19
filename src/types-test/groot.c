@@ -382,7 +382,7 @@ NspGRoot  *GetGRoot(Stack stack, int i)
  * create a NspGRoot instance 
  *-----------------------------------------------------*/
 
-static NspGRoot *nsp_groot_create_void(char *name,NspTypeBase *type)
+static NspGRoot *nsp_groot_create_void(const char *name,NspTypeBase *type)
 {
  NspGRoot *H  = (type == NULL) ? new_groot() : type->new();
  if ( H ==  NULLGROOT)
@@ -413,7 +413,7 @@ int nsp_groot_check_values(NspGRoot *H)
   return OK;
 }
 
-NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type)
+NspGRoot *nsp_groot_create(const char *name,NspList* figures,NspTypeBase *type)
 {
   NspGRoot *H  = nsp_groot_create_void(name,type);
   if ( H ==  NULLGROOT) return NULLGROOT;
@@ -424,7 +424,7 @@ NspGRoot *nsp_groot_create(char *name,NspList* figures,NspTypeBase *type)
 }
 
 
-NspGRoot *nsp_groot_create_default(char *name)
+NspGRoot *nsp_groot_create_default(const char *name)
 {
  NspGRoot *H  = nsp_groot_create_void(name,NULL);
  if ( H ==  NULLGROOT) return NULLGROOT;

@@ -86,8 +86,8 @@ NspSurf *new_surf();
 
 #define NULLSURF (NspSurf*) 0
 
-extern NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type);
-extern NspSurf *nsp_surf_create_default(char *name);
+extern NspSurf *nsp_surf_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type);
+extern NspSurf *nsp_surf_create_default(const char *name);
 
 /* from NspSurfObj.c */
 
@@ -129,7 +129,7 @@ static NspSurf *nsp_surf_xdr_load(XDR *xdrs);
 static AttrTab surf_attrs[];
 static NspMethods *surf_get_methods(void);
 /* static int int_surf_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspSurf *nsp_surf_create_void(char *name,NspTypeBase *type);
+static NspSurf *nsp_surf_create_void(const char *name,NspTypeBase *type);
 #line 14 "codegen/surf.override"
 
 /* inserted in the private part of include file */

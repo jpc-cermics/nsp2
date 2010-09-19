@@ -440,7 +440,7 @@ NspCurve  *GetCurve(Stack stack, int i)
  * create a NspCurve instance 
  *-----------------------------------------------------*/
 
-static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type)
+static NspCurve *nsp_curve_create_void(const char *name,NspTypeBase *type)
 {
  NspCurve *H  = (type == NULL) ? new_curve() : type->new();
  if ( H ==  NULLCURVE)
@@ -485,7 +485,7 @@ int nsp_curve_check_values(NspCurve *H)
   return OK;
 }
 
-NspCurve *nsp_curve_create(char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type)
+NspCurve *nsp_curve_create(const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type)
 {
   NspCurve *H  = nsp_curve_create_void(name,type);
   if ( H ==  NULLCURVE) return NULLCURVE;
@@ -502,7 +502,7 @@ NspCurve *nsp_curve_create(char *name,int mark,int width,int style,int color,int
 }
 
 
-NspCurve *nsp_curve_create_default(char *name)
+NspCurve *nsp_curve_create_default(const char *name)
 {
  NspCurve *H  = nsp_curve_create_void(name,NULL);
  if ( H ==  NULLCURVE) return NULLCURVE;

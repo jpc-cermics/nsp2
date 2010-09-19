@@ -459,7 +459,7 @@ NspSurf  *GetSurf(Stack stack, int i)
  * create a NspSurf instance 
  *-----------------------------------------------------*/
 
-static NspSurf *nsp_surf_create_void(char *name,NspTypeBase *type)
+static NspSurf *nsp_surf_create_void(const char *name,NspTypeBase *type)
 {
  NspSurf *H  = (type == NULL) ? new_surf() : type->new();
  if ( H ==  NULLSURF)
@@ -518,7 +518,7 @@ int nsp_surf_check_values(NspSurf *H)
   return OK;
 }
 
-NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type)
+NspSurf *nsp_surf_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type)
 {
   NspSurf *H  = nsp_surf_create_void(name,type);
   if ( H ==  NULLSURF) return NULLSURF;
@@ -536,7 +536,7 @@ NspSurf *nsp_surf_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMa
 }
 
 
-NspSurf *nsp_surf_create_default(char *name)
+NspSurf *nsp_surf_create_default(const char *name)
 {
  NspSurf *H  = nsp_surf_create_void(name,NULL);
  if ( H ==  NULLSURF) return NULLSURF;

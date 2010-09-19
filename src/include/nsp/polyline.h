@@ -86,8 +86,8 @@ NspPolyline *new_polyline();
 
 #define NULLPOLYLINE (NspPolyline*) 0
 
-extern NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
-extern NspPolyline *nsp_polyline_create_default(char *name);
+extern NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
+extern NspPolyline *nsp_polyline_create_default(const char *name);
 
 /* from NspPolylineObj.c */
 
@@ -128,7 +128,7 @@ static NspPolyline *nsp_polyline_xdr_load(XDR *xdrs);
 static AttrTab polyline_attrs[];
 static NspMethods *polyline_get_methods(void);
 /* static int int_polyline_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type);
+static NspPolyline *nsp_polyline_create_void(const char *name,NspTypeBase *type);
 #line 13 "codegen/polyline.override"
 /* inserted in the private part of include file */
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);

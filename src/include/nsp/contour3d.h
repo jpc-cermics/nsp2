@@ -85,8 +85,8 @@ NspContour3d *new_contour3d();
 
 #define NULLCONTOUR3D (NspContour3d*) 0
 
-extern NspContour3d *nsp_contour3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type);
-extern NspContour3d *nsp_contour3d_create_default(char *name);
+extern NspContour3d *nsp_contour3d_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type);
+extern NspContour3d *nsp_contour3d_create_default(const char *name);
 
 /* from NspContour3dObj.c */
 
@@ -128,7 +128,7 @@ static NspContour3d *nsp_contour3d_xdr_load(XDR *xdrs);
 static AttrTab contour3d_attrs[];
 static NspMethods *contour3d_get_methods(void);
 /* static int int_contour3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspContour3d *nsp_contour3d_create_void(char *name,NspTypeBase *type);
+static NspContour3d *nsp_contour3d_create_void(const char *name,NspTypeBase *type);
 #line 15 "codegen/contour3d.override"
 
 /* inserted in the private part of include file */

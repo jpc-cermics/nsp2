@@ -434,7 +434,7 @@ NspGrRect  *GetGrRect(Stack stack, int i)
  * create a NspGrRect instance 
  *-----------------------------------------------------*/
 
-static NspGrRect *nsp_grrect_create_void(char *name,NspTypeBase *type)
+static NspGrRect *nsp_grrect_create_void(const char *name,NspTypeBase *type)
 {
  NspGrRect *H  = (type == NULL) ? new_grrect() : type->new();
  if ( H ==  NULLGRRECT)
@@ -468,7 +468,7 @@ int nsp_grrect_check_values(NspGrRect *H)
   return OK;
 }
 
-NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type)
+NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type)
 {
   NspGrRect *H  = nsp_grrect_create_void(name,type);
   if ( H ==  NULLGRRECT) return NULLGRRECT;
@@ -485,7 +485,7 @@ NspGrRect *nsp_grrect_create(char *name,double x,double y,double w,double h,int 
 }
 
 
-NspGrRect *nsp_grrect_create_default(char *name)
+NspGrRect *nsp_grrect_create_default(const char *name)
 {
  NspGrRect *H  = nsp_grrect_create_void(name,NULL);
  if ( H ==  NULLGRRECT) return NULLGRRECT;

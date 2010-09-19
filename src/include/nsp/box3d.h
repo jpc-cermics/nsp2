@@ -84,8 +84,8 @@ NspBox3d *new_box3d();
 
 #define NULLBOX3D (NspBox3d*) 0
 
-extern NspBox3d *nsp_box3d_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
-extern NspBox3d *nsp_box3d_create_default(char *name);
+extern NspBox3d *nsp_box3d_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type);
+extern NspBox3d *nsp_box3d_create_default(const char *name);
 
 /* from NspBox3dObj.c */
 
@@ -126,7 +126,7 @@ static NspBox3d *nsp_box3d_xdr_load(XDR *xdrs);
 static AttrTab box3d_attrs[];
 static NspMethods *box3d_get_methods(void);
 /* static int int_box3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspBox3d *nsp_box3d_create_void(char *name,NspTypeBase *type);
+static NspBox3d *nsp_box3d_create_void(const char *name,NspTypeBase *type);
 #line 13 "codegen/box3d.override"
 /* inserted in the private part of include file */
 

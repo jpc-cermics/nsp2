@@ -428,7 +428,7 @@ NspSegments  *GetSegments(Stack stack, int i)
  * create a NspSegments instance 
  *-----------------------------------------------------*/
 
-static NspSegments *nsp_segments_create_void(char *name,NspTypeBase *type)
+static NspSegments *nsp_segments_create_void(const char *name,NspTypeBase *type)
 {
  NspSegments *H  = (type == NULL) ? new_segments() : type->new();
  if ( H ==  NULLSEGMENTS)
@@ -476,7 +476,7 @@ int nsp_segments_check_values(NspSegments *H)
   return OK;
 }
 
-NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type)
+NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type)
 {
   NspSegments *H  = nsp_segments_create_void(name,type);
   if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;
@@ -489,7 +489,7 @@ NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix*
 }
 
 
-NspSegments *nsp_segments_create_default(char *name)
+NspSegments *nsp_segments_create_default(const char *name)
 {
  NspSegments *H  = nsp_segments_create_void(name,NULL);
  if ( H ==  NULLSEGMENTS) return NULLSEGMENTS;

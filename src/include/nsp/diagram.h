@@ -80,8 +80,8 @@ NspDiagram *new_diagram();
 
 #define NULLDIAGRAM (NspDiagram*) 0
 
-extern NspDiagram *nsp_diagram_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
-extern NspDiagram *nsp_diagram_create_default(char *name);
+extern NspDiagram *nsp_diagram_create(const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
+extern NspDiagram *nsp_diagram_create_default(const char *name);
 
 /* from NspDiagramObj.c */
 
@@ -166,7 +166,7 @@ static NspDiagram *nsp_diagram_xdr_load(XDR *xdrs);
 static AttrTab diagram_attrs[];
 static NspMethods *diagram_get_methods(void);
 /* static int int_diagram_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspDiagram *nsp_diagram_create_void(char *name,NspTypeBase *type);
+static NspDiagram *nsp_diagram_create_void(const char *name,NspTypeBase *type);
 #line 57 "codegen/diagram.override"
 
 /* inserted in the private part of include file */

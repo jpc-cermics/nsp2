@@ -80,8 +80,8 @@ NspCompound *new_compound();
 
 #define NULLCOMPOUND (NspCompound*) 0
 
-extern NspCompound *nsp_compound_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
-extern NspCompound *nsp_compound_create_default(char *name);
+extern NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
+extern NspCompound *nsp_compound_create_default(const char *name);
 
 /* from NspCompoundObj.c */
 
@@ -124,7 +124,7 @@ static NspCompound *nsp_compound_xdr_load(XDR *xdrs);
 static AttrTab compound_attrs[];
 static NspMethods *compound_get_methods(void);
 /* static int int_compound_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type);
+static NspCompound *nsp_compound_create_void(const char *name,NspTypeBase *type);
 #line 15 "codegen/compound.override"
 
 /* inserted in the private part of include file */

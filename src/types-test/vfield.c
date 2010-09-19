@@ -442,7 +442,7 @@ NspVField  *GetVField(Stack stack, int i)
  * create a NspVField instance 
  *-----------------------------------------------------*/
 
-static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type)
+static NspVField *nsp_vfield_create_void(const char *name,NspTypeBase *type)
 {
  NspVField *H  = (type == NULL) ? new_vfield() : type->new();
  if ( H ==  NULLVFIELD)
@@ -498,7 +498,7 @@ int nsp_vfield_check_values(NspVField *H)
   return OK;
 }
 
-NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type)
+NspVField *nsp_vfield_create(const char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type)
 {
   NspVField *H  = nsp_vfield_create_void(name,type);
   if ( H ==  NULLVFIELD) return NULLVFIELD;
@@ -513,7 +513,7 @@ NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x
 }
 
 
-NspVField *nsp_vfield_create_default(char *name)
+NspVField *nsp_vfield_create_default(const char *name)
 {
  NspVField *H  = nsp_vfield_create_void(name,NULL);
  if ( H ==  NULLVFIELD) return NULLVFIELD;

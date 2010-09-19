@@ -76,8 +76,8 @@ NspClassBRef *new_classbref();
 
 #define NULLCLASSBREF (NspClassBRef*) 0
 
-extern NspClassBRef *nsp_classbref_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
-extern NspClassBRef *nsp_classbref_create_default(char *name);
+extern NspClassBRef *nsp_classbref_create(const char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
+extern NspClassBRef *nsp_classbref_create_default(const char *name);
 
 /* from NspClassBRefObj.c */
 
@@ -114,6 +114,6 @@ static NspClassBRef *nsp_classbref_xdr_load(XDR *xdrs);
 static AttrTab classbref_attrs[];
 static NspMethods *classbref_get_methods(void);
 /* static int int_classbref_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspClassBRef *nsp_classbref_create_void(char *name,NspTypeBase *type);
+static NspClassBRef *nsp_classbref_create_void(const char *name,NspTypeBase *type);
 #endif /* NspClassBRef_Private */
 

@@ -98,8 +98,8 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
-extern NspObjs3d *nsp_objs3d_create_default(char *name);
+extern NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create_default(const char *name);
 
 /* from NspObjs3dObj.c */
 
@@ -149,7 +149,7 @@ static NspObjs3d *nsp_objs3d_xdr_load(XDR *xdrs);
 static AttrTab objs3d_attrs[];
 static NspMethods *objs3d_get_methods(void);
 /* static int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type);
+static NspObjs3d *nsp_objs3d_create_void(const char *name,NspTypeBase *type);
 #line 27 "codegen/objs3d.override"
 
 /* inserted in the private part of include file */

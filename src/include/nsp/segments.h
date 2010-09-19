@@ -81,8 +81,8 @@ NspSegments *new_segments();
 
 #define NULLSEGMENTS (NspSegments*) 0
 
-extern NspSegments *nsp_segments_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type);
-extern NspSegments *nsp_segments_create_default(char *name);
+extern NspSegments *nsp_segments_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type);
+extern NspSegments *nsp_segments_create_default(const char *name);
 
 /* from NspSegmentsObj.c */
 
@@ -124,7 +124,7 @@ static NspSegments *nsp_segments_xdr_load(XDR *xdrs);
 static AttrTab segments_attrs[];
 static NspMethods *segments_get_methods(void);
 /* static int int_segments_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspSegments *nsp_segments_create_void(char *name,NspTypeBase *type);
+static NspSegments *nsp_segments_create_void(const char *name,NspTypeBase *type);
 #line 14 "codegen/segments.override"
 
 /* inserted in the private part of include file */

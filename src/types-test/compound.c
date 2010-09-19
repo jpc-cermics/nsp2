@@ -412,7 +412,7 @@ NspCompound  *GetCompound(Stack stack, int i)
  * create a NspCompound instance 
  *-----------------------------------------------------*/
 
-static NspCompound *nsp_compound_create_void(char *name,NspTypeBase *type)
+static NspCompound *nsp_compound_create_void(const char *name,NspTypeBase *type)
 {
  NspCompound *H  = (type == NULL) ? new_compound() : type->new();
  if ( H ==  NULLCOMPOUND)
@@ -453,7 +453,7 @@ int nsp_compound_check_values(NspCompound *H)
   return OK;
 }
 
-NspCompound *nsp_compound_create(char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type)
+NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type)
 {
   NspCompound *H  = nsp_compound_create_void(name,type);
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
@@ -465,7 +465,7 @@ NspCompound *nsp_compound_create(char *name,NspMatrix* bounds,NspList* children,
 }
 
 
-NspCompound *nsp_compound_create_default(char *name)
+NspCompound *nsp_compound_create_default(const char *name)
 {
  NspCompound *H  = nsp_compound_create_void(name,NULL);
  if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;

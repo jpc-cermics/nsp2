@@ -417,7 +417,7 @@ NspClassARef  *GetClassARef(Stack stack, int i)
  * create a NspClassARef instance 
  *-----------------------------------------------------*/
 
-static NspClassARef *nsp_classaref_create_void(char *name,NspTypeBase *type)
+static NspClassARef *nsp_classaref_create_void(const char *name,NspTypeBase *type)
 {
  NspClassARef *H  = (type == NULL) ? new_classaref() : type->new();
  if ( H ==  NULLCLASSAREF)
@@ -463,7 +463,7 @@ int nsp_classaref_check_values(NspClassARef *H)
   return OK;
 }
 
-NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type)
+NspClassARef *nsp_classaref_create(const char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type)
 {
   NspClassARef *H  = nsp_classaref_create_void(name,type);
   if ( H ==  NULLCLASSAREF) return NULLCLASSAREF;
@@ -481,7 +481,7 @@ NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,Ns
 }
 
 
-NspClassARef *nsp_classaref_create_default(char *name)
+NspClassARef *nsp_classaref_create_default(const char *name)
 {
  NspClassARef *H  = nsp_classaref_create_void(name,NULL);
  if ( H ==  NULLCLASSAREF) return NULLCLASSAREF;

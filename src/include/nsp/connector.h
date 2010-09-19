@@ -108,8 +108,8 @@ NspConnector *new_connector();
 
 #define NULLCONNECTOR (NspConnector*) 0
 
-extern NspConnector *nsp_connector_create(char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type);
-extern NspConnector *nsp_connector_create_default(char *name);
+extern NspConnector *nsp_connector_create(const char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type);
+extern NspConnector *nsp_connector_create_default(const char *name);
 
 /* from NspConnectorObj.c */
 
@@ -151,7 +151,7 @@ static NspConnector *nsp_connector_xdr_load(XDR *xdrs);
 static AttrTab connector_attrs[];
 static NspMethods *connector_get_methods(void);
 /* static int int_connector_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspConnector *nsp_connector_create_void(char *name,NspTypeBase *type);
+static NspConnector *nsp_connector_create_void(const char *name,NspTypeBase *type);
 #line 38 "codegen/connector.override"
 
 static double lock_size=1; /*  XXX a factoriser quelque part ... */ 

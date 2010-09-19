@@ -83,8 +83,8 @@ NspVField *new_vfield();
 
 #define NULLVFIELD (NspVField*) 0
 
-extern NspVField *nsp_vfield_create(char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type);
-extern NspVField *nsp_vfield_create_default(char *name);
+extern NspVField *nsp_vfield_create(const char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type);
+extern NspVField *nsp_vfield_create_default(const char *name);
 
 /* from NspVFieldObj.c */
 
@@ -125,7 +125,7 @@ static NspVField *nsp_vfield_xdr_load(XDR *xdrs);
 static AttrTab vfield_attrs[];
 static NspMethods *vfield_get_methods(void);
 /* static int int_vfield_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspVField *nsp_vfield_create_void(char *name,NspTypeBase *type);
+static NspVField *nsp_vfield_create_void(const char *name,NspTypeBase *type);
 #line 13 "codegen/vfield.override"
 
 /* inserted in the private part of include file */

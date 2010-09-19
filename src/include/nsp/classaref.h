@@ -78,8 +78,8 @@ NspClassARef *new_classaref();
 
 #define NULLCLASSAREF (NspClassARef*) 0
 
-extern NspClassARef *nsp_classaref_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
-extern NspClassARef *nsp_classaref_create_default(char *name);
+extern NspClassARef *nsp_classaref_create(const char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
+extern NspClassARef *nsp_classaref_create_default(const char *name);
 
 /* from NspClassARefObj.c */
 
@@ -116,6 +116,6 @@ static NspClassARef *nsp_classaref_xdr_load(XDR *xdrs);
 static AttrTab classaref_attrs[];
 static NspMethods *classaref_get_methods(void);
 /* static int int_classaref_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspClassARef *nsp_classaref_create_void(char *name,NspTypeBase *type);
+static NspClassARef *nsp_classaref_create_void(const char *name,NspTypeBase *type);
 #endif /* NspClassARef_Private */
 

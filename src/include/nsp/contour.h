@@ -85,8 +85,8 @@ NspContour *new_contour();
 
 #define NULLCONTOUR (NspContour*) 0
 
-extern NspContour *nsp_contour_create(char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type);
-extern NspContour *nsp_contour_create_default(char *name);
+extern NspContour *nsp_contour_create(const char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type);
+extern NspContour *nsp_contour_create_default(const char *name);
 
 /* from NspContourObj.c */
 
@@ -131,7 +131,7 @@ static NspContour *nsp_contour_xdr_load(XDR *xdrs);
 static AttrTab contour_attrs[];
 static NspMethods *contour_get_methods(void);
 /* static int int_contour_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspContour *nsp_contour_create_void(char *name,NspTypeBase *type);
+static NspContour *nsp_contour_create_void(const char *name,NspTypeBase *type);
 #line 18 "codegen/contour.override"
 
 /* inserted in the private part of include file */

@@ -81,8 +81,8 @@ NspClassA *new_classa();
 
 #define NULLCLASSA (NspClassA*) 0
 
-extern NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
-extern NspClassA *nsp_classa_create_default(char *name);
+extern NspClassA *nsp_classa_create(const char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type);
+extern NspClassA *nsp_classa_create_default(const char *name);
 
 /* from NspClassAObj.c */
 
@@ -126,7 +126,7 @@ static NspClassA *nsp_classa_xdr_load(XDR *xdrs);
 static AttrTab classa_attrs[];
 static NspMethods *classa_get_methods(void);
 /* static int int_classa_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspClassA *nsp_classa_create_void(char *name,NspTypeBase *type);
+static NspClassA *nsp_classa_create_void(const char *name,NspTypeBase *type);
 #line 20 "codegen/classa.override"
 
 /* inserted in the private part of include file

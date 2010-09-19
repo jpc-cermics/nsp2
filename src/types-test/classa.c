@@ -416,7 +416,7 @@ NspClassA  *GetClassA(Stack stack, int i)
  * create a NspClassA instance 
  *-----------------------------------------------------*/
 
-static NspClassA *nsp_classa_create_void(char *name,NspTypeBase *type)
+static NspClassA *nsp_classa_create_void(const char *name,NspTypeBase *type)
 {
  NspClassA *H  = (type == NULL) ? new_classa() : type->new();
  if ( H ==  NULLCLASSA)
@@ -455,7 +455,7 @@ int nsp_classa_check_values(NspClassA *H)
   return OK;
 }
 
-NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type)
+NspClassA *nsp_classa_create(const char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type)
 {
   NspClassA *H  = nsp_classa_create_void(name,type);
   if ( H ==  NULLCLASSA) return NULLCLASSA;
@@ -472,7 +472,7 @@ NspClassA *nsp_classa_create(char *name,int cla_color,int cla_thickness,NspMatri
 }
 
 
-NspClassA *nsp_classa_create_default(char *name)
+NspClassA *nsp_classa_create_default(const char *name)
 {
  NspClassA *H  = nsp_classa_create_void(name,NULL);
  if ( H ==  NULLCLASSA) return NULLCLASSA;

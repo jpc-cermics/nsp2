@@ -85,8 +85,8 @@ NspCurve *new_curve();
 
 #define NULLCURVE (NspCurve*) 0
 
-extern NspCurve *nsp_curve_create(char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type);
-extern NspCurve *nsp_curve_create_default(char *name);
+extern NspCurve *nsp_curve_create(const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type);
+extern NspCurve *nsp_curve_create_default(const char *name);
 
 /* from NspCurveObj.c */
 
@@ -127,7 +127,7 @@ static NspCurve *nsp_curve_xdr_load(XDR *xdrs);
 static AttrTab curve_attrs[];
 static NspMethods *curve_get_methods(void);
 /* static int int_curve_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspCurve *nsp_curve_create_void(char *name,NspTypeBase *type);
+static NspCurve *nsp_curve_create_void(const char *name,NspTypeBase *type);
 #line 13 "codegen/curve.override"
 
 /* inserted in the private part of include file */

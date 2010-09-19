@@ -88,8 +88,8 @@ NspGrImage *new_grimage();
 
 #define NULLGRIMAGE (NspGrImage*) 0
 
-extern NspGrImage *nsp_grimage_create(char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type);
-extern NspGrImage *nsp_grimage_create_default(char *name);
+extern NspGrImage *nsp_grimage_create(const char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type);
+extern NspGrImage *nsp_grimage_create_default(const char *name);
 
 /* from NspGrImageObj.c */
 
@@ -131,7 +131,7 @@ static NspGrImage *nsp_grimage_xdr_load(XDR *xdrs);
 static AttrTab grimage_attrs[];
 static NspMethods *grimage_get_methods(void);
 /* static int int_grimage_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGrImage *nsp_grimage_create_void(char *name,NspTypeBase *type);
+static NspGrImage *nsp_grimage_create_void(const char *name,NspTypeBase *type);
 #line 15 "codegen/grimage.override"
 
 /* inserted in the private part of include file */

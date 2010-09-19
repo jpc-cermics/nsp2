@@ -83,8 +83,8 @@ NspFec *new_fec();
 
 #define NULLFEC (NspFec*) 0
 
-extern NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type);
-extern NspFec *nsp_fec_create_default(char *name);
+extern NspFec *nsp_fec_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type);
+extern NspFec *nsp_fec_create_default(const char *name);
 
 /* from NspFecObj.c */
 
@@ -136,7 +136,7 @@ static NspFec *nsp_fec_xdr_load(XDR *xdrs);
 static AttrTab fec_attrs[];
 static NspMethods *fec_get_methods(void);
 /* static int int_fec_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type);
+static NspFec *nsp_fec_create_void(const char *name,NspTypeBase *type);
 #line 23 "codegen/fec.override"
 
 /* inserted in the private part of include file */

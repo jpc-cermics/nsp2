@@ -567,7 +567,7 @@ NspAxes  *GetAxes(Stack stack, int i)
  * create a NspAxes instance 
  *-----------------------------------------------------*/
 
-static NspAxes *nsp_axes_create_void(char *name,NspTypeBase *type)
+static NspAxes *nsp_axes_create_void(const char *name,NspTypeBase *type)
 {
  NspAxes *H  = (type == NULL) ? new_axes() : type->new();
  if ( H ==  NULLAXES)
@@ -682,7 +682,7 @@ int nsp_axes_check_values(NspAxes *H)
   return OK;
 }
 
-NspAxes *nsp_axes_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type)
+NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type)
 {
   NspAxes *H  = nsp_axes_create_void(name,type);
   if ( H ==  NULLAXES) return NULLAXES;
@@ -717,7 +717,7 @@ NspAxes *nsp_axes_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rh
 }
 
 
-NspAxes *nsp_axes_create_default(char *name)
+NspAxes *nsp_axes_create_default(const char *name)
 {
  NspAxes *H  = nsp_axes_create_void(name,NULL);
  if ( H ==  NULLAXES) return NULLAXES;

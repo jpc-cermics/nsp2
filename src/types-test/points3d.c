@@ -454,7 +454,7 @@ NspPoints3d  *GetPoints3d(Stack stack, int i)
  * create a NspPoints3d instance 
  *-----------------------------------------------------*/
 
-static NspPoints3d *nsp_points3d_create_void(char *name,NspTypeBase *type)
+static NspPoints3d *nsp_points3d_create_void(const char *name,NspTypeBase *type)
 {
  NspPoints3d *H  = (type == NULL) ? new_points3d() : type->new();
  if ( H ==  NULLPOINTS3D)
@@ -493,7 +493,7 @@ int nsp_points3d_check_values(NspPoints3d *H)
   return OK;
 }
 
-NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type)
+NspPoints3d *nsp_points3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type)
 {
   NspPoints3d *H  = nsp_points3d_create_void(name,type);
   if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;
@@ -515,7 +515,7 @@ NspPoints3d *nsp_points3d_create(char *name,NspMatrix* Mcoord,void* Mcoord_l,int
 }
 
 
-NspPoints3d *nsp_points3d_create_default(char *name)
+NspPoints3d *nsp_points3d_create_default(const char *name)
 {
  NspPoints3d *H  = nsp_points3d_create_void(name,NULL);
  if ( H ==  NULLPOINTS3D) return NULLPOINTS3D;

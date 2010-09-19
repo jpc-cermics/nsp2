@@ -497,7 +497,7 @@ NspFec  *GetFec(Stack stack, int i)
  * create a NspFec instance 
  *-----------------------------------------------------*/
 
-static NspFec *nsp_fec_create_void(char *name,NspTypeBase *type)
+static NspFec *nsp_fec_create_void(const char *name,NspTypeBase *type)
 {
  NspFec *H  = (type == NULL) ? new_fec() : type->new();
  if ( H ==  NULLFEC)
@@ -576,7 +576,7 @@ int nsp_fec_check_values(NspFec *H)
   return OK;
 }
 
-NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type)
+NspFec *nsp_fec_create(const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type)
 {
   NspFec *H  = nsp_fec_create_void(name,type);
   if ( H ==  NULLFEC) return NULLFEC;
@@ -596,7 +596,7 @@ NspFec *nsp_fec_create(char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles
 }
 
 
-NspFec *nsp_fec_create_default(char *name)
+NspFec *nsp_fec_create_default(const char *name)
 {
  NspFec *H  = nsp_fec_create_void(name,NULL);
  if ( H ==  NULLFEC) return NULLFEC;

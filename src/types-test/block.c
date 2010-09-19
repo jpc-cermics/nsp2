@@ -506,7 +506,7 @@ NspBlock  *GetBlock(Stack stack, int i)
 #line 253 "codegen/block.override"
 /* override the code for block creation */
 
-static NspBlock *nsp_block_create_void(char *name,NspTypeBase *type)
+static NspBlock *nsp_block_create_void(const char *name,NspTypeBase *type)
 {
  NspBlock *H  = (type == NULL) ? new_block() : type->new();
  if ( H ==  NULLBLOCK)
@@ -547,7 +547,7 @@ int nsp_block_check_values(NspBlock *H)
 }
 
 
-NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,int draw_mode,NspTypeBase *type)
+NspBlock *nsp_block_create(const char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic *icon,int draw_mode,NspTypeBase *type)
 {
   double pt[2];
   int i;
@@ -588,7 +588,7 @@ NspBlock *nsp_block_create(char *name,void* object_sid,double* r,int color,int t
   return H;
 }
 
-NspBlock *nsp_block_create_default(char *name)
+NspBlock *nsp_block_create_default(const char *name)
 {
  NspBlock *H  = nsp_block_create_void(name,NULL);
  if ( H ==  NULLBLOCK) return NULLBLOCK;

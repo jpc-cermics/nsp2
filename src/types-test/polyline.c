@@ -451,7 +451,7 @@ NspPolyline  *GetPolyline(Stack stack, int i)
  * create a NspPolyline instance 
  *-----------------------------------------------------*/
 
-static NspPolyline *nsp_polyline_create_void(char *name,NspTypeBase *type)
+static NspPolyline *nsp_polyline_create_void(const char *name,NspTypeBase *type)
 {
  NspPolyline *H  = (type == NULL) ? new_polyline() : type->new();
  if ( H ==  NULLPOLYLINE)
@@ -498,7 +498,7 @@ int nsp_polyline_check_values(NspPolyline *H)
   return OK;
 }
 
-NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type)
+NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type)
 {
   NspPolyline *H  = nsp_polyline_create_void(name,type);
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
@@ -516,7 +516,7 @@ NspPolyline *nsp_polyline_create(char *name,NspMatrix* x,NspMatrix* y,gboolean c
 }
 
 
-NspPolyline *nsp_polyline_create_default(char *name)
+NspPolyline *nsp_polyline_create_default(const char *name)
 {
  NspPolyline *H  = nsp_polyline_create_void(name,NULL);
  if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;

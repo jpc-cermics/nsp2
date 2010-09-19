@@ -508,7 +508,7 @@ NspObjs3d  *GetObjs3d(Stack stack, int i)
  * create a NspObjs3d instance 
  *-----------------------------------------------------*/
 
-static NspObjs3d *nsp_objs3d_create_void(char *name,NspTypeBase *type)
+static NspObjs3d *nsp_objs3d_create_void(const char *name,NspTypeBase *type)
 {
  NspObjs3d *H  = (type == NULL) ? new_objs3d() : type->new();
  if ( H ==  NULLOBJS3D)
@@ -595,7 +595,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
 {
   NspObjs3d *H  = nsp_objs3d_create_void(name,type);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
@@ -620,7 +620,7 @@ NspObjs3d *nsp_objs3d_create(char *name,nsp_gcscale scale,NspMatrix* wrect,doubl
 }
 
 
-NspObjs3d *nsp_objs3d_create_default(char *name)
+NspObjs3d *nsp_objs3d_create_default(const char *name)
 {
  NspObjs3d *H  = nsp_objs3d_create_void(name,NULL);
  if ( H ==  NULLOBJS3D) return NULLOBJS3D;

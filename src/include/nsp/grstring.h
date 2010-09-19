@@ -89,8 +89,8 @@ NspGrstring *new_grstring();
 
 #define NULLGRSTRING (NspGrstring*) 0
 
-extern NspGrstring *nsp_grstring_create(char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type);
-extern NspGrstring *nsp_grstring_create_default(char *name);
+extern NspGrstring *nsp_grstring_create(const char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type);
+extern NspGrstring *nsp_grstring_create_default(const char *name);
 
 /* from NspGrstringObj.c */
 
@@ -132,7 +132,7 @@ static NspGrstring *nsp_grstring_xdr_load(XDR *xdrs);
 static AttrTab grstring_attrs[];
 static NspMethods *grstring_get_methods(void);
 /* static int int_grstring_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspGrstring *nsp_grstring_create_void(char *name,NspTypeBase *type);
+static NspGrstring *nsp_grstring_create_void(const char *name,NspTypeBase *type);
 #line 14 "codegen/grstring.override"
 
 /* inserted in the private part of include file */

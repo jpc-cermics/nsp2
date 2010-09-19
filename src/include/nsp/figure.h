@@ -91,8 +91,8 @@ NspFigure *new_figure();
 
 #define NULLFIGURE (NspFigure*) 0
 
-extern NspFigure *nsp_figure_create(char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type);
-extern NspFigure *nsp_figure_create_default(char *name);
+extern NspFigure *nsp_figure_create(const char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type);
+extern NspFigure *nsp_figure_create_default(const char *name);
 
 /* from NspFigureObj.c */
 
@@ -160,7 +160,7 @@ static NspFigure *nsp_figure_xdr_load(XDR *xdrs);
 static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspFigure *nsp_figure_create_void(char *name,NspTypeBase *type);
+static NspFigure *nsp_figure_create_void(const char *name,NspTypeBase *type);
 #line 42 "codegen/figure.override"
 
 /* inserted in the private part of include file

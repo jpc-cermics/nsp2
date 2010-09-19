@@ -70,8 +70,8 @@ NspClassB *new_classb();
 
 #define NULLCLASSB (NspClassB*) 0
 
-extern NspClassB *nsp_classb_create(char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
-extern NspClassB *nsp_classb_create_default(char *name);
+extern NspClassB *nsp_classb_create(const char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type);
+extern NspClassB *nsp_classb_create_default(const char *name);
 
 /* from NspClassBObj.c */
 
@@ -108,6 +108,6 @@ static NspClassB *nsp_classb_xdr_load(XDR *xdrs);
 static AttrTab classb_attrs[];
 static NspMethods *classb_get_methods(void);
 /* static int int_classb_create(Stack stack, int rhs, int opt, int lhs);*/ 
-static NspClassB *nsp_classb_create_void(char *name,NspTypeBase *type);
+static NspClassB *nsp_classb_create_void(const char *name,NspTypeBase *type);
 #endif /* NspClassB_Private */
 
