@@ -21,20 +21,16 @@
  *    call or fort 
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
+#include <nsp/nsp.h>
 #include <ctype.h> /* isxxxx */
-
-#include <nsp/object.h>
 #include <nsp/hash.h>
 #include <nsp/matrix.h>
 #include <nsp/smatrix.h>
-#include "nsp/interf.h"
-#include "nsp/stack.h"
+#include <nsp/interf.h>
+#include <nsp/stack.h>
 #include <nsp/system.h>
 #include "callfunc.h"
-#include "linking.h"
+#include <nsp/linking.h>
 #include "addinter.h"
 
 static void link_bug (int i);
@@ -247,7 +243,7 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1000);
   /* first argument is the function name */
   if ((Fname = GetString(stack,1)) == NULL) return RET_BUG;
-  if ( SearchInDynLinks(Fname,&f) == -1 )
+  if ( nsp_link_search(Fname,-1,&f)  == -1 )
     {
       Scierror("Error: entry point %s not found\n",Fname);
       return RET_BUG;

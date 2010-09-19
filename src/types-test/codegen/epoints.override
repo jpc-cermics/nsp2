@@ -8,6 +8,8 @@ include-public Epoints
 /* inserted at the end of public part of include file */
 extern int  nsp_insert_epoint(const char *name, void *func, int sharedid);
 extern NspEpoints *nsp_find_epoint(const char *name) ;
+extern void nsp_show_epoints();
+extern void nsp_remove_sharedlib_epoints(int shid);
 
 %%
 include-private Epoints
@@ -76,5 +78,35 @@ NspEpoints *nsp_find_epoint(const char *name)
   if ( nsp_hash_find(Epoints,name,&Obj) == FAIL) 
     return NULL;
   return ( NspEpoints *) Obj;
+}
+
+void nsp_show_epoints()
+{
+  if ( Epoints == NULL ) return;
+  nsp_hash_print(Epoints,0,0,0);
+}
+
+static void epoint_default() 
+{
+}
+
+void nsp_remove_sharedlib_epoints(int shid)
+{
+  NspObject *Obj;
+  int i=0;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(Epoints,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  NspEpoints *ep = (NspEpoints *) Obj;
+	  if ( ep->obj->shid == shid) 
+	    {
+	      ep->obj->func = epoint_default;
+	      nsp_hash_remove(Epoints,nsp_object_get_name(Obj));
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
 }
 

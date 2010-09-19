@@ -2,7 +2,9 @@
 #define NSP_LINKING
 
 #include <nsp/string.h>
-#include <nsp/object.h> /* for Hash */
+#include <nsp/nsp.h>
+#include <nsp/hash.h>
+
 /* Nsp
  * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics
  *
@@ -22,7 +24,6 @@
  * Boston, MA 02111-1307, USA.
  */
 
-extern int SearchInDynLinks(nsp_const_string op, int (**realop) ());
 extern void  ShowDynLinks (void);
 extern int nsp_is_linked(nsp_const_string name,int *ilib);
 extern void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf);
@@ -33,6 +34,5 @@ extern void nsp_remove_interface(int Nshared);
 extern void nsp_link_initialize(void);
 extern void nsp_delete_interface_functions(int Int);
 extern int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ());
-
 
 #endif 

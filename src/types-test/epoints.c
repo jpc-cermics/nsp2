@@ -24,7 +24,7 @@
 
 
 
-#line 18 "codegen/epoints.override"
+#line 20 "codegen/epoints.override"
 /* headers in C-file */
 
 #line 31 "epoints.c"
@@ -99,7 +99,7 @@ NspTypeEpoints *new_type_epoints(type_mode mode)
 
   type->init = (init_func *) init_epoints;
 
-#line 27 "codegen/epoints.override"
+#line 29 "codegen/epoints.override"
   /* inserted verbatim in the type definition */
 
 #line 106 "epoints.c"
@@ -525,7 +525,7 @@ void Epoints_Interf_Info(int i, char **fname, function (**f))
   *f = Epoints_func[i].fonc;
 }
 
-#line 39 "codegen/epoints.override"
+#line 41 "codegen/epoints.override"
 /* inserted verbatim at the end */
 
 static NspHash *Epoints = NULL;
@@ -568,5 +568,35 @@ NspEpoints *nsp_find_epoint(const char *name)
   return ( NspEpoints *) Obj;
 }
 
+void nsp_show_epoints()
+{
+  if ( Epoints == NULL ) return;
+  nsp_hash_print(Epoints,0,0,0);
+}
 
-#line 573 "epoints.c"
+static void epoint_default() 
+{
+}
+
+void nsp_remove_sharedlib_epoints(int shid)
+{
+  NspObject *Obj;
+  int i=0;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(Epoints,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  NspEpoints *ep = (NspEpoints *) Obj;
+	  if ( ep->obj->shid == shid) 
+	    {
+	      ep->obj->func = epoint_default;
+	      nsp_hash_remove(Epoints,nsp_object_get_name(Obj));
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+}
+
+
+#line 603 "epoints.c"

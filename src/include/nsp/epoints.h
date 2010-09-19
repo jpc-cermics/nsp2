@@ -108,8 +108,10 @@ extern int nsp_epoints_xdr_save(XDR  *xdrs, NspEpoints *M);
 /* inserted at the end of public part of include file */
 extern int  nsp_insert_epoint(const char *name, void *func, int sharedid);
 extern NspEpoints *nsp_find_epoint(const char *name) ;
+extern void nsp_show_epoints();
+extern void nsp_remove_sharedlib_epoints(int shid);
 
-#line 113 "./epoints.h"
+#line 115 "./epoints.h"
 #endif /* NSP_INC_NspEpoints */ 
 
 #ifdef NspEpoints_Private 
@@ -124,9 +126,9 @@ static AttrTab epoints_attrs[];
 static NspMethods *epoints_get_methods(void);
 /* static int int_epoints_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspEpoints *nsp_epoints_create_void(const char *name,NspTypeBase *type);
-#line 14 "codegen/epoints.override"
+#line 16 "codegen/epoints.override"
 /* inserted in the private part of include file */
 
-#line 131 "./epoints.h"
+#line 133 "./epoints.h"
 #endif /* NspEpoints_Private */
 

@@ -26,3 +26,7 @@ Makefile.mak	: Makefile
 #=====================================================
 
 mexlib.c : ../include/mex/mex.h 
+
+linking.o: link_SYSV.c link_W95.c 
+
+

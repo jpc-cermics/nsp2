@@ -20,14 +20,14 @@
  *--------------------------------------------------------------------------*/
 
 #include <setjmp.h>
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/matrix.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
-
-#include "nsp/interf.h"
+#include <nsp/interf.h>
 #include "minpack.h"
-#include "nsp/eval.h" 
+#include <nsp/eval.h>
+#include <nsp/linking.h>
 
 /* 
  * data used when nsp is used to evaluate an  
@@ -828,10 +828,6 @@ static int lmder_fcn(const int *m,const int *n,double *x,double *fvec,double *fj
 }
 
 
-/* FIXME: should be in a .h */
-
-extern int SearchInDynLinks (char *op, int (**realop)());
-
 static NspObject *get_function_obj(Stack stack, int pos,NspObject *obj,HYBR_ftype type,hybr_data *data)
 {
   if ( IsNspPList(obj) )
@@ -849,7 +845,7 @@ static NspObject *get_function_obj(Stack stack, int pos,NspObject *obj,HYBR_ftyp
       char *str = ((NspSMatrix *)obj)->S[0];
       int (*func) (void);
       /* search string in the dynamically linked functions */
-      if ( SearchInDynLinks(str, &func) == -1 )
+      if ( nsp_link_search(str,-1,&func)  == -1 )
 	{
 	  Scierror("Error: function %s is not dynamically linked in nsp\n",str);
 	  return NULL;

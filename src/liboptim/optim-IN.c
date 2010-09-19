@@ -19,13 +19,13 @@
  * n1qn1 : interface 
  *--------------------------------------------------------------------------*/
 
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/matrix.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
-#include "nsp/interf.h"
+#include <nsp/interf.h>
+#include <nsp/linking.h>
 #include "nsp/eval.h" /* nsp_gtk_eval_function */
-
 #include "optim.h"
 
 static void n1qn1_clean(opt_simul_data *obj);
@@ -455,9 +455,6 @@ static void n1qn1_lfcn(int *ind, int *n, double *x, double *f, double *g,void *n
     }
 }
 
-/* FIXME: should be in a .h */
-
-extern int SearchInDynLinks (char *op, int (**realop)());
 
 static void optim_genros(int *ind, int *n, double *x, double *f, double *g, opt_simul_data *optim_data);
 
@@ -481,7 +478,7 @@ static NspObject *get_function(Stack stack, int pos,opt_simul_data *data)
 	  return obj;
 	}
       /* search string in the dynamically linked functions */
-      if ( SearchInDynLinks(str, &func) == -1 )
+      if ( nsp_link_search(str,-1,&func)  == -1 )
 	{
 	  Scierror("Error: function %s is not dynamically linked in nsp\n",str);
 	  return NULL;

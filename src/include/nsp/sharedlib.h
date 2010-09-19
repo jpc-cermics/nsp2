@@ -107,10 +107,14 @@ extern int nsp_sharedlib_xdr_save(XDR  *xdrs, NspSharedlib *M);
 
 #line 8 "codegen/sharedlib.override"
 /* inserted at the end of public part of include file */
-extern int  nsp_insert_shared_library( void *shd,unsigned int id, const  char *path);
-extern NspSharedlib * nsp_find_shared_library( int id);
 
-#line 114 "./sharedlib.h"
+extern int  nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path);
+extern NspSharedlib *nsp_sharedlib_table_find( int id) ;
+extern void nsp_sharedlib_table_remove_lib(int id);
+extern NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name);
+
+
+#line 118 "./sharedlib.h"
 #endif /* NSP_INC_NspSharedlib */ 
 
 #ifdef NspSharedlib_Private 
@@ -125,9 +129,9 @@ static AttrTab sharedlib_attrs[];
 static NspMethods *sharedlib_get_methods(void);
 /* static int int_sharedlib_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSharedlib *nsp_sharedlib_create_void(const char *name,NspTypeBase *type);
-#line 14 "codegen/sharedlib.override"
+#line 18 "codegen/sharedlib.override"
 /* inserted in the private part of include file */
 
-#line 132 "./sharedlib.h"
+#line 136 "./sharedlib.h"
 #endif /* NspSharedlib_Private */
 

@@ -17,16 +17,14 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h> 
-#include <nsp/object.h> 
+#include <nsp/nsp.h>
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
 #include <nsp/spmf.h>
 #include <nsp/interf.h> 
+#include <nsp/linking.h> 
 
 #include "nsp/ode_solvers.h"
 #include "nsp/eval.h"
@@ -223,10 +221,6 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
   return OK;
 }
 
-
-/* FIXME: should be in a .h */
-extern int SearchInDynLinks (char *op, int (**realop)());
-
 int ode_prepare(int m, int n, NspObject *f, NspObject *jac, NspObject *args, ode_data *obj)
 {
   if (( obj->func =nsp_object_copy(f)) == NULLOBJ) return FAIL;
@@ -238,7 +232,7 @@ int ode_prepare(int m, int n, NspObject *f, NspObject *jac, NspObject *args, ode
       char *str = ((NspSMatrix *)f)->S[0];
       int (*func) (void);
       /* search string in the dynamically linked functions */
-      if ( SearchInDynLinks(str, &func) == -1 )
+      if ( nsp_link_search(str,-1,&func)  == -1 )
 	{
 	  Scierror("Error: function %s is not dynamically linked in nsp\n",str);
 	  return FAIL;
@@ -257,7 +251,7 @@ int ode_prepare(int m, int n, NspObject *f, NspObject *jac, NspObject *args, ode
 	  char *str = ((NspSMatrix *)jac)->S[0];
 	  int (*func) (void);
 	  /* search string in the dynamically linked functions */
-	  if ( SearchInDynLinks(str, &func) == -1 )
+	  if ( nsp_link_search(str,-1,&func)  == -1 )
 	    {
 	      Scierror("Error: function %s is not dynamically linked in nsp\n",str);
 	      return FAIL;

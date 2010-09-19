@@ -27,16 +27,13 @@
  *   void ShowInterf()
  */
 
-#include <string.h> 
-#include <stdio.h>
-
-#include "nsp/math.h"
-#include "nsp/plisttoken.h" /* for  name_maxl 52 */
-#include "nsp/sciio.h"
-#include "nsp/interf.h"
+#include <nsp/nsp.h>
+#include <nsp/sciio.h>
+#include <nsp/interf.h>
+#include <nsp/epoints.h>
+#include <nsp/linking.h> 
 
 #include "FunTab.h"
-#include "linking.h"
 #include "addinter.h"
 
 Iel DynInterf[MAXINTERF];

@@ -24,7 +24,7 @@
 
 
 
-#line 18 "codegen/sharedlib.override"
+#line 22 "codegen/sharedlib.override"
 /* headers in C-file */
 
 #line 31 "sharedlib.c"
@@ -99,7 +99,7 @@ NspTypeSharedlib *new_type_sharedlib(type_mode mode)
 
   type->init = (init_func *) init_sharedlib;
 
-#line 27 "codegen/sharedlib.override"
+#line 31 "codegen/sharedlib.override"
   /* inserted verbatim in the type definition */
 
 #line 106 "sharedlib.c"
@@ -537,12 +537,12 @@ void Sharedlib_Interf_Info(int i, char **fname, function (**f))
   *f = Sharedlib_func[i].fonc;
 }
 
-#line 39 "codegen/sharedlib.override"
+#line 43 "codegen/sharedlib.override"
 /* inserted verbatim at the end */
 
 static NspHash *SharedLibs = NULL;
 
-static int nsp_init_shared_library_table(void)
+static int nsp_sharedlib_table_init(void)
 {
   if ( SharedLibs != NULL ) return OK;
   if (( SharedLibs = nsp_hash_create("sharedlibs",256)) == NULL) 
@@ -552,7 +552,7 @@ static int nsp_init_shared_library_table(void)
   return OK;
 }
 
-int  nsp_insert_shared_library( void *shd,unsigned int id, const  char *path)
+int  nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path)
 {
   NspSharedlib *sh = NULL;
   char name[9]; /* size int +1 */
@@ -561,7 +561,7 @@ int  nsp_insert_shared_library( void *shd,unsigned int id, const  char *path)
 
   if ( SharedLibs == NULL ) 
     {
-      if ( nsp_init_shared_library_table() == FAIL) return FAIL;
+      if ( nsp_sharedlib_table_init() == FAIL) return FAIL;
     }
   if (( path_c = nsp_string_copy(path)) == NULL) return FAIL;
   if ((sh = nsp_sharedlib_create(name,shd,id,path_c, NULL))== NULL) 
@@ -577,7 +577,7 @@ int  nsp_insert_shared_library( void *shd,unsigned int id, const  char *path)
   return OK;
 }
 
-NspSharedlib *nsp_find_shared_library( int id) 
+NspSharedlib *nsp_sharedlib_table_find( int id) 
 {
   NspObject *Obj;
   char name[9]; /* size int +1 */
@@ -588,5 +588,34 @@ NspSharedlib *nsp_find_shared_library( int id)
   return ( NspSharedlib *) Obj;
 }
 
+void nsp_sharedlib_table_remove_lib(int id)
+{
+  char name[9]; /* size int +1 */
+  snprintf(name,9, "%x", id );
+  if ( SharedLibs == NULL ) return;
+  nsp_hash_remove(SharedLibs,name);
+}
 
-#line 593 "sharedlib.c"
+NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name)
+{
+  NspObject *Obj;
+  int i=0;
+  if  ( SharedLibs == NULL ) return NULL;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(SharedLibs,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  NspSharedlib *sh = (NspSharedlib *) Obj;
+	  if ( strcmp(name,sh->obj->path) == 0 ) 
+	    {
+	      return sh;
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+  return NULL;
+}
+
+
+#line 622 "sharedlib.c"

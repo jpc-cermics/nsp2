@@ -47,7 +47,9 @@ NspObject *nsp_find_macro_or_func(const char *str,int *type);
 int nsp_delete_macros(const char *dirname);
 static void nsp_remove_macro_or_func(const char *name,int type);
 static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj);
+
 static NspSMatrix *LibDirs = NULLSMAT;
+static NspHash* nsp_functions_table = NULLHASH;
 
 /**
  * nsp_get_libdir:
@@ -57,8 +59,6 @@ static NspSMatrix *LibDirs = NULLSMAT;
  * 
  * Return value: %NULL or a pointer to the directory name.
  **/
-
-static NspHash* nsp_functions_table = NULLHASH;
 
 const char *nsp_get_libdir(int num)
 {
@@ -401,8 +401,8 @@ void nsp_delete_interface_functions(int interface)
 	}
       if ( rep == FAIL) break;
     }
-  return 0;
 }
+
 
 
 /**
