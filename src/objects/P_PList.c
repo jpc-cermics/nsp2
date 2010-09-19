@@ -17,21 +17,17 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "nsp/machine.h"
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h>
 #include <nsp/type.h> 
 #include <nsp/hobj.h> 
 #include <nsp/plist.h> 
 #include <nsp/smatrix.h> 
-#include "nsp/interf.h"
-
+#include <nsp/interf.h> 
 #include <nsp/system.h>
+#include <nsp/nsptcl.h>
+
+/* XXXX */
+extern const char *nsp_get_libdir(int num);
 
 /*
  * Creation of a NspPList 
@@ -72,10 +68,16 @@ NspPList *NspPListCreate(const char *name, PList L,char *filename)
 
 NspPList *NspPListCopy(NspPList *A)
 {
-  NspPList *P_L;
-  P_L = NspPListCreate(NVOID,NULLPLIST,A->file_name);
-  if (( P_L->D =nsp_plist_copy(A->D)) == NULLPLIST ) 
-    return (NULLP_PLIST);
+  NspPList *P_L = NspPListCreate(NVOID,NULLPLIST,A->file_name);
+  if ( P_L == NULL) return P_L;
+  if ( A->D != NULL )
+    {
+      if ( ( P_L->D =nsp_plist_copy(A->D)) == NULLPLIST ) 
+	{
+	  NspPListDestroy(P_L);
+	  return (NULLP_PLIST);
+	}
+    }
   P_L->dir = A->dir;
   return(P_L);
 }
@@ -101,7 +103,7 @@ void NspPListDestroy(NspPList *P_L)
     {
       nsp_object_destroy_name(NSP_OBJECT(P_L));
       FREE(P_L->file_name) ;
-      nsp_plist_destroy(&P_L->D);
+      if ( P_L->D != NULL) nsp_plist_destroy(&P_L->D);
       FREE(P_L) ;
     };
 }
@@ -125,9 +127,6 @@ void NspPListPrInt(NspPList *P_L)
  * NspPListInfo : display Info on NspPList P_L 
  */
 
-/* XXXX */
-extern const char *nsp_get_libdir(int num);
-
 void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
@@ -143,8 +142,6 @@ void NspPListInfo(NspPList *P_L, int indent,const char *name, int rec_level)
  * NspPListPrint : writes P_L Objet 
  */
 
-/* XXX */
-extern nsp_string nsp_tail(char *fileName);
 
 int nsp_plist_get_path(char *fname,NspPList *P_L)
 {
@@ -185,9 +182,10 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
   char fname[FSIZE+1];
   const char *pname = (name != NULL) ? name : NSP_OBJECT(P_L)->name;
   ok = nsp_plist_get_path(fname,P_L);
-  if (user_pref.pr_as_read_syntax)
+  if (user_pref.pr_as_read_syntax ) 
     {
-      nsp_plist_pretty_print(P_L->D,indent+2);
+      if ( P_L->D != NULL )
+	nsp_plist_pretty_print(P_L->D,indent+2);
     }
   else
     {
@@ -196,7 +194,8 @@ void NspPListPrint(NspPList *P_L, int indent,const char *name, int rec_level)
       else 
 	Sciprintf1(indent,"%s\t=\t\tpl\n",pname);
       if ( user_pref.pr_depth  <= rec_level -1 ) return;
-      nsp_plist_pretty_print(P_L->D,indent+2);
+      if ( P_L->D != NULL )
+	nsp_plist_pretty_print(P_L->D,indent+2);
     }
   Sciprintf("\n");
 }
