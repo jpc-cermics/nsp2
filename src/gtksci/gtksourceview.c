@@ -1421,11 +1421,14 @@ static gboolean check_buffer_saved (GtkAction *action, gpointer user_data)
 static void
 close_cb (GtkAction *action, gpointer user_data)
 {
+  GMainLoop *loop;
   GtkWidget *window;
   GtkSourceBuffer *buffer= user_data;
   check_buffer_saved (action, buffer);
   g_object_unref (buffer);
   window =  g_object_get_data (G_OBJECT (buffer), "buffer_window");
+  loop = g_object_get_data (G_OBJECT (window), "main_loop");
+  if ( loop != NULL) g_main_loop_quit (loop);
   gtk_widget_destroy (window);
 }
 
@@ -1517,6 +1520,7 @@ move_cursor_cb (GtkTextBuffer *buffer,
 static gboolean
 window_deleted_cb (GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 {
+  GMainLoop *loop=NULL;
   GtkSourceBuffer *buffer;
   GtkSourceView *view = GTK_SOURCE_VIEW (user_data);
   g_return_val_if_fail (GTK_IS_SOURCE_VIEW (user_data), TRUE);
@@ -1530,6 +1534,9 @@ window_deleted_cb (GtkWidget *widget, GdkEvent *ev, gpointer user_data)
 					NULL, /* closure */
 					NULL, /* func */
 					user_data);
+  /* be sure to quit the loop if edit was entered in a wait mode (asynchronous) */
+  loop = g_object_get_data (G_OBJECT (widget), "main_loop");
+  if ( loop != NULL) g_main_loop_quit (loop);
   /* we return FALSE since we want the window destroyed */
   return FALSE;
 }
@@ -1861,11 +1868,11 @@ static void test_get_language (void);
  * fname can be NULL.
  */
 
-int nsp_edit(const char *fname)
+int nsp_edit(const char *fname,int read_only, int wait)
 {
   GtkWidget *window;
   GtkSourceBuffer *buffer;
-
+  GMainLoop *loop=NULL;
 #ifdef TEST 
   test_schemes () ; 
   test_get_language (); 
@@ -1877,6 +1884,17 @@ int nsp_edit(const char *fname)
   window = create_main_window (buffer);
   gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_widget_show (window);
+  if ( wait == TRUE ) 
+    {
+      loop = g_main_loop_new (NULL,FALSE);
+    }
+  g_object_set_data (G_OBJECT (window), "main_loop", loop);
+  if ( wait == TRUE ) 
+    {
+      GDK_THREADS_LEAVE();
+      g_main_loop_run (loop);
+      GDK_THREADS_ENTER();
+    }
   return 0;
 }
 

@@ -40,6 +40,8 @@
 #include "regexp.h"
 #include "files.h" /* FSIZE */
 
+extern void nsp_edit(char *filename,int read_only,int wait);
+
 /* define in spawn  */
 
 extern function int_spawn_create;
@@ -481,20 +483,19 @@ static int int_regexp(Stack stack,int rhs,int opt,int lhs)
  *
  */
 
-extern void nsp_edit(char *filename,int read_only);
-
 static int int_editfile(Stack stack, int rhs, int opt, int lhs)
 {
   char Fname_expanded[FSIZE+1];
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{ "read_only",s_bool,NULLOBJ,-1},
+		      { "wait",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   char *Fname;
-  int read_only = FALSE;
-  if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&read_only) == FAIL) return RET_BUG;
+  int read_only = FALSE, wait = FALSE;
+  if ( GetArgs(stack,rhs,opt,T,&Fname,&opts,&read_only,&wait) == FAIL) return RET_BUG;
   /* expand keys in path name result in buf */
   nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
-  nsp_edit(Fname_expanded,read_only);
+  nsp_edit(Fname_expanded,read_only,wait);
   return 0;
 }
 
