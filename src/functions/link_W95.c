@@ -26,44 +26,10 @@
 #include <string.h>
 #include <windows.h>
 
-#define Min(x,y)	(((x)<(y))?(x):(y))
-#define Max(x,y)	(((x)>(y))?(x):(y))
-
-extern char *strchr();
-
 static void nsp_delete_symbols (int );
 static int nsp_dlopen(nsp_const_string shared_path,int global);
 static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
-
-/*************************************
- * New version : link entry names 
- *   from new shared lib created with 
- *   files.
- *   -1 : the shared archive was not loaded 
- *   -5 : pb with one of the entry point 
- *************************************/
-
-void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf)
-{
-  int i;
-  if ( iflag == 0 )
-    {
-      *ilib  = nsp_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE);
-    }
-  if (*ilib  == -1 ) return;
-
-  if ( *rhs >= 2) 
-    {
-      i=0 ;
-      while ( en_names[i] != (char *) 0)
-	{
-	  if ( nsp_dlsym(en_names[i],*ilib,strf) == FAIL) 
-	    *ilib=-5;
-	  i++;
-	}
-    }
-}
-
+static void nsp_dlclose(void *shd) ;
 
 /**
  * nsp_link_status:
@@ -98,40 +64,23 @@ int nsp_link_status(void)
 
 static int nsp_dlopen(nsp_const_string shared_path,int global)
 {
+  static int i=1;
+  int rep ;
   static HINSTANCE  hd1 = NULL;
-  int   i;
   hd1 =   LoadLibrary (shared_path);
   if ( hd1 == NULL ) 
     {
       Scierror("Error: link failed for dll %s\n",shared_path);
       return(-1);
     }
-
-  /* store the shared library in table 
-   * first try to detect an unoccupied zone
-   */
-  for ( i = 0 ; i < Nshared ; i++ ) 
+  rep =  nsp_sharedlib_table_insert(hd1,i, shared_path);
+  if ( rep == FAIL ) 
     {
-      if ( hd[i].ok == FAIL) 
-	{
-	  hd[i].shl =  (unsigned long)hd1; 
-	  strcpy(hd[i].tmp_file,shared_path); 
-	  hd[i].ok = OK; 
-	  /* Ok we stop */
-	  return(i); 
-	} 
+      return -1; /* XX */
     }
-  /* we use the last position */
-  if ( Nshared == ENTRYMAX ) 
-    {
-      Scierror("Error: cannot open shared library maxentry %d is reached\n",ENTRYMAX);
-      return -1;
-    }
-  strcpy(hd[Nshared].tmp_file,shared_path);
-  hd[Nshared].shl = (unsigned long)hd1;
-  hd[Nshared].ok = OK;
-  Nshared ++;
-  return (Nshared-1);
+  rep = i;
+  i++;
+  return rep;
 }
 
 /**
@@ -149,83 +98,38 @@ static int nsp_dlopen(nsp_const_string shared_path,int global)
 
 static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
 {
-  int (*loc)();
-  HINSTANCE  hd1 = NULL;
-  int ish = Min(Max(0,ishared),ENTRYMAX-1);
+  NspSharedlib *sh = NULL;
+  void *func;
   char enamebuf[NAME_MAXL];
-  if ( strf == 'f' )
-    Underscores(1,ename,enamebuf);
-  else 
-    Underscores(0,ename,enamebuf);
+  nsp_check_underscores(( strf == 'f' ) ? 1: 0,ename,enamebuf);
 
-  /* lookup the address of the function to be called */
-  if ( NEpoints == ENTRYMAX ) 
+  if ((sh =nsp_sharedlib_table_find(ishared)) == NULL)
     {
-      Sciprintf("You can't link more functions maxentry %d reached\n",ENTRYMAX);
+      Scierror("Error: Shared library %d does not exists\n",ishared);
       return(FAIL);
     }
-  if ( hd[ish].ok == FAIL ) 
-    {
-      Sciprintf("Shared lib %d does not exists\n",ish);
-      return(FAIL);
-    }
-  /** entry was previously loaded **/
-  if (  nsp_link_search(ename,ish,&loc) >= 0 ) 
-    {
-      Sciprintf("Entry name %s is already loaded from lib %d\n",ename,ish);
-      return(OK);
-    }
-  hd1 = (HINSTANCE)  hd[ish].shl;
-  EP[NEpoints].epoint = (l_function) GetProcAddress (hd1,enamebuf);
-  if ( EP[NEpoints].epoint == NULL )
+  /* XXX entry was previously loaded 
+     if (  nsp_link_search(ename,ish,&loc) >= 0 ) 
+     {
+     Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
+     return(OK);
+     }
+  */
+  func = GetProcAddress (sh->obj->shd , enamebuf);
+  if ( func == NULL )
     {
       Sciprintf("%s is not an entry point \n",enamebuf);
-      return(FAIL);
+      return FAIL;
     }
-  else 
-    {
-      /* we don't add the _ in the table */
-      Sciprintf("Linking %s (in fact %s)\n",ename,enamebuf);
-      strncpy(EP[NEpoints].name,ename,NAME_MAXL);
-      EP[NEpoints].Nshared = ish;
-      NEpoints++;
-    }
-  return(OK);  
+  /* insert in the table */
+  if ( nsp_insert_epoint(ename,func,ishared) == FAIL )
+    return FAIL;
+  return OK;
+  
 }
 
 
-
-/**
- * nsp_delete_symbols:
- * @ishared: integer 
- * 
- * remove from link table the entries which were 
- * linked from shared library @ishared.
- *
- **/
-
-static void nsp_delete_symbols(int ishared)
+static void nsp_dlclose(void *shd) 
 {
-  int ish = Min(Max(0,ishared),ENTRYMAX-1);
-  int i=0;
-  for ( i = NEpoints-1 ; i >=0 ; i--) 
-    {
-      if ( EP[i].Nshared == ish )
-	{
-	  int j;
-	  for ( j = i ; j <= NEpoints - 2 ; j++ )
-	    {
-	      EP[j].epoint = EP[j+1].epoint;
-	      EP[j].Nshared = EP[j+1].Nshared;
-	      strcpy(EP[j].name,EP[j+1].name);
-	    }
-	  NEpoints--;
-	}
-    }
-
-  if ( hd[ish].ok != FAIL)
-    {
-      FreeLibrary ((HINSTANCE) hd[ish].shl);
-      hd[ish].ok = FAIL;
-    }
+  FreeLibrary  ((HINSTANCE) shd);
 }
