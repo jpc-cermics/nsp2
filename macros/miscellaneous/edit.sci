@@ -15,8 +15,8 @@ function edit(x,varargopt)
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  
   fname = 'TMPDIR/_editvar.sce';
-  fill_file= %t;
   if exists(x,'callers') then 
     M=acquire(x); 
   elseif exists(x,'nsp-function') then 
@@ -24,18 +24,22 @@ function edit(x,varargopt)
     path = M.get_path[];
     if length(path)<>0 then 
       // a library function 
-      fname = path;
-      fill_file = %f 
+      ok=file('writable',path)
+      if ~ok then 
+	printf("You do not have rights to edit file %s\n",path);
+      end
+      editfile(path,wait=%t);
+      dirname = file('dirname',path);
+      add_lib(dirname,compile=%t);
+      return; 
     end
   else
     return
   end 
-  if fill_file then 
-    // we need a way to create unique files
-    fd=fopen(fname,mode="w");
-    fprint(fd,M,as_read=%t,name=x,color=%f);
-    fd.close[];
-  end
+  // we need a way to create unique files
+  fd=fopen(fname,mode="w");
+  fprint(fd,M,as_read=%t,name=x,color=%f);
+  fd.close[];
   editfile(fname,wait=%t);
   // execute back the file and return 
   // the computed value for x 
@@ -47,3 +51,5 @@ function edit(x,varargopt)
     execstr('resume('+x+'=renv.'+x+')');
   end
 endfunction
+
+
