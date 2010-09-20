@@ -22,13 +22,18 @@ double cdf_dinvnr (double *p, double *q)
   const double eps=1.0E-13, r2pi=0.3989422804014326E0, nhalf=-0.5E0;
   double ccum, xcur, cum, d1, strtx, dx, pp;
   int i1, i,  qporq;
+
+  /* add the particular case p=q=0.5 to get exactly 0 */
+  if ( *p == 0.5 || *q == 0.5 )
+    return 0.0;
+
   /*     FIND MINIMUM OF P AND Q */
   qporq = *p <= *q;
   pp = (!qporq) ? *q : *p;
   /*     initialization step */
   strtx = cdf_stvaln (&pp);
   xcur = strtx;
-  /*     newton interations */
+  /*     newton iterations */
   i1 = maxit;
   for (i = 1; i <= i1; ++i)
     {
