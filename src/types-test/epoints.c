@@ -24,7 +24,7 @@
 
 
 
-#line 20 "codegen/epoints.override"
+#line 21 "codegen/epoints.override"
 /* headers in C-file */
 
 #line 31 "epoints.c"
@@ -99,7 +99,7 @@ NspTypeEpoints *new_type_epoints(type_mode mode)
 
   type->init = (init_func *) init_epoints;
 
-#line 29 "codegen/epoints.override"
+#line 30 "codegen/epoints.override"
   /* inserted verbatim in the type definition */
 
 #line 106 "epoints.c"
@@ -525,12 +525,12 @@ void Epoints_Interf_Info(int i, char **fname, function (**f))
   *f = Epoints_func[i].fonc;
 }
 
-#line 41 "codegen/epoints.override"
+#line 42 "codegen/epoints.override"
 /* inserted verbatim at the end */
 
 static NspHash *Epoints = NULL;
 
-static int nsp_init_shared_epoints_table(void)
+static int nsp_epoints_table_init(void)
 {
   if ( Epoints != NULL ) return OK;
   if (( Epoints = nsp_hash_create("epoints",256)) == NULL) 
@@ -540,12 +540,12 @@ static int nsp_init_shared_epoints_table(void)
   return OK;
 }
 
-int  nsp_insert_epoint(const char *name, void *func, int sharedid)
+int  nsp_epoints_table_insert(const char *name, void *func, int sharedid)
 {
   NspEpoints *ep = NULL;
   if ( Epoints == NULL ) 
     {
-      if ( nsp_init_shared_epoints_table() == FAIL) return FAIL;
+      if ( nsp_epoints_table_init() == FAIL) return FAIL;
     }
   if ((ep = nsp_epoints_create(name,func,sharedid, NULL))== NULL) 
     {
@@ -559,7 +559,7 @@ int  nsp_insert_epoint(const char *name, void *func, int sharedid)
   return OK;
 }
 
-NspEpoints *nsp_find_epoint(const char *name) 
+NspEpoints *nsp_epoints_table_find(const char *name) 
 {
   NspObject *Obj;
   if ( Epoints == NULL ) return NULL;
@@ -568,7 +568,7 @@ NspEpoints *nsp_find_epoint(const char *name)
   return ( NspEpoints *) Obj;
 }
 
-void nsp_show_epoints()
+void nsp_epoints_table_show()
 {
   if ( Epoints == NULL ) return;
   nsp_hash_print(Epoints,0,0,0);
@@ -578,7 +578,7 @@ static void epoint_default()
 {
 }
 
-void nsp_remove_sharedlib_epoints(int shid)
+void nsp_epoints_table_remove_entries(int shid)
 {
   NspObject *Obj;
   int i=0;

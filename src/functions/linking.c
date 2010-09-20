@@ -197,7 +197,7 @@ int nsp_is_linked(nsp_const_string name,int *ilib)
 
 int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ())
 {
-  NspEpoints *ep = nsp_find_epoint(op);
+  NspEpoints *ep =nsp_epoints_table_find(op);
   *realop = NULL;
   if ( ep  == NULL ) return -1 ;
   if ( ilib == -1 || ilib == ep->obj->shid )
@@ -215,7 +215,7 @@ int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ())
 
 void  ShowDynLinks(void)
 {
-  nsp_show_epoints();
+  nsp_epoints_table_show();
   /* 
   int i=0,count=0;
   Sciprintf("Number of entry points %d\n",NEpoints);
@@ -287,7 +287,7 @@ void nsp_unlink_shared(int ilib)
 static void nsp_delete_symbols(int ishared)
 {
   NspSharedlib *sh; 
-  nsp_remove_sharedlib_epoints(ishared);
+  nsp_epoints_table_remove_entries(ishared);
   sh = nsp_sharedlib_table_find(ishared);
   if ( sh != NULL)  nsp_dlclose( sh->obj->shd);
   nsp_sharedlib_table_remove_lib(ishared);

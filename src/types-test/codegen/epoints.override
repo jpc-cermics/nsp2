@@ -6,10 +6,11 @@ include-start Epoints
 %%
 include-public Epoints
 /* inserted at the end of public part of include file */
-extern int  nsp_insert_epoint(const char *name, void *func, int sharedid);
-extern NspEpoints *nsp_find_epoint(const char *name) ;
-extern void nsp_show_epoints();
-extern void nsp_remove_sharedlib_epoints(int shid);
+
+extern int  nsp_epoints_table_insert(const char *name, void *func, int sharedid);
+extern NspEpoints *nsp_epoints_table_find(const char *name) ;
+extern void nsp_epoints_table_show();
+extern void nsp_epoints_table_remove_entries(int shid);
 
 %%
 include-private Epoints
@@ -42,7 +43,7 @@ last
 
 static NspHash *Epoints = NULL;
 
-static int nsp_init_shared_epoints_table(void)
+static int nsp_epoints_table_init(void)
 {
   if ( Epoints != NULL ) return OK;
   if (( Epoints = nsp_hash_create("epoints",256)) == NULL) 
@@ -52,12 +53,12 @@ static int nsp_init_shared_epoints_table(void)
   return OK;
 }
 
-int  nsp_insert_epoint(const char *name, void *func, int sharedid)
+int  nsp_epoints_table_insert(const char *name, void *func, int sharedid)
 {
   NspEpoints *ep = NULL;
   if ( Epoints == NULL ) 
     {
-      if ( nsp_init_shared_epoints_table() == FAIL) return FAIL;
+      if ( nsp_epoints_table_init() == FAIL) return FAIL;
     }
   if ((ep = nsp_epoints_create(name,func,sharedid, NULL))== NULL) 
     {
@@ -71,7 +72,7 @@ int  nsp_insert_epoint(const char *name, void *func, int sharedid)
   return OK;
 }
 
-NspEpoints *nsp_find_epoint(const char *name) 
+NspEpoints *nsp_epoints_table_find(const char *name) 
 {
   NspObject *Obj;
   if ( Epoints == NULL ) return NULL;
@@ -80,7 +81,7 @@ NspEpoints *nsp_find_epoint(const char *name)
   return ( NspEpoints *) Obj;
 }
 
-void nsp_show_epoints()
+void nsp_epoints_table_show()
 {
   if ( Epoints == NULL ) return;
   nsp_hash_print(Epoints,0,0,0);
@@ -90,7 +91,7 @@ static void epoint_default()
 {
 }
 
-void nsp_remove_sharedlib_epoints(int shid)
+void nsp_epoints_table_remove_entries(int shid)
 {
   NspObject *Obj;
   int i=0;

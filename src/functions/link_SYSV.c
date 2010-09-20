@@ -172,7 +172,7 @@ static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
       return FAIL;
     }
   /* insert in the table */
-  if ( nsp_insert_epoint(ename,func,ishared) == FAIL )
+  if ( nsp_epoints_table_insert(ename,func,ishared) == FAIL )
     return FAIL;
   return OK;
 }
