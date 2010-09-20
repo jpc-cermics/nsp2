@@ -6,7 +6,7 @@ function ok = msvc_configure()
 	       "Software\Microsoft\MicrosoftSDK\InstalledSDKs\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1" "Install Dir" ; // Windows 2003 R2 SDK
 	       "Software\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3" "Install Dir"]; // Windows 2003 SDK
     for i = 1:size(entries,'r')
-      ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'',key,''ProductDir'')",errcatch=%t);
+      ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'', entries(i,1), entries(i,2))",errcatch=%t);
       if ok && file('exists',path') then break;end 
     end
     // remove trailing slash
@@ -16,18 +16,20 @@ function ok = msvc_configure()
   endfunction
   
   if getenv('MSVC_SET','NOK') == "OK" then 
+    // msvc was already configured 
     ok = %t
     return 
   end
   ok = %f;
   [name,path,is64] = msvc_get_compiler() 
+  if name == "unknown" then return;end
+  
   // remove trailing slash
   if part(path,length(path))== '\\' then 
     path = part(path,1:(length(path)-1));
   end
   sdk_path = msvc_get_sdk();
-
-  if name == "unknown" then return;end 
+  // select according to version
   select name
    case  'msvc100pro' then // Microsoft Visual 2010 Studio Professional
     ok = msvc_setenv_vc10(name,path,sdk_path, is64);
