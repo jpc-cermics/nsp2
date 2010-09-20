@@ -428,7 +428,7 @@ int nsp_spolyhedron_print(NspSPolyhedron *M, int indent,const char *name, int re
   Sciprintf1(indent+2,"mesh_only	= %s\n", ( M->obj->mesh_only == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"back_color=%d\n",M->obj->back_color);
   Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   Sciprintf1(indent+2,"coldef=%d\n",M->obj->coldef);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
@@ -465,7 +465,7 @@ int nsp_spolyhedron_latex(NspSPolyhedron *M, int indent,const char *name, int re
   Sciprintf1(indent+2,"mesh_only	= %s\n", ( M->obj->mesh_only == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"back_color=%d\n",M->obj->back_color);
   Sciprintf1(indent+2,"shade	= %s\n", ( M->obj->shade == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   Sciprintf1(indent+2,"coldef=%d\n",M->obj->coldef);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");

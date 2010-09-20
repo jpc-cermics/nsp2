@@ -1558,11 +1558,11 @@ class PointerArg(ArgType):
 
     def attr_write_info(self,ptype,pname, varname,byref):
 	"""used when a field is to be reloaded """
-        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+        return  '  Sciprintf1(indent+2,"%s=0x%%x\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be printed """
-        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+        return  '  Sciprintf1(indent+2,"%s=0x%%x\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """
@@ -2729,11 +2729,11 @@ class VoidPointerArg(ArgType):
 
     def attr_write_info(self,ptype,pname, varname,byref):
 	"""used when a field is to be reloaded """
-        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+        return  '  Sciprintf1(indent+2,"%s=0x%%x\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
         """used when a field is to be printed """
-        return  '  Sciprintf1(indent+2,"%s=%%xl\\n",%s->%s);\n' % (pname,varname,pname)
+        return  '  Sciprintf1(indent+2,"%s=0x%%x\\n",%s->%s);\n' % (pname,varname,pname)
 
     def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used when a field is to be initialized """

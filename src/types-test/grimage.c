@@ -364,7 +364,7 @@ int nsp_grimage_print(NspGrImage *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"border	= %s\n", ( M->obj->border == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
-  Sciprintf1(indent+2,"image=%xl\n",M->obj->image);
+  Sciprintf1(indent+2,"image=0x%x\n",M->obj->image);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
@@ -389,7 +389,7 @@ int nsp_grimage_latex(NspGrImage *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"border	= %s\n", ( M->obj->border == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"fname=%s\n",M->obj->fname);
-  Sciprintf1(indent+2,"image=%xl\n",M->obj->image);
+  Sciprintf1(indent+2,"image=0x%x\n",M->obj->image);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");

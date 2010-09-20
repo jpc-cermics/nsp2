@@ -375,7 +375,7 @@ int nsp_points3d_print(NspPoints3d *M, int indent,const char *name, int rec_leve
   if ( M->obj->Mcoord != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
@@ -398,7 +398,7 @@ int nsp_points3d_latex(NspPoints3d *M, int indent,const char *name, int rec_leve
   if ( M->obj->Mcoord != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"mark_type=%d\n",M->obj->mark_type);
   Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);

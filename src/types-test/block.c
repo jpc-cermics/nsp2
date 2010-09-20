@@ -414,7 +414,7 @@ int nsp_block_print(NspBlock *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
+  Sciprintf1(indent+2,"object_sid=0x%x\n",M->obj->object_sid);
   if ( nsp_print_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
@@ -441,7 +441,7 @@ int nsp_block_latex(NspBlock *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_block_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"object_sid=%xl\n",M->obj->object_sid);
+  Sciprintf1(indent+2,"object_sid=0x%x\n",M->obj->object_sid);
   if ( nsp_print_latex_array_double(indent+2,"r",M->obj->r,4,rec_level) == FALSE ) return FALSE ;
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);

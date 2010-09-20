@@ -311,7 +311,7 @@ int nsp_sharedlib_print(NspSharedlib *M, int indent,const char *name, int rec_le
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_sharedlib_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"shd=%xl\n",M->obj->shd);
+  Sciprintf1(indent+2,"shd=0x%x\n",M->obj->shd);
   Sciprintf1(indent+2,"id=%d\n",M->obj->id);
   Sciprintf1(indent+2,"path=%s\n",M->obj->path);
       Sciprintf1(indent+1,"}\n");
@@ -329,7 +329,7 @@ int nsp_sharedlib_latex(NspSharedlib *M, int indent,const char *name, int rec_le
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_sharedlib_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"shd=%xl\n",M->obj->shd);
+  Sciprintf1(indent+2,"shd=0x%x\n",M->obj->shd);
   Sciprintf1(indent+2,"id=%d\n",M->obj->id);
   Sciprintf1(indent+2,"path=%s\n",M->obj->path);
   Sciprintf1(indent+1,"}\n");

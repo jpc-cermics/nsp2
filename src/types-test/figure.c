@@ -397,7 +397,7 @@ int nsp_figure_print(NspFigure *M, int indent,const char *name, int rec_level)
   if ( M->obj->gc != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->gc),indent+2,"gc",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Xgc=%xl\n",M->obj->Xgc);
+  Sciprintf1(indent+2,"Xgc=0x%x\n",M->obj->Xgc);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -434,7 +434,7 @@ int nsp_figure_latex(NspFigure *M, int indent,const char *name, int rec_level)
   if ( M->obj->gc != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->gc),indent+2,"gc",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Xgc=%xl\n",M->obj->Xgc);
+  Sciprintf1(indent+2,"Xgc=0x%x\n",M->obj->Xgc);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");

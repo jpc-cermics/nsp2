@@ -309,7 +309,7 @@ int nsp_epoints_print(NspEpoints *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"func=%xl\n",M->obj->func);
+  Sciprintf1(indent+2,"func=0x%x\n",M->obj->func);
   Sciprintf1(indent+2,"shid=%d\n",M->obj->shid);
       Sciprintf1(indent+1,"}\n");
     }
@@ -326,7 +326,7 @@ int nsp_epoints_latex(NspEpoints *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  Sciprintf1(indent+2,"func=%xl\n",M->obj->func);
+  Sciprintf1(indent+2,"func=0x%x\n",M->obj->func);
   Sciprintf1(indent+2,"shid=%d\n",M->obj->shid);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");

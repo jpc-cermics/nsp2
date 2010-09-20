@@ -367,7 +367,7 @@ int nsp_polyline3d_print(NspPolyline3d *M, int indent,const char *name, int rec_
   if ( M->obj->Mcoord != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   if ( M->obj->Mcolor != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -390,7 +390,7 @@ int nsp_polyline3d_latex(NspPolyline3d *M, int indent,const char *name, int rec_
   if ( M->obj->Mcoord != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   if ( M->obj->Mcolor != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
     }

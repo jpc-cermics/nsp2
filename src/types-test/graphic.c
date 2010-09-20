@@ -340,8 +340,8 @@ int nsp_graphic_print(NspGraphic *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"Fig=%xl\n",M->obj->Fig);
-  Sciprintf1(indent+2,"Axe=%xl\n",M->obj->Axe);
+  Sciprintf1(indent+2,"Fig=0x%x\n",M->obj->Fig);
+  Sciprintf1(indent+2,"Axe=0x%x\n",M->obj->Axe);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -359,8 +359,8 @@ int nsp_graphic_latex(NspGraphic *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"hilited	= %s\n", ( M->obj->hilited == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"show	= %s\n", ( M->obj->show == TRUE) ? "T" : "F" );
-  Sciprintf1(indent+2,"Fig=%xl\n",M->obj->Fig);
-  Sciprintf1(indent+2,"Axe=%xl\n",M->obj->Axe);
+  Sciprintf1(indent+2,"Fig=0x%x\n",M->obj->Fig);
+  Sciprintf1(indent+2,"Axe=0x%x\n",M->obj->Axe);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;

@@ -379,7 +379,7 @@ int nsp_polyhedron_print(NspPolyhedron *M, int indent,const char *name, int rec_
   if ( M->obj->Mcoord != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   if ( M->obj->Mface != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Mface),indent+2,"Mface",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -409,7 +409,7 @@ int nsp_polyhedron_latex(NspPolyhedron *M, int indent,const char *name, int rec_
   if ( M->obj->Mcoord != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
     }
-  Sciprintf1(indent+2,"Mcoord_l=%xl\n",M->obj->Mcoord_l);
+  Sciprintf1(indent+2,"Mcoord_l=0x%x\n",M->obj->Mcoord_l);
   if ( M->obj->Mface != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mface),indent+2,"Mface",rec_level+1)== FALSE ) return FALSE ;
     }
