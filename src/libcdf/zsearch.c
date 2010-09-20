@@ -19,12 +19,21 @@
 
 #include "cdf.h"
 
+
      
 /*
  *   This routine may replace the old dinvr.c routine from
- *   cdflib (translated in C by Jpc). dinvr is simply a 
- *   search routine for bracketing a zero of a function f and 
- *   when done it uses dzror to find accurately a zero of f.
+ *   cdflib (translated in C by Jpc). dinvr is a search routine 
+ *   for bracketing a zero of a function f and when done it uses 
+ *   dzror to find accurately a zero of f (Notes that nsp_zsearch 
+ *   contains internally the "dzror part"). This second part 
+ *   (find accurately a bracketed zero of f) is done using :
+ *     Algorithm R of the paper 'Two Efficient Algorithms with
+ *     Guaranteed Convergence for Finding a Zero of a Function'
+ *     by J. C. P. Bus and T. J. Dekker in ACM Transactions on
+ *     Mathematical Software, Volume 1, no. 4 page 330
+ *     (Dec. '75)
+ *
  *   Both dinvr and nsp_zsearch work using "reverse communication"
  *   which means that they don't compute internally f(x) (no
  *   function pointer is provided to the routine) but
@@ -33,18 +42,21 @@
  *    
  *   There are slight differences between this new routine 
  *   (nsp_zsearch) and dinvr which results in :
- *      * 3 or 4 f evaluations avoided with nsp_zsearch 
+ *      * 3 or 4 f evaluations avoided with nsp_zsearch
+ *        (moreover nsp_zsearch is also faster due to its
+ *         structure).
  *      * nsp_zsearch code is hopefully better understandable
  *      * in some cases nsp_zsearch can find a zero where dinvr
- *        fails.
+ *        fails. 
  *
  *   The main difference is the following: dinvr searches on the
- *   interval [small, big] and evals f on x = small and x = big
+ *   interval [small, big] and first evaluates f on x = small and x = big
  *   to determine the "monotonicity" of the function. Then it
- *   starts from xinit and depending on f(xinit) and on the "monotonicity"
- *   searches on the left or on the right from xinit trying to bracket 
- *   a zero. When a bracket interval [xlb, xhi] is found  dinvr calls dzror but 
- *   without using the fact that the function is known at xlb and xhi.
+ *   starts from x = xinit and depending on f(xinit) and on the "monotonicity"
+ *   searches on the left or on the right trying to bracket a zero. 
+ *   When a bracket interval [b, c] is found  dinvr calls dzror but 
+ *   without using the fact that the function is known at b and c
+ *   (so there are 2 supplementary call to f).
  *
  *   nsp_zsearch can be called by specifying the function monotonicity
  *   (INCREASING, DECREASING, UNKNOWN). In case the monotonicity is
@@ -61,7 +73,8 @@
  *    f=cdff("F", 5, 7, p, q);
  *    cdff("Dfn", 7, p, q, f)  // => bug
  *
- *   The explanation is that the function is not monotone:
+ *   The explanation is that the function is not monotone
+ *   and that 
  *
  *    dfn = linspace(0.00001,7,5000)';
  *    v = ones(size(dfn));
@@ -76,7 +89,7 @@
  *
  *   ZsearchStruct S;
  *   double x = xinit;
- *   stat = nsp_zsearch_init(x, small, big, absstp, relstp, stpmul, 
+ *   stat = nsp_zsearch_init(x, left_bound, right_bound, absstp, relstp, stpmul, 
  *		             abstol, reltol, monotonicity, &S)
  *   do
  *     {
@@ -90,24 +103,24 @@
  *         x is the approximated root (additionnal information in S)
  *         break;
  *      case LEFT_BOUND_EXCEEDED:
- *         the search (on the left from xinit) was not able to bracket a zero
+ *         the search (on the left from a) was not able to bracket a zero
  *         (which doesn't mean that there is not a zero...)
  *         break;
  *      case RIGHT_BOUND_EXCEEDED:
- *         the search (on the right from xinit) was not able to bracket a zero
+ *         the search (on the right from a) was not able to bracket a zero
  *         (which doesn't mean that there is not a zero...)
  *         break;
  *      }
  *       
  */
-int nsp_zsearch_init(double xinit, double zsmall, double zbig, double absstp, double relstp, double stpmul, 
+int nsp_zsearch_init(double xinit, double left_bound, double right_bound, double absstp, double relstp, double stpmul, 
 		     double abstol, double reltol, zsearch_monotonicity monotonicity, ZsearchStruct *S)
 {
-  if ( ! ( zsmall < xinit && xinit < zbig ) )
+  if ( ! ( left_bound < xinit && xinit < right_bound ) )
     return -1;
-  S->xinit = xinit;
-  S->zsmall = zsmall;
-  S->zbig = zbig;
+  S->a = xinit;
+  S->left_bound = left_bound;
+  S->right_bound = right_bound;
   S->absstp = absstp;
   S->relstp = relstp;
   S->stpmul = stpmul;
@@ -118,21 +131,33 @@ int nsp_zsearch_init(double xinit, double zsmall, double zbig, double absstp, do
   return 0;
 }
 
-
-zsearch_ret static init_dzror(ZsearchStruct *S, double *x)
+zsearch_ret static init_bracketed_state(ZsearchStruct *S, double *x)
 {
-  /* this routine inits the dzror parameters and uses the fact 
-   * that the two first f evaluations for dzror
-   * are for xlb and xhi but f(xlb) and f(xhi) are known. 
+  /* to be documented
    */
-  double fx;
-  int status = 0, dum1, dum2;
-  cdf_dstzr (&(S->xlb), &(S->xhi), &(S->abstol), &(S->reltol));
-  cdf_dzror (&status, x, &fx, &(S->xlb), &(S->xhi), &dum1, &dum2);
-  fx = S->fxlb;
-  cdf_dzror (&status, x, &fx, &(S->xlb), &(S->xhi), &dum1, &dum2);
-  fx = S->fxhi;
-  cdf_dzror (&status, x, &fx, &(S->xlb), &(S->xhi), &dum1, &dum2);
+  double tol, p, q, m, mb, w;
+  S->ext = 0;
+  if ( fabs(S->fc) < fabs(S->fb) )
+    {
+      /* swap b and c */
+      double temp;
+      temp = S->b; S->b = S->c, S->c = temp;
+      temp = S->fb; S->fb = S->fc, S->fc = temp;
+    }
+  S->a = S->c; S->fa = S->fc;
+  tol = 0.5* Max ( fabs(S->b)*S->reltol, S->abstol );
+  m = 0.5*(S->b + S->c);
+  mb = m - S->b;
+  if ( mb < 0.0 ) tol = -tol;
+  p = (S->b - S->a)*S->fb;
+  q = S->fa - S->fb;
+  if ( p < 0.0) { p = -p; q = -q; }
+  w =  (p == 0.0 || p <= q*tol) ? tol : p < mb*q ? p/q : mb;
+  S->middle_step = w == mb;
+  S->d = S->a; S->fd = S->fa; 
+  S->a = S->b; S->fa = S->fb;
+  S->b += w;
+  *x = S->b;
   return EVAL_FX;
 }     
 
@@ -142,42 +167,42 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
   switch ( S->state )
     {
     case START:
-      S->fxinit = fx;
-      S->step = S->absstp + S->relstp*fabs(S->xinit);
+      S->fa = fx;
+      S->step = S->absstp + S->relstp*fabs(S->a);
       if ( S->monotonicity == UNKNOWN )
 	{
 	  S->state = DETERMINE_SEARCH_DIR;
-	  *x = Min( S->xinit + S->step, S->zbig);
+	  *x = Min( S->a + S->step, S->right_bound);
 	}
       else if ( ( fx <= 0  &&  S->monotonicity == INCREASING ) ||
 		( fx >= 0  &&  S->monotonicity == DECREASING ) )
 	{
 	  S->state = SEARCH_RIGHT;
-	  S->xlb =  S->xinit; S->fxlb = S->fxinit;
-	  *x = Min(S->xinit + S->step, S->zbig);
+	  S->b =  S->a; S->fb = S->fa;
+	  *x = Min(S->a + S->step, S->right_bound);
 	}
       else
 	{
 	  S->state = SEARCH_LEFT;
-	  S->xhi = S->xinit; S->fxhi =  S->fxinit;
-	  *x = Max(  S->xinit - S->step, S->zsmall);
+	  S->c = S->a; S->fc =  S->fa;
+	  *x = Max(  S->a - S->step, S->left_bound);
 	}
       return EVAL_FX;
 
     case DETERMINE_SEARCH_DIR:
-      S->monotonicity = fx >= S->fxinit ? INCREASING : DECREASING;
-      if ( (fx <= 0 && S->fxinit >= 0) || (fx >= 0 && S->fxinit <= 0) )
+      S->monotonicity = fx >= S->fa ? INCREASING : DECREASING;
+      if ( (fx <= 0 && S->fa >= 0) || (fx >= 0 && S->fa <= 0) )
 	{
 	  S->state = BRACKETED;
 	  if ( S->monotonicity == INCREASING )
 	    {
-	      S->xlb = S->xinit; S->fxlb = S->fxinit; S->xhi = *x; S->fxhi = fx;
+	      S->b = S->a; S->fb = S->fa; S->c = *x; S->fc = fx;
 	    }
 	  else
 	    {
-	      S->xlb = *x; S->fxlb = fx; S->xhi = S->xinit; S->fxhi = S->fxinit;
+	      S->b = *x; S->fb = fx; S->c = S->a; S->fc = S->fa;
 	    }	      
-	  return init_dzror(S, x);
+	  return init_bracketed_state(S, x);
 	}
       else
 	{
@@ -186,14 +211,14 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 	       ( fx >= 0  &&  S->monotonicity == DECREASING ) )
 	    {
 	      S->state = SEARCH_RIGHT;
-	      S->xlb = *x; S->fxlb = fx;
-	      *x = Min( *x + S->step, S->zbig);
+	      S->b = *x; S->fb = fx;
+	      *x = Min( *x + S->step, S->right_bound);
 	    }
 	  else
 	    {
 	      S->state = SEARCH_LEFT;
-	      S->xhi = S->xinit; S->fxhi = S->fxinit;
-	      *x = Max( S->xinit - S->step, S->zsmall);
+	      S->c = S->a; S->fc = S->fa;
+	      *x = Max( S->a - S->step, S->left_bound);
 	    }
 	  return EVAL_FX;
 	}
@@ -204,16 +229,16 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 	   ((S->monotonicity == DECREASING) && ( fx <= 0)) )
 	{
 	  S->state = BRACKETED;
-	  S->xhi = *x; S->fxhi = fx;
-	  return init_dzror(S, x);
+	  S->c = *x; S->fc = fx;
+	  return init_bracketed_state(S, x);
 	}
       else
 	{
-	  if ( *x == S->zbig )
+	  if ( *x == S->right_bound )
 	    return RIGHT_BOUND_EXCEEDED;
 	  /* ici on pourrait tester la non monotonie */
-	  S->xlb = *x; S->fxlb = fx;
-	  *x = Min( *x + S->step, S->zbig);
+	  S->b = *x; S->fb = fx;
+	  *x = Min( *x + S->step, S->right_bound);
 	  return EVAL_FX;
 	}
       
@@ -223,35 +248,74 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 	   ((S->monotonicity == DECREASING) && ( fx >= 0)) )
 	{
 	  S->state = BRACKETED;
-	  S->xlb = *x; S->fxlb = fx;
-	  return init_dzror(S, x);
+	  S->b = *x; S->fb = fx;
+	  return init_bracketed_state(S, x);
 	}
       else
 	{
-	  if ( *x == S->zsmall )
+	  if ( *x == S->left_bound )
 	    return LEFT_BOUND_EXCEEDED;
 	  /* ici on pourrait tester la non monotonie */
-	  S->xhi = *x; S->fxhi = fx;
-	  *x = Max( *x - S->step, S->zsmall);
+	  S->c = *x; S->fc = fx;
+	  *x = Max( *x - S->step, S->left_bound);
 	  return EVAL_FX;
 	}
       
     case BRACKETED:
       {
-	int qdum1, qdum2, status; 
-	cdf_dzror (&status, x, &fx,  &(S->xlb), &(S->xhi), &qdum1, &qdum2);
-	if ( status != 1 )
+	double tol, m, mb, p, q, w, fdb, fda;
+  
+	S->fb = fx;
+	if ( (S->fc >= 0 && S->fb >= 0) || (S->fc <= 0 && S->fb <= 0) )
 	  {
-	    *x = S->xlb;
-	    if ( S->xlb > S->xhi )
+	    S->c = S->a; S->fc = S->fa; S->ext = 0; /* interpolate */
+	  }
+	else
+	  {
+	    S->ext = S->middle_step ? 0 : S->ext+1;
+	  }
+	
+	if ( fabs(S->fc) <  fabs(S->fb) )
+	  {
+	    if ( S->c != S->a ) { S->d = S->a; S->fd = S->fa; }
+	    S->a = S->b; S->fa = S->fb;
+	    S->b = S->c; S->fb = S->fc;
+	    S->c = S->a; S->fc = S->fa;
+	  }
+	tol = 0.5* Max ( fabs(S->b)*S->reltol, S->abstol );
+	m = 0.5*(S->b + S->c); mb = m - S->b;
+	
+	if ( fabs(mb) <= tol )
+	  {
+	    *x = S->b;
+	    if ( S->b > S->c )
 	      {
-		double temp = S->xlb;
-		S->xlb = S->xhi;  S->xhi = temp;
+		S->a = S->b; S->fa = S->fb;
+		S->b = S->c; S->fb = S->fc;
+		S->c = S->a; S->fc = S->fa;
 	      }
 	    return SUCCESS;
 	  }
+	
+	if ( S->ext > 3 )
+	  w = mb;
 	else
-	  return EVAL_FX; 
+	  {
+	    if ( mb < 0.0 ) tol = -tol;
+	    p = (S->b - S->a)*S->fb;
+	    fdb = (S->fd - S->fb)/(S->d - S->b);
+	    fda = (S->fd - S->fa)/(S->d - S->a);	
+	    p = fda*p; q = fdb*S->fa - fda*S->fb;
+	    if ( p < 0.0 ) { p = -p; q = -q; }
+	    if ( S->ext == 3 ) p*= 2.0;
+	    w = (p==0 || p <= q*tol) ? tol : p < mb*q ? p/q : mb;
+	  }
+	S->middle_step = w == mb;
+	S->d = S->a; S->fd = S->fa; 
+	S->a = S->b; S->fa = S->fb;
+	S->b += w;
+	*x = S->b;
+	return EVAL_FX;
       }
     }
   return OTHER_FAILURE;  /* we should never pass here */   

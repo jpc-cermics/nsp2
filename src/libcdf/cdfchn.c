@@ -198,16 +198,11 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
       switch ( ret_val )
 	{
 	case SUCCESS:
-	  *status = 0;
-	  break;
+	  *status = 0; break;
 	case LEFT_BOUND_EXCEEDED:
-	  *status = 1;
-	  *bound = zero;
-	  break;
+	  *status = 1; *bound = zero; break;
 	case RIGHT_BOUND_EXCEEDED:
-	  *status = 2;
-	  *bound = inf;
-	  break;
+	  *status = 2; *bound = inf; break;
 	default:
 	  *status = 4;
 	}

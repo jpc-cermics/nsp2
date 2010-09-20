@@ -25,25 +25,30 @@ typedef enum {
   EVAL_FX, SUCCESS, LEFT_BOUND_EXCEEDED, RIGHT_BOUND_EXCEEDED, OTHER_FAILURE
 } zsearch_ret;
 
+
 typedef struct _ZsearchStruct ZsearchStruct;
 struct _ZsearchStruct
 {
-  double zsmall;
-  double zbig;
+  double left_bound;
+  double right_bound;
   double absstp;
   double relstp;
   double stpmul;
   double abstol;
   double reltol;
   double step;
-  double xinit, fxinit, xlb, xhi, fxlb, fxhi;
+  double a, fa, b, fb, c, fc, d, fd;
+  int ext;
+  Boolean middle_step;
   zsearch_monotonicity monotonicity;
   zsearch_state state;
 } ;
 
-extern int nsp_zsearch_init(double xinit, double zsmall, double zbig, double absstp, double relstp, double stpmul, 
+extern int nsp_zsearch_init(double xinit, double left_bound, double xbig, double absstp, double relstp, double stpmul, 
 			    double abstol, double reltol, zsearch_monotonicity monotonicity, ZsearchStruct *S);
+
 extern zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S);
+
 /*
  *    end (for the new zero search routine)
  */

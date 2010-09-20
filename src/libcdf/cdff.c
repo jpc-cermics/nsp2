@@ -70,7 +70,6 @@ cdf_cdff (int *which, double *p, double *q, double *f, double *dfn,
 	  double *dfd, int *status, double *bound)
 {
 static int c__1 = 1;
-static double c_b24 = 0.;
 static double c_b25 = .5;
 static double c_b27 = 5.;
 
@@ -240,50 +239,45 @@ L210:
       cdf_cumf (f, dfn, dfd, p, q);
       *status = 0;
     }
-  else if (2 == *which)
-    {
+  else if (2 == *which)   /*     Calculating F */
+    { 
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      zsearch_monotonicity monotonicity = qporq ? INCREASING : DECREASING;
+      double step;
+      if ( *dfd > 4.0 )
+	{
+	  *f = *dfd / (*dfd - 2.0 );
+	  step = *f*sqrt( 2.0*(*dfn+ *dfd -2.0)/(*dfn*(*dfd - 4.0)) );
+	}
+      else
+	{
+	  *f = 5.; step = 5.0;
+	}
 
-/*     Calculating F */
+      nsp_zsearch_init(*f, zero, inf, step, 0.0, 2.0, atol, tol, monotonicity, &S);
+      do
+	{
+	  cdf_cumf (f, dfn, dfd, &cum, &ccum);
+	  if ( qporq )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
+	  ret_val = nsp_zsearch(f, fx, &S);
+	}
+      while ( ret_val == EVAL_FX );
 
-      *f = 5.;
-      cdf_dstinv (&c_b24, &inf, &c_b25, &c_b25, &c_b27, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, f, &fx, &qleft, &qhi);
-    L220:
-      if (!(*status == 1))
+      switch ( ret_val )
 	{
-	  goto L250;
+	case SUCCESS:
+	  *status = 0; break;
+	case LEFT_BOUND_EXCEEDED:
+	  *status = 1; *bound = zero; break;
+	case RIGHT_BOUND_EXCEEDED:
+	  *status = 2; *bound = inf; break;
+	default:
+	  *status = 4;
 	}
-      cdf_cumf (f, dfn, dfd, &cum, &ccum);
-      if (!qporq)
-	{
-	  goto L230;
-	}
-      fx = cum - *p;
-      goto L240;
-    L230:
-      fx = ccum - *q;
-    L240:
-      cdf_dinvr (status, f, &fx, &qleft, &qhi);
-      goto L220;
-    L250:
-      if (!(*status == -1))
-	{
-	  goto L280;
-	}
-      if (!qleft)
-	{
-	  goto L260;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L270;
-    L260:
-      *status = 2;
-      *bound = inf;
-    L270:
-    L280:
-      ;
     }
   else if (3 == *which)   /* Calculating DFN */
     {
@@ -305,25 +299,17 @@ L210:
       switch ( ret_val )
 	{
 	case SUCCESS:
-	  *status = 0;
-	  break;
+	  *status = 0; break;
 	case LEFT_BOUND_EXCEEDED:
-	  *status = 1;
-	  *bound = zero;
-	  break;
+	  *status = 1; *bound = zero; break;
 	case RIGHT_BOUND_EXCEEDED:
-	  *status = 2;
-	  *bound = inf;
-	  break;
+	  *status = 2; *bound = inf; break;
 	default:
 	  *status = 4;
 	}
     }
-  else if (4 == *which)
+  else if (4 == *which)    /* Calculating DFD */
     {
-
-/*     Calculating DFD */
-
       *dfd = 5.;
       cdf_dstinv (&zero, &inf, &c_b25, &c_b25, &c_b27, &atol, &tol);
       *status = 0;

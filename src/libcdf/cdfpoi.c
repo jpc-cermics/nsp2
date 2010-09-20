@@ -208,51 +208,94 @@ L190:
     }
   else if (2 == *which)       /*     Calculating S */
     {
+/*       if ( *p <= exp(-*xlam) ) bruno april 2010 (using the jpc 's workaround of cdfbin) */
+/* 	{ */
+/* 	  *status = 0; */
+/* 	  *s =0.0; */
+/* 	  return 0; */
+/* 	} */
+/*       *s = *xlam;  start from the mean instead of 5, bruno april 2010 */
+/*       cdf_dstinv (&c_b22, &inf, &c_b23, &c_b23, &c_b25, &atol, &tol); */
+/*       *status = 0; */
+/*       cdf_dinvr (status, s, &fx, &qleft, &qhi); */
+/*     L200: */
+/*       if (!(*status == 1)) */
+/* 	{ */
+/* 	  goto L230; */
+/* 	} */
+/*       cdf_cumpoi (s, xlam, &cum, &ccum); */
+/*       if (!qporq) */
+/* 	{ */
+/* 	  goto L210; */
+/* 	} */
+/*       fx = cum - *p; */
+/*       goto L220; */
+/*     L210: */
+/*       fx = ccum - *q; */
+/*     L220: */
+/*       cdf_dinvr (status, s, &fx, &qleft, &qhi); */
+/*       goto L200; */
+/*     L230: */
+/*       if (!(*status == -1)) */
+/* 	{ */
+/* 	  goto L260; */
+/* 	} */
+/*       if (!qleft) */
+/* 	{ */
+/* 	  goto L240; */
+/* 	} */
+/*       *status = 1; */
+/*       *bound = 0.; */
+/*       goto L250; */
+/*     L240: */
+/*       *status = 2; */
+/*       *bound = inf; */
+/*     L250: */
+/*     L260: */
+/*       ; */
+
       if ( *p <= exp(-*xlam) ) /* bruno april 2010 (using the jpc 's workaround of cdfbin) */
 	{
-	  *status = 0; 
+	  *status = 0;
 	  *s =0.0;
 	  return 0;
 	}
-      *s = *xlam;  /* start from the mean instead of 5, bruno april 2010 */
-      cdf_dstinv (&c_b22, &inf, &c_b23, &c_b23, &c_b25, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, s, &fx, &qleft, &qhi);
-    L200:
-      if (!(*status == 1))
+      else
 	{
-	  goto L230;
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  zsearch_monotonicity monotonicity = qporq ? INCREASING : DECREASING;
+	  double step = sqrt(*xlam); /* initial step = std */
+	  *s = *xlam + 0.333;  /* start near the median instead of 5, bruno september 2010 */
+	  nsp_zsearch_init(*s, 0.0, inf, step, 0.0, 2.0, atol, tol, monotonicity, &S);
+
+	  do
+	    {
+	      cdf_cumpoi (s, xlam, &cum, &ccum);
+	      if ( qporq )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	      ret_val = nsp_zsearch(s, fx, &S);
+	    }
+	  while ( ret_val == EVAL_FX );
+
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED: /* we do a special thing : for some p slightly
+                                         upper exp(-*xlam) the inversion process fails
+                                         because cumpoi is not computed enough accuratly
+                                       */
+	      *status = 0; *s = 0.0; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = inf; break;
+	    default:
+	      *status = 4;
+	    }
 	}
-      cdf_cumpoi (s, xlam, &cum, &ccum);
-      if (!qporq)
-	{
-	  goto L210;
-	}
-      fx = cum - *p;
-      goto L220;
-    L210:
-      fx = ccum - *q;
-    L220:
-      cdf_dinvr (status, s, &fx, &qleft, &qhi);
-      goto L200;
-    L230:
-      if (!(*status == -1))
-	{
-	  goto L260;
-	}
-      if (!qleft)
-	{
-	  goto L240;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L250;
-    L240:
-      *status = 2;
-      *bound = inf;
-    L250:
-    L260:
-      ;
+
     }
   else if (3 == *which)
     {
