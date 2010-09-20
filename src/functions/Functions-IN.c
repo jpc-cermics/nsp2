@@ -96,10 +96,16 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
   /* expand keys in path name result in buf */
   if ( shared_lib != NULL )
     {
-      if  ( strcmp(shared_lib,"nsp") != 0 || strcmp(shared_lib,"scilab") != 0 )
-	nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
+      if  ( strcmp(shared_lib,"nsp") != 0 
+	    || strcmp(shared_lib,"scilab") != 0 
+	    || strcmp(shared_lib,"show") != 0 )
+	{
+	  nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
+	}
       else
-	strcpy(shared_lib_expanded,shared_lib);
+	{
+	  strcpy(shared_lib_expanded,shared_lib);
+	}
     }
 
   nsp_dynamic_load(shared_lib_expanded,enames,Str[0],&ilib,iflag,&rhs);
