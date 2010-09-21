@@ -31,6 +31,10 @@
 static void nsp_check_underscores(int isfor,nsp_const_string ename, char *ename1);
 static int nsp_find_shared(nsp_const_string shared_path);
 static int nsp_link_status (void) ;
+static void nsp_delete_symbols (int );
+static void *nsp_dlopen(nsp_const_string shared_path,int global);
+static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
+static void nsp_dlclose(void *shd) ;
 
 #if defined(WIN32) 
 #include "link_W95.c"
@@ -102,8 +106,15 @@ void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path
   int i;
   if ( iflag == 0 )
     {
+      static int k=1;
+      void *hd;
+      *ilib = -1;
       /* if no entry names are given we try a dl_open with global option*/
-      *ilib  = nsp_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE );
+      hd  = nsp_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE );
+      if ( hd == NULL) return;
+      if ( nsp_sharedlib_table_insert(hd,k, shared_path) == FAIL) return;
+      *ilib = k;
+      k++;
     }
   if (*ilib  == -1 ) return;
   if ( *rhs >= 2) 

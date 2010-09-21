@@ -26,11 +26,6 @@
 #include <string.h>
 #include <windows.h>
 
-static void nsp_delete_symbols (int );
-static int nsp_dlopen(nsp_const_string shared_path,int global);
-static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
-static void nsp_dlclose(void *shd) ;
-
 /**
  * nsp_link_status:
  * @void: 
@@ -62,25 +57,29 @@ int nsp_link_status(void)
  **/
 
 
-static int nsp_dlopen(nsp_const_string shared_path,int global)
+static void *nsp_dlopen(nsp_const_string shared_path,int global)
 {
-  static int i=1;
-  int rep ;
-  static HINSTANCE  hd1 = NULL;
-  hd1 =   LoadLibrary (shared_path);
+  HINSTANCE  hd1 = NULL;
+  /* expand filename in buf1 */
+
+  if ( strncmp(shared_path,"nsp",3) ==0 
+       || strncmp(shared_path,"scilab",6) ==0  /* backward comp */
+       )
+    {
+      char buf1[FSIZE+1];
+      nsp_path_expand("SCI/bin/libnsp.dll",buf1,FSIZE);
+      hd1 =   LoadLibrary (buf1);
+    }
+  else
+    {
+      hd1 =   LoadLibrary (shared_path);
+    }
   if ( hd1 == NULL ) 
     {
       Scierror("Error: link failed for dll %s\n",shared_path);
-      return(-1);
+      return NULL;
     }
-  rep =  nsp_sharedlib_table_insert(hd1,i, shared_path);
-  if ( rep == FAIL ) 
-    {
-      return -1; /* XX */
-    }
-  rep = i;
-  i++;
-  return rep;
+  return hd1;
 }
 
 /**

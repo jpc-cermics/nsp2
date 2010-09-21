@@ -29,11 +29,6 @@
 #include <dl.h>
 #endif
 
-static void nsp_delete_symbols (int );
-static int nsp_dlopen(nsp_const_string shared_path,int global);
-static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
-static void nsp_dlclose(void *shd) ;
-
 /**
  * nsp_link_status:
  * @void: 
@@ -85,9 +80,8 @@ static function dlsym(void *handle, const char *symbol)
  * loaded  dynamic library 
  **/
 
-static int nsp_dlopen(nsp_const_string shared_path,int global)
+static void * nsp_dlopen(nsp_const_string shared_path,int global)
 {
-  static int i=1;
   int rep ;
   dlhandle hd1;
   if ( strncmp(shared_path,"nsp",3) ==0 
@@ -110,20 +104,13 @@ static int nsp_dlopen(nsp_const_string shared_path,int global)
 #ifndef hppa
       char *loc = dlerror();
       if ( loc != NULL) Scierror("%s\n",loc);
-      return(-1);
+      return hd1;
 #else
       Scierror("link error\n");
-      return(-1);
+      return hd1;
 #endif
     }
-  rep =  nsp_sharedlib_table_insert(hd1,i, shared_path);
-  if ( rep == FAIL ) 
-    {
-      return -1; /* XX */
-    }
-  rep = i;
-  i++;
-  return rep;
+  return hd1;
 }
 
 /**
