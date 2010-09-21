@@ -224,8 +224,8 @@ function Makename=ilib_gen_Make(name,tables,files,libs,makename,with_gateway,ldf
       ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway, 	 ldflags,cflags,fflags)
     end
     // extra generation for testing
-    Makenamep = makename+'.lcc'
-    ilib_gen_Make_lcc(name,tables,files,libs,Makenamep,with_gateway,ldflags,cflags,fflags,'c');
+    //Makenamep = makename+'.lcc'
+    //ilib_gen_Make_lcc(name,tables,files,libs,Makenamep,with_gateway,ldflags,cflags,fflags,'c');
   else
     // unix 
     Makename = makename;
