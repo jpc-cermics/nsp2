@@ -33,7 +33,7 @@ static int nsp_find_shared(nsp_const_string shared_path);
 static int nsp_link_status (void) ;
 static void nsp_delete_symbols (int );
 static void *nsp_dlopen(nsp_const_string shared_path,int global);
-static int nsp_dlsym(nsp_const_string ename, int ishared, char strf);
+static int nsp_dlsym(NspSharedlib *sh, nsp_const_string ename, char strf);
 static void nsp_dlclose(void *shd) ;
 
 #if defined(WIN32) 
@@ -86,6 +86,49 @@ void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, in
 
 
 /**
+ * nsp_dlsym:
+ * @ename: a string giving a symbol name 
+ * @ishared: the id of a previously loaded shared library 
+ * @strf: 'c' or 'f' 
+ * 
+ * Using the id @ishared of a dynamic library returned  by  nsp_dlopen and a symbol 
+ * name, this function gets the address where that symbol is loaded into memory 
+ * and store the symbol in the link table.
+ * 
+ * Returns: %OK or %FAIL 
+ **/
+
+static int nsp_dlsym(NspSharedlib *sh, nsp_const_string ename, char strf)
+{
+  void *func;
+  char enamebuf[NAME_MAXL];
+  nsp_check_underscores(( strf == 'f' ) ? 1: 0,ename,enamebuf);
+  /* get address of entry point */
+  if ((func = nsp_dlsym_os(sh , enamebuf)) == NULL ) return FAIL;
+  /* insert in the table */
+  if ( nsp_epoints_table_insert(ename,enamebuf,func,sh->obj->id) == FAIL )
+    return FAIL;
+  return OK;
+}
+
+
+NspSharedlib *nsp_sharedlib_dlopen(nsp_const_string shared_path, int global) 
+{
+  static int k=1;
+  NspSharedlib *sh;
+  void *hd = nsp_dlopen(shared_path, global ) ;
+  if ( hd == NULL) return NULL ;
+  sh= nsp_sharedlib_table_insert(hd,k,shared_path);
+  if ( sh == NULL) 
+    {
+      nsp_dlclose(hd);
+      return NULL;
+    }
+  k++;
+  return sh;
+}
+
+/**
  * nsp_link_library:
  * @iflag: 
  * @rhs: 
@@ -103,27 +146,34 @@ void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, in
 void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, 
 		      char **en_names, char strf)
 {
+  NspSharedlib *sh = NULL;
   int i;
   if ( iflag == 0 )
     {
-      static int k=1;
-      void *hd;
-      *ilib = -1;
-      /* if no entry names are given we try a dl_open with global option*/
-      hd  = nsp_dlopen(shared_path,( *rhs == 1 ) ? TRUE : FALSE );
-      if ( hd == NULL) return;
-      if ( nsp_sharedlib_table_insert(hd,k, shared_path) == FAIL) return;
-      *ilib = k;
-      k++;
+      int global = ( *rhs == 1 ) ? TRUE : FALSE;
+      sh = nsp_sharedlib_dlopen(shared_path, global);
+      if ( sh == NULL ) return;
+      *ilib = sh->obj->id; 
     }
-  if (*ilib  == -1 ) return;
+  else 
+    {
+      /* get the shared lib object */
+      if ((sh =nsp_sharedlib_table_find(*ilib)) == NULL) 
+	{
+	  Scierror("Error: Shared library %d does not exists\n",*ilib);
+	  return;
+	}
+    }
+  /* now load the entry points from sh */
   if ( *rhs >= 2) 
     {
       i=0 ;
       while ( en_names[i] != (char *) 0)
 	{
-	  if ( nsp_dlsym(en_names[i],*ilib,strf) == FAIL) 
-	    *ilib=-5;
+	  if ( nsp_dlsym(sh,en_names[i],strf) == FAIL) 
+	    {
+	      *ilib=-5; return;
+	    }
 	  i++;
 	}
     }

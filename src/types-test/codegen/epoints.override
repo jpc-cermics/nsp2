@@ -7,7 +7,7 @@ include-start Epoints
 include-public Epoints
 /* inserted at the end of public part of include file */
 
-extern int  nsp_epoints_table_insert(const char *name, void *func, int sharedid);
+extern int  nsp_epoints_table_insert(const char *name,const char *ename, void *func, int sharedid);
 extern NspEpoints *nsp_epoints_table_find(const char *name) ;
 extern void nsp_epoints_table_show();
 extern void nsp_epoints_table_remove_entries(int shid);
@@ -53,14 +53,17 @@ static int nsp_epoints_table_init(void)
   return OK;
 }
 
-int  nsp_epoints_table_insert(const char *name, void *func, int sharedid)
+int  nsp_epoints_table_insert(const char *name,const char *ename, void *func, int sharedid)
 {
+  char *ename1;
   NspEpoints *ep = NULL;
   if ( Epoints == NULL ) 
     {
       if ( nsp_epoints_table_init() == FAIL) return FAIL;
     }
-  if ((ep = nsp_epoints_create(name,func,sharedid, NULL))== NULL) 
+  if (( ename1 = nsp_string_copy(ename)) == NULL)
+       return FAIL;
+  if ((ep = nsp_epoints_create(name,ename1,func,sharedid, NULL))== NULL) 
     {
       return FAIL;
     }

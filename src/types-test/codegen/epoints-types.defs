@@ -5,8 +5,9 @@
   (parent "Object")
   (c-name "NspEpoints")
   (fields
-   '("void*" "func" "hidden" "NULL" "");;
-   '("int" "shid" "hidden" "-1" ) ;;
+   '("char*" "ename" "hidden" );; name of entry point
+   '("void*" "func" "hidden" "NULL" "");; function adress 
+   '("int" "shid" "hidden" "-1" ) ;; id of shared file 
    )
   (gtype-id "Epoints")
 )

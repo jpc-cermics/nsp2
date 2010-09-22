@@ -196,6 +196,7 @@ static int nsp_epoints_eq(NspEpoints *A, NspObject *B)
   NspEpoints *loc = (NspEpoints *) B;
   if ( check_cast(B,nsp_type_epoints_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
+  if ( strcmp(A->obj->ename,loc->obj->ename) != 0) return FALSE;
   if ( A->obj->func != loc->obj->func) return FALSE;
   if ( A->obj->shid != loc->obj->shid) return FALSE;
   return TRUE;
@@ -255,6 +256,7 @@ void nsp_epoints_destroy_partial(NspEpoints *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
+  nsp_string_destroy(&(H->obj->ename));
     FREE(H->obj);
    }
 }
@@ -309,6 +311,7 @@ int nsp_epoints_print(NspEpoints *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"ename=%s\n",M->obj->ename);
   Sciprintf1(indent+2,"func=0x%x\n",M->obj->func);
   Sciprintf1(indent+2,"shid=%d\n",M->obj->shid);
       Sciprintf1(indent+1,"}\n");
@@ -326,6 +329,7 @@ int nsp_epoints_latex(NspEpoints *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_epoints_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"ename=%s\n",M->obj->ename);
   Sciprintf1(indent+2,"func=0x%x\n",M->obj->func);
   Sciprintf1(indent+2,"shid=%d\n",M->obj->shid);
   Sciprintf1(indent+1,"}\n");
@@ -396,6 +400,7 @@ int nsp_epoints_create_partial(NspEpoints *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_epoints)))== NULL ) return FAIL;
   H->obj->ref_count=1;
+  H->obj->ename = NULL;
   H->obj->func = NULL;
   H->obj->shid = -1;
   return OK;
@@ -403,14 +408,20 @@ int nsp_epoints_create_partial(NspEpoints *H)
 
 int nsp_epoints_check_values(NspEpoints *H)
 {
+  if ( H->obj->ename == NULL) 
+    {
+     if (( H->obj->ename = nsp_string_copy("")) == NULL)
+       return FAIL;
+    }
   return OK;
 }
 
-NspEpoints *nsp_epoints_create(const char *name,void* func,int shid,NspTypeBase *type)
+NspEpoints *nsp_epoints_create(const char *name,char* ename,void* func,int shid,NspTypeBase *type)
 {
   NspEpoints *H  = nsp_epoints_create_void(name,type);
   if ( H ==  NULLEPOINTS) return NULLEPOINTS;
   if ( nsp_epoints_create_partial(H) == FAIL) return NULLEPOINTS;
+  H->obj->ename = ename;
   H->obj->func = func;
   H->obj->shid=shid;
   if ( nsp_epoints_check_values(H) == FAIL) return NULLEPOINTS;
@@ -453,6 +464,7 @@ NspEpoints *nsp_epoints_full_copy_partial(NspEpoints *H,NspEpoints *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_epoints))) == NULL) return NULLEPOINTS;
   H->obj->ref_count=1;
+  if ((H->obj->ename = nsp_string_copy(self->obj->ename)) == NULL) return NULL;
   H->obj->func = self->obj->func;
   H->obj->shid=self->obj->shid;
   return H;
@@ -540,14 +552,17 @@ static int nsp_epoints_table_init(void)
   return OK;
 }
 
-int  nsp_epoints_table_insert(const char *name, void *func, int sharedid)
+int  nsp_epoints_table_insert(const char *name,const char *ename, void *func, int sharedid)
 {
+  char *ename1;
   NspEpoints *ep = NULL;
   if ( Epoints == NULL ) 
     {
       if ( nsp_epoints_table_init() == FAIL) return FAIL;
     }
-  if ((ep = nsp_epoints_create(name,func,sharedid, NULL))== NULL) 
+  if (( ename1 = nsp_string_copy(ename)) == NULL)
+       return FAIL;
+  if ((ep = nsp_epoints_create(name,ename1,func,sharedid, NULL))== NULL) 
     {
       return FAIL;
     }
@@ -599,4 +614,4 @@ void nsp_epoints_table_remove_entries(int shid)
 }
 
 
-#line 603 "epoints.c"
+#line 618 "epoints.c"

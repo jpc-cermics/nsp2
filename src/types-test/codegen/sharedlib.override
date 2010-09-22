@@ -7,11 +7,10 @@ include-start Sharedlib
 include-public Sharedlib
 /* inserted at the end of public part of include file */
 
-extern int  nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path);
 extern NspSharedlib *nsp_sharedlib_table_find( int id) ;
 extern void nsp_sharedlib_table_remove_lib(int id);
 extern NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name);
-
+extern NspSharedlib *nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path);
 
 %%
 include-private Sharedlib
@@ -54,7 +53,7 @@ static int nsp_sharedlib_table_init(void)
   return OK;
 }
 
-int  nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path)
+NspSharedlib *nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path)
 {
   NspSharedlib *sh = NULL;
   char name[9]; /* size int +1 */
@@ -63,20 +62,20 @@ int  nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path)
 
   if ( SharedLibs == NULL ) 
     {
-      if ( nsp_sharedlib_table_init() == FAIL) return FAIL;
+      if ( nsp_sharedlib_table_init() == FAIL) return NULL;
     }
-  if (( path_c = nsp_string_copy(path)) == NULL) return FAIL;
+  if (( path_c = nsp_string_copy(path)) == NULL) return NULL;
   if ((sh = nsp_sharedlib_create(name,shd,id,path_c, NULL))== NULL) 
     {
       nsp_string_destroy(&path_c);
-      return FAIL;
+      return NULL;
     }
   if ( nsp_hash_enter(SharedLibs,NSP_OBJECT(sh)) == FAIL ) 
     {
       nsp_sharedlib_destroy(sh);
-      return FAIL;
+      return NULL;
     }
-  return OK;
+  return sh;
 }
 
 NspSharedlib *nsp_sharedlib_table_find( int id) 

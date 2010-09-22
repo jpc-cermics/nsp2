@@ -48,6 +48,7 @@ struct _NspTypeEpoints {
 
 typedef struct _nsp_epoints nsp_epoints;
 struct _nsp_epoints {
+  char* ename;
   void* func;
   int shid;
   int ref_count;
@@ -79,7 +80,7 @@ NspEpoints *new_epoints();
 
 #define NULLEPOINTS (NspEpoints*) 0
 
-extern NspEpoints *nsp_epoints_create(const char *name,void* func,int shid,NspTypeBase *type);
+extern NspEpoints *nsp_epoints_create(const char *name,char* ename,void* func,int shid,NspTypeBase *type);
 extern NspEpoints *nsp_epoints_create_default(const char *name);
 
 /* from NspEpointsObj.c */
@@ -107,12 +108,12 @@ extern int nsp_epoints_xdr_save(XDR  *xdrs, NspEpoints *M);
 #line 8 "codegen/epoints.override"
 /* inserted at the end of public part of include file */
 
-extern int  nsp_epoints_table_insert(const char *name, void *func, int sharedid);
+extern int  nsp_epoints_table_insert(const char *name,const char *ename, void *func, int sharedid);
 extern NspEpoints *nsp_epoints_table_find(const char *name) ;
 extern void nsp_epoints_table_show();
 extern void nsp_epoints_table_remove_entries(int shid);
 
-#line 116 "./epoints.h"
+#line 117 "./epoints.h"
 #endif /* NSP_INC_NspEpoints */ 
 
 #ifdef NspEpoints_Private 
@@ -130,6 +131,6 @@ static NspEpoints *nsp_epoints_create_void(const char *name,NspTypeBase *type);
 #line 17 "codegen/epoints.override"
 /* inserted in the private part of include file */
 
-#line 134 "./epoints.h"
+#line 135 "./epoints.h"
 #endif /* NspEpoints_Private */
 

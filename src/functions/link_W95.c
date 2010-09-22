@@ -95,38 +95,22 @@ static void *nsp_dlopen(nsp_const_string shared_path,int global)
  * Returns: %OK or %FAIL 
  **/
 
-static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
+static void *nsp_dlsym_os(NspSharedlib *sh, nsp_const_string ename)
 {
-  NspSharedlib *sh = NULL;
-  void *func;
-  char enamebuf[NAME_MAXL];
-  nsp_check_underscores(( strf == 'f' ) ? 1: 0,ename,enamebuf);
-
-  if ((sh =nsp_sharedlib_table_find(ishared)) == NULL)
-    {
-      Scierror("Error: Shared library %d does not exists\n",ishared);
-      return(FAIL);
-    }
-  /* XXX entry was previously loaded 
-     if (  nsp_link_search(ename,ish,&loc) >= 0 ) 
-     {
-     Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
-     return(OK);
-     }
-  */
-  func = GetProcAddress (sh->obj->shd , enamebuf);
+  void *func = GetProcAddress (sh->obj->shd , ename);
   if ( func == NULL )
     {
-      Sciprintf("%s is not an entry point \n",enamebuf);
-      return FAIL;
+      Scierror("Error: %s is not an entry point\n",ename);
     }
-  /* insert in the table */
-  if (nsp_epoints_table_insert(ename,func,ishared) == FAIL )
-    return FAIL;
-  return OK;
-  
+  return func 
 }
 
+/**
+ * nsp_dlclose:
+ * @shd: 
+ * 
+ * 
+ **/
 
 static void nsp_dlclose(void *shd) 
 {

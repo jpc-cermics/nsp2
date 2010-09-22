@@ -82,23 +82,13 @@ static function dlsym(void *handle, const char *symbol)
 
 static void * nsp_dlopen(nsp_const_string shared_path,int global)
 {
-  int rep ;
+  const char *sh = shared_path;
+  int flag = ( global == TRUE) ? (RTLD_NOW| RTLD_GLOBAL) : RTLD_NOW;
   dlhandle hd1;
-  if ( strncmp(shared_path,"nsp",3) ==0 
-       || strncmp(shared_path,"scilab",6) ==0  /* backward comp */
-       )
-    {
-      /* try to open symbols from nsp executable 
-       * does not work on all architectures 
-       */
-      hd1 = dlopen(NULL, RTLD_NOW);
-    }
-  else
-    {
-      int flag = ( global == TRUE) ? (RTLD_NOW| RTLD_GLOBAL) : RTLD_NOW;
-      /* this will load the shared library */
-      hd1 = dlopen(shared_path,flag);
-    }
+  if ( strncmp(shared_path,"nsp",3) ==0 ) sh = NULL;
+  if ( strncmp(shared_path,"scilab",6) ==0 ) sh = NULL;
+  /* this will load the shared library or nsp itself is sh is NULL */
+  hd1 = dlopen(sh,flag);
   if ( hd1 == NULL ) 
     {
 #ifndef hppa
@@ -114,7 +104,7 @@ static void * nsp_dlopen(nsp_const_string shared_path,int global)
 }
 
 /**
- * nsp_dlsym:
+ * nsp_dlsym_os:
  * @ename: a string giving a symbol name 
  * @ishared: the id of a previously loaded shared library 
  * @strf: 'c' or 'f' 
@@ -126,44 +116,20 @@ static void * nsp_dlopen(nsp_const_string shared_path,int global)
  * Returns: %OK or %FAIL 
  **/
 
-static int nsp_dlsym(nsp_const_string ename, int ishared, char strf)
+static void *nsp_dlsym_os(NspSharedlib *sh, nsp_const_string ename)
 {
-  NspSharedlib *sh = NULL;
-  void *func;
-  char enamebuf[NAME_MAXL];
-  nsp_check_underscores(( strf == 'f' ) ? 1: 0,ename,enamebuf);
-    
-  if ((sh =nsp_sharedlib_table_find(ishared)) == NULL)
-    {
-      Scierror("Error: Shared library %d does not exists\n",ishared);
-      return(FAIL);
-    }
-  
-  /* XXX entry was previously loaded 
-  if (  nsp_link_search(ename,ish,&loc) >= 0 ) 
-    {
-      Scierror("Warning: Entry name %s is already loaded from lib %d\n",ename,ish);
-      return(OK);
-    }
-  */
-
-  func = dlsym( sh->obj->shd, enamebuf);
+  void *func = dlsym( sh->obj->shd, ename);
   if ( func ==  NULL) 
     {
 #ifndef hppa
       const char *loc = dlerror();
       if ( loc != NULL) Scierror("Error: %s\n",loc);
 #else
-      Scierror("Error: %s is not an entry point\n",enamebuf);
+      Scierror("Error: %s is not an entry point\n",ename);
 #endif
-      return FAIL;
     }
-  /* insert in the table */
-  if ( nsp_epoints_table_insert(ename,func,ishared) == FAIL )
-    return FAIL;
-  return OK;
+  return func; 
 }
-
 
 static void nsp_dlclose(void *shd) 
 {
