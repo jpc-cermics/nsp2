@@ -31,6 +31,7 @@
 #include <nsp/system.h>
 #include "callfunc.h"
 #include <nsp/linking.h>
+#include <nsp/epoints.h>
 #include "addinter.h"
 
 static void link_bug (int i);
@@ -154,22 +155,27 @@ static int int_ulink(Stack stack, int rhs, int opt, int lhs)
 
 static int int_c_link(Stack stack, int rhs, int opt, int lhs)
 {
+  NspEpoints *ep;
   char *name;
   NspObject *O1,*O2=NULL;
-  int ilib=-1,rep,irep;
+  int ilib=-1,irep= FALSE;
   CheckRhs(1,2);
   CheckLhs(0,2);
   if ((name = GetString(stack,1)) == (char*)0) return RET_BUG;  
-  if (rhs == 2 ) {
-    if (GetScalarInt(stack,2,&ilib) == FAIL) return RET_BUG;
-  }
-  rep= nsp_is_linked(name,&ilib);
-  irep = ( rep == -1) ? FALSE : TRUE;
+  if (rhs == 2 )
+    {
+      if (GetScalarInt(stack,2,&ilib) == FAIL) return RET_BUG;
+    }
+  ep =nsp_epoints_table_find(name);
+  if ( ep != NULL) 
+    {
+      irep = ( ilib == -1 ) ? TRUE : (ilib == ep->obj->shid);
+      ilib = ep->obj->shid;
+    }
   if ((O1 = nsp_create_boolean_object(NVOID,irep)) == NULLOBJ) return RET_BUG;
   MoveObj(stack,1,O1);
   if ( lhs == 2 ) 
     {
-      if ( irep == FALSE ) ilib = -1;
       if (( O2 =nsp_create_object_from_int(NVOID,ilib)) == NULLOBJ) return RET_BUG;
       MoveObj(stack,2,O2);
     }
@@ -211,6 +217,28 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
     }
   if ( nsp_move_double(stack,1,(double) ilib)== FAIL) return RET_BUG;
   return 1;
+}
+
+static int int_remove_interface(Stack stack, int rhs, int opt, int lhs)
+{
+  NspEpoints *ep;
+  char *name, *interface, *suffix="_Interf";
+  CheckRhs(1,1);
+  CheckLhs(0,0);
+  if ((name = GetString(stack,1)) == NULLSTRING) return RET_BUG;
+  if ((interface =new_nsp_string_n(strlen(name)+strlen(suffix))) == NULLSTRING )
+    return RET_BUG;
+  sprintf(interface,"%s%s",name,suffix);
+  ep = nsp_epoints_table_find(interface);
+  if ( ep == NULL) 
+    {
+      Scierror("Error: %s is not a loaded interface\n");
+      return RET_BUG;
+    }
+  /* note that this will also destroy ep */
+  nsp_unlink_shared(ep->obj->shid);
+  nsp_string_destroy(&interface);
+  return 0;
 }
 
 /*
@@ -462,6 +490,7 @@ static OpTab Functions_func[]={
   {"ulink",int_ulink},
   {"c_link",int_c_link},
   {"addinter",int_addinter},
+  {"remove_interface",int_remove_interface},
   {"call",int_call},
   {"swigvarlink_create", int_swigvarlink_create},
   {(char *) 0, NULL}

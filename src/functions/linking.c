@@ -33,7 +33,7 @@ static int nsp_find_shared(nsp_const_string shared_path);
 static int nsp_link_status (void) ;
 static void nsp_delete_symbols (int );
 static void *nsp_dlopen(nsp_const_string shared_path,int global);
-static int nsp_dlsym(NspSharedlib *sh, nsp_const_string ename, char strf);
+static int nsp_dlsym(NspSharedlib *sh, nsp_const_string name, nsp_const_string ename, char strf);
 static void nsp_dlclose(void *shd) ;
 
 #if defined(WIN32) 
@@ -76,7 +76,7 @@ void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, in
   if ( iflag== 0 && strncmp(shared_path,"show",4)==0) 
     {
       ShowDynLinks();
-      *ilib = nsp_link_status();  /* return value for Scilab */
+      *ilib = nsp_link_status();  /* return value */
       return;
     }
 
@@ -87,18 +87,19 @@ void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, in
 
 /**
  * nsp_dlsym:
- * @ename: a string giving a symbol name 
- * @ishared: the id of a previously loaded shared library 
+ * @sh: a #NspSharedlib object 
+ * @name: name to insert in the entry point table
+ * @ename: name of entry point to search  
  * @strf: 'c' or 'f' 
  * 
- * Using the id @ishared of a dynamic library returned  by  nsp_dlopen and a symbol 
- * name, this function gets the address where that symbol is loaded into memory 
- * and store the symbol in the link table.
+ * Search in the shared library (accessed through @sh) for an entry point named 
+ * @ename. If the entry point is found then a #NspEpoint object is created (with name 
+ * @name) and inserted in the entry point table.
  * 
- * Returns: %OK or %FAIL 
+ * Returns:  %Ok or %FAIL.
  **/
 
-static int nsp_dlsym(NspSharedlib *sh, nsp_const_string ename, char strf)
+static int nsp_dlsym(NspSharedlib *sh, nsp_const_string name, nsp_const_string ename, char strf)
 {
   void *func;
   char enamebuf[NAME_MAXL];
@@ -111,6 +112,17 @@ static int nsp_dlsym(NspSharedlib *sh, nsp_const_string ename, char strf)
   return OK;
 }
 
+/**
+ * nsp_sharedlib_dlopen:
+ * @shared_path: a string giving a path to a shared library.
+ * @global: an integer (%TRUE or %FALSE).
+ * 
+ * opens a shared library and in case of success creates a 
+ * #NspSharedlib object and insert this object in the shared 
+ * library table. The returned #NspSharedlib should not be freed. 
+ * 
+ * Returns: a #NspSharedlib or %NULL.
+ **/
 
 NspSharedlib *nsp_sharedlib_dlopen(nsp_const_string shared_path, int global) 
 {
@@ -170,7 +182,7 @@ void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path
       i=0 ;
       while ( en_names[i] != (char *) 0)
 	{
-	  if ( nsp_dlsym(sh,en_names[i],strf) == FAIL) 
+	  if ( nsp_dlsym(sh,en_names[i],en_names[i],strf) == FAIL) 
 	    {
 	      *ilib=-5; return;
 	    }
@@ -179,11 +191,17 @@ void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path
     }
 }
 
-/*
- * utility function : 
- * add trailing and leading _ when needed 
- * this information is gathered by configure.
- */
+/**
+ * nsp_check_underscores:
+ * @isfor: 
+ * @ename: 
+ * @ename1: 
+ * 
+ * add trailing and leading underscores to an entry point 
+ * name according to os informations (information is gathered 
+ * by configure).
+ * 
+ **/
 
 static void nsp_check_underscores(int isfor,nsp_const_string ename, char *ename1)
 {
@@ -206,37 +224,10 @@ static void nsp_check_underscores(int isfor,nsp_const_string ename, char *ename1
  * nsp_link_initialize:
  * @void: 
  * 
- * 
  **/
 
 void nsp_link_initialize(void)
 {
-  
-}
-
-
-/**
- * nsp_is_linked:
- * @name: a string 
- * @ilib: an integer 
- * 
- * checks if @name is in the dynamically linked entry points table.
- * if @ilib == -1 the search is performed in 
- * the whole table else the search is restricted to 
- * shared library number @ilib.
- * the returned value is -1 or the indice of 
- * @name in the entry point table. if 
- *
- * @ilib == -1 then on output when the symbol is found 
- * the library number where the symbol was found is returned. 
- * 
- * Returns: an integer 
- **/
-
-int nsp_is_linked(nsp_const_string name,int *ilib)
-{
-  int (*loc)();
-  return  nsp_link_search(name,*ilib,&loc);
 }
 
 /**
@@ -277,24 +268,6 @@ int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ())
 void  ShowDynLinks(void)
 {
   nsp_epoints_table_show();
-  /* 
-  int i=0,count=0;
-  Sciprintf("Number of entry points %d\n",NEpoints);
-  Sciprintf("Shared libs : [");
-  for ( i = 0 ; i < Nshared ; i++) 
-    if ( hd[i].ok == OK) { Sciprintf("%d ",i);count++;}
-  Sciprintf("] : %d libs (%d)\n",count,Nshared);
-  for ( i = NEpoints-1 ; i >=0 ; i--) 
-    {
-      int ish = Min(Max(0,EP[i].Nshared),ENTRYMAX-1);
-      if ( hd[ish].ok == OK) 
-	Sciprintf("Entry point %s in shared lib %d (%s)\n",
-		  EP[i].name,EP[i].Nshared, hd[ish].tmp_file);
-      else 
-	Sciprintf("Entry point %s in shared lib %d (void)\n",
-		  EP[i].name,EP[i].Nshared);
-    }
-  */
 }
 
 /* get all entries as a hash table 
