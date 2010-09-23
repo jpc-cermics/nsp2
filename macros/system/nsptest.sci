@@ -15,7 +15,7 @@ function y=nsptest(fname)
   y=exec(fname,display=%t,echo =%t,errcatch=%t,pausecatch=%t)
   diary(); 
   if y == %f then 
-    printf("Error: test %s failed\n",fname);
+    printf("\033[31mError: test %s failed\033[0m\n",fname);
     printf("%s",lasterror());
     return;
   end 
@@ -27,7 +27,7 @@ function y=nsptest(fname)
     ref_ = ref_file.get_smatrix[];
     ref_file.close[];
     if ref_ <> dia_ then 
-      printf("diff %s %s failed\n",fname_dia,fname_ref);
+      printf("\033[31mError: diff %s %s failed\033[0m\n",fname_dia,fname_ref);
       y=%f 
       return 
     end
