@@ -24,37 +24,17 @@
 #include <stdio.h>
 #include <string.h>
 
-#include <nsp/object.h> 
-#include <nsp/plist.h> 
-#include <nsp/plistc.h> 
-#include <nsp/bhash.h> 
-#include <nsp/cells.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/matrix.h> 
-#include <nsp/list.h> 
-#include <nsp/file.h> 
-#include <nsp/hobj.h> 
-#include <nsp/function.h> 
-#include <nsp/imatrix.h> 
-#include <nsp/hash.h> 
-#include <nsp/ivect.h> 
-
-
-#include "nsp/interf.h"
-#include "nsp/libstab.h"
+#include <nsp/nsp.h> 
+#include <nsp/objects.h> 
+#include <nsp/interf.h>
 #include <nsp/system.h>
-#include "nsp/datas.h"
-#include "nsp/parse.h"
-#include "nsp/stack.h"
-#include "nsp/seval.h"
-#include "nsp/menus.h"
-
-extern void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
-extern void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
-extern NspSMatrix *nsp_lasterror_get(void) ;
-extern void nsp_lasterror_clear(void) ;
-extern nsp_string   nsp_absolute_file_name( char *fname);
-
+#include <nsp/plist.h> 
+#include <nsp/datas.h>
+#include <nsp/libstab.h>
+#include <nsp/eval.h>
+#include <nsp/seval.h>
+#include <nsp/parse.h> 
+#include <nsp/nsptcl.h> 
 
 static function  int_parseevalfile;
 static function  int_add_lib;
@@ -101,8 +81,7 @@ void nsp_expand_file_and_update_exec_dir(Stack *stack,char *old,char *filename,c
  * @dirname_exec: expanded version of filename using current exec directory 
  * 
  * expand @dirname in @dirname_exec using macros and current exec directory. 
- * The current exec directory is also updated using the dirname of the expanded 
- * filename.
+ * The current exec directory is also updated using the expanded dirname.
  * 
  **/
 

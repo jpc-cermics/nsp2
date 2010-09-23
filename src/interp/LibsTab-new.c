@@ -383,15 +383,20 @@ void nsp_delete_interface_functions(int interface)
 	      /* multiple */
 	      NspList *L = (NspList *) Obj;
 	      NspObject *Elt;
-	      int l = nsp_list_length(L),i;
-	      for ( i = 1 ; i <= l ; i++)
+	      int l = nsp_list_length(L),i=1;
+	      while (1)
 		{
+		  if ( i > l ) break;
 		  Elt = nsp_list_get_element(L,i);
-		  if ( IsFunction(Elt) ) 
+		  if ( Elt != NULL &&  IsFunction(Elt) ) 
 		    {
 		      if ( iface == ((NspFunction *) Elt)->iface ) 
-			nsp_list_delete_elt(L,i);
+			{
+			  nsp_list_delete_elt(L,i);
+			  l--;i--;
+			}
 		    }
+		  i++;
 		}
 	      if ( nsp_list_length(L) == 0 )
 		{

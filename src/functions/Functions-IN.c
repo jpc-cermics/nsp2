@@ -94,6 +94,14 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
     { 
       Str = "c";
     }
+
+  if ( strncmp(shared_lib,"show",4)==0) 
+    {
+      nsp_epoints_table_show();
+      nsp_sharedlib_table_show();
+      return 0;
+    }
+
   /* expand keys in path name result in buf */
   if ( shared_lib != NULL )
     {
@@ -232,7 +240,7 @@ static int int_remove_interface(Stack stack, int rhs, int opt, int lhs)
   ep = nsp_epoints_table_find(interface);
   if ( ep == NULL) 
     {
-      Scierror("Error: %s is not a loaded interface\n");
+      Scierror("Error: %s is not a loaded interface\n",name);
       return RET_BUG;
     }
   /* note that this will also destroy ep */

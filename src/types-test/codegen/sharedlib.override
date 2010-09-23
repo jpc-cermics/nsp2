@@ -11,6 +11,7 @@ extern NspSharedlib *nsp_sharedlib_table_find( int id) ;
 extern void nsp_sharedlib_table_remove_lib(int id);
 extern NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name);
 extern NspSharedlib *nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path);
+extern void nsp_sharedlib_table_show();
 
 %%
 include-private Sharedlib
@@ -118,3 +119,8 @@ NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name)
   return NULL;
 }
 
+void nsp_sharedlib_table_show()
+{
+  if  ( SharedLibs == NULL ) return;
+  nsp_hash_print(SharedLibs,0,0,0);
+}

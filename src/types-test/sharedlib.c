@@ -24,7 +24,7 @@
 
 
 
-#line 21 "codegen/sharedlib.override"
+#line 22 "codegen/sharedlib.override"
 /* headers in C-file */
 
 #line 31 "sharedlib.c"
@@ -99,7 +99,7 @@ NspTypeSharedlib *new_type_sharedlib(type_mode mode)
 
   type->init = (init_func *) init_sharedlib;
 
-#line 30 "codegen/sharedlib.override"
+#line 31 "codegen/sharedlib.override"
   /* inserted verbatim in the type definition */
 
 #line 106 "sharedlib.c"
@@ -537,7 +537,7 @@ void Sharedlib_Interf_Info(int i, char **fname, function (**f))
   *f = Sharedlib_func[i].fonc;
 }
 
-#line 42 "codegen/sharedlib.override"
+#line 43 "codegen/sharedlib.override"
 /* inserted verbatim at the end */
 
 static NspHash *SharedLibs = NULL;
@@ -617,5 +617,10 @@ NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name)
   return NULL;
 }
 
+void nsp_sharedlib_table_show()
+{
+  if  ( SharedLibs == NULL ) return;
+  nsp_hash_print(SharedLibs,0,0,0);
+}
 
-#line 622 "sharedlib.c"
+#line 627 "sharedlib.c"

@@ -65,21 +65,12 @@ static void nsp_dlclose(void *shd) ;
 void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
 {
   int lib;
-  nsp_link_initialize(); 
   if ( iflag== 0 && (lib = nsp_find_shared(shared_path)) != -1 ) 
     {
       /* Sciprintf("shared library already loaded\n"); */
       if  ( strcmp(shared_path,"nsp") != 0 || strcmp(shared_path,"scilab") != 0 )
 	nsp_unlink_shared(lib);
     }
-
-  if ( iflag== 0 && strncmp(shared_path,"show",4)==0) 
-    {
-      ShowDynLinks();
-      *ilib = nsp_link_status();  /* return value */
-      return;
-    }
-
   /* calling the linker */
   nsp_link_library(iflag,rhs,ilib,shared_path,en_names,strf);
 }
@@ -261,14 +252,6 @@ int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ())
   return -1 ;
 }
 
-/*
- * Show the linked files 
- */
-
-void  ShowDynLinks(void)
-{
-  nsp_epoints_table_show();
-}
 
 /* get all entries as a hash table 
  * names : shared library number
@@ -301,8 +284,6 @@ static int nsp_find_shared(nsp_const_string shared_path)
 
 void nsp_unlink_shared(int ilib)
 {
-  /* be sure that dynamic link tables are initialized */
-  nsp_link_initialize(); 
   /* delete entry points in shared lib *i */
   nsp_delete_symbols(ilib);
   /* delete entry points used in addinter in shared lib *i */
