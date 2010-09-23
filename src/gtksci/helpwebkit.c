@@ -60,7 +60,6 @@
 #include "nsp/nsptcl.h"
 
 /* XXX*/
-extern nsp_string nsp_dirname(char *fileName);
 extern GtkWidget *egg_find_bar_new (void);
 
 /*
