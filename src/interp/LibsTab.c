@@ -18,7 +18,7 @@
  *
  * 
  * Htable for macros 
- * Htable for functions
+ * FIXME: work in progress 
  *********************************************************************/
 
 #include <string.h>
@@ -26,64 +26,30 @@
 #include <stdio.h>
 #include <glib.h>
 
-#include <nsp/object.h> 
-#include <nsp/plist.h> 
-#include <nsp/plistc.h> 
-#include <nsp/bhash.h> 
-#include <nsp/cells.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/matrix.h> 
-#include <nsp/list.h> 
-#include <nsp/file.h> 
-#include <nsp/hobj.h> 
-#include <nsp/function.h> 
-#include <nsp/imatrix.h> 
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
+#include <nsp/function.h>
 #include <nsp/hash.h> 
-#include <nsp/ivect.h> 
 
-#include "nsp/machine.h"
-#include "nsp/math.h" 
-#include "nsp/plisttoken.h" /* for name_maxl */
-#include "nsp/interf.h"
-#include "nsp/datas.h"
-#include "nsp/libstab.h"
+#include <nsp/plisttoken.h> /** for name_maxl **/
+#include <nsp/interf.h>
+#include <nsp/datas.h>
 #include <nsp/system.h> /* FSIZE+1 */
+#include <nsp/seval.h>
+
+#include "../functions/FunTab.h"
 #include "../functions/callfunc.h" 
 #include "../functions/addinter.h" 
-#include "nsp/seval.h"
 
-/*
- * maximum number of entries in the htable 
- * in fact myhcreate use a prime > MAXTAB
- * WARNING : MAXTAB must be chosen > 2* the number of 
- * expected entries 
- * for good efficiency of the hash code 
- */
+void nsp_init_macro_table(void);
 
-#define MAXTAB 4096
-
-typedef enum {
-  FIND, ENTER,REMOVE
-} ACTION;
-
-typedef struct mdata {
-  int Int;
-} Mdata;
-
-static int   myhcreate (unsigned int);
-/* static void	 myhdestroy(); */
-static int   myhsearch (const char *str,Mdata *d,ACTION);
-
-/* table of directory that contains searched 
- * macros
- */
+NspObject *nsp_find_macro_or_func(const char *str,int *type);
+int nsp_delete_macros(const char *dirname);
+static void nsp_remove_macro_or_func(const char *name,int type);
+static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj);
 
 static NspSMatrix *LibDirs = NULLSMAT;
-
-/* hash table of preloaded macros.
- */
-
-static NspHash* macros_cache = NULLHASH;
+static NspHash* nsp_functions_table = NULLHASH;
 
 /**
  * nsp_get_libdir:
@@ -100,6 +66,15 @@ const char *nsp_get_libdir(int num)
     return LibDirs->S[num];
   else 
     return NULL;
+}
+
+
+int nsp_enter_macro(const char *str,int dir)
+{
+  NspPList *loc; 
+  if ((loc = NspPListCreate(str,NULL,NULL)) == NULL) return FAIL;
+  loc->dir = dir;
+  return  nsp_hash_enter_multiple(nsp_functions_table,NSP_OBJECT(loc));
 }
 
 
@@ -122,10 +97,8 @@ const char *nsp_get_libdir(int num)
 int nsp_enter_macros(const char *dir_name,int recursive,int compile)
 {
   char dirname[FSIZE+1];
-  Mdata data;
   char filename[FSIZE+1];
   int  flen, flag=-1,i;
-  nsp_macro_table_reset_cache();
   /* recursively add search directories */
   /* expand macros in dir_name -> dirname */
   nsp_path_expand(dir_name,dirname,FSIZE);
@@ -154,6 +127,12 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
       if (nsp_string_resize(&(LibDirs->S[flag]),strlen(dirname)) == FAIL)
 	return FAIL;
       strcpy(LibDirs->S[flag],dirname);
+    }
+  else 
+    {
+      /* delete entries in macro_table before re-entering */
+      if ( nsp_delete_macros(dirname) == FAIL) 
+	return FAIL;
     }
 
   /* update binaries if requested 
@@ -184,8 +163,9 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
 	      char name[NAME_MAXL];
 	      strcpy(name,fname);
 	      name[strlen(fname)-4]='\0';
-	      data.Int = flag;
-	      if ( myhsearch(name,&data,ENTER) == FAIL ) 
+	      /* 
+	       */
+	      if ( nsp_enter_macro(name,flag) == FAIL ) 
 		{
 		  Scierror("Error:\t: htable is full increase default size in LibsTab.c\n");
 		  g_dir_close (dir);
@@ -207,6 +187,7 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
  * Return value: %OK or %FAIL
  **/
 
+
 int nsp_delete_macros(const char *dirname)
 {
   int  flen;
@@ -226,9 +207,6 @@ int nsp_delete_macros(const char *dirname)
       /* nothing to do */
       return OK;
     }
-
-  /* reset the cache since we are destroying macros */
-  nsp_macro_table_reset_cache();
 
   /* if flag != -1 : we keep the dir name in LibDirs */
   dir =  g_dir_open(dirname,0,NULL);
@@ -254,11 +232,10 @@ int nsp_delete_macros(const char *dirname)
 	{
 	  if ( strlen(fname) >= 4 && strncmp(".bin",fname + strlen(fname)-4,4)==0)
 	    {
-	      Mdata data;
 	      char name[NAME_MAXL];
 	      strcpy(name,fname);
 	      name[strlen(fname)-4]='\0';
-	      myhsearch(name,&data,REMOVE);
+	      nsp_remove_macro_or_func(name,0);
 	    }
 	}
     }
@@ -277,59 +254,15 @@ int nsp_delete_macros(const char *dirname)
  * Return value: %NULLOBJ or an %NspObject filled with the macro code.
  **/
 
-NspObject *nsp_find_macro(const char *str)
+NspObject *nsp_find_macro(char *str)
 {
-  NspObject *Ob;
-  Mdata data;
-  if ( nsp_hash_find(macros_cache,str,&Ob) == OK) 
-    {
-      /* Sciprintf("Macro %s found in the cache\n"); */
-      return Ob;
-    }
-  if ( myhsearch(str,&data,FIND) == OK ) 
-    {
-      int found=FALSE;
-      NspFile *F;
-      char Name[FSIZE+1];
-      if ( data.Int < 0 ) return NULLOBJ;
-      sprintf(Name,"%s/%s.bin",LibDirs->S[data.Int],str);
-      if (( F =nsp_file_open_xdr_r(Name)) == NULLSCIFILE) return NULLOBJ;
-      /* bin files are supposed to contain only one object */
-      while (1) 
-	{
-	  NspObject *Ob1;
-	  if ((Ob1=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
-	  if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
-	    {
-	      found = TRUE;
-	      ((NspPList *) Ob1)->dir = data.Int;
-	      Ob = Ob1;
-	    }
-	}
-      if (nsp_file_close_xdr_r(F) == FAIL) 
-	{
-	  nsp_file_destroy(F);
-	  return NULLOBJ;
-	}
-      nsp_file_destroy(F);
-
-      /* Sciprintf("Macro %s found in %s/%s.bin\n",str,LibDirs->S[data.Int],str);
-	 Sciprintf("insert %s in a cache \n",str);
-      */
-      /* enter macro  in the cache */
-      if ( found == TRUE )
-	{
-	  nsp_hash_enter(macros_cache,Ob);
-	  return Ob; 
-	}
-      else 
-	{
-	  Sciprintf("Macro %s not found in %s/%s.bin !!!!\n",str,LibDirs->S[data.Int],str);
-	  return NULLOBJ;
-	}
-    }
-  return NULLOBJ;
+  int type;
+  NspObject *Obj;
+  Obj = nsp_find_macro_or_func(str,&type);
+  if ( Obj != NULL && type == 1 ) return NULL;
+  return Obj;
 }
+
 
 /**
  * nsp_init_macro_table:
@@ -342,17 +275,6 @@ void nsp_init_macro_table(void)
 {
   static int firstentry = 0;
   if ( firstentry != 0 ) return;
-  /* a cache */
-  if ( (macros_cache = nsp_hcreate("cache",100)) == NULLHASH ) 
-    {
-      Sciprintf("Fatal Error:\tCan't create table for Scilab libraries\n");
-      exit(1);
-    }
-  if ( myhcreate(MAXTAB) == 0 ) 
-    {
-      Sciprintf("Fatal Error:\tCan't create table for Scilab libraries\n");
-      exit(1);
-    }
   if ((LibDirs =nsp_smatrix_create("libs",1,1,(char *)0,0))== NULLSMAT) 
     {
       Sciprintf("Fatal Error:\tCan't create table for Scilab libraries\n");
@@ -361,370 +283,9 @@ void nsp_init_macro_table(void)
   firstentry = 1;
 }
 
-/**
- * nsp_macro_table_reset_cache:
- * 
- * reset the macros cache 
- */
 
-void nsp_macro_table_reset_cache(void)
-{
-  NspHash *new_cache;
-  if (macros_cache == NULLHASH) return;
-  if ((new_cache = nsp_hcreate("cache",100)) == NULLHASH ) 
-    {
-      Sciprintf("Error: cannot reset the macros cache, no more space available\n");
-      return;
-    }
-  nsp_hash_destroy(macros_cache);
-  macros_cache = new_cache;
-}
-
-
-
-/*
- * Hashtable code : 
- * slightly modified to add REMOVE (Jean-Philippe Chancelier)
- */
-
-/*-
- * Copyright (c) 1990, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * This code is derived from software contributed to Berkeley by
- * Margo Seltzer.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)search.h	8.1 (Berkeley) 6/4/93
- */
-
-
-/* Backward compatibility to hsearch interface. */
-
-typedef struct entry {
-  char key[NAME_MAXL];
-  Mdata data;
-} ENTRY;
-
-/* Copyright (C) 1993 Free Software Foundation, Inc.
- * This file is part of the GNU C Library.
- * Contributed by Ulrich Drepper <drepper@ira.uka.de>
- *
- * The GNU C Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
- *  The GNU C Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *  You should have received a copy of the GNU Library General Public
- * License along with the GNU C Library; see the file COPYING.LIB.  If
- * not, write to the Free Software Foundation, Inc., 675 Mass Ave,
- * Cambridge, MA 02139, USA.  
- */
- 
-/*
- * [Aho,Sethi,Ullman] Compilers: Principles, Techniques and Tools, 1986
- * [Knuth]            The Art of Computer Programming, part 3 (6.4)
- */
-
-/*
- * We need a local static variable which contains the pointer to the
- * allocated memory for the hash table. An entry in this table contains
- * an ENTRY and a flag for usage.
- */
-
-typedef struct { 
-  unsigned int   used;
-  ENTRY entry;
-} _ENTRY;
-
-static _ENTRY   * htable = NULL;
-static unsigned   hsize = 0;
-static unsigned   filled;
 
 /* 
- * For the used double hash method the table size has to be a prime. To
- * correct the user given table size we need a prime test.  This trivial
- * algorithm is adequate because
- * a)  the code is (most probably) only called once per program run and
- * b)  the number is small because the table must fit in the core
- */
-
-static int
-isprime(unsigned int number)
-{
-  /* no even number will be passed */
-  unsigned div = 3;
-
-  while (div*div < number && number%div != 0)
-    div += 2;
-
-  return number%div != 0;
-}
-
-/*
- * Before using the hash table we must allocate memory for it.
- * Test for an existing table are done. We allocate one element
- * more as the found prime number says. This is done for more effective
- * indexing as explained in the comment for the hsearch function.
- * The contents of the table is zeroed, especially the field used 
- * becomes zero.
- */
-
-static int myhcreate(unsigned int nel)
-{
-  /* There is still another table active. Return with error. */
-  if (htable != NULL)
-    return 0;
-
-  /* Change nel to the first prime number not smaller as nel. */
-  nel |= 1;      /* make odd */
-  while (!isprime(nel)) nel += 2;
-
-  hsize  = nel;
-  filled = 0;
-  /* printf(" Size of hTable %d\n",nel); */
-  /* allocate memory and zero out */
-#if 0  
-  if ((htable = (_ENTRY *)calloc(hsize+1, sizeof(_ENTRY))) == NULL)
-    return 0;
-#else 
-  if ((htable = (_ENTRY *) malloc((hsize+1)*sizeof(_ENTRY))) == NULL)
-    return 0;
-  memset(htable,0,(hsize+1)*sizeof(_ENTRY));
-#endif 
-  /* everything went alright */
-  return 1;
-}
-
-
-/*
- * This is the search function. It uses double hashing with open adressing.
- * The argument item.key has to be a pointer to an zero terminated, most
- * probably strings of chars. The function for generating a number of the
- * strings is simple but fast. It can be replaced by a more complex function
- * like ajw (see [Aho,Sethi,Ullman]) if the needs are shown.
- *
- * We use an trick to speed up the lookup. The table is created by hcreate
- * with one more element available. This enables us to use the index zero
- * special. This index will never be used because we store the first hash
- * index in the field used where zero means not used. Every other value
- * means used. The used field can be used as a first fast comparison for
- * equality of the stored and the parameter value. This helps to prevent
- * unnecessary expensive calls of strcmp.
- */
-
-#define HSEARCH_DEBUG(x) 
-#define Eqid(x,y) strncmp(x,y,NAME_MAXL) 
-
-static int myhsearch(const char *key, Mdata *data, ACTION action)
-{
-  register unsigned hval;
-  register unsigned hval2;
-  register unsigned len = NAME_MAXL;
-  register unsigned idx;
-  register const char *str;
-  /*
-   * If table is full and another entry should be entered return with 
-   * error.
-   */
-  if (action == ENTER && filled == hsize-1 ) 
-    {
-      Sciprintf("htable is full edit LibsTab.c and increase default size");
-      return FAIL;    
-    }
-
-  HSEARCH_DEBUG(printf("In hsearch with hsize =%d key = %s filled = %d\n",hsize,key,filled);)
-
-    /* Compute a value for the given string. Perhaps use a better method. */
-    /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
-    /*                  then compute hval % hsize efficiently */
-    hval  = len;
-  str = key;
-  while (*str != '\0') { hval += *str ; str++; }
-  /* compute hval %= hsize efficiently */
-  hval %= hsize;
-  /* 
-   * if ( hval >= hsize){ hval -= hsize; if ( hval >= hsize) hval %= hsize; }
-   */
-
-  /* First hash function: simply take the modul but prevent zero. */
-  if (hval == 0) hval++;
-
-  /* The first index tried. */
-  idx = hval;
-
-  if (htable[idx].used) 
-    {
-
-      HSEARCH_DEBUG(printf("idx %d is used \n",idx);)
-
-	/* Further action might be required according to the action value. */
-	
-	if (htable[idx].used == hval )
-	  {
-	    if ( htable[idx].entry.data.Int == -1 )
-	      {
-		HSEARCH_DEBUG(printf("idx %d is not really used \n",idx);)
-		  /* not used */
-		  switch (action) 
-		    {
-		    case ENTER :
-		      strncpy(htable[idx].entry.key,key,NAME_MAXL);
-		      htable[idx].entry.data.Int = data->Int; 
-		      filled++;
-		      return OK;
-		    default : break;
-		    }
-	      }
-	    else if ( Eqid(key, htable[idx].entry.key) == 0) 
-	      {
-		HSEARCH_DEBUG(printf("idx %d is really used \n",idx);)
-		  switch (action) 
-		    {
-		    case REMOVE :
-		      /* because of the second hash we cannot remove */
-		      /* htable[idx].used = 0;*/
-		      htable[idx].entry.data.Int = -1;
-		      filled--;
-		      return OK ;
-		      break;
-		    case ENTER :
-		      htable[idx].entry.data.Int = data->Int; 
-		      return OK;
-		    case FIND :
-		      data->Int = htable[idx].entry.data.Int;
-		      return OK;
-		    }
-	      }
-	  }
-	
-      /* Second hash function, as suggested in [Knuth] */
-
-      hval2 = 1 + hval % (hsize-2);
-	
-      do {
-	/* 
-	 * Because hsize is prime this guarantees to step through all
-	 * available indeces.
-	 */
-	if (idx <= hval2)
-	  idx = hsize+idx-hval2;
-	else
-	  idx -= hval2;
-
-	HSEARCH_DEBUG(printf("chaining to idx %d \n",idx);)
-	  /* If entry is found use it. */
-	  if (htable[idx].used == hval ) 
-	    {
-
-	      HSEARCH_DEBUG(printf("idx %d is  used \n",idx);)
-		if ( htable[idx].entry.data.Int == -1 )
-		  {
-		    HSEARCH_DEBUG(printf("idx %d is not really used \n",idx);)
-		      /* not used */
-		      switch (action) 
-			{
-			case ENTER :
-			  strncpy(htable[idx].entry.key,key,NAME_MAXL);
-			  htable[idx].entry.data.Int = data->Int; 
-			  filled++;
-			  return OK;
-			default : break;
-			}
-		  }
-		else if ( Eqid(key, htable[idx].entry.key) == 0) 
-		  {
-		    HSEARCH_DEBUG(printf("idx %d is really used \n",idx);)
-		      switch (action) 
-			{
-			case REMOVE :
-			  /* because of the second hash we cannot remove */
-			  /* htable[idx].used = 0;*/
-			  htable[idx].entry.data.Int = -1;
-			  filled--;
-			  return OK;
-			  break;
-			case ENTER :
-			  /* replace */
-			  htable[idx].entry.data.Int = data->Int; 
-			  return OK;
-			case FIND :
-			  data->Int = htable[idx].entry.data.Int;
-			  return OK;
-			}
-		  }
-	    }
-      } while (htable[idx].used);
-    }
-    
-  /* An empty bucket has been found. */
-
-  HSEARCH_DEBUG(printf("found a free idx %d \n",idx);)
-    if (action == ENTER) 
-      {
-	htable[idx].used  = hval;
-	strncpy(htable[idx].entry.key,key,NAME_MAXL);
-	htable[idx].entry.data.Int = data->Int; 
-	filled++;
-	return OK ;
-      }
-    else
-      return FAIL;
-}
-
-
-
-/* Nsp
- * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
- *
- * See also the Copyright below for hash table routines 
- *
- *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
- *
- * This library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * General Public License for more details.
- *
- * You should have received a copy of the GNU General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
- * 
  * Hash Table for storing scilab function informations 
  * The data associated to a function is the couple (Int,Num) 
  *     where Int is an interface number and Num the id of 
@@ -732,33 +293,26 @@ static int myhsearch(const char *key, Mdata *data, ACTION action)
  * 
  *     InitFunctionTable() : initialize Hash Table storing 
  *                  initial set of function.
- *     int EnterFunction(str,Int,Num) : add new function in hash table.
+ *     int nsp_enter_function(str,Int,Num) : add new function in hash table.
  *                  or change data if function str was already in the table
- *     void DeleteFunction(str) : delete entry from its name. 
+ *     void nsp_delete_function(str) : delete entry from its name. 
  *     void DeleteFunctionS(Int) : delete functions from interface Int
  *     FindFunction(str,Int,Num) : find entry from its name.
  *     int FindFunctionB(key,Int, Num) : find entry from (Int,Num) 
  *                          by traversal of the whole table.
  * 
- * FMAXTAB must be set to 2*(the number of primitives)
+ * MAXTAB must be set to 2*(the number of primitives + macros )
  */
 
+
 /*
- * FMAXTAB : maximum number of entries in the htable 
- * in fact  myhcreate use a prime > FMAXTAB
- * WARNING : FMAXTAB must be chosen > 2* the number of 
+ * MAXTAB : maximum number of entries in the htable 
+ * in fact  myhcreate use a prime > MAXTAB
+ * WARNING : MAXTAB must be chosen > 2* the number of 
  * expected entries for good efficiency of the hash code 
  */
 
-#define FMAXTAB 4096
-
-typedef struct fdata {
-  int Int;
-  int Num;
-} Fdata;
-
-static int   nsp_hash_func_hcreate (unsigned int);
-static int   nsp_hash_func_hsearch (const char *str,Fdata *d,ACTION);
+#define MAXTAB 8192
 
 /**
  * nsp_enter_function:
@@ -772,12 +326,12 @@ static int   nsp_hash_func_hsearch (const char *str,Fdata *d,ACTION);
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_enter_function(const char *str, int Int, int Num)
+int  nsp_enter_function(const char *str, int Int, int Num)
 {
-  Fdata data;
-  data.Int = Int ;
-  data.Num = Num ;
-  return( nsp_hash_func_hsearch(str,&data,ENTER));
+  NspFunction *loc;
+  if ((loc = function_create(str,str,Int,Num,0,NULL))== NULL)
+    return FAIL;
+  return  nsp_hash_enter_multiple(nsp_functions_table,NSP_OBJECT(loc));
 }
 
 /**
@@ -789,9 +343,71 @@ int nsp_enter_function(const char *str, int Int, int Num)
 
 void nsp_delete_function(const char *str)
 {
-  Fdata data;
-  nsp_hash_func_hsearch(str,&data,REMOVE);
+  nsp_remove_macro_or_func(str,1);
 }
+
+/**
+ * nsp_delete_interface_functions:
+ * @interface: dynamic interface number.
+ * 
+ * deletes entries associated to interface number @Int by walking through 
+ * the whole hash table. 
+ * 
+ **/
+
+void nsp_delete_interface_functions(int interface)
+{
+  NspObject *Obj;
+  int i=0;
+  int iface = interface;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  if ( IsFunction(Obj)) 
+	    {
+	      /* function */
+	      if ( iface == ((NspFunction *) Obj)->iface ) 
+		{
+		  Sciprintf("removing %s in interface %d\n",nsp_object_get_name(Obj),interface);
+		  nsp_hash_remove(nsp_functions_table,nsp_object_get_name(Obj));
+		}
+	    }
+	  else if (IsNspPList(Obj))
+	    {
+	      /* macro */
+	    }
+	  else if ( IsList(Obj) )
+	    {
+	      /* multiple */
+	      NspList *L = (NspList *) Obj;
+	      NspObject *Elt;
+	      int l = nsp_list_length(L),i=1;
+	      while (1)
+		{
+		  if ( i > l ) break;
+		  Elt = nsp_list_get_element(L,i);
+		  if ( Elt != NULL &&  IsFunction(Elt) ) 
+		    {
+		      if ( iface == ((NspFunction *) Elt)->iface ) 
+			{
+			  nsp_list_delete_elt(L,i);
+			  l--;i--;
+			}
+		    }
+		  i++;
+		}
+	      if ( nsp_list_length(L) == 0 )
+		{
+		  nsp_hash_remove(nsp_functions_table,nsp_object_get_name(Obj));
+		}
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+}
+
 
 
 /**
@@ -809,14 +425,50 @@ void nsp_delete_function(const char *str)
 
 int nsp_find_function(const char *str, int *Int, int *Num)
 {
-  int r;
-  Fdata data;
-  r= nsp_hash_func_hsearch(str,&data,FIND);
-  *Int = data.Int;
-  *Num = data.Num;
-  return r;
+  NspObject *Obj;
+  int type;
+  Obj = nsp_find_macro_or_func(str,&type);
+  if ( Obj != NULL &&  type == 1) 
+    {
+      *Int = ((NspFunction *)Obj)->iface;
+      *Num = ((NspFunction *)Obj)->pos;
+      return OK;
+    }
+  return FAIL;
 }
 
+/**
+ * nsp_find_function_by_id:
+ * @key: 
+ * @Int: 
+ * @Num: 
+ * 
+ * find a function given @Int and @Num
+ * 
+ * Returns: %OK or %FAIL 
+ **/
+
+int nsp_find_function_by_id(char *key, int Int, int Num)
+{
+  NspObject *Obj;
+  int i=0;
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  if (Int == ((NspFunction *)Obj)->iface && Num == ((NspFunction *)Obj)->pos) 
+	    {
+	      strncpy(key,nsp_object_get_name(Obj),NAME_MAXL);
+	      return 1;
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+  return 0;
+}
+
+  
 /**
  * nsp_init_function_table:
  * @void: 
@@ -824,13 +476,12 @@ int nsp_find_function(const char *str, int *Int, int *Num)
  * Initialize the function table.
  **/
 
+
 void nsp_init_function_table(void)
 {
   static int firstentry = 0;
   int i=0,k=0;
-  if ( firstentry == 1 ) return ;
-  /* first call */
-  if ( nsp_hash_func_hcreate(FMAXTAB) == 0 ) 
+  if (( nsp_functions_table= nsp_hash_create("functions",MAXTAB)) == NULLHASH) 
     {
       printf("Fatal Error: Can't create table for scilab functions (not enough memory)\n");
       exit(1);
@@ -850,7 +501,7 @@ void nsp_init_function_table(void)
 	  if ( fname == NULL) break;
 	  if ( nsp_enter_function(fname,i,k) == FAIL)
 	    {
-	      printf("Fatal Error : Table for scilab functions is too small \n");
+	      printf("Fatal Error : Table for nsp functions is too small \n");
 	      exit(1);
 	    }	  
 	  k++;
@@ -861,441 +512,175 @@ void nsp_init_function_table(void)
 }
 
 
-/*
- * Hashtable code : 
- * slightly modified to add DELETE 
- * Jean-Philippe Chancelier Cermics/enpc
- */
-
-/*-
- * Copyright (c) 1990, 1993
- *	The Regents of the University of California.  All rights reserved.
- *
- * This code is derived from software contributed to Berkeley by
- * Margo Seltzer.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in the
- *    documentation and/or other materials provided with the distribution.
- * 3. All advertising materials mentioning features or use of this software
- *    must display the following acknowledgement:
- *	This product includes software developed by the University of
- *	California, Berkeley and its contributors.
- * 4. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
- *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
- * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
- * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
- * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
- * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
- * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- *
- *	@(#)search.h	8.1 (Berkeley) 6/4/93
- */
-
-
-/* Backward compatibility to hsearch interface. */
-
-typedef struct fentry {
-  char key[NAME_MAXL];
-  Fdata data;
-} FENTRY;
-
-/* Copyright (C) 1993 Free Software Foundation, Inc.
- *   This file is part of the GNU C Library.
- *   Contributed by Ulrich Drepper <drepper@ira.uka.de>
- *
- * The GNU C Library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public License as
- * published by the Free Software Foundation; either version 2 of the
- * License, or (at your option) any later version.
- *
- * The GNU C Library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
- *
- * You should have received a copy of the GNU Library General Public
- * License along with the GNU C Library; see the file COPYING.LIB.  If
- * not, write to the Free Software Foundation, Inc., 675 Mass Ave,
- * Cambridge, MA 02139, USA.  
- */
-
-/*
- * [Aho,Sethi,Ullman] Compilers: Principles, Techniques and Tools, 1986
- * [Knuth]            The Art of Computer Programming, part 3 (6.4)
- */
-
-/*
- * We need a local static variable which contains the pointer to the
- * allocated memory for the hash table. An entry in this table contains
- * an FENTRY and a flag for usage.
- */
-
-typedef struct { 
-    unsigned int   used;
-    FENTRY entry;
-} _FENTRY;
-
-static _FENTRY   *f_htable = NULL;
-static unsigned   hsize;
-static unsigned   filled;
-
-
-/* 
- * For the used double hash method the table size has to be a prime. To
- * correct the user given table size we need a prime test.  This trivial
- * algorithm is adequate because
- * a)  the code is (most probably) only called once per program run and
- * b)  the number is small because the table must fit in the core
- */
-
-static int
-isprime1(unsigned int number)
-{
-    /* no even number will be passed */
-    unsigned div = 3;
-
-    while (div*div < number && number%div != 0)
-        div += 2;
-
-    return number%div != 0;
-}
-
-/*
- * Before using the hash table we must allocate memory for it.
- * Test for an existing table are done. We allocate one element
- * more as the found prime number says. This is done for more effective
- * indexing as explained in the comment for the hsearch function.
- * The contents of the table is zeroed, especially the field used 
- * becomes zero.
- */
-
-static int nsp_hash_func_hcreate(unsigned int nel)
-{
-    /* There is still another table active. Return with error. */
-    if (f_htable != NULL)
-	return 0;
-
-    /* Change nel to the first prime number not smaller as nel. */
-    nel |= 1;      /* make odd */
-    while (!isprime1(nel)) nel += 2;
-
-    hsize  = nel;
-    filled = 0;
-    /* printf(" Size of hTable %d\n",nel); */
-    /* allocate memory and zero out */
-    /* note that f_htable has hsize +1 entries */
-#if 0  
-    if ((f_htable = (_FENTRY *)calloc(hsize+1, sizeof(_FENTRY))) == NULL)
-      return 0;
-#else 
-    if ((f_htable = (_FENTRY *) malloc((hsize+1)*sizeof(_FENTRY))) == NULL)
-      return 0;
-    memset(f_htable,0,(hsize+1)*sizeof(_FENTRY));
-#endif 
-    /* everything went alright */
-    return 1;
-}
-
-/*
- * After using the hash table it has to be destroyed. The used memory can
- * be freed and the local static variable can be marked as not used.
- */
-
-/*
- Unused : cleaned at nsp exit 
-static void
-nsp_hash_func_hdestroy()
-{
-    / * free used memory * /
-    free(f_htable);
-    / * the sign for an existing table is a value != NULL in f_htable * / 
-    f_htable = NULL;
-}
-**/
-
 /**
- * nsp_find_function_by_id:
- * @key: 
- * @Int: 
- * @Num: 
+ * nsp_find_macro_or_func:
+ * @str: a string 
+ * @type: an integer pointer 
  * 
- * find a function given @Int and @Num
+ * searches the function table for a function or a macro named 
+ * @str. If multiple definitions exists for a function only 
+ * the first one is returned. @type is set to 1 for functions 
+ * and to zero for macros.
  * 
- * Returns: %OK or %FAIL 
+ * Returns: a #NspObject or %NULLOBJ
  **/
 
-int nsp_find_function_by_id(char *key, int Int, int Num)
+NspObject *nsp_find_macro_or_func(const char *str,int *type)
 {
-  unsigned int i;
-  for ( i = 0 ; i <= hsize ; i++ ) 
-    if ( f_htable[i].used 
-	 &&  f_htable[i].entry.data.Int == Int
-	 &&  f_htable[i].entry.data.Num == Num
-	 )
-      {
-	strncpy(key,f_htable[i].entry.key,NAME_MAXL);
-	return(1);
-      }
-  return(0);
-}
-
-/**
- * ShowTable:
- * @void: 
- * 
- * print the function table.
- * 
- **/
-
-void nsp_print_function_table(void)
-{
-  unsigned int i;
-  Sciprintf("Whole Table\n");
-  for ( i = 0 ; i <= hsize ; i++ ) 
-    if ( f_htable[i].used )
-      Sciprintf("%s %d %d \n",f_htable[i].entry.key,
-	     f_htable[i].entry.data.Int,f_htable[i].entry.data.Num);
-}
-
-/**
- * nsp_delete_interface_functions:
- * @Int: interface number.
- * 
- * deletes entries associated to interface number @Int by walking through 
- * the whole hash table. 
- * 
- **/
-
-void nsp_delete_interface_functions(int Int)
-{
-  unsigned int i;
-  for ( i = 0 ; i <= hsize ; i++ ) 
-    if ( f_htable[i].used 
-	 &&  f_htable[i].entry.data.Int == Int )
-      {
-	f_htable[i].used = 0;
-	filled--;
-      }
-}
-
-/*
- * This is the search function. It uses double hashing with open adressing.
- * The argument item.key has to be a pointer to an zero terminated, most
- * probably strings of chars. The function for generating a number of the
- * strings is simple but fast. It can be replaced by a more complex function
- * like ajw (see [Aho,Sethi,Ullman]) if the needs are shown.
- *
- * We use an trick to speed up the lookup. The table is created by hcreate
- * with one more element available. This enables us to use the index zero
- * special. This index will never be used because we store the first hash
- * index in the field used where zero means not used. Every other value
- * means used. The used field can be used as a first fast comparison for
- * equality of the stored and the parameter value. This helps to prevent
- * unnecessary expensive calls of strcmp.
- */
-
-#define  Eqid(x,y) strncmp(x,y,NAME_MAXL) 
-
-static int nsp_hash_func_hsearch(const char *key, Fdata *data, ACTION action)
-{
-  register unsigned hval;
-  register unsigned hval2;
-  register unsigned len = NAME_MAXL;
-  register unsigned idx;
-  register const char *str;
-
-    /*
-     * If table is full and another entry should be entered return with 
-     * error.
-     */
-    if (action == ENTER && filled == hsize) 
-        return FAIL;
-
-    /* Compute a value for the given string. Perhaps use a better method. */
-    /* modifs (bruno) : avoid the call to strlen and put the modulo outside the loop */
-    /*                  then compute hval % hsize efficiently */
-    hval  = len;
-    str = key;
-    while (*str != '\0') { hval += *str ; str++; }
-    /* compute hval %= hsize efficiently */
-    if ( hval >= hsize)
-      {
-	hval -= hsize;
-	if ( hval >= hsize)
-	  hval %= hsize;
-      }
-
-    /* First hash function: simply take the modul but prevent zero. */
-    if (hval == 0) hval++;
-
-    /* The first index tried. */
-    idx = hval;
-
-    if (f_htable[idx].used) 
-      {
-	/* Further action might be required according to the action value. */
-	
-	if (f_htable[idx].used == hval )
-	  {
-	    if ( Eqid(key, f_htable[idx].entry.key) == 0) 
-	      {
-		switch (action) 
-		  {
-		  case REMOVE :
-		    f_htable[idx].used = 0;
-		    filled--;
-		    return OK ;
-		    break;
-		  case ENTER :
-		    f_htable[idx].entry.data.Num = data->Num; 
-		    f_htable[idx].entry.data.Int = data->Int; 
-		    return OK;
-		  case FIND :
-		    data->Num = f_htable[idx].entry.data.Num;
-		    data->Int = f_htable[idx].entry.data.Int;
-		    return OK;
-		  }
-	      }
-	  }
-	
-	/* Second hash function, as suggested in [Knuth] */
-
-        hval2 = 1 + hval % (hsize-2);
-	
-        do {
-	    /* 
-	     * Because hsize is prime this guarantees to step through all
-             * available indeces.
-	     */
-            if (idx <= hval2)
-	        idx = hsize+idx-hval2;
-	    else
-	        idx -= hval2;
-
-            /* If entry is found use it. */
-            if (f_htable[idx].used == hval ) 
-	      {
-                if ( Eqid(key, f_htable[idx].entry.key) == 0) 
-		  {
-		    switch (action) 
-		      {
-		      case REMOVE :
-			f_htable[idx].used = 0;
-			filled--;
-			return OK;
-			break;
-		      case ENTER :
-			f_htable[idx].entry.data.Num = data->Num; 
-			f_htable[idx].entry.data.Int = data->Int; 
-			return OK;
-		      case FIND :
-			data->Num = f_htable[idx].entry.data.Num;
-			data->Int = f_htable[idx].entry.data.Int;
-			return OK;
-		      }
-		  }
-	      }
-	  } while (f_htable[idx].used);
-      }
-    
-    /* An empty bucket has been found. */
-
-    if (action == ENTER) 
-      {
-        f_htable[idx].used  = hval;
-	strncpy(f_htable[idx].entry.key,key,NAME_MAXL);
-	f_htable[idx].entry.data.Num = data->Num; 
-	f_htable[idx].entry.data.Int = data->Int; 
-	filled++;
-        return OK ;
-      }
-    else
-      return FAIL;
-}
-
-
-#ifdef TEST 
-/* tests */
-
-void test1()
-{
-  int j=0,Int,Num;
-  printf("Testing \n");
-  printf("===================== \n");
-  while ( SciFuncs[j].name != (char *) 0 && j < 10 )
+  NspObject *Ob;
+  NspPList *M;
+  int found=FALSE;
+  NspFile *F;
+  char Name[FSIZE+1];
+  if ( nsp_hash_find(nsp_functions_table,str,&Ob) == FAIL) 
     {
-      if ( FindFunction(SciFuncs[j].name,&Int,&Num) == FAIL )
-	printf(" %s not found \n",SciFuncs[j].name);
+      return NULLOBJ;
+    }
+  if ( IsList(Ob) ) 
+    {
+      Ob = nsp_list_get_element((NspList *) Ob,1);
+      if ( Ob == NULLOBJ ) return NULLOBJ;
+    }
+  if ( IsFunction(Ob) )
+    {
+      *type=1;
+      return Ob;
+    }
+  *type =0;
+  M= (NspPList *) Ob;
+  if ( M->D != NULL )
+    {
+      /* Sciprintf("Macro %s found in the cache\n",str); */
+      return Ob;
+    }
+  if ( M->dir < 0 ) 
+    {
+      /* Sciprintf("Macro %s found but dir is wrong\n",str); */
+      return NULLOBJ;
+    }
+  sprintf(Name,"%s/%s.bin",LibDirs->S[M->dir],str);
+  if (( F =nsp_file_open_xdr_r(Name)) == NULLSCIFILE) return NULLOBJ;
+  /* bin files are supposed to contain only one object */
+  while (1) 
+    {
+      NspObject *Ob1;
+      if ((Ob1=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
+      if ( strcmp(nsp_object_get_name(Ob1),str)== 0)
+	{
+	  found = TRUE;
+	  /* switch values */
+	  M->D = ((NspPList *) Ob1)->D;
+	  M->file_name = ((NspPList *) Ob1)->file_name;
+	  ((NspPList *) Ob1)->D = NULL;
+	  ((NspPList *) Ob1)->file_name= NULL;
+	  nsp_object_destroy(&Ob1);
+	  /* we should here destroy Ob1 */
+	  /* Sciprintf("Macro %s found in %s/%s.bin\n",str,LibDirs->S[M->dir],str); */
+	}
+    }
+  if (nsp_file_close_xdr_r(F) == FAIL) 
+    {
+      nsp_file_destroy(F);
+      return NULLOBJ;
+    }
+  nsp_file_destroy(F);
+  if ( found == TRUE ) 
+    return Ob;
+  else 
+    {
+      Sciprintf("Macro %s NOT found in %s/%s.bin !\n",str,LibDirs->S[M->dir],str);
+    }
+  return NULLOBJ;
+}
+
+/* XXX: should be improved not to insert twice the same def 
+ *
+ */
+
+static int nsp_hash_enter_multiple(NspHash *H, NspObject *Obj) 
+{
+  NspObject *O1;
+  const char *name= nsp_object_get_name(Obj);
+  if ( nsp_hash_find(nsp_functions_table,name,&O1) == FAIL)
+    {
+      return nsp_hash_enter(nsp_functions_table,NSP_OBJECT(Obj));
+    }
+#ifdef DEBUG   
+  Sciprintf("Already present in the table  %s\n",name);
+#endif 
+  if ( IsList(O1) )
+    {
+      /* just add the new definition */
+#ifdef DEBUG   
+      Sciprintf("\t add a new definition to a list\n"); 
+#endif 
+      if ( nsp_list_insert((NspList *) O1,Obj,0) == FAIL) return FAIL;
+    }
+  else
+    {
+      /* create a list and insert old and new definition */
+      NspList* L=nsp_list_create(name);
+#ifdef DEBUG   
+      Sciprintf("\t list create\n");
+#endif 
+      if ( L == NULL) return FAIL;
+      if ((O1 = nsp_object_copy_with_name(O1)) == NULL) return FAIL;
+      if ( nsp_list_insert(L,O1,0) == FAIL) return FAIL;
+      if ( nsp_list_insert(L,Obj,0) == FAIL) return FAIL;
+#ifdef DEBUG   
+      Sciprintf("\t add a new %s previous was %s\n", 
+		IsFunction(Obj) ? "a function" : " a macro",
+		IsFunction(O1) ? "a function" : " a macro");
+#endif 
+      return nsp_hash_enter(H,NSP_OBJECT(L));
+    }
+  return OK;
+}
+
+
+/**
+ * nsp_remove_macro_or_func:
+ * @name: 
+ * @type: 
+ * 
+ * 
+ **/
+
+static void nsp_remove_macro_or_func(const char *name,int type)
+{
+  NspObject *O1;
+  if ( nsp_hash_find(nsp_functions_table,name,&O1) == FAIL)
+    return;
+  if ( IsFunction(O1)) 
+    {
+      /* function */
+      if ( type == 1 ) 
+	nsp_hash_remove(nsp_functions_table,name);
+    }
+  else if (IsNspPList(O1))
+    {
+      /* macro */
+      if ( type == 0) 
+	nsp_hash_remove(nsp_functions_table,name);
+    }
+  else if ( IsList(O1) )
+    {
+      NspObject *Ob;
+      Ob = nsp_list_get_element((NspList *) O1,1);
+      if ( IsFunction(Ob) ) 
+	{
+	  if ( type == 1) 
+	    nsp_list_remove_first((NspList *) O1);
+	}
       else
-	printf(" %s found [%d,%d] \n",SciFuncs[j].name,Int,Num);
-      j++;
+	{
+	  if ( type == 0 )
+	    nsp_list_remove_first((NspList *) O1);
+	}
+      if ( nsp_list_length((NspList *) O1) == 0 )
+	{
+	  nsp_hash_remove(nsp_functions_table,name);
+	}
     }
 }
 
-int test_hash()
-{
-  int j=0,k;
-  InitFunctionTable();
-  test1();
-  for ( k = 1; k < 2 ; k++) 
-    {
-      printf("performing delete for the first five\n");
-      printf("===================== \n");
-      j=0;
-      while ( SciFuncs[j].name != (char *) 0 && j < 5 )
-	{
-	  DeleteFunction(SciFuncs[j].name);
-	  j++;
-	}
-      test1();
-      printf("Restore functions\n");
-      printf("===================== \n");
-      j=0;k=0;
-      while ( SciFuncs[j].name != (char *) 0 && j < 10 )
-	{
-	  nsp_enter_function(SciFuncs[j].name,SciFuncs[j].Int,k);k++;
-	  j++;
-	}
-      test1();
-      printf("entering functions with new data\n");
-      printf("===================== \n");
-      j=0;k=0;
-      while ( SciFuncs[j].name != (char *) 0 && j < 10 )
-	{
-	  nsp_enter_function(SciFuncs[j].name,-23,k);k++;
-	  j++;
-	}
-      test1();
-      printf("Remove interface\n");
-      printf("===================== \n");
-      DelseteFunctionS(-23);
-      test1();
-    }
-  return(0);
-}
-
-void ShowTable();
-
-int main()
-{
-  test_hash();
-  ShowTable();
-  return 0;
-}
-
-/* end of test part */
-#endif 
