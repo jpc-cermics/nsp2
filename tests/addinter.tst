@@ -24,16 +24,20 @@ if rep<> 0 then pause;end
 if ~c_link('libaddinter_Interf') then 
    ilib=addinter('./libaddinter'+%shext,'libaddinter');
 else 
-   error('libaddinter already loaded');
+   printf('libaddinter already loaded\n');
 end
 // test that first and second work
 if first(1:5)<>2*(1:5) then pause;end
 if second([%t,%f])<>~[%t,%f] then pause,end
-// get all the entry points 
-H=link();
-// check that the interface is present in H
-if ~H.iskey['libaddinter_Interf'] then pause;end
-if H('libaddinter_Interf')<>ilib then pause;end
+
+if %f then 
+  // get all the entry points 
+  H=link();
+  // check that the interface is present in H
+  if ~H.iskey['libaddinter_Interf'] then pause;end
+  if H('libaddinter_Interf')<>ilib then pause;end
+end
+
 // dlclose the shared archive 
 ulink(ilib)
 // clean files 
@@ -44,17 +48,11 @@ if c_link('libaddinter_Interf') then pause,end
 
 // check if we can access nsp symbols 
 // with dynamic linking. 
-// we should change internal code for 
-// %win32 to enable "nsp" 
 
-if %win32 then 
-  nsplib = 'NSP/bin/libnsp.dll';
-  rep = execstr('ilib=link(nsplib,''nsp_matrix_print'')',errcatch=%t);
-else
-  rep=execstr('ilib=link(''nsp'',''nsp_matrix_print'')',errcatch=%t);
-  if rep == %f then pause,end
-  // access other symbols through ilib 
-  link(ilib,'nsp_matrix_info');
-  ulink(ilib);
-end 
+rep=execstr('ilib=link(''nsp'',''nsp_matrix_print'')',errcatch=%t);
+if rep == %f then pause,end
+// access other symbols through ilib 
+link(ilib,'nsp_matrix_info');
+ulink(ilib);
+
 

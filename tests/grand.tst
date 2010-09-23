@@ -1,7 +1,7 @@
 // -*- Mode: scilab -*- 
 // test for grand 
 
-prec = 1
+prec = 1;
 function y=norm(x) ; y=max(abs(x));endfunction ;
 
 //FIXME : cdft is not tested 

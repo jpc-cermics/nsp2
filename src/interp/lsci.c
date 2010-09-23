@@ -100,12 +100,12 @@ int main(int argc, char **argv)
   nsp_init_function_table();
   /* Initialize acceleration op tables */
   nsp_init_accelerated_tabs();
-  /* Initialize macro hash table **/
+  /* Initialize macro hash table */
   nsp_init_macro_table();
   /* MPI */
   /* MPI_Init(&argc,&argv); */
   /* MPI_Init(NULL,NULL); */
-  /* Initialize data frame **/  
+  /* Initialize data frame */  
   if ( nsp_init_frames(argc,argv) == FAIL ) return 1;
   /* provide a default SCI and HOME on win32  */
   set_nsp_env();
