@@ -41,8 +41,6 @@
 #include "../functions/callfunc.h" 
 #include "../functions/addinter.h" 
 
-void nsp_init_macro_table(void);
-
 NspObject *nsp_find_macro_or_func(const char *str,int *type);
 int nsp_delete_macros(const char *dirname);
 static void nsp_remove_macro_or_func(const char *name,int type);
@@ -69,6 +67,17 @@ const char *nsp_get_libdir(int num)
 }
 
 
+/**
+ * nsp_enter_macro:
+ * @str: a string 
+ * @dir: an integer 
+ * 
+ * creates a #NspPList object with name @str and inserts 
+ * the object in the function table.
+ * 
+ * Returns: %OK or %FAIL.
+ **/
+
 int nsp_enter_macro(const char *str,int dir)
 {
   NspPList *loc; 
@@ -84,12 +93,14 @@ int nsp_enter_macro(const char *str,int dir)
  * @recursive: a flag %TRUE or %FALSE 
  * @compile: a flag %TRUE or %FALSE 
  * 
- * Insert @dirname in the search list for macros 
- * file *.bin are searched in dirname and inserted 
- * in a hash table. If @compile is %TRUE file with a .sci 
+ * Insert @dirname in the search list for macros. 
+ * file with suffix bin i.e *.bin are searched in @dirname 
+ * and inserted in the function hash table. 
+ * If @compile is %TRUE files with a .sci 
  * suffix are first parsed and saved as binary files *.bin 
  * (one file for each function). 
- * If @recursive is %TRUE directories are recursively added. 
+ * If @recursive is %TRUE directories are recursively scaned and 
+ * added to the function table.
  * 
  * Return value: %OK or %FAIL
  **/
@@ -134,7 +145,7 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
       if ( nsp_delete_macros(dirname) == FAIL) 
 	return FAIL;
     }
-
+  
   /* update binaries if requested 
    */
   if ( compile == TRUE )nsp_parse_eval_dir_full(dirname);
@@ -474,13 +485,18 @@ int nsp_find_function_by_id(char *key, int Int, int Num)
  * @void: 
  * 
  * Initialize the function table.
+ *
  **/
-
 
 void nsp_init_function_table(void)
 {
-  static int firstentry = 0;
   int i=0,k=0;
+  if ( nsp_functions_table != NULLHASH) 
+    {
+      nsp_hash_destroy(nsp_functions_table);
+      nsp_functions_table=NULLHASH;
+    }
+
   if (( nsp_functions_table= nsp_hash_create("functions",MAXTAB)) == NULLHASH) 
     {
       printf("Fatal Error: Can't create table for scilab functions (not enough memory)\n");
@@ -508,8 +524,10 @@ void nsp_init_function_table(void)
 	}
       i++;
     }
-  firstentry = 1;
 }
+
+
+
 
 
 /**

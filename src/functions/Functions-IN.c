@@ -53,7 +53,7 @@ static void link_bug (int i);
 static int int_link(Stack stack, int rhs, int opt, int lhs)
 {
   char shared_lib_expanded[FSIZE+1];
-  char *Str,**enames=NULL,*shared_lib=NULL;
+  char *Str="c",**enames=NULL,*shared_lib=NULL;
   NspSMatrix *Enames;  
   NspObject*OHMat;
   int ilib =0, iflag=1;
@@ -87,18 +87,16 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
       if ((Enames = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
       enames = Enames->S;
     }
+
   if ( rhs > 2 ) 
     {
       /* entries type: c or fortran */
       if ((Str = GetString(stack,3)) == (char*)0) return RET_BUG;
     }
-  else
-    { 
-      Str = "c";
-    }
 
-  if ( strncmp(shared_lib,"show",4)==0) 
+  if ( shared_lib != NULL && strncmp(shared_lib,"show",4)==0) 
     {
+      /* just show the entry points */
       nsp_epoints_table_show();
       nsp_sharedlib_table_show();
       return 0;
@@ -107,7 +105,7 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
   /* expand keys in path name result in buf */
   if ( shared_lib != NULL )
     {
-      if  ( strcmp(shared_lib,"nsp") != 0 || strcmp(shared_lib,"scilab") != 0 )
+      if  ( strcmp(shared_lib,"nsp") != 0 && strcmp(shared_lib,"scilab") != 0 )
 	{
 	  nsp_string shp;
 	  nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);

@@ -789,6 +789,18 @@ static int int_error(Stack stack, int rhs, int opt, int lhs)
 extern function int_astnode_create;
 
 
+static int int_restart(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  /* reinitialize the function table */
+  nsp_init_function_table();
+  /* insert the macros libraries */
+  nsp_enter_macros("SCI/macros",TRUE,FALSE);
+  /* reset the linked interfaces and functions */
+  return 0;
+}
+
 
 /*
  * The Interface for basic parse operations 
@@ -813,6 +825,7 @@ static OpTab Parse_func[]={
   {"astnode_create", int_astnode_create},
   {"input", int_input},
   {"halt", int_halt},
+  {"restart",int_restart},
   {(char *) 0, NULL}
 };
 
