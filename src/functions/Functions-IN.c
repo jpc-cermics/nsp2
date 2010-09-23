@@ -32,6 +32,8 @@
 #include "callfunc.h"
 #include <nsp/linking.h>
 #include <nsp/epoints.h>
+#include <nsp/sharedlib.h>
+#include <nsp/nsptcl.h>
 #include "addinter.h"
 
 static void link_bug (int i);
@@ -105,18 +107,20 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
   /* expand keys in path name result in buf */
   if ( shared_lib != NULL )
     {
-      if  ( strcmp(shared_lib,"nsp") != 0 
-	    || strcmp(shared_lib,"scilab") != 0 
-	    || strcmp(shared_lib,"show") != 0 )
+      if  ( strcmp(shared_lib,"nsp") != 0 || strcmp(shared_lib,"scilab") != 0 )
 	{
+	  nsp_string shp;
 	  nsp_expand_file_with_exec_dir(&stack,shared_lib,shared_lib_expanded);
+	  shp = nsp_absolute_file_name(shared_lib_expanded);
+	  strcpy(shared_lib_expanded,shp);
+	  nsp_string_destroy(&shp);
 	}
       else
 	{
-	  strcpy(shared_lib_expanded,shared_lib);
+	  strcpy(shared_lib_expanded,"nsp");
 	}
     }
-
+      
   nsp_dynamic_load(shared_lib_expanded,enames,Str[0],&ilib,iflag,&rhs);
   if ( ilib < 0) 
     {
@@ -213,12 +217,16 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
     }
   else
     {
+      nsp_string shp;
       /* trying to load a shared library using a 
        * path-name
        */
       if ((file = GetString(stack,1)) == NULLSTRING) return RET_BUG;
       /* expand keys in path name result in buf */
       nsp_expand_file_with_exec_dir(&stack,file,file_expanded);
+      shp = nsp_absolute_file_name(file_expanded);
+      strcpy(file_expanded,shp);
+      nsp_string_destroy(&shp);
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
       if ( nsp_dynamic_interface(file_expanded,Str,&ilib) == FAIL) 
 	return RET_BUG;

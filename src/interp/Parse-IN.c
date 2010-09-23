@@ -417,7 +417,7 @@ static int int_halt(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * lasterror
+ * interface for lasterror.
  */
 
 static int int_lasterror(Stack stack, int rhs, int opt, int lhs)
@@ -562,12 +562,17 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-/* FIXME: juste here for testing 
- * Interface for library names specification 
- * add_lib('directory-name')
- */
-
-/* XXX */
+/**
+ * int_add_lib:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * Interface for add_lib(path, compile=%t|%f, recursive=%t|%f)
+ * 
+ * Returns: 
+ **/
 
 static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
 {
@@ -590,10 +595,17 @@ static int int_add_lib(Stack stack, int rhs, int opt, int lhs)
   return rep;
 }
 
-/* FIXME: juste here for testing 
- * Interface for library names specification 
- * remove_lib('directory-name')
- */
+/**
+ * int_remove_lib:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface for remove_lib(path)
+ * 
+ * Returns: 
+ **/
 
 static int int_remove_lib(Stack stack, int rhs, int opt, int lhs)
 {
@@ -610,6 +622,41 @@ static int int_remove_lib(Stack stack, int rhs, int opt, int lhs)
   nsp_string_destroy(&dir);
   return rep;
 }
+
+/**
+ * int_absolute_file_name:
+ * @stack: 
+ * @rhs: 
+ * @opt: 
+ * @lhs: 
+ * 
+ * interface for absolute_file_name(path) 
+ * which returns the absolute filename associated to 
+ * path but using the current exec dir value if path 
+ * is relative. 
+ * 
+ * Returns: 
+ **/
+
+static int int_absolute_file_name(Stack stack, int rhs, int opt, int lhs)
+{
+  int rep = RET_BUG;
+  nsp_string apath=NULL;
+  char path_expanded[FSIZE+1];
+  char *path=0;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((path= GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,path,path_expanded);
+  if ( (apath = nsp_absolute_file_name(path_expanded))==NULL) goto end;
+  if ( nsp_move_string(stack,1,apath,-1) == FAIL) goto end;
+  rep = 1;
+ end:
+  if ( apath != NULL) nsp_string_destroy(&apath);
+  return rep;
+}
+
+
 
 /* FIXME: juste here for testing 
  * Interface for library names specification 
@@ -753,6 +800,7 @@ static OpTab Parse_func[]={
   {"exec_mtlb" , int_parseevalfile_mtlb },
   {"remove_lib",int_remove_lib},
   {"add_lib",int_add_lib},
+  {"absolute_file_name", int_absolute_file_name},
   {"find_macro",int_find_macro},
   {"find_frame_symbol",int_find_frame_symbol},
   {"find_frames_symbol",int_find_frames_symbol},
