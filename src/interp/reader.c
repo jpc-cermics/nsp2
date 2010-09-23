@@ -33,7 +33,8 @@
  * Attention aussi ça fait duble emplois avec gtksci XXXXXXXX
  */
 
-void  set_echo_mode(int mode),set_is_reading(int mode);
+void  set_echo_mode(int mode);
+void  set_is_reading(int mode);
 int   get_echo_mode(void);
 
 #ifdef aix

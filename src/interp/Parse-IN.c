@@ -20,10 +20,6 @@
  * a set of system functions which can be called from nsp interpreter 
  *------------------------------------------------------------------*/
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-
 #include <nsp/nsp.h> 
 #include <nsp/objects.h> 
 #include <nsp/interf.h>

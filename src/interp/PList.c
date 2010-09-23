@@ -25,30 +25,19 @@
  * This file contains basic functions to build and manage PList 
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#include "nsp/machine.h"
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/bhash.h> 
-#include <nsp/cells.h> 
 #include <nsp/smatrix.h> 
-#include <nsp/matrix.h> 
 #include <nsp/list.h> 
 #include <nsp/file.h> 
 #include <nsp/hobj.h> 
 #include <nsp/function.h> 
-#include <nsp/imatrix.h> 
 #include <nsp/hash.h> 
 #include <nsp/astnode.h> 
-
-#include "nsp/interf.h"
-#include "nsp/pr-output.h"
+#include <nsp/interf.h>
+#include <nsp/pr-output.h>
 
 /**
  * nsp_parse_add:

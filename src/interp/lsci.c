@@ -19,49 +19,29 @@
  * main 
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <math.h>
 #include <locale.h>
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
-#include <nsp/bhash.h> 
-#include <nsp/cells.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/matrix.h> 
-#include <nsp/list.h> 
-#include <nsp/file.h> 
-#include <nsp/hobj.h> 
-#include <nsp/function.h> 
-#include <nsp/imatrix.h> 
-#include <nsp/hash.h> 
-#include <nsp/ivect.h> 
+#include <nsp/parse.h>
+#include <nsp/seval.h>
+#include <nsp/libstab.h>
 
-#include "nsp/interf.h"
-#include "nsp/parse.h"
-#include "nsp/seval.h"
-#include "nsp/libstab.h"
-#include "nsp/version.h"
-#include "nsp/machine.h"
+#include <nsp/version.h>
+#include <nsp/machine.h>
 #ifdef WITH_GTKGLEXT
 #include <gtk/gtkgl.h>
 #endif
 #include <gtk/gtk.h>
-#include "nsp/gtksci.h"
-#include "nsp/nsptcl.h"
+#include <nsp/gtksci.h>
+#include <nsp/nsptcl.h>
 #include <nsp/system.h>
 
 /* FIXME: these is to be in a .h file */
-extern void nsp_textview_destroy(void);
-extern void sci_clear_and_exit(int);
-extern void primitive_types_register(void);
-extern int  nsp_new_frame(void);
-extern void nsp_init_function_table(void);
-extern void controlC_handler (int sig);
 extern void nsp_init_gtk_stack(void);
-extern int nsp_init_accelerated_tabs();
-extern void nsp_set_in_text_view(int value);
+extern void primitive_types_register(void);
+extern void nsp_textview_destroy(void);
+extern void controlC_handler (int sig);
 
 /**/
 static int  no_startup= FALSE;
@@ -477,9 +457,7 @@ static void nsp_syntax (char *badOption)
  */
 
 /* FIXME: should be in a .h */
-extern char * nsp_get_curdir(void);
-extern void set_nsp_tmpdir(void);
-extern nsp_string nsp_absolute_file_name( char *fname);
+
 
 void set_nsp_env (void)
 {

@@ -23,9 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "nsp/machine.h"
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/bhash.h> 

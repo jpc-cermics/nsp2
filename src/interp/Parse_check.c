@@ -20,11 +20,7 @@
  * 
  *--------------------------------------------------------------------------*/
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/bhash.h> 
@@ -32,8 +28,7 @@
 #include <nsp/smatrix.h> 
 #include <nsp/list.h> 
 #include <nsp/file.h> 
-
-#include "nsp/parse.h"
+#include <nsp/parse.h>
 
 static int IsColConc (PList plist, PList *plist1, int *kount);
 static int Isname (PList plist, PList *plist1, int *kount);

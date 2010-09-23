@@ -18,28 +18,16 @@
  *
  */
 
-#include <string.h> 
-#include <math.h>
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
-#include <nsp/bhash.h> 
-#include <nsp/cells.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/matrix.h> 
-#include <nsp/list.h> 
-#include <nsp/file.h> 
 #include <nsp/hobj.h> 
-#include <nsp/function.h> 
-#include <nsp/imatrix.h> 
 #include <nsp/hash.h> 
+#include <nsp/parse.h>
 
-#include "nsp/parse.h"
 /*
  * Scilab keywords an operators
  */
-
 
 /*
  * structure for storing Nsp operators and keywords.

@@ -19,13 +19,7 @@
  * evaluation of nsp expression
  *--------------------------------------------------------------------------*/
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-
-#include "nsp/machine.h"
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/bhash.h> 
@@ -41,21 +35,19 @@
 #include <nsp/function.h> 
 #include <nsp/imatrix.h> 
 #include <nsp/hash.h> 
-
-#include "nsp/plisttoken.h" /*for name_maxl **/
-#include "nsp/stack.h" 
-#include "nsp/parse.h" 
-#include "../objects/frame.h" /* XXX */
-#include <nsp/system.h> /* XXX */
-#include "nsp/libstab.h" 
-#include "nsp/seval.h" 
-#include "../functions/FunTab.h"
+#include <nsp/plisttoken.h>
+#include <nsp/stack.h>
+#include <nsp/parse.h>
+#include <nsp/system.h> 
+#include <nsp/libstab.h>
+#include <nsp/seval.h>
+#include <nsp/nsptcl.h>
+#include "../objects/frame.h" 
 
 /* XXX */
 extern int Sci_Help(char *mandir,char *locale,char *help_file) ;
-extern int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name);
-extern int nsp_glob(const char *pattern);
-extern char *nsp_get_cwd(void);
+extern NspObject *Reserved;  /* used to fill stack with non empty object */
+
 
 static int EvalEqual (PList L1,Stack stack,int first);
 static int EvalOpt (PList L1,Stack stack,int first);
@@ -1412,8 +1404,6 @@ static int EvalFor(PList L1, Stack stack, int first)
  * 
  * Return value: 
  **/
-
-extern NspObject *Reserved;  /* used to fill stack with non empty object */
 
 
 static int EvalEqual(PList L1, Stack stack, int first)
@@ -3142,14 +3132,10 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
  * 
  **/
 
-/* extern NspMatrix *Dollar; */
-
 static void nsp_set_dollar(Stack *stack,NspObject *O, int j)
 {
   if ( O != NULLOBJ ) 
     {
-      /* XXXXX */
-      /* Dollar->R[0]=nsp_object_get_size(O,j); */
       stack->dollar = nsp_object_get_size(O,j);
     }
 }

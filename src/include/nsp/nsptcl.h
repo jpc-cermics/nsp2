@@ -47,6 +47,9 @@ extern void nsp_finalize_environment (void);
 extern void nsp_tclplatform_init (void);
 extern void nsp_update_exec_dir(const char *filename, char *exec_dir,char *filename_exec,unsigned int length);
 extern void nsp_update_exec_dir_from_dir(const char *dirname,char *exec_dir,unsigned int length);
+extern int nsp_glob(const char *pattern);
+extern int nsp_chdir_and_update_exec_dir(Stack *stack,const char *dir_name);
+
 
 #endif /* _TCLINT */
 

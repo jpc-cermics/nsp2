@@ -19,16 +19,13 @@
  * Parsing of nsp syntax 
  *--------------------------------------------------------------------------*/
 
-#include <string.h>
-#include <math.h>
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/bhash.h> 
 #include <nsp/cells.h> 
-#include "nsp/interf.h"
-#include "nsp/parse.h"
+#include <nsp/interf.h>
+#include <nsp/parse.h>
 
 extern void plist_name_to_local_id(PList List,NspBHash *H,int rec);
 
