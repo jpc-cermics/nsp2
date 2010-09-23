@@ -25,15 +25,15 @@ static int   FileCopyRename( int argc, char **argv, int copyFlag,int forceFlag);
  * 
  * returns the absolute path name corresponding to @fname.
  * 
- * Returns: a new string 
+ * Returns: a new allocated string 
  **/
 
-nsp_string nsp_absolute_file_name(char *fname)
+nsp_string nsp_absolute_file_name(const char *fname)
 {
   nsp_string S;
   nsp_tcldstring buffer;
   int pargc=2;
-  char *pargv[] ={NULL, fname};
+  const char *pargv[] ={NULL, fname};
   if (( pargv[0] = nsp_get_cwd() ) == NULL) return NULL;
   if ( nsp_get_path_type(fname)== TCL_PATH_RELATIVE )
     {
@@ -157,7 +157,7 @@ static int FileCopyRename(int argc, char **argv, int copyFlag,int forceFlag)
      */
     
     for (i=0 ; i < argc - 1; i++) {
-	char *jargv[2];
+	const char *jargv[2];
 	char *source, *newFileName;
 	nsp_tcldstring sourceBuffer, newFileNameBuffer;
 
@@ -200,13 +200,11 @@ static int FileCopyRename(int argc, char **argv, int copyFlag,int forceFlag)
 int nsp_file_make_dirs_cmd(int argc, char **argv)
 {
     nsp_tcldstring nameBuffer, targetBuffer;
-    char *errfile;
+    char *errfile = NULL;
     int result, i, j, pargc;
-    char **pargv;
+    char **pargv = NULL;
     struct stat statBuf;
 
-    pargv = NULL;
-    errfile = NULL;
     nsp_tcldstring_init(&nameBuffer);
     nsp_tcldstring_init(&targetBuffer);
 
@@ -225,7 +223,7 @@ int nsp_file_make_dirs_cmd(int argc, char **argv)
 	    break;
 	}
 	for (j = 0; j < pargc; j++) {
-	    char *target = nsp_join_path(j + 1, pargv, &targetBuffer);
+	  char *target = nsp_join_path(j + 1,(const char **) pargv, &targetBuffer);
 
 	    /*
 	     * Call stat() so that if target is a symlink that points to a
@@ -647,11 +645,11 @@ TclPlatformType tclPlatform = TCL_PLATFORM_UNIX;
  */
 
 static char *		DoTildeSubst ( char *user, nsp_tcldstring *resultPtr);
-static const char *		ExtractWinRoot (char *path,  nsp_tcldstring *resultPtr, int offset);
+static const char *	ExtractWinRoot (const char *path,  nsp_tcldstring *resultPtr, int offset);
 static void		FileNameCleanup (ClientData clientData);
 static int		SkipToChar (char **stringPtr,char *match);
-static char *		SplitMacPath (char *path, nsp_tcldstring *bufPtr);
-static char *		SplitWinPath (char *path, nsp_tcldstring *bufPtr);
+static char *		SplitMacPath (const char *path, nsp_tcldstring *bufPtr);
+static char *		SplitWinPath (const char *path, nsp_tcldstring *bufPtr);
 static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
 
 
@@ -670,7 +668,7 @@ static char *		SplitUnixPath (const char *path, nsp_tcldstring *bufPtr);
  * 
  **/
 
-void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length)
+void nsp_update_exec_dir(const char *filename,char *exec_dir,char *filename_exec,unsigned int length)
 {
   int path_type = nsp_get_path_type(filename);
   nsp_string dirname = nsp_dirname (filename);
@@ -694,7 +692,7 @@ void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsig
       nsp_string tail ;
       nsp_tcldstring buffer;
       int pargc=2;
-      char *pargv[] ={ exec_dir, dirname};
+      const char *pargv[] ={ exec_dir, dirname};
       nsp_tcldstring_init (&buffer);
       if ( strcmp(dirname,".") != 0)
 	{
@@ -724,7 +722,7 @@ void nsp_update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsig
  * 
  **/
 
-void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length)
+void nsp_update_exec_dir_from_dir(const char *dirname,char *exec_dir,unsigned int length)
 {
   int path_type = nsp_get_path_type(dirname);
   if ( dirname == NULL) return ;
@@ -744,7 +742,7 @@ void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int leng
       /* set exec_dir = exec_dir/dirname */
       nsp_tcldstring buffer;
       int pargc=2;
-      char *pargv[] ={ exec_dir, dirname};
+      const char *pargv[] ={ exec_dir, dirname};
       nsp_tcldstring_init (&buffer);
       if ( strcmp(dirname,".") != 0)
 	{
@@ -765,7 +763,7 @@ void nsp_update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int leng
  * Return value: 
  **/
 
-nsp_string nsp_dirname (char *fileName)
+nsp_string nsp_dirname (const char *fileName)
 {
   nsp_string result = NULL;
   nsp_tcldstring buffer;
@@ -795,7 +793,7 @@ nsp_string nsp_dirname (char *fileName)
    */
   if (pargc > 1)
     {
-      nsp_join_path (pargc - 1, pargv, &buffer);
+      nsp_join_path (pargc - 1,(const char **) pargv, &buffer);
       result = nsp_new_string(nsp_tcldstring_value (&buffer), buffer.length);
     }
   else if ((pargc == 0) || (nsp_get_path_type (pargv[0]) == TCL_PATH_RELATIVE))
@@ -815,14 +813,13 @@ done:
 
 /**
  * nsp_tail:
- * @fileName: 
+ * @fileName: a string 
  * 
  * 
- * 
- * Return value: 
+ * Return value: an allocated  #nsp_string 
  **/
 
-nsp_string nsp_tail(char *fileName)
+nsp_string nsp_tail(const char *fileName)
 {
   nsp_tcldstring buffer;
   nsp_string result = NULL;
@@ -903,7 +900,7 @@ static void FileNameCleanup(ClientData clientData)
  **/
 
 static const char *
-ExtractWinRoot( char *path,nsp_tcldstring * resultPtr,int  offset)
+ExtractWinRoot(const char *path,nsp_tcldstring * resultPtr,int  offset)
 
 {
   int length;
@@ -963,7 +960,7 @@ ExtractWinRoot( char *path,nsp_tcldstring * resultPtr,int  offset)
  * TCL_PATH_VOLUME_RELATIVE.
  **/
 
-Tcl_PathType nsp_get_path_type( char *path)
+Tcl_PathType nsp_get_path_type(const char *path)
 {
   Tcl_PathType type = TCL_PATH_ABSOLUTE;
 
@@ -1055,7 +1052,7 @@ Tcl_PathType nsp_get_path_type( char *path)
  *
  **/
 
-void nsp_split_path(char *path,int *argcPtr, char ***argvPtr)
+void nsp_split_path(const char *path,int *argcPtr, char ***argvPtr)
 {
   int i, size;
   char *p;
@@ -1100,8 +1097,8 @@ void nsp_split_path(char *path,int *argcPtr, char ***argvPtr)
    * DString plus the argv pointers and the terminating NULL pointer.
    */
 
-  *argvPtr = (char **) ckalloc((unsigned)
-			       ((((*argcPtr) + 1) * sizeof(char *)) + size));
+  *argvPtr = ckalloc((unsigned)
+		     ((((*argcPtr) + 1) * sizeof(char *)) + size));
 
   /*
    * Position p after the last argv pointer and copy the contents of
@@ -1193,7 +1190,7 @@ static char *SplitUnixPath(const char *path, nsp_tcldstring *bufPtr)
  * Return value: the value of @bufPtr
  **/
 
-static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
+static char *SplitWinPath(const char *path, nsp_tcldstring *bufPtr)
 {
   int length;
   const char *p;
@@ -1245,7 +1242,7 @@ static char *SplitWinPath(char *path, nsp_tcldstring *bufPtr)
  * Return value: the value of @bufPtr
  **/
 
-static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
+static char *SplitMacPath(const char *path, nsp_tcldstring *bufPtr)
 {
   int isMac = 0;		/* 1 if is Mac-style, 0 if Unix-style path. */
   int i, length;
@@ -1417,7 +1414,7 @@ static char *SplitMacPath( char *path, nsp_tcldstring *bufPtr)
  *	the nsp_tcldstring must already be initialized.
  **/
 
-char *nsp_join_path( int argc, char **argv,  nsp_tcldstring *resultPtr)
+char *nsp_join_path( int argc, const char *argv[],  nsp_tcldstring *resultPtr)
 {
   int oldLength, length, i, needsSep;
   nsp_tcldstring buffer;
@@ -1636,7 +1633,7 @@ char *nsp_join_path( int argc, char **argv,  nsp_tcldstring *resultPtr)
  *	to free the name if the return value was not %NULL.
  **/
 
-char *nsp_translate_file_name(char *name,nsp_tcldstring *bufferPtr)
+char *nsp_translate_file_name(const char *name,nsp_tcldstring *bufferPtr)
 {
   register char *p;
 
@@ -1644,38 +1641,37 @@ char *nsp_translate_file_name(char *name,nsp_tcldstring *bufferPtr)
    * Handle tilde substitutions, if needed.
    */
 
-  if (name[0] == '~') {
-    int argc, length;
-    char **argv;
-    nsp_tcldstring temp;
-
-    nsp_split_path(name, &argc, &argv);
-	
-    /*
-     * Strip the trailing ':' off of a Mac path
-     * before passing the user name to DoTildeSubst.
-     */
-
-    if (tclPlatform == TCL_PLATFORM_MAC) {
-      length = strlen(argv[0]);
-      argv[0][length-1] = '\0';
-    }
-	
-    nsp_tcldstring_init(&temp);
-    argv[0] = DoTildeSubst( argv[0]+1, &temp);
-    if (argv[0] == NULL) {
+  if (name[0] == '~') 
+    {
+      int argc, length;
+      char **argv;
+      nsp_tcldstring temp;
+      nsp_split_path(name, &argc, &argv);
+      /*
+       * Strip the trailing ':' off of a Mac path
+       * before passing the user name to DoTildeSubst.
+       */
+      if (tclPlatform == TCL_PLATFORM_MAC) {
+	length = strlen(argv[0]);
+	argv[0][length-1] = '\0';
+      }
+      nsp_tcldstring_init(&temp);
+      argv[0] = DoTildeSubst( argv[0]+1, &temp);
+      if (argv[0] == NULL) {
+	nsp_tcldstring_free(&temp);
+	ckfree((char *)argv);
+	return NULL;
+      }
+      nsp_tcldstring_init(bufferPtr);
+      nsp_join_path(argc,(const char **) argv, bufferPtr);
       nsp_tcldstring_free(&temp);
-      ckfree((char *)argv);
-      return NULL;
+      ckfree((char*)argv);
+    } 
+  else
+    {
+      nsp_tcldstring_init(bufferPtr);
+      nsp_join_path(1, &name, bufferPtr);
     }
-    nsp_tcldstring_init(bufferPtr);
-    nsp_join_path(argc, argv, bufferPtr);
-    nsp_tcldstring_free(&temp);
-    ckfree((char*)argv);
-  } else {
-    nsp_tcldstring_init(bufferPtr);
-    nsp_join_path(1, &name, bufferPtr);
-  }
 
   /*
    * Convert forward slashes to backslashes in Windows paths because
@@ -1774,15 +1770,20 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
 {
   if (*user == '\0') 
     {
-      char *dir1;
       const char *dir = nsp_getenv("HOME");
       if (dir == NULL) {
 	Scierror("Error: couldn't find HOME environment variable to expand path\n");
 	return NULL;
       }
+      /* a join path seams unnecessary here 
+      const char *dir1;
       dir1 = nsp_new_string(dir,-1);
       nsp_join_path(1, &dir1, resultPtr);
       nsp_string_destroy(&dir1);
+      */
+
+      nsp_tcldstring_init(resultPtr);
+      nsp_tcldstring_append(resultPtr, dir, -1);
     } 
   else 
     {
@@ -1792,7 +1793,7 @@ static char *DoTildeSubst(char *user, nsp_tcldstring *resultPtr)
 	return NULL;
       }
     }
-  return resultPtr->string;
+  return nsp_tcldstring_value(resultPtr);
 }
 
 /* list files from a pattern  printing result
@@ -1807,6 +1808,7 @@ int nsp_glob(const char *pattern)
   nsp_tcldstring buffer;
   char *separators, *head, *tail,*str;
   char pattern1[FSIZE+1];
+
   nsp_path_expand(pattern,pattern1,FSIZE);
   str = nsp_new_string(pattern1,-1);
   nsp_tcldstring_init(&buffer);
@@ -1828,6 +1830,8 @@ int nsp_glob(const char *pattern)
   nsp_tcldstring_set_length(&buffer, 0);
   /*
    * Perform tilde substitution, if needed.
+   * note that it is not used since nsp_path_expand
+   * above has already expanded leading ~
    */
   if (str[0] == '~') 
     {

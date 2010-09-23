@@ -22,6 +22,7 @@
 #include <nsp/matrix.h>
 #include <nsp/stack.h>
 #include <nsp/interf.h>
+#include <nsp/nsptcl.h>
 #include "../../files.h"
 
 /*
@@ -35,9 +36,7 @@
  */
 
 #include <stdio.h>
-
 #include "tcl.h"
-
 #include <string.h>
 #include <ctype.h>
 #include <limits.h>
@@ -104,8 +103,6 @@ extern int		nsp_file_copy_cmd (int argc, char **argv,int force ) ;
 extern int 		nsp_file_delete_cmd (int argc, char **argv,int force );
 extern int		nsp_file_make_dirs_cmd ( int argc, char **argv) ;
 extern int		nsp_file_rename_cmd ( int argc, char **argv,int force);
-extern nsp_string       nsp_absolute_file_name( char *fname);
-
 extern void		nsp_finalize_environment (void);
 
 extern char *		nsp_get_cwd (void);
@@ -130,10 +127,6 @@ extern char *		TclWordEnd (char *start, char *lastChar, int nested, int *semiPtr
 extern void             nsp_create_exit_handler();
 extern int              nsp_match_files(char *separators,  nsp_tcldstring *dirPtr, char *pattern, char *tail, NspSMatrix *S);
 
-extern nsp_string nsp_tail(char *fileName);
-extern nsp_string nsp_dirname (char *fileName);
-extern void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
-extern void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
 
 
 

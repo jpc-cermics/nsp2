@@ -313,7 +313,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	  goto not3Args;
 	}
 	if (( S = GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
-	nsp_join_path(S->mn,S->S, &buffer);
+	nsp_join_path(S->mn,(const char **) S->S, &buffer);
 	result = nsp_move_string(stack,1, nsp_tcldstring_value(&buffer),  buffer.length);
 	result = ( result == FAIL) ? RET_BUG: 1;
 	goto done;
