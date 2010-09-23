@@ -261,6 +261,7 @@ static NspFunction  *function_xdr_load(XDR *xdrs)
 void function_destroy(NspFunction *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_string_destroy(&H->fname);
   FREE(H);
 }
 
