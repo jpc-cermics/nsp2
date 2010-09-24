@@ -42,6 +42,8 @@
 #include "nsp/spmatrix-in.h"
 #include "nsp/spmatops-in.h"
 
+static int int_sprowmatrix_create(Stack stack, int rhs, int opt, int lhs);
+
 /*
  * NspSpMatrix inherits from NspObject 
  */
@@ -90,6 +92,8 @@ NspTypeSpRowMatrix *new_type_sprowmatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_sprowmatrix_xdr_save;
   top->load  = (load_func *)nsp_sprowmatrix_xdr_load;
+  top->create = (create_func*) int_sprowmatrix_create; 
+
   top->full_copy  =  (copy_func *)nsp_sprowmatrix_copy;                   /* copy object */  
 
   /* specific methods for spmatrix */

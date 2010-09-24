@@ -41,6 +41,8 @@
 #include "nsp/matint.h"
 #include "nsp/nsp_lapack.h" /* vector norm declaration */
 
+static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs);
+
 /*
  * NspPMatrix inherits from NspObject 
  * Polynomial matrices 
@@ -91,6 +93,7 @@ NspTypePMatrix *new_type_pmatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_pmatrix_xdr_save;
   top->load  = (load_func *)nsp_pmatrix_xdr_load;
+  top->create = (create_func*) int_pmatrix_create; 
   top->full_copy  =  (copy_func *)nsp_pmatrix_copy;                   /* copy object */  
 
   /* specific methods for pmatrix */
@@ -211,7 +214,7 @@ static int nsp_pmatrix_full_comp(NspPMatrix * A,NspPMatrix * B,char *op,int *err
 
 int nsp_pmatrix_eq(NspObject *A, NspObject *B)
 {
-  int err,rep;
+  int err=0,rep;
   if ( check_cast(B,nsp_type_pmatrix_id) == FALSE) return FALSE ;
   rep = nsp_pmatrix_full_comp((NspPMatrix *) A,(NspPMatrix *) B,"==",&err);
   if ( err == 1) return FALSE ; 

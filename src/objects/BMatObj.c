@@ -54,6 +54,8 @@
  * </para>
  **/
 
+static int int_bmatrix_create(Stack stack, int rhs, int opt, int lhs);
+
 /*
  * NspBMatrix inherits from NspObject 
  */
@@ -102,6 +104,7 @@ NspTypeBMatrix *new_type_bmatrix(type_mode mode)
   top->neq  = (eq_func *) bmatrix_neq;
   top->save  = (save_func *) bmatrix_xdr_save;
   top->load  = (load_func *) bmatrix_xdr_load;
+  top->create = (create_func*) int_bmatrix_create; 
   top->latex = (print_func *) nsp_bmatrix_latex_print;
   top->as_index  = (get_index_vector_func *) nsp_bmatrix_as_index;
   top->full_copy  =  (copy_func *)nsp_bmatrix_copy;                   
@@ -484,13 +487,24 @@ int GetScalarBool(Stack stack, int i, int *val)
 
 static int int_bmatrix_create(Stack stack, int rhs, int opt, int lhs)
 {
+  int ival = TRUE;
   NspBMatrix *HMat;
   int m1,n1;
-  CheckRhs(2,2);
+  CheckRhs(2,3);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
+  if ( rhs == 3 )
+    {
+      if ( GetScalarBool(stack,3,&ival) == FAIL )
+	return RET_BUG;
+    }
   if ( (HMat =nsp_bmatrix_create(NVOID,m1,n1)) == NULLBMAT) return RET_BUG;
+  if ( ival == FALSE) 
+    {
+      int i;
+      for ( i = 0 ; i < HMat->mn ; i++ )  HMat->B[i] = ival ;
+    }
   MoveObj(stack,1,(NspObject *) HMat);
   return 1;
 }

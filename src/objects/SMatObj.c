@@ -41,6 +41,8 @@
 #include "nsp/datas.h"
 #include "nsp/gsort-p.h"
 
+static int int_smatrix_create(Stack stack, int rhs, int opt, int lhs);
+
 /**
  * SECTION:smatrix
  * @title: NspSMatrix 
@@ -107,6 +109,7 @@ NspTypeSMatrix *new_type_smatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_smatrix_xdr_save;
   top->load  = (load_func *)nsp_smatrix_xdr_load;
+  top->create = (create_func*) int_smatrix_create; 
   top->latex = (print_func *) nsp_smatrix_latex_print;
   top->full_copy  =  (copy_func *)nsp_smatrix_copy;                  /* copy object */  
 
@@ -755,7 +758,7 @@ NspMethods *smatrix_get_methods(void) { return smatrix_methods;};
  * Creation of a NspSMatrix all the strings are created with "." value 
  */
 
-int int_smxcreate(Stack stack, int rhs, int opt, int lhs)
+static int int_smatrix_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *HMat;
   int m1,n1;
@@ -2169,7 +2172,7 @@ static OpTab SMatrix_func[]={
   {"latexmat_s",int_smatrix_2latexmat},
   {"latextab_s",int_smatrix_2latextab},
   /* {"loopextract_m_s",int_smxextractcolforloop}, */
-  {"smat_create_m",int_smxcreate},
+  {"smat_create_m",int_smatrix_create},
   {"redim_s",int_matint_redim},
   {"matrix_s", int_matint_redim},
   {"reshape_s", int_matint_redim},

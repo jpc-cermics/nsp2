@@ -124,6 +124,7 @@ new_type_matrix (type_mode mode)
   top->neq = (eq_func *) matrix_neq;
   top->save = (save_func *) matrix_xdr_save;
   top->load = (load_func *) matrix_xdr_load;
+  top->create = (create_func*) int_mxcreate; 
   top->latex = (print_func *) nsp_matrix_latex_print;
   top->as_index  = (get_index_vector_func *) nsp_matrix_as_index;
   top->full_copy = (copy_func *) nsp_matrix_copy;
@@ -1492,9 +1493,10 @@ static NspMethods *matrix_get_methods(void) { return matrix_methods;};
 int
 int_mxcreate (Stack stack, int rhs, int opt, int lhs)
 {
+  double value = 0.0;
   int m1, n1;
   NspMatrix *HMat;
-  CheckRhs (2, 2);
+  CheckRhs (2, 3);
   CheckLhs (1, 1);
   if (GetScalarInt (stack, 1, &m1) == FAIL)
     return RET_BUG;
@@ -1502,8 +1504,14 @@ int_mxcreate (Stack stack, int rhs, int opt, int lhs)
   if (GetScalarInt (stack, 2, &n1) == FAIL)
     return RET_BUG;
   CheckNonNegative(NspFname(stack),n1,2);
+  if ( rhs == 3 )
+    {
+      if (GetScalarDouble (stack, 1, &value) == FAIL)
+	return RET_BUG;
+    }
   if ((HMat = nsp_matrix_create (NVOID, 'r', m1, n1)) == NULLMAT)
     return RET_BUG;
+  nsp_mat_set_rval(HMat,value);
   MoveObj (stack, 1, (NspObject *) HMat);
   return 1;
 }

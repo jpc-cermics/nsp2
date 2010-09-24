@@ -40,6 +40,7 @@
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+static int int_spcolmatrix_create(Stack stack, int rhs, int opt, int lhs);
 
 /*
  * NspSpColMatrix inherits from NspObject 
@@ -89,6 +90,7 @@ NspTypeSpColMatrix *new_type_spcolmatrix(type_mode mode)
 
   top->save  = (save_func *)nsp_spcolmatrix_xdr_save;
   top->load  = (load_func *)nsp_spcolmatrix_xdr_load;
+  top->create = (create_func*) int_spcolmatrix_create; 
 
   top->full_copy  =  (copy_func *)nsp_spcolmatrix_copy;                   /* copy object */  
 

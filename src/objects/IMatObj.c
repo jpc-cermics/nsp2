@@ -40,6 +40,8 @@
 #include "nsp/matutil.h"
 #include "nsp/gsort-p.h"
 
+static int int_imatrix_create(Stack stack, int rhs, int opt, int lhs);
+
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
 /**
@@ -106,6 +108,7 @@ NspTypeIMatrix *new_type_imatrix(type_mode mode)
   top->neq  = (eq_func *) imatrix_neq;
   top->save  = (save_func *) imatrix_xdr_save;
   top->load  = (load_func *) imatrix_xdr_load;
+  top->create = (create_func*) int_imatrix_create; 
   top->latex = (print_func *) nsp_imatrix_latex_print;
   top->as_index  = (get_index_vector_func *) nsp_imatrix_as_index;
   top->full_copy  =  (copy_func *)nsp_imatrix_copy;                   
