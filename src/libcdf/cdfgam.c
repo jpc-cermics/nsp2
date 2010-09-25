@@ -69,7 +69,7 @@
 
 int
 cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
-	    double *scale, int *status, double *bound)
+	    double *scale, int *status, double *bound, double *boundbis)
 {
   static int c__1 = 1;
   static double c_b27 = -1.;

@@ -56,7 +56,7 @@
 
 int
 cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
-	    int *status, double *bound)
+	    int *status, double *bound, double *boundbis)
 {
 static int c__1 = 1;
 static double c_b22 = 0.;

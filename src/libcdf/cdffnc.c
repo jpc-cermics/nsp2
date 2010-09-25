@@ -77,7 +77,7 @@
 
 int
 cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
-	    double *dfd, double *phonc, int *status, double *bound)
+	    double *dfd, double *phonc, int *status, double *bound, double *boundbis)
 {
 static double c_b17 = 0.;
 static double c_b18 = .5;

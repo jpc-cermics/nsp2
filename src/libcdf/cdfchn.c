@@ -74,18 +74,17 @@
  *   - rewrite the function in a non spaghetti coding style 
  *   - use the fact that q is computed accurately with cumchn_new in
  *     the inversion processes (which == 2|3|4)  
+ *
  */
 
 
 int
 cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
-	    double *pnonc, int *status, double *bound)
+	    double *pnonc, int *status, double *bound, double *boundbis)
 {
-  static double c_b15 = 0., c_b16 = .5, c_b18 = 5.;
-  const double tent4=1.0E5, tol=1.0E-14, atol=1.0E-50;
-  const double zero=1.0E-300, inf=1.0E300;
+  const double tol=1.0e-14, atol=1.0e-50, zero=1.0e-300, inf=1.0e300;
   double ccum, fx, cum;
-  int qleft, qhi;
+  int pq_flag=1;  
 
   /* 
    *  part 1: verify parameters 
@@ -94,7 +93,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 
   if ( *which < 1 || *which > 4 )
     {
-      *status = -1;
+      *status = -1; 
       *bound = (*which < 1) ? 1 : 4;
       return 0;
     }
@@ -106,38 +105,31 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
       if ( ! ( 0.0 < *p  &&  *p <= 1.0 ) )
 	{
 	  *status = -2;
-	  if ( *p <= 0.0 )
-	    *bound = 0.0;
-	  else            /* rmk: Nan will be tracted here (so not the good message) */
-	    *bound = 1.0; 
+	  *bound =  *p <= 0.0 ? 0.0 : 1.0;
 	  return 0;
 	}
 
       if ( ! ( 0.0 < *q  &&  *q <= 1.0 ) )
 	{
 	  *status = -3;
-	  if ( *q <= 0.0 )
-	    *bound = 0.0;
-	  else            /* rmk: Nan will be threaded here (so not the good message) */
-	    *bound = 1.0;
+	  *bound =  *q <= 0.0 ? 0.0 : 1.0;
 	  return 0;   
 	}
 
       if ( fabs(pq - 1.0) >= 0.5*DBL_EPSILON )
 	{
-	  *status = 3;
-	  *bound = 1.0;
-	  return 0;
+	  *status = 3; *bound = 1.0; return 0;
 	}
+
+      pq_flag = *p <= *q;
     }
+
 
   if ( *which != 2  &&  *which != 1 )   /* test *x (but also not for which == 1 as this case handles all values for x) */
     {
       if ( ! (*x >= 0.0) )
 	{
-	  *status = -4;
-	  *bound = 0.0;
-	  return 0;
+	  *status = -4; *bound = 0.0; return 0;
 	}
     }
 
@@ -145,9 +137,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
     {
       if ( ! (*df > 0.0) )
 	{
-	  *bound = 0.0;
-	  *status = -5;
-	  return 0;
+	  *bound = 0.0; *status = -5; return 0;
 	}
     }
 
@@ -155,9 +145,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
     {
       if ( ! (*pnonc >= 0.0) )
 	{
-	  *bound = 0.;
-	  *status = -6;
-	  return 0;
+	  *bound = 0.; *status = -6; return 0;
 	}
     }
 
@@ -174,15 +162,12 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
     }
   else if (2 == *which)        /* Calculating X */
     {
-      int pq_flag = *p <= *q ? 1 : 0;
       ZsearchStruct S;
       zsearch_ret ret_val;
-      zsearch_monotonicity monotonicity = pq_flag ? INCREASING : DECREASING;
       double step = sqrt(*df+2**pnonc);  /* a step proportionnal to the std */
-      double zero = 0.0;
-      double inc_step = 2;
       *x = *df + *pnonc;       /* start from the mean instead of 5  (bruno, april 2010) */ 
-      nsp_zsearch_init(*x, 0, inf, step, zero, inc_step, atol, tol, monotonicity, &S);
+
+      nsp_zsearch_init(*x, 0, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
 
       do
 	{
@@ -191,9 +176,8 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	    fx = cum - *p;
 	  else
 	    fx = ccum - *q;
-	  ret_val = nsp_zsearch(x, fx, &S);
 	}
-      while ( ret_val == EVAL_FX );
+      while ( (ret_val = nsp_zsearch(x, fx, &S)) == EVAL_FX );
 
       switch ( ret_val )
 	{
@@ -210,62 +194,56 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 
   else if (3 == *which)        /* Calculating DF */
     {
-      int pq_flag = *p <= *q ? 1 : 0;
+      ZsearchStruct S;
+      zsearch_ret ret_val;
       *df = 5.;
-      cdf_dstinv (&zero, &inf, &c_b16, &c_b16, &c_b18, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-      while ( *status == 1 )
+      nsp_zsearch_init(*df, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
 	  cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
 	    fx = ccum - *q;
-	  cdf_dinvr (status, df, &fx, &qleft, &qhi);
 	}
+      while ( (ret_val = nsp_zsearch(df, fx, &S)) == EVAL_FX );
 
-      if ( *status == -1 )
+      switch ( ret_val )
 	{
-	  if ( qleft )
-	    {
-	      *status = 1; *bound = zero;
-	    }
-	  else
-	    {
-	      *status = 2; *bound = inf;
-	    }
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 5;
 	}
     }
 
   else if (4 == *which)        /* Calculating PNONC */
     {
-      int pq_flag = *p <= *q ? 1 : 0;
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      double pnoncmax = 1e5;
       *pnonc = 5.;
-      cdf_dstinv (&c_b15, &tent4, &c_b16, &c_b16, &c_b18, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, pnonc, &fx, &qleft, &qhi);
-      while ( *status == 1 )
+      nsp_zsearch_init(*pnonc, 0.0, pnoncmax, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
 	  cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
 	    fx = ccum - *q;
-	  cdf_dinvr (status, pnonc, &fx, &qleft, &qhi);
 	}
+      while ( (ret_val = nsp_zsearch(pnonc, fx, &S)) == EVAL_FX );
 
-      if ( *status == -1 )
+      switch ( ret_val )
 	{
-	  if ( qleft )
-	    {
-	      *status = 1; *bound = zero;
-	    }
-	  else
-	    {
-	      *status = 2;
-	      *bound = tent4;
-	    }
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = 0.0; *boundbis = pnoncmax; break;
+	default:
+	  *status = 5;
 	}
     }
 

@@ -60,7 +60,7 @@
 
 
 int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df,
-		int *status, double *bound)
+		int *status, double *bound, double *boundbis)
 {
   const int c__1 = 1;
   const double c_b25 = 0.;

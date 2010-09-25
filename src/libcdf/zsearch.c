@@ -50,22 +50,25 @@
  *        fails. 
  *
  *   The main difference is the following: dinvr searches on the
- *   interval [small, big] and first evaluates f on x = small and x = big
- *   to determine the "monotonicity" of the function. Then it
- *   starts from x = xinit and depending on f(xinit) and on the "monotonicity"
- *   searches on the left or on the right trying to bracket a zero. 
- *   When a bracket interval [b, c] is found  dinvr calls dzror but 
- *   without using the fact that the function is known at b and c
- *   (so there are 2 supplementary call to f).
+ *   interval [left_bound, right_bound] and first evaluates f on 
+ *   x = left_bound and x = right_bound to determine the "monotonicity" 
+ *   of the function. Then it starts from x = xinit and depending 
+ *   on f(xinit) and on the "monotonicity" searches on the left or 
+ *   on the right trying to bracket a zero. When a bracket interval 
+ *   [b, c] is found  dinvr calls dzror but without using the fact 
+ *   that the function is known at b and c (so there are 2 supplementary 
+ *   call to f).
  *
  *   nsp_zsearch can be called by specifying the function monotonicity
  *   (INCREASING, DECREASING, UNKNOWN). In case the monotonicity is
  *   known (INCREASING, DECREASING), the search direction can be determined 
  *   once f(xinit) has been computed. Otherwise a first positive step is 
  *   done and f(xinit) and f(xinit + step) are used to determine the 
- *   (somewhat local) monotonicity. In case the function is such that 
- *   f(small) and f(big) are together positive or negative, dinvr stops 
- *   while nsp_zsearch can at least begin a search. So can work when f 
+ *   (somewhat local) monotonicity. Moreover if the first search fails 
+ *   the other direction is tried. In case the function is such that 
+ *   f(left_bound) and f(right_bound) are together positive or negative, 
+ *   dinvr stops but not nsp_zsearch which can search on the whole
+ *   [left_bound, right_bound] interval. So can work when f 
  *   is not a monotone function. dinvr was sometimes used this way, in
  *   particular:
  * 
@@ -82,7 +85,7 @@
  *    plot2d(dfn,p,style=2)
  *
  *   and there are 2 possible values for dfn. On this particular
- *   case nsp_zsearch finds one of the 2 roots (5).    
+ *   case nsp_zsearch finds one of the 2 roots (5).  
  *
  *   how to use this stuff:
  *   ----------------------
@@ -94,21 +97,25 @@
  *   do
  *     {
  *        fx = f(x);  compute f on x
- *        ret_val = nsp_zsearch(&x, fx, &S);
  *     }
- *    while ( ret_val == EVAL_FX );
+ *    while ( (ret_val = nsp_zsearch(&x, fx, &S)) == EVAL_FX );
+ *
  *    switch( ret_val )
  *      {
  *      case SUCCESS:
  *         x is the approximated root (additionnal information in S)
  *         break;
  *      case LEFT_BOUND_EXCEEDED:
- *         the search (on the left from a) was not able to bracket a zero
+ *         the search (on the left from xinit) was not able to bracket a zero
  *         (which doesn't mean that there is not a zero...)
  *         break;
  *      case RIGHT_BOUND_EXCEEDED:
- *         the search (on the right from a) was not able to bracket a zero
+ *         the search (on the right from xinit) was not able to bracket a zero
  *         (which doesn't mean that there is not a zero...)
+ *         break;
+ *      case BOTH_BOUND_EXCEEDED:
+ *         this case is got when monotonicity = UNKNOWN and the search
+ *         part fails to bracket a zero.(which doesn't mean that there is not a zero...)
  *         break;
  *      }
  *       
@@ -128,6 +135,7 @@ int nsp_zsearch_init(double xinit, double left_bound, double right_bound, double
   S->reltol = reltol;
   S->monotonicity = monotonicity;
   S->state = START;
+  S->ext = monotonicity==UNKNOWN ? 1 : 0;
   return 0;
 }
 
@@ -235,7 +243,21 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
       else
 	{
 	  if ( *x == S->right_bound )
-	    return RIGHT_BOUND_EXCEEDED;
+	    {
+	      if ( S->ext == 0 )
+		return RIGHT_BOUND_EXCEEDED;
+	      if ( S->ext ==-1 )
+		return BOTH_BOUND_EXCEEDED;
+	      else
+		{
+		  S->ext = -1;
+		  S->state = SEARCH_LEFT;
+		  S->c = S->a; S->fc = S->fa;
+		  S->step = S->absstp + S->relstp*fabs(S->a);
+		  *x = Max( S->a - S->step, S->left_bound);
+		  return EVAL_FX;
+		}
+	    }
 	  /* ici on pourrait tester la non monotonie */
 	  S->b = *x; S->fb = fx;
 	  *x = Min( *x + S->step, S->right_bound);
@@ -254,14 +276,28 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
       else
 	{
 	  if ( *x == S->left_bound )
-	    return LEFT_BOUND_EXCEEDED;
+	    {
+	      if ( S->ext == 0 )
+		return LEFT_BOUND_EXCEEDED;
+	      if ( S->ext ==-1 )
+		return BOTH_BOUND_EXCEEDED;
+	      else
+		{
+		  S->ext = -1;
+		  S->state = SEARCH_RIGHT;
+		  S->c = S->a; S->fc = S->fa;
+		  S->step = S->absstp + S->relstp*fabs(S->a);
+		  *x = Min( S->a + S->step, S->right_bound);
+		  return EVAL_FX;
+		}
+	    }
 	  /* ici on pourrait tester la non monotonie */
 	  S->c = *x; S->fc = fx;
 	  *x = Max( *x - S->step, S->left_bound);
 	  return EVAL_FX;
 	}
       
-    case BRACKETED:
+    case BRACKETED:     /* Algorithm R formulated for reverse communication */
       {
 	double tol, m, mb, p, q, w, fdb, fda;
   

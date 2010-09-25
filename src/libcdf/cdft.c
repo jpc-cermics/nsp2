@@ -55,7 +55,7 @@
 
 int
 cdf_cdft (int *which, double *p, double *q, double *t, double *df,
-	  int *status, double *bound)
+	  int *status, double *bound, double *boundbis)
 {
   static int c__1 = 1;
   static double c_b20 = .5;

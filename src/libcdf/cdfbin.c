@@ -76,7 +76,7 @@
 
 int
 cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
-	    double *pr, double *ompr, int *status, double *bound)
+	    double *pr, double *ompr, int *status, double *bound, double *boundbis)
 {
   static int c__1 = 1;
   static double c_b37 = 0.;

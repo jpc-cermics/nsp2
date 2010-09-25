@@ -61,211 +61,130 @@
 /*     monotonicity and will find an arbitrary one of the two values. */
 /* ********************************************************************** */
 
+/*   some changes by Bruno Pincon (sept. 2010):
+ *   - rewrite the function in a non spaghetti coding style 
+ *   - use nsp_zsearch in place of dinvr
+ *
+ */
+
 
 #include "cdf.h"
 
 
 int
 cdf_cdff (int *which, double *p, double *q, double *f, double *dfn,
-	  double *dfd, int *status, double *bound)
+	  double *dfd, int *status, double *bound, double *boundbis)
 {
-static int c__1 = 1;
-static double c_b25 = .5;
-static double c_b27 = 5.;
+  const double tol=1.0e-14, atol=1.0e-50, zero=1.0e-300, inf=1.0e300;
+  double cum, ccum;
+  int pq_flag=1;   
+  double fx;
 
-  const double tol=1.0E-14,atol=1.0E-50, zero=1.0E-300,inf=1.0E300;
-
-  double d__1;
-
-  double ccum;
-  int qleft;
-  int qporq;
-  double fx, pq;
-  int qhi;
-  double cum;
-
-  if (!(*which < 1 || *which > 4))
+  if ( *which < 1 || *which > 4 )
     {
-      goto L30;
-    }
-  if (!(*which < 1))
-    {
-      goto L10;
-    }
-  *bound = 1.;
-  goto L20;
-L10:
-  *bound = 4.;
-L20:
-  *status = -1;
-  return 0;
-L30:
-  if (*which == 1)
-    {
-      goto L70;
+      *status = -1;
+      *bound = (*which < 1) ? 1 : 4;
+      return 0;
     }
 
-/*     P */
+  if (*which != 1)  /* test p and q */
+    {
+      double pq = *p + *q;
 
-  if (!(*p < 0. || *p > 1.))
-    {
-      goto L60;
-    }
-  if (!(*p < 0.))
-    {
-      goto L40;
-    }
-  *bound = 0.;
-  goto L50;
-L40:
-  *bound = 1.;
-L50:
-  *status = -2;
-  return 0;
-L60:
-L70:
-  if (*which == 1)
-    {
-      goto L110;
-    }
+      if ( ! ( 0.0 < *p  &&  *p <= 1.0 ) )
+	{
+	  *status = -2;
+	  if ( *p <= 0.0 )
+	    *bound = 0.0;
+	  else            /* rmk: Nan will be tracted here (so not the good message) */
+	    *bound = 1.0; 
+	  return 0;
+	}
 
-/*     Q */
+      if ( ! ( 0.0 < *q  &&  *q <= 1.0 ) )
+	{
+	  *status = -3;
+	  if ( *q <= 0.0 )
+	    *bound = 0.0;
+	  else            /* rmk: Nan will be threaded here (so not the good message) */
+	    *bound = 1.0;
+	  return 0;   
+	}
 
-  if (!(*q <= 0. || *q > 1.))
-    {
-      goto L100;
-    }
-  if (!(*q <= 0.))
-    {
-      goto L80;
-    }
-  *bound = 0.;
-  goto L90;
-L80:
-  *bound = 1.;
-L90:
-  *status = -3;
-  return 0;
-L100:
-L110:
-  if (*which == 2)
-    {
-      goto L130;
+      if ( fabs(pq - 1.0) >= 0.5*DBL_EPSILON )
+	{
+	  *status = 3;
+	  *bound = 1.0;
+	  return 0;
+	}
+      
+      pq_flag = *p <= *q;
     }
 
-/*     F */
-
-  if (!(*f < 0.) || *which==1 )   /* add *which==1 to compute cdff with *x < 0 (bruno march,22,2010)) */
+  if ( *which != 2  &&  *which != 1 )   /* test f (but also not for which == 1 as this case handles all values for f) */
     {
-      goto L120;
-    }
-  *bound = 0.;
-  *status = -4;
-  return 0;
-L120:
-L130:
-  if (*which == 3)
-    {
-      goto L150;
+      if ( ! (*f >= 0.0) )
+	{
+	  *status = -4;
+	  *bound = 0.0;
+	  return 0;
+	}
     }
 
-/*     DFN */
-
-  if (!(*dfn <= 0.))
+  if ( *which != 3 )    /* test dfn */
     {
-      goto L140;
-    }
-  *bound = 0.;
-  *status = -5;
-  return 0;
-L140:
-L150:
-  if (*which == 4)
-    {
-      goto L170;
+      if ( ! (*dfn > 0.0) )
+	{
+	  *bound = 0.0;
+	  *status = -5;
+	  return 0;
+	}
     }
 
-/*     DFD */
-
-  if (!(*dfd <= 0.))
+  if ( *which != 4 )    /* test dfd */
     {
-      goto L160;
+      if ( ! (*dfd > 0.0) )
+	{
+	  *bound = 0.0;
+	  *status = -6;
+	  return 0;
+	}
     }
-  *bound = 0.;
-  *status = -6;
-  return 0;
-L160:
-L170:
-  if (*which == 1)
-    {
-      goto L210;
-    }
-
-/*     P + Q */
-
-  pq = *p + *q;
-  if (!((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
-    {
-      goto L200;
-    }
-  if (!(pq < 0.))
-    {
-      goto L180;
-    }
-  *bound = 0.;
-  goto L190;
-L180:
-  *bound = 1.;
-L190:
-  *status = 3;
-  return 0;
-L200:
-L210:
-  if (!(*which == 1))
-    {
-      qporq = *p <= *q;
-    }
-
-/*     Select the minimum of P or Q */
 
 
 /*     Calculate ANSWERS */
 
-  if (1 == *which)
+  if (1 == *which)        /* Calculating P and Q */
     {
-
-/*     Calculating P */
-
       cdf_cumf (f, dfn, dfd, p, q);
       *status = 0;
     }
-  else if (2 == *which)   /*     Calculating F */
+
+  else if (2 == *which)   /* Calculating F */
     { 
       ZsearchStruct S;
       zsearch_ret ret_val;
-      zsearch_monotonicity monotonicity = qporq ? INCREASING : DECREASING;
       double step;
-      if ( *dfd > 4.0 )
+      if ( *dfd > 4.0 )    /* in this case start from the mean and use step_init = std */
 	{
 	  *f = *dfd / (*dfd - 2.0 );
 	  step = *f*sqrt( 2.0*(*dfn+ *dfd -2.0)/(*dfn*(*dfd - 4.0)) );
 	}
       else
 	{
-	  *f = 5.; step = 5.0;
+	  *f = 5.; step = 2.0;
 	}
 
-      nsp_zsearch_init(*f, zero, inf, step, 0.0, 2.0, atol, tol, monotonicity, &S);
+      nsp_zsearch_init(*f, zero, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
       do
 	{
 	  cdf_cumf (f, dfn, dfd, &cum, &ccum);
-	  if ( qporq )
+	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
 	    fx = ccum - *q;
-	  ret_val = nsp_zsearch(f, fx, &S);
 	}
-      while ( ret_val == EVAL_FX );
+      while ( (ret_val = nsp_zsearch(f, fx, &S)) == EVAL_FX );
 
       switch ( ret_val )
 	{
@@ -279,76 +198,60 @@ L210:
 	  *status = 4;
 	}
     }
+
   else if (3 == *which)   /* Calculating DFN */
     {
       ZsearchStruct S;
       zsearch_ret ret_val;
-      *dfn = 5.;
-      nsp_zsearch_init(*dfn, zero, inf, c_b25, c_b25, c_b27, atol, tol, UNKNOWN, &S);
+      *dfn = 5.0;
+      nsp_zsearch_init(*dfn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
 	  cdf_cumf (f, dfn, dfd, &cum, &ccum);
-	  if ( qporq )
+	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
 	    fx = ccum - *q;
-	  ret_val = nsp_zsearch(dfn, fx, &S);
 	}
-      while ( ret_val == EVAL_FX );
+      while ( (ret_val = nsp_zsearch(dfn, fx, &S)) == EVAL_FX );
 
       switch ( ret_val )
 	{
 	case SUCCESS:
 	  *status = 0; break;
-	case LEFT_BOUND_EXCEEDED:
-	  *status = 1; *bound = zero; break;
-	case RIGHT_BOUND_EXCEEDED:
-	  *status = 2; *bound = inf; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = zero; *boundbis = inf; break;
 	default:
-	  *status = 4;
+	  *status = 5;
 	}
     }
+
   else if (4 == *which)    /* Calculating DFD */
     {
-      *dfd = 5.;
-      cdf_dstinv (&zero, &inf, &c_b25, &c_b25, &c_b27, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, dfd, &fx, &qleft, &qhi);
-    L360:
-      if (!(*status == 1))
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      *dfd = 5.0;
+      nsp_zsearch_init(*dfd, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L390;
+	  cdf_cumf (f, dfn, dfd, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumf (f, dfn, dfd, &cum, &ccum);
-      if (!qporq)
+      while ( (ret_val = nsp_zsearch(dfd, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L370;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 5;
 	}
-      fx = cum - *p;
-      goto L380;
-    L370:
-      fx = ccum - *q;
-    L380:
-      cdf_dinvr (status, dfd, &fx, &qleft, &qhi);
-      goto L360;
-    L390:
-      if (!(*status == -1))
-	{
-	  goto L420;
-	}
-      if (!qleft)
-	{
-	  goto L400;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L410;
-    L400:
-      *status = 2;
-      *bound = inf;
-    L410:
-    L420:
-      ;
     }
+
   return 0;
 }				/* cdff_ */

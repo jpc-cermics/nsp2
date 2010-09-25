@@ -22,7 +22,7 @@ typedef enum {
 } zsearch_state;
 
 typedef enum {
-  EVAL_FX, SUCCESS, LEFT_BOUND_EXCEEDED, RIGHT_BOUND_EXCEEDED, OTHER_FAILURE
+  EVAL_FX, SUCCESS, LEFT_BOUND_EXCEEDED, RIGHT_BOUND_EXCEEDED, BOTH_BOUND_EXCEEDED, OTHER_FAILURE
 } zsearch_ret;
 
 
@@ -109,17 +109,17 @@ extern int cdf_gratio (double *a, double *x, double *ans, double *qans,const int
 extern int cdf_ipmpar (const int );
 
 extern int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w1, int *ierr);
-extern int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a, double *b, int *status, double *bound);
-extern int cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn, double *pr, double *ompr, int *status, double *bound);
-extern int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df, int *status, double *bound);
-extern int cdf_cdfchn (int *which, double *p, double *q, double *x, double *df, double *pnonc, int *status, double *bound);
-extern int cdf_cdff (int *which, double *p, double *q, double *f, double *dfn, double *dfd, int *status, double *bound);
-extern int cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn, double *dfd, double *phonc, int *status, double *bound);
-extern int cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape, double *scale, int *status, double *bound);
-extern int cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn, double *pr, double *ompr, int *status, double *bound);
-extern int cdf_cdfnor (int *which, double *p, double *q, double *x, double *mean, double *sd, int *status, double *bound);
-extern int cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam, int *status, double *bound);
-extern int cdf_cdft (int *which, double *p, double *q, double *t, double *df, int *status, double *bound);
+extern int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a, double *b, int *status, double *bound, double *boundbis);
+extern int cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn, double *pr, double *ompr, int *status, double *bound, double *boundbis);
+extern int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df, int *status, double *bound, double *boundbis);
+extern int cdf_cdfchn (int *which, double *p, double *q, double *x, double *df, double *pnonc, int *status, double *bound, double *boundbis);
+extern int cdf_cdff (int *which, double *p, double *q, double *f, double *dfn, double *dfd, int *status, double *bound, double *boundbis);
+extern int cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn, double *dfd, double *phonc, int *status, double *bound, double *boundbis);
+extern int cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape, double *scale, int *status, double *bound, double *boundbis);
+extern int cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn, double *pr, double *ompr, int *status, double *bound, double *boundbis);
+extern int cdf_cdfnor (int *which, double *p, double *q, double *x, double *mean, double *sd, int *status, double *bound, double *boundbis);
+extern int cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam, int *status, double *bound, double *boundbis);
+extern int cdf_cdft (int *which, double *p, double *q, double *t, double *df, int *status, double *bound, double *boundbis);
 extern int cdf_cumbet (double *x, double *y, double *a, double *b, double *cum, double *ccum);
 extern int cdf_cumbin (double *s, double *xn, double *pr, double *ompr, double *cum, double *ccum);
 extern int cdf_cumchi (double *x, double *df, double *cum, double *ccum);
@@ -137,7 +137,7 @@ extern int cdf_dinvr (int *status, double *x, double *fx, int *qleft, int *qhi);
 extern double cdf_stirling_series_diff(double z, double y) ;
 extern double cdf_stirling_series(double a) ;
 
-extern int cdf_cdftnc (int *which, double *p, double *q, double *t, double *df, double *pnonc, int *status, double *bound);
+extern int cdf_cdftnc (int *which, double *p, double *q, double *t, double *df, double *pnonc, int *status, double *bound, double *boundbis);
 extern int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum, double *ccum);
 
 

@@ -71,7 +71,7 @@
 
 
 int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a,
-		double *b, int *status, double *bound)
+		double *b, int *status, double *bound, double *boundbis)
 {
   const double c_b46 = .5;
   const double c_b48 = 5.;

@@ -66,7 +66,7 @@
 
 
 int cdf_cdfnor (int *which, double *p, double *q, double *x, double *mean,
-		double *sd, int *status, double *bound)
+		double *sd, int *status, double *bound, double *boundbis)
 {
   const int c__1 = 1;
   double d__1;
