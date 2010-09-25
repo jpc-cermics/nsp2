@@ -9,6 +9,7 @@ extern   double pow_di (double *, int *);
 #define D_SIGN(a,b) ( b >= 0 ? (a >= 0 ? a : - a) : -(a >= 0 ? a : -a))
 #define D_INT(x) ( (x>0) ? floor(x) : -floor(- x) )
 
+#define CDF_CHECK_ARG(x, b, st ) if ((x)) { *bound = b; *status = st ;return 0;}
 
 /*
  *    for the new zero search routine
