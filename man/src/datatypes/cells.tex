@@ -48,6 +48,8 @@ true is returned if \verb+C{i,j}.equal[Obj]+.
 \item \verb+A.concatd[B]+ \verb+A = [A;B]+
 \item \verb+A.perm_elem[p,q,dim]+ permute values, rows (\verb+dim=1+) or columns (\verb+dim=2+).
 \item \verb+A.set_diag[B [,k]]+ sets the \verb+k+-th diagonal of cell array \verb+A+ to \verb+B+.
+\item \verb+A.enlarge[m,n]+ sets the size of \verb+A+ to \verb+(Max(m,size(A,'r')),Max(n,size(A,'c')))+ and fill 
+  added elements with default value.
 \end{itemize}
 
 \itemdesc{Extraction, insertion, deletion}

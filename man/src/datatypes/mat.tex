@@ -69,6 +69,8 @@ Display of numerical matrices could be changed using the \manlink{format}{format
 \item \verb+A.perm_elem[p,q[,dim]]+ permute p and q: elements
   (default or dim=0), rows (dim=1) or columns (dim=2).
 \item \verb+A.set_diag[B [,k]]+ sets the \verb+k+-th diagonal of matrix \verb+A+ to \verb+B+.
+\item \verb+A.enlarge[m,n]+ sets the size of \verb+A+ to \verb+(Max(m,size(A,'r')),Max(n,size(A,'c')))+ and fill 
+  added elements with default value.
 \end{itemize}
 
 \itemdesc{Operators}
