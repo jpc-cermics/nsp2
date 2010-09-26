@@ -1425,7 +1425,7 @@ static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int o
   NspMatrix *Diag;
   int k=0;
   CheckRhs (1,2);
-  CheckLhs (0,0); 
+  CheckLhs (0,1); 
   if ((Diag = GetMat (stack, 1)) == NULLMAT)   return RET_BUG;
   if ( rhs == 2 )
     {
@@ -1433,7 +1433,8 @@ static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int o
     }
   if (nsp_matrix_set_diag ((NspMatrix *) self, Diag, k) != OK)
     return RET_BUG;
-  return 0;
+  MoveObj(stack,1,self);
+  return 1;
 }
 
 static int int_meth_matrix_has(void *self, Stack stack, int rhs, int opt, int lhs)

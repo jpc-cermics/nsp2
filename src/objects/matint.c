@@ -283,7 +283,7 @@ static int int_matint_meth_set_diag(NspObject *self, Stack stack, int rhs, int o
   NspObject *B;
   NspTypeBase *typeSelf,*typeB;
   CheckRhs (1,2);
-  CheckLhs (0,0);
+  CheckLhs (0,1);
   if ((B = nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
   typeB = check_implements(B, nsp_type_matint_id);
   typeSelf = check_implements(self, nsp_type_matint_id);
@@ -298,9 +298,27 @@ static int int_matint_meth_set_diag(NspObject *self, Stack stack, int rhs, int o
     }
   if ( nsp_matint_set_diag(self,B,k)==FAIL) 
     return RET_BUG;
-  return 0;
+  MoveObj(stack,1,self);
+  return 1;
 }
 
+static int int_matint_meth_enlarge(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  int m,n;
+  NspTypeBase *type;
+  CheckRhs (2,2);
+  CheckLhs (0,1);
+  if (GetScalarInt (stack, 1, &m) == FAIL) return RET_BUG;
+  if (GetScalarInt (stack, 2, &n) == FAIL) return RET_BUG;
+  if ( (type =check_implements(self,nsp_type_matint_id)) == NULL ) 
+    {  
+      Scierror("Object do not implements matint interface\n"); 
+      return RET_BUG;
+    } 
+  if ( MAT_INT(type)->enlarge(self,m,n) == FAIL) return RET_BUG;
+  MoveObj(stack,1,self);
+  return 1;
+}
 
 static NspMethods matint_methods[] = {
   {"redim",(nsp_method *) int_matint_meth_redim},
@@ -309,6 +327,7 @@ static NspMethods matint_methods[] = {
   {"perm_elem",(nsp_method *) int_matint_perm_elem},
   {"to_cells",(nsp_method *) int_matint_to_cells},
   {"set_diag",(nsp_method *) int_matint_meth_set_diag},
+  {"enlarge",(nsp_method *) int_matint_meth_enlarge},
   { NULL, NULL}
 };
 
