@@ -1,0 +1,66 @@
+% -*- mode: latex -*-
+\mansection{testm}
+\begin{mandesc}
+  \short{testm}{ Magic, Frank and Hilbert matrices}\\
+  \short{testmatrix}{ Magic, Frank and Hilbert matrices}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  A=testm(name,n);
+  A=testmatrix(name,n);
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{name} : a character string chosen among
+     "magic", "franck", "franck^-1", "hilbert", "hilbert^-1". 
+    \vname{n} : an integer giving matrix size
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  according to the parameter \verb+name+ returns a \verb+(n,n)+ 
+  matrix which can be a Magic square, a Franck matrix or its 
+  inverse, an Hilbert matrix \verb+A(i,j)=1/(i+j-1)+ or its inverse.
+\end{mandescription}
+
+\begin{examples}
+\paragraph{Franck}
+\begin{Verbatim}
+  n=6;
+  A=testm('franck',n);
+  Ai=testm('franck^-1',n);
+  norm(A*Ai - eye(n,n))
+\end{Verbatim}
+
+\paragraph{Hilbert}
+\begin{Verbatim}
+  n=6;
+  A=testm('hilbert',n);
+  Ai=testm('hilbert^-1',n);
+  norm(A*Ai - eye(n,n))
+
+  Ah=hankel( 1 ./((1:n)+1-1), 1./(n + (1:n)-1))
+  Ah.equal[A]
+\end{Verbatim}
+
+\paragraph{Magic} 
+\begin{Verbatim}
+  n=6;
+  A=testm('magic',n);
+  t1=sort(A,'g','i') == (1:n^2)
+  Ar = sum(A,'r'); Ac = sum(A,'c')';
+  t2= Ar.equal[Ac] 
+  t3=and(sum(A,'r') == Ar(1) )
+\end{Verbatim}
+\end{examples}
+
+\begin{manseealso}
+  \manlink{toeplitz}{toeplitz}
+\end{manseealso}
+\begin{authors}
+  Jean-Philippe Chancelier. The code for the magic matrix generation 
+  if from Shin Kwon Young (\verb+http://user.chollian.net/~brainstm/MagicSquare.htm+).
+\end{authors}
+

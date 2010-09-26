@@ -1,0 +1,42 @@
+% -*- mode: latex -*-
+\mansection{toeplitz}
+\begin{mandesc}
+  \short{toeplitz}{Toeplitz matrix}\\ % @mandesc@
+  \short{hankel}{Hankel matrix}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+   A=toeplitz(c [,r])   
+   A=hankel(c [,r])   
+\end{verbatim}
+\end{calling_sequence}
+\begin{parameters}
+  \begin{varlist}
+    \vname{c,r}: two matrices of the same type. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  builds a \href{http://en.wikipedia.org/wiki/Toeplitz_matrix}{Toeplitz}
+  (resp. \href{http://en.wikipedia.org/wiki/Hankel_matrix}{Hankel})
+  matrix whose first column is described 
+  by \verb+c+ and first (resp. last) row is described by \verb+r+. 
+  When \verb+r+ is omitted it is assumed to be equal to \verb+c+ for Toeplitz
+  matrix and assumed to be zero for Hankel matrix. 
+  The two arguments should have the same type which also gives the type of 
+  the result. Most matrix types are authorized. 
+  When \verb+c+ and \verb+r+ are both given, a warning is issued if they are 
+  not comptatible and incompatibility is solved by using values from \verb+c+. 
+\end{mandescription}
+% --example 
+\begin{examples}
+  \begin{Verbatim}
+    A=toeplitz(m2i(1:5,'uint32'));
+    B=hankel(string(1:3));
+  \end{Verbatim}
+\end{examples}
+% -- see also
+\begin{authors}
+  Jean-Philippe Chancelier. 
+\end{authors}
+
