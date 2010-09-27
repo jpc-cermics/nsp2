@@ -51,154 +51,113 @@
 /*     monotinicity of P with the other parameter. */
 /* ********************************************************************** */
 
+/* rewritten by Bruno Pincon and Jean-Philippe Chancelier */
+
 #include "cdf.h"
 
 int
 cdf_cdft (int *which, double *p, double *q, double *t, double *df,
 	  int *status, double *bound, double *boundbis)
 {
-  static int c__1 = 1;
-  static double c_b20 = .5;
-  static double c_b22 = 5.;
-  /* const double inf = 1.0D300;*/
   const double tol=1.0E-14, atol=1.0E-50, zero=1.0E-300,rtinf=1.0E150, maxdf=1.0E10;
-  double d__1;
-  double ccum;
-  int qleft;
-  int qporq;
-  double fx, pq;
-  int qhi;
-  double cum;
+  double cum, ccum, fx;
+  int pq_flag=1;   
+
 
   CDF_CHECK_ARG(*which < 1 , 1 , -1 );
   CDF_CHECK_ARG(*which > 3 , 3 , -1 );
  
-  if (*which != 1)
+  if (*which != 1)       /* check p and q */
     {
-      /*     P */
-      CDF_CHECK_ARG(*p <= 0 , 0 , -2 );
-      CDF_CHECK_ARG(*p > 1 , 1 , -2 );
-      /*     Q */
-      CDF_CHECK_ARG(*q <= 0 , 0 , -3 );
-      CDF_CHECK_ARG(*q > 1 , 1 , -3 );
-    }
-  if (*which != 3)
-    {
-      /*     DF */
-      CDF_CHECK_ARG(*df <= 0 , 0 , -5 );
-    }
-  if (*which != 1)
-    {
-      /*     P + Q */
-      pq = *p + *q;
-      if (((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      if ( *which == 2 ) /* p=0 and q = 0 are possible */
 	{
-	  *bound = (!(pq < 0.)) ?  1.: 0.0;
-	  *status = 3;
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
 	}
+      else
+	{
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
+	}
+      pq_flag = *p <= *q;
     }
 
-  if (*which != 1)
+  if (*which != 3)       /* check df */
     {
-      qporq = *p <= *q;
+      CDF_CHECK_ARG( !(*df > 0.0) , 0 , -5 );
     }
-  /*     Select the minimum of P or Q */
-  /*     Calculate ANSWERS */
-  if (1 == *which)
+
+
+  /* Calculate ANSWERS */
+  if (1 == *which)         /* Compute P and Q */
     {
-      /*     Computing P and Q */
       cdf_cumt (t, df, p, q);
       *status = 0;
     }
-  else if (2 == *which)
+
+  else if (2 == *which)    /* Compute T */
     {
-      /*     Computing T */
-      /*     .. Get initial approximation for T */
-      *t = cdf_dt1 (p, q, df);
-      d__1 = -rtinf;
-      cdf_dstinv (&d__1, &rtinf, &c_b20, &c_b20, &c_b22, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, t, &fx, &qleft, &qhi);
-    L180:
-      if (!(*status == 1))
+      if ( *p == 0.0 )
+	*t = -2.0*DBL_MAX;   /* -Inf */
+      else if ( *q == 0.0 )
+	*t =  2.0*DBL_MAX;   /* Inf */
+      else
 	{
-	  goto L210;
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+
+	  *t = cdf_dt1 (p, q, df);  /* Get initial approximation for T */
+	  nsp_zsearch_init(*t, -rtinf, rtinf, 0.1, 0.1, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
+	  do
+	    {
+	      cdf_cumt (t, df, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(t, fx, &S)) == EVAL_FX );
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:
+	      *status = 1; *bound = -rtinf; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = rtinf; break;
+	    default:
+	      *status = 5;
+	    }
 	}
-      cdf_cumt (t, df, &cum, &ccum);
-      if (!qporq)
-	{
-	  goto L190;
-	}
-      fx = cum - *p;
-      goto L200;
-    L190:
-      fx = ccum - *q;
-    L200:
-      cdf_dinvr (status, t, &fx, &qleft, &qhi);
-      goto L180;
-    L210:
-      if (!(*status == -1))
-	{
-	  goto L240;
-	}
-      if (!qleft)
-	{
-	  goto L220;
-	}
-      *status = 1;
-      *bound = -rtinf;
-      goto L230;
-    L220:
-      *status = 2;
-      *bound = rtinf;
-    L230:
-    L240:
-      ;
     }
-  else if (3 == *which)
+
+  else if (3 == *which)    /*  Compute DF */
     {
-      /*     Computing DF */
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+
       *df = 5.;
-      cdf_dstinv (&zero, &maxdf, &c_b20, &c_b20, &c_b22, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-    L250:
-      if (!(*status == 1))
+      nsp_zsearch_init(*df, zero, maxdf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L280;
+	  cdf_cumt (t, df, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumt (t, df, &cum, &ccum);
-      if (!qporq)
+      while ( (ret_val = nsp_zsearch(df, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L260;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = zero; *boundbis = maxdf; break;
+	default:
+	  *status = 5;
 	}
-      fx = cum - *p;
-      goto L270;
-    L260:
-      fx = ccum - *q;
-    L270:
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-      goto L250;
-    L280:
-      if (!(*status == -1))
-	{
-	  goto L310;
-	}
-      if (!qleft)
-	{
-	  goto L290;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L300;
-    L290:
-      *status = 2;
-      *bound = maxdf;
-    L300:
-    L310:
-      ;
     }
+
   return 0;
 }		
 
