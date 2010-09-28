@@ -1,0 +1,4 @@
+;; -*- scheme -*-
+
+(include "ldfaure-types.defs")
+

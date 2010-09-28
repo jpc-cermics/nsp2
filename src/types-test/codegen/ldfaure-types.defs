@@ -1,0 +1,18 @@
+;; -*- scheme -*-
+
+(define-objectref Ldfaure
+  (in-module "Ldfaure")
+  (parent "Object")
+  (c-name "NspLdfaure")
+  (fields
+   '("gboolean" "faure_startup" "hidden" "FALSE" )
+   '("void*" "coef" "hidden" "NULL" )
+   '("void*" "ytemp" "hidden" "NULL" )
+   '("int" "qs" "hidden" "-1" )
+   '("int" "hisum_save" "hidden" "-1" )
+   '("int" "faure_dim_num" "hidden" "0" )
+   )
+  (gtype-id "Ldfaure")
+)
+
+

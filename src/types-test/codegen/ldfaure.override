@@ -1,0 +1,65 @@
+/* -*- Mode: C -*- */
+%%
+headers
+
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override-int-create-final  ClassARef
+  /* verbatim in create interface  */
+%%
+override-destroy-prelim ClassARef 
+  /* verbatim in destroy */
+%%
+override classa_color_change kwargs
+static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->obj->cla_color = color;
+  return 0;
+}
+%%
+override classa_color_show kwargs
+static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->obj->cla_color);
+  return 0;
+}
+%%
+override setrowscols_classaref kwargs 
+static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
+{
+  return int_set_attribute(stack,rhs,opt,lhs);
+}
+%%
+override clareftest kwargs 
+/* XXXX : the generated code should be corrected */
+static int clareftest(NspClassARef *A)
+{
+  nsp_object_print((NspObject *) A,0,NULL,0);
+  return TRUE;
+}
+
+static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  int ret;
+  NspObject *A;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_classaref, &A) == FAIL) return RET_BUG;
+  ret = clareftest((NspClassARef *) A);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
