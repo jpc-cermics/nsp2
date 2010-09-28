@@ -61,10 +61,10 @@
 /*     monotonicity and will find an arbitrary one of the two values. */
 /* ********************************************************************** */
 
-/*   some changes by Bruno Pincon (sept. 2010):
+/*   some changes by Bruno Pincon and Jpc (sept. 2010):
  *   - rewrite the function in a non spaghetti coding style 
  *   - use nsp_zsearch in place of dinvr
- *
+ *   - use some macros to simplify argument checking
  */
 
 
@@ -76,83 +76,44 @@ cdf_cdff (int *which, double *p, double *q, double *f, double *dfn,
 	  double *dfd, int *status, double *bound, double *boundbis)
 {
   const double tol=1.0e-14, atol=1.0e-50, zero=1.0e-300, inf=1.0e300;
-  double cum, ccum;
+  double cum, ccum, fx;
   int pq_flag=1;   
-  double fx;
 
-  if ( *which < 1 || *which > 4 )
-    {
-      *status = -1;
-      *bound = (*which < 1) ? 1 : 4;
-      return 0;
-    }
+  /*  Verify parameters */
+
+  CDF_CHECK_ARG(*which < 1 , 1 , -1 );
+  CDF_CHECK_ARG(*which > 4 , 4 , -1 );
 
   if (*which != 1)  /* test p and q */
     {
-      double pq = *p + *q;
-
-      if ( ! ( 0.0 < *p  &&  *p <= 1.0 ) )
+      if ( *which == 2 ) /* p=0 and q = 0 are possible */
 	{
-	  *status = -2;
-	  if ( *p <= 0.0 )
-	    *bound = 0.0;
-	  else            /* rmk: Nan will be tracted here (so not the good message) */
-	    *bound = 1.0; 
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
 	}
-
-      if ( ! ( 0.0 < *q  &&  *q <= 1.0 ) )
+      else
 	{
-	  *status = -3;
-	  if ( *q <= 0.0 )
-	    *bound = 0.0;
-	  else            /* rmk: Nan will be threaded here (so not the good message) */
-	    *bound = 1.0;
-	  return 0;   
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
 	}
-
-      if ( fabs(pq - 1.0) >= 0.5*DBL_EPSILON )
-	{
-	  *status = 3;
-	  *bound = 1.0;
-	  return 0;
-	}
-      
-      pq_flag = *p <= *q;
+       pq_flag = *p <= *q;
     }
 
   if ( *which != 2  &&  *which != 1 )   /* test f (but also not for which == 1 as this case handles all values for f) */
     {
-      if ( ! (*f >= 0.0) )
-	{
-	  *status = -4;
-	  *bound = 0.0;
-	  return 0;
-	}
+      CDF_CHECK_ARG(!(*f >= 0.0), 0.0, -4);
     }
 
   if ( *which != 3 )    /* test dfn */
     {
-      if ( ! (*dfn > 0.0) )
-	{
-	  *bound = 0.0;
-	  *status = -5;
-	  return 0;
-	}
+      CDF_CHECK_ARG(!(*dfn > 0.0), 0.0, -5);
     }
 
   if ( *which != 4 )    /* test dfd */
     {
-      if ( ! (*dfd > 0.0) )
-	{
-	  *bound = 0.0;
-	  *status = -6;
-	  return 0;
-	}
+      CDF_CHECK_ARG(!(*dfd > 0.0), 0.0, -6);
     }
 
 
-/*     Calculate ANSWERS */
+  /*  Calculate ANSWERS  */
 
   if (1 == *which)        /* Calculating P and Q */
     {
@@ -162,40 +123,47 @@ cdf_cdff (int *which, double *p, double *q, double *f, double *dfn,
 
   else if (2 == *which)   /* Calculating F */
     { 
-      ZsearchStruct S;
-      zsearch_ret ret_val;
-      double step;
-      if ( *dfd > 4.0 )    /* in this case start from the mean and use step_init = std */
-	{
-	  *f = *dfd / (*dfd - 2.0 );
-	  step = *f*sqrt( 2.0*(*dfn+ *dfd -2.0)/(*dfn*(*dfd - 4.0)) );
-	}
+      if ( *p == 0.0 )
+	*f = 0.0;
+      else if ( *q == 0.0 )
+	*f =  2.0*DBL_MAX;   /* Inf */
       else
 	{
-	  *f = 5.; step = 2.0;
-	}
-
-      nsp_zsearch_init(*f, zero, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
-      do
-	{
-	  cdf_cumf (f, dfn, dfd, &cum, &ccum);
-	  if ( pq_flag )
-	    fx = cum - *p;
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double step;
+	  if ( *dfd > 4.0 )    /* in this case start from the mean and use step_init = std */
+	    {
+	      *f = *dfd / (*dfd - 2.0 );
+	      step = *f*sqrt( 2.0*(*dfn+ *dfd -2.0)/(*dfn*(*dfd - 4.0)) );
+	    }
 	  else
-	    fx = ccum - *q;
-	}
-      while ( (ret_val = nsp_zsearch(f, fx, &S)) == EVAL_FX );
+	    {
+	      *f = 5.; step = 2.0;
+	    }
 
-      switch ( ret_val )
-	{
-	case SUCCESS:
-	  *status = 0; break;
-	case LEFT_BOUND_EXCEEDED:
-	  *status = 1; *bound = zero; break;
-	case RIGHT_BOUND_EXCEEDED:
-	  *status = 2; *bound = inf; break;
-	default:
-	  *status = 4;
+	  nsp_zsearch_init(*f, zero, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
+	  do
+	    {
+	      cdf_cumf (f, dfn, dfd, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(f, fx, &S)) == EVAL_FX );
+
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:
+	      *status = 1; *bound = zero; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = inf; break;
+	    default:
+	      *status = 5;
+	    }
 	}
     }
 
