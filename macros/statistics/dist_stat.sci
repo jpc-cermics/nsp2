@@ -77,8 +77,14 @@ function [m,sd] = dist_stat(dist, varargin)
 	      is(b,%types.Mat) && isreal(b) && isscalar(b) && b > 0 ) then
 	      error("Error: for dist_stat(""bet"",a,b), a and b should be positive real")
 	end
-	m = a/(a+b);
-	sd = sqrt(a*b/(a+b+1))/(a+b);
+	//m = a/(a+b);
+	m = 1/(1 + b/a);
+	//sd = sqrt(a*b/(a+b+1))/(a+b);
+	if a >= b then
+	   sd = sqrt(b/(1 + (b+1)/a))/(a+b);
+	else
+	   sd = sqrt(a/(1 + (a+1)/b))/(a+b);
+	end
 	
      case "bin" then
 	if numel(varargin) ~= 2 then
@@ -159,8 +165,10 @@ function [m,sd] = dist_stat(dist, varargin)
 	if nu2 > 2 then, m = nu2/(nu2-2), else, m = %inf, end
 	if nu2 > 4 then
 	   sd = nu2*sqrt(2*(nu1+nu2-2)/(nu1*(nu2-4)))/(nu2-2)
-	else
+	elseif nu2 > 2 then
 	   sd = %inf
+	else
+	   sd = %nan
 	end
 	
      case "nf" then
