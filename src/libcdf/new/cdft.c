@@ -51,7 +51,7 @@
 /*     monotinicity of P with the other parameter. */
 /* ********************************************************************** */
 
-/* rewritten by Bruno Pincon and Jean-Philippe Chancelier */
+/* rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept 2010) */
 
 #include "cdf.h"
 
@@ -99,6 +99,8 @@ cdf_cdft (int *which, double *p, double *q, double *t, double *df,
 	*t = -2.0*DBL_MAX;   /* -Inf */
       else if ( *q == 0.0 )
 	*t =  2.0*DBL_MAX;   /* Inf */
+      else if ( *p == 0.5 || *q == 0.5 ) /* 0 */
+	*t = 0.0;
       else
 	{
 	  ZsearchStruct S;
