@@ -62,138 +62,72 @@
 /*      exp( - 0.5 * (( X - MEAN)/SD)**2) */
 /* ********************************************************************** */
 
+/* rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept 2010) */
+
 #include "cdf.h"
 
 
 int cdf_cdfnor (int *which, double *p, double *q, double *x, double *mean,
 		double *sd, int *status, double *bound, double *boundbis)
 {
-  const int c__1 = 1;
-  double d__1;
-  double z__, pq;
+  double z;
   *status = 0;
-  if (!(*which < 1 || *which > 4))
+
+
+  /*  Verify parameters */
+
+  CDF_CHECK_ARG(*which < 1 , 1 , -1 );
+  CDF_CHECK_ARG(*which > 4 , 4 , -1 );
+
+  if (*which != 1)  /* test p and q */
     {
-      goto L30;
+      if ( *which == 2 ) /* p=0 or q = 0 are possible */
+	{
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
+	}
+      else
+	{
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
+	}
     }
-  if (!(*which < 1))
+
+  if (*which != 4)    /* test sd */
     {
-      goto L10;
+      CDF_CHECK_ARG( !(*sd > 0.0) , 0 , -6 );
     }
-  *bound = 1.;
-  goto L20;
- L10:
-  *bound = 4.;
- L20:
-  *status = -1;
-  return 0;
- L30:
-  if (*which == 1)
+
+  /* Note that when p=q=0.5 and x,mean are given (to compute sd) */
+  /* then x should be equal to mean (this is not verified) */
+
+
+
+  /*   Calculate ANSWERS */
+
+  if (1 == *which)          /* Compute (P,Q) */
     {
-      goto L70;
+      z = (*x - *mean) / *sd;
+      cdf_cumnor (&z, p, q);
     }
-  /*     P */
-  if (!(*p <= 0. || *p > 1.))
+
+  else if (2 == *which)    /* Compute X */
     {
-      goto L60;
+      z = cdf_dinvnr(p, q);
+      *x = *sd * z + *mean;
     }
-  if (!(*p <= 0.))
+
+  else if (3 == *which)    /* Compute Mean */
     {
-      goto L40;
+      z = cdf_dinvnr (p, q);
+      *mean = *x - *sd * z;
     }
-  *bound = 0.;
-  goto L50;
- L40:
-  *bound = 1.;
- L50:
-  *status = -2;
-  return 0;
- L60:
- L70:
-  if (*which == 1)
-    {
-      goto L110;
+
+  else if (4 == *which)    /* Compute Sd: Note that this is not defined for p=q=0.5 */
+    {                      /* in this case return Nan (thanks to a change in cdf_dinvnr */
+                           /* which return exactly 0 in this case) */
+      z = cdf_dinvnr (p, q);
+      *sd = (*x - *mean) / z;
     }
-  /*     Q */
-  if (!(*q <= 0. || *q > 1.))
-    {
-      goto L100;
-    }
-  if (!(*q <= 0.))
-    {
-      goto L80;
-    }
-  *bound = 0.;
-  goto L90;
- L80:
-  *bound = 1.;
- L90:
-  *status = -3;
-  return 0;
- L100:
- L110:
-  if (*which == 1)
-    {
-      goto L150;
-    }
-  /*     P + Q */
-  pq = *p + *q;
-  if (!((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
-    {
-      goto L140;
-    }
-  if (!(pq < 0.))
-    {
-      goto L120;
-    }
-  *bound = 0.;
-  goto L130;
- L120:
-  *bound = 1.;
- L130:
-  *status = 3;
-  return 0;
- L140:
- L150:
-  if (*which == 4)
-    {
-      goto L170;
-    }
-  /*     SD */
-  if (!(*sd <= 0.))
-    {
-      goto L160;
-    }
-  *bound = 0.;
-  *status = -6;
-  return 0;
- L160:
-  /*     Calculate ANSWERS */
- L170:
-  if (1 == *which)
-    {
-      /*     Computing P */
-      z__ = (*x - *mean) / *sd;
-      cdf_cumnor (&z__, p, q);
-    }
-  else if (2 == *which)
-    {
-      /*     Computing X */
-      z__ = cdf_dinvnr (p, q);
-      *x = *sd * z__ + *mean;
-    }
-  else if (3 == *which)
-    {
-      /*     Computing the MEAN */
-      z__ = cdf_dinvnr (p, q);
-      *mean = *x - *sd * z__;
-    }
-  else if (4 == *which)
-    {
-      /*     Computing SD */
-      z__ = cdf_dinvnr (p, q);
-      *sd = (*x - *mean) / z__;
-    }
+
   return 0;
 }	
 
