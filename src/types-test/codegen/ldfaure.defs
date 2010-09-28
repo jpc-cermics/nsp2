@@ -2,3 +2,8 @@
 
 (include "ldfaure-types.defs")
 
+(define-method next
+  (of-object "Ldfaure")
+  (c-name "ldfaure_next")
+  (return-type "double")
+)

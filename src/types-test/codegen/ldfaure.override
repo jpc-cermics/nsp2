@@ -1,5 +1,21 @@
 /* -*- Mode: C -*- */
 %%
+include-start Ldfaure
+
+%%
+include-public Ldfaure
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+#include "faure.h"
+
+%%
+include-private Ldfaure
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
 headers
 
 %%
@@ -16,24 +32,55 @@ ignore-glob
   *_get_type
 
 %%
-override-int-create-final  ClassARef
+override-int-create-final  Ldfaure
   /* verbatim in create interface  */
 %%
-override-destroy-prelim ClassARef 
+override-destroy-prelim Ldfaure 
   /* verbatim in destroy */
+
 %%
-override classa_color_change kwargs
-static int _wrap_classa_color_change(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
+override-intcreate Ldfaure
+
+/* override the default int_create */
+
+int int_ldfaure_create(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {s_int,t_end};
-  int color;
-  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
-  self->obj->cla_color = color;
-  return 0;
+  int dim_num=-1, basis=-1, seed=0;
+  nsp_option opts[] ={{ "dim_num",s_int,NULLOBJ,-1},
+		      { "basis",s_int,NULLOBJ,-1},
+		      { "seed",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspLdfaure *H;
+  CheckStdRhs(0,0);
+  if ( get_optional_args(stack,rhs,opt,opts,&dim_num,&basis,&seed) == FAIL) return RET_BUG;
+  /* want to be sure that type ldfaure is initialized */
+  nsp_type_ldfaure = new_type_ldfaure(T_BASE);
+  if(( H = nsp_ldfaure_create_void(NVOID,(NspTypeBase *) nsp_type_ldfaure)) == NULLLDFAURE) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( nsp_ldfaure_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_ldfaure_check_values(H) == FAIL) return RET_BUG;
+  H->obj->seed= seed;
+  if ( faure_start (H, dim_num , basis )== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+%%
+override ldfaure_next kwargs
+
+static int _wrap_ldfaure_next(NspLdfaure *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *M;
+  if (( M = nsp_matrix_create(NVOID,'r',self->obj->faure_dim_num,1)) == NULL)
+    return RET_BUG;
+  if ( faure (self, &self->obj->seed, M->R )== FAIL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
 }
+
 %%
 override classa_color_show kwargs
-static int _wrap_classa_color_show(NspClassARef *self,Stack stack,int rhs,int opt,int lhs)
+static int _wrap_classa_color_show(NspLdfaure *self,Stack stack,int rhs,int opt,int lhs)
 {
   Sciprintf("color: %d\n",self->obj->cla_color);
   return 0;
@@ -47,7 +94,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 %%
 override clareftest kwargs 
 /* XXXX : the generated code should be corrected */
-static int clareftest(NspClassARef *A)
+static int clareftest(NspLdfaure *A)
 {
   nsp_object_print((NspObject *) A,0,NULL,0);
   return TRUE;
@@ -59,7 +106,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   int ret;
   NspObject *A;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_classaref, &A) == FAIL) return RET_BUG;
-  ret = clareftest((NspClassARef *) A);
+  ret = clareftest((NspLdfaure *) A);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }

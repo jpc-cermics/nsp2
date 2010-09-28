@@ -489,7 +489,7 @@ class IntPointerArg(ArgType):
         if pdef == 'no': 
             return '  %s->%s = NULL; %s->%s_length = 0; \n' % (varname,pname,varname,pname)
         else: 
-            return '  %s->%s = AFAIRE %s;\n' % (varname,pname,pdef)
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
 
     def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
 	"""used when a field is to be printed """
