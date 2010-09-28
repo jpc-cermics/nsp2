@@ -23,8 +23,12 @@ double cdf_dinvnr (double *p, double *q)
   double ccum, xcur, cum, d1, strtx, dx, pp;
   int i1, i,  qporq;
 
-  /* add the particular case p=q=0.5 to get exactly 0 */
-  if ( *p == 0.5 || *q == 0.5 )
+  /* add particular cases */
+  if ( *p == 0.0 )
+    return -2.0*DBL_MAX;  /* -Inf */
+  else if ( *q == 0.0 ) 
+    return  2.0*DBL_MAX;  /* Inf */
+  else if ( *p == 0.5 || *q == 0.5 )  /* p=q=0.5 to get exactly 0 */
     return 0.0;
 
   /*     FIND MINIMUM OF P AND Q */
