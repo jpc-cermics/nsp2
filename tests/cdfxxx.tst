@@ -18,6 +18,7 @@ xe =[ 0.0014393908669709057;
       99.16620137447201;
       999.1666203472842;
       9999.166662037871 ];
+// pe computed using wolfram-alpha web calculator
 pe =[ 0.00009999999999999993;
       0.0010000000000000095;
       0.009999999999999966;
@@ -72,6 +73,7 @@ xe = [ 0.1876507842744393;
        9.053567303453834  ;
        23.88518499113799  ;
        61.11087818490155  ];
+// pe computed using wolfram-alpha web calculator
 pe = [ 0.000100000000000037357;
        0.001000000000000068765;
        0.0100000000000011215; 
@@ -137,6 +139,7 @@ xe = [0.0;
       3.3649299989072188;
       5.893429531356009;
       9.677566300882816];
+// pe computed using wolfram-alpha web calculator
 pe = [0.5;
       0.75000000000000013;
       0.9000000000000000541;
@@ -186,3 +189,52 @@ if ~x.equal[-%inf] then, pause, end
 x = cdft("T", dfe, 1, 0);
 if ~x.equal[%inf] then, pause, end
 
+
+
+/////////////////////////////////////////////////////////
+// tests for normal distribution
+/////////////////////////////////////////////////////////
+me = 0.625;
+sde = 0.75;
+xe = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
+// pe computed using pari-gp software
+pe = [0.3085375387259868963622953894, 0.4338161673890963463825581651, 0.5661838326109036536174418350,...
+      0.6914624612740131036377046106, 0.7976716190363569746314664003, 0.8783274954256187431795040554,...
+      0.9331927987311419339955059590, 0.9666234924151827560954251535];
+
+[m,sd] = dist_stat("nor",me,sde);
+if ~(m == me && sd == sde) then, pause, end
+
+// test symmetry
+sxe = 2*me - xe;
+[p,q] = cdf("nor",xe,me,sde);
+[qq,pp] = cdf("nor",sxe,me,sde);
+if ~(p.equal[pp] && q.equal[qq]) then, pause, end
+
+// usual tests
+v = ones(size(xe));
+pp = cdfnor("PQ",xe,me*v,sde*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 1e-15 then, pause, end
+x = icdf("nor",pe,me,sde);
+xx = cdfnor("X",me*v,sde*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./xe );
+if erx > 1e-15 then, pause, end
+m = cdfnor("Mean",sde*v,pe,1-pe,xe);
+erm =  max(abs(m-me)/me);
+if erm > 1e-15 then, pause, end
+sd = cdfnor("Std",pe,1-pe,xe,me*v);
+erb = max( abs(sd-sde)/sde );
+if erb > 1e-15 then, pause, end
+
+// verify extreme value
+[p,q] = cdfnor("PQ",-%inf,me,sde);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdff("PQ",%inf,me,sde);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+x = cdfnor("X", me, sde, 0, 1);
+if ~x.equal[-%inf] then, pause, end
+x = cdfnor("X", me, sde, 1, 0);
+if ~x.equal[%inf] then, pause, end
