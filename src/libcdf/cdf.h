@@ -11,6 +11,12 @@ extern   double pow_di (double *, int *);
 
 #define CDF_CHECK_ARG(x, b, st ) if ((x)) { *bound = b; *status = st ;return 0;}
 
+#define CDF_CHECK_PQ( left , right )  \
+        CDF_CHECK_ARG( !( left  *p  &&  *p right ), *p right ? 0.0 : 1.0 ,-2); \
+        CDF_CHECK_ARG( !( left  *q  &&  *q right ), *q right ? 0.0 : 1.0 ,-3); \
+        CDF_CHECK_ARG( fabs( (*p + *q) - 1.0) >= 0.5*DBL_EPSILON , 1.0, 3); 
+
+
 /*
  *    for the new zero search routine
  */
