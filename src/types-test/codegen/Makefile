@@ -286,8 +286,8 @@ all:: ../../liblowdisc/ldfaure.c
 ../../liblowdisc/ldfaure.c : ldfaure.defs ldfaure-types.defs ldfaure.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override ldfaure.override \
-	    --prefix Ldfaure ldfaure.defs) > $*.c \
-	&& mv ldfaure.h ../../liblowdisc/nsp/
+	    --prefix Ldfaure ldfaure.defs) | sed -e "s+codegen/+../types-test/codegen/+g" > $*.c \
+	&& mv ldfaure.h ldhalton.h ldrevhalton.h ldsobol4.h ldsobol8.h ldniederreiter.h  ../../liblowdisc/nsp/
 
 
 

@@ -1,19 +1,99 @@
 ;; -*- scheme -*-
 
-(define-objectref Ldfaure
+(define-object Ldfaure
   (in-module "Ldfaure")
   (parent "Object")
   (c-name "NspLdfaure")
   (fields
-   '("gboolean" "faure_startup" "hidden" "FALSE" )
+   '("gboolean" "startup" "hidden" "FALSE" )
    '("int*" "coef" "hidden" "NULL" )
    '("int*" "ytemp" "hidden" "NULL" )
    '("int" "qs" "hidden" "-1" )
    '("int" "hisum_save" "hidden" "-1" )
-   '("int" "faure_dim_num" "hidden" "0" )
-   '("int" "seed" "hidden" "0" )
+   '("int" "dim" "hidden" "0" )
+   '("int" "seed" "std" "-1" )
    )
   (gtype-id "Ldfaure")
+)
+
+(define-object Ldrevhalton
+  (in-module "Ldrevhalton")
+  (parent "Object")
+  (c-name "NspLdrevhalton")
+  (fields
+   '("gboolean" "startup" "hidden" "FALSE" )
+   '("int*" "base" "hidden" "NULL" )
+   '("int" "dim" "hidden" "0" )
+   '("int" "seed" "std" "-1" )
+   )
+  (gtype-id "Ldrevhalton")
+)
+
+(define-object Ldhalton
+  (in-module "Ldhalton")
+  (parent "Object")
+  (c-name "NspLdhalton")
+  (fields
+   '("gboolean" "startup" "hidden" "FALSE" )
+   '("int*" "base" "hidden" "NULL" )
+   '("int*" "leap" "hidden" "NULL" )
+   '("int*" "seed" "hidden" "NULL" )
+   '("int" "dim" "hidden" "0" )
+   '("int" "step" "hidden" "0" )
+   )
+  (gtype-id "Ldhalton")
+)
+
+
+(define-object Ldsobol4
+  (in-module "Ldsobol4")
+  (parent "Object")
+  (c-name "NspLdsobol4")
+  (fields
+   '("gboolean" "startup" "hidden" "FALSE" )
+   '("int*" "v" "hidden" "NULL" )
+   '("int*" "lastq" "hidden" "NULL" )
+   '("int" "dim" "hidden" "0" )
+   '("int" "seed" "hidden" "-1")
+   '("int" "seed_save" "hidden" "-1" )
+   '("float" "recipd" "hidden" "0" )
+   )
+  (gtype-id "Ldsobol4")
+)
+
+(define-object Ldsobol8
+  (in-module "Ldsobol8")
+  (parent "Object")
+  (c-name "NspLdsobol8")
+  (fields
+   '("gboolean" "startup" "hidden" "FALSE" )
+   '("gint64*" "v" "hidden" "NULL" )
+   '("gint64*" "lastq" "hidden" "NULL" )
+   '("int" "dim" "hidden" "0" )
+   '("gint64" "seed" "hidden" "-1")
+   '("gint64" "seed_save" "hidden" "-1" )
+   '("double" "recipd" "hidden" "0" )
+   )
+  (gtype-id "Ldsobol8")
+)
+
+(define-object Ldniederreiter
+  (in-module "Ldniederreiter")
+  (parent "Object")
+  (c-name "NspLdniederreiter")
+  (fields
+   '("gboolean" "startup" "hidden" "FALSE" )
+   '("gint64*" "v" "hidden" "NULL" )
+   '("gint64*" "lastq" "hidden" "NULL" )
+   '("int" "dim" "hidden" "0" )
+   '("gint64" "seed" "hidden" "-1")
+   '("gint64" "seed_save" "hidden" "-1" )
+   '("double" "recipd" "hidden" "0" )
+
+   '("int" "base" "hidden" "11" )
+   '("int" "skip" "hidden" "0" )
+   )
+  (gtype-id "Ldniederreiter")
 )
 
 

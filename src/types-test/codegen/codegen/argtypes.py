@@ -464,6 +464,128 @@ class IntArg(ArgType):
 # when used as an object field name foo a foo_length field 
 # is added to record the length of foo 
 
+class Int64PointerArg(ArgType):
+
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+	"""used when a variable is to be copied """
+        if right_varname:
+            # this part is used in copy or full_copy 
+            str= '  if ((%s->%s = malloc(%s->%s_length*sizeof(gint64)))== NULL) return NULL;\n' % \
+                (left_varname,pname,right_varname,pname)
+            str= str + '  %s->%s_length = %s->%s_length;\n' % (left_varname,pname,right_varname,pname) 
+            str= str + '  memcpy(%s->%s,%s->%s,%s->%s_length*sizeof(gint64));\n' \
+                % (left_varname,pname,right_varname,pname,right_varname,pname) 
+            return str
+        else:
+            # this part is only used on create and we do not want to copy the given string 
+            # note that if the given string is NULL it will be set to "" by check_values. 
+            # return '  if ((%s->%s = nsp_string_copy(%s)) == NULL) return NULL;\n' % (left_varname,pname,pname)
+            str = '  %s->%s = %s;\n' % (left_varname,pname,pname)
+            str = str + '  %s->%s_length = %s_length;\n' % (left_varname,pname,pname)
+            return str 
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field of type string is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = NULL; %s->%s_length = 0; \n' % (varname,pname,varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
+
+    def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
+	"""used when a field is to be printed """
+        # XXX to be done 
+        return '' 
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+	"""used to free allocated fields  """
+        return  '    FREE(%s->%s);\n' % (varname,pname)
+
+    def attr_write_save(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+        str = '  if (nsp_xdr_save_i(xdrs, %s->%s_length) == FAIL) return FAIL;\n' % (varname,pname)
+        str = str + '  if (nsp_xdr_save_array_i(xdrs, %s->%s, %s->%s_length) == FAIL) return FAIL;\n' \
+            % (varname,pname,varname,pname)
+        return str
+
+    def attr_write_load(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be reloaded """
+        str= '  if (nsp_xdr_load_i(xdrs,&(%s->%s_length)) == FAIL) return NULL;\n'  % (varname,pname)
+        str= str + '  if ((%s->%s = malloc(%s->%s_length*sizeof(gint64)))== NULL) return NULL;\n' \
+            % (varname,pname,varname,pname)
+        str= str + '  if (nsp_xdr_load_array_i(xdrs,%s->%s,%s->%s_length) == FAIL) return NULL;\n' \
+            % (varname,pname,varname,pname)
+        return str 
+
+    def attr_write_create_call(self, ftype,fname,opt,pdef,psize,pcheck,flag):
+        """use to create the declaration in _create function"""
+        if flag:
+            fftype=''
+        else:
+            fftype=ftype
+        # for int pointers we add the length in a generated extra field 
+        return '%s %s, int %s_length' % (fftype,fname,fname)
+
+    def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
+        if byref == 't' :
+            pset_name  ='((%s *) self)->obj->%s' % (upinfo,pname) 
+        else:
+            pset_name  ='((%s *) self)->%s' % (upinfo,pname) 
+	if pdflt:
+	    info.varlist.add('NspMatrix', '*' + pname + ' = ' + pdflt)
+	else:
+	    info.varlist.add('NspMatrix', '*' + pname)
+	info.arglist.append( pname + '->I')
+        info.add_parselist('mat_int', ['&' + pname], [pname])
+        info.attrcodebefore.append('  if ( ! IsMat(O)  ||  ((NspMatrix *) O)->rc_type != \'r\' ) return FAIL; \n')
+        info.attrcodebefore.append('  %s = (NspMatrix *) O; \n' % (pname) )
+        info.varlist.add('int', 'i')
+        info.varlist.add('int', '*pi=' + pset_name  )
+        info.varlist.add('int', '*loc = NULL')
+        info.attrcodebefore.append('  if ((loc = malloc( %s_length*sizeof(gint64)))== NULL) return FAIL;\n' % pset_name)
+        info.attrcodebefore.append('  FREE(pi); pi = loc;\n' ) 
+        info.attrcodebefore.append('  %s_length = %s->mn;\n' % (pset_name,pname))
+        info.attrcodebefore.append('  for ( i = 0 ; i < %s->mn ; i++) pi[i]= (gint64) %s->R[i];\n' % (pname,pname) ) 
+
+
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        str =       '  {int i;\n' 
+        str = str + '    for ( i = 0 ; i < A->%s_length ; i++)\n' % (pname) 
+        str = str + '      if ( A->%s[i] != loc->%s[i]) return FALSE;\n' % (pname,pname)
+        str = str + '  }\n'
+        return str
+
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        return ''
+        
+    def attr_write_field_declaration(self,ftype,fname,opt,pdef,psize,pcheck):
+        """use to create the declaration for field in the type """
+        str =  '  %s %s;  int %s_length;\n' % (ftype,fname,fname)
+        return str
+
+    def attr_write_return(self, ptype, ownsreturn, info,  pdef, psize, pcheck):
+        # used for returning an attribute value 
+        # this is done by copying the associated field 
+        # some fields have been set for self 
+        if self.byref == 't' :
+            pset_name =  '((%s *) self)->obj->%s' % ( self.c_name , self.fname) 
+        else:
+            pset_name =  '((%s *) self)->%s' % ( self.c_name , self.fname) 
+        info.varlist.add('ZZZgint64', '*ret')
+        info.varlist.add('NspMatrix', '*nsp_ret')
+        str = '  if (( nsp_ret = nsp_matrix_create(NVOID,\'r\',1,%s_length)) == NULL) return NULL;\n' % (pset_name)
+        str = str + '  memcpy(nsp_ret->I, ret , %s_length*sizeof(int));\n' % ( pset_name) 
+        str = str + '  nsp_ret->convert = \'i\';\n' 
+        str = str + '  return NSP_OBJECT(nsp_ret);'
+        info.attrcodeafter.append(str)
+
+        
+    def write_return(self, ptype, ownsreturn, info):
+        info.varlist.add('gint64', '*ret')
+        info.codeafter.append('  if ( nsp_move_double(stack,1,(double) *ret)==FAIL) return RET_BUG;\n'
+                              '  return 1;')
 class IntPointerArg(ArgType):
 
     def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
@@ -958,6 +1080,36 @@ class Int64Arg(ArgType):
     def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
 	"""used to give a default value  """
         return ''
+
+    def attr_write_init(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used when a field is to be initialized """
+        if pdef == 'no': 
+            return '  %s->%s = 0;\n' % (varname,pname)
+        else: 
+            return '  %s->%s = %s;\n' % (varname,pname,pdef)
+
+    def attr_free_fields(self,ptype,pname, varname,byref):
+        return  ''
+
+    def attr_equal_fields(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to test fields equality  """
+        if byref == 't' :
+            pname = 'obj->'+pname
+        return '  if ( A->%s != loc->%s) return FALSE;\n' % (pname,pname)
+    def attr_write_defval(self,ptype,pname, varname,byref, pdef , psize, pcheck):
+	"""used to give a default value  """
+        return ''
+
+    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+        if right_varname:
+            return '  '+ left_varname + '->'+ pname +'='+ right_varname +'->'+ pname +';\n'
+        else:
+            return '  '+ left_varname + '->'+ pname +'='+ pname +';\n'
+
+    def attr_write_print(self,ptype,pname, varname,byref,print_mode, pdef , psize, pcheck):
+        """used when a field is to be printed """
+        return  '  Sciprintf1(indent+2,"%s=%%ld\\n",%s->%s);\n' % (pname,varname,pname)
+
 
 class UInt64Arg(ArgType):
     dflt = '  if (nsp_%(name)s)\n' \
@@ -2916,6 +3068,10 @@ matcher.register('gdouble*', arg)
 arg = IntPointerArg()
 matcher.register('int*', arg)
 matcher.register('gint*', arg)
+
+arg = Int64PointerArg()
+matcher.register('int64*', arg)
+matcher.register('gint64*', arg)
 
 arg = BoolPointerArg()
 matcher.register('boolean*', arg)

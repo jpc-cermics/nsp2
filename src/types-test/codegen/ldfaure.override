@@ -8,6 +8,39 @@ include-public Ldfaure
  * of classa.h
  */
 #include "faure.h"
+%%
+include-public Ldrevhalton
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+#include "reversehalton.h"
+%%
+include-public Ldhalton
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+#include "halton.h"
+
+%%
+include-public Ldsobol4
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+#include "sobol_i4.h"
+
+%%
+include-public Ldsobol8
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+#include "sobol_i8.h"
+
+%%
+include-public Ldniederreiter
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+#include "niederreiter.h"
 
 %%
 include-private Ldfaure
@@ -46,20 +79,21 @@ override-intcreate Ldfaure
 int int_ldfaure_create(Stack stack, int rhs, int opt, int lhs)
 {
   int dim_num=-1, basis=0, seed=0;
-  nsp_option opts[] ={{ "dim_num",s_int,NULLOBJ,-1},
-		      { "basis",s_int,NULLOBJ,-1},
+  nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
 		      { "seed",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspLdfaure *H;
   CheckStdRhs(0,0);
-  if ( get_optional_args(stack,rhs,opt,opts,&dim_num,&basis,&seed) == FAIL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&dim_num,&seed) == FAIL) 
+    return RET_BUG;
   /* want to be sure that type ldfaure is initialized */
   nsp_type_ldfaure = new_type_ldfaure(T_BASE);
-  if(( H = nsp_ldfaure_create_void(NVOID,(NspTypeBase *) nsp_type_ldfaure)) == NULLLDFAURE) return RET_BUG;
+  if(( H = nsp_ldfaure_create_void(NVOID,(NspTypeBase *) nsp_type_ldfaure))
+     == NULLLDFAURE) return RET_BUG;
   /* then we use optional arguments to fill attributes */
   if ( nsp_ldfaure_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldfaure_check_values(H) == FAIL) return RET_BUG;
-  H->obj->seed= seed;
+  H->seed= seed;
   if ( faure_start (H, dim_num , basis )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
@@ -70,43 +104,280 @@ override ldfaure_next kwargs
 
 static int _wrap_ldfaure_next(NspLdfaure *self,Stack stack,int rhs,int opt,int lhs)
 {
+  int n=1,i;
   NspMatrix *M;
-  if (( M = nsp_matrix_create(NVOID,'r',self->obj->faure_dim_num,1)) == NULL)
+  CheckStdRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+      n= Max(n,1);
+    }
+  if (( M = nsp_matrix_create(NVOID,'r',self->dim,n)) == NULL)
     return RET_BUG;
-  if ( faure (self, &self->obj->seed, M->R )== FAIL) return RET_BUG;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( faure (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
+    }
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
 
 %%
-override classa_color_show kwargs
-static int _wrap_classa_color_show(NspLdfaure *self,Stack stack,int rhs,int opt,int lhs)
-{
-  Sciprintf("color: %d\n",self->obj->cla_color);
-  return 0;
-}
-%%
-override setrowscols_classaref kwargs 
-static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
-{
-  return int_set_attribute(stack,rhs,opt,lhs);
-}
-%%
-override clareftest kwargs 
-/* XXXX : the generated code should be corrected */
-static int clareftest(NspLdfaure *A)
-{
-  nsp_object_print((NspObject *) A,0,NULL,0);
-  return TRUE;
-}
+override-intcreate Ldrevhalton
 
-static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
+/* override the default int_create */
+
+int int_ldrevhalton_create(Stack stack, int rhs, int opt, int lhs)
 {
-  int_types T[] = {obj_check,t_end};
-  int ret;
-  NspObject *A;
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_classaref, &A) == FAIL) return RET_BUG;
-  ret = clareftest((NspLdfaure *) A);
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  int dim=-1,  seed=0;
+  nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
+		      { "seed",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspLdrevhalton *H;
+  CheckStdRhs(0,0);
+  if ( get_optional_args(stack,rhs,opt,opts,&dim,&seed) == FAIL) 
+    return RET_BUG;
+  /* want to be sure that type ldrevhalton is initialized */
+  nsp_type_ldrevhalton = new_type_ldrevhalton(T_BASE);
+  if(( H = nsp_ldrevhalton_create_void(NVOID,(NspTypeBase *) nsp_type_ldrevhalton))
+     == NULLLDREVHALTON) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( nsp_ldrevhalton_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_ldrevhalton_check_values(H) == FAIL) return RET_BUG;
+  H->seed= seed;
+  if ( reversehalton_start1(H, dim )== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+
+%%
+override ldrevhalton_next kwargs
+
+static int _wrap_ldrevhalton_next(NspLdrevhalton *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int n=1,i;
+  NspMatrix *M;
+  CheckStdRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+      n= Max(n,1);
+    }
+  if (( M = nsp_matrix_create(NVOID,'r',self->dim,n)) == NULL)
+    return RET_BUG;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( reversehalton (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
+%%
+override-intcreate Ldhalton
+
+/* override the default int_create */
+
+int int_ldhalton_create(Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=-1,  seed=0;
+  nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
+		      { "seed",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspLdhalton *H;
+  CheckStdRhs(0,0);
+  if ( get_optional_args(stack,rhs,opt,opts,&dim,&seed) == FAIL) 
+    return RET_BUG;
+  /* want to be sure that type ldhalton is initialized */
+  nsp_type_ldhalton = new_type_ldhalton(T_BASE);
+  if(( H = nsp_ldhalton_create_void(NVOID,(NspTypeBase *) nsp_type_ldhalton))
+     == NULLLDHALTON) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( nsp_ldhalton_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_ldhalton_check_values(H) == FAIL) return RET_BUG;
+
+  if ( halton_start_def(H, dim )== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+
+%%
+override ldhalton_next kwargs
+
+static int _wrap_ldhalton_next(NspLdhalton *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int n=1,i;
+  NspMatrix *M;
+  CheckStdRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+      n= Max(n,1);
+    }
+  if (( M = nsp_matrix_create(NVOID,'r',self->dim,n)) == NULL)
+    return RET_BUG;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( halton (self, self->step, M->R + M->m*i)== FAIL) return RET_BUG;
+      self->step +=1;
+    }
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+%%
+override-intcreate Ldsobol4
+
+/* override the default int_create */
+
+int int_ldsobol4_create(Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=-1,  seed=0;
+  nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
+		      { "seed",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspLdsobol4 *H;
+  CheckStdRhs(0,0);
+  if ( get_optional_args(stack,rhs,opt,opts,&dim,&seed) == FAIL) 
+    return RET_BUG;
+  /* want to be sure that type ldsobol4 is initialized */
+  nsp_type_ldsobol4 = new_type_ldsobol4(T_BASE);
+  if(( H = nsp_ldsobol4_create_void(NVOID,(NspTypeBase *) nsp_type_ldsobol4))
+     == NULLLDSOBOL4) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( nsp_ldsobol4_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_ldsobol4_check_values(H) == FAIL) return RET_BUG;
+
+  if ( i4_sobol_start(H, dim )== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+
+%%
+override ldsobol4_next kwargs
+
+static int _wrap_ldsobol4_next(NspLdsobol4 *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int n=1,i;
+  NspMatrix *M;
+  CheckStdRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+      n= Max(n,1);
+    }
+  if (( M = nsp_matrix_create(NVOID,'r',self->dim,n)) == NULL)
+    return RET_BUG;
+  M->convert = 'f' ;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( i4_sobol (self, &self->seed, M->F + M->m*i)== FAIL) return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+%%
+override-intcreate Ldsobol8
+
+/* override the default int_create */
+
+int int_ldsobol8_create(Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=-1,  seed=0;
+  nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
+		      { "seed",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspLdsobol8 *H;
+  CheckStdRhs(0,0);
+  if ( get_optional_args(stack,rhs,opt,opts,&dim,&seed) == FAIL) 
+    return RET_BUG;
+  /* want to be sure that type ldsobol8 is initialized */
+  nsp_type_ldsobol8 = new_type_ldsobol8(T_BASE);
+  if(( H = nsp_ldsobol8_create_void(NVOID,(NspTypeBase *) nsp_type_ldsobol8))
+     == NULLLDSOBOL8) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( nsp_ldsobol8_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_ldsobol8_check_values(H) == FAIL) return RET_BUG;
+
+  if ( i8_sobol_start(H, dim )== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+
+%%
+override ldsobol8_next kwargs
+
+static int _wrap_ldsobol8_next(NspLdsobol8 *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int n=1,i;
+  NspMatrix *M;
+  CheckStdRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+      n= Max(n,1);
+    }
+  if (( M = nsp_matrix_create(NVOID,'r',self->dim,n)) == NULL)
+    return RET_BUG;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if ( i8_sobol (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+
+%%
+override-intcreate Ldniederreiter
+
+/* override the default int_create */
+
+int int_ldniederreiter_create(Stack stack, int rhs, int opt, int lhs)
+{
+  int dim=-1,  seed=0;
+  nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
+		      { "seed",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspLdniederreiter *H;
+  CheckStdRhs(0,0);
+  if ( get_optional_args(stack,rhs,opt,opts,&dim,&seed) == FAIL) 
+    return RET_BUG;
+  /* want to be sure that type ldniederreiter is initialized */
+  nsp_type_ldniederreiter = new_type_ldniederreiter(T_BASE);
+  if(( H = nsp_ldniederreiter_create_void(NVOID,(NspTypeBase *) nsp_type_ldniederreiter))
+     == NULLLDNIEDERREITER) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( nsp_ldniederreiter_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_ldniederreiter_check_values(H) == FAIL) return RET_BUG;
+
+  if ( niederreiter_start(H, dim, 11,0,"/tmp/one.txt","/tmp/two.txt",TRUE )== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+
+%%
+override ldniederreiter_next kwargs
+
+static int _wrap_ldniederreiter_next(NspLdniederreiter *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int n=1,i;
+  NspMatrix *M;
+  CheckStdRhs(0,1);
+  if ( rhs == 1) 
+    {
+      if ( GetScalarInt (stack, 1, &n) == FAIL ) return RET_BUG;
+      n= Max(n,1);
+    }
+  if (( M = nsp_matrix_create(NVOID,'r',self->dim,n)) == NULL)
+    return RET_BUG;
+  for ( i = 0 ; i < n ; i++) 
+    {
+      if (niederreiter (self,  M->R + M->m*i)== FAIL) return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+

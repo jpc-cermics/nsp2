@@ -7,3 +7,33 @@
   (c-name "ldfaure_next")
   (return-type "double")
 )
+
+(define-method next
+  (of-object "Ldrevhalton")
+  (c-name "ldrevhalton_next")
+  (return-type "double")
+)
+
+(define-method next
+  (of-object "Ldhalton")
+  (c-name "ldhalton_next")
+  (return-type "double")
+)
+
+(define-method next
+  (of-object "Ldsobol4")
+  (c-name "ldsobol4_next")
+  (return-type "double")
+)
+
+(define-method next
+  (of-object "Ldsobol8")
+  (c-name "ldsobol8_next")
+  (return-type "double")
+)
+
+(define-method next
+  (of-object "Ldniederreiter")
+  (c-name "ldniederreiter_next")
+  (return-type "double")
+)
