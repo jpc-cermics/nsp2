@@ -233,8 +233,7 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
       
     case SEARCH_RIGHT:
       S->step *= S->stpmul;
-      if ( ((S->monotonicity == INCREASING) && ( fx >= 0)) ||
-	   ((S->monotonicity == DECREASING) && ( fx <= 0)) )
+      if ( (fx <= 0 && S->fb >= 0) || (fx >= 0 && S->fb <= 0) )
 	{
 	  S->state = BRACKETED;
 	  S->c = *x; S->fc = fx;
@@ -266,8 +265,7 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
       
     case SEARCH_LEFT:
       S->step *= S->stpmul;
-      if ( ((S->monotonicity == INCREASING) && ( fx <= 0)) ||
-	   ((S->monotonicity == DECREASING) && ( fx >= 0)) )
+      if ( (fx <= 0 && S->fc >= 0) || (fx >= 0 && S->fc <= 0) )
 	{
 	  S->state = BRACKETED;
 	  S->b = *x; S->fb = fx;
@@ -285,7 +283,7 @@ zsearch_ret nsp_zsearch(double *x, double fx, ZsearchStruct *S)
 		{
 		  S->ext = -1;
 		  S->state = SEARCH_RIGHT;
-		  S->c = S->a; S->fc = S->fa;
+		  S->b = S->a; S->fb = S->fa;
 		  S->step = S->absstp + S->relstp*fabs(S->a);
 		  *x = Min( S->a + S->step, S->right_bound);
 		  return EVAL_FX;
