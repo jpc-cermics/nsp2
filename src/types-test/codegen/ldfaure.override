@@ -45,7 +45,7 @@ override-intcreate Ldfaure
 
 int int_ldfaure_create(Stack stack, int rhs, int opt, int lhs)
 {
-  int dim_num=-1, basis=-1, seed=0;
+  int dim_num=-1, basis=0, seed=0;
   nsp_option opts[] ={{ "dim_num",s_int,NULLOBJ,-1},
 		      { "basis",s_int,NULLOBJ,-1},
 		      { "seed",s_int,NULLOBJ,-1},
