@@ -2,11 +2,15 @@
 
 (include "ldfaure-types.defs")
 
+;; Faure 
+
 (define-method next
   (of-object "Ldfaure")
   (c-name "ldfaure_next")
   (return-type "double")
 )
+
+;; ReverseHalton 
 
 (define-method next
   (of-object "Ldrevhalton")
@@ -14,11 +18,60 @@
   (return-type "double")
 )
 
+;; Halton 
+
 (define-method next
   (of-object "Ldhalton")
   (c-name "ldhalton_next")
   (return-type "double")
 )
+
+(define-method set_leap
+  (of-object "Ldhalton")
+  (c-name "ldhalton_set_leap")
+  (parameters
+    '("NspMatrix*" "leap")
+    )
+  (return-type "none")
+)
+
+(define-method get_leap
+  (of-object "Ldhalton")
+  (c-name "ldhalton_get_leap")
+  (return-type "NspMatrix*")
+)
+
+(define-method set_base
+  (of-object "Ldhalton")
+  (c-name "ldhalton_set_base")
+  (parameters
+    '("NspMatrix*" "base")
+    )
+  (return-type "none")
+)
+
+(define-method get_base
+  (of-object "Ldhalton")
+  (c-name "ldhalton_get_base")
+  (return-type "NspMatrix*")
+)
+
+(define-method set_seed
+  (of-object "Ldhalton")
+  (c-name "ldhalton_set_seed")
+  (parameters
+    '("NspMatrix*" "seed")
+    )
+  (return-type "none")
+)
+
+(define-method get_seed
+  (of-object "Ldhalton")
+  (c-name "ldhalton_get_seed")
+  (return-type "NspMatrix*")
+)
+
+;; Sobol4
 
 (define-method next
   (of-object "Ldsobol4")
@@ -26,11 +79,15 @@
   (return-type "double")
 )
 
+;; Sobol8 
+
 (define-method next
   (of-object "Ldsobol8")
   (c-name "ldsobol8_next")
   (return-type "double")
 )
+
+;; niederreiter
 
 (define-method next
   (of-object "Ldniederreiter")

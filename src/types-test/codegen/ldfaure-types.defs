@@ -39,7 +39,7 @@
    '("int*" "leap" "hidden" "NULL" )
    '("int*" "seed" "hidden" "NULL" )
    '("int" "dim" "hidden" "0" )
-   '("int" "step" "hidden" "0" )
+   '("int" "step" "std" "0" )
    )
   (gtype-id "Ldhalton")
 )
