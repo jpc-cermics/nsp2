@@ -55,8 +55,8 @@ int
 cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 	    int *status, double *bound, double *boundbis)
 {
-  const double tol=1.0E-14, atol=1.0E-50, inf=1.0E300;
-  int pq_flag;
+  const double tol=1.0E-14, atol=1.0E-50, inf=1.0E300, zero=1e-300;
+  int pq_flag = 1;
   double fx, cum, ccum;
 
   /* check parameters */
@@ -83,7 +83,7 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 
   if (*which != 3)       /* check xlam */
     {
-      CDF_CHECK_ARG(!(*xlam > 0) , 0 , -5 );  /* note: the very special case xlam=0 was accepted before  */
+      CDF_CHECK_ARG(!(*xlam >= 0) , 0 , -5 );  /* note: the very special case xlam=0 was accepted before  */
     }
 
 
@@ -94,18 +94,25 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
     {
       double sf = floor(*s);  /* add floor to compute the real cdfpoi (bruno april 2010)) */
       cdf_cumpoi (&sf, xlam, p, q);
-      *status = 0;
+      if ( *q > 1.5 ) /* this comes from gratio (when it is unable to compute the result the result is 2) */
+	*status = 10;
+      else
+	*status = 0;
     }
 
   else if (2 == *which)  /* compute s */
     {
-      if ( *q == 1.0 )
+      if ( *xlam == 0.0 )   /* special case for the inverse cdf */
 	{
-	  *status = 0; *s = 2.0*DBL_MAX; /* Inf but this is valid only if xlam > 0 */
+	  *status = 0; *s = 0.0;
+	}
+      else if ( *q == 0.0 )
+	{
+	  *status = 0; *s = 2.0*DBL_MAX; /* Inf (valid only if xlam > 0 but the case xlam=0 is set just before) */
 	}
       else if ( *p <= exp(-*xlam) ) /* bruno april 2010 (using the jpc 's workaround of cdfbin) */
 	{
-	  *status = 0; *s =0.0;
+	  *status = 0; *s = 0.0;
 	}
       else
 	{
@@ -165,14 +172,14 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 	  else
 	    fx = ccum - *q;
 	}
-      while ( (ret_val = nsp_zsearch(s, fx, &S)) == EVAL_FX );
+      while ( (ret_val = nsp_zsearch(xlam, fx, &S)) == EVAL_FX );
 
       switch ( ret_val )
 	{
 	case SUCCESS:
 	  *status = 0; break;
 	case BOTH_BOUND_EXCEEDED:
-	  *status = 4; *bound = 0.0; *boundbis = inf; break;
+	  *status = 4; *bound = zero; *boundbis = inf; break;
 	default:
 	  *status = 5;
 	}
