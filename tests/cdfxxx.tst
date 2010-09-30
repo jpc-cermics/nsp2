@@ -297,3 +297,75 @@ x = cdfpoi("S", lambdae, 1, 0);
 if ~x.equal[%inf] then, pause, end
 
 
+
+
+/////////////////////////////////////////////////////////
+// tests for Non central Student T distribution
+/////////////////////////////////////////////////////////
+
+dfe = 27;
+pnonce = 45;
+
+xe = [ 29.1516022086057625;
+       31.1658463768033300;
+       33.9447244835852544;
+       38.4743055911762255;
+       41.5866711100078490;
+       45.5597696443552707;
+       50.1907655307224303;
+       55.0462588648301363;
+       65.3666211312566077];
+
+// pe computed using wolfram-alpha web calculator
+pe = [0.0000999999995950049108;
+      0.000999999999595949478;
+      0.00999999999959357259;
+      0.0999999999996300955;
+      0.2499999999996927339;
+      0.499999999999796052;
+      0.749999999999898612;
+      0.899999999999959173;
+      0.989999999999995517];
+
+// me and sde computed using wolfram-alpha web calculator
+me = 46.300171811169412087351862665217543591249;
+sde = 6.661388012733784806884035370386105039214;
+
+[m,sd] = dist_stat("nt",dfe,pnonce);
+erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
+if erm > 1e-15 then, pause, end
+if ersd > 1e-13 then, pause, end
+
+// usual tests
+v = ones(size(xe));
+p = cdf("nt",xe,dfe,pnonce);
+pp = cdftnc("PQ",xe,dfe*v,pnonce*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 1e-08 then, pause, end   // max is 4.049946429789740e-09
+
+x = icdf("nt",pe,dfe,pnonce);
+xx = cdftnc("T",dfe*v,pnonce*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./(abs(xe)+1e-6));
+if erx > 2e-10 then, pause, end
+
+df = cdftnc("Df",pnonce*v,pe,1-pe,xe);
+erdf =  max(abs(df-dfe)/dfe);
+if erdf > 1e-9 then, pause, end
+
+pnonc = cdftnc("Pnonc",pe,1-pe,xe,dfe*v);
+erpn =  max(abs(pnonc-pnonce)/pnonce);
+if erpn > 1e-10 then, pause, end
+
+// verify extreme value
+[p,q] = cdftnc("PQ",-%inf,dfe,pnonce);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdftnc("PQ",%inf,dfe,pnonce);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+
+x = cdftnc("T", dfe, pnonce, 0, 1);
+if ~x.equal[-%inf] then, pause, end
+x = cdftnc("T", dfe, pnonce, 1, 0);
+if ~x.equal[%inf] then, pause, end
+
