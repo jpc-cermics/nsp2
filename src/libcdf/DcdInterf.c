@@ -713,12 +713,14 @@ int int_cdftnc(Stack stack, int rhs, int opt, int lhs)
 
 static void cdftncErr(    int status,double bound, double boundbis, int i)
 {
-  static char *param[7]={"WHICH", "P","Q","T","Df"};
+  static char *param[7]={"WHICH", "P","Q","T","Df","Pnonc"};
   switch ( status ) 
     {
     case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
     case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
     case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
+    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
+    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
     default : 
       Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
 	       param[-status-1],i,bound);

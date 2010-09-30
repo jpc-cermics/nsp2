@@ -1,17 +1,5 @@
 #include "cdf.h"
 
-/* Table of constant values */
-
-static double c_b12 = -1e100;
-static double c_b13 = 1e100;
-static double c_b14 = .5;
-static double c_b16 = 5.;
-static double c_b17 = 1e-50;
-static double c_b18 = 1e-14;  /* rtol parameter */   
-static double c_b24 = 1e-100;
-static double c_b25 = 1e4;
-static double c_b36 = -1e4;
-
 /************************************************************************ 
  * 
  *     SUBROUTINE CDFTNC( WHICH, P, Q, T, DF, PNONC, STATUS, BOUND ) 
@@ -88,176 +76,154 @@ static double c_b36 = -1e4;
  ************************************************************************ 
  */
 
+/* rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept 2010) */
+
 int cdf_cdftnc (int *which, double *p, double *q, double *t, double *df,
 		double *pnonc, int *status, double *bound, double *boundbis)
 {
-  double ccum;
-  int qleft;
-  double fx;
-  int qhi;
-  double cum;
+  double cum, ccum, fx;
+  const double tol=1.0E-14, atol=1.0E-50;
+  int pq_flag=1;   
 
-  if (!(*which < 1 || *which > 4))
+
+  CDF_CHECK_ARG(*which < 1 , 1 , -1 );
+  CDF_CHECK_ARG(*which > 4 , 4 , -1 );
+
+  if (*which != 1)       /* check p and q */
     {
-      goto L30;
+      if ( *which == 2 ) /* p=0 and q = 0 are possible */
+	{
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
+	}
+      else
+	{
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
+	}
+      pq_flag = *p <= *q;
     }
-  if (!(*which < 1))
+
+  if (*which != 3)       /* check df */
     {
-      goto L10;
+      CDF_CHECK_ARG( !(*df > 0.0) , 0 , -5 );
     }
-  *bound = 1.;
-  goto L20;
- L10:
-  *bound = 5.;
- L20:
-  *status = -1;
-  return 0;
- L30:
-  if (*which == 1)
+
+  /* we could verify that pnonc is not Nan (for the moment output Nan in this case) */
+  if (*which != 4  &&  isnan(*pnonc) )
     {
-      goto L70;
+      if ( *which == 1 )
+	{
+	  *p = *q = *pnonc;
+	}
+      else if ( *which == 2 )
+	{
+	  *t = *pnonc;
+	}
+      else /* which == 3 */
+	*df = *pnonc;
     }
-  if (!(*p < 0. || *p > .99999999999999989))
-    {
-      goto L60;
-    }
-  if (!(*p < 0.))
-    {
-      goto L40;
-    }
-  *bound = 0.;
-  goto L50;
- L40:
-  *bound = .99999999999999989;
- L50:
-  *status = -2;
-  return 0;
- L60:
- L70:
-  if (*which == 3)
-    {
-      goto L90;
-    }
-  if (!(*df <= 0.))
-    {
-      goto L80;
-    }
-  *bound = 0.;
-  *status = -5;
-  return 0;
- L80:
- L90:
-  if (*which == 4)
-    {
-      goto L100;
-    }
- L100:
-  if (1 == *which)
+
+    
+
+  if (1 == *which)        /* Compute P and Q */
     {
       cdf_cumtnc (t, df, pnonc, p, q);
       *status = 0;
     }
-  else if (2 == *which)
+
+  else if (2 == *which)    /* Compute T */
     {
-      *t = *pnonc;    /* start near the mode */
-      cdf_dstinv (&c_b12, &c_b13, &c_b14, &c_b14, &c_b16, &c_b17, &c_b18);
-      *status = 0;
-      cdf_dinvr (status, t, &fx, &qleft, &qhi);
-    L110:
-      if (!(*status == 1))
+      if ( *p == 0.0 )
+	*t = -2.0*DBL_MAX;   /* -Inf */
+      else if ( *q == 0.0 )
+	*t =  2.0*DBL_MAX;   /* Inf */
+      else
 	{
-	  goto L120;
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double tinf = -1e100, tsup = 1e100; 
+
+	  *t = *pnonc;    /* start near the mode */
+	  nsp_zsearch_init(*t, tinf, tsup, 2.0, 0.1, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
+	  do
+	    {
+	      cdf_cumtnc (t, df, pnonc, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(t, fx, &S)) == EVAL_FX );
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:
+	      *status = 1; *bound = tinf; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = tsup; break;
+	    default:
+	      *status = 5;
+	    }
 	}
-      cdf_cumtnc (t, df, pnonc, &cum, &ccum);
-      fx = cum - *p;
-      cdf_dinvr (status, t, &fx, &qleft, &qhi);
-      goto L110;
-    L120:
-      if (!(*status == -1))
-	{
-	  goto L150;
-	}
-      if (!qleft)
-	{
-	  goto L130;
-	}
-      *status = 1;
-      *bound = -1e100;
-      goto L140;
-    L130:
-      *status = 2;
-      *bound = 1e100;
-    L140:
-    L150:
-      ;
     }
-  else if (3 == *which)
+
+  else if (3 == *which)    /*  Compute DF */
     {
-      *df = 5.;
-      cdf_dstinv (&c_b24, &c_b25, &c_b14, &c_b14, &c_b16, &c_b17, &c_b18);
-      *status = 0;
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-    L160:
-      if (!(*status == 1))
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      double dfinf = 1e-100, dfsup = 1e10;
+      *df = 5.0;
+      nsp_zsearch_init(*df, dfinf, dfsup, 2.0, 0.1, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L170;
+	  cdf_cumtnc (t, df, pnonc, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumtnc (t, df, pnonc, &cum, &ccum);
-      fx = cum - *p;
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-      goto L160;
-    L170:
-      if (!(*status == -1))
+      while ( (ret_val = nsp_zsearch(df, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L200;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = dfinf; *boundbis = dfsup; break;
+	default:
+	  *status = 5;
 	}
-      if (!qleft)
-	{
-	  goto L180;
-	}
-      *status = 1;
-      *bound = 1e-100;
-      goto L190;
-    L180:
-      *status = 2;
-      *bound = 1e100;
-    L190:
-    L200:
-      ;
+ 
     }
-  else if (4 == *which)
+
+  else if (4 == *which)   /*  compute pnonc */
     {
-      *pnonc = 5.;
-      cdf_dstinv (&c_b36, &c_b25, &c_b14, &c_b14, &c_b16, &c_b17, &c_b18);
-      *status = 0;
-      cdf_dinvr (status, pnonc, &fx, &qleft, &qhi);
-    L210:
-      if (!(*status == 1))
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      double pninf = 1e-4, pnsup = 1e4;
+      *pnonc = 5.0;
+      nsp_zsearch_init(*pnonc, pninf, pnsup, 2.0, 0.1, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L220;
+	  cdf_cumtnc (t, df, pnonc, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumtnc (t, df, pnonc, &cum, &ccum);
-      fx = cum - *p;
-      cdf_dinvr (status, pnonc, &fx, &qleft, &qhi);
-      goto L210;
-    L220:
-      if (!(*status == -1))
+      while ( (ret_val = nsp_zsearch(pnonc, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L250;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = pninf; *boundbis = pnsup; break;
+	default:
+	  *status = 5;
 	}
-      if (!qleft)
-	{
-	  goto L230;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L240;
-    L230:
-      *status = 2;
-      *bound = 1e4;
-    L240:
-    L250:
-      ;
     }
+
   return 0;
 }
