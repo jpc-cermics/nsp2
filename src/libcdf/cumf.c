@@ -19,37 +19,37 @@
 
 int cdf_cumf (double *f, double *dfn, double *dfd, double *cum, double *ccum)
 {
-  const double half=0.5E0, done=1.0E0;
-  double d__1, d__2, prod, dsum, xx, yy;
-  int ierr;
-  
-  if (*f <= 0.) 
+  if ( *f > 0.0 )
     {
-      *cum = 0.;
-      *ccum = 1.;
-      return 0;
-    }
+      /*     XX is such that the incomplete beta with parameters 
+       *     a=DFD/2 and b=DFN/2 evaluated at XX is 1 - CUM or CCUM 
+       *     YY is 1 - XX 
+       *     Calculate the smaller of XX and YY accurately 
+       */
+      double prod, sum, xx, yy, a = 0.5 * (*dfd), b = 0.5 * (*dfn);
+      int ierr; 
+      prod = *dfn * *f;
+      sum = *dfd + prod;
+      xx = *dfd / sum;
+      if ( xx > 0.5 )
+	{
+	  yy = prod / sum;
+	  xx = 1.0 - yy;
+	}
+      else
+	yy = 1.0 - xx;
 
-  prod = *dfn * *f;
-  /*     XX is such that the incomplete beta with parameters 
-   *     DFD/2 and DFN/2 evaluated at XX is 1 - CUM or CCUM 
-   *     YY is 1 - XX 
-   *     Calculate the smaller of XX and YY accurately 
-   */
-  dsum = *dfd + prod;
-  xx = *dfd / dsum;
-  if (xx > half)
-    {
-      yy = prod / dsum;
-      xx = done - yy;
+      cdf_bratio (&a, &b, &xx, &yy, ccum, cum, &ierr);
     }
-  else
+  else if (*f <= 0.0) 
     {
-      yy = done - xx;
+      *cum = 0.0; *ccum = 1.0;
     }
-  d__1 = *dfd * half;
-  d__2 = *dfn * half;
-  cdf_bratio (&d__1, &d__2, &xx, &yy, ccum, cum, &ierr);
+  else  /* *f is Nan (it is not well handled in the main first bloc)  */
+    {
+      *cum = *f; *ccum = *f;
+    }
+  
   return 0;
 }	
 

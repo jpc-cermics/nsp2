@@ -83,7 +83,7 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 
   if (*which != 3)       /* check xlam */
     {
-      CDF_CHECK_ARG(!(*xlam >= 0) , 0 , -5 );  /* note: the very special case xlam=0 was accepted before  */
+      CDF_CHECK_ARG(!(*xlam >= 0) , 0 , -5 );  /* note: xlam=0 is a very special case  */
     }
 
 
@@ -102,7 +102,8 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 
   else if (2 == *which)  /* compute s */
     {
-      if ( *xlam == 0.0 )   /* special case for the inverse cdf */
+      /* first we take care of some special cases */
+      if ( *xlam == 0.0 )   
 	{
 	  *status = 0; *s = 0.0;
 	}
@@ -114,7 +115,7 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 	{
 	  *status = 0; *s = 0.0;
 	}
-      else
+      else /* inversion process for usual cases */
 	{
 	  ZsearchStruct S;
 	  zsearch_ret ret_val;

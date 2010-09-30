@@ -22,18 +22,21 @@ int cdf_cumgam (double *x, double *a, double *cum, double *ccum)
 {
   if ( *x <= 0.0 )
     {
-      *cum = 0.;
-      *ccum = 1.;
+      *cum = 0.0; *ccum = 1.0;
     }
-  else if ( *x > DBL_MAX ) /* gratio doesn't handle gracefully Inf (returning Nan in this case) */
-    {                      /* note that -Inf are handled by the previous block (bruno, april 2010) */
-      *cum = 1.;
-      *ccum = 0.;
-    }
-  else                     /* main block (handle Nan also) */
-    {
+  else if ( *x <=  DBL_MAX )  /* main block (could not handle x=Inf and also */
+    {                         /* could not handle x=Nan in some rare cases) */
       const int c0 = 0;
       cdf_gratio (a, x, cum, ccum, &c0);
+    }
+
+  else if (isnan(*x))   /* x = Nan (bruno, sept 2010) */
+    {                
+      *cum = *ccum = *x;
+    }
+  else                    /* x = Inf  (bruno, april 2010) */
+    {
+      *cum = 1.0; *ccum = 0.0;
     }
 
   return 0;

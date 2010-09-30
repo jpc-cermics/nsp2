@@ -15,13 +15,17 @@
  *     the cumulative chi-square distribution. 
  *
  *     Change (Bruno Pincon sept 2010) : use directly the expression function of 
- *     the cumulative gamma.
+ *     the cumulative gamma plus handle special cases (s is Nan or xlam is 0)
  * Returns: 
  **/
 
 int cdf_cumpoi (double *s, double *xlam, double *cum, double *ccum)
 {
-  if ( *xlam != 0.0 )
+  if ( isnan(*s) )
+    {
+      *cum = *ccum = *s;
+    }
+  else if ( *xlam != 0.0 )
     {
       double a = *s + 1.0;
       cdf_cumgam (xlam, &a, ccum, cum);
@@ -32,16 +36,13 @@ int cdf_cumpoi (double *s, double *xlam, double *cum, double *ccum)
 	{
 	  *cum = 1.0; *ccum = 0.0;
 	}
-      else if ( *s < 0.0 )
+      else
 	{
 	  *cum = 0.0; *ccum = 1.0;
-	}
-      else  /* *s is Nan */
-	{
-	  *cum = *ccum = *s;
 	}
     }
   return 0;
 }
+
 
 
