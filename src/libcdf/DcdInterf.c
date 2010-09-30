@@ -229,7 +229,7 @@ static void cdfchiErr(     int status,   double bound, double boundbis, int i)
     case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
     case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
     case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 10 : Scierror("cdfchi: Error in  cumgam\n");break;
+    case 10 : Scierror("cdfchi: Error in cumgam (for answer #%d)\n",i);break;
     default : 
       Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
 	       param[-status-1],i,bound);
@@ -424,7 +424,7 @@ static void cdfgamErr(int status,double bound, double boundbis, int i)
     case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
     case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
     case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 10 : Scierror(" cannot compute answer #%d \n",i);break ;
+    case 10 : Scierror("cannot compute answer #%d \n",i);break ;
     default : 
       Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
 	       param[-status-1],i,bound);
@@ -602,7 +602,9 @@ static void cdfpoiErr(    int status,double bound, double boundbis, int i)
     case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
     case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
     case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
+    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
+    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
+    case 10 : Scierror("cdfpoi: Error in cumgam (for answer #%d)\n",i);break;
     default : 
       Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
 	       param[-status-1],i,bound);
