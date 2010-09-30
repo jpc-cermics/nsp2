@@ -49,11 +49,18 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   double lnx, omx, dum1, dum2;
   double eps=1e-14; /* add a parameter to stop summation (1e-7 was hardcoded). Bruno, april, 5, 2010 */
 
+  if ( isnan(*t) )    /* nan was not well handled (Bruno, sept 2010) */
+    {
+      *cum = *ccum = *t;
+      return 0;
+    }
+
   if (Abs (*pnonc) <= 1e-10)
     {
       cdf_cumt (t, df, cum, ccum);
       return 0;
     }
+
   qrevs = *t < 0.;
   if (qrevs)
     {
@@ -77,7 +84,7 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   x = *df / (*df + t2);
   omx = 1. - x;
   lnx = log (x);
-  lnomx = log (omx);
+  lnomx = log (omx); 
   halfdf = *df * .5;
   alghdf = cdf_gamln (halfdf);
   /*    ******************** Case i = lambda 
