@@ -86,74 +86,43 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
   double ccum, fx, cum;
   int pq_flag=1;  
 
-  /* 
-   *  part 1: verify parameters 
-   *  ------
-   */
+  /*  Verify parameters */
 
-  if ( *which < 1 || *which > 4 )
-    {
-      *status = -1; 
-      *bound = (*which < 1) ? 1 : 4;
-      return 0;
-    }
+  CDF_CHECK_ARG(*which < 1 , 1 , -1 );
+  CDF_CHECK_ARG(*which > 4 , 4 , -1 );
+
 
   if (*which != 1)  /* test p and q */
     {
-      double pq = *p + *q;
-
-      if ( ! ( 0.0 < *p  &&  *p <= 1.0 ) )
+      if ( *which == 2 ) /* p=0 or q = 0 are possible */
 	{
-	  *status = -2;
-	  *bound =  *p <= 0.0 ? 0.0 : 1.0;
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
 	}
-
-      if ( ! ( 0.0 < *q  &&  *q <= 1.0 ) )
+      else
 	{
-	  *status = -3;
-	  *bound =  *q <= 0.0 ? 0.0 : 1.0;
-	  return 0;   
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
 	}
-
-      if ( fabs(pq - 1.0) >= 0.5*DBL_EPSILON )
-	{
-	  *status = 3; *bound = 1.0; return 0;
-	}
-
-      pq_flag = *p <= *q;
+       pq_flag = *p <= *q;
     }
 
 
   if ( *which != 2  &&  *which != 1 )   /* test *x (but also not for which == 1 as this case handles all values for x) */
     {
-      if ( ! (*x >= 0.0) )
-	{
-	  *status = -4; *bound = 0.0; return 0;
-	}
+      CDF_CHECK_ARG(!(*x >= 0.0), 0.0, -4);
     }
 
   if ( *which != 3 )    /* test df */
     {
-      if ( ! (*df > 0.0) )
-	{
-	  *bound = 0.0; *status = -5; return 0;
-	}
+      CDF_CHECK_ARG(!(*df > 0.0), 0.0, -5);
     }
 
   if ( *which != 4 )   /* test pnonc */
     {
-      if ( ! (*pnonc >= 0.0) )
-	{
-	  *bound = 0.; *status = -6; return 0;
-	}
+      CDF_CHECK_ARG(!(*pnonc >= 0.0), 0.0, -6);
     }
 
 
-  /* 
-   *  part 2: calculate  answers
-   *  ------
-   */
+  /*  Calculate ANSWERS  */
 
   if (1 == *which)             /* Calculating P and Q */
     {
@@ -162,33 +131,40 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
     }
   else if (2 == *which)        /* Calculating X */
     {
-      ZsearchStruct S;
-      zsearch_ret ret_val;
-      double step = sqrt(*df+2**pnonc);  /* a step proportionnal to the std */
-      *x = *df + *pnonc;       /* start from the mean instead of 5  (bruno, april 2010) */ 
-
-      nsp_zsearch_init(*x, 0, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
-
-      do
+      if ( *p == 0.0 )
+	*x = 0.0;
+      else if ( *q == 0.0 )
+	*x =  2.0*DBL_MAX;   /* Inf */
+      else
 	{
-	  cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
-	  if ( pq_flag )
-	    fx = cum - *p;
-	  else
-	    fx = ccum - *q;
-	}
-      while ( (ret_val = nsp_zsearch(x, fx, &S)) == EVAL_FX );
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double step = sqrt(*df+2**pnonc);  /* a step proportionnal to the std */
+	  *x = *df + *pnonc;       /* start from the mean instead of 5  (bruno, april 2010) */ 
 
-      switch ( ret_val )
-	{
-	case SUCCESS:
-	  *status = 0; break;
-	case LEFT_BOUND_EXCEEDED:
-	  *status = 1; *bound = zero; break;
-	case RIGHT_BOUND_EXCEEDED:
-	  *status = 2; *bound = inf; break;
-	default:
-	  *status = 4;
+	  nsp_zsearch_init(*x, 0, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
+
+	  do
+	    {
+	      cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(x, fx, &S)) == EVAL_FX );
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:
+	      *status = 1; *bound = zero; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = inf; break;
+	    default:
+	      *status = 4;
+	    }
 	}
     }
 
@@ -207,7 +183,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	    fx = ccum - *q;
 	}
       while ( (ret_val = nsp_zsearch(df, fx, &S)) == EVAL_FX );
-
+      
       switch ( ret_val )
 	{
 	case SUCCESS:
@@ -218,7 +194,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	  *status = 5;
 	}
     }
-
+  
   else if (4 == *which)        /* Calculating PNONC */
     {
       ZsearchStruct S;
@@ -235,7 +211,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 	    fx = ccum - *q;
 	}
       while ( (ret_val = nsp_zsearch(pnonc, fx, &S)) == EVAL_FX );
-
+      
       switch ( ret_val )
 	{
 	case SUCCESS:
