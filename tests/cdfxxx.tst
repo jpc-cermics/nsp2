@@ -371,6 +371,74 @@ if ~x.equal[%inf] then, pause, end
 
 
 /////////////////////////////////////////////////////////
+// tests for Chi2 distribution
+/////////////////////////////////////////////////////////
+
+nue = 120;
+me = nue;
+sde = sqrt(2*nue);
+
+xe = [70.7281048145734133;
+      77.7551404253091079;
+      86.9232796553538947;
+      100.6236313238458138;
+      109.2196641157778885;
+      119.3339957817558314;
+      130.0545935689990529;
+      140.2325689567917948;
+      158.9501658973062206;
+      173.6174364561603340;
+      186.3259854458229654 ]
+
+// pe computed using pari-gp
+pe = [0.000100000000000000093;
+      0.000999999999999998722;
+      0.00999999999999999842;
+      0.0999999999999999957;
+      0.249999999999999999;
+      0.499999999999999758;
+      0.749999999999999869;
+      0.900000000000000071;
+      0.989999999999999988;
+      0.999000000000000031;
+      0.999900000000000011];
+
+[m,sd] = dist_stat("chi",nue);
+erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
+if erm > 1e-16 then, pause, end
+if ersd > 1e-16 then, pause, end
+
+// usual tests
+v = ones(size(xe));
+p = cdf("chi",xe,nue);
+pp = cdfchi("PQ",xe,nue*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 4e-15 then, pause, end
+
+x = icdf("chi",pe,nue);
+xx = cdfchi("X",nue*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./(abs(xe)+1e-6));
+if erx > 2e-15 then, pause, end
+
+nu = cdfchi("Df",pe,1-pe,xe);
+ernu =  max(abs(nu-nue)/nue);
+if ernu > 4e-15 then, pause, end
+
+// verify extreme value
+[p,q] = cdfchi("PQ",-%inf,nue);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdfchi("PQ",%inf,nue);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+
+x = cdfchi("X", nue, 0, 1);
+if ~x.equal[0] then, pause, end
+x = cdfchi("X", nue, 1, 0);
+if ~x.equal[%inf] then, pause, end
+
+
+/////////////////////////////////////////////////////////
 // tests for Non central Chi2 distribution
 /////////////////////////////////////////////////////////
 
@@ -379,6 +447,7 @@ lambdae = 56;
 
 me = 126;
 sde = 2*sqrt(91);
+
 
 xe = [   66.1489524252418022;
          74.5069462816052663;
