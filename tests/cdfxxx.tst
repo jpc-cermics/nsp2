@@ -369,3 +369,77 @@ if ~x.equal[-%inf] then, pause, end
 x = cdftnc("T", dfe, pnonce, 1, 0);
 if ~x.equal[%inf] then, pause, end
 
+
+/////////////////////////////////////////////////////////
+// tests for Non central Chi2 distribution
+/////////////////////////////////////////////////////////
+
+nue = 70;
+lambdae = 56;
+
+me = 126;
+sde = 2*sqrt(91);
+
+xe = [   66.1489524252418022;
+         74.5069462816052663;
+         85.5261440109413797;
+        102.1702072508162757;
+        112.6919073952190473;
+        125.1277668761197077;
+        138.3577139037065535;
+        150.9512945466967437;
+        174.1649991964322908;
+        192.3820748917787853;
+        208.1733961233065600 ];
+
+// pe computed using pari-gp
+pe = [0.000100000000000002419;
+      0.000999999999999987420;
+      0.00999999999999981349;
+      0.100000000000002034;
+      0.250000000000000586;
+      0.500000000000000690;
+      0.749999999999999432;
+      0.899999999999999889;
+      0.989999999999999945;
+      0.998999999999999998;
+      0.999900000000000010];
+
+[m,sd] = dist_stat("nch",nue,lambdae);
+erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
+if erm > 1e-16 then, pause, end
+if ersd > 1e-16 then, pause, end
+
+// usual tests
+v = ones(size(xe));
+p = cdf("nch",xe,nue,lambdae);
+pp = cdfchn("PQ",xe,nue*v,lambdae*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 4e-15 then, pause, end
+
+x = icdf("nch",pe,nue,lambdae);
+xx = cdfchn("X",nue*v,lambdae*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./(abs(xe)+1e-6));
+if erx > 2e-15 then, pause, end
+
+nu = cdfchn("Df",lambdae*v,pe,1-pe,xe);
+ernu =  max(abs(nu-nue)/nue);
+if ernu > 2e-15 then, pause, end
+
+lambda = cdfchn("Pnonc",pe,1-pe,xe,nue*v);
+erpn =  max(abs(lambda-lambdae)/lambdae);
+if erpn > 1e-15 then, pause, end
+
+// verify extreme value
+[p,q] = cdfchn("PQ",-%inf,nue,lambdae);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdfchn("PQ",%inf,nue,lambdae);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+
+x = cdfchn("X", nue, lambdae, 0, 1);
+if ~x.equal[0] then, pause, end
+x = cdfchn("X", nue, lambdae, 1, 0);
+if ~x.equal[%inf] then, pause, end
+
