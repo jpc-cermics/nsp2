@@ -58,187 +58,122 @@
 /*     monotinicity of P with the other parameter. */
 
 
+/* rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept/oct 2010) */
+
 
 int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df,
 		int *status, double *bound, double *boundbis)
 {
-  const int c__1 = 1;
-  const double c_b25 = 0.;
-  const double c_b26 = .5;
-  const double c_b28 = 5.;
   const double tol=1.0E-14,atol=1.0E-50,zero=1.0E-300,inf=1.0E300;
-  double d__1;
-  double ccum, porq;
-  int qleft;
-  int qporq;
-  double fx, pq;
-  int qhi;
-  double cum;
+  double cum, ccum, fx;
+  int pq_flag=1;   
 
   CDF_CHECK_ARG(*which < 1 , 1 , -1 );
   CDF_CHECK_ARG(*which > 3 , 3 , -1 );
  
-  if (*which != 1)
+  if (*which != 1)       /* check p and q */
     {
-      /*     P */
-      CDF_CHECK_ARG(*p < 0 , 0 , -2 );
-      CDF_CHECK_ARG(*p > 1 , 1 , -2 );
-      /*     Q */
-      CDF_CHECK_ARG(*q <= 0 , 0 , -3 );
-      CDF_CHECK_ARG(*q > 1 , 1 , -3 );
-    }
-
-  if (*which != 2 && *which != 1 )
-    {
-      /* add *which==1 to compute cdfchi with *x < 0 (bruno march,22,2010)) */
-      /*     X */
-      CDF_CHECK_ARG(*x  < 0 , 0 , -4 );
-    }
-
-  if (*which != 3)
-    {
-      /*     DF */
-      CDF_CHECK_ARG(*df <= 0 , 0 , -5 );
-    }
-
-  if (*which != 1)
-    {
-      /*     P + Q */
-      pq = *p + *q;
-      if (((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      if ( *which == 2 ) /* p=0 and q = 0 are possible */
 	{
-	  *bound = (!(pq < 0.)) ?  1.: 0.0;
-	  *status = 3;
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
 	}
+      else
+	{
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
+	}
+      pq_flag = *p <= *q;
     }
 
-  if (*which != 1)
+
+  if (*which != 3)       /* check df */
     {
-      /*     Select the minimum of P or Q */
-      qporq = *p <= *q;
-      porq = Min(*p,*q);
+      CDF_CHECK_ARG(!(*df > 0.0) , 0 , -5 );
     }
 
   /*     Calculate ANSWERS */
-  if (1 == *which)
+
+  if (1 == *which)         /* Compute P and Q */
     {
-
-      /*     Calculating P and Q */
-
-      *status = 0;
       cdf_cumchi (x, df, p, q);
-      /*     jpc 2000 : porq must be computed ? */
-      /*     ---> IF (porq.GT.1.5D0) THEN */
-      if (*p > 1.5 || *q > 1.5)
-	{
-	  *status = 10;
-	  return 0;
-	}
+      if (*p > 1.5 )  /* this comes from gratio (cumchi calls cumgam which calls gratio) */
+	              /* when gratio is unable to compute the result the probability p */
+                      /* is set to 2 */
+	*status = 10;
+      else
+	*status = 0;
     }
-  else if (2 == *which)
+
+  else if (2 == *which)    /* Compute X */
     {
-
-      /*     Calculating X */
-
-      *x = *df;  /* start from the mean instead of 5, bruno april 2010 */
-      cdf_dstinv (&c_b25, &inf, &c_b26, &c_b26, &c_b28, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, x, &fx, &qleft, &qhi);
-    L230:
-      if (!(*status == 1))
+      if ( *p == 0.0 )
+	*t = 0.0;
+      else if ( *q == 0.0 )
+	*t =  2.0*DBL_MAX;   /* Inf */
+      else
 	{
-	  goto L270;
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double step = sqrt(2*(*df));  /* use std as initial step */
+	  *x = *df;  /* start from the mean instead of 5, bruno april 2010 */
+	  nsp_zsearch_init(*t, 0, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
+	  do
+	    {
+	      cdf_cumchi (x, df, &cum, &ccum);
+	      if (cum > 1.5 )  /* gratio unable to compute (see comment before) */
+		{
+		  *status = 10; return 0;
+		}
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(x, fx, &S)) == EVAL_FX );
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:
+	      *status = 1; *bound = 0.0; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = inf; break;
+	    default:
+	      *status = 5;
+	    }
 	}
-      cdf_cumchi (x, df, &cum, &ccum);
-      if (!qporq)
-	{
-	  goto L240;
-	}
-      fx = cum - *p;
-      goto L250;
-    L240:
-      fx = ccum - *q;
-    L250:
-      if (!(fx + porq > 1.5))
-	{
-	  goto L260;
-	}
-      *status = 10;
-      return 0;
-    L260:
-      cdf_dinvr (status, x, &fx, &qleft, &qhi);
-      goto L230;
-    L270:
-      if (!(*status == -1))
-	{
-	  goto L300;
-	}
-      if (!qleft)
-	{
-	  goto L280;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L290;
-    L280:
-      *status = 2;
-      *bound = inf;
-    L290:
-    L300:
-      ;
-    }
-  else if (3 == *which)
+     }
+ 
+ else if (3 == *which)    /*  Compute DF */
     {
-
-      /*     Calculating DF */
-
+      ZsearchStruct S;
+      zsearch_ret ret_val;
       *df = 5.;
-      cdf_dstinv (&zero, &inf, &c_b26, &c_b26, &c_b28, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-    L310:
-      if (!(*status == 1))
+      nsp_zsearch_init(*df, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L350;
+	  cdf_cumchi (x, df, &cum, &ccum);
+	  if (cum > 1.5 )  /* gratio unable to compute (see comment before) */
+	    {
+	      *status = 10; return 0;
+	    }
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumchi (x, df, &cum, &ccum);
-      if (!qporq)
+      while ( (ret_val = nsp_zsearch(df, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L320;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 4; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 5;
 	}
-      fx = cum - *p;
-      goto L330;
-    L320:
-      fx = ccum - *q;
-    L330:
-      if (!(fx + porq > 1.5))
-	{
-	  goto L340;
-	}
-      *status = 10;
-      return 0;
-    L340:
-      cdf_dinvr (status, df, &fx, &qleft, &qhi);
-      goto L310;
-    L350:
-      if (!(*status == -1))
-	{
-	  goto L380;
-	}
-      if (!qleft)
-	{
-	  goto L360;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L370;
-    L360:
-      *status = 2;
-      *bound = inf;
-    L370:
-    L380:
-      ;
     }
+
   return 0;
 }				/* cdfchi_ */
