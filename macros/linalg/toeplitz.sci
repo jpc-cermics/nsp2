@@ -22,7 +22,7 @@ function A=toeplitz(c,r)
     if ~type(c).equal[type(r)] then 
      error("Error: the two arguments should have the same type");
     end
-    if c(1)<>r(1) then 
+    if ~c(1).equal[r(1)] then 
       printf("Warning: incompatible values in c and r using c value\n");
     end
   end 
@@ -50,9 +50,10 @@ function A=hankel(c,r)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 // 
-// creates a hankel matrix (Matlab semantics) and should work for most matrix types.
+// creates a hankel matrix (Matlab semantics) and should work for most
+// matrix types.
   if nargin==1 then 
-    A=toeplitz(c($:-1:1),c);
+    A=toeplitz(c($:-1:1),c($:-1:1));
     A=tril(A);
     A=A($:-1:1,:);
   else
