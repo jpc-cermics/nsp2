@@ -389,7 +389,7 @@ endfunction
 // list and hash tables 
 //---------------------
 
-function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[])
+function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_request=[],headers=%t,top=[],parent=[])
   
   function selected_remove (button, data)
     // remove selected line 
@@ -455,8 +455,9 @@ function L=edit_object_list_or_hash(L,with_scroll=%t,title="Edit List",size_requ
       iter=model.append[]
       insert_at_or_after_iter(treeview,model,iter,flag=%f);
     else 
-      while model.iter_next[iter] ; end
-      insert_at_or_after_iter(treeview,model,iter);
+      // while model.iter_next[iter] ; end
+      iter=model.append[]
+      insert_at_or_after_iter(treeview,model,iter,flag=%f);
     end
   endfunction
   
