@@ -49,7 +49,9 @@ b = cdff("Dfd",pe,1-pe,xe,ae*v);
 erb = max( abs(b-be)/be );
 if erb > 1e-13 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdff("PQ",%nan,ae,be);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdff("PQ",0,ae,be);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdff("PQ",%inf,ae,be);
@@ -115,7 +117,9 @@ b = cdff("Dfd",pe,1-pe,xe,ae*v);
 erb = max( abs(b-be)/be );
 if erb > 2e-14 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdff("PQ",%nan,ae,be);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdff("PQ",0,ae,be);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdff("PQ",%inf,ae,be);
@@ -178,7 +182,9 @@ erdf =  max(abs(df-dfe)/dfe);
 if erdf > 1e-14 then, pause, end
 
 
-// verify extreme value
+// verify special value
+[p,q] = cdft("PQ",%nan,dfe);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdft("PQ",-%inf,dfe);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdft("PQ",%inf,dfe);
@@ -229,7 +235,9 @@ sd = cdfnor("Std",pe,1-pe,xe,me*v);
 erb = max( abs(sd-sde)/sde );
 if erb > 1e-15 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdfnor("PQ",%nan,me,sde);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdfnor("PQ",-%inf,me,sde);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdff("PQ",%inf,me,sde);
@@ -288,7 +296,9 @@ lambda = cdfpoi("Xlam",pe,1-pe,xe);
 erl =  max(abs(lambda-lambdae)/lambdae);
 if erl > 1e-14 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdfpoi("PQ",%nan,lambdae);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdfpoi("PQ",%inf,lambdae);
 if ~ (p.equal[1] && q.equal[0]) then, pause, end
 x = cdfpoi("S", lambdae, 0, 1);
@@ -358,7 +368,9 @@ pnonc = cdftnc("Pnonc",pe,1-pe,xe,dfe*v);
 erpn =  max(abs(pnonc-pnonce)/pnonce);
 if erpn > 1e-10 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdftnc("PQ",%nan,dfe,pnonce);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdftnc("PQ",-%inf,dfe,pnonce);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdftnc("PQ",%inf,dfe,pnonce);
@@ -426,7 +438,9 @@ nu = cdfchi("Df",pe,1-pe,xe);
 ernu =  max(abs(nu-nue)/nue);
 if ernu > 4e-15 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdfchi("PQ",%nan,nue);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdfchi("PQ",-%inf,nue);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdfchi("PQ",%inf,nue);
@@ -501,7 +515,9 @@ lambda = cdfchn("Pnonc",pe,1-pe,xe,nue*v);
 erpn =  max(abs(lambda-lambdae)/lambdae);
 if erpn > 1e-15 then, pause, end
 
-// verify extreme value
+// verify special value
+[p,q] = cdfchn("PQ",%nan,nue,lambdae);
+if ~(isnan(p) && isnan(q)) then, pause, end
 [p,q] = cdfchn("PQ",-%inf,nue,lambdae);
 if ~ (p.equal[0] && q.equal[1]) then, pause, end
 [p,q] = cdfchn("PQ",%inf,nue,lambdae);
@@ -510,5 +526,82 @@ if ~ (p.equal[1] && q.equal[0]) then, pause, end
 x = cdfchn("X", nue, lambdae, 0, 1);
 if ~x.equal[0] then, pause, end
 x = cdfchn("X", nue, lambdae, 1, 0);
+if ~x.equal[%inf] then, pause, end
+
+
+
+/////////////////////////////////////////////////////////
+// tests for gamma distribution
+/////////////////////////////////////////////////////////
+
+ae = 9;
+be = 3;
+
+me = 3;
+sde = 1;
+
+xe = [0.5925275476044988;
+      0.8174748014545915;
+      1.1691518168620967;
+      1.8108226860848100;
+      2.2792150583997159;
+      2.8896503947901238;
+      3.6008149659546906;
+      4.3315705137728688;
+      5.8008842891175121;
+      7.0520660552799939;
+      8.1982324119944714];
+
+// pe computed using pari-gp
+pe = [0.00009999999999999985459899033541;
+      0.0009999999999999988053036093811;
+      0.009999999999999997530552926664;
+      0.09999999999999992948214190407;
+      0.2500000000000002015233835064;
+      0.4999999999999998977461755023;
+      0.7499999999999989828246852614;
+      0.9000000000000000286438503030;
+      0.9899999999999999992380234867;
+      0.9989999999999999991545865709;
+      0.9999000000000000109395012255];
+
+[m,sd] = dist_stat("gam",ae,be);
+erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
+if erm > 1e-16 then, pause, end
+if ersd > 1e-16 then, pause, end
+
+// usual tests
+v = ones(size(xe));
+p = cdf("gam",xe,ae,be);
+pp = cdfgam("PQ",xe,ae*v,be*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 1e-15 then, pause, end
+
+x = icdf("gam",pe,ae,be);
+xx = cdfgam("X",ae*v,be*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./(abs(xe)+1e-6));
+if erx > 2e-15 then, pause, end
+
+a = cdfgam("Shape",be*v,pe,1-pe,xe);
+era =  max(abs(a-ae)/ae);
+if era > 2e-15 then, pause, end
+
+b = cdfgam("Scale",pe,1-pe,xe,ae*v);
+erb =  max(abs(b-be)/be);
+if erb > 1e-15 then, pause, end
+
+// verify special value
+[p,q] = cdfgam("PQ",%nan,ae,be);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdfgam("PQ",-%inf,ae,be);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdfgam("PQ",%inf,ae,be);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+
+x = cdfgam("X", ae, be, 0, 1);
+if ~x.equal[0] then, pause, end
+x = cdfgam("X", ae, be, 1, 0);
 if ~x.equal[%inf] then, pause, end
 

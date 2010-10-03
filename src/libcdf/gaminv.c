@@ -520,7 +520,7 @@ L260:
 /*                       SPECIAL CASES */
 
 L270:
-  *x = xmax;
+  *x = 2.0*DBL_MAX;  /* change to get Inf in place of xmax (Bruno, oct 2010) */
   return 0;
 
 L280:
