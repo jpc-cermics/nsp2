@@ -69,234 +69,216 @@
 /*     The beta density is proportional to */
 /*               t^(A-1) * (1-t)^(B-1) */
 
+/* rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept/oct 2010) */
 
 int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a,
 		double *b, int *status, double *bound, double *boundbis)
 {
-  const double c_b46 = .5;
-  const double c_b48 = 5.;
   const double tol=1.0E-14, atol=1.0E-120,zero=1.0E-300,inf=1.0E300,one=1.0E0;
-  const int c__1 = 1;
-  double c_b35 = 0. , c_b36 = 1.;
-  double ccum,  cum, xhi, xlo,  d__1, fx, pq,  xy;
-  int qhi, qleft, qporq;
-  
+  double fx, ccum, cum;
+  int pq_flag=1;
+
+  /*** Check parameter ***/
+
+  /* check which */
   CDF_CHECK_ARG(*which < 1 , 1 , -1 );
   CDF_CHECK_ARG(*which > 4 , 4 , -1 );
  
-  if (*which != 1)
+  if (*which != 1)   /* check p and q */
     {
-      /*     P */
-      CDF_CHECK_ARG(*p < 0 , 0 , -2 );
-      CDF_CHECK_ARG(*p > 1 , 1 , -2 );
-      /*     Q */
-      CDF_CHECK_ARG(*q < 0 , 0 , -3 );
-      CDF_CHECK_ARG(*q > 1 , 1 , -3 );
-    }
-
-  if (*which != 2 && *which != 1)
-    {
-      /* add *which==1 to compute cdfbet for every *x (bruno march,22,2010)) */
-      /*     X */
-      CDF_CHECK_ARG(*x < 0 , 0 , -4 );
-      CDF_CHECK_ARG(*x > 1 , 1 , -4 );
-      /*     Y */
-      CDF_CHECK_ARG(*y < 0 , 0 , -5 );
-      CDF_CHECK_ARG(*y > 1 , 1 , -5 );
-    }
-
-  if (*which != 3)
-    {
-      /*     A */
-      CDF_CHECK_ARG(*a <=0 , 0 , -6 );
-    }
-
-  if (*which != 4)
-    {
-      /*     B */
-      CDF_CHECK_ARG(*b <=0 , 0 , -7 );
-    }
-
-  if (*which != 1)
-    {
-      /*     P + Q */
-      pq = *p + *q;
-      if (((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      if ( *which == 2 ) /* p=0 or q=0 are possible */
 	{
-	  *bound = (!(pq < 0.)) ?  1.: 0.0;
-	  *status = 3;
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
+	}
+      else
+	{
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
+	}
+       pq_flag = *p <= *q;
+    }
+
+  if ( *which != 2  &&  *which != 1 )  /* check x and y */
+    {
+      CDF_CHECK_ARG( !(*x > 0.0) , 0 , -4 );
+      CDF_CHECK_ARG( !(*x <= 1.0) , 1 , -4 );
+
+      CDF_CHECK_ARG( !(*y > 0.0) , 0 , -5 );
+      CDF_CHECK_ARG( !(*y <= 1.0) , 1 , -5 );
+
+      /* X+Y = 1 */
+      CDF_CHECK_ARG( fabs((*x+*y) -1.0) >= 0.5*DBL_EPSILON , 1.0, 4);
+    }
+
+  if (*which != 3)      /* check a */
+    {
+      CDF_CHECK_ARG( !(*a > 0.0) , 0 , -6 );
+    }
+
+  if (*which != 4)      /* check b */
+    {
+      CDF_CHECK_ARG( !(*b > 0.0) , 0 , -7 );
+    }
+
+
+
+  /***  Calculate ANSWERS ***/
+
+  if (1 == *which)       /* compute (p,q) */
+    {
+      if ( finite(*x) && finite(*y) )
+	{
+	  CDF_CHECK_ARG( fabs((*x+*y) -1.0) >= 0.5*DBL_EPSILON , 1.0, 4);
+	  cdf_cumbet (x, y, a, b, p, q);
+	  *status = 0;
+	}
+      else  /* take care of special cases where we don't check that x+y=1 */
+	{
+	  if ( isnan(*x) )
+	    *p = *q = *x;
+	  else if ( isnan(*y) )
+	    *p = *q = *y;
+	  else if ( *x > DBL_MAX && *y < - DBL_MAX )
+	    {
+	      *p = 1.0; *q = 0.0;
+	    }
+	  else if ( *y > DBL_MAX &&  *x < - DBL_MAX )
+	    {
+	      *q = 1.0; *p = 0.0;
+	    }
+	  else
+	    {
+	      *status = 4;
+	    }
 	}
     }
 
-  if (*which != 2)
+  else if (2 == *which)  /* compute (x,y) */
     {
-      /*     X + Y */
-      xy = *x + *y;
-      if (((d__1 = xy - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      /* special cases */
+      if ( *p == 0.0 )
 	{
-	  *bound = (xy < 0.) ? 0 : 1 ;
-	  *status = 4;
-	  return 0;
+	  *x = 0.0; *y = 1.0;
+	}
+      else if ( *q == 0.0 )
+	{
+	  *x = 1.0; *y = 0.0;
+	}
+      else
+	{
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double xinit = 1.0/(1.0+(*b)/(*a));  /* this is the mean */
+	  double step = *a >= *b ? sqrt(*b/(1.0 + (*b+1)/(*a)))/(*a+*b) : sqrt(*a/(1.0 + (*a+1)/(*b)))/(*a+*b);
+	  
+	  /* force xinit to be in (0,1) and step to be > 0 */
+	  xinit = Max ( DBL_EPSILON , xinit );
+	  xinit = Min ( 1.0-2*DBL_EPSILON , xinit );
+	  step = Max ( DBL_EPSILON, step );
+
+	  if ( pq_flag )   /* compute x */
+	    {
+	      *x = xinit;
+	      nsp_zsearch_init(*x, 0.0, 1.0, step, 0.0, 2.0, atol, tol, INCREASING, &S);
+	      do
+		{
+		  *y = 1.0 - *x;
+		  cdf_cumbet (x, y, a, b, &cum, &ccum);
+		  fx = cum - *p;
+		}
+	      while ( (ret_val = nsp_zsearch(x, fx, &S)) == EVAL_FX );
+	      switch ( ret_val )
+		{
+		case 
+		  SUCCESS:
+		  *status = 0; break;
+		case LEFT_BOUND_EXCEEDED:
+		  *status = 0; *x = 0.0; *y = 1.0; break;  /* display a warning ? */
+		case RIGHT_BOUND_EXCEEDED:
+		  *status = 0; *x = 1.0; *y = 0.0; break;  /* display a warning ? */
+		default:
+		  *status = 6;
+		}
+	    }
+	  else            /* compute y */
+	    {
+	      *y = 1.0 - xinit;;
+	      nsp_zsearch_init(*y, 0.0, 1.0, step, 0.0, 2.0, atol, tol, INCREASING, &S);
+	      do
+		{
+		  *x = 1.0 - *y;
+		  cdf_cumbet (x, y, a, b, &cum, &ccum);
+		  fx = ccum - *q;
+		}
+	      while ( (ret_val = nsp_zsearch(y, fx, &S)) == EVAL_FX );
+	      switch ( ret_val )
+		{
+		case 
+		  SUCCESS:
+		  *status = 0; break;
+		case LEFT_BOUND_EXCEEDED:
+		  *status = 0; *y = 0.0; *x = 1.0; break;  /* display a warning ? */
+		case RIGHT_BOUND_EXCEEDED:
+		  *status = 0; *y = 1.0; *x = 0.0; break;  /* display a warning ? */
+		default:
+		  *status = 6;
+		}
+	    }
 	}
     }
 
-  if ( *which != 1)
+  else if (3 == *which)         /* compute a */
     {
-      qporq = *p <= *q;
-    }
-
-  /*     Select the minimum of P or Q */
-  /*     Calculate ANSWERS */
-  if (1 == *which)
-    {
-      /*     Calculating P and Q */
-      cdf_cumbet (x, y, a, b, p, q);
-      *status = 0;
-    }
-  else if (2 == *which)
-    {
-      /*     Calculating X and Y */
-      cdf_dstzr (&c_b35, &c_b36, &atol, &tol);
-      if (!qporq)
-	{
-	  goto L340;
-	}
-      *status = 0;
-      cdf_dzror (status, x, &fx, &xlo, &xhi, &qleft, &qhi);
-      *y = one - *x;
-    L320:
-      if (!(*status == 1))
-	{
-	  goto L330;
-	}
-      cdf_cumbet (x, y, a, b, &cum, &ccum);
-      fx = cum - *p;
-      cdf_dzror (status, x, &fx, &xlo, &xhi, &qleft, &qhi);
-      *y = one - *x;
-      /*          write(6,'(''x'',e10.3,''y='',e10.3,''sta='',i3)') x,y,status */
-      goto L320;
-    L330:
-      goto L370;
-    L340:
-      *status = 0;
-      cdf_dzror (status, y, &fx, &xlo, &xhi, &qleft, &qhi);
-      *x = one - *y;
-    L350:
-      if (!(*status == 1))
-	{
-	  goto L360;
-	}
-      cdf_cumbet (x, y, a, b, &cum, &ccum);
-      fx = ccum - *q;
-      cdf_dzror (status, y, &fx, &xlo, &xhi, &qleft, &qhi);
-      *x = one - *y;
-      goto L350;
-    L360:
-    L370:
-      if (!(*status == -1))
-	{
-	  goto L400;
-	}
-      if (!qleft)
-	{
-	  goto L380;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L390;
-    L380:
-      *status = 2;
-      *bound = 1.;
-    L390:
-    L400:
-      ;
-    }
-  else if (3 == *which)
-    {
-      /*     Computing A */
+      ZsearchStruct S;
+      zsearch_ret ret_val;
       *a = 5.;
-      cdf_dstinv (&zero, &inf, &c_b46, &c_b46, &c_b48, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, a, &fx, &qleft, &qhi);
-    L410:
-      if (!(*status == 1))
+      nsp_zsearch_init(*a, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L440;
+	  cdf_cumbet (x, y, a, b, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumbet (x, y, a, b, &cum, &ccum);
-      if (!qporq)
+      while ( (ret_val = nsp_zsearch(a, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L420;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 5; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 6;
 	}
-      fx = cum - *p;
-      goto L430;
-    L420:
-      fx = ccum - *q;
-    L430:
-      cdf_dinvr (status, a, &fx, &qleft, &qhi);
-      goto L410;
-    L440:
-      if (!(*status == -1))
-	{
-	  goto L470;
-	}
-      if (!qleft)
-	{
-	  goto L450;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L460;
-    L450:
-      *status = 2;
-      *bound = inf;
-    L460:
-    L470:
-      ;
     }
-  else if (4 == *which)
+
+  else if (4 == *which)         /* compute b */
     {
-      /*     Computing B */
+      ZsearchStruct S;
+      zsearch_ret ret_val;
       *b = 5.;
-      cdf_dstinv (&zero, &inf, &c_b46, &c_b46, &c_b48, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, b, &fx, &qleft, &qhi);
-    L480:
-      if (!(*status == 1))
+      nsp_zsearch_init(*b, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  goto L510;
+	  cdf_cumbet (x, y, a, b, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
-      cdf_cumbet (x, y, a, b, &cum, &ccum);
-      if (!qporq)
+      while ( (ret_val = nsp_zsearch(b, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
 	{
-	  goto L490;
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 5; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 6;
 	}
-      fx = cum - *p;
-      goto L500;
-    L490:
-      fx = ccum - *q;
-    L500:
-      cdf_dinvr (status, b, &fx, &qleft, &qhi);
-      goto L480;
-    L510:
-      if (!(*status == -1))
-	{
-	  goto L540;
-	}
-      if (!qleft)
-	{
-	  goto L520;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L530;
-    L520:
-      *status = 2;
-      *bound = inf;
-    L530:
-    L540:
-      ;
     }
+
   return 0;
 }	
