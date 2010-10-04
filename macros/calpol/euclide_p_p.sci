@@ -75,14 +75,17 @@ function [q,r]=pdiv_soft_p_p(a,b)
   q=m2p(q);
 endfunction
 
-function [p,u]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
+function [p,u]=euclide_p_p(a,b,eps=100*%eps,monic=%f)
 // 
 // 
   r1 =[ m2p(1),m2p(0)];
   r2 =[ m2p(0),m2p(1)];
   while %t  then 
     if norm(b,%inf) < eps then ; break;end 
-    if abs(abs(det(horner([r1;r2],10*%eps,ttmode=%t)))-1) > eps then 
+    if b.degree[]== 0 && a.degree[]==0 then ; break;end 
+    d=det([r1;r2]);
+    d0=d.coeffs{1};
+    if norm(d-d0(1)) > eps then 
       // we went one step too far 
       r2=r1;r1=rs; b=a;a=as;break;
     end
@@ -93,7 +96,13 @@ function [p,u]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
     r2 = rs - q.*r2;
     a = b;
     b = r ;
-    abs(abs(det(horner([r1;r2],10*%eps,ttmode=%t)))-1)
+    printf("nouveau a et b et det\n")
+    print(a);
+    print(b);
+    d=det([r1;r2]);
+    d0=d.coeffs{1};
+    print(norm(d -d0(1) ));
+    //abs(abs(det(horner([r1;r2],10*%eps,ttmode=%t)))-1)
   end
   p = a;
   u = [r1;r2]';
@@ -114,17 +123,32 @@ if %f then
   x=m2p([0,1]);
   ablcm.normalize[];
   norm(ablcm - (1+x)^4*x^2);
-  
-
-  
-  pp = [m2p([0,1,4,6,4,1]),m2p([0,0,0,1, 3,3,1]),m2p([0,0,0,1, 2,1]),..
-	m2p([0,0,0,1,2,1]),m2p([0,0,0,0,1,2,1]),m2p([0,0,0,0,1,1]),..
+    
+  pp = [m2p([0,1,4,6,4,1]); // 
+	m2p([0,0,0,1, 3,3,1]);
+	m2p([0,0,0,1, 2,1]);
+	m2p([0,0,0,1,2,1]);
+	m2p([0,0,0,0,1,2,1]);
+	m2p([0,0,0,0,1,1]);
 	m2p([0,0,0,1,1])];
+  
+  x=poly(0);
+  pp1= [ x*(1+x)^4;
+	 x^3*(1+x)^3;
+	 x^3*(1+x)^2;
+	 x^3*(1+x)^2;
+	 x^4*(1+x)^2
+	 x^4*(1+x);
+	 x^3*(1+x)];
+  
+  xx = pp(1);
+  for i=1:size(pp,'*'); xx=euclide(xx,pp(i),monic=%t);  end
 
-  x = pp(1);
-  for i=1:size(pp,'*'); x=euclide(x,pp(i),monic=%t);  end
-
-  qq = [m2p([-12,0,3]),m2p([-12,0,3]),m2p([0,-12,0,3])]
+  xx = pp1(1);
+  for i=1:size(pp,'*'); xx=euclide(xx,pp1(i),monic=%t);  end
+  
+  qq = [m2p([-12,0,3]),m2p([-12,0,3]),m2p([0,-12,0,3])];
+  qq = [3*(x^2-4);3*x*(x^2-4)];
   y = qq(1);
   for i=1:size(qq,'*'); y=euclide(y,qq(i),monic=%t);  end
   

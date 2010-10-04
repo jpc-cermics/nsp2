@@ -1,4 +1,4 @@
-function y=poly(x,name='x',roots=%t)
+function y=poly(x,y,name='x',roots=%t)
 // Copyright  2010 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
