@@ -17,16 +17,12 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-#define PMatrix_Private 
+#include <nsp/nsp.h>
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/smatrix.h> 
+#define PMatrix_Private 
 #include <nsp/pmatrix.h> 
 #include <nsp/cells.h> 
 #include <nsp/matint.h> 
@@ -34,7 +30,7 @@
 #include <nsp/file.h> 
 #include <nsp/type.h> 
 
-
+#include "nsp/cnumeric.h"
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
@@ -516,10 +512,60 @@ static int int_meth_shift(void *self,Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+static int int_meth_normalize(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j;
+  char type = 'r';
+  NspMatrix *N;
+  NspPMatrix *P=self;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  for ( i = 0 ; i < P->mn ; i++) 
+    if (P->S[i]->rc_type == 'c') type = 'c';
+  if ((N = nsp_matrix_create(NVOID,type,P->m,P->n)) == NULL) 
+    return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++) 
+    {
+      NspMatrix *A= P->S[i];
+      if ( A->mn > 1 ) 
+	{
+	  if ( A->rc_type == 'r') 
+	    {
+	      for ( j = 0 ; j < A->mn -1 ; j++) A->R[j] /= A->R[A->mn-1];
+	      if ( type == 'r' ) 
+		{
+		  N->R[i]= A->R[A->mn-1];
+		}
+	      else 
+		{
+		  N->C[i].r = A->R[A->mn-1];
+		  N->C[i].i = 0;
+		}
+	      A->R[A->mn-1]=1.0;
+	    }
+	  else
+	    {
+	      for ( j = 0 ; j < A->mn ; j++) 
+		{
+		  doubleC res;
+		  nsp_div_cc(&A->C[j],&A->C[A->mn-1],&res);
+		  A->C[j]=res;
+		}
+	      N->C[i]= A->C[A->mn-1];
+	      A->C[A->mn-1].r = 1.0;
+	      A->C[A->mn-1].i = 0.0;
+	    }
+	}
+    }
+  MoveObj(stack,1,NSP_OBJECT(N));
+  return 1;
+}
+
 
 static NspMethods pmatrix_methods[] = {
   { "degree", int_meth_degree},
   { "shift", int_meth_shift},
+  { "normalize", int_meth_normalize},
   { (char *) 0, NULL}
 };
 
@@ -1556,12 +1602,27 @@ static int int_pmatrix_minus_m_p(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_pmatrix_pdiv_p_p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *A,*B;
+  NspPMatrix *Q,*R;
+  CheckRhs(2,2);
+  CheckLhs(2,2);
+  if ((A=GetPMat(stack,1))== NULL) return RET_BUG;
+  if ((B=GetPMat(stack,2))== NULL) return RET_BUG;
+  if (nsp_pmatrix_pdiv_tt(A,B,&Q,&R)== FAIL) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) Q);
+  MoveObj(stack,2,(NspObject *) R);
+  return 2;
+}
+
 
 /*
  * The Interface for basic matrices operation 
  */
 
 static OpTab PMatrix_func[]={
+  {"pdiv", int_pmatrix_pdiv_p_p},
   {"extract_p", int_matint_extract}, 
   {"extractelts_p", int_matint_extractelts}, 
   {"extractcols_p", int_matint_extractcols}, 

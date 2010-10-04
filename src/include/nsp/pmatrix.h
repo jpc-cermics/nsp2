@@ -115,6 +115,7 @@ extern NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M);
 extern NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k);
 extern NspMatrix *nsp_pmatrix_horner_tt(NspPMatrix *P,NspMatrix *V);
 extern NspBMatrix  *nsp_pmatrix_comp(NspPMatrix *A, NspPMatrix *B,const char *op);
+extern int nsp_pmatrix_pdiv_tt(NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix **R);
 
 /* polynomials */
 extern int nsp_polynom_resize(nsp_polynom poly);
@@ -123,6 +124,9 @@ extern nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q);
 extern nsp_polynom nsp_polynom_mult(nsp_polynom a,nsp_polynom b);
 extern nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b);
 extern nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b);
+extern int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq, nsp_polynom *hr);
+
+
 extern int nsp_pset_polynom(int n, const doubleC *s1, nsp_polynom *s2); 
 extern nsp_polynom nsp_basic_to_polynom(const doubleC *d, char type); 
 extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 

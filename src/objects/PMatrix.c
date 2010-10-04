@@ -133,6 +133,39 @@ void nsp_polynom_destroy(nsp_polynom *P)
   *P=NULL;
 }
 
+int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq,
+		    nsp_polynom *hr)
+{
+  int i;
+  nsp_polynom ca,q;
+  if ((ca = nsp_polynom_copy_and_name("pe",a))== NULL) return FAIL;
+  if ((q = nsp_polynom_copy_and_name("pe",a))== NULL) return FAIL;
+  for ( i = 0 ; i < ((NspMatrix *) q)->mn ; i++) 
+    ((NspMatrix *) q)->R[i]=0;
+  while (1) 
+    {
+      double c;
+      if ( ca->mn < b->mn || ca->mn == 1 )
+	{
+	  if (( nsp_polynom_resize(q))== FAIL ) return FAIL;
+	  *hq = q;
+	  *hr = ca;
+	  return OK;
+	}
+      c = ca->R[ca->mn-1]/b->R[b->mn-1];
+      q->R[ca->mn-b->mn]=c;
+      /* a = a - c*x^(da-db)*b */
+      for ( i = 0  ; i < b->mn ; i++ ) 
+	ca->R[ca->mn - (b->mn - i)] -= c*b->R[i];
+      ca->R[ca->mn-1]=0.0;
+      if (( nsp_polynom_resize(ca))== FAIL ) return FAIL;
+    }
+  /*   if (na < nb ) then r = a; break;end */
+  return OK;
+}
+
+
+
 /**
  * nsp_matrix_to_polynom:
  * @M: a #NspMatrix 
@@ -1790,6 +1823,33 @@ NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
     }
   return loc;
 }
+
+int nsp_pmatrix_pdiv_tt(NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix **R)
+{
+  int i, m= Max(A->m,B->m), n=Max(B->m,B->n) , mn=Max(A->mn,B->mn);
+  nsp_polynom q,r;
+  NspPMatrix *Ql,*Rl;
+  if ( !( SameDim(A,B) || A->mn == 1 || B->mn == 1)) 
+    {
+      Scierror("Error:\targuments should have the same size\n");
+      return FAIL;
+    }
+  if ((Ql =nsp_pmatrix_create(NVOID,m,n,NULL,-1))== NULLPMAT) 
+    return FAIL;
+  if ((Rl =nsp_pmatrix_create(NVOID,m,n,NULL,-1))== NULLPMAT) 
+    return FAIL;
+  for (i=0; i < mn ; i++) 
+    {
+      if (nsp_polynom_pdiv( A->S[Min(i,A->mn)], B->S[Min(i,B->mn)],&q,&r)== FAIL) 
+	return FAIL;
+      Ql->S[i]= q;
+      Rl->S[i]= r;
+    }
+  *Q = Ql;
+  *R = Rl;
+  return OK;
+}
+
 
 
 /**

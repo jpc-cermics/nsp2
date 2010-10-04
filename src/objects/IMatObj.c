@@ -3061,6 +3061,85 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+int int_euclide(Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j;
+  NspMatrix *A=NULL,*B=NULL;
+  NspIMatrix *IA=NULL,*IB=NULL;
+  CheckStdRhs(2,2);
+  CheckLhs(1,3);
+  if ( IsIMatObj(stack,1) )
+    {
+      if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
+      if ( IA->itype != nsp_gint32) 
+	{
+	  Scierror ("Error: integer matrix argument for %s should be of int32 subtype\n", NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else 
+    {
+      if ((A = GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
+    }
+  if ( IsIMatObj(stack,2) )
+    {
+      if (( IB = GetIMat(stack,2))  == NULLIMAT) return RET_BUG;
+      if ( IB->itype != nsp_gint32) 
+	{
+	  Scierror ("Error: integer matrix argument for %s should be of int32 subtype\n", NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else 
+    {
+      if ((B = GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
+    }
+  if ( (A != NULL && B== NULL) || 
+       (A == NULL && B!= NULL))
+    {
+      Scierror("Error: A and B should be both int32 or double matrices\n");
+      return RET_BUG;
+    }
+  
+  if ( A != NULL ) 
+    {
+      NspMatrix *Res[3]={NULL,NULL,NULL};
+      gint32 res[3];
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	{
+	  if ( ( Res[j] =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULL)
+	    return RET_BUG;
+	}
+      for ( i = 0 ; i < A->mn ; i++ )
+	{
+	  nsp_euclide(A->R[i],B->R[i], res);
+	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	    Res[j]->R[i]= res[j];
+	}
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
+    }
+  else
+    {
+      NspIMatrix *Res[3]={NULL,NULL,NULL};
+      gint32 res[3];
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	{
+	  if ( ( Res[j] =nsp_imatrix_create(NVOID,IA->m,IA->n,nsp_gint32)) == NULL)
+	    return RET_BUG;
+	}
+      for ( i = 0 ; i < IA->mn ; i++ )
+	{
+	  nsp_euclide(IA->Gint32[i],IB->Gint32[i], res);
+	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	    Res[j]->Gint32[i]= res[j];
+	}
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
+    }
+  return Max(lhs,1);
+}
+
 
 
 /*
@@ -3068,6 +3147,7 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab IMatrix_func[]={
+  {"euclide", int_euclide},
   {"impl_i", int_imatrix_impl},
   {"dec2base", int_dec2base},
   {"base2dec", int_base2dec},

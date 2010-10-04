@@ -1280,6 +1280,10 @@ nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A)
 }
 
 
+/* XXXX : to be added in interfaces 
+ *
+ */
+
 typedef union { 
   guint64     Guint64;
   double      Double;
@@ -1317,6 +1321,8 @@ int nsp_hex2num(nsp_string str,double *res)
   return OK;
 }
 
+/* XXXX : to be added in interfaces  */
+
 nsp_string nsp_num2hex(double x)
 {
   int j;
@@ -1335,9 +1341,29 @@ nsp_string nsp_num2hex(double x)
   return str;
 }
 
+/* euclide 
+ * res=[ r, u, v] 
+ * such that  r = pgcd(a, b) and r = a*u+b*v
+ */
+
+void nsp_euclide(gint32 a, gint32 b, gint32 res[])
+{
+  gint32 ruv[3],rs[3];
+  res[0]=a;  res[1]=1;  res[2]=0;
+  ruv[0]=b;  ruv[1]=0;  ruv[2]=1;
+  while ( ruv[0] != 0 ) 
+    {
+      gint32 q = res[0]/ruv[0];
+      rs[0]=res[0];rs[1]=res[1];rs[2]=res[2];
+      res[0]=ruv[0];res[1]=ruv[1];res[2]=ruv[2];
+      ruv[0]=rs[0] - q * ruv[0];
+      ruv[1]=rs[1] - q * ruv[1];
+      ruv[2]=rs[2] - q * ruv[2];
+    }
+}
 
 /*
- * routines for output of boolean matrices 
+ * routines for output of integer matrices 
  */
 
 static void nsp_int_print(const void *m, int i, int j)
