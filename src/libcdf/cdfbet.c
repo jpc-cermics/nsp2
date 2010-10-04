@@ -167,23 +167,42 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 	{
 	  ZsearchStruct S;
 	  zsearch_ret ret_val;
-	  double xinit = 1.0/(1.0+(*b)/(*a));  /* this is the mean */
-	  double step = *a >= *b ? sqrt(*b/(1.0 + (*b+1)/(*a)))/(*a+*b) : sqrt(*a/(1.0 + (*a+1)/(*b)))/(*a+*b);
-	  
-	  /* force xinit to be in (0,1) and step to be > 0 */
-	  xinit = Max ( DBL_EPSILON , xinit );
-	  xinit = Min ( 1.0-DBL_EPSILON , xinit );
-	  step = Max ( DBL_EPSILON, step );
+	  double mean = 1.0/(1.0+(*b)/(*a));  /* this is the mean */
+	  double std = *a >= *b ? sqrt(*b/(1.0 + (*b+1)/(*a)))/(*a+*b) : sqrt(*a/(1.0 + (*a+1)/(*b)))/(*a+*b);
+	  int xy_flag;
 
-	  if ( pq_flag )   /* compute x */
+	  /* decide if we compute x or y */
+	  if ( pq_flag )
 	    {
-	      *x = xinit;
-	      nsp_zsearch_init(*x, 0.0, 1.0, step, 0.0, 2.0, atol, tol, INCREASING, &S);
+	      xy_flag = 1; /* compute x but not in all cases */  
+	      if ( mean - 2.0*std > 0.9 ) /* compute y */
+		xy_flag = 0;
+	    }
+	  else
+	    {
+	      xy_flag = 0; /* compute y but not in all cases */ 
+	      if ( mean + 2.0*std < 0.1 ) /* compute x */
+		xy_flag = 1;
+	    }
+
+	  /* mean will be used as start point but force mean to be in (0,1) */
+	  mean = Max ( DBL_EPSILON , mean );
+	  mean = Min ( 1.0-DBL_EPSILON , mean );
+          /* std will be the initial step size but force it to be > 0 */
+	  std = Max ( DBL_EPSILON, std );
+
+	  if ( xy_flag )   /* compute x */
+	    {
+	      *x = mean;
+	      nsp_zsearch_init(*x, 0.0, 1.0, std, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
 	      do
 		{
 		  *y = 1.0 - *x;
 		  cdf_cumbet (x, y, a, b, &cum, &ccum);
-		  fx = cum - *p;
+		  if ( pq_flag )
+		    fx = cum - *p;
+		  else
+		    fx = ccum - *q;
 		}
 	      while ( (ret_val = nsp_zsearch(x, fx, &S)) == EVAL_FX );
 	      switch ( ret_val )
@@ -201,13 +220,16 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 	    }
 	  else            /* compute y */
 	    {
-	      *y = 1.0 - xinit;;
-	      nsp_zsearch_init(*y, 0.0, 1.0, step, 0.0, 2.0, atol, tol, INCREASING, &S);
+	      *y = 1.0 - mean;;
+	      nsp_zsearch_init(*y, 0.0, 1.0, std, 0.0, 2.0, atol, tol,  pq_flag ? DECREASING : INCREASING, &S);
 	      do
 		{
 		  *x = 1.0 - *y;
 		  cdf_cumbet (x, y, a, b, &cum, &ccum);
-		  fx = ccum - *q;
+		  if ( pq_flag )
+		    fx = cum - *p;
+		  else
+		    fx = ccum - *q;
 		}
 	      while ( (ret_val = nsp_zsearch(y, fx, &S)) == EVAL_FX );
 	      switch ( ret_val )

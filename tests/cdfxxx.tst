@@ -658,7 +658,7 @@ x = icdf("bet",pe,ae,be);
 xx = cdfbet("XY",ae*v,be*v,pe,1-pe);
 if ~x.equal[xx] then, pause, end
 erx = max( abs(x-xe)./(abs(xe)+1e-6));
-if erx > 2e-13 then, pause, end
+if erx > 1e-13 then, pause, end
 
 a = cdfbet("A",be*v,pe,1-pe,xe,1-xe);
 era =  max(abs(a-ae)/ae);
@@ -684,5 +684,11 @@ if ~ (p.equal[1] && q.equal[0]) then, pause, end
 if ~(x.equal[0] && y.equal[1]) then, pause, end
 [x,y] = cdfbet("XY", ae, be, 1, 0);
 if ~(x.equal[1] && y.equal[0]) then, pause, end
+
+// a test which fails before cdfbet improvement about computing x or y
+[x,y]=cdfbet("XY",1e18,3,0.4,0.6);
+[p,q] = cdfbet("PQ",x,y,1e18,3);
+if abs(p-0.4)/0.4 > 1e-14 then, pause, end
+
 
 
