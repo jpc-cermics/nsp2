@@ -172,7 +172,7 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 	  
 	  /* force xinit to be in (0,1) and step to be > 0 */
 	  xinit = Max ( DBL_EPSILON , xinit );
-	  xinit = Min ( 1.0-2*DBL_EPSILON , xinit );
+	  xinit = Min ( 1.0-DBL_EPSILON , xinit );
 	  step = Max ( DBL_EPSILON, step );
 
 	  if ( pq_flag )   /* compute x */
@@ -190,7 +190,7 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 		{
 		case 
 		  SUCCESS:
-		  *status = 0; break;
+		  *status = 0; *y = 1.0 - *x; break;
 		case LEFT_BOUND_EXCEEDED:
 		  *status = 0; *x = 0.0; *y = 1.0; break;  /* display a warning ? */
 		case RIGHT_BOUND_EXCEEDED:
@@ -214,7 +214,7 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 		{
 		case 
 		  SUCCESS:
-		  *status = 0; break;
+		  *status = 0; *x = 1.0 - *y; break;
 		case LEFT_BOUND_EXCEEDED:
 		  *status = 0; *y = 0.0; *x = 1.0; break;  /* display a warning ? */
 		case RIGHT_BOUND_EXCEEDED:
