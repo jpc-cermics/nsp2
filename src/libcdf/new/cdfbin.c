@@ -1,6 +1,6 @@
 #include "cdf.h"
 
-/*********************************************************************** 
+/**
  *     SUBROUTINE CDFBIN ( WHICH, P, Q, S, XN, PR, OMPR, STATUS, BOUND ) 
  *               Cumulative Distribution Function 
  *                         BINomial distribution 
@@ -71,8 +71,7 @@
  *     thus this function compute the cumulative distribution using this 
  *     formula i.e for k in R 
  *     
- ********************************************************************** */
-
+ **/
 
 int
 cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
@@ -85,17 +84,8 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
   static double c_b59 = 1.;
   const  double atol=1.0E-50, zero=1.0E-300, inf=1.0E300,one=1.0E0,tol=1.0E-14;
   
-  double d__1;
-  double ccum;
-  int qleft;
-  int qporq;
-  double fx, pq;
-  double prompr;
-  int qhi;
-  double cum, xhi, xlo;
-  /*     jpc : changed the next line which was strangeley */
-  /*     not working at run time on win32 gcc with optimize option !!! */
-  /*      IF (.NOT ((which.LT.1).AND. (which.GT.4))) GO TO 30 */
+  double d__1, ccum, fx, pq, prompr, cum, xhi, xlo;
+  int qhi, qleft, qporq;
   
   CDF_CHECK_ARG(*which < 1 , 1 , -1 );
   CDF_CHECK_ARG(*which > 4 , 4 , -1 );
@@ -200,86 +190,38 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
       cdf_dstinv (&c_b37, xn, &c_b38, &c_b38, &c_b40, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, s, &fx, &qleft, &qhi);
-    L340:
-      if (!(*status == 1))
+      while (1)
 	{
-	  goto L370;
+	  if (!(*status == 1)) break;
+	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	  fx = (!qporq) ? ccum - *q :  cum - *p;
+	  cdf_dinvr (status, s, &fx, &qleft, &qhi);
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      if (!qporq)
+      if ((*status == -1))
 	{
-	  goto L350;
+	  *status = (!qleft) ? 2 :1;
+	  *bound =  (!qleft) ? *xn: 0;
 	}
-      fx = cum - *p;
-      goto L360;
-    L350:
-      fx = ccum - *q;
-    L360:
-      cdf_dinvr (status, s, &fx, &qleft, &qhi);
-      goto L340;
-    L370:
-      if (!(*status == -1))
-	{
-	  goto L400;
-	}
-      if (!qleft)
-	{
-	  goto L380;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L390;
-    L380:
-      *status = 2;
-      *bound = *xn;
-    L390:
-    L400:
-      ;
     }
   else if (3 == *which)
     {
-
       /*     Calculating XN */
-
       *xn = 5.;
       cdf_dstinv (&zero, &inf, &c_b38, &c_b38, &c_b40, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-    L410:
-      if (!(*status == 1))
+      while (1)
 	{
-	  goto L440;
+	  if (!(*status == 1)) break;
+	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	  fx = (!qporq) ? ccum - *q:  cum - *p;
+	  cdf_dinvr (status, xn, &fx, &qleft, &qhi);
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      if (!qporq)
+      if ((*status == -1))
 	{
-	  goto L420;
+	  *status = (!qleft) ? 2 :1;
+	  *bound =  (!qleft) ? inf: zero;
 	}
-      fx = cum - *p;
-      goto L430;
-    L420:
-      fx = ccum - *q;
-    L430:
-      cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-      goto L410;
-    L440:
-      if (!(*status == -1))
-	{
-	  goto L470;
-	}
-      if (!qleft)
-	{
-	  goto L450;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L460;
-    L450:
-      *status = 2;
-      *bound = inf;
-    L460:
-    L470:
-      ;
     }
   else if (4 == *which)
     {
@@ -287,57 +229,39 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
       cdf_dstzr (&c_b37, &c_b59, &atol, &tol);
       if (!qporq)
 	{
-	  goto L500;
+	  *status = 0;
+	  cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
+	  *pr = one - *ompr;
+	  while (1)
+	    {
+	      if (!(*status == 1)) break;
+	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	      fx = ccum - *q;
+	      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
+	      *pr = one - *ompr;
+	    }
 	}
-      *status = 0;
-      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *ompr = one - *pr;
-    L480:
-      if (!(*status == 1))
+      else
 	{
-	  goto L490;
+	  *status = 0;
+	  cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
+	  *ompr = one - *pr;
+	  while (1) 
+	    {
+	      if (!(*status == 1)) break;
+	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	      fx = cum - *p;
+	      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
+	      *ompr = one - *pr;
+	    }
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      fx = cum - *p;
-      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *ompr = one - *pr;
-      goto L480;
-    L490:
-      goto L530;
-    L500:
-      *status = 0;
-      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *pr = one - *ompr;
-    L510:
-      if (!(*status == 1))
+      if ((*status == -1))
 	{
-	  goto L520;
+	  *status = (!qleft) ? 2 :1;
+	  *bound =  (!qleft) ? 1.: 0.;
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      fx = ccum - *q;
-      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *pr = one - *ompr;
-      goto L510;
-    L520:
-    L530:
-      if (!(*status == -1))
-	{
-	  goto L560;
-	}
-      if (!qleft)
-	{
-	  goto L540;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L550;
-    L540:
-      *status = 2;
-      *bound = 1.;
-    L550:
-    L560:
-      ;
     }
   return 0;
-}				/* cdfbin_ */
+}
+
 
