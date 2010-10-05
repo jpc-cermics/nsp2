@@ -1331,7 +1331,18 @@ static int nsp_read_line(FILE *fd,int *mem)
 	  if ( n > 0 && Info[n-1] == '\r')  Info[n-1] = '\0' ; 
 	  return 1;
 	}
-      else if ( c == (char)EOF ) return EOF;  
+      else if ( c == (char)EOF ) 
+	{
+	  if ( n > 0 )    /* modif to read the last line if terminated by EOF (bruno, oct 2010) */
+	    {
+	      Info[n] = '\0' ;
+	      if ( n > 0 && Info[n-1] == '\r')  Info[n-1] = '\0' ; 
+	      Sciprintf("Warning: Missing end of line at the end of file\n");
+	      return 1;
+	    }
+	  else
+	    return EOF;
+	}  
       n++;
     }
 }
