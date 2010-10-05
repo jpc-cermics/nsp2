@@ -1,6 +1,6 @@
 #include "cdf.h"
 
-/*********************************************************************** 
+/**
  *     SUBROUTINE CDFBIN ( WHICH, P, Q, S, XN, PR, OMPR, STATUS, BOUND ) 
  *               Cumulative Distribution Function 
  *                         BINomial distribution 
@@ -71,8 +71,7 @@
  *     thus this function compute the cumulative distribution using this 
  *     formula i.e for k in R 
  *     
- ********************************************************************** */
-
+ **/
 
 int
 cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
@@ -84,210 +83,79 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
   static double c_b40 = 5.;
   static double c_b59 = 1.;
   const  double atol=1.0E-50, zero=1.0E-300, inf=1.0E300,one=1.0E0,tol=1.0E-14;
+  
+  double d__1, ccum, fx, pq, prompr, cum, xhi, xlo;
+  int qhi, qleft, qporq;
+  
+  CDF_CHECK_ARG(*which < 1 , 1 , -1 );
+  CDF_CHECK_ARG(*which > 4 , 4 , -1 );
 
-  double d__1;
-  double ccum;
-  int qleft;
-  int qporq;
-  double fx, pq;
-  double prompr;
-  int qhi;
-  double cum, xhi, xlo;
-  /*     jpc : changed the next line which was strangeley */
-  /*     not working at run time on win32 gcc with optimize option !!! */
-  /*      IF (.NOT ((which.LT.1).AND. (which.GT.4))) GO TO 30 */
-  if (*which >= 1 && *which <= 4)
+  if (*which != 1)
     {
-      goto L30;
-    }
-  if (!(*which < 1))
-    {
-      goto L10;
-    }
-  *bound = 1.;
-  goto L20;
- L10:
-  *bound = 4.;
- L20:
-  *status = -1;
-  return 0;
- L30:
-  if (*which == 1)
-    {
-      goto L70;
-    }
-  /*     P */
-  if (!(*p < 0. || *p > 1.))
-    {
-      goto L60;
-    }
-  if (!(*p < 0.))
-    {
-      goto L40;
-    }
-  *bound = 0.;
-  goto L50;
- L40:
-  *bound = 1.;
- L50:
-  *status = -2;
-  return 0;
- L60:
- L70:
-  if (*which == 1)
-    {
-      goto L110;
-    }
-  /*     Q */
-  if (!(*q < 0. || *q > 1.))
-    {
-      goto L100;
-    }
-  if (!(*q < 0.))
-    {
-      goto L80;
-    }
-  *bound = 0.;
-  goto L90;
- L80:
-  *bound = 1.;
- L90:
-  *status = -3;
-  return 0;
- L100:
- L110:
-  if (*which == 3)
-    {
-      goto L130;
+      /*     P */
+      CDF_CHECK_ARG(*p < 0 , 0 , -2 );
+      CDF_CHECK_ARG(*p > 1 , 1 , -2 );
+      /*     Q */
+      CDF_CHECK_ARG(*q < 0 , 0 , -3 );
+      CDF_CHECK_ARG(*q > 1 , 1 , -3 );
     }
 
-  /*     XN */
+  if (*which != 3)
+    {
+      /*     XN */
+      CDF_CHECK_ARG(*xn <=0 , 0 , -5 );
+    }
 
-  if (!(*xn <= 0.))
+  if (*which != 2 && *which != 1 )
     {
-      goto L120;
+      /* S : jpc range for *s is extended for *which == 1 */
+      if ( (*s < 0. || (*which != 3 && *s > *xn))) 
+	{
+	  *bound = (*s < 0.) ? 0: *xn ;
+	  *status = -4;
+	  return 0;
+	}
     }
-  *bound = 0.;
-  *status = -5;
-  return 0;
- L120:
- L130:
-  if (*which == 2)
+
+  if (*which != 4)
     {
-      goto L170;
+      /*     PR */
+      CDF_CHECK_ARG(*pr < 0 , 0 , -6 );
+      CDF_CHECK_ARG(*pr > 1 , 1 , -6 );
+      /*     OMPR */
+      CDF_CHECK_ARG(*ompr < 0 , 0 , -7 );
+      CDF_CHECK_ARG(*ompr > 1 , 1 , -7 );
     }
-  /* S : jpc range for *s is extended for *which == 1 */
-  if (!(*s < 0. || (*which != 3 && *s > *xn)) || *which == 1)
+
+  if (*which != 1)
     {
-      goto L160;
+      /*     P + Q */
+      pq = *p + *q;
+      if (((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+	{
+	  *bound = (!(pq < 0.)) ?  1.: 0.0;
+	  *status = 3;
+	  return 0;
+	}
     }
-  if (!(*s < 0.))
+
+  if (*which != 4)
     {
-      goto L140;
+      /*     PR + OMPR */
+      prompr = *pr + *ompr;
+      if (((d__1 = prompr - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+	{
+	  *bound = (prompr < 0.) ? 0 : 1;
+	  *status = 4;
+	  return 0;
+	}
     }
-  *bound = 0.;
-  goto L150;
- L140:
-  *bound = *xn;
- L150:
-  *status = -4;
-  return 0;
- L160:
- L170:
-  if (*which == 4)
-    {
-      goto L210;
-    }
-  /*     PR */
-  if (!(*pr < 0. || *pr > 1.))
-    {
-      goto L200;
-    }
-  if (!(*pr < 0.))
-    {
-      goto L180;
-    }
-  *bound = 0.;
-  goto L190;
- L180:
-  *bound = 1.;
- L190:
-  *status = -6;
-  return 0;
- L200:
- L210:
-  if (*which == 4)
-    {
-      goto L250;
-    }
-  /*     OMPR */
-  if (!(*ompr < 0. || *ompr > 1.))
-    {
-      goto L240;
-    }
-  if (!(*ompr < 0.))
-    {
-      goto L220;
-    }
-  *bound = 0.;
-  goto L230;
- L220:
-  *bound = 1.;
- L230:
-  *status = -7;
-  return 0;
- L240:
- L250:
-  if (*which == 1)
-    {
-      goto L290;
-    }
-  /*     P + Q */
-  pq = *p + *q;
-  if (!((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
-    {
-      goto L280;
-    }
-  if (!(pq < 0.))
-    {
-      goto L260;
-    }
-  *bound = 0.;
-  goto L270;
- L260:
-  *bound = 1.;
- L270:
-  *status = 3;
-  return 0;
- L280:
- L290:
-  if (*which == 4)
-    {
-      goto L330;
-    }
-  /*     PR + OMPR */
-  prompr = *pr + *ompr;
-  if (!((d__1 = prompr - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
-    {
-      goto L320;
-    }
-  if (!(prompr < 0.))
-    {
-      goto L300;
-    }
-  *bound = 0.;
-  goto L310;
- L300:
-  *bound = 1.;
- L310:
-  *status = 4;
-  return 0;
- L320:
- L330:
-  if (!(*which == 1))
+
+  if ( *which != 1)
     {
       qporq = *p <= *q;
     }
+
   /*     Select the minimum of P or Q */
   /*     Calculate ANSWERS */
   if (1 == *which)
@@ -322,86 +190,38 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
       cdf_dstinv (&c_b37, xn, &c_b38, &c_b38, &c_b40, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, s, &fx, &qleft, &qhi);
-    L340:
-      if (!(*status == 1))
+      while (1)
 	{
-	  goto L370;
+	  if (!(*status == 1)) break;
+	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	  fx = (!qporq) ? ccum - *q :  cum - *p;
+	  cdf_dinvr (status, s, &fx, &qleft, &qhi);
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      if (!qporq)
+      if ((*status == -1))
 	{
-	  goto L350;
+	  *status = (!qleft) ? 2 :1;
+	  *bound =  (!qleft) ? *xn: 0;
 	}
-      fx = cum - *p;
-      goto L360;
-    L350:
-      fx = ccum - *q;
-    L360:
-      cdf_dinvr (status, s, &fx, &qleft, &qhi);
-      goto L340;
-    L370:
-      if (!(*status == -1))
-	{
-	  goto L400;
-	}
-      if (!qleft)
-	{
-	  goto L380;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L390;
-    L380:
-      *status = 2;
-      *bound = *xn;
-    L390:
-    L400:
-      ;
     }
   else if (3 == *which)
     {
-
       /*     Calculating XN */
-
       *xn = 5.;
       cdf_dstinv (&zero, &inf, &c_b38, &c_b38, &c_b40, &atol, &tol);
       *status = 0;
       cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-    L410:
-      if (!(*status == 1))
+      while (1)
 	{
-	  goto L440;
+	  if (!(*status == 1)) break;
+	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	  fx = (!qporq) ? ccum - *q:  cum - *p;
+	  cdf_dinvr (status, xn, &fx, &qleft, &qhi);
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      if (!qporq)
+      if ((*status == -1))
 	{
-	  goto L420;
+	  *status = (!qleft) ? 2 :1;
+	  *bound =  (!qleft) ? inf: zero;
 	}
-      fx = cum - *p;
-      goto L430;
-    L420:
-      fx = ccum - *q;
-    L430:
-      cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-      goto L410;
-    L440:
-      if (!(*status == -1))
-	{
-	  goto L470;
-	}
-      if (!qleft)
-	{
-	  goto L450;
-	}
-      *status = 1;
-      *bound = zero;
-      goto L460;
-    L450:
-      *status = 2;
-      *bound = inf;
-    L460:
-    L470:
-      ;
     }
   else if (4 == *which)
     {
@@ -409,57 +229,39 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
       cdf_dstzr (&c_b37, &c_b59, &atol, &tol);
       if (!qporq)
 	{
-	  goto L500;
+	  *status = 0;
+	  cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
+	  *pr = one - *ompr;
+	  while (1)
+	    {
+	      if (!(*status == 1)) break;
+	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	      fx = ccum - *q;
+	      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
+	      *pr = one - *ompr;
+	    }
 	}
-      *status = 0;
-      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *ompr = one - *pr;
-    L480:
-      if (!(*status == 1))
+      else
 	{
-	  goto L490;
+	  *status = 0;
+	  cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
+	  *ompr = one - *pr;
+	  while (1) 
+	    {
+	      if (!(*status == 1)) break;
+	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	      fx = cum - *p;
+	      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
+	      *ompr = one - *pr;
+	    }
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      fx = cum - *p;
-      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *ompr = one - *pr;
-      goto L480;
-    L490:
-      goto L530;
-    L500:
-      *status = 0;
-      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *pr = one - *ompr;
-    L510:
-      if (!(*status == 1))
+      if ((*status == -1))
 	{
-	  goto L520;
+	  *status = (!qleft) ? 2 :1;
+	  *bound =  (!qleft) ? 1.: 0.;
 	}
-      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-      fx = ccum - *q;
-      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-      *pr = one - *ompr;
-      goto L510;
-    L520:
-    L530:
-      if (!(*status == -1))
-	{
-	  goto L560;
-	}
-      if (!qleft)
-	{
-	  goto L540;
-	}
-      *status = 1;
-      *bound = 0.;
-      goto L550;
-    L540:
-      *status = 2;
-      *bound = 1.;
-    L550:
-    L560:
-      ;
     }
   return 0;
-}				/* cdfbin_ */
+}
+
 

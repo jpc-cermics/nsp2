@@ -110,9 +110,9 @@ extern int cdf_dstinv (const double *zsmall,const double *zbig,const double *zab
 		       const double *zstpmu,const double *zabsto,const  double *zrelto);
 extern int cdf_dstzr (double *zxlo, double *zxhi,const double *zabstl,const double *zreltl);
 extern int cdf_dzror (int *status, double *x, double *fx, double *xlo, double *xhi, int *qleft, int *qhi);
-extern int cdf_gaminv (double *a, double *x, double *x0, double *p, double *q, int *ierr);
+extern int cdf_gaminv (double a, double *x, double *x0, double *p, double *q, int *ierr);
 extern int cdf_grat1 (double *a, double *x, double *r__, double *p, double *q, double *eps);
-extern int cdf_gratio (double *a, double *x, double *ans, double *qans,const int *ind);
+extern int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind);
 extern int cdf_ipmpar (const int );
 
 extern int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w1, int *ierr);

@@ -1,70 +1,62 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-/*      SUBROUTINE CDFGAM( WHICH, P, Q, X, SHAPE, RATE, STATUS, BOUND ) */
-/*               Cumulative Distribution Function */
-/*                         GAMma Distribution */
-/*                              Function */
-/*     Calculates any one parameter of the gamma */
-/*     distribution given values for the others. */
-/*                              Arguments */
-/*     WHICH --> Int indicating which of the next four argument */
-/*               values is to be calculated from the others. */
-/*               Legal range: 1..4 */
-/*               iwhich = 1 : Calculate P and Q from X,SHAPE and RATE */
-/*               iwhich = 2 : Calculate X from P,Q,SHAPE and RATE */
-/*               iwhich = 3 : Calculate SHAPE from P,Q,X and RATE */
-/*               iwhich = 4 : Calculate RATE from P,Q,X and SHAPE */
-/*                    INT WHICH */
-/*     P <--> The integral from 0 to X of the gamma density. */
-/*            Input range: [0,1]. */
-/*                    DOUBLE PRECISION P */
-/*     Q <--> 1-P. */
-/*            Input range: (0, 1]. */
-/*            P + Q = 1.0. */
-/*                    DOUBLE PRECISION Q */
-/*     X <--> The upper limit of integration of the gamma density. */
-/*            Input range: [0, +infinity). */
-/*            Search range: [0,1E300] */
-/*                    DOUBLE PRECISION X */
-/*     SHAPE <--> The shape parameter of the gamma density. */
-/*                Input range: (0, +infinity). */
-/*                Search range: [1E-300,1E300] */
-/*                  DOUBLE PRECISION SHAPE */
-/*     RATE <--> The rate parameter of the gamma density. */
-/*                Input range: (0, +infinity). */
-/*                Search range: (1E-300,1E300] */
-/*                   DOUBLE PRECISION RATE */
-/*     STATUS <-- 0 if calculation completed correctly */
-/*               -I if input parameter number I is out of range */
-/*                1 if answer appears to be lower than lowest */
-/*                  search bound */
-/*                2 if answer appears to be higher than greatest */
-/*                  search bound */
-/*                3 if P + Q .ne. 1 */
-/*                10 if the gamma or inverse gamma routine cannot */
-/*                   compute the answer.  Usually happens only for */
-/*                   X and SHAPE very large (gt 1E10 or more) */
-/*                    INT STATUS */
-/*     BOUND <-- Undefined if STATUS is 0 */
-/*               Bound exceeded by parameter number I if STATUS is negative. */
-/*               Lower search bound if STATUS is 1. */
-/*               Upper search bound if STATUS is 2. */
-/*                              Method */
-/*     Cumulative distribution function (P) is calculated directly by */
-/*     the code associated with: */
-/*     DiDinato, A. R. and Morris, A. H. Computation of the  incomplete */
-/*     gamma function  ratios  and their  inverse.   ACM  Trans.  Math. */
-/*     Softw. 12 (1986), 377-393. */
-/*     Computation of other parameters involve a seach for a value that */
-/*     produces  the desired  value  of P.   The search relies  on  the */
-/*     monotinicity of P with the other parameter. */
-/*                              Note */
-/*     The gamma density is proportional to */
-/*       T**(SHAPE - 1) * EXP(- RATE * T) */
-/*                              History */
-
-/* rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept/oct 2010) */
+/*
+ * Cumulative Distribution Function of the gamma Distribution.
+ * Calculates any one parameter of the gamma distribution given 
+ * values for the others. 
+ *
+ *     WHICH --> Int indicating which of the next four argument 
+ *               values is to be calculated from the others. 
+ *               Legal range: 1..4 
+ *               iwhich = 1 : Calculate P and Q from X,SHAPE and RATE 
+ *               iwhich = 2 : Calculate X from P,Q,SHAPE and RATE 
+ *               iwhich = 3 : Calculate SHAPE from P,Q,X and RATE 
+ *               iwhich = 4 : Calculate RATE from P,Q,X and SHAPE 
+ *     P <--> The integral from 0 to X of the gamma density. 
+ *            Input range: [0,1]. 
+ *     Q <--> 1-P. 
+ *            Input range: (0, 1]. 
+ *            P + Q = 1.0. 
+ *     X <--> The upper limit of integration of the gamma density. 
+ *            Input range: [0, +infinity). 
+ *            Search range: [0,1E300] 
+ *     SHAPE <--> The shape parameter of the gamma density. 
+ *                Input range: (0, +infinity). 
+ *                Search range: [1E-300,1E300] 
+ *     RATE <--> The rate parameter of the gamma density. 
+ *                Input range: (0, +infinity). 
+ *                Search range: (1E-300,1E300] 
+ *     STATUS <-- 0 if calculation completed correctly 
+ *               -I if input parameter number I is out of range 
+ *                1 if answer appears to be lower than lowest 
+ *                  search bound 
+ *                2 if answer appears to be higher than greatest 
+ *                  search bound 
+ *                3 if P + Q .ne. 1 
+ *                10 if the gamma or inverse gamma routine cannot 
+ *                   compute the answer.  Usually happens only for 
+ *                   X and SHAPE very large (gt 1E10 or more) 
+ *                    INT STATUS 
+ *     BOUND <-- Undefined if STATUS is 0 
+ *               Bound exceeded by parameter number I if STATUS is negative. 
+ *               Lower search bound if STATUS is 1. 
+ *               Upper search bound if STATUS is 2. 
+ *                              Method 
+ * 
+ *     Cumulative distribution function (P) is calculated directly by 
+ *     the code associated with: 
+ *     DiDinato, A. R. and Morris, A. H. Computation of the  incomplete 
+ *     gamma function  ratios  and their  inverse.   ACM  Trans.  Math. 
+ *     Softw. 12 (1986), 377-393. 
+ *     Computation of other parameters involve a seach for a value that 
+ *     produces  the desired  value  of P.   The search relies  on  the 
+ *     monotinicity of P with the other parameter. 
+ *                              Note 
+ *     The gamma density is proportional to 
+ *       T**(SHAPE - 1) * EXP(- RATE * T) 
+ *
+ * rewritten by Bruno Pincon and Jean-Philippe Chancelier (sept/oct 2010) 
+ */
 
 int
 cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
@@ -108,8 +100,6 @@ cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
       CDF_CHECK_ARG( !(*rate > 0.0) , 0 , -6 );
     }
 
-
-
   /***  Compute answers ***/
 
   if (1 == *which)        /* compute P and Q */
@@ -126,9 +116,11 @@ cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
   else if (2 == *which)   /* compute X */
     {
       double x0 = 0.0;
-      cdf_gaminv (shape, &xrate, &x0, p, q, &ierr);
+      cdf_gaminv (*shape, &xrate, &x0, p, q, &ierr);
       if ( ierr < 0 )
-	*status = 10;
+	{
+	  *status = 10;
+	}
       else
 	{
 	  *x = xrate / *rate; *status = 0;
@@ -149,10 +141,7 @@ cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
 	    {
 	      *status = 10; return 0;
 	    }
-	  if ( pq_flag )
-	    fx = cum - *p;
-	  else
-	    fx = ccum - *q;
+	  fx = ( pq_flag ) ?  cum - *p :  ccum - *q;
 	}
       while ( (ret_val = nsp_zsearch(shape, fx, &S)) == EVAL_FX );
 
@@ -169,12 +158,14 @@ cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
 
   else if (4 == *which)   /* compute rate */
     {
-      cdf_gaminv (shape, &xrate, &x0, p, q, &ierr);
+      cdf_gaminv (*shape, &xrate, &x0, p, q, &ierr);
       if ( ierr < 0 )
-	*status = 10;
+	{
+	  *status = 10;
+	}
       else
 	{
-	  *rate = xrate / *x; *status = 0;
+	  *rate = xrate / (*x) ; *status = 0;
 	}
     }
   return 0;

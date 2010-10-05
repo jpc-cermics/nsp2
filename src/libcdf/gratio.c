@@ -1,36 +1,30 @@
 #include "cdf.h"
 
+/*     evaluation of the incomplete gamma ratio functions p(a,x) and q(a,x) 
+ * 
+ *     it is assumed that a and x are nonnegative, where a and x 
+ *     are not both 0. 
+ *     ans and qans are variables. gratio assigns ans the value 
+ *     p(a,x) and qans the value q(a,x). ind may be any int. 
+ *     if ind = 0 then the user is requesting as much accuracy as 
+ *     possible (up to 14 significant digits). otherwise, if 
+ *     ind = 1 then accuracy is requested to within 1 unit of the 
+ *     6-th significant digit, and if ind .ne. 0,1 then accuracy 
+ *     is requested to within 1 unit of the 3rd significant digit. 
+ *     error return ... 
+ *        ans is assigned the value 2 when a or x is negative, 
+ *     when a*x = 0, or when p(a,x) and q(a,x) are indeterminant. 
+ *     p(a,x) and q(a,x) are computationally indeterminant when 
+ *     x is exceedingly close to a and a is extremely large. 
+ *
+ * written by Alfred H. Lorris, jr. Naval Surface Weapons Center 
+ * Dahlgren, Virginia 
+ */
 
-/* ---------------------------------------------------------------------- */
-/*        evaluation of the incomplete gamma ratio functions */
-/*                      p(a,x) and q(a,x) */
-/*                        ---------- */
-/*     it is assumed that a and x are nonnegative, where a and x */
-/*     are not both 0. */
-/*     ans and qans are variables. gratio assigns ans the value */
-/*     p(a,x) and qans the value q(a,x). ind may be any int. */
-/*     if ind = 0 then the user is requesting as much accuracy as */
-/*     possible (up to 14 significant digits). otherwise, if */
-/*     ind = 1 then accuracy is requested to within 1 unit of the */
-/*     6-th significant digit, and if ind .ne. 0,1 then accuracy */
-/*     is requested to within 1 unit of the 3rd significant digit. */
-/*     error return ... */
-/*        ans is assigned the value 2 when a or x is negative, */
-/*     when a*x = 0, or when p(a,x) and q(a,x) are indeterminant. */
-/*     p(a,x) and q(a,x) are computationally indeterminant when */
-/*     x is exceedingly close to a and a is extremely large. */
-/*                        ---------- */
-/*     written by alfred h. morris, jr. */
-/*     naval surface weapons center, dahlgren, virginia */
-
-
-
-int
-cdf_gratio (double *a, double *x, double *ans, double *qans,const int *ind)
+int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
 {
-  static int c__1 = 1;
-  static int c__0 = 0;
-
+  const int c__1 = 1;
+  const int c__0 = 0;
   /*     ALOG10 = LN(10) */
   /*     RT2PIN = 1/SQRT(2*PI) */
   /*     RTPI   = SQRT(PI) */
@@ -75,10 +69,8 @@ cdf_gratio (double *a, double *x, double *ans, double *qans,const int *ind)
       -1.85406221071516e-6, 8.29671134095309e-7, -1.76659527368261e-7, 6.7078535434015e-9,
       1.02618097842403e-8, -4.38203601845335e-9 };
 
-  /* System generated locals */
   int i__1;
   double d__1;
-  /* Local variables */
   double a2nm1, b2nm1;
   double twoa;
   double c__, e, g, h__;
@@ -94,19 +86,20 @@ cdf_gratio (double *a, double *x, double *ans, double *qans,const int *ind)
   double rta;
   int iop;
   double tol, sum, rtx;
-  /*     ****** E IS A MACHINE DEPENDENT CONSTANT. E IS THE SMALLEST */
-  /*            FLOATING POINT NUMBER FOR WHICH 1.0 + E .GT. 1.0 . */
+
+  /* machine epsilon */
+
   e = cdf_spmpar (c__1);
 
-  if (*a < 0. || *x < 0.)
+  if (a < 0. || x < 0.)
     {
       goto L430;
     }
-  if (*a == 0. && *x == 0.)
+  if (a == 0. && x == 0.)
     {
       goto L430;
     }
-  if (*a * *x == 0.)
+  if (a * x == 0.)
     {
       goto L420;
     }
@@ -116,75 +109,74 @@ cdf_gratio (double *a, double *x, double *ans, double *qans,const int *ind)
     {
       iop = 3;
     }
-/* Computing MAX */
+  /* Computing MAX */
   d__1 = acc0[iop - 1];
   acc = Max (d__1, e);
   e0 = e00[iop - 1];
   x0 = x00[iop - 1];
 
-/*            SELECT THE APPROPRIATE ALGORITHM */
-
-  if (*a >= 1.)
+  /*            SELECT THE APPROPRIATE ALGORITHM */
+  if (a >= 1.)
     {
       goto L10;
     }
-  if (*a == .5)
+  if (a == .5)
     {
       goto L390;
     }
-  if (*x < 1.1)
+  if (x < 1.1)
     {
       goto L160;
     }
-  t1 = *a * log (*x) - *x;
-  u = *a * exp (t1);
+  t1 = a * log (x) - x;
+  u = a * exp (t1);
   if (u == 0.)
     {
       goto L380;
     }
-  r__ = u * (cdf_gam1 (*a) + 1.);
+  r__ = u * (cdf_gam1 (a) + 1.);
   goto L250;
 
-L10:
-  if (*a >= big[iop - 1])
+ L10:
+  if (a >= big[iop - 1])
     {
       goto L30;
     }
-  if (*a > *x || *x >= x0)
+  if (a > x || x >= x0)
     {
       goto L20;
     }
-  twoa = *a + *a;
+  twoa = a + a;
   m = (int) twoa;
   if (twoa != (double) m)
     {
       goto L20;
     }
   i__ = m / 2;
-  if (*a == (double) i__)
+  if (a == (double) i__)
     {
       goto L210;
     }
   goto L220;
-L20:
-  t1 = *a * log (*x) - *x;
-  r__ = exp (t1) / cdf_gamma (*a);
+ L20:
+  t1 = a * log (x) - x;
+  r__ = exp (t1) / cdf_gamma (a);
   goto L40;
 
-L30:
-  l = *x / *a;
+ L30:
+  l = x / a;
   if (l == 0.)
     {
       goto L370;
     }
   s = .5 - l + .5;
   z__ = cdf_rlog (l);
-  if (z__ >= 700. / *a)
+  if (z__ >= 700. / a)
     {
       goto L410;
     }
-  y = *a * z__;
-  rta = sqrt (*a);
+  y = a * z__;
+  rta = sqrt (a);
   if (Abs (s) <= e0 / rta)
     {
       goto L330;
@@ -194,53 +186,53 @@ L30:
       goto L270;
     }
 
-/* Computing 2nd power */
-  d__1 = 1. / *a;
+  /* Computing 2nd power */
+  d__1 = 1. / a;
   t = d__1 * d__1;
-  t1 = (((t * .75 - 1.) * t + 3.5) * t - 105.) / (*a * 1260.);
+  t1 = (((t * .75 - 1.) * t + 3.5) * t - 105.) / (a * 1260.);
   t1 -= y;
   r__ = rt2pin * rta * exp (t1);
 
-L40:
+ L40:
   if (r__ == 0.)
     {
       goto L420;
     }
-  if (*x <= Max (*a, alog10))
+  if (x <= Max (a, alog10))
     {
       goto L50;
     }
-  if (*x < x0)
+  if (x < x0)
     {
       goto L250;
     }
   goto L100;
 
-/*                 TAYLOR SERIES FOR P/R */
+  /*                 TAYLOR SERIES FOR P/R */
 
-L50:
-  apn = *a + 1.;
-  t = *x / apn;
+ L50:
+  apn = a + 1.;
+  t = x / apn;
   wk[0] = t;
   for (n = 2; n <= 20; ++n)
     {
       apn += 1.;
-      t *= *x / apn;
+      t *= x / apn;
       if (t <= .001)
 	{
 	  goto L70;
 	}
       wk[n - 1] = t;
-/* L60: */
+      /* L60: */
     }
   n = 20;
 
-L70:
+ L70:
   sum = t;
   tol = acc * .5;
-L80:
+ L80:
   apn += 1.;
-  t *= *x / apn;
+  t *= x / apn;
   sum += t;
   if (t > tol)
     {
@@ -253,99 +245,98 @@ L80:
     {
       --n;
       sum += wk[n - 1];
-/* L90: */
+      /* L90: */
     }
-  *ans = r__ / *a * (sum + 1.);
+  *ans = r__ / a * (sum + 1.);
   *qans = .5 - *ans + .5;
   return 0;
 
-/*                 ASYMPTOTIC EXPANSION */
-
-L100:
-  amn = *a - 1.;
-  t = amn / *x;
+  /*                 ASYMPTOTIC EXPANSION */
+ L100:
+  amn = a - 1.;
+  t = amn / x;
   wk[0] = t;
   for (n = 2; n <= 20; ++n)
     {
       amn += -1.;
-      t *= amn / *x;
+      t *= amn / x;
       if (Abs (t) <= .001)
 	{
 	  goto L120;
 	}
       wk[n - 1] = t;
-/* L110: */
+      /* L110: */
     }
   n = 20;
 
-L120:
+ L120:
   sum = t;
-L130:
+ L130:
   if (Abs (t) <= acc)
     {
       goto L140;
     }
   amn += -1.;
-  t *= amn / *x;
+  t *= amn / x;
   sum += t;
   goto L130;
 
-L140:
+ L140:
   max__ = n - 1;
   i__1 = max__;
   for (m = 1; m <= i__1; ++m)
     {
       --n;
       sum += wk[n - 1];
-/* L150: */
+      /* L150: */
     }
-  *qans = r__ / *x * (sum + 1.);
+  *qans = r__ / x * (sum + 1.);
   *ans = .5 - *qans + .5;
   return 0;
 
-/*             TAYLOR SERIES FOR P(A,X)/X**A */
+  /*             TAYLOR SERIES FOR P(A,X)/X**A */
 
-L160:
+ L160:
   an = 3.;
-  c__ = *x;
-  sum = *x / (*a + 3.);
-  tol = acc * 3. / (*a + 1.);
-L170:
+  c__ = x;
+  sum = x / (a + 3.);
+  tol = acc * 3. / (a + 1.);
+ L170:
   an += 1.;
-  c__ = -c__ * (*x / an);
-  t = c__ / (*a + an);
+  c__ = -c__ * (x / an);
+  t = c__ / (a + an);
   sum += t;
   if (Abs (t) > tol)
     {
       goto L170;
     }
-  j = *a * *x * ((sum / 6. - .5 / (*a + 2.)) * *x + 1. / (*a + 1.));
+  j = a * x * ((sum / 6. - .5 / (a + 2.)) * x + 1. / (a + 1.));
 
-  z__ = *a * log (*x);
-  h__ = cdf_gam1 (*a);
+  z__ = a * log (x);
+  h__ = cdf_gam1 (a);
   g = h__ + 1.;
-  if (*x < .25)
+  if (x < .25)
     {
       goto L180;
     }
-  if (*a < *x / 2.59)
+  if (a < x / 2.59)
     {
       goto L200;
     }
   goto L190;
-L180:
+ L180:
   if (z__ > -.13394)
     {
       goto L200;
     }
 
-L190:
+ L190:
   w = exp (z__);
   *ans = w * g * (.5 - j + .5);
   *qans = .5 - *ans + .5;
   return 0;
 
-L200:
+ L200:
   l = cdf_rexp (z__);
   w = l + .5 + .5;
   *qans = (w * j - l) * g - h__;
@@ -356,55 +347,55 @@ L200:
   *ans = .5 - *qans + .5;
   return 0;
 
-/*             FINITE SUMS FOR Q WHEN A .GE. 1 */
-/*                 AND 2*A IS AN INT */
+  /*             FINITE SUMS FOR Q WHEN A .GE. 1 */
+  /*                 AND 2*A IS AN INT */
 
-L210:
-  sum = exp (-(*x));
+ L210:
+  sum = exp (-(x));
   t = sum;
   n = 1;
   c__ = 0.;
   goto L230;
 
-L220:
-  rtx = sqrt (*x);
+ L220:
+  rtx = sqrt (x);
   sum = cdf_erfc (c__0, rtx);
-  t = exp (-(*x)) / (rtpi * rtx);
+  t = exp (-(x)) / (rtpi * rtx);
   n = 0;
   c__ = -.5;
 
-L230:
+ L230:
   if (n == i__)
     {
       goto L240;
     }
   ++n;
   c__ += 1.;
-  t = *x * t / c__;
+  t = x * t / c__;
   sum += t;
   goto L230;
-L240:
+ L240:
   *qans = sum;
   *ans = .5 - *qans + .5;
   return 0;
 
-/*              CONTINUED FRACTION EXPANSION */
+  /*              CONTINUED FRACTION EXPANSION */
 
-L250:
-/* Computing MAX */
+ L250:
+  /* Computing MAX */
   d__1 = e * 5.;
   tol = Max (d__1, acc);
   a2nm1 = 1.;
   a2n = 1.;
-  b2nm1 = *x;
-  b2n = *x + (1. - *a);
+  b2nm1 = x;
+  b2n = x + (1. - a);
   c__ = 1.;
-L260:
-  a2nm1 = *x * a2n + c__ * a2nm1;
-  b2nm1 = *x * b2n + c__ * b2nm1;
+ L260:
+  a2nm1 = x * a2n + c__ * a2nm1;
+  b2nm1 = x * b2n + c__ * b2nm1;
   am0 = a2nm1 / b2nm1;
   c__ += 1.;
-  cma = c__ - *a;
+  cma = c__ - a;
   a2n = a2nm1 + cma * a2n;
   b2n = b2nm1 + cma * b2n;
   an0 = a2n / b2n;
@@ -417,17 +408,17 @@ L260:
   *ans = .5 - *qans + .5;
   return 0;
 
-/*                GENERAL TEMME EXPANSION */
+  /*                GENERAL TEMME EXPANSION */
 
-L270:
-  if (Abs (s) <= e * 2. && *a * e * e > .00328)
+ L270:
+  if (Abs (s) <= e * 2. && a * e * e > .00328)
     {
       goto L430;
     }
   c__ = exp (-y);
   d__1 = sqrt (y);
   w = cdf_erfc (c__1, d__1) * .5;
-  u = 1. / *a;
+  u = 1. / a;
   z__ = sqrt (z__ + z__);
   if (l < 1.)
     {
@@ -446,7 +437,7 @@ L270:
       goto L300;
     }
 
-L280:
+ L280:
   if (Abs (s) <= .001)
     {
       goto L340;
@@ -477,7 +468,7 @@ L280:
      c1) * u + c0;
   goto L310;
 
-L290:
+ L290:
   c0 =
     (((((d0[5] * z__ + d0[4]) * z__ + d0[3]) * z__ + d0[2]) * z__ +
       d0[1]) * z__ + d0[0]) * z__ - third;
@@ -486,10 +477,10 @@ L290:
   t = (c2 * u + c1) * u + c0;
   goto L310;
 
-L300:
+ L300:
   t = ((d0[2] * z__ + d0[1]) * z__ + d0[0]) * z__ - third;
 
-L310:
+ L310:
   if (l < 1.)
     {
       goto L320;
@@ -497,21 +488,21 @@ L310:
   *qans = c__ * (w + rt2pin * t / rta);
   *ans = .5 - *qans + .5;
   return 0;
-L320:
+ L320:
   *ans = c__ * (w - rt2pin * t / rta);
   *qans = .5 - *ans + .5;
   return 0;
 
-/*               TEMME EXPANSION FOR L = 1 */
+  /*               TEMME EXPANSION FOR L = 1 */
 
-L330:
-  if (*a * e * e > .00328)
+ L330:
+  if (a * e * e > .00328)
     {
       goto L430;
     }
   c__ = .5 - y + .5;
   w = (.5 - sqrt (y) * (.5 - y / 3. + .5) / rtpi) / c__;
-  u = 1. / *a;
+  u = 1. / a;
   z__ = sqrt (z__ + z__);
   if (l < 1.)
     {
@@ -530,7 +521,7 @@ L330:
       goto L360;
     }
 
-L340:
+ L340:
   c0 =
     ((((((d0[6] * z__ + d0[5]) * z__ + d0[4]) * z__ + d0[3]) * z__ +
        d0[2]) * z__ + d0[1]) * z__ + d0[0]) * z__ - third;
@@ -549,58 +540,58 @@ L340:
      c1) * u + c0;
   goto L310;
 
-L350:
+ L350:
   c0 = (d0[1] * z__ + d0[0]) * z__ - third;
   c1 = d1[0] * z__ + d10;
   t = (d20 * u + c1) * u + c0;
   goto L310;
 
-L360:
+ L360:
   t = d0[0] * z__ - third;
   goto L310;
 
-/*                     SPECIAL CASES */
+  /*                     SPECIAL CASES */
 
-L370:
+ L370:
   *ans = 0.;
   *qans = 1.;
   return 0;
 
-L380:
+ L380:
   *ans = 1.;
   *qans = 0.;
   return 0;
 
-L390:
-  if (*x >= .25)
+ L390:
+  if (x >= .25)
     {
       goto L400;
     }
-  d__1 = sqrt (*x);
+  d__1 = sqrt (x);
   *ans = cdf_erf (d__1);
   *qans = .5 - *ans + .5;
   return 0;
-L400:
-  d__1 = sqrt (*x);
+ L400:
+  d__1 = sqrt (x);
   *qans = cdf_erfc (c__0, d__1);
   *ans = .5 - *qans + .5;
   return 0;
 
-L410:
+ L410:
   if (Abs (s) <= e * 2.)
     {
       goto L430;
     }
-L420:
-  if (*x <= *a)
+ L420:
+  if (x <= a)
     {
       goto L370;
     }
   goto L380;
 
-/*                     ERROR RETURN */
+  /*                     ERROR RETURN */
 
-L430:
+ L430:
   *ans = 2.;
   return 0;
 }

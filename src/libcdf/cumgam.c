@@ -27,7 +27,7 @@ int cdf_cumgam (double *x, double *a, double *cum, double *ccum)
   else if ( *x <=  DBL_MAX )  /* main block (could not handle x=Inf and also */
     {                         /* could not handle x=Nan in some rare cases) */
       const int c0 = 0;
-      cdf_gratio (a, x, cum, ccum, &c0);
+      cdf_gratio (*a, *x, cum, ccum, &c0);
     }
 
   else if (isnan(*x))   /* x = Nan (bruno, sept 2010) */
