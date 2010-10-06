@@ -588,7 +588,7 @@ a = cdfgam("Shape",be*v,pe,1-pe,xe);
 era =  max(abs(a-ae)/ae);
 if era > 2e-15 then, pause, end
 
-b = cdfgam("Scale",pe,1-pe,xe,ae*v);
+b = cdfgam("Rate",pe,1-pe,xe,ae*v);
 erb =  max(abs(b-be)/be);
 if erb > 1e-15 then, pause, end
 

@@ -387,35 +387,48 @@ static void cdffncErr(     int status,   double bound, double boundbis, int i)
 int int_cdfgam(Stack stack, int rhs, int opt, int lhs)
 {
   int rep;
-  char *Table[] = {"PQ", "Scale" ,  "Shape","X", NULL}; 
+  char *Table[] = {"PQ", "Rate" ,  "Shape","X", NULL}; 
   int minrhs = 4,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
-  if ((rep= GetStringInArray(stack,1,Table,1)) == -1) return RET_BUG; 
+  if ((rep= GetStringInArray(stack,1,Table,1)) == -1) 
+    {
+      char *key;
+      if ((key = GetString(stack,1)) == ((char *) 0) ) 
+	return RET_BUG;
+      if ( strcmp(key,"Scale") == 0 )
+	{ 
+	  Sciprintf("Warning: parameter key 'Scale' is obsolete use 'Rate'\n");
+	  rep = 1;
+	}
+      else
+	return RET_BUG; 
+    }
+
   switch (rep) 
     {
     case 0: /* "PQ" */
       {
 	static const int callpos[5] = {3,4,0,1,2};
-	return CdfBase(stack,rhs,opt,lhs,3,2,callpos,"PQ","X,Shape and Scale",1,cdf_cdfgam,cdfgamErr);
+	return CdfBase(stack,rhs,opt,lhs,3,2,callpos,"PQ","X,Shape and Rate",1,cdf_cdfgam,cdfgamErr);
       }
       break;
     case 3: /* "X" */
       {
 	static const int callpos[5] = {2,3,4,0,1};
-	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"X","Shape,Scale,P and Q",2,cdf_cdfgam,cdfgamErr);
+	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"X","Shape,Rate,P and Q",2,cdf_cdfgam,cdfgamErr);
       }
       break;
     case 2: /* "Shape" */
       {
 	static const int callpos[5] = {1,2,3,4,0};
-	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"Shape","Scale,P,Q and X",3,cdf_cdfgam,cdfgamErr);
+	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"Shape","Rate,P,Q and X",3,cdf_cdfgam,cdfgamErr);
       }
       break;
-    case 1: /* "Scale" */
+    case 1: /* "Rate" */
       {
 	static const int callpos[5] = {0,1,2,3,4};
-	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"Scale","P,Q,X and Shape",4,cdf_cdfgam,cdfgamErr);
+	return CdfBase(stack,rhs,opt,lhs,4,1,callpos,"Rate","P,Q,X and Shape",4,cdf_cdfgam,cdfgamErr);
       }
     }
   return 0;
@@ -424,7 +437,7 @@ int int_cdfgam(Stack stack, int rhs, int opt, int lhs)
 
 static void cdfgamErr(int status,double bound, double boundbis, int i)
 {
-  static char *param[7]={"WHICH","P","Q","X","Shape","Scale"};
+  static char *param[7]={"WHICH","P","Q","X","Shape","Rate"};
   switch ( status ) 
     {
     case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
