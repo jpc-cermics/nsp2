@@ -7,20 +7,23 @@
   %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-[P,Q]=cdfgam("PQ",X,Shape,Rate)  
-[X]=cdfgam("X",Shape,Rate,P,Q)  
-[Shape]=cdfgam("Shape",Rate,P,Q,X)  
-[Rate]=cdfgam("Rate",P,Q,X,Shape)  
+[P,Q]=cdfgam("PQ",X,Shape,Rate)    // compute cdf
+[X]=cdfgam("X",Shape,Rate,P,Q)     // compute inverse cdf (quantile function)
+[Shape]=cdfgam("Shape",Rate,P,Q,X) // compute shape parameter 
+[Rate]=cdfgam("Rate",P,Q,X,Shape)  // compute rate parameter
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
 \begin{parameters}
   \begin{varlist}
     \vname{P,Q,X,Shape,Rate}: five real vectors of the same size.
-    \vname{P,Q (Q=1-P)} the integral from 0 to X of the gamma density. Input range: [0,1].
-    \vname{X}:  the upper limit of integration of the gamma density. Input range: [0, +infinity). Search range: [0,1E300]
+    \vname{P,Q (Q=1-P)} the integral from 0 to X of the gamma density. Input range: [0,1] for inverse cdf and
+          (0,1) for computing shape or rate parameter.
+    \vname{X}: the upper limit of integration of the gamma density. Input range: [0, +infinity). Search range: [0,1E300]
       \vname{Shape}:  the shape parameter of the gamma density. Input range: (0, +infinity). Search range: [1E-300,1E300]
-      \vname{Rate}:  the scale parameter of the gamma density. Input range: (0, +infinity). Search range: (1E-300,1E300]
+      \vname{Rate}:  the rate parameter of the gamma density. Input range: (0, +infinity). Search range: (1E-300,1E300].
+ Note that usually the second parameter of the gamma distribution is a \verb!Scale! parameter equal to the inverse of the \verb!Rate! 
+  (so you have to use \verb!Rate = 1/Shape!).
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
@@ -30,9 +33,8 @@
     x^{\alpha-1} \frac{ \beta^\alpha  e^{- \beta x}}{\Gamma(\alpha)}
   \end{equation}
   where $\alpha = \mbox{\tt Shape}$ and $\beta = \mbox{\tt Rate}$. 
-  Note that usually the second parameter of the gamma distribution 
-  is a \verb!Scale! parameter equal to the inverse of the \verb!Rate! 
-  (so you have to use \verb!Rate = 1/Shape!).
+ 
+
 
   Cumulative distribution function (P) is calculated directly by
   the code associated with: DiDinato, A. R. and Morris, A. H. 
@@ -44,25 +46,60 @@
   monotinicity of P with the other parameter.
 \end{mandescription}
 
-\begin{program}\HCode{x=linspace(0,20,100);\Hnewline
-shape =1;\Hnewline
-scale =0.5;\Hnewline
-y= cdfgam("PQ",x,shape*ones(x),scale*ones(x));\Hnewline
-\Hnewline
-function y=f(x)\Hnewline
-  y = x^(shape-1)*scale^shape*exp(-x*scale)./gamma(shape);\Hnewline
-endfunction;\Hnewline
-\Hnewline
-z=x;\Hnewline
-for i=1:length(x)\Hnewline
-  z(i) = intg(0,x(i),f);\Hnewline
-end\Hnewline
-err=max(abs(y-z));}
-\end{program}
+\begin{examples}
+\begin{Verbatim}
+shape =1;
+rate =0.5;
+
+// compute cdf
+x=linspace(0,10,100)';
+v = ones(size(x));
+[p,q] = cdfgam("PQ",x,shape*v,rate*v); // you can alse use  cdf("gam",x,shape,scale)
+xbasc()
+plot2d(x,[p,q],style=[2,5],leg="cdf(x)@1-cdf(x)")
+
+// compute inverse cdf (aka quantile)
+xx = cdfgam("X", shape*v, rate*v, p, q); //  // you can use also icdf("gam",p,shape,scale,Q=q)
+
+// relative error between x and xx 
+er = max(abs(xx - x)./(x+1e-6))     // should be small
+
+
+// compute shape parameter such that (p,q)=(0.2,0.8), x = 34 and rate = 5;
+p = 0.2; q = 0.8; x = 34; rate = 5;
+shape = cdfgam("Shape",rate,p,q,x)
+// we should retrieve (p,q)=(0.2,0.8) ?
+[pp,qq] = cdfgam("PQ",x,shape,rate)
+abs(pp-p)/p    // should be small
+abs(qq-q)/q    // should be small
+
+
+// compute rate parameter such that (p,q)=(0.9,0.1), shape = 67, x = 2;
+p = 0.9; q = 0.1; shape = 67; x = 2;  
+rate = cdfgam("Rate",p,q,x,shape)
+// we should retrieve (p,q)=(0.9,0.1) ?
+[pp,qq] = cdfgam("PQ",x,shape,rate)
+abs(pp-p)/p    // should be small
+abs(qq-q)/q    // should be small
+
+\end{Verbatim}
+%function y=f(x)
+%  y = x^(shape-1)*scale^shape*exp(-x*scale)/gamma(shape);
+%endfunction
+%
+%z = zeros(size(x));
+%for i=1:length(x)
+%  z(i) = intg(0,x(i),f);
+%end
+%err=max(abs(y-z));
+
+\end{examples}
 
 \begin{authors}
-  Nsp interface by Jean-Philippe Chancelier. Code from DCDFLIB: 
-  Library of Fortran Routines for Cumulative Distribution
+  Nsp interface by Jean-Philippe Chancelier. Fortran code from DCDFLIB
+  adapted in C and improved/modified by Bruno Pincon and Jean-Philippe Chancelier.  
+  DCDFLIB: Library of Fortran Routines for Cumulative Distribution
   Functions, Inverses, and Other Parameters (February, 1994)
   Barry W. Brown, James Lovato and Kathy Russell. The University of Texas.
+
 \end{authors}
