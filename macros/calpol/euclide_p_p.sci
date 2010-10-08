@@ -75,63 +75,66 @@ function [q,r]=pdiv_soft_p_p(a,b)
   q=m2p(q);
 endfunction
 
-function [p,u]=euclide_p_p(a,b,eps=100*%eps,monic=%f)
-// 
-// 
-  r1 =[ m2p(1),m2p(0)];
-  r2 =[ m2p(0),m2p(1)];
-  while %t  then 
-    if norm(b,%inf) < eps then ; break;end 
-    if b.degree[]== 0 && a.degree[]==0 then ; break;end 
-    d=det([r1;r2]);
-    d0=d.coeffs{1};
-    if norm(d-d0(1)) > eps then 
-      // we went one step too far 
-      r2=r1;r1=rs; b=a;a=as;break;
+function [g,fact]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
+// epsilon euclid method 
+// See Paola Boito Thesis Chap 3 or 
+// original paper of Hribernig and Stetter.
+// Detection and validation of clusters of 
+// Polynomial Zeros (J. Symbolic Computation (1997) 24 667-682.
+  
+  da= a.degree[];
+  db= b.degree[];
+  if da >= db then
+    f1 = a; f2= b; ind=[1,2];
+  else
+    f1 = b; f2= a; ind=[2,1];
+  end
+  M= [ m2p(1),m2p(0);
+       m2p(0),m2p(1)];
+  v= [ f1;f2];
+  vp = [f1;f2];
+  vpp = [f1;f2];
+  // we have [f1;f2]= M*v 
+  // and it should be true during iterations
+  while %t then 
+    // Compute the matrix such that 
+    // [f1,f2]' = M [fj, fjp1]' 
+    // note that M is unimodular 
+    [q,r]=pdiv(v(1),v(2));
+    M = [ q*M(1,1)+ M(1,2), M(1,1); 
+	  q*M(2,1)+ M(2,2), M(2,1)];
+    v  = [ v(2); r];
+    // first way to stop 
+    [q1,r1]=pdiv(f1,v(1));
+    [q2,r2]=pdiv(f2,v(1));
+    if norm(r1,1) < eps && norm(r2,1) < eps then 
+      break;
     end
-    [q,r]=pdiv(a,b);
-    rs = r1;
-    as = a;
-    r1 = r2;
-    r2 = rs - q.*r2;
-    a = b;
-    b = r ;
-    printf("nouveau a et b et det\n")
-    print(a);
-    print(b);
-    d=det([r1;r2]);
-    d0=d.coeffs{1};
-    print(norm(d -d0(1) ));
-    //abs(abs(det(horner([r1;r2],10*%eps,ttmode=%t)))-1)
+    // [f1;f2]= M*v is an 
+    if norm(M(1,2)*v(2),1) < eps && norm(M(2,2)*v(2),1) < eps then 
+      break;
+    end
+    if v(1).degree[]== 0 && v(2).degree[]== 0 then ;
+      break;
+    end 
   end
-  p = a;
-  u = [r1;r2]';
-  if monic then 
-    cm = p.coeffs{1};
-    p = (1/cm($))*p;
-    u = (1/cm($))*u;
-  end
+  // when we break v(1) is the gcd and 
+  // [f1;f2]= M(:,1) *v(1) 
+  g=v(1);
+  fact = M(ind,1);
 endfunction
 
 if %f then 
   a=m2p([1,4,6,4,1]);//(1+x)^4
   b=m2p([0,0,1,1]); // (1+x)*x^2
 
-  [xx,u]=euclide(a,b);
-  norm([a,b]*u(:,1) -xx );
-  ablcm = a*u(1,2);
+  [xx,f]=euclide(a,b);
+  norm( f*xx -[a;b])
+  ablcm = f(1)*f(2)*xx
   x=m2p([0,1]);
   ablcm.normalize[];
-  norm(ablcm - (1+x)^4*x^2);
-    
-  pp = [m2p([0,1,4,6,4,1]); // 
-	m2p([0,0,0,1, 3,3,1]);
-	m2p([0,0,0,1, 2,1]);
-	m2p([0,0,0,1,2,1]);
-	m2p([0,0,0,0,1,2,1]);
-	m2p([0,0,0,0,1,1]);
-	m2p([0,0,0,1,1])];
-  
+  norm(ablcm - (1+x)^4*x^2)
+      
   x=poly(0);
   pp1= [ x*(1+x)^4;
 	 x^3*(1+x)^3;
@@ -141,28 +144,62 @@ if %f then
 	 x^4*(1+x);
 	 x^3*(1+x)];
   
-  xx = pp(1);
-  for i=1:size(pp,'*'); xx=euclide(xx,pp(i),monic=%t);  end
-
   xx = pp1(1);
-  for i=1:size(pp,'*'); xx=euclide(xx,pp1(i),monic=%t);  end
-  
+  for i=1:size(pp1,'*'); xx=euclide(xx,pp1(i),monic=%t);  end
+  xx.normalize[];
+  norm( xx - x*(1+x))
+    
   qq = [m2p([-12,0,3]),m2p([-12,0,3]),m2p([0,-12,0,3])];
   qq = [3*(x^2-4);3*x*(x^2-4)];
   y = qq(1);
   for i=1:size(qq,'*'); y=euclide(y,qq(i),monic=%t);  end
-  
-  // ce qui suit donne un resultat faux 
-  
-  p=m2p([1,1]);
-  q=m2p([0,1,1]);
-  a=p*p*m2p([45,7]);
-  b=q*q;
-  [a1,b1]=euclide(a,b,monic=%t);
-  
-  // mais juste si on demande moins de précision 
-  
-  [a1,b1]=euclide(a,b,eps=1000*%eps,monic=%t);
-  
+    
+  // more tests 
+  x= poly(0);
+  p1=(1+x);
+  p2=(2+x);
+  p3=(3+x);
+  p4=(x);
+  T= ones(1,100) > 0;
+  for i=1:100
+    cp=grand(1,4,'uin',0,5);
+    p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
+    cq=grand(1,4,'uin',0,5);
+    q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
+    eps= 100*%eps;
+    [gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps=eps);
+    // [gcpq]=gcd_qr(p/norm(p,1),q/norm(q,1),eps=eps);
+    cpq = min(cq,cp);
+    gcpq.normalize[];
+    gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
+    if norm(gcpq1 -gcpq) > 1000*eps then 
+      T(i)=%f; 
+    end 
+  end
+  size(find(T),'*')
+
+  x= poly(0);
+  r= 1:10;
+  r= -5:4;
+  n= 10000;
+  veps= 10.^(-[0:14]);
+  for k=1:size(veps,'*')
+    T= ones(1,n);
+    for i=1:n 
+      cp=grand(1,10,'uin',0,1);
+      p = m2p(1); for j=1:10 ; p= p*(r(j)+x)^cp(j);end 
+      cq=grand(1,10,'uin',0,1);
+      q = m2p(1); for j=1:10 ; q= q*(r(j)+x)^cq(j);end 
+      eps = veps(k);
+      [gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps=eps);
+      cpq = min(cq,cp);
+      pq = m2p(1); for j=1:10 ; pq= pq*(r(j)+x)^cpq(j);end 
+      gcpq1 = pq;
+      gcpq.normalize[];
+      T(i)=norm(gcpq1 -gcpq,1);
+    end
+    Ts=sort(T,'g','i');
+    res(k)=Ts(8000);
+  end
 end 
 
