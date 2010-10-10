@@ -196,9 +196,6 @@ function x=lu_sylvester_solve(Pr,P2r,L,U,b)
 endfunction 
 
 
-// detail de la factorization L*U de la matrice de sylvester 
-// pour deux polynomes f et g 
-// 
 
 if %f then 
   function M=Fmat(n)

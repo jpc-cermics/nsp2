@@ -1,6 +1,4 @@
 function r=pow_p(p,n)
-// overload of ^ operation for polynomial 
-// matrices. p^n is computed by repeated squaring 
 // 
 // Copyright  2010 Jean-Philippe Chancelier Cermics/Enpc 
 //
@@ -18,6 +16,8 @@ function r=pow_p(p,n)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
+// overload of ^ operation for polynomial 
+// matrices. p^n is computed by repeated squaring 
     
   r=m2p([1]);
   q=p;
