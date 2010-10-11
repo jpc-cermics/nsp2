@@ -3060,8 +3060,9 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+typedef void (*Feuclide)(gint32 x,gint32 y, gint32 *z);
 
-int int_euclide(Stack stack, int rhs, int opt, int lhs)
+int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe )
 {
   int i,j;
   NspMatrix *A=NULL,*B=NULL;
@@ -3112,7 +3113,7 @@ int int_euclide(Stack stack, int rhs, int opt, int lhs)
 	}
       for ( i = 0 ; i < A->mn ; i++ )
 	{
-	  nsp_euclide(A->R[i],B->R[i], res);
+	  (*fe)(A->R[i],B->R[i], res);
 	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
 	    Res[j]->R[i]= res[j];
 	}
@@ -3130,7 +3131,7 @@ int int_euclide(Stack stack, int rhs, int opt, int lhs)
 	}
       for ( i = 0 ; i < IA->mn ; i++ )
 	{
-	  nsp_euclide(IA->Gint32[i],IB->Gint32[i], res);
+	  (*fe)(IA->Gint32[i],IB->Gint32[i], res);
 	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
 	    Res[j]->Gint32[i]= res[j];
 	}
@@ -3140,6 +3141,35 @@ int int_euclide(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+int int_euclide(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_euclide);
+}
+
+static void nsp_gcd(gint32 x,gint32 y, gint32 *res)
+{
+  gint32 z[3];
+  nsp_euclide(x,y,z);
+  *res = z[0];
+}
+
+static void nsp_lcm(gint32 x,gint32 y, gint32 *res)
+{
+  gint32 z[3];
+  nsp_euclide(x,y,z);
+  *res = (x/z[0])*y;
+}
+
+
+int int_gcd(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_gcd);
+}
+
+int int_lcm(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_lcm);
+}
 
 
 /*
@@ -3148,6 +3178,10 @@ int int_euclide(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab IMatrix_func[]={
   {"euclide", int_euclide},
+  {"gcd_i_i", int_gcd},
+  {"gcd_m_m", int_gcd},
+  {"lcm_i_i", int_lcm},
+  {"lcm_m_m", int_lcm},
   {"impl_i", int_imatrix_impl},
   {"dec2base", int_dec2base},
   {"base2dec", int_base2dec},
