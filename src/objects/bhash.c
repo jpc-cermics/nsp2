@@ -786,7 +786,7 @@ static int int_meth_bhtfind(void *self,Stack stack, int rhs, int opt, int lhs)
 	{
 	  if (nsp_bhash_find(H,S->S[i],&val) == FAIL)   
 	    {
-	      Scierror("%s: key %s not found in bhash table \n",NspFname(stack));
+	      Scierror("%s: key %s not found in bhash table \n",NspFname(stack),S->S[i]);
 	      return RET_BUG  ;
 	    }
 	  else
