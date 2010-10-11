@@ -1063,6 +1063,40 @@ static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
   return count;
 }
 
+static NspSMatrix*nsp_smatrix_create_from_string(const char *name,const char *val)
+{
+  NspSMatrix *Loc;
+  if ( ( Loc =nsp_smatrix_create_with_length(name,1,1,-1) ) == NULLSMAT) 
+    return(NULLSMAT);
+  if ((Loc->S[0] =nsp_string_copy(val)) == (nsp_string) 0) return(NULLSMAT);
+  return(Loc);
+}
+
+static int int_hcreate_from_smatrix(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspSMatrix *S;
+  NspHash *H = NULL;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;        
+  if ( S->n != 2 ) 
+    {
+      Scierror("Error: first argument should have 2 columns\n");
+      return RET_BUG;
+    }
+  if ( (H = nsp_hash_create(NVOID,S->m) ) == NULLHASH) return RET_BUG;     
+  for ( i = 0; i < S->m ;  i++)
+    {
+      NspObject *Obj= (NspObject *) nsp_smatrix_create_from_string(S->S[i], S->S[i+S->m]);
+      if ( Obj != NULL) 
+	{
+	  if (nsp_hash_enter(H,Obj)== FAIL)  return RET_BUG;     
+	}
+    }
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+}
 
 /*
  *
@@ -1070,7 +1104,7 @@ static int int_hash_as_options(Stack stack, int rhs, int opt, int lhs)
 
 static OpTab Hash_func[]={
   {"hash",int_htcreate},  
-  {"hash_create",int_htcreate},  		/* could be renamed hcreate(10)
+  {"hash_create",int_htcreate},  	/* could be renamed hcreate(10)
                                          * hcreate(x=67,y=89,...) 
                                          * hcreate(n,x=67,y=89,...) 
                                          * hcreate(n) 
@@ -1081,6 +1115,7 @@ static OpTab Hash_func[]={
   {"eq_h_h",int_ht_eq},
   {"ne_h_h",int_ht_neq},
   {"l2h",int_hcreate_from_list},
+  {"s2h",int_hcreate_from_smatrix},
   {"resize2vect_h", int_hash_as_options}, /* H(:) */
   {(char *) 0, NULL}
 };
