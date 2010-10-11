@@ -534,6 +534,39 @@ void mexErrMsgTxt(const char *error_msg)
 }
 
 /**
+ * mexErrMsgIdAndTxt:
+ * @error_msg: a string to be used as error message 
+ * 
+ * uses Scierror() to display @error_message, the mex evaluation 
+ * is stopped and control returns at the interpreter level with error mechanism.
+ * 
+ **/
+
+void mexErrMsgIdAndTxt(const char *id,const char *error_msg)
+{
+  /* Scierror("Error in %s: ","mex"); */
+  Scierror("Error: %s",error_msg);
+  Scierror("\n");
+  nsp_mex_errjump();
+}
+
+/**
+ * mexWarnMsgIdAndTxt:
+ * @error_msg: a string to be used as error message 
+ * 
+ * uses Scierror() to display @error_message, the mex evaluation 
+ * is stopped and control returns at the interpreter level with error mechanism.
+ * 
+ **/
+
+void mexWarnMsgIdAndTxt(const char *id,const char *error_msg)
+{
+  /* Scierror("Error in %s: ","mex"); */
+  Sciprintf("Error: %s\n",error_msg);
+}
+
+
+/**
  * mxCreateDoubleMatrix:
  * @m: number of rows 
  * @n: number of columns 
@@ -2903,3 +2936,31 @@ int mexCheck(const char *str,int nbvars)
   return 0 ;
 }
 
+void *mat2fort(const mxArray *ptr, int m, int n)
+{ 
+  if ( IsMat(ptr)) 
+    {
+      double *d= nsp_alloc_doubles(2*m*n);
+      NspMatrix *M = (NspMatrix *) ptr; 
+      if ( d==NULL)
+	{
+	  nsp_mex_errjump();      
+	}
+      memcpy(d,M->R,M->mn*sizeof(doubleC));
+      return d;
+    }
+  Scierror("Error in %s: mat2fort failed\n","mex");
+  nsp_mex_errjump();
+  return NULL;
+}
+
+mxArray *fort2mat(void *data,int lda, int m, int n)
+{
+  NspMatrix *M;
+  if ((M = nsp_matrix_create (NVOID, 'c', m, n)) == NULLMAT)
+    {
+      nsp_mex_errjump();      
+    }
+  memcpy(M->R,data,m*n*sizeof(doubleC));
+  return (mxArray *) M;
+}

@@ -64,6 +64,8 @@ extern int mxIsSparse (const mxArray *ptr);
 extern int mxIsComplex (const mxArray *ptr);
 extern double mxGetScalar (const mxArray *ptr);
 extern void mexErrMsgTxt (const char *error_msg);
+extern void mexErrMsgIdAndTxt(const char *id,const char *error_msg);
+extern void mexWarnMsgIdAndTxt(const char *id,const char *error_msg);
 
 extern mxArray *mxCreateFull (int m, int n, int it);
 extern mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it);
@@ -247,6 +249,8 @@ extern void mexSetTrapFlag(int trapflag);
 
 extern int mexCheck(const char *str,int nbvars) ;
 
+  extern void *mat2fort(const mxArray *ptr, int m, int n);
+  extern mxArray *fort2mat(void *data,int lda, int m, int n);
 
 #ifdef __cplusplus
 }
