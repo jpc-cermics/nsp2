@@ -131,6 +131,78 @@ if ~x.equal[%inf] then, pause, end
 
 
 
+/////////////////////////////////////////////////////////
+// tests for non central F distribution
+/////////////////////////////////////////////////////////
+nu1e = 3; nu2e = 6; lambdae = 34;
+
+xe = [1.1651;
+      1.8410;
+      3.0354;
+      5.8191;
+      8.5438;      
+      13.3724;
+      21.7037;
+      35.0580;
+      91.4176;
+      211.5908;
+      470.0584];
+
+// pe computed using Maple
+pe = [0.00010000054183185959737;
+      0.00099991428978974905606;
+      0.0099995581578520163523;
+      0.10000172571747423957;
+      0.24999843178998739825;
+      0.49999928033489761216;
+      0.74999939928727204875;
+      0.90000022844640534378;
+      0.99000000291434569247;
+      0.99900000011914222427;
+      0.99990000002634554381];
+
+// me, sde computed using Maple      
+me = 18.5;
+sde = 20.328551350256121976;
+
+[m,sd] = dist_stat("nf",nu1e,nu2e,lambdae);
+erm = abs(m-me)./me; ersd = abs(sd-sde)/sde;
+if erm > 2e-16 then, pause, end
+if ersd > 2e-16 then, pause, end
+
+v = ones(size(xe));
+p = cdf("nf",xe,nu1e,nu2e,lambdae);
+pp = cdffnc("PQ",xe,nu1e*v,nu2e*v,lambdae*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 5e-15 then, pause, end
+x = icdf("nf",pe,nu1e,nu2e,lambdae);
+xx = cdffnc("F",nu1e*v,nu2e*v,lambdae*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./xe );
+if erx > 1e-12 then, pause, end
+nu1 = cdffnc("Dfn",nu2e*v,lambdae*v,pe,1-pe,xe);
+ernu1 =  max(abs(nu1-nu1e)/nu1e);
+if ernu1 > 1e-12 then, pause, end
+nu2 = cdffnc("Dfd",lambdae*v,pe,1-pe,xe,nu1e*v);
+ernu2 = max( abs(nu2-nu2e)/nu2e );
+if ernu2 > 3e-13 then, pause, end
+lambda = cdffnc("Pnonc",pe,1-pe,xe,nu1e*v,nu2e*v);
+erl = max( abs(lambda-lambdae)/lambdae );
+if erl > 5e-12 then, pause, end
+
+// verify special values
+[p,q] = cdffnc("PQ",%nan,nu1e,nu2e,lambdae);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdffnc("PQ",0,nu1e,nu2e,lambdae);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdffnc("PQ",%inf,nu1e,nu2e,lambdae);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end 
+x = cdffnc("F", nu1e, nu2e, lambdae, 0, 1); 
+if ~x.equal[0] then, pause, end
+x = cdffnc("F", nu1e, nu2e, lambdae, 1, 0); 
+if ~x.equal[%inf] then, pause, end
+
 
 /////////////////////////////////////////////////////////
 // tests for Student T distribution
@@ -326,20 +398,20 @@ xe = [ 29.1516022086057625;
        55.0462588648301363;
        65.3666211312566077];
 
-// pe computed using wolfram-alpha web calculator
-pe = [0.0000999999995950049108;
-      0.000999999999595949478;
-      0.00999999999959357259;
-      0.0999999999996300955;
-      0.2499999999996927339;
-      0.499999999999796052;
-      0.749999999999898612;
-      0.899999999999959173;
-      0.989999999999995517];
+// pe computed using Maple
+pe = [0.000099999999594986546240;
+      0.00099999999959594695746;
+      0.0099999999995934392610;
+      0.099999999999630130485;
+      0.24999999999969304242;
+      0.49999999999979688394;
+      0.74999999999989862944;
+      0.89999999999995863801;
+      0.98999999999999597511];
 
-// me and sde computed using wolfram-alpha web calculator
-me = 46.300171811169412087351862665217543591249;
-sde = 6.661388012733784806884035370386105039214;
+// me and sde computed using Maple
+me = 46.300171811169412089;
+sde = 6.6613880127337848116;
 
 [m,sd] = dist_stat("nt",dfe,pnonce);
 erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
@@ -380,6 +452,103 @@ x = cdftnc("T", dfe, pnonce, 0, 1);
 if ~x.equal[-%inf] then, pause, end
 x = cdftnc("T", dfe, pnonce, 1, 0);
 if ~x.equal[%inf] then, pause, end
+
+//////////////////////////
+// pe values computed using Maple
+dfe = 7;
+pnonce = 75;
+xe = [29.2493;
+      30.4882;
+      31.0763;
+      32.5970;
+      33.3308;
+      35.2681;
+      36.2255;
+      38.8331;
+      40.1702;
+      44.0098;
+      46.1140;
+      52.8684;
+      57.2110;
+      65.9899;
+      78.7686;
+      117.9237;
+      178.3409;
+      256.6190;
+      362.4879;
+      507.7959;
+      708.4979;
+      986.5372];
+                              
+pe = [9.9996109330776735181e-8;  
+      4.9999000252556015733e-7;
+      9.9996736778565225059e-7 ; 
+      0.0000050002229277854506845;
+      0.0000099995874784089372765;
+      0.000049998132509900910249;
+      0.000099996960260647410767;
+      0.00050001232012242964714;
+      0.0010000176568062961334;
+      0.0050000810566692108897;
+      0.010000062923852941918;
+      0.050000287599388245389;
+      0.10000037779563279342;
+      0.25000020062720916830;
+      0.49999913872043005991;
+      0.90000013692779479446;
+      0.99000001414221882558;
+      0.99900000009706683499;
+      0.99990000006146782047;
+      0.99998999999640738359;
+      0.99999900000026562696;
+      0.99999989999999306446];
+      
+me = 84.440164912895042512;
+sde = 27.317733242036919736;
+
+[m,sd] = dist_stat("nt",dfe,pnonce);
+erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
+if erm > 1e-15 then, pause, end
+if ersd > 1e-13 then, pause, end
+
+// usual tests
+v = ones(size(xe));
+p = cdf("nt",xe,dfe,pnonce);
+pp = cdftnc("PQ",xe,dfe*v,pnonce*v);
+if ~p.equal[pp] then, pause, end
+erp = max( abs(p-pe)./pe );
+if erp > 5e-06 then, pause, end
+
+x = icdf("nt",pe,dfe,pnonce);
+xx = cdftnc("T",dfe*v,pnonce*v,pe,1-pe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./(abs(xe)+1e-6));
+if erx > 1e-7 then, pause, end
+
+df = cdftnc("Df",pnonce*v,pe,1-pe,xe);
+erdf =  max(abs(df-dfe)/dfe);
+if erdf > 1e-6 then, pause, end
+
+pnonc = cdftnc("Pnonc",pe,1-pe,xe,dfe*v);
+erpn =  max(abs(pnonc-pnonce)/pnonce);
+if erpn > 1e-6 then, pause, end
+
+// verify special values
+[p,q] = cdftnc("PQ",%nan,dfe,pnonce);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdftnc("PQ",-%inf,dfe,pnonce);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdftnc("PQ",%inf,dfe,pnonce);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+
+x = cdftnc("T", dfe, pnonce, 0, 1);
+if ~x.equal[-%inf] then, pause, end
+x = cdftnc("T", dfe, pnonce, 1, 0);
+if ~x.equal[%inf] then, pause, end
+
+
+
+
 
 
 /////////////////////////////////////////////////////////
