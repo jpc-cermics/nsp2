@@ -527,34 +527,31 @@ static int int_meth_normalize(void *self,Stack stack, int rhs, int opt, int lhs)
   for ( i = 0 ; i < P->mn ; i++) 
     {
       NspMatrix *A= P->S[i];
-      if ( A->mn > 1 ) 
+      if ( A->rc_type == 'r') 
 	{
-	  if ( A->rc_type == 'r') 
+	  for ( j = 0 ; j < A->mn -1 ; j++) A->R[j] /= A->R[A->mn-1];
+	  if ( type == 'r' ) 
 	    {
-	      for ( j = 0 ; j < A->mn -1 ; j++) A->R[j] /= A->R[A->mn-1];
-	      if ( type == 'r' ) 
-		{
-		  N->R[i]= A->R[A->mn-1];
-		}
-	      else 
-		{
-		  N->C[i].r = A->R[A->mn-1];
-		  N->C[i].i = 0;
-		}
-	      A->R[A->mn-1]=1.0;
+	      N->R[i]= A->R[A->mn-1];
 	    }
-	  else
+	  else 
 	    {
-	      for ( j = 0 ; j < A->mn ; j++) 
-		{
-		  doubleC res;
-		  nsp_div_cc(&A->C[j],&A->C[A->mn-1],&res);
-		  A->C[j]=res;
-		}
-	      N->C[i]= A->C[A->mn-1];
-	      A->C[A->mn-1].r = 1.0;
-	      A->C[A->mn-1].i = 0.0;
+	      N->C[i].r = A->R[A->mn-1];
+	      N->C[i].i = 0;
 	    }
+	  A->R[A->mn-1]=1.0;
+	}
+      else
+	{
+	  for ( j = 0 ; j < A->mn ; j++) 
+	    {
+	      doubleC res;
+	      nsp_div_cc(&A->C[j],&A->C[A->mn-1],&res);
+	      A->C[j]=res;
+	    }
+	  N->C[i]= A->C[A->mn-1];
+	  A->C[A->mn-1].r = 1.0;
+	  A->C[A->mn-1].i = 0.0;
 	}
     }
   MoveObj(stack,1,NSP_OBJECT(N));

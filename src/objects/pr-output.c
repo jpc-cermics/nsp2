@@ -553,7 +553,7 @@ int nsp_pr_any_float_vs (const char *fmt, double d, int fw, int do_print)
 	  int i;
 	  char str[128],*str1;
 	  sprintf(str,(fmt) ? fmt: "%f" ,d);
-	  if ((str1=strstr(str,"."))!= 0) 
+	  if ((str1=strstr(str,"."))!= 0 && strstr(str,"e") == 0 ) 
 	    {
 	      for ( i = strlen(str1)-1; i >= 0 ; i--)
 		{

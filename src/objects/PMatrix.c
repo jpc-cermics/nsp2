@@ -183,7 +183,7 @@ NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M)
   /* we need to give a name to each elts of a polynomial matrix */
   if ((loc->S[0] = nsp_polynom_copy_and_name("pe",M))== NULLPOLY ) return(NULLPMAT);
   loc->S[0]->m = 1;
-  loc->S[0]->mn = M->mn;
+  loc->S[0]->n = loc->S[0]->mn= M->mn;
   if (( nsp_polynom_resize(loc->S[0]))== FAIL ) return(NULLPMAT);
   return(loc);
 }
