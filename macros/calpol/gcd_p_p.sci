@@ -1,4 +1,4 @@
-function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
+function [z,f1,f2,res] = gcd_p_p(u,v, delta=1.e-9)
 // Copyright  2010 Paola Boito 
 //
 // This program is free software; you can redistribute it and/or modify
@@ -29,9 +29,7 @@ function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
 //   decreased gcd degree, depending on whether the
 //   last residual found is smaller or greater than delta.
 //
-
-  debug = %t
-  
+  debug = %f
   if nargin <= 2 then delta = 1.e-9;end 
   // tolerance for iterative refinement 
   ftol = 1.e-14; 
