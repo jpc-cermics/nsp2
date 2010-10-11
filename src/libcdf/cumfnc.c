@@ -39,7 +39,13 @@ int cdf_cumfnc (double *f, double *dfn, double *dfd, double *pnonc, double *cum,
   double xx, yy, dnterm, centwt, upterm, adn, aup, sum;
   int ierr,  i__ ,  icent;
 
-  if (*f <= 0.)
+  if ( isnan(*f) )    /* nan was not well handled (Bruno, oct 2010) */
+    {
+      *cum = *ccum = *f;
+      return 0;
+    }
+
+  if (*f <= 0.0)
     {
       *cum = 0.;
       *ccum = 1.;
