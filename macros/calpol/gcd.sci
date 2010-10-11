@@ -30,7 +30,7 @@ function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
 //   last residual found is smaller or greater than delta.
 //
 
-  debug = %f
+  debug = %t
   
   if nargin <= 2 then delta = 1.e-9;end 
   // tolerance for iterative refinement 
@@ -65,7 +65,7 @@ function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
   tdeg=N-k;
   
   // handle special or forbidden values for tdeg
-  tdeg = min(max(tdeg,1),m);
+  tdeg = min(max(tdeg,0),m);
   
   if debug then printf("tested degrees: %2d ",tdeg);end 
   
@@ -73,19 +73,18 @@ function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
   // perform iterative refinement
   [z,f1,f2]=cofactors(f,g,tdeg, ftol = ftol)
   res = [norm(f- f1*z) norm(g - f2*z)];
-  
-  if tdeg == min(m,n) then 
-    if debug then 
-      printf(" (=): stop with %d (0) norm=(%g,%g)\n",tdeg,res(1),res(2))
-    end
-    return;
-  end 
-  
-  // try to correct degree
+
   if and( res < [delta,delta])
+    // try to increase degree
     if debug then printf(" (+) ");tref=tdeg;end 
     while %t 
       tdeg=tdeg+1;
+      if tdeg > min(m,n) then 
+	if debug then 
+	  printf(" stop with %d (%d) norm=(%g,%g)\n", tdeg-1,tdeg-1-tref, res(1),res(2));
+	end
+	break;
+      end 
       [newz,f1,f2]=cofactors(f,g,tdeg, ftol = ftol);
       newres = [norm(f- f1*z) norm(g - f2*z)];
       if ((newres(1)>delta)||(newres(2)>delta)) then 
@@ -101,11 +100,7 @@ function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
     if debug then printf(" (-) ");  tref=tdeg;end 
     while ((res(1)>delta)||(res(2)>delta))
       tdeg=tdeg-1;
-      if tdeg==0
-	if debug  then printf(" stop %d (%d) norm=(%g,%g)\n",tdeg,tdeg-tref,res(1),res(2));end
-	z=m2p(1);
-	return
-      end
+      if tdeg < 0 then tdeg=0; break;end 
       [z,f1,f2]=cofactors(f,g,tdeg, ftol = ftol);
       res = [norm(f- f1*z) norm(g - f2*z)];
     end
@@ -113,7 +108,7 @@ function [z,f1,f2,res] = gcd(u,v, delta=1.e-9)
   end
 endfunction
 
-function gcd_test()
+function gcd_test(delta=1.e-9)
 // test gcd computations 
 // more tests 
   x= poly(0);
@@ -126,11 +121,12 @@ function gcd_test()
     q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
     cpq = min(cq,cp);
     gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
-    [g,p,q,res] = gcd_jpc(p,q);
+    [g,ppr,qqr,res] = gcd(p,q,delta=delta);
     g.normalize[];
-    N(i)= norm(g -gcpq1);
-    if N(i) > 1.e-5 then 
-      T(i)=%f; 
+    N(i)= norm(g -gcpq1)/(1+g.degree[]);
+    if N(i) > 1.e-7 then 
+      T(i)=%f;
+      pause;
     end 
   end
   xclear();
@@ -152,5 +148,19 @@ if %f then
     dr(2,i)=g.degree[];
     dr(3,i)=norm(res,2);
   end
+
+  x= poly(0);
+  p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
+  cp=[0,2,5,1];
+  cq=[1,0,0,0];
+  p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
+  q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
+  cpq = min(cq,cp);
+  gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
+  [g,ppr,qqr,res] = gcd(p,q,delta=1.e-9);
+  g.normalize[];
+  norm(g -gcpq1)/(1+g.degree[])
+  
+  
 end
 

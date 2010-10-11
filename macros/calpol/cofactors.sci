@@ -24,6 +24,14 @@ function [g,p,q]=cofactors(u,v, td, iter = %t , ftol = 1.e-14 )
   m=v.degree[];
   uc= u.coeffs{1};
   vc= v.coeffs{1};
+
+  if td == 0 then 
+    g = m2p(1);
+    p = u;
+    q = v;
+    return ;
+  end
+    
   Ms= [ toeplitz([uc,zeros(1,m- td)],[uc(1),zeros(1,m- td)]), ...
         toeplitz([vc,zeros(1,n- td)],[vc(1),zeros(1,n- td)])];
   xx=[Ms;ones(1,n+m-2*(td-1))] \ [zeros(m+n-(td-1),1);1];

@@ -100,12 +100,16 @@ function u=epdiv_lsq(p,q)
   m=q.degree[];
   pc= p.coeffs{1};
   qc= q.coeffs{1};
+  if m == 0 then 
+    u = p/qc;
+    return ;
+  end
   // The convolution matrix associated to q 
   A = toeplitz([qc($:-1:1),zeros(1,n-m)],[qc($),zeros(1,n-m)]);
   // we solve A*x = p in the least square sense
   u = m2p( flipud(A \ flipud(pc') ));
   u.normalize[];
-  u=pc($)/qc($)*u;
+  u=(pc($)/qc($))*u;
 endfunction
 
 function u=epdiv_gko(p,q)
