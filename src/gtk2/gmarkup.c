@@ -228,8 +228,10 @@ static NspGMarkupNode  *nsp_gmarkup_node_xdr_load(XDR *xdrs)
 
 void nsp_gmarkup_node_destroy(NspGMarkupNode *H)
 {
+  nsp_string_destroy(&H->name);
+  nsp_list_destroy(H->children);
+  nsp_hash_destroy(H->attributes);
   nsp_object_destroy_name(NSP_OBJECT(H));
-  /* XXXX */
   FREE(H);
 }
 
@@ -661,7 +663,8 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, 
       g_markup_parse_context_parse (markup_parse_context, text, length, error);
       g_free (text), text = NULL;
     }
-    g_free (markup_parse_context), markup_parse_context = NULL;
+    g_markup_parse_context_free (markup_parse_context);
+    markup_parse_context = NULL;
   }
   return context.root;
 }
