@@ -1,0 +1,63 @@
+% -*- mode: latex -*-
+\mansection{gcd}
+\begin{mandesc}
+  \short{gcd}{gcd of integers or polynomials}\\
+  \short{lcm}{lcm of integers or polynomials}\\
+  \short{euclide}{extended euclidian algorithm}\\
+\end{mandesc}
+\begin{calling_sequence}
+\begin{verbatim}
+ [g]=gcd(p,q)  
+ [g]=lcm(p,q)  
+ [g,a,b]=euclide(p,q)
+
+ [z,f1,f2,res]= gcd(u,v,delta=1.e-9)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{p,q}: both polynomials or both numbers (double or int32).
+    \vname{g,a,b}: polynomials or numbers (double or int32).
+    \vname{u,v}: both polynomials. 
+    \vname{z,f1,f2}: polynomials. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  \verb+gcd(p,q)+, \verb+lcm(p,q)+, \verb+euclide(p,q)+ respectively compute 
+  the gcd, the lcm and the \verb+(g,a,b)+ integers which are solutions of the 
+  Bezout's identity \verb+ap + bq = g = gcd(p, q)+.
+  
+  \verb+[z,f1,f2,res]= gcd(u,v,delta=1.e-9)+ computes an epsilon-gcd of 
+  two polynomials \verb+u+ and \verb+v+ (epsilon given by the delta parameter). 
+  \verb+f1+ and \verb+f2+ are the associated cofactors \verb+u/norm(u) = z*f1+ and 
+  \verb+v/norm(v)= z*f2+ and \verb+res+ gives the euclidian norm of \verb+u/norm(u) - z*f1+ 
+  and \verb+v/norm(v)- z*f2+.
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x= poly(0);
+    p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
+    cp=[1,2,5,1];
+    cq=[1,0,2,0];
+    u= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
+    v= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
+    cpq = min(cq,cp);
+    g = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
+    [z,f1,f2,res] = gcd(p,q,delta=1.e-9);
+    norm(u/norm(u) - z*f1)
+    norm(v/norm(v)- z*f2)
+
+    z.normalize[];
+    norm(z -g) 
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{Pmat}{Pmat}
+\end{manseealso}
+\begin{authors}
+  Paola Boito, Jean-Philippe Chancelier.
+\end{authors}
+
