@@ -2048,6 +2048,13 @@ NspSMatrix* nsp_smatrix_split(NspSMatrix *Src,nsp_const_string splitChars, int m
 {
   NspSMatrix *M=NULLSMAT,*loc;
   int i;
+  if ( Src->mn == 0 ) 
+    {
+      if ( (M=nsp_smatrix_create(NVOID,0,0,".",0)) == NULLSMAT )
+	return NULLSMAT;
+      return M;
+    }
+
   if ((M=nsp_smatrix_split_string(Src->S[0],splitChars,msep))==NULLSMAT) return NULLSMAT;
 
   for ( i= 1 ; i < Src->mn ; i++) 

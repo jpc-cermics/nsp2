@@ -1666,7 +1666,7 @@ static int int_smxsplit(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if ( sep  == NULL )
     sep = defsplit;
-
+  
   if ( (A=nsp_smatrix_split(Src,sep,msep)) == NULLSMAT ) 
     return RET_BUG;
   MoveObj(stack,1,(NspObject *)A);
