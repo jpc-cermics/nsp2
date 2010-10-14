@@ -1,0 +1,15 @@
+;; -*- scheme -*-
+
+(define-object Hm
+  (in-module "Hm")
+  (parent "Object")
+  (c-name "NspHm")
+  (fields
+   '("void*" "htable" "hidden" "NULL" )
+   '("int" "hsize" "hidden" "0" )
+   '("int" "filled" "hidden" "0" )
+   '("int" "base" "hidden" "4" )
+   '("int" "keysize" "hidden" "16" )
+   )
+  (gtype-id "Hm")
+)

@@ -1,0 +1,78 @@
+;; -*- scheme -*-
+
+(include "hm-types.defs")
+
+(define-method delete 
+  (of-object "Hm")
+  (c-name "nsp_hm_remove")
+  (return-type "none")
+  (parameters
+    '("NspMatrix*" "key")
+  )
+)
+
+(define-method enter
+  (of-object "Hm")
+  (c-name "nsp_hm_enter")
+  (return-type "none")
+  (parameters
+    '("int" "key")
+    '("double" "val")
+  )
+)
+
+(define-method find
+  (of-object "Hm")
+  (c-name "nsp_hm_find")
+  (return-type "double")
+  (parameters
+    '("int" "key")
+    )
+)
+
+(define-method iskey
+  (of-object "Hm")
+  (c-name "nsp_hm_iskey")
+  (return-type "gboolean")
+  (parameters
+    '("int" "key")
+  )
+)
+
+(define-method key2m
+  (of-object "Hm")
+  (c-name "nsp_hm_key2m")
+  (return-type "NspMatrix*")
+  (parameters
+   '("gint64" "key")
+  )
+)
+
+(define-method m2key
+  (of-object "Hm")
+  (c-name "nsp_hm_m2key")
+  (return-type "int")
+  (parameters
+    '("NspMatrix*" "M")
+  )
+)
+
+(define-method check_slope
+  (of-object "Hm")
+  (c-name "nsp_hm_check_slope")
+  (return-type "gboolean")
+  (parameters
+    '("NspMatrix*" "M")
+  )
+)
+
+
+
+;; (define-method merge
+;;   (of-object "Hm")
+;;   (c-name "nsp_hm_merge")
+;;   (return-type "double")
+;;   (parameters
+;;     '("int" "key")
+;;   )
+;; )

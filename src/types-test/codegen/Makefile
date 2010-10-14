@@ -23,7 +23,9 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../box3d.c ../objs3d.c ../points3d.c ../polyhedron.c ../polyline3d.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
-	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c
+	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
+	../hm.c 
+
 
 all:: $(ALL)
 	cd ../; make all
@@ -289,6 +291,11 @@ all:: ../../liblowdisc/ldfaure.c
 	    --prefix Ldfaure ldfaure.defs) | sed -e "s+codegen/+../types-test/codegen/+g" > $*.c \
 	&& mv ldfaure.h ldhalton.h ldrevhalton.h ldsobol4.h ldsobol8.h ldniederreiter.h  ../../liblowdisc/nsp/
 
+../hm.c : hm.defs hm-types.defs hm.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override hm.override \
+	    --prefix hm hm.defs) > $*.c \
+	&& mv hm.h ../../include/nsp 
 
 
 
