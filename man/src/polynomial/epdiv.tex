@@ -1,0 +1,48 @@
+% -*- mode: latex -*-
+\mansection{epdiv}
+\begin{mandesc}
+  \shortunder{epdiv\_fft}{epdiv_fft}{polynomial division using fft}\\ 
+  \shortunder{epdiv\_lsq}{epdiv_lsq}{polynomial division using least square linear solver}\\ 
+  \shortunder{epdiv\_gko}{epdiv_gko}{polynomial division using displacement solvers}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ [q]=epdiv_fft(u,v)
+ [q]=epdiv_lsq(u,v)
+ [q]=epdiv_gko(u,v)
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{u,v,q}: polynomials. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  these functions compute the result of the division of polynomial \verb+u+ by 
+  \verb+v+ assuming that \verb+u+ is exactly divisible by \verb+v+
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+  x=poly(0);
+  p=(1+x)*(1+2*x)*(1+5*x);
+  q=(1+2*x);
+  u=epdiv_fft(p,q);
+  if norm(p -q*u) > 1.e-10 then pause;end 
+  u=epdiv_lsq(p,q);
+  if norm(p -q*u) > 1.e-10 then pause;end 
+  u=epdiv_gko(p,q);
+  if norm(p -q*u) > 1.e-10 then pause;end 
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{Pmat}{Pmat} 
+\end{manseealso}
+%-- Author
+\begin{authors}
+  Paola Boito,  J.Ph Chancelier. 
+\end{authors}
+

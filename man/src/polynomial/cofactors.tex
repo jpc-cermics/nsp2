@@ -1,0 +1,56 @@
+% -*- mode: latex -*-
+\mansection{cofactors}
+\begin{mandesc}
+  \short{cofactors}{gcd and cofactors of polynomials}\\ % @mandesc@
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ [g,p,q]=cofactors(u,v,td, iter=%t|%f,ftol=1.e-14)   
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{u,v}: polynomials. 
+    \vname{td}: an integer. 
+    \vname{g,p,q}: polynomials.
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function is used by the function \verb+gcd+. 
+  Given an integer \verb+td+ as a tentative gcd degree, the function \verb+cofactors+ 
+  computes the two cofactors \verb+p+ and \verb+q+ such that \verb+q*u - p*v=0+ and a 
+  polynomial \verb+g+ of \verb+td+ degree (using \verb+epdiv_lsq+) such that:
+\begin{verbatim}
+     p*g - u = 0 
+     q*g - v = 0
+\end{verbatim} 
+  If \verb+iter+ is true, iterative refinement is performed to minimize the euclidian 
+  norm of \verb+(p*g - u,q*g - v)+ using the function \verb+fsolve_lsq+ \verb+ftol+ 
+  being transmited to \verb+fsolve_lsq+. The 
+  companion function which performs iterative refinement is called 
+  \verb+cofactors_iter+. 
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    x=poly(0);
+    u=(1+x+x^3+x^4)*(1+6*x);
+    v=(1+x+x^3+x^4)*(1+7*x);
+    k=4; // tentative degree 
+    [g,p,q]=cofactors(u,v,k,iter=%f)
+    [norm( g*p -u ), norm(g*q -v )]
+    [g,p,q]=cofactors(u,v,k)
+    [norm( g*p -u ), norm(g*q -v )]
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{Pmat}{Pmat}, \manlink{epdiv\_lsq}{epdiv_lsq}
+\end{manseealso}
+%-- Author
+\begin{authors}
+  J.Ph Chancelier. 
+\end{authors}
+
