@@ -66,6 +66,12 @@
   )
 )
 
+(define-method get_keys
+  (of-object "Hm")
+  (c-name "nsp_hm_get_keys")
+  (return-type "NspSMatrix*")
+)
+
 
 
 ;; (define-method merge

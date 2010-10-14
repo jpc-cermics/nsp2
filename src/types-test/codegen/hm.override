@@ -39,6 +39,7 @@ static void nsp_hm_remove(NspHm *H, gint64 key );
 static int nsp_hm_enter(NspHm *H, gint64 key,double val);
 static int nsp_hm_find(NspHm *H, gint64 key, double *val);
 static int nsp_hm_check_slope(NspHm *H,NspMatrix *M);
+static NspIMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv);
 const int no_key=-1;
 
 %%
@@ -72,7 +73,10 @@ override-intcreate Hm
 
 int int_hm_create(Stack stack, int rhs, int opt, int lhs)
 {
-  int size=10;
+  nsp_option opts[] ={{ "base",s_int,NULLOBJ,-1},
+		      { "keysize",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int size=10, base = 4, keysize = 16;
   NspHm *H;
   CheckStdRhs(0,1);
   CheckLhs(0,1);
@@ -81,7 +85,11 @@ int int_hm_create(Stack stack, int rhs, int opt, int lhs)
       if (GetScalarInt(stack,1,&size) == FAIL) return RET_BUG;           
       size= Max(1,size);
     }
+  if ( get_optional_args(stack, rhs, opt, opts, &base, &keysize) == FAIL )
+    return RET_BUG;
   if(( H = nsp_bhcreate(NVOID,size)) == NULLHM) return RET_BUG;
+  H->base = Max(base,2);
+  H->keysize = Max(keysize,1);
   MoveObj(stack,1,NSP_OBJECT(H));
   return 1;
 }
@@ -202,6 +210,17 @@ static int _wrap_nsp_hm_key2m(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
+%%
+override  nsp_hm_get_keys kwargs
+
+static int _wrap_nsp_hm_get_keys(NspHm *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *ret;
+  if ((ret = nsp_hm_get_keys(NVOID,self)) == NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
 
 %%
 last
@@ -307,7 +326,7 @@ int nsp_hm_merge(NspHm *H1,NspHm *H2)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_hm_get_next_object(NspHm *H, int *i,int *key,double *val)
+int nsp_hm_get_next_object(NspHm *H, int *i,gint64 *key,double *val)
 {
   HM_Entry *loc = ((HM_Entry *) H->htable) + *i;  
   if ( loc->used && loc->key != no_key ) 
@@ -432,7 +451,7 @@ NspBMatrix  *nsp_hm_equal(NspHm *L1, NspHm *L2)
       if (( B = nsp_bmatrix_create(NVOID,1,L1->filled))== NULLBMAT) return NULLBMAT;
       while (1) 
 	{
-	  int str=no_key;
+	  gint64 str=no_key;
 	  double val,val2;
 	  int rep =nsp_hm_get_next_object(L1,&i,&str,&val);
 	  if ( str != no_key )
@@ -480,7 +499,7 @@ NspBMatrix  *nsp_hm_not_equal(NspHm *L1, NspHm *L2)
       if (( B = nsp_bmatrix_create(NVOID,1,L1->filled))== NULLBMAT) return NULLBMAT;
       while (1) 
 	{
-	  int str=no_key;
+	  gint64 str=no_key;
 	  double val,val2;
 	  int rep =nsp_hm_get_next_object(L1,&i,&str,&val);
 	  if ( str != no_key )
@@ -521,7 +540,7 @@ int nsp_hm_full_equal(NspHm *L1, NspHm *L2)
   if ( L1->filled != L2->filled ) return FALSE;
   while (1) 
     {
-      int str=no_key;
+      gint64 str=no_key;
       double val,val2;
       int rep1 = nsp_hm_get_next_object(L1,&i,&str,&val);
       if ( str != no_key )
@@ -557,7 +576,7 @@ int nsp_hm_full_not_equal(NspHm *L1, NspHm *L2)
   if ( L1->filled != L2->filled ) return TRUE;
   while (1) 
     {
-      int str=no_key;
+      gint64 str=no_key;
       double val,val2;
       int rep1 = nsp_hm_get_next_object(L1,&i,&str,&val);
       if ( str != no_key )
@@ -583,34 +602,34 @@ int nsp_hm_full_not_equal(NspHm *L1, NspHm *L2)
  * @name: name to give to object 
  * @Hv: a #NspHm 
  * 
- * creates a #NspSMatrix filled with the keys of the hash table 
+ * creates a #NspIMatrix filled with the keys of the hash table 
  * 
- * Return value: a new #NspSMatrix or NULLSMAT
+ * Return value: a new #NspMatrix or NULLSMAT
  **/
 
-NspMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv)
+static NspIMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv)
 {
-  NspMatrix *Loc;
+  NspIMatrix *Loc;
   NspHm *H = Hv;
   int i=0,count =0;
   if ( H->filled == 0) 
     {
-      if ((Loc =nsp_matrix_create(name,'r',0,0)) == NULLMAT)
-	return NULLMAT;
+      if ((Loc =nsp_imatrix_create(name,0,0,nsp_gint64)) == NULLIMAT)
+	return NULLIMAT;
     }
   else 
     {
-      if ( ( Loc =nsp_matrix_create(name,'r',H->filled,1)) == NULLMAT)
-	return NULLMAT;
+      if ( ( Loc =nsp_imatrix_create(name,H->filled,1,nsp_gint64)) == NULLIMAT)
+	return NULLIMAT;
       /* allocate elements and store keys **/
       while (1) 
 	{
-	  int str=no_key;
+	  gint64 str=no_key;
 	  double val;
 	  int rep = nsp_hm_get_next_object(H,&i,&str,&val);
 	  if ( str != no_key )
 	    { 
-	      Loc->R[count++]= str;
+	      Loc->Gint64[count++]= str;
 	    }
 	  if (rep == FAIL) break;
 	}
@@ -618,8 +637,8 @@ NspMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv)
 	{
 	  int i;
 	  Sciprintf("Warning: less objects (%d) in hm table than expected (%d) !\n",count,H->filled);
-	  for ( i = count ; i < H->filled ; i++) Loc->R[i]=0;
-	  if ( nsp_matrix_resize(Loc,count,1) == FAIL) return NULLMAT;
+	  for ( i = count ; i < H->filled ; i++) Loc->Gint64[i]=0;
+	  if ( nsp_imatrix_resize(Loc,count,1) == FAIL) return NULLIMAT;
 	}
     }
   return  Loc;

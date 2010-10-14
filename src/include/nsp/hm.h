@@ -150,8 +150,9 @@ static void nsp_hm_remove(NspHm *H, gint64 key );
 static int nsp_hm_enter(NspHm *H, gint64 key,double val);
 static int nsp_hm_find(NspHm *H, gint64 key, double *val);
 static int nsp_hm_check_slope(NspHm *H,NspMatrix *M);
+static NspIMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv);
 const int no_key=-1;
 
-#line 156 "./hm.h"
+#line 157 "./hm.h"
 #endif /* NspHm_Private */
 

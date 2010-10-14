@@ -24,7 +24,7 @@
 
 
 
-#line 46 "codegen/hm.override"
+#line 47 "codegen/hm.override"
 #include <nsp/cnumeric.h> 
 
 #line 31 "hm.c"
@@ -223,6 +223,8 @@ int nsp_hm_xdr_save(XDR *xdrs, NspHm *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_hm)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->base) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->keysize) == FAIL) return FAIL;
   return OK;
 }
 
@@ -232,6 +234,8 @@ int nsp_hm_xdr_save(XDR *xdrs, NspHm *M)
 
 NspHm  *nsp_hm_xdr_load_partial(XDR *xdrs, NspHm *M)
 {
+  if (nsp_xdr_load_i(xdrs, &M->base) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->keysize) == FAIL) return NULL;
  return M;
 }
 
@@ -244,10 +248,10 @@ static NspHm  *nsp_hm_xdr_load(XDR *xdrs)
   if ( nsp_hm_create_partial(H) == FAIL) return NULLHM;
   if ((H  = nsp_hm_xdr_load_partial(xdrs,H))== NULLHM) return H;
   if ( nsp_hm_check_values(H) == FAIL) return NULLHM;
-#line 63 "codegen/hm.override"
+#line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 251 "hm.c"
+#line 255 "hm.c"
   return H;
 }
 
@@ -257,10 +261,10 @@ static NspHm  *nsp_hm_xdr_load(XDR *xdrs)
 
 void nsp_hm_destroy_partial(NspHm *H)
 {
-#line 67 "codegen/hm.override"
+#line 68 "codegen/hm.override"
   /* verbatim in destroy */
 
-#line 264 "hm.c"
+#line 268 "hm.c"
 }
 
 void nsp_hm_destroy(NspHm *H)
@@ -422,10 +426,10 @@ NspHm *nsp_hm_create(const char *name,void* htable,int hsize,int filled,int base
   H->base=base;
   H->keysize=keysize;
   if ( nsp_hm_check_values(H) == FAIL) return NULLHM;
-#line 63 "codegen/hm.override"
+#line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 429 "hm.c"
+#line 433 "hm.c"
   return H;
 }
 
@@ -480,10 +484,10 @@ NspHm *nsp_hm_full_copy(NspHm *self)
   if ( H ==  NULLHM) return NULLHM;
   if ( nsp_hm_full_copy_partial(H,self)== NULL) return NULLHM;
 
-#line 63 "codegen/hm.override"
+#line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 487 "hm.c"
+#line 491 "hm.c"
   return H;
 }
 
@@ -492,12 +496,15 @@ NspHm *nsp_hm_full_copy(NspHm *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 71 "codegen/hm.override"
+#line 72 "codegen/hm.override"
 /* override the default int_create */
 
 int int_hm_create(Stack stack, int rhs, int opt, int lhs)
 {
-  int size=10;
+  nsp_option opts[] ={{ "base",s_int,NULLOBJ,-1},
+		      { "keysize",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int size=10, base = 4, keysize = 16;
   NspHm *H;
   CheckStdRhs(0,1);
   CheckLhs(0,1);
@@ -506,16 +513,20 @@ int int_hm_create(Stack stack, int rhs, int opt, int lhs)
       if (GetScalarInt(stack,1,&size) == FAIL) return RET_BUG;           
       size= Max(1,size);
     }
+  if ( get_optional_args(stack, rhs, opt, opts, &base, &keysize) == FAIL )
+    return RET_BUG;
   if(( H = nsp_bhcreate(NVOID,size)) == NULLHM) return RET_BUG;
+  H->base = Max(base,2);
+  H->keysize = Max(keysize,1);
   MoveObj(stack,1,NSP_OBJECT(H));
   return 1;
 }
 
-#line 515 "hm.c"
+#line 526 "hm.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 91 "codegen/hm.override"
+#line 99 "codegen/hm.override"
 
 static int _wrap_nsp_hm_remove(NspHm *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -528,10 +539,10 @@ static int _wrap_nsp_hm_remove(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 532 "hm.c"
+#line 543 "hm.c"
 
 
-#line 105 "codegen/hm.override"
+#line 113 "codegen/hm.override"
 
 static int _wrap_nsp_hm_enter(NspHm *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -545,10 +556,10 @@ static int _wrap_nsp_hm_enter(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 549 "hm.c"
+#line 560 "hm.c"
 
 
-#line 120 "codegen/hm.override"
+#line 128 "codegen/hm.override"
 
 static int _wrap_nsp_hm_find(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -580,10 +591,10 @@ static int _wrap_nsp_hm_find(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   return count;
 }
-#line 584 "hm.c"
+#line 595 "hm.c"
 
 
-#line 153 "codegen/hm.override"
+#line 161 "codegen/hm.override"
 
 static int _wrap_nsp_hm_iskey(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -606,10 +617,10 @@ static int _wrap_nsp_hm_iskey(void *self,Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
-#line 610 "hm.c"
+#line 621 "hm.c"
 
 
-#line 191 "codegen/hm.override"
+#line 199 "codegen/hm.override"
 
 static int _wrap_nsp_hm_key2m(NspHm *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -624,11 +635,10 @@ static int _wrap_nsp_hm_key2m(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
+#line 639 "hm.c"
 
-#line 629 "hm.c"
 
-
-#line 177 "codegen/hm.override"
+#line 185 "codegen/hm.override"
 
 static int _wrap_nsp_hm_m2key(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -641,7 +651,7 @@ static int _wrap_nsp_hm_m2key(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 645 "hm.c"
+#line 655 "hm.c"
 
 
 static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int lhs)
@@ -657,6 +667,20 @@ static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
+#line 215 "codegen/hm.override"
+
+static int _wrap_nsp_hm_get_keys(NspHm *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *ret;
+  if ((ret = nsp_hm_get_keys(NVOID,self)) == NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+#line 682 "hm.c"
+
+
 static NspMethods hm_methods[] = {
   {"delete",(nsp_method *) _wrap_nsp_hm_remove},
   {"enter",(nsp_method *) _wrap_nsp_hm_enter},
@@ -665,6 +689,7 @@ static NspMethods hm_methods[] = {
   {"key2m",(nsp_method *) _wrap_nsp_hm_key2m},
   {"m2key",(nsp_method *) _wrap_nsp_hm_m2key},
   {"check_slope",(nsp_method *) _wrap_nsp_hm_check_slope},
+  {"get_keys",(nsp_method *) _wrap_nsp_hm_get_keys},
   { NULL, NULL}
 };
 
@@ -673,7 +698,46 @@ static NspMethods *hm_get_methods(void) { return hm_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab hm_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static NspObject *_wrap_hm_get_base(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspHm *) self)->base;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_hm_set_base(void *self,const char *attr, NspObject *O)
+{
+  int base;
+
+  if ( IntScalar(O,&base) == FAIL) return FAIL;
+  ((NspHm *) self)->base= base;
+  return OK;
+}
+
+static NspObject *_wrap_hm_get_keysize(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspHm *) self)->keysize;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_hm_set_keysize(void *self,const char *attr, NspObject *O)
+{
+  int keysize;
+
+  if ( IntScalar(O,&keysize) == FAIL) return FAIL;
+  ((NspHm *) self)->keysize= keysize;
+  return OK;
+}
+
+static AttrTab hm_attrs[] = {
+  { "base", (attr_get_function *)_wrap_hm_get_base, (attr_set_function *)_wrap_hm_set_base,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "keysize", (attr_get_function *)_wrap_hm_get_keysize, (attr_set_function *)_wrap_hm_set_keysize,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
+};
+
 
 /*-------------------------------------------
  * functions 
@@ -704,7 +768,7 @@ void hm_Interf_Info(int i, char **fname, function (**f))
   *f = hm_func[i].fonc;
 }
 
-#line 208 "codegen/hm.override"
+#line 227 "codegen/hm.override"
 
 
 /* The bhash table code at the end of the file is Copyrighted
@@ -807,7 +871,7 @@ int nsp_hm_merge(NspHm *H1,NspHm *H2)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_hm_get_next_object(NspHm *H, int *i,int *key,double *val)
+int nsp_hm_get_next_object(NspHm *H, int *i,gint64 *key,double *val)
 {
   HM_Entry *loc = ((HM_Entry *) H->htable) + *i;  
   if ( loc->used && loc->key != no_key ) 
@@ -932,7 +996,7 @@ NspBMatrix  *nsp_hm_equal(NspHm *L1, NspHm *L2)
       if (( B = nsp_bmatrix_create(NVOID,1,L1->filled))== NULLBMAT) return NULLBMAT;
       while (1) 
 	{
-	  int str=no_key;
+	  gint64 str=no_key;
 	  double val,val2;
 	  int rep =nsp_hm_get_next_object(L1,&i,&str,&val);
 	  if ( str != no_key )
@@ -980,7 +1044,7 @@ NspBMatrix  *nsp_hm_not_equal(NspHm *L1, NspHm *L2)
       if (( B = nsp_bmatrix_create(NVOID,1,L1->filled))== NULLBMAT) return NULLBMAT;
       while (1) 
 	{
-	  int str=no_key;
+	  gint64 str=no_key;
 	  double val,val2;
 	  int rep =nsp_hm_get_next_object(L1,&i,&str,&val);
 	  if ( str != no_key )
@@ -1021,7 +1085,7 @@ int nsp_hm_full_equal(NspHm *L1, NspHm *L2)
   if ( L1->filled != L2->filled ) return FALSE;
   while (1) 
     {
-      int str=no_key;
+      gint64 str=no_key;
       double val,val2;
       int rep1 = nsp_hm_get_next_object(L1,&i,&str,&val);
       if ( str != no_key )
@@ -1057,7 +1121,7 @@ int nsp_hm_full_not_equal(NspHm *L1, NspHm *L2)
   if ( L1->filled != L2->filled ) return TRUE;
   while (1) 
     {
-      int str=no_key;
+      gint64 str=no_key;
       double val,val2;
       int rep1 = nsp_hm_get_next_object(L1,&i,&str,&val);
       if ( str != no_key )
@@ -1083,34 +1147,34 @@ int nsp_hm_full_not_equal(NspHm *L1, NspHm *L2)
  * @name: name to give to object 
  * @Hv: a #NspHm 
  * 
- * creates a #NspSMatrix filled with the keys of the hash table 
+ * creates a #NspIMatrix filled with the keys of the hash table 
  * 
- * Return value: a new #NspSMatrix or NULLSMAT
+ * Return value: a new #NspMatrix or NULLSMAT
  **/
 
-NspMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv)
+static NspIMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv)
 {
-  NspMatrix *Loc;
+  NspIMatrix *Loc;
   NspHm *H = Hv;
   int i=0,count =0;
   if ( H->filled == 0) 
     {
-      if ((Loc =nsp_matrix_create(name,'r',0,0)) == NULLMAT)
-	return NULLMAT;
+      if ((Loc =nsp_imatrix_create(name,0,0,nsp_gint64)) == NULLIMAT)
+	return NULLIMAT;
     }
   else 
     {
-      if ( ( Loc =nsp_matrix_create(name,'r',H->filled,1)) == NULLMAT)
-	return NULLMAT;
+      if ( ( Loc =nsp_imatrix_create(name,H->filled,1,nsp_gint64)) == NULLIMAT)
+	return NULLIMAT;
       /* allocate elements and store keys **/
       while (1) 
 	{
-	  int str=no_key;
+	  gint64 str=no_key;
 	  double val;
 	  int rep = nsp_hm_get_next_object(H,&i,&str,&val);
 	  if ( str != no_key )
 	    { 
-	      Loc->R[count++]= str;
+	      Loc->Gint64[count++]= str;
 	    }
 	  if (rep == FAIL) break;
 	}
@@ -1118,8 +1182,8 @@ NspMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv)
 	{
 	  int i;
 	  Sciprintf("Warning: less objects (%d) in hm table than expected (%d) !\n",count,H->filled);
-	  for ( i = count ; i < H->filled ; i++) Loc->R[i]=0;
-	  if ( nsp_matrix_resize(Loc,count,1) == FAIL) return NULLMAT;
+	  for ( i = count ; i < H->filled ; i++) Loc->Gint64[i]=0;
+	  if ( nsp_imatrix_resize(Loc,count,1) == FAIL) return NULLIMAT;
 	}
     }
   return  Loc;
@@ -1581,4 +1645,4 @@ static int nsp_hm_check_slope(NspHm *H,NspMatrix *M)
 }
 
 
-#line 1585 "hm.c"
+#line 1649 "hm.c"
