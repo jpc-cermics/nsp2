@@ -7,29 +7,36 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-B=split(str [, msep=bool , sep= string]) 
+B=split(S [, msep=bool , sep= string]) 
 \end{verbatim}
 \end{calling_sequence}
 
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{str}: a string.
-    \vname{B}: a string row vector.
+    \vname{S}: a string matrix.
+    \vname{B}: a \verb+mxn+ string matrix, where \verb+m+ is the size 
+    of \verb+S+ considered as a column vector and \verb+n+ is the number 
+    of tokens obtained by splitting each string of \verb+S+.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-splits the given string using string as a set of one char separator 
-(default value is \verb+' \t\n'+). If \verb+msep=%t+ then consecutive char
+splits the strings given in string matrix \verb+S+
+using the optional argument \verb+sep+ as a set of one char separator 
+(default value is \verb+' \t\n'+). The function fails if all the 
+strings given in \verb+S+ cannot be splitted with the same number of tokens. 
+If \verb+msep=%t+ then consecutive char
 separator are accepted as one valid separator. 
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}\HCode{split('la terre est bleue');\Hnewline
-    split('la terre est   bleue',msep=\%t);\Hnewline
-    split('la terre,est; bleue',msep=\%t,sep=',; ');}
-  \end{program}
+  \begin{Verbatim}
+    split('la terre est bleue',sep=' ');
+    split('la terre est   bleue',sep=' ',msep=\%t);
+    split('la terre,est; bleue',msep=\%t,sep=',; ');
+    split(['A B C','D E F'],sep=' ')
+  \end{Verbatim}
 \end{examples}
 
 % -- see also

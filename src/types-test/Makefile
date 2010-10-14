@@ -12,7 +12,7 @@ GRAPHICS= figure.o axes.o polyline.o curve.o graphic.o groot.o gmatrix.o \
 
 OBJSC = classa.o classb.o classc.o classaref.o classbref.o \
 	clip.o Math.o gr_alloc.o Format.o dsearch.o \
-	switch.o $(GRAPHICS) sharedlib.o epoints.o
+	switch.o $(GRAPHICS) sharedlib.o epoints.o hm.o
 
 
 OBJSF=
