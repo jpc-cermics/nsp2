@@ -204,7 +204,7 @@ ernu2 = max( abs(nu2-nu2e)/nu2e );
 if ernu2 > 5e-15 then, pause, end
 lambda = cdffnc("Pnonc",pe,qe,xe,nu1e*v,nu2e*v);
 erl = max( abs(lambda-lambdae)/lambdae );
-if erl > 2e-12 then, pause, end
+if erl > 5e-15 then, pause, end
 
 // verify special values
 [p,q] = cdffnc("PQ",%nan,nu1e,nu2e,lambdae);
@@ -333,7 +333,7 @@ ernu2 = max( abs(nu2-nu2e)/nu2e );
 if ernu2 > 1e-13 then, pause, end
 lambda = cdffnc("Pnonc",pe,qe,xe,nu1e*v,nu2e*v);
 erl = max( abs(lambda-lambdae)/lambdae );
-if erl > 1e-9 then, pause, end
+if erl > 1e-14 then, pause, end
 
 // verify special values
 [p,q] = cdffnc("PQ",%nan,nu1e,nu2e,lambdae);
