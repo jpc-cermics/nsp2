@@ -23,7 +23,7 @@
 
 
 /**
- * cdf_cumfnc:
+ * nsp_cdf_cumfnc:
  * @f: upper limit of integration of noncentral f in equation 
  * @dfn: degrees of freedom of numerator 
  * @dfd: degrees of freedom of denominator 
@@ -84,28 +84,28 @@
  * Returns: 0
  **/
 
-int cdf_cumfnc_new (double *f, double *dfn, double *dfd, double *pnonc, double *cum, double *ccum)
+int nsp_cdf_cumfnc (double f, double dfn, double dfd, double pnonc, double *cum, double *ccum)
 {
-  if ( isnan(*f) )    /* handled nan */
+  if ( isnan(f) )    /* handled nan */
     {
-      *cum = *ccum = *f;
+      *cum = *ccum = f;
     }
 
-  else if ( *f <= 0.0 )
+  else if ( f <= 0.0 )
     {
       *cum = 0.0; *ccum = 1.0;
     }
 
-  else if ( *f > DBL_MAX )
+  else if ( f > DBL_MAX )
     {
       *cum = 1.0; *ccum = 0.0;
     }
 
-  else if ( *pnonc < 1e-7 )   /* approximate by a central F */ 
+  else if ( pnonc < 1e-7 )   /* approximate by a central F */ 
     {
-      double xc = ((*dfn)/(*dfn + *pnonc))* (*f), 
-	     nu = *dfn + (*pnonc)*(*pnonc)/(*dfn + 2.0*(*pnonc));
-      cdf_cumf (&xc, &nu, dfd, cum, ccum);
+      double xc = (dfn/(dfn + pnonc))* f, 
+	     nu = dfn + (pnonc*pnonc)/(dfn + 2.0*pnonc);
+      cdf_cumf (&xc, &nu, &dfd, cum, ccum);
       return 0;
     }
 
@@ -119,8 +119,8 @@ int cdf_cumfnc_new (double *f, double *dfn, double *dfd, double *pnonc, double *
        *    Q(x) = sum_{j=0}^{+oo}  exp(-lambda) lambda^j / j!   I(1-xx)(nu2,nu1+j)
        *
        */
-      const double nu1 = 0.5*(*dfn), lambda = 0.5*(*pnonc), eps = 1e-14;
-      double nu2 = 0.5*(*dfd), xx, yy, nu1pj, j, jmode, poi_wgh, pterm, qterm, 
+      const double nu1 = 0.5*dfn, lambda = 0.5*pnonc, eps = 1e-14;
+      double nu2 = 0.5*dfd, xx, yy, nu1pj, j, jmode, poi_wgh, pterm, qterm, 
 	pbratio, qbratio;
       double current_poi_wgh, current_pbratio, current_qbratio, cor, psum, qsum;
       int ierr, iter, warning = 0;
@@ -131,12 +131,12 @@ int cdf_cumfnc_new (double *f, double *dfn, double *dfd, double *pnonc, double *
       poi_wgh = nsp_dpois_raw(jmode,lambda,0);
 
       /* calculate xx,yy */
-      yy =  1.0 / ( 1.0 + ((*f)*(*dfn))/(*dfd) );
+      yy =  1.0 / ( 1.0 + (f*dfn)/dfd );
       if ( yy < 0.5 )
 	xx = 1.0 - yy;
       else
 	{
-	  xx = 1.0 / ( 1.0 + (*dfd)/((*f)*(*dfn)) );
+	  xx = 1.0 / ( 1.0 + dfd/(f*dfn) );
 	  yy = 1.0 - xx;
 	}
 

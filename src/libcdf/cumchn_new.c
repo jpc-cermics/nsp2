@@ -22,18 +22,18 @@
 #include "cdf.h"
 
 /**
- * cdf_cumchn_new:
- * @X: upper limit of integration of the non-central chi-square distribution.
- * @df: degrees of freedom of the non-central chi-square distribution. 
- * @pnonc: non-centrality parameter of the non-central chi-square distribution.
+ * nsp_cdf_cumchn:
+ * @x: upper limit of integration of the non-central chi-square distribution.
+ * @nu: degrees of freedom of the non-central chi-square distribution. 
+ * @lambda: non-centrality parameter of the non-central chi-square distribution.
  * @cum: cumulative non-central chi-square distribution. 
  * @ccum:  compliment of cumulative non-central chi-square distribution
  * 
  *     calculates     the       cumulative      non-central    chi-square 
  *     distribution, i.e.,  the probability   that  a   random   variable 
  *     which    follows  the  non-central chi-square  distribution,  with 
- *     non-centrality  parameter    pnonc  and   continuous  degrees   of 
- *     freedom df, is less than or equal to x. 
+ *     non-centrality  parameter lambda  and   continuous  degrees   of 
+ *     freedom nu, is less than or equal to x. 
  * 
  *  This code uses the same method than the Dcdflib cumchn but with various
  *  improvments:
@@ -73,9 +73,8 @@
  * 
  **/
 
-int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *ccum)
+int nsp_cdf_cumchn (double x, double nu, double lambda, double *cum, double *ccum)
 {
-  double x = *X, nu = *df, lambda = *pnonc;
   double mean = nu + lambda, sigma = sqrt(2.0*(nu + 2.0*lambda));
 
   if ( x <= Max(0.0, mean - 50.0*sigma ) )  /* FIXME: 50 was choosen arbitrarily... */
@@ -257,7 +256,7 @@ int cdf_cumchn_new (double *X, double *df, double *pnonc, double *cum, double *c
 
       if ( warning )
 	{
-	  Sciprintf("Warning: possible lost of accuracy in cdf('nch',..) or cdfchn('PQ',..) \n");
+	  Sciprintf("Warning: possible lost of accuracy in nsp_cdf_cumchn\n");
 	}
     }
 
