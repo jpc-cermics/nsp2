@@ -82,7 +82,7 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
     }
   lambda = pnonc2 * .5;
   x = *df / (*df + t2);
-  omx = 1. - x;
+  omx =t2 / (*df + t2); /* 1. - x; */
   lnx = log (x);
   lnomx = log (omx); 
   halfdf = *df * .5;
