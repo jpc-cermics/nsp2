@@ -161,6 +161,19 @@ pe = [0.00010000054183185959737;
       0.99900000011914222427;
       0.99990000002634554381];
 
+// qe computed using Maple
+qe = [0.999899999458168140319367589244;
+      0.999000085710210250979957912247;
+      0.990000441842147983689690359337;
+      0.899998274282525760410809097531;
+      0.750001568210012601649856235525;
+      0.500000719665102387865327949496;
+      0.250000600712727951227621955323;
+      0.099999771553594656241825513942;
+      0.009999997085654307482586083897;
+      0.000999999880857775734412133257;
+      0.000099999973654456185816611128];
+    
 // me, sde computed using Maple      
 me = 18.5;
 sde = 20.328551350256121976;
@@ -171,25 +184,27 @@ if erm > 2e-16 then, pause, end
 if ersd > 2e-16 then, pause, end
 
 v = ones(size(xe));
-p = cdf("nf",xe,nu1e,nu2e,lambdae);
-pp = cdffnc("PQ",xe,nu1e*v,nu2e*v,lambdae*v);
-if ~p.equal[pp] then, pause, end
+[p,q] = cdf("nf",xe,nu1e,nu2e,lambdae);
+[pp,qq] = cdffnc("PQ",xe,nu1e*v,nu2e*v,lambdae*v);
+if ~p.equal[pp] || ~q.equal[qq] then, pause, end
 erp = max( abs(p-pe)./pe );
+erq = max( abs(q-qe)./qe );
 if erp > 5e-15 then, pause, end
-x = icdf("nf",pe,nu1e,nu2e,lambdae);
-xx = cdffnc("F",nu1e*v,nu2e*v,lambdae*v,pe,1-pe);
+if erq > 5e-15 then, pause, end
+x = icdf("nf",pe,nu1e,nu2e,lambdae,Q=qe);
+xx = cdffnc("F",nu1e*v,nu2e*v,lambdae*v,pe,qe);
 if ~x.equal[xx] then, pause, end
 erx = max( abs(x-xe)./xe );
-if erx > 1e-12 then, pause, end
-nu1 = cdffnc("Dfn",nu2e*v,lambdae*v,pe,1-pe,xe);
+if erx > 5e-15 then, pause, end
+nu1 = cdffnc("Dfn",nu2e*v,lambdae*v,pe,qe,xe);
 ernu1 =  max(abs(nu1-nu1e)/nu1e);
-if ernu1 > 1e-12 then, pause, end
-nu2 = cdffnc("Dfd",lambdae*v,pe,1-pe,xe,nu1e*v);
+if ernu1 > 5e-15 then, pause, end
+nu2 = cdffnc("Dfd",lambdae*v,pe,qe,xe,nu1e*v);
 ernu2 = max( abs(nu2-nu2e)/nu2e );
-if ernu2 > 3e-13 then, pause, end
-lambda = cdffnc("Pnonc",pe,1-pe,xe,nu1e*v,nu2e*v);
+if ernu2 > 5e-15 then, pause, end
+lambda = cdffnc("Pnonc",pe,qe,xe,nu1e*v,nu2e*v);
 erl = max( abs(lambda-lambdae)/lambdae );
-if erl > 5e-12 then, pause, end
+if erl > 2e-12 then, pause, end
 
 // verify special values
 [p,q] = cdffnc("PQ",%nan,nu1e,nu2e,lambdae);
@@ -202,6 +217,137 @@ x = cdffnc("F", nu1e, nu2e, lambdae, 0, 1);
 if ~x.equal[0] then, pause, end
 x = cdffnc("F", nu1e, nu2e, lambdae, 1, 0); 
 if ~x.equal[%inf] then, pause, end
+
+
+
+// 
+nu1e=56; nu2e=7; lambdae=123;
+ 
+xe = [   0.3990;
+         0.4418;
+         0.4627;
+         0.5187;
+         0.6633;
+         0.7768;
+         0.8380;
+         1.0255;
+         1.1356;
+         1.5237;
+         1.8013;
+         2.4294;
+         3.5038;
+         5.2768;
+         7.9773;
+        10.4598;
+        18.3749;
+        23.0410;
+        38.1530;
+        47.1177;
+        76.2270;
+        93.5160;
+       291.4893;
+       355.9132;
+       565.2558];
+
+// pe computed using Maple (Digits=20)
+pe = [ 9.9801455386391872330e-8;
+       5.0013065469748517264e-7;
+       9.9939270369695251752e-7;
+       0.0000049975400588107515396;
+       0.000099946118415779266158;
+       0.00050012486762930724613;
+       0.00099960898485605688261;
+       0.0049984777839524740955;
+       0.010000255233109816017;
+       0.050000302886552127947;
+       0.10000772726234428612;
+       0.25000859152265820791;
+       0.50000651592038201852;
+       0.74999724695177234416;
+       0.89999980261771792754;
+       0.94999941224224022427;
+       0.99000003173048867618;
+       0.99500002713997911784;
+       0.99900000224154178328;
+       0.99949999840350334544;
+       0.99989999982912149180;
+       0.99994999995438619251;
+       0.99999900000026715824;
+       0.99999950000003750363;
+       0.99999989999995162389];
+
+// qe computed using Maple (Digits=30)
+qe = [0.999999900198544613608127669624;
+      0.999999499869345302514827363240;
+      0.999999000607296303047482475437;
+      0.999995002459941189248460449163;
+      0.999900053881584220733841802807;
+      0.999499875132370692753874558711;
+      0.999000391015143943117388412502;
+      0.995001522216047525904510643132;
+      0.989999744766890183982906334732;
+      0.949999697113447872053033212069;
+      0.899992272737655713883739362924;
+      0.749991408477341792087719353907;
+      0.499993484079617981482374696524;
+      0.250002753048227655843314098036;
+      0.100000197382282072457691080316;
+      0.050000587757759775727334266354;
+      0.009999968269511323819732361263;
+      0.004999972860020882161274400279;
+      0.000999997758458216724914364431;
+      0.000500001596496654561908913956;
+      0.000100000170878508202286026404;
+      0.000050000045613807492448752157;
+      9.99999732841763282525479e-7;
+      4.99999962496366875085295e-7;
+      1.00000048376105570025441e-7];
+    
+// computed using Maple (Digits=20)
+me = 4.4750000000000000000; 
+sde = 3.7389280995137273879;
+
+[m,sd] = dist_stat("nf",nu1e,nu2e,lambdae);
+erm = abs(m-me)./me; ersd = abs(sd-sde)/sde;
+if erm > 2e-16 then, pause, end
+if ersd > 2e-16 then, pause, end
+
+v = ones(size(xe));
+[p,q] = cdf("nf",xe,nu1e,nu2e,lambdae);
+[pp,qq] = cdffnc("PQ",xe,nu1e*v,nu2e*v,lambdae*v);
+if ~p.equal[pp] || ~q.equal[qq] then, pause, end
+erp = max( abs(p-pe)./pe );
+erq = max( abs(q-qe)./qe );
+if erp > 1e-14 then, pause, end
+if erq > 2e-14 then, pause, end
+x = icdf("nf",pe,nu1e,nu2e,lambdae,Q=qe);
+xx = cdffnc("F",nu1e*v,nu2e*v,lambdae*v,pe,qe);
+if ~x.equal[xx] then, pause, end
+erx = max( abs(x-xe)./xe );
+if erx > 1e-14 then, pause, end
+nu1 = cdffnc("Dfn",nu2e*v,lambdae*v,pe,qe,xe);
+ernu1 =  max(abs(nu1-nu1e)/nu1e);
+if ernu1 > 1e-14 then, pause, end
+nu2 = cdffnc("Dfd",lambdae*v,pe,qe,xe,nu1e*v);
+ernu2 = max( abs(nu2-nu2e)/nu2e );
+if ernu2 > 1e-13 then, pause, end
+lambda = cdffnc("Pnonc",pe,qe,xe,nu1e*v,nu2e*v);
+erl = max( abs(lambda-lambdae)/lambdae );
+if erl > 1e-9 then, pause, end
+
+// verify special values
+[p,q] = cdffnc("PQ",%nan,nu1e,nu2e,lambdae);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdffnc("PQ",0,nu1e,nu2e,lambdae);
+if ~ (p.equal[0] && q.equal[1]) then, pause, end
+[p,q] = cdffnc("PQ",%inf,nu1e,nu2e,lambdae);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end 
+x = cdffnc("F", nu1e, nu2e, lambdae, 0, 1); 
+if ~x.equal[0] then, pause, end
+x = cdffnc("F", nu1e, nu2e, lambdae, 1, 0); 
+if ~x.equal[%inf] then, pause, end
+
+
 
 
 /////////////////////////////////////////////////////////

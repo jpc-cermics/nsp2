@@ -78,6 +78,7 @@
  *   - rewrite the function in a non spaghetti coding style 
  *   - use nsp_zsearch in place of dinvr
  *   - use some macros to simplify argument checking
+ *   - use new cumulative distribution function which is also accurate for small q
  */
 
 
@@ -87,7 +88,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
 {
   const double tent4=1.0E4,tol=1.0E-14, atol=1.0E-50, zero=1.0E-300,inf=1.0E300;
   double cum, ccum, fx;
-
+  int pq_flag = 1;
 
   /*  Verify parameters */
 
@@ -105,7 +106,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
 	{
 	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
 	}
-/*        pq_flag = *p <= *q; */
+      pq_flag = *p <= *q;
     }
 
 
@@ -134,12 +135,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
 
   if (1 == *which)         /* compute p */
     {
-      if ( *f > DBL_MAX )    /* FIXME: special case to include in a new version of cumfnc */
-	{
-	  *p = 1.0; *q = 0.0;
-	}
-      else
-	cdf_cumfnc (f, dfn, dfd, phonc, p, q);
+      cdf_cumfnc_new (f, dfn, dfd, phonc, p, q);
       *status = 0;
     }
 
@@ -147,18 +143,21 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
     {
       if ( *p == 0.0 )
 	*f = 0.0;
-      else if ( *q == 0.0 )  /* should be extended as for q very small p is 1 and ... */
+      else if ( *q == 0.0 )
 	*f =  2.0*DBL_MAX;   /* Inf */
       else
 	{
 	  ZsearchStruct S;
 	  zsearch_ret ret_val;
 	  *f = 5.0;
-	  nsp_zsearch_init(*f, 0.0, inf, 2.0, 0.0, 2.0, atol, tol, INCREASING, &S);
+	  nsp_zsearch_init(*f, 0.0, inf, 2.0, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
 	  do
 	    {
-	      cdf_cumfnc (f, dfn, dfd, phonc, &cum, &ccum);
-	      fx = cum - *p;
+	      cdf_cumfnc_new (f, dfn, dfd, phonc, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
 	    }
 	  while ( (ret_val = nsp_zsearch(f, fx, &S)) == EVAL_FX );
 
@@ -184,8 +183,11 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
       nsp_zsearch_init(*dfn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumfnc (f, dfn, dfd, phonc, &cum, &ccum);
-	  fx = cum - *p;
+	  cdf_cumfnc_new (f, dfn, dfd, phonc, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
       while ( (ret_val = nsp_zsearch(dfn, fx, &S)) == EVAL_FX );
 
@@ -208,8 +210,11 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
       nsp_zsearch_init(*dfd, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumfnc (f, dfn, dfd, phonc, &cum, &ccum);
-	  fx = cum - *p;
+	  cdf_cumfnc_new (f, dfn, dfd, phonc, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
       while ( (ret_val = nsp_zsearch(dfd, fx, &S)) == EVAL_FX );
 
@@ -233,7 +238,10 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
       do
 	{
 	  cdf_cumfnc (f, dfn, dfd, phonc, &cum, &ccum);
-	  fx = cum - *p;
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
 	}
       while ( (ret_val = nsp_zsearch(phonc, fx, &S)) == EVAL_FX );
 
