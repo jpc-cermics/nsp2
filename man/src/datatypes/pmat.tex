@@ -26,7 +26,16 @@ Each entry of the matrix is an (univariate) polynomial.
 \end{mandescription}
 
 \paragraph{Operations on polynomial matrices}
-\paragraph{Herited methods}
+\itemdesc{Polynomials attributes and methods }
+\begin{itemize}
+\item \verb+A.coeffs+ return a cell with same dimensions as \verb+A+. The element \verb+(i,j)+ of the cell 
+  contains the coefficients of the polynomial \verb+A(i,j)+ as a row vector. 
+\item \verb+A.degree[]+ return a numerical matrix filled with the degrees of the entries of \verb+A+.
+\item \verb+B=A.normalize[]+ set the entries of matrix \verb+A+ as monic polynomials and returns in 
+  matrix \verb+B+ the coefficients of highest order term of each entries of \verb+A+.
+\item \verb+A.shift[n]+ multiply each entry of \verb+A+ by polynomial \verb+x^n+. 
+\end{itemize}
+
 \itemdesc{Methods from the matint interface}
 \begin{itemize}
 \item \verb+A.redim[m,n]+ reshape matrix to size \verb+m+x\verb+n+. \verb+m+ or \verb+n+ can be set to \verb+-1+ 
