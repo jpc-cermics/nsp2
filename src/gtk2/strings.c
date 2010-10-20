@@ -212,6 +212,63 @@ NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A)
   return(Loc);
 }
 
+/**
+ * nsp_smatrix_to_latin1:
+ * @A: a #NspSMatrix 
+ * 
+ * converts @A to latin1 using #nsp_string_to_latin1.
+ *
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_smatrix_to_latin1(NspSMatrix *A)
+{ 
+  int i,ret=OK;
+  for ( i= 0 ; i < A->mn ; i++)
+    {
+      char *loc= nsp_string_to_latin1(A->S[i]);
+      if ( loc != A->S[i] && loc != NULL) 
+	{
+	  nsp_string_destroy(&(A->S[i]));
+	  A->S[i]= loc;
+	}
+      else if ( loc == NULL) 
+	{
+	  ret= FAIL;
+	}
+    }
+  return ret;
+}
+
+/**
+ * nsp_string_to_latin1:
+ * @str: string to be converted to latin1
+ * 
+ * converts an utf8 string to latin1 
+ * if string is not utf8 do nothing and return @str. 
+ *
+ * Return value: a pointer to the new allocated string or %NULL in case of allocation failure 
+ * or a pointer to @str if the string was not converted.
+ **/
+
+nsp_string nsp_string_to_latin1(nsp_string str)
+{ 
+  char *str_latin1= NULL;
+  if ( g_utf8_validate(str,-1,NULL) == FALSE ) 
+    {
+      str_latin1 = str;
+    }
+  else
+    {
+      str_latin1 = g_convert (str, -1,"LATIN1", "UTF8", NULL, NULL, NULL);
+      if ( str_latin1 == NULL) 
+	{
+	  DEBUG_STR("xname: convertion to latin1 failed\r\n");
+	}
+    }
+  return str_latin1;
+}
+
 
 /**
  * nsp_mat_to_base64string:

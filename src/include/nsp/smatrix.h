@@ -129,6 +129,7 @@ extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);
 /* Utf8 coding */
 extern NspSMatrix* nsp_smatrix_convert(const char *name,NspSMatrix *A,const char *to_codeset,const char *from_codeset);
 extern int nsp_smatrix_to_utf8(NspSMatrix *A);
+extern int nsp_smatrix_to_latin1(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
 extern NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) ;
 extern int nsp_smatrix_latex_print(NspSMatrix *SMat);

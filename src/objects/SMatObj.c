@@ -727,6 +727,15 @@ static int int_meth_smatrix_to_utf8(void *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
+static int int_meth_smatrix_to_latin1(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ( nsp_smatrix_to_latin1(self) == FAIL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(self));
+  return Max(lhs,1);
+}
+
 static int int_meth_smatrix_is_utf8(void *self, Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
@@ -743,6 +752,7 @@ static NspMethods smatrix_methods[] = {
   {"has",(nsp_method *) int_meth_smatrix_has},
   {"to_utf8",(nsp_method *) int_meth_smatrix_to_utf8},
   {"is_utf8",(nsp_method *) int_meth_smatrix_is_utf8},
+  {"to_latin1",(nsp_method *) int_meth_smatrix_to_latin1},
   { NULL, NULL}
 };
 
