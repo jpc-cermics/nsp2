@@ -133,35 +133,100 @@ void nsp_polynom_destroy(nsp_polynom *P)
   *P=NULL;
 }
 
+/* 
+ *
+ */
+
 int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq,
 		    nsp_polynom *hr)
 {
-  int i;
-  nsp_polynom ca,q;
-  if ((ca = nsp_polynom_copy_and_name("pe",a))== NULL) return FAIL;
-  if ((q = nsp_polynom_copy_and_name("pe",a))== NULL) return FAIL;
-  for ( i = 0 ; i < ((NspMatrix *) q)->mn ; i++) 
-    ((NspMatrix *) q)->R[i]=0;
-  while (1) 
+  const doubleC zero={0,0};
+  int i ;
+  nsp_polynom ca = NULL ,q = NULL , bc = NULL ;
+  char res_type = ( a->rc_type == 'c' || b->rc_type == 'c') ? 'c' : 'r';
+
+  /* be sure that both p and q are real or complex */
+
+  if ((ca = nsp_polynom_copy_and_name("pe",a))== NULL) goto fail;
+  if ( res_type == 'c' && a->rc_type == 'r' )
     {
-      double c;
-      if ( ca->mn < b->mn || ca->mn == 1 )
-	{
-	  if (( nsp_polynom_resize(q))== FAIL ) return FAIL;
-	  *hq = q;
-	  *hr = ca;
-	  return OK;
-	}
-      c = ca->R[ca->mn-1]/b->R[b->mn-1];
-      q->R[ca->mn-b->mn]=c;
-      /* a = a - c*x^(da-db)*b */
-      for ( i = 0  ; i < b->mn ; i++ ) 
-	ca->R[ca->mn - (b->mn - i)] -= c*b->R[i];
-      ca->R[ca->mn-1]=0.0;
-      if (( nsp_polynom_resize(ca))== FAIL ) return FAIL;
+      if ( nsp_mat_complexify (ca,0.0) != 0 ) goto fail;
     }
-  /*   if (na < nb ) then r = a; break;end */
-  return OK;
+  if ((q = nsp_polynom_copy_and_name("pe",a))== NULL) goto fail;
+  if ( res_type == 'c' && a->rc_type == 'r' )
+    {
+      if ( nsp_mat_complexify (ca,0.0) != 0 ) goto fail;
+    }
+  if ( res_type == 'c' && b->rc_type == 'r') 
+    {
+      if ((bc = nsp_polynom_copy_and_name("pe",b))== NULL) goto fail;
+    }
+  else
+    {
+      bc =b;
+    }
+
+  if ( q->rc_type == 'r') 
+    {
+      for ( i = 0 ; i < ((NspMatrix *) q)->mn ; i++) 
+	{
+	  ((NspMatrix *) q)->R[i]=0;
+	}
+      while (1) 
+	{
+	  double c;
+	  if ( ca->mn < b->mn || ca->mn == 1 )
+	    {
+	      if (( nsp_polynom_resize(q))== FAIL ) goto fail;
+	      *hq = q;
+	      *hr = ca;
+	      return OK;
+	    }
+	  c = ca->R[ca->mn-1]/b->R[b->mn-1];
+	  q->R[ca->mn-b->mn]=c;
+	  /* a = a - c*x^(da-db)*b */
+	  for ( i = 0  ; i < b->mn ; i++ ) 
+	    ca->R[ca->mn - (b->mn - i)] -= c*b->R[i];
+	  ca->R[ca->mn-1]=0.0;
+	  if (( nsp_polynom_resize(ca))== FAIL ) goto fail;
+	}
+    }
+  else
+    {
+      for ( i = 0 ; i < ((NspMatrix *) q)->mn ; i++) 
+	{
+	  ((NspMatrix *) q)->C[i]= zero;
+	}
+      while (1) 
+	{
+	  doubleC c;
+	  if ( ca->mn < b->mn || ca->mn == 1 )
+	    {
+	      if (( nsp_polynom_resize(q))== FAIL ) goto fail;
+	      *hq = q;
+	      *hr = ca;
+	      if ( b != bc ) nsp_polynom_destroy(&bc);
+	      return OK;
+	    }
+	  nsp_div_cc( &ca->C[ca->mn-1],&b->C[b->mn-1], &c);
+	  q->C[ca->mn-b->mn]=c;
+	  /* a = a - c*x^(da-db)*b */
+	  for ( i = 0  ; i < b->mn ; i++ ) 
+	    {
+	      doubleC cc=c;
+	      nsp_prod_c( &cc,&b->C[i]);
+	      ca->C[ca->mn - (b->mn - i)].r -= cc.r ;
+	      ca->C[ca->mn - (b->mn - i)].i -= cc.i;
+	    }
+	  ca->C[ca->mn-1]=zero;
+	  if (( nsp_polynom_resize(ca))== FAIL ) goto fail;
+	}
+    }
+ fail:
+  if ( b != bc ) nsp_polynom_destroy(&bc);
+  if ( ca != NULL )  nsp_polynom_destroy(&ca);
+  if ( q != NULL )  nsp_polynom_destroy(&q);
+  return FAIL;
 }
 
 

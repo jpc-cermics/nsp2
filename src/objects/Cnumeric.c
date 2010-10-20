@@ -669,9 +669,8 @@ void nsp_sqrt_c(const doubleC *x, doubleC *res)
  * @y: a  double complex  
  *
  * computes in @res the value of @x multiplied by @y.
+ * note that the call nsp_prod_c(&x,&x) is valid.
  **/
-
-/* x= x*y : can be used with x=x **/
 
 void nsp_prod_c( doubleC *x,const doubleC *y)
 {
