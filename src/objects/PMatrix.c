@@ -155,7 +155,7 @@ int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq,
   if ((q = nsp_polynom_copy_and_name("pe",a))== NULL) goto fail;
   if ( res_type == 'c' && a->rc_type == 'r' )
     {
-      if ( nsp_mat_complexify (ca,0.0) != 0 ) goto fail;
+      if ( nsp_mat_complexify (q,0.0) != 0 ) goto fail;
     }
   if ( res_type == 'c' && b->rc_type == 'r') 
     {
