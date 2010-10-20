@@ -976,6 +976,13 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
 	  Scierror("Aborting evaluation of function %s\n",Feval->next->O);
 	  return body_ret;
 	  break;
+	case RET_ERROR_RAISED: 
+	  /* error was raised at nsp level through the nsp error function */
+	  if ( stack.val->errcatch == FALSE ) 
+	    {
+	      nsp_error_message_show();
+	    }
+	  return RET_BUG ; /* we want here the next error message */
 	default: 
 	  Scierror("Error in body evaluation of function %s",Feval->next->O);
 	  if ( filename != NULL) 
