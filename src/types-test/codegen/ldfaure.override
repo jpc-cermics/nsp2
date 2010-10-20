@@ -5,47 +5,49 @@ include-start Ldfaure
 %%
 include-public Ldfaure
 /* inserted at the end of public part of include file
- * of classa.h
+ * of ldfaure.h
  */
 #include "faure.h"
 %%
 include-public Ldrevhalton
 /* inserted at the end of public part of include file
- * of classa.h
+ * of ldfaure.h
  */
 #include "reversehalton.h"
+#include "lowdisc_shared.h"
+
 %%
 include-public Ldhalton
 /* inserted at the end of public part of include file
- * of classa.h
+ * of ldfaure.h
  */
 #include "halton.h"
 
 %%
 include-public Ldsobol4
 /* inserted at the end of public part of include file
- * of classa.h
+ * of ldfaure.h
  */
 #include "sobol_i4.h"
 
 %%
 include-public Ldsobol8
 /* inserted at the end of public part of include file
- * of classa.h
+ * of ldfaure.h
  */
 #include "sobol_i8.h"
 
 %%
 include-public Ldniederreiter
 /* inserted at the end of public part of include file
- * of classa.h
+ * of ldfaure.h
  */
 #include "niederreiter.h"
 
 %%
 include-private Ldfaure
 /* inserted in the private part of include file
- * of classa.h
+ * of ldfaure.h
  */
 
 %%
@@ -268,9 +270,6 @@ static int _wrap_ldhalton_get_leap(NspLdhalton *self,Stack stack,int rhs,int opt
 %%
 override ldhalton_set_base kwargs
 
-extern int prime(int i);
-extern int prime_ge(int i);
-
 static int _wrap_ldhalton_set_base(NspLdhalton *self,Stack stack,int rhs,int opt,int lhs)
 {
   int i;
@@ -286,7 +285,7 @@ static int _wrap_ldhalton_set_base(NspLdhalton *self,Stack stack,int rhs,int opt
     {
       if (  base->R[i] == 0 ) 
 	{
-	  self->base[i]= prime (i + 1);
+	  self->base[i]= ld_prime (i + 1);
 	}
       else if ( base->R[i] < 0 ) 
 	{
@@ -300,7 +299,7 @@ static int _wrap_ldhalton_set_base(NspLdhalton *self,Stack stack,int rhs,int opt
 	}
       else
 	{
-	  int p =  prime_ge (base->R[i]);
+	  int p =  ld_prime_ge (base->R[i]);
 	  if ( p!= -1 && base->R[i] !=  p) 
 	    {
 	      Scierror("Error: base[%d]=%d should be prime\n",i,base->R[i]);
