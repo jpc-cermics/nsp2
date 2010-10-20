@@ -126,7 +126,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 
   if (1 == *which)             /* Calculating P and Q */
     {
-      cdf_cumchn_new (x, df, pnonc, p, q);
+      nsp_cdf_cumchn (*x, *df, *pnonc, p, q);
       *status = 0;
     }
   else if (2 == *which)        /* Calculating X */
@@ -146,7 +146,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
 
 	  do
 	    {
-	      cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
+	      nsp_cdf_cumchn (*x, *df, *pnonc, &cum, &ccum);
 	      if ( pq_flag )
 		fx = cum - *p;
 	      else
@@ -176,7 +176,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
       nsp_zsearch_init(*df, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
+	  nsp_cdf_cumchn (*x, *df, *pnonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
@@ -204,7 +204,7 @@ cdf_cdfchn (int *which, double *p, double *q, double *x, double *df,
       nsp_zsearch_init(*pnonc, 0.0, pnoncmax, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumchn_new (x, df, pnonc, &cum, &ccum);
+	  nsp_cdf_cumchn (*x, *df, *pnonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else

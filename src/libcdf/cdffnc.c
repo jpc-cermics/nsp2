@@ -135,7 +135,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
 
   if (1 == *which)         /* compute p */
     {
-      cdf_cumfnc_new (f, dfn, dfd, phonc, p, q);
+      nsp_cdf_cumfnc (*f, *dfn, *dfd, *phonc, p, q);
       *status = 0;
     }
 
@@ -153,7 +153,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
 	  nsp_zsearch_init(*f, 0.0, inf, 2.0, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
 	  do
 	    {
-	      cdf_cumfnc_new (f, dfn, dfd, phonc, &cum, &ccum);
+	      nsp_cdf_cumfnc (*f, *dfn, *dfd, *phonc, &cum, &ccum);
 	      if ( pq_flag )
 		fx = cum - *p;
 	      else
@@ -183,7 +183,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
       nsp_zsearch_init(*dfn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumfnc_new (f, dfn, dfd, phonc, &cum, &ccum);
+	  nsp_cdf_cumfnc (*f, *dfn, *dfd, *phonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
@@ -210,7 +210,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
       nsp_zsearch_init(*dfd, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumfnc_new (f, dfn, dfd, phonc, &cum, &ccum);
+	  nsp_cdf_cumfnc (*f, *dfn, *dfd, *phonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
@@ -237,7 +237,7 @@ cdf_cdffnc (int *which, double *p, double *q, double *f, double *dfn,
       nsp_zsearch_init(*phonc, 0.0, tent4, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumfnc (f, dfn, dfd, phonc, &cum, &ccum);
+	  nsp_cdf_cumfnc (*f, *dfn, *dfd, *phonc, &cum, &ccum);
 	  if ( pq_flag )
 	    fx = cum - *p;
 	  else
