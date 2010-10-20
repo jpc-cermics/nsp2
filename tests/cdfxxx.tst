@@ -18,36 +18,51 @@ xe =[ 0.0014393908669709057;
       99.16620137447201;
       999.1666203472842;
       9999.166662037871 ];
-// pe computed using wolfram-alpha web calculator
-pe =[ 0.00009999999999999993;
-      0.0010000000000000095;
-      0.009999999999999966;
-      0.100000000000000022;
-      0.24999999999999996;
-      0.500000000000000013;
-      0.750000000000000004;
-      0.90000000000000003;
-      0.990000000000000044;
-      0.9990000000000000763;
-      0.99990000000000001065];
+
+// pe and qe computed using Maple (Digits=30)
+pe = [0.0000999999999999999337805059354793;
+      0.00100000000000000948098250000001;
+      0.00999999999999996648061629900047;
+      0.100000000000000022206919859078;
+      0.249999999999999964397015164199;
+      0.500000000000000013352188734267;
+      0.750000000000000003623925216819;
+      0.900000000000000031137075181069;
+      0.990000000000000044168765732696;
+      0.999000000000000076305242148685;
+      0.999900000000000010654587624996];
+
+qe = [0.999900000000000000066219494065;
+      0.998999999999999990519017500000;
+      0.990000000000000033519383701000;
+      0.899999999999999977793080140922;
+      0.750000000000000035602984835801;
+      0.499999999999999986647811265733;
+      0.249999999999999996376074783181;
+      0.099999999999999968862924818931;
+      0.009999999999999955831234267304;
+      0.000999999999999923694757851315;
+      0.000099999999999989345412375004];
 
 v = ones(size(xe));
-p = cdf("f",xe,ae,be);
-pp = cdff("PQ",xe,ae*v,be*v);
-if ~p.equal[pp] then, pause, end
+[p,q] = cdf("f",xe,ae,be);
+[pp,qq] = cdff("PQ",xe,ae*v,be*v);
+if ~p.equal[pp] || ~q.equal[qq] then, pause, end
 erp = max( abs(p-pe)./pe );
+erq = max( abs(q-qe)./qe );
 if erp > 1e-15 then, pause, end
-x = icdf("f",pe,ae,be);
-xx = cdff("F",ae*v,be*v,pe,1-pe);
+if erq > 1e-15 then, pause, end
+x = icdf("f",pe,ae,be,Q=qe);
+xx = cdff("F",ae*v,be*v,pe,qe);
 if ~x.equal[xx] then, pause, end
 erx = max( abs(x-xe)./xe );
-if erx > 1e-13 then, pause, end
-a = cdff("Dfn",be*v,pe,1-pe,xe);
+if erx > 3e-15 then, pause, end
+a = cdff("Dfn",be*v,pe,qe,xe);
 era = max( abs(a-ae)/ae );
-if era > 1e-9 then, pause, end  // 2 last cases are badly conditionned so 1e-9
-b = cdff("Dfd",pe,1-pe,xe,ae*v);
+if era > 2e-11 then, pause, end
+b = cdff("Dfd",pe,qe,xe,ae*v);
 erb = max( abs(b-be)/be );
-if erb > 1e-13 then, pause, end
+if erb > 5e-15 then, pause, end
 
 // verify special values
 [p,q] = cdff("PQ",%nan,ae,be);
@@ -61,7 +76,7 @@ if ~x.equal[0] then, pause, end
 x = cdff("F", ae, be, 1, 0);
 if ~x.equal[%inf] then, pause, end
 
-
+/////////////////////////////
 
 ae = 332; be = 5;
 xe = [ 0.1876507842744393; 
@@ -75,18 +90,30 @@ xe = [ 0.1876507842744393;
        9.053567303453834  ;
        23.88518499113799  ;
        61.11087818490155  ];
-// pe computed using wolfram-alpha web calculator
-pe = [ 0.000100000000000037357;
-       0.001000000000000068765;
-       0.0100000000000011215; 
-       0.100000000000010857;
-       0.24999999999991882;
-       0.49999999999994867;
-       0.74999999999997315;
-       0.899999999999989792;
-       0.9899999999999988035;
-       0.99899999999999988074;
-       0.999900000000000000905];
+// pe and qe computed using Maple (Digits=30)
+pe = [0.000100000000000037356859514025778;
+      0.00100000000000006876550136910717;
+      0.0100000000000011215019054042710;
+      0.100000000000010857552034551343;
+      0.249999999999918815933500998595;
+      0.499999999999948672390308797696;
+      0.749999999999973149932264147060;
+      0.899999999999989792175442413569;
+      0.989999999999998803515368741224;
+      0.998999999999999880738609669402;
+      0.999900000000000000905006799924];
+
+qe = [0.999899999999999962643140485974;
+      0.998999999999999931234498630893;
+      0.989999999999998878498094595729;
+      0.899999999999989142447965448657;
+      0.750000000000081184066499001405;
+      0.500000000000051327609691202304;
+      0.250000000000026850067735852940;
+      0.100000000000010207824557586431;
+      0.010000000000001196484631258776;
+      0.001000000000000119261390330598;
+      0.000099999999999999094993200076];
 
 me = 5/3;
 sde = me*sqrt(335/166);
@@ -96,26 +123,28 @@ if erm > 2e-16 then, pause, end
 if ersd > 2e-16 then, pause, end
 
 v = ones(size(xe));
-p = cdf("f",xe,ae,be);
-pp = cdff("PQ",xe,ae*v,be*v);
-if ~p.equal[pp] then, pause, end
+[p,q] = cdf("f",xe,ae,be);
+[pp,qq] = cdff("PQ",xe,ae*v,be*v);
+if ~p.equal[pp] || ~q.equal[qq] then, pause, end
 erp = max( abs(p-pe)./pe );
+erq = max( abs(p-pe)./pe );
 if erp > 1e-15 then, pause, end
-x = icdf("f",pe,ae,be);
-xx = cdff("F",ae*v,be*v,pe,1-pe);
+if erq > 1e-15 then, pause, end
+x = icdf("f",pe,ae,be,Q=qe);
+xx = cdff("F",ae*v,be*v,pe,qe);
 if ~x.equal[xx] then, pause, end
 erx = max( abs(x-xe)./xe );
-if erx > 1e-13 then, pause, end
-a = cdff("Dfn",be*v,pe,1-pe,xe);  // one a is another solution of the equation (we test this here after)
+if erx > 3e-15 then, pause, end
+a = cdff("Dfn",be*v,pe,qe,xe);  // one a is another solution of the equation (we test this here after)
 era =  abs(a-ae)/ae;
 ind = find(era > 1e-9); // detect other solution
 [pp,qq] = cdff("PQ",xe(ind),a(ind),be*ones(size((ind))));  // verify error on p for the other solution
 era(ind) = abs(pp-pe(ind));
 era = max( era );
-if era > 1e-11 then, pause, end
-b = cdff("Dfd",pe,1-pe,xe,ae*v);
+if era > 1e-13 then, pause, end
+b = cdff("Dfd",pe,qe,xe,ae*v);
 erb = max( abs(b-be)/be );
-if erb > 2e-14 then, pause, end
+if erb > 1e-15 then, pause, end
 
 // verify special values
 [p,q] = cdff("PQ",%nan,ae,be);
