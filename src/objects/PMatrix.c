@@ -403,6 +403,67 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int
   return(Loc);
 }
 
+NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val)
+{
+  int i;
+  NspPMatrix *Loc;
+  doubleC cval={0,0};
+  Loc = new_pmatrix();
+  if ( Loc == NULLPMAT) 
+    { 
+      Scierror("PMatCreate : Error no more space ");
+      return(NULLPMAT);
+    }
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
+    return(NULLPMAT);
+  NSP_OBJECT(Loc)->ret_pos = -1 ; 
+  Loc->m =m;
+  Loc->n = n;
+  Loc->mn=m*n;
+  Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
+  Loc->var = NULL;
+  if ( Loc -> mn == 0 ) 
+    {
+      /* empty pmatrix */
+      Loc->S = (nsp_polynom *) 0;
+      return(Loc);
+    }
+  if ( Val != NULL && (Val->mn != 1 && Val->mn != Loc->mn ))
+    {
+      Scierror("PMatCreate : initial value should be of size 1 or %dx%d\n",Loc->m,Loc->n);
+      return(NULLPMAT);
+    }
+  if ((Loc->S = (nsp_polynom *) MALLOC( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
+    { 
+      Scierror("PMatCreate : Error no more space ");
+      return(NULLPMAT);
+    }
+  if ( Val != NULL) 
+    {
+      for ( i = 0 ; i < Loc->mn ; i++ )
+	{
+	  int ind = (( Val->mn == 1 ) ? 0 : i);
+	  if  ( Val->rc_type == 'c') 
+	    {
+	      cval = Val->C[ind];
+	    }
+	  else
+	    {
+	      cval.r = Val->R[ind] ;
+	      cval.i = 0.0;
+	    }
+	  if ( (Loc->S[i] =nsp_basic_to_polynom(&cval,Val->rc_type)) == (nsp_polynom ) 0 ) 
+	    return(NULLPMAT);
+	}
+    }
+  else
+    {
+      for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = NULL;
+    }
+  return(Loc);
+}
+
+
 NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init)
 {
   /* -1 for just allocating a matrix of pointers */

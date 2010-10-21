@@ -68,6 +68,7 @@ extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M);
 extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 
 extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int flag); 
+extern NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val);
 extern NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init);
 extern NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
 extern NspPMatrix *nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err); 

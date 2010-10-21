@@ -394,7 +394,7 @@ static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
 static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
-  doubleC def ={0,0} ;
+  NspMatrix *A=NULLMAT; 
   NspPMatrix *P; 
   CheckRhs(2,3);
   CheckLhs(1,1);
@@ -402,9 +402,10 @@ static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
   if (rhs == 3) 
     {
-      if (GetScalarDouble(stack,1,&def.r) == FAIL) return RET_BUG;
+      if ((A = GetMat(stack,3))== NULLMAT) return RET_BUG;
     }
-  if ( (P =nsp_pmatrix_create(NVOID,m1,n1,&def,(rhs==3)? 1: 0)) == NULLPMAT)  return RET_BUG;
+  if ( (P =nsp_pmatrix_create_m(NVOID,m1,n1,A)) == NULLPMAT)
+    return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
 }
@@ -1619,82 +1620,86 @@ static int int_pmatrix_pdiv_p_p(Stack stack, int rhs, int opt, int lhs)
  */
 
 static OpTab PMatrix_func[]={
+  /* specific */
+  {"companion_m",int_pmatrix_companion_m},
+  {"companion_p",int_pmatrix_companion_p},
+  {"horner", int_pmatrix_horner},
+  {"hornerm", int_pmatrix_hornerm},
+  {"m2p", int_pmatrix_m2p},
+  {"norm_p",      int_pmatrix_norm},
   {"pdiv", int_pmatrix_pdiv_p_p},
-  {"extract_p", int_matint_extract}, 
-  {"extractelts_p", int_matint_extractelts}, 
-  {"extractcols_p", int_matint_extractcols}, 
-  {"extractrows_p", int_matint_extractrows_pointer}, 
-  {"resize2vect_p", int_matint_resize2vect},
-  {"setrowscols_p", int_matint_setrowscols},
-  {"deleteelts_p", int_matint_deleteelts},
-  {"deleterows_p", int_matint_deleterows},
-  {"deletecols_p", int_matint_deletecols},
-  {"tozero_p", int_matint_tozero},
   {"pmat_create",int_pmatrix_create},
-  {"redim_p",int_matint_redim},
-  {"matrix_p",int_matint_redim},
-  {"reshape_p",int_matint_redim},
-  {"concatr_p_p", int_matint_concatr}, /* int_pmatrix_concatr}, */
-  {"concatr_m_p",int_pmatrix_concatr_m_p},
-  {"concatr_p_m",int_pmatrix_concatr_p_m},
+  {"roots_p",int_pmatrix_roots},
+  /* standard */
   {"addcols_p_m",int_pmatrix_addcols},
-  {"concatd_p_p",int_matint_concatd}, /*  int_pmatrix_concatd}, */
+  {"addrows_p",int_pmatrix_addrows},
+  {"ceil_p", int_pmatrix_ceil},
+  {"clean_p",  int_pmatrix_clean},
   {"concatd_m_p",int_pmatrix_concatd_m_p},
   {"concatd_p_m",int_pmatrix_concatd_p_m},
+  {"concatd_p_p",int_matint_concatd}, /*  int_pmatrix_concatd}, */
   {"concatdiag_p_p",int_matint_concat_diag},
-  {"isvector_p", int_matint_isvector},
-  {"addrows_p",int_pmatrix_addrows},
-  {"resize_p",int_pmatrix_resize},
+  {"concatr_m_p",int_pmatrix_concatr_m_p},
+  {"concatr_p_m",int_pmatrix_concatr_p_m},
+  {"concatr_p_p", int_matint_concatr}, /* int_pmatrix_concatr}, */
+  {"conj_p", int_pmatrix_conj},
+  {"deletecols_p", int_matint_deletecols},
+  {"deleteelts_p", int_matint_deleteelts},
+  {"deleterows_p", int_matint_deleterows},
+  {"dh_p_m",  int_pmatrix_dh_p_m},
+  {"div_m_p",int_pmatrix_div_tt_m_p},
+  {"div_p_m",int_pmatrix_div_tt_p_m},
+  {"dprim_p", int_pmatrix_dprim_p},
+  {"dsl_m_p",int_pmatrix_div_tt_m_p},
+  {"dsl_p_m",int_pmatrix_dsl_tt_p_m},
+  {"dst_m_p",int_pmatrix_mult_tt_m_p},
+  {"dst_p_m",int_pmatrix_mult_tt_p_m},
+  {"dst_p_p",int_pmatrix_mult_tt},
   {"enlarge_p", int_pmatrix_enlarge },
   {"eq_p_p" ,  int_pmatrix_eq },
+  {"extract_p", int_matint_extract}, 
+  {"extractcols_p", int_matint_extractcols}, 
+  {"extractelts_p", int_matint_extractelts}, 
+  {"extractrows_p", int_matint_extractrows_pointer}, 
   {"feq_p_p" ,  int_pmatrix_feq },
   {"fge_p_p" ,  int_pmatrix_fge },
   {"fgt_p_p" ,  int_pmatrix_fgt },
   {"fle_p_p" ,  int_pmatrix_fle },
+  {"floor_p",     int_pmatrix_floor},
   {"flt_p_p" ,  int_pmatrix_flt },
   {"fneq_p_p" ,  int_pmatrix_fneq },
   {"ge_p_p" ,  int_pmatrix_ge },
   {"gt_p_p" ,  int_pmatrix_gt },
+  {"hat_p_m",  int_pmatrix_hat_p_m},
+  {"imag_p", int_pmatrix_imag},
+  {"int_p",    int_pmatrix_int},
+  {"isreal_p", int_pmatrix_isreal},
+  {"isvector_p", int_matint_isvector},
   {"le_p_p" ,  int_pmatrix_le },
   {"lt_p_p" ,  int_pmatrix_lt },
-  {"ne_p_p" ,  int_pmatrix_neq },
-  {"m2p", int_pmatrix_m2p},
-  {"quote_p", int_pmatrix_quote_p},
-  {"dprim_p", int_pmatrix_dprim_p},
-  {"companion_m",int_pmatrix_companion_m},
-  {"companion_p",int_pmatrix_companion_p},
-  {"roots_p",int_pmatrix_roots},
-  {"plus_p_p",int_pmatrix_add},
-  {"plus_p_m",int_pmatrix_add_p_m},
-  {"plus_m_p",int_pmatrix_add_m_p},
+  {"matrix_p",int_matint_redim},
+  {"minus_m_p",  int_pmatrix_minus_m_p},
+  {"minus_p", int_pmatrix_minus},
+  {"minus_p_m",  int_pmatrix_minus_p_m},
+  {"minus_p_p",int_pmatrix_minus_p_p},
   {"mult_m_p",int_pmatrix_mult_m_p},
   {"mult_p_m",int_pmatrix_mult_p_m},
   {"mult_p_p",int_pmatrix_mult_p_p},
-  {"dst_p_p",int_pmatrix_mult_tt},
-  {"dst_p_m",int_pmatrix_mult_tt_p_m},
-  {"dst_m_p",int_pmatrix_mult_tt_m_p},
-  {"div_p_m",int_pmatrix_div_tt_p_m},
-  {"div_m_p",int_pmatrix_div_tt_m_p},
-  {"dsl_p_m",int_pmatrix_dsl_tt_p_m},
-  {"dsl_m_p",int_pmatrix_div_tt_m_p},
-  {"minus_p_p",int_pmatrix_minus_p_p},
-  {"minus_p", int_pmatrix_minus},
-  {"horner", int_pmatrix_horner},
-  {"hornerm", int_pmatrix_hornerm},
-  {"isreal_p", int_pmatrix_isreal},
-  {"clean_p",  int_pmatrix_clean},
-  {"ceil_p", int_pmatrix_ceil},
-  {"int_p",    int_pmatrix_int},
-  {"floor_p",     int_pmatrix_floor},
-  {"round_p",      int_pmatrix_round},
-  {"norm_p",      int_pmatrix_norm},
-  {"dh_p_m",  int_pmatrix_dh_p_m},
-  {"hat_p_m",  int_pmatrix_hat_p_m},
-  {"minus_m_p",  int_pmatrix_minus_m_p},
-  {"minus_p_m",  int_pmatrix_minus_p_m},
-  {"conj_p", int_pmatrix_conj},
+  {"ne_p_p" ,  int_pmatrix_neq },
+  {"plus_m_p",int_pmatrix_add_m_p},
+  {"plus_p_m",int_pmatrix_add_p_m},
+  {"plus_p_p",int_pmatrix_add},
+  {"quote_p", int_pmatrix_quote_p},
   {"real_p", int_pmatrix_real},
-  {"imag_p", int_pmatrix_imag},
+  {"redim_p",int_matint_redim},
+  {"reshape_p",int_matint_redim},
+  {"resize2vect_p", int_matint_resize2vect},
+  {"resize_p",int_pmatrix_resize},
+  {"roots_p",int_pmatrix_roots},
+  {"round_p",      int_pmatrix_round},
+  {"setrowscols_p", int_matint_setrowscols},
+  {"tozero_p", int_matint_tozero},
+
   {(char *) 0, NULL}
 };
 

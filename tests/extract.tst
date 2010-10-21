@@ -141,29 +141,24 @@ if ~and(Ac(:) == Acv)  then pause,end;
 //  PMatCompOp is not implemented so this
 // test is commented.
 //-----------------------------------------
-// $$$ function C = m2poly(A)
-// $$$    [m,n] = size(A)
-// $$$    C = pmat_create(m,n)
-// $$$    for i = 1:m*n, C(i) = m2p(A(i)); end
-// $$$ endfunction
-// $$$ 
-// $$$ Ap = m2poly(A);
-// $$$ Ap1r =m2poly( A1r);
-// $$$ Ap2r = m2poly(A2r);
-// $$$ Ap1c = m2poly(A1c);
-// $$$ Ap2c = m2poly(A2c);
-// $$$ Ap3 = m2poly(A3);
-// $$$ Ap4 = m2poly(A4);
-// $$$ Ap12 = m2poly(A12);
-// $$$ Apv = m2poly(Av);
-// $$$ 
-// $$$ if ~and(Ap(ind1,:) == Ap1r)  then pause,end;
-// $$$ if ~and(Ap(ind2,:) == Ap2r)  then pause,end;
-// $$$ if ~and(Ap(:,ind1) == Ap1c)  then pause,end;
-// $$$ if ~and(Ap(:,ind2) == Ap2c)  then pause,end;
-// $$$ if ~and(Ap(ind1,ind2) == Ap12)  then pause,end;
-// $$$ if ~and(Ap(ind3) == Ap3)  then pause,end;
-// $$$ if ~and(Ap(ind4) == Ap4)  then pause,end;
-// $$$ if ~and(Ap(:) == Apv)  then pause,end;
-// $$$ 
+
+ Ap = pmat_create(size(A,'r'),size(A,'c'),A);
+ Ap1r =pmat_create(size(A1r,'r'),size(A1r,'c'),A1r);
+ Ap2r = pmat_create(size(A2r,'r'),size(A2r,'c'),A2r);
+ Ap1c = pmat_create(size(A1c,'r'),size(A1c,'c'),A1c);
+ Ap2c = pmat_create(size(A2c,'r'),size(A2c,'c'),A2c);
+ Ap3 = pmat_create(size(A3,'r'),size(A3,'c'),A3);
+ Ap4 = pmat_create(size(A4,'r'),size(A4,'c'),A4);
+ Ap12 = pmat_create(size(A12,'r'),size(A12,'c'),A12);
+ Apv = pmat_create(size(Av,'r'),size(Av,'c'),Av);
+ 
+ if ~and(Ap(ind1,:) == Ap1r)  then pause,end;
+ if ~and(Ap(ind2,:) == Ap2r)  then pause,end;
+ if ~and(Ap(:,ind1) == Ap1c)  then pause,end;
+ if ~and(Ap(:,ind2) == Ap2c)  then pause,end;
+ if ~and(Ap(ind1,ind2) == Ap12)  then pause,end;
+ if ~and(Ap(ind3) == Ap3)  then pause,end;
+ if ~and(Ap(ind4) == Ap4)  then pause,end;
+ if ~and(Ap(:) == Apv)  then pause,end;
+ 
 
