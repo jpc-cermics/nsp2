@@ -53,16 +53,18 @@ int iwork2[WORK_SIZE];
 
 NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
 {
-  NspMatrix *Mat = new_matrix();
-  
-  if ( Mat == NULLMAT) 
+  NspMatrix *Mat = NULLMAT;
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLMAT;
+    }
+
+   if ( (Mat=new_matrix()) == NULLMAT) 
     {
       Scierror("Error:\tRunning out of memory\n");
-      return(NULLMAT);
+      return NULLMAT;
     }
-  /* shared by all objects */
-  if ( nsp_object_set_initial_name(NSP_OBJECT(Mat),name) == NULL)
-    return(NULLMAT);
   
   NSP_OBJECT(Mat)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   /* specific for Matrix */
@@ -71,37 +73,38 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
   Mat->rc_type = type;
   Mat->mn=m*n;
   Mat->convert = 'd'; 
-  if ( Mat->mn == 0 ) 
+  Mat->R = (double *) 0; 
+  Mat->C = (doubleC *) 0;
+
+  /* shared by all objects */
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Mat),name) == NULL)
     {
-#ifdef MTLB_MODE
-#else
-      Mat->m = Mat->n=0;
-#endif
-      Mat->R = (double *) 0; 
-      Mat->C = (doubleC *) 0;
-      return(Mat);
+      nsp_matrix_destroy(Mat);
+      return NULLMAT;
     }
-  switch ( type ) 
+
+  if ( Mat->mn > 0 ) 
     {
-    case 'r' :
-      Mat->C = (doubleC *) 0;
-      Mat->R =nsp_alloc_doubles(Mat->mn);
-      if ( Mat->R == (double *) 0 ) 
+      switch ( type ) 
 	{
-	  Scierror("Error:\tRunning out of memory\n");
-	  return(NULLMAT);
-	}
-      break;
-    case 'c' : 
-      Mat->R = (double *) 0; 
-      Mat->C =nsp_alloc_doubleC(Mat->mn);
-      if (  Mat->C == (doubleC *) 0) 
-	{
-	  Scierror("Error:\tRunning out of memory\n");
-	  return(NULLMAT);
+	case 'r' :
+	  if ( (Mat->R=nsp_alloc_doubles(Mat->mn)) == (double *) 0 ) 
+	    {
+	      nsp_matrix_destroy(Mat);
+	      Scierror("Error:\tRunning out of memory\n");
+	      return NULLMAT;
+	    }
+	  break;
+	case 'c' : 
+	  if ( (Mat->C=nsp_alloc_doubleC(Mat->mn)) == (doubleC *) 0) 
+	    {
+	      nsp_matrix_destroy(Mat);
+	      Scierror("Error:\tRunning out of memory\n");
+	      return NULLMAT;
+	    }
 	}
     }
-  return(Mat);
+  return Mat;
 }
 
 /**
