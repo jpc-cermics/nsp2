@@ -51,6 +51,19 @@ endfunction
 x=m2p([0,1]);
 
 // creation 
+// P = B + x*A 
+A=int(rand(4,5)*10);
+B=int(rand(4,5)*10);
+P= pmat_create(4,5,A);
+P.shift[1]
+P = P + pmat_create(4,5,B);
+// recover A and B 
+C=P.coeffs;
+if ~ce2m(C).equal[B] then pause;end 
+if ~ce2m(C,indice=2,noti=0).equal[A] then pause;end 
+
+
+// creation 
 //---------
 v=1:3;
 p=m2p(v);
