@@ -1347,17 +1347,20 @@ static int EvalFor(PList L1, Stack stack, int first)
     case RET_ENDFOR : 
       /* if (debug) Sciprintf("end for \n");  */
       /* we must destroy the loop object */
-      if ( L1->arity != -1 ) 
+      if (0 ) 
 	{
-	  /* object is a local variable */
-	  O = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)];
-	  ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)] = NULL;
-	  nsp_object_destroy(&O);
-	}
-      else
-	{
-	  O=nsp_frame_search_and_remove_object((char *) L1->O);
-	  nsp_object_destroy(&O);
+	  if ( L1->arity != -1 ) 
+	    {
+	      /* object is a local variable */
+	      O = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)];
+	      ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)] = NULL;
+	      nsp_object_destroy(&O);
+	    }
+	  else
+	    {
+	      O=nsp_frame_search_and_remove_object((char *) L1->O);
+	      nsp_object_destroy(&O);
+	    }
 	}
       return 0; 
       break;
