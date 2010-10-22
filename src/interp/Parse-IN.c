@@ -254,7 +254,8 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
 		      { "pausecatch",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   /*
-   * we must take care to copy the argument here in order 
+   * we must take care to copy the argument here (i.e the 
+   * GetSMatCopy is not enough) in order 
    * to remove a named variable from the stack, just in 
    * case the variable value is changed by the parse eval 
    * below as for example in  x=['x=90';'z=80']; execstr(x);
@@ -300,6 +301,7 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
     }
   if (( Ob =nsp_create_boolean_object(NVOID,(rep < 0) ? FALSE: TRUE)) == NULLOBJ ) return RET_BUG;
   MoveObj(stack,1,Ob);
+  nsp_smatrix_destroy(S);
   if ( lhs == 2) 
     {
       if ( H == NULLHASH ) return RET_BUG;
