@@ -124,7 +124,8 @@ nsp_polynom nsp_basic_to_polynom(const doubleC *d, char type)
  * nsp_polynom_destroy:
  * @P: a nsp_polynom pointer 
  * 
- * delete a polynom 
+ * delete a polynom. *P null is accepted.
+ * 
  **/
 
 void nsp_polynom_destroy(nsp_polynom *P)
@@ -329,12 +330,6 @@ int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_leve
   return rep;
 }
 
-/*
- * Creation of a NspPMatrix all the elements
- *	 are created with &Czero value 
- *       when flag == -1 the array elements are NULL
- */
-
 /**
  * nsp_pmatrix_create:
  * @name: name of object
@@ -360,7 +355,7 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int
   int i;
   NspPMatrix *Loc;
   static const doubleC *init,*def=&Czero;
-
+  
   if ( ((double) m)*((double) n) > INT_MAX )
     {
       Scierror("Error:\tMatrix dimensions too large\n");
@@ -372,55 +367,65 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int
       Scierror("Error:\tRunning out of memory\n");
       return NULLPMAT;
     }
-
+  
   NSP_OBJECT(Loc)->ret_pos = -1 ; 
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
+  Loc->S = NULL;
 
   if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
     {
       FREE(Loc);
       return NULLPMAT;
     }
-
+  
   if ( Loc -> mn == 0 )  /* empty pmatrix */
-    return Loc;
-
-  if ((Loc->S = (nsp_polynom *) MALLOC( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
-    { 
-      nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
-      Scierror("Error:\tRunning out of memory\n");
-      return NULLPMAT;
+    {
+      return Loc;
     }
 
+  if ((Loc->S = malloc( Loc->mn* sizeof(nsp_polynom ))) == NULL)
+    { 
+      Scierror("Error:\tRunning out of memory\n");
+      goto fail;
+    }
+
+  for  ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i]= NULL;
+  
   if ( flag >= 0) 
     {
-      if ( flag == 0) 
-	init = def ; 
-      else 
-	init = cval ;
+      init = ( flag == 0) ?  def : cval;
       for ( i = 0 ; i < Loc->mn ; i++ )
 	{
-	  if ( (Loc->S[i] =nsp_basic_to_polynom(init,(flag==2)? 'c':'r')) == (nsp_polynom ) 0 )  
-	    {
-	      int j;
-	      for ( j = 0 ; j < i ; j++ )
-		nsp_polynom_destroy(&(Loc->S[i]));
-	      FREE(Loc->S); nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
-	      return NULLPMAT;
-	    }
+	  if ( (Loc->S[i] =nsp_basic_to_polynom(init,(flag==2)? 'c':'r')) == NULL) goto fail;
 	}
     }
   else
     {
       for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = NULL;
     }
-
   return Loc;
+ fail:
+  nsp_pmatrix_destroy(Loc);
+  return NULLPMAT;
 }
+
+/**
+ * nsp_pmatrix_create_m:
+ * @name: name of object
+ * @m: number of rows
+ * @n: number of columns 
+ * @Val: A @mx@n Matrix 
+ * 
+ * returns a new mxn #NspPMatrix. if @A is non null 
+ * then it is used to initialize the result else 
+ * pmatrix elements are  initialized to zero polynomial.
+ * 
+ * Returns:  a new #NspPMatrix or %NULL
+ **/
 
 NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val)
 {
@@ -451,24 +456,30 @@ NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val)
   Loc->mn=m*n;
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
-  Loc->S = (nsp_polynom *) 0;
-  if ( Loc -> mn == 0 )   /* empty pmatrix */
-    return Loc;
+  Loc->S = NULL;
 
+  if ( Loc-> mn == 0 ) 
+    {
+      /* empty pmatrix */
+      return Loc;
+    }
+  
   if ( Val != NULL && (Val->mn != 1 && Val->mn != Loc->mn ))
     {
-      nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
       Scierror("PMatCreate: initial value should be of size 1 or %dx%d\n",Loc->m,Loc->n);
+      nsp_pmatrix_destroy(Loc);
       return NULLPMAT;
     }
 
-  if ((Loc->S = (nsp_polynom *) MALLOC( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
+  if ((Loc->S = malloc( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
     { 
-      nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
+      nsp_pmatrix_destroy(Loc);
       Scierror("Error:\tRunning out of memory\n");
       return NULLPMAT;
     }
-
+  /* to enable nsp_pmatrix_destroy in case of pbs */
+  for  ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i]= NULL;
+  
   if ( Val != NULL) 
     {
       for ( i = 0 ; i < Loc->mn ; i++ )
@@ -482,22 +493,20 @@ NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val)
 	    {
 	      cval.r = Val->R[ind]; cval.i = 0.0;
 	    }
-	  if ( (Loc->S[i] =nsp_basic_to_polynom(&cval,Val->rc_type)) == (nsp_polynom ) 0 ) 
-	    {
-	      int j;
-	      for ( j = 0 ; j < i ; j++ )
-		nsp_polynom_destroy(&(Loc->S[i]));
-	      FREE(Loc->S); nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
-	      return NULLPMAT;
-	    }
+	  if ( (Loc->S[i] =nsp_basic_to_polynom(&cval,Val->rc_type)) == NULL) goto fail;
 	}
     }
   else
     {
       for ( i = 0 ; i < Loc->mn ; i++ ) 
-	Loc->S[i] = NULL;
+	{
+	  if ( (Loc->S[i] =nsp_basic_to_polynom(&cval,'r')) == NULL) goto fail;
+	}
     }
   return Loc;
+ fail:
+  nsp_pmatrix_destroy(Loc);
+  return NULLPMAT;
 }
 
 
@@ -516,7 +525,7 @@ void nsp_pmatrix_destroy(NspPMatrix *A)
   int i;
   if ( A == NULLPMAT) return;
   nsp_object_destroy_name(NSP_OBJECT(A));
-  if (  A-> mn != 0 ) 
+  if (  A-> mn != 0 && A->S != NULL ) 
     {
       for ( i = 0 ; i < A->mn ; i++ ) 
 	{
