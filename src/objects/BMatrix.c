@@ -48,29 +48,42 @@ static int nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int 
 NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
 {
   int i;
-  NspBMatrix *Loc= new_bmatrix();
+  NspBMatrix *Loc= NULLBMAT;
 
-  if ( Loc == NULLBMAT) 
-    { 
-      Scierror("BMatCreate : Error no more space ");
-      return(NULLBMAT);
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLBMAT;
     }
-  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
-    return(NULLBMAT);
-  NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
 
+  if ( (Loc=new_bmatrix()) == NULLBMAT ) 
+    { 
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLBMAT;
+    }
+
+  NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
-  if ( (  Loc->B = (Boolean *) MALLOC( Loc->mn* sizeof(Boolean)))
-       == (Boolean *) 0 )
-    { 
-      Scierror("BMatCreate : Error no more space ");
-      return(NULLBMAT);
+  Loc->B = NULL;
+
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
+    {
+      nsp_bmatrix_destroy(Loc);
+      return NULLBMAT;
     }
+
+  if ( (Loc->B = (Boolean *) MALLOC( Loc->mn* sizeof(Boolean))) == (Boolean *) 0 )
+    {
+      nsp_bmatrix_destroy(Loc);
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLBMAT;
+    }
+
   /* we could use a iset nsp_iset(&ns,&d,A->B+Asize,&inc); **/
-  for ( i = 0 ; i < Loc->mn ; i++ )   Loc->B[ i] = TRUE ;
-  return(Loc);
+  for ( i = 0 ; i < Loc->mn ; i++ )   Loc->B[i] = TRUE ;
+  return Loc;
 }
 
 /**

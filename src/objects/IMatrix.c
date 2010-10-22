@@ -45,37 +45,51 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
  * Return value: a #NspMatrix or %NULLMAT in case of allocation failure.
  */
   
-NspIMatrix  *nsp_imatrix_create(const char *name, int m, int n,nsp_itype itype)
+NspIMatrix  *nsp_imatrix_create(const char *name, int m, int n, nsp_itype itype)
 {
   int i;
   gssize s =  sizeof(gint);
-  NspIMatrix *Loc= new_imatrix();
+  NspIMatrix *Loc= NULLIMAT; 
 
-  if ( Loc == NULLIMAT) 
-    { 
-      Scierror("IMatCreate : Error no more space\n");
-      return(NULLIMAT);
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLIMAT;
     }
-  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
-    return(NULLIMAT);
-  NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
 
+  if ( (Loc=new_imatrix()) == NULLIMAT ) 
+    { 
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLIMAT;
+    }
+
+  NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
   Loc->itype = itype;
+  Loc->Iv = NULL;
+
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
+    {
+      nsp_imatrix_destroy(Loc);
+      return NULLIMAT;
+    }
+
   NSP_ITYPE_SIZE(s,itype);
   Loc->eltsize=s;
   if ( (  Loc->Iv = MALLOC( Loc->mn*s)) == NULL )
     { 
-      Scierror("IMatCreate : Error no more space\n");
-      return(NULLIMAT);
+      Scierror("Error:\tRunning out of memory\n");
+      nsp_imatrix_destroy(Loc);
+      return NULLIMAT;
     }
+
   /* initialiaze to zero */
 #define IMAT_SETZERO(name,type,arg) for (i= 0 ; i < Loc->mn; i++) Loc->name[i]=0;break;
   NSP_ITYPE_SWITCH(Loc->itype,IMAT_SETZERO,void);
 #undef IMAT_SETZERO
-  return(Loc);
+  return Loc;
 }
 
 

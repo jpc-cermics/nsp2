@@ -360,31 +360,42 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int
   int i;
   NspPMatrix *Loc;
   static const doubleC *init,*def=&Czero;
-  Loc = new_pmatrix();
-  if ( Loc == NULLPMAT) 
-    { 
-      Scierror("PMatCreate : Error no more space ");
-      return(NULLPMAT);
+
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLPMAT;
     }
-  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
-    return(NULLPMAT);
+
+  if ( (Loc= new_pmatrix()) == NULLPMAT ) 
+    { 
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLPMAT;
+    }
+
   NSP_OBJECT(Loc)->ret_pos = -1 ; 
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
-  if ( Loc -> mn == 0 ) 
+
+  if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
     {
-      /* empty pmatrix */
-      Loc->S = (nsp_polynom *) 0;
-      return(Loc);
+      FREE(Loc);
+      return NULLPMAT;
     }
+
+  if ( Loc -> mn == 0 )  /* empty pmatrix */
+    return Loc;
+
   if ((Loc->S = (nsp_polynom *) MALLOC( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
     { 
-      Scierror("PMatCreate : Error no more space ");
-      return(NULLPMAT);
+      nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLPMAT;
     }
+
   if ( flag >= 0) 
     {
       if ( flag == 0) 
@@ -393,51 +404,71 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int
 	init = cval ;
       for ( i = 0 ; i < Loc->mn ; i++ )
 	{
-	  if ( (Loc->S[ i] =nsp_basic_to_polynom(init,(flag==2)? 'c':'r')) == (nsp_polynom ) 0 )  return(NULLPMAT);
+	  if ( (Loc->S[i] =nsp_basic_to_polynom(init,(flag==2)? 'c':'r')) == (nsp_polynom ) 0 )  
+	    {
+	      int j;
+	      for ( j = 0 ; j < i ; j++ )
+		nsp_polynom_destroy(&(Loc->S[i]));
+	      FREE(Loc->S); nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
+	      return NULLPMAT;
+	    }
 	}
     }
   else
     {
       for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = NULL;
     }
-  return(Loc);
+
+  return Loc;
 }
 
 NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val)
 {
   int i;
-  NspPMatrix *Loc;
+  NspPMatrix *Loc=NULLPMAT;
   doubleC cval={0,0};
-  Loc = new_pmatrix();
-  if ( Loc == NULLPMAT) 
-    { 
-      Scierror("PMatCreate : Error no more space ");
-      return(NULLPMAT);
+
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLPMAT;
     }
+
+  if ( (Loc= new_pmatrix()) == NULLPMAT ) 
+    { 
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLPMAT;
+    }
+
   if ( nsp_object_set_initial_name(NSP_OBJECT(Loc),name) == NULL)
-    return(NULLPMAT);
+    {
+      FREE(Loc);
+      return NULLPMAT;
+    }
   NSP_OBJECT(Loc)->ret_pos = -1 ; 
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
   Loc->rc_type = 'r' ; /* XXXXX : a preciser ? **/
   Loc->var = NULL;
-  if ( Loc -> mn == 0 ) 
-    {
-      /* empty pmatrix */
-      Loc->S = (nsp_polynom *) 0;
-      return(Loc);
-    }
+  Loc->S = (nsp_polynom *) 0;
+  if ( Loc -> mn == 0 )   /* empty pmatrix */
+    return Loc;
+
   if ( Val != NULL && (Val->mn != 1 && Val->mn != Loc->mn ))
     {
-      Scierror("PMatCreate : initial value should be of size 1 or %dx%d\n",Loc->m,Loc->n);
-      return(NULLPMAT);
+      nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
+      Scierror("PMatCreate: initial value should be of size 1 or %dx%d\n",Loc->m,Loc->n);
+      return NULLPMAT;
     }
+
   if ((Loc->S = (nsp_polynom *) MALLOC( Loc->mn* sizeof(nsp_polynom ))) == (nsp_polynom *) 0 )
     { 
-      Scierror("PMatCreate : Error no more space ");
-      return(NULLPMAT);
+      nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
+      Scierror("Error:\tRunning out of memory\n");
+      return NULLPMAT;
     }
+
   if ( Val != NULL) 
     {
       for ( i = 0 ; i < Loc->mn ; i++ )
@@ -449,18 +480,24 @@ NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val)
 	    }
 	  else
 	    {
-	      cval.r = Val->R[ind] ;
-	      cval.i = 0.0;
+	      cval.r = Val->R[ind]; cval.i = 0.0;
 	    }
 	  if ( (Loc->S[i] =nsp_basic_to_polynom(&cval,Val->rc_type)) == (nsp_polynom ) 0 ) 
-	    return(NULLPMAT);
+	    {
+	      int j;
+	      for ( j = 0 ; j < i ; j++ )
+		nsp_polynom_destroy(&(Loc->S[i]));
+	      FREE(Loc->S); nsp_object_destroy_name(NSP_OBJECT(Loc)); FREE(Loc);
+	      return NULLPMAT;
+	    }
 	}
     }
   else
     {
-      for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = NULL;
+      for ( i = 0 ; i < Loc->mn ; i++ ) 
+	Loc->S[i] = NULL;
     }
-  return(Loc);
+  return Loc;
 }
 
 
@@ -598,12 +635,20 @@ unsigned int  nsp_pmatrix_elt_size(NspPMatrix *M)
 int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
 {
   int i;
+
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
   if ( A->mn == m*n ) 
     {
       A->m=m;
       A->n=n;
-      return(OK);
+      return OK;
     };
+
   if ( m*n < 0) return FAIL;
   if ( m*n < A->mn )
     {
@@ -622,7 +667,7 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
     A->S = (nsp_polynom *)  MALLOC ((m*n+1) * sizeof(nsp_polynom));
   else 
     A->S = (nsp_polynom *)  REALLOC (A->S, (m*n+1) * sizeof(nsp_polynom));
-  if ( A->S == (nsp_polynom *) 0) return(FAIL);
+  if ( A->S == (nsp_polynom *) 0) return FAIL;
 
   /* Initialize new area **/
   A->S[(m*n)] = (nsp_polynom) 0;
@@ -634,7 +679,7 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
   A->n =n;
   A->mn=m*n ;
   if ( A->mn == 0) A->m = A->n = 0;
-  return(OK);
+  return OK;
 }
 
 /*
