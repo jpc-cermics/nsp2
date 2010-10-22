@@ -1,17 +1,5 @@
 // -*- Mode: scilab -*- 
 
-
-function y=pcompare(p1,p2)
-   q=p1-p2;
-   y=norm( q.coeffs{1}) > 10*%eps;
-endfunction 
-
-function q=p_op(p,op)
-  x=p.coeffs{1};
-  execstr('x=x'+op);
-  q=m2p(x);
-endfunction
-
 function p3=pprod(p1,p2)
   [m1,n1]=size(p1);
   [m2,n2]=size(p2);
@@ -61,7 +49,6 @@ P = P + pmat_create(4,5,B);
 C=P.coeffs;
 if ~ce2m(C).equal[B] then pause;end 
 if ~ce2m(C,indice=2,noti=0).equal[A] then pause;end 
-
 
 // creation 
 //---------
@@ -293,6 +280,8 @@ for i=1:size(p1,'*')
   p3 = p1{i}.';
   if ~p3.equal[p2{i}] then pause;end 
 end
+
+
 
 // ^
 
