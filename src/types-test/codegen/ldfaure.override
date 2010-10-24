@@ -96,7 +96,7 @@ int int_ldfaure_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_ldfaure_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldfaure_check_values(H) == FAIL) return RET_BUG;
   H->seed= seed;
-  if ( faure_start (H, dim_num , basis )== FAIL) return RET_BUG;
+  if ( nsp_faure_start (H, dim_num , basis )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -118,7 +118,7 @@ static int _wrap_ldfaure_next(NspLdfaure *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   for ( i = 0 ; i < n ; i++) 
     {
-      if ( faure (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
+      if ( nsp_faure (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
@@ -147,7 +147,7 @@ int int_ldrevhalton_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_ldrevhalton_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldrevhalton_check_values(H) == FAIL) return RET_BUG;
   H->seed= seed;
-  if ( reversehalton_start1(H, dim )== FAIL) return RET_BUG;
+  if ( nsp_reversehalton_start1(H, dim )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -170,7 +170,7 @@ static int _wrap_ldrevhalton_next(NspLdrevhalton *self,Stack stack,int rhs,int o
     return RET_BUG;
   for ( i = 0 ; i < n ; i++) 
     {
-      if ( reversehalton (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
+      if ( nsp_reversehalton (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
@@ -198,7 +198,7 @@ int int_ldhalton_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_ldhalton_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldhalton_check_values(H) == FAIL) return RET_BUG;
 
-  if ( halton_start_def(H, dim )== FAIL) return RET_BUG;
+  if ( nsp_halton_start_def(H, dim )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -221,7 +221,7 @@ static int _wrap_ldhalton_next(NspLdhalton *self,Stack stack,int rhs,int opt,int
     return RET_BUG;
   for ( i = 0 ; i < n ; i++) 
     {
-      if ( halton (self, self->step, M->R + M->m*i)== FAIL) return RET_BUG;
+      if ( nsp_halton (self, self->step, M->R + M->m*i)== FAIL) return RET_BUG;
       self->step +=1;
     }
   MoveObj(stack,1,NSP_OBJECT(M));
@@ -389,7 +389,7 @@ int int_ldsobol4_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_ldsobol4_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldsobol4_check_values(H) == FAIL) return RET_BUG;
 
-  if ( i4_sobol_start(H, dim )== FAIL) return RET_BUG;
+  if ( nsp_i4_sobol_start(H, dim )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -413,7 +413,7 @@ static int _wrap_ldsobol4_next(NspLdsobol4 *self,Stack stack,int rhs,int opt,int
   M->convert = 'f' ;
   for ( i = 0 ; i < n ; i++) 
     {
-      if ( i4_sobol (self, &self->seed, M->F + M->m*i)== FAIL) return RET_BUG;
+      if ( nsp_i4_sobol (self, &self->seed, M->F + M->m*i)== FAIL) return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
@@ -441,7 +441,7 @@ int int_ldsobol8_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_ldsobol8_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldsobol8_check_values(H) == FAIL) return RET_BUG;
 
-  if ( i8_sobol_start(H, dim )== FAIL) return RET_BUG;
+  if ( nsp_i8_sobol_start(H, dim )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -464,7 +464,7 @@ static int _wrap_ldsobol8_next(NspLdsobol8 *self,Stack stack,int rhs,int opt,int
     return RET_BUG;
   for ( i = 0 ; i < n ; i++) 
     {
-      if ( i8_sobol (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
+      if ( nsp_i8_sobol (self, &self->seed, M->R + M->m*i)== FAIL) return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
@@ -477,13 +477,14 @@ override-intcreate Ldniederreiter
 
 int int_ldniederreiter_create(Stack stack, int rhs, int opt, int lhs)
 {
-  int dim=-1,  seed=0;
+  int dim=-1, base = 11, skip=0;
   nsp_option opts[] ={{ "dim",s_int,NULLOBJ,-1},
-		      { "seed",s_int,NULLOBJ,-1},
+		      { "base",s_int,NULLOBJ,-1},
+		      { "skip",s_int,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   NspLdniederreiter *H;
   CheckStdRhs(0,0);
-  if ( get_optional_args(stack,rhs,opt,opts,&dim,&seed) == FAIL) 
+  if ( get_optional_args(stack,rhs,opt,opts,&dim,&base,&skip) == FAIL) 
     return RET_BUG;
   /* want to be sure that type ldniederreiter is initialized */
   nsp_type_ldniederreiter = new_type_ldniederreiter(T_BASE);
@@ -493,7 +494,7 @@ int int_ldniederreiter_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_ldniederreiter_create_partial(H) == FAIL) return RET_BUG;
   if ( nsp_ldniederreiter_check_values(H) == FAIL) return RET_BUG;
 
-  if ( niederreiter_start(H, dim, 11,0,"/tmp/one.txt","/tmp/two.txt",TRUE )== FAIL) return RET_BUG;
+  if ( nsp_niederreiter_start(H, dim, base,skip,"gfarit.txt","gfplys.txt" )== FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -516,7 +517,7 @@ static int _wrap_ldniederreiter_next(NspLdniederreiter *self,Stack stack,int rhs
     return RET_BUG;
   for ( i = 0 ; i < n ; i++) 
     {
-      if (niederreiter (self,  M->R + M->m*i)== FAIL) return RET_BUG;
+      if ( nsp_niederreiter (self,  M->R + M->m*i)== FAIL) return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
