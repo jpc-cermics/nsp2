@@ -170,6 +170,40 @@ static int int_nsp_cospi(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_nsp_tanpi(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_tanpi(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
+static int int_nsp_cotanpi(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_cotanpi(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
 static int int_nsp_gammabr(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
@@ -1324,6 +1358,8 @@ static OpTab Spmf_func[]={
   {"erfcx_m", int_nsp_erfcx},
   {"sinpi_m", int_nsp_sinpi},
   {"cospi_m", int_nsp_cospi},
+  {"tanpi_m", int_nsp_tanpi},
+  {"cotanpi_m", int_nsp_cotanpi},
   {"gammabr_m", int_nsp_gammabr},
   {"lngamma_m", int_nsp_lngamma},
   {"kcdf_m_m", int_nsp_kcdf},

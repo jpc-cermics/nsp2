@@ -40,6 +40,8 @@ extern double nsp_expm1(double x);
 extern double nsp_erfcx(double x);
 extern double nsp_sinpi(double x);
 extern double nsp_cospi(double x);
+extern double nsp_tanpi(double x);
+extern double nsp_cotanpi(double x);
 extern double nsp_gamma(double x);
 extern double nsp_lngamma(double x);
 extern int nsp_kcdf(double x, double *res, int n);

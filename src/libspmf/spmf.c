@@ -128,7 +128,8 @@ double nsp_expm1(double x)
     double y, a = fabs(x);
 
     if (a < DBL_EPSILON) return x;
-    if (a > 0.697) return exp(x) - 1.0;  /* negligible cancellation */
+/*     if (a > 0.697) return exp(x) - 1.0;  /\* negligible cancellation *\/ */
+    if (a > 0.125) return exp(x) - 1.0;  /* negligible cancellation */
 
     /* initial value for the Newton step: */
     if (a > 1e-8)
@@ -256,6 +257,44 @@ double nsp_cospi(double x)
   return res;
 }
 
+/**
+ * nsp_tanpi:
+ * @x: a double 
+ * 
+ * computes tan(pi x) with accuracy even for |x| big
+ * 
+ * Returns: a double
+ **/
+double nsp_tanpi(double x)
+{
+  /* for x = an integer + 0.5 return Nan */
+  if ( x - floor(x) == 0.5 )
+    return 0.0 / 0.0;   /* Nan */
+  else
+    return nsp_sinpi(x) / nsp_cospi(x);
+}
+
+/**
+ * nsp_cotanpi:
+ * @x: a double 
+ * 
+ * computes cotan(pi x) with accuracy even for |x| big
+ * 
+ * Returns: a double
+ **/
+double nsp_cotanpi(double x)
+{
+  /* for x an integer: if x = +-0 return 1/x else Nan */
+  if ( x != floor(x) )
+    return nsp_cospi(x) / nsp_sinpi(x);
+  else
+    {
+      if ( x == 0.0 )
+	return 1.0/x;
+      else
+	return 0.0 / 0.0;   /* Nan */
+    }
+}
 
 /**
  * nsp_stirling_error:
@@ -469,7 +508,7 @@ static double lngamma_in_0p68_1p5(double x)
  **/
 double nsp_lngamma(double x)
 {
-  double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.709; /* 0.6796875 in the Cody's code */
+  double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.71; /*  lim = 0.709 , 0.6796875 in the Cody's code */
   if ( x > 12.0 )
     return log_sqr_2pi + nsp_stirling_error(x) + (x-0.5)*log(x) - x;
   else if ( x > 4.0 )
