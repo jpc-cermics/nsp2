@@ -1477,11 +1477,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 1: /* symmetric case */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
-      {
-	nsp_matrix_destroy(C);
-	return RET_BUG;
-      }
+    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
     stat =  nsp_mat_bdiv_square_symmetric(Ac,C, &rcond, tol_rcond);
     nsp_matrix_destroy(Ac);Ac=NULLMAT;
     if ( stat == FAIL ) goto err;
@@ -1527,11 +1523,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
   case 6: 
     /* symmetric positive definite */
     if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
-    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
-      {
-	nsp_matrix_destroy(C);
-	return RET_BUG;
-      }
+    if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
     stat =  nsp_mat_bdiv_square_pos_symmetric(Ac,C, &rcond, tol_rcond);
     nsp_matrix_destroy(Ac);Ac=NULLMAT;
     if ( stat == FAIL ) goto err;
