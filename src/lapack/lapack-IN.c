@@ -1398,12 +1398,6 @@ static int int_qz( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-
-
-
-
-
-
 /* interface for solve 
  *
  */
@@ -1465,10 +1459,11 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 	}
     }
   
-  if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
 
-  switch ( rep ) {
-  case 0: /* std */
+  switch ( rep ) 
+    {
+    case 0: /* std case */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
     stat = nsp_mat_bdiv_square(Ac,C, &rcond, tol_rcond);
     nsp_matrix_destroy(Ac);Ac=NULLMAT;
@@ -1480,7 +1475,8 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
       }
     break;
 
-  case 1: /* sym */
+  case 1: /* symmetric case */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
       {
 	nsp_matrix_destroy(C);
@@ -1496,7 +1492,8 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
       }
     break;
 
-  case 2 :/* lo */
+  case 2 :/* lo lower triangular */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( nsp_mat_bdiv_triangular(A, C, 'l', 'n', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
@@ -1505,7 +1502,8 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
       }
     break;
 
-  case 3: /* up */
+  case 3: /* up upper triangular */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( nsp_mat_bdiv_triangular(A, C, 'u', 'n', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
@@ -1515,6 +1513,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 4: /* least square */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) goto err;
     stat=  nsp_mat_bdiv_lsq(Ac,C, tol_rcond);
     nsp_matrix_destroy(Ac);Ac=NULLMAT;
@@ -1527,6 +1526,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
 
   case 6: 
     /* symmetric positive definite */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( (Ac = nsp_matrix_copy(A)) == NULLMAT ) 
       {
 	nsp_matrix_destroy(C);
@@ -1543,6 +1543,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 7: /* loT */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( nsp_mat_bdiv_triangular(A, C, 'l', 't', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
@@ -1552,6 +1553,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 8: /* loH */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( nsp_mat_bdiv_triangular(A, C, 'l', 'c', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
@@ -1561,6 +1563,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 9: /* upT */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( nsp_mat_bdiv_triangular(A, C, 'u', 't', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
@@ -1570,6 +1573,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     break;
 
   case 10: /* upH */
+    if ((C = nsp_matrix_copy(B)) == NULLMAT) goto err;
     if ( nsp_mat_bdiv_triangular(A, C, 'u', 'c', &info) == FAIL ) goto err;
     if ( info != 0 )   
       {
