@@ -4050,7 +4050,6 @@ int nsp_mat_bdiv_diagonal(NspMatrix *A, NspMatrix *B, int *info)
 	  {
 	    nsp_div_cc(&(B->C[kB]),&(A->C[kA]),&res);
 	    B->C[kB] = res;
-      NSP_OBJECT(A)->ret_pos = 2;
 	  }
     }
   return OK;
