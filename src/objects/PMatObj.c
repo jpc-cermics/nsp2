@@ -560,10 +560,58 @@ static int int_meth_normalize(void *self,Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_meth_derivative(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j;
+  NspPMatrix *P=self, *Res= NULL;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((Res =nsp_pmatrix_create(NVOID,P->m,P->n,NULL,-1))== NULLPMAT) return RET_BUG;
+  for ( i = 0 ; i < P->mn ; i++) 
+    {
+      NspMatrix *A= P->S[i], *B;
+      if ((B = nsp_matrix_create("pe",A->rc_type,1,Max(A->mn-1,1))) == NULLMAT) goto err;
+      if ( A->mn <= 1) 
+	{
+	  if ( B->rc_type == 'r' ) 
+	    {
+	      B->R[i]= 0;
+	    }
+	  else 
+	    {
+	      B->C[i].r= B->C[i].i= 0;
+	    }
+	}
+      else 
+	{
+	  for ( j = 0 ; j < B->mn ; j++) 
+	    {
+	      if ( B->rc_type == 'r' ) 
+		{
+		  B->R[j]= A->R[j+1]*(j+1);
+		}
+	      else 
+		{
+		  B->C[j].r= A->C[j+1].r*(j+1);
+		  B->C[j].i= A->C[j+1].i*(j+1);
+		}
+	    }
+	}
+      Res->S[i]= B;
+    }
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+ err: 
+  nsp_pmatrix_destroy(Res);
+  return RET_BUG;
+}
+
+
 static NspMethods pmatrix_methods[] = {
   { "degree", int_meth_degree},
   { "shift", int_meth_shift},
   { "normalize", int_meth_normalize},
+  { "derivative", int_meth_derivative},
   { (char *) 0, NULL}
 };
 
