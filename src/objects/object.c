@@ -2049,7 +2049,7 @@ int int_object_size(Stack stack, int rhs, int opt, int lhs)
 	  if (GetScalarInt(stack,2,&size_f) == FAIL) return RET_BUG;
 	  if ( size_f < 0 || size_f > 2 ) 
 	    {
-	      Scierror("Error: second argument of function size should be 0 or 1 not %d\n",size_f);
+	      Scierror("Error: second argument of function size should be 0, 1 or 2 not %d\n",size_f);
 	      return RET_BUG;
 	    }
 	}
