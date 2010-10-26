@@ -1883,15 +1883,31 @@ static int int_smatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
 
 static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
 {
-  NspSMatrix *HMat1,*HMat2;
-  char *str1,*str2;
+  NspSMatrix *HMat1,*Res1=NULL,*Res2=NULL,*Str,*Rep;
+  int i;
   CheckRhs(1,3);
   CheckLhs(1,1);
   if (( HMat1 = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
-  if ((str1 = GetString(stack,2)) == (char*)0) return RET_BUG;
-  if ((str2 = GetString(stack,3)) == (char*)0) return RET_BUG;
-  if (( HMat2 =nsp_smatrix_subst(HMat1,str1,str2))  == NULLSMAT) return RET_BUG;
-  MoveObj(stack,1,(NspObject *) HMat2);
+  if (( Str =  GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
+  if (( Rep =  GetSMat(stack,3)) == NULLSMAT) return RET_BUG;
+  if ( Str->mn != Rep->mn ) 
+    {
+      Scierror("Error: second and third arguments should have the same size\n");
+      return RET_BUG;
+    }
+  Res1=HMat1;
+  for ( i = 0 ; i < Str->mn ; i++)
+    {
+      if ((Res2 =nsp_smatrix_subst(Res1,Str->S[i],Rep->S[i])) == NULLSMAT) return RET_BUG;
+      if ( Res1 != HMat1 ) nsp_smatrix_destroy(Res1);
+      Res1 = Res2;
+    }
+  if ( Str->mn == 0 )
+    {
+      ((NspObject *) HMat1)->ret_pos = 1;
+    }
+  else 
+    MoveObj(stack,1,(NspObject *) Res2);
   return 1;
 }
 
