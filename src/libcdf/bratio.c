@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>  /* cdf_psi1 rename nsp_digamma and move in lib spmf */
 #include "cdf.h"
 
 static double cdf_apser (double *a, double *b, double *x, double *eps);
@@ -392,7 +393,7 @@ static double cdf_apser (double *a, double *b, double *x, double *eps)
     {
       goto L10;
     }
-  c__ = log (*x) + cdf_psi1 (*b) + g + t;
+  c__ = log (*x) + nsp_digamma (*b) + g + t;
   goto L20;
  L10:
   c__ = log (bx) + g + t;

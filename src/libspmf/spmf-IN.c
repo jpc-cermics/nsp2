@@ -238,6 +238,23 @@ static int int_nsp_lngamma(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_nsp_digamma(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *x;
+  int i;
+  CheckRhs (1, 1);
+  CheckLhs (1, 1);
+
+  if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    x->R[i] = nsp_digamma(x->R[i]);
+
+  NSP_OBJECT (x)->ret_pos = 1;
+  return 1;
+}
+
 static int int_nsp_kcdf(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x, *P;
@@ -1362,6 +1379,7 @@ static OpTab Spmf_func[]={
   {"cotanpi_m", int_nsp_cotanpi},
   {"gammabr_m", int_nsp_gammabr},
   {"lngamma_m", int_nsp_lngamma},
+  {"digamma_m", int_nsp_digamma},
   {"kcdf_m_m", int_nsp_kcdf},
   {"kcdflim_m", int_nsp_kcdflim},
   {"invkcdflim_m", int_nsp_invkcdflim},

@@ -44,6 +44,7 @@ extern double nsp_tanpi(double x);
 extern double nsp_cotanpi(double x);
 extern double nsp_gamma(double x);
 extern double nsp_lngamma(double x);
+extern double nsp_digamma (double x);
 extern int nsp_kcdf(double x, double *res, int n);
 extern double nsp_kcdflim(double x, double *q);
 extern int nsp_invkcdflim(double p, double q, double *x);

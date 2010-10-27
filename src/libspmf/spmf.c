@@ -1,7 +1,8 @@
 /* Nsp
  * Copyright (C) 2006-2010 Bruno Pincon Esial/Iecn
  * nsp_expm1 code: Copyright (C) 2002 The R Development Core Team
- *
+ * nsp_digamma code: Copyright (C) 2007-2010 Jean-Philippe Chancelier Enpc/Cermics and Bruno Pincon Esial/Iecn
+
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
@@ -531,6 +532,149 @@ double nsp_lngamma(double x)
 	return log(fabs(nsp_gamma(x)));
     }
 }
+
+
+/**
+ * nsp_digamma   
+ * @x: a double 
+ *  evaluation of the digamma (aka psi) function:
+ *            digamma(x) = gamma'(x)/gamma(x) 
+ *                       = d/dx log(gamma(x)) (for x > 0)
+ *
+ *  Copyright (C) Jean-Philippe Chancelier Enpc/Cermics and Bruno Pincon Esial/Iecn
+ *
+ *  The code was written following the fortran code of psi1 
+ *  (funpack (Cody and all) + modification by A.H. Morris (nswc)) 
+ *  with various modifications:
+ *
+ *       * the rationnal approximation for evaluation in [0.5,3] was replaced by
+ *         2 rationnal approximations (one for x < dx0, the other for x >=dx0, 
+ *         dx0 = 1.4616321... the positive zero of digamma). These rationnal 
+ *         approximations were computed with Maple (see Maple code is given at the end).
+ *       * use of nsp_cotanpi in the reflection formula for x < 0.5
+ *       * use a kind of quad approximation of the zero of digamma
+ *         (relative error stays small for floats near  1.4616321... the positive zero).
+ *       * change the value of xmax constant. 
+ *       * change evaluation at 0
+ * 
+ *   Returns: a double
+ **/
+
+static double f_approx_ls(double x);
+static double f_approx_rs(double x);
+static double f_approx_gt_3(double x);
+
+double nsp_digamma (double x)
+{
+  double aug = 0.0;
+  /* machine dependent constants (here they are set for double ieee) */ 
+  double const xmax   = 1e16,  /* switch value beyond which digamma may be represented as log(x) */ 
+               xsmall = 1e-9;  /* absolute argument below which pi*cotan(pi*x) may be represented by 1/x */ 
+
+  if (x < 0.5)
+    {
+      /* for x < 0.5, we use  digamma(x) = digamma(1-x) - pi * cotan(pi*x)  
+       * first compute aug = - pi*cotan(pi*x)
+       */
+      if ( fabs(x) > xsmall )
+	aug = - M_PI * nsp_cotanpi(x);
+      else 
+	/*  | x | <= xsmall. use 1/x as a substitute for  pi*cotan(pi*x) 
+	 *  (moreover this provides the good behavior at x = 0 (-oo for x=+0 and +oo for x=-0))
+	 */
+	aug = -1.0 / x;
+      x = 1.0 - x;
+    }
+  
+  if (x > 3.0)
+    {
+      if (x >= xmax)
+	return aug + log(x);
+      else 
+	return aug + f_approx_gt_3(x) + log(x) - 0.5/x;
+    }
+  else           /* 0.5 <= x <= 3.0  */
+    {
+      /*  use 2 rational approximations of  digamma(x) / (x - dx0), computed with Maple 
+       *  one for x < dx0 the other for x >= dx0. dx0 positive zero of digamma.
+       */
+      const double dx0 = 1.461632144968362341262659542325721325;
+      /* the 3 following constants improve the computation of x-dx0 using (x - xn/xd) - xr
+       * xn/xd is the closest (under) approximation of (exact) dx0 in ieee double precision
+       * and xd/xd + xr is an approximation of dx0 in quad precision. xd/xn could be written as a double
+       * but we use this form to avoid possible simplification by the compiler with -Ox flag 
+       */
+      const double xn = 3291302991716127.0, xd = 2251799813685248.0, xr = 3.17544559224688270016686752e-16;
+      if ( x >= dx0) 
+	return f_approx_rs(x)*((x - xn/xd) - xr) + aug ;
+      else	
+	return f_approx_ls(x)*((x - xn/xd) - xr) + aug ;
+    }
+} 
+
+/*  approximations of  digamma(x) / (x - dx0) on [dx0, 3] computed with Maple */
+static double f_approx_rs(double x)
+{
+  return((0.1944202116321335E-1+(0.6023197220165417E-1+(0.5013507837380874E-1
++(0.1497783719529072E-1+(0.1580892247487796E-2+(0.4474696461772995E-4+
+0.6664740431685916E-7*x)*x)*x)*x)*x)*x)/(0.1935895616227E-7+(
+0.2841689855839281E-1+(0.5219307314640644E-1+(0.2966216682460071E-1+(
+0.6335518082535423E-2+(0.4777767743644465E-3+0.9029486537581591E-5*x)*x)*x)*x)*
+x)*x));
+}
+
+/*  approximations of  digamma(x) / (x - dx0) on  [0.5, dx0] computed with Maple */
+static double f_approx_ls(double x)
+{
+    return((0.1320643016823474+(0.4253192778241912+(0.3875433094640546+(
+0.1348672821673454+(0.1788325396971957E-1+(0.6938011374594729E-3+
+0.1628066660999515E-5*x)*x)*x)*x)*x)*x)/(0.13188548555E-10+(0.1930294282906748+
+(0.3781764189968253+(0.2403577987227719+(0.608877209974987E-1+(
+0.5829374028059031E-2+0.1504027028852691E-3*x)*x)*x)*x)*x)*x));
+}
+
+/*
+ *  Maple code for approximation of Psi(x)/(x-dx0) in [0.5,3] 
+ * Approximation of dx0 
+ Digits:= 50;
+ dx0:= 1.461632144968362341262659542325721328468196204;
+ Psi(dx0);
+ * gives  -.62379552335332861548617858697593025567122107441233 1O^(-47) 
+
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) Psi(x)/(x-dx0);end proc;
+
+  Digits:=30;
+  ggp:=chebpade(f(x),x=1.5..3,[7,7]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+
+  Digits:=60;
+  ggp:=chebpade(f(x),x=0.5..1.45,[7,7]);
+  Digits:=20;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(gg,x);
+  codegen[C](f_approx,optimized);
+*/
+
+
+/* approximation of  digamma(x) - log(x) + 1.0/(2.0*x) for  x > 3
+ * by a rational chebyshev  approximation published in math. 
+ * comp. 27, 123-127(1973) by Cody, Strecok and Thacher. 
+ */
+static double f_approx_gt_3(double x)
+{
+  double w = 1.0/(x*x);
+  return (  (w*(-0.648157123766197 + w*(-4.48616543918019 + w*(-7.01677227766759 - w*2.12940445131011))))
+	    / (7.77788548522962 + w*(54.6117738103215 + w*(89.2920700481861 + w*(32.2703493791143+w)))) );
+}
+
+
 
 
 /**
