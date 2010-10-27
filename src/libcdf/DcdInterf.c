@@ -999,16 +999,6 @@ static int int_cdf_bcorr_old(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, NULL, cdf_bcorr_old);
 }
 
-static int int_cdf_psi1(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_psi1, NULL);
-}
-
-static int int_cdf_psi1_old(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_psi1_old, NULL);
-}
-
 static int int_cdf_erf(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_erf, NULL);
@@ -1087,8 +1077,6 @@ static OpTab Dcd_func[]={
   {"cdf_dlanor_old",int_cdf_dlanor_old},
   {"cdf_alngam",int_cdf_alngam},
   {"cdf_alngam_old",int_cdf_alngam_old},
-  {"cdf_psi",int_cdf_psi1},
-  {"cdf_psi_old",int_cdf_psi1_old},
   {"cdf_grat1",int_cdf_grat1},
   {"cdf_erf",int_cdf_erf},
   {"cdf_erfc",int_cdf_erfc},

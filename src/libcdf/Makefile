@@ -13,7 +13,7 @@ OBJSC = DcdInterf.o dlamch.o algdiv.o alngam.o \
 	dlnbet.o dlngam.o dstrem.o dt1.o dzror.o \
 	erf.o exparg.o \
 	gam1.o gaminv.o gamln.o gamln1.o gamma.o grat1.o gratio.o gsumln.o \
-	ipmpar.o psi.o rcomp.o rexp.o rlog.o rlog1.o spmpar.o stvaln.o cumchn_new.o zsearch.o
+	ipmpar.o rcomp.o rexp.o rlog.o rlog1.o spmpar.o stvaln.o cumchn_new.o zsearch.o
 
 OBJSF=
 
