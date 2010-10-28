@@ -1,3 +1,4 @@
+/* -*-   Encoding: utf-8  -*-  */
 /* Nsp
  * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *               with a little help from Bruno Pincon Iecn/Esial
@@ -3034,4 +3035,132 @@ NspBMatrix *nsp_smatrix_issorted(NspSMatrix *A, int flag, Boolean strict_order)
     }
   
   return C;
+}
+
+
+typedef struct _utf8_table  utf8_table;
+
+struct _utf8_table {
+  char  *utf8code;
+  char  *texcode;
+};
+
+static const utf8_table _T[]= {
+  {"¡",  "\\textexclamdown "  }, /* INVERTED EXCLAMATION MARK */
+  {"¢",  "\\textcent "  }, /* CENT SIGN */
+  {"£",  "\\pounds "  }, /* POUND SIGN */
+  {"¤",  "\\textcurrency "  }, /* CURRENCY SIGN */
+  {"¥",  "\\textyen "  }, /* YEN SIGN */
+  {"¦",  "\\textbrokenbar "  }, /* BROKEN BAR */
+  {"§",  "\\S "  }, /* SECTION SIGN */
+  {"¨",  "\\\"{}"  }, /* DIAERESIS */
+  {"©",  "\\copyright "  }, /* COPYRIGHT SIGN */
+  {"ª",  "\\textordfeminine "  }, /* FEMININE ORDINAL INDICATOR */
+  {"«",  "\\guillemotleft "  }, /* LEFT-POINTING DOUBLE ANGLE QUOTATION MARK */
+  {"¬",  "\\textlnot "  }, /* NOT SIGN */
+  {"­",  "ZZ"  }, /* SOFT HYPHEN */
+  {"®",  "\\textregistered "  }, /* REGISTERED SIGN */
+  {"¯",  "\\={}"  }, /* MACRON */
+  {"°",  "\\textdegree "  }, /* DEGREE SIGN */
+  {"±",  "\\textpm "  }, /* PLUS-MINUS SIGN */
+  {"²",  "\\texttwosuperior "  }, /* SUPERSCRIPT TWO */
+  {"³",  "\\textthreesuperior "  }, /* SUPERSCRIPT THREE */
+  {"´",  "\\'{}"  }, /* ACUTE ACCENT */
+  {"µ",  "$\\mu$"  }, /* MICRO SIGN */
+  {"¶",  "\\P "  }, /* PILCROW SIGN */
+  {"·",  "\\textperiodcentered "  }, /* MIDDLE DOT */
+  {"¸",  "\\c{}"  }, /* CEDILLA */
+  {"¹",  "\\textonesuperior "  }, /* SUPERSCRIPT ONE */
+  {"º",  "\\textordmasculine "  }, /* MASCULINE ORDINAL INDICATOR */
+  {"»",  "\\guillemotright "  }, /* RIGHT-POINTING DOUBLE ANGLE QUOTATION MARK */
+  {"¼",  "\\textonequarter "  }, /* VULGAR FRACTION ONE QUARTER */
+  {"½",  "\\textonehalf "  }, /* VULGAR FRACTION ONE HALF */
+  {"¾",  "\\textthreequarters "  }, /* VULGAR FRACTION THREE QUARTERS */
+  {"¿",  "\\textquestiondown "  }, /* INVERTED QUESTION MARK */
+  {"À",  "\\`A"  }, /* LATIN CAPITAL LETTER A WITH GRAVE */
+  {"Á",  "\\'A"  }, /* LATIN CAPITAL LETTER A WITH ACUTE */
+  {"Â",  "\\^A"  }, /* LATIN CAPITAL LETTER A WITH CIRCUMFLEX */
+  {"Ã",  "\\~A"  }, /* LATIN CAPITAL LETTER A WITH TILDE */
+  {"Ä",  "\\\"A"  }, /* LATIN CAPITAL LETTER A WITH DIAERESIS */
+  {"Å",  "\\AA{}"  }, /* LATIN CAPITAL LETTER A WITH RING ABOVE */
+  {"Æ",  "\\AE{}"  }, /* LATIN CAPITAL LETTER AE */
+  {"Ç",  "\\c{C}"  }, /* LATIN CAPITAL LETTER C WITH CEDILLA */
+  {"È",  "\\`E"  }, /* LATIN CAPITAL LETTER E WITH GRAVE */
+  {"É",  "\\'E"  }, /* LATIN CAPITAL LETTER E WITH ACUTE */
+  {"Ê",  "\\^E"  }, /* LATIN CAPITAL LETTER E WITH CIRCUMFLEX */
+  {"Ë",  "\\\"E"  }, /* LATIN CAPITAL LETTER E WITH DIAERESIS */
+  {"Ì",  "\\`I"  }, /* LATIN CAPITAL LETTER I WITH GRAVE */
+  {"Í",  "\\'I"  }, /* LATIN CAPITAL LETTER I WITH ACUTE */
+  {"Î",  "\\^I"  }, /* LATIN CAPITAL LETTER I WITH CIRCUMFLEX */
+  {"Ï",  "\\\"I"  }, /* LATIN CAPITAL LETTER I WITH DIAERESIS */
+  {"Ð",  "DH needs T1 "  }, /* \\DH{} LATIN CAPITAL LETTER ETH */
+  {"Ñ",  "\\~N"  }, /* LATIN CAPITAL LETTER N WITH TILDE */
+  {"Ò",  "\\`O"  }, /* LATIN CAPITAL LETTER O WITH GRAVE */
+  {"Ó",  "\\'O"  }, /* LATIN CAPITAL LETTER O WITH ACUTE */
+  {"Ô",  "\\^O"  }, /* LATIN CAPITAL LETTER O WITH CIRCUMFLEX */
+  {"Õ",  "\\~O"  }, /* LATIN CAPITAL LETTER O WITH TILDE */
+  {"Ö",  "\\\"O"  }, /* LATIN CAPITAL LETTER O WITH DIAERESIS */
+  {"×",  "\\texttimes "  }, /* MULTIPLICATION SIGN */
+  {"Ø",  "\\O{}"  }, /* LATIN CAPITAL LETTER O WITH STROKE */
+  {"Ù",  "\\`U"  }, /* LATIN CAPITAL LETTER U WITH GRAVE */
+  {"Ú",  "\\'U"  }, /* LATIN CAPITAL LETTER U WITH ACUTE */
+  {"Û",  "\\^U"  }, /* LATIN CAPITAL LETTER U WITH CIRCUMFLEX */
+  {"Ü",  "\\\"U"  }, /* LATIN CAPITAL LETTER U WITH DIAERESIS */
+  {"Ý",  "\\'Y"  }, /* LATIN CAPITAL LETTER Y WITH ACUTE */
+  {"Þ",  "TH needs T1"  }, /* \\TH{} LATIN CAPITAL LETTER THORN */
+  {"ß",  "\\ss{}"  }, /* LATIN SMALL LETTER SHARP S */
+  {"à",  "\\`a"  }, /* LATIN SMALL LETTER A WITH GRAVE */
+  {"á",  "\\'a"  }, /* LATIN SMALL LETTER A WITH ACUTE */
+  {"â",  "\\^a"  }, /* LATIN SMALL LETTER A WITH CIRCUMFLEX */
+  {"ã",  "\\~a"  }, /* LATIN SMALL LETTER A WITH TILDE */
+  {"ä",  "\\\"a"  }, /* LATIN SMALL LETTER A WITH DIAERESIS */
+  {"å",  "\\aa{}"  }, /* LATIN SMALL LETTER A WITH RING ABOVE */
+  {"æ",  "\\ae{}"  }, /* LATIN SMALL LETTER AE */
+  {"ç",  "\\c{c}"  }, /* LATIN SMALL LETTER C WITH CEDILLA */
+  {"è",  "\\`e"  }, /* LATIN SMALL LETTER E WITH GRAVE */
+  {"é",  "\\'e"  }, /* LATIN SMALL LETTER E WITH ACUTE */
+  {"ê",  "\\^e"  }, /* LATIN SMALL LETTER E WITH CIRCUMFLEX */
+  {"ë",  "\\\"e"  }, /* LATIN SMALL LETTER E WITH DIAERESIS */
+  {"ì",  "\\`i"  }, /* LATIN SMALL LETTER I WITH GRAVE */
+  {"í",  "\\'i"  }, /* LATIN SMALL LETTER I WITH ACUTE */
+  {"î",  "\\^{\\i}"  }, /* LATIN SMALL LETTER I WITH CIRCUMFLEX */
+  {"ï",  "\\\"{\\i}"  }, /* LATIN SMALL LETTER I WITH DIAERESIS */
+  {"ð",  "\\~o"  }, /* LATIN SMALL LETTER ETH */
+  {"ñ",  "\\~n"  }, /* LATIN SMALL LETTER N WITH TILDE */
+  {"ò",  "\\`o"  }, /* LATIN SMALL LETTER O WITH GRAVE */
+  {"ó",  "\\'o"  }, /* LATIN SMALL LETTER O WITH ACUTE */
+  {"ô",  "\\^o"  }, /* LATIN SMALL LETTER O WITH CIRCUMFLEX */
+  {"õ",  "\\~o"  }, /* LATIN SMALL LETTER O WITH TILDE */
+  {"ö",  "\\\"o"  }, /* LATIN SMALL LETTER O WITH DIAERESIS */
+  {"÷",  "$\\div$"  }, /* DIVISION SIGN */
+  {"ø",  "\\o{}"  }, /* LATIN SMALL LETTER O WITH STROKE */
+  {"ù",  "\\`u"  }, /* LATIN SMALL LETTER U WITH GRAVE */
+  {"ú",  "\\'u"  }, /* LATIN SMALL LETTER U WITH ACUTE */
+  {"û",  "\\^u"  }, /* LATIN SMALL LETTER U WITH CIRCUMFLEX */
+  {"ü",  "\\\"u"  }, /* LATIN SMALL LETTER U WITH DIAERESIS */
+  {"ý",  "\\'y"  }, /* LATIN SMALL LETTER Y WITH ACUTE */
+  {"þ",  "th needs T1"  }, /* \\th{} LATIN SMALL LETTER THORN */
+  {"ÿ",  "\\\"y"  }, /* LATIN SMALL LETTER Y WITH DIAERESSI */
+  { NULL, NULL}
+};
+ 
+NspSMatrix *nsp_latex_utf8_symbols(void)
+{
+  NspSMatrix *loc;
+  int i=0,count=0;
+  while ( _T[count].utf8code != NULL ) count++;
+  if ((loc = nsp_smatrix_create(NVOID,count, 2, NULL,0)) == NULL) 
+    return NULL;
+  /* allocate elements and store copies of T elements in Loc */
+  for ( i = 0 ; i < count ; i++ )
+    {
+      if ((loc->S[i] = nsp_string_copy( _T[i].utf8code)) == (nsp_string) 0)
+	goto fail;
+      if ((loc->S[i+loc->m] = nsp_string_copy( _T[i].texcode)) == (nsp_string) 0)
+	goto fail;
+    }
+  return loc;
+ fail:
+  if ( loc != NULL) nsp_smatrix_destroy(loc);
+  return NULL;
 }

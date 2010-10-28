@@ -148,6 +148,7 @@ extern NspBMatrix *nsp_smatrix_has(NspSMatrix *A, NspSMatrix *x, int lhs, NspMat
 extern NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k);
 extern int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k);
 extern NspSMatrix  *nsp_smatrix_create_diag(NspSMatrix *Diag, int k);
+extern NspSMatrix *nsp_latex_utf8_symbols(void);
 
 #endif 
 

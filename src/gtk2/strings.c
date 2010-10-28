@@ -1,3 +1,4 @@
+/* -*-   Encoding: utf-8  -*-  */
 /* Nsp
  * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  *
@@ -368,5 +369,4 @@ static void nsp_swap_double_array(double *R,int n)
 	}
     }
 }
-
 

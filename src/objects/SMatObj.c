@@ -2179,11 +2179,23 @@ int_parse_dim_arg(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_latex_codes(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *Res;
+  CheckStdRhs(0,0);
+  CheckLhs(1,1);
+  if ((Res = nsp_latex_utf8_symbols()) == NULL)
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
 /*
  * The Interface for basic matrices operation 
  */
 
 static OpTab SMatrix_func[]={
+  {"latex_codes", int_latex_codes},
   {"extract_s", int_matint_extract}, 
   {"extractelts_s", int_matint_extractelts}, 
   {"extractcols_s", int_matint_extractcols}, 
