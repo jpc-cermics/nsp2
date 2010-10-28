@@ -72,9 +72,9 @@ function [T_pdivq]=rtaylor(p,q,a,n)
   T_q = taylor(q,a); nq = size(T_q,'*');
   n = max(1,n);
   // The convolution matrix associated to q*r (with degree(r)=n)
-  Cq = toeplitz([T_q,zeros(1,n+1)],[T_q(1),zeros(1,n)]);
-  Cq = Cq(1:n+1,:);
-  b = [T_p(1:min(np,n+1)), zeros(1,max(n+1-np,0))];
+  Cq = toeplitz([T_q,zeros(1,n)],[T_q(1),zeros(1,n-1)]);
+  Cq = Cq(1:n,:);
+  b = [T_p(1:min(np,n)), zeros(1,max(n-np,0))];
   T_pdivq = Cq\b';
 endfunction
 

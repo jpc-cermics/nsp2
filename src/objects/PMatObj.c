@@ -575,11 +575,11 @@ static int int_meth_derivative(void *self,Stack stack, int rhs, int opt, int lhs
 	{
 	  if ( B->rc_type == 'r' ) 
 	    {
-	      B->R[i]= 0;
+	      B->R[0]= 0;
 	    }
-	  else 
+	  else
 	    {
-	      B->C[i].r= B->C[i].i= 0;
+	      B->C[0].r= B->C[0].i= 0;
 	    }
 	}
       else 

@@ -281,7 +281,48 @@ for i=1:size(p1,'*')
   if ~p3.equal[p2{i}] then pause;end 
 end
 
+// derivative 
 
+function d=deriv(p)
+  [m,n]=size(p);
+  d=p;
+  for i=1:m*n 
+    pc = p.coeffs{i};
+    dc = pc(1,2:$).* (1:(size(pc,'*')-1))
+    if isempty(dc) then dc = 0;end 
+    d(i)= m2p(dc);
+  end
+endfunction
+
+p1={ [1+2*x,2+5*x**2, 0;1, x, x+1 ],[1+(2+3*%i)*x,2+(5+%i)*x**2, 0;1, x+6*%i, x+1; 0, x**4, 1+x**2 ]};
+
+for i=1:size(p1,'*')
+  q= p1{i}.derivative[];
+  q1 = deriv(p1{i});
+  if ~q.equal[q1] then pause;end 
+end
+
+// taylor devpt 
+
+function ok=check_taylor(p,a)
+  [T]= taylor(p,a);
+  q=m2p(T);
+  pc = compose(q,m2p([-a,1]));
+  ok=  p == pc 
+endfunction;
+  
+p= m2p(rand(1,5));  a=4;
+check_taylor(p,a,taylor(p,a)); 
+a=4+2*%i;
+check_taylor(p,a,taylor(p,a)); 
+p= m2p(rand(1,5)+%i*rand(1,5));a=4;
+check_taylor(p,a,taylor(p,a));
+
+a=(1:3)';
+T=taylor(p,a);
+for i=1:size(a,'*')
+  if ~check_taylor(p,a(i),T(i,:)) then pause;end 
+end
 
 // ^
 
