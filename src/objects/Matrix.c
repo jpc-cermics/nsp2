@@ -463,6 +463,12 @@ int nsp_matrix_fill_with(NspMatrix *A,const NspMatrix *B)
 int nsp_matrix_resize(NspMatrix *A, int m, int n)
 {
 
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
   if ( A->mn == m*n ) /* no need to resize data just m and n */
     {
       A->m=m;
@@ -483,14 +489,22 @@ int nsp_matrix_resize(NspMatrix *A, int m, int n)
     {
     case 'r' : 
       A->R=nsp_realloc_doubles(A->R,A->mn);
-      if ( A->R == (double *) 0) return(FAIL);
+      if ( A->R == (double *) 0) 
+	{
+	  Scierror("Error:\tRunning out of memory\n");
+	  return FAIL;
+	}
       break ; 
     case 'c' : 
       A->C =nsp_realloc_doubleC(A->C,A->mn);
-      if ( A->C == (doubleC *) 0) return(FAIL);
+      if ( A->C == (doubleC *) 0)
+	{
+	  Scierror("Error:\tRunning out of memory\n");
+	  return FAIL;
+	}
       break;
     }
-  return(OK);
+  return OK;
 }
 
 
