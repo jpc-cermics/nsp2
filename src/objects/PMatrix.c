@@ -700,6 +700,11 @@ int nsp_pmatrix_resize(NspPMatrix *A, int m, int n)
 
 int nsp_pmatrix_enlarge(NspPMatrix *A, int m, int n)
 {
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
   if ( n > A->n  )
     if ( nsp_pmatrix_add_columns(A,n- A->n) == FAIL) return(FAIL);
   if ( m > A->m  )  

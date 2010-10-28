@@ -473,7 +473,7 @@ int nsp_matrix_resize(NspMatrix *A, int m, int n)
     {
       A->m=m;
       A->n=n;
-      return(OK);
+      return OK;
     }
   if ( m*n < 0) return FAIL;
   if ( m*n == 0 ) /* need to free space */
@@ -800,6 +800,12 @@ int nsp_matrix_latex_tab_print(const NspMatrix *Mat)
 
 int nsp_matrix_enlarge(NspMatrix *A, int m, int n)
 {
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
   if ( A->mn == 0) 
     {
       /* special case A=[] **/
@@ -807,8 +813,10 @@ int nsp_matrix_enlarge(NspMatrix *A, int m, int n)
       nsp_mat_set_rval(A,0.00);
       return OK;
     }
+
   if ( n > A->n  )
     if ( nsp_matrix_add_columns(A,n- A->n) == FAIL) return(FAIL);
+
   if ( m > A->m  )  
     if ( nsp_matrix_add_rows(A, m - A->m) == FAIL) return(FAIL);
   return(OK);

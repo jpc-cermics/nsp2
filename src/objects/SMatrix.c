@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ *               with a little help from Bruno Pincon Iecn/Esial
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -61,44 +62,55 @@ static int nsp_smatrix_print_multicols_internal(nsp_num_formats *fmt,const NspSM
 NspSMatrix* nsp_smatrix_create(nsp_const_string name, int m, int n,nsp_const_string str, int flag)
 {
   int i;
-  NspSMatrix *Loc = new_smatrix();
+  NspSMatrix *Loc = NULLSMAT;
   nsp_const_string init; 
   nsp_const_string def="";
-  if ( Loc == NULLSMAT) 
+
+  if ( ((double) m)*((double) n) + 1 > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLSMAT;
+    }
+
+  if ( (Loc= new_smatrix()) == NULLSMAT) 
     { 
       Scierror("Error:\tRunning out of memory\n");
-      return(NULLSMAT);
+      return NULLSMAT;
     }
+
   NSP_OBJECT(Loc)->name = NULL;
   if ( NSP_OBJECT(Loc)->type->set_name(NSP_OBJECT(Loc),name) == NULL)
-    return(NULLSMAT);
+    {
+      FREE(Loc);
+      return NULLSMAT;
+    }
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
-  /* Loc->otype = SMATRIX;
-     Loc->ftype = SMatrix_Type;
-  */
   Loc->m =m;
   Loc->n = n;
   Loc->mn=m*n;
-  if ( Loc->mn == 0 ) 
-    {
-      /* empty string Matrix */
-      Loc->S = (nsp_string *) 0;
-      Loc->m = Loc->n = 0;
-      return(Loc);
-    }
+  Loc->S = (nsp_string *) 0;
+  if ( Loc->mn == 0 )  /* empty string Matrix */
+    return Loc;
+
   if ((Loc->S = (nsp_string *) MALLOC((Loc->mn+1)* sizeof(nsp_string))) == (nsp_string *) 0 )
-    { 
-      Scierror("SMatCreate : Error no more space\n");
-      return(NULLSMAT);
-    }
+    goto err;
+
+  for ( i = 0 ; i <= Loc->mn ; i++ )
+    Loc->S[i] = (nsp_string) 0;
+
   init = ( flag == 0) ? def : str ;
+
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->S[i] =nsp_basic_to_string(init)) == NULLSTRING )  return(NULLSMAT);
+      if ((Loc->S[i] =nsp_basic_to_string(init)) == NULLSTRING )  
+	goto err;
     }
-  /* Last element set to Null pointer **/
-  Loc->S[Loc->mn]=(nsp_string) 0;
-  return(Loc);
+  return Loc;
+
+ err:
+  Scierror("Error:\tRunning out of memory\n");
+  nsp_smatrix_destroy(Loc);
+  return NULLSMAT;
 }
 
 /**
@@ -137,47 +149,54 @@ NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
 
-NspSMatrix*nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, int strl)
+NspSMatrix *nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, int strl)
 {
   int i;
-  NspSMatrix *Loc = new_smatrix();
-  if ( Loc == NULLSMAT) 
+  NspSMatrix *Loc = NULLSMAT;
+  if ( ((double) m)*((double) n) + 1 > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return NULLSMAT;
+    }
+
+  if ( (Loc = new_smatrix()) == NULLSMAT) 
     { 
       Scierror("Error:\tRunning out of memory\n");
       return(NULLSMAT);
     }
+
   NSP_OBJECT(Loc)->name = NULL;
   if ( NSP_OBJECT(Loc)->type->set_name(NSP_OBJECT(Loc),name) == NULL)
-    return(NULLSMAT);
+    {
+      FREE(Loc);
+      return NULLSMAT;
+    }
   NSP_OBJECT(Loc)->ret_pos = -1 ; /* XXXX must be added to all data types */ 
   Loc->m = Max(m,0);
   Loc->n = Max(n,0);
   Loc->mn=m*n;
-  if ( Loc->mn == 0 ) 
-    {
-      /* empty string Matrix */
-      Loc->S = (nsp_string *) 0;
-      return(Loc);
-    }
+  Loc->S = (nsp_string *) 0;
+
+  if ( Loc->mn == 0 )       /* empty string Matrix */
+    return Loc;
+
   if ((Loc->S = (nsp_string *) MALLOC((Loc->mn+1)* sizeof(nsp_string))) == (nsp_string *) 0 )
-    { 
-      Scierror("Error:\tRunning out of memory\n");
-      return(NULLSMAT);
-    }
+    goto err;
+  for ( i = 0 ; i <= Loc->mn ; i++ ) Loc->S[i] = (nsp_string) 0;
+
   if ( strl >= 0) 
     {
       for ( i = 0 ; i < Loc->mn ; i++ ) 
-	{
-	  if ((Loc->S[i] =new_nsp_string_n(strl)) == (nsp_string) 0 )  return(NULLSMAT);
-	}
+	if ((Loc->S[i] =new_nsp_string_n(strl)) == (nsp_string) 0 )
+	  goto err;
     }
-  else
-    {
-      for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = (nsp_string) 0;
-    }
-  /* Last element set to Null pointer **/
-  Loc->S[Loc->mn]=(nsp_string) 0;
-  return(Loc);
+
+  return Loc;
+
+ err:
+  Scierror("Error:\tRunning out of memory\n");
+  nsp_smatrix_destroy(Loc);
+  return NULLSMAT;
 }
 
 /**
@@ -195,13 +214,18 @@ NspSMatrix*nsp_smatrix_create_from_table(char **T)
   int i=0,count=0;
   while ( T[count] != NULL) count++;
   /* initial mxn matrix with unallocated elements **/
-  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,count,1,-1) ) == NULLSMAT) return(NULLSMAT);
-  /* allocate elements and store copies of A elements **/
+  if ( ( Loc =nsp_smatrix_create_with_length(NVOID,count,1,-1) ) == NULLSMAT) 
+    return NULLSMAT;
+  /* allocate elements and store copies of T elements in Loc **/
   for ( i = 0 ; i < count ; i++ )
     {
-      if ((Loc->S[ i] =nsp_string_copy(T[i])) == (nsp_string) 0) return(NULLSMAT);
+      if ((Loc->S[ i] =nsp_string_copy(T[i])) == (nsp_string) 0)
+	{
+	  nsp_smatrix_destroy(Loc);
+	  return NULLSMAT;
+	}
     }
-  return(Loc);
+  return Loc;
 }
 
 
@@ -225,7 +249,11 @@ NspSMatrix* nsp_smatrix_create_from_array(nsp_const_string name,int n,const char
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < n ; i++ )
     {
-      if ((Loc->S[i] =nsp_string_copy(T[i])) == (nsp_string) 0) return(NULLSMAT);
+      if ((Loc->S[i] =nsp_string_copy(T[i])) == (nsp_string) 0)
+	{
+	  nsp_smatrix_destroy(Loc);
+	  return NULLSMAT;
+	}
     }
   return(Loc);
 }
@@ -255,7 +283,11 @@ NspSMatrix*nsp_smatrix_create_from_struct(nsp_const_string name,const void *T,un
   /* allocate elements and store copies of A elements **/
   for (entry = (char **) T, i = 0 ; i < count ;entry = ((char **) (((char *) entry)+ size)), i++ )
     {
-      if ((Loc->S[ i] =nsp_string_copy(*entry)) == (nsp_string) 0) return(NULLSMAT);
+      if ((Loc->S[ i] =nsp_string_copy(*entry)) == (nsp_string) 0)
+	{
+	  nsp_smatrix_destroy(Loc);
+	  return NULLSMAT;
+	}
     }
   return(Loc);
 }
@@ -278,7 +310,11 @@ NspSMatrix*nsp_smatrix_copy(const NspSMatrix *A)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < Loc->mn ; i++ )
     {
-      if ((Loc->S[ i] =nsp_string_copy(A->S[i])) == (nsp_string) 0) return(NULLSMAT);
+      if ((Loc->S[ i] =nsp_string_copy(A->S[i])) == (nsp_string) 0)
+	{
+	  nsp_smatrix_destroy(Loc);
+	  return NULLSMAT;
+	}
     }
   return(Loc);
 }
@@ -314,6 +350,11 @@ unsigned int  nsp_smatrix_elt_size(NspMatrix *M)
 int nsp_smatrix_resize(NspSMatrix *A, int m, int n)
 {
   int i;
+  if ( ((double) m)*((double) n) + 1.0 > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
   if ( A->mn == m*n ) 
     {
       A->m=m;
@@ -341,10 +382,13 @@ int nsp_smatrix_resize(NspSMatrix *A, int m, int n)
   if ( A->S == (nsp_string *) 0) return(FAIL);
 
   /* Initialize new area **/
-  A->S[(m*n)] = (nsp_string)0;
+  for ( i = A->mn ; i <= m*n ; i++ )
+    A->S[i] = (nsp_string)0;
+
   for ( i = A->mn ; i < m*n ; i++ )
     {
-      if ((A->S[i] =nsp_string_copy(".")) == ( nsp_string) 0 )  return(FAIL);
+      if ((A->S[i] =nsp_string_copy(".")) == ( nsp_string) 0 )  /* FIXME: cleanning to do ? */
+	return(FAIL);
     }
   A->m =m ;
   A->n =n;
@@ -366,7 +410,7 @@ void nsp_smatrix_destroy(NspSMatrix *A)
   int i;
   if ( A == NULLSMAT) return;
   NSP_OBJECT(A)->type->set_name(NSP_OBJECT(A),NVOID);
-  if ( A-> mn != 0 ) 
+  if ( A-> mn != 0 && A->S != NULL ) 
     {
       for ( i = 0 ; i < A->mn ; i++ ) 
 	{
@@ -587,6 +631,11 @@ int nsp_smatrix_latex_tab_print(NspSMatrix *SMat)
 
 int nsp_smatrix_enlarge(NspSMatrix *A, int m, int n)
 {
+  if ( ((double) m)*((double) n) + 1.0 > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
   if ( A->mn == 0) return nsp_smatrix_resize(A,m,n);
   if ( n > A->n  )
     if ( nsp_smatrix_add_columns(A,n- A->n) == FAIL) return(FAIL);

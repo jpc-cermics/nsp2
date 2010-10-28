@@ -241,12 +241,19 @@ unsigned int  nsp_imatrix_elt_size(NspMatrix *M)
 
 int nsp_imatrix_resize(NspIMatrix *A, int m, int n) 
 {
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
   if ( A->mn == m*n ) 
     {
       A->m=m;
       A->n=n;
-      return(OK);
+      return OK;
     };
+
   if ( m*n < 0) return FAIL;
   if ( m*n == 0 ) 
     {
@@ -254,10 +261,15 @@ int nsp_imatrix_resize(NspIMatrix *A, int m, int n)
       FREE(A->Iv);
       return OK;
     }
+
   A->m =m ;  A->n =n;   A->mn=m*n ;
   A->Iv =REALLOC(A->Iv,A->mn*A->eltsize);
-  if ( A->Iv == NULL) return(FAIL);
-  return(OK);
+  if ( A->Iv == NULL) 
+    {
+      Scierror("Error:\tRunning out of memory\n");
+      return FAIL;
+    }
+  return OK;
 }
 
 /**
@@ -268,7 +280,7 @@ int nsp_imatrix_resize(NspIMatrix *A, int m, int n)
  * 
  * The #NspIMatrix @A of dimension 1x1 is changed to a matrix of size @m x @n 
  * filled with the @A scalar value i.e A= A(1,1)*ones(m;n). 
- * Note that the size of @A is not checked on entry it sould be 1x1.
+ * Note that the size of @A is not checked on entry it should be 1x1.
  *
  * returns: %OK or %FAIL. When %OK is returned @A is changed. 
  */
@@ -505,6 +517,11 @@ int nsp_imatrix_latex_tab_print(NspIMatrix *IMat)
 
 int nsp_imatrix_enlarge(NspIMatrix *A, int m, int n)
 {
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
   if ( A->mn == 0)
     {
       int i;

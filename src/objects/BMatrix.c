@@ -160,6 +160,12 @@ unsigned int  nsp_bmatrix_elt_size(NspMatrix *M)
 
 int nsp_bmatrix_resize(NspBMatrix *A, int m, int n) 
 {
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
   if ( A->mn == m*n ) 
     {
       A->m=m;
@@ -370,6 +376,12 @@ int nsp_bmatrix_latex_tab_print(NspBMatrix *BMat)
 
 int nsp_bmatrix_enlarge(NspBMatrix *A, int m, int n)
 {
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
   if ( A->mn == 0)
     {
       int i;
