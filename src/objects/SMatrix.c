@@ -1962,7 +1962,7 @@ NspMatrix *nsp_string_to_ascii(nsp_const_string S)
   NspMatrix *Loc;
   if ((Loc = nsp_matrix_create(NVOID,'r',1,strlen(S))) == NULLMAT) return(NULLMAT);
   for ( i = 0 ; i < strlen(S) ; i++ )
-    Loc->R[i] = (int) S[i];
+    Loc->R[i] = (unsigned char) S[i];
   return Loc;
 }
 
