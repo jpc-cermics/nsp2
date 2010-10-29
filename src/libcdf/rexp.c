@@ -36,44 +36,26 @@ static double cdf_rexp_(double x);
 double cdf_rexp(double x)
 {
   double w;
-  if ( x > 0.15 ) 
+  if ( x < -0.015 ||  x > 0.015 ) 
     {
-      if ( x > 0.30 ) return exp(x)-1;
-      /* exp(x)-1= (exp(x/2)-1)*(exp(x/2)+1) */
-      w = cdf_rexp_(x/2); 
-      return w*(w+2);
+      return exp(x)-1;
     }
   else 
     {
-      if ( x < -0.30) return exp(x)-1;
-      if ( x > -0.15) return cdf_rexp_(x);
-      /* exp(x)-1= (exp(x/2)-1)*(exp(x/2)+1) */
-      w = cdf_rexp_(x/2); 
-      return w*(w+2);
+      return cdf_rexp_(x);
     }
 }
 
 static double cdf_rexp_(double x)
-    {
-#ifdef HORNER 
-      return (x*(0.9987959956059006
-		 +(0.1680067132994839E-11
-		   +0.2377958241890412E-1*x)*x)
-	      /(0.9987959956059007
-		+(-0.4993979978012702
-		  +(0.107012582051777
-		    +(-0.1188979120931212E-1
-		      +0.5944152325789097E-3*x)*x)*x)*x));
-#else 
-      /* continued fraction form */
-      return ( 0.4000500174892026E2
-	       / (x-0.2000250087429536E2+0.1380277617472468E3
-		  /(x+0.1003149949888885E-9+0.298286123203475E2
-		    /(x+0.1127717937405408E-10+0.121736389391988E2
-		      /(x-0.4094050759274607E-10)))));
-#endif 
+{
+  return(x*(0.9999879465639932
+	    +(0.1681565684988593E-17
+	      +0.2380922406793938E-1*x)*x)
+	 /(0.9999879465639932
+	   +(-0.4999939732819966
+	     +(0.1071415529482722
+	       +(-0.1190461203396969E-1+0.5952298576585598E-3*x)*x)*x)*x));
 }
-
 
 /* 
  * Using Maple code for approximation 
@@ -83,7 +65,7 @@ static double cdf_rexp_(double x)
   f:= proc(x) exp(x)-1;end proc;
   g:= proc(x) f(x)/x;end proc;
   Digits:=50;
-  am:=-15;ap:=15;ad:=100;
+  am:=-15;ap:=15;ad:=1000;
   ggp:=chebpade(g(x),x=(am/ad)..(ap/ad),[2,4]);
   Digits:=17;
   gg:= convert(ggp,float);
