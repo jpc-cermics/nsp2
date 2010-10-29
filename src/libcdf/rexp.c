@@ -31,7 +31,6 @@
  * Returns: a double 
  **/
 
-static double cdf_rexp_(double x);
 
 double cdf_rexp(double x)
 {
@@ -42,19 +41,17 @@ double cdf_rexp(double x)
     }
   else 
     {
-      return cdf_rexp_(x);
+      /* pade approximation computed with 
+       * Maple (see code below).
+       */
+      return(x*(0.9999879465639932
+		+(0.1681565684988593E-17
+		  +0.2380922406793938E-1*x)*x)
+	     /(0.9999879465639932
+	       +(-0.4999939732819966
+		 +(0.1071415529482722
+		   +(-0.1190461203396969E-1+0.5952298576585598E-3*x)*x)*x)*x));
     }
-}
-
-static double cdf_rexp_(double x)
-{
-  return(x*(0.9999879465639932
-	    +(0.1681565684988593E-17
-	      +0.2380922406793938E-1*x)*x)
-	 /(0.9999879465639932
-	   +(-0.4999939732819966
-	     +(0.1071415529482722
-	       +(-0.1190461203396969E-1+0.5952298576585598E-3*x)*x)*x)*x));
 }
 
 /* 
