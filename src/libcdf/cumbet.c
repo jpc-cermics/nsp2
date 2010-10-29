@@ -40,7 +40,7 @@ int cdf_cumbet (double *x, double *y, double *a, double *b, double *cum,double *
       *ccum = 0.;
       return 0;
     }
-  cdf_bratio (a, b, x, y, cum, ccum, &ierr);
+  cdf_bratio (*a, *b, *x, *y, cum, ccum, &ierr);
   return 0;
 }
 

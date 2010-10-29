@@ -34,7 +34,6 @@
 
 double cdf_rexp(double x)
 {
-  double w;
   if ( x < -0.015 ||  x > 0.015 ) 
     {
       return exp(x)-1;

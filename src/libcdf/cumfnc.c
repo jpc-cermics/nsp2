@@ -87,7 +87,7 @@ int cdf_cumfnc (double *f, double *dfn, double *dfd, double *pnonc, double *cum,
     }
   d__1 = *dfn * half + (double) icent;
   d__2 = *dfd * half;
-  cdf_bratio (&d__1, &d__2, &xx, &yy, &betdn, &dummy, &ierr);
+  cdf_bratio (d__1, d__2, xx, yy, &betdn, &dummy, &ierr);
   adn = *dfn / 2. + (double) icent;
   aup = adn;
   b = *dfd / 2.;

@@ -113,7 +113,7 @@ extern int cdf_grat1 (double *a, double *x, double *r__, double *p, double *q, d
 extern int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind);
 extern int cdf_ipmpar (const int );
 
-extern int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w1, int *ierr);
+extern int cdf_bratio (double a, double b, double x, double y, double *w, double *w1, int *ierr);
 extern int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *a, double *b, int *status, double *bound, double *boundbis);
 extern int cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn, double *pr, double *ompr, int *status, double *bound, double *boundbis);
 extern int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df, int *status, double *bound, double *boundbis);

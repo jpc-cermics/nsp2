@@ -1,15 +1,13 @@
 #include <nsp/spmf.h>  /* cdf_psi1 rename nsp_digamma and move in lib spmf */
 #include "cdf.h"
 
-static double cdf_apser (double *a, double *b, double *x, double *eps);
-static double cdf_fpser (double *a, double *b, double *x, double *eps);
-static double cdf_bpser (double *a, double *b, double *x, double *eps);
-static double cdf_bfrac (double *a, double *b, double *x, double *y, 
-			 double *lambda, double *eps);
-static double cdf_bup (double *a, double *b, double *x, double *y, int *n, double *eps);
-static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, 
-		      double *eps,int *ierr);
-static double cdf_basym (double *a, double *b, double *lambda, double *eps);
+static double cdf_apser (double a, double b, double x, double eps);
+static double cdf_fpser (double a, double b, double x, double eps);
+static double cdf_bpser (double a, double b, double x, double eps);
+static double cdf_bfrac (double a, double b, double x, double y, double lambda, double eps);
+static double cdf_bup (double a, double b, double x, double y, int *n, double eps);
+static int cdf_bgrat (double a, double b, double x, double y, double *w, double eps,int *ierr);
+static double cdf_basym (double a, double b, double lambda, double eps);
 
 
 /*
@@ -36,7 +34,7 @@ static double cdf_basym (double *a, double *b, double *lambda, double *eps);
  * revised, nov 1991 
  */
 
-int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w1,
+int cdf_bratio (double a, double b, double x, double y, double *w, double *w1,
 		int *ierr)
 {
   const int c__1 = 1;
@@ -52,57 +50,57 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
   eps = cdf_spmpar (c__1);
   *w = 0.;
   *w1 = 0.;
-  if (*a < 0. || *b < 0.)
+  if (a < 0. || b < 0.)
     {
       goto L270;
     }
-  if (*a == 0. && *b == 0.)
+  if (a == 0. && b == 0.)
     {
       goto L280;
     }
-  if (*x < 0. || *x > 1.)
+  if (x < 0. || x > 1.)
     {
       goto L290;
     }
-  if (*y < 0. || *y > 1.)
+  if (y < 0. || y > 1.)
     {
       goto L300;
     }
-  z__ = *x + *y - .5 - .5;
+  z__ = x + y - .5 - .5;
   if (Abs (z__) > eps * 3.)
     {
       goto L310;
     }
 
   *ierr = 0;
-  if (*x == 0.)
+  if (x == 0.)
     {
       goto L210;
     }
-  if (*y == 0.)
+  if (y == 0.)
     {
       goto L230;
     }
-  if (*a == 0.)
+  if (a == 0.)
     {
       goto L240;
     }
-  if (*b == 0.)
+  if (b == 0.)
     {
       goto L220;
     }
 
   eps = Max (eps, 1e-15);
-  if (Max (*a, *b) < eps * .001)
+  if (Max (a, b) < eps * .001)
     {
       goto L260;
     }
 
   ind = 0;
-  a0 = *a;
-  b0 = *b;
-  x0 = *x;
-  y0 = *y;
+  a0 = a;
+  b0 = b;
+  x0 = x;
+  y0 = y;
   if (Min (a0, b0) > 1.)
     {
       goto L40;
@@ -110,15 +108,15 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
 
   /*             procedure for a0 .le. 1 or b0 .le. 1 */
 
-  if (*x <= .5)
+  if (x <= .5)
     {
       goto L10;
     }
   ind = 1;
-  a0 = *b;
-  b0 = *a;
-  x0 = *y;
-  y0 = *x;
+  a0 = b;
+  b0 = a;
+  x0 = y;
+  y0 = x;
 
  L10:
   /* computing min */
@@ -181,24 +179,24 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
   /*             procedure for a0 .gt. 1 and b0 .gt. 1 */
 
  L40:
-  if (*a > *b)
+  if (a > b)
     {
       goto L50;
     }
-  lambda = *a - (*a + *b) * *x;
+  lambda = a - (a + b) * x;
   goto L60;
  L50:
-  lambda = (*a + *b) * *y - *b;
+  lambda = (a + b) * y - b;
  L60:
   if (lambda >= 0.)
     {
       goto L70;
     }
   ind = 1;
-  a0 = *b;
-  b0 = *a;
-  x0 = *y;
-  y0 = *x;
+  a0 = b;
+  b0 = a;
+  x0 = y;
+  y0 = x;
   lambda = Abs (lambda);
 
  L70:
@@ -237,37 +235,37 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
   /*            evaluation of the appropriate algorithm */
 
  L90:
-  *w = cdf_fpser (&a0, &b0, &x0, &eps);
+  *w = cdf_fpser (a0, b0, x0, eps);
   *w1 = .5 - *w + .5;
   goto L250;
 
  L100:
-  *w1 = cdf_apser (&a0, &b0, &x0, &eps);
+  *w1 = cdf_apser (a0, b0, x0, eps);
   *w = .5 - *w1 + .5;
   goto L250;
 
  L110:
-  *w = cdf_bpser (&a0, &b0, &x0, &eps);
+  *w = cdf_bpser (a0, b0, x0, eps);
   *w1 = .5 - *w + .5;
   goto L250;
 
  L120:
-  *w1 = cdf_bpser (&b0, &a0, &y0, &eps);
+  *w1 = cdf_bpser (b0, a0, y0, eps);
   *w = .5 - *w1 + .5;
   goto L250;
 
  L130:
   d__1 = eps * 15.;
-  *w = cdf_bfrac (&a0, &b0, &x0, &y0, &lambda, &d__1);
+  *w = cdf_bfrac (a0, b0, x0, y0, lambda, d__1);
   *w1 = .5 - *w + .5;
   goto L250;
 
  L140:
-  *w1 = cdf_bup (&b0, &a0, &y0, &x0, &n, &eps);
+  *w1 = cdf_bup (b0, a0, y0, x0, &n, eps);
   b0 += n;
  L150:
   d__1 = eps * 15.;
-  cdf_bgrat (&b0, &a0, &y0, &x0, w1, &d__1, &ierr1);
+  cdf_bgrat (b0, a0, y0, x0, w1, d__1, &ierr1);
   *w = .5 - *w1 + .5;
   goto L250;
 
@@ -281,12 +279,12 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
   --n;
   b0 = 1.;
  L170:
-  *w = cdf_bup (&b0, &a0, &y0, &x0, &n, &eps);
+  *w = cdf_bup (b0, a0, y0, x0, &n, eps);
   if (x0 > .7)
     {
       goto L180;
     }
-  *w += cdf_bpser (&a0, &b0, &x0, &eps);
+  *w += cdf_bpser (a0, b0, x0, eps);
   *w1 = .5 - *w + .5;
   goto L250;
 
@@ -296,24 +294,24 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
       goto L190;
     }
   n = 20;
-  *w += cdf_bup (&a0, &b0, &x0, &y0, &n, &eps);
+  *w += cdf_bup (a0, b0, x0, y0, &n, eps);
   a0 += n;
  L190:
   d__1 = eps * 15.;
-  cdf_bgrat (&a0, &b0, &x0, &y0, w, &d__1, &ierr1);
+  cdf_bgrat (a0, b0, x0, y0, w, d__1, &ierr1);
   *w1 = .5 - *w + .5;
   goto L250;
 
  L200:
   d__1 = eps * 100.;
-  *w = cdf_basym (&a0, &b0, &lambda, &d__1);
+  *w = cdf_basym (a0, b0, lambda, d__1);
   *w1 = .5 - *w + .5;
   goto L250;
 
   /*               termination of the procedure */
 
  L210:
-  if (*a == 0.)
+  if (a == 0.)
     {
       goto L320;
     }
@@ -323,7 +321,7 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
   return 0;
 
  L230:
-  if (*b == 0.)
+  if (b == 0.)
     {
       goto L330;
     }
@@ -345,8 +343,8 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
   /*           procedure for a and b .lt. 1.e-3*eps */
 
  L260:
-  *w = *b / (*a + *b);
-  *w1 = *a / (*a + *b);
+  *w = b / (a + b);
+  *w1 = a / (a + b);
   return 0;
 
   /*                       error return */
@@ -377,55 +375,45 @@ int cdf_bratio (double *a, double *b, double *x, double *y, double *w, double *w
 
 /*
  *     apser yields the incomplete beta ratio i(sub(1-x))(b,a) for 
- *     a .le. min(eps,eps*b), b*x .le. 1, and x .le. 0.5. used when 
+ *     a .le. min(eps,epsb), b*x .le. 1, and x .le. 0.5. used when 
  *     a is very small. use only if above inequalities are satisfied. 
  */
 
-static double cdf_apser (double *a, double *b, double *x, double *eps)
+static double cdf_apser (double a, double b, double x, double eps)
 {
   const  double g = .577215664901533;
-  double ret_val;
-  double c__, j, s, t, aj, bx, tol;
-
-  bx = *b * *x;
-  t = *x - bx;
-  if (*b * *eps > .02)
+  double c, j, s, t, aj, bx, tol;
+  
+  bx = b * x;
+  t = x - bx;
+  if (b * eps > .02)
     {
-      goto L10;
+      c = log (bx) + g + t;
     }
-  c__ = log (*x) + nsp_digamma (*b) + g + t;
-  goto L20;
- L10:
-  c__ = log (bx) + g + t;
-
- L20:
-  tol = *eps * 5. * Abs (c__);
+  else 
+    {
+      c = log (x) + nsp_digamma (b) + g + t;
+    }
+  tol = eps * 5. * Abs (c);
   j = 1.;
   s = 0.;
- L30:
-  j += 1.;
-  t *= *x - bx / j;
-  aj = t / j;
-  s += aj;
-  if (Abs (aj) > tol)
+  while (1 ) 
     {
-      goto L30;
+      j += 1.;
+      t *= x - bx / j;
+      aj = t / j;
+      s += aj;
+      if (Abs (aj) <= tol) break;
     }
-
-  ret_val = -(*a) * (c__ + s);
-  return ret_val;
+  return  -(a) * (c + s);
 }
 
-
-
 /*
- *                 EVALUATION OF I (A,B) 
- *                                X 
- *          FOR B .LT. MIN(EPS,EPS*A) AND X .LE. 0.5. 
+ *  calculates  I_X (A,B) 
+ *  FOR B .LT. MIN(EPS,EPS*A) AND X .LE. 0.5. 
  */
 
-
-static double cdf_fpser (double *a, double *b, double *x, double *eps)
+static double cdf_fpser (double a, double b, double x, double eps)
 {
   const int c__1 = 1;
 
@@ -434,12 +422,12 @@ static double cdf_fpser (double *a, double *b, double *x, double *eps)
   double tol;
 
   ret_val = 1.;
-  if (*a <= *eps * .001)
+  if (a <= eps * .001)
     {
       goto L10;
     }
   ret_val = 0.;
-  t = *a * log (*x);
+  t = a * log (x);
   if (t < cdf_exparg (c__1))
     {
       return ret_val;
@@ -449,14 +437,14 @@ static double cdf_fpser (double *a, double *b, double *x, double *eps)
   /*                note that 1/b(a,b) = b */
 
  L10:
-  ret_val = *b / *a * ret_val;
-  tol = *eps / *a;
-  an = *a + 1.;
-  t = *x;
+  ret_val = b / a * ret_val;
+  tol = eps / a;
+  an = a + 1.;
+  t = x;
   s = t / an;
  L20:
   an += 1.;
-  t = *x * t;
+  t = x * t;
   c__ = t / an;
   s += c__;
   if (Abs (c__) > tol)
@@ -464,7 +452,7 @@ static double cdf_fpser (double *a, double *b, double *x, double *eps)
       goto L20;
     }
 
-  ret_val *= *a * s + 1.;
+  ret_val *= a * s + 1.;
   return ret_val;
 }				/* fpser_ */
 
@@ -475,32 +463,27 @@ static double cdf_fpser (double *a, double *b, double *x, double *eps)
  *     OR B*X .LE. 0.7.  EPS IS THE TOLERANCE USED. 
  */
 
-static double cdf_bpser (double *a, double *b, double *x, double *eps)
+static double cdf_bpser (double a, double b, double x, double eps)
 {
-  int i__1;
-  double ret_val;
-  double c__;
-  int i__, m;
-  double n, t, u, w, z__, a0, b0;
-  double apb, tol, sum;
+  int i__1, i__, m;
+  double ret_val= 0.0 , c__;
+  double n, t, u, w, z__, a0, b0, apb, tol, sum;
 
-  ret_val = 0.;
-  if (*x == 0.)
+  if (x == 0.)
     {
       return ret_val;
     }
-  /*          compute the factor x**a/(a*beta(a,b))  */
-
-  a0 = Min (*a, *b);
+  /*  compute the factor x**a/(a*beta(a,b))  */
+  a0 = Min (a, b);
   if (a0 < 1.)
     {
       goto L10;
     }
-  z__ = *a * log (*x) - cdf_betaln (*a, *b);
-  ret_val = exp (z__) / *a;
+  z__ = a * log (x) - cdf_betaln (a, b);
+  ret_val = exp (z__) / a;
   goto L100;
  L10:
-  b0 = Max (*a, *b);
+  b0 = Max (a, b);
   if (b0 >= 8.)
     {
       goto L90;
@@ -510,15 +493,14 @@ static double cdf_bpser (double *a, double *b, double *x, double *eps)
       goto L40;
     }
 
-  /*            procedure for a0 .lt. 1 and b0 .le. 1 */
+  /*  procedure for a0 .lt. 1 and b0 .le. 1 */
 
-  ret_val = pow(*x,*a);
+  ret_val = pow(x,a);
   if (ret_val == 0.)
     {
       return ret_val;
     }
-
-  apb = *a + *b;
+  apb = a + b;
   if (apb > 1.)
     {
       goto L20;
@@ -526,12 +508,12 @@ static double cdf_bpser (double *a, double *b, double *x, double *eps)
   z__ = cdf_gam1 (apb) + 1.;
   goto L30;
  L20:
-  u = *a + *b - 1.;
+  u = a + b - 1.;
   z__ = (cdf_gam1 (u) + 1.) / apb;
 
  L30:
-  c__ = (cdf_gam1 (*a) + 1.) * (cdf_gam1 (*b) + 1.) / z__;
-  ret_val = ret_val * c__ * (*b / apb);
+  c__ = (cdf_gam1 (a) + 1.) * (cdf_gam1 (b) + 1.) / z__;
+  ret_val = ret_val * c__ * (b / apb);
   goto L100;
 
   /*         procedure for a0 .lt. 1 and 1 .lt. b0 .lt. 8 */
@@ -554,7 +536,7 @@ static double cdf_bpser (double *a, double *b, double *x, double *eps)
   u = log (c__) + u;
 
  L60:
-  z__ = *a * log (*x) - u;
+  z__ = a * log (x) - u;
   b0 += -1.;
   apb = a0 + b0;
   if (apb > 1.)
@@ -567,36 +549,34 @@ static double cdf_bpser (double *a, double *b, double *x, double *eps)
   u = a0 + b0 - 1.;
   t = (cdf_gam1 (u) + 1.) / apb;
  L80:
-  ret_val = exp (z__) * (a0 / *a) * (cdf_gam1 (b0) + 1.) / t;
+  ret_val = exp (z__) * (a0 / a) * (cdf_gam1 (b0) + 1.) / t;
   goto L100;
 
-  /*            procedure for a0 .lt. 1 and b0 .ge. 8 */
-
+  /* procedure for a0 .lt. 1 and b0 .ge. 8 */
  L90:
   u = cdf_gamln1 (a0) + cdf_algdiv (a0, b0);
-  z__ = *a * log (*x) - u;
-  ret_val = a0 / *a * exp (z__);
+  z__ = a * log (x) - u;
+  ret_val = a0 / a * exp (z__);
+
  L100:
-  if (ret_val == 0. || *a <= *eps * .1)
+  if (ret_val == 0. || a <= eps * .1)
     {
       return ret_val;
     }
-  /*                     compute the series   */
-
+  /*  compute the series   */
   sum = 0.;
   n = 0.;
   c__ = 1.;
-  tol = *eps / *a;
- L110:
-  n += 1.;
-  c__ = c__ * (.5 - *b / n + .5) * *x;
-  w = c__ / (*a + n);
-  sum += w;
-  if (Abs (w) > tol)
+  tol = eps / a;
+  while (1)
     {
-      goto L110;
+      n += 1.;
+      c__ = c__ * (.5 - b / n + .5) * x;
+      w = c__ / (a + n);
+      sum += w;
+      if ( Abs (w) <= tol) break;
     }
-  ret_val *= *a * sum + 1.;
+  ret_val *= a * sum + 1.;
   return ret_val;
 }			
 
@@ -606,26 +586,26 @@ static double cdf_bpser (double *a, double *b, double *x, double *eps)
  *     it is assumed that  lambda = (a + b)*y - b. 
  */
 
-static double cdf_bfrac (double *a, double *b, double *x, double *y, double *lambda, double *eps)
+static double cdf_bfrac (double a, double b, double x, double y, double lambda, double eps)
 {
   double ret_val, d__1;
   double beta, c__, e, n, p, r__, s, t, alpha, w, c0, c1, r0, an, bn;
   double yp1, anp1, bnp1;
 
-  ret_val = cdf_brcomp (*a, *b, *x, *y);
+  ret_val = cdf_brcomp (a, b, x, y);
   if (ret_val == 0.)
     {
       return ret_val;
     }
 
-  c__ = *lambda + 1.;
-  c0 = *b / *a;
-  c1 = 1. / *a + 1.;
-  yp1 = *y + 1.;
+  c__ = lambda + 1.;
+  c0 = b / a;
+  c1 = 1. / a + 1.;
+  yp1 = y + 1.;
 
   n = 0.;
   p = 1.;
-  s = *a + 1.;
+  s = a + 1.;
   an = 0.;
   bn = 1.;
   anp1 = 1.;
@@ -636,10 +616,10 @@ static double cdf_bfrac (double *a, double *b, double *x, double *y, double *lam
 
  L10:
   n += 1.;
-  t = n / *a;
-  w = n * (*b - n) * *x;
-  e = *a / s;
-  alpha = p * (p + c0) * e * e * (w * *x);
+  t = n / a;
+  w = n * (b - n) * x;
+  e = a / s;
+  alpha = p * (p + c0) * e * e * (w * x);
   e = (t + 1.) / (c1 + t + t);
   beta = n + w / s + e * (c__ + n * yp1);
   p = t + 1.;
@@ -656,7 +636,7 @@ static double cdf_bfrac (double *a, double *b, double *x, double *y, double *lam
 
   r0 = r__;
   r__ = anp1 / bnp1;
-  if ((d__1 = r__ - r0, Abs (d__1)) <= *eps * r__)
+  if ((d__1 = r__ - r0, Abs (d__1)) <= eps * r__)
     {
       goto L20;
     }
@@ -682,7 +662,7 @@ static double cdf_bfrac (double *a, double *b, double *x, double *y, double *lam
  *     eps is the tolerance used. 
  */
 
-static double cdf_bup (double *a, double *b, double *x, double *y, int *n, double *eps)
+static double cdf_bup (double a, double b, double x, double y, int *n, double eps)
 {
   const int c__1 = 1;
   const int c__0 = 0;
@@ -700,11 +680,11 @@ static double cdf_bup (double *a, double *b, double *x, double *y, int *n, doubl
    *             EXP(MU)*(X**A*Y**B/BETA(A,B))/A 
    */
 
-  apb = *a + *b;
-  ap1 = *a + 1.;
+  apb = a + b;
+  ap1 = a + 1.;
   mu = 0;
   d__ = 1.;
-  if (*n == 1 || *a < 1.)
+  if (*n == 1 || a < 1.)
     {
       goto L10;
     }
@@ -722,7 +702,7 @@ static double cdf_bup (double *a, double *b, double *x, double *y, int *n, doubl
   d__ = exp (-t);
 
  L10:
-  ret_val = cdf_brcmp1 (mu, *a, *b, *x, *y) / *a;
+  ret_val = cdf_brcmp1 (mu, a, b, x, y) / a;
   if (*n == 1 || ret_val == 0.)
     {
       return ret_val;
@@ -733,18 +713,18 @@ static double cdf_bup (double *a, double *b, double *x, double *y, int *n, doubl
   /*          let k be the index of the maximum term */
 
   k = 0;
-  if (*b <= 1.)
+  if (b <= 1.)
     {
       goto L50;
     }
-  if (*y > 1e-4)
+  if (y > 1e-4)
     {
       goto L20;
     }
   k = nm1;
   goto L30;
  L20:
-  r__ = (*b - 1.) * *x / *y - *a;
+  r__ = (b - 1.) * x / y - a;
   if (r__ < 1.)
     {
       goto L50;
@@ -763,7 +743,7 @@ static double cdf_bup (double *a, double *b, double *x, double *y, int *n, doubl
   for (i__ = 1; i__ <= i__1; ++i__)
     {
       l = (double) (i__ - 1);
-      d__ = (apb + l) / (ap1 + l) * *x * d__;
+      d__ = (apb + l) / (ap1 + l) * x * d__;
       w += d__;
       /* l40: */
     }
@@ -780,9 +760,9 @@ static double cdf_bup (double *a, double *b, double *x, double *y, int *n, doubl
   for (i__ = kp1; i__ <= i__1; ++i__)
     {
       l = (double) (i__ - 1);
-      d__ = (apb + l) / (ap1 + l) * *x * d__;
+      d__ = (apb + l) / (ap1 + l) * x * d__;
       w += d__;
-      if (d__ <= *eps * w)
+      if (d__ <= eps * w)
 	{
 	  goto L70;
 	}
@@ -805,7 +785,7 @@ static double cdf_bup (double *a, double *b, double *x, double *y, int *n, doubl
  *     ierr is a variable that reports the status of the results. 
  */
 
-static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, double *eps,int *ierr)
+static int cdf_bgrat (double a, double b, double x, double y, double *w, double eps,int *ierr)
 {
   int i__1;
   double d__1;
@@ -820,20 +800,20 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
   double lnx, sum;
   double bp2n;
 
-  bm1 = *b - .5 - .5;
-  nu = *a + bm1 * .5;
-  if (*y > .375)
+  bm1 = b - .5 - .5;
+  nu = a + bm1 * .5;
+  if (y > .375)
     {
       goto L10;
     }
-  d__1 = -(*y);
+  d__1 = -(y);
   lnx = cdf_dln1px (d__1);
   goto L20;
  L10:
-  lnx = log (*x);
+  lnx = log (x);
  L20:
   z__ = -nu * lnx;
-  if (*b * z__ == 0.)
+  if (b * z__ == 0.)
     {
       goto L70;
     }
@@ -842,15 +822,15 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
    *                 SET R = EXP(-Z)*Z**B/GAMMA(B) 
    */
 
-    r__ = *b * (cdf_gam1 (*b) + 1.) * exp (*b * log (z__));
-  r__ = r__ * exp (*a * lnx) * exp (bm1 * .5 * lnx);
-  u = cdf_algdiv (*b, *a) + *b * log (nu);
+    r__ = b * (cdf_gam1 (b) + 1.) * exp (b * log (z__));
+  r__ = r__ * exp (a * lnx) * exp (bm1 * .5 * lnx);
+  u = cdf_algdiv (b, a) + b * log (nu);
   u = r__ * exp (-u);
   if (u == 0.)
     {
       goto L70;
     }
-  cdf_grat1 (b, &z__, &r__, &p, &q, eps);
+  cdf_grat1 (&b, &z__, &r__, &p, &q, &eps);
 
   /* computing 2nd power */
   d__1 = 1. / nu;
@@ -864,7 +844,7 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
   n2 = 0.;
   for (n = 1; n <= 30; ++n)
     {
-      bp2n = *b + n2;
+      bp2n = b + n2;
       j = (bp2n * (bp2n + 1.) * j + (z__ + bp2n + 1.) * t) * v;
       n2 += 2.;
       t *= t2;
@@ -876,12 +856,12 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
 	  goto L40;
 	}
       nm1 = n - 1;
-      coef = *b - n;
+      coef = b - n;
       i__1 = nm1;
       for (i__ = 1; i__ <= i__1; ++i__)
 	{
 	  s += coef * c__[i__ - 1] * d__[n - i__ - 1];
-	  coef += *b;
+	  coef += b;
 	  /* l30: */
 	}
     L40:
@@ -892,7 +872,7 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
 	{
 	  goto L70;
 	}
-      if (Abs (dj) <= *eps * (sum + l))
+      if (Abs (dj) <= eps * (sum + l))
 	{
 	  goto L60;
 	}
@@ -925,7 +905,7 @@ static int cdf_bgrat (double *a, double *b, double *x, double *y, double *w, dou
 
 #define NUM 20
 
-static double cdf_basym (double *a, double *b, double *lambda, double *eps)
+static double cdf_basym (double a, double b, double lambda, double eps)
 {
   /*
    * num is the maximum value that n can take in the do loop 
@@ -949,25 +929,25 @@ static double cdf_basym (double *a, double *b, double *lambda, double *eps)
   double sum, znm1;
 
   ret_val = 0.;
-  if (*a >= *b)
+  if (a >= b)
     {
       goto L10;
     }
-  h__ = *a / *b;
+  h__ = a / b;
   r0 = 1. / (h__ + 1.);
-  r1 = (*b - *a) / *b;
-  w0 = 1. / sqrt (*a * (h__ + 1.));
+  r1 = (b - a) / b;
+  w0 = 1. / sqrt (a * (h__ + 1.));
   goto L20;
  L10:
-  h__ = *b / *a;
+  h__ = b / a;
   r0 = 1. / (h__ + 1.);
-  r1 = (*b - *a) / *a;
-  w0 = 1. / sqrt (*b * (h__ + 1.));
+  r1 = (b - a) / a;
+  w0 = 1. / sqrt (b * (h__ + 1.));
 
  L20:
-  d__1 = -(*lambda) / *a;
-  d__2 = *lambda / *b;
-  f = *a * cdf_rlog1 (d__1) + *b * cdf_rlog1 (d__2);
+  d__1 = -(lambda) / a;
+  d__2 = lambda / b;
+  f = a * cdf_rlog1 (d__1) + b * cdf_rlog1 (d__2);
   t = exp (-f);
   if (t == 0.)
     {
@@ -1043,7 +1023,7 @@ static double cdf_basym (double *a, double *b, double *lambda, double *eps)
       w = w0 * w;
       t1 = d__[np1 - 1] * w * j1;
       sum += t0 + t1;
-      if (Abs (t0) + Abs (t1) <= *eps * sum)
+      if (Abs (t0) + Abs (t1) <= eps * sum)
 	{
 	  goto L80;
 	}
@@ -1051,7 +1031,7 @@ static double cdf_basym (double *a, double *b, double *lambda, double *eps)
     }
 
  L80:
-  u = exp (-cdf_bcorr (*a, *b));
+  u = exp (-cdf_bcorr (a, b));
   ret_val = e0 * t * u * sum;
   return ret_val;
 }				

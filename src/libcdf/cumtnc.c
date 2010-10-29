@@ -111,11 +111,11 @@ int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum,
   /*    Compute bcent=B(2*cent) 
    */
   d__1 = cent + .5;
-  cdf_bratio (&halfdf, &d__1, &x, &omx, &bcent, &dum1, &ierr);
+  cdf_bratio (halfdf, d__1, x, omx, &bcent, &dum1, &ierr);
   /*    compute bbcent=B(2*cent+1) 
    */
   d__1 = cent + 1.;
-  cdf_bratio (&halfdf, &d__1, &x, &omx, &bbcent, &dum2, &ierr);
+  cdf_bratio (halfdf, d__1, x, omx, &bbcent, &dum2, &ierr);
   /*    Case bcent and bbcent are essentially zero 
    *    Thus t is effectively infinite 
    */

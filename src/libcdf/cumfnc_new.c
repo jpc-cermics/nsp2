@@ -142,7 +142,7 @@ int nsp_cdf_cumfnc (double f, double dfn, double dfd, double pnonc, double *cum,
 
       /* calculate bratio for j=jmode */
       nu1pj = nu1 + jmode;
-      cdf_bratio (&nu1pj, &nu2, &xx, &yy, &pbratio, &qbratio, &ierr);
+      cdf_bratio (nu1pj, nu2, xx, yy, &pbratio, &qbratio, &ierr);
 
       /* calculate first term */
       psum = poi_wgh * pbratio;

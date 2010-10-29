@@ -39,7 +39,7 @@ int cdf_cumf (double *f, double *dfn, double *dfd, double *cum, double *ccum)
       else
 	yy = 1.0 - xx;
 
-      cdf_bratio (&a, &b, &xx, &yy, ccum, cum, &ierr);
+      cdf_bratio (a, b, xx, yy, ccum, cum, &ierr);
     }
   else if (*f <= 0.0) 
     {
