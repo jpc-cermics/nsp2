@@ -21,7 +21,6 @@
 
 #include <math.h>
 #include <string.h>
-/* #include <fpu_control.h> */
 #include <nsp/machine.h>
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
@@ -30,7 +29,9 @@
 #include <nsp/plist.h> 
 #include <nsp/spmf.h>
 #include <nsp/interf.h> 
-
+#ifdef __linux__ 
+#include <fpu_control.h>
+#endif
 
 static int int_nsp_log1p(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1367,6 +1368,33 @@ static int int_nsp_pdf( Stack stack, int rhs, int opt, int lhs)
   return pdf_table[rep].fonc(stack, rhs, opt, lhs);
 }
 
+#ifdef __linux__ 
+static int int_set_double_extended(Stack stack, int rhs, int opt, int lhs)
+{                                                                         
+  static int usual=1;                                                     
+  static unsigned int __fpu_control;                                      
+  CheckRhs (0, 0);                                                        
+  CheckLhs (0, 0);                                                        
+
+  if ( usual )
+    {         
+      unsigned int toto;
+      _FPU_GETCW(__fpu_control);
+      toto = __fpu_control;
+      toto &= ~_FPU_EXTENDED;
+      toto |= _FPU_DOUBLE;
+      _FPU_SETCW(toto);
+      usual = 0;
+    }
+  else
+    {
+      _FPU_SETCW(__fpu_control);
+      usual = 1;
+    }
+  return 0;
+}
+#endif
+
 
 static OpTab Spmf_func[]={
   {"bincoeff", int_nsp_binomial_coef},
@@ -1391,6 +1419,9 @@ static OpTab Spmf_func[]={
   {"primes_m", int_nsp_primes},
   {"convhull_m_m", int_convhull2d},
   {"pdf", int_nsp_pdf},
+#ifdef __linux__ 
+  {"switch_precision", int_set_double_extended},
+#endif
   {(char *) 0, NULL}
 };
 
