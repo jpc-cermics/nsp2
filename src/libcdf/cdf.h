@@ -82,7 +82,7 @@ extern double nsp_log1p (double a);
 extern double nsp_log1p (double a);
 extern double cdf_dlnbet (double a0, double b0);
 extern double cdf_dlngam (double a);
-extern double cdf_dstrem (double z__);
+/* extern double cdf_dstrem (double z__); */
 extern double cdf_dt1 (double *p, double *q, double *df);
 extern double cdf_erf (double x);
 extern double cdf_erfc (int ind, double x);

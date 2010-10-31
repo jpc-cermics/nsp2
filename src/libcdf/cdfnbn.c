@@ -1,88 +1,77 @@
 #include "cdf.h"
 
-/* ********************************************************************** */
-/*      SUBROUTINE CDFNBN ( WHICH, P,Q, S, XN, PR, STATUS, BOUND ) */
-/*               Cumulative Distribution Function */
-/*               Negative BiNomial distribution */
-/*                              Function */
-/*     Calculates any one parameter of the negative binomial */
-/*     distribution given values for the others. */
-/*     The  cumulative  negative   binomial  distribution  returns  the */
-/*     probability that there  will be  F or fewer failures before  the */
-/*     XNth success in binomial trials each of which has probability of */
-/*     success PR. */
-/*     The individual term of the negative binomial is the probability of */
-/*     S failures before XN successes and is */
-/*          Choose( S, XN+S-1 ) * PR^(XN) * (1-PR)^S */
-/*                              Arguments */
-/*     WHICH --> Int indicating which of the next four argument */
-/*               values is to be calculated from the others. */
-/*               Legal range: 1..4 */
-/*               iwhich = 1 : Calculate P and Q from S,XN,PR and OMPR */
-/*               iwhich = 2 : Calculate S from P,Q,XN,PR and OMPR */
-/*               iwhich = 3 : Calculate XN from P,Q,S,PR and OMPR */
-/*               iwhich = 4 : Calculate PR and OMPR from P,Q,S and XN */
-/*                    INT WHICH */
-/*     P <--> The cumulation from 0 to S of the  negative */
-/*            binomial distribution. */
-/*            Input range: [0,1]. */
-/*                    DOUBLE PRECISION P */
-/*     Q <--> 1-P. */
-/*            Input range: (0, 1]. */
-/*            P + Q = 1.0. */
-/*                    DOUBLE PRECISION Q */
-/*     S <--> The upper limit of cumulation of the binomial distribution. */
-/*            There are F or fewer failures before the XNth success. */
-/*            Input range: [0, +infinity). */
-/*            Search range: [0, 1E300] */
-/*                    DOUBLE PRECISION S */
-/*     XN  <--> The number of successes. */
-/*              Input range: [0, +infinity). */
-/*              Search range: [0, 1E300] */
-/*                    DOUBLE PRECISION XN */
-/*     PR  <--> The probability of success in each binomial trial. */
-/*              Input range: [0,1]. */
-/*              Search range: [0,1]. */
-/*                    DOUBLE PRECISION PR */
-/*     OMPR  <--> 1-PR */
-/*              Input range: [0,1]. */
-/*              Search range: [0,1] */
-/*              PR + OMPR = 1.0 */
-/*                    DOUBLE PRECISION OMPR */
-/*     STATUS <-- 0 if calculation completed correctly */
-/*               -I if input parameter number I is out of range */
-/*                1 if answer appears to be lower than lowest */
-/*                  search bound */
-/*                2 if answer appears to be higher than greatest */
-/*                  search bound */
-/*                3 if P + Q .ne. 1 */
-/*                4 if PR + OMPR .ne. 1 */
-/*                    INT STATUS */
-/*     BOUND <-- Undefined if STATUS is 0 */
-/*               Bound exceeded by parameter number I if STATUS */
-/*               is negative. */
-/*               Lower search bound if STATUS is 1. */
-/*               Upper search bound if STATUS is 2. */
-/*                              Method */
-/*     Formula   26.5.26   of   Abramowitz  and  Stegun,  Handbook   of */
-/*     Mathematical Functions (1966) is used  to  reduce calculation of */
-/*     the cumulative distribution  function to that of  an  incomplete */
-/*     beta. */
-/*     Computation of other parameters involve a seach for a value that */
-/*     produces  the desired  value  of P.   The search relies  on  the */
-/*     monotinicity of P with the other parameter. */
-/* ********************************************************************** */
+/**
+ * Cumulative Distribution Function of Negative BiNomial distribution 
+ *
+ * Calculates any one parameter of the negative binomial 
+ * distribution given values for the others. 
+ * The  cumulative  negative   binomial  distribution  returns  the 
+ * probability that there  will be  F or fewer failures before  the 
+ * XNth success in binomial trials each of which has probability of 
+ * success PR. 
+ * The individual term of the negative binomial is the probability of 
+ * S failures before XN successes and is 
+ *      Choose( S, XN+S-1 ) * PR^(XN) * (1-PR)^S 
+ * 
+ * WHICH --> Int indicating which of the next four argument 
+ *           values is to be calculated from the others. 
+ *           Legal range: 1..4 
+ *           iwhich = 1 : Calculate P and Q from S,XN,PR and OMPR 
+ *           iwhich = 2 : Calculate S from P,Q,XN,PR and OMPR 
+ *           iwhich = 3 : Calculate XN from P,Q,S,PR and OMPR 
+ *           iwhich = 4 : Calculate PR and OMPR from P,Q,S and XN 
+ * P <--> The cumulation from 0 to S of the  negative 
+ *        binomial distribution. 
+ *        Input range: [0,1]. 
+ * Q <--> 1-P. 
+ *        Input range: (0, 1]. 
+ *        P + Q = 1.0. 
+ * S <--> The upper limit of cumulation of the binomial distribution. 
+ *        There are F or fewer failures before the XNth success. 
+ *        Input range: [0, +infinity). 
+ *        Search range: [0, 1E300] 
+ * XN  <--> The number of successes. 
+ *          Input range: [0, +infinity). 
+ *          Search range: [0, 1E300] 
+ * PR  <--> The probability of success in each binomial trial. 
+ *          Input range: [0,1]. 
+ *          Search range: [0,1]. 
+ * OMPR  <--> 1-PR 
+ *          Input range: [0,1]. 
+ *          Search range: [0,1] 
+ *          PR + OMPR = 1.0 
+ * STATUS <-- 0 if calculation completed correctly 
+ *           -I if input parameter number I is out of range 
+ *            1 if answer appears to be lower than lowest 
+ *              search bound 
+ *            2 if answer appears to be higher than greatest 
+ *              search bound 
+ *            3 if P + Q .ne. 1 
+ *            4 if PR + OMPR .ne. 1 
+ * BOUND <-- Undefined if STATUS is 0 
+ *           Bound exceeded by parameter number I if STATUS 
+ *           is negative. 
+ *           Lower search bound if STATUS is 1. 
+ *           Upper search bound if STATUS is 2. 
+ * 
+ * Formula   26.5.26   of   Abramowitz  and  Stegun,  Handbook   of 
+ * Mathematical Functions (1966) is used  to  reduce calculation of 
+ * the cumulative distribution  function to that of  an  incomplete 
+ * beta. 
+ * Computation of other parameters involve a seach for a value that 
+ * produces  the desired  value  of P.   The search relies  on  the 
+ * monotinicity of P with the other parameter. 
+ **/
 
 int
 cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
 	    double *pr, double *ompr, int *status, double *bound, double *boundbis)
 {
-static int c__1 = 1;
-static double c_b35 = 0.;
-static double c_b36 = .5;
-static double c_b38 = 5.;
-static double c_b58 = 1.;
-
+  static int c__1 = 1;
+  static double c_b35 = 0.;
+  static double c_b36 = .5;
+  static double c_b38 = 5.;
+  static double c_b58 = 1.;
   const double tol=1.0E-14, atol=1.0E-50,inf=1.0E300, one=1.0E0;
   /* System generated locals */
   double d__1;

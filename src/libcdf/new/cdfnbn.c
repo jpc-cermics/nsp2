@@ -1,6 +1,6 @@
 #include "cdf.h"
 
-/*
+/**
  * Cumulative Distribution Function of Negative BiNomial distribution 
  *
  * Calculates any one parameter of the negative binomial 
@@ -61,7 +61,7 @@
  * Computation of other parameters involve a seach for a value that 
  * produces  the desired  value  of P.   The search relies  on  the 
  * monotinicity of P with the other parameter. 
- */
+ **/
 
 int
 cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
