@@ -95,6 +95,7 @@ AC_DEFUN([SC_PATH_TCLCONFIG], [
 			`ls -d /usr/contrib/lib 2>/dev/null` \
 			`ls -d /usr/share/tcltk/tcl8.5 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
+			`ls -d /usr/lib64 2>/dev/null` \
 			; do
 		    if test -f "$i/tclConfig.sh" ; then
 			ac_cv_c_tclconfig="`(cd $i; pwd)`"
@@ -226,6 +227,7 @@ AC_DEFUN([SC_PATH_TKCONFIG], [
 			`ls -d /usr/contrib/lib 2>/dev/null` \
 			`ls -d /usr/share/tcltk/tk8.5 2>/dev/null` \
 			`ls -d /usr/lib 2>/dev/null` \
+			`ls -d /usr/lib64 2>/dev/null` \
 			; do
 		    if test -f "$i/tkConfig.sh" ; then
 			ac_cv_c_tkconfig="`(cd $i; pwd)`"
