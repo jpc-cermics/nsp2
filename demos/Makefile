@@ -31,10 +31,12 @@ clean::
 		$(MAKE) $(MFLAGS) clean); \
 	done
 
+DESTDIR=$(prefix)/lib/nsp
+
 install::
 	@echo "installing demos files"
 	@find . \( -type f  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/demos/{} \; \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/demos/{} \; \
 		-exec echo -n "." \;
 	@echo ""
 

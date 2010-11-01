@@ -13,6 +13,7 @@ distclean::
 
 clean::
 
+DESTDIR=$(prefix)/lib/nsp
 
 SCRIPTS=findpath install-sh  ltmain.sh config.guess config.sub
 
@@ -20,16 +21,16 @@ install::
 	@echo installing config files 
 	@for i in $(SCRIPTS) ;\
 	do ( \
-	  $(TOP)/config/install-sh  $(opt_SCRIPT) $$i $(prefix)/lib/nsp/config/$$i ); \
+	  $(TOP)/config/install-sh  $(opt_SCRIPT) $$i $(DESTDIR)/config/$$i ); \
 	done
 	@for i in Make* *.desktop *.png ;\
 	do ( \
-	  $(TOP)/config/install-sh  $(opt_DATA) $$i $(prefix)/lib/nsp/config/$$i ); \
+	  $(TOP)/config/install-sh  $(opt_DATA) $$i $(DESTDIR)/config/$$i ); \
 	done
-	@sed -e "s+src/include+include+g" $(prefix)/lib/nsp/config/Makeso.incl > $(prefix)/lib/nsp/config/Makeso1 
-	@mv $(prefix)/lib/nsp/config/Makeso1 $(prefix)/lib/nsp/config/Makeso.incl
-	@sed -e "s+src/include+include+g" $(prefix)/lib/nsp/config/Makemex > $(prefix)/lib/nsp/config/Makemex1 
-	@mv $(prefix)/lib/nsp/config/Makemex1 $(prefix)/lib/nsp/config/Makemex
+	@sed -e "s+src/include+include+g" $(DESTDIR)/config/Makeso.incl > $(DESTDIR)/config/Makeso1 
+	@mv $(DESTDIR)/config/Makeso1 $(DESTDIR)/config/Makeso.incl
+	@sed -e "s+src/include+include+g" $(DESTDIR)/config/Makemex > $(DESTDIR)/config/Makemex1 
+	@mv $(DESTDIR)/config/Makemex1 $(DESTDIR)/config/Makemex
 
 
 

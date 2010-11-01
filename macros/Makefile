@@ -32,10 +32,12 @@ clean::
 		$(MAKE) $(MFLAGS) clean); \
 	done
 
+DESTDIR=$(prefix)/lib/nsp
+
 install::
 	@echo "installing function files"
 	@find . \( \( -name '*.sci' -o -name '*.bin' -o -name 'Mak*' -o -name '*.cos' -o -name '*.png' \) -a -type f  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/macros/{} \; \
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/macros/{} \; \
 		-exec echo -n "." \;
 	@echo ""
 

@@ -11,6 +11,8 @@ distclean::
 
 clean:: distclean
 
+DESTDIR=$(prefix)/lib/nsp
+
 install::
-	@$(TOP)/config/install-sh -d $(prefix)/lib/nsp/man/html/generated/
-	@$(TOP)/config/install-sh html/generated/*  $(prefix)/lib/nsp/man/html/generated/
+	@$(TOP)/config/install-sh -d $(DESTDIR)/man/html/generated/
+	@$(TOP)/config/install-sh html/generated/*  $(DESTDIR)/man/html/generated/
