@@ -109,8 +109,13 @@ tarbindist:
 
 DESTDIR=$(prefix)/lib/nsp
 
-install:
-	@echo "installing bin files"
+install: install-dest install-scripts install-bin
+
+# special install target for packaging
+install-packaging: install-dest install-scripts-packaging
+
+install-dest:
+	@echo "installing bin files in DESTDIR=" $(DESTDIR)
 	@find bin -type f -exec $(TOP)/config/install-sh  $(opt_PROG) {} $(DESTDIR)/{} \;
 	@echo "installing lib files"
 	@find libs -type f -exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/{} \;
@@ -122,20 +127,50 @@ install:
 	@find pvm3/bin \( -type f \) \
 		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(DESTDIR)/{} \;
 	@cd src/include ; make install;
+	@echo "installing config files"
 	@cd config ; make install;
+	@echo "installing demos files"
 	@cd demos ; make install;
+	@echo "installing macros files"
 	@cd macros ; make install;
+	@echo "installing man files"
 	@cd man ; make install;
+	@echo "install libtool"
+	@$(TOP)/config/install-sh $(opt_PROG) libtool $(DESTDIR)/
+	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(DESTDIR)/
+	@echo "install end"
+
+install-scripts:
+	@echo "create nsp-inst"
 	@cd scripts; rm nsp-inst ; make nsp-inst DESTDIR=$(DESTDIR)
+	@echo "create nsplibtool-inst"
 	@cd scripts; rm nsplibtool-inst ; make nsplibtool-inst DESTDIR=$(DESTDIR)
+	@echo "create Path.incl"
 	@cd scripts; rm Path.incl ; make Path.incl DESTDIR=$(DESTDIR)
+	@echo "install scripts"
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(DESTDIR)/bin/nsp
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(DESTDIR)/bin/nsplibtool
 	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(DESTDIR)/Path.incl
-	@$(TOP)/config/install-sh $(opt_PROG) libtool $(DESTDIR)/
-	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(DESTDIR)/
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(DESTDIR)/../../bin/nsp
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(DESTDIR)/../../bin/nsplibtool
+
+# when packaging the scripts must refer to /usr/lib/nsp
+# not perfect since instalation of a packaged version could 
+# be performed on a non-standard destination 
+
+install-scripts-packaging:
+	@echo "create nsp-inst"
+	@cd scripts; rm nsp-inst ; make nsp-inst DESTDIR=/usr/lib/nsp
+	@echo "create nsplibtool-inst"
+	@cd scripts; rm nsplibtool-inst ; make nsplibtool-inst DESTDIR=/usr/lib/nsp
+	@echo "create Path.incl"
+	@cd scripts; rm Path.incl ; make Path.incl DESTDIR=/usr/lib/nsp
+	@echo "install scripts"
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(DESTDIR)/bin/nsp
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(DESTDIR)/bin/nsplibtool
+	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(DESTDIR)/Path.incl
+
+install-bin:
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/bin/nsp 
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/bin/nsplibtool
 
 cvsclean::
 
