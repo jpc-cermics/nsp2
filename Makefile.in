@@ -134,8 +134,8 @@ install:
 	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(DESTDIR)/Path.incl
 	@$(TOP)/config/install-sh $(opt_PROG) libtool $(DESTDIR)/
 	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(DESTDIR)/
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/bin/nsp
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/bin/nsplibtool
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(DESTDIR)/../../bin/nsp
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(DESTDIR)/../../bin/nsplibtool
 
 cvsclean::
 
