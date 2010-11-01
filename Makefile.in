@@ -111,16 +111,16 @@ DESTDIR=$(prefix)/lib/nsp
 
 install:
 	@echo "installing bin files"
-	@find bin -type f -exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+	@find bin -type f -exec $(TOP)/config/install-sh  $(opt_PROG) {} $(DESTDIR)/{} \;
 	@echo "installing lib files"
-	@find libs -type f -exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
+	@find libs -type f -exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/{} \;
 	@echo "installing pvm3 files"
 	@find pvm3/lib \( -type f  \) \
-		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(DESTDIR)/{} \;
 	@find pvm3/lib \( -name '*.a'  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(prefix)/lib/nsp/{} \;
+		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/{} \;
 	@find pvm3/bin \( -type f \) \
-		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(prefix)/lib/nsp/{} \;
+		-exec $(TOP)/config/install-sh  $(opt_PROG) {} $(DESTDIR)/{} \;
 	@cd src/include ; make install;
 	@cd config ; make install;
 	@cd demos ; make install;
@@ -129,11 +129,11 @@ install:
 	@cd scripts; rm nsp-inst ; make nsp-inst DESTDIR=$(DESTDIR)
 	@cd scripts; rm nsplibtool-inst ; make nsplibtool-inst DESTDIR=$(DESTDIR)
 	@cd scripts; rm Path.incl ; make Path.incl DESTDIR=$(DESTDIR)
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/lib/nsp/bin/nsp
-	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/lib/nsp/bin/nsplibtool
-	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(prefix)/lib/nsp/Path.incl
-	@$(TOP)/config/install-sh $(opt_PROG) libtool $(prefix)/lib/nsp/
-	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(prefix)/lib/nsp/
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(DESTDIR)/bin/nsp
+	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(DESTDIR)/bin/nsplibtool
+	@$(TOP)/config/install-sh $(opt_DATA) scripts/Path.incl $(DESTDIR)/Path.incl
+	@$(TOP)/config/install-sh $(opt_PROG) libtool $(DESTDIR)/
+	@$(TOP)/config/install-sh $(opt_DATA) Makefile.incl  $(DESTDIR)/
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsp-inst $(prefix)/bin/nsp
 	@$(TOP)/config/install-sh $(opt_PROG) scripts/nsplibtool-inst $(prefix)/bin/nsplibtool
 
