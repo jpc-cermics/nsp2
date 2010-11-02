@@ -1393,6 +1393,15 @@ static int int_set_double_extended(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 }
+
+int nsp_use_extended_fpu()
+{
+  unsigned int __fpu_control;                                      
+  _FPU_GETCW(__fpu_control);
+  return  (__fpu_control & _FPU_EXTENDED) == _FPU_EXTENDED;
+}
+
+
 #endif
 
 
