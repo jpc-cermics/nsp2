@@ -26,6 +26,7 @@
 #include <nsp/spmf.h>
 #include <string.h>
 #include "../libcdf/cdf.h"
+#include <nsp/cnumeric.h>
 
 /**
  * SECTION:spmf
@@ -130,7 +131,8 @@ double nsp_expm1(double x)
 
     if (a < DBL_EPSILON) return x;
 /*     if (a > 0.697) return exp(x) - 1.0;  /\* negligible cancellation *\/ */
-    if (a > 0.125) return exp(x) - 1.0;  /* negligible cancellation */
+/*     if (a > 0.125) return exp(x) - 1.0;  /\* negligible cancellation *\/ */
+    if (a > 0.25) return exp(x) - 1.0;  /* negligible cancellation */
 
     /* initial value for the Newton step: */
     if (a > 1e-8)
@@ -297,68 +299,56 @@ double nsp_cotanpi(double x)
     }
 }
 
-/**
- * nsp_stirling_error:
- * @x: a double 
- * 
- *  computes the error w(x) = ln(gamma(x)) - {0.5*log(2*Pi) + (x-0.5)*log(x) - x} 
- *  using Cody 's approximation (specfun lib available at Netlib) 
- * 
- * Returns: a double
- **/
-double  nsp_stirling_error(double x)
-{
-  static const double C0=-1.910444077728e-03,          C1=8.4171387781295e-04,
-    C2=-5.952379913043012e-04,       C3=7.93650793500350248e-04,
-    C4=-2.777777777777681622553e-03, C5=8.333333333333333331554247e-02,
-    C6=5.7083835261e-03;
-  double t;
-  t = 1.0/x; t = t*t;
-  return ((((((C6*t + C0)*t + C1)*t + C2)*t + C3)*t + C4)*t + C5)/x;
-}
 
 /* 
- *  Evaluate gamma for x in [1,2]. This uses the rationnal approximation
+ *  Evaluate gamma for x in [1,2] using the rationnal approximation
  *  of the Cody 's gamma fortran code (specfun lib available at Netlib) 
  */
 static double gamma_in_1_2(double x)
 {
-  static const double P[] = {-1.71618513886549492533811    ,  2.47656508055759199108314e+1,
-			     -3.79804256470945635097577e+2 ,  6.29331155312818442661052e+2,
-			     8.66966202790413211295064e+2 , -3.14512729688483675254357e+4,
-			     -3.61444134186911729807069e+4 ,  6.64561438202405440627855e+4 };
-
-  static const double Q[] = {-3.08402300119738975254353e+1 ,  3.15350626979604161529144e+2,
-			     -1.01515636749021914166146e+3 , -3.10777167157231109440444e+3,
-			     2.25381184209801510330112e+4 ,  4.75584627752788110767815e+3,
-			     -1.34659959864969306392456e+5 , -1.15132259675553483497211e+5 };
-
-  double xnum = 0.0, xden = 1.0;
-  int i;
   x -= 1.0;
-  for ( i = 0 ; i < 8 ; i++ )
-    {
-      xnum = (xnum + P[i])*x;
-      xden = xden*x + Q[i];
-    }
-  return (xnum/xden + 1.0);
+  return 1.0 + (x*(6.64561438202405440627855e4+x*(-3.61444134186911729807069e4+x*(-3.14512729688483675254357e4
+		+x*(8.66966202790413211295064e2+x*(6.29331155312818442661052e2+x*(-3.79804256470945635097577e2
+                +x*(24.7656508055759199108314-x*1.71618513886549492533811))))))))
+              /(-1.15132259675553483497211e+5+x*(-1.34659959864969306392456e+5+x*(4.75584627752788110767815e+3
+		+x*(2.25381184209801510330112e+4+x*(-3.10777167157231109440444e+3+x*(-1.01515636749021914166146e+3
+                +x*(3.15350626979604161529144e+2+x*(-3.08402300119738975254353e+1+x))))))));
 }
 
+
+/* static double mypow(double x, double p) */
+/* { */
+/*   double pf = floor(p); */
+/*   return nsp_pow_di(x, (int) pf)*pow(x,p - pf); */
+/* } */
+
+
+/*
+ * Evaluate gamma for x >= 33. The code uses a Stirling 's like polynomial
+ * from the gamma function of the Cephes library (S. Moshier).
+ */
 static double gamma_for_x_big(double x)
 {
-  static double const sqrt_twopi = 2.506628274631000502415765284;
-  double w, q, res;
-
-  w = nsp_stirling_error(x);
-  /*   we have to compute sqrt(2Pi) x^(x-0.5) exp(-x) exp(w(x)) */
-  /*   the "factorisation" by exp: exp( 0.5*log(2Pi) + (x-0.5)log(x) - x + w(x) ) is bad */
-  /*   use the gsl method: the trick is that pow seems quite accurate in fact */
-  q = pow(x,0.5*x);
-  res = (q*exp(-x))*q;
-  res = (sqrt_twopi * (res/sqrt(x))) * exp(w);
-  
-  return res;
+  /*  compute sqrt(2Pi) x^(x-0.5) exp(-x) w(x)  (w(x) = "stirling error")  */
+  double const sqrt_twopi = 2.506628274631000502415765284;
+  double w, q, y;
+  w = 1.0/x;
+  w = 1.0 + w*( 8.33333333333482195737218e-02
+               +w*(3.47222221605458661666810e-03
+               +w*(-2.68132617805781235317819e-03
+               +w*(-2.29549961613378125484253e-04
+               +w*7.87311395793093677340779e-04))));
+  y = exp(x);
+  if ( x <= 143.01608 )
+    q = pow(x,x-0.5)/y;
+  else
+    {
+      q = pow(x,0.5*x-0.25);
+      q = q*(q/y);
+    }
+  return sqrt_twopi * q * w;
 }
+
 
 /**
  * nsp_gamma:
@@ -372,18 +362,18 @@ static double gamma_for_x_big(double x)
  **/
 double nsp_gamma(double x)
 {
- static double const cst1 = DBL_EPSILON, cst2 = 15;
- double abs_x, xx;
- double prodxx;   /* long double prodxx; */
+  static double const cst1 = 0.06250*DBL_EPSILON, cst2 = 43;
+  double abs_x, xx;
+  long double prodxx;
 
- abs_x = fabs(x);
+  abs_x = fabs(x);
 
- if ( x < 0.0  &&  floor(x) == x )
-   return 0.0/0.0;   /* NaN */
+  if ( x < 0.0  &&  floor(x) == x )
+    return 0.0/0.0;   /* NaN */
    
- else if ( abs_x <= cst1 )
-   return 1.0/x;
-    
+  else if ( abs_x <= cst1 )
+    return 1.0/x;
+  
   else if ( abs_x <= cst2 )
     {
       if ( x > 2.0 )
@@ -414,89 +404,69 @@ double nsp_gamma(double x)
       if ( x > 0.0 )
 	return gamma_for_x_big(x);
       else
-	return M_PI/(nsp_sinpi(x)*gamma_for_x_big(1.0-x));
+	return M_PI/(nsp_sinpi(x)*abs_x*gamma_for_x_big(abs_x));
     }     
 }
 
-/* approximation for lngamma in [4,12] translation in C of the Cody 's code */
+/**
+ * nsp_stirling_error:
+ * @x: a double 
+ * 
+ *  computes the error w(x) = ln(gamma(x)) - {0.5*log(2*Pi) + (x-0.5)*log(x) - x} 
+ *  using Cody 's approximation (specfun lib available at Netlib) 
+ * 
+ * Returns: a double
+ **/
+double  nsp_stirling_error(double x)
+{
+  static const double C0=-1.910444077728e-03, C1=8.4171387781295e-04,
+    C2=-5.952379913043012e-04,       C3=7.93650793500350248e-04,
+    C4=-2.777777777777681622553e-03, C5=8.333333333333333331554247e-02,
+    C6=5.7083835261e-03;
+  double t;
+  t = 1.0/x; t = t*t;
+  return ((((((C6*t + C0)*t + C1)*t + C2)*t + C3)*t + C4)*t + C5)/x;
+}
+
+
+/* approximation for lngamma in [4,12] using W. Cody 's rationnal approximation */
 static double lngamma_in_4_12(double x)
 {
-  double const 
-    D = 1.791759469228055000094023,
-    P[] = {1.474502166059939948905062e4, 2.426813369486704502836312e6,
-	   1.214755574045093227939592e8, 2.663432449630976949898078e9,
-	   2.940378956634553899906876e10,1.702665737765398868392998e11,
-	   4.926125793377430887588120e11,5.606251856223951465078242e11},
-    Q[] = {2.690530175870899333379843e3, 6.393885654300092398984238e5,
-           4.135599930241388052042842e7, 1.120872109616147941376570e9,
-	   1.488613728678813811542398e10,1.016803586272438228077304e11,
-	   3.417476345507377132798597e11,4.463158187419713286462081e11};
-    double xm4, xnum, xden;
-    int i;
-    xm4 = x - 4.0;
-    xden = -1.0;
-    xnum = 0.0;
-    for ( i = 0 ; i < 8 ; i++ )
-      {
-	xnum = xnum*xm4 + P[i];
-	xden = xden*xm4 + Q[i];
-      }
-    return D + xm4*(xnum/xden);
-}
+    x -= 4.0;
+    return    1.791759469228055000094023 
+      + x*( (5.606251856223951465078242e11+x*(4.926125793377430887588120e11+x*(1.702665737765398868392998e11
+	     +x*(2.940378956634553899906876e10+x*(2.663432449630976949898078e9+x*(1.214755574045093227939592e8
+	     +x*(2.426813369486704502836312e6+x*1.474502166059939948905062e4)))))))
+	  / (4.463158187419713286462081e11+x*(3.417476345507377132798597e11+x*(1.016803586272438228077304e11
+	     +x*(1.488613728678813811542398e10+x*(1.120872109616147941376570e9+x*(4.135599930241388052042842e7
+	     +x*(6.393885654300092398984238e5+x*(2.690530175870899333379843e3-x)))))))) );
+}   
 
-/* approximation for lngamma in [1.5,4] translation in C of the Cody 's code */
+/* approximation for lngamma in [1.5,4] using W. Cody 's rationnal approximation */
 static double lngamma_in_1p5_4(double x)
 {
-  double const 
-    D = 4.227843350984671393993777e-1,
-    P[] = {4.974607845568932035012064,  5.424138599891070494101986e2,
-	   1.550693864978364947665077e4,1.847932904445632425417223e5,
-	   1.088204769468828767498470e6,3.338152967987029735917223e6,
-	   5.106661678927352456275255e6,3.074109054850539556250927e6},
-    Q[] = {1.830328399370592604055942e2,7.765049321445005871323047e3,
-	   1.331903827966074194402448e5,1.136705821321969608938755e6,
-	   5.267964117437946917577538e6,1.346701454311101692290052e7,
-	   1.782736530353274213975932E7,9.533095591844353613395747e6};
-    double xm2, xnum, xden;
-    int i;
-    xm2 = x - 2.0;
-    xden = 1.0;
-    xnum = 0.0;
-    for ( i = 0 ; i < 8 ; i++ )
-      {
-	xnum = xnum*xm2 + P[i];
-	xden = xden*xm2 + Q[i];
-      }
-    return xm2*(D + xm2*(xnum/xden));
+  x -= 2.0;
+  return x*( 0.4227843350984671393993777 
+	     + x*( (3.074109054850539556250927e6+x*(5.106661678927352456275255e6+x*(3.338152967987029735917223e6
+		    +x*(1.088204769468828767498470e6+x*(1.847932904445632425417223e5+x*(1.550693864978364947665077e4
+                    +x*(5.424138599891070494101986e2+x*4.974607845568932035012064)))))))
+		  /(9.533095591844353613395747e6+x*(1.782736530353274213975932e7+x*(1.346701454311101692290052e7
+		    +x*(5.267964117437946917577538e6+x*(1.136705821321969608938755e6+x*(1.331903827966074194402448e5
+                    +x*(7.765049321445005871323047e3+x*(1.830328399370592604055942e2+x))))))))));
 }
 
-/* approximation for lngamma in [0.68,1.5] translation in C of the Cody 's code */
+/* approximation for lngamma in [0.68,1.5]  using W. Cody 's rationnal approximation */
 static double lngamma_in_0p68_1p5(double x)
 {
-  double const 
-    D = -5.772156649015328605195174e-1,
-    P[] = {4.945235359296727046734888e0, 2.018112620856775083915565e2,
-	   2.290838373831346393026739e3, 1.131967205903380828685045e4,
-	   2.855724635671635335736389e4, 3.848496228443793359990269e4,
-	   2.637748787624195437963534e4, 7.225813979700288197698961e3},
-    Q[] = {6.748212550303777196073036e1, 1.113332393857199323513008e3,
-	   7.738757056935398733233834e3,2.763987074403340708898585e4,
-	   5.499310206226157329794414e4,6.161122180066002127833352e4,
-	   3.635127591501940507276287e4,8.785536302431013170870835e3};
-    double xm1, xnum, xden;
-    int i;
-    xm1 = x - 1.0;
-    xden = 1.0;
-    xnum = 0.0;
-    for ( i = 0 ; i < 8 ; i++ )
-      {
-	xnum = xnum*xm1 + P[i];
-	xden = xden*xm1 + Q[i];
-      }
-    return xm1*(D + xm1*(xnum/xden));
+  x -= 1.0;
+  return x*( - 0.5772156649015328605195174 
+             + x*( (7.225813979700288197698961e3+x*(2.637748787624195437963534e4+x*(3.848496228443793359990269e4
+		    +x*(2.855724635671635335736389e4+x*(1.131967205903380828685045e4+x*(2.290838373831346393026739e3
+                    +x*(2.018112620856775083915565e2+x*4.945235359296727046734888)))))))
+		  /(8.785536302431013170870835e3+x*(3.635127591501940507276287e4+x*(6.161122180066002127833352e4
+		    +x*(5.499310206226157329794414e4+x*(2.763987074403340708898585e4+x*(7.738757056935398733233834e3
+		    +x*(1.113332393857199323513008e3+x*(6.748212550303777196073036e1+x))))))))));
 }
-
-
 
 /**
  * nsp_lngamma:
@@ -509,8 +479,10 @@ static double lngamma_in_0p68_1p5(double x)
  **/
 double nsp_lngamma(double x)
 {
-  double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.71; /*  lim = 0.709 , 0.6796875 in the Cody's code */
-  if ( x > 12.0 )
+  double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.71; /*  lim = 0.6796875 in the Cody's code */
+  if ( x > DBL_MAX )
+    return x;
+  else if ( x > 12.0 )
     return log_sqr_2pi + nsp_stirling_error(x) + (x-0.5)*log(x) - x;
   else if ( x > 4.0 )
     return lngamma_in_4_12(x);
