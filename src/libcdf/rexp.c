@@ -31,27 +31,43 @@
  * Returns: a double 
  **/
 
+extern int nsp_use_extended_fpu();
 
 double cdf_rexp(double x)
 {
-  if ( x < -0.015 ||  x > 0.015 ) 
+  double y;
+  if ( x < -0.015 ||  x > 0.015 )
     {
-      return exp(x)-1;
+      y = exp(x)-1;
     }
   else 
     {
       /* pade approximation computed with 
        * Maple (see code below).
        */
-      return(x*(0.9999879465639932
-		+(0.1681565684988593E-17
-		  +0.2380922406793938E-1*x)*x)
-	     /(0.9999879465639932
-	       +(-0.4999939732819966
-		 +(0.1071415529482722
-		   +(-0.1190461203396969E-1+0.5952298576585598E-3*x)*x)*x)*x));
+      y= x*(0.9999879465639932
+		   +(0.1681565684988593E-17
+		     +0.2380922406793938E-1*x)*x)
+	/(0.9999879465639932
+	  +(-0.4999939732819966
+	    +(0.1071415529482722
+	      +(-0.1190461203396969E-1+0.5952298576585598E-3*x)*x)*x)*x);
+      /* 
+       * improve the result: only usefull when 
+       * pure 64bits is used 
+       */
     }
-}
+#ifdef __linux__ 
+  if ( nsp_use_extended_fpu() == FALSE && Abs(x) > 0.01  ) 
+    {
+      /* improve by newton step : 
+       *     Copyright (C) 2002 The R Development Core Team
+       */
+      y -= (1.0 + y) * (nsp_log1p(y) - x);
+    }
+#endif 
+  return y;
+} 
 
 /* 
  * Using Maple code for approximation 
