@@ -34,26 +34,25 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-
 #include <libgtkhtml/gtkhtml.h>
 
 extern gchar *html_selection_get_text (HtmlView *view);
 
-/* XXXX */
-#include "nsp/config.h"
-#include "nsp/math.h"
-#include "nsp/sciio.h"
-#include "nsp/gtksci.h"
+#include <nsp/nsp.h> 
+#include <nsp/sciio.h>
+#include <nsp/gtksci.h>
+#include <nsp/system.h>
+#include <nsp/interf.h>
+#include <nsp/nsptcl.h>
+#include <nsp/hash.h>
+#include <nsp/file.h>
+#include <nsp/smatrix.h>
+
 #include "queue.h"
 #include "uri.h"
-#include <nsp/system.h>
 #include "../system/regexp.h"
-#include "nsp/object.h"
-#include "nsp/interf.h"
-#include "nsp/nsptcl.h"
 
 /*  defines  */
 
@@ -767,7 +766,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 {
   char buf[FSIZE+1];
   GPrintFunc old;
-  char *sci = nsp_getenv("SCI"); 
+  const char *sci = nsp_getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
     mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
@@ -816,7 +815,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
 static NspHash *nsp_help_table = NULLHASH;
 
 /* XXX*/
-extern nsp_string nsp_dirname(char *fileName);
+/* extern nsp_string nsp_dirname(const char *fileName);*/
 
 static int nsp_help_fill_help_table(const char *index_file)
 {
