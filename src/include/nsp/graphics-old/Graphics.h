@@ -1,5 +1,5 @@
-#ifndef NPS_GRAPHICS_H
-#define NPS_GRAPHICS_H
+#ifndef NSP_GRAPHICS_OLD_H
+#define NSP_GRAPHICS_OLD_H
 
 /*
  * This Software is GPL (Copyright ENPC 1998-2009) 
