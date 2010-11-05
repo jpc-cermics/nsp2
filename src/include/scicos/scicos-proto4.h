@@ -2,8 +2,10 @@
 #define NSP_SCICOS_PROTO_H
 
 extern int scicos_setblockwin (BCG *Xgc,int *win, int *cur);
+/*
 extern int scicos_recterase (BCG *Xgc,const double r[]);
 extern int scicos_affdraw (BCG *Xgc,const int *fontd,const int *form,const double *val,const double *r);
+*/
 extern int scicos_ftree2 (int *vec, int *nb, int *deput, int *outoin,
 			  int *outoinptr, int *ord, int *nord, int *ok);
 extern int scicos_ftree3(int *vec, int *nb, int *deput, int *typl, int *bexe,

@@ -203,6 +203,12 @@ extern void scicos_transmit_or_zero_block(scicos_block *block,int flag);
 extern void scicos_mvswitch_block(scicos_block *block,int flag);
 extern void scicos_csslti4_block(scicos_block *block,int flag);
 
+#define SCICOS44 
+#ifdef SCICOS44 
+extern void evtdly4 (scicos_block * block, int flag);
+extern int scicos_affich2_block(scicos_args_F0);
+#endif 
+
 #endif 
 
 /* this is to be included only once in scicos.c */
@@ -340,6 +346,10 @@ scicos_block_table  tabsim[] ={
   {"writef",(ScicosF) scicos_writef_block},
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   {"zcross",(ScicosF) scicos_zcross_block} ,
+#ifdef SCICOS44 
+  {"evtdly4", (ScicosF)  evtdly4 },
+  {"affich2", (ScicosF)  scicos_affich2_block },
+#endif 
   {NULL , (ScicosF) 0}
 };
 #endif 
