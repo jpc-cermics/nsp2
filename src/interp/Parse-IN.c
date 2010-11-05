@@ -420,6 +420,15 @@ static int int_halt(Stack stack, int rhs, int opt, int lhs)
 
 /*
  * interface for lasterror.
+ * This function returns in a string matrix all pending 
+ * error messages and clears the pending messages.
+ * Thus, typically this function should be always called in 
+ * ok = execstr(..., errcatch=%t) 
+ * if ~ok then 
+ *   // always clear the error message by calling lasterror() 
+ *   // if needed use the returned matrix to display an error 
+ *   x_message('Error:\n\n'+catenate(lasterror()));
+ * end 
  */
 
 static int int_lasterror(Stack stack, int rhs, int opt, int lhs)
