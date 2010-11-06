@@ -115,7 +115,7 @@ extern int nsp_qcurve_xdr_save(XDR  *xdrs, NspQcurve *M);
 #line 9 "codegen/qcurve.override"
 /* inserted at the end of public part of include file */
 
-extern NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
+extern NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
 				  double ymin,double ymax,NspList **Lc);
 extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 

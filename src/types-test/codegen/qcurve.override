@@ -8,7 +8,7 @@ include-start Qcurve
 include-public Qcurve
 /* inserted at the end of public part of include file */
 
-extern NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
+extern NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
 				  double ymin,double ymax,NspList **Lc);
 extern void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n);
 
@@ -389,13 +389,29 @@ static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
     }
 }
 
-/* set up an oscillo 
- * 
- */
 
-NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
-			   int yfree,double ymin,double ymax,NspList **Lc)
+
+/**
+ * nsp_oscillo_obj:
+ * @win: integer giving the window id
+ * @ncurves: number of curve to create in the graphic window
+ * @style: style for each curve
+ * @bufsize: size of points in each curve
+ * @yfree: ignored (means that ymin and ymax can move freely).
+ * @ymin: min y value 
+ * @ymax: max y value 
+ * @Lc: If requested returns the list of curves.
+ * 
+ * 
+ * 
+ * Returns: a #NspFigure or %NULL
+ **/
+
+NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
+			 int yfree,double ymin,double ymax,NspList **Lc)
 {
+  double frect[4];
+  char strflag[]="151";
   NspAxes *axe;
   BCG *Xgc;
   char *curve_l=NULL;
@@ -421,30 +437,41 @@ NspFigure *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
   for ( i = 0 ; i < l  ; i++)
     nsp_list_remove_first(axe->obj->children);
 
+  frect[0]=0;frect[1]=ymin;frect[2]=100;frect[3]=ymax;
+  
   /* create a set of qcurves and insert them in axe */
   for ( i = 0 ; i < ncurves ; i++) 
     {
       int mark=-1;
       NspQcurve *curve;
-      NspMatrix *Pts = nsp_matrix_create("Pts",'r',Max(bufsize,0),2); 
+      NspMatrix *Pts = nsp_matrix_create("Pts",'r',Max(bufsize,1),2); 
       if ( Pts == NULL) return NULL;
       if ( style[i] <= 0 ) mark = -style[i];
       curve= nsp_qcurve_create("curve",mark,0,0,( style[i] > 0 ) ?  style[i] : -1,
 			       qcurve_std,Pts,curve_l,-1,-1,NULL);
       if ( curve == NULL) return NULL;
       /* insert the new curve */
-      if ( nsp_list_end_insert( axe->obj->children,(NspObject *)curve )== FAIL)
-	return NULL;
+      if ( nsp_axes_insert_child(axe,(NspGraphic *) curve,FALSE)== FAIL) 
+	{
+	  return NULL;
+	}
     }
-  nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig,((NspGraphic *) axe)->obj);
   /* updates the axes scale information */
-  nsp_strf_axes( axe , NULL, '2');
+  nsp_strf_axes( axe , frect, strflag[1]);
+  memcpy(axe->obj->frect->R,frect,4*sizeof(double));
+  memcpy(axe->obj->rect->R,frect,4*sizeof(double));
+  axe->obj->axes = 1;
+  axe->obj->xlog = FALSE;
+  axe->obj->ylog=  FALSE;
   axe->obj->iso = FALSE;
-  axe->obj->fixed = FALSE;
+  /* use free scales if requested  */
+  axe->obj->fixed = ( yfree == TRUE ) ? FALSE: TRUE ;
   nsp_axes_invalidate((NspGraphic *) axe);
   if ( Lc != NULL) *Lc = axe->obj->children;
-  return ((NspGraphic *) axe)->obj->Fig;
+  return axe;
 }
+
+/* add one point for each curve in qcurve data  */
 
 void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n)
 {
@@ -467,7 +494,7 @@ void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n)
 static void oscillo_test()
 {
   int style[]={-1,2,3};
-  nsp_oscillo_obj(123,3,style,100,TRUE,0,0,NULL);
+  nsp_oscillo_obj(123,3,style,100,TRUE,-5,5,NULL);
 }
 
 

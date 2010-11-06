@@ -2123,6 +2123,9 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
   double xtest;
   if (logf[0] == 'n') 
     {
+      /* avoid infinite loop with nans */
+      if ( isnan(FRectI[0]) || isnan(FRectI[2]) ) { FRectI[0]=-1;FRectI[1]=1;}
+
       if ( FRectI[0]*FRectI[2] < 0 ) 
 	{
 	  double xmin,xmax;
@@ -2166,6 +2169,9 @@ static void gr_rescale_new(char *logf, double *FRectI, int *Xdec, int *Ydec, int
     }
   if (logf[1] == 'n') 
     {
+      /* avoid infinite loop with nans */
+      if ( isnan(FRectI[1]) || isnan(FRectI[3]) ) { FRectI[1]=-1;FRectI[3]=1;}
+
       if ( FRectI[1]*FRectI[3] < 0 ) 
 	{
 	  double ymin,ymax;
@@ -2407,4 +2413,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2411 "axes.c"
+#line 2417 "axes.c"

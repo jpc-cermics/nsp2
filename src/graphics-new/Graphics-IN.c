@@ -1220,9 +1220,9 @@ static NspGraphic *nsp_plot2d_obj(double x[],double y[],char *logflag, int *n1,i
   int i;
   NspAxes *axe; 
   if (( axe=  nsp_check_for_current_axes())== NULL) return NULL;
-
+  
   axe->obj->lpos = legend_pos;
-
+  
   /* compute brect if not given */
   switch (strflag[1])
     {

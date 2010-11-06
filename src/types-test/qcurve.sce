@@ -1,5 +1,7 @@
+// test code in nsp 
+// similar C-code is used internally by scicos for cscope 
 
-function [F,cu]=new_plot(x,y,varargopt)
+function [F,cu]=new_plot(x,y,rect,varargopt)
   mode = "Gtk";
   xset('window',20);
   ok=execstr('F=get_current_figure()',errcatch=%t);
@@ -9,37 +11,54 @@ function [F,cu]=new_plot(x,y,varargopt)
     // remove previous contents.
     F.children=list();
   end
-  if length(F.children)== 0 then 
-    rect = [min(x),min(y),max(x),max(y)];
-    A = axes_create(top=%t,wrect=[0,0,1,1],frect=rect,arect=[1,1,1,1]/12);
-    F.children(1)= A; 
-  else
-    A = F.children(1);
-  end
+  A = axes_create(top=%t,wrect=[0,0,1,1],rect=rect,arect=[1,1,1,1]/12);
+  A.iso=%f;
+  A.fixed=%t;
+  A.auto_axis=%t;
+  F.children(1)= A;
   varargopt.Pts=[x(:),y(:)]; 
   cu = qcurve_create(varargopt(:)); 
   A.children($+1)= cu;
   F.connect[];
-  xbasr(F.id)
+  F.invalidate[];
+  // xbasr(F.id)
 endfunction
 
-function oscillo1()
-  [F,Q]=new_plot(1:100,ones(1,100),color=6);
-  F.children(1).iso=%f;
-  t=linspace(0,50,1000);
-  for i= 1:1000
-    Q.add_points[[t(i),t(i)*sin(2*%pi*t(i))]];
-    if modulo(i,2) == 0 then 
-      F.draw_now[];
-      xpause(40000,%t);
-      //xclick();
+function oscillo1(fixedminmax=%t)
+// create a Figure with a qcurve 
+// The qcurve can contain atmost 8000 pts 
+  [F,Q]=new_plot(1:8000,ones(1,8000),[0,-2,100,2],color=6);
+  n=200;
+  nt=200;
+  t=linspace(0,500,n);
+  for i= 1:n-1
+    // adding and drawing nt points.
+    ti=linspace(t(i),t(i+1),nt);
+    if fixedminmax then 
+      Q.add_points[[ti',sin(2*%pi*ti'/10)]];
+    else
+      Q.add_points[[ti',ti'.*sin(2*%pi*ti'/10)]];
     end
+    F.invalidate[];
+    A= F.children(1);
+    if fixedminmax then 
+      // we force the scales 
+      xmax = max(t(i+1),100);
+      xmin = max(0,xmax-100);
+      A.rect = [xmin,-2,max(t(i+1),100),2];
+      A.fixed=%t;
+    else
+      // we let moving data fix the scales 
+      A.fixed=%f;
+    end
+    xpause(0,%t);
   end
 endfunction
 
-function oscillo2()
-  nb=100;
-  [F,Q]=new_plot(1:nb,ones(1,nb),color=6);
+function oscillo2(fixedminmax=%t)
+// more than one curve 
+  nb=4000;
+  [F,Q]=new_plot(1:nb,ones(1,nb),[0,-2,100,2],color=6);
   F.children(1).iso=%f;
   Q2 = qcurve_create(Pts=[1:nb;ones(1,nb)]',color=2)
   F.children(1).children($+1)= Q2;
@@ -47,38 +66,31 @@ function oscillo2()
   F.children(1).children($+1)= Q3;
   Q4 = qcurve_create(Pts=[1:nb;ones(1,nb)]',color=13)
   F.children(1).children($+1)= Q4;
-  t=linspace(0,50,10000);
-  rnd=rand(1,1);
-  for i= 1:1000
-    Q.add_points[[t(i),sin(2*%pi*t(i))+1]];
-    Q2.add_points[[t(i),cos(4*%pi*t(i))+1]];
-    Q3.add_points[[t(i),abs((1+0.3*rand(1,1))*cos(3*%pi*t(i)))]];
-    Q4.add_points[[t(i),2.5]]
-    if modulo(i,5) == 0 then 
-      F.draw_now[];
-      xpause(40000,%t);
-      //xclick();
-    end
-  end
-endfunction
 
-function oscillo3()
-  oscillo();
-  F=get_current_figure();
-  axe=F.children(1);
-  Q1=axe.children(1);
-  Q2=axe.children(2);
-  Q3=axe.children(3);
-  t=linspace(0,50,10000);
-  rnd=rand(1,1);
-  for i= 1:1000
-    Q1.add_points[[t(i),sin(2*%pi*t(i))+1]];
-    Q2.add_points[[t(i),cos(4*%pi*t(i))+1]];
-    Q3.add_points[[t(i),abs((1+0.3*rand(1,1))*cos(3*%pi*t(i)))]];
-    if modulo(i,5) == 0 then 
-      F.draw_now[];
-      xpause(40000,%t);
-      //xclick();
+  n=200;
+  nt=200;
+  fixedminmax=%f;
+  t=linspace(0,500,n);
+  for i= 1:n-1
+    // adding and drawing nt points.
+    ti=linspace(t(i),t(i+1),nt);
+    Q.add_points[[ti',sin(2*%pi*ti'/10)+1]];
+    Q2.add_points[[ti',0.5*cos(4*%pi*ti'/30)+1]];
+    Q3.add_points[[ti',(1+0.3*sin(%pi*ti'/40)).*cos(3*%pi*ti'/10)]];
+    Q4.add_points[[ti',2.5*ones(nt,1)]];
+    F.invalidate[];
+    A= F.children(1);
+    if fixedminmax then 
+      // we force the scales 
+      xmax = max(t(i+1),100);
+      xmin = max(0,xmax-100);
+      A.rect = [xmin,-2,max(t(i+1),100),2];
+      A.fixed=%t;
+    else
+      // we let moving data fix the scales 
+      A.fixed=%f;
     end
+    xpause(0,%t);
   end
+  pause;
 endfunction

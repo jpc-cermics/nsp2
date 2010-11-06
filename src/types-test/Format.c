@@ -461,7 +461,7 @@ static void gradua(const double *xmi,const double *xma, int *kminr, int *kmaxr, 
 
 static void decompSup(double x, int *xk, int *xa, int b)
 {
-  if ( x == 0.0 ) 
+  if ( x == 0.0 || isnan(x) ) 
     { 
       *xk=0 ; *xa= 1; /* jpc */
     }
@@ -503,7 +503,7 @@ static void decompSup(double x, int *xk, int *xa, int b)
 
 static void decompInf(double x, int *xk, int *xa, int b)
 {
-  if ( x == 0.0 ) 
+  if ( x == 0.0 || isnan(x) ) 
     { 
       *xk=0 ; *xa= 1; /* jpc */
     }
