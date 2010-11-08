@@ -1,0 +1,59 @@
+% -*- mode: latex -*-
+\mansection{exists}
+\begin{mandesc}
+  \short{exists}{checks for variables}
+\end{mandesc}
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  bool= exists(name [, str])  
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{name}: a string giving the symbol name to be searched.
+    \vname{where}: an optional character string which should be chosen 
+    among \verb+'all'+, \verb+'caller'+, \verb+'callers'+, \verb+'local'+,
+    \verb+'global'+, \verb+'function'+, \verb+'nsp-function'+, or 
+    \verb+'callable'+.
+    \verb{bool} a boolean. 
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  This function can be used to search for symbols, it returns true if 
+  symbol names \verb+name+ is found and false if not. 
+  \begin{varlist}
+    \vname{'all'}: this is the default value, which  means \verb+local+ or 
+    \verb+callers+ or \verb+global+.
+    \vname{'caller'}:  search in the caller. 
+    \vname{'callers'}: search in the calling stack frames.
+    \vname{'local'}: search in the local fram.
+    \vname{'global'}: search in the global frame.
+    \vname{'function'}: search in primitives. 
+    \vname{'nsp-function'}: search in libraries of nsp coded functions.
+    \vname{'callable'}: means \verb+function+ or \verb+nsp-function+.
+  \end{varlist}
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    global x1;
+    x1 = 1;
+    x2 = 2;
+    function y=f(s,env); x4=4;y=exists(s,env);endfunction;
+    function y=g(s,env); x3=3; y=f(s,env);endfunction;
+    // net calls should return true.
+    y=g('x4','local')
+    y=g('x3','caller')
+    y=g('x2','callers')
+    y=g('x1','callers')
+    y=g('x1','global')
+    // functions 
+    exists('sin_m','function')
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{acquire}{acquire} 
+\end{manseealso}
