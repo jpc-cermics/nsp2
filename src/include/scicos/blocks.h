@@ -208,18 +208,20 @@ extern void scicos_csslti4_block(scicos_block *block,int flag);
 
 #ifdef SCICOS44 
 
-extern void selector (scicos_block *block,int flag);
-extern void sum (scicos_block *block,int flag);
-extern void prod (scicos_block *block,int flag);
-extern void switchn (scicos_block *block,int flag);
-extern void relay (scicos_block *block,int flag);
-extern void readc (scicos_block *block,int flag);
-extern void writec (scicos_block *block,int flag);
-extern void writeau (scicos_block *block,int flag);
-extern void readau (scicos_block *block,int flag);
-extern void plusblk (scicos_block *block,int flag);
-extern void slider (scicos_block *block,int flag);
-extern void zcross2 (scicos_block *block,int flag);
+extern void selector (scicos_args_F2);
+extern void sum (scicos_args_F2);
+extern void prod (scicos_args_F2);
+extern void switchn (scicos_args_F2);
+extern void relay (scicos_args_F2);
+extern void readc (scicos_args_F2);
+extern void writec (scicos_args_F2);
+extern void writeau (scicos_args_F2);
+extern void readau (scicos_args_F2);
+extern void plusblk (scicos_args_F2);
+extern void slider(scicos_args_F0);
+extern void zcross2 (scicos_args_F0);
+extern void andlog (scicos_args_F0);
+
 extern void mswitch (scicos_block *block,int flag);
 extern void logicalop (scicos_block *block,int flag);
 extern void switch2 (scicos_block *block,int flag);
@@ -508,7 +510,6 @@ extern void matmul2_e (scicos_block *block,int flag);
 extern void constraint_c (scicos_block *block,int flag);
 extern void lookup2d (scicos_block *block,int flag);
 extern void diffblk_c (scicos_block *block,int flag);
-extern void andlog (scicos_block *block,int flag);
 extern void foriterator (scicos_block *block,int flag);
 extern void assignment (scicos_block *block,int flag);
 extern void whileiterator (scicos_block *block,int flag);
