@@ -73,99 +73,81 @@
  *     
  **/
 
+/* rewritten and modified by Bruno Pincon and Jean-Philippe Chancelier (sept-nov 2010) */
+
 int
 cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 	    double *pr, double *ompr, int *status, double *bound, double *boundbis)
 {
-  static int c__1 = 1;
-  static double c_b37 = 0.;
-  static double c_b38 = .5;
-  static double c_b40 = 5.;
-  static double c_b59 = 1.;
-  const  double atol=1.0E-50, zero=1.0E-300, inf=1.0E300,one=1.0E0,tol=1.0E-14;
-  
-  double d__1, ccum, fx, pq, prompr, cum, xhi, xlo;
-  int qhi, qleft, qporq;
-  
+  const  double tol = 1e-14, atol=1e-50, zero=1.0E-300, inf=1.0E300;
+  double cum, ccum, fx;
+  int pq_flag=1;
+
+  /*** Check parameter ***/
+
+  /* check which */
   CDF_CHECK_ARG(*which < 1 , 1 , -1 );
   CDF_CHECK_ARG(*which > 4 , 4 , -1 );
+ 
 
-  if (*which != 1)
+  if (*which != 1)   /* check p and q */
     {
-      /*     P */
-      CDF_CHECK_ARG(*p < 0 , 0 , -2 );
-      CDF_CHECK_ARG(*p > 1 , 1 , -2 );
-      /*     Q */
-      CDF_CHECK_ARG(*q < 0 , 0 , -3 );
-      CDF_CHECK_ARG(*q > 1 , 1 , -3 );
-    }
-
-  if (*which != 3)
-    {
-      /*     XN */
-      CDF_CHECK_ARG(*xn <=0 , 0 , -5 );
-    }
-
-  if (*which != 2 && *which != 1 )
-    {
-      /* S : jpc range for *s is extended for *which == 1 */
-      if ( (*s < 0. || (*which != 3 && *s > *xn))) 
+      if ( *which == 2 )   /* p=0 or q=0 are possible */
 	{
-	  *bound = (*s < 0.) ? 0: *xn ;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
+	}
+      else
+	{
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
+	}
+       pq_flag = *p <= *q;
+    }
+
+
+  if (*which != 2 && *which != 1 )        /* check S : range for *s is extended for *which == 1 (jpc) */
+    {
+      if ( !(*s >= 0.0) || (*which != 3 && !(*s <= *xn)) ) 
+	{
+	  *bound = !(*s >= 0.0) ? 0 : *xn ;
 	  *status = -4;
 	  return 0;
 	}
     }
 
-  if (*which != 4)
+  if (*which != 3)   /* check xn */
     {
-      /*     PR */
-      CDF_CHECK_ARG(*pr < 0 , 0 , -6 );
-      CDF_CHECK_ARG(*pr > 1 , 1 , -6 );
-      /*     OMPR */
-      CDF_CHECK_ARG(*ompr < 0 , 0 , -7 );
-      CDF_CHECK_ARG(*ompr > 1 , 1 , -7 );
+      CDF_CHECK_ARG(!(*xn > 0.0) , 0 , -5 );
     }
 
-  if (*which != 1)
+  if (*which != 4)   /* check pr and ompr */
     {
-      /*     P + Q */
-      pq = *p + *q;
-      if (((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      if ( *which != 3 )
 	{
-	  *bound = (!(pq < 0.)) ?  1.: 0.0;
-	  *status = 3;
-	  return 0;
+	  CDF_CHECK_ARG( !(*pr >= 0) , 0 , -6 );
+	  CDF_CHECK_ARG( !(*ompr >= 0) , 0 , -7 );
 	}
-    }
-
-  if (*which != 4)
-    {
-      /*     PR + OMPR */
-      prompr = *pr + *ompr;
-      if (((d__1 = prompr - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      else
 	{
-	  *bound = (prompr < 0.) ? 0 : 1;
-	  *status = 4;
-	  return 0;
+	  CDF_CHECK_ARG( !(*pr > 0) , 0 , -6 );
+	  CDF_CHECK_ARG( !(*ompr > 0) , 0 , -7 );
 	}
+
+      CDF_CHECK_ARG( !(*pr <= 1) , 1 , -6 );
+      CDF_CHECK_ARG( !(*ompr <= 1) , 1 , -7 );
+
+      CDF_CHECK_ARG( fabs((*pr+*ompr) -1.0) >= 0.5*DBL_EPSILON , 1.0, 4);
     }
 
-  if ( *which != 1)
-    {
-      qporq = *p <= *q;
-    }
 
-  /*     Select the minimum of P or Q */
-  /*     Calculate ANSWERS */
-  if (1 == *which)
+  /****  Calculate ANSWERS  ****/
+
+  if (1 == *which)         /* compute (P,Q) */
     {
-      /*     Calculating P */
-      if ( *s < 0 ) 
+      if ( *s < 0.0 ) 
 	{ 
 	  *p=0.0; *q=1.0; *status = 0;
 	}
-      else if ( *s > *xn ) 
+      else if ( *s >= *xn ) 
 	{ 
 	  *p=1.0; *q=0.0; *status = 0;
 	}
@@ -176,91 +158,161 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 	  *status = 0;
 	}
     }
-  else if (2 == *which)
+
+  else if (2 == *which)   /* compute S */
     {
-      if ( *p <= pow(*ompr,*xn) )
+      /* special cases */
+      if ( *pr == 0.0 )   /* constant random variable equal to 0 => generalised inverse is 0 */
 	{
-	  /* jpc fev 2005 */
-	  *status = 0; 
-	  *s =0.0;
-	  return 0;
+	  *s =0.0; *status = 0; 
 	}
-      /*     Calculating S */
-      *s = *pr * *xn;  // start from the mean in place of 5. ! (bruno, april 2010)
-      cdf_dstinv (&c_b37, xn, &c_b38, &c_b38, &c_b40, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, s, &fx, &qleft, &qhi);
-      while (1)
+      else if ( *ompr == 0.0 ) /* constant random variable equal to Xn => generalised inverse is Xn */
 	{
-	  if (!(*status == 1)) break;
-	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-	  fx = (!qporq) ? ccum - *q :  cum - *p;
-	  cdf_dinvr (status, s, &fx, &qleft, &qhi);
+	  *s = *xn; *status = 0; 
 	}
-      if ((*status == -1))
+
+      else if ( *p <= pow(*ompr,*xn) ) /* jpc fev 2005 */
 	{
-	  *status = (!qleft) ? 2 :1;
-	  *bound =  (!qleft) ? *xn: 0;
+	  *s =0.0; *status = 0; 
 	}
-    }
-  else if (3 == *which)
-    {
-      /*     Calculating XN */
-      *xn = 5.;
-      cdf_dstinv (&zero, &inf, &c_b38, &c_b38, &c_b40, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-      while (1)
+      else if ( *q == 0.0 )
 	{
-	  if (!(*status == 1)) break;
-	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-	  fx = (!qporq) ? ccum - *q:  cum - *p;
-	  cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-	}
-      if ((*status == -1))
-	{
-	  *status = (!qleft) ? 2 :1;
-	  *bound =  (!qleft) ? inf: zero;
-	}
-    }
-  else if (4 == *which)
-    {
-      /*     Calculating PR and OMPR */
-      cdf_dstzr (&c_b37, &c_b59, &atol, &tol);
-      if (!qporq)
-	{
-	  *status = 0;
-	  cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-	  *pr = one - *ompr;
-	  while (1)
-	    {
-	      if (!(*status == 1)) break;
-	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-	      fx = ccum - *q;
-	      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-	      *pr = one - *ompr;
-	    }
+	  *s = *xn; *status = 0; 
 	}
       else
 	{
-	  *status = 0;
-	  cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-	  *ompr = one - *pr;
-	  while (1) 
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double step;
+	  *s = (*pr) * (*xn);  // start from the mean in place of 5. ! (bruno, april 2010)
+	  step = sqrt((*s) * (*ompr)); // initial step = std
+	  
+	  nsp_zsearch_init(*s, 0.0, *xn, step, 0.0, 2.0, atol, tol, pq_flag ?  INCREASING : DECREASING, &S);
+
+	  do
 	    {
-	      if (!(*status == 1)) break;
 	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
-	      fx = cum - *p;
-	      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-	      *ompr = one - *pr;
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(s, fx, &S)) == EVAL_FX );
+
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; 
+	      break;
+	    case LEFT_BOUND_EXCEEDED:  /* we do a special thing : return 0 */
+	      *status = 0; *s = 0.0; break;
+	    case RIGHT_BOUND_EXCEEDED: /* we do a special thing : return xn */
+	      *status = 0; *s = *xn; break;
+	    default:
+	      *status = 5;
 	    }
 	}
-      if ((*status == -1))
+    }
+
+  else if (3 == *which)   /* compute XN */
+    {
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+
+      *xn = Max ( 1.0 , Min( (*s)/(*pr), inf));   /* start from s/pr instead of 5 (bruno, nov 2010) */
+
+      nsp_zsearch_init(*xn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  *status = (!qleft) ? 2 :1;
-	  *bound =  (!qleft) ? 1.: 0.;
+	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	  if ( pq_flag )
+	    fx = cum - *p;
+	  else
+	    fx = ccum - *q;
+	}
+      while ( (ret_val = nsp_zsearch(xn, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
+	{
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 6; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 5;
 	}
     }
+
+  else if (4 == *which)       /* Calculating PR and OMPR */
+    {
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      /* decide if we compute pr or ompr */
+      /*(this is important for pr << 1 (ompr near 1) or ompr << 1 (ompr near 0)) */
+      /* for that purpose we use the function pr -> cum_probability (with S and Xn fixed) which is decreasing */
+      /* So if cum_probability(0.5) <= p then pr <= 0.5 and we compute pr otherwise we compute ompr */
+      *pr = *ompr = 0.5;
+      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+      
+      if ( cum <= *p ) /* compute pr */
+	{
+	  *pr = 0.4;
+	  nsp_zsearch_init(*pr, zero, 0.5, 0.1, 0.0, 1.0, atol, tol,  pq_flag ?  DECREASING : INCREASING, &S);
+	  do
+	    {
+	      *ompr = 1.0 - *pr;
+	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(pr, fx, &S)) == EVAL_FX );
+	  *ompr = *pr;
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:   /* this should not occur (or may be with Nan in the computation) */
+	      *status = 1; *bound = zero; break;
+	    case RIGHT_BOUND_EXCEEDED:  /* this should not occur (or may be with Nan in the computation) */
+	      *status = 2; *bound = 0.5; break;
+	    default:                    /* this should not occur (or may be with Nan in the computation) */
+	      *status = 5;
+	    }
+	}
+      else             /* compute ompr */
+	{
+	  *ompr = 0.4;
+	  nsp_zsearch_init(*ompr, zero, 0.5, 0.1, 0.0, 1.0, atol, tol,  pq_flag ?  INCREASING : DECREASING, &S);
+	  do
+	    {
+	      *pr = 1.0 - *ompr;
+	      cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(ompr, fx, &S)) == EVAL_FX );
+	  *pr = 1.0 - *ompr;
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; 
+	      break;
+	    case LEFT_BOUND_EXCEEDED:   /* this should not occur (or may be with Nan in the computation) */
+	      *status = 1; *bound = zero; break;
+	    case RIGHT_BOUND_EXCEEDED:  /* this should not occur (or may be with Nan in the computation) */
+	      *status = 2; *bound = 0.5; break;
+	    default:                    /* this should not occur (or may be with Nan in the computation) */
+	      *status = 5;
+	    }
+	}
+    }
+
   return 0;
 }
 
