@@ -63,163 +63,148 @@
  * monotinicity of P with the other parameter. 
  **/
 
+/* rewritten and modified by Bruno Pincon and Jean-Philippe Chancelier (sept-nov 2010) */
+
 int
 cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
 	    double *pr, double *ompr, int *status, double *bound, double *boundbis)
 {
-  static int c__1 = 1;
-  static double c_b35 = 0.;
-  static double c_b36 = .5;
-  static double c_b38 = 5.;
-  static double c_b58 = 1.;
+  const  double tol = 1e-14, atol=1e-50, zero=1.0E-300, inf=1.0E300;
+  double cum, ccum, fx;
+  int pq_flag=1;
 
-  const double tol=1.0E-14, atol=1.0E-50,inf=1.0E300, one=1.0E0;
-  int qleft,  qporq, qhi;
-  double fx, pq, prompr, d__1, ccum, cum, xhi, xlo;
+  /*** Check parameter ***/
 
+  /* check which */
   CDF_CHECK_ARG(*which < 1 , 1 , -1 );
   CDF_CHECK_ARG(*which > 4 , 4 , -1 );
  
-  if (*which != 1)
+  if (*which != 1)   /* check p and q */
     {
-      /*     P */
-      CDF_CHECK_ARG(*p < 0 , 0 , -2 );
-      CDF_CHECK_ARG(*p > 1 , 1 , -2 );
-      /*     Q */
-      CDF_CHECK_ARG(*q <= 0 , 0 , -3 );
-      CDF_CHECK_ARG(*q > 1 , 1 , -3 );
-    }
-
-  if (*which != 2 && *which != 1 )
-    {
-      /* add *which==1 to compute cdfnnbn with *s < 0 (bruno march,22,2010)) */ 
-      /*     S */
-      CDF_CHECK_ARG(*s  < 0 , 0 , -4 );
-    }
-
-  if (*which != 3)
-    {
-      /*     XN */
-      CDF_CHECK_ARG(*xn  < 0 , 0 , -5 );
-    }
-
-  if (*which != 4)
-    {
-      /*     PR */
-      CDF_CHECK_ARG(*pr  < 0 , 0 , -6 );
-      CDF_CHECK_ARG(*pr  > 1 , 1 , -6 );
-      /*     OMPR */
-      CDF_CHECK_ARG(*ompr < 0 , 0 , -7 );
-      CDF_CHECK_ARG(*ompr > 1 , 1 , -7 );
-    }
-
-  if (*which != 1)
-    {
-      /*     P + Q */
-      pq = *p + *q;
-      if (((d__1 = pq - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      if ( *which == 2 )   /* p=0 or q=0 are possible */
 	{
-	  *bound = (!(pq < 0.)) ?  1.: 0.0;
-	  *status = 3;
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 <= , <= 1.0 );
 	}
-    }
-
-  if (*which != 4)
-    {
-      /*     PR + OMPR */
-      prompr = *pr + *ompr;
-      if (((d__1 = prompr - .5 - .5, Abs (d__1)) > cdf_spmpar (c__1) * 3.))
+      else
 	{
-	  *bound = (prompr < 0.) ?  0. : 1.0 ;
-	  *status = 4;
-	  return 0;
+	  CDF_CHECK_PQ( 0.0 < , <= 1.0 );
 	}
+       pq_flag = *p <= *q;
     }
 
-  if (*which != 1)
+
+  if (*which != 2 && *which != 1 ) /* check s : range for s is extented for which==1 (bruno march,22,2010)) */ 
     {
-      qporq = *p <= *q;
+      CDF_CHECK_ARG( !(*s >= 0.0) , 0 , -4 );
     }
+
+  if (*which != 3)   /* check xn */
+    {
+      CDF_CHECK_ARG( !(*xn  >= 0) , 0 , -5 );
+    }
+
+  if (*which != 4)   /* check pr and ompr */
+    {
+      if ( *which != 3 )
+	{
+	  CDF_CHECK_ARG( !(*pr >= 0) , 0 , -6 );
+	  CDF_CHECK_ARG( !(*ompr >= 0) , 0 , -7 );
+	}
+      else
+	{
+	  CDF_CHECK_ARG( !(*pr > 0) , 0 , -6 );
+	  CDF_CHECK_ARG( !(*ompr > 0) , 0 , -7 );
+	}
+
+      CDF_CHECK_ARG( !(*pr <= 1) , 1 , -6 );
+      CDF_CHECK_ARG( !(*ompr <= 1) , 1 , -7 );
+
+      CDF_CHECK_ARG( fabs((*pr+*ompr) -1.0) >= 0.5*DBL_EPSILON , 1.0, 4);
+    }
+
+
+  /****  Calculate ANSWERS  ****/
   
-  if (1 == *which)            
+  if (1 == *which)               /* compute (P,Q) */      
     {
-      /* Calculating P */
       double sf = floor(*s);  /* add floor to compute the real cdfnbn (bruno march,22,2010)) */
       cdf_cumnbn (&sf, xn, pr, ompr, p, q);
       *status = 0;
     }
 
-  else if (2 == *which)  
+  else if (2 == *which)         /* compute S */
     {
-      /* Calculating S */
-      /* bruno april 2010 (using the jpc 's workaround of cdfbin) */
+      /* bruno april 2010 (use jpc 's workaround of cdfbin) */
       double p0, q0, s0=0.0;
       cdf_cumnbn(&s0, xn, pr, ompr, &p0, &q0);
       if ( *p <= p0 )
 	{
-	  *status = 0; 
-	  *s =0.0;
-	  return 0;
+	  *status = 0; *s =0.0;
 	}
+      else
+	{
+	  ZsearchStruct S;
+	  zsearch_ret ret_val;
+	  double step;
+	  *s = *xn *(*pr/(*ompr));  /* start from the mean instead of 5, bruno april 2010 */
+	  step = sqrt( *s/(*ompr) );  /* initial step = std */
 
-      *s = *xn *(*pr/(1.0 - *pr));  /* start from the mean instead of 5, bruno april 2010 */
-      cdf_dstinv (&c_b35, &inf, &c_b36, &c_b36, &c_b38, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, s, &fx, &qleft, &qhi);
-      while (1) 
-	{
-	  if (!(*status == 1)) break;
-	  cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
-	  fx =(!qporq) ? ccum - *q : cum - *p;
-	  cdf_dinvr (status, s, &fx, &qleft, &qhi);
-	}
-      if ((*status == -1))
-	{
-	  if (!qleft)
+	  nsp_zsearch_init(*s, 0.0, inf, step, 0.0, 2.0, atol, tol, pq_flag ?  INCREASING : DECREASING, &S);
+	  do
 	    {
-	      *status = 2;
-	      *bound = inf;
+	      cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
 	    }
-	  else 
+	  while ( (ret_val = nsp_zsearch(s, fx, &S)) == EVAL_FX );
+
+	  switch ( ret_val )
 	    {
-	      *status = 1;
-	      *bound = 0.;
+	    case SUCCESS:
+	      *status = 0; 
+	      break;
+	    case LEFT_BOUND_EXCEEDED:
+	      *status = 1; *bound = 0.0; break;
+	    case RIGHT_BOUND_EXCEEDED:
+	      *status = 2; *bound = inf; break;
+	    default:
+	      *status = 5;
 	    }
 	}
     }
-  else if (3 == *which)
+
+  else if (3 == *which)         /* compute Xn */
     {
-      /*     Calculating XN */
-      *xn = 5.;
-      cdf_dstinv (&c_b35, &inf, &c_b36, &c_b36, &c_b38, &atol, &tol);
-      *status = 0;
-      cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-      while (1)
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+
+      *xn = Max ( 1.0 , Min( (*s)*(*ompr)/(*pr), inf));   /* start from s*(1-pr)/pr instead of 5 (bruno, nov 2010) */
+
+      nsp_zsearch_init(*xn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      do
 	{
-	  if (!(*status == 1)) break;
-	  {
-	      goto L420;
-	    }
 	  cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
-	  fx =(!qporq)?  ccum - *q:  cum - *p;
-	  cdf_dinvr (status, xn, &fx, &qleft, &qhi);
-	}
-      if ((*status == -1))
-	{
-	  if (!qleft)
-	    {
-	      *status = 2;
-	      *bound = inf;
-	    }
+	  if ( pq_flag )
+	    fx = cum - *p;
 	  else
-	    {
-	      *status = 1;
-	      *bound = 0.;
-	    }
+	    fx = ccum - *q;
+	}
+      while ( (ret_val = nsp_zsearch(xn, fx, &S)) == EVAL_FX );
+
+      switch ( ret_val )
+	{
+	case SUCCESS:
+	  *status = 0; break;
+	case BOTH_BOUND_EXCEEDED:
+	  *status = 6; *bound = zero; *boundbis = inf; break;
+	default:
+	  *status = 5;
 	}
     }
-  else if (4 == *which)
+
+  else if (4 == *which)    /* ICI */
     {
       /*     Calculating PR and OMPR */
       cdf_dstzr (&c_b35, &c_b58, &atol, &tol);
