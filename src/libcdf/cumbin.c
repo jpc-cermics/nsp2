@@ -22,15 +22,24 @@
 
 int cdf_cumbin (double *s, double *xn, double *pr, double *ompr, double *cum, double *ccum)
 {
-  double d1, d2;
-  if (!(*s < *xn))
+  if ( isnan(*s) )
     {
-      *cum = 1.;
-      *ccum = 0.;
-      return 0;
+      *cum = *ccum = *s;
     }
-  d1 = *s + 1.;
-  d2 = *xn - *s;
-  cdf_cumbet (pr, ompr, &d1, &d2, ccum, cum);
+  else if ( *s < 0.0 )
+    {
+      *cum = 0.0; *ccum = 1.0;
+    }
+  else if ( *s >= *xn )
+    {
+      *cum = 1.0; *ccum = 0.;
+    }
+  else
+    {
+      double d1, d2;
+      d1 = *s + 1.0;
+      d2 = *xn - *s;
+      cdf_cumbet (pr, ompr, &d1, &d2, ccum, cum);
+    }
   return 0;
 }				
