@@ -141,7 +141,7 @@ ind = find(era > 1e-9); // detect other solution
 [pp,qq] = cdff("PQ",xe(ind),a(ind),be*ones(size((ind))));  // verify error on p for the other solution
 era(ind) = abs(pp-pe(ind));
 era = max( era );
-if era > 1e-13 then, pause, end
+if era > 1e-12 then, pause, end
 b = cdff("Dfd",pe,qe,xe,ae*v);
 erb = max( abs(b-be)/be );
 if erb > 1e-15 then, pause, end
@@ -1036,3 +1036,224 @@ if abs(p-0.4)/0.4 > 1e-14 then, pause, end
 
 
 
+
+/////////////////////////////////////////////////////////
+// tests for binomial distribution
+/////////////////////////////////////////////////////////
+
+Ne = 8;
+pre = 0.5;
+qre = 0.5;
+
+me = 4;
+sde = sqrt(2);
+[m,sd] = dist_stat("bin",Ne,pre);
+if ~(m == me && sd == sde) then, pause, end
+
+xe = (0:7)';
+pe = [0.003906250;
+      0.035156250;
+      0.14453125;
+      0.36328125;
+      0.63671875;
+      0.85546875;
+      0.96484375;
+      0.99609375];
+
+qe =[0.99609375;
+     0.96484375;
+     0.85546875;
+     0.63671875;
+     0.36328125;
+     0.14453125;
+     0.03515625;
+     0.00390625];		       
+
+v = ones(size(xe));
+[p,q] = cdf("bin",xe,Ne,pre);
+[pp,qq] = cdfbin("PQ",xe,Ne*v,pre*v,qre*v);
+if ~(p.equal[pp] && q.equal[qq]) then, pause, end
+erp = max( abs(p-pe)./pe );
+erq =  max( abs(q-qe)./qe );
+if erp > 1e-14 || erq > 1e-14 then, pause, end
+x = cdfbin("S",Ne*v,pre*v,qre*v,pe,qe);
+erx = max( abs(x-xe)./(xe+1e-6) );
+if erx > 1e-14 then, pause, end
+// a test for icdf...
+xx = icdf("bin",p,Ne,pre,Q=q);
+if ~xx.equal[xe] then, pause, end
+
+N = cdfbin("Xn",pre*v,qre*v,pe,qe,xe);
+erN =  max(abs(N-Ne)/Ne);
+if erN > 1e-14 then, pause, end
+
+pr = cdfbin("PrOmpr",pe,qe,xe,Ne*v);
+erp =  max(abs(pr-pre)/pre);
+if erp > 1e-15 then, pause, end
+
+// verify special values
+[p,q] = cdfbin("PQ",%nan,Ne,pre,qre);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdfbin("PQ",%inf,Ne,pre,qre);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+x = cdfbin("S", Ne, pre,qre, 0, 1);
+if ~x.equal[0] then, pause, end
+x = cdfbin("S", Ne, pre,qre, 1, 0);
+if ~x.equal[Ne] then, pause, end
+
+
+/////////////////////////////////////////////
+Ne = 536;
+pre = 0.01;
+qre = 0.99;
+
+me = 5.36;
+sde = sqrt(5.36*0.99);
+[m,sd] = dist_stat("bin",Ne,pre);
+if ~(m == me && sd == sde) then, pause, end
+
+xe = [0:20]';
+pe = [0.0045757712397081284048;
+      0.029349643810249106435;
+      0.096289147978124981414;
+      0.21664502415875029198;
+      0.37863917063418789434;
+      0.55274197048253699425;
+      0.70837932186212179568;
+      0.82740933085372344757;
+      0.90691296059685131859;
+      0.95402622266685301994;
+      0.97910570661724786500;
+      0.99121939675306759732;
+      0.99657266890904853964;
+      0.99875224514038809968;
+      0.99957469706606673597;
+      0.99986380137933558994;
+      0.99995889187631354002;
+      0.99998827218435188466;
+      0.99999682907541355743;
+      0.99999918551856610740;
+      0.99999980081205593989];
+
+qe = [0.99542422876029187160;
+      0.97065035618975089357;
+      0.90371085202187501859;
+      0.78335497584124970802;
+      0.62136082936581210566;
+      0.44725802951746300575;
+      0.29162067813787820432;
+      0.17259066914627655243;
+      0.093087039403148681407;
+      0.045973777333146980061;
+      0.020894293382752135001;
+      0.0087806032469324026761;
+      0.0034273310909514603608;
+      0.0012477548596119003195;
+      0.00042530293393326402688;
+      0.00013619862066441005734;
+      0.000041108123686459982769;
+      0.000011727815648115337029;
+      0.0000031709245864425698357;
+      0.00000081448143389259992278;
+      0.00000019918794406010777884];
+
+v = ones(size(xe));
+[p,q] = cdf("bin",xe,Ne,pre);
+[pp,qq] = cdfbin("PQ",xe,Ne*v,pre*v,qre*v);
+if ~(p.equal[pp] && q.equal[qq]) then, pause, end
+erp = max( abs(p-pe)./pe );
+erq = max( abs(q-qe)./qe );
+if erp > 1e-14 ||  erq > 1e-14 then, pause, end
+x = cdfbin("S",Ne*v,pre*v,qre*v,pe,qe);
+erx = max( abs(x-xe)./(xe+1e-6) );  // x(1) not accurate. This is due to evaluation of cumbin
+                                    // (cumbin calls cumbet) for s near 0 (one parameter of the beta
+                                    // is 1 + s so this is not well conditionned for s < epsm)
+if erx > 1e-9 then, pause, end
+
+// a test for icdf...
+xx = icdf("bin",p,Ne,pre,Q=q);
+if ~xx.equal[xe] then, pause, end
+
+N = cdfbin("Xn",pre*v,qre*v,pe,qe,xe);
+erN =  max(abs(N-Ne)/Ne);
+if erN > 1e-14 then, pause, end
+
+pr = cdfbin("PrOmpr",pe,qe,xe,Ne*v);
+erp =  max(abs(pr-pre)/pre);
+if erp > 1e-12 then, pause, end
+
+// verify special values
+[p,q] = cdfbin("PQ",%nan,Ne,pre,qre);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdfbin("PQ",%inf,Ne,pre,qre);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+x = cdfbin("S", Ne, pre,qre, 0, 1);
+if ~x.equal[0] then, pause, end
+x = cdfbin("S", Ne, pre,qre, 1, 0);
+if ~x.equal[Ne] then, pause, end
+
+/////////////////////////////////////////////
+Ne = 321;
+pre = 0.9;
+qre = 0.1;
+
+me = 288.9;
+sde = sqrt(28.89);
+[m,sd] = dist_stat("bin",Ne,pre);
+if ~(abs(m - me)/me <= 2*%eps && abs(sd - sde)/sde <= 2*%eps) then, pause, end
+
+xe = [0; 50; 100; 150; 175; 200; 225; 240; 250; 260; 265;
+      270; 275; 280; 285; 287; 288; 289; 290; 292; 295; 300; 305; 310; 315; 320];
+
+pe =  [1.0000000000000000000e-321; 6.5083205422645359224e-215; 4.0318956556729814777e-141; 
+       1.4519404758656870831e-83; 5.8209996235426349890e-60; 9.1732452512905724320e-40; 
+       3.7048966634154258164e-23; 4.4352160407343684605e-15; 1.4529234277622591707e-10; 
+       0.00000081815278095305200984; 0.000030055381495567516456; 0.00066306702539178785468; 
+       0.0085483416434786790044; 0.062777042072038058980; 0.25867625434535255484; 
+       0.38839967991060633995; 0.46052062508314932368; 0.53463799780372117893; 
+       0.60824421622966840069; 0.74406905072516894767; 0.89306050460617850209; 
+       0.98837438693100647005; 0.99962756276666586587; 0.99999773819378560716; 
+       0.99999999889174036302; 0.99999999999999794957];
+
+qe = [1.0000000000000000000; 1.0000000000000000000; 1.0000000000000000000; 
+      1.0000000000000000000; 1.0000000000000000000; 1.0000000000000000000; 
+      1.0000000000000000000; 0.99999999999999556478; 0.99999999985470765722; 
+      0.99999918184721904695; 0.99996994461850443248; 0.99933693297460821215; 
+      0.99145165835652132100; 0.93722295792796194102; 0.74132374565464744516; 
+      0.61160032008939366005; 0.53947937491685067632; 0.46536200219627882107; 
+      0.39175578377033159931; 0.25593094927483105233; 0.10693949539382149791; 
+      0.011625613068993529953; 0.00037243723333413412562; 0.0000022618062143928353918; 
+      0.0000000011082596369756712815; 2.0504327506461018404e-15];
+
+v = ones(size(xe));
+// don't test if cdf("bin"... and cdfbin output the same values
+// because this test case needs the option ompr= which is not implemented
+// in cdf("bin"... (this is because fl(1 - fl(0.9)) is not equal to
+// fl(0.1) so the ompr computed in cdf("bin" using 1-0.9 is not exactly
+// equal to the ompr provided to cdfbin).
+
+[p,q] = cdfbin("PQ",xe,Ne*v,pre*v,qre*v);
+erp = max( abs(p-pe)./pe );
+erq = max( abs(q-qe)./qe );
+if erp > 1e-13 ||  erq > 1e-13 then, pause, end
+x = cdfbin("S",Ne*v,pre*v,qre*v,pe,qe);
+erx = max( abs(x-xe)./(xe+1e-6) );
+if erx > 1e-14 then, pause, end
+
+N = cdfbin("Xn",pre*v,qre*v,pe,qe,xe);
+erN =  max(abs(N-Ne)/Ne);
+if erN > 1e-13 then, pause, end
+
+pr = cdfbin("PrOmpr",pe,qe,xe,Ne*v);
+erp =  max(abs(pr-pre)/pre);
+if erp > 1e-15 then, pause, end
+
+// verify special values
+[p,q] = cdfbin("PQ",%nan,Ne,pre,qre);
+if ~(isnan(p) && isnan(q)) then, pause, end
+[p,q] = cdfbin("PQ",%inf,Ne,pre,qre);
+if ~ (p.equal[1] && q.equal[0]) then, pause, end
+x = cdfbin("S", Ne, pre,qre, 0, 1);
+if ~x.equal[0] then, pause, end
+x = cdfbin("S", Ne, pre,qre, 1, 0);
+if ~x.equal[Ne] then, pause, end
