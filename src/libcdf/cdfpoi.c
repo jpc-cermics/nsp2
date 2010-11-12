@@ -49,7 +49,7 @@
  * Returns: 0
  **/
 
-/* modified by Bruno Pincon and Jean-Philippe Chancelier (sept 2010) */
+/* rewritten and modified by Bruno Pincon and Jean-Philippe Chancelier (sept 2010) */
 
 int
 cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
