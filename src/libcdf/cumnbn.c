@@ -28,17 +28,27 @@
 int cdf_cumnbn (double *s, double *xn, double *pr, double *ompr, double *cum,
 		double *ccum)
 {
-  double d__1;
-  d__1 = *s + 1.;
-  if ( d__1 > DBL_MAX )  /* add this block because cumbet doesn't handle well Inf 
-                            as its 4 th parameter (return Nan). Bruno april 2010 */
+  if ( isnan(*s) )
     {
-      *cum = 1.0;
-      *ccum = 0.0;
+      *cum = *ccum = *s;
+    }
+  else if ( *s < 0.0 )
+    {
+      *cum = 0.0; *ccum = 1.0;
     }
   else
     {
-      cdf_cumbet (pr, ompr, xn, &d__1, cum, ccum);
+      double b = *s + 1.0;
+      if ( b > DBL_MAX )  /* add this block because bratio doesn't handle Inf 
+                             as its 2 th parameter (return Nan). Bruno april 2010 */
+	{
+	  *cum = 1.0; *ccum = 0.0;
+	}
+      else
+	{
+	  int ierr; /* FIXME: bratio can fails so... */
+	  cdf_bratio (*xn, b, *pr, *ompr, cum, ccum, &ierr);
+	}
     }
   return 0;
 }

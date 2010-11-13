@@ -36,10 +36,8 @@ int cdf_cumbin (double *s, double *xn, double *pr, double *ompr, double *cum, do
     }
   else
     {
-      double d1, d2;
-      d1 = *s + 1.0;
-      d2 = *xn - *s;
-      cdf_cumbet (pr, ompr, &d1, &d2, ccum, cum);
+      int ierr;  /* FIXME: bratio can fails so... */
+      cdf_bratio (*s+1.0, *xn - *s, *pr, *ompr, ccum, cum, &ierr);
     }
   return 0;
 }				

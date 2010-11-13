@@ -172,18 +172,12 @@ int cdf_cdfbet (int *which, double *p, double *q, double *x, double *y, double *
 	  int xy_flag;
 
 	  /* decide if we compute x or y */
-	  if ( pq_flag )
-	    {
-	      xy_flag = 1; /* compute x but not in all cases */  
-	      if ( mean - 2.0*std > 0.9 ) /* compute y */
-		xy_flag = 0;
-	    }
-	  else
-	    {
-	      xy_flag = 0; /* compute y but not in all cases */ 
-	      if ( mean + 2.0*std < 0.1 ) /* compute x */
-		xy_flag = 1;
-	    }
+	  *x = *y = 0.5;
+	  cdf_cumbet (x, y, a, b, &cum, &ccum);
+	  if ( cum >= *p )   /* then x <= 0.5 so compute x */
+	    xy_flag = 1;
+	  else               /* y < 0.5 so compute y */
+	    xy_flag = 0;
 
 	  /* mean will be used as start point but force mean to be in (0,1) */
 	  mean = Max ( DBL_EPSILON , mean );

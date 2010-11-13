@@ -27,20 +27,19 @@
 
 int cdf_cumbet (double *x, double *y, double *a, double *b, double *cum,double *ccum)
 {
-  int ierr;
-  if (*x <= 0.0 )
+  if ( *x <= 0.0 )
     {
-      *cum = 0.;
-      *ccum = 1.;
-      return 0;
+      *cum = 0.0; *ccum = 1.0;
     }
-  if (*y <= 0.0)
+  else if ( *y <= 0.0 )
     {
-      *cum = 1.;
-      *ccum = 0.;
-      return 0;
+      *cum = 1.0; *ccum = 0.0;
     }
-  cdf_bratio (*a, *b, *x, *y, cum, ccum, &ierr);
+  else
+    {
+      int ierr;
+      cdf_bratio (*a, *b, *x, *y, cum, ccum, &ierr);
+    }
   return 0;
 }
 
