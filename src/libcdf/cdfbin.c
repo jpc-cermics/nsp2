@@ -143,20 +143,9 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 
   if (1 == *which)         /* compute (P,Q) */
     {
-      if ( *s < 0.0 ) 
-	{ 
-	  *p=0.0; *q=1.0; *status = 0;
-	}
-      else if ( *s >= *xn ) 
-	{ 
-	  *p=1.0; *q=0.0; *status = 0;
-	}
-      else 
-	{
-	  double sf = floor(*s); /* add floor to compute the real cdfbin (bruno march,22,2010)) */
-	  cdf_cumbin (&sf, xn, pr, ompr, p, q);
-	  *status = 0;
-	}
+      double sf = floor(*s); /* add floor to compute the real cdfbin (bruno march,22,2010)) */
+      cdf_cumbin (&sf, xn, pr, ompr, p, q);
+      *status = 0;
     }
 
   else if (2 == *which)   /* compute S */
@@ -221,7 +210,7 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 
       *xn = Max ( 1.0 , Min( (*s)/(*pr), inf));   /* start from s/pr instead of 5 (bruno, nov 2010) */
 
-      nsp_zsearch_init(*xn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      nsp_zsearch_init(*xn, zero, inf, 2.0, 0.0, 2.0, atol, tol, pq_flag ? DECREASING : INCREASING, &S);
       do
 	{
 	  cdf_cumbin (s, xn, pr, ompr, &cum, &ccum);
@@ -236,8 +225,10 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
 	{
 	case SUCCESS:
 	  *status = 0; break;
-	case BOTH_BOUND_EXCEEDED:
-	  *status = 6; *bound = zero; *boundbis = inf; break;
+	case LEFT_BOUND_EXCEEDED:
+	  *status = 1; *bound = zero; break;
+	case RIGHT_BOUND_EXCEEDED:
+	  *status = 2; *bound = inf; break;
 	default:
 	  *status = 5;
 	}

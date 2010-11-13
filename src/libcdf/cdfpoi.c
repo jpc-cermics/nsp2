@@ -159,12 +159,12 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
       ZsearchStruct S;
       zsearch_ret ret_val;
       *xlam = 5.;
-      nsp_zsearch_init(*xlam, 0.0, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      nsp_zsearch_init(*xlam, zero, inf, 2.0, 0.0, 2.0, atol, tol, pq_flag ? DECREASING : INCREASING, &S);
 	
       do
 	{
 	  cdf_cumpoi (s, xlam, &cum, &ccum);
-	  if ( ccum > 1.5 ) /* this comes from gratio (when it is unable to compute the result it output 2) */
+	  if ( ccum > 1.5 ) /* this comes from gratio (when it is unable to compute the result it outputs 2) */
 	    {
 	      *status = 10; return 0;
 	    }
@@ -179,8 +179,10 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 	{
 	case SUCCESS:
 	  *status = 0; break;
-	case BOTH_BOUND_EXCEEDED:
-	  *status = 4; *bound = zero; *boundbis = inf; break;
+	case LEFT_BOUND_EXCEEDED:
+	  *status = 1; *bound = zero; break;
+	case RIGHT_BOUND_EXCEEDED:
+	  *status = 2; *bound = inf; break;
 	default:
 	  *status = 5;
 	}
