@@ -103,22 +103,13 @@ cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
       CDF_CHECK_ARG( !(*xn  >= 0) , 0 , -5 );
     }
 
-  if (*which != 4)   /* check pr and ompr */
+  if (*which != 4)   /* check pr and ompr: the case ompr=0 (that is pr = 1 in exact arithmetic) 
+                        corresponds to a constant random variable equal to 0 */
     {
-      if ( *which != 3 )
-	{
-	  CDF_CHECK_ARG( !(*pr >= 0) , 0 , -6 );
-	  CDF_CHECK_ARG( !(*ompr >= 0) , 0 , -7 );
-	}
-      else
-	{
-	  CDF_CHECK_ARG( !(*pr > 0) , 0 , -6 );
-	  CDF_CHECK_ARG( !(*ompr > 0) , 0 , -7 );
-	}
-
+      CDF_CHECK_ARG( !(*pr > 0) , 0 , -6 );
+      CDF_CHECK_ARG( !(*ompr >= 0) , 0 , -7 );
       CDF_CHECK_ARG( !(*pr <= 1) , 1 , -6 );
       CDF_CHECK_ARG( !(*ompr <= 1) , 1 , -7 );
-
       CDF_CHECK_ARG( fabs((*pr+*ompr) -1.0) >= 0.5*DBL_EPSILON , 1.0, 4);
     }
 
@@ -140,6 +131,10 @@ cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
       if ( *p <= p0 )
 	{
 	  *status = 0; *s =0.0;
+	}
+      else if ( *q == 0.0 )
+	{
+	  *status = 0; *s = 2.0*DBL_MAX;  /* Inf */
 	}
       else
 	{
@@ -182,7 +177,7 @@ cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
 
       *xn = Max ( 1.0 , Min( (*s)*(*ompr)/(*pr), inf));   /* start from s*(1-pr)/pr instead of 5 (bruno, nov 2010) */
 
-      nsp_zsearch_init(*xn, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
+      nsp_zsearch_init(*xn, zero, inf, 2.0, 0.0, 2.0, atol, tol, pq_flag ? DECREASING : INCREASING, &S);
       do
 	{
 	  cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
@@ -197,58 +192,84 @@ cdf_cdfnbn (int *which, double *p, double *q, double *s, double *xn,
 	{
 	case SUCCESS:
 	  *status = 0; break;
-	case BOTH_BOUND_EXCEEDED:
-	  *status = 6; *bound = zero; *boundbis = inf; break;
+	case LEFT_BOUND_EXCEEDED:
+	  *status = 1; *bound = zero; break;
+	case RIGHT_BOUND_EXCEEDED:
+	  *status = 2; *bound = inf; break;
 	default:
 	  *status = 5;
 	}
     }
 
-  else if (4 == *which)    /* ICI */
+  else if (4 == *which)        /* compute pr and ompr */
     {
-      /*     Calculating PR and OMPR */
-      cdf_dstzr (&c_b35, &c_b58, &atol, &tol);
-      if (!qporq)
+      ZsearchStruct S;
+      zsearch_ret ret_val;
+      /* decide if we compute pr or ompr */
+      /*(this is important for pr << 1 (ompr near 1) or ompr << 1 (ompr near 0)) */
+      /* for that purpose we use the function pr -> cum_probability (with S and Xn fixed) which is increasing */
+      /* caution: this is due to the definition used for negative binomial distribution (and there are others definitions) */
+      /* So if cum_probability(0.5) >= p then pr <= 0.5 and we compute pr otherwise we compute ompr */
+      *pr = *ompr = 0.5;
+      cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
+      
+      if ( cum >= *p ) /* compute pr */
 	{
-	  *status = 0;
-	  cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-	  *pr = one - *ompr;
-	  while (1)
+	  *pr = 0.4;
+	  nsp_zsearch_init(*pr, zero, 1.0, 0.1, 0.0, 1.0, atol, tol,  pq_flag ?  INCREASING : DECREASING, &S);
+	  do
 	    {
-	      if (!(*status == 1)) break;
+	      *ompr = 1.0 - *pr;
 	      cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
-	      fx = ccum - *q;
-	      cdf_dzror (status, ompr, &fx, &xlo, &xhi, &qleft, &qhi);
-	      *pr = one - *ompr;
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(pr, fx, &S)) == EVAL_FX );
+	  *ompr = *pr;
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; break;
+	    case LEFT_BOUND_EXCEEDED:   /* this should not occur (or may be with Nan in the computation) */
+	      *status = 1; *bound = zero; break;
+	    case RIGHT_BOUND_EXCEEDED:  /* this should not occur (or may be with Nan in the computation) */
+	      *status = 2; *bound = 1.0; break;
+	    default:                    /* this should not occur (or may be with Nan in the computation) */
+	      *status = 5;
 	    }
 	}
-      else
+      else             /* compute ompr */
 	{
-	  *status = 0;
-	  cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-	  *ompr = one - *pr;
-	  while (1) 
+	  *ompr = 0.4;
+	  nsp_zsearch_init(*ompr, zero, 1.0, 0.1, 0.0, 1.0, atol, tol,  pq_flag ? DECREASING : INCREASING, &S);
+	  do
 	    {
-	      if (!(*status == 1)) break;
+	      *pr = 1.0 - *ompr;
 	      cdf_cumnbn (s, xn, pr, ompr, &cum, &ccum);
-	      fx = cum - *p;
-	      cdf_dzror (status, pr, &fx, &xlo, &xhi, &qleft, &qhi);
-	      *ompr = one - *pr;
+	      if ( pq_flag )
+		fx = cum - *p;
+	      else
+		fx = ccum - *q;
+	    }
+	  while ( (ret_val = nsp_zsearch(ompr, fx, &S)) == EVAL_FX );
+	  *pr = 1.0 - *ompr;
+	  
+	  switch ( ret_val )
+	    {
+	    case SUCCESS:
+	      *status = 0; 
+	      break;
+	    case LEFT_BOUND_EXCEEDED:   /* this should not occur (or may be with Nan in the computation) */
+	      *status = 1; *bound = zero; break;
+	    case RIGHT_BOUND_EXCEEDED:  /* this should not occur (or may be with Nan in the computation) */
+	      *status = 2; *bound = 1.0; break;
+	    default:                    /* this should not occur (or may be with Nan in the computation) */
+	      *status = 5;
 	    }
 	}
-      if ((*status == -1))
-	{
-	  if (!qleft)
-	    {
-	      *status = 2;
-	      *bound = 1.;
-	    }
-	  else
-	    {
-	      *status = 1;
-	      *bound = 0.;
-	    }
-	}
-    }
+     }
   return 0;
 }	
