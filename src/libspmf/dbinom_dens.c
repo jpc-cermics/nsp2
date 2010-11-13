@@ -211,7 +211,7 @@ double nsp_pdf_hyper(NTYPE x, NTYPE r, NTYPE b, NTYPE n, int give_log)
  * The negative binomial distribution is well defined for non-integer n,
  * and this can be useful for e.g. overdispersed discrete survival times.
  *
- * n should be > 0 and p in [0,1]
+ * n should be > 0 and p in (0,1]
  * this is verified by the nsp interface
  *
  */

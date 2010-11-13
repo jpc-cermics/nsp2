@@ -1195,9 +1195,9 @@ static int int_nbn_part(Stack stack, int rhs, int opt, int lhs)
   if ( (x = GetRealMatCopy(stack,2)) == NULLMAT ) return RET_BUG;
   if (GetScalarDouble(stack,3,&r) == FAIL) return RET_BUG;      
   if (GetScalarDouble(stack,4,&p) == FAIL) return RET_BUG;      
-  if ( !( r > 0.0  &&  0.0 <= p  &&  p <= 1.0) )
+  if ( !( r > 0.0  &&  0.0 < p  &&  p <= 1.0) )
     { 
-      Scierror("Error: pdf('nbn',x,r,p), invalid parameters: r should be positive and p in [0,1]\n"); 
+      Scierror("Error: pdf('nbn',x,r,p), invalid parameters: r should be positive and p in (0,1]\n"); 
       return RET_BUG;
     }
   for ( i = 0 ; i < x->mn ; i++ )

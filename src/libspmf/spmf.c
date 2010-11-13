@@ -21,7 +21,7 @@
 
 #include <limits.h>
 #include <float.h>
-#include <nsp/math.h> 
+#include <nsp/math.h>
 #include <nsp/sciio.h>
 #include <nsp/spmf.h>
 #include <string.h>
@@ -32,58 +32,58 @@
  * SECTION:spmf
  * @Title: Libspmf
  * @Short_Description: special mathematical functions
- * @Stability_Level: 
- * @See_Also: 
+ * @Stability_Level:
+ * @See_Also:
  *
- * 
+ *
  */
 
 
 /*
- *     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) ) 
+ *     PURPOSE :  Compute   v = log ( (1 + s)/(1 - s) )
  *        for small s, this is for |s| < 0.334
- *     ALGORITHM : 
- *     1/ if |s| is "very small" we use a truncated 
- *        taylor dvp (by keeping 4 terms) from : 
+ *     ALGORITHM :
+ *     1/ if |s| is "very small" we use a truncated
+ *        taylor dvp (by keeping 4 terms) from :
  *
- *        t = 2 * s * ( 1 + 1/3 s^2  + 1/5 s^4  +  1/7 s^6   [+  1/9 s^8 .... ]) 
+ *        t = 2 * s * ( 1 + 1/3 s^2  + 1/5 s^4  +  1/7 s^6   [+  1/9 s^8 .... ])
  *
  *        the relative error er is about 1/9 s^8, er <= epsm leads to
  *         |s| <= (9 epsm)^(1/8) which is near 0.0133. We take 0.01
  *        as limit for this formula.
  *
- *     2/ for 0.01 < |s| <= 0.2  we used a minimax polynome : 
- *        yi = s * (2  + d3 s^3 + d5 s^5 .... + d13 s^13 + d15 s^15) 
- *        computed (by some remes algorithm) following 
- *        (*) the sin(x) example (p 39) of the book : 
- *         "ELEMENTARY FUNCTIONS" 
- *         "Algorithms and implementation" 
- *         J.M. Muller (Birkhauser) 
- *        (*) without the additionnal raffinement to get the first coefs 
- *         very near floating point numbers) 
+ *     2/ for 0.01 < |s| <= 0.2  we used a minimax polynome :
+ *        yi = s * (2  + d3 s^3 + d5 s^5 .... + d13 s^13 + d15 s^15)
+ *        computed (by some remes algorithm) following
+ *        (*) the sin(x) example (p 39) of the book :
+ *         "ELEMENTARY FUNCTIONS"
+ *         "Algorithms and implementation"
+ *         J.M. Muller (Birkhauser)
+ *        (*) without the additionnal raffinement to get the first coefs
+ *         very near floating point numbers)
  *
  *     3/ for 0.2 < |s| <= 0.334 we used another minimax polynome
- *        yi = s * (2  + e3 s^2 + e5 s^4 + .... + e15 s^15 + e17 s^17) 
+ *        yi = s * (2  + e3 s^2 + e5 s^4 + .... + e15 s^15 + e17 s^17)
  *        got less or more empiricaly with the pari-gp software.
- *        
+ *
  */
 
 double lnp1m1(double s)
 {
   double  s2;
   const double E = 1.e-2, C3  = 2.0/3.0, C5  = 2.0/5.0, C7 = 2.0/7.0;
-  const double 
+  const double
     D3 = 0.66666666666672679472E0, D5 = 0.39999999996176889299E0,
     D7 = 0.28571429392829380980E0, D9 = 0.22222138684562683797E0,
     D11= 0.18186349187499222459E0, D13= 0.15250315884469364710E0,
-    D15= 0.15367270224757008114E0, E1 = 2.000000000009506159978903118, 
+    D15= 0.15367270224757008114E0, E1 = 2.000000000009506159978903118,
     E3 = 0.6666666653952079503982298174, E5 = 0.4000000741877232817059141633,
     E7 = 0.2857118089055873685381586584, E9 = 0.2222743062829225981951620178,
     E11 =0.1811042136269037116837648205, E13 =0.1601985962777479638905952230,
     E15 =0.0983334292284553038580498852, E17 =0.2223610247590649232825929055;
 
   s2 = s * s;
-  if (fabs(s) <=  E) 
+  if (fabs(s) <=  E)
     return  s * (2E0 + s2*(C3 + s2*(C5 + s2*C7)));
   else if ( fabs(s) <= 0.2 )
     return s * (2.E0 + s2*(D3 + s2*(D5 + s2*( D7 + s2*(D9 + s2*(D11 + s2*(D13 + s2*D15)))))));
@@ -93,36 +93,36 @@ double lnp1m1(double s)
 
 /**
  * nsp_log1p:
- * @x:  a double 
- * 
+ * @x:  a double
+ *
  * computes log(1+x) with accuracy near x = 0
- * 
+ *
  * Returns: a double
  **/
 double nsp_log1p(double x)
 {
-  if ( -0.5 <= x && x <= 1.0) 
+  if ( -0.5 <= x && x <= 1.0)
     {
       /* use the function log((1+g)/(1-g)) with g = x/(x + 2) */
       return lnp1m1( x / (x + 2.0));
-    } 
-  else 
+    }
+  else
     {
       /* use the standard formula */
       return log(x + 1.0);
     }
-} 
+}
 
 
 /**
  * nsp_expm1:
- * @x:  a double 
- * 
+ * @x:  a double
+ *
  * computes exp(x)-1 with accuracy near x = 0
  * code origin:
  *     Mathlib : A C Library of Special Functions
  *     Copyright (C) 2002 The R Development Core Team
- * 
+ *
  * Returns: a double
  **/
 double nsp_expm1(double x)
@@ -148,10 +148,10 @@ double nsp_expm1(double x)
 
 /**
  * nsp_sinpi:
- * @x: a double 
- * 
+ * @x: a double
+ *
  * computes sin(pi x) with accuracy even for |x| big
- * 
+ *
  * Returns: a double
  **/
 double nsp_sinpi(double x)
@@ -180,7 +180,7 @@ double nsp_sinpi(double x)
   x = fabs(x);
 
   /* reduce to [0,2) using periodicity */
-  if ( x >= 2.0 )   
+  if ( x >= 2.0 )
     x = x - 2.0*floor(0.5*x);
 
   if ( x > 1.0 )    /* reduce to [0,1] using odd parity around 1 */
@@ -207,10 +207,10 @@ double nsp_sinpi(double x)
 
 /**
  * nsp_cospi:
- * @x: a double 
- * 
+ * @x: a double
+ *
  * computes cos(pi x) with accuracy even for |x| big
- * 
+ *
  * Returns: a double
  **/
 double nsp_cospi(double x)
@@ -246,10 +246,10 @@ double nsp_cospi(double x)
       x = 0.5 - x;
       t = x*x;
       res = x*(A1 + t*(A3 + t*(A5 + t*(A7 + t*(A9 + t*(A11 + t*A13))))));
-    }      
+    }
   else  /* 0 <= a < 0.25  or  0.75 < a < 1.0 */
     {
-      if ( x > 0.75 ) 
+      if ( x > 0.75 )
 	{
 	  x = 1.0 - x;
 	  sign = -1.0;
@@ -262,10 +262,10 @@ double nsp_cospi(double x)
 
 /**
  * nsp_tanpi:
- * @x: a double 
- * 
+ * @x: a double
+ *
  * computes tan(pi x) with accuracy even for |x| big
- * 
+ *
  * Returns: a double
  **/
 double nsp_tanpi(double x)
@@ -279,10 +279,10 @@ double nsp_tanpi(double x)
 
 /**
  * nsp_cotanpi:
- * @x: a double 
- * 
+ * @x: a double
+ *
  * computes cotan(pi x) with accuracy even for |x| big
- * 
+ *
  * Returns: a double
  **/
 double nsp_cotanpi(double x)
@@ -300,9 +300,9 @@ double nsp_cotanpi(double x)
 }
 
 
-/* 
+/*
  *  Evaluate gamma for x in [1,2] using the rationnal approximation
- *  of the Cody 's gamma fortran code (specfun lib available at Netlib) 
+ *  of the Cody 's gamma fortran code (specfun lib available at Netlib)
  */
 static double gamma_in_1_2(double x)
 {
@@ -352,8 +352,8 @@ static double gamma_for_x_big(double x)
 
 /**
  * nsp_gamma:
- * @x: a double 
- * 
+ * @x: a double
+ *
  * computes gamma(x) with accuracy and normally with good special values
  * (Nan for x a negative integer, -Inf for x = -0, + Inf for x = +0)
  * overflow limit is near 171.624.
@@ -405,16 +405,16 @@ double nsp_gamma(double x)
 	return gamma_for_x_big(x);
       else
 	return M_PI/(nsp_sinpi(x)*abs_x*gamma_for_x_big(abs_x));
-    }     
+    }
 }
 
 /**
  * nsp_stirling_error:
- * @x: a double 
- * 
- *  computes the error w(x) = ln(gamma(x)) - {0.5*log(2*Pi) + (x-0.5)*log(x) - x} 
- *  using Cody 's approximation (specfun lib available at Netlib) 
- * 
+ * @x: a double
+ *
+ *  computes the error w(x) = ln(gamma(x)) - {0.5*log(2*Pi) + (x-0.5)*log(x) - x}
+ *  using Cody 's approximation (specfun lib available at Netlib)
+ *
  * Returns: a double
  **/
 double  nsp_stirling_error(double x)
@@ -433,14 +433,14 @@ double  nsp_stirling_error(double x)
 static double lngamma_in_4_12(double x)
 {
     x -= 4.0;
-    return    1.791759469228055000094023 
+    return    1.791759469228055000094023
       + x*( (5.606251856223951465078242e11+x*(4.926125793377430887588120e11+x*(1.702665737765398868392998e11
 	     +x*(2.940378956634553899906876e10+x*(2.663432449630976949898078e9+x*(1.214755574045093227939592e8
 	     +x*(2.426813369486704502836312e6+x*1.474502166059939948905062e4)))))))
 	  / (4.463158187419713286462081e11+x*(3.417476345507377132798597e11+x*(1.016803586272438228077304e11
 	     +x*(1.488613728678813811542398e10+x*(1.120872109616147941376570e9+x*(4.135599930241388052042842e7
 	     +x*(6.393885654300092398984238e5+x*(2.690530175870899333379843e3-x)))))))) );
-}   
+}
 
 /* approximation for lngamma in [1.5,4] using W. Cody 's rationnal approximation */
 static double lngamma_in_1p5_4(double x)
@@ -459,7 +459,7 @@ static double lngamma_in_1p5_4(double x)
 static double lngamma_in_0p68_1p5(double x)
 {
   x -= 1.0;
-  return x*( - 0.5772156649015328605195174 
+  return x*( - 0.5772156649015328605195174
              + x*( (7.225813979700288197698961e3+x*(2.637748787624195437963534e4+x*(3.848496228443793359990269e4
 		    +x*(2.855724635671635335736389e4+x*(1.131967205903380828685045e4+x*(2.290838373831346393026739e3
                     +x*(2.018112620856775083915565e2+x*4.945235359296727046734888)))))))
