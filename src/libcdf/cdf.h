@@ -79,7 +79,6 @@ extern double cdf_dlamch (char *, long int);
 extern double cdf_dln1px (double a);
 extern double cdf_dln1px_old (double a);
 extern double nsp_log1p (double a);
-extern double nsp_log1p (double a);
 extern double cdf_dlnbet (double a0, double b0);
 extern double cdf_dlngam (double a);
 /* extern double cdf_dstrem (double z__); */
@@ -106,8 +105,6 @@ extern double cdf_spmpar (int );
 extern double cdf_stvaln (double *p);
 extern int cdf_dstinv (const double *zsmall,const double *zbig,const double *zabsst,const double *zrelst,
 		       const double *zstpmu,const double *zabsto,const  double *zrelto);
-extern int cdf_dstzr (double *zxlo, double *zxhi,const double *zabstl,const double *zreltl);
-extern int cdf_dzror (int *status, double *x, double *fx, double *xlo, double *xhi, int *qleft, int *qhi);
 extern int cdf_gaminv (double a, double *x, double *x0, double *p, double *q, int *ierr);
 extern int cdf_grat1 (double *a, double *x, double *r__, double *p, double *q, double *eps);
 extern int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind);
