@@ -1387,7 +1387,7 @@ if err > 1e-14 then, pause, end
 
 pr = cdfnbn("PrOmpr",pe,qe,xe,re*v);
 erp =  max(abs(pr-pre)/pre);
-if erp > 1e-15 then, pause, end
+if erp > 1e-14 then, pause, end
 
 // verify special values
 [p,q] = cdfnbn("PQ",%nan,re,pre,qre);
