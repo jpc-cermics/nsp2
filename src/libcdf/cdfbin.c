@@ -117,6 +117,11 @@ cdf_cdfbin (int *which, double *p, double *q, double *s, double *xn,
   if (*which != 3)   /* check xn */
     {
       CDF_CHECK_ARG(!(*xn > 0.0) , 0 , -5 );
+      /* we restrict Xn to be an integer */
+      if ( floor(*xn) != *xn ) 
+	{
+	  *status = 6; return 0;
+	}
     }
 
   if (*which != 4)   /* check pr and ompr */

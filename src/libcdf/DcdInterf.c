@@ -177,7 +177,7 @@ static void cdfbinErr(     int status,   double bound, double boundbis, int i)
     case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
     case 4 : Scierror(" Pr(%d) + Ompr(%d) .ne. 1 \n",i,i);break;
     case 5 : Scierror("unexpected failure for answer (#%d) (should not occur)\n",i);break ;
-    case 6 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
+    case 6 : Scierror("component #%d of arg Xn (nb of Bernoulli trials) is not a positive integer\n",i);break ;
     default : 
       Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
 	       param[-status-1],i,bound);
