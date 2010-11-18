@@ -104,13 +104,10 @@ cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
 
   if (1 == *which)        /* compute P and Q */
     {
-      xrate = *x * *rate;
-      cdf_cumgam (&xrate, shape, p, q);
-      if (*p > 1.5)   /* this comes from gratio (cumgam calls gratio) when gratio */
-	              /* is unable to compute the result the probability p is set to 2 */
-	*status = 10;
-      else
-	*status = 0;
+      int retval;
+      xrate = (*x) * (*rate);
+      retval = cdf_cumgam (&xrate, shape, p, q);
+      *status = retval == OK ? 0 : 10;
     }
 
   else if (2 == *which)   /* compute X */
@@ -136,8 +133,7 @@ cdf_cdfgam (int *which, double *p, double *q, double *x, double *shape,
       nsp_zsearch_init(*shape, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumgam (&xrate, shape, &cum, &ccum);
-	  if ( cum > 1.5 ) /* error code from gratio */
+	  if ( cdf_cumgam (&xrate, shape, &cum, &ccum) == FAIL )
 	    {
 	      *status = 10; return 0;
 	    }

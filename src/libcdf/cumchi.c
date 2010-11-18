@@ -11,16 +11,17 @@
  * @cum and its complement in @ccum. 
  * calls incomplete gamma function (cumgam)
  * 
- * Returns: 0 
+ * Returns: OK or FAIL 
  **/
 
 int cdf_cumchi (double *x, double *df, double *cum, double *ccum)
 {
   double a;
   double xx;
+  int retval;
   a = *df * .5;
   xx = *x * .5;
-  cdf_cumgam (&xx, &a, cum, ccum);
-  return 0;
+  retval = cdf_cumgam (&xx, &a, cum, ccum);
+  return retval;
 }
 

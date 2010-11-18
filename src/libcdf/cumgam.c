@@ -15,11 +15,12 @@
  * 
  * calls the routine gratio() to compute the result.
  * 
- * returns: 
+ * returns: OK or FAIL
  **/
 
 int cdf_cumgam (double *x, double *a, double *cum, double *ccum)
 {
+  int retval = OK;
   if ( *x <= 0.0 )
     {
       *cum = 0.0; *ccum = 1.0;
@@ -27,7 +28,7 @@ int cdf_cumgam (double *x, double *a, double *cum, double *ccum)
   else if ( *x <=  DBL_MAX )  /* main block (could not handle x=Inf and also */
     {                         /* could not handle x=Nan in some rare cases) */
       const int c0 = 0;
-      cdf_gratio (*a, *x, cum, ccum, &c0);
+      retval = cdf_gratio (*a, *x, cum, ccum, &c0);
     }
 
   else if (isnan(*x))   /* x = Nan (bruno, sept 2010) */
@@ -39,6 +40,6 @@ int cdf_cumgam (double *x, double *a, double *cum, double *ccum)
       *cum = 1.0; *ccum = 0.0;
     }
 
-  return 0;
+  return retval;
 } 
 

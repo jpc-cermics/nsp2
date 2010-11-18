@@ -93,11 +93,8 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
   if (1 == *which)       /* compute (p,q) */
     {
       double sf = floor(*s);  /* add floor to compute the real cdfpoi (bruno april 2010)) */
-      cdf_cumpoi (&sf, xlam, p, q);
-      if ( *q > 1.5 ) /* this comes from gratio (when it is unable to compute the result the result is 2) */
-	*status = 10;
-      else
-	*status = 0;
+      int retval = cdf_cumpoi (&sf, xlam, p, q);
+      *status = retval == OK ? 0 : 10;
     }
 
   else if (2 == *which)  /* compute s */
@@ -125,8 +122,7 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 
 	  do
 	    {
-	      cdf_cumpoi (s, xlam, &cum, &ccum);
-	      if ( ccum > 1.5 ) /* this comes from gratio (when it is unable to compute the result the result is 2) */
+	      if ( cdf_cumpoi (s, xlam, &cum, &ccum) == FAIL )
 		{
 		  *status = 10; return 0;
 		}
@@ -163,8 +159,7 @@ cdf_cdfpoi (int *which, double *p, double *q, double *s, double *xlam,
 	
       do
 	{
-	  cdf_cumpoi (s, xlam, &cum, &ccum);
-	  if ( ccum > 1.5 ) /* this comes from gratio (when it is unable to compute the result it outputs 2) */
+	  if ( cdf_cumpoi (s, xlam, &cum, &ccum) == FAIL )
 	    {
 	      *status = 10; return 0;
 	    }

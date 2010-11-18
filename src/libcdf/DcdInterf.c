@@ -37,20 +37,32 @@
 static int CdfBase(Stack stack,int rhs, int opt, int lhs,
 		   int inarg,int oarg,const int pos[],const char *option,
 		   const char *errnames,int which,int (*fonc)(),
-		   void (*foncErr)(int status,double bound,double boundbis, int i));
+		   void (*foncErr)(int status,double bound,double boundbis, int i, int m, int n));
 
-static void cdfbetErr (int status,double bound,double boundbis, int i);
-static void cdfbinErr (int status,double bound,double boundbis, int i);
-static void cdfchiErr (int status,double bound,double boundbis, int i);
-static void cdffErr (int status,double bound,double boundbis, int i);
-static void cdffncErr (int status,double bound,double boundbis, int i);
-static void cdfgamErr (int status,double bound,double boundbis, int i);
-static void cdfnbnErr (int status,double bound,double boundbis, int i);
-static void cdfnorErr (int status,double bound,double boundbis, int i);
-static void cdfpoiErr (int status,double bound,double boundbis, int i);
-static void cdftErr (int status,double bound,double boundbis, int i);
-static void cdftncErr (int status,double bound,double boundbis, int i);
-static void cdfchnErr (int status,double bound,double boundbis, int i);
+static void cdfbetErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfbinErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfchiErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdffErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdffncErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfgamErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfnbnErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfnorErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfpoiErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdftErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdftncErr (int status,double bound,double boundbis, int i, int m, int n);
+static void cdfchnErr (int status,double bound,double boundbis, int i, int m, int n);
+
+static void cdf_dim_mes(char *buf, int k, int m, int n)
+{
+  if ( m*n == 1 )
+    {
+      buf[0] = '\0';
+    }
+  else if ( m == 1 || n == 1 )
+    sprintf(buf, "(%d)",k+1);
+  else
+    sprintf(buf, "(%d,%d)",k%m+1,k/m+1);
+}
 
 /**************************************************
  *  hand written interface 
@@ -100,20 +112,22 @@ int int_cdfbet(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static void cdfbetErr( int status, double bound, double boundbis, int i)
+static void cdfbetErr( int status, double bound, double boundbis, int i, int m, int n)
 {
   static char param[]="-PQXYAB";
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror(" X(%d) + Y(%d) .ne. 1 \n",i,i);break;
-    case 5 : Scierror("unsuccessful search on interval [%g,%g] for answer (#%d)\n",bound,boundbis,i);break ;
-    case 6 : Scierror("unexpected failure for answer (#%d) (should not occur)\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: X%s + Y%s ~= 1 \n",buf,buf);break;
+    case 5 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 6 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %c(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %c%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -167,20 +181,22 @@ int int_cdfbin(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-static void cdfbinErr(     int status,   double bound, double boundbis, int i)
+static void cdfbinErr(     int status,   double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"Which","P","Q","S" ,"Xn","PrOmpr"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror(" Pr(%d) + Ompr(%d) .ne. 1 \n",i,i);break;
-    case 5 : Scierror("unexpected failure for answer (#%d) (should not occur)\n",i);break ;
-    case 6 : Scierror("component #%d of arg Xn (nb of Bernoulli trials) is not a positive integer\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: Pr%s + Ompr%s ~= 1 \n",buf,buf);break;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
+    case 6 : Scierror("Error: Xn%s (nb of Bernoulli trials) is not a positive integer\n",buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -227,23 +243,24 @@ int int_cdfchi(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
-static void cdfchiErr(     int status,   double bound, double boundbis, int i)
+static void cdfchiErr(int status, double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"X","P","Q","X","Df"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] for answer (#%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer (#%d) (should not occur)\n",i);break ;
-    case 10 : Scierror("cdfchi: Error in cumgam (for answer #%d)\n",i);break;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
+    case 10 : Scierror("Error: cumchi failed to compute result%s for given parameter\n",buf);break;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
-
 
 /**************************************************
  *  hand written interface 
@@ -292,22 +309,23 @@ int int_cdff(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static void cdffErr(int status, double bound, double boundbis, int i)
+static void cdffErr(int status, double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH","P","Q","F","Dfn","Dfd"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] for answer (#%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer (#%d) (should not occur)\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i, bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
-
 
 
 /**************************************************
@@ -362,19 +380,21 @@ int int_cdffnc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static void cdffncErr(     int status,   double bound, double boundbis, int i)
+static void cdffncErr(     int status,   double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH","P","Q","F","Dfn","Dfd","Pnonc"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -439,23 +459,24 @@ int int_cdfgam(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static void cdfgamErr(int status,double bound, double boundbis, int i)
+static void cdfgamErr(int status,double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH","P","Q","X","Shape","Rate"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
-    case 10 : Scierror("cannot compute answer #%d \n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
+    case 10 : Scierror("Error: cumgam failed to compute result%s for given parameter\n",buf);break;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
-
 
 /**************************************************
  *  hand written interface 
@@ -503,18 +524,21 @@ int int_cdfnbn(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-static void cdfnbnErr(    int status,double bound, double boundbis, int i)
+static void cdfnbnErr(    int status,double bound, double boundbis, int i, int m, int n)
 {
   static char *param[]={"WHICH", "P","Q","S","Xn","PrOmpr"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror(" Pr(%d) + Ompr(%d) .ne. 1 \n",i,i);break;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: Pr%s + Ompr%s ~= 1 \n",buf,buf);break;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -564,22 +588,22 @@ int int_cdfnor(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-static void cdfnorErr(    int status,double bound, double boundbis, int i)
+static void cdfnorErr(    int status,double bound, double boundbis, int i, int m, int n)
 {
   int iname;
   static const char *param[]={"WHICH", "P","Q","X","Mean","Std"};
+  char buf[30];
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",bound,i);break;
-    case 2 : Scierror("answer (#%d)appears to be higher than greatest search bound %g\n",bound,i);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
     default : 
       iname = Max(0,Min(5,-status -1));
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",param[iname],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n", param[iname],buf,bound);
     }
 }
-
-
 
 /**************************************************
  *  hand written interface 
@@ -619,20 +643,22 @@ int int_cdfpoi(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-static void cdfpoiErr(    int status,double bound, double boundbis, int i)
+static void cdfpoiErr(int status,double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH", "P","Q","S","Xlam"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
-    case 10 : Scierror("cdfpoi: Error in cumgam (for answer #%d)\n",i);break;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
+    case 10 : Scierror("Error: cumpoi failed to compute result%s for given parameter\n",buf);break;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -676,19 +702,21 @@ int int_cdft(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-static void cdftErr(    int status,double bound, double boundbis, int i)
+static void cdftErr(    int status,double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH", "P","Q","T","Df"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -736,19 +764,21 @@ int int_cdftnc(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-static void cdftncErr(    int status,double bound, double boundbis, int i)
+static void cdftncErr(    int status,double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH", "P","Q","T","Df","Pnonc"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d)\n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -798,19 +828,21 @@ int int_cdfchn(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static void cdfchnErr(    int status,double bound, double boundbis, int i)
+static void cdfchnErr(    int status,double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH", "P","Q","X","Df","Pnonc"};
+  char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
+  cdf_dim_mes(buf, i, m, n);
   switch ( status ) 
     {
-    case 1 : Scierror("answer (#%d) appears to be lower than lowest search bound %g\n",i,bound);break;
-    case 2 : Scierror("answer (#%d) appears to be higher than greatest search bound %g\n",i,bound);break;
-    case 3 : Scierror(" P(%d) + Q(%d) .ne. 1 \n",i,i);break ;
-    case 4 : Scierror("unsuccessful search on interval [%g,%g] (for answer #%d) \n",bound,boundbis,i);break ;
-    case 5 : Scierror("unexpected failure for answer #%d (should not occur)\n",i);break ;
+    case 1 : Scierror("Error: answer%s appears to be lower than lowest search bound %g\n",buf,bound);break;
+    case 2 : Scierror("Error: answer%s appears to be higher than greatest search bound %g\n",buf,bound);break;
+    case 3 : Scierror("Error: P%s + Q%s ~= 1 \n",buf,buf);break ;
+    case 4 : Scierror("Error: unsuccessful search on interval [%g,%g] %s%s\n",bound,boundbis,mes,buf);break ;
+    case 5 : Scierror("Error: unexpected failure %s%s (should not occur)\n",mes,buf);break ;
     default : 
-      Scierror("input parameter %s(%d) is out of range, bound exceeded: %g\n",
-	       param[-status-1],i,bound);
+      Scierror("Error: input parameter %s%s is out of range, bound exceeded: %g\n",
+	       param[-status-1],buf,bound);
     }
 }
 
@@ -1108,7 +1140,7 @@ void Dcd_Interf_Info(int i, char **fname, function (**f))
 
 static int CdfBase(Stack stack,int rhs, int opt, int lhs,
 		   int inarg,int oarg,const int pos[],const char *option,
-		   const char *errnames,int which,int (*fonc)(),void (*foncErr)(int status,double bound, double boundbis, int i))
+		   const char *errnames,int which,int (*fonc)(),void (*foncErr)(int status,double bound, double boundbis, int i, int m, int n))
 {
   NspMatrix *M[6];
   int i,status=0;
@@ -1150,7 +1182,7 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
 	  (*fonc)(&which,M[pos[0]]->R+i,M[pos[1]]->R+i,M[pos[2]]->R+i,M[pos[3]]->R+i,M[pos[4]]->R+i, &status,&bound,&boundbis);
 	  if (status != 0) 
 	    {
-	      (*foncErr)(status,bound,boundbis,i+1); return RET_BUG;
+	      (*foncErr)(status,bound,boundbis,i,M[0]->m,M[0]->n); return RET_BUG;
 	    }
 	}
       break;
@@ -1160,8 +1192,7 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
 	  (*fonc)(&which,M[pos[0]]->R+i,M[pos[1]]->R+i,M[pos[2]]->R+i,M[pos[3]]->R+i,M[pos[4]]->R+i,M[pos[5]]->R+i, &status,&bound,&boundbis);
 	  if (status != 0) 
 	    {
-	      /** Scierror("i=%d\n",i); **/
-	      (*foncErr)(status,bound,boundbis,i+1); return  RET_BUG;
+	      (*foncErr)(status,bound,boundbis,i,M[0]->m,M[0]->n); return  RET_BUG;
 	    }
 	}
       break;
@@ -1171,7 +1202,7 @@ static int CdfBase(Stack stack,int rhs, int opt, int lhs,
 	  (*fonc)(&which,M[pos[0]]->R+i,M[pos[1]]->R+i, M[pos[2]]->R+i,M[pos[3]]->R+i, &status,&bound,&boundbis);
 	  if (status != 0) 
 	    {
-	      (*foncErr)(status,bound,boundbis,i+1); return RET_BUG;
+	      (*foncErr)(status,bound,boundbis,i,M[0]->m,M[0]->n); return RET_BUG;
 	    }
 	}
       break;

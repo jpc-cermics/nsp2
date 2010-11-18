@@ -19,6 +19,8 @@
  *
  * written by Alfred H. Lorris, jr. Naval Surface Weapons Center 
  * Dahlgren, Virginia 
+ *
+ *   return OK or FAIL
  */
 
 int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
@@ -249,7 +251,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
     }
   *ans = r__ / a * (sum + 1.);
   *qans = .5 - *ans + .5;
-  return 0;
+  return OK;
 
   /*                 ASYMPTOTIC EXPANSION */
  L100:
@@ -292,7 +294,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
     }
   *qans = r__ / x * (sum + 1.);
   *ans = .5 - *qans + .5;
-  return 0;
+  return OK;
 
   /*             TAYLOR SERIES FOR P(A,X)/X**A */
 
@@ -334,7 +336,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
   w = exp (z__);
   *ans = w * g * (.5 - j + .5);
   *qans = .5 - *ans + .5;
-  return 0;
+  return OK;
 
  L200:
   l = cdf_rexp (z__);
@@ -345,7 +347,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
       goto L380;
     }
   *ans = .5 - *qans + .5;
-  return 0;
+  return OK;
 
   /*             FINITE SUMS FOR Q WHEN A .GE. 1 */
   /*                 AND 2*A IS AN INT */
@@ -377,7 +379,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
  L240:
   *qans = sum;
   *ans = .5 - *qans + .5;
-  return 0;
+  return OK;
 
   /*              CONTINUED FRACTION EXPANSION */
 
@@ -406,7 +408,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
 
   *qans = r__ * an0;
   *ans = .5 - *qans + .5;
-  return 0;
+  return OK;
 
   /*                GENERAL TEMME EXPANSION */
 
@@ -487,11 +489,11 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
     }
   *qans = c__ * (w + rt2pin * t / rta);
   *ans = .5 - *qans + .5;
-  return 0;
+  return OK;
  L320:
   *ans = c__ * (w - rt2pin * t / rta);
   *qans = .5 - *ans + .5;
-  return 0;
+  return OK;
 
   /*               TEMME EXPANSION FOR L = 1 */
 
@@ -555,12 +557,12 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
  L370:
   *ans = 0.;
   *qans = 1.;
-  return 0;
+  return OK;
 
  L380:
   *ans = 1.;
   *qans = 0.;
-  return 0;
+  return OK;
 
  L390:
   if (x >= .25)
@@ -570,12 +572,12 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
   d__1 = sqrt (x);
   *ans = cdf_erf (d__1);
   *qans = .5 - *ans + .5;
-  return 0;
+  return OK;
  L400:
   d__1 = sqrt (x);
   *qans = cdf_erfc (c__0, d__1);
   *ans = .5 - *qans + .5;
-  return 0;
+  return OK;
 
  L410:
   if (Abs (s) <= e * 2.)
@@ -593,6 +595,6 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
 
  L430:
   *ans = 2.;
-  return 0;
+  return FAIL;
 }
 

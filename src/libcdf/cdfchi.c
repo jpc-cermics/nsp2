@@ -94,13 +94,8 @@ int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df,
 
   if (1 == *which)         /* Compute P and Q */
     {
-      cdf_cumchi (x, df, p, q);
-      if (*p > 1.5 )  /* this comes from gratio (cumchi calls cumgam which calls gratio) */
-	              /* when gratio is unable to compute the result the probability p */
-                      /* is set to 2 */
-	*status = 10;
-      else
-	*status = 0;
+      int retval = cdf_cumchi (x, df, p, q);
+      *status = retval == OK ? 0 : 10;
     }
 
   else if (2 == *which)    /* Compute X */
@@ -118,8 +113,7 @@ int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df,
 	  nsp_zsearch_init(*x, 0, inf, step, 0.0, 2.0, atol, tol, pq_flag ? INCREASING : DECREASING, &S);
 	  do
 	    {
-	      cdf_cumchi (x, df, &cum, &ccum);
-	      if (cum > 1.5 )  /* gratio unable to compute (see comment before) */
+	      if ( cdf_cumchi (x, df, &cum, &ccum) == FAIL )
 		{
 		  *status = 10; return 0;
 		}
@@ -152,8 +146,7 @@ int cdf_cdfchi (int *which, double *p, double *q, double *x, double *df,
       nsp_zsearch_init(*df, zero, inf, 2.0, 0.0, 2.0, atol, tol, UNKNOWN, &S);
       do
 	{
-	  cdf_cumchi (x, df, &cum, &ccum);
-	  if (cum > 1.5 )  /* gratio unable to compute (see comment before) */
+	  if ( cdf_cumchi (x, df, &cum, &ccum) == FAIL )
 	    {
 	      *status = 10; return 0;
 	    }
