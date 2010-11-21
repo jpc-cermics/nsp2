@@ -1768,8 +1768,8 @@ NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double 
   double vmin=0.0,vmax=0.0;
   NspSPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL,*Val = NULL;
-  if ((C=nsp_surf_to_coords("c",x,y,z,m,n))==NULL) goto bug;
-  if ((F=nsp_surf_to_faces("f",x,m,y,n) )==NULL) goto bug;
+  if ((C=nsp_surf_to_coords("c",NULL,x,y,z,m,n))==NULL) goto bug;
+  if ((F=nsp_surf_to_faces("f",NULL,x,m,y,n) )==NULL) goto bug;
   if ((Val = nsp_matrix_create("v",'r',C->m,1)) == NULLMAT) goto bug; 
 
   if ( col == NULL) 
@@ -1814,6 +1814,65 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
   return NULL;
 }
 
+/**
+ * nsp_spolyhedron_update_from_triplet:
+ * @pol: 
+ * @x: 
+ * @y: 
+ * @z: 
+ * 
+ * updates spolyhedron data with new matrices x,y,z 
+ * The sizes are supposed to be compaible are are thus not checked.
+ * 
+ * 
+ * Returns: %OK or %FAIL.
+ **/
+
+int nsp_spolyhedron_update_from_triplet(NspSPolyhedron *pol,double *x,double *y,double *z,int m,int n, double *col,int ncol)
+{
+  double vmin=0.0,vmax=0.0;
+  NspMatrix *C=NULL,*F=NULL,*Val =pol->obj->Mval;
+  
+  C=nsp_surf_to_coords("c",pol->obj->Mcoord,x,y,z,m,n);
+  F=nsp_surf_to_faces("f",pol->obj->Mface,x,m,y,n);
+  
+  if ( col == NULL) 
+    {
+      /* colors are selected according to z values */
+      memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
+    }
+  else if ( ncol == C->m ) 
+    {
+      /* colors are selected accordind to col array */
+      memcpy(col,C->R+2*C->m,C->m*sizeof(double));
+    }
+  else if ( ncol == m ) 
+    {
+      /* one color by face from col array XXXXX */
+      memcpy(Val->R,C->R+2*C->m,C->m*sizeof(double));
+    }
+  
+  /* use VMiniMaxi but change it to extern */
+  if ( Val->mn != 0) 
+    {
+      int i=0,j;
+      while ( ISNAN(Val->R[i])) i++;
+      vmin = vmax = Val->R[i];
+      for ( j = i+1 ; j < Val->mn ; j++) 
+	{
+	  if ( ISNAN(Val->R[j])) continue;
+	  if ( Val->R[j] < vmin) vmin = Val->R[j];
+	  if ( Val->R[j] > vmax) vmax = Val->R[j];
+	}
+    }
+  pol->obj->vmin=vmin;
+  pol->obj->vmax=vmax;
+  /* some variables are to be updated */
+  nsp_check_spolyhedron(NULL,pol);
+  return OK;
+}
+
+
 NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol )
 {
   int bc;
@@ -1857,4 +1916,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1861 "spolyhedron.c"
+#line 1920 "spolyhedron.c"

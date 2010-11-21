@@ -41,6 +41,10 @@
 #define SCSBOOL_COP int
 #define SCSUNKNOW_COP double
 
+/* should de a define */
+extern void Coserror (char *fmt, ...);
+
+
 extern scicos_run *Scicos;
 
 /* maximum value for sum of number of inputs 

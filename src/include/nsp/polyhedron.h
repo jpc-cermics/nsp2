@@ -110,8 +110,8 @@ extern int nsp_polyhedron_xdr_save(XDR  *xdrs, NspPolyhedron *M);
 
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
 extern NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n);
-extern NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n);
-extern NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn) ; 
+extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n);
+extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn) ; 
 extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int m,int n,
 			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr);
 extern int nsp_obj3d_orientation(int x[], int y[], int n);

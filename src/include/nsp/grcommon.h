@@ -36,8 +36,10 @@ extern Gengine GL_gengine;
 #endif 
 extern NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n);
 extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n,double *col, int ncol);
-extern NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  ;
-extern NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n);
+extern int nsp_spolyhedron_update_from_triplet(NspSPolyhedron *pol,double *x,double *y,double *z,int m,int n, double *col,int ncol);
+
+extern NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn)  ;
+extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n);
 extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol,int m,int n,
 			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr );
 

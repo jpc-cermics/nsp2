@@ -851,7 +851,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &z) == FAIL) return RET_BUG;
   CheckDimProp(NspFname(stack),1,3, x->mn != z->m);
   CheckDimProp(NspFname(stack),2,3, y->mn != z->n);
-  ret = nsp_surf_to_coords(NVOID,x->R, y->R, z->R,z->m,z->n);
+  ret = nsp_surf_to_coords(NVOID,NULL,x->R, y->R, z->R,z->m,z->n);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -867,7 +867,7 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   int_types T[] = {realmat,realmat,t_end};
   NspMatrix *x, *y, *ret;
   if ( GetArgs(stack,rhs,opt,T,&x, &y) == FAIL) return RET_BUG;
-  ret = nsp_surf_to_faces(NVOID,x->R,x->mn, y->R,y->mn);
+  ret = nsp_surf_to_faces(NVOID,NULL,x->R,x->mn, y->R,y->mn);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
@@ -1338,8 +1338,8 @@ NspPolyhedron *nsp_polyhedron_create_from_triplet(char *name,double *x,double *y
 {
   NspPolyhedron *pol;
   NspMatrix *C=NULL,*F=NULL ;
-  if ((C=nsp_surf_to_coords("c",x,y,z,m,n))==NULL) goto bug;
-  if ((F=nsp_surf_to_faces("f",x,m,y,n) )==NULL) goto bug;
+  if ((C=nsp_surf_to_coords("c",NULL,x,y,z,m,n))==NULL) goto bug;
+  if ((F=nsp_surf_to_faces("f",NULL,x,m,y,n) )==NULL) goto bug;
   if ((pol = nsp_polyhedron_create(name,C,NULL,F,NULL,NULL,TRUE,NULL,0,NULL))==NULL)  goto bug;
   if ( nsp_check_polyhedron(pol)== FAIL) goto bug;
   return pol;
@@ -1378,15 +1378,34 @@ NspPolyhedron *nsp_polyhedron_create_from_facets(char *name,double *xx,double *y
   return NULL;
 }
 
+/**
+ * nsp_surf_to_coords:
+ * @name: 
+ * @C: %NULL or a coord matrix to be filled 
+ * @x: 
+ * @y: 
+ * @z: 
+ * @m: 
+ * @n: 
+ * 
+ * If C is non null it is filled and returned but compatibility sizes 
+ * are not checked. If C is null a matrix is created.
+ * 
+ * Returns: a new #NspMatrix.
+ **/
 
-
-
-
-NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int m,int n)
+NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n)
 {
   int i,j;
   NspMatrix *coord;
-  if ((coord = nsp_matrix_create(name,'r',m*n,3))==NULL) return NULL;
+  if ( C != NULL) 
+    {
+      coord = C;
+    }
+  else
+    {
+      if ((coord = nsp_matrix_create(name,'r',m*n,3))==NULL) return NULL;
+    }
   for (i= 0 ; i < coord->m ;  i++)
     {
       coord->R[i+2*coord->m]= z[i];
@@ -1400,11 +1419,35 @@ NspMatrix *nsp_surf_to_coords(const char *name,double *x,double *y,double *z,int
   return coord;
 }
 
-NspMatrix *nsp_surf_to_faces(const char *name,double *x,int xmn,double *y,int ymn)  
+/**
+ * nsp_surf_to_faces:
+ * @name: 
+ * @F: 
+ * @x: 
+ * @xmn: 
+ * @y: 
+ * @ymn: 
+ * 
+ * If @F is non null it is filled and returned but compatibility sizes 
+ * are not checked. If @F is null a matrix is created.
+ * 
+ * 
+ * Returns: 
+ **/
+
+NspMatrix *nsp_surf_to_faces(const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn)  
 {
   NspMatrix *face;
   int j,i,nface;
-  if ((face = nsp_matrix_create(name,'r',4,(xmn-1)*(ymn-1)))==NULL) return NULL;
+  if ( F != NULL) 
+    {
+      face = F;
+      face->convert = 'd';
+    }
+  else 
+    {
+      if ((face = nsp_matrix_create(name,'r',4,(xmn-1)*(ymn-1)))==NULL) return NULL;
+    }
   nface = 0;
   for (j = 0 ; j < ymn -1 ; j++) 
     {
@@ -1564,4 +1607,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1568 "polyhedron.c"
+#line 1611 "polyhedron.c"
