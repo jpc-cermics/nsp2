@@ -133,6 +133,9 @@ extern int scicos_trash_block(scicos_args_F0);
 extern int scicos_zcross_block(scicos_args_F0);
 extern int scicos_integr_block(scicos_args_F0);
 extern int scicos_intplt_block(scicos_args_F0);
+
+
+
 extern void scicos_abs_block(scicos_args_F0);
 extern void scicos_andlog_block(scicos_args_F0);
 extern void scicos_bidon_block(scicos_args_F0);
@@ -203,6 +206,7 @@ extern void scicos_cstblk4_block(scicos_block *block,int flag);
 extern void scicos_transmit_or_zero_block(scicos_block *block,int flag);
 extern void scicos_mvswitch_block(scicos_block *block,int flag);
 extern void scicos_csslti4_block(scicos_block *block,int flag);
+extern void scicos_gtkrange_block (scicos_block * block, int flag);
 
 #define SCICOS44 
 
@@ -857,6 +861,7 @@ scicos_block_table  tabsim[] ={
   /*  {"gensqr",(ScicosF) F2C(gensqr)}, */
   {"gensqr",(ScicosF) scicos_gensqr_block},
   /*  {"hltblk",(ScicosF) F2C(hltblk)}, */
+  {"gtkrange", (ScicosF) scicos_gtkrange_block},
   {"hltblk",(ScicosF) scicos_hlt_block},
   /* {"hystheresis",(ScicosF) hystheresis}, */
   {"hystheresis",(ScicosF) scicos_hystheresis_block},
