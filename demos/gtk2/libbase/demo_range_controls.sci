@@ -16,6 +16,12 @@ function demo_range_controls()
   box2.show[]
   //adjustment = GtkAdjustment(0,expand= 0,fill= 101,padding= 0.1, 1, 1)
   adjustment =gtkadjustment_new(value=0,lower=0,upper=101,step_incr=0.1,page_incr=1,page_size=1)
+
+  function show_value(wid,data) 
+    x=wid.get_value[];
+    printf("adjustment value [%f]\n",x);
+  endfunction
+  adjustment.connect["value-changed",show_value]
   
   scale = gtkhscale_new(adjustment=adjustment)
   scale.set_size_request[150,-1]
