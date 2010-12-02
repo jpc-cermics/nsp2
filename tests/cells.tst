@@ -205,6 +205,53 @@ if ~C1.equal[C2] then pause;end
 C3=mapce(C,myabs);
 if ~C1.equal[C3] then pause;end 
 
+// ce2m and m2ce 
+
+A=testmatrix('magic',5);
+C=m2ce(A,[1,2,5],[1,3,6]);
+A1=[C{1,1},C{1,2};C{2,1},C{2,2}];
+if ~A1.equal[A(1:4,1:5)] then pause;end 
+
+// ce2m 
+
+C=cell(1,10);
+A=ones(1,10);
+B=ones(1,10);
+
+for i=1:10 
+  C{i}=rand(4,5);
+  A(i)=C{i}(1,1);
+  B(i)=C{i}(1,2);
+end 
+
+A1=ce2m(C);
+if ~A1.equal[A] then pause;end 
+
+B1=ce2m(C,indice=5); 
+if ~B1.equal[B] then pause;end 
+
+C{4}= m2b(C{4});
+A1=ce2m(C);
+if ~isnan(A1(4)) then pause;end 
+A1=ce2m(C,notm=%inf);
+if ~isinf(A1(4)) then pause;end 
+
+A1=ce2m(C,indice=100,noti=67,notm=%inf);
+if ~isinf(A1(4)) then pause;end 
+if  abs(A1(1)-67) > %eps then pause;end 
+
+// 
+
+A=1:10;
+C=m2ce(A,[1,2],1:11);
+A1=ce2m(C);
+if ~A1.equal[A] then pause;end 
+
+
+
+
+
+
 
 
 
