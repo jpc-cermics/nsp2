@@ -1293,3 +1293,39 @@ NspCells *nsp_cells_map(NspCells *C, NspPList *PL, NspList *args)
 
 
 
+NspCells *nsp_cells_m2ce(NspMatrix *M, NspMatrix *Rows, NspMatrix *Cols)
+{
+  int i,j, first,last;
+  NspMatrix *R=NULL,*C=NULL;
+  NspCells *Res = nsp_cells_create(NVOID, Max(Rows->mn-1,0),Max(Cols->mn-1,0));
+  if ( Res == NULL) return NULL;
+  if ( (R = nsp_matrix_create_int_impl(1,1,2)) == NULL)    return NULL;
+  if ( (C = nsp_matrix_create_int_impl(1,1,2)) == NULL)    return NULL;
+  for ( i = 0 ; i < Res->m ; i++ )
+    for ( j = 0 ; j < Res->n ; j++ )
+      {
+	/* we need to extract M(Rows->R[i]:Rows->R[i+1]-1,Cols->R[j]:Rows->R[j+1]-1) */
+	NspObject *Elt;
+	/* create implicit matrices with just first, step, last */
+	last = Rows->R[i+1]-1;
+	first= Rows->R[i];
+	R->n=R->mn=last - first + 1;
+	R->impl[0]=first;
+	last = Cols->R[j+1]-1;
+	first= Cols->R[j];
+	C->n=C->mn=last - first + 1;
+	C->impl[0]=first;
+	Elt = nsp_matint_extract1(NSP_OBJECT(M),NSP_OBJECT(R),NSP_OBJECT(C));
+	if ( Elt == NULL) goto end;
+	if (nsp_object_set_name(Elt,"ce") == FAIL) goto end;
+	Res->objs[i+Res->m*j] = Elt;
+      }
+  nsp_matrix_destroy(C);
+  nsp_matrix_destroy(R);
+  return Res;
+ end:
+  return NULL;
+} 
+
+
+

@@ -1228,6 +1228,23 @@ int int_ce2m(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* XXX : the following code should work for all 
+ * matint objects. Should be changed accordingly.
+ */
+
+int int_m2ce(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M,*Rows,*Cols;
+  NspCells *Res;
+  CheckStdRhs(3,3);
+  CheckLhs(1,1);
+  if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((Rows = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((Cols = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((Res = nsp_cells_m2ce(M,Rows,Cols))== NULL)  return RET_BUG;
+  MoveObj(stack,1, NSP_OBJECT(Res));
+  return 1;
+}
 
 /*
  * push the cells elements on the stack 
@@ -1410,6 +1427,7 @@ static OpTab Cells_func[]={
   {"map_ce", int_cells_map},
   {"diagcre_ce",int_cells_diagcre},
   {"diage_ce",int_cells_diage},
+  {"m2ce", int_m2ce},
   {(char *) 0, NULL}
 };
 
