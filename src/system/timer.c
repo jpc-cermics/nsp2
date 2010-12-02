@@ -166,43 +166,47 @@ int nsp_stimer(void)
 }
 
 /**
- * nsp_tictoc:
+ * nsp_toc:
+ * @etime: a pointer to a double (previously returned by tic).
  * 
- *    start if etime == NULL 
- * or stop (and compute elapsed time) if etime != NULL
- * a clock using g_get_current_time(). Equivalent to the UNIX gettimeofday() 
- * function, but portable.
- *
- * Return value: %OK or %FAIL
+ * 
+ * returns the elapsed time between a start_time and the current time. 
+ * if @etime is non null then it is used as a start time if it is null then 
+ * the start time is given by @start_time.
+ * 
+ * Returns: a double 
  **/
 
-typedef enum {TIC=0, TOC=1} tictoc;
+static double start_time=0; 
 
-int nsp_tictoc(double *etime)
+double nsp_toc(double *etime)
 {
-  static double start_time=0; 
-  static tictoc last_call = TOC;
+  double res;
   GTimeVal time;
-  /* 
-  char *str;
-  str= g_time_val_to_iso8601(&time);
-  fprintf(stderr,"time= %s\n",str);
-  */
   g_get_current_time(&time);
-  if ( etime != NULL )  /* toc */
-    {
-      if ( last_call != TIC )
-	return FAIL;
-      *etime = ((double) time.tv_sec + 1e-6 * (double) time.tv_usec) - start_time;
-      last_call = TOC;
-    }
-  else                  /* tic */
-    {
-      start_time = (double) time.tv_sec + 1e-6 * (double) time.tv_usec;
-      last_call = TIC;
-    }
+  res = (double) time.tv_sec + 1e-6 * (double) time.tv_usec;
+  res -= (etime != NULL) ? *etime : start_time;
+  return res;
+}
 
-  return OK;
+/**
+ * nsp_tic:
+ * @set_start_time: an integer 
+ * 
+ * returns the current time in a double and if @set_start_time is TRUE then @start_time 
+ * is set to the value of the current time. 
+ *
+ * Returns: a double 
+ **/
+
+double nsp_tic(int set_start_time)
+{
+  double res; 
+  GTimeVal time;
+  g_get_current_time(&time);
+  res =  (double) time.tv_sec + 1e-6 * (double) time.tv_usec;
+  if ( set_start_time == TRUE )  start_time = res ; 
+  return res; 
 }
 
 

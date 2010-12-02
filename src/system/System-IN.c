@@ -96,25 +96,37 @@ static int int_cputime(Stack stack,int rhs,int opt,int lhs)
 
 static int int_tic(Stack stack,int rhs,int opt,int lhs) 
 {
+  NspObject *OM;
+  /* set start_time to current time and return it */
+  double res;
   CheckRhs(0,0);
-  CheckLhs(0,0);
-  nsp_tictoc(NULL);
+  CheckLhs(0,1);
+  res = nsp_tic((lhs <= 0) ? TRUE : FALSE) ;
+  if ( lhs == 1) 
+    {
+      if ( (OM=nsp_create_object_from_double(NVOID,res)) == NULLOBJ ) 
+	return RET_BUG;
+      MoveObj(stack,1,OM);
+      return 1;
+    }
   return 0;
 }
 
 static int int_toc(Stack stack,int rhs,int opt,int lhs) 
 {
   NspObject *OM;
-  double etime;
-  CheckRhs(0,0);
+  double etime, start;
+  CheckRhs(0,1);
   CheckLhs(0,1);
-
-  if ( nsp_tictoc(&etime) == FAIL )
+  if ( rhs == 1) 
     {
-      Scierror("Error: tic() must be called before toc()\n");
-      return RET_BUG;
+      if (GetScalarDouble(stack,1,&start) == FAIL) return RET_BUG;
+      etime = nsp_toc(&start);
     }
-
+  else
+    {
+      etime = nsp_toc(NULL);
+    }
   if ( (OM=nsp_create_object_from_double(NVOID,etime)) == NULLOBJ ) 
     return RET_BUG;
   MoveObj(stack,1,OM);

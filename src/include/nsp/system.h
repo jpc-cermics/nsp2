@@ -88,8 +88,8 @@ extern double nsp_cputime(void);
 extern int nsp_realtime(double *t);
 extern int nsp_realtime_init( double *t,  double *scale);
 extern int nsp_stimer(void);
-extern int nsp_tictoc(double *etime);
-
+extern double nsp_tic(int set_start_time);
+extern double nsp_toc(double *etime);
 
 #endif 
 
