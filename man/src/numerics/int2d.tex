@@ -126,7 +126,7 @@ abs(Ia-I)
 // timing with scalar evaluation
 tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000); toc()
 // timing with vectorial evaluation (this should be faster)
-tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t); toc()}
+tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t); toc()
 \end{Verbatim}
 
 \paragraph{example 3} integrating a singularity. Here we try to compute:
