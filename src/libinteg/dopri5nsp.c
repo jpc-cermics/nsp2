@@ -46,7 +46,7 @@
  *          calculated (interpolation coef are computed only if needed).
  *  
  *   - the nsp_dopri5 routine manages itself the recording of the solution depending
- *     of the parameter task (see nsp_dopri5 comments).
+ *     on the parameter task (see nsp_dopri5 comments).
  *
  *   - internal memory needs are managed by nsp_dopri5
  *
