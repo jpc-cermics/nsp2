@@ -25,15 +25,21 @@ function histplot(n,data,normalize=%t,style=[2],strf='171',rect=[],leg="",nax=[2
     return;
   end;
   if nargin < 2 then printf('histplot : Wrong number of arguments\n'); return; end;
-  p=size(data,'*')
+  p=numel(data)
   data=data(:)
 
-  if size(n,'*')==1 then 
-    x = linspace(min(data), max(data), n+1)';
+  if numel(n)==1 then 
+     [xlb,xub] = minmax(data);
+     if xlb < xub then
+	x = linspace(xlb, xub, n+1)';
+     else
+	// just one class : print a warning ?
+	x = [(xlb - %eps)*(1-%eps);(xub + %eps)*(1+%eps)]
+     end
   else
     x=n(:)
   end,
-  n=prod(size(x));
+  n=numel(x);
   [ind , y] = bsearch(data, x);
   if normalize then y=y ./ (p*(x(2:$)-x(1:$-1))),end 
   y(n)=y($);   // add a last point 
