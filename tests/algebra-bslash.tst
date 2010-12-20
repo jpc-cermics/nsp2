@@ -9,7 +9,7 @@ function x=ldiv(A,B),x=A\B,endfunction
   
 //-----Square matrix-----
 n=5;  A=randn(n,n);b=randn(2,n+1);
-if execstr('ldiv(A,B)',errcatch=%t)==%t then pause,end
+if execstr('ldiv(A,b)',errcatch=%t)==%t then pause,end
 //Small dimensions real
 n=5;
 b=randn(n,2);A=randn(n,n);
@@ -18,7 +18,7 @@ if Err(A*x-b)>200*%eps then pause,end
 //Small dimensions complex
 b=randn(n,2)+%i;A=randn(n,n);
 x=ldiv(A,b);
-if Err(A*x-b)>500*%eps then pause,end
+if Err(A*x-b)>1000*%eps then pause,end
 
 b=randn(n,2);A=randn(n,n)+%i;
 x=ldiv(A,b);
@@ -27,14 +27,14 @@ if Err(A*x-b)>200*%eps then pause,end
 
 b=randn(n,2)+%i;A=randn(n,n)+%i;
 x=ldiv(A,b);
-if Err(A*x-b)>200*%eps then pause,end
+if Err(A*x-b)>500*%eps then pause,end
 
 
 //Large dimensions real
 n=50;
 b=randn(n,2);A=randn(n,n);
 x=ldiv(A,b);
-if Err(A*x-b)>10000*%eps then pause,end
+if Err(A*x-b)>14000*%eps then pause,end
 //Small dimensions complex
 b=randn(n,2)+%i;A=randn(n,n);
 x=ldiv(A,b);
@@ -110,11 +110,11 @@ if Err(A'*A*x-A'*b)>10000*%eps then pause,end
 
 b=randn(m,2);A=randn(m,n)+%i;
 x=ldiv(A,b);
-if Err(A'*A*x-A'*b)>10000*%eps then pause,end
+if Err(A'*A*x-A'*b)>15000*%eps then pause,end
 
 b=randn(m,2)+%i;A=randn(m,n)+%i;
 x=ldiv(A,b);
-if Err(A'*A*x-A'*b)>10000*%eps then pause,end
+if Err(A'*A*x-A'*b)>12000*%eps then pause,end
 
 
 b=randn(m,2)+%i;A=randn(m,n);
@@ -123,8 +123,8 @@ if Err(A'*A*x-A'*b)>10000*%eps then pause,end
 
 b=randn(m,2);A=randn(m,n)+%i;
 x=ldiv(A,b);
-if Err(A'*A*x-A'*b)>10000*%eps then pause,end
+if Err(A'*A*x-A'*b)>15000*%eps then pause,end
 
 b=randn(m,2)+%i;A=randn(m,n)+%i;
 x=ldiv(A,b);
-if Err(A'*A*x-A'*b)>10000*%eps then pause,end
+if Err(A'*A*x-A'*b)>20000*%eps then pause,end

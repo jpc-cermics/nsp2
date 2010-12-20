@@ -242,11 +242,12 @@ if max(abs(St-1)) > 0.3 then pause,end
 // test de cdfgam
 
 v=[0:0.01:3];
-[P,Q]=cdfgam("PQ",v,0.1*ones(size(v)),0.3*ones(size(v)));
-v1=cdfgam("X",0.1*ones(size(v)),0.3*ones(size(v)),P,Q);
+nv = numel(v);
+[P,Q]=cdfgam("PQ",v,0.1*ones(1,nv),0.3*ones(1,nv));
+v1=cdfgam("X",0.1*ones(1,nv),0.3*ones(1,nv),P,Q);
 if max(abs(v-v1)) > 1.e-14 then pause,end
-Shape=cdfgam("Shape",0.3*ones(size(v)),P,Q,v);
-// Shape est faux si P==0;
-if max(abs(Shape(2:$)-0.1)) > 1.e-8 then pause,end
-Scale=cdfgam("Scale",P,Q,v,0.1*ones(size(v)));
-if max(abs(Scale(2:$)-0.3)) > 1.e-8 then pause,end
+// Shape n'est pas defini pour P==0;
+Shape=cdfgam("Shape",0.3*ones(1,nv-1),P(2:$),Q(2:$),v(2:$));
+if max(abs(Shape(2:$)-0.1)) > 1.e-15 then pause,end
+Scale=cdfgam("Rate",P(2:$),Q(2:$),v(2:$),0.1*ones(1,nv-1));
+if max(abs(Scale(2:$)-0.3)) > 1.e-15 then pause,end
