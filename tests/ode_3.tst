@@ -59,7 +59,7 @@ alpha = 1e-6;
 
 rtol = [1e-6, 1e-10];
 atol = [1e-8, 1e-12];
-errtol = [8e-4, 2e-7];
+errtol = [9e-4, 2e-7];
 
 for algo = ["default", "stiff"]
   for j = 1:length(rtol)
