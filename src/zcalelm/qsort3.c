@@ -30,10 +30,17 @@
 #include <nsp/math.h> 
 #include <nsp/gsort-p.h> 
 
+/* to sort (i,j) couple in nsp_spcolmatrix_sparse (for couple the sort is not stable) */
+#define ELT_TYPE couple
+#define COUPLE_ONLY
+#include "qsort3-gen.c"
+#undef COUPLE_ONLY
+#undef  ELT_TYPE
+
+
 #define ELT_TYPE int
 #include "qsort3-gen.c"
 #undef  ELT_TYPE
-
 
 /*
  * double arrays or matrices 

@@ -16,6 +16,11 @@ extern int nsp_gsort(int *xI, double *xD, int *ind, int *iflag, int *m, int *n,n
 typedef enum {sort_g,sort_gs,sort_gm,sort_c,sort_r,sort_lr ,sort_lc ,sort_ldc,sort_ldr, sort_gb,sort_gd} nsp_sort;
 typedef enum {test_sort_g, test_sort_c, test_sort_r, test_sort_lc , test_sort_lr} nsp_test_sort;
 
+/* a type to sort (i,j) indices in nsp_spcolmatrix_sparse */
+typedef struct _couple couple;
+struct _couple { int i; int j; };
+
+
 extern int nsp_matrix_sort(NspMatrix *A,NspObject **Index,int ind_flag,char dir, nsp_sort type, char ind_type);
 extern int nsp_matrix_column_sort(NspMatrix *A,NspObject **Index,int ind_flag,char dir, char ind_type);
 extern int nsp_matrix_row_sort(NspMatrix *A,NspObject **Index,int ind_flag,char dir, char ind_type);
@@ -116,6 +121,11 @@ extern void nsp_qsort_bp_gint32(gint32 *a, int n, int p[],int flag,char dir );
 extern void nsp_qsort_bp_guint32(guint32 *a, int n, int p[],int flag,char dir );
 extern void nsp_qsort_bp_gint64(gint64 *a, int n, int p[],int flag,char dir );
 extern void nsp_qsort_bp_guint64(guint64 *a, int n, int p[],int flag,char dir );
+
+/* this sort (for sorting (i,j) couples in nsp_spcolmatrix_sparse) is build with nsp_sqsort_bp
+   but the comparizon key (see sqort3.c) don't include indices for stability => it is not a
+   stable sort (but stability is not required for the specific use) */
+extern void nsp_sqsort_bp_couple(couple x[], int n, int p[],char dir );
 
 /* bruno 's stupid stable quicksort   */
 extern void nsp_sqsort_bp_int(int x[], int n, int p[],char dir );

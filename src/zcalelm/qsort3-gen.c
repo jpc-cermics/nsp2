@@ -46,8 +46,13 @@
 #define qs_cmp(i,j) ( (c=strcmp(x[(i)],x[(j)])) < 0 || (c==0 && p[(i)]<p[(j)]) )
 #define qs_cmp_pivot(j) ( (c=strcmp(pivot,x[(j)])) < 0 || (c==0 && ipiv<p[(j)]) )
 #else
+#ifdef COUPLE_ONLY
+#define qs_cmp(ii,jj) ( x[(ii)].j<x[(jj)].j || (x[(ii)].j==x[(jj)].j && x[(ii)].i<x[(jj)].i) )
+#define qs_cmp_pivot(jj) ( pivot.j<x[(jj)].j || (pivot.j==x[(jj)].j && pivot.i<x[(jj)].i) )
+#else
 #define qs_cmp(i,j) ( x[(i)]<x[(j)] || (x[(i)]==x[(j)] && p[(i)]<p[(j)]) )
 #define qs_cmp_pivot(j) ( pivot<x[(j)] || (pivot==x[(j)] && ipiv<p[(j)]) )
+#endif
 #endif
 
 #define SWAP(i,j)  temp = x[i]; x[i] = x[j]; x[j] = temp;	\

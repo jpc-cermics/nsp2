@@ -160,21 +160,23 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
  * Return value: a new  #NspSColMatrix or %NULLSPCOL
  **/
 
-NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n)
+NspSpColMatrix *nsp_spcolmatrix_sparse(char *name, NspMatrix *RC, NspMatrix *Values, int m, int n)
 {
   double *rows, *cols;
   NspSpColMatrix *Loc = NULLSPCOL;
-  int *jc_ir=NULL, *ir, *p=NULL;
-  int k,kf,first_k,kk,ind,i,imax,j,jmax, colsize, colsize_init;
+  Boolean do_ij_sort = FALSE;
+  couple *ij=NULL;
+  int *p=NULL, k,kf,first_k,kk,ind,i,imax,j,jmax, colsize, colsize_init;
 
-  if ( (jc_ir=nsp_alloc_work_int(RC->mn)) == NULL || (p=nsp_alloc_work_int(RC->mn)) == NULL ) 
-    goto err;
+  if ( (ij = malloc(RC->m*sizeof(couple))) == NULL || (p = malloc(RC->m*sizeof(int))) == NULL )
+    {
+      Scierror("Error:\tRunning out of memory\n"); goto err;
+    }
  
   imax = 0; jmax = 0;
   rows = RC->R; cols = rows + RC->m;
-  ir = jc_ir + RC->m;
 
-  /* check indices then swap cols and rows stored in jc_ir for lexical ordering */
+  /* check indices then store in ij for lexical ordering */
   for ( k = 0 ; k < RC->m; k++ )
     {
       i = (int) rows[k];
@@ -187,7 +189,9 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 	}
       if ( i > imax) imax = i;
       if ( j > jmax) jmax = j;
-      jc_ir[k] = j-1; ir[k] = i-1;
+      ij[k].i = i-1; ij[k].j = j-1;
+      if ( k > 0 && !do_ij_sort && ( ij[k].j < ij[k-1].j || (ij[k].j == ij[k-1].j && ij[k].i < ij[k-1].i) ) )
+	do_ij_sort = TRUE;
     }
 
   if ( m == -1 )
@@ -204,29 +208,34 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
       Scierror("Error:\t some column indices are > n=%d\n",n); goto err;
     }
 
-  /* sort jc_ir lexical row increasing */
-  nsp_qsort_gen_lexirow_int(jc_ir, p, 1, RC->m, 2, 'i');
-  for ( k = 0 ; k < RC->m ; k++ ) p[k]--;
+  if ( do_ij_sort )
+    {
+      /* sort ij (a kind of lexical sort) */
+      nsp_sqsort_bp_couple(ij, RC->m, p, 'i');
+      for ( k = 0 ; k < RC->m ; k++ ) p[k]--;
+    }
+  else
+    for ( k = 0 ; k < RC->m ; k++ ) p[k]=k;
 
-  /* allocate space for Loc **/
+  /* allocate space for Loc */
   if ( (Loc =nsp_spcolmatrix_create(name,Values->rc_type,m,n))== NULLSPCOL)
     goto err;
 
   if ( RC->m == 0 ) return Loc;
 
   /* now form the sparse matrix, column by column */
-  j = jc_ir[0];
+  j = ij[0].j;
   first_k = 0; k = 1 ;
   while ( k < RC->m )
     {
-      if (jc_ir[k] != j  ||  k == RC->m-1 ) /* a column is ended, there are 2 cases */
+      if (ij[k].j != j  ||  k == RC->m-1 ) /* a column is ended, there are 2 cases */
 	/*
 	 *    1/ elem k is the first of a new column => column is [first_k:k-1]
-	 *    2/ elem k is on the same column but is the last one => column [first_k:k] 
+	 *    2/ elem k is on the same column but is the last one => column [first_k:k]
 	 */
 	{
-	  if ( jc_ir[k] != j ) kf = k-1;  /* case 1 */
-	  else                 kf = k;    /* case 2 */
+	  if ( ij[k].j != j ) kf = k-1;  /* case 1 */
+	  else                kf = k;    /* case 2 */
 	  colsize = colsize_init = kf - first_k + 1;
 	  if ( nsp_spcolmatrix_resize_col(Loc,j,colsize_init) == FAIL ) goto err;
 	  kk = first_k;
@@ -237,12 +246,12 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 	      if ( colsize > 0 )
 		{
 		  /* 2/ init with the first non null coef (which can become null after summation in some case...) */
-		  Loc->D[j]->R[0] = Values->R[p[kk]]; Loc->D[j]->J[0] = ir[kk];
+		  Loc->D[j]->R[0] = Values->R[p[kk]]; Loc->D[j]->J[0] = ij[kk].i;
 		  ind = 0; kk++;
 		  /* 3/ parse the rest of the column */
-		  while ( kk <= kf ) 
+		  while ( kk <= kf )
 		    {
-		      if ( ir[kk] == ir[kk-1] )  /* same row index => add coef */
+		      if ( ij[kk].i == ij[kk-1].i )  /* same row index => add coef */
 			{
 			  Loc->D[j]->R[ind] += Values->R[p[kk]];
 			  colsize--;
@@ -253,7 +262,7 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 			    colsize--;
 			  else
 			    ind++;
-			  Loc->D[j]->R[ind] = Values->R[p[kk]]; Loc->D[j]->J[ind] = ir[kk];
+			  Loc->D[j]->R[ind] = Values->R[p[kk]]; Loc->D[j]->J[ind] = ij[kk].i;
 			}
 		      kk++;
 		    }
@@ -268,12 +277,12 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 	      if ( colsize > 0 )
 		{
 		  /* 2/ init with the first non null coef (which can become null after summation in some case...) */
-		  Loc->D[j]->C[0] = Values->C[p[kk]]; Loc->D[j]->J[0] = ir[kk];
+		  Loc->D[j]->C[0] = Values->C[p[kk]]; Loc->D[j]->J[0] = ij[kk].i;
 		  ind = 0; kk++;
 		  /* 3/ parse the rest of the column */
-		  while ( kk <= kf ) 
+		  while ( kk <= kf )
 		    {
-		      if ( ir[kk] == ir[kk-1] ) /* same row index => add coef */
+		      if ( ij[kk].i == ij[kk-1].i ) /* same row index => add coef */
 			{
 			  Loc->D[j]->C[ind].r += Values->C[p[kk]].r; Loc->D[j]->C[ind].i += Values->C[p[kk]].i;
 			  colsize--;
@@ -284,7 +293,7 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 			    colsize--;
 			  else
 			    ind++;
-			  Loc->D[j]->C[ind] = Values->C[p[kk]]; Loc->D[j]->J[ind] = ir[kk];
+			  Loc->D[j]->C[ind] = Values->C[p[kk]]; Loc->D[j]->J[ind] = ij[kk].i;
 			}
 		      kk++;
 		    }
@@ -295,11 +304,11 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
 	    }
 	  
 	  if ( colsize < colsize_init ) /* due to zero coef or cancellation we have to resize */
-	    if ( nsp_spcolmatrix_resize_col(Loc,j,colsize) == FAIL ) 
+	    if ( nsp_spcolmatrix_resize_col(Loc,j,colsize) == FAIL )
 	      goto err;
 
 	  first_k = kf+1;      /* index of the new column */
-	  j = jc_ir[first_k];  /* column number of the new column */
+	  j = ij[first_k].j;   /* column number of the new column */
 	}
       k++;
     }
@@ -308,27 +317,27 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Valu
   k = RC->m-1;
   if ( first_k == k )
     {
-      j = jc_ir[k];
+      j = ij[k].j;
       if ( Values->rc_type == 'r' && Values->R[k] != 0.0 )
 	{
 	  if ( nsp_spcolmatrix_resize_col(Loc,j,1) == FAIL ) goto err;
 	  Loc->D[j]->R[0] = Values->R[p[k]];
-	  Loc->D[j]->J[0] = ir[k];
+	  Loc->D[j]->J[0] = ij[k].i;
 	}
       else if ( Values->rc_type == 'c' &&  (Values->C[k].r != 0.0 || Values->C[k].i != 0.0) )
 	{
 	  if ( nsp_spcolmatrix_resize_col(Loc,j,1) == FAIL ) goto err;
 	  Loc->D[j]->C[0] = Values->C[p[k]];
-	  Loc->D[j]->J[0] = ir[k];
+	  Loc->D[j]->J[0] = ij[k].i;
 	}
     }
      
-  FREE(jc_ir);
+  FREE(ij);
   FREE(p);
   return Loc;
 
  err:
-  FREE(jc_ir);
+  FREE(ij);
   FREE(p);
   nsp_spcolmatrix_destroy(Loc);
   return NULLSPCOL;
