@@ -20,14 +20,12 @@ B = sparse(ij,val,[1200,1207]);
 if ~A.equal[B] then, pause; end
 
 // same example but add doublon and zeros
-ijplus = ij([1000;600;78],:);
-valplus = -val([1000;600;78]);
-val([1000;600;78]) = 2*val([1000;600;78]);
-B = sparse([ij;ijplus],[val;valplus],[1200,1207]);
+ijplus = grand(56,2,"uin",1,1200);
+vplus = zeros(56,1);
+B = sparse([ij;ijplus;ij],[0.5*val;vplus;0.5*val],[1200,1207]);
 if ~A.equal[B] then, pause; end
 
-
-// 2-same test in complex case
+// 2-sames tests in complex case
 A = sprand(12,12,0.05) + %i*sprand(12,12,0.05);
 [ij,val] = spget(A);
 B = sparse(ij,val,[12,12]);
@@ -46,18 +44,16 @@ B = sparse(ij,val,[1200,1207]);
 if ~A.equal[B] then, pause; end
 
 // same example but add doublon and zeros
-ijplus = ij([1000;600;78],:);
-valplus = -val([1000;600;78]);
-val([1000;600;78]) = 2*val([1000;600;78]);
-B = sparse([ij;ijplus],[val;valplus],[1200,1207]);
+ijplus = grand(56,2,"uin",1,1200);
+vplus = zeros(56,1);
+B = sparse([ij;ijplus;ij],[0.5*val;vplus;0.5*val],[1200,1207]);
 if ~A.equal[B] then, pause; end
-
 
 // 3- doublon and cancellation of coefs
 ij = [1, 4, 4, 4, 4, 9, 9, 1, 2, 2, 2, 9, 9, 9;...
       2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]';
 val= [1, 1,-2, 2,-1, 1,-5, 1, 3,-6,-4, 5,-4,-1];
-Res = zeros_new(9,2);
+Res = zeros(9,2);
 Res(1,1) = 1; Res(1,2)= 1; Res(2,1)=-7; Res(9,2) = -4; 
 A = sparse(ij,val);
 if ~A.equal[sparse(Res)] then, pause; end
@@ -71,8 +67,8 @@ if ~A.equal[sparse(Res)] then, pause; end
 // 5- null coefs
 ij = [1, 4, 4, 4, 4, 9, 9, 1, 2, 2, 2, 9, 9, 9;...
       2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1]';
-val = zeros_new(14,1);
-Res = zeros_new(9,2);
+val = zeros(14,1);
+Res = zeros(9,2);
 A = sparse(ij,val);
 if ~A.equal[sparse(Res)] then, pause; end
 
