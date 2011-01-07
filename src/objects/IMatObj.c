@@ -2837,6 +2837,47 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int
+int_imatrix_issorted (Stack stack, int rhs, int opt, int lhs)
+{
+  char *flag=NULL;
+  int rep = test_sort_g;
+  char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
+  Boolean strict_order = FALSE;
+  NspIMatrix *A;
+  NspBMatrix *Res;
+  nsp_option opts[] ={{"flag",string,NULLOBJ,-1},
+		      {"strict_order",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 2)
+  CheckLhs(1, 1);
+
+  if ((A = GetIMat (stack, 1)) == NULLIMAT)
+    return RET_BUG;
+
+  if ( get_optional_args(stack, rhs, opt, opts, &flag, &strict_order) == FAIL )
+    return RET_BUG;
+
+  if ( flag != NULL) 
+    {
+      rep = is_string_in_array(flag, flags_list, 1);
+      if ( rep < 0 ) 
+	{
+	  string_not_in_array(stack, flag, flags_list, "optional argument");
+	  return RET_BUG;
+	}
+    }
+  
+  if ( (Res = nsp_imatrix_issorted(A, rep, strict_order)) == NULLBMAT )
+    return RET_BUG;
+  
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+
 nsp_string nsp_dec2base( guint64 n,const char *str_base )
 {
   nsp_string str=NULL;
@@ -3285,11 +3326,10 @@ static OpTab IMatrix_func[]={
   {"nnz_i",  int_matrix_nnz},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
-  {"issorted_i", int_imatrix_issorted},
   {"scale_rows_i_i", int_imatrix_scale_rows},
   {"scale_cols_i_i", int_imatrix_scale_cols},
 #endif 
-
+  {"issorted_i", int_imatrix_issorted},
   {(char *) 0, NULL}
 };
 

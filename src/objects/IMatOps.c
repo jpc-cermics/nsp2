@@ -3794,38 +3794,25 @@ NspIMatrix *nsp_imatrix_cross(NspIMatrix *X, NspIMatrix *Y, int dim)
 }
 #endif 
 
-/**
- * nsp_imatrix_issorted:
- * @A: (input) #NspIMatrix
- * @dim_flag: (input) (0, 1 or 2)
- * @strict_order: (input) true for "<" and false for  "=<"
- *
- * Return value: TRUE or FALSE
- **/
-
-NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_order)
+/* this routine can test if:
+ *   1/ a whoole array is ordered (length=A->mn, start=0, inc=1)
+ *   2/ a given column, says column j, of A is ordered (length=A->m, start=j*A->m, inc=1)
+ *   3/ a given row, says row i, of A is ordered (length=A->n, start=i, inc=A->m)
+ */
+static Boolean array_is_sorted(NspIMatrix *A, int length, int start, int inc, Boolean strict_order)
 {
-  NspBMatrix *C;
   Boolean bool = TRUE;
-  int i, j, k, c0, c1;
+  int i, j;
 
-  if ((C = nsp_bmatrix_create(NVOID,Min(A->m,1),Min(A->n,1))) == NULLBMAT) 
-    return NULLBMAT;
-  
-  if ( C->mn == 0 )
-    return C;
+  if ( length < 1 ) return bool;
 
-  switch (dim_flag) 
+  if ( strict_order )
     {
-    default :
-      Sciprintf("\nInvalid dim flag '%d' assuming dim=0\n", dim_flag);
-      
-    case 0: 
-      if ( strict_order )
+      if ( inc == 1 )
 	{
 #define IMAT_AC(name,type,arg)					\
-	  for ( i = 1 ; i < A->mn && bool ; i++ )	\
-	    bool = A->name[i-1] < A->name[i];		\
+	  for ( i = start+1 ; i < start+length && bool ; i++ )	\
+	    bool = A->name[i-1] < A->name[i];				\
 	  break;
 	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
 #undef IMAT_AC
@@ -3833,54 +3820,153 @@ NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int dim_flag, Boolean strict_ord
       else
 	{
 #define IMAT_AC(name,type,arg)					\
-	  for ( i = 1 ; i < A->mn && bool ; i++ )	\
-	    bool = (A->name[i-1] <= A->name[i]);	\
+	  for ( i = 1, j=start+inc ; i < length && bool ; i++, j+=inc )	\
+	    bool = A->name[j-inc] < A->name[j];				\
 	  break;
 	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
 #undef IMAT_AC
 	}
+    }
+
+  else
+    {
+      if ( inc == 1 )
+	{
+#define IMAT_AC(name,type,arg)					\
+	  for ( i = start+1 ; i < start+length && bool ; i++ )	\
+	    bool = A->name[i-1] <= A->name[i];				\
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
+#undef IMAT_AC
+	}
+      else
+	{
+#define IMAT_AC(name,type,arg)					\
+	  for ( i = 1, j=start+inc ; i < length && bool ; i++, j+=inc )	\
+	    bool = A->name[j-inc] <= A->name[j];				\
+	  break;
+	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
+#undef IMAT_AC
+	}
+    }
+
+  return bool;
+} 
+
+/* compare 2 columns or 2 rows of A in the lexicographic meaning: 
+ *     to compare columns j1 and j2 use : n=A->m, startx= j1*A->m, starty=j2*A->m and inc=1
+ *     to compare rows i1 and i2 use : n=A->n, startx= i1, starty=i2 and inc=A->m
+ */
+static Boolean compare_vect(NspIMatrix *A, int n, int startx, int starty, int inc, Boolean strict_order)
+{
+  int i, kx, ky;
+
+  if ( n < 1 ) return TRUE;
+
+  if ( strict_order )
+    {
+#define IMAT_AC(name,type,arg)	                \
+      for ( i = 0, kx = startx, ky = starty ; i < n  ; i++, kx+=inc, ky+=inc ) \
+	{					\
+	  if ( A->name[kx] < A->name[ky] )	\
+	    return TRUE;			\
+	  else if ( A->name[kx] > A->name[ky] ) \
+	    return FALSE;			\
+	}					\
+      return FALSE;				\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
+#undef IMAT_AC
+    }
+  else
+    {
+#define IMAT_AC(name,type,arg)	                \
+      for ( i = 0, kx = startx, ky = starty ; i < n  ; i++, kx+=inc, ky+=inc ) \
+	{					\
+	  if ( A->name[kx] < A->name[ky] )	\
+	    return TRUE;			\
+	  else if ( A->name[kx] > A->name[ky] ) \
+	    return FALSE;			\
+	}					\
+      return TRUE;				\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");	
+#undef IMAT_AC
+    }
+
+  return TRUE;   /* to avoid a gcc warning */
+}
+
+/**
+ * nsp_imatrix_issorted:
+ * @A: (input) #NspIMatrix
+ * @flag: (input) 0 = test_sort_g to test if the whoole array is sorted
+ *                1 = test_sort_c to test if each row is sorted (got a column boolean vector)
+ *                2 = test_sort_r to test if each column is sorted (got a row boolean vector)
+ *                3 = test_sort_lc to test if the columns are lexically ordered
+ *                4 = test_sort_lr to test if the rows are lexically ordered
+ * @strict_order: (input) true for "<" and false for  "=<"
+ *
+ * Return value: TRUE or FALSE
+ **/
+NspBMatrix *nsp_imatrix_issorted(NspIMatrix *A, int flag, Boolean strict_order)
+{
+  NspBMatrix *C;
+  Boolean bool = TRUE;
+  int i, j;
+
+  if ( flag == test_sort_c )
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,A->m,Min(A->n,1))) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+  else if ( flag == test_sort_r )
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,Min(A->m,1),A->n)) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+  else
+    {
+      if ( (C = nsp_bmatrix_create(NVOID,Min(A->m,1),Min(A->n,1))) == NULLBMAT ) 
+	return NULLBMAT;
+    }
+
+  if ( C->mn == 0 )
+    return C;
+
+
+  switch ( flag ) 
+    {
+    case test_sort_g:
+      C->B[0] =  array_is_sorted(A, A->mn, 0, 1, strict_order);
+      break;
+      
+    case test_sort_r:    /* test if each column is sorted */
+      for ( j = 0 ; j < A->n ; j++ )
+	C->B[j] =  array_is_sorted(A, A->m, j*A->m, 1, strict_order);
+      break;
+
+    case test_sort_c:    /* test if each row is sorted */
+      for ( i = 0 ; i < A->m ; i++ )
+	C->B[i] =  array_is_sorted(A, A->n, i, A->m, strict_order);
+      break;
+
+    case test_sort_lr:  /* are rows sorted in the lexicographic meaning ? */
+      for ( i = 1 ; i < A->m && bool ; i++ )
+	bool = compare_vect(A,  A->n, i-1, i, A->m, strict_order);
       C->B[0] = bool;
       break;
 
-    case 1:  /* are rows sorted ? (in the lexicographic meaning) */
-#define IMAT_AC(name,type,arg)					\
-      for ( i = 1 ; i < A->m && bool ; i++ )		\
-	for ( j = 0, k = i ; j < A->n ; j++, k+=A->m )	\
-	  {						\
-	    if ( A->name[k-1] < A->name[k] )		\
-	      { bool = TRUE; break; }		\
-	    else if ( A->name[k-1] == A->name[k] )	\
-	      bool = TRUE;				\
-	    else if ( A->name[k-1] > A->name[k] )	\
-	      { bool = FALSE; break; }			\
-	  }						\
-      C->B[0] = bool;					\
-      break;						
-    {       NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");}
-#undef IMAT_AC
-    break;
-    case 2: /* are columns sorted ? (in the lexicographic meaning) */
-#define IMAT_AC(name,type,arg)							\
-      for ( j = 1, c0 = 0, c1 = A->m ; j < A->n && bool ; j++, c0+=A->m, c1+=A->m ) \
-	for ( i = 0  ; i < A->m ; i++)					\
-	  {								\
-	    if ( A->name[i+c0] < A->name[i+c1] )			\
-	      { bool = TRUE; break; }					\
-	    else if ( A->name[i+c0] == A->name[i+c1] )			\
-	      bool = TRUE;						\
-	    else if ( A->name[i+c0] > A->name[i+c1] )			\
-	      { bool = FALSE; break; }					\
-	  }								\
-      C->B[0] = bool;							\
+    case test_sort_lc: /* are columns sorted in the lexicographic meaning ? */
+      for ( j = 1 ; j < A->n && bool ; j++ )
+	bool = compare_vect(A, A->m, (j-1)*A->m, j*A->m, 1, strict_order);
+      C->B[0] = bool;
       break;
-    {
-      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
     }
-#undef IMAT_AC
-    break;
-    }
+  
   return C;
 }
+
 
 /**
  * nsp_imatrix_has:
