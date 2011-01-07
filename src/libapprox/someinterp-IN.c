@@ -93,10 +93,11 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
    *
    *   yp = linear_interpn(xp1, ..., xpn, x1, ..., xn, val, outmode)
    */
-  char *str;
+  char *str=NULL;
   int n = (rhs+1)/2 - 1, m, mxp, nxp, mnxp, i, *ndim, ndim_prod=1, *ad, *k, outmode;
   double **xp, **x, *u, *v, *val;
   NspMatrix *B;
+  CheckOptRhs(0,1);
 
   if ( n < 1 )
     { 
@@ -165,7 +166,17 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
   /* get the outmode */
   if ( rhs == 2*n + 2 )
     {
-      if ((str = GetString(stack,2*n+2)) == (char*)0) goto err;
+      if ( opt == 0 )
+	{
+	  if ((str = GetString(stack,2*n+2)) == (char*)0) goto err;
+	}
+      else
+	{
+	  nsp_option opts[] ={{"outmode",string,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &str) == FAIL )
+	    goto err;
+ 	}
       outmode = get_outmode(str);
       if (outmode == UNDEFINED || outmode == LINEAR)
 	{
@@ -303,12 +314,14 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
   /*  interface on the interp routine
    *
    *   [st [, dst [, d2st [, d3st]]]] = interp(t, x, y, d [,outmode])
+   *   [st [, dst [, d2st [, d3st]]]] = interp(t, x, y, d [,outmode=])
    */
-  char *str;
+  char *str=NULL;
   NspMatrix *t, *x, *y, *d, *st, *dst, *d2st, *d3st;
   int m, n, outmode;
 
   CheckRhs(4,5);
+  CheckOptRhs(0, 1);
   CheckLhs(1,4);
 
   if ((t = GetMat(stack,1)) == NULLMAT) return RET_BUG;
@@ -331,7 +344,17 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs == 5 )   /* get the outmode */
     {
-      if ((str = GetString(stack,5)) == (char*)0) return RET_BUG;
+      if ( opt == 0 )
+	{
+	  if ((str = GetString(stack,5)) == (char*)0) return RET_BUG;
+	}
+      else  /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"outmode",string,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &str) == FAIL )
+	    return RET_BUG;
+ 	}
       outmode = get_outmode(str);
       if ( outmode == UNDEFINED )
 	{
@@ -361,7 +384,7 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
 	    MoveObj(stack,4,(NspObject *) d3st);
 	}
     }
-  return lhs;
+  return Max(1,lhs);
 }
 
 
@@ -370,12 +393,14 @@ static int int_nsp_splin2d( Stack stack, int rhs, int opt, int lhs)
   /*  interface on the splin2d routine
    *
    *   C = splin2d(x, y, z [, splin_type])
+   *   C = splin2d(x, y, z [, splin_type=])
    */
-  char *str;
+  char *str=NULL;
   NspMatrix *x, *y, *z, *C;
   int spline_type;
 
   CheckRhs(3,4);
+  CheckOptRhs(0, 1);
   CheckLhs(1,4);
 
   if ((x = GetMat(stack,1)) == NULLMAT) return RET_BUG;
@@ -411,7 +436,17 @@ static int int_nsp_splin2d( Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs == 4)   /* get the spline type */
     {
-      if ((str = GetString(stack,4)) == (char*)0) return RET_BUG;
+      if ( opt == 0 )
+	{
+	  if ((str = GetString(stack,4)) == (char*)0) return RET_BUG;
+	}
+      else
+	{
+	  nsp_option opts[] ={{"spline_type",string,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &str) == FAIL )
+	    return RET_BUG;
+ 	}
       spline_type = get_spline_type(str);
       if ( spline_type == UNDEFINED ||  spline_type == CLAMPED )
 	{
@@ -453,12 +488,14 @@ static int int_nsp_interp2d(Stack stack, int rhs, int opt, int lhs)
   /*  interface on the interp2d routine
    *
    *   [u [, dudx, dudy]] = interp2d(xm, ym, x, y, C [,outmode])
+   *   [u [, dudx, dudy]] = interp2d(xm, ym, x, y, C [,outmode=])
    */
   char *str;
   NspMatrix *xm, *ym, *x, *y, *C, *u, *dudx, *dudy;
   int nx, ny, outmode;
 
   CheckRhs(5,6);
+  CheckOptRhs(0, 1)
   CheckLhs(1,3);
 
   if ((xm = GetMat(stack,1)) == NULLMAT) return RET_BUG;
@@ -478,7 +515,17 @@ static int int_nsp_interp2d(Stack stack, int rhs, int opt, int lhs)
 
   if ( rhs == 6 )   /* get the outmode */
     {
-      if ((str = GetString(stack,6)) == (char*)0) return RET_BUG;
+      if ( opt == 0 )
+	{
+	  if ((str = GetString(stack,6)) == (char*)0) return RET_BUG;
+	}
+      else
+	{
+	  nsp_option opts[] ={{"outmode",string,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &str) == FAIL )
+	    return RET_BUG;
+ 	}
       outmode = get_outmode(str);
       if ( outmode == UNDEFINED || outmode == LINEAR )
 	{
