@@ -1186,3 +1186,171 @@ void nsp_eval_bicubic(double *x, double *y, double *C, int nx, int ny, double *x
 	}
     }
 }
+
+/* an utility routine for nsp_intg_spline */
+static double intg_eval_hermite(double t, double *x, double *y, double *d)
+{
+  double dx, Ll, Lr, Ll2, Lr2, Hl, Hr, Kl, Kr;
+  dx = x[1] - x[0];
+  Ll = (x[1]-t)/dx; Lr = (t-x[0])/dx;
+  Ll2 = Ll*Ll; Lr2 = Lr*Lr;
+  Hl = (1.0+2.0*Lr)*Ll2; Hr = (1.0+2.0*Ll)*Lr2;
+  Kl = dx*Lr*Ll2       ; Kr = -dx*Ll*Lr2;
+  return y[0]*Hl + y[1]*Hr + d[0]*Kl + d[1]*Kr;
+}
+
+/* an utility routine for nsp_intg_spline */
+static double intg_spline_with_gauss(double a, double b, int k, double *x, double *y, double *d)
+{
+  double xi = 1.0/sqrt(3.0),t1, t2;
+  t1 = 0.5*((1.0+xi)*a + (1.0-xi)*b);
+  t2 = 0.5*((1.0-xi)*a + (1.0+xi)*b);
+  return 0.5*(b-a)*(  intg_eval_hermite(t1, &(x[k]), &(y[k]),  &(d[k]))
+		    + intg_eval_hermite(t2, &(x[k]), &(y[k]),  &(d[k])) );
+}
+
+/* an utility routine for nsp_intg_spline */
+static double intg_spline_outside(double a, double b, double *x, double *y, double *d, int n, int outmode)
+{
+  double I, T, delta_x, K;
+  switch ( outmode )
+    {
+    case BY_ZERO:
+      I = 0.0;
+      break;
+
+    case BY_NAN:
+      I = 0.0/0.0;
+      break;
+
+    case C0:
+      if ( b <= x[0] )
+	I = (b-a)*y[0];
+      else
+	I = (b-a)*y[n-1];
+      break;
+
+    case LINEAR:
+      if ( b <= x[0] )
+	I = (b-a)*(y[0] + 0.5*d[0]*(a+b-2.0*x[0]));
+      else
+	I = (b-a)*(y[n-1] + 0.5*d[n-1]*(a+b-2.0*x[n-1]));
+      break;
+
+    case NATURAL:
+      if ( b <= x[0] )
+	I = intg_spline_with_gauss(a, b, 0, x, y, d);
+      else
+	I = intg_spline_with_gauss(a, b, n-2, x, y, d);
+      break;
+
+    case PERIODIC:
+      T = x[n-1] - x[0];
+      K = floor((b-a)/T);
+      if ( K >= 1.0 )
+	I = K*nsp_intg_spline(x[0],x[n-1],x, y, d, n, 0);
+      else
+	I = 0.0;
+      delta_x = (b-a) - K*T;
+      if ( delta_x > 0.0 )
+	{
+	  if ( a < x[0] )
+	    {
+	      a += T*ceil((x[0]-a)/T); b = a + delta_x;
+	      if ( b > x[n-1] )
+		I +=    nsp_intg_spline(a,x[n-1],x,y,d,n,0) 
+		     +  nsp_intg_spline(x[0],x[0]+(b-x[n-1]),x,y,d,n,0); 
+	      else
+		I += nsp_intg_spline(a,b,x,y,d,n,0);
+	    }
+	  else
+	    {
+	      b -= T*ceil((b-x[n-1])/T); a = b - delta_x;
+	      if ( a < x[0] )
+		I +=    nsp_intg_spline(x[n-1]-(x[0]-a),x[n-1],x,y,d,n,0) 
+		     +  nsp_intg_spline(x[0],b,x,y,d,n,0); 
+	      else
+		I += nsp_intg_spline(a,b,x,y,d,n,0);
+	    }
+	}
+      break;
+
+    default:
+      I = 0.0;
+      break;
+    }
+  return I;
+}
+
+/**
+ * nsp_intg_spline:
+ * @a: (input) double scalar (should be finite) a and b define the integration interval
+ * @b: (input) double scalar (should be finite)  
+ * @x: (input) breakpoints of the spline or subspline
+ * @y: (input) values of the spline or subspline at the breakpoint @x
+ * @d: (input) values of the derivative of the spline or subpline at the breakpoint @x
+ * @n: (input) number of breakpoints
+ * @outmode: (input) defines the spline or subspline outside [x[0], x[n-1]]
+ * 
+ * compute  \int_a^b s(t) dt, where s is a cubic spline or sub-spline defined
+ * by the triplet (x, y, d) (the Hermite form). 
+ * a and b could be taken outside the spline domain [x[0],x[n-1]], in this case
+ * the definition of the spline depends upon the parameter outmode.
+ * 
+ **/
+double nsp_intg_spline(double a, double b, double *x, double *y, double *d, int n, int outmode) 
+{
+  double I = 0.0, s = 1.0;
+  int k;
+  
+  if ( a == b) return 0.0;
+
+  if ( b < a ) 
+    {
+      double temp = a; 
+      a = b; b = temp; s = -1.0;
+    }
+
+  if ( a < x[0] )
+    {
+      if ( b <= x[0] )
+	return s*intg_spline_outside(a, b, x, y, d, n, outmode);
+      else
+	{
+	  I = intg_spline_outside(a, x[0], x, y, d, n, outmode);
+	  k = 0;
+	}
+    }
+  else if ( a >= x[n-1] )
+    {
+      return s*intg_spline_outside(a, b, x, y, d, n, outmode);
+    }
+  else
+    {
+      k = isearch(a, x, n);
+      if ( b <= x[k+1] )
+	return s*intg_spline_with_gauss(a, b, k, x, y, d);
+      else
+	{
+	  I = intg_spline_with_gauss(a, x[k+1], k, x, y, d);
+	  k++;
+	}
+    }
+
+  while ( k <= n-2 && b >= x[k+1] )
+    {
+      double dx = x[k+1] - x[k];
+      I += dx*( 0.5*(y[k]+y[k+1]) + dx*(d[k]-d[k+1])/12.0 );
+      k++;
+    }
+
+  if ( k <= n-2 )
+    {
+      if ( b > x[k] )
+	I += intg_spline_with_gauss(x[k], b, k, x, y, d);
+    }
+  else if ( b > x[n-1] )
+    I += intg_spline_outside(x[n-1], b, x, y, d, n, outmode);
+
+  return s*I;
+}

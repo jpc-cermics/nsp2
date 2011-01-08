@@ -38,7 +38,7 @@ static int good_order(const double x[], int n)
   /*  test if x[i-1] < x[i] */
   int i;
 
-  if (fabs(x[0]) > DBL_MAX  ||  x[n-1] >  DBL_MAX)
+  if (! (finite(x[0]) && finite(x[n-1])) ) 
     return 0;
 
   for ( i = 1 ; i < n ; i++ ) 
@@ -232,7 +232,7 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
 
   if (! good_order(x->R, n))  /* verify strict increasing abscissae */
     {
-      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf detected\n",  NspFname(stack));
+      Scierror("%s: elts of arg 1 not (strictly) increasing or +-inf or Nan detected\n",  NspFname(stack));
       return RET_BUG;
     }
 
@@ -557,7 +557,65 @@ static int int_nsp_interp2d(Stack stack, int rhs, int opt, int lhs)
 	  MoveObj(stack,3,(NspObject *) dudy);
 	}
     }
-  return lhs;
+  return Max(1,lhs);
+}
+
+
+static int int_nsp_intg_spline( Stack stack, int rhs, int opt, int lhs)
+{ 
+  /*  interface on :
+   *
+   *   I = intg_splin(a, b, x, y, d, outmode=)
+   */
+  char *str=NULL;
+  NspMatrix *x, *y, *d;
+  double a, b, I;
+  int outmode;
+
+  int_types T[] = {s_double, s_double, realmat, realmat, realmat, new_opts, t_end} ;
+  nsp_option opts[] ={{ "outmode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( GetArgs(stack,rhs,opt,T,&a, &b, &x, &y, &d, &opts, &str) == FAIL ) return RET_BUG;
+
+  if ( ! (finite(a) && finite(b)) )
+    { 
+      Scierror("%s: 2 first arguments must be finite\n", NspFname(stack));
+      return RET_BUG;
+    }
+
+  CheckSameDims(NspFname(stack),3,4,x,y);
+  CheckSameDims(NspFname(stack),3,5,x,d);
+  CheckVector(NspFname(stack),3,x);
+
+  if ( x->mn < 2 )
+    { 
+      Scierror("%s: length of x must be >= 2  \n", NspFname(stack));
+      return RET_BUG;
+    }
+  /* verify strict increasing abscissae x ? */
+  if ( ! good_order(x->R, x->mn) )
+    { 
+      Scierror("%s: elts of arg 3 not (strictly) increasing or +-inf or Nan detected\n",  NspFname(stack));
+      return RET_BUG;
+    }
+
+  if ( str != NULL )
+    {
+      outmode = get_outmode(str);
+      if ( outmode == UNDEFINED )
+	{
+	  Scierror("%s: %s is an unknown or unsupported outmode \n",NspFname(stack), str);
+	  return RET_BUG;
+	}
+    }
+  else
+    outmode = BY_NAN;  /* default outmode */
+
+  I = nsp_intg_spline(a, b, x->R, y->R, d->R, x->mn, outmode);
+
+  if ( nsp_move_double(stack,1,I)== FAIL) return RET_BUG;
+
+  return 1;
 }
 
 
@@ -567,6 +625,7 @@ static OpTab Approx_func[]={
     {"interp", int_nsp_interp},
     {"splin2d", int_nsp_splin2d},
     {"interp2d", int_nsp_interp2d},
+    {"intg_splin", int_nsp_intg_spline},
     {(char *) 0, NULL}
 };
 

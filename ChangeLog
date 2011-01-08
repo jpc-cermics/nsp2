@@ -1,3 +1,7 @@
+2011-01-08  Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* add intg_splin to integrate a spline or sub-spline.
+
 2010-08-09  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* scicos moved in toolboxes. remove old directories.
