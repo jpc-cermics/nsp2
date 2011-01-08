@@ -32,6 +32,7 @@
     $d$ is the vector with the derivatives at the $x_i$: $s'(x_i)=d_i$.
     (this is called the {\em Hermite} form). 
     The evaluation of the spline at some points must be done by the  \manlink{interp}{interp}  function.
+    You can integrate a spline over an interval $[a,b]$ using the \manlink{intg\_splin}{intg_splin} function. 
     Several kind of splines may be computed by selecting the appropriate \verb!spline_type!
     parameter: 
     
@@ -139,7 +140,7 @@ xselect()\Hnewline
   %-- see also
 
   \begin{manseealso}
-\manlink{interp}{interp} \manlink{linear\_interpn}{linear_interpn}
+\manlink{interp}{interp}, \manlink{intg\_splin}{intg_splin}, \manlink{linear\_interpn}{linear_interpn}
   \end{manseealso}
 
   %-- Authors

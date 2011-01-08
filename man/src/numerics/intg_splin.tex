@@ -1,0 +1,73 @@
+% -*- mode: latex -*-
+
+\mansection{intg\_splin}
+\begin{mandesc}
+  \shortunder{intg\_splin}{intg_splin}{integrate a cubic spline on an interval}
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+    \begin{verbatim}
+I = intg_splin(a, b, x, y, d)
+I = intg_splin(a, b, x, y, d, outmode=str_outmode)
+    \end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{a, b}: real scalars defining the integration interval
+   \vname{x,y,d}: real vectors of the same size defining a cubic spline or sub-spline function 
+                (called $s$ in the following)
+                \vname{str\_outmode}: (optional) string defining the evaluation of $s$ outside the $[x_1,x_n]$ interval
+                (default is \verb+"by_nan"+)
+   \vname{I}: result
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+    Given three vectors $(x,y,d)$ defining a spline or sub-spline function
+    (see \manlink{splin}{splin} ) with $y_i=s(x_i)$, $d_i = s'(x_i)$ this function
+    computes:
+$$
+    I = \int_a^b s(t) dt
+$$
+    The \verb!outmode! parameter lets to define $s(t)$ for $t \notin [x_1,x_n]$.
+ It can be choosen among \verb+"by_nan"+ (default),  \verb+"by_zero"+,  \verb+"C0"+,
+    \verb+"linear"+,  \verb+"natural"+ or  \verb+"periodic"+. See \manlink{interp}{interp}
+ help page for explanations.
+
+  \end{mandescription}
+
+  %--example 
+  \begin{examples}
+
+\begin{Verbatim}
+a = -8; b = 8;
+function y=sinc(x),k=find(x==0),y=sin(x)./x,y(k)=1,endfunction
+x = linspace(a,b,40)';
+y = sinc(x);
+dk = splin(x,y);
+
+// integrate exactly the spline approximation of sinc
+Ik = intg_splin(a,b,x,y,dk)
+
+// integrate accuratly sinc 
+I = intg(a,b,sinc)
+
+// compute relative error
+e = abs((Ik-I)/I)
+\end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{splin}{splin}, \manlink{interp}{interp}, \manlink{intg}{intg}
+\end{manseealso}
+
+%-- Author
+\begin{authors}
+    Bruno Pincon
+\end{authors}
+
