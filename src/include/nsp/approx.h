@@ -31,5 +31,6 @@ extern int nsp_bicubic_spline(double *x, double *y, double *u, int nx, int ny, d
 extern void nsp_eval_bicubic(double *x, double *y, double *C, int nx, int ny, double *x_eval, double *y_eval, 
 			     double *z_eval, double *dzdx_eval, double *dzdy_eval, int m, int outmode);
 
+extern double nsp_intg_spline(double a, double b, double *x, double *y, double *z, int n, int outmode);
 #endif 
 
