@@ -155,7 +155,10 @@ void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path
     {
       int global = ( *rhs == 1 ) ? TRUE : FALSE;
       sh = nsp_sharedlib_dlopen(shared_path, global);
-      if ( sh == NULL ) return;
+      if ( sh == NULL ) 
+	{
+	  *ilib = -1;  return;
+	}
       *ilib = sh->obj->id; 
     }
   else 
