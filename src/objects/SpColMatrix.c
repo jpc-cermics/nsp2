@@ -506,12 +506,10 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
  * @HMat: a #NspSpColMatrix
  * 
  * computes the number of non nul elements stored in 
- * a sparse Matrix. 
+ * a sparse Matrix. (added by Bruno)
  * 
  * Return value: the number of non nul elements.
  **/
-/*  (added by Bruno) */
-
 int nsp_spcolmatrix_nnz(const NspSpColMatrix *HMat)
 {
   int i, nnz=0;
@@ -5468,9 +5466,88 @@ int nsp_spcolmatrix_isreal(const NspSpColMatrix *A, int strict)
  */
 
 /*
- *nsp_mat_kron: produit de Kroeneker
- * A et B sont inchanges 
+ * nsp_spcolmatrix_kron: Kronecker product of 2 sparse matrices
+ * A and B are not changed (added by Bruno)
  */
+NspSpColMatrix *nsp_spcolmatrix_kron(NspSpColMatrix *A, NspSpColMatrix *B)
+{
+  NspSpColMatrix *C = NULLSPCOL;
+  char type = 'r';
+  int mC, nC, jA, jB, kA, kB, k;
+
+  if ( A->rc_type == 'c' || B->rc_type == 'c' ) type = 'c';
+
+  mC = A->m*B->m; 
+  nC = A->n*B->n;
+  if (   ((double) mC) !=  ((double)A->m) * ((double)B->m)
+      || ((double) nC) !=  ((double)A->n) * ((double)B->n) )
+    {
+      Scierror("Error: matrix got from kronecker product is too large \n");
+      return NULLSPCOL;
+    }
+
+  if ( (C =nsp_spcolmatrix_create(NVOID,type, mC, nC)) == NULLSPCOL ) 
+    return NULLSPCOL; 
+  
+  if ( C->m == 0 || C->n ==0 ) return C;
+
+  for ( jA = 0 ; jA < A->n ; jA++ )
+    {
+      SpCol *Aj = A->D[jA];
+      for ( jB = 0 ; jB < B->n ; jB++ )
+	{
+	  // fill column jA*B->n + jB of C
+	  SpCol *Bj = B->D[jB];  
+	  SpCol *Cj = C->D[jA*B->n + jB];
+	  if ( nsp_spcolmatrix_resize_col(C,jA*B->n + jB, Aj->size*Bj->size) == FAIL ) 
+	    goto err;	  
+
+	  for (kA = 0, k = 0  ; kA <  Aj->size  ; kA++) 
+	    {
+	      int iA = B->m*Aj->J[kA];
+	      if ( A->rc_type == 'r' )
+		{
+		  double valA = Aj->R[kA];
+		  if ( B->rc_type == 'r' )
+		    for (kB = 0  ; kB <  Bj->size  ; kB++, k++)
+		      { 
+			Cj->R[k] = valA*Bj->R[kB]; 
+			Cj->J[k] = iA + Bj->J[kB];
+		      }
+		  else  /* B is complex */
+		    for (kB = 0  ; kB <  Bj->size  ; kB++, k++)
+		      { 
+			Cj->C[k].r = valA*Bj->C[kB].r; Cj->C[k].i = valA*Bj->C[kB].i;
+			Cj->J[k] = iA + Bj->J[kB];
+		      }
+		}
+ 	      else  /* A is complex */
+		{
+		  doubleC valA = Aj->C[kA];
+		  if ( B->rc_type == 'r' )
+		    for (kB = 0  ; kB <  Bj->size  ; kB++, k++)
+		      { 
+			Cj->C[k].r = valA.r*Bj->R[kB]; Cj->C[k].i = valA.i*Bj->R[kB];
+			Cj->J[k] = iA + Bj->J[kB];
+		      }
+		  else  /*  both A and B complex */
+		    for (kB = 0  ; kB <  Bj->size  ; kB++, k++)
+		      { 
+			Cj->C[k].r = valA.r*Bj->C[kB].r - valA.i*Bj->C[kB].i; 
+			Cj->C[k].i = valA.i*Bj->C[kB].r + valA.r*Bj->C[kB].i;
+			Cj->J[k] = iA + Bj->J[kB];
+		      }
+		}
+	    }
+	}
+    }
+  return C;
+
+ err:
+  nsp_spcolmatrix_destroy(C);
+  return NULLSPCOL;
+}
+
 
 /*
  *nsp_mat_sort: Index=Sort(A)

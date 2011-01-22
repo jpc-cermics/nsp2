@@ -3198,6 +3198,21 @@ static int int_spcolmatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
+static int int_spcolmatrix_kron(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSpColMatrix *A, *B, *C;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((A = GetSpCol(stack, 1)) == NULLSPCOL)
+    return RET_BUG;
+  if ((B = GetSpCol(stack, 2)) == NULLSPCOL)
+    return RET_BUG;
+  if ((C = nsp_spcolmatrix_kron(A,B)) == NULLSPCOL)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) C);
+  return 1;
+}
+
 
 /*
  * The Interface for basic numerical sparse matrices operation 
@@ -3307,6 +3322,8 @@ static OpTab SpColMatrix_func[]={
   {"real_sp", int_spcolmatrix_real},
   {"imag_sp", int_spcolmatrix_imag},
   {"isreal_sp", int_spcolmatrix_isreal},
+  {"dstd_sp_sp", int_spcolmatrix_kron},	/* operator:  .*. */
+  {"kron_sp_sp", int_spcolmatrix_kron},
   {"norm_sp", int_spcolmatrix_norm},
   {"isnan_sp",int_spcolmatrix_isnan},
   {"isinf_sp",int_spcolmatrix_isinf},
