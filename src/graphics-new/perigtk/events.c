@@ -62,16 +62,14 @@ static gboolean locator_button_press(GtkWidget *widget,
       break;
     }
 
-  if ( event->state & GDK_SHIFT_MASK) 
+  if ( event->state & GDK_SHIFT_MASK )
     {
-      /* 
-       * Sciprintf("A Shift-press\n");
-       */
+      if ( event->state & GDK_CONTROL_MASK )
+	id +=3000;
+      else 
+	id +=2000;
     }
-  /*
-  static int count=0;
-  fprintf(stderr,"A press is activated %d\n",count++);
-  */
+  else if ( event->state & GDK_CONTROL_MASK ) id +=1000;
 
   if ( nsp_event_info.sci_click_activated == FALSE ) 
     {
