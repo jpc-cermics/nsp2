@@ -418,6 +418,28 @@ x = randn(3,50);
 y = x*A; yf = x*full(A);
 if norm(y-yf)/norm(yf) > 10*%eps then, pause, end
 
+// -------------------------------------
+//  test kron
+// -------------------------------------
+A =  ones(2,2);
+B = 3*eye(3,3);
+C = A.*.B;
+if ~C.equal[full(sparse(A).*.sparse(B))] then, pause, end
+A =  [0, 1+%i;
+      1, 0;
+      0, %i];
+B = 2*eye(2,2);
+C = A.*.B;
+if ~C.equal[full(sparse(A).*.sparse(B))] then, pause, end
+C = B.*.A;
+if ~C.equal[full(sparse(B).*.sparse(A))] then, pause, end
+A =  [0, 1+%i;
+      1, 0;
+      0, %i];
+B = [%i, 0, 0, 2+%i;
+     0,  1, 2, 0];
+C = A.*.B;
+if ~C.equal[full(sparse(A).*.sparse(B))] then, pause, end
 
 
 // ----------------------------------------------------------
