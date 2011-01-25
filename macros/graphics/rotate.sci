@@ -6,8 +6,8 @@ function [xy]=rotate(xy,teta,orig)
 // orig : centre de la rotation, <0;0> si omis
 //!
 // Copyright INRIA
-[lhs,rhs]=argn(0)
-select rhs
+//[lhs,rhs]=argn(0)
+select nargin
  case 2 then orig=[0;0];
  case 3 then orig=matrix(orig,2,1);
  else error(39)
