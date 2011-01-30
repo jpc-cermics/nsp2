@@ -250,7 +250,7 @@ static const gchar *view_ui_description =
   "  </menubar>"
   "</ui>";
 
-static const gchar *buffer_ui_description =
+static const gchar *buffer_file_ui_description =
   "<ui>"
   "  <menubar name=\"MainMenu\">"
   "    <menu action=\"FileMenu\">"
@@ -273,6 +273,20 @@ static const gchar *buffer_ui_description =
   "  </menubar>"
   "</ui>";
 
+static const gchar *buffer_smatrix_ui_description =
+  "<ui>"
+  "  <menubar name=\"MainMenu\">"
+  "    <menu action=\"FileMenu\">"
+  "      <menuitem action=\"Print\"/>"
+  "      <menuitem action=\"Find\"/>"
+  "      <menuitem action=\"Replace\"/>"
+  "      <separator/>"
+  "      <menuitem action=\"Close\"/>"
+  "    </menu>"
+  "    <menu action=\"ViewMenu\">"
+  "    </menu>"
+  "  </menubar>"
+  "</ui>";
 
 /* File loading code ----------------------------------------------------------------- */
 
@@ -305,7 +319,6 @@ gtk_source_buffer_load_file (GtkSourceBuffer *source_buffer,
   GtkTextIter iter;
   gchar *buffer,*buffer_utf8 ;
   GError *error_here = NULL;
-
   g_return_val_if_fail (GTK_IS_SOURCE_BUFFER (source_buffer), FALSE);
   g_return_val_if_fail (filename != NULL, FALSE);
 
@@ -493,6 +506,82 @@ open_file (GtkSourceBuffer *buffer, const gchar *filename)
     }
   g_free (freeme);
   return success;
+}
+
+/* S is assumed to be a utf8 matrix 
+ */
+
+static gboolean
+gtk_source_buffer_load_smatrix (GtkSourceBuffer *source_buffer,
+				NspSMatrix *S)
+{
+  int i;
+  GtkTextIter iter;
+  
+  g_return_val_if_fail (GTK_IS_SOURCE_BUFFER (source_buffer), FALSE);
+  g_return_val_if_fail (S != NULL, FALSE);
+  
+  gtk_source_buffer_begin_not_undoable_action (source_buffer);
+  gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (source_buffer), &iter);
+  for ( i = 0 ; i < S->mn ; i++) 
+    {
+      gtk_text_buffer_insert(GTK_TEXT_BUFFER (source_buffer),&iter, S->S[i],-1);
+      gtk_text_buffer_insert(GTK_TEXT_BUFFER (source_buffer),&iter, "\n",-1);
+    }
+  gtk_source_buffer_end_not_undoable_action (source_buffer);
+  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (source_buffer), FALSE);
+  /* move cursor to the beginning */
+  gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (source_buffer), &iter);
+  gtk_text_buffer_place_cursor (GTK_TEXT_BUFFER (source_buffer), &iter);
+  return TRUE;
+}
+
+static gboolean
+open_smatrix (GtkSourceBuffer *buffer,const char *title, NspSMatrix *S)
+{
+  GtkWidget *window;
+  GtkSourceLanguage *language = NULL;
+  gboolean success = FALSE;
+  remove_all_marks (buffer);
+  language = nsp_gtksource_language ();
+  gtk_source_buffer_set_language (buffer, language);
+  success = gtk_source_buffer_load_smatrix(buffer,S);
+  /* to keep track that this is a smatrix buffer */
+  g_object_set_data(G_OBJECT (buffer),"smatrix",GINT_TO_POINTER(1));
+  if ( success == FALSE ) return success;
+  window =  g_object_get_data (G_OBJECT (buffer), "buffer_window");
+  if ( window)  gtk_window_set_title (GTK_WINDOW (window), title);
+  return success;
+}
+
+
+/* get buffer content in a SMatrix  */
+
+static NspSMatrix *save_buffer_in_smatrix(GtkSourceBuffer *buffer)
+{
+  NspSMatrix *S=NULL;
+  GtkTextIter start, end;
+  gchar *chars,*chars1;
+  gtk_text_buffer_get_iter_at_offset (GTK_TEXT_BUFFER (buffer), &start, 0);
+  gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end);
+  chars1= chars = gtk_text_buffer_get_slice (GTK_TEXT_BUFFER (buffer), &start, &end, FALSE);
+  gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (buffer), FALSE);	  
+  if ((S = nsp_smatrix_create(NVOID,0,0,"",0))== NULLSMAT)
+    return S;
+  while ( *chars != '\0') 
+    {
+      char *tag = strstr(chars,"\n");
+      if(tag != NULL) *tag ='\0';
+      if ( nsp_row_smatrix_append_string(S,chars) == FAIL) 
+	goto err;
+      if ( tag == NULL) break;
+      chars = tag+1;
+    }
+  g_free (chars1);
+  return S;
+ err:
+  if ( S != NULL) nsp_smatrix_destroy(S);
+  return NULL;
 }
 
 
@@ -1063,7 +1152,6 @@ draw_page (GtkPrintOperation        *operation,
   pango_layout_set_font_description (layout, desc);
   pango_font_description_free (desc);
 
-
   pango_layout_get_extents (layout, NULL, &rect);
 
   cairo_move_to (cr,
@@ -1424,12 +1512,25 @@ close_cb (GtkAction *action, gpointer user_data)
   GMainLoop *loop;
   GtkWidget *window;
   GtkSourceBuffer *buffer= user_data;
-  check_buffer_saved (action, buffer);
-  g_object_unref (buffer);
+  int *hus = g_object_get_data (G_OBJECT (buffer), "smatrix");
+  if ( hus != NULL) 
+    {
+      NspSMatrix *S;
+      /* this is a smatrix buffer */
+      S = save_buffer_in_smatrix(buffer);
+      g_object_set_data (G_OBJECT (buffer), "smatrix_value",S);
+      /* we do not unref buffer */
+    }
+  else
+    {
+      check_buffer_saved (action, buffer);
+      g_object_unref (buffer);
+    }
   window =  g_object_get_data (G_OBJECT (buffer), "buffer_window");
   loop = g_object_get_data (G_OBJECT (window), "main_loop");
   if ( loop != NULL) g_main_loop_quit (loop);
   gtk_widget_destroy (window);
+  Sciprintf("Close cb \n");
 }
 
 /* View UI callbacks ------------------------------------------------------------------ */
@@ -1633,7 +1734,7 @@ add_source_mark_pixbufs (GtkSourceView *view)
 static GtkWidget *
 create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
 {
-  GtkWidget *window, *sw, *view, *vbox, *pos_label, *menu;
+  GtkWidget *window, *sw, *view, *vbox, *pos_label,*descr_label, *menu;
   PangoFontDescription *font_desc = NULL;
   GtkAccelGroup *accel_group;
   GtkActionGroup *action_group;
@@ -1717,11 +1818,14 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
 				       GTK_SHADOW_IN);
   pos_label = gtk_label_new ("Position");
   g_object_set_data (G_OBJECT (view), "pos_label", pos_label);
+  descr_label = gtk_label_new ("");
+  g_object_set_data (G_OBJECT (view), "descr_label", descr_label);
   menu = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
   
   /* layout widgets */
   gtk_container_add (GTK_CONTAINER (window), vbox);
   gtk_box_pack_start (GTK_BOX (vbox), menu, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), descr_label, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view);
   gtk_box_pack_start (GTK_BOX (vbox), pos_label, FALSE, FALSE, 0);
@@ -1799,7 +1903,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
 }
 
 static GtkWidget *
-create_main_window (GtkSourceBuffer *buffer)
+create_main_window (GtkSourceBuffer *buffer,int flag)
 {
   GtkWidget *window;
   GtkAction *action;
@@ -1807,6 +1911,10 @@ create_main_window (GtkSourceBuffer *buffer)
   GtkActionGroup *action_group;
   GList *groups;
   GError *error;
+  const gchar *buffer_ui_description;
+
+  buffer_ui_description = (flag) ? buffer_file_ui_description :
+    buffer_smatrix_ui_description;
 
   window = create_view_window (buffer, NULL);
   ui_manager = g_object_get_data (G_OBJECT (window), "ui_manager");
@@ -1820,13 +1928,14 @@ create_main_window (GtkSourceBuffer *buffer)
 
   /* merge buffer ui */
   error = NULL;
+
   if (!gtk_ui_manager_add_ui_from_string (ui_manager, buffer_ui_description, -1, &error))
     {
       g_message ("building buffer ui failed: %s", error->message);
       g_error_free (error);
       exit (1);
     }
-
+    
   /* preselect menu checkitems */
   groups = gtk_ui_manager_get_action_groups (ui_manager);
   /* retrieve the view action group at position 0 in the list */
@@ -1863,9 +1972,13 @@ create_main_window (GtkSourceBuffer *buffer)
 static void test_get_language (void);
 #endif 
 
-/*
- * main function: creates a new edit function 
- * fname can be NULL.
+/**
+ * nsp_edit:
+ * @fname: file name of file to be edited or %NULL
+ * @read_only: a boolean 
+ * @wait:  a boolean 
+ * 
+ * creates a new edit function 
  */
 
 int nsp_edit(const char *fname,int read_only, int wait)
@@ -1881,7 +1994,7 @@ int nsp_edit(const char *fname,int read_only, int wait)
   buffer = gtk_source_buffer_new (NULL);
   open_file (buffer, fname);
   /* create first window */
-  window = create_main_window (buffer);
+  window = create_main_window (buffer,TRUE);
   gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_widget_show (window);
   if ( wait == TRUE ) 
@@ -1896,6 +2009,38 @@ int nsp_edit(const char *fname,int read_only, int wait)
       GDK_THREADS_ENTER();
     }
   return 0;
+}
+
+NspSMatrix *nsp_edit_smatrix(const char *title, NspSMatrix *S)
+{
+  NspSMatrix *Res;
+  int wait = TRUE;
+  GtkWidget *window;
+  GtkSourceBuffer *buffer;
+  GMainLoop *loop=NULL;
+  /* create buffer */
+  buffer = gtk_source_buffer_new (NULL);
+  open_smatrix (buffer,title,S);
+  /* create first window */
+  window = create_main_window (buffer,FALSE);
+  gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
+  gtk_window_set_title (GTK_WINDOW (window), title);
+  gtk_widget_show (window);
+  if ( wait == TRUE ) 
+    {
+      loop = g_main_loop_new (NULL,FALSE);
+    }
+  g_object_set_data (G_OBJECT (window), "main_loop", loop);
+  if ( wait == TRUE ) 
+    {
+      GDK_THREADS_LEAVE();
+      g_main_loop_run (loop);
+      GDK_THREADS_ENTER();
+    }
+  
+  Res = g_object_get_data (G_OBJECT (buffer), "smatrix_value");
+  g_object_unref (buffer);
+  return Res;
 }
 
 int nsp_sourceview_cleanup(void)

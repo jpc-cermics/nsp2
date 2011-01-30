@@ -41,6 +41,7 @@
 #include "files.h" /* FSIZE */
 
 extern void nsp_edit(char *filename,int read_only,int wait);
+extern NspSMatrix *nsp_edit_smatrix(const char *title, NspSMatrix *S);
 
 /* define in spawn  */
 
@@ -511,6 +512,27 @@ static int int_editfile(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
+static int int_editsmat(Stack stack, int rhs, int opt, int lhs)
+{
+  char *title;
+  NspSMatrix *S,*Res;
+  int_types T[] = { string,smat, t_end} ;
+  CheckRhs(2,2);
+  CheckLhs(0,1);
+  if ( GetArgs(stack,rhs,opt,T,&title,&S) == FAIL) return RET_BUG;
+  Res = nsp_edit_smatrix(title,S);
+  if ( Res == NULL ) 
+    {
+      if ((Res = nsp_smatrix_create(NVOID,0,0,"",0))== NULLSMAT)
+	return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
+
+
 #if 0 
 static int int_mktemp(Stack stack, int rhs, int opt, int lhs)
 {
@@ -619,6 +641,7 @@ static OpTab System_func[]={
   {"spawn_sync", int_g_spawn_sync},
   {"spawn_async", int_g_spawn_async},
   {"editfile", int_editfile},
+  {"editsmat", int_editsmat},
   {"listenv", int_listenv},
 #if 0 
   {"mktemp", int_mktemp},
