@@ -41,7 +41,7 @@
 #include "files.h" /* FSIZE */
 
 extern void nsp_edit(char *filename,int read_only,int wait);
-extern NspSMatrix *nsp_edit_smatrix(const char *title, NspSMatrix *S);
+extern NspSMatrix *nsp_edit_smatrix(const char *title,const char *comment, NspSMatrix *S);
 
 /* define in spawn  */
 
@@ -515,13 +515,40 @@ static int int_editfile(Stack stack, int rhs, int opt, int lhs)
 
 static int int_editsmat(Stack stack, int rhs, int opt, int lhs)
 {
-  char *title;
+  nsp_option opts[] ={{ "comment",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *title=NULL,*comment=NULL;
+  char *title_utf8=NULL,*comment_utf8=NULL;
   NspSMatrix *S,*Res;
-  int_types T[] = { string,smat, t_end} ;
-  CheckRhs(2,2);
+  int_types T[] = { string,smatcopy,new_opts, t_end} ;
+  CheckStdRhs(2,2);
   CheckLhs(0,1);
-  if ( GetArgs(stack,rhs,opt,T,&title,&S) == FAIL) return RET_BUG;
-  Res = nsp_edit_smatrix(title,S);
+  if ( GetArgs(stack,rhs,opt,T,&title,&S,opts,&comment) == FAIL) return RET_BUG;
+
+  if ((title_utf8= nsp_string_to_utf8(title)) == NULL) {
+    Scierror("Error: cannot convert title to utf8\n");
+    return RET_BUG;
+  }
+  if ( comment != NULL )
+    {
+      if ((comment_utf8= nsp_string_to_utf8(comment)) == NULL) {
+	Scierror("Error: cannot convert title to utf8\n");
+	return RET_BUG;
+      }
+    }
+  if ( nsp_smatrix_to_utf8(S) == FAIL) 
+    {
+      Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),
+	       ArgPosition(2));
+      return RET_BUG;
+    }
+  
+  Res = nsp_edit_smatrix(title,comment,S);
+
+  if (title_utf8 != NULL&& title_utf8 != title ) g_free (title_utf8);
+  if (comment != NULL && comment_utf8 != NULL 
+      && comment_utf8 != comment ) g_free (comment_utf8);
+  
   if ( Res == NULL ) 
     {
       if ((Res = nsp_smatrix_create(NVOID,0,0,"",0))== NULLSMAT)

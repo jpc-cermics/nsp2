@@ -99,7 +99,8 @@ static void forward_string_cb (GtkAction *action, gpointer user_data);
 static void backward_string_cb (GtkAction *action, gpointer user_data);
 #endif 
 
-static GtkWidget *create_view_window(GtkSourceBuffer *buffer, GtkSourceView  *from);
+static GtkWidget *
+create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *comment, int close);
 
 /* Actions & UI definition ---------------------------------------------------- */
 
@@ -1523,14 +1524,14 @@ close_cb (GtkAction *action, gpointer user_data)
     }
   else
     {
-      check_buffer_saved (action, buffer);
+      if ( action != NULL) 
+	check_buffer_saved (action, buffer);
       g_object_unref (buffer);
     }
   window =  g_object_get_data (G_OBJECT (buffer), "buffer_window");
   loop = g_object_get_data (G_OBJECT (window), "main_loop");
   if ( loop != NULL) g_main_loop_quit (loop);
   gtk_widget_destroy (window);
-  Sciprintf("Close cb \n");
 }
 
 /* View UI callbacks ------------------------------------------------------------------ */
@@ -1731,8 +1732,25 @@ add_source_mark_pixbufs (GtkSourceView *view)
 }
 #endif 
 
+static void button_ok_clicked(GtkWidget *widget, void *user_data)
+{
+  close_cb (NULL,user_data); 
+}
+
+static void button_cancel_clicked(GtkWidget *widget, void *user_data)
+{
+  GMainLoop *loop;
+  GtkWidget *window;
+  GtkSourceBuffer *buffer= user_data;
+  window =  g_object_get_data (G_OBJECT (buffer), "buffer_window");
+  loop = g_object_get_data (G_OBJECT (window), "main_loop");
+  if ( loop != NULL) g_main_loop_quit (loop);
+  gtk_widget_destroy (window);
+}
+
 static GtkWidget *
-create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
+create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from, const char *comment,
+		    int close)
 {
   GtkWidget *window, *sw, *view, *vbox, *pos_label,*descr_label, *menu;
   PangoFontDescription *font_desc = NULL;
@@ -1818,17 +1836,33 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
 				       GTK_SHADOW_IN);
   pos_label = gtk_label_new ("Position");
   g_object_set_data (G_OBJECT (view), "pos_label", pos_label);
-  descr_label = gtk_label_new ("");
-  g_object_set_data (G_OBJECT (view), "descr_label", descr_label);
+  if ( comment != NULL ) 
+    {
+      descr_label = gtk_label_new (comment);
+      g_object_set_data (G_OBJECT (view), "descr_label", descr_label);
+    }
   menu = gtk_ui_manager_get_widget (ui_manager, "/MainMenu");
-  
   /* layout widgets */
   gtk_container_add (GTK_CONTAINER (window), vbox);
   gtk_box_pack_start (GTK_BOX (vbox), menu, FALSE, FALSE, 0);
-  gtk_box_pack_start (GTK_BOX (vbox), descr_label, FALSE, FALSE, 0);
+  if ( comment != NULL )
+    gtk_box_pack_start (GTK_BOX (vbox), descr_label, FALSE, FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), sw, TRUE, TRUE, 0);
   gtk_container_add (GTK_CONTAINER (sw), view);
   gtk_box_pack_start (GTK_BOX (vbox), pos_label, FALSE, FALSE, 0);
+  
+  if (close ) 
+    {
+      GtkWidget *button,*hbox;
+      hbox = gtk_hbox_new (0, FALSE);
+      button = gtk_button_new_from_stock(GTK_STOCK_OK);
+      g_signal_connect (button,"clicked",G_CALLBACK (button_ok_clicked),buffer);
+      gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+      button = gtk_button_new_from_stock(GTK_STOCK_CANCEL);
+      g_signal_connect (button,"clicked",G_CALLBACK (button_cancel_clicked),buffer);
+      gtk_box_pack_end (GTK_BOX (hbox), button, FALSE, FALSE, 0);
+      gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+    }
 
   /* setup view */
   font_desc = pango_font_description_from_string ("monospace");
@@ -1903,7 +1937,7 @@ create_view_window (GtkSourceBuffer *buffer, GtkSourceView *from)
 }
 
 static GtkWidget *
-create_main_window (GtkSourceBuffer *buffer,int flag)
+create_main_window (GtkSourceBuffer *buffer,int flag,const char *comment,int close)
 {
   GtkWidget *window;
   GtkAction *action;
@@ -1916,7 +1950,7 @@ create_main_window (GtkSourceBuffer *buffer,int flag)
   buffer_ui_description = (flag) ? buffer_file_ui_description :
     buffer_smatrix_ui_description;
 
-  window = create_view_window (buffer, NULL);
+  window = create_view_window (buffer, NULL,comment,close);
   ui_manager = g_object_get_data (G_OBJECT (window), "ui_manager");
 
   /* buffer action group */
@@ -1994,7 +2028,7 @@ int nsp_edit(const char *fname,int read_only, int wait)
   buffer = gtk_source_buffer_new (NULL);
   open_file (buffer, fname);
   /* create first window */
-  window = create_main_window (buffer,TRUE);
+  window = create_main_window (buffer,TRUE,NULL,FALSE);
   gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_widget_show (window);
   if ( wait == TRUE ) 
@@ -2011,7 +2045,7 @@ int nsp_edit(const char *fname,int read_only, int wait)
   return 0;
 }
 
-NspSMatrix *nsp_edit_smatrix(const char *title, NspSMatrix *S)
+NspSMatrix *nsp_edit_smatrix(const char *title,const char *comment, NspSMatrix *S)
 {
   NspSMatrix *Res;
   int wait = TRUE;
@@ -2022,7 +2056,7 @@ NspSMatrix *nsp_edit_smatrix(const char *title, NspSMatrix *S)
   buffer = gtk_source_buffer_new (NULL);
   open_smatrix (buffer,title,S);
   /* create first window */
-  window = create_main_window (buffer,FALSE);
+  window = create_main_window (buffer,FALSE,comment,TRUE);
   gtk_window_set_default_size (GTK_WINDOW (window), 600, 400);
   gtk_window_set_title (GTK_WINDOW (window), title);
   gtk_widget_show (window);
