@@ -1612,6 +1612,13 @@ int nsp_edit(char *filename, int read_only)
   return 0;
 }
 
+NspSMatrix *nsp_edit_smatrix(const char *title,const char *comment, NspSMatrix *S)
+{
+  Sciprintf("nsp_edit_smatrix: to be implemented when gtksourceview not found\n");
+  return NULL;
+}
+
+
 #endif
 
 

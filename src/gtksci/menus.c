@@ -626,7 +626,12 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
   GtkWidget *menuitem;
   if ( m == NULL ) return ;
   if ( m->stock_name != NULL ) 
-    menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
+    {
+      menuitem = gtk_image_menu_item_new_from_stock (m->stock_name, NULL);
+      /* Attention 2.16 only */
+      /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem),TRUE);*/
+    }
+
   else 
     menuitem = gtk_menu_item_new_with_mnemonic (m->name);
   if ( m->accel != NULL )
@@ -651,7 +656,11 @@ static void sci_menubar_add_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *
       while ( loc != NULL) 
 	{
 	  if ( loc->stock_name != NULL ) 
-	    menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL);
+	    {
+	      menuitem1 = gtk_image_menu_item_new_from_stock(loc->stock_name, NULL);
+	      /* 2.16 only */
+	      /* gtk_image_menu_item_set_always_show_image ( GTK_IMAGE_MENU_ITEM(menuitem1),TRUE); */
+	    }
 	  else 
 	    menuitem1 = gtk_menu_item_new_with_mnemonic(loc->name);
 	  gtk_menu_shell_append (GTK_MENU_SHELL (menu), menuitem1);
