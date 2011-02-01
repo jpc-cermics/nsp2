@@ -557,13 +557,36 @@ if sort([])<>[] then pause,end
 [s,k]=sort([]);if s<>[]|k<>[] then pause,end
 
 //kron
-function y=kron(a,b) y=a.*.b;endfunction
+//function y=kron(a,b) y=a.*.b;endfunction
 
 a=[1 2];b=[3;4];
 if or(kron(a,b)<>[3 6;4 8]) then pause,end
 if or(kron(a+0,b)<>[3 6;4 8]) then pause,end
 if or(kron(a,b+0)<>[3 6;4 8]) then pause,end
 if or(kron(a+0,b+0)<>[3 6;4 8]) then pause,end
+
+a = [1 2;3 4]; b = ones(2,2);
+c = [1 1 2 2;
+     1 1 2 2;
+     3 3 4 4;
+     3 3 4 4];
+if ~c.equal[kron(a,b)], then, pause, end
+d = %i*c;
+if ~d.equal[kron(a*%i,b)], then, pause, end
+if ~d.equal[kron(a,b*%i)], then, pause, end
+d = -c + 0*%i;
+if ~d.equal[kron(a*%i,b*%i)], then, pause, end
+
+a = zeros(0,5);
+b = zeros(0,3);
+c = zeros(0,15);
+if ~c.equal[kron(a,b)], then, pause, end
+
+a = zeros(5,0);
+b = zeros(2,0);
+c = zeros(10,0);
+if ~c.equal[kron(a,b)], then, pause, end
+
 if kron([],b)<>[] then pause,end
 if kron([],b+0)<>[] then pause,end
 a=[];

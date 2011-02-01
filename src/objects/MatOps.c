@@ -42,6 +42,7 @@
 
 
 static void Kronecker (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
+static void KroneckerBis (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
 typedef int (*AdSu) (const int,const double *,const int,double *,const int);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
 static int MatOpScalar (NspMatrix *Mat1,NspMatrix *Mat2,AdSu F1,AdSuZ F2);
@@ -1391,7 +1392,7 @@ NspMatrix *nsp_mat_kron(NspMatrix *A, NspMatrix *B)
   if ((Loc = nsp_matrix_create(NVOID,type,B->m*A->m,B->n*A->n)) == NULLMAT) 
     return(NULLMAT);
   if ( Loc->mn == 0 ) return(Loc);
-  Kronecker(A,B,Loc);
+  KroneckerBis(A,B,Loc);
   return(Loc);
 }
 
@@ -3180,6 +3181,7 @@ int nsp_mat_mult_scalar_bis(NspMatrix *A, NspMatrix *B)
       if ( B->rc_type == 'r' )
 	for ( i = 0 ; i < A->mn ; i++ )
 	  A->R[i] *= B->R[0];
+/* 	C2F(dscal)(&(A->mn), B->R, A->R, &inc); */
       else
 	{
 	  if ( nsp_mat_complexify(A, 0.0) == FAIL ) return FAIL;
@@ -4504,6 +4506,60 @@ static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
     }
 }
 
+
+static void KroneckerBis(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
+{
+  int iA, jA, jB, iB, k;
+
+  if ( A->rc_type == 'r' &&  B->rc_type == 'r' )
+    {
+      double *colA, *colB;
+      for ( jA = 0, k = 0, colA = A->R ; jA < A->n ; jA++, colA += A->m )
+	for ( jB = 0, colB = B->R ; jB < B->n ; jB++, colB += B->m )
+	  for ( iA = 0 ; iA < A->m ; iA++)
+	    for ( iB = 0 ; iB < B->m ; iB++, k++ )
+	      PK->R[k] = colA[iA] * colB[iB];
+    }
+
+  else if ( A->rc_type == 'c' &&  B->rc_type == 'c' ) 
+    {
+      doubleC *colA, *colB;
+      for ( jA = 0, k = 0, colA = A->C ; jA < A->n ; jA++, colA += A->m )
+	for ( jB = 0, colB = B->C ; jB < B->n ; jB++, colB += B->m )
+	  for ( iA = 0 ; iA < A->m ; iA++)
+	    for ( iB = 0 ; iB < B->m ; iB++, k++ )
+	      {
+		PK->C[k].r = colA[iA].r * colB[iB].r - colA[iA].i * colB[iB].i; 
+		PK->C[k].i = colA[iA].i * colB[iB].r + colA[iA].r * colB[iB].i;
+	      }
+    }
+
+  else if ( A->rc_type == 'c' &&  B->rc_type == 'r' ) 
+    {
+      doubleC *colA; double *colB;
+      for ( jA = 0, k = 0, colA = A->C ; jA < A->n ; jA++, colA += A->m )
+	for ( jB = 0, colB = B->R ; jB < B->n ; jB++, colB += B->m )
+	  for ( iA = 0 ; iA < A->m ; iA++)
+	    for ( iB = 0 ; iB < B->m ; iB++, k++ )
+	      {
+		PK->C[k].r = colA[iA].r * colB[iB];
+		PK->C[k].i = colA[iA].i * colB[iB];
+	      }
+    }
+
+  else if ( A->rc_type == 'r' &&  B->rc_type == 'c' ) 
+    {
+      double *colA; doubleC *colB;
+      for ( jA = 0, k = 0, colA = A->R ; jA < A->n ; jA++, colA += A->m )
+	for ( jB = 0, colB = B->C ; jB < B->n ; jB++, colB += B->m )
+	  for ( iA = 0 ; iA < A->m ; iA++)
+	    for ( iB = 0 ; iB < B->m ; iB++, k++ )
+	      {
+		PK->C[k].r = colA[iA] * colB[iB].r;
+		PK->C[k].i = colA[iA] * colB[iB].i;
+	      }
+    }
+}
 
 /**
  * nsp_mat_magic:
