@@ -766,6 +766,7 @@ static int int_htdelete(void *self,Stack stack, int rhs, int opt, int lhs)
 	  NspHash *H1;
 	  NspObject *O1;
 	  if ((H1 = GetHash(stack,j)) == NULLHASH) return RET_BUG;        
+	  i=0;
 	  while (1) 
 	    {
 	      int rep =nsp_hash_get_next_object(H1,&i,&O1);
