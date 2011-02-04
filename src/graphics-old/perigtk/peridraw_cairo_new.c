@@ -473,6 +473,7 @@ static void draw_mark_cairo(BCG *Xgc,int *x, int *y)
   cairo_move_to (cr, *x,*y);
   cairo_show_text (cr,symbol_code);
 }
+
 #endif 
  
 
@@ -495,13 +496,15 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,NULL);
   dx = PANGO_PIXELS(( ink_rect.x + ink_rect.width/2.0));
   dy = PANGO_PIXELS(( ink_rect.y + ink_rect.height/2.0));
-  cairo_move_to (cr, *x-dx,*y+dy);
+  cairo_move_to (cr, *x-dx,*y-dy);
   pango_cairo_update_layout (cr,Xgc->private->mark_layout);
-  cairo_show_text (cr,symbol_code);
-  /* 
-     cairo_rectangle (cr,*x-dx/2.0,*y-dy/2.0,PANGO_PIXELS(ink_rect.width),PANGO_PIXELS(ink_rect.height));
-     cairo_stroke (cr);
-  */
+  pango_cairo_show_layout (cr,Xgc->private->mark_layout);
+  /* cairo_show_text (cr,symbol_code); */
+  if (0) 
+    {
+      cairo_rectangle (cr,*x-dx/2.0,*y-dy/2.0,PANGO_PIXELS(ink_rect.width),PANGO_PIXELS(ink_rect.height));
+      cairo_stroke (cr);
+    }
 }
 
 /*
