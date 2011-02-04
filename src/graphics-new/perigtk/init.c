@@ -447,7 +447,7 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		   G_CALLBACK(sci_delete_window), (gpointer) dd);
 
   g_signal_connect (GTK_OBJECT(dd->private->window), "key_press_event",
-		    G_CALLBACK(key_press_event), (gpointer) dd);
+		    G_CALLBACK(key_press_event_new), (gpointer) dd);
 
   /* show everything */
 

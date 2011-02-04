@@ -178,6 +178,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
 
 /* event handler for "key_press_event" */
 
+
 static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
   gint x,y; 
@@ -186,21 +187,26 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   if (nsp_event_info_old.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
     {
       /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
-      if ( event->state != GDK_CONTROL_MASK && event->state != GDK_MOD1_MASK ) 
+      if ( (event->state & GDK_CONTROL_MASK) || (event->state & GDK_MOD1_MASK )) 
+	return FALSE;
+
+      if ( nsp_event_info_old.sci_click_activated == FALSE ) 
+	{
+	  /* here we are not in an xclick or xgetmouse 
+	   * thus we have to store events in queue.
+	   */
+	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
+	  nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
+	  nsp_enqueue_old(&gc->queue,&ev);
+	}
+      else
 	{
 	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
 	  nsp_event_info_old.x=x ; nsp_event_info_old.y=y;
 	  nsp_event_info_old.ok =1 ;  nsp_event_info_old.win=  gc->CurWindow; 
 	  nsp_event_info_old.button = event->keyval;
-	  nsp_event_info_old.mask = event->state;
 	  gtk_main_quit();
 	}
-    }
-  else 
-    {
-      gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-      nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
-      nsp_enqueue_old(&gc->queue,&ev);
     }
   return FALSE; /* also want other handlers to be activated */
 }

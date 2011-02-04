@@ -182,7 +182,7 @@ static gboolean locator_button_motion(GtkWidget *widget,
 
 /* event handler for "key_press_event" */
 
-static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
+static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
   gint x,y; 
   GdkModifierType state;
@@ -190,7 +190,19 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
   if (nsp_event_info.getkey == TRUE && (event->keyval >= 0x20) && (event->keyval <= 0xFF))
     {
       /* since Alt-keys and Ctrl-keys are stored in menus I want to ignore them here */
-      if ( event->state != GDK_CONTROL_MASK && event->state != GDK_MOD1_MASK ) 
+      if ( (event->state & GDK_CONTROL_MASK) || (event->state & GDK_MOD1_MASK )) 
+	return FALSE;
+
+      if ( nsp_event_info.sci_click_activated == FALSE ) 
+	{
+	  /* here we are not in an xclick or xgetmouse 
+	   * thus we have to store events in queue.
+	   */
+	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
+	  nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
+	  nsp_enqueue(&gc->queue,&ev);
+	}
+      else
 	{
 	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
 	  nsp_event_info.x=x ; nsp_event_info.y=y;
@@ -199,12 +211,6 @@ static gint key_press_event (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	  nsp_event_info.mask = event->state;
 	  gtk_main_quit();
 	}
-    }
-  else 
-    {
-      gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
-      nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
-      nsp_enqueue(&gc->queue,&ev);
     }
   return FALSE; /* also want other handlers to be activated */
 }
@@ -590,7 +596,18 @@ static void delete_window(BCG *dd,int intnum)
   
   /* delete the associated figure */
   F =  dd->figure;
-  if ( F != NULL) nsp_figure_destroy(F);
+  if ( F != NULL) 
+    { 
+      NspFigure *cF;
+      /* Note that because of ref_count the figure may not 
+       * be destroyed, thus we need to clear Figure Xgc 
+       */ 
+      F->obj->Xgc = NULL; 
+      cF = nsp_get_current_figure();
+      if ( cF != NULL && cF->obj ==  F->obj ) 
+	nsp_unset_current_figure();
+      nsp_figure_destroy(F);
+    }
 
   /* I delete the pixmap and the widget */
   if ( winxgc->CurPixmapStatus == 1 ) 
@@ -678,7 +695,7 @@ static void scig_deconnect_handlers(BCG *winxgc)
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->window), 
 					  G_CALLBACK(sci_delete_window), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func (GTK_OBJECT (winxgc->private->window),
-					   G_CALLBACK( key_press_event), (gpointer) winxgc);
+					   G_CALLBACK( key_press_event_new), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
 					  G_CALLBACK( locator_button_press), (gpointer) winxgc);
   n+=g_signal_handlers_disconnect_by_func(GTK_OBJECT(winxgc->private->drawing),
