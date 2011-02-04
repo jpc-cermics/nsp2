@@ -11,7 +11,7 @@ struct _NspTypePolyline {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./polyline.h"
+#line 48 "./polyline.h"
 };
 
 </STRUCT>
@@ -69,12 +69,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_polyline_create</NAME>
 <RETURNS>NspPolyline *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_polyline_create_default</NAME>
 <RETURNS>NspPolyline *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_polyline_copy</NAME>
@@ -171,9 +171,6 @@ XDR *xdrs, NspPolyline *M
 <RETURNS>int </RETURNS>
 XDR  *xdrs, NspPolyline *M
 </FUNCTION>
-<STRUCT>
-<NAME>NspMe</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeMe</NAME>
 typedef struct _NspTypeMe { 
@@ -280,6 +277,77 @@ NspMe *H,int indent
 <RETURNS>NspMe  *</RETURNS>
  NspObject *O
 </FUNCTION>
+<TYPEDEF>
+<NAME>gint</NAME>
+typedef int gint    ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>guint</NAME>
+typedef unsigned int guint   ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gshort</NAME>
+typedef short gshort  ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gushort</NAME>
+typedef unsigned short gushort ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>glong</NAME>
+typedef long int glong   ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gulong</NAME>
+typedef unsigned long int gulong  ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gint8</NAME>
+typedef signed char gint8   ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>guint8</NAME>
+typedef unsigned char guint8  ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gint16</NAME>
+typedef signed short gint16  ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>guint16</NAME>
+typedef unsigned short guint16 ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gint32</NAME>
+typedef int gint32  ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>guint32</NAME>
+typedef unsigned int guint32 ;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gint64</NAME>
+typedef __int64 gint64;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>guint64</NAME>
+typedef unsigned __int64 guint64;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>gint64</NAME>
+typedef long long int gint64;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>guint64</NAME>
+typedef unsigned long long int guint64;
+</TYPEDEF>
+<ENUM>
+<NAME>nsp_itype</NAME>
+typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
+		 nsp_gulong, nsp_gint8, nsp_guint8, nsp_gint16,
+		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
+		 nsp_guint64 } nsp_itype;
+</ENUM>
 <FUNCTION>
 <NAME>update_exec_dir</NAME>
 <RETURNS>void </RETURNS>
@@ -473,6 +541,33 @@ double
 <RETURNS>double </RETURNS>
 char *cmach
 </FUNCTION>
+<MACRO>
+<NAME>SET_LOW_WORD</NAME>
+#define SET_LOW_WORD(d,v)					\
+  do {								\
+    ieee_double_shape_type sl_u;				\
+    sl_u.value = (d);						\
+    sl_u.parts.lsw = (v);					\
+    (d) = sl_u.value;						\
+  } while (0)
+</MACRO>
+<TYPEDEF>
+<NAME>uint32_t</NAME>
+typedef unsigned int uint32_t;
+</TYPEDEF>
+<MACRO>
+<NAME>SET_LOW_WORD</NAME>
+#define SET_LOW_WORD(d,v)					\
+  do {								\
+    ieee_double_shape_type sl_u;				\
+    sl_u.value = (d);						\
+    if ( is_little_endian())					\
+      sl_u.parts.msw = (v);					\
+    else							\
+      sl_u.parts.lsw = (v);					\
+    (d) = sl_u.value;						\
+  } while (0)
+</MACRO>
 <FUNCTION>
 <NAME>nsp_double2int</NAME>
 <RETURNS>int </RETURNS>
@@ -718,10 +813,6 @@ doubleC *A, double *B, doubleC *Z, int m, int n
 <RETURNS>void </RETURNS>
 doubleC *A, doubleC *B, doubleC *Z, int m, int n
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspSMatrix</NAME>
-typedef struct _NspSmatrix NspSMatrix ;
-</TYPEDEF>
 <STRUCT>
 <NAME>NspTypeSMatrix</NAME>
 typedef struct _NspTypeSMatrix { 
@@ -889,6 +980,11 @@ const NspSMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_smatrix_print</NAME>
+<RETURNS>int </RETURNS>
+const NspSMatrix *Mat, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smatrix_print_multicols</NAME>
 <RETURNS>int </RETURNS>
 const NspSMatrix *Mat, int indent,const char *name, int rec_level
 </FUNCTION>
@@ -1123,6 +1219,11 @@ const char *name,NspSMatrix *A,const char *to_codeset,const char *from_codeset
 NspSMatrix *A
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_smatrix_to_latin1</NAME>
+<RETURNS>int </RETURNS>
+NspSMatrix *A
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_smatrix_utf8_validate</NAME>
 <RETURNS>int </RETURNS>
 NspSMatrix *A
@@ -1193,6 +1294,11 @@ NspSMatrix *A, NspSMatrix *Diag, int k
 NspSMatrix *Diag, int k
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_latex_utf8_symbols</NAME>
+<RETURNS>NspSMatrix *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_smatrix_type_as_string</NAME>
 <RETURNS>char *</RETURNS>
 void
@@ -1232,10 +1338,6 @@ XDR  *F
 <RETURNS>int </RETURNS>
 XDR  *F, NspSMatrix *M
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspMaxpMatrix</NAME>
-typedef struct _NspMpmatrix NspMaxpMatrix;
-</TYPEDEF>
 <STRUCT>
 <NAME>NspTypeMaxpMatrix</NAME>
 typedef struct _NspTypeMaxpMatrix { 
@@ -1325,11 +1427,6 @@ const NspMaxpMatrix *A
 <NAME>mpmatrix_object</NAME>
 <RETURNS>NspMaxpMatrix  *</RETURNS>
 NspObject *O
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_mpmat_fullcomp</NAME>
-<RETURNS>int </RETURNS>
-
 </FUNCTION>
 <FUNCTION>
 <NAME>mpmatrix_object</NAME>
@@ -2066,14 +2163,19 @@ char *name,double *x,double *y,double *z,int m,int n
 char *name,double *x,double *y,double *z,int m,int n,double *col, int ncol
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_spolyhedron_update_from_triplet</NAME>
+<RETURNS>int </RETURNS>
+NspSPolyhedron *pol,double *x,double *y,double *z,int m,int n, double *col,int ncol
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_surf_to_faces</NAME>
 <RETURNS>NspMatrix *</RETURNS>
-const char *name,double *x,int xmn,double *y,int ymn
+const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_surf_to_coords</NAME>
 <RETURNS>NspMatrix *</RETURNS>
-const char *name,double *x,double *y,double *z,int m,int n
+const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_facets_to_faces</NAME>
@@ -2113,7 +2215,7 @@ struct _NspTypeGRoot {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./groot.h"
+#line 43 "./groot.h"
 };
 
 </STRUCT>
@@ -2164,12 +2266,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_groot_create</NAME>
 <RETURNS>NspGRoot *</RETURNS>
-char *name,NspList* figures,NspTypeBase *type
+const char *name,NspList* figures,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_groot_create_default</NAME>
 <RETURNS>NspGRoot *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_groot_copy</NAME>
@@ -2427,13 +2529,6 @@ XDR *xdrs, NspSqlC *M
 <RETURNS>int </RETURNS>
 XDR  *xdrs, NspSqlC *M
 </FUNCTION>
-<STRUCT>
-<NAME>doubleC</NAME>
-typedef struct { double r, i; } doubleC;
-</STRUCT>
-<STRUCT>
-<NAME>NspMatrix</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeMatrix</NAME>
 typedef struct _NspTypeMatrix { 
@@ -3161,24 +3256,9 @@ int m, int n
 int m, int n
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_set_urandseed</NAME>
-<RETURNS>void </RETURNS>
-int m
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_get_urandseed</NAME>
-<RETURNS>int </RETURNS>
-void
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_set_urandtype</NAME>
-<RETURNS>void </RETURNS>
-int m
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_get_urandtype</NAME>
-<RETURNS>int </RETURNS>
-void
+<NAME>nsp_mat_randn</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+int m, int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_pow_matscalar</NAME>
@@ -3498,12 +3578,17 @@ const NspMatrix *x, int m,const char **ops,const double *scalars, NspObject **In
 <FUNCTION>
 <NAME>nsp_mat_ndind2ind</NAME>
 <RETURNS>int </RETURNS>
-int *dims, int nd, NspMatrix **ndind, NspMatrix **Ind
+int *dims, int nd, NspMatrix **ndind, NspObject **Ind, char ind_type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_sub2ind</NAME>
 <RETURNS>int </RETURNS>
-int *dims, int nd, NspMatrix **ndind, int nb_ind, NspMatrix **Ind
+int *dims, int nd, NspMatrix **ndind, int nb_ind, NspObject **Ind, char ind_type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_mat_ind2sub</NAME>
+<RETURNS>int </RETURNS>
+int *dims, int nd, NspObject **ndind, NspObject *Obj, char ind_type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_nnz</NAME>
@@ -3591,6 +3676,20 @@ NspObject *Obj,index_vector *index
 Stack stack, int ipos,NspObject **Obj,index_vector *index
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_fft</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+NspMatrix *x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_ifft</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+NspMatrix *x
+</FUNCTION>
+<MACRO>
+<NAME>NSP_MATRIX_INLINED</NAME>
+#define NSP_MATRIX_INLINED static inline 
+</MACRO>
+<FUNCTION>
 <NAME>GetMatCopy</NAME>
 <RETURNS>NspMatrix *</RETURNS>
 Stack stack, int i
@@ -3600,9 +3699,6 @@ Stack stack, int i
 <RETURNS>NspMatrix *</RETURNS>
 Stack stack, int i
 </FUNCTION>
-<STRUCT>
-<NAME>NspUmfpack</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeUmfpack</NAME>
 </STRUCT>
@@ -3724,7 +3820,7 @@ struct _NspTypePoints3d {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./points3d.h"
+#line 48 "./points3d.h"
 };
 
 </STRUCT>
@@ -3780,12 +3876,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_points3d_create</NAME>
 <RETURNS>NspPoints3d *</RETURNS>
-char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type
+const char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_points3d_create_default</NAME>
 <RETURNS>NspPoints3d *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_points3d_copy</NAME>
@@ -4020,7 +4116,32 @@ double s
 double x
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_expm1</NAME>
+<RETURNS>double </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_erfcx</NAME>
+<RETURNS>double </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_sinpi</NAME>
+<RETURNS>double </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cospi</NAME>
+<RETURNS>double </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_tanpi</NAME>
+<RETURNS>double </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_cotanpi</NAME>
 <RETURNS>double </RETURNS>
 double x
 </FUNCTION>
@@ -4035,6 +4156,11 @@ double x
 double x
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_digamma</NAME>
+<RETURNS>double </RETURNS>
+double x
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_kcdf</NAME>
 <RETURNS>int </RETURNS>
 double x, double *res, int n
@@ -4043,6 +4169,11 @@ double x, double *res, int n
 <NAME>nsp_kcdflim</NAME>
 <RETURNS>double </RETURNS>
 double x, double *q
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_invkcdflim</NAME>
+<RETURNS>int </RETURNS>
+double p, double q, double *x
 </FUNCTION>
 <FUNCTION>
 <NAME>marsaglia_K</NAME>
@@ -4090,6 +4221,11 @@ double x, double mu, double sigma
 double x, double nu
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_pdf_nchi2</NAME>
+<RETURNS>double </RETURNS>
+double x, double nu, double xnonc
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_pdf_exp</NAME>
 <RETURNS>double </RETURNS>
 double x, double Av
@@ -4134,6 +4270,21 @@ double x, double sigma, double a
 <RETURNS>double </RETURNS>
 double x, double p
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_pdf_uin</NAME>
+<RETURNS>double </RETURNS>
+double x, double n1, double n2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pdf_unf</NAME>
+<RETURNS>double </RETURNS>
+double x, double a, double b
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_binomial_coef</NAME>
+<RETURNS>int </RETURNS>
+double n, double k, double *res
+</FUNCTION>
 <TYPEDEF>
 <NAME>Dxblk2</NAME>
 typedef struct Dxblk2_ Dxblk2; 
@@ -4143,9 +4294,6 @@ typedef struct Dxblk2_ Dxblk2;
 <RETURNS>int </RETURNS>
 Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2, double *x, int *id, double *pqa, int *ipqa, int *ierror
 </FUNCTION>
-<STRUCT>
-<NAME>NspModule</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeModule</NAME>
 typedef struct _NspTypeModule { 
@@ -4283,9 +4431,6 @@ struct _NspTypeBHash {
   /*< public >*/
 };
 
-</STRUCT>
-<STRUCT>
-<NAME>NspBHash</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>NspBHash</NAME>
@@ -4469,6 +4614,185 @@ const char *name, unsigned int nel
 <RETURNS>void </RETURNS>
 NspBHash *H
 </FUNCTION>
+<STRUCT>
+<NAME>NspHm</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeHm</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeHm</NAME>
+struct _NspTypeHm {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+ 
+#line 46 "./hm.h"
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>NspHm</NAME>
+struct _NspHm {
+  /*< private >*/
+  NspObject father;
+  NspTypeHm*type;
+  /*< public >*/
+    void* htable;
+  int hsize;
+  int filled;
+  int base;
+  int keysize;
+};
+
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_hm_id</NAME>
+extern int nsp_type_hm_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_hm</NAME>
+extern NspTypeHm *nsp_type_hm;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_hm</NAME>
+<RETURNS>NspTypeHm *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_hm</NAME>
+<RETURNS>NspHm *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLHM</NAME>
+#define NULLHM (NspHm*) 0
+</MACRO>
+<FUNCTION>
+<NAME>nsp_hm_create</NAME>
+<RETURNS>NspHm *</RETURNS>
+const char *name,void* htable,int hsize,int filled,int base,int keysize,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_create_default</NAME>
+<RETURNS>NspHm *</RETURNS>
+const char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_copy</NAME>
+<RETURNS>NspHm *</RETURNS>
+NspHm *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspHm *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_info</NAME>
+<RETURNS>int </RETURNS>
+NspHm *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_print</NAME>
+<RETURNS>int </RETURNS>
+NspHm *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_latex</NAME>
+<RETURNS>int </RETURNS>
+NspHm *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_object</NAME>
+<RETURNS>NspHm *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsHmObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsHm</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetHmCopy</NAME>
+<RETURNS>NspHm *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetHm</NAME>
+<RETURNS>NspHm *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_create_partial</NAME>
+<RETURNS>int </RETURNS>
+NspHm *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_destroy_partial</NAME>
+<RETURNS>void </RETURNS>
+NspHm *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_copy_partial</NAME>
+<RETURNS>NspHm *</RETURNS>
+NspHm *H,NspHm *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_full_copy_partial</NAME>
+<RETURNS>NspHm *</RETURNS>
+NspHm *H,NspHm *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_full_copy</NAME>
+<RETURNS>NspHm *</RETURNS>
+NspHm *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_check_values</NAME>
+<RETURNS>int </RETURNS>
+NspHm *H
+</FUNCTION>
+<FUNCTION>
+<NAME>int_hm_create</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_xdr_load_partial</NAME>
+<RETURNS>NspHm *</RETURNS>
+XDR *xdrs, NspHm *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hm_xdr_save</NAME>
+<RETURNS>int </RETURNS>
+XDR  *xdrs, NspHm *M
+</FUNCTION>
+<STRUCT>
+<NAME>HM_Entry</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>HM_Entry</NAME>
+struct _HM_Entry { 
+  unsigned int used; /* used to detect if data is present */
+  gint64 key;
+  double val;
+};
+
+</STRUCT>
+<ENUM>
+<NAME>HMOperation</NAME>
+typedef enum {
+  HM_FIND,
+  HM_ENTER,
+  HM_REMOVE 
+} HMOperation;
+</ENUM>
 <FUNCTION>
 <NAME>nsp_parse_eval_file</NAME>
 <RETURNS>int </RETURNS>
@@ -4483,6 +4807,11 @@ const char *Str,int display,int echo, int errcatch,int pause
 <NAME>nsp_parse_eval_from_smat</NAME>
 <RETURNS>int </RETURNS>
 NspSMatrix *M,int display,int echo, int errcatch,int pause
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_eval_from_multistring</NAME>
+<RETURNS>int </RETURNS>
+const char *Str,int display,int echo, int errcatch,int pause
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_parse_eval_from_std</NAME>
@@ -4502,12 +4831,17 @@ const char *Dir
 <FUNCTION>
 <NAME>nsp_gtk_eval_function</NAME>
 <RETURNS>int </RETURNS>
-NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret
+NspPList *func,NspObject *args[],int n_args, NspObject  *ret[],int *nret
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_gtk_eval_function_catch</NAME>
+<RETURNS>int </RETURNS>
+NspPList *func,NspObject *args[],int n_args,NspObject  *ret[],int *nret, int errcatch,int pausecatch
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_gtk_eval_function_by_name</NAME>
 <RETURNS>int </RETURNS>
-const char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret
+const char *name,NspObject *args[],int n_args, NspObject  *ret[],int *nret
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_qr</NAME>
@@ -4562,7 +4896,7 @@ NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Ran
 <FUNCTION>
 <NAME>nsp_inv</NAME>
 <RETURNS>int </RETURNS>
-NspMatrix *A
+NspMatrix *A, double *rcond, Boolean warning
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_norm</NAME>
@@ -4592,7 +4926,7 @@ NspMatrix *A,NspMatrix **U
 <FUNCTION>
 <NAME>nsp_mat_is_symmetric</NAME>
 <RETURNS>int </RETURNS>
-NspMatrix *A
+const NspMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_mat_is_upper_triangular</NAME>
@@ -4657,16 +4991,33 @@ NspMatrix *A, NspMatrix *B, int *info
 <FUNCTION>
 <NAME>nsp_mat_bdiv_banded</NAME>
 <RETURNS>int </RETURNS>
-NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rcond, double tol_rcond, int *info
+NspMatrix *Ab, int kl, int ku, NspMatrix *B, double *rcond, double tol_rcond, int *info, double *rrcond
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_increase_banded_mat</NAME>
 <RETURNS>NspMatrix *</RETURNS>
 NspMatrix *A, int kl, char flag
 </FUNCTION>
-<STRUCT>
-<NAME>NspList</NAME>
-</STRUCT>
+<FUNCTION>
+<NAME>nsp_zgges</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix *B,int (*F)(const doubleC *alpha, const doubleC *beta),NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_dgges</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix *B,int (*F)(const double *alphar,const double *alphai,const double *beta),NspMatrix **VSL,NspMatrix **VSR,NspMatrix **Sdim
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_dgees0</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **U,int (*F)(const double *re,const double *im),NspMatrix **Sdim
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_zgees0</NAME>
+<RETURNS>int </RETURNS>
+NspMatrix *A,NspMatrix **U,int (*F)(const doubleC *w), NspMatrix **Sdim
+</FUNCTION>
 <STRUCT>
 <NAME>NspTypeList</NAME>
 typedef struct _NspTypeList { 
@@ -4718,10 +5069,6 @@ type_mode mode
 <MACRO>
 <NAME>NULLCELL</NAME>
 #define NULLCELL ( Cell *) 0 
-</MACRO>
-<MACRO>
-<NAME>NULLOBJ</NAME>
-#define NULLOBJ  ( NspObject *) 0 
 </MACRO>
 <FUNCTION>
 <NAME>nsp_list_path_extract</NAME>
@@ -4971,7 +5318,7 @@ struct _NspTypeContour3d {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./contour3d.h"
+#line 49 "./contour3d.h"
 };
 
 </STRUCT>
@@ -5027,12 +5374,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_contour3d_create</NAME>
 <RETURNS>NspContour3d *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* zz,int flag,double zlev,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_contour3d_create_default</NAME>
 <RETURNS>NspContour3d *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_contour3d_copy</NAME>
@@ -5142,7 +5489,7 @@ struct _NspTypeSurf {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./surf.h"
+#line 48 "./surf.h"
 };
 
 </STRUCT>
@@ -5200,12 +5547,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_surf_create</NAME>
 <RETURNS>NspSurf *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,NspMatrix* colors,gboolean mesh,gboolean zcolor,int mesh_color,int face_color,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_surf_create_default</NAME>
 <RETURNS>NspSurf *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_surf_copy</NAME>
@@ -5340,7 +5687,7 @@ struct _NspTypeGrstring {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grstring.h"
+#line 48 "./grstring.h"
 };
 
 </STRUCT>
@@ -5354,11 +5701,13 @@ struct _nsp_grstring {
   double y;
   char* font;
   NspSMatrix* text;
-  int position;
   double angle;
   double w;
   double h;
   int fill;
+  int posx;
+  int posy;
+  int size;
   int ref_count;
 };
 
@@ -5399,12 +5748,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_grstring_create</NAME>
 <RETURNS>NspGrstring *</RETURNS>
-char *name,double x,double y,char* font,NspSMatrix* text,int position,double angle,double w,double h,int fill,NspTypeBase *type
+const char *name,double x,double y,char* font,NspSMatrix* text,double angle,double w,double h,int fill,int posx,int posy,int size,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grstring_create_default</NAME>
 <RETURNS>NspGrstring *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grstring_copy</NAME>
@@ -5616,9 +5965,6 @@ NspHash *H
 NspFile *F
 </FUNCTION>
 <STRUCT>
-<NAME>NspNone</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeNone</NAME>
 typedef struct _NspTypeNone { 
   NSP_TYPE_OBJECT__ 
@@ -5708,10 +6054,6 @@ Stack stack, int i
 <RETURNS>NspNone *</RETURNS>
 Stack stack, int i
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspModuleElt</NAME>
-typedef struct _NspModulelt NspModuleElt;
-</TYPEDEF>
 <STRUCT>
 <NAME>NspTypeModuleElt</NAME>
 typedef struct _NspTypeModuleElt { 
@@ -5810,8 +6152,8 @@ void
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_get_extension</NAME>
-<RETURNS>char *</RETURNS>
-char *name
+<RETURNS>const char *</RETURNS>
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_get_user_home</NAME>
@@ -5820,12 +6162,12 @@ char *name, nsp_tcldstring *bufferPtr
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_getenv</NAME>
-<RETURNS>char *</RETURNS>
+<RETURNS>const char *</RETURNS>
 const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_setenv</NAME>
-<RETURNS>void </RETURNS>
+<RETURNS>int </RETURNS>
 const char *name,const char *value
 </FUNCTION>
 <FUNCTION>
@@ -5916,17 +6258,17 @@ char *string,char * pattern
 <FUNCTION>
 <NAME>nsp_absolute_file_name</NAME>
 <RETURNS>nsp_string </RETURNS>
- char *fname
+const char *fname
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_dirname</NAME>
 <RETURNS>nsp_string </RETURNS>
-char *fileName
+const char *fileName
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_tail</NAME>
 <RETURNS>nsp_string </RETURNS>
-char *fileName
+const char *fileName
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_create_exit_handler</NAME>
@@ -5944,14 +6286,24 @@ void
 void
 </FUNCTION>
 <FUNCTION>
-<NAME>update_exec_dir</NAME>
+<NAME>nsp_update_exec_dir</NAME>
 <RETURNS>void </RETURNS>
-char *filename,char *exec_dir,char *filename_exec,unsigned int length
+const char *filename, char *exec_dir,char *filename_exec,unsigned int length
 </FUNCTION>
 <FUNCTION>
-<NAME>update_exec_dir_from_dir</NAME>
+<NAME>nsp_update_exec_dir_from_dir</NAME>
 <RETURNS>void </RETURNS>
-char *dirname,char *exec_dir,unsigned int length
+const char *dirname,char *exec_dir,unsigned int length
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_glob</NAME>
+<RETURNS>int </RETURNS>
+const char *pattern
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_chdir_and_update_exec_dir</NAME>
+<RETURNS>int </RETURNS>
+Stack *stack,const char *dir_name
 </FUNCTION>
 <STRUCT>
 <NAME>NspCompound</NAME>
@@ -5966,7 +6318,7 @@ struct _NspTypeCompound {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./compound.h"
+#line 48 "./compound.h"
 };
 
 </STRUCT>
@@ -6018,12 +6370,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_compound_create</NAME>
 <RETURNS>NspCompound *</RETURNS>
-char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type
+const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_compound_create_default</NAME>
 <RETURNS>NspCompound *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_compound_copy</NAME>
@@ -6366,6 +6718,11 @@ const char *title,const char *dirname,char **filters
 const char *title,const char *dirname
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_get_filename_folder</NAME>
+<RETURNS>char *</RETURNS>
+const char *title,const char *dirname
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_multi_dialog_</NAME>
 <RETURNS>menu_answer </RETURNS>
 const char *title,char **pszTitle, char **pszName,int nv
@@ -6425,6 +6782,28 @@ const char *title,char **pszTitle, char **pszName,int nv
 <RETURNS>void </RETURNS>
 const char *title,GtkWidget *vbox
 </FUNCTION>
+<USER_FUNCTION>
+<NAME>Stop_menu_handler</NAME>
+<RETURNS>void </RETURNS>
+void
+</USER_FUNCTION>
+<FUNCTION>
+<NAME>set_stop_menu_handler</NAME>
+<RETURNS>Stop_menu_handler </RETURNS>
+ Stop_menu_handler f
+</FUNCTION>
+<FUNCTION>
+<NAME>reset_stop_menu_handler</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<ENUM>
+<NAME>nsp_spline_enum</NAME>
+typedef enum {
+  NOT_A_KNOT, NATURAL, CLAMPED, PERIODIC, FAST, FAST_PERIODIC, 
+  MONOTONE, BY_ZERO, C0, LINEAR, BY_NAN, UNDEFINED 
+} nsp_spline_enum;
+</ENUM>
 <FUNCTION>
 <NAME>nsp_eval_piecewise_hermite</NAME>
 <RETURNS>void </RETURNS>
@@ -6481,8 +6860,519 @@ double *x, double *y, double *C, int nx, int ny, double *x_eval, double *y_eval,
 <NAME>HOST_TYPE</NAME>
 #define HOST_TYPE   "i686-pc-linux-gnu"
 </MACRO>
+<FUNCTION>
+<NAME>ShowDynLinks</NAME>
+<RETURNS>void  </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_is_linked</NAME>
+<RETURNS>int </RETURNS>
+nsp_const_string name,int *ilib
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_link_library</NAME>
+<RETURNS>void </RETURNS>
+int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_dynamic_load</NAME>
+<RETURNS>void </RETURNS>
+nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_get_dlsymbols</NAME>
+<RETURNS>NspHash *</RETURNS>
+
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_unlink_shared</NAME>
+<RETURNS>void </RETURNS>
+int ilib
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_remove_interface</NAME>
+<RETURNS>void </RETURNS>
+int Nshared
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_link_initialize</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_delete_interface_functions</NAME>
+<RETURNS>void </RETURNS>
+int Int
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_link_search</NAME>
+<RETURNS>int  </RETURNS>
+nsp_const_string op, int ilib, int (**realop) ()
+</FUNCTION>
 <STRUCT>
-<NAME>NspObject</NAME>
+<NAME>NspEpoints</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeEpoints</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeEpoints</NAME>
+struct _NspTypeEpoints {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+ 
+#line 47 "./epoints.h"
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>nsp_epoints</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_epoints</NAME>
+struct _nsp_epoints {
+  char* ename;
+  void* func;
+  int shid;
+  int ref_count;
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>NspEpoints</NAME>
+struct _NspEpoints {
+  /*< private >*/
+  NspObject father;
+  NspTypeEpoints*type;
+  /*< public >*/
+  nsp_epoints *obj;
+};
+
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_epoints_id</NAME>
+extern int nsp_type_epoints_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_epoints</NAME>
+extern NspTypeEpoints *nsp_type_epoints;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_epoints</NAME>
+<RETURNS>NspTypeEpoints *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_epoints</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLEPOINTS</NAME>
+#define NULLEPOINTS (NspEpoints*) 0
+</MACRO>
+<FUNCTION>
+<NAME>nsp_epoints_create</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+const char *name,char* ename,void* func,int shid,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_create_default</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+const char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_copy</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+NspEpoints *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspEpoints *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_info</NAME>
+<RETURNS>int </RETURNS>
+NspEpoints *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_print</NAME>
+<RETURNS>int </RETURNS>
+NspEpoints *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_latex</NAME>
+<RETURNS>int </RETURNS>
+NspEpoints *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_object</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsEpointsObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsEpoints</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetEpointsCopy</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetEpoints</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_create_partial</NAME>
+<RETURNS>int </RETURNS>
+NspEpoints *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_destroy_partial</NAME>
+<RETURNS>void </RETURNS>
+NspEpoints *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_copy_partial</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+NspEpoints *H,NspEpoints *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_full_copy_partial</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+NspEpoints *H,NspEpoints *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_full_copy</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+NspEpoints *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_check_values</NAME>
+<RETURNS>int </RETURNS>
+NspEpoints *H
+</FUNCTION>
+<FUNCTION>
+<NAME>int_epoints_create</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_xdr_load_partial</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+XDR *xdrs, NspEpoints *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_xdr_save</NAME>
+<RETURNS>int </RETURNS>
+XDR  *xdrs, NspEpoints *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_table_insert</NAME>
+<RETURNS>int  </RETURNS>
+const char *name,const char *ename, void *func, int sharedid
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_table_find</NAME>
+<RETURNS>NspEpoints *</RETURNS>
+const char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_table_show</NAME>
+<RETURNS>void </RETURNS>
+
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_epoints_table_remove_entries</NAME>
+<RETURNS>void </RETURNS>
+int shid
+</FUNCTION>
+<STRUCT>
+<NAME>nsp_smio</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_smio</NAME>
+struct _nsp_smio {
+  XDR  xdrs[1];  /* xdr struture */
+  int  flag;     /* flag for special open (xdr) */
+  char openf[4]; /* flags used in fopen */
+  unsigned int pos,len;   /* position in stream and len of string D */
+  nsp_string D; /* string for storing data */
+  int ref_count;
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeSMio</NAME>
+typedef struct _NspTypeSMio { 
+  NSP_TYPE_OBJECT__ 
+  /*< public >*/
+} NspTypeSMio;
+</STRUCT>
+<STRUCT>
+<NAME>NspSMio</NAME>
+struct _NspSMio {
+  /*< private >*/
+  NspObject father; 
+  NspTypeSMio *type; 
+  /*< public >*/
+  nsp_smio *obj;
+};
+
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_smio_id</NAME>
+extern int nsp_type_smio_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_smio</NAME>
+extern NspTypeSMio *nsp_type_smio;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_smio</NAME>
+<RETURNS>NspTypeSMio *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_new_smio</NAME>
+<RETURNS>NspSMio *</RETURNS>
+
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_wcreate</NAME>
+<RETURNS>NspSMio *</RETURNS>
+char *name, char *str,int flag,unsigned int len
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_rcreate</NAME>
+<RETURNS>NspSMio *</RETURNS>
+char *name, char *str,int flag,const char *data,unsigned int len
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_copy</NAME>
+<RETURNS>NspSMio *</RETURNS>
+NspSMio *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_full_copy</NAME>
+<RETURNS>NspSMio *</RETURNS>
+NspSMio  *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspSMio *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_info</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *H, int indent,char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_print</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *H, int indent,char *name, int rec_level
+</FUNCTION>
+<MACRO>
+<NAME>OPEN_MASK</NAME>
+#define OPEN_MASK 0x000f 
+</MACRO>
+<MACRO>
+<NAME>XDR_MASK</NAME>
+#define XDR_MASK 0x00f0 
+</MACRO>
+<MACRO>
+<NAME>SWAP_MASK</NAME>
+#define SWAP_MASK 0x0f00 
+</MACRO>
+<MACRO>
+<NAME>SWAP_ON</NAME>
+#define SWAP_ON(flag) (flag |= (1 << 8) )
+</MACRO>
+<MACRO>
+<NAME>SWAP_OFF</NAME>
+#define SWAP_OFF(flag) (flag &= ~SWAP_MASK )
+</MACRO>
+<MACRO>
+<NAME>XDR_ON</NAME>
+#define XDR_ON(flag)  (flag |= (1 << 4 ) )
+</MACRO>
+<MACRO>
+<NAME>XDR_OFF</NAME>
+#define XDR_OFF(flag)  (flag &= ~XDR_MASK )
+</MACRO>
+<MACRO>
+<NAME>OPEN_ON</NAME>
+#define OPEN_ON(flag)  (flag |= (1  ) )
+</MACRO>
+<MACRO>
+<NAME>OPEN_OFF</NAME>
+#define OPEN_OFF(flag)  (flag &= ~OPEN_MASK )
+</MACRO>
+<MACRO>
+<NAME>IS_OPENED</NAME>
+#define IS_OPENED(flag) ( flag & OPEN_MASK )
+</MACRO>
+<MACRO>
+<NAME>IS_XDR</NAME>
+#define IS_XDR(flag) ( flag & XDR_MASK)
+</MACRO>
+<MACRO>
+<NAME>USE_SWAP</NAME>
+#define USE_SWAP(flag) ( flag & SWAP_MASK) 
+</MACRO>
+<MACRO>
+<NAME>NULLSMIO</NAME>
+#define NULLSMIO (NspSMio *) 0
+</MACRO>
+<FUNCTION>
+<NAME>GetSMio</NAME>
+<RETURNS>NspSMio *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetSMioCopy</NAME>
+<RETURNS>NspSMio *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_object</NAME>
+<RETURNS>NspSMio *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_ropen</NAME>
+<RETURNS>NspSMio *</RETURNS>
+char *mode,int xdr_on,int swap_on, const char *str,unsigned int len
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_wopen</NAME>
+<RETURNS>NspSMio *</RETURNS>
+char *mode,int xdr_on,int swap_on,unsigned int len
+</FUNCTION>
+<FUNCTION>
+<NAME>IsSMioObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>is_little_endian</NAME>
+<RETURNS>int </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_close</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_eof</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *f
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_error</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *f
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_get</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,void *x,int n,const char *type,int *items_read
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_getc</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_ungetc</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,int  c
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_getstr</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F, char *start, int n,int *n_read
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_printf_matrix</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,char *format,char *sep,NspMatrix *M,NspSMatrix *S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_printf_smatrix</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,NspSMatrix *S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_put</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,void *x,int n, char *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_putstr</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,const char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_read_lines</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,NspSMatrix **S,int nlines
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_scanf_smatrix</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,NspSMatrix **S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_scanf_matrix</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,char *format,NspMatrix **M,int flag,NspSMatrix **S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_seek</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,long int offset,const char *flag
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_tell</NAME>
+<RETURNS>int </RETURNS>
+NspSMio *F,long int *offset
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_clearerr</NAME>
+<RETURNS>void </RETURNS>
+NspSMio *f
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_xdr_save</NAME>
+<RETURNS>int </RETURNS>
+XDR *xdrs, NspSMio *S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_smio_xdr_load</NAME>
+<RETURNS>NspSMio *</RETURNS>
+XDR *xdrs
+</FUNCTION>
+<STRUCT>
+<NAME>doubleC</NAME>
+struct _doubleC { 
+  double r;
+  double i; 
+};
+
 </STRUCT>
 <STRUCT>
 <NAME>AttrTab</NAME>
@@ -6657,20 +7547,20 @@ void
 <RETURNS>int </RETURNS>
 void
 </FUNCTION>
+<MACRO>
+<NAME>NSP_OBJECT_INLINED</NAME>
+#define NSP_OBJECT_INLINED static inline 
+</MACRO>
 <FUNCTION>
 <NAME>check_cast</NAME>
 <RETURNS>int </RETURNS>
-void *obj,NspTypeId id
+const void *obj,NspTypeId id
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_get_id_from_object</NAME>
 <RETURNS>int </RETURNS>
 NspObject *Obj
 </FUNCTION>
-<MACRO>
-<NAME>NSP_OBJECT_INLINED</NAME>
-#define NSP_OBJECT_INLINED static inline 
-</MACRO>
 <FUNCTION>
 <NAME>check_implements</NAME>
 <RETURNS>NspTypeBase *</RETURNS>
@@ -6686,6 +7576,10 @@ void * F
 <RETURNS>int  </RETURNS>
 void * F, NspObject * M
 </FUNCTION>
+<MACRO>
+<NAME>NSP_INC_Stack</NAME>
+#define NSP_INC_Stack
+</MACRO>
 <STRUCT>
 <NAME>Stack</NAME>
 </STRUCT>
@@ -6875,15 +7769,19 @@ NspObject **Obj
 <RETURNS>NspObject *</RETURNS>
 nsp_const_string str
 </FUNCTION>
+<MACRO>
+<NAME>Ocheckname</NAME>
+#define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
+</MACRO>
+<MACRO>
+<NAME>NULLOBJ</NAME>
+#define NULLOBJ  ( NspObject *) 0 
+</MACRO>
 <FUNCTION>
 <NAME>nsp_void_object_destroy</NAME>
 <RETURNS>void </RETURNS>
 NspObject **O
 </FUNCTION>
-<MACRO>
-<NAME>Ocheckname</NAME>
-#define Ocheckname(x,y) ( strcmp( NSP_OBJECT(x)->name,y)==0 ) 
-</MACRO>
 <FUNCTION>
 <NAME>nsp_object_xdr_save</NAME>
 <RETURNS>int </RETURNS>
@@ -7035,6 +7933,11 @@ const char *name,const char *str, int lstr
 const char *name,int m, int n,double *rtab, double *itab
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_create_object_from_tint</NAME>
+<RETURNS>NspObject *</RETURNS>
+const char *name, nsp_int_union val, int type
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_create_empty_matrix_object</NAME>
 <RETURNS>NspObject *</RETURNS>
 const char *name
@@ -7128,6 +8031,11 @@ nsp_string *hstr, unsigned int n
 nsp_string str
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_string_to_latin1</NAME>
+<RETURNS>nsp_string </RETURNS>
+nsp_string str
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_new_string</NAME>
 <RETURNS>nsp_string </RETURNS>
 nsp_const_string bytes,int length
@@ -7150,7 +8058,7 @@ struct _NspTypeAxes {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 41 "./axes.h"
+#line 55 "./axes.h"
 };
 
 </STRUCT>
@@ -7225,12 +8133,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_axes_create</NAME>
 <RETURNS>NspAxes *</RETURNS>
-char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type
+const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_axes_create_default</NAME>
 <RETURNS>NspAxes *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_axes_copy</NAME>
@@ -7415,7 +8323,7 @@ struct _NspTypeBox3d {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./box3d.h"
+#line 48 "./box3d.h"
 };
 
 </STRUCT>
@@ -7471,12 +8379,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_box3d_create</NAME>
 <RETURNS>NspBox3d *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* z,gboolean mesh,int mesh_color,int face_color,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_box3d_create_default</NAME>
 <RETURNS>NspBox3d *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_box3d_copy</NAME>
@@ -7576,6 +8484,10 @@ XDR  *xdrs, NspBox3d *M
 <ENUM>
 <NAME>nsp_basic_types</NAME>
 enum nsp_basic_types { 
+  INUMBER32 = -14,
+  INUMBER64,
+  UNUMBER32,
+  UNUMBER64,
   NUMBER =-10,
   NAME, 
   STRING, 
@@ -7670,6 +8582,7 @@ enum nsp_codes {
   BREAK , 
   CASE ,  
   CATCH ,  
+  CD_COMMAND,
   CLEAR,  
   CLEARGLOBAL,  
   CONTINUE,  
@@ -7686,7 +8599,9 @@ enum nsp_codes {
   GLOBAL,
   HELP  , 
   IF,     
+  LS_COMMAND,
   PAUSE,  
+  PWD_COMMAND,
   QUIT ,  
   PRETURN,
   SELECT, 
@@ -7712,7 +8627,7 @@ struct _NspTypeContour {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./contour.h"
+#line 49 "./contour.h"
 };
 
 </STRUCT>
@@ -7768,12 +8683,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_contour_create</NAME>
 <RETURNS>NspContour *</RETURNS>
-char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type
+const char *name,NspMatrix* z,NspMatrix* x,NspMatrix* y,NspMatrix* levels,int nlevels,NspMatrix* style,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_contour_create_default</NAME>
 <RETURNS>NspContour *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_contour_copy</NAME>
@@ -7936,6 +8851,11 @@ int code
 int code
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_astcode_to_codename</NAME>
+<RETURNS>const char *</RETURNS>
+int code
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_astcode_to_string</NAME>
 <RETURNS>char *</RETURNS>
 int type
@@ -7965,10 +8885,6 @@ void
 <RETURNS>void </RETURNS>
 void
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspPList</NAME>
-typedef struct _NspPlist  NspPList;
-</TYPEDEF>
 <STRUCT>
 <NAME>NspTypePList</NAME>
 </STRUCT>
@@ -7995,6 +8911,22 @@ typedef struct parse_cell *PList;
 <NAME>parse_double</NAME>
 struct _parse_double {
   double val ; /* the value of the parsed double */
+  nsp_string str;
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>parse_int</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>parse_int</NAME>
+struct _parse_int {
+  union { 
+    gint32 Gint32;
+    guint32 Guint32;
+    gint64 Gint64;
+    guint64 Guint64;
+  };
   nsp_string str;
 };
 
@@ -8106,7 +9038,7 @@ Stack stack, int i
 <FUNCTION>
 <NAME>NspPListCreate</NAME>
 <RETURNS>NspPList *</RETURNS>
-char *name, PList L, char *filename
+const char *name, PList L, char *filename
 </FUNCTION>
 <FUNCTION>
 <NAME>NspPListCopy</NAME>
@@ -8147,6 +9079,11 @@ NspPList *P_L
 <NAME>NspPList2SMatrix</NAME>
 <RETURNS>NspSMatrix *</RETURNS>
 NspPList *P_L, int indent
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_plist_get_path</NAME>
+<RETURNS>int </RETURNS>
+char *fname,NspPList *P_L
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_parse_add</NAME>
@@ -8207,6 +9144,11 @@ PList *plist, char *str
 <NAME>nsp_parse_add_object</NAME>
 <RETURNS>int </RETURNS>
 PList *plist, NspObject *obj
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parse_add_inti</NAME>
+<RETURNS>int </RETURNS>
+PList *plist, char *str, int type
 </FUNCTION>
 <FUNCTION>
 <NAME>ParseAddDouble</NAME>
@@ -8295,8 +9237,8 @@ PList L, int indent
 </FUNCTION>
 <FUNCTION>
 <NAME>plist_get_nargs</NAME>
-<RETURNS>void </RETURNS>
-PList List,int *lhs , int *rhsp1
+<RETURNS>int </RETURNS>
+PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out
 </FUNCTION>
 <ENUM>
 <NAME>accelerated_ops</NAME>
@@ -8353,7 +9295,7 @@ struct _NspTypeClassBRef {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./classbref.h"
+#line 43 "./classbref.h"
 };
 
 </STRUCT>
@@ -8406,12 +9348,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_classbref_create</NAME>
 <RETURNS>NspClassBRef *</RETURNS>
-char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type
+const char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classbref_create_default</NAME>
 <RETURNS>NspClassBRef *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classbref_copy</NAME>
@@ -8522,9 +9464,6 @@ struct _nsp_file {
   int ref_count;
 };
 
-</STRUCT>
-<STRUCT>
-<NAME>NspFile</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>NspTypeSciFile</NAME>
@@ -8662,7 +9601,7 @@ Stack stack, int i
 <FUNCTION>
 <NAME>nsp_file_open</NAME>
 <RETURNS>NspFile *</RETURNS>
-char *fname, char *mode,int xdr_on,int swap_on
+const char *fname, char *mode,int xdr_on,int swap_on
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_file_close</NAME>
@@ -8822,7 +9761,7 @@ char *fname, FILE *fp, char *format, Stack stack,int nargs, int arg_cnt, int lin
 <FUNCTION>
 <NAME>do_scanf</NAME>
 <RETURNS>int </RETURNS>
-char *command,FILE *fp,char *format,Stack stack,int iline, int *nargs,char *strv,int *retval
+const char *command,FILE *fp,char *format,Stack stack,int iline, int *nargs,const char *strv,int *retval
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_xdr_save_string</NAME>
@@ -8916,6 +9855,12 @@ struct _string_tokenizer {
 } ;
 
 </STRUCT>
+<ENUM>
+<NAME>token_io</NAME>
+typedef enum { 
+  nsp_tok_stdio, nsp_tok_file, nsp_tok_string, nsp_tok_strings
+}  token_io;
+</ENUM>
 <STRUCT>
 <NAME>tokenizer</NAME>
 struct _tokenizer {
@@ -8952,6 +9897,8 @@ struct _tokenizer {
   token_ParseComment *ParseComment;
   token_ParseError *ParseError;
   token_code2name *code2name;
+  /* type of io */
+  token_io io;
 };
 
 </STRUCT>
@@ -8994,6 +9941,31 @@ int *n
 <RETURNS>MoreFun </RETURNS>
 MoreFun F
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_prompt</NAME>
+<RETURNS>char *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_force_prompt</NAME>
+<RETURNS>char *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>inc_pause_prompt</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>dec_pause_prompt</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>zero_pause_prompt</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
 <STRUCT>
 <NAME>NspArrows</NAME>
 </STRUCT>
@@ -9007,7 +9979,7 @@ struct _NspTypeArrows {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 33 "./arrows.h"
+#line 48 "./arrows.h"
 };
 
 </STRUCT>
@@ -9061,12 +10033,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_arrows_create</NAME>
 <RETURNS>NspArrows *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,double arsize,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_arrows_create_default</NAME>
 <RETURNS>NspArrows *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_arrows_copy</NAME>
@@ -9217,7 +10189,7 @@ struct _NspTypeDiagram {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./diagram.h"
+#line 48 "./diagram.h"
 };
 
 </STRUCT>
@@ -9269,12 +10241,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_diagram_create</NAME>
 <RETURNS>NspDiagram *</RETURNS>
-char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type
+const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_diagram_create_default</NAME>
 <RETURNS>NspDiagram *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_diagram_copy</NAME>
@@ -9557,9 +10529,6 @@ NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]
 <RETURNS>int </RETURNS>
 NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]
 </FUNCTION>
-<STRUCT>
-<NAME>NspMod</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeMod</NAME>
 typedef struct _NspTypeMod { 
@@ -10243,6 +11212,38 @@ typedef int integer;
 #define UPDATE_EXEC_DIR 1
 </MACRO>
 <MACRO>
+<NAME>IMPORT</NAME>
+#define IMPORT extern  __declspec (dllimport)
+</MACRO>
+<MACRO>
+<NAME>EXPORT</NAME>
+#define EXPORT __declspec (dllexport) 
+</MACRO>
+<MACRO>
+<NAME>IMPORT</NAME>
+#define IMPORT extern __attribute__ ((__dllimport__))
+</MACRO>
+<MACRO>
+<NAME>EXPORT</NAME>
+#define EXPORT extern 
+</MACRO>
+<MACRO>
+<NAME>IMPORT</NAME>
+#define IMPORT extern
+</MACRO>
+<MACRO>
+<NAME>EXPORT</NAME>
+#define EXPORT extern
+</MACRO>
+<MACRO>
+<NAME>INLIBNSP</NAME>
+#define INLIBNSP IMPORT
+</MACRO>
+<MACRO>
+<NAME>INLIBNSP</NAME>
+#define INLIBNSP EXPORT
+</MACRO>
+<MACRO>
 <NAME>HAVE_CLOCK</NAME>
 #define HAVE_CLOCK 1
 </MACRO>
@@ -10277,6 +11278,22 @@ typedef int integer;
 <MACRO>
 <NAME>HAVE_GMP_H</NAME>
 #define HAVE_GMP_H 1
+</MACRO>
+<MACRO>
+<NAME>HAVE_GTHREAD</NAME>
+#define HAVE_GTHREAD 
+</MACRO>
+<MACRO>
+<NAME>HAVE_GTKSOURCEVIEW</NAME>
+#define HAVE_GTKSOURCEVIEW 
+</MACRO>
+<MACRO>
+<NAME>HAVE_GTKSOURCEVIEW_CONTEXT_CLASS</NAME>
+#define HAVE_GTKSOURCEVIEW_CONTEXT_CLASS 
+</MACRO>
+<MACRO>
+<NAME>HAVE_GTKSOURCEVIEW_GUTTER</NAME>
+#define HAVE_GTKSOURCEVIEW_GUTTER 
 </MACRO>
 <MACRO>
 <NAME>HAVE_INLINE</NAME>
@@ -10387,6 +11404,14 @@ typedef int integer;
 #define HAVE_WEBKIT_ZOOM 
 </MACRO>
 <MACRO>
+<NAME>HAVE_ZLIB</NAME>
+#define HAVE_ZLIB /**/
+</MACRO>
+<MACRO>
+<NAME>HAVE_ZLIB_H</NAME>
+#define HAVE_ZLIB_H 1
+</MACRO>
+<MACRO>
 <NAME>HAVE_cairo_image_surface</NAME>
 #define HAVE_cairo_image_surface /**/
 </MACRO>
@@ -10425,6 +11450,10 @@ typedef int integer;
 <MACRO>
 <NAME>PACKAGE_TARNAME</NAME>
 #define PACKAGE_TARNAME "nsp"
+</MACRO>
+<MACRO>
+<NAME>PACKAGE_URL</NAME>
+#define PACKAGE_URL ""
 </MACRO>
 <MACRO>
 <NAME>PACKAGE_VERSION</NAME>
@@ -10489,10 +11518,6 @@ typedef int integer;
 <MACRO>
 <NAME>WITH_SNDFILE</NAME>
 #define WITH_SNDFILE /**/
-</MACRO>
-<MACRO>
-<NAME>WITH_TK</NAME>
-#define WITH_TK /**/
 </MACRO>
 <MACRO>
 <NAME>WITH_UMFPACK</NAME>
@@ -10608,6 +11633,11 @@ int nr, int nc
 const char *fmt, double d, int fw
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_pr_any_float_vs</NAME>
+<RETURNS>int  </RETURNS>
+const char *fmt, double d, int fw, int do_print
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_init_pr_format</NAME>
 <RETURNS>void </RETURNS>
 nsp_num_formats *fmt
@@ -10653,6 +11683,11 @@ const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, in
 int output_max_field_width, int output_precision,int e
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_get_format</NAME>
+<RETURNS>void </RETURNS>
+int *output_max_field_width, int *output_precision,int *e
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_qsort</NAME>
 <RETURNS>void </RETURNS>
 char *a, char *tab,int flag, int n, int es, int es1,int (*cmp) (), int (*swapcode) (), int (*swapcodeind) ()
@@ -10674,7 +11709,7 @@ struct _NspTypeVField {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./vfield.h"
+#line 48 "./vfield.h"
 };
 
 </STRUCT>
@@ -10729,12 +11764,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_vfield_create</NAME>
 <RETURNS>NspVField *</RETURNS>
-char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type
+const char *name,NspMatrix* fx,NspMatrix* fy,NspMatrix* x,NspMatrix* y,gboolean colored,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_vfield_create_default</NAME>
 <RETURNS>NspVField *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_vfield_copy</NAME>
@@ -11272,9 +12307,6 @@ extern function int_mxdiv;
 extern function int_mxbdiv; 
 </VARIABLE>
 <STRUCT>
-<NAME>NspCells</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeCells</NAME>
 typedef struct _NspTypeCells { 
   NSP_TYPE_OBJECT__ 
@@ -11471,6 +12503,11 @@ NspCells *C, NspObject *Obj, int *ind
 <RETURNS>NspCells *</RETURNS>
 NspCells *C, NspPList *PL, NspList *args
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_cells_m2ce</NAME>
+<RETURNS>NspCells *</RETURNS>
+NspMatrix *M, NspMatrix *Rows, NspMatrix *Cols
+</FUNCTION>
 <MACRO>
 <NAME>NULLCELLS</NAME>
 #define NULLCELLS (NspCells *) NULL
@@ -11523,7 +12560,7 @@ struct _NspTypeObjs3d {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 39 "./objs3d.h"
+#line 53 "./objs3d.h"
 };
 
 </STRUCT>
@@ -11588,12 +12625,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_objs3d_create</NAME>
 <RETURNS>NspObjs3d *</RETURNS>
-char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type
+const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_objs3d_create_default</NAME>
 <RETURNS>NspObjs3d *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_objs3d_copy</NAME>
@@ -11731,9 +12768,6 @@ void
 NspFigure *F,const double *wrect
 </FUNCTION>
 <STRUCT>
-<NAME>NspAstNode</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeAstNode</NAME>
 </STRUCT>
 <STRUCT>
@@ -11849,8 +12883,255 @@ Stack stack, int i
 <RETURNS>int </RETURNS>
 Stack stack, int rhs, int opt, int lhs
 </FUNCTION>
+<MACRO>
+<NAME>NSP_INC_NspAstNode</NAME>
+#define NSP_INC_NspAstNode
+</MACRO>
+<STRUCT>
+<NAME>NspAstNode</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspBHash</NAME>
+#define NSP_INC_NspBHash
+</MACRO>
+<STRUCT>
+<NAME>NspBHash</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_Boolean</NAME>
+#define NSP_INC_Boolean
+</MACRO>
+<TYPEDEF>
+<NAME>Boolean</NAME>
+typedef int Boolean;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspBMatrix</NAME>
+#define NSP_INC_NspBMatrix
+</MACRO>
+<STRUCT>
+<NAME>NspBMatrix</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspCells</NAME>
+#define NSP_INC_NspCells
+</MACRO>
+<STRUCT>
+<NAME>NspCells</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspCholmod</NAME>
+#define NSP_INC_NspCholmod
+</MACRO>
+<STRUCT>
+<NAME>NspCholmod</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspFile</NAME>
+#define NSP_INC_NspFile
+</MACRO>
+<STRUCT>
+<NAME>NspFile</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspFunction</NAME>
+#define NSP_INC_NspFunction
+</MACRO>
+<STRUCT>
+<NAME>NspFunction</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspHash</NAME>
+#define NSP_INC_NspHash
+</MACRO>
+<STRUCT>
+<NAME>NspHash</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspHobj</NAME>
+#define NSP_INC_NspHobj
+</MACRO>
+<STRUCT>
+<NAME>NspHobj</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspIMatrix</NAME>
+#define NSP_INC_NspIMatrix
+</MACRO>
+<STRUCT>
+<NAME>NspIMatrix</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspIVect</NAME>
+#define NSP_INC_NspIVect
+</MACRO>
+<TYPEDEF>
+<NAME>NspIVect</NAME>
+typedef struct _NspIvect NspIVect;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspList</NAME>
+#define NSP_INC_NspList
+</MACRO>
+<STRUCT>
+<NAME>NspList</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspLmo</NAME>
+#define NSP_INC_NspLmo
+</MACRO>
+<STRUCT>
+<NAME>NspLmo</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_doubleC</NAME>
+#define NSP_INC_doubleC
+</MACRO>
+<STRUCT>
+<NAME>doubleC</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspMatrix</NAME>
+#define NSP_INC_NspMatrix
+</MACRO>
+<STRUCT>
+<NAME>NspMatrix</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspMe</NAME>
+#define NSP_INC_NspMe
+</MACRO>
+<STRUCT>
+<NAME>NspMe</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspMod</NAME>
+#define NSP_INC_NspMod
+</MACRO>
+<STRUCT>
+<NAME>NspMod</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspModule</NAME>
+#define NSP_INC_NspModule
+</MACRO>
+<STRUCT>
+<NAME>NspModule</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspModuleElt</NAME>
+#define NSP_INC_NspModuleElt
+</MACRO>
+<TYPEDEF>
+<NAME>NspModuleElt</NAME>
+typedef struct _NspModulelt NspModuleElt;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspMaxpMatrix</NAME>
+#define NSP_INC_NspMaxpMatrix
+</MACRO>
+<TYPEDEF>
+<NAME>NspMaxpMatrix</NAME>
+typedef struct _NspMpmatrix NspMaxpMatrix;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspNone</NAME>
+#define NSP_INC_NspNone
+</MACRO>
+<STRUCT>
+<NAME>NspNone</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspObject</NAME>
+#define NSP_INC_NspObject
+</MACRO>
+<STRUCT>
+<NAME>NspObject</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspPList</NAME>
+#define NSP_INC_NspPList
+</MACRO>
+<TYPEDEF>
+<NAME>NspPList</NAME>
+typedef struct _NspPlist NspPList;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspPMatrix</NAME>
+#define NSP_INC_NspPMatrix
+</MACRO>
+<TYPEDEF>
+<NAME>NspPMatrix</NAME>
+typedef struct _NspPmatrix NspPMatrix;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspScalExp</NAME>
+#define NSP_INC_NspScalExp
+</MACRO>
 <STRUCT>
 <NAME>NspScalExp</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspSerial</NAME>
+#define NSP_INC_NspSerial
+</MACRO>
+<STRUCT>
+<NAME>NspSerial</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspSMatrix</NAME>
+#define NSP_INC_NspSMatrix
+</MACRO>
+<TYPEDEF>
+<NAME>NspSMatrix</NAME>
+typedef struct _NspSmatrix NspSMatrix;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspSMio</NAME>
+#define NSP_INC_NspSMio
+</MACRO>
+<STRUCT>
+<NAME>NspSMio</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspSpColMatrix</NAME>
+#define NSP_INC_NspSpColMatrix
+</MACRO>
+<TYPEDEF>
+<NAME>NspSpColMatrix</NAME>
+typedef struct _NspSpColmatrix NspSpColMatrix;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspSpRowMatrix</NAME>
+#define NSP_INC_NspSpRowMatrix
+</MACRO>
+<TYPEDEF>
+<NAME>NspSpRowMatrix</NAME>
+typedef struct _NspSpRowmatrix NspSpRowMatrix;
+</TYPEDEF>
+<MACRO>
+<NAME>NSP_INC_NspType</NAME>
+#define NSP_INC_NspType
+</MACRO>
+<STRUCT>
+<NAME>NspType</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_NspUmfpack</NAME>
+#define NSP_INC_NspUmfpack
+</MACRO>
+<STRUCT>
+<NAME>NspUmfpack</NAME>
+</STRUCT>
+<MACRO>
+<NAME>NSP_INC_Stack</NAME>
+#define NSP_INC_Stack
+</MACRO>
+<STRUCT>
+<NAME>Stack</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>Stack_ref</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>NspTypeScalExp</NAME>
@@ -11979,13 +13260,6 @@ struct _expr_func {
   int logical;
 };
 
-</STRUCT>
-<TYPEDEF>
-<NAME>Boolean</NAME>
-typedef int Boolean;
-</TYPEDEF>
-<STRUCT>
-<NAME>NspBMatrix</NAME>
 </STRUCT>
 <STRUCT>
 <NAME>NspTypeBMatrix</NAME>
@@ -12344,7 +13618,7 @@ struct _NspTypeSegments {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./segments.h"
+#line 48 "./segments.h"
 };
 
 </STRUCT>
@@ -12397,12 +13671,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_segments_create</NAME>
 <RETURNS>NspSegments *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* color,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_segments_create_default</NAME>
 <RETURNS>NspSegments *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_segments_copy</NAME>
@@ -12512,7 +13786,7 @@ struct _NspTypeGMatrix1 {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./gmatrix1.h"
+#line 49 "./gmatrix1.h"
 };
 
 </STRUCT>
@@ -12570,12 +13844,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_gmatrix1_create</NAME>
 <RETURNS>NspGMatrix1 *</RETURNS>
-char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type
+const char *name,NspMatrix* data,gboolean remap,gboolean shade,NspMatrix* colminmax,NspMatrix* zminmax,NspMatrix* colout,NspMatrix* x,NspMatrix* y,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_gmatrix1_create_default</NAME>
 <RETURNS>NspGMatrix1 *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_gmatrix1_copy</NAME>
@@ -12705,7 +13979,7 @@ const char *fmt,...
 <FUNCTION>
 <NAME>do_printf_stdout</NAME>
 <RETURNS>int </RETURNS>
-FILE *ignore,const char *fmt, ...
+const FILE *ignore,const char *fmt, ...
 </FUNCTION>
 <FUNCTION>
 <NAME>Sciprint2string_reset</NAME>
@@ -12794,7 +14068,7 @@ extern SciGetC Scigetchar ;
 SciGetC F
 </FUNCTION>
 <FUNCTION>
-<NAME>SciReadClean</NAME>
+<NAME>nsp_read_clean_after_ctrc</NAME>
 <RETURNS>void </RETURNS>
 void
 </FUNCTION>
@@ -12820,6 +14094,16 @@ int mode
 </FUNCTION>
 <FUNCTION>
 <NAME>get_is_reading</NAME>
+<RETURNS>int </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_set_in_text_view</NAME>
+<RETURNS>void </RETURNS>
+int value
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_get_in_text_view</NAME>
 <RETURNS>int </RETURNS>
 void
 </FUNCTION>
@@ -12879,9 +14163,6 @@ void
 <NAME>int_sprowmatrix_minus</NAME>
 extern function int_sprowmatrix_minus;
 </VARIABLE>
-<STRUCT>
-<NAME>NspType</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeType</NAME>
 typedef struct _NspTypeType { 
@@ -13002,10 +14283,6 @@ const char *name
 <RETURNS>char *</RETURNS>
 void *type
 </FUNCTION>
-<VARIABLE>
-<NAME>nsp_dynamic_id</NAME>
-extern const int nsp_dynamic_id ; 
-</VARIABLE>
 <STRUCT>
 <NAME>NspQcurve</NAME>
 </STRUCT>
@@ -13019,7 +14296,7 @@ struct _NspTypeQcurve {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 34 "./qcurve.h"
+#line 48 "./qcurve.h"
 };
 
 </STRUCT>
@@ -13078,12 +14355,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_qcurve_create</NAME>
 <RETURNS>NspQcurve *</RETURNS>
-char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type
+const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,int start,int last,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_qcurve_create_default</NAME>
 <RETURNS>NspQcurve *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_qcurve_copy</NAME>
@@ -13182,7 +14459,7 @@ XDR  *xdrs, NspQcurve *M
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_oscillo_obj</NAME>
-<RETURNS>NspFigure *</RETURNS>
+<RETURNS>NspAxes *</RETURNS>
 int win,int ncurves,int style[],int bufsize,int yfree,double ymin,double ymax,NspList **Lc
 </FUNCTION>
 <FUNCTION>
@@ -13203,7 +14480,7 @@ struct _NspTypePolyhedron {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./polyhedron.h"
+#line 43 "./polyhedron.h"
 };
 
 </STRUCT>
@@ -13260,12 +14537,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_polyhedron_create</NAME>
 <RETURNS>NspPolyhedron *</RETURNS>
-char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* pos, int pos_length,NspTypeBase *type
+const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mface,NspMatrix* Mcolor,NspMatrix* Mback_color,gboolean mesh,int* pos, int pos_length,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_polyhedron_create_default</NAME>
 <RETURNS>NspPolyhedron *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_polyhedron_copy</NAME>
@@ -13375,12 +14652,12 @@ char *name,double *xx,double *yy,double *zz,int m,int n
 <FUNCTION>
 <NAME>nsp_surf_to_coords</NAME>
 <RETURNS>NspMatrix *</RETURNS>
-const char *name,double *x,double *y,double *z,int m,int n
+const char *name,NspMatrix *C,double *x,double *y,double *z,int m,int n
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_surf_to_faces</NAME>
 <RETURNS>NspMatrix *</RETURNS>
-const char *name,double *x,int xmn,double *y,int ymn
+const char *name,NspMatrix *F,double *x,int xmn,double *y,int ymn
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_facets_to_faces</NAME>
@@ -13615,7 +14892,7 @@ struct _NspTypeConnector {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 59 "./connector.h"
+#line 72 "./connector.h"
 };
 
 </STRUCT>
@@ -13671,12 +14948,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_connector_create</NAME>
 <RETURNS>NspConnector *</RETURNS>
-char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type
+const char *name,void* object_sid,double* r,int color,int thickness,int background,gr_lock lock,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_connector_create_default</NAME>
 <RETURNS>NspConnector *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_connector_copy</NAME>
@@ -13786,7 +15063,7 @@ struct _NspTypeGrRect {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grrect.h"
+#line 49 "./grrect.h"
 };
 
 </STRUCT>
@@ -13843,12 +15120,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_grrect_create</NAME>
 <RETURNS>NspGrRect *</RETURNS>
-char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type
+const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grrect_create_default</NAME>
 <RETURNS>NspGrRect *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grrect_copy</NAME>
@@ -13958,7 +15235,7 @@ struct _NspTypeGMatrix {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./gmatrix.h"
+#line 49 "./gmatrix.h"
 };
 
 </STRUCT>
@@ -14013,12 +15290,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_gmatrix_create</NAME>
 <RETURNS>NspGMatrix *</RETURNS>
-char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type
+const char *name,NspMatrix* data,NspMatrix* rect,gboolean remap,NspMatrix* colminmax,NspMatrix* zminmax,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_gmatrix_create_default</NAME>
 <RETURNS>NspGMatrix *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_gmatrix_copy</NAME>
@@ -14128,7 +15405,7 @@ struct _NspTypeString3d {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./string3d.h"
+#line 48 "./string3d.h"
 };
 
 </STRUCT>
@@ -14184,12 +15461,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_string3d_create</NAME>
 <RETURNS>NspString3d *</RETURNS>
-char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type
+const char *name,NspMatrix* Mcoord,void* Mcoord_l,char* str,int font_type,int font_size,int* pos, int pos_length,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_string3d_create_default</NAME>
 <RETURNS>NspString3d *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_string3d_copy</NAME>
@@ -14320,7 +15597,7 @@ struct _NspTypeClassA {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 38 "./classa.h"
+#line 52 "./classa.h"
 };
 
 </STRUCT>
@@ -14364,12 +15641,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_classa_create</NAME>
 <RETURNS>NspClassA *</RETURNS>
-char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type
+const char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classa_create_default</NAME>
 <RETURNS>NspClassA *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classa_copy</NAME>
@@ -14483,7 +15760,7 @@ struct _NspTypeBlock {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 82 "./block.h"
+#line 97 "./block.h"
 };
 
 </STRUCT>
@@ -14542,12 +15819,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_block_create</NAME>
 <RETURNS>NspBlock *</RETURNS>
-char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic* icon,int draw_mode,NspTypeBase *type
+const char *name,void* object_sid,double* r,int color,int thickness,int background,int n_locks,grb_lock* locks,NspGraphic* icon,int draw_mode,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_block_create_default</NAME>
 <RETURNS>NspBlock *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_block_copy</NAME>
@@ -14645,6 +15922,91 @@ XDR *xdrs, NspBlock *M
 XDR  *xdrs, NspBlock *M
 </FUNCTION>
 <FUNCTION>
+<NAME>getenv</NAME>
+<RETURNS>char  *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>putenv</NAME>
+#define putenv(x) abs_putenv(x)
+</MACRO>
+<MACRO>
+<NAME>getpid</NAME>
+#define getpid() getpid()
+</MACRO>
+<MACRO>
+<NAME>putenv</NAME>
+#define putenv(x) _putenv(x)
+</MACRO>
+<MACRO>
+<NAME>chdir</NAME>
+#define chdir(x) _chdir(x)
+</MACRO>
+<MACRO>
+<NAME>GETCWD</NAME>
+#define GETCWD(x,y) _getcwd(x,y)
+</MACRO>
+<FUNCTION>
+<NAME>Sciprintf</NAME>
+<RETURNS>void </RETURNS>
+char *fmt,...
+</FUNCTION>
+<MACRO>
+<NAME>GETCWD</NAME>
+#define GETCWD(x,y) getcwd(x,y)
+</MACRO>
+<MACRO>
+<NAME>GETCWD</NAME>
+#define GETCWD(x,y) getcwd(x,y)
+</MACRO>
+<MACRO>
+<NAME>GETCWD</NAME>
+#define GETCWD(x,y) getcwd(x,y)
+</MACRO>
+<MACRO>
+<NAME>GETCWD</NAME>
+#define GETCWD(x,y) getwd(x)
+</MACRO>
+<MACRO>
+<NAME>FSIZE</NAME>
+#define FSIZE 1024
+</MACRO>
+<FUNCTION>
+<NAME>get_sci_data_strings</NAME>
+<RETURNS>char *</RETURNS>
+int n
+</FUNCTION>
+<FUNCTION>
+<NAME>set_nsp_tmpdir</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>get_nsp_tmpdir</NAME>
+<RETURNS>char *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>clean_tmpdir</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_change_curdir</NAME>
+<RETURNS>int </RETURNS>
+char *path
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_get_curdir</NAME>
+<RETURNS>char *</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_path_expand</NAME>
+<RETURNS>void </RETURNS>
+const char *in_name, char *out_name, int out_size
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_timer</NAME>
 <RETURNS>double </RETURNS>
 void
@@ -14670,8 +16032,13 @@ double *t
 void
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_tictoc</NAME>
-<RETURNS>int </RETURNS>
+<NAME>nsp_tic</NAME>
+<RETURNS>double </RETURNS>
+int set_start_time
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_toc</NAME>
+<RETURNS>double </RETURNS>
 double *etime
 </FUNCTION>
 <VARIABLE>
@@ -14720,10 +16087,6 @@ int code
 <RETURNS>NspHash *</RETURNS>
 void
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspPMatrix</NAME>
-typedef struct _NspPmatrix  NspPMatrix;
-</TYPEDEF>
 <STRUCT>
 <NAME>NspTypePMatrix</NAME>
 </STRUCT>
@@ -14798,7 +16161,7 @@ NspPMatrix *A
 <FUNCTION>
 <NAME>nsp_matrix_to_pmatrix</NAME>
 <RETURNS>NspPMatrix *</RETURNS>
-NspMatrix *A, nsp_const_string str, int flag
+NspMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_matrix_to_polynom</NAME>
@@ -14818,7 +16181,12 @@ NspPMatrix *A
 <FUNCTION>
 <NAME>nsp_pmatrix_create</NAME>
 <RETURNS>NspPMatrix *</RETURNS>
-char *name, int m, int n, doubleC *cval, int flag
+char *name, int m, int n,const doubleC *cval, int flag
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_create_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+char *name, int m, int n,NspMatrix *Val
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_pmatrix_clone</NAME>
@@ -14849,11 +16217,6 @@ NspPMatrix *A, NspMatrix *Rows, int *err
 <NAME>nsp_pmatrix_transpose</NAME>
 <RETURNS>NspPMatrix *</RETURNS>
 const NspPMatrix *A
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_pcopy_polynom</NAME>
-<RETURNS>int </RETURNS>
-int n, nsp_polynom *s1, nsp_polynom *s2
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_pmatrix_add_columns</NAME>
@@ -14901,26 +16264,6 @@ NspPMatrix *A,const NspMatrix *Rows,const NspMatrix *Cols,const NspPMatrix *B
 NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspPMatrix *B
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_pset_polynom</NAME>
-<RETURNS>int </RETURNS>
-int n, doubleC *s1, nsp_polynom *s2
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_basic_to_polynom</NAME>
-<RETURNS>nsp_polynom </RETURNS>
-doubleC *d, char type
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_polynom_copy</NAME>
-<RETURNS>nsp_polynom </RETURNS>
-nsp_polynom P
-</FUNCTION>
-<FUNCTION>
-<NAME>nsp_polynom_copy_with_name</NAME>
-<RETURNS>nsp_polynom </RETURNS>
-nsp_polynom P
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_pmatrix_elt_size</NAME>
 <RETURNS>unsigned int  </RETURNS>
 NspPMatrix *M
@@ -14944,6 +16287,76 @@ NspPMatrix *Mat, int indent,const char *name, int rec_level
 <NAME>nsp_polynom_destroy</NAME>
 <RETURNS>void </RETURNS>
 nsp_polynom *P
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_add</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_minus</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_mult_m_p</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_mult_p_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_mult_tt</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_mult_tt_p_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_mult_tt_m_p</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_div_tt_p_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspMatrix *B,int flag
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_div_tt_m_p</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_mult_p_p</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A, NspPMatrix *B
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_dh_p_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+const NspPMatrix *P,const NspMatrix *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_hat_p_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *P,int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_minus_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A,NspMatrix *B, int flag
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_add_m</NAME>
+<RETURNS>NspPMatrix *</RETURNS>
+NspPMatrix *A,NspMatrix *B
 </FUNCTION>
 <FUNCTION>
 <NAME>IsPMatObj</NAME>
@@ -14971,11 +16384,6 @@ Stack stack, int i
 Stack stack, int i
 </FUNCTION>
 <FUNCTION>
-<NAME>PMatCompOp</NAME>
-<RETURNS>NspBMatrix *</RETURNS>
-NspPMatrix *A, NspPMatrix *B, char *op
-</FUNCTION>
-<FUNCTION>
 <NAME>PMatFullComp</NAME>
 <RETURNS>int </RETURNS>
 NspPMatrix *A, NspPMatrix *B, char *op, int *err
@@ -14986,9 +16394,144 @@ NspPMatrix *A, NspPMatrix *B, char *op, int *err
 NspMatrix *A
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_pmatrix_to_cells</NAME>
+<RETURNS>NspCells *</RETURNS>
+const char *name, NspPMatrix *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_horner</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+NspPMatrix *P,NspMatrix *V,int k
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_horner_tt</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+NspPMatrix *P,NspMatrix *V
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_comp</NAME>
+<RETURNS>NspBMatrix  *</RETURNS>
+NspPMatrix *A, NspPMatrix *B,const char *op
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pmatrix_pdiv_tt</NAME>
+<RETURNS>int </RETURNS>
+NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix **R
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_resize</NAME>
+<RETURNS>int </RETURNS>
+nsp_polynom poly
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_add</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom P,nsp_polynom Q
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_minus</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom P,nsp_polynom Q
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_mult</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom a,nsp_polynom b
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_mult_std</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom a,nsp_polynom b
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_mult_fft</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom a,nsp_polynom b
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_pdiv</NAME>
+<RETURNS>int </RETURNS>
+nsp_polynom a,nsp_polynom b,nsp_polynom *hq, nsp_polynom *hr
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_pset_polynom</NAME>
+<RETURNS>int </RETURNS>
+int n, const doubleC *s1, nsp_polynom *s2
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_basic_to_polynom</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+const doubleC *d, char type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_copy</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom P
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_copy_with_name</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom P
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_power</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom p,int n
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_minus_m</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom p, void *v, char type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_add_m</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom p, void *v, char type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_horner</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+nsp_polynom P,NspMatrix *b
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_hornerm</NAME>
+<RETURNS>NspMatrix *</RETURNS>
+nsp_polynom P,NspMatrix *b
+</FUNCTION>
+<FUNCTION>
 <NAME>nsp_polynom_roots</NAME>
 <RETURNS>NspMatrix *</RETURNS>
 nsp_polynom poly
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_mult_m</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom p, void *v, char type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_polynom_div_m</NAME>
+<RETURNS>nsp_polynom </RETURNS>
+nsp_polynom p, void *v, char type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hornerdd</NAME>
+<RETURNS>double </RETURNS>
+const double *a,const int n, double x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hornercd</NAME>
+<RETURNS>doubleC </RETURNS>
+const doubleC *a,const int n, double x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hornerdc</NAME>
+<RETURNS>doubleC </RETURNS>
+const double *a,const int n, doubleC x
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_hornercc</NAME>
+<RETURNS>doubleC </RETURNS>
+const doubleC *a,const int n, doubleC x
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_pmatrix_size</NAME>
@@ -15020,9 +16563,6 @@ NspObject *A,NspObject *B
 <RETURNS>int </RETURNS>
 NspObject *A,NspObject *B
 </FUNCTION>
-<STRUCT>
-<NAME>NspCholmod</NAME>
-</STRUCT>
 <STRUCT>
 <NAME>NspTypeCholmod</NAME>
 </STRUCT>
@@ -15251,7 +16791,7 @@ struct _NspTypeFec {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./fec.h"
+#line 43 "./fec.h"
 };
 
 </STRUCT>
@@ -15311,12 +16851,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_fec_create</NAME>
 <RETURNS>NspFec *</RETURNS>
-char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type
+const char *name,NspMatrix* x,NspMatrix* y,NspMatrix* triangles,NspMatrix* func,NspMatrix* colminmax,NspMatrix* zminmax,gboolean mesh,gboolean paint,NspMatrix* colout,gboolean colorbar,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_fec_create_default</NAME>
 <RETURNS>NspFec *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_fec_copy</NAME>
@@ -15429,6 +16969,11 @@ const int *tab, int *perm
 BCG *Xgc,const double *sx,const double *sy,const  double *fxy,const int *zxy, const double *zlevel,const int *fill
 </FUNCTION>
 <FUNCTION>
+<NAME>DrawTriangle</NAME>
+<RETURNS>void </RETURNS>
+BCG *Xgc,const double *sx,const double *sy,const  double *fxy,const int *zxy, const double *zlevel,const int *fill
+</FUNCTION>
+<FUNCTION>
 <NAME>FindIntersection</NAME>
 <RETURNS>void </RETURNS>
 const double *sx,const double *sy,const double *fxy,double z,int inda, int indb,  int *xint, int *yint
@@ -15521,9 +17066,6 @@ NspRect *R,const double pt[2]
 NspRect *R,const double size[2]
 </FUNCTION>
 <STRUCT>
-<NAME>NspLmo</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeLmo</NAME>
 typedef struct _NspTypeLmo { 
   NSP_TYPE_OBJECT__ 
@@ -15612,7 +17154,7 @@ struct _NspTypeClassB {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./classb.h"
+#line 43 "./classb.h"
 };
 
 </STRUCT>
@@ -15654,12 +17196,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_classb_create</NAME>
 <RETURNS>NspClassB *</RETURNS>
-char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type
+const char *name,int clb_color,int clb_thickness,NspMatrix* clb_val,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classb_create_default</NAME>
 <RETURNS>NspClassB *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classb_copy</NAME>
@@ -15757,9 +17299,6 @@ XDR *xdrs, NspClassB *M
 XDR  *xdrs, NspClassB *M
 </FUNCTION>
 <STRUCT>
-<NAME>NspHobj</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeHobj</NAME>
 typedef struct _NspTypeHobj { 
   NSP_TYPE_OBJECT__ 
@@ -15781,10 +17320,6 @@ struct _NspHobj {
 };
 
 </STRUCT>
-<VARIABLE>
-<NAME>nsp_type_hobj_id</NAME>
-extern int nsp_type_hobj_id;
-</VARIABLE>
 <VARIABLE>
 <NAME>nsp_type_hobj</NAME>
 extern NspTypeHobj *nsp_type_hobj;
@@ -15890,7 +17425,7 @@ struct _NspTypeFigure {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 33 "./figure.h"
+#line 50 "./figure.h"
 };
 
 </STRUCT>
@@ -15951,12 +17486,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_figure_create</NAME>
 <RETURNS>NspFigure *</RETURNS>
-char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type
+const char *name,char* fname,char* driver,int id,NspMatrix* dims,NspMatrix* viewport_dims,gboolean wresize,NspMatrix* position,NspList* children,gboolean draw_now,NspFigureData* gc,void* Xgc,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_figure_create_default</NAME>
 <RETURNS>NspFigure *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_figure_copy</NAME>
@@ -16188,9 +17723,6 @@ struct _NspTypeHash {
 </STRUCT>
 <STRUCT>
 <NAME>NspHash</NAME>
-</STRUCT>
-<STRUCT>
-<NAME>NspHash</NAME>
 struct _NspHash {
   /*< private >*/
   NspObject father; 
@@ -16306,7 +17838,7 @@ NspHash *H, NspObject *O
 <FUNCTION>
 <NAME>nsp_hash_remove</NAME>
 <RETURNS>void </RETURNS>
-NspHash *H, char *str
+NspHash *H, const char *str
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_hash_find_and_copy</NAME>
@@ -16406,10 +17938,6 @@ struct _user_preferences
   int color;            /* use terminal coded colors */
 };
 </STRUCT>
-<VARIABLE>
-<NAME>user_pref</NAME>
-extern user_preferences user_pref;
-</VARIABLE>
 <FUNCTION>
 <NAME>scig_click_handler_none</NAME>
 <RETURNS>int </RETURNS>
@@ -16560,6 +18088,11 @@ void
 void
 </FUNCTION>
 <FUNCTION>
+<NAME>nsp_clear_history</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
 <NAME>create_plugged_main_menu</NAME>
 <RETURNS>void </RETURNS>
 void
@@ -16692,10 +18225,199 @@ NspGFrame *R,const double pt[2]
 <RETURNS>int </RETURNS>
 NspGFrame *R,const double pt[2]
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspSpColMatrix</NAME>
-typedef struct _NspSpColmatrix NspSpColMatrix;
-</TYPEDEF>
+<STRUCT>
+<NAME>NspSharedlib</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeSharedlib</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>NspTypeSharedlib</NAME>
+struct _NspTypeSharedlib {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+ 
+#line 47 "./sharedlib.h"
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>nsp_sharedlib</NAME>
+</STRUCT>
+<STRUCT>
+<NAME>nsp_sharedlib</NAME>
+struct _nsp_sharedlib {
+  void* shd;
+  int id;
+  char* path;
+  int ref_count;
+};
+
+</STRUCT>
+<STRUCT>
+<NAME>NspSharedlib</NAME>
+struct _NspSharedlib {
+  /*< private >*/
+  NspObject father;
+  NspTypeSharedlib*type;
+  /*< public >*/
+  nsp_sharedlib *obj;
+};
+
+</STRUCT>
+<VARIABLE>
+<NAME>nsp_type_sharedlib_id</NAME>
+extern int nsp_type_sharedlib_id;
+</VARIABLE>
+<VARIABLE>
+<NAME>nsp_type_sharedlib</NAME>
+extern NspTypeSharedlib *nsp_type_sharedlib;
+</VARIABLE>
+<FUNCTION>
+<NAME>new_type_sharedlib</NAME>
+<RETURNS>NspTypeSharedlib *</RETURNS>
+type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>new_sharedlib</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+
+</FUNCTION>
+<MACRO>
+<NAME>NULLSHAREDLIB</NAME>
+#define NULLSHAREDLIB (NspSharedlib*) 0
+</MACRO>
+<FUNCTION>
+<NAME>nsp_sharedlib_create</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+const char *name,void* shd,int id,char* path,NspTypeBase *type
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_create_default</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+const char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_copy</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+NspSharedlib *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_destroy</NAME>
+<RETURNS>void </RETURNS>
+NspSharedlib *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_info</NAME>
+<RETURNS>int </RETURNS>
+NspSharedlib *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_print</NAME>
+<RETURNS>int </RETURNS>
+NspSharedlib *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_latex</NAME>
+<RETURNS>int </RETURNS>
+NspSharedlib *H, int indent,const char *name, int rec_level
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_object</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>IsSharedlibObj</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>IsSharedlib</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O
+</FUNCTION>
+<FUNCTION>
+<NAME>GetSharedlibCopy</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>GetSharedlib</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+Stack stack, int i
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_create_partial</NAME>
+<RETURNS>int </RETURNS>
+NspSharedlib *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_destroy_partial</NAME>
+<RETURNS>void </RETURNS>
+NspSharedlib *H
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_copy_partial</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+NspSharedlib *H,NspSharedlib *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_full_copy_partial</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+NspSharedlib *H,NspSharedlib *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_full_copy</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+NspSharedlib *self
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_check_values</NAME>
+<RETURNS>int </RETURNS>
+NspSharedlib *H
+</FUNCTION>
+<FUNCTION>
+<NAME>int_sharedlib_create</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_xdr_load_partial</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+XDR *xdrs, NspSharedlib *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_xdr_save</NAME>
+<RETURNS>int </RETURNS>
+XDR  *xdrs, NspSharedlib *M
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_table_find</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+ int id
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_table_remove_lib</NAME>
+<RETURNS>void </RETURNS>
+int id
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_table_find_by_path</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+const char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_table_insert</NAME>
+<RETURNS>NspSharedlib *</RETURNS>
+ void *shd,unsigned int id, const  char *path
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_sharedlib_table_show</NAME>
+<RETURNS>void </RETURNS>
+
+</FUNCTION>
 <STRUCT>
 <NAME>NspTypeSpColMatrix</NAME>
 typedef struct _NspTypeSpColMatrix { 
@@ -16762,6 +18484,10 @@ type_mode mode
 <MACRO>
 <NAME>NULLSPCOL</NAME>
 #define NULLSPCOL (  NspSpColMatrix *) 0
+</MACRO>
+<MACRO>
+<NAME>NULLSPCOLMAT</NAME>
+#define NULLSPCOLMAT (  NspSpColMatrix *) 0
 </MACRO>
 <FUNCTION>
 <NAME>SpColObj</NAME>
@@ -16856,7 +18582,7 @@ SpCol *Row
 <FUNCTION>
 <NAME>nsp_spcolmatrix_redim</NAME>
 <RETURNS>NspSpColMatrix *</RETURNS>
-NspSpColMatrix *A, int m, int n
+NspSpColMatrix *A, int m, int n, Boolean inplace
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_enlarge_cols</NAME>
@@ -16961,7 +18687,7 @@ NspSpColMatrix *A, int k
 <FUNCTION>
 <NAME>nsp_spcolmatrix_set_diag</NAME>
 <RETURNS>int </RETURNS>
-NspSpColMatrix *A, NspSpColMatrix *Diag, int k
+NspSpColMatrix *A, NspObject *ODiag, int k
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_diag_create</NAME>
@@ -17371,7 +19097,7 @@ NspSpColMatrix *A,int flag
 <FUNCTION>
 <NAME>nsp_spcolmatrix_is_lower_triangular</NAME>
 <RETURNS>Boolean </RETURNS>
-NspSpColMatrix *A
+const NspSpColMatrix *A
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spcolmatrix_is_upper_triangular</NAME>
@@ -17436,7 +19162,7 @@ struct _NspTypeGrImage {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grimage.h"
+#line 49 "./grimage.h"
 };
 
 </STRUCT>
@@ -17495,12 +19221,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_grimage_create</NAME>
 <RETURNS>NspGrImage *</RETURNS>
-char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type
+const char *name,double x,double y,double w,double h,gboolean border,int thickness,char* fname,void* image,int color,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grimage_create_default</NAME>
 <RETURNS>NspGrImage *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grimage_copy</NAME>
@@ -17598,9 +19324,6 @@ XDR *xdrs, NspGrImage *M
 XDR  *xdrs, NspGrImage *M
 </FUNCTION>
 <STRUCT>
-<NAME>NspFunction</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeFunction</NAME>
 typedef struct _NspTypeFunction { 
   NSP_TYPE_OBJECT__ 
@@ -17646,7 +19369,7 @@ type_mode mode
 <FUNCTION>
 <NAME>function_create</NAME>
 <RETURNS>NspFunction *</RETURNS>
-char *name,char *fname,int iface,int pos,int status,NspTypeBase *type
+const char *name,const char *fname,int iface,int pos,int status,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>function_copy</NAME>
@@ -17694,9 +19417,6 @@ Stack stack, int i
 Stack stack, int i
 </FUNCTION>
 <STRUCT>
-<NAME>NspIMatrix</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeIMatrix</NAME>
 </STRUCT>
 <STRUCT>
@@ -17707,13 +19427,6 @@ struct _NspTypeIMatrix {
 };
 
 </STRUCT>
-<ENUM>
-<NAME>nsp_itype</NAME>
-typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
-		 nsp_gulong, nsp_gint8, nsp_guint8, nsp_gint16,
-		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
-		 nsp_guint64 } nsp_itype;
-</ENUM>
 <MACRO>
 <NAME>NSP_ITYPE_FORMATS</NAME>
 #define NSP_ITYPE_FORMATS(names)				\
@@ -17784,19 +19497,19 @@ struct _NspIMatrix {
 #define NSP_MIN_ITYPE(xx,itype)						\
   switch(itype) {							\
   case nsp_gint: xx.Gint= G_MININT; break;				\
-  case nsp_guint: xx.Guint= G_MINUINT; break;				\
+  case nsp_guint: xx.Guint= 0; break;				\
   case  nsp_gshort: xx.Gshort= G_MINSHORT; break;			\
-  case nsp_gushort: xx.Gushort= G_MINUSHORT; break;			\
+  case nsp_gushort: xx.Gushort= 0; break;			\
   case  nsp_glong: xx.Glong= G_MINLONG ;  break;			\
-  case nsp_gulong: xx.Gulong= G_MINULONG; break;			\
+  case nsp_gulong: xx.Gulong= 0; break;			\
   case  nsp_gint8: xx.Gint8= G_MININT8; break;				\
-  case nsp_guint8: xx.Guint8= G_MINUINT8; break;			\
+  case nsp_guint8: xx.Guint8= 0; break;			\
   case  nsp_gint16: xx.Gint16= G_MININT16; break;			\
-  case nsp_guint16: xx.Guint16= G_MINUINT16; break;			\
+  case nsp_guint16: xx.Guint16= 0; break;			\
   case  nsp_gint32: xx.Gint32= G_MININT32; break;			\
-  case nsp_guint32: xx.Guint32= G_MINUINT32; break;			\
+  case nsp_guint32: xx.Guint32= 0; break;			\
   case  nsp_gint64: xx.Gint64= G_MININT64; break;			\
-  case  nsp_guint64: xx.Guint64= G_MINUINT64; break;}
+  case  nsp_guint64: xx.Guint64= 0; break;}
 </MACRO>
 <MACRO>
 <NAME>NSP_ITYPE_SWITCH</NAME>
@@ -17815,7 +19528,7 @@ struct _NspIMatrix {
   case nsp_gint32: X(Gint32,gint32,arg);	\
   case nsp_guint32: X(Guint32,guint32,arg);	\
   case nsp_gint64 : X(Gint64,gint64,arg );	\
-  case nsp_guint64 : X(Gint64,guint64,arg );}
+  case nsp_guint64 : X(Guint64,guint64,arg );}
 </MACRO>
 <MACRO>
 <NAME>NSP_ITYPE_SIZE</NAME>
@@ -17946,6 +19659,11 @@ Stack stack, int i, int *val
 <NAME>nsp_imatrix_create</NAME>
 <RETURNS>NspIMatrix *</RETURNS>
 const char *name, int m, int n, nsp_itype itype
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_imatrix_create_int_impl</NAME>
+<RETURNS>NspIMatrix *</RETURNS>
+NspIMatrix *First, NspIMatrix *Step,NspIMatrix *Last
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_imatrix_clone</NAME>
@@ -18096,6 +19814,11 @@ NspIMatrix *A
 <NAME>nsp_matrix_to_imatrix</NAME>
 <RETURNS>NspIMatrix *</RETURNS>
 NspMatrix *M,nsp_itype itype
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_matrix_to_imatrix_with_bounds</NAME>
+<RETURNS>NspIMatrix  *</RETURNS>
+NspMatrix *M, nsp_itype itype
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_imatrix_to_matrix</NAME>
@@ -18373,11 +20096,6 @@ int m, int n,nsp_itype itype
 int m, int n,nsp_itype itype
 </FUNCTION>
 <FUNCTION>
-<NAME>nsp_imatrix_rand</NAME>
-<RETURNS>NspIMatrix *</RETURNS>
-int m, int n,nsp_itype itype
-</FUNCTION>
-<FUNCTION>
 <NAME>nsp_imatrix_pow_matscalar</NAME>
 <RETURNS>int </RETURNS>
 NspIMatrix *A, NspIMatrix *B
@@ -18582,10 +20300,11 @@ const NspIMatrix *A
 <RETURNS>nsp_int_union </RETURNS>
 const NspIMatrix *A
 </FUNCTION>
-<TYPEDEF>
-<NAME>NspSpRowMatrix</NAME>
-typedef struct _NspSpRowmatrix NspSpRowMatrix;
-</TYPEDEF>
+<FUNCTION>
+<NAME>nsp_euclide</NAME>
+<RETURNS>void </RETURNS>
+gint32 a, gint32 b, gint32 res[]
+</FUNCTION>
 <STRUCT>
 <NAME>NspTypeSpRowMatrix</NAME>
 </STRUCT>
@@ -18672,7 +20391,7 @@ NspObject *O
 Stack stack, int i
 </FUNCTION>
 <FUNCTION>
-<NAME>IsSpRowMat</NAME>
+<NAME>IsSpMat</NAME>
 <RETURNS>int </RETURNS>
 const NspObject *O
 </FUNCTION>
@@ -19277,7 +20996,7 @@ struct _NspTypeGraphic {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 42 "codegen/graphic.override"
+#line 45 "codegen/graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
@@ -19292,7 +21011,7 @@ struct _NspTypeGraphic {
   invalidate_func *invalidate;
 
 
-#line 63 "./graphic.h"
+#line 78 "./graphic.h"
 };
 
 </STRUCT>
@@ -19346,12 +21065,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_graphic_create</NAME>
 <RETURNS>NspGraphic *</RETURNS>
-char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type
+const char *name,gboolean hilited,gboolean show,void* Fig,void* Axe,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_graphic_create_default</NAME>
 <RETURNS>NspGraphic *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_graphic_copy</NAME>
@@ -19471,7 +21190,7 @@ struct _NspTypeCurve {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./curve.h"
+#line 48 "./curve.h"
 };
 
 </STRUCT>
@@ -19528,12 +21247,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_curve_create</NAME>
 <RETURNS>NspCurve *</RETURNS>
-char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type
+const char *name,int mark,int width,int style,int color,int mode,NspMatrix* Pts,char* legend,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_curve_create_default</NAME>
 <RETURNS>NspCurve *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_curve_copy</NAME>
@@ -19630,6 +21349,71 @@ XDR *xdrs, NspCurve *M
 <RETURNS>int </RETURNS>
 XDR  *xdrs, NspCurve *M
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_get_libdir</NAME>
+<RETURNS>const char *</RETURNS>
+int num
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_enter_macros</NAME>
+<RETURNS>int </RETURNS>
+const char *dir_name,int recursive,int compile
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_delete_macros</NAME>
+<RETURNS>int </RETURNS>
+const char *dirname
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_find_macro</NAME>
+<RETURNS>NspObject *</RETURNS>
+const char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_init_macro_table</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_macro_table_reset_cache</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_enter_function</NAME>
+<RETURNS>int </RETURNS>
+const char *str, int Int, int Num
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_delete_function</NAME>
+<RETURNS>void </RETURNS>
+const char *str
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_find_function</NAME>
+<RETURNS>int </RETURNS>
+const char *str, int *Int, int *Num
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_init_function_table</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_find_function_by_id</NAME>
+<RETURNS>int </RETURNS>
+char *key, int Int, int Num
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_print_function_table</NAME>
+<RETURNS>void </RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_delete_interface_functions</NAME>
+<RETURNS>void </RETURNS>
+int Int
+</FUNCTION>
 <STRUCT>
 <NAME>NspGrArc</NAME>
 </STRUCT>
@@ -19643,7 +21427,7 @@ struct _NspTypeGrArc {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./grarc.h"
+#line 48 "./grarc.h"
 };
 
 </STRUCT>
@@ -19702,12 +21486,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_grarc_create</NAME>
 <RETURNS>NspGrArc *</RETURNS>
-char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type
+const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grarc_create_default</NAME>
 <RETURNS>NspGrArc *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_grarc_copy</NAME>
@@ -19812,10 +21596,6 @@ extern function int_bmatrix_b2m;
 <NAME>int_bmatrix_setrc</NAME>
 extern function int_bmatrix_setrc;
 </VARIABLE>
-<TYPEDEF>
-<NAME>NspIVect</NAME>
-typedef struct _NspIvect  NspIVect;
-</TYPEDEF>
 <STRUCT>
 <NAME>NspTypeIVect</NAME>
 typedef struct _NspTypeIVect { 
@@ -20485,7 +22265,7 @@ struct _NspTypeClassARef {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./classaref.h"
+#line 43 "./classaref.h"
 };
 
 </STRUCT>
@@ -20540,12 +22320,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_classaref_create</NAME>
 <RETURNS>NspClassARef *</RETURNS>
-char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type
+const char *name,int cla_color,int cla_thickness,NspMatrix* cla_val,NspBMatrix* cla_bval,NspList* cla_lval,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classaref_create_default</NAME>
 <RETURNS>NspClassARef *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_classaref_copy</NAME>
@@ -20643,9 +22423,6 @@ XDR *xdrs, NspClassARef *M
 XDR  *xdrs, NspClassARef *M
 </FUNCTION>
 <STRUCT>
-<NAME>NspSerial</NAME>
-</STRUCT>
-<STRUCT>
 <NAME>NspTypeSerial</NAME>
 </STRUCT>
 <USER_FUNCTION>
@@ -20704,7 +22481,7 @@ const char *name,const char *buf,int nbytes
 <FUNCTION>
 <NAME>nsp_serial_copy</NAME>
 <RETURNS>NspSerial *</RETURNS>
-NspSerial *H
+const NspSerial *H
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_serial_destroy</NAME>
@@ -20766,6 +22543,16 @@ const NspSerial *S
 <RETURNS>NspSerial *</RETURNS>
 const NspMatrix *A
 </FUNCTION>
+<FUNCTION>
+<NAME>nsp_serial_compress</NAME>
+<RETURNS>NspSerial *</RETURNS>
+const NspSerial *S
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_serial_uncompress</NAME>
+<RETURNS>NspSerial *</RETURNS>
+const NspSerial *Sz
+</FUNCTION>
 <STRUCT>
 <NAME>NspFigureData</NAME>
 </STRUCT>
@@ -20779,7 +22566,7 @@ struct _NspTypeFigureData {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./figuredata.h"
+#line 43 "./figuredata.h"
 };
 
 </STRUCT>
@@ -20835,12 +22622,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_figuredata_create</NAME>
 <RETURNS>NspFigureData *</RETURNS>
-char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type
+const char *name,int color,int background,NspMatrix* colormap,int dashes,int font,int font_size,int foreground,int hidden3d,int line_mode,int line_style,int mark,int mark_size,int pattern,int pixmap,int thickness,int use_color,gboolean auto_clear,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_figuredata_create_default</NAME>
 <RETURNS>NspFigureData *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_figuredata_copy</NAME>
@@ -20950,7 +22737,7 @@ struct _NspTypePolyline3d {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./polyline3d.h"
+#line 48 "./polyline3d.h"
 };
 
 </STRUCT>
@@ -21004,12 +22791,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_polyline3d_create</NAME>
 <RETURNS>NspPolyline3d *</RETURNS>
-char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type
+const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_polyline3d_create_default</NAME>
 <RETURNS>NspPolyline3d *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_polyline3d_copy</NAME>
@@ -21192,6 +22979,101 @@ extern NspTypeGRint *nsp_type_grint;
 <NAME>new_type_grint</NAME>
 <RETURNS>NspTypeGRint *</RETURNS>
 type_mode mode
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval</NAME>
+<RETURNS>int </RETURNS>
+PList L1,Stack, int first, int rhs,int lhs,int display
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_arg</NAME>
+<RETURNS>int </RETURNS>
+PList L,Stack *stack, int i,int rhs,int lhs,int display
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_func</NAME>
+<RETURNS>int </RETURNS>
+NspObject *O,const char *str,int msuffix, Stack, int first, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_maybe_accelerated_op</NAME>
+<RETURNS>int </RETURNS>
+char *opname, int msuffix, accelerated_ops tab_id,Stack stack, int first, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_maybe_accelerated_binop</NAME>
+<RETURNS>int </RETURNS>
+const char *opname, int opcode, Stack stack, int first, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_dotplus</NAME>
+<RETURNS>int </RETURNS>
+Stack, int first, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_macro</NAME>
+<RETURNS>int </RETURNS>
+NspObject *OF,Stack,int first,int rhs,int opt,int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_method</NAME>
+<RETURNS>int </RETURNS>
+char *str, Stack stack, int first, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_macro_body</NAME>
+<RETURNS>int </RETURNS>
+NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs,int display
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_extract</NAME>
+<RETURNS>int </RETURNS>
+Stack,int first,int rhs,int opt,int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_eval_extract_cells</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int first, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_store_result</NAME>
+<RETURNS>int </RETURNS>
+char *str,Stack stack, int first
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_interfaces</NAME>
+<RETURNS>int </RETURNS>
+int i, int num, Stack, int rhs, int opt, int lhs
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_check_stack</NAME>
+<RETURNS>int </RETURNS>
+Stack, int rhs, int opt, int lhs,char *message,char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_build_funcname</NAME>
+<RETURNS>void </RETURNS>
+const char *str,Stack *stack,int first,int rhs,char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_build_funcnameij</NAME>
+<RETURNS>void </RETURNS>
+const char *str,Stack *stack,int first,int i,int j,char *name
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_void_seq_object_destroy</NAME>
+<RETURNS>void </RETURNS>
+Stack stack,int from, int to
+</FUNCTION>
+<FUNCTION>
+<NAME>reorder_stack</NAME>
+<RETURNS>int </RETURNS>
+Stack stack, int ret
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_parser_get_line</NAME>
+<RETURNS>int </RETURNS>
+PList L
 </FUNCTION>
 <USER_FUNCTION>
 <NAME>Scig_command_handler</NAME>
@@ -21546,7 +23428,7 @@ struct _NspTypeSPolyhedron {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 29 "./spolyhedron.h"
+#line 48 "./spolyhedron.h"
 };
 
 </STRUCT>
@@ -21614,12 +23496,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_spolyhedron_create</NAME>
 <RETURNS>NspSPolyhedron *</RETURNS>
-char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type
+const char *name,NspMatrix* Mcoord,NspMatrix* Mface,NspMatrix* Mval,double vmin,double vmax,int colmin,int colmax,int coloutmin,int coloutmax,gboolean mesh,gboolean mesh_only,int back_color,gboolean shade,void* Mcoord_l,int* pos, int pos_length,int* fill, int fill_length,double* vlevel, int vlevel_length,int coldef,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spolyhedron_create_default</NAME>
 <RETURNS>NspSPolyhedron *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_spolyhedron_copy</NAME>
@@ -21749,7 +23631,7 @@ struct _NspTypeLink {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 79 "./link.h"
+#line 93 "./link.h"
 };
 
 </STRUCT>
@@ -21806,12 +23688,12 @@ type_mode mode
 <FUNCTION>
 <NAME>nsp_link_create</NAME>
 <RETURNS>NspLink *</RETURNS>
-char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,NspTypeBase *type
+const char *name,void* object_sid,int color,int thickness,int background,NspMatrix* poly,grl_lock lock1,grl_lock lock2,NspTypeBase *type
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_link_create_default</NAME>
 <RETURNS>NspLink *</RETURNS>
-char *name
+const char *name
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_link_copy</NAME>
@@ -21921,8 +23803,524 @@ NspLink *L,const double pt[2]
 <FUNCTION>
 <NAME>link_create_n</NAME>
 <RETURNS>NspLink *</RETURNS>
-char *name,int n,int color,int thickness
+const char *name,int n,int color,int thickness
 </FUNCTION>
+<TYPEDEF>
+<NAME>bool_t</NAME>
+typedef unsigned int bool_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>int32_t</NAME>
+typedef int int32_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>int8_t</NAME>
+typedef signed char int8_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>uint8_t</NAME>
+typedef unsigned char uint8_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>int16_t</NAME>
+typedef signed short int16_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>uint16_t</NAME>
+typedef unsigned short uint16_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>int64_t</NAME>
+typedef __int64 int64_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>uint64_t</NAME>
+typedef unsigned __int64 uint64_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>int64_t</NAME>
+typedef long long int int64_t;
+</TYPEDEF>
+<TYPEDEF>
+<NAME>uint64_t</NAME>
+typedef unsigned long long int uint64_t;
+</TYPEDEF>
+<MACRO>
+<NAME>BYTES_PER_XDR_UNIT</NAME>
+#define BYTES_PER_XDR_UNIT	(4)
+</MACRO>
+<MACRO>
+<NAME>RNDUP</NAME>
+#define RNDUP(x)  ((((x) + BYTES_PER_XDR_UNIT - 1) / BYTES_PER_XDR_UNIT) \
+		   * BYTES_PER_XDR_UNIT)
+</MACRO>
+<USER_FUNCTION>
+<NAME>xdrproc_t</NAME>
+<RETURNS>bool_t </RETURNS>
+
+</USER_FUNCTION>
+<TYPEDEF>
+<NAME>XDR</NAME>
+typedef struct XDR XDR;
+</TYPEDEF>
+<FUNCTION>
+<NAME>x_getlong</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, long *__lp
+</FUNCTION>
+<FUNCTION>
+<NAME>x_putlong</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, __const long *__lp
+</FUNCTION>
+<FUNCTION>
+<NAME>x_getbytes</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, caddr_t __addr, u_int __len
+</FUNCTION>
+<FUNCTION>
+<NAME>x_putbytes</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, __const char *__addr, u_int __len
+</FUNCTION>
+<FUNCTION>
+<NAME>x_getpostn</NAME>
+<RETURNS>u_int </RETURNS>
+__const XDR *__xdrs
+</FUNCTION>
+<FUNCTION>
+<NAME>x_setpostn</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, u_int __pos
+</FUNCTION>
+<FUNCTION>
+<NAME>x_inline</NAME>
+<RETURNS>int32_t *</RETURNS>
+XDR *__xdrs, u_int __len
+</FUNCTION>
+<FUNCTION>
+<NAME>x_destroy</NAME>
+<RETURNS>void </RETURNS>
+XDR *__xdrs
+</FUNCTION>
+<FUNCTION>
+<NAME>x_getint32</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, int32_t *__ip
+</FUNCTION>
+<FUNCTION>
+<NAME>x_putint32</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, __const int32_t *__ip
+</FUNCTION>
+<MACRO>
+<NAME>XDR_GETINT32</NAME>
+#define XDR_GETINT32(xdrs, int32p)		\
+  (*(xdrs)->x_ops->x_getint32)(xdrs, int32p)
+</MACRO>
+<MACRO>
+<NAME>xdr_getint32</NAME>
+#define xdr_getint32(xdrs, int32p)		\
+  (*(xdrs)->x_ops->x_getint32)(xdrs, int32p)
+</MACRO>
+<MACRO>
+<NAME>XDR_PUTINT32</NAME>
+#define XDR_PUTINT32(xdrs, int32p)		\
+  (*(xdrs)->x_ops->x_putint32)(xdrs, int32p)
+</MACRO>
+<MACRO>
+<NAME>xdr_putint32</NAME>
+#define xdr_putint32(xdrs, int32p)		\
+  (*(xdrs)->x_ops->x_putint32)(xdrs, int32p)
+</MACRO>
+<MACRO>
+<NAME>XDR_GETLONG</NAME>
+#define XDR_GETLONG(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
+</MACRO>
+<MACRO>
+<NAME>xdr_getlong</NAME>
+#define xdr_getlong(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_getlong)(xdrs, longp)
+</MACRO>
+<MACRO>
+<NAME>XDR_PUTLONG</NAME>
+#define XDR_PUTLONG(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
+</MACRO>
+<MACRO>
+<NAME>xdr_putlong</NAME>
+#define xdr_putlong(xdrs, longp)		\
+  (*(xdrs)->x_ops->x_putlong)(xdrs, longp)
+</MACRO>
+<MACRO>
+<NAME>XDR_GETBYTES</NAME>
+#define XDR_GETBYTES(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
+</MACRO>
+<MACRO>
+<NAME>xdr_getbytes</NAME>
+#define xdr_getbytes(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_getbytes)(xdrs, addr, len)
+</MACRO>
+<MACRO>
+<NAME>XDR_PUTBYTES</NAME>
+#define XDR_PUTBYTES(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
+</MACRO>
+<MACRO>
+<NAME>xdr_putbytes</NAME>
+#define xdr_putbytes(xdrs, addr, len)		\
+  (*(xdrs)->x_ops->x_putbytes)(xdrs, addr, len)
+</MACRO>
+<MACRO>
+<NAME>XDR_GETPOS</NAME>
+#define XDR_GETPOS(xdrs)			\
+  (*(xdrs)->x_ops->x_getpostn)(xdrs)
+</MACRO>
+<MACRO>
+<NAME>xdr_getpos</NAME>
+#define xdr_getpos(xdrs)			\
+  (*(xdrs)->x_ops->x_getpostn)(xdrs)
+</MACRO>
+<MACRO>
+<NAME>XDR_SETPOS</NAME>
+#define XDR_SETPOS(xdrs, pos)			\
+  (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
+</MACRO>
+<MACRO>
+<NAME>xdr_setpos</NAME>
+#define xdr_setpos(xdrs, pos)			\
+  (*(xdrs)->x_ops->x_setpostn)(xdrs, pos)
+</MACRO>
+<MACRO>
+<NAME>XDR_INLINE</NAME>
+#define	XDR_INLINE(xdrs, len)			\
+  (*(xdrs)->x_ops->x_inline)(xdrs, len)
+</MACRO>
+<MACRO>
+<NAME>xdr_inline</NAME>
+#define	xdr_inline(xdrs, len)			\
+  (*(xdrs)->x_ops->x_inline)(xdrs, len)
+</MACRO>
+<MACRO>
+<NAME>XDR_DESTROY</NAME>
+#define	XDR_DESTROY(xdrs)			\
+  if ((xdrs)->x_ops->x_destroy)			\
+    (*(xdrs)->x_ops->x_destroy)(xdrs)
+</MACRO>
+<MACRO>
+<NAME>xdr_destroy</NAME>
+#define	xdr_destroy(xdrs)			\
+  if ((xdrs)->x_ops->x_destroy)			\
+    (*(xdrs)->x_ops->x_destroy)(xdrs)
+</MACRO>
+<MACRO>
+<NAME>NULL_xdrproc_t</NAME>
+#define NULL_xdrproc_t ((xdrproc_t)0)
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_INT32</NAME>
+#define IXDR_GET_INT32(buf)           ((int32_t)ntohl((uint32_t)*(buf)++))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_INT32</NAME>
+#define IXDR_PUT_INT32(buf, v)        (*(buf)++ = (int32_t)htonl((uint32_t)(v)))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_U_INT32</NAME>
+#define IXDR_GET_U_INT32(buf)         ((uint32_t)IXDR_GET_INT32(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_U_INT32</NAME>
+#define IXDR_PUT_U_INT32(buf, v)      IXDR_PUT_INT32(buf, (int32_t)(v))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_LONG</NAME>
+#define IXDR_GET_LONG(buf) ((long)IXDR_GET_U_INT32(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_LONG</NAME>
+#define IXDR_PUT_LONG(buf, v) ((long)IXDR_PUT_INT32(buf, (long)(v)))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_U_LONG</NAME>
+#define IXDR_GET_U_LONG(buf)	      ((u_long)IXDR_GET_LONG(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_U_LONG</NAME>
+#define IXDR_PUT_U_LONG(buf, v)	      IXDR_PUT_LONG(buf, (long)(v))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_BOOL</NAME>
+#define IXDR_GET_BOOL(buf)		((bool_t)IXDR_GET_LONG(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_ENUM</NAME>
+#define IXDR_GET_ENUM(buf, t)		((t)IXDR_GET_LONG(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_SHORT</NAME>
+#define IXDR_GET_SHORT(buf)		((short)IXDR_GET_LONG(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_GET_U_SHORT</NAME>
+#define IXDR_GET_U_SHORT(buf)		((u_short)IXDR_GET_LONG(buf))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_BOOL</NAME>
+#define IXDR_PUT_BOOL(buf, v)		IXDR_PUT_LONG((buf), ((long)(v)))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_ENUM</NAME>
+#define IXDR_PUT_ENUM(buf, v)		IXDR_PUT_LONG((buf), ((long)(v)))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_SHORT</NAME>
+#define IXDR_PUT_SHORT(buf, v)		IXDR_PUT_LONG((buf), ((long)(v)))
+</MACRO>
+<MACRO>
+<NAME>IXDR_PUT_U_SHORT</NAME>
+#define IXDR_PUT_U_SHORT(buf, v)	IXDR_PUT_LONG((buf), ((long)(v)))
+</MACRO>
+<FUNCTION>
+<NAME>xdr_void</NAME>
+<RETURNS>bool_t	</RETURNS>
+void
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_short</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, short *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_u_short</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, u_short *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_int</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, int *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_u_int</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, u_int *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_long</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, long *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_u_long</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, u_long *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_bool</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, bool_t *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_enum</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, enum_t *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_array</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char **, u_int *, u_int, u_int, xdrproc_t
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_bytes</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char **, u_int *, u_int
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_opaque</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, caddr_t, u_int
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_string</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char **, u_int
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_union</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, enum_t *, char *, struct xdr_discrim *, xdrproc_t
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_char</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_u_char</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_vector</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char *, u_int, u_int, xdrproc_t
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_float</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, float *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_double</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, double *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_reference</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, caddr_t *, u_int, xdrproc_t
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_pointer</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, caddr_t *, u_int, xdrproc_t
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_wrapstring</NAME>
+<RETURNS>bool_t	</RETURNS>
+XDR *, char **
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_free</NAME>
+<RETURNS>void	</RETURNS>
+xdrproc_t, char *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_int8_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, int8_t *__ip
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_uint8_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, uint8_t *__up
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_int16_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, int16_t *__ip
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_uint16_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, uint16_t *__up
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_int32_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, int32_t *__ip
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_uint32_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, uint32_t *__up
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_int64_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, int64_t *__ip
+</FUNCTION>
+<FUNCTION>
+<NAME>xdr_uint64_t</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *__xdrs, uint64_t *__up
+</FUNCTION>
+<MACRO>
+<NAME>MAX_NETOBJ_SZ</NAME>
+#define MAX_NETOBJ_SZ 1024
+</MACRO>
+<TYPEDEF>
+<NAME>netobj</NAME>
+typedef struct netobj netobj;
+</TYPEDEF>
+<FUNCTION>
+<NAME>xdr_netobj</NAME>
+<RETURNS>bool_t   </RETURNS>
+
+</FUNCTION>
+<FUNCTION>
+<NAME>xdrmem_create</NAME>
+<RETURNS>void   </RETURNS>
+XDR *, char *, u_int, enum xdr_op
+</FUNCTION>
+<FUNCTION>
+<NAME>xdrstdio_create</NAME>
+<RETURNS>void   </RETURNS>
+XDR *, FILE *, enum xdr_op
+</FUNCTION>
+<FUNCTION>
+<NAME>xdrrec_create</NAME>
+<RETURNS>void   </RETURNS>
+XDR *, u_int, u_int, char *, int (*)(), int (*)()
+</FUNCTION>
+<FUNCTION>
+<NAME>xdrrec_endofrecord</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *, int
+</FUNCTION>
+<FUNCTION>
+<NAME>xdrrec_skiprecord</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *
+</FUNCTION>
+<FUNCTION>
+<NAME>xdrrec_eof</NAME>
+<RETURNS>bool_t </RETURNS>
+XDR *
+</FUNCTION>
+<MACRO>
+<NAME>bool_t</NAME>
+#define	bool_t	int
+</MACRO>
+<MACRO>
+<NAME>enum_t</NAME>
+#define	enum_t	int
+</MACRO>
+<MACRO>
+<NAME>NULL</NAME>
+#	define NULL	0
+</MACRO>
+<MACRO>
+<NAME>mem_alloc</NAME>
+#define mem_alloc(bsize)	malloc(bsize)
+</MACRO>
+<MACRO>
+<NAME>mem_free</NAME>
+#define mem_free(ptr, bsize)	free(ptr)
+</MACRO>
+<TYPEDEF>
+<NAME>caddr_t</NAME>
+typedef char * caddr_t;
+</TYPEDEF>
+<MACRO>
+<NAME>bzero</NAME>
+#define bzero(x,n) memset(x,0,n)
+</MACRO>
+<MACRO>
+<NAME>bcopy</NAME>
+#define bcopy(x,y,n) memcpy(x,y,n)
+</MACRO>
+<MACRO>
+<NAME>IEEEFP</NAME>
+#define IEEEFP
+</MACRO>
+<MACRO>
+<NAME>INADDR_LOOPBACK</NAME>
+#define	INADDR_LOOPBACK		(u_long)0x7F000001
+</MACRO>
 <TYPEDEF>
 <NAME>window_scale_list</NAME>
 typedef struct wcscalelist window_scale_list;
@@ -22093,7 +24491,7 @@ int
 <FUNCTION>
 <NAME>nsp_gr_export</NAME>
 <RETURNS>void </RETURNS>
-const char *fname, int iwin, int color,const char *driver,char option
+const char *fname, int iwin, int color,const char *driver,char option,int figure_export
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_gr_expose</NAME>
@@ -22407,7 +24805,7 @@ BCG *Xgc,legends_pos pos,int n1,const int *style,const char * legend,const char 
 <FUNCTION>
 <NAME>graduate</NAME>
 <RETURNS>int </RETURNS>
-double *,double *,double *,double *,int *,int *,int *,int *,int *
+const double *,const double *,double *,double *,int *,int *,int *,int *,int *
 </FUNCTION>
 <FUNCTION>
 <NAME>update_frame_bounds</NAME>
@@ -22841,6 +25239,10 @@ struct __BCG
   BCG_PRIVATE *private ;  /* only visible when inside a specific driver */ 
 #endif 
   nsp_event_queue queue; /* a queue for storing event when outside xclick */
+  int figure_bg_draw;   /* used in exporting: if true draw the figure background 
+			 * if false do not so as to obtain transparent icons 
+			 * used for creating icons from graphics.
+			 */
 } ;
 </STRUCT>
 <FUNCTION>
@@ -23090,7 +25492,7 @@ struct _nsp_gc_actions {
   driver_gc_change *change ;
   driver_gc_2dzoom *zoom ;
   driver_gc_3drot  *rotation ;
-  driver_gc_delete *delete ;
+  driver_gc_delete *destroy ;
   driver_gc_erase  *erase ;
   driver_gc_expose *expose ;
   driver_gc_loadsg *loadsg; 
@@ -23547,6 +25949,18 @@ struct _nsp_gengine1 {
 };
 
 </STRUCT>
+<ENUM>
+<NAME>gr_str_posx</NAME>
+typedef enum { GR_STR_XLEFT ,GR_STR_XCENTER , GR_STR_XRIGHT} gr_str_posx;
+</ENUM>
+<ENUM>
+<NAME>gr_str_posy</NAME>
+typedef enum { GR_STR_YBOTTOM ,GR_STR_YCENTER , GR_STR_YBASELINE, GR_STR_YUP } gr_str_posy;
+</ENUM>
+<ENUM>
+<NAME>gr_str_box</NAME>
+typedef enum { GR_in_box, GR_fill_box, GR_no_box} gr_str_box;
+</ENUM>
 <FUNCTION>
 <NAME>nsp_drawpolyline_clip</NAME>
 <RETURNS>void </RETURNS>
@@ -24038,9 +26452,9 @@ NcFStruct *E
 double nu1, double nu2, double xnonc
 </FUNCTION>
 <FUNCTION>
-<NAME>rand_genprm</NAME>
-<RETURNS>void </RETURNS>
-double *array, int larray
+<NAME>nsp_rand_prm_array</NAME>
+<RETURNS>int </RETURNS>
+NspObject *Objarray
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_rand_prm</NAME>
@@ -24221,6 +26635,11 @@ double a
 <NAME>nsp_rand_lognormal</NAME>
 <RETURNS>double </RETURNS>
 double mu, double sigma
+</FUNCTION>
+<FUNCTION>
+<NAME>nsp_rand_t</NAME>
+<RETURNS>double </RETURNS>
+double nu, double delta
 </FUNCTION>
 <MACRO>
 <NAME>NbGenInNsp</NAME>
@@ -24406,6 +26825,16 @@ const mxArray *ptr
 <NAME>mexErrMsgTxt</NAME>
 <RETURNS>void </RETURNS>
 const char *error_msg
+</FUNCTION>
+<FUNCTION>
+<NAME>mexErrMsgIdAndTxt</NAME>
+<RETURNS>void </RETURNS>
+const char *id,const char *error_msg
+</FUNCTION>
+<FUNCTION>
+<NAME>mexWarnMsgIdAndTxt</NAME>
+<RETURNS>void </RETURNS>
+const char *id,const char *error_msg
 </FUNCTION>
 <FUNCTION>
 <NAME>mxCreateFull</NAME>
@@ -24663,6 +27092,11 @@ size_t n
 </FUNCTION>
 <FUNCTION>
 <NAME>mxDestroyArray</NAME>
+<RETURNS>void </RETURNS>
+mxArray *ptr
+</FUNCTION>
+<FUNCTION>
+<NAME>mxDestroyNamedArray</NAME>
 <RETURNS>void </RETURNS>
 mxArray *ptr
 </FUNCTION>
@@ -25006,4 +27440,14 @@ int trapflag
 <NAME>mexCheck</NAME>
 <RETURNS>int </RETURNS>
 const char *str,int nbvars
+</FUNCTION>
+<FUNCTION>
+<NAME>mat2fort</NAME>
+<RETURNS>void *</RETURNS>
+const mxArray *ptr, int m, int n
+</FUNCTION>
+<FUNCTION>
+<NAME>fort2mat</NAME>
+<RETURNS>mxArray *</RETURNS>
+void *data,int lda, int m, int n
 </FUNCTION>
