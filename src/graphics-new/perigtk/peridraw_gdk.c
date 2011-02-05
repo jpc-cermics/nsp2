@@ -862,6 +862,7 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
       double xt,yt;
       GdkRectangle rect;
       PangoMatrix matrix = PANGO_MATRIX_INIT; 
+      int xpos=x,ypos=y;
       pango_matrix_rotate (&matrix, - angle );
       pango_context_set_matrix (Xgc->private->context, &matrix);
       pango_layout_context_changed (Xgc->private->layout);
@@ -873,8 +874,16 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
        * of the string we want the string to rotate around this point. 
        * thus we cannot call gdk_draw_layout with (x,y) directly.
        */
-      xt = 0 * matrix.xx + -height * matrix.xy + matrix.x0;
-      yt = 0 * matrix.yx + -height * matrix.yy + matrix.y0;
+      xpos = 0; ypos= -height;
+      /* XXXXX This is unfinished since we have only treated the centered case 
+       * It should be done in cairo and opengl.
+       */
+      if ( posx == GR_STR_XCENTER && posy == GR_STR_YCENTER )
+	{
+	  xpos = -width/2; ypos= -height/2;
+	}
+      xt = matrix.xx*xpos + matrix.xy*ypos + matrix.x0;
+      yt = matrix.yx*xpos + matrix.yy*ypos + matrix.y0;
       get_rotated_layout_bounds (Xgc->private->layout, &matrix,&rect);
       gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,
 		       x+rect.x+xt,y+rect.y+yt,Xgc->private->layout);
@@ -900,8 +909,8 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
     }
   else
     {
-      int xpos=x,ypos=y;
       /* horizontal string */
+      int xpos=x,ypos=y;
       switch( posx ) 
 	{
 	case GR_STR_XLEFT: xpos = x; break;

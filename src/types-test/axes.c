@@ -1078,9 +1078,10 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children =  (NspList *) val;
-  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj );
+  /* some objects need an Xgc for computing their bounds */
+  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   return OK;
 }
 
@@ -1096,14 +1097,14 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children= children;
-  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj);
+  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   return OK;
 }
 
 
-#line 1107 "axes.c"
+#line 1108 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1389,7 +1390,7 @@ static AttrTab axes_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 177 "codegen/axes.override"
+#line 178 "codegen/axes.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1398,10 +1399,10 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1402 "axes.c"
+#line 1403 "axes.c"
 
 
-#line 187 "codegen/axes.override"
+#line 188 "codegen/axes.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1411,7 +1412,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1415 "axes.c"
+#line 1416 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1442,7 +1443,7 @@ void Axes_Interf_Info(int i, char **fname, function (**f))
   *f = Axes_func[i].fonc;
 }
 
-#line 198 "codegen/axes.override"
+#line 199 "codegen/axes.override"
 
 /* inserted verbatim at the end */
 static int nsp_axes_legends(BCG *Xgc,NspAxes *axe);
@@ -2413,4 +2414,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2417 "axes.c"
+#line 2418 "axes.c"

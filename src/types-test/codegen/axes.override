@@ -147,9 +147,10 @@ static int _wrap_axes_set_obj_children(void *self,NspObject *val)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children =  (NspList *) val;
-  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) val,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj );
+  /* some objects need an Xgc for computing their bounds */
+  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   return OK;
 }
 
@@ -165,9 +166,9 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
       nsp_list_destroy(((NspAxes *) self)->obj->children);
     }
   ((NspAxes *) self)->obj->children= children;
-  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   if ( ((NspGraphic *) self)->obj->Fig != NULL) 
     nsp_list_link_figure((NspList *) O,((NspGraphic *) self)->obj->Fig,((NspAxes *) self)->obj);
+  nsp_axes_compute_inside_bounds(self,((NspAxes *) self)->obj->bounds->R);
   return OK;
 }
 

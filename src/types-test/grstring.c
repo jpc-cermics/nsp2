@@ -1075,22 +1075,21 @@ static void nsp_scale_grstring(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of grstring 
- *
+/* compute in @bounds the enclosing rectangle of grstring 
+ * Note that it only works when the grstring is inside a 
+ * figure. 
  */
 
 static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 {
   nsp_string str;
   NspGrstring *P = (NspGrstring *) Obj;
+  NspSMatrix *S = P->obj->text;
   int rect1[4],fontid[2];
   double width, height;
   nsp_axes *axe = Obj->obj->Axe;
   nsp_figure *F = Obj->obj->Fig;
-  BCG *Xgc = F->Xgc;
-  NspSMatrix *S = P->obj->text;
-  if ( Xgc == NULL) return FALSE;
-
+  BCG *Xgc;
   if ( S->mn != 1) 
     {
       if (( str =nsp_smatrix_elts_concat(S,"\n",1," ",1))== NULL) return FALSE;
@@ -1109,6 +1108,8 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       bounds[3]= P->obj->y+  P->obj->h;;
       break;
     case GR_in_box :
+      /* here we need a Figure */
+      if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
       /* centred in a box  */
       if ( P->obj->size != -1 ) 
 	{
@@ -1127,6 +1128,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       break;
     case GR_no_box : 
       /* no box case */
+      if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
       if ( P->obj->size != -1 ) 
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
@@ -1154,9 +1156,8 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	}
       break;
     }
-  
   return TRUE;
 }
 
 
-#line 1163 "grstring.c"
+#line 1164 "grstring.c"
