@@ -1377,8 +1377,8 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
  * @L: 
  * @Obj: 
  * 
- * Remove a graphic object in a Figure 
- * by exploring the axes
+ * Remove a graphic object in a List and recursively 
+ * explore the list elements if they can contain children
  * 
  * 
  * Returns: 
@@ -1391,15 +1391,36 @@ static int nsp_list_delete_graphic_obj(NspFigure *F,NspList *L, NspGraphic *Obj)
     {
       if ( Loc->O != NULLOBJ )
 	{
-	  NspGraphic *G1= (NspGraphic *) Loc->O;
-	  if ( G1->obj == Obj->obj ) 
+	  NspGraphic *G= (NspGraphic *) Loc->O;
+	  if ( G->obj == Obj->obj ) 
 	    {
-	      G1->type->unlink_figure(G1,F->obj);
+	      G->type->unlink_figure(G,F->obj);
 	      nsp_remove_cell_from_list(L, Loc);
 	      L->icurrent = 0;
 	      L->current = NULLCELL;
 	      nsp_cell_destroy(&Loc);
 	      return OK;
+	    }
+	  else 
+	    {
+	      if ( IsAxes(NSP_OBJECT(G)))
+		{ 
+		  NspAxes *A = (NspAxes *) G;
+		  NspList *L1=  A->obj->children;
+		  if (nsp_list_delete_graphic_obj(F,L1, Obj)==OK) return OK;
+		}
+	      else if ( IsObjs3d(NSP_OBJECT(G)))
+		{
+		  NspObjs3d *A = (NspObjs3d *) G;
+		  NspList *L1=  A->obj->children;
+		  if ( nsp_list_delete_graphic_obj(F,L1, Obj)==OK) return OK;
+		}
+	      else if ( IsCompound(NSP_OBJECT(G)))
+		{
+		  NspCompound *C = (NspCompound *) G;
+		  NspList *L1=  C->obj->children;
+		  if ( nsp_list_delete_graphic_obj(F,L1, Obj)==OK) return OK;
+		}
 	    }
 	}
       Loc = Loc->next;
