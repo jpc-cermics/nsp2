@@ -159,7 +159,7 @@ static int int_lsq( Stack stack, int rhs, int opt, int lhs)
 
 static int int_svd( Stack stack, int rhs, int opt, int lhs)
 {
-  char *mode = NULL,cmode ;
+  char *mode = NULL,cmode;
   double tol = 0, *Tol=NULL;
   NspMatrix *A;
   NspMatrix *S=NULL, *U=NULL,*V=NULL, *rank=NULL;
@@ -1470,7 +1470,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     if ( stat == FAIL ) goto err;
     else if ( rcond <= tol_rcond )
       {
-	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	Scierror("Error: matrix is badly conditionned (rcond = %g)\n",rcond);
 	goto err;
       }
     break;
@@ -1483,7 +1483,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     if ( stat == FAIL ) goto err;
     else if ( rcond <= tol_rcond )
       {
-	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	Scierror("Error: matrix is badly conditionned (rcond = %g)\n",rcond);
 	goto err;
       }
     break;
@@ -1529,7 +1529,7 @@ static int int_solve( Stack stack, int rhs, int opt, int lhs)
     if ( stat == FAIL ) goto err;
     else if ( rcond <= tol_rcond )
       {
-	Scierror("Warning: matrix is badly conditionned (rcond = %g)\n",rcond);
+	Scierror("Error: matrix is badly conditionned (rcond = %g)\n",rcond);
 	goto err;
       }
     break;
