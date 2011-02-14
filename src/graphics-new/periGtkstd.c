@@ -40,6 +40,7 @@
 #include "nsp/command.h"
 #include "nsp/object.h"
 #include "nsp/figure.h"
+#include <nsp/gtk/gtkwindow.h>
 
 static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
@@ -2089,6 +2090,21 @@ void nsp_set_cursor(BCG *Xgc,int id)
 	}
     }
 }
+
+
+NspObject *nsp_get_graphic_widget(int wid)
+{
+  NspObject *Obj;
+  BCG *Xgc;
+  if ( (Xgc=window_list_search_new(wid)) == NULL) return NULL;
+  if ( Xgc->private->window == NULL)  return NULL;
+  nsp_type_gtkwindow = new_type_gtkwindow(T_BASE);
+  Obj = (NspObject *) 
+    gobject_create(NVOID,(GObject *) Xgc->private->window,
+		   (NspTypeBase *) nsp_type_gtkwindow);
+  return Obj;
+}
+
 #endif 
 
 

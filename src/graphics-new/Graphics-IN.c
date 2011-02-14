@@ -64,6 +64,7 @@
 #include <nsp/contour.h> 
 #include <nsp/contour3d.h> 
 
+
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
 extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos); 
@@ -6292,6 +6293,24 @@ static int int_switch_graphics(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+extern NspObject *nsp_get_graphic_widget(int wid);
+
+static int int_nsp_graphic_widget(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *nsp_ret;
+  int wid;
+  CheckLhs(0,1);
+  CheckStdRhs(1,1);
+  if (GetScalarInt(stack,1,&wid) == FAIL) return RET_BUG;
+  if ((nsp_ret = nsp_get_graphic_widget(wid)) == NULL) 
+    {
+      Scierror("Error: cannot obtain the graphic widget for graphic window %d\n",
+	       wid);
+      return RET_BUG;
+    }
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
 
 /*************************************************************
  * The Interface for graphic functions 
@@ -6458,6 +6477,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xtitle"),int_xtitle},
   {NAMES("scicos_draw3D"), int_scicos_draw3D},
   {NAMES("scicos_lock_draw"), int_lock_draw},
+  {NAMES("nsp_graphic_widget"), int_nsp_graphic_widget},
   {(char *) 0, NULL}
 };
 
