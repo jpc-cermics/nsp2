@@ -293,7 +293,7 @@ int nsp_smatrix_xdr_save(XDR *xdrs, NspSMatrix *M)
   if (nsp_xdr_save_i(xdrs,M->n) == FAIL) return FAIL;
   for ( i= 0 ; i < M->mn ; i++) 
     {
-      if ( strlen(M->S[i]) > BUF_LEN ) 
+      if (0 &&  strlen(M->S[i]) > BUF_LEN ) 
 	{ 
 	  Scierror("XXX Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return FAIL;
@@ -309,7 +309,6 @@ int nsp_smatrix_xdr_save(XDR *xdrs, NspSMatrix *M)
 
 NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
 {
-  char s_buf[BUF_LEN+1];
   int m,n,i;
   NspSMatrix *M;
   static char name[NAME_MAXL];
@@ -321,12 +320,18 @@ NspSMatrix *nsp_smatrix_xdr_load(XDR *xdrs)
   /* allocate elements and store copies of A elements **/
   for ( i = 0 ; i < m*n ; i++ )
     {
+#if 0 
+      char s_buf[BUF_LEN+1];
       if (nsp_xdr_load_string(xdrs,s_buf,BUF_LEN)== FAIL) 
 	{
 	  Scierror("Warning: Lengh of element %d is too big (max=%d)\n",i, BUF_LEN ) ;
 	  return NULLSMAT;
 	}
       if ((M->S[i] =nsp_string_copy(s_buf)) == NULLSTRING ) return(NULLSMAT);
+#else 
+      if (nsp_xdr_load_new_string(xdrs,&M->S[i]) == FAIL) 
+	return NULLSMAT;
+#endif
     }
   return M;
 }
