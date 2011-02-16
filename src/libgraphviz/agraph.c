@@ -24,7 +24,7 @@
 
 
 
-#line 28 "../types-test/codegen/agraph.override"
+#line 31 "../types-test/codegen/agraph.override"
 /* headers */
 
 #line 31 "agraph.c"
@@ -461,7 +461,7 @@ NspAgraph *nsp_agraph_full_copy(NspAgraph *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 44 "../types-test/codegen/agraph.override"
+#line 47 "../types-test/codegen/agraph.override"
 
 /* override the default int_create */
 
@@ -544,6 +544,42 @@ static int _wrap_nsp_gv_render(NspAgraph *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
+static int _wrap_nsp_gv_gattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, string,t_end};
+  char *attr, *value;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&attr, &value) == FAIL) return RET_BUG;
+  ret = nsp_gv_gattr(self, attr, value);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_nsp_gv_nattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, string,t_end};
+  char *attr, *value;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&attr, &value) == FAIL) return RET_BUG;
+  ret = nsp_gv_nattr(self, attr, value);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_nsp_gv_eattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string, string,t_end};
+  char *attr, *value;
+  int ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&attr, &value) == FAIL) return RET_BUG;
+  ret = nsp_gv_eattr(self, attr, value);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static int _wrap_nsp_gv_write(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {string,t_end};
@@ -579,6 +615,9 @@ static NspMethods agraph_methods[] = {
   {"add_edges",(nsp_method *) _wrap_nsp_gv_add_edges},
   {"layout",(nsp_method *) _wrap_nsp_gv_layout},
   {"render",(nsp_method *) _wrap_nsp_gv_render},
+  {"graphattr",(nsp_method *) _wrap_nsp_gv_gattr},
+  {"nodeattr",(nsp_method *) _wrap_nsp_gv_nattr},
+  {"edgeattr",(nsp_method *) _wrap_nsp_gv_eattr},
   {"write",(nsp_method *) _wrap_nsp_gv_write},
   {"nnodes",(nsp_method *) _wrap_nsp_gv_nnodes},
   {"nedges",(nsp_method *) _wrap_nsp_gv_nedges},
@@ -3010,7 +3049,7 @@ void Agraph_Interf_Info(int i, char **fname, function (**f))
   *f = Agraph_func[i].fonc;
 }
 
-#line 76 "../types-test/codegen/agraph.override"
+#line 79 "../types-test/codegen/agraph.override"
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
@@ -3158,10 +3197,26 @@ static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
 
 static int nsp_agclose(NspAgraph * g){ return 0;};
 
-  
 
+static int nsp_gv_gattr(NspAgraph * g, char *attr, char *value)
+{
+  Agsym_t *a;
+  a = agraphattr( ((Agraph_t *)g->obj->graph)->root, attr, value);
+  return ( a == NULL) ? FALSE: TRUE;
+}
 
+static int nsp_gv_nattr(NspAgraph * g, char *attr, char *value)
+{
+  Agsym_t *a;
+  a = agnodeattr( g->obj->graph, attr, value);
+  return ( a == NULL) ? FALSE: TRUE;
+}
 
+static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value)
+{
+  Agsym_t *a;
+  a = agedgeattr( g->obj->graph, attr, value);
+  return ( a == NULL) ? FALSE: TRUE;
+}
 
-
-#line 3168 "agraph.c"
+#line 3223 "agraph.c"

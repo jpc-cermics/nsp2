@@ -23,6 +23,9 @@ static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
 static int nsp_gv_write(NspAgraph * g,void *chan);
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename);
 static int nsp_gv_layout(NspAgraph *G, char *mode);
+static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value);
+static int nsp_gv_gattr(NspAgraph * g, char *attr, char *value);
+static int nsp_gv_nattr(NspAgraph * g, char *attr, char *value);
 %%
 headers
 /* headers */
@@ -224,24 +227,20 @@ static int nsp_agclose(NspAgraph * g){ return 0;};
 static int nsp_gv_gattr(NspAgraph * g, char *attr, char *value)
 {
   Agsym_t *a;
-  a = agraphattr( G->obj->graph->root, attr, value);
-  return ( a == NULL) FALSE: TRUE;
+  a = agraphattr( ((Agraph_t *)g->obj->graph)->root, attr, value);
+  return ( a == NULL) ? FALSE: TRUE;
 }
 
 static int nsp_gv_nattr(NspAgraph * g, char *attr, char *value)
 {
   Agsym_t *a;
-  Agnode_t *node = agfstnode( G->obj->graph);
-  if ( node == NULL) return FALSE;
-  a = agnodeattr(node->graph, attr, value);
-  return ( a == NULL) FALSE: TRUE;
+  a = agnodeattr( g->obj->graph, attr, value);
+  return ( a == NULL) ? FALSE: TRUE;
 }
 
 static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value)
 {
   Agsym_t *a;
-  Agedge_t *edge = agfstedge( G->obj->graph);
-  if ( edge == NULL) return FALSE;
-  a = agedgeattr(edge->head->graph, attr, value);
-  return ( a == NULL) FALSE: TRUE;
+  a = agedgeattr( g->obj->graph, attr, value);
+  return ( a == NULL) ? FALSE: TRUE;
 }
