@@ -44,7 +44,7 @@ struct _NspTypeAgedge {
 
 typedef struct _nsp_agedge nsp_agedge;
 struct _nsp_agedge {
-  NspMatrix* Mcoord;
+  void* edge;
   int ref_count;
 };
 
@@ -74,7 +74,7 @@ NspAgedge *new_agedge();
 
 #define NULLAGEDGE (NspAgedge*) 0
 
-extern NspAgedge *nsp_agedge_create(const char *name,NspMatrix* Mcoord,NspTypeBase *type);
+extern NspAgedge *nsp_agedge_create(const char *name,void* edge,NspTypeBase *type);
 extern NspAgedge *nsp_agedge_create_default(const char *name);
 
 /* from NspAgedgeObj.c */

@@ -24,7 +24,7 @@
 
 
 
-#line 31 "../types-test/codegen/agraph.override"
+#line 35 "../types-test/codegen/agraph.override"
 /* headers */
 
 #line 31 "agraph.c"
@@ -461,7 +461,7 @@ NspAgraph *nsp_agraph_full_copy(NspAgraph *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 47 "../types-test/codegen/agraph.override"
+#line 51 "../types-test/codegen/agraph.override"
 
 /* override the default int_create */
 
@@ -592,6 +592,52 @@ static int _wrap_nsp_gv_write(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
+static int _wrap_nsp_gv_agfindnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *name;
+  NspAgnode *ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
+  ret = nsp_gv_agfindnode(self, name);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static int _wrap_nsp_gv_agfstnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspAgnode *ret;
+
+  ret = nsp_gv_agfstnode(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static int _wrap_nsp_gv_agnxtnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspObject *n;
+  NspAgnode *ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
+  ret = nsp_gv_agnxtnode(self, ((NspAgnode *) n));
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static int _wrap_nsp_gv_aglstnode(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspAgnode *ret;
+
+  ret = nsp_gv_aglstnode(self);
+  if (ret == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
 static int _wrap_nsp_gv_nnodes(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
@@ -619,6 +665,10 @@ static NspMethods agraph_methods[] = {
   {"nodeattr",(nsp_method *) _wrap_nsp_gv_nattr},
   {"edgeattr",(nsp_method *) _wrap_nsp_gv_eattr},
   {"write",(nsp_method *) _wrap_nsp_gv_write},
+  {"findnode",(nsp_method *) _wrap_nsp_gv_agfindnode},
+  {"fstnode",(nsp_method *) _wrap_nsp_gv_agfstnode},
+  {"nxtnode",(nsp_method *) _wrap_nsp_gv_agnxtnode},
+  {"lstnode",(nsp_method *) _wrap_nsp_gv_aglstnode},
   {"nnodes",(nsp_method *) _wrap_nsp_gv_nnodes},
   {"nedges",(nsp_method *) _wrap_nsp_gv_nedges},
   { NULL, NULL}
@@ -795,7 +845,7 @@ static int nsp_agnode_eq(NspAgnode *A, NspObject *B)
   NspAgnode *loc = (NspAgnode *) B;
   if ( check_cast(B,nsp_type_agnode_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( NSP_OBJECT(A->obj->Mcoord)->type->eq(A->obj->Mcoord,loc->obj->Mcoord) == FALSE ) return FALSE;
+  if ( A->obj->node != loc->obj->node) return FALSE;
   return TRUE;
 }
 
@@ -819,7 +869,6 @@ int nsp_agnode_xdr_save(XDR *xdrs, NspAgnode *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_agnode)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   return OK;
 }
 
@@ -830,7 +879,6 @@ int nsp_agnode_xdr_save(XDR *xdrs, NspAgnode *M)
 NspAgnode  *nsp_agnode_xdr_load_partial(XDR *xdrs, NspAgnode *M)
 {
   M->obj->ref_count=1;
-  if ((M->obj->Mcoord =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
  return M;
 }
 
@@ -855,8 +903,6 @@ void nsp_agnode_destroy_partial(NspAgnode *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    if ( H->obj->Mcoord != NULL ) 
-      nsp_matrix_destroy(H->obj->Mcoord);
     FREE(H->obj);
    }
 }
@@ -911,9 +957,7 @@ int nsp_agnode_print(NspAgnode *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
-    }
+  Sciprintf1(indent+2,"node=0x%x\n",M->obj->node);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -929,9 +973,7 @@ int nsp_agnode_latex(NspAgnode *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agnode_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
-    }
+  Sciprintf1(indent+2,"node=0x%x\n",M->obj->node);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1000,27 +1042,21 @@ int nsp_agnode_create_partial(NspAgnode *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_agnode)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->Mcoord = NULLMAT;
+  H->obj->node = NULL;
   return OK;
 }
 
 int nsp_agnode_check_values(NspAgnode *H)
 {
-  if ( H->obj->Mcoord == NULLMAT) 
-    {
-       if (( H->obj->Mcoord = nsp_matrix_create("Mcoord",'r',0,0)) == NULLMAT)
-       return FAIL;
-
-    }
   return OK;
 }
 
-NspAgnode *nsp_agnode_create(const char *name,NspMatrix* Mcoord,NspTypeBase *type)
+NspAgnode *nsp_agnode_create(const char *name,void* node,NspTypeBase *type)
 {
   NspAgnode *H  = nsp_agnode_create_void(name,type);
   if ( H ==  NULLAGNODE) return NULLAGNODE;
   if ( nsp_agnode_create_partial(H) == FAIL) return NULLAGNODE;
-  H->obj->Mcoord= Mcoord;
+  H->obj->node = node;
   if ( nsp_agnode_check_values(H) == FAIL) return NULLAGNODE;
   return H;
 }
@@ -1061,12 +1097,7 @@ NspAgnode *nsp_agnode_full_copy_partial(NspAgnode *H,NspAgnode *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_agnode))) == NULL) return NULLAGNODE;
   H->obj->ref_count=1;
-  if ( self->obj->Mcoord == NULL )
-    { H->obj->Mcoord = NULL;}
-  else
-    {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
-    }
+  H->obj->node = self->obj->node;
   return H;
 }
 
@@ -1106,40 +1137,7 @@ static NspMethods *agnode_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_agnode_get_Mcoord(void *self,const char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspAgnode *) self)->obj->Mcoord;
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_agnode_get_obj_Mcoord(void *self,const char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspAgnode *) self)->obj->Mcoord);
-  return (NspObject *) ret;
-}
-
-static int _wrap_agnode_set_Mcoord(void *self,const char *attr, NspObject *O)
-{
-  NspMatrix *Mcoord;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspAgnode *) self)->obj->Mcoord != NULL ) 
-    nsp_matrix_destroy(((NspAgnode *) self)->obj->Mcoord);
-  ((NspAgnode *) self)->obj->Mcoord= Mcoord;
-  return OK;
-}
-
-static AttrTab agnode_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_agnode_get_Mcoord, (attr_set_function *)_wrap_agnode_set_Mcoord,(attr_get_object_function *)_wrap_agnode_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
-  { NULL,NULL,NULL,NULL,NULL },
-};
-
+static AttrTab agnode_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAgedge ----------- */
@@ -1305,7 +1303,7 @@ static int nsp_agedge_eq(NspAgedge *A, NspObject *B)
   NspAgedge *loc = (NspAgedge *) B;
   if ( check_cast(B,nsp_type_agedge_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
-  if ( NSP_OBJECT(A->obj->Mcoord)->type->eq(A->obj->Mcoord,loc->obj->Mcoord) == FALSE ) return FALSE;
+  if ( A->obj->edge != loc->obj->edge) return FALSE;
   return TRUE;
 }
 
@@ -1329,7 +1327,6 @@ int nsp_agedge_xdr_save(XDR *xdrs, NspAgedge *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_agedge)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
-  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->Mcoord)) == FAIL) return FAIL;
   return OK;
 }
 
@@ -1340,7 +1337,6 @@ int nsp_agedge_xdr_save(XDR *xdrs, NspAgedge *M)
 NspAgedge  *nsp_agedge_xdr_load_partial(XDR *xdrs, NspAgedge *M)
 {
   M->obj->ref_count=1;
-  if ((M->obj->Mcoord =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
  return M;
 }
 
@@ -1365,8 +1361,6 @@ void nsp_agedge_destroy_partial(NspAgedge *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-    if ( H->obj->Mcoord != NULL ) 
-      nsp_matrix_destroy(H->obj->Mcoord);
     FREE(H->obj);
    }
 }
@@ -1421,9 +1415,7 @@ int nsp_agedge_print(NspAgedge *M, int indent,const char *name, int rec_level)
         }
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
-  if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
-    }
+  Sciprintf1(indent+2,"edge=0x%x\n",M->obj->edge);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1439,9 +1431,7 @@ int nsp_agedge_latex(NspAgedge *M, int indent,const char *name, int rec_level)
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_agedge_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
-  if ( M->obj->Mcoord != NULL)
-    { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcoord),indent+2,"Mcoord",rec_level+1)== FALSE ) return FALSE ;
-    }
+  Sciprintf1(indent+2,"edge=0x%x\n",M->obj->edge);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -1510,27 +1500,21 @@ int nsp_agedge_create_partial(NspAgedge *H)
 {
   if((H->obj = calloc(1,sizeof(nsp_agedge)))== NULL ) return FAIL;
   H->obj->ref_count=1;
-  H->obj->Mcoord = NULLMAT;
+  H->obj->edge = NULL;
   return OK;
 }
 
 int nsp_agedge_check_values(NspAgedge *H)
 {
-  if ( H->obj->Mcoord == NULLMAT) 
-    {
-       if (( H->obj->Mcoord = nsp_matrix_create("Mcoord",'r',0,0)) == NULLMAT)
-       return FAIL;
-
-    }
   return OK;
 }
 
-NspAgedge *nsp_agedge_create(const char *name,NspMatrix* Mcoord,NspTypeBase *type)
+NspAgedge *nsp_agedge_create(const char *name,void* edge,NspTypeBase *type)
 {
   NspAgedge *H  = nsp_agedge_create_void(name,type);
   if ( H ==  NULLAGEDGE) return NULLAGEDGE;
   if ( nsp_agedge_create_partial(H) == FAIL) return NULLAGEDGE;
-  H->obj->Mcoord= Mcoord;
+  H->obj->edge = edge;
   if ( nsp_agedge_check_values(H) == FAIL) return NULLAGEDGE;
   return H;
 }
@@ -1571,12 +1555,7 @@ NspAgedge *nsp_agedge_full_copy_partial(NspAgedge *H,NspAgedge *self)
 {
   if ((H->obj = calloc(1,sizeof(nsp_agedge))) == NULL) return NULLAGEDGE;
   H->obj->ref_count=1;
-  if ( self->obj->Mcoord == NULL )
-    { H->obj->Mcoord = NULL;}
-  else
-    {
-      if ((H->obj->Mcoord = (NspMatrix *) nsp_object_full_copy_and_name("Mcoord",NSP_OBJECT(self->obj->Mcoord))) == NULLMAT) return NULL;
-    }
+  H->obj->edge = self->obj->edge;
   return H;
 }
 
@@ -1616,40 +1595,7 @@ static NspMethods *agedge_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-static NspObject *_wrap_agedge_get_Mcoord(void *self,const char *attr)
-{
-  NspMatrix *ret;
-
-  ret = ((NspAgedge *) self)->obj->Mcoord;
-  return (NspObject *) ret;
-}
-
-static NspObject *_wrap_agedge_get_obj_Mcoord(void *self,const char *attr, int *copy)
-{
-  NspMatrix *ret;
-
-  *copy = FALSE;
-  ret = ((NspMatrix*) ((NspAgedge *) self)->obj->Mcoord);
-  return (NspObject *) ret;
-}
-
-static int _wrap_agedge_set_Mcoord(void *self,const char *attr, NspObject *O)
-{
-  NspMatrix *Mcoord;
-
-  if ( ! IsMat(O) ) return FAIL;
-  if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
-  if (((NspAgedge *) self)->obj->Mcoord != NULL ) 
-    nsp_matrix_destroy(((NspAgedge *) self)->obj->Mcoord);
-  ((NspAgedge *) self)->obj->Mcoord= Mcoord;
-  return OK;
-}
-
-static AttrTab agedge_attrs[] = {
-  { "Mcoord", (attr_get_function *)_wrap_agedge_get_Mcoord, (attr_set_function *)_wrap_agedge_set_Mcoord,(attr_get_object_function *)_wrap_agedge_get_obj_Mcoord, (attr_set_object_function *)int_set_object_failed },
-  { NULL,NULL,NULL,NULL,NULL },
-};
-
+static AttrTab agedge_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
 
 
 /* ----------- NspAgsym ----------- */
@@ -2749,32 +2695,6 @@ int _wrap_nsp_agsubnode(Stack stack, int rhs, int opt, int lhs) /* agsubnode */
   return 1;
 }
 
-int _wrap_nsp_agfstnode(Stack stack, int rhs, int opt, int lhs) /* agfstnode */
-{
-  int_types T[] = {obj_check,t_end};
-  NspObject *g;
-  NspAgnode *ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_agraph, &g) == FAIL) return RET_BUG;
-    ret = nsp_agfstnode(((NspAgraph *) g));
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
-int _wrap_nsp_agnxtnode(Stack stack, int rhs, int opt, int lhs) /* agnxtnode */
-{
-  int_types T[] = {obj_check,t_end};
-  NspObject *n;
-  NspAgnode *ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_agnode, &n) == FAIL) return RET_BUG;
-    ret = nsp_agnxtnode(((NspAgnode *) n));
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
 int _wrap_nsp_agsubedge(Stack stack, int rhs, int opt, int lhs) /* agsubedge */
 {
   int_types T[] = {obj_check, obj_check, s_int,t_end};
@@ -3010,8 +2930,6 @@ static OpTab Agraph_func[]={
   {"agisdirected", _wrap_nsp_agisdirected},
   {"agisstrict", _wrap_nsp_agisstrict},
   {"agsubnode", _wrap_nsp_agsubnode},
-  {"agfstnode", _wrap_nsp_agfstnode},
-  {"agnxtnode", _wrap_nsp_agnxtnode},
   {"agsubedge", _wrap_nsp_agsubedge},
   {"agfstin", _wrap_nsp_agfstin},
   {"agnxtin", _wrap_nsp_agnxtin},
@@ -3049,7 +2967,7 @@ void Agraph_Interf_Info(int i, char **fname, function (**f))
   *f = Agraph_func[i].fonc;
 }
 
-#line 79 "../types-test/codegen/agraph.override"
+#line 83 "../types-test/codegen/agraph.override"
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
@@ -3219,4 +3137,55 @@ static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value)
   return ( a == NULL) ? FALSE: TRUE;
 }
 
-#line 3223 "agraph.c"
+static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name)
+{
+  Agnode_t *n ;
+  if ((n = agfindnode(g->obj->graph,name) )== NULL)
+    {
+      Scierror("Error: node with name=%s was not found\n",name);
+      return NULL;
+    }
+  int i;
+  attrsym_t *aptr;
+  for (i = 0; (aptr = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list[i]); i++)
+    Sciprintf("node attributes:\n",aptr->name);
+  return nsp_agnode_create(NVOID,n,NULL);
+}
+
+static NspAgnode *nsp_gv_agfstnode(NspAgraph * g)
+{
+  Agnode_t *n ;
+  if ((n = agfstnode(g->obj->graph))== NULL)
+    {
+      Scierror("Error: first node was not found\n");
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n,NULL);
+}
+
+static NspAgnode *nsp_gv_aglstnode(NspAgraph * g)
+{
+  Agnode_t *n ;
+  if ((n = aglstnode(g->obj->graph))== NULL)
+    {
+      Scierror("Error: last node was not found\n");
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n,NULL);
+}
+
+static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n)
+{
+  Agnode_t *n1 ;
+  if ((n1 = agnxtnode(g->obj->graph,n->obj->node))== NULL)
+    {
+      Scierror("Error: next node was not found\n");
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n1,NULL);
+}
+
+
+
+
+#line 3192 "agraph.c"

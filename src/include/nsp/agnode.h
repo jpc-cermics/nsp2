@@ -44,7 +44,7 @@ struct _NspTypeAgnode {
 
 typedef struct _nsp_agnode nsp_agnode;
 struct _nsp_agnode {
-  NspMatrix* Mcoord;
+  void* node;
   int ref_count;
 };
 
@@ -74,7 +74,7 @@ NspAgnode *new_agnode();
 
 #define NULLAGNODE (NspAgnode*) 0
 
-extern NspAgnode *nsp_agnode_create(const char *name,NspMatrix* Mcoord,NspTypeBase *type);
+extern NspAgnode *nsp_agnode_create(const char *name,void* node,NspTypeBase *type);
 extern NspAgnode *nsp_agnode_create_default(const char *name);
 
 /* from NspAgnodeObj.c */

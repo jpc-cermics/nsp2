@@ -70,9 +70,6 @@
   )
 )
 
-
-
-
 ;;	 { (char *)"agopen", _wrap_agopen, METH_VARARGS, NULL},
 
 (define-function agopen
@@ -142,21 +139,47 @@
   (c-name "nsp_agisstrict")
   (return-type "int")
   (parameters
-    '("NspAgraph*" "g")
+   '("NspAgraph*" "g")
+   )
   )
+
+;; find a node from name 
+
+(define-method findnode
+  (of-object "Agraph")
+  (c-name "nsp_gv_agfindnode")
+  (return-type "NspAgnode*")
+  (parameters
+   '("char*" "name")
+   )
+  )
+
+;; first node 
+
+(define-method fstnode
+  (of-object "Agraph")
+  (c-name "nsp_gv_agfstnode")
+  (return-type "NspAgnode*")
 )
 
-;;	 { (char *)"agnode", _wrap_agnode, METH_VARARGS, NULL},
+;; next 
 
-;; (define-function agnode
-;;   (c-name "nsp_agnode")
-;;   (return-type "NspAgnode*")
-;;   (parameters
-;;     '("NspAgraph*" "g")
-;;     '("char*" "name")
-;;     '("int" "createflag")
-;;   )
-;; )
+(define-method nxtnode
+  (of-object "Agraph")
+  (c-name "nsp_gv_agnxtnode")
+  (return-type "NspAgnode*")
+  (parameters
+    '("NspAgnode*" "n")
+    )
+)
+
+;; last node 
+
+(define-method lstnode
+  (of-object "Agraph")
+  (c-name "nsp_gv_aglstnode")
+  (return-type "NspAgnode*")
+)
 
 ;;	 { (char *)"agidnode", _wrap_agidnode, METH_VARARGS, NULL},
 
@@ -182,25 +205,7 @@
   )
 )
 
-;;	 { (char *)"agfstnode", _wrap_agfstnode, METH_VARARGS, NULL},
 
-(define-function agfstnode
-  (c-name "nsp_agfstnode")
-  (return-type "NspAgnode*")
-  (parameters
-    '("NspAgraph*" "g")
-  )
-)
-
-
-;;	 { (char *)"agnxtnode", _wrap_agnxtnode, METH_VARARGS, NULL},
-(define-function agnxtnode
-  (c-name "nsp_agnxtnode")
-  (return-type "NspAgnode*")
-  (parameters
-    '("NspAgnode*" "n")
-  )
-)
 
 ;;X	 { (char *)"aglstnode", _wrap_aglstnode, METH_VARARGS, NULL},
 ;;X	 { (char *)"agprvnode", _wrap_agprvnode, METH_VARARGS, NULL},

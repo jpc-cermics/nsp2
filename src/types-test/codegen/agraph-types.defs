@@ -15,7 +15,7 @@
   (parent "Object")
   (c-name "NspAgnode")
   (fields
-    '("NspMatrix*" "Mcoord" ) 
+    '("void*" "node" "hidden" "NULL")
     )
   (gtype-id "Agnode")
 )
@@ -25,7 +25,7 @@
   (parent "Object")
   (c-name "NspAgedge")
   (fields
-    '("NspMatrix*" "Mcoord" ) 
+    '("void*" "edge" "hidden" "NULL")
     )
   (gtype-id "Agedge")
 )

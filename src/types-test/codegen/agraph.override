@@ -26,6 +26,10 @@ static int nsp_gv_layout(NspAgraph *G, char *mode);
 static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value);
 static int nsp_gv_gattr(NspAgraph * g, char *attr, char *value);
 static int nsp_gv_nattr(NspAgraph * g, char *attr, char *value);
+static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name);
+static NspAgnode *nsp_gv_agfstnode(NspAgraph * g);
+static NspAgnode *nsp_gv_aglstnode(NspAgraph * g);
+static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n);
 %%
 headers
 /* headers */
@@ -244,3 +248,56 @@ static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value)
   a = agedgeattr( g->obj->graph, attr, value);
   return ( a == NULL) ? FALSE: TRUE;
 }
+
+static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name)
+{
+  Agnode_t *n ;
+  if ((n = agfindnode(g->obj->graph,name) )== NULL)
+    {
+      Scierror("Error: node with name=%s was not found\n",name);
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n,NULL);
+}
+
+static NspAgnode *nsp_gv_agfstnode(NspAgraph * g)
+{
+  Agnode_t *n ;
+  if ((n = agfstnode(g->obj->graph))== NULL)
+    {
+      Scierror("Error: first node was not found\n");
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n,NULL);
+}
+
+static NspAgnode *nsp_gv_aglstnode(NspAgraph * g)
+{
+  Agnode_t *n ;
+  if ((n = aglstnode(g->obj->graph))== NULL)
+    {
+      Scierror("Error: last node was not found\n");
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n,NULL);
+}
+
+static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n)
+{
+  Agnode_t *n1 ;
+  if ((n1 = agnxtnode(g->obj->graph,n->obj->node))== NULL)
+    {
+      Scierror("Error: next node was not found\n");
+      return NULL;
+    }
+  return nsp_agnode_create(NVOID,n1,NULL);
+}
+
+/* Comment trouver les attributs pour les noeuds , arcs et graphe 
+
+  int i;
+  attrsym_t *aptr;
+  for (i = 0; (aptr = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list[i]); i++)
+    Sciprintf("node attributes:\n",aptr->name);
+
+*/
