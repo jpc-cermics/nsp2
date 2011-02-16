@@ -128,6 +128,7 @@ static NspAgraph *nsp_agraph_create_void(const char *name,NspTypeBase *type);
 /* inserted in the private part of include file
  * of ldfaure.h
  */
+static int nsp_agclose(NspAgraph * g);
 static int nsp_gv_add_nodes(NspAgraph *G, NspSMatrix *S);
 static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
 #define nsp_gv_nnodes(G) agnnodes((G)->obj->graph)
@@ -135,6 +136,6 @@ static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
 static int nsp_gv_write(NspAgraph * g,void *chan);
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename);
 static int nsp_gv_layout(NspAgraph *G, char *mode);
-#line 139 "./agraph.h"
+#line 140 "./agraph.h"
 #endif /* NspAgraph_Private */
 

@@ -15,6 +15,7 @@ include-private Agraph
 /* inserted in the private part of include file
  * of ldfaure.h
  */
+static int nsp_agclose(NspAgraph * g);
 static int nsp_gv_add_nodes(NspAgraph *G, NspSMatrix *S);
 static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
 #define nsp_gv_nnodes(G) agnnodes((G)->obj->graph)
@@ -39,16 +40,43 @@ ignore-glob
   *_get_type
 
 %%
-override-int-create-final  Agraph
-  /* verbatim in create/load/copy interface  */
-  ZZZ
+override-intcreate Agraph
+
+/* override the default int_create */
+
+int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
+{
+  Agraph_t *g;
+  NspAgraph *H;
+  char *name = "G";
+  nsp_option opts[] ={{ "type",s_int,NULLOBJ,-1},
+		      { "name",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int type = AGRAPH;
+  CheckStdRhs(0,0);
+  aginit(); /* can be called multiple times */
+  if ( get_optional_args(stack,rhs,opt,opts,&type,&name) == FAIL) 
+    return RET_BUG;
+  if (( g = agopen(name,type))== NULL) 
+    {
+      Scierror("Error: agopen failed to create a graph\n");
+      return RET_BUG;
+    }
+  if ((H = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
+    {
+      Scierror("Error: failed to create a graph\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
 
 %%
 last
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
-static int nsp_agclose(NspAgraph * g){return FAIL;}
+
 
 NspAgraph *nsp_agread(void *chan)
 { 
@@ -69,16 +97,6 @@ static int nsp_gv_write(NspAgraph * g,void *chan)
   fclose(file);
   return TRUE;
 }
-static int nsp_gv_write(NspAgraph * g,void *chan)
-{ 
-  FILE* file = fopen(chan, "w"); 
-  if ( file == NULL ) return FALSE;
-  agwrite(g->obj->graph,file);
-  fclose(file);
-  return TRUE;
-}
-
-
 
 void nsp_agflatten(NspAgraph * g, int flag){ };
 int nsp_agisflattened(NspAgraph * g){return FAIL;}
@@ -200,6 +218,7 @@ static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
   return TRUE;
 }
 
+static int nsp_agclose(NspAgraph * g){ return 0;};
 
   
 

@@ -24,7 +24,7 @@
 
 
 
-#line 27 "../types-test/codegen/agraph.override"
+#line 28 "../types-test/codegen/agraph.override"
 /* headers */
 
 #line 31 "agraph.c"
@@ -461,21 +461,38 @@ NspAgraph *nsp_agraph_full_copy(NspAgraph *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
+#line 44 "../types-test/codegen/agraph.override"
+
+/* override the default int_create */
+
 int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 {
+  Agraph_t *g;
   NspAgraph *H;
+  char *name = "G";
+  nsp_option opts[] ={{ "type",s_int,NULLOBJ,-1},
+		      { "name",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int type = AGRAPH;
   CheckStdRhs(0,0);
-  /* want to be sure that type agraph is initialized */
-  nsp_type_agraph = new_type_agraph(T_BASE);
-  if(( H = nsp_agraph_create_void(NVOID,(NspTypeBase *) nsp_type_agraph)) == NULLAGRAPH) return RET_BUG;
-  /* then we use optional arguments to fill attributes */
-  if ( nsp_agraph_create_partial(H) == FAIL) return RET_BUG;
-  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
- if ( nsp_agraph_check_values(H) == FAIL) return RET_BUG;
+  aginit(); /* can be called multiple times */
+  if ( get_optional_args(stack,rhs,opt,opts,&type,&name) == FAIL) 
+    return RET_BUG;
+  if (( g = agopen(name,type))== NULL) 
+    {
+      Scierror("Error: agopen failed to create a graph\n");
+      return RET_BUG;
+    }
+  if ((H = nsp_agraph_create(NVOID,g, NULL)) == NULL) 
+    {
+      Scierror("Error: failed to create a graph\n");
+      return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
 
+#line 496 "agraph.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -2993,11 +3010,11 @@ void Agraph_Interf_Info(int i, char **fname, function (**f))
   *f = Agraph_func[i].fonc;
 }
 
-#line 43 "../types-test/codegen/agraph.override"
+#line 76 "../types-test/codegen/agraph.override"
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
-int nsp_agclose(NspAgraph * g){return FAIL;}
+
 
 NspAgraph *nsp_agread(void *chan)
 { 
@@ -3018,8 +3035,6 @@ static int nsp_gv_write(NspAgraph * g,void *chan)
   fclose(file);
   return TRUE;
 }
-
-
 
 void nsp_agflatten(NspAgraph * g, int flag){ };
 int nsp_agisflattened(NspAgraph * g){return FAIL;}
@@ -3141,6 +3156,7 @@ static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
   return TRUE;
 }
 
+static int nsp_agclose(NspAgraph * g){ return 0;};
 
   
 
@@ -3148,4 +3164,4 @@ static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
 
 
 
-#line 3152 "agraph.c"
+#line 3168 "agraph.c"

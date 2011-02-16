@@ -3,7 +3,6 @@
 #include "agedge.h"
 #include "agsym.h"
 
-int nsp_agclose(NspAgraph * g);
 NspAgraph *nsp_agread(void *chan);
 /* NspAgraph *nsp_agconcat(NspAgraph * g, void *chan, Agdisc_t * disc); */
 int nsp_agwrite(NspAgraph * g, char *chan);
