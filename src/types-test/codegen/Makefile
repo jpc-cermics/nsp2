@@ -24,8 +24,8 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
 	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
-	../hm.c 
-
+	../hm.c ../agraph.c \
+	../../libgraphviz/agraph.c
 
 all:: $(ALL)
 	cd ../; make all
@@ -296,6 +296,15 @@ all:: ../../liblowdisc/ldfaure.c
 	    --override hm.override \
 	    --prefix hm hm.defs) > $*.c \
 	&& mv hm.h ../../include/nsp 
+
+
+../../libgraphviz/agraph.c : agraph.defs agraph-types.defs agraph.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override agraph.override \
+	    --prefix Agraph agraph.defs) | sed -e "s+codegen/+../types-test/codegen/+g" > $*.c  \
+	&& mv agdisc.h  agedge.h  agnode.h  agsym.h  agraph.h ../../include/nsp 
+
+
 
 
 

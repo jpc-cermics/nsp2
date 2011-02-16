@@ -1,0 +1,476 @@
+;; -*- scheme -*-
+; object definitions ...
+
+(include "agraph-types.defs")
+
+(define-method add_nodes
+  (of-object "Agraph")
+  (c-name "nsp_gv_add_nodes")
+  (return-type "boolean")
+  (parameters
+   '("NspSMatrix*" "nodes")
+  )
+)
+
+(define-method add_edges
+  (of-object "Agraph")
+  (c-name "nsp_gv_add_edges")
+  (return-type "boolean")
+  (parameters
+   '("NspSMatrix*" "nodes")
+  )
+)
+
+(define-method layout 
+  (of-object "Agraph")
+  (c-name "nsp_gv_layout")
+  ;;(return-type "boolean")
+  (parameters
+   '("string" "type")
+  )
+)
+
+(define-method render 
+  (of-object "Agraph")
+  (c-name "nsp_gv_render")
+  :: (return-type "boolean")
+  (parameters
+   '("string" "type")
+   '("string" "fname")
+  )
+)
+
+;;	 { (char *)"agopen", _wrap_agopen, METH_VARARGS, NULL},
+
+(define-function agopen
+  (c-name "nsp_agopen")
+  (return-type "NspAgraph*")
+  (parameters
+    '("char*" "name")
+    '("Agdesc_t" "desc")
+    '("Agdisc_t*" "disc")
+  )
+)
+
+;;	 { (char *)"agclose", _wrap_agclose, METH_VARARGS, NULL},
+
+(define-function agclose
+  (c-name "nsp_agclose")
+  (return-type "int")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+;; read 
+
+(define-function agread
+  (c-name "nsp_agread")
+  (return-type "NspAgraph*")
+  (parameters
+   '("char*" "filename")
+  )
+)
+
+;; write 
+
+(define-method write
+  (of-object "Agraph")
+  (c-name "nsp_gv_write")
+  (return-type "int")
+  (parameters
+     '("char*" "chan")
+  )
+)
+
+;;	 { (char *)"agisundirected", _wrap_agisundirected, METH_VARARGS, NULL},
+
+(define-function agisundirected
+  (c-name "nsp_agisundirected")
+  (return-type "int")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+;;	 { (char *)"agisdirected", _wrap_agisdirected, METH_VARARGS, NULL},
+
+(define-function agisdirected
+  (c-name "nsp_agisdirected")
+  (return-type "int")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+;;	 { (char *)"agisstrict", _wrap_agisstrict, METH_VARARGS, NULL},
+
+(define-function agisstrict
+  (c-name "nsp_agisstrict")
+  (return-type "int")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+;;	 { (char *)"agnode", _wrap_agnode, METH_VARARGS, NULL},
+
+;; (define-function agnode
+;;   (c-name "nsp_agnode")
+;;   (return-type "NspAgnode*")
+;;   (parameters
+;;     '("NspAgraph*" "g")
+;;     '("char*" "name")
+;;     '("int" "createflag")
+;;   )
+;; )
+
+;;	 { (char *)"agidnode", _wrap_agidnode, METH_VARARGS, NULL},
+
+(define-function agidnode
+  (c-name "nsp_agidnode")
+  (return-type "NspAgnode*")
+  (parameters
+    '("NspAgraph*" "g")
+    '("unsigned-long" "id")
+    '("int" "createflag")
+  )
+)
+
+;;	 { (char *)"agsubnode", _wrap_agsubnode, METH_VARARGS, NULL},
+
+(define-function agsubnode
+  (c-name "nsp_agsubnode")
+  (return-type "NspAgnode*")
+  (parameters
+    '("NspAgraph*" "g")
+    '("NspAgnode*" "n")
+    '("int" "createflag")
+  )
+)
+
+;;	 { (char *)"agfstnode", _wrap_agfstnode, METH_VARARGS, NULL},
+
+(define-function agfstnode
+  (c-name "nsp_agfstnode")
+  (return-type "NspAgnode*")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+
+;;	 { (char *)"agnxtnode", _wrap_agnxtnode, METH_VARARGS, NULL},
+(define-function agnxtnode
+  (c-name "nsp_agnxtnode")
+  (return-type "NspAgnode*")
+  (parameters
+    '("NspAgnode*" "n")
+  )
+)
+
+;;X	 { (char *)"aglstnode", _wrap_aglstnode, METH_VARARGS, NULL},
+;;X	 { (char *)"agprvnode", _wrap_agprvnode, METH_VARARGS, NULL},
+
+;;	 { (char *)"agedge", _wrap_agedge, METH_VARARGS, NULL},
+
+;; (define-function agedge
+;;   (c-name "nsp_agedge")
+;;   (return-type "NspAgedge*")
+;;   (parameters
+;;     '("NspAgnode*" "t")
+;;     '("NspAgnode*" "h")
+;;     '("char*" "name")
+;;     '("int" "createflag")
+;;   )
+;; )
+
+;;	 { (char *)"agidedge", _wrap_agidedge, METH_VARARGS, NULL},
+
+(define-function agidedge
+  (c-name "nsp_agidedge")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgnode*" "t")
+    '("NspAgnode*" "h")
+    '("unsigned-long" "id")
+    '("int" "createflag")
+  )
+)
+
+;;	 { (char *)"agsubedge", _wrap_agsubedge, METH_VARARGS, NULL},
+(define-function agsubedge
+  (c-name "nsp_agsubedge")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgraph*" "g")
+    '("NspAgedge*" "e")
+    '("int" "createflag")
+  )
+)
+
+;;	 { (char *)"agfstin", _wrap_agfstin, METH_VARARGS, NULL},
+(define-function agfstin
+  (c-name "nsp_agfstin")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgnode*" "n")
+  )
+)
+
+;;	 { (char *)"agnxtin", _wrap_agnxtin, METH_VARARGS, NULL},
+(define-function agnxtin
+  (c-name "nsp_agnxtin")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgedge*" "e")
+  )
+)
+
+;;	 { (char *)"agfstout", _wrap_agfstout, METH_VARARGS, NULL},
+(define-function agfstout
+  (c-name "nsp_agfstout")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgnode*" "n")
+  )
+)
+
+;;	 { (char *)"agnxtout", _wrap_agnxtout, METH_VARARGS, NULL},
+(define-function agnxtout
+  (c-name "nsp_agnxtout")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgedge*" "e")
+  )
+)
+
+;;	 { (char *)"agfstedge", _wrap_agfstedge, METH_VARARGS, NULL},
+(define-function agfstedge
+  (c-name "nsp_agfstedge")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgnode*" "n")
+  )
+)
+
+;;	 { (char *)"agnxtedge", _wrap_agnxtedge, METH_VARARGS, NULL},
+(define-function agnxtedge
+  (c-name "nsp_agnxtedge")
+  (return-type "NspAgedge*")
+  (parameters
+    '("NspAgedge*" "e")
+    '("NspAgnode*" "n")
+  )
+)
+
+;;X	 { (char *)"aghead", _wrap_aghead, METH_VARARGS, NULL},
+;;X	 { (char *)"agtail", _wrap_agtail, METH_VARARGS, NULL},
+
+;;	 { (char *)"agattr", _wrap_agattr, METH_VARARGS, NULL},
+
+(define-function agattr
+  (c-name "nsp_agattr")
+  (return-type "NspAgsym*")
+  (parameters
+    '("NspAgraph*" "g")
+    '("int" "kind")
+    '("char*" "name")
+    '("char*" "value")
+  )
+)
+
+;;	 { (char *)"agattrsym", _wrap_agattrsym, METH_VARARGS, NULL},
+
+;; (define-function agattrsym
+;;   (c-name "nsp_agattrsym")
+;;   (return-type "NspAgsym*")
+;;   (parameters
+;;     '("void*" "obj")
+;;     '("char*" "name")
+;;   )
+;; )
+
+;;	 { (char *)"agnxtattr", _wrap_agnxtattr, METH_VARARGS, NULL},
+
+(define-function agnxtattr
+  (c-name "nsp_agnxtattr")
+  (return-type "NspAgsym*")
+  (parameters
+    '("NspAgraph*" "g")
+    '("int" "kind")
+    '("NspAgsym*" "attr")
+  )
+)
+
+;; { (char *)"agget", _wrap_agget, METH_VARARGS, NULL},
+
+;; (define-function agget
+;;   (c-name "nsp_agget")
+;;   (return-type "char*")
+;;   (parameters
+;;     '("void*" "obj")
+;;     '("char*" "name")
+;;   )
+;; )
+
+;;	 { (char *)"agxget", _wrap_agxget, METH_VARARGS, NULL},
+
+;; (define-function agxget
+;;   (c-name "nsp_agxget")
+;;   (return-type "char*")
+;;   (parameters
+;;     '("void*" "obj")
+;;     '("NspAgsym*" "sym")
+;;   )
+;; )
+
+;; { (char *)"agset", _wrap_agset, METH_VARARGS, NULL},
+
+;; (define-function agset
+;;   (c-name "nsp_agset")
+;;   (return-type "int")
+;;   (parameters
+;;     '("void*" "obj")
+;;     '("char*" "name")
+;;     '("char*" "value")
+;;   )
+;; )
+;;	 { (char *)"agxset", _wrap_agxset, METH_VARARGS, NULL},
+
+;; (define-function agxset
+;;   (c-name "nsp_agxset")
+;;   (return-type "int")
+;;   (parameters
+;;     '("void*" "obj")
+;;     '("NspAgsym*" "sym")
+;;     '("char*" "value")
+;;   )
+;; )
+
+;;X	 { (char *)"agsafeset", _wrap_agsafeset, METH_VARARGS, NULL},
+;;X	 { (char *)"agattrname", _wrap_agattrname, METH_VARARGS, NULL},
+;;X	 { (char *)"agattrdefval", _wrap_agattrdefval, METH_VARARGS, NULL},
+;;X	 { (char *)"agsafeset_label", _wrap_agsafeset_label, METH_VARARGS, NULL}
+;;X	 { (char *)"agattr_label", _wrap_agattr_label, METH_VARARGS, NULL},
+
+;;	 { (char *)"agsubg", _wrap_agsubg, METH_VARARGS, NULL},
+(define-function agsubg
+  (c-name "nsp_agsubg")
+  (return-type "NspAgraph*")
+  (parameters
+    '("NspAgraph*" "g")
+    '("char*" "name")
+    '("int" "cflag")
+  )
+)
+;;	 { (char *)"agfstsubg", _wrap_agfstsubg, METH_VARARGS, NULL},
+(define-function agfstsubg
+  (c-name "nsp_agfstsubg")
+  (return-type "NspAgraph*")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+;;XX	 { (char *)"agnxtsubg", _wrap_agnxtsubg, METH_VARARGS, NULL},
+
+;; { (char *)"agparent", _wrap_agparent, METH_VARARGS, NULL},
+
+(define-function agparent
+  (c-name "nsp_agparent")
+  (return-type "NspAgraph*")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+;;	 { (char *)"agroot", _wrap_agroot, METH_VARARGS, NULL},
+(define-function agroot
+  (c-name "nsp_agroot")
+  (return-type "NspAgraph*")
+  (parameters
+    '("NspAgraph*" "g")
+  )
+)
+
+
+;;	 { (char *)"agdelsubg", _wrap_agdelsubg, METH_VARARGS, NULL},
+
+(define-function agdelsubg
+  (c-name "nsp_agdelsubg")
+  (return-type "long")
+  (parameters
+    '("NspAgraph*" "g")
+    '("NspAgraph*" "sub")
+  )
+)
+
+;;	 { (char *)"agnnodes", _wrap_agnnodes, METH_VARARGS, NULL},
+
+(define-method nnodes
+  (of-object "Agraph")
+  (c-name "nsp_gv_nnodes")
+  (return-type "int")
+)
+
+;;	 { (char *)"agnedges", _wrap_agnedges, METH_VARARGS, NULL},
+
+(define-method nedges
+  (of-object "Agraph")
+  (c-name "nsp_gv_nedges")
+  (return-type "int")
+)
+
+;;	 { (char *)"agdegree", _wrap_agdegree, METH_VARARGS, NULL},
+
+(define-function agdegree
+  (c-name "nsp_agdegree")
+  (return-type "int")
+  (parameters
+    '("NspAgnode*" "n")
+    '("int" "in")
+    '("int" "out")
+  )
+)
+
+;;	 { (char *)"agraphof", _wrap_agraphof, METH_VARARGS, NULL},
+
+;; (define-function agraphof
+;;   (c-name "nsp_agraphof")
+;;   (return-type "NspAgraph*")
+;;   (parameters
+;;     '("void" "*")
+;;   )
+;; )
+
+;;	 { (char *)"agnameof", _wrap_agnameof, METH_VARARGS, NULL},
+
+;; (define-function agnameof
+;;   (c-name "nsp_agnameof")
+;;   (return-type "char*")
+;;   (parameters
+;;     '("void" "*")
+;;   )
+;; )
+
+
+;;	 { (char *)"agdelnode", _wrap_agdelnode, METH_VARARGS, NULL},
+(define-function agdelnode
+  (c-name "nsp_agdelnode")
+  (return-type "int")
+  (parameters
+    '("NspAgnode*" "arg_n")
+  )
+)
+
+
+;;	 { (char *)"agdeledge", _wrap_agdeledge, METH_VARARGS, NULL},
+
+(define-function agdeledge
+  (c-name "nsp_agdeledge")
+  (return-type "int")
+  (parameters
+    '("NspAgedge*" "arg_e")
+  )
+)

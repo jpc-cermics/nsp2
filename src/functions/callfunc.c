@@ -180,6 +180,11 @@ extern sci_interface webkit_Interf;extern interface_info webkit_Interf_Info;
 
 extern sci_interface libminpack_Interf;extern interface_info libminpack_Interf_Info;
 
+#ifdef WITH_GRAPHVIZ 
+extern sci_interface Agraph_Interf;extern interface_info Agraph_Interf_Info;
+#endif 
+
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -308,6 +313,9 @@ InterfTab Interfaces[]={
 #endif
   {Optim_Interf, Optim_Interf_Info},
   {Lapack_all_Interf , Lapack_all_Interf_Info },
+#ifdef WITH_GRAPHVIZ 
+  {Agraph_Interf , Agraph_Interf_Info },
+#endif 
   {NULL,NULL}
 }; 
 

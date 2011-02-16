@@ -1,0 +1,57 @@
+;; -*- scheme -*-
+
+(define-objectref Agraph
+  (in-module "Agraph")
+  (parent "Object")
+  (c-name "NspAgraph")
+  (fields
+    '("void*" "graph" "hidden" "NULL")
+    )
+  (gtype-id "Agraph")
+)
+
+(define-objectref Agnode
+  (in-module "Agnode")
+  (parent "Object")
+  (c-name "NspAgnode")
+  (fields
+    '("NspMatrix*" "Mcoord" ) 
+    )
+  (gtype-id "Agnode")
+)
+
+(define-objectref Agedge
+  (in-module "Agedge")
+  (parent "Object")
+  (c-name "NspAgedge")
+  (fields
+    '("NspMatrix*" "Mcoord" ) 
+    )
+  (gtype-id "Agedge")
+)
+
+(define-objectref Agsym
+  (in-module "Agsym")
+  (parent "Object")
+  (c-name "NspAgsym")
+  (fields
+    '("NspMatrix*" "Mcoord" ) 
+    )
+  (gtype-id "Agsym")
+)
+
+(define-objectref Agdisc
+  (in-module "Agdisc")
+  (parent "Object")
+  (c-name "NspAgdisc")
+  (fields
+    '("NspMatrix*" "Mcoord" ) 
+    )
+  (gtype-id "Agdisc")
+)
+
+
+
+
+
+

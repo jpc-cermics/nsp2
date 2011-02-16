@@ -1,0 +1,195 @@
+/* -*- Mode: C -*- */
+%%
+include-start Agraph
+
+%%
+include-public Agraph
+/* inserted at the end of public part of include file
+ * of ldfaure.h
+ */
+#include <gvc.h> 
+#include <nsp/agraph-nsp.h>
+
+%%
+include-private Agraph
+/* inserted in the private part of include file
+ * of ldfaure.h
+ */
+static int nsp_gv_add_nodes(NspAgraph *G, NspSMatrix *S);
+static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
+#define nsp_gv_nnodes(G) agnnodes((G)->obj->graph)
+#define nsp_gv_nedges(G) agnedges((G)->obj->graph)
+static int nsp_gv_write(NspAgraph * g,void *chan);
+static int nsp_gv_render(NspAgraph *G, char *mode, char *filename);
+static int nsp_gv_layout(NspAgraph *G, char *mode);
+%%
+headers
+/* headers */
+
+%%
+init 
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+last
+/* graphs */
+/* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
+
+int nsp_agclose(NspAgraph * g){return FAIL;}
+
+NspAgraph *nsp_agread(void *chan)
+{ 
+  FILE* file = fopen(chan, "r"); 
+  Agraph_t *dotGraph = NULL;
+  if ( file == NULL ) return NULL;
+  aginit(); /* can be called multiple times */
+  if ((dotGraph = agread(file))== NULL) 
+    return NULL;
+  return nsp_agraph_create(NVOID,dotGraph, NULL);
+}
+
+static int nsp_gv_write(NspAgraph * g,void *chan)
+{ 
+  FILE* file = fopen(chan, "w"); 
+  if ( file == NULL ) return FALSE;
+  agwrite(g->obj->graph,file);
+  fclose(file);
+  return TRUE;
+}
+
+
+
+void nsp_agflatten(NspAgraph * g, int flag){ };
+int nsp_agisflattened(NspAgraph * g){return FAIL;}
+int nsp_agisdirected(NspAgraph * g){return FAIL;}
+int nsp_agisundirected(NspAgraph * g){return FAIL;}
+int nsp_agisstrict(NspAgraph * g){return FAIL;}
+/* nodes */
+NspAgnode  *nsp_agidnode(NspAgraph * g, unsigned long id,int createflag){ return NULL;}
+NspAgnode  *nsp_agsubnode(NspAgraph * g, NspAgnode  * n, int createflag){ return NULL;} 
+NspAgnode  *nsp_agfstnode(NspAgraph * g){ return NULL;}
+NspAgnode  *nsp_agnxtnode(NspAgnode  * n){ return NULL;}
+/* edges */
+NspAgedge *nsp_agidedge(NspAgnode * t, NspAgnode * h, unsigned long id,
+			  int createflag){ return NULL;}
+NspAgedge *nsp_agsubedge(NspAgraph * g, NspAgedge * e, int createflag){ return NULL;}
+NspAgedge *nsp_agfstin(NspAgnode * n){ return NULL;}
+NspAgedge *nsp_agnxtin(NspAgedge * e){ return NULL;}
+NspAgedge *nsp_agfstout(NspAgnode * n){ return NULL;}
+NspAgedge *nsp_agnxtout(NspAgedge * e){ return NULL;}
+NspAgedge *nsp_agfstedge(NspAgnode * n){ return NULL;}
+NspAgedge *nsp_agnxtedge(NspAgedge * e, NspAgnode * n){ return NULL;}
+
+/* generic */
+/* NspAgraph *nsp_agraphof(void *){ return NULL;} */
+/* char *nsp_agnameof(void *){ return NULL;} */
+int nsp_agrelabel(void *obj, char *name){return FAIL;}	/* scary */
+int nsp_agrelabel_node(NspAgnode * n, char *newname){return FAIL;}
+int nsp_agdelete(NspAgraph * g, void *obj){return FAIL;}
+long nsp_agdelsubg(NspAgraph * g, NspAgraph * sub){return FAIL;}	/* could be agclose */
+int nsp_agdelnode(NspAgnode * arg_n){return FAIL;}
+int nsp_agdeledge(NspAgedge * arg_e){return FAIL;}
+/* int nsp_agisarootobj(void *){ return NULL;} */
+/* strings */
+/* char *nsp_agstrdup(NspAgraph *, char *){ return NULL;} */
+/* char *nsp_agstrdup_html(NspAgraph *, char *){ return NULL;} */
+/* int nsp_aghtmlstr(char *){ return NULL;} */
+/* char *nsp_agstrbind(NspAgraph * g, char *){ return NULL;}*/
+/*   int nsp_agstrfree(NspAgraph *, char *){ return NULL;} */
+/*char *nsp_agcanonstr(char *, char *){ return NULL;}*/
+/*char *nsp_agcanonStr(char*){ return NULL;}*/
+NspAgsym *nsp_agattr(NspAgraph * g, int kind, char *name,
+		       char *value){ return NULL;}
+NspAgsym *nsp_agattrsym(void *obj, char *name){ return NULL;}
+NspAgsym *nsp_agnxtattr(NspAgraph * g, int kind, NspAgsym * attr){ return NULL;}
+void *nsp_agbindrec(void *obj, char *name, unsigned int size,
+		       int move_to_front){ return NULL;}
+int nsp_agdelrec(void *obj, char *name){return FAIL;}
+void nsp_aginit(NspAgraph * g, int kind, char *rec_name,
+		int rec_size, int move_to_front){ }
+void nsp_agclean(NspAgraph * g, int kind, char *rec_name){}
+char *nsp_agget(void *obj, char *name){ return NULL;}
+char *nsp_agxget(void *obj, NspAgsym * sym){ return NULL;}
+int nsp_agset(void *obj, char *name, char *value){return FAIL;}
+int nsp_agxset(void *obj, NspAgsym * sym, char *value){return FAIL;}
+/* defintions for subgraphs */
+NspAgraph *nsp_agsubg(NspAgraph * g, char *name, int cflag){ return NULL;}	/* constructor */
+NspAgraph *nsp_agidsubg(NspAgraph * g, unsigned long id, int cflag){ return NULL;}	/* constructor */
+NspAgraph *nsp_agfstsubg(NspAgraph * g){ return NULL;};
+NspAgraph *nsp_agnxtsubg(NspAgraph * subg){ return NULL;}
+NspAgraph *nsp_agparent(NspAgraph * g){ return NULL;};
+NspAgraph *nsp_agroot(NspAgraph * g){ return NULL;}
+/* set cardinality */
+int nsp_agdegree(NspAgnode * n, int in, int out){return FAIL;}
+/* memory */
+
+static int nsp_gv_add_nodes(NspAgraph *G, NspSMatrix *S)
+{
+  int i;
+  for ( i = 0 ; i < S->mn ; i++) 
+    if ( agnode(G->obj->graph, S->S[i]) == NULL) return FALSE;
+  return TRUE;
+}
+
+static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S)
+{
+  int i;
+  if ( S->n != 2 ) 
+    {
+      Scierror("add_deges: argument should have two columns\n");
+      return FALSE;
+    }
+  for ( i = 0 ; i < S->m ; i++) 
+    {
+      Agnode_t *t, *h;
+      if ((t = agfindnode(G->obj->graph, S->S[i]))== NULL) 
+	return FALSE;
+      if ((h = agfindnode(G->obj->graph, S->S[i+S->m]))== NULL) 
+	return FALSE;
+      if ( agedge(G->obj->graph, t,h)  == NULL) 
+	return FALSE;
+    }
+  return TRUE;
+}
+
+static GVC_t *gvc=NULL;
+
+static int nsp_gv_layout(NspAgraph *G, char *mode)
+{
+  if ( gvc == NULL ) 
+    {
+      gvc = gvContext();
+    }
+  gvLayout(gvc, G->obj->graph, mode);
+  return TRUE;
+}
+
+static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
+{
+  FILE* file;
+  if ( gvc == NULL ) 
+    {
+      Scierror("render: you should call layout first\n");
+      return FALSE;
+    }
+  if (( file = fopen(filename, "w"))== NULL) 
+    return FALSE;
+  gvRender(gvc, G->obj->graph, mode, file);
+  fclose(file);
+  return TRUE;
+}
+
+
+  
+
+
+
+
