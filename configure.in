@@ -1512,7 +1512,6 @@ fi
 PORTAUDIO_LIB= 
 HAVE_PORTAUDIO=no
 
-
 if test "$HAVE_SNDFILE" = "yes"; then
 if test "$with_portaudio" != "no"; then                           
  if test "x$PKG_CONFIG" != x ; then 
@@ -1551,6 +1550,35 @@ if test "$HAVE_PORTAUDIO" = "yes"; then
   PORTAUDIO_LIB=libportaudio 
 fi
 
+#########################
+## graphviz 
+#########################
+
+HAVE_GRAPHVIZ=no
+
+if test "$with_graphviz" != "no"; then                           
+ if test "x$PKG_CONFIG" != x ; then 
+      ## try first to use pkg-config	
+      ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since sndfile.pc does not exists
+      PKG_CHECK_MODULES(GRAPHVIZ, libgvc , HAVE_GRAPHVIZ="yes", HAVE_GRAPHVIZ="no")
+      ## In case of success I just want portaudio be added in GTK_PKGS_CFLAGS 
+      if test "$HAVE_GRAPHVIZ" = "yes"; then
+      	 # we also need gthread-2.0 for our portaudio files.
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgvc"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgvc"
+         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+	 GRAPHVIZ_CFLAGS=""
+	 GRAPHVIZ_LIBS=""
+      fi 
+ fi
+fi 
+
+if test "$HAVE_GRAPHVIZ" = "yes"; then
+  AC_DEFINE(WITH_GRAPHVIZ,[],[graphviz library])
+  GRAPHVIZ_LIB=libgraphviz 
+fi
 
 #########################
 ## substituting variables
@@ -1624,6 +1652,9 @@ AC_SUBST(SNDFILE_LIB)
 AC_SUBST(PORTAUDIO_CFLAGS)
 AC_SUBST(PORTAUDIO_LIBS)
 AC_SUBST(PORTAUDIO_LIB)
+AC_SUBST(GRAPHVIZ_CFLAGS)
+AC_SUBST(GRAPHVIZ_LIBS)
+AC_SUBST(GRAPHVIZ_LIB)
 #
 AC_SUBST(ASOUND_CFLAGS)
 AC_SUBST(ASOUND_LIBS)
@@ -1692,6 +1723,7 @@ echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
 echo "Sndfile support........:" $HAVE_SNDFILE
 echo "Portaudio support......:" $HAVE_PORTAUDIO
+echo "Graphviz support.......:" $HAVE_GRAPHVIZ
 echo "Asound support.........:" $HAVE_ASOUND
 echo -n "Cholmod support........:" 
 if test "xx$cholmod_libs" != "xx" ; then echo " yes"; else echo " no"; fi

@@ -40,6 +40,39 @@
   )
 )
 
+(define-method graphattr 
+  (of-object "Agraph")
+  (c-name "nsp_gv_gattr")
+  :: (return-type "boolean")
+  (parameters
+   '("string" "attr")
+   '("string" "value")
+  )
+)
+
+(define-method nodeattr 
+  (of-object "Agraph")
+  (c-name "nsp_gv_nattr")
+  :: (return-type "boolean")
+  (parameters
+   '("string" "attr")
+   '("string" "value")
+  )
+)
+
+(define-method edgeattr 
+  (of-object "Agraph")
+  (c-name "nsp_gv_eattr")
+  :: (return-type "boolean")
+  (parameters
+   '("string" "attr")
+   '("string" "value")
+  )
+)
+
+
+
+
 ;;	 { (char *)"agopen", _wrap_agopen, METH_VARARGS, NULL},
 
 (define-function agopen
