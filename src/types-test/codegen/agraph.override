@@ -39,11 +39,16 @@ ignore-glob
   *_get_type
 
 %%
+override-int-create-final  Agraph
+  /* verbatim in create/load/copy interface  */
+  ZZZ
+
+%%
 last
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
-int nsp_agclose(NspAgraph * g){return FAIL;}
+static int nsp_agclose(NspAgraph * g){return FAIL;}
 
 NspAgraph *nsp_agread(void *chan)
 { 
@@ -56,6 +61,14 @@ NspAgraph *nsp_agread(void *chan)
   return nsp_agraph_create(NVOID,dotGraph, NULL);
 }
 
+static int nsp_gv_write(NspAgraph * g,void *chan)
+{ 
+  FILE* file = fopen(chan, "w"); 
+  if ( file == NULL ) return FALSE;
+  agwrite(g->obj->graph,file);
+  fclose(file);
+  return TRUE;
+}
 static int nsp_gv_write(NspAgraph * g,void *chan)
 { 
   FILE* file = fopen(chan, "w"); 
