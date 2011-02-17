@@ -304,20 +304,6 @@
 
 ;;X	 { (char *)"aghead", _wrap_aghead, METH_VARARGS, NULL},
 ;;X	 { (char *)"agtail", _wrap_agtail, METH_VARARGS, NULL},
-
-;;	 { (char *)"agattr", _wrap_agattr, METH_VARARGS, NULL},
-
-(define-function agattr
-  (c-name "nsp_agattr")
-  (return-type "NspAgsym*")
-  (parameters
-    '("NspAgraph*" "g")
-    '("int" "kind")
-    '("char*" "name")
-    '("char*" "value")
-  )
-)
-
 ;;	 { (char *)"agattrsym", _wrap_agattrsym, METH_VARARGS, NULL},
 
 ;; (define-function agattrsym

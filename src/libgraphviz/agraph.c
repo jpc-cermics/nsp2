@@ -24,7 +24,7 @@
 
 
 
-#line 35 "../types-test/codegen/agraph.override"
+#line 32 "../types-test/codegen/agraph.override"
 /* headers */
 
 #line 31 "agraph.c"
@@ -461,7 +461,7 @@ NspAgraph *nsp_agraph_full_copy(NspAgraph *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 51 "../types-test/codegen/agraph.override"
+#line 48 "../types-test/codegen/agraph.override"
 
 /* override the default int_create */
 
@@ -544,41 +544,78 @@ static int _wrap_nsp_gv_render(NspAgraph *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
+#line 80 "../types-test/codegen/agraph.override"
+
+typedef Agsym_t *(fattr)(Agraph_t *,char *name,char *value);
+
+static int _wrap_nsp_gv_gattr_gen(NspAgraph *self,Stack stack,int rhs,int opt,int lhs,
+				  fattr f,const char *type)
+{
+  Agsym_t *a = NULL;
+  int i;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  for ( i = 1 ; i <= rhs ; i++) 
+    {
+      char *value, *attr;
+      NspObject *O;
+      if ( Ocheckname(NthObj(i),NVOID) ) 
+	{
+	  Scierror("Error: %s of method %s should be a named optional argument \n",
+		   ArgPosition(i),NspFname(stack));
+	  return RET_BUG;
+	}
+      /* A copy of object is added in the hash table **/
+      /* GetObj takes care of Hobj pointers **/
+      attr = nsp_object_get_name(NthObj(i));
+      O = nsp_get_object(stack,i);
+      if ( IsString(O) == FALSE )
+	{
+	  Scierror("Error: %s of method  %s should be a string\n",
+		   ArgPosition(i),NspFname(stack));
+	  return RET_BUG;
+	}
+      value =  ((NspSMatrix *) O)->S[0];
+      a = f( ((Agraph_t *) self->obj->graph)->root,attr,value);
+      if ( a == NULL) 
+	{
+	  Scierror("Error: failed to add %s attribute %s=%s\n",
+		   type,  nsp_object_get_name(O),((NspSMatrix *) O)->S[0]);
+	  return RET_BUG;
+	}
+    }
+  return 0;
+} 
+
 static int _wrap_nsp_gv_gattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, string,t_end};
-  char *attr, *value;
-  int ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&attr, &value) == FAIL) return RET_BUG;
-  ret = nsp_gv_gattr(self, attr, value);
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
+  return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agraphattr,"graph");
 }
+
+#line 596 "agraph.c"
+
+
+#line 129 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_gv_nattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, string,t_end};
-  char *attr, *value;
-  int ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&attr, &value) == FAIL) return RET_BUG;
-  ret = nsp_gv_nattr(self, attr, value);
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
+  return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agnodeattr,"node");
 }
+
+#line 606 "agraph.c"
+
+
+#line 137 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_gv_eattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int_types T[] = {string, string,t_end};
-  char *attr, *value;
-  int ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&attr, &value) == FAIL) return RET_BUG;
-  ret = nsp_gv_eattr(self, attr, value);
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
+  return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agedgeattr,"edge");
 }
+
+
+
+#line 618 "agraph.c"
+
 
 static int _wrap_nsp_gv_write(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2787,21 +2824,6 @@ int _wrap_nsp_agnxtedge(Stack stack, int rhs, int opt, int lhs) /* agnxtedge */
   return 1;
 }
 
-int _wrap_nsp_agattr(Stack stack, int rhs, int opt, int lhs) /* agattr */
-{
-  int_types T[] = {obj_check, s_int, string, string,t_end};
-  int kind;
-  char *name, *value;
-  NspObject *g;
-  NspAgsym *ret;
-
-  if ( GetArgs(stack,rhs,opt,T,&nsp_type_agraph, &g, &kind, &name, &value) == FAIL) return RET_BUG;
-    ret = nsp_agattr(((NspAgraph *) g), kind, name, value);
-  if (ret == NULL ) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(ret));
-  return 1;
-}
-
 int _wrap_nsp_agnxtattr(Stack stack, int rhs, int opt, int lhs) /* agnxtattr */
 {
   int_types T[] = {obj_check, s_int, obj_check,t_end};
@@ -2937,7 +2959,6 @@ static OpTab Agraph_func[]={
   {"agnxtout", _wrap_nsp_agnxtout},
   {"agfstedge", _wrap_nsp_agfstedge},
   {"agnxtedge", _wrap_nsp_agnxtedge},
-  {"agattr", _wrap_nsp_agattr},
   {"agnxtattr", _wrap_nsp_agnxtattr},
   {"agsubg", _wrap_nsp_agsubg},
   {"agfstsubg", _wrap_nsp_agfstsubg},
@@ -2967,7 +2988,7 @@ void Agraph_Interf_Info(int i, char **fname, function (**f))
   *f = Agraph_func[i].fonc;
 }
 
-#line 83 "../types-test/codegen/agraph.override"
+#line 147 "../types-test/codegen/agraph.override"
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
@@ -3032,8 +3053,7 @@ int nsp_agdeledge(NspAgedge * arg_e){return FAIL;}
 /*   int nsp_agstrfree(NspAgraph *, char *){ return NULL;} */
 /*char *nsp_agcanonstr(char *, char *){ return NULL;}*/
 /*char *nsp_agcanonStr(char*){ return NULL;}*/
-NspAgsym *nsp_agattr(NspAgraph * g, int kind, char *name,
-		       char *value){ return NULL;}
+
 NspAgsym *nsp_agattrsym(void *obj, char *name){ return NULL;}
 NspAgsym *nsp_agnxtattr(NspAgraph * g, int kind, NspAgsym * attr){ return NULL;}
 void *nsp_agbindrec(void *obj, char *name, unsigned int size,
@@ -3116,27 +3136,6 @@ static int nsp_gv_render(NspAgraph *G, char *mode, char *filename)
 static int nsp_agclose(NspAgraph * g){ return 0;};
 
 
-static int nsp_gv_gattr(NspAgraph * g, char *attr, char *value)
-{
-  Agsym_t *a;
-  a = agraphattr( ((Agraph_t *)g->obj->graph)->root, attr, value);
-  return ( a == NULL) ? FALSE: TRUE;
-}
-
-static int nsp_gv_nattr(NspAgraph * g, char *attr, char *value)
-{
-  Agsym_t *a;
-  a = agnodeattr( g->obj->graph, attr, value);
-  return ( a == NULL) ? FALSE: TRUE;
-}
-
-static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value)
-{
-  Agsym_t *a;
-  a = agedgeattr( g->obj->graph, attr, value);
-  return ( a == NULL) ? FALSE: TRUE;
-}
-
 static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name)
 {
   Agnode_t *n ;
@@ -3145,10 +3144,6 @@ static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name)
       Scierror("Error: node with name=%s was not found\n",name);
       return NULL;
     }
-  int i;
-  attrsym_t *aptr;
-  for (i = 0; (aptr = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list[i]); i++)
-    Sciprintf("node attributes:\n",aptr->name);
   return nsp_agnode_create(NVOID,n,NULL);
 }
 
@@ -3185,7 +3180,13 @@ static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n)
   return nsp_agnode_create(NVOID,n1,NULL);
 }
 
+/* Comment trouver les attributs pour les noeuds , arcs et graphe 
 
+  int i;
+  attrsym_t *aptr;
+  for (i = 0; (aptr = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list[i]); i++)
+    Sciprintf("node attributes:\n",aptr->name);
 
+*/
 
-#line 3192 "agraph.c"
+#line 3193 "agraph.c"

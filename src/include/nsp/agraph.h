@@ -136,13 +136,10 @@ static int nsp_gv_add_edges(NspAgraph *G, NspSMatrix *S);
 static int nsp_gv_write(NspAgraph * g,void *chan);
 static int nsp_gv_render(NspAgraph *G, char *mode, char *filename);
 static int nsp_gv_layout(NspAgraph *G, char *mode);
-static int nsp_gv_eattr(NspAgraph * g, char *attr, char *value);
-static int nsp_gv_gattr(NspAgraph * g, char *attr, char *value);
-static int nsp_gv_nattr(NspAgraph * g, char *attr, char *value);
 static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name);
 static NspAgnode *nsp_gv_agfstnode(NspAgraph * g);
 static NspAgnode *nsp_gv_aglstnode(NspAgraph * g);
 static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n);
-#line 147 "./agraph.h"
+#line 144 "./agraph.h"
 #endif /* NspAgraph_Private */
 
