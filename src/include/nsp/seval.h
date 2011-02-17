@@ -20,6 +20,7 @@ extern int nsp_eval_extract(Stack,int first,int rhs,int opt,int lhs);
 extern int nsp_eval_extract_cells(Stack stack, int first, int rhs, int opt, int lhs);
 
 extern int nsp_store_result(char *str,Stack stack, int first);
+extern int nsp_store_object(NspObject *Ob);
 extern int nsp_interfaces(int i, int num, Stack, int rhs, int opt, int lhs);
 extern int nsp_check_stack(Stack, int rhs, int opt, int lhs,char *message,char *name);
 

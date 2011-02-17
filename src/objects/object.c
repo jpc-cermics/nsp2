@@ -2155,9 +2155,12 @@ static int int_object_xdr_load(Stack stack, int rhs, int opt, int lhs)
   if (( F =nsp_file_open_xdr_r(buf)) == NULLSCIFILE) return RET_BUG;
   while (1) 
     {
-      if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) 
-	break;
-      nsp_frame_replace_object(O,-1);
+      if ((O=nsp_object_xdr_load(F->obj->xdrs))== NULLOBJ ) break;
+      if ( nsp_store_object(O) == FAIL) 
+	{
+	  Scierror("Error: failed to load object from %s\n",  fname);
+	  break;
+	}
     }
   if (nsp_file_close_xdr_r(F) == FAIL)
     {

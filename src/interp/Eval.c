@@ -3020,6 +3020,47 @@ int nsp_store_result(char *str, Stack stack, int first)
     }
 }
 
+/* store an object in the curent frame 
+ * taking care of global frame. We assume 
+ * here that the object has a name.
+ */
+
+int nsp_store_object(NspObject *Ob) 
+{
+  const char *name = nsp_object_get_name(Ob);
+  NspObject *O1; 
+  if ( name == NULL) return FAIL;
+  O1 = nsp_frame_search_object(name);
+  /* If the Object is a pointer 
+   * then the object it points to is considered 
+   */
+  if ( Ob->basetype ==  NSP_TYPE_BASE(nsp_type_hobj))
+    {
+      HOBJ_GET_OBJECT(Ob,FAIL);
+    }
+  if ( O1 != NULL && IsGlobal(O1) )
+    {
+      if ( nsp_global_frame_replace_object(Ob) == FAIL) 
+	{
+	  Scierror("Error: cannot insert %s in global frame\n",
+		   name);
+	  return FAIL;
+	}
+    }
+  else 
+    {
+      if (nsp_frame_replace_object(Ob,-1)==FAIL) 
+	{
+	  Scierror("Error: cannot insert %s in local frame\n",
+		   name);
+	  return FAIL;
+	}
+    }
+  return OK;
+}
+
+
+
 /**
  *nsp_store_result_in_symb_table:
  * @position: id of variable in the local table.

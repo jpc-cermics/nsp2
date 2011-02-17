@@ -719,7 +719,12 @@ int nsp_frame_insert_hash_contents(NspHash *H)
 	{
 	  NspObject *Ob;
 	  if ((Ob = nsp_object_copy_with_name(loc->data))== NULLOBJ) return FAIL;
-	  if ( nsp_frame_replace_object(Ob,-1)== FAIL) return FAIL;
+#if 0 
+	  if ( nsp_frame_replace_object(Ob,-1)== FAIL) return FAIL; 
+#else 
+	  /* if some object are global in the frame, keep them global */
+	  if ( nsp_store_object(Ob) == FAIL) return FAIL;
+#endif 
 	}
     }
   return OK;
