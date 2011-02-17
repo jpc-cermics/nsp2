@@ -3056,8 +3056,8 @@ int nsp_mat_bdiv_scalar(NspMatrix *A, NspMatrix *B)
 	  if (nsp_mat_set_ival(A,0.00) == FAIL ) return(FAIL);
 	  for ( i = 0 ; i < A->mn ; i++ )  
 	    {
+	      A->C[i].i = B->C[0].i / A->C[i].r;
 	      A->C[i].r = B->C[0].r / A->C[i].r;
-	      A->C[i].r = B->C[0].i / A->C[i].r;
 	    }
 	}
     }
