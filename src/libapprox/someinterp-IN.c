@@ -121,12 +121,12 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
     }
 
   /* parse input arg */
-  if ((B = GetMat(stack,1)) == NULLMAT) goto err;
+  if ((B = GetRealMat(stack,1)) == NULLMAT) goto err;
   mxp = B->m; nxp = B->n; mnxp = B->mn; xp[0] = B->R;
 
   for ( i = 2 ; i <= n ; i++ )
     {
-      if ((B = GetMat(stack,i)) == NULLMAT) goto err;
+      if ((B = GetRealMat(stack,i)) == NULLMAT) goto err;
       if ( mxp != B->m || nxp != B->n )
 	{ 
 	  Scierror("%s: bad inputs for xp1, xp2, ...., \n", NspFname(stack));
@@ -137,7 +137,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
 
   for ( i = 1 ; i <= n ; i++ )
     {
-      if ((B = GetMat(stack,i+n)) == NULLMAT) goto err;
+      if ((B = GetRealMat(stack,i+n)) == NULLMAT) goto err;
       CheckVector(NspFname(stack),i+n,B);
       if (B->mn < 2)
 	{ 
@@ -155,7 +155,7 @@ int int_nsp_linear_interpn( Stack stack, int rhs, int opt, int lhs)
      }
   
   /* value of the function on the grid (when nsp will support nd arrays this would change) */
-  if ((B = GetMat(stack,2*n+1)) == NULLMAT) goto err;
+  if ((B = GetRealMat(stack,2*n+1)) == NULLMAT) goto err;
   if ( B->mn != ndim_prod )
     {
       Scierror("%s: bad dimension for the grid values \n", NspFname(stack));
@@ -218,8 +218,8 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,4);
   CheckLhs(1,4);
 
-  if ((x = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((y = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((x = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((y = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
 
   CheckSameDims(NspFname(stack),1,2,x,y);
   CheckVector(NspFname(stack),1,x);
@@ -256,7 +256,7 @@ static int int_nsp_splin( Stack stack, int rhs, int opt, int lhs)
 	  Scierror("%s: for a clamped spline you must give the endpoint slopes\n",NspFname(stack));
 	  return RET_BUG;
 	}
-      if ((s = GetMat(stack,4)) == NULLMAT) return RET_BUG;
+      if ((s = GetRealMat(stack,4)) == NULLMAT) return RET_BUG;
       CheckLength(NspFname(stack),4,s,2);
     }
   else if ( rhs == 4 )
@@ -324,10 +324,10 @@ static int int_nsp_interp( Stack stack, int rhs, int opt, int lhs)
   CheckOptRhs(0, 1);
   CheckLhs(1,4);
 
-  if ((t = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((x = GetMat(stack,2)) == NULLMAT) return RET_BUG;
-  if ((y = GetMat(stack,3)) == NULLMAT) return RET_BUG;
-  if ((d = GetMat(stack,4)) == NULLMAT) return RET_BUG;
+  if ((t = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((x = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((y = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((d = GetRealMat(stack,4)) == NULLMAT) return RET_BUG;
 
   CheckSameDims(NspFname(stack),2,3,x,y);
   CheckSameDims(NspFname(stack),2,4,x,d);
@@ -403,9 +403,9 @@ static int int_nsp_splin2d( Stack stack, int rhs, int opt, int lhs)
   CheckOptRhs(0, 1);
   CheckLhs(1,4);
 
-  if ((x = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((x = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
-  if ((y = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((y = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),2,y);
 
   if ( x->mn < 2 || y->mn < 2 )
@@ -426,7 +426,7 @@ static int int_nsp_splin2d( Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
       
-  if ((z = GetMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((z = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
   if ( z->m != x->mn || z->n != y->mn )
     {
       Scierror("%s: incompatibility of arg 3 with arg 1 and arg 2\n",  NspFname(stack));
@@ -498,12 +498,12 @@ static int int_nsp_interp2d(Stack stack, int rhs, int opt, int lhs)
   CheckOptRhs(0, 1)
   CheckLhs(1,3);
 
-  if ((xm = GetMat(stack,1)) == NULLMAT) return RET_BUG;
-  if ((ym = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((xm = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ((ym = GetRealMat(stack,2)) == NULLMAT) return RET_BUG;
   CheckSameDims(NspFname(stack),1,2,xm,ym);
-  if ((x = GetMat(stack,3)) == NULLMAT) return RET_BUG;
-  if ((y = GetMat(stack,4)) == NULLMAT) return RET_BUG;
-  if ((C = GetMat(stack,5)) == NULLMAT) return RET_BUG;
+  if ((x = GetRealMat(stack,3)) == NULLMAT) return RET_BUG;
+  if ((y = GetRealMat(stack,4)) == NULLMAT) return RET_BUG;
+  if ((C = GetRealMat(stack,5)) == NULLMAT) return RET_BUG;
   if ( x->mn < 2 || y->mn < 2 || C->mn != 16*(x->mn-1)*(y->mn-1) )
     {
       Scierror("%s: incompatible arguments\n", NspFname(stack));
