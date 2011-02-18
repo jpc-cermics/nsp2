@@ -33,7 +33,7 @@
 (define-method render 
   (of-object "Agraph")
   (c-name "nsp_gv_render")
-  :: (return-type "boolean")
+  ;; (return-type "boolean")
   (parameters
    '("string" "type")
    '("string" "fname")
@@ -43,21 +43,38 @@
 (define-method graphattr 
   (of-object "Agraph")
   (c-name "nsp_gv_gattr")
-  :: (return-type "boolean")
+  ;; (return-type "boolean")
   (parameters
    '("string" "attr")
    '("string" "value")
   )
 )
 
+;; get all the attribute names 
+
+(define-method graphattrs
+  (of-object "Agraph")
+  (c-name "nsp_gv_graphattrs")
+  (return-type "NspSMatrix*")
+)
+
+
 (define-method nodeattr 
   (of-object "Agraph")
   (c-name "nsp_gv_nattr")
-  :: (return-type "boolean")
+  ;; (return-type "boolean")
   (parameters
    '("string" "attr")
    '("string" "value")
   )
+)
+
+;; get all the attribute names 
+
+(define-method nodeattrs
+  (of-object "Agraph")
+  (c-name "nsp_gv_nodeattrs")
+  (return-type "NspSMatrix*")
 )
 
 (define-method edgeattr 
@@ -69,6 +86,15 @@
    '("string" "value")
   )
 )
+
+;; get all the attribute names 
+
+(define-method edgeattrs
+  (of-object "Agraph")
+  (c-name "nsp_gv_edgeattrs")
+  (return-type "NspSMatrix*")
+)
+
 
 ;;	 { (char *)"agopen", _wrap_agopen, METH_VARARGS, NULL},
 

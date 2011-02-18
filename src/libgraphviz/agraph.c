@@ -24,7 +24,7 @@
 
 
 
-#line 32 "../types-test/codegen/agraph.override"
+#line 36 "../types-test/codegen/agraph.override"
 /* headers */
 
 #line 31 "agraph.c"
@@ -461,7 +461,7 @@ NspAgraph *nsp_agraph_full_copy(NspAgraph *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 48 "../types-test/codegen/agraph.override"
+#line 52 "../types-test/codegen/agraph.override"
 
 /* override the default int_create */
 
@@ -536,15 +536,13 @@ static int _wrap_nsp_gv_render(NspAgraph *self,Stack stack,int rhs,int opt,int l
 {
   int_types T[] = {string, string,t_end};
   char *type, *fname;
-  int ret;
 
   if ( GetArgs(stack,rhs,opt,T,&type, &fname) == FAIL) return RET_BUG;
-  ret = nsp_gv_render(self, type, fname);
-  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
-  return 1;
+  nsp_gv_render(self, type, fname);
+  return 0;
 }
 
-#line 80 "../types-test/codegen/agraph.override"
+#line 84 "../types-test/codegen/agraph.override"
 
 typedef Agsym_t *(fattr)(Agraph_t *,char *name,char *value);
 
@@ -592,20 +590,40 @@ static int _wrap_nsp_gv_gattr(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agraphattr,"graph");
 }
 
-#line 596 "agraph.c"
+#line 594 "agraph.c"
 
 
-#line 129 "../types-test/codegen/agraph.override"
+static int _wrap_nsp_gv_graphattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *ret;
+
+  ret = nsp_gv_graphattrs(self);
+  if ( ret == NULLSMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+#line 133 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_gv_nattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agnodeattr,"node");
 }
 
-#line 606 "agraph.c"
+#line 614 "agraph.c"
 
 
-#line 137 "../types-test/codegen/agraph.override"
+static int _wrap_nsp_gv_nodeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *ret;
+
+  ret = nsp_gv_nodeattrs(self);
+  if ( ret == NULLSMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+#line 141 "../types-test/codegen/agraph.override"
 
 static int _wrap_nsp_gv_eattr(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -614,8 +632,18 @@ static int _wrap_nsp_gv_eattr(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 
 
 
-#line 618 "agraph.c"
+#line 636 "agraph.c"
 
+
+static int _wrap_nsp_gv_edgeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspSMatrix *ret;
+
+  ret = nsp_gv_edgeattrs(self);
+  if ( ret == NULLSMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
 
 static int _wrap_nsp_gv_write(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -699,8 +727,11 @@ static NspMethods agraph_methods[] = {
   {"layout",(nsp_method *) _wrap_nsp_gv_layout},
   {"render",(nsp_method *) _wrap_nsp_gv_render},
   {"graphattr",(nsp_method *) _wrap_nsp_gv_gattr},
+  {"graphattrs",(nsp_method *) _wrap_nsp_gv_graphattrs},
   {"nodeattr",(nsp_method *) _wrap_nsp_gv_nattr},
+  {"nodeattrs",(nsp_method *) _wrap_nsp_gv_nodeattrs},
   {"edgeattr",(nsp_method *) _wrap_nsp_gv_eattr},
+  {"edgeattrs",(nsp_method *) _wrap_nsp_gv_edgeattrs},
   {"write",(nsp_method *) _wrap_nsp_gv_write},
   {"findnode",(nsp_method *) _wrap_nsp_gv_agfindnode},
   {"fstnode",(nsp_method *) _wrap_nsp_gv_agfstnode},
@@ -2988,7 +3019,7 @@ void Agraph_Interf_Info(int i, char **fname, function (**f))
   *f = Agraph_func[i].fonc;
 }
 
-#line 147 "../types-test/codegen/agraph.override"
+#line 151 "../types-test/codegen/agraph.override"
 /* graphs */
 /* NspAgraph *agopen(char *name, Agdesc_t desc, Agdisc_t * disc){} */
 
@@ -3180,13 +3211,41 @@ static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n)
   return nsp_agnode_create(NVOID,n1,NULL);
 }
 
-/* Comment trouver les attributs pour les noeuds , arcs et graphe 
 
+static NspSMatrix *nsp_gv_objattrs(NspAgraph * g,int tag )
+{
   int i;
-  attrsym_t *aptr;
-  for (i = 0; (aptr = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list[i]); i++)
-    Sciprintf("node attributes:\n",aptr->name);
+  attrsym_t *aptr, **aptrl;
+  NspSMatrix *S= nsp_smatrix_create(NVOID,0,0, NULL,0);
+  switch ( tag ) 
+    {
+    case AGGRAPH: aptrl = ((Agraph_t *) g->obj->graph)->univ->globattr->list;break;
+    case AGNODE:  aptrl = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list;break;
+    case AGEDGE:  aptrl = ((Agraph_t *) g->obj->graph)->univ->edgeattr->list;break;
+    }
+  if ( aptrl == NULL) return S;
+  for (i = 0; (aptr = aptrl[i]); i++)
+    {
+      if ( nsp_row_smatrix_append_string(S, aptr->name) == FAIL) 
+	goto fail;
+    }
+  return S;
+ fail:
+  if ( S != NULL) nsp_smatrix_destroy(S);
+  return NULL;
+}
 
-*/
+static NspSMatrix *nsp_gv_graphattrs(NspAgraph * g)
+{
+  return nsp_gv_objattrs(g,AGGRAPH);
+}
+static NspSMatrix *nsp_gv_nodeattrs(NspAgraph * g)
+{
+  return nsp_gv_objattrs(g,AGNODE);
+}
+static NspSMatrix *nsp_gv_edgeattrs(NspAgraph * g)
+{
+  return nsp_gv_objattrs(g,AGEDGE);
+}
 
-#line 3193 "agraph.c"
+#line 3252 "agraph.c"

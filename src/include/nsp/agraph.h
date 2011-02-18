@@ -140,6 +140,10 @@ static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name);
 static NspAgnode *nsp_gv_agfstnode(NspAgraph * g);
 static NspAgnode *nsp_gv_aglstnode(NspAgraph * g);
 static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n);
-#line 144 "./agraph.h"
+static NspSMatrix *nsp_gv_nodeattrs(NspAgraph * g);
+static NspSMatrix *nsp_gv_edgeattrs(NspAgraph * g);
+static NspSMatrix *nsp_gv_graphattrs(NspAgraph * g);
+
+#line 148 "./agraph.h"
 #endif /* NspAgraph_Private */
 

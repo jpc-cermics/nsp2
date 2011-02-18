@@ -27,6 +27,10 @@ static NspAgnode *nsp_gv_agfindnode(NspAgraph * g, char *name);
 static NspAgnode *nsp_gv_agfstnode(NspAgraph * g);
 static NspAgnode *nsp_gv_aglstnode(NspAgraph * g);
 static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n);
+static NspSMatrix *nsp_gv_nodeattrs(NspAgraph * g);
+static NspSMatrix *nsp_gv_edgeattrs(NspAgraph * g);
+static NspSMatrix *nsp_gv_graphattrs(NspAgraph * g);
+
 %%
 headers
 /* headers */
@@ -335,11 +339,39 @@ static NspAgnode *nsp_gv_agnxtnode(NspAgraph * g, NspAgnode *n)
   return nsp_agnode_create(NVOID,n1,NULL);
 }
 
-/* Comment trouver les attributs pour les noeuds , arcs et graphe 
 
+static NspSMatrix *nsp_gv_objattrs(NspAgraph * g,int tag )
+{
   int i;
-  attrsym_t *aptr;
-  for (i = 0; (aptr = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list[i]); i++)
-    Sciprintf("node attributes:\n",aptr->name);
+  attrsym_t *aptr, **aptrl;
+  NspSMatrix *S= nsp_smatrix_create(NVOID,0,0, NULL,0);
+  switch ( tag ) 
+    {
+    case AGGRAPH: aptrl = ((Agraph_t *) g->obj->graph)->univ->globattr->list;break;
+    case AGNODE:  aptrl = ((Agraph_t *) g->obj->graph)->univ->nodeattr->list;break;
+    case AGEDGE:  aptrl = ((Agraph_t *) g->obj->graph)->univ->edgeattr->list;break;
+    }
+  if ( aptrl == NULL) return S;
+  for (i = 0; (aptr = aptrl[i]); i++)
+    {
+      if ( nsp_row_smatrix_append_string(S, aptr->name) == FAIL) 
+	goto fail;
+    }
+  return S;
+ fail:
+  if ( S != NULL) nsp_smatrix_destroy(S);
+  return NULL;
+}
 
-*/
+static NspSMatrix *nsp_gv_graphattrs(NspAgraph * g)
+{
+  return nsp_gv_objattrs(g,AGGRAPH);
+}
+static NspSMatrix *nsp_gv_nodeattrs(NspAgraph * g)
+{
+  return nsp_gv_objattrs(g,AGNODE);
+}
+static NspSMatrix *nsp_gv_edgeattrs(NspAgraph * g)
+{
+  return nsp_gv_objattrs(g,AGEDGE);
+}
