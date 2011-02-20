@@ -655,6 +655,7 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
   if ( rc_type == 'c' &&  B->rc_type  == 'r' )
     {
       /* A is complex -> B is complexified and matlab converted */
+      if ( (B=Bc =nsp_matrix_copy(B)) == NULLMAT) goto err;  /* avoid b to be complex on output */
       if (nsp_mat_complexify(B,0.00) == FAIL ) goto err;
       Mat2mtlb_cplx (B);
     }
