@@ -677,7 +677,7 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
 	  /* Axi= Bi */
 	  for ( i = 0 ; i < B->n ; i++ )
 	    {
-	      status = umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr,X->R+i*T.n+T.m*T.n,B->R+i*B->m+B->mn,
+	      status = umfpack_di_wsolve(mode, T.Jc, T.Ir, T.Pr,X->R+i*T.n+X->mn,B->R+i*B->m+B->mn,
 					 Numeric, dControl, Info, Wi->I, W->R);
 	    }
 	  /* X is mtlb converted we have to back convert */
@@ -696,7 +696,7 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
       for ( i = 0 ; i < B->n ; i++ )
 	{
 	  status = umfpack_zi_wsolve(mode, T.Jc, T.Ir, T.Pr,  T.Pi,
-				     X->R+i*T.n, X->R+i*T.n+T.m*T.n, 
+				     X->R+i*T.n, X->R+i*T.n+X->mn, 
 				     B->R+i*B->m, B->R+i*B->m+B->mn, Numeric, dControl, Info, Wi->I, W->R);
 	}
       /* X is mtlb converted we have to back convert */
