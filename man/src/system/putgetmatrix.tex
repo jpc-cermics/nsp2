@@ -13,10 +13,10 @@
 \begin{calling_sequence}
 \begin{verbatim}
    F.put_matrix[M,format=str1,sep=str2,header=title]
-   fprintfMat(filename,format=str1,sep=str2,header=title)
+   fprintfMat(filename,M,format=str1,sep=str2,header=title)
 
    [M,title] = F.get_matrix[]
-   [M,title] = fscanfMat(filename)
+   [M,title] = fscanfMat(filename,format=str1)
 \end{verbatim}
 \end{calling_sequence}
 
