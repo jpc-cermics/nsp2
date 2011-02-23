@@ -177,7 +177,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
        case 'str'
 	//---- strings 
 	str=strsubst(%str1(%kk),'\\n','\n');
-	%vv = split(str)';
+	%vv = split(str,sep='\n')';
 	ok = check_dims(%vv,%sz);
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
        case 'lis'
@@ -252,6 +252,7 @@ function str=getvalue_dialog(desc,labels,typ,ini)
     end
     L= x_choices(desc,Li,%t); 
     str=m2s([]);
+    if isempty(L) then return;end
     for i=1:size(labels,'*')
       if typ(2*i-1)=='combo' then 
 	str.concatd[typ(2*i)(L(i))];
