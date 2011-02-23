@@ -124,6 +124,33 @@ function [g,fact]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
   fact = M(ind,1);
 endfunction
 
+function gcd_euclide_test()
+// test gcd computations 
+// more tests 
+  x= poly(0);
+  p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
+  n=100 ; T= ones(1,n) > 0; N= zeros(1,n);
+  for i=1:n
+    cp=grand(1,4,'uin',0,5);
+    p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
+    cq=grand(1,4,'uin',0,5);
+    q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
+    cpq = min(cq,cp);
+    gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
+    // [g,p,q,res] = gcd_jpc(p,q);
+    [g,b1]=euclide(p/norm(p,2),q/norm(q,2));
+    g.normalize[];
+    N(i)= norm(g -gcpq1);
+    if N(i) > 1.e-5 then 
+      T(i)=%f; 
+    end 
+  end
+  xclear();
+  Nok = size(find(T),'*');
+  plot2d(1:n,log(N)/log(10))
+  xtitle(sprintf('Number of correct tests %d/%d',Nok,n));
+endfunction 
+
 if %f then 
   a=m2p([1,4,6,4,1]);//(1+x)^4
   b=m2p([0,0,1,1]); // (1+x)*x^2
