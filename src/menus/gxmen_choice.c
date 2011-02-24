@@ -260,8 +260,8 @@ static void nsp_setup_table_combo(nsp_choice_array *ca,GtkWidget *table,int row,
   ca->widget = nsp_setup_choice(ca->type,title,Obj,Ms,Mm,Mn,active);
   tmp = gtk_label_new (title);
   gtk_misc_set_alignment (GTK_MISC (tmp), 0.0, 0.5);
-  gtk_table_attach_defaults (GTK_TABLE (table), tmp, 0, 1, row,row+1);
-  gtk_table_attach_defaults (GTK_TABLE (table), ca->widget, 1, 2, row,row+1);
+  gtk_table_attach (GTK_TABLE (table),tmp, 0, 1, row,row+1 , GTK_FILL, GTK_FILL,0,0);
+  gtk_table_attach (GTK_TABLE (table), ca->widget, 1, 2, row,row+1,GTK_FILL | GTK_EXPAND,GTK_FILL,0,0 );
 }
 
 /* creates a widget according to type  */
