@@ -87,10 +87,15 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
   function [%vv,ok]=check_eval(label,str,typ)
     ok=%f;%vv=[];
     [ierr,%H]=execstr('%vv=['+str+']',env=exec_context, errcatch=%t);
-    if ierr==%f then return;end 
+    if ierr==%f then 
+      x_message(['Answer given for '+label+' is wrong and';
+		 'cannot be evaluated:';'v=['+str+']']);
+      lasterror();
+      return;
+    end 
     %vv=%H.%vv;
     if type(%vv,'string')<>typ then
-      x_message(['Entry '+label+'has incorrect type";
+      x_message(['Entry '+label+' has incorrect type";
 		 'Expecting a '+typ]);
       return;
     end
