@@ -1,6 +1,11 @@
 #ifndef __SCICOS4_H 
 #define __SCICOS4_H 
 
+#ifndef SCICOS44
+#define SCICOS44
+#endif 
+
+
 #include "simul4.h"
 
 /* define min max for win32 */

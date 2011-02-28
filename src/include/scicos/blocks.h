@@ -208,8 +208,6 @@ extern void scicos_mvswitch_block(scicos_block *block,int flag);
 extern void scicos_csslti4_block(scicos_block *block,int flag);
 extern void scicos_gtkrange_block (scicos_block * block, int flag);
 
-#define SCICOS44 
-
 #ifdef SCICOS44 
 
 extern void selector (scicos_args_F2);
