@@ -75,6 +75,7 @@ extern double cdf_brcomp (double a, double b, double x, double y);
 extern double cdf_dbetrm (double *a, double *b);
 extern double cdf_devlpl (const double *a,const int n, double x);
 extern double cdf_dinvnr (double *p, double *q);
+extern double nsp_cdf_dinvnr(double p, double q);
 extern double cdf_dlamch (char *, long int);
 extern double cdf_dln1px (double a);
 extern double cdf_dln1px_old (double a);

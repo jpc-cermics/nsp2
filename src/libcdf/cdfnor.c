@@ -111,20 +111,20 @@ int cdf_cdfnor (int *which, double *p, double *q, double *x, double *mean,
 
   else if (2 == *which)    /* Compute X */
     {
-      z = cdf_dinvnr(p, q);
+      z = nsp_cdf_dinvnr(*p, *q); /* cdf_dinvnr(p, q); */
       *x = *sd * z + *mean;
     }
 
   else if (3 == *which)    /* Compute Mean */
     {
-      z = cdf_dinvnr (p, q);
+      z = nsp_cdf_dinvnr (*p, *q);  /* cdf_dinvnr(p, q); */
       *mean = *x - *sd * z;
     }
 
   else if (4 == *which)    /* Compute Sd: Note that this is not defined for p=q=0.5 */
     {                      /* in this case return Nan (thanks to a change in cdf_dinvnr */
                            /* which return exactly 0 in this case) */
-      z = cdf_dinvnr (p, q);
+      z = nsp_cdf_dinvnr (*p, *q); /* cdf_dinvnr (p, q); */
       *sd = (*x - *mean) / z;
     }
 
