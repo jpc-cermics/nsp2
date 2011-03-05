@@ -31,8 +31,8 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
 //                          'combo',['a','b','c'];
 //            dimi : defines the size of the ith required value
 //                   it must be 
-//                    - an integer or a 2-vector of integers (-1 stands for 
-//                      arbitrary dimension)
+//                    - an integer or a 2-vector of integers (strictly
+//                    negative value stands for arbitrary dimension)
 //                    - an evaluatable character string 
 //  ini     : n column vector of strings, ini(i) gives the suggested
 //            response for the ith required value
@@ -54,18 +54,18 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
     end
     if isempty(dims) then ok=%t; return;end 
     if size(dims,0)== 1 then 
-      ok = dims.equal[-1] || dims.equal[size(val,0)];
+      ok = dims < 0 || dims.equal[size(val,0)];
       return;
     end
-    if dims.equal[[-1,-1]]  then 
+    if max(dims) < 0 then 
       ok = %t;
       return;
     end
-    if dims(1).equal[-1] then 
+    if dims(1) < 0 then 
       ok = dims(2).equal[n]
       return;
     end
-    if dims(2).equal[-1] then 
+    if dims(2) < 0 then 
       ok = dims(1).equal[m]
       return;
     end
