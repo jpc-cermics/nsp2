@@ -4,7 +4,9 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a 
 
-OBJSC = agraph.o 
+OBJSC = agraph.o callbacks.o  gvdevice_gtk.o  gvplugin_gtk.o \
+	interface.o  support.o
+
 
 OBJSF=
 

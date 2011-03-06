@@ -139,6 +139,7 @@ extern void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc);
 extern int nsp_set_current_figure(NspFigure *F);
 extern int nsp_unset_current_figure(void);
 extern NspFigure *nsp_get_current_figure(void);
+extern NspObject *nsp_get_wid_figure(int wid);
 extern void nsp_send_scale_2D_to_opengl(BCG *Xgc);
 extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
 extern int nsp_figure_remove_children(NspFigure *F);
@@ -147,7 +148,7 @@ extern NspFigure *nsp_check_for_current_figure(void);
 extern void nsp_figure_data_reset(NspFigure *F);
 
 
-#line 151 "./figure.h"
+#line 152 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -162,7 +163,7 @@ static AttrTab figure_attrs[];
 static NspMethods *figure_get_methods(void);
 /* static int int_figure_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFigure *nsp_figure_create_void(const char *name,NspTypeBase *type);
-#line 43 "codegen/figure.override"
+#line 44 "codegen/figure.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -184,6 +185,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 188 "./figure.h"
+#line 189 "./figure.h"
 #endif /* NspFigure_Private */
 

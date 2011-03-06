@@ -163,7 +163,7 @@ NspAgraph *new_agraph()
 
 static int nsp_agraph_size(NspAgraph *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*
@@ -1057,7 +1057,7 @@ NspAgnode *new_agnode()
 
 static int nsp_agnode_size(NspAgnode *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*
@@ -1548,7 +1548,7 @@ NspAgedge *new_agedge()
 
 static int nsp_agedge_size(NspAgedge *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*
@@ -2006,7 +2006,7 @@ NspAgsym *new_agsym()
 
 static int nsp_agsym_size(NspAgsym *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*
@@ -2516,7 +2516,7 @@ NspAgdisc *new_agdisc()
 
 static int nsp_agdisc_size(NspAgdisc *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*
