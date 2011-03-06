@@ -193,7 +193,7 @@ class Wrapper:
               '\n' \
               'static int nsp_%(typename_dc)s_size(%(typename)s *Mat, int flag)\n' \
               '{\n' \
-              '  return 0;\n' \
+              '  return 1;\n' \
               '}\n' \
               '\n'  \
               '/*\n'  \

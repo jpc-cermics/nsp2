@@ -181,7 +181,7 @@ NspGrArc *new_grarc()
 
 static int nsp_grarc_size(NspGrArc *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

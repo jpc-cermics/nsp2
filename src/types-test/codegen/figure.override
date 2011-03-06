@@ -30,6 +30,7 @@ extern void nsp_figure_data_set_colormap(NspFigure *F,NspMatrix *Mc);
 extern int nsp_set_current_figure(NspFigure *F);
 extern int nsp_unset_current_figure(void);
 extern NspFigure *nsp_get_current_figure(void);
+extern NspObject *nsp_get_wid_figure(int wid);
 extern void nsp_send_scale_2D_to_opengl(BCG *Xgc);
 extern void nsp_send_scale_3D_to_opengl(BCG *Xgc);
 extern int nsp_figure_remove_children(NspFigure *F);
@@ -1874,3 +1875,29 @@ int nsp_figure_remove_children(NspFigure *F)
     return OK;
 }
 
+
+/**
+ * nsp_get_wid_figure:
+ * @wid: a graphic window id 
+ * 
+ * returns a #NspFigure object associated to window id
+ * if it exists or %NULL if the graphic window has no associated 
+ * figure.
+ * 
+ * Returns: a new #NspFigure or %NULL 
+ **/
+
+NspObject *nsp_get_wid_figure(int wid)
+{
+  BCG *Xgc;
+  NspFigure *F = NULL;
+  /* check if we have a graphic window with 
+   * a figure non recorded as current 
+   */
+  Xgc=window_list_search_new(wid);
+  if ( Xgc == NULL) goto end;
+  if ((F= nsp_get_figure(Xgc))== NULL) goto end;
+  return nsp_object_copy((NspObject *) F);
+ end:
+  return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
+}

@@ -184,7 +184,7 @@ NspContour *new_contour()
 
 static int nsp_contour_size(NspContour *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

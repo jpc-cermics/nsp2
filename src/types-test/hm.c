@@ -167,7 +167,7 @@ NspHm *new_hm()
 
 static int nsp_hm_size(NspHm *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

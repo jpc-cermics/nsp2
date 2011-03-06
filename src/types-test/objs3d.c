@@ -180,7 +180,7 @@ NspObjs3d *new_objs3d()
 
 static int nsp_objs3d_size(NspObjs3d *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

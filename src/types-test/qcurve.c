@@ -174,7 +174,7 @@ NspQcurve *new_qcurve()
 
 static int nsp_qcurve_size(NspQcurve *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

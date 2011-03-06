@@ -180,7 +180,7 @@ NspGrImage *new_grimage()
 
 static int nsp_grimage_size(NspGrImage *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

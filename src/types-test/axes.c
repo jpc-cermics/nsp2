@@ -183,7 +183,7 @@ NspAxes *new_axes()
 
 static int nsp_axes_size(NspAxes *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

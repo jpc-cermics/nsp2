@@ -174,7 +174,7 @@ NspVField *new_vfield()
 
 static int nsp_vfield_size(NspVField *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

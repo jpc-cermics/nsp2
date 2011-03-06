@@ -176,7 +176,7 @@ NspSegments *new_segments()
 
 static int nsp_segments_size(NspSegments *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

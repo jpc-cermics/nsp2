@@ -214,7 +214,7 @@ NspLink *new_link()
 
 static int nsp_link_size(NspLink *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

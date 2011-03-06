@@ -184,7 +184,7 @@ NspString3d *new_string3d()
 
 static int nsp_string3d_size(NspString3d *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

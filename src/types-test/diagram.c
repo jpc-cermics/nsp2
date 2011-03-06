@@ -183,7 +183,7 @@ NspDiagram *new_diagram()
 
 static int nsp_diagram_size(NspDiagram *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

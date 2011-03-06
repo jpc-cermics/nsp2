@@ -187,7 +187,7 @@ NspContour3d *new_contour3d()
 
 static int nsp_contour3d_size(NspContour3d *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

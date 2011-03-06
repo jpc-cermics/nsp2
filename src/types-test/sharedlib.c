@@ -167,7 +167,7 @@ NspSharedlib *new_sharedlib()
 
 static int nsp_sharedlib_size(NspSharedlib *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

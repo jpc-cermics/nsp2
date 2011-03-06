@@ -180,7 +180,7 @@ NspGrRect *new_grrect()
 
 static int nsp_grrect_size(NspGrRect *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

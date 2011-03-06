@@ -183,7 +183,7 @@ NspGMatrix *new_gmatrix()
 
 static int nsp_gmatrix_size(NspGMatrix *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

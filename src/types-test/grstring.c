@@ -181,7 +181,7 @@ NspGrstring *new_grstring()
 
 static int nsp_grstring_size(NspGrstring *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

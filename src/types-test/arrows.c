@@ -178,7 +178,7 @@ NspArrows *new_arrows()
 
 static int nsp_arrows_size(NspArrows *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

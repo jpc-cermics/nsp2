@@ -179,7 +179,7 @@ NspCurve *new_curve()
 
 static int nsp_curve_size(NspCurve *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

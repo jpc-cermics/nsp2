@@ -190,7 +190,7 @@ NspGraphic *new_graphic()
 
 static int nsp_graphic_size(NspGraphic *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

@@ -120,6 +120,14 @@
   (return-type "NspFigure*")
 )
 
+(define-function get_figure 
+  (c-name "nsp_get_wid_figure")
+  (parameters
+   '("gint" "wid"))
+  (return-type "NspObject*")
+)
+
+
 (define-function get_current_axes
   (c-name "nsp_get_current_axes")
   (return-type "NspAxes*")

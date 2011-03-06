@@ -177,7 +177,7 @@ NspBox3d *new_box3d()
 
 static int nsp_box3d_size(NspBox3d *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

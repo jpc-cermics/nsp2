@@ -168,7 +168,7 @@ NspClassA *new_classa()
 
 static int nsp_classa_size(NspClassA *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

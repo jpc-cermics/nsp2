@@ -207,7 +207,7 @@ NspConnector *new_connector()
 
 static int nsp_connector_size(NspConnector *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

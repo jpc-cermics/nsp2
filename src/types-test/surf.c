@@ -176,7 +176,7 @@ NspSurf *new_surf()
 
 static int nsp_surf_size(NspSurf *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

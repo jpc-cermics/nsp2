@@ -186,7 +186,7 @@ NspPolyhedron *new_polyhedron()
 
 static int nsp_polyhedron_size(NspPolyhedron *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

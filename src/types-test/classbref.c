@@ -162,7 +162,7 @@ NspClassBRef *new_classbref()
 
 static int nsp_classbref_size(NspClassBRef *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

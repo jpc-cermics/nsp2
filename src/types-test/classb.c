@@ -164,7 +164,7 @@ NspClassB *new_classb()
 
 static int nsp_classb_size(NspClassB *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

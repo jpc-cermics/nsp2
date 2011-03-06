@@ -187,7 +187,7 @@ NspPolyline3d *new_polyline3d()
 
 static int nsp_polyline3d_size(NspPolyline3d *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

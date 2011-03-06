@@ -173,7 +173,7 @@ NspCompound *new_compound()
 
 static int nsp_compound_size(NspCompound *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

@@ -180,7 +180,7 @@ NspPolyline *new_polyline()
 
 static int nsp_polyline_size(NspPolyline *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

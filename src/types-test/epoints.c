@@ -167,7 +167,7 @@ NspEpoints *new_epoints()
 
 static int nsp_epoints_size(NspEpoints *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

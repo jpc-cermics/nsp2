@@ -190,7 +190,7 @@ NspPoints3d *new_points3d()
 
 static int nsp_points3d_size(NspPoints3d *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

@@ -165,7 +165,7 @@ NspGRoot *new_groot()
 
 static int nsp_groot_size(NspGRoot *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

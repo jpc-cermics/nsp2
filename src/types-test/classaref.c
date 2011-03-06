@@ -162,7 +162,7 @@ NspClassARef *new_classaref()
 
 static int nsp_classaref_size(NspClassARef *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*

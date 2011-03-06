@@ -213,7 +213,7 @@ NspBlock *new_block()
 
 static int nsp_block_size(NspBlock *Mat, int flag)
 {
-  return 0;
+  return 1;
 }
 
 /*
