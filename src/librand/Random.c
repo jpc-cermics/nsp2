@@ -19,9 +19,6 @@
  *
  *--------------------------------------------------------------------------*/
 
-/* #include <math.h> */
-/* #include "nsp/machine.h" */
-
 /* external functions to be called through this interface */
 #include "grand.h"
 #include "basic_generators.h"
@@ -37,16 +34,16 @@ NspRandomGen *NspRNG[NbGenInNsp] = { &MersenneTwister,
 static int current_gen_id = MT;  
 
 /* the current generator func (avoid an indirection) */
-unsigned long int (*current_gen)() = randmt;
+guint32 (*current_gen)() = randmt;
 
 /* the current factor (avoid an indirection) */
 static double current_factor = 2.3283064365386963e-10;
 
 /* the current max int (avoid an indirection) */
-static long unsigned current_max_int = 4294967295ul;
+static guint32 current_max_int = 4294967295ul;
 
 /* an auxiliary generator only used ... */
-unsigned long randbcpl( unsigned long s )
+guint32 randbcpl( guint32 s )
 {
   return 2147001325ul * s + 715136305ul;
 }
@@ -71,7 +68,7 @@ double rand_ranf(void)
   return  current_factor * (double) current_gen();
 }
 
-unsigned long int rand_lgi(void)
+guint32 rand_lgi(void)
 {
   return current_gen();
 }
@@ -80,7 +77,7 @@ void rand_unf_01_and_uin_0_127(double *u, int *k_7bits)
 {
   if ( current_gen_id < CLCG4 )   /* 32 bits generators */
     {
-      unsigned long int n = current_gen();
+      guint32 n = current_gen();
       *k_7bits = n & 127;
       n >>= 7;
       *u = n * 2.98023223876953125e-8;
@@ -97,7 +94,7 @@ void rand_unf_01_and_uin_0_127_and_sign(double *u, int *k_7bits, int *k_1bit)
   int k7, k1;
   if ( current_gen_id < CLCG4 )   /* 32 bits generators */
     {
-      unsigned long int n = current_gen();
+      guint32 n = current_gen();
       k7 = n & 255;
       k1 = k7 & 1;
       k7 >>= 1;
@@ -141,9 +138,8 @@ void rand_unf_01_and_uin_0_127_and_sign(double *u, int *k_7bits, int *k_1bit)
 
 int rand_ignuin(int a, int b)
 {
-  unsigned long k, d = (b-a+1);
-
-  static unsigned long d_save=-1, qd;
+  guint32 k, d = (b-a+1);
+  static guint32 d_save=-1, qd;
   if ( d == 1 )
     return a;
   else

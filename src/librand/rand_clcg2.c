@@ -31,7 +31,7 @@
 
 
 /* header for clcg2 */
-static unsigned long clcg2();
+static guint32 clcg2();
 static int set_state_clcg2(double g[]);
 static int set_state_clcg2_simple(double g);
 static void get_state_clcg2(double g[]);
@@ -44,12 +44,12 @@ NspRandomGen Clcg2 = { CLCG2 , clcg2, "clcg2", 2,
 		       set_state_clcg2_simple };
 
 /* initial default state (seeds) : */
-static long s1 = 1234567890 ;
-static long s2 = 123456789  ;
+static gint32 s1 = 1234567890 ;
+static gint32 s2 = 123456789  ;
 
-static unsigned long clcg2()
+static guint32 clcg2()
 {
-  register long k,z;
+  register gint32 k,z;
 
   /*  s1 = a1*s1 mod m1  (Schrage 's method)  */
   k= s1 /53668;
@@ -74,7 +74,7 @@ static unsigned long clcg2()
    *   randlib.
    */
   
-  return( (unsigned long) z );
+  return( (guint32) z );
 }
 
 static int set_state_clcg2(double g[])
@@ -99,7 +99,7 @@ static int set_state_clcg2(double g[])
 
 static int set_state_clcg2_simple(double seed)
 {
-  unsigned long s_test;
+  guint32 s_test;
   
   if ( seed != floor(seed) || seed < 0  || seed > 4294967295.0 )
     {
@@ -107,7 +107,7 @@ static int set_state_clcg2_simple(double seed)
       return FAIL;
     }
 
-  s_test = (unsigned long) seed;
+  s_test = (guint32) seed;
   do
     s_test = randbcpl( s_test );
   while ( s_test < 1 || s_test > 2147483562 );

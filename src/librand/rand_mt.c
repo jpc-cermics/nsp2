@@ -56,7 +56,7 @@
 #include "basic_generators.h"
 
 /* header for mt */
-/* static  unsigned long randmt();*/
+/* static  guint32 randmt();*/
 static int set_state_mt_simple(double s);
 static int set_state_mt(double *seed_array);
 static void get_state_mt(double *state);
@@ -83,15 +83,15 @@ NspRandomGen MersenneTwister = { MT , randmt, "mt", 625,
 #define TEMPERING_SHIFT_T(y)  (y << 15)
 #define TEMPERING_SHIFT_L(y)  (y >> 18)
 
-static unsigned long mt[N]; /* the array for the state vector  */
+static guint32 mt[N]; /* the array for the state vector  */
 static int mti=N;
 static int is_init=0;  
 static double DEFAULT_SEED=5489.0;
 
-unsigned long randmt()
+guint32 randmt()
 {
-  unsigned long y;
-  static unsigned long mag01[2]={0x0, MATRIX_A};
+  guint32 y;
+  static guint32 mag01[2]={0x0, MATRIX_A};
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
   
   if (mti >= N) { /* generate N words at one time */
@@ -127,11 +127,11 @@ unsigned long randmt()
 static int set_state_mt_simple(double s)
 {
   /*   set the initial state with the simple procedure  */
-  unsigned long seed;
+  guint32 seed;
 
   if ( s == floor(s) && 0.0 <= s && s <= 4294967295.0)
     {
-      seed = (unsigned long) s;
+      seed = (guint32) s;
       mt[0]= seed & 0xffffffff;
       for (mti=1; mti<N; mti++)
 	{
@@ -178,7 +178,7 @@ static int set_state_mt(double *seed_array)
     }
   mti = mti_try;
   for (i=0;i<N;i++) 
-    mt[i] = ((unsigned long) seed_array[i+1]) & 0xffffffff;
+    mt[i] = ((guint32) seed_array[i+1]) & 0xffffffff;
   is_init = 1;
   return OK;
 }

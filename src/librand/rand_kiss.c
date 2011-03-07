@@ -17,7 +17,7 @@
  *      they  are not interfaced at the scilab level.
  *
  *      Need that it is assumed that the 
- *         unsigned long arithmetic is the classic 32 bits 
+ *         guint32 arithmetic is the classic 32 bits 
  *         unsigned arithmetic modulo 2^32 (ie all is exact
  *         modulo 2^32) 
  *
@@ -26,7 +26,7 @@
 #include "basic_generators.h"
 
 /* header for kiss */
-static unsigned long kiss();
+static guint32 kiss();
 static int set_state_kiss(double g[]);
 static int set_state_kiss_simple(double g);
 static void get_state_kiss(double g[]);
@@ -47,9 +47,9 @@ NspRandomGen Kiss = { KISS , kiss, "kiss", 4,
 #define KISSGEN  ((MWC^CONG)+SHR3)
 
 /*  the kiss 's state  (any int in [0,2^32-1] are OK ?) */
-static unsigned long z=362436069, w=521288629, jsr=123456789, jcong=380116160;
+static guint32 z=362436069, w=521288629, jsr=123456789, jcong=380116160;
 
-static unsigned long kiss()
+static guint32 kiss()
 {
   return KISSGEN;
 }
@@ -64,10 +64,10 @@ static int set_state_kiss(double *g)
 	return FAIL;
       }
 
-  z = (unsigned long) g[0];
-  w = (unsigned long) g[1];
-  jsr = (unsigned long) g[2];
-  jcong = (unsigned long) g[3];
+  z = (guint32) g[0];
+  w = (guint32) g[1];
+  jsr = (guint32) g[2];
+  jcong = (guint32) g[3];
   return OK;
 }
 
@@ -79,7 +79,7 @@ static int set_state_kiss_simple(double g)
       return FAIL;
     }
 
-  z = randbcpl( (unsigned long) g );
+  z = randbcpl( (guint32) g );
   w = randbcpl(z);
   jsr = randbcpl(w);
   jcong = randbcpl(jsr);

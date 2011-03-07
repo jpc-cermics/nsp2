@@ -4,6 +4,7 @@
 #include <nsp/math.h> 
 #include <nsp/sciio.h> 
 #include <nsp/object.h> 
+#include <nsp/ints.h> 
 
 
 typedef struct _PoissonStruct PoissonStruct;
@@ -150,7 +151,7 @@ extern double nsp_rand_ncchi2(NcChi2Struct *C);
 extern double nsp_rand_ncchi2_direct(double nu, double xnonc);
 extern int rand_ignuin (int a, int b);
 extern double rand_ranf (void);
-extern unsigned long int rand_lgi(void);
+extern guint32 rand_lgi(void);
 extern double nsp_rand_exp_core(void);
 extern double nsp_rand_exp(double tau);
 extern double nsp_rand_nor_core();

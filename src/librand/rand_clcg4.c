@@ -60,7 +60,7 @@
 #include "grand.h"
 #include "basic_generators.h"
 
-static unsigned long clcg4();
+static guint32 clcg4();
 static int set_state_clcg4(double s[]);
 static int set_state_clcg4_simple(double s0);
 static void get_state_clcg4(double s[]);
@@ -78,25 +78,25 @@ NspRandomGen Clcg4 = { CLCG4 , clcg4, "clcg4", 4,
 
 #define H   32768               /* = 2^15 : use in MultModM.           */
 
-static long aw[4], avw[4],      /*   a[j]^{2^w} et a[j]^{2^{v+w}}.     */
+static gint32 aw[4], avw[4],      /*   a[j]^{2^w} et a[j]^{2^{v+w}}.     */
   a[4] = { 45991, 207707, 138556, 49689 },
   m[4] = { 2147483647, 2147483543, 2147483423, 2147483323 };
 
-static long Ig[4][Maxgen+1], Lg[4][Maxgen+1], Cg[4][Maxgen+1];
+static gint32 Ig[4][Maxgen+1], Lg[4][Maxgen+1], Cg[4][Maxgen+1];
 /* Initial seed, previous seed, and current seed. */
 
 static int  is_init = 0;
-static long v_default = 31;
-static long w_default = 41;
+static gint32 v_default = 31;
+static gint32 w_default = 41;
 static int g = 0;  /* the current virtual generator */
 
 static double max_int_gen[4] = {2147483646, 2147483542, 2147483422, 2147483322};
 
-static long MultModM (long s, long t, long M)
+static gint32 MultModM (gint32 s, gint32 t, gint32 M)
 /* Returns (s*t) MOD M.  Assumes that -M < s < M and -M < t < M.    */
 /* See L'Ecuyer and Cote (1991).                                    */
 {
-  long R, S0, S1, q, qh, rh, k;
+  gint32 R, S0, S1, q, qh, rh, k;
 
   if (s < 0)  s += M;
   if (t < 0)  t += M;
@@ -131,7 +131,7 @@ static long MultModM (long s, long t, long M)
   return R;
 }
 
-static void comp_aw_and_avw(long v, long w)
+static void comp_aw_and_avw(gint32 v, gint32 w)
 {
   int i, j;
   for (j = 0; j < 4; j++)
@@ -145,7 +145,7 @@ static void comp_aw_and_avw(long v, long w)
     }
 }
 
-static void init_clcg4(long v, long w)
+static void init_clcg4(gint32 v, gint32 w)
 {
   /* currently the nsp interface don't let the user chooses
    * v and w (always v_default and w_default) so this routine
@@ -178,17 +178,17 @@ static void display_info_clcg4()
 }
 
 
-static int four_seed_from_one(double seed, long s[])
+static int four_seed_from_one(double seed, gint32 s[])
 {
   int k;
-  unsigned long s_test;
+  guint32 s_test;
 
   if ( seed != floor(seed) || seed < 0 || seed >  4294967295.0 )
     {
       Scierror("bad simple seed for clcg4, must be an integer in  [0,2^32-1]\n");
       return FAIL;
     }
-  s_test = (unsigned long) seed;
+  s_test = (guint32) seed;
   for ( k = 0 ; k < 4 ; k++ )
     {
       do
@@ -227,7 +227,7 @@ static int set_state_clcg4(double *s)
 
 static int set_state_clcg4_simple(double s0)
 {
-  long s[4];
+  gint32 s[4];
 
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
 
@@ -287,7 +287,7 @@ void init_generator_clcg4(SeedType Where)
 
 void advance_state_clcg4(int k)
 {
-  long int b[4];
+  gint32 b[4];
   int i, j;
 
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
@@ -334,11 +334,11 @@ int set_initial_seed_clcg4(double *s)
   return OK;
 }
 
-static unsigned long clcg4()
+static guint32 clcg4()
 {
   /* Modif Bruno : the generator have now the form (1) in place of (2) */
 
-  long k,s;
+  gint32 k,s;
   double u;
 
   if (! is_init ) {init_clcg4(v_default,w_default); is_init = 1; };
@@ -373,6 +373,6 @@ static unsigned long clcg4()
       u -= 2147483647.0;
       if (u >= 2147483647.0) u -= 2147483647.0;
     }
-  return ((unsigned long) u );
+  return ((guint32) u );
 
 }

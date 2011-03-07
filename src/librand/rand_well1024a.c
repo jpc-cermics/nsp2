@@ -20,7 +20,7 @@
 #include "basic_generators.h"
 
 /* header for the well1024a */
-static unsigned long well1024a();
+static guint32 well1024a();
 static int set_state_well1024a_simple(double s);
 static int set_state_well1024a(double seed_array[]);
 static void get_state_well1024a(double state[]);
@@ -69,7 +69,7 @@ static int set_state_well1024a(double seed_array[])
     }
   state_i = state_i_try;
   for ( i = 0 ; i < R ; i++ ) 
-    STATE[i] = ((unsigned long) seed_array[i+1]) & 0xffffffff;
+    STATE[i] = ((guint32) seed_array[i+1]) & 0xffffffff;
   is_init = 1;
   return OK;
 }
@@ -78,12 +78,12 @@ static int set_state_well1024a_simple(double s)
 {
   /*   set the initial state with the same procedure than for the *
    *   mersenne-twister (see rand_mt.c)                           */
-  unsigned long seed;
+  guint32 seed;
   int i;
 
   if ( s == floor(s) && 0.0 <= s && s <= 4294967295.0 )
     {
-      seed = (unsigned long) s;
+      seed = (guint32) s;
       STATE[0]= seed & 0xffffffff;
       for ( i=1 ; i < R ; i++)
 	{
@@ -113,7 +113,7 @@ static void get_state_well1024a(double state[])
     state[i+1] = (double) STATE[i];
 }
 
-static unsigned long well1024a (void)
+static guint32 well1024a (void)
 {
 
   if ( ! is_init )

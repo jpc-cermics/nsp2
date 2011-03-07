@@ -63,7 +63,7 @@
 
 
 /* header for fsultra */
-static unsigned long fsultra();
+static guint32 fsultra();
 static int set_state_fsultra(double g[]);
 static int set_state_fsultra_simple(double g);
 static void get_state_fsultra(double g[]);
@@ -79,10 +79,10 @@ NspRandomGen Fsultra = { FSULTRA , fsultra, "fsultra", 40,
 #define N2 24           /* The shorter lag      */
 
 static int is_init=0;  
-static long swb_state[N];          /* state of the swb generator */
+static gint32 swb_state[N];          /* state of the swb generator */
 static int swb_index=N;            /* an index on the swb state */
 static int swb_flag;		   /* the carry flag for the SWB generator */
-static unsigned long cong_state;   /* state of the congruential generator */
+static guint32 cong_state;   /* state of the congruential generator */
 
 /* for this generator the state seems completly defined by:
    swb_state, swb_index, swb_flag (which define the state of the swb generator)
@@ -91,7 +91,7 @@ static unsigned long cong_state;   /* state of the congruential generator */
 
 /* those are the default for the simple initialisation routine */
 static  double DEFAULT_SEED1= 1234567.0;
-static unsigned long DEFAULT_SEED2=7654321; 
+static guint32 DEFAULT_SEED2=7654321; 
 
 
 /* SWB is the subtract-with-borrow operation which should be one line
@@ -128,7 +128,7 @@ static void advance_state_swb()
   swb_index = 0;
 }
 
-static unsigned long fsultra()
+static guint32 fsultra()
 {
   if (swb_index >= N)  /* generate N words at one time */
     { 
@@ -164,7 +164,7 @@ static unsigned long fsultra()
 
 static int set_state_fsultra_simple(double s1)
 { 
-  unsigned long shrgx, tidbits=0;
+  guint32 shrgx, tidbits=0;
   int i, j;
 
   if ( s1 != floor(s1) || s1 < 0.0  ||  s1 > 4294967295.0 )
@@ -173,8 +173,8 @@ static int set_state_fsultra_simple(double s1)
       return FAIL;
     }
 
-  cong_state = ((unsigned long) s1)*2 + 1;
-  shrgx =  s1 == DEFAULT_SEED1 ? DEFAULT_SEED2 : randbcpl( (unsigned long) s1 );
+  cong_state = ((guint32) s1)*2 + 1;
+  shrgx =  s1 == DEFAULT_SEED1 ? DEFAULT_SEED2 : randbcpl( (guint32) s1 );
   for ( i=0 ; i<N ; i++)
     {
       for ( j=32 ; j>0 ; j--)
@@ -220,11 +220,11 @@ static int set_state_fsultra(double *s)
       Scierror("\n\r the third component of the fsultra state, must be an integer in [1, 2^32-1] \n\r");
       return FAIL;
     }
-  cong_state = (unsigned long) try;
+  cong_state = (guint32) try;
  
   /* no verif here ... */
   for (i = 0 ; i < N ; i++) 
-    swb_state[i] = (long) (((unsigned long) s[i+3]) & 0xffffffff);
+    swb_state[i] = (long) (((guint32) s[i+3]) & 0xffffffff);
 
   is_init = 1;
   return OK;
@@ -245,6 +245,6 @@ static void get_state_fsultra(double s[])
   s[1] = (double)  swb_flag;
   s[2] = (double)  cong_state;
   for (i = 0 ; i < N ; i++) 
-    s[i+3] = (double) (unsigned long) swb_state[i];
+    s[i+3] = (double) (guint32) swb_state[i];
 }
 

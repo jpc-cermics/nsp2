@@ -9,10 +9,10 @@ typedef struct _NspRandomGen NspRandomGen;
 struct _NspRandomGen
 {
   int id_gen;
-  unsigned long (*gen)();
+  guint32 (*gen)();
   const char *name_gen;
   int dim_state;
-  unsigned long max_int; 
+  guint32 max_int; 
   double factor;              /* 1.0/(rng_max_int+1) */
   void (*get_state)(double *);
   int (*set_state)(double *);
@@ -29,10 +29,10 @@ extern NspRandomGen Clcg2;
 extern NspRandomGen *NspRNG[NbGenInNsp];
 
 /* header for mt */
-unsigned long randmt();
+guint32 randmt();
 
 /* header for bcpl */
-unsigned long randbcpl(unsigned long s);
+guint32 randbcpl(guint32 s);
 
 /* header for the clcg4 */
 #define Maxgen  100
