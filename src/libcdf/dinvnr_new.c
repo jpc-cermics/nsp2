@@ -1,3 +1,22 @@
+/* Nsp
+ * Copyright (C) 2011 Peter John Acklam, Bruno Pincon
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
 #include "cdf.h"
 
 /**
@@ -7,7 +26,7 @@
  * 
  * p and q should verify p+q == 1 (in floating point)
  *
- * returns x  such that cumnor(x)  =   p,  i.e., the  integral from 
+ * returns x  such that cumnor(x) = p,  i.e., the  integral from 
  * - infinity to x of (1/sqrt(2*pi)) exp(-u*u/2) du is p 
  * 
  *     use algorithm from Peter John Acklam 

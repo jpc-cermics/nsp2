@@ -49,14 +49,8 @@
 /*     Package of Special Function Routines and Test Drivers" */
 /*     acm Transactions on Mathematical Software. 19, 22-32. */
 /*     is used to calulate the  cumulative standard normal distribution. */
-/*     The rational functions from pages  90-95  of Kennedy and Gentle, */
-/*     Statistical  Computing,  Marcel  Dekker, NY,  1980 are  used  as */
-/*     starting values to Newton's Iterations which compute the inverse */
-/*     standard normal.  Therefore no  searches  are necessary for  any */
-/*     parameter. */
-/*     For X < -15, the asymptotic expansion for the normal is used  as */
-/*     the starting value in finding the inverse standard normal. */
-/*     This is formula 26.2.12 of Abramowitz and Stegun. */
+/*     Inverse standard normal uses algorithm from  Peter John Acklam, slightly */
+/*     modified by Bruno Pincon (see dinvnr_new.c file) */
 /*                              Note */
 /*      The normal density is proportional to */
 /*      exp( - 0.5 * (( X - MEAN)/SD)**2) */

@@ -25,7 +25,7 @@ double cdf_dt1 (double *p, double *q, double *df)
   double denpow, d1,  sum, term,  x, xp, xx;
   int i;
 
-  x = (d1 = cdf_dinvnr (p, q), Abs (d1));
+  x = (d1 = nsp_cdf_dinvnr (*p, *q), Abs (d1));
   xx = x * x;
   sum = x;
   denpow = 1.;

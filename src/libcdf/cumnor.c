@@ -89,7 +89,7 @@ int cdf_cumnor (double *arg, double *result, double *ccum)
    *           A conservative value is the largest machine number X 
    *           such that   1.0 + X = 1.0   to machine precision. 
    */
-  eps = cdf_spmpar (c__1) * .5;
+  eps = cdf_spmpar (c__1) * 0.5;
   min__ = cdf_spmpar (c__2);
 
   x = *arg;
@@ -108,9 +108,9 @@ int cdf_cumnor (double *arg, double *result, double *ccum)
        */
       xsq = zero;
       if (y > eps)
-	{
-	  xsq = x * x;
-	}
+      	{
+      	  xsq = x * x;
+      	}
       xnum = a[4] * xsq;
       xden = xsq;
       for (i__ = 1; i__ <= 3; ++i__)
