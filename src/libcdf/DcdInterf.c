@@ -380,7 +380,7 @@ int int_cdffnc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static void cdffncErr(     int status,   double bound, double boundbis, int i, int m, int n)
+static void cdffncErr(int status,   double bound, double boundbis, int i, int m, int n)
 {
   static char *param[7]={"WHICH","P","Q","F","Dfn","Dfd","Pnonc"};
   char buf[30], mesmn[]=" for answer", mes1[]="", *mes = m*n == 1 ? mes1 : mesmn;;
@@ -411,22 +411,17 @@ static void cdffncErr(     int status,   double bound, double boundbis, int i, i
 int int_cdfgam(Stack stack, int rhs, int opt, int lhs)
 {
   int rep;
-  char *Table[] = {"PQ", "Rate" ,  "Shape","X", NULL}; 
+  char *Table[] = {"PQ", "Rate" ,  "Shape","X", "Scale", NULL}; 
   int minrhs = 4,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
   if ((rep= GetStringInArray(stack,1,Table,1)) == -1) 
+    return RET_BUG; 
+
+  if ( rep == 4 )
     {
-      char *key;
-      if ((key = GetString(stack,1)) == ((char *) 0) ) 
-	return RET_BUG;
-      if ( strcmp(key,"Scale") == 0 )
-	{ 
-	  Sciprintf("Warning: parameter key 'Scale' is obsolete use 'Rate'\n");
-	  rep = 1;
-	}
-      else
-	return RET_BUG; 
+      Sciprintf("Warning: parameter key 'Scale' is obsolete use 'Rate'\n");
+      rep = 1;
     }
 
   switch (rep) 
