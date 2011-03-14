@@ -147,8 +147,8 @@ calculations (in the following $npr$ will denote the number of components of the
 n = 5000;
 pr = linspace(0.01,0.99,80)';
 X = randn(n,1);  // a sample from N(0,1)
-q = quantile(X,pr)
-qe = cdfnor("X",zeros(size(pr)),ones(size(pr)),pr,1-pr)
+q = quantile(X,pr);
+qe = cdfnor("X",zeros(size(pr)),ones(size(pr)),pr,1-pr);
 // compare curves
 xbasc()
 plot2d(pr,[q,qe],style=[2,5],leg="sample quantile@exact quantile",leg_pos="dr")
