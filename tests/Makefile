@@ -78,7 +78,8 @@ TESTS= \
 	markup.dia \
 	polynoms.dia \
 	errcatch.dia \
-	cdfxxx.dia
+	cdfxxx.dia \
+	spmf.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
