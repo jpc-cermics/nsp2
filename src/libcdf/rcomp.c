@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /**
@@ -32,7 +33,7 @@ double cdf_rcomp (double a, double x)
   t = a * log (x) - x ;
   if (a >= 1.)
     {
-      return  exp (t) / cdf_gamma (a);
+      return  exp (t) / nsp_gamma (a);
     }
   return  a * exp (t) * (cdf_gam1 (a) + 1.);
 }

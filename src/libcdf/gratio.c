@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /*     evaluation of the incomplete gamma ratio functions p(a,x) and q(a,x) 
@@ -162,7 +163,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
   goto L220;
  L20:
   t1 = a * log (x) - x;
-  r__ = exp (t1) / cdf_gamma (a);
+  r__ = exp (t1) / nsp_gamma (a);
   goto L40;
 
  L30:

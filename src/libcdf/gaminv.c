@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /*  inverse incomplete gamma ratio function 
@@ -127,7 +128,7 @@ int cdf_gaminv (double a, double *x, double *x0, double *p, double *q, int *ierr
       goto L80;
     }
   d__1 = a + 1.;
-  g = cdf_gamma (d__1);
+  g = nsp_gamma (d__1);
   qg = *q * g;
   if (qg == 0.)
     {
