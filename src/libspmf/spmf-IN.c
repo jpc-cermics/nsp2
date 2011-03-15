@@ -205,7 +205,7 @@ static int int_nsp_cotanpi(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-static int int_nsp_gammabr(Stack stack, int rhs, int opt, int lhs)
+static int int_nsp_gamma(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
   int i;
@@ -1406,7 +1406,7 @@ int nsp_use_extended_fpu()
 
 
 static OpTab Spmf_func[]={
-  {"bincoeff", int_nsp_binomial_coef},
+  {"bincoeff_m", int_nsp_binomial_coef},
   {"log1p_m", int_nsp_log1p},
   {"expm1_m", int_nsp_expm1},
   {"erfcx_m", int_nsp_erfcx},
@@ -1414,7 +1414,7 @@ static OpTab Spmf_func[]={
   {"cospi_m", int_nsp_cospi},
   {"tanpi_m", int_nsp_tanpi},
   {"cotanpi_m", int_nsp_cotanpi},
-  {"gammabr_m", int_nsp_gammabr},
+  {"gamma_m", int_nsp_gamma},
   {"lngamma_m", int_nsp_lngamma},
   {"digamma_m", int_nsp_digamma},
   {"kcdf_m_m", int_nsp_kcdf},

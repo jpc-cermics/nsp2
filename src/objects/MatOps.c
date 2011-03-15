@@ -3870,36 +3870,6 @@ int nsp_mat_erfc(NspMatrix *A)
   return(OK);
 }
 
-/**
- * nsp_mat_tgamma:
- * @A: a #NspMatrix 
- * 
- * A=gamma(A). The Gamma function is defined by
- * integral from 0 to infinity of t^(x-1) e^-t dt
- * 
- * Return value: %OK or %FAIL.
- **/
-
-int nsp_mat_tgamma(NspMatrix *A)
-{
-  int i ;
-  if ( A->rc_type == 'r') 
-    {
-#ifdef HAVE_TGAMMA
-      for ( i = 0 ; i < A->mn ; i++) A->R[i]= tgamma(A->R[i]);
-#else 
-      Scierror("Error: tgamma function not implemented\n");
-      return(FAIL);
-#endif 
-    }
-  else
-    {
-      Scierror("Error: tgamma function not implemented for complex\n");
-      return(FAIL);
-    }
-  return(OK);
-}
-
 
 /**
  * nsp_mat_lgamma:

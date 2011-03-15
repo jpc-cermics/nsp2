@@ -428,6 +428,15 @@ double  nsp_stirling_error(double x)
   return ((((((C6*t + C0)*t + C1)*t + C2)*t + C3)*t + C4)*t + C5)/x;
 }
 
+/* double  nsp_stirling_error(double x) */
+/* { */
+/*   double t = 1.0/x; */
+/*   t = t*t; */
+/*   return ((((((5.7083835261e-03*t -1.910444077728e-03)*t + 8.4171387781295e-04)*t  */
+/*                - 5.952379913043012e-04)*t + 7.93650793500350248e-04)*t  */
+/*                - 2.777777777777681622553e-03)*t + 8.333333333333333331554247e-02)/x; */
+/* } */
+
 
 /* approximation for lngamma in [4,12] using W. Cody 's rationnal approximation */
 static double lngamma_in_4_12(double x)
@@ -479,7 +488,7 @@ static double lngamma_in_0p68_1p5(double x)
  **/
 double nsp_lngamma(double x)
 {
-  double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.71; /*  lim = 0.6796875 in the Cody's code */
+  double const log_sqr_2pi = 0.9189385332046727417803297364, lim = 0.71;  /* lim = 0.6796875 in the Cody's code */
   if ( x > DBL_MAX )
     return x;
   else if ( x > 12.0 )
