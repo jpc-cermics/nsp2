@@ -1,8 +1,7 @@
 /* Nsp
- * Copyright (C) 2006-2010 Bruno Pincon Esial/Iecn
- * nsp_expm1 code: Copyright (C) 2002 The R Development Core Team
- * nsp_digamma code: Copyright (C) 2007-2010 Jean-Philippe Chancelier Enpc/Cermics and Bruno Pincon Esial/Iecn
-
+ * Copyright (C) 2006-2011 Bruno Pincon Esial/Iecn
+ * Copyright (C) 2007-2011 Jean-Philippe Chancelier Enpc/Cermics
+ *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
  * License as published by the Free Software Foundation; either
@@ -114,6 +113,104 @@ double nsp_log1p(double x)
 }
 
 
+
+/** 
+ * Here is another version (currently) unused. There is a
+ * Maple code (to get a some rationnal pade approximation)
+ * which could be reused for a long double version of nsp_log1p(x)
+ * 
+ * cdf_dln1px_jpc:
+ * @a: a double, value for which ln(1+a) is desired.
+ * 
+ * Returns ln(1+ @a). 
+ * Note that the obvious code log(1.0 + @a) won't work for small @a
+ * because 1.0+ @a loses accuracy. We obtain here around 6.e-16 relative error.
+ * Rational chebishev pade approximation is obtained with Maple
+ * with ideas from dln1px and rlog1 from: 
+ *     DiDinato, A. R. and Morris,  A.   H.  Algorithm 708: Significant 
+ *     Digit Computation of the Incomplete  Beta  Function Ratios.  ACM 
+ *     Trans. Math.  Softw. 18 (1993), 360-373. 
+ * 
+ * Returns: a double 
+ **/
+
+/* 
+ * Using Maple code for approximation in [-0.1,0.1] of 
+ * (log(1+x)-log(1-x))/2x giving an approximation 
+ * of log(1+x) in [-0.18,0.18].
+ * 
+ 
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) log(1+x);end proc;
+  g:=proc(x) (f(x)-f(-x))/(2*x);end proc;
+  Digits:=50;
+  gg:=chebpade(g(x),x=-0.1..0.1,[8,8]);
+  Digits:=17;
+  gg:= convert(gg,float);
+  n:= numer(gg);
+  xx:=coeffs(n,x)[1];
+  n:=n/xx;
+  d:= denom(gg)/xx;
+  g_cheb:= unapply(n/d,x);
+  f_approx:= proc(x) local u; u:= x/(2+x); 2*u*(g_cheb(u)); end proc;
+  infnorm(f(x)-f_approx(x),x=-0.18..0.18);
+  codegen[C](f_approx,optimized);
+  codegen[C](g_cheb,optimized);
+  codegen[C](confracform(n/d));
+  
+  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
+    evalf((u1-u2)/u1,70);
+  end proc;
+  
+  m_err:=proc(a,b,nn)
+    mv:=a*nn; mvp:=b*nn;
+    s:=[seq(i/mvp,i=-mv..-1),seq(i/mvp,i=1..mv)];
+    serr:= map(f_err,s);
+    convert(max(op(serr)),float);
+  end proc;
+  
+  m_err(18,100,10);
+  
+*/
+#if 0
+double cdf_dln1px_jpc (double x)
+{
+  /* basic test: x=linspace(-0.38,0.56,10000);max(abs(cdf_dln1px(x)-log(1+x)))
+   * 
+   */
+  double res = 0.0,u,u2;
+  if (x < -.18)
+    {
+      if ( x < -0.39 ) return  log (1+x) ;
+      /* x is in  [-0.39,-0.18] 
+       * log(1+x) = log(1+ (10x+3)/7) - log(10/7);
+       */
+      x = (x + .3)/0.7;
+      res -= 0.35667494393873240;
+    }
+  else 
+    {
+      if ( x > 0.57) return log (1+x);
+      if ( x > 0.18) 
+	{
+	  /* [0.18,0.57] 
+	   * log(1+x)= log(1 + (3x-1)/4) - log(3/4);
+	   */
+	  x *= 0.75; x -= 0.25;
+	  res -= -0.28768207245178093;
+	}
+    }
+  /* now x is in the range [-0.18,0.18] */
+  u = x/(2.0+x);
+  u2 = u*u;
+  res += 2*u*(1 + ( -0.7793882156769878+0.6815528913297467E-1*u2)*u2)
+    /(1 + (-0.1112721549008866E1+0.2390624709752837*u2)*u2);
+  return res;
+}
+#endif
+
+
 /**
  * nsp_expm1:
  * @x:  a double
@@ -125,26 +222,105 @@ double nsp_log1p(double x)
  *
  * Returns: a double
  **/
+
+extern int nsp_use_extended_fpu();
+
 double nsp_expm1(double x)
 {
-    double y, a = fabs(x);
+  double y;
+  if ( x < -0.015 ||  x > 0.015 )
+    {
+      y = exp(x)-1;
+    }
+  else 
+    {
+      /* pade approximation computed with Maple (see code below). */
+      y= x*(0.9999879465639932
+		   +(0.1681565684988593E-17
+		     +0.2380922406793938E-1*x)*x)
+	/(0.9999879465639932
+	  +(-0.4999939732819966
+	    +(0.1071415529482722
+	      +(-0.1190461203396969E-1+0.5952298576585598E-3*x)*x)*x)*x);
+    }
+  /* improve the result: only usefull when pure 64bits is used  */
+#ifdef __linux__ 
+  if ( nsp_use_extended_fpu() == FALSE && Abs(x) > 0.01  ) 
+    {
+      /* improve by newton step : 
+       *     Copyright (C) 2002 The R Development Core Team
+       */
+      y -= (1.0 + y) * (nsp_log1p(y) - x);
+    }
+#endif 
+  return y;
+} 
 
-    if (a < DBL_EPSILON) return x;
-/*     if (a > 0.697) return exp(x) - 1.0;  /\* negligible cancellation *\/ */
-/*     if (a > 0.125) return exp(x) - 1.0;  /\* negligible cancellation *\/ */
-    if (a > 0.25) return exp(x) - 1.0;  /* negligible cancellation */
+/* 
+ * Using Maple code for approximation 
+ 
+  with(numapprox);
+  with(orthopoly);
+  f:= proc(x) exp(x)-1;end proc;
+  g:= proc(x) f(x)/x;end proc;
+  Digits:=50;
+  am:=-15;ap:=15;ad:=1000;
+  ggp:=chebpade(g(x),x=(am/ad)..(ap/ad),[2,4]);
+  Digits:=17;
+  gg:= convert(ggp,float);
+  gg:= convert(gg,horner);
+  f_approx:= unapply(x*gg,x);
+  infnorm(f(x)-f_approx(x),x=(am/ad)..(ap/ad));
+  codegen[C](f_approx,optimized);
+  codegen[C](confracform(x*gg));
+  
+  f_err:=proc(x) local u1,u2; u1:=evalf(f(x),70); u2:=evalf(f_approx(x),17);
+    evalf((u1-u2)/u1,70);
+  end proc;
+  
+  m_err:=proc(am,ap,b,nn)
+    mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
+    s:=[seq(i/mvd,i=mvm..-1),seq(i/mvd,i=1..mvp)];
+    serr:= map(f_err,s);
+    convert(max(op(serr)),float);
+  end proc;
+  
+  m_err(am,ap,ad,1);
 
-    /* initial value for the Newton step: */
-    if (a > 1e-8)
-	y = exp(x) - 1.0;
-    else /* Taylor expansion, more accurate in this range */
-	y = (0.5*x + 1.0) * x;
+  # in [0.15,0.30] 
 
-    /* Newton step for solving   log(1 + y) = x   for y : */
-    y -= (1.0 + y) * (nsp_log1p(y) - x);
-    return y;
-}
+  f_1:= unapply(x*gg,x);
+  f_approx := proc(x) (f_1(x/2))*(f_1(x/2)+2);end proc;
 
+  m_err1:=proc(am,ap,b,nn)
+    mvm:=am*nn;mvp:=ap*nn;mvd:= b*nn;
+    s:=[seq(i/mvd,i=mvm..mvp)];
+    serr:= map(f_err,s);
+    convert(max(op(serr)),float);
+  end proc;
+
+  m_err(15,30,100,1);
+  m_err(-30,-15,100,10);
+
+*/
+
+
+/* test original code with Maple 
+ *
+ *
+
+p1 := 9.14041914819518e-10;
+p2 := .0238082361044469;
+q1 := -.499999999085958;
+q2 := .107141568980644;
+q3 := -.0119041179760821;
+q4 := 5.95130811860248e-4;
+
+f_approx:= unapply(x *(((p2*x + p1)*x + 1.) /((((q4*x + q3)*x + q2)*x + q1)*x + 1.)),x);
+infnorm(f(x) - f_approx(x),x=-0.15..0.15);
+
+
+*/
 
 /**
  * nsp_sinpi:
@@ -521,8 +697,6 @@ double nsp_lngamma(double x)
  *  evaluation of the digamma (aka psi) function:
  *            digamma(x) = gamma'(x)/gamma(x) 
  *                       = d/dx log(gamma(x)) (for x > 0)
- *
- *  Copyright (C) Jean-Philippe Chancelier Enpc/Cermics and Bruno Pincon Esial/Iecn
  *
  *  The code was written following the fortran code of psi1 
  *  (funpack (Cody and all) + modification by A.H. Morris (nswc)) 
