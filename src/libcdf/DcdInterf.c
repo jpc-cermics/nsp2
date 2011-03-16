@@ -923,31 +923,10 @@ static int int_cdf_gamln1_old(Stack stack, int rhs, int opt, int lhs)
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_gamln1_old,NULL);
 }
 
-static int int_cdf_dln1px(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px,NULL);
-}
-
-static int int_cdf_dln1px_old(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_dln1px_old,NULL);
-}
-
 
 static int int_cdf_dlanor(Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11( stack,rhs,opt,lhs, cdf_dlanor,NULL);
-}
-
-
-static int int_cdf_rexp(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp,NULL);
-}
-
-static int int_cdf_rexp_old(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_mx_genv11( stack,rhs,opt,lhs, cdf_rexp_old,NULL);
 }
 
 
@@ -1076,8 +1055,6 @@ static OpTab Dcd_func[]={
   {"cdftnc",int_cdftnc}, 
   {"cdf_rlog1",int_cdf_rlog1},
   {"cdf_rlog1_old",int_cdf_rlog1_old},
-  {"cdf_rexp",int_cdf_rexp},
-  {"cdf_rexp_old",int_cdf_rexp_old},
   {"cdf_gam1",int_cdf_gam1},
   {"cdf_gam1_old",int_cdf_gam1_old},
   {"cdf_rlog",int_cdf_rlog},
@@ -1091,8 +1068,6 @@ static OpTab Dcd_func[]={
   {"cdf_gamln",int_cdf_gamln},
   {"cdf_gamln1",int_cdf_gamln1},
   {"cdf_gamln1_old",int_cdf_gamln1_old},
-  {"cdf_dln1px",int_cdf_dln1px}, 
-  {"cdf_dln1px_old",int_cdf_dln1px_old},
   {"cdf_dlanor",int_cdf_dlanor},
   {"cdf_dlanor_old",int_cdf_dlanor_old},
   {"cdf_alngam",int_cdf_alngam},

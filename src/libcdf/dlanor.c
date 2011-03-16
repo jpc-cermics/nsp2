@@ -22,6 +22,7 @@
 
 #include <nsp/machine.h>
 #include <nsp/math.h>
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /**
@@ -106,6 +107,6 @@ double cdf_dlanor_old(double x)
   approx = -dlsqpi - 0.5E0*xx2 - log(xx);
   invxx2= 1.0E0/xx2;
   correc = cdf_devlpl(coef,ncoeff,invxx2)/xx2;
-  correc = cdf_dln1px(correc);
+  correc = nsp_log1p(correc);
   return  approx + correc;
 }

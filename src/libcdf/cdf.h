@@ -76,9 +76,6 @@ extern double cdf_dbetrm (double *a, double *b);
 extern double cdf_devlpl (const double *a,const int n, double x);
 extern double nsp_cdf_dinvnr(double p, double q);
 extern double cdf_dlamch (char *, long int);
-extern double cdf_dln1px (double a);
-extern double cdf_dln1px_old (double a);
-extern double nsp_log1p (double a);
 extern double cdf_dlnbet (double a0, double b0);
 extern double cdf_dlngam (double a);
 /* extern double cdf_dstrem (double z__); */
@@ -93,8 +90,6 @@ extern double cdf_gamln1 (double a);
 extern double cdf_gamln1_old (double a);
 extern double cdf_gsumln (double a, double b);
 extern double cdf_rcomp (double a, double x);
-extern double cdf_rexp (double x);
-extern double cdf_rexp_old (double x);
 extern double cdf_rlog (double x);
 extern double cdf_rlog_old (double x);
 extern double cdf_rlog1 (double x);

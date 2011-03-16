@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /**
@@ -13,5 +14,5 @@
 
 double cdf_dln1mx (double x)
 {
-  return cdf_dln1px ( -x );
+  return nsp_log1p ( -x );
 }

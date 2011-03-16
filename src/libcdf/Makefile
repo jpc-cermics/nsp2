@@ -9,10 +9,10 @@ OBJSC = DcdInterf.o dlamch.o algdiv.o alngam.o \
 	cdfbet.o cdfbin.o cdfchi.o cdfchn.o cdff.o cdffnc.o cdfgam.o cdfnbn.o cdfnor.o \
 	cdfpoi.o cdft.o cdftnc.o cumbet.o cumbin.o cumchi.o cumf.o cumfnc_new.o cumgam.o \
 	cumnbn.o cumnor.o cumpoi.o cumt.o cumtnc.o cumtnc_new.o \
-	dbetrm.o devlpl.o dinvnr_new.o dlanor.o dln1mx.o dln1px.o \
+	dbetrm.o devlpl.o dinvnr_new.o dlanor.o dln1mx.o \
 	dlnbet.o dlngam.o dt1.o erf.o exparg.o \
 	gam1.o gaminv.o gamln.o gamln1.o grat1.o gratio.o gsumln.o \
-	ipmpar.o rcomp.o rexp.o rlog1.o spmpar.o stvaln.o cumchn_new.o zsearch.o
+	ipmpar.o rcomp.o rlog1.o spmpar.o stvaln.o cumchn_new.o zsearch.o
 
 OBJSF=
 

@@ -340,7 +340,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
   return OK;
 
  L200:
-  l = cdf_rexp (z__);
+  l = nsp_expm1 (z__);
   w = l + .5 + .5;
   *qans = (w * j - l) * g - h__;
   if (*qans < 0.)

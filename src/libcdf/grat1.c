@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 
@@ -126,7 +127,7 @@ int cdf_grat1_old (double *a, double *x, double *r, double *p, double *q, double
   *q = .5 - *p + .5;
   return 0;
  L50:
-  l = cdf_rexp (z);
+  l = nsp_expm1 (z);
   w = l + .5 + .5;
   *q = (w * j - l) * g - h;
   if (*q < 0.)
@@ -239,7 +240,7 @@ int cdf_grat1 (double *a, double *x, double *r, double *p, double *q, double *ep
   *q = .5 - *p + .5;
   return 0;
  L50:
-  l = cdf_rexp (z);
+  l = nsp_expm1 (z);
   w = l + .5 + .5;
   *q = (w * j - l) * g - h;
   if (*q < 0.)

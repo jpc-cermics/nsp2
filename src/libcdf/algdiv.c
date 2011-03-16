@@ -21,6 +21,7 @@
  *
  */
 
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /**
@@ -48,9 +49,9 @@ double cdf_algdiv(double a, double b)
    * g(b) - g(a+b) == h(a,b);
    */
   /* 
-   * return  a - a*log(b)+ (0.5 -a-b)*cdf_dln1px(a/b) + comp;
+   * return  a - a*log(b)+ (0.5 -a-b)*nsp_log1p(a/b) + comp;
    */
-  u = ((a <= b) ? b + (a - .5) : a + (b - .5)) * cdf_dln1px (a/b);
+  u = ((a <= b) ? b + (a - .5) : a + (b - .5)) * nsp_log1p (a/b);
   v = a * (log (b) - 1.);
   return (u <= v) ? comp - u - v : comp - v - u;
 
@@ -216,7 +217,7 @@ double cdf_algdiv_old (double a, double b)
   w *= c / b;
   /* COMBINE THE RESULTS */
   d1 = a / b;
-  u = d * cdf_dln1px (d1);
+  u = d * nsp_log1p (d1);
   v = a * (log (b) - 1.);
   if (u <= v)
     {

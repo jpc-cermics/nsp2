@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /**
@@ -22,7 +23,7 @@ double cdf_gsumln (double a, double b)
 	}
       else 
 	{
-	  return  cdf_gamln1 (x) + cdf_dln1px (x);
+	  return  cdf_gamln1 (x) + nsp_log1p (x);
 	}
     }
   else 

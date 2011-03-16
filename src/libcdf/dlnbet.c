@@ -1,3 +1,4 @@
+#include <nsp/spmf.h>
 #include "cdf.h"
 
 /**
@@ -118,7 +119,7 @@ L100:
   h = a / b;
   c = h / (h + 1.);
   u = -(a - .5) * log (c);
-  v = b * cdf_dln1px (h);
+  v = b * nsp_log1p (h);
   if (u <= v)
     {
       ret_val = log (b) * -.5 + e + w - u - v;
