@@ -606,8 +606,8 @@ static int nsp_help_fill_help_table(const char *index_file)
 
   if ((dirname = nsp_dirname (buf))== NULL)return FAIL;
 
-  Sciprintf(" nsp_help_fill_help_table: with buf=%s\n",buf);
-  Sciprintf(" nsp_help_fill_help_table: with dirname=%s\n",dirname);
+  /* Sciprintf(" nsp_help_fill_help_table: with buf=%s\n",buf); */
+  /* Sciprintf(" nsp_help_fill_help_table: with dirname=%s\n",dirname); */
 
   if ((F=nsp_file_open(buf,mode,xdr,swap)) == NULLSCIFILE)
     {
