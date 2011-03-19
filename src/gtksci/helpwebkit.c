@@ -665,7 +665,7 @@ static int nsp_help_fill_help_table(const char *index_file)
       if (( Obj = nsp_new_string_obj(nsp_tcldstring_value(&name),buf,-1))
 	  == NULLOBJ)
 	goto bug;
-      Sciprintf(" nsp_help_fill_help_table: Enter %s with buf=%s\n",nsp_tcldstring_value(&name),buf);
+      /* Sciprintf(" nsp_help_fill_help_table: Enter %s with buf=%s\n",nsp_tcldstring_value(&name),buf); */
       nsp_tcldstring_free(&name);	 
       nsp_tcldstring_free(&filename);	
       
