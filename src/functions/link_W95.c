@@ -102,8 +102,9 @@ static void *nsp_dlsym_os(NspSharedlib *sh, nsp_const_string ename)
     {
       Scierror("Error: %s is not an entry point\n",ename);
     }
-  return func 
+  return func ;
 }
+
 
 /**
  * nsp_dlclose:
