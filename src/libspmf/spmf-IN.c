@@ -1401,6 +1401,16 @@ int nsp_use_extended_fpu()
   return  (__fpu_control & _FPU_EXTENDED) == _FPU_EXTENDED;
 }
 
+/*
+  windows version 
+<float.h>
+int nsp_use_extended_fpu()
+{
+  int fpucontrol = _controlfp( 0, 0 ) ;
+  return (__fpu_control & MCW_PC ) == _PC_64 ;/ * _PC_53  * /
+}
+
+ */
 
 #endif
 
