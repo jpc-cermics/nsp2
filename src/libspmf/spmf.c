@@ -220,9 +220,6 @@ double cdf_dln1px_jpc (double x)
  * @x:  a double
  *
  * computes exp(x)-1 with accuracy near x = 0
- * code origin:
- *     Mathlib : A C Library of Special Functions
- *     Copyright (C) 2002 The R Development Core Team
  *
  * Returns: a double
  **/
