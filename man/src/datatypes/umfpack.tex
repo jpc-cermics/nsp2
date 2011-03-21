@@ -11,6 +11,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 Au=umfpack_create(As)
+[Au,sing]=umfpack_create(As)
 xf=umfpack_solve(As,Bf,mode=string,irstep=int)
 \end{verbatim}
 \end{calling_sequence}
@@ -18,7 +19,8 @@ xf=umfpack_solve(As,Bf,mode=string,irstep=int)
 \begin{parameters}
   \begin{varlist}
     \vname{As}: a real or complex sparse matrix
-    \vname{Au}: An Umfpack nsp object.
+    \vname{Au}: an Umfpack nsp object.
+    \vname{sing}: a scalar boolean (true if the matrix is detected as singular) 
     \vname{Bf,xf}: real or complex full matrices 
   \end{varlist}
 \end{parameters}
