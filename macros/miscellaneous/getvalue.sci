@@ -157,7 +157,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
 	if ~ok then break;end
 	%nv= prod(%sz);
-	if %nv < 0 then 
+	if %nv <= 0 then 
 	  ok = check_dims(%vv,[%nv,1]) || check_dims(%vv,[0,0]);
 	else
 	  ok = check_dims(%vv,[%nv,1]);
@@ -168,7 +168,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
 	if ~ok then break;end
 	%nv= prod(%sz);
-	if %nv < 0 then 
+	if %nv <= 0 then 
 	  ok = check_dims(%vv,[1,%nv]) || check_dims(%vv,[0,0]);
 	else
 	  ok = check_dims(%vv,[1,%nv]);
@@ -180,7 +180,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
 	if ~ok then break;end
 	%nv=prod(%sz);
 	ok = check_dims(%vv,[1,%nv]) || check_dims(%vv,[%nv,1]);
-	if %nv < 0 then 
+	if %nv <= 0 then 
 	  ok = ok || check_dims(%vv,[0,0]);
 	end
 	if ~ok then error_size(%labels(%kk),string_dims(%nv));break;end 
