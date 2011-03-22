@@ -2040,7 +2040,7 @@ int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix
       switch ( List->type ) 
 	{
 	case OPT:
-	  nsp_plist_print_internal(List);
+	  /* nsp_plist_print_internal(List); */
 	  List = List->next ;
 	  if ( in != NULL) 
 	    if ( nsp_row_smatrix_append_string(in,(char *) List->O)  == FAIL) return FAIL;
