@@ -381,7 +381,7 @@ void nsp_delete_interface_functions(int interface)
 	      /* function */
 	      if ( iface == ((NspFunction *) Obj)->iface ) 
 		{
-		  Sciprintf("removing %s in interface %d\n",nsp_object_get_name(Obj),interface);
+		  /* Sciprintf("removing %s in interface %d\n",nsp_object_get_name(Obj),interface); */
 		  nsp_hash_remove(nsp_functions_table,nsp_object_get_name(Obj));
 		}
 	    }
