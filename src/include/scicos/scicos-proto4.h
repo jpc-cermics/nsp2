@@ -1,6 +1,9 @@
 #ifndef NSP_SCICOS_PROTO_H
 #define NSP_SCICOS_PROTO_H
 
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h> 
+
 extern int scicos_setblockwin (BCG *Xgc,int *win, int *cur);
 /*
 extern int scicos_recterase (BCG *Xgc,const double r[]);
