@@ -1,4 +1,4 @@
-function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=getvalue(%desc,%labels,%typ,%ini)
+function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=getvalue(%desc,%labels,%typ,%ini)
 // getvalues - launch dialogs for acquiring data 
 //   then check that the entered values have the correct types 
 //   and evaluate them in the context environment.
@@ -113,7 +113,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
     error('%typ : list(''type'',[sizes],...)')
   end
   %1=[];%2=[];%3=[];%4=[];%5=[];%6=[];%7=[];%8=[];%9=[];%10=[];%11=[];
-  %12=[];%13=[];%14=[];%15=[];%16=[];%17=[];%18=[];
+  %12=[];%13=[];%14=[];%15=[];%16=[];%17=[];%18=[];%19=[];%20=[];
 
   // %ini 
   if nargin < 4  then %ini=smat_create(%nn,1);end;
@@ -198,7 +198,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18]=get
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
        case 'lis'
 	//---- a list 
-	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
+	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'List'); 
 	if ~ok then break;end;
 	%nsz= prod(%sz);
 	ok = %nsz < 0 || length(%vv)== abs(%nsz);
