@@ -52,13 +52,19 @@ static void link_bug (int i);
 
 static int int_link(Stack stack, int rhs, int opt, int lhs)
 {
+  int global = FALSE;
+  nsp_option opts[] ={{"global",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   char shared_lib_expanded[FSIZE+1];
   char *Str="c",**enames=NULL,*shared_lib=NULL;
   NspSMatrix *Enames;  
   NspObject*OHMat;
   int ilib =0, iflag=1;
-  CheckRhs(0,3);
+  CheckStdRhs(0,3);
   CheckLhs(0,1);
+
+  if ( get_optional_args(stack, rhs, opt, opts, &global) == FAIL )
+    return RET_BUG;
 
   if ( rhs == 0)
     {
@@ -119,7 +125,7 @@ static int int_link(Stack stack, int rhs, int opt, int lhs)
 	}
     }
       
-  nsp_dynamic_load(shared_lib_expanded,enames,Str[0],&ilib,iflag,&rhs);
+  nsp_dynamic_load(shared_lib_expanded,enames,Str[0],&ilib,iflag,&rhs,global);
   if ( ilib < 0) 
     {
       link_bug(ilib); 
@@ -199,11 +205,18 @@ static int int_c_link(Stack stack, int rhs, int opt, int lhs)
 
 static int int_addinter(Stack stack, int rhs, int opt, int lhs)
 {
+  int global = FALSE;
   char file_expanded[FSIZE+1];
   int ilib=0;
   char *Str,*file=NULL;
-  CheckRhs(2,2);
+  CheckStdRhs(2,2);
   CheckLhs(0,1);
+
+  nsp_option opts[] ={{"global",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  if ( get_optional_args(stack, rhs, opt, opts, &global) == FAIL )
+    return RET_BUG;
+
   if ( IsMatObj(stack,1)) 
     {
       /* trying to find an interface in a preloaded 
@@ -211,7 +224,7 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
        */
       if (GetScalarInt(stack,1,&ilib) == FAIL) return RET_BUG;
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
-      if ( nsp_dynamic_interface(NULL,Str,&ilib) == FAIL) return RET_BUG;
+      if ( nsp_dynamic_interface(NULL,Str,&ilib,global) == FAIL) return RET_BUG;
     }
   else
     {
@@ -226,7 +239,7 @@ static int int_addinter(Stack stack, int rhs, int opt, int lhs)
       strcpy(file_expanded,shp);
       nsp_string_destroy(&shp);
       if ((Str = GetString(stack,2)) ==  NULLSTRING) return RET_BUG;
-      if ( nsp_dynamic_interface(file_expanded,Str,&ilib) == FAIL) 
+      if ( nsp_dynamic_interface(file_expanded,Str,&ilib,global) == FAIL) 
 	return RET_BUG;
     }
   if ( nsp_move_double(stack,1,(double) ilib)== FAIL) return RET_BUG;

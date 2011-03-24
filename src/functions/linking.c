@@ -50,6 +50,7 @@ static void nsp_dlclose(void *shd) ;
  * @ilib: 
  * @iflag: 
  * @rhs: 
+ * @global: boolean, to force a link with global option
  * 
  * Dynamically Link entry points given in en_names 
  * from shared library given by its path in 
@@ -62,7 +63,8 @@ static void nsp_dlclose(void *shd) ;
  * 
  **/
 
-void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs)
+void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf,
+		      int *ilib, int iflag, int *rhs, int global)
 {
   int lib;
   if ( iflag== 0 && (lib = nsp_find_shared(shared_path)) != -1 ) 
@@ -72,7 +74,7 @@ void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, in
 	nsp_unlink_shared(lib);
     }
   /* calling the linker */
-  nsp_link_library(iflag,rhs,ilib,shared_path,en_names,strf);
+  nsp_link_library(iflag,rhs,ilib,shared_path,en_names,strf,global);
 }
 
 
@@ -139,6 +141,7 @@ NspSharedlib *nsp_sharedlib_dlopen(nsp_const_string shared_path, int global)
  * @shared_path: 
  * @en_names: 
  * @strf: 
+ * @global:
  * 
  * return in ilib the number of the shared archive or -1 or -5
  *   -1 : the shared archive was not loaded 
@@ -147,14 +150,15 @@ NspSharedlib *nsp_sharedlib_dlopen(nsp_const_string shared_path, int global)
  **/
 
 void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, 
-		      char **en_names, char strf)
+		      char **en_names, char strf, int global)
 {
   NspSharedlib *sh = NULL;
   int i;
   if ( iflag == 0 )
     {
-      int global = ( *rhs == 1 ) ? TRUE : FALSE;
-      sh = nsp_sharedlib_dlopen(shared_path, global);
+      int global1 = ( *rhs == 1 ) ? TRUE : FALSE;
+      if ( global == TRUE ) global1 = TRUE;
+      sh = nsp_sharedlib_dlopen(shared_path, global1);
       if ( sh == NULL ) 
 	{
 	  *ilib = -1;  return;

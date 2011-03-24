@@ -26,8 +26,8 @@
 
 extern void  ShowDynLinks (void);
 extern int nsp_is_linked(nsp_const_string name,int *ilib);
-extern void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf);
-extern void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs);
+extern void nsp_link_library(int iflag, int *rhs,int *ilib,nsp_const_string shared_path, char **en_names, char strf, int global);
+extern void nsp_dynamic_load(nsp_const_string shared_path,char **en_names,char strf, int *ilib, int iflag, int *rhs, int global);
 extern NspHash *nsp_get_dlsymbols();
 extern void nsp_unlink_shared(int ilib);
 extern void nsp_remove_interface(int Nshared);

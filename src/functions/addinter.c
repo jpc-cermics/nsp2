@@ -59,7 +59,7 @@ static void nsp_interfaces_initialize(void);
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int *ilib)
+int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface,int *ilib, int global)
 {
   const char interf[]="_Interf";
   const char interf_info[]="_Interf_Info";
@@ -103,7 +103,7 @@ int nsp_dynamic_interface(nsp_const_string shared_lib,nsp_const_string interface
    * shared_lib
    */
   
-  nsp_dynamic_load(shared_lib,names,'c',ilib,( shared_lib == NULL) ? 1 : 0,&rhs);
+  nsp_dynamic_load(shared_lib,names,'c',ilib,( shared_lib == NULL) ? 1 : 0,&rhs,global );
   
   if ( ilib < 0 )
     {
