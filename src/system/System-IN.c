@@ -28,6 +28,8 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+#include <glib.h> /* for g_xx functions below */
+
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
