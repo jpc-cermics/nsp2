@@ -1,8 +1,6 @@
 #include "integ.h"
 
 #define lsa001_1 lsa001_._3
-
-
 #define lsr001_1 lsr001_._3
 
 struct
@@ -22,8 +20,6 @@ struct
 
 int nsp_ode_rscar1 (double *rsav, double *isav)
 {
-  ls0001 *Ls = (ls0001*) &ls0001_;
-
   int lenrls = 219;
   int lenils = 39;
   int lenrla = 22;
@@ -34,7 +30,7 @@ int nsp_ode_rscar1 (double *rsav, double *isav)
   int c1 = 1;
 
   l = 0;
-  C2F (dcopy) (&lenrls, &rsav[l], &c1, Ls->rls, &c1);
+  C2F (dcopy) (&lenrls, &rsav[l], &c1, ls0001_._3.rls, &c1);
   l += lenrls;
   C2F (dcopy) (&lenrla, &rsav[l], &c1, lsa001_1.rlsa, &c1);
   l += lenrla;
@@ -43,7 +39,7 @@ int nsp_ode_rscar1 (double *rsav, double *isav)
   l = 0;
   for (i = 0; i < lenils ; ++i)
     {
-      Ls->ils[i] = (int) isav[l + i];
+      ls0001_._3.ils[i] = (int) isav[l + i];
     }
   l += lenils;
   for (i = 0; i < lenila; ++i)

@@ -18,19 +18,17 @@ struct
 
 int nsp_ode_rscom1 (double *rsav, double *isav)
 {
-  ls0001 *Ls = (ls0001*) &ls0001_;
-
   int lenrls = 219;
   int lenils = 39;
   int i;
 
   for (i = 0 ; i < lenrls ; ++i)
     {
-      Ls->rls[i] = rsav[i];
+      ls0001_._3.rls[i] = rsav[i];
     }
   for (i = 0;  i < lenils; ++i)
     {
-      Ls->ils[i] = (int) isav[i];
+      ls0001_._3.ils[i] = (int) isav[i];
     }
   eh0001_.ieh[0] = (int) isav[lenils];
   eh0001_.ieh[1] = (int) isav[lenils + 1];

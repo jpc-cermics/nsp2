@@ -22,7 +22,6 @@ struct
 int nsp_ode_svcar1 (double *rsav, double *isav)
 {
   int c1 = 1;
-  ls0001 *Ls = (ls0001*) &ls0001_;
   int lenrls = 219;
   int lenils = 39;
   int lenrla = 22;
@@ -32,7 +31,7 @@ int nsp_ode_svcar1 (double *rsav, double *isav)
   int i, l;
 
   l = 0;
-  C2F (dcopy) (&lenrls, Ls->rls, &c1, &rsav[l], &c1);
+  C2F (dcopy) (&lenrls, ls0001_._3.rls, &c1, &rsav[l], &c1);
   l += lenrls;
   C2F (dcopy) (&lenrla, lsa001_1.rlsa, &c1, &rsav[l], &c1);
   l += lenrla;
@@ -41,7 +40,7 @@ int nsp_ode_svcar1 (double *rsav, double *isav)
   l = 0;
   for (i = 0; i < lenils; ++i)
     {
-      isav[l + i] = (double) Ls->ils[i];
+      isav[l + i] = (double) ls0001_._3.ils[i];
     }
   l += lenils;
   for (i = 0 ; i < lenila; ++i)

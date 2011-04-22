@@ -485,21 +485,14 @@ typedef union {
       jstart, kflag, l, meth, miter, maxord, maxcor, msbp, mxncf, n, nq, nst,
       nfe, nje, nqu;
   } _2;
+  struct 
+  {
+    double rls[219];
+    int ils[39];
+  } _3;
 } ode_ls0001; 
 
-
 extern ode_ls0001 ls0001_;
-
-/* used to save previous structure */
-
-typedef struct __ls0001 ls0001;
-
-struct __ls0001 
-{
-  double rls[219];
-  int ils[39];
-};
-
 
 typedef union {
   struct
@@ -520,7 +513,6 @@ typedef union {
 } ode_lsr;
 
 extern ode_lsr lsr001_;
-
 
 typedef union {
   struct

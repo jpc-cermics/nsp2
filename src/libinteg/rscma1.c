@@ -20,11 +20,20 @@ struct
  *of subroutine svcma or the equivalent. 
  */
 
+int nsp_ode_pipo (double *rsav, double *isav)
+{
+  int i;
+  for (i = 0 ; i < 7; ++i)
+    {
+      ls0001_._3.rls[i] = rsav[i];
+    }
+  return 0;
+}
+
+
 
 int nsp_ode_rscma1 (double *rsav, double *isav)
 {
-  ls0001 *Ls = (ls0001*) &ls0001_;
-
   int lenrls = 219;
   int lenils = 39;
   int lenrla = 22;
@@ -33,7 +42,7 @@ int nsp_ode_rscma1 (double *rsav, double *isav)
 
   for (i = 0 ; i < lenrls; ++i)
     {
-      Ls->rls[i] = rsav[i];
+      ls0001_._3.rls[i] = rsav[i];
     }
   for (i = 0 ; i < lenrla; ++i)
     {
@@ -41,7 +50,7 @@ int nsp_ode_rscma1 (double *rsav, double *isav)
     }
   for (i = 0 ; i < lenils; ++i)
     {
-      Ls->ils[i] = (int) isav[i];
+      ls0001_._3.ils[i] = (int) isav[i];
     }
   for (i = 0; i < lenila; ++i)
     {

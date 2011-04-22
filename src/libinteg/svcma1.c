@@ -24,7 +24,6 @@ struct
 
 int nsp_ode_svcma1 (double *rsav, double *isav)
 {
-  ls0001 *Ls = (ls0001*) &ls0001_;
 
   int lenrls = 219;
   int lenils = 39;
@@ -36,7 +35,7 @@ int nsp_ode_svcma1 (double *rsav, double *isav)
   i1 = lenrls;
   for (i = 0; i < i1 ; ++i)
     {
-      rsav[i] = Ls->rls[i];
+      rsav[i] = ls0001_._3.rls[i];
     }
   i1 = lenrla;
   for (i = 0; i < i1; ++i)
@@ -47,7 +46,7 @@ int nsp_ode_svcma1 (double *rsav, double *isav)
   i1 = lenils;
   for (i = 0; i < i1; ++i)
     {
-      isav[i] = (double) Ls->ils[i];
+      isav[i] = (double) ls0001_._3.ils[i];
     }
   i1 = lenila;
   for (i = 0; i < i1; ++i)

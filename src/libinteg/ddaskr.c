@@ -8141,7 +8141,7 @@ nsp_ode_dnedd (double *x, double *y, double *yprime, int *neq, Dres res,
   double pnorm, delnrm;
   double temp1, temp2, tolnew;
   int i__, j;
-  int idum, ires;
+  int idum, ires=0;
   int ierj;
   int iernew;
   int iertyp;
@@ -9939,9 +9939,9 @@ nsp_ode_dnedk (double *x, double *y, double *yprime, int *neq, Dres res,
   double delnrm,  eplin,  temp1=0, temp2,  tolnew;
   int i__, j;
   int iernew;
-  int ierpj, iersl;
+  int ierpj, iersl=0;
   int iertyp, lwp;
-  int ires, liwp;
+  int ires=0, liwp;
 
 
   /* Parameter adjustments */
