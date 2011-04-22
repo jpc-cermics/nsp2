@@ -37,10 +37,14 @@
  * Returns: 
  **/
 
-int nsp_link_status(void)
+static int nsp_link_status(void)
 {
   return(1);
 }
+
+/* just to get rid of an unused message till we really use link_status */
+int _nsp_link_status(void) { return nsp_link_status();} 
+
 
 /*
  * a set of macros for hppa to emulate dl functions 

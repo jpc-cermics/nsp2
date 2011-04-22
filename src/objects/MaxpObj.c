@@ -1411,7 +1411,7 @@ static int int_mpfge(Stack stack, int rhs, int opt, int lhs)
  * NspMaxpMatrix : Restack a copy of matrix A
  * keeps m*n constant
  */
-
+#if 0 
 static int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
 {
   int m1,n1;
@@ -1440,6 +1440,7 @@ static int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT(A)->ret_pos = 1;
   return 1;
 }
+#endif 
 
 
 

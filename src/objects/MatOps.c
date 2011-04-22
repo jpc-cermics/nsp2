@@ -40,8 +40,9 @@
 #include <nsp/blas.h>
 #include <nsp/matutil.h>
 
-
+#if 0 
 static void Kronecker (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
+#endif 
 static void KroneckerBis (NspMatrix *A,NspMatrix *B,NspMatrix *PK);
 typedef int (*AdSu) (const int,const double *,const int,double *,const int);
 typedef int (*AdSuZ) (int*,doubleC *,int*,doubleC *,int*);
@@ -4418,7 +4419,7 @@ int nsp_mat_minus_maxplus(NspMatrix *A)
  * The i-loop leads to dcopy calls 
  * 
  **/
-
+#if 0 
 static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 {
   static int c__1 = 1;
@@ -4475,7 +4476,7 @@ static void Kronecker(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 	}
     }
 }
-
+#endif 
 
 static void KroneckerBis(NspMatrix *A, NspMatrix *B, NspMatrix *PK)
 {
