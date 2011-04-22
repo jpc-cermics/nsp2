@@ -7,8 +7,9 @@
  */
 
 #include <stdio.h>   /* for file declaration **/
-#include "nsp/sciio.h" 
+#include <nsp/sciio.h>
 #include <nsp/objectf.h>
+#include <nsp/ints.h>
 
 /*
  * NspPList inherits from NspObject 

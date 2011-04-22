@@ -20,7 +20,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <stdio.h>   /* for file declaration **/
+#include <nsp/intsf.h>  /* forward declarations */
+
 #if defined(__MSC__) && defined(_MSC_VER)
 typedef int gint    ;
 typedef unsigned int guint   ;
@@ -47,45 +48,40 @@ typedef unsigned long long int guint64;
 
 /* all the integer types */
 
-typedef enum   { nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
-		 nsp_gulong, nsp_gint8, nsp_guint8, nsp_gint16,
-		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
-		 nsp_guint64 } nsp_itype;
+union nsp_int_union_ { 
+  gint     Gint;
+  guint     Guint;
+  gshort     Gshort;
+  gushort     Gushort;
+  glong     Glong;
+  gulong     Gulong;
+  gint8     Gint8;
+  guint8     Guint8;
+  gint16     Gint16;
+  guint16     Guint16;
+  gint32     Gint32;
+  guint32     Guint32;
+  gint64     Gint64;
+  guint64     Guint64;
+};
 
-typedef union { 
-    gint     Gint;
-    guint     Guint;
-    gshort     Gshort;
-    gushort     Gushort;
-    glong     Glong;
-    gulong     Gulong;
-    gint8     Gint8;
-    guint8     Guint8;
-    gint16     Gint16;
-    guint16     Guint16;
-    gint32     Gint32;
-    guint32     Guint32;
-    gint64     Gint64;
-    guint64     Guint64;
-} nsp_int_union ;
-
-typedef union { 
-    void *    Iv;
-    gint     *Gint;
-    guint     *Guint;
-    gshort     *Gshort;
-    gushort     *Gushort;
-    glong     *Glong;
-    gulong     *Gulong;
-    gint8     *Gint8;
-    guint8     *Guint8;
-    gint16     *Gint16;
-    guint16     *Guint16;
-    gint32     *Gint32;
-    guint32     *Guint32;
-    gint64     *Gint64;
-    guint64     *Guint64;
-} nsp_int_union_ptr ;
+union  nsp_int_union_ptr_  { 
+  void *    Iv;
+  gint     *Gint;
+  guint     *Guint;
+  gshort     *Gshort;
+  gushort     *Gushort;
+  glong     *Glong;
+  gulong     *Gulong;
+  gint8     *Gint8;
+  guint8     *Guint8;
+  gint16     *Gint16;
+  guint16     *Guint16;
+  gint32     *Gint32;
+  guint32     *Guint32;
+  gint64     *Gint64;
+  guint64     *Guint64;
+};
 
 #endif 
 

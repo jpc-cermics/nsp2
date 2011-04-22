@@ -14,7 +14,7 @@
 #include "nsp/string.h" 
 #include "nsp/index.h" 
 #include "nsp/xdr.h"
-#include "nsp/ints.h" 
+#include "nsp/intsf.h"
 #include "nsp/objectf.h" 
 
 /* typedef struct  _NspObject  NspObject;  */
