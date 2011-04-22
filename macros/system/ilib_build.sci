@@ -287,7 +287,8 @@ function ilib_gen_Make_unix(name,tables,files,libs,Makename,with_gateway, ...
 	    " -Dmexfunction=mex$* "+ fflags +"\n"); 
   else
     fprintf(fd,"CFLAGS = $(CC_OPTIONS) -DFORDLL -DmexFunction=mex_$* "+cflags+ "\n");
-    fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -Dmexfunction=mex$* "+fflags+ "\n");
+    fprintf(fd,"FFLAGS = $(FC_OPTIONS) -DFORDLL -Dmexfunction=mex$* "+fflags+  "\n");
+    fprintf(fd,"CXXFLAGS = $(CXX_OPTIONS) -DFORDLL -DmexFunction=mex_$* "+cflags+ "\n");
   end
   fprintf(fd,"EXTRA_LDFLAGS = "+ ldflags+ "\n");
   if  %win32  && with_cygwin then
