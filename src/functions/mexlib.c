@@ -766,7 +766,7 @@ void mxFreeMatrix (mxArray *ptr)
 
 void mxFree(void *ptr)
 {
-  free(ptr);
+  if (ptr != NULL)  free(ptr);
 }
 
 /**
