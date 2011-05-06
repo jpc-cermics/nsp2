@@ -597,6 +597,7 @@ void nsp_epoints_table_remove_entries(int shid)
 {
   NspObject *Obj;
   int i=0;
+  if ( Epoints == NULL ) return ;
   while (1) 
     {
       int rep = nsp_hash_get_next_object(Epoints,&i,&Obj);
@@ -614,4 +615,4 @@ void nsp_epoints_table_remove_entries(int shid)
 }
 
 
-#line 618 "epoints.c"
+#line 619 "epoints.c"
