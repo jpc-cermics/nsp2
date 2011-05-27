@@ -63,7 +63,7 @@ static int parse_fact(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist);
 static int IsComa(Tokenizer *T,int *op);
-static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist);
+static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist,int *count);
 static int parse_extsymb(Tokenizer *T,NspBHash *symb_table,PList *plist, char *id, int flag, int *count, char end_char);
 static int IsColMatOp(Tokenizer *T,int *op,char opt);
 static int IsRowMatOp(Tokenizer *T,int *op,char opt);
@@ -83,7 +83,7 @@ static int parse_declaration(Tokenizer *T,NspBHash *symb_table,PList *plist,int 
 static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist, 
 			  int (*parsef)(Tokenizer *T,NspBHash *symb_table,PList *plist,char c),
 			  int (*opfn)(Tokenizer *T,int *op,char c), char *info,char opt);
-
+static int parse_listeval(Tokenizer *T,NspBHash *symb_table,PList *plist);
 
 
 #ifdef  WITH_SYMB_TABLE 
@@ -2151,10 +2151,8 @@ static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
  **/
 static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
-  PList plist1= NULLPLIST;
-  int count = 1,flag;
-  int w_flag=1;
   char id[NAME_MAXL];
+  int count;
   switch ( T->tokenv.id ) 
     {
     case '\0':
@@ -2250,86 +2248,14 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
        */
       strncpy(id,T->tokenv.syn,NAME_MAXL);
       if (nsp_parse_add_name(plist,id) == FAIL) return(FAIL);
-      flag=1;
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      /* just name **/
-      if ( T->tokenv.id != '(' && T->tokenv.id != '[' && T->tokenv.id != '{' 
-	   && T->IsDotAlpha(T) != OK) 
-	{
-	  /* XXX Here we could accept any characters up to \n , or ; 
-	   *   f foo.sci --> f('foo.sci') 
-	   */
-	  return OK;
-	}
-      while ( w_flag )
-	{
-	  int dot;
-	  plist1=NULLPLIST;
-	  switch ( T->tokenv.id ) {
-	    
-	  case '(' : 
-	    if (parse_extsymb(T,symb_table,plist,id,flag,&count,')')==FAIL) return FAIL;
-	    dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
-	    if ( !dot && T->tokenv.id != '('  
-		 && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
-	      w_flag =0;
-	    break;
-	  case '[' :
-	    if (parse_extsymb(T,symb_table,plist,id,flag,&count,']')==FAIL) return FAIL;
-	    dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
-	    if ( !dot  && T->tokenv.id != '('
-		 && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
-	      w_flag =0;
-	    break;
-	  case '{' :
-	    if (parse_extsymb(T,symb_table,plist,id,flag,&count,'}')==FAIL) return FAIL;
-	    dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
-	    if ( !dot && T->tokenv.id != '(' 
-		 && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
-	      w_flag =0;
-	    break;
-	  case '.': 
-	    /*  * .<symb> **/
-	    if (  T->tokenv.id == '.' && T->tokenv.NextC == '\'' )
-	      {
-		w_flag = 0;
-		break;
-	      }
-	    if ( T->IsDotAlpha(T) == FAIL)
-	      {
-		T->ParseError(T,"Parse Error: token `%s' found while expecting , or ; or \\n\n",
-			      T->code2name(T,T->tokenv.id));
-		return FAIL;
-	      }
-	    if ( T->NextToken(T) == FAIL) return FAIL;
-	    if (nsp_parse_add_string(&plist1,T->tokenv.syn) == FAIL) return(FAIL);
-	    if (nsp_parse_add(&plist1,DOTARGS,1,T->tokenv.Line)== FAIL) return FAIL;
-	    if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
-	    if ( T->NextToken(T) == FAIL) return(FAIL);
-	    count++;
-	    break; 
-	  default :
-	    w_flag = 0;
-	    break;
-	  }
-	}
-      /* a listeval L()()()..() **/
-      if (nsp_parse_add(plist,LISTEVAL,count,T->tokenv.Line)== FAIL) return(FAIL);
-      /* check if this is a simple call or extract f(...) 
-       * if yes LISTEVAL is changed to CALLEVAL to simplify evaluation 
-       */
-      if ( nsp_check_simple_listeval(*plist) == OK ) 
-	{
-	  /* Sciprintf("This is a simple one\n");
-	   *nsp_plist_print_internal(*plist);
-	   */
-	}
-      if (debug)nsp_plist_print_internal(*plist);
+      if ( parse_listeval(T,symb_table,plist) == FAIL) return FAIL;
+      /* nsp_plist_print_internal(*plist); */
       break;
     case  '(' : 
       /*  ************   ( expr,expr,expr ) */
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      if (parse_exprset(T,symb_table,plist) == FAIL) return(FAIL);
+      if (parse_exprset(T,symb_table,plist,&count) == FAIL) return(FAIL);
       if ( T->tokenv.id != ')' ) 
 	{
 	  T->ParseError(T,"Parse Error: missing right parenthesis \n");
@@ -2338,6 +2264,12 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
       else 
 	{
 	  if ( T->NextToken(T) == FAIL) return(FAIL);
+	  if ( count == 0) 
+	    {
+	      /* (expr) followed by (), . operator, {} operator and .meth[] */
+	      if ( parse_listeval(T,symb_table,plist) == FAIL) return FAIL;
+	    }
+	  /* nsp_plist_print_internal(*plist);*/
 	  break;
 	}
     case COMMENT :
@@ -2368,8 +2300,85 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 }
 
 
-
-
+static int parse_listeval(Tokenizer *T,NspBHash *symb_table,PList *plist)
+{
+  char id[NAME_MAXL];
+  PList plist1= NULLPLIST;
+  int count=1, w_flag=1, flag = 1;
+  /* just name **/
+  if ( T->tokenv.id != '(' && T->tokenv.id != '[' && T->tokenv.id != '{' 
+       && T->IsDotAlpha(T) != OK) 
+    {
+      /* XXX Here we could accept any characters up to \n , or ; 
+       *   f foo.sci --> f('foo.sci') 
+       */
+      return OK;
+    }
+  while ( w_flag )
+    {
+      int dot;
+      plist1=NULLPLIST;
+      switch ( T->tokenv.id ) {
+      case '(' : 
+	if (parse_extsymb(T,symb_table,plist,id,flag,&count,')')==FAIL) return FAIL;
+	dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
+	if ( !dot && T->tokenv.id != '('  
+	     && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
+	  w_flag =0;
+	break;
+      case '[' :
+	if (parse_extsymb(T,symb_table,plist,id,flag,&count,']')==FAIL) return FAIL;
+	dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
+	if ( !dot  && T->tokenv.id != '('
+	     && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
+	  w_flag =0;
+	break;
+      case '{' :
+	if (parse_extsymb(T,symb_table,plist,id,flag,&count,'}')==FAIL) return FAIL;
+	dot = T->tokenv.id == '.' && T->tokenv.NextC != '\'';
+	if ( !dot && T->tokenv.id != '(' 
+	     && T->tokenv.id != '[' && T->tokenv.id != '{' ) 
+	  w_flag =0;
+	break;
+      case '.': 
+	/*  * .<symb> **/
+	if (  T->tokenv.id == '.' && T->tokenv.NextC == '\'' )
+	  {
+	    w_flag = 0;
+	    break;
+	  }
+	if ( T->IsDotAlpha(T) == FAIL)
+	  {
+	    T->ParseError(T,"Parse Error: token `%s' found while expecting , or ; or \\n\n",
+			  T->code2name(T,T->tokenv.id));
+	    return FAIL;
+	  }
+	if ( T->NextToken(T) == FAIL) return FAIL;
+	if (nsp_parse_add_string(&plist1,T->tokenv.syn) == FAIL) return(FAIL);
+	if (nsp_parse_add(&plist1,DOTARGS,1,T->tokenv.Line)== FAIL) return FAIL;
+	if (nsp_parse_add_list(plist,&plist1)==FAIL) return(FAIL);
+	if ( T->NextToken(T) == FAIL) return(FAIL);
+	count++;
+	break; 
+      default :
+	w_flag = 0;
+	break;
+      }
+    }
+  /* a listeval L()()()..() **/
+  if (nsp_parse_add(plist,LISTEVAL,count,T->tokenv.Line)== FAIL) return(FAIL);
+  /* check if this is a simple call or extract f(...) 
+   * if yes LISTEVAL is changed to CALLEVAL to simplify evaluation 
+   */
+  if ( nsp_check_simple_listeval(*plist) == OK ) 
+    {
+      /* Sciprintf("This is a simple one\n");
+       *nsp_plist_print_internal(*plist);
+       */
+    }
+  if (debug)nsp_plist_print_internal(*plist);
+  return OK;
+}
 
 /**
  * IsComa:
@@ -2396,25 +2405,26 @@ static int IsComa(Tokenizer *T,int *op)
  * @T: a #Tokenize 
  * @symb_table: a #NspBHash 
  * @plist: a #PList
+ * @count: an integer pointer
  * 
- * parsing lexpr = <expr> , <expr> , <expr>  
- * when no more ',' are found we return
+ * parses lexpr = <expr> , <expr> , <expr>  
+ * when no more ',' are found the function returns and 
+ * @count contains the number of comma operator found.
  *
- *
- * Returns: 
+ * Returns: %OK or %FAIL
  **/
 
-static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist)
+static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist,int *count)
 {
-  int count=0;
   int op;
   PList plist1 = NULLPLIST ;
+  *count = 0;
   if (debug) scidebug(debugI++,"[parenth>");
   if (parse_expr(T,symb_table,&plist1,'f') == FAIL) return(FAIL);
   while( IsComa(T,&op) == OK )
     {
       PList plist2=NULLPLIST;
-      count ++;
+      (*count)++;
       if (debug) Sciprintf("-arg-");
       parse_nblines(T);
       plist2=NULLPLIST;
@@ -2424,7 +2434,7 @@ static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist)
       plist2=plist1;
       if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
-  if ( count == 0 ) 
+  if ( *count == 0 ) 
     {
       /* special case : (<expr>)  no op found **/
       if (nsp_parse_add(&plist1,PARENTH,1,T->tokenv.Line) == FAIL) return(FAIL);

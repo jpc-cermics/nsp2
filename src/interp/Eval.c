@@ -64,7 +64,7 @@ struct _obj_check_field {
 static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1, int *mlhs_r, int *mlhs_flag,
 		       obj_check_field *objs, int *objs_count);
 
-static int EvalRhsList (PList L,Stack, int first, int rhs,int lhs);
+static int EvalRhsList (PList L,Stack, int first, int rhs,int lhs,int display);
 static int EvalRhsCall (PList L,Stack, int first, int rhs,int lhs);
 static int show_eval_bug(Stack s,int n, PList L) ;
 
@@ -371,7 +371,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  return n;
 	  break;
 	case LISTEVAL :
-	  if (( n = EvalRhsList(L,stack,first,rhs,lhs))< 0) 
+	  if (( n = EvalRhsList(L,stack,first,rhs,lhs,display))< 0) 
 	    {
 	      SHOWBUG(stack,n,L);
 	    }
@@ -1948,6 +1948,11 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
   int j,fargs,arity1;
   NspObject *O;
   /*Object which is changed **/
+  if ( L->type != NAME ) 
+    {
+      Scierror("Error: expecting an expression starting with a name in the lhs of an equation\n");
+      SHOWBUG(stack,RET_BUG,L);
+    }
   name = L->O;
   
   /* Object L which is changed
@@ -2354,7 +2359,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
  * Return value: 
  **/
 
-int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
+int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 {
   const char *name;
   int j,n,arity,nargs,lhs1=1,opt, copy_tag;
@@ -2365,10 +2370,24 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs)
   arity = L->arity ;
   /*Get first argument to fix $ value if necessary **/
   /*O1 can be NULL **/
-  name = (char *) L->next->O;
-  /* */
-  L= L->next;
-  stack.val->S[first]=nsp_frames_search_object(name);
+  if ( L->next->type == PLIST ) 
+    {
+      /* argument is a PLIST which is in fact a parenth */
+      /* nsp_plist_print_internal(L->next->O); */
+      if (( n=nsp_eval((PList) L->next->O,stack,first,0,1,display))< 0)
+	{
+	  nsp_void_seq_object_destroy(stack,first,first+1);
+	  return n;
+	}
+      L= L->next;
+    }
+  else 
+    {
+      name = (char *) L->next->O;
+      /* */
+      L= L->next;
+      stack.val->S[first]=nsp_frames_search_object(name);
+    }
   /*Following the evaluation  L(exp1)(exp2)...(expn) **/
   nargs=1;
   for ( j = 1 ; j < arity ; j++ )
