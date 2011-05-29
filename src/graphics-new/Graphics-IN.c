@@ -4639,6 +4639,71 @@ static int int_xstringl_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*-----------------------------------------------------------
+ *  corners=xstringbox(x,y,str,angle,fontid,fontsize)
+ *-----------------------------------------------------------*/
+
+static int int_xstringbox(Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_figure *F;
+  NspAxes *axe;
+  BCG *Xgc;
+  NspSMatrix *S;
+  NspMatrix *M;
+  double rect[4],wc=0,x,y,yi,angle;
+  int fid,fsiz;
+  int i,remove=0;
+  int font[2];
+
+  CheckRhs(6,6);
+  CheckLhs(0,1);
+
+  if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
+  if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
+  if ((S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
+  if (S->mn == 0) return 0; 
+  if (S->n != 1) {
+    remove=1;
+    if (( S =nsp_smatrix_column_concat(S," ",1)) == NULLSMAT) return RET_BUG;
+  }
+  if (GetScalarDouble(stack,4,&angle) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,5,&fid) == FAIL) return RET_BUG;
+  if (GetScalarInt(stack,6,&fsiz) == FAIL) return RET_BUG;
+
+  if ((axe=nsp_check_for_current_axes())== NULL) return FAIL;
+
+  if ((M = nsp_matrix_create(NVOID,'r',2,4))== NULLMAT) return RET_BUG;
+  NSP_OBJECT(M)->ret_pos=1;
+  StackStore(stack,(NspObject *) M,rhs+1);
+
+  F=((NspGraphic *) axe)->obj->Fig;
+  Xgc=F->Xgc;
+  *Xgc->scales=axe->obj->scale;
+
+  yi=y;
+
+  Xgc->graphic_engine->xget_font(Xgc,font,FALSE);
+  Xgc->graphic_engine->xset_font(Xgc,fid,fsiz,TRUE);
+
+  for(i=S->m -1;i>=0;--i) {
+    Xgc->graphic_engine->scale->boundingbox(Xgc,S->S[i],x,y,rect);
+    wc=Max(wc,rect[2]);
+    if (i != 0 ) 
+      y += rect[3] * 1.2;
+    else 
+      y += rect[3];
+  }
+
+  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1],TRUE);
+
+  if (remove==1) nsp_smatrix_destroy(S);
+
+  M->R[0]=x;M->R[1]=yi;M->R[2]=x;M->R[3]=y;
+  M->R[4]=x+wc;M->R[5]=y;M->R[6]=M->R[4];M->R[7]=M->R[1];
+
+  return 1;
+}
+
+/*-----------------------------------------------------------
  * xtape: update manual XXX
  *-----------------------------------------------------------*/
 
@@ -6473,6 +6538,7 @@ OpGrTab Graphics_func[]={
   {NAMES("xstringb"),int_xstringb},
   {NAMES("xstringc"),int_xstringc},
   {NAMES("xstringl"),int_xstringl_new},
+  {NAMES("xstringbox"),int_xstringbox},
   {NAMES("xtape"),int_xtape},
   {NAMES("xtitle"),int_xtitle},
   {NAMES("scicos_draw3D"), int_scicos_draw3D},
