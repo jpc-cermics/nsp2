@@ -4642,6 +4642,10 @@ static int int_xstringl_new(Stack stack, int rhs, int opt, int lhs)
 /*-----------------------------------------------------------
  *
  *  corners=xstringbox(x,y,str,angle,fontid,fontsize)
+ *  ou
+ *  corners=xstringbox(txt)
+ *  ou
+ *  corners=xstringbox(compound)
  *
  *-----------------------------------------------------------*/
 
