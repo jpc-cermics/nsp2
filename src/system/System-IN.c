@@ -100,10 +100,12 @@ static int int_cputime(Stack stack,int rhs,int opt,int lhs)
 static int int_tic(Stack stack,int rhs,int opt,int lhs) 
 {
   NspObject *OM;
-  /* set start_time to current time and return it */
   double res;
   CheckRhs(0,0);
   CheckLhs(0,1);
+  /* returns the current time and if called with 
+   * empty lhs then a global start_time value is set to current time 
+   */
   res = nsp_tic((lhs <= 0) ? TRUE : FALSE) ;
   if ( lhs == 1) 
     {
@@ -128,6 +130,9 @@ static int int_toc(Stack stack,int rhs,int opt,int lhs)
     }
   else
     {
+      /* returns elapsed time from start_time which is set 
+       * by a call to tic without lhs 
+       */
       etime = nsp_toc(NULL);
     }
   if ( (OM=nsp_create_object_from_double(NVOID,etime)) == NULLOBJ ) 
