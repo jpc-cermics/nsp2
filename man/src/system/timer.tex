@@ -1,0 +1,45 @@
+% -*- mode: latex -*-
+\mansection{timer, cpuinfo, tic, toc}
+\begin{mandesc}
+  \short{timer}{elapsed cpu time between timer calls} 
+  \short{cpuinfo}{elapsed cpu time since session start} 
+  \short{toc}{elapsed time since tic call}
+  \short{tic}{set a timer start}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  T=timer();
+  T=cpuinfo();
+  tic();T=toc();
+  Ts=tic();...;T=toc(Ts);
+\end{verbatim}
+\end{calling_sequence}
+\begin{mandescription}
+  \verb!timer!  returns the CPU time (in seconds) used by nsp from the 
+  preceding call to the \verb!timer! function. 
+
+  \verb!cpuinfo! returns the total CPU time (in seconds) used by nsp 
+  from the time it was started. Note that internal representation
+  can overflow and wrap around.
+
+  \verb!toc()! returns the elapsed time since last call to \verb!tic()!
+  used without lhs. \verb!toc(T)! where \verb!T! was set by a call to 
+  \verb!T=tic()! returns the elapsed time since the \verb!T=tic()! 
+  instruction was executed. 
+\end{mandescription}
+\begin{examples}
+  \begin{Verbatim}
+    A=rand(200,200);timer();inv(A);Tinv=timer();
+    n=100;t=zeros(1,n);
+    tic();
+    for i=1:n 
+      tStart = tic();
+      inv(A);
+      t(i) = toc(tStart);
+    end
+    avt = toc()/n // average time 
+  \end{Verbatim}
+\end{examples}
+%-- see also
+
