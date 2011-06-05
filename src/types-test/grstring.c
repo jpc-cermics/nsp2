@@ -1156,8 +1156,68 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	}
       break;
     }
+
+    if (P->obj->angle!=0.) 
+      {
+	/* rotate the bounds */
+	double diff[2],  bb[8], center[2];
+	double cosa = cos(-P->obj->angle*M_PI/180);
+	double sina = sin(-P->obj->angle*M_PI/180);
+
+	switch ( P->obj->fill ) 
+	  {
+	  case GR_fill_box:
+	  case GR_in_box:
+	    center[0]=bounds[0]+(bounds[2]-bounds[0])/2;
+	    center[1]=bounds[1]+(bounds[3]-bounds[1])/2;
+	    break;
+	  case GR_no_box:
+	    center[0]=bounds[0];
+	    center[1]=bounds[1];
+	    break;
+	  }
+
+	/* rotate/translate the points */
+	diff[0]=bounds[0]-center[0];
+	diff[1]=bounds[1]-center[1];
+	bb[0]=diff[0]*cosa-diff[1]*sina+center[0];
+	bb[1]=diff[0]*sina+diff[1]*cosa+center[1];
+
+	diff[0]=bounds[0]-center[0];
+	diff[1]=bounds[3]-center[1];
+	bb[2]=diff[0]*cosa-diff[1]*sina+center[0];
+	bb[3]=diff[0]*sina+diff[1]*cosa+center[1];
+
+	diff[0]=bounds[2]-center[0];
+	diff[1]=bounds[3]-center[1];
+	bb[4]=diff[0]*cosa-diff[1]*sina+center[0];
+	bb[5]=diff[0]*sina+diff[1]*cosa+center[1];
+
+	diff[0]=bounds[2]-center[0];
+	diff[1]=bounds[1]-center[1];
+	bb[6]=diff[0]*cosa-diff[1]*sina+center[0];
+	bb[7]=diff[0]*sina+diff[1]*cosa+center[1];
+
+	/* compute bounds */
+	bounds[0]=Min(bb[0],bb[2]);
+	bounds[0]=Min(bounds[0],bb[4]);
+	bounds[0]=Min(bounds[0],bb[6]);
+
+	bounds[2]=Max(bb[0],bb[2]);
+	bounds[2]=Max(bounds[2],bb[4]);
+	bounds[2]=Max(bounds[2],bb[6]);
+
+	bounds[1]=Min(bb[1],bb[3]);
+	bounds[1]=Min(bounds[1],bb[5]);
+	bounds[1]=Min(bounds[1],bb[7]);
+
+	bounds[3]=Max(bb[1],bb[3]);
+	bounds[3]=Max(bounds[3],bb[5]);
+	bounds[3]=Max(bounds[3],bb[7]);
+      }
+ 
   return TRUE;
 }
 
 
-#line 1164 "grstring.c"
+#line 1224 "grstring.c"
