@@ -746,7 +746,7 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
  * objects are changed.
  */
 
-static void nsp_compound_compute_inside_bounds(NspGraphic *Obj)
+static int nsp_compound_compute_inside_bounds(NspGraphic *Obj)
 {
   double l_bounds[4],bounds[4];
   Cell *cloc;
@@ -758,7 +758,7 @@ static void nsp_compound_compute_inside_bounds(NspGraphic *Obj)
     {
       bounds[0]=bounds[1]=0;
       bounds[2]=bounds[3]=0;
-      return;
+      return FALSE;
     }
   
   bounds[0]=bounds[1]=LARGEST_REAL;
@@ -782,6 +782,7 @@ static void nsp_compound_compute_inside_bounds(NspGraphic *Obj)
       cloc = cloc->next;
     }
   memcpy(P->obj->bounds->R,bounds,4*sizeof(double));
+  return TRUE;
 }
 
 /* Note that the bounds should be changed here
@@ -850,7 +851,8 @@ static int nsp_getbounds_compound(NspGraphic *Obj,double *bounds)
 {
   NspCompound *P = (NspCompound *) Obj;
   /* XXX should not be always computed */
-  nsp_compound_compute_inside_bounds(Obj);
+  if ( nsp_compound_compute_inside_bounds(Obj) == FALSE ) 
+    return FALSE;
   memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
   return TRUE;
 }
@@ -879,4 +881,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 883 "compound.c"
+#line 885 "compound.c"
