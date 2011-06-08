@@ -1174,12 +1174,22 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	    center[1]=bounds[1]+(bounds[3]-bounds[1])/2;
 	    break;
 	  case GR_no_box:
-	    center[0]=bounds[0];
-	    center[1]=bounds[1];
+	    switch( P->obj->posx ) 
+	      {
+	      case GR_STR_XLEFT: center[0] = bounds[0]; break;
+	      case GR_STR_XCENTER: center[0]  = bounds[0] + width/2; break;
+	      case GR_STR_XRIGHT: center[0]  = bounds[0] + width; break;
+	      }
+	    switch( P->obj->posy ) 
+	      {
+	      case GR_STR_YBOTTOM: center[1]  =bounds[1] ; break;
+	      case GR_STR_YCENTER:  center[1]  = bounds[1] + height/2; break;
+	      case GR_STR_YBASELINE: center[1] =bounds[1] ; break; /* wrong */
+	      case GR_STR_YUP:  center[1]  = bounds[1] +height; break;
+	      } 
 	    break;
 	  }
-
-	/* rotate/translate the points */
+ 	/* rotate/translate the points */
 	diff[0]=bounds[0]-center[0];
 	diff[1]=bounds[1]-center[1];
 	bb[0]=diff[0]*cosa-diff[1]*sina+center[0];
@@ -1222,4 +1232,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1226 "grstring.c"
+#line 1236 "grstring.c"
