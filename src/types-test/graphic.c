@@ -24,7 +24,7 @@
 
 
 
-#line 21 "codegen/graphic.override"
+#line 22 "codegen/graphic.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/figuredata.h> 
@@ -106,7 +106,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
 
   type->init = (init_func *) init_graphic;
 
-#line 75 "codegen/graphic.override"
+#line 76 "codegen/graphic.override"
 
   /* inserted verbatim in the type definition 
    * here we define the default values for graphic methods 
@@ -528,7 +528,7 @@ int int_graphic_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 95 "codegen/graphic.override"
+#line 96 "codegen/graphic.override"
 /* take care that the name to give for override is the c-name of 
  * the method 
  */
@@ -545,7 +545,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
 #line 546 "graphic.c"
 
 
-#line 110 "codegen/graphic.override"
+#line 111 "codegen/graphic.override"
 static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -560,7 +560,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
 #line 561 "graphic.c"
 
 
-#line 123 "codegen/graphic.override"
+#line 124 "codegen/graphic.override"
 static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {realmat,t_end};
@@ -574,7 +574,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
 #line 575 "graphic.c"
 
 
-#line 145 "codegen/graphic.override"
+#line 146 "codegen/graphic.override"
 static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -586,7 +586,7 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
 #line 587 "graphic.c"
 
 
-#line 135 "codegen/graphic.override"
+#line 136 "codegen/graphic.override"
 static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   CheckRhs(0,0);
@@ -598,12 +598,23 @@ static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt
 #line 599 "graphic.c"
 
 
+static int _wrap_graphic_get_bounds(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *ret;
+
+  ret = graphic_get_bounds(self);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
 static NspMethods graphic_methods[] = {
   {"translate",(nsp_method *) _wrap_graphic_translate},
   {"scale",(nsp_method *) _wrap_graphic_scale},
   {"rotate",(nsp_method *) _wrap_graphic_rotate},
   {"unlink",(nsp_method *) _wrap_graphic_unlink},
   {"invalidate",(nsp_method *) _wrap_graphic_invalidate},
+  {"get_bounds",(nsp_method *) _wrap_graphic_get_bounds},
   { NULL, NULL}
 };
 
@@ -686,7 +697,7 @@ void Graphic_Interf_Info(int i, char **fname, function (**f))
   *f = Graphic_func[i].fonc;
 }
 
-#line 155 "codegen/graphic.override"
+#line 156 "codegen/graphic.override"
 
 /* verbatim at the end */
 /* default methods in graphic */
@@ -940,7 +951,7 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
   int xmin,ymin,xmax,ymax;
   double bounds[4];
   if ( rect == NULL ) return TRUE;
-  if ( G->type->bounds(G,bounds) == FALSE ) return TRUE;
+  if ( G->type->bounds(G,bounds) == FALSE ) return TRUE; /* XXX */
   scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
   scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);
   r1.x = xmin-10; 
@@ -951,4 +962,13 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
 }
 
 
-#line 955 "graphic.c"
+static NspMatrix *graphic_get_bounds(NspGraphic *G)
+{
+  NspMatrix *M;
+  double bounds[4];
+  if ( G->type->bounds(G,bounds) == FALSE ) return NULL;
+  if ((M= nsp_matrix_create_from_array(NVOID,1,4,bounds,0))==NULL) return NULL;
+  return M;
+}
+
+#line 975 "graphic.c"

@@ -15,6 +15,7 @@ extern int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rec
 include-private Graphic
 
 /* inserted in the private part of include file */
+static NspMatrix *graphic_get_bounds(NspGraphic *G);
 
 %%
 headers
@@ -405,7 +406,7 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
   int xmin,ymin,xmax,ymax;
   double bounds[4];
   if ( rect == NULL ) return TRUE;
-  if ( G->type->bounds(G,bounds) == FALSE ) return TRUE;
+  if ( G->type->bounds(G,bounds) == FALSE ) return TRUE; /* XXX */
   scale_f2i(&axe->scale,bounds,bounds+1,&xmin,&ymin,1);
   scale_f2i(&axe->scale,bounds+2,bounds+3,&xmax,&ymax,1);
   r1.x = xmin-10; 
@@ -415,3 +416,12 @@ int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect)
   return  gdk_rectangle_intersect(rect,&r1,&r1);
 }
 
+
+static NspMatrix *graphic_get_bounds(NspGraphic *G)
+{
+  NspMatrix *M;
+  double bounds[4];
+  if ( G->type->bounds(G,bounds) == FALSE ) return NULL;
+  if ((M= nsp_matrix_create_from_array(NVOID,1,4,bounds,0))==NULL) return NULL;
+  return M;
+}

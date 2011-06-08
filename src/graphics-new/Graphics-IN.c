@@ -4336,6 +4336,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
     { NULL,t_end,NULLOBJ,-1}};
   
   CheckStdRhs(3,5);
+  CheckLhs(0,1);
   
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;

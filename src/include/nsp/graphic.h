@@ -38,7 +38,7 @@ typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
 
-#line 60 "codegen/graphic.override"
+#line 61 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const GdkRectangle *rect, void *data);
 typedef void translate_func(NspGraphic *Obj,const double *tr);
@@ -59,7 +59,7 @@ struct _NspTypeGraphic {
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 45 "codegen/graphic.override"
+#line 46 "codegen/graphic.override"
 
   draw_func *draw; 
   translate_func *translate;
@@ -161,7 +161,8 @@ static NspGraphic *nsp_graphic_create_void(const char *name,NspTypeBase *type);
 #line 16 "codegen/graphic.override"
 
 /* inserted in the private part of include file */
+static NspMatrix *graphic_get_bounds(NspGraphic *G);
 
-#line 166 "./graphic.h"
+#line 167 "./graphic.h"
 #endif /* NspGraphic_Private */
 

@@ -948,12 +948,13 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   switch ( P->obj->fill ) 
     {
     case GR_fill_box: 
-      /* we must enlarge the font size so as to fill the box.
-       *
+      /* draw the string inside a box: 
+       * the font size is adapted so as to fill the box.
        */
       nsp_draw_grstring_in_box(Xgc,P,str);
       break;
     case GR_in_box :
+      /* draw a string centered in a box */
       xd1 = XDouble2Pixel_d(Xgc->scales,x + P->obj->w/2.0);
       yd1 = YDouble2Pixel_d(Xgc->scales,y + P->obj->h/2.0);
       if ( P->obj->size != -1 ) 
@@ -967,6 +968,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
 	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],TRUE);
       break;
     case GR_no_box : 
+      /* display a string */
       xd1 = XDouble2Pixel_d(Xgc->scales,x + P->obj->w/2.0);
       yd1 = YDouble2Pixel_d(Xgc->scales,y + P->obj->h/2.0);
       if ( P->obj->size != -1 ) 
@@ -1220,4 +1222,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1224 "grstring.c"
+#line 1226 "grstring.c"

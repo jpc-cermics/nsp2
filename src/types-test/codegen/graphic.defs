@@ -45,4 +45,12 @@
   (return-type "none")
   )
 
+;; get bounds 
+
+(define-method get_bounds
+  (of-object "Graphic")
+  (c-name "graphic_get_bounds")
+  (return-type "NspMatrix*")
+  )
+
 
