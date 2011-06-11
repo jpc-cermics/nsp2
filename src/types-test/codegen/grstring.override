@@ -133,7 +133,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
 					 GR_STR_XCENTER,GR_STR_YCENTER);
       if ( P->obj->size != -1 )
-	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],TRUE);
+	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       break;
     case GR_no_box : 
       /* display a string */
@@ -147,7 +147,7 @@ static void nsp_draw_grstring(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       Xgc->graphic_engine->displaystring(Xgc,str,xd1,yd1,0,P->obj->angle,
 					 P->obj->posx, P->obj->posy);
       if ( P->obj->size != -1 )
-	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],TRUE);
+	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       break;
     }
 
@@ -227,12 +227,28 @@ static void nsp_translate_grstring(NspGraphic *Obj,const double *tr)
 static void nsp_rotate_grstring(NspGraphic *Obj,double *R)
 {
   NspGrstring *P = (NspGrstring *) Obj;
-  double x1;
+  double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
-  P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
-  P->obj->x = x1;
-  /* Il faut aussi changer l'angle */
+  /* rotate (x,y) */
+  switch ( P->obj->fill ) 
+    {
+    case GR_fill_box:
+    case GR_in_box:
+      /* rotate the center */
+      x1 = R[0]*(P->obj->x+ P->obj->w/2) -R[1]*(P->obj->y + P->obj->h/2);
+      y1 = R[1]*(P->obj->x+ P->obj->w/2) +R[0]*(P->obj->y + P->obj->h/2);
+      P->obj->x = x1 - P->obj->w/2;
+      P->obj->y = y1 - P->obj->h/2;
+      P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
+      break;
+    case GR_no_box : 
+      x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
+      P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
+      P->obj->x = x1;
+      /* change the angle */
+      P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
+      break;
+    }
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
@@ -280,7 +296,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
     case GR_in_box :
       /* here we need a Figure */
       if ( F == NULL || (Xgc = F->Xgc) == NULL) return FALSE;
-      /* centred in a box  */
+      /* centered in a box  */
       if ( P->obj->size != -1 ) 
 	{
 	  Xgc->graphic_engine->xget_font(Xgc,fontid, FALSE);
@@ -288,7 +304,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	}
       Xgc->graphic_engine->boundingbox(Xgc,str,0,0,rect1);
       if ( P->obj->size != -1 )
-	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],TRUE);
+	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       bounds[0]= P->obj->x + P->obj->w/2 -width/2; 
@@ -306,7 +322,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	}
       Xgc->graphic_engine->boundingbox(Xgc,str,0,0,rect1);
       if ( P->obj->size != -1 )
-	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],TRUE);
+	Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1],FALSE);
       if ( S->mn != 1 ) FREE(str);
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       switch( P->obj->posx ) 
@@ -326,76 +342,93 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 	}
       break;
     }
+  
+  if (P->obj->angle!=0.) 
+    {
+      /* rotate the bounds */
+      double diff[2],  bb[8], center[2];
+      double cosa = cos(-P->obj->angle*M_PI/180);
+      double sina = sin(-P->obj->angle*M_PI/180);
 
-    if (P->obj->angle!=0.) 
-      {
-	/* rotate the bounds */
-	double diff[2],  bb[8], center[2];
-	double cosa = cos(-P->obj->angle*M_PI/180);
-	double sina = sin(-P->obj->angle*M_PI/180);
+      switch ( P->obj->fill ) 
+	{
+	case GR_fill_box:
+	case GR_in_box:
+	  center[0]=bounds[0]+(bounds[2]-bounds[0])/2;
+	  center[1]=bounds[1]+(bounds[3]-bounds[1])/2;
+	  break;
+	case GR_no_box:
+	  switch( P->obj->posx ) 
+	    {
+	    case GR_STR_XLEFT: center[0] = bounds[0]; break;
+	    case GR_STR_XCENTER: center[0]  = bounds[0] + width/2; break;
+	    case GR_STR_XRIGHT: center[0]  = bounds[0] + width; break;
+	    }
+	  switch( P->obj->posy ) 
+	    {
+	    case GR_STR_YBOTTOM: center[1]  =bounds[1] ; break;
+	    case GR_STR_YCENTER:  center[1]  = bounds[1] + height/2; break;
+	    case GR_STR_YBASELINE: center[1] =bounds[1] ; break; /* wrong */
+	    case GR_STR_YUP:  center[1]  = bounds[1] +height; break;
+	    } 
+	  break;
+	}
+      /* rotate/translate the points */
+      diff[0]=bounds[0]-center[0];
+      diff[1]=bounds[1]-center[1];
+      bb[0]=diff[0]*cosa-diff[1]*sina+center[0];
+      bb[1]=diff[0]*sina+diff[1]*cosa+center[1];
 
-	switch ( P->obj->fill ) 
-	  {
-	  case GR_fill_box:
-	  case GR_in_box:
-	    center[0]=bounds[0]+(bounds[2]-bounds[0])/2;
-	    center[1]=bounds[1]+(bounds[3]-bounds[1])/2;
-	    break;
-	  case GR_no_box:
-	    switch( P->obj->posx ) 
-	      {
-	      case GR_STR_XLEFT: center[0] = bounds[0]; break;
-	      case GR_STR_XCENTER: center[0]  = bounds[0] + width/2; break;
-	      case GR_STR_XRIGHT: center[0]  = bounds[0] + width; break;
-	      }
-	    switch( P->obj->posy ) 
-	      {
-	      case GR_STR_YBOTTOM: center[1]  =bounds[1] ; break;
-	      case GR_STR_YCENTER:  center[1]  = bounds[1] + height/2; break;
-	      case GR_STR_YBASELINE: center[1] =bounds[1] ; break; /* wrong */
-	      case GR_STR_YUP:  center[1]  = bounds[1] +height; break;
-	      } 
-	    break;
-	  }
- 	/* rotate/translate the points */
-	diff[0]=bounds[0]-center[0];
-	diff[1]=bounds[1]-center[1];
-	bb[0]=diff[0]*cosa-diff[1]*sina+center[0];
-	bb[1]=diff[0]*sina+diff[1]*cosa+center[1];
+      diff[0]=bounds[0]-center[0];
+      diff[1]=bounds[3]-center[1];
+      bb[2]=diff[0]*cosa-diff[1]*sina+center[0];
+      bb[3]=diff[0]*sina+diff[1]*cosa+center[1];
 
-	diff[0]=bounds[0]-center[0];
-	diff[1]=bounds[3]-center[1];
-	bb[2]=diff[0]*cosa-diff[1]*sina+center[0];
-	bb[3]=diff[0]*sina+diff[1]*cosa+center[1];
+      diff[0]=bounds[2]-center[0];
+      diff[1]=bounds[3]-center[1];
+      bb[4]=diff[0]*cosa-diff[1]*sina+center[0];
+      bb[5]=diff[0]*sina+diff[1]*cosa+center[1];
 
-	diff[0]=bounds[2]-center[0];
-	diff[1]=bounds[3]-center[1];
-	bb[4]=diff[0]*cosa-diff[1]*sina+center[0];
-	bb[5]=diff[0]*sina+diff[1]*cosa+center[1];
+      diff[0]=bounds[2]-center[0];
+      diff[1]=bounds[1]-center[1];
+      bb[6]=diff[0]*cosa-diff[1]*sina+center[0];
+      bb[7]=diff[0]*sina+diff[1]*cosa+center[1];
 
-	diff[0]=bounds[2]-center[0];
-	diff[1]=bounds[1]-center[1];
-	bb[6]=diff[0]*cosa-diff[1]*sina+center[0];
-	bb[7]=diff[0]*sina+diff[1]*cosa+center[1];
+      /* compute bounds */
+      bounds[0]=Min(bb[0],bb[2]);
+      bounds[0]=Min(bounds[0],bb[4]);
+      bounds[0]=Min(bounds[0],bb[6]);
 
-	/* compute bounds */
-	bounds[0]=Min(bb[0],bb[2]);
-	bounds[0]=Min(bounds[0],bb[4]);
-	bounds[0]=Min(bounds[0],bb[6]);
+      bounds[2]=Max(bb[0],bb[2]);
+      bounds[2]=Max(bounds[2],bb[4]);
+      bounds[2]=Max(bounds[2],bb[6]);
 
-	bounds[2]=Max(bb[0],bb[2]);
-	bounds[2]=Max(bounds[2],bb[4]);
-	bounds[2]=Max(bounds[2],bb[6]);
+      bounds[1]=Min(bb[1],bb[3]);
+      bounds[1]=Min(bounds[1],bb[5]);
+      bounds[1]=Min(bounds[1],bb[7]);
 
-	bounds[1]=Min(bb[1],bb[3]);
-	bounds[1]=Min(bounds[1],bb[5]);
-	bounds[1]=Min(bounds[1],bb[7]);
+      bounds[3]=Max(bb[1],bb[3]);
+      bounds[3]=Max(bounds[3],bb[5]);
+      bounds[3]=Max(bounds[3],bb[7]);
+    }
+    
+  if ( FALSE && F != NULL && (Xgc = F->Xgc) != NULL)
+    {
+      /* draw the bounds */
+      int xm[4],ym[4];
+      double x[4],y[4];
+      x[0]=bounds[0];
+      y[0]=bounds[1];
+      x[1]=bounds[2];
+      y[1]=bounds[1];
+      x[2]=bounds[2];
+      y[2]=bounds[3];
+      x[3]=bounds[0];
+      y[3]=bounds[3];
+      scale_f2i(Xgc->scales,x,y,xm,ym,4);
+      Xgc->graphic_engine->drawpolyline(Xgc,xm,ym,4,TRUE);
+    }
 
-	bounds[3]=Max(bb[1],bb[3]);
-	bounds[3]=Max(bounds[3],bb[5]);
-	bounds[3]=Max(bounds[3],bb[7]);
-      }
- 
   return TRUE;
 }
 

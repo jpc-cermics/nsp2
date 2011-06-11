@@ -24,7 +24,7 @@
 
 
 
-#line 25 "codegen/grrect.override"
+#line 26 "codegen/grrect.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/figuredata.h> 
@@ -102,7 +102,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
 
   type->init = (init_func *) init_grrect;
 
-#line 37 "codegen/grrect.override"
+#line 38 "codegen/grrect.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -216,6 +216,7 @@ static int nsp_grrect_eq(NspGrRect *A, NspObject *B)
   if ( A->obj->fill_color != loc->obj->fill_color) return FALSE;
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
   if ( A->obj->color != loc->obj->color) return FALSE;
+  if ( A->obj->angle != loc->obj->angle) return FALSE;
   return TRUE;
 }
 
@@ -246,6 +247,7 @@ int nsp_grrect_xdr_save(XDR *xdrs, NspGrRect *M)
   if (nsp_xdr_save_i(xdrs, M->obj->fill_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->obj->angle) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -266,6 +268,7 @@ NspGrRect  *nsp_grrect_xdr_load_partial(XDR *xdrs, NspGrRect *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->fill_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->angle) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -359,6 +362,7 @@ int nsp_grrect_print(NspGrRect *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -382,6 +386,7 @@ int nsp_grrect_latex(NspGrRect *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -459,6 +464,7 @@ int nsp_grrect_create_partial(NspGrRect *H)
   H->obj->fill_color = -1;
   H->obj->thickness = 0;
   H->obj->color = -1;
+  H->obj->angle = 0.0;
   return OK;
 }
 
@@ -468,7 +474,7 @@ int nsp_grrect_check_values(NspGrRect *H)
   return OK;
 }
 
-NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type)
+NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,double angle,NspTypeBase *type)
 {
   NspGrRect *H  = nsp_grrect_create_void(name,type);
   if ( H ==  NULLGRRECT) return NULLGRRECT;
@@ -480,6 +486,7 @@ NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double 
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
   H->obj->color=color;
+  H->obj->angle=angle;
   if ( nsp_grrect_check_values(H) == FAIL) return NULLGRRECT;
   return H;
 }
@@ -528,6 +535,7 @@ NspGrRect *nsp_grrect_full_copy_partial(NspGrRect *H,NspGrRect *self)
   H->obj->fill_color=self->obj->fill_color;
   H->obj->thickness=self->obj->thickness;
   H->obj->color=self->obj->color;
+  H->obj->angle=self->obj->angle;
   return H;
 }
 
@@ -695,6 +703,25 @@ static int _wrap_grrect_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_grrect_get_angle(void *self,const char *attr)
+{
+  double ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspGrRect *) self)->obj->angle;
+  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
+  return nsp_ret;
+}
+
+static int _wrap_grrect_set_angle(void *self,const char *attr, NspObject *O)
+{
+  double angle;
+
+  if ( DoubleScalar(O,&angle) == FAIL) return FAIL;
+  ((NspGrRect *) self)->obj->angle= angle;
+  return OK;
+}
+
 static AttrTab grrect_attrs[] = {
   { "x", (attr_get_function *)_wrap_grrect_get_x, (attr_set_function *)_wrap_grrect_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_grrect_get_y, (attr_set_function *)_wrap_grrect_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -703,6 +730,7 @@ static AttrTab grrect_attrs[] = {
   { "fill_color", (attr_get_function *)_wrap_grrect_get_fill_color, (attr_set_function *)_wrap_grrect_set_fill_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "thickness", (attr_get_function *)_wrap_grrect_get_thickness, (attr_set_function *)_wrap_grrect_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "color", (attr_get_function *)_wrap_grrect_get_color, (attr_set_function *)_wrap_grrect_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "angle", (attr_get_function *)_wrap_grrect_get_angle, (attr_set_function *)_wrap_grrect_set_angle,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -710,7 +738,7 @@ static AttrTab grrect_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 60 "codegen/grrect.override"
+#line 61 "codegen/grrect.override"
 
 extern function int_nspgraphic_extract;
 
@@ -719,10 +747,10 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 723 "grrect.c"
+#line 751 "grrect.c"
 
 
-#line 70 "codegen/grrect.override"
+#line 71 "codegen/grrect.override"
 
 extern function int_graphic_set_attribute;
 
@@ -732,7 +760,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 736 "grrect.c"
+#line 764 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -763,7 +791,7 @@ void GrRect_Interf_Info(int i, char **fname, function (**f))
   *f = GrRect_func[i].fonc;
 }
 
-#line 81 "codegen/grrect.override"
+#line 82 "codegen/grrect.override"
 
 /* inserted verbatim at the end */
 
@@ -781,6 +809,12 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       return;
     }
   
+  if (  P->obj->angle != 0.0 ) 
+    {
+      nsp_draw_grrect_rotate(Xgc,P);
+      return;
+    }
+
   val[0]= P->obj->x;
   val[1]= P->obj->y;
   val[2]= P->obj->w;
@@ -834,6 +868,74 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
 }
 
+/* draw rectangle when angle is non null */
+
+static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
+{
+  int i;
+  double vx[4]={R->obj->x,R->obj->x+R->obj->w,R->obj->x+R->obj->w,R->obj->x};
+  double vy[4]={R->obj->y,R->obj->y,R->obj->y-R->obj->h,R->obj->y-R->obj->h};
+  double rvx[4],rvy[4],cx=R->obj->x+R->obj->w/2,cy=R->obj->y-R->obj->h/2;
+  double cosa = cos(-R->obj->angle*M_PI/180);
+  double sina = sin(-R->obj->angle*M_PI/180);
+  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  int cthick=-1;
+
+  for ( i= 0 ; i < 4; i++)
+    {
+      rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
+      rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
+    }
+  if ( R->obj->fill_color != -2 ) 
+    {
+      if (  R->obj->fill_color != -1) 
+	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->fill_color);
+      Xgc->graphic_engine->scale->fillpolyline(Xgc,rvx,rvy,4,1);
+      /* Xgc->graphic_engine->scale->fillrectangle(Xgc,val); */
+      if (  R->obj->fill_color != -1) 
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+    }
+  
+  if ( R->obj->color != -2 ) 
+    {
+      /* draw the rectangle */ 
+      if ( R->obj->color != -1 ) 
+	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->color);
+      if ( R->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->xset_thickness(Xgc,R->obj->thickness);
+	}
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,rvx,rvy,4,1);
+      /* Xgc->graphic_engine->scale->drawrectangle(Xgc,val); */
+      /* reset to default values */
+      if ( R->obj->color != -1 ) 
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+      if ( R->obj->thickness != -1 ) 
+	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
+    }
+ 
+  if (((NspGraphic *) R)->obj->hilited == TRUE )
+    {
+      int lock_size=6, lock_color=10;
+      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int x=lock_size,y=lock_size;
+      double xd,yd;
+      double rect[4]; 
+      length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
+      rect[0]=rvx[0] -xd/2.0;
+      rect[1]=rvy[0] +yd/2.0;
+      rect[2]=xd;
+      rect[3]=yd;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      rect[0]=rvx[2]-xd/2.0;
+      rect[1]=rvy[2] + yd/2.0;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      Xgc->graphic_engine->xset_pattern(Xgc,color);
+    }
+
+}
+
 
 static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
 {
@@ -847,12 +949,19 @@ static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
 static void nsp_rotate_grrect(NspGraphic *Obj,double *R)
 {
   NspGrRect *P = (NspGrRect *) Obj;
-  double x1;
+  double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
-  P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
-  P->obj->x = x1;
+  /* the rectangle is rotated in such a way that the 
+   * draw function will have to make a rotation with 
+   * center the center of the rectangle 
+   */
+  /* rotate the center */
+  x1 = R[0]*(P->obj->x+ P->obj->w/2) -R[1]*(P->obj->y - P->obj->h/2);
+  y1 = R[1]*(P->obj->x+ P->obj->w/2) +R[0]*(P->obj->y - P->obj->h/2);
+  P->obj->x = x1 - P->obj->w/2;
+  P->obj->y = y1 + P->obj->h/2;
   /* Il faut aussi changer l'angle */
+  P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
@@ -872,12 +981,38 @@ static void nsp_scale_grrect(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 {
   NspGrRect *P = (NspGrRect *) Obj;
-  bounds[0]=P->obj->x;/* xmin */
-  bounds[1]=P->obj->y-P->obj->h;/* ymin */
-  bounds[2]=P->obj->x+P->obj->w;/* xmax */
-  bounds[3]=P->obj->y;/* ymax */
+  if (  P->obj->angle == 0.0 ) 
+    {
+      bounds[0]=P->obj->x;/* xmin */
+      bounds[1]=P->obj->y-P->obj->h;/* ymin */
+      bounds[2]=P->obj->x+P->obj->w;/* xmax */
+      bounds[3]=P->obj->y;/* ymax */
+    }
+  else
+    {
+      int i;
+      double vx[4]={P->obj->x,P->obj->x+P->obj->w,P->obj->x+P->obj->w,P->obj->x};
+      double vy[4]={P->obj->y,P->obj->y,P->obj->y-P->obj->h,P->obj->y-P->obj->h};
+      double rvx[4],rvy[4],cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
+      double cosa = cos(-P->obj->angle*M_PI/180);
+      double sina = sin(-P->obj->angle*M_PI/180);
+      for ( i= 0 ; i < 4; i++)
+	{
+	  rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
+	  rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
+	}
+      bounds[0]=bounds[2]=rvx[0];
+      bounds[1]=bounds[3]=rvy[0];
+      for ( i= 0 ; i < 4; i++)
+	{
+	  if ( rvx[i] < bounds[0]) bounds[0] = rvx[i];
+	  if ( rvy[i] < bounds[1]) bounds[1] = rvy[i];
+	  if ( rvx[i] > bounds[2]) bounds[2] = rvx[i];
+	  if ( rvy[i] > bounds[3]) bounds[3] = rvy[i];
+	}
+    }
   return TRUE;
 }
 
 
-#line 884 "grrect.c"
+#line 1019 "grrect.c"

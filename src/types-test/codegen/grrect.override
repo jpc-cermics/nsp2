@@ -19,6 +19,7 @@ static void nsp_translate_grrect(NspGraphic *o,const double *tr);
 static void nsp_rotate_grrect(NspGraphic *o,double *R);
 static void nsp_scale_grrect(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grrect(NspGraphic *o,double *bounds);
+static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R);
 
 %%
 headers
@@ -95,6 +96,12 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       return;
     }
   
+  if (  P->obj->angle != 0.0 ) 
+    {
+      nsp_draw_grrect_rotate(Xgc,P);
+      return;
+    }
+
   val[0]= P->obj->x;
   val[1]= P->obj->y;
   val[2]= P->obj->w;
@@ -148,6 +155,74 @@ static void nsp_draw_grrect(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
 }
 
+/* draw rectangle when angle is non null */
+
+static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R)
+{
+  int i;
+  double vx[4]={R->obj->x,R->obj->x+R->obj->w,R->obj->x+R->obj->w,R->obj->x};
+  double vy[4]={R->obj->y,R->obj->y,R->obj->y-R->obj->h,R->obj->y-R->obj->h};
+  double rvx[4],rvy[4],cx=R->obj->x+R->obj->w/2,cy=R->obj->y-R->obj->h/2;
+  double cosa = cos(-R->obj->angle*M_PI/180);
+  double sina = sin(-R->obj->angle*M_PI/180);
+  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  int cthick=-1;
+
+  for ( i= 0 ; i < 4; i++)
+    {
+      rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
+      rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
+    }
+  if ( R->obj->fill_color != -2 ) 
+    {
+      if (  R->obj->fill_color != -1) 
+	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->fill_color);
+      Xgc->graphic_engine->scale->fillpolyline(Xgc,rvx,rvy,4,1);
+      /* Xgc->graphic_engine->scale->fillrectangle(Xgc,val); */
+      if (  R->obj->fill_color != -1) 
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+    }
+  
+  if ( R->obj->color != -2 ) 
+    {
+      /* draw the rectangle */ 
+      if ( R->obj->color != -1 ) 
+	Xgc->graphic_engine->xset_pattern(Xgc,R->obj->color);
+      if ( R->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->xset_thickness(Xgc,R->obj->thickness);
+	}
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,rvx,rvy,4,1);
+      /* Xgc->graphic_engine->scale->drawrectangle(Xgc,val); */
+      /* reset to default values */
+      if ( R->obj->color != -1 ) 
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+      if ( R->obj->thickness != -1 ) 
+	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
+    }
+ 
+  if (((NspGraphic *) R)->obj->hilited == TRUE )
+    {
+      int lock_size=6, lock_color=10;
+      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
+      int x=lock_size,y=lock_size;
+      double xd,yd;
+      double rect[4]; 
+      length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
+      rect[0]=rvx[0] -xd/2.0;
+      rect[1]=rvy[0] +yd/2.0;
+      rect[2]=xd;
+      rect[3]=yd;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      rect[0]=rvx[2]-xd/2.0;
+      rect[1]=rvy[2] + yd/2.0;
+      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      Xgc->graphic_engine->xset_pattern(Xgc,color);
+    }
+
+}
+
 
 static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
 {
@@ -161,12 +236,19 @@ static void nsp_translate_grrect(NspGraphic *Obj,const double *tr)
 static void nsp_rotate_grrect(NspGraphic *Obj,double *R)
 {
   NspGrRect *P = (NspGrRect *) Obj;
-  double x1;
+  double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
-  P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
-  P->obj->x = x1;
+  /* the rectangle is rotated in such a way that the 
+   * draw function will have to make a rotation with 
+   * center the center of the rectangle 
+   */
+  /* rotate the center */
+  x1 = R[0]*(P->obj->x+ P->obj->w/2) -R[1]*(P->obj->y - P->obj->h/2);
+  y1 = R[1]*(P->obj->x+ P->obj->w/2) +R[0]*(P->obj->y - P->obj->h/2);
+  P->obj->x = x1 - P->obj->w/2;
+  P->obj->y = y1 + P->obj->h/2;
   /* Il faut aussi changer l'angle */
+  P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
@@ -186,10 +268,36 @@ static void nsp_scale_grrect(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 {
   NspGrRect *P = (NspGrRect *) Obj;
-  bounds[0]=P->obj->x;/* xmin */
-  bounds[1]=P->obj->y-P->obj->h;/* ymin */
-  bounds[2]=P->obj->x+P->obj->w;/* xmax */
-  bounds[3]=P->obj->y;/* ymax */
+  if (  P->obj->angle == 0.0 ) 
+    {
+      bounds[0]=P->obj->x;/* xmin */
+      bounds[1]=P->obj->y-P->obj->h;/* ymin */
+      bounds[2]=P->obj->x+P->obj->w;/* xmax */
+      bounds[3]=P->obj->y;/* ymax */
+    }
+  else
+    {
+      int i;
+      double vx[4]={P->obj->x,P->obj->x+P->obj->w,P->obj->x+P->obj->w,P->obj->x};
+      double vy[4]={P->obj->y,P->obj->y,P->obj->y-P->obj->h,P->obj->y-P->obj->h};
+      double rvx[4],rvy[4],cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
+      double cosa = cos(-P->obj->angle*M_PI/180);
+      double sina = sin(-P->obj->angle*M_PI/180);
+      for ( i= 0 ; i < 4; i++)
+	{
+	  rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
+	  rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
+	}
+      bounds[0]=bounds[2]=rvx[0];
+      bounds[1]=bounds[3]=rvy[0];
+      for ( i= 0 ; i < 4; i++)
+	{
+	  if ( rvx[i] < bounds[0]) bounds[0] = rvx[i];
+	  if ( rvy[i] < bounds[1]) bounds[1] = rvy[i];
+	  if ( rvx[i] > bounds[2]) bounds[2] = rvx[i];
+	  if ( rvy[i] > bounds[3]) bounds[3] = rvy[i];
+	}
+    }
   return TRUE;
 }
 
