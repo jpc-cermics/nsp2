@@ -687,7 +687,8 @@ static void queryfamily(char *name, int *j,int *v3)
   /* */
 }
 
-/* set up the private layout with proper font 
+/* set up the private layout with proper font and font size 
+ * 
  * Xgc->fontSize is used to keep track of previous value
  *  if <=0 then previous value was an indice in the pango_size array 
  *  if > 0 then previous value was an absolute value in pixel.
@@ -699,12 +700,14 @@ static void xset_font(BCG *Xgc,int fontid, int fontsize,int full)
   i = Min(FONTNUMBER-1,Max(fontid,0));
   if ( full == TRUE ) 
     {
+      /* size is given in pixel */
       fsiz = Max(1,fontsize);
       changed = Xgc->fontId != i || Xgc->fontSize != fsiz ;
       Xgc->fontSize = fsiz;
    }
   else
     {
+      /* size is given as an indice */
       fsiz = Min(FONTMAXSIZE-1,Max(fontsize,0));
       changed = Xgc->fontId != i || Xgc->fontSize != - fsiz ;
       Xgc->fontSize = - fsiz ;
@@ -726,11 +729,13 @@ static void  xget_font(BCG *Xgc,int *font,int full)
   font[0] = Xgc->fontId ;
   if ( full == TRUE )
     {
+      /* returns font size in pixel */
       font[1] = (Xgc->fontSize <= 0) ?
 	pango_size[-Xgc->fontSize]: Xgc->fontSize;
     }
   else
     {
+      /* returns font size as an array indice */
       font[1] = (Xgc->fontSize <= 0) ? -Xgc->fontSize : 0 ;
     }
 }
@@ -786,9 +791,10 @@ static const int symbols[] =
   };
 
 
-/* utility to rotate a string */
+/* utility to get the enclosing rectangle of a rotated string */
 
-static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *matrix, GdkRectangle *rect)
+static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *matrix, 
+				       GdkRectangle *rect)
 {
   gdouble x_min = 0, x_max = 0, y_min = 0, y_max = 0;
   PangoRectangle logical_rect;
@@ -800,10 +806,8 @@ static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *
       for (j = 0; j < 2; j++)
 	{
 	  gdouble y = (j == 0) ? logical_rect.y : logical_rect.y + logical_rect.height;
-	  
 	  gdouble xt = (x * matrix->xx + y * matrix->xy) / PANGO_SCALE + matrix->x0;
 	  gdouble yt = (x * matrix->yx + y * matrix->yy) / PANGO_SCALE + matrix->y0;
-	  
 	  if (i == 0 && j == 0)
 	    {
 	      x_min = x_max = xt;
@@ -822,11 +826,29 @@ static void get_rotated_layout_bounds (PangoLayout  *layout, const PangoMatrix *
 	    }
 	}
     }
-  
   rect->x = floor (x_min);
   rect->width = ceil (x_max) - rect->x;
   rect->y = floor (y_min);
   rect->height = floor (y_max) - rect->y;
+}
+
+/* return the corners, the last one is associated to the baseline  */
+
+static void get_rotated_layout_corners (PangoLayout  *layout, const PangoMatrix *matrix,
+					double *cx,double *cy)
+{
+  PangoRectangle logical_rect;
+  gdouble x[2],y[2];
+  gint i, cxi[]={0,1,1,0}, cyi[]={0,0,1,1};
+  pango_layout_get_extents (layout, NULL, &logical_rect);
+  x[0] = logical_rect.x; x[1]=x[0]+ logical_rect.width;
+  y[0] = logical_rect.y; y[1]=y[0]+ logical_rect.height;
+  for (i = 0; i < 4 ; i++)
+    {
+      double xp=x[cxi[i]], yp=y[cyi[i]];
+      cx[i] = (xp * matrix->xx + yp * matrix->xy) / PANGO_SCALE + matrix->x0;
+      cy[i] = (xp * matrix->yx + yp * matrix->yy) / PANGO_SCALE + matrix->y0;
+    }
 }
 
 
@@ -845,23 +867,37 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
+  int xpos,ypos;
+  /* flag = TRUE; */
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */
   pango_layout_get_pixel_size (Xgc->private->layout, &width, &height); 
   if ( posy == GR_STR_YBASELINE ) 
     {
-      /* we want (x,y) to be at the baseline of the first layout line 
-       */
+      /* we want (x,y) to be at the baseline of the first layout line */
       PangoLayoutLine *line;
       line = pango_layout_get_line(Xgc->private->layout,0);
       pango_layout_line_get_pixel_extents(line, &ink_rect,&logical_rect);
     }
+  /* used to recenter the string */
+  switch( posx ) 
+    {
+    case GR_STR_XLEFT: xpos = 0; break;
+    case GR_STR_XCENTER: xpos = - width/2; break;
+    case GR_STR_XRIGHT: xpos =  - width; break;
+    }
+  switch( posy ) 
+    {
+    case GR_STR_YBOTTOM: ypos = -height; break;
+    case GR_STR_YCENTER:  ypos = - height/2; break;
+    case GR_STR_YBASELINE: ypos = logical_rect.y; break;
+    case GR_STR_YUP:  ypos = 0 ; break;
+    } 
   if ( Abs(angle) >= 0.1) 
     {
       double xt,yt;
       GdkRectangle rect;
       PangoMatrix matrix = PANGO_MATRIX_INIT; 
-      int xpos,ypos;
       pango_matrix_rotate (&matrix, - angle );
       pango_context_set_matrix (Xgc->private->context, &matrix);
       pango_layout_context_changed (Xgc->private->layout);
@@ -870,22 +906,9 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
        * in gdk_draw_layout x and y specify the position of the top left corner 
        * of the bounding box (in device space) of the transformed layout. 
        * Here when alpha = 0, (x,y) is the lower left point of the bounding box 
-       * of the string we want the string to rotate around this point. 
-       * thus we cannot call gdk_draw_layout with (x,y) directly.
+       * of the string and dependfing on posx, posy the rotation center is different.
+       * We must compute position to give to gdk_draw_layout with.
        */
-      switch( posx ) 
-	{
-	case GR_STR_XLEFT: xpos = 0; break;
-	case GR_STR_XCENTER: xpos = - width/2; break;
-	case GR_STR_XRIGHT: xpos =  - width; break;
-	}
-      switch( posy ) 
-	{
-	case GR_STR_YBOTTOM: ypos = 0 -height; break;
-	case GR_STR_YCENTER:  ypos = 0 - height/2; break;
-	case GR_STR_YBASELINE: ypos = 0 + logical_rect.y; break;
-	case GR_STR_YUP:  ypos = 0 ; break;
-	} 
       xt = matrix.xx*xpos + matrix.xy*ypos + matrix.x0;
       yt = matrix.yx*xpos + matrix.yy*ypos + matrix.y0;
       get_rotated_layout_bounds (Xgc->private->layout, &matrix,&rect);
@@ -895,41 +918,29 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
       pango_layout_context_changed (Xgc->private->layout);
       if (flag == TRUE ) 
 	{
-	  /* draw the enclosing polyline 
-	   */
-	  int vx[]={x,x,x,x},vy[]={y,y,y,y};
-	  double dx,dy;
-	  dx =  0 * matrix.xx + -height * matrix.xy + matrix.x0;
-	  dy =  0 * matrix.yx + -height * matrix.yy + matrix.x0;
-	  vx[1] += dx; vy[1] += dy;
-	  dx =  width * matrix.xx + -height * matrix.xy + matrix.x0;
-	  dy =  width * matrix.yx + -height * matrix.yy + matrix.x0;
-	  vx[2] += dx; vy[2] += dy;
-	  dx =  width * matrix.xx + 0 * matrix.xy + matrix.x0;
-	  dy =  width * matrix.yx + 0 * matrix.yy + matrix.x0;
-	  vx[3] += dx; vy[3] += dy;
-	  drawpolyline(Xgc,vx, vy,4,1);
+	  int i;
+	  double cx[4],cy[4];
+	  gint cxi[4],cyi[4];
+	  get_rotated_layout_corners (Xgc->private->layout,&matrix,cx,cy);
+	  for ( i = 0 ; i < 4 ; i++) 
+	    { 
+	      cx[i] += x+xt;
+	      cy[i] += y+yt;
+	      cxi[i]=cx[i]; 
+	      cyi[i]=cy[i];
+	    }
+	  drawpolyline(Xgc,cxi,cyi,4,1);
 	}
     }
   else
     {
       /* horizontal string */
-      int xpos=x,ypos=y;
-      switch( posx ) 
-	{
-	case GR_STR_XLEFT: xpos = x; break;
-	case GR_STR_XCENTER: xpos = x - width/2; break;
-	case GR_STR_XRIGHT: xpos = x - width; break;
-	}
-      switch( posy ) 
-	{
-	case GR_STR_YBOTTOM: ypos = y -height; break;
-	case GR_STR_YCENTER:  ypos = y - height/2; break;
-	case GR_STR_YBASELINE: ypos = y + logical_rect.y; break;
-	case GR_STR_YUP:  ypos = y ; break;
-	} 
+      xpos += x;
+      ypos += y;
       if ( flag == TRUE )
-	gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc,FALSE,xpos,ypos,width,height);
+	{
+	  gdk_draw_rectangle(Xgc->private->drawable, Xgc->private->wgc,FALSE,xpos,ypos,width,height);
+	}
       gdk_draw_layout (Xgc->private->drawable,Xgc->private->wgc,xpos,ypos,Xgc->private->layout);
     }
 }

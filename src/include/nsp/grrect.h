@@ -57,6 +57,7 @@ struct _nsp_grrect {
   int fill_color;
   int thickness;
   int color;
+  double angle;
   int ref_count;
 };
 
@@ -86,7 +87,7 @@ NspGrRect *new_grrect();
 
 #define NULLGRRECT (NspGrRect*) 0
 
-extern NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,NspTypeBase *type);
+extern NspGrRect *nsp_grrect_create(const char *name,double x,double y,double w,double h,int fill_color,int thickness,int color,double angle,NspTypeBase *type);
 extern NspGrRect *nsp_grrect_create_default(const char *name);
 
 /* from NspGrRectObj.c */
@@ -115,7 +116,7 @@ extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 
 /* inserted at the end of public part of include file */
 
-#line 119 "./grrect.h"
+#line 120 "./grrect.h"
 #endif /* NSP_INC_NspGrRect */ 
 
 #ifdef NspGrRect_Private 
@@ -138,7 +139,8 @@ static void nsp_translate_grrect(NspGraphic *o,const double *tr);
 static void nsp_rotate_grrect(NspGraphic *o,double *R);
 static void nsp_scale_grrect(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grrect(NspGraphic *o,double *bounds);
+static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R);
 
-#line 143 "./grrect.h"
+#line 145 "./grrect.h"
 #endif /* NspGrRect_Private */
 

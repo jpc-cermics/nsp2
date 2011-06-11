@@ -2296,7 +2296,7 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
       else 
 	{
 	  if ((gobj =(NspGraphic *) nsp_grrect_create("rect",val[0],val[1],val[2],val[3],
-						      iback,ithickness,icolor,NULL))== NULL)
+						      iback,ithickness,icolor,0.0,NULL))== NULL)
 	    return RET_BUG;
 	
 	}
@@ -2710,7 +2710,7 @@ static int int_xrect_new(Stack stack, int rhs, int opt, int lhs)
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   /* create the object */
-  if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,NULL))== NULL)
+  if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],back,width,color,0.0,NULL))== NULL)
     return RET_BUG;
   /* insert the object in the axe */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) rect, TRUE)== FAIL) 
@@ -2761,7 +2761,7 @@ static int int_xfrect_new(Stack stack, int rhs, int opt, int lhs)
   
   if ( opts[0].obj == NULLOBJ) color = -1;
   if ((rect = nsp_grrect_create("pl",val[0],val[1],val[2],val[3],color,width,
-				stroke_color,NULL))== NULL)
+				stroke_color,0.0,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) rect )== FAIL)
@@ -6154,7 +6154,7 @@ static int scicos_draw_3d_new(double r[],int color,double size3d)
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL) return FAIL;
   if ((gobj =(NspObject *) nsp_grrect_create("pl",r[0],r[1],r[2],r[3],
-					      -2,thickness,color,NULL))== NULL)
+					     -2,thickness,color,0.0,NULL))== NULL)
     return FAIL;
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) gobj )== FAIL) return FAIL;
