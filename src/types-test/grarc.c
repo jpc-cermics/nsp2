@@ -24,7 +24,7 @@
 
 
 
-#line 25 "codegen/grarc.override"
+#line 26 "codegen/grarc.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/grarc.h>
@@ -103,7 +103,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
 
   type->init = (init_func *) init_grarc;
 
-#line 38 "codegen/grarc.override"
+#line 39 "codegen/grarc.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -219,6 +219,7 @@ static int nsp_grarc_eq(NspGrArc *A, NspObject *B)
   if ( A->obj->fill_color != loc->obj->fill_color) return FALSE;
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
   if ( A->obj->color != loc->obj->color) return FALSE;
+  if ( A->obj->angle != loc->obj->angle) return FALSE;
   return TRUE;
 }
 
@@ -251,6 +252,7 @@ int nsp_grarc_xdr_save(XDR *xdrs, NspGrArc *M)
   if (nsp_xdr_save_i(xdrs, M->obj->fill_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
+  if (nsp_xdr_save_d(xdrs, M->obj->angle) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -273,6 +275,7 @@ NspGrArc  *nsp_grarc_xdr_load_partial(XDR *xdrs, NspGrArc *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->fill_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->angle) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -368,6 +371,7 @@ int nsp_grarc_print(NspGrArc *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -393,6 +397,7 @@ int nsp_grarc_latex(NspGrArc *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
+  Sciprintf1(indent+2,"angle=%f\n",M->obj->angle);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -472,6 +477,7 @@ int nsp_grarc_create_partial(NspGrArc *H)
   H->obj->fill_color = -1;
   H->obj->thickness = 0;
   H->obj->color = 0;
+  H->obj->angle = 0;
   return OK;
 }
 
@@ -481,7 +487,7 @@ int nsp_grarc_check_values(NspGrArc *H)
   return OK;
 }
 
-NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type)
+NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,double angle,NspTypeBase *type)
 {
   NspGrArc *H  = nsp_grarc_create_void(name,type);
   if ( H ==  NULLGRARC) return NULLGRARC;
@@ -495,6 +501,7 @@ NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
   H->obj->color=color;
+  H->obj->angle=angle;
   if ( nsp_grarc_check_values(H) == FAIL) return NULLGRARC;
   return H;
 }
@@ -545,6 +552,7 @@ NspGrArc *nsp_grarc_full_copy_partial(NspGrArc *H,NspGrArc *self)
   H->obj->fill_color=self->obj->fill_color;
   H->obj->thickness=self->obj->thickness;
   H->obj->color=self->obj->color;
+  H->obj->angle=self->obj->angle;
   return H;
 }
 
@@ -750,6 +758,25 @@ static int _wrap_grarc_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_grarc_get_angle(void *self,const char *attr)
+{
+  double ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspGrArc *) self)->obj->angle;
+  nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
+  return nsp_ret;
+}
+
+static int _wrap_grarc_set_angle(void *self,const char *attr, NspObject *O)
+{
+  double angle;
+
+  if ( DoubleScalar(O,&angle) == FAIL) return FAIL;
+  ((NspGrArc *) self)->obj->angle= angle;
+  return OK;
+}
+
 static AttrTab grarc_attrs[] = {
   { "x", (attr_get_function *)_wrap_grarc_get_x, (attr_set_function *)_wrap_grarc_set_x,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "y", (attr_get_function *)_wrap_grarc_get_y, (attr_set_function *)_wrap_grarc_set_y,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -760,6 +787,7 @@ static AttrTab grarc_attrs[] = {
   { "fill_color", (attr_get_function *)_wrap_grarc_get_fill_color, (attr_set_function *)_wrap_grarc_set_fill_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "thickness", (attr_get_function *)_wrap_grarc_get_thickness, (attr_set_function *)_wrap_grarc_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "color", (attr_get_function *)_wrap_grarc_get_color, (attr_set_function *)_wrap_grarc_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "angle", (attr_get_function *)_wrap_grarc_get_angle, (attr_set_function *)_wrap_grarc_set_angle,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -767,7 +795,7 @@ static AttrTab grarc_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 60 "codegen/grarc.override"
+#line 61 "codegen/grarc.override"
 
 extern function int_nspgraphic_extract;
 
@@ -776,10 +804,10 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 780 "grarc.c"
+#line 808 "grarc.c"
 
 
-#line 70 "codegen/grarc.override"
+#line 71 "codegen/grarc.override"
 
 extern function int_graphic_set_attribute;
 
@@ -789,7 +817,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 793 "grarc.c"
+#line 821 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -820,7 +848,7 @@ void GrArc_Interf_Info(int i, char **fname, function (**f))
   *f = GrArc_func[i].fonc;
 }
 
-#line 81 "codegen/grarc.override"
+#line 82 "codegen/grarc.override"
 
 /* inserted verbatim at the end */
 
@@ -838,6 +866,12 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     {
       return ;
     }
+  
+  if (  P->obj->angle != 0.0 ) 
+    {
+      nsp_draw_grarc_rotate(Xgc,P);
+      return;
+    }
 
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
   val[0]= P->obj->x;
@@ -846,7 +880,6 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
   val[3]= P->obj->h;
   val[4]= P->obj->a1;
   val[5]= P->obj->a2;
-
   
   if ( P->obj->fill_color != -2 ) 
     {
@@ -877,6 +910,55 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     }
 }
 
+static void nsp_draw_grarc_rotate(BCG *Xgc,NspGrArc *P)
+{
+  int i;
+  double vx[4]={P->obj->x,P->obj->x+P->obj->w,P->obj->x+P->obj->w,P->obj->x};
+  double vy[4]={P->obj->y,P->obj->y,P->obj->y-P->obj->h,P->obj->y-P->obj->h};
+  double rvx[4],rvy[4],cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
+  double cosa = cos(-P->obj->angle*M_PI/180);
+  double sina = sin(-P->obj->angle*M_PI/180);
+  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+  int cthick=-1;
+
+  for ( i= 0 ; i < 4; i++)
+    {
+      rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
+      rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
+    }
+  
+  if ( P->obj->fill_color != -2 ) 
+    {
+      /* fill the arc */ 
+      if (  P->obj->fill_color != -1) 
+	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
+      Xgc->graphic_engine->scale->fillpolyline(Xgc,rvx,rvy,4,1);
+      /* Xgc->graphic_engine->scale->fillarc(Xgc,val);*/
+      if (  P->obj->fill_color != -1) 
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+    }
+  
+  if ( P->obj->color != -2 ) 
+    {
+      /* draw the arc */ 
+      if ( P->obj->color != -1 ) 
+	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
+      if ( P->obj->thickness != -1 ) 
+	{
+	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
+	  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
+	}
+      Xgc->graphic_engine->scale->drawpolyline(Xgc,rvx,rvy,4,1);
+      /* Xgc->graphic_engine->scale->drawarc(Xgc,val);*/
+      /* reset to default values */
+      if ( P->obj->color != -1 ) 
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+      if ( P->obj->thickness != -1 ) 
+	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
+    }
+}
+
+
 static void nsp_translate_grarc(NspGraphic *Obj,const double *tr)
 {
   NspGrArc *P = (NspGrArc *) Obj;
@@ -889,12 +971,19 @@ static void nsp_translate_grarc(NspGraphic *Obj,const double *tr)
 static void nsp_rotate_grarc(NspGraphic *Obj,double *R)
 {
   NspGrArc *P = (NspGrArc *) Obj;
-  double x1;
+  double x1,y1;
   nsp_graphic_invalidate((NspGraphic *) Obj);
-  x1 = R[0]*(P->obj->x) -R[1]*(P->obj->y);
-  P->obj->y = R[1]*(P->obj->x) +R[0]*(P->obj->y);
-  P->obj->x = x1;
-  /* Il faut aussi changer l'angle */
+  /* the rectangle is rotated in such a way that the 
+   * draw function will have to make a rotation with 
+   * center the center of the rectangle 
+   */
+  /* rotate the center */
+  x1 = R[0]*(P->obj->x+ P->obj->w/2) -R[1]*(P->obj->y - P->obj->h/2);
+  y1 = R[1]*(P->obj->x+ P->obj->w/2) +R[0]*(P->obj->y - P->obj->h/2);
+  P->obj->x = x1 - P->obj->w/2;
+  P->obj->y = y1 + P->obj->h/2;
+  /* changer angle */
+  P->obj->angle += - atan2(R[1],R[0])*180/M_PI;
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
@@ -914,12 +1003,39 @@ static void nsp_scale_grarc(NspGraphic *Obj,double *alpha)
 static int nsp_getbounds_grarc(NspGraphic *Obj,double *bounds)
 {
   NspGrArc *P = (NspGrArc *) Obj;
-  bounds[0]=P->obj->x;/* xmin */
-  bounds[1]=P->obj->y-P->obj->h;/* ymin */
-  bounds[2]=P->obj->x+P->obj->w;/* xmax */
-  bounds[3]=P->obj->y;/* ymax */
+
+  if (  P->obj->angle == 0.0 ) 
+    {
+      bounds[0]=P->obj->x;/* xmin */
+      bounds[1]=P->obj->y-P->obj->h;/* ymin */
+      bounds[2]=P->obj->x+P->obj->w;/* xmax */
+      bounds[3]=P->obj->y;/* ymax */
+    }
+  else
+    {
+      int i;
+      double vx[4]={P->obj->x,P->obj->x+P->obj->w,P->obj->x+P->obj->w,P->obj->x};
+      double vy[4]={P->obj->y,P->obj->y,P->obj->y-P->obj->h,P->obj->y-P->obj->h};
+      double rvx[4],rvy[4],cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
+      double cosa = cos(-P->obj->angle*M_PI/180);
+      double sina = sin(-P->obj->angle*M_PI/180);
+      for ( i= 0 ; i < 4; i++)
+	{
+	  rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
+	  rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
+	}
+      bounds[0]=bounds[2]=rvx[0];
+      bounds[1]=bounds[3]=rvy[0];
+      for ( i= 0 ; i < 4; i++)
+	{
+	  if ( rvx[i] < bounds[0]) bounds[0] = rvx[i];
+	  if ( rvy[i] < bounds[1]) bounds[1] = rvy[i];
+	  if ( rvx[i] > bounds[2]) bounds[2] = rvx[i];
+	  if ( rvy[i] > bounds[3]) bounds[3] = rvy[i];
+	}
+    }
   return TRUE;
 }
 
 
-#line 926 "grarc.c"
+#line 1042 "grarc.c"

@@ -14,6 +14,7 @@
     '("int" "fill_color" "std" "-1")
     '("int" "thickness")
     '("int" "color")
+    '("double" "angle" "std" "0" )
     )
   (gtype-id "GrArc")
 )

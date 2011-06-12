@@ -58,6 +58,7 @@ struct _nsp_grarc {
   int fill_color;
   int thickness;
   int color;
+  double angle;
   int ref_count;
 };
 
@@ -87,7 +88,7 @@ NspGrArc *new_grarc();
 
 #define NULLGRARC (NspGrArc*) 0
 
-extern NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,NspTypeBase *type);
+extern NspGrArc *nsp_grarc_create(const char *name,double x,double y,double w,double h,double a1,double a2,int fill_color,int thickness,int color,double angle,NspTypeBase *type);
 extern NspGrArc *nsp_grarc_create_default(const char *name);
 
 /* from NspGrArcObj.c */
@@ -116,7 +117,7 @@ extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
 /* inserted at the end of public part of include file */
 
-#line 120 "./grarc.h"
+#line 121 "./grarc.h"
 #endif /* NSP_INC_NspGrArc */ 
 
 #ifdef NspGrArc_Private 
@@ -140,7 +141,8 @@ static void nsp_translate_grarc(NspGraphic *o,const double *tr);
 static void nsp_rotate_grarc(NspGraphic *o,double *R);
 static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
+static void nsp_draw_grarc_rotate(BCG *Xgc,NspGrArc *P);
 
-#line 145 "./grarc.h"
+#line 147 "./grarc.h"
 #endif /* NspGrArc_Private */
 

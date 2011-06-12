@@ -2114,7 +2114,8 @@ static int int_xarc_new(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
+  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],
+			      back,width,color,0.0,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) arc,TRUE)== FAIL) 
@@ -2145,7 +2146,8 @@ static int int_xfarc_new(Stack stack, int rhs, int opt, int lhs)
   if ( get_optional_args(stack,rhs,opt,opts,&back,&color,&width) == FAIL) return RET_BUG;
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
-  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],back,width,color,NULL))== NULL)
+  if ((arc = nsp_grarc_create("pl",val[0],val[1],val[2],val[3],val[4],val[5],
+			      back,width,color,0.0,NULL))== NULL)
     return RET_BUG;
   /* insert the object */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) arc,TRUE)== FAIL) 
@@ -2290,7 +2292,7 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
       if ( nrow == 6 ) 
 	{
 	  if ((gobj =(NspGraphic *) nsp_grarc_create("arc",val[0],val[1],val[2],val[3],val[4],val[5],
-						     iback,ithickness,icolor,NULL)) == NULL)
+						     iback,ithickness,icolor,0.0,NULL)) == NULL)
 	    return RET_BUG;
 	}
       else 
