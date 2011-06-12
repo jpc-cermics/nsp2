@@ -2296,6 +2296,7 @@ static int _wrap_lsame(Stack stack, int rhs, int opt, int lhs) /* lsame */
   return 1;
 }
 
+#if 0 
 static int _wrap_slamc1(Stack stack, int rhs, int opt, int lhs) /* slamc1 */
 {
   int_types T[] = {mat_int, mat_int, mat_int, mat_int,t_end};
@@ -2303,10 +2304,12 @@ static int _wrap_slamc1(Stack stack, int rhs, int opt, int lhs) /* slamc1 */
   NspMatrix *beta, *t, *rnd, *ieee1;
 
   if ( GetArgs(stack,rhs,opt,T,&beta, &t, &rnd, &ieee1) == FAIL) return RET_BUG;
-    ret = C2F(slamc1)(beta->I, t->I, rnd->I, ieee1->I);
+  ret = C2F(slamc1)(beta->I, t->I, rnd->I, ieee1->I);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
+#endif 
+
 
 static int _wrap_xerbla(Stack stack, int rhs, int opt, int lhs) /* xerbla */
 {
@@ -3943,7 +3946,9 @@ static OpTab lapack_all_func[]={
   {"lapack_ilaenv", _wrap_ilaenv},
   {"lapack_izmax1", _wrap_izmax1},
   {"lapack_lsame", _wrap_lsame},
+#if 0 
   {"lapack_slamc1", _wrap_slamc1},
+#endif
   {"lapack_xerbla", _wrap_xerbla},
   {"lapack_zbdsqr", _wrap_zbdsqr},
   {"lapack_zdrot", _wrap_zdrot},
