@@ -4468,6 +4468,8 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *S,*Sk;
 
   CheckRhs(5,6);
+  CheckLhs(0,1);
+
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
   if ((S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
@@ -4506,6 +4508,12 @@ static int int_xstringb(Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   nsp_list_link_figure(axe->obj->children, ((NspGraphic *) axe)->obj->Fig, axe->obj);
   nsp_axes_invalidate(((NspGraphic *) axe));
+
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(grs));
+      return 1;
+    }
   return 0;
 } 
 

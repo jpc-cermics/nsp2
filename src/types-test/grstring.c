@@ -1141,8 +1141,8 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
       length_scale_i2f(&axe->scale,&width,&height,rect1+2,rect1+3,1);
       bounds[0]= P->obj->x + P->obj->w/2 -width/2; 
       bounds[2]= P->obj->x + P->obj->w/2 +width/2;
-      bounds[1]= P->obj->y - P->obj->h/2 -height/2;
-      bounds[3]= P->obj->y - P->obj->h/2 + height/2;
+      bounds[1]= P->obj->y + P->obj->h/2 -height/2;
+      bounds[3]= P->obj->y + P->obj->h/2 + height/2;
       break;
     case GR_no_box : 
       /* no box case */
