@@ -46,5 +46,5 @@ if abs(Ia - 1) > 1.2e-8 then pause;end
 if abs(Ia - 1) > 1.2e-8 then pause;end
 
 function y=f(x);y = log(abs(x)); endfunction
-[Ia,ea,ier] = intg(0,1,f, sing=0);
-if abs(Ia + 2) > 1.2e-8 then pause;end
+[Ia,ea,ier] = intg(-1,1,f, sing=0);
+if abs(Ia + 2) > 1e-14 then pause;end

@@ -16,7 +16,7 @@ Ia = intg(a,b,f)
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{a,b}:  real scalars (including \verb+-%inf+ and\verb+%inf+) defining the integration interval
+    \vname{a,b}:  real scalars (including \verb+-%inf+ and\verb+%inf+) defining the integration range
     \vname{f}: nsp function defining the function to integrate
     \vname{atol=ea}: optional named argument, requested absolute error
                       on the result (default is 1e-14)
@@ -48,15 +48,9 @@ such that:
 $$
    | I - I_a | \le  \max (atol, rtol*|I|)
 $$
-Additional parameters for the function $f$ could be passed using the
-named optional argument \verb+args=cpar+. \verb+cpar+ is a cell array
-with the additionnal parameters of $f$. Note that if $f$ has only 
-one additionnal parameter it is not mandatory to encapsulate it 
-in a cell array (except when the parameter is it self a cell array !). 
-See examples. 
+together with an estimation \verb+ea_estim+ of the error  $| I - I_a |$.
 
-\verb+ea_estim+ is a computed estimation of $| I - I_a |$. The \verb+ier+ 
-variable could take values from 0 to 5: 
+The \verb+ier+ variable could take values from 0 to 5: 
 \begin{itemize}
 \item ier = 0,  normal and reliable termination of the routine. It is assumed that the
       requested  accuracy has been achieved.
@@ -70,11 +64,10 @@ variable could take values from 0 to 5:
             integrand, in order to determine the integration
             difficulties. If the position of a local difficulty can
             be determined (i.e.  singularity, discontinuity within
-            the interval) one will probably gain from  splitting up
-            the interval at this point and calling the integrator
-            on the sub-ranges. If possible, an appropriate
-            special-purpose integrator should be used which is
-            designed for handling the type  of difficulty involved.
+            the interval) one will probably gain by given the singular
+            point(s) using the \verb+sing=+ optional argument (or
+            by using an appropriate special-purpose integrator 
+            designed for handling the type  of difficulty involved).
       \item ier = 2: the occurrence of roundoff error is detected
             which prevents the requested tolerance from being
             achieved. The error may be under-estimated.
@@ -88,6 +81,13 @@ variable could take values from 0 to 5:
             any other value of ier.
       \end{itemize}
 \end{itemize}
+
+Additional parameters for the function $f$ could be passed using the
+named optional argument \verb+args=cpar+. \verb+cpar+ is a cell array
+with the additionnal parameters of $f$. Note that if $f$ has only 
+one additionnal parameter it is not mandatory to encapsulate it 
+in a cell array (except when the parameter is it self a cell array !). 
+See example 3 (and example 5) here after. 
 
 \end{mandescription}
 
@@ -188,8 +188,8 @@ function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction
 \paragraph{example 6} Integration with singularities.
 \begin{Verbatim}
 function y=f(x);y = log(abs(x)); endfunction
-[Ia,ea,ier] = intg(0,1,f, sing=0) // exact result is -2
-Ia-2
+[Ia,ea,ier] = intg(-1,1,f, sing=0) // exact result is -2
+Ia+2
 \end{Verbatim}
 
 \end{examples}

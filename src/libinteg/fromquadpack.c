@@ -738,15 +738,15 @@ nsp_quadpack_dqagpe (intg_f f, double *a, double *b, int *npts2, double *points,
   double d__1, d__2;
 
   /* Local variables */
-  int i__, j, k=0;
+  int i, j, k=0;
   double a1, a2, b1, b2, area, resa, dres, sign, temp;
   double area1, area2, area12, erro12, defab1, defab2;
   double oflow, uflow, res3la[3], error1, error2, rlist2[52];
   double defabs, epmach, erlarg, abseps, correc=0.0, errbnd, resabs;
   double erlast, errmax, reseps, ertest, errsum;
-  int id, ip1, ind1, ind2, ksgn, nres, nint, jlow, npts;
+  int id, ind1, ind2, ksgn, nres, nint, jlow, npts;
   int ierro, ktmin, nrmax, noext, iroff1, iroff2, iroff3;
-  int nintp1, numrl2, jupbnd, levmax, maxerr, levcur, extrap;
+  int numrl2, jupbnd, levmax, maxerr, levcur, extrap;
 
 
 /* ***begin prologue  dqagpe */
@@ -1042,63 +1042,49 @@ nsp_quadpack_dqagpe (intg_f f, double *a, double *b, int *npts2, double *points,
 
   sign = 1.;
   if (*a > *b)
-    {
-      sign = -1.;
-    }
+    sign = -1.0;
+
   pts[1] = Min (*a, *b);
-  if (npts == 0)
-    {
-      goto L15;
-    }
-  i__1 = npts;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      pts[i__ + 1] = points[i__];
-/* L10: */
-    }
-L15:
-  pts[npts + 2] = Max (*a, *b);
+  for (i = 1; i <= npts ; ++i)
+    pts[i + 1] = points[i];
+  pts[*npts2] = Max (*a, *b);
+
   nint = npts + 1;
   a1 = pts[1];
-  if (npts == 0)
+  if (npts > 0)   /* sort pts */
     {
-      goto L40;
-    }
-  nintp1 = nint + 1;
-  i__1 = nint;
-  for (i__ = 1; i__ <= i__1; ++i__)
-    {
-      ip1 = i__ + 1;
-      i__2 = nintp1;
-      for (j = ip1; j <= i__2; ++j)
-	{
-	  if (pts[i__] <= pts[j])
+      for ( i = 1 ; i <= npts+1 ; i++ )
+	for ( j = i+1 ; j <= *npts2 ; j++ )
+	  if ( pts[j] < pts[i] )
 	    {
-	      goto L20;
+	      temp = pts[i]; pts[i] = pts[j];  pts[j] = temp;
 	    }
-	  temp = pts[i__];
-	  pts[i__] = pts[j];
-	  pts[j] = temp;
-	L20:
-	  ;
+
+      /* test if a singular point is outside the range */
+      if (pts[1] != Min (*a, *b) || pts[*npts2] != Max (*a, *b))
+	{
+	  *ier = 6; return 0;
+	}
+      else  /* remove points specified more than once */
+	{
+	  i = 1;
+	  for ( j = 2  ; j <= *npts2 ; j++ )
+	    if ( pts[j] > pts[i] )
+	      {
+		pts[i+1] = pts[j]; i++;
+	      }
+	  *npts2 = Max(i,2); /* total number of "unique" points */
+	  nint = *npts2-1;
 	}
     }
-  if (pts[1] != Min (*a, *b) || pts[nintp1] != Max (*a, *b))
-    {
-      *ier = 6;
-      return 0;
-    }
-
 
 /*            compute first integral and error approximations. */
 /*            ------------------------------------------------ */
-
-L40:
   resabs = 0.;
   i__2 = nint;
-  for (i__ = 1; i__ <= i__2; ++i__)
+  for (i = 1; i <= i__2; ++i)
     {
-      b1 = pts[i__ + 1];
+      b1 = pts[i + 1];
       nsp_quadpack_dqk21 ((intg_f) f, &a1, &b1,  &area1, &error1, &defabs, &resa, vectflag,   stat);
       if (*stat != 0)
 	{
@@ -1106,30 +1092,30 @@ L40:
 	}
       *abserr += error1;
       *result += area1;
-      ndin[i__] = 0;
+      ndin[i] = 0;
       if (error1 == resa && error1 != 0.)
 	{
-	  ndin[i__] = 1;
+	  ndin[i] = 1;
 	}
       resabs += defabs;
-      level[i__] = 0;
-      elist[i__] = error1;
-      alist__[i__] = a1;
-      blist[i__] = b1;
-      rlist[i__] = area1;
-      iord[i__] = i__;
+      level[i] = 0;
+      elist[i] = error1;
+      alist__[i] = a1;
+      blist[i] = b1;
+      rlist[i] = area1;
+      iord[i] = i;
       a1 = b1;
 /* L50: */
     }
   errsum = 0.;
   i__2 = nint;
-  for (i__ = 1; i__ <= i__2; ++i__)
+  for (i = 1; i <= i__2; ++i)
     {
-      if (ndin[i__] == 1)
+      if (ndin[i] == 1)
 	{
-	  elist[i__] = *abserr;
+	  elist[i] = *abserr;
 	}
-      errsum += elist[i__];
+      errsum += elist[i];
 /* L55: */
     }
 
@@ -1150,10 +1136,10 @@ L40:
       goto L80;
     }
   i__2 = npts;
-  for (i__ = 1; i__ <= i__2; ++i__)
+  for (i = 1; i <= i__2; ++i)
     {
-      jlow = i__ + 1;
-      ind1 = iord[i__];
+      jlow = i + 1;
+      ind1 = iord[i];
       i__1 = nint;
       for (j = jlow; j <= i__1; ++j)
 	{
@@ -1167,12 +1153,12 @@ L40:
 	L60:
 	  ;
 	}
-      if (ind1 == iord[i__])
+      if (ind1 == iord[i])
 	{
 	  goto L70;
 	}
-      iord[k] = iord[i__];
-      iord[i__] = ind1;
+      iord[k] = iord[i];
+      iord[i] = ind1;
     L70:
       ;
     }
