@@ -12,19 +12,14 @@ function y=f2(x);y=2*exp(-x^2)/sqrt(%pi);endfunction;
 I = erf(0.5);
 if abs(I - Ia)  > 10*%eps then pause;end
 
-function y=g(x,p);a=p(1);w=p(2);y=a*x + sin(w*x);endfunction;
-[Ia,ea] = intg(0,2*%pi,g,args=[1,1]);
+function y=g(x,a);y=a*x;endfunction;
+[Ia,ea] = intg(0,2*%pi,g,args={1});
+if abs(Ia - 2*%pi^2) > 10*%eps then pause;end
+[Ia,ea] = intg(0,2*%pi,g,args=1);
 if abs(Ia - 2*%pi^2) > 10*%eps then pause;end
 
-[Ia,ea] = intg(0,2*%pi,g,args=list(1,1));
-if abs(Ia - 2*%pi^2) > 10*%eps then pause;end
-
-function y=g(x,p);a=p{1};b=p{2};y=b*x + sin(b*x);endfunction;
+function y=g(x,a,w);y=a*x + sin(w*x);endfunction;
 [Ia,ea] = intg(0,2*%pi,g,args={1,1});
-if abs(Ia - 2*%pi^2) > 10*%eps then pause;end
-
-function y=g(x,p);y=p.a*x + sin(p.w*x);endfunction;
-[Ia,ea] = intg(0,2*%pi,g,args=hash(2,a=1,w=1));
 if abs(Ia - 2*%pi^2) > 10*%eps then pause;end
 
 function y=f(x);y = 2*x.*cos(1./x) + sin(1./x); endfunction;
@@ -35,17 +30,21 @@ if abs(Ia -cos(1)) > 1.e-6 then pause;end
 
 function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction
 
-[Ia, ea, ier] = intg(-%inf, %inf, f, args={"nor",0,1});
+[Ia, ea, ier] = intg(-%inf, %inf, f, args={{"nor",0,1}});
 if abs(Ia - 1) > 1.2e-8 then pause;end
 
-[Ia, ea, ier] = intg(0, %inf, f, args={"gam",3,1});
+[Ia, ea, ier] = intg(0, %inf, f, args={{"gam",3,1}});
 if abs(Ia - 1) > 1.2e-8 then pause;end
 
-[Ia, ea, ier] = intg(-%inf, %inf, f, args={"cau",100});
+[Ia, ea, ier] = intg(-%inf, %inf, f, args={{"cau",100}});
 if abs(Ia - 1) > 1.2e-8 then pause;end
 
-[Ia, ea, ier] = intg(-%inf, %inf, f, args={"lap",1000});
+[Ia, ea, ier] = intg(-%inf, %inf, f, args={{"lap",1000}});
 if abs(Ia - 1) > 1.2e-8 then pause;end
 
-[Ia, ea, ier] = intg(0, 1, f, args={"bet",2,6});
+[Ia, ea, ier] = intg(0, 1, f, args={{"bet",2,6}});
 if abs(Ia - 1) > 1.2e-8 then pause;end
+
+function y=f(x);y = log(abs(x)); endfunction
+[Ia,ea,ier] = intg(0,1,f, sing=0);
+if abs(Ia + 2) > 1.2e-8 then pause;end

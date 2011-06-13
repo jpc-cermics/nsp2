@@ -19,6 +19,7 @@
 
 #include <nsp/nsp.h>
 #include <nsp/matrix.h> 
+#include <nsp/cells.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
@@ -1045,17 +1046,7 @@ static int int_ode_discrete(Stack stack,NspObject *f,NspObject *args,NspMatrix *
  * to intg_func. intg_func is the C func passed to the 
  * integrator and which evaluates f(x [,List]) from a nsp function.
  */ 
-
-typedef int (*intg_f)(const double *t, double *y, int *n);
-
-extern int C2F(nspdqagse)(intg_f f, double *a, double *b, double *epsabs, double *epsrel, 
-		          int *limit, double *result, double *abserr, int *neval, int *ier,
-                          double *alist, double *blist, double *rlist, double *elist, 
-		          int *iord, int *last, int *vectflag, int *stat);
-extern int C2F(nspdqagie)(intg_f f, double *bound, int *inf, double *epsabs, double *epsrel, 
-		          int *limit, double *result, double *abserr, int *neval, int *ier,
-                          double *alist, double *blist, double *rlist, double *elist, 
-		          int *iord, int *last, int *vectflag, int *stat);
+#include "fromquadpack.h"
 
 typedef struct _intg_data intg_data;
  
@@ -1064,26 +1055,49 @@ struct _intg_data
   NspObject *args;   /* the extra argument to the integrator (a simple Mat, or a List, ... */
   NspMatrix *x;      /* current evaluation point or vector, x is a 1x1 or 21x1 or 15x1 or 30x1 */
   NspObject *func;   /* function to integrate */
+  NspObject **targs; /* used to transmit func arguments x + additionnals ones from args */
+  int nargs;
   int errcatch;
   int pausecatch;
 };
 
 static intg_data intg_d ={NULLOBJ, NULLMAT, NULLOBJ}; 
 
-
 static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean vect_flag, Boolean use_dqagse, int inf)
 {
+  obj->args = NULLOBJ;
+  obj->x = NULLMAT;
+  obj->func = NULLOBJ;
+  obj->targs = NULL;
   if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"intg_f")== FAIL)) return FAIL;
   if ( args != NULL ) 
     {
       if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
       if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+      if ( IsCells(obj->args) )
+	{
+	  NspCells *C = (NspCells *) obj->args; 
+	  int k;
+	  obj->nargs = C->mn+1;
+	  if ( (obj->targs = malloc((C->mn+1)*sizeof(NspObject *))) == NULL ) return FAIL;
+	  for ( k = 1 ; k <= C->mn ; k++ )
+	    obj->targs[k] = C->objs[k-1];
+	}
+      else
+	{
+	  if ( (obj->targs = malloc(2*sizeof(NspObject *))) == NULL ) return FAIL;
+	  obj->targs[1] = obj->args;
+	  obj->nargs = 2;
+	}
     }
   else 
     {
+      obj->nargs = 1;
       obj->args = NULL;
+      if ( (obj->targs = malloc(sizeof(NspObject *))) == NULL ) return FAIL;
     }
+
   if ( vect_flag )
     {
       if ( use_dqagse )  /* integration on [a,b] */
@@ -1122,6 +1136,7 @@ static void intg_clean(intg_data *obj)
   if ( obj->args != NULL) nsp_object_destroy(&(obj->args));
   nsp_object_destroy( (NspObject **) &(obj->func));
   nsp_matrix_destroy(obj->x);
+  free(obj->targs);
 }
 
 /**
@@ -1136,9 +1151,9 @@ static void intg_clean(intg_data *obj)
 static int intg_func(const double *x, double *y, int *n)
 {
   intg_data *intg = &intg_d;
-  NspObject *targs[2];/* arguments to be transmited to intg->func */
+  NspObject **targs = intg->targs;
   NspObject *nsp_ret;
-  int k, nret = 1,nargs = 1;
+  int k, nret = 1,nargs = intg->nargs;
   int mn_save = intg->x->mn, m_save = intg->x->m;
   int errcatch =  intg->errcatch;
   int pausecatch = intg->pausecatch;
@@ -1148,12 +1163,6 @@ static int intg_func(const double *x, double *y, int *n)
  
   for ( k = 0 ; k < *n ; k++ )
     intg->x->R[k] = x[k];
-
-  if (intg->args != NULL ) 
-    {
-      targs[1]= intg->args;
-      nargs= 2;
-    }
 
   /* FIXME : a changer pour mettre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)intg->func ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
@@ -1202,12 +1211,12 @@ static int intg_func(const double *x, double *y, int *n)
  **/
 int int_intg(Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *res=NULLMAT;
+  NspMatrix *res=NULLMAT, *sing=NULLMAT;
   NspObject *f=NULLOBJ, *args=NULLOBJ;
   double a, b, rtol=1.e-8, atol=1.e-14, er_estim, bound=0.0;
   int limit = 750, lwork; /* (lwork = 4*limit) */
-  double *rwork=NULL;
-  int ier, *iwork=NULL, neval, last, inf, sign=1, stat;
+  double *rwork=NULL, *rsing=NULL;
+  int ier, *iwork=NULL, neval, last, inf, sign=1, stat, npts2;
   Boolean vect_flag=FALSE, use_dqagse;
 
   int_types T[] = {s_double, s_double, obj, new_opts, t_end} ;
@@ -1216,6 +1225,7 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     { "args",obj,  NULLOBJ,-1},
     { "atol",s_double,NULLOBJ,-1},
     { "rtol",s_double,NULLOBJ,-1},
+    { "sing",realmat,NULLOBJ,-1},
     { "limit",s_int,NULLOBJ,-1},
     { "vecteval",s_bool,NULLOBJ,-1},
     { NULL,t_end,NULLOBJ,-1}
@@ -1223,7 +1233,7 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
 
   CheckLhs(1,4);
 
-  if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &limit, &vect_flag) == FAIL ) 
+  if ( GetArgs(stack,rhs,opt, T, &a, &b, &f, &opts, &args, &atol, &rtol, &sing, &limit, &vect_flag) == FAIL ) 
     return RET_BUG;
 
   /* inherits values from stack */
@@ -1240,6 +1250,11 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     use_dqagse = TRUE;
   else
     {
+      if ( sing != NULLMAT ) 
+	{
+	  Scierror("%s: singularities not allowed on infinite intervals\n",NspFname(stack));
+	  return RET_BUG;
+	}
       use_dqagse = FALSE;
       if ( finite(a) )       /* b is inf or -inf */
 	{
@@ -1268,6 +1283,14 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
  
   limit = Max(4, limit);
 
+  if ( sing != NULLMAT )
+    {
+      npts2 = 2 + sing->mn;
+      rsing = sing->R;
+    }
+  else
+    npts2 = 2;
+
   if ( IsNspPList(f) == FALSE  )
     {
       Scierror("%s: third argument should be a function\n",NspFname(stack));
@@ -1275,9 +1298,9 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
     }
 
   /* allocate working arrays */
-  lwork = 4*limit;
+  lwork = 4*limit + npts2;
   rwork = nsp_alloc_work_doubles(lwork);
-  iwork = nsp_alloc_work_int(limit);
+  iwork = nsp_alloc_work_int(2*limit+npts2);
   if ( (rwork == NULL) || (iwork == NULL) )
     {
       FREE(rwork); FREE(iwork);
@@ -1293,17 +1316,19 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
 
   /* call the integrator  */
   if ( use_dqagse ) 
-    C2F(nspdqagse)(intg_func, &a, &b, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier,
-		   rwork, &rwork[limit], &rwork[2*limit], &rwork[3*limit], iwork, &last, 
+    /* nsp_quadpack_dqagse(intg_func, &a, &b, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier, */
+    /* 		   rwork, &rwork[limit], &rwork[2*limit], &rwork[3*limit], iwork, &last,  */
+    /* 		   &vect_flag, &stat); */
+    nsp_quadpack_dqagpe(intg_func, &a, &b, &npts2, rsing, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier,
+			rwork, &rwork[limit], &rwork[2*limit], &rwork[3*limit], &rwork[4*limit], iwork, &iwork[limit], &iwork[2*limit], &last, 
 		   &vect_flag, &stat);
   else
     {
-      C2F(nspdqagie)(intg_func, &bound, &inf, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier,
+      nsp_quadpack_dqagie(intg_func, &bound, &inf, &atol, &rtol, &limit, res->R, &er_estim, &neval, &ier,
 		     rwork, &rwork[limit], &rwork[2*limit], &rwork[3*limit], iwork, &last, 
 		     &vect_flag, &stat);
       if ( sign == -1 ) res->R[0] = -res->R[0];
     }
-
 
   if ( stat != 0 ) 
     {
@@ -1312,9 +1337,10 @@ int int_intg(Stack stack, int rhs, int opt, int lhs)
        */
       goto err; 
     }
+
   if ( ier == 6 )
     {
-      Scierror("Error:  intg: tolerance too stringent\n");
+      Scierror("Error:  intg: tolerance too stringent or break points outside integration range \n");
       goto err;
     }
   else if ( ier != 0 && lhs < 3 )
