@@ -94,6 +94,7 @@ struct  _scicos_block {
   void **oparptr;
   double *alpha;
   double *beta;
+  void *grobj; /* Nsp graphic object */
 };
 
 typedef struct _scicos_sim scicos_sim ;
