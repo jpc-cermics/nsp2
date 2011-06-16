@@ -1754,6 +1754,8 @@ struct _int3d_data
   NspMatrix *y;    /* current evaluation point ordinates, y is a 1x1 or npx1 */
   NspMatrix *z;    /* current evaluation point elevation, z is a 1x1 or npx1 */
   NspObject *func; /* function to integrate */
+  NspObject **targs; /* used to transmit func arguments x,y,z + additionals ones from args */
+  int nargs;
   int errcatch;
   int pausecatch;
 };
@@ -1765,14 +1767,32 @@ static int int3d_prepare(NspObject *f, NspObject *args, int3d_data *obj, Boolean
 {
   if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"int3d_f")== FAIL)) return FAIL;
+
   if ( args != NULL ) 
     {
       if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
       if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+      if ( IsCells(obj->args) )
+	{
+	  NspCells *C = (NspCells *) obj->args; 
+	  int k;
+	  obj->nargs = C->mn+3;
+	  if ( (obj->targs = malloc((C->mn+3)*sizeof(NspObject *))) == NULL ) return FAIL;
+	  for ( k = 0 ; k < C->mn ; k++ )
+	    obj->targs[k+3] = C->objs[k];
+	}
+      else
+	{
+	  if ( (obj->targs = malloc(4*sizeof(NspObject *))) == NULL ) return FAIL;
+	  obj->targs[3] = obj->args;
+	  obj->nargs = 4;
+	}
     }
   else 
     {
+      obj->nargs = 3;
       obj->args = NULL;
+      if ( (obj->targs = malloc(3*sizeof(NspObject *))) == NULL ) return FAIL;
     }
 
   if ( vect_flag )
@@ -1805,6 +1825,7 @@ static void int3d_clean(int3d_data *obj)
   nsp_matrix_destroy(obj->x);
   nsp_matrix_destroy(obj->y);
   nsp_matrix_destroy(obj->z);
+  free(obj->targs);
   /* ici */
 }
 
@@ -1823,9 +1844,9 @@ static void int3d_clean(int3d_data *obj)
 static int int3d_func(const double *x, const double *y, const double *z, double *val, int *n, void *param)
 {
   int3d_data *int3d = &int3d_d;
-  NspObject *targs[4];/* arguments to be transmited to intg->func */
+  NspObject **targs = int3d->targs; /* arguments to be transmited to intg->func */
   NspObject *nsp_ret;
-  int k, nret = 1,nargs = 3;
+  int k, nret = 1,nargs = int3d->nargs;
   int mn_saved = int3d->x->mn, m_saved = int3d->x->m;   /* to be explained... */
   int errcatch =  int3d->errcatch;
   int pausecatch = int3d->pausecatch;
@@ -1842,12 +1863,6 @@ static int int3d_func(const double *x, const double *y, const double *z, double 
   for ( k = 0 ; k < *n ; k++ )
     int3d->z->R[k] = z[k];
   int3d->z->mn = *n; int3d->z->m = *n;
-
-  if (int3d->args != NULL ) 
-    {
-      targs[3]= int3d->args;
-      nargs = 4;
-    }
 
   /* FIXME : a changer pour mettre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)int3d->func,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 

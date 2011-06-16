@@ -9,7 +9,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 Ia  = int3d(X, Y, Z, f)
-[Ia, [,ea_estim, [,ier [,neval]]]] = int3d(X, Y, Z, f, atol=ea, rtol=er, args=obj, limit=maxtet, vecteval=b)
+[Ia, [,ea_estim, [,ier [,neval]]]] = int3d(X, Y, Z, f, atol=ea, rtol=er, args=fpar, limit=maxtet, vecteval=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -22,7 +22,7 @@ Ia  = int3d(X, Y, Z, f)
                       on the result (default is 1e-12)
     \vname{rtol=er}: optional named argument, requested relative error
                       on the result (default is 1e-7).
-    \vname{args=obj}: optional named argument, useful to pass
+    \vname{args=fpar}: optional named argument, useful to pass
     additional parameters needed by the function f.
     \vname{limit=maxtet}: optional named argument, max number of
     tetrahedra allowed in the subdivision process of the initial set of
@@ -51,9 +51,6 @@ such that:
 $$
    | I - I_a | \le  \max \{ atol ,  rtol*|I| \}
 $$
-Additional parameter(s) for the function $f$ could be passed using the
-optional argument \verb+args+ which can be any nsp object (see
-examples and also the examples from \manlink{intg}{intg}). 
 \verb+ea_estim+ is an estimation of $| I - I_a |$. The
 \verb+ier+ variable could take the following values: 
 \begin{itemize}
@@ -63,6 +60,15 @@ examples and also the examples from \manlink{intg}{intg}).
       parameter) allowed has been achieved. You can try to
       increase limit.
 \end{itemize}
+
+
+Additional parameters for the function $f$ could be passed using the
+named optional argument \verb+args=fpar+ where \verb+fpar+ is a cell array
+with the additionnal parameters of $f$ : if $f$ is of the form 
+\verb+function z=f(x,y,z,p1,p2,...,pn)+ then \verb+args={p1,p2,...,pn}+.
+Note that if $f$ has only one additional parameter it is not mandatory 
+to encapsulate it in a cell array (except when the parameter is it 
+self a cell array). The additional parameters could be any nsp object.
  
 The code uses the method described in ``Algorithm 720, TOMS ACM,
 An Algorithm for Adaptive Cubature Over a Collection of 3-Dimensional Simplices
@@ -117,6 +123,9 @@ Z = [0;0;0;1];
 // test 1
 alpha = [3,13,9];
 I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
+// usual syntax 
+[Ia,ea] = int3d(X,Y,Z,foo,args={alpha})
+// but (only one additional parameter) you can use :
 [Ia,ea] = int3d(X,Y,Z,foo,args=alpha)
 abs(I - Ia)
 
@@ -131,7 +140,14 @@ I = 1/(6*(1+alpha(1))*(1+alpha(2))*(1+alpha(3)))
 tic(); [Ia,ea] = int3d(X,Y,Z,foo,args=alpha,vecteval=%t); toc()
 abs(I - Ia)
 
+// now split the vector of parameters in 3 scalar parameters
+function v=foo(x,y,z,alpha1,alpha2,alpha3);
+   v = 1./(1 + alpha1*x+alpha2*y+alpha3*z).^4;
+endfunction
+[Ia,ea] = int3d(X,Y,Z,foo,args={30,13,91},vecteval=%t)
+abs(I - Ia)
 \end{Verbatim}
+
 
 \end{examples}
 

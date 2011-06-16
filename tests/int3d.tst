@@ -31,3 +31,8 @@ if abs(I - Ia) > 1e-12 then, pause, end
 if abs(I - Ia) > 1e-12 then, pause, end
 
 
+function v=foo(x,y,z,alpha1,alpha2,alpha3);
+   v = 1./(1 + alpha1*x+alpha2*y+alpha3*z).^4;
+endfunction
+[Ia,ea] = int3d(X,Y,Z,foo,args={3,13,9},vecteval=%t);
+if abs(I - Ia) > 1e-12 then, pause, end
