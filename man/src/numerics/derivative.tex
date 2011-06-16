@@ -10,7 +10,7 @@
 \begin{verbatim}
 Ja = derivative(F,x)
 [Ja,Ha] = derivative(F,x)
-[Ja,Ha] = derivative(F,x, h=stepsize, order=1|2|4, args=F_param, Q=dir)
+[Ja,Ha] = derivative(F,x, h=stepsize, order=1|2|4, args=Fpar, Q=dir)
 \end{verbatim}
 \end{calling_sequence}
 
@@ -81,9 +81,14 @@ You can also play with the formula order and/or
 using random orthogonal matrices Q (\verb+Q = qr(rand(m,m))+)
 
 \itemdesc{passing supplementary arguments to F}
-An additional parameter for the function $f$ could be passed using the
-named optional argument \verb+args+ which can be any nsp object, see
-example 3 (see also \manlink{intg}{intg} example section).
+Additional parameters for the function $f$ could be passed using the
+named optional argument \verb+args=Fpar+  where \verb+Fpar+ is a 
+cell array with the additional parameters of $F$ : if $F$ is of the form 
+\verb+function z=F(x,p1,p2,...,pn)+ then \verb+args={p1,p2,...,pn}+. 
+Note that if $f$ has only one additional parameter it is not mandatory 
+to encapsulate it in a cell array (except when the parameter is it 
+self a cell array !). The additional parameters could be any nsp object.
+See example 3 (see also \manlink{intg}{intg} example section).
 
 \end{mandescription}
 
@@ -169,7 +174,7 @@ norm(H-Ha)/norm(Ha)
 \paragraph{example 3} an easy example which shows how to pass
 supplementary arguments:
 \begin{Verbatim}
-function y=f(x,p);A=p{1};b=p{2};y=0.5*x'*A*x-b'*x;endfunction
+function y=f(x,A,b);y=dot(0.5*(A*x)-b,x);endfunction
 
 A = [1,2;2,-0.5]; b=[1;-1]; 
 x = randn(2,1); 

@@ -68,7 +68,7 @@ function [J,H] = derivative(F, x, h=[], order=2, Q=[], args=[])
    else
       h_not_given = %f	
    end
-   
+
    J = %deriv1_(F, x, h, order, Q, args)
    m = size(J,1);
    
@@ -119,6 +119,8 @@ endfunction
 function y=%R_(F_,x,args)  
    if isempty(args) then
       y=F_(x)
+   elseif is(args,%types.Cells)
+      y = F_(x,args{:})
    else
       y = F_(x,args)
    end
