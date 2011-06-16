@@ -9,7 +9,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 Ia  = int2d(X, Y, f)
-[Ia, [,ea_estim, [,ier [,neval]]]] = int2d(X, Y, f, tol=e, tolflag=b, args=obj, limit=maxtri, iclose=b, vecteval=b)
+[Ia, [,ea_estim, [,ier [,neval]]]] = int2d(X, Y, f, tol=e, tolflag=b, args=fpar, limit=maxtri, iclose=b, vecteval=b)
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -24,7 +24,7 @@ Ia  = int2d(X, Y, f)
     \vname{tolflag=b}: optional named argument, boolean scalar. Should be
     \verb+%t+ if the requested tolerance \verb+tol+ concerns the absolute
      error and \verb+%f+ for a relative error request (default is \verb+%f+).
-    \vname{args=obj}: optional named argument, useful to pass
+    \vname{args=fpar}: optional named argument, useful to pass
     additional parameters needed by the function f.
     \vname{limit=maxtri}: optional named argument, max number of
     triangles allowed in the subdivision process of the initial set of
@@ -60,9 +60,7 @@ $$
    | I - I_a | \le  tol, \mbox{ or } | I - I_a | \le  tol*|I|
 $$
 depending on the \verb+tolflag+ optional parameter.
-An additional parameters for the function $f$ could be passed using the
-optional argument \verb+args+ which can be any nsp object (see
-examples). \verb+ea_estim+ is an estimation of $| I - I_a |$. The
+ \verb+ea_estim+ is an estimation of $| I - I_a |$. The
 \verb+ier+ variable could take the following values: 
 \begin{itemize}
 \item ier = 0,  normal and reliable termination of the routine. It is assumed that the
@@ -81,6 +79,14 @@ examples). \verb+ea_estim+ is an estimation of $| I - I_a |$. The
       reached. If this is the case you could increase the
       \verb+limit=maxtri+ parameter.
 \end{itemize}
+
+Additional parameters for the function $f$ could be passed using the
+named optional argument \verb+args=fpar+ where \verb+fpar+ is a cell array
+with the additionnal parameters of $f$ : if $f$ is of the form 
+\verb+function z=f(x,y,p1,p2,...,pn)+ then \verb+args={p1,p2,...,pn}+.
+Note that if $f$ has only one additional parameter it is not mandatory 
+to encapsulate it in a cell array (except when the parameter is it 
+self a cell array). The additional parameters could be any nsp object.
 
 Rmk: the underlying routine (twodq) integrates only on triangles and
 the rectangle case is handled in providing a simple triangulation of
@@ -128,8 +134,24 @@ tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000); toc()
 // timing with vectorial evaluation (this should be faster)
 tic(); [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t); toc()
 \end{Verbatim}
+  
+\paragraph{example 3} passing additional parameters to the integrand function.
 
-\paragraph{example 3} integrating a singularity. Here we try to compute:
+\begin{Verbatim}
+// one parameter
+function z=f(x,y,a);z=cos(a*x+20*y);endfunction
+[Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t,args={10})
+// here (only one additional parameter) you can use
+// [Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t,args=10)
+Ia - (-cos(30)+cos(10)+cos(20)-1)/200
+
+// two parameters
+function z=f(x,y,a,b);z=cos(a*x+b*y);endfunction
+[Ia,ea,ier] = int2d([0,1],[0,1],f,limit=1000,vecteval=%t,args={10,20})
+Ia - (-cos(30)+cos(10)+cos(20)-1)/200
+\end{Verbatim}
+
+\paragraph{example 4} integrating a singularity. Here we try to compute:
 $$
     \int_T \frac{dxdy}{x+y} = 1, \; T = \{ x \ge 0, y \ge 0, x+y \le 1 \}
 $$ 

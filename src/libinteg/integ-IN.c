@@ -1052,7 +1052,7 @@ typedef struct _intg_data intg_data;
  
 struct _intg_data
 {
-  NspObject *args;   /* the extra argument to the integrator (a simple Mat, or a List, ... */
+  NspObject *args;   /* the extra arguments to the integrator (in general an array of cells) */
   NspMatrix *x;      /* current evaluation point or vector, x is a 1x1 or 21x1 or 15x1 or 30x1 */
   NspObject *func;   /* function to integrate */
   NspObject **targs; /* used to transmit func arguments x + additionnals ones from args */
@@ -1061,7 +1061,7 @@ struct _intg_data
   int pausecatch;
 };
 
-static intg_data intg_d ={NULLOBJ, NULLMAT, NULLOBJ}; 
+static intg_data intg_d ={NULLOBJ, NULLMAT, NULLOBJ, NULL}; 
 
 static int intg_prepare(NspObject *f, NspObject *args, intg_data *obj, Boolean vect_flag, Boolean use_dqagse, int inf)
 {
@@ -1395,29 +1395,48 @@ typedef struct _int2d_data int2d_data;
  
 struct _int2d_data
 {
-  NspObject *args; /* extra argument of the integrant */
+  NspObject *args; /* the extra arguments of the integrant (in general an array of cells) */
   NspMatrix *x;    /* current evaluation point abscissae, x is a 1x1 or 28x1 or 46x1 */
   NspMatrix *y;    /* current evaluation point ordinates, y is a 1x1 or 28x1 or 46x1 */
   NspObject *func; /* function to integrate */
+  NspObject **targs; /* used to transmit func arguments x and y + additionals ones from args */
+  int nargs;
   int errcatch;
   int pausecatch;
 };
 
-static int2d_data int2d_d ={NULLOBJ, NULLMAT, NULLMAT, NULLOBJ}; 
-
+static int2d_data int2d_d ={NULLOBJ, NULLMAT, NULLMAT, NULLOBJ, NULL}; 
 
 static int int2d_prepare(NspObject *f, NspObject *args, int2d_data *obj, Boolean vect_flag, Boolean iclose)
 {
   if (( obj->func = nsp_object_copy(f)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->func,"int2d_f")== FAIL)) return FAIL;
+
   if ( args != NULL ) 
     {
       if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
       if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+      if ( IsCells(obj->args) )
+	{
+	  NspCells *C = (NspCells *) obj->args; 
+	  int k;
+	  obj->nargs = C->mn+2;
+	  if ( (obj->targs = malloc((C->mn+2)*sizeof(NspObject *))) == NULL ) return FAIL;
+	  for ( k = 0 ; k < C->mn ; k++ )
+	    obj->targs[k+2] = C->objs[k];
+	}
+      else
+	{
+	  if ( (obj->targs = malloc(3*sizeof(NspObject *))) == NULL ) return FAIL;
+	  obj->targs[2] = obj->args;
+	  obj->nargs = 3;
+	}
     }
   else 
     {
+      obj->nargs = 2;
       obj->args = NULL;
+      if ( (obj->targs = malloc(2*sizeof(NspObject *))) == NULL ) return FAIL;
     }
 
   if ( vect_flag )
@@ -1457,6 +1476,7 @@ static void int2d_clean(int2d_data *obj)
   nsp_object_destroy( (NspObject **) &(obj->func));
   nsp_matrix_destroy(obj->x);
   nsp_matrix_destroy(obj->y);
+  free(obj->targs);
 }
 
 /**
@@ -1472,23 +1492,18 @@ static void int2d_clean(int2d_data *obj)
 static int int2d_func(const double *x, const double *y, double *z, int *n)
 {
   int2d_data *int2d = &int2d_d;
-  NspObject *targs[3];/* arguments to be transmited to intg->func */
+  NspObject **targs = int2d->targs;
   NspObject *nsp_ret;
-  int k, nret = 1,nargs = 2;
+  int k, nret = 1,nargs = int2d->nargs;
   int errcatch =  int2d->errcatch;
   int pausecatch = int2d->pausecatch;
+
   targs[0]= NSP_OBJECT(int2d->x);
   for ( k = 0 ; k < *n ; k++ )
     int2d->x->R[k] = x[k];
   targs[1]= NSP_OBJECT(int2d->y);
   for ( k = 0 ; k < *n ; k++ )
     int2d->y->R[k] = y[k];
-
-  if (int2d->args != NULL ) 
-    {
-      targs[2]= int2d->args;
-      nargs = 3;
-    }
 
   /* FIXME : a changer pour mettre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)int2d->func,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 

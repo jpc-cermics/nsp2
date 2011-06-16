@@ -9,7 +9,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
 Ia = intg(a,b,f)
-[Ia [,ea_estim [,ier [,neval]]]]  = intg(a, b, f, atol=ea, rtol=er, args=cpar,... 
+[Ia [,ea_estim [,ier [,neval]]]]  = intg(a, b, f, atol=ea, rtol=er, args=fpar,... 
                                          limit=maxsub, sing=points, vecteval=b)
 \end{verbatim}
 \end{calling_sequence}
@@ -22,7 +22,7 @@ Ia = intg(a,b,f)
                       on the result (default is 1e-14)
     \vname{rtol=er}: optional named argument, requested relative error
                       on the result (default is 1e-8).
-    \vname{args=cpar}: optional named argument, useful to pass
+    \vname{args=fpar}: optional named argument, useful to pass
     additional parameters needed by the function f.
     \vname{limit=maxsub}: optional named argument, max number of
     subdivisions allowed (default 750).
@@ -83,10 +83,12 @@ The \verb+ier+ variable could take values from 0 to 5:
 \end{itemize}
 
 Additional parameters for the function $f$ could be passed using the
-named optional argument \verb+args=cpar+. \verb+cpar+ is a cell array
-with the additionnal parameters of $f$. Note that if $f$ has only 
-one additionnal parameter it is not mandatory to encapsulate it 
-in a cell array (except when the parameter is it self a cell array !). 
+named optional argument \verb+args=fpar+ where \verb+fpar+ is a 
+cell array with the additional parameters of $f$ : if $f$ is of the form 
+\verb+function z=f(x,p1,p2,...,pn)+ then \verb+args={p1,p2,...,pn}+. 
+Note that if $f$ has only one additional parameter it is not mandatory 
+to encapsulate it in a cell array (except when the parameter is it 
+self a cell array !). The additional parameters could be any nsp object. 
 See example 3 (and example 5) here after. 
 
 \end{mandescription}
@@ -109,11 +111,6 @@ abs(I - Ia)
 \end{Verbatim}
   
 \paragraph{example 3} passing extra parameters (see also example 5). 
-If your function needs
-only one additional parameter \verb+p+, says a scalar, or a vector or matrice 
-(or any nsp object but not an array of cells) you can use \verb+args=p+. 
-Otherwise you have to use  \verb+args={p1, p2,...}+ (that is encapsulate 
-the additionnal parameters in an array of cells).
 \begin{Verbatim}
 // a function with one parameter
 function y=g(x,a);y=a*x;endfunction
@@ -168,7 +165,6 @@ density functions, theorical results must be all equal to 1 (see the
 // a function to handle all pdf functions with intg
 function y=f(x,p);y=pdf(p{1},x,p{2:$});endfunction
 
-
 // integrating the N(0,1) density
 [Ia, ea, ier] = intg(-%inf, %inf, f, args={{"nor",0,1}})
 
@@ -200,6 +196,6 @@ Ia+2
 
 % -- Authors
 \begin{authors}
-  uses the routine dqagse and dqagie (Robert Piessens and Elise de Doncker) from
+  uses the routine dqagpe and dqagie (Robert Piessens and Elise de Doncker) from
   quadpack. Nsp interface: Bruno Pincon.
 \end{authors}
