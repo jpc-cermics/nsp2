@@ -207,7 +207,7 @@ extern void scicos_cstblk4_block(scicos_block *block,int flag);
 extern void scicos_transmit_or_zero_block(scicos_block *block,int flag);
 extern void scicos_mvswitch_block(scicos_block *block,int flag);
 extern void scicos_csslti4_block(scicos_block *block,int flag);
-extern void scicos_gtkrange_block (scicos_block * block, int flag);
+extern void scicos_gtkrange_block(scicos_block * block, int flag);
 
 #ifdef SCICOS44 
 
@@ -517,6 +517,8 @@ extern void foriterator (scicos_block *block,int flag);
 extern void assignment (scicos_block *block,int flag);
 extern void whileiterator (scicos_block *block,int flag);
 extern void loopbreaker   (scicos_block *block,int flag) ;
+extern void scicos_sliderm_block(scicos_block * block, int flag);
+
 #endif 
 
 #endif 
@@ -1163,6 +1165,7 @@ scicos_block_table  tabsim[] ={
   {"zcross",(ScicosF) scicos_zcross_block} ,
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   /* {"zcross2",(ScicosF) zcross2}, */
+  {"sliderm",(ScicosF) scicos_sliderm_block},  
   {NULL , (ScicosF) 0}
 };
 
