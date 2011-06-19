@@ -27,7 +27,7 @@ Ia = intg(a,b,f)
     \vname{limit=maxsub}: optional named argument, max number of
     subdivisions allowed (default 750).
     \vname{sing=points}: optional named argument, array of reals where the integrand
-    is known to be singular.
+    is known to be singular (note that you cannot use sing with an infinite range).
     \vname{vecteval=b}: optional named argument, boolean scalar
     (default \verb+%f+), use \verb+%t+ if you write the function
                    \verb+f+ such that it could be evaluated on a
@@ -90,6 +90,18 @@ Note that if $f$ has only one additional parameter it is not mandatory
 to encapsulate it in a cell array (except when the parameter is it 
 self a cell array !). The additional parameters could be any nsp object. 
 See example 3 (and example 5) here after. 
+
+
+While the \verb+sing=+ optional parameter is first devoted to
+integrate functions with (integrable) singularities it can
+be also use to improve the first discretization in the intg 
+computing process. When the internal routine (dqagpe) computes 
+a first approximation of the integral it uses a 21 points 
+Gaussien formula on the whole $[a,b]$ interval. So if these
+points are all located on a part where the function is constant 
+then intg may return a completly false value. To begin the 
+integration approximation using 10 intervals (instead
+of just one) you can use \verb+sing=linspace(a,b,11)+.
 
 \end{mandescription}
 
@@ -187,6 +199,7 @@ function y=f(x);y = log(abs(x)); endfunction
 [Ia,ea,ier] = intg(-1,1,f, sing=0) // exact result is -2
 Ia+2
 \end{Verbatim}
+
 
 \end{examples}
 
