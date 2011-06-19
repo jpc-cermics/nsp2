@@ -49,18 +49,20 @@ struct _ode_data
 {
   NspObject *args; /* extra argument to the integrator (a simple Mat, a List,...) */
   int neq;         /* number of equations if neq <  y->mn y can be used to pass 
-		    * extra informations to f
+		    * extra informations to f (with nsp this is not used I think (bruno))
 		    */
   NspMatrix *y,*t; /* state of ode y->mn >= neq , t : 1x1 matrix the time */
   NspObject *func; /* (pointer to nsp code of the ode function (if provided as nsp function) */
   NspObject *jac;  /* (pointer to nsp code of its jacobian (if provided as nsp function) */
   ode_f c_func;    /* pointer onto the C (or fortran) code (ode function to integrate)  */ 
   ode_jac c_jac;   /* pointer onto the C (or fortran) code (jacobian of the ode function) */ 
+  NspObject **targs; /* used to pass rhs ode func arguments x,t + additionnals ones from args */
+  int nargs;         /* total number of arguments to pass to the rhs ode function */
   int errcatch;
   int pausecatch;
 };
 
-static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL}; 
+static ode_data ode_d ={ NULL,0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,0,0,0}; 
 
 extern struct {
   int mesflg, lunit;
@@ -80,6 +82,7 @@ static void ode_clean(ode_data *obj)
   if ( obj->jac != NULL)   nsp_object_destroy(&obj->jac);
   nsp_matrix_destroy(obj->y); obj->y = NULLMAT;
   nsp_matrix_destroy(obj->t); obj->t = NULLMAT;
+  free(obj->targs); obj->targs = NULL;
   obj->c_func = NULL;
   obj->c_jac = NULL;
   obj->neq = 0;
@@ -102,20 +105,16 @@ static void ode_clean(ode_data *obj)
 static int ode_system(int *neq,const double *t,const double y[],double ydot[], void *param)
 {
   ode_data *ode = &ode_d;
-  NspObject *targs[4];/* arguments to be transmited to ode->func */
+  NspObject **targs = ode->targs; /* arguments to be transmited to ode->func */
   NspObject *nsp_ret;
-  int nret = 1,nargs = 2, i;
+  int nret = 1,nargs = ode->nargs, i;
   int errcatch =  ode->errcatch;
   int pausecatch = ode->pausecatch;
   targs[0]= NSP_OBJECT(ode->t); 
   ode->t->R[0] = *t;
   targs[1]= NSP_OBJECT(ode->y); 
   for ( i= 0 ; i < ode->y->mn ; i++) ode->y->R[i]= y[i];
-  if (ode->args != NULL ) 
-    {
-      targs[2]= ode->args;
-      nargs= 3;
-    }
+
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)ode->func ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
@@ -154,20 +153,15 @@ static int ode_jac_system(int *neq,const double *t,const double y[],
 			  int *ml,int *mu,double jac[],int *nrowj, void *param)
 {
   ode_data *ode = &ode_d;
-  NspObject *targs[4];/* arguments to be transmited to ode->func */
+  NspObject **targs = ode->targs;/* arguments to be transmited to ode->func */
   NspObject *nsp_ret;
-  int nret = 1,nargs = 2, i, j, k, dim = ode->y->mn;
+  int nret = 1,nargs = ode->nargs, i, j, k, dim = ode->y->mn;
   int errcatch =  ode->errcatch;
   int pausecatch = ode->pausecatch;
   targs[0]= NSP_OBJECT(ode->t); 
   ode->t->R[0] = *t;
   targs[1]= NSP_OBJECT(ode->y); 
   for ( i= 0 ; i < dim ; i++) ode->y->R[i]= y[i];
-  if (ode->args != NULL ) 
-    {
-      targs[2]= ode->args;
-      nargs= 3;
-    }
 
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)ode->jac ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
@@ -267,13 +261,31 @@ int ode_prepare(int m, int n, NspObject *f, NspObject *jac, NspObject *args, ode
 
   if ( args != NULL ) 
     {
-      if (( obj->args = nsp_object_copy(args)) == NULLOBJ ) return FAIL;   /* FIXME: is copy necessary ? */
+      if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;  /* FIXME: is copy necessary ? */
       if (( nsp_object_set_name(obj->args,"arg")== FAIL)) return FAIL;
+      if ( IsCells(obj->args) )
+	{
+	  NspCells *C = (NspCells *) obj->args; 
+	  int k;
+	  obj->nargs = C->mn+2;
+	  if ( (obj->targs = malloc((C->mn+2)*sizeof(NspObject *))) == NULL ) return FAIL;
+	  for ( k = 0 ; k < C->mn ; k++ )
+	    obj->targs[k+2] = C->objs[k];
+	}
+      else
+	{
+	  if ( (obj->targs = malloc(3*sizeof(NspObject *))) == NULL ) return FAIL;
+	  obj->targs[2] = obj->args;
+	  obj->nargs = 3;
+	}
     }
   else 
     {
+      obj->nargs = 2;
       obj->args = NULL;
+      if ( (obj->targs = malloc(2*sizeof(NspObject *))) == NULL ) return FAIL;
     }
+
   if ((obj->y = nsp_matrix_create("y",'r',m,n))== NULLMAT) return FAIL;
   if ((obj->t = nsp_matrix_create("t",'r',1,1))== NULLMAT) return FAIL;
   return OK;

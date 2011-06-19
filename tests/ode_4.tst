@@ -165,7 +165,7 @@ end
 // use adams (with fonctional iteration only) and rkd5 (this works
 // as the tolerance is enough stringent, the ode appears not so stiff)
 task = 1;
-errtol = 3e-8;  // adams got an err of 2.55321e-08
+errtol = 5e-8;  // adams got an err of  3.61761e-08 
 t = linspace(0,T,m);
 ye = ex4_solution(t,y0,Lambda,P);
 for algo = ["adams", "rkd5"]

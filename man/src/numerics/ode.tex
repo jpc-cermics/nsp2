@@ -10,7 +10,7 @@
 \begin{verbatim}
 x = ode(x0,t0,t,f) // or  x = ode(x0,t0,t,f,task=1)
 [x,tt] = ode(x0, t0, t, f, task=2|3)
-[x, ier] = ode(x0,t0,t,f, task=1, type=method, atol=ea, rtol=er, jac=Df, args=obj, odeoptions=htable, warn=b)
+[x, ier] = ode(x0,t0,t,f, task=1, type=method, atol=ea, rtol=er, jac=Df, args=fpar, odeoptions=htable, warn=b)
 [x, tt, ier] = ode(x0,t0,t,f, task=2|3, type=method, atol=ea, rtol=er, jac=Df, args=obj, odeoptions=htable, warn=b)
 \end{verbatim}
 \end{calling_sequence}
@@ -31,8 +31,8 @@ x = ode(x0,t0,t,f) // or  x = ode(x0,t0,t,f,task=1)
     the vector \verb+x0+.
     \vname{jac=Df}: \verb+Df+ should be a nsp function or a string (name of a C or fortran function dynamicaly linked 
                     to nsp) defining the Jacobian of function \verb+f+.
-    \vname{args=obj}: optional named argument used to pass additional parameters to the function \verb+f+ 
-    (and to the function \verb+Df+ if it is provided). It can be any nsp object.
+    \vname{args=fpar}: optional named argument used to pass additional parameters to the function \verb+f+ 
+    (and to the function \verb+Df+ if it is provided). 
 
     \vname{odeoptions}: a hash table of parameters for fine manual tuning of the choosen ode solver.
     \vname{warn=b}: boolean scalar, default is true. Use \verb+warn=%f+ to remove the display of warning 
@@ -78,13 +78,16 @@ It is possible to code this function in C or fortran language, see examples.
 
 \itemdesc{optional argument {\tt args}}
 Additional parameters for the function $f$ (and also for the function which computes the Jacobian 
-if it is provided by the user) could be passed using \verb+args=obj+ where \verb+obj+ can be any nsp 
-object (see examples). In this case \verb+f+ has the form:
+if it is provided by the user) could be passed using \verb+args=fpar+ where \verb+fpar+ is an array of
+cells with the additional parameters :
+If \verb+f+ has the form:
 \begin{quote}
-{\tt function y = f(t,x,obj) \\
+{\tt function y = f(t,x,p1,...,pn) \\
       ....}
 \end{quote}
-
+then \verb+args={p1,...,pn}+. Note that if $f$ has only one additional parameter 
+it is not mandatory to encapsulate it in a cell array (except when the parameter is it 
+self a cell array !). The additional parameters could be any nsp object. 
 
 \itemdesc{optional {\tt atol} and {\tt rtol} parameters: solver accuracy control}
 At each time step taken by the solver says from $\tau_{k-1}$ to  $\tau_k = \tau_{k-1} + (\Delta t)_k$
@@ -136,10 +139,10 @@ the nsp function defining \verb+jac+, the Jacobian of \verb+f+ should be as foll
 {\tt function J = Df(t,x) \\
       ....}\\
 or:\\
-{\tt function J = Df(t,x,obj) \\
+{\tt function J = Df(t,x,p1,...,pn) \\
      ....}
 \end{quote}
-when {\tt obj} is provided with {\tt args=obj}.
+if additional parameters should be provided (must be the same than for \verb+f+).
 It is possible to code this function in C or fortran language, see examples. 
 
 \itemdesc{odeoptions: fine solver tuning}
@@ -227,7 +230,7 @@ eps = 0.1 // parameter value
 T = 200 ;  // final integration time
 t = linspace(0,T,8000); // time instants to record to solution
 u0 = [0;0];  // initial condition (starting point)
-// solve the ode
+// solve the ode (only one additional parameter so using args={eps} is not mandatory)
 u = ode(u0, 0, t, Brusselator, rtol = 1e-9, atol = 1e-10, args=eps);
 // plot solution in the phase space
 plot2d(u(1,:)',u(2,:)', style=2, rect=[-0.5,-0.5,6,6])
@@ -258,18 +261,17 @@ u(t) =  \left[ \begin{array}{c} u_1(t) \\  u_2(t)\end{array} \right]  \equiv  \l
 \dot{u}(t) =  \left[ \begin{array}{c} \dot{u}_1(t) \\ \dot{u}_2(t) \end{array} \right] =
     \left( \begin{array}{c} u_2(t) \\  -k u_1(t) - 2 \alpha u_2(t) \end{array} \right) = f(u)
 $$
-So the code (we choose to pass the 2 parameters with an  \manlink{hash table}{hash}):
 \begin{Verbatim}
-function [f] = oscillator(t,u,p)
-   f = [ u(2); -p.k*u(1) - 2*p.alpha*u(2)];
+function [f] = oscillator(t,u,k,alpha)
+   f = [ u(2); -k*u(1) - 2*alpha*u(2)];
 endfunction
 T = 16 ;  // final integration time
 t = linspace(0,T,1000); // time instants to record to solution
 u0 = [1;0];  // initial condition (x(0)=1, dx/dt(0)=0)
 // solve the ode
-up = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0));
-ud = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=0.02));
-ua = ode(u0, 0, t, oscillator, args=hash(2,k=1,alpha=-0.02));
+up = ode(u0, 0, t, oscillator, args={1,0});
+ud = ode(u0, 0, t, oscillator, args={1,0.02});
+ua = ode(u0, 0, t, oscillator, args={1,-0.02});
 // plot the 3 solutions
 xbasc()
 subplot(1,2,1)
