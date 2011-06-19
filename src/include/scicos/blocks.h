@@ -199,6 +199,7 @@ extern void scicos_relationalop_block(scicos_block *block,int flag);
 extern void scicos_bounce_ball_block(scicos_block *block,int flag);
 extern void scicos_bouncexy_block(scicos_block *block,int flag);
 extern void scicos_cscope_block(scicos_block *block,int flag);
+extern void scicos_cscopxy_block(scicos_block *block,int flag);
 extern void scicos_cmscope_block(scicos_block *block,int flag);
 extern void scicos_scalar2vector_block(scicos_block *block,int flag);
 extern void scicos_evaluate_expr_block(scicos_block *block,int flag);
@@ -720,7 +721,8 @@ scicos_block_table  tabsim[] ={
   {"counter",(ScicosF) counter},
   /* {"cscope",(ScicosF) cscope}, */
   {"cscope",(ScicosF) scicos_cscope_block},
-  {"cscopxy",(ScicosF) cscopxy},
+  /* {"cscopxy",(ScicosF) cscopxy}, */
+  {"cscopxy",(ScicosF) scicos_cscopxy_block},
   {"cscopxy3d",(ScicosF) cscopxy3d},
   /*  {"csslti",(ScicosF) F2C(csslti)}, */
   {"csslti",(ScicosF) scicos_csslti_block},

@@ -24,7 +24,7 @@
 
 
 
-#line 33 "codegen/qcurve.override"
+#line 35 "codegen/qcurve.override"
 
 #line 30 "qcurve.c"
 
@@ -98,7 +98,7 @@ NspTypeQcurve *new_type_qcurve(type_mode mode)
 
   type->init = (init_func *) init_qcurve;
 
-#line 41 "codegen/qcurve.override"
+#line 43 "codegen/qcurve.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_qcurve;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
@@ -603,15 +603,48 @@ static int _wrap_nsp_qcurve_addPts(NspQcurve *self,Stack stack,int rhs,int opt,i
   return 0;
 }
 
+static int _wrap_nsp_qcurve_enlarge(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int pts, ret;
+
+  if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
+  ret = nsp_qcurve_enlarge(self, pts);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static int _wrap_nsp_qcurve_clear(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
   nsp_qcurve_clear(self);
   return 0;
 }
 
+static int _wrap_nsp_qcurve_get_pts(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspMatrix *ret;
+
+  ret = nsp_qcurve_get_pts(self);
+  if ( ret == NULLMAT) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ret));
+  return 1;
+}
+
+static int _wrap_nsp_qcurve_get_len(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = nsp_qcurve_get_len(self);
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static NspMethods qcurve_methods[] = {
   {"add_points",(nsp_method *) _wrap_nsp_qcurve_addPts},
+  {"enlarge",(nsp_method *) _wrap_nsp_qcurve_enlarge},
   {"clear",(nsp_method *) _wrap_nsp_qcurve_clear},
+  {"get_points",(nsp_method *) _wrap_nsp_qcurve_get_pts},
+  {"get_length",(nsp_method *) _wrap_nsp_qcurve_get_len},
   { NULL, NULL}
 };
 
@@ -688,7 +721,7 @@ static int _wrap_qcurve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 61 "codegen/qcurve.override"
+#line 63 "codegen/qcurve.override"
 /* override set alpha */
 static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -702,7 +735,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 706 "qcurve.c"
+#line 739 "qcurve.c"
 static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -711,7 +744,7 @@ static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 76 "codegen/qcurve.override"
+#line 78 "codegen/qcurve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -740,7 +773,7 @@ static int _wrap_qcurve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 744 "qcurve.c"
+#line 777 "qcurve.c"
 static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -797,7 +830,7 @@ static AttrTab qcurve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 106 "codegen/qcurve.override"
+#line 108 "codegen/qcurve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -806,10 +839,10 @@ int _wrap_nsp_extractelts_qcurve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 810 "qcurve.c"
+#line 843 "qcurve.c"
 
 
-#line 116 "codegen/qcurve.override"
+#line 118 "codegen/qcurve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -819,7 +852,7 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 823 "qcurve.c"
+#line 856 "qcurve.c"
 
 
 int _wrap_oscillo_test(Stack stack, int rhs, int opt, int lhs) /* oscillo */
@@ -857,7 +890,7 @@ void Qcurve_Interf_Info(int i, char **fname, function (**f))
   *f = Qcurve_func[i].fonc;
 }
 
-#line 127 "codegen/qcurve.override"
+#line 129 "codegen/qcurve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -900,8 +933,6 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   if ( P->obj->color != -1 ) 
     Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
 
-  Sciprintf("Avec color %d et mark %d\n", P->obj->color, P->obj->mark);
-  /*XXX: we should not be in Rec mode here */
   switch ( P->obj->mode ) 
     {
     case qcurve_std:
@@ -1041,14 +1072,14 @@ static int nsp_getbounds_qcurve(NspGraphic *Obj,double *bounds)
   return TRUE;
 }
 
-static void nsp_qcurve_addPts(NspQcurve *C,NspMatrix *Pts)
+void nsp_qcurve_addPts(NspQcurve *C,NspMatrix *Pts)
 {
   /* XXX : check if matrix is real and with two columns 
    */
   return nsp_qcurve_addpt(C,Pts->R,Pts->R+Pts->m,Pts->m);
 }
 
-static void nsp_qcurve_addpt(NspQcurve *C,double *x,double *y,int n)
+void nsp_qcurve_addpt(NspQcurve *C,const double *x,const double *y,int n)
 {
   NspMatrix *M = C->obj->Pts;
   double *qx=M->R,*qy= M->R+M->m;
@@ -1085,19 +1116,19 @@ static void nsp_qcurve_addpt(NspQcurve *C,double *x,double *y,int n)
     }
 }
 
-static void nsp_qcurve_clear(NspQcurve *C)
+void nsp_qcurve_clear(NspQcurve *C)
 {
   C->obj->start = -1;
 }
 
-static int nsp_qcurve_get_len(NspQcurve *C)
+int nsp_qcurve_get_len(NspQcurve *C)
 {
-  return ( C->obj->start <= C->obj->last) 
-    ? C->obj->last - C->obj->start + 1
+  return ( C->obj->start == -1 ) ? 0 :
+    ( C->obj->start <= C->obj->last) ? C->obj->last - C->obj->start + 1
     : C->obj->Pts->m - C->obj->start + C->obj->last +1;
 }
 
-static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
+void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
 {
   int i=0 ,pos,max;
   NspMatrix *M = C->obj->Pts;
@@ -1105,6 +1136,8 @@ static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
   pos = C->obj->start;
   max =( pos <= C->obj->last )
     ? C->obj->last :  M->m -1 ;
+
+  if ( pos == -1 ) return;
   while ( pos <= max )
     {
       cx[i]  = x[pos];
@@ -1123,6 +1156,69 @@ static void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
     }
 }
 
+/* increase the qcurve buffer with npts points 
+ *
+ */
+
+int nsp_qcurve_enlarge(NspQcurve *C,int npts)
+{
+  NspMatrix *M = C->obj->Pts;
+  NspMatrix *Mnew = nsp_matrix_create("Pts",'r',M->m+npts,2);
+  double *cx= (Mnew == NULL) ? NULL : Mnew->R;
+  double *x=M->R;
+  double *cy= (Mnew == NULL) ? NULL : Mnew->R+Mnew->m;
+  double *y = M->R+M->m;
+  int start=0, i=0;
+  int pos = C->obj->start;
+  int max =( pos <= C->obj->last ) ? C->obj->last :  M->m -1 ;
+  
+  if ( Mnew == NULL ) return FALSE;
+
+  if ( pos != -1 ) 
+    {
+      while ( pos <= max )
+	{
+	  cx[i]  = x[pos];
+	  cy[i]  = y[pos];
+	  pos++;i++;
+	}
+      if ( C->obj->last < C->obj->start )
+	{
+	  pos = 0;
+	  while ( pos <= C->obj->last )
+	    {
+	      if ( i > Mnew->m ) 
+		{
+		  i=0;
+		}
+	      cx[i]  = x[pos];
+	      cy[i]  = y[pos];
+	      pos++;
+	      if ( i <= start ) start++;
+	      i++;
+	    }
+	}
+    }
+  else
+    {
+      start = -1;
+    }
+  /* update */
+  nsp_matrix_destroy(C->obj->Pts);
+  C->obj->Pts = Mnew;
+  C->obj->last= i-1;
+  C->obj->start = start;
+  return TRUE;
+}
+
+NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
+{
+  int np = nsp_qcurve_get_len(C);
+  NspMatrix *Pts;
+  if (( Pts = nsp_matrix_create("Pts",'r',np,2))== NULL) return NULL;
+  nsp_qcurve_get_xy(C,Pts->R,Pts->R+Pts->m);
+  return Pts;
+}
 
 
 /**
@@ -1170,7 +1266,6 @@ NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
   l =  nsp_list_length(axe->obj->children);
   for ( i = 0 ; i < l  ; i++)
     nsp_list_remove_first(axe->obj->children);
-
   frect[0]=0;frect[1]=ymin;frect[2]=100;frect[3]=ymax;
   
   /* create a set of qcurves and insert them in axe */
@@ -1207,7 +1302,7 @@ NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
 
 /* add one point for each curve in qcurve data  */
 
-void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n)
+void  nsp_oscillo_add_point(NspList *L,double t,const double *y, int n)
 {
   int count =0;
   Cell *Loc = L->first;
@@ -1219,7 +1314,6 @@ void  nsp_oscillo_add_point(NspList *L,double t,double *y, int n)
 	  if ( count >= n ) return;
 	  nsp_qcurve_addpt(curve,&t,&y[count],1);
 	  count++;
-	  return;
 	}
       Loc = Loc->next;
     }
@@ -1234,4 +1328,4 @@ static void oscillo_test()
 
      
 
-#line 1238 "qcurve.c"
+#line 1332 "qcurve.c"

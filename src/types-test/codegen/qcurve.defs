@@ -3,7 +3,6 @@
 (include "qcurve-types.defs")
 
 ;; overriden 
-
 ;; just for the name, the code is overriten 
 
 (define-function extractelts_qcurve
@@ -15,6 +14,8 @@
   (return-type "none")
 )
 
+;; add a set of points to the queue curve 
+
 (define-method add_points 
   (of-object "Qcurve")
   (c-name "nsp_qcurve_addPts")
@@ -24,12 +25,43 @@
   (return-type "none")
 )
 
+;; enlarge the points size 
+
+(define-method enlarge 
+  (of-object "Qcurve")
+  (c-name "nsp_qcurve_enlarge")
+  (parameters
+    '("int" "pts")
+    )
+  (return-type "boolean")
+)
+
+;; clear the points 
+
 (define-method clear  
   (of-object "Qcurve")
   (c-name "nsp_qcurve_clear")
   (return-type "none")
 )
 
+;; get the points 
+
+(define-method get_points
+  (of-object "Qcurve")
+  (c-name "nsp_qcurve_get_pts")
+  (return-type "NspMatrix*")
+)
+
+;; get the length 
+
+(define-method get_length
+  (of-object "Qcurve")
+  (c-name "nsp_qcurve_get_len")
+  (return-type "int")
+)
+
+
+;; 
 
 (define-function oscillo
   (c-name "oscillo_test")

@@ -1,11 +1,19 @@
 ;; -*- scheme -*-
 
+;; A queue curve: i.e a circular queue used 
+;; to store points of a curve of oscilloscope type
+;; main difficulty here: the maximum number of points which 
+;; are kept depends on the size of Pts. 
+;; For a scicos oscilloscope it should depend on the 
+;; refresh period which is an amount of time 
+;; i.e we should be able to dynamically resize the queue 
+;; if necessary.
+
 (define-objectref Qcurve
   (in-module "Qcurve")
   (parent "Graphic")
   (c-name "NspQcurve")
   (fields
-   ;; '("int" "color"); curve color is defined in parent 
    '("int" "mark" "std" "-1") ; mark to be used (-1 no mark)
    '("int" "width" "std" "-1"); line width 
    '("int" "style"); line style 

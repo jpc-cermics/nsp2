@@ -68,7 +68,7 @@ function oscillo2(fixedminmax=%t)
   F.children(1).children($+1)= Q4;
 
   n=200;
-  nt=200;
+  nt=300;
   fixedminmax=%f;
   t=linspace(0,500,n);
   for i= 1:n-1

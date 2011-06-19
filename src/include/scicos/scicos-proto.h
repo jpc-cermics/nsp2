@@ -1,9 +1,14 @@
 #ifndef NSP_SCICOS_PROTO_H
 #define NSP_SCICOS_PROTO_H
 
+/*
 extern int scicos_setblockwin (BCG *Xgc,int *win, int *cur);
 extern int scicos_recterase (BCG *Xgc,const double r[]);
 extern int scicos_affdraw (BCG *Xgc,const int *fontd,const int *form,const double *val,const double *r);
+extern void scicos_clip(BCG *Xgc,int n) ;
+extern BCG *scicos_set_win(int wid,int *oldwid);
+
+*/
 extern int scicos_ftree2 (int *vec, int *nb, int *deput, int *outoin,
 			  int *outoinptr, int *ord, int *nord, int *ok);
 extern int scicos_ftree3(int *vec, int *nb, int *deput, int *typl, int *bexe,
@@ -32,8 +37,6 @@ extern  int scicos_unsfdcopy (int *, double *, int *, double *, int *);
 extern  int scicos_isort (int *, int *, int *);
 extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
 extern int scicos_getscilabel(int kfun,char **label);
-extern void scicos_clip(BCG *Xgc,int n) ;
-extern BCG *scicos_set_win(int wid,int *oldwid);
 extern void *scicos_get_function(char * fname);
 extern void scicos_do_cold_restart(void);
 extern int scicos_get_phase_simulation(void);
