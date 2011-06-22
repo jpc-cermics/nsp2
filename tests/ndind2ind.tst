@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*-
-// Copyright (C) 2010 B. Pincon Iecn/Esial
+// Copyright (C) 2010-2011 B. Pincon Iecn/Esial
 
 // some tests for ndind2ind
 

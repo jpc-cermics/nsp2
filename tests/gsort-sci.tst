@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*- 
-// Copyright INRIA/ENPC 
+// Copyright Inria/ENPC 
 // test de gsort :
 
 N=4;P=5;

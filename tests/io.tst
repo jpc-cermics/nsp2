@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*- 
-// Copyright (C) 2010 J.P Chancelier Cermics/Enpc 
+// Copyright (C) 2010-2011 J.P Chancelier Cermics/Enpc 
 // 
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

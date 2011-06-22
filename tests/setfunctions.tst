@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*-
-// Copyright (C) 2010 B. Pincob Iecn/Esial
+// Copyright (C) 2010-2011 B. Pincob Iecn/Esial
 
 // some tests for set functions (to be completed)
 
