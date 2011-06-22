@@ -1,5 +1,5 @@
 function [T_pa]=taylor(p,a)
-// Copyright  2010 Francois Delebecque
+// Copyright  2010-2011 Francois Delebecque
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -49,7 +49,7 @@ if %f then
 end
 
 function [T_pdivq]=rtaylor(p,q,a,n)
-// Copyright  2010 Jean-Philippe Chancelier 
+// Copyright  2010-2011 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -92,7 +92,7 @@ if %f then
 end
 
 function [res,L_c,T,p_a]=residue(p,q,a,tol=%eps)
-// Copyright  2010 Francois Delebecque
+// Copyright  2010-2011 Francois Delebecque
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

@@ -1,5 +1,5 @@
 /* 
- * Copyright (C) 1998-2010 Claude Lemarechal, INRIA. (PB)
+ * Copyright (C) 1998-2011 Claude Lemarechal, INRIA. (PB)
  * 
  * n1gc2: derived from a free version of va14a Harwell free.
  *

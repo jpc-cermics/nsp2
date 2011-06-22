@@ -1,7 +1,7 @@
 function sci_load(fname,varargin)
   
 // load a Scilab saved File 
-// Copyright (C) 2006-2010  Jean-Philippe Chancelier Enpc/Cermics
+// Copyright (C) 2006-2011  Jean-Philippe Chancelier Enpc/Cermics
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@ function sci_load(fname,varargin)
   function str=sci_load_get_name(F1)    
   // load a name from xdr file 
   // utility function for sci_load
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     id1=F1.get[n=6,type='il'];
     if isempty(id1) then str=[];return;end
     id = ones_new(4,6);
@@ -42,7 +42,7 @@ function sci_load(fname,varargin)
   function x=sci_load_mat(F1)
   // load a scimatrix 
   // utility function for sci_load
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     s=F1.get[n=3,type='il'];
     mn=s(1)*s(2);
     x=F1.get[n=mn*(s(3)+1),type='dl'];
@@ -53,7 +53,7 @@ function sci_load(fname,varargin)
   function x=sci_load_spmat_old(F1)
   // load a scimatrix 
   // utility function for sci_load
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     s=F1.get[n=4,type='il']
     m=s(1);n=s(2);
     // nnz 
@@ -80,7 +80,7 @@ function sci_load(fname,varargin)
   function x=sci_load_spmat(F1)
   // load a scimatrix 
   // utility function for sci_load
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     s=F1.get[n=4,type='il']
     m=s(1);n=s(2);
     // nnz 
@@ -132,7 +132,7 @@ function sci_load(fname,varargin)
   function Str=sci_load_smat(F1)
   // load string matrix 
   // utility function for sci_load
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     s=F1.get[n=3,type='il']; // s(3) is unused 
     mn=s(1)*s(2);
     if mn == 0 then Str=m2s([]);
@@ -155,7 +155,7 @@ function sci_load(fname,varargin)
   // not that we do not try to convert the function code 
   // we just read the corresponding data to be able to skip 
   // saved function 
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     nout=F1.get[n=1,type='il'];
     nsiz=6;vv=F1.get[n=nout*nsiz+1,type='il'];
     nin=vv($);
@@ -167,7 +167,7 @@ function sci_load(fname,varargin)
   function L=sci_load_list(F1,type)
   // load a list 
   // utility function for sci_load
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     s=F1.get[n=1,type='il']; // list size 
     x=F1.get[n=s+1,type='il'];// elts positions 
     L=list();
@@ -206,7 +206,7 @@ function sci_load(fname,varargin)
   function str=scilab_code2str(id)
   // From internal Scilab code to ascii string 
   // all the code is not complete in alphb ?
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     csiz=63;
     str='';
     alpha="0123456789abcdefghijklmnopqrstuvwxyz_#!$ ();:+-*/\=.,''[]%|&<>~^"; 
@@ -274,12 +274,12 @@ endfunction
 function sci_save(fname,varargopt)
 // Save in scilab binary mode the 
 // arguments which are given as name=val
-// Copyright (C) 2006-2010 Jean-Philippe Chancelier
+// Copyright (C) 2006-2011 Jean-Philippe Chancelier
 
   function sci_save_mat(F1,val)
   // save a matrix 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     F1.put[1,type='il'];
     nn=size(val);
     if and(imag(val)==0) then m_type=0;else m_type=1;end;
@@ -293,7 +293,7 @@ function sci_save(fname,varargopt)
   function sci_save_imat(F1,val)
   // save an integer matrix 
   // utility for sci_save
-  // Copyright (C) 2010  Jean-Philippe Chancelier
+  // Copyright (C) 2010-2011  Jean-Philippe Chancelier
     types_id=['c','sl','x','il','x','x','x','x','x','x','uc','usl','x',  'uil']
     types_nsp=['int8','int16','x','int32','x','x','x','x','x','x','uint8','uint16','x','uint32']
     I=find( val.itype[]== types_nsp);
@@ -310,7 +310,7 @@ function sci_save(fname,varargopt)
   function sci_save_spmat(F1,val)
   // save a matrix 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     F1.put[5,type='il'];
     nn=size(val);
     // get the triplet of the transpose
@@ -331,7 +331,7 @@ function sci_save(fname,varargopt)
   function sci_save_bmat(F1,val)
   // save a boolean 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     F1.put[4,type='il'];
     nn=size(val);
     F1.put[nn,type='il'];
@@ -341,7 +341,7 @@ function sci_save(fname,varargopt)
   function sci_save_smat(F1,val)
   // string matrix 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     if size(val,'*')==0 then 
       // emty string matrix does not exists ? 
       sci_save_mat(F1,[]);
@@ -366,7 +366,7 @@ function sci_save(fname,varargopt)
   function sci_save_list(F1,val,obj_type)
   // A list
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     if nargin<=2 then obj_type=15;end
     F1.put[obj_type,type='il'];
     nn=size(val);
@@ -415,7 +415,7 @@ function sci_save(fname,varargopt)
   function sci_save_hash(F1,val);
   // save hash table as struct 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     if val.iskey['type'] then 
       // is key type is present 
       sci_type = val('type');
@@ -448,7 +448,7 @@ function sci_save(fname,varargopt)
   function y=sci_save_count_mat(val)
   // count the space needed to save mat 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     nn=size(val,'*');
     if and(imag(val)==0) then m_type=0;else m_type=1;end;
     y= 2 + nn*(1+m_type);
@@ -464,7 +464,7 @@ function sci_save(fname,varargopt)
   function y=sci_save_count_smat(val)
   // string matrix 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     nn=size(val,'*');
     if nn==0 then 
       // emty string matrix does not exists ? 
@@ -487,7 +487,7 @@ function sci_save(fname,varargopt)
   function y=sci_save_count_list(val)
   // A list
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     nn=size(val);
     y = ceil((2 + nn+1)/2);
     for i=1:nn
@@ -509,7 +509,7 @@ function sci_save(fname,varargopt)
   function  y=sci_save_count_hash(val);
   // save hash table as struct 
   // utility for sci_save
-  // Copyright (C) 2006-2010 Jean-Philippe Chancelier
+  // Copyright (C) 2006-2011 Jean-Philippe Chancelier
     if val.iskey['type'] then 
       // is key type is present 
       sci_type = val('type');
@@ -578,7 +578,7 @@ endfunction
 
 function id=sci_str2code(str)
 // from sting to scilab coded string 
-// Copyright (C) 2006-2010 Jean-Philippe Chancelier
+// Copyright (C) 2006-2011 Jean-Philippe Chancelier
   taba2s = [ 100,101,102,103,104,105,106,107,108,-40,...
 	     110,111,112,113,114,115,116,117,118,119,...
 	     120,121,122,123,124,125,126,127,128,129,...

@@ -20,7 +20,7 @@
  *  This file is a modified version of the testfile testtext.c 
  *  from gtk distribution, modified to build a small text editor 
  *  for nsp 
- *  Copyright (C) 2001-2010 Jean-Philippe Chancelier Enpc/Cermics
+ *  Copyright (C) 2001-2011 Jean-Philippe Chancelier Enpc/Cermics
  *
  */
 

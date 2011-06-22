@@ -13,7 +13,7 @@ OBJSC = lapack.o lapack-IN.o lapack_all.o
 
 # dhgeqz.f : patched version 
 
-OBJSF = dspadm.o dgpadm.o zhpadm.o zgpadm.o dhgeqz.o
+OBJSF = dspadm.o dgpadm.o zhpadm.o zgpadm.o dhgeqz.o clsolve.o
 
 include ../Make.lib
 

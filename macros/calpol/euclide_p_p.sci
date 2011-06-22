@@ -1,6 +1,6 @@
 
 function [r,q]=monodiv_p(a,alpha)
-// Copyright  2010 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@ function [r,q]=monodiv_p(a,alpha)
 endfunction
 
 function [q,r]=pdiv_soft_p_p(a,b) 
-// Copyright  2010 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

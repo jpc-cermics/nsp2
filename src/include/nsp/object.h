@@ -2,7 +2,7 @@
 #define NSP_INC_TYPE_OBJECT 
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2010) 
+ * This Software is GPL (Copyright ENPC 1998-2011) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 

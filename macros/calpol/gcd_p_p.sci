@@ -1,5 +1,5 @@
 function [z,f1,f2,res] = gcd_p_p(u,v, delta=1.e-9)
-// Copyright  2010 Paola Boito 
+// Copyright  2010-2011 Paola Boito 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

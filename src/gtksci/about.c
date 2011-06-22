@@ -1,6 +1,6 @@
 /* -*-   Encoding: utf-8  -*-  */
 /* Nsp
- * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -58,7 +58,7 @@ void create_nsp_about_old(void)
 
   gtk_container_add (GTK_CONTAINER (box1), pixmapwid);
   
-  label = gtk_label_new ("Nsp \n  GPL Copyright 2004/2010");
+  label = gtk_label_new ("Nsp \n  GPL Copyright 2004/2011");
   gtk_box_pack_start (GTK_BOX (box1), label , FALSE, TRUE, 5);
 
   gtk_widget_show_all (window);

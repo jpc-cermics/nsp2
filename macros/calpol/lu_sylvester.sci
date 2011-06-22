@@ -1,6 +1,6 @@
 
 function [Pr,P2r,L,U]=lu_sylvester(pf,pg) 
-// Copyright  2010 Paola Boito 
+// Copyright  2010-2011 Paola Boito 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ function [Pr,P2r,L,U]=lu_sylvester(pf,pg)
 endfunction
 
 function x=lu_sylvester_solve(Pr,P2r,L,U,b)
-// Copyright  2010 Paola Boito 
+// Copyright  2010-2011 Paola Boito 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

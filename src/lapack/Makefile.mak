@@ -16,7 +16,7 @@ OBJSC = lapack.obj lapack-IN.obj lapack_all.obj
 
 # dhgeqz.f : patched version 
 
-OBJSF = dspadm.obj dgpadm.obj zhpadm.obj zgpadm.obj dhgeqz.obj
+OBJSF = dspadm.obj dgpadm.obj zhpadm.obj zgpadm.obj dhgeqz.obj clsolve.obj
 
 include ../Make.lib.mak
 

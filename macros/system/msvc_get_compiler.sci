@@ -1,6 +1,6 @@
 function [name,path,is64] = msvc_get_compiler() 
 
-// Copyright (C) 2006-2010 Jean-Philippe Chancelier Enpc/Cermics
+// Copyright (C) 2006-2011 Jean-Philippe Chancelier Enpc/Cermics
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

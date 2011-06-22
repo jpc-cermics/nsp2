@@ -1,6 +1,6 @@
 function [c,ka,kb] = intersect(a,b,ind_type="double",which="elements")
 
-// Copyright (C) 2007-2010 Bruno Pinçon
+// Copyright (C) 2007-2011 Bruno Pinçon
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

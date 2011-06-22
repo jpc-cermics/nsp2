@@ -1,5 +1,5 @@
 /*
- * This Software is GPL (Copyright ENPC 1998-2010) 
+ * This Software is GPL (Copyright ENPC 1998-2011) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  *
  * Generic code for Sorting Matrices a[i+n*j] 

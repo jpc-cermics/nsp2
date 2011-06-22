@@ -411,7 +411,7 @@ class Wrapper:
         '#define NSP_INC_%(typename)s\n' \
         '\n' \
         '/*\n' \
-        ' * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics\n' \
+        ' * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics\n' \
         ' * \n' \
         ' * This library is free software; you can redistribute it and/or\n' \
         ' * modify it under the terms of the GNU General Public\n' \
@@ -2100,7 +2100,7 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write('/* Nsp\n') 
     tag = overrides.get_copyright()
     if tag == '' :
-        tag = ' * Copyright (C) 1998-2009 Jean-Philippe Chancelier Enpc/Cermics\n'
+        tag = ' * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics\n'
         fp.write( tag) 
     else:
         fp.write( tag) 

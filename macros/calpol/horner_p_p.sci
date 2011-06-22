@@ -1,5 +1,5 @@
 function R=horner_p_p(P,Q, vdim=%f, ttmode=%f)
-// Copyright  2010 Jean-Philippe Chancelier 
+// Copyright  2010-2011 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

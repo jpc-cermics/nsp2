@@ -1,6 +1,6 @@
 function [B] = pinv(A,tol=[])
 
-// Copyright (C) 2005-2010 Bruno Pinçon
+// Copyright (C) 2005-2011 Bruno Pinçon
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

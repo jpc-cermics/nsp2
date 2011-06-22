@@ -1,6 +1,6 @@
 
 function u=epdiv_fft(p,q) 
-// Copyright  2010 Paola Boito 
+// Copyright  2010-2011 Paola Boito 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,7 +75,7 @@ function u=epdiv_fft(p,q)
 endfunction
 
 function u=epdiv_lsq(p,q)
-// Copyright  2010 Jean-Philippe Chancelier 
+// Copyright  2010-2011 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ function u=epdiv_lsq(p,q)
 endfunction
 
 function u=epdiv_gko(p,q)
-// Copyright  2010 Paola Boito 
+// Copyright  2010-2011 Paola Boito 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
