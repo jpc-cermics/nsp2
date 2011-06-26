@@ -443,42 +443,8 @@ static int nsp_axes_legends(BCG *Xgc,NspAxes *axe)
 
 static void nsp_axes_compute_inside_bounds(NspGraphic *Obj,double *bounds)
 {
-  double l_bounds[4];
-  Cell *cloc;
-  NspList *L;
   NspAxes *P = (NspAxes *) Obj;
-  L = P->obj->children;
-  cloc = L->first ;
-  
-  if ( cloc == NULLCELL) 
-    {
-      bounds[0]=bounds[1]=0;
-      bounds[2]=bounds[3]=0;
-      return;
-    }
-  
-  bounds[0]=bounds[1]=LARGEST_REAL;
-  bounds[2]=bounds[3]=-LARGEST_REAL;
-
-  while ( cloc != NULLCELL ) 
-    {
-      if ( cloc->O != NULLOBJ ) 
-	{
-	  NspGraphic *G= (NspGraphic *) cloc->O;
-	  if ( G->type->bounds(G,l_bounds) == TRUE ) 
-	    {
-	      if ( l_bounds[0] < bounds[0] ) 
-		bounds[0]= l_bounds[0];
-	      if (  l_bounds[2] > bounds[2])
-		bounds[2]= l_bounds[2];
-	      if ( l_bounds[1] < bounds[1] ) 
-		bounds[1]= l_bounds[1];
-	      if (  l_bounds[3] > bounds[3])
-		bounds[3]= l_bounds[3];
-	    }
-	}
-      cloc = cloc->next;
-    }
+  nsp_grlist_compute_inside_bounds(P->obj->children,bounds);
 }
 
 

@@ -125,7 +125,7 @@ extern int nsp_qcurve_get_len(NspQcurve *C);
 extern void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy);
 extern int nsp_qcurve_enlarge(NspQcurve *C,int npts);
 extern NspMatrix *nsp_qcurve_get_pts(NspQcurve *C);
-
+typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
 #line 130 "./qcurve.h"
 #endif /* NSP_INC_NspQcurve */ 
 

@@ -902,7 +902,7 @@ void Qcurve_Interf_Info(int i, char **fname, function (**f))
     '("NspMatrix*" "Pts")
 */
 
-typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
+
 
 static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {

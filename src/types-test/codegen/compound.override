@@ -222,19 +222,21 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
 }
 
-/* compute the bounds of the set of objects countained in the 
- * compound. This function is to be called when contained 
- * objects are changed.
- */
+/**
+ * nsp_grlist_compute_inside_bounds:
+ * @L: a #NspList 
+ * @bounds: pointer to an array of double of size 4.
+ * 
+ * compute the bounds of the set of objects countained in the 
+ * list. returns %FALSE when the list is empty.
+ * 
+ * Returns: %TRUE or %FALSE
+ **/
 
-static int nsp_compound_compute_inside_bounds(NspGraphic *Obj)
+int nsp_grlist_compute_inside_bounds(NspList *L,double *bounds)
 {
-  double l_bounds[4],bounds[4];
-  Cell *cloc;
-  NspList *L;
-  NspCompound *P = (NspCompound *) Obj;
-  L = P->obj->children;
-  cloc = L->first ;
+  double l_bounds[4];
+  Cell *cloc = L->first ;
   if ( cloc == NULLCELL) 
     {
       bounds[0]=bounds[1]=0;
@@ -262,7 +264,17 @@ static int nsp_compound_compute_inside_bounds(NspGraphic *Obj)
 	}
       cloc = cloc->next;
     }
-  memcpy(P->obj->bounds->R,bounds,4*sizeof(double));
+  return TRUE;
+}
+
+static int nsp_compound_compute_inside_bounds(NspGraphic *Obj)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  double bounds[4];
+  if ( nsp_grlist_compute_inside_bounds(P->obj->children,bounds) == TRUE ) 
+    {
+      memcpy(P->obj->bounds->R,bounds,4*sizeof(double));
+    }
   return TRUE;
 }
 

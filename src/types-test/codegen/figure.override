@@ -37,7 +37,8 @@ extern int nsp_figure_remove_children(NspFigure *F);
 extern NspObject *nsp_check_for_current_axes_or_objs3d(void);
 extern NspFigure *nsp_check_for_current_figure(void);
 extern void nsp_figure_data_reset(NspFigure *F);
-
+/* compute the bounds of graphic objects stored in L */
+extern int nsp_grlist_compute_inside_bounds(NspList *L,double *bounds);
 
 %%
 include-private Figure
