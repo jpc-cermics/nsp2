@@ -200,6 +200,7 @@ extern void scicos_bounce_ball_block(scicos_block *block,int flag);
 extern void scicos_bouncexy_block(scicos_block *block,int flag);
 extern void scicos_cscope_block(scicos_block *block,int flag);
 extern void scicos_cscopxy_block(scicos_block *block,int flag);
+extern void scicos_canimxy_block (scicos_block *block,int flag);
 extern void scicos_cmscope_block(scicos_block *block,int flag);
 extern void scicos_scalar2vector_block(scicos_block *block,int flag);
 extern void scicos_evaluate_expr_block(scicos_block *block,int flag);
@@ -278,10 +279,9 @@ extern void samphold4 (scicos_block *block,int flag);
 extern void dollar4 (scicos_block *block,int flag);
 extern void invblk4 (scicos_block *block,int flag);
 extern void delay4 (scicos_block *block,int flag);
-extern void cevscpe (scicos_block *block,int flag);
+extern void scicos_cevscpe_block (scicos_block *block,int flag);
 extern void cfscope (scicos_block *block,int flag);
 extern void cscopxy (scicos_block *block,int flag);
-extern void canimxy (scicos_block *block,int flag);
 extern void canimxy3d (scicos_block *block,int flag);
 extern void cscopxy3d (scicos_block *block,int flag);
 extern void matmul_m (scicos_block *block,int flag);
@@ -701,11 +701,11 @@ scicos_block_table  tabsim[] ={
   {"bounce_ball",(ScicosF) scicos_bounce_ball_block},
   /* {"bouncexy",(ScicosF) bouncexy}, */
   {"bouncexy",(ScicosF) scicos_bouncexy_block},
-  {"canimxy",(ScicosF) canimxy},
+  {"canimxy",(ScicosF) scicos_canimxy_block},
   {"canimxy3d",(ScicosF) canimxy3d},
   /*  {"cdummy",(ScicosF) F2C(cdummy)}, */
   {"cdummy",(ScicosF) scicos_cdummy_block},
-  {"cevscpe",(ScicosF) cevscpe},
+  {"cevscpe",(ScicosF) scicos_cevscpe_block},
   /* {"cfscope",(ScicosF) cfscope}, XXX */
   {"cmat3d",(ScicosF) cmat3d},
   {"cmatview",(ScicosF) cmatview},

@@ -115,18 +115,16 @@ extern int nsp_qcurve_xdr_save(XDR  *xdrs, NspQcurve *M);
 #line 9 "codegen/qcurve.override"
 /* inserted at the end of public part of include file */
 
-extern NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,int yfree,
-				  double ymin,double ymax,NspList **Lc);
-extern void  nsp_oscillo_add_point(NspList *L,double t,const double *y, int n);
 extern void nsp_qcurve_addPts(NspQcurve *C,NspMatrix *Pts);
 extern void nsp_qcurve_addpt(NspQcurve *C,const double *x,const double *y,int n);
 extern void nsp_qcurve_clear(NspQcurve *C);
 extern int nsp_qcurve_get_len(NspQcurve *C);
 extern void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy);
+extern void nsp_qcurve_get_xy_stem(NspQcurve *C,double *cx,double *cy);
 extern int nsp_qcurve_enlarge(NspQcurve *C,int npts);
 extern NspMatrix *nsp_qcurve_get_pts(NspQcurve *C);
 typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
-#line 130 "./qcurve.h"
+#line 128 "./qcurve.h"
 #endif /* NSP_INC_NspQcurve */ 
 
 #ifdef NspQcurve_Private 
@@ -141,7 +139,7 @@ static AttrTab qcurve_attrs[];
 static NspMethods *qcurve_get_methods(void);
 /* static int int_qcurve_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspQcurve *nsp_qcurve_create_void(const char *name,NspTypeBase *type);
-#line 24 "codegen/qcurve.override"
+#line 22 "codegen/qcurve.override"
 /* inserted in the private part of include file */
 
 static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -149,8 +147,8 @@ static void nsp_translate_qcurve(NspGraphic *o,const double *tr);
 static void nsp_rotate_qcurve(NspGraphic *o,double *R);
 static void nsp_scale_qcurve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_qcurve(NspGraphic *o,double *bounds);
-static void oscillo_test();
 
-#line 155 "./qcurve.h"
+
+#line 153 "./qcurve.h"
 #endif /* NspQcurve_Private */
 

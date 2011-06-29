@@ -60,10 +60,3 @@
   (return-type "int")
 )
 
-
-;; 
-
-(define-function oscillo
-  (c-name "oscillo_test")
-  (return-type "none")
-)

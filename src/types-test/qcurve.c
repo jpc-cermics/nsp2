@@ -24,7 +24,7 @@
 
 
 
-#line 35 "codegen/qcurve.override"
+#line 33 "codegen/qcurve.override"
 
 #line 30 "qcurve.c"
 
@@ -98,7 +98,7 @@ NspTypeQcurve *new_type_qcurve(type_mode mode)
 
   type->init = (init_func *) init_qcurve;
 
-#line 43 "codegen/qcurve.override"
+#line 41 "codegen/qcurve.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_qcurve;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_qcurve ;
@@ -721,7 +721,7 @@ static int _wrap_qcurve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 63 "codegen/qcurve.override"
+#line 61 "codegen/qcurve.override"
 /* override set alpha */
 static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -744,7 +744,7 @@ static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 78 "codegen/qcurve.override"
+#line 76 "codegen/qcurve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -830,7 +830,7 @@ static AttrTab qcurve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 108 "codegen/qcurve.override"
+#line 106 "codegen/qcurve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -842,7 +842,7 @@ int _wrap_nsp_extractelts_qcurve(Stack stack, int rhs, int opt, int lhs)
 #line 843 "qcurve.c"
 
 
-#line 118 "codegen/qcurve.override"
+#line 116 "codegen/qcurve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -855,12 +855,6 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
 #line 856 "qcurve.c"
 
 
-int _wrap_oscillo_test(Stack stack, int rhs, int opt, int lhs) /* oscillo */
-{
-    oscillo_test();
-  return 0;
-}
-
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -869,7 +863,6 @@ int _wrap_oscillo_test(Stack stack, int rhs, int opt, int lhs) /* oscillo */
 static OpTab Qcurve_func[]={
   {"extractelts_qcurve", _wrap_nsp_extractelts_qcurve},
   {"setrowscols_qcurve", _wrap_nsp_setrowscols_qcurve},
-  {"oscillo", _wrap_oscillo_test},
   { "qcurve_create", int_qcurve_create},
   { NULL, NULL}
 };
@@ -890,7 +883,7 @@ void Qcurve_Interf_Info(int i, char **fname, function (**f))
   *f = Qcurve_func[i].fonc;
 }
 
-#line 129 "codegen/qcurve.override"
+#line 127 "codegen/qcurve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -935,6 +928,23 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
   switch ( P->obj->mode ) 
     {
+    case qcurve_stem:
+      {
+	int nc = nsp_qcurve_get_len(P);
+	int iflag=0;
+	double *xm=NULL,*ym=NULL;
+	int n= 2*nc;
+	xm = graphic_alloc(0,n,sizeof(double));
+	ym = graphic_alloc(1,n,sizeof(double));
+	if ( xm == 0 || ym == 0) 
+	  {
+	    Sciprintf("Error: cannot allocated points for drawing\n");
+	    return;
+	  }
+	nsp_qcurve_get_xy_stem(P,xm,ym);
+	Xgc->graphic_engine->scale->drawsegments(Xgc,xm,ym,2*nc,&P->obj->color,iflag);
+      }
+      break;
     case qcurve_std:
     default:
       {
@@ -955,7 +965,6 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	  Xgc->graphic_engine->scale->drawpolyline(Xgc,xm,ym,n,0);
 	break;
       }
-
     }
   Xgc->graphic_engine->xset_thickness(Xgc,c_width);
   Xgc->graphic_engine->xset_pattern(Xgc,c_color);
@@ -1156,6 +1165,40 @@ void nsp_qcurve_get_xy(NspQcurve *C,double *cx,double *cy)
     }
 }
 
+void nsp_qcurve_get_xy_stem(NspQcurve *C,double *cx,double *cy)
+{
+  int i=0 ,pos,max;
+  NspMatrix *M = C->obj->Pts;
+  double *x=M->R,*y= M->R+M->m;
+  pos = C->obj->start;
+  max =( pos <= C->obj->last )
+    ? C->obj->last :  M->m -1 ;
+
+  if ( pos == -1 ) return;
+  while ( pos <= max )
+    {
+      cx[2*i]  = x[pos];
+      cy[2*i]  = 0;
+      cx[2*i+1]  = x[pos];
+      cy[2*i+1]  = y[pos];
+      pos++;i++;
+    }
+  if ( C->obj->last < C->obj->start )
+    {
+      pos = 0;
+      while ( pos <= C->obj->last )
+	{
+	  cx[2*i]  = x[pos];
+	  cy[2*i]  = 0;
+	  cx[2*i+1]  = x[pos];
+	  cy[2*i+1]  = y[pos];
+	  pos++;i++;
+	}
+    }
+}
+
+
+
 /* increase the qcurve buffer with npts points 
  *
  */
@@ -1221,111 +1264,4 @@ NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
 }
 
 
-/**
- * nsp_oscillo_obj:
- * @win: integer giving the window id
- * @ncurves: number of curve to create in the graphic window
- * @style: style for each curve
- * @bufsize: size of points in each curve
- * @yfree: ignored (means that ymin and ymax can move freely).
- * @ymin: min y value 
- * @ymax: max y value 
- * @Lc: If requested returns the list of curves.
- * 
- * 
- * 
- * Returns: a #NspFigure or %NULL
- **/
-
-NspAxes *nsp_oscillo_obj(int win,int ncurves,int style[],int bufsize,
-			 int yfree,double ymin,double ymax,NspList **Lc)
-{
-  double frect[4];
-  char strflag[]="151";
-  NspAxes *axe;
-  BCG *Xgc;
-  char *curve_l=NULL;
-  int i,l;
-  /*
-   * set current window
-   */
-  if ((Xgc = window_list_get_first()) != NULL) 
-    Xgc->graphic_engine->xset_curwin(Max(win,0),TRUE);
-  else 
-    Xgc= set_graphic_window_new(Max(win,0));
-
-  /*
-   * Gc of new window 
-   */
-  if ((Xgc = window_list_get_first())== NULL) return NULL;
-  if ((axe=  nsp_check_for_axes(Xgc,NULL)) == NULL) return NULL;
-
-  /* clean previous plots 
-   */ 
-
-  l =  nsp_list_length(axe->obj->children);
-  for ( i = 0 ; i < l  ; i++)
-    nsp_list_remove_first(axe->obj->children);
-  frect[0]=0;frect[1]=ymin;frect[2]=100;frect[3]=ymax;
-  
-  /* create a set of qcurves and insert them in axe */
-  for ( i = 0 ; i < ncurves ; i++) 
-    {
-      int mark=-1;
-      NspQcurve *curve;
-      NspMatrix *Pts = nsp_matrix_create("Pts",'r',Max(bufsize,1),2); 
-      if ( Pts == NULL) return NULL;
-      if ( style[i] <= 0 ) mark = -style[i];
-      curve= nsp_qcurve_create("curve",mark,0,0,( style[i] > 0 ) ?  style[i] : -1,
-			       qcurve_std,Pts,curve_l,-1,-1,NULL);
-      if ( curve == NULL) return NULL;
-      /* insert the new curve */
-      if ( nsp_axes_insert_child(axe,(NspGraphic *) curve,FALSE)== FAIL) 
-	{
-	  return NULL;
-	}
-    }
-  /* updates the axes scale information */
-  nsp_strf_axes( axe , frect, strflag[1]);
-  memcpy(axe->obj->frect->R,frect,4*sizeof(double));
-  memcpy(axe->obj->rect->R,frect,4*sizeof(double));
-  axe->obj->axes = 1;
-  axe->obj->xlog = FALSE;
-  axe->obj->ylog=  FALSE;
-  axe->obj->iso = FALSE;
-  /* use free scales if requested  */
-  axe->obj->fixed = ( yfree == TRUE ) ? FALSE: TRUE ;
-  nsp_axes_invalidate((NspGraphic *) axe);
-  if ( Lc != NULL) *Lc = axe->obj->children;
-  return axe;
-}
-
-/* add one point for each curve in qcurve data  */
-
-void  nsp_oscillo_add_point(NspList *L,double t,const double *y, int n)
-{
-  int count =0;
-  Cell *Loc = L->first;
-  while ( Loc != NULLCELL ) 
-    {
-      if ( Loc->O != NULLOBJ )
-	{ 
-	  NspQcurve *curve =(NspQcurve *) Loc->O;
-	  if ( count >= n ) return;
-	  nsp_qcurve_addpt(curve,&t,&y[count],1);
-	  count++;
-	}
-      Loc = Loc->next;
-    }
-}
-
-static void oscillo_test()
-{
-  int style[]={-1,2,3};
-  nsp_oscillo_obj(123,3,style,100,TRUE,-5,5,NULL);
-}
-
-
-     
-
-#line 1332 "qcurve.c"
+#line 1268 "qcurve.c"
