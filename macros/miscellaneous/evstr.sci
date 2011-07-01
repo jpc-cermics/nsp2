@@ -7,7 +7,8 @@ function [y,err]=evstr(str, exec_context)
     y=[];
     [ok,H]=execstr('y='+str,env=exec_context,errcatch=%t);
     err= ~ok;
-    if ok then   y=H.y; else y=[];end 
+    if ok then y=H.y; 
+    else lasterror(); y=m2s([]);end 
   else
     A_evstr=zeros_new(m,n);
     err=%t;
@@ -17,6 +18,8 @@ function [y,err]=evstr(str, exec_context)
 	err=err & ok;
 	if ok then 
 	  A_evstr(i,j)=H.%rep;
+	else
+	  lasterror();
 	end
       end
     end
