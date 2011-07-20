@@ -648,6 +648,18 @@ int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
 }
 #endif 
 
+#include <locale.h>
+
+static int int_setlocale(Stack stack,int rhs,int opt,int lhs)
+{
+  char *locale = setlocale(LC_NUMERIC,NULL);
+  CheckRhs(0,0);
+  CheckLhs(1,1);
+  if ( locale == NULL) locale = "unknown";
+  nsp_move_string(stack,1,locale,-1);
+  return 1;
+}
+
 static OpTab System_func[]={
   {"registry", int_nsp_query_registry },
   {"localtime", int_localtime},
@@ -677,6 +689,7 @@ static OpTab System_func[]={
   {"editfile", int_editfile},
   {"editsmat", int_editsmat},
   {"listenv", int_listenv},
+  {"setlocale",int_setlocale},
 #if 0 
   {"mktemp", int_mktemp},
 #endif 
