@@ -823,7 +823,7 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
     {
       /* return the error message as third argument */
       char *st = (error != NULL) ? error->message : "";
-      if ( nsp_spawn_move(stack,st,"xxx",4) == FAIL) goto end;
+      if ( nsp_spawn_move(stack,st,"\n",4) == FAIL) goto end;
     }
   ret = Max(lhs,1);
  end:
