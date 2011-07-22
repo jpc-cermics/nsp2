@@ -1077,6 +1077,27 @@ NspMatrix *nsp_imatrix_to_matrix(NspIMatrix *M)
 }
 
 /**
+ * nsp_imatrix_elt_as_double
+ * @M: a #NspIMatrix
+ * @k: indice of element 
+ * 
+ * #NspIMatrix element conversion to double
+ * Return value: a double
+ */
+
+double nsp_imatrix_elt_as_double(NspIMatrix *M,int k)
+{
+  double d;
+#define IMAT_ITOM(name,type,arg)		\
+  d =  M->name[k] ;				\
+  break;
+  NSP_ITYPE_SWITCH(M->itype,IMAT_ITOM,void);
+#undef IMAT_ITOM
+  return d;
+}
+
+
+/**
  * nsp_imatrix_and
  * @A: a #NspIMatrix
  * @B: a #NspIMatrix

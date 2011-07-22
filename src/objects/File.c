@@ -2252,6 +2252,11 @@ static int P_GetScalarDouble(Stack stack,int first_arg,int n_args,int col,int li
       if ((M =(NspObject*) GetBMat(stack,i))== NULL) return FAIL;
       *dval = ((NspBMatrix *)M)->B[line+ ((NspBMatrix *)M)->m*obj_col];
     }
+  else if ( IsIMat(obj))
+    {
+      if ((M =(NspObject*) GetIMat(stack,i)) ==NULL) return FAIL;
+      *dval = nsp_imatrix_elt_as_double((NspIMatrix *) M,line+ ((NspIMatrix *)M)->m*obj_col);
+    }
   else 
     {
       Scierror("%s: item %d should be a scalar or boolean matrix\n",NspFname(stack),i);
