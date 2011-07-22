@@ -1,4 +1,10 @@
-function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=getvalue(%desc,%labels,%typ,%ini)
+function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=...
+    getvalue(%desc,%labels,%typ,%ini)
+  [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=...
+      getvalue_internal(%desc,%labels,%typ,%ini,use_dialog=%t);
+endfunction
+
+function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=getvalue_internal(%desc,%labels,%typ,%ini,use_dialog=%t)
 // getvalues - launch dialogs for acquiring data 
 //   then check that the entered values have the correct types 
 //   and evaluate them in the context environment.
@@ -101,7 +107,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     end
     ok=%t;
   endfunction
-    
+      
   if ~exists('%scicos_context') then 
     exec_context = hash_create(10);
   else
@@ -130,7 +136,11 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     
   while %t do
     // acquire data through dialog 
-    %str1=getvalue_dialog(%desc,%labels,%typ,%ini)
+    if use_dialog then 
+      %str1=getvalue_dialog(%desc,%labels,%typ,%ini)
+    else
+      %str1= %ini;
+    end
     if isempty(%str1) then ok=%f,%str=[];break,end
     %str=strsubst(%str1,'\n',';');
     
@@ -214,12 +224,13 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
       end
       execstr('%'+m2s(%kk,'%.0f')+'=%vv'); // string 
     end
+    // do not loop if not using a dialog 
+    if ~use_dialog then break;end 
+    // break or continue
     if ok then; break;end 
     %ini=%str;
   end
-  if nargout==%nn+2 then
-    execstr('%'+string(nargout-1)+'=%str')
-  end
+  execstr('%'+string(%nn+1)+'=%str')
 endfunction
 
 function [y,err]=evstr(str, exec_context)
