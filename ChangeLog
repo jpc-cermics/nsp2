@@ -1,6 +1,6 @@
 2011-01-22  Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
-	* add kron (.*.) for sparse (and a small test for kron in sparse-nsp.tst)
+	* add kron (.*.) for sparse (and a small test for kron in sparse-nsp.tst) 
 
 2011-01-08  Bruno  <bruno.pincon@iecn.u-nancy.fr>
 
