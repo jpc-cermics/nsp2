@@ -22,7 +22,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 //                   'mat' : stands for matrix of scalars 
 //                   'col' : stands for column vector of scalars
 //                   'row' : stands for row vector of scalars
-//                   'vec' : stands for  vector of scalars
+//                   'vec' : stands for vector of scalars
 //                   'str' : stands for vector of strings
 //                   'lis' : stands for list
 //                   'pol' : stands for polynomials
@@ -94,9 +94,9 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
       return;
     end 
     %vv=%H.%vv;
-    if type(%vv,'string')<>typ then
+    if and(type(%vv,'string')<>typ) then
       x_message(['Entry '+label+' has incorrect type";
-		 'Expecting a '+typ]);
+		 'Expecting a '+catenate(typ,sep=', or ')]);
       return;
     end
     ok=%t;
@@ -148,13 +148,13 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	%vv= %str(%kk);
        case 'mat'
 	//---- matrix 
-	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
+	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['Mat','IMat']); 
 	if ~ok then break;end
 	ok = check_dims(%vv,%sz);
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
        case 'row'
 	//---- row vector
-	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
+	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['Mat','IMat']); 
 	if ~ok then break;end
 	%nv= prod(%sz);
 	if %nv <= 0 then 
@@ -165,7 +165,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	if ~ok then  error_size(%labels(%kk),string_dims([%nv,1]));break;end;
        case 'col'
 	//---- column vector 
-	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
+	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['Mat','IMat']); 
 	if ~ok then break;end
 	%nv= prod(%sz);
 	if %nv <= 0 then 
@@ -176,7 +176,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	if ~ok then error_size(%labels(%kk),string_dims([1,%nv]));break;end
        case 'vec'
 	//---- vector 
-	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'Mat'); 
+	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['Mat','IMat']); 
 	if ~ok then break;end
 	%nv=prod(%sz);
 	ok = check_dims(%vv,[1,%nv]) || check_dims(%vv,[%nv,1]);
