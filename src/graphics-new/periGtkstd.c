@@ -53,7 +53,7 @@ double nsp_predef_colors[] =
   {
     0,0,0,       /* black */
     1,1,1,       /* white */
-    0.9,0.9,0.9, /* gray */
+    0.8,0.8,0.8, /* gray */
     0,   0, 1,   /* Blue */
     0,   1, 0,   /* Green */
     0,   1, 1,   /* Cyan */
@@ -1159,7 +1159,6 @@ void nsp_set_colormap_constants(BCG *Xgc,int m)
  * @color_id: 
  * 
  * 
- * 
  * Returns: 
  **/
 
@@ -1167,32 +1166,35 @@ static void xget_colormap(BCG *Xgc, int *num,  double *val,int color_id)
 {
   NspMatrix *colors = Xgc->private->colors;
   int m = Xgc->Numcolors,  i;
-  *num = m;
-  if ( val != NULL )
+  NspFigure *F = Xgc->figure;
+  NspFigureData *Gc = NULL;
+  if ( F != NULL ) 
     {
-      if ( color_id != 0 ) 
+      Gc = F->obj->gc;
+      if ( Gc->colormap != NULL && Gc->colormap->mn != 0 )
 	{
-	  /* just return one color */
-	  if ( color_id >= 1 && color_id <= m )
-	    {
-	      int i=color_id-1;
-	      val[0] = colors->R[i];
-	      val[1] = colors->R[i+colors->m];
-	      val[2] = colors->R[i+2*colors->m];
-	    }
-	  else 
-	    {
-	      val[0]= val[1] =val[2]=0.0;
-	    }
+	  colors= Gc->colormap;
+	  m = colors->m;
 	}
-      else 
+    }
+  *num = m;
+  if ( val == NULL ) return;
+  if ( color_id != 0 ) 
+    {
+      /* just return one color: remember that we have 
+       * extra predef colors at the end and that 
+       * colors start at 1 for nsp_get_color_rgb
+       */
+      nsp_get_color_rgb(Xgc,color_id,val,colors);
+    }
+  else 
+    {
+      /* get all colors */
+      for (i = 0; i < m; i++) 
 	{
-	  for (i = 0; i < m; i++) 
-	    {
-	      val[i] = colors->R[i];
-	      val[i+m] =  colors->R[i+colors->m];
-	      val[i+2*m] = colors->R[i+2*colors->m];
-	    }
+	  val[i] = colors->R[i];
+	  val[i+m] =  colors->R[i+colors->m];
+	  val[i+2*m] = colors->R[i+2*colors->m];
 	}
     }
 }

@@ -87,7 +87,10 @@ GtkWidget *nsp_gtkcombobox_colormap_new( BCG *Xgc,int init_color)
 				10);
   /* get number of colors */
   Xgc->graphic_engine->xget_colormap(Xgc,&n_colors,NULL,0);
-  
+  /* remember that colormaps are always terminated by 
+   * black, white, gray 
+   */
+  n_colors += 3;
   for ( i = 0 ; i < n_colors ; i++) 
     {
       gtk_list_store_append (store, &iter);
@@ -287,7 +290,7 @@ static GdkPixbuf *create_color_pixbuf (BCG *Xgc,int color_id)
 {
   double val[3];
   int n_colors;
-  Xgc->graphic_engine->xget_colormap(Xgc,&n_colors,val,Max(color_id,0));
+  Xgc->graphic_engine->xget_colormap(Xgc,&n_colors,val,Max(color_id,1));
   return create_color_pixbuf_from_rgb(val);
 }
 
