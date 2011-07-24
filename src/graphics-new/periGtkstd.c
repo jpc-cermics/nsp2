@@ -1443,7 +1443,8 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 /* shared by all the drivers */
 
 #include "perigtk/events.c"  
-#include "perigtk/init.c" 
+#include "perigtk/actions.c" 
+#include "perigtk/init.c"
 
 /*
  * Initialisation of the graphic context. Used also 

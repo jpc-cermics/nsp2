@@ -152,6 +152,7 @@ periCairoNew.o: periCairoNew.c periGtkstd.c \
   ../../src/include/nsp/command.h \
   perigtk/events.c \
   perigtk/init.c \
+  perigtk/actions.c \
   perigtk/peridraw_cairo_new.c \
   perigtk/peridraw_gdk.c \
   perigtk/peridraw_gl.c \
@@ -174,6 +175,7 @@ periGL.o: periGL.c periGtkstd.c \
   ../../src/include/nsp/command.h \
   perigtk/events.c \
   perigtk/init.c \
+  perigtk/actions.c \
   perigtk/peridraw_cairo_new.c \
   perigtk/peridraw_gdk.c \
   perigtk/peridraw_gl.c \
@@ -196,6 +198,7 @@ periGtk.o: periGtk.c periGtkstd.c \
   ../../src/include/nsp/command.h \
   perigtk/events.c \
   perigtk/init.c \
+  perigtk/actions.c \
   perigtk/peridraw_cairo_new.c \
   perigtk/peridraw_gdk.c \
   perigtk/peridraw_gl.c \

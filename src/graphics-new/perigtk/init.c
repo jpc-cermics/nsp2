@@ -318,9 +318,17 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
   dd->private->vbox =  gtk_vbox_new (FALSE, 0);
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->vbox, FALSE, TRUE, 0);
 
+  /* menu */
   dd->private->menu_entries = graphic_initial_menu(dd->CurWindow );
   dd->private->menubar = NULL;
   create_graphic_window_menu(dd);
+
+  /* toolbar */
+  /*
+    nsp_gwin_add_ui_manager(dd,vbox);
+  */
+
+  /* status bar */
 
   dd->private->CinfoW = gtk_statusbar_new ();
   gtk_box_pack_start (GTK_BOX (vbox), dd->private->CinfoW, FALSE, TRUE, 0);

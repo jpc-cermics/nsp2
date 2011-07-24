@@ -43,11 +43,11 @@
 extern void nsp_pa_stop(void);
 extern void create_nsp_about(void); 
 extern char GetDriver();
+extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
 static void *nsp_window_create_initial_menu(void) ;
 static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
 static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne,int action_type,char *fname);
-static int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 static void sci_menubar_add_menu_entry(BCG *Xgc,GtkWidget *menubar,menu_entry *m);
 static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m);
 static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group);
@@ -1216,15 +1216,11 @@ static void nsp_menu_gwdelete(void)
   nspg_menu_delete(NULL,lab_count);
 }
 
-
-
-
 /*-----------------------------------------------------------------
  * Execute predefined callbacks 
  *-----------------------------------------------------------------*/
 
-
-static int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
+int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
 {
   if      (strcmp(name,"$clear")== 0)  nspg_menu_erase(Xgc,winid);
   else if (strcmp(name,"$select")== 0) nspg_menu_select(Xgc,winid) ;
