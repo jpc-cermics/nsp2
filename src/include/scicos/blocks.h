@@ -64,6 +64,34 @@ struct _scicos_block_table  {
   ScicosF fonc;
 };
 
+/* Multi declaration for block 
+ */
+
+#define MULTI_DECLARATION(name)						\
+  extern void name##_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP (scicos_block *block,int flag);
+
+#define MD_NAME(name) #name
+
+#define MULTI_DECLARATION1(name)					\
+  { MD_NAME(name##_SCSINT32_COP), (ScicosF) name##_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSINT16_COP), (ScicosF) name##_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSINT8_COP), (ScicosF) name##_SCSINT8_COP},		\
+  { MD_NAME(name##_SCSUINT32_COP), (ScicosF) name##_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP), (ScicosF) name##_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSREAL_COP), (ScicosF) name##_SCSREAL_COP}
+
+/*
+ *
+ */
+
+
 extern int scicos_affich_block(scicos_args_F0);
 extern int scicos_affich2_block(scicos_args_F0);
 extern int scicos_bound (scicos_args_F0);
@@ -519,13 +547,15 @@ extern void whileiterator (scicos_block *block,int flag);
 extern void loopbreaker   (scicos_block *block,int flag) ;
 extern void scicos_sliderm_block(scicos_block * block, int flag);
 
-#endif 
+MULTI_DECLARATION(absolute_valuei)
 
-#endif 
+#endif   /* SCICOS44 */
+
+#endif /* __SCICOS_BLOCKS__  */
 
 /* this is to be included only once in scicos.c */
 
-#ifdef TABSIM 
+#ifdef TABSIM
 
 #ifndef SCICOS44 
 scicos_block_table  tabsim[] ={
@@ -1166,9 +1196,11 @@ scicos_block_table  tabsim[] ={
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   /* {"zcross2",(ScicosF) zcross2}, */
   {"sliderm",(ScicosF) scicos_sliderm_block},  
+  MULTI_DECLARATION1(absolute_valuei), 
   {NULL , (ScicosF) 0}
 };
 
 #endif
 #endif 
+
 
