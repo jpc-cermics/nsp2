@@ -1,8 +1,8 @@
 % -*- mode: latex -*-
-\mansection{timer, cpuinfo, tic, toc}
+\mansection{timer, cputime, tic, toc}
 \begin{mandesc}
   \short{timer}{elapsed cpu time between timer calls} \\
-  \short{cpuinfo}{elapsed cpu time since session start}  \\ 
+  \short{cputime}{elapsed cpu time since session start}  \\ 
   \short{toc}{elapsed time since tic call} \\
   \short{tic}{set a timer start}
 \end{mandesc}
@@ -10,7 +10,7 @@
 \begin{calling_sequence}
 \begin{verbatim}
   T=timer();
-  T=cpuinfo();
+  T=cputime();
   tic();T=toc();
   Ts=tic();...;T=toc(Ts);
 \end{verbatim}
@@ -19,7 +19,7 @@
 \noindent\verb!timer!  returns the CPU time (in seconds) used by nsp from the 
   preceding call to the \verb!timer! function. 
 
-\noindent\verb!cpuinfo! returns the total CPU time (in seconds) used by nsp 
+\noindent\verb!cputime! returns the total CPU time (in seconds) used by nsp 
   from the time it was started. Note that internal representation
   can overflow and wrap around.
 
