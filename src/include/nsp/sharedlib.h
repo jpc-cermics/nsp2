@@ -113,8 +113,10 @@ extern void nsp_sharedlib_table_remove_lib(int id);
 extern NspSharedlib *nsp_sharedlib_table_find_by_path(const char *name);
 extern NspSharedlib *nsp_sharedlib_table_insert( void *shd,unsigned int id, const  char *path);
 extern void nsp_sharedlib_table_show();
+extern int nsp_check_dlsym(NspSharedlib *sh, nsp_const_string ename);
+extern int nsp_sharedlib_table_find_symbol(const char *name);
 
-#line 118 "./sharedlib.h"
+#line 120 "./sharedlib.h"
 #endif /* NSP_INC_NspSharedlib */ 
 
 #ifdef NspSharedlib_Private 
@@ -129,9 +131,9 @@ static AttrTab sharedlib_attrs[];
 static NspMethods *sharedlib_get_methods(void);
 /* static int int_sharedlib_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspSharedlib *nsp_sharedlib_create_void(const char *name,NspTypeBase *type);
-#line 18 "codegen/sharedlib.override"
+#line 20 "codegen/sharedlib.override"
 /* inserted in the private part of include file */
 
-#line 136 "./sharedlib.h"
+#line 138 "./sharedlib.h"
 #endif /* NspSharedlib_Private */
 
