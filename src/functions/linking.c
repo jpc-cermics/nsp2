@@ -105,6 +105,29 @@ static int nsp_dlsym(NspSharedlib *sh, nsp_const_string name, nsp_const_string e
   return OK;
 }
 
+
+/**
+ * nsp_check_dlsym:
+ * @sh: a #NspSharedlib object 
+ * @ename: name of entry point to search  
+ * @strf: 'c' or 'f' 
+ * 
+ * Search in the shared library (accessed through @sh) for an entry point named 
+ * @ename. If the entry point is found then return %OK else returns %FAIL 
+ * 
+ * Returns:  %Ok or %FAIL.
+ **/
+
+int nsp_check_dlsym(NspSharedlib *sh, nsp_const_string ename)
+{
+  void *func;
+  /* get address of entry point */
+  if ((func = nsp_dlsym_os(sh , ename)) == NULL ) 
+    return FAIL;
+  else
+    return OK;
+}
+
 /**
  * nsp_sharedlib_dlopen:
  * @shared_path: a string giving a path to a shared library.
