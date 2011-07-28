@@ -96,7 +96,7 @@ extern void scicos_affich2_block(scicos_args_F0);
 extern void scicos_bound (scicos_args_F0);
 extern void scicos_constraint_block(scicos_args_Fi);
 extern void scicos_csslti_block(scicos_args_F0);
-extern void scicos_cst_block(scicos_args_F);
+extern void scicos_cstblk_block(scicos_args_F);
 extern void scicos_delay_block(scicos_args_F0);
 extern void scicos_delayv_block(scicos_args_F);
 extern void scicos_diff_block(scicos_args_Fi);
@@ -121,7 +121,7 @@ extern void scicos_intplt_block(scicos_args_F0);
 extern void scicos_intpol_block(scicos_args_F0);
 extern void scicos_intrp2_block(scicos_args_F);
 extern void scicos_intrpl_block(scicos_args_F0);
-extern void scicos_inv_block(scicos_args_F0);
+extern void scicos_invblk_block(scicos_args_F0);
 extern void scicos_iocopy_block(scicos_args_F0);
 extern void scicos_log_block(scicos_args_F0);
 extern void scicos_lookup_block(scicos_args_F0);
@@ -168,13 +168,13 @@ extern void scicos_cdummy_block(scicos_args_F0);
 extern void scicos_cosblk_block(scicos_args_F0);
 extern void scicos_dband_block(scicos_args_F0);
 extern void scicos_gain_block(scicos_args_F0);
-extern void scicos_plus_block(scicos_args_F2);
+extern void scicos_plusblk_block(scicos_args_F2);
 extern void scicos_prod_block(scicos_args_F2);
 extern void scicos_readau_block(scicos_args_F2);
 extern void scicos_readc_block(scicos_args_F2);
 extern void scicos_readf_block(scicos_args_F0);
 extern void scicos_relay_block(scicos_args_F2);
-extern void scicos_plusblk(scicos_args_F2);
+/* extern void scicos_plusblk(scicos_args_F2); */
 extern void scicos_selector_block(scicos_args_F2);
 extern void scicos_slider_block(scicos_args_F0);
 extern void scicos_sum_block(scicos_args_F2);
@@ -246,7 +246,7 @@ extern void readc (scicos_args_F2);
 extern void writec (scicos_args_F2);
 extern void writeau (scicos_args_F2);
 extern void readau (scicos_args_F2);
-extern void plusblk (scicos_args_F2);
+/* extern void plusblk (scicos_args_F2); scicos_plus_blk */
 extern void slider(scicos_args_F0);
 extern void zcross2 (scicos_args_F0);
 extern void andlog (scicos_args_F0);
@@ -579,7 +579,7 @@ scicos_block_table  tabsim[] ={
   {"cscope",(ScicosF) scicos_cscope_block},
   {"csslti",(ScicosF) scicos_csslti_block},
   {"csslti4",(ScicosF) scicos_csslti4_block},
-  {"cstblk",(ScicosF) scicos_cst_block},
+  {"cstblk",(ScicosF) scicos_cstblk_block},
   {"cstblk4",(ScicosF) scicos_cstblk4_block},
   {"dband",(ScicosF) scicos_dband_block},
   {"deadband",(ScicosF) scicos_deadband_block},
@@ -614,7 +614,7 @@ scicos_block_table  tabsim[] ={
   {"intpol",(ScicosF) scicos_intpol_block},
   {"intrp2",(ScicosF) scicos_intrp2_block},
   {"intrpl",(ScicosF) scicos_intrpl_block},
-  {"invblk",(ScicosF) scicos_inv_block},
+  {"invblk",(ScicosF) scicos_invblk_block},
   {"iocopy",(ScicosF) scicos_iocopy_block},
   {"logblk",(ScicosF) scicos_log_block},
   {"logicalop",(ScicosF) scicos_logicalop_block},
@@ -633,7 +633,7 @@ scicos_block_table  tabsim[] ={
   {"mux",(ScicosF) scicos_mux_block},
   {"mvswitch",(ScicosF) scicos_mvswitch_block},
   {"pload",(ScicosF) scicos_pload_block},
-  {"plusblk",(ScicosF) scicos_plus_block},
+  {"plusblk",(ScicosF) scicos_plusblk_block},
   {"powblk",(ScicosF) scicos_pow_block},
   {"prod",(ScicosF) scicos_prod_block},
   {"product",(ScicosF) scicos_product_block},
@@ -757,9 +757,7 @@ scicos_block_table  tabsim[] ={
   {"csslti",(ScicosF) scicos_csslti_block},
   /* {"csslti4",(ScicosF) csslti4}, */
   {"csslti4",(ScicosF) scicos_csslti4_block},
-  /*  {"cstblk",(ScicosF) F2C(cstblk)}, */
-  {"cstblk",(ScicosF) scicos_cst_block},
-  /* {"cstblk4",(ScicosF) cstblk4}, */
+  {"cstblk",(ScicosF) scicos_cstblk_block},
   {"cstblk4",(ScicosF) scicos_cstblk4_block},
   {"cstblk4_m",(ScicosF) cstblk4_m},
   {"cumsum_c",(ScicosF) cumsum_c},
@@ -909,8 +907,7 @@ scicos_block_table  tabsim[] ={
   {"intrp2",(ScicosF) scicos_intrp2_block},
   /*  {"intrpl",(ScicosF) F2C(intrpl)}, */
   {"intrpl",(ScicosF) scicos_intrpl_block},
-  /*  {"invblk",(ScicosF) F2C(invblk)}, */
-  {"invblk",(ScicosF) scicos_inv_block},
+  {"invblk",(ScicosF) scicos_invblk_block},
   {"invblk4",(ScicosF) invblk4},
   /*  {"iocopy",(ScicosF) F2C(iocopy)}, */
   {"iocopy",(ScicosF) scicos_iocopy_block},
@@ -1032,7 +1029,7 @@ scicos_block_table  tabsim[] ={
   /*  {"pload",(ScicosF) F2C(pload)}, */
   {"pload",(ScicosF) scicos_pload_block},
   /* {"plusblk",(ScicosF) plusblk}, */
-  {"plusblk",(ScicosF) scicos_plus_block},
+  {"plusblk",(ScicosF) scicos_plusblk_block},
   /*  {"powblk",(ScicosF) F2C(powblk)}, */
   {"powblk",(ScicosF) scicos_pow_block},
   /* {"prod",(ScicosF) prod}, */
