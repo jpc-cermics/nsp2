@@ -678,7 +678,7 @@ static int int_smatrix_concat_down(NspSMatrix *self,Stack stack,int rhs,int opt,
     }
   if ( B->mn == 0 ) 
     {
-      NSP_OBJECT(A)->ret_pos =1;
+      MoveObj(stack,1,NSP_OBJECT(A));
       return 1;
     }
   if ( A == B ) 
