@@ -100,6 +100,8 @@ static int scicos_out_fill(scicos_inout *out,int type,int *out_dims,int m,
   out->dims      = out_dims;
   out->dims[0] = m;
   out->dims[1] = n;
+  out->data = NULL;
+  out->time = NULL;
   if (( out->data = malloc(m*n*(out->ndata)*sizeof(double)))==NULL)
     {
       return FAIL;
