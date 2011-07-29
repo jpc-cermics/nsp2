@@ -85,7 +85,7 @@ menu_answer nsp_matrix_dialog_i(const char *title,NspSMatrix *Labels_v,NspSMatri
       gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (scrolled_win),
 				      GTK_POLICY_AUTOMATIC,
 				      GTK_POLICY_AUTOMATIC);
-      if ( entry_style ) 
+      if ( entry_style == TRUE ) 
 	list = nsp_matrix_table(Labels_v,Labels_h,M,entry_size);
       else 
 	list = nsp_matrix_create_tree_view(Labels_v,Labels_h,M);
@@ -178,7 +178,7 @@ static void edited (GtkCellRendererText *cell,gchar *path_string,gchar *new_text
   gtk_tree_path_free (path);
 }
 
-static GtkWidget * nsp_matrix_create_tree_view(NspSMatrix *colnames,NspSMatrix *rownames,NspSMatrix *S)
+static GtkWidget * nsp_matrix_create_tree_view(NspSMatrix *rownames,NspSMatrix *colnames,NspSMatrix *S)
 {
   int j=0,jinit=0;
   GValue value = { 0, };
