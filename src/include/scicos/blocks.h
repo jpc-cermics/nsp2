@@ -545,6 +545,7 @@ extern void loopbreaker   (scicos_block *block,int flag) ;
 extern void scicos_sliderm_block(scicos_block * block, int flag);
 
 MULTI_DECLARATION(absolute_valuei)
+MULTI_DECLARATION(switch2)
 
 #endif   /* SCICOS44 */
 
@@ -1190,7 +1191,8 @@ scicos_block_table  tabsim[] ={
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   /* {"zcross2",(ScicosF) zcross2}, */
   {"sliderm",(ScicosF) scicos_sliderm_block},  
-  MULTI_DECLARATION1(absolute_valuei), 
+  MULTI_DECLARATION1(absolute_valuei),  
+  MULTI_DECLARATION1(switch2), 
   {NULL , (ScicosF) 0}
 };
 
