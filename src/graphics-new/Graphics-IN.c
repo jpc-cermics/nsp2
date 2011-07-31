@@ -31,6 +31,7 @@
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
 #include <nsp/interf.h> 
+#include <nsp/command.h> 
 
 #include "nsp/graphics-new/Graphics.h"
 #include "nsp/parse.h"
@@ -71,6 +72,7 @@ extern NspSMatrix *GetSMatUtf8(Stack stack,int pos);
 extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos); 
 extern char *nsp_get_extension(char *name);
 extern BCG *nsp_check_graphic_context(void);
+extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
 static int nsp_graphic_demo (const char *fname,const char *code,int flag) ;
 static void  nsp_gwin_clear(void);
@@ -6438,6 +6440,33 @@ static int int_nsp_graphic_widget(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/* push string to the command queue for graphic window win 
+ * or if string is a predefined command it is executed directly 
+ *
+ */
+
+static int int_nsp_enqueue_command(Stack stack, int rhs, int opt, int lhs)
+{
+  BCG *Xgc=NULL;
+  char buf[256];
+  int wid;
+  char *command;
+
+  CheckLhs(0,1);
+  CheckStdRhs(2,2);
+  if (GetScalarInt(stack,1,&wid) == FAIL) return RET_BUG;
+  if ((command = GetString(stack,2)) == (char*)0) return RET_BUG;
+
+  if (( Xgc=window_list_search_new(wid))== NULL) return 0;
+  if ( nsp_call_predefined_callbacks(Xgc, command, wid) == 1) 
+    return 0;
+  sprintf(buf,"scicos_tb(%s,%d)",command,wid);
+  enqueue_nsp_command(buf);
+  return 0;
+}
+
+
+
 /*************************************************************
  * The Interface for graphic functions 
  *************************************************************/
@@ -6605,6 +6634,7 @@ OpGrTab Graphics_func[]={
   {NAMES("scicos_draw3D"), int_scicos_draw3D},
   {NAMES("scicos_lock_draw"), int_lock_draw},
   {NAMES("nsp_graphic_widget"), int_nsp_graphic_widget},
+  {NAMES("nsp_enqueue_command"), int_nsp_enqueue_command},
   {(char *) 0, NULL}
 };
 
