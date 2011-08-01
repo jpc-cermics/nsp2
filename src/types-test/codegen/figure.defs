@@ -73,6 +73,13 @@
   (return-type "none")
   )
 
+(define-method draw_status
+  (of-object "Figure")
+  (c-name "nsp_figure_draw_status")
+  (return-type "gboolean")
+  )
+
+
 (define-method process_updates
   (of-object "Figure")
   (c-name "nsp_figure_process_updates")

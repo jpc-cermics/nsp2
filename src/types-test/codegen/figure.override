@@ -51,6 +51,7 @@ static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
 static int nsp_figure_draw_latter(NspFigure *);
 static int nsp_figure_draw_now(NspFigure *);
+static int nsp_figure_draw_status(NspFigure *);
 static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
@@ -1143,6 +1144,20 @@ static int nsp_figure_draw_now(NspFigure *F)
   /* flush the accumulated expose events */
   Xgc->graphic_engine->process_updates(Xgc);
   return OK ;
+}
+
+/**
+ * nsp_figure_draw_status:
+ * @F: 
+ * 
+ * 
+ * 
+ * Returns: 
+ **/
+
+static int nsp_figure_draw_status(NspFigure *F)
+{
+  return F->obj->draw_now == TRUE ;
 }
 
 /**
