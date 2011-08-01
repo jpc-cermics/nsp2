@@ -22604,6 +22604,17 @@
   (return-type "none")
   )
 
+;; added Aug 2011 
+
+(define-method set_tooltip_text 
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_set_tooltip_text")
+  (parameters
+   '("const-gchar*" "name")
+   )
+  (return-type "none")
+  )
+
 (define-function widget_push_colormap
   (c-name "gtk_widget_push_colormap")
   (return-type "none")
