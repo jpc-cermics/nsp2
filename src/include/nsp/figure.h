@@ -174,6 +174,7 @@ static int nsp_figure_connect(NspFigure *);
 static int nsp_figure_unconnect(NspFigure *);
 static int nsp_figure_draw_latter(NspFigure *);
 static int nsp_figure_draw_now(NspFigure *);
+static int nsp_figure_draw_status(NspFigure *);
 static void nsp_figure_children_unlink_figure(NspFigure *F);
 static void nsp_figure_children_link_figure(NspFigure *F);
 static int nsp_figure_check_children(NspFigure *F,NspList *L);
@@ -186,6 +187,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 190 "./figure.h"
+#line 191 "./figure.h"
 #endif /* NspFigure_Private */
 
