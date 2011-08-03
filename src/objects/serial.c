@@ -22,6 +22,7 @@
 #define  Serial_Private 
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
+#include <nsp/smatrix.h> 
 #include <nsp/imatrix.h> 
 #include <nsp/matint.h> 
 #include <nsp/serial.h>
@@ -185,23 +186,19 @@ static char *nsp_serial_type_short_string(NspObject *v)
   return(serial_short_type_name);
 }
 
-static int nsp_serial_full_comp(NspSerial * A,NspSerial * B,char *op,int *err)
-{
-  Scierror("serial_full_comp: to be implemented \n");
-  return FALSE;
-}
-
 /*
  * A == B 
  */
 
 static int nsp_serial_eq(NspSerial *A, NspObject *B)
 {
-  int err,rep;
+  int i;
+  NspSerial *Sb= (NspSerial *) B;
   if ( check_cast(B,nsp_type_serial_id) == FALSE) return FALSE ;
-  rep = nsp_serial_full_comp(A,(NspSerial *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( A->nbytes != Sb->nbytes ) return FALSE;
+  for ( i=0; i < A->nbytes; i++) 
+    if ( A->val[i] !=  Sb->val[i]) return FALSE;
+  return TRUE;
 }
 
 /*
@@ -210,11 +207,13 @@ static int nsp_serial_eq(NspSerial *A, NspObject *B)
 
 static int nsp_serial_neq(NspSerial *A, NspObject *B)
 {
-  int err=0,rep;
+  int i;
+  NspSerial *Sb= (NspSerial *) B;
   if ( check_cast(B,nsp_type_serial_id) == FALSE) return TRUE;
-  rep = nsp_serial_full_comp(A,(NspSerial *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  if ( A->nbytes != Sb->nbytes ) return TRUE;
+  for ( i=0; i < A->nbytes; i++) 
+    if ( A->val[i] !=  Sb->val[i]) return TRUE;
+  return FALSE;
 }
 
 /*
@@ -281,7 +280,31 @@ int nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level)
 
 int nsp_serial_print(NspSerial *H, int indent,const char *name, int rec_level)
 {
-  nsp_serial_info(H,indent,name,rec_level);
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(H)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      NspSMatrix *S=NULL;
+      nsp_string res1;
+      if (( res1=nsp_serial_to_base64(H))== NULL) return FALSE;
+      if (( S= (NspSMatrix *) nsp_smatrix_split_nc( res1,60)) == NULL)
+	return RET_BUG;
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=base64toserial(",pname);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"base64toserial(");
+	}
+      nsp_smatrix_print(S,indent+1,NULL,rec_level);
+      nsp_string_destroy(&res1);
+      nsp_smatrix_destroy(S);
+      Sciprintf1(indent,");\n");
+    }
+  else
+    {
+      nsp_serial_info(H,indent,name,rec_level);
+    }
   return TRUE;
 }
 
@@ -538,10 +561,43 @@ static int int_serial_meth_uncompress(void *self,Stack stack,int rhs,int opt,int
   return 1;
 }
 
+nsp_string nsp_serial_to_base64(NspSerial *S) 
+{
+  nsp_string res1= nsp_string_to_base64string(S->val,S->nbytes);
+  return res1 ;
+}
+
+static int int_serial_meth_to_base64(void *self,Stack stack, int rhs, int opt, int lhs)
+{
+  nsp_string res1;
+  NspSerial *a= self;
+  CheckStdRhs(0,1);
+  CheckLhs(0,1);
+  if ( rhs == 1 )
+    {
+      int nc;
+      /* base64 version splited in chunks of nc characters */
+      NspSMatrix *S;
+      if (GetScalarInt(stack,1,&nc) == FAIL) return RET_BUG;
+      if (( res1=nsp_serial_to_base64(a))== NULL) return RET_BUG;
+      if ((S= nsp_smatrix_split_nc(res1,nc)) == NULL) return RET_BUG;
+      nsp_string_destroy(&res1);
+      MoveObj(stack,1,NSP_OBJECT(S));
+    }
+  else 
+    {
+      /* associated base64 string */
+      if (( res1=nsp_serial_to_base64(a))== NULL) return RET_BUG;
+      if ( nsp_move_string(stack,1,res1,-1) == FAIL) return RET_BUG; 
+    }
+  return 1; 
+}
+
 static NspMethods serial_methods[] = {
   { "unserialize", int_serial_meth_unserialize},
   { "compress", int_serial_meth_compress },
   { "uncompress", int_serial_meth_uncompress },
+  { "tobase64", int_serial_meth_to_base64},
   { (char *) 0, NULL}
 };
 
@@ -613,7 +669,35 @@ int int_serial_unserialize(Stack stack, int rhs, int opt, int lhs)
   return 1; 
 }
 
-/* useful to creatr a buffer which can receive a serialized 
+int int_base64toserial(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *M;
+  NspSerial *S = NULL;
+  int len,i;
+  nsp_string str=NULL, res;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ((M = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( M->mn == 1) 
+    {
+      str = M->S[0];
+    }
+  else
+    {
+      str = nsp_smatrix_elts_concat(M,NULL,0,NULL,0);
+    }
+  res = nsp_base64string_to_nsp_string(str,&len);
+  if ( M->mn != 1) nsp_string_destroy(&str);
+  if ( res == NULL) return RET_BUG; 
+  if ((S= nsp_serial_create(NVOID,NULL,len-strlen(nsp_serial_header)))== NULLSERIAL) 
+    return RET_BUG;
+  for (i=0 ; i < len ; i++) S->val[i]= res[i];
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1; 
+}
+
+
+/* useful to creatre a buffer which can receive a serialized 
  * object as in pvm or mpi.
  */
 
@@ -628,7 +712,6 @@ int int_serial_create(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S)); 
   return 1; 
 }
-
 
 static OpTab Serial_func[]={
   /* {"unserialize_serial",int_serial_unserialize}, moved in object.c */

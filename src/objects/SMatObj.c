@@ -751,6 +751,23 @@ static int int_meth_smatrix_is_utf8(void *self, Stack stack, int rhs, int opt, i
 }
 
 
+static int int_meth_smatrix_split_nc(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int nc;
+  NspSMatrix *S,*A=self;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  if (GetScalarInt(stack,1,&nc) == FAIL) return RET_BUG;
+  if ( A->mn != 1) 
+    {
+      Scierror("Error: Object must be of size 1x1 for splitnc method\n");
+      return RET_BUG;
+    }
+  if ((S= nsp_smatrix_split_nc( A->S[0],nc)) == NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+
 
 static NspMethods smatrix_methods[] = {
   {"concatd",(nsp_method *) int_smatrix_concat_down},
@@ -758,6 +775,7 @@ static NspMethods smatrix_methods[] = {
   {"to_utf8",(nsp_method *) int_meth_smatrix_to_utf8},
   {"is_utf8",(nsp_method *) int_meth_smatrix_is_utf8},
   {"to_latin1",(nsp_method *) int_meth_smatrix_to_latin1},
+  {"splitnc",(nsp_method *) int_meth_smatrix_split_nc},
   { NULL, NULL}
 };
 
@@ -2195,6 +2213,53 @@ static int int_latex_codes(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_smatrix_to_base64(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspSMatrix *A,*Res;
+  CheckStdRhs(1, 1);
+  CheckLhs(1, 1);
+  if ((A = GetSMat (stack, 1)) == NULLSMAT)
+    return RET_BUG;
+  if ((Res = nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULL) 
+    return RET_BUG;
+  for ( i = 0 ; i < A->mn ; i++)
+    {
+      Res->S[i]=nsp_string_to_base64string(A->S[i],strlen(A->S[i]));
+      if ( Res->S[i] == NULL ) 
+	{
+	  nsp_smatrix_destroy(A);
+	  return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
+static int int_base64_to_smatrix(Stack stack, int rhs, int opt, int lhs)
+{
+  int i;
+  NspSMatrix *A,*Res;
+  CheckStdRhs(1, 1);
+  CheckLhs(1, 1);
+  if ((A = GetSMat (stack, 1)) == NULLSMAT)
+    return RET_BUG;
+  if ((Res = nsp_smatrix_create_with_length(NVOID,A->m,A->n,-1))== NULL) 
+    return RET_BUG;
+  for ( i = 0 ; i < A->mn ; i++)
+    {
+      int out;
+      Res->S[i]=nsp_base64string_to_nsp_string(A->S[i],&out);
+      if ( Res->S[i] == NULL ) 
+	{
+	  nsp_smatrix_destroy(A);
+	  return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,NSP_OBJECT(Res));
+  return 1;
+}
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -2285,6 +2350,8 @@ static OpTab SMatrix_func[]={
   {"parse_dim_arg",int_parse_dim_arg},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
+  {"s2base64",int_smatrix_to_base64},
+  {"base642s",int_base64_to_smatrix},
   {(char *) 0, NULL}
 };
 

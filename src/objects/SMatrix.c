@@ -2125,6 +2125,42 @@ NspSMatrix* nsp_smatrix_split(NspSMatrix *Src,nsp_const_string splitChars, int m
   return NULLSMAT;
 }
 
+
+/**
+ * nsp_smatrix_split_nc:
+ * @str: a #nsp_const_string to be splited 
+ * @n:  size of chunks
+ * 
+ * splits a string in chunks of size @n
+ *
+ * Return value: A new #NspSMatrix or %NULLSMAT
+ **/
+
+NspSMatrix* nsp_smatrix_split_nc(nsp_const_string str, int n)
+{
+  NspSMatrix *M=NULLSMAT;
+  int len = strlen(str);
+  int m,i,j,count=0;
+  n= Max(1,n);
+  m= len/n ;
+  if (n*m != len ) m++;
+  if ( m == 0 ) 
+    {
+      if ( (M=nsp_smatrix_create(NVOID,0,0,".",0)) == NULLSMAT )
+	return NULLSMAT;
+      return M;
+    }
+  if ((M =nsp_smatrix_create_with_length(NVOID,m,1,n)) == NULLSMAT) return(NULLSMAT);
+  count=0;
+  for ( i= 0 ; i < M->mn ; i++) 
+    {
+      for ( j = 0 ; j < n ; j++) M->S[i][j] = str[count++];
+      M->S[i][n]='\0';
+    }
+  return M;
+}
+
+
 /**
  * nsp_row_smatrix_append_string:
  * @A: a #NspSMatrix 

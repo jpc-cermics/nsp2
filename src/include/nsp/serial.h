@@ -84,6 +84,7 @@ extern NspSerial *nsp_matrix_to_serial(const NspMatrix *A);
 
 extern NspSerial *nsp_serial_compress(const NspSerial *S);
 extern NspSerial *nsp_serial_uncompress(const NspSerial *Sz);
+extern nsp_string nsp_serial_to_base64(NspSerial *S);
 
 
 #endif 

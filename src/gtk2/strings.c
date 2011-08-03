@@ -300,6 +300,7 @@ nsp_string nsp_mat_to_base64string(NspMatrix *A)
   return out;
 }
 
+
 /**
  * nsp_base64string_to_doubles:
  * @text: a #nsp_string 
@@ -328,6 +329,50 @@ double *nsp_base64string_to_doubles(nsp_string text, int *out_len)
   return (double *) ret; 
 }
 
+/**
+ * nsp_string_to_base64string:
+ * @str: a nsp_string
+ * 
+ * allocate a #nsp_string filled with the base64 code 
+ * of the data contained in @str. Since @str can contain 
+ * null characters, the length to be copied is given in len.
+ * 
+ * Returns: a new #nsp_string
+ **/
+
+nsp_string nsp_string_to_base64string(nsp_const_string str,unsigned int len)
+{
+  const guchar *data = (const guchar *) str;
+  gint state = 0, save = 0;
+  int outlen;
+  nsp_string out = new_nsp_string_n(len * 4 / 3 + 4);
+  if ( out == NULL ) return NULL;
+  outlen = g_base64_encode_step (data, len, FALSE, out, &state, &save);
+  outlen += g_base64_encode_close (FALSE, out + outlen, &state, &save);
+  out[outlen] = '\0';
+  return out;
+}
+
+/**
+ * nsp_base64string_to_nsp_string:
+ * @text: a #nsp_string 
+ * @out_len: an int pointer 
+ * 
+ * Decode the base 64 string into an array of doubles.
+ * The array of double is allocated.
+ * 
+ * Returns: an allocated and filled array of doubles.
+ **/
+
+nsp_string nsp_base64string_to_nsp_string(nsp_string text, int *out_len) 
+{
+  gint input_length= strlen (text), state = 0;
+  guint save = 0;
+  guchar *ret = malloc((input_length * 3 / 4)*sizeof(char));
+  if (ret == NULL ) return NULL;
+  *out_len = g_base64_decode_step (text, input_length, ret, &state, &save);
+  return (nsp_string) ret; 
+}
 
 void nsp_test_base64(NspMatrix *A)
 {

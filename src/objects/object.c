@@ -2461,6 +2461,7 @@ static int int_serial_munserialize(Stack stack, int rhs, int opt, int lhs)
 }
 
 extern function int_serial_create;
+extern function int_base64toserial;
 
 /*
  * The Interface for basic object operations
@@ -2510,6 +2511,7 @@ static OpTab Obj_func[]={
   {"unserialize",int_serial_unserialize},
   {"unserialize_m",int_serial_munserialize},
   {"serial_create",int_serial_create} ,
+  {"base64toserial",int_base64toserial} ,
   {(char *) 0, NULL}
 };
 

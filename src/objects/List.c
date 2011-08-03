@@ -1223,6 +1223,12 @@ int nsp_sorted_list_insert(NspList *L, NspObject *O)
 {
   Cell *Loc,*Loc1,*Loc2;
 
+  if ( O==NULL ||  NSP_OBJECT(O)->name == NULL)  
+    {
+      Scierror("Error: cannot insert an unamed object in a sorted list\n");
+      return FAIL;
+    }
+
   if ( L->first == NULLCELL )
     {
       if ( (Loc2 = nsp_cell_create(O)) == NULLCELL ) return FAIL;
@@ -1232,7 +1238,7 @@ int nsp_sorted_list_insert(NspList *L, NspObject *O)
       L->nel = 1;
       return OK;
     }
-
+  
   /* here we know that L has at least one element */
   Loc = nsp_get_cell_in_sorted_list(L, NSP_OBJECT(O)->name, &Loc1);
 
