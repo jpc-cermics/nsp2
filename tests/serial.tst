@@ -1,3 +1,4 @@
+// -*- Mode: scilab -*- 
 // test serialization of objects 
 
 A=testmatrix('magic',6);
@@ -71,6 +72,49 @@ if ~A1.equal[A] then pause;end
 
 function y=f(x);y=sin(x)+cos(x);endfunction;
 f1=unserialize(serialize(f,'m'));
+
+// serialize then convert serialized object 
+// to a base64 string 
+//----------------------------------------
+
+x=rand(1,1);
+A=serialize(x);
+str=A.tobase64[];
+// back to serialized object.
+A1=base64toserial(str);
+if ~A1.equal[A] then pause;end 
+y=A1.unserialize[];
+if ~x.equal[y] then pause;end 
+
+// serialize then convert serialized object 
+// to a base64 string splitted.
+//----------------------------------------
+
+x=rand(1,10);
+A=serialize(x);
+nc=length(A);
+str=A.tobase64[20];
+// back to serialized object.
+A1=base64toserial(str);
+if ~A1.equal[A] then pause;end 
+y=A1.unserialize[];
+if ~x.equal[y] then pause;end 
+
+// serialized objects can be printed 
+// as_read using a base64 string conversion.
+//----------------------------------------
+
+S=sprint(A,as_read=%t);
+A1=A;
+clear A;
+ok=execstr(S,errcatch=%t);
+if ~ok then pause;end 
+if ~A1.equal[A] then pause;end 
+y=A1.unserialize[];
+if ~x.equal[y] then pause;end 
+
+
+
 
 
 
