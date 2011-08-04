@@ -359,7 +359,16 @@ NspGObject  *GetGObject(Stack stack, int i)
 
 NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
 {
-  NspGObject *H = (type == NULL) ? new_gobject() : type->new();
+  NspGObject *H;
+  /* when obj is NULL we return NULL 
+   * to simplify some automatic interfaces ? 
+   */
+  if ( obj == NULL ) 
+    {
+      Scierror("Error: no gobject available\n");
+      return NULLGOBJECT;
+    }
+  H = (type == NULL) ? new_gobject() : type->new();
   if ( H ==  NULLGOBJECT)
     {
       Sciprintf("No more memory\n");
@@ -369,7 +378,7 @@ NspGObject *gobject_create(const char *name,  GObject *obj, NspTypeBase *type)
   if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
     return(NULLGOBJECT);
   NSP_OBJECT(H)->ret_pos = -1 ;
-  H->obj = obj ; 
+  H->obj = obj ;
   return H;
 }
 
