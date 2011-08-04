@@ -1340,6 +1340,7 @@ static int nsp_figure_start_compound(NspFigure *F)
 
 static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
 {
+  /* double l_bounds[4]; */
   NspAxes *A1,*A2;
   NspList *L;
   NspCompound *C;
@@ -1352,7 +1353,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
     {
       count = 0;
     }
-
+  
   if ((C= nsp_compound_create(name,NULL,NULL,NULL))== NULL) return NULL;
   /*
    * the first child of figure is the axe that must be converted to 
@@ -1367,6 +1368,11 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
   L = C->obj->children;
   C->obj->children = A1->obj->children;
   A1->obj->children = L;
+  /* need now to update the bounds of the compound 
+   * since its children have changed. 
+   * Note that it is also done by nsp_axes_insert_child
+   */
+  /*   ((NspGraphic *) C)->type->bounds((NspGraphic *) C,l_bounds);*/
   if ( (A2 =(NspAxes *) nsp_list_get_element(F->obj->children,2)) ==  NULL )
     {
       /* if we just have one axe we insert the new compound in 
