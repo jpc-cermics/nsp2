@@ -164,6 +164,8 @@ last
 
 /* inserted verbatim at the end */
 
+static const int lock_size=6;
+
 static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   NspCompound *P = (NspCompound *) Obj;
@@ -197,26 +199,28 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   if ( G->obj->hilited == TRUE )
     {
       double bounds[4];
-      int lock_size=6, lock_color=10;
+      int lock_color=10;
       int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
       int x=lock_size,y=lock_size;
       double xd,yd;
       double rect[4]; 
-      nsp_getbounds_compound(G,bounds);
+      /* already take into accound the fact that object is 
+       * hilited in its bounds 
+       */
+      if ( nsp_getbounds_compound(G,bounds)== FALSE ) return;
       length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
-      
-      rect[0]=bounds[0] -xd/2.0;
-      rect[1]=bounds[3] +yd/2.0;
+      rect[0]=bounds[0];
+      rect[1]=bounds[3];
       rect[2]=xd;
       rect[3]=yd;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      rect[0]=bounds[2]-xd/2.0;
-      rect[1]=bounds[1]+ yd/2.0;
+      rect[0]=bounds[2] - xd;
+      rect[1]=bounds[1] + yd;
       Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      rect[0]=bounds[0]; 
-      rect[1]=bounds[3];
-      rect[2]=bounds[2]-bounds[0];
-      rect[3]=bounds[3]-bounds[1];
+      rect[0]=bounds[0]  +xd/2.0; 
+      rect[1]=bounds[3]  -yd/2.0;
+      rect[2]=bounds[2]-bounds[0]  -xd;
+      rect[3]=bounds[3]-bounds[1]  -yd;
       Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
       Xgc->graphic_engine->xset_pattern(Xgc,color);
     }
@@ -267,6 +271,20 @@ int nsp_grlist_compute_inside_bounds(NspList *L,double *bounds)
   return TRUE;
 }
 
+/**
+ * nsp_compound_compute_inside_bounds:
+ * @Obj: a #NspCompound object 
+ * 
+ * Computes the bounds of objects contained in the compound and
+ * store the result in the #NspCompound object.
+ * If the compound is empty %FALSE is returned and  #NspCompound object
+ * is not changed. 
+ * This function should only be called when children of compound are 
+ * modified.
+ * 
+ * Returns: %TRUE or %FALSE 
+ **/
+
 static int nsp_compound_compute_inside_bounds(NspGraphic *Obj)
 {
   NspCompound *P = (NspCompound *) Obj;
@@ -274,8 +292,9 @@ static int nsp_compound_compute_inside_bounds(NspGraphic *Obj)
   if ( nsp_grlist_compute_inside_bounds(P->obj->children,bounds) == TRUE ) 
     {
       memcpy(P->obj->bounds->R,bounds,4*sizeof(double));
+      return TRUE;
     }
-  return TRUE;
+  return FALSE;
 }
 
 /* Note that the bounds should be changed here
@@ -336,17 +355,38 @@ static void nsp_scale_compound(NspGraphic *Obj,double *alpha)
   nsp_graphic_invalidate((NspGraphic *) Obj);
 }
 
-/* compute in bounds the enclosing rectangle of compound 
- *
- */
+/**
+ * nsp_getbounds_compound:
+ * @Obj: 
+ * @bounds: 
+ * 
+ * returns in @bounds the bounds of the graphic object, 
+ * taking into account the fact that the object might be hilited.
+ * 
+ * Returns: %TRUE or %FALSE 
+ **/
 
-static int nsp_getbounds_compound(NspGraphic *Obj,double *bounds)
+static int nsp_getbounds_compound(NspGraphic *G,double *bounds)
 {
-  NspCompound *P = (NspCompound *) Obj;
-  /* XXX should not be always computed */
-  if ( nsp_compound_compute_inside_bounds(Obj) == FALSE ) 
+  double xd=0.0,yd=0.0;
+  int x=lock_size,y=lock_size;
+  NspCompound *P = (NspCompound *) G;
+  nsp_figure *F = G->obj->Fig;
+  BCG *Xgc = ( F != NULL) ? F->Xgc : NULL;
+  /* nsp_compound_compute_inside_bounds should not always
+   * be called since P->obj->bounds->R should contain the 
+   * result. 
+   */
+  if ( nsp_compound_compute_inside_bounds(G) == FALSE ) 
     return FALSE;
-  memcpy(bounds,P->obj->bounds->R,4*sizeof(double));
+  /* copy internal bounds in bounds */
+  memcpy(bounds,P->obj->bounds->R,4*sizeof(double));  
+  /* add  the hilite boundaries to the bounds */
+  if ( Xgc!= NULL) length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
+  bounds[0] -=  xd/2.0;/* xmin*/
+  bounds[1] -=  yd/2.0;/* ymin*/
+  bounds[2] +=  xd/2.0;/* xmax*/
+  bounds[3] +=  yd/2.0;/* ymax*/
   return TRUE;
 }
 
