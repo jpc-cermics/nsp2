@@ -5744,28 +5744,41 @@ static int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
  * utilities 
  *-----------------------------------------------------------*/
 
+/* seteventhandler("name", win=[w1,...,wn] ) : set handler
+ * seteventhandler(win=int) : remove hander 
+ */
+
 static int int_seteventhandler(Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *Mw;
+  nsp_option opts[] ={{ "win",realmat,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   BCG *Xgc;
-  char *info;
-  int ierr=0,win;
-  CheckRhs(1,1);
+  char *info = NULL;
+  int ierr=0,win=-1;
+  CheckStdRhs(0,1);
   CheckLhs(0,1);
-
-  Xgc=nsp_check_graphic_context();
-  win = Xgc->graphic_engine->xget_curwin();
-  if ( win != -1 ) 
+  if ( rhs - opt >=1 ) 
     {
-      if (rhs == 1) 
+      if ((info = GetString(stack,1)) == (char*)0) return RET_BUG;
+    }
+  if ( get_optional_args(stack,rhs,opt,opts,&Mw) == FAIL)
+    return RET_BUG;
+  
+  if ( opts[0].obj == NULLOBJ) 
+    {
+      Xgc=nsp_check_graphic_context();
+      win = Xgc->graphic_engine->xget_curwin();
+      nsp_gr_set_graphic_eventhandler(&win,(info==NULL) ? "": info,&ierr);
+    }
+  else 
+    {
+      int i; 
+      for ( i=0 ; i < Mw->mn ; i++) 
 	{
-	  if ((info = GetString(stack,1)) == (char*)0) return RET_BUG;
-	  nsp_gr_set_graphic_eventhandler(&win,info,&ierr);
+	  win = Max(0, ((int) Mw->R[i]));
+	  nsp_gr_set_graphic_eventhandler(&win,(info==NULL) ? "": info,&ierr);
 	}
-      else
-	{
-	  nsp_gr_set_graphic_eventhandler(&win,"",&ierr);
-	}
-      return 0;
     }
   return 0;
 } 
