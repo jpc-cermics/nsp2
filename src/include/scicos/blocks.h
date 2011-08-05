@@ -606,7 +606,7 @@ scicos_block_table  tabsim[] ={
   {"gain",(ScicosF) scicos_gain_block},
   {"gensin",(ScicosF) scicos_gensin_block},
   {"gensqr",(ScicosF) scicos_gensqr_block},
-  {"hltblk",(ScicosF) scicos_hlt_block},
+  {"hltblk",(ScicosF) scicos_hltblk_block},
   {"hystheresis",(ScicosF) scicos_hystheresis_block},
   {"ifthel",(ScicosF) scicos_ifthel_block},
   {"integral_func",(ScicosF) scicos_integral_func_block},
