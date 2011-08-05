@@ -99,22 +99,22 @@ extern void scicos_csslti_block(scicos_args_F0);
 extern void scicos_cstblk_block(scicos_args_F);
 extern void scicos_delay_block(scicos_args_F0);
 extern void scicos_delayv_block(scicos_args_F);
-extern void scicos_diff_block(scicos_args_Fi);
+extern void scicos_diffblk_block(scicos_args_Fi);
 extern void scicos_dlradp_block(scicos_args_F0);
 extern void scicos_dollar_block(scicos_args_F0);
 extern void scicos_dsslti_block(scicos_args_F0);
 extern void scicos_eselect_block(scicos_args_Fm1);
 extern void scicos_evscpe_block(scicos_args_F0);
 extern void scicos_evtdly_block(scicos_args_F0);
-extern void scicos_exp_block(scicos_args_F0);
-extern void scicos_for_block(scicos_args_F0);
+extern void scicos_expblk_block(scicos_args_F0);
+extern void scicos_forblk_block(scicos_args_F0);
 extern void scicos_fscope_block(scicos_args_F);
 extern void scicos_fsv_block(scicos_args_F0);
 extern void scicos_gensin_block(scicos_args_F0);
 extern void scicos_gensin_block(scicos_args_F0);
 extern void scicos_gensin_test (scicos_args_F0);
 extern void scicos_gensqr_block(scicos_args_F0);
-extern void scicos_hlt_block(scicos_args_F0);
+extern void scicos_hltblk_block(scicos_args_F0);
 extern void scicos_ifthel_block(scicos_args_Fm1);
 extern void scicos_integr_block(scicos_args_F0);
 extern void scicos_intplt_block(scicos_args_F0);
@@ -123,33 +123,33 @@ extern void scicos_intrp2_block(scicos_args_F);
 extern void scicos_intrpl_block(scicos_args_F0);
 extern void scicos_invblk_block(scicos_args_F0);
 extern void scicos_iocopy_block(scicos_args_F0);
-extern void scicos_log_block(scicos_args_F0);
+extern void scicos_logblk_block(scicos_args_F0);
 extern void scicos_lookup_block(scicos_args_F0);
 extern void scicos_lsplit_block(scicos_args_F0);
 extern void scicos_lsplit_block(scicos_args_F0);
 extern void scicos_lusat_block(scicos_args_F);
-extern void scicos_max_block(scicos_args_F0);
+extern void scicos_maxblk_block(scicos_args_F0);
 extern void scicos_memo_block(scicos_args_F0);
 extern void scicos_mfclck_block(scicos_args_F0);
-extern void scicos_min_block(scicos_args_F0);
+extern void scicos_minblk_block(scicos_args_F0);
 extern void scicos_mscope_block(scicos_args_F0);
 extern void scicos_mux_block(scicos_args_F);
 extern void scicos_demux_block(scicos_args_F);
 extern void scicos_pload_block( scicos_args_F0);
-extern void scicos_pow_block(scicos_args_F0);
+extern void scicos_powblk_block(scicos_args_F0);
 extern void scicos_qzcel_block(scicos_args_F0);
 extern void scicos_qzflr_block(scicos_args_F0);
 extern void scicos_qzrnd_block(scicos_args_F0);
 extern void scicos_qztrn_block(scicos_args_F0);
-extern void scicos_rnd_block(scicos_args_F0);
+extern void scicos_rndblk_block(scicos_args_F0);
 extern void scicos_samphold_block(scicos_args_F0);
 extern void scicos_sawtth_block(scicos_args_F0);
 extern void scicos_scope_block(scicos_args_F);
 extern void scicos_scopxy_block(scicos_args_F0);
 extern void scicos_scoxy_block(scicos_args_F0);
-extern void scicos_sel_block(scicos_args_F0);
+extern void scicos_selblk_block(scicos_args_F0);
 extern void scicos_sinblk_block(scicos_args_F0);
-extern void scicos_sqr_block(scicos_args_F0);
+extern void scicos_sqrblk_block(scicos_args_F0);
 extern void scicos_sum2_block(scicos_args_F);
 extern void scicos_sum3_block(scicos_args_F);
 extern void scicos_tanblk_block(scicos_args_F0);
@@ -161,7 +161,7 @@ extern void scicos_zcross_block(scicos_args_F0);
 extern void scicos_integr_block(scicos_args_F0);
 extern void scicos_intplt_block(scicos_args_F0);
 
-extern void scicos_abs_block(scicos_args_F0);
+extern void scicos_absblk_block(scicos_args_F0);
 extern void scicos_andlog_block(scicos_args_F0);
 extern void scicos_bidon_block(scicos_args_F0);
 extern void scicos_cdummy_block(scicos_args_F0);
@@ -557,7 +557,7 @@ MULTI_DECLARATION(switch2)
 
 #ifndef SCICOS44 
 scicos_block_table  tabsim[] ={
-  {"absblk",(ScicosF) scicos_abs_block},
+  {"absblk",(ScicosF) scicos_absblk_block},
   {"absolute_value",(ScicosF) scicos_absolute_value_block},
   {"acos_blk",(ScicosF) scicos_acos_block},
   {"acosh_blk",(ScicosF) scicos_acosh_block},
@@ -588,7 +588,7 @@ scicos_block_table  tabsim[] ={
   {"delayv",(ScicosF) scicos_delayv_block},
   {"demux",(ScicosF) scicos_demux_block},
   {"deriv",(ScicosF) scicos_deriv_block},
-  {"diffblk",(ScicosF) scicos_diff_block},
+  {"diffblk",(ScicosF) scicos_diffblk_block},
   {"dlradp",(ScicosF) scicos_dlradp_block},
   {"dollar",(ScicosF) scicos_dollar_block},
   {"dsslti",(ScicosF) scicos_dsslti_block},
@@ -597,9 +597,9 @@ scicos_block_table  tabsim[] ={
   {"evscpe",(ScicosF) scicos_evscpe_block},
   {"evtdly",(ScicosF) scicos_evtdly_block},
   {"evtvardly",(ScicosF) scicos_evtvardly_block},
-  {"expblk",(ScicosF) scicos_exp_block},
+  {"expblk",(ScicosF) scicos_expblk_block},
   {"extractor",(ScicosF) scicos_extractor_block},
-  {"forblk",(ScicosF) scicos_for_block},
+  {"forblk",(ScicosF) scicos_forblk_block},
   {"fscope",(ScicosF) scicos_fscope_block},
   {"fsv",(ScicosF) scicos_fsv_block},
   {"gainblk",(ScicosF) scicos_gainblk_block},
@@ -617,15 +617,15 @@ scicos_block_table  tabsim[] ={
   {"intrpl",(ScicosF) scicos_intrpl_block},
   {"invblk",(ScicosF) scicos_invblk_block},
   {"iocopy",(ScicosF) scicos_iocopy_block},
-  {"logblk",(ScicosF) scicos_log_block},
+  {"logblk",(ScicosF) scicos_logblk_block},
   {"logicalop",(ScicosF) scicos_logicalop_block},
   {"lookup",(ScicosF) scicos_lookup_block},
   {"lsplit",(ScicosF) scicos_lsplit_block},
   {"lusat",(ScicosF) scicos_lusat_block},
-  {"maxblk",(ScicosF) scicos_max_block},
+  {"maxblk",(ScicosF) scicos_maxblk_block},
   {"memo",(ScicosF) scicos_memo_block},
   {"mfclck",(ScicosF) scicos_mfclck_block},
-  {"minblk",(ScicosF) scicos_min_block},
+  {"minblk",(ScicosF) scicos_minblk_block},
   {"minmax",(ScicosF) scicos_minmax_block},
   {"modulo_count",(ScicosF) scicos_modulo_count_block},
   {"mscope",(ScicosF) scicos_mscope_block},
@@ -635,7 +635,7 @@ scicos_block_table  tabsim[] ={
   {"mvswitch",(ScicosF) scicos_mvswitch_block},
   {"pload",(ScicosF) scicos_pload_block},
   {"plusblk",(ScicosF) scicos_plusblk_block},
-  {"powblk",(ScicosF) scicos_pow_block},
+  {"powblk",(ScicosF) scicos_powblk_block},
   {"prod",(ScicosF) scicos_prod_block},
   {"product",(ScicosF) scicos_product_block},
   {"qzcel",(ScicosF) scicos_qzcel_block},
@@ -649,7 +649,7 @@ scicos_block_table  tabsim[] ={
   {"readf",(ScicosF) scicos_readf_block},
   {"relationalop",(ScicosF) scicos_relationalop_block},
   {"relay",(ScicosF) scicos_relay_block},
-  {"rndblk",(ScicosF) scicos_rnd_block},
+  {"rndblk",(ScicosF) scicos_rndblk_block},
   {"samphold",(ScicosF) scicos_samphold_block},
   {"satur",(ScicosF) scicos_satur_block},
   {"sawtth",(ScicosF) scicos_sawtth_block},
@@ -657,14 +657,14 @@ scicos_block_table  tabsim[] ={
   {"scope",(ScicosF) scicos_scope_block},
   {"scopxy",(ScicosF) scicos_scopxy_block},
   {"scoxy",(ScicosF) scicos_scoxy_block},
-  {"selblk",(ScicosF) scicos_sel_block},
+  {"selblk",(ScicosF) scicos_selblk_block},
   {"selector",(ScicosF) scicos_selector_block},
   {"signum",(ScicosF) scicos_signum_block},
   {"sinblk",(ScicosF) scicos_sinblk_block},
   {"sin_blk",(ScicosF) scicos_sin_block},
   {"sinh_blk",(ScicosF) scicos_sinh_block},
   {"slider",(ScicosF) scicos_slider_block},
-  {"sqrblk",(ScicosF) scicos_sqr_block},
+  {"sqrblk",(ScicosF) scicos_sqrblk_block},
   {"step_func",(ScicosF) scicos_step_func_block},
   {"sum2",(ScicosF) scicos_sum2_block},
   {"sum3",(ScicosF) scicos_sum3_block},
@@ -693,7 +693,7 @@ scicos_block_table  tabsim[] ={
 #else 
 
 scicos_block_table  tabsim[] ={
-  {"absblk",(ScicosF) scicos_abs_block},
+  {"absblk",(ScicosF) scicos_absblk_block},
   {"absolute_value",(ScicosF) scicos_absolute_value_block},
   /* {"acos_blk",(ScicosF) acos_blk}, */
   {"acos_blk",(ScicosF) scicos_acos_block},
@@ -787,7 +787,7 @@ scicos_block_table  tabsim[] ={
   {"demux",(ScicosF) scicos_demux_block},
   /* {"deriv",(ScicosF) deriv}, */
   {"deriv",(ScicosF) scicos_deriv_block},
-  {"diffblk",(ScicosF) scicos_diff_block},
+  {"diffblk",(ScicosF) scicos_diffblk_block},
   {"diffblk_c",(ScicosF) diffblk_c},
   /*  {"dlradp",(ScicosF) F2C(dlradp)}, */
   {"dlradp",(ScicosF) scicos_dlradp_block},
@@ -810,7 +810,7 @@ scicos_block_table  tabsim[] ={
   /* {"evtvardly",(ScicosF) evtvardly}, */
   {"evtvardly",(ScicosF) scicos_evtvardly_block},
   /*  {"expblk",(ScicosF) F2C(expblk)}, */
-  {"expblk",(ScicosF) scicos_exp_block},
+  {"expblk",(ScicosF) scicos_expblk_block},
   {"expblk_m",(ScicosF) expblk_m},
   {"extdiag",(ScicosF) extdiag},
   {"extdiagz",(ScicosF) extdiagz},
@@ -856,7 +856,7 @@ scicos_block_table  tabsim[] ={
   {"exttriu",(ScicosF) exttriu},
   {"exttriuz",(ScicosF) exttriuz},
   /*  {"forblk",(ScicosF) F2C(forblk)}, */
-  {"forblk",(ScicosF) scicos_for_block},
+  {"forblk",(ScicosF) scicos_forblk_block},
   {"foriterator",(ScicosF) foriterator},
   {"fromws_c",(ScicosF) fromws_c},
   {"fscope",(ScicosF) scicos_fscope_block},
@@ -890,7 +890,7 @@ scicos_block_table  tabsim[] ={
   {"gensqr",(ScicosF) scicos_gensqr_block},
   /*  {"hltblk",(ScicosF) F2C(hltblk)}, */
   {"gtkrange", (ScicosF) scicos_gtkrange_block},
-  {"hltblk",(ScicosF) scicos_hlt_block},
+  {"hltblk",(ScicosF) scicos_hltblk_block},
   /* {"hystheresis",(ScicosF) hystheresis}, */
   {"hystheresis",(ScicosF) scicos_hystheresis_block},
   /*  {"ifthel",(ScicosF) F2C(ifthel)}, */
@@ -913,7 +913,7 @@ scicos_block_table  tabsim[] ={
   /*  {"iocopy",(ScicosF) F2C(iocopy)}, */
   {"iocopy",(ScicosF) scicos_iocopy_block},
   /*  {"logblk",(ScicosF) F2C(logblk)}, */
-  {"logblk",(ScicosF) scicos_log_block},
+  {"logblk",(ScicosF) scicos_logblk_block},
   {"logic",(ScicosF) logic},
   /* {"logicalop",(ScicosF) logicalop}, */
   {"logicalop",(ScicosF) scicos_logicalop_block},
@@ -1008,13 +1008,13 @@ scicos_block_table  tabsim[] ={
   {"matzmul_m",(ScicosF) matzmul_m},
   {"matztran_m",(ScicosF) matztran_m},
   /*  {"maxblk",(ScicosF) F2C(maxblk)}, */
-  {"maxblk",(ScicosF) scicos_max_block},
+  {"maxblk",(ScicosF) scicos_maxblk_block},
   /*  {"memo",(ScicosF) F2C(memo)}, */
   {"memo",(ScicosF) scicos_memo_block},
   /*  {"mfclck",(ScicosF) F2C(mfclck)}, */
   {"mfclck",(ScicosF) scicos_mfclck_block},
   /*  {"minblk",(ScicosF) F2C(minblk)}, */
-  {"minblk",(ScicosF) scicos_min_block},
+  {"minblk",(ScicosF) scicos_minblk_block},
   /* {"minmax",(ScicosF) minmax}, */
   {"minmax",(ScicosF) scicos_minmax_block},
   /* {"modulo_count",(ScicosF) modulo_count}, */
@@ -1032,7 +1032,7 @@ scicos_block_table  tabsim[] ={
   /* {"plusblk",(ScicosF) plusblk}, */
   {"plusblk",(ScicosF) scicos_plusblk_block},
   /*  {"powblk",(ScicosF) F2C(powblk)}, */
-  {"powblk",(ScicosF) scicos_pow_block},
+  {"powblk",(ScicosF) scicos_powblk_block},
   /* {"prod",(ScicosF) prod}, */
   {"prod",(ScicosF) scicos_prod_block},
   /* {"product",(ScicosF) product}, */
@@ -1068,7 +1068,7 @@ scicos_block_table  tabsim[] ={
   {"relay",(ScicosF) scicos_relay_block},
   {"ricc_m",(ScicosF) ricc_m},
   /*  {"rndblk",(ScicosF) F2C(rndblk)}, */
-  {"rndblk",(ScicosF) scicos_rnd_block},
+  {"rndblk",(ScicosF) scicos_rndblk_block},
   {"rndblk_m", (ScicosF) rndblk_m},
   {"rndblk_m",(ScicosF) rndblk_m},
   {"rndblkz_m",(ScicosF) rndblkz_m},
@@ -1089,7 +1089,7 @@ scicos_block_table  tabsim[] ={
   {"scopxy",(ScicosF) scicos_scopxy_block},
   {"scoxy",(ScicosF) scicos_scoxy_block},
   /*  {"selblk",(ScicosF) F2C(selblk)}, */
-  {"selblk",(ScicosF) scicos_sel_block},
+  {"selblk",(ScicosF) scicos_selblk_block},
   {"selector",(ScicosF) scicos_selector_block},
   /* {"selector",(ScicosF) selector}, */
   {"selector_m",(ScicosF) selector_m},
@@ -1119,7 +1119,7 @@ scicos_block_table  tabsim[] ={
   {"slider",(ScicosF) scicos_slider_block},
   /* {"slider",(ScicosF) slider}, */
   /*  {"sqrblk",(ScicosF) F2C(sqrblk)}, */
-  {"sqrblk",(ScicosF) scicos_sqr_block},
+  {"sqrblk",(ScicosF) scicos_sqrblk_block},
   {"step_func",(ScicosF) scicos_step_func_block},
   /* {"step_func",(ScicosF) step_func}, */
   {"submat",(ScicosF) submat},
