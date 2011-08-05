@@ -1,3 +1,4 @@
+#/* -*- Mode: Makefile -*- */
 
 all	::
 	@echo "processing *.sci files" 
@@ -7,5 +8,9 @@ clean	::
 	@echo "Cleaning"
 	@$(RM) *.bin
 
+silent-clean ::
+	@$(RM) *.bin
+
 distclean:: clean 
 
+silent-distclean :: silent-clean
