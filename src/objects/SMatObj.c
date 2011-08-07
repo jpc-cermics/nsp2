@@ -806,7 +806,9 @@ static int int_smatrix_create(Stack stack, int rhs, int opt, int lhs)
       if ((str = GetString(stack,3)) == (char*)0) return RET_BUG;
       flag =1;
     }
-  if ( (HMat =nsp_smatrix_create(NVOID,m1,n1,str,flag)) == NULLSMAT) return RET_BUG;
+  if ((HMat =nsp_smatrix_create(NVOID,Max(m1,0),Max(n1,0),str,flag)) 
+      == NULLSMAT) 
+    return RET_BUG;
   MoveObj(stack,1,(NspObject *) HMat);
   return 1;
 }
