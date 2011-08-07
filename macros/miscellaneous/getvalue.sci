@@ -188,10 +188,16 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	//---- vector 
 	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['Mat','IMat']); 
 	if ~ok then break;end
-	%nv=prod(%sz);
-	ok = check_dims(%vv,[1,%nv]) || check_dims(%vv,[%nv,1]);
-	if %nv <= 0 then 
-	  ok = ok || check_dims(%vv,[0,0]);
+	if %sz.equal[-1] then 
+	  // Temporary: we accept 'vec',-1 to be equivalent to 'mat',-1
+	  // i.e we do not force answer to be a matrix. 
+	  ok = check_dims(%vv,%sz);
+	else 
+	  %nv=prod(%sz);
+	  ok = check_dims(%vv,[1,%nv]) || check_dims(%vv,[%nv,1]);
+	  if %nv <= 0 then 
+	    ok = ok || check_dims(%vv,[0,0]);
+	  end
 	end
 	if ~ok then error_size(%labels(%kk),string_dims(%nv));break;end 
        case 'pol'
