@@ -440,11 +440,13 @@ static const gchar *view_ui_description =
   "      <menuitem action=\"Preferences\"/>" 
   */
   "    </menu>"
+#ifdef HAVE_WEBKIT_ZOOM
   "    <menu action=\"ViewMenu\">"
   "      <menuitem action=\"ZoomIn\"/>"
   "      <menuitem action=\"ZoomOut\"/>"
   "      <menuitem action=\"ZoomDefault\"/>"
   "    </menu>"
+#endif 
   "    <menu action=\"GoMenu\">"
   "      <menuitem action=\"Back\"/>"
   "      <menuitem action=\"Forward\"/>"
@@ -547,12 +549,16 @@ int nsp_help_topic(const char *topic,char *buf);
 
 int Sci_Help(char *mandir,char *locale,char *help_file) 
 {
+  int free = FALSE;
   char buf[FSIZE+1];
   const char *sci = nsp_getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
   if ( mandir == NULL && sci != NULL) 
-    mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
-
+    {
+      free = TRUE;
+      mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
+    }
+  
   /* expand topic -> filename in buf */
   if ( help_file == NULL )
     {
@@ -581,6 +587,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
       if ( buf[0]== '\0') return OK; 
       open_webkit_window(mandir,l,buf);
     }
+  if ( free == TRUE ) g_free(mandir);
   return 0; 
 }
 

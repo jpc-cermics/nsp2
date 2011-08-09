@@ -2146,7 +2146,7 @@ static void nsp_draw_figure(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   if ( rect != NULL)
     {
       Xgc->graphic_engine->cleararea(Xgc,rect);
-#if 0
+#if 1
       /* debug helper */
       {
 	  static int nc=0;

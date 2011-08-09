@@ -107,7 +107,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     end
     ok=%t;
   endfunction
-      
+  // evaluation 
   if ~exists('%scicos_context') then 
     exec_context = hash_create(10);
   else
@@ -202,7 +202,12 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	if ~ok then error_size(%labels(%kk),string_dims(%nv));break;end 
        case 'pol'
 	//---- polynom 
-	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),'PMat'); 
+	// for polynoms we add z and s in the context 
+	// we accept a polynom or a matrix 
+	// conversion is to be made in blocks.
+	exec_context.z=poly(0,'z');
+	exec_context.s=poly(0,'s');
+	[%vv,ok]=check_eval(%labels(%kk),%str(%kk),['PMat','Mat']); 
 	if ~ok then break;end;
 	ok = check_dims(%vv,%sz);
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
@@ -240,6 +245,8 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 endfunction
 
 function [y,err]=evstr(str, exec_context)
+// evaluate given string using exec_context if given
+//
   if nargin < 2 then 
     exec_context = hash_create(10);
   end

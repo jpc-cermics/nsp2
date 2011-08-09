@@ -592,6 +592,16 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   return FALSE;
 }
 
+void nsp_clc(void)
+{
+  GtkTextIter start,end;
+  if ( view == NULL ) return;
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_buffer_delete(view->buffer->buffer,&start,&end);
+  gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
+  /* nsp_textview_insert_logo(view); */
+  key_press_return(view,TRUE);
+}
 
 /* paste with middle button, redefined 
  */
