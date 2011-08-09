@@ -3101,7 +3101,7 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-typedef void (*Feuclide)(gint32 x,gint32 y, gint32 *z);
+typedef void (*Feuclide)(gint32 x,gint32 y, gint32 *z, gint32 *zp);
 
 int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe )
 {
@@ -3154,7 +3154,7 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe 
 	}
       for ( i = 0 ; i < A->mn ; i++ )
 	{
-	  (*fe)(A->R[i],B->R[i], res);
+	  (*fe)(A->R[i],B->R[i], res, NULL);
 	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
 	    Res[j]->R[i]= res[j];
 	}
@@ -3172,7 +3172,7 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe 
 	}
       for ( i = 0 ; i < IA->mn ; i++ )
 	{
-	  (*fe)(IA->Gint32[i],IB->Gint32[i], res);
+	  (*fe)(IA->Gint32[i],IB->Gint32[i], res, NULL);
 	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
 	    Res[j]->Gint32[i]= res[j];
 	}
@@ -3187,17 +3187,17 @@ int int_euclide(Stack stack, int rhs, int opt, int lhs)
   return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_euclide);
 }
 
-static void nsp_gcd(gint32 x,gint32 y, gint32 *res)
+static void nsp_gcd(gint32 x,gint32 y, gint32 *res,gint32 *resp)
 {
   gint32 z[3];
-  nsp_euclide(x,y,z);
+  nsp_euclide(x,y,z,NULL);
   *res = z[0];
 }
 
-static void nsp_lcm(gint32 x,gint32 y, gint32 *res)
+static void nsp_lcm(gint32 x,gint32 y, gint32 *res,gint32 *resp)
 {
   gint32 z[3];
-  nsp_euclide(x,y,z);
+  nsp_euclide(x,y,z,NULL);
   *res = (x/z[0])*y;
 }
 

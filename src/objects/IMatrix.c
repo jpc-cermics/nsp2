@@ -1396,9 +1396,11 @@ nsp_string nsp_num2hex(double x)
 /* euclide 
  * res=[ r, u, v] 
  * such that  r = pgcd(a, b) and r = a*u+b*v
+ * if resp is non null then it is filled with 
+ *     [r',u',v'] r'=0 and r'=a*u'+b*v';
  */
 
-void nsp_euclide(gint32 a, gint32 b, gint32 res[])
+void nsp_euclide(gint32 a, gint32 b, gint32 res[], gint32 resp[])
 {
   gint32 ruv[3],rs[3];
   res[0]=a;  res[1]=1;  res[2]=0;
@@ -1411,6 +1413,10 @@ void nsp_euclide(gint32 a, gint32 b, gint32 res[])
       ruv[0]=rs[0] - q * ruv[0];
       ruv[1]=rs[1] - q * ruv[1];
       ruv[2]=rs[2] - q * ruv[2];
+    }
+  if ( resp != NULL)
+    {
+      resp[0]=ruv[0];resp[1]=ruv[1];resp[2]=ruv[2];
     }
 }
 

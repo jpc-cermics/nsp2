@@ -2013,8 +2013,8 @@ int nsp_imatrix_bdiv_el(NspIMatrix *A, NspIMatrix *B)
 int nsp_imatrix_bdiv_scalar(NspIMatrix *A, NspIMatrix *B)
 {
   int i;
-#define IMAT_DIVSC(name,type,arg)						\
-  for ( i = 0 ; i < A->mn ; i++ ) A->name[i] /= B->name[0]/A->name[i];	\
+#define IMAT_DIVSC(name,type,arg)					\
+  for ( i = 0 ; i < A->mn ; i++ ) A->name[i] = B->name[0]/A->name[i];	\
       break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_DIVSC,"");
 #undef IMAT_DIVSC
