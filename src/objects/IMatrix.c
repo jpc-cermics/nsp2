@@ -1087,7 +1087,7 @@ NspMatrix *nsp_imatrix_to_matrix(NspIMatrix *M)
 
 double nsp_imatrix_elt_as_double(NspIMatrix *M,int k)
 {
-  double d;
+  double d=0.0;
 #define IMAT_ITOM(name,type,arg)		\
   d =  M->name[k] ;				\
   break;
@@ -1498,5 +1498,32 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
 	}
     }
   return rep;
+}
+
+/*
+ *
+ */
+
+void nsp_euclide_gen(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
+{
+#define IMAT_EUCLIDE(name,type,arg)					\
+  {type ruv[3],rs[3],*res=vres,*resp=vresp;				\
+    res[0]=*(type *) a; res[1]=(type)1;res[2]=(type)0;			\
+    ruv[0]=*(type *) b; ruv[1]=(type)0;ruv[2]=(type)1;			\
+    while ( ruv[0] != 0 )						\
+      {									\
+	type q = res[0]/ruv[0];						\
+	rs[0]=res[0];rs[1]=res[1];rs[2]=res[2];				\
+	res[0]=ruv[0];res[1]=ruv[1];res[2]=ruv[2];			\
+	ruv[0]=rs[0] - q * ruv[0];					\
+	ruv[1]=rs[1] - q * ruv[1];					\
+	ruv[2]=rs[2] - q * ruv[2];					\
+      }									\
+    if ( resp != NULL)							\
+      {									\
+	resp[0]=ruv[0];resp[1]=ruv[1];resp[2]=ruv[2];			\
+      }}
+  NSP_ITYPE_SWITCH(itype,IMAT_EUCLIDE,"");
+#undef  IMAT_ISTRUE
 }
 
