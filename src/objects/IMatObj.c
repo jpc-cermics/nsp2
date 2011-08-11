@@ -3102,9 +3102,8 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
 }
 
 typedef void (*Feuclide)(gint32 x,gint32 y, gint32 *z, gint32 *zp);
-typedef void (*Geuclide)(nsp_itype itype,void *a,void *b,void *vres, void *vresp);
 
-int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe )
+int int_euclide_gen_old(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe )
 {
   int i,j;
   NspMatrix *A=NULL,*B=NULL;
@@ -3183,34 +3182,151 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe 
   return Max(lhs,1);
 }
 
-int int_euclide(Stack stack, int rhs, int opt, int lhs)
+int int_euclide_old(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_euclide);
+  return int_euclide_gen_old(stack,rhs,opt,lhs,3,nsp_euclide_old);
 }
 
-static void nsp_gcd(gint32 x,gint32 y, gint32 *res,gint32 *resp)
+static void nsp_gcd_old(gint32 x,gint32 y, gint32 *res,gint32 *resp)
 {
   gint32 z[3];
-  nsp_euclide(x,y,z,NULL);
+  nsp_euclide_old(x,y,z,NULL);
   *res = z[0];
 }
 
-static void nsp_lcm(gint32 x,gint32 y, gint32 *res,gint32 *resp)
+int int_gcd_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_euclide_gen_old(stack,rhs,opt,lhs,3,nsp_gcd_old);
+}
+
+static void nsp_lcm_old(gint32 x,gint32 y, gint32 *res,gint32 *resp)
 {
   gint32 z[3];
-  nsp_euclide(x,y,z,NULL);
+  nsp_euclide_old(x,y,z,NULL);
   *res = (x/z[0])*y;
 }
 
+int int_lcm_old(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_euclide_gen_old(stack,rhs,opt,lhs,3,nsp_lcm_old);
+}
+
+/*
+ *
+ */
+
+typedef void (*Geuclide)(nsp_itype itype,void *a,void *b,void *vres, void *vresp);
+
+int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Geuclide fe,int tag )
+{
+  int i,j;
+  NspMatrix *A=NULL,*B=NULL;
+  NspIMatrix *IA=NULL,*IB=NULL;
+  CheckStdRhs(2,2);
+  CheckLhs(1,nres);
+  if ( IsIMatObj(stack,1) )
+    {
+      if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
+    }
+  else 
+    {
+      if ((A = GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
+    }
+  if ( IsIMatObj(stack,2) )
+    {
+      if (( IB = GetIMat(stack,2))  == NULLIMAT) return RET_BUG;
+      if ( IA == NULL || IB->itype != IA->itype )
+	{
+	  Scierror ("Error: integer matrix argument for %s should be of same subtype\n", NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+  else 
+    {
+      if ((B = GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
+    }
+  if ( (A != NULL && B== NULL) || 
+       (A == NULL && B!= NULL))
+    {
+      Scierror("Error: A and B should be both int matrices or double matrices\n");
+      return RET_BUG;
+    }
+  
+  if ( A != NULL ) 
+    {
+      NspMatrix *Res[3]={NULL,NULL,NULL};
+      gint32 res[3];
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	{
+	  if ( ( Res[j] =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULL)
+	    return RET_BUG;
+	}
+      for ( i = 0 ; i < A->mn ; i++ )
+	{
+	  gint32 a=A->R[i],b=B->R[i];
+	  (*fe)(nsp_gint32,&a,&b,res, NULL);
+	  switch ( tag ) {
+	  case 0:		
+	  case 1: Res[0]->R[i]= res[0]; break;
+	  case 2: Res[0]->R[i]= (a/res[0])*b;break;
+	  }
+	  for ( j = 1 ; j < Min(Max(lhs,1),3); j++) 
+	    Res[j]->R[i]= res[j];
+	}
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
+    }
+  else
+    {
+      NspIMatrix *Res[3]={NULL,NULL,NULL};
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	{
+	  if ( ( Res[j] =nsp_imatrix_create(NVOID,IA->m,IA->n,IA->itype)) == NULL)
+	    return RET_BUG;
+	}
+#define IMAT_EUCLIDE1(name,type,arg) for ( i=0 ; i < IA->mn ; i++) {	\
+	type res[3];							\
+	(*fe)( IA->itype, &IA->name[i],&IB->name[i], res, NULL);	\
+	switch ( tag )	{						\
+	case 0:								\
+	case 1: Res[0]->name[i]= res[0]; break;				\
+	case 2: Res[0]->name[i]= (IA->name[i]/res[0])*IB->name[i];break; \
+	}								\
+	for ( j = 1 ; j < Min(Max(lhs,1),3); j++)			\
+	  {								\
+	  Res[j]->name[i]= res[j];					\
+	  } } break;
+      NSP_ITYPE_SWITCH(IA->itype,IMAT_EUCLIDE1,"");
+      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
+	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
+    }
+  return Max(lhs,1);
+}
+
+int int_euclide(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_euclide,0);
+}
+
+
+extern void nsp_gcd(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
+{
+  nsp_euclide(itype,a,b,vres,NULL);
+}
 
 int int_gcd(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_gcd);
+  return int_euclide_gen(stack,rhs,opt,lhs,1,nsp_gcd,1);
+}
+
+static void nsp_lcm(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
+{
+  nsp_euclide(itype,a,b,vres,NULL);
 }
 
 int int_lcm(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_lcm);
+  return int_euclide_gen(stack,rhs,opt,lhs,1,nsp_lcm,2);
 }
 
 
@@ -3224,6 +3340,7 @@ static OpTab IMatrix_func[]={
   {"gcd_m_m", int_gcd},
   {"lcm_i_i", int_lcm},
   {"lcm_m_m", int_lcm},
+
   {"impl_i", int_imatrix_impl},
   {"dec2base", int_dec2base},
   {"base2dec", int_base2dec},

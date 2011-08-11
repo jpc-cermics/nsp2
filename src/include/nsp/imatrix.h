@@ -425,8 +425,8 @@ extern NspBMatrix *nsp_imatrix_has(NspIMatrix *A, NspIMatrix *x, int lhs, NspMat
 extern nsp_int_union nsp_imatrix_intmax(const NspIMatrix *A);
 extern nsp_int_union nsp_imatrix_intmin(const NspIMatrix *A);
 extern double nsp_imatrix_elt_as_double(NspIMatrix *M,int k);
-extern void nsp_euclide(gint32 a, gint32 b, gint32 res[],gint32 resp[]);
-extern void nsp_euclide_gen(nsp_itype itype, void *a, void *b, void *vres, void *vresp);
+extern void nsp_euclide_old(gint32 a, gint32 b, gint32 res[],gint32 resp[]);
+extern void nsp_euclide(nsp_itype itype, void *a, void *b, void *vres, void *vresp);
 #endif 
 
 #ifdef IMatrix_Private 

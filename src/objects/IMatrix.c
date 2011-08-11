@@ -1400,7 +1400,7 @@ nsp_string nsp_num2hex(double x)
  *     [r',u',v'] r'=0 and r'=a*u'+b*v';
  */
 
-void nsp_euclide(gint32 a, gint32 b, gint32 res[], gint32 resp[])
+void nsp_euclide_old(gint32 a, gint32 b, gint32 res[], gint32 resp[])
 {
   gint32 ruv[3],rs[3];
   res[0]=a;  res[1]=1;  res[2]=0;
@@ -1420,11 +1420,11 @@ void nsp_euclide(gint32 a, gint32 b, gint32 res[], gint32 resp[])
     }
 }
 
-/*
+/* multi integer version
  *
  */
 
-void nsp_euclide_gen(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
+void nsp_euclide(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
 {
 #define IMAT_EUCLIDE(name,type,arg)					\
   {type ruv[3],rs[3],*res=vres,*resp=vresp;				\
@@ -1442,7 +1442,7 @@ void nsp_euclide_gen(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
     if ( resp != NULL)							\
       {									\
 	resp[0]=ruv[0];resp[1]=ruv[1];resp[2]=ruv[2];			\
-      }}
+      }} break;
   NSP_ITYPE_SWITCH(itype,IMAT_EUCLIDE,"");
 #undef  IMAT_ISTRUE
 }
