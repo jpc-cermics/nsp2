@@ -3102,6 +3102,7 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
 }
 
 typedef void (*Feuclide)(gint32 x,gint32 y, gint32 *z, gint32 *zp);
+typedef void (*Geuclide)(nsp_itype itype,void *a,void *b,void *vres, void *vresp);
 
 int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe )
 {
