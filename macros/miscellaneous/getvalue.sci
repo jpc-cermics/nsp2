@@ -211,7 +211,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 	if ~ok then break;end;
 	ok = check_dims(%vv,%sz);
 	if ~ok then  error_size(%labels(%kk),string_dims(%sz));break;end 
-       case 'str'
+       case {'str','gen'}
 	//---- strings 
 	str=strsubst(%str1(%kk),'\\n','\n');
 	%vv = split(str,sep='\n')';
