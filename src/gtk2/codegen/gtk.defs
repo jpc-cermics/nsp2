@@ -8331,6 +8331,19 @@
    )
   )
 
+;; added Aug 2011 
+
+(define-method set_tooltip_column
+  (of-object "GtkIconView")
+  (c-name "gtk_icon_view_set_tooltip_column")
+  (return-type "none")
+  (parameters
+   '("gint" "column")
+   )
+  )
+
+
+
 
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkimage.h
 
