@@ -775,6 +775,9 @@ target_drag_data_received  (GtkWidget          *widget,
   /* if (data->target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW")) */
   if (data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW",FALSE ))
     {
+      /* used when draging an icon from a scicos palette 
+       * the associated model row is transmited through drag and drop
+       */
       GtkTreeModel     *tree_model;
       GtkTreePath      *path;
       if ( gtk_tree_get_row_drag_data (data,&tree_model,&path))
@@ -793,11 +796,24 @@ target_drag_data_received  (GtkWidget          *widget,
 	      GdkModifierType state;
 	      BCG *Xgc;
 	      static char buf[256];
+	      const gchar *bname;
+	      gchar name[256];
 	      int ids[2],winnum;
 	      double pt[2];
 	      GType mtype;
 	      GValue value = { 0, };
-	      int col=2;
+	      int col=1;
+	      /* column one is the block name */
+	      gtk_tree_model_get_value(tree_model,&iter ,col, &value);
+	      mtype = G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&value)); 
+	      if ( mtype != G_TYPE_STRING )
+		{
+		  gtk_drag_finish (context, FALSE, FALSE, time);
+		  return;
+		}
+	      bname = g_value_get_string(&value);
+	      strcpy(name,bname);
+	      g_value_unset(&value);
 	      for (col = 2 ; col < 4; col++)
 		{
 		  gtk_tree_model_get_value(tree_model,&iter ,col, &value);
@@ -828,7 +844,8 @@ target_drag_data_received  (GtkWidget          *widget,
 	      /* Sciprintf("PlaceDropped_info([%5.3f,%5.3f],[%d,%d],[%d,%d],%d,%d,%d)\n",
 	       * pt[0],pt[1],x,y,x1,y1,ids[0],ids[1],winnum);
 	       */
-	      sprintf(buf,"PlaceDropped_info([%5.3f,%5.3f],%d,%d,%d)\n",pt[0],pt[1],ids[0],ids[1],winnum);
+	      sprintf(buf,"PlaceDropped_info([%5.3f,%5.3f],%d,%d,%d,'%s')\n",
+		      pt[0],pt[1],ids[0],ids[1],winnum,name);
 	      enqueue_nsp_command(buf);
 	      gtk_drag_finish (context, TRUE, FALSE, time);	  
 	    }
