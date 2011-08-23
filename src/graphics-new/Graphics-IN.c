@@ -6464,16 +6464,14 @@ static int int_nsp_enqueue_command(Stack stack, int rhs, int opt, int lhs)
   char buf[256];
   int wid;
   char *command;
-
   CheckLhs(0,1);
   CheckStdRhs(2,2);
   if (GetScalarInt(stack,1,&wid) == FAIL) return RET_BUG;
   if ((command = GetString(stack,2)) == (char*)0) return RET_BUG;
-
   if (( Xgc=window_list_search_new(wid))== NULL) return 0;
   if ( nsp_call_predefined_callbacks(Xgc, command, wid) == 1) 
     return 0;
-  sprintf(buf,"scicos_tb(%s,%d)",command,wid);
+  sprintf(buf,"%s",command);
   enqueue_nsp_command(buf);
   return 0;
 }
