@@ -84,8 +84,21 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     str = '[' + catenate(strsubst(string(dims),'-1','*'),sep=',')+']';
   endfunction
 
+  function num=std_message(strings ,buttons)
+    if nargin == 1 then 
+      num=1; x_message(strings)  
+    else 
+      num=x_message(strings ,buttons)
+    end 
+  endfunction
+  
+  // the message function can be changed by callers
+  if ~exists('message','nsp-function') then 
+    message=std_message;
+  end
+  
   function error_size(str,sz)
-    x_message(['Answer given for '+str+' entry';
+    message(['Answer given for '+str+' entry';
 	       'has invalid dimensions. ';
 	       'Expecting size to be: '+sz]);
   endfunction
@@ -94,14 +107,14 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
     ok=%f;%vv=[];
     [ierr,%H]=execstr('%vv=['+str+']',env=exec_context, errcatch=%t);
     if ierr==%f then 
-      x_message(['Answer given for '+label+' is wrong and';
+      message(['Answer given for '+label+' is wrong and';
 		 'cannot be evaluated:';'v=['+str+']']);
       lasterror();
       return;
     end 
     %vv=%H.%vv;
     if ~isempty(typ) && and(type(%vv,'string')<>typ) then
-      x_message(['Entry '+label+' has incorrect type";
+      message(['Entry '+label+' has incorrect type";
 		 'Expecting a '+catenate(typ,sep=', or ')]);
       return;
     end
