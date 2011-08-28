@@ -4827,7 +4827,7 @@ int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
 
 
 /*
- * push the marix  elements on the stack 
+ * push the matrix  elements on the stack 
  */
 
 static int int_mx_to_seq (Stack stack, int rhs, int opt, int lhs)

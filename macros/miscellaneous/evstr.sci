@@ -1,5 +1,9 @@
 function [y,err]=evstr(str, exec_context)
 // partially emulates a scilab function
+  if type(str,'short')=='m' then 
+    y=str;err=%f;
+    return;
+  end
   if nargin < 2 then 
     exec_context = hash_create(10);
   end

@@ -2262,6 +2262,35 @@ static int int_base64_to_smatrix(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
+/*
+ * push the smatrix  elements on the stack 
+ */
+
+static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j,count=0;
+  NspSMatrix *M;
+  CheckRhs (1, 1);
+  if ((M = GetSMat(stack, 1)) == NULLSMAT ) return RET_BUG;
+  for ( i=0 ; i < M->mn ; i++)
+    {  
+      NthObj(i+2)= nsp_create_object_from_str(NVOID,M->S[i]);
+      NthObj(i+2)->ret_pos = i+1;
+      if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+    }
+  return M->mn ;
+ bug: 
+  for ( j= 2 ; j <= i +1  ; j++) 
+    {
+      M = (NspSMatrix *) NthObj(j);
+      nsp_smatrix_destroy(M);
+    }
+  return RET_BUG;
+}
+
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -2352,6 +2381,7 @@ static OpTab SMatrix_func[]={
   {"parse_dim_arg",int_parse_dim_arg},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
+  {"object2seq_s",int_smatrix_to_seq}, /* A{...} on rhs  */
   {"s2base64",int_smatrix_to_base64},
   {"base642s",int_base64_to_smatrix},
   {(char *) 0, NULL}
