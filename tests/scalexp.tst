@@ -39,6 +39,8 @@ S.set_extra_names['z']
 if or(S.get_vars[]<>['u1';'z']) then pause;end 
 
 
+// S depends on ['u1','u2']
+
 S=scalexp_create('u1 + cos(%pi*u2)');
 S.apply_context[hash(%pi=%pi)];
 if or(S.get_vars[]<>['u1';'u2']) then pause;end 
@@ -47,5 +49,18 @@ u2=5*u1;
 y=S.byte_eval[[u1;u2]];
 yref = u1 + cos(%pi*u2);
 if norm(yref-y) > 10*%eps then pause;end 
+
+// S depends on ['u2']
+
+S=scalexp_create('4 + cos(%pi*u2)');
+S.apply_context[hash(%pi=%pi)];
+// force u1 dependency 
+S.set_extra_names['u'+string(1:8)];
+if or(S.get_vars[]<>['u'+string(1:8)]) then pause;end
+S.bcomp[];
+u2=1;
+y=S.byte_eval[[0;u2;zeros(6,1)]];
+if norm(y - (4 + cos(%pi*1))) > 10*%eps then pause;end 
+
 
 
