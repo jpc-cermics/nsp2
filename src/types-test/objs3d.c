@@ -2753,7 +2753,7 @@ void nsp_objs3d_invalidate(NspGraphic *G)
  * Returns: %OK or %FAIL
  **/
 
-int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
+int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G, int invalidate)
 {
   if ( nsp_list_end_insert(A->obj->children,(NspObject *) G )== FAIL)
     return FAIL;
@@ -2762,11 +2762,9 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G)
   /* updates the bounds of the axe */
   nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
   /* raise an invalidate operation */
-  nsp_graphic_invalidate((NspGraphic *) G);
+  if ( invalidate ) nsp_graphic_invalidate((NspGraphic *) G);
   return OK;
 }
-
-
 
 /* requested for nsp_gcscale
  *
@@ -2806,4 +2804,4 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 }
 
 
-#line 2810 "objs3d.c"
+#line 2808 "objs3d.c"

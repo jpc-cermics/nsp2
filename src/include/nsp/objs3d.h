@@ -127,7 +127,7 @@ extern int nsp_objs3d_xdr_save(XDR  *xdrs, NspObjs3d *M);
 
 /* inserted at the end of public part of include file */
 extern NspObjs3d * nsp_check_for_objs3d(BCG *Xgc,const double *wrect);
-extern int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G);
+extern int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G,int invalidate);
 extern void nsp_objs3d_invalidate(NspGraphic *G);
 extern int gr_compute_ticks(double *xminv, double *xmaxv, double *grads, int *ngrads);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);

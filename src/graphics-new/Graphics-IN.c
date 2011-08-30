@@ -346,7 +346,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
       vf = nsp_contour3d_create("c",x,y,z,nz,iflag[0],zlev,NULL);
       if ( vf == NULL) return RET_BUG;
       /* insert the new contour3d */
-      if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) vf)== FAIL)
+      if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) vf,FALSE)== FAIL)
 	{
 	  Scierror("Error: failed to insert contour in Figure\n");
 	  return RET_BUG;
@@ -680,7 +680,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 	  gobj = (NspObject *)nsp_points3d_create("pts",M1,NULL,-1,-color,-1,NULL,0,NULL);
 	  if ( gobj == NULL)  return RET_BUG;
 	}
-      if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj)== FAIL)
+      if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj,FALSE)== FAIL)
 	{
 	  Scierror("Error: failed to insert contour in Figure\n");
 	  return RET_BUG;
@@ -1026,7 +1026,7 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
 
   /* insert the new polyhedron */
-  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
+  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
@@ -1058,7 +1058,7 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
   if ( flag[0] < 0) pol->obj->mesh = FALSE;
 
   /* insert the new polyhedron */
-  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
+  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
@@ -1098,7 +1098,7 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
     }
   pol->obj->shade = shade;
   /* insert the new polyhedron */
-  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
+  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
@@ -1138,7 +1138,7 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
   if ( pol == NULL) return NULL;
 
   /* insert the new polyhedron */
-  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol)== FAIL)
+  if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) pol,FALSE)== FAIL)
     {
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
