@@ -967,14 +967,19 @@ nsp_matrix_boundster(const NspMatrix *A, int *ind, int *imin, int *imax)
 }
 
 
-/*
- * Utility function : Converts back to double
- * if Matrix was previously converted to int or real
- * A is changed and its adress is also returned
- */
+/**
+ * Mat2double:
+ * @A: a #NspMatrix
+ * 
+ * Utility function : Converts back to double.
+ * If Matrix was previously converted to int or real
+ * A is changed. If @A is in implicit compact mode ('u') then @A is 
+ * expanded to an array of doubles. The pointer to @A is returned.
+ * 
+ * Returns: the matrix @A.
+ **/
 
-NspMatrix *
-Mat2double (NspMatrix * A)
+NspMatrix *Mat2double (NspMatrix * A)
 {
   int inc = -1;
   if (A == NULLMAT ) return A;
