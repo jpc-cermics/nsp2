@@ -625,11 +625,11 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
  * Return value: a new #NspGMarkupNode
  **/
 
-NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, GError **error)
+NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name,int *err)
 {
   GMarkupParseContext *markup_parse_context = NULL;
   GMarkupDomContext context = {node_name,NULL, NULL, NULL, FALSE};
-  
+  GError *lerror = NULL;
   g_return_val_if_fail (filename != NULL, context.root);
 
   {
@@ -657,12 +657,23 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, 
     gchar *text = NULL;
     gsize length = -1;
 
-    g_file_get_contents (filename, &text, &length, error);
+    g_file_get_contents (filename, &text, &length, &lerror);
     if (text != NULL)
-    {
-      g_markup_parse_context_parse (markup_parse_context, text, length, error);
-      g_free (text), text = NULL;
-    }
+      {
+	int tag=g_markup_parse_context_parse (markup_parse_context, text, length, &lerror);
+	if ( tag == FALSE ) 
+	  {
+	    Scierror("Error: failed to parse markup file %s\n",filename);
+	    Scierror("\t%s\n",lerror->message);
+	    g_error_free(lerror);
+	    *err=TRUE;
+	  }
+	else
+	  {
+	    *err=FALSE;
+	  }
+	g_free (text), text = NULL;
+      }
     g_markup_parse_context_free (markup_parse_context);
     markup_parse_context = NULL;
   }
@@ -671,15 +682,25 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name, 
 
 int int_gmarkup(Stack stack, int rhs, int opt, int lhs)
 {
+  int err;
   char *str,*node_name=NULL;
   NspGMarkupNode *node;
   CheckStdRhs(1,2);
+  CheckLhs(1,1);
   if ((str=GetString(stack,1))== NULL) return RET_BUG;
   if ( rhs == 2 )
     if ((node_name=GetString(stack,2))== NULL) return RET_BUG;
-  if ((node = g_markup_dom_new (str,node_name, NULL))== NULL) return RET_BUG;
-  MoveObj(stack,1,NSP_OBJECT(node));
-  return 1;
+  if ((node = g_markup_dom_new (str,node_name,&err))== NULL) return RET_BUG;
+  if ( err == TRUE ) 
+    {
+      nsp_gmarkup_node_destroy(node);
+      return RET_BUG;
+    }
+  else
+    {
+      MoveObj(stack,1,NSP_OBJECT(node));
+    }
+  return Max(lhs,1);
 } 
 
 int int_gmarkup_escape_text(Stack stack, int rhs, int opt, int lhs)
