@@ -509,7 +509,7 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
   NspFile *F;
   Cell *C;
   NspList *L;
-  if (nsp_new_frame() == FAIL ) return FAIL;
+  if (nsp_new_frame("datas") == FAIL ) return FAIL;
   if (( rep = ParseEvalLoop(T,0,FALSE,TRUE)) < 0 && rep != RET_EOF ) 
     {
       nsp_frame_delete() ;

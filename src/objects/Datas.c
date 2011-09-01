@@ -187,11 +187,11 @@ int nsp_init_frames(int argc, char **argv)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_new_frame(void)
+int nsp_new_frame(const char *name)
 {
   NspFrame *frame;
   if ( Datas == NULLLIST ) return FAIL;
-  if (( frame=nsp_frame_create("datas",NULL))== NULLFRAME) return FAIL;
+  if (( frame=nsp_frame_create(name,NULL))== NULLFRAME) return FAIL;
   if (nsp_list_store(Datas,NSP_OBJECT(frame),1) == FAIL) return FAIL;
   return OK;
 }
@@ -210,11 +210,11 @@ int nsp_new_frame(void)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_new_frame_with_local_vars(NspCells *table)
+int nsp_new_frame_with_local_vars(const char *name,NspCells *table)
 {
   NspFrame *frame;
   if ( Datas == NULLLIST ) return FAIL;
-  if ((frame=nsp_frame_create("datas",table))== NULLFRAME) return FAIL;
+  if ((frame=nsp_frame_create(name,table))== NULLFRAME) return FAIL;
   if (nsp_list_store(Datas,NSP_OBJECT(frame),1) == FAIL) return FAIL;
   return OK;
 }

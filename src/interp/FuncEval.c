@@ -602,12 +602,14 @@ static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix
 
 int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs)
 {
+  const char *name_def="datas",*name= NSP_OBJECT(OF)->name;
   int rep;
   /* new data frame for function evaluation */
 #ifdef WITH_SYMB_TABLE
-  nsp_new_frame_with_local_vars(((NspPList *) OF)->D->next->next->next->O);
+  if ( strcmp(name,NVOID)==0 ) name=name_def;
+  nsp_new_frame_with_local_vars(name,((NspPList *) OF)->D->next->next->next->O);
 #else 
-  nsp_new_frame(); 
+  nsp_new_frame(name); 
 #endif 
   stack.first = first;
   if ((rep= MacroEval_Base(OF,stack,first,rhs,opt,lhs,0) ) == RET_BUG) 

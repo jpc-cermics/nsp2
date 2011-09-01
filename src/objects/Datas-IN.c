@@ -243,6 +243,42 @@ static int nsp_exists(const char *Name, _exist_tag type)
   return irep;
 }
 
+/* returns the names of calling environments  */
+
+static NspSMatrix *nsp_calling_tree()
+{
+  NspSMatrix *S;
+  int i;
+  int count=0;
+  if ( Datas != NULLLIST ) 
+    {
+      Cell *C= Datas->first;
+      while ( C != NULLCELL) 
+	{
+	  count++;
+	  C = C->next ;
+	}
+    }
+  if (( S = nsp_smatrix_create(NVOID,count,1,NULL,0))== NULL ) 
+    return NULL;
+  count=0;
+  if ( Datas != NULLLIST ) 
+    {
+      Cell *C= Datas->first;
+      while ( C != NULLCELL) 
+	{
+	  const char *name = C->O->name;
+	  if (( S->S[count]= nsp_new_string(name,-1))==NULL )  goto err;
+	  count++;
+	  C = C->next ;
+	}
+    }
+  return S;
+ err:
+  for ( i= count;  i < S->mn; i++ )  S->S[i]=NULL;
+  nsp_smatrix_destroy(S);
+  return NULL;
+}
 
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
@@ -253,8 +289,15 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
   NspSMatrix *Names;
   NspBMatrix *B;
   int rep=0,i;
-  CheckStdRhs(1,2);
+  CheckStdRhs(0,2);
   CheckLhs(1,1);
+  if ( rhs -opt == 0 ) 
+    {
+      NspSMatrix *S=nsp_calling_tree();
+      if ( S == NULL) return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(S));
+      return 1;
+    }
   if ((Names = GetSMat(stack,1)) == NULLSMAT)  return RET_BUG;
   if (rhs == 2) { 
     if ((rep= GetStringInArray(stack,2,exists_list,1)) == -1) return RET_BUG; 

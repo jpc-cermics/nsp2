@@ -42,7 +42,7 @@
 /* FIXME: these is to be in a .h file */
 extern void sci_clear_and_exit(int);
 extern void primitive_types_register(void);
-extern int  nsp_new_frame(void);
+extern int  nsp_new_frame(const char *);
 extern void InitFunctionTable(void);
 extern void controlC_handler (int sig);
 

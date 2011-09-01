@@ -33,7 +33,7 @@ int main()
 {
   NspMatrix *M;
   NspObject *OM,*OM1;
-  nsp_new_frame();
+  nsp_new_frame("datas");
   if ((M =nsp_mat_rand(2,2)) == NULLMAT) {exit(1);}
   nsp_object_set_name(M,"pipo");
   nsp_frame_replace_object(M);

@@ -180,7 +180,7 @@ static int int_parseevalfile_gen(Stack stack, int rhs, int opt, int lhs,int mtlb
        * frame as a hash table : take care that frame must be deleted 
        * at the end. 
        */
-      if ( nsp_new_frame() == FAIL) goto err;
+      if ( nsp_new_frame("datas") == FAIL) goto err;
       /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
@@ -275,7 +275,7 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
        * frame as a hash table : take care that frame must be deleted 
        * at the end. 
        */
-      if ( nsp_new_frame() == FAIL) return RET_BUG;
+      if ( nsp_new_frame("datas") == FAIL) return RET_BUG;
       /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
@@ -349,7 +349,7 @@ static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_e
    * frame as a hash table : take care that frame must be deleted 
    * at the end. 
    */
-  if ( nsp_new_frame() == FAIL) return RET_BUG;
+  if ( nsp_new_frame("datas") == FAIL) return RET_BUG;
   /* insert the contents of E in new frame */
   if ( E != NULL) 
     {
@@ -519,7 +519,7 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
        * frame as a hash table : take care that frame must be deleted 
        * at the end. 
        */
-      if ( nsp_new_frame() == FAIL) return RET_BUG;
+      if ( nsp_new_frame("datas") == FAIL) return RET_BUG;
       /* insert the contente of E in new frame */
       if ( E != NULL) 
 	{
