@@ -17,11 +17,6 @@ prefix=@prefix@
 
 all::
 
-clean::
-	@echo Cleaning 
-	@$(RM) $(FILES_TO_CLEAN)
-distclean::
-	@$(RM) $(FILES_TO_CLEAN)
 
 RANLIB = @RANLIB@
 
