@@ -11,5 +11,6 @@
 #define get_time scicos_get_time
 #define get_block_number scicos_get_block_number
 #define set_block_error scicos_set_block_error
+#define set_pointer_xproperty scicos_set_pointer_xproperty
 
 #endif 

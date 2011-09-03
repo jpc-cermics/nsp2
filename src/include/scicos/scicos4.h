@@ -429,5 +429,4 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 */
 #define GetPtrWorkPtrs(blk) (blk->work)
 
-
 #endif 
