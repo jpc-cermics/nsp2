@@ -741,13 +741,15 @@ static nsp_string send_string_to_child(NspSpawn *H,const char *str)
  * could be usefull to make an other function to at least 
  * check for gtk_events while the spawned process is running.
  *
- * On windows the functions have the following problems 
+ * On windows the function g_spawn_sync have the following problems 
  * - a console will pop up for non gui programs 
  * - in some situation the standard output or standard error 
  *   are not collected. This happens for example when 
  *   spawning nmake. 
+ * that's why an other interface int_g_spawn_sync_win32 is 
+ * called for win32.
  * 
- * Returns: 
+ * Returns: number of returned argument by interface.
  **/
 
 int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
@@ -759,15 +761,15 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
   gchar *working_directory=NULL;
   gchar *standard_output=NULL;
   gchar *standard_error=NULL; 
-  int exit_status;
+  int exit_status,allok;
   GError *error=NULL;
   NspSMatrix *S;
-
+  
   nsp_option opts[] ={{"wd",string,NULLOBJ,-1},
 		      {"w32mode", s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckStdRhs(1,2);
-  CheckLhs(0,4);
+  CheckLhs(0,5);
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) 
     {
@@ -790,23 +792,31 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
 		     &standard_error,
 		     &exit_status,
 		     &error);
+  
+  /* when rep == TRUE it doe not means that the child returned ok 
+   * we have to check the child exit_status.
+   */
 
-  if ( lhs <= 0 && rep == FALSE ) 
+  allok = (rep == TRUE && exit_status == 0);
+  
+  if ( lhs <= 0 && (allok == FALSE ) )
     {
-      if (error != NULL) Scierror("Error: %s\n",error->message);
+      if ( rep == FALSE ) 
+	Scierror("Error: spawn_sync failed: %s\n",error->message);
+      else
+	Scierror("Error: spawn_sync child execution returned an error\n");
       return RET_BUG;
     }
 
-  if ( nsp_move_boolean(stack,1,rep)  == FAIL ) return RET_BUG;
-
-  if ( lhs <= 1 )
+  if ( nsp_move_boolean(stack,1,allok )  == FAIL ) return RET_BUG;
+  
+  if ( lhs == 1 )
     {
       nsp_spawn_showstr(standard_output, "cannot convert standard output to utf8\n" );
       nsp_spawn_showstr(standard_error, "cannot convert standard error to utf8\n" );
       if (error != NULL) 
 	nsp_spawn_showstr(error->message, "cannot convert error message to utf8\n" );
     }
-
   if ( lhs >= 2)
     {
       /* return standard_output as second argument */
@@ -824,6 +834,12 @@ int int_g_spawn_sync(Stack stack, int rhs, int opt, int lhs)
       /* return the error message as third argument */
       char *st = (error != NULL) ? error->message : "";
       if ( nsp_spawn_move(stack,st,"\n",4) == FAIL) goto end;
+    }
+  if ( lhs >= 5) 
+    {
+      /* return the exit status */
+      if ( nsp_move_double(stack,5,(double) exit_status)==FAIL)
+	return RET_BUG;
     }
   ret = Max(lhs,1);
  end:
@@ -884,6 +900,7 @@ static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs)
   char *cmd;
   int ret =  RET_BUG;
   int w32mode= TRUE;
+  int exit_status=0,allok;
   gboolean rep;
   gchar *working_directory=NULL;
   GError *error=NULL;
@@ -892,7 +909,7 @@ static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs)
 		      {"w32mode", s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckStdRhs(1,2);
-  CheckLhs(0,4);
+  CheckLhs(0,5);
   if ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) 
     {
@@ -910,16 +927,25 @@ static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs)
   if (( cmd = nsp_smatrix_elts_concat(S," ",1," ",1))== NULL) 
     return RET_BUG;
   
-  rep = nsp_win32_system(working_directory,cmd,FALSE, std_o,std_e,&ret);
+  rep = nsp_win32_system(working_directory,cmd,FALSE, std_o,std_e,&exit_status);
   
-  if ( lhs <= 0 && rep == FAIL ) 
+  /* when rep == TRUE it doe not means that the child returned ok 
+   * we have to check the child exit_status.
+   */
+
+  allok = (rep == OK && exit_status == 0);
+
+  if ( lhs <= 0 && (allok == FALSE ) )
     {
-      if (error != NULL) Scierror("Error: %s\n",error->message);
-      goto end;
+      if ( rep == FALSE ) 
+	Scierror("Error: spawn_sync failed: %s\n",error->message);
+      else
+	Scierror("Error: spawn_sync child execution returned an error\n");
+      return RET_BUG;
     }
 
-  if ( nsp_move_boolean(stack,1,(rep== OK) ? TRUE:FALSE)  == FAIL ) goto end;
-
+  if ( nsp_move_boolean(stack,1, allok )  == FAIL ) goto end;
+  
   if ( lhs <= 1 )
     {
       if ( nsp_spawn_showfile(std_o ) == FAIL) 	goto end;
@@ -945,7 +971,13 @@ static int int_g_spawn_sync_win32(Stack stack, int rhs, int opt, int lhs)
     {
       /* return the error message as third argument */
       char *st = (error != NULL) ? error->message : "";
-      if ( nsp_spawn_move(stack,st,"xxx",4) == FAIL) goto end;
+      if ( nsp_spawn_move(stack,st,"\n",4) == FAIL) goto end;
+    }
+  if ( lhs >= 5) 
+    {
+      /* return the exit status */
+      if ( nsp_move_double(stack,5,(double) exit_status)==FAIL)
+	return RET_BUG;
     }
   ret = Max(lhs,1);
  end:
@@ -980,6 +1012,8 @@ static int nsp_win32_system(const char *working_dir, const char *command,BOOL Wa
   char *dirname=nsp_get_cwd();
   char *dirname_native = NULL;
   nsp_tcldstring buffer;
+
+  *ret=0;
 
   /* take care that dirname_native is an adress 
    * in buffer. buffer must be freed when dirname_native 
@@ -1033,7 +1067,6 @@ static int nsp_win32_system(const char *working_dir, const char *command,BOOL Wa
   if (CreateProcess(NULL, CmdLine, NULL, NULL, TRUE,0, NULL, wd , &siStartInfo, &piProcInfo))
     {
       WaitForSingleObject(piProcInfo.hProcess,INFINITE);
-
       if ( GetExitCodeProcess(piProcInfo.hProcess,&ExitCode) == STILL_ACTIVE )
 	{
 	  TerminateProcess(piProcInfo.hProcess,0);
