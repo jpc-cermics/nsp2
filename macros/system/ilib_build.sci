@@ -475,11 +475,14 @@ function [libn,ok]=ilib_compile(lib_name,makename,files)
       ilib_compile_get_names(lib_name,makename,files)  
   if path=="." then path = "./";end 
   if path<>"" && path<>"./" then chdir(path);  end 
+  // the name of the shared lib 
+  libn= file('join',[path,lib_name_make]);
   
   // perform the make with system function 
   // step by step 
   // first try to build each file step by step 
   nf = size(files,'*');
+  ok=%t;
   for i=1:nf 
     str = [make_command,makename,files(i)];
     strc = catenate(str,sep=" ");
@@ -494,12 +497,9 @@ function [libn,ok]=ilib_compile(lib_name,makename,files)
     strc=  catenate(str,sep=" ");
     printf('   '+strc + '\n');
     ok = ilib_spawn_sync(str);
-    // a revoir 
-    libn= file('join',[path,lib_name_make]);
   end
   chdir(oldpath); 
 endfunction
-
 
 function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_get_names(lib_name,makename,files) 
 // return is res the correct name for 
