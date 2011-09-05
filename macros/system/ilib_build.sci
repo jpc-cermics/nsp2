@@ -454,7 +454,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
 
 endfunction
 
-function libn=ilib_compile(lib_name,makename,files)
+function [libn,ok]=ilib_compile(lib_name,makename,files)
 // Copyright ENPC
 // call make for target files or objects depending
 // on OS and compilers
@@ -462,6 +462,7 @@ function libn=ilib_compile(lib_name,makename,files)
 // if files is given the make is performed on each 
 // target contained in files then a whole make is performed 
 //-------------------------------------------------
+  ok=%t,
   if nargin < 3 || isempty(files) then files=m2s([]); end 
   if type(lib_name,'short')<>'s' then
     error('ilib_compile: first argument must be a string');
@@ -486,14 +487,16 @@ function libn=ilib_compile(lib_name,makename,files)
     ok = ilib_spawn_sync(str);
     if ~ok then break ; end 
   end
-  // then the shared library 
-  printf('   building shared library\n');
-  str = [make_command, makename, lib_name];
-  strc=  catenate(str,sep=" ");
-  printf('   '+strc + '\n');
-  ok = ilib_spawn_sync(str);
-  // a revoir 
-  libn= file('join',[path,lib_name_make]);
+  if ok then 
+    // then the shared library 
+    printf('   building shared library\n');
+    str = [make_command, makename, lib_name];
+    strc=  catenate(str,sep=" ");
+    printf('   '+strc + '\n');
+    ok = ilib_spawn_sync(str);
+    // a revoir 
+    libn= file('join',[path,lib_name_make]);
+  end
   chdir(oldpath); 
 endfunction
 
