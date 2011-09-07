@@ -12,4 +12,11 @@
 #define get_block_number scicos_get_block_number
 #define set_block_error scicos_set_block_error
 
+/* extern used by some modelica blocks 
+ */ 
+
+extern double exp_(double x);
+extern double log_(double x);
+extern double pow_(double x, double y);
+
 #endif 
