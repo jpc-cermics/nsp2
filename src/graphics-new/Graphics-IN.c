@@ -3241,6 +3241,7 @@ static char *xget_Table[] = {
 
 static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
 {
+  int color_arg=-1;
   NspFigureData *Gc;
   NspFigure *F;
   BCG *Xgc;
@@ -3254,7 +3255,20 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
 
   if ((rep= GetStringInArray(stack,1,xget_Table,1)) == -1) return RET_BUG; 
 
-  if (rhs == 2) { if (GetScalarInt(stack,2,&flagx) == FAIL) return RET_BUG;}
+  if (rhs == 2 ) 
+    { 
+      if ( rep == xget_color )
+	{
+	  char *Table[] = {"black","white","gray","blue","green","lightblue",
+			   "red","purple","yellow",NULL};
+	  if ((color_arg= GetStringInArray(stack,2,Table,1)) == -1) 
+	    return RET_BUG; 
+	}
+      else 
+	{
+	  if (GetScalarInt(stack,2,&flagx) == FAIL) return RET_BUG;
+	}
+    }
   
   F = nsp_check_for_current_figure(); 
   Xgc=nsp_check_graphic_context();
@@ -3282,7 +3296,18 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
       return 1;
       break;
     case xget_color:
-      if ( nsp_move_double(stack,1,(double) Gc->color) == FAIL) return RET_BUG;
+      if ( rhs == 2 ) 
+	{
+	  if ( Gc->colormap != NULL &&Gc->colormap->mn != 0 ) 
+	    val = Gc->colormap->m ;
+	  else 
+	    val = Xgc->graphic_engine->xget_last(Xgc);
+	  if ( nsp_move_double(stack,1,(double) val+color_arg+1) == FAIL) return RET_BUG;
+	}
+      else 
+	{
+	  if ( nsp_move_double(stack,1,(double) Gc->color) == FAIL) return RET_BUG;
+	}
       return 1;
       break;
     case xget_colormap:
