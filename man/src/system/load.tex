@@ -2,12 +2,15 @@
 \mansection{load}
 \begin{mandesc}
   \short{load}{load saved objects}
+  \short{sci_load}{load objects which were saved by scicoslab}
 \end{mandesc}
 
   %-- Calling sequence section
 \begin{calling_sequence}
   \begin{verbatim}
     load(filename [,name1,...,namen])  
+    sci_load(filename [,name1,...,namen])  
+    H=sci_load(filename [,name1,...,namen]);
   \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -24,6 +27,11 @@
   whole file content is reloaded. If explicit names are given then 
   objects with corresponding names are searched and if found reloaded in 
   the running nsp session. 
+
+  The \verb!sci_load! command is used to reload in the running nsp context
+  objects previously saved by scicoslab (or saved with the  \verb!sci_save! 
+  commande). If a left hand side argument is provided then an hash table 
+  filled with the loaded values is returned.
 \end{mandescription}
 %--example 
 \begin{examples}

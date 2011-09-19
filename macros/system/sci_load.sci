@@ -1,4 +1,4 @@
-function sci_load(fname,varargin)
+function H=sci_load(fname,varargin)
   
 // load a Scilab saved File 
 // Copyright (C) 2006-2011  Jean-Philippe Chancelier Enpc/Cermics
@@ -226,6 +226,7 @@ function sci_load(fname,varargin)
     str=stripblanks(str);
   endfunction
 
+  H=hash(0);
   varargin.compact[];
   Str=[];
   if length(varargin) > 1 then 
@@ -263,8 +264,11 @@ function sci_load(fname,varargin)
       return;
     end
     if isempty(Str) || ~isempty(find(Str==str)) then 
-      execstr('resume('+str+'=xval);');
-      //printf('loading ->%s\n',str);
+      if nargout < 1 then 
+	execstr('resume('+str+'=xval);');
+      else
+	execstr('H('''+str+''')=xval;');
+      end
     end
   end
   F1.close[];
@@ -538,6 +542,7 @@ function sci_save(fname,varargopt)
     y=sci_save_count_list(L);
   endfunction
 
+    
   S=varargopt.__keys;
   if size(S,'*')==0 then 
     error("You must specify the names of arguments to be saved as name=value");
@@ -577,7 +582,7 @@ function sci_save(fname,varargopt)
 endfunction
 
 function id=sci_str2code(str)
-// from sting to scilab coded string 
+// from string to scilab coded string 
 // Copyright (C) 2006-2011 Jean-Philippe Chancelier
   taba2s = [ 100,101,102,103,104,105,106,107,108,-40,...
 	     110,111,112,113,114,115,116,117,118,119,...
