@@ -122,7 +122,7 @@ extern NspBMatrix *SMatCompOp (NspSMatrix *A, NspSMatrix *B, char *op);
 extern int SMatFullComp (NspSMatrix *A, NspSMatrix *B, char *op, int *err); 
 extern NspSMatrix *nsp_smatrix_transpose(const NspSMatrix *A); 
 extern NspSMatrix *nsp_smatrix_subst(const NspSMatrix *A,nsp_const_string needle,nsp_const_string  replace); 
-extern int nsp_smatrix_strip_blanks(NspSMatrix *A); 
+extern int nsp_smatrix_strip_blanks(NspSMatrix *A, int tab); 
 
 /* extern NspSMatrix *nsp_get_methods(NspObject *ob,NspTypeBase *type); */
 extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);

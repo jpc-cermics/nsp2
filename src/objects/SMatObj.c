@@ -1942,12 +1942,18 @@ static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
 
 static int int_smxstripblanks(Stack stack, int rhs, int opt, int lhs)
 {
+  int tab=FALSE;
   NspSMatrix *HMat1;
-  CheckRhs(1,1);
+  CheckRhs(1,2);
   CheckLhs(1,1);
   if (( HMat1 = GetSMatCopy(stack,1)) == NULLSMAT) return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarBool(stack,2,&tab) == FAIL )
+	return RET_BUG;
+    }
   NSP_OBJECT(HMat1)->ret_pos = 1;
-  if (nsp_smatrix_strip_blanks(HMat1) == FAIL) return RET_BUG;
+  if (nsp_smatrix_strip_blanks(HMat1,tab) == FAIL) return RET_BUG;
   return 1;
 }
 
