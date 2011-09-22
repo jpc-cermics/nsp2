@@ -619,6 +619,11 @@ int nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
   int slice=10000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
+  if ( Mat == NULL) 
+    {
+      Sciprintf1(indent,"Error: cannot expand matrix for printing values\n");
+      return 0;
+    }
 
   if (user_pref.pr_as_read_syntax)
     {

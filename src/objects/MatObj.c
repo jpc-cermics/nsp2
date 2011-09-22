@@ -1544,19 +1544,57 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
       if (GetScalarDouble (stack, 3, &last) == FAIL)
 	return RET_BUG;
     }
-
-  /*  ifirst = (int) dfirst; istep = (int) step; ilast = (int) last; */
-  if ( 1 && dfirst == floor(dfirst)
-       && step == floor(step)
-       && last == floor(last) )
+  if (isnan(step) || isnan(last) || isnan(dfirst))
     {
-      if ((M = nsp_matrix_create_int_impl (dfirst, step, last)) == NULLMAT)
-	return RET_BUG;
+      Scierror("Error: %%nan should not be used for implicit vector creation\n");
+      return RET_BUG;
     }
-  else 
+  if ( isinf(step)) 
     {
-      if ((M = nsp_matrix_create_impl (dfirst, step, last)) == NULLMAT)
-	return RET_BUG;
+      Scierror("Error: %%inf should not be used for implicit vector step creation\n");
+      return RET_BUG;
+    }
+  if ( ! isinf(dfirst) && ! isinf(last))
+    {
+      if ((dfirst == floor(dfirst)) && (step == floor(step)) && (last == floor(last)))
+	{
+	  if ((M = nsp_matrix_create_int_impl (dfirst, step, last)) == NULLMAT)
+	    return RET_BUG;
+	}
+      else 
+	{
+	  if ((M = nsp_matrix_create_impl (dfirst, step, last)) == NULLMAT)
+	    return RET_BUG;
+	}
+    }
+  else
+    {
+      if ( isinf(dfirst) && isinf(last)) 
+	{
+	  if ( (M = nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT )
+	    return RET_BUG;
+	  M->R[0]=1; M->R[0]/= 0.0 ;
+	}
+      else if ( isinf(dfirst) )
+	{
+	  if ( (M = nsp_matrix_create(NVOID,'r',1,0)) == NULLMAT )
+	    return RET_BUG;
+	}
+      else
+	{
+	  /* XXXX : this is to be finished since implicit vectors 
+	   * 1:%inf will crash nsp when trying to expand them we 
+	   */
+	  Scierror("Error: %%inf should not be used for implicit vector last value\n");
+	  return RET_BUG;
+	  if ( (M = nsp_matrix_create(NVOID,'r',0,0)) == NULLMAT )
+	    return RET_BUG;
+	  M->m=1;
+	  M->n=M->mn=INT_MAX;/* XXX we would have liked infinity */
+	  M->impl[0]=dfirst;
+	  M->impl[1]=step;
+	  M->convert = 'u';
+	}
     }
   MoveObj (stack, 1, (NspObject *) M);
   return 1;
