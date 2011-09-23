@@ -22,6 +22,7 @@
 #include <setjmp.h>
 #include <nsp/nsp.h> 
 #include <nsp/matrix.h> 
+#include <nsp/cells.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
 #include <nsp/interf.h>
@@ -44,6 +45,8 @@ struct _hybr_data
   NspMatrix *x;    /* value of x */
   NspObject *fcn;
   NspObject *jac;
+  NspObject **targs; /* used to transmit func arguments x + additionnals ones from args */
+  int nargs;
   minpack_fcn1 f_fcn;
   minpack_fcn6 f_jac;
   minpack_fcn2 f_lfcn;
@@ -629,7 +632,7 @@ static int int_minpack_lsq_eval_jac (Stack stack, int rhs, int opt, int lhs)
  * if m >= 0 then for lmdiff or lmderr
  **/
 
-static int hybr_prepare(int m,int n,NspObject *fcn,NspObject *jac,NspObject *args,hybr_data *obj)
+static int hybr_prepare(int m, int n, NspObject *fcn, NspObject *jac, NspObject *args, hybr_data *obj)
 {
   if (( obj->fcn =nsp_object_copy(fcn)) == NULL) return FAIL;
   if (( nsp_object_set_name(obj->fcn,"hybr_fcn")== FAIL)) return FAIL;
@@ -646,11 +649,29 @@ static int hybr_prepare(int m,int n,NspObject *fcn,NspObject *jac,NspObject *arg
     {
       if (( obj->args = nsp_object_copy(args)) == NULL ) return FAIL;
       if (( nsp_object_set_name((NspObject *) obj->args,"arg")== FAIL)) return FAIL;
+      if ( IsCells(obj->args) )
+	{
+	  NspCells *C = (NspCells *) obj->args; 
+	  int k;
+	  obj->nargs = C->mn+1;
+	  if ( (obj->targs = malloc((C->mn+1)*sizeof(NspObject *))) == NULL ) return FAIL;
+	  for ( k = 0 ; k < C->mn ; k++ )
+	    obj->targs[k+1] = C->objs[k];
+	}
+      else
+	{
+	  if ( (obj->targs = malloc(2*sizeof(NspObject *))) == NULL ) return FAIL;
+	  obj->targs[1] = obj->args;
+	  obj->nargs = 2;
+	}
     }
   else 
     {
+      obj->nargs = 1;
       obj->args = NULL;
+      if ( (obj->targs = malloc(sizeof(NspObject *))) == NULL ) return FAIL;
     }
+
   if ((obj->x = nsp_matrix_create("x",'r',n,1))== NULL) return FAIL;
   return OK;
 }
@@ -664,7 +685,8 @@ static void hybr_clean(hybr_data *obj)
   if ( obj->args != NULL) nsp_object_destroy(&obj->args);
   nsp_object_destroy(&obj->fcn);
   if ( obj->jac != NULL)   nsp_object_destroy(&obj->jac);
-  nsp_matrix_destroy(obj->x);
+  nsp_matrix_destroy(obj->x);  
+  free(obj->targs); obj->targs = NULL;
 }
 
 /*
@@ -674,20 +696,16 @@ static void hybr_clean(hybr_data *obj)
 static int hybr_lfcn(const int *m,const int *n, double *x, double *fvec, int *iflag,void *hybr_obj_d)
 {
   hybr_data *hybr_obj = hybr_obj_d;
-  NspObject *targs[2];/* arguments to be transmited to hybr_obj->objective */
+  NspObject **targs = hybr_obj->targs; /* arguments to be transmited to hybr_obj->objective */
   NspObject *nsp_ret;
-  int nret = 1,nargs = 1, nres;
+  int nret = 1, nargs = hybr_obj->nargs, nres;
   int errcatch = hybr_obj->errcatch;
   int pausecatch = hybr_obj->pausecatch;
   targs[0]= NSP_OBJECT(hybr_obj->x); 
   memcpy(hybr_obj->x->R,x,hybr_obj->x->mn*sizeof(double));
   /* for ( i= 0 ; i < hybr_obj->x->mn ; i++) hybr_obj->x->R[i]= x[i];*/
   nres= *m;
-  if (hybr_obj->args != NULL ) 
-    {
-      targs[1]= NSP_OBJECT(hybr_obj->args);
-      nargs= 2;
-    }
+
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)hybr_obj->fcn ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {
@@ -731,9 +749,9 @@ static int hybr_ljac(const int *m,const int *n, double *x, double *fjac, int *ld
 		     int *iflag, void *hybr_obj_d)
 {
   hybr_data *hybr_obj = hybr_obj_d;
-  NspObject *targs[2];/* arguments to be transmited to hybr_obj->objective */
+  NspObject **targs=hybr_obj->targs; /* arguments to be transmited to hybr_obj->objective */
   NspObject *nsp_ret;
-  int nret = 1, nargs = 1, nres;
+  int nret = 1, nargs=hybr_obj->nargs, nres;
   int errcatch = hybr_obj->errcatch;
   int pausecatch = hybr_obj->pausecatch;
   targs[0]= NSP_OBJECT(hybr_obj->x); 
@@ -741,11 +759,6 @@ static int hybr_ljac(const int *m,const int *n, double *x, double *fjac, int *ld
   /* for ( i= 0 ; i < hybr_obj->x->mn ; i++) hybr_obj->x->R[i]= x[i]; */
   nres= (*m)*(*n);
 
-  if (hybr_obj->args != NULL ) 
-    {
-      targs[1]= NSP_OBJECT(hybr_obj->args);
-      nargs= 2;
-    }
   /* FIXME : a changer pour metre une fonction eval standard */
   if ( nsp_gtk_eval_function_catch((NspPList *)hybr_obj->jac ,targs,nargs,&nsp_ret,&nret,errcatch,pausecatch)== FAIL) 
     {

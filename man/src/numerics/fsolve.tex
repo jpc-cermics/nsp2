@@ -60,20 +60,20 @@ Note that, when \verb+fsolve+ is called with only 1 or 2 outputs arguments, an e
 when \verb+info <= 0+, and a warning is displayed in the nsp console when \verb+info >= 2+ except 
 if \verb+warn+ is set to \verb+%f+. 
 
-\itemdesc{form of the function {\tt f}}
-The function \verb+f+ takes one argument, a vector $x$ of length $n$ and possibly an additional
-argument which will be passed using the \verb+args=obj+ named optional argument. The function
-should return a vector of length $n$. It is possible to use a C or fortran function in place
-of an nsp function, this will be described in a next version of this manual page.
-
-\itemdesc{optional argument {\tt args}}
-Additional parameters to the function \verb+f+ (and also to the function which computes the Jacobian 
-if it is provided by the user) can be transmited using \verb+args=obj+. Where obj can be any nsp 
-object (see examples). In this case \verb+f+ has the form:
+\itemdesc{form of the function {\tt f} and optional argument {\tt args}}
+The function \verb+f+ takes one argument, a vector $x$ of length $n$ and possibly additional
+parameters \verb+p1, p2, ..., pm+ :
 \begin{quote}
-{\tt function y = f(x,obj) \\
+{\tt function y = f(x,p1,...,pm) \\
       ....}
 \end{quote}
+In this case, the additionnal parameters are passed using the optional argument {\tt args}
+this way \verb+args={p1,...,pm}+. Note that if $f$ has only one additional parameter it 
+is not mandatory to encapsulate it in a cell array (except when the parameter is it self 
+a cell array !). Additional parameters could be any nsp object. 
+
+The function should return a vector of length $n$. It is possible to use a C or fortran function in place
+of an nsp function, this will be described in a next version of this manual page.
 
 \itemdesc{optional {\tt jac} parameter}
 The solver needs $Jf$ the jacobian of $x \mapsto f(x)$ and this function can be given using 
@@ -83,10 +83,10 @@ The header of the nsp function which defines the Jacobian of \verb+f+ should be 
 {\tt function J = Jf(x) \\
       ....}\\
 or:\\
-{\tt function J = Jf(x,obj) \\
+{\tt function J = Jf(x,p1,...,pm) \\
      ....}
 \end{quote}
-when {\tt obj} is provided with {\tt args=obj}. 
+when additional parameters are needed (should be the same than for {\tt f}.
 Note that when the Jacobian is not given it is approximated by finite differences and it is 
 possible to get the result of the evaluated Jacobian using the function \verb+J=fsolve_jac(x,f)+.
 This gives a feature to test your own Jacobian if provided by comparing its evaluation with the 
@@ -139,7 +139,7 @@ function [f] = brusselator(u,eps)
         (5+eps)*u(1) - u(1)^2*u(2)]
 endfunction
 eps = 2;
-[z,fz,info] = fsolve([1;1],brusselator,args=eps)
+[z,fz,info] = fsolve([1;1],brusselator,args={eps}) // or simply args=eps
 
 // compute the relative error
 ze = [2 ; (5+eps)/2];

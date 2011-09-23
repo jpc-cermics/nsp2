@@ -78,6 +78,10 @@ $$
   [J_f(x)]_j = \omega_j \nabla_x {\cal M}(t_j, x) =  \omega_j \left[ \partial_{x_1}{\cal M}(t_j, x), \dots,
     \partial_{x_n}{\cal M}(t_j, x) \right]
 $$
+So in general you will have to pass additionnal parameters (other than $x$) to the 
+function \verb+f+ (and to its jacobian if you provide it) like the vectors with the 
+weights $\omega_j$ and the $t_j$ and $y_j$ values of this example. This is the 
+role of the \verb+args+ parameter. 
 %Note that when {\cal M} is linear in $x$, that is:
 %$$
 %{\cal M}(t,x) = \sum_{i=1}^m \phi_i(t) x_i
@@ -128,20 +132,18 @@ Note that, when \verb+fsolve_lsq+ is called with only 1 or 2 outputs arguments, 
 when \verb+info <= 0+, and a warning is displayed in the nsp console when \verb+info >= 1+ except 
 if \verb+warn+ is set to \verb+%f+. 
 
-\itemdesc{form of the function {\tt f}}
-The function \verb+f+ takes one argument, a vector $x$ of length $n$ and possibly an additional
-argument which will be passed using the \verb+args=obj+ named optional argument. The function
-should return a vector of length $m$. It is possible to use a C or fortran function in place
-of an nsp function, this will be described in a next version of this manual page.
-
-\itemdesc{optional argument {\tt args}}
-Additional parameters to the function \verb+f+ (and also to the function which computes the Jacobian 
-if it is provided by the user) can be transmited using \verb+args=obj+. Where obj can be any nsp 
-object (see examples). In this case \verb+f+ has the form:
+\itemdesc{form of the function {\tt f} and optional argument {\tt args}}
+The function \verb+f+ takes one argument, a vector $x$ of length $n$ and possibly additional parameters which will be passed using the \verb+args=obj+ named optional argument. If \verb+f+ has the form:
 \begin{quote}
-{\tt function y = f(x,obj) \\
+{\tt function y = f(x,p1,...,pn) \\
       ....}
 \end{quote}
+then \verb+args={p1,...,pn}+. Note that if $f$ has only one additional parameter 
+it is not mandatory to encapsulate it in a cell array (except when the parameter is it 
+self a cell array !). The additional parameters could be any nsp object. 
+The function
+should return a vector of length $m$. It is possible to use a C or fortran function in place
+of an nsp function, this will be described in a next version of this manual page.
 
 \itemdesc{optional {\tt jac} parameter}
 The solver needs $Jf$ the jacobian of $x \mapsto f(x)$ and this function can be given using 
@@ -151,10 +153,10 @@ The header of the nsp function which defines the Jacobian of \verb+f+ should be 
 {\tt function J = Jf(x) \\
       ....}\\
 or:\\
-{\tt function J = Jf(x,obj) \\
+{\tt function J = Jf(x,p1,...,pn) \\
      ....}
 \end{quote}
-when {\tt obj} is provided with {\tt args=obj}. 
+the additionnal parameters (should be the same than for $f$) being provided using {\tt args=\{p1,p2,...,pn\}}. 
 Note that when the Jacobian is not given it is approximated by finite differences and it is 
 possible to get the result of the evaluated Jacobian using the function \verb+J=fsolve_lsq_jac(x,f,m)+.
 This gives a feature to test your own Jacobian if provided by comparing its evaluation with the 
@@ -179,10 +181,9 @@ function y = expdecay(t, A, tau)
 endfunction
 
 // build the function f for fsolve_lsq
-function e = fun(x, obs)
-   // obs is a hash table with the observations
+function e = fun(x, w, t, y)
    A = x(1); tau = x(2);
-   e = obs.w.*( expdecay(obs.t, A, tau) - obs.y )
+   e = w.*( expdecay(t, A, tau) - y )
 endfunction
 
 // datas observations
@@ -190,12 +191,11 @@ m=10;    // nb of measures...
 tm=[0.25; 0.5; 0.75; 1.0; 1.25; 1.5; 1.75; 2.0; 2.25; 2.5];
 ym=[0.79; 0.59; 0.47; 0.36; 0.29; 0.23; 0.17; 0.15; 0.12; 0.08];
 wm=ones(m,1); // measure weights (here all equal to 1)
-obs = hash(3,t=tm,y=ym,w=wm);
 
 // initial parameters guess
 x0 = [1.5 ; 0.8];
 // call to fsolve_lsq
-xopt = fsolve_lsq(x0,fun, m, args=obs)
+xopt = fsolve_lsq(x0,fun, m, args={wm,tm,ym})
 
 // display results
 tt = linspace(0,1.1*max(tm),100)';
@@ -212,26 +212,25 @@ function dy = Dexpdecay(t, A, tau)
 endfunction
 
 // build the Jacobian of f
-function J = Jfun(x, obs)
-   // obs is a hash table with the observations
+function J = Jfun(x, w, t, y)
    A = x(1); tau = x(2);
-   J = Dexpdecay(obs.t, A, tau)
-   J.scale_rows[obs.w]
+   J = Dexpdecay(t, A, tau)
+   J.scale_rows[w]
 endfunction
 
 // verifying the Jacobian with fsolve_lsq_jac
 x = [0.5; 2]; 
-[fx, Jfx] = fsolve_lsq_jac(x, fun, m, args=obs);
-Jfxe =  Jfun(x, obs);
+[fx, Jfx] = fsolve_lsq_jac(x, fun, m, args={wm,tm,ym});
+Jfxe =  Jfun(x,wm,tm,ym);
 norm(Jfx-Jfxe,1)/norm(Jfxe)
 
 // verifying the Jacobian with derivative
-Jfx = derivative(fun,x, args=obs);
-Jfxe =  Jfun(x, obs);
+Jfx = derivative(fun,x, args={wm,tm,ym});
+Jfxe =  Jfun(x, wm, tm, ym);
 norm(Jfx-Jfxe,1)/norm(Jfxe)
 
 // call fsolve using jac=
-xopt = fsolve_lsq(x0,fun, m, jac=Jfun, args=hash(3,t=tm,y=ym,w=wm))
+xopt = fsolve_lsq(x0,fun, m, jac=Jfun, args={wm,tm,ym})
 \end{Verbatim}
 
 \end{examples}
