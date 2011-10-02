@@ -1699,7 +1699,8 @@ void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos po
  *
  */
 
-void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord)
+void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
+			  int Mm,int ncoord)
 {
   int i, k=0;
   double facteur;
@@ -1709,23 +1710,23 @@ void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos
        * thus we have to copy
        */
       double v[3];
-      v[0] = M[i];v[1] = M[i+ncoord]; v[2] = M[i+2*ncoord]; 
+      v[0] = M[i];v[1] = M[i+Mm]; v[2] = M[i+2*Mm]; 
       Coord[i]   = TRX(Xgc->scales,v[0],v[1],v[2]);
-      Coord[i+ncoord] = TRY(Xgc->scales,v[0],v[1],v[2]);
-      Coord[i+2*ncoord] = TRZ(Xgc->scales,v[0],v[1],v[2]);
-      if ( Coord[i+2*ncoord] < lim[2] )  
+      Coord[i+Mm] = TRY(Xgc->scales,v[0],v[1],v[2]);
+      Coord[i+2*Mm] = TRZ(Xgc->scales,v[0],v[1],v[2]);
+      if ( Coord[i+2*Mm] < lim[2] )  
 	{
 	  pos[k] = OUT_Z; /* dans ce cas on applique pas la perspective */
 	}
       else
 	{
 	  /* on applique la perspective */
-	  facteur = 1.0/Coord[i+2*ncoord];
+	  facteur = 1.0/Coord[i+2*Mm];
 	  facteur = 1.0;
 	  Coord[i]   = facteur*Coord[i];
-	  Coord[i+ncoord] = facteur*Coord[i+ncoord];
+	  Coord[i+Mm] = facteur*Coord[i+Mm];
 	  /* le point est-il dans le rectangle de visu ? */
-	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+ncoord]) > lim[1] ) 
+	  if ( fabs(Coord[i]) > lim[0] || fabs(Coord[i+Mm]) > lim[1] ) 
 	    pos[k] = OUT_XY;
 	  else
 	    pos[k] = VIN;
@@ -2804,4 +2805,4 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 }
 
 
-#line 2808 "objs3d.c"
+#line 2809 "objs3d.c"

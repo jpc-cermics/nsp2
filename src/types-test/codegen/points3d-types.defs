@@ -11,6 +11,7 @@
     '("int" "mark_type" "std" "-1")
     '("int" "mark_size" "std" "-1")
     '("int*" "pos" "hidden" )
+    '("int" "max" "hidden" "-1")
     )
   (gtype-id "Points3d")
 )

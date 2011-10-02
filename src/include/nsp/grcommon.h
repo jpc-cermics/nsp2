@@ -30,7 +30,9 @@ extern void fillpolylines3D(BCG *Xgc,double *vectsx, double *vectsy, double *vec
 /* extern  int nsp_obj3d_orientation(int x[], int y[], int n); */
 extern void nsp_figure_force_redraw(nsp_figure *F,void *rect);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
-extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
+				 int Mm,int ncoord);
+
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine;
 #endif 
@@ -43,9 +45,8 @@ extern NspMatrix *nsp_surf_to_coords(const char *name,NspMatrix *C,double *x,dou
 extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol,int m,int n,
 			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr );
 
-
-
-extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
+				 int Mm,int ncoord);
 extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 
 extern void fillpolylines3D_shade(BCG *Xgc,double *vectsx, double *vectsy, double *vectsz, int *fillvect,int n, int p);

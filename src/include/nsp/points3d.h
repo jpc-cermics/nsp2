@@ -55,6 +55,7 @@ struct _nsp_points3d {
   int mark_type;
   int mark_size;
   int* pos;  int pos_length;
+  int max;
   int ref_count;
 };
 
@@ -84,7 +85,7 @@ NspPoints3d *new_points3d();
 
 #define NULLPOINTS3D (NspPoints3d*) 0
 
-extern NspPoints3d *nsp_points3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,NspTypeBase *type);
+extern NspPoints3d *nsp_points3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,int color,int mark_type,int mark_size,int* pos, int pos_length,int max,NspTypeBase *type);
 extern NspPoints3d *nsp_points3d_create_default(const char *name);
 
 /* from NspPoints3dObj.c */
@@ -116,8 +117,9 @@ extern int nsp_points3d_xdr_save(XDR  *xdrs, NspPoints3d *M);
 extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double *Amax) ;
 extern BCG *nsp_check_graphic_context(void);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
+extern int nsp_points3d_add_pts(NspGraphic *P,int k);
 
-#line 121 "./points3d.h"
+#line 123 "./points3d.h"
 #endif /* NSP_INC_NspPoints3d */ 
 
 #ifdef NspPoints3d_Private 
@@ -132,7 +134,7 @@ static AttrTab points3d_attrs[];
 static NspMethods *points3d_get_methods(void);
 /* static int int_points3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPoints3d *nsp_points3d_create_void(const char *name,NspTypeBase *type);
-#line 18 "codegen/points3d.override"
+#line 19 "codegen/points3d.override"
 static void nsp_draw_points3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 static void nsp_translate_points3d(NspGraphic *o,const double *tr);
 static void nsp_rotate_points3d(NspGraphic *o,double *R);
@@ -148,6 +150,6 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 152 "./points3d.h"
+#line 154 "./points3d.h"
 #endif /* NspPoints3d_Private */
 

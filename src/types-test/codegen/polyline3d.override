@@ -9,6 +9,7 @@ include-public  Polyline3d
 
 /* inserted at the end of public part of include file */
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+extern int nsp_polyline3d_add_pts(NspGraphic *P,int k);
 
 %%
 include-private  Polyline3d
@@ -144,7 +145,9 @@ static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
       /* draw all the faces: this is not really used  
        * since the face order is computed and sequenced in upper object.
        */
-      for ( i= 0 ; i < ((NspPolyline3d *) Obj)->obj->Mcoord->m -1; i++) 
+      nsp_polyline3d *L = ((NspPolyline3d *) Obj)->obj;
+      int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
+      for ( i= 0 ; i < npts-1; i++) 
 	draw_polyline3d_face(Xgc,Obj,i);
     }
 }
@@ -171,15 +174,17 @@ extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double 
 
 static int nsp_getbounds_polyline3d(NspGraphic *Obj,double *bounds)
 {
-  int i;
+  int i,max;
   /* this should be stored in a cache and recomputed when necessary 
    *
    */
   nsp_polyline3d *Q= ((NspPolyline3d *) Obj)->obj;
   nsp_check_polyline3d((NspPolyline3d *) Obj);
-  if ( Q->Mcoord->mn == 0) return FALSE;
+  /* if qmax != -1 we ignore points after Q->max*/
+  max = (Q->max >= 0 ) ? Q->max : Q->Mcoord->m;
+  if ( max == 0) return FALSE;
   for ( i = 0 ; i < Q->Mcoord->n ; i++) 
-    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
+    nsp_gr_bounds_min_max(max,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
   return TRUE;
 }
 
@@ -187,7 +192,6 @@ static int nsp_getbounds_polyline3d(NspGraphic *Obj,double *bounds)
 int nsp_check_polyline3d( NspPolyline3d *P)
 {
   nsp_polyline3d *L = P->obj;
-  int L_nb_coords = L->Mcoord->m;
 
   if ( L->Mcoord->n != 3 ) 
     {
@@ -195,9 +199,13 @@ int nsp_check_polyline3d( NspPolyline3d *P)
       return FAIL;
     }
 
+  /* we must have one color or a number of colors equal to 
+   * the number of segments
+   */
+
   if ( L->Mcolor->mn != L->Mcoord->m -1 && L->Mcolor->mn != 1 ) 
     {
-      Scierror("Erro: bad color for polyline3d object\n");
+      Scierror("Error: bad color for polyline3d object\n");
     }
 
   L->Mcolor = Mat2int(L->Mcolor);
@@ -205,8 +213,8 @@ int nsp_check_polyline3d( NspPolyline3d *P)
   /* create extra data for qpos declared int* 
    * Q->pos id only usefull for non opengl driver 
    */
-  if ( L->pos == NULL) L->pos = malloc( L_nb_coords * sizeof(VisionPos));
-  L->pos_length = L_nb_coords;
+  if ( L->pos == NULL) L->pos = malloc( L->Mcoord->m * sizeof(VisionPos));
+  L->pos_length = L->Mcoord->m;
   
   /* create extra data for Mcoord_l declared void* */
   if ( L->Mcoord_l == NULL) 
@@ -219,15 +227,14 @@ int nsp_check_polyline3d( NspPolyline3d *P)
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_polyline3d *L = ((NspPolyline3d *) Ob)->obj;
-  double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
-  int L_nb_colors = L->Mcolor->mn ;
-  int *L_color = L->Mcolor->I;
-  int L_nb_coords = L->Mcoord->m;
+  const double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
+  const int L_nb_colors = L->Mcolor->mn ;
+  const int *L_color = L->Mcolor->I;
   int x[2], y[2], color, n=2, flag=0;
   x[0] = XScale(Xgc->scales,L_coord[j]);
-  y[0] = YScale(Xgc->scales,L_coord[j+L_nb_coords]);
+  y[0] = YScale(Xgc->scales,L_coord[j+L->Mcoord->m]);
   x[1] = XScale(Xgc->scales,L_coord[j+1]);
-  y[1] = YScale(Xgc->scales,L_coord[j+1+L_nb_coords]);
+  y[1] = YScale(Xgc->scales,L_coord[j+1+L->Mcoord->m]);
   color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
 }
@@ -240,18 +247,18 @@ static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
   double x[2], y[2],z[2];
   int  n=2, flag=0;
   double * L_coord = ((NspMatrix *) L->Mcoord)->R;
-  int L_nb_coords = L->Mcoord->m;
   int *L_color = L->Mcolor->I;
   int L_nb_colors = L->Mcolor->mn ;
-  for ( j = 0 ; j < L_nb_coords-1 ; j++ )
+  int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
+  for ( j = 0 ; j < npts -1 ; j++ )
     {
       color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
       x[0] = L_coord[j];
-      y[0] = L_coord[j+L_nb_coords];
-      z[0] = L_coord[j+2*L_nb_coords];
+      y[0] = L_coord[j+L->Mcoord->m];
+      z[0] = L_coord[j+2*L->Mcoord->m];
       x[1] = L_coord[j+1];
-      y[1] = L_coord[j+1+L_nb_coords];
-      z[1] = L_coord[j+1+2*L_nb_coords];
+      y[1] = L_coord[j+1+L->Mcoord->m];
+      z[1] = L_coord[j+1+2*L->Mcoord->m];
       drawsegments3D(Xgc, x, y ,z, n, &color, flag);
     }
 #endif
@@ -263,10 +270,10 @@ static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int
   int j;
   double zmean;
   double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
-  int L_nb_coords = L->Mcoord->m;
-  for ( j = 0 ; j < L_nb_coords-1 ; j++ )
+  int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
+  for ( j = 0 ; j < npts -1 ; j++ )
     {
-      zmean = 0.5 * (L_coord[j+2*L_nb_coords] + L_coord[j+1+2*L_nb_coords]);
+      zmean = 0.5 * (L_coord[j+2*L->Mcoord->m] + L_coord[j+1+2*L->Mcoord->m]);
       if (L->pos[j] != OUT_Z && L->pos[j+1] != OUT_Z)
 	if (L->pos[j] == VIN || L->pos[j+1] == VIN)
 	  { 
@@ -286,7 +293,8 @@ static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int
 static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_polyline3d *Q= ((NspPolyline3d *) Obj)->obj;
-  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
+  int npts = (Q->max >=0 ) ? Q->max : Q->Mcoord->m;
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m,npts );
   zmean_faces_for_Polyline3d(Obj, z,  HF, n, k);
 }
 
@@ -296,6 +304,65 @@ static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, 
 
 static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 {
-  return ((NspPolyline3d *) Obj)->obj->Mcoord->m -1;
+  return Max(((NspPolyline3d *) Obj)->obj->Mcoord->m -1,0);
 }
 
+/* increases the number of points of the polyline 
+ * Note that its possible to draw a polyline without 
+ * including all points by locally changing L->Mcoord->m 
+ */
+
+extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
+{
+  nsp_polyline3d *L =((NspPolyline3d *) P)->obj;
+  if ( k <=0) return OK;
+
+  if ( nsp_matrix_add_rows(L->Mcoord,k) == FAIL )
+    {
+      Scierror("Failed to allocate points in a polyline3d\n");
+      return FAIL;
+    }
+  if ( nsp_matrix_add_rows(L->Mcoord_l,k) == FAIL )
+    {
+      Scierror("Failed to allocate points in a polyline3d\n");
+      return FAIL;
+    }
+  
+  /* we must have one color or a number of colors equal to 
+   * the number of segments
+   */
+
+  L->Mcolor = Mat2int(L->Mcolor);
+  
+  if ( L->Mcolor->mn != L->Mcoord->m -1 && L->Mcolor->mn != 1 ) 
+    {
+      int i,m;
+      /* increase color size */
+      m= L->Mcolor->m = L->Mcolor->mn; L->Mcolor->n=1;
+      if ( nsp_matrix_add_rows(L->Mcoord_l,k) == FAIL )
+	{
+	  Scierror("Failed to allocate points in a polyline3d\n");
+	  return FAIL;
+	}
+      for (i = 0 ; i < k ; i++) L->Mcolor->I[m+i]= L->Mcolor->I[m-1];
+    }
+
+  /* create extra data for qpos declared int* 
+   * Q->pos id only usefull for non opengl driver 
+   */
+  if ( L->pos == NULL) 
+    L->pos = malloc( L->Mcoord->m * sizeof(VisionPos));
+  else 
+    {
+      void *old=L->pos;
+      L->pos = malloc(L->Mcoord->m * sizeof(VisionPos));
+      if ( L->pos == NULL) 
+	{
+	  Scierror("Failed to allocate points in a polyline3d\n");
+	  return FAIL;
+	}
+      FREE(old);
+    }
+  
+  return OK;
+}

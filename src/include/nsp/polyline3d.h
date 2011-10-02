@@ -53,6 +53,7 @@ struct _nsp_polyline3d {
   void* Mcoord_l;
   NspMatrix* Mcolor;
   int* pos;  int pos_length;
+  int max;
   int ref_count;
 };
 
@@ -82,7 +83,7 @@ NspPolyline3d *new_polyline3d();
 
 #define NULLPOLYLINE3D (NspPolyline3d*) 0
 
-extern NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type);
+extern NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,int max,NspTypeBase *type);
 extern NspPolyline3d *nsp_polyline3d_create_default(const char *name);
 
 /* from NspPolyline3dObj.c */
@@ -111,8 +112,9 @@ extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 
 /* inserted at the end of public part of include file */
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
+extern int nsp_polyline3d_add_pts(NspGraphic *P,int k);
 
-#line 116 "./polyline3d.h"
+#line 118 "./polyline3d.h"
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
@@ -127,7 +129,7 @@ static AttrTab polyline3d_attrs[];
 static NspMethods *polyline3d_get_methods(void);
 /* static int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspPolyline3d *nsp_polyline3d_create_void(const char *name,NspTypeBase *type);
-#line 15 "codegen/polyline3d.override"
+#line 16 "codegen/polyline3d.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -144,6 +146,6 @@ static int nsp_check_polyline3d(NspPolyline3d *P);
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 148 "./polyline3d.h"
+#line 150 "./polyline3d.h"
 #endif /* NspPolyline3d_Private */
 

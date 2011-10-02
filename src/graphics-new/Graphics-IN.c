@@ -672,12 +672,12 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 	  NspMatrix *Mcol;
 	  if ((Mcol = nsp_matrix_create("col",'r',1,1))== NULLMAT) return RET_BUG;
 	  Mcol->R[0]=color;
-	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,NULL,0,NULL);
+	  gobj = (NspObject *)nsp_polyline3d_create("pol",M1,NULL,Mcol,NULL,0,-1,NULL);
 	  if ( gobj == NULL)  return RET_BUG;
 	}
       else
 	{
-	  gobj = (NspObject *)nsp_points3d_create("pts",M1,NULL,-1,-color,-1,NULL,0,NULL);
+	  gobj = (NspObject *)nsp_points3d_create("pts",M1,NULL,-1,-color,-1,NULL,0,-1,NULL);
 	  if ( gobj == NULL)  return RET_BUG;
 	}
       if ( nsp_objs3d_insert_child(objs3d, (NspGraphic *) gobj,FALSE)== FAIL)

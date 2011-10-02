@@ -9,6 +9,7 @@
     '("void*"      "Mcoord_l"  "hidden" "NULL" )
     '("NspMatrix*" "Mcolor")
     '("int*" "pos" "hidden" )
+    '("int"  "max" "hidden" "-1" ) ; do not draw points after max 
     )
   (gtype-id "Polyline3d")
 )

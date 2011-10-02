@@ -1302,7 +1302,7 @@ static void nsp_polyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, 
 {
   nsp_polyhedron *Q= ((NspPolyhedron *) Obj)->obj;
   /* apply_transforms(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->n); */
-  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m,Q->Mcoord->m);
   zmean_faces_for_Polyhedron(Obj, z,  HF, n, k);
 }
 

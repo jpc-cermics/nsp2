@@ -24,7 +24,7 @@
 
 
 
-#line 33 "codegen/polyline3d.override"
+#line 34 "codegen/polyline3d.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/polyline3d.h>
@@ -107,7 +107,7 @@ NspTypePolyline3d *new_type_polyline3d(type_mode mode)
 
   type->init = (init_func *) init_polyline3d;
 
-#line 50 "codegen/polyline3d.override"
+#line 51 "codegen/polyline3d.override"
   /* inserted verbatim in the type definition 
    * here we override the method og its father class i.e Graphic
    */
@@ -223,6 +223,7 @@ static int nsp_polyline3d_eq(NspPolyline3d *A, NspObject *B)
     for ( i = 0 ; i < A->obj->pos_length ; i++)
       if ( A->obj->pos[i] != loc->obj->pos[i]) return FALSE;
   }
+  if ( A->obj->max != loc->obj->max) return FALSE;
   return TRUE;
 }
 
@@ -282,11 +283,11 @@ static NspPolyline3d  *nsp_polyline3d_xdr_load(XDR *xdrs)
   if ( nsp_polyline3d_create_partial(H) == FAIL) return NULLPOLYLINE3D;
   if ((H  = nsp_polyline3d_xdr_load_partial(xdrs,H))== NULLPOLYLINE3D) return H;
   if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
-#line 74 "codegen/polyline3d.override"
+#line 75 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 290 "polyline3d.c"
+#line 291 "polyline3d.c"
   return H;
 }
 
@@ -300,11 +301,11 @@ void nsp_polyline3d_destroy_partial(NspPolyline3d *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 79 "codegen/polyline3d.override"
+#line 80 "codegen/polyline3d.override"
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 308 "polyline3d.c"
+#line 309 "polyline3d.c"
     if ( H->obj->Mcoord != NULL ) 
       nsp_matrix_destroy(H->obj->Mcoord);
     if ( H->obj->Mcolor != NULL ) 
@@ -371,6 +372,7 @@ int nsp_polyline3d_print(NspPolyline3d *M, int indent,const char *name, int rec_
   if ( M->obj->Mcolor != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"max=%d\n",M->obj->max);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -394,6 +396,7 @@ int nsp_polyline3d_latex(NspPolyline3d *M, int indent,const char *name, int rec_
   if ( M->obj->Mcolor != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->Mcolor),indent+2,"Mcolor",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"max=%d\n",M->obj->max);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -468,6 +471,7 @@ int nsp_polyline3d_create_partial(NspPolyline3d *H)
   H->obj->Mcoord_l = NULL;
   H->obj->Mcolor = NULLMAT;
   H->obj->pos = NULL; H->obj->pos_length = 0; 
+  H->obj->max = -1;
   return OK;
 }
 
@@ -489,7 +493,7 @@ int nsp_polyline3d_check_values(NspPolyline3d *H)
   return OK;
 }
 
-NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,NspTypeBase *type)
+NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord_l,NspMatrix* Mcolor,int* pos, int pos_length,int max,NspTypeBase *type)
 {
   NspPolyline3d *H  = nsp_polyline3d_create_void(name,type);
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
@@ -499,12 +503,13 @@ NspPolyline3d *nsp_polyline3d_create(const char *name,NspMatrix* Mcoord,void* Mc
   H->obj->Mcolor= Mcolor;
   H->obj->pos = pos;
   H->obj->pos_length = pos_length;
+  H->obj->max=max;
   if ( nsp_polyline3d_check_values(H) == FAIL) return NULLPOLYLINE3D;
-#line 74 "codegen/polyline3d.override"
+#line 75 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 508 "polyline3d.c"
+#line 513 "polyline3d.c"
   return H;
 }
 
@@ -561,6 +566,7 @@ NspPolyline3d *nsp_polyline3d_full_copy_partial(NspPolyline3d *H,NspPolyline3d *
   if ((H->obj->pos = malloc(self->obj->pos_length*sizeof(int)))== NULL) return NULL;
   H->obj->pos_length = self->obj->pos_length;
   memcpy(H->obj->pos,self->obj->pos,self->obj->pos_length*sizeof(int));
+  H->obj->max=self->obj->max;
   return H;
 }
 
@@ -570,11 +576,11 @@ NspPolyline3d *nsp_polyline3d_full_copy(NspPolyline3d *self)
   if ( H ==  NULLPOLYLINE3D) return NULLPOLYLINE3D;
   if ( nsp_graphic_full_copy_partial((NspGraphic *) H,(NspGraphic *) self ) == NULL) return NULLPOLYLINE3D;
   if ( nsp_polyline3d_full_copy_partial(H,self)== NULL) return NULLPOLYLINE3D;
-#line 74 "codegen/polyline3d.override"
+#line 75 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return NULL; 
 
-#line 578 "polyline3d.c"
+#line 584 "polyline3d.c"
   return H;
 }
 
@@ -594,11 +600,11 @@ int int_polyline3d_create(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_polyline3d_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_polyline3d_check_values(H) == FAIL) return RET_BUG;
-#line 74 "codegen/polyline3d.override"
+#line 75 "codegen/polyline3d.override"
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_polyline3d(H)== FAIL) return RET_BUG; 
 
-#line 602 "polyline3d.c"
+#line 608 "polyline3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -679,7 +685,7 @@ static AttrTab polyline3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 84 "codegen/polyline3d.override"
+#line 85 "codegen/polyline3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -688,10 +694,10 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 692 "polyline3d.c"
+#line 698 "polyline3d.c"
 
 
-#line 94 "codegen/polyline3d.override"
+#line 95 "codegen/polyline3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -701,7 +707,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 705 "polyline3d.c"
+#line 711 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -732,7 +738,7 @@ void Polyline3d_Interf_Info(int i, char **fname, function (**f))
   *f = Polyline3d_func[i].fonc;
 }
 
-#line 105 "codegen/polyline3d.override"
+#line 106 "codegen/polyline3d.override"
 
 /* inserted verbatim at the end */
 
@@ -775,7 +781,9 @@ static void nsp_draw_polyline3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *re
       /* draw all the faces: this is not really used  
        * since the face order is computed and sequenced in upper object.
        */
-      for ( i= 0 ; i < ((NspPolyline3d *) Obj)->obj->Mcoord->m -1; i++) 
+      nsp_polyline3d *L = ((NspPolyline3d *) Obj)->obj;
+      int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
+      for ( i= 0 ; i < npts-1; i++) 
 	draw_polyline3d_face(Xgc,Obj,i);
     }
 }
@@ -802,15 +810,17 @@ extern void nsp_gr_bounds_min_max(int n,double *A,int incr,double *Amin, double 
 
 static int nsp_getbounds_polyline3d(NspGraphic *Obj,double *bounds)
 {
-  int i;
+  int i,max;
   /* this should be stored in a cache and recomputed when necessary 
    *
    */
   nsp_polyline3d *Q= ((NspPolyline3d *) Obj)->obj;
   nsp_check_polyline3d((NspPolyline3d *) Obj);
-  if ( Q->Mcoord->mn == 0) return FALSE;
+  /* if qmax != -1 we ignore points after Q->max*/
+  max = (Q->max >= 0 ) ? Q->max : Q->Mcoord->m;
+  if ( max == 0) return FALSE;
   for ( i = 0 ; i < Q->Mcoord->n ; i++) 
-    nsp_gr_bounds_min_max(Q->Mcoord->m,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
+    nsp_gr_bounds_min_max(max,Q->Mcoord->R+i*Q->Mcoord->m,1,&bounds[2*i],&bounds[2*i+1]);
   return TRUE;
 }
 
@@ -818,7 +828,6 @@ static int nsp_getbounds_polyline3d(NspGraphic *Obj,double *bounds)
 int nsp_check_polyline3d( NspPolyline3d *P)
 {
   nsp_polyline3d *L = P->obj;
-  int L_nb_coords = L->Mcoord->m;
 
   if ( L->Mcoord->n != 3 ) 
     {
@@ -826,9 +835,13 @@ int nsp_check_polyline3d( NspPolyline3d *P)
       return FAIL;
     }
 
+  /* we must have one color or a number of colors equal to 
+   * the number of segments
+   */
+
   if ( L->Mcolor->mn != L->Mcoord->m -1 && L->Mcolor->mn != 1 ) 
     {
-      Scierror("Erro: bad color for polyline3d object\n");
+      Scierror("Error: bad color for polyline3d object\n");
     }
 
   L->Mcolor = Mat2int(L->Mcolor);
@@ -836,8 +849,8 @@ int nsp_check_polyline3d( NspPolyline3d *P)
   /* create extra data for qpos declared int* 
    * Q->pos id only usefull for non opengl driver 
    */
-  if ( L->pos == NULL) L->pos = malloc( L_nb_coords * sizeof(VisionPos));
-  L->pos_length = L_nb_coords;
+  if ( L->pos == NULL) L->pos = malloc( L->Mcoord->m * sizeof(VisionPos));
+  L->pos_length = L->Mcoord->m;
   
   /* create extra data for Mcoord_l declared void* */
   if ( L->Mcoord_l == NULL) 
@@ -850,15 +863,14 @@ int nsp_check_polyline3d( NspPolyline3d *P)
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j)
 {
   nsp_polyline3d *L = ((NspPolyline3d *) Ob)->obj;
-  double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
-  int L_nb_colors = L->Mcolor->mn ;
-  int *L_color = L->Mcolor->I;
-  int L_nb_coords = L->Mcoord->m;
+  const double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
+  const int L_nb_colors = L->Mcolor->mn ;
+  const int *L_color = L->Mcolor->I;
   int x[2], y[2], color, n=2, flag=0;
   x[0] = XScale(Xgc->scales,L_coord[j]);
-  y[0] = YScale(Xgc->scales,L_coord[j+L_nb_coords]);
+  y[0] = YScale(Xgc->scales,L_coord[j+L->Mcoord->m]);
   x[1] = XScale(Xgc->scales,L_coord[j+1]);
-  y[1] = YScale(Xgc->scales,L_coord[j+1+L_nb_coords]);
+  y[1] = YScale(Xgc->scales,L_coord[j+1+L->Mcoord->m]);
   color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
   Xgc->graphic_engine->drawsegments(Xgc, x, y , n, &color, flag);
 }
@@ -871,18 +883,18 @@ static void draw_polyline3d_ogl(BCG *Xgc,void *Ob)
   double x[2], y[2],z[2];
   int  n=2, flag=0;
   double * L_coord = ((NspMatrix *) L->Mcoord)->R;
-  int L_nb_coords = L->Mcoord->m;
   int *L_color = L->Mcolor->I;
   int L_nb_colors = L->Mcolor->mn ;
-  for ( j = 0 ; j < L_nb_coords-1 ; j++ )
+  int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
+  for ( j = 0 ; j < npts -1 ; j++ )
     {
       color = ( L_nb_colors == 1 ) ? L_color[0] : L_color[j];
       x[0] = L_coord[j];
-      y[0] = L_coord[j+L_nb_coords];
-      z[0] = L_coord[j+2*L_nb_coords];
+      y[0] = L_coord[j+L->Mcoord->m];
+      z[0] = L_coord[j+2*L->Mcoord->m];
       x[1] = L_coord[j+1];
-      y[1] = L_coord[j+1+L_nb_coords];
-      z[1] = L_coord[j+1+2*L_nb_coords];
+      y[1] = L_coord[j+1+L->Mcoord->m];
+      z[1] = L_coord[j+1+2*L->Mcoord->m];
       drawsegments3D(Xgc, x, y ,z, n, &color, flag);
     }
 #endif
@@ -894,10 +906,10 @@ static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int
   int j;
   double zmean;
   double * L_coord = ((NspMatrix *) L->Mcoord_l)->R;
-  int L_nb_coords = L->Mcoord->m;
-  for ( j = 0 ; j < L_nb_coords-1 ; j++ )
+  int npts = (L->max >=0 ) ? L->max : L->Mcoord->m;
+  for ( j = 0 ; j < npts -1 ; j++ )
     {
-      zmean = 0.5 * (L_coord[j+2*L_nb_coords] + L_coord[j+1+2*L_nb_coords]);
+      zmean = 0.5 * (L_coord[j+2*L->Mcoord->m] + L_coord[j+1+2*L->Mcoord->m]);
       if (L->pos[j] != OUT_Z && L->pos[j+1] != OUT_Z)
 	if (L->pos[j] == VIN || L->pos[j+1] == VIN)
 	  { 
@@ -917,7 +929,8 @@ static void zmean_faces_for_Polyline3d(void *Obj, double z[], HFstruct HF[], int
 static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_polyline3d *Q= ((NspPolyline3d *) Obj)->obj;
-  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
+  int npts = (Q->max >=0 ) ? Q->max : Q->Mcoord->m;
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m,npts );
   zmean_faces_for_Polyline3d(Obj, z,  HF, n, k);
 }
 
@@ -927,8 +940,67 @@ static void nsp_polyline3d_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, 
 
 static int nsp_polyline3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 {
-  return ((NspPolyline3d *) Obj)->obj->Mcoord->m -1;
+  return Max(((NspPolyline3d *) Obj)->obj->Mcoord->m -1,0);
 }
 
+/* increases the number of points of the polyline 
+ * Note that its possible to draw a polyline without 
+ * including all points by locally changing L->Mcoord->m 
+ */
 
-#line 935 "polyline3d.c"
+extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
+{
+  nsp_polyline3d *L =((NspPolyline3d *) P)->obj;
+  if ( k <=0) return OK;
+
+  if ( nsp_matrix_add_rows(L->Mcoord,k) == FAIL )
+    {
+      Scierror("Failed to allocate points in a polyline3d\n");
+      return FAIL;
+    }
+  if ( nsp_matrix_add_rows(L->Mcoord_l,k) == FAIL )
+    {
+      Scierror("Failed to allocate points in a polyline3d\n");
+      return FAIL;
+    }
+  
+  /* we must have one color or a number of colors equal to 
+   * the number of segments
+   */
+
+  L->Mcolor = Mat2int(L->Mcolor);
+  
+  if ( L->Mcolor->mn != L->Mcoord->m -1 && L->Mcolor->mn != 1 ) 
+    {
+      int i,m;
+      /* increase color size */
+      m= L->Mcolor->m = L->Mcolor->mn; L->Mcolor->n=1;
+      if ( nsp_matrix_add_rows(L->Mcoord_l,k) == FAIL )
+	{
+	  Scierror("Failed to allocate points in a polyline3d\n");
+	  return FAIL;
+	}
+      for (i = 0 ; i < k ; i++) L->Mcolor->I[m+i]= L->Mcolor->I[m-1];
+    }
+
+  /* create extra data for qpos declared int* 
+   * Q->pos id only usefull for non opengl driver 
+   */
+  if ( L->pos == NULL) 
+    L->pos = malloc( L->Mcoord->m * sizeof(VisionPos));
+  else 
+    {
+      void *old=L->pos;
+      L->pos = malloc(L->Mcoord->m * sizeof(VisionPos));
+      if ( L->pos == NULL) 
+	{
+	  Scierror("Failed to allocate points in a polyline3d\n");
+	  return FAIL;
+	}
+      FREE(old);
+    }
+  
+  return OK;
+}
+
+#line 1007 "polyline3d.c"

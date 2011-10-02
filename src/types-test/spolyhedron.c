@@ -1558,7 +1558,7 @@ static void zmean_faces_for_SPolyhedron(void *Obj, double z[], HFstruct HF[], in
 static void nsp_spolyhedron_zmean(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, int k, double *lim)
 {
   nsp_spolyhedron *Q= ((NspSPolyhedron *) Obj)->obj;
-  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m);
+  apply_transforms_new(Xgc,((NspMatrix *) Q->Mcoord_l)->R,Q->Mcoord->R,Q->pos, lim, Q->Mcoord->m, Q->Mcoord->m);
   zmean_faces_for_SPolyhedron(Obj, z,  HF, n, k);
 }
 
