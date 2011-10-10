@@ -4834,38 +4834,52 @@ int int_nearfloat(Stack stack, int rhs, int opt, int lhs)
 /*
  * [m,e] = frexp(x)  x is changed (in m) 
  */
-
 int
 int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
 {
-  int i, exposant;
+  int i, exposant, rep=0;
   NspMatrix *x, *e;
-  CheckRhs (1, 1);
+  char *output = NULL;
+  nsp_option opts[] ={{"output",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  char *output_possible_choices[]={ "usual", "int",  NULL };
+
+  CheckStdRhs (1, 1);
   CheckLhs (1, 2);
+  CheckOptRhs(0, 1)
 
   if ( (x = GetRealMatCopy (stack, 1)) == NULLMAT )
     return RET_BUG;
   NSP_OBJECT (x)->ret_pos = 1;
 
-  if ( lhs == 1 )
+  if ( opt > 0 )
     {
-      for ( i = 0 ; i < x->mn ; i++ )
-	x->R[i] = frexp( x->R[i], &exposant);
-      return 1;
-    }
-  else  /* lhs == 2 */
-    {
-      if ( (e = nsp_matrix_create(NVOID,'r',x->m, x->n)) == NULLMAT )
+      if ( get_optional_args(stack, rhs, opt, opts, &output) == FAIL )
 	return RET_BUG;
-
-      for ( i = 0 ; i < x->mn ; i++ )
+      rep = is_string_in_array(output, output_possible_choices, 1);
+      if ( rep < 0 )
 	{
-	  x->R[i] = frexp( x->R[i], &exposant);
-	  e->R[i] = (double) exposant;
+	  string_not_in_array(stack, output, output_possible_choices, "optional argument output");
+	  return RET_BUG;
 	}
-      MoveObj(stack, 2, (NspObject *) e);
-      return 2;
     }
+
+  if ( (e = nsp_matrix_create(NVOID,'r',x->m, x->n)) == NULLMAT )
+    return RET_BUG;
+
+  for ( i = 0 ; i < x->mn ; i++ )
+    {
+      x->R[i] = frexp( x->R[i], &exposant);
+      e->R[i] = (double) exposant;
+      if ( rep == 1 && finite(x->R[i]) ) /* output == "int" so get the form m*2^e with m an integer */
+	while ( x->R[i] != floor(x->R[i]) )
+	  {
+	    x->R[i] *= 2.0; e->R[i] -= 1.0;
+	  }
+    }
+
+  MoveObj(stack, 2, (NspObject *) e);
+  return 2;
 }
 
 
