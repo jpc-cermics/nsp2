@@ -35,6 +35,7 @@ $$
         \frac{1}{\beta(a,b)} x^{a-1}(1-x)^{b-1} \;
         \mbox{for } x \in (0,1)
 $$
+\href{http://en.wikipedia.org/wiki/Beta_distribution}{Wikipedia page on beta distribution}.
 
 \item \itemdesc{\hypertarget{binpdf}{binomial}} \verb!y=pdf("bin",x,n,p)!. Computes
   the binomial mass function with parameters $p \in [0,1]$ and $n$
@@ -42,6 +43,7 @@ $$
 $$
      f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x} \;\mbox{for } x \in \{0,1,\dots,n\}
 $$
+\href{http://en.wikipedia.org/wiki/Binomial_distribution}{Wikipedia page on binomial distribution}.
 
 \item \itemdesc{\hypertarget{nbnpdf}{negative binomial}} \verb!y=pdf("nbn",x,r,p)!. Computes
   the negative binomial mass function with parameters $r > 0$ ($r$ not
@@ -52,19 +54,21 @@ $$
   When $r$ is integer, $f(x; r, p)$ is the probability to get $x$ failures among 
  independant Bernoulli trials (each one with probability $p$ of success) which are
  stopped when $r$ success has occured (so the number of Bernoulli trials is $r+x$).  
+\href{http://en.wikipedia.org/wiki/Negative_binomial_distribution}{Wikipedia page on negative binomial distribution}.
 
 \item \itemdesc{\hypertarget{caupdf}{Cauchy}} \verb!y=pdf("cau",x,sigma)! computes the Cauchy
   density with parameter $\sigma > 0$:
 $$
      f(x; \sigma) = \frac{ \sigma }{ \pi ( x^2 + \sigma^2 ) }
 $$
-
+\href{http://en.wikipedia.org/wiki/Cauchy_distribution}{Wikipedia page on Cauchy distribution}.
 
 \item \itemdesc{\hypertarget{chipdf}{chi square}} \verb!y=pdf("chi",x,nu)! computes the chi square
   density with parameter $\nu > 0$ (number of dof):
 $$
      f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}\; \mbox{ for } x > 0 
 $$
+\href{http://en.wikipedia.org/wiki/Chi_square_distribution}{Wikipedia page on chi square distribution}.
 
 %% \item \itemdesc{\hypertarget{nchipdf}{non central chi square}} \verb!y=pdf("nch",x,nu,xnonc)! computes the non central chi square
 %%   density with parameters $\nu > 0$ (number of dof) and $\lambda > 0$ (non centrality parameter):
@@ -82,11 +86,13 @@ $$
      \ge 0
 $$
 Caution: the parameter is more frequently $\lambda = 1/\tau$.
+\href{http://en.wikipedia.org/wiki/Exponential_distribution}{Wikipedia page on exponential distribution}.
 
 
 \item \itemdesc{\hypertarget{fpdf}{F variance ratio}} \verb!y=pdf("f",x,nu1,nu2)! computes
   the variance ratio density with parameters $\nu_1 > 0$ and $\nu_2 >
   0$ (respectively number of dof in the numerator and denominator).
+\href{http://en.wikipedia.org/wiki/F-distribution}{Wikipedia page on F distribution}.
 
 
 \item \itemdesc{\hypertarget{gampdf}{gamma}} \verb!y=pdf("gam",x,a,b)! computes the gamma
@@ -96,6 +102,7 @@ $$
      f(x; a, b) = \frac{ b^a x^{a-1} e^{-bx} } {\Gamma(a)}\; \mbox{for } x > 0
 $$
 Caution: second parameter is often a scale parameter, says $s = 1/b$.
+\href{http://en.wikipedia.org/wiki/Gamma_distribution}{Wikipedia page on gamma distribution}.
 
 \item \itemdesc{\hypertarget{norpdf}{Gauss Laplace}} \verb!y=pdf("nor",x,mu,sigma)! computes the normal
   density with parameters $\mu$ and $\sigma > 0$:
@@ -103,6 +110,7 @@ $$
      f(x; \mu, \sigma) = \frac{ 1 }{ \sigma \sqrt{2\pi}}
      e^{-\frac{1}{2} \left( \frac{x-\mu}{\sigma} \right)^2 }
 $$
+\href{http://en.wikipedia.org/wiki/Normal_distribution}{Wikipedia page on normal distribution}.
 
 
 \item \itemdesc{\hypertarget{geompdf}{geometric}} \verb!y=pdf("geom",x,p)!. Computes
@@ -110,6 +118,7 @@ $$
 $$
      f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
 $$
+\href{http://en.wikipedia.org/wiki/Geometric_distribution}{Wikipedia page on geometric distribution}.
 
 \item \itemdesc{hypergeometric} \verb!y=pdf("hyp",x,n,r,b)! computes
   the hypergeometric mass function with parameter $n$ (positive
