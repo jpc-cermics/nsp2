@@ -5065,45 +5065,68 @@ int int_test_dperm(Stack stack, int rhs, int opt, int lhs)
 static int int_format(Stack stack, int rhs, int opt, int lhs)
 {
   int output_max_field_width=11, output_precision=4, eflag=0;
-  static char *Table[] = {"long", "medium", "short", "long e", "medium e", "short e",  NULL};
+  static char *Table[] = {"long", "medium", "short", "long e", "medium e", "short e", "default", "get", NULL};
   int mf[] = {23,18,11,23,18,11 };
   int op[] = {16,11, 4,16,11, 4};
   int id;
 
   CheckRhs(0,3);
 
-  if ( rhs >=1 ) 
+  if ( rhs == 0 ) /* format() set the default format but is obsolete => display a warning */
     {
-      if ( IsMatObj(stack,1) ) 
-	{
-	  if ( GetScalarInt (stack, 1, &output_max_field_width) == FAIL )
-	    return RET_BUG;
-	}
-      else 
+      CheckLhs(0,0);
+      Sciprintf("Warning: obsolete usage => use format('default')\n");
+      nsp_set_format(output_max_field_width, output_precision, eflag);
+      return 0;
+    }
+  else
+    {
+      if ( IsSMatObj(stack,1) ) 
 	{
 	  if ((id= GetStringInArray(stack,1, Table,1))==-1)return RET_BUG; 
+	  if ( id == 7 ) /* get format */
+	    {
+	      CheckLhs(1,3);
+	      nsp_get_format(&output_max_field_width, &output_precision, &eflag);
+	      if ( nsp_move_double(stack,1,(double) output_max_field_width) == FAIL ) 
+		return RET_BUG;
+	      if ( nsp_move_double(stack,2,(double) output_precision) == FAIL ) 
+		return RET_BUG;
+	      if ( nsp_move_boolean(stack,3, eflag) == FAIL ) 
+		return RET_BUG;
+	      return Max(lhs,1);
+	    }
+	  CheckLhs(0,0);
+	  if ( id == 6 ) id = 2; /* default format is currently short */
 	  if ( id > 2 ) eflag=1;
 	  nsp_set_format(mf[id],op[id],eflag);
 	  return 0;
 	}
-    }
-
-  if ( rhs >=2 ) 
-    {
-      if ( GetScalarInt (stack, 2, &output_precision) == FAIL )
-	return RET_BUG;
-
-      if ( rhs == 3 )
+      else if( IsMatObj(stack,1) ) 
 	{
-	  if ( GetScalarBool(stack, 3, &eflag) == FAIL )
+	  CheckLhs(0,0);
+	  if ( GetScalarInt (stack, 1, &output_max_field_width) == FAIL )
 	    return RET_BUG;
+	  if ( rhs >=2 ) 
+	    {
+	      if ( GetScalarInt (stack, 2, &output_precision) == FAIL )
+		return RET_BUG;
+	      if ( rhs == 3 )
+		{
+		  if ( GetScalarBool(stack, 3, &eflag) == FAIL )
+		    return RET_BUG;
+		}
+	    }
+	  nsp_set_format(output_max_field_width, output_precision, eflag);
+	}
+      else
+	{
+	  Scierror ("Error: bad type for first argument \n",NspFname(stack));
+	  return RET_BUG;
 	}
     }
-
-  nsp_set_format(output_max_field_width, output_precision, eflag);
   return 0;
 }
-
 
 static int int_unique( Stack stack, int rhs, int opt, int lhs)
 { 

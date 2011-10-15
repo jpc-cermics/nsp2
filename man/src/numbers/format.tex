@@ -3,18 +3,19 @@
 \mansection{format}
 
 \begin{mandesc}
-  \short{format}{number printing and display format}
+  \short{format}{number printing and display format for floating point numbers}
 \end{mandesc}
 
 
 %-- Calling sequence section
 \begin{calling_sequence}
    \begin{verbatim}
-     format()
+     // first form: set the current format
      format(str)
-     format(field)
-     format(field, prec)
      format(field, prec, eflag)
+
+     // second form: get the current format
+     [field, prec, eflag] = format("get")
    \end{verbatim}
 \end{calling_sequence}
 
@@ -23,18 +24,18 @@
 \begin{parameters}
 
   \begin{varlist}
-   \vname{str}: a string among "long", "medium", "short", "long e", "medium e", "short e"
+   \vname{str}: a string among "long", "medium", "short", "long e", "medium e", "short e", "default"
    \vname{field}: integer max size of characters to print the number
    \vname{prec}: min number of significative digits (default is 4)
-   \vname{eflag}: boolean scalar, should be \%t to force number
-   display with the form mantissa and exponent part (default is \%f).
+   \vname{eflag}: boolean scalar, should be \%t to force number display always with an exponent part (default is \%f).
   \end{varlist}
 
   \end{parameters}
 
   \begin{mandescription}
-    Sets the current printing format. Default is "short" and
-    correspond to prec=4, field=11, eflag=\%f (see the following
+  \begin{description}
+  \item[form 1]  The first form lets to set the current printing format for floating point
+    numbers. Default is "short" and correspond to prec=4, field=11, eflag=\%f (see the following
     table). Using  "long", "medium", "short" or the form \verb+format(field, prec)+
     or \verb+format(field, prec, %f)+ leads to a ``variable format'' 
     which tries to use a fixed point notation when possible (that
@@ -46,7 +47,7 @@
      \verb+format(field, prec, %t)+  displays numbers always
     with a mantissa and an exponent part.
 
-    \verb+format()+ lets recover the default format.
+    \verb+format("default")+ lets recover the default format (which is "short")
 
   \begin{tabular}{|c|c|c|c|}
      string  & field & prec & eflag \\
@@ -59,26 +60,49 @@
    "long e"  & 23    & 16   &  \%t \\
    \end{tabular}
 
+  \item[form 2] lets to retrieve the 3 parameters field, prec, eflag which define the display format.
+      This is useful if you want to modify locally the format :
+\begin{Verbatim}
+// save current format
+[save_field,save_prec,save_eflag] = format("get");
+// set a different format and do some operations
+.....
+// reset initial format
+format(save_field,save_prec,save_eflag)
+\end{Verbatim}
+      
+  \end{description} 
+    
   \end{mandescription}
 
   %--example 
 
 \begin{examples}
 
-\begin{program}\HCode{\%pi\Hnewline
-format("medium")\Hnewline
-\%pi\Hnewline
-format("long")\Hnewline
-\%pi\Hnewline
-format()\Hnewline
-// default format should output the next number as is\Hnewline
-// (because 11 char could be used to print it in fixed\Hnewline
-//  point notation together with 4 significant digits)\Hnewline
-x = 0.000001234\Hnewline
-// but should use notation with exponent on the following number\Hnewline
-x = 0.0000001234}
-\end{program}
+\begin{Verbatim}
+%pi
+format("medium")
+%pi
+format("long")
+%pi
+format("default")
+// default format should output the next number as is
+// (because 11 char could be used to print it in fixed
+//  point notation together with 4 significant digits)
+x = 0.000001234
+// but should use notation with exponent on the following number
+x = 0.0000001234
 
+// print 0.2. (0.2 could not exactly be coded as a double float number)
+format("default")
+0.2
+format("long")
+0.2
+// now discover that fl(0.2) is not exactly 0.2
+// but  0.200000000000000011102230246251565404236316680908203125
+format(57,55,%f)
+0.2
+\end{Verbatim}
 \end{examples}
 
   %-- see also
