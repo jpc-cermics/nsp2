@@ -57,6 +57,7 @@ NspObject *Reserved= NULLOBJ;/* used to fill stack with non empty object */
 NspObject *Null = NULLOBJ;   /* Direct access to %null **/
 NspFrame  *GlobalFrame = NULLFRAME; /* Direct access to GlobalFrame **/
 NspFrame  *ConstantFrame = NULLFRAME; /* Direct access to constants **/
+NspFrame  *TopFrame = NULLFRAME; /* Direct access to top **/
 
 
 /**
@@ -169,9 +170,9 @@ int nsp_init_frames(int argc, char **argv)
   /* ast */
   if ((O = (NspObject *) nsp_ast_hash_create()) ==NULLOBJ) return FAIL;
   nsp_frame_replace_object(O,-1);
-  
   /* the top level frame */
   if (( frame=nsp_frame_create("top",NULL))== NULLFRAME) return FAIL;
+  TopFrame = frame; /* Direct access to toplevel frame */
   if ( nsp_list_store(Datas,(NspObject *)frame,1) == FAIL) return(FAIL);
   return(OK);
 }
@@ -391,6 +392,25 @@ int nsp_global_frame_replace_object(NspObject *A)
       return(FAIL);
     }
   return nsp_eframe_replace_object((NspFrame *) GlobalFrame,A);
+} 
+
+/**
+ *nsp_toplevel_frame_replace_object:
+ * @A:  object to be inserted
+ * 
+ * Insert Object A in the toplevel frame 
+ * If an object with the same name as A exists 
+ * It is replaced by A
+ * 
+ * 
+ * Return value: %OK or %FAIL.
+ **/
+
+int nsp_toplevel_frame_replace_object(NspObject *A)
+{
+  if (  A == NULLOBJ ) return(OK);
+  if (  TopFrame == NULL ) return(FAIL);
+  return nsp_eframe_replace_object((NspFrame *) TopFrame,A);
 } 
 
 /**

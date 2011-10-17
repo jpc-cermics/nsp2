@@ -28,12 +28,9 @@
 
 
 static void nsp_mex_errjump(void);
-
-#include <string.h>
-#include <math.h>
 #include <stdio.h>
 #include <setjmp.h>
-
+#include <nsp/nsp.h>
 #include <nsp/object.h>
 #include <nsp/hash.h>
 #include <nsp/matrix.h>
@@ -1298,9 +1295,38 @@ int *mxGetDimensions(const mxArray *ptr)
 
 mxClassID mxGetClassID(const mxArray *ptr) 
 {
+  int id=((NspTypeBase *) ptr->basetype)->id;
   if ( ptr == NULL )  nsp_mex_errjump();
-  /* just return the base type that's enough for mexlib */
-  return ((NspTypeBase *) ptr->basetype)->id;
+  if (id == nsp_type_cells_id) return mxCELL_CLASS;
+  else if ( id ==     nsp_type_hash_id ) return mxSTRUCT_CLASS;
+  else if ( id ==     nsp_type_smatrix_id) return mxCHAR_CLASS;
+  else if ( id ==     nsp_type_bmatrix_id) return mxLOGICAL_CLASS;
+  else if ( id ==     nsp_type_matrix_id) return mxDOUBLE_CLASS;
+  else if ( id ==     nsp_type_object_id) return mxOBJECT_CLASS;
+  else if ( id ==     nsp_type_spcolmatrix_id) return mxSPARSE_CLASS;
+  else if ( id ==     nsp_type_imatrix_id) 
+    {
+      switch(((NspIMatrix *)ptr)->itype)
+	{	
+	case nsp_gint: return mxINT32_CLASS;  break;			
+	case nsp_guint: return mxUINT32_CLASS;  break;			
+	case nsp_gshort: return mxINT16_CLASS;  break;			
+	case nsp_gushort:return mxUINT16_CLASS;  break;			
+	case nsp_glong: return mxINT32_CLASS ; break;			
+	case nsp_gulong:  return mxUINT32_CLASS; break;			
+	case nsp_gint8: return mxINT8_CLASS; break;			
+	case nsp_guint8:  return mxUINT8_CLASS;break;			
+	case nsp_gint16:return mxINT16_CLASS;  break;			
+	case nsp_guint16:  return mxUINT16_CLASS; break;			
+	case nsp_gint32: return mxINT32_CLASS;  break;			
+	case nsp_guint32:  return mxUINT32_CLASS; break;			
+	case nsp_gint64: return mxINT64_CLASS;  break;			
+	case nsp_guint64: return mxUINT64_CLASS;  break;
+	}
+      return mxUNKNOWN_CLASS;
+    }
+  else if ( id ==     nsp_type_plist_id ) return mxFUNCTION_CLASS;
+  else  return mxUNKNOWN_CLASS;
 }
 
 /**
@@ -1439,7 +1465,7 @@ int mexPutArray( mxArray *array_ptr,const char *workspace)
     }
   else if ( strcmp(workspace,"base")==0) 
     {
-      return  nsp_global_frame_replace_object(array_ptr);
+      return  nsp_toplevel_frame_replace_object(array_ptr);
     }
   else if ( strcmp(workspace,"caller")==0) 
     {
@@ -1447,7 +1473,8 @@ int mexPutArray( mxArray *array_ptr,const char *workspace)
     }
   else 
     {
-      Scierror("Error: mexPutVariable unknown workspace id %d\n",workspace);
+      Scierror("Error: mexPutVariable unknown workspace id %s\n",workspace);
+      Scierror("       allowed workspaces are global base or caller\n");
       nsp_mex_errjump();      
     }
   return OK;
