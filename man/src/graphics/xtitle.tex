@@ -27,11 +27,10 @@ xtitle(title, [x_title, y_title])
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}
-    \HCode{"x=(1:10)';plot2d(x,x);\Hnewline
-    xtitle(['Titre';'Principal'],'x legend ','y legend');"
-    }
-  \end{program}
+\begin{Verbatim}
+x=(1:10)';plot2d(x,x);
+xtitle(['Titre';'Principal'],'x legend ','y legend');
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

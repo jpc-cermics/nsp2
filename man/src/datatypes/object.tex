@@ -50,24 +50,25 @@ This is used for object display (\verb+print+, \verb+sprint+, \verb+fprint+,
 \end{itemize}
 
 \begin{examples}
-  \begin{program}\HCode{a=\%types.ClassA.new[cla_color=89,cla_thickness=56];\Hnewline
-      // ClassA is a predefined toy class.\Hnewline
-      is(a,\%types.Mat) \Hnewline
-      is(a,\%types.ClassA) \Hnewline
-      a.__attrs\Hnewline
-      a.cla_color = 32 \Hnewline
-      a.cla_val = rand(2,2)\Hnewline
-      a.cla_val(3,3) = 1;\Hnewline
-      a.set[cla_val=1:5,cla_color=56]\Hnewline
-      a('cla_color') = 78 \Hnewline
-      a.get_method_names[];\Hnewline
-      // ClassB is a predefined toy class which inherits from ClassA\Hnewline
-      b=\%types.ClassB.new[cla_color=89,cla_thickness=56];\Hnewline
-      b.get_attribute_names[];\Hnewline
-      is(b,\%types.ClassA) \Hnewline
-      is(b,\%types.ClassB) \Hnewline
-      test(b); }
-  \end{program}
+  \begin{Verbatim}
+    a=%types.ClassA.new[cla_color=89,cla_thickness=56];
+    // ClassA is a predefined toy class.
+    is(a,%types.Mat) 
+    is(a,%types.ClassA) 
+    a.__attrs
+    a.cla_color = 32 
+    a.cla_val = rand(2,2)
+    a.cla_val(3,3) = 1;
+    a.set[cla_val=1:5,cla_color=56]
+    a('cla_color') = 78 
+    a.get_method_names[];
+    // ClassB is a predefined toy class which inherits from ClassA
+    b=%types.ClassB.new[cla_color=89,cla_thickness=56];
+    b.get_attribute_names[];
+    is(b,%types.ClassA) 
+    is(b,%types.ClassB) 
+    test(b);
+  \end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

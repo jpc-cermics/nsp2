@@ -50,29 +50,31 @@ of a matrix \verb+A+, precisely ($A$ being $m \times n$):
 %--example 
 \begin{examples}
 \paragraph{example 1} basic examples
-  \begin{program}\HCode{x = 0:6;\Hnewline
-    diff(x)\Hnewline
-    x = (0:6).^2;\Hnewline
-    diff(x,order=1)\Hnewline
-    diff(x,order=2)\Hnewline
-    diff(x,order=3)}
-  \end{program}
+\begin{Verbatim}
+x = 0:6;
+diff(x)
+x = (0:6).^2;
+diff(x,order=1)
+diff(x,order=2)
+diff(x,order=3)
+\end{Verbatim}
 
 \paragraph{example 2} approximate derivatives of a function
-  \begin{program}\HCode{n = 12;\Hnewline
-    x = linspace(0,2*\%pi,n);\Hnewline
-    y = sin(x);\Hnewline
-    // diff(y)./diff(x) gives a good approximation\Hnewline
-    // of the derivatives at the middle points of the mesh.\Hnewline
-    // Here, since the mesh is uniform diff(x) could be replaced with\Hnewline
-    // the (uniform) step size 2*\%pi/n\Hnewline
-    d = diff(y)/(2*\%pi/n)\Hnewline
-    // the middle points:\Hnewline
-    xm = 0.5*(x(1:$-1) + x(2:$));\Hnewline
-    // the exact derivative\Hnewline
-    d_exact = cos(xm)\Hnewline
-    abs(d - d_exact)}
-  \end{program}
+\begin{Verbatim}
+n = 12;
+x = linspace(0,2*%pi,n);
+y = sin(x);
+// diff(y)./diff(x) gives a good approximation
+// of the derivatives at the middle points of the mesh.
+// Here, since the mesh is uniform diff(x) could be replaced with
+// the (uniform) step size 2*%pi/n
+d = diff(y)/(2*%pi/n)
+// the middle points:
+xm = 0.5*(x(1:$-1) + x(2:$));
+// the exact derivative
+d_exact = cos(xm)
+abs(d - d_exact)
+\end{Verbatim}
 \end{examples}
 
 % -- see also

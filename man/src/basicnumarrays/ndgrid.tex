@@ -73,25 +73,26 @@ of the same array seen as a 2 dimensional array.
 
 \begin{examples}
 \paragraph{example 1} plot a function...
-\begin{program}\HCode{// the function (we use element wize op)\Hnewline
-function z=f(x,y)\Hnewline
-z = x.^2 + y.^3\Hnewline
-endfunction\Hnewline
-\Hnewline
-// create a simple 2d grid\Hnewline
-nx = 40; ny = 40;\Hnewline
-x = linspace(-1,1,nx);\Hnewline
-y = linspace(-1,1,ny);\Hnewline
-[X,Y] = ndgrid(x,y);\Hnewline
-\Hnewline
-// compute the function on the grid\Hnewline
-Z = f(X,Y);\Hnewline
-\Hnewline
-// 3d plot of the function\Hnewline
-xbasc()\Hnewline
-plot3d(x,y,Z, flag=[2 6 4]);\Hnewline 
-xselect()}
-\end{program}
+\begin{Verbatim}
+// the function (we use element wize op)
+function z=f(x,y)
+z = x.^2 + y.^3
+endfunction
+
+// create a simple 2d grid
+nx = 40; ny = 40;
+x = linspace(-1,1,nx);
+y = linspace(-1,1,ny);
+[X,Y] = ndgrid(x,y);
+
+// compute the function on the grid
+Z = f(X,Y);
+
+// 3d plot of the function
+xbasc()
+plot3d(x,y,Z, flag=[2 6 4]); 
+xselect()
+\end{Verbatim}
 
 \end{examples}
 

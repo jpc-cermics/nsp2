@@ -124,47 +124,48 @@ variable  \verb+col+ being set to the ith column of \verb+A+ at the \verb!i!-th 
 \end{itemize}
 
 \begin{examples}
-  \begin{itemize}
-    \item Creation, extraction, insertion with \verb+{.}+:
-      \begin{program}\HCode{M=rand(4,4);\Hnewline
-	  A={8,9,M,"nsp"};  \Hnewline
-	  \Hnewline
-	  b=A{1} 	\Hnewline
-	  \Hnewline
-	  [a,b]=A{[1,3]};\Hnewline
-	  \Hnewline
-	  A{1:2}=(M,78) ; \Hnewline
-	  \Hnewline
-	  A{:} = (4,5,6,7); \Hnewline
-	  A={8,9;M,"nsp"};  \Hnewline
-	  A{1:2,1}=(56,67);\Hnewline
-	  \Hnewline
-	  A{1:2,1:2}=(1,2,3,4);\Hnewline
-	  \Hnewline
-	  D{3}=8;}
-      \end{program}
-    \item Using \verb+{.}+ to provide a sequence of aguments to a function
-      \begin{program}\HCode{ function y=f(varargin);y=length(varargin);endfunction;\Hnewline
-	  A={8,9,M,"nsp"}; // creation \Hnewline
-	  f(A{:}) }
-      \end{program}
-    \item Creation, extraction, insertion with \verb+(.)+:
-      \begin{program}\HCode{A={};\Hnewline 
-	  A([1,3]) = {7,8} // affectation \Hnewline
-	  A([1:3]) // extraction of a sub cell array\Hnewline
-	  A(1,2) = {89};  // same result as A{1,2} = 89;
-	  A={1,2;3,4}\Hnewline
-	  { A{:,1}}   // 1x2 \Hnewline
-	  A(:,1)      // 2x1 }
-      \end{program}
-    \item using \verb+map+:
-      \begin{program}\HCode{A={7,8,rand(4,6),'foo'};\Hnewline 
-	  function y=len(x);y=length(x);endfunction;\Hnewline
-	  Res=map(A,len);\Hnewline
-	  function y=plus_val(x,args);y=x+args(1);endfunction;\Hnewline
-	  Res=map({7,8,rand(2,2)},plus_val,list(45))}
-      \end{program}
-  \end{itemize}
+\begin{itemize}
+\item Creation, extraction, insertion with \verb+{.}+:
+\begin{Verbatim}
+M=rand(4,4);
+A={8,9,M,"nsp"};  
+b=A{1} 	
+[a,b]=A{[1,3]};
+A{1:2}=(M,78) ; 
+A{:} = (4,5,6,7); 
+A={8,9;M,"nsp"};  
+A{1:2,1}=(56,67);
+A{1:2,1:2}=(1,2,3,4);
+D{3}=8;
+\end{Verbatim}
+
+\item Using \verb+{.}+ to provide a sequence of aguments to a function
+\begin{Verbatim} 
+function y=f(varargin);y=length(varargin);endfunction;
+A={8,9,M,"nsp"}; // creation 
+f(A{:})
+\end{Verbatim}
+\item Creation, extraction, insertion with \verb+(.)+:
+\begin{Verbatim}
+A={}; 
+A([1,3]) = {7,8} // affectation 
+A([1:3]) // extraction of a sub cell array
+A(1,2) = {89};  // same result as A{1,2} = 89;
+A={1,2;3,4}
+{ A{:,1}}   // 1x2 
+A(:,1)      // 2x1 
+\end{Verbatim}
+
+\item using \verb+map+:
+\begin{Verbatim}
+A={7,8,rand(4,6),'foo'}; 
+function y=len(x);y=length(x);endfunction;
+Res=map(A,len);
+function y=plus_val(x,args);y=x+args(1);endfunction;
+Res=map({7,8,rand(2,2)},plus_val,list(45))
+\end{Verbatim}
+\end{itemize}
+
 \end{examples}
 
 \begin{manseealso}

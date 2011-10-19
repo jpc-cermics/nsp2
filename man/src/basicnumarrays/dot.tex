@@ -44,62 +44,65 @@ $$
 %--example 
 \begin{examples}
 \paragraph{example 1} a simple example (we form 2 orthonormal vectors) :
-  \begin{program}\HCode{x = randn(5,1);\Hnewline
-    y = randn(5,1);\Hnewline
-    // step 0\Hnewline
-    dot(x,y)\Hnewline
-    // step 1 normalise x:\Hnewline
-    x = x/norm(x)\Hnewline
-    // step 2 remove the component of y in the direction of x\Hnewline
-    y = y - dot(y,x)*x\Hnewline
-    // step 3 normalise y\Hnewline
-    y = y/norm(y)\Hnewline
-    // test \Hnewline
-    norm(x)  // should be 1\Hnewline
-    norm(y)  // should be 1\Hnewline
-    dot(x,y) // should be near 0}
-  \end{program}
+\begin{Verbatim}
+x = randn(5,1);
+y = randn(5,1);
+// step 0
+dot(x,y)
+// step 1 normalise x:
+x = x/norm(x)
+// step 2 remove the component of y in the direction of x
+y = y - dot(y,x)*x
+// step 3 normalise y
+y = y/norm(y)
+// test 
+norm(x)  // should be 1
+norm(y)  // should be 1
+dot(x,y) // should be near 0
+\end{Verbatim}
 
 \paragraph{example 2} same example with complex vectors
-  \begin{program}\HCode{x = randn(5,1) + \%i*randn(5,1);\Hnewline
-    y = randn(5,1) + \%i*randn(5,1);\Hnewline
-    // step 0\Hnewline
-    dot(x,y)\Hnewline
-    // step 1 normalise x:\Hnewline
-    x = x/norm(x)\Hnewline
-    // step 2 remove the component of y in the direction of x\Hnewline
-    // (be careful for the order in dot in this case)\Hnewline
-    y = y - dot(x,y)*x\Hnewline
-    // step 3 normalise y\Hnewline
-    y = y/norm(y)\Hnewline
-    // test \Hnewline
-    norm(x)  // should be 1\Hnewline
-    norm(y)  // should be 1\Hnewline
-    dot(x,y) // should be near 0}
-  \end{program}
+\begin{Verbatim}
+x = randn(5,1) + %i*randn(5,1);
+y = randn(5,1) + %i*randn(5,1);
+// step 0
+dot(x,y)
+// step 1 normalise x:
+x = x/norm(x)
+// step 2 remove the component of y in the direction of x
+// (be careful for the order in dot in this case)
+y = y - dot(x,y)*x
+// step 3 normalise y
+y = y/norm(y)
+// test 
+norm(x)  // should be 1
+norm(y)  // should be 1
+dot(x,y) // should be near 0
+\end{Verbatim}
 
 \paragraph{example 3} fastest way to compute the 2-norm of the rows or
  columns vectors of a matrix : in this case you cannot use norm because
  norm computes a matrix norm in this case.
-  \begin{program}\HCode{A = randn(5,7);\Hnewline
-    norm_cols_A = sqrt(dot(A,A,dim=1))\Hnewline
-    // test\Hnewline
-    norm(A(:,3)) - norm_cols_A(3)\Hnewline
-    // the same for the rows\Hnewline
-    norm_rows_A = sqrt(dot(A,A,dim=2))\Hnewline
-    // test\Hnewline
-    norm(A(2,:)) - norm_rows_A(2)\Hnewline
-    // comparizon with another method for a big matrix\Hnewline
-    A = randn(800,800);\Hnewline
-    tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()\Hnewline
-    // the other method (should be slower)\Hnewline
-    tic(); norm_cols_A = sqrt(sum(A.^2,dim=1)); toc()\Hnewline
-    // same thing with a complex matrix\Hnewline
-    A = randn(800,800) + \%i*rand(800,800);\Hnewline
-    tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()\Hnewline
-    // the other method (should be slower)\Hnewline
-    tic(); norm_cols_A = sqrt(sum(conj(A).*A,dim=1)); toc()}
-\end{program}
+\begin{Verbatim}
+A = randn(5,7);
+norm_cols_A = sqrt(dot(A,A,dim=1))
+// test
+norm(A(:,3)) - norm_cols_A(3)
+// the same for the rows
+norm_rows_A = sqrt(dot(A,A,dim=2))
+// test
+norm(A(2,:)) - norm_rows_A(2)
+// comparizon with another method for a big matrix
+A = randn(800,800);
+tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()
+// the other method (should be slower)
+tic(); norm_cols_A = sqrt(sum(A.^2,dim=1)); toc()
+// same thing with a complex matrix
+A = randn(800,800) + %i*rand(800,800);
+tic(); norm_cols_A = sqrt(dot(A,A,dim=1)); toc()
+// the other method (should be slower)
+tic(); norm_cols_A = sqrt(sum(conj(A).*A,dim=1)); toc()
+\end{Verbatim}
 \end{examples}
 
 % -- see also

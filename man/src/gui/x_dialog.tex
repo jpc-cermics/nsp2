@@ -23,12 +23,11 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{program}
-    \HCode{gain=evstr(x_dialog('value of gain ?','0.235'))\Hnewline
-    x_dialog(['Method';'enter sampling period'],'1')\Hnewline
-    m=evstr(x_dialog('enter a  3x3 matrix ',['[0 0 0';'0 0 0';'0 0 0]']))
-    }
-  \end{program}
+\begin{Verbatim}
+gain=evstr(x_dialog('value of gain ?','0.235'))
+x_dialog(['Method';'enter sampling period'],'1')
+m=evstr(x_dialog('enter a  3x3 matrix ',['[0 0 0';'0 0 0';'0 0 0]']))
+\end{Verbatim}
 \end{examples}
 %-- see also
 \begin{manseealso}

@@ -41,13 +41,14 @@ array of the parallelogram defined by $A$ and $B$.
 %--example 
 \begin{examples}
 \paragraph{example 1} simple example
-  \begin{program}\HCode{x = randn(3,1);\Hnewline
-    y = randn(3,1);\Hnewline
-    z = cross(x,y)\Hnewline
-    // verify orthonogonality:\Hnewline
-    dot(x,z)\Hnewline
-    dot(y,z)}
-  \end{program}
+\begin{Verbatim}
+x = randn(3,1);
+y = randn(3,1);
+z = cross(x,y)
+// verify orthonogonality:
+dot(x,z)
+dot(y,z)}
+\end{Verbatim}
 \end{examples}
 
 % -- see also

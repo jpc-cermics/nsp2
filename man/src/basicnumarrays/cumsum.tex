@@ -39,14 +39,15 @@
 \end{mandescription}
 %--example 
 \begin{examples}
-  \begin{program}\HCode{A=rand(4,5) \Hnewline
-      cumsum(A,'c'); \Hnewline
-      // boolean matrix \Hnewline
-      cumsum(A>=0.5,'c');\Hnewline
-      cumprod(1:5,'m') \Hnewline
-      // sparse matrix 
-      cumsum(sparse(rand(4,6)),'r')  }
-  \end{program}
+\begin{Verbatim}
+A=rand(4,5) 
+cumsum(A,dim='c'); 
+// boolean matrix 
+cumsum(A>=0.5,dim='c');
+cumprod(1:5,dim='m') 
+// sparse matrix 
+cumsum(sparse(rand(4,6)),dim='r')
+\end{Verbatim}
 \end{examples}
 %-- see also
 \begin{manseealso}

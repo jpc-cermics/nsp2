@@ -54,26 +54,28 @@ case the function extract the $k$ th diagonal of the matrix $A$ as a column vect
 %--example 
 \begin{examples}
 \paragraph{first form examples}
-  \begin{program}\HCode{v=rand(4,1) \Hnewline
-diag(v) \Hnewline
-diag(v,-1) \Hnewline
-diag(v,1)\Hnewline
-// build the 1d discrete laplacien matrix (as a full matrix)\Hnewline
-n = 5;\Hnewline
-v = ones(n-1,1);\Hnewline
-A = 2*eye(n) - diag(v,1) + diag(v,-1)\Hnewline
-// build the 1d discrete laplacien matrix (as a sparse matrix)\Hnewline
-n = 5;\Hnewline
-v = sparse(ones(n-1,1));\Hnewline
-A = 2*speye(n,n) - diag(v,1) + diag(v,-1)}
-\end{program}
+\begin{Verbatim}
+v=rand(4,1) 
+diag(v) 
+diag(v,-1) 
+diag(v,1)
+// build the 1d discrete laplacien matrix (as a full matrix)
+n = 5;
+v = ones(n-1,1);
+A = 2*eye(n) - diag(v,1) + diag(v,-1)
+// build the 1d discrete laplacien matrix (as a sparse matrix)
+n = 5;
+v = sparse(ones(n-1,1));
+A = 2*speye(n,n) - diag(v,1) + diag(v,-1)
+\end{Verbatim}
 
 \paragraph{second form examples}
-  \begin{program}\HCode{A=rand(4,5) \Hnewline
-      diag(A) \Hnewline
-      diag(A,-1) \Hnewline
-      diag(A,1)}
-  \end{program}
+\begin{Verbatim}
+A=rand(4,5) 
+diag(A) 
+diag(A,-1) 
+diag(A,1)
+\end{Verbatim}
 \end{examples}
 
 %-- see also
