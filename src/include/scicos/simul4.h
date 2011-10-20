@@ -64,10 +64,10 @@ struct  _scicos_block {
   double *res_init; /* keep track of initialy allocated res */
   int nin;
   int *insz;
-  double **inptr;
+  void **inptr;
   int nout;
   int *outsz;
-  double **outptr;
+  void **outptr;
   int nevout;
   double *evout;
   int nrpar;
