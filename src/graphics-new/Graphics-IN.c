@@ -6501,6 +6501,16 @@ static int int_nsp_enqueue_command(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+/* clear all the event queue
+ *
+ */
+
+static int int_nsp_clear_queue(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  window_list_clear_queue(NULL);
+  return 0;
+}
 
 
 /*************************************************************
@@ -6671,6 +6681,7 @@ OpGrTab Graphics_func[]={
   {NAMES("scicos_lock_draw"), int_lock_draw},
   {NAMES("nsp_graphic_widget"), int_nsp_graphic_widget},
   {NAMES("nsp_enqueue_command"), int_nsp_enqueue_command},
+  {NAMES("nsp_clear_queue"), int_nsp_clear_queue},
   {(char *) 0, NULL}
 };
 
