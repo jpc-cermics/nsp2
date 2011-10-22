@@ -77,28 +77,30 @@ to the permutation matrix $P$ (\verb+p+ is such that $AP$ is equal to \verb+A(:,
 
 \begin{examples}
 \paragraph{example 1} solving a least square problem:
-  \begin{program}\HCode{A=rand(10,5);\Hnewline
-    b=rand(10,1);\Hnewline
-    // solving min ||Ax - b|| with a simple economic sized A = QR factorization\Hnewline
-    [Q,R]=qr(A,mode="e");\Hnewline
-    x = R}\verb+\+\HCode{(Q'*b);\Hnewline
-    // solving min ||Ax - b|| with a AP = QR factorization\Hnewline
-    [Q,R,p]=qr(A,mode="e");\Hnewline
-    x = R}\verb+\+\HCode{(Q'*b);\Hnewline
-    x(p) = x; // apply the permutation}
-  \end{program}
+\begin{Verbatim}
+A=rand(10,5);
+b=rand(10,1);
+// solving min ||Ax - b|| with a simple economic sized A = QR factorization
+[Q,R]=qr(A,mode="e");
+x = R\(Q'*b);
+// solving min ||Ax - b|| with a AP = QR factorization
+[Q,R,p]=qr(A,mode="e");
+x = R\(Q'*b);
+x(p) = x; // apply the permutation
+\end{Verbatim}
 
 \paragraph{example 2} rank detection
-  \begin{program}\HCode{// build a random matrix and make one column a linear combinaison of some others\Hnewline
-    A=rand(5,4);\Hnewline
-    A(:,2) = 0.1*A(:,1) - 3*A(:,4); // A must be now of rank 3\Hnewline
-    [Q,R,p,rk,sval]=qr(A)\Hnewline
-    // compare sval with the "real" singular values\Hnewline
-    sv = svd(A);\Hnewline
-    // sval(1) and sval(2) are rough estimations of sv(1) and sv(3)\Hnewline
-    esvmax = abs((sval(1)-sv(1))/sv(1))  // relative error for the max sv estimation\Hnewline
-    esvmin = abs((sval(2)-sv(3))/sv(3))  // relative error for the min sv estimation}
-  \end{program}
+\begin{Verbatim}
+// build a random matrix and make one column a linear combinaison of some others
+A=rand(5,4);
+A(:,2) = 0.1*A(:,1) - 3*A(:,4); // A must be now of rank 3
+[Q,R,p,rk,sval]=qr(A)
+// compare sval with the "real" singular values
+sv = svd(A);
+// sval(1) and sval(2) are rough estimations of sv(1) and sv(3)
+esvmax = abs((sval(1)-sv(1))/sv(1))  // relative error for the max sv estimation
+esvmin = abs((sval(2)-sv(3))/sv(3))  // relative error for the min sv estimation
+\end{Verbatim}
 
 \end{examples}
 

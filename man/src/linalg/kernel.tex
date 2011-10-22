@@ -44,12 +44,13 @@ and max singular values.
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}\HCode{A=randn(6,5);\Hnewline
-kerA=kernel(A) // should be 5 x 0 empty matrix \Hnewline
-// define the last column as a linear combinaison of the others\Hnewline
-A(:,$) = sum(A(:,1:$-1),2);\Hnewline
-kerA=kernel(A) // should be now 5 x 1}
-  \end{program}
+\begin{Verbatim}
+A=randn(6,5);
+kerA=kernel(A) // should be 5 x 0 empty matrix 
+// define the last column as a linear combinaison of the others
+A(:,$) = sum(A(:,1:$-1),2);
+kerA=kernel(A) // should be now 5 x 1
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

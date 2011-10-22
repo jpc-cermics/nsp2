@@ -33,11 +33,12 @@ Based on Lapack routines \verb!dtrsyl! and \verb!ztrsyl!.
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}\HCode{n=4;m=3;\Hnewline
-  At=rand(n,n);Ct=rand(n,m);Bt=rand(m,m);\Hnewline
-  X = sylv(At,Bt,Ct);\Hnewline
-  norm(At*X+X*Bt-Ct)}
-  \end{program}
+\begin{Verbatim}
+n=4;m=3;
+At=rand(n,n);Ct=rand(n,m);Bt=rand(m,m);
+X = sylv(At,Bt,Ct);
+norm(At*X+X*Bt-Ct)
+\end{Verbatim}
 \end{examples}
 
 %\begin{manseealso}

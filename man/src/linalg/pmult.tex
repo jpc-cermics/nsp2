@@ -35,17 +35,18 @@ matrix the optional argument flag provides the additional features:
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}\HCode{// show speed improvments in the sparse case\Hnewline
-A=sprand(20000,20000,1/2000,'nor');\Hnewline
-x=randn(20000,1); \Hnewline
-tic(); y1 = A'*x; toc()  \Hnewline
-tic(); y2 = pmult(A,x); toc() \Hnewline
-norm(y1-y2)/norm(y1)\Hnewline
-// compute normal equations of a linear least square pb\Hnewline
-A=randn(700,200); b = randn(700,1);\Hnewline
-tic(); At=A'; AA=At*A; bb=At*b; toc()\Hnewline
-tic(); AA=pmult(A,A); bb=pmult(A,b); toc()}  
-\end{program}
+\begin{Verbatim}
+// show speed improvments in the sparse case
+A=sprand(20000,20000,1/2000,'nor');
+x=randn(20000,1); 
+tic(); y1 = A'*x; toc()  
+tic(); y2 = pmult(A,x); toc() 
+norm(y1-y2)/norm(y1)
+// compute normal equations of a linear least square pb
+A=randn(700,200); b = randn(700,1);
+tic(); At=A'; AA=At*A; bb=At*b; toc()
+tic(); AA=pmult(A,A); bb=pmult(A,b); toc()
+\end{Verbatim}
 \end{examples}
 
 %\begin{manseealso}

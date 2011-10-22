@@ -43,17 +43,18 @@ and max singular values.
 \end{mandescription}
 
 \begin{examples}
-  \begin{program}\HCode{A=randn(6,5);\Hnewline
-ImA=orth(A) // should be 6 x 5 matrix \Hnewline
-// verify orthonormality  \Hnewline
-ImA'*ImA \Hnewline
-clean(ImA'*ImA) \Hnewline
-// define the last column as a linear combinaison of the others\Hnewline
-A(:,$) = sum(A(:,1:$-1),2);\Hnewline
-ImA=orth(A) // should be now 6 x 4 \Hnewline
-// verify orthonormality  \Hnewline
-ImA'*ImA}  
-\end{program}
+\begin{Verbatim}
+A=randn(6,5);
+ImA=orth(A) // should be 6 x 5 matrix 
+// verify orthonormality  
+ImA'*ImA 
+clean(ImA'*ImA) 
+// define the last column as a linear combinaison of the others
+A(:,$) = sum(A(:,1:$-1),2);
+ImA=orth(A) // should be now 6 x 4 
+// verify orthonormality  
+ImA'*ImA
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

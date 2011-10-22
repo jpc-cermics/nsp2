@@ -50,31 +50,33 @@ to detect potential numerical problem. See example 2.
 
 \begin{examples}
 \paragraph{example 1}
-  \begin{program}\HCode{A=rand(51,51);\Hnewline
-    rc=rcond(A)\Hnewline
-    // make a singular system:\Hnewline
-    A(:,5) = 0.3*A(:,1) + 0.9*A(:,21) - 2*A(:,41);\Hnewline
-    rc=rcond(A)\Hnewline
-    // solve a Ax=b linear system (the bad conditionning is detected)\Hnewline
-    b = rand(51,1);\Hnewline
-    x = A}\verb+\+\HCode{b;}
-  \end{program}
+\begin{Verbatim}
+A=rand(51,51);
+rc=rcond(A)
+// make a singular system:
+A(:,5) = 0.3*A(:,1) + 0.9*A(:,21) - 2*A(:,41);
+rc=rcond(A)
+// solve a Ax=b linear system (the bad conditionning is detected)
+b = rand(51,1);
+x = A\b;
+\end{Verbatim}
 
 \paragraph{example 2} a badly conditionned triangular matrix
-  \begin{program}\HCode{// make such a triangular matrix\Hnewline
-    T = triu(rand(500,500));\Hnewline
-    b = rand(500,1);\Hnewline
-    // solve T x = b with backslash: no warning occurs\Hnewline
-    x = T}\verb+\+\HCode{b;\Hnewline
-    // computing rcond\Hnewline
-    rc = rcond(T)\Hnewline
-    // computing the relative residual\Hnewline
-    norm(T*x-b)/norm(b)\Hnewline
-    // solve in least square meaning with rank detection\Hnewline
-    x = lsq(T,b);\Hnewline
-    // the relative residual is now better\Hnewline
-    norm(T*x-b)/norm(b)}
-  \end{program}
+\begin{Verbatim}
+// make such a triangular matrix
+T = triu(rand(500,500));
+b = rand(500,1);
+// solve T x = b with backslash: no warning occurs
+x = T\b;
+// computing rcond
+rc = rcond(T)
+// computing the relative residual
+norm(T*x-b)/norm(b)
+// solve in least square meaning with rank detection
+x = lsq(T,b);
+// the relative residual is now better
+norm(T*x-b)/norm(b)
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

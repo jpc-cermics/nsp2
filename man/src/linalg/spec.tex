@@ -49,44 +49,46 @@ $\lambda_j$ eigenvalue (\verb+lambda(j)+) : $A v^j = \lambda_j v^j$.
 \end{mandescription}
 
 \begin{examples}
-\paragraph{example 1} a simple example (we form a matrix with
-      eigenvalues 1,2,3,4,5):
-  \begin{program}\HCode{X=rand(5,5);\Hnewline
-    vp = [1;2;3;4;5];\Hnewline
-    A = X*diag(vp)*inv(X);\Hnewline
-    // remark: span(X(:,j)) is the eigenspace associated to the eigenvalue j\Hnewline
-    [lambda,V]=spec(A)\Hnewline
-    A*V - V*diag(lambda)\Hnewline
-    // reorder V such that V(:,j) is the eigenvector associated to the eigenvalue j\Hnewline
-    V(:,round(lambda))=V;\Hnewline
-    V./X  // each colomn must have the same coefficients\Hnewline}
-  \end{program}
+\paragraph{example 1} a simple example (we form a matrix with eigenvalues 1,2,3,4,5):
+\begin{Verbatim}
+X=rand(5,5);
+vp = [1;2;3;4;5];
+A = X*diag(vp)*inv(X);
+// remark: span(X(:,j)) is the eigenspace associated to the eigenvalue j
+[lambda,V]=spec(A)
+A*V - V*diag(lambda)
+// reorder V such that V(:,j) is the eigenvector associated to the eigenvalue j
+V(:,round(lambda))=V;
+V./X  // each colomn must have the same coefficients
+\end{Verbatim}
 
 \paragraph{example 2} hyper-plane symetry:
-  \begin{program}\HCode{u = rand(4,1); u = u/norm(u);\Hnewline
-    // A is the matrix of the symetry around the hyper-plane orthogonal to u\Hnewline
-    // (aka as an hyper-plane reflection or an Houselholder transformation)\Hnewline
-    A = eye(4,4) - 2*u*u';\Hnewline
-    // -1 must be an eigenvalue of multiplity 1\Hnewline
-    //  1 must be an eigenvalue of multiplity 3\Hnewline
-    [lambda,V]=spec(A)\Hnewline
-    // the eigenspace associated to -1 must be span(u):\Hnewline
-    V(:,1)./u}  
-  \end{program}
+\begin{Verbatim}
+u = rand(4,1); u = u/norm(u);
+// A is the matrix of the symetry around the hyper-plane orthogonal to u
+// (aka as an hyper-plane reflection or an Houselholder transformation)
+A = eye(4,4) - 2*u*u';
+// -1 must be an eigenvalue of multiplity 1
+//  1 must be an eigenvalue of multiplity 3
+[lambda,V]=spec(A)
+// the eigenspace associated to -1 must be span(u):
+V(:,1)./u
+\end{Verbatim}
 
-\paragraph{example 3} a rotation matrix in the plane (here eigenvalues
-    are necessary complex):
-  \begin{program}\HCode{theta =}\verb+%pi+\HCode{/3; ct=cos(theta); st=sin(theta);\Hnewline
-    A=[ct,-st;st,ct];\Hnewline
-    [lambda,V]=spec(A)}
-  \end{program}
+\paragraph{example 3} a rotation matrix in the plane (here eigenvalues are necessary complex):
+\begin{Verbatim}
+theta=%pi/3; ct=cos(theta); st=sin(theta);
+A=[ct,-st;st,ct];
+[lambda,V]=spec(A)
+\end{Verbatim}
 
-\paragraph{example 4} a defective case (1 is an eigenvalue of
-    multiplicity 3 and the associated eigenspace must be span([1;0;0]):
-  \begin{program}\HCode{A=[1,1,0;0,1,1;0,0,1];\Hnewline
-    [lambda,V]=spec(A)\Hnewline
-    orth(V)}
-  \end{program}
+\paragraph{example 4} a defective case (1 is an eigenvalue of multiplicity 3 
+and the associated eigenspace must be span([1;0;0]):
+\begin{Verbatim}
+A=[1,1,0;0,1,1;0,0,1];
+[lambda,V]=spec(A)
+orth(V)
+\end{Verbatim}
 \end{examples}
 
 \begin{manseealso}

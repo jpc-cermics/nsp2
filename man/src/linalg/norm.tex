@@ -60,26 +60,29 @@ The matrix 2-norm is not available for sparse matrix.
 \end{mandescription}
 \begin{examples}
 \paragraph{example 1} a simple example
-  \begin{program}\HCode{x=[1,1];\Hnewline
-    // 1-norm\Hnewline
-    norm(x,1)  // or norm(x,'1')\Hnewline
-    // 2-norm\Hnewline
-    norm(x,2)  // or norm(x,'2') or simply norm(x)\Hnewline
-    // Inf-norm\Hnewline
-    norm(x,\%inf)  // or norm(x,'Inf')\Hnewline}
-  \end{program}
+\begin{Verbatim}
+x=[1,1];
+// 1-norm
+norm(x,1)  // or norm(x,'1')
+// 2-norm
+norm(x,2)  // or norm(x,'2') or simply norm(x)
+// Inf-norm
+norm(x,%inf)  // or norm(x,'Inf')
+\end{Verbatim}
+
 \paragraph{example 2} invariance of a 2-norm by an orthonormal tranformation
-  \begin{program}\HCode{// make an orthonormal matrix\Hnewline
-    Q=qr(rand(5,5));\Hnewline
-    // a random vector\Hnewline
-    x = randn(5,1);\Hnewline
-    // its 2-norm\Hnewline
-    nx = norm(x,2)\Hnewline
-    // the 2-norm Q*x\Hnewline
-    ny = norm(Q*x, 2)\Hnewline
-    // nx and ny should be near equal\Hnewline
-    abs((nx-ny)/nx)}
-  \end{program}
+\begin{Verbatim}
+// make an orthonormal matrix
+Q=qr(rand(5,5));
+// a random vector
+x = randn(5,1);
+// its 2-norm
+nx = norm(x,2)
+// the 2-norm Q*x
+ny = norm(Q*x, 2)
+// nx and ny should be near equal
+abs((nx-ny)/nx)
+\end{Verbatim}
 \end{examples}
 
 %\begin{manseealso}
