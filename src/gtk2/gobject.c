@@ -1650,6 +1650,31 @@ int nsp_gtk_eval_function_by_name(const char *name,NspObject *args[],int n_args,
 
 
 /**
+ * nsp_gtk_eval_function_by_name_catch:
+ * @func: 
+ * @args: 
+ * @n_args: 
+ * @ret: 
+ * @nret: 
+ * 
+ * evaluates the macro @func using the gtk stack.
+ * 
+ * Return value: 
+ **/
+
+
+int nsp_gtk_eval_function_by_name_catch(const char *name,NspObject *args[],int n_args,NspObject  *ret[],int *nret,
+					int errcatch, int pausecatch)
+{
+  /* we search here the function by name in the calling stacks
+   * since it is used by scicos or mexcallmatlab.
+   */
+  NspObject *Obj= nsp_frames_search_object(name);
+  return  _nsp_gtk_eval_function((NspPList *)Obj,name,args,n_args,ret,nret,errcatch, pausecatch);
+}
+
+
+/**
  * nsp_constant_strip_prefix:
  * @name: the constant name.
  * @strip_prefix: the prefix to strip.
