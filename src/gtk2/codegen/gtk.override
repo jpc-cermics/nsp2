@@ -7013,6 +7013,32 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
 }
 
+%%
+override gtk_action_group_get_action noargs
+
+static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *action_name;
+  NspObject *nsp_ret;
+  GtkAction *ret;
+  if ( GetArgs(stack,rhs,opt,T,&action_name) == FAIL) return RET_BUG;
+  ret = gtk_action_group_get_action(GTK_ACTION_GROUP(self->obj), action_name);
+  if ( ret != NULL) 
+    {
+      nsp_type_gtkaction = new_type_gtkaction(T_BASE);
+      if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkaction))== NULL)
+	return RET_BUG;
+    }
+  else
+    {
+      if ((nsp_ret = (NspObject *) nsp_none_create(NVOID,NULL))== NULL)
+	return RET_BUG;
+    }
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
 
 %%
 override gtk_action_group_list_actions noargs
