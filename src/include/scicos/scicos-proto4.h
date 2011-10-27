@@ -2,12 +2,6 @@
 #define NSP_SCICOS_PROTO_H
 
 #include <nsp/nsp.h>
-/* 
-#include <nsp/graphics-new/Graphics.h>  
-extern BCG *scicos_set_win(int wid,int *oldwid);
-extern void scicos_clip(BCG *Xgc,int n) ;
-extern int scicos_setblockwin (BCG *Xgc,int *win, int *cur);
-*/
 
 extern int scicos_ftree2 (int *vec, int *nb, int *deput, int *outoin,
 			  int *outoinptr, int *ord, int *nord, int *ok);
@@ -50,6 +44,7 @@ extern int scicos_get_fcaller_id(void);
 extern void scicos_end_scicos_sim(void);
 extern void scicos_set_block_number(int kfun);
 extern int scicos_get_block_error (void);
+
 
 /* nsp events */
 
