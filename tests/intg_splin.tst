@@ -66,7 +66,7 @@ if ~isnan(I) then, pause, end
 // use natural
 I = intg_splin(a,b,x,y,d,outmode="natural");
 Ie = F(b) - F(a);
-if abs((I-Ie)/Ie) > 2e-15, then, pause, end
+if abs((I-Ie)/Ie) > 4e-15, then, pause, end
 
 // use C0
 I = intg_splin(a,b,x,y,d,outmode="C0");

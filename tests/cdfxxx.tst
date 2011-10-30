@@ -59,10 +59,10 @@ erx = max( abs(x-xe)./xe );
 if erx > 3e-15 then, pause, end
 a = cdff("Dfn",be*v,pe,qe,xe);
 era = max( abs(a-ae)/ae );
-if era > 2e-11 then, pause, end
+if era > 2.5e-11 then, pause, end
 b = cdff("Dfd",pe,qe,xe,ae*v);
 erb = max( abs(b-be)/be );
-if erb > 5e-15 then, pause, end
+if erb > 1e-14 then, pause, end
 
 // verify special values
 [p,q] = cdff("PQ",%nan,ae,be);
@@ -128,8 +128,8 @@ v = ones(size(xe));
 if ~p.equal[pp] || ~q.equal[qq] then, pause, end
 erp = max( abs(p-pe)./pe );
 erq = max( abs(p-pe)./pe );
-if erp > 1e-15 then, pause, end
-if erq > 1e-15 then, pause, end
+if erp > 3e-15 then, pause, end
+if erq > 3e-15 then, pause, end
 x = icdf("f",pe,ae,be,Q=qe);
 xx = cdff("F",ae*v,be*v,pe,qe);
 if ~x.equal[xx] then, pause, end
@@ -144,7 +144,7 @@ era = max( era );
 if era > 1e-12 then, pause, end
 b = cdff("Dfd",pe,qe,xe,ae*v);
 erb = max( abs(b-be)/be );
-if erb > 1e-15 then, pause, end
+if erb > 6e-15 then, pause, end
 
 // verify special values
 [p,q] = cdff("PQ",%nan,ae,be);
@@ -230,7 +230,7 @@ ernu1 =  max(abs(nu1-nu1e)/nu1e);
 if ernu1 > 5e-15 then, pause, end
 nu2 = cdffnc("Dfd",lambdae*v,pe,qe,xe,nu1e*v);
 ernu2 = max( abs(nu2-nu2e)/nu2e );
-if ernu2 > 5e-15 then, pause, end
+if ernu2 > 7e-15 then, pause, end
 lambda = cdffnc("Pnonc",pe,qe,xe,nu1e*v,nu2e*v);
 erl = max( abs(lambda-lambdae)/lambdae );
 if erl > 5e-15 then, pause, end
@@ -766,8 +766,8 @@ sde = 6.6613880127337848116;
 
 [m,sd] = dist_stat("nt",dfe,pnonce);
 erm = abs(m-me)/me; ersd = abs(sd-sde)/sde;
-if erm > 1e-15 then, pause, end
-if ersd > 1e-13 then, pause, end
+if erm > 5e-15 then, pause, end
+if ersd > 3e-13 then, pause, end
 
 // usual tests
 v = ones(size(xe));
@@ -789,7 +789,7 @@ if erdf > 1e-9 then, pause, end
 
 pnonc = cdftnc("Pnonc",pe,1-pe,xe,dfe*v);
 erpn =  max(abs(pnonc-pnonce)/pnonce);
-if erpn > 1e-10 then, pause, end
+if erpn > 2e-10 then, pause, end
 
 // verify special values
 [p,q] = cdftnc("PQ",%nan,dfe,pnonce);
@@ -868,17 +868,17 @@ p = cdf("nt",xe,dfe,pnonce);
 pp = cdftnc("PQ",xe,dfe*v,pnonce*v);
 if ~p.equal[pp] then, pause, end
 erp = max( abs(p-pe)./pe );
-if erp > 5e-06 then, pause, end
+if erp > 5e-05 then, pause, end
 
 x = icdf("nt",pe,dfe,pnonce);
 xx = cdftnc("T",dfe*v,pnonce*v,pe,1-pe);
 if ~x.equal[xx] then, pause, end
 erx = max( abs(x-xe)./(abs(xe)+1e-6));
-if erx > 1e-7 then, pause, end
+if erx > 1e-6 then, pause, end
 
 df = cdftnc("Df",pnonce*v,pe,1-pe,xe);
 erdf =  max(abs(df-dfe)/dfe);
-if erdf > 1e-6 then, pause, end
+if erdf > 3e-6 then, pause, end
 
 pnonc = cdftnc("Pnonc",pe,1-pe,xe,dfe*v);
 erpn =  max(abs(pnonc-pnonce)/pnonce);
@@ -946,7 +946,7 @@ p = cdf("chi",xe,nue);
 pp = cdfchi("PQ",xe,nue*v);
 if ~p.equal[pp] then, pause, end
 erp = max( abs(p-pe)./pe );
-if erp > 4e-15 then, pause, end
+if erp > 5e-15 then, pause, end
 
 x = icdf("chi",pe,nue);
 xx = cdfchi("X",nue*v,pe,1-pe);
@@ -1019,7 +1019,7 @@ p = cdf("nch",xe,nue,lambdae);
 pp = cdfchn("PQ",xe,nue*v,lambdae*v);
 if ~p.equal[pp] then, pause, end
 erp = max( abs(p-pe)./pe );
-if erp > 4e-15 then, pause, end
+if erp > 7e-15 then, pause, end
 
 x = icdf("nch",pe,nue,lambdae);
 xx = cdfchn("X",nue*v,lambdae*v,pe,1-pe);
@@ -1096,7 +1096,7 @@ p = cdf("gam",xe,ae,be);
 pp = cdfgam("PQ",xe,ae*v,be*v);
 if ~p.equal[pp] then, pause, end
 erp = max( abs(p-pe)./pe );
-if erp > 1e-15 then, pause, end
+if erp > 2e-15 then, pause, end
 
 x = icdf("gam",pe,ae,be);
 xx = cdfgam("X",ae*v,be*v,pe,1-pe);
@@ -1110,7 +1110,7 @@ if era > 2e-15 then, pause, end
 
 b = cdfgam("Rate",pe,1-pe,xe,ae*v);
 erb =  max(abs(b-be)/be);
-if erb > 1e-15 then, pause, end
+if erb > 2e-15 then, pause, end
 
 // verify special values
 [p,q] = cdfgam("PQ",%nan,ae,be);
@@ -1480,8 +1480,9 @@ erp = max( abs(p-pe)./pe );
 erq =  max( abs(q-qe)./qe );
 if erp > 1e-14 || erq > 1e-14 then, pause, end
 x = cdfnbn("S",re*v,pre*v,qre*v,pe,qe);
-erx = max( abs(x-xe)./(xe+1e-6) );
-if erx > 1e-14 then, pause, end
+erx = max( abs(x-xe)./(xe+1e-3) );
+if erx > 2e-13 then, pause, end
+
 // a test for icdf...
 xx = icdf("nbn",p,re,pre,Q=q);
 if ~xx.equal[xe] then, pause, end
@@ -1532,14 +1533,14 @@ pe = [8.8817841970012523234e-16; 0.00000031814398149804616464; 0.000063373530037
 
 qe = [0.99999999999999911182; 0.99999968185601850195; 0.99993662646996248559; 
       0.99881331135027466472; 0.99208979354792707621; 0.97044422303126184060; 
-      0.92355063094561489699; 0.84626000132263910880; 0.74190564923390880188; 
-      0.62084508558750827137; 0.49618162546935178862; 0.37956190162580830807; 
-      0.27875344448387731505; 0.19718726831646397724; 0.13479282300468795613; 
-      0.089311925348776765982; 0.057520393306799083628; 0.036099497138050490459; 
-      0.022127395884010631710; 0.013273529037155728367; 0.0078064032852556765637; 
+      0.92355063094561489699; 0.84626000132263910880; 0.74190564923390880188;
+      0.62084508558750827137; 0.49618162546935178862; 0.37956190162580830807;
+      0.27875344448387731505; 0.19718726831646397724; 0.13479282300468795613;
+      0.089311925348776765982; 0.057520393306799083628; 0.036099497138050490459;
+      0.022127395884010631710; 0.013273529037155728367; 0.0078064032852556765637;
       0.0045083804026297318212; 0.0025604516839407905856; 0.0014318403981652494966;
-      0.00078931858211365319863; 0.00042937495029477241755; 0.00023070138207633156072; 
-      0.00012253386239281188212; 0.000064384797702822881737; 0.000033491165041094947095; 
+      0.00078931858211365319863; 0.00042937495029477241755; 0.00023070138207633156072;
+      0.00012253386239281188212; 0.000064384797702822881737; 0.000033491165041094947095;
       0.000017257122306683050504];
 
 
