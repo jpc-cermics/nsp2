@@ -2737,17 +2737,8 @@ int nsp_mat_pow_scalar(NspMatrix *A, NspMatrix *B)
 	{
 	  if ( B->R[0] == 2.0 )
 	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= A->R[i];
-	  else if ( B->R[0] == 3.0 )
-	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = A->R[i]*A->R[i]*A->R[i];
 	  else if ( B->R[0] == floor(B->R[0]) )  /* integer exponent */
-	    {
-	      if ( fabs(B->R[0]) <= 65536.0 ) 
-		/* use power algorithm (2^16 = 65536 so less than 16 multiplications, */
-		/* so the relative error is bounded by 16 epsm)                       */
-		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = nsp_pow_di(A->R[i], (int) B->R[0]);
-	      else
-		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i], B->R[0]);
-	    }
+	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i], B->R[0]);
 	  else   /* A.^p  with p real or p a too big integer */
 	    {
 	      Boolean rflag = TRUE;
