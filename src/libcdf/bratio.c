@@ -236,28 +236,28 @@ int cdf_bratio (double a, double b, double x, double y, double *w, double *w1,
 
  L90:
   *w = cdf_fpser (a0, b0, x0, eps);
-  *w1 = .5 - *w + .5;
+  *w1 = 1.0 - *w; /* .5 - *w + .5; */
   goto L250;
 
  L100:
   *w1 = cdf_apser (a0, b0, x0, eps);
-  *w = .5 - *w1 + .5;
+  *w = 1.0 - *w1; /*.5 - *w1 + .5;*/
   goto L250;
 
  L110:
   *w = cdf_bpser (a0, b0, x0, eps);
-  *w1 = .5 - *w + .5;
+  *w1 = 1.0 - *w; /*.5 - *w + .5;*/
   goto L250;
 
  L120:
   *w1 = cdf_bpser (b0, a0, y0, eps);
-  *w = .5 - *w1 + .5;
+  *w = 1.0 - *w1; /* .5 - *w1 + .5; */
   goto L250;
 
  L130:
   d__1 = eps * 15.;
   *w = cdf_bfrac (a0, b0, x0, y0, lambda, d__1);
-  *w1 = .5 - *w + .5;
+  *w1 = 1.0 - *w; /* .5 - *w + .5; */
   goto L250;
 
  L140:
@@ -266,7 +266,7 @@ int cdf_bratio (double a, double b, double x, double y, double *w, double *w1,
  L150:
   d__1 = eps * 15.;
   cdf_bgrat (b0, a0, y0, x0, w1, d__1, &ierr1);
-  *w = .5 - *w1 + .5;
+  *w = 1.0 - *w1; /* .5 - *w1 + .5; */
   goto L250;
 
  L160:
@@ -285,7 +285,7 @@ int cdf_bratio (double a, double b, double x, double y, double *w, double *w1,
       goto L180;
     }
   *w += cdf_bpser (a0, b0, x0, eps);
-  *w1 = .5 - *w + .5;
+  *w1 = 1.0 - *w; /* .5 - *w + .5; */
   goto L250;
 
  L180:
@@ -299,13 +299,13 @@ int cdf_bratio (double a, double b, double x, double y, double *w, double *w1,
  L190:
   d__1 = eps * 15.;
   cdf_bgrat (a0, b0, x0, y0, w, d__1, &ierr1);
-  *w1 = .5 - *w + .5;
+  *w1 = 1.0 - *w; /*.5 - *w + .5;*/
   goto L250;
 
  L200:
   d__1 = eps * 100.;
   *w = cdf_basym (a0, b0, lambda, d__1);
-  *w1 = .5 - *w + .5;
+  *w1 = 1.0 - *w; /* .5 - *w + .5; */
   goto L250;
 
   /*               termination of the procedure */
@@ -343,8 +343,16 @@ int cdf_bratio (double a, double b, double x, double y, double *w, double *w1,
   /*           procedure for a and b .lt. 1.e-3*eps */
 
  L260:
-  *w = b / (a + b);
-  *w1 = a / (a + b);
+  /* *w = b / (a + b); */
+  /* *w1 = a / (a + b); */
+  if ( b <= a )
+    {
+      *w = b / (a + b); *w1 = 1.0 - *w;
+    }
+  else
+    {
+      *w1 = a / (a + b); *w = 1.0 - *w1;
+    }
   return 0;
 
   /*                       error return */

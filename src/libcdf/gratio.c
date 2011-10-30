@@ -251,7 +251,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
       /* L90: */
     }
   *ans = r__ / a * (sum + 1.);
-  *qans = .5 - *ans + .5;
+  *qans = 1.0 - *ans; /* .5 - *ans + .5; */
   return OK;
 
   /*                 ASYMPTOTIC EXPANSION */
@@ -294,7 +294,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
       /* L150: */
     }
   *qans = r__ / x * (sum + 1.);
-  *ans = .5 - *qans + .5;
+  *ans = 1.0 - *qans; /* .5 - *qans + .5; */
   return OK;
 
   /*             TAYLOR SERIES FOR P(A,X)/X**A */
@@ -335,19 +335,19 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
 
  L190:
   w = exp (z__);
-  *ans = w * g * (.5 - j + .5);
-  *qans = .5 - *ans + .5;
+  *ans = w * g * (1.0 - j);  /* w * g * (.5 - j + .5); */
+  *qans = 1.0 - *ans; /*.5 - *ans + .5;*/
   return OK;
 
  L200:
   l = nsp_expm1 (z__);
-  w = l + .5 + .5;
+  w = l + 1.0; /* .5 + .5; */
   *qans = (w * j - l) * g - h__;
   if (*qans < 0.)
     {
       goto L380;
     }
-  *ans = .5 - *qans + .5;
+  *ans = 1.0 - *qans; /* .5 - *qans + .5; */
   return OK;
 
   /*             FINITE SUMS FOR Q WHEN A .GE. 1 */
@@ -379,7 +379,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
   goto L230;
  L240:
   *qans = sum;
-  *ans = .5 - *qans + .5;
+  *ans = 1.0 - *qans; /* .5 - *qans + .5; */
   return OK;
 
   /*              CONTINUED FRACTION EXPANSION */
@@ -408,7 +408,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
     }
 
   *qans = r__ * an0;
-  *ans = .5 - *qans + .5;
+  *ans = 1.0 - *qans; /*.5 - *qans + .5; */
   return OK;
 
   /*                GENERAL TEMME EXPANSION */
@@ -489,11 +489,11 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
       goto L320;
     }
   *qans = c__ * (w + rt2pin * t / rta);
-  *ans = .5 - *qans + .5;
+  *ans = 1.0 - *qans; /* .5 - *qans + .5; */
   return OK;
  L320:
   *ans = c__ * (w - rt2pin * t / rta);
-  *qans = .5 - *ans + .5;
+  *qans = 1.0 - *ans; /* 5 - *ans + .5; */
   return OK;
 
   /*               TEMME EXPANSION FOR L = 1 */
@@ -503,7 +503,7 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
     {
       goto L430;
     }
-  c__ = .5 - y + .5;
+  c__ = 1.0 - y; /* .5 - y + .5; */
   w = (.5 - sqrt (y) * (.5 - y / 3. + .5) / rtpi) / c__;
   u = 1. / a;
   z__ = sqrt (z__ + z__);
@@ -572,12 +572,12 @@ int cdf_gratio (double a, double x, double *ans, double *qans,const int *ind)
     }
   d__1 = sqrt (x);
   *ans = cdf_erf (d__1);
-  *qans = .5 - *ans + .5;
+  *qans = 1.0 - *ans; /*.5 - *ans + .5;*/
   return OK;
  L400:
   d__1 = sqrt (x);
   *qans = cdf_erfc (c__0, d__1);
-  *ans = .5 - *qans + .5;
+  *ans = 1.0 - *qans; /*.5 - *qans + .5;*/
   return OK;
 
  L410:
