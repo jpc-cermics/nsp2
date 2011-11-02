@@ -250,4 +250,4 @@ if max(abs(v-v1)) > 1.e-14 then pause,end
 Shape=cdfgam("Shape",0.3*ones(1,nv-1),P(2:$),Q(2:$),v(2:$));
 if max(abs(Shape(2:$)-0.1)) > 1.e-15 then pause,end
 Scale=cdfgam("Rate",P(2:$),Q(2:$),v(2:$),0.1*ones(1,nv-1));
-if max(abs(Scale(2:$)-0.3)) > 1.e-15 then pause,end
+if max(abs(Scale(2:$)-0.3)) > 2.e-15 then pause,end
