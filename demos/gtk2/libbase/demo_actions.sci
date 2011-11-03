@@ -239,6 +239,15 @@ function demoaction_remove_cb(button, args )
   manager.set_data[ui_id=-1];
 endfunction
 
+function demoaction_popup(button, args )
+// remove dynamic menu 
+  manager = args(1);
+  popup_list = manager.get_toplevels[GTK.UI_MANAGER_POPUP]
+  popup = popup_list(1);
+  popup.popup[button=3,activate_time=0];
+endfunction
+
+
 function demo_actions()
 //  gtk_accel_map_load ("accels");
 // gtk_accel_map_save ("accels");
@@ -316,7 +325,7 @@ function demo_actions()
   
   action_group = gtkactiongroup_new("TestActions")
   demoaction_build_actions(action_group,merge);
-
+  
   merge.insert_action_group[action_group, 0];
   merge.set_data[ui_id=-1];
   merge.connect["add_widget", demoaction_add_widget, list(box)];
@@ -330,7 +339,7 @@ function demo_actions()
   if rep==0 then 
     printf("building menus failed: \n");
   end
-  
+    
   hbox = gtkhbox_new(homogeneous=%f,spacing=0);
   box.pack_end[hbox,expand=%f,fill=%f,padding=0];
   hbox.show[];
@@ -345,5 +354,12 @@ function demo_actions()
   button.show[];
   button.connect["clicked", demoaction_remove_cb, list(merge)];
 
+  button = gtkbutton_new(label="Popup");
+  hbox.pack_start[ button,expand=%f,fill=%f,padding=0];
+  button.show[];
+  button.connect["clicked", demoaction_popup, list(merge)];
+
+  // get the popup menu 
   window.show[];
+    
 endfunction
