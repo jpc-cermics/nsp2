@@ -3919,25 +3919,14 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
 
   for ( i = 0 ; i < x->n ; i++)
     {
+      int lmark=mark,lcolor=color;
       NspMatrix *xp,*yp;
       if ((xp= nsp_matrix_create_from_array("x",1,x->m,x->R + x->m*i,NULL))== NULL) return RET_BUG;
       if ((yp= nsp_matrix_create_from_array("x",1,y->m,y->R + y->m*i,NULL))== NULL) return RET_BUG;
-      if ( style != NULL)
-	{
-	  mark=fill_color=-2;color=-1;
-	  if ( style->I[i] <= 0) 
-	    {
-	      mark = - style->I[i];
-	      color=-2;
-	    }
-	  else
-	    {
-	      color = style->I[i];
-	    }
-	}
+      lmark = ( style == NULL) ? mark: (( style->I[i] <= 0) ?  - style->I[i] : -2);
+      lcolor= ( style == NULL) ? color: (( style->I[i] <= 0) ? -2 : style->I[i]);
       if ((pl = nsp_polyline_create("pl",xp,yp,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
-      mark = color=-1;
       /* insert the polyline */
       if ( compound == TRUE ) 
 	{
