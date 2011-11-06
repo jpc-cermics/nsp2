@@ -2,13 +2,13 @@
 
 \mansection{acquire}
 \begin{mandesc}
-  \short{acquire}{search a variable in callers} \\
+  \short{acquire}{acquire value from calling stack frames} \\
 \end{mandesc}
 
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-y = acquire(name);
+ y = acquire(name [,where], def=object );
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -16,23 +16,30 @@ y = acquire(name);
   \begin{varlist}
     \vname{name}: a string giving the name of symbol to search.
     \vname{y}: a nsp object.
+    \vname{where}: an optional character string which should be chosen 
+    among \verb+'all'+, \verb+'caller'+, \verb+'callers'+, \verb+'local'+,
+    \verb+'global'+, \verb+'function'+, \verb+'nsp-function'+, or 
+    \verb+'callable'+.
+    \vname{object}: a nsp object.
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-  This function is used to copy in the current frame a variable found in callers 
-  with the given name. 
+  This function is used to search a symbol in the frames defined by where (the default value 
+  is \verb+"callers"+) and copy the value of the symbol in the current frame if such a symbol is found. If the symbol is not found an error is returned or a default value is returned if 
+  the named optional argument \verb+def+ was given. 
 \end{mandescription}
 
 \begin{examples}
 \begin{Verbatim}
 x=1:3;
 function y=f(n)
-   if n >= 10 then y=acquire('x'); 
-   else y=f(n+1);
-   end 
+ if n >= 10 then y=acquire('x'); 
+ else y=f(n+1);
+ end 
 endfunction 
 y=f(0);
+y=acquire('foo','caller',def=67);
 \end{Verbatim}
 \end{examples}
 

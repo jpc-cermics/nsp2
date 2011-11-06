@@ -6,7 +6,8 @@
 % -- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  bool= exists(name [, str])  
+  bool= exists(name [, where])
+  S=exists();
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -18,11 +19,15 @@
     \verb+'global'+, \verb+'function'+, \verb+'nsp-function'+, or 
     \verb+'callable'+.
     \vname{bool}: a boolean. 
+    \vname{S}: a string matrix.
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
-  This function can be used to search for symbols, it returns true if 
-  symbol names \verb+name+ is found and false if not. 
+  When called with no arguments the function \verb+exists+ will return 
+  the names of calling stack frames from current frame to constants. 
+  When called with a string as first \verb+name+ the function is 
+  used to search for symbols, it returns true if 
+  symbol named \verb+name+ is found and false if not. 
   \begin{varlist}
     \vname{'all'}: this is the default value, which  means \verb+local+ or 
     \verb+callers+ or \verb+global+.
@@ -51,6 +56,10 @@
     y=g('x1','global')
     // functions 
     exists('sin_m','function')
+    // calling stack names 
+    function y=f(); y=g();endfunction 
+    function y=g(); y=exists();endfunction 
+    y=f()
   \end{Verbatim}
 \end{examples}
 %-- see also
