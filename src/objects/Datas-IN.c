@@ -17,11 +17,7 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#include <nsp/nsp.h>
 #include <nsp/object.h> 
 #include <nsp/type.h> 
 #include <nsp/hobj.h> 
@@ -39,6 +35,10 @@
 extern NspObject *Reserved;
 extern NspFrame  *GlobalFrame;
 extern NspFrame  *ConstantFrame;
+
+static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", "callable", NULL};
+typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, in_macro, in_callable} _exist_tag;
+static int nsp_exists(const char *Name, _exist_tag type,NspObject **ret);
 
 /*
  * Now the interfaced function for frame operations 
@@ -108,18 +108,36 @@ static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
 
 static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
 {
+  NspObject *Def=NULL;
+  NspObject *Obj = NULLOBJ;
   char *name;
-  NspObject *Obj;
-  CheckRhs(1,1);
+  int rep=in_callers; 
+  nsp_option opts[] ={{"args",list,NULLOBJ,-1},
+		      {"def",objcopy,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  NspList *args = NULL;
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
   if ((name = GetString (stack, 1)) == (char *) 0) return RET_BUG;
-  /* get value from callers */
-  if (( Obj = nsp_frames_search_local_in_calling(name,FALSE)) == NULLOBJ) 
+  if (rhs -opt  == 2) { 
+    if ((rep= GetStringInArray(stack,2,exists_list,1)) == -1) return RET_BUG; 
+  }
+  if ( get_optional_args(stack, rhs, opt, opts, &args,&Def) == FAIL )
+    return RET_BUG;
+  if ( nsp_exists(name,rep,&Obj)== FALSE ) 
     {
-      Scierror("Error: object %s not found in callers environemnt\n",name);
-      return RET_BUG;
+      if ( Def == NULL ) 
+	{
+	  Scierror("Error: object %s not found in callers environemnt\n",name);
+	  return RET_BUG;
+	}
+      else 
+	{
+	  MoveObj(stack,1,Def);
+	  return Max(lhs,1);
+	}
     }
-  /* Follow pointer **/
+  /* Follow pointer */
   HOBJ_GET_OBJECT(Obj,RET_BUG);
   if (( Obj = nsp_object_copy(Obj)) == NULLOBJ) 
     return RET_BUG;
@@ -193,10 +211,8 @@ static int int_clearglobal(Stack stack, int rhs, int opt, int lhs)
  * Interface for exists 
  */
 
-static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", "callable", NULL};
-typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, in_macro, in_callable} _exist_tag;
 
-static int nsp_exists(const char *Name, _exist_tag type)
+static int nsp_exists(const char *Name, _exist_tag type,NspObject **ret)
 {
   NspObject *O=NULLOBJ;
   int irep=FALSE, vi=0,vn=0;
@@ -237,9 +253,10 @@ static int nsp_exists(const char *Name, _exist_tag type)
        */
       if ( IsHobj(O) && ((NspHobj *) O)->htype == 'g' )
 	{
-	  if ((nsp_global_frame_search_object(Name)) == NULLOBJ)  irep=FALSE;
+	  if ((O=nsp_global_frame_search_object(Name)) == NULLOBJ)  irep=FALSE;
 	}
     }
+  if ( ret != NULL) *ret = O;
   return irep;
 }
 
@@ -280,6 +297,9 @@ static NspSMatrix *nsp_calling_tree()
   return NULL;
 }
 
+/* checks if variables exists 
+ *
+ */
 
 static int int_exists(Stack stack, int rhs, int opt, int lhs)
 {
@@ -307,7 +327,7 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
   if (( B = nsp_bmatrix_create(NVOID,Names->m,Names->n)) ==NULL) return FAIL;
   for ( i= 0 ; i < Names->mn ; i++)
     {
-      B->B[i] = nsp_exists(Names->S[i],rep);
+      B->B[i] = nsp_exists(Names->S[i],rep,NULL);
     }
   MoveObj(stack,1,NSP_OBJECT(B));
   return 1;
