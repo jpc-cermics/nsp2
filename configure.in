@@ -1077,8 +1077,7 @@ if test "$MINGW32" != "yes" ; then
    VTE=no 
    AC_CHECK_LIB(vte,vte_terminal_new,[VTE=yes])
    if test "$VTE" = no; then
-      AC_MSG_WARN([Could not find the vte library. I will try libzvt-2.0 ],)
-      AC_MSG_ERROR([you should install vte and vte-devel ],)
+      AC_MSG_ERROR([you should install library and devel for VTE (Terminal emulator widget)],)
       # check for zzledt 
       LIBS=`pkg-config libzvt-2.0 --cflags --libs` 
       GZVT2=no
@@ -1106,6 +1105,8 @@ fi
   if test "no$READLINE" != no; then
      ZZLEDT="reader_rl"
      AC_DEFINE(WITH_READLINE,[],[readline library])
+  else 
+     AC_MSG_ERROR([Could not find/use the GNU readline library (or associated devel files)],)
   fi
 
 #detect cairo in gtk 
