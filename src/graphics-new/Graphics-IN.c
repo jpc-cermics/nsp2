@@ -6207,7 +6207,7 @@ typedef  enum { SLD_NORTH=0, SLD_SOUTH=1, SLD_EAST=2, SLD_WEST=3, SLD_ANY=4 }
 typedef  enum { SL_IN=0  ,SL_OUT=1 ,SL_EVIN=2,SL_EVOUT=3 , SL_SQP=4, SL_SQM=5 } 
   slock_type;
 
-static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked)
+static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,slock_type typ,int locked,int dcolor)
 {
   NspPolyline *pl;
   NspAxes *axe; 
@@ -6256,10 +6256,17 @@ static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,sl
 
   if (( axe=  nsp_check_for_current_axes())== NULL) return FAIL;
 
-  {
-    nsp_figure *F = ((NspGraphic *) axe)->obj->Fig;
-    fill_color= color = F->gc->pattern ;
-  }
+  if ( dcolor != -2 )
+    {
+      /* color was given as option */
+      fill_color= color = dcolor;
+    }
+  else 
+    {
+      nsp_figure *F = ((NspGraphic *) axe)->obj->Fig;
+      fill_color= color = F->gc->color ;
+    }
+
 
   if ((Mx= nsp_matrix_create("x",'r',npt,1))== NULLMAT) return FAIL;
   if ((My= nsp_matrix_create("y",'r',npt,1))== NULLMAT) return FAIL;
@@ -6284,14 +6291,17 @@ static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,sl
 
 static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
 {
-  int dir=0,typ=0;
+  
+  nsp_option opts[] ={{ "color",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  int dir=0,typ=0,color=-2;
   double xf,yf;
   NspMatrix *Mpt;
-  int_types T[] = {realmat,s_double,s_double,s_int,s_int, t_end} ;
-  CheckRhs(5,5);
-  if ( GetArgs(stack,rhs,opt,T,&Mpt,&xf,&yf,&dir,&typ) == FAIL) return RET_BUG;
+  int_types T[] = {realmat,s_double,s_double,s_int,s_int,new_opts, t_end} ;
+  CheckStdRhs(5,5);
+  if ( GetArgs(stack,rhs,opt,T,&Mpt,&xf,&yf,&dir,&typ,&opts,&color) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,Mpt,2);
-  lock_draw_new(Mpt->R,xf/9.0,yf/3.5,dir,typ,1);
+  lock_draw_new(Mpt->R,xf/9.0,yf/3.5,dir,typ,1,color);
   return 0;
 } 
 
