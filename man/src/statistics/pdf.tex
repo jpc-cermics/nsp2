@@ -32,8 +32,7 @@ y=pdf(dist_type, x [,p1,...,pk])
   density with shape parameters $a > 0$ and $b > 0$:
 $$
      f(x; a, b) =
-        \frac{1}{\beta(a,b)} x^{a-1}(1-x)^{b-1} \;
-        \mbox{for } x \in (0,1)
+        \frac{1}{\beta(a,b)} x^{a-1}(1-x)^{b-1}, \quad x \in (0,1)
 $$
 \href{http://en.wikipedia.org/wiki/Beta_distribution}{Wikipedia page on beta distribution}.
 
@@ -41,7 +40,7 @@ $$
   the binomial mass function with parameters $p \in [0,1]$ and $n$
   (positive integer):
 $$
-     f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x} \;\mbox{for } x \in \{0,1,\dots,n\}
+     f(x; n, p) = \frac{ n! }{ x! (n-x)!} p^x (1-p)^{n-x}, \quad x \in \{0,1,\dots,n\}
 $$
 \href{http://en.wikipedia.org/wiki/Binomial_distribution}{Wikipedia page on binomial distribution}.
 
@@ -49,7 +48,7 @@ $$
   the negative binomial mass function with parameters $r > 0$ ($r$ not
   necessarily integer) and $p \in (0,1]$:
 $$
-     f(x; r, p) = \frac{ \Gamma(r+x) }{ x! \Gamma(r)} p^r (1-p)^x \;\mbox{for } x \in \{0,1,\dots\}
+     f(x; r, p) = \frac{ \Gamma(r+x) }{ x! \Gamma(r)} p^r (1-p)^x, \quad x \in \{0,1,\dots\}
 $$
   When $r$ is integer, $f(x; r, p)$ is the probability to get $x$ failures among 
  independant Bernoulli trials (each one with probability $p$ of success) which are
@@ -66,7 +65,7 @@ $$
 \item \itemdesc{\hypertarget{chipdf}{chi square}} \verb!y=pdf("chi",x,nu)! computes the chi square
   density with parameter $\nu > 0$ (number of dof):
 $$
-     f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}\; \mbox{ for } x > 0 
+     f(x; \nu) = \frac{1}{2^{\nu/2} \Gamma(\nu/2)} x^{\nu/2-1} e^{-x/2}, \quad x > 0 
 $$
 \href{http://en.wikipedia.org/wiki/Chi_square_distribution}{Wikipedia page on chi square distribution}.
 
@@ -82,8 +81,7 @@ $$
 \item \itemdesc{\hypertarget{exppdf}{exponential}} \verb!y=pdf("exp",x,tau)! computes the exponential
   density with parameter $\tau > 0$:
 $$
-     f(x; \tau) = \frac{1}{\tau} e^{-x/\tau} \; \mbox{for } x
-     \ge 0
+     f(x; \tau) = \frac{1}{\tau} e^{-x/\tau}, \quad x \ge 0
 $$
 Caution: the parameter is more frequently $\lambda = 1/\tau$.
 \href{http://en.wikipedia.org/wiki/Exponential_distribution}{Wikipedia page on exponential distribution}.
@@ -99,7 +97,7 @@ Caution: the parameter is more frequently $\lambda = 1/\tau$.
   density with parameters $a > 0$ (shape parameter) and $b \ge 0$
   (rate parameter):
 $$
-     f(x; a, b) = \frac{ b^a x^{a-1} e^{-bx} } {\Gamma(a)}\; \mbox{for } x > 0
+     f(x; a, b) = \frac{ b^a x^{a-1} e^{-bx} } {\Gamma(a)}, \quad x > 0
 $$
 Caution: second parameter is often a scale parameter, says $s = 1/b$.
 \href{http://en.wikipedia.org/wiki/Gamma_distribution}{Wikipedia page on gamma distribution}.
@@ -116,7 +114,7 @@ $$
 \item \itemdesc{\hypertarget{geompdf}{geometric}} \verb!y=pdf("geom",x,p)!. Computes
   the geometric mass function with parameter $p \in (0,1]$:
 $$
-     f(x; p) = (1-p)^{x-1} p \;\mbox{for } x \in \{1, 2, \dots\}
+     f(x; p) = (1-p)^{x-1} p, \quad x \in \{1, 2, \dots\}
 $$
 \href{http://en.wikipedia.org/wiki/Geometric_distribution}{Wikipedia page on geometric distribution}.
 
@@ -127,8 +125,7 @@ $$
      f(x; n, r,b) = 
     \frac{\left(\begin{array}{c}r\\x\end{array}\right)
           \left(\begin{array}{c}b\\n-x\end{array}\right)}
-         {\left(\begin{array}{c}r+b\\n\end{array}\right)}
-         \;\mbox{for } x \in \{0, 1, \dots, n\} \; (\mbox{in fact }x \in \{\max(0,n-b),\dots, \min(n,r)\})
+         {\left(\begin{array}{c}r+b\\n\end{array}\right)},\quad x \in \{\max(0,n-b),\dots, \min(n,r)\})
 $$
 $f(x; n,r,b)$ is the probability to get $x$ red balls
 in a sample (without replacement) of $n$ balls in an urn
@@ -159,26 +156,26 @@ $$
 \item \itemdesc{\hypertarget{parpdf}{Pareto}} \verb!y=pdf("par",x,a,b)! computes the Pareto
   density with shape parameter $a > 0$ and scale parameter $b > 0$:
 $$
-     f(x; a, b) = \frac{ a/b }{ (x/b)^{a+1} }, \; \mbox{ for } x \ge b
+     f(x; a, b) = \frac{ a/b }{ (x/b)^{a+1} }, \quad x \ge b
 $$
 
 
 \item \itemdesc{\hypertarget{poipdf}{Poisson}} \verb!y=pdf("poi",x,mu)! computes
   the Poisson mass function with parameter $\mu \ge 0$:
 $$
-     f(x; \mu) = \frac{\mu^x e^{-\mu}}{x!} \;\mbox{for } x \in \{0, 1, 2, \dots\}
+     f(x; \mu) = \frac{\mu^x e^{-\mu}}{x!} , \quad x \in \{0, 1, 2, \dots\}
 $$
 
 \item \itemdesc{\hypertarget{raypdf}{Rayleigh}} \verb!y=pdf("ray",x,sigma)! computes the Rayleigh
   density with parameter $\sigma > 0$:
 $$
-     f(x; \sigma) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x/\sigma)^2 }, \; \mbox{ for } x \ge 0
+     f(x; \sigma) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x/\sigma)^2 }, \quad x \ge 0
 $$
 
 \item \itemdesc{\hypertarget{traypdf}{tail Rayleigh}} \verb!y=pdf("tray",x,sigma, a)! computes
   the tail Rayleigh density with parameters $\sigma > 0$ and $a \ge 0$:
 $$
-     f(x; \sigma, a) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x-a)(x+a)/\sigma^2 }, \; \mbox{ for } x \ge a
+     f(x; \sigma, a) = \frac{x}{\sigma^2} e^{-\frac{1}{2} (x-a)(x+a)/\sigma^2 }, \quad x \ge a
 $$
 
 
@@ -194,20 +191,20 @@ $$
   the  uniform ($U\{n_1,n_1+1,\dots,n_2\}$) mass function with parameters $n_1$ and $n_2$
   (integers such that $n_1 \le n_2$).
 $$
-     f(x; n_1, n_2) = \frac{ 1 }{ n_2 - n_1 + 1} \;\mbox{for } x \in \{n_1,n_1+1,\dots,n_2\}
+     f(x; n_1, n_2) = \frac{ 1 }{ n_2 - n_1 + 1},  \quad x \in \{n_1,n_1+1,\dots,n_2\}
 $$
 
 \item \itemdesc{\hypertarget{unfpdf}{Uniform (unf)}} \verb!y=pdf("unf",x,a,b)! computes
   the  uniform ($U(a,b)$) density function with parameters $a$ and $b$ ($a < b$).
 $$
-     f(x; a, b) = \frac{1}{b-a} \;\mbox{for } x \in [a,b]
+     f(x; a, b) = \frac{1}{b-a}, \quad x \in [a,b]
 $$
 
 
 \item \itemdesc{\hypertarget{weipdf}{Weibull}} \verb!y=pdf("wei",x,a,b)! computes the Weibull
   density with parameters $a > 0$ and $b > 0$:
 $$
-     f(x; a, b) = \frac{b}{a} e^{ (b-1)\log(x/a) - (x/a)^b }, \; \mbox{ for } x > 0
+     f(x; a, b) = \frac{b}{a} e^{ (b-1)\log(x/a) - (x/a)^b }, \quad x > 0
 $$
 
 \end{itemize}
