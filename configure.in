@@ -1733,7 +1733,7 @@ echo -n "Cholmod support........:"
 if test "xx$cholmod_libs" != "xx" ; then echo " yes"; else echo " no"; fi
 echo -n "Umfpack support........:" 
 if test "xx$umfpack_libs" != "xx" ; then echo " yes"; else echo " no"; fi
-
+echo -n "GtkSourceView support..:" $have_gtksourceview
 
 echo 
 echo -n "man vizualization......:" 
