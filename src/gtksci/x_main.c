@@ -75,6 +75,12 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
       /* initialise gtk */
       gtk_set_locale();
       gtk_init(&argc,&argv);
+      /* 
+      g_object_set (gtk_settings_get_default (), 
+		    "gtk-enable-mnemonics", TRUE,
+		    "gtk-auto-mnemonics", FALSE,
+		    "gtk-enable-accels", TRUE, NULL);
+      */
       /* initialise opengl */
       nsp_gtk_gl_init (&argc, &argv);
       /* we are in window mode */
