@@ -6301,7 +6301,7 @@ static int int_lock_draw(Stack stack, int rhs, int opt, int lhs)
   CheckStdRhs(5,5);
   if ( GetArgs(stack,rhs,opt,T,&Mpt,&xf,&yf,&dir,&typ,&opts,&color) == FAIL) return RET_BUG;
   CheckLength(NspFname(stack),1,Mpt,2);
-  lock_draw_new(Mpt->R,xf/9.0,yf/3.5,dir,typ,1,color);
+  lock_draw_new(Mpt->R,xf/13,yf/5,dir,typ,1,color);
   return 0;
 } 
 
