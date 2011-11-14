@@ -571,40 +571,32 @@ static void drawarc_gen(BCG *Xgc,int arc[])
 
 static void fillarc_gen( BCG *Xgc,int arc[])
 { 
-  int vx[365],vy[365],k,k0,kmax,n;
-  double alpha,fact=0.01745329251994330,w,h;
-  int close = 1;
+  int vx[365],vy[365],k,close = 1;
+  double alpha,fact=0.01745329251994330;
+  double w=arc[2]/2.0,h=arc[3]/2.0;
+  /* drawarc_gen(Xgc,arc); */
+  int n = Min((arc[5]/64),360), count=0;
   
-  /* A revoir XXXX fillarc_gen est faux */
-  drawarc_gen(Xgc,arc);
-  return;
-
-  w = arc[2]/2.0;
-  h = arc[3]/2.0;
-  n = Min((arc[5]/64),360);
-
-  k0 = 0;
-  kmax = n-1;
-
   if (n != 360) 
     {
-      vx[0] = arc[0] + w;
-      vy[0] = arc[1] + h;
-      k0 = 1;
-      kmax = n;
+      vx[count] = arc[0] + w;
+      vy[count] = arc[1] + h;
+      count++;
     }
-  for (k = k0; k <= kmax; ++k) {
-    alpha=(( arc[4]/64)+k)*fact;
-    vx[k] = arc[0] + w*(cos(alpha)+1.0);
-    vy[k] = arc[1] * h*(-sin(alpha)+1.0);}
+  for (k = 0; k < n ; ++k) 
+    {
+      alpha=((arc[4]/64)+k)*fact;
+      vx[count] = arc[0] + w*(cos(alpha)+1.0);
+      vy[count] = arc[1] * h*(-sin(alpha)+1.0);
+      count++;
+    }
   if (n != 360) 
     {
-      n++;
-      vx[n] = arc[0] + w;
-      vy[n] = arc[1] + h;
-      n++;
+      vx[count] = arc[0] + w;
+      vy[count] = arc[1] + h;
+      count++;
     }
-  Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,n,close);
+  Xgc->graphic_engine->fillpolyline(Xgc,vx, vy,count,close);
 }
 
 /*

@@ -141,8 +141,8 @@ static void nsp_translate_grarc(NspGraphic *o,const double *tr);
 static void nsp_rotate_grarc(NspGraphic *o,double *R);
 static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
-static void nsp_draw_grarc_rotate(BCG *Xgc,NspGrArc *P);
-
+static void nsp_draw_polyline_grarc(BCG *Xgc,NspGrArc *P);
+static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P);
 #line 147 "./grarc.h"
 #endif /* NspGrArc_Private */
 

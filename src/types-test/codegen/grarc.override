@@ -19,8 +19,8 @@ static void nsp_translate_grarc(NspGraphic *o,const double *tr);
 static void nsp_rotate_grarc(NspGraphic *o,double *R);
 static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
-static void nsp_draw_grarc_rotate(BCG *Xgc,NspGrArc *P);
-
+static void nsp_draw_polyline_grarc(BCG *Xgc,NspGrArc *P);
+static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P);
 %%
 headers
 #include <gdk/gdk.h>
@@ -84,9 +84,10 @@ last
 
 static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
-  double val[6];
-  int ccolor=-1,cthick=-1;
   NspGrArc *P = (NspGrArc *) Obj;
+  double val[6]={ P->obj->x, P->obj->y, P->obj->w, P->obj->h, P->obj->a1, P->obj->a2};
+  int ccolor=-1,cthick=-1;
+
   if ( ((NspGraphic *) P)->obj->show == FALSE ) return;
 
   /* check if the block is inside drawing rectangle
@@ -96,27 +97,18 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
     {
       return ;
     }
-  
-  if (  P->obj->angle != 0.0 ) 
-    {
-      nsp_draw_grarc_rotate(Xgc,P);
-      return;
-    }
 
   ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-  val[0]= P->obj->x;
-  val[1]= P->obj->y;
-  val[2]= P->obj->w;
-  val[3]= P->obj->h;
-  val[4]= P->obj->a1;
-  val[5]= P->obj->a2;
   
   if ( P->obj->fill_color != -2 ) 
     {
       /* fill the arc */ 
       if (  P->obj->fill_color != -1) 
 	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
-      Xgc->graphic_engine->scale->fillarc(Xgc,val);
+      if (  P->obj->angle != 0.0 ) 
+	nsp_fill_polyline_grarc(Xgc,P);
+      else
+	Xgc->graphic_engine->scale->fillarc(Xgc,val);
       if (  P->obj->fill_color != -1) 
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
@@ -131,7 +123,10 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
 	  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
 	}
-      Xgc->graphic_engine->scale->drawarc(Xgc,val);
+      if (  P->obj->angle != 0.0 ) 
+	nsp_draw_polyline_grarc(Xgc,P);
+      else
+	Xgc->graphic_engine->scale->drawarc(Xgc,val);
       /* reset to default values */
       if ( P->obj->color != -1 ) 
 	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
@@ -139,55 +134,6 @@ static void nsp_draw_grarc(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
     }
 }
-
-static void nsp_draw_grarc_rotate(BCG *Xgc,NspGrArc *P)
-{
-  int i;
-  double vx[4]={P->obj->x,P->obj->x+P->obj->w,P->obj->x+P->obj->w,P->obj->x};
-  double vy[4]={P->obj->y,P->obj->y,P->obj->y-P->obj->h,P->obj->y-P->obj->h};
-  double rvx[4],rvy[4],cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
-  double cosa = cos(-P->obj->angle*M_PI/180);
-  double sina = sin(-P->obj->angle*M_PI/180);
-  int ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-  int cthick=-1;
-
-  for ( i= 0 ; i < 4; i++)
-    {
-      rvx[i]=cosa*(vx[i]-cx)- sina*(vy[i]-cy)+cx;
-      rvy[i]=sina*(vx[i]-cx)+ cosa*(vy[i]-cy)+cy;
-    }
-  
-  if ( P->obj->fill_color != -2 ) 
-    {
-      /* fill the arc */ 
-      if (  P->obj->fill_color != -1) 
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->fill_color);
-      Xgc->graphic_engine->scale->fillpolyline(Xgc,rvx,rvy,4,1);
-      /* Xgc->graphic_engine->scale->fillarc(Xgc,val);*/
-      if (  P->obj->fill_color != -1) 
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
-    }
-  
-  if ( P->obj->color != -2 ) 
-    {
-      /* draw the arc */ 
-      if ( P->obj->color != -1 ) 
-	Xgc->graphic_engine->xset_pattern(Xgc,P->obj->color);
-      if ( P->obj->thickness != -1 ) 
-	{
-	  cthick = Xgc->graphic_engine->xget_thickness(Xgc); 
-	  Xgc->graphic_engine->xset_thickness(Xgc,P->obj->thickness);
-	}
-      Xgc->graphic_engine->scale->drawpolyline(Xgc,rvx,rvy,4,1);
-      /* Xgc->graphic_engine->scale->drawarc(Xgc,val);*/
-      /* reset to default values */
-      if ( P->obj->color != -1 ) 
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
-      if ( P->obj->thickness != -1 ) 
-	Xgc->graphic_engine->xset_thickness(Xgc,cthick);
-    }
-}
-
 
 static void nsp_translate_grarc(NspGraphic *Obj,const double *tr)
 {
@@ -265,5 +211,64 @@ static int nsp_getbounds_grarc(NspGraphic *Obj,double *bounds)
 	}
     }
   return TRUE;
+}
+
+/* draw a grarc using a polyline (used when rotation is involved) */
+
+static void nsp_draw_polyline_grarc(BCG *Xgc,NspGrArc *P)
+{ 
+  double cosa = cos(-P->obj->angle*M_PI/180);
+  double sina = sin(-P->obj->angle*M_PI/180);
+  double cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
+  double vx[365],vy[365];
+  int k, n = Min((P->obj->a2/64),360);
+  for (k = 0; k < n; ++k) 
+    {
+      double alpha=(( P->obj->a1/64)+k)*M_PI/180,x,y;
+      x = P->obj->x + (P->obj->w/2.0)*(cos(alpha)+1.0);
+      y = P->obj->y - (P->obj->h/2.0)*(-sin(alpha)+1.0);
+      vx[k]=cosa*(x-cx)- sina*(y-cy)+cx;
+      vy[k]=sina*(x-cx)+ cosa*(y-cy)+cy;
+    }
+  Xgc->graphic_engine->scale->drawpolyline(Xgc,vx, vy,n,0);
+}
+
+static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P)
+{ 
+  double cosa = cos(-P->obj->angle*M_PI/180);
+  double sina = sin(-P->obj->angle*M_PI/180);
+  double cx=P->obj->x+P->obj->w/2,cy=P->obj->y-P->obj->h/2;
+  double x,y;
+  double vx[365],vy[365];
+  int k,close = 1;
+  /* drawarc_gen(Xgc,arc); */
+  int n = Min(P->obj->a2/64,360), count=0;
+  
+  if (n != 360) 
+    {
+      x = P->obj->x + (P->obj->w/2.0);
+      y = P->obj->y - (P->obj->h/2.0);
+      vx[count]=cosa*(x-cx)- sina*(y-cy)+cx;
+      vy[count]=sina*(x-cx)+ cosa*(y-cy)+cy;
+      count++;
+    }
+  for (k = 0; k < n ; ++k) 
+    {
+      double alpha=((P->obj->a1/64)+k)*M_PI/180;
+      x = P->obj->x + (P->obj->w/2.0)*(cos(alpha)+1.0);
+      y = P->obj->y - (P->obj->h/2.0)*(-sin(alpha)+1.0);
+      vx[count]=cosa*(x-cx)- sina*(y-cy)+cx;
+      vy[count]=sina*(x-cx)+ cosa*(y-cy)+cy;
+      count++;
+    }
+  if (n != 360) 
+    {
+      x = P->obj->x + (P->obj->w/2.0);
+      y = P->obj->y - (P->obj->h/2.0);
+      vx[count]=cosa*(x-cx)- sina*(y-cy)+cx;
+      vy[count]=sina*(x-cx)+ cosa*(y-cy)+cy;
+      count++;
+    }
+  Xgc->graphic_engine->scale->fillpolyline(Xgc,vx, vy,count,close);
 }
 
