@@ -1054,7 +1054,7 @@ int nsp_list_print(NspList *L, int indent,char *name, int rec_level)
 	}
       if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf1(indent+1,"%s=%s;\n",pname,epname);
+	  Sciprintf1(indent,"%s=%s;clear('%s');\n",pname,epname,epname);
 	}
     }
   else

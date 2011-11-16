@@ -435,7 +435,7 @@ int nsp_hash_print(NspHash *H, int indent,char *name, int rec_level)
 	      count++;
 	    }
 	}
-      if ( strcmp(pname,NVOID) != 0) Sciprintf1(indent+1,"%s=%s;\n",pname,epname);
+      if ( strcmp(pname,NVOID) != 0) Sciprintf1(indent,"%s=%s;clear('%s');\n",pname,epname,epname);
 
     }
   else 
