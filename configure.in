@@ -975,8 +975,8 @@ AC_MSG_RESULT([$GTK_VER])
 # path, then we don't want to generate a full path 
 # for gtk-config or to directly generate the 
 # result of `gtk-config --cflags`. 
-GTKCFLAGS='`pkg-config gtk+-2.0 --cflags`'
-GTKLIBS='`pkg-config gtk+-2.0 --libs`'
+GTKCFLAGS='`$PKG_CONFIG gtk+-2.0 --cflags`'
+GTKLIBS='`$PKG_CONFIG gtk+-2.0 --libs`'
 AC_DEFINE(WITH_GTK,[],[gtk library])
 GTK_PKGS_CFLAGS='gtk+-2.0'
 GTK_PKGS_LIBS='gtk+-2.0'
@@ -995,8 +995,8 @@ PKG_CHECK_MODULES(webkit, webkit-1.0 , have_webkit=yes, have_webkit=no)
 if test "x${have_webkit}" = "xyes" ; then
      GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS webkit-1.0"
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS webkit-1.0"
-     GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-     GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
      HELP_OBJS="helpwebkit.o"
      AC_DEFINE(HAVE_WEBKIT,[] , [Whether WebKit is available])
      PKG_CHECK_MODULES(webkit_zoom, webkit-1.0 >= 1.0.1 , have_webkit_zoom=yes, have_webkit_zoom=no)
@@ -1013,8 +1013,8 @@ PKG_CHECK_MODULES(gthread, gthread-2.0 , have_gthread=yes, have_gthread=no)
 if test "x${have_gthread}" = "xyes" ; then
      GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gthread-2.0"
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS gthread-2.0"
-     GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-     GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
      AC_DEFINE(HAVE_GTHREAD,[] , [Whether gthread-2.0 is available])
 fi
 
@@ -1027,7 +1027,7 @@ GTKHTML=no
 
 if test "x${have_webkit}" = "xno" ; then
    ac_save_LIBS="$LIBS"
-   LIBS=`pkg-config libgtkhtml-2.0 --cflags --libs`
+   LIBS=`$PKG_CONFIG libgtkhtml-2.0 --cflags --libs`
    HELP_OBJS=
    AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
    if test "$GTKHTML" = no; then
@@ -1036,8 +1036,8 @@ if test "x${have_webkit}" = "xno" ; then
    else 
      	GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgtkhtml-2.0"
      	GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgtkhtml-2.0"
-     	GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-     	GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     	GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+     	GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
      	HELP_OBJS="helpbrowser.o uri.o"
      	AC_DEFINE(WITH_GTKHTML,[],[gtkhtml])
    fi	
@@ -1052,8 +1052,8 @@ PKG_CHECK_MODULES(gtksourceview, gtksourceview-2.0 , have_gtksourceview=yes, hav
 if test "x${have_gtksourceview}" = "xyes" ; then
      GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtksourceview-2.0"
      GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtksourceview-2.0"
-     GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-     GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+     GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+     GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
      GTKSOURCEVIEW_OBJS="gtksourceview.o"
      AC_DEFINE(HAVE_GTKSOURCEVIEW,[] , [Whether gtksourceview-2.0 is available])
      PKG_CHECK_MODULES(gtk_source_gutter_insert,  gtksourceview-2.0 >= 2.8.0 , have_gutter=yes, have_gutter=no)
@@ -1073,13 +1073,13 @@ fi
 
 if test "$MINGW32" != "yes" ; then 
    ac_save_LIBS="$LIBS"
-   LIBS=`pkg-config vte --cflags --libs` 
+   LIBS=`$PKG_CONFIG vte --cflags --libs` 
    VTE=no 
    AC_CHECK_LIB(vte,vte_terminal_new,[VTE=yes])
    if test "$VTE" = no; then
       AC_MSG_ERROR([you should install library and devel for VTE (Terminal emulator widget)],)
       # check for zzledt 
-      LIBS=`pkg-config libzvt-2.0 --cflags --libs` 
+      LIBS=`$PKG_CONFIG libzvt-2.0 --cflags --libs` 
       GZVT2=no
       AC_CHECK_LIB(zvt-2.0, zvt_term_new_with_size,[GZVT2=yes])
       if test "$GZVT2" = no; then
@@ -1113,7 +1113,7 @@ fi
 
 if test "$with_cairo" != no; then
   ac_save_LIBS="$LIBS"
-  LIBS=`pkg-config gtk+-2.0  --cflags --libs`
+  LIBS=`$PKG_CONFIG gtk+-2.0  --cflags --libs`
   AC_CHECK_LIB(cairo, cairo_pdf_surface_create, enable_cairo_pdf=yes, :) 
   AC_CHECK_LIB(cairo, cairo_ps_surface_create, enable_cairo_ps=yes, :) 
   AC_CHECK_LIB(cairo, cairo_svg_surface_create, enable_cairo_svg=yes, :) 
@@ -1147,10 +1147,10 @@ WITH_GL="no"
 if test "$with_gtkglext" != no; then
     gtkglext_version="1.0.0"
     AC_MSG_CHECKING([if gtkglext exists ])
-    if pkg-config --exists gtkglext-1.0; then
+    if $PKG_CONFIG --exists gtkglext-1.0; then
        AC_MSG_RESULT([yes])
        AC_MSG_CHECKING([if gtkglext is version $gtkglext_version or later])
-       if pkg-config --atleast-version=$gtkglext_version gtkglext-1.0 ; then
+       if $PKG_CONFIG --atleast-version=$gtkglext_version gtkglext-1.0 ; then
           AC_MSG_RESULT([yes])
           GTKGLEXT_VER=`$PKG_CONFIG --modversion gtkglext-1.0`
           # we have cheched above that gtk-config is in the 
@@ -1159,19 +1159,19 @@ if test "$with_gtkglext" != no; then
           # result of `gtk-config --cflags`. Idem for gnome
           #GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtkglext-1.0"
           #GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtkglext-1.0"
-          #GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-          #GTKLIBS="\`pkg-config $GTK_PKGS_CFLAGS --libs\`"
+          #GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+          #GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --libs\`"
           #WITH_GL="yes"
 	  AC_MSG_CHECKING([if freetype2 exists])
-	  if pkg-config --exists freetype2; then
+	  if $PKG_CONFIG --exists freetype2; then
 		 AC_MSG_RESULT([yes])
 		 AC_MSG_CHECKING([if pangoft2 exists])
-		 if pkg-config --exists pangoft2; then
+		 if $PKG_CONFIG --exists pangoft2; then
 			AC_MSG_RESULT([yes])
 			GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gtkglext-1.0 pangoft2 freetype2"
 			GTK_PKGS_LIBS="$GTK_PKGS_LIBS gtkglext-1.0 pangoft2 "
-			GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-			GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+			GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+			GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 			WITH_GL="yes"
 			PERIGLEXT="periGL.o"
 			AC_DEFINE(WITH_GTKGLEXT,[],[gtkglext: opengl in gtk ])
@@ -1209,8 +1209,8 @@ if test "$WITH_GL" == ZZZyes; then
 	WITH_GL="no"
 	GTK_PKGS_CFLAGS=`echo $GTK_PKGS_CFLAGS | sed -e 's+gtkglext-1.0++g' `
 	GTK_PKGS_LIBS=`echo $GTK_PKGS_LIBS | sed -e 's+gtkglext-1.0++g' `
-	GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-	GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+	GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+	GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
      fi
 fi 
 
@@ -1349,8 +1349,8 @@ if test "$with_fftw3" != no; then
       if test "$HAVE_FFTW3" = "yes"; then
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS fftw3"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS fftw3"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 	 FFTW3_CFLAGS=""
 	 FFTW3_LIBS=""
       fi 
@@ -1395,8 +1395,8 @@ if test "$with_gmp" != no; then
       if test "$HAVE_GMP" = "yes"; then
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS gmp"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS gmp"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 	 GMP_CFLAGS=""
 	 GMP_LIBS=""
       fi 
@@ -1439,8 +1439,8 @@ if test "$with_sndfile" != no; then
       if test "$HAVE_SNDFILE" = "yes"; then
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS sndfile"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS sndfile"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 	 SNDFILE_CFLAGS=""
 	 SNDFILE_LIBS=""
       fi 
@@ -1481,8 +1481,8 @@ if test "$with_asound" != no; then
       if test "$HAVE_ASOUND" = "yes"; then
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS alsa"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS alsa"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 	 ASOUND_CFLAGS=""
 	 ASOUND_LIBS=""
       fi 
@@ -1527,8 +1527,8 @@ if test "$with_portaudio" != "no"; then
       	 # we also need gthread-2.0 for our portaudio files.
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS portaudio-2.0 gthread-2.0"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS portaudio-2.0 gthread-2.0"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 	 PORTAUDIO_CFLAGS=""
 	 PORTAUDIO_LIBS=""
       fi 
@@ -1570,8 +1570,8 @@ if test "$with_graphviz" != "no"; then
       	 # we also need gthread-2.0 for our portaudio files.
 	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libgvc"
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libgvc"
-         GTKCFLAGS="\`pkg-config $GTK_PKGS_CFLAGS --cflags\`"
-         GTKLIBS="\`pkg-config $GTK_PKGS_LIBS --libs\`"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
 	 GRAPHVIZ_CFLAGS=""
 	 GRAPHVIZ_LIBS=""
       fi 
