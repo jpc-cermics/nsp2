@@ -97,9 +97,9 @@ NspSpColMatrix * nsp_sprowmatrix_cast_to_spcol(NspSpRowMatrix *M)
  * @m: 
  * @n: 
  * 
- * Creates a #NspSColMatrix of size @mx@n with no stored data
+ * Creates a #NspSpRowMatrix of size @mx@n with no stored data
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_create(char *name, char type, int m, int n)
@@ -118,13 +118,13 @@ NspSpRowMatrix *nsp_sprowmatrix_create(char *name, char type, int m, int n)
  * @m: 
  * @n: 
  * 
- * Creates a #NspSColMatrix of size @mx@n filed with values specified 
+ * Creates a #NspSpRowMatrix of size @mx@n filed with values specified 
  * in @RC ((i,j) values stored in a two column matrix) and @Values 
  * ( A(@RC(k,1),@RC(k,2))= Values(k)).
  * XXXX should be changed in order to cumulate values when specific
  * indices are repeated as in Matlab.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_sparse(char *name,NspMatrix *RC, NspMatrix *Values, int m, int n)
@@ -167,7 +167,7 @@ int nsp_sprowmatrix_get(NspSpRowMatrix *A, NspMatrix **RC, NspMatrix **Values)
  * 
  * returns a copy of sparse matrix @A.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_copy(NspSpRowMatrix *A)
@@ -328,7 +328,7 @@ int nsp_sprowmatrix_print(NspSpRowMatrix *Sp, int indent,char *name, int rec_lev
  * without copy on full matrices by here we have to create 
  * a new sparse.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 /* XXXX: Attention c'est faux a cause du codage on obtient un redim de la 
@@ -862,7 +862,7 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspObject *Rows, NspObject
  * 
  * returns A(Row,Cols) but @Rows is changed in the process.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspObject *Rows, NspObject *Cols)
@@ -880,7 +880,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract(NspSpRowMatrix *A, NspObject *Rows, NspO
  * 
  * return A(Elts)
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspObject *Elts)
@@ -961,7 +961,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_elts(NspSpRowMatrix *A, NspObject *Elts)
  * returns A(Rows,:) but @Rows is changed 
  * err is used inside for-loops 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspObject *Cols, int *err)
@@ -985,7 +985,7 @@ NspSpRowMatrix *nsp_sprowmatrix_extract_cols(NspSpRowMatrix *A, NspObject *Cols,
  * 
  * A(:,Cols)
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_extract_rows(NspSpRowMatrix *A, NspObject *Rows, int *err)
@@ -1040,7 +1040,7 @@ int nsp_sprowmatrix_set_diag(NspSpRowMatrix *A, NspSpRowMatrix *Diag, int k)
  *  Creates a Matrix with kth diag set to Diag 
  * 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_diag_create(NspSpRowMatrix *Diag, int k)
@@ -1058,7 +1058,7 @@ NspSpRowMatrix *nsp_sprowmatrix_diag_create(NspSpRowMatrix *Diag, int k)
  * returns @Ax@B  by the method of gustafson,acm t.o.m.s. 
  * vol 4 (1978) p250. 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_mult(NspSpRowMatrix *A, NspSpRowMatrix *B)
@@ -1201,7 +1201,7 @@ NspMatrix *nsp_sprowmatrix_mult_sp_m(NspSpRowMatrix *A, NspMatrix *X, NspMatrix 
  * 
  * @Xx@A when @X is full 
  * 
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_mult_m_sp(NspMatrix *X,NspSpRowMatrix *A)
@@ -1327,7 +1327,7 @@ int nsp_sprowmatrix_seti(NspSpRowMatrix *A, double d)
  * 
  * from full to sparse.
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_from_mat(NspMatrix *A)
@@ -1342,7 +1342,7 @@ NspSpRowMatrix *nsp_sprowmatrix_from_mat(NspMatrix *A)
  * from sparse to full.
  * 
  * 
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_to_mat(NspSpRowMatrix *Sp)
@@ -1358,7 +1358,7 @@ NspMatrix *nsp_sprowmatrix_to_mat(NspSpRowMatrix *Sp)
  * returned. 
  * Warning : For Complex matrices transpose is a' = transp+ conj
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_transpose(const NspSpRowMatrix *A)
@@ -1379,7 +1379,7 @@ NspSpRowMatrix *nsp_sprowmatrix_transpose(const NspSpRowMatrix *A)
  * 
  * A+B
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_add(NspSpRowMatrix *A, NspSpRowMatrix *B)
@@ -1395,7 +1395,7 @@ NspSpRowMatrix *nsp_sprowmatrix_add(NspSpRowMatrix *A, NspSpRowMatrix *B)
  * 
  * A-B
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_sub(NspSpRowMatrix *A, NspSpRowMatrix *B)
@@ -1411,7 +1411,7 @@ NspSpRowMatrix *nsp_sprowmatrix_sub(NspSpRowMatrix *A, NspSpRowMatrix *B)
  * 
  * A.*B
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_multtt(NspSpRowMatrix *A, NspSpRowMatrix *B)
@@ -1507,7 +1507,7 @@ int nsp_sprowmatrix_mult_scal(NspSpRowMatrix *A, NspSpRowMatrix *B)
  * op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
  * 
  * 
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_op_scal(NspSpRowMatrix *A, NspSpRowMatrix *B, int *flag, char op)
@@ -1999,7 +1999,7 @@ int nsp_sprowmatrix_clean(NspSpRowMatrix *A, int rhs, double epsa, double epsr)
  * 
  * max or min (A,B)
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int minmaxflag, int *err)
@@ -2025,7 +2025,7 @@ NspSpRowMatrix *nsp_sprowmatrix_maximinitt_g(NspSpRowMatrix *A, NspSpRowMatrix *
  *  Res Created if flag == 1
  * 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 
@@ -2050,7 +2050,7 @@ NspSpRowMatrix *nsp_sprowmatrix_maxitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int
  *  Res Created if flag == 1
  * 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_minitt(NspSpRowMatrix *A, NspSpRowMatrix *B, int flag, int *err)
@@ -2139,7 +2139,7 @@ int nsp_sprowmatrix_isreal(const NspSpRowMatrix *A, int strict)
  * if dim=0 the full sum is computed 
  * 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, int dim)
@@ -2195,7 +2195,7 @@ NspSpRowMatrix *nsp_sprowmatrix_sum(NspSpRowMatrix *A, int dim)
  * Imax is created if lhs == 2 
  * Note that Imax is a full matrix XXX not a good idea ? 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, int dim, NspMatrix **Imax, int lhs)
@@ -2246,7 +2246,7 @@ NspSpRowMatrix *nsp_sprowmatrix_maxi(NspSpRowMatrix *A, int dim, NspMatrix **Ima
  * Imax is created if lhs == 2 
  * Note that Imax is a full matrix XXX not a good idea ? 
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_mini(NspSpRowMatrix *A, int dim, NspMatrix **Imax, int lhs)
@@ -2328,7 +2328,7 @@ int nsp_sprowmatrix_tril(NspSpRowMatrix *A,int k)
  * 
  * A=Eye(m,n)
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_eye(int m, int n)
@@ -2344,7 +2344,7 @@ NspSpRowMatrix *nsp_sprowmatrix_eye(int m, int n)
  * 
  * A=ones(m,n)
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_ones(int m, int n)
@@ -2360,7 +2360,7 @@ NspSpRowMatrix *nsp_sprowmatrix_ones(int m, int n)
  * 
  * A=zeros(m,n)
  * 
- * Return value: a new  #NspSColMatrix or %NULLSPCOL
+ * Return value: a new  #NspSpRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_zeros(int m, int n)
@@ -2463,7 +2463,7 @@ static NspMatrix* SpUnary2Full(NspSpRowMatrix *A, Func1 F1, Func2 F2)
  * 
  * returns cos(A) as a full matrix.
  * 
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_acos(NspSpRowMatrix *A)
@@ -2482,7 +2482,7 @@ NspMatrix *nsp_sprowmatrix_acos(NspSpRowMatrix *A)
  * 
  * returns cosh(A) as a full matrix.
  * 
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_acosh(NspSpRowMatrix *A)
@@ -2831,7 +2831,7 @@ void nsp_sprowmatrix_conj(NspSpRowMatrix *A)
  * 
  * 
  * Cos(A)
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_cos(NspSpRowMatrix *A)
@@ -2845,7 +2845,7 @@ NspMatrix *nsp_sprowmatrix_cos(NspSpRowMatrix *A)
  * 
  * 
  * Cosh(A)
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_cosh(NspSpRowMatrix *A)
@@ -2858,7 +2858,7 @@ NspMatrix *nsp_sprowmatrix_cosh(NspSpRowMatrix *A)
  * @A: 
  * 
  * exp(A)
- * Return value: a new  #NspMatrix or %NULLSPCOL
+ * Return value: a new  #NspMatrix or %NULLMAT
  **/
 
 NspMatrix *nsp_sprowmatrix_expel(NspSpRowMatrix *A)
@@ -3122,7 +3122,7 @@ int nsp_sprowmatrix_find(NspSpRowMatrix *A, int lhs, NspMatrix **Res1, NspMatrix
  * returns a new #NspSpRowMatrix filled with random values ('n' or 'u') 
  * the percent of non null elements is given by @sparsity.
  * 
- * Return value: a new  #NspRowMatrix or %NULLSPCOL
+ * Return value: a new  #NspRowMatrix or %NULLSPROW
  **/
 
 NspSpRowMatrix *nsp_sprowmatrix_rand(int m,int n,double sparsity,char crand)
