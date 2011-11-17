@@ -952,19 +952,14 @@ fi
 #################
 
 ZZLEDT="reader"
+GTK_REQUIRED_VERSION=2.12.0
+GTK_PKGS_CFLAGS='gtk+-2.0'
+GTK_PKGS_LIBS='gtk+-2.0'
 
-AC_PATH_PROG(PKG_CONFIG,pkg-config)
-if test "x$PKG_CONFIG" = x; then
-    # @*%&$ Ximian programmers renamed this application
-    AC_PATH_PROG(PKG_CONFIG,pkgconfig,yes,no)
-    if test "x$PKG_CONFIG" = x; then
-    	AC_MSG_ERROR([Could not find the pkg-config (or pkgconfig) program.],)
-	with_gtk2="no"
-    fi
-fi
+PKG_CHECK_MODULES(GTK,[$GTK_PKGS_CFLAGS >= $GTK_REQUIRED_VERSION])
 
 AC_MSG_CHECKING([gtk version ])
-GTK_VER=`$PKG_CONFIG --modversion gtk+-2.0`
+GTK_VER=`$PKG_CONFIG --modversion $GTK_PKGS_CFLAGS`
 case $GTK_VER in
       2.2.* | 2.3.0 | 2.3.1| 2.3.2| 2.3.4 )
         GTKPLUGBUG=gtkmenu.o
@@ -975,11 +970,9 @@ AC_MSG_RESULT([$GTK_VER])
 # path, then we don't want to generate a full path 
 # for gtk-config or to directly generate the 
 # result of `gtk-config --cflags`. 
-GTKCFLAGS='`$PKG_CONFIG gtk+-2.0 --cflags`'
-GTKLIBS='`$PKG_CONFIG gtk+-2.0 --libs`'
+GTKCFLAGS='`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags`'
+GTKLIBS='`$PKG_CONFIG $GTK_PKGS_LIBS --libs`'
 AC_DEFINE(WITH_GTK,[],[gtk library])
-GTK_PKGS_CFLAGS='gtk+-2.0'
-GTK_PKGS_LIBS='gtk+-2.0'
 GUILIB='gtksci'
 GZVT='gzvt2'
 # we need a patched version 
