@@ -90,8 +90,8 @@ LINKEROPT= $(LD_LDFLAGS)
 #
 # Ressource compiler 
 #
-RC=windres 
-RCVARS=-O coff 
+RC = @RC@
+RCVARS = -O coff 
 #
 #
 COMPILE= $(CC)  $(CFLAGS)

@@ -45,7 +45,7 @@ distclean::
 # windres is a link to i686-pc-mingw32-windres on mingwin 
 
 nsp_ico.o: nsp.rc 
-	windres nsp.rc nsp_ico.o
+	$(RC) nsp.rc nsp_ico.o
 
 edit.o: gtktextview.c gtksourceview.c
 
