@@ -18,9 +18,10 @@
  *
  *--------------------------------------------------------------------------*/
 
+#include <ctype.h>
 #include <gtk/gtk.h>
-
 #define  GMarkupNode_Private 
+#include <nsp/nsp.h>
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
 #include <nsp/list.h>
@@ -28,9 +29,17 @@
 #include <nsp/hobj.h>
 #include <nsp/file.h>
 #include <nsp/type.h>
+#include <nsp/interf.h>
+#include <nsp/plistc.h>
 #include "gmarkup.h"
-#include "nsp/interf.h"
-#include "nsp/plistc.h"
+
+/* 
+#include <glib/gfileutils.h>
+#include <glib/gmarkup.h>
+#include <glib/gmem.h>
+#include <glib/gmessages.h>
+#include <glib/gstrfuncs.h>
+*/
 
 /* 
  * NspGMarkupNode inherits from NspObject 
@@ -485,13 +494,6 @@ static AttrTab gmarkup_node_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-
-#include <ctype.h>
-#include <glib/gfileutils.h>
-#include <glib/gmarkup.h>
-#include <glib/gmem.h>
-#include <glib/gmessages.h>
-#include <glib/gstrfuncs.h>
 
 typedef struct _GMarkupDomContext GMarkupDomContext;
 
