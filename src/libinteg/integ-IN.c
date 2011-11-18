@@ -437,6 +437,15 @@ int int_ode(Stack stack, int rhs, int opt, int lhs)
 	Sciprintf("%s: Warning for task=2 or 3, t should be a scalar (use the last component)\n",NspFname(stack));
     }
 
+
+  /* to be adapted when fix, roots, etc... will be implemented */
+  if ( (methode != discrete && ( (task == 1 && lhs > 2) || (task > 1 && lhs > 3) )) || 
+       (methode == discrete && lhs > 1)  )
+    {
+      Scierror("%s: Error: too much output arguments\n",NspFname(stack)); 
+      return RET_BUG;
+    }
+
   switch ( methode ) 
     {
     case ode_default: 
@@ -444,7 +453,7 @@ int int_ode(Stack stack, int rhs, int opt, int lhs)
     case stiff:
       return int_ode_lsode(stack, f, jac, args, y0, t0, time, rtol, Matol, task, warn, lhs, odeoptions, methode);
     case discrete:
-      return int_ode_discrete(stack,f,args,y0,t0,time);
+       return int_ode_discrete(stack,f,args,y0,t0,time);
     case rkd5:
       return int_ode_dopri5(stack, f, args, y0, t0, time, rtol, Matol, task, warn, lhs, odeoptions);
     case fix:
