@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2011 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -136,7 +137,7 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
 	  Scierror("No More Space\n");
 	  return(NULLSPCOL);
 	}
-      Sp->D[i]->size = 0 ;
+      Sp->D[i]->size = 0 ; Sp->D[i]->J = NULL; Sp->D[i]->R = NULL;
     }
   return(Sp);
 }
@@ -153,9 +154,7 @@ NspSpColMatrix *nsp_spcolmatrix_create(char *name, char type, int m, int n)
  * Creates a #NspSpColMatrix of size @mx@n filed with values specified 
  * in @RC ((i,j) values stored in a two column matrix) and @Values 
  * ( A(@RC(k,1),@RC(k,2))= Values(k)).
- * Rewritten by Bruno Pincon  to cumulate values when specific
- * indices are repeated as in Matlab (fix also a bug and test
- * if indices are integer)
+ * The routine cumulate values when specific indices are repeated as in Matlab
  * 
  * Return value: a new  #NspSpColMatrix or %NULLSPCOL
  **/
@@ -430,31 +429,31 @@ NspSpColMatrix *nsp_spcolmatrix_copy(NspSpColMatrix *A)
 
 int nsp_spcolmatrix_resize_col(NspSpColMatrix *Sp, int i, int n)
 {
-  SpCol *Row;
+  SpCol *Col;
   int cp = ( Sp->rc_type == 'c') ? 2 : 1;
-  Row = Sp->D[i];
-  if ( Row->size == 0 ) 
+  Col = Sp->D[i];
+  if ( Col->size == 0 ) 
     {
       if ( n <= 0 ) return(OK);
-      if ((Row->J =nsp_alloc_int((int) n)) == (int *) 0) return(FAIL);
+      if ((Col->J =nsp_alloc_int((int) n)) == (int *) 0) return(FAIL);
       /* note that all data are in a union */
-      if ((Row->R =nsp_alloc_doubles(n*cp)) == (double *) 0 ) return(FAIL);
-      Row->size = n;
+      if ((Col->R =nsp_alloc_doubles(n*cp)) == (double *) 0 ) return(FAIL);
+      Col->size = n;
       return(OK);
     }
-  if ( Row->size == n  ) return(OK);
+  if ( Col->size == n  ) return(OK);
   
   if ( n <= 0 ) 
     {
       /* empty new size **/
-      FREE(Row->J);
-      FREE(Row->R);
-      Row->size = 0;
+      FREE(Col->J);
+      FREE(Col->R);
+      Col->size = 0;
       return(OK);
     }
-  if ((Row->J =nsp_realloc_int(Row->J, n))  == (int *) 0) return(FAIL);
-  if (( Row->R =nsp_realloc_doubles(Row->R, n*cp)) == (double *) 0 ) return(FAIL);
-  Row->size = n;
+  if ((Col->J =nsp_realloc_int(Col->J, n))  == (int *) 0) return(FAIL);
+  if (( Col->R =nsp_realloc_doubles(Col->R, n*cp)) == (double *) 0 ) return(FAIL);
+  Col->size = n;
   return(OK);
 }
 
@@ -506,7 +505,7 @@ void nsp_spcolmatrix_destroy(NspSpColMatrix *Mat)
  * @HMat: a #NspSpColMatrix
  * 
  * computes the number of non nul elements stored in 
- * a sparse Matrix. (added by Bruno)
+ * a sparse Matrix.
  * 
  * Return value: the number of non nul elements.
  **/
@@ -1250,6 +1249,418 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Co
  fail: 
   nsp_free_index_vector_cache(&index_r);
   nsp_free_index_vector_cache(&index_c);
+  return FAIL;
+
+}
+
+/**
+ * nsp_spcol_test_in_place_assign_OK:
+ * @A: a #NspSpColMatrix
+ * @jA: an int 
+ * @index_r: an #index_vector
+ * @q: an array of int
+ *
+ *  Test if the indices in index_r->val (which have been sorted previously so are in increasing order)
+ *  are all in the array Col->J (Col is the jA th column of the matrix A). If yes return TRUE which 
+ *  means that an in place insertion can be done. Moreover the corresponding indices of Col->J 
+ *  (indices k such that Col->J[k] = index_r->val[i] are recorded in the array q (its purpose is to 
+ *  do fastly the in place insertion when possible). 
+ *  This is an utility function for sparse assignment (A(i,j) = B). 
+ *
+ * Return value:  %TRUE or %FALSE
+ **/
+
+Boolean nsp_spcolmatrix_test_in_place_assign_OK(NspSpColMatrix *A, int jA, index_vector *index_r, int *q)
+{
+  SpCol *Col = A->D[jA];
+  int j, k = nsp_spcolmatrix_locate(Col, index_r->val[0]);
+
+  if ( k == - 1 )
+    return FALSE;
+  else
+    {
+      q[0] = k;
+      for ( j = 1 ; j < index_r->nval ; j++ )
+	{
+	  /* get k such that Col->J[k] <= index_r->val[j] */
+	  while ( k < Col->size && index_r->val[j] > Col->J[k] )
+	    k++;
+	  if ( k >= Col->size || index_r->val[j] != Col->J[k] )
+	    return FALSE;
+	  else
+	    q[j] = k;
+	}
+      return TRUE;
+    }
+}
+
+/**
+ * void nsp_spcolmatrix_clean_zeros:
+ * @Col: a #SpCol
+ * @type: type (real/complex) of SpCol Col
+ *
+ *  suppress all 0 elements (move all non zeros elements accordingly) 
+ *  and free the corresponding memory 
+ **/
+
+void nsp_spcolmatrix_clean_zeros(SpCol *Col, char type)
+{
+  int k, kp=0, it= type=='r' ? 1 : 2;
+  if ( type == 'r' )
+    {
+      for ( k = 0 ; k < Col->size ; k++ )
+	if ( Col->R[k] != 0.0 )
+	  {
+	    if ( kp != k )
+	      {
+		Col->R[kp] = Col->R[k];
+		Col->J[kp] = Col->J[k];
+	      }
+	    kp++;
+	  }
+    }
+  else
+    {
+      for ( k = 0 ; k < Col->size ; k++ )
+	if ( Col->C[k].r != 0.0 &&  Col->C[k].i != 0.0 )
+	  {
+	    if ( kp != k )
+	      {
+		Col->C[kp] = Col->C[k]; 
+		Col->J[kp] = Col->J[k];
+	      }
+	    kp++;
+	  }
+    }
+
+  if ( kp > 0 )
+    {
+      Col->J = REALLOC(Col->J, kp*sizeof(int));
+      Col->R = REALLOC(Col->R, it*kp*sizeof(double));
+    }
+  else
+    {
+      FREE(Col->J); FREE(Col->R);
+    }
+  Col->size = kp;
+}
+ 
+/**
+ * nsp_spcol_in_place_assign:
+ * @A: a #NspSpColMatrix
+ * @jA: an int (column number)
+ * @index_r: an #index_vector
+ * @q: an array of int of size index_r->nval such that Col->J[q[k]] = index_r[k]
+ * @p: an array of int of size index_r->nval such that index_r[k] corresponds to the element B(p[k],j)
+ *     (this comes from a previous increasing sort onto the array index_r)
+ * @B: a #NspMatrix
+ * @jB: an int the column of B which is involved here.
+ *
+ * 
+ * Return value:  %TRUE or %FALSE
+ **/
+	
+void nsp_spcolmatrix_in_place_assign(NspSpColMatrix *A, int jA, index_vector *index_r, int *q, int *p, NspMatrix *B, int jB)
+{
+  SpCol *Col = A->D[jA];
+  int k;  
+  Boolean do_clean = FALSE;
+
+  if ( B->m == 1 && B->n == 1 )
+    {
+      if ( A->rc_type == 'c' )
+	{
+	  doubleC Bval;
+	  if ( B->rc_type == 'c' )
+	    {
+	      Bval = B->C[0]; if ( Bval.r == 0.0 && Bval.i == 0.0 ) do_clean = TRUE;
+	    }
+	  else
+	    {
+	      Bval.r = B->R[0]; Bval.i = 0.0; if ( Bval.r == 0.0 ) do_clean = TRUE;
+	    }
+	  for ( k = 0 ; k < index_r->nval ; k++ )
+	    Col->C[q[k]] = Bval;
+	}
+      else
+	{
+	  double Bval = B->R[0];
+	  if ( Bval == 0.0 ) do_clean = TRUE;
+	  for ( k = 0 ; k < index_r->nval ; k++ )
+	    Col->R[q[k]] = Bval;
+	}
+    }
+  else
+    {
+      int base = jB*B->m;
+      if ( A->rc_type == 'r' )
+	{
+	  double Bval;
+	  for ( k = 0 ; k < index_r->nval ; k++ )
+	    {
+	      Bval =  B->R[base + p[k]];
+	      if ( Bval == 0.0 ) do_clean = TRUE;
+	      Col->R[q[k]] = Bval;
+	    }
+	}
+      else if ( B->rc_type == 'r' )
+	{
+	  double Bval;
+	  for ( k = 0 ; k < index_r->nval ; k++ )
+	    {
+	      Bval =  B->R[base + p[k]];
+	      if ( Bval == 0.0 ) do_clean = TRUE;
+	      Col->C[q[k]].r = Bval;  Col->C[q[k]].i = 0.0;
+	    }
+	}
+      else
+	{
+	  doubleC Bval;
+	  for ( k = 0 ; k < index_r->nval ; k++ )
+	    {
+	      Bval =  B->C[base + p[k]];
+	      if ( Bval.r == 0.0 && Bval.i == 0.0 ) do_clean = TRUE;
+	      Col->C[q[k]] = Bval;
+	    }
+	}
+    }
+
+  if ( do_clean )
+    nsp_spcolmatrix_clean_zeros(Col, A->rc_type);
+}
+
+typedef enum { real_scalar, cmplx_scalar, real_to_real, real_to_cmplx, cmplx_to_cmplx } assign_type;
+
+static void assign_val(SpCol *ColNew, int kCn, char type,  NspMatrix *B, int iB, int jB, Boolean *do_clean, Boolean *first_call)
+{
+  static assign_type assign;
+  static double Bval;
+  static doubleC BvalC;
+  static int base;
+
+  if ( *first_call )
+    {
+      if ( B->m == 1 && B->n == 1 ) /* scalar case */
+	{
+	  if (type == 'r')
+	    {
+	      Bval = B->R[0]; assign = real_scalar; if ( Bval == 0.0 ) *do_clean = TRUE;
+	    }
+	  else if ( B->rc_type == 'c' )
+	    {
+	      BvalC = B->C[0]; assign = cmplx_scalar; if ( BvalC.r == 0.0 && BvalC.i == 0.0 ) *do_clean = TRUE;
+	    } 
+	  else
+	    {
+	      BvalC.r = B->R[0]; BvalC.i = 0.0; assign = cmplx_scalar; if ( BvalC.r == 0.0 ) *do_clean = TRUE;
+	    }
+	}
+      else   
+	{
+	  base = jB*B->m;  /* init base adr of first element of the jB th column of B */
+	  if ( type == 'r' )
+	    assign = real_to_real;
+	  else if ( B->rc_type == 'r' )
+	    assign = real_to_cmplx;
+	  else
+	    assign = cmplx_to_cmplx;
+	}
+      *first_call = FALSE;
+    }
+
+  switch ( assign )
+    {
+    case (real_scalar):
+      ColNew->R[kCn] = Bval; break;
+    case (cmplx_scalar):
+      ColNew->C[kCn] = BvalC; break;
+    case (real_to_real):
+      ColNew->R[kCn] = B->R[base + iB];
+      if ( ColNew->R[kCn] == 0.0 ) *do_clean = TRUE; 
+      break;
+    case ( real_to_cmplx ):
+      ColNew->C[kCn].r = B->R[base + iB]; ColNew->C[kCn].i = 0.0;
+      if ( ColNew->C[kCn].r == 0.0 ) *do_clean = TRUE;
+      break;
+    case (cmplx_to_cmplx):
+      ColNew->C[kCn] = B->C[base + iB];
+      if ( ColNew->C[kCn].r == 0.0  &&  ColNew->C[kCn].i == 0.0 ) *do_clean = TRUE;
+      break;
+    }
+}
+
+/**
+ * nsp_spcolmatrix_assign_by_merge:
+ * @A: a #NspSpColMatrix
+ * @jA: an int (column number) 
+ * @index_r: an #index_vector
+ * @p: an array of int of size index_r->nval such that index_r[k] corresponds to the element B(p[k],j)
+ *     (this comes from a previous increasing sort onto the array index_r)
+ * @B: a #NspMatrix
+ * @jB: an int the column of B which is involved here.
+ * @type: the type (real or complex) of Col
+ *
+ * 
+ * Return value:  %OK or %FAIL
+ **/
+	
+int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *index_r, int *p, NspMatrix *B, int jB)
+{
+  SpCol *Col=A->D[jA], *ColNew=NULL;
+  int kC=0, kCn=0, kB=0, size_max = index_r->nval + Col->size, ib = A->rc_type == 'r' ? 1 : 2;
+  Boolean first_call = TRUE, do_clean = FALSE;
+	  
+  if ( (ColNew = (SpCol *) MALLOC( sizeof(SpCol*))) == NULL )
+    return FAIL;
+  ColNew->J = NULL; ColNew->R = NULL; 
+  if ( (ColNew->J = (int *) MALLOC( size_max*sizeof(int))) == NULL )
+    goto fail;
+  if ( (ColNew->R = (double *) MALLOC( ib*size_max*sizeof(double))) == NULL )
+    goto fail;
+  ColNew->size = size_max;
+
+  while ( kC < Col->size && kB < index_r->nval )
+    {
+      if ( Col->J[kC] < index_r->val[kB] )
+	{
+	  ColNew->J[kCn] = Col->J[kC];
+	  if ( A->rc_type == 'r' ) 
+	    ColNew->R[kCn] = Col->R[kC];
+	  else 
+	    ColNew->C[kCn] = Col->C[kC];
+	  kC++; 
+	}
+      else
+	{
+	  ColNew->J[kCn] = index_r->val[kB];
+	  assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &first_call);
+	  if ( Col->J[kC] == index_r->val[kB] ) kC++;
+	  kB++;
+	} 
+      kCn++;
+    }
+
+  while ( kC < Col->size )
+    {
+      ColNew->J[kCn] = Col->J[kC];
+      if ( A->rc_type == 'r' ) 
+	ColNew->R[kCn] = Col->R[kC];
+      else 
+	ColNew->C[kCn] = Col->C[kC];
+      kCn++; kC++;
+    }
+
+  while ( kB < index_r->nval )
+    {
+      ColNew->J[kCn] = index_r->val[kB];
+      assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &first_call);
+      kB++; kCn++;
+    }
+
+  FREE(Col->R); FREE(Col->J); FREE(Col);
+  A->D[jA] = ColNew;
+
+  if ( do_clean )   /* some zeros have been inserted */
+    {
+      ColNew->size = kCn;   /* avoid to test unused unitialized last elements (at pos kCn,...,size_max-1) */
+      nsp_spcolmatrix_clean_zeros(ColNew, A->rc_type);
+    }
+  else if ( kCn < size_max )  /* free unused memery */
+    nsp_spcolmatrix_resize_col(A, jA, kCn);
+
+  return OK;
+
+ fail:
+  FREE(ColNew->R);
+  FREE(ColNew->J);
+  FREE(ColNew);
+  return FAIL;
+}
+
+/**
+ * nsp_spcolmatrix_set_rowcol_from_full:
+ * @A: a #NspSpColMatrix
+ * @Rows: a #NspMatrix 
+ * @Cols: a #NspMatrix
+ * @B: a #NspMatrix
+ * 
+ *  A(Rows,Cols) = B 
+ *  A is changed and enlarged if necessary 
+ *  Size Compatibility is checked between 
+ *  A and B 
+ *
+ * Return value:  %OK or %FAIL
+ **/
+
+int nsp_spcolmatrix_set_rowcol_from_full(NspSpColMatrix *A, NspObject *Rows, NspObject *Cols, NspMatrix *B)
+{
+  int *p=NULL,*q=NULL, j,k;
+  index_vector index_c={0}, index_r={0};
+  index_r.iwork = matint_iwork1;
+  index_c.iwork = matint_iwork2;
+
+  if ( nsp_get_index_vector_from_object(Cols,&index_c) == FAIL ) goto fail;
+  if ( nsp_get_index_vector_from_object(Rows,&index_r) == FAIL ) goto fail;
+  if ( (p = nsp_alloc_work_int(index_r.nval)) == NULL ) goto fail;
+  if ( (q = nsp_alloc_work_int(index_r.nval)) == NULL ) goto fail;
+
+  /* Check compatibility : B is a scalar or B must have compatible 
+   * size with Rows and Cols : Note that B=[] is treated elsewhere 
+   */
+  if ( B->m != 1 || B->n != 1)
+    {
+      if ( index_r.nval != B->m || index_c.nval != B->n )
+	{
+	  Scierror("Error:\tIncompatible dimensions\n");
+	  goto fail;
+	}
+    }
+  
+  if ( index_r.min < 1 || index_c.min < 1 ) 
+    {
+      Scierror("Error:\tNegative indices are not allowed\n");
+      goto fail;
+    }
+
+  /* Enlarge A if necessary */
+  if ( index_r.max > A->m || index_c.max > A->n ) 
+    if (nsp_spcolmatrix_enlarge(A, index_r.max, index_c.max) == FAIL) 
+      goto fail;
+
+  /* Is result complex ? */
+  if ( B->rc_type == 'c' && A->rc_type == 'r' )
+    if ( nsp_spcolmatrix_seti(A,0.00) == FAIL ) 
+      goto fail;
+
+  /* sort index_r.val */
+  if ( index_r.flag ) /* index vector is of the form [k,k+1,k+2,....] so already sorted */
+    for ( k = 0 ; k < index_r.nval ; k++ )  /* just set p to identity permutation */ 
+      p[k] = k;
+  else                /* call sorting routine */
+    {
+      nsp_sqsort_bp_int(index_r.val, index_r.nval, p, 'i');
+      for ( k = 0 ; k < index_r.nval ; k++ ) p[k]--; /* sort routine provides 1-based indices so get 0-based */
+    }
+
+  /* make assignment column by column */
+  for ( j = 0 ; j < index_c.nval ; j++ ) 
+    {
+      int jA = index_c.val[j];
+      if ( nsp_spcolmatrix_test_in_place_assign_OK(A, jA, &index_r, q) )
+	nsp_spcolmatrix_in_place_assign(A, jA, &index_r, q, p, B, j);
+      else
+	if ( nsp_spcolmatrix_assign_by_merge(A, jA, &index_r, p, B, j) == FAIL ) goto fail;
+    }
+
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
+  FREE(p); FREE(q);
+  return OK;
+
+ fail: 
+  nsp_free_index_vector_cache(&index_r);
+  nsp_free_index_vector_cache(&index_c);
+  FREE(p); FREE(q);
   return FAIL;
 
 }
@@ -2127,18 +2538,15 @@ static int  GetDiagVal (NspSpColMatrix *Diag,int i,double *val,doubleC *cval);
 /**
  * nsp_spcolmatrix_set_diag:
  * @A: a #NspSpColMatrix
- * @Diag: a #NspSpColMatrix
+ * @ODiag: a #NspObject
  * @k: an integer 
  * 
  * sets the @k-th diagonal of @A to @Diag 
  * @A is complexified if necessary 
- * 
+ *  
+ * diagonal elements can be specified by a sparse or a full matrix (and also by a simple scalar)
  * Return value: %OK or %FAIL
  **/
-
-/*   adapted by bruno ( 19 fev 2010) such that the diagonal elements can be 
- *   specified also with a full matrix (and also simply by a scalar)
- */
 
 int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspObject *ODiag, int k)
 {
@@ -2398,8 +2806,6 @@ NspSpColMatrix *nsp_spcolmatrix_diag_create(NspSpColMatrix *Diag, int k)
  * 
  * Return value: a new  #NspSpColMatrix or %NULLSPCOL
  **/
-
-/*  some modifs by Bruno Pincon 2005 to improve efficiency */
 
 NspSpColMatrix *nsp_spcolmatrix_mult(NspSpColMatrix *A, NspSpColMatrix *B)
 {
@@ -2752,8 +3158,6 @@ NspMatrix *nsp_spcolmatrix_pmult_sp_m(NspSpColMatrix *A, NspMatrix *B, NspMatrix
  * 
  * Return value: a new  #NspMatrix or %NULLMAT
  **/
-
-/* (added by Bruno) */
 
 NspMatrix *nsp_spcolmatrix_mult_m_sp(NspMatrix *X,NspSpColMatrix *A)
 {
@@ -5467,7 +5871,7 @@ int nsp_spcolmatrix_isreal(const NspSpColMatrix *A, int strict)
 
 /*
  * nsp_spcolmatrix_kron: Kronecker product of 2 sparse matrices
- * A and B are not changed (added by Bruno)
+ * A and B are not changed
  */
 NspSpColMatrix *nsp_spcolmatrix_kron(NspSpColMatrix *A, NspSpColMatrix *B)
 {
@@ -7432,7 +7836,6 @@ static double nsp_spcolmatrix_norm1(NspSpColMatrix *A)
   return norm;
 }
 
-/* added by Bruno using lapack way of scaling */
 static double nsp_spcolmatrix_fro(NspSpColMatrix *A)
 {
   int j,k;
@@ -7847,7 +8250,7 @@ NspSpColMatrix *nsp_spcolmatrix_isinf(NspSpColMatrix *A,int flag)
  *
  * Return value: %TRUE or %FALSE
  **/
-/* added by Bruno */
+
 Boolean nsp_spcolmatrix_is_lower_triangular(const NspSpColMatrix *A)
 {
   int i, j, k;
@@ -7895,7 +8298,7 @@ Boolean nsp_spcolmatrix_is_lower_triangular(const NspSpColMatrix *A)
  *
  * Return value: %TRUE or %FALSE
  **/
-/* added by Bruno */
+
 Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A)
 {
   int i, j, k;
@@ -7935,8 +8338,6 @@ Boolean nsp_spcolmatrix_is_upper_triangular(NspSpColMatrix *A)
   return TRUE;
 }
 
-
-/* added by Bruno */
 int nsp_spcolmatrix_locate(SpCol *Col,int j)
 {
   int k, n = Col->size, LIM = 16;
@@ -7981,7 +8382,7 @@ int nsp_spcolmatrix_locate(SpCol *Col,int j)
  *
  * Return value: %TRUE or %FALSE
  **/
-/* added by Bruno */
+
 Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
 {
   int i, j, k, kp;
@@ -8045,7 +8446,7 @@ Boolean nsp_spcolmatrix_is_symmetric(NspSpColMatrix *A)
  * 
  * Return value: %FAIL (if the matrix is not square) or %OK 
  **/
-/* added by Bruno */
+
 int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *Ku)
 {
   int j, k, kl=0, ku=0;
@@ -8077,7 +8478,7 @@ int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl, int *K
  * Return value: a #NspMatrix: the lapack banded storage of @A (kl and ku should have 
  *               been computed by #nsp_spcolmatrix_lower_and_upper_bandwidth)
  **/
-/* added by Bruno */
+
 NspMatrix *nsp_spcolmatrix_to_lapack_band_format(NspSpColMatrix *A, int kl, int ku, Boolean enlarge)
 {
   int i, j, k, stride = enlarge ? kl : 0;
@@ -8135,7 +8536,7 @@ NspMatrix *nsp_spcolmatrix_to_lapack_band_format(NspSpColMatrix *A, int kl, int 
  *              -1 means a dim problem or a bad type for x
  *               
  **/
-/* added by Bruno */
+
 int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix *b)
 {
   int i, j, jj, k, kk;
@@ -8248,7 +8649,7 @@ int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix *b)
  *              -1 means a dim problem or a bad type for x
  *               
  **/
-/* added by Bruno */
+
 int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b)
 {
   int i, j, jj, k, kk;
@@ -8344,8 +8745,6 @@ int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b)
   return 0;
 }
 
-
-
 /**
  * nsp_spcolmatrix_scale_rows:
  * @A: a #NspSpColMatrix of size m x n
@@ -8356,53 +8755,81 @@ int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b)
  * 
  * Return value: %FAIL or %OK
  **/
-/* added by Bruno */
 
 int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
 {
   int i,j, k;
+  Boolean do_clean;
   
-  if(A->rc_type == 'r' ) 
+  if ( A->rc_type == 'r' ) 
     {
       if ( x->rc_type == 'r') 
 	{
 	  for ( j = 0 ; j < A->n ; j++)
-	    for ( k = 0 ; k < A->D[j]->size ; k++ )
-	      {
-		i = A->D[j]->J[k];
-		A->D[j]->R[k] *= x->R[i];
-	      }
+	    {
+	      do_clean = FALSE;
+	      for ( k = 0 ; k < A->D[j]->size ; k++ )
+		{
+		  i = A->D[j]->J[k];
+		  A->D[j]->R[k] *= x->R[i];
+		  if ( A->D[j]->R[k] == 0.0 )
+		    do_clean = TRUE;
+		}
+	      if ( do_clean )
+		nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	    }
 	}
       else 
 	{
 	  if ( nsp_spcolmatrix_complexify(A) == FAIL ) 
 	    return FAIL;
 	  for ( j = 0 ; j < A->n ; j++)
-	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
-	      {
-		i = A->D[j]->J[k];
-		A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[i].i;
-		A->D[j]->C[k].r *= x->C[i].r;
-	      }
+	    {
+	      do_clean = FALSE;
+	      for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+		{
+		  i = A->D[j]->J[k];
+		  A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[i].i;
+		  A->D[j]->C[k].r *= x->C[i].r;
+		  if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
+		    do_clean = TRUE;
+		}
+	      if ( do_clean )
+		nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	    }
 	}
     }
   else
     {
       if ( x->rc_type == 'r') 
 	for ( j = 0 ; j < A->n ; j++)
-	  for ( k = 0 ; k <  A->D[j]->size ; k++ )
-	    {
-	      i = A->D[j]->J[k];
-	      A->D[j]->C[k].r *= x->R[i];
-	      A->D[j]->C[k].i *= x->R[i];
-	    }
+	  {
+	    do_clean = FALSE;
+	    for ( k = 0 ; k <  A->D[j]->size ; k++ )
+	      {
+		i = A->D[j]->J[k];
+		A->D[j]->C[k].r *= x->R[i];
+		A->D[j]->C[k].i *= x->R[i];
+		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
+		  do_clean = TRUE;
+	      }
+	    if ( do_clean )
+	      nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	  }
       else 
 	for ( j = 0 ; j < A->n ; j++)
-	  for ( k = 0 ; k <  A->D[j]->size ; k++ )
-	    {
-	      i = A->D[j]->J[k];
-	      nsp_prod_c(&A->D[j]->C[k],&x->C[i]);
-	    }
+	  {
+	    do_clean = FALSE;
+	    for ( k = 0 ; k <  A->D[j]->size ; k++ )
+	      {
+		i = A->D[j]->J[k];
+		nsp_prod_c(&A->D[j]->C[k],&x->C[i]);
+		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
+		  do_clean = TRUE;
+	      }
+	    if ( do_clean )
+	      nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	  }
     }
   return OK;
 }
@@ -8417,45 +8844,77 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
  * 
  * Return value: %FAIL or %OK
  **/
-/* added by Bruno */
 
 int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
 {
   int j, k;
-  
+  Boolean do_clean;
+
   if(A->rc_type == 'r' ) 
     {
       if ( x->rc_type == 'r') 
 	{
 	  for ( j = 0 ; j < A->n ; j++)
-	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
-	      A->D[j]->R[k] *= x->R[j];
+	    {
+	      do_clean = FALSE;
+	      for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+		{
+		  A->D[j]->R[k] *= x->R[j];
+		  if ( A->D[j]->R[k] == 0.0 )
+		    do_clean = TRUE;
+		}
+	      if ( do_clean )
+		nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	    }
 	}
       else 
 	{
 	  if ( nsp_spcolmatrix_complexify(A) == FAIL ) 
 	    return FAIL;
 	  for ( j = 0 ; j < A->n ; j++)
-	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
-	      {
-		A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[j].i;
-		A->D[j]->C[k].r *= x->C[j].r;
-	      }
-	}
+	    {
+	      do_clean = FALSE;
+	      for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+		{
+		  A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[j].i;
+		  A->D[j]->C[k].r *= x->C[j].r;
+		  if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
+		    do_clean = TRUE;
+		}
+	      if ( do_clean )
+		nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	    }
+ 	}
     }
   else
     {
       if ( x->rc_type == 'r') 
 	for ( j = 0 ; j < A->n ; j++)
-	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
-	    {
-	      A->D[j]->C[k].r *= x->R[j];
-	      A->D[j]->C[k].i *= x->R[j];
-	    }
+	  {
+	    do_clean = FALSE;
+	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	      {
+		A->D[j]->C[k].r *= x->R[j];
+		A->D[j]->C[k].i *= x->R[j];
+		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
+		  do_clean = TRUE;
+	      }
+	    if ( do_clean )
+	      nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	  }
       else 
 	for ( j = 0 ; j < A->n ; j++)
-	  for ( k = 0 ; k < A->D[j]->size ; k++ ) 
-	    nsp_prod_c(&A->D[j]->C[k],&x->C[j]);
+	  {
+	    do_clean = FALSE;
+	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
+	      {
+		nsp_prod_c(&A->D[j]->C[k],&x->C[j]);
+		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
+		  do_clean = TRUE;
+	      }
+	    if ( do_clean )
+	      nsp_spcolmatrix_clean_zeros(A->D[j], A->rc_type);
+	  }
     }
   return OK;
 }

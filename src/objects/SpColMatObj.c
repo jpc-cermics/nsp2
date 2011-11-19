@@ -1049,8 +1049,9 @@ static int int_spcolmatrix_concatdiag_m_sp(Stack stack, int rhs, int opt, int lh
 static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *A,*B=NULLSPCOL,*B1=NULLSPCOL;
-  NspMatrix *Bm;
+  NspMatrix *Bm = NULLMAT;
   NspObject *Rows,*Cols=NULL;
+  Boolean full_case = FALSE;
 
   CheckRhs(3,4);
   CheckLhs(1,1);
@@ -1063,8 +1064,10 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
   
   if ( IsMatObj(stack,rhs) )
     {
+      full_case = TRUE;
       if ((Bm = GetMat(stack,rhs)) == NULLMAT ) goto ret_bug;
-      if ((B1= B=nsp_spcolmatrix_from_mat(Bm)) == NULLSPCOL) goto ret_bug;
+      if ( rhs == 3 )
+	if ((B1= B=nsp_spcolmatrix_from_mat(Bm)) == NULLSPCOL) goto ret_bug;
     }
   else if ( IsSpColMatObj(stack,rhs)) 
     {
@@ -1081,7 +1084,16 @@ static int int_spcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
   if ( rhs == 3 ) 
     { if (nsp_spcolmatrix_set_row( A, Rows,B) == FAIL) goto ret_bug; }
   else 
-    { if (nsp_spcolmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;} 
+    { 
+      if ( full_case )
+      	{
+      	  if (nsp_spcolmatrix_set_rowcol_from_full( A, Rows,Cols, Bm) == FAIL )  goto ret_bug;
+      	}
+      else
+      	{
+	  if (nsp_spcolmatrix_set_rowcol( A, Rows,Cols,B) == FAIL )  goto ret_bug;
+	}
+    } 
   NSP_OBJECT(A)->ret_pos = 1;
   nsp_spcolmatrix_destroy(B1);
   return 1;
