@@ -8,7 +8,7 @@ LIBRARY = nsp.a
 
 CFLAGS = $(CC_OPTIONS) $(FFTW3_CFLAGS)
 FFLAGS = $(FC_OPTIONS)
-OBJSC=fft-IN.o
+OBJSC  = fft-IN.o
 
 NOTHING=
 
@@ -28,5 +28,5 @@ all:: Makefile.mak
 Makefile.mak	: Makefile
 	$(SCIDIR)/scripts/Mak2VCMak Makefile
 
-
-
+#--------------dependencies
+fft-IN.o: fft-IN.c ../include/nsp/config.h
