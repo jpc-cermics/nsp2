@@ -735,6 +735,7 @@ scicos_block_table  tabsim[] ={
   {"cdummy",(ScicosF) scicos_cdummy_block},
   {"cevscpe",(ScicosF) scicos_cevscpe_block},
   /* {"cfscope",(ScicosF) cfscope}, XXX */
+  {"cfscope",(ScicosF) cfscope},
   {"cmat3d",(ScicosF) cmat3d},
   {"cmatview",(ScicosF) cmatview},
   /* {"cmscope",(ScicosF) cmscope}, */
