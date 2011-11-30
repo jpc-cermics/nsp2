@@ -8,7 +8,7 @@ all :: $(LIBRARY).dll
 $(LIBRARY).dll: $(OBJS)
 	@echo Creation of dll $(LIBRARY).dll and import lib from ...
 	@$(DUMPEXTS) -o "$*.def" "$*.dll" $**
-	$(LINKER) $(LINKER_FLAGS) $(OBJS) $(OTHERLIBS) $(SCIIMPLIB) $(XLIBSBIN) $(TERMCAPLIB) $(EXTRA_LDFLAGS) /nologo /dll /out:"$*.dll" /implib:"$*.ilib" /def:"$*.def" 
+	$(LINKER) $(LINKER_FLAGS) $(OBJS) $(OTHERLIBS) $(SCIIMPLIB) $(XLIBSBIN) $(TERMCAPLIB) $(EXTRA_LDFLAGS) /nologo /dll /out:"$*.dll" /implib:"$*.lib" /def:"$*.def" 
 
 clean	::
 	-del $(OBJS)
@@ -17,6 +17,7 @@ clean	::
 	-del $(LIBRARY).dll
 	-del $(LIBRARY).exp
 	-del $(LIBRARY).ilib
+	-del $(LIBRARY).lib
 
 distclean:: 	clean
 
