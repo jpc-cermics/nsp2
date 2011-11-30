@@ -127,11 +127,10 @@ xdrmem_getbytes(register XDR *xdrs, caddr_t addr, register u_int len)
 
   if ((xdrs->x_handy -= len) < 0)
     return (FALSE);
-  bcopy(xdrs->x_private, addr, len);
+  memcpy (addr,xdrs->x_private, len);
   xdrs->x_private += len;
   return (TRUE);
 }
-
 
 static bool_t
 xdrmem_putbytes (XDR *xdrs, const char *addr, u_int len)
@@ -143,7 +142,6 @@ xdrmem_putbytes (XDR *xdrs, const char *addr, u_int len)
   xdrs->x_private += len;
   return TRUE;
 }
-
 
 static u_int
 xdrmem_getpos(const XDR *xdrs)
@@ -179,11 +177,13 @@ xdrmem_inline (XDR *xdrs, u_int len)
     }
   return buf;
 }
+
 /*
  * Gets the next word from the memory referenced by xdrs and places it
  * in the int pointed to by ip.  It then increments the private word to
  * point at the next element.  Neither object pointed to is const
  */
+
 static bool_t
 xdrmem_getint32 (XDR *xdrs, int32_t *ip)
 {
@@ -200,6 +200,7 @@ xdrmem_getint32 (XDR *xdrs, int32_t *ip)
  * then increments the private word to point at the next element.  The
  * long pointed at is const
  */
+
 static bool_t
 xdrmem_putint32 (XDR *xdrs, const int32_t *ip)
 {
