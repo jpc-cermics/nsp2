@@ -463,7 +463,7 @@ extern int DimArg(NspObject *O, int *dim);
  **/
 
 #define CheckComplex(fname,pos,o1) if ( o1->rc_type != 'r' ) \
-   { Scierror("%s: argument %d should be a complex  matrix\n",fname,pos1); \
+   { Scierror("%s: argument %d should be a complex  matrix\n",fname,pos); \
      return RET_BUG;} 
 
 
