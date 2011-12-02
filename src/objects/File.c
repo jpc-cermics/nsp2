@@ -1767,7 +1767,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
   sfdir  type[MAXSCAN];
   int nc[MAXSCAN];
   char save,directive;
-  char *p,*p1;
+  char *p1;
   register char *q;
   const void * target;
   int l_flag=0, h_flag=0,width_flag,width_val,str_width_flag=0;
@@ -1794,7 +1794,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
   while (1)
     {
       /* scanf */
-      p=q;
+      /* p=q;*/
       while (*q != '%' && *q != '\0' ) q++;
       if ( *q == '%' && *(q+1) == '%' ) 
 	{

@@ -1114,7 +1114,7 @@ static int int_bmatrix_feq(Stack stack, int rhs, int opt, int lhs)
 
 static int int_bmatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
 {
-  int i,j,count=0;
+  int i,j;
   NspBMatrix *M;
   CheckRhs (1, 1);
   if ((M = GetBMat(stack, 1)) == NULLBMAT ) return RET_BUG;
@@ -1123,7 +1123,7 @@ static int int_bmatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
       NthObj(i+2)= ( M->B[i]== TRUE ) ? 
 	nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
       NthObj(i+2)->ret_pos = i+1;
-      if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+      if ( NthObj(i+2) == NULLOBJ ) { goto bug;}
     }
   return M->mn ;
   bug: 

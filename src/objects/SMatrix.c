@@ -2686,8 +2686,8 @@ static int nsp_smatrix_print_internal(nsp_num_formats *fmt,const NspSMatrix *m, 
 static int nsp_smatrix_print_multicols_internal(nsp_num_formats *fmt,const NspSMatrix *m, int indent)
 {
   int *Iloc;
-  int inc,column_width=2,total_width, p_rows=0,col,ncolmax=10,rc=0;
-  int max_width ,winrows,offset;
+  int inc,column_width=2,total_width, p_rows=0,ncolmax=10,rc=0;
+  int max_width ,winrows; /* ,offset; */
   int i,j,k;
   int nr = m->m;
   int nc = m->n;
@@ -2718,7 +2718,7 @@ static int nsp_smatrix_print_multicols_internal(nsp_num_formats *fmt,const NspSM
       if (total_width <= max_width ) break ;
     }
   nc =Max(k,1);
-  offset =  indent + 4; /* 4 = " |...| " */
+  /* offset =  indent + 4;*/ /* 4 = " |...| " */
   inc = nc;
   Sciprintf("\n");
   if ( user_pref.pr_as_read_syntax )
@@ -2726,7 +2726,7 @@ static int nsp_smatrix_print_multicols_internal(nsp_num_formats *fmt,const NspSM
       nsp_gen_matrix_as_read_syntax(fmt,m,nr,nc,inc,indent,SMij_string_as_read);
       return TRUE;
     }
-  col=0;
+
   for ( i = 0; i < rc ; i++)
     {
       int imore;

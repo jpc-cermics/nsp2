@@ -4889,7 +4889,7 @@ int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
 
 static int int_mx_to_seq (Stack stack, int rhs, int opt, int lhs)
 {
-  int i,j,count=0;
+  int i,j;
   NspMatrix *M;
   CheckRhs (1, 1);
   if ((M = GetMat(stack, 1)) == NULLMAT ) return RET_BUG;
@@ -4898,14 +4898,14 @@ static int int_mx_to_seq (Stack stack, int rhs, int opt, int lhs)
       {  
 	NthObj(i+2)= nsp_create_object_from_double(NVOID,M->R[i]);
 	NthObj(i+2)->ret_pos = i+1;
-	if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+	if ( NthObj(i+2) == NULLOBJ ) { goto bug;}
       }
   else 
     for ( i=0 ; i < M->mn ; i++)
       {  
 	NthObj(i+2)=nsp_create_object_from_complex(NVOID,&M->C[i]);
 	NthObj(i+2)->ret_pos = i+1;
-	if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+	if ( NthObj(i+2) == NULLOBJ ) { goto bug;}
       }
   return M->mn ;
   bug: 
@@ -5532,7 +5532,7 @@ static int int_getticks(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *xticks=NULLMAT;
   double xmin, xmax, grads[20];
-  int i, k, inc, n=4, rep, ngrads, n1, n2, nbticks;
+  int i, k, inc, n=4,  ngrads, n1, n2, nbticks; /* rep */
   Boolean inside=TRUE;
 
   int_types T[] = {s_double, s_double, new_opts, t_end} ;
@@ -5558,7 +5558,7 @@ static int int_getticks(Stack stack, int rhs, int opt, int lhs)
 
   if ( n <= 1 || n > 20 ) n = 4;
       
-  rep = gr_compute_ticks(&xmin, &xmax, grads, &ngrads);
+  /* rep =*/ gr_compute_ticks(&xmin, &xmax, grads, &ngrads);
 
   n1 = 0; n2 = ngrads-1; 
   if ( inside )  /* remove xticks outside [xmin, xmax] */

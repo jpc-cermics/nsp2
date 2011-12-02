@@ -752,17 +752,15 @@ int nsp_mat_subs_calarm(NspMatrix *Mat1, NspMatrix *Mat2)
 void nsp_mat_clean(NspMatrix *A, int rhs, double epsa, double epsr)
 {
   int j;
-  double d_epsr=DBL_EPSILON;
-  double d_epsa=DBL_EPSILON;
+  double d_epsa= ( rhs >= 2 ) ? epsa: DBL_EPSILON;
+  double d_epsr= ( rhs >= 3 ) ? epsr: DBL_EPSILON;
   double norm,eps;
   int inc=1;
   if ( A->rc_type == 'r') 
     norm=C2F(dasum)(&A->mn,A->R,&inc);
   else
     norm=nsp_zasum(&A->mn,A->C,&inc);
-  if ( rhs >= 2 ) d_epsa = epsa;
-  if ( rhs >= 3 ) d_epsr = epsr;
-  eps= Max(epsa,epsr*norm);
+  eps= Max(d_epsa,d_epsr*norm);
   switch ( A->rc_type ) 
     {
     case 'r' : 

@@ -471,7 +471,7 @@ int nsp_smio_tell(NspSMio *F,long int *offset)
 
 int nsp_smio_put(NspSMio *F,void *x,int n, char *type)
 {  
-  char swap_c,c1,*data;
+  char swap_c,c1; /* *data;*/
   int i,swap;
   if ( strlen(type) == 0) 
     {
@@ -492,7 +492,7 @@ int nsp_smio_put(NspSMio *F,void *x,int n, char *type)
   else if (swap_c == 'l' ) 
     swap = ( is_little_endian() ) ? FALSE : TRUE ;
 
-  data = F->obj->D+ F->obj->pos;
+  /* data = F->obj->D+ F->obj->pos; */
   
   switch ( type[0] )
     {

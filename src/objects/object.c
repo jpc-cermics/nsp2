@@ -1068,11 +1068,9 @@ int int_get_attribute(Stack stack, int rhs, int opt, int lhs)
 {
   char *attr;
   NspObject *ob;
-  NspTypeBase *type;
   CheckRhs(2,100); /* XXXXXX */
   CheckLhs(-1,1);
   if ((ob =nsp_get_object(stack,1)) == NULLOBJ ) return RET_BUG;
-  type = ob->basetype;
   if ((attr = GetString(stack,2)) == (char*)0) return RET_BUG;  
   ob = nsp_get_attribute_util(ob,ob->basetype,attr);
   if ( ob == NULLOBJ) return RET_BUG;
@@ -2193,7 +2191,7 @@ static u_int get_xdr_len (u_int cnt)
 int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
 {
   FILE *FIC;
-  int len, offset, c,n ;
+  int len, offset, c ,n;
   NspSerial *S;
   char *name, *str, scis[]={"NspXdr_1.0"};
   
@@ -2206,8 +2204,13 @@ int int_load_as_serialized(Stack stack, int rhs, int opt, int lhs)
   while ((c = fgetc(FIC)) != EOF) { len++; }
   if ((str=malloc(sizeof(int)*len)) == NULL) return RET_BUG;
   rewind (FIC);
-  n = fread (str, sizeof(char), len,  FIC);
+  n=fread (str, sizeof(char), len,  FIC);
   fclose (FIC);
+  if ( n != len ) 
+    {
+      Scierror ("Error: failed to read %d characters from %s\n",len,name);
+      return RET_BUG;
+    }
   offset = sizeof(u_int);
   if (strncmp (str + offset, scis, strlen(scis)) != 0)
     {

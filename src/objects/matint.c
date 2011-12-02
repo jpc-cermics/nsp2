@@ -1112,9 +1112,9 @@ static NspObject *nsp_matint_extract_rows_mat(NspObject *Obj,NspObject *Elts, in
 
 static NspObject *nsp_matint_extract_rows_int(NspObject *Obj,NspObject *Elts, index_vector *index)
 {
-  int *from, *from1, *to;
+  int *from1, *to;
   EXTRACT_ROW_PREAMBLE(NspBMatrix);
-  from = from1= A->B; 
+  from1= A->B; 
   to = ((NspBMatrix *) Loc)->B;
   for ( j = 0 ; j < ((NspSMatrix *) A)->n ; j++ )
     {
@@ -3959,7 +3959,7 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
   int i,j;
   int imin,imax,dsize;
   NspTypeBase *typeA, *typeB; 
-  unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
+  unsigned int elt_size_A ; /* , elt_size_B;*/ /* size in number of bytes */
 
   typeA = check_implements(ObjA, nsp_type_matint_id);
   typeB = check_implements(ObjB, nsp_type_matint_id);
@@ -3974,7 +3974,7 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
   MAT_INT(typeB)->canonic(ObjB);
   
   elt_size_A = MAT_INT(typeA)->elt_size(ObjA); 
-  elt_size_B = MAT_INT(typeB)->elt_size(ObjB); 
+  /* elt_size_B = MAT_INT(typeB)->elt_size(ObjB);  */
   
   imin = Max(0,-k);
   imax = Min(A->m,A->n -k );

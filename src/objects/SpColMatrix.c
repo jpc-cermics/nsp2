@@ -1040,14 +1040,14 @@ int nsp_spcolmatrix_insert_elt(NspSpColMatrix *A, int i, int j, NspSpColMatrix *
 
 int nsp_spcolmatrix_delete_elt(NspSpColMatrix *A, int row, int col, int amin, int amax)
 {
-  int acol,ok1=0,col1,k1;
+  int acol,ok1=0,k1;
   /* search if corresponding element exists 
    * FIXME: should make a dichotomic search here !!! 
    */
 
   for ( acol = amin ; acol < amax ; acol++) 
     {
-      if ( col == A->D[row]->J[acol] ) { ok1 = 1; col1 = acol;break;}
+      if ( col == A->D[row]->J[acol] ) { ok1 = 1; /* col1 = acol;*/ break;}
       if ( col < A->D[row]->J[acol] )  { break;}
     }
   /* perform deletion if necessary  **/
@@ -1119,8 +1119,8 @@ int nsp_spcolmatrix_get_elt(NspSpColMatrix *B, int i, int j)
 
 int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Cols, NspSpColMatrix *B)
 {
-  int Bnonnul = FALSE;
-  char type ='r';
+  /* int Bnonnul = FALSE; */
+  /* char type ='r';*/
   int i,k,l,acol;
 
   index_vector index_c={0}, index_r={0};
@@ -1145,7 +1145,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Co
   else
     {
       /* B is a scalar check if it is a null scalar **/
-      if ( B->D[0]->size !=0) Bnonnul = TRUE;
+      /* if ( B->D[0]->size !=0) Bnonnul = TRUE; */
     }
   
   if ( index_r.min < 1 || index_c.min < 1 ) 
@@ -1159,7 +1159,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Co
   /* Id result complex ? */
   if ( B->rc_type == 'c' &&   A->rc_type == 'r' )
     { 
-      type = 'c';
+      /* type = 'c'; */
       if (nsp_spcolmatrix_seti(A,0.00) == FAIL ) goto fail;
     }
   /* fill A */
@@ -1187,7 +1187,7 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Co
 	{
 	  int ok = -1;
 	  int row = index_r.val[k];
-	  int ok1,col1,k1,kb;
+	  int ok1,k1,kb;
 	  kb = ( B->m == 1 && B->n == 1) ? 0 : k; /* if B is scalar **/
 	  /* search if the kth element of B->D[ib] is non null **/
 	  for ( l = 0 ; l < B->D[ib]->size ; l++) 
@@ -1202,8 +1202,8 @@ int nsp_spcolmatrix_set_rowcol(NspSpColMatrix *A, NspObject *Rows, NspObject *Co
 	      /* search where to insert **/
 	      for ( acol = amin ; acol < amax ; acol++) 
 		{
-		  if ( row == A->D[col]->J[acol] ) { ok1 = 1; col1 = acol;break;}
-		  if ( row < A->D[col]->J[acol] )  { ok1 = 2; col1 = acol; break;}
+		  if ( row == A->D[col]->J[acol] ) { ok1 = 1; /* col1 = acol;*/ break;}
+		  if ( row < A->D[col]->J[acol] )  { ok1 = 2; /* col1 = acol;*/ break;}
 		}
 	      /* perform insertion **/
 	      switch ( ok1 ) 
@@ -2226,7 +2226,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspObject *Rows, NspObject
   for ( i = 0 ; i < Loc->n ; i++)
     {
       int count;
-      int imin,imax,k;
+      int imin,imax;
       SpCol *Ai, *Li;
       int col;
       col = (flag == 1) ? index_c.val[i] : i ;
@@ -2234,7 +2234,7 @@ static NspSpColMatrix *SpExtract_G(NspSpColMatrix *A, NspObject *Rows, NspObject
       Li= Loc->D[i];
       Li->iw=0;
       if ( Ai->size == 0) continue; /* nothing to do row is empty */
-      imin=0; imax= Ai->size-1 ; k = -1;
+      imin=0; imax= Ai->size-1 ;
       Li->iw=0;
       count = nsp_bi_dichotomic_search_i(index_r.val,0,index_r.nval-1,Ai->J,imin,imax,Work,Index,0);
       /* now we know the column size */
@@ -2487,12 +2487,12 @@ NspSpColMatrix *nsp_spcolmatrix_extract_cols(NspSpColMatrix *A, NspObject *Cols,
 NspSpColMatrix *nsp_spcolmatrix_diag_extract(NspSpColMatrix *A, int k)
 {
   NspSpColMatrix *Loc;
-  int j,i,rmin,rmax, cmin,cmax,itmax,count=0;
+  int j,i,rmin,/* rmax,*/ cmin,/* cmax,*/ itmax,count=0;
   rmin = Max(0,-k);
   cmin = Max(0,k);
   itmax = Min(A->m-rmin,A->n -cmin );
-  rmax = rmin + itmax;
-  cmax = cmin + itmax;
+  /* rmax = rmin + itmax; */
+  /* cmax = cmin + itmax; */
   if ( itmax <= 0 ) 
     {
       Loc =nsp_spcolmatrix_create(NVOID,A->rc_type,(int) 0 , (int) 0);
@@ -5351,8 +5351,8 @@ static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m
  * @epsr: relative precision 
  * 
  * A = Matclean(a) clean A according to epsa and epsr 
- * epsa is used if rhs >= 1 
- * epsr is used if rhs >= 2
+ * epsa is used if rhs >= 2 
+ * epsr is used if rhs >= 3
  * A is changed, 
  * 
  * 
@@ -5362,8 +5362,8 @@ static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m
 int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 {
   int j,i,n;
-  double d_epsr=DBL_EPSILON;
-  double d_epsa=DBL_EPSILON;
+  double d_epsa=( rhs >= 2 ) ? epsa: DBL_EPSILON;
+  double d_epsr=( rhs >= 3 ) ? epsr: DBL_EPSILON;
   double norm,eps;
   int inc=1;
   if ( A->rc_type == 'r') 
@@ -5380,9 +5380,7 @@ int nsp_spcolmatrix_clean(NspSpColMatrix *A, int rhs, double epsa, double epsr)
 	if ( A->D[i]->size != 0) 
 	  norm +=nsp_zasum(&A->D[i]->size,A->D[i]->C,&inc);
     }
-  if ( rhs >= 1 ) d_epsa = epsa;
-  if ( rhs >= 2 ) d_epsr = epsr;
-  eps= Max(epsa,epsr*norm);
+  eps= Max(d_epsa,d_epsr*norm);
   for ( i = 0 ; i < A->n  ; i++ ) 
     {
       n =0;
@@ -6156,7 +6154,7 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, int dim, NspMatrix **Ima
 {
   NspSpColMatrix *M=NULL;
   int j;
-  int inc=1,imax,count;
+  int /* inc=1, */ imax,count;
   if ( A->m == 0 || A->n == 0 ) 
     {
       if ( lhs == 2) *Imax = nsp_matrix_create(NVOID,'r',0,0);
@@ -6203,7 +6201,7 @@ static NspSpColMatrix *SpColMaxiMini(NspSpColMatrix *A, int dim, NspMatrix **Ima
 	return NULLSPCOL;
       if (nsp_spcolmatrix_resize_col(M,0,A->m) == FAIL) return NULLSPCOL;
       count =0;
-      inc = A->m;
+      /* inc = A->m; */
       if ( lhs == 2) 
 	{
 	  if ((*Imax = nsp_matrix_create(NVOID,'r',A->m,1)) == NULLMAT) 
@@ -6717,14 +6715,14 @@ int nsp_spcolmatrix_tril(NspSpColMatrix *A,int k)
   int i,j;
   for ( i = 0 ; i < A->n ; i++)
     {
-      int resize=FALSE;
+      /* int resize=FALSE; */
       /* maximum row indice to keep for column i */
       int minrow= i-k;
       for ( j=0; j < A->D[i]->size ; j++ ) 
 	{
 	  if ( A->D[i]->J[j] >= minrow )
 	    { 
-	      resize=TRUE;break;
+	      /* resize=TRUE;*/ break;
 	    }
 	  else 
 	    {

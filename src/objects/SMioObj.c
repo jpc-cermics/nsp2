@@ -904,7 +904,7 @@ static int int_smio_can_compress(void *self, Stack stack, int rhs, int opt, int 
 #else 
   rep = FALSE; 
 #endif 
-  nsp_move_boolean(stack,1,TRUE);
+  nsp_move_boolean(stack,1,rep);
   return 1;
 }
 

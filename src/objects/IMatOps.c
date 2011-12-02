@@ -758,7 +758,7 @@ NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
 {
   NspIMatrix *Prod;
   int i,j;
-  int inc=1;
+  /* int inc=1; */
 
   if ( A->mn == 0) 
     {
@@ -805,7 +805,7 @@ NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
     case 2:
       if ((Prod = nsp_imatrix_create(NVOID,A->m,1,A->itype)) == NULLIMAT) 
 	return NULLIMAT;
-      inc = A->m;
+      /* inc = A->m;*/
 #define IMAT_AC(name,type,arg)					\
       for ( i=0 ; i < A->m ; i++)				\
 	{							\

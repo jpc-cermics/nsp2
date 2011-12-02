@@ -756,10 +756,8 @@ static int nsp_pcopy_polynom(int n, nsp_polynom *s1, nsp_polynom *s2)
 
 int nsp_pmatrix_add_columns(NspPMatrix *A, int n)
 {
-  int ns;
-  int Asize;
-  Asize=A->mn;
-  ns= (A->m)*n;
+  /* int ns= (A->m)*n; */
+  /* int Asize= A->mn; */
   if ( nsp_pmatrix_resize(A,A->m,A->n+n) == FAIL) return(FAIL);
   /* normalemeny inutile car Resize le fait deja **/
   /* if (nsp_pset_polynom(ns,&Czero,A->S+Asize) == FAIL) return(FAIL);**/

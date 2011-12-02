@@ -2275,7 +2275,7 @@ static int int_base64_to_smatrix(Stack stack, int rhs, int opt, int lhs)
 
 static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
 {
-  int i,j,count=0;
+  int i,j;
   NspSMatrix *M;
   CheckRhs (1, 1);
   if ((M = GetSMat(stack, 1)) == NULLSMAT ) return RET_BUG;
@@ -2283,7 +2283,7 @@ static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
     {  
       NthObj(i+2)= nsp_create_object_from_str(NVOID,M->S[i]);
       NthObj(i+2)->ret_pos = i+1;
-      if ( NthObj(i+2) == NULLOBJ ) { count= i; goto bug;}
+      if ( NthObj(i+2) == NULLOBJ ) { goto bug;}
     }
   return M->mn ;
  bug: 

@@ -516,14 +516,14 @@ int nsp_sprowmatrix_insert_elt(NspSpRowMatrix *A, int i, int j, NspSpRowMatrix *
 
 int nsp_sprowmatrix_delete_elt(NspSpRowMatrix *A, int row, int col, int amin, int amax)
 {
-  int acol,ok1=0,col1,k1;
+  int acol,ok1=0,k1;
   /* search if corresponding element exists 
    * FIXME: should make a dichotomic search here !!! 
    */
 
   for ( acol = amin ; acol < amax ; acol++) 
     {
-      if ( col == A->D[row]->J[acol] ) { ok1 = 1; col1 = acol;break;}
+      if ( col == A->D[row]->J[acol] ) { ok1 = 1; /* col1 = acol*; */ break;}
       if ( col < A->D[row]->J[acol] )  { break;}
     }
   /* perform deletion if necessary  **/
@@ -802,7 +802,7 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspObject *Rows, NspObject
   for ( i = 0 ; i < Loc->m ; i++)
     {
       int count;
-      int imin,imax,k;
+      int imin,imax;
       SpRow *Ai, *Li;
       int row;
       row = (flag == 1) ? index_r.val[i] : i ;
@@ -810,7 +810,7 @@ static NspSpRowMatrix *SpExtract_G(NspSpRowMatrix *A, NspObject *Rows, NspObject
       Li= Loc->D[i];
       Li->iw=0;
       if ( Ai->size == 0) continue; /* nothing to do row is empty */
-      imin=0; imax= Ai->size-1 ; k = -1;
+      imin=0; imax= Ai->size-1 ;
       Li->iw=0;
       count = nsp_bi_dichotomic_search_i(index_c.val,0,index_c.nval-1,Ai->J,imin,imax,Work,Index,0);
       /* now we know the row size */

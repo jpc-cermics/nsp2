@@ -2409,7 +2409,7 @@ static int int_spcolmatrix_zeros(Stack stack, int rhs, int opt, int lhs)
 
 static int int_spcolmatrix_clean(Stack stack, int rhs, int opt, int lhs)
 {
-  double epsa =1.e-10, epsr = 1.e-10;
+  double epsa =DBL_EPSILON, epsr = DBL_EPSILON;
   NspSpColMatrix *A;
   CheckRhs (1, 3);
   CheckLhs (1, 1);

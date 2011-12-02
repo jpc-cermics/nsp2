@@ -1242,7 +1242,8 @@ static int int_mpseti(Stack stack, int rhs, int opt, int lhs)
 
 static int int_mpclean(Stack stack, int rhs, int opt, int lhs)
 {
-  double epsa=1.e-8,epsr=1.e-8;
+  double epsr=DBL_EPSILON;
+  double epsa=DBL_EPSILON;
   NspMaxpMatrix *HMat;
   CheckRhs(1,3);
   CheckLhs(1,1);
@@ -1452,7 +1453,7 @@ static int int_mpmatrix(Stack stack, int rhs, int opt, int lhs)
 static int int_mxconcat_mixed_mmp (Stack stack, int rhs, int opt, int lhs,function F)
 {
   NspMatrix *A;
-  NspMaxpMatrix *Amp,*B;
+  NspMaxpMatrix /* *Amp,*/ *B;
   CheckRhs (2, 2);
   CheckLhs (1, 1);
   if (IsMatObj (stack, 1))
@@ -1469,7 +1470,7 @@ static int int_mxconcat_mixed_mmp (Stack stack, int rhs, int opt, int lhs,functi
 	  /* Copy A if necessary  */
 	  if ((A = GetMatCopy(stack, 1)) == NULLMAT) return RET_BUG;
 	  /* cast A to Maxp */
-	  Amp = nsp_matrix_cast_to_mpmatrix(A);
+	  /* Amp =*/ nsp_matrix_cast_to_mpmatrix(A);
 	  if ((B = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;    
 	  return F(stack, rhs, opt, lhs);
 	}
@@ -1487,7 +1488,7 @@ static int int_mxconcat_mixed_mmp (Stack stack, int rhs, int opt, int lhs,functi
       /* Copy A if necessary  */
       if ((A = GetMatCopy(stack,2)) == NULLMAT) return RET_BUG;
       /* cast A to Maxp */
-      Amp = nsp_matrix_cast_to_mpmatrix(A);
+      /* Amp =*/ nsp_matrix_cast_to_mpmatrix(A);
       if ((B = GetMpMat(stack,1)) == NULLMAXPMAT) return RET_BUG;    
       return F(stack, rhs, opt, lhs);
     }

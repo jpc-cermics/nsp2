@@ -384,9 +384,9 @@ static int  GetFromTable_1(NspObject **Objs,int_types *T,va_list *ap,char *forma
       if ( Objs[count] == NULLOBJ) 
 	{
 	  /* do nothing if Obj[count] is empty: associated argument will be left unchanged */
-	  void **Foo ;
-	  Foo=va_arg(*ap,void *);
-	  if ( *T == obj_check )  Foo=va_arg(*ap,void *);
+	  /* void **Foo ;*/
+	  /* Foo=*/ va_arg(*ap,void *);
+	  if ( *T == obj_check ) /*Foo=*/ va_arg(*ap,void *);
 	}
       else 
 	{
@@ -1502,9 +1502,9 @@ static int get_from_options(nsp_option Opts[],va_list *ap,char *format)
       if ( Opts[count].obj == NULL) 
 	{
 	  /* do nothing if Obj[count] is empty: associated argument will be left unchanged */
-	  void **Foo ;
-	  Foo=va_arg(*ap,void *);
-	  if ( Opts[count].type == obj_check )  Foo=va_arg(*ap,void *);
+	  /* void **Foo ; */
+	  /* Foo=*/ va_arg(*ap,void *);
+	  if ( Opts[count].type == obj_check ) /* Foo=*/ va_arg(*ap,void *);
 	}
       else 
 	{
