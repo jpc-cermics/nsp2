@@ -2922,17 +2922,17 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
       Xgc->graphic_engine->xclick_any(Xgc,buf,&button,&imask,&ixrep,&iyrep,&iw,iflag,motion,release,key,istr);
       if (button>=0)
 	{
-	  NspGraphic *G; 
+	  /* NspGraphic *G;  */
 	  BCG *Xgc_win =window_list_search_new(iw);
-	  G= nsp_get_point_axes(Xgc_win,ixrep,iyrep,drep+1);
+	  /* G=*/ nsp_get_point_axes(Xgc_win,ixrep,iyrep,drep+1);
 	}
     }
   else 
     {
-      NspGraphic *G; 
+      /* NspGraphic *G;  */
       int ixrep,iyrep;
       Xgc->graphic_engine->xclick(Xgc,buf,&button,&imask,&ixrep,&iyrep,iflag,motion,release,key,istr);
-      G= nsp_get_point_axes(Xgc,ixrep,iyrep,drep+1);
+      /* G=*/ nsp_get_point_axes(Xgc,ixrep,iyrep,drep+1);
       iw=win;
     }
 
@@ -3925,7 +3925,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
       if ((yp= nsp_matrix_create_from_array("x",1,y->m,y->R + y->m*i,NULL))== NULL) return RET_BUG;
       lmark = ( style == NULL) ? mark: (( style->I[i] <= 0) ?  - style->I[i] : -2);
       lcolor= ( style == NULL) ? color: (( style->I[i] <= 0) ? -2 : style->I[i]);
-      if ((pl = nsp_polyline_create("pl",xp,yp,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+      if ((pl = nsp_polyline_create("pl",xp,yp,close,lcolor,lmark,mark_size,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
       /* insert the polyline */
       if ( compound == TRUE ) 
@@ -4318,7 +4318,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   NspGrstring *grs;
   NspAxes *axe;
   NspSMatrix *S,*Sk;
-  double x,y,yi,angle=0.0, h = 0.0, w = 0.0;
+  double x,y,angle=0.0, h = 0.0, w = 0.0;
   int flagx=0, box=FALSE, fill= GR_no_box, fsiz = -1;
   char *posx=NULL,*posy=NULL;
   
@@ -4339,7 +4339,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   
   if (GetScalarDouble(stack,1,&x) == FAIL) return RET_BUG;
   if (GetScalarDouble(stack,2,&y) == FAIL) return RET_BUG;
-  yi=y;
+  
 
   if (( S = GetSMatUtf8(stack,3)) == NULLSMAT) return RET_BUG;
   if ( S->mn == 0 ) {  return 0;} 
@@ -4797,7 +4797,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
   int iscflag[3];
   static int flagx_def[3] = { 1,1,1} ;
   int *iflag = iflag_def,*aint = aint_def, *flagx= flagx_def,num;
-  double alpha = 35.0,theta = 45.0,  *rect = rect_def ,*ebox = ebox_def ;
+  double alpha = 35.0,theta = 45.0,  *rect = rect_def /* ,*ebox = ebox_def*/ ;
 
   static char *xtape_Table[] = {"on","clear","replay","replaysc","replayna","off",  NULL };
   CheckRhs(1,7);
@@ -4863,10 +4863,13 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	if ((M= GetRealMatInt(stack,6))  == NULLMAT) return RET_BUG;
 	CheckLength(NspFname(stack),6,M,3); flagx = (int*) M->R;
       }
+      /* 
       if ( rhs >= 7 ) { 
 	if ((M= GetRealMat(stack,6))  == NULLMAT) return RET_BUG;
 	CheckLength(NspFname(stack),7,M,6); ebox =  M->R;
       }
+      */
+
       if ((Xgc=window_list_search_new(num)) == NULL) return 0;
       /*
        * change the angles 
@@ -5243,7 +5246,7 @@ static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   int button,mask;
   int cursor = TRUE;
   double drep[2];
-  NspGraphic *G; 
+  /* NspGraphic *G;  */
   int ix,iy;
   nsp_option opts[] ={
     { "clearq",s_bool,NULLOBJ,-1},
@@ -5262,7 +5265,7 @@ static int int_xgetmouse(Stack stack, int rhs, int opt, int lhs)
   if ( cursor == TRUE ) iflag = iflag | (1 <<2);
 
   Xgc->graphic_engine->xgetmouse(Xgc,"xv",&button,&mask,&ix,&iy,iflag,motion,release,key);
-  G= nsp_get_point_axes(Xgc,ix,iy,drep);
+  /* G= */ nsp_get_point_axes(Xgc,ix,iy,drep);
   if ((M = nsp_matrix_create(NVOID,'r',1,3))== NULLMAT) return RET_BUG;
   M->R[0] = drep[0];  M->R[1] =drep[1];  M->R[2] = (double) button;
   NSP_OBJECT(M)->ret_pos=1;
@@ -5581,12 +5584,12 @@ static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int
 
 static int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 {
-  BCG *Xgc;
+  /* BCG *Xgc; */
   char dir = 'l', *format = NULL, tics = 'v';
   char **val = NULL;
   int fontsize = -1, sub_int=2, seg_flag = 1,textcolor = -1,ticscolor=-1;
-  double *x = NULL,*y = NULL;
-  int nx=0,ny=0,ntics;
+  /* double *x = NULL,*y = NULL; */
+  int /*nx=0,ny=0 */ ntics;
   NspSMatrix *S;
   NspMatrix *Mx=NULLMAT,*My= NULLMAT;
   char *sdir=NULL,*stics=NULL;
@@ -5607,7 +5610,7 @@ static int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
   if ( GetArgs(stack,rhs,opt,T,&opts,&sdir,&fontsize,&format,&seg_flag,
 	       &sub_int,&textcolor,&stics,&ticscolor,&S,&Mx,&My) == FAIL) return RET_BUG;
 
-  Xgc=nsp_check_graphic_context();
+  nsp_check_graphic_context();
 
   if ( sdir != NULL  ) 
     { 
@@ -5629,34 +5632,39 @@ static int int_nxaxis(Stack stack, int rhs, int opt, int lhs)
 
   if ( Mx != NULLMAT )
     { 
-      x = Mx->R;
-      nx = Mx->mn;
+      /* x = Mx->R; */
+      /* nx = Mx->mn; */
     }
   else 
     {
+      /* 
       static double x_def[1];
-      nx = 1;
+      nx = 1; 
       x = x_def ;
       if ( dir == 'l' ) 
 	x_def[0] = Xgc->scales->frect[0];
       else if ( dir == 'r' ) 
 	x_def[0] = Xgc->scales->frect[2];
+      */
+
     }
 
   if ( My != NULLMAT )
     { 
-      y = My->R;
-      ny = My->mn;
+      /* y = My->R;*/
+      /* ny = My->mn;*/
     }
   else 
     {
+      /* 
       static double y_def[1];
-      ny = 1;
+      ny = 1; 
       y = y_def ;
       if ( dir == 'd' ) 
 	y_def[0] = Xgc->scales->frect[1];
       else if ( dir == 'u' ) 
 	y_def[0] = Xgc->scales->frect[3];
+      */
     }
 
   /* compatibility test */

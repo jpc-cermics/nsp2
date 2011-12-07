@@ -1142,7 +1142,6 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
   L1= L->next ; /* first arg */
   if ( L->type > 0  ) 
     {
-      const char *opcode ;
       /* Evaluation of operators */
       loc = L1;
       for ( j = 0 ; j < L->arity  ; j++ )
@@ -1152,8 +1151,13 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
 	}
       if ( L->type == MINUS_OP && L->arity == 1) L->type = MOINS; /* to be inserted in parser */
       code[*pos] = ( 1 << 16 ) | L->type ; *pos += 1;
-      opcode =nsp_astcode_to_nickname(L->type);
-      /* Sciprintf("Need to emit %s (id %d) with arity %d and code %d \n",opcode,L->type,code[*pos-1],code[*pos-2]); */
+#if 0 
+      {
+	const char *opcode ;
+	opcode =nsp_astcode_to_nickname(L->type);
+	Sciprintf("Need to emit %s (id %d) with arity %d and code %d \n",opcode,L->type,code[*pos-1],code[*pos-2]); 
+      }
+#endif 
       return OK;
     }
   else 

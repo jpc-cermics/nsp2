@@ -466,7 +466,6 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
 
 static void draw_mark3D(BCG *Xgc,double x, double y, double z)
 {
-  double dx,dy;
   PangoRectangle ink_rect,logical_rect;
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
@@ -475,11 +474,13 @@ static void draw_mark3D(BCG *Xgc,double x, double y, double z)
   g_unichar_to_utf8(0x0, iter);
   pango_layout_set_text (Xgc->private->mark_layout,symbol_code, -1);
   pango_layout_get_extents(Xgc->private->mark_layout,&ink_rect,&logical_rect);
-  dx = ink_rect.x + ink_rect.width/2.0;
-  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
   Xgc->CurColor=1;
   xset_pattern(Xgc,Xgc->CurColor);
   /* XXX  we need here to move x,y,z to center the mark at (x,y,z)  */
+  /* double dx,dy;
+  dx = ink_rect.x + ink_rect.width/2.0;
+  dy = ink_rect.y -logical_rect.height + ink_rect.height/2.0;
+  */
   /* glRasterPos3f(x- PANGO_PIXELS(dx),y + PANGO_PIXELS(-dy),z); */
   glRasterPos3f(x,y,z);
   gl_pango_ft2_render_layout (Xgc->private->mark_layout,NULL);

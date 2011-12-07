@@ -84,7 +84,7 @@ int main(int argc, char **argv)
   int initial_dir = FALSE; 
   char *dir_name=NULL, *dir_pos = NULL;
   char startup[128];
-  char *display = NULL;
+  /* char *display = NULL; */
   int i;
   ProgramName = argv[0];
 
@@ -125,7 +125,10 @@ int main(int argc, char **argv)
 	{ 
 	  /* X11 display */
 	  if ( i+1 < argc ) 
-	    display = argv[++i];
+	    {
+	      /* display = argv[++i];*/ ++i;
+	      
+	    }
 	  else 
 	    {
 	      Sciprintf("missing argument after %s\n",argv[i]);

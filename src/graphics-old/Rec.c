@@ -1438,8 +1438,9 @@ static void replay_Grid(BCG *Xgc,void *theplot)
 
 static void clean_Grid(void *plot)
 {
-  struct rec_xgrid *theplot;
-  theplot=(struct rec_xgrid *) plot;
+  /* struct rec_xgrid *theplot;
+  theplot=(struct rec_xgrid *) plot; 
+  */
 }
 
 
@@ -2977,9 +2978,7 @@ static void scale_change_Plot3D(BCG *Xgc,void *plot, int *flag, double *b1, int 
 static void scale_change_3dobj(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 
 			       int undo, int *bbox1, double *subwin, int win_num)
 {
-  struct rec_3dobj *theplot;
-  theplot =   (struct rec_3dobj *) plot;
-  /* XXX */
+  /* struct rec_3dobj *theplot =  (struct rec_3dobj *) plot; */
 }
 
 static void scale_change_graphic_object(BCG *Xgc,void *plot, int *flag, double *b1, int *aaint,char *strflag, 

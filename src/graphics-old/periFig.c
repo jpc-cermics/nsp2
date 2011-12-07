@@ -976,7 +976,7 @@ static void drawline(BCG *Xgc,int xx1, int yy1, int x2, int y2)
 static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag)
 {
   int NDvalue,i;
-  int l_style=0,style_val=0,pen_color,fill_color,areafill;
+  int l_style=0,style_val=0,pen_color,fill_color;/* areafill;*/
   int Dvalue1;
   /* store the current values */
   int dash,color;
@@ -991,7 +991,7 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
       fig_set_color(Xgc,NDvalue,&pen_color);
       Dvalue1= xget_dash(Xgc);
       xset_dash(Xgc,Dvalue1);
-      areafill = -1;
+      /* areafill = -1; */
       fill_color = WHITE;
       FPRINTF((file,"# Object : %d %s -<%d>- \n", (int)i,"segments", Xgc->CurPattern));
       FPRINTF((file,"2 1 %d %d %d %d 0 0 -1 %d.000 0 0 0 0 0 2\n",
@@ -1013,7 +1013,7 @@ static void drawsegments(BCG *Xgc,int *vx, int *vy, int n, int *style, int iflag
 static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int iflag)
 {
   int i;
-  int l_style=0,style_val=0,pen_color,fill_color,areafill;
+  int l_style=0,style_val=0,pen_color,fill_color; /* ,areafill; */
   int NDvalue;
   /* store the current values */
   int dash,color;
@@ -1029,7 +1029,7 @@ static void drawarrows(BCG *Xgc,int *vx, int *vy, int n, int as, int *style, int
       dash = xget_dash(Xgc);
       xset_dash(Xgc,dash);
       /* Only draws **/
-      areafill = -1;
+      /* areafill = -1; */
       fill_color = WHITE;
       FPRINTF((file,"# Object : %d %s -<%d>-\n", (int)i,"arrows", Xgc->CurPattern));
       FPRINTF((file,"2 1 %d %d %d %d 0 0 -1 %d.000 0 0 0 1 0 2\n",
@@ -1397,14 +1397,12 @@ static void xset_default(BCG *Xgc)
 
 void InitScilabGCXfig(BCG *Xgc)
 { 
-  int i,j,col;
+  int /* i=1,j=-1 */ col;
   Xgc->IDLastPattern = GREYNUMBER - 1; /* bug ?? **/
   Xgc->CurLineWidth=1 ;
-  i=1;
   xset_thickness(Xgc,1);
   xset_alufunction(Xgc,"GXcopy");
   /* retirer le clipping **/
-  i=j= -1;
   xset_unclip(Xgc);
   xset_dash(Xgc,0);
   xset_font(Xgc,2,1);

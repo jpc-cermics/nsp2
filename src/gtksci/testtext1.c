@@ -256,8 +256,7 @@ static void nsp_append_history(char *text,view_history *data, int readline_add)
   if (text[0] != '\0' && strcmp (text, data->history_tail->data) != 0) 
     {
       /* do not insert repetitions */
-      GList *loc;
-      loc =g_list_append (data->history_tail, g_strdup (text));
+      GList *loc=  g_list_append(data->history_tail, g_strdup (text));
       data->history_tail =data->history_cur= data->history_tail->next;
       data->dir = 0;
     }
@@ -611,7 +610,7 @@ static gint
 gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpointer xdata)
 {
   GtkTextIter iter;
-  GtkTextBuffer *buffer;
+  /* GtkTextBuffer *buffer; */
   View *view= xdata;
   GtkTextView *text_view =GTK_TEXT_VIEW(view->text_view);
   gtk_widget_grab_focus (view->text_view);
@@ -632,7 +631,7 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
       gtk_text_iter_forward_char (&iter);
 
       /* gtk_text_buffer_place_cursor (view->buffer->buffer,&iter); */
-      buffer = view->buffer->buffer;
+      /* buffer = view->buffer->buffer; */
       nsp_delete_completion_infos(view);
       if ( str ) 
 	{
@@ -716,7 +715,7 @@ static int Xorgetchar_textview(void)
 static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int position, GtkTextIter iter)
 {
   GtkTextIter start, end;
-  int rep,  i;
+  int  i;
   NspSMatrix *S = nsp_smatrix_split_string(nsp_expr,"\n",1);
   if ( S->mn == 1 && strlen(nsp_expr) >=1 && nsp_expr[strlen(nsp_expr)-1] != '\n')
     {
@@ -745,7 +744,7 @@ static void nsp_eval_pasted_from_clipboard(const gchar *nsp_expr,View *view, int
     {
       nsp_append_history(S->S[i], view->view_history, TRUE);
     }
-  rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+  /* rep =*/  nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
   nsp_smatrix_destroy(S);
   if ( get_is_reading() == TRUE ) 
     {
@@ -817,14 +816,13 @@ void nsp_eval_str_in_terminal(const gchar *str, int execute_silently)
     }
   else
     {
-      int rep;
       NspSMatrix *S = nsp_smatrix_split_string(str,"\n",1);
       nsp_readline_clear_line();
       Sciprintf("\n");
       if ( execute_silently == TRUE ) 
-	rep = nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,FALSE);
+	nsp_parse_eval_from_smat(S,FALSE,FALSE,FALSE,FALSE);
       else 
-	rep = nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
+	nsp_parse_eval_from_smat(S,TRUE,TRUE,FALSE,FALSE);
       nsp_smatrix_destroy(S);
       /* restore a prompt */
       Sciprintf(nsp_prompt());
@@ -1036,7 +1034,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
     {
       GtkTextBuffer *src_buffer = NULL;
       GtkTextIter start, end;
-      gboolean copy_tags = TRUE;
+      /* gboolean copy_tags = TRUE; */
 
       if (selection_data->length != sizeof (src_buffer))
         return;
@@ -1056,8 +1054,7 @@ gtk_text_view_drag_data_received (GtkWidget        *widget,
           gint     n_atoms;
           GList   *list;
           GdkAtom  target = GDK_NONE;
-
-          copy_tags = FALSE;
+	  /*           copy_tags = FALSE; */
 
           atoms = gtk_text_buffer_get_deserialize_formats (buffer, &n_atoms);
 
@@ -1492,7 +1489,6 @@ int nsp_insert_pixbuf_from_file(char *filename)
 
 static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof)
 {
-  static int fd=0;              /* file number for standard in */
   static int use_prompt=1;
   static int tty =0, init_flag = TRUE, enter=0;
   char * line=NULL ; 
@@ -1501,7 +1497,7 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
      * ehrlich juin 2001 
      */
     setvbuf(stdin, NULL, _IONBF, 0); 
-    fd=fileno(stdin);
+    /* fd=fileno(stdin); */
     tty = isatty(fileno(stdin));
     init_flag = FALSE;
 #ifdef __MINGW32__

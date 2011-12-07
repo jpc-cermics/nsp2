@@ -2120,8 +2120,7 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
 
 void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 {
-  PList L=List,L1;
-  const char *s;
+  PList L=List; /* ,L1; */
   int j;
   List = List->next;
   if ( L->type > 0 )
@@ -2249,7 +2248,7 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	    {
 	      Arg_name_to_local_name(rec+1,List,H);
 	      /* function call prototype */
-	      L1 = ((PList) List->O)->next->next;
+	      /* L1 = ((PList) List->O)->next->next; */
 	      /* the function body i.e statements */
 	      Arg_name_to_local_name(rec+1,List->next,H);
 	    }
@@ -2319,7 +2318,9 @@ void plist_name_to_local_id(PList List,NspBHash *H,int rec)
 	case PWD_COMMAND:
 	  break;
 	default:
-	  s=nsp_astcode_to_name(L->type);
+	  {
+	    /* const char *s = nsp_astcode_to_name(L->type);*/
+	  }
 	}
     }
 }

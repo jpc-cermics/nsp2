@@ -336,7 +336,7 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
   guint timer_tk;
 #endif 
   GTK_locator_info rec_info ; 
-  int win=*iwin,wincount=0,win1, change_cursor;
+  int win=*iwin,wincount=0,/* win1,*/ change_cursor;
 
   if ( Xgc == (BCG *) 0 || Xgc->private->drawing == NULL ) 
     {
@@ -356,7 +356,7 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
       /* just work on current win */
       win = Xgc->CurWindow;
     }
-  win1= win; /* CheckClickQueue change its first argument if -1 */
+  /*win1= win;*/ /* CheckClickQueue change its first argument if -1 */
 
   /* decode iflag */
   change_cursor = iflag & (1<<2); 

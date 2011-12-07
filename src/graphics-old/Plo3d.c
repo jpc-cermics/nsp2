@@ -272,7 +272,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   nsp_box_3d box;
   int fg,fg1,dc;
   /* solid = color of 3D frame */
-  int polysize,npoly,whiteid;
+  int polysize /* ,npoly*/ ,whiteid;
   int *polyx,*polyy,*fill;
   int cache;
   double zmin,zmax;
@@ -324,7 +324,7 @@ static void C2F(plot3dg)(BCG *Xgc,char *name,
   dc =  flag[0];
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ;
   polysize=5;
-  npoly= (*q)-1; 
+  /* npoly= (*q)-1;  */
   /* Choix de l'ordre de parcourt **/
   switch (cache)
     {
@@ -487,7 +487,7 @@ void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, double 
 static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, double *z, int *cvect, int *p, int *q, double *teta, double *alpha,const char *legend, int *flag, double *bbox)
 {
   nsp_box_3d box;
-  int fg1, polysize,npoly,whiteid,cache,i,warn=0;
+  int fg1, polysize,npoly,whiteid,/* cache,*/ i,warn=0;
   int *polyx,*polyy,*locindex,fill[4]; /* Modified by polpoth 4/5/2000 fill[4] instead of fill[1] */
   double *polyz;
   double zmin,zmax;
@@ -513,12 +513,12 @@ static void C2F(fac3dg)(BCG *Xgc,char *name, int iflag, double *x, double *y, do
   fg1 = Xgc->graphic_engine->xget_hidden3d(Xgc);
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=box.InsideD[0];
+      /* cache=box.InsideD[0]; */
       if (flag[2] >=2 )DrawAxis(Xgc,&box,'D',Max(fg1,0));
     }
   else 
     {
-      cache=box.InsideU[0]-4;
+      /* cache=box.InsideU[0]-4; */
       if (flag[2] >=2 )DrawAxis(Xgc,&box,'U',Max(fg1,0));
     }
   polyz = graphic_alloc(5,(*q),sizeof(double));
@@ -1012,7 +1012,7 @@ int nsp_geom3d(BCG *Xgc,double *x, double *y, double *z, int *n)
 void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag)
 {
   double xmmin=0.0,ymmax=1.0,xmmax=1.0,ymmin=0.0,FRect[4],WRect[4],ARect[4];
-  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1;
+  double R,xo,yo,/* zo,*/ dx,dy,dz,hx,hy,hx1,hy1;
   double cost,sint,cosa,sina;
   int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
   char logf[2];
@@ -1095,7 +1095,7 @@ void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double
       R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
       xo= (double) (box->x[0]+box->x[6])/2 ;
       yo= (double) (box->y[0]+box->y[6])/2 ;
-      zo= (double) (box->z[0]+box->z[6])/2 ;
+      /* zo= (double) (box->z[0]+box->z[6])/2 ; */
       xmmin=  (double) xo - R ;
       xmmax=  (double) xo + R ;
       ymmax=  (double) -yo + R ;
@@ -1878,7 +1878,7 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   static int fg1;
   int polysize,npoly,whiteid;
   int fill[4];
-  static int cache;
+  /* static int cache;*/
   static double zmin,zmax;
   int i;
 
@@ -1906,12 +1906,12 @@ static void fac3dg_ogl(BCG *Xgc,char *name, int iflag, double *x, double *y, dou
   if (fg1==-1) fg1=0;  
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=box.InsideD[0];
+      /* cache=box.InsideD[0]; */
       if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
-      cache=box.InsideU[0]-4;
+      /* cache=box.InsideU[0]-4; */
       if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
   whiteid  = Xgc->graphic_engine->xget_last(Xgc);
@@ -1991,10 +1991,10 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   nsp_box_3d box;
   int fg,fg1,dc;
   /* solid = color of 3D frame */
-  int polysize,npoly,whiteid;
+  int polysize,/* npoly, */ whiteid;
   double *polyx,*polyy,*polyz;
   int *fill;
-  int cache;
+  /* int cache; */
   double zmin,zmax;
   int i,j;
 
@@ -2023,12 +2023,12 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
    */ 
   if ( box.z[box.InsideU[0]] > box.z[box.InsideD[0]])
     {
-      cache=box.InsideD[0];
+      /* cache=box.InsideD[0]; */
       if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'D',fg1);
     }
   else 
     {
-      cache=box.InsideU[0]-4;
+      /* cache=box.InsideU[0]-4; */
       if (flag[2] >=2 )DrawAxis_ogl(Xgc,&box,'U',fg1);
     }
 
@@ -2049,8 +2049,7 @@ static void plot3dg_ogl(BCG *Xgc,char *name,
   if (fg1==-1) fg1=0;   
   for ( i =0 ; i < (*q)-1 ; i++)   fill[i]= dc ; 
   polysize=5;
-  npoly= (*q)-1; 
-
+  /* npoly= (*q)-1;  */
   /* two pass drawing for front anb back faces */
   glEnable(GL_CULL_FACE);
   for ( k = 0; k < 2 ; k++) 
@@ -2277,8 +2276,7 @@ static int nsp_param3d_1_ogl(BCG *Xgc,double *x, double *y, double *z, int *m, i
       if ( *iflag != 0 ) style[0]=  colors[cur];
       while (1) 
 	{
-	  int nel = 0,j1;
-	  j1= (*m)*cur;
+	  int nel = 0; /* ,j1= (*m)*cur;*/
 	  for ( j =init ; j < (*m) ; j++)	 
 	    {
 	      if ( finite(x[j]) ==0 || finite(y[j])==0 || finite(z[j]) == 0) break;

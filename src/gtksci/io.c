@@ -322,7 +322,7 @@ void sci_winch_signal(int n)
  * 
  */
 
-static void nsp_create_stdin_channel(int fd,int *val);
+static int nsp_create_stdin_channel(int fd,int *val);
 
 int Xorgetchar_channel(void)
 {
@@ -345,7 +345,7 @@ int Xorgetchar_channel(void)
 
 static gboolean stdin_read( GIOChannel *source, GIOCondition condition, gpointer data );
 
-static void nsp_create_stdin_channel(int fd,int *val)
+static int nsp_create_stdin_channel(int fd,int *val)
 {
   static GIOChannel *channel;
   guint stdout_tag;
@@ -356,6 +356,7 @@ static void nsp_create_stdin_channel(int fd,int *val)
 			       ( G_IO_IN | G_IO_HUP | G_IO_ERR ),
 			       stdin_read,
 			       val );
+  return stdout_tag;
 }
 
 /* Note that bytes_read can be longer that 1 here 

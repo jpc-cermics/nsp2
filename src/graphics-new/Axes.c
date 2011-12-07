@@ -231,7 +231,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 {
   int Nx=0,Ny=0;
   double angle=0.0,vxx,vxx1,xd,yd,d_barlength,str_offset;
-  int vx[2],vy[2],xm[2],ym[2];
+  int vx[2],vy[2],xm[2]; /* ym[2]; */
   char c_format[5];
   int flag=0,xx=0,yy=0,posi[2],rect[4];
   int i,barlength;
@@ -314,7 +314,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
 	  /* the horizontal segment */
 	  xd = x_convert(xy_type, x , 0);
 	  vx[0] =  inint(XScaleR_d(Xgc->scales,xd,y[0]));
-	  ym[0] = vy[0] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));
+	  /* ym[0] =*/ vy[0] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));
 	  xd = x_convert(xy_type, x , Nx-1);
 	  vx[1] =  inint(XScaleR_d(Xgc->scales,xd,y[0]));
 	  vy[1] =  inint(YScaleR_d(Xgc->scales,xd,y[0]));

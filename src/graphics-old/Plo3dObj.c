@@ -1435,13 +1435,14 @@ static void draw_point(BCG *Xgc,void *Ob, int j)
 static void draw_points_ogl(BCG *Xgc,void *Ob)
 {
   Points *V = (Points *) Ob;
-  double x, y,z;
   int color, mark, n=1,j;
   for ( j = 0 ; j < V->nb_coords ; j++) 
     {
+      /* double x, y, z;
       x = V->coord[3*j];
       y = V->coord[3*j+1];
       z = V->coord[3*j+2];
+      */
       color = V->color;
       mark = V->mark_type;
       /* il faudrait sauvegarder le pattern et la marque actuels */

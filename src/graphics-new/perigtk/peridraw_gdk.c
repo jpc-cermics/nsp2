@@ -867,7 +867,7 @@ static void displaystring(BCG *Xgc,const char *str, int x, int y, int flag,doubl
 {
   PangoRectangle ink_rect,logical_rect;
   int  height,width;
-  int xpos,ypos;
+  int xpos=0,ypos=0;
   /* flag = TRUE; */
   pango_layout_set_text (Xgc->private->layout, str, -1);
   /* used to position the descent of the last line of layout at y */

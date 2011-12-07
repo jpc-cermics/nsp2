@@ -217,10 +217,10 @@ static void drawarcs(BCG *Xgc, int *vects, int *style, int n)
 static void _draw_fill_arc(BCG *Xgc,int arc[], int flag)
 { 
   cairo_t *cr =  Xgc->private->cairo_cr;
-  double xc, yc, radius, angle1, angle2; 
+  double xc, yc, /* radius,*/ angle1, angle2; 
   xc = arc[0]+arc[2]/2.0;
   yc = arc[1]+arc[3]/2.0;
-  radius = arc[2]/2.0;
+  /* radius = arc[2]/2.0; */
   angle1 = arc[4]* (M_PI / (64*180.));
   angle2 = angle1 + arc[5]* (M_PI / (64*180.));
   cairo_new_path (cr);
@@ -352,9 +352,8 @@ static void fillpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
-  int n1,i;
-  
-  if (closeflag == 1) n1 = n+1;else n1= n;
+  int i;
+  /* if (closeflag == 1) n1 = n+1;else n1= n; */
   cairo_new_path(cr); 
   cairo_move_to(cr, vx[0],vy[0]);
   for ( i = 1 ; i < n ; i++ ) 
@@ -373,9 +372,9 @@ static void filldrawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag, in
 {
   cairo_t *cr =  Xgc->private->cairo_cr;
   cairo_status_t status;
-  int n1,i;
+  int i;
   /*    */
-  if (closeflag == 1) n1 = n+1;else n1= n;
+  /* if (closeflag == 1) n1 = n+1;else n1= n;*/
   cairo_new_path(cr); 
   cairo_move_to(cr, vx[0],vy[0]);
   for ( i = 1 ; i < n ; i++ ) 

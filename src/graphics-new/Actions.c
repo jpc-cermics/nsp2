@@ -373,13 +373,10 @@ static void nsp_gc_2dzoom(BCG *Xgc)
 {
   double bbox[4];
   int ibbox[4];
-  static int nsp_gc_buzy_zoom = 0;
-  nsp_gc_buzy_zoom =1;
   if ( Xgc == NULL) return ;
   zoom_get_rectangle(Xgc,bbox,ibbox);
   nsp_figure_zoom(Xgc,ibbox);
   Xgc->graphic_engine->process_updates(Xgc);
-  nsp_gc_buzy_zoom = 0;
 }
 
 /**
@@ -542,14 +539,16 @@ static int nsp_gc_loadsg(BCG *Xgc,const char *filename)
 static void zoom_get_rectangle(BCG *Xgc,double *bbox, int *ibbox)
 {
   /* Using the mouse to get the new rectangle to fix boundaries */
-  int th,pixmode,alumode,color,style,fg;
+  int th,color,style,fg;
   int ibutton,imask,iwait=FALSE,istr=0;
   double x0,y0,x,y,xl,yl;
   int    ix0,iy0,ix,iy,ixl,iyl;
   if ( Xgc == NULL ) return; 
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
+  /* 
   pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
   alumode = Xgc->graphic_engine->xget_alufunction(Xgc);
+  */
   th = Xgc->graphic_engine->xget_thickness(Xgc);
   color= Xgc->graphic_engine->xget_pattern(Xgc);
   style = Xgc->graphic_engine->xget_dash(Xgc);

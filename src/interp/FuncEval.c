@@ -1140,15 +1140,14 @@ static int extract_varargout(Stack stack,NspObject *O,int *j,int Lhs)
 
 int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs,int display)
 {
-  int nret,body_ret ;
-  PList Lhs,Feval,Body;
+  int body_ret ;
   PList P = ((NspPList *) OF)->D;
-  Lhs  = (PList) ((PList) P->next->O)->next->O;
-  Feval= (PList) ((PList) P->next->O)->next->next->O;
-  Body = (PList) P->next->next->O;
+  /* PList Lhs  = (PList) ((PList) P->next->O)->next->O; */
+  /* PList Feval= (PList) ((PList) P->next->O)->next->next->O; */
+  PList Body = (PList) P->next->next->O;
   /*Test on Lhs */
+  /* int nret = Lhs->arity ; */
   stack.first = first;
-  nret = Lhs->arity ; 
   body_ret =nsp_eval(Body,stack,first,0,0,display);
   if ( body_ret < 0 && body_ret != RET_RETURN ) return body_ret ;
   return 0 ;

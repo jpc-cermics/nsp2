@@ -2786,7 +2786,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
   NspObject *args[5], *nsp_ret;
   NspGtkCustomNotify *cunote = data;
   int nret = 0,nargs = 4;
-  gboolean ret = FALSE;
+  /* gboolean ret = FALSE; */
 
   g_assert (cunote->func);
 
@@ -2807,7 +2807,9 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
     goto end; 
 
   if (nret ==1 && IsBMat(nsp_ret) && ((NspBMatrix *) nsp_ret)->mn==1 )
-    ret =  ((NspBMatrix *) nsp_ret)->B[0];
+    {
+      /* ret =  ((NspBMatrix *) nsp_ret)->B[0]; */
+    }
   nspg_unblock_threads();
  end: 
   {
@@ -3786,9 +3788,8 @@ override gtk_editable_get_selection_bounds noargs
 static int
 _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
 {
-  int start, end,  n= 0;
-
-  if (gtk_editable_get_selection_bounds(GTK_EDITABLE(self->obj), &start, &end)) n = 2;
+  int start=0, end=0;   /* n= 0; */
+  gtk_editable_get_selection_bounds(GTK_EDITABLE(self->obj), &start, &end);
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG; 
   return 1;
 }
@@ -5868,11 +5869,10 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   /* static char *kwlist[] = { "iter", "text", "default_editable", NULL };*/
   NspObject *nsp_iter;
   char *text;
-  int len, default_editable, ret;
+  int default_editable, ret;
   GtkTextIter *iter = NULL;
   
   if (GetArgs(stack,rhs,opt,T,&nsp_type_gtktextiter,&nsp_iter, &text, &default_editable) == FAIL) return RET_BUG;;
-  len = strlen(text);
   iter = nspg_boxed_get(nsp_iter, GtkTextIter);
   ret = gtk_text_buffer_insert_interactive(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text), default_editable);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
@@ -6612,7 +6612,7 @@ override gtk_icon_size_lookup kwargs
 static int
 _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
 {
-  int rep;
+  /* int rep; */
   int_types T[] = {obj, t_end} ;
   /* static char *kwlist[] = { "icon_size", NULL };*/
   NspObject *nsp_icon_size;
@@ -6621,7 +6621,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
 
   if (GetArgs(stack,rhs,opt,T, &nsp_icon_size) == FAIL) return RET_BUG;;
   if (nspg_enum_get_value(GTK_TYPE_ICON_SIZE, nsp_icon_size,  &icon_size)) return RET_BUG;
-  rep=gtk_icon_size_lookup(icon_size, &width, &height);
+  gtk_icon_size_lookup(icon_size, &width, &height); 
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
@@ -6747,7 +6747,7 @@ nspgtk_cell_layout_data_func_marshal (GtkCellLayout *tree_column,
   NspObject *args[5], *nsp_ret;
   NspGtkCustomNotify *cunote = data;
   int nret = 0,nargs = 4;
-  gboolean ret = FALSE;
+  /* gboolean ret = FALSE; */
 
   g_assert (cunote->func);
 
@@ -6768,7 +6768,9 @@ nspgtk_cell_layout_data_func_marshal (GtkCellLayout *tree_column,
     goto end; 
 
   if (nret ==1 && IsBMat(nsp_ret) && ((NspBMatrix *) nsp_ret)->mn==1 )
-    ret =  ((NspBMatrix *) nsp_ret)->B[0];
+    {
+      /* ret =  ((NspBMatrix *) nsp_ret)->B[0]; */
+    }
   nspg_unblock_threads();
  end: 
   {

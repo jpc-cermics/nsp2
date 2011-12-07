@@ -581,13 +581,13 @@ static int parse_number(Tokenizer *T)
     }
   if ( c == 'e' || c == 'E' || c == 'd' || c == 'D') 
     {
-      char sign = '+';
+      /* char sign = '+'; */
       T->tokenv.buf[count++]='E';
       /* parsing e+xxx or e-xxx or exxx*/
       c=T->GetChar(T);
       if ( c == '+' || c == '-' ) 
 	{
-	  sign = c;
+	  /* sign = c; */
 	  T->tokenv.buf[count++]=c;
 	  c=T->GetChar(T);
 	}
@@ -1080,7 +1080,7 @@ static int token_read_line(Tokenizer *T,char *prompt, char *buffer, int *buf_siz
 static int get_line(Tokenizer *T,char *prompt)
 {
   static int firstentry=0;
-  int n,eof;
+  int /* n */ eof;
   int curlinesize= LINEMAXSIZE;/* -3 to store \n\0\0*/
   token_read_line(T,prompt,T->curline.buf,&curlinesize,&eof);
   if ( firstentry == 0 ) 
@@ -1088,7 +1088,7 @@ static int get_line(Tokenizer *T,char *prompt)
       T->tokenv.Line = 0;
       firstentry++;
     }
-  n= strlen(T->curline.buf);
+  /* n= strlen(T->curline.buf); */
   T->tokenv.Line++;
   T->curline.lpt3 = 0;
   T->curline.lpt2 = 0;

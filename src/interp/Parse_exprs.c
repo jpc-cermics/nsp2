@@ -198,7 +198,7 @@ int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
  **/
 static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F)
 {
-  int count = 0,op=0;
+  int count = 0; /* ,op=0; */
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
   PList plist2_last = NULLPLIST;
@@ -264,7 +264,7 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
         }
       else 
         {
-	  op=1;
+	  /* op=1; */
 	  if ( debug) Sciprintf("{%d}",T->tokenv.id);
 	  if ( plist1 != NULLPLIST) 
 	    {

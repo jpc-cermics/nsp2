@@ -590,11 +590,11 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
   for (i = 0 ; i < n_specs ; i++)
     {
       GParamSpec *spec = specs[i];
-      gboolean can_modify;
+      /* 
+       *	 gboolean can_modify = ((spec->flags & G_PARAM_WRITABLE) != 0 &&
+       *	 (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0);
+       */
 
-      can_modify = ((spec->flags & G_PARAM_WRITABLE) != 0 &&
-                    (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0);
-      
       if ((spec->flags & G_PARAM_READABLE) == 0)
         {
           /* can't display unreadable properties */
@@ -620,10 +620,10 @@ static NspSMatrix *nsp_gobject_get_properties (NspGObject *object,int type_only_
   for (i = 0 ; i < n_specs ; i++)
     {
       GParamSpec *spec = specs[i];
-      gboolean can_modify;
-
-      can_modify = ((spec->flags & G_PARAM_WRITABLE) != 0 &&
-                    (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0);
+      /* 
+       * gboolean can_modify =  ((spec->flags & G_PARAM_WRITABLE) != 0 &&
+       * (spec->flags & G_PARAM_CONSTRUCT_ONLY) == 0); 
+       */
       
       if ((spec->flags & G_PARAM_READABLE) == 0) continue ; 
       if (type_only_flag == TRUE && spec->owner_type != type) continue ; 

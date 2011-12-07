@@ -996,6 +996,7 @@ static NspMethods *gdate_get_methods(void) { return gdate_methods;};
  * Attributes
  *-------------------------------------------*/
 
+#if 0 
 static NspObject *_wrap_gdate_get_obj(void *self,char *attr)
 {
   int ret;
@@ -1010,9 +1011,12 @@ static int _wrap_gdate_set_obj(void *self, char *attr, NspObject *O)
   */
   return OK;
 }
+#endif 
 
 static AttrTab gdate_attrs[] = {
+#if 0 
   { "obj", (attr_get_function *)_wrap_gdate_get_obj, (attr_set_function *)_wrap_gdate_set_obj,(attr_get_object_function *)int_get_object_failed,(attr_set_object_function *)int_set_object_failed },
+#endif 
   { NULL,NULL,NULL,NULL },
 };
 

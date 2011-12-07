@@ -2361,7 +2361,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 
 int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 {
-  const char *name;
+  const char *name=NULL;
   int j,n,arity,nargs,lhs1=1,opt, copy_tag;
   NspObject *O1;
   PList L2;
