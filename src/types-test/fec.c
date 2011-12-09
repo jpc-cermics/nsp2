@@ -27,7 +27,7 @@
 
 
 
-#line 37 "codegen/fec.override"
+#line 38 "codegen/fec.override"
 #include <gdk/gdk.h>
 #include <nsp/objects.h>
 #include <nsp/figuredata.h> 
@@ -110,7 +110,7 @@ NspTypeFec *new_type_fec(type_mode mode)
 
   type->init = (init_func *) init_fec;
 
-#line 54 "codegen/fec.override"
+#line 55 "codegen/fec.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
@@ -995,7 +995,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 74 "codegen/fec.override"
+#line 75 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1007,7 +1007,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
 #line 1008 "fec.c"
 
 
-#line 84 "codegen/fec.override"
+#line 85 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1047,7 +1047,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 94 "codegen/fec.override"
+#line 95 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 

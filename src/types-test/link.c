@@ -1762,7 +1762,6 @@ int link_is_lock_connected(NspLink *B,int i)
 
 static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angle,lock_dir dir)
 {
-  double ptl[2];
   int hvfactor = 2*lock_size;
   NspMatrix *M = B->obj->poly;
   int m= B->obj->poly->m;
@@ -1772,8 +1771,7 @@ static void link_set_lock_pos(NspLink *B, int i,const double pt[],int  keep_angl
 
   if ( keep_angle == TRUE && dir != LD_ANY && m >= 3 ) 
     {
-      ptl[0]=M->R[xp];
-      ptl[1]=M->R[yp];
+      /* double ptl[2];     ptl[0]=M->R[xp];      ptl[1]=M->R[yp]; */
       switch ( dir ) 
 	{
 	case LD_NORTH: 
@@ -1806,9 +1804,9 @@ static int link_connect(NspLink *L,int lock, NspObject *Obj,int obj_lock,int obj
 {
   double pt[2];
   gr_port p;
-  NspTypeGRint *bf,*obj_bf;
+  NspTypeGRint *obj_bf;
   if ( L == NULLLINK) return FAIL;
-  bf = GR_INT(((NspObject *) L)->basetype->interface);
+  /* bf = GR_INT(((NspObject *) L)->basetype->interface); */
   obj_bf = GR_INT(((NspObject *) Obj)->basetype->interface);
   if ( obj_bf->get_lock_connection(Obj,obj_lock,obj_port,&p)== FAIL) return FAIL;
   if ( p.object_id != NULLOBJ ) return FAIL;
@@ -1911,4 +1909,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1915 "link.c"
+#line 1913 "link.c"

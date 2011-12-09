@@ -1178,7 +1178,7 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
   if (P->obj->angle!=0.) 
     {
       /* rotate the bounds */
-      double diff[2],  bb[8], center[2];
+      double diff[2],  bb[8], center[2]={0,0};
       double cosa = cos(-P->obj->angle*M_PI/180);
       double sina = sin(-P->obj->angle*M_PI/180);
 

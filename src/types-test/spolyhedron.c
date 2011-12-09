@@ -1831,10 +1831,9 @@ if ( Val != NULL) nsp_matrix_destroy(Val);
 int nsp_spolyhedron_update_from_triplet(NspSPolyhedron *pol,double *x,double *y,double *z,int m,int n, double *col,int ncol)
 {
   double vmin=0.0,vmax=0.0;
-  NspMatrix *C=NULL,*F=NULL,*Val =pol->obj->Mval;
-  
-  C=nsp_surf_to_coords("c",pol->obj->Mcoord,x,y,z,m,n);
-  F=nsp_surf_to_faces("f",pol->obj->Mface,x,m,y,n);
+  NspMatrix *Val =pol->obj->Mval;
+  NspMatrix *C=nsp_surf_to_coords("c",pol->obj->Mcoord,x,y,z,m,n);
+  nsp_surf_to_faces("f",pol->obj->Mface,x,m,y,n);
   
   if ( col == NULL) 
     {
@@ -1916,4 +1915,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1920 "spolyhedron.c"
+#line 1919 "spolyhedron.c"

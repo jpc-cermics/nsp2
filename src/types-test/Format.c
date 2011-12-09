@@ -633,7 +633,7 @@ static int gradu(double *xmin, double *xmax, double *grads,int * nticks,double *
 }
 
 
-static int gradu2(double *xmax,double *thewidth,double *scal)
+static void gradu2(double *xmax,double *thewidth,double *scal)
 {
   double f,x,sg,scale;
   int k, w;
@@ -646,7 +646,6 @@ static int gradu2(double *xmax,double *thewidth,double *scal)
   }
   *thewidth = width[w - 1];
   *scal=scale;
-  return 0;
 }
 
 
@@ -654,9 +653,9 @@ static void grds(double *xminv, double *xmaxv,double *gr,int * nticks, double *t
 {
   double span,width,low,up;
   double nup,nlow;
-  int res,k;
+  int k;
   span=*xmaxv-*xminv;
-  res=gradu2(&span, thewidth, scal);
+  gradu2(&span, thewidth, scal);
   width=*thewidth* *scal;
 
   nlow= ROUND(*xminv/ width);low=nlow* width;

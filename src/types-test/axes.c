@@ -2364,6 +2364,9 @@ void nsp_draw_colorbar(BCG *Xgc,nsp_axes *P,double vmin , double vmax, int *colm
       rclip.height = clip[4];
       Xgc->graphic_engine->xset_clip(Xgc,&rclip);
     }
+
+  /* back to current value*/
+  Xgc->graphic_engine->xset_pattern(Xgc,cpat);
 }
 
 
@@ -2380,4 +2383,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2384 "axes.c"
+#line 2387 "axes.c"

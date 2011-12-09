@@ -900,7 +900,7 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
 {
   int clip_box[4],  *xm,*ym,*zm=NULL,i,j,n,na,im;
   int arsize, cpat,uc;
-  double  xx[2],yy[2], maxx,maxy, maxsf, nx,ny,sc,sfx,sfy,sfx2,sfy2;
+  double /*  xx[2],yy[2],*/ maxx,maxy, maxsf, nx,ny,sc,sfx,sfy,sfx2,sfy2;
   double  arsize1=0.5,arsize2=0.5;
 
   uc = Xgc->graphic_engine->xget_usecolor(Xgc);
@@ -911,8 +911,10 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
   
   /* The arrowsize acording to the windowsize **/
   n=2*(n1)*(n2);
+  /* 
   xx[0]=x[0];xx[1]=x[n1-1];
   yy[0]=y[0];yy[1]=y[n2-1];
+  */
   
   /* Allocation */
   xm = graphic_alloc(0,n,sizeof(int));
@@ -1069,4 +1071,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1073 "vfield.c"
+#line 1075 "vfield.c"

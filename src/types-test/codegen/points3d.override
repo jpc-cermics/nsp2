@@ -258,7 +258,7 @@ void drawpolymark3D(BCG *Xgc,double *vx,double *vy,double *vz,int n);
 static void draw_points3d_ogl(BCG *Xgc,void *Ob)
 {
 #ifdef  WITH_GTKGLEXT 
-  int mark[2],current_mark[2],color;
+  int mark[2],current_mark[2],color=0;
   nsp_points3d *V = ((NspPoints3d *) Ob)->obj;
   int j;
   int npts = (V->max >=0 ) ? V->max : V->Mcoord->m;

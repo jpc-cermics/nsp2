@@ -646,7 +646,7 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
   NspTypeGRint *bf;
   NspObject *Obj;
   NspMatrix *pt;
-  int rep,click;
+  int click;
   double pt1[2]= {5,-10};
   NspDiagram *D = self;
   Cell *C;
@@ -712,7 +712,7 @@ static int _wrap_diagram_insert_diagram(void *self,Stack stack, int rhs, int opt
   /* we can now destroy Di */
   nsp_diagram_destroy(Di);
   /* and we can enter a move_selection */
-  rep = nsp_diagram_select_and_move_list(D,NULLOBJ,pt->R,&click);
+  nsp_diagram_select_and_move_list(D,NULLOBJ,pt->R,&click);
   return 0;
 }
 
@@ -1146,7 +1146,7 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
   rect[3]= 0;
   while ( ibutton == -1 ) 
     {
-      int ok_changed; 
+      /* int ok_changed;  */
       Cell *C;
       rect2d_f2i(&axe->scale,rect,Xgc->zrect,1);
       for ( i = 0 ; i < 4 ; i++) zrect1[i] = xof[i]+ Xgc->zrect[i];
@@ -1177,7 +1177,7 @@ static void nsp_diagram_rectangle_select_objs(NspDiagram *R,const double pt[2],d
 		   && o_rect[0] >= rect[0]  && o_rect[2] <= rect[0]+rect[2] 
 		   && o_rect[1] >= rect[1]-rect[3] && o_rect[3] <= rect[1] )
 		{
-		  ok_changed  = TRUE;
+		  /* ok_changed  = TRUE; */
 		  bf->set_hilited(C->O,TRUE);
 		}
 	      else 
@@ -1991,7 +1991,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2],int mo
   double rect[]={pt[0],pt[1],10,10};
   NspBlock *B;
   NspGraphic *G;
-  BCG *Xgc;
+  /* BCG *Xgc; */
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
   B = nsp_block_create("fe",NULL,rect,color,thickness,background,0,NULL,NULL,mode,NULL);
@@ -2003,7 +2003,7 @@ NspObject * nsp_diagram_create_new_block(NspDiagram *F,const double pt[2],int mo
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
-  Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc; 
+  /* Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc; */
   return NSP_OBJECT(B);
 }
 
@@ -2072,7 +2072,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   double rect[]={0,100,4,4}, pt[]={0,100};
   NspConnector *B;
   NspGraphic *G;
-  BCG *Xgc;
+  /* BCG *Xgc; */
   gr_lock l;
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
@@ -2085,7 +2085,7 @@ NspObject * nsp_diagram_create_new_connector(NspDiagram *F)
   rep= nsp_diagram_move_obj(F,(NspObject  *) B,pt,-5,0,MOVE);
   if ( rep== -100 )  return NULLOBJ;
   /* XXXX block_draw(B); */
-  Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc; 
+  /* Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc;  */
   return NSP_OBJECT(B);
 }
 
@@ -2139,11 +2139,11 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   BCG *Xgc= ((nsp_figure*) (((NspGraphic *) F)->obj->Fig))->Xgc;
   NspObject *Ob;
   int cp1;
-  double mpt[2],pt[2];
+  double mpt[2]; /* pt[2]; */
   int wstop = 0,stop=2, ibutton, imask, iwait=FALSE;
   int color=4,thickness=1,hvfactor,count=0;
   NspLink *L;
-  NspTypeGRint *bf;
+  /* NspTypeGRint *bf; */
   /* unhilite all */
   nsp_diagram_unhilite_objs(F,FALSE);
   hvfactor=lock_size*2;/* magnetism toward horizontal and vertical line  */
@@ -2151,7 +2151,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
   
   /* prepare a link with 1 points */
   L= link_create_n("fe",1,color,thickness);
-  bf = GR_INT(((NspObject *) L)->basetype->interface);
+  /* bf = GR_INT(((NspObject *) L)->basetype->interface); */
   if ( L == NULLLINK) return NULLOBJ;
   G = (NspGraphic *) L;
   G->obj->hilited = TRUE;
@@ -2200,7 +2200,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 	   */
 	  int lock_c, rep;
 	  /* are we near a lock point ? if true mpt is changed  */
-	  pt[0]=mpt[0]; pt[1]=mpt[1];
+	  /* pt[0]=mpt[0]; pt[1]=mpt[1]; */
 	  rep = nsp_diagram_select_lock(F,mpt, &Ob, &cp1,&lock_c);
 	  /* link_check will check if the lock point is already in use */
 	  if ( rep != 0 )

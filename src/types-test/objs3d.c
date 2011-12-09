@@ -1417,8 +1417,10 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
   int flagx;
   /* should be shared */
   int foreground_color;
-  int background_color;
+  /* 
 
+  int background_color;
+  */
 #ifdef WITH_GTKGLEXT 
   if ( Xgc->graphic_engine == &GL_gengine ) 
     {
@@ -1429,10 +1431,10 @@ static void nsp_draw_objs3d_s2( BCG *Xgc,NspObjs3d *Obj,double theta,double alph
 #endif
   
   flagx = Xgc->graphic_engine->xget_last(Xgc);
-  /* XXX */
   foreground_color = flagx+1;
+  /*
   background_color = flagx+2;
-
+  */
   /* allocate a structure for drawing purpose 
    * The unchanged values are kept in Lobj
    */
@@ -1566,17 +1568,18 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
   nsp_box_3d box;
   double x[2],y[2],zz[2],zzmin,zzmax;
   double Box[6]={ebox[0],ebox[2],ebox[4],ebox[1],ebox[3],ebox[5]};
-  int flagx, nf=0, two=2;
+  int flagx,  two=2;
   double lim[3];
   Plot3dBox *B;
   /* should be shared */
   int foreground_color;
-  int background_color;
+  /* int background_color; */
 
   /* NspFname(stack) ="drawobj"; */
   flagx = Xgc->graphic_engine->xget_last(Xgc);
   foreground_color = flagx+1;
-  background_color = flagx+2;
+  /*  background_color = flagx+2; */
+
 
   /* allocate a structure for drawing purpose 
    * The unchanged values are kept in Lobj
@@ -1616,7 +1619,6 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,NspObjs3d *Obj,double theta,double alp
     }
 
   cloc = Children->first ;
-  nf = 0;
   while ( cloc != NULLCELL ) 
     {
       if ( cloc->O != NULLOBJ ) 
@@ -2510,7 +2512,7 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
 static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta, double Alpha, int flag)
 {
   double xmmin=0.0,ymmax=1.0,xmmax=1.0,ymmin=0.0,FRect[4],WRect[4],ARect[4];
-  double R,xo,yo,zo,dx,dy,dz,hx,hy,hx1,hy1;
+  double R,xo,yo,/* zo,*/ dx,dy,dz,hx,hy,hx1,hy1;
   double cost,sint,cosa,sina;
   int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
   char logf[2];
@@ -2593,7 +2595,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
       R= (double) sqrt(dx*dx + dy*dy + dz*dz)/2;
       xo= (double) (box->x[0]+box->x[6])/2 ;
       yo= (double) (box->y[0]+box->y[6])/2 ;
-      zo= (double) (box->z[0]+box->z[6])/2 ;
+      /* zo= (double) (box->z[0]+box->z[6])/2 ; */
       xmmin=  (double) xo - R ;
       xmmax=  (double) xo + R ;
       ymmax=  (double) -yo + R ;
@@ -2666,7 +2668,7 @@ int nsp_geom3d_new(BCG *Xgc,double *x, double *y, double *z, int *n)
 void nsp_3d_rotation(BCG *Xgc)
 {
   double theta,alpha, theta_dir;
-  int pixmode,pt[2];
+  int pt[2];
   int xc,yc;
   double theta0,alpha0;
   int ibutton,imask,iwait=FALSE,istr=0;
@@ -2676,7 +2678,7 @@ void nsp_3d_rotation(BCG *Xgc)
       Xgc->graphic_engine->xinfo(Xgc,"No 3d recorded plots in your graphic window");
     }
   Xgc->graphic_engine->xset_win_protect(Xgc,TRUE); /* protect against window kill */
-  pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc);
+  /* pixmode = Xgc->graphic_engine->xget_pixmapOn(Xgc); */
   nsp_set_cursor(Xgc,GDK_EXCHANGE);
   Xgc->graphic_engine->xclick(Xgc,"one",&ibutton,&imask,&xc,&yc,iwait,FALSE,FALSE,FALSE,istr);
   pt[0]=x0 = x = xc;
@@ -2805,4 +2807,4 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 }
 
 
-#line 2809 "objs3d.c"
+#line 2811 "objs3d.c"
