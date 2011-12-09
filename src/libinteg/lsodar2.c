@@ -80,8 +80,8 @@ C2F(lsodar2) (ode_f f, int *neq, double *y, double *t, double *tout,
   double atoli, ayi, hmx, big, ewti, size, h0, rtoli, 
     tdist, tnext, tolsf, w0, hmax, rh, tcrit, tol, sum, tp;
   int ihit=0, irfp, irt, kgo, len1, len2, len1c, len1n, len1s, i__, 
-    iflag, leniw, lenwm=0, lenyh, imxer, lenrw, i1, i2, lirfnd, 
-    leniwc, lenrwc, lf0, lenrwn, lenrws, lyhnew, ml, mu;
+    iflag, leniw, lenwm=0, lenyh, imxer, lenrw, i1, i2, /* lirfnd, */
+    leniwc, lenrwc, lf0, /* lenrwn, lenrws,*/ lyhnew, ml, mu;
 
   /*----------------------------------------------------------------------- 
    *this is the may 7, 1982 version of 
@@ -1463,8 +1463,10 @@ C2F(lsodar2) (ode_f f, int *neq, double *y, double *t, double *tout,
   len1 = Max (len1n, len1s);
   len2 = ls0001_1.n * 3;
   lenrw = len1 + len2;
-  lenrwn = len1n + len2;
+  /*
+    lenrwn = len1n + len2;
   lenrws = len1s + len2;
+  */
   lenrwc = len1c + len2;
   iwork[17] = lenrw;
   ls0001_1.liwm = 1;
@@ -2113,7 +2115,7 @@ C2F(lsodar2) (ode_f f, int *neq, double *y, double *t, double *tout,
     }
   if (irt == 2)
     {
-      lirfnd = 2;
+      /* lirfnd = 2;*/
       *istate = 4;
       *t = lsr001_1.t0;
       goto L425;

@@ -3935,7 +3935,7 @@ nsp_ode_droots2 (int *nrt, double *hmin, int *jflag, double *x0,
   double fracsub, fracint, t2, tmax;
   int imxold, istuck, nxlast;
   int iunstuck, i__;
-  int xroot, zroot, sgnchg;
+  int xroot,  sgnchg;
   static double alpha;
   static double x2;
   static int imax, last;
@@ -4043,7 +4043,7 @@ nsp_ode_droots2 (int *nrt, double *hmin, int *jflag, double *x0,
   istuck = 0;
   iunstuck = 0;
   tmax = zero;
-  zroot = FALSE;
+  /* zroot = FALSE;*/
   i__1 = *nrt;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
@@ -4180,7 +4180,7 @@ nsp_ode_droots2 (int *nrt, double *hmin, int *jflag, double *x0,
   istuck = 0;
   iunstuck = 0;
   tmax = zero;
-  zroot = FALSE;
+  /* zroot = FALSE;*/
   i__1 = *nrt;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
@@ -4676,7 +4676,7 @@ nsp_ode_droots1 (int *nrt, double *hmin, int *jflag, double *x0,
   double fracsub, fracint, t2, tmax;
   int imxold, istuck, nxlast;
   int iunstuck, i__;
-  int xroot, zroot, sgnchg;
+  int xroot,  sgnchg;
   static double alpha;
   static double x2;
   static int imax, last;
@@ -4786,7 +4786,7 @@ nsp_ode_droots1 (int *nrt, double *hmin, int *jflag, double *x0,
   istuck = 0;
   iunstuck = 0;
   tmax = zero;
-  zroot = FALSE;
+  /* zroot = FALSE;*/
   i__1 = *nrt;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
@@ -4937,7 +4937,7 @@ nsp_ode_droots1 (int *nrt, double *hmin, int *jflag, double *x0,
   istuck = 0;
   iunstuck = 0;
   tmax = zero;
-  zroot = FALSE;
+  /*zroot = FALSE;*/
   i__1 = *nrt;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
@@ -10462,7 +10462,7 @@ nsp_ode_dslvk (int *neq, double *y, double *tn, double *yprime,
 
   /* Local variables */
   int ncfl, lhes, lgmr, maxl, nres, npsl, liwp, i__, iflag;
-  int miter, nrmax, nrsts, maxlp1, lq, lr, lv, lz;
+  int  nrmax, nrsts, maxlp1, lq, lr, lv, lz;
   int ldl, nli, nre, kmp, lwk, nps, lwp;
 
 
@@ -10489,7 +10489,7 @@ nsp_ode_dslvk (int *neq, double *y, double *tn, double *yprime,
   maxl = iwm[24];
   kmp = iwm[25];
   nrmax = iwm[26];
-  miter = iwm[23];
+  /* miter = iwm[23]; */
   *iersl = 0;
   *ires = 0;
   /*----------------------------------------------------------------------- 
@@ -10613,7 +10613,7 @@ nsp_ode_dspigm (int *neq, double *tn, double *y, double *yprime,
 
   /* Local variables */
   double c__;
-  double dlnrm, prod, rnrm, s, snormw, tem, rho;
+  double dlnrm, prod, rnrm, s, snormw, tem, rho=0.0;
   int i2, maxlm1, ll, ip1;
   int i__, j, k;
   int ier;

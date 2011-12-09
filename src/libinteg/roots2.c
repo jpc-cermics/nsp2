@@ -109,7 +109,7 @@ nsp_ode_roots2 (int *ng, double *hmin, int *jflag, double *x0, double *x1,
   double fracsub, fracint, t2, tmax;
   int imxold, istuck, nxlast;
   int iunstuck, i__;
-  int xroot, zroot, sgnchg;
+  int xroot,  sgnchg;
 
   --jroot;
   --gx;
@@ -129,7 +129,7 @@ nsp_ode_roots2 (int *ng, double *hmin, int *jflag, double *x0, double *x1,
   istuck = 0;
   iunstuck = 0;
   tmax = zero;
-  zroot = FALSE;
+  /* zroot = FALSE;*/
   i__1 = *ng;
   for (i__ = 1; i__ <= i__1; ++i__)
     {
@@ -269,7 +269,7 @@ nsp_ode_roots2 (int *ng, double *hmin, int *jflag, double *x0, double *x1,
   istuck = 0;
   iunstuck = 0;
   tmax = zero;
-  zroot = FALSE;
+  /* zroot = FALSE;*/
   i__1 = *ng;
   for (i__ = 1; i__ <= i__1; ++i__)
     {

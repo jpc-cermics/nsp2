@@ -1251,9 +1251,10 @@ nsp_colnew_contrl (double *xi, double *xiold, double *z__, double *dmz,
 
 
   /* Local variables */
-  double anfix, relax, anscl, arg, check, andif, fact, factor, relmin, rlxold, rnold, anorm, dummy[1], rnorm, rstart;
+  double anfix=0.0, relax, anscl, arg, check, andif, fact, factor, 
+    relmin, rlxold, rnold, anorm, dummy[1], rnorm, rstart;
   int iconv, msing;
-  int ifin, icor, ifrz, i__, j;
+  int ifin, icor, ifrz=0, i__, j;
   int ifreez;
   int imesh, ipred;
   int inz;

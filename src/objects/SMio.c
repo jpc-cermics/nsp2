@@ -673,6 +673,7 @@ int nsp_smio_putstr(NspSMio *F, const char *str)
       F->obj->len = n; 
     }
   nok = sprintf(F->obj->D+F->obj->pos,"%s",str);
+  if ( nok == 0) {}; 
   F->obj->pos += strlen(str);
   return OK;
 }

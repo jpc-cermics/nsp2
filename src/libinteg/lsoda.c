@@ -83,7 +83,7 @@ int C2F(lsoda) (ode_f f, int *neq, double *y, double *t, double *tout,
   int len1, len2;
   int len1c, len1n, len1s, i__, iflag;
   int leniw, lenwm=0;
-  int leniwc, lenrwc, lf0, lenrwn, lenrws;
+  int leniwc, lenrwc, lf0; /* lenrwn;*/ /* lenrws;*/
   int lenrw;
   int ml;
   int mu;
@@ -1318,8 +1318,8 @@ int C2F(lsoda) (ode_f f, int *neq, double *y, double *t, double *tout,
   len1 = Max (len1n, len1s);
   len2 = ls0001_1.n * 3;
   lenrw = len1 + len2;
-  lenrwn = len1n + len2;
-  lenrws = len1s + len2;
+  /* lenrwn = len1n + len2;*/
+  /* lenrws = len1s + len2; */
   lenrwc = len1c + len2;
   iwork[17] = lenrw;
   ls0001_1.liwm = 1;

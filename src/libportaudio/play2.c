@@ -110,7 +110,7 @@ int nsp_play_data_no_cb(NspMatrix *M,int sample_rate, int sync,int device)
 static void play_data_nocb(thread_data *data)
 {
   PaStream *ostream; 
-  int max, offset=0;
+  int  offset=0;
   PaStreamParameters ostream_p;
   PaError err;   
   float buffer[FRAMES_PER_BUFFER*2]; /* max_channel is 2 */
@@ -133,7 +133,9 @@ static void play_data_nocb(thread_data *data)
       data->err=FAIL;goto end;
   }
   
+  /*
   max = Pa_GetDeviceInfo(ostream_p.device)->maxOutputChannels;
+  */
 
   if ( data->M->m > 2 )
     {

@@ -202,7 +202,7 @@ int rk_rkf45 (ode_f fydot, int *neqn, double *y, double *t, double *tout,
 	      int *iopt, double *work, int *lrw, int *iwork, int *liw,
 	      double *bjac, int *mf, void *param)
 {
-  double theniflag;
+  /* double theniflag; */
   int k1, k2, k3, k4, k5, k6, k7, k1m;
 
   /* Parameter adjustments */
@@ -211,6 +211,7 @@ int rk_rkf45 (ode_f fydot, int *neqn, double *y, double *t, double *tout,
   --iwork;
 
   /* Function Body */
+  /*
   if (*itask == 1)
     {
       theniflag = 1.;
@@ -219,6 +220,7 @@ int rk_rkf45 (ode_f fydot, int *neqn, double *y, double *t, double *tout,
     {
       theniflag = -1.;
     }
+  */
   /* 
    * 
    *    compute indices for the splitting of the work array 

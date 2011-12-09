@@ -57,10 +57,8 @@ int nsp_ode_xerrwd (char *msg, int *nmes, int *nerr, int *level, int *ni,
 		       int *i1, int *i2, int *nr, double *r1, double *r2,
 		       long int msg_len)
 {
-  int lunit;
   int mesflg;
-
-  lunit = nsp_ode_ixsav (&c__1, &c__0, &c_false);
+  /* int lunit = nsp_ode_ixsav (&c__1, &c__0, &c_false); */
   mesflg = nsp_ode_ixsav (&c__2, &c__0, &c_false);
   if (mesflg == 0)
     {
@@ -175,9 +173,8 @@ static int nsp_ode_ixsav (int *ipar, int *ivalue, int *iset)
   static int lunit = -1;
   static int lundef = 6;
   static int mesflg = 1;
-
   /* System generated locals */
-  int ret_val;
+  int ret_val=0;
   if (*ipar == 1)
     {
       if (lunit == -1)

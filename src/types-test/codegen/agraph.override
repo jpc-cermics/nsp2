@@ -579,7 +579,7 @@ static NspAgraph *nsp_gv_agsubg(NspAgraph * g, char *name)
 
 static int _wrap_nsp_gv_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs)
 {
-  int a;
+  /* int a; */
   int i;
   CheckStdRhs(0,0);
   CheckLhs(0,1);
@@ -606,7 +606,7 @@ static int _wrap_nsp_gv_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs)
 
       agstr = nsp_string_copy(attr);
       if ( agstr == NULL) return RET_BUG;
-      a = agsafeset(obj,agstr,value,"");
+      /* a =*/ agsafeset(obj,agstr,value,"");
       nsp_string_destroy(&agstr);
       /*
 	if ( a == FALSE) 

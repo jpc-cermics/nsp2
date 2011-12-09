@@ -67,11 +67,14 @@
 void XCNAME(nsp_sqsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],char dir )
 {
   int ileft[25], iright[25]; /* to store parts (segments) of the array which stay to sort */
-  int i, ia, ib, im, la, j, itemp, ipiv, n_init = n;
+  int i, ia, ib, im, la, j, itemp, n_init = n;
   ELT_TYPE temp, pivot;
 #ifdef STRING_ONLY 
   int c;
 #endif
+#ifndef COUPLE_ONLY
+  int ipiv;
+#endif 
 
   if ( dir == 'd' ) 
     for ( i = 0 ; i < n ; i++) p[i]=n - i;
@@ -112,7 +115,10 @@ void XCNAME(nsp_sqsort_bp_,ELT_TYPE)(ELT_TYPE x[], int n, int p[],char dir )
 	      if ( qs_cmp(j,i) ) { SWAP(i, j); }
 	      if ( qs_cmp(j,ia)) { SWAP(ia, j); }
 	      else if ( qs_cmp(ia,i) ) { SWAP(ia, i); }
-	      pivot = x[ia]; ipiv = p[ia];
+	      pivot = x[ia]; 
+#ifndef COUPLE_ONLY
+	      ipiv = p[ia];
+#endif
 	      /* at this point we have  x[i=ia+1] <= pivot (=x[ia]) <= x[j=ib]  */
 	      while (1)
 		{

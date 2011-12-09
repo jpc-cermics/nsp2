@@ -119,10 +119,11 @@ extern void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  doub
 
 extern void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
+extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,int closeflag);
 
 /* inserted at the end of public part of include file */
 
-#line 126 "./fec.h"
+#line 127 "./fec.h"
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
@@ -137,7 +138,7 @@ static AttrTab fec_attrs[];
 static NspMethods *fec_get_methods(void);
 /* static int int_fec_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspFec *nsp_fec_create_void(const char *name,NspTypeBase *type);
-#line 23 "codegen/fec.override"
+#line 24 "codegen/fec.override"
 
 /* inserted in the private part of include file */
 
@@ -150,6 +151,6 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 static void PermutOfSort_d(const double *tab, int *perm);
 static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 
-#line 154 "./fec.h"
+#line 155 "./fec.h"
 #endif /* NspFec_Private */
 
