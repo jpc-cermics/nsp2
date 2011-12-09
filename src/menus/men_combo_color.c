@@ -303,7 +303,7 @@ static GdkPixbuf *create_color_pixbuf_from_rgb (double val[])
 {
   guchar pcol[3];
   GdkPixbuf *pixbuf;
-  int x,i, num, rowstride;
+  int x,i, num /* , rowstride */;
   guchar *pixels, *p;
   
   for (i = 0; i < 3; i++) pcol[i]=val[i]*255;
@@ -312,7 +312,7 @@ static GdkPixbuf *create_color_pixbuf_from_rgb (double val[])
 			   FALSE, 8,
 			   16, 16);
 
-  rowstride = gdk_pixbuf_get_rowstride (pixbuf);
+  /* rowstride = gdk_pixbuf_get_rowstride (pixbuf); */
   p = pixels = gdk_pixbuf_get_pixels (pixbuf);
 
   num = gdk_pixbuf_get_width (pixbuf) * gdk_pixbuf_get_height (pixbuf);

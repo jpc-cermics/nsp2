@@ -98,6 +98,7 @@ static menu_answer nsp_dialog_(const char *title,const char *init_value,char **a
   GtkTextIter iter, start, end;
   GtkTextBuffer *buffer;
   menu_answer result = menu_cancel;
+  int rep;
 
   start_sci_gtk(); /* be sure that gtk is started */
 
@@ -129,9 +130,9 @@ static menu_answer nsp_dialog_(const char *title,const char *init_value,char **a
 
   gtk_widget_grab_focus (text);
   gtk_widget_show_all (window);
-  result = gtk_dialog_run(GTK_DIALOG(window));
+  rep = gtk_dialog_run(GTK_DIALOG(window));
   *answer = NULL;
-  switch (result)
+  switch ( rep )
     {
     case GTK_RESPONSE_ACCEPT:
     case GTK_RESPONSE_OK:

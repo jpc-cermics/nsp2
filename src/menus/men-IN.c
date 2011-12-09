@@ -780,7 +780,7 @@ int int_unset_menu(Stack stack, int rhs, int opt, int lhs)
 int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 {
   char *button=NULL,*mname=NULL;
-  integer win,zero=0,ierr=0, typ=0,gwin=-1;
+  int zero=0,ierr=0, typ=0,gwin=-1;
   NspSMatrix *SubMenus = NULL;
 
   CheckRhs(1,4);
@@ -845,7 +845,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
   
   if ( gwin != -1 ) 
     {
-      win = nsp_gr_change(gwin);
+      nsp_gr_change(gwin);
     } 
 
   if ( mname == NULL) mname = button;
@@ -857,7 +857,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 
   if ( gwin != -1 ) 
     {
-      win = nsp_gr_change(gwin);
+      nsp_gr_change(gwin);
     } 
 
   if (ierr == FAIL ) 

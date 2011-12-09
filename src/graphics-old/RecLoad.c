@@ -683,7 +683,7 @@ static int load_NEch(BCG *Xgc)
 
 static int load_Plot(BCG *Xgc)
 {
-  int n=0, nstyle;
+  int n=0;
   struct rec_plot2d *lplot;
   lplot= ((struct rec_plot2d *) MALLOC(sizeof(struct rec_plot2d)));
   if (lplot != NULL)
@@ -692,7 +692,7 @@ static int load_Plot(BCG *Xgc)
       if ( load_LI(Xgc->xdrs,&lplot->n2) == 0) return(0);
       if ( load_LI(Xgc->xdrs,&lplot->code)==0) return(0);
       if ( load_VectC(Xgc->xdrs,&(lplot->xf)) == 0) return(0);
-      if (lplot->n1==1 ) nstyle= lplot->n1+1;else nstyle= lplot->n1;
+      /* if (lplot->n1==1 ) nstyle= lplot->n1+1;else nstyle= lplot->n1; */
       switch (lplot->xf[0])
 	{
 	case 'g': n=(lplot->n1)*(lplot->n2);break;

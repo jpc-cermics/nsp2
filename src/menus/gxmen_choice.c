@@ -49,9 +49,9 @@ static GtkWidget * nsp_setup_matrix_entry(GtkWidget *w,char **Ms,int m,int n,int
 static int nsp_matrix_entry_get_values(GtkWidget *table,NspSMatrix *S);
 static GtkWidget *nsp_setup_matrix_wraper(char **Ms,int m,int n,int entry_size);
 static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size);
-static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M);
+static void nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M);
 static GtkWidget *nsp_setup_scale_wraper(double *val,int entry_size);
-static int nsp_scale_get_value(GtkWidget *scale,NspMatrix *M);
+static void nsp_scale_get_value(GtkWidget *scale,NspMatrix *M);
 
 static GtkWidget *nsp_setup_choice_button(void *Obj,int entry_size);
 static NspList *nsp_combo_extract_choices(NspList *L);
@@ -625,7 +625,7 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 {
   gchar *fname;
   const gchar *fname1;
-  int i=0,rep;
+  int i=0;
   Cell *Loc= L->first;
   while (Loc != NULL) 
     {
@@ -689,11 +689,11 @@ static int nsp_combo_update_choices(NspList *L,nsp_choice_array *array)
 	  }
 	  break;
 	case choice_spin_button:
-	  rep = nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
+	  nsp_spin_button_get_value(array[i].widget,(NspMatrix *) Ms);
 	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
 	  break;
 	case choice_range_button:
-	  rep = nsp_scale_get_value(array[i].widget,(NspMatrix *) Ms);
+	  nsp_scale_get_value(array[i].widget,(NspMatrix *) Ms);
 	  active_field->R[0] = ((NspMatrix *) Ms)->R[0];
 	  break;
 	case choice_button:
@@ -942,10 +942,9 @@ static GtkWidget *nsp_setup_spin_button_wraper(double *val,int entry_size)
   return  gtk_spin_button_new (adj,*(val+6),*(val+7));
 }
 
-static int nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M)
+static void nsp_spin_button_get_value(GtkWidget *spin,NspMatrix *M)
 {
   M->R[0] = gtk_spin_button_get_value(GTK_SPIN_BUTTON(spin));
-  return OK;
 }
 
 /*
@@ -965,12 +964,10 @@ static GtkWidget *nsp_setup_scale_wraper(double *val,int entry_size)
 }
 
 
-static int nsp_scale_get_value(GtkWidget *scale,NspMatrix *M)
+static void nsp_scale_get_value(GtkWidget *scale,NspMatrix *M)
 {
-  GtkAdjustment *adj;
-  adj= gtk_range_get_adjustment(GTK_RANGE(scale));
+  GtkAdjustment *adj = gtk_range_get_adjustment(GTK_RANGE(scale));
   M->R[0] = gtk_adjustment_get_value(adj);
-  return OK;
 }
 
 /* A button used to recursively open a new 

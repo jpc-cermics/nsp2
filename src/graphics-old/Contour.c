@@ -331,10 +331,10 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
   double *zconst;
   int err=0, N[3],i;
   void (*func) (BCG *Xgc,int, double,double,double);
+  /* 
   void (*draw_axis) (BCG *Xgc, const nsp_box_3d *box, char flag, int style);
-
-  
   draw_axis = DrawAxis;
+  */
   ZC=zlev;
 
   switch ( flag)
@@ -344,20 +344,20 @@ int nsp_contour3d_draw(BCG *Xgc,double *x, double *y, double *z, int n1, int n2,
       /* 3D geometry with projection on the surface */
 #ifdef WITH_GTKGLEXT 
       func =  ( Xgc->graphic_engine == &GL_gengine_old ) ? Contstore_ogl : Contstore_; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis;
-      break;
+      /* draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis; */
 #else 
-      func=Contstore_; break;  
+      func=Contstore_;
 #endif 
+      break;
     case 1: 
       /* 3D geometry with projection on a fixed z level  */
 #ifdef WITH_GTKGLEXT 
       func =  ( Xgc->graphic_engine == &GL_gengine_old ) ? Contstore_1_ogl : Contstore_1; 
-      draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis;
-      break;
+      /* draw_axis =( Xgc->graphic_engine == &GL_gengine_old ) ?  DrawAxis_ogl :  DrawAxis; */
 #else 
-      func=Contstore_1; break;  
+      func=Contstore_1;
 #endif 
+      break;
     }
 
 

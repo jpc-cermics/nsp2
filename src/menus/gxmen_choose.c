@@ -41,7 +41,7 @@ menu_answer nsp_choose(NspSMatrix *Items,NspSMatrix *Title,NspSMatrix *button,in
 menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_names, 
 			int n_but,int *choice)
 {
-  int result, i,maxl;
+  int result,rep, i,maxl;
   GtkWidget *window;
   GtkWidget *vbox;
   GtkWidget *scrolled_win;
@@ -109,8 +109,17 @@ menu_answer nsp_choose_(const char *title,char **Items,int nItems,char **but_nam
   
   gtk_widget_show_all (window);
   result = gtk_dialog_run(GTK_DIALOG(window));
+  switch (result)
+    {
+    case GTK_RESPONSE_ACCEPT:
+      rep = (  *choice >= 0) ? menu_ok : menu_cancel;
+      break;
+    default:
+      rep =  menu_cancel;
+      break;
+    }
   gtk_widget_destroy(window);
-  return (  *choice >= 0) ? menu_ok : menu_cancel ;
+  return rep  ;
 }
 
 static GtkTreeModel*create_list_model (char **Items,int nItems)

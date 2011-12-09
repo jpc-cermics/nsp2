@@ -595,8 +595,9 @@ static void nsp_gc_tops(BCG *Xgc, int colored,const char *bufname,const char *dr
 
 static void nsp_gc_2dzoom(BCG *Xgc)
 {
-  static int nsp_gc_buzy_zoom = 0;
+  /* static int nsp_gc_buzy_zoom = 0;
   nsp_gc_buzy_zoom =1;
+  */
   if ( Xgc->record_flag != TRUE ) 
     {
       Xgc->graphic_engine->xinfo(Xgc,"Zoom works only with the Rec driver");
@@ -605,7 +606,7 @@ static void nsp_gc_2dzoom(BCG *Xgc)
     {
       zoom_old(Xgc);
     }
-  nsp_gc_buzy_zoom = 0;
+  /*   nsp_gc_buzy_zoom = 0; */
 }
 
 /**

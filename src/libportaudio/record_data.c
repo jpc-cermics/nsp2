@@ -123,13 +123,13 @@ static void record_data(thread_data *data)
   PaStreamParameters ostream_p;
   PaStream *stream;
   PaError err;
-  int i, offset = 0,  totalFrames, channels=2, dynamic=FALSE;
+  int i, offset = 0, channels=2, dynamic=FALSE;
 
   data->err=OK;
   
   if ( data->M != NULL ) 
     {
-      totalFrames = data->M->n;
+      /* int totalFrames = data->M->n; */
       for( i=0; i< data->M->mn; i++ ) data->M->F[i]=0;
       channels = data->M->m;
     }

@@ -80,7 +80,10 @@ void set_nsp_tmpdir(void)
 #else 
       sprintf(tmp_dir,"/tmp/SD_%d_",(int) getpid());
       sprintf(buf,"umask 000;if test ! -d %s; then mkdir %s; fi ",tmp_dir,tmp_dir);
-      status = system(buf);
+      if ((status = system(buf)) == -1) 
+	{
+	  Sciprintf("failed to create TMPDIR\n");
+	}
 #endif 
       sprintf(buf,"NSP_TMPDIR=%s",tmp_dir);
       nsp_setenv("NSP_TMPDIR",tmp_dir);
@@ -132,7 +135,9 @@ void clean_tmpdir(void)
   status = system(buf);
   sprintf(buf,"rm -f -r /tmp/%d.metanet.* > /dev/null  2>/dev/null",
 	  (int) getpid());
-  status = system(buf);
+  if ((status = system(buf))== -1) 
+    {
+    }
 #endif 
 }
 
