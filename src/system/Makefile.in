@@ -29,7 +29,7 @@ F_win= tcl/win/tclCmdAZ.o \
 OBJSC =  System-IN.o timer.o files.o realtime.o spawn.o regexp.o dstring.o $(F_@SYST_FILES@)
 
 all     ::
-	cd tcl/@SYST_FILES@ ; make all
+	cd tcl/@SYST_FILES@ && $(MAKE) all
 
 include ../../Makefile.incl
 SCIDIR=../..

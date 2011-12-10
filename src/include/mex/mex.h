@@ -70,7 +70,9 @@ extern "C" {
   extern mxArray *mxCreateFull (int m, int n, int it);
   extern mxArray *mxCreateDoubleMatrix(int m, int n,  mxComplexity it);
 
-  extern void *mxCalloc (unsigned int n, unsigned int size);
+  /* extern void *mxCalloc (unsigned int n, unsigned int size); */
+  extern void *mxCalloc (size_t n, size_t size);
+
   extern int mxGetString (const mxArray *ptr, char *str, int strl);
   extern void mxFreeMatrix (mxArray *ptr);
   extern void mxFree (void *ptr);

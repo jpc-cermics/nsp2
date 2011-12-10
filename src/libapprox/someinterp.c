@@ -591,12 +591,12 @@ static int dpchst(double arg1, double arg2)
 void nsp_dpchim(double *x, double *u, double *d, int n, int inc)
 {
   int i;
-  double del1, del2, dmax, dmin, drat1, drat2, dsave,
+  double del1, del2, dmax, dmin, drat1, drat2, 
     h1, h2, hsum, hsumt3, w1, w2;
 
   h1 = x[1] - x[0];
   del1 = (u[inc] - u[0])/h1;
-  dsave = del1;
+  /* dsave = del1; */
 
   /* special case n=2 -- use linear interpolation */
   if (n == 2)
@@ -641,12 +641,14 @@ void nsp_dpchim(double *x, double *u, double *d, int n, int inc)
 	{
 	case -1:
 	  d[i*inc] = 0.0;
-	  dsave = del2;
+	  /* dsave = del2; */
 	  break;
 	case 0:
 	  d[i*inc] = 0.0;
 	  if (del2 != 0.0)
-	    dsave = del2;
+	    {
+	      /* dsave = del2; */
+	    }
 	  break;
 	case 1:
 	  /* use brodlie modification of butland formula. */

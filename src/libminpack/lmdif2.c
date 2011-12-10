@@ -104,7 +104,6 @@ static int minpack_lmdif3 (minpack_fcn2 fcn, int *m, int *n, double *x, double *
   const double zero = 0.;
   int fjac_dim1, fjac_offset, i__1;
   int j, iflag;
-  double fnorm, epsmch;
   
   --wa4;
   --fvec;
@@ -119,7 +118,7 @@ static int minpack_lmdif3 (minpack_fcn2 fcn, int *m, int *n, double *x, double *
 
   /*     epsmch is the machine precision. */
 
-  epsmch = minpack_dpmpar (1);
+  /* epsmch = minpack_dpmpar (1); */
 
   iflag = 0;
   *nfev = 0;
@@ -153,7 +152,7 @@ static int minpack_lmdif3 (minpack_fcn2 fcn, int *m, int *n, double *x, double *
     {
       goto L300;
     }
-  fnorm = minpack_enorm (*m, &fvec[1]);
+  /* fnorm = minpack_enorm (*m, &fvec[1]); */
   /*     initialize levenberg-marquardt parameter and iteration counter. */
   /*        calculate the jacobian matrix. */
   iflag = 2;

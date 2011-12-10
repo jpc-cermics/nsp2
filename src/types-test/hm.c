@@ -1410,7 +1410,7 @@ static int nsp_bhsearch(NspHm *H, gint64 key,double *val, HMOperation action)
   register unsigned hval;
   register unsigned hval2;
   register unsigned idx;
-  register int str;
+  /* register int str; */
   HM_Entry *htable = H->htable;
 
   /*
@@ -1424,7 +1424,7 @@ static int nsp_bhsearch(NspHm *H, gint64 key,double *val, HMOperation action)
     }
 
   /* Compute a value for the given string. Perhaps use a better method. */
-  str = key;
+  /* str = key; */
   hval = key;
   hval %= H->hsize;
   

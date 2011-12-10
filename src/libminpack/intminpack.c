@@ -305,11 +305,10 @@ static int int_minpack_eval_jac (Stack stack, int rhs, int opt, int lhs)
   
   {
     double *wa, epsfcn = 0.0;
-    int nprint, nfev, ml=X->mn-1,mu=X->mn-1, maxfev = (X->mn + 1) * 200;
+    int  nfev, ml=X->mn-1,mu=X->mn-1, maxfev = (X->mn + 1) * 200;
     
     if ((work2 =nsp_matrix_create(NVOID,'r',2*X->mn,1)) == NULLMAT) goto bug;
     wa = work2->R; 
-    nprint = 0;
       
     J->R[0]=1;
     J->R[1]=2;

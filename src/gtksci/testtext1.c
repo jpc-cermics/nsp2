@@ -257,6 +257,7 @@ static void nsp_append_history(char *text,view_history *data, int readline_add)
     {
       /* do not insert repetitions */
       GList *loc=  g_list_append(data->history_tail, g_strdup (text));
+      if ( loc == NULL) {}
       data->history_tail =data->history_cur= data->history_tail->next;
       data->dir = 0;
     }

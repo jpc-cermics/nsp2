@@ -66,8 +66,7 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int n, double *x, double *fvec,
 			int *info, int *nfev,
 			double *fjac, int *ldfjac, double *wa1, double *wa2, void *data)
 {
-  int iter, msum, iflag, jeval, ncsuc, nslow1, nslow2,  ncfail;
-  double fnorm;
+  int  msum, iflag;
   
   *info = 1;
   iflag = 0;
@@ -92,7 +91,7 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int n, double *x, double *fvec,
     {
       goto L300;
     }
-  fnorm = minpack_enorm (n, fvec);
+  /* fnorm = minpack_enorm (n, fvec); */
 
   /*     determine the number of calls to fcn needed to compute 
    *     the jacobian matrix. 
@@ -102,13 +101,13 @@ int minpack_hybrd_eval (minpack_fcn1 fcn, int n, double *x, double *fvec,
 
   /*     initialize iteration counter and monitors. */
 
-  iter = 1;
-  ncsuc = 0;
-  ncfail = 0;
-  nslow1 = 0;
-  nslow2 = 0;
+  /* iter = 1;*/
+  /* ncsuc = 0; */
+  /* ncfail = 0; */
+  /* nslow1 = 0; */
+  /* nslow2 = 0; */
 
-  jeval = TRUE;
+  /* jeval = TRUE;  */
 
   /*        calculate the jacobian matrix. */
 

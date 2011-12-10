@@ -672,7 +672,7 @@ mxArray *mxCreateFull(int m, int n, int it)
  * Return value: the new allocated array 
  **/
 
-void *mxCalloc(unsigned int n, unsigned int size)
+void *mxCalloc(size_t n, size_t size)
 {
   return calloc(n,size*sizeof(char));
 }
