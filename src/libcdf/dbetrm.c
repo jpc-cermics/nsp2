@@ -57,7 +57,7 @@ static double cdf_dstrem (double z)
 			    -5.95238095238095238095238095238e-4, 8.41750841750841750841750841751e-4,
 			    -.00191752691752691752691752691753, .00641025641025641025641025641026,
 			    -.0295506535947712418300653594771, .179644372368830573164938490016 };
-  double   sterl, status;
+  double   sterl;
   /*
    *    For information, here are the next 11 coefficients of the 
    *    remainder term in Sterling's formula 
@@ -76,7 +76,7 @@ static double cdf_dstrem (double z)
   if (z <= 0.)
     {
       Scierror("Zero or negative argument in DSTREM\n");
-      status = -100.;
+      /* status = -100.; */
       return 0;
     }
   if (!(z > 6.))

@@ -133,6 +133,7 @@ extern double cdf_stirling_series(double a) ;
 
 extern int cdf_cdftnc (int *which, double *p, double *q, double *t, double *df, double *pnonc, int *status, double *bound, double *boundbis);
 extern int cdf_cumtnc (double *t, double *df, double *pnonc, double *cum, double *ccum);
+extern int cdf_cumtnc_new (double *t, double *df, double *pnonc, double *cum, double *ccum);
 
 
 
