@@ -209,7 +209,6 @@ int dxlegf(Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2,
   int i__1;
   int i__, l;
   double sx;
-  double pi2;
   double dnu2;
 
   --ipqa;
@@ -221,7 +220,7 @@ int dxlegf(Dxblk2 *dxblk2, double *dnu1, int *nudiff, int *mu1, int *mu2,
   if (*ierror != 0) {
     return 0;
   }
-  pi2 = atan(1.) * 2.;
+  /* pi2 = atan(1.) * 2.;*/
   /* 
    *       ZERO OUTPUT ARRAYS 
    * 
@@ -1613,7 +1612,6 @@ static int dxred(Dxblk2 *dxblk2, double *x, int *ix, int *ierror)
 static int dxset(Dxblk2 *dxblk2,int irad, int nradpl,double dzero,int nbits, int *ierror)
 {
   static const int log102[20] = { 301,29,995,663,981,195,213,738,894,724,493,26,768,189,881,462,108,541,310,428 };
-  static int iflag = 0;
 
   int i__1, i__2;
   double d__1;
@@ -1822,7 +1820,6 @@ static int dxset(Dxblk2 *dxblk2,int irad, int nradpl,double dzero,int nbits, int
   *ierror = 206;
   return 0;
  L100:
-  iflag = 1;
   return 0;
 } 
 

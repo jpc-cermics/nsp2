@@ -1076,7 +1076,7 @@ static int matpow_for_kcdf(double *A, int m, int p, int *e, double lim_factor, d
  **/
 int nsp_kcdf(double x, double *res, int n)
 {
-  double d, sqrt_n = sqrt(n), s, h, *H=NULL, fact;
+  double sqrt_n = sqrt(n), s, h, *H=NULL, fact;
   int k, m, i, j, diag, e;
   double lim_factor = pow(2.0,465);
   double scale_factor = 1.0/lim_factor;
@@ -1088,7 +1088,7 @@ int nsp_kcdf(double x, double *res, int n)
 
   if ( n < 1 ) return FAIL;
 
-  d = x/sqrt_n;
+  /* d = x/sqrt_n; */
   s = x*x;
 
   if ( s > 7.25  ||  (s > 3.76 && n > 99) )

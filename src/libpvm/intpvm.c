@@ -561,10 +561,9 @@ int int_pvm_set_timer( Stack stack, int rhs, int opt, int lhs)
 int int_pvm_get_timer( Stack stack, int rhs, int opt, int lhs)
 {
   double t=0.0;
-  int rep;
   CheckRhs(0,0);
   CheckLhs(1,1);
-  rep=nsp_pvm_gettimer(&t);
+  nsp_pvm_gettimer(&t);
   if ( nsp_move_double(stack,1,t)==FAIL) return RET_BUG;
   return 1;
 }
