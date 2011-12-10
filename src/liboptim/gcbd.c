@@ -355,7 +355,7 @@ optim_zgcbd (opt_simul simul, int *n, double *binf, double *bsup, double *x,
   double bss, zng, zrl;
   double dfp;
   double dfred1, param1, dfrit1, aa;
-  double diff, difg, scal;
+  double diff=0, difg=0, scal;
   double diri;
   double eps0, bss2;
   double epsxi, tproj;
@@ -366,11 +366,11 @@ optim_zgcbd (opt_simul simul, int *n, double *binf, double *bsup, double *x,
   double tetaq;
   double tmax, ceps0;
   double xi, sy, epsgcp;
-  double znglib, difrit;
+  double znglib=0, difrit;
   double zngred;
   double zngrit, ys1, amd, amf;
-  int i__,icycl, napav, indrl,imp1,ind,indgc1,indsim,ired;
-  int iresul,iter=0, irit,izag1, napm1,lb, nb,nap, ifp, irl, inp;
+  int i__,icycl, napav, indrl,ind,indgc1=0,indsim,ired;
+  int iter=0, irit, napm1,lb, nb,nap, ifp, irl, inp;
   int napm,np,nred, izag;
 
   /* Parameter adjustments */
@@ -503,7 +503,7 @@ optim_zgcbd (opt_simul simul, int *n, double *binf, double *bsup, double *x,
   nap = 0;
   /* 
    */
-  iresul = 1;
+  /* iresul = 1; */
   optim_proj (n, &binf[1], &bsup[1], &x[1]);
   indsim = 4;
   (*simul) (&indsim, n, &x[1], f, &g[1],optim_data);
@@ -548,7 +548,7 @@ optim_zgcbd (opt_simul simul, int *n, double *binf, double *bsup, double *x,
       ibloc[i__] = 0;
     }
   izag = 3;
-  izag1 = izag;
+  /* izag1 = izag;*/
   nap = 0;
   iter = 0;
   scal = 1.;
@@ -740,7 +740,7 @@ optim_zgcbd (opt_simul simul, int *n, double *binf, double *bsup, double *x,
     }
   /*   ----choix des variables a relacher 
    */
-  imp1 = *imp;
+  /* imp1 = *imp;*/
  L301:
   if (ialg[7] == 1)
     {
@@ -1159,7 +1159,7 @@ static int optim_gcp (int *n, int *index, int *indic, int *np, int *nt, double *
   /* Local variables */
   double beta;
   int iter, i__,itmax;
-  double s0, s1, s2, dg, ro, d2a, eps0, eps1;
+  double s0, s1, s2, dg, ro, d2a;
 
   /* Parameter adjustments */
   --g;
@@ -1182,8 +1182,9 @@ static int optim_gcp (int *n, int *index, int *indic, int *np, int *nt, double *
   --index;
 
   /* Function Body */
-  eps0 = 1e-5;
-  eps1 = 1e-5;
+  /* eps0 = 1e-5;
+     eps1 = 1e-5;
+  */
   i__1 = *n;
   for (i__ = 1; i__ <= i__1; ++i__)
     {

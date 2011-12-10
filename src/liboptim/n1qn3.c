@@ -206,10 +206,10 @@ static int optim_n1qn3a (opt_simul simul, opt_prosca prosca,opt_ct ctonb,opt_ct 
   int i__;
   double t;
   int indic;
-  double preco, gnorm, r1, ff, dk, ps, ys;
+  double preco, gnorm, r1, ff, dk=0, ps, ys;
   int moderl;
   double precos, dk1, hp0, ps2, den;
-  double eps1;
+  double eps1=0;
 
   /* Parameter adjustments */
   --aux;

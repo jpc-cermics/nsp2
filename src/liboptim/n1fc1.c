@@ -253,7 +253,7 @@ static int optim_n1fc1a (opt_simul simul, opt_prosca prosca, int *n, int *mode, 
   int nk, mm;
   double ro, ps;
   int nv, napmax, nt1;
-  double s3n, roa;
+  double s3n, roa=0;
   int nta;
   double fpn, tnc, eps;
   int nki;
@@ -1135,7 +1135,7 @@ static int optim_fprf2 (int *iflag, int *ntot, int *nv, int *io, double *zero,
 
   /* Local variables */
   double gama;
-  int mek01, mekk;
+  int  mekk;
   double deps;
   int incr;
   double teta;
@@ -1782,7 +1782,7 @@ static int optim_fprf2 (int *iflag, int *ntot, int *nv, int *io, double *zero,
       goto L400;
     }
   k1 = k0 + 1;
-  mek01 = (k0 - 1) * *mm1;
+  /* mek01 = (k0 - 1) * *mm1;*/
   mek = k0 * *mm1;
   mekk = mek - *mm1;
   i__2 = *nv;
@@ -1890,15 +1890,15 @@ static int optim_nlis2 (opt_simul simul, opt_prosca prosca, int *n, double *xn, 
   int indic;
   double z__, d1, d3[1], d4[1];
   int i1, i2, i3, i4, i5[1];
-  double z1, fa, fd, fg;
+  double z1, fa, fd=0, fg;
   int mc;
   double ta, fp;
   int indica;
   double td;
-  int indicd;
-  double tg, tc;
+  int indicd=0;
+  double tg, tc=0;
   int mp;
-  double ps, tp, fpa, den, ffn, fpd, fpg;
+  double ps, tp, fpa, den, ffn, fpd=0, fpg;
 
   /* Parameter adjustments */
   --gg;
@@ -2444,7 +2444,7 @@ static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4
   double diam1;
   int i__, j, k, l, n;
   double t, u;
-  int indic, logic, memax, lunit, j0, k1, k0;
+  int indic, logic, memax,  j0, k1, k0;
   double s2, u1, ap;
   int nc;
   double fn;
@@ -2472,7 +2472,7 @@ static int optim_n1fc1o (int *unit, int *job, int *i1, int *i2, int *i3, int *i4
   --i5;
 
   /* Function Body */
-  lunit = *unit;
+  /* lunit = *unit; */
   /* 
    */
   switch (*job)

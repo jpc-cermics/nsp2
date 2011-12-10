@@ -230,7 +230,7 @@ static int optim_zqnbd (int *indqn, opt_simul simul, double *dh, int *n, double 
 
   /* Local variables */
   int ifac;
-  double diff, difg, scal;
+  double diff=0, difg, scal;
   int mode, napm;
   double teta;
   int iter, irit;
@@ -240,7 +240,7 @@ static int optim_zqnbd (int *indqn, opt_simul simul, double *dh, int *n, double 
   int n2fac;
   double scal1;
   int napm1;
-  double teta1, zsig1;
+  double teta1;
   int idfac, i__, j, k;
   double t;
   int nnfac;
@@ -759,7 +759,7 @@ static int optim_zqnbd (int *indqn, opt_simul simul, double *dh, int *n, double 
    *     premiere mise a jour de dh 
    */
   sig = 1. / cof1;
-  zsig1 = 1. / sig1;
+  /* zsig1 = 1. / sig1; */
   mk = 0;
   ir = *nfac;
   epsmc = 1e-9;
