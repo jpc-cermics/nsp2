@@ -865,12 +865,12 @@ property_widget (GObject    *object,
   else if (type == G_TYPE_PARAM_OBJECT)
     {
       GtkWidget *label, *button;
-
+      char *name=g_strdup (spec->name);
       prop_edit = gtk_hbox_new (FALSE, 5);
 
       label = gtk_label_new ("");
       button = gtk_button_new_with_label ("Properties");
-      g_object_set_data (G_OBJECT (button), "property-name", spec->name);
+      g_object_set_data (G_OBJECT (button), "property-name", name);
       g_signal_connect (button, "clicked", 
 			G_CALLBACK (object_properties), 
 			object);

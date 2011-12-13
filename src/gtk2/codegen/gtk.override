@@ -2536,6 +2536,35 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
   return 0;
 }
 %%
+override gtk_tree_model_filter_new 
+
+static int _wrap_gtk_tree_model_filter_new(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {new_opts,t_end};
+  nsp_option opts[] = {
+	{"root",obj,NULLOBJ,-1}, 
+	{NULL,t_end,NULLOBJ,-1} };
+  NspObject *nsp_root = NULL, *nsp_ret;
+  GtkTreePath *root = NULL;
+  GtkTreeModelFilter *ret;
+
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_root) == FAIL) return RET_BUG;
+  if ( nsp_root != NULL ) {
+    if (nspg_boxed_check(nsp_root, GTK_TYPE_TREE_PATH))
+      root = nspg_boxed_get(nsp_root, GtkTreePath);
+    else if (! IsNone(nsp_root)) {
+      Scierror("root should be a GtkTreePath or None");
+      return RET_BUG;
+    }
+  }
+  ret =GTK_TREE_MODEL_FILTER( gtk_tree_model_filter_new(GTK_TREE_MODEL(self->obj), root));
+  nsp_type_gtktreemodelfilter = new_type_gtktreemodelfilter(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtktreemodelfilter))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
 ignore gtk_tree_view_new_with_column
 %%
 override gtk_tree_view_new noargs

@@ -4791,12 +4791,15 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
   BCG *Xgc;
   int rep;
   NspMatrix *M;
-  static double  rect_def[4] = { 0,0,10,10}, ebox_def[6] = {0,1,0,1,0,1};
+  int iscflag[3];
+  static double  rect_def[4] = { 0,0,10,10}; /*  ebox_def[6] = {0,1,0,1,0,1};*/
+  /* 
   static int iflag_def[4] = { 0,0,0,0 };
   static int aint_def[4] = { 0,0,0,0 };
-  int iscflag[3];
   static int flagx_def[3] = { 1,1,1} ;
-  int *iflag = iflag_def,*aint = aint_def, *flagx= flagx_def,num;
+  */
+  /* int *iflag = iflag_def,*/ /* *aint = aint_def,*/ /* *flagx= flagx_def,*/
+  int num;
   double alpha = 35.0,theta = 45.0,  *rect = rect_def /* ,*ebox = ebox_def*/ ;
 
   static char *xtape_Table[] = {"on","clear","replay","replaysc","replayna","off",  NULL };
@@ -4837,7 +4840,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
 	{
 	  iscflag[1]=1;
 	  if ((M= GetRealMatInt(stack,4))  == NULLMAT) return RET_BUG;
-	  CheckLength(NspFname(stack),4,M,4); aint = (int*) M->R;
+	  CheckLength(NspFname(stack),4,M,4); /* aint = (int*) M->R; */
 	}
       if ((Xgc=window_list_search_new(num)) == NULL) return 0;
       /*
@@ -4857,11 +4860,11 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
       if ( rhs >= 4 ) { if (GetScalarDouble(stack,4,&alpha) == FAIL) return RET_BUG;}
       if ( rhs >= 5 ) { 
 	if ((M= GetRealMatInt(stack,5))  == NULLMAT) return RET_BUG;
-	CheckLength(NspFname(stack),5,M,4); iflag = (int*) M->R;
+	CheckLength(NspFname(stack),5,M,4);/* iflag = (int*) M->R; */
       }
       if ( rhs >= 6 ) { 
 	if ((M= GetRealMatInt(stack,6))  == NULLMAT) return RET_BUG;
-	CheckLength(NspFname(stack),6,M,3); flagx = (int*) M->R;
+	CheckLength(NspFname(stack),6,M,3); /* flagx = (int*) M->R; */
       }
       /* 
       if ( rhs >= 7 ) { 
