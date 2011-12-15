@@ -141,7 +141,7 @@ ind = find(era > 1e-9); // detect other solution
 [pp,qq] = cdff("PQ",xe(ind),a(ind),be*ones(size((ind))));  // verify error on p for the other solution
 era(ind) = abs(pp-pe(ind));
 era = max( era );
-if era > 1e-12 then, pause, end
+if era > 1e-14 then, pause, end
 b = cdff("Dfd",pe,qe,xe,ae*v);
 erb = max( abs(b-be)/be );
 if erb > 6e-15 then, pause, end
@@ -1033,7 +1033,7 @@ if ernu > 2e-15 then, pause, end
 
 lambda = cdfchn("Pnonc",pe,1-pe,xe,nue*v);
 erpn =  max(abs(lambda-lambdae)/lambdae);
-if erpn > 1e-15 then, pause, end
+if erpn > 1e-12 then, pause, end
 
 // verify special values
 [p,q] = cdfchn("PQ",%nan,nue,lambdae);

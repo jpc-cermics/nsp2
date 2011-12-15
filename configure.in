@@ -48,6 +48,7 @@ AC_ARG_WITH(pvm,
 AC_ARG_WITH(sndfile,
     [  --without-sndfile       do not compile with sndfile support ])
 
+
 AC_ARG_WITH(portaudio,
     [  --without-portaudio     do not compile with portaudio support ])
 
@@ -851,6 +852,14 @@ if test -n "$zlib_lib"; then
         AC_DEFINE(HAVE_ZLIB, [], [Define if ZLIB is available.])])])
 fi
 
+
+#################
+## glpk 
+#################
+
+builtin(include,config/glpk.m4)
+CHECK_GLPK()
+
 #################
 ## PVM
 #################
@@ -1422,7 +1431,7 @@ fi
 ## libsndfile 
 #################
 
-SNDFILE_LIB= 
+SNDFILE_LIB=
 
 if test "$with_sndfile" != no; then                           
    ## search for sndfile 
@@ -1728,6 +1737,7 @@ echo "Sndfile support........:" $HAVE_SNDFILE
 echo "Portaudio support......:" $HAVE_PORTAUDIO
 echo "Graphviz support.......:" $HAVE_GRAPHVIZ
 echo "Asound support.........:" $HAVE_ASOUND
+echo "Glpk support...........:" $HAVE_GLPK
 echo -n "Cholmod support........:" 
 if test "xx$cholmod_libs" != "xx" ; then echo " yes"; else echo " no"; fi
 echo -n "Umfpack support........:" 
