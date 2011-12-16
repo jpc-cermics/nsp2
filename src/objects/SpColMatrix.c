@@ -45,22 +45,18 @@
 #include "nsp/nsp_lapack.h" /* vector_norm */
 #include "../librand/grand.h"
 
-static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
-/* In file Perm.c **/
-
 extern int C2F(dperm) (double A[],int ind[],int *nv);
 extern int C2F(zperm) (doubleC A[],int ind[],int *nv);
-
 typedef void (*BopLeft) (SpCol *,char,int *,SpCol *,char,int);
 typedef void (*BopBoth) (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
 typedef void (*BopBothNull) (SpCol *,char,int *);
 typedef void (*BopRight) (SpCol *,char,int *,SpCol *,char,int);
 
+static int nsp_spcolmatrix_print_internal(nsp_num_formats *fmt,NspSpColMatrix *m, int indent);
 static NspSpColMatrix *BinaryOp (NspSpColMatrix *,NspSpColMatrix *,BopLeft,BopBoth,
 				 BopRight,int force_real);
 static NspSpColMatrix *BinaryOp_bis(NspSpColMatrix *A, NspSpColMatrix *B, BopLeft BinLeft, BopBoth BinBoth, 
 				    BopBothNull BinBothNull, BopRight BinRight);
-
 static void PlusLeft (SpCol *,char,int *,SpCol *,char,int);
 static void PlusBoth (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
 static void PlusRight (SpCol *,char,int *,SpCol *,char,int);
@@ -76,7 +72,6 @@ static void MultttRight (SpCol *,char,int *,SpCol *,char,int);
 static void DivttLeft (SpCol *,char,int *,SpCol *,char,int);
 static void DivttBoth (SpCol *,char,int *,SpCol *,char,int,SpCol *,char,int);
 static void DivttRight (SpCol *,char,int *,SpCol *,char,int);
-
 
 static int nsp_dichotomic_search(int x,const int val[],int imin,int imax);
 static int nsp_bi_dichotomic_search_i(const int *x,int xpmin,int xpmax,const int *val,int imin,int imax,
@@ -307,11 +302,12 @@ NspSpColMatrix *nsp_spcolmatrix_sparse(char *name, NspMatrix *RC, NspMatrix *Val
 	      goto err;
 
 	  first_k = kf+1;      /* index of the new column */
-	  j = ij[first_k].j;   /* column number of the new column */
+	  if ( first_k < RC->m) 
+	    j = ij[first_k].j;   /* column number of the new column */
 	}
       k++;
     }
-
+  
   /* if the last column is formed of only one element it has not been inserted in the sparse matrix */
   k = RC->m-1;
   if ( first_k == k )
@@ -1431,12 +1427,13 @@ void nsp_spcolmatrix_in_place_assign(NspSpColMatrix *A, int jA, index_vector *in
 
 typedef enum { real_scalar, cmplx_scalar, real_to_real, real_to_cmplx, cmplx_to_cmplx } assign_type;
 
-static void assign_val(SpCol *ColNew, int kCn, char type,  NspMatrix *B, int iB, int jB, Boolean *do_clean, Boolean *first_call)
+static void assign_val(SpCol *ColNew, int kCn, char type,  NspMatrix *B, int iB, int jB, 
+		       Boolean *do_clean, Boolean *first_call)
 {
-  static assign_type assign;
-  static double Bval;
-  static doubleC BvalC;
-  static int base;
+  assign_type assign= real_scalar;
+  double Bval=0.0;
+  doubleC BvalC = {0,0};
+  int base=0;
 
   if ( *first_call )
     {
@@ -1458,12 +1455,7 @@ static void assign_val(SpCol *ColNew, int kCn, char type,  NspMatrix *B, int iB,
       else   
 	{
 	  base = jB*B->m;  /* init base adr of first element of the jB th column of B */
-	  if ( type == 'r' )
-	    assign = real_to_real;
-	  else if ( B->rc_type == 'r' )
-	    assign = real_to_cmplx;
-	  else
-	    assign = cmplx_to_cmplx;
+	  assign = ( type == 'r' ) ?  real_to_real: (( B->rc_type == 'r' ) ?  real_to_cmplx: cmplx_to_cmplx);
 	}
       *first_call = FALSE;
     }
@@ -1510,7 +1502,7 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
   int kC=0, kCn=0, kB=0, size_max = index_r->nval + Col->size, ib = A->rc_type == 'r' ? 1 : 2;
   Boolean first_call = TRUE, do_clean = FALSE;
 	  
-  if ( (ColNew = (SpCol *) MALLOC( sizeof(SpCol*))) == NULL )
+  if ( (ColNew = (SpCol *) MALLOC( sizeof(SpCol))) == NULL )
     return FAIL;
   ColNew->J = NULL; ColNew->R = NULL; 
   if ( (ColNew->J = (int *) MALLOC( size_max*sizeof(int))) == NULL )

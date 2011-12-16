@@ -559,7 +559,7 @@ static int int_spcolmatrix_sparse(Stack stack, int rhs, int opt, int lhs)
   CheckRhs(2,3);
   CheckLhs(1,1);
   if ((RC = GetRealMat(stack,1)) == NULLMAT) return RET_BUG;
-/*   if ((RC = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG; */
+  /*   if ((RC = GetRealMatCopy(stack,1)) == NULLMAT) return RET_BUG; */
   if ( RC->mn == 1) 
     {
       /* special case sparse(m,n) */
