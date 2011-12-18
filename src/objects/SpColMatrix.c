@@ -1430,10 +1430,10 @@ typedef enum { real_scalar, cmplx_scalar, real_to_real, real_to_cmplx, cmplx_to_
 static void assign_val(SpCol *ColNew, int kCn, char type,  NspMatrix *B, int iB, int jB, 
 		       Boolean *do_clean, Boolean *first_call)
 {
-  assign_type assign= real_scalar;
-  double Bval=0.0;
-  doubleC BvalC = {0,0};
-  int base=0;
+  static assign_type assign= real_scalar;
+  static double Bval=0.0;
+  static doubleC BvalC = {0,0};
+  static int base=0;
 
   if ( *first_call )
     {
