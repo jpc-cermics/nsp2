@@ -1426,56 +1426,68 @@ void nsp_spcolmatrix_in_place_assign(NspSpColMatrix *A, int jA, index_vector *in
 }
 
 typedef enum { real_scalar, cmplx_scalar, real_to_real, real_to_cmplx, cmplx_to_cmplx } assign_type;
+typedef struct _nsp_sparse_assign nsp_sparse_assign;
+
+struct _nsp_sparse_assign {
+  Boolean first_call;
+  assign_type assign; 
+  double Bval;
+  doubleC BvalC;
+  int base;
+};
 
 static void assign_val(SpCol *ColNew, int kCn, char type,  NspMatrix *B, int iB, int jB, 
-		       Boolean *do_clean, Boolean *first_call)
+		       Boolean *do_clean, nsp_sparse_assign *asv )
 {
-  static assign_type assign= real_scalar;
-  static double Bval=0.0;
-  static doubleC BvalC = {0,0};
-  static int base=0;
-
-  if ( *first_call )
+  if (asv->first_call )
     {
+      asv->assign= real_scalar;
+      asv->Bval=0.0;
+      asv->BvalC.r =       asv->BvalC.i = 0;
+      asv->base=0;
       if ( B->m == 1 && B->n == 1 ) /* scalar case */
 	{
 	  if (type == 'r')
 	    {
-	      Bval = B->R[0]; assign = real_scalar; if ( Bval == 0.0 ) *do_clean = TRUE;
+	      asv->Bval = B->R[0]; asv->assign = real_scalar; 
+	      if ( asv->Bval == 0.0 ) *do_clean = TRUE;
 	    }
 	  else if ( B->rc_type == 'c' )
 	    {
-	      BvalC = B->C[0]; assign = cmplx_scalar; if ( BvalC.r == 0.0 && BvalC.i == 0.0 ) *do_clean = TRUE;
+	      asv->BvalC = B->C[0]; asv->assign = cmplx_scalar; 
+	      if ( asv->BvalC.r == 0.0 && asv->BvalC.i == 0.0 ) *do_clean = TRUE;
 	    } 
 	  else
 	    {
-	      BvalC.r = B->R[0]; BvalC.i = 0.0; assign = cmplx_scalar; if ( BvalC.r == 0.0 ) *do_clean = TRUE;
+	      asv->BvalC.r = B->R[0]; asv->BvalC.i = 0.0; asv->assign = cmplx_scalar; 
+	      if ( asv->BvalC.r == 0.0 ) *do_clean = TRUE;
 	    }
 	}
       else   
 	{
-	  base = jB*B->m;  /* init base adr of first element of the jB th column of B */
-	  assign = ( type == 'r' ) ?  real_to_real: (( B->rc_type == 'r' ) ?  real_to_cmplx: cmplx_to_cmplx);
+	  asv->base = jB*B->m;  /* init base adr of first element of the jB th column of B */
+	  asv->assign = ( type == 'r' ) ?  real_to_real: 
+	    (( B->rc_type == 'r' ) ?  real_to_cmplx: cmplx_to_cmplx);
 	}
-      *first_call = FALSE;
+      asv->first_call = FALSE;
     }
-
-  switch ( assign )
+  
+  switch ( asv->assign )
     {
     case (real_scalar):
-      ColNew->R[kCn] = Bval; break;
+      ColNew->R[kCn] = asv->Bval; break;
     case (cmplx_scalar):
-      ColNew->C[kCn] = BvalC; break;
+      ColNew->C[kCn] = asv->BvalC; break;
     case (real_to_real):
-      ColNew->R[kCn] = B->R[base + iB];
+      ColNew->R[kCn] = B->R[asv->base + iB];
       if ( ColNew->R[kCn] == 0.0 ) *do_clean = TRUE; 
       break;
     case ( real_to_cmplx ):
-      ColNew->C[kCn].r = B->R[base + iB]; ColNew->C[kCn].i = 0.0;
+      ColNew->C[kCn].r = B->R[asv->base + iB]; ColNew->C[kCn].i = 0.0;
       if ( ColNew->C[kCn].r == 0.0 ) *do_clean = TRUE;
       break;
     case (cmplx_to_cmplx):
-      ColNew->C[kCn] = B->C[base + iB];
+      ColNew->C[kCn] = B->C[asv->base + iB];
       if ( ColNew->C[kCn].r == 0.0  &&  ColNew->C[kCn].i == 0.0 ) *do_clean = TRUE;
       break;
     }
@@ -1500,8 +1512,9 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
 {
   SpCol *Col=A->D[jA], *ColNew=NULL;
   int kC=0, kCn=0, kB=0, size_max = index_r->nval + Col->size, ib = A->rc_type == 'r' ? 1 : 2;
-  Boolean first_call = TRUE, do_clean = FALSE;
-	  
+  Boolean do_clean = FALSE;
+  nsp_sparse_assign asv ={TRUE, real_scalar,0.0,{0,0},0};
+  
   if ( (ColNew = (SpCol *) MALLOC( sizeof(SpCol))) == NULL )
     return FAIL;
   ColNew->J = NULL; ColNew->R = NULL; 
@@ -1525,7 +1538,7 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
       else
 	{
 	  ColNew->J[kCn] = index_r->val[kB];
-	  assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &first_call);
+	  assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &asv);
 	  if ( Col->J[kC] == index_r->val[kB] ) kC++;
 	  kB++;
 	} 
@@ -1545,7 +1558,7 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
   while ( kB < index_r->nval )
     {
       ColNew->J[kCn] = index_r->val[kB];
-      assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &first_call);
+      assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &asv);
       kB++; kCn++;
     }
 
