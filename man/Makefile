@@ -13,6 +13,12 @@ clean:: distclean
 
 DESTDIR=$(prefix)/lib/nsp
 
-install::
+xxinstall::
 	@$(TOP)/config/install-sh -d $(DESTDIR)/man/html/generated/
 	@$(TOP)/config/install-sh html/generated/*  $(DESTDIR)/man/html/generated/
+
+install::
+	@echo "Installing manual pages"
+	@$(TOP)/config/install-sh -d $(DESTDIR)/man/html/generated/
+	@tar   cf - --exclude CVS html/generated  | ( cd $(DESTDIR)/man ; tar xfp - )
+
