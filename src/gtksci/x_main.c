@@ -28,7 +28,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-#include <signal.h>
+#include <locale.h>
 #include "nsp/version.h"
 #include "nsp/machine.h"
 #ifdef WITH_GTKGLEXT
@@ -73,7 +73,13 @@ void nsp_gtk_init(int argc, char **argv,int no_window,int use_textview)
       /* we are using a gtk widget app */
       nsp_in_gtk_window();
       /* initialise gtk */
+#ifdef __APPLE__ 
+      /* avoid a gtk warning about locale */
+      gtk_disable_setlocale();
+      setlocale(LC_ALL,"");
+#else 
       gtk_set_locale();
+#endif 
       gtk_init(&argc,&argv);
       /* 
       g_object_set (gtk_settings_get_default (), 
@@ -146,7 +152,13 @@ void start_sci_gtk(void)
   char **argv = NULL; 
   if ( nsp_check_events_activated() == TRUE ) return;
   /* initialise gtk */
+#ifdef __APPLE__ 
+  /* avoid a gtk warning about locale */
+  gtk_disable_setlocale();
+  setlocale(LC_ALL,"");
+#else 
   gtk_set_locale();
+#endif 
   gtk_init(&argc,&argv);
   nsp_gtk_gl_init (&argc, &argv);
   nsp_activate_gtk_events_check();

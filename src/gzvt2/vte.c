@@ -22,6 +22,7 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <locale.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <glib-object.h>
@@ -654,6 +655,12 @@ main(int argc, char **argv)
       break;
     }
   }
+
+#ifdef __APPLE__ 
+  /* avoid a gtk warning about locale */
+  gtk_disable_setlocale();
+  setlocale(LC_ALL,"");
+#endif 
 
   gtk_init(&argc, &argv);
   gdk_window_set_debug_updates(debug);
