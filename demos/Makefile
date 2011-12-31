@@ -33,11 +33,18 @@ clean::
 
 DESTDIR=$(prefix)/lib/nsp
 
-install::
+xxinstall::
 	@echo "installing demos files"
 	@find . \( -type f  \) \
 		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/demos/{} \; \
 		-exec echo -n "." \;
 	@echo ""
+
+install::
+	@echo "installing demos files"
+	@$(TOP)/config/install-sh -d $(DESTDIR)/demos
+	@tar   cf - --exclude CVS .  | ( cd $(DESTDIR)/demos ; tar xfp - )
+
+
 
 
