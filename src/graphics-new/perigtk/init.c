@@ -400,14 +400,16 @@ static void gtk_nsp_graphic_window(int is_top, BCG *dd, char *dsp,GtkWidget *win
 		     target_table, n_targets ,GDK_ACTION_COPY
 		     | GDK_ACTION_MOVE |GDK_ACTION_LINK);
 
+  g_signal_connect_after(GTK_OBJECT(dd->private->drawing), "realize",
+			 G_CALLBACK(realize_event), (gpointer) dd);
+
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "motion-notify-event",
 		   G_CALLBACK(locator_button_motion), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-press-event",
 		   G_CALLBACK(locator_button_press), (gpointer) dd);
   g_signal_connect(GTK_OBJECT(dd->private->drawing), "button-release-event",
 		   G_CALLBACK(locator_button_release), (gpointer) dd);
-  g_signal_connect(GTK_OBJECT(dd->private->drawing), "realize",
-		   G_CALLBACK(realize_event), (gpointer) dd);
+
 
   /* GDK_POINTER_MOTION_HINT_MASK is a special mask which is used
    * to reduce the number of GDK_MOTION_NOTIFY events received.

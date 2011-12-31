@@ -1603,6 +1603,8 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 #endif
   realize_event_ogl(Xgc);
 
+  gdk_gl_drawable_gl_end (Xgc->private->gldrawable);
+
   return FALSE;
 }
 
@@ -1851,7 +1853,10 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
       dd->private->draw = TRUE;
       rect = NULL;
     }
-  if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
+  else 
+    {
+      if (!gdk_gl_drawable_gl_begin (dd->private->gldrawable, dd->private->glcontext)) return FALSE;
+    }
   
   /* with this driver we have to draw all times */
   
