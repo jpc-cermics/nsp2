@@ -1,12 +1,12 @@
 SHELL = /bin/sh
 TOP=..
+
 include $(TOP)/Path.incl
 include $(TOP)/Makefile.incl
 
-CFLAGS = $(CC_OPTIONS) 
+SUBDIRS =  scicos-2.7
+SUBDIRS_CLEAN =scicos-2.7
 
-SUBDIRS =  graphics miscellaneous system statistics linalg calpol
-SUBDIRS_CLEAN =  graphics miscellaneous system statistics linalg calpol
 
 all:: 
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
@@ -34,20 +34,8 @@ clean::
 
 DESTDIR=$(prefix)/lib/nsp
 
-xxinstall::
-	@echo "installing function files"
-	@find . \( \( -name '*.sci' -o -name '*.bin' -o -name 'Mak*' -o -name '*.cos' -o -name '*.png' \) -a -type f  \) \
-		-exec $(TOP)/config/install-sh  $(opt_DATA) {} $(DESTDIR)/macros/{} \; \
-		-exec echo -n "." \;
-	@echo ""
-
 install::
-	@echo "installing macros files"
-	@$(TOP)/config/install-sh -d $(DESTDIR)/macros
-	@tar   cf - --exclude CVS . | ( cd $(DESTDIR)/macros ; tar xfp - )
-
-
-
-
-
+	@echo "installing toolboxes"
+	@$(TOP)/config/install-sh -d $(DESTDIR)/toolboxes
+	@tar   cf - --exclude CVS .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
 
