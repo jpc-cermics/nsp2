@@ -198,13 +198,13 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	  /* here we are not in an xclick or xgetmouse 
 	   * thus we have to store events in queue.
 	   */
-	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
+	  gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state);
 	  nsp_gwin_event ev={ gc->CurWindow,x, y,event->keyval ,event->state,0,1};
 	  nsp_enqueue(&gc->queue,&ev);
 	}
       else
 	{
-	  gdk_window_get_pointer (gc->private->drawing->window, &x, &y, &state);
+	  gdk_window_get_pointer (GS_GET_WINDOW(gc->private->drawing), &x, &y, &state);
 	  nsp_event_info.x=x ; nsp_event_info.y=y;
 	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; 
 	  nsp_event_info.button = event->keyval;
@@ -299,7 +299,7 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
 	  if ( bcg  != NULL)
 	    {
 	      cursor =  ( flag == 0 ) ? bcg->private->ccursor : bcg->private->gcursor;
-	      gdk_window_set_cursor(bcg->private->drawing->window,cursor);
+	      gdk_window_set_cursor(GS_GET_WINDOW(bcg->private->drawing),cursor);
 	    }
 	}
     }
@@ -307,7 +307,7 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
     {
       if ( Xgc != (BCG *) 0 && Xgc->private != NULL &&  Xgc->private->drawing != NULL ) {
 	cursor =  ( flag == 0 ) ? Xgc->private->ccursor : Xgc->private->gcursor;
-	gdk_window_set_cursor (Xgc->private->drawing->window,cursor);
+	gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),cursor);
       }
     }
 }
@@ -643,7 +643,7 @@ static void delete_window(BCG *dd,int intnum)
       if ( winxgc->private->window != NULL) 
 	{
 #if defined(PERIGL) && !defined(PERIGLGTK) 
-	  gdk_window_unset_gl_capability(winxgc->private->drawing->window);
+	  gdk_window_unset_gl_capability(GS_GET_WINDOW(winxgc->private->drawing));
 #endif 
 	  gtk_widget_destroy(winxgc->private->window);
 	}
@@ -836,7 +836,7 @@ target_drag_data_received  (GtkWidget          *widget,
 	       *  ids[0],ids[1],winnum);
 	       */
 	      Xgc = window_list_search(winnum);
-	      gdk_window_get_pointer (Xgc->private->drawing->window, &x1, &y1, &state);
+	      gdk_window_get_pointer (GS_GET_WINDOW(Xgc->private->drawing), &x1, &y1, &state);
 	      if ( nsp_new_graphics() == TRUE) 
 		nsp_get_point_axes(Xgc,x1,y1,pt);
 	      else

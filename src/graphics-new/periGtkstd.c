@@ -42,6 +42,13 @@
 #include "nsp/figure.h"
 #include <nsp/gtk/gtkwindow.h>
 
+
+#ifdef GSEAL_ENABLE 
+#define GS_GET_WINDOW(x) gtk_widget_get_window(x) 
+#else 
+#define GS_GET_WINDOW(x) (x)->window
+#endif 
+
 static void nsp_get_color_rgb(BCG *Xgc,int color,double *rgb, NspMatrix *colors);
 
 #ifdef PERIGTK
@@ -83,10 +90,17 @@ static void invalidate(BCG *Xgc,void *rect)
   if ( Xgc->private->drawing == NULL) return;
   if ( rect == NULL ) 
     {
-      gdk_window_invalidate_rect(Xgc->private->drawing->window,
+#ifdef GSEAL_ENABLE 
+      gtk_widget_get_allocation (Xgc->private->drawing,&Xgc->private->invalidated);
+      gdk_window_invalidate_rect(GS_GET_WINDOW(Xgc->private->drawing),
+				 &Xgc->private->invalidated,
+				 FALSE);
+#else 
+      gdk_window_invalidate_rect(GS_GET_WINDOW(Xgc->private->drawing),
 				 &Xgc->private->drawing->allocation,
 				 FALSE);
       Xgc->private->invalidated = Xgc->private->drawing->allocation;
+#endif 
     }
   else
     {
@@ -104,7 +118,7 @@ static void invalidate(BCG *Xgc,void *rect)
 	{
 	  Xgc->private->invalidated = *grect;
 	}
-      gdk_window_invalidate_rect(Xgc->private->drawing->window,rect, FALSE);
+      gdk_window_invalidate_rect(GS_GET_WINDOW(Xgc->private->drawing),rect, FALSE);
     }
 }
 
@@ -118,7 +132,7 @@ static void invalidate(BCG *Xgc,void *rect)
 static void process_updates(BCG *Xgc)
 {
   if ( Xgc->private->drawing == NULL) return;
-  gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+  gdk_window_process_updates (GS_GET_WINDOW(Xgc->private->drawing), FALSE);
 }
 
 /*---------------------------------------------------------
@@ -160,7 +174,7 @@ static void xset_show(BCG *Xgc)
       if ( Xgc->private->gldrawable != NULL 
 	   &&  GDK_IS_GL_DRAWABLE (Xgc->private->gldrawable))
 	gdk_gl_drawable_wait_gl(Xgc->private->gldrawable);
-      gdk_draw_drawable(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(GS_GET_WINDOW(Xgc->private->drawing),Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
       gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
@@ -171,7 +185,7 @@ static void xset_show(BCG *Xgc)
       /* we copy the extra_pixmap to the window and to the backing store pixmap 
        * except for perigl which draw without a Xgc->private->pixmap.
        */
-      gdk_draw_drawable(Xgc->private->drawing->window,Xgc->private->stdgc, Xgc->private->extra_pixmap,
+      gdk_draw_drawable(GS_GET_WINDOW(Xgc->private->drawing),Xgc->private->stdgc, Xgc->private->extra_pixmap,
 		      0,0,0,0,Xgc->CWindowWidth, Xgc->CWindowHeight);
 #ifndef PERIGK
       gdk_draw_drawable(Xgc->private->pixmap, Xgc->private->stdgc, Xgc->private->extra_pixmap,
@@ -184,7 +198,7 @@ static void xset_show(BCG *Xgc)
       /* if we do not have an extra pixmap 
        * we just make a gdk_window_process_updates
        */
-      gdk_window_process_updates (Xgc->private->drawing->window, FALSE);
+      gdk_window_process_updates (GS_GET_WINDOW(Xgc->private->drawing), FALSE);
     }
 }
 
@@ -367,9 +381,9 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       /* here drawing and scrolled move together */
       gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
       gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
-      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
       /* resize the graphic window */
-      gdk_window_resize(Xgc->private->drawing->window,x,y);
+      gdk_window_resize(GS_GET_WINDOW(Xgc->private->drawing),x,y);
       /* resize the main window at init time */
       /* gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));*/
       /* resize the scrolled */
@@ -392,10 +406,10 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       GdkGeometry geometry;
       GdkWindowHints geometry_mask;
       gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
-      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
       if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) schrink = TRUE;
       /* resize the graphic window */
-      gdk_window_resize(Xgc->private->drawing->window,x,y);
+      gdk_window_resize(GS_GET_WINDOW(Xgc->private->drawing),x,y);
       /* want the scrolled window to be aware */
       gtk_widget_set_size_request(Xgc->private->drawing, x,y);
       /* Limit the scolled window size  */
@@ -465,7 +479,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
     {
       int w,h,pw,ph, xoff, yoff;
       gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
-      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
       xoff = Max((pw-w),0); 
       yoff= Max((ph-h),0);
       if ( (Xgc->CWindowWidth < x - xoff  ) || (Xgc->CWindowHeight <  y - yoff )) 
@@ -475,7 +489,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 	   * gdk_window_resize is used the scroll bars of the scrolled window 
 	   * are not properly updated.
 	   */
-	  /*  gdk_window_resize(Xgc->private->drawing->window,x-xoff,y-yoff);  
+	  /*  gdk_window_resize(GS_GET_WINDOW(Xgc->private->drawing),x-xoff,y-yoff);  
 	   */
 	  gtk_widget_set_size_request (Xgc->private->drawing,x-xoff,y-yoff);
 
@@ -984,7 +998,7 @@ static void xset_wresize(BCG *Xgc,int num)
     {
       int w,h;
       if ( Xgc->private->drawing == NULL ) return;
-      gdk_drawable_get_size (Xgc->private->drawing->window,&w,&h);
+      gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
       Xgc->CurResizeStatus = num1 ;
       xset_windowdim(Xgc,w,h);
     }
@@ -1517,12 +1531,12 @@ static gint realize_event_common(GtkWidget *widget, gpointer data)
   g_return_val_if_fail(GTK_IS_DRAWING_AREA(dd->private->drawing), FALSE);
   
   /* create gc */
-  dd->private->stdgc = gdk_gc_new(dd->private->drawing->window);
+  dd->private->stdgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing));
   gdk_gc_set_rgb_bg_color(dd->private->stdgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->stdgc,&white);
   /* standard gc : for private->pixmap copies */
   /* this gc could be shared by all windows */
-  dd->private->wgc = gdk_gc_new(dd->private->drawing->window);
+  dd->private->wgc = gdk_gc_new(GS_GET_WINDOW(dd->private->drawing));
   gdk_gc_set_rgb_bg_color(dd->private->wgc,&black);
   gdk_gc_set_rgb_fg_color(dd->private->wgc,&white);
 
@@ -1530,7 +1544,7 @@ static gint realize_event_common(GtkWidget *widget, gpointer data)
   dd->private->gcursor = gdk_cursor_new(GDK_CROSSHAIR);
   dd->private->ccursor = gdk_cursor_new(GDK_TOP_LEFT_ARROW);
   dd->private->extra_cursor = NULL;
-  gdk_window_set_cursor(dd->private->drawing->window, dd->private->ccursor);
+  gdk_window_set_cursor(GS_GET_WINDOW(dd->private->drawing), dd->private->ccursor);
   return TRUE;
 }
 
@@ -1555,7 +1569,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   if ( dd->private->pixmap == NULL)
     {
-      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
     }
@@ -1617,7 +1631,7 @@ static gint realize_event(GtkWidget *widget, gpointer data)
 
   if ( dd->private->pixmap == NULL)
     {
-      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
     }
@@ -1708,7 +1722,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
-	      gdk_drawable_get_size (dd->private->drawing->window,&w,&h);
+	      gdk_drawable_get_size (GS_GET_WINDOW(dd->private->drawing),&w,&h);
 	      /* just to give the scrollbar the possibility to be updated */
 	      gtk_widget_set_size_request (dd->private->drawing,w,h);
 	    }
@@ -1754,7 +1768,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
        */
       dd->private->resize = 0;
       if ( dd->private->pixmap) g_object_unref(G_OBJECT(dd->private->pixmap));
-      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
       /* update drawable */
@@ -1786,19 +1800,19 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   
   if (event  != NULL) 
     {
-      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
+      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc, 
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       /* debug the drawing rectangle which is updated                
-      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
 			 event->area.x, event->area.y, 
 			 event->area.width, event->area.height);
       */
     }
   else 
     {
-      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, 
+      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc, 
 			dd->private->pixmap,
 			0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
@@ -1806,7 +1820,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
     {
-      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
 			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
     }
   
@@ -1932,7 +1946,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	  if ( dd->CurPixmapStatus == 0 ) dd->private->gldrawable=NULL;
 	}
       /* allocate a new pixmap and set its open Gl capabilities */
-      dd->private->pixmap = gdk_pixmap_new(dd->private->drawing->window,
+      dd->private->pixmap = gdk_pixmap_new(GS_GET_WINDOW(dd->private->drawing),
 					   dd->CWindowWidth, dd->CWindowHeight,
 					   -1);
       nsp_set_gldrawable(dd,dd->private->pixmap);
@@ -1970,23 +1984,23 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
   
   if (event  != NULL) 
     {
-      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,
+      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
       /* debug the drawing rectangle which is updated              */
-      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
 			 event->area.x, event->area.y, 
 			 event->area.width, event->area.height);
     }
   else 
     {
-      gdk_draw_drawable(dd->private->drawing->window, dd->private->stdgc, dd->private->pixmap,0,0,0,0,
+      gdk_draw_drawable(GS_GET_WINDOW(dd->private->drawing), dd->private->stdgc, dd->private->pixmap,0,0,0,0,
 			dd->CWindowWidth, dd->CWindowHeight);
     }
   /* if a zrect exists then add it on graphics  */
   if ( dd->zrect[2] != 0 && dd->zrect[3] != 0) 
     {
-      gdk_draw_rectangle(dd->private->drawing->window,dd->private->wgc,FALSE,
+      gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
 			 dd->zrect[0],dd->zrect[1],dd->zrect[2],dd->zrect[3]);
       gdk_gl_drawable_wait_gdk(dd->private->gldrawable);
     }
@@ -2082,7 +2096,7 @@ void nsp_set_cursor(BCG *Xgc,int id)
       if (Xgc->private->extra_cursor != NULL)
 	gdk_cursor_unref (Xgc->private->extra_cursor);
       Xgc->private->extra_cursor = NULL;
-      gdk_window_set_cursor (Xgc->private->drawing->window,
+      gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),
 			     Xgc->private->ccursor);
     }
   else 
@@ -2093,7 +2107,7 @@ void nsp_set_cursor(BCG *Xgc,int id)
 	  if (Xgc->private->extra_cursor != NULL)
 	    gdk_cursor_unref (Xgc->private->extra_cursor);
 	  Xgc->private->extra_cursor = cursor;
-	  gdk_window_set_cursor (Xgc->private->drawing->window,
+	  gdk_window_set_cursor (GS_GET_WINDOW(Xgc->private->drawing),
 				 cursor);
 	}
     }
