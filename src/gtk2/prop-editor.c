@@ -153,17 +153,23 @@ static void
 int_modified (GtkAdjustment *adj, gpointer data)
 {
   ObjectProperty *p = data;
+#ifdef GSEAL_ENABLE
+  int value = (int) gtk_adjustment_get_value (adj);
+#else 
+  int value = (int) adj->value;
+#endif
 
   if (is_child_property (p->spec))
     {
       GtkWidget *widget = GTK_WIDGET (p->obj);
       GtkWidget *parent = gtk_widget_get_parent (widget);
-
       gtk_container_child_set (GTK_CONTAINER (parent), 
-			       widget, p->spec->name, (int) adj->value, NULL);
+			       widget, p->spec->name,value,NULL);
     }
   else
-    g_object_set (p->obj, p->spec->name, (int) adj->value, NULL);
+    {
+      g_object_set (p->obj, p->spec->name, value, NULL);
+    }
 }
 
 static void
@@ -186,18 +192,20 @@ int_changed (GObject *object, GParamSpec *pspec, gpointer data)
 {
   GtkAdjustment *adj = GTK_ADJUSTMENT (data);
   GValue val = { 0, };  
-
+#ifdef GSEAL_ENABLE
+  int value = (int) gtk_adjustment_get_value (adj);
+#else 
+  int value = (int) adj->value;
+#endif
+  
   g_value_init (&val, G_TYPE_INT);
-
   get_property_value (object, pspec, &val);
-
-  if (g_value_get_int (&val) != (int)adj->value)
+  if (g_value_get_int (&val) != value )
     {
       block_controller (G_OBJECT (adj));
       gtk_adjustment_set_value (adj, g_value_get_int (&val));
       unblock_controller (G_OBJECT (adj));
     }
-
   g_value_unset (&val);
 }
 
@@ -205,17 +213,21 @@ static void
 uint_modified (GtkAdjustment *adj, gpointer data)
 {
   ObjectProperty *p = data;
-
+#ifdef GSEAL_ENABLE
+  guint value = (guint) gtk_adjustment_get_value (adj);
+#else 
+  guint value = (guint) adj->value;
+#endif
   if (is_child_property (p->spec))
     {
       GtkWidget *widget = GTK_WIDGET (p->obj);
       GtkWidget *parent = gtk_widget_get_parent (widget);
 
       gtk_container_child_set (GTK_CONTAINER (parent), 
-			       widget, p->spec->name, (guint) adj->value, NULL);
+			       widget, p->spec->name, value , NULL);
     }
   else
-    g_object_set (p->obj, p->spec->name, (guint) adj->value, NULL);
+    g_object_set (p->obj, p->spec->name, value, NULL);
 }
 
 static void
@@ -224,16 +236,21 @@ uint_changed (GObject *object, GParamSpec *pspec, gpointer data)
   GtkAdjustment *adj = GTK_ADJUSTMENT (data);
   GValue val = { 0, };  
 
+#ifdef GSEAL_ENABLE
+  guint value = (guint) gtk_adjustment_get_value (adj);
+#else 
+  guint value = (guint) adj->value;
+#endif
+
   g_value_init (&val, G_TYPE_UINT);
   get_property_value (object, pspec, &val);
 
-  if (g_value_get_uint (&val) != (guint)adj->value)
+  if (g_value_get_uint (&val) != value)
     {
       block_controller (G_OBJECT (adj));
       gtk_adjustment_set_value (adj, g_value_get_uint (&val));
       unblock_controller (G_OBJECT (adj));
     }
-
   g_value_unset (&val);
 }
 
@@ -241,6 +258,11 @@ static void
 float_modified (GtkAdjustment *adj, gpointer data)
 {
   ObjectProperty *p = data;
+#ifdef GSEAL_ENABLE
+  float value = (float) gtk_adjustment_get_value (adj);
+#else 
+  float value = (float) adj->value;
+#endif
 
   if (is_child_property (p->spec))
     {
@@ -248,10 +270,10 @@ float_modified (GtkAdjustment *adj, gpointer data)
       GtkWidget *parent = gtk_widget_get_parent (widget);
 
       gtk_container_child_set (GTK_CONTAINER (parent), 
-			       widget, p->spec->name, (float) adj->value, NULL);
+			       widget, p->spec->name, value, NULL);
     }
   else
-    g_object_set (p->obj, p->spec->name, (float) adj->value, NULL);
+    g_object_set (p->obj, p->spec->name, value, NULL);
 }
 
 static void
@@ -259,11 +281,15 @@ float_changed (GObject *object, GParamSpec *pspec, gpointer data)
 {
   GtkAdjustment *adj = GTK_ADJUSTMENT (data);
   GValue val = { 0, };  
-
+#ifdef GSEAL_ENABLE
+  float value = (float) gtk_adjustment_get_value (adj);
+#else 
+  float value = (float) adj->value;
+#endif
   g_value_init (&val, G_TYPE_FLOAT);
   get_property_value (object, pspec, &val);
 
-  if (g_value_get_float (&val) != (float) adj->value)
+  if (g_value_get_float (&val) != value)
     {
       block_controller (G_OBJECT (adj));
       gtk_adjustment_set_value (adj, g_value_get_float (&val));
@@ -277,17 +303,21 @@ static void
 double_modified (GtkAdjustment *adj, gpointer data)
 {
   ObjectProperty *p = data;
-
+#ifdef GSEAL_ENABLE
+  double value = (double) gtk_adjustment_get_value (adj);
+#else 
+  double value = (double) adj->value;
+#endif
   if (is_child_property (p->spec))
     {
       GtkWidget *widget = GTK_WIDGET (p->obj);
       GtkWidget *parent = gtk_widget_get_parent (widget);
 
       gtk_container_child_set (GTK_CONTAINER (parent), 
-			       widget, p->spec->name, (double) adj->value, NULL);
+			       widget, p->spec->name, value, NULL);
     }
   else
-    g_object_set (p->obj, p->spec->name, (double) adj->value, NULL);
+    g_object_set (p->obj, p->spec->name, value, NULL);
 }
 
 static void
@@ -295,11 +325,17 @@ double_changed (GObject *object, GParamSpec *pspec, gpointer data)
 {
   GtkAdjustment *adj = GTK_ADJUSTMENT (data);
   GValue val = { 0, };  
+#ifdef GSEAL_ENABLE
+  double value = (double) gtk_adjustment_get_value (adj);
+#else 
+  double value = (double) adj->value;
+#endif
+
 
   g_value_init (&val, G_TYPE_DOUBLE);
   get_property_value (object, pspec, &val);
 
-  if (g_value_get_double (&val) != adj->value)
+  if (g_value_get_double (&val) != value)
     {
       block_controller (G_OBJECT (adj));
       gtk_adjustment_set_value (adj, g_value_get_double (&val));
@@ -359,17 +395,21 @@ static void
 bool_modified (GtkToggleButton *tb, gpointer data)
 {
   ObjectProperty *p = data;
-
+#ifdef GSEAL_ENABLE
+  int active = gtk_toggle_button_get_active (tb);
+#else 
+  int active =  (int) tb->active;
+#endif
   if (is_child_property (p->spec))
     {
       GtkWidget *widget = GTK_WIDGET (p->obj);
       GtkWidget *parent = gtk_widget_get_parent (widget);
 
       gtk_container_child_set (GTK_CONTAINER (parent), 
-			       widget, p->spec->name, (int) tb->active, NULL);
+			       widget, p->spec->name, active, NULL);
     }
   else
-    g_object_set (p->obj, p->spec->name, (int) tb->active, NULL);
+    g_object_set (p->obj, p->spec->name, active, NULL);
 }
 
 static void
@@ -377,20 +417,30 @@ bool_changed (GObject *object, GParamSpec *pspec, gpointer data)
 {
   GtkToggleButton *tb = GTK_TOGGLE_BUTTON (data);
   GValue val = { 0, };  
-  
+
+#ifdef GSEAL_ENABLE
+  int active = gtk_toggle_button_get_active (tb);
+#else 
+  int active =  (int) tb->active;
+#endif
+
   g_value_init (&val, G_TYPE_BOOLEAN);
   get_property_value (object, pspec, &val);
 
-  if (g_value_get_boolean (&val) != tb->active)
+  if (g_value_get_boolean (&val) != active)
     {
       block_controller (G_OBJECT (tb));
       gtk_toggle_button_set_active (tb, g_value_get_boolean (&val));
       unblock_controller (G_OBJECT (tb));
     }
 
-  gtk_label_set_text (GTK_LABEL (GTK_BIN (tb)->child), g_value_get_boolean (&val) ?
+#ifdef GSEAL_ENABLE
+  gtk_label_set_text (GTK_LABEL(gtk_bin_get_child(GTK_BIN(tb))), g_value_get_boolean (&val) ?
                       "TRUE" : "FALSE");
-  
+#else 
+  gtk_label_set_text (GTK_LABEL(GTK_BIN (tb)->child), g_value_get_boolean (&val) ?
+                      "TRUE" : "FALSE");
+#endif
   g_value_unset (&val);
 }
 

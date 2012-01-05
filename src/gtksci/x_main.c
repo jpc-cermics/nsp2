@@ -308,7 +308,12 @@ static void nsp_create_gtk_toplevel(gint argc, gchar *argv[])
   /* I transmit the socket Id via shared memory  */ 
   xid = (guint32 *) (shm+1); 
 #ifdef  GDK_WINDOW_XWINDOW
+#ifdef GSEAL_ENABLE
+  *xid = GDK_WINDOW_XWINDOW(gtk_socket_get_plug_window(GTK_SOCKET(socket_button)));
+#else 
   *xid = GDK_WINDOW_XWINDOW(socket_button->window); 
+#endif 
+
 #else 
   *xid = socket_button->window;
 #endif

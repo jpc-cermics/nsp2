@@ -44,7 +44,15 @@ void create_nsp_about_old(void)
 					GTK_STOCK_CLOSE, GTK_RESPONSE_ACCEPT,
 					NULL);
   gtk_widget_realize(window);
+#ifdef GSEAL_ENABLE
+  box1 = gtk_dialog_get_content_area(GTK_DIALOG(window));
+#else 
   box1 = GTK_DIALOG(window)->vbox;
+#endif 
+  
+  gtk_dialog_get_window(window);
+
+
   pixmap = gdk_pixmap_create_from_xpm_d (window->window, &mask, NULL,
 					 (gchar **) nsp_logo_xpm);
   pixmapwid =gtk_image_new_from_pixmap(pixmap, mask);
