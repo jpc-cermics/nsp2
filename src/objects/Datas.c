@@ -131,6 +131,13 @@ int nsp_init_frames(int argc, char **argv)
   if ((O =nsp_create_false_object("%fftw"))==NULLOBJ) return FAIL;
 #endif 
   nsp_frame_replace_object(O,-1);
+  /* flag to detect if we have glpk */
+#ifdef WITH_GLPK
+  if ((O =nsp_create_true_object("%glpk"))==NULLOBJ) return FAIL;
+#else
+  if ((O =nsp_create_false_object("%glpk"))==NULLOBJ) return FAIL;
+#endif
+  nsp_frame_replace_object(O,-1);
   /* flag to detect if we have umfpack */
 #ifdef WITH_UMFPACK
   if ((O =nsp_create_true_object("%umfpack"))==NULLOBJ) return FAIL;

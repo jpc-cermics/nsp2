@@ -124,6 +124,10 @@ extern  sci_interface  Paudio_Interf ;extern  interface_info  Paudio_Interf_Info
 extern  sci_interface umfpack_Interf ;extern  interface_info  umfpack_Interf_Info ;
 #endif 
 
+#ifdef WITH_GLPK 
+extern  sci_interface liblinprog_Interf ;extern  interface_info  liblinprog_Interf_Info ;
+#endif 
+
 /* #define WITH_SQLITE3  */
 
 #ifdef WITH_SQLITE3 
@@ -135,7 +139,7 @@ extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
 extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
 #endif
 
-/* #define WITH_LIBAMOS */
+#define WITH_LIBAMOS
 #ifdef WITH_LIBAMOS
 extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info ;
 #endif 
@@ -255,6 +259,9 @@ InterfTab Interfaces[]={
   {BHash_Interf , BHash_Interf_Info},
 #ifdef WITH_UMFPACK
   {umfpack_Interf , umfpack_Interf_Info},
+#endif
+#ifdef WITH_GLPK
+  {liblinprog_Interf , liblinprog_Interf_Info},
 #endif
 #ifdef WITH_PREMIA
   {premiamodel_Interf , premiamodel_Interf_Info},
