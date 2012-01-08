@@ -12,7 +12,7 @@ AC_DEFUN([CHECK_GLPK],
     AS_HELP_STRING([--with-glpk-libdir=DIR], [search for GLPK libraries in DIR]),
 	              [], [with_glpk_libdir=no])
 
-  GLPK_LIB=libglpk
+  GLPK_LIB=
   HAVE_GLPK="no"
 
   if test "$with_glpk" != no; then
@@ -53,10 +53,11 @@ AC_DEFUN([CHECK_GLPK],
        AC_DEFINE([WITH_GLPK], [], [Define to 1 if you have GLPK.])
        HAVE_GLPK="yes"
        AC_MSG_RESULT([yes])
+       GLPK_LIB=libglpk
     else
        GLPK_CFLAGS=""
        GLPK_LIBS=""
-       GLPK_LIB=libglpk
+       GLPK_LIB=
        AC_MSG_RESULT([no])
     fi
   fi 
