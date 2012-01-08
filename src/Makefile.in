@@ -5,14 +5,13 @@ include ../Makefile.incl
 SCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics-old graphics-new menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
-	libminpack liboptim libscipy-nsp @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@
+	libminpack liboptim @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@ 
 
 ALLSCIDIRS = zcalelm objects interp functions gtk2 \
 	system graphics-old graphics-new  menus gtksci gzvt2 modules gobjects types-test \
 	librand libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
 	libblas liblapack liboptim libscipy-nsp libxdr libsndfile libumfpack libpvm libminpack libportaudio \
-	libgraphviz libglpk
-
+	libgraphviz libglpk 
 
 
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS) 
