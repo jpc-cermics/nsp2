@@ -80,7 +80,8 @@ TESTS= \
 	polynoms.dia \
 	errcatch.dia \
 	cdfxxx.dia \
-	spmf.dia
+	spmf.dia \
+	linprog.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
