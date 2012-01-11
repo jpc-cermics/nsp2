@@ -1,0 +1,100 @@
+% -*- mode: latex -*-
+
+\mansection{linprog}
+\begin{mandesc}
+  \short{linprog}{linear programming and mip solver}
+\end{mandesc}
+
+% -- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+[xopt,fopt,flag] = linprog(c, A, b, Ae, be)
+[xopt,fopt,flag[,extras]] = linprog(c, A, b, Ae, be, sense="min"|"max",lb=, ub=, binprog=%t|%f,
+                                    intprog=%t|%f, var_type=, basis_info=, heur_sol=,
+                                    solver_options=, tm_lim=, verb=, frq_out=, solver="smplx"|"ipt")
+\end{verbatim}
+\end{calling_sequence}
+% -- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{c}: real vector (says of length $n$) defining the cost function
+    \vname{A,b}: real $m_i \times n$ matrix and vector of size $m_i$ defining inequality constraints
+    \vname{Ae,be}: real $m_e \times n$ matrix and vector  of size $m_e$ defining equality constraints
+    \vname{sense=}: optional, defines the optimisation direction (default is "min")
+    \vname{lb=, ub=}: optional, vectors of size $n$ defining lower and upper bounds of 
+                      variables (defaults: $0$ for lb and $\infty$ for ub)
+    \vname{binprog=}: optional, should be true if all (structural) variables are binary (in this case
+                      lb and ub should be provided).
+    \vname{intprog=}: optional,  should be true if all variables are integers.
+    
+    \vname{var_type=}: optional, should be provided only in case you have both continuous (real) 
+                       and integer variables. The corresponding argument should be an array of
+                       $n$ strings with strings "C" or  "I".
+    \vname{basis_info=}: optional, it is an hast table which lets to define the initial basis.
+    \vname{heur_sol=}: optional (only for mips) vector of length $n$ to provide a feasible solution.
+    \vname{solver_options=}: optional, an hash table for fine tuning of some solver parameters.
+    \vname{tm_lim=}: optional, a scalar defining the max computing time in sec (default is 300).
+    \vname{verb=}: optional, level of verbosity (0 no output, 1 (default) only error messages,
+                   2 normal outputs, 3 normals outputs plus some initial and final informations).
+    \vname{frq_out}: time between two ``normal'' outputs (normal output are displayed every
+                     frq\_out sec, default is 5).
+    \vname{solver=}: for a LP problem you can choose between a simplex solver (default) or an 
+                     interior point solver.
+    \vname{xopt}: optimal solution (flag=0) or best feasible solution found or empty vector
+                  for unbounded or unfeasible cases.
+    \vname{fopt}: optimal cost function value.
+    \vname{flag}: solution status
+    \vname{extras}: an hash table with additional informations (reduced cost, lagrange
+                    multipliers, basis information).
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function tries to solve the linear programming (LP) problem:
+$$
+\begin{array}{l}
+\min \mbox{ or } \max f(x) = c^{\top} x\\
+x \in \R^n \mbox{ such that } \left\{ \begin{array}{l} 
+  A x \le b \\
+  A_e x = b_e \\
+  lb \le x \le ub 
+\end{array}\right.
+\end{array}
+$$
+with possibly some (or all) variables restricted to be integers, in which
+case the problem is called a MIP (mixed integer (linear) programming).
+If all variables are binary then you can use \verb+binprog=%t+ (in which case
+you don't provide lower and upper bounds). If all variables are 
+integer use \verb+intprog=%t+. You should only provide the optional
+\verb+var_type=+ argument only in case when both type of variables are
+present. 
+
+The following exit flag values can be got:
+\begin{itemize}
+\item \verb+0+: optimal (or integer optimal) solution found.
+\item \verb+1+: unbounded solution
+\item \verb+2+: unfeasible LP
+\item \verb+3+: dual LP is unfeasible
+\item \verb+4+: time limit reached with a feasible solution
+\item \verb+5+: time limit reached with a dual feasible solution
+\item \verb+6+: iteration limit reached with a feasible solution
+\item \verb+7+: iteration limit reached with a dual feasible solution
+\item \verb+8+: mip gap reached
+\end{itemize}
+
+TO BE CONTINUED.
+
+\end{mandescription} 
+
+\begin{examples}
+  
+\end{examples}
+
+\begin{manseealso}
+
+\end{manseealso}
+
+% -- Authors
+\begin{authors}
+ glpk: Andrew Makhorin (and contributors). Nsp interface: Bruno Pin\c{c}on
+\end{authors}
