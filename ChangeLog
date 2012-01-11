@@ -1,3 +1,7 @@
+2012-01-08  Bruno  <bruno.pincon@iecn.u-nancy.fr>
+
+	* add glpk interface (linprog function).
+
 2011-08-03  Jean-Philippe Chancelier  <jpc@cermics.enpc.fr>
 
 	* src/objects/serial.c: serialized object can be converted
