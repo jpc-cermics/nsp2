@@ -231,11 +231,12 @@ int output_to_nsp_term(void *info, const char *s)
 
 jmp_buf intglpk_env;
 
+#ifdef HAVE_GLPK_ERROR_HOOK
 void exit_from_glpk_redirected_to_nsp(void *info)
 {
   longjmp(intglpk_env,-1);
 }
-
+#endif 
 
 static int set_ijval_from_mat_or_spmat(int *Count, int row_stride, NspObject *A, 
 				       int *iA, int *jA, double *valA, int *ii, int *jj)
@@ -407,12 +408,13 @@ int int_glpk(Stack stack, int sense, NspMatrix *c, int nnzA, int *iA, int *jA, d
   double PlusInf = 2.0*DBL_MAX, MinusInf = - PlusInf, Nan = 0.0/0.0;
  
   /* install function to redirect exit */
+#ifdef HAVE_GLPK_ERROR_HOOK
   glp_error_hook(exit_from_glpk_redirected_to_nsp, info);
+#endif 
 
   /* install function to redirect output terminal messages to nsp */
   glp_term_hook(output_to_nsp_term, info);
-
-
+  
   /* describe LP problem for glpk */
   LP = glp_create_prob();
 

@@ -17,7 +17,7 @@ AC_DEFUN([CHECK_GLPK],
 
   if test "$with_glpk" != no; then
     glpk_found=no
-    AC_MSG_CHECKING([for GLPK])
+    AC_MSG_CHECKING([for glpk])
     GLPK_CFLAGS=
     if test x"$with_glpk_includedir" != x"no"; then
       GLPK_CFLAGS="-I$with_glpk_includedir"
@@ -47,6 +47,10 @@ AC_DEFUN([CHECK_GLPK],
     AC_LANG_PUSH(C)
     AC_LINK_IFELSE([$glpk_test_prog], [glpk_found=yes], [glpk_found=no])
     AC_LANG_POP(C)
+    AC_CHECK_LIB(libglpk,glpk_error_hook,[GLPK_ERROR_HOOK=yes])
+    if test "$GLPK_ERROR_HOOK" = yes; then
+       AC_DEFINE(HAVE_GLPK_ERROR_HOOK,[],[glpk_error_hook in libglpk])
+    fi	
     CFLAGS="$save_cflags"
     LIBS="$save_libs"
     if test x"$glpk_found" = x"yes"; then
@@ -66,4 +70,6 @@ AC_DEFUN([CHECK_GLPK],
   AC_SUBST(GLPK_LIBS)
   AC_SUBST(GLPK_LIB)
 ])
+
+
 
