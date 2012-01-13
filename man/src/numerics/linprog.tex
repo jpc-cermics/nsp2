@@ -9,34 +9,31 @@
 \begin{calling_sequence}
 \begin{verbatim}
 [xopt,fopt,flag] = linprog(c, A, b, Ae, be)
-[xopt,fopt,flag[,extras]] = linprog(c, A, b, Ae, be, sense="min"|"max",lb=, ub=, binprog=%t|%f,
-                                    intprog=%t|%f, var_type=, basis_info=, heur_sol=,
-                                    solver_options=, tm_lim=, verb=, frq_out=, solver="smplx"|"ipt")
+[xopt,fopt,flag[,extras]] = linprog(c, A, b, Ae, be, sense="min"|"max",lb=, ub=,
+                                    binprog=%t|%f, intprog=%t|%f, var_type=,
+                                    heur_sol=, solver_options=, 
+                                    tm_lim=, verb=, frq_out=, solver="smplx"|"ipt")
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
 \begin{parameters}
   \begin{varlist}
-    \vname{c}: real vector (says of length $n$) defining the cost function
+    \vname{c}: real vector (says of size $n$) defining the cost function
     \vname{A,b}: real $m_i \times n$ matrix and vector of size $m_i$ defining inequality constraints
     \vname{Ae,be}: real $m_e \times n$ matrix and vector  of size $m_e$ defining equality constraints
     \vname{sense=}: optional, defines the optimisation direction (default is "min")
-    \vname{lb=, ub=}: optional, vectors of size $n$ defining lower and upper bounds of 
+    \vname{lb=, ub=}: optional, vectors of size $n$ defining lower and upper bounds of the unknown
                       variables (defaults: $0$ for lb and $\infty$ for ub)
-    \vname{binprog=}: optional, should be true if all (structural) variables are binary (in this case
-                      lb and ub should be provided).
+    \vname{binprog=}: optional, should be true if all variables are binary integers.
     \vname{intprog=}: optional,  should be true if all variables are integers.
-    
     \vname{var_type=}: optional, should be provided only in case you have both continuous (real) 
-                       and integer variables. The corresponding argument should be an array of
-                       $n$ strings with strings "C" or  "I".
-    \vname{basis_info=}: optional, it is an hast table which lets to define the initial basis.
-    \vname{heur_sol=}: optional (only for mips) vector of length $n$ to provide a feasible solution.
-    \vname{solver_options=}: optional, an hash table for fine tuning of some solver parameters.
-    \vname{tm_lim=}: optional, a scalar defining the max computing time in sec (default is 300).
-    \vname{verb=}: optional, level of verbosity (0 no output, 1 (default) only error messages,
-                   2 normal outputs, 3 normals outputs plus some initial and final informations).
-    \vname{frq_out}: time between two ``normal'' outputs (normal output are displayed every
+                       and integer variables.
+    \vname{heur_sol=}: optional (only for mips) vector of size $n$ providing a feasible solution.
+    \vname{solver_options=}: optional, an hash table for fine tuning of solver parameters.
+    \vname{tm_lim=}: optional, real positive scalar defining the max computing time in sec (default is 300).
+    \vname{verb=}: optional, level of verbosity (0 no output, 1 (default) error messages,
+                   2 ``normal'' outputs, 3 ``normal'' outputs plus initial and final informations).
+    \vname{frq_out=}: time between two ``normal'' outputs (normal output are displayed every
                      frq\_out sec, default is 5).
     \vname{solver=}: for a LP problem you can choose between a simplex solver (default) or an 
                      interior point solver.
@@ -44,13 +41,13 @@
                   for unbounded or unfeasible cases.
     \vname{fopt}: optimal cost function value.
     \vname{flag}: solution status
-    \vname{extras}: an hash table with additional informations (reduced cost, lagrange
+    \vname{extras}: hash table with additional informations (reduced cost, lagrange
                     multipliers, basis information).
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-This function tries to solve the linear programming (LP) problem:
+This function tries to solve the linear programming problem (LP):
 $$
 \begin{array}{l}
 \min \mbox{ or } \max f(x) = c^{\top} x\\
@@ -62,14 +59,20 @@ x \in \R^n \mbox{ such that } \left\{ \begin{array}{l}
 \end{array}
 $$
 with possibly some (or all) variables restricted to be integers, in which
-case the problem is called a MIP (mixed integer (linear) programming).
+case the problem is called a MIP (mixed integer (linear programming) problem).
 If all variables are binary then you can use \verb+binprog=%t+ (in which case
 you don't provide lower and upper bounds). If all variables are 
 integer use \verb+intprog=%t+. You should only provide the optional
 \verb+var_type=+ argument only in case when both type of variables are
-present. 
+present.  The corresponding argument should be an array of $n$ strings 
+with \verb+var_type(k)="C"+ to define variable $k$ as continuous 
+and \verb+var_type(i)="I"+  to define it as integer.
 
-The following exit flag values can be got:
+If all constraints are equalities (respectively inequalities) second 
+($A$) and third ($b$) arguments (respectively fourth $A_e$ and fifth ($b_e$)
+arguments) should be empty matrices.
+
+The following exit flag values can be obtained:
 \begin{itemize}
 \item \verb+0+: optimal (or integer optimal) solution found.
 \item \verb+1+: unbounded solution
@@ -82,7 +85,80 @@ The following exit flag values can be got:
 \item \verb+8+: mip gap reached
 \end{itemize}
 
-TO BE CONTINUED.
+\itemdesc{optional {\tt solver} parameter}
+For a pure LP you can choose between the glpk simplex solver 
+{\tt solver="smplx"} or the glpk interior point solver 
+{\tt solver="ipt"}. Note that the interior point solver is
+not efficient in some cases (in particular it don't manage 
+well full columns in constraint matrix, that is if a variable
+is effectively present in many constraints).
+
+\itemdesc{optional {\tt heur\_sol} parameter}
+MIPs are often quite hard to solve. In some cases an heuristic solution
+can be obtained by other means and you can provide it to the mip glpk
+solver using this optional argument (this can help much the glpk mip 
+solver in particular if it is closed to the optimal solution). 
+Take care: the feasibility of this  heuristic solution is 
+not tested.
+
+\itemdesc{optional {\tt solver\_options} parameter}
+This argument is an hash table with the possible following entries:
+\begin{description}
+\item[common options]
+\begin{itemize}
+\item \verb+scale=s+ scales (when not zero) the LP constraint matrix to get better numerical behavior. 
+      s should be a scalar integer in $[0,13]$ (default 1).
+      \begin{tabular}{|c|l|}
+        \hline
+        0 & no scaling \\
+        1 & automatic scaling (correspond to scale=12) \\
+        2 & geometric mean scaling\\
+        3 & geometric mean scaling + round scale factors to power of 2\\
+        4 & geometric mean scaling but skip if LP is well scaled\\
+        5 & geometric mean scaling + round scale factors to power of 2 but skip if LP is well scaled\\
+        6 & equilibration scaling\\
+        7 & equilibration scaling + round scale factors to power of 2\\
+        8 & equilibration scaling but skip if LP is well scaled\\
+        9 & equilibration scaling + round scale factors to power of 2 but skip if LP is well scaled\\
+       10 & geom mean + equil scaling\\
+       11 & geom mean + equil scaling  + round scale factors to power of 2\\
+       12 & geom mean + equil scaling but skip if LP is well scaled\\
+       13 &  geom mean + equil scaling + round scale factors to power of 2 but skip if LP is well scaled\\
+       \hline
+      \end{tabular}
+      Note that scale don't occur if optional presolve argument is true (scaling is done by the presolver). 
+\end{itemize}
+\item[simplex solver options]
+\begin{itemize}
+\item \verb+presolve=%f|%t+ (default is false). In case true a presolver tries to reduce
+      the LP problem to a easier one.
+\item \verb+meth=1|2|3+ (default is 1). simplex algorithm choice: 1 primal simplex, 3 dual simplex, 2 
+      dual simplex but switch to primal simplex in case of failure.
+\item \verb+r_test=0|1+ (default is 1) ratio test: 0 standard, 1 Harris.
+\item \verb+pricing=0|1+
+\item \verb+basis_info=+  hash table which defines the initial basis.
+\end{itemize}
+\item[interior point solver options]
+\begin{itemize}
+\item \verb+ord_alg=+; reordering algorithm
+\end{itemize}
+\item[mip solver options]
+\begin{itemize}
+\item \verb+presolve=%f|%t+ (default is true). In case true a presolver tries to reduce
+      the MIP problem to a easier one.
+\item \verb+gmi_cuts=%t|%f+ (default is false) use Gomory cuts.
+\item \verb+mir_cuts=%t|%f+ (default is true) use mir cuts.
+\item \verb+cov_cuts=%t|%f+ (default is false) use cov cuts.
+\item \verb+clq_cuts=%t|%f+ (default is false) use clique cuts.
+\item \verb+fp_heur=%t|%f+ (default is false) if true find an feasible solution using F-pump heuristic.
+\item \verb+binarize=%t|%f+ (default is false) if true binarize integer (not binary) variables. 
+\item \verb+br_tech=+ an int in [1,5]
+\item \verb+bt_tech=+ an int in [1,4]
+\item \verb+mip_gap=+
+\end{itemize}
+\end{description}
+
+TO BE CONTINUED
 
 \end{mandescription} 
 
