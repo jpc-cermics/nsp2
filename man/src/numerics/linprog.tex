@@ -11,8 +11,8 @@
 [xopt,fopt,flag] = linprog(c, A, b, Ae, be)
 [xopt,fopt,flag[,extras]] = linprog(c, A, b, Ae, be, sense="min"|"max",lb=, ub=,
                                     binprog=%t|%f, intprog=%t|%f, var_type=,
-                                    heur_sol=, solver_options=, 
-                                    tm_lim=, verb=, frq_out=, solver="smplx"|"ipt")
+                                    heur_sol=, solver_options=, tm_lim=, 
+                                    verb=, frq_out=, solver="smplx"|"ipt")
 \end{verbatim}
 \end{calling_sequence}
 % -- Parameters
@@ -24,23 +24,23 @@
     \vname{sense=}: optional, defines the optimisation direction (default is "min")
     \vname{lb=, ub=}: optional, vectors of size $n$ defining lower and upper bounds of the unknown
                       variables (defaults: $0$ for lb and $\infty$ for ub)
-    \vname{binprog=}: optional, should be true if all variables are binary integers.
-    \vname{intprog=}: optional,  should be true if all variables are integers.
+    \vname{intprog=}: optional,  set it to true if all variables are integers.
+    \vname{binprog=}: optional, set it to true if all variables are binary integers.
     \vname{var_type=}: optional, should be provided only in case you have both continuous (real) 
                        and integer variables.
     \vname{heur_sol=}: optional (only for mips) vector of size $n$ providing a feasible solution.
     \vname{solver_options=}: optional, an hash table for fine tuning of solver parameters.
-    \vname{tm_lim=}: optional, real positive scalar defining the max computing time in sec (default is 300).
-    \vname{verb=}: optional, level of verbosity (0 no output, 1 (default) error messages,
-                   2 ``normal'' outputs, 3 ``normal'' outputs plus initial and final informations).
-    \vname{frq_out=}: time between two ``normal'' outputs (normal output are displayed every
-                     frq\_out sec, default is 5).
+    \vname{tm_lim=}: optional, real positive scalar defining max computing time in sec (default is 300).
+    \vname{verb=}: optional, level of verbosity (0: no output, 1: (default) error messages,
+                   2: normal outputs, 3: normal outputs plus initial and final informations).
+    \vname{frq_out=}: time between two normal outputs (information on current iteration is 
+                      displayed every frq\_out sec) default is 5 sec.
     \vname{solver=}: for a LP problem you can choose between a simplex solver (default) or an 
                      interior point solver.
     \vname{xopt}: optimal solution (flag=0) or best feasible solution found or empty vector
                   for unbounded or unfeasible cases.
     \vname{fopt}: optimal cost function value.
-    \vname{flag}: solution status
+    \vname{flag}: solution status.
     \vname{extras}: hash table with additional informations (reduced cost, lagrange
                     multipliers, basis information).
   \end{varlist}
@@ -68,10 +68,27 @@ present.  The corresponding argument should be an array of $n$ strings
 with \verb+var_type(k)="C"+ to define variable $k$ as continuous 
 and \verb+var_type(i)="I"+  to define it as integer.
 
-If all constraints are equalities (respectively inequalities) second 
-($A$) and third ($b$) arguments (respectively fourth $A_e$ and fifth ($b_e$)
-arguments) should be empty matrices.
+\itemdesc{remarks about constraints}
+\begin{itemize}
+\item If all constraints are equalities (respectively inequalities) second 
+and third arguments (respectively fourth and fifth arguments) should 
+be empty matrices (with first dimension equal to 0). 
+\item The (down) concatenation of $A$ and $A_e$ constitute the full
+constraint matrix.
+\item If your LP problem have a constraint with both under and upper bounds:
+$$
+   \underline{b} \le a_1 x_1 + a_2 x_2 + \dots + a_n x_n \le \bar{b}
+$$
+this gives two inequality constraints:
+$$
+\begin{array}{rcl}
+ a_1 x_1 + a_2 x_2 + \dots + a_n x_n  & \le & \bar{b}\\
+ -a_1 x_1 - a_2 x_2 + \dots - a_n x_n &  \le & -\underline{b}
+\end{array}
+$$
+\end{itemize}
 
+\itemdesc{possible exit flag values}
 The following exit flag values can be obtained:
 \begin{itemize}
 \item \verb+0+: optimal (or integer optimal) solution found.
@@ -85,12 +102,30 @@ The following exit flag values can be obtained:
 \item \verb+8+: mip gap reached
 \end{itemize}
 
+In cases 1, 2, 3, \verb+xopt+ is set to \verb+[]+ (\verb+fopt+ is set to
+$\pm \infty$ in case 1 and 2 and to $Nan$ in case 3). 
+
+In cases 4,5,6,7,8 \verb+xopt+ is the best feasible solution found so far 
+(which realizes a mip gap tolerance set by the user in case 8, 
+see \verb+mip_gap+ solver options). If you solve a pure LP with the simplex
+method it is possible to continue the computation toward the optimal
+solution without starting from scratch if you output the fourth \verb+extra+
+parameter which contains current basis information. For that purpose you
+need to set the \verb+basis_info+ solver option this way:
+\begin{Verbatim}
+sopt = hash(basis_info=extras.basis_info [, others_options]);
+[xopt, fopt, flag, extras] = linprog(....., solver_options=sopt);
+\end{Verbatim}
+For a MIP the only way to help the solver is to provide it the feasible 
+solution found so far using \verb+heur_sol=xopt+ in the new call to
+\verb+linprog+.
+
 \itemdesc{optional {\tt solver} parameter}
 For a pure LP you can choose between the glpk simplex solver 
 {\tt solver="smplx"} or the glpk interior point solver 
 {\tt solver="ipt"}. Note that the interior point solver is
-not efficient in some cases (in particular it don't manage 
-well full columns in constraint matrix, that is if a variable
+not efficient in some cases (for enough large size problem) 
+it don't manage well full columns in constraint matrix, that is if a variable
 is effectively present in many constraints).
 
 \itemdesc{optional {\tt heur\_sol} parameter}
@@ -104,10 +139,10 @@ not tested.
 \itemdesc{optional {\tt solver\_options} parameter}
 This argument is an hash table with the possible following entries:
 \begin{description}
-\item[common options]
+\item[option common to all solvers]
 \begin{itemize}
-\item \verb+scale=s+ scales (when not zero) the LP constraint matrix to get better numerical behavior. 
-      s should be a scalar integer in $[0,13]$ (default 1).
+\item \verb+scale=s+ When not zero this option lets to scale the LP constraint matrix to get better 
+      numerical behavior.  s should be a scalar integer in $[0,13]$ (default is 1).
       \begin{tabular}{|c|l|}
         \hline
         0 & no scaling \\
@@ -126,7 +161,7 @@ This argument is an hash table with the possible following entries:
        13 &  geom mean + equil scaling + round scale factors to power of 2 but skip if LP is well scaled\\
        \hline
       \end{tabular}
-      Note that scale don't occur if optional presolve argument is true (scaling is done by the presolver). 
+      Note that scale don't occur if optional presolve argument is true (scaling being done by the presolver). 
 \end{itemize}
 \item[simplex solver options]
 \begin{itemize}
@@ -147,13 +182,17 @@ This argument is an hash table with the possible following entries:
 \item \verb+presolve=%f|%t+ (default is true). In case true a presolver tries to reduce
       the MIP problem to a easier one.
 \item \verb+gmi_cuts=%t|%f+ (default is false) use Gomory cuts.
-\item \verb+mir_cuts=%t|%f+ (default is true) use mir cuts.
-\item \verb+cov_cuts=%t|%f+ (default is false) use cov cuts.
+\item \verb+mir_cuts=%t|%f+ (default is true) use mixed integer rounding cuts.
+\item \verb+cov_cuts=%t|%f+ (default is false) use mixed cover cuts.
 \item \verb+clq_cuts=%t|%f+ (default is false) use clique cuts.
 \item \verb+fp_heur=%t|%f+ (default is false) if true find an feasible solution using F-pump heuristic.
-\item \verb+binarize=%t|%f+ (default is false) if true binarize integer (not binary) variables. 
-\item \verb+br_tech=+ an int in [1,5]
-\item \verb+bt_tech=+ an int in [1,4]
+\item \verb+binarize=%t|%f+ (default is false) if true binarize integer (not binary) variables (this 
+      option is used only if the presolver is enable).
+\item \verb+br_tech=br_param+ Branching technique option: \verb+br_param+ should be an int in [1,5],
+      1: first fractional variable, 2: last fractional variable, 3: most fractional variable, 4:
+      heuristic by Driebeck and Tomlin (this is the default), 5: hybrid pseudicost heuristic.
+\item \verb+bt_tech=bt_param+ Backtracking technique option:  \verb+br_param+ should be an int in [1,4],
+      1: depth first search, 2: breadth first search, 3: best local bound (default), 4: best projection heuristic.
 \item \verb+mip_gap=+
 \end{itemize}
 \end{description}
