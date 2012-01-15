@@ -102,10 +102,12 @@ The following exit flag values can be obtained:
 \item \verb+8+: mip gap reached
 \end{itemize}
 
-In cases 1, 2, 3, \verb+xopt+ is set to \verb+[]+ (\verb+fopt+ is set to
+Remarks:
+\begin{itemize}
+\item In cases 1, 2, 3, \verb+xopt+ is set to \verb+[]+ (\verb+fopt+ is set to
 $\pm \infty$ in case 1 and 2 and to $Nan$ in case 3). 
 
-In cases 4,5,6,7,8 \verb+xopt+ is the best feasible solution found so far 
+\item In cases 4,5,6,7,8 \verb+xopt+ is the best feasible solution found so far 
 (which realizes a mip gap tolerance set by the user in case 8, 
 see \verb+mip_gap+ solver options). If you solve a pure LP with the simplex
 method it is possible to continue the computation toward the optimal
@@ -116,9 +118,10 @@ need to set the \verb+basis_info+ solver option this way:
 sopt = hash(basis_info=extras.basis_info [, others_options]);
 [xopt, fopt, flag, extras] = linprog(....., solver_options=sopt);
 \end{Verbatim}
-For a MIP the only way to help the solver is to provide it the feasible 
-solution found so far using \verb+heur_sol=xopt+ in the new call to
-\verb+linprog+.
+For a MIP the only way to help the solver in a second run, is to provide 
+it the feasible solution found in the first call using \verb+heur_sol=xopt+ 
+in the new call to \verb+linprog+.
+\end{itemize}
 
 \itemdesc{optional {\tt solver} parameter}
 For a pure LP you can choose between the glpk simplex solver 
@@ -130,11 +133,11 @@ is effectively present in many constraints).
 
 \itemdesc{optional {\tt heur\_sol} parameter}
 MIPs are often quite hard to solve. In some cases an heuristic solution
-can be obtained by other means and you can provide it to the mip glpk
-solver using this optional argument (this can help much the glpk mip 
-solver in particular if it is closed to the optimal solution). 
-Take care: the feasibility of this  heuristic solution is 
-not tested.
+can be obtained by other means (or from a first run as we have seen before)
+and you can provide it to the mip glpk solver using this optional argument 
+(this can help much the glpk mip solver in particular if it is closed to 
+the optimal solution). Take care: the feasibility of this  heuristic 
+solution is not tested.
 
 \itemdesc{optional {\tt solver\_options} parameter}
 This argument is an hash table with the possible following entries:
@@ -202,7 +205,25 @@ TO BE CONTINUED
 \end{mandescription} 
 
 \begin{examples}
-  
+\paragraph{example 1} We solve the following toy production problem: maximize
+$f(x) = 50 x_1 + 40 x_2 + 70 x_3 + 80 x_4 = c^{\top} x$ under the constraints:
+$x_1, x_2, x_3, x_4 \ge  0$ and:
+$$
+\begin{array}{rcl}
+   2 x_1 + 4 x_2 +  8 x_3 +  6 x_4 & \le & 100\\
+   10 x_1 + 8 x_2 + 6 x_3 + 10 x_4 & \le & 160\\
+      x_1 +  x_2  + 2 x_3 +  2 x_4 & \le & 20
+\end{array} \iff  A x \le b
+$$
+\begin{Verbatim}
+c= [50; 40; 70; 80];
+A = [ 2 4 8  6;
+     10 8 6 10;
+      1 1 2  2];
+b = [100; 160;  20];
+[xopt,fopt,flag,extra] = linprog(c,A,b,[],[],sense="max")
+\end{Verbatim}
+
 \end{examples}
 
 \begin{manseealso}
