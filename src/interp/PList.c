@@ -1212,8 +1212,9 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  break;
 	case SELECT :
 	  /* arity N. List argument is the test other arguments are 
-	     the cases **/
-	  if (0) Sciprintf1(indent,"slect{%d,%d,%d\n",indent,pos,posret) ;
+	   * the cases 
+	   */
+	  if (0) Sciprintf1(indent,"select{%d,%d,%d\n",indent,pos,posret) ;
 	  PRINTTAG("select");
 	  for ( j = 0 ; j < L->arity ; j++)
 	    {
@@ -1257,10 +1258,17 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	case CASE :
 	  if (0) Sciprintf1(indent,"case{%d,%d,%d\n",indent,pos,posret) ;
 	  if ( pos != 0) Sciprintf("\n");
-	  newpos = NSP_PRINTF1_COLOR(posret,p_blue,"case") ;
-	  newpos =_nsp_plist_pretty_print_arg(List,1,newpos,newpos+1);
-	  newpos += NSP_PRINTF1_COLOR(1,p_blue,"then\n") ;
-	  newpos =_nsp_plist_pretty_print_arg(List->next,posret+2,0,posret+2);
+	  if ( List->type == COMMENT )
+	    {
+	      newpos =_nsp_plist_pretty_print_arg(List,posret,0,posret);
+	    }
+	  else
+	    {
+	      newpos = NSP_PRINTF1_COLOR(posret,p_blue,"case") ;
+	      newpos =_nsp_plist_pretty_print_arg(List,1,newpos,newpos+1);
+	      newpos += NSP_PRINTF1_COLOR(1,p_blue,"then\n") ;
+	      newpos =_nsp_plist_pretty_print_arg(List->next,posret+2,0,posret+2);
+	    }
 	  return newpos;
 	  break;
 	case LASTCASE :
@@ -1823,10 +1831,18 @@ static void _nsp_plist_print(PList List, int indent)
 	  Sciprintf(")");
 	  break;
 	case CASE :
-	  Sciprintf("case ") ;
-	  _nsp_plist_print_arg(List,indent);
-	  Sciprintf("then ") ;
-	  _nsp_plist_print_arg(List->next,indent);
+	  if ( List->type == COMMENT )
+	    {
+	      /* case can be a comment only */
+	      _nsp_plist_print_arg(List,indent);
+	    }
+	  else
+	    {
+	      Sciprintf("case ") ;
+	      _nsp_plist_print_arg(List,indent);
+	      Sciprintf("then ") ;
+	      _nsp_plist_print_arg(List->next,indent);
+	    }
 	  break;
 	case LASTCASE :
 	  Sciprintf("else ") ;

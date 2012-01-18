@@ -806,13 +806,24 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  /*On pourrait ici controler l'adequation entre lhs et nargs ? XXXX */
 	  return nargs;
 	  break;
-	case CASE :       /* adapted to compare objects of different types (bruno, march,2,2009) */
+	case CASE :
 	  {
+	    /* adapted to compare objects of different types (bruno, march,2,2009) */
 	    /* the select expression */ 
 	    NspObject *C = NULLOBJ, *SelectObj = stack.val->S[first-1];
 	    HOBJ_GET_OBJECT(SelectObj,RET_BUG);
-	    
 	    /* first evaluate the case expression */ 
+	    if (L1->type == COMMENT ) 
+	      {
+		/* a case expression which is just a comment */
+		nsp_void_object_destroy(&stack.val->S[first]);
+		/* create a false object and places at first pos in stack */
+		if ( (stack.val->S[first] = nsp_create_false_object(NVOID)) == NULLOBJ )
+		  {
+		    SHOWBUG(stack,nargs,L1);   /* a voir... */
+		  }
+		return 1; 
+	      }
 	    nargs=nsp_eval_arg(L1,&stack,first,1,1,display);
 	    if ( nargs != 1 ) 
 	      {
@@ -833,11 +844,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      }
 	    C = stack.val->S[first];
 	    HOBJ_GET_OBJECT(C,RET_BUG);
-
+	    
 	    /* now the value to be compared to case is at position first-1 (and pointed by SelectObj) and 
 	     * the case expression is at position first (and pointed by C)
 	     */
-
+	    
 	    if (IsCells(C))
 	      {
 		/* when case expression is an array of cells  {val1,....,valn} */
