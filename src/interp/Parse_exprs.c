@@ -109,10 +109,12 @@ static int nsp_parse_symbols_table_set_id(NspBHash *symb_table) ;
  * Returns: %OK or %FAIL
  **/
 
+
 int nsp_parse_top(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int count=0;
   PList plist1 = NULLPLIST ;
+
   if (debug) scidebug(debugI++,"[top>");
   while (1) 
     {
@@ -754,13 +756,14 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 static int parse_name(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   char id[NAME_MAXL];
-  switch ( T->tokenv.id ) 
+  if (debug) scidebug(--debugI,"[name>");
+  if (  T->tokenv.id == '\0' ) 
     {
-    case '\0':
-      /*  *********** we are at end-of-line and need an other <fact> */
       if ( T->ForceNextChar(T) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      return(parse_name(T,symb_table,plist));
+    }
+  switch ( T->tokenv.id ) 
+    {
     case NAME :
       strncpy(id,T->tokenv.syn,NAME_MAXL);
       if (nsp_parse_add_name(plist,id) == FAIL) return(FAIL);
@@ -769,7 +772,7 @@ static int parse_name(Tokenizer *T,NspBHash *symb_table,PList *plist)
     default:
       return(FAIL);
     }
-  if (debug) scidebug(--debugI,"<fact]");
+  if (debug) scidebug(--debugI,"<name]");
   return(OK);
 }
 
@@ -904,9 +907,7 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
   if (debug) scidebug(debugI++,"[while>");
 
   /* Parsing the while condition */
-
   if ( T->NextToken(T) == FAIL) return(FAIL);
-
   T->tokenv.FlagEqu = 0;
   if (parse_expr(T,symb_table,&plist1,'f') == FAIL ) 
     {
@@ -914,9 +915,7 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
       return(FAIL);
     }
   T->tokenv.FlagEqu = 0;
-  /* if (nsp_parse_add_list1(&plist1,&plist1) == FAIL) return(FAIL);*/
-  if (debug) scidebug(debugI++,"[do>"); 
-
+  if (debug) scidebug(debugI++,"[while-do>"); 
   /* Tokens for introducing the do Part */
   plist2=NULLPLIST;
   if (parse_bkey(T,THEN,DO,"while",&plist2) == FAIL) return(FAIL);
@@ -930,7 +929,8 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if ( T->NextToken(T) == FAIL) return(FAIL);
       if (nsp_parse_add(&plist1,WHILE,2,T->tokenv.Line) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
-      if (debug) scidebug(--debugI,"<enddo]"); 
+      if (debug) scidebug(--debugI,"<while-do]"); 
+      if (debug) scidebug(--debugI,"<while]"); 
       return (OK) ;
     }
   else 
@@ -1540,8 +1540,8 @@ static int parse_expr(Tokenizer *T,NspBHash *symb_table,PList *plist,char inmatr
   if (T->tokenv.id == COLON_OP) 
     {
       /* if (nsp_parse_add_doublei(&plist1,"1")== FAIL) return(FAIL);
-	 if (nsp_parse_add_name(&plist1,"$")== FAIL) return(FAIL);
-      */
+       * if (nsp_parse_add_name(&plist1,"$")== FAIL) return(FAIL);
+       */
       if (nsp_parse_add(&plist2,COLON_OP,0,T->tokenv.Line) == FAIL) return(FAIL);
       if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
@@ -1839,11 +1839,10 @@ static int parse_terme1(Tokenizer *T,NspBHash *symb_table,PList *plist,char inma
   if (parse_terme(T,symb_table,&plist1) == FAIL ) return(FAIL);
   if (op == MINUS_OP || op == TILDE_OP )
     { 
-      if (debug) Sciprintf("{%c}",op);
       if (nsp_parse_add(&plist1,op,1,T->tokenv.Line) == FAIL) return(FAIL);
     }
   if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
-  if (debug) scidebug(--debugI,"<terme1]");
+  if (debug) scidebug(--debugI,"<(%s)terme1]",(op ==0) ? "" :nsp_astcode_to_name(op));
   return(OK);
 }
 
@@ -1966,7 +1965,7 @@ static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add(plist,op,1,T->tokenv.Line) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
     }
-  if (debug) scidebug(debugI++,"[fact2>");
+  if (debug) scidebug(--debugI,"<fact2]");
   return(OK);
 }
 
@@ -1981,7 +1980,8 @@ static int parse_fact2(Tokenizer *T,NspBHash *symb_table,PList *plist)
  *          | <symb>(<equal>,<equal>,....) 
  *          | ( <expr> ) | (<expr1>,<expr2>,....)
  *          | <terme1>
- *
+ *          | <comment>
+ * 
  * <symb>:= symb | symb.<symb> 
  * 
  * Comments are accepter in fact3 
@@ -1993,27 +1993,25 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   char id[NAME_MAXL];
   int count;
-  switch ( T->tokenv.id ) 
+  if (debug) scidebug(debugI++,"[fact3>");  
+  if (  T->tokenv.id == '\0' )
     {
-    case '\0':
-      /*  *********** we are at end-of-line and need an other <fact> */
       if ( T->ForceNextChar(T) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
-      return(parse_fact(T,symb_table,plist));
+    }
+  if (  T->tokenv.id == '/' && T->tokenv.NextC == '/' ) 
+    {
+      char c;
+      c=T->GetChar(T);
+      while (c != '\n') c=T->GetChar(T);
+      if ( T->ForceNextChar(T) == FAIL) return(FAIL);
+      if ( T->NextToken(T) == FAIL) return(FAIL);
+    }
+  switch ( T->tokenv.id ) 
+    {
     case '/':
-      if ( T->tokenv.NextC == '/' ) 
-	{
-	  char c;
-	  c=T->GetChar(T);
-	  while (c != '\n') c=T->GetChar(T);
-	  if ( T->ForceNextChar(T) == FAIL) return(FAIL);
-	  if ( T->NextToken(T) == FAIL) return(FAIL);
-	  return(parse_fact(T,symb_table,plist));
-	}
-      else
-	{
-	  return(OK);
-	}
+      // bizarre 
+      return(OK); 
     case PLUS_OP:
     case MINUS_OP: 
     case TILDE_OP: 
@@ -2028,7 +2026,6 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	}
       else 
 	{
-	  if (debug) scidebug(--debugI,"<fact]");
 	  return(FAIL);
 	}
     case '{' :
@@ -2041,7 +2038,6 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	}
       else 
 	{
-	  if (debug) scidebug(--debugI,"<fact]");
 	  return(FAIL);
 	}
     case QUOTE_OP:  /* case '\'' : */
@@ -2125,7 +2121,7 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
       /* XXXX : Any  keyword here is an error */
       if ( 0 && nsp_is_code_keyword(T->tokenv.id) == TRUE )
 	{
-	  if (debug) scidebug(--debugI,"<fact]");
+	  if (debug) scidebug(--debugI,"<fact3]");
 	  return(OK);
 	}
       else 
@@ -2135,7 +2131,7 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
 	  return(FAIL);
 	}
     }
-  if (debug) scidebug(--debugI,"<fact]");
+  if (debug) scidebug(--debugI,"<fact3]");
   return(OK);
 }
 
@@ -3045,22 +3041,21 @@ static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist,
 {
   int op;
   PList plist1 = NULLPLIST ;
-  if (debug) scidebug(debugI++,"[%s>",info);
+  if (debug) scidebug(debugI++,"[nary:%s>",info);
   if ( (*parsef)(T,symb_table,&plist1) == FAIL) return(FAIL);
   while( (*opfn)(T,&op) == OK )
     {
       PList plist2=NULLPLIST;
-      if (debug) Sciprintf("-arg-");
+      if (debug) scidebug(debugI,"{%s}",nsp_astcode_to_name(op));
       while (1) 
 	{
+	  /* forget the comments in a parse_nary
+	   * (should be changed) 
+	   */
 	  parse_nblines(T);
 	  plist2=NULLPLIST;
 	  if ( (*parsef)(T,symb_table,&plist2) == FAIL ) return(FAIL);
 	  if ( plist2->type != COMMENT ) break;
-	  /* Note that comments in a parse_nary are not keeped in the 
-	   * parsed structure 
-	   * a way to keep them should be found 
-	   */
 	  nsp_plist_destroy(&plist2);
 	}
       if (nsp_parse_add_list(&plist1,&plist2) == FAIL) return(FAIL);
@@ -3068,9 +3063,8 @@ static int parse_nary(Tokenizer *T,NspBHash *symb_table,PList *plist,
       plist2=plist1;
       if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
-  if (debug) Sciprintf("{t_op:%d}",op);
   if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
-  if (debug) scidebug(--debugI,"<%s]",info);
+  if (debug) scidebug(--debugI,"<nary:%s]",info);
   return(OK);
 } 
 
@@ -3093,12 +3087,12 @@ static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
 {
   int op;
   PList plist1 = NULLPLIST ;
-  if (debug) scidebug(debugI++,"[%s>",info);
+  if (debug) scidebug(debugI++,"[naryopt:%s>",info);
   if ( (*parsef)(T,symb_table,&plist1,opt) == FAIL) return(FAIL);
   while( (*opfn)(T,&op,opt) == OK )
     {
       PList plist2=NULLPLIST;
-      if (debug) Sciprintf("-arg-");
+      if (debug) scidebug(debugI,"{%s}",nsp_astcode_to_name(op));
       parse_nblines(T);
       plist2=NULLPLIST;
       if ( (*parsef)(T,symb_table,&plist2,opt) == FAIL ) return(FAIL);
@@ -3107,9 +3101,8 @@ static int parse_nary_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,
       plist2=plist1;
       if (nsp_parse_add_list1(&plist1,&plist2) == FAIL) return(FAIL);
     }
-  if (debug) Sciprintf("{t_op:%d}",op);
   if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
-  if (debug) scidebug(--debugI,"<%s]",info);
+  if (debug) scidebug(--debugI,"<naryopt:%s]",info);
   return(OK);
 } 
 
