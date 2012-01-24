@@ -354,7 +354,7 @@ static Boolean vector_is_monotone(double *t, int n)
 
 int int_ode(Stack stack, int rhs, int opt, int lhs)
 {
-  ode_method methode= ode_default;
+  int methode= ode_default;
   NspObject *f= NULL, *jac=NULL,*g=NULL, *args=NULL;
   NspHash *odeoptions = NULL;
   NspList *gargs=NULL;
