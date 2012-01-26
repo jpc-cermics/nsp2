@@ -210,11 +210,13 @@ IOFun2 SetScifprintf(IOFun2 F)
  * print in a row string matrix 
  * the string matrix is created if nsp_print_string 
  * is NULL;
+ * XXX: buf could be dynamically enlarged
  *
  */
 
+#define SIO_BUFSIZE 8
 static int count=0;
-static char buf[1024];/* rendre buf dynamique XXX */
+static char buf[SIO_BUFSIZE+1];
 
 /**
  * Sciprint2string:
@@ -234,7 +236,7 @@ int  Sciprint2string(const char *fmt, va_list ap)
 {
   char *line;
   int n,i;
-  n= vsnprintf(buf+count,1024-count , fmt, ap );
+  n= vsnprintf(buf+count,Max(0,SIO_BUFSIZE-count), fmt, ap );
   if ((line = strchr(buf+count,'\n')) != NULL)
     {
       *line = '\0'; 
@@ -248,6 +250,7 @@ int  Sciprint2string(const char *fmt, va_list ap)
   else 
     {
       count+=n;
+      count=Min(count,SIO_BUFSIZE);
     }
   return n;
 }

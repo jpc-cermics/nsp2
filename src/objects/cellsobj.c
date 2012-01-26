@@ -669,7 +669,7 @@ int int_col_cells_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *C;
   int  i;
-  CheckRhs(0,1000);
+  CheckRhs(0,INT_MAX);
   CheckLhs(1,1);
   if ( (C =nsp_cells_create(NVOID,1,rhs)) == NULLCELLS ) return RET_BUG;
   for ( i = 1 ; i <= rhs ; i++) 
@@ -697,7 +697,7 @@ int int_row_cells_create(Stack stack, int rhs, int opt, int lhs)
 {
   NspCells *C;
   int i,cols=1;
-  CheckRhs(0,1000);
+  CheckRhs(0,INT_MAX);
   CheckLhs(1,1);
   if ( rhs == 1 ) 
     {
