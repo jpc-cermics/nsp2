@@ -617,7 +617,7 @@ int nsp_matrix_print( NspMatrix *Mat, int indent,const char *name, int rec_level
 {
   int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(Mat)->name;
-  int slice=10000;
+  int slice=1000;
   Mat = Mat2double(Mat); /* be sure that mat is back converted to double */
   if ( Mat == NULL) 
     {
