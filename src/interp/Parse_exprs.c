@@ -2019,11 +2019,16 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case '[' : 
       /*  *************    get a matrix */
       if (debug) scidebug(debugI++,"[mat>");
-      if (parse_matrix(T,symb_table,plist,']') == OK ) 
-	{
-	  if (debug) scidebug(--debugI,"<mat]");
-	  break;
-	}
+      if 
+#ifdef ZZZ
+	(parse_cells(T,symb_table,plist,']') == OK ) 
+#else 
+	(parse_matrix(T,symb_table,plist,']') == OK ) 
+#endif 
+	  {
+	    if (debug) scidebug(--debugI,"<mat]");
+	    break;
+	  }
       else 
 	{
 	  return(FAIL);

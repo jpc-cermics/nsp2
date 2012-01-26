@@ -438,6 +438,61 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if (( n =nsp_eval_func(O1,fname,2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L);
 	  return n;
 	  break;
+#ifdef ZZZ
+	  /* XXXX en test si le parsing des matrices est remis comme celui des cells */
+	case DIAGCONCAT:
+	case ROWCONCAT:
+	case COLCONCAT:
+	  /* when matrix are parsed like cells */
+	  /* 
+	   * a matrix is always (P_MATRIX (DIAGCONCAT arg1 ... argn ))
+	   *                   argi = (ROWCONCAT carg1 .... cargn))
+	   *                   cargi =(COLCONCAT exp1 .... expn) 
+	   * Thus ROWCONCAT and DIAGCONCAT could be accelerated 
+	   * when they are of arity one since they do nothing in that case. 
+	   */
+	  loc = L1;
+	  nargs = 0;
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      /* evaluate arguments */
+	      if ((n =nsp_eval_arg(loc,&stack,first+nargs,1,1,display)) <0 ) 
+		{
+		  /* clean and return */
+		  nsp_void_seq_object_destroy(stack,first,first+nargs);
+		  SHOWBUG(stack,n,L1);
+		}
+	      nargs += n;
+	      if ( nargs == 2 ) 
+		{
+		  switch ( L->type ) 
+		    {
+		    case ROWCONCAT:
+		      if ( (n =nsp_eval_maybe_accelerated_op("concatd",2,concatd_tab, stack,first,nargs,0,lhs)) < 0 ) 
+			{
+			  SHOWBUG(stack,n,L1);
+			}
+		      break;
+		    case COLCONCAT:
+		      if ( (n =nsp_eval_maybe_accelerated_op("concatr",2,concatr_tab, stack,first,nargs,0,lhs)) < 0 ) 
+			{
+			  SHOWBUG(stack,n,L1);
+			}
+		      break;
+		    case DIAGCONCAT:
+		      O1=nsp_frames_search_op_object("concatdiag");
+		      if ((n=nsp_eval_func(O1,"concatdiag",2,stack,first,nargs,0,lhs)) < 0) 
+			{
+			  SHOWBUG(stack,n,L);
+			}
+		    }
+		  nargs = 1;
+		}
+	      loc= loc->next;
+	    }
+	  return n;
+	  break;
+#else 
 	case ROWCONCAT:
 	  if ((nargs =nsp_eval_arg(L1,&stack,first,1,1,display)) <0 ) SHOWBUG(stack,nargs,L1);
 	  if ( nargs > 1 ) 
@@ -538,6 +593,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  if ((n=nsp_eval_func(O1,"concatdiag",2,stack,first,nargs,0,lhs)) < 0) SHOWBUG(stack,n,L);
 	  return n;
 	  break;
+#endif
 	case WHILE:
 	  while (1) 
 	    {

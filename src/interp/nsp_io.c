@@ -214,7 +214,7 @@ IOFun2 SetScifprintf(IOFun2 F)
  *
  */
 
-#define SIO_BUFSIZE 8
+#define SIO_BUFSIZE 2048
 static int count=0;
 static char buf[SIO_BUFSIZE+1];
 
