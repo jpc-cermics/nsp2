@@ -69,8 +69,8 @@ struct _nsp_objs3d {
   gboolean with_box;
   int box_color;
   int box_style;
-  int ref_count;
   gboolean fixed;
+  int ref_count;
 };
 
 struct _NspObjs3d {
@@ -99,7 +99,7 @@ NspObjs3d *new_objs3d();
 
 #define NULLOBJS3D (NspObjs3d*) 0
 
-extern NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean fixed,gboolean with_box,int box_color,int box_style,NspTypeBase *type);
+extern NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspTypeBase *type);
 extern NspObjs3d *nsp_objs3d_create_default(const char *name);
 
 /* from NspObjs3dObj.c */
@@ -136,7 +136,7 @@ extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,co
 extern NspObjs3d *nsp_check_for_current_objs3d(void);
 extern NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect);
 
-#line 139 "./objs3d.h"
+#line 140 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -187,6 +187,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 190 "./objs3d.h"
+#line 191 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

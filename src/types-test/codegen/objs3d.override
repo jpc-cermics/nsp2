@@ -1806,10 +1806,7 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G, int invalidate)
   G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
   
   /* updates the bounds of the axe */
-  /* Alan : nsp_objs3d_compute_inside_bounds utilise un tableau à 6 éléments,
-   * A->obj->bounds n'a que 4 doubles
-   */
-  /* nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R); */
+  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
   
   /* raise an invalidate operation */
   if ( invalidate ) nsp_graphic_invalidate((NspGraphic *) G);

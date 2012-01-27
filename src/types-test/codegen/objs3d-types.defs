@@ -11,7 +11,7 @@
                             ;; or the position of this objs3d in an other Obj3d
    '("double" "rho")        ;; rotation of the rectangle which contains the Obj3d
    '("gboolean" "top")     ;; %t if this is a Figure child or %f in other cases
-   '("NspMatrix*" "bounds" "hidden" "{0,0,0,0}" "4");; bounds of objects contained in the Obj3d. 
+   '("NspMatrix*" "bounds" "hidden" "{0,0,0,0,0,0}" "6");; bounds of objects contained in the Obj3d. 
    '("NspMatrix*" "arect" "std" "{1./8.,1./8.,1./8.,1./8.}" "4") ;; 
    '("NspMatrix*" "frect" "std" "{0,0,1,1}" "4" ) ;; the scales that this objs3d defines if []
                             ;; frect is deduced from data. 
@@ -23,6 +23,7 @@
    '("gboolean" "with_box" "std" "TRUE")  ;; draw a 3d box container 
    '("int" "box_color" "std" "-1")  ;; box color 
    '("int" "box_style" "std" "0")  ;; box style 
+   '("gboolean" "fixed" "std" "0")  ;; box style 
    )
   (gtype-id "Objs3d")
 )
