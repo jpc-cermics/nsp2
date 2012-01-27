@@ -222,6 +222,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( A->obj->alpha != loc->obj->alpha) return FALSE;
   if ( A->obj->theta != loc->obj->theta) return FALSE;
   if ( A->obj->with_box != loc->obj->with_box) return FALSE;
+  if ( A->obj->fixed != loc->obj->fixed) return FALSE;
   if ( A->obj->box_color != loc->obj->box_color) return FALSE;
   if ( A->obj->box_style != loc->obj->box_style) return FALSE;
   return TRUE;
@@ -258,6 +259,7 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_save_d(xdrs, M->obj->alpha) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->theta) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->with_box) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->fixed) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->box_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->box_style) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
@@ -284,6 +286,7 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_load_d(xdrs, &M->obj->alpha) == FAIL) return NULL;
   if (nsp_xdr_load_d(xdrs, &M->obj->theta) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->with_box) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->fixed) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->box_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->box_style) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -411,6 +414,7 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"alpha=%f\n",M->obj->alpha);
   Sciprintf1(indent+2,"theta=%f\n",M->obj->theta);
   Sciprintf1(indent+2,"with_box	= %s\n", ( M->obj->with_box == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -539,6 +543,7 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->alpha = 35;
   H->obj->theta = 45;
   H->obj->with_box = TRUE;
+  H->obj->fixed = FALSE;
   H->obj->box_color = -1;
   H->obj->box_style = 0;
   return OK;
@@ -570,10 +575,10 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   }
   if ( H->obj->frect == NULLMAT) 
     {
-     double x_def[4]={0,0,1,1};
-     if (( H->obj->frect = nsp_matrix_create("frect",'r',1,4)) == NULLMAT)
+     double x_def[6]={0,0,1,1,1,1};
+     if (( H->obj->frect = nsp_matrix_create("frect",'r',1,6)) == NULLMAT)
        return FAIL;
-      memcpy(H->obj->frect->R,x_def,4*sizeof(double));
+      memcpy(H->obj->frect->R,x_def,6*sizeof(double));
   }
   if ( H->obj->title == NULL) 
     {
@@ -595,7 +600,7 @@ int nsp_objs3d_check_values(NspObjs3d *H)
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean fixed,gboolean with_box,int box_color,int box_style,NspTypeBase *type)
 {
   NspObjs3d *H  = nsp_objs3d_create_void(name,type);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
@@ -613,6 +618,7 @@ NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect
   H->obj->alpha=alpha;
   H->obj->theta=theta;
   H->obj->with_box=with_box;
+  H->obj->fixed=fixed;
   H->obj->box_color=box_color;
   H->obj->box_style=box_style;
   if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
@@ -699,6 +705,7 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
   H->obj->alpha=self->obj->alpha;
   H->obj->theta=self->obj->theta;
   H->obj->with_box=self->obj->with_box;
+  H->obj->fixed=self->obj->fixed;
   H->obj->box_color=self->obj->box_color;
   H->obj->box_style=self->obj->box_style;
   return H;
@@ -1046,6 +1053,25 @@ static int _wrap_objs3d_set_with_box(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_objs3d_get_fixed(void *self,const char *attr)
+{
+  int ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspObjs3d *) self)->obj->fixed;
+  nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
+  return nsp_ret;
+}
+
+static int _wrap_objs3d_set_fixed(void *self,const char *attr, NspObject *O)
+{
+  int fixed;
+
+  if ( BoolScalar(O,&fixed) == FAIL) return FAIL;
+  ((NspObjs3d *) self)->obj->fixed= fixed;
+  return OK;
+}
+
 static NspObject *_wrap_objs3d_get_box_color(void *self,const char *attr)
 {
   int ret;
@@ -1092,6 +1118,7 @@ static AttrTab objs3d_attrs[] = {
   { "alpha", (attr_get_function *)_wrap_objs3d_get_alpha, (attr_set_function *)_wrap_objs3d_set_alpha,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "theta", (attr_get_function *)_wrap_objs3d_get_theta, (attr_set_function *)_wrap_objs3d_set_theta,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "with_box", (attr_get_function *)_wrap_objs3d_get_with_box, (attr_set_function *)_wrap_objs3d_set_with_box,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "fixed", (attr_get_function *)_wrap_objs3d_get_fixed, (attr_set_function *)_wrap_objs3d_set_fixed,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "box_color", (attr_get_function *)_wrap_objs3d_get_box_color, (attr_set_function *)_wrap_objs3d_set_box_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "box_style", (attr_get_function *)_wrap_objs3d_get_box_style, (attr_set_function *)_wrap_objs3d_set_box_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
@@ -1245,15 +1272,22 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_3D_to_opengl(Xgc);
   
-  nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
+  /* update frect 
+   *
+   */
+
+  if ( P->obj->fixed == FALSE ) {
+     nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
+     memcpy(P->obj->frect->R,inside_bounds,6*sizeof(double));
+  }
   
   if ( 0) 
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
 	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
 
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
-
-  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
+  
+  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,P->obj->frect->R,
 		     P->obj->with_box,P->obj->box_color,P->obj->box_style);
 
   if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
@@ -1286,7 +1320,7 @@ static void nsp_objs3d_compute_inside_bounds(BCG *Xgc,NspGraphic *Obj,double *bo
   NspObjs3d *P = (NspObjs3d *) Obj;
   L = P->obj->children;
   cloc = L->first ;
-  
+
   if ( cloc == NULLCELL) 
     {
       bounds[0]=bounds[1]=bounds[2]=bounds[3]=bounds[4]=bounds[5]=0;
@@ -2423,6 +2457,7 @@ static void nsp_plot3d_update_bounds(BCG *Xgc,char *name, double *x, double *y, 
 {
   int redraw = FALSE;
   int i;
+  
   if (*flag!=0 && *flag!=1 && *flag!=3 && *flag!=5 && *flag != 7 )
     {
       switch (type3d) 
@@ -2516,7 +2551,7 @@ static void SetEch3d1(BCG *Xgc, nsp_box_3d *box,const double *bbox, double Teta,
   double cost,sint,cosa,sina;
   int ib, i, aaint[]={2,10,2,10},wdim[2], wmax=0,hmax=0;
   char logf[2];
-
+  
   Xgc->graphic_engine->xget_windowdim(Xgc,wdim,wdim+1);
   Xgc->scales->scale_flag3d = 1;
   Xgc->scales->alpha = Alpha;
@@ -2749,7 +2784,7 @@ void nsp_objs3d_invalidate(NspGraphic *G)
  * @G: a #NspGraphic 
  * 
  * inserts @G in the given axe @A. The bounds 
- * of the objs3d are updated acordingly and an 
+ * of the objs3d are updated accordingly and an 
  * invalidate operation is raised using the 
  * graphic object. 
  * 
@@ -2762,8 +2797,13 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G, int invalidate)
     return FAIL;
   /* call the link_figure method */
   G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
+  
   /* updates the bounds of the axe */
-  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
+  /* Alan : nsp_objs3d_compute_inside_bounds utilise un tableau à 6 éléments,
+   * A->obj->bounds n'a que 4 doubles
+   */
+  /* nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R); */
+  
   /* raise an invalidate operation */
   if ( invalidate ) nsp_graphic_invalidate((NspGraphic *) G);
   return OK;

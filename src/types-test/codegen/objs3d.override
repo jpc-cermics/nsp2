@@ -280,7 +280,14 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_3D_to_opengl(Xgc);
   
-  nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
+  /* update frect 
+   *
+   */
+
+  if ( P->obj->fixed == FALSE ) {
+     nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
+     memcpy(P->obj->frect->R,inside_bounds,6*sizeof(double));
+  }
   
   if ( 0) 
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
@@ -288,7 +295,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 
-  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
+  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,P->obj->frect->R,
 		     P->obj->with_box,P->obj->box_color,P->obj->box_style);
 
   if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
@@ -1784,7 +1791,7 @@ void nsp_objs3d_invalidate(NspGraphic *G)
  * @G: a #NspGraphic 
  * 
  * inserts @G in the given axe @A. The bounds 
- * of the objs3d are updated acordingly and an 
+ * of the objs3d are updated accordingly and an 
  * invalidate operation is raised using the 
  * graphic object. 
  * 
@@ -1797,8 +1804,13 @@ int nsp_objs3d_insert_child(NspObjs3d *A, NspGraphic *G, int invalidate)
     return FAIL;
   /* call the link_figure method */
   G->type->link_figure( G,((NspGraphic *) A)->obj->Fig,A->obj);
+  
   /* updates the bounds of the axe */
-  nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R);
+  /* Alan : nsp_objs3d_compute_inside_bounds utilise un tableau à 6 éléments,
+   * A->obj->bounds n'a que 4 doubles
+   */
+  /* nsp_objs3d_compute_inside_bounds(NULL,(NspGraphic *) A,A->obj->bounds->R); */
+  
   /* raise an invalidate operation */
   if ( invalidate ) nsp_graphic_invalidate((NspGraphic *) G);
   return OK;
