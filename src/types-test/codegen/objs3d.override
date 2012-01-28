@@ -21,6 +21,7 @@ extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *s
 extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,const int *pt);
 extern NspObjs3d *nsp_check_for_current_objs3d(void);
 extern NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect);
+extern void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale);
 
 %%
 include-private Objs3d
@@ -280,14 +281,20 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_3D_to_opengl(Xgc);
   
-  /* update frect 
-   *
-   */
+  /* update inside bounds */
 
-  if ( P->obj->fixed == FALSE ) {
-     nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
-     memcpy(P->obj->frect->R,inside_bounds,6*sizeof(double));
-  }
+  if (  P->obj->fixed == FALSE ) 
+    {
+      /* actualize the inside bounds with objects 
+       * this should not be done systematically 
+       */
+      nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
+    }
+  else 
+    {
+      /* update inside_bounds with fixed data */
+      memcpy(inside_bounds,P->obj->ebox->R,6*sizeof(double));
+    }
   
   if ( 0) 
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
@@ -295,7 +302,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 
-  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,P->obj->frect->R,
+  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
 		     P->obj->with_box,P->obj->box_color,P->obj->box_style);
 
   if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
@@ -1848,5 +1855,54 @@ static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2)
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 {
   nsp_scale_default(scale);
+}
+
+
+
+/* set up the bounds of objs3d according to objects 
+ * already inserted and ebox (ebox can be NULL when unused)
+ */
+
+void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale) 
+{
+  NspGraphic *G= (NspGraphic *) A;
+  /* use strf argument to change the objs3d */
+  switch (scale) 
+    {
+    case 0: /* no computation, the plot use the previus (or default) scale */
+      break;
+    case 1: /* from the ebox arg */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      break;
+    case 7: /* backward compatibility  */
+      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
+      A->obj->fixed = TRUE;
+      break;
+    case 5: /* enlarged for pretty objs3d from the ebox arg */
+      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
+      A->obj->fixed = TRUE; 
+      break;
+    case 3: /* built for an isometric scale from the ebox arg */
+      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
+      A->obj->fixed = TRUE; 
+      break;
+    case 2: /* from the min/max of the x, y datas */
+      /* could be stored in a cache */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    case 8: /* backward compatibility  */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    case 6: /* enlarged for pretty objs3d from the min/max of the x, y datas */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    case 4: /* built for an isometric plot from the min/max of the x, y datas */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    }
 }
 

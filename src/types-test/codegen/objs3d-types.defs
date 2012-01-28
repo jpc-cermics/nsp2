@@ -23,7 +23,8 @@
    '("gboolean" "with_box" "std" "TRUE")  ;; draw a 3d box container 
    '("int" "box_color" "std" "-1")  ;; box color 
    '("int" "box_style" "std" "0")  ;; box style 
-   '("gboolean" "fixed" "std" "0")  ;; box style 
+   '("gboolean" "fixed" "std" "FALSE")  ;; box style 
+   '("NspMatrix*" "ebox" "hidden" "{0,0,0,0,0,0}" "6" ) ;; the scales that this objs3d defines if []
    )
   (gtype-id "Objs3d")
 )

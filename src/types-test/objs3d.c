@@ -24,7 +24,7 @@
 
 
 
-#line 64 "codegen/objs3d.override"
+#line 65 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
@@ -103,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 77 "codegen/objs3d.override"
+#line 78 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -225,6 +225,7 @@ static int nsp_objs3d_eq(NspObjs3d *A, NspObject *B)
   if ( A->obj->box_color != loc->obj->box_color) return FALSE;
   if ( A->obj->box_style != loc->obj->box_style) return FALSE;
   if ( A->obj->fixed != loc->obj->fixed) return FALSE;
+  if ( NSP_OBJECT(A->obj->ebox)->type->eq(A->obj->ebox,loc->obj->ebox) == FALSE ) return FALSE;
   return TRUE;
 }
 
@@ -335,6 +336,8 @@ void nsp_objs3d_destroy_partial(NspObjs3d *H)
       nsp_list_destroy(H->obj->children);
     if ( H->obj->colormap != NULL ) 
       nsp_matrix_destroy(H->obj->colormap);
+    if ( H->obj->ebox != NULL ) 
+      nsp_matrix_destroy(H->obj->ebox);
     FREE(H->obj);
    }
 }
@@ -417,6 +420,9 @@ int nsp_objs3d_print(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
+  if ( M->obj->ebox != NULL)
+    { if ( nsp_object_print(NSP_OBJECT(M->obj->ebox),indent+2,"ebox",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -461,6 +467,9 @@ int nsp_objs3d_latex(NspObjs3d *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"box_color=%d\n",M->obj->box_color);
   Sciprintf1(indent+2,"box_style=%d\n",M->obj->box_style);
   Sciprintf1(indent+2,"fixed	= %s\n", ( M->obj->fixed == TRUE) ? "T" : "F" );
+  if ( M->obj->ebox != NULL)
+    { if ( nsp_object_latex(NSP_OBJECT(M->obj->ebox),indent+2,"ebox",rec_level+1)== FALSE ) return FALSE ;
+    }
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -546,7 +555,8 @@ int nsp_objs3d_create_partial(NspObjs3d *H)
   H->obj->with_box = TRUE;
   H->obj->box_color = -1;
   H->obj->box_style = 0;
-  H->obj->fixed = 0;
+  H->obj->fixed = FALSE;
+  H->obj->ebox = NULLMAT;
   return OK;
 }
 
@@ -597,11 +607,18 @@ int nsp_objs3d_check_values(NspObjs3d *H)
        return FAIL;
 
     }
+  if ( H->obj->ebox == NULLMAT) 
+    {
+     double x_def[6]={0,0,0,0,0,0};
+     if (( H->obj->ebox = nsp_matrix_create("ebox",'r',1,6)) == NULLMAT)
+       return FAIL;
+      memcpy(H->obj->ebox->R,x_def,6*sizeof(double));
+  }
   nsp_graphic_check_values((NspGraphic *) H);
   return OK;
 }
 
-NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspTypeBase *type)
+NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,NspList* children,NspMatrix* colormap,double alpha,double theta,gboolean with_box,int box_color,int box_style,gboolean fixed,NspMatrix* ebox,NspTypeBase *type)
 {
   NspObjs3d *H  = nsp_objs3d_create_void(name,type);
   if ( H ==  NULLOBJS3D) return NULLOBJS3D;
@@ -622,6 +639,7 @@ NspObjs3d *nsp_objs3d_create(const char *name,nsp_gcscale scale,NspMatrix* wrect
   H->obj->box_color=box_color;
   H->obj->box_style=box_style;
   H->obj->fixed=fixed;
+  H->obj->ebox= ebox;
   if ( nsp_objs3d_check_values(H) == FAIL) return NULLOBJS3D;
   return H;
 }
@@ -709,6 +727,12 @@ NspObjs3d *nsp_objs3d_full_copy_partial(NspObjs3d *H,NspObjs3d *self)
   H->obj->box_color=self->obj->box_color;
   H->obj->box_style=self->obj->box_style;
   H->obj->fixed=self->obj->fixed;
+  if ( self->obj->ebox == NULL )
+    { H->obj->ebox = NULL;}
+  else
+    {
+      if ((H->obj->ebox = (NspMatrix *) nsp_object_full_copy_and_name("ebox",NSP_OBJECT(self->obj->ebox))) == NULLMAT) return NULL;
+    }
   return H;
 }
 
@@ -778,7 +802,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 98 "codegen/objs3d.override"
+#line 99 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -793,7 +817,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 797 "objs3d.c"
+#line 821 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -902,7 +926,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 114 "codegen/objs3d.override"
+#line 115 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -959,7 +983,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 963 "objs3d.c"
+#line 987 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1129,7 +1153,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 172 "codegen/objs3d.override"
+#line 173 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1138,10 +1162,10 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1142 "objs3d.c"
+#line 1166 "objs3d.c"
 
 
-#line 182 "codegen/objs3d.override"
+#line 183 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1150,7 +1174,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1154 "objs3d.c"
+#line 1178 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -1181,7 +1205,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 192 "codegen/objs3d.override"
+#line 193 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1273,14 +1297,20 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_3D_to_opengl(Xgc);
   
-  /* update frect 
-   *
-   */
+  /* update inside bounds */
 
-  if ( P->obj->fixed == FALSE ) {
-     nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
-     memcpy(P->obj->frect->R,inside_bounds,6*sizeof(double));
-  }
+  if (  P->obj->fixed == FALSE ) 
+    {
+      /* actualize the inside bounds with objects 
+       * this should not be done systematically 
+       */
+      nsp_objs3d_compute_inside_bounds(Xgc,Obj,inside_bounds);
+    }
+  else 
+    {
+      /* update inside_bounds with fixed data */
+      memcpy(inside_bounds,P->obj->ebox->R,6*sizeof(double));
+    }
   
   if ( 0) 
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
@@ -1288,7 +1318,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 
-  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,P->obj->frect->R,
+  nsp_draw_objs3d_s2(Xgc,P,P->obj->theta,P->obj->alpha,legend,flag,inside_bounds,
 		     P->obj->with_box,P->obj->box_color,P->obj->box_style);
 
   if ( rep == OK)  Xgc->graphic_engine->xpop_colormap(Xgc);
@@ -2844,4 +2874,53 @@ static void nsp_init_nsp_gcscale(nsp_gcscale *scale)
 }
 
 
-#line 2848 "objs3d.c"
+
+/* set up the bounds of objs3d according to objects 
+ * already inserted and ebox (ebox can be NULL when unused)
+ */
+
+void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale) 
+{
+  NspGraphic *G= (NspGraphic *) A;
+  /* use strf argument to change the objs3d */
+  switch (scale) 
+    {
+    case 0: /* no computation, the plot use the previus (or default) scale */
+      break;
+    case 1: /* from the ebox arg */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      break;
+    case 7: /* backward compatibility  */
+      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
+      A->obj->fixed = TRUE;
+      break;
+    case 5: /* enlarged for pretty objs3d from the ebox arg */
+      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
+      A->obj->fixed = TRUE; 
+      break;
+    case 3: /* built for an isometric scale from the ebox arg */
+      memcpy(A->obj->ebox->R,ebox,6*sizeof(double));
+      A->obj->fixed = TRUE; 
+      break;
+    case 2: /* from the min/max of the x, y datas */
+      /* could be stored in a cache */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    case 8: /* backward compatibility  */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    case 6: /* enlarged for pretty objs3d from the min/max of the x, y datas */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    case 4: /* built for an isometric plot from the min/max of the x, y datas */
+      nsp_objs3d_compute_inside_bounds(NULL,G,A->obj->bounds->R);
+      A->obj->fixed = FALSE; 
+      break;
+    }
+}
+
+
+#line 2927 "objs3d.c"

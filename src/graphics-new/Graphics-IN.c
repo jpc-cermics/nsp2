@@ -351,6 +351,7 @@ static int int_contour_new( Stack stack, int rhs, int opt, int lhs)
 	  Scierror("Error: failed to insert contour in Figure\n");
 	  return RET_BUG;
 	}
+      nsp_strf_objs3d( objs3d , ebox , iflag[1]);
       nsp_objs3d_invalidate(((NspGraphic *) objs3d));
       ret = NSP_OBJECT(vf);
     }
@@ -686,6 +687,7 @@ static int int_param3d_new( Stack stack, int rhs, int opt, int lhs)
 	  return RET_BUG;
 	}
     }
+  nsp_strf_objs3d( objs3d , ebox , iflag[1]);
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return 0;
 } 
@@ -1031,6 +1033,8 @@ static NspGraphic *nsp_plot3d_new(double *x, double *y, double *z, int *p, int *
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
     }
+  /* if bbox exists we consider that it fixes the bounds */
+  nsp_strf_objs3d( objs3d , bbox , flag[1] );
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return (NspGraphic *) pol;
 }
@@ -1063,6 +1067,7 @@ static NspGraphic * nsp_plot_fac3d_new(double *x, double *y, double *z,int izcol
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
     }
+  nsp_strf_objs3d( objs3d , bbox , flag[1]);
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return (NspGraphic *) pol;
 }
@@ -1103,6 +1108,7 @@ static NspGraphic *nsp_plot_fac3d1_new(double *x, double *y, double *z,int izcol
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
     }
+  nsp_strf_objs3d( objs3d , bbox , flag[1]);
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return (NspGraphic *) pol;
 }
@@ -1143,6 +1149,7 @@ static NspGraphic *nsp_plot3d1_new(double *x, double *y, double *z, int *p, int 
       Scierror("Error: failed to insert contour in Figure\n");
       return NULL;
     }
+  nsp_strf_objs3d( objs3d , bbox , flag[1]);
   nsp_objs3d_invalidate(((NspGraphic *) objs3d));
   return (NspGraphic *) pol;
 }
@@ -1529,7 +1536,7 @@ static int int_plot2d_G( Stack stack, int rhs, int opt, int lhs,int force2d,int 
       /* if rect is provided and not selected by strf we force it */
       plot2d_strf_change('d',strf);
     }
-
+  
   ret = nsp_plot2d_obj(x->R,y->R,logflags, &ncurves, &lcurve,Mistyle->I,strf,
 		       leg,leg_posi,mode,rect,nax);
   if ( ret == NULL && ncurves != 0 )
