@@ -24,7 +24,7 @@
    '("int" "box_color" "std" "-1")  ;; box color 
    '("int" "box_style" "std" "0")  ;; box style 
    '("gboolean" "fixed" "std" "FALSE")  ;; box style 
-   '("NspMatrix*" "ebox" "hidden" "{0,0,0,0,0,0}" "6" ) ;; the scales that this objs3d defines if []
+   '("NspMatrix*" "ebox" "std" "{0,0,0,0,0,0}" "6" ) ;; when fixed is true bounds are specified by ebox
    )
   (gtype-id "Objs3d")
 )

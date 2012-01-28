@@ -263,6 +263,7 @@ int nsp_objs3d_xdr_save(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_save_i(xdrs, M->obj->box_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->box_style) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fixed) == FAIL) return FAIL;
+  if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->ebox)) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -290,6 +291,7 @@ NspObjs3d  *nsp_objs3d_xdr_load_partial(XDR *xdrs, NspObjs3d *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->box_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->box_style) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->fixed) == FAIL) return NULL;
+  if ((M->obj->ebox =(NspMatrix *) nsp_object_xdr_load(xdrs))== NULLMAT) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -817,7 +819,7 @@ static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 821 "objs3d.c"
+#line 823 "objs3d.c"
 static NspObject *_wrap_objs3d_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -983,7 +985,7 @@ static int _wrap_objs3d_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 987 "objs3d.c"
+#line 989 "objs3d.c"
 static NspObject *_wrap_objs3d_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1131,6 +1133,35 @@ static int _wrap_objs3d_set_fixed(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_objs3d_get_ebox(void *self,const char *attr)
+{
+  NspMatrix *ret;
+
+  ret = ((NspObjs3d *) self)->obj->ebox;
+  return (NspObject *) ret;
+}
+
+static NspObject *_wrap_objs3d_get_obj_ebox(void *self,const char *attr, int *copy)
+{
+  NspMatrix *ret;
+
+  *copy = FALSE;
+  ret = ((NspMatrix*) ((NspObjs3d *) self)->obj->ebox);
+  return (NspObject *) ret;
+}
+
+static int _wrap_objs3d_set_ebox(void *self,const char *attr, NspObject *O)
+{
+  NspMatrix *ebox;
+
+  if ( ! IsMat(O) ) return FAIL;
+  if ((ebox = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
+  if (((NspObjs3d *) self)->obj->ebox != NULL ) 
+    nsp_matrix_destroy(((NspObjs3d *) self)->obj->ebox);
+  ((NspObjs3d *) self)->obj->ebox= ebox;
+  return OK;
+}
+
 static AttrTab objs3d_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_objs3d_get_wrect, (attr_set_function *)_wrap_objs3d_set_wrect,(attr_get_object_function *)_wrap_objs3d_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
   { "rho", (attr_get_function *)_wrap_objs3d_get_rho, (attr_set_function *)_wrap_objs3d_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -1146,6 +1177,7 @@ static AttrTab objs3d_attrs[] = {
   { "box_color", (attr_get_function *)_wrap_objs3d_get_box_color, (attr_set_function *)_wrap_objs3d_set_box_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "box_style", (attr_get_function *)_wrap_objs3d_get_box_style, (attr_set_function *)_wrap_objs3d_set_box_style,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "fixed", (attr_get_function *)_wrap_objs3d_get_fixed, (attr_set_function *)_wrap_objs3d_set_fixed,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "ebox", (attr_get_function *)_wrap_objs3d_get_ebox, (attr_set_function *)_wrap_objs3d_set_ebox,(attr_get_object_function *)_wrap_objs3d_get_obj_ebox, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -1162,7 +1194,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1166 "objs3d.c"
+#line 1198 "objs3d.c"
 
 
 #line 183 "codegen/objs3d.override"
@@ -1174,7 +1206,7 @@ int _wrap_nsp_setrowscols_objs3d(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1178 "objs3d.c"
+#line 1210 "objs3d.c"
 
 
 /*----------------------------------------------------
@@ -2923,4 +2955,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
 }
 
 
-#line 2927 "objs3d.c"
+#line 2959 "objs3d.c"
