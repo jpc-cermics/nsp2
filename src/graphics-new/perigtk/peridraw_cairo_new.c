@@ -892,7 +892,9 @@ static int  xset_pattern(BCG *Xgc,int color)
   cairo_t *cr =  Xgc->private->cairo_cr; 
   double rgb[3];
   int old = xget_pattern(Xgc);
-  if ( old == color ) return old;
+  /* gives wrong results in new_graphics 
+   * if ( old == color ) return old;
+   */
   if ( Xgc->private->colors == NULL) return 1;
   Xgc->CurColor = color = Max(1,color);
   nsp_get_color_rgb(Xgc,color,rgb,Xgc->private->colors);
