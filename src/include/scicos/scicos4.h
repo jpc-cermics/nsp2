@@ -5,7 +5,6 @@
 #define SCICOS44
 #endif 
 
-
 #include "simul4.h"
 
 /* define min max for win32 */
@@ -123,10 +122,12 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 #define GetInPortPtrs(blk,x) ((((x)>0)&((x)<=(blk->nin))) ? (blk->inptr[x-1]) : NULL)
 /* Get number of regular output port. */
 #define GetNout(blk) (blk->nout)
-/* Get regular output port pointer of port number x. */
+/* Get regular output port pointer of port number x. 
+ * outptr and inptr are by default void ** 
+ */
 #define GetOutPtrs(blk) (blk->outptr)
 #define GetInPtrs(blk) (blk->inptr)
-#define GetOutPortPtrs(blk,x) ((((x)>0)&((x)<=(blk->nout))) ? (blk->outptr[x-1]) : NULL)
+#define GetOutPortPtrs(blk,x) ((((x)>0)&((x)<=(blk->nout))) ? ((blk->outptr[x-1])) : NULL)
 /* Get number of rows (first dimension) of regular input port number x.*/
 #define GetInPortRows(blk,x) ((((x)>0)&((x)<=(blk->nin))) ? (blk->insz[x-1]) : 0)
 /* Get number of columns (second dimension) of regular input port number x. */
@@ -267,34 +268,34 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 #define Getint32OparPtrs(blk,x) (SCSINT32_COP *) GetOparPtrs(blk,x)
 
 /*
-    Get pointer of uint8 typed object parameters number x.
-*/
+ *   Get pointer of uint8 typed object parameters number x.
+ */
 #define Getuint8OparPtrs(blk,x) (SCSUINT8_COP *) GetOparPtrs(blk,x)
 
 /*
-    Get pointer of uint16 typed object parameters number x.
-*/
+ *   Get pointer of uint16 typed object parameters number x.
+ */
 #define Getuint16OparPtrs(blk,x) (SCSUINT16_COP *) GetOparPtrs(blk,x)
 
 /*
-    Get pointer of uint32 typed object parameters number x.
-*/
+ * Get pointer of uint32 typed object parameters number x.
+ */
 #define Getuint32OparPtrs(blk,x) (SCSUINT32_COP *) GetOparPtrs(blk,x)
 
 /*
-    Get number of object state.
-*/
+ * Get number of object state.
+ */
 #define GetNoz(blk) (blk->noz)
 
 /*
-    Get type of object state number x.
-*/
+ *   Get type of object state number x.
+ */
 #define GetOzType(blk,x) (((x>0)&(x<=blk->noz)) ? (blk->oztyp[x-1]) : 0)
 
 /*
-    Get size of object state number x.
-
-*/
+ * Get size of object state number x.
+ *
+ */
 /*  usage :
  *   GetOzSize(blk,x,1) : get first dimension of oz
  *   GetOzSize(blk,x,2) : get second dimension of oz
@@ -303,55 +304,55 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
                               ((((y)>0)&((y)<=2)) ? (blk->ozsz[(y-1)*blk->noz+(x-1)]) : 0) : 0)
 
 /*
-    Get pointer of object state number x.
-*/
+ *   Get pointer of object state number x.
+ */
 #define GetOzPtrs(blk,x) (((x>0)&(x<=blk->noz)) ? (blk->ozptr[x-1]) : 0)
 
 /*
-    Get pointer of real object state number x.
-*/
+ *   Get pointer of real object state number x.
+ */
 #define GetRealOzPtrs(blk,x) (SCSREAL_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get pointer of imaginary part of object state number x.
-*/
-#define GetImagOzPtrs(blk,x) (((x)>0)&((x)<=(blk->noz)) ? \
-                               (SCSREAL_COP *) ((SCSREAL_COP *)blk->ozptr[x-1]+ \
-                               ((blk->ozsz[x-1])*(blk->ozsz[blk->noz+(x-1)]))) : NULL)
+ *   Get pointer of imaginary part of object state number x.
+ */
+#define GetImagOzPtrs(blk,x) (((x)>0)&((x)<=(blk->noz)) ?		\
+			      (SCSREAL_COP *) ((SCSREAL_COP *)blk->ozptr[x-1]+ \
+					       ((blk->ozsz[x-1])*(blk->ozsz[blk->noz+(x-1)]))) : NULL)
 
 /*
-    Get pointer of int8 typed object state number x.
-*/
+ *   Get pointer of int8 typed object state number x.
+ */
 #define Getint8OzPtrs(blk,x) (SCSINT8_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get pointer of int16 typed object state number x.
-*/
+ *   Get pointer of int16 typed object state number x.
+ */
 #define Getint16OzPtrs(blk,x) (SCSINT16_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get pointer of int32 typed object state number x.
-*/
+ *   Get pointer of int32 typed object state number x.
+ */
 #define Getint32OzPtrs(blk,x) (SCSINT32_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get pointer of uint8 typed object state number x.
-*/
+ *   Get pointer of uint8 typed object state number x.
+ */
 #define Getuint8OzPtrs(blk,x) (SCSUINT8_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get pointer of uint16 typed object state number x.
-*/
+ *   Get pointer of uint16 typed object state number x.
+ */
 #define Getuint16OzPtrs(blk,x) (SCSUINT16_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get pointer of uint32 typed object state number x.
-*/
+ * Get pointer of uint32 typed object state number x.
+ */
 #define Getuint32OzPtrs(blk,x) (SCSUINT32_COP *) GetOzPtrs(blk,x)
 
 /*
-    Get the sizeof of the object state number x.
-*/
+ * Get the sizeof of the object state number x.
+ */
 #define GetSizeOfOz(blk,x)    ((GetOzType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
                                (GetOzType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
 			       ((GetOzType(blk,x)==SCSINT8_N)|(GetOzType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
@@ -359,8 +360,8 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
                                ((GetOzType(blk,x)==SCSINT32_N)|(GetOzType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 
 /*
-    Get the sizeof of the object parameters number x.
-*/
+ * Get the sizeof of the object parameters number x.
+ */
 #define GetSizeOfOpar(blk,x)  ((GetOparType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
                                (GetOparType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
 			       ((GetOparType(blk,x)==SCSINT8_N)|(GetOparType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
@@ -368,16 +369,16 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
                                ((GetOparType(blk,x)==SCSINT32_N)|(GetOparType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 
 /*
-    Get the sizeof of the regular output port number x.
-*/
+ * Get the sizeof of the regular output port number x.
+ */
 #define GetSizeOfOut(blk,x)  ((GetOutType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
                               (GetOutType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
 			      ((GetOutType(blk,x)==SCSINT8_N)|(GetOutType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
                               ((GetOutType(blk,x)==SCSINT16_N)|(GetOutType(blk,x)==SCSUINT16_N)) ? (sizeof(SCSINT16_COP)) : \
                               ((GetOutType(blk,x)==SCSINT32_N)|(GetOutType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 /*
-    Get the sizeof of the regular input port number x.
-*/
+ * Get the sizeof of the regular input port number x.
+ */
 #define GetSizeOfIn(blk,x)  ((GetInType(blk,x)==SCSREAL_N) ? (sizeof(SCSREAL_COP)) : \
                              (GetInType(blk,x)==SCSCOMPLEX_N) ? (2*sizeof(SCSCOMPLEX_COP)) : \
                              ((GetInType(blk,x)==SCSINT8_N)|(GetInType(blk,x)==SCSUINT8_N)) ? (sizeof(SCSINT8_COP)) : \
@@ -385,48 +386,48 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
                              ((GetInType(blk,x)==SCSINT32_N)|(GetInType(blk,x)==SCSUINT32_N)) ? (sizeof(SCSINT32_COP)) : 0)
 
 /*
-    Get number of zero crossing surface.
-*/
+ * Get number of zero crossing surface.
+ */
 #define GetNg(blk) (blk->ng)
 
 /*
-    Get pointer of the zero crossing register.
-*/
+ * Get pointer of the zero crossing register.
+ */
 #define GetGPtrs(blk) (blk->g)
 
 /*
-    Get pointer of the direction of the zero crossing register.
-*/
+ * Get pointer of the direction of the zero crossing register.
+ */
 #define GetJrootPtrs(blk) (blk->jroot)
 
 /*
-    Get number of modes.
-*/
+ * Get number of modes.
+ */
 #define GetNmode(blk) (blk->nmode)
 
 /*
-    Get pointer of the mode register.
-*/
+ * Get pointer of the mode register.
+ */
 #define GetModePtrs(blk) (blk->mode)
 
 /*
-    Get pointer of the block label
-*/
+ * Get pointer of the block label
+ */
 #define GetLabelPtrs(blk) (blk->label)
 
 /*
-    Get pointer of boolean typed regular input port number x.
-*/
+ * Get pointer of boolean typed regular input port number x.
+ */
 #define GetBoolInPortPtrs(blk,x) Getint32InPortPtrs(blk,x)
 
 /*
-    Get pointer of boolean typed regular output port number x.
-*/
+ * Get pointer of boolean typed regular output port number x.
+ */
 #define GetBoolOutPortPtrs(blk,x) Getint32OutPortPtrs(blk,x)
 
 /*
-    Get the pointer of pointer of the Work array.
-*/
+ *    Get the pointer of pointer of the Work array.
+ */
 #define GetPtrWorkPtrs(blk) (blk->work)
 
 #endif 
