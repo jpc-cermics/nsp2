@@ -57,4 +57,6 @@ extern void *scicos_malloc(size_t size);
 extern void scicos_free(void *p);
 extern int scicos_mtran(double *a, int na, double *b, int nb, int m, int n);
 
+extern void Set_Jacobian_flag (int flag);
+
 #endif 
