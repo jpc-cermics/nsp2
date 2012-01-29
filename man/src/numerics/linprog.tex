@@ -70,6 +70,7 @@ and \verb+var_type(i)="I"+  to define it as integer.
 
 \itemdesc{remarks about constraints}
 \begin{itemize}
+\item The constraint matrices $A$ and $A_e$ can be either sparse or full matrix.
 \item If all constraints are equalities (respectively inequalities) second 
 and third arguments (respectively fourth and fifth arguments) should 
 be empty matrices (with first dimension equal to 0). 
@@ -86,6 +87,10 @@ $$
  -a_1 x_1 - a_2 x_2 + \dots - a_n x_n &  \le & -\underline{b}
 \end{array}
 $$
+\item For glpk the unknowns $x_1, \dots, x_n$ are called structural variables
+and each constraint is associated to an auxiliary variable $y_i = (Ax)_i$ 
+for $i \in [1,m_i]$ and $y_{i+m_i} = (A_ex)_i$ for  $i \in [1,m_e]$. This is
+important when one wants to specify the initial basis.
 \end{itemize}
 
 \itemdesc{possible exit flag values}
@@ -174,7 +179,18 @@ This argument is an hash table with the possible following entries:
       dual simplex but switch to primal simplex in case of failure.
 \item \verb+r_test=0|1+ (default is 1) ratio test: 0 standard, 1 Harris.
 \item \verb+pricing=0|1+
-\item \verb+basis_info=+  hash table which defines the initial basis.
+\item \verb+basis_info=+  hash table which defines the initial basis. The hash table has 2 entries named
+      \verb+str+ and \verb+aux+ which are respectively arrays of size $n$ and $m_i+m_e$ giving for
+      structural and auxiliary variables their statuses :
+      \begin{tabular}{|c|l|}
+        \hline
+        1 & basic variable \\
+        2 & non-basic variable on lower bound \\
+        3 & non-basic variable on upper bound\\
+        4 & non-basic free variable (not used by linprog) \\
+        5 & non-basic fixed variable (this corresponds to an equility constraint)\\
+       \hline
+      \end{tabular}
 \end{itemize}
 \item[interior point solver options]
 \begin{itemize}
@@ -200,7 +216,9 @@ This argument is an hash table with the possible following entries:
 \end{itemize}
 \end{description}
 
-TO BE CONTINUED
+\itemdesc{terminal outputs}
+
+TO BE DONE: explain the output informations from glpk during computation. 
 
 \end{mandescription} 
 
@@ -223,6 +241,15 @@ A = [ 2 4 8  6;
 b = [100; 160;  20];
 [xopt,fopt,flag,extra] = linprog(c,A,b,[],[],sense="max")
 \end{Verbatim}
+On such problems there is a trivial basis to start simplex : each structural variable
+is a non-basic variable at its lower bound 0 (status flag is 2) and each auxiliary variable 
+is a basic variable (status flag is 1). 
+\begin{Verbatim}
+init_basis = hash(str=[2,2,2,2],aux=[1,1,1]);
+sopt = hash(basis_info = init_basis)
+[xopt,fopt,flag,extra] = linprog(c,A,b,[],[],sense="max",solver_options=sopt)
+\end{Verbatim}
+
 
 \end{examples}
 
