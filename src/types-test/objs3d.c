@@ -2802,6 +2802,9 @@ void nsp_3d_rotation(BCG *Xgc)
       x=xc;
       y=yc;
     }
+  Xgc->scales->theta = theta;
+  Xgc->scales->alpha = alpha;
+  Xgc->graphic_engine->xinfo(Xgc," "); 
   nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = FALSE;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
@@ -2955,4 +2958,4 @@ void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale)
 }
 
 
-#line 2959 "objs3d.c"
+#line 2962 "objs3d.c"

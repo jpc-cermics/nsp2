@@ -1754,6 +1754,9 @@ void nsp_3d_rotation(BCG *Xgc)
       x=xc;
       y=yc;
     }
+  Xgc->scales->theta = theta;
+  Xgc->scales->alpha = alpha;
+  Xgc->graphic_engine->xinfo(Xgc," "); 
   nsp_set_cursor(Xgc,-1);
   Xgc->scales->scale_3drot_flag = FALSE;
   Xgc->graphic_engine->xset_win_protect(Xgc,FALSE); /* protect against window kill */
