@@ -281,7 +281,7 @@ clean ::
 	    --prefix Sharedlib sharedlib.defs) > $*.c \
 	&& mv sharedlib.h ../../include/nsp 
 
-all:: ../../liblowdisc/ldfaure.c 
+xxall:: ../../liblowdisc/ldfaure.c 
 	cd ../../liblowdisc/; make 
 
 ../../liblowdisc/ldfaure.c : ldfaure.defs ldfaure-types.defs ldfaure.override codegen/*.py
