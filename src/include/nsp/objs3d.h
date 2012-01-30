@@ -137,8 +137,13 @@ extern int nsp_figure_change3d_orientation(BCG *Xgc,double theta,double alpha,co
 extern NspObjs3d *nsp_check_for_current_objs3d(void);
 extern NspObjs3d * nsp_check_for_objs3d_in_figure(NspFigure *F,const double *wrect);
 extern void nsp_strf_objs3d(NspObjs3d *A,double *ebox, int scale);
+extern void apply_transforms_new(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[],
+			  int Mm,int ncoord);
+extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],
+				  const double lim[], int ncoord);
 
-#line 142 "./objs3d.h"
+
+#line 147 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -153,7 +158,7 @@ static AttrTab objs3d_attrs[];
 static NspMethods *objs3d_get_methods(void);
 /* static int int_objs3d_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspObjs3d *nsp_objs3d_create_void(const char *name,NspTypeBase *type);
-#line 28 "codegen/objs3d.override"
+#line 33 "codegen/objs3d.override"
 
 /* inserted in the private part of include file */
 static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
@@ -189,6 +194,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 193 "./objs3d.h"
+#line 198 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

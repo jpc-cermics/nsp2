@@ -24,7 +24,7 @@
 
 
 
-#line 65 "codegen/objs3d.override"
+#line 70 "codegen/objs3d.override"
 #include <gtk/gtk.h>
 
 #ifdef  WITH_GTKGLEXT 
@@ -103,7 +103,7 @@ NspTypeObjs3d *new_type_objs3d(type_mode mode)
 
   type->init = (init_func *) init_objs3d;
 
-#line 78 "codegen/objs3d.override"
+#line 83 "codegen/objs3d.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_objs3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_objs3d ;
@@ -804,7 +804,7 @@ static int _wrap_objs3d_set_wrect(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 99 "codegen/objs3d.override"
+#line 104 "codegen/objs3d.override"
 /* override set rho */
 static int _wrap_objs3d_set_rho(void *self, char *attr, NspObject *O)
 {
@@ -928,7 +928,7 @@ static int _wrap_objs3d_set_title(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 115 "codegen/objs3d.override"
+#line 120 "codegen/objs3d.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -1185,7 +1185,7 @@ static AttrTab objs3d_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 173 "codegen/objs3d.override"
+#line 178 "codegen/objs3d.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1197,7 +1197,7 @@ int _wrap_nsp_extractelts_objs3d(Stack stack, int rhs, int opt, int lhs)
 #line 1198 "objs3d.c"
 
 
-#line 183 "codegen/objs3d.override"
+#line 188 "codegen/objs3d.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1237,7 +1237,7 @@ void Objs3d_Interf_Info(int i, char **fname, function (**f))
   *f = Objs3d_func[i].fonc;
 }
 
-#line 193 "codegen/objs3d.override"
+#line 198 "codegen/objs3d.override"
 
 /* inserted verbatim at the end */
 
@@ -1938,7 +1938,7 @@ static Plot3dBox* make_box(BCG *Xgc,double Box[], GBoolean with_ticks, BoxStyle 
 #ifdef WITH_GTKGLEXT 
       if ( Xgc->graphic_engine != &GL_gengine ) 
 #endif	
-	apply_transforms_new1(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks)); 
+	apply_transforms_new1(Xgc, B->ticks_coord,B->ticks_coord, B->ticks_pos, lim, 2*(B->nb_xyz_ticks));
     }
   if ( B->with_ticks  &&  B->box_style == MATLAB )
     {

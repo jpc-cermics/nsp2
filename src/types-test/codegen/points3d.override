@@ -284,7 +284,7 @@ static void draw_points3d_ogl(BCG *Xgc,void *Ob)
       Vp[1] = V_coord[j+V->Mcoord->m];
       Vp[2] = V_coord[j+2*V->Mcoord->m];
 #if 0      
-      apply_transforms_new(Xgc,Tp,Vp,V->pos,lim,1); 
+      apply_transforms_new1(Xgc,Tp,Vp,V->pos,lim,1); 
       Tp[0] = XScale(Xgc->scales,Tp[0]);
       Tp[1] = YScale(Xgc->scales,Tp[1]);
       nsp_ogl_set_2dview(Xgc);
