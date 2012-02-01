@@ -41,7 +41,7 @@
     t = linspace(0,3,3*rate);
     y = sin(2*%pi*440*t); // mono 
     play(y,sync=%t);
-    y = [y,sin(2*%pi*220*t)] // stereo
+    y = [y;sin(2*%pi*220*t)]; // stereo
     play(y,sync=%t);
     // a more complex sound 
     p=[1,3;5,3;8,3]; 

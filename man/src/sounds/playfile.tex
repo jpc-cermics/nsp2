@@ -39,7 +39,7 @@
     t = linspace(0,3,3*rate);
     y = sin(2*%pi*440*t); // mono 
     F=sndfile('TMPDIR/test.wav',mode='w',samplerate=rate,channels=1);
-    F.write[x];
+    F.write[y];
     F.close[];
     // now play the file 
     playfile('TMPDIR/test.wav')
