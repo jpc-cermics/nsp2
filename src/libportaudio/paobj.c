@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -31,13 +31,14 @@
 #define Pa_Private 
 #include <nsp/object.h>
 #include <nsp/matrix.h>
-#include "nsp/pr-output.h" 
-#include "nsp/interf.h"
-#include "nsp/matutil.h"
+#include <nsp/pr-output.h>
+#include <nsp/interf.h>
+#include <nsp/matutil.h>
 #include "pansp.h" 
 #include <nsp/ivect.h> 
 #include <nsp/hobj.h> 
 #include <nsp/type.h> 
+#include <nsp/system.h> /* FSIZE */
 
 #define FRAMES_PER_BUFFER   (1024)
 
@@ -567,6 +568,7 @@ static void nsp_paobj_open(NspPa *P)
 
 static int int_nsp_play_file(Stack stack,int rhs,int opt,int lhs)
 {
+  char Fname_expanded[FSIZE+1];
   int err,sync=FALSE,device=-1; 
   int_types T[] = {string,new_opts, t_end} ;
   nsp_option opts[] ={{"sync",s_bool,NULLOBJ,-1},
@@ -575,7 +577,9 @@ static int int_nsp_play_file(Stack stack,int rhs,int opt,int lhs)
   char *str;
   CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&str,&opts,&sync,&device) == FAIL) return RET_BUG;
-  err= nsp_play_file( str,sync,device);
+  /* expand keys in path name result in buf */
+  nsp_expand_file_with_exec_dir(&stack,str,Fname_expanded);  
+  err= nsp_play_file(Fname_expanded,sync,device);
   if ( lhs == 1) 
     {
       if ( nsp_move_double(stack,1,(double) err)==FAIL) return RET_BUG;

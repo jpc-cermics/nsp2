@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -33,6 +33,7 @@
 #include <nsp/smatrix.h> 
 #include <nsp/matrix.h> 
 #include <nsp/hobj.h> 
+#include <nsp/system.h> /* FSIZE */
 
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
@@ -613,6 +614,7 @@ static int nsp_sndfile_format(NspSMatrix *S);
 
 static int int_sndfile_fopen(Stack stack, int rhs, int opt, int lhs)
 {
+  char Fname_expanded[FSIZE+1];
   NspSndFile *F;
   NspSMatrix *Format=NULL;
   int sfmode;
@@ -662,7 +664,10 @@ static int int_sndfile_fopen(Stack stack, int rhs, int opt, int lhs)
     }
   /* initialize the type for sndfile */
   new_type_sndfile(T_BASE);
-  if (( F = nsp_sndfile_create(NVOID, Fname)) == NULLSNDFILE) return RET_BUG;
+  /* expand keys in path name result in buf */
+  nsp_expand_file_with_exec_dir(&stack,Fname,Fname_expanded);
+
+  if (( F = nsp_sndfile_create(NVOID, Fname_expanded)) == NULLSNDFILE) return RET_BUG;
   F->snd->sfinfo = sfi;
   F->snd->sf = sf_open (F->snd->fname, sfmode, &F->snd->sfinfo);
   F->snd->mode = sfmode;
