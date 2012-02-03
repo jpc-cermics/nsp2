@@ -60,8 +60,8 @@ function demo_image_from_drawable()
   src.set_size_request[w,w]
 
   n=100;
-  rects=[rand(n,2,'u')*w,rand(n,2,'u')*50+20];
-  rgb= rand(n,3,'u')*65535; 
+  rects=[rand(n,2)*w,rand(n,2)*50+20];
+  rgb= rand(n,3)*65535; 
 
   src.connect["expose_event", image_source_expose,list(n,rects,rgb)]
 
