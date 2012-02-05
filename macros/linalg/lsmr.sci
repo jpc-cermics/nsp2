@@ -263,7 +263,7 @@ function [x, istop, itn, normr, normAr, normA, condA, normx]...
   // Exit if b=0 or A'b = 0.
 
   normAr = alpha * beta;
-  if normAr == 0, disp(msg(1,:)); return, end
+  if normAr == 0, print(msg(1,:)); return, end
 
   // Heading for iteration log.
 
