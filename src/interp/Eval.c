@@ -2839,7 +2839,8 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
       if ( O1->basetype == NSP_TYPE_BASE(nsp_type_plist))   stack.val->S[first] = O1;
     }
   
-  if ( stack.val->S[first] != NULLOBJ && stack.val->S[first]->basetype != NSP_TYPE_BASE(nsp_type_plist))
+  if ( stack.val->S[first] != NULLOBJ && stack.val->S[first]->basetype != NSP_TYPE_BASE(nsp_type_plist) 
+       && stack.val->S[first]->basetype != NSP_TYPE_BASE(nsp_type_function))
     { 
       /* Object is a variable, evaluate arguments and call extract
        */
@@ -2892,6 +2893,12 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
        */
       /* evaluation of ARGS **/
       O1= stack.val->S[first];
+      if ( O1 != NULL && stack.val->S[first]->basetype == NSP_TYPE_BASE(nsp_type_function))
+	{
+	  /* O1 is a function not a macro */
+	  name = ((NspFunction *) stack.val->S[first])->fname;
+	  O1= NULL;
+	}
       stack.val->S[first]=NULLOBJ;
       /*
        * sequential evaluation of function arguments 
