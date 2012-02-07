@@ -1,0 +1,51 @@
+[Setup]
+AppName=Nsp
+AppVerName=Nsp @PACKAGE_VERSION@
+AppVersion=@PACKAGE_VERSION@
+AppPublisherURL=http://cermics.enpc.fr/~jpc/nsp-tiddly/mine.html
+AppSupportURL=http://code.google.com/p/tumbi/issues/list
+AppUpdatesURL=http://cermics.enpc.fr/~jpc/nsp-tiddly/mine.html
+CreateAppDir=yes
+; pf for program files
+DefaultDirName={pf}\nsp
+DefaultGroupName=Nsp
+; icon for uninstall
+UninstallDisplayIcon={app}\nsp-win.exe
+LicenseFile=COPYING
+;AdminPrivilegesRequired=yes
+;DisableDirPage=yes
+;DisableProgramGroupPage=yes
+;DisableStartupPrompt=yes
+WindowShowCaption=yes
+BackColor=clPurple
+BackColor2=clBlack
+Compression=bzip/9
+OutputDir=..
+OutputBaseFilename=nsp2-@DATE@
+;;[Registry]
+;;Root: HKLM; Subkey: "Software\Nsp"; Flags: uninsdeletekeyifempty
+;;Root: HKLM; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; Flags: uninsdeletekey
+;;Root: HKLM; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; ValueType: string; ValueName: "Path"; ValueData: "{app}"; Flags: uninsdeletekey
+;;Root: HKCU; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; Flags: uninsdeletekey
+;;Root: HKCU; Subkey: "Software\Nsp\@PACKAGE_VERSION@"; ValueType: string; ValueName: "Path"; ValueData: "{app}"; Flags: uninsdeletekey
+
+[Files]
+Source: "bin\*.*"; DestDir: "{app}\bin"; Flags: recursesubdirs
+Source: "src\include\*.*"; DestDir: "{app}\include"; Flags: recursesubdirs
+Source: "config\*.*"; DestDir: "{app}\config"; Flags: recursesubdirs
+Source: "lib\*.*"; DestDir: "{app}\lib"; Flags: recursesubdirs
+Source: "etc\*.*"; DestDir: "{app}\etc"; Flags: recursesubdirs
+Source: "share\*.*"; DestDir: "{app}\share"; Flags: recursesubdirs
+Source: "man\html\generated\*.*"; DestDir: "{app}\man\html\generated"; Flags: recursesubdirs
+Source: "macros\*.*"; DestDir: "{app}\macros\"; Flags: recursesubdirs
+Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
+Source: "demos\*.*"; DestDir: "{app}\demos\"; Flags: recursesubdirs
+Source: "toolboxes\*.*"; DestDir: "{app}\toolboxes\"; Flags: recursesubdirs
+Source: "libs\NperiPos.ps"; DestDir: "{app}\libs\"; Flags: recursesubdirs
+
+[Icons]
+Name: "{commondesktop}\Nsp"; Filename: "{app}\bin\nsp-win.exe"
+Name: "{commonprograms}\Nsp\Nsp"; Filename: "{app}\bin\nsp-win.exe"
+Name: "{commonprograms}\Nsp\Uninstall Nsp"; Filename: "{uninstallexe}"
+
+

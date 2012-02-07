@@ -7,3 +7,4 @@ Path.incl
 configure
 libtool
 aclocal.m4
+nsp.iss
