@@ -6,7 +6,7 @@ SCIDIR1=..\..
 
 LIBRARY = nsp.a
 
-CFLAGS = $(CC_OPTIONS) `pkg-config portaudio-2.0 --cflags `
+CFLAGS = $(CC_OPTIONS) `$(PKG_CONFIG) portaudio-2.0 --cflags `
 FFLAGS = $(FC_OPTIONS)
 
 OBJSC = play_file.o play_data.o play2.o paobj.o record_data.o play_util.o

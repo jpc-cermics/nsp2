@@ -3,10 +3,10 @@ include ../../Makefile.incl
 # using vte or libzvt 
 #--------------------
 
-ZTERM_LDFLAGS= `pkg-config libzvt-2.0 --cflags --libs` -DHAS_I18N
-zterm_CFLAGS= `pkg-config libzvt-2.0 --cflags ` -DHAS_I18N
-VTE_LDFLAGS= `pkg-config  gtk+-2.0 vte --cflags --libs` 
-vte_CFLAGS=  `pkg-config gtk+-2.0 vte --cflags` 
+ZTERM_LDFLAGS= `$(PKG_CONFIG) libzvt-2.0 --cflags --libs` -DHAS_I18N
+zterm_CFLAGS= `$(PKG_CONFIG) libzvt-2.0 --cflags ` -DHAS_I18N
+VTE_LDFLAGS= `$(PKG_CONFIG)  gtk+-2.0 vte --cflags --libs` 
+vte_CFLAGS=  `$(PKG_CONFIG) gtk+-2.0 vte --cflags` 
 
 TERM_NAME=@TERM_NAME@
 LDFLAGS=$(@TERM_LDFLAGS@)
