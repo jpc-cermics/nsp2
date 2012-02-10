@@ -553,7 +553,13 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
   char buf[FSIZE+1];
   const char *sci = nsp_getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
-  if ( mandir == NULL && sci != NULL) 
+
+  if ( sci == NULL ) 
+    {
+      Sciprintf("Error: Cannot find manual, SCI is undefined\n");
+      return 0;
+    }
+  if ( mandir == NULL) 
     {
       free = TRUE;
       mandir = g_strconcat (sci, G_DIR_SEPARATOR_S, "man",G_DIR_SEPARATOR_S,  "html",  NULL);
@@ -585,6 +591,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
     {
       if ( nsp_help_topic(help_file,buf)== FAIL ) return FAIL; 
       if ( buf[0]== '\0') return OK; 
+      /* Sciprintf("Help with %s %s %s %d\n",mandir,l,buf,FSIZE); */
       open_webkit_window(mandir,l,buf);
     }
   if ( free == TRUE ) g_free(mandir);
@@ -599,7 +606,7 @@ static int nsp_help_fill_help_table(const char *index_file)
   nsp_tcldstring name,filename;
   int all=TRUE;
   char buf[FSIZE+1];
-  NspSMatrix *S = NULL;
+  NspSMatrix *Sb = NULL;
   int xdr= FALSE,swap = TRUE,i;
 #ifdef WIN32 
   int j;
@@ -621,7 +628,7 @@ static int nsp_help_fill_help_table(const char *index_file)
       Scierror("Error %f not found\n",buf);
       return FAIL;
     }
-  if ( nsp_fscanf_smatrix(F,&S) == FAIL) 
+  if ( nsp_fscanf_smatrix(F,&Sb) == FAIL) 
     {
       nsp_file_close(F);
       return FAIL;
@@ -630,10 +637,10 @@ static int nsp_help_fill_help_table(const char *index_file)
   /* initialize hash table for help */
   if (  nsp_help_table == NULLHASH) 
     {
-      if ( ( nsp_help_table = nsp_hash_create("%help",S->mn) ) == NULLHASH) 
+      if ( ( nsp_help_table = nsp_hash_create("%help",Sb->mn) ) == NULLHASH) 
 	return  FAIL;
     }
-  for ( i = 0 ; i < S->mn ; i++)
+  for ( i = 0 ; i < Sb->mn ; i++)
     {
       char *str,*str1;
       NspObject *Obj;
@@ -642,10 +649,10 @@ static int nsp_help_fill_help_table(const char *index_file)
       Tcl_RegExp regExpr;
       nsp_tcldstring_init(&name);
       if (( regExpr = nsp_tclregexp_compile(patterns)) == NULL) goto bug;
-      if ((nsp_tcl_regsub(S->S[i],regExpr,"\\1",&name,&nmatch,all))==FAIL)  goto bug;
+      if ((nsp_tcl_regsub(Sb->S[i],regExpr,"\\1",&name,&nmatch,all))==FAIL)  goto bug;
 
       nsp_tcldstring_init(&filename);
-      if ((nsp_tcl_regsub(S->S[i],regExpr,"\\2",&filename,&nmatch,all))==FAIL)  goto bug;
+      if ((nsp_tcl_regsub(Sb->S[i],regExpr,"\\2",&filename,&nmatch,all))==FAIL)  goto bug;
       str = str1= nsp_tcldstring_value(&name);
       /* remove \ from names */
       while ( *str1 != '\0') 
@@ -677,11 +684,13 @@ static int nsp_help_fill_help_table(const char *index_file)
       nsp_tcldstring_free(&filename);	
       
       if (nsp_hash_enter(nsp_help_table,Obj) == FAIL) goto bug;
-    }
+    }  
+  nsp_smatrix_destroy(Sb);
   return OK;
  bug:
   nsp_tcldstring_free(&name);	 
   nsp_tcldstring_free(&filename);	
+  nsp_smatrix_destroy(Sb);
   return FAIL;
 }
 
