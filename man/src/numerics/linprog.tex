@@ -62,8 +62,8 @@ with possibly some (or all) variables restricted to be integers, in which
 case the problem is called a MIP (mixed integer (linear programming) problem).
 If all variables are binary then you can use \verb+binprog=%t+ (in which case
 you don't provide lower and upper bounds). If all variables are 
-integer use \verb+intprog=%t+. You should only provide the optional
-\verb+var_type=+ argument only in case when both type of variables are
+integer use \verb+intprog=%t+. You should provide the optional
+\verb+var_type=+ argument only when both type of variables are
 present.  The corresponding argument should be an array of $n$ strings 
 with \verb+var_type(k)="C"+ to define variable $k$ as continuous 
 and \verb+var_type(i)="I"+  to define it as integer.

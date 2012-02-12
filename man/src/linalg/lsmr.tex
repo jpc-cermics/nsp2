@@ -31,9 +31,10 @@
     \vname{itn}: number of iterations
     \vname{normr}: estimate of the residual norm ($\|Ax-b\|_2$)
     \vname{normAr}: estimate of the residual for the normal equation ($\|A^{\top}(Ax-b)\|_2$)
-    \vname{normA}: estimate of the Frobenius norm of $A$
-    \vname{condA}: estimate of the condition number of $A$
-    \vname{normx}: is $\|x\|_2$
+    \vname{normA}: estimate of $\| A \|_F$ the Frobenius norm of $A$
+    \vname{condA}: estimate of  $\| A \|_F \| A^+ \|_F$ the condition number of $A$ ($A^+$
+                   is the pseudo-inverse of $A$).
+    \vname{normx}: euclidian norm of $x$ ($\|x\|_2$).
   \end{varlist}
 \end{parameters}
 
@@ -43,10 +44,12 @@ the least-squares problem:
 $$
       \min \| A x - b \|^2_2. 
 $$
-if the system appears to be inconsistent ($A$ not square or $A$ square
-but not enough numerical invertible). $A$ is a rectangular matrix of 
+if the system appears to be inconsistent (which means that there is no 
+$x$ such that $A x=b$ ($b \notin Range(A)$)). $A$ is a rectangular matrix of 
 dimension $m \times n$, where all cases are allowed: $m=n$, $m>n$, or $m<n$. 
-The matrix A may be dense or sparse (usually sparse).
+The matrix $A$ may be dense or sparse (usually sparse). Note that in case
+$A$ is not full rank (there is an infinity of solutions to the least square
+problem) lsmr should provide the minimum norm solution.
 
 In place of $A$ you can provide a function (says $Afun$) which takes two 
 arguments such that $Afun(x,1)$ returns $A x$ and   $Afun(x,2)$ 
@@ -54,7 +57,7 @@ returns $A^{\top} x$.
 
 When $\lambda$ is not $0$ lsmr solves the regularized least-squares problem:
 $$
-      \min \| A x - b \|^2_2 + \| \lambda x \|^2_2 
+      \min \| A x - b \|^2_2 + \lambda^2 \| x \|^2_2 
 $$
 The lsmr method is described in this \href{http://arxiv.org/abs/1006.0758}{paper}.
 
@@ -65,13 +68,14 @@ The lsmr method is described in this \href{http://arxiv.org/abs/1006.0758}{paper
 than some quantity depending on atol and btol. In the following we denote $r = A x - b$ 
 the residual. If $A x = b$ seems to be consistent, lsmr terminates when:
 $$
-   \| r \|_2  \le  atol \| A \|_2 \| x \|_2 + btol \| b \|_2
+   \| r \|_2  \le  atol \| A \|_F \| x \|_2 + btol \| b \|_2
 $$
 otherwise, lsmr terminates when;
 $$
-   \| A^{\top}r \|_2  \le  atol \| A \|_2 \| r \|_2
+   \| A^{\top}r \|_2  \le  atol \| A \|_F \| r \|_2
 $$
-(note that the tests use the estimates of the quantities $\|r\|$, $\| A \|_2$ and  $\| A^{\top}r \|_2$).
+(note that these 2 tests use the estimates of the quantities $\|r\|_2$, $\| A \|_F$ 
+and  $\| A^{\top}r \|_2$).
 
 If both tolerances are 1.0e-6 (say), the final residual norm should be
 accurate to about 6 digits. (The final $x$ will usually have fewer
@@ -88,7 +92,7 @@ Maximum precision can be obtained by setting $atol = 0$, $btol = 0$, $conlim=0$,
 but the number of iterations may then be excessive.
 
 \item lsmr terminates if the number of iterations reaches $itnlim$.
-      Note that For ill-conditioned systems, a larger value that the 
+      Note that for ill-conditioned systems, a larger value that the 
       default one ($\min(m,n)$) may be needed.
 \end{itemize}
 
@@ -117,12 +121,44 @@ See the \href{http://arxiv.org/abs/1006.0758}{paper} for details.
 \end{mandescription}
 
 \begin{examples}
-\paragraph{example 1} A basic test...
+\paragraph{example 1} A first basic test
+\begin{Verbatim}
+A = rand(40,20);
+b = ones(40,1);
+[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
+// compute the ``exact solution'' with backslash (QR factorization here)
+xx = A\b;
+// compute relative difference 
+norm(x-xx)/norm(x)
+
+// compute solution again with lsmr but with a more stringent atol parameter
+// (rmk: the max number of iterations should be increased too)
+[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
+// now the relative difference should be smaller
+norm(x-xx)/norm(x)
+
+// now we modify A such that it becomes rank deficient
+A(:,15:20) = A(1:6);
+// lsmr should find the minimum norm solution
+[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,itnlim=30);
+// compute the minimum norm solution with backslash
+xx = A\b;
+// compute relative difference
+norm(x-xx)/norm(x)
+\end{Verbatim}
+
+\paragraph{example 2} Another test, solve a square sparse linear system
 \begin{Verbatim}
 A = 2*speye(1e4,1e4) + sprand(1e4,1e4,1e-3);
 b = ones(1e4,1);
 [x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t);
+// compute relative residual
+norm(A*x-b)/norm(b)
 
+// use more stringent atol and btol
+[x, istop, itn, normr, normAr, normA, condA, normx] = lsmr(A,b,show=%t,atol=1e-12,btol=1e-12);
+// compute relative residual
+norm(A*x-b)/norm(b)
 \end{Verbatim}
 
 \end{examples}
