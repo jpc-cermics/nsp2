@@ -92,5 +92,4 @@ function oscillo2(fixedminmax=%t)
     end
     xpause(0,%t);
   end
-  pause;
 endfunction
