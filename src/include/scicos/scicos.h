@@ -1,38 +1,27 @@
+/* Nsp
+ * Copyright (C) 2012-2012 Ramine Nikoukhah Inria.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ *
+ * include for scicos 
+ *--------------------------------------------------------------------------*/
+
 #ifndef __SCICOS_H 
 #define __SCICOS_H 
 
-#include "simul.h"
-
-extern scicos_run *Scicos;
-
-/* maximum value for sum of number of inputs 
- * and outputs ports of a given 
- * block of type 2 
- */
-
-#define SZ_SIZE 60
-
-/* maximum value for sum of number of inputs 
- * and outputs of a given block 
- * of type 0 */
-
-#define TB_SIZE 500
-
-typedef void (*voidf)();
-
-#include "scicos-proto.h"
-
-#define do_cold_restart             scicos_do_cold_restart
-#define get_phase_simulation        scicos_get_phase_simulation
-#define get_scicos_time             scicos_get_scicos_time
-#define scicos_get_scicos           scicos_get_scicos_time
-#define get_final_time              scicos_get_final_time
-#define get_block_number            scicos_get_block_number
-#define set_block_number            scicos_set_block_number
-#define get_block_error             scicos_get_block_error
-#define set_block_error             scicos_set_block_error
-#define end_scicos_sim              scicos_end_scicos_sim
-#define what_is_hot                 scicos_what_is_hot
-#define scicos_getlabel             scicos_get_label
+#include "scicos4.h"
 
 #endif 

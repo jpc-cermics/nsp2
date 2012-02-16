@@ -3,9 +3,9 @@
 
 /* default include file for block definition  */
 
+#include <string.h>
 #include <nsp/nsp.h>
 #include <nsp/blas.h>
-#include <string.h>
 #include <nsp/matutil.h>
 #include <scicos/scicos4.h>
 #include <scicos/blocks.h>

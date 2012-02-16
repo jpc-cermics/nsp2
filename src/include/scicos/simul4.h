@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2005-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,7 +22,8 @@
 #ifndef NSP_SCICOS_SIMUL4_H
 #define NSP_SCICOS_SIMUL4_H
 
-#include "nsp/object.h"
+#include <nsp/nsp.h>
+#include <nsp/object.h>
 
 /* used when a list of objects is stored in arrays */
 
