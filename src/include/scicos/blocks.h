@@ -107,9 +107,7 @@ struct _scicos_block_table  {
   { MD_NAME(name##_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP},	\
   { MD_NAME(name##_SCSREAL_COP), (ScicosF) name##_SCSREAL_COP}
 
-/*
- *
- */
+/* A set of old blocks */
 
 extern void scicos_affich_block(scicos_args_F0);
 extern void scicos_affich2_block(scicos_args_F0);
@@ -180,7 +178,6 @@ extern void scicos_trash_block(scicos_args_F0);
 extern void scicos_zcross_block(scicos_args_F0);
 extern void scicos_integr_block(scicos_args_F0);
 extern void scicos_intplt_block(scicos_args_F0);
-
 extern void scicos_absblk_block(scicos_args_F0);
 extern void scicos_andlog_block(scicos_args_F0);
 extern void scicos_bidon_block(scicos_args_F0);
@@ -194,7 +191,6 @@ extern void scicos_readau_block(scicos_args_F2);
 extern void scicos_readc_block(scicos_args_F2);
 extern void scicos_readf_block(scicos_args_F0);
 extern void scicos_relay_block(scicos_args_F2);
-/* extern void scicos_plusblk(scicos_args_F2); */
 extern void scicos_selector_block(scicos_args_F2);
 extern void scicos_slider_block(scicos_args_F0);
 extern void scicos_sum_block(scicos_args_F2);
@@ -203,6 +199,8 @@ extern void scicos_writeau_block(scicos_args_F2);
 extern void scicos_writec_block(scicos_args_F2);
 extern void scicos_writef_block(scicos_args_F0);
 extern void scicos_zcross2_block(scicos_args_F0);
+
+/* new blocks */
 
 extern void scicos_absolute_value_block(scicos_block *block,int flag); 
 extern void scicos_acos_block(scicos_block *block,int flag);
@@ -254,22 +252,6 @@ extern void scicos_transmit_or_zero_block(scicos_block *block,int flag);
 extern void scicos_mvswitch_block(scicos_block *block,int flag);
 extern void scicos_csslti4_block(scicos_block *block,int flag);
 extern void scicos_gtkrange_block(scicos_block * block, int flag);
-
-#ifdef SCICOS44 
-
-extern void selector (scicos_args_F2);
-extern void sum (scicos_args_F2);
-extern void prod (scicos_args_F2);
-extern void switchn (scicos_args_F2);
-extern void relay (scicos_args_F2);
-extern void readc (scicos_args_F2);
-extern void writec (scicos_args_F2);
-extern void writeau (scicos_args_F2);
-extern void readau (scicos_args_F2);
-/* extern void plusblk (scicos_args_F2); scicos_plus_blk */
-extern void slider(scicos_args_F0);
-extern void zcross2 (scicos_args_F0);
-extern void andlog (scicos_args_F0);
 
 extern void mswitch (scicos_block *block,int flag);
 extern void logicalop (scicos_block *block,int flag);
@@ -567,7 +549,6 @@ extern void scicos_sliderm_block(scicos_block * block, int flag);
 MULTI_DECLARATION(absolute_valuei)
 MULTI_DECLARATION(switch2)
 
-#endif   /* SCICOS44 */
 
 #endif /* __SCICOS_BLOCKS__  */
 
