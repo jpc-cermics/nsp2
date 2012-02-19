@@ -81,7 +81,8 @@ TESTS= \
 	errcatch.dia \
 	cdfxxx.dia \
 	spmf.dia \
-	linprog.dia
+	linprog.dia \
+	scale_rc.dia
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
