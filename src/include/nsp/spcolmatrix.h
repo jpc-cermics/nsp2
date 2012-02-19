@@ -230,8 +230,8 @@ extern int nsp_spcolmatrix_lower_and_upper_bandwidth(NspSpColMatrix *A, int *Kl,
 extern NspMatrix *nsp_spcolmatrix_to_lapack_band_format(NspSpColMatrix *A, int kl, int ku, Boolean enlarge);
 extern int nsp_spcolmatrix_solve_utri(NspSpColMatrix *U, NspMatrix *x, NspMatrix *b);
 extern int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b);
-extern int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x);
-extern int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x);
+extern int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x, char op);
+extern int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x, char op);
 extern int nsp_spcolmatrix_locate(SpCol *Col,int j);
 extern NspSpColMatrix *nsp_spcolmatrix_kron(NspSpColMatrix *A, NspSpColMatrix *B);
 

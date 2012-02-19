@@ -1,5 +1,6 @@
 /* Nsp
  * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2011 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -195,7 +196,6 @@ int nsp_spcolmatrix_eq(NspObject *a, NspObject *b)
   NspSpColMatrix *A, *B;
   if ( check_cast(b,nsp_type_spcolmatrix_id) == FALSE) return FALSE ;
 
-  /* quick code by Bruno (I want to test sparse(ij,val,..) function */
   A = (NspSpColMatrix *) a; B = (NspSpColMatrix *) b; 
   if ( A->m != B->m) return FALSE;
   if ( A->n != B->n) return FALSE;
@@ -384,8 +384,12 @@ static int int_meth_spcolmatrix_scale_rows(void *self, Stack stack,int rhs,int o
 {
   NspSpColMatrix *A = (NspSpColMatrix *) self;
   NspMatrix *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 1)
 
   if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
@@ -395,7 +399,23 @@ static int int_meth_spcolmatrix_scale_rows(void *self, Stack stack,int rhs,int o
       return RET_BUG;
     }
 
-  if ( nsp_spcolmatrix_scale_rows(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_spcolmatrix_scale_rows(A, x, ope) == FAIL )
     return RET_BUG;
 
   return 0;
@@ -413,8 +433,12 @@ static int int_meth_spcolmatrix_scale_cols(void *self, Stack stack,int rhs,int o
 {
   NspSpColMatrix *A = (NspSpColMatrix *) self;
   NspMatrix *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 1)
 
   if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
@@ -424,7 +448,23 @@ static int int_meth_spcolmatrix_scale_cols(void *self, Stack stack,int rhs,int o
       return RET_BUG;
     }
 
-  if ( nsp_spcolmatrix_scale_cols(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_spcolmatrix_scale_cols(A, x, ope) == FAIL )
     return RET_BUG;
 
   return 0;
@@ -1490,7 +1530,6 @@ static int int_spcolmatrix_pmult_sp_m(Stack stack, int rhs, int opt, int lhs)
 /*
  *   Res = X * A , A sparse matrix, X full matrix
  *   A and X are left unchanged
- *   added by Bruno
  */
 
 static int int_spcolmatrix_mult_m_sp(Stack stack, int rhs, int opt, int lhs)
@@ -2191,8 +2230,6 @@ static int int_spcolmatrix_isinf(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-
-/* added by Bruno : return the number of non zero elements */
 static int int_spcolmatrix_nnz(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpColMatrix *HMat; 
@@ -3160,11 +3197,14 @@ static int int_spcolmatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
 {
   NspSpColMatrix *A;
   NspMatrix *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 1)
   CheckLhs(1,1);
-  CheckRhs(2,2);
 
   if ((A = GetSpColCopy (stack, 1)) == NULLSPCOL) return RET_BUG;
-
   if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
   if ( x->mn != A->m )
@@ -3173,7 +3213,23 @@ static int int_spcolmatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
       return RET_BUG;
     }
 
-  if ( nsp_spcolmatrix_scale_rows(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_spcolmatrix_scale_rows(A, x, ope) == FAIL )
     return RET_BUG;
 
   NSP_OBJECT(A)->ret_pos = 1; 
@@ -3189,11 +3245,14 @@ static int int_spcolmatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
 {
   NspSpColMatrix *A;
   NspMatrix *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 1)
   CheckLhs(1,1);
-  CheckRhs(2,2);
 
   if ((A = GetSpColCopy (stack, 1)) == NULLSPCOL) return RET_BUG;
-
   if ((x = GetMat (stack, 2)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
   if ( x->mn != A->n )
@@ -3202,7 +3261,23 @@ static int int_spcolmatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
       return RET_BUG;
     }
 
-  if ( nsp_spcolmatrix_scale_cols(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_spcolmatrix_scale_cols(A, x, ope) == FAIL )
     return RET_BUG;
 
   NSP_OBJECT(A)->ret_pos = 1; 

@@ -8752,14 +8752,15 @@ int nsp_spcolmatrix_solve_ltri(NspSpColMatrix *L, NspMatrix *x, NspMatrix *b)
  * nsp_spcolmatrix_scale_rows:
  * @A: a #NspSpColMatrix of size m x n
  * @x: a #NspMatrix must be a vector of size m (1 x m or m x 1)
- * 
+ * @op: a char should be '*' to multiply and '/' to divide
+ *
  *  for (i from 0 to m-1)  
- *      multiplie row i of A by x[i]
+ *      multiply or divide row i of A by x[i]
  * 
  * Return value: %FAIL or %OK
  **/
 
-int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
+int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x, char op)
 {
   int i,j, k;
   Boolean do_clean;
@@ -8774,7 +8775,10 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
 	      for ( k = 0 ; k < A->D[j]->size ; k++ )
 		{
 		  i = A->D[j]->J[k];
-		  A->D[j]->R[k] *= x->R[i];
+		  if ( op == '*' )
+		    A->D[j]->R[k] *= x->R[i];
+		  else
+		    A->D[j]->R[k] /= x->R[i];
 		  if ( A->D[j]->R[k] == 0.0 )
 		    do_clean = TRUE;
 		}
@@ -8792,8 +8796,15 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
 	      for ( k = 0 ; k < A->D[j]->size ; k++ ) 
 		{
 		  i = A->D[j]->J[k];
-		  A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[i].i;
-		  A->D[j]->C[k].r *= x->C[i].r;
+		  if ( op == '*' )
+		    {
+		      A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[i].i;
+		      A->D[j]->C[k].r *= x->C[i].r;
+		    }
+		  else
+		    {
+		      nsp_div_dc(A->D[j]->C[k].r, &x->C[i], &A->D[j]->C[k]);
+		    }
 		  if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
 		    do_clean = TRUE;
 		}
@@ -8811,8 +8822,16 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
 	    for ( k = 0 ; k <  A->D[j]->size ; k++ )
 	      {
 		i = A->D[j]->J[k];
-		A->D[j]->C[k].r *= x->R[i];
-		A->D[j]->C[k].i *= x->R[i];
+		if ( op == '*' )
+		  {
+		    A->D[j]->C[k].r *= x->R[i];
+		    A->D[j]->C[k].i *= x->R[i];
+		  }
+		else
+		  {
+		    A->D[j]->C[k].r /= x->R[i];
+		    A->D[j]->C[k].i /= x->R[i];
+		  }
 		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
 		  do_clean = TRUE;
 	      }
@@ -8826,7 +8845,10 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
 	    for ( k = 0 ; k <  A->D[j]->size ; k++ )
 	      {
 		i = A->D[j]->J[k];
-		nsp_prod_c(&A->D[j]->C[k],&x->C[i]);
+		if ( op == '*' )
+		  nsp_prod_c(&A->D[j]->C[k],&x->C[i]);
+		else
+		  nsp_div_cc(&A->D[j]->C[k],&x->C[i],&A->D[j]->C[k]);
 		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
 		  do_clean = TRUE;
 	      }
@@ -8841,14 +8863,15 @@ int nsp_spcolmatrix_scale_rows(NspSpColMatrix *A, NspMatrix *x)
  * nsp_spcolmatrix_scale_cols:
  * @A: a #NspSpColMatrix of size m x n
  * @x: a #NspMatrix must be a vector of size n (1 x n or n x 1)
+ * @op: a char should be '*' to multiply and '/' to divide
  * 
  *  for (j from 0 to n-1)  
- *      multiplie column j of A by x[j]
+ *      multiply or divide column j of A by x[j]
  * 
  * Return value: %FAIL or %OK
  **/
 
-int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
+int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x, char op)
 {
   int j, k;
   Boolean do_clean;
@@ -8862,7 +8885,10 @@ int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
 	      do_clean = FALSE;
 	      for ( k = 0 ; k < A->D[j]->size ; k++ ) 
 		{
-		  A->D[j]->R[k] *= x->R[j];
+		  if ( op == '*' )
+		    A->D[j]->R[k] *= x->R[j];
+		  else
+		    A->D[j]->R[k] /= x->R[j];
 		  if ( A->D[j]->R[k] == 0.0 )
 		    do_clean = TRUE;
 		}
@@ -8879,8 +8905,15 @@ int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
 	      do_clean = FALSE;
 	      for ( k = 0 ; k < A->D[j]->size ; k++ ) 
 		{
-		  A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[j].i;
-		  A->D[j]->C[k].r *= x->C[j].r;
+		  if ( op == '*' )
+		    {
+		      A->D[j]->C[k].i = A->D[j]->C[k].r * x->C[j].i;
+		      A->D[j]->C[k].r *= x->C[j].r;
+		    }
+		  else
+		    {
+		      nsp_div_dc(A->D[j]->C[k].r, &x->C[j], &A->D[j]->C[k]);
+		    }
 		  if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
 		    do_clean = TRUE;
 		}
@@ -8897,8 +8930,16 @@ int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
 	    do_clean = FALSE;
 	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
 	      {
-		A->D[j]->C[k].r *= x->R[j];
-		A->D[j]->C[k].i *= x->R[j];
+		if ( op == '*' )
+		  {
+		    A->D[j]->C[k].r *= x->R[j];
+		    A->D[j]->C[k].i *= x->R[j];
+		  }
+		else
+		  {
+		    A->D[j]->C[k].r /= x->R[j];
+		    A->D[j]->C[k].i /= x->R[j];
+		  }
 		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
 		  do_clean = TRUE;
 	      }
@@ -8911,7 +8952,10 @@ int nsp_spcolmatrix_scale_cols(NspSpColMatrix *A, NspMatrix *x)
 	    do_clean = FALSE;
 	    for ( k = 0 ; k < A->D[j]->size ; k++ ) 
 	      {
-		nsp_prod_c(&A->D[j]->C[k],&x->C[j]);
+		if ( op == '*' )
+		  nsp_prod_c(&A->D[j]->C[k],&x->C[j]);
+		else
+		  nsp_div_cc(&A->D[j]->C[k],&x->C[j],&A->D[j]->C[k]);
 		if ( A->D[j]->C[k].r == 0.0 && A->D[j]->C[k].i == 0.0 )
 		  do_clean = TRUE;
 	      }

@@ -5938,14 +5938,14 @@ int nsp_mat_sub_mat(NspMatrix *A, NspMatrix *B)
  * nsp_mat_scale_rows:
  * @A: a #NspMatrix of size m x n
  * @x: a #NspMatrix must be a vector of size m (1 x m or m x 1)
- * 
+ * @op: a char '*' to multiply or '/' to divide
  *  for (i from 0 to m-1)  
- *      multiplie row i of A by x[i]
+ *      multiplie or divide row i of A by x[i]
  * 
  * Return value: %FAIL or %OK
  **/
 
-int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
+int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x, char op)
 {
   int i,j, k;
   
@@ -5953,35 +5953,82 @@ int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
     {
       if ( x->rc_type == 'r') 
 	{
-	  for ( j = 0, k=0 ; j < A->n ; j++)
-	    for ( i = 0 ; i < A->m ; i++, k++ ) 
-	      A->R[k] *= x->R[i];
+	  switch (op)
+	    {
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  A->R[k] *= x->R[i];
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  A->R[k] /= x->R[i];
+	      break;
+	    }
 	}
       else 
 	{
 	  if ( nsp_mat_complexify(A,0.0) == FAIL ) 
 	    return FAIL;
-	  for ( j = 0, k=0 ; j < A->n ; j++)
-	    for ( i = 0 ; i < A->m ; i++, k++ ) 
-	      {
-		A->C[k].i = A->C[k].r * x->C[i].i;
-		A->C[k].r *= x->C[i].r;
-	      }
+	  switch (op)
+	    {
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].i = A->C[k].r * x->C[i].i;
+		    A->C[k].r *= x->C[i].r;
+		  }
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  nsp_div_dc(A->C[k].r, &x->C[i], &A->C[k]);
+	      break;
+	    }
 	}
     }
   else
     {
       if ( x->rc_type == 'r') 
-	for ( j = 0, k=0 ; j < A->n ; j++)
-	  for ( i = 0 ; i < A->m ; i++, k++ ) 
+	{
+	  switch (op)
 	    {
-	      A->C[k].r *= x->R[i];
-	      A->C[k].i *= x->R[i];
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].r *= x->R[i];
+		    A->C[k].i *= x->R[i];
+		  }
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].r /= x->R[i];
+		    A->C[k].i /= x->R[i];
+		  }
+	      break;
 	    }
-      else 
-	for ( j = 0, k=0 ; j < A->n ; j++)
-	  for ( i = 0 ; i < A->m ; i++, k++ ) 
-	    nsp_prod_c(&A->C[k],&x->C[i]);
+	}
+      else
+	{
+ 	  switch (op)
+	    {
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  nsp_prod_c(&A->C[k],&x->C[i]);
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  nsp_div_cc(&A->C[k],&x->C[i],&A->C[k]);  /* a voir */
+	      break;
+	    }
+	}
     }
   return OK;
 }
@@ -5990,14 +6037,14 @@ int nsp_mat_scale_rows(NspMatrix *A, NspMatrix *x)
  * nsp_mat_scale_cols:
  * @A: a #NspMatrix of size m x n
  * @x: a #NspMatrix must be a vector of size n (1 x n or n x 1)
- * 
+ * @op: a char '*' to multiply or '/' to divide
  *  for (j from 0 to n-1)  
- *      multiplie column j of A by x[j]
+ *      multiplie or divide column j of A by x[j]
  * 
  * Return value: %FAIL or %OK
  **/
 
-int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
+int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x, char op)
 {
   int i,j, k;
   
@@ -6005,35 +6052,80 @@ int nsp_mat_scale_cols(NspMatrix *A, NspMatrix *x)
     {
       if ( x->rc_type == 'r') 
 	{
-	  for ( j = 0, k=0 ; j < A->n ; j++)
-	    for ( i = 0 ; i < A->m ; i++, k++ ) 
-	      A->R[k] *= x->R[j];
+	  switch (op)
+	    {
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  A->R[k] *= x->R[j];
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  A->R[k] /= x->R[j];
+	      break;
+	    }
 	}
       else 
 	{
 	  if ( nsp_mat_complexify(A,0.0) == FAIL ) 
 	    return FAIL;
-	  for ( j = 0, k=0 ; j < A->n ; j++)
-	    for ( i = 0 ; i < A->m ; i++, k++ ) 
-	      {
-		A->C[k].i = A->C[k].r * x->C[j].i;
-		A->C[k].r *= x->C[j].r;
-	      }
+	  switch (op)
+	    {
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].i = A->C[k].r * x->C[j].i;
+		    A->C[k].r *= x->C[j].r;
+		  }
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  nsp_div_dc(A->C[k].r, &x->C[j], &A->C[k]);
+	      break;
+	    }
 	}
     }
   else
     {
-      if ( x->rc_type == 'r') 
-	for ( j = 0, k=0 ; j < A->n ; j++)
-	  for ( i = 0 ; i < A->m ; i++, k++ ) 
+      if ( x->rc_type == 'r')
+	{ 
+	  switch (op)
 	    {
-	      A->C[k].r *= x->R[j];
-	      A->C[k].i *= x->R[j];
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].r *= x->R[j]; A->C[k].i *= x->R[j];
+		  }
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  {
+		    A->C[k].r /= x->R[j]; A->C[k].i /= x->R[j];
+		  }
+	      break;
 	    }
+	}
       else 
-	for ( j = 0, k=0 ; j < A->n ; j++)
-	  for ( i = 0 ; i < A->m ; i++, k++ ) 
-	    nsp_prod_c(&A->C[k],&x->C[j]);
+	{
+	  switch (op)
+	    {
+	    case '*':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  nsp_prod_c(&A->C[k],&x->C[j]);
+	      break;
+	    case '/':
+	      for ( j = 0, k=0 ; j < A->n ; j++)
+		for ( i = 0 ; i < A->m ; i++, k++ ) 
+		  nsp_div_cc(&A->C[k],&x->C[j],&A->C[k]);  /* a voir */
+	      break;
+	    }
+	}
     }
   return OK;
 }

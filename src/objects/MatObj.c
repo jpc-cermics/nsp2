@@ -1356,16 +1356,20 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 /* 
  *  scale_rows[x]
  *
- *    A <- diag(x)*A
+ *    multiply or divide row i of A by x[i]
  *
- *    A.scale_rows[x]
+ *    A.scale_rows[x,op='*'|'/']
  */
 
 static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *A = (NspMatrix *) self, *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 1)
 
   if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
@@ -1375,7 +1379,23 @@ static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,in
       return RET_BUG;
     }
 
-  if ( nsp_mat_scale_rows(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_mat_scale_rows(A, x, ope) == FAIL )
     return RET_BUG;
 
   return 0;
@@ -1384,16 +1404,20 @@ static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,in
 /* 
  *  scale_cols[x]
  *
- *    A <- A*diag(x)
+ *    multiply or divide column j of A by x[j]
  *
- *    A.scale_cols[x]
+ *    A.scale_cols[x,op='*'|'/']
  */
 
 static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *A = (NspMatrix *) self, *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 1)
 
   if ((x = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
@@ -1403,7 +1427,23 @@ static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,in
       return RET_BUG;
     }
 
-  if ( nsp_mat_scale_cols(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_mat_scale_cols(A, x, ope) == FAIL )
     return RET_BUG;
 
   return 0;
@@ -5417,15 +5457,19 @@ static int int_mat_lower_upper_bandwidth(Stack stack, int rhs, int opt, int lhs)
 }
 
 /* 
- *  B = scale_rows(A,x)  (exists as a method but useful as a function too)
+ *  B = scale_rows(A,x,op='*'|'/')  (exists as a method but useful as a function too)
  *
  */
 static int int_mat_scale_rows(Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *A, *x;
-  CheckLhs(1,1);
-  CheckRhs(2,2);
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
 
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1,1);
 
   if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
 
@@ -5437,24 +5481,43 @@ static int int_mat_scale_rows(Stack stack,int rhs,int opt,int lhs)
       return RET_BUG;
     }
 
-  if ( nsp_mat_scale_rows(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_mat_scale_rows(A, x, ope) == FAIL )
     return RET_BUG;
 
   NSP_OBJECT(A)->ret_pos = 1; 
-
   return 1;
 }
 
 /* 
- *  B = scale_cols(A,x)  (exists as a method but useful as a function too)
+ *  B = scale_cols(A,x,op='*'|'/')  (exists as a method but useful as a function too)
  *
  */
 static int int_mat_scale_cols(Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *A, *x;
-  CheckLhs(1,1);
-  CheckRhs(2,2);
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
 
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1,1);
 
   if ((A = GetMatCopy (stack, 1)) == NULLMAT) return RET_BUG;
 
@@ -5466,11 +5529,26 @@ static int int_mat_scale_cols(Stack stack,int rhs,int opt,int lhs)
       return RET_BUG;
     }
 
-  if ( nsp_mat_scale_cols(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_mat_scale_cols(A, x, ope) == FAIL )
     return RET_BUG;
 
   NSP_OBJECT(A)->ret_pos = 1; 
-
   return 1;
 }
 
