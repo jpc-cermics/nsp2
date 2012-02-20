@@ -292,7 +292,7 @@ pvmd3$(EXESFX):	$(REGEXCONF) $(DOBJ) $(SOCKDOBJ)
 $(LIBPVM).a:	$(REGEXCONF) $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
 	@rm -f $(LIBPVM).a
 	@$(AR) cr $(LIBPVM).a $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ) $(ADDEDOBJ)
-	@case x$(HASRANLIB) in xt ) echo ranlib $(LIBPVM).a; ranlib $(LIBPVM).a ;; esac
+	@case x$(HASRANLIB) in xt ) echo $(RANLIB) $(LIBPVM).a; $(RANLIB) $(LIBPVM).a ;; esac
 
 # shm pvmd3 & libpvm3*.a
 
@@ -303,13 +303,13 @@ pvmd3-shm:	$(REGEXCONF) $(DOBJ) $(SHMEMDOBJ)
 lib-shm:	$(REGEXCONF) $(LOBJ) $(LPVMSHMEM) $(SHMEMLOBJ)
 	rm -f $(LIBPVM).a
 	$(AR) cr $(LIBPVM).a $(LOBJ) $(LPVMSHMEM) $(SHMEMLOBJ)
-	case x$(HASRANLIB) in xt ) echo ranlib; ranlib $(LIBPVM).a ;; esac
+	case x$(HASRANLIB) in xt ) echo $(RANLIB); $(RANLIB) $(LIBPVM).a ;; esac
 	touch lib-shm
 
 $(LIBPVM)s.a:	$(REGEXCONF) $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
 	rm -f $(LIBPVM)s.a
 	$(AR) cr $(LIBPVM)s.a $(LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
-	case x$(HASRANLIB) in xt ) echo ranlib; ranlib $(LIBPVM)s.a ;; esac
+	case x$(HASRANLIB) in xt ) echo $(RANLIB); $(RANLIB) $(LIBPVM)s.a ;; esac
 
 # mpp pvmd3 & libpvm3*.a
 
@@ -338,7 +338,7 @@ pvmd3-os2:	$(REGEXCONFOS2) $(OS2DOBJ) $(DOBJ) $(SOCKDOBJ)
 lib-os2:	$(REGEXCONFOS2) $(LOBJ) $(OS2LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
 	rm -f $(LIBPVM).a
 	$(AR) cr $(LIBPVM).a $(LOBJ) $(OS2LOBJ) $(LPVMSOCK) $(SOCKLOBJ)
-	case x$(HASRANLIB) in xt ) echo ranlib; ranlib $(LIBPVM).a ;; esac
+	case x$(HASRANLIB) in xt ) echo $(RANLIB); $(RANLIB) $(LIBPVM).a ;; esac
 	touch lib-os2
 
 #

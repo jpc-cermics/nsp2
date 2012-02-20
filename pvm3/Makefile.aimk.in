@@ -34,7 +34,8 @@ SHELL		=	/bin/sh
 #
 
 PVMOPTS		=	CC=@CC@ \
-				F77=@FC@
+			F77=@FC@ \
+			RANLIB=@RANLIB@
 
 #				CFLOPTS=$(CFLOPTS)
 #				FFLOPTS=$(FFLOPTS)

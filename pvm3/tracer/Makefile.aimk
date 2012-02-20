@@ -136,7 +136,7 @@ $(TRCLIBDEP):  $(LIBPVMTRC)
 $(LIBPVMTRC):  $(TRCOBJS) $(PVMLDIR)
 	@$(AR) rc $(LIBPVMTRC) $(TRCOBJS)
 	@ case x$(HASRANLIB) in \
-		xt ) echo "ranlib $(LIBPVMTRC)"; ranlib $(LIBPVMTRC) ;; \
+		xt ) echo "$(RANLIB) $(LIBPVMTRC)"; $(RANLIB) $(LIBPVMTRC) ;; \
 		xf ) echo "No Ranlib Necessary." ;; esac
 
 $(PVMXDIR):
