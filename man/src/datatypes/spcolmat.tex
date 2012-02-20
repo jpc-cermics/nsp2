@@ -36,7 +36,7 @@ Internally a sparse matrix is stored as an array of pointers (on columns) , each
 two arrays : one for the indices and another for the values of the non-zeros entries of
 the column \verb+i+. 
 %For compatibility with matlab, there is also a internal storage format
-%corresponding to the Compressed Row Storage Format (triplet Ax,Ai,Ap, also used by UMFPACK)
+%corresponding to the Compressed column Storage Format (triplet Ax,Ai,Ap, also used by UMFPACK)
  
 The functions \verb+sparse+ and \verb+sp_create+ (or  \verb+spcol_create+) lets to create
 sparse matrices:
@@ -55,8 +55,8 @@ sparse matrices:
 \paragraph{Operations on sparse matrices}
 \itemdesc{Methods}
 \begin{itemize}
-\item \verb+S.scale_rows[x]+ multiplies each row i of A with a scalar (see \manlink{scale_rows}{scale_rows}) 
-\item \verb+S.scale_cols[x]+ multiplies each column j of A with a scalar (see \manlink{scale_cols}{scale_cols})
+\item \verb+S.scale_rows[x]+ multiplies or divides each row i of A with a different scalar (see \manlink{scale_rows}{scale_rows}) 
+\item \verb+S.scale_cols[x]+ multiplies or divides each column j of A with a different scalar (see \manlink{scale_cols}{scale_cols})
 \item \verb+S.get_nnz[]+ returns the number of non zeros entries of \verb+S+ 
 \item \verb+S.set_diag[v[,k]]+ put the \emph{SpColMat} vector $v$ in the diagonal number $k$ of \verb+S+
  (see \manlink{set_diag}{set_diag}).
