@@ -1,0 +1,76 @@
+\mansection{blas\_axpy}
+\begin{mandesc}
+  \shortunder{blas\_axpy}{blas_axpy}{add to a vector another vector times a scalar}\\ 
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+y.blas_axpy[alpha, x]  // y <- y + alpha*x
+y.blas_axpy[alpha, x, i1, i2]  // y(i1:i2) <- y(i1:i2) + alpha*x
+y.blas_axpy[alpha, x, i1, i2, j1, j2]  // y(i1:i2,j1:j2) <- y(i1:i2,j1:j2) + alpha*x
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{y,x}: numerical vectors or matrices (both real or both complex)
+    \vname{alpha}: real scalar (when \verb+x+ and \verb+y+ are real) or complex scalar (when \verb+x+ and \verb+y+ 
+                   are complex).
+    \vname{i1,i2,j1,j2}: part of \verb+y+ where the operation applies.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+This method modify in place the vector or matrix on which it is applied:
+\begin{itemize}
+\item \verb+y.blas_axpy[alpha, x]+ do the operation $y \leftarrow y + \alpha x$.
+      $x$ should have the same dimensions than $y$.
+\item \verb+y.blas_axpy[alpha, x, i1, i2]+ is the same but acts on the sub part of 
+      $y$ between components number $i1$ and $i2$ (included) in the one-indexing
+      meaning  (see \manlink{indexing arrays}{indexing arrays}). $x$ may have
+      any dimensions but should have a total of $i2-i1+1$ components.
+\item \verb+y.blas_axpy[alpha, x, i1, i2, j1, j2]+ acts on the submatrix $y(i1:i2,j1:j2)$
+      and $x$ should be a matrix with dimensions $(i2-i1+1)\times(j2-j1+1)$.  
+\end{itemize}
+Remarks:
+\begin{itemize} 
+\item $y$, $x$ and $\alpha$ should be either all real or all complex.
+\item these operations should give the same result than respectively:
+      \begin{itemize}
+      \item \verb-y = y + alpha*x-
+      \item \verb-y(i1:i2) = y(i1:i2) + alpha*x-
+      \item \verb-y(i1:i2,j1:j2)) = y(i1:i2,j1:j2) + alpha*x-
+      \end{itemize}
+      but using the \verb+blas_axpy+ method should be faster.
+\end{itemize}
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+z = -2:2;
+y = z
+x = [-1,1,-1,1,-1]
+y.blas_axpy[2,x]
+y 
+
+// same operation but on a subpart of y
+y = z
+y.blas_axpy[2,x(2:4),2,4]
+y
+
+// now axpy operation on a submatrix
+X = rand(6,6)
+Y = ones(4,4);
+X.blas_axpy[10,Y,2,5,2,5]
+X
+\end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+% \manlink{find}{find}
+\end{manseealso}
+
