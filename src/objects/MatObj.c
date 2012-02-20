@@ -1156,7 +1156,7 @@ Mat2float (NspMatrix * A)
 
 static int int_meth_matrix_add(void *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspMatrix *A = (NspMatrix *) self, *B;
+  NspMatrix *A = Mat2double((NspMatrix *) self), *B;
   CheckRhs(1,1);
   CheckLhs(1,1);
   if ((B = GetMat (stack, 1)) == NULLMAT) 
@@ -1179,9 +1179,9 @@ static int int_meth_matrix_add(void *self,Stack stack,int rhs,int opt,int lhs)
 
 static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
 {
-  NspMatrix *alpha, *y = (NspMatrix *) self, *x;
+  NspMatrix *alpha, *y = Mat2double((NspMatrix *) self), *x;
   int one = 1, i1, i2, j1, j2, mn, m, n, j;
-  CheckLhs(1,1);
+  CheckLhs(0,0);
 
   if ( rhs != 2  &&  rhs != 4  && rhs != 6 )
     { 
@@ -1196,7 +1196,7 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
 
   if ( alpha->rc_type != y->rc_type || x->rc_type != y->rc_type )
     { 
-      Scierror("Error: sorry the arguments must be of same type than self arg %s\n",NspFname(stack));
+      Scierror("Error: sorry the arguments must be of same type (real/complex) than self arg %s\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1288,7 +1288,7 @@ static int int_meth_matrix_axpy(void *self, Stack stack,int rhs,int opt,int lhs)
  */
 static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspMatrix *A = (NspMatrix *) self;
+  NspMatrix *A = Mat2double((NspMatrix *) self);
   NspMatrix *alpha, *x, *y;
   int i1, i2, j1, j2, mm, nn, one=1, k;
   char *flag=NULL, cflag;
@@ -1300,7 +1300,7 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
       Scierror("Error: %d arguments is incorrect for method %s\n",rhs,NspFname(stack));
       return RET_BUG;
     }
-  CheckLhs(1,1);
+  CheckLhs(0,0);
 
   if ((alpha = GetMat (stack, 1)) == NULLMAT) return RET_BUG;
   CheckScalar(NspFname(stack),1,alpha);
@@ -1311,7 +1311,7 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 
   if ( alpha->rc_type != A->rc_type || x->rc_type != A->rc_type || y->rc_type != A->rc_type )
     { 
-      Scierror("Error: sorry the 3 first arguments must be of same type than self arg %s\n",NspFname(stack));
+      Scierror("Error: sorry the 3 first arguments must be of same type (real/complex) than self arg %s\n",NspFname(stack));
       return RET_BUG;
     }
 
@@ -1363,7 +1363,7 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 
 static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
 {
-  NspMatrix *A = (NspMatrix *) self, *x;
+  NspMatrix *A = Mat2double((NspMatrix *) self), *x;
   char *op=NULL; char ope='*'; 
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -1411,7 +1411,7 @@ static int int_meth_matrix_scale_rows(void *self, Stack stack,int rhs,int opt,in
 
 static int int_meth_matrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
 {
-  NspMatrix *A = (NspMatrix *) self, *x;
+  NspMatrix *A = Mat2double((NspMatrix *) self), *x;
   char *op=NULL; char ope='*'; 
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -1457,7 +1457,7 @@ static int int_meth_matrix_get_nnz(void *self, Stack stack,int rhs,int opt,int l
 {
   CheckLhs(0,0);
   CheckRhs(0,0);
-  if ( nsp_move_double(stack,1,nsp_mat_nnz((NspMatrix *) self)) == FAIL) return RET_BUG;
+  if ( nsp_move_double(stack,1,nsp_mat_nnz(Mat2double((NspMatrix *) self))) == FAIL) return RET_BUG;
   return 1;
 }
 
@@ -1476,7 +1476,7 @@ static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int o
     {
       if (GetScalarInt (stack,2 , &k) == FAIL)   return RET_BUG;
     }
-  if (nsp_matrix_set_diag ((NspMatrix *) self, Diag, k) != OK)
+  if (nsp_matrix_set_diag (Mat2double((NspMatrix *) self), Diag, k) != OK)
     return RET_BUG;
   MoveObj(stack,1,self);
   return 1;
@@ -1484,7 +1484,7 @@ static int int_meth_matrix_set_diag(NspObject *self, Stack stack, int rhs, int o
 
 static int int_meth_matrix_has(void *self, Stack stack, int rhs, int opt, int lhs)
 {
-  NspMatrix *A = (NspMatrix *) self, *x;
+  NspMatrix *A = Mat2double((NspMatrix *) self), *x;
   NspBMatrix *B;
   NspMatrix *Ind,*Ind2;
   
@@ -1506,10 +1506,6 @@ static int int_meth_matrix_has(void *self, Stack stack, int rhs, int opt, int lh
 
   return Max(lhs,1);
 }
-
-
-
-
 
 
 static NspMethods matrix_methods[] = {
@@ -5514,7 +5510,6 @@ static int int_mat_scale_cols(Stack stack,int rhs,int opt,int lhs)
   char *op=NULL; char ope='*'; 
   nsp_option opts[] ={{"op",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-
   CheckStdRhs(2, 2);
   CheckOptRhs(0, 1)
   CheckLhs(1,1);
