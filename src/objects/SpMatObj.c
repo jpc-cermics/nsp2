@@ -394,7 +394,7 @@ static int int_meth_sprowmatrix_scale_rows(void *self, Stack stack,int rhs,int o
       Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
       return RET_BUG;
     }
-  if ( nsp_spcolmatrix_scale_cols(A, x) == FAIL )
+  if ( nsp_spcolmatrix_scale_cols(A, x, '*') == FAIL )
     return RET_BUG;
 
   return 0;
@@ -420,7 +420,7 @@ static int int_meth_sprowmatrix_scale_cols(void *self, Stack stack,int rhs,int o
       return RET_BUG;
     }
 
-  if ( nsp_spcolmatrix_scale_rows(A, x) == FAIL )
+  if ( nsp_spcolmatrix_scale_rows(A, x, '*') == FAIL )
     return RET_BUG;
   return 0;
 }
