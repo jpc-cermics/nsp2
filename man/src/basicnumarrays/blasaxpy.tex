@@ -5,9 +5,9 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-y.blas_axpy[alpha, x]  // y <- y + alpha*x
-y.blas_axpy[alpha, x, i1, i2]  // y(i1:i2) <- y(i1:i2) + alpha*x
-y.blas_axpy[alpha, x, i1, i2, j1, j2]  // y(i1:i2,j1:j2) <- y(i1:i2,j1:j2) + alpha*x
+y.blas_axpy[alpha, x]
+y.blas_axpy[alpha, x, i1, i2]
+y.blas_axpy[alpha, x, i1, i2, j1, j2]
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -71,6 +71,6 @@ X
 
 %-- see also
 \begin{manseealso}
-% \manlink{find}{find}
+ \manlink{blas\_ger}{blas_ger},\manlink{scale\_rows}{scale_rows},\manlink{scale\_cols}{scale_cols}
 \end{manseealso}
 

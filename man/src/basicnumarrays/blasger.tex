@@ -1,0 +1,77 @@
+\mansection{blas\_ger}
+\begin{mandesc}
+  \shortunder{blas\_ger}{blas_ger}{matrix rank one update}
+\end{mandesc}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+A.blas_ger[alpha, x, y] 
+A.blas_ger[alpha, x, y, flag=str]
+A.blas_ger[alpha, x, y, i1,i2,j1,j2]
+A.blas_ger[alpha, x, y, i1,i2,j1,j2, flag=str]
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{A}: full matrix
+    \vname{x,y}: vectors
+    \vname{alpha}: real or complex scalar
+    \vname{i1,i2,j1,j2}: integers specifying a submatrix where the operation is done.
+    \vname{flag=str}: named optional, useful only in the complex case ; \verb+flag="*"+ (default)
+                     or \verb+flag="T"+.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+
+This method modifies in place a matrix $A$ by adding it a rank one matrix:
+\begin{itemize}
+\item \verb+A.blas_ger[alpha, x, y]+ corresponds to  $A \leftarrow A + \alpha \; x \; y'$
+      If $A$ has dims $m \times n$, $x$ should be a vector with $m$ components
+      and $y$ a vector with $n$ components.
+\item \verb+A.blas_ger[alpha, x, y,flag="T"]+ corresponds to  $A \leftarrow A + alpha x \; y^{\top}$
+      and so is different from the previous case only in the complex case.
+\item \verb+A.blas_ger[alpha, x, y, i1, i2, j1, j2]+ do the rank one update only on the
+      submatrix $A(i1:i2,j1:j2)$. In this case $x$ should have $i2-i1+1$ components 
+      and $y$ should have $j2-j1+1$ components.
+\end{itemize}
+$A$, $\alpha$, $x$ and $y$ should be either all real or all complex (that is mixed real and complex 
+leads to an error). Note that, $x$ and $y$ being column vectors, \verb-A = A + alpha*x*y'- 
+(or \verb-A = A + alpha*x*y.'- to tranpose only $y$) should give the same result but 
+using \verb+blas_ger+ should be faster. 
+
+\end{mandescription}
+
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+// how to add or substract a different scalar to each row of a matrix 
+A=rand(3,4)
+// here we want to add 1 to row 1, 2 to row 2, etc...
+A.blas_ger[1, 1:3, ones(1,4)]
+A
+
+// how to add or substract a different scalar to each column of a matrix 
+A=rand(3,4)
+// we add 1 to column 1, 2 to column 2, etc...
+A.blas_ger[1, ones(3,1), 1:4]
+A
+
+// speed improvment
+A = rand(500,500);
+x = rand(500,1); y = rand(1,500); alpha = 2;
+tic(); B = A + alpha*x*y; toc()
+tic(); A.blas_ger[alpha,x,y]; toc()
+// A and B should be equal
+B.equal[A]
+\end{Verbatim}
+
+\end{examples}
+
+%-- see also
+\begin{manseealso}
+\manlink{blas\_axpy}{blas_axpy},\manlink{scale\_rows}{scale_rows},\manlink{scale\_cols}{scale_cols}
+\end{manseealso}
+

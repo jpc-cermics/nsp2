@@ -42,13 +42,13 @@ Display of numerical matrices could be changed using the \manlink{format}{format
 \itemdesc{Matrix methods}
 \begin{itemize}
 \item \verb+A.add[B]+  add matrix \verb+B+ to matrix \verb+A+.
-\item \verb+A.blas_axpy[alpha, x [i1,i2 [,j1,j2]]]+ constant times a vector plus a vector i.e \verb!A = A + alpha*X!  (see \manlink{blas_axpy}{blas_axpy})
+\item \verb+A.blas_axpy[alpha, x [i1,i2 [,j1,j2]]]+ constant times a vector plus a vector i.e \verb!A = A + alpha*X!  (see \manlink{blas\_axpy}{blas_axpy})
 \item \verb+A.blas_ger[alpha, x, y [,i1,i2,j1,j2]]+  rank one update \verb!A = A + alpha*x*y'!
-  on a submatrix of \verb+A+.
+  on a submatrix of \verb+A+ (see \manlink{blas\_ger}{blas_ger}).
 \item \verb+A.scale_rows[x]+ multiplies or divides each row i of A with a different scalar:
-  \verb+A(i,:) = x(i) A(i,:)+.  (see \manlink{scale_rows}{scale_rows}) 
+  \verb+A(i,:) = x(i) A(i,:)+.  (see \manlink{scale\_rows}{scale_rows}) 
 \item \verb+A.scale_cols[x]+ multiplies or divides each column j of A with a different scalar:
-  \verb+A(:,j) = x(j) A(:,j)+ (see \manlink{scale_cols}{scale_cols}).
+  \verb+A(:,j) = x(j) A(:,j)+ (see \manlink{scale\_cols}{scale_cols}).
 \item \verb+b=A.has[x]+ look for each component of \verb+x+, 
   if it is in \verb+A+: \verb+b+ is a boolean vector 
   (of same dim than \verb+x+) with \verb+b(k)+ true if
