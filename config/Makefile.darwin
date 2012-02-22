@@ -5,13 +5,15 @@ FFLAGS = $(FC_OPTIONS)
 # whole-archive does not exists and noall_load neither -Wl,-noall_load
 
 LIBS=-Wl,-all_load $(NSPLIBS) 
-#LIBS=$(NSPLIBS) libs/nsp.a 
 
 bin/scilex: scilex-lib 
 	@$(RM) $@;
 	@echo "linking"; 
-	$(FC) $(FFLAGS) -o $@ src/interp/lsci.o \
-		$(LIBS) $(EXTERNLIBS) $(FC_LDFLAGS) 
+	@$(LD) -r -o all-o.o src/interp/lsci.o -all_load $(NSPLIBS)
+	@$(LIBTOOL) --silent --mode=link --tag=CC $(FC) $(FCFLAGS) \
+		all-o.o -o $@ \
+		$(EXTERNLIBS) $(FC_LDFLAGS)
+	@$(RM) all-o.o
 
 
 
