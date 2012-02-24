@@ -951,6 +951,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
 	int n = nsp_qcurve_get_len(P);
 	double *xm=NULL,*ym=NULL;
 	if ( n == 0) break;
+	/* Sciprintf("Drawing a q-curve with %d\n",n); */
 	xm = graphic_alloc(0,n,sizeof(double));
 	ym = graphic_alloc(1,n,sizeof(double));
 	if ( xm == 0 || ym == 0) 
@@ -1264,4 +1265,4 @@ NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
 }
 
 
-#line 1268 "qcurve.c"
+#line 1269 "qcurve.c"

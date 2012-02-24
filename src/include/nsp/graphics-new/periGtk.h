@@ -383,6 +383,9 @@ static int nsp_set_gldrawable(BCG *Xgc,GdkPixmap *pixmap);
 static GdkPoint *gtk_get_xpoints(void);
 static int GtkReallocVector (int n);
 static int gtk_store_points (int n, int *vx,int *vy,int  onemore);
+#if 1 
+static int gtk_store_points_remove_redundent (int n, int *vx,int *vy,int  onemore);
+#endif 
 #ifndef WITH_PANGO
 static void LoadSymbFonts(void);
 static void loadfamily_n(char *name, int *j);

@@ -238,10 +238,18 @@ static void drawpolyline(BCG *Xgc, int *vx, int *vy, int n,int closeflag)
   if (closeflag == 1) n1 =n+1;else n1= n;
   if (n1 >= 2) 
     {
+#if 1
+      int nr= gtk_store_points_remove_redundent(n, vx, vy, closeflag);
+      if ( nr != -1 ) 
+	{
+	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), nr);
+	}
+#else 
       if ( gtk_store_points(n, vx, vy, closeflag)) 
 	{
 	  gdk_draw_lines(Xgc->private->drawable,Xgc->private->wgc, gtk_get_xpoints(), n1);
 	}
+#endif 
     }
 }
 
