@@ -45,7 +45,7 @@ AC_DEFUN([CHECK_GLPK],
           return 0;
         }'
     AC_LANG_PUSH(C)
-    AC_LINK_IFELSE([$glpk_test_prog], [glpk_found=yes], [glpk_found=no])
+    AC_LINK_IFELSE([AC_LANG_SOURCE([$glpk_test_prog])], [glpk_found=yes], [glpk_found=no])
     AC_LANG_POP(C)
     AC_CHECK_LIB(libglpk,glpk_error_hook,[GLPK_ERROR_HOOK=yes])
     if test "$GLPK_ERROR_HOOK" = yes; then
