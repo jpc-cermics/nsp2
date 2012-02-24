@@ -809,7 +809,6 @@ static int nspgobject_connect_general(NspGObject *self, Stack stack,int rhs,int 
 
   CheckRhs(2,3);
   CheckLhs(1,1);
-
   if (( name=  GetString(stack,1)) == (char*)0) return RET_BUG;             
   /*Need a GetFunction here XXXXXX **/
   if (( callback = GetNspPListCopy(stack,2)) == NULLP_PLIST) return RET_BUG;
@@ -1334,7 +1333,7 @@ nsp_gobject_closures_destroy (gpointer data)
 {
   GSList *slist, *closures = data;
   /*
-   * fprintf(stderr,"==>closures destroy\n");
+    Sciprintf("==>Closures are being destroyed\n");
    */
   for (slist = closures; slist; slist = slist->next)
     {
@@ -1349,12 +1348,9 @@ nspg_closure_invalidate(gpointer data, GClosure *closure)
 {
   NspGClosure *pc = (NspGClosure *)closure;
   nspg_block_threads();
-  /* 
-   * Scierror("==>nspg_closure_invalidate\n");
-   */
-  /* NspPList *callback;
-   * NspList *extra_args; 
-   */
+  /*
+    Sciprintf("==>nspg_closure_invalidate\n");
+  */
   NspPListDestroy(pc->callback);
   if (pc->extra_args != NULL)nsp_list_destroy(pc->extra_args);
   if (pc->swap_data != NULL)nsp_object_destroy(&pc->swap_data);
