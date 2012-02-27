@@ -25,7 +25,10 @@ ac_default_prefix=/usr/local
 AC_ARG_ENABLE(wall,
     [  --disable-wall          do not use Wall compilation option (for gcc g77) ])
 
-AC_ARG_ENABLE(wall,
+AC_ARG_ENABLE(debug,
+    [  --disable-debug         do not use g compilation option (for gcc g77) ])
+
+AC_ARG_ENABLE(optimize,
     [  --disable-optimize      do not optimize ])
 
 AC_ARG_ENABLE(pg,
@@ -600,6 +603,7 @@ esac
 ############################################
 # add -Wall 
 # remove optimize 
+# remove debug
 #############################################
 
 if test X"$enable_wall" != Xno; then 
@@ -619,6 +623,12 @@ if test X"$enable_optimize" = Xno; then
    FC_OPTIONS=`echo $FC_OPTIONS | sed -e 's/-O[[0-9]]*//g'`
    ENABLE_DEBUG="${ENABLE_DEBUG}, optimize off"
 fi 
+
+if test X"$enable_debug" = Xno; then
+   CC_OPTIONS=`echo $CC_OPTIONS | sed -e 's/-g//g'`
+   FC_OPTIONS=`echo $FC_OPTIONS | sed -e 's/-g//g'`
+   ENABLE_DEBUG="${ENABLE_DEBUG}, debug off"
+fi
 
 #########################################
 # FC_OPTIONS1 and CC_OPTIONS are similar 
