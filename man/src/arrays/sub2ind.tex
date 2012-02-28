@@ -1,0 +1,101 @@
+% -*- mode: latex -*-
+
+\mansection{sub2ind, ind2sub}
+\begin{mandesc}
+   \short{sub2ind}{convert multi-dimensional indexing to linear indexing}\\
+   \short{ind2sub}{convert linear indexing to multi-dimensional indexing}\\
+\end{mandesc}
+
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+ // two dimensional indexing <-> linear indexing
+ Ind = sub2ind(dims, I, J)
+ Ind = sub2ind(dims, I, J, ind_type=str)
+ [I,J] = ind2sub(dims, Ind)
+ [I,J] = ind2sub(dims, Ind, ind_type=str)
+
+ // multi-dimensional indexing <-> linear indexing
+ Ind = sub2ind(ndims, I1, I2, ..., In)
+ Ind = sub2ind(ndims, I1, I2, ..., In, ind_type=str)
+ [I1,...,In] = ind2sub(ndims, Ind)
+ [I1,...,In] = ind2sub(ndims, Ind, ind_type=str)
+\end{verbatim}
+\end{calling_sequence}
+
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+   \vname{dims}: vector with the 2 dimensions of a two-dimensional array.
+   \vname{I,J}: vectors of indices of same size.
+   \vname{ndims}: vector with the n dimensions of a n-dimensional array.
+   \vname{I1,...,In}: vectors of indices of same size.
+   \vname{Ind}: vector of indices.
+   \vname{ind_type=str}: named optional, str can be equal to \verb"double" (default) in which case
+          the resulting indices are stored as double floating point numbers or equal to  \verb"int"
+          to be stored as int32 numbers.
+  \end{varlist}
+\end{parameters}
+
+\begin{mandescription}
+This function lets to convert between linear indexing and two-dimensional indexing
+(see \manlink{indexing arrays}{indexing arrays} to understand the various
+ways of indexing arrays). It can be also used for conversion between linear
+indexing and multi-dimensional indexing. 
+
+\itemdesc{linear $\leftrightarrow$ two-dimensional indexing conversions}
+
+Denoting by $m$ the number of rows and $n$ the number of columns of a matrix, 
+a two dimensional index is a couple $(i,j)$ with $1 \le i \le m$ and
+$1 \le j \le n$ and corresponds to the linear index $k = (j-1) \times m + i$
+with $1 \le k \le m \times n$ (see \manlink{indexing arrays}{indexing arrays} 
+about the various ways of indexing arrays). 
+
+Given the vector \verb+dims = [m,n]+ and $p$ such couples $(i,j)$ under the form 
+of two vectors \verb+I+ and \verb+J+ each with $p$ components \verb+Ind=sub2ind(dims,I,J)+
+computes the $p$ corresponding linear index and given \verb+dims+ and \verb+Ind+
+\verb+[I,J]=ind2sub(dims,Ind)+ do the inverse operation.
+
+\itemdesc{linear  $\leftrightarrow$ multi-dimensional indexing conversions}
+
+The same conversion can be done for multi-dimensional arrays (even if nsp
+doesn't yet support arrays with more than 2 dimensions). Considering a $n$
+dimensional arrays with dimensions $m_1 \times m_2 \times \dots \times m_n$,
+a nd-index is a $n$-tuple $(i_1,i_2,\dots, i_n)$ with $1 \le i_k \le m_k$
+for $k=1,\dots,n$ and corresponds to the linear index:
+$$
+   k = i_1 + m_1 \left( i_2-1 + m_2 \left( i_3 - 1 + m_3 \left( \dots \right) \right) \right)  
+$$ 
+
+In this case \verb+dims=[m1,m2,...,mn]+ and the conversion can be done between $p$ such $n$-tuple
+under the form of $n$ vectors \verb+I1+, \dots, \verb+IN+ with $p$ components each one, and 
+the vector \verb+Ind+ with $p$ components with the corresponding linear indices.    
+
+\itemdesc{named optional arg ind\_type}
+
+Output indices vector(s) can be stored with doubles float number by default or using \verb+ind_type="double"+
+or with 32 bits integer using \verb+ind_type="int"+.
+
+\end{mandescription}
+
+%--example 
+\begin{examples}
+\begin{Verbatim}
+// this is the example of the indexing help page
+Ind = sub2ind([3,4],2,2)   // should be 5
+[I,J] = ind2sub([3,4],5)   // should be 2 and 2
+
+// how to add fastly 1 to the diagonal of a matrix
+A = rand(5,5)
+Ind = sub2ind([5,5],1:5,1:5);
+// now add 1 on the diagonal of A
+A(Ind) = A(Ind) + 1
+\end{Verbatim}
+\end{examples}
+
+
+%-- see also
+\begin{manseealso}
+\manlink{indexing arrays}{indexing arrays}
+\end{manseealso}
+
