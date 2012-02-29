@@ -34,6 +34,7 @@
    '("gboolean" "clip" "std" "TRUE") ;; are we doing a clipgrf.
    '("int" "line_width" "std" "0") ;; default line width for axes  
    '("int" "font_size" "std" "1") ;; font size for axes and titles 
+   '("int" "background" "std" "-1") ;; default color for the background
    )
   (gtype-id "Axes")
 )

@@ -237,6 +237,7 @@ static int nsp_axes_eq(NspAxes *A, NspObject *B)
   if ( A->obj->clip != loc->obj->clip) return FALSE;
   if ( A->obj->line_width != loc->obj->line_width) return FALSE;
   if ( A->obj->font_size != loc->obj->font_size) return FALSE;
+  if ( A->obj->background != loc->obj->background) return FALSE;
   return TRUE;
 }
 
@@ -282,6 +283,7 @@ int nsp_axes_xdr_save(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_save_i(xdrs, M->obj->clip) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->line_width) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->font_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->background) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -317,6 +319,7 @@ NspAxes  *nsp_axes_xdr_load_partial(XDR *xdrs, NspAxes *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->clip) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->line_width) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->font_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->background) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -460,6 +463,7 @@ int nsp_axes_print(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
   Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
+  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -515,6 +519,7 @@ int nsp_axes_latex(NspAxes *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"clip	= %s\n", ( M->obj->clip == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"line_width=%d\n",M->obj->line_width);
   Sciprintf1(indent+2,"font_size=%d\n",M->obj->font_size);
+  Sciprintf1(indent+2,"background=%d\n",M->obj->background);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -610,6 +615,7 @@ int nsp_axes_create_partial(NspAxes *H)
   H->obj->clip = TRUE;
   H->obj->line_width = 0;
   H->obj->font_size = 1;
+  H->obj->background = -1;
   return OK;
 }
 
@@ -682,7 +688,7 @@ int nsp_axes_check_values(NspAxes *H)
   return OK;
 }
 
-NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,NspTypeBase *type)
+NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,double rho,gboolean top,NspMatrix* bounds,NspMatrix* arect,NspMatrix* frect,char* title,char* x,char* y,NspList* children,gboolean fixed,gboolean iso,gboolean auto_axis,int grid,int axes,gboolean xlog,gboolean ylog,int lpos,NspMatrix* rect,gboolean zoom,NspMatrix* zrect,gboolean clip,int line_width,int font_size,int background,NspTypeBase *type)
 {
   NspAxes *H  = nsp_axes_create_void(name,type);
   if ( H ==  NULLAXES) return NULLAXES;
@@ -712,6 +718,7 @@ NspAxes *nsp_axes_create(const char *name,nsp_gcscale scale,NspMatrix* wrect,dou
   H->obj->clip=clip;
   H->obj->line_width=line_width;
   H->obj->font_size=font_size;
+  H->obj->background=background;
   if ( nsp_axes_check_values(H) == FAIL) return NULLAXES;
   return H;
 }
@@ -813,6 +820,7 @@ NspAxes *nsp_axes_full_copy_partial(NspAxes *H,NspAxes *self)
   H->obj->clip=self->obj->clip;
   H->obj->line_width=self->obj->line_width;
   H->obj->font_size=self->obj->font_size;
+  H->obj->background=self->obj->background;
   return H;
 }
 
@@ -1360,6 +1368,23 @@ static int _wrap_axes_set_font_size(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
+static NspObject *_wrap_axes_get_background(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspAxes *) self)->obj->background;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_axes_set_background(void *self,const char *attr, NspObject *O)
+{
+  int background;
+
+  if ( IntScalar(O,&background) == FAIL) return FAIL;
+  ((NspAxes *) self)->obj->background= background;
+  return OK;
+}
+
 static AttrTab axes_attrs[] = {
   { "wrect", (attr_get_function *)_wrap_axes_get_wrect, (attr_set_function *)_wrap_axes_set_wrect,(attr_get_object_function *)_wrap_axes_get_obj_wrect, (attr_set_object_function *)int_set_object_failed },
   { "rho", (attr_get_function *)_wrap_axes_get_rho, (attr_set_function *)_wrap_axes_set_rho,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
@@ -1383,6 +1408,7 @@ static AttrTab axes_attrs[] = {
   { "clip", (attr_get_function *)_wrap_axes_get_clip, (attr_set_function *)_wrap_axes_set_clip,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "line_width", (attr_get_function *)_wrap_axes_get_line_width, (attr_set_function *)_wrap_axes_set_line_width,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "font_size", (attr_get_function *)_wrap_axes_get_font_size, (attr_set_function *)_wrap_axes_set_font_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "background", (attr_get_function *)_wrap_axes_get_background, (attr_set_function *)_wrap_axes_set_background,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
