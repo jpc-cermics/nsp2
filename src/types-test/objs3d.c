@@ -1346,7 +1346,7 @@ static void nsp_draw_objs3d(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
   
   if ( 0) 
     axis_draw(Xgc, (strlen(strflag) >= 3) ? strflag[2] : '1', 
-	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1);
+	      (strlen(strflag) >= 2) ? strflag[1] : '6', -1, -1);
 
   rep = Xgc->graphic_engine->xpush_colormap(Xgc,P->obj->colormap);
 

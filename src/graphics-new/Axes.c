@@ -34,6 +34,7 @@ static void NumberFormat (char *str,int k,int a);
 static void aplotv1_new(BCG *Xgc,char mode, int grid_color);
 static void aplotv2 (BCG *Xgc,char mode, int grid_color);
 static void nsp_draw_frame_rectangle(BCG *Xgc) ;
+static void nsp_draw_filled_rectangle(BCG *Xgc,int bg) ;
 static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
 		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color);
 
@@ -53,7 +54,7 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
  *
  */
 
-void axis_draw(BCG *Xgc,char mode, char scale, int grid_color)
+void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
 {
   /* using foreground to draw axis */
   int old_dash,pat, fg;
@@ -66,9 +67,11 @@ void axis_draw(BCG *Xgc,char mode, char scale, int grid_color)
     case '0' :
       break ;
     case '2' :
+      nsp_draw_filled_rectangle(Xgc,bg);
       nsp_draw_frame_rectangle(Xgc);
       break;
     default :
+      nsp_draw_filled_rectangle(Xgc,bg);
       if ( scale  == '5' || scale =='6' )
 	{
 	  aplotv1_new(Xgc,mode,grid_color);
@@ -704,3 +707,29 @@ static void nsp_draw_frame_rectangle(BCG *Xgc)
     }
 }
 
+static void nsp_draw_filled_rectangle(BCG *Xgc,int bg) 
+{
+  int ccolor  = Xgc->graphic_engine->xget_pattern(Xgc);
+  
+  if (bg<=0) return;
+  
+  Xgc->graphic_engine->xset_pattern(Xgc,bg);
+  if ( Xgc->scales->cosa == 1.0 ) {
+    int rect[4] = {Xgc->scales->Irect.x,Xgc->scales->Irect.y,
+                   Xgc->scales->Irect.width,Xgc->scales->Irect.height};
+    Xgc->graphic_engine->fillrectangle(Xgc,rect);
+  } else {
+    double x[4],y[4];
+    x[0]= Xgc->scales->frect[0];
+    y[0]= Xgc->scales->frect[1];
+    x[1]= Xgc->scales->frect[2];
+    y[1]= y[0];
+    x[2]= x[1];
+    y[2]= Xgc->scales->frect[3];
+    x[3]= x[0];
+    y[3]= y[2];
+    Xgc->graphic_engine->scale->fillpolyline(Xgc,x,y,4,1);
+    /*Xgc->graphic_engine->scale->drawpolyline(Xgc,x,y,4,1);*/
+  }
+  Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+}

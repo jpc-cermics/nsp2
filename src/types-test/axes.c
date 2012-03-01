@@ -905,7 +905,7 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 901 "axes.c"
+#line 909 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
@@ -1112,7 +1112,7 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1108 "axes.c"
+#line 1116 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -1425,7 +1425,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1403 "axes.c"
+#line 1429 "axes.c"
 
 
 #line 188 "codegen/axes.override"
@@ -1438,7 +1438,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1416 "axes.c"
+#line 1442 "axes.c"
 
 
 /*----------------------------------------------------
@@ -1594,6 +1594,33 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   P->obj->scale = *Xgc->scales;
   nsp_send_scale_2D_to_opengl(Xgc);
   
+  /* clip the enclosing rectangle of the  axe
+   */
+  
+  clip = clip_axe;
+  if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
+  
+  Xgc->graphic_engine->xset_clip(Xgc, &clip);
+  
+  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
+  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
+  lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
+  
+  /* draw axes, ticks */
+  axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid, P->obj->background);
+  /* legends */
+  nsp_axes_legends(Xgc,P);
+  /* title if present */
+  if ( P->obj->title[0] != '\0') 
+    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
+  if ( P->obj->x[0] != '\0') 
+    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
+  if ( P->obj->y[0] != '\0') 
+    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
+  
+  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
+  Xgc->graphic_engine->xset_thickness(Xgc, lw);
+  
   /* clip the inside rectangle of the  axe
    * Note that clipping is wrong when an axe is rotated 
    * since clipping only works with rectangles 
@@ -1620,33 +1647,6 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       cloc = cloc->next;
     }
   
-  /* clip the enclosing rectangle of the  axe
-   */
-  
-  clip = clip_axe;
-  if ( rect != NULL ) gdk_rectangle_intersect( &rect_a, &clip, &clip);
-  
-  Xgc->graphic_engine->xset_clip(Xgc, &clip);
-  
-  Xgc->graphic_engine->xget_font(Xgc,font, FALSE);
-  Xgc->graphic_engine->xset_font(Xgc,font[0], P->obj->font_size, FALSE);
-  lw = Xgc->graphic_engine->xset_thickness(Xgc, P->obj->line_width);
-  
-  /* draw axes, ticks */
-  axis_draw(Xgc,P->obj->axes+'0', (P->obj->auto_axis) ? '5': '1', P->obj->grid);
-  /* legends */
-  nsp_axes_legends(Xgc,P);
-  /* title if present */
-  if ( P->obj->title[0] != '\0') 
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->title,1);
-  if ( P->obj->x[0] != '\0') 
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->x,2);
-  if ( P->obj->y[0] != '\0') 
-    Xgc->graphic_engine->scale->displaystringa(Xgc,P->obj->y,3);
-  
-  Xgc->graphic_engine->xset_font(Xgc,font[0],font[1], FALSE);
-  Xgc->graphic_engine->xset_thickness(Xgc, lw);
-
   /* back to previous clip zone */
 
   if ( rect != NULL ) 
@@ -2409,4 +2409,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2387 "axes.c"
+#line 2413 "axes.c"

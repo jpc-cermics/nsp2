@@ -98,7 +98,7 @@ extern void nsp_axis_old (BCG *Xgc,char,char,double *,int *,double *,int*,
 			  char *str[],int subtics,char *format,
 			  int fontsize,int textcolor,int ticscolor,
 			  char logflag,int seg_flag ,int grid_color);
-extern void axis_draw  (BCG *Xgc, char mode, char scale, int grid_color);
+extern void axis_draw  (BCG *Xgc, char mode, char scale, int grid_color, int bg);
 extern void nsp_grformat_e  (char *fmt,double xmin,double xmax,double xpas); 
 extern void nsp_grformat_e1  (char *fmt,double *x,int nx); 
 
