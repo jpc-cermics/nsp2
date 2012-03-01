@@ -62,16 +62,15 @@ void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
   pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
+  nsp_draw_filled_rectangle(Xgc,bg);
   switch ( c) 
     {
     case '0' :
       break ;
     case '2' :
-      nsp_draw_filled_rectangle(Xgc,bg);
       nsp_draw_frame_rectangle(Xgc);
       break;
     default :
-      nsp_draw_filled_rectangle(Xgc,bg);
       if ( scale  == '5' || scale =='6' )
 	{
 	  aplotv1_new(Xgc,mode,grid_color);
