@@ -312,9 +312,12 @@ static char *nsp_xhistory_down(view_history *data)
   if ( data == NULL) return NULL;
   if ( data->dir == 0 ) return NULL;
   if ( data->history_cur->next != NULL) {
+    data->dir = -1;
     data->history_cur = data->history_cur->next;
+  } else {
+    data->dir = 0;
+    return NULL;
   }
-  data->dir = -1;
   return data->history_cur->data;
 }
 
@@ -458,7 +461,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   /* delete extra info added by completion  */
   nsp_delete_completion_infos(view);
 
-  /* fprintf(stderr,"key pressed \n"); */
+  /*fprintf(stderr,"key pressed\n");*/
   switch ( event->keyval ) 
     {
     case GDK_Tab :
@@ -527,6 +530,12 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	}
       goto def; 
       break;
+    case GDK_KEY_Home: 
+      if (view->buffer->mark != NULL) {
+        gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+        gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+       }
+      return TRUE;
     case GDK_Control_L :
     case GDK_Control_R :
       /* fprintf(stderr,"un controle \n"); */
@@ -554,17 +563,15 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
  down: 
   str = nsp_xhistory_down(data);
   /* fprintf(stdout,"down pressed\n"); */
-  if ( str != NULL) 
-    {
-      /* fprintf(stdout,"insert text\n"); */
-      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-      if ( view->buffer->mark != NULL) 
-	{
-	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
-	  gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
-	}
-      gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
-    }
+  gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  if ( view->buffer->mark != NULL) {
+     gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+     gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
+  }
+  if ( str != NULL) {
+    /* fprintf(stdout,"insert text\n"); */
+    gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+  }
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
  ctrl_l : 
@@ -1360,6 +1367,7 @@ static int  nsp_print_to_textview(const char *fmt, va_list ap)
   GtkTextIter start, end;
   int n;
   char *lbuf = buf ;
+  /*fprintf(stderr," nsp_print_to_textview\n");*/
   if ( xtag == FALSE ) 
     {
       int i;/* {8,{9,{7,{6,{7,{2,8}}}}}} */
@@ -1420,6 +1428,9 @@ static int  nsp_print_to_textview(const char *fmt, va_list ap)
   else 
     gtk_text_buffer_move_mark (view->buffer->buffer, view->buffer->mark, &end);
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+  gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 0.0, 1.0);
   gtk_text_buffer_apply_tag (view->buffer->buffer,
 			     view->buffer->not_editable_tag,
 			     &start, &end);
