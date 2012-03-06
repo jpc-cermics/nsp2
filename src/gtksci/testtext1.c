@@ -56,7 +56,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 
-
 #ifdef WIN32
 /* XXXXXX */
 #define sigsetjmp(x,y) setjmp(x)
@@ -536,7 +535,8 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	}
       goto def; 
       break;
-    case GDK_KEY_Home: 
+    case GDK_KP_Home: 
+    case GDK_Home: 
       if (view->buffer->mark != NULL) {
         gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
         gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
