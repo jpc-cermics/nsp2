@@ -514,6 +514,9 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	    {
 	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
 	    }
+          gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
+					&iter,
+					0, TRUE, 1.0, 1.0);
 	  return TRUE;
 	}
       goto def;
@@ -525,6 +528,9 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	    {
 	      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
 	      gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+              gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+					    view->buffer->mark,
+					    0, TRUE, 1.0, 1.0);
 	    }
 	  return TRUE;
 	}
@@ -534,6 +540,9 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
       if (view->buffer->mark != NULL) {
         gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
         gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 1.0, 1.0);
        }
       return TRUE;
     case GDK_Control_L :
@@ -547,30 +556,44 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
   return FALSE;
  up:    str = nsp_xhistory_up(data);
   /* fprintf(stdout,"up pressed\n"); */
-  if ( str != NULL) 
-    {
-      /* fprintf(stdout,"insert text\n"); */
-      gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-      if ( view->buffer->mark != NULL) 
-	{
-	  gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
-	  gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
-	}
-      gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+  if (str != NULL) {
+    /* fprintf(stdout,"insert text\n"); */
+    gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+    if (view->buffer->mark != NULL) {
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+      gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
     }
+    gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+    gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
+				   &end,
+ 				   0, TRUE, 1.0, 1.0);
+    gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
+  }
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
  down: 
   str = nsp_xhistory_down(data);
   /* fprintf(stdout,"down pressed\n"); */
   gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-  if ( view->buffer->mark != NULL) {
+  if (view->buffer->mark != NULL) {
      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
      gtk_text_buffer_delete(view->buffer->buffer,&iter,&end);
   }
-  if ( str != NULL) {
+  if (str != NULL) {
     /* fprintf(stdout,"insert text\n"); */
     gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
+    gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
+				 &end,
+ 				 0, TRUE, 1.0, 1.0);
+    gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
+  } else {
+    if (view->buffer->mark != NULL) {
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+				view->buffer->mark,
+				0, TRUE, 1.0, 1.0);
+    }
   }
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
@@ -898,6 +921,8 @@ static char *readline_textview_internal(const char *prompt)
        * but event handlers do not use the nsp_command 
        * queue any more.
        */
+      if ( buf[0] != '\0' && buf[0] != '\n' ) 
+        nsp_append_history(buf,  view->view_history, TRUE);
       Sciprintf("%s\n",buf);
       return g_strdup(buf);
     }
