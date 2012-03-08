@@ -466,6 +466,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     case GDK_Tab :
       nsp_insert_completions(view);
       return TRUE;
+    case GDK_KP_Enter:
     case GDK_Return:
       key_press_return(view,TRUE);
       return TRUE;
