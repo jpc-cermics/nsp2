@@ -20324,6 +20324,15 @@ static int _wrap_gtk_entry_get_text(NspGtkEntry *self,Stack stack,int rhs,int op
   return 1;
 }
 
+static int _wrap_gtk_entry_get_text_length(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_entry_get_text_length(GTK_ENTRY(self->obj));
+  if (nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static int _wrap_gtk_entry_get_layout(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspObject *nsp_ret;
@@ -20467,6 +20476,78 @@ static int _wrap_gtk_entry_text_index_to_layout_index(NspGtkEntry *self,Stack st
   return 1;
 }
 
+static int _wrap_gtk_entry_set_cursor_hadjustment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {new_opts,t_end};
+  nsp_option opts[] = {
+	{"hadjustment",obj,NULLOBJ,-1},
+	{NULL,t_end,NULLOBJ,-1} };
+  NspGObject *nsp_hadjustment = NULL;
+  GtkAdjustment *hadjustment = NULL;
+
+  if ( GetArgs(stack,rhs,opt,T,opts, &nsp_hadjustment) == FAIL) return RET_BUG;
+  if ( nsp_hadjustment != NULL ) {
+    if ( IsGtkAdjustment((NspObject *)nsp_hadjustment))
+      hadjustment = GTK_ADJUSTMENT(nsp_hadjustment->obj);
+    else if (! IsNone((NspObject *)nsp_hadjustment)) {
+         Scierror( "hadjustment should be a GtkAdjustment or None");
+         return RET_BUG;
+    }
+  }
+  gtk_entry_set_cursor_hadjustment(GTK_ENTRY(self->obj), hadjustment);
+  return 0;
+}
+
+static int _wrap_gtk_entry_get_cursor_hadjustment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspObject *nsp_ret;
+  GtkAdjustment *ret;
+
+  ret = gtk_entry_get_cursor_hadjustment(GTK_ENTRY(self->obj));
+  nsp_type_gtkadjustment = new_type_gtkadjustment(T_BASE);
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_gtkadjustment))== NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+static int _wrap_gtk_entry_set_progress_fraction(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_double,t_end};
+  double fraction;
+
+  if ( GetArgs(stack,rhs,opt,T,&fraction) == FAIL) return RET_BUG;
+  gtk_entry_set_progress_fraction(GTK_ENTRY(self->obj), fraction);
+  return 0;
+}
+
+static int _wrap_gtk_entry_get_progress_fraction(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  double ret;
+
+  ret = gtk_entry_get_progress_fraction(GTK_ENTRY(self->obj));
+  if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+static int _wrap_gtk_entry_editable_set_position(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int position;
+
+  if ( GetArgs(stack,rhs,opt,T,&position) == FAIL) return RET_BUG;
+  gtk_editable_set_position(GTK_EDITABLE(self->obj), position);
+  return 0;
+}
+
+static int _wrap_gtk_entry_editable_get_position(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = gtk_editable_get_position(GTK_EDITABLE(self->obj));
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 static NspMethods gtkentry_methods[] = {
   {"set_visibility",(nsp_method *) _wrap_gtk_entry_set_visibility},
   {"get_visibility",(nsp_method *) _wrap_gtk_entry_get_visibility},
@@ -20482,6 +20563,7 @@ static NspMethods gtkentry_methods[] = {
   {"get_width_chars",(nsp_method *) _wrap_gtk_entry_get_width_chars},
   {"set_text",(nsp_method *) _wrap_gtk_entry_set_text},
   {"get_text",(nsp_method *) _wrap_gtk_entry_get_text},
+  {"get_text_length",(nsp_method *) _wrap_gtk_entry_get_text_length},
   {"get_layout",(nsp_method *) _wrap_gtk_entry_get_layout},
   {"get_layout_offsets",(nsp_method *) _wrap_gtk_entry_get_layout_offsets},
   {"set_alignment",(nsp_method *) _wrap_gtk_entry_set_alignment},
@@ -20490,10 +20572,16 @@ static NspMethods gtkentry_methods[] = {
   {"get_completion",(nsp_method *) _wrap_gtk_entry_get_completion},
   {"append_text",(nsp_method *) _wrap_gtk_entry_append_text},
   {"prepend_text",(nsp_method *) _wrap_gtk_entry_prepend_text},
-  {"set_position",(nsp_method *) _wrap_gtk_entry_set_position},
+  {"set_position",(nsp_method *) _wrap_gtk_entry_set_position}, 
   {"set_editable",(nsp_method *) _wrap_gtk_entry_set_editable},
   {"layout_index_to_text_index",(nsp_method *) _wrap_gtk_entry_layout_index_to_text_index},
   {"text_index_to_layout_index",(nsp_method *) _wrap_gtk_entry_text_index_to_layout_index},
+  {"set_cursor_hadjustment",(nsp_method *) _wrap_gtk_entry_set_cursor_hadjustment},
+  {"get_cursor_hadjustment",(nsp_method *) _wrap_gtk_entry_get_cursor_hadjustment},
+  {"set_progress_fraction",(nsp_method *) _wrap_gtk_entry_set_progress_fraction},
+  {"get_progress_fraction",(nsp_method *) _wrap_gtk_entry_get_progress_fraction},
+  {"editable_set_position",(nsp_method *) _wrap_gtk_entry_editable_set_position},
+  {"editable_get_position",(nsp_method *) _wrap_gtk_entry_editable_get_position},
   { NULL, NULL}
 };
 
