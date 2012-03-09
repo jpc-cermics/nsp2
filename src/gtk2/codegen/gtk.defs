@@ -4512,6 +4512,7 @@
   (return-type "gboolean")
   )
 
+
 (define-virtual insert_text
   (of-object "GtkEditable")
   (return-type "none")
@@ -4587,6 +4588,9 @@
   )
 
 
+
+
+
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkentry.h
 
 (define-function gtk_entry_get_type
@@ -4600,7 +4604,8 @@
   (return-type "GtkWidget*")
   )
 
-					; DEPRECATED, but we use it for a constructor for convenience
+;;  DEPRECATED, but we use it for a constructor for convenience
+
 (define-function gtk_entry_new_with_max_length
   (c-name "gtk_entry_new_with_max_length")
   (is-constructor-of GtkEntry)
@@ -4826,6 +4831,49 @@
    '("gint" "text_index")
    )
   )
+
+;; added Mars 2012 for GtkEntry
+
+(define-method get_text_length
+  (of-object "GtkEntry")
+  (c-name "gtk_entry_get_text_length")
+  (return-type "guin16")
+  )
+
+(define-method set_cursor_hadjustment
+  (of-object "GtkEntry")
+  (c-name "gtk_entry_set_cursor_hadjustment")
+  (return-type "none")
+  (parameters
+   '("GtkAdjustment*" "adjustment")
+   )
+  )
+
+(define-method get_cursor_hadjustment
+  (of-object "GtkEntry")
+  (c-name "gtk_entry_get_cursor_hadjustment")
+  (return-type "GtkAdjustment*")
+  )
+
+(define-method set_progress_fraction
+  (of-object "GtkEntry")
+  (c-name "gtk_entry_set_progress_fraction")
+  (return-type "none")
+  (parameters
+   '("gouble" "fraction" )
+   )
+  )
+  
+(define-method get_progress_fraction
+  (of-object "GtkEntry")
+  (c-name "gtk_entry_get_progress_fraction")
+  (return-type "gdouble")
+  )
+
+
+
+
+;; end mars 2012 
 
 (define-virtual populate_popup
   (of-object "GtkEntry")
