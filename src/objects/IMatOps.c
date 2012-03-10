@@ -3301,14 +3301,14 @@ int nsp_imatrix_sub_mat(NspIMatrix *A, NspIMatrix *B)
  * nsp_imatrix_scale_rows:
  * @A: a #NspIMatrix of size m x n
  * @x: a #NspIMatrix must be a vector of size m (1 x m or m x 1)
- * 
+ * @op: a char '*' to multiply or '/' to divide
  *  for (i from 0 to m-1)  
- *      multiplie row i of A by x[i]
+ *      multiplie or divide row i of A by x[i]
  * 
  * Return value: %FAIL or %OK
  **/
 
-int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x)
+int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x, char op)
 {
   int i,j, k;
 
@@ -3322,8 +3322,24 @@ int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x)
     for ( i = 0 ; i < A->m ; i++, k++ )		\
       A->name[k] *= x->name[i];			\
   break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#define IMAT_AD(name,type,arg)				\
+  for ( j = 0, k=0 ; j < A->n ; j++)		\
+    for ( i = 0 ; i < A->m ; i++, k++ )		\
+      A->name[k] /= x->name[i];			\
+  break;
+
+  if ( op == '*' )
+    {
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+    }
+  else
+    {
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AD,"");
+    }
+
 #undef IMAT_AC
+#undef IMAT_AD
+
   return OK;
 }
 
@@ -3331,14 +3347,14 @@ int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x)
  * nsp_imatrix_scale_cols:
  * @A: a #NspIMatrix of size m x n
  * @x: a #NspIMatrix must be a vector of size n (1 x n or n x 1)
- * 
+ * @op: a char '*' to multiply or '/' to divide
  *  for (j from 0 to n-1)  
- *      multiplie column j of A by x[j]
- * 
+ *      multiplie or divide column j of A by x[j]
+  * 
  * Return value: %FAIL or %OK
  **/
 
-int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x)
+int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x, char op)
 {
 
   int i,j, k;
@@ -3352,8 +3368,24 @@ int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x)
     for ( i = 0 ; i < A->m ; i++, k++ )		\
       A->name[k] *= x->name[j];			\
   break;
-  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#define IMAT_AD(name,type,arg)				\
+  for ( j = 0, k=0 ; j < A->n ; j++)		\
+    for ( i = 0 ; i < A->m ; i++, k++ )		\
+      A->name[k] /= x->name[j];			\
+  break;
+
+  if ( op == '*' )
+    {
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+    }
+  else
+    {
+      NSP_ITYPE_SWITCH(A->itype,IMAT_AD,"");
+    }
+
 #undef IMAT_AC
+#undef IMAT_AD
+
   return OK;
 }
 

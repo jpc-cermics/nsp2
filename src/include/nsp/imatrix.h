@@ -341,8 +341,8 @@ extern int nsp_xdr_load_array_ixx(XDR *xdrs, void *nx,nsp_itype itype, int l);
 
 /* from IMatOps */
 
-extern int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x);
-extern int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x);
+extern int nsp_imatrix_scale_rows(NspIMatrix *A, NspIMatrix *x, char op);
+extern int nsp_imatrix_scale_cols(NspIMatrix *A, NspIMatrix *x, char op);
 extern NspIMatrix *nsp_imatrix_diff(NspIMatrix *A, int order, int dim);
 extern int nsp_imatrix_mult_scalar_bis(NspIMatrix *A, NspIMatrix *B);
 extern int nsp_imatrix_add_scalar_bis(NspIMatrix *A, NspIMatrix *B);

@@ -552,11 +552,23 @@ static int int_meth_imatrix_add(void *a,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
+/* 
+ *  scale_rows[x,op="*"|"/"]
+ *
+ *    multiply or divide row i of A by x[i]
+ *
+ *    A.scale_rows[x,op='*'|'/']
+ */
+
 static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A = self, *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 1)
 
   if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
@@ -566,25 +578,45 @@ static int int_meth_imatrix_scale_rows(void *self, Stack stack,int rhs,int opt,i
       return RET_BUG;
     }
 
-  if ( nsp_imatrix_scale_rows(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_imatrix_scale_rows(A, x, ope) == FAIL )
     return RET_BUG;
 
   return 0;
 }
 
 /* 
- *  scale_cols[x]
+ *  scale_cols[x,op='*'|'/']
  *
- *    A <- A*diag(x)
+ *    multiply or divide column j of A by x[j]
  *
- *    A.scale_cols[x]
+ *    A.scale_cols[x,op='*'|'/']
  */
 
 static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A =  self, *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,0);
-  CheckRhs(1,1);
+  CheckStdRhs(1, 1);
+  CheckOptRhs(0, 1)
 
   if ((x = GetIMat (stack, 1)) == NULLIMAT) return RET_BUG;
   CheckVector(NspFname(stack),1,x);
@@ -594,7 +626,23 @@ static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,i
       return RET_BUG;
     }
 
-  if ( nsp_imatrix_scale_cols(A, x) == FAIL )
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_imatrix_scale_cols(A, x, ope) == FAIL )
     return RET_BUG;
 
   return 0;
@@ -606,7 +654,7 @@ static int int_meth_imatrix_scale_cols(void *self, Stack stack,int rhs,int opt,i
 
 static int int_meth_imatrix_get_nnz(void *self, Stack stack,int rhs,int opt,int lhs)
 {
-  CheckLhs(0,0);
+  CheckLhs(1,1);
   CheckRhs(0,0);
   if ( nsp_move_double(stack,1,nsp_imatrix_nnz((NspIMatrix *) self)) == FAIL) return RET_BUG;
   return 1;
@@ -3329,6 +3377,116 @@ int int_lcm(Stack stack, int rhs, int opt, int lhs)
   return int_euclide_gen(stack,rhs,opt,lhs,1,nsp_lcm,2);
 }
 
+/* 
+ *  B = scale_rows(A,x,op='*'|'/')  (exists as a method but useful as a function too)
+ *
+ */
+
+static int int_imatrix_scale_rows(Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *A, *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckLhs(1,1);
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 1)
+
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT) return RET_BUG;
+
+  if ((x = GetIMat (stack, 2)) == NULLIMAT) return RET_BUG;
+  CheckVector(NspFname(stack),2,x);
+  if ( x->mn != A->m )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->m);
+      return RET_BUG;
+    }
+
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_imatrix_scale_rows(A, x, ope) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(A)->ret_pos = 1; 
+  return 1;
+}
+
+/* 
+ *  B = scale_cols(A,x,op='*'|'/')  (exists as a method but useful as a function too)
+ *
+ */
+static int int_imatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *A, *x;
+  char *op=NULL; char ope='*'; 
+  nsp_option opts[] ={{"op",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckLhs(1,1);
+  CheckStdRhs(2, 2);
+  CheckOptRhs(0, 1)
+
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT) return RET_BUG;
+
+  if ((x = GetIMat (stack, 2)) == NULLIMAT) return RET_BUG;
+  CheckVector(NspFname(stack),2,x);
+  if ( x->mn != A->n )
+    { 
+      Scierror("%s: the argument should have %d components \n",NspFname(stack),A->n);
+      return RET_BUG;
+    }
+
+  if ( get_optional_args(stack, rhs, opt, opts, &op) == FAIL )
+    return RET_BUG;
+
+  if ( op != NULL) 
+    {
+      if ( strcmp(op,"*") == 0 )
+	ope = '*';
+      else if ( strcmp(op,"/") == 0 )
+	ope = '/';
+      else
+	{
+	  Scierror("%s: optional named arg op should be set to '*' or '/'\n",NspFname(stack));
+	  return RET_BUG;
+	}
+    }
+
+  if ( nsp_imatrix_scale_cols(A, x, ope) == FAIL )
+    return RET_BUG;
+
+  NSP_OBJECT(A)->ret_pos = 1; 
+  return 1;
+}
+
+/* 
+ *   nnz(A)  number of non zero elements of A (exists as a method under
+ *           the name get_nnz)
+ *
+ */
+static int int_imatrix_nnz(Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *A;
+  CheckLhs(1,1);
+  CheckRhs(1,1);
+  if ((A = GetIMat(stack, 1)) == NULLIMAT) return RET_BUG;
+
+  if ( nsp_move_double(stack,1,nsp_imatrix_nnz(A)) == FAIL) return RET_BUG;
+  return 1;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -3428,7 +3586,9 @@ static OpTab IMatrix_func[]={
   {"plus_i_i", int_imatrix_dadd},
   {"minus_i_i", int_imatrix_dsub},
   {"minus_i", int_imatrix_minus},
-
+  {"scale_rows_i_i", int_imatrix_scale_rows},
+  {"scale_cols_i_i", int_imatrix_scale_cols},
+  {"nnz_i", int_imatrix_nnz},
 #if 0
   {"dst_i_i", int_imatrix_iultel}, 
   {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
@@ -3444,8 +3604,6 @@ static OpTab IMatrix_func[]={
   {"nnz_i",  int_matrix_nnz},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
-  {"scale_rows_i_i", int_imatrix_scale_rows},
-  {"scale_cols_i_i", int_imatrix_scale_cols},
 #endif 
   {"issorted_i", int_imatrix_issorted},
   {(char *) 0, NULL}
