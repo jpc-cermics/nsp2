@@ -102,19 +102,12 @@ intmax(1u64)
 \item \verb+A.add[B]+  add the IMat matrix \verb+B+ to the IMat matrix \verb+A+ (\verb+A+ and \verb+B+ must have
 the same  integer type).
 \item \verb+A.scale_rows[x]+ multiplies each row i of A with the scalar \verb+x(i)+:
-  \verb+A(i,:) = x(i) A(i,:)+.  (\verb+A+ and \verb+x+ must have the same  integer type). See \manlink{scale_rows}{scale_rows} help page.
+  \verb+A(i,:) = x(i) A(i,:)+.  (\verb+A+ and \verb+x+ must have the same  integer type). See \manlink{scale_rows}{scale\_rows} help page.
 \item \verb+A.scale_cols[x]+ multiplies each column j of A with a scalar:
-  \verb+A(:,j) = x(j) A(:,j)+. (\verb+A+ and \verb+x+ must have the same  integer type).See \manlink{scale_cols}{scale_cols} help page.
+  \verb+A(:,j) = x(j) A(:,j)+. (\verb+A+ and \verb+x+ must have the same  integer type).See \manlink{scale_cols}{scale\_cols} help page.
 \item \verb+b=A.has[x]+ look for each component of \verb+x+, 
-  if it is in \verb+A+: \verb+b+ is a boolean vector 
-  (of same dim than \verb+x+) with \verb+b(k)+ true if
-  \verb+x(k)+ is in \verb+A+. Additionaly the first index of
-  \verb+x(k)+ in \verb+A+ could be provided, either in the one index way
-  when 2 output arguments are requested (call of the form \verb+[b,i]=A.has[x]+) or
-  either in the two indices way if 3 output arguments are requested
-  (\verb+[b,i,j]=A.has[x]+). If \verb+x(k)+ is not in \verb+A+ then
-  \verb+i(k)=0+ and \verb+j(k)=0+. (\verb+A+ and \verb+x+ must have the same  integer type). See
-  \manlink{has}{has} help page.
+  if it is in \verb+A+ (additionaly the first index of \verb+x(k)+ in \verb+A+ could be provided)
+  \verb+A+ and \verb+x+ must have the same  integer type (see \manlink{has}{has} help page).
 \item \verb+A.nnz[]+ returns the numbers of non zero elements of A.
 \end{itemize}
 
