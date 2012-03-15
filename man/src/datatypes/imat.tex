@@ -102,9 +102,9 @@ intmax(1u64)
 \item \verb+A.add[B]+  add the IMat matrix \verb+B+ to the IMat matrix \verb+A+ (\verb+A+ and \verb+B+ must have
 the same  integer type).
 \item \verb+A.scale_rows[x]+ multiplies each row i of A with the scalar \verb+x(i)+:
-  \verb+A(i,:) = x(i) A(i,:)+.  (\verb+A+ and \verb+x+ must have the same  integer type). See \manlink{scale_rows}{scale\_rows} help page.
+  \verb+A(i,:) = x(i) A(i,:)+.  (\verb+A+ and \verb+x+ must have the same integer type). See \manlink{scale\_rows}{scale_rows} help page.
 \item \verb+A.scale_cols[x]+ multiplies each column j of A with a scalar:
-  \verb+A(:,j) = x(j) A(:,j)+. (\verb+A+ and \verb+x+ must have the same  integer type).See \manlink{scale_cols}{scale\_cols} help page.
+  \verb+A(:,j) = x(j) A(:,j)+. (\verb+A+ and \verb+x+ must have the same  integer type).See \manlink{scale\_cols}{scale_cols} help page.
 \item \verb+b=A.has[x]+ look for each component of \verb+x+, 
   if it is in \verb+A+ (additionaly the first index of \verb+x(k)+ in \verb+A+ could be provided)
   \verb+A+ and \verb+x+ must have the same  integer type (see \manlink{has}{has} help page).
@@ -122,7 +122,7 @@ of B then A don't  change of integer type, otherwise A is casted to the integer 
 \item \verb+A.perm_elem[p,q[,dim]]+ permute p and q: elements
   (default or dim=0), rows (dim=1) or columns (dim=2).
 \item \verb+A.set_diag[B [,k]]+ sets the \verb+k+-th diagonal of matrix \verb+A+ to \verb+B+. See
-  \manlink{set_diag}{set_diag} help page.
+  \manlink{set\_diag}{set_diag} help page.
 \item \verb+A.enlarge[m,n]+ sets the size of \verb+A+ to \verb+(Max(m,size(A,'r')),Max(n,size(A,'c')))+ and fill 
   added elements with default value.
 \end{itemize}
