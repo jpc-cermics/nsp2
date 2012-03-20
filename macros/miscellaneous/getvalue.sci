@@ -1,10 +1,11 @@
 function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=...
     getvalue(%desc,%labels,%typ,%ini)
+  function xfun(desc,list,flag) x_choices(desc,list,flag);endfunction
   [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=...
-      getvalue_internal(%desc,%labels,%typ,%ini,use_dialog=%t);
+      getvalue_internal(%desc,%labels,%typ,%ini,use_dialog=%t,ch_fun=xfun);
 endfunction
 
-function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=getvalue_internal(%desc,%labels,%typ,%ini,use_dialog=%t)
+function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,%20]=getvalue_internal(%desc,%labels,%typ,%ini,use_dialog=%t,ch_fun=xfun)
 // getvalues - launch dialogs for acquiring data 
 //   then check that the entered values have the correct types 
 //   and evaluate them in the context environment.
@@ -150,7 +151,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
   while %t do
     // acquire data through dialog 
     if use_dialog then 
-      %str1=getvalue_dialog(%desc,%labels,%typ,%ini)
+      %str1=getvalue_dialog(%desc,%labels,%typ,%ini,ch_fun)
     else
       %str1= %ini;
     end
@@ -264,7 +265,7 @@ function [ok,%1,%2,%3,%4,%5,%6,%7,%8,%9,%10,%11,%12,%13,%14,%15,%16,%17,%18,%19,
 endfunction
 
 
-function str=getvalue_dialog(desc,labels,typ,ini)
+function str=getvalue_dialog(desc,labels,typ,ini,ch_fun)
   if %f then 
     // old version 
     str = x_mdialog(des,labels,ini);
@@ -281,7 +282,7 @@ function str=getvalue_dialog(desc,labels,typ,ini)
 	Li(i)= list('entry',labels(i),1,ini(i));
       end
     end
-    L= x_choices(desc,Li,%t); 
+    L= ch_fun(desc,Li,%t); 
     str=m2s([]);
     if isempty(L) then return;end
     for i=1:size(labels,'*')
