@@ -4837,7 +4837,7 @@
 (define-method get_text_length
   (of-object "GtkEntry")
   (c-name "gtk_entry_get_text_length")
-  (return-type "guin16")
+  (return-type "guint")
   )
 
 (define-method set_cursor_hadjustment
