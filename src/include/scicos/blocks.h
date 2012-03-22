@@ -242,6 +242,7 @@ extern void scicos_relationalop_block(scicos_block *block,int flag);
 extern void scicos_bounce_ball_block(scicos_block *block,int flag);
 extern void scicos_bouncexy_block(scicos_block *block,int flag);
 extern void scicos_cscope_block(scicos_block *block,int flag);
+extern void scicos_cfscope_block(scicos_block *block,int flag);
 extern void scicos_cscopxy_block(scicos_block *block,int flag);
 extern void scicos_canimxy_block (scicos_block *block,int flag);
 extern void scicos_cmscope_block(scicos_block *block,int flag);
@@ -598,11 +599,11 @@ scicos_block_table  tabsim[] ={
   /*  {"cdummy",(ScicosF) F2C(cdummy)}, */
   {"cdummy",(ScicosF) scicos_cdummy_block},
   {"cevscpe",(ScicosF) scicos_cevscpe_block},
-  /* {"cfscope",(ScicosF) cfscope}, XXX */
-  {"cfscope",(ScicosF) cfscope},
-  {"cmat3d",(ScicosF) cmat3d},
-  {"cmatview",(ScicosF) cmatview},
-  /* {"cmscope",(ScicosF) cmscope}, */
+  /* {"cfscope",(ScicosF) cfscope}
+   * {"cmat3d",(ScicosF) cmat3d},
+   * {"cmatview",(ScicosF) cmatview},
+   * {"cmscope",(ScicosF) cmscope},
+   */
   {"cmscope",(ScicosF) scicos_cmscope_block},
   {"constraint",(ScicosF) scicos_constraint_block},
   {"constraint_c",(ScicosF) constraint_c}, 
@@ -616,6 +617,7 @@ scicos_block_table  tabsim[] ={
   {"counter",(ScicosF) counter},
   /* {"cscope",(ScicosF) cscope}, */
   {"cscope",(ScicosF) scicos_cscope_block},
+  {"cfscope",(ScicosF) scicos_cfscope_block},
   /* {"cscopxy",(ScicosF) cscopxy}, */
   {"cscopxy",(ScicosF) scicos_cscopxy_block},
   {"cscopxy3d",(ScicosF) cscopxy3d},
