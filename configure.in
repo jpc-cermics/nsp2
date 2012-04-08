@@ -1394,6 +1394,27 @@ else
   IN_FFTPACK=FFTPACK
 fi
 
+#################
+## libtirpc
+## (lib rpc on Fedora 16)
+#################
+
+
+if test "x$PKG_CONFIG" != x; then # try first to use pkg-config	
+   ## If fftw3.pc is found, set FFTW3_CFLAGS and FFTW3_LIBS
+   PKG_CHECK_MODULES(TIRPC, libtirpc , HAVE_TIRPC="yes", HAVE_TIRPC="no")
+   ## In case of success I just want libtirpc be added in GTK_PKGS_CFLAGS 
+   if test "$HAVE_TIRPC" = "yes"; then
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libtirpc"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libtirpc"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+   fi 
+fi
+
+if test "$HAVE_TIRPC" = "yes"; then
+  AC_DEFINE(HAVE_TIRPC,[],[tirpc library for xdr])
+fi
 
 #################
 ## gmp 

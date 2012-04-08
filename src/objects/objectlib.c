@@ -804,10 +804,18 @@ struct _writeproc_buf {
 
 static int writeproc_increase_buf(writeproc_buf *buf);
 
+#ifdef HAVE_TIRPC 
+#define T_IOHANDLE void *
+#define T_BUF void *
+#else 
+#define T_IOHANDLE char *
+#define T_BUF char *
+#endif 
+
 /* returns the actual number of bytes transferred 
  * -1 is an error */ 
 
-static int writeproc(char *iohandle,char* c_buf,int len) 
+static int writeproc(T_IOHANDLE iohandle,T_BUF c_buf,int len) 
 {
   writeproc_buf *buf =(writeproc_buf *) iohandle;
   u_long *header = (u_long *) c_buf ;
@@ -853,7 +861,7 @@ static int writeproc_increase_buf(writeproc_buf *buf)
   return OK;
 }
 
-static int readproc(char *iohandle,char* buf,int len) 
+static int readproc(T_IOHANDLE iohandle,T_BUF buf,int len) 
 {
   return 0;
 }
