@@ -18,6 +18,11 @@
 
 // tests for linprog and readmpsfile (to be completed) 
 
+if ~%glpk then 
+   printf("This version of nsp was not compiled with glpk support\n");
+   return;
+end 
+
 /////////////////////////////////////////////////////////////////////////////////
 // test 1-1:   max c'*x
 //             Ax <= b
