@@ -10,6 +10,7 @@ if test "$SCI" = ""; then
   SCI="NSP_DIRECTORY"
 fi
 export SCI
+export UBUNTU_MENUPROXY=0
 if test "$DISPLAY" = ""; then
   DISPLAY="unix:0.0"
 fi
