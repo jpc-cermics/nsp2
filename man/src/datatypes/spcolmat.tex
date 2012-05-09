@@ -2,7 +2,8 @@
 
 \mansection{SpColMat}
 \begin{mandesc}
-  \short{SpColMat}{Sparse matrix data type}
+  \short{SpColMat}{Sparse matrix data type}\\
+  \short{sparse}{create sparse matrix from non zeros coefficients}
 \end{mandesc}
 % -- Calling sequence section
 \begin{calling_sequence}
@@ -20,7 +21,7 @@ S = sp_create(m,n) // or spcol_create(m,n)
     \vname{ij}: matrix with two columns containing the row and column indices of 
                 non-zeros entries  
     \vname{v}: vector of the values of nonzeros entries
-    \vname{mn}: vector of two integer values indicating the dimension 
+    \vname{mn}: vector of two integer values with the matrix dimensions 
     \vname{m,n}: scalars numbers of rows and columns
   \end{varlist}
 \end{parameters}
@@ -80,6 +81,8 @@ to get a sparse one).
 of \verb+S+. \verb+size(S,1)+ (resp. \verb+size(S,2)+) returns the number of rows 
 (resp. columns) of \verb+S+.
     \item \verb+nnz(S)+ returns the number of nonzero entries in \verb+S+.
+    \item \verb+B=speye(m,n)+ create a sparse identity like matrix with $m$ rows and $n$ columns. 
+    \item \verb+B=spones(A)+ create a sparse matrix of ones with the same non zeros coefficients pattern than sparse matrix \verb+A+. 
     \item \verb+M=full(S)+ converts a sparse matrix \verb+S+ to a full matrix \verb+M+ 
     \item \verb+[I,J,V]=find(S)+ retrieves the \verb+[I,J,V]+ indices triplet 
 corresponding to the nonzero entries of \verb+S+ : i.e., the $i^{\mbox{th}}$ nonzero
@@ -124,14 +127,16 @@ norm(A*x-b)/norm(b)
 \end{examples}
 
 \begin{manseealso}
-\manlink{spones}{spones},
-\manlink{spget}{spget},
-\manlink{full}{full},
-\manlink{sprand}{sprand},
-\manlink{speye}{speye},\manlink{norm}{norm},
+%\manlink{spones}{spones},
+%\manlink{spget}{spget},
+%\manlink{full}{full},
+%\manlink{sprand}{sprand},
+%\manlink{speye}{speye},
+\manlink{norm}{norm},
 \manlink{diag}{diag},\manlink{tril}{tril},\manlink{triu}{triu},
 \manlink{issymmetric}{issymmetric},\manlink{istriangular}{istriangular},
 \manlink{lower_upper_bandwidths}{lower_upper_bandwidths}
+\manlink{lsmr}{lsmr}
 \end{manseealso}
 
 % -- Authors
