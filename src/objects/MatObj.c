@@ -1354,7 +1354,7 @@ static int int_meth_matrix_ger(void *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 /* 
- *  scale_rows[x]
+ *  scale_rows[x,op="*"|"/"]
  *
  *    multiply or divide row i of A by x[i]
  *
