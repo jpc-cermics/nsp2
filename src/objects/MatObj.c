@@ -5670,12 +5670,60 @@ static int int_getticks(Stack stack, int rhs, int opt, int lhs)
   MoveObj (stack, 1, (NspObject *) xticks);
   return 1;
 }
+
+NspMatrix *nsp_mat_hex2num(NspSMatrix *S,int swap);
+NspSMatrix *nsp_mat_num2hex(NspMatrix *M,int swap);
+
+static int int_num2hex(Stack stack, int rhs, int opt, int lhs)
+{
+  int swap = TRUE;
+  NspMatrix *M;
+  NspSMatrix *S;
+  int_types T[] = {realmat,  new_opts, t_end} ;
+  nsp_option opts[] ={
+    { "swap",s_bool,  NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+  
+  CheckStdRhs(1,1);
+  CheckOptRhs(0,1);
+  CheckLhs(1, 1);
+  if ( GetArgs(stack,rhs,opt, T, &M, &opts, &swap) == FAIL ) 
+    return RET_BUG;
+  if ((S= nsp_mat_num2hex(M,swap))==NULL) return RET_BUG;
+  MoveObj (stack, 1, NSP_OBJECT(S));
+  return 1;
+}
+
+static int int_hex2num(Stack stack, int rhs, int opt, int lhs)
+{
+  int swap = TRUE;
+  NspSMatrix *S;
+  NspMatrix *M;
+  int_types T[] = {smat,  new_opts, t_end} ;
+  nsp_option opts[] ={
+    { "swap",s_bool,  NULLOBJ,-1},
+    { NULL,t_end,NULLOBJ,-1}
+  };
+  
+  CheckStdRhs(1,1);
+  CheckOptRhs(0,1);
+  CheckLhs(1, 1);
+  if ( GetArgs(stack,rhs,opt, T, &S, &opts, &swap) == FAIL ) 
+    return RET_BUG;
+  if ((M= nsp_mat_hex2num(S,swap))==NULL) return RET_BUG;
+  MoveObj (stack, 1, NSP_OBJECT(M));
+  return 1;
+}
+
  
 /*
  * The Interface for basic matrices operation 
  */
 
 static OpTab Matrix_func[] = {
+  {"num2hex",int_num2hex},
+  {"hex2num",int_hex2num},
   {"alignement_m",int_alignement},
   {"harmloop1_i",int_harmloop1},
   {"harmloop2_i",int_harmloop2},

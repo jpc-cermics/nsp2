@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
@@ -6908,3 +6909,116 @@ NspBMatrix *nsp_mat_has(NspMatrix *A, NspMatrix *x, int lhs, NspMatrix **ind, Ns
   nsp_matrix_destroy(Ind2);
   return NULLBMAT;
 }
+
+
+
+/**
+ * nsp_mat_hex2num:
+ * @S: a #NspSMatrix pointer
+ * 
+ * uses 16 hexadecimal characters of each string of matrix @S
+ * as the binary code for a double precision number.  
+ * If fewer than 16 characters are given the
+ * strings are right padded with '0' characters.
+ * 
+ * Returns: a new #NspMatrix or %NULL.
+ **/
+
+extern int is_little_endian(void);
+
+NspMatrix *nsp_mat_hex2num(NspSMatrix *S,int swap)
+{
+  int i,j;
+  union
+  {
+    uint64_t ival;
+    double dval;
+  } num;
+  NspMatrix *loc;
+  int bswap =  swap ? (( is_little_endian() ) ? FALSE : TRUE) : FALSE; 
+
+  if ( (loc = nsp_matrix_create(NVOID,'r',S->m,S->n)) == NULLMAT ) return NULLMAT;
+  for ( i = 0 ; i < loc->mn; i++)
+    {
+      char *str = S->S[i];
+      int nc;
+      if ((nc= strlen(S->S[i])) > 16 ) 
+	{
+	  goto err;
+	}
+      for ( j = 0 ; j < nc ; j++)
+	{
+	  char ch = (bswap == TRUE ) ? str[15-j]: str[j];
+	  if (isxdigit (ch))
+	    {
+	      num.ival <<= 4;
+	      if (ch >= 'a')
+		num.ival += (uint64_t) (ch - 'a' + 10);
+	      else if (ch >= 'A')
+		num.ival += (uint64_t) (ch - 'A' + 10);
+	      else
+		num.ival += (uint64_t) (ch - '0');
+	    }
+	  else
+	    {
+	      Scierror("Error: illegal character %c found in hex2num argument '%s' \n",
+		       ch,str[j]);
+	      goto err;
+	    }
+	}
+      if (nc < 16) num.ival <<= (16 - nc) * 4;
+      loc->R[i] = num.dval;
+    }
+  return loc;
+ err:
+  nsp_matrix_destroy(loc);
+  return NULLMAT;
+}
+
+/**
+ * nsp_mat_num2hex:
+ * @M: a #NspMatrix pointer
+ * 
+ * double precision number to 16 character hexadecimal string
+ * 
+ * Returns: a new #NspSMatrix or %NULL.
+ **/
+
+NspSMatrix *nsp_mat_num2hex(NspMatrix *M, int swap)
+{
+  int i,j;
+  NspSMatrix *loc;
+  union
+  {
+    uint64_t ival;
+    double dval;
+  } num;
+  int bswap =  swap ? (( is_little_endian() ) ? FALSE : TRUE) : FALSE; 
+  
+  if ( ( loc =nsp_smatrix_create_with_length(NVOID,M->m,M->n,16) ) == NULLSMAT) 
+    return(NULLSMAT);
+  /* Sciprintf("Je suis %d je veux swapper %d et je fais %d\n",is_little_endian(),swap,bswap); */
+  for ( i= 0 ; i < M->mn ; i++)
+    {
+      num.dval = M->R[i];
+      for ( j = 0; j < 16; j++)
+	{
+	  int k= (bswap== TRUE) ? j : 15 - j;
+	  unsigned char ch = (char) (num.ival >> (k * 4) & 0xF);
+	  if (ch >= 10)
+	    ch += 'a' - 10;
+	  else
+	    ch += '0';
+	  loc->S[i][j]=ch;
+	}
+      loc->S[i][16]='\0';
+    }
+  return loc;
+}
+
+
+
+
+
+
+

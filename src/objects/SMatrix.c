@@ -145,7 +145,7 @@ NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int
  * 
  * creates a  new #NspSMatrix of size @m time @n. 
  * If @strl is strictly negative the string are not allocated. 
- * If @strl is positive strings are allocated nut not initialized.
+ * If @strl is positive strings are allocated but not initialized.
  * 
  * Return value:  a new #NspSMatrix or %NULLSMAT 
  **/
