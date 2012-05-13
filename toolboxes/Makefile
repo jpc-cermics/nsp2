@@ -36,5 +36,7 @@ DESTDIR=$(prefix)/lib/nsp
 install::
 	@echo "installing toolboxes"
 	@$(TOP)/config/install-sh -d $(DESTDIR)/toolboxes
-	@tar   cf - --exclude CVS .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
+	@tar   cf - --exclude CVS --exclude '*.c' --exclude '*.o' --exclude '*.lo' \
+		--exclude '*.f' .  | ( cd $(DESTDIR)/toolboxes ; tar xfp - )
+
 
