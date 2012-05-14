@@ -435,13 +435,13 @@ static int _wrap_spawn_close(NspSpawn *self,Stack stack,int rhs,int opt,int lhs)
   if ( self->obj->channel_err != NULL) 
     {
       g_source_remove(self->obj->err_id);
-      g_io_channel_unref(self->obj->channel_err);
+      /* g_io_channel_unref(self->obj->channel_err); */
       self->obj->channel_err=NULL;
     }
   if ( self->obj->channel_out != NULL) 
     {
       g_source_remove(self->obj->out_id);
-      g_io_channel_unref(self->obj->channel_out);
+      /* g_io_channel_unref(self->obj->channel_out); */
       self->obj->channel_out=NULL;
     }
   g_spawn_close_pid(self->obj->pid);
