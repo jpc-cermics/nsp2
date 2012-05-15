@@ -29,8 +29,8 @@ AC_DEFUN([CHECK_GLPK],
     GLPK_LIBS="$GLPK_LDFLAGS -lglpk"
     save_cflags="$CFLAGS"
     save_libs="$LIBS"
-    CFLAGS="$GLPK_CFLAGS"
-    LIBS="$GLPK_LIBS"
+    CFLAGS="$CFLAGS $GLPK_CFLAGS"
+    LIBS="$LIBS $GLPK_LIBS"
     glpk_test_prog='
         #include <glpk.h>
         #if (GLP_MAJOR_VERSION < 4) \
