@@ -21,7 +21,7 @@ x = ode(x0,t0,t,f) // or  x = ode(x0,t0,t,f,task=1)
     \vname{t0}: real scalar, initial time.
     \vname{t}: when task=1, \verb+t+ should a real vector with time instants at which the solution must
     be computed and recorded (final integration time is \verb+t($)+); when task=2 or 3, \verb+t+ is a 
-    scalar given the final integration time.
+    scalar giving the final integration time.
     \vname{f}: nsp function or string (name of a C or fortran function dynamicaly linked to nsp) 
                defining the vector field of the differential equation.
     \vname{task=num}: output mode, num could be equal to 1 (the default), 2 or 3. See explanations hereafter.
