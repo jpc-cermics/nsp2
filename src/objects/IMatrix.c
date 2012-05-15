@@ -387,16 +387,22 @@ int nsp_imatrix_print(NspIMatrix *IMat, int indent,const char *name, int rec_lev
       if (IMat->mn==0 )
 	{
 	  if ( strcmp(pname,NVOID) != 0) 
-	    Sciprintf1(indent,"%s= imat_create(%d,%d,\"%s\");",pname,IMat->m,IMat->n,st);
+	    Sciprintf1(indent,"%s= imat_create(%d,%d,\"%s\")",pname,IMat->m,IMat->n,st);
 	  else 
-	    Sciprintf1(indent,"imat_create(%d,%d,\"%s\");",IMat->m,IMat->n, st);
+	    Sciprintf1(indent,"imat_create(%d,%d,\"%s\")",IMat->m,IMat->n, st);
 	}
       else 
 	{
+	  /* first line must be name= or emty */
 	  if ( strcmp(pname,NVOID) != 0) 
-	    Sciprintf1(indent,"%s=m2i(",pname);
+	    {
+	      Sciprintf1(indent,"%s=\n",pname);
+	    }
 	  else 
-	    Sciprintf1(indent,"m2i(");
+	    {
+	      Sciprintf1(indent,"\n");
+	    }
+	  Sciprintf1(indent,"m2i(");
 	}
     }
   else 
@@ -417,7 +423,7 @@ int nsp_imatrix_print(NspIMatrix *IMat, int indent,const char *name, int rec_lev
     }
   if (user_pref.pr_as_read_syntax)
     {
-      Sciprintf1(indent,",\"%s\");\n",st);
+      Sciprintf1(indent,",\"%s\")\n",st);
     }
   return rep;
 }
