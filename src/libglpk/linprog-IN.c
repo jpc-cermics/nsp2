@@ -288,7 +288,7 @@ static int get_solver_options(Stack stack, NspHash *solver_options, Solvers_para
   int bt_tech=0, bt_tech_default = GLP_BT_BLB; /* bt_tech \in [1,4] */
   double mip_gap=-1.0, mip_gap_default = 0.0;  /* should be a real >= 0 */
   int binarize=-1, binarize_default = GLP_OFF;
-  double scale=-1, scale_default = 1;  /* automatic scaling (if presolve is not set) */
+  int scale=-1, scale_default = 1;  /* automatic scaling (if presolve is not set) */
   NspHash *basis_info=NULLHASH; 
   nsp_option opts[] ={
     { "presolve",s_bool,NULLOBJ,-1},
