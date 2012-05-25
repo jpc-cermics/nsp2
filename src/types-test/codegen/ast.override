@@ -234,6 +234,22 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
 }
 
 %%
+override Ast.ast_get_arity kwargs
+/* override a method */
+static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ret;
+  int ret ;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  ret = ((int) self->arity);
+  if ((Ret=nsp_new_double_obj((double) ret))== NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+
+%%
 override Ast.ast_is kwargs
 /* override a method */
 static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
@@ -386,3 +402,648 @@ int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
 
 %%
 last 
+
+/* pretty print of the ast i.e ast -> code */
+
+
+static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret);
+static int _nsp_ast_pprint_arg(NspList *L,int elt, int i, int pos, int posret);
+static int _nsp_ast_pprint_arg_ret(NspList *L,int elt, int i, int pos, int posret, int *ret);
+static int _nsp_ast_pprint_opname(int type, int indent, int pos);
+static int _nsp_ast_pprint_args(NspList *L, int start, int last, int indent, int pos, int posret, char *sep);
+
+/**
+ * nsp_ast_pprint:
+ * @L: 
+ * @indent: the curent indentation to use.
+ * 
+ * pretty printing of a #PList. 
+ * 
+ **/
+
+void nsp_ast_pprint(NspAst * L, int indent)
+{
+  _nsp_ast_pprint(L,indent,0,indent);
+}
+
+typedef enum { p_black =30, 
+               p_red =31,
+               p_green=32,
+               p_yellow=33,
+               p_blue=34,
+               p_purple=35,
+               p_cyan=36,
+               p_white=37} nsp_term_colors;
+
+#define NSP_PRINTF_COLOR(col,str)					\
+  ((user_pref.color == TRUE ) ? Sciprintf("\033[%dm%s\033[0m",col,str)	\
+   :Sciprintf("%s",str));
+
+#define NSP_PRINTF1_COLOR(posret,col,str) \
+  ((user_pref.color == TRUE ) ? Sciprintf1(posret,"\033[%dm%s\033[0m",col,str) \
+   : Sciprintf1(posret,"%s",str))
+
+#define CMAX 50
+
+#define PRINTTAG(tag)							\
+  if (pos != posret ) {							\
+    Sciprintf("\n");newpos = NSP_PRINTF1_COLOR(posret,p_blue,tag) ;}	\
+  else { newpos = pos+ NSP_PRINTF_COLOR(p_blue,tag) ; }
+
+static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
+{
+  const char *s;
+  int j,newpos=0,ret=FALSE;
+  if ( ast->op > 0 ) 
+    {
+      /* operators **/
+      switch ( ast->arity ) 
+	{
+	case 0: /* 0-ary operators */
+	  return _nsp_ast_pprint_opname(ast->op,indent,pos);
+	  break;
+	case 1:
+	  switch ( ast->op ) 
+	    {
+	    case  COMMA_OP : 
+	    case  SEMICOLON_OP  :
+	      newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	      newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
+	      Sciprintf("\n");
+	      return 0;
+	      break;
+	    case QUOTE_OP : 
+	    case DOTPRIM:
+	      newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	      newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
+	      return  newpos;
+	      break;
+	    case RETURN_OP : 
+	      _nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	      Sciprintf("\n");
+	      return 0;
+	      break;
+	    case TILDE_OP : 
+	    default:
+	      newpos =_nsp_ast_pprint_opname(ast->op,indent,pos);
+	      newpos =_nsp_ast_pprint_arg(ast->args,1,0,newpos,posret);
+	      return newpos;
+	    }
+	  break;
+	case 2:
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	  newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
+	  if ( newpos > CMAX) 
+	    {
+	      Sciprintf("\n");
+	      newpos =_nsp_ast_pprint_arg(ast->args,2,posret,0,posret);
+	    }
+	  else
+	    {
+	      newpos =_nsp_ast_pprint_arg(ast->args,2,0,newpos,posret);
+	    }
+	  return newpos;
+	  break;
+	default :
+	  newpos = pos;
+	  for ( j = 0 ; j <  ast->arity ; j++ )
+	    {
+	      newpos =_nsp_ast_pprint_arg(ast->args,j+1,(j == 0) ? indent : 1,
+					   newpos,posret);
+	      if ( j != ast->arity -1 ) 
+		newpos =_nsp_ast_pprint_opname(ast->op,1,newpos);
+	    }
+	  break;
+	}
+    }
+  else 
+    {
+      switch ( ast->op ) 
+	{
+	case OPT:
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	  newpos += Sciprintf(" = ");
+	  newpos =_nsp_ast_pprint_arg(ast->args,2,0,newpos,posret);
+	  return newpos;
+	  break;
+	case EQUAL_OP:
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	  newpos += Sciprintf("=");
+	  newpos =_nsp_ast_pprint_arg(ast->args,2,0,newpos,newpos);
+	  return newpos;
+	  break;
+	case MLHS  :
+	  /* <lmhs> = ... **/
+	  /* we do not display the left and right bracket 
+	   *  if arity is one 
+	   */
+	  if ( ast->arity > 1) 
+	    newpos = pos +  Sciprintf1(indent,"[");
+	  else
+	    newpos = pos +  Sciprintf1(indent,"");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  if ( ast->arity > 1) 
+	    newpos += Sciprintf("]");
+	  return newpos;
+	  break;
+	case ARGS :
+	  newpos = pos +  Sciprintf1(indent,"(");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  newpos += Sciprintf(")");
+	  return newpos;
+	  break;
+	case CELLARGS :
+	  newpos = pos +  Sciprintf1(indent,"{");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  newpos += Sciprintf("}");
+	  return newpos;
+	  break;
+	case METARGS :
+	  newpos = pos +  Sciprintf1(indent,"[");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  newpos += Sciprintf("]");
+	  return newpos;
+	  break;
+	case DOTARGS :
+	  newpos = pos + Sciprintf1(0,".");
+	  newpos += _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,"");
+	  return newpos;
+	case CALLEVAL:
+	case LISTEVAL :
+	  if (0) Sciprintf1(indent,"LIST%d,%d,%d\n",indent,pos,posret) ;
+	  newpos = pos +  Sciprintf1(indent,"");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,"");
+	  return newpos;
+	  break;
+	case FEVAL :
+	  if (0) Sciprintf1(indent,"FEVAL%d,%d,%d\n",indent,pos,posret) ;
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	  newpos += Sciprintf("(");
+	  newpos = _nsp_ast_pprint_args(ast->args,2,ast->arity,0,newpos,newpos,",");
+	  newpos += Sciprintf(")");
+	  return newpos;
+	  break;
+	case PLIST :
+	  return newpos;
+	  break;
+	case COMMENT:
+	case NAME :
+	case OPNAME :
+	case NUMBER:
+	case STRING:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
+	  return _nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
+	  break;
+	case OBJECT: 
+	  return Sciprintf1(indent,"{object}")+ pos;
+	  /* ignore */
+	  break;
+	case EMPTYMAT:
+	  return Sciprintf1(indent,"[]")+ pos;
+	case EMPTYCELL:
+	  return Sciprintf1(indent,"{}")+ pos;
+	  break;
+	case P_MATRIX :
+	  newpos = pos + Sciprintf1(indent,"[");
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,0,newpos,posret+1);
+	  newpos += Sciprintf("]");
+	  return newpos;
+	  break;
+	case P_CELL :
+	  newpos = pos + Sciprintf1(indent,"{");
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,0,newpos,posret+1);
+	  newpos += Sciprintf("}");
+	  return newpos;
+	  break;
+	case ROWCONCAT:
+	case COLCONCAT:
+	case DIAGCONCAT:
+	  newpos =_nsp_ast_pprint_arg_ret(ast->args,1,1,indent,pos,posret,&ret);
+	  if ( newpos == 0) 
+	    {
+	      newpos =_nsp_ast_pprint_opname(ast->op,posret,newpos);
+	    }
+	  else 
+	    {
+	      newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
+	    }
+	  if ( newpos > CMAX )
+	    {
+	      if ( ast->op == COLCONCAT ) Sciprintf("...");
+	      Sciprintf("\n");
+	      newpos =_nsp_ast_pprint_arg_ret(ast->args,2,posret,0,posret,&ret);
+	    }
+	  else 
+	    {
+	      newpos =_nsp_ast_pprint_arg_ret(ast->args,2,0,newpos,posret,&ret);
+	    }
+	  return newpos;
+	  break;
+	case CELLROWCONCAT:
+	case CELLCOLCONCAT:
+	case CELLDIAGCONCAT:
+	  for ( j = 0 ; j < ast->arity ; j++)
+	    {
+	      if ( j > 0 && newpos > CMAX  ) 
+		{
+		  Sciprintf("\n");
+		  newpos =_nsp_ast_pprint_arg(ast->args,1posret,0,posret);
+		}
+	      else
+		{
+		  newpos =_nsp_ast_pprint_arg(ast->args,10,newpos,posret);
+		}
+	      if ( j < ast->arity-1)
+		newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
+	      ast = ast->next;
+	    }
+	  return newpos;
+	  break;
+	case WHILE:
+	  PRINTTAG("while");
+	  newpos =_nsp_ast_pprint_arg(ast->args,11,newpos,posret);
+	  newpos += NSP_PRINTF1_COLOR(1,p_blue,"do\n");
+	  newpos =_nsp_ast_pprint_arg(ast->next,posret+2,0,posret+2);
+	  newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	  return newpos;
+	  break;
+	case FUNCTION:
+	  /* Sciprintf("function arity %d\n",ast->arity); */
+	  PRINTTAG("function");
+	  _nsp_ast_pprint_arg(ast->args,11,pos,newpos+1);
+	  Sciprintf("\n");
+	  newpos =_nsp_ast_pprint_arg(ast->next,posret+2,pos,posret+2);
+	  if ( newpos != 0)  Sciprintf("\n");
+	  if ( ast->arity == 3 ) 
+	    {
+	      newpos =_nsp_ast_pprint_arg(ast->next->next,posret+2,pos,posret+2);
+	    }
+	  return NSP_PRINTF1_COLOR(posret,p_blue,"endfunction");
+	  break;
+	case FOR:
+	  PRINTTAG("for");
+	  newpos =_nsp_ast_pprint_arg(ast->args,11,newpos,posret);
+	  newpos += Sciprintf("=") ;
+	  newpos =_nsp_ast_pprint_arg(ast->next,0,newpos,newpos+1);
+	  newpos += Sciprintf(" ");
+	  PRINTTAG("do");
+	  newpos += Sciprintf("\n");
+	  newpos =_nsp_ast_pprint_arg(ast->next->next,posret+2,0,posret+2);
+	  if ( newpos != 0)  Sciprintf("\n");
+	  return NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	  break;
+	case IF :
+	  /* a sequence of if elseif etc.... */
+	  if (0) Sciprintf1(posret,"IF%d,%d,%d",indent,pos,posret) ;
+	  PRINTTAG("if");
+	  for ( j = 0 ; j < ast->arity  ; j += 2 )
+	    {
+	      if ( j == ast->arity-1 ) 
+		{
+		  /* we have reached the last else **/
+		  if ( newpos != 0) Sciprintf("\n");
+		  NSP_PRINTF1_COLOR(posret,p_blue,"else\n");
+		  newpos =_nsp_ast_pprint_arg(ast->args,1,posret+2,0,posret+2);
+		}
+	      else 
+		{ 
+		  if ( j != 0) 
+		    {
+		      if ( newpos != 0) Sciprintf("\n");
+		      newpos = NSP_PRINTF1_COLOR(posret,p_blue,"elseif");
+		    }
+		  newpos =_nsp_ast_pprint_arg(ast->args,1,1,newpos+1,newpos+1);
+		  NSP_PRINTF1_COLOR(1,p_blue,"then\n");
+		  ast = ast->next ;
+		  newpos =_nsp_ast_pprint_arg(ast->args,1,posret+2,0,posret+2);
+		  ast = ast->next ;
+		}
+	    }
+	  if ( newpos != 0) Sciprintf("\n");
+	  newpos = NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	  return newpos;
+	  break;
+	case TRYCATCH :
+	  /* XXXXX */
+	  /* try catch sequence */
+	  PRINTTAG("try");
+	  newpos += Sciprintf1(1,"\n");
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,posret+2,0,posret+2);
+	  newpos += NSP_PRINTF1_COLOR(posret,p_blue,"catch");
+	  ast = ast->next;
+	  newpos += Sciprintf1(1,"\n");
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,posret+2,0,posret+2);
+	  if ( ast->arity == 2 ) 
+	    {
+	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	    }
+	  else 
+	    {
+	      ast = ast->next;
+	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"finally");
+	      newpos =_nsp_ast_pprint_arg(ast->args,1,posret+2,0,posret+2);
+	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	    }
+	  return newpos;
+	  break;
+	case SELECT :
+	  /* arity N. ast argument is the test other arguments are 
+	   * the cases 
+	   */
+	  if (0) Sciprintf1(indent,"select{%d,%d,%d\n",indent,pos,posret) ;
+	  PRINTTAG("select");
+	  for ( j = 0 ; j < ast->arity ; j++)
+	    {
+	      if ( j==0) 
+		{
+		  _nsp_ast_pprint_arg(ast->args,1,1,newpos,posret);
+		  Sciprintf("\n");
+		  newpos = 0;
+		}
+	      else
+		{
+		  newpos=_nsp_ast_pprint_arg(ast->args,1,posret+2,newpos,posret+2);
+		}
+	      ast = ast->next;
+	    }
+	  if ( newpos != 0) Sciprintf("\n");
+	  newpos = NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	  return newpos;
+	  break;
+	case STATEMENTS :
+	  if (0) Sciprintf1(indent,"st{%d,%d,%d\n",indent,pos,posret) ;
+	  newpos = pos +  Sciprintf1(indent,"");
+	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"");
+	  if (0) Sciprintf1(indent,"}\n");
+	  return newpos;
+	  break;
+	case STATEMENTS1 :
+	  if (0) Sciprintf1(indent,"st1{%d,%d,%d\n",indent,pos,posret) ;
+	  newpos = pos +  Sciprintf1(indent,"");
+	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"");
+	  if (0) Sciprintf1(indent,"}\n");
+	  return newpos;
+	  break;
+	case PARENTH :
+	  if (0) Sciprintf1(indent,"paren{%d,%d,%d\n",indent,pos,posret) ;
+	  newpos = pos + Sciprintf1(indent,"(") ;
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  newpos += Sciprintf(")");
+	  return newpos;
+	  break;
+	case CASE :
+	  if (0) Sciprintf1(indent,"case{%d,%d,%d\n",indent,pos,posret) ;
+	  if ( pos != 0) Sciprintf("\n");
+	  if ( ast->type == COMMENT )
+	    {
+	      newpos =_nsp_ast_pprint_arg(ast->args,1,posret,0,posret);
+	    }
+	  else
+	    {
+	      newpos = NSP_PRINTF1_COLOR(posret,p_blue,"case") ;
+	      newpos =_nsp_ast_pprint_arg(ast->args,1,1,newpos,newpos+1);
+	      newpos += NSP_PRINTF1_COLOR(1,p_blue,"then\n") ;
+	      newpos =_nsp_ast_pprint_arg(ast->next,posret+2,0,posret+2);
+	    }
+	  return newpos;
+	  break;
+	case LASTCASE :
+	  if ( pos != 0) Sciprintf("\n");
+	  NSP_PRINTF1_COLOR(posret,p_blue,"else\n") ;
+	  newpos =_nsp_ast_pprint_arg(ast->args,1,posret+2,0,posret+2);
+	  return newpos;
+	  break;
+	case GLOBAL:
+	  /* n-ary global */
+	  PRINTTAG("global");Sciprintf(" ");
+	  /* newpos = NSP_PRINTF1_COLOR(posret,p_blue,"global ") ; */
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case CLEAR:
+	  /* n-ary global */
+	  PRINTTAG("clear");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case CLEARGLOBAL:
+	  /* n-ary global */
+	  PRINTTAG("clearglobal");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case PAUSE:
+	  /* 1-ary pause */
+	  PRINTTAG("pause");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case HELP:
+	  /* 1-ary help */
+	  PRINTTAG("help");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case WHO:
+	  /* 1-ary who */
+	  PRINTTAG("who");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case EXEC:
+	  /* 1-ary exec */
+	  PRINTTAG("exec");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case APROPOS:
+	  /* 1-ary apropos */
+	  PRINTTAG("apropos");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case CD_COMMAND:
+	  /* 1-ary cd */
+	  PRINTTAG("cd");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case LS_COMMAND:
+	  /* 1-ary ls */
+	  PRINTTAG("ls");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	case PWD_COMMAND:
+	  /* 1-ary pwd */
+	  PRINTTAG("pwd");Sciprintf(" ");
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",");
+	  return newpos;
+	  break;
+	default:
+	  Sciprintf("Warning in PlistPrettyPrint :");
+	  s=nsp_astcode_to_name(ast->op);
+	  if ( s != (char *) 0) Sciprintf(" %s ",s);
+	}
+    }
+  return 0;
+}
+ 
+static int _nsp_ast_pprint_opname(int type, int indent, int pos)
+{
+  Sciprintf1(indent,"");
+  return pos+ nsp_print_opname(type) + indent;
+}
+
+/* a set of Args separated by sep */
+
+/* #define WITH_SYMB_TABLE_DEBUG */
+
+static int _nsp_ast_pprint_args(NspList *L, int start, int last, int indent, int pos, int posret, char *sep)
+{
+  int j,  newpos=pos,indent1=indent;
+  for ( j = start ; j <= last ; j++)
+    {
+      if ((ast = nsp_list_get_element(L,j )) == NULL) return 0;
+      newpos =_nsp_ast_pprint_arg(ast,indent1,newpos,posret);
+      if ( j != last ) newpos += Sciprintf(sep);
+      /* reset indent for next argument of necessary **/
+      if ( indent1 != indent ) indent1 = indent; 
+      /* newpos==0 if the previous ArgPrettyPrint has inserted a \n **/
+      if ( newpos == 0) indent1 = posret;
+      /* if we have remaining arguments and  line is too long we insert \n */
+      if ( newpos > CMAX && j != last ) 
+	{
+	  newpos=0; indent1=indent;Sciprintf("\n");
+	}
+    }
+  return newpos;
+}
+
+static int _nsp_ast_pprint_arg(NspList *L,int elt, int i, int pos, int posret)
+{
+  NspAst *ast;
+  int n;
+  if ( nsp_list_length(L) < elt) return 0; /* BUG */
+  if ((ast = nsp_list_get_element(L,elt)) == NULL) return 0; /* BUG */
+  
+  switch (ast->op) 
+    {
+    case NAME :
+#ifdef WITH_SYMB_TABLE_DEBUG
+      return pos+Sciprintf1(i,"%s<%d>",(char *) ast->O,ast->arity);
+#else 
+      return pos+Sciprintf1(i,"%s",(char *) ast->O);
+#endif 
+      break;
+    case NUMBER:
+      return pos+  Sciprintf1(i,"%s",((parse_double *) ast->O)->str);
+      break;
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+      return pos+  Sciprintf1(i,"%s",((parse_int *) ast->O)->str);
+      break;
+    case OPNAME :
+      return pos+Sciprintf1(i,"'%s'",(char *) ast->O);
+      break;
+    case OBJECT :
+#ifdef WITH_SYMB_TABLE_DEBUG      
+      n = pos+Sciprintf1(i,"{object:Ox%x}\n",(unsigned int) ast->O);
+      nsp_object_print(ast->O,0,0,0);
+      return n;
+#else 
+      return pos;
+#endif
+      break;
+    case STRING:
+      /* return pos+Sciprintf1(i,"\"%s\"",(char *) ast->O);*/
+      n= pos + Sciprintf1(i,"");
+      n+= strlen(((char *) ast->O));
+      nsp_print_string_as_read((char *) ast->O);
+      return n;
+      break;
+    case COMMENT:
+      return pos+Sciprintf1(i,"//%s",(char *) ast->O);
+      break;
+    case EMPTYMAT:
+      return pos+Sciprintf1(i,"[]");break;
+    case EMPTYCELL:
+      return pos+Sciprintf1(i,"{}");break;
+    case BREAK:
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"break");break;
+      break;
+    case PRETURN: 
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"return");
+      break;
+    case QUIT :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"quit");
+      break;
+    case NSP_EXIT :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"exit");
+      break;
+    case PAUSE :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"pause");
+      break;
+    case ABORT :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"abort");
+      break;
+    case CONTINUE :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"continue");
+      break;
+    case WHO :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"who");
+      break;
+    case HELP:
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"help");
+      break;
+    case CD_COMMAND :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"cd");
+      break;
+    case LS_COMMAND :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"cd");
+      break;
+    case PWD_COMMAND :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"cd");
+      break;
+    case WHAT :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"what");
+      break;
+    case CLEAR :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"clear");
+      break;
+    case CLEARGLOBAL :
+      return pos+NSP_PRINTF1_COLOR(i,p_blue,"clearglobal");
+      break;
+    default:
+      Scierror("Something Strange ast->op ....\n");
+      return 0;
+    }
+  return 0;
+}
+
+/* similar to _nsp_ast_pprint_arg_ 
+ * but add a newline if ar is a comment 
+ */
+
+static int _nsp_ast_pprint_arg_ret(NspList *L,int elt, int i, int pos, int posret, int *ret)
+{
+  int newpos;
+  NspAst *ast =  nsp_list_get_element(L,elt);
+  newpos= _nsp_ast_pprint_arg(L,elt,i,pos,posret);
+  if ( ast != NULL  &&  ast->op == COMMENT )
+    {
+      Sciprintf("\n");
+      newpos = 0;
+      *ret = TRUE;
+    }
+  else 
+    {
+      *ret = FALSE;
+    }
+  return newpos; 
+}

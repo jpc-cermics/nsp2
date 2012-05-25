@@ -53,5 +53,11 @@
   (return-type "NspList*")
 )
 
+(define-method get_arity
+  (of-object "Ast")
+  (c-name "ast_get_arity")
+  (return-type "int")
+)
+
 
 

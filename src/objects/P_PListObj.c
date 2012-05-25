@@ -32,6 +32,7 @@
 #include <nsp/ivect.h> 
 #include <nsp/file.h> 
 #include <nsp/list.h> 
+#include <nsp/ast.h> 
 
 #include <nsp/system.h>
 #include "nsp/pr-output.h" 
@@ -646,7 +647,18 @@ static int int_plist_to_list(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+extern NspAst *nsp_plist_to_ast(const char *name,PList L);
 
+static int int_plist_to_ast(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAst *L;
+  NspPList *PL;
+  CheckRhs(1,1);
+  if ((PL = NspPListObj(NthObj(1))) == NULLP_PLIST) return RET_BUG;
+  if ((L= nsp_plist_to_ast(NVOID,PL->D))== NULLAST ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(L));
+  return 1;
+}
 
 /*
  * The Interface for parsed lists
@@ -655,6 +667,7 @@ static int int_plist_to_list(Stack stack, int rhs, int opt, int lhs)
 static OpTab NspPList_func[]={
   {"pl2s", int_pl2s},
   {"pl2l", int_plist_to_list},
+  {"pl2ast", int_plist_to_ast},
   {"inout", int_inout},
   {"print_internal", int_print_internal},
   {(char *) 0, NULL}

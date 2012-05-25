@@ -36,6 +36,7 @@
 #include <nsp/function.h> 
 #include <nsp/hash.h> 
 #include <nsp/astnode.h> 
+#include <nsp/ast.h> 
 #include <nsp/interf.h>
 #include <nsp/pr-output.h>
 
@@ -704,7 +705,8 @@ static int _nsp_list_add_list(NspList **list,NspList *L)
 
 /**
  * nsp_plist_to_list:
- * @L: 
+ * @name: a string pointer
+ * @L: a #PList
  * 
  * converts a #PList to a nsp #NspList with #NspAstNode as elements. 
  * The #NspList can be used at nsp level.
@@ -760,6 +762,88 @@ NspList *nsp_plist_to_list(const char *name,PList L)
       L= L->next;
     }
   return(Res);
+} 
+
+
+/**
+ * nsp_plist_to_ast:
+ * @L: 
+ * 
+ * converts a #PList to a nsp #NspAst which represents ast which can be 
+ * manipulated at nsp level. 
+ * 
+ * Return value: a new #NspAst or %NULLAST.
+ **/
+
+static NspAst *nsp_plist_node_to_ast(const char *name,PList L);
+
+NspAst *nsp_plist_to_ast(const char *name,PList L)
+{
+  PList L1=L;
+  NspAst *ast;
+  NspList *args;
+  if ( L == NULL ) 
+    {
+      Scierror("Ast: internal error, nsp_plist_ast_args called with wrong arguments\n");
+      return NULL;
+    }
+  /* first get args */
+  L1 = L1->next;
+  if ((args= nsp_list_create("args"))== NULLLIST) return NULLAST;
+  while ( L1  != NULLPLIST ) 
+    {
+      /* arguments can be nodes or new asts */
+      if ((ast = nsp_plist_node_to_ast("ast",L1)) == NULLAST)  return NULLAST;
+      if ( nsp_list_end_insert(args,NSP_OBJECT(ast))== FAIL) goto err;
+      L1 = L1->next;
+    }
+  /* then create an ast with tolevel object */
+  if ((ast = nsp_plist_node_to_ast(name,L)) == NULLAST)  return NULLAST;
+  ast->args = args;
+  return ast;
+ err:
+  nsp_list_destroy(args);
+  return NULLAST;
+}
+
+static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
+{
+  char *str;
+  NspObject *obj;
+  switch ( L->type) 
+    {
+    case OBJECT :
+      if ((obj=nsp_object_copy_with_name(L->O)) == NULLOBJ) return NULLAST;
+      return nsp_ast_create(name,L->type,L->arity,obj,NULL,NULL);
+      break;
+    case NUMBER :
+      if ((str = nsp_string_copy(((parse_double *) L->O)->str)) ==NULL)
+	return NULLAST;
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL);
+      break;
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+      if ((str = nsp_string_copy(((parse_int *) L->O)->str)) ==NULL)
+	return NULLAST;
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL);
+      break;
+    case STRING:
+    case COMMENT:
+    case NAME :
+    case OPNAME :
+      if ((str = nsp_string_copy((char *) L->O)) ==NULL)
+	return NULLAST;
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL);
+      break;
+    case PLIST: 
+      return nsp_plist_to_ast(name,(PList) L->O);
+      break;
+    default: 
+      return nsp_ast_create(name,L->type,L->arity,L->O,NULL,NULL);
+    }
+  return NULL;
 } 
 
 /**
