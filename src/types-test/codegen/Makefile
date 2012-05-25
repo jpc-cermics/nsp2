@@ -24,7 +24,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
 	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
-	../hm.c ../../libgraphviz/agraph.c
+	../hm.c ../../libgraphviz/agraph.c ../ast.c 
 
 all:: $(ALL)
 	cd ../; make all
@@ -304,7 +304,11 @@ xxall:: ../../liblowdisc/ldfaure.c
 	&& mv agdisc.h  agedge.h  agnode.h  agsym.h  agraph.h ../../include/nsp 
 
 
-
+../ast.c : ast.defs ast-types.defs ast.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override ast.override \
+	    --prefix Ast ast.defs) > $*.c \
+	&& mv ast.h ../../include/nsp 
 
 
 

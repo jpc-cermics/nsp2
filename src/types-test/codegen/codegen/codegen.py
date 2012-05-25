@@ -287,77 +287,83 @@ class Wrapper:
               '%(fields_free1)s' 
 
     type_tmpl_1_1_1_1 = \
-              '%(fields_free2)s' \
-              '}\n\n' \
-              'void nsp_%(typename_dc)s_destroy(%(typename)s *H)\n' \
-              '{\n' \
-              '  nsp_object_destroy_name(NSP_OBJECT(H));\n' \
-              '  nsp_%(typename_dc)s_destroy_partial(H);\n' \
-              '  FREE(H);\n' \
-              '}\n' \
-              '\n' \
-              '/*\n' \
-              ' * info \n' \
-              ' */\n' \
-              '\n' \
-              'int nsp_%(typename_dc)s_info(%(typename)s *M,int indent,const char *name,int rec_level)\n' \
-              '{\n' \
-              '  const char *pname;\n' \
-              '  if ( M == NULL%(typename_uc)s) \n' \
-              '    {\n' \
-              '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-              '      return TRUE;\n' \
-              '    }\n' \
-              '  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
-              '  Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n", (pname==NULL) ? "" : pname,\n' \
-              '             nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
-              '  return TRUE;\n' \
-              '}\n' \
-              '\n' \
-              '/*\n' \
-              ' * print \n' \
-              ' */\n' \
-              '\n' \
-              'int nsp_%(typename_dc)s_print(%(typename)s *M, int indent,const char *name, int rec_level)\n' \
-              '{\n' \
-              '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
-              '  if ( M == NULL%(typename_uc)s) \n' \
-              '    {\n' \
-              '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
-              '      return TRUE;\n' \
-              '    }\n' \
-              '  if (user_pref.pr_as_read_syntax) \n' \
-              '    { \n' \
-              '      Sciprintf1(indent,"%%s=TO_BE_DONE();\\n",pname);\n' \
-              '    } \n' \
-              '  else \n' \
-              '    { \n' \
-              '      if ( user_pref.pr_depth  <= rec_level -1 ) \n' \
-              '        {\n' \
-              '          nsp_%(typename_dc)s_info(M,indent,pname,rec_level);\n' \
-              '          return TRUE;\n' \
-              '        }\n' \
-              '      Sciprintf1(indent,"%%s\\t=\\t\\t%%s %(ref_count)s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)) %(ref_count_ref)s);\n' \
-              '      Sciprintf1(indent+1,"{\\n");\n' \
-              '%(fields_print)s' \
-              '      Sciprintf1(indent+1,"}\\n");\n' \
-              '    }\n' \
-              '  return TRUE;\n' \
-              '}\n\n' \
-              '/*\n' \
-              ' * latex print \n' \
-              ' */\n\n' \
-              'int nsp_%(typename_dc)s_latex(%(typename)s *M, int indent,const char *name, int rec_level)\n' \
-              '{\n' \
-              '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
-              '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\002latex:\\\\[");\n' \
-              '  Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
-              '  Sciprintf1(indent+1,"{\\n");\n' \
-              '%(fields_latex)s' \
-              '  Sciprintf1(indent+1,"}\\n");\n' \
-              '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\\\]\\005");\n' \
-              '  return TRUE;\n' \
-              '}\n' 
+        '%(fields_free2)s' \
+        '}\n\n' \
+        'void nsp_%(typename_dc)s_destroy(%(typename)s *H)\n' \
+        '{\n' \
+        '  nsp_object_destroy_name(NSP_OBJECT(H));\n' \
+        '  nsp_%(typename_dc)s_destroy_partial(H);\n' \
+        '  FREE(H);\n' \
+        '}\n' \
+        '\n' 
+    
+    type_tmpl_info = \
+        '/*\n' \
+        ' * info \n' \
+        ' */\n' \
+        '\n' \
+        'int nsp_%(typename_dc)s_info(%(typename)s *M,int indent,const char *name,int rec_level)\n' \
+        '{\n' \
+        '  const char *pname;\n' \
+        '  if ( M == NULL%(typename_uc)s) \n' \
+        '    {\n' \
+        '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
+        '      return TRUE;\n' \
+        '    }\n' \
+        '  pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
+        '  Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n", (pname==NULL) ? "" : pname,\n' \
+        '             nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
+        '  return TRUE;\n' \
+        '}\n' \
+        '\n' 
+
+    type_tmpl_print = \
+        '/*\n' \
+        ' * print \n' \
+        ' */\n' \
+        '\n' \
+        'int nsp_%(typename_dc)s_print(%(typename)s *M, int indent,const char *name, int rec_level)\n' \
+        '{\n' \
+        '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
+        '  if ( M == NULL%(typename_uc)s) \n' \
+        '    {\n' \
+        '      Sciprintf("Null Pointer %(typename)s \\n");\n' \
+        '      return TRUE;\n' \
+        '    }\n' \
+        '  if (user_pref.pr_as_read_syntax) \n' \
+        '    { \n' \
+        '      Sciprintf1(indent,"%%s=TO_BE_DONE();\\n",pname);\n' \
+        '    } \n' \
+        '  else \n' \
+        '    { \n' \
+        '      if ( user_pref.pr_depth  <= rec_level -1 ) \n' \
+        '        {\n' \
+        '          nsp_%(typename_dc)s_info(M,indent,pname,rec_level);\n' \
+        '          return TRUE;\n' \
+        '        }\n' \
+        '      Sciprintf1(indent,"%%s\\t=\\t\\t%%s %(ref_count)s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)) %(ref_count_ref)s);\n' \
+        '      Sciprintf1(indent+1,"{\\n");\n' \
+        '%(fields_print)s' \
+        '      Sciprintf1(indent+1,"}\\n");\n' \
+        '    }\n' \
+        '  return TRUE;\n' \
+        '}\n\n' 
+
+    type_tmpl_latex = \
+        '/*\n' \
+        ' * latex print \n' \
+        ' */\n\n' \
+        'int nsp_%(typename_dc)s_latex(%(typename)s *M, int indent,const char *name, int rec_level)\n' \
+        '{\n' \
+        '  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;\n' \
+        '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\002latex:\\\\[");\n' \
+        '  Sciprintf1(indent,"%%s\\t=\\t\\t%%s\\n",pname, nsp_%(typename_dc)s_type_short_string(NSP_OBJECT(M)));\n' \
+        '  Sciprintf1(indent+1,"{\\n");\n' \
+        '%(fields_latex)s' \
+        '  Sciprintf1(indent+1,"}\\n");\n' \
+        '  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\\\]\\005");\n' \
+        '  return TRUE;\n' \
+        '}\n' 
 
     
     type_tmpl_interface_util = \
@@ -769,8 +775,34 @@ class Wrapper:
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_destroy(typename_nn))
             self.fp.resetline()
-            
+
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
+        
+        # info code 
+
+        if self.overrides.part_info_is_overriden(typename_nn):
+            stn = 'info_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_info(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_info % substdict)
+
+        # print code 
+            
+        if self.overrides.part_print_is_overriden(typename_nn):
+            stn = 'print_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_print(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_print % substdict)
+
+        # latex print 
+        self.fp.write(self.type_tmpl_latex % substdict)
+
         # insert the end of type definition 
         # i.e a set of functions used for writing interfaces 
         self.fp.write(self.type_tmpl_interface_util % substdict)
@@ -993,6 +1025,24 @@ class Wrapper:
             lineno, filename = self.overrides.getstartline(stn)
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_destroy(typename_nn))
+            self.fp.resetline()
+
+        # info code 
+
+        if self.overrides.part_info_is_overriden(typename_nn):
+            stn = 'info_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_info(typename_nn))
+            self.fp.resetline()
+
+        # print code 
+            
+        if self.overrides.part_print_is_overriden(typename_nn):
+            stn = 'print_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_print(typename_nn))
             self.fp.resetline()
 
         self.fp.write(self.type_tmpl_1_1_1_1 % substdict)
