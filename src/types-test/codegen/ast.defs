@@ -1,0 +1,57 @@
+;; -*- scheme -*-
+
+(include "ast-types.defs")
+
+(define-method classa_color_change
+  (of-object "ClassA")
+  (c-name "classa_color_change")
+  (return-type "int")
+  (parameters
+    '("int" "color")
+  )
+)
+
+(define-method get_str
+  (of-object "Ast")
+  (c-name "ast_get_str")
+  (return-type "string")
+)
+
+(define-method get_op
+  (of-object "Ast")
+  (c-name "ast_get_op")
+  (return-type "int")
+)
+
+(define-method get_codename
+  (of-object "Ast")
+  (c-name "ast_get_codename")
+  (return-type "int")
+)
+
+(define-method get_opname
+  (of-object "Ast")
+  (c-name "ast_get_opname")
+  (return-type "int")
+)
+
+(define-method is
+  (of-object "Ast")
+  (c-name "ast_is")
+  (return-type "int")
+)
+
+(define-method get_obj
+  (of-object "Ast")
+  (c-name "ast_get_obj")
+  (return-type "int")
+)
+
+(define-method get_args
+  (of-object "Ast")
+  (c-name "ast_get_args")
+  (return-type "NspList*")
+)
+
+
+

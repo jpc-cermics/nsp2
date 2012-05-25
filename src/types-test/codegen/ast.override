@@ -1,0 +1,388 @@
+/* -*- Mode: C -*- */
+%%
+include-start Ast
+
+%%
+include-public Ast
+
+/* inserted at the end of public part of include file
+ * of classa.h
+ */
+
+%%
+include-private Ast
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
+headers
+#include <nsp/objects.h>
+#include <nsp/plist.h> 
+#include <nsp/plistc.h> 
+#include <nsp/parse.h>
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override-int-create-final Ast
+/* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+%%
+override-destroy-prelim  Ast
+/* verbatim in destroy */
+%%
+override classa_color_change kwargs
+/* override a method */
+static int _wrap_classa_color_change(NspAst *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int color;
+  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
+  self->cla_color = color;
+  return 0;
+}
+%%
+override Ast.classa_color_show kwargs
+/* a method can be overriden by giving its name or 
+ * class.name 
+ */
+static int _wrap_classa_color_show(NspAst *self,Stack stack,int rhs,int opt,int lhs)
+{
+  Sciprintf("color: %d\n",self->cla_color);
+  return 0;
+}
+%%
+override setrowscols_classa kwargs 
+/* override a function */
+static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
+{
+  return int_set_attribute(stack,rhs,opt,lhs);
+}
+
+%%
+override-attr Ast.cla_lval 
+
+/* here we override get_obj  and set_obj 
+ * we want get to be followed by a set to check that 
+ * inserted value is correct thus we use copy = TRUE.
+ */
+
+static NspObject *_wrap_classa_get_obj_cla_lval(void *self,char *attr, int *copy)
+{
+  NspList *ret;
+  *copy = TRUE; 
+  ret = ((NspList*) ((NspAst *) self)->cla_lval);
+  return (NspObject *) ret;
+}
+
+/* in this function we can check that val is correct before 
+ * setting the field with val. return FAIL if val is incorrect.
+ */
+
+static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
+{
+  if (((NspAst *) self)->cla_lval != NULL ) 
+    nsp_list_destroy(((NspAst *) self)->cla_lval);
+  ((NspAst *) self)->cla_lval = (NspList *) val;
+  return OK;
+}
+
+%%
+override nsp_setrowscols_curve kwargs
+/* override a function */
+
+%%
+last
+
+/* verbatim at the end of file */
+
+/* methods 
+ *
+ */
+
+%%
+override Ast.ast_get_str kwargs
+/* override a method */
+static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ret;
+  char *str=NULL;
+  int op; 
+  CheckRhs(0,0); 
+  CheckLhs(1,1);
+  op = ((int) self->op);
+  switch ( op ) 
+    {
+    case NAME :
+    case OPNAME :
+    case STRING :
+    case COMMENT :
+    case NUMBER :
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
+      str = ((NspAst *) self)->obj;
+      if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
+      break;
+    default:
+      if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
+	return RET_BUG;
+    }
+  MoveObj(stack,1,Ret);
+  return 1;
+}
+
+%%
+override Ast.ast_get_op kwargs
+/* override a method */
+static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ret;
+  int ret ;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  ret = ((int) self->op);
+  if ((Ret=nsp_new_double_obj((double) ret))== NULLOBJ) return RET_BUG;
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+%%
+override Ast.ast_get_codename kwargs
+/* override a method */
+static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  const char *str;
+  NspObject *Ret;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  switch ( ((int) self->op)) 
+    {
+    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
+    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
+    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
+    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
+    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
+    default:
+      str=nsp_astcode_to_codename(self->op);
+      if ( str != (char *) 0 )
+	{
+	  if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
+	}
+      else 
+	{
+	  if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
+	    return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+%%
+override Ast.ast_get_opname kwargs
+/* override a method */
+static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  const char *str;
+  NspObject *Ret;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  switch ( ((int) self->op)) 
+    {
+    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
+    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
+    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
+    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
+    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
+    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
+    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
+    default:
+      str=nsp_astcode_to_name(self->op);
+      if ( str != (char *) 0 )
+	{
+	  if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
+	}
+      else 
+	{
+	  if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
+	    return RET_BUG;
+	}
+    }
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+%%
+override Ast.ast_is kwargs
+/* override a method */
+static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  int rep = FALSE;
+  const char *str,*str1;
+  CheckRhs(1,1);
+  CheckLhs(1,1); 
+  if ((str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
+  switch ( ((int) self->op)) 
+    {
+    case STRING: if ( strcmp(str1,"STRING")== 0) rep=TRUE;break;
+    case COMMENT: if ( strcmp(str1,"COMMENT")== 0) rep=TRUE;break;
+    case NUMBER: if ( strcmp(str1,"NUMBER")== 0) rep=TRUE;break;
+    case INUMBER32: if ( strcmp(str1,"INUMBER32")== 0) rep=TRUE;break;
+    case INUMBER64: if ( strcmp(str1,"INUMBER64")== 0) rep=TRUE;break;
+    case UNUMBER32: if ( strcmp(str1,"UNUMBER32")== 0) rep=TRUE;break;
+    case UNUMBER64: if ( strcmp(str1,"UNUMBER64")== 0)rep=TRUE;break;
+    case NAME : if ( strcmp(str1,"NAME")== 0) rep=TRUE;break;
+    case OPNAME : if ( strcmp(str1,"OPNAME")== 0) rep=TRUE;break;
+    case OBJECT :  if ( strcmp(str1,"OBJECT")== 0) rep=TRUE;break;
+    default:
+      str=nsp_astcode_to_name(self->op);
+      if ( str != (char *) 0 && strcmp(str,str1)==0 ) rep = TRUE;
+    }
+  if ( nsp_move_boolean(stack,1, rep) == FAIL)  return RET_BUG;
+  return Max(lhs,1);
+}
+
+
+%%
+override Ast.ast_get_obj kwargs
+/* override a method */
+static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( ((int) self->op) != OBJECT )
+    {
+      Scierror("Error: an object can be returned only for astnode of id OBJECT\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1, self->obj);
+  return Max(lhs,1);
+}
+
+%%
+override Ast.ast_get_args kwargs
+/* override a method */
+static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  MoveObj(stack,1, NSP_OBJECT(self->args));
+  return Max(lhs,1);
+}
+
+%%
+override-info Ast 
+/*
+ * info overriden 
+ */
+
+int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
+{
+  int i;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
+  Sciprintf("%s\t= [op:%s,%d,arity:%d,data:%d]\t\t%s ()\n",
+	    pname,
+	    nsp_astcode_to_name(M->op),
+	    M->op, M->arity,
+	    NSP_POINTER_TO_INT(M->obj),
+	    nsp_ast_type_short_string(NSP_OBJECT(M)));
+  return TRUE;
+}
+
+%%
+override-print Ast 
+/*
+ * print overriden 
+ */
+
+int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=ast_create(op=%d,arity=%d,line=%d);",pname,
+		     M->op, M->arity, M->obj);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"ast_create(op=%d,arity=%d,line=%d);",
+		     M->op, M->arity, M->obj);
+	}
+    }
+  else 
+    {
+      const char *s;
+      Sciprintf1(indent,"%s\t={",pname);
+      switch ( M->op ) 
+	{
+	case STRING:
+	  Sciprintf("\"%s\"", M->obj);
+	  break;
+	case COMMENT:
+	  Sciprintf1(indent,"//%s", M->obj);
+	  break;
+	case NUMBER:
+	case INUMBER32:
+	case INUMBER64:
+	case UNUMBER32:
+	case UNUMBER64:
+	  Sciprintf("%s",M->obj);
+	  break;
+	case NAME :
+	  Sciprintf("%s", M->obj);
+	  break;
+	case OPNAME :
+	  Sciprintf("'%s'", M->obj);
+	  break;
+	case OBJECT : 
+	  Sciprintf("obj:0x%x",M->obj);
+	  break;
+	default:
+	  s=nsp_astcode_to_name( M->op);
+	  if ( s != (char *) 0 )
+	    Sciprintf("%s",s);
+	  else 
+	    Sciprintf("UNKNOWN->%d", M->op);
+	  /* 
+	  s=nsp_astcode_to_codename( M->op);
+	  if ( s != (char *) 0 )
+	    Sciprintf("(%s)",s);
+	  else 
+	    Sciprintf("(UNKNOWN->%d)", M->op);
+	  */
+	}
+      Sciprintf("}\t\t%s\n",nsp_ast_type_short_string(NSP_OBJECT(M)));
+      if ( M->args != NULL && nsp_list_length(M->args) > 0) 
+	{
+	  nsp_list_print(M->args,indent+2,"args",rec_level+1);
+	}
+    }
+  return TRUE;
+}
+
+%%
+last 

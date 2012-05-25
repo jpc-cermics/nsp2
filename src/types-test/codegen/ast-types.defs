@@ -1,0 +1,23 @@
+;; -*- scheme -*-
+
+(define-object Ast
+  (in-module "Ast")
+  (parent "Object")
+  (c-name "NspAst")
+  (fields
+   '("int" "op" "hidden");    /* operator code */
+   '("int" "arity" "hidden"); /* arity for operators or tag for names etc.. */
+   '("void*" "obj" "hidden" ); /* used to store a relevant objects */ 
+   '("NspList*" "args" "hidden"); /* store arguments */
+   )
+  (gtype-id "Ast")
+)
+
+
+
+
+
+
+
+
+
