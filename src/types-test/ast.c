@@ -810,13 +810,13 @@ static NspMethods ast_methods[] = {
   {"get_op",(nsp_method *) _wrap_ast_get_op},
   {"get_codename",(nsp_method *) _wrap_ast_get_codename},
   {"get_opname",(nsp_method *) _wrap_ast_get_opname},
-  {"is_",(nsp_method *) _wrap_ast_is},
+  {"is",(nsp_method *) _wrap_ast_is},
   {"get_obj",(nsp_method *) _wrap_ast_get_obj},
   {"get_args",(nsp_method *) _wrap_ast_get_args},
   {"get_arity",(nsp_method *) _wrap_ast_get_arity},
   {"sprint",(nsp_method *) _wrap_ast_sprint},
   {"fprint",(nsp_method *) _wrap_ast_fprint},
-  {"print_",(nsp_method *) _wrap_ast_print},
+  {"print",(nsp_method *) _wrap_ast_print},
   { NULL, NULL}
 };
 

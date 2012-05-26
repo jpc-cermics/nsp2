@@ -17,8 +17,8 @@ def exc_info():
     return ret
 
 def fixname(name):
-    if keyword.iskeyword(name):
-	return name + '_'
+    #if keyword.iskeyword(name):
+    #      return name + '_fix_'
     return name
 
 class FileOutput:
