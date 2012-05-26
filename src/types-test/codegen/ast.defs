@@ -59,5 +59,23 @@
   (return-type "int")
 )
 
+(define-method sprint
+  (of-object "Ast")
+  (c-name "ast_sprint")
+  (return-type "NspSMatrix*")
+)
+
+(define-method fprint
+  (of-object "Ast")
+  (c-name "ast_fprint")
+  (return-type "NspSMatrix*")
+)
+
+(define-method print
+  (of-object "Ast")
+  (c-name "ast_print")
+  (return-type "NspSMatrix*")
+)
+
 
 

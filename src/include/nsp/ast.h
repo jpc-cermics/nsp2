@@ -125,7 +125,11 @@ static NspAst *nsp_ast_create_void(const char *name,NspTypeBase *type);
 /* inserted in the private part of include file
  * of classa.h
  */
+static void nsp_ast_pprint(NspAst * L, int indent);
+static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
+static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
+static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 
-#line 130 "./ast.h"
+#line 134 "./ast.h"
 #endif /* NspAst_Private */
 
