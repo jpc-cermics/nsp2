@@ -1507,7 +1507,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
     }
   user_pref.pr_depth= dp;
   user_pref.list_as_tree=at;
-  user_pref.list_as_tree=cr;
+  user_pref.color=cr;
   /* restore to default values */
   switch ( mode ) 
     {
