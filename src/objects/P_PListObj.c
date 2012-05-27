@@ -182,20 +182,18 @@ int  NspPListFullComp(NspPList * A,NspPList * B,char *op,int *err)
 
 int NspPListObjEq(NspObject *A, NspObject *B)
 {
-  int err,rep;
-  if ( check_cast(B,nsp_type_ivect_id) == FALSE) return FALSE ;
-  rep =  NspPListFullComp((NspPList *) A,(NspPList *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  if ( check_cast(B,nsp_type_plist_id) == FALSE) return FALSE ;
+  if ( nsp_plist_equal(((NspPList *) A)->D,((NspPList *) B)->D) == TRUE) 
+    return TRUE;
+  return FALSE;
 }
 
 int NspPListObjNeq(NspObject *A, NspObject *B)
 {
-  int err=0,rep;
-  if ( check_cast(B,nsp_type_ivect_id) == FALSE) return TRUE;
-  rep =  NspPListFullComp((NspPList *) A,(NspPList *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  if ( check_cast(B,nsp_type_plist_id) == FALSE) return TRUE;
+  if ( nsp_plist_equal(((NspPList *) A)->D,((NspPList *) B)->D) == TRUE) 
+    return FALSE;
+  return TRUE;
 }
 
 

@@ -156,8 +156,6 @@ extern int nsp_parse_add_opname(PList *plist, char *str);
 extern int nsp_parse_add_object(PList *plist, NspObject *obj );
 extern int nsp_parse_add_inti(PList *plist, char *str, int type);
 
-
-extern int ParseAddDouble (PList *plist);
 extern PList nsp_eplist_create(void);
 extern void nsp_plist_destroy(PList *List);
 extern PList nsp_plist_copy(PList L);
@@ -170,11 +168,11 @@ extern void nsp_plist_pretty_print(PList L, int indent);
 extern int nsp_arg_pretty_print(PList L, int i, int pos, int posret);
 extern void nsp_plist_print(PList L, int indent);
 extern void nsp_plist_info(PList L, int indent);
-extern void ShowLine (PList L);
 extern int nsp_plist_save(PList L);
 extern int nsp_plist_load(PList *L);
 extern NspSMatrix *nsp_plist2smatrix(PList L, int indent) ;
 extern int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out);
+extern int nsp_plist_equal(PList L1,PList L2);
 
 #endif /*  PLIST_H  */
 
