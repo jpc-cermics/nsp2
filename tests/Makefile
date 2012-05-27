@@ -82,7 +82,9 @@ TESTS= \
 	cdfxxx.dia \
 	spmf.dia \
 	linprog.dia \
-	scale_rc.dia
+	scale_rc.dia \
+	percenta.dia \
+	ast.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
