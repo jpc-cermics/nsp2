@@ -924,6 +924,8 @@ static int int_ast_print_gen(NspAst *self,Stack stack, int rhs, int opt, int lhs
       CheckStdRhs(0,0);
     }
   CheckLhs(0,1);
+
+  if ( mode == string_out) color=FALSE; 
   
   if ( get_optional_args(stack, rhs, opt, print_opts,
 			 &as_read,&color,&depth,&indent) == FAIL) 
@@ -1537,4 +1539,4 @@ static int _nsp_ast_pprint_arg_ret(NspList *L,int elt, int indent, int pos, int 
   return newpos; 
 }
 
-#line 1541 "ast.c"
+#line 1543 "ast.c"
