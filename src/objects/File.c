@@ -1999,6 +1999,8 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	    }
 	  }
 	  break;
+	case 'a':
+	case 'A':
 	case 'e':
 	case 'f':
 	case 'g':
@@ -2009,7 +2011,7 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	      Scierror("Error: scanf: bad conversion\n");
 	      return FAIL;
 	    }
-	  else if (l_flag) 
+	  else if ( l_flag)  /* We alway scan using a double ! */
 	    {
 	      if (stared == FALSE ) {
 		ptrtab[num_conversion] =  &buf_lf[num_conversion];
@@ -2633,6 +2635,8 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  pf_type = l_flag ? PF_LUD : PF_UD;
 	  break;
 
+	case 'a':
+	case 'A':
 	case 'e':
 	case 'g':
 	case 'f':
