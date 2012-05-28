@@ -35,14 +35,25 @@ ast=pl2ast(f);
 execstr(ast.sprint[])
 if ~g.equal[f] then pause;end 
 
-if %t then 
-  // loop on macros 
-  F=glob('SCI/macros/miscellaneous/*.sci');
-  for i=1:size(F,'*')
-    name = file('rootname",file('tail',F(1)));
-    execstr(sprintf('ft=%s;ast=pl2ast(%s);',name,name));
-    execstr(ast.sprint[])
-    execstr(sprintf('tt=ft.equal[%s];',name));
-    if ~tt then pause;end 
-  end
+
+// loop on macros testing 
+// pl2ast and then ast print and eval 
+F=glob('SCI/macros/miscellaneous/*.sci');
+for i=1:size(F,'*')
+  name = file('rootname",file('tail',F(1)));
+  execstr(sprintf('ft=%s;ast=pl2ast(%s);',name,name));
+  execstr(ast.sprint[])
+  execstr(sprintf('tt=ft.equal[%s];',name));
+  if ~tt then pause;end 
 end
+
+// test parse_file 
+for i=1:size(F,'*')
+  name = file('rootname",file('tail',F(1)));
+  ast=parse_file(F(i));
+  execstr(ast.sprint[])
+  execstr(sprintf('tt=ft.equal[%s];',name));
+  if ~tt then pause;end 
+end
+
+
