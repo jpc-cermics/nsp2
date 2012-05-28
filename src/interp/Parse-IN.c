@@ -31,6 +31,7 @@
 #include <nsp/seval.h>
 #include <nsp/parse.h> 
 #include <nsp/nsptcl.h> 
+#include <nsp/ast.h> 
 
 static function  int_parseevalfile;
 static function  int_add_lib;
@@ -814,6 +815,34 @@ static int int_restart(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * ast=parse_file(...)
+ * 
+ */
+
+static int int_parse_file_gen(Stack stack, int rhs, int opt, int lhs,int mtlb)
+{
+  NspAst *ast;
+  char old[FSIZE+1], fname_expanded[FSIZE+1];
+  char *fname= NULL;
+  int_types T[] = {string, t_end} ;
+  CheckLhs(0,1);
+  if ( GetArgs(stack,rhs,opt,T,&fname) == FAIL) return RET_BUG;
+  /* update the current exec dir in stack, old value is returned in old 
+   * fname_expanded contains the file name after expansion using current_exec_dir
+   */
+  nsp_expand_file_and_update_exec_dir(&stack,old,fname,fname_expanded);
+  ast =nsp_parse_file(fname_expanded);
+  if ( ast == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ast));
+  return 1;
+}
+
+static int int_parse_file(Stack stack, int rhs, int opt, int lhs)
+{
+  return int_parse_file_gen(stack,rhs,opt,lhs,FALSE);
+}
+
+/*
  * The Interface for basic parse operations 
  */
 
@@ -837,6 +866,7 @@ static OpTab Parse_func[]={
   {"input", int_input},
   {"halt", int_halt},
   {"restart",int_restart},
+  {"parse_file",int_parse_file},
   {(char *) 0, NULL}
 };
 

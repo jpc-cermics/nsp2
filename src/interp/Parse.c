@@ -37,6 +37,7 @@
 #include <nsp/smatrix.h> 
 #include <nsp/list.h> 
 #include <nsp/file.h> 
+#include <nsp/ast.h> 
 
 #include "nsp/datas.h"
 #include "nsp/parse.h"
@@ -768,5 +769,96 @@ NspObject *nsp_eval_macro_code(NspPList *PL,NspObject **O,NspList *args,int *fir
 }
     
 
+/**
+ * nsp_parse_file:
+ * @Str: pathname as string of the file to be executed 
+ * 
+ * parses the contents of the file given by @Str and returns 
+ * an ast.
+ *
+ * Return value: a #NspAst or %NULL
+ **/
+
+static NspAst *nsp_parse_full(Tokenizer *T);
+
+NspAst* nsp_parse_file(char *Str) 
+{
+  NspAst *ast;
+  FILE *input;
+  Tokenizer T;
+  char *file_name = NspFileName(SciStack);
+  if ((input = fopen(Str,"r")) == NULL) 
+    {
+      /* Only when strerror exists XXXXXXX */
+      Scierror("Error: file %s cannot be opened for reading\n %s\n"
+	       ,Str,strerror(errno));
+      return NULL;
+    }
+  nsp_init_tokenizer(&T);
+  /* set tokenizer input */
+  nsp_tokeniser_file(&T,input);
+  /* reset the line counter */
+  /* Calling the evaluator */
+  NspFileName(SciStack) =  Str;
+  ast = nsp_parse_full(&T);
+  if ( ast == NULL ) 
+    {
+      Scierror("Error: failed to parse at line %d of file %s\n",T.tokenv.Line,Str);
+    }
+  NspFileName(SciStack) = file_name;
+  fclose(input);
+  return ast;
+}
 
 
+/*
+ * nsp_parse_full:
+ * @T: 
+ * 
+ * reads from @T and return an ast 
+ * 
+ * Return value: a #NspAst or %NULL.
+ */
+
+static NspAst *nsp_parse_full(Tokenizer *T)
+{
+  int errcatch = SciStack.val->errcatch;
+  int rep; 
+  NspAst *ast;
+  PList plist = NULLPLIST ;
+  NspList *args =  NULLLIST;
+  if ((args= nsp_list_create("args"))== NULLLIST) return NULLAST;
+  while (1) 
+    {
+      /* clean previous parsed expression */
+      nsp_plist_destroy(&plist);
+      if ((rep=nsp_parse(T,NULLBHASH,&plist)) < 0 ) 
+	{
+	  /* parse error */
+	  if ( errcatch == FALSE ) nsp_error_message_show();
+	  nsp_plist_destroy(&plist);
+	  break;
+	}
+      if (plist != NULLPLIST ) 
+	{
+	  if ((ast= nsp_plist_to_ast("ast",plist))== NULLAST ) goto err;
+	  if ( nsp_list_end_insert(args,NSP_OBJECT(ast))== FAIL) goto err;
+	}
+    }
+  if ( rep == RET_OK ) 
+    {
+      /* then create an ast with tolevel object */
+      if ((ast= nsp_ast_create(NVOID,STATEMENTS,nsp_list_length(args),NULL,NULL,NULL))== NULL)
+	goto err;
+      ast->args = args;
+      return ast;
+    }
+  else
+    {
+      nsp_list_destroy(args);
+      return NULL;
+    }
+ err:
+  nsp_list_destroy(args);
+  return NULL;
+}
