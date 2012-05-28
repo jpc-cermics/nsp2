@@ -948,6 +948,7 @@ static int _nsp_plist_pretty_print_opname(int type, int indent, int pos);
 static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int pos, int posret, char *sep);
 static int _nsp_plist_pretty_print_arg(PList L, int i, int pos, int posret);
 static int _nsp_plist_pretty_print_arg_ret(PList L, int i, int pos, int posret, int *ret);
+static int _nsp_plist_equalop_mlhs_length(PList L);
 
 /**
  * nsp_plist_pretty_print:
@@ -1070,9 +1071,12 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
 	  return newpos;
 	  break;
 	case EQUAL_OP:
-	  newpos =_nsp_plist_pretty_print_arg(List,indent,pos,posret);
-	  newpos += Sciprintf("=");
-	  newpos =_nsp_plist_pretty_print_arg(List->next,0,newpos,newpos);
+	  {
+	    int len=_nsp_plist_equalop_mlhs_length(List);
+	    newpos =_nsp_plist_pretty_print_arg(List,indent,pos,posret);
+	    if ( len > 0)   newpos += Sciprintf("=");
+	    newpos =_nsp_plist_pretty_print_arg(List->next,0,newpos,newpos);
+	  }
 	  return newpos;
 	  break;
 	case MLHS  :
@@ -1437,6 +1441,18 @@ static int _nsp_plist_pretty_print(PList List, int indent, int pos, int posret)
   return 0;
 }
  
+/* length of MLHS containted in an EQUAL_OP */
+
+static int _nsp_plist_equalop_mlhs_length(PList L)
+{
+  PList L1 = (PList) L->O;
+
+  if ( L->type != PLIST ) return -1;
+  if ( L1->type != MLHS ) return -1;
+  return L1->arity;
+}
+
+
 static int _nsp_plist_pretty_print_opname(int type, int indent, int pos)
 {
   Sciprintf1(indent,"");

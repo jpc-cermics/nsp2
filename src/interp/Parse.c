@@ -845,7 +845,7 @@ static NspAst *nsp_parse_full(Tokenizer *T)
 	  if ( nsp_list_end_insert(args,NSP_OBJECT(ast))== FAIL) goto err;
 	}
     }
-  if ( rep == RET_OK ) 
+  if ( rep == RET_OK || rep == RET_EOF ) 
     {
       /* then create an ast with tolevel object */
       if ((ast= nsp_ast_create(NVOID,STATEMENTS,nsp_list_length(args),NULL,NULL,NULL))== NULL)

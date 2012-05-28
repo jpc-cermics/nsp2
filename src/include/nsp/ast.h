@@ -130,8 +130,6 @@ static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 
-static NspAst *nsp_m2ast(NspSMatrix *S);
-
-#line 136 "./ast.h"
+#line 134 "./ast.h"
 #endif /* NspAst_Private */
 
