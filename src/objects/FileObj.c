@@ -666,10 +666,12 @@ static int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
   NspObject *object;
   print_func *pr;
   int dp=user_pref.pr_depth;
-  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,indent=0;
+  int cr=user_pref.color;
+  int as_read=FALSE,latex=FALSE,table=FALSE,depth=INT_MAX,color=TRUE,indent=0;
   char *name = NULL;
   nsp_option opts[] ={{ "as_read",s_bool,NULLOBJ,-1},
 		      { "depth", s_int,NULLOBJ,-1},
+		      { "color", s_bool,NULLOBJ,-1},
 		      { "indent",s_int,NULLOBJ,-1},
 		      { "latex",s_bool,NULLOBJ,-1},
 		      { "name",string,NULLOBJ,-1},
@@ -680,7 +682,7 @@ static int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
   CheckLhs(0,1);
   if ((object =nsp_get_object(stack,1))== NULLOBJ) return RET_BUG; 
   if ( get_optional_args(stack, rhs, opt, opts,&as_read,&depth,
-			 &indent,&latex,&name,&table) == FAIL) 
+			 &color,&indent,&latex,&name,&table) == FAIL) 
     return RET_BUG;
   /* changes io in order to write to file F */
   if ( !IS_OPENED(F->obj->flag))
@@ -693,24 +695,26 @@ static int int_file_print(void *self,Stack stack, int rhs, int opt, int lhs)
   mf =nsp_set_nsp_more(scimore_void);
   /* print object */
   user_pref.pr_depth= depth;
+  user_pref.color=color;
   pr = ( latex == TRUE) ?  object->type->latex :  object->type->pr ;
   if ( as_read == TRUE ) 
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
+      user_pref.color=FALSE;
       if ( latex == TRUE ) 
 	{
 	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");
 	}
       pr(object,indent,name,0);
       user_pref.pr_as_read_syntax= kp;
-      user_pref.pr_depth= dp;
     }
   else 
     {
       pr(object,indent,name,0);
     }
   user_pref.pr_depth= dp;
+  user_pref.color=cr;
   /* restore to default values */
   SetScilabIO(def);
   nsp_set_nsp_more(mf);

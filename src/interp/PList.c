@@ -2514,43 +2514,83 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H)
 
 int nsp_plist_equal(PList L1,PList L2)
 {
+  /* Sciprintf("->test equal\n");
+  if ( L1 != NULLPLIST )     nsp_plist_print_internal(L1);
+  if ( L2 != NULLPLIST )     nsp_plist_print_internal(L2);
+  */ 
+
   while ( L1  != NULLPLIST ) 
     {
-      if ( L2 == NULLPLIST ) return FALSE;
-      if ( L1->type != L2->type ) return FALSE;
+      /* Sciprintf("while step \n"); */
+      if ( L2 == NULLPLIST ) 
+	{
+	  /* Sciprintf("L2 is null \n"); */
+	  /* Sciprintf("<- test equal\n"); */
+	  return FALSE;
+	}
+      if ( L1->type != L2->type ) 
+	{
+	   /* Sciprintf("type differ %s %s\n",nsp_astcode_to_name(L1->type),
+		    nsp_astcode_to_name(L2->type)); */
+	   /* Sciprintf("<- test equal\n"); */
+	  return FALSE;
+	}
       switch ( L1->type) 
 	{
 	case OBJECT :
+	  /* Sciprintf("<- test equal\n"); */
+	  return TRUE;
 	  break;
 	case NUMBER :
 	  if (strcmp(((parse_double *) L1->O)->str,((parse_double *) L2->O)->str) != 0)
-	    return FALSE;
+	    {
+	      /* Sciprintf("number differ\n"); */
+	      /* Sciprintf("<- test equal\n"); */
+	      return FALSE;
+	    }
 	  break;
 	case INUMBER32 :
 	case INUMBER64 :
 	case UNUMBER32 :
 	case UNUMBER64 :
 	  if ( strcmp(((parse_int *) L1->O)->str,((parse_int *) L2->O)->str) != 0)
-	    return FALSE; 
+	    {
+	      /*  Sciprintf("number differ\n"); */
+	      /*  Sciprintf("<- test equal\n"); */
+	      return FALSE;
+	    }
 	  break;
 	case STRING:
 	case COMMENT:
 	case NAME :
 	case OPNAME :
 	  if ( strcmp(((char *) L1->O),((char *) L2->O)) != 0)
-	    return FALSE; 
+	    {
+	      /* Sciprintf("name/comments differ %s %s\n",((char *) L1->O),
+			((char *) L2->O)); */
+	      /*  Sciprintf("<- test equal\n"); */
+	      return FALSE;
+	    }
 	  break;
 	case PLIST: 
 	  if (nsp_plist_equal((PList) L1->O, (PList) L2->O) == FALSE)
-	    return FALSE;
+	    {
+	      /*  Sciprintf("<- test equal\n"); */
+	      return FALSE;
+	    }
 	  break;
 	default: 
-	  if ( L1->type != L2->type ) return FALSE;
+	  if ( L1->type != L2->type )
+	    {
+	      /*  Sciprintf("<- test equal\n"); */
+	      return FALSE;
+	    }
 	}
       L1= L1->next;
       L2= L2->next;
     }
   /* if L2 is longer */
+  /* Sciprintf("<- test equal\n"); */
   if ( L2 != NULLPLIST ) return FALSE;
   return TRUE;
 } 

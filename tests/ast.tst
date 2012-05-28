@@ -17,6 +17,16 @@
  
 // basic test for ast 
 
+function showdiff(x,y)
+  f1=fopen(x.get_fname[]+'1.sce',mode='w');
+  f1.print[x,as_read=%t];
+  f1.close[];
+  f2=fopen(x.get_fname[]+'2.sce',mode='w');
+  f2.print[x,as_read=%t];
+  f2.close[];
+  system(sprintf('diff %s1.sce %s2.sce",x.get_fname[],x.get_fname[]));
+endfunction
+
 function y=f()
   if x > 0 then 
     y=1;
@@ -44,7 +54,7 @@ if ~ast.equal[astn] then pause;end
 if %f then 
 // loop on macros testing 
 // pl2ast and then ast print and eval 
-F=glob('SCI/macros/misc*/*.sci');
+F=glob('SCI/macros/*/*.sci');
 for i=1:size(F,'*')
   name = file('rootname",file('tail',F(i)));
   if name == "00util" then continue;end;
@@ -52,10 +62,11 @@ for i=1:size(F,'*')
   ok=execstr(sprintf('ft=%s;ast=pl2ast(%s);',name,name),errcatch=%t);
   if ~ok then printf("Error step 1 for %s\n",name); pause;end 
   [ok,H]=execstr(ast.sprint[],errcatch=%t)
+  
   if ~ok then printf("Error step 2 for %s\n",name);pause;end 
   ok=execstr(sprintf('tt=ft.equal[H(''%s'')];',name,name),errcatch=%t);
   if ~ok then printf("Error step 3 for %s\n",name);pause;end 
-  // if ~tt then printf("Error step 4 for %s\n",name);pause;end 
+  if ~tt then printf("Error step 4 for %s\n",name);pause;end 
   // iterate one more time 
   ok=execstr(sprintf('ast1=pl2ast(H(''%s''));',name),errcatch=%t);
   if ~ok then printf("Error step 5 for %s\n",name);pause;end 
@@ -74,3 +85,4 @@ for i=1:size(F,'*')
   if ~tt then pause;end 
 end
 end 
+

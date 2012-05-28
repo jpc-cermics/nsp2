@@ -1491,6 +1491,7 @@ static int int_object_print_gen(Stack stack, int rhs, int opt, int lhs, print_mo
     {
       int kp=user_pref.pr_as_read_syntax;
       user_pref.pr_as_read_syntax= 1;
+      user_pref.color=FALSE;
       if ( latex == TRUE ) 
 	{
 	  Sciprintf("Warning: you cannot select both as_read and latex, latex ignored\n");

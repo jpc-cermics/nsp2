@@ -1031,7 +1031,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	    case  SEMICOLON_OP  :
 	      newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
 	      newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
-	      Sciprintf("\n");
+	      Sciprintf("");
 	      return 0;
 	      break;
 	    case QUOTE_OP : 
@@ -1359,12 +1359,12 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  break;
 	case STATEMENTS :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
+	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",FALSE,"\n");
 	  return newpos;
 	  break;
 	case STATEMENTS1 :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
+	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",FALSE,"\n");
 	  return newpos;
 	  break;
 	case PARENTH :

@@ -2541,8 +2541,9 @@ void nsp_print_string_as_read(const char *str)
       switch (*str) 
 	{
 	case '\'' :
-	case '\"' : 
 	  Sciprintf("%s","''");break;
+	case '\"' : 
+	  Sciprintf("%s","\"\"");break;
 	case '\\' :
 	  Sciprintf("%s","\\\\");break;
 	case '\a' :
