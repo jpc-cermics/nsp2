@@ -25,35 +25,52 @@ function y=f()
   else
     y=0;
   end
-endfunction
+endfunction;
 
 g=f;  
 if ~g.equal[f] then pause;end 
+
 // get ast associated to f 
 ast=pl2ast(f);
 // recreate f by print/eval loop 
-execstr(ast.sprint[])
-if ~g.equal[f] then pause;end 
+[ok,H]=execstr(ast.sprint[]);
+if ~ok then pause;end 
+if ~f.equal[H('f')] then pause;end 
 
+// iterate 
+astn=pl2ast(H('f'));
+if ~ast.equal[astn] then pause;end 
 
+if %f then 
 // loop on macros testing 
 // pl2ast and then ast print and eval 
-F=glob('SCI/macros/miscellaneous/*.sci');
+F=glob('SCI/macros/misc*/*.sci');
 for i=1:size(F,'*')
-  name = file('rootname",file('tail',F(1)));
-  execstr(sprintf('ft=%s;ast=pl2ast(%s);',name,name));
-  execstr(ast.sprint[])
-  execstr(sprintf('tt=ft.equal[%s];',name));
-  if ~tt then pause;end 
+  name = file('rootname",file('tail',F(i)));
+  if name == "00util" then continue;end;
+  printf("test1 for %s\n",name);
+  ok=execstr(sprintf('ft=%s;ast=pl2ast(%s);',name,name),errcatch=%t);
+  if ~ok then printf("Error step 1 for %s\n",name); pause;end 
+  [ok,H]=execstr(ast.sprint[],errcatch=%t)
+  if ~ok then printf("Error step 2 for %s\n",name);pause;end 
+  ok=execstr(sprintf('tt=ft.equal[H(''%s'')];',name,name),errcatch=%t);
+  if ~ok then printf("Error step 3 for %s\n",name);pause;end 
+  // if ~tt then printf("Error step 4 for %s\n",name);pause;end 
+  // iterate one more time 
+  ok=execstr(sprintf('ast1=pl2ast(H(''%s''));',name),errcatch=%t);
+  if ~ok then printf("Error step 5 for %s\n",name);pause;end 
+  if ~ast1.equal[ast] then  printf("Error step 6 for %s\n",name);pause;end 
 end
 
 // test parse_file 
 for i=1:size(F,'*')
-  name = file('rootname",file('tail',F(1)));
+  name = file('rootname",file('tail',F(i)));
+  if name == "00util" then continue;end;
+  printf("test2 for %s\n",name);
   ast=parse_file(F(i));
+  execstr(sprintf('ft=%s;',name));
   execstr(ast.sprint[])
   execstr(sprintf('tt=ft.equal[%s];',name));
   if ~tt then pause;end 
 end
-
-
+end 

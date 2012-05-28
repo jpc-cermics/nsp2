@@ -793,8 +793,11 @@ NspAst *nsp_plist_to_ast(const char *name,PList L)
   while ( L1  != NULLPLIST ) 
     {
       /* arguments can be nodes or new asts */
-      if ((ast = nsp_plist_node_to_ast("ast",L1)) == NULLAST)  return NULLAST;
-      if ( nsp_list_end_insert(args,NSP_OBJECT(ast))== FAIL) goto err;
+      if ( L1->type != OBJECT ) 
+	{
+	  if ((ast = nsp_plist_node_to_ast("ast",L1)) == NULLAST)  return NULLAST;
+	  if ( nsp_list_end_insert(args,NSP_OBJECT(ast))== FAIL) goto err;
+	}
       L1 = L1->next;
     }
   /* then create an ast with tolevel object */
@@ -1477,7 +1480,7 @@ static int _nsp_plist_pretty_print_args(PList List, int Larity, int indent, int 
       /* if we have remaining arguments and  line is too long we insert \n */
       if ( newpos > CMAX && j != Larity -1 ) 
 	{
-	  newpos=0; indent1=indent;Sciprintf("\n");
+	  newpos=0; indent1=posret;Sciprintf("\n");
 	}
       List = List->next;
     }

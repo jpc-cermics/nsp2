@@ -129,7 +129,8 @@ static void nsp_ast_pprint(NspAst * L, int indent);
 static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
+static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 
-#line 134 "./ast.h"
+#line 135 "./ast.h"
 #endif /* NspAst_Private */
 
