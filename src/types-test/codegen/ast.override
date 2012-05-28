@@ -5,9 +5,9 @@ include-start Ast
 %%
 include-public Ast
 
-/* inserted at the end of public part of include file
- * of classa.h
- */
+/* inserted at the end of public part of class include file */
+extern NspAst *nsp_plist_to_ast(const char *name,PList L);
+extern NspAst* nsp_parse_file(char *Str);
 
 %%
 include-private Ast
@@ -1102,3 +1102,4 @@ static int _nsp_ast_pprint_arg_ret(NspList *L,int elt, int indent, int pos, int 
     }
   return newpos; 
 }
+

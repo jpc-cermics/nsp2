@@ -101,9 +101,9 @@ extern int nsp_ast_xdr_save(XDR  *xdrs, NspAst *M);
 
 #line 7 "codegen/ast.override"
 
-/* inserted at the end of public part of include file
- * of classa.h
- */
+/* inserted at the end of public part of class include file */
+extern NspAst *nsp_plist_to_ast(const char *name,PList L);
+extern NspAst* nsp_parse_file(char *Str);
 
 #line 109 "./ast.h"
 #endif /* NSP_INC_NspAst */ 
@@ -130,6 +130,8 @@ static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 
-#line 134 "./ast.h"
+static NspAst *nsp_m2ast(NspSMatrix *S);
+
+#line 136 "./ast.h"
 #endif /* NspAst_Private */
 

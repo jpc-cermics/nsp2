@@ -23,8 +23,10 @@ extern int nsp_is_nsp_keyword(const char *id);
 extern int nsp_is_code_keyword(int keyc);
 extern int nsp_print_opname(int code);
 
-
 extern NspSMatrix *nsp_lasterror_get(void) ;
 extern void nsp_lasterror_clear(void);
+
+
+
 
 #endif 
