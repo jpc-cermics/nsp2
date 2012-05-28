@@ -24,7 +24,7 @@
 
 
 
-#line 25 "codegen/ast.override"
+#line 26 "codegen/ast.override"
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
@@ -188,6 +188,8 @@ static char *nsp_ast_type_short_string(NspObject *v)
   return(ast_short_type_name);
 }
 
+#line 424 "codegen/ast.override"
+
 /*
  * A == B 
  */
@@ -198,7 +200,7 @@ static int nsp_ast_eq(NspAst *A, NspObject *B)
   if ( check_cast(B,nsp_type_ast_id) == FALSE) return FALSE ;
   if ( A->op != loc->op) return FALSE;
   if ( A->arity != loc->arity) return FALSE;
-  if ( A->obj != loc->obj) return FALSE;
+  if ( nsp_ast_obj_equal(A,loc)== FALSE) return FALSE;
   if ( NSP_OBJECT(A->args)->type->eq(A->args,loc->args) == FALSE ) return FALSE;
   return TRUE;
 }
@@ -212,10 +214,8 @@ static int nsp_ast_neq(NspAst *A, NspObject *B)
   return ( nsp_ast_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
 
-/*
- * save 
- */
 
+#line 219 "ast.c"
 int nsp_ast_xdr_save(XDR *xdrs, NspAst *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -244,7 +244,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
   if ( nsp_ast_create_partial(H) == FAIL) return NULLAST;
   if ((H  = nsp_ast_xdr_load_partial(xdrs,H))== NULLAST) return H;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 44 "codegen/ast.override"
+#line 45 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 250 "ast.c"
   return H;
@@ -256,7 +256,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
 
 void nsp_ast_destroy_partial(NspAst *H)
 {
-#line 47 "codegen/ast.override"
+#line 48 "codegen/ast.override"
 /* verbatim in destroy */
 #line 262 "ast.c"
   if ( H->args != NULL ) 
@@ -270,7 +270,7 @@ void nsp_ast_destroy(NspAst *H)
   FREE(H);
 }
 
-#line 340 "codegen/ast.override"
+#line 332 "codegen/ast.override"
 /*
  * info overriden 
  */
@@ -290,7 +290,7 @@ int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
 }
 
 #line 293 "ast.c"
-#line 360 "codegen/ast.override"
+#line 352 "codegen/ast.override"
 /*
  * print overriden 
  */
@@ -361,8 +361,7 @@ int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
     }
   return TRUE;
 }
-
-#line 366 "ast.c"
+#line 365 "ast.c"
 /*
  * latex print 
  */
@@ -467,9 +466,9 @@ NspAst *nsp_ast_create(const char *name,int op,int arity,void* obj,NspList* args
   H->obj = obj;
   H->args= args;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 44 "codegen/ast.override"
+#line 45 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 473 "ast.c"
+#line 472 "ast.c"
   return H;
 }
 
@@ -532,9 +531,9 @@ NspAst *nsp_ast_full_copy(NspAst *self)
   if ( H ==  NULLAST) return NULLAST;
   if ( nsp_ast_full_copy_partial(H,self)== NULL) return NULLAST;
 
-#line 44 "codegen/ast.override"
+#line 45 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 538 "ast.c"
+#line 537 "ast.c"
   return H;
 }
 
@@ -553,9 +552,9 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
-#line 44 "codegen/ast.override"
+#line 45 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 559 "ast.c"
+#line 558 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -563,7 +562,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 120 "codegen/ast.override"
+#line 112 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -595,10 +594,10 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 599 "ast.c"
+#line 598 "ast.c"
 
 
-#line 153 "codegen/ast.override"
+#line 145 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -612,10 +611,10 @@ static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs
   return Max(lhs,1);
 }
 
-#line 616 "ast.c"
+#line 615 "ast.c"
 
 
-#line 168 "codegen/ast.override"
+#line 160 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -651,10 +650,10 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 655 "ast.c"
+#line 654 "ast.c"
 
 
-#line 205 "codegen/ast.override"
+#line 197 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -690,10 +689,10 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 694 "ast.c"
+#line 693 "ast.c"
 
 
-#line 257 "codegen/ast.override"
+#line 249 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -722,10 +721,10 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 726 "ast.c"
+#line 725 "ast.c"
 
 
-#line 287 "codegen/ast.override"
+#line 279 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -740,10 +739,10 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
   return Max(lhs,1);
 }
 
-#line 744 "ast.c"
+#line 743 "ast.c"
 
 
-#line 303 "codegen/ast.override"
+#line 295 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -753,10 +752,10 @@ static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
-#line 757 "ast.c"
+#line 756 "ast.c"
 
 
-#line 242 "codegen/ast.override"
+#line 234 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -770,20 +769,20 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
   return Max(lhs,1);
 }
 
-#line 774 "ast.c"
+#line 773 "ast.c"
 
 
-#line 323 "codegen/ast.override"
+#line 315 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   return meth_ast_sprint(self,stack,rhs,opt,lhs);
 }
-#line 784 "ast.c"
+#line 783 "ast.c"
 
 
-#line 331 "codegen/ast.override"
+#line 323 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -791,10 +790,10 @@ static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_fprint(self,stack,rhs,opt,lhs);
 }
 
-#line 795 "ast.c"
+#line 794 "ast.c"
 
 
-#line 314 "codegen/ast.override"
+#line 306 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -802,7 +801,7 @@ static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_print(self,stack,rhs,opt,lhs);
 }
 
-#line 806 "ast.c"
+#line 805 "ast.c"
 
 
 static NspMethods ast_methods[] = {
@@ -856,16 +855,7 @@ void Ast_Interf_Info(int i, char **fname, function (**f))
   *f = Ast_func[i].fonc;
 }
 
-#line 111 "codegen/ast.override"
-
-/* verbatim at the end of file */
-
-/* methods 
- *
- */
-
-
-#line 433 "codegen/ast.override"
+#line 452 "codegen/ast.override"
 
 /* pretty print of the ast i.e ast -> code */
 
@@ -874,7 +864,7 @@ static int _nsp_ast_pprint_arg(NspList *L,int elt, int i, int pos, int posret);
 static int _nsp_ast_pprint_arg_ret(NspList *L,int elt, int i, int pos, int posret, int *ret);
 static int _nsp_ast_pprint_opname(int type, int indent, int pos);
 static int _nsp_ast_pprint_args(NspList *L, int start, int last, int indent, int pos,
-				int posret, char *sep, int breakable);
+				int posret, char *sep, int breakable,const char *breakstr);
 static int _nsp_ast_equalop_mlhs_length(NspAst *ast);
 
 /* very similar to the generic function for printing objects and 
@@ -1064,7 +1054,8 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  break;
 	case 2:
 	  newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
-	  newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
+	  newpos =_nsp_ast_pprint_opname(ast->op,1,newpos);
+	  newpos += Sciprintf(" ");
 	  if ( newpos > CMAX) 
 	    {
 	      /* we have the right to break line here 
@@ -1086,7 +1077,10 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	      newpos =_nsp_ast_pprint_arg(ast->args,j+1,(j == 0) ? indent : 1,
 					   newpos,posret);
 	      if ( j != ast->arity -1 ) 
-		newpos =_nsp_ast_pprint_opname(ast->op,1,newpos);
+		{
+		  newpos =_nsp_ast_pprint_opname(ast->op,1,newpos);
+		  newpos += Sciprintf(" ");
+		}
 	    }
 	  break;
 	}
@@ -1116,28 +1110,28 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	   *  if arity is one 
 	   */
 	  newpos = pos +  Sciprintf1(indent,( ast->arity > 1) ? "[" : "");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE," ...\n");
 	  if ( ast->arity > 1) newpos += Sciprintf("]");
 	  return newpos;
 	  break;
 	case ARGS :
 	  /* a sequence of expressions inside () for x()*/
 	  newpos = pos +  Sciprintf1(indent,"(");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  newpos += Sciprintf(")");
 	  return newpos;
 	  break;
 	case CELLARGS :
 	  /* a sequence of expressions inside {} for x{} */
 	  newpos = pos +  Sciprintf1(indent,"{");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  newpos += Sciprintf("}");
 	  return newpos;
 	  break;
 	case METARGS :
 	  /* a sequence of expressions inside [] for x[] */
 	  newpos = pos +  Sciprintf1(indent,"[");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  newpos += Sciprintf("]");
 	  return newpos;
 	  break;
@@ -1152,13 +1146,13 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	case CALLEVAL:
 	case LISTEVAL :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,"",FALSE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,"",FALSE,"");
 	  return newpos;
 	  break;
 	case FEVAL :
 	  newpos =_nsp_ast_pprint_arg(ast->args,1,indent,pos,posret);
 	  newpos += Sciprintf("(");
-	  newpos = _nsp_ast_pprint_args(ast->args,2,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,2,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  newpos += Sciprintf(")");
 	  return newpos;
 	  break;
@@ -1365,17 +1359,17 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  break;
 	case STATEMENTS :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",TRUE);
+	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
 	  return newpos;
 	  break;
 	case STATEMENTS1 :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",TRUE);
+	  newpos= _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
 	  return newpos;
 	  break;
 	case PARENTH :
 	  newpos = pos + Sciprintf1(indent,"(") ;
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  newpos += Sciprintf(")");
 	  return newpos;
 	  break;
@@ -1404,67 +1398,67 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  /* n-ary global */
 	  PRINTTAG("global");Sciprintf(" ");
 	  /* newpos = NSP_PRINTF1_COLOR(posret,p_blue,"global ") ; */
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case CLEAR:
 	  /* n-ary clear */
 	  PRINTTAG("clear");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case CLEARGLOBAL:
 	  /* n-ary global */
 	  PRINTTAG("clearglobal");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case PAUSE:
 	  /* can be 0 or 1-ary pause */
 	  PRINTTAG("pause");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case HELP:
 	  /* 0 or  1-ary help */
 	  PRINTTAG("help");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case WHO:
 	  /* 0 or 1-ary who */
 	  PRINTTAG("who");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case EXEC:
 	  /* 1-ary exec */
 	  PRINTTAG("exec");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case APROPOS:
 	  /* 1-ary apropos */
 	  PRINTTAG("apropos");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case CD_COMMAND:
 	  /* 1-ary cd */
 	  PRINTTAG("cd");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case LS_COMMAND:
 	  /* 1-ary ls */
 	  PRINTTAG("ls");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 	case PWD_COMMAND:
 	  /* 1-ary pwd */
 	  PRINTTAG("pwd");Sciprintf(" ");
-	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE);
+	  newpos = _nsp_ast_pprint_args(ast->args,1,ast->arity,0,newpos,newpos,",",TRUE,"\n");
 	  return newpos;
 	  break;
 
@@ -1496,7 +1490,7 @@ static int _nsp_ast_pprint_opname(int type, int indent, int pos)
 /* #define WITH_SYMB_TABLE_DEBUG */
 
 static int _nsp_ast_pprint_args(NspList *L, int start, int last, int indent, int pos, 
-				int posret, char *sep, int breakable)
+				int posret, char *sep, int breakable, const char *breakstr)
 {
   NspAst *ast;
   int j,  newpos=pos,indent1=indent;
@@ -1512,7 +1506,7 @@ static int _nsp_ast_pprint_args(NspList *L, int start, int last, int indent, int
       /* if we have remaining arguments and  line is too long we insert \n */
       if ( breakable==TRUE && newpos > CMAX && j != last ) 
 	{
-	  newpos=0; indent1=posret;Sciprintf("\n");
+	  newpos=0; indent1=posret;Sciprintf(breakstr);
 	}
     }
   return newpos;
@@ -1561,5 +1555,29 @@ static int _nsp_ast_equalop_mlhs_length(NspAst *ast)
   return nsp_list_length(mlhs->args);
 }
 
+static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
+{
+  if ( ast1->op != ast2->op ) return FALSE;
+  switch ( ast1->op ) 
+    {
+    case NUMBER :
+    case INUMBER32 :
+    case INUMBER64 :
+    case UNUMBER32 :
+    case UNUMBER64 :
+    case STRING:
+    case COMMENT:
+    case NAME :
+    case OPNAME :
+      return strcmp((char *) ast1->obj,(char *) ast2->obj)==0;
+      break;
+    default: 
+      return TRUE;
+    }
+  return TRUE;
+}
 
-#line 1566 "ast.c"
+
+
+
+#line 1584 "ast.c"

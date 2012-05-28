@@ -27,6 +27,7 @@ class Overrides:
         self.override_include_private = {}
         self.override_type = {} # inserted verbatim in type definition 
         self.override_save_load = {} # override the save load for a class 
+        self.override_equal = {} # override the eq not eq for a class 
         self.override_create = {} # override the create for a class 
         self.override_intcreate = {} # override the create interface code
         self.override_implements = {} # inserted verbatim for implemented interfaces 
@@ -120,6 +121,12 @@ class Overrides:
             type = words[1]
             self.override_save_load[type] = rest
             slot = '%s_save_load' % ( type )
+            self.startlines[slot] = (startline + 1, filename)
+        elif words[0] == 'override-equal':
+            # override code for all the implemented interfaces 
+            type = words[1]
+            self.override_equal[type] = rest
+            slot = '%s_equal' % ( type )
             self.startlines[slot] = (startline + 1, filename)
         elif words[0] == 'override-create':
             # override code for all the implemented interfaces 
@@ -250,6 +257,10 @@ class Overrides:
         return self.override_save_load.has_key(slot)
     def get_override_save_load(self,slot):
         return self.override_save_load[slot]
+    def part_equal_is_overriden(self, slot):
+        return self.override_equal.has_key(slot)
+    def get_override_equal(self,slot):
+        return self.override_equal[slot]
     def part_create_is_overriden(self, slot):
         return self.override_create.has_key(slot)
     def get_override_create(self,slot):

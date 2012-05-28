@@ -214,7 +214,7 @@ class Wrapper:
               '}\n'  \
               '\n' 
 
-    type_tmpl_1_1_1 = \
+    type_tmpl_equalities = \
               '/*\n' \
               ' * A == B \n' \
               ' */\n' \
@@ -748,7 +748,17 @@ class Wrapper:
             substdict['ref_count_ref']= ',M->obj->ref_count'
         # insert the end of type defintion 
         self.fp.write(self.type_tmpl_1_1 % substdict)
-        self.fp.write(self.type_tmpl_1_1_1 % substdict)
+
+        # eq and not equal in type methods 
+
+        if self.overrides.part_equal_is_overriden(typename_nn):
+            slot = '%s_equal' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_equal(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_equalities % substdict)
 
         # insert override code for save_load 
         if self.overrides.part_save_load_is_overriden(typename_nn):
