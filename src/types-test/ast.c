@@ -1031,8 +1031,8 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	    case  SEMICOLON_OP  :
 	      newpos =_nsp_ast_pprint_arg(ast,1,indent,pos,posret);
 	      newpos =_nsp_ast_pprint_opname(ast->op,0,newpos);
-	      Sciprintf("");
-	      return 0;
+	      /* Sciprintf(""); */
+	      return newpos;
 	      break;
 	    case QUOTE_OP : 
 	    case DOTPRIM:
@@ -1042,7 +1042,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	      break;
 	    case RETURN_OP : 
 	      _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	      Sciprintf("\n");
+	      Sciprintf("\n");/* then return 0 as newpos */
 	      return 0;
 	      break;
 	    case TILDE_OP : 
@@ -1359,7 +1359,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  break;
 	case STATEMENTS :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos= _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,posret,"",FALSE,"\n");
+	  newpos= _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
 	  return newpos;
 	  break;
 	case STATEMENTS1 :

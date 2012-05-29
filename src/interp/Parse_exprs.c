@@ -284,7 +284,8 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
 	      switch ( T->tokenv.id ) 
 		{
 		case COMMENT :
-		  if (nsp_parse_add(&plist1,RETURN_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
+		  /* a statement followed by a comment we convert to <stmt>; // comm  */
+		  if (nsp_parse_add(&plist1,SEMICOLON_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
 		  break;
 		case COMMA_OP : 
 		  if (nsp_parse_add(&plist1,COMMA_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
@@ -311,15 +312,18 @@ static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcf
 	      count++; 
 	      if ( T->tokenv.id == COMMENT  )
 		{
+		  plist1=NULL;
+		  if (nsp_parse_add_comment(&plist1,T->tokenv.buf) == FAIL) return(FAIL);
+		  if (nsp_parse_add(&plist1,RETURN_OP,1,T->tokenv.Line) == FAIL) return(FAIL);
 		  if ( plist2 == NULL) 
 		    {
-		      if (nsp_parse_add_comment(&plist2,T->tokenv.buf) == FAIL) return(FAIL); count++;
+		      if (nsp_parse_add_list(&plist2,&plist1)== FAIL) return(FAIL);count++;
 		      plist2_last = plist2; 
 		      while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
 		    }
 		  else 
 		    {
-		      if (nsp_parse_add_comment(&plist2_last,T->tokenv.buf) == FAIL) return(FAIL); count++;
+		      if (nsp_parse_add_list(&plist2_last,&plist1)== FAIL) return(FAIL);count++;
 		      while ( plist2_last->next != NULL) plist2_last = plist2_last->next;
 		    }
 		}
