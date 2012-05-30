@@ -1269,15 +1269,12 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  newpos= _nsp_ast_pprint_arg(ast,1,1,newpos,newpos);
 	  Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
 	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
-	  if ( newpos != posret+2 )
-	    {
-	      Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
-	    }
 	  if ( ast->arity == 3 ) 
 	    {
 	      newpos =_nsp_ast_pprint_arg(ast,3,0,newpos,posret+2);
 	    }
-	  return NSP_PRINTF1_COLOR(posret,p_blue,"endfunction");
+	  newpos= nsp_ast_pprint_key("endfunction",newpos,posret);
+	  return newpos;
 	  break;
 	case FOR:
 	  PRINTTAG("for");
@@ -1586,4 +1583,4 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
 
 
 
-#line 1590 "ast.c"
+#line 1587 "ast.c"
