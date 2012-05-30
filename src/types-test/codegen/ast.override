@@ -598,7 +598,7 @@ typedef enum { p_black =30,
   ((user_pref.color == TRUE ) ? Sciprintf1(posret,"\033[%dm%s\033[0m",col,str) \
    : Sciprintf1(posret,"%s",str))
 
-#define CMAX 50
+#define CMAX 90
 
 #define PRINTTAG(tag)							\
   if (pos != posret ) {							\
@@ -957,7 +957,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  break;
 	case STATEMENTS1 :
 	  newpos = pos +  Sciprintf1(indent,"");
-	  newpos= _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,posret,"",FALSE,"\n");
+	  newpos= _nsp_ast_pprint_args(ast,1,ast->arity,0,newpos,posret,"",TRUE,"\n");
 	  return newpos;
 	  break;
 	case PARENTH :
