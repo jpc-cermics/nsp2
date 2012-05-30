@@ -1022,7 +1022,10 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 {
   const char *s;
   int j,newpos=0,ret=FALSE;
-  if ( pos < posret ) pos=Sciprintf1(posret-pos,"");
+  if ( pos < posret ) 
+    {
+      pos=Sciprintf1(posret-pos,"");
+    }
   if ( ast->op > 0 ) 
     {
       /* operators **/
@@ -1254,15 +1257,16 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	case WHILE:
 	  PRINTTAG("while");
 	  newpos =_nsp_ast_pprint_arg(ast,1,1,newpos,posret);
-	  newpos += NSP_PRINTF1_COLOR(1,p_blue,"do\n");
-	  newpos =_nsp_ast_pprint_arg(ast,2,posret+2,0,posret+2);
-	  newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	  newpos += NSP_PRINTF1_COLOR(1,p_blue,"do");
+	  Sciprintf("\n");newpos = Sciprintf1(posret+2,"");
+	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
+	  newpos= nsp_ast_pprint_key("end",newpos,posret);
 	  return newpos;
 	  break;
 	case FUNCTION:
 	  /* Sciprintf("function arity %d\n",ast->arity); */
 	  PRINTTAG("function");
-	  _nsp_ast_pprint_arg(ast,1,1,pos,newpos+1);
+	  newpos= _nsp_ast_pprint_arg(ast,1,1,newpos,newpos);
 	  Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
 	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
 	  if ( newpos != posret+2 )
@@ -1279,10 +1283,8 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  PRINTTAG("for");
 	  newpos =_nsp_ast_pprint_arg(ast,1,1,newpos,posret);
 	  newpos += Sciprintf("=") ;
-	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,newpos+1);
-	  newpos += Sciprintf(" do");
-	  /* PRINTTAG("do"); */
-	  newpos += Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
+	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,newpos);
+	  NSP_PRINTF1_COLOR(1,p_blue,"do\n") ;newpos= Sciprintf1(posret+2,"");
 	  newpos =_nsp_ast_pprint_arg(ast,3,0,newpos,posret+2);
 	  if ( newpos != posret+2 )
 	    {
@@ -1320,18 +1322,19 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  /* try catch sequence */
 	  PRINTTAG("try");Sciprintf1(1,"\n");newpos= Sciprintf1(posret+2,"");
 	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+2);
-	  newpos += NSP_PRINTF1_COLOR(posret,p_blue,"catch");
+	  newpos= nsp_ast_pprint_key("catch",newpos,posret);
 	  Sciprintf1(1,"\n");newpos= Sciprintf1(posret+2,"");
 	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
 	  if ( ast->arity == 2 ) 
 	    {
-	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	      newpos= nsp_ast_pprint_key("end",newpos,posret);
 	    }
 	  else 
 	    {
-	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"finally");
-	      newpos =_nsp_ast_pprint_arg(ast,3,posret+2,0,posret+2);
-	      newpos += NSP_PRINTF1_COLOR(posret,p_blue,"end");
+	      newpos= nsp_ast_pprint_key("finally",newpos,posret);
+	      Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
+	      newpos =_nsp_ast_pprint_arg(ast,3,0,newpos,posret+2);
+	      newpos= nsp_ast_pprint_key("end",newpos,posret);
 	    }
 	  return newpos;
 	  break;
@@ -1352,11 +1355,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 		  newpos=_nsp_ast_pprint_arg(ast,j+1,0,newpos,posret+2);
 		}
 	    }
-	  if ( newpos != posret+2 )
-	    {
-	      Sciprintf("\n");newpos= Sciprintf1(posret,"");
-	    }
-	  newpos = NSP_PRINTF_COLOR(p_blue,"end");
+	  newpos= nsp_ast_pprint_key("end",newpos,posret);
 	  return newpos;
 	  break;
 	case STATEMENTS :
@@ -1375,25 +1374,18 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  newpos += Sciprintf(")");
 	  return newpos;
 	  break;
-	case CASE :
-	  if ( pos != 0) Sciprintf("\n");
-	  if ( ast->op  == COMMENT )
-	    {
-	      newpos =_nsp_ast_pprint_arg(ast,1,posret,0,posret);
-	    }
-	  else
-	    {
-	      newpos = NSP_PRINTF1_COLOR(posret,p_blue,"case") ;
-	      newpos =_nsp_ast_pprint_arg(ast,1,1,newpos,newpos+1);
-	      newpos += NSP_PRINTF1_COLOR(1,p_blue,"then\n") ;
-	      newpos =_nsp_ast_pprint_arg(ast,2,posret+2,0,posret+2);
-	    }
+	case CASE : 
+	  PRINTTAG("case");
+	  newpos=_nsp_ast_pprint_arg(ast,1,1,newpos,newpos+1);
+	  NSP_PRINTF1_COLOR(1,p_blue,"then\n") ;
+	  newpos= Sciprintf1(posret+2,"");
+	  newpos=_nsp_ast_pprint_arg(ast,2,0,newpos,posret+2);
 	  return newpos;
 	  break;
 	case LASTCASE :
-	  if ( pos != 0) Sciprintf("\n");
-	  NSP_PRINTF1_COLOR(posret,p_blue,"else\n") ;
-	  newpos =_nsp_ast_pprint_arg(ast,1,posret+2,0,posret+2);
+	  PRINTTAG("else");
+	  Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
+	  newpos =_nsp_ast_pprint_arg(ast,1,0,newpos,posret+2);
 	  return newpos;
 	  break;
 	case GLOBAL:
@@ -1594,4 +1586,4 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
 
 
 
-#line 1598 "ast.c"
+#line 1590 "ast.c"
