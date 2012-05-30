@@ -1012,6 +1012,11 @@ typedef enum { p_black =30,
     Sciprintf("\n");newpos = NSP_PRINTF1_COLOR(posret,p_blue,tag) ;}	\
   else { newpos = pos+ NSP_PRINTF_COLOR(p_blue,tag) ; }
 
+/* posret: indentation to use if line-break.
+ *
+ */
+
+
 static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 {
   const char *s;
@@ -1043,7 +1048,8 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	    case RETURN_OP : 
 	      _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
 	      Sciprintf("\n");/* then return 0 as newpos */
-	      return 0;
+	      newpos= Sciprintf1(posret,"");
+	      return newpos;
 	      break;
 	    case TILDE_OP : 
 	    default:
@@ -1082,6 +1088,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 		  newpos += Sciprintf(" ");
 		}
 	    }
+	  return newpos;
 	  break;
 	}
     }
@@ -1101,7 +1108,8 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  newpos = _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
 	  if (  _nsp_ast_equalop_mlhs_length(ast) > 0 ) 
 	    newpos += Sciprintf("=");
-	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos,newpos);
+	  /* fix new return position after = */
+	  newpos = _nsp_ast_pprint_arg(ast,2,0,newpos, newpos);
 	  return newpos;
 	  break;
 	case MLHS  :
@@ -1476,7 +1484,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  if ( s != (char *) 0) Sciprintf(" %s ",s);
 	}
     }
-  return 0;
+  return newpos;
 }
  
 static int _nsp_ast_pprint_opname(int type, int indent, int pos)
@@ -1493,23 +1501,22 @@ static int _nsp_ast_pprint_args(NspAst *ast, int start, int last, int indent, in
 				int posret, char *sep, int breakable, const char *breakstr)
 {
   NspList *L= ast->args;
-  int j,  newpos=pos,indent1=indent;
+  int j,  newpos=pos;
   for ( j = start ; j <= last ; j++)
     {
       NspAst *ast1;
       if ((ast1 =(NspAst*) nsp_list_get_element(L,j )) == NULL) return 0;
-      newpos =_nsp_ast_pprint(ast1,indent1,newpos,posret);
+      /* Sciprintf("<|indent=%d,newpos=%d,posret=%d|",indent,newpos,posret); */
+      newpos =_nsp_ast_pprint(ast1,indent,newpos,posret);
       if ( j != last ) newpos += Sciprintf(sep);
-      /* reset indent for next argument of necessary **/
-      if ( indent1 != indent ) indent1 = indent; 
-      /* newpos==0 if the previous ArgPrettyPrint has inserted a \n **/
-      if ( newpos == 0) indent1 = posret;
       /* if we have remaining arguments and  line is too long we insert \n */
       if ( breakable==TRUE && newpos > CMAX && j != last ) 
 	{
-	  newpos=0; indent1=posret;Sciprintf(breakstr);
+	  /* wa are breaking a line */
+	  newpos=posret; Sciprintf(breakstr);Sciprintf1(posret,"");
 	}
     }
+  /* Sciprintf("|indent=%d,newpos=%d,posret=%d|>",indent,newpos,posret); */
   return newpos;
 }
 
@@ -1534,8 +1541,8 @@ static int _nsp_ast_pprint_arg_ret(NspList *L,int elt, int indent, int pos, int 
   newpos = _nsp_ast_pprint(ast,indent,pos,posret);
   if ( ast->op == COMMENT )
     {
-      Sciprintf("\n");
-      newpos = 0;
+      Sciprintf("\n");Sciprintf1(posret,"");
+      newpos = posret;
       *ret = TRUE;
     }
   else 
@@ -1582,4 +1589,4 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
 
 
 
-#line 1586 "ast.c"
+#line 1593 "ast.c"
