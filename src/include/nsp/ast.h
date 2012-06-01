@@ -132,6 +132,9 @@ static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static int nsp_check_ast_args(NspList *L);
-#line 136 "./ast.h"
+static void nsp_ast_print_node(NspAst *ast);
+static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
+
+#line 139 "./ast.h"
 #endif /* NspAst_Private */
 

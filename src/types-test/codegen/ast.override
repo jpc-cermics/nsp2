@@ -22,6 +22,9 @@ static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static int nsp_check_ast_args(NspList *L);
+static void nsp_ast_print_node(NspAst *ast);
+static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
+
 %%
 headers
 #include <nsp/objects.h>
@@ -352,15 +355,21 @@ override-info Ast
 
 int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
 {
-  int i;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("%s\t= [op:%s,%d,arity:%d,data:%d]\t\t%s ()\n",
-	    pname,
-	    nsp_astcode_to_name(M->op),
-	    M->op, M->arity,
-	    NSP_POINTER_TO_INT(M->obj),
-	    nsp_ast_type_short_string(NSP_OBJECT(M)));
+  if ( user_pref.list_as_tree == TRUE ) 
+    {
+      nsp_ast_info_tree(M,indent,name,rec_level);
+    }
+  else
+    {
+      Sciprintf1(indent,"%s\t={",pname);
+      nsp_ast_print_node(M);
+      Sciprintf("}\t\t%s\n",nsp_ast_type_short_string(NSP_OBJECT(M)));
+      if ( M->args != NULL && nsp_list_length(M->args) > 0) 
+	{
+	  nsp_list_info(M->args,indent+2,"|",rec_level+1);
+	}
+    }
   return TRUE;
 }
 
@@ -388,46 +397,8 @@ int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
     }
   else 
     {
-      const char *s;
       Sciprintf1(indent,"%s\t={",pname);
-      switch ( M->op ) 
-	{
-	case STRING:
-	  Sciprintf("\"%s\"", M->obj);
-	  break;
-	case COMMENT:
-	  Sciprintf1(indent,"//%s", M->obj);
-	  break;
-	case NUMBER:
-	case INUMBER32:
-	case INUMBER64:
-	case UNUMBER32:
-	case UNUMBER64:
-	  Sciprintf("%s",M->obj);
-	  break;
-	case NAME :
-	  Sciprintf("%s", M->obj);
-	  break;
-	case OPNAME :
-	  Sciprintf("'%s'", M->obj);
-	  break;
-	case OBJECT : 
-	  Sciprintf("obj:0x%x",M->obj);
-	  break;
-	default:
-	  s=nsp_astcode_to_name( M->op);
-	  if ( s != (char *) 0 )
-	    Sciprintf("%s",s);
-	  else 
-	    Sciprintf("UNKNOWN->%d", M->op);
-	  /* 
-	  s=nsp_astcode_to_codename( M->op);
-	  if ( s != (char *) 0 )
-	    Sciprintf("(%s)",s);
-	  else 
-	    Sciprintf("(UNKNOWN->%d)", M->op);
-	  */
-	}
+      nsp_ast_print_node(M);
       Sciprintf("}\t\t%s\n",nsp_ast_type_short_string(NSP_OBJECT(M)));
       if ( M->args != NULL && nsp_list_length(M->args) > 0) 
 	{
@@ -436,6 +407,44 @@ int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
     }
   return TRUE;
 }
+
+
+static void nsp_ast_print_node(NspAst *ast) 
+{
+  const char *s;
+  switch ( ast->op ) 
+    {
+	case STRING:
+	  Sciprintf("\"%s\"", ast->obj);
+	  break;
+	case COMMENT:
+	  Sciprintf("//%s", ast->obj);
+	  break;
+	case NUMBER:
+	case INUMBER32:
+	case INUMBER64:
+	case UNUMBER32:
+	case UNUMBER64:
+	  Sciprintf("%s",ast->obj);
+	  break;
+	case NAME :
+	  Sciprintf("%s", ast->obj);
+	  break;
+	case OPNAME :
+	  Sciprintf("'%s'", ast->obj);
+	  break;
+	case OBJECT : 
+	  Sciprintf("obj:0x%x",ast->obj);
+	  break;
+	default:
+	  s=nsp_astcode_to_name( ast->op);
+	  if ( s != (char *) 0 )
+	    Sciprintf("%s",s);
+	  else 
+	    Sciprintf("UNKNOWN->%d", ast->op);
+    }
+}
+
 %%
 override-equal Ast
 
@@ -1207,3 +1216,40 @@ static int nsp_check_ast_args(NspList *L)
 }
 
 
+static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level)
+{
+  const int name_len=128;
+  char epname[name_len];
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(ast)->name;
+  Cell *C;
+  int i=1;
+  Sciprintf1(indent,"%s[",(strcmp(pname,NVOID) != 0) ? pname : "");
+  nsp_ast_print_node(ast);Sciprintf("]\n");
+  if ( rec_level <= user_pref.pr_depth ) 
+    {
+      C= ast->args->first;
+      while ( C != NULLCELL) 
+	{
+	  int j;
+	  sprintf(epname,"%s",pname);
+	  for ( j = 0 ; j < strlen(epname);j++) 
+	    {
+	      if (epname[j] !='-' && epname[j] != '`' && epname[j] != ' ' && epname[j] != '|') epname[j]=' ';
+	    }
+	  for ( j = 0 ; j < strlen(epname);j++) if (epname[j]=='-' || epname[j] == '`' ) epname[j]=' ';
+	  if ( C->next == NULLCELL) 
+	    strcat(epname,"`-");
+	  else 
+	    strcat(epname,"|-");
+	  if ( C->O != NULLOBJ )
+	    {
+	      nsp_object_info(C->O,indent,epname,rec_level+1);      
+	    }
+	  else
+	    {
+	      Sciprintf1(indent+2,"%s Undefined\n",epname);
+	    }
+	  C = C->next ;i++;
+	}
+    }
+} 
