@@ -1,7 +1,7 @@
 function hist3d(f,T,A,leg,flags,ebox)
 // Copyright INRIA
   nep=8
-  def=list(35,45,'X@Y@Z',[2 1 4])
+  def=list(35,45,'X@Y@Z',[2, 1, 4])
   [lhs,rhs]=argn(0)
   if rhs<=0 then  //demo
     s_mat=['hist3d(10*rand(10,10));']
@@ -18,7 +18,7 @@ function hist3d(f,T,A,leg,flags,ebox)
     end
     dx=(x(2)-x(1))/nep;
     dy=(y(2)-y(1))/nep;
-    bnds=[x(1) x($), y(1) y($),mini(0,mini(f)) maxi(f)]
+    bnds=[x(1), x($), y(1), y($),mini(0,mini(f)), maxi(f)]
     x=(x(1:sx-1)+x(2:sx))/2;
     y=(y(1:sy-1)+y(2:sy))/2;
     [nl,nc]=size(f);
@@ -27,7 +27,7 @@ function hist3d(f,T,A,leg,flags,ebox)
     x=(1:nl)-(0.5)*ones_new(1,nl);
     y=(1:nc)-(0.5)*ones_new(1,nc);
     dx=1/nep; dy=1/nep;
-    bnds=[0 nl,0 nc,mini(0,mini(f)) maxi(f)]
+    bnds=[0, nl,0, nc,mini(0,mini(f)), maxi(f)]
   end
   x=x.*.[1,1] + dx*ones_new(size(x)).*.[0,1] - dx*ones_new(size(x)).*.[1,0];
   y=y.*.[1,1] + dy*ones_new(size(y)).*.[0,1] - dy*ones_new(size(y)).*.[1,0];

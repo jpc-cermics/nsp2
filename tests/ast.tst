@@ -16,16 +16,12 @@
 // Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  
 // basic test for ast 
-
-function showdiff(x,y)
-  f1=fopen(x.get_fname[]+'1.sce',mode='w');
-  f1.print[x,as_read=%t];
-  f1.close[];
-  f2=fopen(x.get_fname[]+'2.sce',mode='w');
-  f2.print[x,as_read=%t];
-  f2.close[];
-  system(sprintf('diff %s1.sce %s2.sce",x.get_fname[],x.get_fname[]));
-endfunction
+// Note: when space are equivalent to , in matrices 
+//       the result for the ast is not the same when parsing
+//  [x y,z] -> (colconcat x (colconcat y z))
+//  [x,y,z] -> (colconcat (colconcat x y) z)).
+// but when printing ast the comma is always added 
+// thus parse -> ast -> print -> parse do not give identity.
 
 function y=f()
   if x > 0 then 
@@ -55,14 +51,15 @@ if %f then
 // loop on macros testing 
 // pl2ast and then ast print and eval 
 F=glob('SCI/macros/*/*.sci');
+
 for i=1:size(F,'*')
   name = file('rootname",file('tail',F(i)));
   if name == "00util" then continue;end;
-  printf("test1 for %s\n",name);
-  ok=execstr(sprintf('ft=%s;ast=pl2ast(%s);',name,name),errcatch=%t);
+  ok=execstr(sprintf('ft=%s;",name),errcatch=%t);
+  if ~ok then continue;end // macro is not loaded
+  ok=execstr(sprintf('ast=pl2ast(%s);',name),errcatch=%t);
   if ~ok then printf("Error step 1 for %s\n",name); pause;end 
-  [ok,H]=execstr(ast.sprint[],errcatch=%t)
-  
+  [ok,H]=execstr(ast.sprint[],errcatch=%t);
   if ~ok then printf("Error step 2 for %s\n",name);pause;end 
   ok=execstr(sprintf('tt=ft.equal[H(''%s'')];',name,name),errcatch=%t);
   if ~ok then printf("Error step 3 for %s\n",name);pause;end 
@@ -72,17 +69,20 @@ for i=1:size(F,'*')
   if ~ok then printf("Error step 5 for %s\n",name);pause;end 
   if ~ast1.equal[ast] then  printf("Error step 6 for %s\n",name);pause;end 
 end
-
 // test parse_file 
 for i=1:size(F,'*')
   name = file('rootname",file('tail',F(i)));
   if name == "00util" then continue;end;
-  printf("test2 for %s\n",name);
+  ok=execstr(sprintf('ft=%s;",name),errcatch=%t);
+  if ~ok then continue;end // macro is not loaded
+  // here we parse the file, thus ast will contain more 
+  // than just one function
   ast=parse_file(F(i));
-  execstr(sprintf('ft=%s;',name));
-  execstr(ast.sprint[])
-  execstr(sprintf('tt=ft.equal[%s];',name));
-  if ~tt then pause;end 
+  [ok,H]=execstr(ast.sprint[],errcatch=%t);
+  if ~ok then printf("Error step 7 for %s\n",name);pause;end 
+  ok=execstr(sprintf('tt=ft.equal[H(''%s'')];',name,name),errcatch=%t);
+  if ~ok then printf("Error step 8 for %s\n",name);pause;end 
+  if ~tt then printf("Error step 9 for %s\n",name);pause;end 
 end
 end 
 
