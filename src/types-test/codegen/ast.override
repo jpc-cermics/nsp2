@@ -8,6 +8,7 @@ include-public Ast
 /* inserted at the end of public part of class include file */
 extern NspAst *nsp_plist_to_ast(const char *name,PList L);
 extern NspAst* nsp_parse_file(char *Str);
+extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
 
 %%
 include-private Ast
@@ -20,13 +21,14 @@ static int meth_ast_print(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_sprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int meth_ast_fprint(NspAst *self,Stack stack, int rhs, int opt, int lhs);
 static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
-
+static int nsp_check_ast_args(NspList *L);
 %%
 headers
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/parse.h>
+
 %%
 init 
 
@@ -57,16 +59,31 @@ static int _wrap_classa_color_change(NspAst *self,Stack stack,int rhs,int opt,in
   self->cla_color = color;
   return 0;
 }
+
 %%
-override Ast.classa_color_show kwargs
+override Ast.set_args kwargs
 /* a method can be overriden by giving its name or 
  * class.name 
  */
-static int _wrap_classa_color_show(NspAst *self,Stack stack,int rhs,int opt,int lhs)
+
+static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
-  Sciprintf("color: %d\n",self->cla_color);
+  int_types T[] = {list,t_end};
+  NspList *args;
+  if ( GetArgs(stack,rhs,opt,T,&args) == FAIL) return RET_BUG;
+  if ( nsp_check_ast_args(args) == FAIL)  return RET_BUG;
+  if ( (args= (NspList *) nsp_object_copy((NspObject *)args)) == NULL )
+    return RET_BUG;
+  if ( nsp_object_set_name((NspObject *) args,"args") == FAIL ) goto err;
+  nsp_list_destroy(self->args);
+  self->args = args;
   return 0;
+ err: 
+  nsp_list_destroy(args);
+  return RET_BUG;
+  
 }
+
 %%
 override setrowscols_classa kwargs 
 /* override a function */
@@ -1173,5 +1190,20 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
   return TRUE;
 }
 
+/*
+ * checks that all elements are of type NspAst 
+ */ 
+
+static int nsp_check_ast_args(NspList *L)
+{
+  int n = nsp_list_length(L);
+  int i;
+  for ( i = 1; i <= n ; i++)
+    {
+      NspObject *Obj = nsp_list_get_element(L,i);
+      if ( IsAst(Obj) == FALSE ) return FAIL;
+    }
+  return OK;
+}
 
 

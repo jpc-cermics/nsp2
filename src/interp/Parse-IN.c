@@ -843,11 +843,26 @@ static int int_parse_file(Stack stack, int rhs, int opt, int lhs)
   return int_parse_file_gen(stack,rhs,opt,lhs,FALSE);
 }
 
+static int int_parse(Stack stack, int rhs, int opt, int lhs,int mtlb)
+{
+  NspAst *ast;
+  NspSMatrix *S;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  if ((S=GetSMatCopy(stack,1))== NULLSMAT) return RET_BUG;
+  ast =nsp_parse_from_smat(S);
+  if ( ast == NULL ) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ast));
+  return 1;
+}
+
+
 /*
  * The Interface for basic parse operations 
  */
 
 static OpTab Parse_func[]={
+  {"parse_s" , int_parse },
   {"parse_eval" , int_parseevalfile },
   {"exec" , int_parseevalfile },
   {"exec_mtlb" , int_parseevalfile_mtlb },

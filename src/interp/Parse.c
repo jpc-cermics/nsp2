@@ -811,7 +811,47 @@ NspAst* nsp_parse_file(char *Str)
 }
 
 
-/*
+/**
+ * nsp_parse_from_smat:
+ * @M: a #NspSMatrix
+ * 
+ * parses the contents of the string matrix given by @M. 
+ * The strings contained in matrix @M are explored in a column order. 
+ * A #NspAst is returned on success and %NULL on error.
+ *
+ * Return value: a #NspAst or %NULL
+ **/
+
+NspAst * nsp_parse_from_smat(NspSMatrix *M)
+{
+  NspAst *ast;
+  char *file_name;
+  Tokenizer T;
+  nsp_init_tokenizer(&T);
+  nsp_tokeniser_strings(&T,M->S);
+  file_name = NspFileName(SciStack);
+  NspFileName(SciStack)= NULL;
+  /* Calling the evaluator */
+  ast = nsp_parse_full(&T);
+  if ( ast == NULL ) 
+    {
+      int i = T.strings.ind ; 
+      if ( i >= 0 && i < M->mn ) 
+	{
+	  Scierror("Error: parsing of string matrix element %d failed\n",i+1);
+          Scierror("\t%s\n",M->S[i]);
+	}
+      else 
+	{
+	  Scierror("Error: while parsing a string matrix\n");
+	}
+    }
+  /* restore current input function */
+  NspFileName(SciStack) = file_name;
+  return ast;
+}
+
+/**
  * nsp_parse_full:
  * @T: 
  * 
