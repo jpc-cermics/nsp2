@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1837,7 +1837,7 @@ int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
 	    }
 	  else if ( IsSMat(obj)) 
 	    {
-	      /* XXXX A FAIRE */
+	      if ( nsp_smatrix_resize((NspSMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	    }
 	}
       /* read each line */
@@ -1910,7 +1910,7 @@ int int_object_sscanf(Stack stack, int rhs, int opt, int lhs)
 	}
       else if ( IsSMat(obj)) 
 	{
-	  /* XXXX A FAIRE */
+	  if ( nsp_smatrix_resize((NspSMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	}
     }
   /* read each line */
@@ -1990,7 +1990,7 @@ int int_object_fscanf(Stack stack, int rhs, int opt, int lhs)
 	}
       else if ( IsSMat(obj)) 
 	{
-	  /* XXXX A FAIRE */
+	  if ( nsp_smatrix_resize((NspSMatrix *) obj,iter,1) == FAIL) return RET_BUG;
 	}
     }
   /* read each line */

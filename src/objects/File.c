@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -2100,15 +2100,39 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	{
 	case SF_C:
 	  char_buf[i-1][nc[i-1]]='\0';
-	  NthObj(i)=nsp_create_object_from_str(NVOID,char_buf[i-1]);
-	  /* Sciprintf("read [%s]\n",char_buf[i-1]); **/
+	  if ( iline == 0) 
+	    {
+	      NthObj(i)=nsp_create_object_from_str(NVOID,char_buf[i-1]);
+	    }
+	  else
+	    {
+	      ((NspSMatrix *) NthObj(i))->S[iline]=nsp_basic_to_string(char_buf[i-1]);
+	      if ( ((NspSMatrix *) NthObj(i))->S[iline] == NULLSTRING )
+		{
+		  Scierror("Error: scanf out of memory\n");
+		  return FAIL;
+		}
+	    }
 	  break;
 	case SF_S:
-	  NthObj(i)=nsp_create_object_from_str(NVOID,char_buf[i-1]);
+	  if ( iline == 0) 
+	    NthObj(i)=nsp_create_object_from_str(NVOID,char_buf[i-1]);
+	  else
+	    {
+	      ((NspSMatrix *) NthObj(i))->S[iline]=nsp_basic_to_string(char_buf[i-1]);
+	      if ( ((NspSMatrix *) NthObj(i))->S[iline] == NULLSTRING )
+		{
+		  Scierror("Error: scanf out of memory\n");
+		  return FAIL;
+		}
+	    }
 	  break;
 	case SF_LUI:
 	  dval = *((unsigned long int*) ptrtab[i-1]);
-	  NthObj(i)=nsp_create_object_from_double(NVOID,dval);
+	  if ( iline == 0) 
+	    NthObj(i)=nsp_create_object_from_double(NVOID,dval);
+	  else
+	    ((NspMatrix *) NthObj(i))->R[iline]= dval;
 	  break;
 	case SF_SUI:
 	  dval = *((unsigned short int*) ptrtab[i-1]);
