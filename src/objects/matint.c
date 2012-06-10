@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2006-2011 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2012 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -855,7 +855,7 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts,ind
 	  else if ( A->n == 1)
 	    return MAT_INT(type)->clone(NVOID, Obj, 0, 1, FALSE);
 	}
-      return MAT_INT(type)->clone(NVOID, Obj, m, n, FALSE);
+      return MAT_INT(type)->clone(NVOID, Obj, 0, 0, FALSE);
     }
 
   elt_size = MAT_INT(type)->elt_size(Obj); 
