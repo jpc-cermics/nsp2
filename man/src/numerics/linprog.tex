@@ -169,7 +169,10 @@ This argument is an hash table with the possible following entries:
        13 &  geom mean + equil scaling + round scale factors to power of 2 but skip if LP is well scaled\\
        \hline
       \end{tabular}
-      Note that scale don't occur if optional presolve argument is true (scaling being done by the presolver). 
+      See \href{http://en.wikibooks.org/wiki/GLPK/Scaling}{glpk wiki book about scaling}.
+      Note that scale   don't occur if optional presolve argument is true (scaling being done by the presolver). 
+      Note also that in \href{http://en.wikibooks.org/wiki/GLPK/Modeling_tips#Close-to-zero_values}{some cases} 
+      scaling can damage the numerical behavior.
 \end{itemize}
 \item[simplex solver options]
 \begin{itemize}
@@ -218,7 +221,10 @@ This argument is an hash table with the possible following entries:
 
 \itemdesc{terminal outputs}
 
-TO BE DONE: explain the output informations from glpk during computation. 
+Some informations about output informations sending by glpk to the terminal 
+during computation are available at the 
+\href{http://en.wikibooks.org/wiki/GLPK/Terminal_output}{glpk wiki book}.
+ 
 
 \end{mandescription} 
 
