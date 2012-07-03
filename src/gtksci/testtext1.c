@@ -504,6 +504,26 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	}
       goto def;
       break;
+    case GDK_Left :
+      cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+      gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
+      gtk_text_iter_backward_char (&iter);
+      if (gtk_text_iter_can_insert (&iter,GTK_TEXT_VIEW(view->text_view)->editable) ) {
+        gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+        gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
+                                     &iter,
+                                     0, FALSE, 0.0, 1.0);
+      } else {
+        if ( view->buffer->mark != NULL) {
+          gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
+          gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+          gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+                                        view->buffer->mark,
+                                        0, TRUE, 1.0, 1.0);
+          }
+	
+      }
+      return TRUE;
     case 'b' :
       if ( event->state & GDK_CONTROL_MASK ) 
 	{
@@ -516,7 +536,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 	    }
           gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
 					&iter,
-					0, TRUE, 1.0, 1.0);
+					0, TRUE, 0.0, 1.0);
 	  return TRUE;
 	}
       goto def;
@@ -566,9 +586,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     }
     gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
-				   &end,
- 				   0, TRUE, 1.0, 1.0);
+    cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
+				   cursor_mark,
+				   0, FALSE, 1.0, 1.0);
     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   }
   g_signal_stop_emission_by_name (widget, "key_press_event");
@@ -585,9 +606,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     /* fprintf(stdout,"insert text\n"); */
     gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
-    gtk_text_view_scroll_to_iter(GTK_TEXT_VIEW (view->text_view), 
-				 &end,
- 				 0, TRUE, 1.0, 1.0);
+    cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+    gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
+				   cursor_mark,
+				   0, FALSE, 1.0, 1.0);
     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   } else {
     if (view->buffer->mark != NULL) {
@@ -619,6 +641,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     {
       gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
       gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
+      cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+      gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
+				   cursor_mark,
+				   0, FALSE, 1.0, 1.0);
     }
   return FALSE;
 }
