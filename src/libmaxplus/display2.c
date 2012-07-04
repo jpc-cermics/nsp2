@@ -44,17 +44,17 @@ void Display_Vector(int nnodes, double *v)
     }
 }
 
-void Display_Vector_String(int nnodes, double *v,char *s)
+void Display_Vector_String(int nnodes,const double *v,const char *s)
 {
   int i;
   for (i=0; i<nnodes; i++)
     {
-      printf(s);
+      printf("%s",s);
       printf("(%d)= %g\n",i,v[i]);
     }
 }
 
-void Display_Sparse_Matrix(int narcs, int *ij,double *A)
+void Display_Sparse_Matrix(int narcs,const int *ij,const double *A)
 {
   int i;
   for (i=0;i<narcs; i++)
