@@ -1112,7 +1112,7 @@ static int int_mptriu(Stack stack, int rhs, int opt, int lhs)
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
   if ( (HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  nsp_mat_triu((NspMatrix *) HMat,k1);
+  nsp_mpmatrix_triu( HMat,k1);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }
@@ -1133,7 +1133,7 @@ static int int_mptril(Stack stack, int rhs, int opt, int lhs)
       if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
     }
   if ( (HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT) return RET_BUG;
-  nsp_mat_tril((NspMatrix *) HMat,k1);
+  nsp_mpmatrix_tril( HMat,k1);
   NSP_OBJECT(HMat)->ret_pos = 1;
   return 1;
 }

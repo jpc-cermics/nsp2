@@ -845,6 +845,62 @@ NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, int k)
   return(Loc);
 }
 
+/**
+ * nsp_mpmatrix_triu:
+ * @A: a #NspMatrix 
+ * @k: an integer 
+ * 
+ * A = triu(A,k). 
+ **/
+
+void nsp_mpmatrix_triu(NspMaxpMatrix *A, int k)
+{
+  int i,j;
+  if ( A->rc_type == 'r' )
+    {
+      double *Aj;
+      for ( j = 0, Aj = A->R ; j < Min(A->m+k-1,A->n) ; j++, Aj += A->m )
+	for ( i = Max(0,j+1-k) ; i < A->m ; i++)
+	  Aj[i] = -1/0.0;
+    }
+  else
+    {
+      doubleC zeroC = {-1/0.0,0.0}, *Aj;
+      for ( j = 0, Aj = A->C ; j < Min(A->m+k-1,A->n) ; j++, Aj += A->m )
+	for ( i = Max(0,j+1-k) ; i < A->m ; i++)
+	  Aj[i] = zeroC;
+    }
+}
+
+/**
+ * nsp_mpmatrix_tril:
+ * @A: a #NspMatrix 
+ * @k:  an integer
+ * 
+ * A=Tril(A)
+ **/
+
+void nsp_mpmatrix_tril(NspMaxpMatrix *A, int k)
+{
+  int i,j;
+  if ( A->rc_type == 'r' )
+    {
+      int j0 = Max(0,k+1);
+      double *Aj= &A->R[j0*A->m];
+      for ( j = j0; j < A->n ; j++, Aj += A->m )
+	for ( i = 0 ; i < Min(A->m,j-k) ; i++)
+	  Aj[i] = -1/0.0;
+    }
+  else
+    {
+      int j0 = Max(0,k+1);
+      doubleC zeroC = {-1/0.0,0.0}, *Aj= &A->C[j0*A->m];
+      for ( j = j0 ; j < A->n ; j++, Aj += A->m )
+	for ( i = 0 ; i < Min(A->m,j-k) ; i++)
+	  Aj[i] = zeroC;
+    }
+}
+
 
 
 /**
