@@ -23,7 +23,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "nsp/interf.h"
+#include <nsp/nsp.h>
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/sprowmatrix.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/interf.h>
+
 #include "maxplus.h"
 
 static int int_maxp_howard(Stack stack, int rhs, int opt, int lhs)
@@ -169,12 +179,12 @@ static int int_maxp_karp(Stack stack, int rhs, int opt, int lhs)
 
 static int int_maxp_sp_karp(Stack stack, int rhs, int opt, int lhs)
 { 
-  NspSpMatrix *A;
+  NspSpRowMatrix *A;
   double res;
   int entry=1;
   CheckRhs(1,2);
   CheckLhs(1,1);
-  if ((A = GetRealSp(stack,1)) == NULLSP)  return RET_BUG;
+  if ((A = GetRealSpRow(stack,1)) == NULL)  return RET_BUG;
   if ( rhs == 2 ) 
     {
       if ( GetScalarInt(stack,2,&entry) == FAIL) return RET_BUG;
@@ -188,7 +198,7 @@ static int int_maxp_sp_karp(Stack stack, int rhs, int opt, int lhs)
 static int int_maxp_sparse2full(Stack stack, int rhs, int opt, int lhs)
 { 
   NspMatrix *Ij,*a,*Res;
-  int *ij=NULL,i,I, nnodes,narcs;
+  int *ij=NULL,I, nnodes,narcs;
   CheckRhs(3,3);
   CheckLhs(1,1);
 
@@ -200,7 +210,7 @@ static int int_maxp_sparse2full(Stack stack, int rhs, int opt, int lhs)
   if ( GetScalarInt(stack,3,&nnodes) == FAIL) return RET_BUG;
   narcs=a->m;
   if ((Res = nsp_matrix_create(NVOID,'r',nnodes,nnodes)) == NULLMAT) return RET_BUG;
-  for (I=0; I< Res->mn; I++ ) Res->R[i] = -HUGE_VAL;
+  for (I=0; I< Res->mn; I++ ) Res->R[I] = -HUGE_VAL;
   for (I=0; I< narcs; I++)
     {
        Res->R[(ij[2*I]-1)+ (ij[2*I+1]-1)*nnodes]=a->R[I];

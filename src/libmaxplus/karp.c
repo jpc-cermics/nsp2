@@ -2,8 +2,18 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
-#include "nsp/object.h"
+#include <nsp/nsp.h>
+#include <nsp/object.h> 
+#include <nsp/matrix.h> 
+#include <nsp/bmatrix.h> 
+#include <nsp/smatrix.h> 
+#include <nsp/imatrix.h> 
+#include <nsp/sprowmatrix.h> 
+#include <nsp/spcolmatrix.h> 
+#include <nsp/matint.h> 
+#include <nsp/interf.h>
 #include "maxplus.h" 
+
 
 static int Karp(const NspMatrix *IJ,const NspMatrix *A,int nnodes, int entry, double *u);
 
@@ -48,10 +58,10 @@ int maxplus_matrix_karp(NspMatrix *A,int entry,double *res)
  * Return value: 
  **/
 
-int maxplus_spmatrix_karp(NspSpMatrix *Sp,int entry,double *res) 
+int maxplus_spmatrix_karp(NspSpRowMatrix *Sp,int entry,double *res) 
 {
   NspMatrix *IJ, *A;
-  if ( nsp_spmatrix_get(Sp, &IJ, &A)== FAIL) return FAIL;
+  if ( nsp_sprowmatrix_get(Sp, &IJ, &A)== FAIL) return FAIL;
   return  Karp(IJ,A,Sp->m,entry,res);
 }
 
