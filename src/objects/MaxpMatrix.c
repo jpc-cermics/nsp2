@@ -802,15 +802,50 @@ int nsp_mpmatrix_set_diag(NspMaxpMatrix *A, NspMaxpMatrix *Diag, int k)
  * @Diag: a #NspMaxpMatrix
  * @k: an int 
  *
- * Creates a square marix with its @k-th diagonal filled with @Diag.
+ * Creates a square matrix with its @k-th diagonal filled with @Diag.
  * 
  * returns: a #MspMatrix or %NULLMAXPMAT 
  */
 
 NspMaxpMatrix *nsp_mpmatrix_create_diag(const NspMaxpMatrix *Diag, int k)
 {
-  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_create_diag((const NspMatrix *)Diag, k));
+  //  return nsp_matrix_cast_to_mpmatrix(nsp_matrix_create_diag((const NspMatrix *)Diag, k));
+  int i,j;
+  int imin,imax,nd;
+  int inc=1;
+  double d= -1.0/0.0;
+  NspMaxpMatrix *Loc;
+  imin = Max(0,-k);
+  imax = Diag->mn +imin;
+  nd = Diag->mn+Abs(k);
+  if (( Loc = nsp_mpmatrix_create(NVOID,Diag->rc_type,nd,nd)) == NULL)
+    return(NULL);
+  switch (Loc->rc_type ) 
+    {
+    case 'r' : nsp_mat_set_rval((NspMatrix *)Loc,-1/0.00);break;
+    case 'c': nsp_csetd(&Loc->mn,&d,Loc->C,&inc);break;
+    }
+  if ( Loc->rc_type == 'c') 
+    {
+      j=0;
+      for ( i = imin ; i < imax ; i++ ) 
+	{
+	  Loc->C[i+(i+k)*Loc->m].i= Diag->C[j].i;
+	  Loc->C[i+(i+k)*Loc->m].r= Diag->C[j++].r;
+	}
+    }
+  else 
+    {
+      j=0;
+      for ( i = imin ; i < imax ; i++ ) 
+	{
+	  Loc->R[i+(i+k)*Loc->m]= Diag->R[j++];
+	}
+    }
+  return(Loc);
 }
+
+
 
 /**
  * nsp_mpmatrix_transpose: 
