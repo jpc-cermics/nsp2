@@ -679,6 +679,12 @@ static int int_m2mp(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *A;
   CheckRhs(1,1);
   CheckLhs(1,1);
+  if ( IsMpMatObj(stack,1)) 
+    {
+      /* Note that the result will be boolean */
+      NthObj (1)->ret_pos = 1;
+      return 1;
+    }
   if (( A = GetMat(stack,1)) == NULLMAT) return RET_BUG;
   if (( B = nsp_mpmatrix_copy((NspMaxpMatrix *) A)) == NULLMAXPMAT) return RET_BUG;
   MoveObj(stack,1,(NspObject *) B);   
@@ -966,38 +972,48 @@ static int int_mpsum(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * matprod : product of all elements of a
+ * matprod : product of all elements of a in the tropical sense 
+ * i.e it is a sum 
  * a is unchanged 
  */
 
+/*
 static int int_mpprod(Stack stack, int rhs, int opt, int lhs)
 {
   return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_prod) );
 }
+*/
 
 /*
- * matcusum : cumulative sum of all elements of a
+ * matcusum : tropical cumulative sum of all elements of a
+ * i.e a cumulative max 
  * a is unchanged 
  */
 
+static NspMatrix *nsp_mat_cum_max(NspMatrix *A, int dim)
+{
+  return (NspMatrix *) nsp_mpmatrix_cum_max((NspMaxpMatrix *)A, dim);
+}
+
 static int int_mpcusum(Stack stack, int rhs, int opt, int lhs)
 {
-  return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_cum_sum) );
+  return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_cum_max) );
 }
 
 /*
- * matcuprod : cumulative prod of all elements of a
+ * matcuprod : tropical cumulative prod of all elements of a
+ * i.e a standard cumulative sum.
  * a is unchanged 
  */
 
 static int int_mpcuprod(Stack stack, int rhs, int opt, int lhs)
 {
-  return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_cum_prod) );
+  return ( int_mp_sum(stack,rhs,opt,lhs,nsp_mat_cum_sum) );
 }
 
-/*
- *nsp_mpmat_maxi: Maxi(*HMat);
- * A is unchanged 
+/* mp_maxi: a generic interface for computing max or min in 
+ * the usual sense. This interface is used for the tropical sum 
+ * operation.
  */
 
 typedef NspMatrix *(*MiMax) (NspMatrix *A,int,NspMatrix **Imax,int lhs);
@@ -2446,7 +2462,7 @@ static OpWrapTab Matrix_func[]={
   {"logel_mp",int_mxlogel,int_mp_wrap1},
   {"lt_mp_mp" ,  int_mplt ,NULL},
   {"m2mp",int_m2mp,NULL},
-  {"max_mp" ,  int_mpmaxi,NULL}, 
+  {"max_mp" ,  int_mpmaxi,NULL},
   {"maxplus",int_m2mp,NULL},
   {"min_mp" ,  int_mpmini ,NULL},
   {"minus_mp",int_mxminus,int_mp_wrap1},
@@ -2459,8 +2475,8 @@ static OpWrapTab Matrix_func[]={
   {"ones_mp_mp" ,  int_mpones_deprecated,NULL},
   {"ones_deprecated_mp_mp" ,  int_mpones_deprecated,NULL},
   {"plus_mp_mp",   int_mpdadd,NULL},
-  {"prod_mp" ,  int_mpprod ,NULL},
-  {"prod_mp_s" ,  int_mpprod ,NULL},
+  {"prod_mp" ,  int_mpsum ,NULL}, // should be a sum
+  {"prod_mp_s" ,  int_mpsum ,NULL},
   {"quote_mp",int_mpquote,NULL},
   {"real_mp" ,  int_mprealpart ,NULL},
   {"redim_mp" ,  int_matint_redim ,NULL}, 
@@ -2476,8 +2492,7 @@ static OpWrapTab Matrix_func[]={
   {"sort_mp" , int_mpmatrix_sort ,NULL},
   {"sqrt_mp",int_mxsqrtel,int_mp_wrap1},
   {"sqrtel_mp",int_mxsqrtel,int_mp_wrap1},
-  {"sum_mp" ,  int_mpsum ,NULL},
-  {"sum_mp_s" ,  int_mpsum ,NULL},
+  {"sum_mp" ,  int_mpmaxi ,NULL}, // sum is a max in Maxplus 
   {"tan_mp",int_mxtan,int_mp_wrap1},
   {"tanh_mp",int_mxtanh,int_mp_wrap1},
   {"tril_mp" ,  int_mptril ,NULL},

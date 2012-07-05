@@ -219,6 +219,7 @@ extern int nsp_mpmat_find(NspMaxpMatrix *A, int lhs, NspMaxpMatrix **Res1, NspMa
 
 extern NspMatrix * nsp_mpmatrix_cast_to_matrix(NspMaxpMatrix *M);
 extern NspMaxpMatrix * nsp_matrix_cast_to_mpmatrix(NspMatrix *M);
+extern NspMaxpMatrix *nsp_mpmatrix_cum_max(NspMaxpMatrix *A, int dim);
 
 #endif 
 

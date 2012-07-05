@@ -918,5 +918,94 @@ NspMaxpMatrix *nsp_mpmatrix_transpose(const NspMaxpMatrix *A)
 }
 
 
+/**
+ * nsp_mpmatrix_cum_max:  cumulative max of elements of @A
+ * @A: a #NspMatrix
+ * @dim: an integer 
+ *
+ * for dim=0 the cumulative max over all elements is computed (in column major order).
+ * for dim=1 the cumulative max over the row indices is computed.
+ * for dim=2 the cumulative max over the column indices is computed.
+ * else dim=0 is forced.
+ * 
+ * Return value: a #NspMatrix of same dim than @A
+ **/
 
+NspMaxpMatrix *nsp_mpmatrix_cum_max(NspMaxpMatrix *A, int dim)
+{
+  double cumax;
+  doubleC C_cumax;
+  NspMaxpMatrix *Max;
+  int i,j;
 
+  if ( A->mn == 0) 
+    return  nsp_mpmatrix_create(NVOID,'r',A->m,A->n);
+
+  if ((Max = nsp_mpmatrix_create(NVOID,A->rc_type,A->m,A->n)) == NULL) 
+    return NULL;
+
+  switch (dim) 
+    {
+    default : 
+      Sciprintf("Invalid dim flag '%d' assuming 0\n",dim);
+
+    case 0: 
+      if ( A->rc_type == 'r' ) 
+	{
+	  cumax=-1/0.00;
+	  for ( i=0 ; i < A->mn ; i++)
+	    Max->R[i] = (cumax = Max(cumax,A->R[i]));
+	}
+      else
+	{
+	  C_cumax.r  = -1/0.00 ; C_cumax.i = -1/0.00;
+	  for ( i=0 ; i < A->mn ; i++) 
+	    { 
+	      Max->C[i].r = ( C_cumax.r = Max(C_cumax.r,A->C[i].r));
+	      Max->C[i].i = ( C_cumax.i = Max(C_cumax.i,A->C[i].i));
+	    }
+	}
+      break;
+
+    case 1:
+      if ( A->rc_type == 'r' ) 
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    cumax=-1/0.00;
+	    for ( i=0 ; i < A->m ; i++) 
+	      Max->R[i+(A->m)*j] = (cumax =Max(cumax, A->R[i+(A->m)*j]));
+	  }
+      else
+	for ( j= 0 ; j < A->n ; j++) 
+	  {
+	    C_cumax.r  = -1/0.00 ; C_cumax.i = -1/0.00;
+	    for ( i=0 ; i < A->m ; i++) 
+	      { 
+		Max->C[i+j*A->m].r = ( C_cumax.r =Max(C_cumax.r,A->C[i+j*A->m].r));
+		Max->C[i+j*A->m].i = ( C_cumax.i =Max(C_cumax.i,A->C[i+j*A->m].i));
+	      }
+	  }
+      break;
+
+    case 2:
+      if ( A->rc_type == 'r' ) 
+	for ( i= 0 ; i < A->m ; i++) 
+	  {
+	    cumax=-1/0.00;
+	    for ( j=0 ; j < A->n ; j++) 
+	      Max->R[i+(A->m)*j] = (cumax =Max(cumax, A->R[i+(A->m)*j]));
+	  }
+      else
+	for ( i=0 ; i < A->m ; i++) 
+	  {
+	    C_cumax.r  = -1/0.00 ; C_cumax.i = -1/0.00;
+	    for ( j= 0 ; j < A->n ; j++) 
+	      { 
+		Max->C[i+j*A->m].r = ( C_cumax.r =Max(C_cumax.r,A->C[i+j*A->m].r));
+		Max->C[i+j*A->m].i = ( C_cumax.i =Max(C_cumax.i,A->C[i+j*A->m].i));
+	      }
+	  }
+      break;
+    }
+  return Max;
+}
