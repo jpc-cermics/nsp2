@@ -589,7 +589,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
     gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
 				   cursor_mark,
-				   0, FALSE, 1.0, 1.0);
+				   0, TRUE, 1.0, 1.0);
     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   }
   g_signal_stop_emission_by_name (widget, "key_press_event");
@@ -609,7 +609,7 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
     cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
     gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
 				   cursor_mark,
-				   0, FALSE, 1.0, 1.0);
+				   0, TRUE, 1.0, 1.0);
     gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   } else {
     if (view->buffer->mark != NULL) {
