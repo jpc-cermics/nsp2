@@ -161,7 +161,7 @@ static void nsp_draw_qcurve(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,v
       /* use a mark */
       Xgc->graphic_engine->xget_mark(Xgc,xmark); 
       cmark=xmark[0];
-      Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
+      Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->width);
     }
   if ( P->obj->color != -1 ) 
     Xgc->graphic_engine->xset_pattern(Xgc, P->obj->color);
