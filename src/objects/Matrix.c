@@ -820,10 +820,10 @@ int nsp_matrix_enlarge(NspMatrix *A, int m, int n)
     }
 
   if ( n > A->n  )
-    if ( nsp_matrix_add_columns(A,n- A->n) == FAIL) return(FAIL);
+    if ( nsp_matrix_add_columns(A,n- A->n,0.0) == FAIL) return(FAIL);
 
   if ( m > A->m  )  
-    if ( nsp_matrix_add_rows(A, m - A->m) == FAIL) return(FAIL);
+    if ( nsp_matrix_add_rows(A, m - A->m,0.0) == FAIL) return(FAIL);
   return(OK);
 }
 
@@ -880,6 +880,7 @@ int nsp_matrix_concat_right(NspMatrix *A,const NspMatrix *B)
  * nsp_matrix_add_columns:
  * @A: a #NspMatrix
  * @n: number of columns 
+ * @d: value to give to new elements
  * 
  * Adds @n columns to the #NspMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
@@ -887,9 +888,9 @@ int nsp_matrix_concat_right(NspMatrix *A,const NspMatrix *B)
  * returns:  %OK or %FAIL.
  */
 
-int nsp_matrix_add_columns(NspMatrix *A, int n)
+int nsp_matrix_add_columns(NspMatrix *A, int n,double d)
 {
-  double d=0.0;
+  /* double d=0.0; */
   int inc = 1,ns;
   int Asize;
   if (n == 0) return OK;
@@ -1062,6 +1063,7 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
  * nsp_matrix_add_rows:
  * @A: a #NspMatrix
  * @m: number of rows
+ * @d: value to give to new elements
  * 
  * Adds @n rows to the #NspMatrix. Note that 
  * if @A is an empy matrix on entry it remains empty.
@@ -1069,9 +1071,9 @@ NspMatrix*nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B)
  * returns:  %OK or %FAIL.
  */
 
-int nsp_matrix_add_rows(NspMatrix *A, int m)
+int nsp_matrix_add_rows(NspMatrix *A, int m,double d)
 {
-  double d=0.0;
+  /* double d=0.0; */
   int inc = -1,Am;
   int j;
   if ( m == 0) return OK;

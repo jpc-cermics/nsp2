@@ -149,10 +149,10 @@ extern int nsp_matrix_latex_tab_print(const NspMatrix *Mat);
 extern int nsp_matrix_redim (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_enlarge (NspMatrix *A, int m, int n); 
 extern int nsp_matrix_concat_right(NspMatrix *A, const NspMatrix *B); 
-extern int nsp_matrix_add_columns(NspMatrix *A, int n); 
+extern int nsp_matrix_add_columns(NspMatrix *A, int n, double d); 
 extern NspMatrix *nsp_matrix_concat_down(const NspMatrix *A,const NspMatrix *B); 
 extern NspMatrix *nsp_matrix_concat_diag(const NspMatrix *A,const NspMatrix *B); 
-extern int nsp_matrix_add_rows(NspMatrix *A, int m); 
+extern int nsp_matrix_add_rows(NspMatrix *A, int m,double d); 
 extern int nsp_matrix_set_submatrix(NspMatrix *A, NspMatrix *Rows, NspMatrix *Cols, NspMatrix *B); 
 extern int GenericMatSeRoBis(void *A, int Am, int An, int Amn, int nb_ind, int rmin, int rmax,
 			     void *B, int Bm, int Bn, int Bmn, F_Enlarge F, int *Bscal);

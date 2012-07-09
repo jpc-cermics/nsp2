@@ -1021,7 +1021,7 @@ typedef int (*MiMax1) (NspMatrix *A, NspMatrix *B, NspMatrix *Ind, int j,int fla
 
 static int int_mp_maxi(Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 {
-  int dim;
+  int dim=0;
   NspMaxpMatrix *A,*M,*B; 
   NspMatrix *M1,*Imax;
   if ( rhs < 1) 
@@ -2390,8 +2390,8 @@ static OpWrapTab Matrix_func[]={
   {"abs_mp",int_mxabs,int_mp_wrap1},
   {"acos_mp",int_mxacos,int_mp_wrap1},
   {"acosh_mp",int_mxacosh,int_mp_wrap1},
-  {"addcols_mp_mp",int_mpaddcols ,NULL},
-  {"addrows_mp_mp",int_mpaddrows ,NULL},
+  {"addcols_mp_m",int_mpaddcols ,NULL},
+  {"addrows_mp_m",int_mpaddrows ,NULL},
   {"and_mp_mp",int_mpmini,NULL},
   {"arg_mp",int_mxangle,int_mp_wrap1},
   {"angle_mp",int_mxangle,int_mp_wrap1},

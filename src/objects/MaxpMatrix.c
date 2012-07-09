@@ -486,9 +486,27 @@ int nsp_mpmatrix_latex_tab_print(const NspMaxpMatrix *Mat)
 
 int nsp_mpmatrix_enlarge(NspMaxpMatrix *A, int m, int n)
 {
-  int rep = nsp_matrix_enlarge((NspMatrix *)A,m,n);
-  nsp_matrix_cast_to_mpmatrix((NspMatrix *)A);
-  return rep;
+  double un=1.0,zero=0.0,d=-un/zero;
+  if ( ((double) m)*((double) n) > INT_MAX )
+    {
+      Scierror("Error:\tMatrix dimensions too large\n");
+      return FAIL;
+    }
+
+  if ( A->mn == 0) 
+    {
+      /* special case A=[] **/
+      if ( nsp_matrix_resize((NspMatrix *)A,m,n) == FAIL) return(FAIL);
+      nsp_mat_set_rval((NspMatrix *)A,d);
+      return OK;
+    }
+
+  if ( n > A->n  )
+    if ( nsp_matrix_add_columns((NspMatrix *)A,n- A->n,d) == FAIL) return(FAIL);
+
+  if ( m > A->m  )  
+    if ( nsp_matrix_add_rows((NspMatrix *)A, m - A->m,d) == FAIL) return(FAIL);
+  return(OK);
 }
 
 /**
@@ -521,7 +539,8 @@ int nsp_mpmatrix_concat_right(NspMaxpMatrix *A,const NspMaxpMatrix *B)
 
 int nsp_mpmatrix_add_columns(NspMaxpMatrix *A, int n)
 {
-  int rep = nsp_matrix_add_columns((NspMatrix *)A,n);
+  double un=1.0,zero=0.0;
+  int rep = nsp_matrix_add_columns((NspMatrix *)A,n,-un/zero);
   nsp_matrix_cast_to_mpmatrix((NspMatrix *)A);
   return rep;
 }
@@ -571,7 +590,8 @@ NspMaxpMatrix*nsp_mpmatrix_concat_diag(const NspMaxpMatrix *A,const NspMaxpMatri
 
 int nsp_mpmatrix_add_rows(NspMaxpMatrix *A, int m)
 {
-  int rep = nsp_matrix_add_rows((NspMatrix *)A,m);
+  double un=1.0,zero=0.0;
+  int rep = nsp_matrix_add_rows((NspMatrix *)A,m,-un/zero);
   nsp_matrix_cast_to_mpmatrix((NspMatrix *)A);
   return rep;
 }

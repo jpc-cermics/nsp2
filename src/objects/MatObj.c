@@ -2849,7 +2849,7 @@ int_mxaddcols (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if (GetScalarInt (stack, 2, &n1) == FAIL)
     return RET_BUG;
-  if (nsp_matrix_add_columns (HMat, n1) != OK)
+  if (nsp_matrix_add_columns (HMat, n1,0.0) != OK)
     return RET_BUG;
   NSP_OBJECT (HMat)->ret_pos = 1;
   return 1;
@@ -2874,7 +2874,7 @@ int_mxaddrows (Stack stack, int rhs, int opt, int lhs)
     return RET_BUG;
   if (GetScalarInt (stack, 2, &m1) == FAIL)
     return RET_BUG;
-  if (nsp_matrix_add_rows (HMat, m1) != OK)
+  if (nsp_matrix_add_rows(HMat, m1,0.0) != OK)
     return RET_BUG;;
   NSP_OBJECT (HMat)->ret_pos = 1;
   return 1;
