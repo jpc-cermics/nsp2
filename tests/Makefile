@@ -49,7 +49,6 @@ TESTS= \
 	setfunctions.dia \
 	ndind2ind.dia \
 	createbyset.dia \
-	sparse-mixed.dia \
 	extract_empty.dia \
 	sci_save_load.dia \
 	global.dia \
@@ -61,6 +60,7 @@ TESTS= \
 	int3d.dia \
 	intg_splin.dia \
 	sparse_ij_val.dia \
+	sparse-mixed.dia \
 	solve.dia \
 	legendre.dia \
 	scalexp.dia \
@@ -107,8 +107,6 @@ ALG=algebra-balanc.dia \
 AFINIR= \
 	ode_4.dia \
 	color-strings.tst \
-	hash-vl.tst \
-	matops.tst \
 	pvm.tst \
 	sparse-nsp.tst \
 	sparse.tst \

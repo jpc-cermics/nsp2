@@ -59,6 +59,12 @@ Sp1=Sp;
 Sp1.scale_cols[1:size(Sp1,2)];
 if norm(full(Sp)*diag(1:size(Sp1,2))-full(Sp1)) > 1.e-10 then pause;end 
 
+// convert to matlab representation en back.
+
+[Jc,Ir,P]=spget_mtlb(Sp);
+Sp1=spfrommtlb(Jc,Ir,P,size(Sp));
+if ~Sp.equal[Sp1] then pause;end 
+
 // nsp_spcolmatrix_redim
 // XXX this should be a method 
 
@@ -131,8 +137,6 @@ if or(A1<>[A # A]) then pause;end
 Sp1=[A # Sp];
 A1=sp2m(Sp1);
 if or(A1<>[A # A]) then pause;end
-
-
 
 // nsp_spcolmatrix_insert_elt(A,i,j,B,rb,cb)
 // nsp_spcolmatrix_delete_elt(A,row,col,amin,amax)
@@ -642,18 +646,75 @@ if or(A1<>full(Sp1)) then pause;end
 //  *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
 //  */
  
-// /*
-//  *nsp_mat_kron: produit de Kroeneker
-//  * A et B sont inchanges 
-//  */
 
-// /*
-//  *nsp_mat_sort: Index=Sort(A)
-//  * A is changed, Index created with the indexes 
-//  * return NULLMAT on error 
-//  * WARNING : A must be real but the test is not done here 
-//  * ======
-//  */
+//  Kroneker product 
+
+// SP .*. SP 
+//--------------
+
+A2=rand(A);
+Sp2= sparse(A2)
+Sp1=Sp .*. Sp2 
+A1=sp2m(Sp1);
+if or(A1<> A .*. A2 ) then pause;end
+
+// SP .*. full
+//--------------
+if %f then 
+  // not already present TOBEDONE 
+  A2=rand(A);
+  Sp2= sparse(A2)
+  Sp1=Sp .*. A2
+  A1=sp2m(Sp1);
+  if or(A1<>A .*. A2 ) then pause;end
+end 
+
+// full .*. SP
+//--------------
+
+if %f then 
+  // not already present TOBEDONE 
+  A2=rand(A);
+  Sp2= sparse(A2)
+  Sp1= A2 .*. Sp 
+  A1=sp2m(Sp1);
+  if or(A1<>A .*. A2 ) then pause;end
+end
+
+// SP .*. scalar(Ful)
+//--------------
+if %f then 
+  // not already present TOBEDONE 
+  Sp1=Sp .*. 4 
+  A1=sp2m(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
+
+// SP .*. scalar(Sp)
+//--------------
+
+Sp1=Sp .*. sparse(4) 
+A1=sp2m(Sp1);
+if or(A1<>A * 4 ) then pause;end
+
+// scalar(Ful) .*. Sp
+//------------------
+if %f then 
+  // not already present TOBEDONE 
+  Sp1= 4 .*. Sp 
+  A1=sp2m(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end 
+
+// scalar(Sp) .*. Sp
+//------------------
+
+Sp1= sparse(4) .*. Sp 
+A1=sp2m(Sp1);
+if or(A1<>A * 4 ) then pause;end
+
+// sort(Sp) 
+// XXXX 
 
 // nsp_spcolmatrix_sum
 //------------------
