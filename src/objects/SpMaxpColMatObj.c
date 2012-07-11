@@ -942,15 +942,15 @@ static int int_spmaxpcolmatrix_concatdiag(Stack stack, int rhs, int opt, int lhs
 static int int_spmaxpcolmatrix_concat_sp_m_gen(Stack stack, int rhs, int opt, int lhs, SpC F)
 {
   NspSpMaxpColMatrix *HMat1,*B;
-  NspMatrix *HMat2;
+  NspMaxpMatrix *HMat2;
   CheckRhs(2,2);
   CheckLhs(1,1);
   if ((HMat1 = GetSpMaxpCol(stack,1))  == NULLSPMAXPCOL) return RET_BUG;
-  if ((HMat2 = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+  if ((HMat2 = GetMpMat(stack,2)) == NULLMAXPMAT) return RET_BUG;
   if ( HMat1->m ==0 && HMat1->n == 0) 
     {
       /* return 2 */
-      if ((B=nsp_spmaxpcolmatrix_from_mat(HMat2)) == NULLSPMAXPCOL) return RET_BUG;
+      if ((B=nsp_spmaxpcolmatrix_from_mat((NspMatrix *)HMat2)) == NULLSPMAXPCOL) return RET_BUG;
       MoveObj(stack,1,NSP_OBJECT(B));
       return 1;
     }
@@ -962,7 +962,7 @@ static int int_spmaxpcolmatrix_concat_sp_m_gen(Stack stack, int rhs, int opt, in
   else
     {
       if ((HMat1 = GetSpMaxpColCopy(stack,1))  == NULLSPMAXPCOL) return RET_BUG;
-      if ((B=nsp_spmaxpcolmatrix_from_mat(HMat2)) == NULLSPMAXPCOL) return RET_BUG;
+      if ((B=nsp_spmaxpcolmatrix_from_mat((NspMatrix *)HMat2)) == NULLSPMAXPCOL) return RET_BUG;
       if ( (*F)(HMat1,B)!= OK) 
 	{
 	  nsp_spmaxpcolmatrix_destroy(B);
@@ -1011,10 +1011,10 @@ static int int_spmaxpcolmatrix_concatdiag_sp_m(Stack stack, int rhs, int opt, in
 static int int_spmaxpcolmatrix_concat_m_sp_gen(Stack stack, int rhs, int opt, int lhs, SpC F)
 {
   NspSpMaxpColMatrix *HMat2,*B;
-  NspMatrix *HMat1;
+  NspMaxpMatrix *HMat1;
   CheckRhs(2,2);
   CheckLhs(1,1);
-  if ((HMat1 = GetMat(stack,1))  == NULLMAT ) return RET_BUG;
+  if ((HMat1 = GetMpMat(stack,1))  == NULLMAXPMAT ) return RET_BUG;
   if ( HMat1->m ==0 && HMat1->n == 0) 
     {
       /* return 2 */
@@ -1025,13 +1025,13 @@ static int int_spmaxpcolmatrix_concat_m_sp_gen(Stack stack, int rhs, int opt, in
   if ((HMat2 = GetSpMaxpCol(stack,2)) == NULLSPMAXPCOL) return RET_BUG;
   if ( HMat2->m == 0 && HMat2->n == 0) 
     {
-      if ((B=nsp_spmaxpcolmatrix_from_mat(HMat1)) == NULLSPMAXPCOL) return RET_BUG;
+      if ((B=nsp_spmaxpcolmatrix_from_mat((NspMatrix *)HMat1)) == NULLSPMAXPCOL) return RET_BUG;
       MoveObj(stack,1,NSP_OBJECT(B));
       return 1;
     }
   else
     {
-      if ((B=nsp_spmaxpcolmatrix_from_mat(HMat1)) == NULLSPMAXPCOL) return RET_BUG;
+      if ((B=nsp_spmaxpcolmatrix_from_mat((NspMatrix *)HMat1)) == NULLSPMAXPCOL) return RET_BUG;
       if ( (*F)(B,HMat2)!= OK) 
 	{
 	  return RET_BUG;
