@@ -56,7 +56,7 @@ NspMatrix * nsp_matrix_create(const char *name, char type, int m, int n)
   NspMatrix *Mat = NULLMAT;
   if ( ((double) m)*((double) n) > INT_MAX )
     {
-      Scierror("Error:\tMatrix dimensions too large\n");
+      Scierror("Error:\tMatrix dimensions too large m*n > %d\n",INT_MAX);
       return NULLMAT;
     }
 
