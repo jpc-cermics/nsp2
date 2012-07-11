@@ -34,10 +34,8 @@ OBJSC = Matrix.o MatOps.o MatObj.o  \
 	serial.o \
 	SpColMatrix.o SpColMatObj.o \
 	eframe.o mtlb.o \
-	IMatrix.o IMatObj.o IMatOps.o SMio.o SMioObj.o
-
-
-
+	IMatrix.o IMatObj.o IMatOps.o SMio.o SMioObj.o \
+	SpMaxpColMatrix.o SpMaxpColMatObj.o 
 
 OLD=	gsort.o qsort.o	
 

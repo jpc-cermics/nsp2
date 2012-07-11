@@ -36,6 +36,7 @@
 #include <nsp/imatrix.h> 
 #include <nsp/sprowmatrix.h> 
 #include <nsp/spcolmatrix.h> 
+#include <nsp/spmaxpcolmatrix.h> 
 #include <nsp/matint.h> 
 #include <nsp/file.h> 
 #include <nsp/hash.h> 
@@ -610,10 +611,12 @@ void primitive_types_register(void)
   new_type_classaref(T_BASE);
   new_type_classbref(T_BASE);
   new_type_astnode(T_BASE);
+  new_type_spmaxpcolmatrix(T_BASE);
+
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */
-  nsp_last_static_id_ = nsp_type_astnode_id;
+  nsp_last_static_id_ = nsp_type_spmaxpcolmatrix_id;
 }
 
 

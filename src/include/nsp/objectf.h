@@ -156,6 +156,10 @@ typedef struct _NspType NspType;
 #define NSP_INC_NspUmfpack
 typedef struct _NspUmfpack NspUmfpack;
 #endif
+#ifndef NSP_INC_NspSpMaxpColMatrix
+#define NSP_INC_NspSpMaxpColMatrix
+typedef struct _NspSpMaxpColmatrix NspSpMaxpColMatrix;
+#endif
 
 /* forward declaration of Stack */
 

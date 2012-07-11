@@ -853,9 +853,19 @@ static NspObject *nsp_matint_extract_elements(NspObject *Obj,NspObject *Elts,ind
 		return MAT_INT(type)->clone(NVOID, Obj, 1, 0, FALSE);
 	    }
 	  else if ( A->n == 1)
-	    return MAT_INT(type)->clone(NVOID, Obj, 0, 1, FALSE);
+	    {
+	      return MAT_INT(type)->clone(NVOID, Obj, 0, 1, FALSE);
+	    }
 	}
-      return MAT_INT(type)->clone(NVOID, Obj, 0, 0, FALSE);
+      /* size to return is 0x0 except if argument was 0xn or nx0 */
+      if ( m == 0 || n== 0) 
+	{
+	  return MAT_INT(type)->clone(NVOID, Obj, m, n, FALSE);
+	}
+      else
+	{
+	  return MAT_INT(type)->clone(NVOID, Obj, 0, 0, FALSE);
+	}
     }
 
   elt_size = MAT_INT(type)->elt_size(Obj); 

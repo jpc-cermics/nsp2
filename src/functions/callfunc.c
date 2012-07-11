@@ -104,7 +104,7 @@ extern  sci_interface  Lapack_all_Interf ;extern  interface_info  Lapack_all_Int
 
 extern  sci_interface  MpMatrix_Interf ;extern  interface_info  MpMatrix_Interf_Info ;
 #ifdef WITH_MAXPLUSLIB
-extern  sci_interface  Maxplus_Interf ;extern  interface_info  Maxplus_Interf_Info ;
+extern  sci_interface  Maxplus_Interf ;extern  interface_info  Maxplus_Interf_Info ; 
 #endif 
 
 #ifdef EXTEND 
@@ -186,6 +186,8 @@ extern sci_interface libminpack_Interf;extern interface_info libminpack_Interf_I
 #ifdef WITH_GRAPHVIZ 
 extern sci_interface Agraph_Interf;extern interface_info Agraph_Interf_Info;
 #endif 
+
+extern  sci_interface  SpMaxpColMatrix_Interf  ;extern  interface_info  SpMaxpColMatrix_Interf_Info  ;
 
 
 InterfTab Interfaces[]={
@@ -322,6 +324,7 @@ InterfTab Interfaces[]={
 #ifdef WITH_GRAPHVIZ 
   {Agraph_Interf , Agraph_Interf_Info },
 #endif 
+  {SpMaxpColMatrix_Interf , SpMaxpColMatrix_Interf_Info}, 
   {NULL,NULL}
 }; 
 
