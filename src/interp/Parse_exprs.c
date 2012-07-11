@@ -815,7 +815,11 @@ static int parse_functionright(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   PList plist1= NULLPLIST;
   char id[NAME_MAXL];
-  if ( T->tokenv.id != NAME ) return(FAIL);
+  if ( T->tokenv.id != NAME ) 
+    {
+      T->ParseError(T,"Parse Error: Unexpected token here %s. Expecting a name\n",T->code2name(T,T->tokenv.id));
+      return(FAIL);
+    }
   /*  ************    symb(arg1,....,argn) */
   strncpy(id,T->tokenv.syn,NAME_MAXL);
   if ( T->NextToken(T) == FAIL) return(FAIL);
@@ -2121,11 +2125,18 @@ static int parse_fact3(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_comment(plist,T->tokenv.buf) == FAIL) return(FAIL);
       if ( T->NextToken(T) == FAIL) return(FAIL);
       break;
-      /* in order to accept function in f(....) etc.... 
-	 case FUNCTION : 
-	 if ( parse_function(T,plist) == FAIL) return FAIL;
-	 break;
-      */ 
+#if 0 
+      /* The following code could be used in order to 
+       * accept the function...endfunction syntax in expressions 
+       * Ex: intg(0,1,function y=f(x),y=x;endfunction) 
+       * it works but the function f exists after the call and 
+       * syntax error are not properly detected. It could be 
+       * usefull to add a way to give anonymous function name.
+       */
+    case FUNCTION : 
+      if ( parse_function(T,symb_table,plist) == FAIL) return FAIL;
+      break;
+#endif 
     default :
       /* XXXX : Any  keyword here is an error */
       if ( 0 && nsp_is_code_keyword(T->tokenv.id) == TRUE )
@@ -2267,6 +2278,8 @@ static int parse_exprset(Tokenizer *T,NspBHash *symb_table,PList *plist,int *cou
   PList plist1 = NULLPLIST ;
   *count = 0;
   if (debug) scidebug(debugI++,"[parenth>");
+
+  
   if (parse_expr(T,symb_table,&plist1,'f') == FAIL) return(FAIL);
   while( IsComa(T,&op) == OK )
     {
