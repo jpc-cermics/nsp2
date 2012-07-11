@@ -29,7 +29,7 @@ AC_DEFUN([AC_CHECK_AMD],
  # check amd includes 
  #-------------------
  AC_MSG_CHECKING([for amd include file directory])
- ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
+ ac_amd_includedirs="/usr/include/suitesparse /usr/include/amd /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/amd /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
  AC_FIND_FILE("amd.h", $ac_amd_includedirs, amd_includedir)
  if test "x${amd_includedir}" != "xNO"; then
   CPPFLAGS="-I${amd_includedir} ${CPPFLAGS}"
@@ -80,7 +80,7 @@ AC_DEFUN([AC_CHECK_UMFPACK],
  # check umfpack includes 
  #-------------------
  AC_MSG_CHECKING([for umfpack include file directory])
- ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
+ ac_umf_includedirs=" /usr/include/suitesparse  /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse /opt/local/include"
  AC_FIND_FILE("umfpack.h", $ac_umf_includedirs, umfpack_includedir)
  if test "x${umfpack_includedir}" != "x" -a "x${umfpack_includedir}" != "xNO"; then
     if test "x${umfpack_includedir}" != "x${amd_includedir}"; then 
@@ -102,8 +102,8 @@ AC_DEFUN([AC_CHECK_UMFPACK],
    if test "${ac_umfpack_libdir}" = "/usr/lib"; then 
       AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
    else 
-      LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS}"
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"])
+      LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS} -lSuiteSparse"
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lSuiteSparse ${amd_libs}"])
    fi
    AC_SUBST(umfpack_libs)
  else 
