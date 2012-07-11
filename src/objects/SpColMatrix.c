@@ -1336,7 +1336,10 @@ void nsp_spcolmatrix_clean_zeros(SpCol *Col, char type)
     }
   else
     {
-      FREE(Col->J); FREE(Col->R);
+      if ( Col->size != 0) 
+	{
+	  FREE(Col->J); FREE(Col->R);
+	}
     }
   Col->size = kp;
 }
@@ -1561,8 +1564,11 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
       assign_val(ColNew, kCn, A->rc_type, B, p[kB], jB, &do_clean, &asv);
       kB++; kCn++;
     }
-
-  FREE(Col->R); FREE(Col->J); FREE(Col);
+  
+  if ( Col->size != 0) 
+    {
+      FREE(Col->R); FREE(Col->J); FREE(Col);
+    }
   A->D[jA] = ColNew;
 
   if ( do_clean )   /* some zeros have been inserted */
@@ -1571,14 +1577,14 @@ int nsp_spcolmatrix_assign_by_merge(NspSpColMatrix *A, int jA, index_vector *ind
       nsp_spcolmatrix_clean_zeros(ColNew, A->rc_type);
     }
   else if ( kCn < size_max )  /* free unused memery */
-    nsp_spcolmatrix_resize_col(A, jA, kCn);
+    {
+      nsp_spcolmatrix_resize_col(A, jA, kCn);
+    }
 
   return OK;
 
  fail:
-  FREE(ColNew->R);
-  FREE(ColNew->J);
-  FREE(ColNew);
+  nsp_spcolmatrix_col_destroy(ColNew);
   return FAIL;
 }
 
@@ -5803,7 +5809,6 @@ int nsp_spcolmatrix_imagpart(NspSpColMatrix *A)
 	    {
 	      FREE( A->D[i]->J);
 	      FREE( A->D[i]->R);
-	      /* FREE( A->D[i]->C); */
 	    }
 	  A->D[i]->size =0;
 	}

@@ -1340,7 +1340,10 @@ void nsp_spmaxpcolmatrix_clean_zeros(SpCol *Col, char type)
     }
   else
     {
-      FREE(Col->J); FREE(Col->R);
+      if ( Col->size != 0) 
+	{
+	  FREE(Col->J); FREE(Col->R);
+	}
     }
   Col->size = kp;
 }
@@ -1566,7 +1569,11 @@ int nsp_spmaxpcolmatrix_assign_by_merge(NspSpMaxpColMatrix *A, int jA, index_vec
       kB++; kCn++;
     }
 
-  FREE(Col->R); FREE(Col->J); FREE(Col);
+  if ( Col->size != 0) 
+    {
+      FREE(Col->R); FREE(Col->J); FREE(Col);
+    }
+
   A->D[jA] = ColNew;
 
   if ( do_clean )   /* some zeros have been inserted */
@@ -1580,9 +1587,7 @@ int nsp_spmaxpcolmatrix_assign_by_merge(NspSpMaxpColMatrix *A, int jA, index_vec
   return OK;
 
  fail:
-  FREE(ColNew->R);
-  FREE(ColNew->J);
-  FREE(ColNew);
+  nsp_spmaxpcolmatrix_col_destroy(ColNew);
   return FAIL;
 }
 
