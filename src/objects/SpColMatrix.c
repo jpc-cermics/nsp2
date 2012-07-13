@@ -2567,7 +2567,7 @@ int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspObject *ODiag, int k)
   NspMatrix *FDiag = (NspMatrix *) ODiag; 
   Boolean diag_is_sparse = IsSpColMat(ODiag) || IsSpMat(ODiag), diag_is_scalar;
   char diag_rc_type;
-
+  
   rmin = Max(0,-k);
   cmin = Max(0,k);
   if ( diag_is_sparse )
@@ -2590,7 +2590,15 @@ int nsp_spcolmatrix_set_diag(NspSpColMatrix *A, NspObject *ODiag, int k)
     }
 
   if ( diag_rc_type == 'c' && A->rc_type == 'r' ) 
-    if ( nsp_spcolmatrix_complexify(A) == FAIL ) return(FAIL);
+    {
+      if ( nsp_spcolmatrix_complexify(A) == FAIL ) return(FAIL);
+    }
+
+  if ( ! diag_is_sparse )
+    {
+      /* be sure that diag is in proper mode */
+      FDiag = Mat2double(FDiag);
+    }
 
   for ( i = 0, ii = 0 ; i < dsize ; i++ ) 
     {
