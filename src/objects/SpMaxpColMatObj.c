@@ -1083,7 +1083,7 @@ static int int_spmaxpcolmatrix_concatdiag_m_sp(Stack stack, int rhs, int opt, in
 static int int_spmaxpcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
 {
   NspSpMaxpColMatrix *A,*B=NULLSPMAXPCOL,*B1=NULLSPMAXPCOL;
-  NspMatrix *Bm = NULLMAT;
+  NspMaxpMatrix *Bm = NULLMAXPMAT;
   NspObject *Rows,*Cols=NULL;
   Boolean full_case = FALSE;
 
@@ -1096,12 +1096,12 @@ static int int_spmaxpcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
       if ((Cols =nsp_get_object(stack,3)) == NULLOBJ)  goto ret_bug;
     }
   
-  if ( IsMatObj(stack,rhs) )
+  if ( IsMpMatObj(stack,rhs) )
     {
       full_case = TRUE;
-      if ((Bm = GetMat(stack,rhs)) == NULLMAT ) goto ret_bug;
+      if ((Bm = GetMpMat(stack,rhs)) == NULLMAXPMAT ) goto ret_bug;
       if ( rhs == 3 )
-	if ((B1= B=nsp_spmaxpcolmatrix_from_mat(Bm)) == NULLSPMAXPCOL) goto ret_bug;
+	if ((B1= B=nsp_spmaxpcolmatrix_from_mat((NspMatrix *) Bm)) == NULLSPMAXPCOL) goto ret_bug;
     }
   else if ( IsSpMaxpColMatObj(stack,rhs)) 
     {
@@ -1121,7 +1121,7 @@ static int int_spmaxpcolmatrix_setrc(Stack stack, int rhs, int opt, int lhs)
     { 
       if ( full_case )
       	{
-      	  if (nsp_spmaxpcolmatrix_set_rowcol_from_full( A, Rows,Cols, Bm) == FAIL )  goto ret_bug;
+      	  if (nsp_spmaxpcolmatrix_set_rowcol_from_full( A, Rows,Cols,(NspMatrix*) Bm) == FAIL )  goto ret_bug;
       	}
       else
       	{

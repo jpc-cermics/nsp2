@@ -151,97 +151,97 @@ if or(A1<>[A # A]) then pause;end
 // insert a sparse 
 
 Sp1=Sp;
-Sp1(1:2,3)=mp2spmp([7;8]);
+Sp1(1:2,3)=mp2spmp(maxplus([7;8]));
 A1=spmp2mp(Sp1);
 A2=A;
-A2(1:2,3)=[7;8];
+A2(1:2,3)=maxplus([7;8]);
 if or(A1<>A2) then pause;end
 
 // insert a full 
 
 Sp1=Sp;
-Sp1(1:2,3)=[7;8];
+Sp1(1:2,3)=maxplus([7;8]);
 A1=spmp2mp(Sp1);
 A2=A;
-A2(1:2,3)=[7;8];
+A2(1:2,3)=maxplus([7;8]);
 if or(A1<>A2) then pause;end
 
 //
 
 Sp1=Sp;
-Sp1(3,5:7)=mp2spmp([7,8,9]);
+Sp1(3,5:7)=mp2spmp(maxplus([7,8,9]));
 A1=spmp2mp(Sp1);
 A2=A;
-A2(3,5:7)=[7,8,9];
+A2(3,5:7)=maxplus([7,8,9]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1(3,5:7)=[7,8,9];
+Sp1(3,5:7)=maxplus([7,8,9]);
 A1=spmp2mp(Sp1);
 A2=A;
-A2(3,5:7)=[7,8,9];
+A2(3,5:7)=maxplus([7,8,9]);
 if or(A1<>A2) then pause;end
 
 // 
 
 Sp1=Sp;
-Sp1(3,5)=mp2spmp([7]);
+Sp1(3,5)=mp2spmp(maxplus([7]));
 A1=spmp2mp(Sp1);
 A2=A;
-A2(3,5)=[7];
+A2(3,5)=maxplus([7]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1(3,5)=[7];
+Sp1(3,5)=maxplus([7]);
 A1=spmp2mp(Sp1);
 A2=A;
-A2(3,5)=[7];
+A2(3,5)=maxplus([7]);
 if or(A1<>A2) then pause;end
 
 //
 
 Sp1=Sp;
-Sp1([1,10],[5,11])=mp2spmp([1,2;3,4]);
+Sp1([1,10],[5,11])=mp2spmp(maxplus([1,2;3,4]));
 A1=spmp2mp(Sp1);
 A2=A;
-A2([1,10],[5,11])=[1,2;3,4];
+A2([1,10],[5,11])=maxplus([1,2;3,4]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1([1,10],[5,11])=[1,2;3,4];
+Sp1([1,10],[5,11])=maxplus([1,2;3,4]);
 A1=spmp2mp(Sp1);
 A2=A;
-A2([1,10],[5,11])=[1,2;3,4];
+A2([1,10],[5,11])=maxplus([1,2;3,4]);
 if or(A1<>A2) then pause;end
 
 // nsp_spcolmatrix_set_row 
 
 Sp1=Sp;
-Sp1([1,4,7])=mp2spmp(0);
+Sp1([1,4,7])=mp2spmp(maxplus(-%inf));
 A1=spmp2mp(Sp1);
 A2=A;
-A2([1,4,7])=0;
+A2([1,4,7])=maxplus(-%inf);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1([1,4,7])=0;
+Sp1([1,4,7])=maxplus(-%inf);
 A1=spmp2mp(Sp1);
 A2=A;
-A2([1,4,7])=0;
+A2([1,4,7])=maxplus(-%inf);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1([1,4,7])=mp2spmp([8,9,10]);
+Sp1([1,4,7])=mp2spmp(maxplus([8,9,10]));
 A1=spmp2mp(Sp1);
 A2=A;
-A2([1,4,7])=[8,9,10];
+A2([1,4,7])=maxplus([8,9,10]);
 if or(A1<>A2) then pause;end
 
 Sp1=Sp;
-Sp1([1,4,7])=[8,9,10];
+Sp1([1,4,7])=maxplus([8,9,10]);
 A1=spmp2mp(Sp1);
 A2=A;
-A2([1,4,7])=[8,9,10];
+A2([1,4,7])=maxplus([8,9,10]);
 if or(A1<>A2) then pause;end
 
 // nsp_spcolmatrix_delete_cols
@@ -369,39 +369,41 @@ for k =[-7:7]
 end 
 
 // nsp_spcolmatrix_diag_set 
-// XXXXXXXX should be replaced by a method 
 // ----------------------------
 
-Sp1=Sp;
-nd=size(diag(Sp1,0),'*');
-Sp1.set_diag[mp2spmp(1:nd),0];
-A1=spmp2mp(Sp1);
-[ma,na]=size(A);
-B=[diag(diag(A))-diag(1:nd)];
-[mb,nb]=size(B);
-B=[B;zeros_new(ma-mb,na)];
-if nb < na then B=[B,zeros_new(ma,na-nb)];end
-A2=A-B;
-if or(A1<>A2) then pause;end
-
-dd=[1,7,0,0,9,5,0,0,0,1,2,3];
-for i=-3:3 
+if %f then 
+  // XXXXX the use of - is wrong below 
   Sp1=Sp;
-  nd=size(diag(Sp1,i),'*');
-  dd1=dd(1:nd);
-  Sp1.set_diag[mp2spmp(dd1),i];
+  nd=size(diag(Sp1,0),'*');
+  Sp1.set_diag[mp2spmp(maxplus(1:nd)),0];
   A1=spmp2mp(Sp1);
   [ma,na]=size(A);
-  B=[diag(diag(A,i),i)-diag(dd1,i)];
+  B=[diag(diag(A))-maxplus(diag(1:nd))];
   [mb,nb]=size(B);
-  if nb > na then B(:,(na+1):nb)=[];end;
-  if mb > ma then B(ma+1:mb,:)=[];
-  else 
-    B=[B;zeros_new(ma-mb,na)];
-  end
+  B=[B;zeros_new(ma-mb,na)];
   if nb < na then B=[B,zeros_new(ma,na-nb)];end
   A2=A-B;
   if or(A1<>A2) then pause;end
+  
+  dd=[1,7,0,0,9,5,0,0,0,1,2,3];
+  for i=-3:3 
+    Sp1=Sp;
+    nd=size(diag(Sp1,i),'*');
+    dd1=dd(1:nd);
+    Sp1.set_diag[mp2spmp(dd1),i];
+    A1=spmp2mp(Sp1);
+    [ma,na]=size(A);
+    B=[diag(diag(A,i),i)-diag(dd1,i)];
+    [mb,nb]=size(B);
+    if nb > na then B(:,(na+1):nb)=[];end;
+    if mb > ma then B(ma+1:mb,:)=[];
+    else 
+      B=[B;zeros_new(ma-mb,na)];
+    end
+    if nb < na then B=[B,zeros_new(ma,na-nb)];end
+    A2=A-B;
+    if or(A1<>A2) then pause;end
+  end
 end
 
 // nsp_spcolmatrix_diag_create 
@@ -409,77 +411,96 @@ end
 // ----------------------------
 
 for i=-3:3
-  Sp1=diagcre(mp2spmp([1,3,0,0,4,5]),i);
+  Sp1=diagcre(mp2spmp(maxplus([1,3,0,0,4,5])),i);
   A1=spmp2mp(Sp1);
-  A2=diag([1,3,0,0,4,5],i);
+  A2=diag(maxplus([1,3,0,0,4,5]),i);
   if or(A1<>A2) then pause;end
-  Sp1=diagcre(mp2spmp([1,3,0,0,4,5]'),i);
+  Sp1=diagcre(mp2spmp(maxplus([1,3,0,0,4,5])'),i);
   A1=spmp2mp(Sp1);
-  A2=diag([1,3,0,0,4,5],i);
+  A2=diag(maxplus([1,3,0,0,4,5]),i);
   if or(A1<>A2) then pause;end
 end
 
 // Sp * Sp 
 // ----------------------------
 
-Sp1= Sp*Sp';
-A1=spmp2mp(Sp1);
-A2=A*A';
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= Sp*Sp';
+  A1=spmp2mp(Sp1);
+  A2=A*A';
+  if or(A1<>A2) then pause;end
+end 
 
 // Sp * full
 // ----------------------------
 
-Sp1= Sp*(A');
-A1=Sp1;
-A2=A*A';
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= Sp*(A');
+  A1=Sp1;
+  A2=A*A';
+  if or(A1<>A2) then pause;end
+end 
 
 // full *Sp 
 // ----------------------------
 
-Sp1= A*Sp';
-A1=Sp1;
-A2=A*A';
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= A*Sp';
+  A1=Sp1;
+  A2=A*A';
+  if or(A1<>A2) then pause;end
+end
 
 // Sp * scalar(Sp)
 // ----------------------------
 
-Sp1= Sp*mp2spmp(7);
-A1=spmp2mp(Sp1);
-A2=A*7;
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= Sp*mp2spmp(7);
+  A1=spmp2mp(Sp1);
+  A2=A*7;
+  if or(A1<>A2) then pause;end
+end
 
 // scalar(Sp) * Sp
 // ----------------------------
-
-Sp1= mp2spmp(7)*Sp;
-A1=spmp2mp(Sp1);
-A2=7*A;
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= mp2spmp(7)*Sp;
+  A1=spmp2mp(Sp1);
+  A2=7*A;
+  if or(A1<>A2) then pause;end
+end 
 
 // Sp * scalar(Full)
 // ----------------------------
 
-Sp1= Sp*7;
-A1=spmp2mp(Sp1);
-A2=A*7;
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= Sp*7;
+  A1=spmp2mp(Sp1);
+  A2=A*7;
+  if or(A1<>A2) then pause;end
+end
 
 // scalar(F) * Sp
 // ----------------------------
 
-Sp1= 7*Sp;
-A1=spmp2mp(Sp1);
-A2=7*A;
-if or(A1<>A2) then pause;end
+if %f then 
+  // * for maxplus to be done XXXX 
+  Sp1= 7*Sp;
+  A1=spmp2mp(Sp1);
+  A2=7*A;
+  if or(A1<>A2) then pause;end
+end 
 
 //ATESTER 
 
 // nsp_spcolmatrix_complexify 
 // ATESTER 
-
 // nsp_spcolmatrix_setr 
 // XXXX pas interfacé : ATESTER 
 // nsp_spcolmatrix_seti
@@ -499,138 +520,186 @@ if or(A1<>A.') then pause;end
 // Sp + Sp 
 //--------------------------
 
-A2=rand(A);
-Sp2= sparse(A2)
-Sp1=Sp + Sp2 
-A1=spmp2mp(Sp1);
-if or(A1<>A +  A2 ) then pause;end
+if %f then
+  //  XXXX 
+  A2= maxplus(rand(mp2m(A)));
+  Sp2= sparsemp(A2)
+  Sp1=Sp + Sp2 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A +  A2 ) then pause;end
+end
 
 // Sp + full -> full
 //--------------------------
-
-A2=rand(A);
-A1=Sp + A2 
-if or(A1<>A +  A2 ) then pause;end
+if %f then
+  //  XXXX 
+  A2= maxplus(rand(mp2m(A)));
+  A1=Sp + A2 
+  if or(A1<>A +  A2 ) then pause;end
+end 
 
 // full + Sp -> full
 //--------------------------
 
-A2=rand(A);
-A1= A2 + Sp;
-if or(A1<>A +  A2 ) then pause;end
-
+if %f then
+  //  XXXX 
+  A2= maxplus(rand(mp2m(A)));
+  A1= A2 + Sp;
+  if or(A1<>A +  A2 ) then pause;end
+end
 
 // Sp - Sp 
 //--------------------------
 
-A2=rand(A);
-Sp2= sparse(A2)
-Sp1=Sp - Sp2 
-A1=spmp2mp(Sp1);
-if or(A1<>A -  A2 ) then pause;end
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  Sp2= sparse(A2)
+  Sp1=Sp - Sp2 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A -  A2 ) then pause;end
+end
 
 // Sp - full -> full
 //--------------------------
 
-A2=rand(A);
-A1=Sp - A2 ;
-if or(A1<>A -  A2 ) then pause;end
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  A1=Sp - A2 ;
+  if or(A1<>A -  A2 ) then pause;end
+end
 
 // full - Sp -> full
 //--------------------------
 
-A2=rand(A);
-A1= A2 - Sp;
-if or(A1<> A2-full(Sp) ) then pause;end
+
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  A1= A2 - Sp;
+  if or(A1<> A2-full(Sp) ) then pause;end
+end
 
 // SP .* SP 
 //--------------
 
-A2=rand(A);
-Sp2= sparse(A2)
-Sp1=Sp .* Sp2 
-A1=spmp2mp(Sp1);
-if or(A1<>A .* A2 ) then pause;end
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  Sp2= sparse(A2)
+  Sp1=Sp .* Sp2 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A .* A2 ) then pause;end
+end 
 
 // SP .* full
 //--------------
-
-A2=rand(A);
-Sp2= sparse(A2)
-Sp1=Sp .* A2
-A1=spmp2mp(Sp1);
-if or(A1<>A .* A2 ) then pause;end
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  Sp2= sparse(A2)
+  Sp1=Sp .* A2
+  A1=spmp2mp(Sp1);
+  if or(A1<>A .* A2 ) then pause;end
+end
 
 // full .* SP
 //--------------
 
-A2=rand(A);
-Sp2= sparse(A2)
-Sp1= A2 .* Sp 
-A1=spmp2mp(Sp1);
-if or(A1<>A .* A2 ) then pause;end
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  Sp2= sparse(A2)
+  Sp1= A2 .* Sp 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A .* A2 ) then pause;end
+end
 
 // SP .* scalar(Ful)
 //--------------
 
-Sp1=Sp .* 4 
-A1=spmp2mp(Sp1);
-if or(A1<>A * 4 ) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1=Sp .* 4 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
 
 // SP .* scalar(Sp)
 //--------------
-
-Sp1=Sp .* sparse(4) 
-A1=spmp2mp(Sp1);
-if or(A1<>A * 4 ) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1=Sp .* sparse(4) 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
 
 // scalar(Ful) .* Sp
 //------------------
 
-Sp1= 4 .* Sp 
-A1=spmp2mp(Sp1);
-if or(A1<>A * 4 ) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1= 4 .* Sp 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
 
 // scalar(Sp) .* Sp
 //------------------
 
-Sp1= sparse(4) .* Sp 
-A1=spmp2mp(Sp1);
-if or(A1<>A * 4 ) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1= sparse(4) .* Sp 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
 
 // Sp * scalar(Sp)
 
-Sp1=Sp*mp2spmp(4);
-A1=spmp2mp(Sp1);
-if or(A1<>A*4) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1=Sp*mp2spmp(4);
+  A1=spmp2mp(Sp1);
+  if or(A1<>A*4) then pause;end
+end 
 
 // Sp * Sp(empty mxn)
 //------------------
 
-Sp1=Sp*mp2spmp(zeros_new(size(Sp,2),0));
-A1=spmp2mp(Sp1);
-if or(A1<>zeros_new(size(Sp,1),0)) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1=Sp*mp2spmp(zeros_new(size(Sp,2),0));
+  A1=spmp2mp(Sp1);
+  if or(A1<>zeros_new(size(Sp,1),0)) then pause;end
+end
 
 // op can be '+'(A+B) ,'-' (A-B), '#' (-A+B)
 // NspMatrix *nsp_spcolmatrix_op_scal
 //------------------
 
-Sp1=Sp + mp2spmp(4);
-if or(Sp1<>A+4) then pause;end
-
-Sp1=Sp - mp2spmp(4);
-if or(Sp1<>A-4) then pause;end
-
-Sp1= - Sp + mp2spmp(4);
-if or(Sp1<>-A+4) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1=Sp + mp2spmp(4);
+  if or(Sp1<>A+4) then pause;end
+  
+  Sp1=Sp - mp2spmp(4);
+  if or(Sp1<>A-4) then pause;end
+  
+  Sp1= - Sp + mp2spmp(4);
+  if or(Sp1<>-A+4) then pause;end
+end
 
 // clean(Sp)
 //------------------
 
-Sp1 = sparse(Sp +mp2spmp(0.01));
-Sp2 = clean(Sp1,0.1);
-A1=spmp2mp(Sp2);
-if or(A1<>clean(A+0.01,0.1)) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1 = sparse(Sp +mp2spmp(0.01));
+  Sp2 = clean(Sp1,0.1);
+  A1=spmp2mp(Sp2);
+  if or(A1<>clean(A+0.01,0.1)) then pause;end
+end
 
 // nsp_spcolmatrix_realpart: 
 //------------------
@@ -642,32 +711,36 @@ if or(A1<>full(Sp1)) then pause;end
 // nsp_spcolmatrix_imagpart: 
 //------------------
 
-Sp1 = imag(Sp);
-A1=imag(A);
-if or(A1<>full(Sp1)) then pause;end
-
+if %f then 
+  //  XXXX 
+  Sp1 = imag(Sp);
+  A1=imag(A);
+  if or(A1<>full(Sp1)) then pause;end
+end
 
 // /*
 //  *nsp_mat_inv_el: a(i,j)=1/a(i,j) A est changee
 //  */
- 
 
 //  Kroneker product 
 
 // SP .*. SP 
 //--------------
 
-A2=rand(A);
-Sp2= sparse(A2)
-Sp1=Sp .*. Sp2 
-A1=spmp2mp(Sp1);
-if or(A1<> A .*. A2 ) then pause;end
+if %f then 
+  //  XXXX 
+  A2=maxplus(rand(mp2m(A)));;
+  Sp2= sparse(A2)
+  Sp1=Sp .*. Sp2 
+  A1=spmp2mp(Sp1);
+  if or(A1<> A .*. A2 ) then pause;end
+end
 
 // SP .*. full
 //--------------
 if %f then 
-  // not already present TOBEDONE 
-  A2=rand(A);
+  // XXX not already present TOBEDONE 
+  A2=maxplus(rand(mp2m(A)));;
   Sp2= sparse(A2)
   Sp1=Sp .*. A2
   A1=spmp2mp(Sp1);
@@ -678,8 +751,8 @@ end
 //--------------
 
 if %f then 
-  // not already present TOBEDONE 
-  A2=rand(A);
+  // XXX not already present TOBEDONE 
+  A2=maxplus(rand(mp2m(A)));;
   Sp2= sparse(A2)
   Sp1= A2 .*. Sp 
   A1=spmp2mp(Sp1);
@@ -689,7 +762,7 @@ end
 // SP .*. scalar(Ful)
 //--------------
 if %f then 
-  // not already present TOBEDONE 
+  // XXX not already present TOBEDONE 
   Sp1=Sp .*. 4 
   A1=spmp2mp(Sp1);
   if or(A1<>A * 4 ) then pause;end
@@ -698,14 +771,17 @@ end
 // SP .*. scalar(Sp)
 //--------------
 
-Sp1=Sp .*. sparse(4) 
-A1=spmp2mp(Sp1);
-if or(A1<>A * 4 ) then pause;end
+if %f then 
+  //  XXXX 
+  Sp1=Sp .*. sparse(4) 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
 
 // scalar(Ful) .*. Sp
 //------------------
 if %f then 
-  // not already present TOBEDONE 
+  // XXX not already present TOBEDONE 
   Sp1= 4 .*. Sp 
   A1=spmp2mp(Sp1);
   if or(A1<>A * 4 ) then pause;end
@@ -714,9 +790,13 @@ end
 // scalar(Sp) .*. Sp
 //------------------
 
-Sp1= sparse(4) .*. Sp 
-A1=spmp2mp(Sp1);
-if or(A1<>A * 4 ) then pause;end
+
+if %f then 
+  //  XXXX 
+  Sp1= sparse(4) .*. Sp 
+  A1=spmp2mp(Sp1);
+  if or(A1<>A * 4 ) then pause;end
+end
 
 // sort(Sp) 
 // XXXX 
@@ -724,12 +804,16 @@ if or(A1<>A * 4 ) then pause;end
 // nsp_spcolmatrix_sum
 //------------------
 
-for c=['f','c','r'] 
-  Sp1=sum(Sp);
-  A1=spmp2mp(Sp1);
-  if or(A1<>sum(A)) then pause;end
+
+if %f then 
+  //  XXXX 
+  for c=['f','c','r'] 
+    Sp1=sum(Sp);
+    A1=spmp2mp(Sp1);
+    if or(A1<>sum(A)) then pause;end
+  end
 end
- 
+
 
 // /*
 //  * Prod =nsp_mat_prod(A ,B])
@@ -756,14 +840,14 @@ end
 //------------------
 
 Spr=real(Sp);Ar=real(A);
-A1=int(rand(A)*30);A1(A1>=5)=0;
-Sp1=mp2spmp(A1);
+A1=int(rand(mp2m(A))*30);A1(A1>=5)=0;
+Sp1=mp2spmp(maxplus(A1));
 Sp2=max(Spr,Sp1);
-A2=max(Ar,A1);
+A2=max(Ar,maxplus(A1));
 if or(A2<>spmp2mp(Sp2)) then pause;end
 
 [Sp2,SpImax2]=max(Spr,Sp1);
-[A2,AImax2]=max(Ar,A1);
+[A2,AImax2]=max(Ar,maxplus(A1));
 if or(A2<>spmp2mp(Sp2)) then pause;end
 I=find(Ar==0 && A1==0);
 AImax2(I)=0;
