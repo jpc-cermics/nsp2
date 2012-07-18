@@ -599,11 +599,8 @@ scicos_block_table  tabsim[] ={
   /*  {"cdummy",(ScicosF) F2C(cdummy)}, */
   {"cdummy",(ScicosF) scicos_cdummy_block},
   {"cevscpe",(ScicosF) scicos_cevscpe_block},
-  /* {"cfscope",(ScicosF) cfscope}
-   * {"cmat3d",(ScicosF) cmat3d},
-   * {"cmatview",(ScicosF) cmatview},
-   * {"cmscope",(ScicosF) cmscope},
-   */
+  {"cmat3d",(ScicosF) cmat3d},
+  {"cmatview",(ScicosF) cmatview},
   {"cmscope",(ScicosF) scicos_cmscope_block},
   {"constraint",(ScicosF) scicos_constraint_block},
   {"constraint_c",(ScicosF) constraint_c}, 
