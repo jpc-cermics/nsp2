@@ -137,10 +137,10 @@ char * nsp_get_filename_save(const char *title,const char *dirname)
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
-    }
 #ifdef WIN32
-  for (k=0 ; k < strlen(filename) ;k++) if ( filename[k]=='\\') filename[k]='/';
+      for (k=0 ; k < strlen(filename) ;k++) if ( filename[k]=='\\') filename[k]='/';
 #endif 
+    }
   gtk_widget_destroy (dialog);
   return filename ;
 }

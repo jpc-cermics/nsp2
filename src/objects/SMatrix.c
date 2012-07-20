@@ -1757,15 +1757,16 @@ extern void nsp_matrix_set_format(nsp_num_formats *fmt,NspMatrix *M) ;
 
 NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
 {
-  char buf[1024],formati[256];
-  nsp_const_string def="%f", format=def;
-  /* nsp_const_string  defi ="%f +%fi", */
+  char buf[1024],formati[256],format[256];
+  /* nsp_const_string def="%f", format=def; */
+  /* nsp_const_string  defi ="%f +%fi",     */
   int i;
   NspSMatrix *Loc;
   if (flag == 1 )
     {
       if ( A->rc_type == 'r') 
-	format = str;
+	sprintf(format,"%s",str);
+	/*format = str;*/
       else 
 	sprintf(formati,"%s +%si",str,str);
     }
@@ -1775,7 +1776,8 @@ NspSMatrix*nsp_matrix_to_smatrix(NspMatrix *A,nsp_const_string str, int flag)
       nsp_init_pr_format (&fmt);
       nsp_matrix_set_format(&fmt,A) ;
       if  ( A->rc_type == 'r') 
-        format = fmt.curr_real_fmt;
+	sprintf(format,"%s",fmt.curr_real_fmt);
+        /*format = fmt.curr_real_fmt;*/
       else 
 	sprintf(formati,"%s + %si",fmt.curr_real_fmt,fmt.curr_imag_fmt);
     }
