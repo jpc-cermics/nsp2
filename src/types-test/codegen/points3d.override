@@ -352,12 +352,12 @@ extern int nsp_points3d_add_pts(NspGraphic *P,int k)
   nsp_points3d *L =((NspPoints3d *) P)->obj;
   if ( k <=0) return OK;
 
-  if ( nsp_matrix_add_rows(L->Mcoord,k) == FAIL )
+  if ( nsp_matrix_add_rows(L->Mcoord,k,0.0) == FAIL )
     {
       Scierror("Failed to allocate points in a polyline3d\n");
       return FAIL;
     }
-  if ( nsp_matrix_add_rows(L->Mcoord_l,k) == FAIL )
+  if ( nsp_matrix_add_rows(L->Mcoord_l,k,0.0) == FAIL )
     {
       Scierror("Failed to allocate points in a polyline3d\n");
       return FAIL;

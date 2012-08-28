@@ -2782,7 +2782,7 @@ NspObject * nsp_diagram_create_new_link(NspDiagram *F)
 		  break;
 		}
 	    }
-	  if ( nsp_matrix_add_rows(L->obj->poly,1)== FAIL ) return NULLOBJ;	  
+	  if ( nsp_matrix_add_rows(L->obj->poly,1,0.0)== FAIL ) return NULLOBJ;	  
 	  count ++;
 	  L->obj->poly->R[count]= mpt[0];
 	  L->obj->poly->R[count+L->obj->poly->m]= mpt[1];
