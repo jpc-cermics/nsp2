@@ -59,7 +59,7 @@ all:: main.o ../../../libs/main.o
 
 include ../../../Makefile.incl
 
-CFLAGS = -mno-cygwin $(CC_OPTIONS) -D_POSIX_SOURCE  -DSkip_f2c_Undefs -DMSDOS
+CFLAGS = $(CC_OPTIONS) -D_POSIX_SOURCE  -DSkip_f2c_Undefs -DMSDOS
 
 include ../../Make.lib
 

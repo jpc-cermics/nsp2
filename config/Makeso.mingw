@@ -48,7 +48,7 @@ all:: $(LIBRARY_NAME).dll
 
 $(LIBRARY_NAME).dll : $(OBJS) 
 	@echo linking 
-	@gcc -mno-cygwin -shared -o $(LIBRARY_NAME).dll $(OBJS)  -L$(SCIDIR)/bin -lnsp
+	@gcc -shared -o $(LIBRARY_NAME).dll $(OBJS)  -L$(SCIDIR)/bin -lnsp
 
 clean	::
 	@$(RM) *.o *.lo
