@@ -182,6 +182,8 @@ function H=sci_load(fname,varargin)
 	 case 4 then xval=sci_load_bmat(F1);
 	 case 5 then xval=sci_load_spmat(F1);
 	 case 8 then xval=sci_load_imat(F1);
+	 case 11 then sci_load_fun(F1);xval=[];
+	  printf("Warning: Scilab uncompiled function ignored in list %s\n",str);
 	 case 13 then sci_load_fun(F1);xval=[];
 	  printf("Warning: Scilab coded function ignored in list %s\n",str);
 	 case 10 then xval=sci_load_smat(F1);
@@ -253,6 +255,8 @@ function H=sci_load(fname,varargin)
      case 5 then xval=sci_load_spmat(F1);
      case 8 then xval=sci_load_imat(F1);
      case 10 then xval=sci_load_smat(F1);
+     case 11 then sci_load_fun(F1);xval=[];
+      printf("Warning: Scilab uncompiled function ignored in list %s\n",str);
      case 13 then sci_load_fun(F1);xval=[];
       printf("Warning: Scilab coded function %s ignored\n",str);
      case 15 then xval=sci_load_list(F1,15);
