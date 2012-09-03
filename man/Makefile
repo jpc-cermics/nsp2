@@ -21,4 +21,5 @@ install::
 	@echo "installing man pages"
 	@$(TOP)/config/install-sh -d $(DESTDIR)/man/html/generated/
 	@tar   cf - --exclude CVS html/generated  | ( cd $(DESTDIR)/man ; tar xfp - )
+	@$(TOP)/config/install-sh scicoslab.4dx  $(DESTDIR)/man/
 
