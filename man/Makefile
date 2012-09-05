@@ -23,3 +23,5 @@ install::
 	@tar   cf - --exclude CVS html/generated  | ( cd $(DESTDIR)/man ; tar xfp - )
 	@$(TOP)/config/install-sh scicoslab.4dx  $(DESTDIR)/man/
 
+
+man::
