@@ -203,7 +203,7 @@ int Xorgetchar_select(void)
 #ifdef __APPLE__
     select_timeout.tv_usec = 1000;
 #else 
-    select_timeout.tv_usec = 5;
+    select_timeout.tv_usec = 1000;
 #endif 
 
 #ifdef WITH_GTK_MAIN 
