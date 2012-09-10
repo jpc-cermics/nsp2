@@ -31,6 +31,5 @@ install::
 	@mv $(DESTDIR)/config/Makeso1 $(DESTDIR)/config/Makeso.incl
 	@sed -e "s+src/include+include+g" $(DESTDIR)/config/Makemex > $(DESTDIR)/config/Makemex1 
 	@mv $(DESTDIR)/config/Makemex1 $(DESTDIR)/config/Makemex
-
-
+	@find language-specs -type f -exec $(TOP)/config/install-sh {} $(DESTDIR)/config/{} \;
 
