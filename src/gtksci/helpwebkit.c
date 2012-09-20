@@ -534,6 +534,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
       WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
       webkit_web_view_open (web_view, help_file );
     }
+  gtk_window_present(GTK_WINDOW(main_window));
   return 0;
 }
 
