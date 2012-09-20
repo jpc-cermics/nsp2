@@ -6095,7 +6095,54 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
+%%
+override gtk_file_chooser_dialog_new kwargs
 
+static int
+_wrap_gtkfilechooserdialog_new(Stack stack,int rhs,int opt,int lhs)
+{
+  gchar *title = NULL;
+  NspGObject *nsp_window = NULL;
+  GObject *ret;
+  NspSMatrix *nsp_buttons = NULL;
+  NspObject *nsp_ret;
+  GtkFileChooserAction action = 0;
+  int i;
+  
+  int_types T[] = {new_opts,  t_end} ;
+  nsp_option opts[] = {
+    {"title",string,NULLOBJ,-1}, 
+    {"parent",obj,NULLOBJ,-1}, 
+    {"action",s_int,NULLOBJ,-1}, 
+    {"buttons",smat,NULLOBJ,-1}, 
+    {NULL,t_end,NULLOBJ,-1} };
+  
+  if (GetArgs(stack,rhs,opt,T,&opts, &title, &nsp_window, &action, &nsp_buttons)== FAIL) return RET_BUG; 
+  
+  if ( nsp_window != NULL && ! nspgobject_check(nsp_window, nsp_type_gtkwindow)) {
+    Scierror("window must be a GtkWindow");
+    return RET_BUG;
+  }
+  ret =(GObject *)  gtk_file_chooser_dialog_new(title, (nsp_window != NULL) ? GTK_WINDOW(nsp_window->obj) : NULL,
+						action, NULL,NULL);
+  if ( ret == NULL) {
+    Scierror("could not create GtkFileChooserDialog object");
+    return RET_BUG;
+  }
+  if ( nsp_buttons != NULL) 
+    {
+      for (i = 0; i < nsp_buttons->mn ; i ++) 
+	{
+	  gtk_dialog_add_button(GTK_DIALOG(ret), nsp_buttons->S[i],i+1);
+	}
+    }
+    
+  if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *) ret,(NspTypeBase *) nsp_type_gtkfilechooserdialog))== NULL)
+    return RET_BUG; 
+  
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
 %%
 override gtk_rc_set_default_files kwargs
 static int

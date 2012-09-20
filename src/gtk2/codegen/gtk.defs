@@ -10990,7 +10990,6 @@
   (return-type "none")
   )
 
-
 ;; From /opt/gtk2/include/gtk-2.0/gtk/gtkmessagedialog.h
 
 (define-function gtk_message_dialog_get_type
