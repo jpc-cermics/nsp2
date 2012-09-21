@@ -24,7 +24,7 @@
 
 
 
-#line 30 "codegen/compound.override"
+#line 31 "codegen/compound.override"
 
 #line 30 "compound.c"
 
@@ -98,7 +98,7 @@ NspTypeCompound *new_type_compound(type_mode mode)
 
   type->init = (init_func *) init_compound;
 
-#line 38 "codegen/compound.override"
+#line 39 "codegen/compound.override"
   /* inserted verbatim in the type definition */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_compound;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_compound ;
@@ -206,6 +206,7 @@ static int nsp_compound_eq(NspCompound *A, NspObject *B)
   if ( NSP_OBJECT(A->obj->children)->type->eq(A->obj->children,loc->obj->children) == FALSE ) return FALSE;
   if ( A->obj->mark != loc->obj->mark) return FALSE;
   if ( A->obj->mark_size != loc->obj->mark_size) return FALSE;
+  if ( A->obj->mark_color != loc->obj->mark_color) return FALSE;
   return TRUE;
 }
 
@@ -232,6 +233,7 @@ int nsp_compound_xdr_save(XDR *xdrs, NspCompound *M)
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_color) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -248,6 +250,7 @@ NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -346,6 +349,7 @@ int nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_leve
     }
   Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
   Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
+  Sciprintf1(indent+2,"mark_color=%d\n",M->obj->mark_color);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -370,6 +374,7 @@ int nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_leve
     }
   Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
   Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
+  Sciprintf1(indent+2,"mark_color=%d\n",M->obj->mark_color);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -444,6 +449,7 @@ int nsp_compound_create_partial(NspCompound *H)
   H->obj->children = NULLLIST;
   H->obj->mark = -1;
   H->obj->mark_size = -1;
+  H->obj->mark_color = -1;
   return OK;
 }
 
@@ -465,7 +471,7 @@ int nsp_compound_check_values(NspCompound *H)
   return OK;
 }
 
-NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,int mark,int mark_size,NspTypeBase *type)
+NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,int mark,int mark_size,int mark_color,NspTypeBase *type)
 {
   NspCompound *H  = nsp_compound_create_void(name,type);
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
@@ -474,6 +480,7 @@ NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* chi
   H->obj->children= children;
   H->obj->mark=mark;
   H->obj->mark_size=mark_size;
+  H->obj->mark_color=mark_color;
   if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
   return H;
 }
@@ -529,6 +536,7 @@ NspCompound *nsp_compound_full_copy_partial(NspCompound *H,NspCompound *self)
     }
   H->obj->mark=self->obj->mark;
   H->obj->mark_size=self->obj->mark_size;
+  H->obj->mark_color=self->obj->mark_color;
   return H;
 }
 
@@ -569,7 +577,7 @@ static NspMethods *compound_get_methods(void) { return NULL;};
  * Attributes
  *-------------------------------------------*/
 
-#line 87 "codegen/compound.override"
+#line 88 "codegen/compound.override"
 
 /* here we override get_obj  and set_obj 
  * we want get to be followed by a set to check that 
@@ -624,7 +632,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 628 "compound.c"
+#line 636 "compound.c"
 static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -667,10 +675,28 @@ static int _wrap_compound_set_mark_size(void *self,const char *attr, NspObject *
   return OK;
 }
 
+static NspObject *_wrap_compound_get_mark_color(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspCompound *) self)->obj->mark_color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_compound_set_mark_color(void *self,const char *attr, NspObject *O)
+{
+  int mark_color;
+
+  if ( IntScalar(O,&mark_color) == FAIL) return FAIL;
+  ((NspCompound *) self)->obj->mark_color= mark_color;
+  return OK;
+}
+
 static AttrTab compound_attrs[] = {
   { "children", (attr_get_function *)_wrap_compound_get_children, (attr_set_function *)_wrap_compound_set_children,(attr_get_object_function *)_wrap_compound_get_obj_children, (attr_set_object_function *)_wrap_compound_set_obj_children },
   { "mark", (attr_get_function *)_wrap_compound_get_mark, (attr_set_function *)_wrap_compound_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mark_size", (attr_get_function *)_wrap_compound_get_mark_size, (attr_set_function *)_wrap_compound_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark_color", (attr_get_function *)_wrap_compound_get_mark_color, (attr_set_function *)_wrap_compound_set_mark_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -678,7 +704,7 @@ static AttrTab compound_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 143 "codegen/compound.override"
+#line 144 "codegen/compound.override"
 
 extern function int_nspgraphic_extract;
 
@@ -687,10 +713,10 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 691 "compound.c"
+#line 717 "compound.c"
 
 
-#line 153 "codegen/compound.override"
+#line 154 "codegen/compound.override"
 
 extern function int_graphic_set_attribute;
 
@@ -700,7 +726,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 704 "compound.c"
+#line 730 "compound.c"
 
 
 /*----------------------------------------------------
@@ -731,7 +757,7 @@ void Compound_Interf_Info(int i, char **fname, function (**f))
   *f = Compound_func[i].fonc;
 }
 
-#line 164 "codegen/compound.override"
+#line 165 "codegen/compound.override"
 
 /* inserted verbatim at the end */
 
@@ -766,35 +792,90 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
     }
 
   /* draw rectangle if hilited */
+  if ( G->obj->hilited == TRUE ) nsp_draw_default_mark_compound(Xgc,Obj);
+}
+
+static void nsp_draw_default_mark_compound(BCG *Xgc,NspGraphic *Obj)
+{
+  NspCompound *P = (NspCompound *) Obj;
+  NspGraphic *G =  (NspGraphic *) Obj;
+  double bounds[4];
+  int color = Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
+  int x=lock_size,y=lock_size;
+  double xd,yd;
+  double xdd=0.,ydd=0.;
+  double rect[4];
   
-  if ( G->obj->hilited == TRUE )
-    {
-      double bounds[4];
-      int lock_color=10;
-      int color = Xgc->graphic_engine->xset_pattern(Xgc,lock_color);
-      int x=lock_size,y=lock_size;
-      double xd,yd;
-      double rect[4]; 
-      /* already take into accound the fact that object is 
-       * hilited in its bounds 
-       */
-      if ( nsp_getbounds_compound(G,bounds)== FALSE ) return;
-      length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
-      rect[0]=bounds[0];
-      rect[1]=bounds[3];
-      rect[2]=xd;
-      rect[3]=yd;
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      rect[0]=bounds[2] - xd;
-      rect[1]=bounds[1] + yd;
-      Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      rect[0]=bounds[0]  +xd/2.0; 
-      rect[1]=bounds[3]  -yd/2.0;
-      rect[2]=bounds[2]-bounds[0]  -xd;
-      rect[3]=bounds[3]-bounds[1]  -yd;
-      Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
-      Xgc->graphic_engine->xset_pattern(Xgc,color);
+  /* mark<0 no rectangle */
+  /* mark>=0 rectangle */
+  /* abs(mark)>=1 two squares */
+  /* abs(mark)>=2 four squares */
+  /* mark_size<0 lock_size for square */
+  /* mark_size=0 0 no square */
+  /* mark_size>0 mark_size*2 for square/mark_size for rectangle */
+  
+  /* already take into accound the fact that object is 
+   * hilited in its bounds 
+   */
+  if ( nsp_getbounds_compound(G,bounds)== FALSE ) return;
+  
+  length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
+  
+  /* square size */
+  if (P->obj->mark_size>=0) {
+    int sz;
+    sz=P->obj->mark_size;
+    if (P->obj->mark>0) sz=sz*2;
+    length_scale_i2f(Xgc->scales,&xdd,&ydd,&sz,&sz,1);
+  } else {
+    xdd=xd; ydd=yd;
+  }
+  
+  rect[2]=xdd;
+  rect[3]=ydd;
+  
+  /* draw squares */
+  switch(Abs(P->obj->mark))
+  {
+  /* four squares */
+  case 2 :
+    rect[0]=bounds[2] - xd/2 - xdd/2;
+    rect[1]=bounds[3] + ydd/2 - yd/2;
+    Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+    
+    rect[0]=bounds[0] - xdd/2 + xd/2;
+    rect[1]=bounds[1] + yd/2 + ydd/2;
+    Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+      
+  /* two squares */
+  case 1 :
+    rect[0]=bounds[0] - xdd/2 + xd/2;
+    rect[1]=bounds[3] + ydd/2 - yd/2;
+    Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+  
+    rect[0]=bounds[2] - xd/2 - xdd/2;
+    rect[1]=bounds[1] + yd/2 + ydd/2;
+    Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
+    
+  default :
+    break;
+  }
+
+  /* draw surrounding rectangle */
+  if (P->obj->mark>=0) {
+    rect[0]=bounds[0] + xd/2.0; 
+    rect[1]=bounds[3] - yd/2.0;
+    rect[2]=bounds[2] - bounds[0] - xd;
+    rect[3]=bounds[3] - bounds[1] - yd;
+    /* rectangle thickness */
+    if (P->obj->mark_size>0) {
+      Xgc->graphic_engine->xset_thickness(Xgc,P->obj->mark_size);
     }
+    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+  }
+  
+  /* restore current pattern */
+  Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
 
 /**
@@ -985,4 +1066,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 989 "compound.c"
+#line 1070 "compound.c"

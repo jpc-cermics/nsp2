@@ -3125,7 +3125,7 @@ NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F)
   NspAxes *A; 
   NspList *L;
   NspCompound *C;
-  if ((C= nsp_compound_create(name,NULL,NULL,-1,-1,NULL))== NULL) return NULL;
+  if ((C= nsp_compound_create(name,NULL,NULL,2,-1,10,NULL))== NULL) return NULL;
   /* unlink the children from the figure */
   /* return the first axes XXX  */
   if ( (A =(NspAxes *) nsp_list_get_element(F->obj->children,1)) ==  NULL )
@@ -3219,7 +3219,7 @@ static NspCompound *nsp_figure_end_compound(char *name,NspFigure *F)
       count = 0;
     }
   
-  if ((C= nsp_compound_create(name,NULL,NULL,-1,-1,NULL))== NULL) return NULL;
+  if ((C= nsp_compound_create(name,NULL,NULL,2,-1,10,NULL))== NULL) return NULL;
   /*
    * the first child of figure is the axe that must be converted to 
    * compound.

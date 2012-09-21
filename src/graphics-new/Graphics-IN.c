@@ -2236,7 +2236,7 @@ static int int_xarcs_G_(Stack stack, int rhs, int opt, int lhs,int nrow,int flag
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ( compound == TRUE ) 
     {
-      if ((C= nsp_compound_create("c",NULL,NULL,-1,-1,NULL))== NULL) return RET_BUG;
+      if ((C= nsp_compound_create("c",NULL,NULL,2,-1,10,NULL))== NULL) return RET_BUG;
       L = C->obj->children;
     }
   else
@@ -3133,7 +3133,7 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( compound == TRUE ) 
     {
-      if ((C= nsp_compound_create("c",NULL,NULL,-1,-1,NULL))== NULL) return RET_BUG;
+      if ((C= nsp_compound_create("c",NULL,NULL,2,-1,10,NULL))== NULL) return RET_BUG;
       L = C->obj->children;
     }
   else
@@ -3916,7 +3916,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ( compound == TRUE ) 
     {
-      if ((C= nsp_compound_create("c",NULL,NULL,-1,-1,NULL))== NULL) return RET_BUG;
+      if ((C= nsp_compound_create("c",NULL,NULL,2,-1,10,NULL))== NULL) return RET_BUG;
       L = C->obj->children;
     }
   else
