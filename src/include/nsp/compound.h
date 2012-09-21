@@ -51,6 +51,8 @@ typedef struct _nsp_compound nsp_compound;
 struct _nsp_compound {
   NspMatrix* bounds;
   NspList* children;
+  int mark;
+  int mark_size;
   int ref_count;
 };
 
@@ -80,7 +82,7 @@ NspCompound *new_compound();
 
 #define NULLCOMPOUND (NspCompound*) 0
 
-extern NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type);
+extern NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,int mark,int mark_size,NspTypeBase *type);
 extern NspCompound *nsp_compound_create_default(const char *name);
 
 /* from NspCompoundObj.c */
@@ -110,7 +112,7 @@ extern int nsp_compound_xdr_save(XDR  *xdrs, NspCompound *M);
 /* inserted at the end of public part of include file */
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
-#line 114 "./compound.h"
+#line 116 "./compound.h"
 #endif /* NSP_INC_NspCompound */ 
 
 #ifdef NspCompound_Private 
@@ -139,6 +141,6 @@ static void nsp_compound_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_compound_children(NspGraphic *Obj);
 
-#line 143 "./compound.h"
+#line 145 "./compound.h"
 #endif /* NspCompound_Private */
 

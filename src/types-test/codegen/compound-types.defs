@@ -7,10 +7,8 @@
   (fields
    '("NspMatrix*" "bounds" "hidden" "{0}" "4");; bounds of objects contained in the compound
    '("NspList*" "children") ;; list of graphic object in the compound
-   )
+   '("int" "mark" "std" "-1")
+   '("int" "mark_size" "std" "-1")
+  )
   (gtype-id "Compound")
 )
-
-
-
-

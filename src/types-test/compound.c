@@ -204,6 +204,8 @@ static int nsp_compound_eq(NspCompound *A, NspObject *B)
   if ( A->obj == loc->obj ) return TRUE;
   if ( NSP_OBJECT(A->obj->bounds)->type->eq(A->obj->bounds,loc->obj->bounds) == FALSE ) return FALSE;
   if ( NSP_OBJECT(A->obj->children)->type->eq(A->obj->children,loc->obj->children) == FALSE ) return FALSE;
+  if ( A->obj->mark != loc->obj->mark) return FALSE;
+  if ( A->obj->mark_size != loc->obj->mark_size) return FALSE;
   return TRUE;
 }
 
@@ -228,6 +230,8 @@ int nsp_compound_xdr_save(XDR *xdrs, NspCompound *M)
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_compound)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_object_xdr_save(xdrs,NSP_OBJECT(M->obj->children)) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_size) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
   return OK;
 }
@@ -242,6 +246,8 @@ NspCompound  *nsp_compound_xdr_load_partial(XDR *xdrs, NspCompound *M)
   char name[NAME_MAXL];
   M->obj->ref_count=1;
   if ((M->obj->children =(NspList *) nsp_object_xdr_load(xdrs))== NULLLIST) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_size) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
@@ -338,6 +344,8 @@ int nsp_compound_print(NspCompound *M, int indent,const char *name, int rec_leve
   if ( M->obj->children != NULL)
     { if ( nsp_object_print(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
       Sciprintf1(indent+1,"}\n");
     }
@@ -360,6 +368,8 @@ int nsp_compound_latex(NspCompound *M, int indent,const char *name, int rec_leve
   if ( M->obj->children != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->obj->children),indent+2,"children",rec_level+1)== FALSE ) return FALSE ;
     }
+  Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
+  Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -432,6 +442,8 @@ int nsp_compound_create_partial(NspCompound *H)
   H->obj->ref_count=1;
   H->obj->bounds = NULLMAT;
   H->obj->children = NULLLIST;
+  H->obj->mark = -1;
+  H->obj->mark_size = -1;
   return OK;
 }
 
@@ -453,13 +465,15 @@ int nsp_compound_check_values(NspCompound *H)
   return OK;
 }
 
-NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,NspTypeBase *type)
+NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,int mark,int mark_size,NspTypeBase *type)
 {
   NspCompound *H  = nsp_compound_create_void(name,type);
   if ( H ==  NULLCOMPOUND) return NULLCOMPOUND;
   if ( nsp_compound_create_partial(H) == FAIL) return NULLCOMPOUND;
   H->obj->bounds= bounds;
   H->obj->children= children;
+  H->obj->mark=mark;
+  H->obj->mark_size=mark_size;
   if ( nsp_compound_check_values(H) == FAIL) return NULLCOMPOUND;
   return H;
 }
@@ -513,6 +527,8 @@ NspCompound *nsp_compound_full_copy_partial(NspCompound *H,NspCompound *self)
     {
       if ((H->obj->children = (NspList *) nsp_object_full_copy_and_name("children",NSP_OBJECT(self->obj->children))) == NULLLIST) return NULL;
     }
+  H->obj->mark=self->obj->mark;
+  H->obj->mark_size=self->obj->mark_size;
   return H;
 }
 
@@ -608,7 +624,7 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 612 "compound.c"
+#line 628 "compound.c"
 static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
@@ -617,8 +633,44 @@ static NspObject *_wrap_compound_get_children(void *self,const char *attr)
   return (NspObject *) ret;
 }
 
+static NspObject *_wrap_compound_get_mark(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspCompound *) self)->obj->mark;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_compound_set_mark(void *self,const char *attr, NspObject *O)
+{
+  int mark;
+
+  if ( IntScalar(O,&mark) == FAIL) return FAIL;
+  ((NspCompound *) self)->obj->mark= mark;
+  return OK;
+}
+
+static NspObject *_wrap_compound_get_mark_size(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspCompound *) self)->obj->mark_size;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_compound_set_mark_size(void *self,const char *attr, NspObject *O)
+{
+  int mark_size;
+
+  if ( IntScalar(O,&mark_size) == FAIL) return FAIL;
+  ((NspCompound *) self)->obj->mark_size= mark_size;
+  return OK;
+}
+
 static AttrTab compound_attrs[] = {
   { "children", (attr_get_function *)_wrap_compound_get_children, (attr_set_function *)_wrap_compound_set_children,(attr_get_object_function *)_wrap_compound_get_obj_children, (attr_set_object_function *)_wrap_compound_set_obj_children },
+  { "mark", (attr_get_function *)_wrap_compound_get_mark, (attr_set_function *)_wrap_compound_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark_size", (attr_get_function *)_wrap_compound_get_mark_size, (attr_set_function *)_wrap_compound_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
 };
 
@@ -635,7 +687,7 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 639 "compound.c"
+#line 691 "compound.c"
 
 
 #line 153 "codegen/compound.override"
@@ -648,7 +700,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 652 "compound.c"
+#line 704 "compound.c"
 
 
 /*----------------------------------------------------
@@ -933,4 +985,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 937 "compound.c"
+#line 989 "compound.c"
