@@ -45,8 +45,57 @@ static void setpopupname(BCG *Xgc,char *string)
 
 extern GTK_locator_info nsp_event_info;
 
-/* event handler for "button-press-event".
+/* set of static variable(s)/function(s) used here
+ * to do not run some gtk functions when calling
+ * gtk_main at gtk_main_loop_level 0
+ * 
+ * alan/jpc, 19/09/2012
  */
+
+static GMainLoop *nsp_loop=NULL;
+
+/**
+ * nsp_gtk_main:
+ * @void: 
+ * 
+ * enters a gtk_main_loop. This is prefered to 
+ * entering a gtk_main since entering top level gtk_main 
+ * can be time costly.
+ **/
+
+static void nsp_gtk_main(void)
+{
+  if (nsp_loop==NULL) {
+    nsp_loop = g_main_loop_new (NULL, TRUE);
+  }
+  GDK_THREADS_LEAVE ();
+  g_main_loop_run (nsp_loop);
+  GDK_THREADS_ENTER ();
+  gdk_flush ();
+}
+
+/**
+ * nsp_gtk_main_quit:
+ * @void: 
+ * 
+ * used instead of gtk_main_quit
+ **/
+
+static void nsp_gtk_main_quit(void)
+{
+  g_main_loop_quit (nsp_loop);
+}
+
+/**
+ * locator_button_press:
+ * @widget: 
+ * @event: 
+ * @gc: 
+ * 
+ * event handler for "button-press-event".
+ * 
+ * Returns: %TRUE 
+ **/
 
 static gboolean locator_button_press(GtkWidget *widget,
 				     GdkEventButton *event,
@@ -88,13 +137,21 @@ static gboolean locator_button_press(GtkWidget *widget,
       nsp_event_info.y = event->y; 
       nsp_event_info.button = id;
       nsp_event_info.mask = event->state ;
-      gtk_main_quit();
+      nsp_gtk_main_quit();
     }
   return TRUE;
 }
 
-/* event handler for "button-release-event",
- */
+/**
+ * locator_button_release:
+ * @widget: 
+ * @event: 
+ * @gc: 
+ * 
+ * event handler for "button-release-event",
+ * 
+ * Returns: %TRUE 
+ **/
 
 static gboolean locator_button_release(GtkWidget *widget,
 				       GdkEventButton *event,
@@ -117,15 +174,22 @@ static gboolean locator_button_release(GtkWidget *widget,
 	  nsp_event_info.x = event->x;  nsp_event_info.y = event->y;
 	  nsp_event_info.button = event->button -6;
 	  nsp_event_info.mask = event->state;
-	  gtk_main_quit();
+	  nsp_gtk_main_quit();
 	}
     }
   return TRUE;
 }
 
-/* event handler for "motion-notify-event",
+/**
+ * locator_button_motion:
+ * @widget: 
+ * @event: 
+ * @gc: 
  * 
- */
+ * event handler for "motion-notify-event",
+ * 
+ * Returns: %TRUE
+ **/
 
 static gboolean locator_button_motion(GtkWidget *widget,
 				      GdkEventMotion *event,
@@ -174,13 +238,22 @@ static gboolean locator_button_motion(GtkWidget *widget,
 	  nsp_event_info.x = x;  nsp_event_info.y = y;
 	  nsp_event_info.button = -1;
 	  nsp_event_info.mask = event->state;
-	  gtk_main_quit();
+	  nsp_gtk_main_quit();
 	}
     }
   return TRUE;
 }
 
-/* event handler for "key_press_event" */
+/**
+ * key_press_event_new:
+ * @widget: 
+ * @event: 
+ * @gc: 
+ * 
+ * event handler for "key_press_event"
+ * 
+ * Returns: %TRUE or %FALSE
+ **/
 
 static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 {
@@ -209,7 +282,7 @@ static gint key_press_event_new (GtkWidget *widget, GdkEventKey *event, BCG *gc)
 	  nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; 
 	  nsp_event_info.button = event->keyval;
 	  nsp_event_info.mask = event->state;
-	  gtk_main_quit();
+	  nsp_gtk_main_quit();
 	}
     }
   return FALSE; /* also want other handlers to be activated */
@@ -229,12 +302,17 @@ static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
 }
 #endif 
 
-/*
+/**
+ * timeout_menu_check:
+ * @gc: a #BCG 
+ * 
  * a time out to check for menu activation 
- * XXX : info.win is not correct this is to be done 
- */
+ * Note that info.win is not correct this is to be done XXX 
+ * 
+ * Returns: %TRUE 
+ **/
 
-static gint timeout_test (BCG *gc)
+static gint timeout_menu_check (BCG *gc)
 {
   if ( dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
     {
@@ -242,13 +320,14 @@ static gint timeout_test (BCG *gc)
       nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
       nsp_event_info.mask = 0;
       nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
-      gtk_main_quit();
+      nsp_gtk_main_quit();
       gdk_threads_leave();
     }
   return TRUE;
 }
   
 #ifdef WITH_TK
+/* be sur that tk events are taken into account */
 
 extern void nsp_flush_tkevents(void);
 
@@ -401,7 +480,7 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
   if ( nsp_event_info.getmen == TRUE ) 
     {
       /*  Check soft menu activation during xclick */ 
-      nsp_event_info.timer = g_timeout_add(100, (GSourceFunc) timeout_test, Xgc);
+      nsp_event_info.timer = g_timeout_add(100, (GSourceFunc) timeout_menu_check, Xgc);
       nsp_event_info.str   = str;
       nsp_event_info.lstr  = lstr; /* on entry it gives the size of str buffer */
     }
@@ -413,7 +492,7 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
   while (1) 
     {
       /* enter the gtk_main */
-      gtk_main();
+      nsp_gtk_main();
       /* be sure that gtk_main_quit was activated by proper event */
       if ( nsp_event_info.ok == 1 ) 
 	{
@@ -514,7 +593,7 @@ static void sci_destroy_window (GtkWidget *widget,  BCG *gc)
       nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = 0 ;  nsp_event_info.y = 0;
       nsp_event_info.button = -100;
       delete_window(gc,gc->CurWindow);
-      gtk_main_quit();
+      nsp_gtk_main_quit();
     }
   else 
     {
@@ -536,7 +615,7 @@ static gboolean sci_delete_window (GtkWidget *widget, GdkEventKey *event,  BCG *
       nsp_event_info.ok =1 ;  nsp_event_info.win=  gc->CurWindow; nsp_event_info.x = 0 ;  nsp_event_info.y = 0;
       nsp_event_info.button = -100;
       delete_window(gc,gc->CurWindow);
-      gtk_main_quit();
+      nsp_gtk_main_quit();
     }
   else 
     delete_window(gc,gc->CurWindow);
@@ -718,13 +797,10 @@ static void scig_deconnect_handlers(BCG *winxgc)
  *
  **/
 
-static  int stop = FALSE;
-
-static gint timeout_pause (int *stop)
+static gint timeout_pause (void *data)
 {
   gdk_threads_enter();
-  *stop = TRUE;
-  gtk_main_quit();
+  nsp_gtk_main_quit();
   gdk_threads_leave();
   return TRUE;
 }
@@ -732,28 +808,18 @@ static gint timeout_pause (int *stop)
 extern void controlC_handler (int sig);
 static void controlC_handler_pause(int sig)
 {
-  timeout_pause (&stop);
+  timeout_pause (NULL);
 }
 
 static void nsp_event_pause(int number) 
 {
   guint tid;
   signal(SIGINT,controlC_handler_pause);
-
-  tid=g_timeout_add(number,(GSourceFunc) timeout_pause, &stop);
-  while (1) 
-    {
-      gtk_main();
-      if ( stop == TRUE)
-	{
-	  g_source_remove (tid);
-	  break;
-	}
-    }
+  tid=g_timeout_add(number,(GSourceFunc) timeout_pause, NULL);
+  nsp_gtk_main();
+  g_source_remove(tid);
   signal(SIGINT,controlC_handler);
 }
-
-
 
 static void  
 target_drag_data_received  (GtkWidget          *widget,
