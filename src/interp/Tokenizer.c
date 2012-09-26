@@ -406,7 +406,10 @@ static void  parse_operators(Tokenizer *T)
 	{
 	  T->GetChar(T); 
 	  if ( isdigit(T->tokenv.NextC) )
-	    T->backch(T);
+	    {
+	      /* the dot is given to number */
+	      T->backch(T);T->backch(T);T->GetChar(T);
+	    }
 	  else
 	    T->tokenv.id = SLASHDOT;
 	  break;
@@ -473,8 +476,7 @@ static void  parse_operators(Tokenizer *T)
 }
 
 /*
- * Parse a Scilab number 
- * as a string in T->tokenv.buf 
+ * Parse a nsp number as a string in T->tokenv.buf 
  */
 
 static int parse_number(Tokenizer *T)
