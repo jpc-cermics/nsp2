@@ -51,17 +51,6 @@ override-int-create-final Ast
 %%
 override-destroy-prelim  Ast
 /* verbatim in destroy */
-%%
-override classa_color_change kwargs
-/* override a method */
-static int _wrap_classa_color_change(NspAst *self,Stack stack,int rhs,int opt,int lhs)
-{
-  int_types T[] = {s_int,t_end};
-  int color;
-  if ( GetArgs(stack,rhs,opt,T,&color) == FAIL) return RET_BUG;
-  self->cla_color = color;
-  return 0;
-}
 
 %%
 override Ast.set_args kwargs
@@ -86,46 +75,6 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return RET_BUG;
   
 }
-
-%%
-override setrowscols_classa kwargs 
-/* override a function */
-static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
-{
-  return int_set_attribute(stack,rhs,opt,lhs);
-}
-
-%%
-override-attr Ast.cla_lval 
-
-/* here we override get_obj  and set_obj 
- * we want get to be followed by a set to check that 
- * inserted value is correct thus we use copy = TRUE.
- */
-
-static NspObject *_wrap_classa_get_obj_cla_lval(void *self,char *attr, int *copy)
-{
-  NspList *ret;
-  *copy = TRUE; 
-  ret = ((NspList*) ((NspAst *) self)->cla_lval);
-  return (NspObject *) ret;
-}
-
-/* in this function we can check that val is correct before 
- * setting the field with val. return FAIL if val is incorrect.
- */
-
-static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
-{
-  if (((NspAst *) self)->cla_lval != NULL ) 
-    nsp_list_destroy(((NspAst *) self)->cla_lval);
-  ((NspAst *) self)->cla_lval = (NspList *) val;
-  return OK;
-}
-
-%%
-override nsp_setrowscols_curve kwargs
-/* override a function */
 
 %%
 override Ast.ast_get_str kwargs
@@ -307,6 +256,40 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
       return RET_BUG;
     }
   MoveObj(stack,1, self->obj);
+  return Max(lhs,1);
+}
+
+%%
+override Ast.ast_set_user_data kwargs
+/* override a method */
+static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(0,1); 
+  if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
+    return RET_BUG;
+  if ( self->user_data != NULL )
+    {
+      nsp_object_destroy(&self->user_data);
+    }
+  self->user_data = Obj;
+  return 0;
+}
+
+%%
+override Ast.ast_get_user_data kwargs
+/* override a method */
+static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( self->user_data == NULL )
+    {
+      Scierror("Error: astnode has no user_data\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1, self->user_data);
   return Max(lhs,1);
 }
 

@@ -9,6 +9,7 @@
    '("int" "arity" "hidden"); /* arity for operators or tag for names etc.. */
    '("void*" "obj" "hidden" ); /* used to store a relevant objects */ 
    '("NspList*" "args" "hidden"); /* store arguments */
+   '("NspObject*" "user_data" "hidden"); /* store user_data */
    )
   (gtype-id "Ast")
 )

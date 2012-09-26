@@ -547,10 +547,10 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
 
 /*
  * ParseEvalLoop:
- * @T: 
- * @display: 
- * @errcatch: 
- * @pause: 
+ * @T:  a #Tokenizer
+ * @display: an integer 
+ * @errcatch: and integer
+ * @pause: an integer 
  * 
  * 
  * Parse Eval Loop until quit or EOF or CtrlC reached 
@@ -851,9 +851,9 @@ NspAst * nsp_parse_from_smat(NspSMatrix *M)
   return ast;
 }
 
-/**
+/*
  * nsp_parse_full:
- * @T: 
+ * @T: a #Tokenizer
  * 
  * reads from @T and return an ast 
  * 
@@ -888,7 +888,7 @@ static NspAst *nsp_parse_full(Tokenizer *T)
   if ( rep == RET_OK || rep == RET_EOF ) 
     {
       /* then create an ast with tolevel object */
-      if ((ast= nsp_ast_create(NVOID,STATEMENTS,nsp_list_length(args),NULL,NULL,NULL))== NULL)
+      if ((ast= nsp_ast_create(NVOID,STATEMENTS,nsp_list_length(args),NULL,NULL,NULL,NULL))== NULL)
 	goto err;
       ast->args = args;
       return ast;

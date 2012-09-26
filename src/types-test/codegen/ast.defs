@@ -2,15 +2,6 @@
 
 (include "ast-types.defs")
 
-(define-method classa_color_change
-  (of-object "ClassA")
-  (c-name "classa_color_change")
-  (return-type "int")
-  (parameters
-    '("int" "color")
-  )
-)
-
 (define-method get_str
   (of-object "Ast")
   (c-name "ast_get_str")
@@ -46,6 +37,22 @@
   (c-name "ast_get_obj")
   (return-type "int")
 )
+
+(define-method get_user_data
+  (of-object "Ast")
+  (c-name "ast_get_user_data")
+  (return-type "NspObject*")
+)
+
+(define-method set_user_data
+  (of-object "Ast")
+  (parameters
+   '("NspObject*" "ud")
+   )
+  (c-name "ast_set_user_data")
+  (return-type "void")
+)
+
 
 (define-method get_args
   (of-object "Ast")

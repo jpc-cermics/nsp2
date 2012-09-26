@@ -817,12 +817,12 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
     {
     case OBJECT :
       if ((obj=nsp_object_copy_with_name(L->O)) == NULLOBJ) return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,obj,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,obj,NULL,NULL,NULL);
       break;
     case NUMBER :
       if ((str = nsp_string_copy(((parse_double *) L->O)->str)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL);
       break;
     case INUMBER32 :
     case INUMBER64 :
@@ -830,7 +830,7 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
     case UNUMBER64 :
       if ((str = nsp_string_copy(((parse_int *) L->O)->str)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL);
       break;
     case STRING:
     case COMMENT:
@@ -838,13 +838,13 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
     case OPNAME :
       if ((str = nsp_string_copy((char *) L->O)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL);
       break;
     case PLIST: 
       return nsp_plist_to_ast(name,(PList) L->O);
       break;
     default: 
-      return nsp_ast_create(name,L->type,L->arity,L->O,NULL,NULL);
+      return nsp_ast_create(name,L->type,L->arity,L->O,NULL,NULL,NULL);
     }
   return NULL;
 } 
