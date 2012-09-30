@@ -429,7 +429,7 @@ int nsp_get_index_vector_from_object(NspObject *Obj,index_vector *index)
 
 
 /**
- * nsp_matint_delete_columns:
+ * nsp_matint_delete_columns_from_index:
  * @Obj: a #NspObject which implements #matint
  * @index: an #index_vector
  *
@@ -439,7 +439,7 @@ int nsp_get_index_vector_from_object(NspObject *Obj,index_vector *index)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_matint_delete_columns(NspObject  *Obj,index_vector *index)
+int nsp_matint_delete_columns_from_index(NspObject  *Obj,index_vector *index)
 {
   /* all objects which implements matint can be casted 
    * to NspSMatrix for accessing common fields.
@@ -500,7 +500,7 @@ int nsp_matint_delete_columns(NspObject  *Obj,index_vector *index)
 }
 
 /**
- * nsp_matint_delete_rows:
+ * nsp_matint_delete_rows_from_index:
  * @Obj: a #NspObject which implements #matint
  * @index: an #index_vector
  *
@@ -510,7 +510,7 @@ int nsp_matint_delete_columns(NspObject  *Obj,index_vector *index)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_matint_delete_rows(NspObject *Obj,index_vector *index)
+int nsp_matint_delete_rows_from_index(NspObject *Obj,index_vector *index)
 {
   /* all objects which implements matint can be casted 
    * to NspSMatrix for accessing common fields.
@@ -619,7 +619,7 @@ int nsp_matint_tozero(NspObject *Obj)
 
 
 /**
- * nsp_matint_delete_elements:
+ * nsp_matint_delete_elements_from_index:
  * @Obj: a #NspObject which implements #matint
  * @index: an #index_vector
  *
@@ -629,7 +629,7 @@ int nsp_matint_tozero(NspObject *Obj)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_matint_delete_elements(NspObject *Obj,index_vector *index)
+int nsp_matint_delete_elements_from_index(NspObject *Obj,index_vector *index)
 {
   /* all objects which implements matint can be casted 
    * to NspSMatrix for accessing common fields.
@@ -2786,7 +2786,7 @@ int int_matint_deleteelts(Stack stack, int rhs, int opt, int lhs)
   if ( rhs == 3 )
     return int_matint_deleteelts2(stack, rhs, opt, lhs);
   else
-    return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements);
+    return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_elements_from_index);
 }
 
 /**
@@ -2805,7 +2805,7 @@ int int_matint_deleteelts(Stack stack, int rhs, int opt, int lhs)
 
 int int_matint_deletecols(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_columns);
+  return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_columns_from_index);
 }
 
 /**
@@ -2823,7 +2823,7 @@ int int_matint_deletecols(Stack stack, int rhs, int opt, int lhs)
  **/
 int int_matint_deleterows(Stack stack, int rhs, int opt, int lhs)
 {
-  return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_rows);
+  return int_matint_delete_gen(stack, rhs, opt, lhs, (delfunc) nsp_matint_delete_rows_from_index);
 }
 
 
@@ -4049,5 +4049,76 @@ static int nsp_matint_set_diag(NspObject *ObjA,NspObject *ObjB,int k)
 	}
     }
   return OK;
+}
+
+/**
+ * nsp_matint_delete_gen:
+ * @Obj: #NspObject to be changed 
+ * @Index: Indexes for deletion given as #NspObject 
+ * @delfunc: function to be used.
+ * 
+ * generic function used by next ones.
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+static int nsp_matint_delete_gen( NspObject *Obj, NspObject *Index, delfunc F)
+{
+  int rep;
+  index_vector index={0};
+  index.iwork = matint_iwork1;  
+  if ( nsp_get_index_vector_from_object(Obj,&index) == FAIL) 
+    return FAIL;
+  rep = (*F)(Obj,&index);
+  nsp_free_index_vector_cache(&index);
+  return rep;
+}
+
+/**
+ * nsp_matint_delete_elts:
+ * @Obj: #NspObject to be changed 
+ * @Index: Indexes for deletion given as #NspObject 
+ * 
+ * generic function which can be used by objects which implement 
+ * matint in order to perform elements deletions.
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_matint_delete_elts_O( NspObject *Obj, NspObject *Index) 
+{
+  return nsp_matint_delete_gen(Obj,Index, nsp_matint_delete_elements_from_index);
+}
+
+/**
+ * nsp_matint_delete_cols:
+ * @Obj: #NspObject to be changed 
+ * @Index: Indexes for deletion given as #NspObject 
+ *
+ * generic function which can be used by objects which implement 
+ * matint in order to perform  column deletion
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_matint_delete_cols_O( NspObject *Obj, NspObject *Index) 
+{
+  return nsp_matint_delete_gen(Obj,Index, nsp_matint_delete_columns_from_index);
+}
+
+/**
+ * nsp_matint_delete_rows:
+ * @Obj: #NspObject to be changed 
+ * @Index: Indexes for deletion given as #NspObject 
+ * 
+ * generic function which can be used by objects which implement 
+ * matint in order to perform  row deletion.
+ * 
+ * Returns: %OK or %FAIL
+ **/
+
+int nsp_matint_delete_rows_O( NspObject *Obj, NspObject *Index) 
+{
+  return nsp_matint_delete_gen(Obj,Index, nsp_matint_delete_rows_from_index);
 }
 
