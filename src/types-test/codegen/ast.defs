@@ -8,11 +8,18 @@
   (return-type "string")
 )
 
+;; method get op is used to get the id of 
+;; the ast node which is an integer. This 
+;; is not supposed to be used at user level 
+
 (define-method get_op
   (of-object "Ast")
   (c-name "ast_get_op")
   (return-type "int")
 )
+
+;; 
+
 
 (define-method get_codename
   (of-object "Ast")
