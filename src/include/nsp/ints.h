@@ -22,7 +22,7 @@
 
 #include <nsp/intsf.h>  /* forward declarations */
 
-#if defined(__MSC__) && defined(_MSC_VER)
+#if ( defined(__MSC__) && defined(_MSC_VER) ) || defined(NOGLIBH)
 typedef int gint    ;
 typedef unsigned int guint   ;
 typedef short gshort  ;
