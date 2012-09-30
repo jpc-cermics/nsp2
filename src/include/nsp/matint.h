@@ -58,9 +58,9 @@ NspTypeMatint *new_type_matint(type_mode mode);
 extern NspMethods *matint_get_methods(void);
 
 extern int nsp_matint_tozero(NspObject *Obj);
-extern int nsp_matint_delete_columns(NspObject  *Obj,index_vector *index);
-extern int nsp_matint_delete_rows(NspObject *Obj, index_vector *index);
-extern int nsp_matint_delete_elements(NspObject *Obj, index_vector *index);
+extern int nsp_matint_delete_columns_from_index(NspObject  *Obj,index_vector *index);
+extern int nsp_matint_delete_rows_from_index(NspObject *Obj, index_vector *index);
+extern int nsp_matint_delete_elements_from_index(NspObject *Obj, index_vector *index);
 extern int nsp_matint_delete_elements2(NspObject *Obj, 
 				       int *indrow, int nr, int rmin, int rmax,
 				       int *indcol, int nc, int cmin, int cmax);
@@ -94,6 +94,10 @@ typedef enum { matint_iwork1=0, matint_iwork2=1} matint_workid;
 extern int get_index_vector_from_object(NspObject *Obj, index_vector *index) ;
 extern int nsp_matint_set_submatrix1(NspObject *ObjA,NspObject *Row, NspObject *Col, NspObject *ObjB);
 extern int nsp_matint_perm_elem(NspObject *ObjA, int p, int q, int dim_flag);
+
+extern int nsp_matint_delete_elements( NspObject *Obj, NspObject *Index) ;
+extern int nsp_matint_delete_columns( NspObject *Obj, NspObject *Index) ;
+extern int nsp_matint_delete_rows( NspObject *Obj, NspObject *Index) ;
 
 extern int int_matint_cells_setrowscols(Stack stack, int rhs, int opt, int lhs);
 extern int int_matint_concat_diag(Stack stack, int rhs, int opt, int lhs);

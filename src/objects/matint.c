@@ -4067,7 +4067,7 @@ static int nsp_matint_delete_gen( NspObject *Obj, NspObject *Index, delfunc F)
   int rep;
   index_vector index={0};
   index.iwork = matint_iwork1;  
-  if ( nsp_get_index_vector_from_object(Obj,&index) == FAIL) 
+  if ( nsp_get_index_vector_from_object(Index,&index) == FAIL) 
     return FAIL;
   rep = (*F)(Obj,&index);
   nsp_free_index_vector_cache(&index);
@@ -4075,7 +4075,7 @@ static int nsp_matint_delete_gen( NspObject *Obj, NspObject *Index, delfunc F)
 }
 
 /**
- * nsp_matint_delete_elts:
+ * nsp_matint_delete_elements:
  * @Obj: #NspObject to be changed 
  * @Index: Indexes for deletion given as #NspObject 
  * 
@@ -4085,13 +4085,13 @@ static int nsp_matint_delete_gen( NspObject *Obj, NspObject *Index, delfunc F)
  * Returns: %OK or %FAIL
  **/
 
-int nsp_matint_delete_elts_O( NspObject *Obj, NspObject *Index) 
+int nsp_matint_delete_elements( NspObject *Obj, NspObject *Index) 
 {
   return nsp_matint_delete_gen(Obj,Index, nsp_matint_delete_elements_from_index);
 }
 
 /**
- * nsp_matint_delete_cols:
+ * nsp_matint_delete_columns:
  * @Obj: #NspObject to be changed 
  * @Index: Indexes for deletion given as #NspObject 
  *
@@ -4101,7 +4101,7 @@ int nsp_matint_delete_elts_O( NspObject *Obj, NspObject *Index)
  * Returns: %OK or %FAIL
  **/
 
-int nsp_matint_delete_cols_O( NspObject *Obj, NspObject *Index) 
+int nsp_matint_delete_columns( NspObject *Obj, NspObject *Index) 
 {
   return nsp_matint_delete_gen(Obj,Index, nsp_matint_delete_columns_from_index);
 }
@@ -4117,7 +4117,7 @@ int nsp_matint_delete_cols_O( NspObject *Obj, NspObject *Index)
  * Returns: %OK or %FAIL
  **/
 
-int nsp_matint_delete_rows_O( NspObject *Obj, NspObject *Index) 
+int nsp_matint_delete_rows( NspObject *Obj, NspObject *Index) 
 {
   return nsp_matint_delete_gen(Obj,Index, nsp_matint_delete_rows_from_index);
 }
