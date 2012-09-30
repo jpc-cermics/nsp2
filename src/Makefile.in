@@ -3,49 +3,32 @@ SHELL = /bin/sh
 include ../Makefile.incl
 
 SCIDIRS = zcalelm objects interp functions gtk2 \
-	system graphics-old graphics-new menus gtksci gzvt2 modules gobjects types-test \
-	librand libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
+	system graphics-old graphics-new menus gtksci \
+	gzvt2 modules gobjects types-test librand \
+	libcdf @MPLUSLIBDIR@ libfft libinteg libapprox libspmf lapack \
 	libminpack liboptim @PVMNSPDIR@ @BLAS_LOCAL@ @LAPACK_LOCAL@ @LIBXDR_LOCAL@ @SNDFILE_LIB@ @UFSPARSE_LIB@ @PORTAUDIO_LIB@ @GRAPHVIZ_LIB@ @GLPK_LIB@ 
 
-ALLSCIDIRS = zcalelm objects interp functions gtk2 \
-	system graphics-old graphics-new  menus gtksci gzvt2 modules gobjects types-test \
-	librand libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
-	libblas liblapack liboptim libxdr libsndfile libumfpack libpvm libminpack libportaudio \
+ALLSCIDIRS =zcalelm objects interp functions gtk2 \
+	system graphics-old graphics-new menus gtksci \
+	gzvt2 modules gobjects types-test librand \
+	libcdf libmaxplus libfft libinteg libapprox libspmf lapack \
+	libminpack liboptim \ 
+	libpvm libblas liblapack libxdr libsndfile libumfpack libportaudio \
 	libgraphviz libglpk 
-
 
 SUBDIRS = $(DLD_SUBDIR) $(SCIDIRS) 
 ALLSUBDIRS = $(DLD_SUBDIR) $(ALLSCIDIRS) 
 
-
-all::
+all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i ; echo "making all in src/$$i..."; \
-		$(MAKE) $(MFLAGS) all); \
-	done
-
-distclean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(ALLSCIDIRS) ;\
-	do \
-		(cd $$i ; echo "making distclean in src/$$i..."; \
-		$(MAKE) $(MFLAGS)  distclean); \
-	done
-
-clean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(ALLSUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making clean in src/$$i..."; \
-		$(MAKE) $(MFLAGS) clean); \
-	done
-
-f2cclean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(ALLSUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making f2cclean in src/$$i..."; \
-		$(MAKE) $(MFLAGS) f2cclean); \
+		(cd $$i && echo "making $@ in src/$$i " && \
+		$(MAKE) $(MFLAGS) -s $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
