@@ -46,26 +46,26 @@ clean::
 distclean::
 	$(RM) *.o  $(SCIDIR)/libs/$(LIBRARY) .archive_target
 
-
+#------------------------
 # generate dependencies 
-
+#-------------------------
 
 .SUFFIXES: .d $(SUFFIXES)
 
 DEPS=$(OBJSC:.o=.d)
 
 .c.d:
-	$(CC) $(CFLAGS) -MMD -c $*.c 
-
-# @cat $(DEPS) | egrep -v "^[ \t]*/usr/" >> Makefile 
-
-depend	: $(DEPS)
-	@emacs Makefile  -l `pwd`/../include-remove.el  -e job -batch 2> /dev/null
-	@cat $(DEPS)  >> Makefile 
-	@$(RM) $(DEPS) 
+	@echo "compiling $<  Wall "
+	@$(COMPILE) -MMD -c $<
 
 clean:: 
 	@$(RM) $(DEPS) 
 
-
+depend	: $(DEPS)
+	@cat *.d | tr "\n" "@" \
+	| sed -e "s+/usr/[-_./a-zA-Z0-9]*[\t ]*\\\@++g" \
+	| sed -e "s+/usr/[-_./a-zA-Z0-9]*[\t ]*++g" \
+	| sed -e "s+../../src+..+g" \
+	| tr  "@" "\n" > Makefile.deps 
+	@$(RM) $(DEPS) 
 
