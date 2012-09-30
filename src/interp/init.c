@@ -86,7 +86,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   char startup[128];
   /* char *display = NULL; */
   int i;
-  ProgramName = argv[0];
+  ProgramName = (argc > 0 ) ? argv[0]: "unknown";
 
   /* Initialize reader */
   nsp_intialize_reader();

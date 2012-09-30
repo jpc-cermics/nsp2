@@ -6,30 +6,19 @@ include $(TOP)/Makefile.incl
 CFLAGS = $(CC_OPTIONS) 
 
 SUBDIRS =  graphics miscellaneous system statistics linalg calpol
-SUBDIRS_CLEAN =  graphics miscellaneous system statistics linalg calpol
 
-all:: 
+all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i ; echo "making all in macros/$$i..."; \
-		$(MAKE) $(MFLAGS) all); \
-	done
-
-distclean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS_CLEAN) ;\
-	do \
-		(cd $$i ; echo "making distclean in macros/$$i..."; \
-		$(MAKE) $(MFLAGS)  distclean); \
-	done
-
-clean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS_CLEAN) ;\
-	do \
-		(cd $$i ; echo "making clean in macros/$$i..."; \
-		$(MAKE) $(MFLAGS) clean); \
+		(cd $$i && echo "making $@ in demos/$$i " && \
+		$(MAKE) $(MFLAGS) -s $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
 
 DESTDIR=$(prefix)/lib/nsp

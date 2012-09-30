@@ -7,27 +7,16 @@ CFLAGS = $(CC_OPTIONS)
 
 SUBDIRS = libbase libplus
 
-all:: 
+all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i ; echo "making all in macros/scicos_blocks/$$i..."; \
-		$(MAKE) $(MFLAGS) all); \
+		(cd $$i && echo "making $@ in demos/$$i " && \
+		$(MAKE) $(MFLAGS) -s $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
-
-distclean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making distclean in macros/scicos_blocks/$$i..."; \
-		$(MAKE) $(MFLAGS)  distclean); \
-	done
-
-clean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making clean in macros/scicos_blocks/$$i..."; \
-		$(MAKE) $(MFLAGS) clean); \
-	done
-

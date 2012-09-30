@@ -7,27 +7,17 @@ CFLAGS = $(CC_OPTIONS)
 
 SUBDIRS = libdemo
 
-all:: 
+all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i ; echo "making all in demos/graphics/$$i..."; \
-		$(MAKE) $(MFLAGS) all); \
-	done
-
-distclean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making distclean in demos/graphics/$$i..."; \
-		$(MAKE) $(MFLAGS)  distclean); \
-	done
-
-clean::
-	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
-	for i in $(SUBDIRS) ;\
-	do \
-		(cd $$i ; echo "making clean demos/graphics/$$i..."; \
-		$(MAKE) $(MFLAGS) clean); \
+		(cd $$i && echo "making $@ in demos/graphics/$$i " && \
+		$(MAKE) $(MFLAGS) -s $@ ); \
+	   	IER=$$? &&\
+	   	case $$IER in\
+	    	0) ;;\
+	    	*) echo "Cannot make $@ in sub directory $$d";\
+	       	  exit $$IER;;\
+	   	esac;\
 	done
 
