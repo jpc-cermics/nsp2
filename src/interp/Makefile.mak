@@ -10,13 +10,13 @@ LIBRARY = nsp.lib
 OBJSC = Parse_exprs.obj Parse.obj Parse_check.obj \
 	Tokenizer.obj Eval.obj FuncEval.obj Parse-IN.obj \
 	LibsTab.obj PList.obj PListBase.obj reader_rl.obj nsp_io.obj astnode.obj \
-	scalexp.obj
+	scalexp.obj init.obj 
 
 OBJSF=
 
 include ../../Makefile.incl.mak
 
-CFLAGS = $(CC_OPTIONS)  -DSTANDALONE -MMD
+CFLAGS = $(CC_OPTIONS)  -DSTANDALONE
 FFLAGS = $(FC_OPTIONS) 
 
 include ../Make.lib.mak
@@ -31,3 +31,5 @@ all :: lsci.obj
 #=====================================================
 #dependencies generated with gcc -MMD 
 #=====================================================
+include Makefile.deps
+
