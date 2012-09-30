@@ -12,7 +12,8 @@
  */
 
 enum _nsp_basic_types { 
-  INUMBER32 = -14,
+  BASIC_FIRST= -15,
+  INUMBER32 = -14, 
   INUMBER64,
   UNUMBER32,
   UNUMBER64,
@@ -22,6 +23,7 @@ enum _nsp_basic_types {
   COMMENT,
   OPNAME ,
   OBJECT ,
+  BASIC_LAST
 };
 
 typedef enum _nsp_basic_types nsp_basic_types;
@@ -146,7 +148,7 @@ enum _nsp_codes {
   WHAT ,  
   WHILE,  
   WHO ,   
-  /* guard */
+  /* guard: take care that this one should be negative and smaller than basics */
   LASTCODE_NEG_OP  
 };
 

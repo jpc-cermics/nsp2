@@ -856,13 +856,25 @@ static int int_parse(Stack stack, int rhs, int opt, int lhs,int mtlb)
   return 1;
 }
 
+static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs,int mtlb)
+{
+  NspAst *ast;
+  int code;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  if (GetScalarInt(stack,1,&code) == FAIL) return RET_BUG;
+  if ((ast=nsp_ast_create(NVOID,int op,0,NULL,NULL,NULL,NULL))==NULL)
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(ast));
+  return 1;
+}
 
 /*
  * The Interface for basic parse operations 
  */
 
 static OpTab Parse_func[]={
-  {"parse_s" , int_parse },
+  {"parse_s" , int_parse }, /* for ast */
   {"parse_eval" , int_parseevalfile },
   {"exec" , int_parseevalfile },
   {"exec_mtlb" , int_parseevalfile_mtlb },
@@ -882,7 +894,8 @@ static OpTab Parse_func[]={
   {"input", int_input},
   {"halt", int_halt},
   {"restart",int_restart},
-  {"parse_file",int_parse_file},
+  {"parse_file",int_parse_file}, /* for ast */
+  {"ast_create",int_ast_create_1}, /* for ast */
   {(char *) 0, NULL}
 };
 
