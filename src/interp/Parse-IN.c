@@ -814,7 +814,6 @@ static int int_restart(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
-
 /*
  * ast=parse_file(...)
  * 
@@ -843,7 +842,7 @@ static int int_parse_file(Stack stack, int rhs, int opt, int lhs)
   return int_parse_file_gen(stack,rhs,opt,lhs,FALSE);
 }
 
-static int int_parse(Stack stack, int rhs, int opt, int lhs,int mtlb)
+static int int_parse(Stack stack, int rhs, int opt, int lhs)
 {
   NspAst *ast;
   NspSMatrix *S;
@@ -856,14 +855,14 @@ static int int_parse(Stack stack, int rhs, int opt, int lhs,int mtlb)
   return 1;
 }
 
-static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs,int mtlb)
+static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
 {
   NspAst *ast;
   int code;
   CheckStdRhs(1,1);
   CheckLhs(0,1);
   if (GetScalarInt(stack,1,&code) == FAIL) return RET_BUG;
-  if ((ast=nsp_ast_create(NVOID,int op,0,NULL,NULL,NULL,NULL))==NULL)
+  if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,NULL,NULL))==NULL)
     return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ast));
   return 1;
