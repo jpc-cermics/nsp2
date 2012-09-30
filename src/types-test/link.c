@@ -1454,7 +1454,8 @@ int link_remove_control(NspLink *L,const double pt[2])
   if ( cp == 0 || cp == L->obj->poly->m -1 ) return OK;
   index.min = index.max = cp+1;
   /* remove point in matrix */
-  return nsp_matint_delete_rows( (NspObject *) (L->obj->poly), &index);
+  return nsp_matint_delete_rows_from_index( (NspObject *) (L->obj->poly),
+					    &index);
 }
 
 
@@ -1909,4 +1910,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1913 "link.c"
+#line 1914 "link.c"

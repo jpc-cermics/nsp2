@@ -1576,12 +1576,13 @@ int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int ncol, int 
   
   index.iwork = matint_iwork1;
   if ( nsp_get_index_vector_from_object(NSP_OBJECT(B),&index) == FAIL) return FAIL;
-  if ( nsp_matint_delete_rows(NSP_OBJECT(C),&index)==FAIL) return FAIL;
+  if ( nsp_matint_delete_rows_from_index(NSP_OBJECT(C),&index)==FAIL) return FAIL;
   if ( Colr != NULL && ncol != n )
     {
-      if ( nsp_matint_delete_rows(NSP_OBJECT(Col),&index)==FAIL) return FAIL;
+      if ( nsp_matint_delete_rows_from_index(NSP_OBJECT(Col),&index)==FAIL) return FAIL;
     }
-    
+  nsp_free_index_vector_cache(&index);
+  
   nsp_matrix_destroy(Fc);
   nsp_matrix_destroy(Fs); 
   nsp_matrix_destroy(Index); 
@@ -1607,4 +1608,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1611 "polyhedron.c"
+#line 1612 "polyhedron.c"
