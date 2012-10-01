@@ -376,7 +376,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 {
   gint pw,ph,w,h;
   if (Xgc == NULL || Xgc->private->window ==  NULL) return ;
-  if ( Xgc->CurResizeStatus == 1) 
+  if ( Xgc->CurResizeStatus == 1 ) 
     {
       /* here drawing and scrolled move together */
       gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
@@ -400,7 +400,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
        * window to be smaller than its container 
        *
        */
-      int inhibit_enlarge = TRUE;
+      int inhibit_enlarge = ( Xgc->CurResizeStatus == 2) ? FALSE : TRUE ;
       int schrink = FALSE;
       /* gint sc_w,sc_h;*/
       GdkGeometry geometry;
@@ -475,7 +475,7 @@ static void xget_popupdim(BCG *Xgc,int *x, int *y)
 
 static void xset_popupdim(BCG *Xgc,int x, int y)
 {
-  if ( Xgc->CurResizeStatus == 0) 
+  if ( Xgc->CurResizeStatus == 0 || Xgc->CurResizeStatus == 2 ) 
     {
       int w,h,pw,ph, xoff, yoff;
       gdk_drawable_get_size (Xgc->private->scrolled->window,&pw,&ph);
@@ -516,7 +516,7 @@ static void xset_popupdim(BCG *Xgc,int x, int y)
 static void xget_viewport(BCG *Xgc,int *x, int *y)
 {     
   GtkAdjustment * H, *V;
-  if ( Xgc->CurResizeStatus == 0) 
+  if ( Xgc->CurResizeStatus == 0 || Xgc->CurResizeStatus == 2 )
     {
       /* get the horizontal and vertival adjustments of the ? */
       H = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (Xgc->private->scrolled));
@@ -542,7 +542,7 @@ static void xget_viewport(BCG *Xgc,int *x, int *y)
 
 static void xset_viewport(BCG *Xgc,int x, int y)
 {
-  if ( Xgc->CurResizeStatus == 0) 
+  if ( Xgc->CurResizeStatus == 0 || Xgc->CurResizeStatus == 2) 
     {
       gtk_adjustment_set_value( gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (Xgc->private->scrolled)),
 				(gfloat) x);
@@ -978,7 +978,7 @@ static void xset_wresize(BCG *Xgc,int num)
 {
   GdkGeometry geometry;
   GdkWindowHints geometry_mask;
-  int num1= Min(Max(num,0),1);
+  int num1= Min(Max(num,0),2);
   if ( num1 != Xgc->CurResizeStatus && num1 == 1) 
     {
       /* we want here that the graphic window follows the viewport resize 
@@ -1003,6 +1003,7 @@ static void xset_wresize(BCG *Xgc,int num)
       xset_windowdim(Xgc,w,h);
     }
 }
+ 
 
 /**
  * xget_wresize:
@@ -1719,6 +1720,15 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	  if ( (dd->CWindowWidth < event->width) || (dd->CWindowHeight < event->height))
 	    {
 	      int w,h;
+	      /* 
+	       * Sciprintf("XXXX attention la taille bouge (%d,%d) (%d,%d)\n",
+	       * 	 dd->CWindowWidth,dd->CWindowHeight,
+	       *	 event->width,event->height);
+	       */
+	      if (0 &&  dd->CurResizeStatus == 2 ) 
+		{
+		  enqueue_nsp_command("XXX redraw_requested");
+		}
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
@@ -1793,6 +1803,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 	}
       else
 	{
+	  /* call a new draw when necessary here */
 	  NspGraphic *G = (NspGraphic *) dd->figure ;
 	  G->type->draw(dd,G,rect,NULL);
 	}
