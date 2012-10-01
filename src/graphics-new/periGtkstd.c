@@ -372,6 +372,8 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  * 
  **/
 
+static void nsp_wait_wdim(BCG *Xgc,int x, int y);
+
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
   gint pw,ph,w,h;
@@ -404,7 +406,7 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       int schrink = FALSE;
       /* gint sc_w,sc_h;*/
       GdkGeometry geometry;
-      GdkWindowHints geometry_mask;
+      GdkWindowHints geometry_mask= GDK_HINT_MAX_SIZE;
       gdk_drawable_get_size (Xgc->private->window->window,&pw,&ph);
       gdk_drawable_get_size (GS_GET_WINDOW(Xgc->private->drawing),&w,&h);
       if ( (Xgc->CWindowWidth > x ) || (Xgc->CWindowHeight > y )) schrink = TRUE;
@@ -418,13 +420,17 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	{
 	  geometry.max_width = x+15;
 	  geometry.max_height = y+15;
-	  geometry_mask = GDK_HINT_MAX_SIZE ;
 	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), 
 					 Xgc->private->scrolled,
 					 &geometry, geometry_mask);
 	}
       else 
 	{
+	  geometry.max_width = G_MAXSHORT;
+	  geometry.max_height = G_MAXSHORT;
+	  gtk_window_set_geometry_hints (GTK_WINDOW (Xgc->private->window), 
+					 Xgc->private->scrolled,
+					 &geometry, geometry_mask);
 	  /* if window was schrinked then scrolled must follow */
 	  if (  schrink == TRUE ) 
 	    {
@@ -443,8 +449,50 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  expose_event_new( Xgc->private->drawing,NULL, Xgc);
 	}
     }
-  gdk_flush();
+  /* wait until the Xgc is updated i.e when a configure event will be done */
+  /* nsp_wait_wdim(Xgc,x,y); */
 }
+
+
+typedef struct _wdim_wait wdim_wait;
+
+struct _wdim_wait {
+  BCG *Xgc;
+  int x,y,count;
+};
+
+static GMainLoop *nsp_wdim_loop=NULL;
+
+static gint timeout_wait_wdim (void *data)
+{
+  wdim_wait *ww= data;
+  gdk_threads_enter();
+  if ( ww->x ==  ww->Xgc->CWindowWidth && ww->y ==  ww->Xgc->CWindowHeight )
+    {
+      g_main_loop_quit (nsp_wdim_loop);
+    }
+  else if ( ww->count == 100 ) 
+    {
+      g_main_loop_quit (nsp_wdim_loop);
+    }
+  ww->count++;
+  gdk_threads_leave();
+  return TRUE;
+}
+
+static void nsp_wait_wdim(BCG *Xgc,int x, int y)
+{
+  wdim_wait ww= {Xgc,x,y,0};
+  guint tid= g_timeout_add(10,(GSourceFunc) timeout_wait_wdim, &ww);
+  if (nsp_wdim_loop==NULL) {
+    nsp_wdim_loop = g_main_loop_new (NULL, TRUE);
+  }
+  GDK_THREADS_LEAVE ();
+  g_main_loop_run (nsp_wdim_loop);
+  g_source_remove(tid);
+  GDK_THREADS_ENTER ();
+}
+
 
 /**
  * xget_popupdim:
@@ -1707,6 +1755,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	{
 	  if ( (dd->CWindowWidth != event->width) || (dd->CWindowHeight != event->height))
 	    {
+	      /* printf("XXX changed to %d %d\n",event->width,event->height); */
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
@@ -1729,6 +1778,7 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 		{
 		  enqueue_nsp_command("XXX redraw_requested");
 		}
+	      /* printf("XXX changed to %d %d\n",event->width,event->height); */
 	      dd->CWindowWidth = event->width;
 	      dd->CWindowHeight = event->height;
 	      dd->private->resize = 1;
