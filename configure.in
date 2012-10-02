@@ -1109,6 +1109,9 @@ if test "$MINGW32" != "yes" ; then
       TERM_LDFLAGS=VTE_LDFLAGS
    fi
    LIBS=$ac_save_LIBS
+else 
+   # no use to compile gzvt2 for windows.
+   GZVT=
 fi 
 
 
