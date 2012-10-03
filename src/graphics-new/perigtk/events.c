@@ -68,10 +68,10 @@ static void nsp_gtk_main(void)
   if (nsp_loop==NULL) {
     nsp_loop = g_main_loop_new (NULL, TRUE);
   }
-  GDK_THREADS_LEAVE ();
-  g_main_loop_run (nsp_loop);
   GDK_THREADS_ENTER ();
-  gdk_flush ();
+  g_main_loop_run (nsp_loop);
+  GDK_THREADS_LEAVE ();
+  /* gdk_flush (); */
 }
 
 /**
@@ -123,10 +123,6 @@ static gboolean locator_button_press(GtkWidget *widget,
   if ( nsp_event_info.sci_click_activated == FALSE ) 
     {
       nsp_gwin_event ev={ gc->CurWindow,event->x, event->y,id,event->state,0,0};
-      /* 
-      static int count=0;
-      fprintf(stderr,"Add press in queue %d\n",count++); 
-      */
       nsp_enqueue(&gc->queue,&ev);
     }
   else 
@@ -312,16 +308,28 @@ static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
  * Returns: %TRUE 
  **/
 
+#define DEBUG_T 
+#ifdef  DEBUG_T 
+static int ktmc=0;
+#endif 
+
 static gint timeout_menu_check (BCG *gc)
 {
-  if ( dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
+#ifdef  DEBUG_T 
+  ktmc++;
+  Sciprintf("timeout_menu_check with ktmc %d\n",ktmc);
+#endif
+  if (ktmc==100 ||  dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
     {
-      gdk_threads_enter();
+      GDK_THREADS_ENTER ();
       nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
       nsp_event_info.mask = 0;
       nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
       nsp_gtk_main_quit();
-      gdk_threads_leave();
+      GDK_THREADS_LEAVE ();
+#ifdef  DEBUG_T 
+      Sciprintf("quit the menu_check with a message\n");
+#endif
     }
   return TRUE;
 }
@@ -333,9 +341,9 @@ extern void nsp_flush_tkevents(void);
 
 static gint timeout_tk (void *v)
 {
-  gdk_threads_enter();
+  GDK_THREADS_ENTER ();
   nsp_flush_tkevents();
-  gdk_threads_leave();
+  GDK_THREADS_LEAVE ();
   return TRUE;
 }
 
@@ -395,11 +403,13 @@ static void nsp_change_cursor(BCG *Xgc, int win,int wincount, int flag )
  * wait for events: mouse motion and mouse press and release 
  *                  and dynamic menu activation through a timeout 
  * 
- * if iflag = 0 : clear previous mouse click 
- * if iflag = 1 : don't 
- * if getmotion = 1 : check also mouse move 
- * if getrelease=1 : check also mouse release 
- * if dyn_men = 1 ; check also dynamic menus (returns the menu code in str )
+ * if iflag = 0 : clear previous mouse click else if iflag = 1 : don't 
+ * if getmotion = 1 : add  mouse move to checked events.
+ * if getrelease=1 :  add  mouse release to checked events.
+ * if dyn_men = 1 ;   add  dynamic menus activation to checked events
+ *                    dyn_menu is activated if str != NULL (returns the menu code in str )
+ * if getkey = 1;     add key-pressed to checked events.
+ *                    
  * return value : 0,1,2 if button pressed 
  *                -5,-4,-3: if button release
  *                -100 : error or window destroyed 
@@ -480,6 +490,7 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
   if ( nsp_event_info.getmen == TRUE ) 
     {
       /*  Check soft menu activation during xclick */ 
+      ktmc=0;
       nsp_event_info.timer = g_timeout_add(100, (GSourceFunc) timeout_menu_check, Xgc);
       nsp_event_info.str   = str;
       nsp_event_info.lstr  = lstr; /* on entry it gives the size of str buffer */
@@ -488,16 +499,26 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
 #ifdef WITH_TK
   timer_tk=  g_timeout_add(100,  (GSourceFunc) timeout_tk , NULL);
 #endif
-  
+#ifdef  DEBUG_T 
+  Sciprintf("enter the while \n");
+#endif
   while (1) 
     {
       /* enter the gtk_main */
       nsp_gtk_main();
+#ifdef  DEBUG_T 
+      Sciprintf("quit the main \n");
+#endif
       /* be sure that gtk_main_quit was activated by proper event */
       if ( nsp_event_info.ok == 1 ) 
 	{
-	  if ( win == -1 ) break;
-	  if ( nsp_event_info.win == win  ) break;
+	  if ( win == -1 || nsp_event_info.win == win  ) 
+	    {
+#ifdef  DEBUG_T 
+	      Sciprintf("quit the while loop\n");
+#endif
+	      break;
+	    }
 	}
     }
   
@@ -799,9 +820,9 @@ static void scig_deconnect_handlers(BCG *winxgc)
 
 static gint timeout_pause (void *data)
 {
-  gdk_threads_enter();
+  GDK_THREADS_ENTER ();
   nsp_gtk_main_quit();
-  gdk_threads_leave();
+  GDK_THREADS_LEAVE ();
   return TRUE;
 }
 
