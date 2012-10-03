@@ -308,7 +308,7 @@ static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
  * Returns: %TRUE 
  **/
 
-#define DEBUG_T 
+/* #define DEBUG_T  */
 #ifdef  DEBUG_T 
 static int ktmc=0;
 #endif 
@@ -318,19 +318,21 @@ static gint timeout_menu_check (BCG *gc)
 #ifdef  DEBUG_T 
   ktmc++;
   Sciprintf("timeout_menu_check with ktmc %d\n",ktmc);
-#endif
   if (ktmc==100 ||  dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
-    {
-      GDK_THREADS_ENTER ();
-      nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
-      nsp_event_info.mask = 0;
-      nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
-      nsp_gtk_main_quit();
-      GDK_THREADS_LEAVE ();
-#ifdef  DEBUG_T 
-      Sciprintf("quit the menu_check with a message\n");
+#else 
+    if (  dequeue_nsp_command(nsp_event_info.str,nsp_event_info.lstr) == OK)
 #endif
-    }
+      {
+	GDK_THREADS_ENTER ();
+	nsp_event_info.ok = 1 ; nsp_event_info.x = 0 ; nsp_event_info.y =0 ; nsp_event_info.button =  -2;
+	nsp_event_info.mask = 0;
+	nsp_event_info.win = (gc == NULL) ? 0 : gc->CurWindow;
+	nsp_gtk_main_quit();
+	GDK_THREADS_LEAVE ();
+#ifdef  DEBUG_T 
+	Sciprintf("quit the menu_check with a message\n");
+#endif
+      }
   return TRUE;
 }
   
@@ -490,7 +492,9 @@ static void nsp_event_wait(BCG *Xgc,int *ibutton,int *imask, int *x1, int *yy1,i
   if ( nsp_event_info.getmen == TRUE ) 
     {
       /*  Check soft menu activation during xclick */ 
+#ifdef  DEBUG_T 
       ktmc=0;
+#endif
       nsp_event_info.timer = g_timeout_add(100, (GSourceFunc) timeout_menu_check, Xgc);
       nsp_event_info.str   = str;
       nsp_event_info.lstr  = lstr; /* on entry it gives the size of str buffer */
