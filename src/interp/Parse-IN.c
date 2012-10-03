@@ -858,12 +858,20 @@ static int int_parse(Stack stack, int rhs, int opt, int lhs)
 static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
 {
   NspAst *ast;
+  char *str=NULL;
   int code;
-  CheckStdRhs(1,1);
+  int_types T[] = {s_int,new_opts, t_end} ;
+  nsp_option opts[] ={{ "str",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
-  if (GetScalarInt(stack,1,&code) == FAIL) return RET_BUG;
+  if ( GetArgs(stack,rhs,opt,T,&code,&opts,&str) == FAIL)   return RET_BUG;
   if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,NULL,NULL))==NULL)
     return RET_BUG;
+  if ( str != NULL) 
+    {
+      if ( nsp_ast_set_str(ast,str) == FAIL) 
+	return RET_BUG;
+    }
   MoveObj(stack,1,NSP_OBJECT(ast));
   return 1;
 }

@@ -8,6 +8,15 @@
   (return-type "string")
 )
 
+(define-method set_str
+  (of-object "Ast")
+  (c-name "ast_set_str")
+  (parameters
+   '("string" "str")
+   )
+  (return-type "none")
+)
+
 ;; method get op is used to get the id of 
 ;; the ast node which is an integer. This 
 ;; is not supposed to be used at user level 

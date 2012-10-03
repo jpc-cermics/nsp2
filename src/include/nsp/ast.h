@@ -106,8 +106,9 @@ extern int nsp_ast_xdr_save(XDR  *xdrs, NspAst *M);
 extern NspAst *nsp_plist_to_ast(const char *name,PList L);
 extern NspAst* nsp_parse_file(char *Str);
 extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
+extern int nsp_ast_set_str(NspAst *ast,const char *str);
 
-#line 111 "./ast.h"
+#line 112 "./ast.h"
 #endif /* NSP_INC_NspAst */ 
 
 #ifdef NspAst_Private 
@@ -122,7 +123,7 @@ static AttrTab ast_attrs[];
 static NspMethods *ast_get_methods(void);
 /* static int int_ast_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAst *nsp_ast_create_void(const char *name,NspTypeBase *type);
-#line 15 "codegen/ast.override"
+#line 16 "codegen/ast.override"
 
 /* inserted in the private part of include file
  * of classa.h
@@ -136,6 +137,6 @@ static int nsp_check_ast_args(NspList *L);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
 
-#line 140 "./ast.h"
+#line 141 "./ast.h"
 #endif /* NspAst_Private */
 

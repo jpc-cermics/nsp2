@@ -24,7 +24,7 @@
 
 
 
-#line 30 "codegen/ast.override"
+#line 31 "codegen/ast.override"
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
@@ -190,7 +190,7 @@ static char *nsp_ast_type_short_string(NspObject *v)
   return(ast_short_type_name);
 }
 
-#line 433 "codegen/ast.override"
+#line 415 "codegen/ast.override"
 
 /*
  * A == B 
@@ -246,7 +246,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
   if ( nsp_ast_create_partial(H) == FAIL) return NULLAST;
   if ((H  = nsp_ast_xdr_load_partial(xdrs,H))== NULLAST) return H;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 50 "codegen/ast.override"
+#line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 252 "ast.c"
   return H;
@@ -258,7 +258,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
 
 void nsp_ast_destroy_partial(NspAst *H)
 {
-#line 53 "codegen/ast.override"
+#line 54 "codegen/ast.override"
 /* verbatim in destroy */
 
 #line 265 "ast.c"
@@ -275,7 +275,7 @@ void nsp_ast_destroy(NspAst *H)
   FREE(H);
 }
 
-#line 335 "codegen/ast.override"
+#line 317 "codegen/ast.override"
 /*
  * info overriden 
  */
@@ -301,7 +301,7 @@ int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
 }
 
 #line 304 "ast.c"
-#line 361 "codegen/ast.override"
+#line 343 "codegen/ast.override"
 /*
  * print overriden 
  */
@@ -484,7 +484,7 @@ NspAst *nsp_ast_create(const char *name,int op,int arity,void* obj,NspList* args
   H->args= args;
   H->user_data= user_data;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
-#line 50 "codegen/ast.override"
+#line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 490 "ast.c"
   return H;
@@ -561,7 +561,7 @@ NspAst *nsp_ast_full_copy(NspAst *self)
   if ( H ==  NULLAST) return NULLAST;
   if ( nsp_ast_full_copy_partial(H,self)== NULL) return NULLAST;
 
-#line 50 "codegen/ast.override"
+#line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 567 "ast.c"
   return H;
@@ -582,7 +582,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
-#line 50 "codegen/ast.override"
+#line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 588 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -592,7 +592,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 81 "codegen/ast.override"
+#line 82 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -614,6 +614,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
     case UNUMBER32:
     case UNUMBER64:
       str = ((NspAst *) self)->obj;
+      if ( str == NULL) str = "@";
       if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
       break;
     default:
@@ -624,10 +625,26 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 628 "ast.c"
+#line 629 "ast.c"
 
 
-#line 114 "codegen/ast.override"
+#line 116 "codegen/ast.override"
+static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *str;
+  CheckRhs(1,1); 
+  if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
+  CheckLhs(0,1);
+  if ( nsp_ast_set_str(self,str) == FAIL) 
+    return RET_BUG;
+  return 0;
+}
+
+#line 645 "ast.c"
+
+
+#line 130 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -641,10 +658,10 @@ static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs
   return Max(lhs,1);
 }
 
-#line 645 "ast.c"
+#line 662 "ast.c"
 
 
-#line 129 "codegen/ast.override"
+#line 145 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -652,38 +669,24 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
   NspObject *Ret;
   CheckRhs(0,0);
   CheckLhs(1,1); 
-  switch ( ((int) self->op)) 
+  str=nsp_astcode_to_codename(self->op);
+  if ( str != (char *) 0 )
     {
-    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
-    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
-    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
-    default:
-      str=nsp_astcode_to_codename(self->op);
-      if ( str != (char *) 0 )
-	{
-	  if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
-	}
-      else 
-	{
-	  if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
-	    return RET_BUG;
-	}
+      if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
+    }
+  else 
+    {
+      if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
+	return RET_BUG;
     }
   MoveObj(stack,1,Ret);
   return Max(lhs,1);
 }
 
-#line 684 "ast.c"
+#line 687 "ast.c"
 
 
-#line 166 "codegen/ast.override"
+#line 168 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -693,16 +696,6 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   CheckLhs(1,1); 
   switch ( ((int) self->op)) 
     {
-    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
-    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
-    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
     default:
       str=nsp_astcode_to_name(self->op);
       if ( str != (char *) 0 )
@@ -719,10 +712,10 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 723 "ast.c"
+#line 716 "ast.c"
 
 
-#line 218 "codegen/ast.override"
+#line 210 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -733,16 +726,6 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   if ((str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
   switch ( ((int) self->op)) 
     {
-    case STRING: if ( strcmp(str1,"STRING")== 0) rep=TRUE;break;
-    case COMMENT: if ( strcmp(str1,"COMMENT")== 0) rep=TRUE;break;
-    case NUMBER: if ( strcmp(str1,"NUMBER")== 0) rep=TRUE;break;
-    case INUMBER32: if ( strcmp(str1,"INUMBER32")== 0) rep=TRUE;break;
-    case INUMBER64: if ( strcmp(str1,"INUMBER64")== 0) rep=TRUE;break;
-    case UNUMBER32: if ( strcmp(str1,"UNUMBER32")== 0) rep=TRUE;break;
-    case UNUMBER64: if ( strcmp(str1,"UNUMBER64")== 0)rep=TRUE;break;
-    case NAME : if ( strcmp(str1,"NAME")== 0) rep=TRUE;break;
-    case OPNAME : if ( strcmp(str1,"OPNAME")== 0) rep=TRUE;break;
-    case OBJECT :  if ( strcmp(str1,"OBJECT")== 0) rep=TRUE;break;
     default:
       str=nsp_astcode_to_name(self->op);
       if ( str != (char *) 0 && strcmp(str,str1)==0 ) rep = TRUE;
@@ -751,10 +734,10 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 755 "ast.c"
+#line 738 "ast.c"
 
 
-#line 248 "codegen/ast.override"
+#line 230 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -769,10 +752,10 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
   return Max(lhs,1);
 }
 
-#line 773 "ast.c"
+#line 756 "ast.c"
 
 
-#line 282 "codegen/ast.override"
+#line 264 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -787,10 +770,10 @@ static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return Max(lhs,1);
 }
 
-#line 791 "ast.c"
+#line 774 "ast.c"
 
 
-#line 264 "codegen/ast.override"
+#line 246 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -807,10 +790,10 @@ static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return 0;
 }
 
-#line 811 "ast.c"
+#line 794 "ast.c"
 
 
-#line 298 "codegen/ast.override"
+#line 280 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -820,10 +803,10 @@ static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
-#line 824 "ast.c"
+#line 807 "ast.c"
 
 
-#line 57 "codegen/ast.override"
+#line 58 "codegen/ast.override"
 /* a method can be overriden by giving its name or 
  * class.name 
  */
@@ -839,17 +822,17 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_object_set_name((NspObject *) args,"args") == FAIL ) goto err;
   nsp_list_destroy(self->args);
   self->args = args;
+  self->arity =  nsp_list_length(self->args);
   return 0;
  err: 
   nsp_list_destroy(args);
   return RET_BUG;
-  
 }
 
-#line 850 "ast.c"
+#line 833 "ast.c"
 
 
-#line 203 "codegen/ast.override"
+#line 195 "codegen/ast.override"
 /* override a method */
 static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -863,20 +846,20 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
   return Max(lhs,1);
 }
 
-#line 867 "ast.c"
+#line 850 "ast.c"
 
 
-#line 318 "codegen/ast.override"
+#line 300 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   return meth_ast_sprint(self,stack,rhs,opt,lhs);
 }
-#line 877 "ast.c"
+#line 860 "ast.c"
 
 
-#line 326 "codegen/ast.override"
+#line 308 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -884,10 +867,10 @@ static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_fprint(self,stack,rhs,opt,lhs);
 }
 
-#line 888 "ast.c"
+#line 871 "ast.c"
 
 
-#line 309 "codegen/ast.override"
+#line 291 "codegen/ast.override"
 /* override a method */
 
 static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
@@ -895,11 +878,12 @@ static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_print(self,stack,rhs,opt,lhs);
 }
 
-#line 899 "ast.c"
+#line 882 "ast.c"
 
 
 static NspMethods ast_methods[] = {
   {"get_str",(nsp_method *) _wrap_ast_get_str},
+  {"set_str",(nsp_method *) _wrap_ast_set_str},
   {"get_op",(nsp_method *) _wrap_ast_get_op},
   {"get_codename",(nsp_method *) _wrap_ast_get_codename},
   {"get_opname",(nsp_method *) _wrap_ast_get_opname},
@@ -952,7 +936,7 @@ void Ast_Interf_Info(int i, char **fname, function (**f))
   *f = Ast_func[i].fonc;
 }
 
-#line 461 "codegen/ast.override"
+#line 443 "codegen/ast.override"
 
 /* pretty print of the ast i.e ast -> code */
 
@@ -1732,4 +1716,36 @@ static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_l
     }
 } 
 
-#line 1736 "ast.c"
+
+
+int nsp_ast_set_str(NspAst *ast,const char *str)
+{
+  char *str1,*ast_str =((NspAst *) ast)->obj ;
+  int op = ((int) ast->op);
+  switch ( op ) 
+    {
+    case NAME :
+    case OPNAME :
+    case STRING :
+    case COMMENT :
+    case NUMBER :
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
+      if (( str1 =new_nsp_string(str)) == NULLSTRING) 
+	{
+	  Scierror("Error:\tCannot allocate string, running out of memory\n");
+	  return FAIL;
+	}
+      if (ast_str  != NULL) nsp_string_destroy(&ast_str);
+      ((NspAst *) ast)->obj = str1 ;
+      break;
+    default:
+      Scierror("Error: str cannot be set for the given ast node\n");
+      return FAIL;
+    }
+  return OK;
+}
+
+#line 1752 "ast.c"

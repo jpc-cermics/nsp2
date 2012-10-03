@@ -9,6 +9,7 @@ include-public Ast
 extern NspAst *nsp_plist_to_ast(const char *name,PList L);
 extern NspAst* nsp_parse_file(char *Str);
 extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
+extern int nsp_ast_set_str(NspAst *ast,const char *str);
 
 %%
 include-private Ast
@@ -69,11 +70,11 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_object_set_name((NspObject *) args,"args") == FAIL ) goto err;
   nsp_list_destroy(self->args);
   self->args = args;
+  self->arity =  nsp_list_length(self->args);
   return 0;
  err: 
   nsp_list_destroy(args);
   return RET_BUG;
-  
 }
 
 %%
@@ -99,6 +100,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
     case UNUMBER32:
     case UNUMBER64:
       str = ((NspAst *) self)->obj;
+      if ( str == NULL) str = "@";
       if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
       break;
     default:
@@ -107,6 +109,20 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
     }
   MoveObj(stack,1,Ret);
   return 1;
+}
+
+%%
+override Ast.ast_set_str kwargs
+static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,t_end};
+  char *str;
+  CheckRhs(1,1); 
+  if ( GetArgs(stack,rhs,opt,T,&str) == FAIL) return RET_BUG;
+  CheckLhs(0,1);
+  if ( nsp_ast_set_str(self,str) == FAIL) 
+    return RET_BUG;
+  return 0;
 }
 
 %%
@@ -133,29 +149,15 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
   NspObject *Ret;
   CheckRhs(0,0);
   CheckLhs(1,1); 
-  switch ( ((int) self->op)) 
+  str=nsp_astcode_to_codename(self->op);
+  if ( str != (char *) 0 )
     {
-    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
-    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
-    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
-    default:
-      str=nsp_astcode_to_codename(self->op);
-      if ( str != (char *) 0 )
-	{
-	  if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
-	}
-      else 
-	{
-	  if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
-	    return RET_BUG;
-	}
+      if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
+    }
+  else 
+    {
+      if ((Ret = (NspObject *) nsp_smatrix_create(NVOID,0,0,"v",(int)0)) == NULLOBJ) 
+	return RET_BUG;
     }
   MoveObj(stack,1,Ret);
   return Max(lhs,1);
@@ -172,16 +174,6 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   CheckLhs(1,1); 
   switch ( ((int) self->op)) 
     {
-    case STRING: if ((Ret = nsp_new_string_obj(NVOID,"STRING",-1))== NULLOBJ) return RET_BUG;break;
-    case COMMENT: if ((Ret = nsp_new_string_obj(NVOID,"COMMENT",-1))== NULLOBJ) return RET_BUG;break;
-    case NUMBER: if ((Ret = nsp_new_string_obj(NVOID,"NUMBER",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case INUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"INUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER32: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER32",-1))== NULLOBJ) return RET_BUG;break;
-    case UNUMBER64: if ((Ret = nsp_new_string_obj(NVOID,"UNUMBER64",-1))== NULLOBJ) return RET_BUG;break;
-    case NAME : if ((Ret = nsp_new_string_obj(NVOID,"NAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OPNAME : if ((Ret = nsp_new_string_obj(NVOID,"OPNAME",-1))== NULLOBJ) return RET_BUG;break;
-    case OBJECT :  if ((Ret = nsp_new_string_obj(NVOID,"OBJECT",-1))== NULLOBJ) return RET_BUG;break;
     default:
       str=nsp_astcode_to_name(self->op);
       if ( str != (char *) 0 )
@@ -225,16 +217,6 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   if ((str1 = GetString(stack,1)) == (char*)0) return RET_BUG;
   switch ( ((int) self->op)) 
     {
-    case STRING: if ( strcmp(str1,"STRING")== 0) rep=TRUE;break;
-    case COMMENT: if ( strcmp(str1,"COMMENT")== 0) rep=TRUE;break;
-    case NUMBER: if ( strcmp(str1,"NUMBER")== 0) rep=TRUE;break;
-    case INUMBER32: if ( strcmp(str1,"INUMBER32")== 0) rep=TRUE;break;
-    case INUMBER64: if ( strcmp(str1,"INUMBER64")== 0) rep=TRUE;break;
-    case UNUMBER32: if ( strcmp(str1,"UNUMBER32")== 0) rep=TRUE;break;
-    case UNUMBER64: if ( strcmp(str1,"UNUMBER64")== 0)rep=TRUE;break;
-    case NAME : if ( strcmp(str1,"NAME")== 0) rep=TRUE;break;
-    case OPNAME : if ( strcmp(str1,"OPNAME")== 0) rep=TRUE;break;
-    case OBJECT :  if ( strcmp(str1,"OBJECT")== 0) rep=TRUE;break;
     default:
       str=nsp_astcode_to_name(self->op);
       if ( str != (char *) 0 && strcmp(str,str1)==0 ) rep = TRUE;
@@ -1236,3 +1218,35 @@ static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_l
 	}
     }
 } 
+
+
+
+int nsp_ast_set_str(NspAst *ast,const char *str)
+{
+  char *str1,*ast_str =((NspAst *) ast)->obj ;
+  int op = ((int) ast->op);
+  switch ( op ) 
+    {
+    case NAME :
+    case OPNAME :
+    case STRING :
+    case COMMENT :
+    case NUMBER :
+    case INUMBER32:
+    case INUMBER64:
+    case UNUMBER32:
+    case UNUMBER64:
+      if (( str1 =new_nsp_string(str)) == NULLSTRING) 
+	{
+	  Scierror("Error:\tCannot allocate string, running out of memory\n");
+	  return FAIL;
+	}
+      if (ast_str  != NULL) nsp_string_destroy(&ast_str);
+      ((NspAst *) ast)->obj = str1 ;
+      break;
+    default:
+      Scierror("Error: str cannot be set for the given ast node\n");
+      return FAIL;
+    }
+  return OK;
+}
