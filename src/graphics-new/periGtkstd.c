@@ -40,8 +40,11 @@
 #include "nsp/command.h"
 #include "nsp/object.h"
 #include "nsp/figure.h"
+#include "nsp/axes.h"
 #include <nsp/gtk/gtkwindow.h>
 
+static gint realize_event(GtkWidget *widget, gpointer data);
+static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
 #ifdef GSEAL_ENABLE 
 #define GS_GET_WINDOW(x) gtk_widget_get_window(x) 
@@ -372,8 +375,6 @@ static void xget_windowdim(BCG *Xgc,int *x, int *y)
  * 
  **/
 
-static void nsp_wait_wdim(BCG *Xgc,int x, int y);
-
 static void xset_windowdim(BCG *Xgc,int x, int y)
 {
   gint pw,ph,w,h;
@@ -390,6 +391,9 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
       /* gdk_window_resize(Xgc->private->window->window,x+Max((pw-w),0),y+Max((ph-h),0));*/
       /* resize the scrolled */
       gdk_window_resize(Xgc->private->scrolled->window,x+Max((pw-w),0),y+Max((ph-h),0));
+      /* we want the size to be ok now and not to wait for configure_event  */
+      Xgc->CWindowWidth = x;
+      Xgc->CWindowHeight = y;
       /* want the expose event to resize pixmap and redraw */
       Xgc->private->resize = 1; 
     }
@@ -449,49 +453,9 @@ static void xset_windowdim(BCG *Xgc,int x, int y)
 	  expose_event_new( Xgc->private->drawing,NULL, Xgc);
 	}
     }
-  /* wait until the Xgc is updated i.e when a configure event will be done */
-  /* nsp_wait_wdim(Xgc,x,y); */
 }
 
 
-typedef struct _wdim_wait wdim_wait;
-
-struct _wdim_wait {
-  BCG *Xgc;
-  int x,y,count;
-};
-
-static GMainLoop *nsp_wdim_loop=NULL;
-
-static gint timeout_wait_wdim (void *data)
-{
-  wdim_wait *ww= data;
-  gdk_threads_enter();
-  if ( ww->x ==  ww->Xgc->CWindowWidth && ww->y ==  ww->Xgc->CWindowHeight )
-    {
-      g_main_loop_quit (nsp_wdim_loop);
-    }
-  else if ( ww->count == 100 ) 
-    {
-      g_main_loop_quit (nsp_wdim_loop);
-    }
-  ww->count++;
-  gdk_threads_leave();
-  return TRUE;
-}
-
-static void nsp_wait_wdim(BCG *Xgc,int x, int y)
-{
-  wdim_wait ww= {Xgc,x,y,0};
-  guint tid= g_timeout_add(10,(GSourceFunc) timeout_wait_wdim, &ww);
-  if (nsp_wdim_loop==NULL) {
-    nsp_wdim_loop = g_main_loop_new (NULL, TRUE);
-  }
-  GDK_THREADS_LEAVE ();
-  g_main_loop_run (nsp_wdim_loop);
-  g_source_remove(tid);
-  GDK_THREADS_ENTER ();
-}
 
 
 /**
@@ -1500,8 +1464,6 @@ static void xset_fpf_def(BCG *Xgc)
  * window_list management 
  */
 
-static gint realize_event(GtkWidget *widget, gpointer data);
-static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer data);
 
 /* shared by all the drivers */
 
@@ -1769,14 +1731,46 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 	  if ( (dd->CWindowWidth < event->width) || (dd->CWindowHeight < event->height))
 	    {
 	      int w,h;
-	      /* 
-	       * Sciprintf("XXXX attention la taille bouge (%d,%d) (%d,%d)\n",
-	       * 	 dd->CWindowWidth,dd->CWindowHeight,
-	       *	 event->width,event->height);
-	       */
 	      if (0 &&  dd->CurResizeStatus == 2 ) 
 		{
-		  enqueue_nsp_command("XXX redraw_requested");
+		  /* The next command when activated during a nsp_gtk_main() loop  
+		   * (for example while in a xclick() or xgetmouse() will activate 
+		   * the timeout_menu_check function in perigtk/event.c 
+		   * and thus will produce a call to nsp_gtk_main_quit.
+		   * Unfortunately, on windows (at least with the version of gtk we use)
+		   * the  nsp_gtk_main_quit call will not produce an exit from nsp_gtk_main 
+		   * while the graphic window is enlarged. That's why we have the next 
+		   * hack and do not use the enqueue_nsp_command.
+		   */
+		  enqueue_nsp_command("redraw_requested");
+		}
+	      if ( dd->CurResizeStatus == 2 ) 
+		{
+		  /* This is a hack for scicos that should possibly be moved elsewhere.
+		   * when using  dd->CurResizeStatus == 2 we do not want the 
+		   * graphic to be scaled when enlarging the drawing area. Thus 
+		   * the scales are changed in order to take care of a larger 
+		   * drawing area without scaling the graphics. 
+		   * 
+		   */
+		  if (dd->figure != NULL) 
+		    {
+		      NspObject *Obj;
+		      if ( (Obj = nsp_list_get_element(((NspFigure *)dd->figure)->obj->children,1)) !=  NULLOBJ ) 
+			{
+			  if ( IsAxes(Obj)) 
+			    {
+			      double w1,w2, h1, h2, dw,dh;
+			      NspAxes *Axes = (NspAxes *) Obj;
+			      scale_i2f(&Axes->obj->scale,&w1,&h1,&dd->CWindowWidth, &dd->CWindowHeight,1);
+			      scale_i2f(&Axes->obj->scale,&w2,&h2, &event->width,  &event->height, 1);
+			      Axes->obj->frect->R[2] += (dw=w2-w1,dw);
+			      Axes->obj->rect->R[2]  += dw;
+			      Axes->obj->frect->R[1] += (dh=h2-h1,dh);
+			      Axes->obj->rect->R[1]  += dh;
+			    }
+			}
+		    }
 		}
 	      /* printf("XXX changed to %d %d\n",event->width,event->height); */
 	      dd->CWindowWidth = event->width;
@@ -1865,7 +1859,7 @@ static gint expose_event_new(GtkWidget *widget, GdkEventExpose *event, gpointer 
 			dd->private->pixmap,
 			event->area.x, event->area.y, event->area.x, event->area.y,
 			event->area.width, event->area.height);
-      /* debug the drawing rectangle which is updated                
+      /* uncomment to debug the drawing rectangle which is updated                
       gdk_draw_rectangle(GS_GET_WINDOW(dd->private->drawing),dd->private->wgc,FALSE,
 			 event->area.x, event->area.y, 
 			 event->area.width, event->area.height);
