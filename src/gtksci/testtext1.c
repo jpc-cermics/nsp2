@@ -115,6 +115,9 @@ static int Xorgetchar_textview(void);
 static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_size, int *len_line, int *eof);
 static int  nsp_print_to_textview(const char *fmt, va_list ap);
 
+static void    nsp_textview_gtk_main(void);
+static void    nsp_textview_gtk_main_quit(void);
+
 /**
  * nsp_textview_insert_logo:
  * @view: 
@@ -442,7 +445,7 @@ static void key_press_return(View *view,int stop_signal)
   if ( stop_signal == TRUE )
     g_signal_stop_emission_by_name (view->text_view, "key_press_event");
   nsp_expr= search_string;
-  gtk_main_quit();
+  nsp_textview_gtk_main_quit();
 }
 
 /* dealing with keypressed in text view 
@@ -702,16 +705,6 @@ gtk_text_view_button_press_event (GtkWidget *widget, GdkEventButton *event,gpoin
 }
 
 
-static gint timeout_command (void *v)
-{
-  if ( checkqueue_nsp_command() == TRUE) 
-    {
-      gdk_threads_enter();
-      gtk_main_quit();
-      gdk_threads_leave();
-    }
-  return TRUE;
-}
 
 /**
  * Xorgetchar_textview:
@@ -727,7 +720,6 @@ static gint timeout_command (void *v)
 static int Xorgetchar_textview(void)
 {
   static int count=0;
-  guint timer;
   if ( nsp_check_events_activated()== FALSE) return(getchar());
   if ( nsp_expr != NULL ) 
     {
@@ -746,13 +738,9 @@ static int Xorgetchar_textview(void)
 	}
       return val1;
     }
-  timer=  g_timeout_add(100,  (GtkFunction) timeout_command , NULL);
   
-  /* this zone is already in a  gdk_threads_enter(); 
-   */
-  gtk_main();
-  /* gdk_threads_leave(); */
-  g_source_remove(timer);
+  nsp_textview_gtk_main();
+
   count=1;
   g_print ("char returned '%c'\n",nsp_expr[0]);
   return nsp_expr[0];
@@ -923,19 +911,16 @@ static void nsp_eval_drag_drop_info_text(const gchar *nsp_expr,View *view, int p
 static char *readline_textview_internal(const char *prompt)
 {
   static int use_prompt=1;
-  guint timer;
+
   if ( nsp_check_events_activated()== FALSE) return readline(prompt);
   
   if ( use_prompt == 1) 
     {
       nsp_insert_prompt(prompt);
     }
-  timer=  g_timeout_add(100,  (GtkFunction) timeout_command , NULL);
-  /* this zone is already in a: gdk_threads_enter(); 
-   */
-  gtk_main();
-  /* gdk_threads_leave(); */
-  g_source_remove(timer);
+
+  nsp_textview_gtk_main();
+
   if ( checkqueue_nsp_command() == TRUE) 
     {
       char buf[256];
@@ -1686,3 +1671,74 @@ void nsp_textview_destroy()
   g_free (view);
   view = NULL;
 }
+
+
+
+/**
+ * nsp_textview_gtk_main:
+ * @void: 
+ * 
+ * Enters a main loop with texview. We quit the 
+ * main loop when a nsp_comman is found in the command queue.
+ * 
+ **/
+
+#define TEST_LOOP
+#ifdef TEST_LOOP 
+static GMainLoop *nsp_textview_loop=NULL;
+#endif 
+
+static gint timeout_command (void *v);
+
+#ifdef TEST_LOOP 
+static void  nsp_textview_gtk_main(void)
+{
+  guint timer;
+  if (nsp_textview_loop==NULL) {
+    nsp_textview_loop = g_main_loop_new (NULL, TRUE);
+  }    
+  timer= g_timeout_add(100,  (GtkFunction) timeout_command ,nsp_textview_loop);
+  /* at that point we are in a  GDK_THREADS_ENTER(); */
+  GDK_THREADS_LEAVE();
+  g_main_loop_run (nsp_textview_loop);
+  GDK_THREADS_ENTER();
+  g_source_remove(timer);
+}
+#else 
+static void  nsp_textview_gtk_main(void)
+{
+  guint timer;
+  timer= g_timeout_add(100,  (GtkFunction) timeout_command ,NULL);
+  /* at that point we are in a  GDK_THREADS_ENTER(); */
+  gtk_main();
+  /* GDK_THREADS_LEAVE(); */
+  g_source_remove(timer);
+}
+#endif 
+
+
+static void  nsp_textview_gtk_main_quit(void)
+{
+  /* this one is called by a callback */
+#ifdef TEST_LOOP 
+  g_main_loop_quit(nsp_textview_loop);
+#else 
+  gtk_main_quit();
+#endif
+}
+
+static gint timeout_command (void *v)
+{
+  if ( checkqueue_nsp_command() == TRUE) 
+    {
+      GDK_THREADS_ENTER();
+#ifdef TEST_LOOP 
+      g_main_loop_quit ((GMainLoop *) v);
+#else 
+      gtk_main_quit();
+#endif 
+      GDK_THREADS_LEAVE();
+    }
+  return TRUE;
+}
+
