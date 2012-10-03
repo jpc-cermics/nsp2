@@ -68,10 +68,9 @@ static void nsp_gtk_main(void)
   if (nsp_loop==NULL) {
     nsp_loop = g_main_loop_new (NULL, TRUE);
   }
-  GDK_THREADS_ENTER ();
-  g_main_loop_run (nsp_loop);
   GDK_THREADS_LEAVE ();
-  /* gdk_flush (); */
+  g_main_loop_run (nsp_loop);
+  GDK_THREADS_ENTER ();
 }
 
 /**
@@ -308,7 +307,7 @@ static void test_drag_begin(GtkWidget *widget, GdkEvent *event)
  * Returns: %TRUE 
  **/
 
-/* #define DEBUG_T  */
+/* #define DEBUG_T */
 #ifdef  DEBUG_T 
 static int ktmc=0;
 #endif 
