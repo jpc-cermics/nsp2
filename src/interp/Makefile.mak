@@ -16,7 +16,7 @@ OBJSF=
 
 include ../../Makefile.incl.mak
 
-CFLAGS = $(CC_OPTIONS)  -DSTANDALONE
+CFLAGS = $(CC_OPTIONS)  -DSTANDALONE -MMD
 FFLAGS = $(FC_OPTIONS) 
 
 include ../Make.lib.mak
@@ -31,5 +31,3 @@ all :: lsci.obj
 #=====================================================
 #dependencies generated with gcc -MMD 
 #=====================================================
-include Makefile.deps
-
