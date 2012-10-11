@@ -78,7 +78,7 @@ class Wrapper:
               ' */\n' \
               'NspType%(typename_nn)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
               '{\n'  
-    type_tmpl_1_0_1 = \
+    type_tmpl_1_0_1_1 = \
               '  NspType%(typename_nn)s *type= NULL;\n'  \
               '  NspTypeObject *top;\n'  \
               '  if (  nsp_type_%(typename_dc)s != 0 && mode == T_BASE )\n'  \
@@ -110,8 +110,12 @@ class Wrapper:
               '  top->sh_type = (sh_type_func *) nsp_%(typename_dc)s_type_short_string;\n' \
               '  top->info = (info_func *) nsp_%(typename_dc)s_info;\n' \
               '  /* top->is_true = (is_true_func  *) nsp_%(typename_dc)s_is_true; */\n' \
-              '  /* top->loop =(loop_func *) nsp_%(typename_dc)s_loop;*/\n' \
-              '  top->path_extract = (path_func *)  object_path_extract;\n' \
+              '  /* top->loop =(loop_func *) nsp_%(typename_dc)s_loop;*/\n' 
+
+    type_tmpl_1_0_1_2 = \
+              '  top->path_extract = (path_func *)  object_path_extract;\n' 
+
+    type_tmpl_1_0_1_3 = \
               '  top->get_from_obj = (get_from_obj_func *) nsp_%(typename_dc)s_object;\n' \
               '  top->eq  = (eq_func *) nsp_%(typename_dc)s_eq;\n' \
               '  top->neq  = (eq_func *) nsp_%(typename_dc)s_neq;\n' \
@@ -124,7 +128,7 @@ class Wrapper:
               '  /* specific methods for %(typename_dc)s */\n'  \
               '\n'  \
               '  type->init = (init_func *) init_%(typename_dc)s;\n'  \
-              '\n'  \
+              '\n'  
 
     type_tmpl_1_0_2 = \
               '  /* \n' \
@@ -676,7 +680,18 @@ class Wrapper:
         if len(self.objinfo.implements) != 0 :
             for interf in self.objinfo.implements:
                 self.fp.write('  NspType%s *t_%s;\n' % (interf,string.lower(interf)));
-        self.fp.write(self.type_tmpl_1_0_1 % substdict)
+        self.fp.write(self.type_tmpl_1_0_1_1 % substdict)
+        # insert path extract override code
+        if self.overrides.part_path_extract_is_overriden(typename_nn):
+            stn = 'path_extract_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_path_extract(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_1_0_1_2 % substdict)
+
+        self.fp.write(self.type_tmpl_1_0_1_3 % substdict)
         # insert type override code 
         if self.overrides.part_type_is_overriden(typename_nn):
             lineno, filename = self.overrides.getstartline(typename_nn)
