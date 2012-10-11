@@ -878,6 +878,23 @@ static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+static int int_astv_create_1(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAstv *astv;
+  NspObject *Obj=NULL;
+  int value=FALSE;
+  int_types T[] = {obj ,new_opts, t_end} ;
+  nsp_option opts[] ={{ "value",s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckLhs(0,1);
+  if ( GetArgs(stack,rhs,opt,T,&Obj,&opts,&value) == FAIL)   return RET_BUG;
+  if (( astv = nsp_astv(Obj,value))== NULL)
+    return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(astv));
+  return 1;
+}
+
+
 /*
  * The Interface for basic parse operations 
  */
@@ -905,7 +922,7 @@ static OpTab Parse_func[]={
   {"restart",int_restart},
   {"parse_file",int_parse_file}, /* for ast */
   {"ast_create",int_ast_create_1}, /* for ast */
-  {"astv_create",int_astv_create}, /* for ast */
+  {"astv_create",int_astv_create_1}, /* for astv */
   {(char *) 0, NULL}
 };
 

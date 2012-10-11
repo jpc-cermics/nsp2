@@ -53,7 +53,6 @@ struct _NspAstv {
     gboolean hv;
   int rows;
   int columns;
-  char* stype;
   NspObject* value;
 };
 
@@ -75,7 +74,7 @@ NspAstv *new_astv();
 
 #define NULLASTV (NspAstv*) 0
 
-extern NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,char* stype,NspObject* value,NspTypeBase *type);
+extern NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspTypeBase *type);
 extern NspAstv *nsp_astv_create_default(const char *name);
 
 /* from NspAstvObj.c */
@@ -103,6 +102,7 @@ extern int nsp_astv_xdr_save(XDR  *xdrs, NspAstv *M);
 #line 7 "codegen/astv.override"
 
 /* inserted at the end of public part of class include file */
+extern NspAstv *nsp_astv(NspObject *Obj,int flag);
 
 #line 108 "./astv.h"
 #endif /* NSP_INC_NspAstv */ 
@@ -119,7 +119,7 @@ static AttrTab astv_attrs[];
 static NspMethods *astv_get_methods(void);
 /* static int int_astv_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspAstv *nsp_astv_create_void(const char *name,NspTypeBase *type);
-#line 12 "codegen/astv.override"
+#line 13 "codegen/astv.override"
 
 /* inserted in the private part of include file
  * of classa.h

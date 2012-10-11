@@ -24,7 +24,7 @@
 
 
 
-#line 19 "codegen/astv.override"
+#line 20 "codegen/astv.override"
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
@@ -88,7 +88,7 @@ NspTypeAstv *new_type_astv(type_mode mode)
   top->info = (info_func *) nsp_astv_info;
   /* top->is_true = (is_true_func  *) nsp_astv_is_true; */
   /* top->loop =(loop_func *) nsp_astv_loop;*/
-#line 109 "codegen/astv.override"
+#line 105 "codegen/astv.override"
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
 #line 95 "astv.c"
@@ -144,7 +144,6 @@ static int init_astv(NspAstv *Obj,NspTypeAstv *type)
   Obj->hv = FALSE;
   Obj->rows = 0;
   Obj->columns = 0;
-  Obj->stype = NULL;
   Obj->value = NULLOBJ;
   return OK;
 }
@@ -193,7 +192,7 @@ static char *nsp_astv_type_short_string(NspObject *v)
   return(astv_short_type_name);
 }
 
-#line 163 "codegen/astv.override"
+#line 159 "codegen/astv.override"
 
 /*
  * A == B 
@@ -225,7 +224,7 @@ static int nsp_astv_neq(NspAstv *A, NspObject *B)
 }
 
 
-#line 229 "astv.c"
+#line 228 "astv.c"
 int nsp_astv_xdr_save(XDR *xdrs, NspAstv *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -254,9 +253,9 @@ static NspAstv  *nsp_astv_xdr_load(XDR *xdrs)
   if ( nsp_astv_create_partial(H) == FAIL) return NULLASTV;
   if ((H  = nsp_astv_xdr_load_partial(xdrs,H))== NULLASTV) return H;
   if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
-#line 39 "codegen/astv.override"
+#line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 260 "astv.c"
+#line 259 "astv.c"
   return H;
 }
 
@@ -266,11 +265,10 @@ static NspAstv  *nsp_astv_xdr_load(XDR *xdrs)
 
 void nsp_astv_destroy_partial(NspAstv *H)
 {
-#line 42 "codegen/astv.override"
+#line 43 "codegen/astv.override"
 /* verbatim in destroy */
 
-#line 273 "astv.c"
-  nsp_string_destroy(&(H->stype));
+#line 272 "astv.c"
   if ( H->value != NULL ) 
     nsp_object_destroy(&H->value);
 }
@@ -282,7 +280,7 @@ void nsp_astv_destroy(NspAstv *H)
   FREE(H);
 }
 
-#line 113 "codegen/astv.override"
+#line 109 "codegen/astv.override"
 /*
  * info overriden 
  */
@@ -292,8 +290,8 @@ int nsp_astv_info(NspAstv *M, int indent,const char *name, int rec_level)
   return nsp_astv_print(M,indent,name,rec_level);
 }
 
-#line 296 "astv.c"
-#line 124 "codegen/astv.override"
+#line 294 "astv.c"
+#line 120 "codegen/astv.override"
 /*
  * print overriden 
  */
@@ -331,7 +329,7 @@ int nsp_astv_print(NspAstv *M, int indent,const char *name, int rec_level)
 }
 
 
-#line 335 "astv.c"
+#line 333 "astv.c"
 /*
  * latex print 
  */
@@ -345,7 +343,6 @@ int nsp_astv_latex(NspAstv *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"hv	= %s\n", ( M->hv == TRUE) ? "T" : "F" );
   Sciprintf1(indent+2,"rows=%d\n",M->rows);
   Sciprintf1(indent+2,"columns=%d\n",M->columns);
-  Sciprintf1(indent+2,"stype=%s\n",M->stype);
         if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
@@ -418,11 +415,6 @@ int nsp_astv_create_partial(NspAstv *H)
 
 int nsp_astv_check_values(NspAstv *H)
 {
-  if ( H->stype == NULL) 
-    {
-     if (( H->stype = nsp_string_copy("")) == NULL)
-       return FAIL;
-    }
   if ( H->value == NULLOBJ) 
     {
      if (( H->value =(NspObject*) nsp_matrix_create("value",'r',0,0)) == NULL)
@@ -431,19 +423,18 @@ int nsp_astv_check_values(NspAstv *H)
   return OK;
 }
 
-NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,char* stype,NspObject* value,NspTypeBase *type)
+NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspTypeBase *type)
 {
   NspAstv *H  = nsp_astv_create_void(name,type);
   if ( H ==  NULLASTV) return NULLASTV;
   H->hv=hv;
   H->rows=rows;
   H->columns=columns;
-  H->stype = stype;
   H->value= value;
   if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
-#line 39 "codegen/astv.override"
+#line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 447 "astv.c"
+#line 438 "astv.c"
   return H;
 }
 
@@ -465,7 +456,6 @@ NspAstv *nsp_astv_copy_partial(NspAstv *H,NspAstv *self)
   H->hv=self->hv;
   H->rows=self->rows;
   H->columns=self->columns;
-  if ((H->stype = nsp_string_copy(self->stype)) == NULL) return NULL;
   if ( self->value == NULL )
     { H->value = NULL;}
   else
@@ -492,7 +482,6 @@ NspAstv *nsp_astv_full_copy_partial(NspAstv *H,NspAstv *self)
   H->hv=self->hv;
   H->rows=self->rows;
   H->columns=self->columns;
-  if ((H->stype = nsp_string_copy(self->stype)) == NULL) return NULL;
   if ( self->value == NULL )
     { H->value = NULL;}
   else
@@ -508,9 +497,9 @@ NspAstv *nsp_astv_full_copy(NspAstv *self)
   if ( H ==  NULLASTV) return NULLASTV;
   if ( nsp_astv_full_copy_partial(H,self)== NULL) return NULLASTV;
 
-#line 39 "codegen/astv.override"
+#line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 514 "astv.c"
+#line 503 "astv.c"
   return H;
 }
 
@@ -529,9 +518,9 @@ int int_astv_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_astv_check_values(H) == FAIL) return RET_BUG;
-#line 39 "codegen/astv.override"
+#line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 535 "astv.c"
+#line 524 "astv.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -539,25 +528,20 @@ int int_astv_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 60 "codegen/astv.override"
+#line 61 "codegen/astv.override"
 /* override a method */
 static int _wrap_astv_get_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
 {
   CheckRhs(0,0);
   CheckLhs(0,1); 
-  if ( self->hv == FALSE )
-    {
-      Scierror("Error: object has no value\n");
-      return RET_BUG;
-    }
   MoveObj(stack,1, self->value);
   return Max(lhs,1);
 }
 
-#line 558 "astv.c"
+#line 542 "astv.c"
 
 
-#line 76 "codegen/astv.override"
+#line 72 "codegen/astv.override"
 /* override a method */
 static int _wrap_astv_have_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -568,10 +552,10 @@ static int _wrap_astv_have_value(NspAstv *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 572 "astv.c"
+#line 556 "astv.c"
 
 
-#line 88 "codegen/astv.override"
+#line 84 "codegen/astv.override"
 /* override a method */
 static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -591,10 +575,10 @@ static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, in
   return 0;
 }
 
-#line 595 "astv.c"
+#line 579 "astv.c"
 
 
-#line 46 "codegen/astv.override"
+#line 47 "codegen/astv.override"
 /* override a method */
 static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -607,7 +591,7 @@ static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 611 "astv.c"
+#line 595 "astv.c"
 
 
 static NspMethods astv_methods[] = {
@@ -654,7 +638,31 @@ void Astv_Interf_Info(int i, char **fname, function (**f))
   *f = Astv_func[i].fonc;
 }
 
-#line 196 "codegen/astv.override"
+#line 192 "codegen/astv.override"
+
+NspAstv *nsp_astv(NspObject *Obj,int flag)
+{
+  NspObject *O1;
+  NspAstv *H;
+  /* want to be sure that type astv is initialized */
+  nsp_type_astv = new_type_astv(T_BASE);
+  if(( H = nsp_astv_create_void(NVOID,(NspTypeBase *) nsp_type_astv)) == NULLASTV) return NULL;
+  if ((O1 = nsp_object_copy_and_name("ud",Obj)) == NULLOBJ) 
+    {
+      nsp_astv_destroy(H);
+      return NULL;
+    }
+  if ( H->value != NULL )
+    {
+      nsp_object_destroy(&H->value);
+    }
+  H->value = O1;
+  H->hv = flag;
+  H->rows= nsp_object_get_size(O1,1);
+  H->columns= nsp_object_get_size(O1,2);
+  return H;
+}
 
 
-#line 661 "astv.c"
+
+#line 669 "astv.c"

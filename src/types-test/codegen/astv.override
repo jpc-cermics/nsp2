@@ -6,6 +6,7 @@ include-start Astv
 include-public Astv
 
 /* inserted at the end of public part of class include file */
+extern NspAstv *nsp_astv(NspObject *Obj,int flag);
 
 %%
 include-private Astv
@@ -62,11 +63,6 @@ static int _wrap_astv_get_value(NspAstv *self, Stack stack, int rhs, int opt, in
 {
   CheckRhs(0,0);
   CheckLhs(0,1); 
-  if ( self->hv == FALSE )
-    {
-      Scierror("Error: object has no value\n");
-      return RET_BUG;
-    }
   MoveObj(stack,1, self->value);
   return Max(lhs,1);
 }
@@ -193,4 +189,28 @@ static int nsp_astv_neq(NspAstv *A, NspObject *B)
 
 %%
 last 
+
+NspAstv *nsp_astv(NspObject *Obj,int flag)
+{
+  NspObject *O1;
+  NspAstv *H;
+  /* want to be sure that type astv is initialized */
+  nsp_type_astv = new_type_astv(T_BASE);
+  if(( H = nsp_astv_create_void(NVOID,(NspTypeBase *) nsp_type_astv)) == NULLASTV) return NULL;
+  if ((O1 = nsp_object_copy_and_name("ud",Obj)) == NULLOBJ) 
+    {
+      nsp_astv_destroy(H);
+      return NULL;
+    }
+  if ( H->value != NULL )
+    {
+      nsp_object_destroy(&H->value);
+    }
+  H->value = O1;
+  H->hv = flag;
+  H->rows= nsp_object_get_size(O1,1);
+  H->columns= nsp_object_get_size(O1,2);
+  return H;
+}
+
 

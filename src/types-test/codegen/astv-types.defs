@@ -10,7 +10,6 @@
    '("gboolean" "hv" "hidden" "FALSE"); /* number of rows */
    '("int" "rows" "hidden"); /* number of rows */
    '("int" "columns" "hidden"); /* number of columns */
-   '("char*" "stype" "hidden"); /* type as string */
    '("NspObject*" "value" "hidden" "NULL" ); /* value as object or NULL  */
    )
   (gtype-id "Astv")
