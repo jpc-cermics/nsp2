@@ -1786,6 +1786,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
   int k;
   stack.first = first;
   /* check if w=[] : Not perfect since list() will also return 0 
+   * in fact deletion should be detected at Parsing XXXXX
    */
 
   if (nsp_object_get_size( stack.val->S[first+1+fargs],0) == 0) 
