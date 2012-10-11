@@ -333,7 +333,7 @@ NspHash *nsp_ast_hash_create(void)
     {
       if (Ops[i].name[0] != '@') 
 	{
-	  el = nsp_create_object_from_double(Ops[i].name,Ops[i].code);
+	  el = nsp_create_object_from_double(Ops[i].codename,Ops[i].code);
 	  if ( el == NULLOBJ) return NULLHASH;
 	  if (nsp_hash_enter(ast_codes,el) == FAIL) return NULLHASH;
 	}

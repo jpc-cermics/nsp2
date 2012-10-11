@@ -2296,6 +2296,19 @@ static int int_smatrix_to_seq (Stack stack, int rhs, int opt, int lhs)
 }
 
 
+/*
+ * push the smatrix  elements on the stack 
+ */
+
+static int int_print_string_as_read (Stack stack, int rhs, int opt, int lhs)
+{
+  char *str;
+  CheckRhs (1, 1);
+  if ((str = GetString(stack,1)) == ((char *) 0) )
+    return RET_BUG;
+  nsp_print_string_as_read(str);
+  return 0;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -2390,6 +2403,7 @@ static OpTab SMatrix_func[]={
   {"object2seq_s",int_smatrix_to_seq}, /* A{...} on rhs  */
   {"s2base64",int_smatrix_to_base64},
   {"base642s",int_base64_to_smatrix},
+  {"print_string_as_read",int_print_string_as_read},
   {(char *) 0, NULL}
 };
 
