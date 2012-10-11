@@ -1,0 +1,660 @@
+/* -*- Mode: C -*- */
+
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+
+
+
+
+#line 19 "codegen/astv.override"
+#include <nsp/objects.h>
+#include <nsp/plist.h> 
+#include <nsp/plistc.h> 
+#include <nsp/parse.h>
+
+#line 34 "astv.c"
+
+/* ----------- NspAstv ----------- */
+
+
+#define  NspAstv_Private 
+#include <nsp/objects.h>
+#include <nsp/astv.h>
+#include <nsp/interf.h>
+
+/* 
+ * NspAstv inherits from Object 
+ */
+
+int nsp_type_astv_id=0;
+NspTypeAstv *nsp_type_astv=NULL;
+
+/*
+ * Type object for NspAstv 
+ * all the instance of NspTypeAstv share the same id. 
+ * nsp_type_astv: is an instance of NspTypeAstv 
+ *    used for objects of NspAstv type (i.e built with new_astv) 
+ * other instances are used for derived classes 
+ */
+NspTypeAstv *new_type_astv(type_mode mode)
+{
+  NspTypeAstv *type= NULL;
+  NspTypeObject *top;
+  if (  nsp_type_astv != 0 && mode == T_BASE )
+    {
+      /* initialization performed and T_BASE requested */
+      return nsp_type_astv;
+    }
+  if (( type =  malloc(sizeof(NspTypeAstv))) == NULL) return NULL;
+  type->interface = NULL;
+  type->surtype = (NspTypeBase *) new_type_object(T_DERIVED);
+  if ( type->surtype == NULL) return NULL;
+  type->attrs = astv_attrs;
+  type->get_attrs = (attrs_func *) int_get_attribute;
+  type->set_attrs = (attrs_func *) int_set_attribute;
+  type->methods = astv_get_methods;
+  type->new = (new_func *) new_astv;
+
+
+  top = NSP_TYPE_OBJECT(type->surtype);
+  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
+
+  /* object methods redefined for astv */ 
+
+  top->pr = (print_func *) nsp_astv_print;
+  top->dealloc = (dealloc_func *) nsp_astv_destroy;
+  top->copy  =  (copy_func *) nsp_astv_copy;
+  top->size  = (size_func *) nsp_astv_size;
+  top->s_type =  (s_type_func *) nsp_astv_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_astv_type_short_string;
+  top->info = (info_func *) nsp_astv_info;
+  /* top->is_true = (is_true_func  *) nsp_astv_is_true; */
+  /* top->loop =(loop_func *) nsp_astv_loop;*/
+#line 109 "codegen/astv.override"
+top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
+
+#line 95 "astv.c"
+  top->get_from_obj = (get_from_obj_func *) nsp_astv_object;
+  top->eq  = (eq_func *) nsp_astv_eq;
+  top->neq  = (eq_func *) nsp_astv_neq;
+  top->save  = (save_func *) nsp_astv_xdr_save;
+  top->load  = (load_func *) nsp_astv_xdr_load;
+  top->create = (create_func*) int_astv_create;
+  top->latex = (print_func *) nsp_astv_latex;
+  top->full_copy = (copy_func *) nsp_astv_full_copy;
+
+  /* specific methods for astv */
+
+  type->init = (init_func *) init_astv;
+
+  /* 
+   * NspAstv interfaces can be added here 
+   * type->interface = (NspTypeBase *) new_type_b();
+   * type->interface->interface = (NspTypeBase *) new_type_C()
+   * ....
+   */
+  if ( nsp_type_astv_id == 0 ) 
+    {
+      /* 
+       * the first time we get here we initialize the type id and
+       * an instance of NspTypeAstv called nsp_type_astv
+       */
+      type->id =  nsp_type_astv_id = nsp_new_type_id();
+      nsp_type_astv = type;
+      if ( nsp_register_type(nsp_type_astv) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_astv(mode);
+    }
+  else 
+    {
+      type->id = nsp_type_astv_id;
+      return type;
+    }
+}
+
+/*
+ * initialize NspAstv instances 
+ * locally and by calling initializer on parent class 
+ */
+
+static int init_astv(NspAstv *Obj,NspTypeAstv *type)
+{
+  /* initialize the surtype */ 
+  if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
+  Obj->type = type;
+  NSP_OBJECT(Obj)->basetype = (NspTypeBase *)type;
+  /* specific */
+  Obj->hv = FALSE;
+  Obj->rows = 0;
+  Obj->columns = 0;
+  Obj->stype = NULL;
+  Obj->value = NULLOBJ;
+  return OK;
+}
+
+/*
+ * new instance of NspAstv 
+ */
+
+NspAstv *new_astv() 
+{
+  NspAstv *loc;
+  /* type must exists */
+  nsp_type_astv = new_type_astv(T_BASE);
+  if ( (loc = malloc(sizeof(NspAstv)))== NULLASTV) return loc;
+  /* initialize object */
+  if ( init_astv(loc,nsp_type_astv) == FAIL) return NULLASTV;
+  return loc;
+}
+
+/*----------------------------------------------
+ * Object method redefined for NspAstv 
+ *-----------------------------------------------*/
+/*
+ * size 
+ */
+
+static int nsp_astv_size(NspAstv *Mat, int flag)
+{
+  return 1;
+}
+
+/*
+ * type as string 
+ */
+
+static char astv_type_name[]="Astv";
+static char astv_short_type_name[]="astv";
+
+static char *nsp_astv_type_as_string(void)
+{
+  return(astv_type_name);
+}
+
+static char *nsp_astv_type_short_string(NspObject *v)
+{
+  return(astv_short_type_name);
+}
+
+#line 163 "codegen/astv.override"
+
+/*
+ * A == B 
+ */
+
+static int nsp_astv_eq(NspAstv *A, NspObject *B)
+{
+  NspAstv *loc = (NspAstv *) B;
+  if ( check_cast(B,nsp_type_astv_id) == FALSE) return FALSE ;
+  if ( A->value == NULL && loc->value == NULL) return TRUE;
+  if ( A->value != NULL && loc->value != NULL) 
+    {
+      if ( NSP_OBJECT(A->value)->type->eq(A->value,loc->value) == FALSE ) return FALSE;
+    }
+  else
+    {
+      return FALSE;
+    }
+  return TRUE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_astv_neq(NspAstv *A, NspObject *B)
+{
+  return ( nsp_astv_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+
+#line 229 "astv.c"
+int nsp_astv_xdr_save(XDR *xdrs, NspAstv *M)
+{
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_astv)) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  return OK;
+}
+
+/*
+ * load 
+ */
+
+NspAstv  *nsp_astv_xdr_load_partial(XDR *xdrs, NspAstv *M)
+{
+ return M;
+}
+
+static NspAstv  *nsp_astv_xdr_load(XDR *xdrs)
+{
+  NspAstv *H = NULL;
+  char name[NAME_MAXL];
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLASTV;
+  if ((H  = nsp_astv_create_void(name,(NspTypeBase *) nsp_type_astv))== NULLASTV) return H;
+  if ( nsp_astv_create_partial(H) == FAIL) return NULLASTV;
+  if ((H  = nsp_astv_xdr_load_partial(xdrs,H))== NULLASTV) return H;
+  if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
+#line 39 "codegen/astv.override"
+/* verbatim in create/load/full_copy interface use NULL for returned value */
+#line 260 "astv.c"
+  return H;
+}
+
+/*
+ * delete 
+ */
+
+void nsp_astv_destroy_partial(NspAstv *H)
+{
+#line 42 "codegen/astv.override"
+/* verbatim in destroy */
+
+#line 273 "astv.c"
+  nsp_string_destroy(&(H->stype));
+  if ( H->value != NULL ) 
+    nsp_object_destroy(&H->value);
+}
+
+void nsp_astv_destroy(NspAstv *H)
+{
+  nsp_object_destroy_name(NSP_OBJECT(H));
+  nsp_astv_destroy_partial(H);
+  FREE(H);
+}
+
+#line 113 "codegen/astv.override"
+/*
+ * info overriden 
+ */
+
+int nsp_astv_info(NspAstv *M, int indent,const char *name, int rec_level)
+{
+  return nsp_astv_print(M,indent,name,rec_level);
+}
+
+#line 296 "astv.c"
+#line 124 "codegen/astv.override"
+/*
+ * print overriden 
+ */
+
+int nsp_astv_print(NspAstv *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=astv([%d,%d],\"%s\",%s)",pname,
+		     M->rows, M->columns, (M->hv == FALSE) ? "" :
+		     nsp_object_type_as_string(M->value),
+		     ( M->hv == FALSE) ? "%f":"%t");
+	}
+      else 
+	{
+	  Sciprintf1(indent,"astv([%d,%d],\"%s\",%s)",
+		     M->rows, M->columns, (M->hv == FALSE) ? "" :
+		     nsp_object_type_as_string(M->value),
+		     ( M->hv == FALSE) ? "%f":"%t");
+		     
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t=[%d,%d],\"%s\",%s\n",pname,
+		 M->rows, M->columns, (M->hv == FALSE) ? "" :
+		 nsp_object_type_as_string(M->value),
+		 ( M->hv == FALSE) ? "%f":"%t");
+
+    }
+  return TRUE;
+}
+
+
+#line 335 "astv.c"
+/*
+ * latex print 
+ */
+
+int nsp_astv_latex(NspAstv *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
+  Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_astv_type_short_string(NSP_OBJECT(M)));
+  Sciprintf1(indent+1,"{\n");
+  Sciprintf1(indent+2,"hv	= %s\n", ( M->hv == TRUE) ? "T" : "F" );
+  Sciprintf1(indent+2,"rows=%d\n",M->rows);
+  Sciprintf1(indent+2,"columns=%d\n",M->columns);
+  Sciprintf1(indent+2,"stype=%s\n",M->stype);
+        if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(indent+1,"}\n");
+  if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
+  return TRUE;
+}
+/*-----------------------------------------------------
+ * a set of functions used when writing interfaces 
+ * for NspAstv objects 
+ * Note that some of these functions could become MACROS
+ *-----------------------------------------------------*/
+
+NspAstv   *nsp_astv_object(NspObject *O)
+{
+  /* Follow pointer */
+  if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
+  /* Check type */
+  if ( check_cast (O,nsp_type_astv_id) == TRUE ) return ((NspAstv *) O);
+  else 
+    Scierror("Error:	Argument should be a %s\n",type_get_name(nsp_type_astv));
+  return NULL;
+}
+
+int IsAstvObj(Stack stack, int i)
+{
+  return nsp_object_type(NthObj(i),nsp_type_astv_id);
+}
+
+int IsAstv(NspObject *O)
+{
+  return nsp_object_type(O,nsp_type_astv_id);
+}
+
+NspAstv  *GetAstvCopy(Stack stack, int i)
+{
+  if (  GetAstv(stack,i) == NULL ) return NULL;
+  return MaybeObjCopy(&NthObj(i));
+}
+
+NspAstv  *GetAstv(Stack stack, int i)
+{
+  NspAstv *M;
+  if (( M = nsp_astv_object(NthObj(i))) == NULLASTV)
+     ArgMessage(stack,i);
+  return M;
+}
+
+/*-----------------------------------------------------
+ * constructor 
+ * if type is non NULL it is a subtype which can be used to 
+ * create a NspAstv instance 
+ *-----------------------------------------------------*/
+
+static NspAstv *nsp_astv_create_void(const char *name,NspTypeBase *type)
+{
+ NspAstv *H  = (type == NULL) ? new_astv() : type->new();
+ if ( H ==  NULLASTV)
+  {
+   Sciprintf("No more memory\n");
+   return NULLASTV;
+  }
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLASTV;
+ NSP_OBJECT(H)->ret_pos = -1 ;
+ return H;
+}
+
+int nsp_astv_create_partial(NspAstv *H)
+{
+  return OK;
+}
+
+int nsp_astv_check_values(NspAstv *H)
+{
+  if ( H->stype == NULL) 
+    {
+     if (( H->stype = nsp_string_copy("")) == NULL)
+       return FAIL;
+    }
+  if ( H->value == NULLOBJ) 
+    {
+     if (( H->value =(NspObject*) nsp_matrix_create("value",'r',0,0)) == NULL)
+       return FAIL;
+    }
+  return OK;
+}
+
+NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,char* stype,NspObject* value,NspTypeBase *type)
+{
+  NspAstv *H  = nsp_astv_create_void(name,type);
+  if ( H ==  NULLASTV) return NULLASTV;
+  H->hv=hv;
+  H->rows=rows;
+  H->columns=columns;
+  H->stype = stype;
+  H->value= value;
+  if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
+#line 39 "codegen/astv.override"
+/* verbatim in create/load/full_copy interface use NULL for returned value */
+#line 447 "astv.c"
+  return H;
+}
+
+
+NspAstv *nsp_astv_create_default(const char *name)
+{
+ NspAstv *H  = nsp_astv_create_void(name,NULL);
+ if ( H ==  NULLASTV) return NULLASTV;
+ if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
+ return H;
+}
+
+/*
+ * copy for gobject derived class  
+ */
+
+NspAstv *nsp_astv_copy_partial(NspAstv *H,NspAstv *self)
+{
+  H->hv=self->hv;
+  H->rows=self->rows;
+  H->columns=self->columns;
+  if ((H->stype = nsp_string_copy(self->stype)) == NULL) return NULL;
+  if ( self->value == NULL )
+    { H->value = NULL;}
+  else
+    {
+      if ((H->value = (NspObject *) nsp_object_copy_and_name("value",NSP_OBJECT(self->value))) == NULLOBJ) return NULL;
+    }
+  return H;
+}
+
+NspAstv *nsp_astv_copy(NspAstv *self)
+{
+  NspAstv *H  =nsp_astv_create_void(NVOID,(NspTypeBase *) nsp_type_astv);
+  if ( H ==  NULLASTV) return NULLASTV;
+  if ( nsp_astv_copy_partial(H,self)== NULL) return NULLASTV;
+
+  return H;
+}
+/*
+ * full copy for gobject derived class
+ */
+
+NspAstv *nsp_astv_full_copy_partial(NspAstv *H,NspAstv *self)
+{
+  H->hv=self->hv;
+  H->rows=self->rows;
+  H->columns=self->columns;
+  if ((H->stype = nsp_string_copy(self->stype)) == NULL) return NULL;
+  if ( self->value == NULL )
+    { H->value = NULL;}
+  else
+    {
+      if ((H->value = (NspObject *) nsp_object_full_copy_and_name("value",NSP_OBJECT(self->value))) == NULLOBJ) return NULL;
+    }
+  return H;
+}
+
+NspAstv *nsp_astv_full_copy(NspAstv *self)
+{
+  NspAstv *H  =nsp_astv_create_void(NVOID,(NspTypeBase *) nsp_type_astv);
+  if ( H ==  NULLASTV) return NULLASTV;
+  if ( nsp_astv_full_copy_partial(H,self)== NULL) return NULLASTV;
+
+#line 39 "codegen/astv.override"
+/* verbatim in create/load/full_copy interface use NULL for returned value */
+#line 514 "astv.c"
+  return H;
+}
+
+/*-------------------------------------------------------------------
+ * wrappers for the NspAstv
+ * i.e functions at Nsp level 
+ *-------------------------------------------------------------------*/
+
+int int_astv_create(Stack stack, int rhs, int opt, int lhs)
+{
+  NspAstv *H;
+  CheckStdRhs(0,0);
+  /* want to be sure that type astv is initialized */
+  nsp_type_astv = new_type_astv(T_BASE);
+  if(( H = nsp_astv_create_void(NVOID,(NspTypeBase *) nsp_type_astv)) == NULLASTV) return RET_BUG;
+  /* then we use optional arguments to fill attributes */
+  if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
+ if ( nsp_astv_check_values(H) == FAIL) return RET_BUG;
+#line 39 "codegen/astv.override"
+/* verbatim in create/load/full_copy interface use RET_BUG for returned value */
+#line 535 "astv.c"
+  MoveObj(stack,1,(NspObject  *) H);
+  return 1;
+} 
+
+/*-------------------------------------------
+ * Methods
+ *-------------------------------------------*/
+#line 60 "codegen/astv.override"
+/* override a method */
+static int _wrap_astv_get_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( self->hv == FALSE )
+    {
+      Scierror("Error: object has no value\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1, self->value);
+  return Max(lhs,1);
+}
+
+#line 558 "astv.c"
+
+
+#line 76 "codegen/astv.override"
+/* override a method */
+static int _wrap_astv_have_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( nsp_move_boolean(stack,1,self->hv) == FAIL)
+    return RET_BUG;
+  return Max(lhs,1);
+}
+
+#line 572 "astv.c"
+
+
+#line 88 "codegen/astv.override"
+/* override a method */
+static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(0,1); 
+  if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
+    return RET_BUG;
+  if ( self->value != NULL )
+    {
+      nsp_object_destroy(&self->value);
+    }
+  self->value = Obj;
+  self->hv = TRUE;
+  self->rows= nsp_object_get_size(self->value,1);
+  self->columns= nsp_object_get_size(self->value,2);
+  return 0;
+}
+
+#line 595 "astv.c"
+
+
+#line 46 "codegen/astv.override"
+/* override a method */
+static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ret;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  if ((Ret =(NspObject*) nsp_matrix_create_from_doubles(NVOID,1,2,self->rows,self->columns))==NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+#line 611 "astv.c"
+
+
+static NspMethods astv_methods[] = {
+  {"get_value",(nsp_method *) _wrap_astv_get_value},
+  {"have_value",(nsp_method *) _wrap_astv_have_value},
+  {"set_value",(nsp_method *) _wrap_astv_set_value},
+  {"get_dims",(nsp_method *) _wrap_astv_get_dims},
+  { NULL, NULL}
+};
+
+static NspMethods *astv_get_methods(void) { return astv_methods;};
+/*-------------------------------------------
+ * Attributes
+ *-------------------------------------------*/
+
+static AttrTab astv_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+
+/*-------------------------------------------
+ * functions 
+ *-------------------------------------------*/
+/*----------------------------------------------------
+ * Interface 
+ * i.e a set of function which are accessible at nsp level
+ *----------------------------------------------------*/
+
+static OpTab Astv_func[]={
+  { "astv_create", int_astv_create},
+  { NULL, NULL}
+};
+
+/* call ith function in the Astv interface */
+
+int Astv_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+{
+  return (*(Astv_func[i].fonc))(stack,rhs,opt,lhs);
+}
+
+/* used to walk through the interface table 
+    (for adding or removing functions) */
+
+void Astv_Interf_Info(int i, char **fname, function (**f))
+{
+  *fname = Astv_func[i].name;
+  *f = Astv_func[i].fonc;
+}
+
+#line 196 "codegen/astv.override"
+
+
+#line 661 "astv.c"

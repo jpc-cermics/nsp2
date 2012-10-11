@@ -1,0 +1,196 @@
+/* -*- Mode: C -*- */
+%%
+include-start Astv
+
+%%
+include-public Astv
+
+/* inserted at the end of public part of class include file */
+
+%%
+include-private Astv
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
+headers
+#include <nsp/objects.h>
+#include <nsp/plist.h> 
+#include <nsp/plistc.h> 
+#include <nsp/parse.h>
+
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override-int-create-final Astv
+/* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+%%
+override-destroy-prelim  Astv
+/* verbatim in destroy */
+
+%%
+override Astv.astv_get_dims kwargs
+/* override a method */
+static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Ret;
+  CheckRhs(0,0);
+  CheckLhs(1,1); 
+  if ((Ret =(NspObject*) nsp_matrix_create_from_doubles(NVOID,1,2,self->rows,self->columns))==NULL) 
+    return RET_BUG;
+  MoveObj(stack,1,Ret);
+  return Max(lhs,1);
+}
+
+%%
+override Astv.astv_get_value kwargs
+/* override a method */
+static int _wrap_astv_get_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( self->hv == FALSE )
+    {
+      Scierror("Error: object has no value\n");
+      return RET_BUG;
+    }
+  MoveObj(stack,1, self->value);
+  return Max(lhs,1);
+}
+
+%%
+override Astv.astv_have_value kwargs
+/* override a method */
+static int _wrap_astv_have_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  if ( nsp_move_boolean(stack,1,self->hv) == FAIL)
+    return RET_BUG;
+  return Max(lhs,1);
+}
+
+%%
+override Astv.astv_set_value kwargs
+/* override a method */
+static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(0,1); 
+  if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
+    return RET_BUG;
+  if ( self->value != NULL )
+    {
+      nsp_object_destroy(&self->value);
+    }
+  self->value = Obj;
+  self->hv = TRUE;
+  self->rows= nsp_object_get_size(self->value,1);
+  self->columns= nsp_object_get_size(self->value,2);
+  return 0;
+}
+
+%%
+override-path-extract Astv 
+top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
+
+%%
+override-info Astv 
+/*
+ * info overriden 
+ */
+
+int nsp_astv_info(NspAstv *M, int indent,const char *name, int rec_level)
+{
+  return nsp_astv_print(M,indent,name,rec_level);
+}
+
+%%
+override-print Astv 
+/*
+ * print overriden 
+ */
+
+int nsp_astv_print(NspAstv *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=astv([%d,%d],\"%s\",%s)",pname,
+		     M->rows, M->columns, (M->hv == FALSE) ? "" :
+		     nsp_object_type_as_string(M->value),
+		     ( M->hv == FALSE) ? "%f":"%t");
+	}
+      else 
+	{
+	  Sciprintf1(indent,"astv([%d,%d],\"%s\",%s)",
+		     M->rows, M->columns, (M->hv == FALSE) ? "" :
+		     nsp_object_type_as_string(M->value),
+		     ( M->hv == FALSE) ? "%f":"%t");
+		     
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t=[%d,%d],\"%s\",%s\n",pname,
+		 M->rows, M->columns, (M->hv == FALSE) ? "" :
+		 nsp_object_type_as_string(M->value),
+		 ( M->hv == FALSE) ? "%f":"%t");
+
+    }
+  return TRUE;
+}
+
+
+%%
+override-equal Astv
+
+/*
+ * A == B 
+ */
+
+static int nsp_astv_eq(NspAstv *A, NspObject *B)
+{
+  NspAstv *loc = (NspAstv *) B;
+  if ( check_cast(B,nsp_type_astv_id) == FALSE) return FALSE ;
+  if ( A->value == NULL && loc->value == NULL) return TRUE;
+  if ( A->value != NULL && loc->value != NULL) 
+    {
+      if ( NSP_OBJECT(A->value)->type->eq(A->value,loc->value) == FALSE ) return FALSE;
+    }
+  else
+    {
+      return FALSE;
+    }
+  return TRUE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_astv_neq(NspAstv *A, NspObject *B)
+{
+  return ( nsp_astv_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+
+%%
+last 
+

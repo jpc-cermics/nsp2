@@ -1,0 +1,30 @@
+;; -*- scheme -*-
+
+(include "astv-types.defs")
+
+(define-method get_value
+  (of-object "Astv")
+  (c-name "astv_get_value")
+  (return-type "NspObject*")
+)
+
+(define-method have_value
+  (of-object "Astv")
+  (c-name "astv_have_value")
+  (return-type "boolean")
+)
+
+(define-method set_value
+  (of-object "Astv")
+  (parameters
+   '("NspObject*" "val")
+   )
+  (c-name "astv_set_value")
+  (return-type "none")
+)
+
+(define-method get_dims
+  (of-object "Astv")
+  (c-name "astv_get_dims")
+  (return-type "NspMatrix*")
+)
