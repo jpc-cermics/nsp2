@@ -1928,18 +1928,29 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
     }
   else if ( dotflag == ARGS )
     {
-      /* Expand implicit `:' vectors L(:) = (7,8,9) */
-      /* Expansion should be performed earlier XXXX */
-      if (IsIVect(stack.val->S[first+1]) )
+      int i;
+      NspMatrix *M=NULL;
+      /* here we fill the implicit vectors with proper dimensions
+       * and expand them 
+       * Expand implicit `:' vectors L(:) = (7,8,9) 
+       */
+      for ( i=1; i < fargs ; i++) 
 	{
-	  NspIVect *IV = nsp_ivect_object(stack.val->S[first+1]);
-	  if ( IV->flag == 1)
+	  if (IsIVect(stack.val->S[first+i]) )
 	    {
-	      IV->flag = 0; IV->first = 1;IV->step=1;
-	      IV->last=nsp_object_get_size(stack.val->S[first], 0);
+	      NspIVect *IV = nsp_ivect_object(stack.val->S[first+i]);
+	      if ( IV->flag == 1)
+		{
+		  IV->flag = 0; IV->first = 1;IV->step=1;
+		  IV->last=nsp_object_get_size(stack.val->S[first], 0);
+		}
+	      /* directly call the function not to perturb the stack
+	       * if ((n=nsp_eval_func(NULLOBJ,"iv2mat",2,stack,first+1,1,0,1)) < 0) return n; 
+	       */
+	      if ((M=nsp_ivect_2_mat(IV)) == NULLMAT) return RET_BUG;
+	      nsp_void_object_destroy(&stack.val->S[first+i]);
+	      stack.val->S[first+i]=(NspObject *) M;
 	    }
-	  /*WARNING: must be sure that int_iv2mat only changes first+1 **/
-	  if ((n=nsp_eval_func(NULLOBJ,"iv2mat",2,stack,first+1,1,0,1)) < 0) return n;
 	}
       /* we build a function name depending only on the object L */
       O1=nsp_frames_search_op_object(fname);

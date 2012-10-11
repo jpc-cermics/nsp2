@@ -88,7 +88,7 @@ NspTypeAst *new_type_ast(type_mode mode)
   top->info = (info_func *) nsp_ast_info;
   /* top->is_true = (is_true_func  *) nsp_ast_is_true; */
   /* top->loop =(loop_func *) nsp_ast_loop;*/
-  top->path_extract = (path_func *)  object_path_extract;
+  top->path_extract = (path_func *) NULL; /*  object_path_extract; */
   top->get_from_obj = (get_from_obj_func *) nsp_ast_object;
   top->eq  = (eq_func *) nsp_ast_eq;
   top->neq  = (eq_func *) nsp_ast_neq;

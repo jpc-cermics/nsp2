@@ -105,18 +105,9 @@ void nsp_ivect_destroy(NspIVect *IV)
  * Displays Info on IV
  **/
 
-int nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
+int nsp_ivect_info(NspIVect *IV, int indent,const char *name,int rec_level)
 {
-  int i;
-  if ( IV == NULLIVECT) 
-    {
-      Sciprintf("Null Pointer IVect \n");
-      return TRUE;
-    }
-  for ( i=0 ; i < indent ; i++) Sciprintf(" ");
-  Sciprintf("IVect %s %d:%d:%d %d\n",NSP_OBJECT(IV)->name,
-	    IV->first,IV->step,IV->last,IV->flag);
-  return TRUE;
+  return nsp_ivect_print(IV,indent,name,rec_level);
 }
 
 /**
@@ -129,10 +120,30 @@ int nsp_ivect_info(NspIVect *IV, int indent,char *name,int rec_level)
  * writes IVect Objet 
  **/
 
-int nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level)
+int nsp_ivect_print(NspIVect *IV, int indent,const char *name, int rec_level)
 {
-  nsp_ivect_info(IV,indent,NULL,0);
-  return TRUE;
+  int rep = TRUE;
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(IV)->name;
+
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  Sciprintf1(indent,"%s=iv_create(%d,%d,%d)\n",pname,
+		     IV->first,IV->step, IV->last);
+	}
+      else 
+	{
+	  Sciprintf1(indent,"iv_create(%d,%d,%d)\n", 
+		     IV->first,IV->step, IV->last);
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t= %d:%d:%d\t\tiv \n",pname,
+		 IV->first,IV->step, IV->last);
+    }
+  return rep;
 }
 
 

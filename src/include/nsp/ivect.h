@@ -26,7 +26,7 @@ struct _NspIvect {
   NspObject father; 
   NspTypeIVect *type; 
   /*< public >*/
-  int first,step,last ; /* implicit bounds  */
+  int first,step,last ;    /* implicit bounds  */
   int flag ;               /* set to 1 if 1:$ or : else set to 0 */
 };
 
@@ -67,8 +67,8 @@ extern NspIVect *nsp_ivect_create(char *name, int first, int step, int last, int
 extern int IsIVectF (NspObject *O); 
 extern NspIVect *nsp_ivect_copy(NspIVect *A); 
 extern void nsp_ivect_destroy(NspIVect *IV); 
-extern int nsp_ivect_info(NspIVect *IV, int indent,char *name, int rec_level); 
-extern int nsp_ivect_print(NspIVect *IV, int indent,char *name, int rec_level); 
+extern int nsp_ivect_info(NspIVect *IV, int indent,const char *name, int rec_level); 
+extern int nsp_ivect_print(NspIVect *IV, int indent,const char *name, int rec_level); 
 extern NspMatrix *nsp_ivect_2_mat(NspIVect *IV); 
 
 extern int IsIVect(NspObject *O);
