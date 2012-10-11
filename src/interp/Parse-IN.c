@@ -32,6 +32,7 @@
 #include <nsp/parse.h> 
 #include <nsp/nsptcl.h> 
 #include <nsp/ast.h> 
+#include <nsp/astv.h> 
 
 static function  int_parseevalfile;
 static function  int_add_lib;
@@ -876,6 +877,7 @@ static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+
 /*
  * The Interface for basic parse operations 
  */
@@ -903,6 +905,7 @@ static OpTab Parse_func[]={
   {"restart",int_restart},
   {"parse_file",int_parse_file}, /* for ast */
   {"ast_create",int_ast_create_1}, /* for ast */
+  {"astv_create",int_astv_create}, /* for ast */
   {(char *) 0, NULL}
 };
 
