@@ -23,7 +23,7 @@
 
 #line 4 "codegen/ast.override"
 
-#line 27 "./ast.h"
+#line 27 
 /* NspAst */
 
 #include <nsp/object.h>
@@ -35,14 +35,14 @@
 typedef struct _NspAst NspAst ;
 typedef struct _NspTypeAst NspTypeAst ;
 
-#line 39 "./ast.h"
+#line 39 
 
 struct _NspTypeAst {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 46 "./ast.h"
+#line 46 
 };
 
 struct _NspAst {
@@ -108,7 +108,7 @@ extern NspAst* nsp_parse_file(char *Str);
 extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
 extern int nsp_ast_set_str(NspAst *ast,const char *str);
 
-#line 112 "./ast.h"
+#line 112 
 #endif /* NSP_INC_NspAst */ 
 
 #ifdef NspAst_Private 
