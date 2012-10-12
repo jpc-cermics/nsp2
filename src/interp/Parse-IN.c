@@ -263,6 +263,7 @@ static int int_execstr(Stack stack, int rhs, int opt, int lhs)
    * below as for example in  x=['x=90';'z=80']; execstr(x);
    */
   CheckStdRhs(1,1);
+  CheckLhs(0,2);
   if ((S=GetSMatCopy(stack,1))== NULLSMAT) return RET_BUG;
   if ( get_optional_args(stack,rhs,opt,opts,&display,&echo,&nsp_type_hash,&E,&errcatch,&pausecatch) == FAIL) 
     return RET_BUG;
