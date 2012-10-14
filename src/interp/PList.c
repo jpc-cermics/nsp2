@@ -793,7 +793,7 @@ NspAst *nsp_plist_to_ast(const char *name,PList L)
   while ( L1  != NULLPLIST ) 
     {
       /* arguments can be nodes or new asts */
-      if ( L1->type != OBJECT ) 
+      /* if ( L1->type != OBJECT )  */
 	{
 	  if ((ast = nsp_plist_node_to_ast("ast",L1)) == NULLAST)  return NULLAST;
 	  if ( nsp_list_end_insert(args,NSP_OBJECT(ast))== FAIL) goto err;
@@ -809,6 +809,21 @@ NspAst *nsp_plist_to_ast(const char *name,PList L)
   return NULLAST;
 }
 
+/**
+ * nsp_plist_node_to_ast:
+ * @name: a string 
+ * @L: a #PList 
+ * 
+ * utility function for function nsp_plist_to_ast().
+ * Note that the field L->O is only relevant for the case 
+ * which are listed here. On the other cases it only codes a 
+ * line number thus we do not put it in the nsp_ast_create call.
+ * Note also that a FUNCTION node contains an OBJECT in the 
+ * PList code and the object is inserted in the #NspAst. 
+ * 
+ * Returns: a new #NspAst 
+ **/
+
 static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
 {
   char *str;
@@ -816,7 +831,7 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
   switch ( L->type) 
     {
     case OBJECT :
-      if ((obj=nsp_object_copy_with_name(L->O)) == NULLOBJ) return NULLAST;
+      if ((obj=nsp_object_copy_and_name("table",L->O)) == NULLOBJ) return NULLAST;
       return nsp_ast_create(name,L->type,L->arity,obj,NULL,NULL,NULL);
       break;
     case NUMBER :
@@ -834,17 +849,24 @@ static NspAst *nsp_plist_node_to_ast(const char *name,PList L)
       break;
     case STRING:
     case COMMENT:
-    case NAME :
+    case NAME : /* Note that the arity field is an integer which stands for 
+		 * the position of name in the table of a function */
     case OPNAME :
+      /* arity of NAME can be different to zero we put 0 here */
       if ((str = nsp_string_copy((char *) L->O)) ==NULL)
 	return NULLAST;
-      return nsp_ast_create(name,L->type,L->arity,str,NULL,NULL,NULL);
+      return nsp_ast_create(name,L->type,0,str,NULL,NULL,NULL);
       break;
     case PLIST: 
       return nsp_plist_to_ast(name,(PList) L->O);
       break;
-    default: 
+    case FUNCTION:
       return nsp_ast_create(name,L->type,L->arity,L->O,NULL,NULL,NULL);
+    default: 
+      /* we do not transmit L->O to nsp_ast_name since it only code 
+       * a line number here
+       */
+      return nsp_ast_create(name,L->type,L->arity,NULL /*L->O*/ ,NULL,NULL,NULL);
     }
   return NULL;
 } 
