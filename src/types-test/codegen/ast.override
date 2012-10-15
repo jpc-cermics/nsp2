@@ -99,7 +99,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
     case INUMBER64:
     case UNUMBER32:
     case UNUMBER64:
-      str = ((NspAst *) self)->obj;
+      str = ((NspAst *) self)->str;
       if ( str == NULL) str = "@";
       if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
       break;
@@ -218,7 +218,7 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   switch ( ((int) self->op)) 
     {
     default:
-      str=nsp_astcode_to_name(self->op);
+      str=nsp_astcode_to_codename(self->op);
       if ( str != (char *) 0 && strcmp(str,str1)==0 ) rep = TRUE;
     }
   if ( nsp_move_boolean(stack,1, rep) == FAIL)  return RET_BUG;
@@ -237,7 +237,7 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
       Scierror("Error: an object can be returned only for astnode of id OBJECT\n");
       return RET_BUG;
     }
-  MoveObj(stack,1, self->obj);
+  MoveObj(stack,1, self->xobj);
   return Max(lhs,1);
 }
 
@@ -355,13 +355,11 @@ int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
     {
       if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf1(indent,"%s=ast_create(op=%d,arity=%d,line=%d);",pname,
-		     M->op, M->arity, M->obj);
+	  Sciprintf1(indent,"%s=ast_create(%d);",pname,M->op);
 	}
       else 
 	{
-	  Sciprintf1(indent,"ast_create(op=%d,arity=%d,line=%d);",
-		     M->op, M->arity, M->obj);
+	  Sciprintf1(indent,"ast_create(%d);",M->op);
 	}
     }
   else 
@@ -384,26 +382,26 @@ static void nsp_ast_print_node(NspAst *ast)
   switch ( ast->op ) 
     {
 	case STRING:
-	  Sciprintf("\"%s\"", ast->obj);
+	  Sciprintf("\"%s\"", ast->str);
 	  break;
 	case COMMENT:
-	  Sciprintf("//%s", ast->obj);
+	  Sciprintf("//%s", ast->str);
 	  break;
 	case NUMBER:
 	case INUMBER32:
 	case INUMBER64:
 	case UNUMBER32:
 	case UNUMBER64:
-	  Sciprintf("%s",ast->obj);
+	  Sciprintf("%s",ast->str);
 	  break;
 	case NAME :
-	  Sciprintf("%s", ast->obj);
+	  Sciprintf("%s", ast->str);
 	  break;
 	case OPNAME :
-	  Sciprintf("'%s'", ast->obj);
+	  Sciprintf("'%s'", ast->str);
 	  break;
 	case OBJECT : 
-	  Sciprintf("obj:0x%x",ast->obj);
+	  Sciprintf("obj:0x%x",ast->xobj);
 	  break;
 	default:
 	  s=nsp_astcode_to_name( ast->op);
@@ -736,7 +734,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	    NspAst *ast1;
 	    if ((ast1 =(NspAst*) nsp_list_get_element(ast->args,1)) == NULL) return newpos;
 	    if (ast1->op != STRING ) return newpos;
-	    newpos = pos + Sciprintf1(0,".%s",(char *) ast1->obj);
+	    newpos = pos + Sciprintf1(0,".%s",(char *) ast1->str);
 	    return newpos;
 	  }
 	case CALLEVAL:
@@ -757,37 +755,37 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  return newpos;
 	  break;
 	case COMMENT:
-	  return pos+Sciprintf1(indent,"//%s",(char *) ast->obj);
+	  return pos+Sciprintf1(indent,"//%s",(char *) ast->str);
 	  break;
 	case NAME :
 #ifdef WITH_SYMB_TABLE_DEBUG
-	  return pos+Sciprintf1(indent,"%s<%d>",(char *) ast->obj,ast->arity);
+	  return pos+Sciprintf1(indent,"%s<%d>",(char *) ast->str,ast->arity);
 #else 
-	  return pos+Sciprintf1(indent,"%s",(char *) ast->obj);
+	  return pos+Sciprintf1(indent,"%s",(char *) ast->str);
 #endif 
 	  break;
 	case OPNAME :
-	  return pos+Sciprintf1(indent,"'%s'",(char *) ast->obj);
+	  return pos+Sciprintf1(indent,"'%s'",(char *) ast->str);
 	  break;
 	case NUMBER:
-	  return pos+  Sciprintf1(indent,"%s",(char *) ast->obj);
+	  return pos+  Sciprintf1(indent,"%s",(char *) ast->str);
 	  break;
 	case STRING:
 	  newpos = pos + Sciprintf1(indent,"");
-	  newpos += strlen(((char *) ast->obj));
-	  nsp_print_string_as_read((char *) ast->obj);
+	  newpos += strlen(((char *) ast->str));
+	  nsp_print_string_as_read((char *) ast->str);
 	  return newpos;
 	  break;
 	case INUMBER32 :
 	case INUMBER64 :
 	case UNUMBER32 :
 	case UNUMBER64 :
-	  return pos+  Sciprintf1(indent,"%s",(char *) ast->obj);
+	  return pos+  Sciprintf1(indent,"%s",(char *) ast->str);
 	  break;
 	case OBJECT: 
 #ifdef WITH_SYMB_TABLE_DEBUG      
-	  n = pos+Sciprintf1(indent,"{object:Ox%x}\n",(unsigned int) ast->obj);
-	  nsp_object_print(ast->obj,0,0,0);
+	  n = pos+Sciprintf1(indent,"{object:Ox%x}\n",(unsigned int) ast->xobj);
+	  nsp_object_print(ast->xobj,0,0,0);
 	  return n;
 #else 
 	  return pos;
@@ -1160,7 +1158,7 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
     case COMMENT:
     case NAME :
     case OPNAME :
-      return strcmp((char *) ast1->obj,(char *) ast2->obj)==0;
+      return strcmp((char *) ast1->str,(char *) ast2->str)==0;
       break;
     default: 
       return TRUE;
@@ -1227,7 +1225,7 @@ static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_l
 
 int nsp_ast_set_str(NspAst *ast,const char *str)
 {
-  char *str1,*ast_str =((NspAst *) ast)->obj ;
+  char *str1,*ast_str =((NspAst *) ast)->str ;
   int op = ((int) ast->op);
   switch ( op ) 
     {
@@ -1246,7 +1244,7 @@ int nsp_ast_set_str(NspAst *ast,const char *str)
 	  return FAIL;
 	}
       if (ast_str  != NULL) nsp_string_destroy(&ast_str);
-      ((NspAst *) ast)->obj = str1 ;
+      ((NspAst *) ast)->str = str1 ;
       break;
     default:
       Scierror("Error: str cannot be set for the given ast node\n");

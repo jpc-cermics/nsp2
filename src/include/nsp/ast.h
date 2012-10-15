@@ -52,7 +52,8 @@ struct _NspAst {
   /*< public >*/
     int op;
   int arity;
-  void* obj;
+  char* str;
+  NspObject* xobj;
   NspList* args;
   NspObject* user_data;
 };
@@ -75,7 +76,7 @@ NspAst *new_ast();
 
 #define NULLAST (NspAst*) 0
 
-extern NspAst *nsp_ast_create(const char *name,int op,int arity,void* obj,NspList* args,NspObject* user_data,NspTypeBase *type);
+extern NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xobj,NspList* args,NspObject* user_data,NspTypeBase *type);
 extern NspAst *nsp_ast_create_default(const char *name);
 
 /* from NspAstObj.c */
@@ -108,7 +109,7 @@ extern NspAst* nsp_parse_file(char *Str);
 extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
 extern int nsp_ast_set_str(NspAst *ast,const char *str);
 
-#line 112 "./ast.h"
+#line 113 "./ast.h"
 #endif /* NSP_INC_NspAst */ 
 
 #ifdef NspAst_Private 
@@ -137,6 +138,6 @@ static int nsp_check_ast_args(NspList *L);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
 
-#line 141 "./ast.h"
+#line 142 "./ast.h"
 #endif /* NspAst_Private */
 

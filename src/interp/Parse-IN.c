@@ -867,7 +867,7 @@ static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&code,&opts,&str) == FAIL)   return RET_BUG;
-  if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,NULL,NULL))==NULL)
+  if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,NULL,NULL,NULL))==NULL)
     return RET_BUG;
   if ( str != NULL) 
     {

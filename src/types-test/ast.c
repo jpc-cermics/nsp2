@@ -143,7 +143,8 @@ static int init_ast(NspAst *Obj,NspTypeAst *type)
   /* specific */
   Obj->op = 0;
   Obj->arity = 0;
-  Obj->obj = NULL;
+  Obj->str = NULL;
+  Obj->xobj = NULLOBJ;
   Obj->args = NULLLIST;
   Obj->user_data = NULLOBJ;
   return OK;
@@ -193,7 +194,7 @@ static char *nsp_ast_type_short_string(NspObject *v)
   return(ast_short_type_name);
 }
 
-#line 419 "codegen/ast.override"
+#line 417 "codegen/ast.override"
 
 /*
  * A == B 
@@ -220,7 +221,7 @@ static int nsp_ast_neq(NspAst *A, NspObject *B)
 }
 
 
-#line 224 "ast.c"
+#line 225 "ast.c"
 int nsp_ast_xdr_save(XDR *xdrs, NspAst *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -251,7 +252,7 @@ static NspAst  *nsp_ast_xdr_load(XDR *xdrs)
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
 #line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 255 "ast.c"
+#line 256 "ast.c"
   return H;
 }
 
@@ -264,7 +265,10 @@ void nsp_ast_destroy_partial(NspAst *H)
 #line 54 "codegen/ast.override"
 /* verbatim in destroy */
 
-#line 268 "ast.c"
+#line 269 "ast.c"
+  nsp_string_destroy(&(H->str));
+  if ( H->xobj != NULL ) 
+    nsp_object_destroy(&H->xobj);
   if ( H->args != NULL ) 
     nsp_list_destroy(H->args);
   if ( H->user_data != NULL ) 
@@ -303,7 +307,7 @@ int nsp_ast_info(NspAst *M, int indent,const char *name, int rec_level)
   return TRUE;
 }
 
-#line 307 "ast.c"
+#line 311 "ast.c"
 #line 347 "codegen/ast.override"
 /*
  * print overriden 
@@ -316,13 +320,11 @@ int nsp_ast_print(NspAst *M, int indent,const char *name, int rec_level)
     {
       if ( strcmp(pname,NVOID) != 0) 
 	{
-	  Sciprintf1(indent,"%s=ast_create(op=%d,arity=%d,line=%d);",pname,
-		     M->op, M->arity, M->obj);
+	  Sciprintf1(indent,"%s=ast_create(%d);",pname,M->op);
 	}
       else 
 	{
-	  Sciprintf1(indent,"ast_create(op=%d,arity=%d,line=%d);",
-		     M->op, M->arity, M->obj);
+	  Sciprintf1(indent,"ast_create(%d);",M->op);
 	}
     }
   else 
@@ -345,26 +347,26 @@ static void nsp_ast_print_node(NspAst *ast)
   switch ( ast->op ) 
     {
 	case STRING:
-	  Sciprintf("\"%s\"", ast->obj);
+	  Sciprintf("\"%s\"", ast->str);
 	  break;
 	case COMMENT:
-	  Sciprintf("//%s", ast->obj);
+	  Sciprintf("//%s", ast->str);
 	  break;
 	case NUMBER:
 	case INUMBER32:
 	case INUMBER64:
 	case UNUMBER32:
 	case UNUMBER64:
-	  Sciprintf("%s",ast->obj);
+	  Sciprintf("%s",ast->str);
 	  break;
 	case NAME :
-	  Sciprintf("%s", ast->obj);
+	  Sciprintf("%s", ast->str);
 	  break;
 	case OPNAME :
-	  Sciprintf("'%s'", ast->obj);
+	  Sciprintf("'%s'", ast->str);
 	  break;
 	case OBJECT : 
-	  Sciprintf("obj:0x%x",ast->obj);
+	  Sciprintf("obj:0x%x",ast->xobj);
 	  break;
 	default:
 	  s=nsp_astcode_to_name( ast->op);
@@ -375,7 +377,7 @@ static void nsp_ast_print_node(NspAst *ast)
     }
 }
 
-#line 379 "ast.c"
+#line 381 "ast.c"
 /*
  * latex print 
  */
@@ -388,7 +390,8 @@ int nsp_ast_latex(NspAst *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"op=%d\n",M->op);
   Sciprintf1(indent+2,"arity=%d\n",M->arity);
-  Sciprintf1(indent+2,"obj=0x%x\n",M->obj);
+  Sciprintf1(indent+2,"str=%s\n",M->str);
+        if ( M->xobj->type->pr(M->xobj,indent+2,"xobj",rec_level+1)==FALSE) return FALSE;
   if ( M->args != NULL)
     { if ( nsp_object_latex(NSP_OBJECT(M->args),indent+2,"args",rec_level+1)== FALSE ) return FALSE ;
     }
@@ -464,6 +467,16 @@ int nsp_ast_create_partial(NspAst *H)
 
 int nsp_ast_check_values(NspAst *H)
 {
+  if ( H->str == NULL) 
+    {
+     if (( H->str = nsp_string_copy("")) == NULL)
+       return FAIL;
+    }
+  if ( H->xobj == NULLOBJ) 
+    {
+     if (( H->xobj =(NspObject*) nsp_matrix_create("xobj",'r',0,0)) == NULL)
+       return FAIL;
+    }
   if ( H->args == NULLLIST) 
     {
      if (( H->args = nsp_list_create("args")) == NULLLIST)
@@ -477,19 +490,20 @@ int nsp_ast_check_values(NspAst *H)
   return OK;
 }
 
-NspAst *nsp_ast_create(const char *name,int op,int arity,void* obj,NspList* args,NspObject* user_data,NspTypeBase *type)
+NspAst *nsp_ast_create(const char *name,int op,int arity,char* str,NspObject* xobj,NspList* args,NspObject* user_data,NspTypeBase *type)
 {
   NspAst *H  = nsp_ast_create_void(name,type);
   if ( H ==  NULLAST) return NULLAST;
   H->op=op;
   H->arity=arity;
-  H->obj = obj;
+  H->str = str;
+  H->xobj= xobj;
   H->args= args;
   H->user_data= user_data;
   if ( nsp_ast_check_values(H) == FAIL) return NULLAST;
 #line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 493 "ast.c"
+#line 507 "ast.c"
   return H;
 }
 
@@ -510,7 +524,13 @@ NspAst *nsp_ast_copy_partial(NspAst *H,NspAst *self)
 {
   H->op=self->op;
   H->arity=self->arity;
-  H->obj = self->obj;
+  if ((H->str = nsp_string_copy(self->str)) == NULL) return NULL;
+  if ( self->xobj == NULL )
+    { H->xobj = NULL;}
+  else
+    {
+      if ((H->xobj = (NspObject *) nsp_object_copy_and_name("xobj",NSP_OBJECT(self->xobj))) == NULLOBJ) return NULL;
+    }
   if ( self->args == NULL )
     { H->args = NULL;}
   else
@@ -542,7 +562,13 @@ NspAst *nsp_ast_full_copy_partial(NspAst *H,NspAst *self)
 {
   H->op=self->op;
   H->arity=self->arity;
-  H->obj = self->obj;
+  if ((H->str = nsp_string_copy(self->str)) == NULL) return NULL;
+  if ( self->xobj == NULL )
+    { H->xobj = NULL;}
+  else
+    {
+      if ((H->xobj = (NspObject *) nsp_object_full_copy_and_name("xobj",NSP_OBJECT(self->xobj))) == NULLOBJ) return NULL;
+    }
   if ( self->args == NULL )
     { H->args = NULL;}
   else
@@ -566,7 +592,7 @@ NspAst *nsp_ast_full_copy(NspAst *self)
 
 #line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 570 "ast.c"
+#line 596 "ast.c"
   return H;
 }
 
@@ -587,7 +613,7 @@ int int_ast_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_ast_check_values(H) == FAIL) return RET_BUG;
 #line 51 "codegen/ast.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 591 "ast.c"
+#line 617 "ast.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -616,7 +642,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
     case INUMBER64:
     case UNUMBER32:
     case UNUMBER64:
-      str = ((NspAst *) self)->obj;
+      str = ((NspAst *) self)->str;
       if ( str == NULL) str = "@";
       if ((Ret = nsp_new_string_obj(NVOID,str,-1))== NULLOBJ) return RET_BUG;
       break;
@@ -628,7 +654,7 @@ static int _wrap_ast_get_str(NspAst *self, Stack stack, int rhs, int opt, int lh
   return 1;
 }
 
-#line 632 "ast.c"
+#line 658 "ast.c"
 
 
 #line 116 "codegen/ast.override"
@@ -644,7 +670,7 @@ static int _wrap_ast_set_str(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 648 "ast.c"
+#line 674 "ast.c"
 
 
 #line 130 "codegen/ast.override"
@@ -661,7 +687,7 @@ static int _wrap_ast_get_op(NspAst *self, Stack stack, int rhs, int opt, int lhs
   return Max(lhs,1);
 }
 
-#line 665 "ast.c"
+#line 691 "ast.c"
 
 
 #line 145 "codegen/ast.override"
@@ -686,7 +712,7 @@ static int _wrap_ast_get_codename(NspAst *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 690 "ast.c"
+#line 716 "ast.c"
 
 
 #line 168 "codegen/ast.override"
@@ -715,7 +741,7 @@ static int _wrap_ast_get_opname(NspAst *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 719 "ast.c"
+#line 745 "ast.c"
 
 
 #line 210 "codegen/ast.override"
@@ -730,14 +756,14 @@ static int _wrap_ast_is(NspAst *self, Stack stack, int rhs, int opt, int lhs)
   switch ( ((int) self->op)) 
     {
     default:
-      str=nsp_astcode_to_name(self->op);
+      str=nsp_astcode_to_codename(self->op);
       if ( str != (char *) 0 && strcmp(str,str1)==0 ) rep = TRUE;
     }
   if ( nsp_move_boolean(stack,1, rep) == FAIL)  return RET_BUG;
   return Max(lhs,1);
 }
 
-#line 741 "ast.c"
+#line 767 "ast.c"
 
 
 #line 230 "codegen/ast.override"
@@ -751,11 +777,11 @@ static int _wrap_ast_get_obj(NspAst *self, Stack stack, int rhs, int opt, int lh
       Scierror("Error: an object can be returned only for astnode of id OBJECT\n");
       return RET_BUG;
     }
-  MoveObj(stack,1, self->obj);
+  MoveObj(stack,1, self->xobj);
   return Max(lhs,1);
 }
 
-#line 759 "ast.c"
+#line 785 "ast.c"
 
 
 #line 264 "codegen/ast.override"
@@ -773,7 +799,7 @@ static int _wrap_ast_get_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return Max(lhs,1);
 }
 
-#line 777 "ast.c"
+#line 803 "ast.c"
 
 
 #line 246 "codegen/ast.override"
@@ -793,7 +819,7 @@ static int _wrap_ast_set_user_data(NspAst *self, Stack stack, int rhs, int opt, 
   return 0;
 }
 
-#line 797 "ast.c"
+#line 823 "ast.c"
 
 
 #line 280 "codegen/ast.override"
@@ -806,7 +832,7 @@ static int _wrap_ast_get_args(NspAst *self, Stack stack, int rhs, int opt, int l
   return Max(lhs,1);
 }
 
-#line 810 "ast.c"
+#line 836 "ast.c"
 
 
 #line 58 "codegen/ast.override"
@@ -832,7 +858,7 @@ static int _wrap_set_args(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return RET_BUG;
 }
 
-#line 836 "ast.c"
+#line 862 "ast.c"
 
 
 #line 195 "codegen/ast.override"
@@ -849,7 +875,7 @@ static int _wrap_ast_get_arity(NspAst *self, Stack stack, int rhs, int opt, int 
   return Max(lhs,1);
 }
 
-#line 853 "ast.c"
+#line 879 "ast.c"
 
 
 #line 300 "codegen/ast.override"
@@ -859,7 +885,7 @@ static int _wrap_ast_sprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
 {
   return meth_ast_sprint(self,stack,rhs,opt,lhs);
 }
-#line 863 "ast.c"
+#line 889 "ast.c"
 
 
 #line 308 "codegen/ast.override"
@@ -870,7 +896,7 @@ static int _wrap_ast_fprint(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_fprint(self,stack,rhs,opt,lhs);
 }
 
-#line 874 "ast.c"
+#line 900 "ast.c"
 
 
 #line 291 "codegen/ast.override"
@@ -881,7 +907,7 @@ static int _wrap_ast_print(NspAst *self,Stack stack,int rhs,int opt,int lhs)
   return meth_ast_print(self,stack,rhs,opt,lhs);
 }
 
-#line 885 "ast.c"
+#line 911 "ast.c"
 
 
 static NspMethods ast_methods[] = {
@@ -939,7 +965,7 @@ void Ast_Interf_Info(int i, char **fname, function (**f))
   *f = Ast_func[i].fonc;
 }
 
-#line 447 "codegen/ast.override"
+#line 445 "codegen/ast.override"
 
 /* pretty print of the ast i.e ast -> code */
 
@@ -1232,7 +1258,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	    NspAst *ast1;
 	    if ((ast1 =(NspAst*) nsp_list_get_element(ast->args,1)) == NULL) return newpos;
 	    if (ast1->op != STRING ) return newpos;
-	    newpos = pos + Sciprintf1(0,".%s",(char *) ast1->obj);
+	    newpos = pos + Sciprintf1(0,".%s",(char *) ast1->str);
 	    return newpos;
 	  }
 	case CALLEVAL:
@@ -1253,37 +1279,37 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	  return newpos;
 	  break;
 	case COMMENT:
-	  return pos+Sciprintf1(indent,"//%s",(char *) ast->obj);
+	  return pos+Sciprintf1(indent,"//%s",(char *) ast->str);
 	  break;
 	case NAME :
 #ifdef WITH_SYMB_TABLE_DEBUG
-	  return pos+Sciprintf1(indent,"%s<%d>",(char *) ast->obj,ast->arity);
+	  return pos+Sciprintf1(indent,"%s<%d>",(char *) ast->str,ast->arity);
 #else 
-	  return pos+Sciprintf1(indent,"%s",(char *) ast->obj);
+	  return pos+Sciprintf1(indent,"%s",(char *) ast->str);
 #endif 
 	  break;
 	case OPNAME :
-	  return pos+Sciprintf1(indent,"'%s'",(char *) ast->obj);
+	  return pos+Sciprintf1(indent,"'%s'",(char *) ast->str);
 	  break;
 	case NUMBER:
-	  return pos+  Sciprintf1(indent,"%s",(char *) ast->obj);
+	  return pos+  Sciprintf1(indent,"%s",(char *) ast->str);
 	  break;
 	case STRING:
 	  newpos = pos + Sciprintf1(indent,"");
-	  newpos += strlen(((char *) ast->obj));
-	  nsp_print_string_as_read((char *) ast->obj);
+	  newpos += strlen(((char *) ast->str));
+	  nsp_print_string_as_read((char *) ast->str);
 	  return newpos;
 	  break;
 	case INUMBER32 :
 	case INUMBER64 :
 	case UNUMBER32 :
 	case UNUMBER64 :
-	  return pos+  Sciprintf1(indent,"%s",(char *) ast->obj);
+	  return pos+  Sciprintf1(indent,"%s",(char *) ast->str);
 	  break;
 	case OBJECT: 
 #ifdef WITH_SYMB_TABLE_DEBUG      
-	  n = pos+Sciprintf1(indent,"{object:Ox%x}\n",(unsigned int) ast->obj);
-	  nsp_object_print(ast->obj,0,0,0);
+	  n = pos+Sciprintf1(indent,"{object:Ox%x}\n",(unsigned int) ast->xobj);
+	  nsp_object_print(ast->xobj,0,0,0);
 	  return n;
 #else 
 	  return pos;
@@ -1656,7 +1682,7 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2)
     case COMMENT:
     case NAME :
     case OPNAME :
-      return strcmp((char *) ast1->obj,(char *) ast2->obj)==0;
+      return strcmp((char *) ast1->str,(char *) ast2->str)==0;
       break;
     default: 
       return TRUE;
@@ -1723,7 +1749,7 @@ static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_l
 
 int nsp_ast_set_str(NspAst *ast,const char *str)
 {
-  char *str1,*ast_str =((NspAst *) ast)->obj ;
+  char *str1,*ast_str =((NspAst *) ast)->str ;
   int op = ((int) ast->op);
   switch ( op ) 
     {
@@ -1742,7 +1768,7 @@ int nsp_ast_set_str(NspAst *ast,const char *str)
 	  return FAIL;
 	}
       if (ast_str  != NULL) nsp_string_destroy(&ast_str);
-      ((NspAst *) ast)->obj = str1 ;
+      ((NspAst *) ast)->str = str1 ;
       break;
     default:
       Scierror("Error: str cannot be set for the given ast node\n");
@@ -1751,4 +1777,4 @@ int nsp_ast_set_str(NspAst *ast,const char *str)
   return OK;
 }
 
-#line 1755 "ast.c"
+#line 1781 "ast.c"

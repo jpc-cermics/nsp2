@@ -12,7 +12,7 @@ function [ok,H]=ast_function_vars(ast)
     ok=%f;
     return;
   end
-  if ~ast.is['function'] then ok=%f;return;end
+  if ~ast.is['FUNCTION'] then ok=%f;return;end
   // get the function name fname, out and in 
   args = ast.get_args[];
   sig= args(1);

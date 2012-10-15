@@ -34,7 +34,7 @@ function [rep,H]=ast_eval(ast,H)
 
   function [y,name,ast1]=ast_is_simple_assign(ast)
   // checks that ast is of kind x=expr.
-    if ~ast.is["="] then y=%f;return;end
+    if ~ast.is["EQUAL_OP"] then y=%f;return;end
     args= ast.get_args[];
     mlhs=args(1);
     ast1=args(2);
