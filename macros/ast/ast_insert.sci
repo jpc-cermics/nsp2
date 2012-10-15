@@ -1,6 +1,6 @@
 // work in progress 
 
-function rep=ast_insert(ast,H)
+function rep=ast_insert(ast,f)
 // test function which insert an ast when a call to f is found
   
   function ast=ast_insert_build_exprs(L)
@@ -30,8 +30,13 @@ function rep=ast_insert(ast,H)
       L= ast.get_args[];
       rep=list();
       for j = 1:length(L)
-	fc = ast_collect_funcall(L(j),'f');
+	fc = ast_collect_funcall(L(j),H.name);
 	if length(fc)<>0 then 
+	  for i=1:length(fc);
+	    pause xxx;
+	    astn=ast_funcall_inline(fc(i),H.code);
+	    rep($+1)= astn;
+	  end
 	  newast= ast_insert_build_exprs(fc);
 	  rep($+1) = newast;
 	end
@@ -45,18 +50,22 @@ function rep=ast_insert(ast,H)
     end
     //printf("<--arg_inserter\n");
   endfunction
+  H=hash(code=pl2ast(f),name=f.get_name[]);
+  pause xxx;
   rep =ast_visit(ast,ast_inserter,H);
 endfunction
   
 function ast_insert_test()
+  function y=f(x); y=sin(x)+cos(x)+x(1);endfunction;
   function test()
     x=89;
     y=f(5)+7;
     y=7;
     x=6;
-    z=78+f(6);z=8,f(56);
+    z=78+f(6)+f(7);
+    z=8,f(56);
   endfunction
-  rep=ast_insert(pl2ast(test),'f');
+  rep=ast_insert(pl2ast(test),f);
   rep.print[];
   printf('\n');
 endfunction
