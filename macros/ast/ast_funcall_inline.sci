@@ -1,12 +1,10 @@
-function [ast]=ast_funcall_inline(ast,f)
-// expand a funcall 
-// (calleval f (args arg1 ... argn))
-// using code in f 
-// Attention il reste à renommer les variables 
-// locales de f et la variable de retour;
-
+function [ast,H]=ast_funcall_inline(ast,f)
+// inline calls to f: f can be a function or a function
+// given by its ast.
+// ast contains a simple call to f 
+  
   function [ok,ast]=ast_funcall_expand(ast,L)
-  // expand a funcall 
+  // utility function expand a funcall 
   // (calleval f (args arg1 ... argn))
   // L gives the names to be used for arguments
     ok=%t;
@@ -27,12 +25,14 @@ function [ast]=ast_funcall_inline(ast,f)
     ast = ast_create(%ast.STATEMENTS);
     ast.set_args[rep];
   endfunction
-  
-  // rename variables in tha ast for function f
+
+  // rename variables in the ast for function f
   [f_ast]=ast_function_rename_vars(f);
   // variable names in new ast 
   [ok,H]= ast_function_vars(f_ast);
+  // expand the call to f given in ast
   [ok,ast]=ast_funcall_expand(ast,H.in);
+  // get the body of the function;
   f_ast=f_ast.get_args[](2);
   L= ast.get_args[];
   L.concat[f_ast.get_args[]];

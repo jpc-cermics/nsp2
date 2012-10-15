@@ -1,6 +1,7 @@
 function rep=ast_collect_vars(ast)
 // collect variables found in ast 
-  
+// i.e all the nodes of type NAME except optional named arguments.
+    
   function H=ast_vars_visit(ast,H)
     select ast.get_op[] 
      case %ast.OPT then

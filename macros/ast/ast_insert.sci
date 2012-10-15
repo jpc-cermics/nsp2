@@ -30,17 +30,26 @@ function rep=ast_insert(ast,f)
       L= ast.get_args[];
       rep=list();
       for j = 1:length(L)
+	Lj = L(j);
+	// test if calls to H.name are performed in L(j)
 	fc = ast_collect_funcall(L(j),H.name);
 	if length(fc)<>0 then 
+	  // inline the calls 
+	  out=m2s([]);
 	  for i=1:length(fc);
-	    pause xxx;
-	    astn=ast_funcall_inline(fc(i),H.code);
+	    [astn,Ho]=ast_funcall_inline(fc(i),H.code);
+	    out(i)=Ho.out;
 	    rep($+1)= astn;
 	  end
-	  newast= ast_insert_build_exprs(fc);
-	  rep($+1) = newast;
+	  //newast= ast_insert_build_exprs(fc);
+	  //rep($+1) = newast;
+	  for i=1:length(fc);
+	    Lj = ast_replace_funcall(Lj,fc(i),ast_expr(out(i)));
+	  end
+	  rep($+1) = ast_visit_internal(Lj,ast_inserter,H);
+	else
+	  rep($+1) = ast_visit_internal(Lj,ast_inserter,H);
 	end
-	rep($+1) = ast_visit_internal(L(j),ast_inserter,H);
       end
       ast.set_args[rep];
       return; 
@@ -51,21 +60,25 @@ function rep=ast_insert(ast,f)
     //printf("<--arg_inserter\n");
   endfunction
   H=hash(code=pl2ast(f),name=f.get_name[]);
-  pause xxx;
   rep =ast_visit(ast,ast_inserter,H);
 endfunction
   
 function ast_insert_test()
-  function y=f(x); y=sin(x)+cos(x)+x(1);endfunction;
+  function y=f(x); y=sin(x);endfunction;
   function test()
-    x=89;
     y=f(5)+7;
-    y=7;
-    x=6;
-    z=78+f(6)+f(7);
-    z=8,f(56);
   endfunction
   rep=ast_insert(pl2ast(test),f);
   rep.print[];
   printf('\n');
+
+  function y=f(x); y=sin(x);endfunction;
+  function test()
+    x=4;
+    y=f(5)+f(x);
+  endfunction
+  rep=ast_insert(pl2ast(test),f);
+  rep.print[];
+  printf('\n');
+    
 endfunction

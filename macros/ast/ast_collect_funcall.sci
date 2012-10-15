@@ -1,5 +1,7 @@
 function rep=ast_collect_funcall(ast,str)
-// collect calls to f 
+// collect calls to f which are returned in 
+// a list. Each element of the list is an ast.
+  
   function rep=ast_collect_funcall_visit(ast,str)
   // a visitor 
     select ast.get_op[] 

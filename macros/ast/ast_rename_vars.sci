@@ -55,4 +55,9 @@ function ast_rename_vars_test()
   rep=ast_rename_vars(ast,hash(a=ast1));
   rep.print[];
   printf("\n");
+  // other example 
+  rep=ast_rename_vars(ast,hash(a='foo'));
+  rep.print[];
+  printf("\n");
+  
 endfunction
