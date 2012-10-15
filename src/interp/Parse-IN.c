@@ -859,15 +859,27 @@ static int int_parse(Stack stack, int rhs, int opt, int lhs)
 
 static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
 {
+  NspList *args=NULL;
   NspAst *ast;
   char *str=NULL;
   int code;
   int_types T[] = {s_int,new_opts, t_end} ;
   nsp_option opts[] ={{ "str",string,NULLOBJ,-1},
+		      { "args",list,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   CheckLhs(0,1);
-  if ( GetArgs(stack,rhs,opt,T,&code,&opts,&str) == FAIL)   return RET_BUG;
-  if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,NULL,NULL,NULL))==NULL)
+  if ( GetArgs(stack,rhs,opt,T,&code,&opts,&str,&args) == FAIL)   return RET_BUG;
+  if ( args != NULL) 
+    {
+      if ( nsp_ast_check_args(args) == FAIL)
+	{
+	  Scierror("Error: args should be a list of ast objects\n");
+	  return RET_BUG;
+	}
+      if ((args = (NspList *) nsp_object_copy_and_name("args",(NspObject*) args)) == NULL) 
+	return RET_BUG;
+    }
+  if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,args,NULL,NULL))==NULL)
     return RET_BUG;
   if ( str != NULL) 
     {
