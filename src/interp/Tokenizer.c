@@ -1185,18 +1185,36 @@ static int parse_error (Tokenizer *T,char *fmt,...)
 
 static const char *code2name(Tokenizer *T,int key)
 {
+  unsigned char c = (unsigned char) key;
   const char *s = nsp_astcode_to_name(key);
   if (s != NULL) return s;
   switch (key) 
     {
     case COMMENT : return(T->tokenv.buf);
     case NUMBER : return(T->tokenv.buf);
+    case INUMBER32 : return(T->tokenv.buf);
+    case UNUMBER32 : return(T->tokenv.buf);
+    case INUMBER64 : return(T->tokenv.buf);
+    case UNUMBER64 : return(T->tokenv.buf);
     case NAME   : return(T->tokenv.syn);
     case OPNAME : return(T->tokenv.buf);
     case STRING : return(T->tokenv.buf);
+    }
+  /* special characters which are parsed as tokens but not correct tokens */
+  switch (c)
+    {
+    case '\r'   : return("\\r"); /* char that can be parsed as a token */
+    case '@'    : return("@"); 
+    case '?'    : return("?"); 
+    case '!'    : return("!"); 
+    case 195    : return("utf8 character");
     default: return(" ");
     }
 }
+
+
+
+
 
 /*
  * Used when Scilab input is from a file 
@@ -1220,7 +1238,7 @@ static void SciFileReadLine(Tokenizer *T, char *prompt, char *buffer, int *buf_s
 	}
     }
   *len_line = strlen(buffer);
-  /* remove newline character if there */
+  /* remove end of line which is assumed to be \n or \r or \r\n */
   if(*len_line >= 2)
     {
       if ( buffer[*len_line - 2] == '\r' && buffer[*len_line - 1] == '\n' )
