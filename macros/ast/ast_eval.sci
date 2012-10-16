@@ -418,7 +418,8 @@ function [rep,H]=ast_eval(ast,H)
       end
     end
   endfunction
-
+  
+  if nargin <= 1; H=hash(0);end 
   [rep,H]=ast_eval_internal(ast,H)
 endfunction
 

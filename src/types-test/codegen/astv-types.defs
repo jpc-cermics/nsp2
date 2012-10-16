@@ -7,10 +7,15 @@
   (parent "Object")
   (c-name "NspAstv")
   (fields
-   '("gboolean" "hv" "hidden" "FALSE"); /* number of rows */
+   '("gboolean" "hv" "hidden" "FALSE"); /* have value flag */
    '("int" "rows" "hidden"); /* number of rows */
    '("int" "columns" "hidden"); /* number of columns */
    '("NspObject*" "value" "hidden" "NULL" ); /* value as object or NULL  */
+   '("NspObject*" "ast_rows" "hidden" "NULL" ); /* ast for rows */
+   '("NspObject*" "ast_columns" "hidden" "NULL"); /* ast for columns */
+   '("NspObject*" "ast_value" "hidden" "NULL" ); /* ast for value */
+   '("char*" "stype"); 
+   '("char*" "ssubtype"); 
    )
   (gtype-id "Astv")
 )

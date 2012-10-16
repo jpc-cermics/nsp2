@@ -145,6 +145,11 @@ static int init_astv(NspAstv *Obj,NspTypeAstv *type)
   Obj->rows = 0;
   Obj->columns = 0;
   Obj->value = NULLOBJ;
+  Obj->ast_rows = NULLOBJ;
+  Obj->ast_columns = NULLOBJ;
+  Obj->ast_value = NULLOBJ;
+  Obj->stype = NULL;
+  Obj->ssubtype = NULL;
   return OK;
 }
 
@@ -224,7 +229,7 @@ static int nsp_astv_neq(NspAstv *A, NspObject *B)
 }
 
 
-#line 228 "astv.c"
+#line 233 "astv.c"
 int nsp_astv_xdr_save(XDR *xdrs, NspAstv *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -232,6 +237,8 @@ int nsp_astv_xdr_save(XDR *xdrs, NspAstv *M)
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_astv)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,M->stype) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,M->ssubtype) == FAIL) return FAIL;
   return OK;
 }
 
@@ -241,6 +248,8 @@ int nsp_astv_xdr_save(XDR *xdrs, NspAstv *M)
 
 NspAstv  *nsp_astv_xdr_load_partial(XDR *xdrs, NspAstv *M)
 {
+  if (nsp_xdr_load_new_string(xdrs,&(M->stype)) == FAIL) return NULL;
+  if (nsp_xdr_load_new_string(xdrs,&(M->ssubtype)) == FAIL) return NULL;
  return M;
 }
 
@@ -255,7 +264,7 @@ static NspAstv  *nsp_astv_xdr_load(XDR *xdrs)
   if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
 #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 259 "astv.c"
+#line 268 "astv.c"
   return H;
 }
 
@@ -268,9 +277,17 @@ void nsp_astv_destroy_partial(NspAstv *H)
 #line 43 "codegen/astv.override"
 /* verbatim in destroy */
 
-#line 272 "astv.c"
+#line 281 "astv.c"
   if ( H->value != NULL ) 
     nsp_object_destroy(&H->value);
+  if ( H->ast_rows != NULL ) 
+    nsp_object_destroy(&H->ast_rows);
+  if ( H->ast_columns != NULL ) 
+    nsp_object_destroy(&H->ast_columns);
+  if ( H->ast_value != NULL ) 
+    nsp_object_destroy(&H->ast_value);
+  nsp_string_destroy(&(H->stype));
+  nsp_string_destroy(&(H->ssubtype));
 }
 
 void nsp_astv_destroy(NspAstv *H)
@@ -290,7 +307,7 @@ int nsp_astv_info(NspAstv *M, int indent,const char *name, int rec_level)
   return nsp_astv_print(M,indent,name,rec_level);
 }
 
-#line 294 "astv.c"
+#line 311 "astv.c"
 #line 120 "codegen/astv.override"
 /*
  * print overriden 
@@ -329,7 +346,7 @@ int nsp_astv_print(NspAstv *M, int indent,const char *name, int rec_level)
 }
 
 
-#line 333 "astv.c"
+#line 350 "astv.c"
 /*
  * latex print 
  */
@@ -344,6 +361,11 @@ int nsp_astv_latex(NspAstv *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent+2,"rows=%d\n",M->rows);
   Sciprintf1(indent+2,"columns=%d\n",M->columns);
         if ( M->value->type->pr(M->value,indent+2,"value",rec_level+1)==FALSE) return FALSE;
+        if ( M->ast_rows->type->pr(M->ast_rows,indent+2,"ast_rows",rec_level+1)==FALSE) return FALSE;
+        if ( M->ast_columns->type->pr(M->ast_columns,indent+2,"ast_columns",rec_level+1)==FALSE) return FALSE;
+        if ( M->ast_value->type->pr(M->ast_value,indent+2,"ast_value",rec_level+1)==FALSE) return FALSE;
+  Sciprintf1(indent+2,"stype=%s\n",M->stype);
+  Sciprintf1(indent+2,"ssubtype=%s\n",M->ssubtype);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -420,10 +442,35 @@ int nsp_astv_check_values(NspAstv *H)
      if (( H->value =(NspObject*) nsp_matrix_create("value",'r',0,0)) == NULL)
        return FAIL;
     }
+  if ( H->ast_rows == NULLOBJ) 
+    {
+     if (( H->ast_rows =(NspObject*) nsp_matrix_create("ast_rows",'r',0,0)) == NULL)
+       return FAIL;
+    }
+  if ( H->ast_columns == NULLOBJ) 
+    {
+     if (( H->ast_columns =(NspObject*) nsp_matrix_create("ast_columns",'r',0,0)) == NULL)
+       return FAIL;
+    }
+  if ( H->ast_value == NULLOBJ) 
+    {
+     if (( H->ast_value =(NspObject*) nsp_matrix_create("ast_value",'r',0,0)) == NULL)
+       return FAIL;
+    }
+  if ( H->stype == NULL) 
+    {
+     if (( H->stype = nsp_string_copy("")) == NULL)
+       return FAIL;
+    }
+  if ( H->ssubtype == NULL) 
+    {
+     if (( H->ssubtype = nsp_string_copy("")) == NULL)
+       return FAIL;
+    }
   return OK;
 }
 
-NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspTypeBase *type)
+NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspObject* ast_rows,NspObject* ast_columns,NspObject* ast_value,char* stype,char* ssubtype,NspTypeBase *type)
 {
   NspAstv *H  = nsp_astv_create_void(name,type);
   if ( H ==  NULLASTV) return NULLASTV;
@@ -431,10 +478,15 @@ NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspOb
   H->rows=rows;
   H->columns=columns;
   H->value= value;
+  H->ast_rows= ast_rows;
+  H->ast_columns= ast_columns;
+  H->ast_value= ast_value;
+  H->stype = stype;
+  H->ssubtype = ssubtype;
   if ( nsp_astv_check_values(H) == FAIL) return NULLASTV;
 #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 438 "astv.c"
+#line 490 "astv.c"
   return H;
 }
 
@@ -462,6 +514,26 @@ NspAstv *nsp_astv_copy_partial(NspAstv *H,NspAstv *self)
     {
       if ((H->value = (NspObject *) nsp_object_copy_and_name("value",NSP_OBJECT(self->value))) == NULLOBJ) return NULL;
     }
+  if ( self->ast_rows == NULL )
+    { H->ast_rows = NULL;}
+  else
+    {
+      if ((H->ast_rows = (NspObject *) nsp_object_copy_and_name("ast_rows",NSP_OBJECT(self->ast_rows))) == NULLOBJ) return NULL;
+    }
+  if ( self->ast_columns == NULL )
+    { H->ast_columns = NULL;}
+  else
+    {
+      if ((H->ast_columns = (NspObject *) nsp_object_copy_and_name("ast_columns",NSP_OBJECT(self->ast_columns))) == NULLOBJ) return NULL;
+    }
+  if ( self->ast_value == NULL )
+    { H->ast_value = NULL;}
+  else
+    {
+      if ((H->ast_value = (NspObject *) nsp_object_copy_and_name("ast_value",NSP_OBJECT(self->ast_value))) == NULLOBJ) return NULL;
+    }
+  if ((H->stype = nsp_string_copy(self->stype)) == NULL) return NULL;
+  if ((H->ssubtype = nsp_string_copy(self->ssubtype)) == NULL) return NULL;
   return H;
 }
 
@@ -488,6 +560,26 @@ NspAstv *nsp_astv_full_copy_partial(NspAstv *H,NspAstv *self)
     {
       if ((H->value = (NspObject *) nsp_object_full_copy_and_name("value",NSP_OBJECT(self->value))) == NULLOBJ) return NULL;
     }
+  if ( self->ast_rows == NULL )
+    { H->ast_rows = NULL;}
+  else
+    {
+      if ((H->ast_rows = (NspObject *) nsp_object_full_copy_and_name("ast_rows",NSP_OBJECT(self->ast_rows))) == NULLOBJ) return NULL;
+    }
+  if ( self->ast_columns == NULL )
+    { H->ast_columns = NULL;}
+  else
+    {
+      if ((H->ast_columns = (NspObject *) nsp_object_full_copy_and_name("ast_columns",NSP_OBJECT(self->ast_columns))) == NULLOBJ) return NULL;
+    }
+  if ( self->ast_value == NULL )
+    { H->ast_value = NULL;}
+  else
+    {
+      if ((H->ast_value = (NspObject *) nsp_object_full_copy_and_name("ast_value",NSP_OBJECT(self->ast_value))) == NULLOBJ) return NULL;
+    }
+  if ((H->stype = nsp_string_copy(self->stype)) == NULL) return NULL;
+  if ((H->ssubtype = nsp_string_copy(self->ssubtype)) == NULL) return NULL;
   return H;
 }
 
@@ -499,7 +591,7 @@ NspAstv *nsp_astv_full_copy(NspAstv *self)
 
 #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 503 "astv.c"
+#line 595 "astv.c"
   return H;
 }
 
@@ -520,7 +612,7 @@ int int_astv_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_astv_check_values(H) == FAIL) return RET_BUG;
 #line 40 "codegen/astv.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 524 "astv.c"
+#line 616 "astv.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -538,7 +630,7 @@ static int _wrap_astv_get_value(NspAstv *self, Stack stack, int rhs, int opt, in
   return Max(lhs,1);
 }
 
-#line 542 "astv.c"
+#line 634 "astv.c"
 
 
 #line 72 "codegen/astv.override"
@@ -552,7 +644,7 @@ static int _wrap_astv_have_value(NspAstv *self, Stack stack, int rhs, int opt, i
   return Max(lhs,1);
 }
 
-#line 556 "astv.c"
+#line 648 "astv.c"
 
 
 #line 84 "codegen/astv.override"
@@ -575,7 +667,7 @@ static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, in
   return 0;
 }
 
-#line 579 "astv.c"
+#line 671 "astv.c"
 
 
 #line 47 "codegen/astv.override"
@@ -591,7 +683,7 @@ static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int
   return Max(lhs,1);
 }
 
-#line 595 "astv.c"
+#line 687 "astv.c"
 
 
 static NspMethods astv_methods[] = {
@@ -607,7 +699,54 @@ static NspMethods *astv_get_methods(void) { return astv_methods;};
  * Attributes
  *-------------------------------------------*/
 
-static AttrTab astv_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
+static NspObject *_wrap_astv_get_stype(void *self,const char *attr)
+{
+  const gchar *ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspAstv *) self)->stype;
+  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
+  return nsp_ret;
+}
+
+static int _wrap_astv_set_stype(void *self,const char *attr, NspObject *O)
+{
+  char *stype;
+
+  if ((stype = nsp_string_object(O))==NULL) return FAIL;
+  if ((stype = nsp_string_copy(stype)) ==NULL) return FAIL;
+  nsp_string_destroy(&((NspAstv *) self)->stype);
+  ((NspAstv *) self)->stype= stype;
+  return OK;
+}
+
+static NspObject *_wrap_astv_get_ssubtype(void *self,const char *attr)
+{
+  const gchar *ret;
+  NspObject *nsp_ret;
+
+  ret = ((NspAstv *) self)->ssubtype;
+  nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
+  return nsp_ret;
+}
+
+static int _wrap_astv_set_ssubtype(void *self,const char *attr, NspObject *O)
+{
+  char *ssubtype;
+
+  if ((ssubtype = nsp_string_object(O))==NULL) return FAIL;
+  if ((ssubtype = nsp_string_copy(ssubtype)) ==NULL) return FAIL;
+  nsp_string_destroy(&((NspAstv *) self)->ssubtype);
+  ((NspAstv *) self)->ssubtype= ssubtype;
+  return OK;
+}
+
+static AttrTab astv_attrs[] = {
+  { "stype", (attr_get_function *)_wrap_astv_get_stype, (attr_set_function *)_wrap_astv_set_stype,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "ssubtype", (attr_get_function *)_wrap_astv_get_ssubtype, (attr_set_function *)_wrap_astv_set_ssubtype,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { NULL,NULL,NULL,NULL,NULL },
+};
+
 
 /*-------------------------------------------
  * functions 
@@ -665,4 +804,4 @@ NspAstv *nsp_astv(NspObject *Obj,int flag)
 
 
 
-#line 669 "astv.c"
+#line 808 "astv.c"

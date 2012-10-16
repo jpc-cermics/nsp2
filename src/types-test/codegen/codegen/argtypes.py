@@ -213,7 +213,10 @@ class StringArg(ArgType):
             info.add_parselist('string', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ((%s = nsp_string_object(O))==NULL) return FAIL;\n' % pname)
         info.attrcodebefore.append('  if ((%s = nsp_string_copy(%s)) ==NULL) return FAIL;\n' % (pname,pname))
-        info.attrcodebefore.append('  nsp_string_destroy(&((%s *) self)->obj->%s);\n' % (upinfo,pname))
+        if  byref == 't' :
+            info.attrcodebefore.append('  nsp_string_destroy(&((%s *) self)->obj->%s);\n' % (upinfo,pname))
+        else:
+            info.attrcodebefore.append('  nsp_string_destroy(&((%s *) self)->%s);\n' % (upinfo,pname))
 
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :

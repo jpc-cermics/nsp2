@@ -148,6 +148,7 @@ void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof)
 static int next_token(Tokenizer *T)
 {
   static int chcnt;
+ loop:
   T->IgnoreWSpaces(T);
   T->curline.lpt1 = T->curline.lpt2;
   T->curline.lpt2 = T->curline.lpt3;
@@ -178,6 +179,13 @@ static int next_token(Tokenizer *T)
       T->tokenv.id= RETURN_OP;
       return(OK);
     }
+  if (0 && T->tokenv.id == '\r' ) 
+    {
+      /* trying to ignore '\r' */
+      T->GetChar(T);
+      goto loop;
+    }
+
   T->GetChar(T);
   if ( T->tokenv.id == '.' ) 
     {
@@ -1150,8 +1158,21 @@ static int token_line_set(Tokenizer *T,int l)
 
 static int parse_show_line(Tokenizer *T)
 {
-  int i;
-  Scierror("\t%s",T->curline.buf);
+  char lbuf[LINEMAXSIZE+LINEMAXSIZE];
+  int i,count=0;;
+  for ( i = 0 ; i < strlen(T->curline.buf) ; i++)
+    {
+      if ( T->curline.buf[i]== '\r' )
+	{
+	  lbuf[count++]='\\';	  lbuf[count++]='r';
+	}
+      else
+	{
+	  lbuf[count++]= T->curline.buf[i];
+	}
+    }
+  lbuf[count]='\0';
+  Scierror("\t%s",lbuf);/* T->curline.buf); */
   Scierror("\t",T->curline.buf);
   for ( i= 0 ; i < T->curline.lpt2-1; i++) Scierror(" ");
   Scierror("^\n");
