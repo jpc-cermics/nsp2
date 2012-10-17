@@ -1363,7 +1363,7 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
   else
     have_backup = TRUE;
   
-  file = fopen (filename, "w");
+  file = fopen (filename, "wb"); /* see porting issue bellow for binary */
   if (!file)
     {
       error_dialog (NULL,"Cannot back up '%s' to '%s': %s",filename, bak_filename, g_strerror (errno));
@@ -1375,6 +1375,10 @@ static gboolean save_buffer (GtkSourceBuffer *buffer,const char *filename )
   
       chars = gtk_text_buffer_get_slice (GTK_TEXT_BUFFER (buffer), &start, &end, FALSE);
 
+      /* porting issue for win32 
+       * If the stream is from a file opened in text mode, any linefeed embedded 
+       * in the output string is translated to carriage-return linefeed on output
+       */
       if (fputs (chars, file) == EOF ||
 	  fclose (file) == EOF)
 	{
