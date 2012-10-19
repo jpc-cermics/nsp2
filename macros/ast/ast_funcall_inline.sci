@@ -1,7 +1,7 @@
 function [ast,H]=ast_funcall_inline(ast,f)
-// inline calls to f: f can be a function or a function
-// given by its ast.
-// ast contains a simple call to f 
+// ast: contains a simple call to f  ex: ast_expr('f(4)');
+// f: can be a function or a function given by its ast.
+// the call to f is replaced by inline call.
   
   function [ok,ast]=ast_funcall_expand(ast,L)
   // utility function expand a funcall 

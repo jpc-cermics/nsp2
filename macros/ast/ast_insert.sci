@@ -23,6 +23,24 @@ function rep=ast_insert(ast,f)
     ast.set_args[rep];
   endfunction
     
+  function [ok,rep]=ast_special_funcall(ast,H)
+    ok=%t;rep=ast;
+    astif =     ast.get_args[](1);
+    // check special construction like if 
+    if astif.is['IF'] then 
+      args = astif.get_args[];
+      // do not touch the conditions; XXXXX 
+      for i=2:2:length(args)
+	args(i) = ast_inserter(args(i),H);
+      end
+      astif.set_args[args];
+      ast.set_args[list(astif)];
+      rep=ast;
+    else
+      ok=%f;
+    end
+  endfunction
+  
   function ast=ast_inserter(ast,H)
   // a visitor 
   //printf("-->ast_inserter\n");
@@ -32,24 +50,30 @@ function rep=ast_insert(ast,f)
       rep=list();
       for j = 1:length(L)
 	Lj = L(j);
-	// test if calls to H.name are performed in L(j)
-	fc = ast_collect_funcall(L(j),H.name);
-	if length(fc)<>0 then 
-	  // inline the calls 
-	  out=m2s([]);
-	  for i=1:length(fc);
-	    [astn,Ho]=ast_funcall_inline(fc(i),H.code);
-	    out(i)=Ho.out;
-	    rep($+1)= astn;
-	  end
-	  //newast= ast_insert_build_exprs(fc);
-	  //rep($+1) = newast;
-	  for i=1:length(fc);
-	    Lj = ast_replace_funcall(Lj,fc(i),ast_expr(out(i)));
-	  end
-	  rep($+1) = ast_visit_internal(Lj,ast_inserter,H);
+	[ok1,rep1]= ast_special_funcall(Lj,H);
+	pause yyy;
+	if ok1 then 
+	  rep($+1) = rep1;
 	else
-	  rep($+1) = ast_visit_internal(Lj,ast_inserter,H);
+	  // test if calls to H.name are performed in L(j)
+	  fc = ast_collect_funcall(Lj,H.name);
+	  if length(fc)<>0 then 
+	    // inline the calls 
+	    out=m2s([]);
+	    for i=1:length(fc);
+	      [astn,Ho]=ast_funcall_inline(fc(i),H.code);
+	      out(i)=Ho.out;
+	      rep($+1)= astn;
+	    end
+	    //newast= ast_insert_build_exprs(fc);
+	    //rep($+1) = newast;
+	    for i=1:length(fc);
+	      Lj = ast_replace_funcall(Lj,fc(i),ast_expr(out(i)));
+	    end
+	    rep($+1) = ast_visit_internal(Lj,ast_inserter,H);
+	  else
+	    rep($+1) = ast_visit_internal(Lj,ast_inserter,H);
+	  end
 	end
       end
       ast.set_args[rep];

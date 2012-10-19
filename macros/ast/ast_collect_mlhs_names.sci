@@ -27,14 +27,11 @@ function rep=ast_collect_mlhs_names(ast)
   rep=ast_visit(ast,ast_mlhs_names_visit,hash(0));
 endfunction
 
-function rep=ast_collect_mlhs_names_test()
-  printf("Test: variables in ");
-  ast = ast_expr('function [o1,o2]=f(xi); [x(1).o,z(2)(:),w]=f(5,x);");
-  ast.print[];
-  printf("\n");
-  printf("Results:\n");
-  H = ast_collect_mlhs_names(ast);
-  rep = H.__keys;
+function ast_collect_mlhs_names_test()
+  function [o1,o2]=f(xi); [x(1).o,z(2)(:),w]=f(5,x);endfunction;
+  H = ast_collect_mlhs_names(pl2ast(f));
+  rep=['z';'o1';'o2';'w';'x'];
+  if ~sort(rep).equal[sort(H.__keys)] then pause;end 
 endfunction
 
 

@@ -4,36 +4,49 @@ function rep=ast_collect_funcall(ast,str)
   
   function rep=ast_collect_funcall_visit(ast,str)
   // a visitor 
+    rep=list();
+    args = ast_visit_args(ast,1,ast.get_arity[],ast_collect_funcall_visit,str);
+    for i=1:length(args) ;rep.concat[args(i)];  end
     select ast.get_op[] 
      case %ast.CALLEVAL then
       // Optional values specified by name = val ; we do not rename name
       if  ast.get_args[](1).get_str[] == str then 
-	rep = list(ast)
-      else
-	rep = list();
+	rep($+1)=ast;
       end
-      return;
-    else
-      rep=list();
-      args = ast_visit_args(ast,1,ast.get_arity[],ast_collect_funcall_visit,str);
-      for i=1:length(args) ;rep.concat[args(i)];  end
     end
   endfunction
   rep =ast_visit(ast,ast_collect_funcall_visit,str);
 endfunction
 
-function ast_collect_funcall_test();
-  // test file 
-  printf("Test: call of f in ");
-  ast = ast_expr('f(5,6)+7+f(4)*3;");
-  ast.print[];
-  printf("\n");
-  printf("Results:\n");
+function ast_collect_funcall_test()
+  // ex1 
+  str(1)='f(5,6)';
+  str(2)='f(x)';
+  str(3)='g('+str1+')+'+str2+'*3;';
+  ast = ast_expr(str(3));
   rep = ast_collect_funcall(ast,'f');
   for i=1:length(rep)
-    rep(i).print[];
-    printf("\n");
+    if ~rep(i).equal[ast_expr(str(i))] then pause;end 
   end
+  // ex2 
+  str(1)='f(x)';
+  str(2)='f(5,f(x))';
+  str(3)='f(y)';
+  str(4)=sprintf('%s + %s',str2,str4);
+  ast = ast_expr(str(4));
+  rep = ast_collect_funcall(ast,'f');
+  for i=1:length(rep)
+    if ~rep(i).equal[ast_expr(str(i))] then pause;end 
+  end
+
+  function y=f(x); sin(x)+f(1)+[f(2);f(3)];endfunction;
+  rep = ast_collect_funcall(pl2ast(f),'f');
+  for i=1:length(rep)
+    if ~rep(i).equal[ast_expr(sprintf('f(%d)',i))] then pause;end 
+  end
+  
+
+
 endfunction
 
 

@@ -21,14 +21,11 @@ function rep=ast_collect_vars(ast)
   rep=ast_visit(ast,ast_vars_visit,hash(0));
 endfunction
 
-function rep=ast_collect_vars_test()
-  printf("Test: variables in ");
-  ast = ast_expr('f(5,x)+7+sin(4)*3+y;");
-  ast.print[];
-  printf("\n");
-  printf("Results:\n");
+function ast_collect_vars_test()
+  ast = ast_expr('z=f(5,x)+7+sin(4)*3+y;");
   H = ast_collect_vars(ast);
-  rep = H.__keys;
+  rep=['z';'f';'x';'y';'sin'];
+  if ~sort(rep).equal[sort(H.__keys)] then pause;end 
 endfunction
 
 
