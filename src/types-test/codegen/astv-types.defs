@@ -14,8 +14,9 @@
    '("NspObject*" "ast_rows" "hidden" "NULL" ); /* ast for rows */
    '("NspObject*" "ast_columns" "hidden" "NULL"); /* ast for columns */
    '("NspObject*" "ast_value" "hidden" "NULL" ); /* ast for value */
-   '("char*" "stype"); 
-   '("char*" "ssubtype"); 
+   '("NspList*" "args" "hidden" "NULL" ); /* astv objects for elements of object  for value */
+   '("char*" "stype" "hidden" ""); 
+   '("char*" "ssubtype" "hidden" "" ); 
    )
   (gtype-id "Astv")
 )

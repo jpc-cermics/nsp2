@@ -57,6 +57,7 @@ struct _NspAstv {
   NspObject* ast_rows;
   NspObject* ast_columns;
   NspObject* ast_value;
+  NspList* args;
   char* stype;
   char* ssubtype;
 };
@@ -79,7 +80,7 @@ NspAstv *new_astv();
 
 #define NULLASTV (NspAstv*) 0
 
-extern NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspObject* ast_rows,NspObject* ast_columns,NspObject* ast_value,char* stype,char* ssubtype,NspTypeBase *type);
+extern NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspObject* ast_rows,NspObject* ast_columns,NspObject* ast_value,NspList* args,char* stype,char* ssubtype,NspTypeBase *type);
 extern NspAstv *nsp_astv_create_default(const char *name);
 
 /* from NspAstvObj.c */
@@ -109,7 +110,7 @@ extern int nsp_astv_xdr_save(XDR  *xdrs, NspAstv *M);
 /* inserted at the end of public part of class include file */
 extern NspAstv *nsp_astv(NspObject *Obj,int flag);
 
-#line 113 "./astv.h"
+#line 114 "./astv.h"
 #endif /* NSP_INC_NspAstv */ 
 
 #ifdef NspAstv_Private 
@@ -130,6 +131,6 @@ static NspAstv *nsp_astv_create_void(const char *name,NspTypeBase *type);
  * of classa.h
  */
 
-#line 134 "./astv.h"
+#line 135 "./astv.h"
 #endif /* NspAstv_Private */
 
