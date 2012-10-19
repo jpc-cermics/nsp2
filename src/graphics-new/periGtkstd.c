@@ -1764,6 +1764,10 @@ static gint configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointe
 			      NspAxes *Axes = (NspAxes *) Obj;
 			      scale_i2f(&Axes->obj->scale,&w1,&h1,&dd->CWindowWidth, &dd->CWindowHeight,1);
 			      scale_i2f(&Axes->obj->scale,&w2,&h2, &event->width,  &event->height, 1);
+			      Axes->obj->arect->R[0] = Axes->obj->arect->R[0] * dd->CWindowWidth/event->width;
+			      Axes->obj->arect->R[1] = Axes->obj->arect->R[1] * dd->CWindowWidth/event->width;
+			      Axes->obj->arect->R[2] = Axes->obj->arect->R[2] * dd->CWindowHeight/event->height;
+			      Axes->obj->arect->R[3] = Axes->obj->arect->R[3] * dd->CWindowHeight/event->height;
 			      Axes->obj->frect->R[2] += (dw=w2-w1,dw);
 			      Axes->obj->rect->R[2]  += dw;
 			      Axes->obj->frect->R[1] += (dh=h2-h1,dh);
