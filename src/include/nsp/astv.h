@@ -57,7 +57,7 @@ struct _NspAstv {
   NspObject* ast_rows;
   NspObject* ast_columns;
   NspObject* ast_value;
-  NspList* args;
+  NspObject* args;
   char* stype;
   char* ssubtype;
 };
@@ -80,7 +80,7 @@ NspAstv *new_astv();
 
 #define NULLASTV (NspAstv*) 0
 
-extern NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspObject* ast_rows,NspObject* ast_columns,NspObject* ast_value,NspList* args,char* stype,char* ssubtype,NspTypeBase *type);
+extern NspAstv *nsp_astv_create(const char *name,gboolean hv,int rows,int columns,NspObject* value,NspObject* ast_rows,NspObject* ast_columns,NspObject* ast_value,NspObject* args,char* stype,char* ssubtype,NspTypeBase *type);
 extern NspAstv *nsp_astv_create_default(const char *name);
 
 /* from NspAstvObj.c */

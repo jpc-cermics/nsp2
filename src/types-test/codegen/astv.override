@@ -101,6 +101,39 @@ static int _wrap_astv_set_value(NspAstv *self, Stack stack, int rhs, int opt, in
 }
 
 %%
+override Astv.astv_get_args kwargs
+/* override a method */
+
+static int _wrap_astv_get_args(NspAstv *self,Stack stack,int rhs,int opt,int lhs)
+{
+  if ( self->args == NULL) return RET_BUG;
+  if ( !IsHash(self->args) ) return RET_BUG;
+  MoveObj(stack,1,self->args);
+  return 1;
+}
+
+
+%%
+override Astv.astv_set_args kwargs
+/* override a method */
+
+static int _wrap_astv_set_args(NspAstv *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {obj_check,t_end};
+  NspObject *args=NULL,*Obj;
+  if ( GetArgs(stack,rhs,opt,T,&nsp_type_hash,&args) == FAIL) return RET_BUG;
+  if ((Obj = nsp_object_copy_and_name("args",args)) == NULLOBJ) 
+    return RET_BUG;
+  if ( self->args != NULL )
+    {
+      nsp_object_destroy(&self->args);
+    }
+  self->args = Obj;
+  return 0;
+}
+
+
+%%
 override-path-extract Astv 
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 

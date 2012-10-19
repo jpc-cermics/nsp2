@@ -28,3 +28,27 @@
   (c-name "astv_get_dims")
   (return-type "NspMatrix*")
 )
+
+(define-method get_args 
+  (of-object "Astv")
+  (c-name "astv_get_args")
+  (return-type "NspObject*")
+)
+
+(define-method set_args 
+  (of-object "Astv")
+  (c-name "astv_set_args")
+  (parameters
+   '("NspObject*" "args")
+   )
+  (return-type "none")
+)
+
+
+
+
+
+
+
+
+

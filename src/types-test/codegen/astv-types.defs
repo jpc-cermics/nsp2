@@ -10,11 +10,11 @@
    '("gboolean" "hv" "hidden" "FALSE"); /* have value flag */
    '("int" "rows" "hidden"); /* number of rows */
    '("int" "columns" "hidden"); /* number of columns */
-   '("NspObject*" "value" "hidden" "NULL" ); /* value as object or NULL  */
+   '("NspObject*" "value" "hidden" "NULL" ); /* value as object */
    '("NspObject*" "ast_rows" "hidden" "NULL" ); /* ast for rows */
    '("NspObject*" "ast_columns" "hidden" "NULL"); /* ast for columns */
    '("NspObject*" "ast_value" "hidden" "NULL" ); /* ast for value */
-   '("NspList*" "args" "hidden" "NULL" ); /* astv objects for elements of object  for value */
+   '("NspObject*" "args" "hidden" "NULL" ); /* astv objects for elements of object  for value */
    '("char*" "stype" "hidden" ""); 
    '("char*" "ssubtype" "hidden" "" ); 
    )

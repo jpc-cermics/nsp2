@@ -2097,7 +2097,8 @@ class NspObjectArg(ArgType):
 	    info.varlist.add(self.fullname, '*' + pname)
         info.setobj = 't' 
 	info.arglist.append(pname)
-        info.add_parselist(self.nsp_arg_type, ['&' + pname], [pname])
+        #info.add_parselist(self.nsp_arg_type, ['&' + pname], [pname])
+        info.add_parselist('obj', ['&' + pname], [pname])
         info.attrcodebefore.append('  if ((%s = (%s *) nsp_object_copy_and_name(attr,O)) == NULL%s) return FAIL;\n' % (pname,self.fullname,self.shortname_uc))
         if byref == 't' :
             info.attrcodebefore.append('  if (((%s *) self)->obj->%s != NULL ) \n' % (upinfo,pname))

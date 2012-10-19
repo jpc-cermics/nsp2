@@ -32,6 +32,26 @@ function [rep,H]=ast_eval(ast,H)
     rep=astv_create(v1.get_value[] >= v2.get_value[],value=v);
   endfunction
 
+  function str=ast_str_funcall(ast,name)
+  // regenerate a fun call with rep replacing 
+  // initial arguments 
+  // example ast_str_funcall(ast_expr('f(4,5,x,poo=5)'),'g')
+    L = ast.get_args[];
+    args= L(2);
+    args1 = args.get_args[];
+    for i=1:length(args1);
+      if args1(i).is['OPT'] then 
+	L1=args1(i).get_args[];
+	args1(i).set_args[list(L1(1),ast_expr(sprintf('rep(%d)',i)))];
+      else
+	args1(i)= ast_expr(sprintf('rep(%d)',i));
+      end
+    end
+    args.set_args[args1];
+    ast.set_args[list(ast_create(%ast.NAME,str=name),args)];
+    str=ast.sprint[];
+  endfunction
+        
   function [y,name,ast1]=ast_is_simple_assign(ast)
   // checks that ast is of kind x=expr.
     if ~ast.is["EQUAL_OP"] then y=%f;return;end
@@ -50,7 +70,7 @@ function [rep,H]=ast_eval(ast,H)
     y= ~isempty(find(str==['sin','cos']));
   endfunction
 
-  function y=ast_sin(varargin)
+  function y=asteval_sin(varargin)
     if length(varargin)<> 1 then 
       error('Illegal number of arguments in sin\n');
       return;
@@ -59,12 +79,31 @@ function [rep,H]=ast_eval(ast,H)
     y = astv_create(sin(arg.get_value[]),value=varargin(1).have_value[]);
   endfunction
 
+  function y=asteval_struct(varargopt)
+  // The struct function 
+  // loop on elements to see if they have a value.
+    S=varargopt.__keys;
+    V=hash(size(S,'*'));
+    ok=%t;
+    for i=1:size(S,'*') 
+      if ~varargopt(S(i)).have_value[] then 
+	ok=%f;break;
+      else
+	V(S(i))= varargopt(S(i)).get_value[];
+      end 
+    end
+    if ok then 
+      y = astv_create(V,value=%t);
+    else
+      y = astv_create(S,value=%f);
+    end
+    y.set_args[varargopt];
+  endfunction
+
   function rep=TILDE_OP(v1)
     v=  v1.have_value[];
     rep = astv_create(~ v1.get_value[], value=v);
   endfunction
-
-
   
   function [rep,H]= ast_eval_internal(ast,H)
     
@@ -149,10 +188,8 @@ function [rep,H]=ast_eval(ast,H)
       select ast.get_op[] 
        case %ast.OPT then
 	// val=value in a calling list */
-	newpos=ast_eval_arg(ast,1,H);
-	newpos=newpos + Sciprintf("=");
-	newpos=ast_eval_arg(ast,2,H);
-	rep=newpos;return;
+	//newpos=ast_eval_arg(ast,1,H);
+	[rep,H]=ast_eval_arg(ast,2,H);
        case %ast.EQUAL_OP then
 	// affectations A revoir 
 	[y,name,ast1]=ast_is_simple_assign(ast);
@@ -211,10 +248,13 @@ function [rep,H]=ast_eval(ast,H)
 	end;
 	name=args(1).get_str[];
 	if H.iskey[name] then 
-	  execstr('rep='+name+'(rep(:))',env=H);
+	  str=ast_str_funcall(ast,name)
+ 	  execstr('rep='+str,env=H);
 	  return;
-	else ast_is_pervasive(name) 
-	  execstr('rep='+'ast_'+name+'(rep(:))');
+	else 
+	  ast_is_pervasive(name)  // a revoir 
+	  str=ast_str_funcall(ast,'asteval_'+name);
+	  execstr('rep='+str);
 	end
 	return;
        case %ast.FEVAL  then
