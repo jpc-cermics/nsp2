@@ -4,6 +4,7 @@ function rep=ast_insert(ast,f)
 // test function which insert an ast when a call to f is found
   
   function ast=ast_insert_build_exprs(L)
+  // build expression to be inserted.
     rep=list();
     ast= ast_create(%ast.COMMENT,str="-->insertion");
     ast1 = ast_create(%ast.RETURN_OP);
@@ -80,5 +81,23 @@ function ast_insert_test()
   rep=ast_insert(pl2ast(test),f);
   rep.print[];
   printf('\n');
-    
+  function y=f(x); y=sin(x);endfunction;
+
+  
+// XXXX attention cet example est faux les 
+// insertions doivent être faites dans 
+// chaque branche.
+  function test()
+    x=4;
+    if %t then
+      x=8;
+      y=f(5)+f(x);
+    else
+      y=78;
+    end
+  endfunction
+  rep=ast_insert(pl2ast(test),f);
+  rep.print[];
+  printf('\n');
+  
 endfunction

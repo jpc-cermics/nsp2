@@ -57,4 +57,21 @@ function ast_funcall_inline_test()
   printf('\n");
 endfunction
   
+function ast_funcall_inline_test2()
+  expr='f(a,b)';
+  printf('Test: inline a call to '+expr+'\n');
+  ast=ast_expr(expr);
+  function z=f(x,y); 
+    [m,n]=size(x);
+    [p,q]=size(y);
+    if n == p then 
+      z=zeros(m,q);
+      for i=1:m ;for j=1:q; for k=1:n; z(i,j)= z(i,j)+x(i,k)*y(k,j);
+	  end;end;end;
+    end;
+  endfunction
+  ast1=ast_funcall_inline(ast,f);
+  ast1.print[];
+  printf('\n");
+endfunction
 
