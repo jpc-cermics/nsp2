@@ -9,6 +9,30 @@ function [rep,H,ast]=ast_eval(ast,H)
       str = str + "s";
     end
   endfunction
+
+  function [rep]=EXTRACT(obj,varargin)
+    if length(varargin)== 1 then 
+      val = obj.get_value[];
+      if varargin(1).have_value[] then 
+	rep=astv_create(val(varargin(1).get_value[]),value=obj.have_value[]);
+      else
+	// Que faire ?
+	rep=astv_create(val(varargin(1).get_value[]),value=%f);
+      end
+    elseif length(varargin)== 2 then 
+      val = obj.get_value[];
+      if varargin(1).have_value[] && varargin(2).have_value[] then 
+	rep=astv_create(val(varargin(1).get_value[], varargin(2).get_value[]),value=obj.have_value[]);
+      else
+	// Que faire ?
+	rep=astv_create(val(varargin(1).get_value[], ...
+			    varargin(2).get_value[]),value=%f);
+      end
+    else
+      error("Error: wrong number of arguments\n");
+      return;
+    end
+  endfunction
     
   function [rep]=PLUS_OP(v1,v2)
     v=  v1.have_value[] && v2.have_value[];
@@ -159,6 +183,21 @@ function [rep,H,ast]=ast_eval(ast,H)
       end
       ast.set_args[L];
     endfunction 
+
+    function [rep,H,ast]= ast_eval_args_plus(ast,start,last,H)
+      L= ast.get_args[];
+      rep=list();
+      for j=start:last
+	[repj,H,ast1] =ast_eval_internal(L(j),H);
+	if type(repj,'short')== 'l' then 
+	  rep.concat[repj];
+	else
+	  rep($+1)=repj;
+	end
+	L(j)=ast1;
+      end
+      ast.set_args[L];
+    endfunction 
     
     function [rep,H]=ast_eval_arg(ast, elt,H)
       L= ast.get_args[];
@@ -194,6 +233,14 @@ function [rep,H,ast]=ast_eval(ast,H)
 	select  ast.get_op[] 
 	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.RETURN_OP} then
 	  [rep,H,ast]=ast_eval_args(ast,1,1,H);
+	  if ~isempty(rep) then 
+	    dd=rep(1).get_dims[]
+	    astn=ast_create(%ast.SEMICOLON_OP,args=ast.get_args[]);
+	    astp=ast_create(%ast.COMMENT,str=sprintf("value [%d,%d] %s",dd(1),dd(2),...
+						     type(rep(1).get_value[],'short')));
+	    astp=ast_create(%ast.RETURN_OP,args=list(astp));
+	    ast=ast_create(%ast.STATEMENTS,args=list(astn,astp));
+	  end
 	  rep=list();
 	  return;
 	else
@@ -275,9 +322,30 @@ function [rep,H,ast]=ast_eval(ast,H)
        case %ast.DOTARGS  then rep=list();return;
        case { %ast.LISTEVAL}  then
 	// evaluate the arguments 
-	[rep,H,ast1]=ast_eval_args(ast,2,ast.get_arity[],H);
-	rep = execstr("rep="+ast.sprint[],env=H);
-	ast=ast1;
+	// [rep,H,ast1]=ast_eval_args(ast,2,ast.get_arity[],H);
+	[rep,H,ast1]=ast_eval_args(ast,1,1,H);
+	obj=rep(1);
+	L=ast.get_args[];
+	for i=2:length(L) 
+	  if L(i).is['DOTARGS'] then 
+	    field=L(i).get_args[](1).get_str[];
+	    if obj.get_args[].iskey[field] then 
+	      obj = obj.get_args[](field)
+	    else 
+	      error(sprint('Error: field %s not found\n',field));
+	      return;
+	    end
+	  elseif L(i).is['ARGS'] then 
+	    // we need to extract the args 
+	    [rep,H,ast1]=ast_eval_internal(L(i),H);
+	    // call extract 
+	    execstr('rep=EXTRACT(obj,rep(:))')
+	  else
+	    pause "to be done in extract";
+	  end
+	end
+	// just to obtain a modified ast 
+	[rep1,H1,ast]=ast_eval_args(ast,1,ast.get_arity[],H);
 	return;
        case { %ast.CALLEVAL} then 
 	if ast.get_arity[] <> 2 then 
@@ -376,6 +444,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	rep =ast_eval_arg(ast,3,H);
 	return;
        case %ast.IF then
+	// evaluate the conditions 
 	L= ast.get_args[];Ln = length(L);
 	ok=-1;
 	if modulo(Ln,2)==0 then Last=Ln;else Last=Ln-1;end
@@ -387,18 +456,17 @@ function [rep,H,ast]=ast_eval(ast,H)
 	    ok=i;
 	  end
 	end
-	reps=reps(1:2:Last);
-	if ok == -1 && and(reps) then 
-	  ast = L($);
-	  printf("We can select the last else\n",ok);
-	elseif ok <> -1 then 
-	  printf("We can select branch %d\n",ok);
-	  ast = L(ok);
-	end
+	// detect if we can select one branch only 
+	reps=reps(1:2:Last); if ok == -1 && and(reps) then ok =length(L) ;end
 	for j=1:Ln
 	  if modulo(j,2)==0 || (modulo(j,2)==1 && j ==Ln) then 
-	    [Hj]=ast_eval_internal(L(j),H);
+	    [repj,Hj,astj]= ast_eval_internal(L(j),H)
+	    L(j)=astj;
 	  end
+	end
+	ast.set_args[L];
+	if ok <> -1 then 
+	  ast= L(ok);
 	end
 	rep=list();
 	return;
@@ -431,11 +499,10 @@ function [rep,H,ast]=ast_eval(ast,H)
 	// newpos= ast_eval_key("end",newpos,posret);
 	rep=newpos;return;
        case %ast.STATEMENTS  then
-	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H)
+	[rep,H,ast]= ast_eval_args_plus(ast,1,ast.get_arity[],H)
 	return;
        case %ast.STATEMENTS1  then
-	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H);
-	pause zzz;
+	[rep,H,ast]= ast_eval_args_plus(ast,1,ast.get_arity[],H);
 	return;
        case %ast.PARENTH  then
 	[rep,H]=ast_eval_args(ast,1,ast.get_arity[],H);
@@ -514,7 +581,7 @@ function [rep,H,ast]=ast_eval(ast,H)
   [rep,H,ast]=ast_eval_internal(ast,H)
 endfunction
 
-function [rep,H,ast]= ast_eval_test()
+function  ast_eval_test()
   function y=f()
     x=%f
     if x then 
@@ -522,9 +589,19 @@ function [rep,H,ast]= ast_eval_test()
     elseif %f then 
       y=5;
     else
-      y=7;
+      y=7+8;
     end
   endfunction
   [rep,H,ast]=ast_eval(pl2ast(f));
+  
+  ast.print[];printf('\n');
+  
+  function y=f()
+    a=struct(b=ones(4,4));
+    z=a.b(1+1,3);
+  endfunction ;
+  [rep,H,ast]=ast_eval(pl2ast(f));
+  ast.print[];printf('\n');
+  
 endfunction
 
