@@ -149,7 +149,12 @@ function [rep,H,ast]=ast_eval(ast,H)
       L= ast.get_args[];
       rep=list();
       for j=start:last
-	[rep($+1),H,ast1] =ast_eval_internal(L(j),H);
+	[repj,H,ast1] =ast_eval_internal(L(j),H);
+	if type(repj,'short')== 'l' then 
+	  rep.concat[repj];
+	else
+	  rep($+1)=repj;
+	end
 	L(j)=ast1;
       end
       ast.set_args[L];
@@ -189,6 +194,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	select  ast.get_op[] 
 	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.RETURN_OP} then
 	  [rep,H,ast]=ast_eval_args(ast,1,1,H);
+	  rep=list();
 	  return;
 	else
 	  [arg1,H,ast1] =ast_eval_args(ast,1,1,H);
@@ -227,29 +233,32 @@ function [rep,H,ast]=ast_eval(ast,H)
 	//newpos=ast_eval_arg(ast,1,H);
 	[rep,H]=ast_eval_arg(ast,2,H);
        case %ast.EQUAL_OP then
-	// affectations A revoir 
+	// ast1 is the rhs 
 	[y,name,ast1]=ast_is_simple_assign(ast);
 	if ~y then 
-	  error("use only simple =\n");
+	  error("use only simple lhs =\n");
 	  return;
 	end
-	[rep,H]=ast_eval_internal(ast1,H);
+	[rep,H,ast2]=ast_eval_internal(ast1,H);
 	if type(rep,'short')== 'l' then 
 	  error(sprintf("rhs evaluation returns too many values (%d)\n",length(rep)));
 	  return;
 	end
 	if H.iskey[name] then 
-	  pause xxx
+	  printf("Compatibility should be checke \n");
+	  H(name)=rep
 	else
 	  H(name)= rep;
 	end
+	L=ast.get_args[];
+	ast.set_args[list(L(1),ast2)];
 	return;
        case %ast.MLHS   then
 	[rep,H]=ast_eval_args(ast,1,ast.get_arity[],H);
 	return; 
        case %ast.ARGS  then
 	// a sequence of expressions inside () for x()*/
-	[rep,H]=ast_eval_args(ast,1,ast.get_arity[],H);
+	[rep,H,ast]=ast_eval_args(ast,1,ast.get_arity[],H);
 	return;
        case %ast.CELLARGS  then
 	// a sequence of expressions inside {} for x{} */
@@ -263,14 +272,14 @@ function [rep,H,ast]=ast_eval(ast,H)
 	newpos=ast_eval_args(ast,1,ast.get_arity[],H);
 	newpos=newpos + Sciprintf("]");
 	rep=newpos;return;
-       case %ast.DOTARGS  then
-	L=ast.get_args[];
-	if length(L) < 1 then rep=newpos;return;end
-	ast1=L(1);
-	if ast1.get_op[] <> %ast.STRING then rep=newpos;return;end
-	newpos=pos + Sciprintf1(0,sprintf(".%s", ast1.get_str[]));
-	rep=newpos;return;
-       case { %ast.CALLEVAL, %ast.LISTEVAL}  then
+       case %ast.DOTARGS  then rep=list();return;
+       case { %ast.LISTEVAL}  then
+	// evaluate the arguments 
+	[rep,H,ast1]=ast_eval_args(ast,2,ast.get_arity[],H);
+	rep = execstr("rep="+ast.sprint[],env=H);
+	ast=ast1;
+	return;
+       case { %ast.CALLEVAL} then 
 	if ast.get_arity[] <> 2 then 
 	  error("only simple calls are accepted\n");
 	  return;
@@ -425,7 +434,8 @@ function [rep,H,ast]=ast_eval(ast,H)
 	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H)
 	return;
        case %ast.STATEMENTS1  then
-	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H)
+	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H);
+	pause zzz;
 	return;
        case %ast.PARENTH  then
 	[rep,H]=ast_eval_args(ast,1,ast.get_arity[],H);
