@@ -1624,6 +1624,19 @@ if test "$HAVE_GRAPHVIZ" = "yes"; then
 fi
 
 #########################
+## libscipy 
+## use the library if repository is present
+#########################
+
+AC_CHECK_FILE("src/libscipy-nsp", [libamos_exists="yes"], [libamos_exists="no"])
+
+if test "xx${libamos_exists}" = "xxyes"; then 
+   AC_MSG_RESULT([using directory src/libscipy-nsp])
+   AMOS_CEPHES_LIB=libscipy-nsp
+   AC_DEFINE(WITH_LIBAMOS,[],[cephes amos library])
+fi
+
+#########################
 ## substituting variables
 #########################
 
@@ -1758,6 +1771,7 @@ AC_SUBST(RC_FILE)
 AC_SUBST(DUMPEXTS)
 AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GTKSOURCEVIEW_OBJS)
+AC_SUBST(AMOS_CEPHES_LIB)
 
 AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl )
 

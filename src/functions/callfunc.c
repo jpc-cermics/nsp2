@@ -139,8 +139,10 @@ extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
 extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
 #endif
 
+/* the define is generated in config.h by configure when libscipy-nsp  exists 
+ */
 #ifdef WITH_LIBAMOS
-extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Info ;
+extern  sci_interface AmosCephes_Interf ;extern  interface_info  AmosCephes_Interf_Info ;
 #endif 
 
 #define WITH_GRAPHIC_OBJECTS   
@@ -278,7 +280,7 @@ InterfTab Interfaces[]={
 #endif
   {Mtlb_Interf, Mtlb_Interf_Info},
 #ifdef WITH_LIBAMOS
-  {AmosCephes_Interf, AmosCephes_Info},
+  {AmosCephes_Interf, AmosCephes_Interf_Info},
 #endif 
 #ifdef  WITH_GRAPHIC_OBJECTS 
   {Arrows_Interf, Arrows_Interf_Info},
