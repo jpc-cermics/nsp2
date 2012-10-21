@@ -109,6 +109,7 @@ function ast_pprint(ast,indent)
 	  rep= newpos;
 	  return;
 	 case %ast.RETURN_OP  then 
+	  pause xxx
 	  ast_pprint_arg(ast,1,indent,pos,posret);
 	  Sciprintf("\n");newpos=0;
 	  rep=newpos;return;

@@ -862,7 +862,7 @@ static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
   NspList *args=NULL;
   NspAst *ast;
   char *str=NULL;
-  int code;
+  int code,arity=0;
   int_types T[] = {s_int,new_opts, t_end} ;
   nsp_option opts[] ={{ "str",string,NULLOBJ,-1},
 		      { "args",list,NULLOBJ,-1},
@@ -878,8 +878,10 @@ static int int_ast_create_1(Stack stack, int rhs, int opt, int lhs)
 	}
       if ((args = (NspList *) nsp_object_copy_and_name("args",(NspObject*) args)) == NULL) 
 	return RET_BUG;
+      /* now we need to set the arity accordingly */
+      arity =  nsp_list_length((NspList *)args);
     }
-  if ((ast=nsp_ast_create(NVOID,code,0,NULL,NULL,args,NULL,NULL))==NULL)
+  if ((ast=nsp_ast_create(NVOID,code,arity,NULL,NULL,args,NULL,NULL))==NULL)
     return RET_BUG;
   if ( str != NULL) 
     {

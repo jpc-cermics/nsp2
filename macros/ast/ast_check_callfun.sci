@@ -1,6 +1,7 @@
 function rep=ast_check_callfun(ast,str)
 // checks if ast contains a call to the function whose 
 // name is given by str 
+// maybe not so usefull since superseded by ast_collect_funcall 
   
   function rep=ast_checker(ast,str)
   // a visitor 

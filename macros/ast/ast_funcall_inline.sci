@@ -39,13 +39,6 @@ function [ast,H]=ast_funcall_inline(ast,f)
   ast.set_args[L];
 endfunction
 
-function y=ast_new_var(str)
-// generate a new variable 
-  global count;
-  if isempty(count) then count=0;end
-  y =sprintf('%s%d',str,count);
-  count = count+1;
-endfunction
 
 function ast_funcall_inline_test()
   expr='f(4)';

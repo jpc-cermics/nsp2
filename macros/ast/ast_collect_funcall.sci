@@ -20,19 +20,16 @@ endfunction
 
 function ast_collect_funcall_test()
   // ex1 
-  str(1)='f(5,6)';
-  str(2)='f(x)';
-  str(3)='g('+str1+')+'+str2+'*3;';
+  str=['f(5,6)','f(x)'];
+  str(3)=sprintf('g(%s)+%s*3',str(1),str(2));
   ast = ast_expr(str(3));
   rep = ast_collect_funcall(ast,'f');
   for i=1:length(rep)
     if ~rep(i).equal[ast_expr(str(i))] then pause;end 
   end
   // ex2 
-  str(1)='f(x)';
-  str(2)='f(5,f(x))';
-  str(3)='f(y)';
-  str(4)=sprintf('%s + %s',str2,str4);
+  str=['f(x)','f(5,f(x))','f(y)'];
+  str(4)=sprintf('%s + %s',str(2),str(3));
   ast = ast_expr(str(4));
   rep = ast_collect_funcall(ast,'f');
   for i=1:length(rep)
@@ -44,8 +41,6 @@ function ast_collect_funcall_test()
   for i=1:length(rep)
     if ~rep(i).equal[ast_expr(sprintf('f(%d)',i))] then pause;end 
   end
-  
-
 
 endfunction
 
