@@ -79,6 +79,36 @@ function [rep,H]=ast_eval(ast,H)
     y = astv_create(sin(arg.get_value[]),value=varargin(1).have_value[]);
   endfunction
 
+  function y=asteval_ones(varargin)
+    n = length(varargin)
+    if n == 1 then 
+      arg= varargin(1);
+      y = astv_create( ones(arg.get_value[]),value=arg.have_value[]);
+    elseif n== 2 then 
+      arg1=varargin(1);arg2=varargin(2);
+      y = astv_create( ones(arg1.get_value[],arg2.get_value[]),...
+		       value=arg1.have_value[]& arg2.have_value[]);
+    else
+      error('Illegal number of arguments in ones\n');
+      return;
+    end
+  endfunction
+
+  function y=asteval_rand(varargin)
+    n = length(varargin)
+    if n == 1 then 
+      arg= varargin(1);
+      y = astv_create( rand(arg.get_value[]),value=%f);
+    elseif n== 2 then 
+      arg1=varargin(1);arg2=varargin(2);
+      y = astv_create( rand(arg1.get_value[],arg2.get_value[]),...
+		       value=%f);
+    else
+      error('Illegal number of arguments in ones\n');
+      return;
+    end
+  endfunction
+  
   function y=asteval_struct(varargopt)
   // The struct function 
   // loop on elements to see if they have a value.

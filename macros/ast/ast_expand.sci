@@ -19,7 +19,6 @@ function ast=ast_expand(ast,reset=%t)
     endfunction
         
     function [rep,newargs]=ast_expand_default(ast)
-      args = ast.get_args[];
       [rep,newargs]= ast_expand_args(ast,1,ast.get_arity[],list(),list());
       ast.set_args[newargs];
       rep($+1)= ast;
@@ -32,19 +31,12 @@ function ast=ast_expand(ast,reset=%t)
       end
     endfunction 
     
-    function ast=ast_create_equalop(ast,name);
-    // return ast= (; (= name ast))
-      ast1=ast_create(%ast.MLHS,args=list(ast_create(%ast.NAME,str=name)));
-      ast2=ast_create(%ast.EQUAL_OP,args=list(ast1,ast));
-      ast= ast_create(%ast.RETURN_OP,args=list(ast2));
-    endfunction;
-    
     function [rep,newargs]=ast_expand_arg(ast,rep,newargs) 
       [loc,flag] = ast_expand_internal(ast)
       for j=1:length(loc)-1; rep($+1)=loc(j);  end
-      // A Compléter avec les autres ....
-      if loc($).is['NAME'] || loc($).is['NUMBER'] then 
-	// printf('already a name');
+      // Set of ast for which introducing extra variable is useless
+      vals =['INUMBER32','INUMBER64','UNUMBER32','UNUMBER64','NAME','NUMBER','PARENTH'];
+      if or(loc($).get_codename[]== vals) then 
 	newargs($+1) = loc($);
       elseif flag == %f then 
 	// the expanded ast do not return a value
@@ -55,14 +47,32 @@ function ast=ast_expand(ast,reset=%t)
 	newargs($+1) = (ast_create(%ast.NAME,str=name));
       end
     endfunction
+    
+    function ast=ast_create_equalop(ast,name);
+    // return ast= (; (= name ast))
+      ast1=ast_create(%ast.MLHS,args=list(ast_create(%ast.NAME,str=name)));
+      ast2=ast_create(%ast.EQUAL_OP,args=list(ast1,ast));
+      ast= ast_create(%ast.RETURN_OP,args=list(ast2));
+    endfunction;
        
     // real start of code for  ast_expand_internal 
     flag = %f 
     if ( ast.get_op[] > 0 ) then 
       // expression operators 
       // sans doute voir ce qu'on fait de , ; et \n 
-      flag = %t;
-      [rep,newargs]=ast_expand_default(ast); return;
+      select ast.get_op[] 
+	case {%ast.RETURN_OP, %ast.COMMA_OP, %ast.SEMICOLON_OP} then 
+	 flag = %f;
+	 L=ast.get_args[];
+	 [rep]= ast_expand_internal(L(1))
+	 ast.set_args[list(rep($))];
+	 rep($)= ast;
+	 newargs=list();
+	 return;
+      else
+	flag = %t;
+	[rep,newargs]=ast_expand_default(ast); return;
+      end
     else 
       // set of commands 
       select ast.get_op[] 
@@ -195,8 +205,9 @@ function ast=ast_expand(ast,reset=%t)
 	rep = list(ast);
 	return;
        case %ast.PARENTH  then
-	flag=%t;
-	[rep,newargs]=ast_expand_default(ast); return;
+	[rep,newargs]=ast_expand_default(ast);
+	flag = %t;
+	return;
        case %ast.CASE  then 
 	// do not expand the test 
 	L=ast.get_args[];
