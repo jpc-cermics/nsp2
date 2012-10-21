@@ -1,4 +1,4 @@
-function [rep,H]=ast_eval(ast,H)
+function [rep,H,ast]=ast_eval(ast,H)
 // evaluation for ast 
 // using astv variables.
 
@@ -135,15 +135,16 @@ function [rep,H]=ast_eval(ast,H)
     rep = astv_create(~ v1.get_value[], value=v);
   endfunction
   
-  function [rep,H]= ast_eval_internal(ast,H)
+  function [rep,H,ast]= ast_eval_internal(ast,H)
     
-    function [rep,H]= ast_eval_args(ast,start,last,H)
+    function [rep,H,ast]= ast_eval_args(ast,start,last,H)
       L= ast.get_args[];
       rep=list();
       for j=start:last
-	ast1=L(j);
-	[rep($+1),H] =ast_eval_internal(ast1,H)
+	[rep($+1),H,ast1] =ast_eval_internal(L(j),H);
+	L(j)=ast1;
       end
+      ast.set_args[L];
     endfunction 
     
     function [rep,H]=ast_eval_arg(ast, elt,H)
@@ -179,10 +180,12 @@ function [rep,H]=ast_eval(ast,H)
        case 1 then
 	select  ast.get_op[] 
 	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.RETURN_OP} then
-	  [rep,H]=ast_eval_arg(ast,1,H);  return;
+	  [rep,H,ast]=ast_eval_args(ast,1,1,H);
+	  return;
 	else
-	  [arg1,H] =ast_eval_arg(ast,1,H);
+	  [arg1,H,ast1] =ast_eval_args(ast,1,1,H);
 	  execstr("rep="+ast.get_codename[]+"(arg1);");
+	  ast.set_args[list(ast1)];
 	  return;
 	end
        case 2 then
@@ -335,14 +338,9 @@ function [rep,H]=ast_eval(ast,H)
 	// body 
 	[rep,H] =ast_eval_arg(ast,2,H);return;
        case %ast.FUNCTION then
-	// the function description 
-	// newpos= ast_eval_arg(ast,1,H);
-	// the body 
-	[rep,H] =ast_eval_arg(ast,2,H);
-	if ( ast.get_arity[] == 3 ) then
-	  // ? table d'objects 
-	  // ast_eval_arg(ast,3,H);
-	end
+	L=ast.get_args[];
+	[rep,H,ast1]= ast_eval_internal(L(2),H);
+	ast.set_args[list(L(1),ast1,L(3))];
 	return 
        case %ast.FOR then
 	rep1 =ast_eval_arg(ast,1,H);
@@ -364,9 +362,11 @@ function [rep,H]=ast_eval(ast,H)
 	end
 	reps=reps(1:2:Last);
 	if ok == -1 && and(reps) then 
+	  ast = L($);
 	  printf("We can select the last else\n",ok);
 	elseif ok <> -1 then 
 	  printf("We can select branch %d\n",ok);
+	  ast = L(ok);
 	end
 	for j=1:Ln
 	  if modulo(j,2)==0 || (modulo(j,2)==1 && j ==Ln) then 
@@ -404,10 +404,10 @@ function [rep,H]=ast_eval(ast,H)
 	// newpos= ast_eval_key("end",newpos,posret);
 	rep=newpos;return;
        case %ast.STATEMENTS  then
-	[rep,H]= ast_eval_args(ast,1,ast.get_arity[],H)
+	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H)
 	return;
        case %ast.STATEMENTS1  then
-	[rep,H]= ast_eval_args(ast,1,ast.get_arity[],H)
+	[rep,H,ast]= ast_eval_args(ast,1,ast.get_arity[],H)
 	return;
        case %ast.PARENTH  then
 	[rep,H]=ast_eval_args(ast,1,ast.get_arity[],H);
@@ -483,10 +483,10 @@ function [rep,H]=ast_eval(ast,H)
   endfunction
   
   if nargin <= 1; H=hash(0);end 
-  [rep,H]=ast_eval_internal(ast,H)
+  [rep,H,ast]=ast_eval_internal(ast,H)
 endfunction
 
-function [rep,H]= ast_eval_test()
+function [rep,H,ast]= ast_eval_test()
   function y=f()
     x=%f
     if x then 
@@ -497,6 +497,6 @@ function [rep,H]= ast_eval_test()
       y=7;
     end
   endfunction
-  [rep,H]=ast_eval(pl2ast(f));
+  [rep,H,ast]=ast_eval(pl2ast(f));
 endfunction
 
