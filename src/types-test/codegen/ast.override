@@ -598,7 +598,7 @@ typedef enum { p_black =30,
 
 #define PRINTTAG(tag)							\
   if (pos != posret ) {							\
-    Sciprintf("\n");newpos = NSP_PRINTF1_COLOR(posret,p_blue,tag) ;}	\
+    Sciprintf("%s","\n");newpos = NSP_PRINTF1_COLOR(posret,p_blue,tag) ;} \
   else { newpos = pos+ NSP_PRINTF_COLOR(p_blue,tag) ; }
 
 /* posret: indentation to use if line-break.
@@ -640,7 +640,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	      break;
 	    case RETURN_OP : 
 	      _nsp_ast_pprint_arg(ast,1,indent,pos,posret);
-	      Sciprintf("\n");newpos=0; /* XXX Sciprintf1(posret,""); */
+	      Sciprintf("%s","\n");newpos=0; /* XXX Sciprintf1(posret,""); */
 	      return newpos;
 	      break;
 	    case TILDE_OP : 
@@ -659,7 +659,7 @@ static int _nsp_ast_pprint(NspAst *ast, int indent, int pos, int posret)
 	      /* we have the right to break line here 
 	       * we indent on the next line with posret 
 	       */
-	      Sciprintf("\n");newpos= Sciprintf1(posret,"");
+	      Sciprintf("%s","\n");newpos= Sciprintf1(posret,"");
 	    }
 	  newpos =_nsp_ast_pprint_arg(ast,2,0,newpos,posret);
 	  return newpos;
