@@ -170,9 +170,6 @@ function [rep,H]=ast_eval(ast,H)
       rep=length(mlhs.get_args[]);
     endfunction 
     
-    function y=Sciprintf(x); y=length(x);printf("%s",x);endfunction;
-    function y=Sciprintf1(i,x); y=length(x)+i;x=catenate(smat_create(1,i," "))+x;printf("%s",x);endfunction;
-    
     if ( ast.get_op[] > 0 ) then 
       // expression operators
       select  ast.get_arity[] 
@@ -181,20 +178,8 @@ function [rep,H]=ast_eval(ast,H)
 	return;
        case 1 then
 	select  ast.get_op[] 
-	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP} then
-	  [rep,H]=ast_eval_arg(ast,1,H)
-	  return;
-	 case {%ast.QUOTE_OP, %ast.DOTPRIM} then
-	  [rep,H]=ast_eval_arg(ast,1,H)
-	  newpos =ast_eval_opname(ast.get_opname[],0,newpos,H);
-	  rep= newpos;
-	  return;
-	 case %ast.RETURN_OP  then 
-	  [rep,H]=ast_eval_arg(ast,1,H);return;
-	 case %ast.TILDE_OP  then 
-	  [rep,H]=ast_eval_arg(ast,1,H);
-	  execstr("rep="+ast.get_codename[]+"(arg1);");
-	  return;
+	 case {%ast.COMMA_OP, %ast.SEMICOLON_OP,%ast.RETURN_OP} then
+	  [rep,H]=ast_eval_arg(ast,1,H);  return;
 	else
 	  [arg1,H] =ast_eval_arg(ast,1,H);
 	  execstr("rep="+ast.get_codename[]+"(arg1);");
@@ -366,22 +351,30 @@ function [rep,H]=ast_eval(ast,H)
 	rep =ast_eval_arg(ast,3,H);
 	return;
        case %ast.IF then
-	// a sequence of if elseif etc.... */
-	for  j=0:2:(ast.get_arity[]-1)
-	  if  j == ast.get_arity[]-1  then
-	    // we have reached the last else **/
-	    //newpos= ast_eval_key("else",newpos,posret,H);
-	    Sciprintf("\n");newpos= Sciprintf1(posret+2,"");
-	    newpos =ast_eval_arg(ast,j+1,H);
-	  else 
-	    //newpos= ast_eval_key("elseif",newpos,posret,H);
-	    newpos =ast_eval_arg(ast,j+1,H);
-	    Sciprintf1(1,"then\n");newpos= Sciprintf1(posret+2,"");
-	    newpos =ast_eval_arg(ast,j+2,H);
+	L= ast.get_args[];Ln = length(L);
+	ok=-1;
+	if modulo(Ln,2)==0 then Last=Ln;else Last=Ln-1;end
+	reps=(1:2:Last) == 0;
+	for i=1:2:Last
+	  rep = ast_eval_internal(L(i),H);
+	  reps(i)=  rep.have_value[];
+	  if rep.have_value[] && and(rep.get_value[]) then 
+	    ok=i;
 	  end
 	end
-	//newpos= ast_eval_key("end",newpos,posret,H);
-	rep=newpos;return;
+	reps=reps(1:2:Last);
+	if ok == -1 && and(reps) then 
+	  printf("We can select the last else\n",ok);
+	elseif ok <> -1 then 
+	  printf("We can select branch %d\n",ok);
+	end
+	for j=1:Ln
+	  if modulo(j,2)==0 || (modulo(j,2)==1 && j ==Ln) then 
+	    [Hj]=ast_eval_internal(L(j),H);
+	  end
+	end
+	rep=list();
+	return;
        case %ast.TRYCATCH  then
 	// try catch sequence */
 	newpos =ast_eval_arg(ast,1,0,H);
@@ -491,5 +484,19 @@ function [rep,H]=ast_eval(ast,H)
   
   if nargin <= 1; H=hash(0);end 
   [rep,H]=ast_eval_internal(ast,H)
+endfunction
+
+function [rep,H]= ast_eval_test()
+  function y=f()
+    x=%f
+    if x then 
+      y=6;
+    elseif %f then 
+      y=5;
+    else
+      y=7;
+    end
+  endfunction
+  [rep,H]=ast_eval(pl2ast(f));
 endfunction
 
