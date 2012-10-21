@@ -2,7 +2,15 @@ function [rep,H,ast]=ast_eval(ast,H)
 // evaluation for ast 
 // using astv variables.
 
-  function rep=PLUS_OP(v1,v2)
+  function [str]=ast_suffix(arg)
+    str=type(arg.get_value[],'short');
+    dims=arg.get_dims[];
+    if and(dims==[1,1]) then 
+      str = str + "s";
+    end
+  endfunction
+    
+  function [rep]=PLUS_OP(v1,v2)
     v=  v1.have_value[] && v2.have_value[];
     rep=astv_create(v1.get_value[] + v2.get_value[], value= v);
   endfunction
@@ -11,12 +19,12 @@ function [rep,H,ast]=ast_eval(ast,H)
     v=  v1.have_value[] && v2.have_value[];
     rep=astv_create(v1.get_value[] * v2.get_value[], value= v);
   endfunction
-
+  
   function rep=DOTSTAR(v1,v2)
     v=  v1.have_value[] && v2.have_value[];
     rep=astv_create(v1.get_value[] * v2.get_value[], value= v);
   endfunction
-
+  
   function rep=COLCONCAT(v1,v2)
     v=  v1.have_value[] && v2.have_value[];
     rep=astv_create([v1.get_value[];v2.get_value[]],value=v);
@@ -189,9 +197,19 @@ function [rep,H,ast]=ast_eval(ast,H)
 	  return;
 	end
        case 2 then
-	[arg1,H] =ast_eval_arg(ast,1,H);
-	[arg2,H] =ast_eval_arg(ast,2,H);
-	execstr("rep="+ast.get_codename[]+"(arg1,arg2);");
+	L = ast.get_args[];
+	[arg1,H,ast1] =ast_eval_internal(L(1),H);
+	[arg2,H,ast2] =ast_eval_internal(L(2),H);
+	str1 = ast_suffix(arg1);
+	str2 = ast_suffix(arg2);
+	fname = sprintf("%s_%s_%s",ast.get_codename[],str1,str2);
+	str = sprintf("[rep]=%s(arg1,arg2)",fname);
+	execstr("[rep]="+ast.get_codename[]+"(arg1,arg2);");
+	// new ast 
+	ast_args=ast_create(%ast.ARGS,args=list(ast1,ast2));
+	ast_f = ast_create(%ast.NAME,str=fname);
+	ast=ast_create(%ast.CALLEVAL,args=list(ast_f,ast_args));
+	return;
       else
 	// n-ary 
 	args=list();

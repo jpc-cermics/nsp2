@@ -695,7 +695,7 @@ static int _wrap_astv_get_dims(NspAstv *self, Stack stack, int rhs, int opt, int
   NspObject *Ret;
   CheckRhs(0,0);
   CheckLhs(1,1); 
-  if ((Ret =(NspObject*) nsp_matrix_create_from_doubles(NVOID,1,2,self->rows,self->columns))==NULL) 
+  if ((Ret =(NspObject*) nsp_matrix_create_from_doubles(NVOID,1,2,(double) self->rows,(double) self->columns))==NULL) 
     return RET_BUG;
   MoveObj(stack,1,Ret);
   return Max(lhs,1);
