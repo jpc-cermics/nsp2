@@ -102,8 +102,13 @@ AC_DEFUN([AC_CHECK_UMFPACK],
    if test "${ac_umfpack_libdir}" = "/usr/lib"; then 
       AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
    else 
+      umfpack_fail=no
       LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS} -lSuiteSparse"
-      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lSuiteSparse ${amd_libs}"])
+      AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lSuiteSparse ${amd_libs}"],[umfpack_fail=yes]) 
+      if test "xx$umfpack_fail" != "xxyes";then 
+        LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS} -lSuiteSparse"
+        AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"])
+      fi  
    fi
    AC_SUBST(umfpack_libs)
  else 
