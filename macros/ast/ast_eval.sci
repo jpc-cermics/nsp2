@@ -33,7 +33,31 @@ function [rep,H,ast]=ast_eval(ast,H)
       return;
     end
   endfunction
-    
+
+  function [rep]=COLON_OP(varargin)
+    if length(varargin)== 2 then 
+      value = (varargin(1).have_value[])&(varargin(2).have_value[]);
+      if value then 
+	rep=astv_create((varargin(1).get_value[]):(varargin(2).get_value[]),value=value);
+      else
+	rep=astv_create([],value=value); // XXX 
+      end
+    elseif length(varargin)== 3 then 
+      value = (varargin(1).have_value[])&(varargin(2).have_value[]) ...
+	      &(varargin(3).have_value[]);
+      if value then 
+	rep=astv_create((varargin(1).get_value[]):(varargin(2).get_value[]):...
+			(varargin(3).get_value[]),value=value);
+      else
+	rep=astv_create(val(varargin(1).get_value[]),value=%f);
+      end
+    else
+      error("Error: wrong number of arguments\n");
+      return;
+    end
+  endfunction
+
+  
   function [rep]=PLUS_OP(v1,v2)
     v=  v1.have_value[] && v2.have_value[];
     rep=astv_create(v1.get_value[] + v2.get_value[], value= v);
@@ -81,6 +105,26 @@ function [rep,H,ast]=ast_eval(ast,H)
     end
     args.set_args[args1];
     ast.set_args[list(ast_create(%ast.NAME,str=name),args)];
+    str=ast.sprint[];
+  endfunction
+
+  function str=ast_str_extract(ast,name)
+  // regenerate an extract call with rep replacing 
+  // initial arguments 
+    L = ast.get_args[];
+    args= L(2);
+    args1 = args.get_args[];
+    for i=1:length(args1);
+      if args1(i).is['OPT'] then 
+	L1=args1(i).get_args[];
+	args1(i).set_args[list(L1(1),ast_expr(sprintf('rep(%d)',i)))];
+      else
+	args1(i)= ast_expr(sprintf('rep(%d)',i));
+      end
+    end
+    args1.add_first[ast_create(%ast.NAME,str=L(1).get_str[])];
+    args.set_args[args1];
+    ast.set_args[list(ast_create(%ast.NAME,str='EXTRACT'),args)];
     str=ast.sprint[];
   endfunction
         
@@ -361,8 +405,9 @@ function [rep,H,ast]=ast_eval(ast,H)
 	end;
 	name=args(1).get_str[];
 	if H.iskey[name] then 
-	  str=ast_str_funcall(ast,name)
+	  str=ast_str_extract(ast,name)
  	  execstr('rep='+str,env=H);
+	  rep=rep(1);
 	  return;
 	else 
 	  ast_is_pervasive(name)  // a revoir 
@@ -593,12 +638,20 @@ function  ast_eval_test()
     end
   endfunction
   [rep,H,ast]=ast_eval(pl2ast(f));
-  
   ast.print[];printf('\n');
   
   function y=f()
     a=struct(b=ones(4,4));
     z=a.b(1+1,3);
+  endfunction ;
+  [rep,H,ast]=ast_eval(pl2ast(f));
+  ast.print[];printf('\n');
+  
+  function y=f()
+    x=rand(4,5);
+    y=x+6;
+    z=x+y;
+    w=z(1:3);
   endfunction ;
   [rep,H,ast]=ast_eval(pl2ast(f));
   ast.print[];printf('\n');
