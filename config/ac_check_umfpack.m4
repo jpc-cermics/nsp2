@@ -103,10 +103,18 @@ AC_DEFUN([AC_CHECK_UMFPACK],
       AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-lumfpack ${amd_libs}"])
    else 
       umfpack_fail=no
+      # AC_MSG_CHECKING([umfpack link one])
+      ac_save_ldflags_one=${LDFLAGS}
       LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS} -lSuiteSparse"
+      ## Invalidate the cache and try again without -lSuiteSparse 
+      $as_unset ac_cv_lib_umfpack_umfpack_di_solve
       AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack -lSuiteSparse ${amd_libs}"],[umfpack_fail=yes]) 
-      if test "xx$umfpack_fail" != "xxyes";then 
-        LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS} -lSuiteSparse"
+      if test "xx$umfpack_fail" == "xxyes";then 
+        ## Invalidate the cache and try again without -lSuiteSparse 
+	$as_unset ac_cv_lib_umfpack_umfpack_di_solve
+	LDFLAGS=${ac_save_ldflags_one}
+	#  AC_MSG_CHECKING([umfpack link two])
+        LDFLAGS="-L${ac_umfpack_libdir} ${LDFLAGS}"
         AC_CHECK_LIB(umfpack,umfpack_di_solve,[umfpack_libs="-L${ac_umfpack_libdir} -lumfpack ${amd_libs}"])
       fi  
    fi
