@@ -46,6 +46,9 @@ AC_ARG_WITH(addedf2c,
 AC_ARG_WITH(maxpluslib,
     [  --with-maxpluslib       add maxplus lib ])
 
+AC_ARG_WITH(amoscephes,
+    [  --with-amoscephes       add amoscephes lib ])
+
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
 
@@ -1628,9 +1631,9 @@ fi
 ## use the library if repository is present
 #########################
 
-AC_CHECK_FILE("src/libscipy-nsp", [libamos_exists="yes"], [libamos_exists="no"])
+# AC_CHECK_FILE("src/libscipy-nsp", [libamos_exists="yes"], [libamos_exists="no"])
 
-if test "xx${libamos_exists}" = "xxyes"; then 
+if test "$with_amoscephes" = yes; then 
    AC_MSG_RESULT([using directory src/libscipy-nsp])
    AMOS_CEPHES_LIB=libscipy-nsp
    AC_DEFINE(WITH_LIBAMOS,[],[cephes amos library])
