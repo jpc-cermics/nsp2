@@ -15,7 +15,7 @@ function [rep,H,ast]=ast_eval(ast,H)
     name=lhs.get_args[](1).get_str[];
     if H.iskey[name] then 
       // evaluate the rhs 
-      [rep]=ast_eval_internal(L(2),H);
+      [rep,H1,ast1]=ast_eval_internal(L(2),H);
       // evaluate the args 
       [reps]=ast_eval_internal(lhs.get_args[](2),H);
       // generate a new mlhs with 
@@ -23,15 +23,43 @@ function [rep,H,ast]=ast_eval(ast,H)
       H2=hash(rep=rep,reps=reps);H2(name)=H(name);
       // this will call setrowscols_astv 
       [ok,H1]=execstr(sprintf('rep2=SETROWSCOLS(%s,reps(:),rep);',name),env=H2);
-      pause in assign;
+      rep = H1.rep2;
+      // build a simplified ast XXXX we should also simplify the args 
+      L(2)=ast1;
+      ast.set_args[L];
     else 
       error(sprintf('Error: variable %s is not defined\n",name));
       ok=%t;return;
     end
   endfunction
   
-  function y =  SETROWSCOLS(x,varargin) 
-    pause xxx
+  function rep =  SETROWSCOLS(obj,varargin) 
+    if ~obj.have_value[]  then 
+      rep = obj; // same dimensions and type b
+    else
+      if length(varargin)== 2 then 
+	val = obj.get_value[];
+	if varargin(1).have_value[] && varargin(2).have_value[] then 
+	  val(varargin(1).get_value[])= varargin(2).get_value[];
+	  rep=astv_create(val,value=obj.have_value[]);
+	else
+	  // check compatibility of sizes  and return same dimensions;
+	  rep=astv_create(val,value=%f);
+	end
+      elseif length(varargin)== 3 then 
+	val = obj.get_value[];
+	if varargin(1).have_value[] && varargin(2).have_value[] && 
+	  varargin(3).have_value[] then 
+	  val(varargin(1).get_value[],varargin(2).get_value[]) = varargin(3).get_value[];
+	  rep=astv_create(val,value=%t);
+	else
+	  rep=astv_create(val,value=%f);
+	end
+      else
+	error("Error: wrong number of arguments\n");
+	return;
+      end
+    end
   endfunction
   
   function [rep,H,ast]=ast_eval_calleval(ast,H)
@@ -446,6 +474,7 @@ function [rep,H,ast]=ast_eval(ast,H)
 	  return;
 	else
 	  [ok,rep,H,ast1]= ast_eval_assign(ast,H);
+	  if ok then return;end 
 	  pause in equal op with complex assign
 	end
        case %ast.MLHS   then
