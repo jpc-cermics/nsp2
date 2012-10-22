@@ -26,19 +26,20 @@ F_win= tcl/win/tclCmdAZ.o \
 	tcl/win/Tobedone.o \
 	registry.o 
 
-OBJSC =  System-IN.o timer.o files.o realtime.o spawn.o regexp.o dstring.o $(F_@SYST_FILES@)
+OBJSC =  System-IN.o timer.o files.o realtime.o \
+	spawn.o regexp.o dstring.o $(F_@SYST_FILES@)
 
-all     ::
-	cd tcl/@SYST_FILES@ && $(MAKE) all
+tcl/@SYST_FILES@/%.o: 
+	@cd tcl/@SYST_FILES@ && $(MAKE) $*.o
+
+#all     ::
+#	cd tcl/@SYST_FILES@ && $(MAKE) all
 
 include ../../Makefile.incl
-SCIDIR=../..
 
 CFLAGS = $(CC_OPTIONS)  -DSTANDALONE -MMD
 
 include ../Make.lib
-
-FUNDEF= System1-IN.fun
 
 timer.o: timer.c ../include/nsp/machine.h
 
