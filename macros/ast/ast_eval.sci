@@ -2,7 +2,108 @@ function [rep,H,ast]=ast_eval(ast,H)
 // evaluation for ast 
 // using astv variables.
 
+  function [ok,rep,H,ast]=ast_eval_assign(ast,H)
+  // used in x(..) = expr
+    rep=list();
+    if ~ast.is['EQUAL_OP'] then  ok = %f; return;end
+    L = ast.get_args[];
+    // get the mlhs 
+    mlhs = L(1); 
+    if mlhs.get_arity[] <> 1 then  ok=%f; return;end
+    lhs = mlhs.get_args[](1);
+    if ~lhs.is['CALLEVAL'] then  ok = %f; return;end
+    name=lhs.get_args[](1).get_str[];
+    if H.iskey[name] then 
+      // evaluate the rhs 
+      [rep]=ast_eval_internal(L(2),H);
+      // evaluate the args 
+      [reps]=ast_eval_internal(lhs.get_args[](2),H);
+      // generate a new mlhs with 
+      // name (reps(:)) = rep;
+      H2=hash(rep=rep,reps=reps);H2(name)=H(name);
+      // this will call setrowscols_astv 
+      [ok,H1]=execstr(sprintf('rep2=SETROWSCOLS(%s,reps(:),rep);',name),env=H2);
+      pause in assign;
+    else 
+      error(sprintf('Error: variable %s is not defined\n",name));
+      ok=%t;return;
+    end
+  endfunction
+  
+  function y =  SETROWSCOLS(x,varargin) 
+    pause xxx
+  endfunction
+  
+  function [rep,H,ast]=ast_eval_calleval(ast,H)
+  // this function is used to evaluate a rhs calleval
+  // [rep,H,ast1]=ast_eval_args(ast,2,ast.get_arity[],H);
+  // evaluate the arguments 
+    if ast.get_arity[] <> 2 then 
+      error("only simple calls are accepted\n");
+      return;
+    end
+    [rep,H]=ast_eval_arg(ast,2,H);
+    args= ast.get_args[];
+    if ~args(1).is['NAME'] then
+      error("expecting a name\n");
+      return;
+    end;
+    name=args(1).get_str[];
+    if H.iskey[name] then 
+      str=ast_str_extract(ast,name)
+      [ok,H2]=execstr('rep='+str,env=H);
+      rep=H2.rep;
+      return;
+    else 
+      ast_is_pervasive(name)  // a revoir 
+      str=ast_str_funcall(ast,'asteval_'+name);
+      execstr('rep='+str);
+    end
+    return;
+  endfunction
+  
+  function [rep,H,ast]=ast_eval_listeval(ast,H)
+  // this function is used to evaluate a rhs listeval.
+  // [rep,H,ast1]=ast_eval_args(ast,2,ast.get_arity[],H);
+    [rep,H,ast1]=ast_eval_args(ast,1,1,H);
+    obj=rep(1); // the base object 
+    L=ast.get_args[];
+    for i=2:length(L) 
+      select L(i).get_op[] 
+       case %ast.ARGS  then
+	// we need to extract the args 
+	[rep,H,ast1]=ast_eval_internal(L(i),H);
+	// call extract 
+	execstr('rep=EXTRACT(obj,rep(:))')
+       case %ast.CELLARGS  then
+	// a sequence of expressions inside {}
+	pause "to be done in extract";
+	return;
+       case %ast.METARGS  then
+	// a sequence of expressions inside [] for x[] */
+	pause "to be done in extract";
+	return;
+       case %ast.DOTARGS  then 
+	// we have to extract a field 
+	field=L(i).get_args[](1).get_str[];
+	if obj.get_args[].iskey[field] then 
+	  obj = obj.get_args[](field)
+	else 
+	  error(sprint('Error: field %s not found\n',field));
+	  return;
+	end
+      else
+	pause "to be done in extract";
+      end
+    end
+    // just to obtain a modified ast 
+    [rep1,H1,ast]=ast_eval_args(ast,1,ast.get_arity[],H);
+    return;
+  endfunction
+  
   function [str]=ast_suffix(arg)
+  // return a suffix for object arg 
+  // based on the type of arg + a flag for [1,1] objects.
     str=type(arg.get_value[],'short');
     dims=arg.get_dims[];
     if and(dims==[1,1]) then 
@@ -11,6 +112,7 @@ function [rep,H,ast]=ast_eval(ast,H)
   endfunction
 
   function [rep]=EXTRACT(obj,varargin)
+  // extract function for astv objects 
     if length(varargin)== 1 then 
       val = obj.get_value[];
       if varargin(1).have_value[] then 
@@ -33,7 +135,7 @@ function [rep,H,ast]=ast_eval(ast,H)
       return;
     end
   endfunction
-
+  
   function [rep]=COLON_OP(varargin)
     if length(varargin)== 2 then 
       value = (varargin(1).have_value[])&(varargin(2).have_value[]);
@@ -56,7 +158,6 @@ function [rep,H,ast]=ast_eval(ast,H)
       return;
     end
   endfunction
-
   
   function [rep]=PLUS_OP(v1,v2)
     v=  v1.have_value[] && v2.have_value[];
@@ -127,9 +228,10 @@ function [rep,H,ast]=ast_eval(ast,H)
     ast.set_args[list(ast_create(%ast.NAME,str='EXTRACT'),args)];
     str=ast.sprint[];
   endfunction
-        
+  
   function [y,name,ast1]=ast_is_simple_assign(ast)
   // checks that ast is of kind x=expr.
+    name='void';ast1=ast;
     if ~ast.is["EQUAL_OP"] then y=%f;return;end
     args= ast.get_args[];
     mlhs=args(1);
@@ -321,29 +423,31 @@ function [rep,H,ast]=ast_eval(ast,H)
       select ast.get_op[] 
        case %ast.OPT then
 	// val=value in a calling list */
-	//newpos=ast_eval_arg(ast,1,H);
+	// newpos=ast_eval_arg(ast,1,H);
 	[rep,H]=ast_eval_arg(ast,2,H);
        case %ast.EQUAL_OP then
-	// ast1 is the rhs 
-	[y,name,ast1]=ast_is_simple_assign(ast);
-	if ~y then 
-	  error("use only simple lhs =\n");
+	// pause equal_op
+	[ok,name,ast1]=ast_is_simple_assign(ast); // ast1 is the rhs 
+	if ok then 
+	  // this is a simple assign x= expr;
+	  [rep,H,ast2]=ast_eval_internal(ast1,H);
+	  if type(rep,'short')== 'l' then 
+	    error(sprintf("rhs evaluation returns too many values (%d)\n",length(rep)));
+	    return;
+	  end
+	  if H.iskey[name] then 
+	    printf("Compatibility should be checke \n");
+	    H(name)=rep
+	  else
+	    H(name)= rep;
+	  end
+	  L=ast.get_args[];
+	  ast.set_args[list(L(1),ast2)];
 	  return;
-	end
-	[rep,H,ast2]=ast_eval_internal(ast1,H);
-	if type(rep,'short')== 'l' then 
-	  error(sprintf("rhs evaluation returns too many values (%d)\n",length(rep)));
-	  return;
-	end
-	if H.iskey[name] then 
-	  printf("Compatibility should be checke \n");
-	  H(name)=rep
 	else
-	  H(name)= rep;
+	  [ok,rep,H,ast1]= ast_eval_assign(ast,H);
+	  pause in equal op with complex assign
 	end
-	L=ast.get_args[];
-	ast.set_args[list(L(1),ast2)];
-	return;
        case %ast.MLHS   then
 	[rep,H]=ast_eval_args(ast,1,ast.get_arity[],H);
 	return; 
@@ -364,57 +468,10 @@ function [rep,H,ast]=ast_eval(ast,H)
 	newpos=newpos + Sciprintf("]");
 	rep=newpos;return;
        case %ast.DOTARGS  then rep=list();return;
-       case { %ast.LISTEVAL}  then
-	// evaluate the arguments 
-	// [rep,H,ast1]=ast_eval_args(ast,2,ast.get_arity[],H);
-	[rep,H,ast1]=ast_eval_args(ast,1,1,H);
-	obj=rep(1);
-	L=ast.get_args[];
-	for i=2:length(L) 
-	  if L(i).is['DOTARGS'] then 
-	    field=L(i).get_args[](1).get_str[];
-	    if obj.get_args[].iskey[field] then 
-	      obj = obj.get_args[](field)
-	    else 
-	      error(sprint('Error: field %s not found\n',field));
-	      return;
-	    end
-	  elseif L(i).is['ARGS'] then 
-	    // we need to extract the args 
-	    [rep,H,ast1]=ast_eval_internal(L(i),H);
-	    // call extract 
-	    execstr('rep=EXTRACT(obj,rep(:))')
-	  else
-	    pause "to be done in extract";
-	  end
-	end
-	// just to obtain a modified ast 
-	[rep1,H1,ast]=ast_eval_args(ast,1,ast.get_arity[],H);
-	return;
-       case { %ast.CALLEVAL} then 
-	if ast.get_arity[] <> 2 then 
-	  error("only simple calls are accepted\n");
-	  return;
-	end
-	// evaluate the arguments 
-	[rep,H]=ast_eval_arg(ast,2,H);
-	args= ast.get_args[];
-	if ~args(1).is['NAME'] then
-	  error("expecting a function name\n");
-	  return;
-	end;
-	name=args(1).get_str[];
-	if H.iskey[name] then 
-	  str=ast_str_extract(ast,name)
- 	  execstr('rep='+str,env=H);
-	  rep=rep(1);
-	  return;
-	else 
-	  ast_is_pervasive(name)  // a revoir 
-	  str=ast_str_funcall(ast,'asteval_'+name);
-	  execstr('rep='+str);
-	end
-	return;
+       case %ast.LISTEVAL then
+	[rep,H,ast]=ast_eval_listeval(ast,H); return;
+       case %ast.CALLEVAL then 
+       	[rep,H,ast]=ast_eval_calleval(ast,H); return;
        case %ast.FEVAL  then
 	pause feval
 	newpos =ast_eval_arg(ast,1,H);
@@ -652,6 +709,20 @@ function  ast_eval_test()
     y=x+6;
     z=x+y;
     w=z(1:3);
+  endfunction ;
+  [rep,H,ast]=ast_eval(pl2ast(f));
+  ast.print[];printf('\n');
+
+  function y=f()
+    x=rand(4,5);
+    z=x(2:3,2:4);
+  endfunction ;
+  [rep,H,ast]=ast_eval(pl2ast(f));
+  ast.print[];printf('\n');
+
+  function y=f()
+    x=rand(4,5);
+    x(2:3,2:4)=7;
   endfunction ;
   [rep,H,ast]=ast_eval(pl2ast(f));
   ast.print[];printf('\n');
