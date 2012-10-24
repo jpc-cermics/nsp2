@@ -6947,6 +6947,7 @@ NspMatrix *nsp_mat_hex2num(NspSMatrix *S,int swap)
 	{
 	  goto err;
 	}
+      num.ival =0;
       for ( j = 0 ; j < nc ; j++)
 	{
 	  char ch = (bswap == TRUE ) ? str[15-j]: str[j];
