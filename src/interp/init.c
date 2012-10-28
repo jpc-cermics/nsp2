@@ -191,9 +191,14 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   nsp_set_in_text_view(use_textview);
 
 #if defined(THREAD_MAIN_VERSION) || defined(ACTIVATE_THREAD)
-  /* init threads */
-  g_thread_init(NULL);
-  gdk_threads_init();
+  /* init threads but useless after version 2.32 
+   * causes errors on win32 versions 
+   */
+  if (!GLIB_CHECK_VERSION (2,32,0)) 
+    {
+      g_thread_init(NULL);
+      gdk_threads_init();
+    }
 #endif 
 
   /* FIXME: should be moved here  */
