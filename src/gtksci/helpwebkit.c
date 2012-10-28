@@ -551,7 +551,7 @@ int nsp_help_topic(const char *topic,char *buf);
 int Sci_Help(char *mandir,char *locale,char *help_file) 
 {
   int free = FALSE;
-  char buf[FSIZE+1];
+  char buf[FSIZE+32];
   const char *sci = nsp_getenv("SCI"); 
   char *l = locale ; /* (locale == NULL) ? "eng": locale ;  */
 
@@ -571,7 +571,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
     {
 #ifdef WIN32 
       int i;
-      strcpy(buf,( strncmp(mandir,"//",2) == 0) ? "file:" : "file://");
+      strcpy(buf,( strncmp(mandir,"//",2) == 0) ? "file:" : "file:///");
       strcat(buf, mandir);
       for ( i = 0 ; i < strlen(buf) ; i++)
 	{
@@ -581,6 +581,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
       strcpy(buf,mandir);
 #endif 
       strcat(buf,"/generated/manual.html");
+      /* Sciprintf("trying to see [%s]\n",buf); */
       open_webkit_window(mandir,l,buf);
     }
   else if ( strncmp(help_file,"file:",5)==0 || strncmp(help_file,"http:",5)==0) 
@@ -592,7 +593,7 @@ int Sci_Help(char *mandir,char *locale,char *help_file)
     {
       if ( nsp_help_topic(help_file,buf)== FAIL ) return FAIL; 
       if ( buf[0]== '\0') return OK; 
-      /* Sciprintf("Help with %s %s %s %d\n",mandir,l,buf,FSIZE); */
+      /* Sciprintf("XXX Help with [%s] [%s] [%s] %d\n",mandir,l,buf,FSIZE); */
       open_webkit_window(mandir,l,buf);
     }
   if ( free == TRUE ) g_free(mandir);
@@ -606,7 +607,7 @@ static int nsp_help_fill_help_table(const char *index_file)
   nsp_string dirname;
   nsp_tcldstring name,filename;
   int all=TRUE;
-  char buf[FSIZE+1];
+  char buf[FSIZE+32];
   NspSMatrix *Sb = NULL;
   int xdr= FALSE,swap = TRUE,i;
 #ifdef WIN32 
@@ -666,7 +667,7 @@ static int nsp_help_fill_help_table(const char *index_file)
       /* need a join here */
       /* Sciprintf("dirname for help [%s]\n",dirname); */
 #ifdef WIN32 
-      strcpy(buf,( strncmp(dirname,"//",2) == 0) ? "file:" : "file://");
+      strcpy(buf,( strncmp(dirname,"//",2) == 0) ? "file:" : "file:///");
       strcat(buf, dirname);
       for ( j = 0 ; j < strlen(buf) ; j++)
 	{
