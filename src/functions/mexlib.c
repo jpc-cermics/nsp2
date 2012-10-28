@@ -201,7 +201,7 @@ int nsp_mex_wrapper(Stack stack, int rhs, int opt, int lhs,mexfun *mexFunction)
   mxArray *prhs[INTERSIZ];
   int rfl;
 #ifdef WIN32 
-  if (( rfl = _setjmp(MexEnv)) != 0 )
+  if (( rfl = setjmp(MexEnv)) != 0 )
     {
       return RET_BUG;
     }
