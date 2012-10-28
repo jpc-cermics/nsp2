@@ -423,7 +423,7 @@ char *nsp_errno_id(void)
 #ifdef EPERM
 	case EPERM: return "EPERM";
 #endif
-#if defined(EPFNOSUPPORT) && (!defined(ENOLCK) || (ENOLCK != EPFNOSUPPORT))
+#if defined(EPFNOSUPPORT) && (!defined(ENOLCK) || (ENOLCK != EPFNOSUPPORT)) && (!defined(ENOPROTOOPT) || (ENOPROTOOPT != EPFNOSUPPORT))
 	case EPFNOSUPPORT: return "EPFNOSUPPORT";
 #endif
 #ifdef EPIPE
@@ -871,7 +871,7 @@ char *nsp_error_msg(int err)
 #ifdef EPERM
 	case EPERM: return "not owner";
 #endif
-#if defined(EPFNOSUPPORT) && (!defined(ENOLCK) || (ENOLCK != EPFNOSUPPORT))
+#if defined(EPFNOSUPPORT) && (!defined(ENOLCK) || (ENOLCK != EPFNOSUPPORT)) && (!defined(ENOPROTOOPT) || (ENOPROTOOPT != EPFNOSUPPORT))
 	case EPFNOSUPPORT: return "protocol family not supported";
 #endif
 #ifdef EPIPE
