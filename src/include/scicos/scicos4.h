@@ -26,8 +26,6 @@
 #define SCICOS44
 #endif 
 
-#include "simul4.h"
-
 /* define min max for win32 */
 #ifndef max 
 #define max(a,b) ((a) >= (b) ? (a) : (b))
@@ -65,12 +63,6 @@
 #define SCSUINT32_COP unsigned int
 #define SCSBOOL_COP int
 #define SCSUNKNOW_COP double
-
-/* should de a define */
-extern void Coserror (char *fmt, ...);
-
-
-extern scicos_run *Scicos;
 
 /* maximum value for sum of number of inputs 
  * and outputs ports of a given 
@@ -114,6 +106,7 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 #define DoColdRestart(block)        (scicos_do_cold_restart()) 
 #define get_phase_simulation        scicos_get_phase_simulation
 #define GetSimulationPhase(block)   (scicos_get_phase_simulation())
+#define get_time                    scicos_get_time
 #define get_scicos_time             scicos_get_scicos_time
 #define GetScicosTime(block)        (scicos_get_scicos_time())
 #define get_final_time              scicos_get_final_time
