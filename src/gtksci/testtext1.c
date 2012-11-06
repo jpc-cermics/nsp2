@@ -118,6 +118,16 @@ static int  nsp_print_to_textview(const char *fmt, va_list ap);
 static void    nsp_textview_gtk_main(void);
 static void    nsp_textview_gtk_main_quit(void);
 
+#ifdef THREAD_VERSION
+static void nsp_insert_prompt_thread(const char *prompt);
+static void nsp_textview_init_queue(void);
+static void nsp_textview_wait_for_text(void) ;
+static void nsp_textview_awake_for_text(void) ;
+static void nsp_textview_init_print_queue(void);
+static void nsp_textview_wait_for_end_print_text(void) ;
+static void nsp_textview_awake_for_end_print_text(void) ;
+#endif 
+
 /**
  * nsp_textview_insert_logo:
  * @view: 
@@ -445,7 +455,11 @@ static void key_press_return(View *view,int stop_signal)
   if ( stop_signal == TRUE )
     g_signal_stop_emission_by_name (view->text_view, "key_press_event");
   nsp_expr= search_string;
+#ifdef THREAD_VERSION  
+  nsp_textview_awake_for_text();
+#else 
   nsp_textview_gtk_main_quit();
+#endif
 }
 
 /* dealing with keypressed in text view 
@@ -649,6 +663,10 @@ key_press_text_view(GtkWidget *widget, GdkEventKey *event, gpointer xdata)
 				   cursor_mark,
 				   0, FALSE, 1.0, 1.0);
     }
+  /* we can here return TRUE or FALSE 
+   * TRUE and character won't be echoed 
+   * FALSE and character will be echoed 
+   */
   return FALSE;
 }
 
@@ -916,10 +934,18 @@ static char *readline_textview_internal(const char *prompt)
   
   if ( use_prompt == 1) 
     {
+#ifdef THREAD_VERSION
+      nsp_insert_prompt_thread(prompt);
+#else 
       nsp_insert_prompt(prompt);
+#endif
     }
 
+#ifdef THREAD_VERSION
+  nsp_textview_wait_for_text();
+#else 
   nsp_textview_gtk_main();
+#endif
 
   if ( checkqueue_nsp_command() == TRUE) 
     {
@@ -1395,6 +1421,20 @@ static View *create_view (Buffer *buffer)
   return view;
 }
 
+/* print to the textview 
+ *
+ */
+#ifdef THREAD_VERSION
+static int nsp_tv_print(const char *fmt, ...)
+{
+  int n;
+  va_list ap;
+  va_start(ap,fmt);
+  n= nsp_print_to_textview(fmt, ap );
+  va_end(ap);
+  return n;
+}
+#endif 
 
 static int  nsp_print_to_textview(const char *fmt, va_list ap)
 {
@@ -1474,6 +1514,40 @@ static int  nsp_print_to_textview(const char *fmt, va_list ap)
   return n;
 }
 
+/* should be used in the threaded version 
+ *
+ */ 
+
+#ifdef THREAD_VERSION
+static gboolean nsp_insert_idle_text(gpointer user_data)
+{
+  char *text = (char *) user_data;
+  gdk_threads_enter();
+  nsp_tv_print("%s",text);
+  gdk_threads_leave();
+  nsp_textview_awake_for_end_print_text();
+  return FALSE;
+}
+#endif 
+
+/* It is safe to call this function from 
+ * non gtk thread.
+ */
+
+#ifdef THREAD_VERSION
+static int  nsp_print_to_textview_thread(const char *fmt, va_list ap)
+{
+  static char tbuf[1025];
+  int n= vsnprintf(tbuf,1024 , fmt, ap );
+  printf("call idle with text [%s]\n",tbuf);
+  g_idle_add(nsp_insert_idle_text,(gpointer) tbuf);
+  nsp_textview_wait_for_end_print_text();
+  return n;
+}
+#endif 
+
+/* write the prompt prompt in textview */
+
 static void nsp_insert_prompt(const char *prompt)
 {
   GtkTextBuffer *buffer;
@@ -1496,15 +1570,48 @@ static void nsp_insert_prompt(const char *prompt)
 			     &start, &end);
 }
 
+/* utility function for nsp_insert_prompt  */
+
+#ifdef THREAD_VERSION
+static gboolean nsp_insert_idle_prompt(gpointer user_data)
+{
+  char *prompt = (char *) user_data;
+  printf("In the idle\n");
+  gdk_threads_enter();
+  nsp_insert_prompt(prompt);
+  gdk_threads_leave();
+  return FALSE;
+}
+#endif 
+
+/* It is safe to call this function from 
+ * non gtk thread.
+ */
+
+#ifdef THREAD_VERSION
+static void nsp_insert_prompt_thread(const char *prompt)
+{
+  gpointer user_data= (gpointer) prompt;
+  g_idle_add(nsp_insert_idle_prompt,user_data);
+} 
+#endif 
 
 void nsp_create_main_text_view(void)
 {
   Buffer *buffer = create_buffer ();
   view = create_view (buffer);
   buffer_unref (buffer);
+#ifdef THREAD_VERSION
+  SetScilabIO(nsp_print_to_textview_thread);
+#else 
   SetScilabIO(nsp_print_to_textview);
+#endif 
   nsp_set_getchar_fun(Xorgetchar_textview);
   nsp_set_readline_fun(readline_textview);
+#ifdef THREAD_VERSION
+  nsp_textview_init_queue();
+  nsp_textview_init_print_queue();
+#endif
 }
 
 /* insert a graphic file in the textview 
@@ -1683,14 +1790,10 @@ void nsp_textview_destroy()
  * 
  **/
 
-#define TEST_LOOP
-#ifdef TEST_LOOP 
 static GMainLoop *nsp_textview_loop=NULL;
-#endif 
 
 static gint timeout_command (void *v);
 
-#ifdef TEST_LOOP 
 static void  nsp_textview_gtk_main(void)
 {
   guint timer;
@@ -1699,46 +1802,68 @@ static void  nsp_textview_gtk_main(void)
   }    
   timer= g_timeout_add(100,  (GtkFunction) timeout_command ,nsp_textview_loop);
   /* at that point we are in a  GDK_THREADS_ENTER(); */
-  GDK_THREADS_LEAVE();
   g_main_loop_run (nsp_textview_loop);
-  GDK_THREADS_ENTER();
   g_source_remove(timer);
 }
-#else 
-static void  nsp_textview_gtk_main(void)
-{
-  guint timer;
-  timer= g_timeout_add(100,  (GtkFunction) timeout_command ,NULL);
-  /* at that point we are in a  GDK_THREADS_ENTER(); */
-  gtk_main();
-  /* GDK_THREADS_LEAVE(); */
-  g_source_remove(timer);
-}
-#endif 
-
 
 static void  nsp_textview_gtk_main_quit(void)
 {
   /* this one is called by a callback */
-#ifdef TEST_LOOP 
   g_main_loop_quit(nsp_textview_loop);
-#else 
-  gtk_main_quit();
-#endif
 }
 
 static gint timeout_command (void *v)
 {
   if ( checkqueue_nsp_command() == TRUE) 
     {
-      GDK_THREADS_ENTER();
-#ifdef TEST_LOOP 
-      g_main_loop_quit ((GMainLoop *) v);
+#ifdef THREAD_VERSION
+      nsp_textview_awake_for_text();
 #else 
-      gtk_main_quit();
-#endif 
+      GDK_THREADS_ENTER();
+      g_main_loop_quit ((GMainLoop *) v);
       GDK_THREADS_LEAVE();
+#endif 
     }
   return TRUE;
 }
+
+#ifdef THREAD_VERSION
+
+static GAsyncQueue *queue= NULL;
+
+static void nsp_textview_init_queue(void)
+{
+  queue= g_async_queue_new ();
+}
+
+static void nsp_textview_wait_for_text(void) 
+{
+  g_async_queue_pop(queue);
+}
+
+static void nsp_textview_awake_for_text(void) 
+{
+  int x=0;
+  g_async_queue_push(queue,&x);
+}
+
+static GAsyncQueue *pqueue= NULL;
+
+static void nsp_textview_init_print_queue(void)
+{
+  pqueue= g_async_queue_new ();
+}
+
+static void nsp_textview_wait_for_end_print_text(void) 
+{
+  g_async_queue_pop(pqueue);
+}
+
+static void nsp_textview_awake_for_end_print_text(void) 
+{
+  int x=0;
+  g_async_queue_push(pqueue,&x);
+}
+
+#endif 
 
