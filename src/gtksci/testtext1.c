@@ -113,6 +113,7 @@ static int     nsp_print_to_textview(const char *fmt, va_list ap);
 static void    nsp_textview_gtk_main(void);
 static void    nsp_textview_gtk_main_quit(void);
 
+/* #define THREAD_VERSION */
 #ifdef THREAD_VERSION
 static void nsp_insert_prompt_thread(const char *prompt);
 static void nsp_textview_init_queue(void);
@@ -1516,7 +1517,6 @@ static int  nsp_print_to_textview_thread(const char *fmt, va_list ap)
 {
   static char tbuf[1025];
   int n= vsnprintf(tbuf,1024 , fmt, ap );
-  printf("call idle with text [%s]\n",tbuf);
   g_idle_add(nsp_insert_idle_text,(gpointer) tbuf);
   nsp_textview_wait_for_end_print_text();
   return n;
@@ -1553,7 +1553,6 @@ static void nsp_insert_prompt(const char *prompt)
 static gboolean nsp_insert_idle_prompt(gpointer user_data)
 {
   char *prompt = (char *) user_data;
-  printf("In the idle\n");
   gdk_threads_enter();
   nsp_insert_prompt(prompt);
   gdk_threads_leave();
@@ -1734,9 +1733,6 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
   return;
 }
 
-
-
-
 /**
  * nsp_textview_destroy:
  * @void: 
@@ -1745,15 +1741,44 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
  * 
  **/
 
-void nsp_textview_destroy()
+void nsp_textview_destroy_internal(void)
 {
-  if ( nsp_get_in_text_view() == FALSE ) return;
-  if ( view == NULL ) return;
   nsptv_clear_history(view);
   nsptv_buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
   g_free (view);
   view = NULL;
+}
+
+#ifdef THREAD_VERSION
+static gboolean nsptv_idle_destroy(gpointer user_data)
+{
+  GAsyncQueue *queue=  user_data;
+  int x=0;
+  gdk_threads_enter();
+  nsp_textview_destroy_internal();
+  gdk_threads_leave();
+  g_async_queue_push(queue,&x);
+  return FALSE;
+}
+#endif 
+
+/* It is safe to call this function from non gtk thread.
+ */
+void nsp_textview_destroy(void)
+{
+  if ( nsp_get_in_text_view() == FALSE ) return;
+  if ( view == NULL ) return;
+#ifdef THREAD_VERSION
+  {
+    GAsyncQueue *queue= g_async_queue_new ();
+    g_idle_add(nsptv_idle_destroy,(gpointer) queue);
+    g_async_queue_pop(queue);
+    g_async_queue_unref(queue);
+  }
+#else 
+  nsp_textview_destroy_internal();
+#endif 
 }
 
 /**
