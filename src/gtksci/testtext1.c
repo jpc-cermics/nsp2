@@ -1777,7 +1777,9 @@ static void  nsp_textview_gtk_main(void)
   }    
   timer= g_timeout_add(100,  (GtkFunction) timeout_command ,nsp_textview_loop);
   /* at that point we are in a  GDK_THREADS_ENTER(); */
+  GDK_THREADS_LEAVE();
   g_main_loop_run (nsp_textview_loop);
+  GDK_THREADS_ENTER();
   g_source_remove(timer);
 }
 
