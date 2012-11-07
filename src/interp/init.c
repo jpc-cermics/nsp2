@@ -71,6 +71,7 @@ static void set_nsp_home_env(char *nsp_abs_path);
 
 #ifdef THREAD_MAIN_VERSION
 static void *nsp_top_level_loop_thread(void *args);
+GThread *thread1=NULL,*thread2= NULL,*thmain=NULL;
 #endif 
 
 int nsp_init_and_loop(int argc, char **argv,int loop)
@@ -306,13 +307,19 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
    * but we only want to stop on RET_QUIT and RET_EOF 
    * i.e RET_ABORT should not stop. 
    */
-
+  
 #ifdef THREAD_MAIN_VERSION
-  if (!g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error))
+  if (! (thread1= g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error)))
     {
       g_printerr ("Failed to create NO thread: %s\n", error->message);
       return 1;
     }
+  if (!(thread2=g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error)))
+    {
+      g_printerr ("Failed to create NO thread: %s\n", error->message);
+      return 1;
+    }
+  thmain = g_thread_self();
   /* enter the GTK main loop */
   gdk_threads_enter();
   gtk_main();
