@@ -36,7 +36,7 @@
 #include <nsp/gtksci.h>
 #include <nsp/nsptcl.h>
 #include <nsp/system.h>
-#include <nsp/threads.h>
+#include <nsp/nspthreads.h>
 
 /* FIXME: these is to be in a .h file */
 extern void nsp_init_gtk_stack(void);

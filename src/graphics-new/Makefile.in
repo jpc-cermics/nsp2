@@ -84,6 +84,8 @@ Contour-new.o: Contour-new.c ../../src/include/nsp/math.h \
   ../../src/include/nsp/graphics-new/periGtk.h \
   ../../src/include/nsp/graphics-new/Graphics.h
 
+Graphics-IN.o :  ../include/nsp/nspthreads.h
+
 Graphics-IN.o: Graphics-IN.c \
   ../../src/include/nsp/graphics-new/Graphics.h \
   ../../src/include/nsp/machine.h ../../src/include/nsp/config.h \

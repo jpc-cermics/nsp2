@@ -58,6 +58,9 @@ edit.o: gtktextview.c gtksourceview.c
 	@echo "compilation of dumpext.exe"
 	@$(CC) $(CFLAGS) -o ../../bin/dumpexts.exe winDumpExts.o
 
+testtext1.o : ../include/nsp/nspthreads.h
+threads.o :  ../include/nsp/nspthreads.h
+
 # generated with gcc -MMD 
 #--------------------------
 

@@ -19,7 +19,9 @@ struct _nsp_thread_interface {
 };
 
 /* should be moved in config.h */
-/* #define NSP_WITH_MAIN_GTK_THREAD */
+#if 0
+#define NSP_WITH_MAIN_GTK_THREAD 
+#endif
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 extern GThread *thread1,*thread2,*thmain;
