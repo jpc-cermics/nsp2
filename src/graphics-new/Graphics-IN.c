@@ -25,7 +25,7 @@
 #include <stdio.h>
 #include <string.h> 
 
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/smatrix.h> 
@@ -33,10 +33,10 @@
 #include <nsp/interf.h> 
 #include <nsp/command.h> 
 
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/parse.h"
-#include "nsp/gsort-p.h"
-#include "nsp/gtk/gobject.h" /* FIXME: nsp_gtk_eval_function */
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/parse.h>
+#include <nsp/gsort-p.h>
+#include <nsp/gtk/gobject.h> /* FIXME: nsp_gtk_eval_function */
 #include "Plo3dObj.h"
 
 #include <gtk/gtk.h>
@@ -65,7 +65,7 @@
 #include <nsp/fec.h>
 #include <nsp/contour.h> 
 #include <nsp/contour3d.h> 
-
+#include <nsp/nspthreads.h> 
 
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
@@ -6702,55 +6702,11 @@ OpGrTab Graphics_func[]={
   {(char *) 0, NULL}
 };
 
-/* #define THREAD_VERSION */
-#ifdef THREAD_VERSION
-extern GThread *thread1,*thread2,*thmain;
-
-typedef struct _nsp_graphics_threads nsp_graphics_threads;
-struct _nsp_graphics_threads {
-  Stack *stack;
-  function *fun;
-  int i,rhs, opt, lhs, ans;
-  GAsyncQueue *queue;
-};
-
-static gboolean nsp_interface_idle_in_main_thread(gpointer user_data)
-{
-  nsp_graphics_threads *data = user_data;
-  gdk_threads_enter();
-  printf("-->execution dans thread main de l'interface %d\n",data->i);
-  data->ans = (*(data->fun))(*(data->stack), data->rhs, data->opt, data->lhs);
-  gdk_threads_leave();
-  printf("<--execution dans thread main de l'interface %d\n",data->i);
-  g_async_queue_push(data->queue,data);
-  return FALSE;
-}
-
-int nsp_interface_executed_in_main_thread(int i, Stack *stack, int rhs, int opt, int lhs)
-{
-  static GAsyncQueue *queue = NULL;
-  nsp_graphics_threads user_data = {stack,Graphics_func[i].fonc,i,rhs,opt,lhs,0,queue};
-  if ( queue == NULL)  queue= g_async_queue_new ();
-  user_data.queue = queue;
-  g_idle_add( nsp_interface_idle_in_main_thread,(gpointer) &user_data);
-  g_async_queue_pop(user_data.queue);
-  printf("-->déblocage de la queue avec %d\n",user_data.ans);
-  return user_data.ans;
-}
-
-#endif 
-
 int Graphics_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-#ifdef THREAD_VERSION
-  if ( g_thread_self() == thmain ) 
-    {
-      return (*(Graphics_func[i].fonc))(stack,rhs,opt,lhs);
-    }
-  else
-    {
-      return nsp_interface_executed_in_main_thread(i,&stack,rhs,opt,lhs);
-    }
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,Graphics_func[i].fonc,
+					       &stack,rhs,opt,lhs);
 #else 
   return (*(Graphics_func[i].fonc))(stack,rhs,opt,lhs);
 #endif 

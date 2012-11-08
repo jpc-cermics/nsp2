@@ -76,6 +76,16 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
 {
   static GAsyncQueue *queue = NULL;
   nsp_thread_interface data = {stack,f,i,rhs,opt,lhs,0,queue};
+  /* checks if we are already in gtk thread */
+  if ( g_thread_self() == thmain ) 
+    {
+      int n;
+      gdk_threads_enter();  
+      n= (*f)(stack,rhs,opt,lhs);
+      gdk_threads_leave();  
+      return n;
+    }
+  
   if ( queue == NULL) 
     {
       queue= g_async_queue_new ();
