@@ -77,11 +77,11 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
   static GAsyncQueue *queue = NULL;
   nsp_thread_interface data = {stack,f,i,rhs,opt,lhs,0,queue};
   /* checks if we are already in gtk thread */
-  if ( g_thread_self() == thmain ) 
+  if ( g_thread_self() == nsp_gtk_main_thread())
     {
       int n;
       gdk_threads_enter();  
-      n= (*f)(stack,rhs,opt,lhs);
+      n= (*f)(*stack,rhs,opt,lhs);
       gdk_threads_leave();  
       return n;
     }
@@ -95,4 +95,22 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
   g_async_queue_pop(data.queue);
   printf("-->Quit the async queue returning %d\n",data.ans);
   return data.ans;
+}
+
+/**
+ * nsp_gtk_main_thread:
+ * @void: 
+ * 
+ * return the value of the main gtk thread.
+ * 
+ * Returns: a #GThread pointer 
+ **/
+
+GThread *nsp_gtk_main_thread(void)
+{
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return thmain;
+#else 
+  return NULL;
+#endif 
 }

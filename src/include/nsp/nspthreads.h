@@ -26,7 +26,9 @@ extern GThread *thread1,*thread2,*thmain;
 #endif 
 
 extern void nsp_check_threads(const char *str);
-extern int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rhs, int opt, int lhs);
+extern GThread *nsp_gtk_main_thread(void);
+extern int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, 
+						 int rhs, int opt, int lhs);
 
 #endif 
 

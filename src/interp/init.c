@@ -36,6 +36,7 @@
 #include <nsp/gtksci.h>
 #include <nsp/nsptcl.h>
 #include <nsp/system.h>
+#include <nsp/threads.h>
 
 /* FIXME: these is to be in a .h file */
 extern void nsp_init_gtk_stack(void);
@@ -67,16 +68,15 @@ static void set_nsp_home_env(char *nsp_abs_path);
 #endif 
 
 /* this is for a threaded main in nsp: still experimental */
-/* #define THREAD_MAIN_VERSION */
 
-#ifdef THREAD_MAIN_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static void *nsp_top_level_loop_thread(void *args);
 GThread *thread1=NULL,*thread2= NULL,*thmain=NULL;
 #endif 
 
 int nsp_init_and_loop(int argc, char **argv,int loop)
 {
-#ifdef THREAD_MAIN_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   GError *error = NULL;
 #endif 
   int use_stdlib = TRUE;
@@ -191,7 +191,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 
   nsp_set_in_text_view(use_textview);
 
-#if defined(THREAD_MAIN_VERSION) || defined(ACTIVATE_THREAD)
+#if defined(NSP_WITH_MAIN_GTK_THREAD) || defined(ACTIVATE_THREAD)
   /* init threads but useless after version 2.32 
    * causes errors on win32 versions 
    */
@@ -308,7 +308,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
    * i.e RET_ABORT should not stop. 
    */
   
-#ifdef THREAD_MAIN_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   if (! (thread1= g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error)))
     {
       g_printerr ("Failed to create NO thread: %s\n", error->message);
@@ -337,7 +337,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   return 0;
 }
 
-#ifdef THREAD_MAIN_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static void *nsp_top_level_loop_thread(void *args)
 {
   int rep;
