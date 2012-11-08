@@ -26,15 +26,7 @@
 static void error(Stack *stack,char *fmt,...);
 
 NspObject *S[STACK_SIZE];
-
-/*
- * Info on Stack 
- */
-
-void StackInfo(void)
-{
-  
-}
+Stack SciStack={0,NULL};
 
 void InitStack()
 {
@@ -60,7 +52,7 @@ void nsp_init_stack(Stack *stack,NspObject **S)
   stack->val->current_exec_dir = calloc(FSIZE+1,sizeof(char));
 }
 
-Stack SciStack={0,NULL};
+
 
 /* store object o at position pos (relative from first ) */ 
 

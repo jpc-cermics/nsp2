@@ -2,7 +2,7 @@
 #define NSP_INC_TYPE_OBJECT 
 
 /*
- * This Software is GPL (Copyright ENPC 1998-2011) 
+ * This Software is GPL (Copyright ENPC 1998-2012) 
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
@@ -241,10 +241,8 @@ struct _Stack {
 } ;
 
 #define STACK_SIZE 50000
-extern NspObject *S[STACK_SIZE];    /* this could be malloced XXX */
 extern Stack SciStack ;
 
-extern void StackInfo (void); 
 extern void InitStack (void); 
 extern void nsp_init_stack(Stack *stack,NspObject **S);
 
