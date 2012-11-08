@@ -38,18 +38,14 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#include <nsp/machine.h>
-#include <nsp/object.h> 
-#include <nsp/hash.h> 
+#include <nsp/nsp.h>
 #include <nsp/file.h> 
 #include <nsp/smatrix.h> 
-#include <nsp/math.h>
-#include <nsp/tokenizer.h> 
 #include <nsp/gtksci.h> 
 #include <nsp/command.h> 
 #include <nsp/sciio.h>
-#include <nsp/interf.h>
 #include <nsp/eval.h>
+#include <nsp/nspthreads.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -119,8 +115,7 @@ static void    nsp_textview_gtk_main(void);
 static void    nsp_textview_gtk_main_quit(void);
 static View *nsptv_get_view(const char *str);
 
-/* #define THREAD_VERSION */
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static void nsp_insert_prompt_thread(View *view,const char *prompt);
 static void nsp_textview_wait_for_text(View *view);
 static void nsp_textview_awake_for_text(View *view);
@@ -439,7 +434,7 @@ static void nsptv_key_press_return(View *view,int stop_signal)
   if ( stop_signal == TRUE )
     g_signal_stop_emission_by_name (view->text_view, "key_press_event");
   view->nsp_expr= search_string;
-#ifdef THREAD_VERSION  
+#ifdef NSP_WITH_MAIN_GTK_THREAD  
   nsp_textview_awake_for_text(view);
 #else 
   nsp_textview_gtk_main_quit();
@@ -739,7 +734,7 @@ static int Xorgetchar_textview(void)
       return val1;
     }
   
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   nsp_textview_wait_for_text(view);
 #else 
   nsp_textview_gtk_main();
@@ -922,14 +917,14 @@ static char *readline_textview_internal(const char *prompt)
   
   if ( use_prompt == 1) 
     {
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
       nsp_insert_prompt_thread(view,prompt);
 #else 
       nsp_insert_prompt(view,prompt);
 #endif
     }
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   nsp_textview_wait_for_text(view);
 #else 
   nsp_textview_gtk_main();
@@ -1408,7 +1403,7 @@ static View *nsptv_create_view (Buffer *buffer)
   /* used to store string to pass to nsp interpreter*/
   view->nsp_expr=NULL; 
   /* initialize the queues */
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   view->read_queue= g_async_queue_new ();
   view->write_queue= g_async_queue_new ();
 #else 
@@ -1423,7 +1418,7 @@ static View *nsptv_create_view (Buffer *buffer)
 /* print to the textview 
  *
  */
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static int nsp_tv_print(View *view,const char *fmt, ...)
 {
   int n;
@@ -1524,7 +1519,7 @@ static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list a
  *
  */ 
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static gboolean nsp_insert_idle_text(gpointer user_data)
 {
   View *view = (View *) user_data;
@@ -1541,7 +1536,7 @@ static gboolean nsp_insert_idle_text(gpointer user_data)
  * non gtk thread.
  */
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static int  nsp_print_to_textview_thread(const char *fmt, va_list ap)
 {
   char tbuf[1025];
@@ -1580,7 +1575,7 @@ static void nsp_insert_prompt(View *view,const char *prompt)
 
 /* utility function for nsp_insert_prompt  */
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static gboolean nsp_insert_idle_prompt(gpointer user_data)
 {
   View *view = (View *) user_data;
@@ -1596,7 +1591,7 @@ static gboolean nsp_insert_idle_prompt(gpointer user_data)
  * non gtk thread.
  */
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static void nsp_insert_prompt_thread(View *view,const char *prompt)
 {
   view->user_data= (gpointer) prompt;
@@ -1613,7 +1608,7 @@ View *nsp_create_main_text_view_(void)
   Buffer *buffer = nsptv_create_buffer ();
   view = nsptv_create_view (buffer);
   nsptv_buffer_unref (buffer);
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   SetScilabIO(nsp_print_to_textview_thread);
 #else 
   SetScilabIO(nsp_print_to_textview);
@@ -1623,7 +1618,7 @@ View *nsp_create_main_text_view_(void)
   return view;
 }
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 void nsp_create_main_text_view(void)
 {
   views[0] = nsp_create_main_text_view_();
@@ -1826,7 +1821,7 @@ void nsp_textview_destroy_internal(void)
   view = NULL;
 }
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 static gboolean nsptv_idle_destroy(gpointer user_data)
 {
   GAsyncQueue *queue=  user_data;
@@ -1846,7 +1841,7 @@ void nsp_textview_destroy(void)
   View *view= nsptv_get_view("nsp_textview_destroy");
   if ( nsp_get_in_text_view() == FALSE ) return;
   if ( view == NULL ) return;
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
   {
     GAsyncQueue *queue= g_async_queue_new ();
     g_idle_add(nsptv_idle_destroy,(gpointer) queue);
@@ -1902,7 +1897,7 @@ static gint timeout_command (void *v)
   return TRUE;
 }
 
-#ifdef THREAD_VERSION
+#ifdef NSP_WITH_MAIN_GTK_THREAD
 
 static gint nsptv_timeout_command_thread(gpointer user_data)
 {
