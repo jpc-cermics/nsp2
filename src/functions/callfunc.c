@@ -29,6 +29,7 @@
 #include <nsp/interf.h>
 #include <nsp/addinter.h>
 #include <nsp/callfunc.h>
+#include <nsp/seval.h>
 
 extern  sci_interface  Matrix_Interf   ;extern  interface_info  Matrix_Interf_Info   ;
 extern  sci_interface  SMatrix_Interf  ;extern  interface_info  SMatrix_Interf_Info  ;
@@ -332,7 +333,6 @@ InterfTab Interfaces[]={
  */
 
 static int show_returned_positions(Stack stack,int pos);
-extern int reorder_stack(Stack stack, int ret) ;
 
 /* Only used in DEBUG Mode */
 #ifdef DEBUG_STACK
@@ -430,11 +430,11 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
 	  (*O)->ret_pos= -1;
 	  O++;
 	}
-      reorder_stack(stack,0);
+      nsp_reorder_stack(stack,0);
       return ret;
     }
 
-  ret = reorder_stack(stack,ret);
+  ret = nsp_reorder_stack(stack,ret);
   
   if ( ret == RET_BUG ) 
     {
@@ -473,11 +473,11 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 	  (*O)->ret_pos= -1;
 	  O++;
 	}
-      reorder_stack(stack,0);
+      nsp_reorder_stack(stack,0);
       return RET_BUG;
     }
 
-  ret = reorder_stack(stack,ret);
+  ret = nsp_reorder_stack(stack,ret);
   
   if ( ret == RET_BUG ) 
     {
@@ -489,7 +489,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
 }
 
 
-int  reorder_stack(Stack stack, int ret)
+int  nsp_reorder_stack(Stack stack, int ret)
 {
   NspObject **O1=stack.val->S+stack.first, **obj=stack.val->S+stack.first-1;
   NspObject*O,*O2;
@@ -532,7 +532,7 @@ int  reorder_stack(Stack stack, int ret)
 	      if ( O->ret_pos != -1 )
 		{
 		  /* XXXX should not get there */
-		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", NspFname(stack));
+		  fprintf(stderr,"Something wrong in nsp_reorder_stack for %s: a pointer is returned \n", NspFname(stack));
 		  exit(1);
 		}
 	      /* O is an optional argument,O2 is the value */
@@ -546,7 +546,7 @@ int  reorder_stack(Stack stack, int ret)
 	      if ( O->ret_pos != -1 )
 		{
 		  /* XXXX should not get there */
-		  fprintf(stderr,"Something wrong in reorder_stack for %s: a pointer is returned \n", NspFname(stack));
+		  fprintf(stderr,"Something wrong in nsp_reorder_stack for %s: a pointer is returned \n", NspFname(stack));
 		  exit(1);
 		}
 	      /* O points to O2 */

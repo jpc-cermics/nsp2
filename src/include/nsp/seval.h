@@ -9,9 +9,12 @@
 
 extern int nsp_eval(PList L1,Stack, int first, int rhs,int lhs,int display);
 extern int nsp_eval_arg(PList L,Stack *stack, int i,int rhs,int lhs,int display);
-extern int nsp_eval_func(NspObject *O,const char *str,int msuffix, Stack, int first, int rhs, int opt, int lhs);
-extern int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, accelerated_ops tab_id,Stack stack, int first, int rhs, int opt, int lhs);
-extern int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode, Stack stack, int first, int rhs, int opt, int lhs);
+extern int nsp_eval_func(NspObject *O,const char *str,int msuffix, Stack stack, 
+			 int first, int rhs, int opt, int lhs);
+extern int nsp_eval_maybe_accelerated_op(char *opname, int msuffix, accelerated_ops tab_id,
+					 Stack stack, int first, int rhs, int opt, int lhs);
+extern int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode, Stack stack, int first,
+					    int rhs, int opt, int lhs);
 extern int nsp_eval_dotplus(Stack, int first, int rhs, int opt, int lhs);
 extern int nsp_eval_macro(NspObject *OF,Stack,int first,int rhs,int opt,int lhs);
 extern int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs);
@@ -28,7 +31,7 @@ extern void nsp_build_funcname(const char *str,Stack *stack,int first,int rhs,ch
 extern void nsp_build_funcnameij(const char *str,Stack *stack,int first,int i,int j,char *name);
 extern void nsp_void_seq_object_destroy(Stack stack,int from, int to);
 
-extern int reorder_stack(Stack stack, int ret) ;
+extern int nsp_reorder_stack(Stack stack, int ret) ;
 extern int nsp_parser_get_line(PList L);
 
 #endif 

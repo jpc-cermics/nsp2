@@ -19,9 +19,9 @@ Eval.o: Eval.c ../include/nsp/nsp.h \
  ../include/nsp/eval.h ../include/nsp/system.h \
  ../include/nsp/libstab.h ../include/nsp/seval.h \
  ../include/nsp/interf.h ../include/nsp/datas.h \
- ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../include/nsp/nsptcl.h ../include/nsp/dstring.h \
- ../include/nsp/frame.h
+ ../include/nsp/accelerated_tab.h ../include/nsp/nsptcl.h \
+ ../include/nsp/dstring.h ../include/nsp/frame.h \
+ ../include/nsp/gtksci.h
 FuncEval.o: FuncEval.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -42,9 +42,8 @@ FuncEval.o: FuncEval.c ../include/nsp/nsp.h \
  ../include/nsp/parse.h ../include/nsp/eval.h \
  ../include/nsp/matint.h ../include/nsp/accelerated_tab.h \
  ../include/nsp/interf.h ../include/nsp/frame.h \
- ../include/nsp/seval.h ../include/nsp/interf.h \
- ../include/nsp/datas.h ../include/nsp/libstab.h \
- ../include/nsp/funtab.h
+ ../include/nsp/seval.h ../include/nsp/datas.h \
+ ../include/nsp/libstab.h ../include/nsp/funtab.h
 LibsTab.o: LibsTab.c  ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -63,10 +62,9 @@ LibsTab.o: LibsTab.c  ../include/nsp/nsp.h \
  ../include/nsp/file.h ../include/nsp/function.h \
  ../include/nsp/interf.h ../include/nsp/datas.h \
  ../include/nsp/system.h ../include/nsp/seval.h \
- ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../include/nsp/eval.h ../include/nsp/plist.h \
- ../include/nsp/funtab.h ../include/nsp/callfunc.h \
- ../include/nsp/addinter.h
+ ../include/nsp/accelerated_tab.h ../include/nsp/eval.h \
+ ../include/nsp/plist.h ../include/nsp/funtab.h \
+ ../include/nsp/callfunc.h ../include/nsp/addinter.h
 PList.o: PList.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -114,10 +112,10 @@ Parse-IN.o: Parse-IN.c ../include/nsp/nsp.h \
  ../include/nsp/system.h ../include/nsp/plist.h \
  ../include/nsp/datas.h ../include/nsp/libstab.h \
  ../include/nsp/eval.h ../include/nsp/seval.h \
- ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../include/nsp/parse.h ../include/nsp/nsptcl.h \
- ../include/nsp/stack.h ../include/nsp/dstring.h \
- ../include/nsp/ast.h ../include/nsp/astv.h
+ ../include/nsp/accelerated_tab.h ../include/nsp/parse.h \
+ ../include/nsp/nsptcl.h ../include/nsp/stack.h \
+ ../include/nsp/dstring.h ../include/nsp/ast.h \
+ ../include/nsp/astv.h
 Parse.o: Parse.c  ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -134,8 +132,7 @@ Parse.o: Parse.c  ../include/nsp/nsp.h \
  ../include/nsp/datas.h ../include/nsp/parse.h \
  ../include/nsp/eval.h ../include/nsp/system.h \
  ../include/nsp/seval.h ../include/nsp/interf.h \
- ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../include/nsp/frame.h
+ ../include/nsp/accelerated_tab.h ../include/nsp/frame.h
 Parse_check.o: Parse_check.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -206,12 +203,18 @@ init.o: init.c ../include/nsp/nsp.h \
  ../include/nsp/parse.h ../include/nsp/eval.h \
  ../include/nsp/seval.h ../include/nsp/interf.h \
  ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/libstab.h \
- ../include/nsp/version.h \
+ ../include/nsp/libstab.h ../include/nsp/version.h \
         ../include/nsp/gtksci.h \
  ../include/nsp/nsptcl.h ../include/nsp/stack.h \
  ../include/nsp/dstring.h ../include/nsp/system.h \
  ../include/nsp/nspthreads.h
+lsci.o: lsci.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h
 nsp_io.o: nsp_io.c ../include/nsp/math.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \

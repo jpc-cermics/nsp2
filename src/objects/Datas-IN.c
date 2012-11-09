@@ -80,7 +80,7 @@ static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
 	{
 	  /* here NthObj(i) can be an object of the calling frame : which can 
 	   * be destroyed by nsp_frame_move_up_object so we do not want to 
-	   * look at this object again in reorder_stack
+	   * look at this object again in nsp_reorder_stack
 	   * Ex:     a=5;function f();resume(a);endfunction
 	   *         f() 
 	   */

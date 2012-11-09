@@ -308,8 +308,7 @@ void axis2d(nsp_gcscale *scales,double *alpha, double *initpoint, double *size, 
   initpoint1[1]= YScale(scales,initpoint[1]);
 }
 
-/* Changement interactif d'echelle */
 
-extern int EchCheckSCPlots();
+
 
 

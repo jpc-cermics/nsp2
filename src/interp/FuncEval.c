@@ -19,7 +19,6 @@
  * Caling functions or extractions for variables 
  *--------------------------------------------------------------------------*/
 
-#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -47,7 +46,6 @@
 #include <nsp/libstab.h> 
 #include <nsp/funtab.h>
 
-/* FIXME */
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
 static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
 static int SearchInOPt(char *str, Stack stack, int first, int nargs,int *wrong_pos);
@@ -173,7 +171,7 @@ int nsp_eval_func(NspObject *O,const char *str, int msuffix, Stack stack, int fi
       /* A revoir XXXXX */
       FuncEvalErrorMess(str,&stack,first,nb_suffix);
       /*clean the stack */
-      reorder_stack(stack,0);
+      nsp_reorder_stack(stack,0);
       return RET_BUG;
     }
 }
@@ -211,7 +209,7 @@ int nsp_eval_dotplus(Stack stack, int first, int rhs, int opt, int lhs)
 #endif 
 #ifdef TEST2
       ret = int_mxdadd(stack,rhs,opt,lhs); 
-      return reorder_stack(stack,ret);
+      return nsp_reorder_stack(stack,ret);
 #endif
     }
   else
@@ -266,12 +264,12 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
 	  (*O)->ret_pos= -1;
 	  O++;
 	}
-      reorder_stack(stack,0);
+      nsp_reorder_stack(stack,0);
       stack.val->S[stack.first-1]= NULLOBJ; 
       return RET_BUG;
     }
   
-  ret = reorder_stack(stack,ret);
+  ret = nsp_reorder_stack(stack,ret);
   
   if ( ret == RET_BUG ) 
     {
@@ -614,7 +612,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
   if ((rep= MacroEval_Base(OF,stack,first,rhs,opt,lhs,0) ) == RET_BUG) 
     {
       /*clean the stack */
-      reorder_stack(stack,0);
+      nsp_reorder_stack(stack,0);
     }
   /*Closing the frame **/
   nsp_frame_delete();

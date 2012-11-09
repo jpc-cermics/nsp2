@@ -2930,7 +2930,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 		Lf->arity = (Int << 12 )  + Num;
 	      else 
 		{
-		  reorder_stack(stack,0);
+		  nsp_reorder_stack(stack,0);
 		  return RET_BUG;
 		}
 	    }
