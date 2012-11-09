@@ -3398,7 +3398,7 @@ void nsp_void_seq_object_destroy(Stack stack,int from, int to)
 int nsp_eval_maybe_accelerated_op(char *opname, int msuffix,accelerated_ops tab_id,
 				  Stack stack, int first, int rhs, int opt, int lhs)
 {
-  AcceleratedTab *tab = &accelerated_tabs[tab_id];
+  const AcceleratedTab *tab = nsp_get_accelerated_tab(tab_id);
   int id1, id2;
   function *the_func = NULL;
 
@@ -3448,11 +3448,11 @@ int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode,
 {
   int id1, id2;
   NspObject *O1=NULLOBJ;
-  AcceleratedTab *OpTab;
+  const AcceleratedTab *OpTab;
   function *the_func = NULL;
 
   if (  NOTCODE_OP < opcode && opcode < LASTCODE_OP  
-	&&  (OpTab = &accelerated_tabs[opcode - NOTCODE_OP + setrowscols_tab]) != NULL 
+	&&  ((OpTab = nsp_get_accelerated_tab(opcode - NOTCODE_OP + setrowscols_tab)) != NULL )
 	&&  OpTab->length != 0 )
     {
       /* acceleration supported for this operator (at least on one type) */

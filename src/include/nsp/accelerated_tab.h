@@ -1,11 +1,17 @@
 #ifndef NSP_INC_ACCELERATEDTAB
 #define NSP_INC_ACCELERATEDTAB
 
-#include "interf.h"   /* ici pour le type function */
+#include <nsp/nsp.h>  
+#include <nsp/interf.h>   /* need the definition of function */
 
-/* enum codes for accelerated ops */
+/* enum codes for accelerated ops: 
+ * these values should be shorter than NOTCODE_OP 
+ * defined in plisttoken.h 
+ */
 
-typedef enum { 
+typedef enum _accelerated_ops accelerated_ops;
+
+enum _accelerated_ops { 
   undef_tab=-1,
   concatr_tab=0, 
   concatd_tab=1,
@@ -18,7 +24,7 @@ typedef enum {
   deletecols_tab=8,
   deleterows_tab=9,
   tozero_tab=10,
-  setrowscols_tab=11} accelerated_ops;
+  setrowscols_tab=11};
 
 /**
  * AcceleratedTab: 
@@ -36,17 +42,16 @@ typedef struct _AcceleratedTab AcceleratedTab;
 
 struct _AcceleratedTab
 {
-  int ops_id; /* this should be equal to the indice in table */
+  const int ops_id; /* this should be equal to the indice in table */
   const char *opname;
-  int arity;
+  const int arity;
   const char **accelerated_types;
-  int length;
+  const int length;
   function **func;
 } ;
 
-extern AcceleratedTab accelerated_tabs[];
-
-extern function *nsp_get_fast_function(AcceleratedTab *tab, int type_id);
 extern int nsp_init_accelerated_tabs(void);
+extern function *nsp_get_fast_function(const AcceleratedTab *tab, int type_id);
+extern const AcceleratedTab *nsp_get_accelerated_tab(accelerated_ops tab_id);
 
 #endif 

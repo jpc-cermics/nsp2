@@ -25,12 +25,18 @@
 #include <nsp/plistc.h>
 #include <nsp/type.h> 
 
+static int init_func_tab_internal(AcceleratedTab *tab);
+static int get_type_max_id(const char *table[]);
 static const char *xmatint_types[]={ "Mat","SMat","BMat","PMat","Cells",NULL};
 static const char *xnum_and_str_types[]={ "Mat","SMat",NULL};
 static const char *xnum_types[]={ "Mat",NULL};
 static const char *xbool_types[]={ "BMat",NULL};
 
-AcceleratedTab accelerated_tabs[] =
+/* this table should be static and initialized once 
+ * in a multi-thread version
+ */
+
+static AcceleratedTab accelerated_tabs[] =
   {
     /* accelerated functions */
     { concatr_tab,     "concatr",     2,  xmatint_types, 0, NULL},
@@ -87,25 +93,38 @@ AcceleratedTab accelerated_tabs[] =
     { SEQOR,             NULL,         1,  NULL, 0, NULL},   
     { LT_OP,             NULL,         2,  xnum_and_str_types, 0, NULL},
     { GT_OP,             NULL,         2,  xnum_and_str_types, 0, NULL},
-    { undef_tab},
+    { undef_tab}, /* tag to detect the end */
   };
 
+/**
+ * nsp_init_accelerated_tabs:
+ * @void: 
+ * 
+ * Initialize the association table which is used to get 
+ * function pointers from a function name and the types of the arguments.
+ * 
+ * Return value: %OK or %FAIL
+ **/
 
-static int get_type_max_id(const char *table[])
+int nsp_init_accelerated_tabs(void)
 {
-  int type_id=nsp_no_type_id ;
-  const char **str = table ;
-  while ( *str != NULL) 
+  int i=0; 
+  AcceleratedTab *tab = accelerated_tabs;
+  while ( tab->ops_id != undef_tab ) 
     {
-      NspTypeBase *type = nsp_get_type_from_name(*str);
-      if ( type_id < type->id) type_id = type->id;
-      str++;
+      if ( i != tab->ops_id && i != tab->ops_id - NOTCODE_OP + setrowscols_tab) 
+	{
+	  Scierror("Warning: accelerated table is badly filled at position %d\n",i);
+	  exit(1);
+	}
+      if ( init_func_tab_internal(tab) == FAIL ) return FAIL;
+      tab++;
+      i++;
     }
-  return type_id;
+  return OK;
 }
 
-
-static int init_func_tab1(AcceleratedTab *tab)
+static int init_func_tab_internal(AcceleratedTab *tab)
 {
   int i, Int, Num;
   char op_typed[NAME_MAXL], *op, *name,  *nothing;
@@ -123,7 +142,7 @@ static int init_func_tab1(AcceleratedTab *tab)
   /* allocate func array and set to zero */
   if ( (tab->func=calloc(tab->length, sizeof(function *))) == NULL )
     {
-      Sciprintf("Warning: enable to allocate the %s accelerated func tab\n",tab->opname);
+      Sciprintf("Warning: unable to allocate the %s accelerated func tab\n",tab->opname);
       return FAIL;
     }
 
@@ -161,38 +180,18 @@ static int init_func_tab1(AcceleratedTab *tab)
   return OK;
 }
 
-
-/**
- * nsp_init_accelerated_tabs:
- * @void: 
- * 
- * Initialize static tables which contains functions 
- * pointers associated to specific data types. 
- * 
- * Return value: %OK or %FAIL
- **/
-
-int nsp_init_accelerated_tabs(void)
+static int get_type_max_id(const char *table[])
 {
-  int i=0; 
-  AcceleratedTab *tab; 
-
-  tab= accelerated_tabs;
-  while ( tab->ops_id != undef_tab ) 
+  int type_id=nsp_no_type_id ;
+  const char **str = table ;
+  while ( *str != NULL) 
     {
-      if ( i != tab->ops_id && i != tab->ops_id - NOTCODE_OP + setrowscols_tab) 
-	{
-	  Scierror("Warning: accelerated table is badly filled at position %d\n",i);
-	  exit(1);
-	}
-      if ( init_func_tab1(tab) == FAIL ) return FAIL;
-      tab++;
-      i++;
+      NspTypeBase *type = nsp_get_type_from_name(*str);
+      if ( type_id < type->id) type_id = type->id;
+      str++;
     }
-  return OK;
+  return type_id;
 }
-
-
 
 /**
  * nsp_get_fast_function:
@@ -205,7 +204,22 @@ int nsp_init_accelerated_tabs(void)
  * Returns: %NULL or a #function.
  **/
 
-function *nsp_get_fast_function(AcceleratedTab *tab, int type_id)
+function *nsp_get_fast_function(const AcceleratedTab *tab, int type_id)
 {
   return ( type_id > tab->length ) ? NULL : tab->func[type_id-1];
+}
+
+
+/**
+ * nsp_get_accelerated_tab:
+ * @tab_id: an integer 
+ * 
+ * returns the accelerated table associated to operation @tab_id
+ * 
+ * Returns: an #AcceleratedTab
+ **/
+
+const AcceleratedTab *nsp_get_accelerated_tab(accelerated_ops tab_id)
+{
+  return (const AcceleratedTab *) accelerated_tabs + tab_id;
 }
