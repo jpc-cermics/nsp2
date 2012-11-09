@@ -42,7 +42,7 @@
 #include <nsp/libstab.h>
 #include <nsp/seval.h>
 #include <nsp/nsptcl.h>
-#include "../objects/frame.h" 
+#include <nsp/frame.h> 
 
 /* XXX */
 extern int Sci_Help(char *mandir,char *locale,char *help_file) ;

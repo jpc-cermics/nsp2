@@ -40,13 +40,12 @@
 #include <nsp/ivect.h> 
 #include <nsp/scalexp.h> 
 #include <nsp/type.h> 
-
-#include "nsp/interf.h"
-#include "nsp/plisttoken.h" /*for name_maxl **/
-#include "nsp/stack.h" 
-#include "nsp/parse.h" 
-#include "../objects/frame.h" /* XXX */
-#include "nsp/gsort-p.h" 
+#include <nsp/interf.h>
+#include <nsp/plisttoken.h> /*for name_maxl **/
+#include <nsp/stack.h> 
+#include <nsp/parse.h> 
+#include <nsp/frame.h> 
+#include <nsp/gsort-p.h> 
 
 static int nsp_scalexp_byte_comp(NspScalExp *Se,int check);
 static NspSMatrix *nsp_expr_get_vars(PList L1,NspSMatrix *extra_names);

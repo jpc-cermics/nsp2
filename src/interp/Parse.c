@@ -22,14 +22,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-
 #include <stdio.h>
 #include <errno.h>
 #include <glib.h>
 
-#include "nsp/math.h"
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/bhash.h> 
@@ -38,12 +35,11 @@
 #include <nsp/list.h> 
 #include <nsp/file.h> 
 #include <nsp/ast.h> 
-
-#include "nsp/datas.h"
-#include "nsp/parse.h"
+#include <nsp/datas.h>
+#include <nsp/parse.h>
 #include <nsp/system.h> /* FSIZE */
-#include "nsp/seval.h"
-#include "../objects/frame.h" /* to be moved in include */
+#include <nsp/seval.h>
+#include <nsp/frame.h>
 
 #include <signal.h>
 #include <setjmp.h>
