@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -133,8 +133,8 @@ int nsp_graphic_new_cairo(GtkWidget *win,GtkWidget *box, int v2,int *wdim,int *w
  *
  */ 
 
-#include "../functions/callfunc.h" 
-#include "../functions/FunTab.h"
+#include <nsp/callfunc.h>
+#include <nsp/funtab.h>
 
 extern void Graphics_Interf_Info(int i, char **fname, function (**f));
 extern void GraphicsOld_Interf_Info(int i, char **fname, function (**f));
