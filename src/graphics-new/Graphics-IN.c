@@ -21,7 +21,6 @@
  * interface for nsp 
  *--------------------------------------------------------------------------*/
 
-#include <math.h>
 #include <stdio.h>
 #include <string.h> 
 
@@ -32,6 +31,7 @@
 #include <nsp/plist.h> 
 #include <nsp/interf.h> 
 #include <nsp/command.h> 
+#include <nsp/gtksci.h> 
 
 #include <nsp/graphics-new/Graphics.h>
 #include <nsp/parse.h>
@@ -5755,19 +5755,15 @@ static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int
  * not the perfect place to insert this interface XXX ...
  *---------------------------------------------------*/
 
-extern void Sci_Help(char *,char *,char *);
-
 static int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
 {
-#if defined(WITH_GTKHTML) || defined(HAVE_WEBKIT) 
   int i;
   char *str[3]={NULL,NULL,NULL};
   CheckRhs(0,1);
   for (i=0; i < rhs ; i++) {
     if ((str[i] = GetString(stack,i+1)) == (char*)0) return RET_BUG;
   }
-  Sci_Help(NULL,NULL,str[0]);
-#endif 
+  nsp_help_browser(NULL,NULL,str[0]);
   return 0;
 }
 

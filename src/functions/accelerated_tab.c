@@ -32,8 +32,9 @@ static const char *xnum_and_str_types[]={ "Mat","SMat",NULL};
 static const char *xnum_types[]={ "Mat",NULL};
 static const char *xbool_types[]={ "BMat",NULL};
 
-/* this table should be static and initialized once 
- * in a multi-thread version
+/* this table should be initialized once 
+ * in a multi-thread version by calling 
+ * the function  nsp_init_accelerated_tabs
  */
 
 static AcceleratedTab accelerated_tabs[] =

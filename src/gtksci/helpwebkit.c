@@ -28,19 +28,14 @@
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-/* XXXX */
-#include "nsp/config.h"
-#include "nsp/math.h"
-#include "nsp/sciio.h"
-#include "nsp/gtksci.h"
-#include "queue.h"
-#include "uri.h"
+#include <nsp/nsp.h>
+#include <nsp/gtksci.h>
 #include <nsp/system.h>
-#include "../system/regexp.h"
-#include <nsp/object.h> 
 #include <nsp/hash.h> 
 #include <nsp/file.h> 
 #include <nsp/smatrix.h> 
+
+#include "../system/regexp.h"
 #include "eggfindbar.h"
 
 #define N_(x) x
@@ -56,8 +51,8 @@
 #define FALSE (0)
 #endif 
 
-#include "nsp/interf.h"
-#include "nsp/nsptcl.h"
+#include <nsp/interf.h>
+#include <nsp/nsptcl.h>
 
 /* XXX*/
 extern GtkWidget *egg_find_bar_new (void);
@@ -548,7 +543,7 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 
 int nsp_help_topic(const char *topic,char *buf);
 
-int Sci_Help(char *mandir,char *locale,char *help_file) 
+int nsp_help_browser(char *mandir,char *locale,char *help_file) 
 {
   int free = FALSE;
   char buf[FSIZE+32];

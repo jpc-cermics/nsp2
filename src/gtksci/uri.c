@@ -19,11 +19,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/* this file is used when helpbrowser.c is used */
 
 #include <string.h>
-
 #include <glib.h>
-
 #include "uri.h"
 
 /*  #define URI_DEBUG 1  */
@@ -313,80 +312,3 @@ uri_to_abs (const gchar *uri,
   return retval;
 }
 
-#if 0
-RFC 2396                   URI Generic Syntax                August 1998
-
-
-A. Collected BNF for URI
-
-      URI-reference = [ absoluteURI | relativeURI ] [ "#" fragment ]
-      absoluteURI   = scheme ":" ( hier_part | opaque_part )
-      relativeURI   = ( net_path | abs_path | rel_path ) [ "?" query ]
-
-      hier_part     = ( net_path | abs_path ) [ "?" query ]
-      opaque_part   = uric_no_slash *uric
-
-      uric_no_slash = unreserved | escaped | ";" | "?" | ":" | "@" |
-                      "&" | "=" | "+" | "$" | ","
-
-      net_path      = "//" authority [ abs_path ]
-      abs_path      = "/"  path_segments
-      rel_path      = rel_segment [ abs_path ]
-
-      rel_segment   = 1*( unreserved | escaped |
-                          ";" | "@" | "&" | "=" | "+" | "$" | "," )
-
-      scheme        = alpha *( alpha | digit | "+" | "-" | "." )
-
-      authority     = server | reg_name
-
-      reg_name      = 1*( unreserved | escaped | "$" | "," |
-                          ";" | ":" | "@" | "&" | "=" | "+" )
-
-      server        = [ [ userinfo "@" ] hostport ]
-      userinfo      = *( unreserved | escaped |
-                         ";" | ":" | "&" | "=" | "+" | "$" | "," )
-
-      hostport      = host [ ":" port ]
-      host          = hostname | IPv4address
-      hostname      = *( domainlabel "." ) toplabel [ "." ]
-      domainlabel   = alphanum | alphanum *( alphanum | "-" ) alphanum
-      toplabel      = alpha | alpha *( alphanum | "-" ) alphanum
-      IPv4address   = 1*digit "." 1*digit "." 1*digit "." 1*digit
-      port          = *digit
-
-      path          = [ abs_path | opaque_part ]
-      path_segments = segment *( "/" segment )
-      segment       = *pchar *( ";" param )
-      param         = *pchar
-      pchar         = unreserved | escaped |
-                      ":" | "@" | "&" | "=" | "+" | "$" | ","
-
-      query         = *uric
-
-      fragment      = *uric
-
-      uric          = reserved | unreserved | escaped
-      reserved      = ";" | "/" | "?" | ":" | "@" | "&" | "=" | "+" |
-                      "$" | ","
-      unreserved    = alphanum | mark
-      mark          = "-" | "_" | "." | "!" | "~" | "*" | "'" |
-                      "(" | ")"
-
-      escaped       = "%" hex hex
-      hex           = digit | "A" | "B" | "C" | "D" | "E" | "F" |
-                              "a" | "b" | "c" | "d" | "e" | "f"
-
-      alphanum      = alpha | digit
-      alpha         = lowalpha | upalpha
-
-      lowalpha = "a" | "b" | "c" | "d" | "e" | "f" | "g" | "h" | "i" |
-                 "j" | "k" | "l" | "m" | "n" | "o" | "p" | "q" | "r" |
-                 "s" | "t" | "u" | "v" | "w" | "x" | "y" | "z"
-      upalpha  = "A" | "B" | "C" | "D" | "E" | "F" | "G" | "H" | "I" |
-                 "J" | "K" | "L" | "M" | "N" | "O" | "P" | "Q" | "R" |
-                 "S" | "T" | "U" | "V" | "W" | "X" | "Y" | "Z"
-      digit    = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" |
-                 "8" | "9"
-
-#endif

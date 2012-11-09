@@ -43,11 +43,10 @@
 #include <nsp/seval.h>
 #include <nsp/nsptcl.h>
 #include <nsp/frame.h> 
+#include <nsp/gtksci.h> 
 
 /* XXX */
-extern int Sci_Help(char *mandir,char *locale,char *help_file) ;
 extern NspObject *Reserved;  /* used to fill stack with non empty object */
-
 
 static int EvalEqual (PList L1,Stack stack,int first);
 static int EvalOpt (PList L1,Stack stack,int first);
@@ -1029,15 +1028,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  break;
 	case HELP  : 
 	  /* 1-ary help */
-#ifdef WITH_GTKHTML
-	  Sci_Help(NULL,NULL,(char *) L1->O);
-#else 
-#ifdef HAVE_WEBKIT
-	  Sci_Help(NULL,NULL,(char *) L1->O);
-#else 
-	  Sciprintf("no man support in this version\n");
-#endif
-#endif
+	  nsp_help_browser(NULL,NULL,(char *) L1->O);
 	  return 0;
 	  break;
 	case WHO :
@@ -1287,15 +1278,7 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       nsp_global_frame_remove_all_objects(); 
       return 0;
     case HELP:
-#ifdef WITH_GTKHTML
-      Sci_Help(NULL,NULL,NULL);
-#else 
-#ifdef HAVE_WEBKIT
-      Sci_Help(NULL,NULL,NULL);
-#else 
-      Sciprintf("no man support in this version\n");
-#endif
-#endif
+      nsp_help_browser(NULL,NULL,NULL);
       return 0;
     case CD_COMMAND:
       if ( nsp_chdir_and_update_exec_dir(stack,NULL) == FAIL)

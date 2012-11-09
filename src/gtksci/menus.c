@@ -30,28 +30,27 @@
 #include <unistd.h>
 #include <gtk/gtk.h>
 
-#include "nsp/command.h" 
-#include "nsp/graphics-new/periGtk.h" 
-#include "nsp/menus.h" 
-#include "nsp/math.h"
-#include "nsp/config.h"
+#include <nsp/nsp.h>
+#include <nsp/command.h>
+#include <nsp/graphics-new/periGtk.h> 
+#include <nsp/menus.h> 
 #include <nsp/system.h> 
-#include "nsp/sciio.h" 
-#include "nsp/gtksci.h"
-#include "nsp/nsptcl.h"
+#include <nsp/sciio.h> 
+#include <nsp/gtksci.h>
+#include <nsp/nsptcl.h>
 
 extern void nsp_pa_stop(void);
-extern void create_nsp_about(void); 
-extern char GetDriver();
 extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
 static void *nsp_window_create_initial_menu(void) ;
 static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
-static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne,int action_type,char *fname);
+static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,
+			int ne,int action_type,char *fname);
 static void sci_menubar_add_menu_entry(BCG *Xgc,GtkWidget *menubar,menu_entry *m);
 static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m);
 static GtkWidget *sci_menu_to_gtkmenubar(BCG *Xgc,menu_entry *m,GtkAccelGroup *accel_group);
 static int is_menu_name(const char *name,const char *name1) ;
+
 /*--------------------------------------------------------------
  * main menu. i.e the menu of the main scilab window 
  *            this menu is attached to a zterm through a plug widget
@@ -1149,15 +1148,7 @@ static void nsp_menu_scicos_stop (void)
 
 static void nsp_menu_help(void)
 {
-#ifdef WITH_GTKHTML
-  Sci_Help(NULL,NULL,NULL);
-#else 
-#ifdef HAVE_WEBKIT
-  Sci_Help(NULL,NULL,NULL);
-#else 
-  Sciprintf("help is not available\n");
-#endif 
-#endif 
+  nsp_help_browser(NULL,NULL,NULL);
 }
 
 /* start text_view 

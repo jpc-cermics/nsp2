@@ -25,7 +25,7 @@
 /* 
  * adapted from the gimp for nsp 
  * the only exported function is 
- * int Sci_Help(char *mandir,char *locale,char *help_file) 
+ * int nsp_help_browser(char *mandir,char *locale,char *help_file) 
  */
 
 #include <string.h> 
@@ -49,6 +49,7 @@ extern gchar *html_selection_get_text (HtmlView *view);
 #include <nsp/hash.h>
 #include <nsp/file.h>
 #include <nsp/smatrix.h>
+#include <nsp/gtksci.h>
 
 #include "queue.h"
 #include "uri.h"
@@ -762,7 +763,7 @@ open_browser_dialog (const gchar *help_path,
 
 int nsp_help_topic(const char *topic,char *buf);
 
-int Sci_Help(char *mandir,char *locale,char *help_file) 
+int nsp_help_browser(char *mandir,char *locale,char *help_file) 
 {
   char buf[FSIZE+1];
   GPrintFunc old;

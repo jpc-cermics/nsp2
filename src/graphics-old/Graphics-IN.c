@@ -6430,30 +6430,6 @@ static int check_xy(const char *fname,char dir,int mn,int xpos,NspMatrix *Mx,int
   return 1;
 }
 
-/*---------------------------------------------------
- * interface for calling the helpbrowser 
- * when scilab is compiled with gtk 
- * not the perfect place to insert this interface XXX ...
- *---------------------------------------------------*/
-#if 0
-extern void Sci_Help(char *,char *,char *);
-
-static int int_gtkhelp(Stack stack, int rhs, int opt, int lhs)
-{
-#if defined(WITH_GTKHTML) || defined(HAVE_WEBKIT) 
-  int i;
-  char *str[3]={NULL,NULL,NULL};
-  CheckRhs(0,1);
-  for (i=0; i < rhs ; i++) {
-    if ((str[i] = GetString(stack,i+1)) == (char*)0) return RET_BUG;
-  }
-  Sci_Help(NULL,NULL,str[0]);
-#endif 
-  return 0;
-}
-#endif
-
-
 /*-----------------------------------------------------------
  * utilities 
  *-----------------------------------------------------------*/
