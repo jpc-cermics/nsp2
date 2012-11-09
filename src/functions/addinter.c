@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,14 +17,11 @@
  * Boston, MA 02111-1307, USA.
  * 
  * addinter related functions : used to dynamically link functions 
- * from an interface in Scilab function table. 
- * An interface is characterized by two functions:
+ *   from an interface into nsp function table. 
+ *   An interface is characterized by two functions:
  *   a function F(i,stack,rhs,opt,lhs) which is used for function call
- *   and a function F_info which is used to find entry names 
- *   
- *   void AddInter(files,iname,enames,err)
- *   void RemoveInterf(Nshared)
- *   void ShowInterf()
+ *   and a function F_info which is used to find entry names.
+ *
  */
 
 #include <nsp/nsp.h>
@@ -32,9 +29,8 @@
 #include <nsp/interf.h>
 #include <nsp/epoints.h>
 #include <nsp/linking.h> 
-
-#include "FunTab.h"
-#include "addinter.h"
+#include <nsp/funtab.h>
+#include <nsp/addinter.h>
 
 Iel DynInterf[MAXINTERF];
 int LastInterf=0;

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,20 +20,17 @@
  * Call a function given (Int,Num) 
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/hobj.h> 
-#include "nsp/stack.h" 
-#include "nsp/math.h"
-#include "nsp/plisttoken.h" /* for  name_maxl 52 */
-#include "nsp/sciio.h"
-#include "nsp/interf.h"
-#include "addinter.h"
-#include "callfunc.h"
+#include <nsp/stack.h> 
+#include <nsp/math.h>
+#include <nsp/plisttoken.h> /* for  name_maxl 52 */
+#include <nsp/sciio.h>
+#include <nsp/interf.h>
+#include <nsp/addinter.h>
+#include <nsp/callfunc.h>
 
-extern  sci_interface  Matrix_Interf ;extern  interface_info  Matrix_Interf_Info ;
+extern  sci_interface  Matrix_Interf   ;extern  interface_info  Matrix_Interf_Info   ;
 extern  sci_interface  SMatrix_Interf  ;extern  interface_info  SMatrix_Interf_Info  ;
 extern  sci_interface  PMatrix_Interf  ;extern  interface_info  PMatrix_Interf_Info  ;
 extern  sci_interface  BMatrix_Interf  ;extern  interface_info  BMatrix_Interf_Info  ;
@@ -135,6 +132,7 @@ extern  sci_interface sqlc_Interf ;extern  interface_info  sqlc_Interf_Info ;
 #endif 
 
 /* #define WITH_DCLASS */
+
 #ifdef WITH_DCLASS
 extern  sci_interface DClass_Interf ;extern  interface_info  DClass_Interf_Info ;
 #endif
@@ -190,7 +188,6 @@ extern sci_interface Agraph_Interf;extern interface_info Agraph_Interf_Info;
 #endif 
 
 extern  sci_interface  SpMaxpColMatrix_Interf  ;extern  interface_info  SpMaxpColMatrix_Interf_Info  ;
-
 
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},

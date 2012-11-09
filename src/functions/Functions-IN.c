@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -22,19 +22,19 @@
  */
 
 #include <nsp/nsp.h>
-#include <ctype.h> /* isxxxx */
+#include <ctype.h> /* for is_ */
 #include <nsp/hash.h>
 #include <nsp/matrix.h>
 #include <nsp/smatrix.h>
 #include <nsp/interf.h>
 #include <nsp/stack.h>
 #include <nsp/system.h>
-#include "callfunc.h"
+#include <nsp/callfunc.h>
 #include <nsp/linking.h>
 #include <nsp/epoints.h>
 #include <nsp/sharedlib.h>
 #include <nsp/nsptcl.h>
-#include "addinter.h"
+#include <nsp/addinter.h>
 
 static void link_bug (int i);
 
