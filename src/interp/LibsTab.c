@@ -36,10 +36,9 @@
 #include <nsp/datas.h>
 #include <nsp/system.h> /* FSIZE+1 */
 #include <nsp/seval.h>
-
-#include "../functions/FunTab.h"
-#include "../functions/callfunc.h" 
-#include "../functions/addinter.h" 
+#include <nsp/funtab.h>
+#include <nsp/callfunc.h> 
+#include <nsp/addinter.h> 
 
 NspObject *nsp_find_macro_or_func(const char *str,int *type);
 int nsp_delete_macros(const char *dirname);

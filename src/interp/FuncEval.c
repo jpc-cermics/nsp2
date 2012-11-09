@@ -37,16 +37,15 @@
 #include <nsp/imatrix.h> 
 #include <nsp/hash.h> 
 #include <nsp/ivect.h> 
-
-#include "nsp/plisttoken.h" /*for name_maxl **/
-#include "nsp/stack.h" 
-#include "nsp/parse.h" 
-#include "nsp/matint.h" 
-#include "nsp/accelerated_tab.h"
-#include "../objects/frame.h" /* XXX */
-#include "nsp/seval.h" 
-#include "nsp/libstab.h" 
-#include "../functions/FunTab.h"
+#include <nsp/plisttoken.h> /*for name_maxl **/
+#include <nsp/stack.h> 
+#include <nsp/parse.h> 
+#include <nsp/matint.h> 
+#include <nsp/accelerated_tab.h>
+#include <nsp/frame.h> 
+#include <nsp/seval.h> 
+#include <nsp/libstab.h> 
+#include <nsp/funtab.h>
 
 /* FIXME */
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
