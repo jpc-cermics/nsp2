@@ -130,11 +130,10 @@ struct _tokenizer {
   token_io io;
 };
 
-extern void nsp_init_tokenizer(Tokenizer *T);
+extern void nsp_tokenizer_init(Tokenizer *T);
 extern void nsp_tokeniser_file(Tokenizer *T,FILE *f);
 extern void nsp_tokeniser_string(Tokenizer *T,const char *str);
 extern void nsp_tokeniser_strings(Tokenizer *T,char **S);
-
 
 typedef void (*MoreFun) (int *n);
 extern MoreFun scimore ;

@@ -1786,8 +1786,17 @@ int int_object_sprintf(Stack stack, int rhs, int opt, int lhs)
  * scanf(n,"format") or scanf("format")
  */
 
-
-extern void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof);
+static void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof)
+{
+  Tokenizer T;
+  int len_line;
+  nsp_tokenizer_init(&T);
+  T.token_readline(&T,prompt,buffer,&buf_size, &len_line, eof);
+  /* we add  \n ( which was swallowed by T->tokenv_readline*/
+  buffer[len_line] ='\n';
+  buffer[len_line+1] = '\0';
+  buffer[len_line+2] = '\0'; /* ??? xxxx*/
+}
 
 int int_object_scanf(Stack stack, int rhs, int opt, int lhs)
 {

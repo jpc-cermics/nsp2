@@ -20,23 +20,12 @@
  * 
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <nsp/object.h> 
+#include <ctype.h> /* is_ functions */
+#include <nsp/nsp.h> 
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
-#include <nsp/bhash.h> 
-#include <nsp/cells.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/list.h> 
-#include <nsp/file.h> 
-
-#include "nsp/sciio.h"
-#include "nsp/parse.h"
 #define Private_Tokenizer 
-#include "nsp/tokenizer.h" 
+#include <nsp/tokenizer.h> 
 
 static SciReadFunc SciFileReadLine;
 static SciReadFunc SciStringReadLine;
@@ -45,14 +34,14 @@ static SciReadFunc SciSMatReadLine;
 #define PERCENT_CHECK(c) (((c) == '%') && (T->mtlb == FALSE) )
 
 /**
- * nsp_init_tokenizer:
+ * nsp_tokenizer_init:
  * @T: 
  * 
  * initialize a tokenizer 
  *
  **/
 
-void nsp_init_tokenizer(Tokenizer *T)
+void nsp_tokenizer_init(Tokenizer *T)
 {
   T->NextToken=next_token;
   T->ParseCommandArg=parse_command_arg;
@@ -85,12 +74,28 @@ void nsp_init_tokenizer(Tokenizer *T)
 }
 
 
+/**
+ * nsp_tokeniser_file:
+ * @T: a #Tokenizer 
+ * @f: a FILE 
+ * 
+ * set up the tokenizer as to read from file @f.
+ **/
+
 void nsp_tokeniser_file(Tokenizer *T,FILE *f)
 {
   T->file = f;
   T->io = nsp_tok_file;
   T->token_readline = SciFileReadLine;
 }
+
+/**
+ * nsp_tokeniser_string:
+ * @T: a #Tokenizer 
+ * @str: a constant string 
+ * 
+ * set up the tokenizer as to read from string @str.
+ **/
 
 void nsp_tokeniser_string(Tokenizer *T,const char *str)
 {
@@ -101,9 +106,13 @@ void nsp_tokeniser_string(Tokenizer *T,const char *str)
 
 }
 
-/*
- * a NULL terminated array of strings 
- */
+/**
+ * nsp_tokeniser_strings:
+ * @T: a #Tokenizer 
+ * @S: a %NULL terminated array of strings 
+ * 
+ * set up the tokenizer as to read from string @S
+ **/
 
 void nsp_tokeniser_strings(Tokenizer *T,char **S)
 {
@@ -114,19 +123,6 @@ void nsp_tokeniser_strings(Tokenizer *T,char **S)
   T->io = nsp_tok_strings;
   T->token_readline = SciSMatReadLine;
 
-}
-
-
-void scanf_get_line(char *prompt, char *buffer, int buf_size, int *eof)
-{
-  Tokenizer T;
-  int len_line;
-  nsp_init_tokenizer(&T);
-  T.token_readline(&T,prompt,buffer,&buf_size, &len_line, eof);
-  /* we add  \n ( which was swallowed by T->tokenv_readline*/
-  buffer[len_line] ='\n';
-  buffer[len_line+1] = '\0';
-  buffer[len_line+2] = '\0'; /* ??? xxxx*/
 }
 
 /**
@@ -1369,7 +1365,7 @@ static void nsp_default_more(int *n)
   Tokenizer T;
   char buf[2];
   int buf_size=2, len_line, eof;
-  nsp_init_tokenizer(&T);
+  nsp_tokenizer_init(&T);
   T.token_readline(&T,MORESTR,buf, &buf_size, &len_line, &eof);
   *n = 1; 
   if (len_line == 0 || (len_line != 0 && buf[0] == 'y') ) *n=0;

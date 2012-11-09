@@ -327,7 +327,7 @@ static int _int_input(Stack stack,char *prompt,int eval,NspHash *E, int accept_e
   int buf_size=1024, len_line, eof;
   int display=FALSE,echo =FALSE,errcatch=FALSE,rep,pausecatch=FALSE;;
  again:
-  nsp_init_tokenizer(&To);
+  nsp_tokenizer_init(&To);
   To.token_readline(&To,prompt,buf, &buf_size, &len_line, &eof);
   if ( accept_empty == TRUE && buf[0]=='\0') 
     {
