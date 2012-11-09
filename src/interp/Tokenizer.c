@@ -75,14 +75,14 @@ void nsp_tokenizer_init(Tokenizer *T)
 
 
 /**
- * nsp_tokeniser_file:
+ * nsp_tokenizer_file:
  * @T: a #Tokenizer 
  * @f: a FILE 
  * 
  * set up the tokenizer as to read from file @f.
  **/
 
-void nsp_tokeniser_file(Tokenizer *T,FILE *f)
+void nsp_tokenizer_file(Tokenizer *T,FILE *f)
 {
   T->file = f;
   T->io = nsp_tok_file;
@@ -90,14 +90,14 @@ void nsp_tokeniser_file(Tokenizer *T,FILE *f)
 }
 
 /**
- * nsp_tokeniser_string:
+ * nsp_tokenizer_string:
  * @T: a #Tokenizer 
  * @str: a constant string 
  * 
  * set up the tokenizer as to read from string @str.
  **/
 
-void nsp_tokeniser_string(Tokenizer *T,const char *str)
+void nsp_tokenizer_string(Tokenizer *T,const char *str)
 {
   T->string.str = str;
   T->string.pos = 0;
@@ -107,14 +107,14 @@ void nsp_tokeniser_string(Tokenizer *T,const char *str)
 }
 
 /**
- * nsp_tokeniser_strings:
+ * nsp_tokenizer_strings:
  * @T: a #Tokenizer 
  * @S: a %NULL terminated array of strings 
  * 
  * set up the tokenizer as to read from string @S
  **/
 
-void nsp_tokeniser_strings(Tokenizer *T,char **S)
+void nsp_tokenizer_strings(Tokenizer *T,char **S)
 {
   T->strings.S = S;
   T->strings.pos = 0;

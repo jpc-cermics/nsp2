@@ -113,7 +113,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   nsp_tokenizer_init(&T);
   T.mtlb = mtlb;
   /* set tokenizer input */
-  nsp_tokeniser_file(&T,input);
+  nsp_tokenizer_file(&T,input);
   /* reset the line counter */
   /* Calling the evaluator */
   NspFileName(SciStack) =  Str;
@@ -166,7 +166,7 @@ int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatc
   int cur_echo= nsp_set_echo_input_line(echo);
   nsp_tokenizer_init(&T);
   /* set tokenizer input */
-  nsp_tokeniser_string(&T,Str);
+  nsp_tokenizer_string(&T,Str);
   file_name = NspFileName(SciStack);
   NspFileName(SciStack) =  NULL;
   /* Calling the evaluator */
@@ -221,7 +221,7 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
   int rep ;
   int cur_echo= nsp_set_echo_input_line(echo);
   nsp_tokenizer_init(&T);
-  nsp_tokeniser_strings(&T,M->S);
+  nsp_tokenizer_strings(&T,M->S);
   file_name = NspFileName(SciStack);
   NspFileName(SciStack)= NULL;
   /* Calling the evaluator */
@@ -389,7 +389,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       NspFileName(SciStack) = F1;
       /* reset the line counter **/
       nsp_tokenizer_init(&T);
-      nsp_tokeniser_file(&T,SciInput);
+      nsp_tokenizer_file(&T,SciInput);
       /* Calling the evaluator  
        * the macro is sabed with its non expanded name
        */
@@ -479,7 +479,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      NspFileName(SciStack) = F1;
 	      /* reset the line counter */
 	      nsp_tokenizer_init(&T);
-	      nsp_tokeniser_file(&T,SciInput);
+	      nsp_tokenizer_file(&T,SciInput);
 	      /* Calling the evaluator  
 	       */
 	      rep= DirParseAndXdrSave(&T,dirname);
@@ -665,7 +665,7 @@ PList nsp_parse_expr(NspSMatrix *M)
   Tokenizer T;
   int rep, cur_echo= nsp_set_echo_input_line(FALSE);
   nsp_tokenizer_init(&T);
-  nsp_tokeniser_strings(&T,M->S);
+  nsp_tokenizer_strings(&T,M->S);
   file_name = NspFileName(SciStack);
   /* call the parser */
   if ((rep=nsp_parse(&T,NULLBHASH,&plist)) < 0 ) 
@@ -792,7 +792,7 @@ NspAst* nsp_parse_file(char *Str)
     }
   nsp_tokenizer_init(&T);
   /* set tokenizer input */
-  nsp_tokeniser_file(&T,input);
+  nsp_tokenizer_file(&T,input);
   /* reset the line counter */
   /* Calling the evaluator */
   NspFileName(SciStack) =  Str;
@@ -824,7 +824,7 @@ NspAst * nsp_parse_from_smat(NspSMatrix *M)
   char *file_name;
   Tokenizer T;
   nsp_tokenizer_init(&T);
-  nsp_tokeniser_strings(&T,M->S);
+  nsp_tokenizer_strings(&T,M->S);
   file_name = NspFileName(SciStack);
   NspFileName(SciStack)= NULL;
   /* Calling the evaluator */
