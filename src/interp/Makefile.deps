@@ -7,20 +7,21 @@ Eval.o: Eval.c ../include/nsp/nsp.h \
  ../include/nsp/object-inlined.h ../include/nsp/plist.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/bhash.h \
- ../include/nsp/cells.h ../include/nsp/smatrix.h \
- ../include/nsp/list.h ../include/nsp/file.h \
- ../include/nsp/ivect.h ../include/nsp/matrix.h \
- ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
- ../include/nsp/bmatrix.h ../include/nsp/hobj.h \
- ../include/nsp/function.h ../include/nsp/imatrix.h \
- ../include/nsp/hash.h ../include/nsp/stack.h \
- ../include/nsp/parse.h ../include/nsp/eval.h \
- ../include/nsp/system.h ../include/nsp/libstab.h \
- ../include/nsp/seval.h ../include/nsp/interf.h \
- ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/nsptcl.h \
- ../include/nsp/dstring.h ../objects/frame.h
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/cells.h \
+ ../include/nsp/smatrix.h ../include/nsp/list.h \
+ ../include/nsp/file.h ../include/nsp/ivect.h \
+ ../include/nsp/matrix.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/hobj.h ../include/nsp/function.h \
+ ../include/nsp/imatrix.h ../include/nsp/hash.h \
+ ../include/nsp/stack.h ../include/nsp/parse.h \
+ ../include/nsp/eval.h ../include/nsp/system.h \
+ ../include/nsp/libstab.h ../include/nsp/seval.h \
+ ../include/nsp/interf.h ../include/nsp/datas.h \
+ ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
+ ../include/nsp/nsptcl.h ../include/nsp/dstring.h \
+ ../objects/frame.h
 FuncEval.o: FuncEval.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -30,31 +31,32 @@ FuncEval.o: FuncEval.c ../include/nsp/nsp.h \
  ../include/nsp/object-inlined.h ../include/nsp/plist.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/bhash.h \
- ../include/nsp/cells.h ../include/nsp/smatrix.h \
- ../include/nsp/matrix.h ../include/nsp/complex.h \
- ../include/nsp/matrix-inlined.h ../include/nsp/list.h \
- ../include/nsp/file.h ../include/nsp/hobj.h \
- ../include/nsp/function.h ../include/nsp/imatrix.h \
- ../include/nsp/hash.h ../include/nsp/ivect.h \
- ../include/nsp/stack.h ../include/nsp/parse.h \
- ../include/nsp/eval.h ../include/nsp/matint.h \
- ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../objects/frame.h ../include/nsp/seval.h \
- ../include/nsp/interf.h ../include/nsp/datas.h \
- ../include/nsp/libstab.h ../functions/FunTab.h
-LibsTab.o: LibsTab.c  ../include/nsp/nsp.h ../include/nsp/machine.h \
- ../include/nsp/config.h ../include/nsp/package_undef.h \
- ../include/nsp/object.h ../include/nsp/math.h \
- ../include/nsp/string.h ../include/nsp/index.h \
- ../include/nsp/xdr.h ../include/nsp/intsf.h \
- ../include/nsp/objectf.h ../include/nsp/object-inlined.h \
- ../include/nsp/objects.h ../include/nsp/matrix.h \
- ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
- ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/cells.h \
+ ../include/nsp/smatrix.h ../include/nsp/matrix.h \
  ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
- ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
- ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/list.h ../include/nsp/file.h \
+ ../include/nsp/hobj.h ../include/nsp/function.h \
+ ../include/nsp/imatrix.h ../include/nsp/hash.h \
+ ../include/nsp/ivect.h ../include/nsp/stack.h \
+ ../include/nsp/parse.h ../include/nsp/eval.h \
+ ../include/nsp/matint.h ../include/nsp/accelerated_tab.h \
+ ../include/nsp/interf.h ../include/nsp/frame.h \
+ ../include/nsp/seval.h ../include/nsp/interf.h \
+ ../include/nsp/datas.h ../include/nsp/libstab.h \
+ ../include/nsp/funtab.h
+LibsTab-new.o: LibsTab-new.c  ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/ints.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/objects.h \
+ ../include/nsp/matrix.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
  ../include/nsp/matint.h ../include/nsp/list.h \
  ../include/nsp/hobj.h ../include/nsp/hash.h \
  ../include/nsp/type.h ../include/nsp/file.h \
@@ -64,6 +66,28 @@ LibsTab.o: LibsTab.c  ../include/nsp/nsp.h ../include/nsp/machine.h \
  ../include/nsp/interf.h ../include/nsp/eval.h \
  ../include/nsp/plist.h ../functions/FunTab.h \
  ../functions/callfunc.h ../functions/addinter.h
+LibsTab.o: LibsTab.c  ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/objects.h \
+ ../include/nsp/matrix.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
+ ../include/nsp/ints.h ../include/nsp/matint.h \
+ ../include/nsp/list.h ../include/nsp/hobj.h \
+ ../include/nsp/hash.h ../include/nsp/type.h \
+ ../include/nsp/file.h ../include/nsp/function.h \
+ ../include/nsp/interf.h ../include/nsp/datas.h \
+ ../include/nsp/system.h ../include/nsp/seval.h \
+ ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
+ ../include/nsp/eval.h ../include/nsp/plist.h \
+ ../include/nsp/funtab.h ../include/nsp/callfunc.h \
+ ../include/nsp/addinter.h
 PList.o: PList.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -73,12 +97,13 @@ PList.o: PList.c ../include/nsp/nsp.h \
  ../include/nsp/object-inlined.h ../include/nsp/plist.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/bhash.h \
- ../include/nsp/smatrix.h ../include/nsp/list.h \
- ../include/nsp/file.h ../include/nsp/hobj.h \
- ../include/nsp/function.h ../include/nsp/hash.h \
- ../include/nsp/astnode.h ../include/nsp/ast.h \
- ../include/nsp/interf.h ../include/nsp/pr-output.h
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/smatrix.h \
+ ../include/nsp/list.h ../include/nsp/file.h \
+ ../include/nsp/hobj.h ../include/nsp/function.h \
+ ../include/nsp/hash.h ../include/nsp/astnode.h \
+ ../include/nsp/ast.h ../include/nsp/interf.h \
+ ../include/nsp/pr-output.h
 PListBase.o: PListBase.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -88,9 +113,9 @@ PListBase.o: PListBase.c ../include/nsp/nsp.h \
  ../include/nsp/object-inlined.h ../include/nsp/plist.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/hobj.h \
- ../include/nsp/hash.h ../include/nsp/parse.h \
- ../include/nsp/eval.h
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/parse.h ../include/nsp/eval.h
 Parse-IN.o: Parse-IN.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -103,61 +128,20 @@ Parse-IN.o: Parse-IN.c ../include/nsp/nsp.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/list.h \
- ../include/nsp/hobj.h ../include/nsp/hash.h \
- ../include/nsp/type.h ../include/nsp/file.h \
- ../include/nsp/interf.h ../include/nsp/system.h \
- ../include/nsp/plist.h ../include/nsp/datas.h \
- ../include/nsp/libstab.h ../include/nsp/eval.h \
- ../include/nsp/seval.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/parse.h \
- ../include/nsp/nsptcl.h ../include/nsp/stack.h \
- ../include/nsp/dstring.h ../include/nsp/ast.h
-Parse.o: Parse.c  ../include/nsp/math.h ../include/nsp/machine.h \
- ../include/nsp/config.h ../include/nsp/package_undef.h \
- ../include/nsp/object.h ../include/nsp/string.h \
- ../include/nsp/index.h ../include/nsp/xdr.h \
- ../include/nsp/intsf.h ../include/nsp/objectf.h \
- ../include/nsp/object-inlined.h ../include/nsp/plist.h \
- ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
- ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h ../include/nsp/plistc.h \
- ../include/nsp/bhash.h ../include/nsp/cells.h \
- ../include/nsp/smatrix.h ../include/nsp/list.h \
- ../include/nsp/file.h ../include/nsp/ast.h \
- ../include/nsp/datas.h ../include/nsp/parse.h \
- ../include/nsp/eval.h ../include/nsp/system.h \
- ../include/nsp/seval.h ../include/nsp/interf.h \
+ ../include/nsp/ints.h  ../include/nsp/matint.h \
+ ../include/nsp/list.h ../include/nsp/hobj.h \
+ ../include/nsp/hash.h ../include/nsp/type.h \
+ ../include/nsp/file.h ../include/nsp/interf.h \
+ ../include/nsp/system.h ../include/nsp/plist.h \
+ ../include/nsp/datas.h ../include/nsp/libstab.h \
+ ../include/nsp/eval.h ../include/nsp/seval.h \
  ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../objects/frame.h
-Parse_check.o: Parse_check.c ../include/nsp/nsp.h \
+ ../include/nsp/parse.h ../include/nsp/nsptcl.h \
+ ../include/nsp/stack.h ../include/nsp/dstring.h \
+ ../include/nsp/ast.h ../include/nsp/astv.h
+Parse.o: Parse.c  ../include/nsp/math.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
- ../include/nsp/math.h ../include/nsp/string.h \
- ../include/nsp/index.h ../include/nsp/xdr.h \
- ../include/nsp/intsf.h ../include/nsp/objectf.h \
- ../include/nsp/object-inlined.h ../include/nsp/plist.h \
- ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
- ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/bhash.h \
- ../include/nsp/cells.h ../include/nsp/smatrix.h \
- ../include/nsp/list.h ../include/nsp/file.h \
- ../include/nsp/parse.h ../include/nsp/eval.h
-Parse_exprs.o: Parse_exprs.c ../include/nsp/nsp.h \
- ../include/nsp/machine.h ../include/nsp/config.h \
- ../include/nsp/package_undef.h ../include/nsp/object.h \
- ../include/nsp/math.h ../include/nsp/string.h \
- ../include/nsp/index.h ../include/nsp/xdr.h \
- ../include/nsp/intsf.h ../include/nsp/objectf.h \
- ../include/nsp/object-inlined.h ../include/nsp/plist.h \
- ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
- ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/bhash.h \
- ../include/nsp/cells.h ../include/nsp/interf.h \
- ../include/nsp/parse.h ../include/nsp/eval.h
-Tokenizer.o: Tokenizer.c ../include/nsp/object.h \
- ../include/nsp/math.h ../include/nsp/machine.h \
- ../include/nsp/config.h ../include/nsp/package_undef.h \
  ../include/nsp/string.h ../include/nsp/index.h \
  ../include/nsp/xdr.h ../include/nsp/intsf.h \
  ../include/nsp/objectf.h ../include/nsp/object-inlined.h \
@@ -167,7 +151,52 @@ Tokenizer.o: Tokenizer.c ../include/nsp/object.h \
  ../include/nsp/plistc.h ../include/nsp/bhash.h \
  ../include/nsp/cells.h ../include/nsp/smatrix.h \
  ../include/nsp/list.h ../include/nsp/file.h \
- ../include/nsp/parse.h ../include/nsp/eval.h
+ ../include/nsp/ast.h ../include/nsp/datas.h \
+ ../include/nsp/parse.h ../include/nsp/eval.h \
+ ../include/nsp/system.h ../include/nsp/seval.h \
+ ../include/nsp/interf.h ../include/nsp/accelerated_tab.h \
+ ../include/nsp/interf.h ../objects/frame.h
+Parse_check.o: Parse_check.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/plist.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/cells.h \
+ ../include/nsp/smatrix.h ../include/nsp/list.h \
+ ../include/nsp/file.h ../include/nsp/parse.h \
+ ../include/nsp/eval.h
+Parse_exprs.o: Parse_exprs.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/plist.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/cells.h \
+ ../include/nsp/interf.h ../include/nsp/parse.h \
+ ../include/nsp/eval.h
+Tokenizer.o: Tokenizer.c ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/machine.h \
+ ../include/nsp/config.h ../include/nsp/package_undef.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/objectf.h ../include/nsp/object-inlined.h \
+ ../include/nsp/plist.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/ints.h \
+ ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/cells.h \
+ ../include/nsp/smatrix.h ../include/nsp/list.h \
+ ../include/nsp/file.h ../include/nsp/parse.h \
+ ../include/nsp/eval.h
 astnode.o: astnode.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -177,12 +206,39 @@ astnode.o: astnode.c ../include/nsp/nsp.h \
  ../include/nsp/object-inlined.h ../include/nsp/plist.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/ints.h  ../include/nsp/plistc.h ../include/nsp/smatrix.h \
- ../include/nsp/matrix.h ../include/nsp/complex.h \
- ../include/nsp/matrix-inlined.h ../include/nsp/file.h \
- ../include/nsp/hobj.h ../include/nsp/astnode.h \
- ../include/nsp/type.h ../include/nsp/interf.h \
- ../include/nsp/parse.h ../include/nsp/eval.h
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/smatrix.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/file.h ../include/nsp/hobj.h \
+ ../include/nsp/astnode.h ../include/nsp/type.h \
+ ../include/nsp/interf.h ../include/nsp/parse.h \
+ ../include/nsp/eval.h
+init.o: init.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/plist.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/ints.h  ../include/nsp/plistc.h \
+ ../include/nsp/parse.h ../include/nsp/eval.h \
+ ../include/nsp/seval.h ../include/nsp/interf.h \
+ ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
+ ../include/nsp/interf.h ../include/nsp/libstab.h \
+ ../include/nsp/version.h \
+        ../include/nsp/gtksci.h \
+ ../include/nsp/nsptcl.h ../include/nsp/stack.h \
+ ../include/nsp/dstring.h ../include/nsp/system.h \
+ ../include/nsp/nspthreads.h
+lsci.o: lsci.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h
 nsp_io.o: nsp_io.c ../include/nsp/math.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -192,12 +248,12 @@ nsp_io.o: nsp_io.c ../include/nsp/math.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
  ../include/nsp/stack.h ../include/nsp/smatrix.h
-reader_rl.o: reader_rl.c  ../include/nsp/machine.h ../include/nsp/config.h \
- ../include/nsp/package_undef.h ../include/nsp/sciio.h \
- ../include/nsp/objectf.h ../include/nsp/math.h \
- ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
- ../include/nsp/plisttoken.h ../include/nsp/gtksci.h \
- ../include/nsp/system.h
+reader_rl.o: reader_rl.c  ../include/nsp/machine.h \
+ ../include/nsp/config.h ../include/nsp/package_undef.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/math.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/gtksci.h ../include/nsp/system.h
 scalexp.o: scalexp.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \

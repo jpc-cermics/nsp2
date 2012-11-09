@@ -31,3 +31,5 @@ all :: lsci.obj
 #=====================================================
 #dependencies generated with gcc -MMD 
 #=====================================================
+
+include Makefile.deps
