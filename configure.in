@@ -1047,7 +1047,7 @@ GTKHTML=no
 if test "x${have_webkit}" = "xno" ; then
    ac_save_LIBS="$LIBS"
    LIBS=`$PKG_CONFIG libgtkhtml-2.0 --cflags --libs`
-   HELP_OBJS=
+   HELP_OBJS="helpvoid.o"
    AC_CHECK_LIB(gtkhtml-2,html_document_open_stream,[GTKHTML=yes])
    if test "$GTKHTML" = no; then
       AC_MSG_WARN([Could not find webkit or the libgtkhtml-2.0 package.],)
