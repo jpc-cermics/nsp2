@@ -2170,7 +2170,7 @@ NspSMatrix *nsp_plist2smatrix(PList L, int indent)
  * 
  */
 
-int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out)
+int nsp_plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out)
 {
   if ( List->type > 0 )
     {
@@ -2189,10 +2189,10 @@ int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix
 	case EQUAL_OP:
 	  List = List->next ;
 	  if ( List != NULLPLIST && List->type == PLIST ) 
-	    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+	    nsp_plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  List = List->next ;
 	  if ( List != NULLPLIST && List->type == PLIST ) 
-	    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+	    nsp_plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  break;
 	case MLHS  :
 	  *lhs = List->arity;
@@ -2221,17 +2221,17 @@ int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix
 		else
 		  {
 		    /* collect the optional arguments */
-		    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+		    nsp_plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 		  }
 	      }
 	  break;
 	case PLIST : 
-	  plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+	  nsp_plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  break;
 	case FUNCTION:
 	  List = List->next ;
 	  if ( List != NULLPLIST && List->type == PLIST ) 
-	    plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
+	    nsp_plist_get_nargs((PList) List->O,lhs,rhsp1,in,out);
 	  break;
 	default:
 	  /* ignore */
@@ -2248,7 +2248,7 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
  */
 
 /**
- * plist_name_to_local_id:
+ * nsp_plist_name_to_local_id:
  * @List: 
  * @H: 
  * @rec: 
@@ -2259,7 +2259,7 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
  * functions defined in the function. 
  **/
 
-void plist_name_to_local_id(PList List,NspBHash *H,int rec)
+void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec)
 {
   PList L=List; /* ,L1; */
   int j;
@@ -2502,7 +2502,7 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H)
       /* nothing to do */
       break;
     case PLIST :
-      plist_name_to_local_id((PList) L->O,H,rec);
+      nsp_plist_name_to_local_id((PList) L->O,H,rec);
       break;
     case PRETURN: 
     case QUIT :

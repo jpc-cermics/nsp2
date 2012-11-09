@@ -6,14 +6,16 @@
  * Jean-Philippe Chancelier Enpc/Cermics         
  */
 
-#include <stdio.h>   /* for file declaration **/
+#include <stdio.h>   /* for file declaration */
 #include <nsp/sciio.h>
 #include <nsp/objectf.h>
 #include <nsp/ints.h>
+#include <nsp/bhash.h> /* for plist_name_to_local_id */
 
 /*
  * NspPList inherits from NspObject 
  */
+
 /* typedef struct _NspPlist  NspPList; */
 
 typedef struct _NspTypePList NspTypePList;
@@ -138,8 +140,6 @@ extern NspSMatrix * NspPList2SMatrix (NspPList *P_L, int indent);
 
 extern int nsp_plist_get_path(char *fname,NspPList *P_L);
 
-
-
 /* PList.c */
 
 extern int nsp_parse_add(PList *plist, int op, int arity, int line);
@@ -171,8 +171,10 @@ extern void nsp_plist_info(PList L, int indent);
 extern int nsp_plist_save(PList L);
 extern int nsp_plist_load(PList *L);
 extern NspSMatrix *nsp_plist2smatrix(PList L, int indent) ;
-extern int plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out);
 extern int nsp_plist_equal(PList L1,PList L2);
+
+extern int nsp_plist_get_nargs(PList List,int *lhs , int *rhsp1, NspSMatrix *in, NspSMatrix *out);
+extern void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec);
 
 #endif /*  PLIST_H  */
 

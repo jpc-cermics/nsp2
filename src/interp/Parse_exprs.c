@@ -27,9 +27,8 @@
 #include <nsp/interf.h>
 #include <nsp/parse.h>
 
-extern void plist_name_to_local_id(PList List,NspBHash *H,int rec);
-
 typedef int (*ExprsStop) (Tokenizer *T,int token);
+
 static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F);
 static int parse_endstop(Tokenizer *T,int token);
 static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist);
@@ -568,7 +567,6 @@ static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int
   return(OK);
 }
 
-
 extern NspObject * int_bhash_get_keys(void *Hv, char *attr);
 
 #ifdef  WITH_SYMB_TABLE 
@@ -718,7 +716,7 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,FUNCTION,3,T->tokenv.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
-      plist_name_to_local_id(plist1,symbols,0); 
+      nsp_plist_name_to_local_id(plist1,symbols,0); 
 #ifdef  SMAT_SYMB_TABLE
       if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);
 #endif

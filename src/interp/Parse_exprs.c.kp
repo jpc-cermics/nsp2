@@ -1,3 +1,4 @@
+/* -*- Mode: C -*- */
 /* Nsp
  * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
  *
@@ -26,8 +27,6 @@
 #include <nsp/cells.h> 
 #include <nsp/interf.h>
 #include <nsp/parse.h>
-
-extern void plist_name_to_local_id(PList List,NspBHash *H,int rec);
 
 typedef int (*ExprsStop) (Tokenizer *T,int token);
 static int parse_exprs(Tokenizer *T,NspBHash *symb_table,PList *plist, int funcflag, ExprsStop F);
