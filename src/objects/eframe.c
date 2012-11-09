@@ -30,10 +30,9 @@
 #include <nsp/smatrix.h> 
 #include <nsp/hash.h> 
 #include <nsp/bhash.h> 
-
-#include "frame.h"
-#include "nsp/interf.h"
-#include "nsp/datas.h"
+#include <nsp/frame.h>
+#include <nsp/interf.h>
+#include <nsp/datas.h>
 
 #ifdef SMAT_SYMB_TABLE
 static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val);

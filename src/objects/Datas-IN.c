@@ -25,12 +25,11 @@
 #include <nsp/smatrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/hash.h> 
-
-#include "nsp/interf.h"
-#include "nsp/datas.h"
-#include "frame.h"
-#include "nsp/libstab.h"
-#include "../functions/FunTab.h"
+#include <nsp/interf.h>
+#include <nsp/datas.h>
+#include <nsp/frame.h>
+#include <nsp/libstab.h>
+#include <nsp/funtab.h>
 
 extern NspObject *Reserved;
 extern NspFrame  *GlobalFrame;

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,26 +17,21 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include "nsp/math.h"
-
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/type.h> 
 #include <nsp/hobj.h> 
 #include <nsp/list.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/hash.h> 
 #include <nsp/cells.h> 
-
-#include "nsp/interf.h"
-#include "nsp/datas.h"
-#include "nsp/shext.h"
-#include "nsp/plistc.h"
-#include "nsp/version.h"
-#include "../functions/FunTab.h"
-#include "nsp/libstab.h"
-
-#include "frame.h"
+#include <nsp/interf.h>
+#include <nsp/datas.h>
+#include <nsp/shext.h>
+#include <nsp/plistc.h>
+#include <nsp/version.h>
+#include <nsp/funtab.h>
+#include <nsp/libstab.h>
+#include <nsp/frame.h>
 
 /* inhibit the search fro symbols in calling frames */
 
