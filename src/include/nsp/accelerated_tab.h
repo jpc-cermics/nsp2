@@ -46,7 +46,7 @@ struct _AcceleratedTab
   const char *opname;
   const int arity;
   const char **accelerated_types;
-  const int length;
+  int length;
   function **func;
 } ;
 
