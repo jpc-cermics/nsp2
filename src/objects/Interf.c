@@ -2070,7 +2070,7 @@ static int get_dim_from_string(char *str)
 
 int GetDimArg(Stack stack, int pos, int *dim)
 {
-  char *dim_sort[]={ "M", "m", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
+  const char *dim_sort[]={ "M", "m", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
   int   dim_val[] ={ -2 , -2 , -1 , 0  ,  0    ,  0     ,  1    ,  1   ,  2   ,  2   , 0 };
   int rep;
   if ( IsSMatObj(stack, pos) )
@@ -2105,7 +2105,7 @@ int GetDimArg(Stack stack, int pos, int *dim)
 
 int DimArg(NspObject *O, int *dim)
 {
-  char *dim_sort[]={ "M", "m", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
+  const char *dim_sort[]={ "M", "m", ".", "*", "full", "FULL" , "row" , "ROW", "col", "COL", NULL };
   int   dim_val[] ={ -2 , -2 , -1 , 0  ,  0    ,  0     ,  1    ,  1   ,  2   ,  2   , 0 };
   int rep;
 
@@ -2119,7 +2119,7 @@ int DimArg(NspObject *O, int *dim)
       rep = is_string_in_array(str, dim_sort, 0);
       if ( rep < 0 )
 	{
-	  char **entry;
+	  const nsp_const_string *entry;
 	  Scierror("Error:\tstring is %s", (rep == -2) ? "ambiguous " : "bad ") ;
 	  Scierror(", choose among:\n\t '%s'", *dim_sort);
 	  for (entry = dim_sort+1 ; *entry != NULL; entry++)

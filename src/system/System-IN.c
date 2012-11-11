@@ -623,8 +623,9 @@ static int int_localtime(Stack stack,int rhs,int opt,int lhs)
 
 static int int_get_current_exec_file(Stack stack,int rhs,int opt,int lhs)
 {
+  Stack *stack1 = nsp_get_stack();
   char def_name[]= "unknown";
-  char *file_name = NspFileName(SciStack);
+  char *file_name = NspFileName1(stack1);
   CheckRhs(0,0);
   CheckLhs(1,1);
   if ( file_name == NULL) file_name = def_name;

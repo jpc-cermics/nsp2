@@ -40,6 +40,8 @@
 #include <nsp/hash.h> 
 #include <nsp/cells.h> 
 #include <nsp/plist.h> 
+#include <nsp/frame.h> 
+#include <nsp/nspdatas.h> 
 
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
@@ -895,13 +897,12 @@ static int int_lx_mlist_as_hash(Stack stack, int rhs, int opt, int lhs)
  * return %null on the stack
  */
 
-extern NspObject *Null;
-
 static int int_lxnull(Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_datas *data = nsp_get_datas();
   CheckRhs(0,0);
   CheckLhs(1,1);
-  NthObj(1) = Null ;
+  NthObj(1) = data->Null ;
   NSP_OBJECT(NthObj(1))->ret_pos = 1;
   return 1;
 }
@@ -1404,7 +1405,8 @@ static int int_lxunique(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {list,new_opts,t_end} ;
   nsp_option opts[] ={{ "ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL, itype='d';
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   int rep_ind_type;
 
   if ( GetArgs(stack,rhs,opt,T,&L,&opts,&ind_type) == FAIL ) 

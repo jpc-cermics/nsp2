@@ -468,7 +468,7 @@ static int int_file_eof(void *self, Stack stack, int rhs, int opt, int lhs)
  * f.seek[offset] ou f.seek[offset,"set"| "cur"| "end" ]; 
  */
 
-static char *seek_Table[] = {"set", "cur", "end", NULL};
+static const char *seek_Table[] = {"set", "cur", "end", NULL};
 
 static int int_file_seek(void *self, Stack stack, int rhs, int opt, int lhs)
 {

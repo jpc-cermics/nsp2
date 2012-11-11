@@ -55,7 +55,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -63,6 +63,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #define  WebKitWebView_Private 
 #include "nsp/gtk/webkitwebview.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspWebKitWebView inherits from NspGtkContainer */ 
 
@@ -651,7 +652,7 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -659,6 +660,7 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 #define  WebKitWebFrame_Private 
 #include "nsp/gtk/webkitwebframe.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspWebKitWebFrame inherits from NspGObject */ 
 
@@ -970,7 +972,7 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -978,6 +980,7 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 #define  WebKitWebHistoryItem_Private 
 #include "nsp/gtk/webkitwebhistoryitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspWebKitWebHistoryItem inherits from NspGObject */ 
 
@@ -1250,7 +1253,7 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1258,6 +1261,7 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  WebKitWebBackForwardList_Private 
 #include "nsp/gtk/webkitwebbackforwardlist.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspWebKitWebBackForwardList inherits from NspGObject */ 
 
@@ -1634,7 +1638,7 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1642,6 +1646,7 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 #define  WebKitWebSettings_Private 
 #include "nsp/gtk/webkitwebsettings.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspWebKitWebSettings inherits from NspGObject */ 
 
@@ -1866,7 +1871,7 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1874,6 +1879,7 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 #define  WebKitNetworkRequest_Private 
 #include "nsp/gtk/webkitnetworkrequest.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspWebKitNetworkRequest inherits from NspGObject */ 
 
@@ -2126,7 +2132,12 @@ static OpTab webkit_func[]={
 
 int webkit_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,webkit_func[i].fonc,
+  					       &stack,rhs,opt,lhs);
+#else
   return (*(webkit_func[i].fonc))(stack,rhs,opt,lhs);
+#endif
 }
 
 /* used to walk through the interface table 
@@ -2142,7 +2153,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2146 "webkit.c"
+#line 2157 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));

@@ -411,12 +411,18 @@ int IsString(const NspObject *O)
     return FALSE;
 }
 
-/*
- * Checks that first+i object on the stack 
- * is a NspSMatrix and returns that NspSMatrix  
- * or a copy of that NspSMatrix if its name 
- * is != NVOID 
- */
+/**
+ * GetSMatCopy:
+ * @stack: calling stack 
+ * @i: an integer 
+ * 
+ * Checks that object @i on the stack 
+ * is a #NspSMatrix and returns that #NspSMatrix  
+ * or a copy of that #NspSMatrix if its name 
+ * is not NVOID 
+ * 
+ * Returns: a #NspMatrix 
+ **/
 
 NspSMatrix*GetSMatCopy(Stack stack, int i)
 {
@@ -424,10 +430,16 @@ NspSMatrix*GetSMatCopy(Stack stack, int i)
   return MaybeObjCopy(&NthObj(i));
 }
 
-/*
+/**
+ * GetSMat:
+ * @stack: calling stack 
+ * @i: an integer 
+ * 
  * Checks that first+i object on the stack 
  * is a NspSMatrix and returns that NspSMatrix  
- */
+ * 
+ * Returns: a #NspMatrix 
+ **/
 
 NspSMatrix*GetSMat(Stack stack, int i)
 {
@@ -437,10 +449,16 @@ NspSMatrix*GetSMat(Stack stack, int i)
   return M;
 }
 
-/*
+/**
+ * GetString:
+ * @stack: calling stack 
+ * @i: an integer 
+ * 
  * Checks that first+i objects on the stack 
  * is a string and returns a pointer to that string
- */
+ * 
+ * Returns: a string 
+ **/
 
 char *GetString(Stack stack, int i)
 {
@@ -456,19 +474,28 @@ char *GetString(Stack stack, int i)
   return M->S[0];
 }
 
-/*
+/**
+ * GetStringInArray:
+ * @stack:  calling stack 
+ * @ith: an integer 
+ * @Table: an null terminated array of string
+ * @flag: an integer 
+ *
  * Checks that first+i objects on the stack 
  * is a string which is in the array Table
  * Table: last entry must be NULL and there must not be duplicate entries.
  * this function returns the index of string in the array A or -1 
  * Note that if flag == 0 abbreviation are accepted 
  * if they do not lead to ambiguity 
- */
+ * 
+ * Returns: an integer 
+ **/
 
-int GetStringInArray(Stack stack, int ith, char **Table, int flag)
+int GetStringInArray(Stack stack, int ith,const nsp_const_string *Table, int flag)
 {
   int rep ;
-  char *key, **entry;
+  char *key;
+  const nsp_const_string *entry;
   if ((key = GetString(stack,ith)) == ((char *) 0) ) return -1;
   rep = is_string_in_array(key,Table,flag);
   if ( rep < 0 ) 
@@ -494,13 +521,32 @@ int GetStringInArray(Stack stack, int ith, char **Table, int flag)
   return rep;
 }
 
+/**
+ * GetStringInStruct:
+ * @stack:  calling stack 
+ * @ith: an integer 
+ * @T: a void *
+ * @size: an integer 
+ * @flag: an integer 
+ * 
+ * Checks that object at position @i on the stack @stack
+ * is a string which is in the array struct @T. We assume that 
+ * the elements of array @T are of size @size and the first element 
+ * of the struct is a string.
+ * This function returns the index of string in the struct @T or -1 
+ * Note that if flag == 0 abbreviation are accepted 
+ * if they do not lead to ambiguity.
+ * 
+ * Returns: an integer 
+ **/
+
 int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag) 
 {
   char **Table =(char **) T;
   int rep ;
   char *key, **entry;
   if ((key = GetString(stack,ith)) == ((char *) 0) ) return -1;
-  rep = is_string_in_struct(key,(void **)T,size,flag);
+  rep = is_string_in_struct(key,(const void **)T,size,flag);
   if ( rep < 0 ) 
     {
       Scierror("Error:\t%s", ArgPosition(ith));
@@ -525,22 +571,108 @@ int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag)
   return rep;
 }
 
+/**
+ * GetSMatUtf8:
+ * @stack:  calling stack 
+ * @pos: an integer 
+ * 
+ * checks if object at position @pos on the stack @stack is an 
+ * utf8 string matrix or copy and convert the matrix if it is 
+ * a non utf8 string matrix.
+ * 
+ * Returns: a new #NspSMatrix 
+ **/
 
-/*
- * Lookup str in the table Table (null terminated).  Accept unique
+NspSMatrix *GetSMatUtf8(Stack stack,int pos)
+{
+  NspSMatrix *Sm;
+  if ((Sm = GetSMat(stack,pos)) == NULLSMAT) return NULLSMAT;
+  if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
+    {
+      /* need to copy first */
+      if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
+      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
+ 	{
+ 	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
+ 	  return NULLSMAT;
+ 	}
+    }
+  return Sm;
+}
+
+/**
+ * GetStringUtf8:
+ * @stack:  calling stack 
+ * @pos: an integer 
+ * 
+ * checks if object at position @pos on the stack @stack is an utf8 string
+ * or copy and convert the string if it is a non utf8 string.
+ * 
+ * Returns: a string pointer.
+ **/
+
+char *GetStringUtf8(Stack stack,int pos)
+{
+  NspSMatrix *Sm;
+  if ((Sm = GetSMatUtf8(stack,pos)) == NULLSMAT) return NULL;
+  if ( Sm->mn != 1 ) 
+    {
+      Scierror("%s: %s should be a string\n",NspFname(stack),ArgPosition(pos));
+      return NULL;
+    }
+  return Sm->S[0];
+}
+
+/**
+ * GetSMatCopyUtf8:
+ * @stack:  calling stack 
+ * @pos: an integer 
+ * 
+ * returns a copy of a string matrix converted to utf8 
+ * or %NULL if object at position @pos on the stack is 
+ * not a string matrix 
+ * 
+ * Returns: a #NspSMatrix
+ **/
+
+NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
+{
+  NspSMatrix *Sm;
+  if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
+  if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
+    {
+      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
+	{
+	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
+	  return NULLSMAT;
+	}
+    }
+  return Sm;
+}
+
+
+/**
+ * is_string_in_array:
+ * @key: a constant string 
+ * @Table: an null terminated array of constant strings 
+ * @flag: an integer 
+ * 
+ * Lookups @key in the table @Table and accept unique
  * abbreviations unless flag == 1;
  * return value is >=0  -> index in table 
  *              is  -1  -> bad key 
  *              is  -2  -> ambiguous key 
  * Note that if flag == 0 abbreviation are accepted 
  * if they do not lead to ambiguity. 
- */
+ * 
+ * Returns: an integer 
+ **/
 
-int is_string_in_array(const char *key, char **Table, int flag)
+int is_string_in_array(const char *key,const nsp_const_string Table[], int flag)
 {
   int index = -1, numAbbrev=0, i;
   const char *p1, *p2;
-  char **entry;
+  const nsp_const_string *entry;
   /*
    * Lookup the value of the object in the table.  Accept unique
    * abbreviations unless flag == 1;
@@ -586,9 +718,9 @@ int is_string_in_array(const char *key, char **Table, int flag)
  *
  **/
 
-void string_not_in_array(Stack stack,const char *key, char **Table,char *message)
+void string_not_in_array(Stack stack,const char *key,const nsp_const_string *Table,char *message)
 {
-  char **entry;
+  const nsp_const_string *entry;
   Scierror("Error:\t%s of function %s has a wrong value '%s'\n",message,NspFname(stack),key);
   Scierror("\texpected values are '%s'", *Table);
   for (entry = Table+1 ; *entry != NULL; entry++) {
@@ -616,7 +748,7 @@ void string_not_in_array(Stack stack,const char *key, char **Table,char *message
  * Returns: -1 if fail or a non negative integer 
  **/
 
-int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag)
+int is_string_in_struct(const char *key,const void **Table,unsigned int size, int flag)
 {
   int index = -1, numAbbrev=0, i;
   const char *p1, *p2;
@@ -1573,11 +1705,11 @@ static int int_smatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *M=NULL;
   NspObject *Index=NULLOBJ;
-  char *type_possible_choices[]={ "g", "gs", "c", "r", "lr" , "lc", NULL };
+  const char *type_possible_choices[]={ "g", "gs", "c", "r", "lr" , "lc", NULL };
   char *type=NULL;
-  char *dir_possible_choices[]={ "i", "d",  NULL };
+  const char *dir_possible_choices[]={ "i", "d",  NULL };
   char *dir=NULL;
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   int iflag = FALSE;
   char direction = 'd', itype = 'd';
@@ -2045,7 +2177,8 @@ static int int_smatrix_unique( Stack stack, int rhs, int opt, int lhs)
   nsp_option opts[] ={{ "first_ind",s_bool,NULLOBJ,-1},
 		      { "ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL, itype='d';
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   int rep_ind_type;
 
   if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind,&ind_type) == FAIL ) 
@@ -2091,7 +2224,7 @@ int_smatrix_issorted (Stack stack, int rhs, int opt, int lhs)
 {
   char *flag=NULL;
   int rep = test_sort_g;
-  char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
+  const char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
   Boolean strict_order = FALSE;
   NspSMatrix *A;
   NspBMatrix *Res;
@@ -2153,7 +2286,7 @@ int_is_string_in_array (Stack stack, int rhs, int opt, int lhs)
       return RET_BUG;
     }
 
-  rep = is_string_in_array(key, Table->S, !abbrev);
+  rep = is_string_in_array(key,(const char **) Table->S, !abbrev);
   if ( rep < 0 && names != NULLSMAT )  /* in this case an automatic treatment of the error is done */ 
     {
       Scierror("Error:\t argument %s of function %s has a wrong value '%s'\n",names->S[0],names->S[1],key);

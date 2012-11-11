@@ -1413,11 +1413,11 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
 override-slot GdkGC.tp_getattr
 
 static char *_gdkgc_attrs[]={ "__attrs", "background", "cap_style",
-			     "clip_mask", "clip_x_origin", "clip_y_origin",
-			     "fill", "font", "foreground", "function",
-			     "graphics_exposures", "join_style", "line_style",
-			     "line_width", "stipple", "sub_window", "tile",
-			     "ts_x_origin", "ts_y_origin", NULL 
+			      "clip_mask", "clip_x_origin", "clip_y_origin",
+			      "fill", "font", "foreground", "function",
+			      "graphics_exposures", "join_style", "line_style",
+			      "line_width", "stipple", "sub_window", "tile",
+			      "ts_x_origin", "ts_y_origin", NULL 
 };
 
 
@@ -1441,7 +1441,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
 {
   GdkGCValues gc;
   int rep;
-  if ((rep= is_string_in_array(attr, _gdkgc_attrs, 0)) < 0 ) 
+  if ((rep= is_string_in_array(attr,(const nsp_const_string *) _gdkgc_attrs, 0)) < 0 ) 
     {
       Scierror("attribute %s not found or ambiguous\n",attr);
       return NULL;
@@ -1494,7 +1494,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   int rep;
   GdkGC *gc = GDK_GC(((NspGObject *)self)->obj);
   
-  if ((rep= is_string_in_array(attr, _gdkgc_attrs, 0)) < 0 ) 
+  if ((rep= is_string_in_array(attr,(const nsp_const_string *) _gdkgc_attrs, 0)) < 0 ) 
     {
       Scierror("attribute %s not found or ambiguous\n",attr);
       return RET_BUG;
@@ -2229,7 +2229,7 @@ ignore gdk_visual_get_best_depth gdk_visual_get_best_type gdk_visual_get_system 
 ignore gdk_visual_get_best_with_depth gdk_visual_get_best_with_type
 %%
 override gdk_visual_new kwargs
-static char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
+static const char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
 static int
 _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
 {

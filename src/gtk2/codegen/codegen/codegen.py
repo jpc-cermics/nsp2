@@ -56,7 +56,7 @@ class Wrapper:
     type_tmpl_1 = \
               '/* -*- Mode: C -*- */\n' \
               '/*-------------------------------------------------------------------\n'  \
-              ' * This Software is ( Copyright ENPC 1998-2007 )                          \n'  \
+              ' * This Software is ( Copyright ENPC 1998-2012 )                          \n'  \
               ' * Jean-Philippe Chancelier Enpc/Cermics \n'  \
               ' *-------------------------------------------------------------------*/\n'  \
               '\n'  \
@@ -64,6 +64,7 @@ class Wrapper:
               '#define  %(typename)s_Private \n'  \
               '#include "nsp/gtk/%(typename_dc)s.h"\n'  \
               '#include "nsp/interf.h"\n'  \
+              '#include "nsp/nspthreads.h"\n'  \
               '\n'  \
               '/* Nsp%(typename)s inherits from Nsp%(parent)s */ \n'  \
               '\n'  \
@@ -244,7 +245,7 @@ class Wrapper:
                 '#define INC_NSP_%(typename)s\n' \
                 '\n' \
                 '/*-----------------------------------------------------------------\n' \
-                '* This Software is ( Copyright ENPC 1998-2007 )\n' \
+                '* This Software is ( Copyright ENPC 1998-2012 )\n' \
                 '* Jean-Philippe Chancelier Enpc/Cermics\n' \
                 '*-----------------------------------------------------------------*/\n' \
                 '\n' \
@@ -769,7 +770,12 @@ class Wrapper:
               '\n'  \
               'int %(typename)s_Interf(int i, Stack stack, int rhs, int opt, int lhs)\n'  \
               '{\n'  \
-              '  return (*(%(typename)s_func[i].fonc))(stack,rhs,opt,lhs);\n'  \
+              '#ifdef NSP_WITH_MAIN_GTK_THREAD\n' \
+              '  return nsp_interface_executed_in_main_thread(i,%(typename)s_func[i].fonc,\n' \
+              '  					       &stack,rhs,opt,lhs);\n' \
+              '#else\n' \
+              '  return (*(%(typename)s_func[i].fonc))(stack,rhs,opt,lhs);\n'\
+              '#endif\n' \
               '}\n'  \
               '\n'  \
               '/* used to walk through the interface table \n'  \

@@ -30,12 +30,10 @@
 #include <nsp/frame.h>
 #include <nsp/libstab.h>
 #include <nsp/funtab.h>
+#include <nsp/nspthreads.h>
+#include <nsp/nspdatas.h>
 
-extern NspObject *Reserved;
-extern NspFrame  *GlobalFrame;
-extern NspFrame  *ConstantFrame;
-
-static char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", "callable", NULL};
+static const char *exists_list[] = {"all","caller", "callers", "local", "global", "function", "nsp-function", "callable", NULL};
 typedef enum { in_all, in_caller, in_callers, in_local, in_global, in_function, in_macro, in_callable} _exist_tag;
 static int nsp_exists(const char *Name, _exist_tag type,NspObject **ret);
 
@@ -55,6 +53,7 @@ static int nsp_exists(const char *Name, _exist_tag type,NspObject **ret);
 
 static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
 {
+  nsp_datas *data = nsp_get_datas();
   NspObject *O;
   int i;
   CheckRhs(1,1000);
@@ -84,14 +83,14 @@ static int int_dataresume(Stack stack, int rhs, int opt, int lhs)
 	   * Ex:     a=5;function f();resume(a);endfunction
 	   *         f() 
 	   */
-	  NthObj(i) = Reserved;
+	  NthObj(i) = data->Reserved;
 	} 
       else 
 	{
 	  /* as in the first branch but with a pointer */
 	  NspHobj *hobj =(NspHobj *) NthObj(i) ;
 	  if ( Ocheckname(hobj->O,NVOID) == FALSE ) 
-	    hobj->O = Reserved;
+	    hobj->O = data->Reserved;
 	
 	}
       /* A copy of object is added in the upper env **/
@@ -263,12 +262,13 @@ static int nsp_exists(const char *Name, _exist_tag type,NspObject **ret)
 
 static NspSMatrix *nsp_calling_tree()
 {
+  nsp_datas *data = nsp_get_datas();
   NspSMatrix *S;
   int i;
   int count=0;
-  if ( Datas != NULLLIST ) 
+  if ( data->L != NULLLIST ) 
     {
-      Cell *C= Datas->first;
+      Cell *C= data->L->first;
       while ( C != NULLCELL) 
 	{
 	  count++;
@@ -278,9 +278,9 @@ static NspSMatrix *nsp_calling_tree()
   if (( S = nsp_smatrix_create(NVOID,count,1,NULL,0))== NULL ) 
     return NULL;
   count=0;
-  if ( Datas != NULLLIST ) 
+  if ( data->L != NULLLIST ) 
     {
-      Cell *C= Datas->first;
+      Cell *C= data->L->first;
       while ( C != NULLCELL) 
 	{
 	  const char *name = C->O->name;
@@ -338,7 +338,8 @@ static int int_exists(Stack stack, int rhs, int opt, int lhs)
 
 NspObject *nsp_who(Stack *stack,const char *frame, int as_hash, int print_only, int *error) 
 {
-  static char *frame_list[] = {"local", "global", "caller","constants", NULL};
+  nsp_datas *data = nsp_get_datas();
+  const char *frame_list[] = {"local", "global", "caller","constants", NULL};
   static nsp_frame_tag frame_tags[]={nsp_frame_local, nsp_frame_global, 
 				     nsp_frame_caller, nsp_frame_constants};
   int rep = 0;
@@ -362,19 +363,19 @@ NspObject *nsp_who(Stack *stack,const char *frame, int as_hash, int print_only, 
     {
     case nsp_frame_local : 
       /* get current frame and return it as a hash table */
-      if ( Datas == NULLLIST ) return NULL;
-      F = (NspFrame *) Datas->first->O;
+      if ( data->L == NULLLIST ) return NULL;
+      F = (NspFrame *) data->L->first->O;
       break;
     case nsp_frame_global:
       /* get global frame and return it as a hash table */
-      if ( (F= GlobalFrame) == NULLFRAME ) return NULL;
+      if ( (F= data->GlobalFrame) == NULLFRAME ) return NULL;
       break;
     case  nsp_frame_caller: 
       /* get caller frame and return it as a hash table */
-      if ( Datas == NULLLIST ) return NULL;
-      C = Datas->first->next;
+      if ( data->L == NULLLIST ) return NULL;
+      C = data->L->first->next;
       if (  C == NULLCELL)  return NULL;
-      if ( ((NspFrame *) C->O) == ConstantFrame) 
+      if ( ((NspFrame *) C->O) == data->ConstantFrame) 
 	{
 	  Scierror("Error: caller frame does not exist\n");
 	  return NULL;
@@ -383,7 +384,7 @@ NspObject *nsp_who(Stack *stack,const char *frame, int as_hash, int print_only, 
       break;
     case nsp_frame_constants: 
       /* get constants frame and return it as a hash table */
-      if ((F= ConstantFrame) == NULLFRAME ) return NULL;
+      if ((F= data->ConstantFrame) == NULLFRAME ) return NULL;
       break;
     }
   

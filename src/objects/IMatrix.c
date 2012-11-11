@@ -334,7 +334,7 @@ int nsp_imatrix_info(NspIMatrix *IMat, int indent,const char *name, int rec_leve
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(IMat)->name;
   NSP_ITYPE_NAMES(names);
-  char *st=NULL;
+  const char *st=NULL;
   st = NSP_ITYPE_NAME(names,IMat->itype);
   if ( IMat->m >=1 &&  IMat->mn >= 2 ) 
     {
@@ -377,11 +377,10 @@ int nsp_imatrix_info(NspIMatrix *IMat, int indent,const char *name, int rec_leve
 int nsp_imatrix_print(NspIMatrix *IMat, int indent,const char *name, int rec_level)
 {
   NSP_ITYPE_NAMES(names);
-  char *st=NULL;
+  const char *st=NULL;
   int rep = TRUE;
   const char *pname = (name != NULL) ? name : NSP_OBJECT(IMat)->name;
   st = NSP_ITYPE_NAME(names,IMat->itype);					
-
   if (user_pref.pr_as_read_syntax)
     {
       if (IMat->mn==0 )

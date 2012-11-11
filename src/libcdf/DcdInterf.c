@@ -77,7 +77,7 @@ static void cdf_dim_mes(char *buf, int k, int m, int n)
 int int_cdfbet(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"A","B","PQ","XY",  NULL};
+  const char *Table[] = {"A","B","PQ","XY",  NULL};
   int minrhs = 5,maxrhs = 6,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -146,7 +146,7 @@ static void cdfbetErr( int status, double bound, double boundbis, int i, int m, 
 int int_cdfbin(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"PQ","PrOmpr","S","Xn", NULL};
+  const char *Table[] = {"PQ","PrOmpr","S","Xn", NULL};
   int minrhs = 5,maxrhs = 6,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -215,7 +215,7 @@ static void cdfbinErr(     int status,   double bound, double boundbis, int i, i
 int int_cdfchi(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"Df","PQ","X",  NULL};
+  const char *Table[] = {"Df","PQ","X",  NULL};
   int minrhs = 3,maxrhs = 4,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -274,7 +274,7 @@ static void cdfchiErr(int status, double bound, double boundbis, int i, int m, i
 int int_cdff(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"Dfd","Dfn","F","PQ",  NULL};
+  const char *Table[] = {"Dfd","Dfn","F","PQ",  NULL};
   int minrhs = 4,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -340,7 +340,7 @@ static void cdffErr(int status, double bound, double boundbis, int i, int m, int
 int int_cdffnc(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"Dfd","Dfn","F","Pnonc","PQ",  NULL};
+  const char *Table[] = {"Dfd","Dfn","F","Pnonc","PQ",  NULL};
   int minrhs = 5,maxrhs = 6,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -412,7 +412,7 @@ static void cdffncErr(int status,   double bound, double boundbis, int i, int m,
 int int_cdfgam(Stack stack, int rhs, int opt, int lhs)
 {
   int rep;
-  char *Table[] = {"PQ", "Rate" ,  "Shape","X", "Scale", NULL}; 
+  const char *Table[] = {"PQ", "Rate" ,  "Shape","X", "Scale", NULL}; 
   int minrhs = 4,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -485,7 +485,7 @@ static void cdfgamErr(int status,double bound, double boundbis, int i, int m, in
 int int_cdfnbn(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = { "PQ" ,  "PrOmpr", "S", "Xn", NULL};
+  const char *Table[] = { "PQ" ,  "PrOmpr", "S", "Xn", NULL};
   int minrhs = 5,maxrhs = 6,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -550,7 +550,7 @@ static void cdfnbnErr(    int status,double bound, double boundbis, int i, int m
 int int_cdfnor(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"Mean", "PQ","Std" ,"X",  NULL};
+  const char *Table[] = {"Mean", "PQ","Std" ,"X",  NULL};
   int minrhs = 4,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -611,7 +611,7 @@ static void cdfnorErr(    int status,double bound, double boundbis, int i, int m
 int int_cdfpoi(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"PQ", "S", "Xlam", NULL};
+  const char *Table[] = {"PQ", "S", "Xlam", NULL};
   int minrhs = 3,maxrhs = 4,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -670,7 +670,7 @@ static void cdfpoiErr(int status,double bound, double boundbis, int i, int m, in
 int int_cdft(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"Df", "PQ", "T" , NULL};
+  const char *Table[] = {"Df", "PQ", "T" , NULL};
   int minrhs = 3,maxrhs = 4,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -726,7 +726,7 @@ static void cdftErr(    int status,double bound, double boundbis, int i, int m, 
 int int_cdftnc(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = {"Df", "PQ", "T" , "Pnonc", NULL};
+  const char *Table[] = {"Df", "PQ", "T" , "Pnonc", NULL};
   int minrhs = 3,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);
@@ -789,7 +789,7 @@ static void cdftncErr(    int status,double bound, double boundbis, int i, int m
 int int_cdfchn(Stack stack, int rhs, int opt, int lhs)
 { 
   int rep;
-  char *Table[] = { "Df" ,"Pnonc", "PQ", "X",NULL};
+  const char *Table[] = { "Df" ,"Pnonc", "PQ", "X",NULL};
   int minrhs = 4,maxrhs = 5,minlhs=1,maxlhs=2;
   CheckRhs(minrhs,maxrhs);
   CheckLhs(minlhs,maxlhs);

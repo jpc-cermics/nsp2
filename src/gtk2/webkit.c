@@ -1,6 +1,4 @@
-#include "nsp/config.h" 
-#include "nsp/math.h"
-
+#include <nsp/nsp.h>
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
 #include <nsp/matrix.h>

@@ -729,7 +729,7 @@ static NspMatrix * nsp_umfpack_solve(NspUmfpack *self,NspMatrix *B, int mode, in
 
 static int nsp_umfpack_solve_mode( Stack stack,char *mode, int *imode) 
 {
-  char *types[]={ "A", "At",  "Aat", "Pt_L" ,
+  const char *types[]={ "A", "At",  "Aat", "Pt_L" ,
 		  "L", "Lt_P", "Lat_P", "Lt",
 		  "U_Qt" , "U", "Q_Ut" , "Q_Uat",
 		  "Ut", "Uat", NULL};

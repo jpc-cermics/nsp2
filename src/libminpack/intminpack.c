@@ -896,7 +896,7 @@ static NspObject *get_function(Stack stack, int pos,HYBR_ftype type,hybr_data *d
  * 
  */
 
-static char *test_names[]={ 
+static const char *test_names[]={ 
   "rosenbrock",
   "powell_singular",
   "powell_badly_scaled",
@@ -958,7 +958,7 @@ extern int minpack_jac_rosenbrock (const int *n, double *x, double *fjac, int *l
 extern int minpack_jac_powell_singular (const int *n, double *x, double *fjac, int *ldfjac, int *iflag, void *data);
 
 
-static char *test_jac_names[]=
+static const char *test_jac_names[]=
   {
     "jac_rosenbrock",
     "jac_powell_singular",

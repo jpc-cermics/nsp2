@@ -55,7 +55,7 @@
 static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -63,6 +63,7 @@ static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 #define  GdkEvent_Private 
 #include "nsp/gtk/gdkevent.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkEvent inherits from NspGBoxed */ 
 
@@ -307,7 +308,7 @@ _wrap_gdk_event_get_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;      
 }
-#line 311 "gdk.c"
+#line 312 "gdk.c"
 
 
 #line 1081 "gdk.override"
@@ -321,7 +322,7 @@ _wrap_gdk_event_get_root_coords(NspGObject *self, Stack stack,int rhs,int opt,in
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 325 "gdk.c"
+#line 326 "gdk.c"
 
 
 #line 1053 "gdk.override"
@@ -339,7 +340,7 @@ _wrap_gdk_event_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,n,(double) value) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 343 "gdk.c"
+#line 344 "gdk.c"
 
 
 static NspMethods gdkevent_methods[] = {
@@ -698,7 +699,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
   Scierror("Event attributes not found \n");
   return NULL;
 }
-#line 702 "gdk.c"
+#line 703 "gdk.c"
 
 
 
@@ -707,7 +708,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -715,6 +716,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 #define  GdkFont_Private 
 #include "nsp/gtk/gdkfont.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkFont inherits from NspGBoxed */ 
 
@@ -963,7 +965,7 @@ static int _wrap_gdk_char_width(NspGdkFont *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 967 "gdk.c"
+#line 969 "gdk.c"
 
 
 static int _wrap_gdk_string_measure(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1007,7 +1009,7 @@ static int _wrap_gdk_char_measure(NspGdkFont *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 1011 "gdk.c"
+#line 1013 "gdk.c"
 
 
 static int _wrap_gdk_string_height(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1052,7 +1054,7 @@ static int _wrap_gdk_char_height(NspGdkFont *self,Stack stack,int rhs,int opt,in
   return 1; 
 }
 
-#line 1056 "gdk.c"
+#line 1058 "gdk.c"
 
 
 #line 529 "gdk.override"
@@ -1075,7 +1077,7 @@ _wrap_gdk_text_extents(NspObject *self, Stack stack,int rhs,int opt,int lhs)
 			(double) ascent, (double) descent) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 1079 "gdk.c"
+#line 1081 "gdk.c"
 
 
 static int _wrap_gdk_string_extents(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1148,7 +1150,7 @@ static AttrTab gdkfont_attrs[] = {
 static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1156,6 +1158,7 @@ static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #define  GdkColor_Private 
 #include "nsp/gtk/gdkcolor.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkColor inherits from NspGBoxed */ 
 
@@ -1354,7 +1357,7 @@ _wrap_gdkcolor_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1358 "gdk.c"
+#line 1361 "gdk.c"
 
 
 static NspMethods *gdkcolor_get_methods(void) { return NULL;};
@@ -1435,7 +1438,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   return OK;
 }
 
-#line 1439 "gdk.c"
+#line 1442 "gdk.c"
 
 
 
@@ -1444,7 +1447,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1452,6 +1455,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #define  GdkCursor_Private 
 #include "nsp/gtk/gdkcursor.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkCursor inherits from NspGBoxed */ 
 
@@ -1694,7 +1698,7 @@ _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) nsp_ret);
   return 1;
 }
-#line 1698 "gdk.c"
+#line 1702 "gdk.c"
 
 
 static NspMethods *gdkcursor_get_methods(void) { return NULL;};
@@ -1721,7 +1725,7 @@ static AttrTab gdkcursor_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1729,6 +1733,7 @@ static AttrTab gdkcursor_attrs[] = {
 #define  GdkRectangle_Private 
 #include "nsp/gtk/gdkrectangle.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkRectangle inherits from NspGBoxed */ 
 
@@ -1949,7 +1954,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
-#line 1953 "gdk.c"
+#line 1958 "gdk.c"
 
 
 #line 2198 "gdk.override"
@@ -1966,7 +1971,7 @@ _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int 
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1970 "gdk.c"
+#line 1975 "gdk.c"
 
 
 #line 2213 "gdk.override"
@@ -1983,7 +1988,7 @@ _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1987 "gdk.c"
+#line 1992 "gdk.c"
 
 
 static NspMethods gdkrectangle_methods[] = {
@@ -2043,7 +2048,7 @@ static AttrTab gdkrectangle_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2051,6 +2056,7 @@ static AttrTab gdkrectangle_attrs[] = {
 #define  GdkColormap_Private 
 #include "nsp/gtk/gdkcolormap.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkColormap inherits from NspGObject */ 
 
@@ -2314,7 +2320,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
   }
   return 0;
 }
-#line 2318 "gdk.c"
+#line 2324 "gdk.c"
 
 
 static int _wrap_gdk_colormap_get_visual(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2374,7 +2380,7 @@ _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("use GdkColormap.alloc_color"); 
   return RET_BUG;
 }
-#line 2378 "gdk.c"
+#line 2384 "gdk.c"
 
 
 static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2418,7 +2424,7 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2426,6 +2432,7 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkDevice_Private 
 #include "nsp/gtk/gdkdevice.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkDevice inherits from NspGObject */ 
 
@@ -2685,7 +2692,7 @@ _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs
     if (( nsp_move_double(stack,2,(double) mask))==FAIL) return RET_BUG;
   return 2;
 }
-#line 2689 "gdk.c"
+#line 2696 "gdk.c"
 
 
 #line 1153 "gdk.override"
@@ -2728,7 +2735,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   Scierror("To be done XXXX ");
   return RET_BUG;
 }
-#line 2732 "gdk.c"
+#line 2739 "gdk.c"
 
 
 #line 1194 "gdk.override"
@@ -2758,7 +2765,7 @@ _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     }
   return 1;
 }
-#line 2762 "gdk.c"
+#line 2769 "gdk.c"
 
 
 static NspMethods gdkdevice_methods[] = {
@@ -2838,7 +2845,7 @@ _wrap_gdk_device__get_axes(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2842 "gdk.c"
+#line 2849 "gdk.c"
 static NspObject *_wrap_gdk_device__get_num_keys(NspObject *self,char *attr)
 {
   int ret;
@@ -2863,7 +2870,7 @@ _wrap_gdk_device__get_keys(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2867 "gdk.c"
+#line 2874 "gdk.c"
 static AttrTab gdkdevice_attrs[] = {
   { "name", (attr_get_function *)_wrap_gdk_device__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "source", (attr_get_function *)_wrap_gdk_device__get_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2882,7 +2889,7 @@ static AttrTab gdkdevice_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2890,6 +2897,7 @@ static AttrTab gdkdevice_attrs[] = {
 #define  GdkDisplay_Private 
 #include "nsp/gtk/gdkdisplay.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkDisplay inherits from NspGObject */ 
 
@@ -3286,7 +3294,7 @@ static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3294,6 +3302,7 @@ static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkDisplayManager_Private 
 #include "nsp/gtk/gdkdisplaymanager.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkDisplayManager inherits from NspGObject */ 
 
@@ -3487,7 +3496,7 @@ static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3495,6 +3504,7 @@ static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkDragContext_Private 
 #include "nsp/gtk/gdkdragcontext.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkDragContext inherits from NspGObject */ 
 
@@ -3774,7 +3784,7 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_double(stack,2,(double) protocol)== FAIL) return RET_BUG;
   return 2;
 }
-#line 3778 "gdk.c"
+#line 3788 "gdk.c"
 
 
 static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -3963,7 +3973,7 @@ _wrap_gdk_drag_context__get_targets(NspGObject *self, char *attr)
       return NULL;
     }
 }
-#line 3967 "gdk.c"
+#line 3977 "gdk.c"
 static NspObject *_wrap_gdk_drag_context__get_actions(NspObject *self,char *attr)
 {
   guint ret;
@@ -4017,7 +4027,7 @@ static AttrTab gdkdragcontext_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -4025,6 +4035,7 @@ static AttrTab gdkdragcontext_attrs[] = {
 #define  GdkDrawable_Private 
 #include "nsp/gtk/gdkdrawable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkDrawable inherits from NspGObject */ 
 
@@ -4217,7 +4228,7 @@ _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width, (double) height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 4221 "gdk.c"
+#line 4232 "gdk.c"
 
 
 static int _wrap_gdk_drawable_set_colormap(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4333,7 +4344,7 @@ _wrap_gdk_draw_polygon(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4337 "gdk.c"
+#line 4348 "gdk.c"
 
 
 static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4377,7 +4388,7 @@ _wrap_gdk_draw_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 		GDK_GC(gc->obj), x, y, text, strlen(text));
   return 0;
 }
-#line 4381 "gdk.c"
+#line 4392 "gdk.c"
 
 
 static int _wrap_gdk_draw_drawable(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4429,7 +4440,7 @@ _wrap_gdk_draw_points(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4433 "gdk.c"
+#line 4444 "gdk.c"
 
 
 #line 214 "gdk.override"
@@ -4461,7 +4472,7 @@ _wrap_gdk_draw_segments(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(segs);
   return 0;
 }
-#line 4465 "gdk.c"
+#line 4476 "gdk.c"
 
 
 #line 244 "gdk.override"
@@ -4487,7 +4498,7 @@ _wrap_gdk_draw_lines(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4491 "gdk.c"
+#line 4502 "gdk.c"
 
 
 static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4591,7 +4602,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXXXXX");
   return RET_BUG;
 }
-#line 4595 "gdk.c"
+#line 4606 "gdk.c"
 
 
 #line 311 "gdk.override"
@@ -4634,7 +4645,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
   Scierror("To be done XXXXXX ");  
   return RET_BUG;
 }
-#line 4638 "gdk.c"
+#line 4649 "gdk.c"
 
 
 #line 354 "gdk.override"
@@ -4676,7 +4687,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 4680 "gdk.c"
+#line 4691 "gdk.c"
 
 
 static NspMethods gdkdrawable_methods[] = {
@@ -4719,7 +4730,7 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -4727,6 +4738,7 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkWindow_Private 
 #include "nsp/gtk/gdkwindow.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkWindow inherits from NspGdkDrawable */ 
 
@@ -4931,7 +4943,7 @@ _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, nsp_context);
   return 1;
 }
-#line 4935 "gdk.c"
+#line 4947 "gdk.c"
 
 
 static int _wrap_gdk_input_set_extension_events(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5009,7 +5021,7 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
 }
-#line 5013 "gdk.c"
+#line 5025 "gdk.c"
 
 
 #line 1695 "gdk.override"
@@ -5115,7 +5127,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 5119 "gdk.c"
+#line 5131 "gdk.c"
 
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5506,7 +5518,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height,(double) depth) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5510 "gdk.c"
+#line 5522 "gdk.c"
 
 
 #line 1811 "gdk.override"
@@ -5519,7 +5531,7 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5523 "gdk.c"
+#line 5535 "gdk.c"
 
 
 #line 1822 "gdk.override"
@@ -5532,7 +5544,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5536 "gdk.c"
+#line 5548 "gdk.c"
 
 
 #line 1833 "gdk.override"
@@ -5545,7 +5557,7 @@ _wrap_gdk_window_get_deskrelative_origin(NspGObject *self, Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5549 "gdk.c"
+#line 5561 "gdk.c"
 
 
 #line 1844 "gdk.override"
@@ -5558,7 +5570,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5562 "gdk.c"
+#line 5574 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5585,7 +5597,7 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5589 "gdk.c"
+#line 5601 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5637,7 +5649,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 5641 "gdk.c"
+#line 5653 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5942,7 +5954,7 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5950,6 +5962,7 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkPixmap_Private 
 #include "nsp/gtk/gdkpixmap.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkPixmap inherits from NspGdkDrawable */ 
 
@@ -6176,7 +6189,7 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -6184,6 +6197,7 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkBitmap_Private 
 #include "nsp/gtk/gdkbitmap.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkBitmap inherits from NspGdkDrawable */ 
 
@@ -6379,7 +6393,7 @@ static int _wrap_gdk_gc_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -6387,6 +6401,7 @@ static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #define  GdkGC_Private 
 #include "nsp/gtk/gdkgc.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkGC inherits from NspGObject */ 
 
@@ -6708,7 +6723,7 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 6712 "gdk.c"
+#line 6727 "gdk.c"
 
 
 static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6918,7 +6933,7 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(dash_list);
   return 0;
 }
-#line 6922 "gdk.c"
+#line 6937 "gdk.c"
 
 
 static int _wrap_gdk_gc_offset(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -7031,11 +7046,11 @@ static AttrTab gdkgc_attrs[]={{NULL,NULL,NULL}} ;
 #line 1414 "gdk.override"
 
 static char *_gdkgc_attrs[]={ "__attrs", "background", "cap_style",
-			     "clip_mask", "clip_x_origin", "clip_y_origin",
-			     "fill", "font", "foreground", "function",
-			     "graphics_exposures", "join_style", "line_style",
-			     "line_width", "stipple", "sub_window", "tile",
-			     "ts_x_origin", "ts_y_origin", NULL 
+			      "clip_mask", "clip_x_origin", "clip_y_origin",
+			      "fill", "font", "foreground", "function",
+			      "graphics_exposures", "join_style", "line_style",
+			      "line_width", "stipple", "sub_window", "tile",
+			      "ts_x_origin", "ts_y_origin", NULL 
 };
 
 
@@ -7059,7 +7074,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
 {
   GdkGCValues gc;
   int rep;
-  if ((rep= is_string_in_array(attr, _gdkgc_attrs, 0)) < 0 ) 
+  if ((rep= is_string_in_array(attr,(const nsp_const_string *) _gdkgc_attrs, 0)) < 0 ) 
     {
       Scierror("attribute %s not found or ambiguous\n",attr);
       return NULL;
@@ -7087,7 +7102,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   }
   return NULL;
 }
-#line 7091 "gdk.c"
+#line 7106 "gdk.c"
 
 
 #line 1474 "gdk.override"
@@ -7114,7 +7129,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   int rep;
   GdkGC *gc = GDK_GC(((NspGObject *)self)->obj);
   
-  if ((rep= is_string_in_array(attr, _gdkgc_attrs, 0)) < 0 ) 
+  if ((rep= is_string_in_array(attr,(const nsp_const_string *) _gdkgc_attrs, 0)) < 0 ) 
     {
       Scierror("attribute %s not found or ambiguous\n",attr);
       return RET_BUG;
@@ -7187,7 +7202,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
     }
   return 0;
 }
-#line 7191 "gdk.c"
+#line 7206 "gdk.c"
 
 
 
@@ -7196,7 +7211,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7204,6 +7219,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #define  GdkImage_Private 
 #include "nsp/gtk/gdkimage.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkImage inherits from NspGObject */ 
 
@@ -7472,7 +7488,7 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7480,6 +7496,7 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkKeymap_Private 
 #include "nsp/gtk/gdkkeymap.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkKeymap inherits from NspGObject */ 
 
@@ -7687,7 +7704,7 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7695,6 +7712,7 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkPixbuf_Private 
 #include "nsp/gtk/gdkpixbuf.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkPixbuf inherits from NspGObject */ 
 
@@ -7959,7 +7977,7 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
       return 1;
     }
 }
-#line 7963 "gdk.c"
+#line 7981 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8043,7 +8061,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 8047 "gdk.c"
+#line 8065 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8203,7 +8221,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8207 "gdk.c"
+#line 8225 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8385,7 +8403,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8389 "gdk.c"
+#line 8407 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { NULL,NULL,NULL,NULL },
@@ -8397,7 +8415,7 @@ static AttrTab gdkpixbuf_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8405,6 +8423,7 @@ static AttrTab gdkpixbuf_attrs[] = {
 #define  GdkPixbufAnimation_Private 
 #include "nsp/gtk/gdkpixbufanimation.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkPixbufAnimation inherits from NspGObject */ 
 
@@ -8667,7 +8686,7 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8675,6 +8694,7 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkPixbufAnimationIter_Private 
 #include "nsp/gtk/gdkpixbufanimationiter.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkPixbufAnimationIter inherits from NspGObject */ 
 
@@ -8905,7 +8925,7 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8913,6 +8933,7 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkPixbufLoader_Private 
 #include "nsp/gtk/gdkpixbufloader.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkPixbufLoader inherits from NspGObject */ 
 
@@ -9191,7 +9212,7 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9199,6 +9220,7 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkScreen_Private 
 #include "nsp/gtk/gdkscreen.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkScreen inherits from NspGObject */ 
 
@@ -9649,7 +9671,7 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9657,6 +9679,7 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 #define  GdkVisual_Private 
 #include "nsp/gtk/gdkvisual.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGdkVisual inherits from NspGObject */ 
 
@@ -9839,7 +9862,7 @@ NspGdkVisual *gdkvisual_copy(NspGdkVisual *self)
 */ 
 
 #line 2232 "gdk.override"
-static char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
+static const char *_visual[]={ "best_depth", "best_type", "get_system", NULL };
 static int
 _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
 {
@@ -9917,7 +9940,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 9921 "gdk.c"
+#line 9944 "gdk.c"
 
 
 static NspMethods *gdkvisual_get_methods(void) { return NULL;};
@@ -10263,7 +10286,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXX ");
   return RET_BUG;
 }
-#line 10267 "gdk.c"
+#line 10290 "gdk.c"
 
 
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs)
@@ -10352,7 +10375,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10356 "gdk.c"
+#line 10379 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs)
@@ -10484,7 +10507,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10488 "gdk.c"
+#line 10511 "gdk.c"
 
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs)
@@ -10598,7 +10621,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10602 "gdk.c"
+#line 10625 "gdk.c"
 
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs)
@@ -10877,7 +10900,7 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
-#line 10881 "gdk.c"
+#line 10904 "gdk.c"
 
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
@@ -11235,7 +11258,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 11239 "gdk.c"
+#line 11262 "gdk.c"
 
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
@@ -11307,7 +11330,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 11311 "gdk.c"
+#line 11334 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs)
@@ -11444,7 +11467,12 @@ static OpTab gdk_func[]={
 
 int gdk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,gdk_func[i].fonc,
+  					       &stack,rhs,opt,lhs);
+#else
   return (*(gdk_func[i].fonc))(stack,rhs,opt,lhs);
+#endif
 }
 
 /* used to walk through the interface table 
@@ -11563,7 +11591,7 @@ gdk_register_classes(NspObject *d)
   #endif
 * /
 
-#line 11567 "gdk.c"
+#line 11595 "gdk.c"
   nspg_register_boxed(d, "Event", GDK_TYPE_EVENT, &PyGdkEvent_Type);
   nspg_register_boxed(d, "Font", GDK_TYPE_FONT, &PyGdkFont_Type);
   nspg_register_boxed(d, "Color", GDK_TYPE_COLOR, &PyGdkColor_Type);

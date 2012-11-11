@@ -1698,9 +1698,7 @@ int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
 int
 int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
 {
-  static char *Strings[] =
-    { "magic", "franck", "franck^-1", "hilbert", "hilbert^-1",
-      (char *) NULL };
+  const char *Strings[] = { "magic", "franck", "franck^-1", "hilbert", "hilbert^-1", NULL };
   int ind, n1;
   NspMatrix *A=NULLMAT;
   CheckRhs (2, 2);
@@ -1855,11 +1853,11 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *M=NULLMAT;
   NspObject *Index=NULLOBJ;
-  char *type_possible_choices[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
+  const char *type_possible_choices[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
   char *type=NULL;
-  char *dir_possible_choices[]={ "i", "d",  NULL };
+  const char *dir_possible_choices[]={ "i", "d",  NULL };
   char *dir=NULL;
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   int iflag = FALSE;
   char direction = 'd', itype = 'd';
@@ -3627,7 +3625,7 @@ int int_mxishift (Stack stack, int rhs, int opt, int lhs)
   if (rhs >= 3)
     {
       int rep;
-      char *shift_options1[] = { "r", "l", NULL };
+      const char *shift_options1[] = { "r", "l", NULL };
       if ((rep = GetStringInArray (stack, 3, shift_options1, 1)) == -1)
 	return RET_BUG;
       dir = shift_options1[rep][0];
@@ -4223,7 +4221,7 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
   NspObject *Rc=NULLOBJ,*Rr=NULLOBJ;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   char itype = 'd';
   int rep;
@@ -4325,7 +4323,7 @@ int_mxmfind (Stack stack, int rhs, int opt, int lhs)
   const char **ops = NULL;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   char itype = 'd';
   int rep;
@@ -4412,7 +4410,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
   int nd, *dims=NULL, i;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   char itype = 'd';
   int rep;
@@ -4505,7 +4503,7 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
   int nd, *dims=NULL, i, nb_ind=0;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   char itype = 'd';
   int rep;
@@ -4607,7 +4605,7 @@ int_ind2sub (Stack stack, int rhs, int opt, int lhs)
   int nd, *dims=NULL, i;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   char itype = 'd';
 
@@ -4797,10 +4795,10 @@ extern double nsp_dlamch (char *cmach);
  */
 
 typedef enum { nump_eps,nump_huge,nump_tiny,nump_radix,nump_digits,nump_minexp,nump_maxexp,nump_denorm,nump_tiniest  } nump_id;
-static char *numbers_props[]={ "eps","huge","tiny","radix","digits","minexp","maxexp","denorm","tiniest" , NULL };
 
 int int_number_properties(Stack stack, int rhs, int opt, int lhs)
 {
+  const char *numbers_props[]={ "eps","huge","tiny","radix","digits","minexp","maxexp","denorm","tiniest" , NULL };
   int rep;
   double tiniest,b;
   NspObject *Ob=NULLOBJ;
@@ -4878,7 +4876,7 @@ int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
   char *output = NULL;
   nsp_option opts[] ={{"output",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *output_possible_choices[]={ "usual", "int",  NULL };
+  const char *output_possible_choices[]={ "usual", "int",  NULL };
 
   CheckStdRhs (1, 1);
   CheckLhs (1, 2);
@@ -5101,7 +5099,7 @@ int int_test_dperm(Stack stack, int rhs, int opt, int lhs)
 static int int_format(Stack stack, int rhs, int opt, int lhs)
 {
   int output_max_field_width=11, output_precision=4, eflag=0;
-  static char *Table[] = {"long", "medium", "short", "long e", "medium e", "short e", "default", "get", NULL};
+  const char *Table[] = {"long", "medium", "short", "long e", "medium e", "short e", "default", "get", NULL};
   int mf[] = {23,18,11,23,18,11 };
   int op[] = {16,11, 4,16,11, 4};
   int id;
@@ -5174,8 +5172,10 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
 		      { "ind_type",string,NULLOBJ,-1},
                       { "which",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
-  char *which=NULL, iwhich='e', *which_possible_choices[]={ "elements", "rows", "columns", NULL };
+  char *ind_type=NULL, itype='d';
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *which=NULL, iwhich='e';
+  const char *which_possible_choices[]={ "elements", "rows", "columns", NULL };
   int rep_ind_type, rep_which;
 
   if ( GetArgs(stack,rhs,opt,T,&x,&opts,&first_ind, &ind_type, &which) == FAIL ) 
@@ -5346,7 +5346,7 @@ int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
 {
   char *flag=NULL;
   int rep = test_sort_g;
-  char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
+  const char *flags_list[]={ "g", "c", "r", "lc", "lr", NULL};
   Boolean strict_order = FALSE, order_nan = FALSE;
   NspMatrix *A;
   NspBMatrix *Res;

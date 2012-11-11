@@ -326,7 +326,7 @@ int int_optim (Stack stack, int rhs, int opt, int lhs)
 
 static optim_algo check_optim_algo(Stack stack,const char *fname,const char *algo)
 {
-  static char *Table[] = {"qn",  "gc",  "nd", NULL};
+  const char *Table[] = {"qn",  "gc",  "nd", NULL};
   int rep ; 
   if ( algo == NULL ) return algo_qn;
   rep = is_string_in_array(algo,Table,1);
@@ -500,7 +500,7 @@ static NspObject *get_function(Stack stack, int pos,opt_simul_data *data)
  * [f,g,ind]=optim_test(x,ind,'genros');
  */
 
-static char *test_names[]={ "genros" , NULL };
+static const char *test_names[]={ "genros" , NULL };
 static opt_simul test_functions[]={ optim_genros , NULL};
 
 int int_n1qn1d_test (Stack stack, int rhs, int opt, int lhs)

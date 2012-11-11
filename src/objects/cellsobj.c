@@ -1312,7 +1312,8 @@ static int int_cells_unique(Stack stack, int rhs, int opt, int lhs)
   NspObject *ind=NULLOBJ, **hind=NULL;
   nsp_option opts[] ={{ "ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type=NULL, itype='d', *ind_type_possible_choices[]={ "double", "int",  NULL };
+  char *ind_type=NULL, itype='d';
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   int rep_ind_type;
 
   CheckLhs(1,3);

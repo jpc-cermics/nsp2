@@ -1394,12 +1394,11 @@ nspg_closure_new(NspPList *callback, NspList *extra_args, NspObject *swap_data)
  */
 
 static Stack Marshal_stack={0,NULL};
-static NspObject *Marshal_stack_S[STACK_SIZE];
 static int  stack_count=0; /* should be added in the stack */
 
 void nsp_init_gtk_stack(void)
 {
-  nsp_init_stack(&Marshal_stack,Marshal_stack_S);
+  nsp_init_stack(&Marshal_stack);
 }
 
 
@@ -1943,7 +1942,12 @@ nspg_value_from_nspobject(GValue *value, NspObject *obj)
   case G_TYPE_CHAR:
   case G_TYPE_UCHAR:
     if ((str =nsp_string_object(obj)) != NULL)
+#if GLIB_CHECK_VERSION(2,32,0)
+      g_value_set_schar(value, str[0]);
+#else 
       g_value_set_char(value, str[0]);
+#endif 
+
     else {
       return FAIL;
     }
@@ -2121,7 +2125,11 @@ nspg_value_as_nspobject(const GValue *value, gboolean copy_boxed)
       else
 	break;
     case G_TYPE_CHAR: {
+#if GLIB_CHECK_VERSION(2,32,0)
+      gint8 val = g_value_get_schar(value);
+#else 
       gint8 val = g_value_get_char(value);
+#endif 
       return  nsp_new_string_obj(NVOID,(char *) &val,1);
     }
     case G_TYPE_UCHAR: {

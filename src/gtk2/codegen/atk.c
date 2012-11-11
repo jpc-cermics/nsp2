@@ -31,7 +31,7 @@
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -39,6 +39,7 @@
 #define  AtkHyperlink_Private 
 #include "nsp/gtk/atkhyperlink.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkHyperlink inherits from NspGObject */ 
 
@@ -306,7 +307,7 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -314,6 +315,7 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkObject_Private 
 #include "nsp/gtk/atkobject.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkObject inherits from NspGObject */ 
 
@@ -694,7 +696,7 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -702,6 +704,7 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkNoOpObject_Private 
 #include "nsp/gtk/atknoopobject.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkNoOpObject inherits from NspAtkObject */ 
 
@@ -912,7 +915,7 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -920,6 +923,7 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkObjectFactory_Private 
 #include "nsp/gtk/atkobjectfactory.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkObjectFactory inherits from NspGObject */ 
 
@@ -1140,7 +1144,7 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1148,6 +1152,7 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkNoOpObjectFactory_Private 
 #include "nsp/gtk/atknoopobjectfactory.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkNoOpObjectFactory inherits from NspAtkObjectFactory */ 
 
@@ -1355,7 +1360,7 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1363,6 +1368,7 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkRegistry_Private 
 #include "nsp/gtk/atkregistry.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkRegistry inherits from NspGObject */ 
 
@@ -1608,7 +1614,7 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1616,6 +1622,7 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkRelation_Private 
 #include "nsp/gtk/atkrelation.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkRelation inherits from NspGObject */ 
 
@@ -1838,7 +1845,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1842 "atk.c"
+#line 1849 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -1867,7 +1874,7 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1875,6 +1882,7 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkRelationSet_Private 
 #include "nsp/gtk/atkrelationset.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkRelationSet inherits from NspGObject */ 
 
@@ -2168,7 +2176,7 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2176,6 +2184,7 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkStateSet_Private 
 #include "nsp/gtk/atkstateset.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkStateSet inherits from NspGObject */ 
 
@@ -2486,7 +2495,7 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2494,6 +2503,7 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 #define  AtkUtil_Private 
 #include "nsp/gtk/atkutil.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspAtkUtil inherits from NspGObject */ 
 
@@ -2877,7 +2887,12 @@ static OpTab atk_func[]={
 
 int atk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,atk_func[i].fonc,
+  					       &stack,rhs,opt,lhs);
+#else
   return (*(atk_func[i].fonc))(stack,rhs,opt,lhs);
+#endif
 }
 
 /* used to walk through the interface table 
@@ -3066,7 +3081,7 @@ atk_register_classes(NspObject *d)
   }
 
 
-#line 3070 "atk.c"
+#line 3085 "atk.c"
   nspgobject_register_class(d, "AtkHyperlink", ATK_TYPE_HYPERLINK, &PyAtkHyperlink_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkObject", ATK_TYPE_OBJECT, &PyAtkObject_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkNoOpObject", ATK_TYPE_NO_OP_OBJECT, &PyAtkNoOpObject_Type, Py_BuildValue("(O)", &PyAtkObject_Type));

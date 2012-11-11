@@ -364,7 +364,7 @@ int int_ode(Stack stack, int rhs, int opt, int lhs)
   char *type=NULL;
   NspMatrix *y0,*time,*w=NULL,*iw=NULL, *Matol=NULL;
   
-  static char *Table[] = {"default","adams","stiff","rk","rkd5","fix","discrete","roots", NULL};
+  const char *Table[] = {"default","adams","stiff","rk","rkd5","fix","discrete","roots", NULL};
 
   int_types T[] = {realmatcopy,s_double,realmat,obj,new_opts, t_end} ;
 

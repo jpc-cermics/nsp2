@@ -52,6 +52,8 @@ extern NspSMatrix *SMatCreateFromAttrsTable (AttrTab *T);
 #define NspFnameH(x) (x)->fname 
 /* current file name in use */
 #define NspFileName(x) (x).file_name
+#define NspFileName1(x) (((x)==NULL) ? "" : (x)->file_name)
+
 
 /**
  *CheckRhs:

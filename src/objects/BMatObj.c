@@ -766,7 +766,7 @@ static int int_bmatrix_find(Stack stack, int rhs, int opt, int lhs)
   NspObject *Rc=NULLOBJ,*Rr=NULLOBJ;
   nsp_option opts[] ={{"ind_type",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   char itype = 'd';
   int rep;

@@ -23,6 +23,7 @@
 #include <nsp/math.h>
 #include <nsp/objectf.h>
 
+
 extern void update_exec_dir(char *filename,char *exec_dir,char *filename_exec,unsigned int length);
 extern void update_exec_dir_from_dir(char *dirname,char *exec_dir,unsigned int length);
 extern void nsp_expand_file_with_exec_dir(Stack *stack,char *filename,char *filename_exec);

@@ -18,6 +18,7 @@ struct _nsp_thread_interface {
   GAsyncQueue *queue;
 };
 
+
 /* should be moved in config.h */
 #if 0
 #define NSP_WITH_MAIN_GTK_THREAD 
@@ -31,6 +32,8 @@ extern void nsp_check_threads(const char *str);
 extern GThread *nsp_gtk_main_thread(void);
 extern int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, 
 						 int rhs, int opt, int lhs);
+extern int nsp_new_interp(GThread *thread,int argc,char **argv);
+
 
 #endif 
 

@@ -58,11 +58,16 @@ extern int IsString(const NspObject *O);
 extern NspSMatrix *GetSMatCopy (Stack stack, int i); 
 extern NspSMatrix *GetSMat (Stack stack, int i); 
 extern char *GetString (Stack stack, int i); 
-extern int GetStringInArray (Stack stack, int ith, char **Table, int flag); 
+extern NspSMatrix *GetSMatUtf8(Stack stack,int pos);
+extern char *GetStringUtf8(Stack stack,int pos);
+extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos);
+
+extern int GetStringInArray(Stack stack, int ith,const nsp_const_string *Table, int flag);
 extern int GetStringInStruct(Stack stack, int ith,void *T,unsigned int size, int flag);
-extern int is_string_in_array (const char *key, char **Table, int flag); 
-extern void string_not_in_array(Stack stack,const char *key, char **Table,char *message);
-extern int is_string_in_struct(const char *key,void **Table,unsigned int size, int flag);
+extern int is_string_in_array(const char *key,const nsp_const_string Table[], int flag);
+extern void string_not_in_array(Stack stack,const char *key,const nsp_const_string *Table,char *message);
+extern int is_string_in_struct(const char *key,const void **Table,unsigned int size, int flag);
+
 extern NspSMatrix *nsp_smatrix_create(nsp_const_string name,int m,int n,nsp_const_string str,int flag);
 extern NspSMatrix *nsp_smatrix_clone(const char *name, NspSMatrix *A, int m, int n, int init);
 extern NspSMatrix *nsp_smatrix_create_with_length(nsp_const_string name, int m, int n, int strl); 
@@ -133,14 +138,12 @@ extern int nsp_smatrix_to_utf8(NspSMatrix *A);
 extern int nsp_smatrix_to_latin1(NspSMatrix *A);
 extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
 extern NspSMatrix *nsp_smatrix_utf8_from_unichar(NspMatrix *A) ;
+
 extern int nsp_smatrix_latex_print(NspSMatrix *SMat);
 extern int nsp_smatrix_latex_tab_print(NspSMatrix *SMat);
-
 extern int nsp_fscanf_matrix(NspFile *F,char *format,NspMatrix **M,int flag,NspSMatrix **S);
 extern int nsp_read_lines(NspFile *F,NspSMatrix **S,int nlines);
 extern int nsp_fscanf_smatrix(NspFile *F,NspSMatrix **S);
-
-
 extern NspMatrix *nsp_smatrix_strtod(const NspSMatrix *S);
 
 extern int nsp_smatrix_unique(NspSMatrix *x, NspObject **Ind, NspMatrix **Occ, Boolean first_ind, char ind_type);
@@ -150,7 +153,6 @@ extern NspSMatrix  *nsp_smatrix_extract_diag(NspSMatrix *A, int k);
 extern int nsp_smatrix_set_diag(NspSMatrix *A, NspSMatrix *Diag, int k);
 extern NspSMatrix  *nsp_smatrix_create_diag(NspSMatrix *Diag, int k);
 extern NspSMatrix *nsp_latex_utf8_symbols(void);
-
 extern void nsp_print_string_as_read(const char *str);
 
 #endif 

@@ -32,31 +32,28 @@
 #include <nsp/funtab.h>
 #include <nsp/libstab.h>
 #include <nsp/frame.h>
+#include <nsp/nspthreads.h>
+#include <nsp/nspdatas.h>
 
-/* inhibit the search fro symbols in calling frames */
+/* inhibit the search for symbols in calling frames */
 
 extern int frames_search_inhibit;
 
-/* use NspList or NspHash to implement frames */
-
-#define FRAME_AS_LIST
-
-/*
- * Used to store the calling frames for function invocation 
- * It is a list of list each list is called a frame here 
- */
-
+#ifndef NSP_WITH_MAIN_GTK_THREAD
 NspList   *Datas = NULLLIST; /* contains the list of frames */
 NspObject *Reserved= NULLOBJ;/* used to fill stack with non empty object */
-/* NspMatrix *Dollar = NULLMAT;*/ /* Direct access to $ **/
-NspObject *Null = NULLOBJ;   /* Direct access to %null **/
-NspFrame  *GlobalFrame = NULLFRAME; /* Direct access to GlobalFrame **/
-NspFrame  *ConstantFrame = NULLFRAME; /* Direct access to constants **/
-NspFrame  *TopFrame = NULLFRAME; /* Direct access to top **/
+NspObject *Null = NULLOBJ;   /* Direct access to %null */
+NspFrame  *GlobalFrame = NULLFRAME; /* Direct access to GlobalFrame */
+NspFrame  *ConstantFrame = NULLFRAME; /* Direct access to constants */
+NspFrame  *TopFrame = NULLFRAME; /* Direct access to top */
+#endif
 
+static int nsp_constant_frame(nsp_datas *data,int argc, char **argv);
+static int nsp_frame_replace_object1(nsp_datas *data, NspObject *A,int local_id);
 
 /**
  * nsp_init_frames:
+ * @nspdata: a pointer of type #nspdata
  * @argc: length of @argv 
  * @argv: array of characters
  * 
@@ -65,118 +62,152 @@ NspFrame  *TopFrame = NULLFRAME; /* Direct access to top **/
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_init_frames(int argc, char **argv)
+int nsp_init_frames(void *user_data,int argc, char **argv)
+{
+  nsp_datas **data = user_data;
+  NspFrame *frame; 
+  /* A List of frames */
+  if (((*data) = calloc(1, sizeof(nsp_datas)))== NULL) return FAIL;
+  if (((*data)->L =nsp_list_create("datas")) ==NULLLIST ) return FAIL;
+#ifndef NSP_WITH_MAIN_GTK_THREAD
+  Datas = (*data)->L;
+#endif
+  /* The GlobalFrame is not stored in Datas */
+  if (((*data)->GlobalFrame=nsp_frame_create("global",NULL))== NULLFRAME) return FAIL;
+#ifndef NSP_WITH_MAIN_GTK_THREAD
+  GlobalFrame=(*data)->GlobalFrame;
+#endif 
+  /* The constant frame: ConstantFramecan be used for direct access */
+  if ( nsp_constant_frame(*data,argc,argv) == FAIL)  return FAIL;
+  /* the top level frame */
+  if (( frame=nsp_frame_create("top",NULL))== NULLFRAME) return FAIL;
+  /* Direct access to toplevel frame */
+  (*data)->TopFrame = frame; 
+#ifndef NSP_WITH_MAIN_GTK_THREAD
+  TopFrame = (*data)->TopFrame;
+#endif
+  if ( nsp_list_store((*data)->L,(NspObject *) (*data)->TopFrame,1) == FAIL) return FAIL;
+  return OK;
+}
+
+/**
+ * nsp_constant_frame:
+ * @argc: length of @argv 
+ * @argv: array of characters
+ * 
+ * Initialize a constant frame data structure with constants
+ * 
+ * Return value: a new #NspFrame or %NULL
+ **/
+
+static int nsp_constant_frame(nsp_datas *data,int argc, char **argv)
 {
   double d;
   NspObject *O;
   NspFrame *frame; 
-  if ((Datas =nsp_list_create("datas")) ==NULLLIST ) return(FAIL);
-  if ((GlobalFrame=nsp_frame_create("global",NULL))== NULLFRAME) return FAIL;
-  /* The GlobalFrame is not stored in Datas */
+  /* The constant frame: be used for direct access */
   if (( frame=nsp_frame_create("constants",NULL))== NULLFRAME) return FAIL;
-  ConstantFrame = frame; /* Direct access to constants **/
+  /* Direct access to constants */
+  data->ConstantFrame=frame;
+#ifndef NSP_WITH_MAIN_GTK_THREAD
+  ConstantFrame = data->ConstantFrame;
+#endif 
   /* store the new frame in Datas */
-  if ( nsp_list_store(Datas,(NspObject *)frame,1) == FAIL) return(FAIL);
-  /* Create first Object in the initial frame **/
+  if ( nsp_list_store(data->L,(NspObject *)data->ConstantFrame,1) == FAIL ) return FAIL;
+  /* Create first Object in the initial frame */
   if ((O= (NspObject *) nsp_smatrix_create_from_array("%argv",argc,(const char **) argv))
       == NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
-  d=0;d=1/d;
-  if ((O=nsp_create_object_from_double("%inf",d))==NULLOBJ)return FAIL;
-  nsp_frame_replace_object(O,-1);
-  d=0;d=d/d;
-  if ((O=nsp_create_object_from_double("%nan",d))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
+  d=0;d=1/d;  if ((O=nsp_create_object_from_double("%inf",d))==NULLOBJ)return FAIL;
+  nsp_frame_replace_object1(data,O,-1);
+  d=0;d=d/d;  if ((O=nsp_create_object_from_double("%nan",d))==NULLOBJ) return FAIL;
+  nsp_frame_replace_object1(data,O,-1);
   if ((O=nsp_create_object_from_double("%pi",M_PI))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   if ((O=nsp_create_object_from_double("%e",M_E))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
-  /*
-    if ((O =nsp_create_object_from_double("___$", -1.0 ))==NULLOBJ) return FAIL;
-    nsp_frame_replace_object(O,-1);
-    Dollar = (NspMatrix *) O;
-  */
-
+  nsp_frame_replace_object1(data,O,-1);
   if ((O =nsp_create_true_object("%t"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   if ((O =nsp_create_false_object("%f"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   if ((O =nsp_create_object_from_double("%eps",nsp_dlamch("e")))== NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
-  /* used for list element deletion **/
+  nsp_frame_replace_object1(data,O,-1);
+  /* used for list element deletion */
   if ((O =nsp_create_empty_matrix_object("%null"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
-  Null = O;
-  /* %i **/
+  data->Null = O; nsp_frame_replace_object1(data,O,-1);
+#ifndef NSP_WITH_MAIN_GTK_THREAD
+  Null = data->Null;
+#endif 
+  /* %i */
   if ((O =nsp_complexi_object_("%i"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* shared lib suffix */
   if ((O =(NspObject *) nsp_smatrix_create("%shext",1,1,SHREXT_NAME,1) ) == NULLOBJ )
     return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* reserved */
-  if ((Reserved =nsp_create_empty_matrix_object("@keep@"))==NULLOBJ) return FAIL;
+  if ((data->Reserved =nsp_create_empty_matrix_object("@keep@"))==NULLOBJ) return FAIL;
+#ifndef NSP_WITH_MAIN_GTK_THREAD
+  Reserved = data->Reserved;
+#endif 
   /* flag to know that we are using nsp !! */
   if ((O =nsp_create_true_object("%nsp"))==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* flag to detect if we have fftw */
 #ifdef WITH_FFTW3
   if ((O =nsp_create_true_object("%fftw"))==NULLOBJ) return FAIL;
 #else 
   if ((O =nsp_create_false_object("%fftw"))==NULLOBJ) return FAIL;
 #endif 
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* flag to detect if we have glpk */
 #ifdef WITH_GLPK
   if ((O =nsp_create_true_object("%glpk"))==NULLOBJ) return FAIL;
 #else
   if ((O =nsp_create_false_object("%glpk"))==NULLOBJ) return FAIL;
 #endif
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* flag to detect if we have umfpack */
 #ifdef WITH_UMFPACK
   if ((O =nsp_create_true_object("%umfpack"))==NULLOBJ) return FAIL;
 #else
   if ((O =nsp_create_false_object("%umfpack"))==NULLOBJ) return FAIL;
 #endif
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* flag to detect if we have cholmod */
 #ifdef WITH_CHOLMOD
   if ((O =nsp_create_true_object("%cholmod"))==NULLOBJ) return FAIL;
 #else 
   if ((O =nsp_create_false_object("%cholmod"))==NULLOBJ) return FAIL;
 #endif 
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* are we a win32 version */
 #ifdef WIN32 
   if ((O =nsp_create_true_object("%win32"))==NULLOBJ) return FAIL;
 #else 
   if ((O =nsp_create_false_object("%win32"))==NULLOBJ) return FAIL;
 #endif
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* which nsp version */
   if ((O= nsp_create_object_from_str("%nsp_version",NSP_VERSION))==NULLOBJ) 
     return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* which host */
   if ((O= nsp_create_object_from_str("%host",HOST_TYPE))==NULLOBJ) 
     return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* types */ 
-  nsp_frame_replace_object((NspObject *)nsp_types_hash_table,-1); 
+  nsp_frame_replace_object1(data,(NspObject *)nsp_types_hash_table,-1); 
   /* gtk */
-  nsp_frame_replace_object((NspObject *)nsp_gtk_hash_table,-1); 
-  nsp_frame_replace_object((NspObject *)nsp_gdk_hash_table,-1); 
-  nsp_frame_replace_object((NspObject *)nsp_atk_hash_table,-1); 
-  nsp_frame_replace_object((NspObject *)nsp_pango_hash_table,-1); 
+  nsp_frame_replace_object1(data,(NspObject *)nsp_gtk_hash_table,-1); 
+  nsp_frame_replace_object1(data,(NspObject *)nsp_gdk_hash_table,-1); 
+  nsp_frame_replace_object1(data,(NspObject *)nsp_atk_hash_table,-1); 
+  nsp_frame_replace_object1(data,(NspObject *)nsp_pango_hash_table,-1); 
   /* ast */
   if ((O = (NspObject *) nsp_ast_hash_create()) ==NULLOBJ) return FAIL;
-  nsp_frame_replace_object(O,-1);
+  nsp_frame_replace_object1(data,O,-1);
   /* the top level frame */
-  if (( frame=nsp_frame_create("top",NULL))== NULLFRAME) return FAIL;
-  TopFrame = frame; /* Direct access to toplevel frame */
-  if ( nsp_list_store(Datas,(NspObject *)frame,1) == FAIL) return(FAIL);
-  return(OK);
+  return OK;
 }
 
 
@@ -192,10 +223,11 @@ int nsp_init_frames(int argc, char **argv)
 
 int nsp_new_frame(const char *name)
 {
+  nsp_datas *data = nsp_get_datas();
   NspFrame *frame;
-  if ( Datas == NULLLIST ) return FAIL;
+  if ( data->L == NULLLIST ) return FAIL;
   if (( frame=nsp_frame_create(name,NULL))== NULLFRAME) return FAIL;
-  if (nsp_list_store(Datas,NSP_OBJECT(frame),1) == FAIL) return FAIL;
+  if (nsp_list_store(data->L,NSP_OBJECT(frame),1) == FAIL) return FAIL;
   return OK;
 }
 
@@ -205,20 +237,20 @@ int nsp_new_frame(const char *name)
  * 
  * Allocate a new frame for function invocation. The frames are 
  * stored in a linked list. If this linked list is not initialized then 
- * the call to nsp_new_frame() will fail. The frame can contain an 
+ * the call to nsp_new_frame() will fail. The frame can contain
  * a table used for local variables and a table for dynamically 
  * added variables (a sorted list or a hash table, default value is a sorted list).
- * 
  * 
  * Return value: %OK or %FAIL.
  **/
 
 int nsp_new_frame_with_local_vars(const char *name,NspCells *table)
 {
+  nsp_datas *data = nsp_get_datas();
   NspFrame *frame;
-  if ( Datas == NULLLIST ) return FAIL;
+  if ( data->L == NULLLIST ) return FAIL;
   if ((frame=nsp_frame_create(name,table))== NULLFRAME) return FAIL;
-  if (nsp_list_store(Datas,NSP_OBJECT(frame),1) == FAIL) return FAIL;
+  if (nsp_list_store(data->L,NSP_OBJECT(frame),1) == FAIL) return FAIL;
   return OK;
 }
 
@@ -233,8 +265,9 @@ int nsp_new_frame_with_local_vars(const char *name,NspCells *table)
 
 void nsp_frame_delete(void)
 {
-  if ( Datas == NULLLIST )   return ;
-  nsp_list_delete_elt(Datas,1) ;
+  nsp_datas *data = nsp_get_datas();
+  if ( data->L == NULLLIST )   return ;
+  nsp_list_delete_elt(data->L,1) ;
 }
 
 /**
@@ -246,26 +279,12 @@ void nsp_frame_delete(void)
 
 void nsp_frames_info(void)
 {
-  if ( Datas == NULLLIST ) 
+  nsp_datas *data = nsp_get_datas();
+  if ( data->L == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_info(Datas,0,NULL,0) ;
+    nsp_list_info(data->L,0,NULL,0) ;
   
-}
-
-/**
- *nsp_frame_info_obsolete:
- * @void: 
- * 
- * Display information on the first frame 
- **/
-
-void nsp_frame_info_obsolete(void)
-{
-  if ( Datas == NULLLIST ) 
-    Sciprintf("Empty Datas\n");
-  else 
-    nsp_list_info((NspList *) Datas->first->O,0,NULL,0) ;
 }
 
 /**
@@ -278,26 +297,11 @@ void nsp_frame_info_obsolete(void)
 
 void nsp_frames_print(void)
 {
-  if ( Datas == NULLLIST ) 
+  nsp_datas *data = nsp_get_datas();
+  if ( data->L == NULLLIST ) 
     Sciprintf("Empty Datas\n");
   else 
-    nsp_list_print(Datas,0,NULL,0);
-}
-
-/**
- *nsp_frame_print_obsolete:
- * @void: 
- * 
- * Display first frame content.
- * 
- **/
-
-void nsp_frame_print_obsolete(void)
-{
-  if ( Datas == NULLLIST ) 
-    Sciprintf("Empty Datas\n");
-  else 
-    nsp_list_print((NspList *)Datas->first->O,0,NULL,0);
+    nsp_list_print(data->L,0,NULL,0);
 }
 
 /**
@@ -317,11 +321,19 @@ void nsp_frame_print_obsolete(void)
 
 int nsp_frame_replace_object( NspObject *A,int local_id)
 {
+  nsp_datas *data;
   if (  A == NULLOBJ ) return(OK);
-  if (  Datas == NULLLIST ) 
+  data = nsp_get_datas();
+  return nsp_frame_replace_object1(data, A,local_id);
+} 
+
+static int nsp_frame_replace_object1(nsp_datas *data, NspObject *A,int local_id)
+{
+  if (  A == NULLOBJ ) return(OK);
+  if (  data->L == NULLLIST ) 
     {
       Scierror("Error: Can't insert obj in empty Data frame\n");
-      return(FAIL);
+      return FAIL;
     }
   else 
     {
@@ -337,16 +349,16 @@ int nsp_frame_replace_object( NspObject *A,int local_id)
       if ( local_id == -1 ) 
 	{
 	  /* insert in current frame */
-	  return nsp_eframe_replace_object((NspFrame *) Datas->first->O,A);
+	  return nsp_eframe_replace_object((NspFrame *) data->L->first->O,A);
 	}
       else 
 	{
 	  /* insert as a local variable */
 	  NspObject *O1;
 	  local_id = VAR_ID(local_id);
-	  O1 = ((NspFrame *) Datas->first->O)->table->objs[local_id];
+	  O1 = ((NspFrame *) data->L->first->O)->table->objs[local_id];
 	  if ( O1 != NULL )  nsp_object_destroy(&O1);
-	  ((NspFrame *) Datas->first->O)->table->objs[local_id]=A;
+	  ((NspFrame *) data->L->first->O)->table->objs[local_id]=A;
 	  return OK;
 	}
     }
@@ -364,8 +376,9 @@ int nsp_frame_replace_object( NspObject *A,int local_id)
 
 int nsp_frame_save(NspFile *F)
 {
-  if (  Datas == NULLLIST )  return(FAIL);
-  return nsp_eframe_to_save(F,(NspFrame *) Datas->first->O);
+  nsp_datas *data = nsp_get_datas();
+  if (  data->L == NULLLIST )  return FAIL;
+  return nsp_eframe_to_save(F,(NspFrame *) data->L->first->O);
 } 
 
 
@@ -383,17 +396,19 @@ int nsp_frame_save(NspFile *F)
 
 int nsp_global_frame_replace_object(NspObject *A)
 {
+  nsp_datas *data;
   int Int,Num;
   if (  A == NULLOBJ ) return(OK);
-  if (  GlobalFrame == NULL ) return(FAIL);
+  data = nsp_get_datas();
+  if (  data->GlobalFrame == NULL ) return FAIL;
   if ( nsp_find_function(nsp_object_get_name(A),&Int,&Num) == OK 
        || nsp_find_macro(nsp_object_get_name(A)) != NULLOBJ)
     {
       Sciprintf("Warning: variable %s will hide a function name\n",
 		nsp_object_get_name(A));
-      return(FAIL);
+      return FAIL;
     }
-  return nsp_eframe_replace_object((NspFrame *) GlobalFrame,A);
+  return nsp_eframe_replace_object((NspFrame *)  data->GlobalFrame,A);
 } 
 
 /**
@@ -410,9 +425,11 @@ int nsp_global_frame_replace_object(NspObject *A)
 
 int nsp_toplevel_frame_replace_object(NspObject *A)
 {
+  nsp_datas *data;
   if (  A == NULLOBJ ) return(OK);
-  if (  TopFrame == NULL ) return(FAIL);
-  return nsp_eframe_replace_object((NspFrame *) TopFrame,A);
+  data = nsp_get_datas();
+  if (  data->TopFrame == NULL ) return FAIL;
+  return nsp_eframe_replace_object((NspFrame *) data->TopFrame,A);
 } 
 
 /**
@@ -426,13 +443,15 @@ int nsp_toplevel_frame_replace_object(NspObject *A)
 
 NspObject *nsp_frames_search_object(const char *str)
 {
+  nsp_datas *data;
   NspObject *Obj;
   Cell *C;
-  if ( Datas == NULLLIST ) 
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) 
     return NULLOBJ;
   else 
     {
-      C= Datas->first;
+      C= data->L->first;
       while ( C != NULLCELL) 
 	{
 	  if ((Obj = nsp_eframe_search_object((NspFrame *) C->O,str,TRUE)) != NULLOBJ ) 
@@ -442,7 +461,7 @@ NspObject *nsp_frames_search_object(const char *str)
 	      /* FIXME: to find variables which are in globalframe 
 	       * but which are not really global %t %e etc...
 	       */
-	      return ((NspFrame *) C->O != GlobalFrame ) ? nsp_global_frame_search_object(str) : NULLOBJ;
+	      return ((NspFrame *) C->O != data->GlobalFrame ) ? nsp_global_frame_search_object(str) : NULLOBJ;
 	    }
 	  else 
 	    C = C->next ;
@@ -471,10 +490,13 @@ NspObject *nsp_frames_search_object(const char *str)
 
 NspObject *nsp_frames_search_local_in_calling(const char *str, int caller_flag)
 {
+  nsp_datas *data;
   NspObject *Obj;
-  Cell *C = Datas->first->next;
+  Cell *C ;
+  data = nsp_get_datas();
+  C = data->L->first->next;
   if ( frames_search_inhibit == TRUE ) return NULLOBJ;
-  /* we assume here that str was already found in Datas->first but with no value 
+  /* we assume here that str was already found in data->L->first but with no value 
    */
   while ( C != NULLCELL) 
     {
@@ -503,8 +525,10 @@ NspObject *nsp_frames_search_local_in_calling(const char *str, int caller_flag)
 
 NspObject *nsp_frame_search_object(nsp_const_string str)
 {
-  if ( Datas == NULLLIST )   return NULLOBJ;
-  return nsp_eframe_search_object((NspFrame *) Datas->first->O,str,TRUE) ;
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST )   return NULLOBJ;
+  return nsp_eframe_search_object((NspFrame *) data->L->first->O,str,TRUE) ;
 } 
 
 
@@ -519,8 +543,10 @@ NspObject *nsp_frame_search_object(nsp_const_string str)
 
 NspObject *nsp_global_frame_search_object(nsp_const_string str)
 {
-  if ( GlobalFrame == NULL )  return NULLOBJ;
-  return nsp_eframe_search_object((NspFrame *)GlobalFrame ,str,TRUE) ;
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->GlobalFrame == NULL )  return NULLOBJ;
+  return nsp_eframe_search_object((NspFrame *)data->GlobalFrame ,str,TRUE) ;
 } 
 
 /**
@@ -537,8 +563,10 @@ NspObject *nsp_global_frame_search_object(nsp_const_string str)
 
 void nsp_global_frame_remove_object(nsp_const_string str)
 {
-  if ( GlobalFrame == NULL )  return ;
-  nsp_eframe_remove_object((NspFrame *)GlobalFrame,str);
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->GlobalFrame == NULL )  return ;
+  nsp_eframe_remove_object((NspFrame *)data->GlobalFrame,str);
 }
 
 /**
@@ -549,9 +577,11 @@ void nsp_global_frame_remove_object(nsp_const_string str)
 
 int nsp_global_frame_remove_all_objects(void)
 {
-  if ( GlobalFrame == NULL ) return OK;
-  nsp_frame_destroy((NspFrame *)GlobalFrame);
-  if ((GlobalFrame = nsp_frame_create("global",NULL)) == NULLFRAME)
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->GlobalFrame == NULL ) return OK;
+  nsp_frame_destroy((NspFrame *)data->GlobalFrame);
+  if ((data->GlobalFrame = nsp_frame_create("global",NULL)) == NULLFRAME)
     return FAIL;
   else
     return OK;
@@ -569,8 +599,10 @@ int nsp_global_frame_remove_all_objects(void)
 
 NspObject *nsp_frame_search_and_remove_object(nsp_const_string str)
 {
-  if ( Datas == NULLLIST ) return NULLOBJ;
-  return nsp_eframe_search_and_remove_object((NspFrame *) Datas->first->O ,str);
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) return NULLOBJ;
+  return nsp_eframe_search_and_remove_object((NspFrame *) data->L->first->O ,str);
 } 
 
 /**
@@ -583,8 +615,10 @@ NspObject *nsp_frame_search_and_remove_object(nsp_const_string str)
 
 void nsp_frame_remove_object(nsp_const_string str)
 {
-  if ( Datas == NULLLIST ) return;
-  nsp_eframe_remove_object((NspFrame *)Datas->first->O,str);
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) return;
+  nsp_eframe_remove_object((NspFrame *)data->L->first->O,str);
 } 
 
 /**
@@ -596,8 +630,10 @@ void nsp_frame_remove_object(nsp_const_string str)
 
 void nsp_frame_remove_all_objects(void)
 {
-  if ( Datas == NULLLIST ) return;
-  nsp_eframe_remove_all_objects((NspFrame *)Datas->first->O);
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) return;
+  nsp_eframe_remove_all_objects((NspFrame *)data->L->first->O);
 } 
 
 /**
@@ -612,13 +648,15 @@ void nsp_frame_remove_all_objects(void)
 
 int nsp_frame_search_and_move_up_object(nsp_const_string str)
 {
+  nsp_datas *data;
   NspObject *O;
   Cell *C;
-  if ( Datas == NULLLIST ) 
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) 
     return FAIL;
   else 
     {
-      C= Datas->first;
+      C= data->L->first;
       if ( C->next == NULLCELL) 
 	{
 	  Scierror("Error: cannot move %s in an upper frame, we are on top\n",str);
@@ -629,7 +667,7 @@ int nsp_frame_search_and_move_up_object(nsp_const_string str)
 	  Scierror("Error: %s object not found\n",str);
 	  return FAIL;
 	}
-      return nsp_eframe_replace_object((NspFrame *)Datas->first->next->O,O);
+      return nsp_eframe_replace_object((NspFrame *)data->L->first->next->O,O);
     }
 }
 
@@ -644,22 +682,24 @@ int nsp_frame_search_and_move_up_object(nsp_const_string str)
 
 int nsp_frame_move_up_object(NspObject *O)
 {
+  nsp_datas *data;
   Cell *C;
   if (  O == NULLOBJ ) return(OK);
-  if ( Datas == NULLLIST ) 
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) 
     {
       Scierror("Error: Can't insert object %s in empty Data frame\n",nsp_object_get_name(O));
       return FAIL;
     }
   else 
     {
-      C= Datas->first;
+      C= data->L->first;
       if ( C->next == NULLCELL) 
 	{
 	  Scierror("Error: cannot move %s in an upper frame, we are on top\n",nsp_object_get_name(O));
 	  return FAIL; 
 	}
-      return nsp_eframe_replace_object((NspFrame *)Datas->first->next->O,O);
+      return nsp_eframe_replace_object((NspFrame *)data->L->first->next->O,O);
     }
 }
 
@@ -687,12 +727,14 @@ int nsp_frame_move_up_object(NspObject *O)
 
 int nsp_declare_global(char *name, int id) 
 {
+  nsp_datas *data;
   NspObject *O;
   NspHobj *O1;
-  if ( Datas == NULLLIST ) return FAIL;
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) return FAIL;
   if ( name == NULL) return FAIL;
   /* if current frame is the global frame we have nothing to do */
-  if ( Datas->first->O == (NspObject *) GlobalFrame ) return OK;
+  if ( data->L->first->O == (NspObject *) data->GlobalFrame ) return OK;
   /* search in the global frame */
   O=nsp_global_frame_search_object(name);
   if ( O == NULLOBJ ) 
@@ -765,6 +807,8 @@ int nsp_frame_insert_hash_contents(NspHash *H)
 
 NspHash *nsp_current_frame_to_hash(void)
 {
-  if ( Datas == NULLLIST ) return NULLHASH;
-  return nsp_eframe_to_hash((NspFrame *) Datas->first->O);
+  nsp_datas *data;
+  data = nsp_get_datas();
+  if ( data->L == NULLLIST ) return NULLHASH;
+  return nsp_eframe_to_hash((NspFrame *) data->L->first->O);
 }

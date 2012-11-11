@@ -480,7 +480,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
 		      { "name",string,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
   int rep, itype = AGRAPH;
-  char *t_choices[]={ "graph", "graphstrict","digraph","digraohstrict",  NULL };
+  const char *t_choices[]={ "graph", "graphstrict","digraph","digraohstrict",  NULL };
   int t_itype[]={ AGRAPH,AGRAPHSTRICT,AGDIGRAPH,AGDIGRAPHSTRICT };
   CheckStdRhs(0,0);
   aginit(); /* can be called multiple times */

@@ -57,11 +57,11 @@ struct _NspTypeIMatrix {
 
 /* names that can be used at nsp level to specify an integer type */
 
-#define NSP_ITYPE_NAMES(names)				       \
-  char *(names)[]={"int", "uint", "short", "ushort", "long",	\
-                   "ulong", "int8", "uint8", "int16",           \
-                   "uint16", "int32", "uint32", "int64",        \
-                   "uint64",NULL};
+#define NSP_ITYPE_NAMES(names)						\
+  const char *(names)[]={"int", "uint", "short", "ushort", "long",	\
+			 "ulong", "int8", "uint8", "int16",		\
+			 "uint16", "int32", "uint32", "int64",		\
+			 "uint64",NULL};
 
 struct _NspIMatrix {
   /*< private >*/

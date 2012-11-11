@@ -39,7 +39,7 @@
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -47,6 +47,7 @@
 #define  PangoAttrList_Private 
 #include "nsp/gtk/pangoattrlist.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoAttrList inherits from NspGBoxed */ 
 
@@ -268,7 +269,7 @@ _wrap_pango_attr_list_insert(NspObject *self, Stack stack,int rhs,int opt,int lh
   pango_attr_list_insert(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 272 "pango.c"
+#line 273 "pango.c"
 
 
 #line 336 "pango.override"
@@ -285,7 +286,7 @@ _wrap_pango_attr_list_insert_before(NspObject *self, Stack stack,int rhs,int opt
   pango_attr_list_insert_before(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 289 "pango.c"
+#line 290 "pango.c"
 
 
 #line 351 "pango.override"
@@ -302,7 +303,7 @@ _wrap_pango_attr_list_change(NspObject *self, Stack stack,int rhs,int opt,int lh
   pango_attr_list_change(nspg_boxed_get(self, PangoAttrList), attr);
   return 0;
 }
-#line 306 "pango.c"
+#line 307 "pango.c"
 
 
 static int _wrap_pango_attr_list_splice(NspPangoAttrList *self,Stack stack,int rhs,int opt,int lhs)
@@ -344,7 +345,7 @@ static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -352,6 +353,7 @@ static AttrTab pangoattrlist_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoColor_Private 
 #include "nsp/gtk/pangocolor.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoColor inherits from NspGBoxed */ 
 
@@ -549,7 +551,7 @@ _wrap_pangocolor_new(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 553 "pango.c"
+#line 555 "pango.c"
 
 
 static int _wrap_pango_color_parse(NspPangoColor *self,Stack stack,int rhs,int opt,int lhs)
@@ -611,7 +613,7 @@ static AttrTab pangocolor_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -619,6 +621,7 @@ static AttrTab pangocolor_attrs[] = {
 #define  PangoFontDescription_Private 
 #include "nsp/gtk/pangofontdescription.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFontDescription inherits from NspGBoxed */ 
 
@@ -826,7 +829,7 @@ _wrap_pangofontdescription_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 830 "pango.c"
+#line 833 "pango.c"
 
 
 #line 416 "pango.override"
@@ -837,7 +840,7 @@ _wrap_pango_font_description_copy(NspObject *self)
 				    nspg_boxed_get(self, PangoFontDescription),
 				    TRUE, TRUE, NULL);
 }
-#line 841 "pango.c"
+#line 844 "pango.c"
 
 
 static int _wrap_pango_font_description_copy_static(NspPangoFontDescription *self,Stack stack,int rhs,int opt,int lhs)
@@ -1140,7 +1143,7 @@ static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1148,6 +1151,7 @@ static AttrTab pangofontdescription_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoFontMetrics_Private 
 #include "nsp/gtk/pangofontmetrics.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFontMetrics inherits from NspGBoxed */ 
 
@@ -1385,7 +1389,7 @@ static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1393,6 +1397,7 @@ static AttrTab pangofontmetrics_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoGlyphString_Private 
 #include "nsp/gtk/pangoglyphstring.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoGlyphString inherits from NspGBoxed */ 
 
@@ -1636,7 +1641,7 @@ _wrap_pango_glyph_string_extents(NspObject *self, Stack stack,int rhs,int opt,in
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 1640 "pango.c"
+#line 1645 "pango.c"
 
 
 #line 530 "pango.override"
@@ -1666,7 +1671,7 @@ _wrap_pango_glyph_string_extents_range(NspObject *self, Stack stack,int rhs,int 
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 1670 "pango.c"
+#line 1675 "pango.c"
 
 
 #line 558 "pango.override"
@@ -1692,7 +1697,7 @@ _wrap_pango_glyph_string_get_logical_widths(NspObject *self, Stack stack,int rhs
   MoveObj(stack,1,(NspObject *)ret);
   return 1;
 }
-#line 1696 "pango.c"
+#line 1701 "pango.c"
 
 
 static NspMethods pangoglyphstring_methods[] = {
@@ -1728,7 +1733,7 @@ static AttrTab pangoglyphstring_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1736,6 +1741,7 @@ static AttrTab pangoglyphstring_attrs[] = {
 #define  PangoLanguage_Private 
 #include "nsp/gtk/pangolanguage.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoLanguage inherits from NspGBoxed */ 
 
@@ -1946,7 +1952,7 @@ static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1954,6 +1960,7 @@ static AttrTab pangolanguage_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoTabArray_Private 
 #include "nsp/gtk/pangotabarray.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoTabArray inherits from NspGBoxed */ 
 
@@ -2213,7 +2220,7 @@ _wrap_pango_tab_array_get_tab(NspObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,2,(double)alignment,(double) location)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 2217 "pango.c"
+#line 2224 "pango.c"
 
 
 #line 819 "pango.override"
@@ -2236,7 +2243,7 @@ _wrap_pango_tab_array_get_tabs(NspObject *self, Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,(NspObject *)ret);
   return 1;
 }
-#line 2240 "pango.c"
+#line 2247 "pango.c"
 
 
 static int _wrap_pango_tab_array_get_positions_in_pixels(NspPangoTabArray *self,Stack stack,int rhs,int opt,int lhs)
@@ -2271,7 +2278,7 @@ static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2279,6 +2286,7 @@ static AttrTab pangotabarray_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoContext_Private 
 #include "nsp/gtk/pangocontext.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoContext inherits from NspGObject */ 
 
@@ -2479,7 +2487,7 @@ _wrap_pango_context_list_families(NspGObject *self)
   g_free(families);
   return ret;
 }
-#line 2483 "pango.c"
+#line 2491 "pango.c"
 
 
 static int _wrap_pango_context_load_font(NspPangoContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -2668,7 +2676,7 @@ static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2676,6 +2684,7 @@ static AttrTab pangocontext_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoFont_Private 
 #include "nsp/gtk/pangofont.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFont inherits from NspGObject */ 
 
@@ -2911,7 +2920,7 @@ _wrap_pango_font_get_glyph_extents(NspGObject *self, Stack stack,int rhs,int opt
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 2915 "pango.c"
+#line 2924 "pango.c"
 
 
 static NspMethods pangofont_methods[] = {
@@ -2933,7 +2942,7 @@ static AttrTab pangofont_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2941,6 +2950,7 @@ static AttrTab pangofont_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoFontFace_Private 
 #include "nsp/gtk/pangofontface.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFontFace inherits from NspGObject */ 
 
@@ -3162,7 +3172,7 @@ static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3170,6 +3180,7 @@ static AttrTab pangofontface_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoFontFamily_Private 
 #include "nsp/gtk/pangofontfamily.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFontFamily inherits from NspGObject */ 
 
@@ -3370,7 +3381,7 @@ _wrap_pango_font_family_list_faces(NspGObject *self)
   g_free(faces);
   return ret;
 }
-#line 3374 "pango.c"
+#line 3385 "pango.c"
 
 
 static int _wrap_pango_font_family_get_name(NspPangoFontFamily *self,Stack stack,int rhs,int opt,int lhs)
@@ -3400,7 +3411,7 @@ static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3408,6 +3419,7 @@ static AttrTab pangofontfamily_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoFontMap_Private 
 #include "nsp/gtk/pangofontmap.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFontMap inherits from NspGObject */ 
 
@@ -3658,7 +3670,7 @@ _wrap_pango_font_map_list_families(NspGObject *self)
   g_free(families);
   return ret;
 }
-#line 3662 "pango.c"
+#line 3674 "pango.c"
 
 
 static NspMethods pangofontmap_methods[] = {
@@ -3680,7 +3692,7 @@ static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3688,6 +3700,7 @@ static AttrTab pangofontmap_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoFontset_Private 
 #include "nsp/gtk/pangofontset.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoFontset inherits from NspGObject */ 
 
@@ -3915,7 +3928,7 @@ static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -3923,6 +3936,7 @@ static AttrTab pangofontset_attrs[]={{NULL,NULL,NULL}} ;
 #define  PangoLayout_Private 
 #include "nsp/gtk/pangolayout.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspPangoLayout inherits from NspGObject */ 
 
@@ -4191,7 +4205,7 @@ _wrap_pango_layout_set_text(NspGObject *self, Stack stack,int rhs,int opt,int lh
 
 
 
-#line 4195 "pango.c"
+#line 4209 "pango.c"
 
 
 static int _wrap_pango_layout_get_text(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4215,7 +4229,7 @@ _wrap_pango_layout_set_markup(NspGObject *self, Stack stack,int rhs,int opt,int 
   pango_layout_set_markup(PANGO_LAYOUT(self->obj), markup, length);
   return 0;
 }
-#line 4219 "pango.c"
+#line 4233 "pango.c"
 
 
 #line 595 "pango.override"
@@ -4253,7 +4267,7 @@ _wrap_pango_layout_set_markup_with_accel(NspGObject *self, Stack stack,int rhs,i
   Scierror("%s: To be done \n",NspFname(stack)); 
   return RET_BUG; 
 }
-#line 4257 "pango.c"
+#line 4271 "pango.c"
 
 
 static int _wrap_pango_layout_set_font_description(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4461,7 +4475,7 @@ _wrap_pango_layout_index_to_pos(NspGObject *self, Stack stack,int rhs,int opt,in
     return RET_BUG;
   return 1;
 }
-#line 4465 "pango.c"
+#line 4479 "pango.c"
 
 
 #line 645 "pango.override"
@@ -4483,7 +4497,7 @@ _wrap_pango_layout_get_cursor_pos(NspGObject *self, Stack stack,int rhs,int opt,
 			(double)	weak_pos.width,(double) weak_pos.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 4487 "pango.c"
+#line 4501 "pango.c"
 
 
 #line 665 "pango.override"
@@ -4504,7 +4518,7 @@ _wrap_pango_layout_move_cursor_visually(NspGObject *self, Stack stack,int rhs,in
   if ( nsp_move_doubles(stack,1,1,2,(double) new_index,(double) new_trailing)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 4508 "pango.c"
+#line 4522 "pango.c"
 
 
 #line 684 "pango.override"
@@ -4522,7 +4536,7 @@ _wrap_pango_layout_xy_to_index(NspGObject *self, Stack stack,int rhs,int opt,int
   if ( nsp_move_doubles(stack,1,1,2,(double) index,(double) trailing)== FAIL)  return RET_BUG;
   return 1;
 }
-#line 4526 "pango.c"
+#line 4540 "pango.c"
 
 
 #line 700 "pango.override"
@@ -4539,7 +4553,7 @@ _wrap_pango_layout_get_extents(NspGObject *self, Stack stack,int rhs,int opt,int
 			(double)logical_rect.width,(double) logical_rect.height) == FAIL) return RET_BUG ; 
   return 2; 
 }
-#line 4543 "pango.c"
+#line 4557 "pango.c"
 
 
 #line 715 "pango.override"
@@ -4557,7 +4571,7 @@ _wrap_pango_layout_get_pixel_extents(NspGObject *self, Stack stack,int rhs,int o
   return 2; 
 
 }
-#line 4561 "pango.c"
+#line 4575 "pango.c"
 
 
 #line 731 "pango.override"
@@ -4571,7 +4585,7 @@ _wrap_pango_layout_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG;
   return 1;
 }
-#line 4575 "pango.c"
+#line 4589 "pango.c"
 
 
 #line 743 "pango.override"
@@ -4585,7 +4599,7 @@ _wrap_pango_layout_get_pixel_size(NspGObject *self, Stack stack,int rhs,int opt,
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height)  == FAIL) return RET_BUG;
   return 1;
 }
-#line 4589 "pango.c"
+#line 4603 "pango.c"
 
 
 static int _wrap_pango_layout_get_line_count(NspPangoLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -4684,7 +4698,7 @@ _wrap_pango_attr_language_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret) ;
   return 1;
 }
-#line 4688 "pango.c"
+#line 4702 "pango.c"
 
 
 #line 88 "pango.override"
@@ -4700,7 +4714,7 @@ _wrap_pango_attr_family_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret) ;
   return 1;
 }
-#line 4704 "pango.c"
+#line 4718 "pango.c"
 
 
 #line 102 "pango.override"
@@ -4717,7 +4731,7 @@ _wrap_pango_attr_foreground_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4721 "pango.c"
+#line 4735 "pango.c"
 
 
 #line 117 "pango.override"
@@ -4734,7 +4748,7 @@ _wrap_pango_attr_background_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4738 "pango.c"
+#line 4752 "pango.c"
 
 
 #line 132 "pango.override"
@@ -4750,7 +4764,7 @@ _wrap_pango_attr_size_new( Stack stack,int rhs,int opt,int lhs)
   return 1;
 
 }
-#line 4754 "pango.c"
+#line 4768 "pango.c"
 
 
 #line 146 "pango.override"
@@ -4769,7 +4783,7 @@ _wrap_pango_attr_style_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4773 "pango.c"
+#line 4787 "pango.c"
 
 
 #line 163 "pango.override"
@@ -4788,7 +4802,7 @@ _wrap_pango_attr_weight_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4792 "pango.c"
+#line 4806 "pango.c"
 
 
 #line 180 "pango.override"
@@ -4809,7 +4823,7 @@ _wrap_pango_attr_variant_new( Stack stack,int rhs,int opt,int lhs)
   return 1;
 
 }
-#line 4813 "pango.c"
+#line 4827 "pango.c"
 
 
 #line 199 "pango.override"
@@ -4830,7 +4844,7 @@ _wrap_pango_attr_stretch_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4834 "pango.c"
+#line 4848 "pango.c"
 
 
 #line 218 "pango.override"
@@ -4854,7 +4868,7 @@ _wrap_pango_attr_font_desc_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4858 "pango.c"
+#line 4872 "pango.c"
 
 
 #line 240 "pango.override"
@@ -4876,7 +4890,7 @@ _wrap_pango_attr_underline_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4880 "pango.c"
+#line 4894 "pango.c"
 
 
 #line 260 "pango.override"
@@ -4893,7 +4907,7 @@ _wrap_pango_attr_strikethrough_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4897 "pango.c"
+#line 4911 "pango.c"
 
 
 #line 275 "pango.override"
@@ -4909,7 +4923,7 @@ _wrap_pango_attr_rise_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4913 "pango.c"
+#line 4927 "pango.c"
 
 
 #line 289 "pango.override"
@@ -4930,7 +4944,7 @@ _wrap_pango_attr_shape_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4934 "pango.c"
+#line 4948 "pango.c"
 
 
 #line 308 "pango.override"
@@ -4946,7 +4960,7 @@ _wrap_pango_attr_scale_new( Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4950 "pango.c"
+#line 4964 "pango.c"
 
 
 #line 755 "pango.override"
@@ -4996,7 +5010,7 @@ _wrap_pango_parse_markup( Stack stack,int rhs,int opt,int lhs)
   Scierror("%s: To be done \n",NspFname(stack)); 
   return RET_BUG; 
 }
-#line 5000 "pango.c"
+#line 5014 "pango.c"
 
 
 int _wrap_pango_find_paragraph_boundary(Stack stack, int rhs, int opt, int lhs)
@@ -5079,7 +5093,12 @@ static OpTab pango_func[]={
 
 int pango_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,pango_func[i].fonc,
+  					       &stack,rhs,opt,lhs);
+#else
   return (*(pango_func[i].fonc))(stack,rhs,opt,lhs);
+#endif
 }
 
 /* used to walk through the interface table 
@@ -5129,7 +5148,7 @@ pango_register_classes(NspObject *d)
 #line 15 "pango.override"
 
 
-#line 5133 "pango.c"
+#line 5152 "pango.c"
   nspg_register_boxed(d, "AttrList", PANGO_TYPE_ATTR_LIST, &PyPangoAttrList_Type);
   nspg_register_boxed(d, "Color", PANGO_TYPE_COLOR, &PyPangoColor_Type);
   nspg_register_boxed(d, "FontDescription", PANGO_TYPE_FONT_DESCRIPTION, &PyPangoFontDescription_Type);

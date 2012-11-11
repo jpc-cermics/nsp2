@@ -790,11 +790,11 @@ static int int_mpmatrix_sort(Stack stack, int rhs, int opt, int lhs)
 {
   NspMaxpMatrix *M=NULL;
   NspObject *Index=NULLOBJ;
-  char *type_possible_choices[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
+  const char *type_possible_choices[]={ "g", "gs", "gm", "c", "r", "lr" , "lc" , "ldc", "ldr","gb","gd", NULL };
   char *type=NULL;
-  char *dir_possible_choices[]={ "i", "d",  NULL };
+  const char *dir_possible_choices[]={ "i", "d",  NULL };
   char *dir=NULL;
-  char *ind_type_possible_choices[]={ "double", "int",  NULL };
+  const char *ind_type_possible_choices[]={ "double", "int",  NULL };
   char *ind_type=NULL;
   int iflag = FALSE;
   char direction = 'd', itype = 'd';

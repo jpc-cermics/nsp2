@@ -471,7 +471,7 @@ static int int_meth_shift(void *self,Stack stack, int rhs, int opt, int lhs)
   if (rhs >= 2)
     {
       int rep;
-      char *shift_options1[] = { "r", "l", NULL };
+      const char *shift_options1[] = { "r", "l", NULL };
       if ((rep = GetStringInArray (stack,2, shift_options1, 1)) == -1)
 	return RET_BUG;
       dir = shift_options1[rep][0];
@@ -1501,7 +1501,7 @@ static int int_pmatrix_norm( Stack stack, int rhs, int opt, int lhs)
   NspPMatrix *P;
   double p=2.0;
   int id=1, i;
-  char *norm_table[] =       {"1","2","inf",NULL};
+  const char *norm_table[] =       {"1","2","inf",NULL};
   CheckRhs(1,2);
   CheckLhs(0,1);
   if ( (P=GetPMat(stack, 1)) == NULLPMAT ) return RET_BUG;

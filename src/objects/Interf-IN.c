@@ -293,7 +293,7 @@ static int int_mxtest(Stack stack, int rhs, int opt, int lhs)
 static int int_mxtest20(Stack stack, int rhs, int opt, int lhs)
 {
   /* test un str parmis une table **/
-  static char *Strings[] = {"trois","truc","un","deux", (char *) NULL};
+  const char *Strings[] = {"trois","truc","un","deux", (char *) NULL};
   GetStringInArray(stack,1,Strings,0);
   return 0;
   /* int_mx2pmx(stack,rhs,opt,lhs) ;

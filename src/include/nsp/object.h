@@ -18,7 +18,6 @@
 #include "nsp/objectf.h" 
 
 /* typedef struct  _NspObject  NspObject;  */
-
 typedef struct  _AttrTab AttrTab;
 typedef struct  _NspMethods NspMethods;
 
@@ -241,10 +240,11 @@ struct _Stack {
 } ;
 
 #define STACK_SIZE 50000
-extern Stack SciStack ;
+extern void nsp_init_stack(Stack *stack);
+extern Stack *nsp_get_stack(void);
+extern void *nsp_get_datas();
+extern int nsp_init_frames(void *user_data,int argc, char **argv);
 
-extern void InitStack (void); 
-extern void nsp_init_stack(Stack *stack,NspObject **S);
 
 /*-----------------------------------------------------------
  * Object attributes 

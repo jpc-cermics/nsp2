@@ -691,7 +691,7 @@ int int_pvm_reduce( Stack stack, int rhs, int opt, int lhs)
   char *str,*str2;
   void (*op)(int *, void *, void *, int *, int *)= NULL;
   int rep,datatype,tag,rootginst,res;
-  char *Table[] = {"Max", "Min", "Sum", "Pro", NULL};
+  const char *Table[] = {"Max", "Min", "Sum", "Pro", NULL};
   CheckRhs(5,5);
   CheckLhs(1,2);
   if ((str = GetString(stack,1)) == NULLSTRING) return RET_BUG;

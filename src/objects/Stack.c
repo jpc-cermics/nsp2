@@ -17,23 +17,85 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
+#include <nsp/nsp.h>
 #include <nsp/stack.h>
 #include <nsp/interf.h>
 #include <nsp/system.h> /* FSIZE */
 #include <nsp/smatrix.h>
+#include <nsp/nspthreads.h>
+
+#include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 
 static void error(Stack *stack,char *fmt,...);
 
-NspObject *S[STACK_SIZE];
-Stack SciStack={0,NULL};
+typedef struct _nsp_interp nsp_interp; 
+struct _nsp_interp {
+  GThread *thread;
+  Stack stack;
+  void *datas;
+};
 
-void InitStack()
+static nsp_interp nsp_data_interp[128];
+static int nsp_interp_count = 0;
+
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+G_LOCK_DEFINE(nsp_interp_count);
+#endif 
+
+int nsp_new_interp(GThread *thread,int argc, char **argv)
 {
-  nsp_init_stack(&SciStack,S);
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  G_LOCK (nsp_interp_count);
+#endif 
+  nsp_init_stack(&nsp_data_interp[nsp_interp_count].stack);
+  nsp_data_interp[nsp_interp_count].thread= thread;
+  nsp_init_frames(&nsp_data_interp[nsp_interp_count].datas,argc,argv);
+  nsp_interp_count++;
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  G_UNLOCK (nsp_interp_count);
+#endif 
+  return OK;
 }
 
-void nsp_init_stack(Stack *stack,NspObject **S)
+
+static int nsp_get_interp()
+{
+  GThread *self = g_thread_self();
+  int i = 0;
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  G_LOCK (nsp_interp_count);
+  int imax = nsp_interp_count;
+  G_UNLOCK (nsp_interp_count);
+#else 
+  int imax = nsp_interp_count;
+#endif 
+  for ( i=0; i <  imax ; i++)
+    {
+      if ( self == nsp_data_interp[i].thread) 
+	{
+	  printf("Found interp %d\n",i);
+	  return i;
+	}
+    }
+  /* printf("Returns the default interp \n"); */
+  return 0;
+}
+
+Stack *nsp_get_stack()
+{
+  int i= nsp_get_interp();
+  return &nsp_data_interp[i].stack;
+}
+
+void *nsp_get_datas()
+{
+  int i= nsp_get_interp();
+  return nsp_data_interp[i].datas;
+
+}
+
+void nsp_init_stack(Stack *stack)
 {
   stack->first = 0;
   stack->fname = NULL;
@@ -41,8 +103,8 @@ void nsp_init_stack(Stack *stack,NspObject **S)
   stack->dollar = -1;
   /* XXX : should check here that stack->val != NULL */
   stack->val = calloc(1,sizeof(Stack_ref));
-  stack->val->S = S ;
-  stack->val->L = S + STACK_SIZE;
+  stack->val->S = calloc(STACK_SIZE, sizeof(NspObject *));
+  stack->val->L = stack->val->S + STACK_SIZE; /* tag for end of stack */
   if ( stack->val->error_msg == NULL) 
     stack->val->error_msg = (NspObject *) nsp_smatrix_create(NVOID,0,0,NULL,0);
   stack->val->error = error;
@@ -51,8 +113,6 @@ void nsp_init_stack(Stack *stack,NspObject **S)
   stack->val->symbols = NULL;
   stack->val->current_exec_dir = calloc(FSIZE+1,sizeof(char));
 }
-
-
 
 /* store object o at position pos (relative from first ) */ 
 

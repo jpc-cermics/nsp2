@@ -338,7 +338,8 @@ static GtkWidget *nsp_setup_choice(nsp_choice_value type,char *title,void *Obj,c
 
 static int nsp_get_choice_from_title(char *type)
 {
-  char *table[]= {"combo","entry","colors","save","open","matrix","folder","spin","range","button","ignore",NULL};
+  const char *table[]= {"combo","entry","colors","save","open","matrix","folder",
+			"spin","range","button","ignore",NULL};
   int rep = is_string_in_array(type,table,1);
   if ( rep < 0 ) return choice_unknown;
   switch (rep) 

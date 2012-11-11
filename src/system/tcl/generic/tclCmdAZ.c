@@ -146,7 +146,7 @@ int int_sysfile(Stack stack,int rhs,int opt,int lhs)
 	FILE_READLINK, FILE_RENAME, FILE_ROOTNAME, FILE_SIZE, FILE_SPLIT,
 	FILE_STAT, FILE_TAIL, FILE_TYPE, FILE_VOLUMES, FILE_WRITABLE};
     
-  static char *fileOptions[] = 
+  const char *fileOptions[] = 
     {"atime", "attributes", "copy", "delete", 
      "dirname", "executable", "exists", "extension", "isdirectory", 
      "isfile", "join", "lstat", "mtime", "mkdir", "nativename", 
@@ -839,7 +839,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
     {
       /* get one specified attribute  */
       NspObject *O;
-      if ((index = GetStringInArray(stack,3,tclpFileAttrStrings,0)) == -1 ) 
+      if ((index = GetStringInArray(stack,3,(const nsp_const_string *) tclpFileAttrStrings,0)) == -1 ) 
 	goto done;
       if ((*tclpFileAttrProcs[index].getProc)( index, fileName, &O) != TCL_OK) {
 	goto done;
@@ -852,7 +852,7 @@ static int TclFileAttrsCmd(Stack stack,int rhs,int opt,int lhs)
       /* set attributes */
       int i;
       for (i = 3 ; i <= rhs  ; i += 2) {
-	if ((index = GetStringInArray(stack,i,tclpFileAttrStrings,0)) == -1 ) 
+	if ((index = GetStringInArray(stack,i,(const nsp_const_string *) tclpFileAttrStrings,0)) == -1 ) 
 	  goto done;
 	if ((*tclpFileAttrProcs[index].setProc)( index, fileName,NthObj(i+1)) 
 	    != TCL_OK) 

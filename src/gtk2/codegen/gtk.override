@@ -4142,7 +4142,7 @@ ignore gtk_image_new_from_pixmap gtk_image_new_from_image gtk_image_new_from_fil
 %%
 override gtk_image_new 
 
-static char *image_table[] = {  "pixmap", "image", "file",  "pixbuf",  "stock",  "icon_set","animation",NULL};
+static const char *image_table[] = {  "pixmap", "image", "file",  "pixbuf",  "stock",  "icon_set","animation",NULL};
 typedef enum { FROM_pixmap, FROM_image, FROM_file,  FROM_pixbuf,  FROM_stock,  FROM_icon_set,FROM_animation} image_from;
 
 static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lhs)

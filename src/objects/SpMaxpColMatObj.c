@@ -2931,7 +2931,7 @@ static int int_spmaxpcolmatrix_norm( Stack stack, int rhs, int opt, int lhs)
 {
   double norm, p=2.0;
   int id=1, is_vector;
-  char *norm_table[] =       {"1","2","inf","fro","Inf","Fro","M",NULL};
+  const char *norm_table[] =       {"1","2","inf","fro","Inf","Fro","M",NULL};
   char norm_lapack_table[] = {'1','2','I'  ,'F'  ,'I'  ,'F'  ,'M'};
   NspSpMaxpColMatrix *A;
 

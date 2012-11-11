@@ -33,7 +33,7 @@ extern void nsp_gr_2dzoom(int );
 extern void nsp_gr_3drot(int ); 
 extern void nsp_gr_old_delete(int ); 
 extern void nsp_gr_erase(int ); 
-extern void nsp_gr_old_export(char *fname, int iwin, int color, char *driver,char option);
+extern void nsp_gr_old_export(char *fname, int iwin, int color,const char *driver,char option);
 extern void nsp_gr_expose(int ); 
 extern void nsp_gr_loadsg(int ,char *); 
 extern void nsp_gr_raise(int ); 

@@ -435,7 +435,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
   /* checks the optional type argument */
   if ( sstype != NULL) 
     {
-      char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
+      const char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
       int rep = is_string_in_array(sstype, types,1);
       if ( rep < 0 ) 
 	{
@@ -457,7 +457,7 @@ int int_cholmod_create(Stack stack, int rhs, int opt, int lhs)
   /* checks the optional mode argument */
   if ( ctype != NULL) 
     {
-      char *types[]={ "ll'", "ldl'",  NULL };
+      const char *types[]={ "ll'", "ldl'",  NULL };
       int rep = is_string_in_array(ctype, types,1);
       if ( rep < 0 ) 
 	{
@@ -523,7 +523,7 @@ static int int_cholmod_meth_isreal(NspCholmod *self, Stack stack, int rhs, int o
 
 static int nsp_cholmod_solve_mode( Stack stack,char *mode, int *imode) 
 {
-  char *types[]={ "A", "LDLt",  "Lt", "LD" , "D", "DLt", "P", "L", "Pt" , NULL};
+  const char *types[]={ "A", "LDLt",  "Lt", "LD" , "D", "DLt", "P", "L", "Pt" , NULL};
   int modes[]={ CHOLMOD_A, CHOLMOD_LDLt,  CHOLMOD_Lt, CHOLMOD_LD ,
 		CHOLMOD_D, CHOLMOD_DLt, CHOLMOD_P, CHOLMOD_L,CHOLMOD_Pt };
   int rep = is_string_in_array(mode, types,1);
@@ -885,7 +885,7 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
   /* checks the optional type argument */
   if ( sstype != NULL) 
     {
-      char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
+      const char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
       int rep = is_string_in_array(sstype, types,1);
       if ( rep < 0 ) 
 	{
@@ -899,7 +899,7 @@ int int_cholmod_chol(Stack stack, int rhs, int opt, int lhs)
   /* checks the optional mode argument */
   if ( ctype != NULL) 
     {
-      char *types[]={ "ll'", "ldl'",  NULL };
+      const char *types[]={ "ll'", "ldl'",  NULL };
       int rep = is_string_in_array(ctype, types,1);
       if ( rep < 0 ) 
 	{
@@ -1066,7 +1066,7 @@ int int_cholmod_analyze(Stack stack, int rhs, int opt, int lhs)
   /* checks the optional type argument */
   if ( sstype != NULL) 
     {
-      char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
+      const char *types[]={ "row", "col", "sym", "lo", "up",  NULL };
       int rep = is_string_in_array(sstype, types,1);
       if ( rep < 0 ) 
 	{

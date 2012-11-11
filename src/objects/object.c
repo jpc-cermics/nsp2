@@ -1345,7 +1345,7 @@ int int_object_type(Stack stack, int rhs, int opt, int lhs)
   if (rhs == 2 ) 
     {
       int mode;
-      char *mode_Table[] = {  "short", "string", NULL};
+      const char *mode_Table[] = {  "short", "string", NULL};
       if ((mode= GetStringInArray(stack,2,mode_Table,1)) == -1) return RET_BUG; 
       switch (mode )
 	{
@@ -2035,7 +2035,7 @@ static int count_lines(FILE *f)
 int int_object_size(Stack stack, int rhs, int opt, int lhs)
 { 
   double d;
-  static char *Table[]={ "*","r","c",NULL }; 
+  const char *Table[]={ "*","r","c",NULL }; 
   NspMatrix *Loc1;
   NspObject *O1,*O2;
   int size_f=-1;

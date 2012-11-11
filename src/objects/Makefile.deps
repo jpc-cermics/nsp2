@@ -20,11 +20,11 @@ BMatObj.o: BMatObj.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/datas.h \
- ../include/nsp/pr-output.h ../include/nsp/interf.h \
- ../include/nsp/matutil.h ../include/nsp/matrix-in.h
+ ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/datas.h ../include/nsp/pr-output.h \
+ ../include/nsp/interf.h ../include/nsp/matutil.h \
+ ../include/nsp/matrix-in.h
 BMatrix.o: BMatrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -78,7 +78,8 @@ Datas.o: Datas.c ../include/nsp/nsp.h \
  ../include/nsp/datas.h ../include/nsp/shext.h \
  ../include/nsp/plistc.h ../include/nsp/version.h \
  ../include/nsp/funtab.h ../include/nsp/libstab.h \
- ../include/nsp/frame.h
+ ../include/nsp/frame.h ../include/nsp/nspthreads.h \
+ 
 File.o: File.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -89,10 +90,10 @@ File.o: File.c ../include/nsp/object.h \
  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
  ../include/nsp/plisttoken.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matrix.h \
- ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
- ../include/nsp/bmatrix.h ../include/nsp/interf.h \
- ../include/nsp/pr-output.h ../include/nsp/system.h
+ ../include/nsp/matrix.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/interf.h ../include/nsp/pr-output.h \
+ ../include/nsp/system.h
 FileObj.o: FileObj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -103,12 +104,12 @@ FileObj.o: FileObj.c ../include/nsp/object.h \
  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
  ../include/nsp/plisttoken.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matrix.h \
- ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
- ../include/nsp/bmatrix.h ../include/nsp/hobj.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matutil.h \
- ../include/nsp/stack.h ../include/nsp/system.h
+ ../include/nsp/matrix.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/hobj.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matutil.h ../include/nsp/stack.h \
+ ../include/nsp/system.h
 Hash.o: Hash.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -125,7 +126,8 @@ Hash.o: Hash.c ../include/nsp/object.h \
  ../include/nsp/file.h ../include/nsp/type.h \
  ../include/nsp/hobj.h ../include/nsp/list.h \
  ../include/nsp/none.h ../include/nsp/hash.h \
- ../include/nsp/cells.h ../include/nsp/plist.h
+ ../include/nsp/cells.h ../include/nsp/plist.h \
+ ../include/nsp/bhash.h
 HashObj.o: HashObj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -143,10 +145,11 @@ HashObj.o: HashObj.c ../include/nsp/object.h \
  ../include/nsp/hobj.h ../include/nsp/list.h \
  ../include/nsp/none.h ../include/nsp/hash.h \
  ../include/nsp/cells.h ../include/nsp/plist.h \
- ../include/nsp/pr-output.h ../include/nsp/interf.h \
- ../include/nsp/matutil.h ../include/nsp/seval.h \
- ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/eval.h
+ ../include/nsp/bhash.h ../include/nsp/pr-output.h \
+ ../include/nsp/interf.h ../include/nsp/matutil.h \
+ ../include/nsp/seval.h ../include/nsp/datas.h \
+ ../include/nsp/accelerated_tab.h ../include/nsp/nsp.h \
+ ../include/nsp/eval.h
 Hobj.o: Hobj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -169,12 +172,12 @@ IMatObj.o: IMatObj.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/bmatrix.h \
- ../include/nsp/matint.h ../include/nsp/type.h \
- ../include/nsp/file.h ../include/nsp/hobj.h \
- ../include/nsp/datas.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h ../include/nsp/matrix-in.h
+ ../include/nsp/bmatrix.h ../include/nsp/matint.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/hobj.h ../include/nsp/datas.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h \
+ ../include/nsp/matrix-in.h
 IMatOps.o: IMatOps.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -186,11 +189,11 @@ IMatOps.o: IMatOps.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matint.h \
- ../include/nsp/cnumeric.h ../include/nsp/machine.h \
- ../include/nsp/complex.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h ../include/nsp/nsp_lapack.h \
- ../include/nsp/lapack-c.h ../include/nsp/blas.h
+ ../include/nsp/matint.h ../include/nsp/cnumeric.h \
+ ../include/nsp/machine.h ../include/nsp/complex.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h \
+ ../include/nsp/nsp_lapack.h ../include/nsp/lapack-c.h \
+ ../include/nsp/blas.h
 IMatrix.o: IMatrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -201,9 +204,8 @@ IMatrix.o: IMatrix.c ../include/nsp/object.h \
  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h \
- ../include/nsp/pr-output.h ../include/nsp/interf.h \
- ../include/nsp/matutil.h
+ ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/pr-output.h \
+ ../include/nsp/interf.h ../include/nsp/matutil.h
 IVect.o: IVect.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -239,7 +241,7 @@ Interf-IN.o: Interf-IN.c ../include/nsp/object.h \
  ../include/nsp/list.h ../include/nsp/none.h \
  ../include/nsp/hash.h ../include/nsp/cells.h \
  ../include/nsp/plist.h ../include/nsp/ints.h \
- ../include/nsp/matrix.h \
+ ../include/nsp/bhash.h ../include/nsp/matrix.h \
  ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
  ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/sprowmatrix.h \
@@ -249,12 +251,12 @@ Interf-IN.o: Interf-IN.c ../include/nsp/object.h \
  ../include/nsp/module.h ../include/nsp/modulelt.h \
  ../include/nsp/pmatrix.h ../include/nsp/classa.h \
  ../include/nsp/classb.h ../include/nsp/serial.h \
- ../include/nsp/bhash.h ../include/nsp/mpmatrix.h \
- ../include/nsp/classaref.h ../include/nsp/classbref.h \
- ../include/nsp/interf.h ../include/nsp/matrix-in.h \
- ../include/nsp/bmatrix-in.h ../include/nsp/seval.h \
- ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/eval.h
+ ../include/nsp/mpmatrix.h ../include/nsp/classaref.h \
+ ../include/nsp/classbref.h ../include/nsp/interf.h \
+ ../include/nsp/matrix-in.h ../include/nsp/bmatrix-in.h \
+ ../include/nsp/seval.h ../include/nsp/datas.h \
+ ../include/nsp/accelerated_tab.h ../include/nsp/nsp.h \
+ ../include/nsp/eval.h
 Interf.o: Interf.c ../include/nsp/pr-output.h \
  ../include/nsp/objectf.h ../include/nsp/matutil.h \
  ../include/nsp/complex.h ../include/nsp/object.h \
@@ -268,7 +270,7 @@ Interf.o: Interf.c ../include/nsp/pr-output.h \
  ../include/nsp/plisttoken.h ../include/nsp/list.h \
  ../include/nsp/none.h ../include/nsp/hash.h \
  ../include/nsp/cells.h ../include/nsp/plist.h \
- ../include/nsp/ints.h  ../include/nsp/matrix.h \
+ ../include/nsp/ints.h  ../include/nsp/bhash.h ../include/nsp/matrix.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
  ../include/nsp/sprowmatrix.h ../include/nsp/triplet.h \
@@ -277,9 +279,9 @@ Interf.o: Interf.c ../include/nsp/pr-output.h \
  ../include/nsp/ivect.h ../include/nsp/module.h \
  ../include/nsp/modulelt.h ../include/nsp/pmatrix.h \
  ../include/nsp/classa.h ../include/nsp/classb.h \
- ../include/nsp/serial.h ../include/nsp/bhash.h \
- ../include/nsp/mpmatrix.h ../include/nsp/classaref.h \
- ../include/nsp/classbref.h ../include/nsp/interf.h
+ ../include/nsp/serial.h ../include/nsp/mpmatrix.h \
+ ../include/nsp/classaref.h ../include/nsp/classbref.h \
+ ../include/nsp/interf.h
 List.o: List.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -312,10 +314,11 @@ ListObj.o: ListObj.c ../include/nsp/object.h \
  ../include/nsp/hobj.h ../include/nsp/list.h \
  ../include/nsp/none.h ../include/nsp/hash.h \
  ../include/nsp/cells.h ../include/nsp/plist.h \
- ../include/nsp/pr-output.h ../include/nsp/interf.h \
- ../include/nsp/matutil.h ../include/nsp/seval.h \
- ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/eval.h
+ ../include/nsp/bhash.h ../include/nsp/pr-output.h \
+ ../include/nsp/interf.h ../include/nsp/matutil.h \
+ ../include/nsp/seval.h ../include/nsp/datas.h \
+ ../include/nsp/accelerated_tab.h ../include/nsp/nsp.h \
+ ../include/nsp/eval.h
 MatObj.o: MatObj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -327,17 +330,17 @@ MatObj.o: MatObj.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matint.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matrix-in.h \
- ../include/nsp/bmatrix-in.h ../include/nsp/smatrix-in.h \
- ../include/nsp/matutil.h ../include/nsp/gsort-p.h \
- ../include/nsp/nsp_lapack.h ../include/nsp/blas.h \
- ../include/nsp/matrix-inlined.h ../include/nsp/seval.h \
- ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/eval.h \
- ../include/nsp/plist.h
+ ../include/nsp/matint.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matrix-in.h ../include/nsp/bmatrix-in.h \
+ ../include/nsp/smatrix-in.h ../include/nsp/matutil.h \
+ ../include/nsp/gsort-p.h ../include/nsp/nsp_lapack.h \
+ ../include/nsp/blas.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/seval.h ../include/nsp/datas.h \
+ ../include/nsp/accelerated_tab.h ../include/nsp/nsp.h \
+ ../include/nsp/eval.h ../include/nsp/plist.h \
+ ../include/nsp/bhash.h
 MatOps.o: MatOps.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -349,12 +352,11 @@ MatOps.o: MatOps.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h \
- ../include/nsp/cnumeric.h ../include/nsp/machine.h \
- ../include/nsp/complex.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h ../include/nsp/nsp_lapack.h \
- ../include/nsp/lapack-c.h ../librand/grand.h \
- ../include/nsp/blas.h
+ ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/cnumeric.h \
+ ../include/nsp/machine.h ../include/nsp/complex.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h \
+ ../include/nsp/nsp_lapack.h ../include/nsp/lapack-c.h \
+ ../librand/grand.h ../include/nsp/blas.h
 Matrix.o: Matrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -366,11 +368,10 @@ Matrix.o: Matrix.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h \
- ../include/nsp/pr-output.h ../include/nsp/interf.h \
- ../include/nsp/cnumeric.h ../include/nsp/machine.h \
- ../include/nsp/complex.h ../include/nsp/blas.h \
- ../include/nsp/matutil.h
+ ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/pr-output.h \
+ ../include/nsp/interf.h ../include/nsp/cnumeric.h \
+ ../include/nsp/machine.h ../include/nsp/complex.h \
+ ../include/nsp/blas.h ../include/nsp/matutil.h
 MaxpMatrix.o: MaxpMatrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -398,12 +399,12 @@ MaxpObj.o: MaxpObj.c ../include/nsp/object.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/mpmatrix.h \
  ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matint.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matrix-in.h \
- ../include/nsp/bmatrix-in.h ../include/nsp/smatrix-in.h \
- ../include/nsp/matutil.h ../include/nsp/gsort-p.h
+ ../include/nsp/matint.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matrix-in.h ../include/nsp/bmatrix-in.h \
+ ../include/nsp/smatrix-in.h ../include/nsp/matutil.h \
+ ../include/nsp/gsort-p.h
 PMatObj.o: PMatObj.c ../include/nsp/nsp.h \
  ../include/nsp/machine.h ../include/nsp/config.h \
  ../include/nsp/package_undef.h ../include/nsp/object.h \
@@ -448,7 +449,7 @@ P_PList.o: P_PList.c ../include/nsp/nsp.h \
  ../include/nsp/hobj.h ../include/nsp/sciio.h \
  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
  ../include/nsp/plisttoken.h ../include/nsp/plist.h \
- ../include/nsp/ints.h  ../include/nsp/smatrix.h \
+ ../include/nsp/ints.h  ../include/nsp/bhash.h ../include/nsp/smatrix.h \
  ../include/nsp/interf.h ../include/nsp/system.h \
  ../include/nsp/nsptcl.h ../include/nsp/stack.h \
  ../include/nsp/dstring.h
@@ -462,7 +463,7 @@ P_PListObj.o: P_PListObj.c ../include/nsp/object.h \
  ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
  ../include/nsp/plist.h ../include/nsp/ints.h \
- ../include/nsp/plistc.h \
+ ../include/nsp/bhash.h ../include/nsp/plistc.h \
  ../include/nsp/smatrix.h ../include/nsp/ivect.h \
  ../include/nsp/file.h ../include/nsp/list.h \
  ../include/nsp/ast.h ../include/nsp/system.h \
@@ -489,12 +490,11 @@ SMatObj.o: SMatObj.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matutil.h \
- ../include/nsp/smatrix-in.h ../include/nsp/datas.h \
- ../include/nsp/gsort-p.h
+ ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matutil.h ../include/nsp/smatrix-in.h \
+ ../include/nsp/datas.h ../include/nsp/gsort-p.h
 SMatrix.o: SMatrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -506,11 +506,10 @@ SMatrix.o: SMatrix.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/matint.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/interf.h \
- ../include/nsp/pr-output.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h
+ ../include/nsp/ints.h  ../include/nsp/matint.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/interf.h ../include/nsp/pr-output.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h
 SMio.o: SMio.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -552,10 +551,10 @@ SpColMatObj.o: SpColMatObj.c ../include/nsp/object.h \
  ../include/nsp/spcolmatrix.h ../include/nsp/triplet.h \
  ../include/nsp/sprowmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/cells.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matutil.h
+ ../include/nsp/cells.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matutil.h
 SpColMatrix.o: SpColMatrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -569,13 +568,13 @@ SpColMatrix.o: SpColMatrix.c ../include/nsp/object.h \
  ../include/nsp/spcolmatrix.h ../include/nsp/triplet.h \
  ../include/nsp/sprowmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/cells.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/blas.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h ../include/nsp/cnumeric.h \
- ../include/nsp/machine.h ../include/nsp/complex.h \
- ../include/nsp/nsp_lapack.h ../librand/grand.h
+ ../include/nsp/cells.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/blas.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h \
+ ../include/nsp/cnumeric.h ../include/nsp/machine.h \
+ ../include/nsp/complex.h ../include/nsp/nsp_lapack.h \
+ ../librand/grand.h
 SpMatObj.o: SpMatObj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -625,10 +624,10 @@ SpMaxpColMatObj.o: SpMaxpColMatObj.c ../include/nsp/object.h \
  ../include/nsp/spmaxpcolmatrix.h ../include/nsp/mpmatrix.h \
  ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/cells.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/interf.h ../include/nsp/matutil.h
+ ../include/nsp/cells.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/interf.h \
+ ../include/nsp/matutil.h
 SpMaxpColMatrix.o: SpMaxpColMatrix.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -644,13 +643,13 @@ SpMaxpColMatrix.o: SpMaxpColMatrix.c ../include/nsp/object.h \
  ../include/nsp/spmaxpcolmatrix.h ../include/nsp/mpmatrix.h \
  ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/cells.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/pr-output.h \
- ../include/nsp/blas.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h ../include/nsp/cnumeric.h \
- ../include/nsp/machine.h ../include/nsp/complex.h \
- ../include/nsp/nsp_lapack.h ../librand/grand.h
+ ../include/nsp/cells.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/pr-output.h ../include/nsp/blas.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h \
+ ../include/nsp/cnumeric.h ../include/nsp/machine.h \
+ ../include/nsp/complex.h ../include/nsp/nsp_lapack.h \
+ ../librand/grand.h
 Sptriplet.o: Sptriplet.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -664,19 +663,20 @@ Sptriplet.o: Sptriplet.c ../include/nsp/object.h \
  ../include/nsp/spcolmatrix.h ../include/nsp/triplet.h \
  ../include/nsp/sprowmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/cells.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h
-Stack.o: Stack.c ../include/nsp/stack.h \
- ../include/nsp/math.h ../include/nsp/machine.h \
- ../include/nsp/config.h ../include/nsp/package_undef.h \
- ../include/nsp/objectf.h ../include/nsp/interf.h \
- ../include/nsp/object.h ../include/nsp/string.h \
+ ../include/nsp/cells.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h
+Stack.o: Stack.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
  ../include/nsp/index.h ../include/nsp/xdr.h \
- ../include/nsp/intsf.h ../include/nsp/object-inlined.h \
- ../include/nsp/system.h ../include/nsp/smatrix.h \
- ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
- ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/stack.h \
+ ../include/nsp/interf.h ../include/nsp/system.h \
+ ../include/nsp/smatrix.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/nspthreads.h \
+ 
 bhash.o: bhash.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -693,7 +693,7 @@ bhash.o: bhash.c ../include/nsp/object.h \
  ../include/nsp/pr-output.h ../include/nsp/interf.h \
  ../include/nsp/matutil.h ../include/nsp/seval.h \
  ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/eval.h \
+ ../include/nsp/nsp.h ../include/nsp/eval.h \
  ../include/nsp/plist.h ../include/nsp/ints.h \
  
 cells.o: cells.c ../include/nsp/object.h \
@@ -707,12 +707,11 @@ cells.o: cells.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/matrix.h \
  ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/cells.h \
- ../include/nsp/list.h ../include/nsp/matint.h \
- ../include/nsp/hobj.h ../include/nsp/file.h \
- ../include/nsp/type.h ../include/nsp/interf.h \
- ../include/nsp/pr-output.h ../include/nsp/matutil.h \
- ../include/nsp/gsort-p.h
+ ../include/nsp/ints.h  ../include/nsp/cells.h ../include/nsp/list.h \
+ ../include/nsp/matint.h ../include/nsp/hobj.h \
+ ../include/nsp/file.h ../include/nsp/type.h \
+ ../include/nsp/interf.h ../include/nsp/pr-output.h \
+ ../include/nsp/matutil.h ../include/nsp/gsort-p.h
 cellsobj.o: cellsobj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -724,10 +723,10 @@ cellsobj.o: cellsobj.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/matrix.h \
  ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
  ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
- ../include/nsp/ints.h  ../include/nsp/cells.h \
- ../include/nsp/matint.h ../include/nsp/hobj.h \
- ../include/nsp/file.h ../include/nsp/type.h \
- ../include/nsp/list.h ../include/nsp/plist.h \
+ ../include/nsp/ints.h  ../include/nsp/cells.h ../include/nsp/matint.h \
+ ../include/nsp/hobj.h ../include/nsp/file.h \
+ ../include/nsp/type.h ../include/nsp/list.h \
+ ../include/nsp/plist.h ../include/nsp/bhash.h \
  ../include/nsp/pr-output.h ../include/nsp/interf.h \
  ../include/nsp/matutil.h
 eframe.o: eframe.c ../include/nsp/object.h \
@@ -758,9 +757,9 @@ function.o: function.c ../include/nsp/object.h \
  ../include/nsp/type.h ../include/nsp/hobj.h \
  ../include/nsp/interf.h ../include/nsp/seval.h \
  ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
- ../include/nsp/interf.h ../include/nsp/eval.h \
+ ../include/nsp/nsp.h ../include/nsp/eval.h \
  ../include/nsp/plist.h ../include/nsp/ints.h \
- 
+ ../include/nsp/bhash.h
 matint.o: matint.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -771,15 +770,15 @@ matint.o: matint.c ../include/nsp/object.h \
  ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
  ../include/nsp/plisttoken.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matrix.h \
- ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
- ../include/nsp/bmatrix.h ../include/nsp/mpmatrix.h \
- ../include/nsp/matint.h ../include/nsp/cells.h \
- ../include/nsp/list.h ../include/nsp/hobj.h \
- ../include/nsp/interf.h ../include/nsp/gsort-p.h \
- ../include/nsp/seval.h ../include/nsp/datas.h \
- ../include/nsp/accelerated_tab.h ../include/nsp/interf.h \
- ../include/nsp/eval.h ../include/nsp/plist.h
+ ../include/nsp/matrix.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/mpmatrix.h ../include/nsp/matint.h \
+ ../include/nsp/cells.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/interf.h \
+ ../include/nsp/gsort-p.h ../include/nsp/seval.h \
+ ../include/nsp/datas.h ../include/nsp/accelerated_tab.h \
+ ../include/nsp/nsp.h ../include/nsp/eval.h \
+ ../include/nsp/plist.h ../include/nsp/bhash.h
 mtlb.o: mtlb.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -805,21 +804,21 @@ none.o: none.c ../include/nsp/object.h \
  ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
  ../include/nsp/hobj.h ../include/nsp/type.h \
  ../include/nsp/file.h ../include/nsp/interf.h
-object.o: object.c  ../include/nsp/object.h \
- ../include/nsp/math.h ../include/nsp/machine.h \
- ../include/nsp/config.h ../include/nsp/package_undef.h \
- ../include/nsp/string.h ../include/nsp/index.h \
- ../include/nsp/xdr.h ../include/nsp/intsf.h \
- ../include/nsp/objectf.h ../include/nsp/smatrix.h \
- ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
- ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
- ../include/nsp/matrix.h ../include/nsp/complex.h \
- ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
- ../include/nsp/hobj.h ../include/nsp/type.h \
- ../include/nsp/file.h ../include/nsp/serial.h \
- ../include/nsp/stack.h ../include/nsp/interf.h \
- ../include/nsp/system.h ../include/nsp/plistc.h \
- ../include/nsp/datas.h ../include/nsp/object-inlined.h
+object.o: object.c  ../include/nsp/object.h ../include/nsp/math.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/smatrix.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/hobj.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/serial.h ../include/nsp/stack.h \
+ ../include/nsp/interf.h ../include/nsp/system.h \
+ ../include/nsp/plistc.h ../include/nsp/datas.h \
+ ../include/nsp/object-inlined.h
 objectlib.o: objectlib.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -837,7 +836,8 @@ objectlib.o: objectlib.c ../include/nsp/object.h \
  ../include/nsp/hobj.h ../include/nsp/list.h \
  ../include/nsp/none.h ../include/nsp/hash.h \
  ../include/nsp/cells.h ../include/nsp/plist.h \
- ../include/nsp/serial.h ../include/nsp/interf.h
+ ../include/nsp/bhash.h ../include/nsp/serial.h \
+ ../include/nsp/interf.h
 pr-output.o: pr-output.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -861,10 +861,10 @@ serial.o: serial.c ../include/nsp/object.h \
  ../include/nsp/plisttoken.h ../include/nsp/complex.h \
  ../include/nsp/matrix-inlined.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/ints.h \
- ../include/nsp/matint.h \
- ../include/nsp/serial.h ../include/nsp/smio.h \
- ../include/nsp/file.h ../include/nsp/type.h \
- ../include/nsp/hobj.h ../include/nsp/interf.h
+ ../include/nsp/matint.h ../include/nsp/serial.h \
+ ../include/nsp/smio.h ../include/nsp/file.h \
+ ../include/nsp/type.h ../include/nsp/hobj.h \
+ ../include/nsp/interf.h
 typeobj.o: typeobj.c ../include/nsp/object.h \
  ../include/nsp/math.h ../include/nsp/machine.h \
  ../include/nsp/config.h ../include/nsp/package_undef.h \
@@ -877,7 +877,7 @@ typeobj.o: typeobj.c ../include/nsp/object.h \
  ../include/nsp/list.h ../include/nsp/none.h \
  ../include/nsp/hash.h ../include/nsp/cells.h \
  ../include/nsp/plist.h ../include/nsp/ints.h \
- ../include/nsp/matrix.h \
+ ../include/nsp/bhash.h ../include/nsp/matrix.h \
  ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
  ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
  ../include/nsp/imatrix.h ../include/nsp/sprowmatrix.h \
@@ -889,5 +889,4 @@ typeobj.o: typeobj.c ../include/nsp/object.h \
  ../include/nsp/pmatrix.h ../include/nsp/classa.h \
  ../include/nsp/classb.h ../include/nsp/classaref.h \
  ../include/nsp/classbref.h ../include/nsp/serial.h \
- ../include/nsp/bhash.h ../include/nsp/astnode.h \
- ../include/nsp/interf.h
+ ../include/nsp/astnode.h ../include/nsp/interf.h

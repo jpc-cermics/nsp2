@@ -533,7 +533,7 @@ static int int_smio_eof(void *self, Stack stack, int rhs, int opt, int lhs)
  * f.seek[] ou f.seek["pos"]; 
  */
 
-static char *seek_Table[] = {"set", "cur", "end", NULL};
+static const char *seek_Table[] = {"set", "cur", "end", NULL};
 
 static int int_smio_seek(void *self, Stack stack, int rhs, int opt, int lhs)
 {

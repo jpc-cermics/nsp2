@@ -263,7 +263,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -271,6 +271,7 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 #define  GtkBorder_Private 
 #include "nsp/gtk/gtkborder.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkBorder inherits from NspGBoxed */ 
 
@@ -489,7 +490,7 @@ static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -497,6 +498,7 @@ static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIconInfo_Private 
 #include "nsp/gtk/gtkiconinfo.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIconInfo inherits from NspGBoxed */ 
 
@@ -803,7 +805,7 @@ static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -811,6 +813,7 @@ static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIconSet_Private 
 #include "nsp/gtk/gtkiconset.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIconSet inherits from NspGBoxed */ 
 
@@ -1032,7 +1035,7 @@ _wrap_gtkiconset_new(Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_gtk_icon_set_new_from_pixbuf(stack,rhs,opt,lhs);
 }
-#line 1036 "gtk.c"
+#line 1039 "gtk.c"
 
 
 static int _wrap_gtk_icon_set_copy(NspGtkIconSet *self,Stack stack,int rhs,int opt,int lhs)
@@ -1104,7 +1107,7 @@ _wrap_gtk_icon_set_get_sizes(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,(NspObject *) ret) ; 
   return 1;
 }
-#line 1108 "gtk.c"
+#line 1111 "gtk.c"
 
 
 static NspMethods gtkiconset_methods[] = {
@@ -1127,7 +1130,7 @@ static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1135,6 +1138,7 @@ static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIconSource_Private 
 #include "nsp/gtk/gtkiconsource.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIconSource inherits from NspGBoxed */ 
 
@@ -1571,7 +1575,7 @@ static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1579,6 +1583,7 @@ static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRequisition_Private 
 #include "nsp/gtk/gtkrequisition.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRequisition inherits from NspGBoxed */ 
 
@@ -1799,7 +1804,7 @@ _wrap_gtk_requisition__set_width(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->width = val;
   return OK;
 }
-#line 1803 "gtk.c"
+#line 1808 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_width(NspObject *self,char *attr)
 {
   int ret;
@@ -1817,7 +1822,7 @@ _wrap_gtk_requisition__set_height(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->height = val;
   return 0;
 }
-#line 1821 "gtk.c"
+#line 1826 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_height(NspObject *self,char *attr)
 {
   int ret;
@@ -1838,7 +1843,7 @@ static AttrTab gtkrequisition_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -1846,6 +1851,7 @@ static AttrTab gtkrequisition_attrs[] = {
 #define  GtkSelectionData_Private 
 #include "nsp/gtk/gtkselectiondata.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSelectionData inherits from NspGBoxed */ 
 
@@ -2045,7 +2051,7 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
 			 type, format,(const guchar *) data, length);
   return 0;
 }
-#line 2049 "gtk.c"
+#line 2055 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_set_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2076,7 +2082,7 @@ _wrap_gtk_selection_data_get_text(NspObject *self,Stack stack,int rhs,int opt,in
   Scierror("To be done XXXXX gtk_selection_data_get_text");
   return 0;
 }
-#line 2080 "gtk.c"
+#line 2086 "gtk.c"
 
 
 #line 516 "gtk.override"
@@ -2097,7 +2103,7 @@ _wrap_gtk_selection_data_get_targets(NspObject *self,Stack stack,int rhs,int opt
   return 1; 
   NSP_LIST_CLEAN; 
 }
-#line 2101 "gtk.c"
+#line 2107 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_targets_include_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2186,7 +2192,7 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
     }
   return RetArgs(stack,lhs,T,nsp_model,nsp_path);  
 }
-#line 2190 "gtk.c"
+#line 2196 "gtk.c"
 
 
 static NspMethods gtkselectiondata_methods[] = {
@@ -2252,7 +2258,7 @@ _wrap_gtk_selection_data__get_data(NspGObject *self, char *attr)
     return nsp_new_string_obj(NVOID,NULL,0);
   }
 }
-#line 2256 "gtk.c"
+#line 2262 "gtk.c"
 static AttrTab gtkselectiondata_attrs[] = {
   { "selection", (attr_get_function *)_wrap_gtk_selection_data__get_selection, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "target", (attr_get_function *)_wrap_gtk_selection_data__get_target, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2268,7 +2274,7 @@ static AttrTab gtkselectiondata_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2276,6 +2282,7 @@ static AttrTab gtkselectiondata_attrs[] = {
 #define  GtkTextAttributes_Private 
 #include "nsp/gtk/gtktextattributes.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextAttributes inherits from NspGBoxed */ 
 
@@ -2520,7 +2527,7 @@ _wrap_gtk_text_attributes__get_bg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.bg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2524 "gtk.c"
+#line 2531 "gtk.c"
 #line 6715 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
@@ -2529,7 +2536,7 @@ _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.fg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2533 "gtk.c"
+#line 2540 "gtk.c"
 #line 6724 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
@@ -2539,7 +2546,7 @@ _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2543 "gtk.c"
+#line 2550 "gtk.c"
 #line 6734 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
@@ -2550,7 +2557,7 @@ _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2554 "gtk.c"
+#line 2561 "gtk.c"
 #line 6745 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
@@ -2559,7 +2566,7 @@ _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.rise;
   return nsp_new_double_obj((double) ret);
 }
-#line 2563 "gtk.c"
+#line 2570 "gtk.c"
 #line 6754 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
@@ -2568,7 +2575,7 @@ _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.underline;
   return nsp_new_double_obj((double) ret);
 }
-#line 2572 "gtk.c"
+#line 2579 "gtk.c"
 #line 6763 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
@@ -2576,7 +2583,7 @@ _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.strikethrough;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
-#line 2580 "gtk.c"
+#line 2587 "gtk.c"
 #line 6771 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
@@ -2585,7 +2592,7 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
 
-#line 2589 "gtk.c"
+#line 2596 "gtk.c"
 static NspObject *_wrap_gtk_text_attributes__get_justification(NspObject *self,char *attr)
 {
   gint ret;
@@ -2798,7 +2805,7 @@ static AttrTab gtktextattributes_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -2806,6 +2813,7 @@ static AttrTab gtktextattributes_attrs[] = {
 #define  GtkTextIter_Private 
 #include "nsp/gtk/gtktextiter.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextIter inherits from NspGBoxed */ 
 
@@ -3005,7 +3013,7 @@ _wrap_gtk_text_iter_copy(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   return (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, nspg_boxed_get(self, GtkTextIter), TRUE, TRUE,NULL);
 }
-#line 3009 "gtk.c"
+#line 3017 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_offset(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3097,7 +3105,7 @@ _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lh
   Scierror("XXXX To be done gtk_text_iter_get_slice");
   return 0;
 }
-#line 3101 "gtk.c"
+#line 3109 "gtk.c"
 
 
 #line 5399 "gtk.override"
@@ -3126,7 +3134,7 @@ _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   Scierror("To be done gtk_text_iter_get_text");
   return 0;
 }
-#line 3130 "gtk.c"
+#line 3138 "gtk.c"
 
 
 #line 5426 "gtk.override"
@@ -3156,7 +3164,7 @@ _wrap_gtk_text_iter_get_visible_slice(NspGBoxed *self,Stack stack,int rhs,int op
   Scierror("To be done gtk_text_iter_get_visible_slice");
   return 0;
 }
-#line 3160 "gtk.c"
+#line 3168 "gtk.c"
 
 
 #line 5454 "gtk.override"
@@ -3186,7 +3194,7 @@ _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt
   Scierror("To be done gtk_text_iter_get_visible_text");
   return 0;
 }
-#line 3190 "gtk.c"
+#line 3198 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_pixbuf(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3210,7 +3218,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3214 "gtk.c"
+#line 3222 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_child_anchor(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3240,7 +3248,7 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
     
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3244 "gtk.c"
+#line 3252 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_begins_tag(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3336,7 +3344,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3340 "gtk.c"
+#line 3348 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_editable(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3988,7 +3996,7 @@ _wrap_gtk_text_iter_forward_search(NspGBoxed *self,Stack stack,int rhs,int opt,i
     }
   return 0;
 }
-#line 3992 "gtk.c"
+#line 4000 "gtk.c"
 
 
 #line 5554 "gtk.override"
@@ -4026,7 +4034,7 @@ _wrap_gtk_text_iter_backward_search(NspGBoxed *self,Stack stack,int rhs,int opt,
     }
   return 0;
 }
-#line 4030 "gtk.c"
+#line 4038 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -4212,7 +4220,7 @@ static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -4220,6 +4228,7 @@ static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeIter_Private 
 #include "nsp/gtk/gtktreeiter.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeIter inherits from NspGBoxed */ 
 
@@ -4438,7 +4447,7 @@ static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -4446,6 +4455,7 @@ static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeRowReference_Private 
 #include "nsp/gtk/gtktreerowreference.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeRowReference inherits from NspGBoxed */ 
 
@@ -4712,7 +4722,7 @@ static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -4720,6 +4730,7 @@ static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreePath_Private 
 #include "nsp/gtk/gtktreepath.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreePath inherits from NspGBoxed */ 
 
@@ -4958,7 +4969,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
     }
   return NULL;
 }
-#line 4962 "gtk.c"
+#line 4973 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_to_string(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -5010,7 +5021,7 @@ _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 5014 "gtk.c"
+#line 5025 "gtk.c"
 
 
 #line 180 "gtk.override"
@@ -5039,7 +5050,7 @@ _wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,in
   nsp_list_destroy(L);
   return RET_BUG;
 }
-#line 5043 "gtk.c"
+#line 5054 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -5158,7 +5169,7 @@ static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5166,6 +5177,7 @@ static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellEditable_Private 
 #include "nsp/gtk/gtkcelleditable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellEditable inherits from NspGObject */ 
 
@@ -5391,7 +5403,7 @@ static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5399,6 +5411,7 @@ static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellLayout_Private 
 #include "nsp/gtk/gtkcelllayout.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellLayout inherits from NspGObject */ 
 
@@ -5649,7 +5662,7 @@ _wrap_gtk_cell_layout_set_attributes(NspGObject *self,Stack stack,int rhs,int op
   return 0;
 }
 
-#line 5653 "gtk.c"
+#line 5666 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_add_attribute(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5734,7 +5747,7 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
 				    nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 5738 "gtk.c"
+#line 5751 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_clear_attributes(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5778,7 +5791,7 @@ static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -5786,6 +5799,7 @@ static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkEditable_Private 
 #include "nsp/gtk/gtkeditable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkEditable inherits from NspGObject */ 
 
@@ -5986,7 +6000,7 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5990 "gtk.c"
+#line 6004 "gtk.c"
 
 
 #line 3798 "gtk.override"
@@ -6007,7 +6021,7 @@ static int _wrap_gtk_editable_insert_text(NspGtkEditable *self,Stack stack,int r
   if ( nsp_move_double(stack,1,(double)position) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 6011 "gtk.c"
+#line 6025 "gtk.c"
 
 
 static int _wrap_gtk_editable_delete_text(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
@@ -6120,7 +6134,7 @@ static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -6128,6 +6142,7 @@ static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFileChooser_Private 
 #include "nsp/gtk/gtkfilechooser.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFileChooser inherits from NspGObject */ 
 
@@ -6883,7 +6898,7 @@ static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -6891,6 +6906,7 @@ static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeDragDest_Private 
 #include "nsp/gtk/gtktreedragdest.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeDragDest inherits from NspGObject */ 
 
@@ -7138,7 +7154,7 @@ static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7146,6 +7162,7 @@ static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeDragSource_Private 
 #include "nsp/gtk/gtktreedragsource.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeDragSource inherits from NspGObject */ 
 
@@ -7406,7 +7423,7 @@ static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -7414,6 +7431,7 @@ static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeModel_Private 
 #include "nsp/gtk/gtktreemodel.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeModel inherits from NspGObject */ 
 
@@ -7631,7 +7649,7 @@ static int _wrap_gtk_tree_model_get_column_type(NspGtkTreeModel *self,Stack stac
   return 1; 
 }
 
-#line 7635 "gtk.c"
+#line 7653 "gtk.c"
 
 
 #line 1509 "gtk.override"
@@ -7664,7 +7682,7 @@ _wrap_gtk_tree_model_get_iter(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
 }
-#line 7668 "gtk.c"
+#line 7686 "gtk.c"
 
 
 #line 1540 "gtk.override"
@@ -7689,7 +7707,7 @@ _wrap_gtk_tree_model_get_iter_from_string(NspGObject *self,Stack stack,int rhs,i
     return RET_BUG;
   }
 }
-#line 7693 "gtk.c"
+#line 7711 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_string_from_iter(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7732,7 +7750,7 @@ _wrap_gtk_tree_model_get_iter_first(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 1;
 }
-#line 7736 "gtk.c"
+#line 7754 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7786,7 +7804,7 @@ _wrap_gtk_tree_model_get_value(NspGObject *self,Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7790 "gtk.c"
+#line 7808 "gtk.c"
 
 
 #line 2367 "gtk.override"
@@ -7808,7 +7826,7 @@ _wrap_gtk_tree_model_iter_next(NspGObject *self,Stack stack,int rhs,int opt,int 
   if ( nsp_move_boolean(stack,1,rep)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 7812 "gtk.c"
+#line 7830 "gtk.c"
 
 
 #line 2387 "gtk.override"
@@ -7840,7 +7858,7 @@ _wrap_gtk_tree_model_iter_children(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   }
 }
-#line 7844 "gtk.c"
+#line 7862 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7916,7 +7934,7 @@ _wrap_gtk_tree_model_iter_nth_child(NspGObject *self,Stack stack,int rhs,int opt
   else 
     return RET_BUG;
 }
-#line 7920 "gtk.c"
+#line 7938 "gtk.c"
 
 
 #line 2448 "gtk.override"
@@ -7949,7 +7967,7 @@ _wrap_gtk_tree_model_iter_parent(NspGObject *self,Stack stack,int rhs,int opt,in
     return RET_BUG;
   }
 }
-#line 7953 "gtk.c"
+#line 7971 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -8046,7 +8064,7 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
   /* XXXX detecter les erreurs ? */
   return 0;
 }
-#line 8050 "gtk.c"
+#line 8068 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -8191,7 +8209,7 @@ static int _wrap_gtk_tree_model_filter_new(NspGtkTreeModel *self,Stack stack,int
   return 1;
 }
 
-#line 8195 "gtk.c"
+#line 8213 "gtk.c"
 
 
 static NspMethods gtktreemodel_methods[] = {
@@ -8231,7 +8249,7 @@ static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8239,6 +8257,7 @@ static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeSortable_Private 
 #include "nsp/gtk/gtktreesortable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeSortable inherits from NspGObject */ 
 
@@ -8440,7 +8459,7 @@ _wrap_gtk_tree_sortable_get_sort_column_id(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,n,(double) sort_column_id,(double) order) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 8444 "gtk.c"
+#line 8463 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_set_sort_column_id(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8517,7 +8536,7 @@ _wrap_gtk_tree_sortable_set_sort_func(NspGObject *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#line 8521 "gtk.c"
+#line 8540 "gtk.c"
 
 
 #line 1755 "gtk.override"
@@ -8544,7 +8563,7 @@ _wrap_gtk_tree_sortable_set_default_sort_func(NspGObject *self,Stack stack,int r
 					  nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 8548 "gtk.c"
+#line 8567 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_has_default_sort_func(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8574,7 +8593,7 @@ static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -8582,6 +8601,7 @@ static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAboutDialog_Private 
 #include "nsp/gtk/gtkaboutdialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAboutDialog inherits from NspGtkDialog */ 
 
@@ -9067,7 +9087,7 @@ static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9075,6 +9095,7 @@ static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAccelGroup_Private 
 #include "nsp/gtk/gtkaccelgroup.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAccelGroup inherits from NspGObject */ 
 
@@ -9316,7 +9337,7 @@ static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9324,6 +9345,7 @@ static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAccelLabel_Private 
 #include "nsp/gtk/gtkaccellabel.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAccelLabel inherits from NspGtkLabel */ 
 
@@ -9593,7 +9615,7 @@ static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9601,6 +9623,7 @@ static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAccelMap_Private 
 #include "nsp/gtk/gtkaccelmap.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAccelMap inherits from NspGObject */ 
 
@@ -9794,7 +9817,7 @@ static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -9802,6 +9825,7 @@ static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAccessible_Private 
 #include "nsp/gtk/gtkaccessible.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAccessible inherits from NspAtkObject */ 
 
@@ -10006,7 +10030,7 @@ static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -10014,6 +10038,7 @@ static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAction_Private 
 #include "nsp/gtk/gtkaction.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAction inherits from NspGObject */ 
 
@@ -10452,7 +10477,7 @@ static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -10460,6 +10485,7 @@ static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkActionGroup_Private 
 #include "nsp/gtk/gtkactiongroup.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkActionGroup inherits from NspGObject */ 
 
@@ -10731,7 +10757,7 @@ static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack
 }
 
 
-#line 10735 "gtk.c"
+#line 10761 "gtk.c"
 
 
 #line 7123 "gtk.override"
@@ -10750,7 +10776,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 10754 "gtk.c"
+#line 10780 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -10837,7 +10863,7 @@ static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -10845,6 +10871,7 @@ static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAdjustment_Private 
 #include "nsp/gtk/gtkadjustment.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAdjustment inherits from NspGtkObject */ 
 
@@ -11058,7 +11085,7 @@ _wrap_gtk_adjustment_set_all(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("deprecated: use individual setters");
   return RET_BUG;
 }
-#line 11062 "gtk.c"
+#line 11089 "gtk.c"
 
 
 static int _wrap_gtk_adjustment_changed(NspGtkAdjustment *self,Stack stack,int rhs,int opt,int lhs)
@@ -11128,7 +11155,7 @@ _wrap_gtk_adjustment__set_value(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_value_changed(adjustment);
   return 0;
 }
-#line 11132 "gtk.c"
+#line 11159 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_value(NspObject *self,char *attr)
 {
   double ret;
@@ -11150,7 +11177,7 @@ _wrap_gtk_adjustment__set_lower(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11154 "gtk.c"
+#line 11181 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_lower(NspObject *self,char *attr)
 {
   double ret;
@@ -11172,7 +11199,7 @@ _wrap_gtk_adjustment__set_upper(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11176 "gtk.c"
+#line 11203 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_upper(NspObject *self,char *attr)
 {
   double ret;
@@ -11194,7 +11221,7 @@ _wrap_gtk_adjustment__set_step_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11198 "gtk.c"
+#line 11225 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_step_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -11216,7 +11243,7 @@ _wrap_gtk_adjustment__set_page_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11220 "gtk.c"
+#line 11247 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -11238,7 +11265,7 @@ _wrap_gtk_adjustment__set_page_size(NspGObject *self, char *attr, NspObject *val
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 11242 "gtk.c"
+#line 11269 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_size(NspObject *self,char *attr)
 {
   double ret;
@@ -11265,7 +11292,7 @@ static AttrTab gtkadjustment_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -11273,6 +11300,7 @@ static AttrTab gtkadjustment_attrs[] = {
 #define  GtkAlignment_Private 
 #include "nsp/gtk/gtkalignment.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAlignment inherits from NspGtkBin */ 
 
@@ -11515,7 +11543,7 @@ static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -11523,6 +11551,7 @@ static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkArrow_Private 
 #include "nsp/gtk/gtkarrow.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkArrow inherits from NspGtkMisc */ 
 
@@ -11760,7 +11789,7 @@ static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -11768,6 +11797,7 @@ static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkAspectFrame_Private 
 #include "nsp/gtk/gtkaspectframe.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkAspectFrame inherits from NspGtkFrame */ 
 
@@ -12009,7 +12039,7 @@ static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -12017,6 +12047,7 @@ static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkBin_Private 
 #include "nsp/gtk/gtkbin.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkBin inherits from NspGtkContainer */ 
 
@@ -12240,7 +12271,7 @@ static AttrTab gtkbin_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -12248,6 +12279,7 @@ static AttrTab gtkbin_attrs[] = {
 #define  GtkBox_Private 
 #include "nsp/gtk/gtkbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkBox inherits from NspGtkContainer */ 
 
@@ -12559,7 +12591,7 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 12563 "gtk.c"
+#line 12595 "gtk.c"
 
 
 static int _wrap_gtk_box_set_child_packing(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -12604,7 +12636,7 @@ static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -12612,6 +12644,7 @@ static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkButton_Private 
 #include "nsp/gtk/gtkbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkButton inherits from NspGtkBin */ 
 
@@ -12827,7 +12860,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 12831 "gtk.c"
+#line 12864 "gtk.c"
 
 
 static int _wrap_gtk_button_pressed(NspGtkButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -13024,7 +13057,7 @@ static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -13032,6 +13065,7 @@ static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkButtonBox_Private 
 #include "nsp/gtk/gtkbuttonbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkButtonBox inherits from NspGtkBox */ 
 
@@ -13290,7 +13324,7 @@ _wrap_gtk_button_box_get_child_size(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_move_doubles(stack,1,1,2,(double) min_width, (double) min_height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13294 "gtk.c"
+#line 13328 "gtk.c"
 
 
 #line 4359 "gtk.override"
@@ -13304,7 +13338,7 @@ _wrap_gtk_button_box_get_child_ipadding(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 13308 "gtk.c"
+#line 13342 "gtk.c"
 
 
 static NspMethods gtkbuttonbox_methods[] = {
@@ -13331,7 +13365,7 @@ static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -13339,6 +13373,7 @@ static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCalendar_Private 
 #include "nsp/gtk/gtkcalendar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCalendar inherits from NspGtkWidget */ 
 
@@ -13594,7 +13629,7 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 }
 
 
-#line 13598 "gtk.c"
+#line 13633 "gtk.c"
 
 
 static int _wrap_gtk_calendar_clear_marks(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13635,7 +13670,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13639 "gtk.c"
+#line 13674 "gtk.c"
 
 
 static int _wrap_gtk_calendar_freeze(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13677,7 +13712,7 @@ static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -13685,6 +13720,7 @@ static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellRenderer_Private 
 #include "nsp/gtk/gtkcellrenderer.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellRenderer inherits from NspGtkObject */ 
 
@@ -13899,7 +13935,7 @@ _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,in
   if (  nsp_move_doubles(stack,1,1,4,(double)  x_offset,(double) y_offset, (double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 13903 "gtk.c"
+#line 13939 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_render(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -14006,7 +14042,7 @@ _wrap_gtk_cell_renderer_get_fixed_size(NspGObject *self,Stack stack,int rhs,int 
     return RET_BUG; 
   return 1; 
 }
-#line 14010 "gtk.c"
+#line 14046 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_editing_canceled(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -14049,7 +14085,7 @@ static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -14057,6 +14093,7 @@ static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellRendererCombo_Private 
 #include "nsp/gtk/gtkcellrenderercombo.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellRendererCombo inherits from NspGtkCellRendererText */ 
 
@@ -14264,7 +14301,7 @@ static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -14272,6 +14309,7 @@ static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellRendererPixbuf_Private 
 #include "nsp/gtk/gtkcellrendererpixbuf.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellRendererPixbuf inherits from NspGtkCellRenderer */ 
 
@@ -14479,7 +14517,7 @@ static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -14487,6 +14525,7 @@ static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellRendererProgress_Private 
 #include "nsp/gtk/gtkcellrendererprogress.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellRendererProgress inherits from NspGtkCellRenderer */ 
 
@@ -14694,7 +14733,7 @@ static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -14702,6 +14741,7 @@ static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellRendererText_Private 
 #include "nsp/gtk/gtkcellrenderertext.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellRendererText inherits from NspGtkCellRenderer */ 
 
@@ -14924,7 +14964,7 @@ static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -14932,6 +14972,7 @@ static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellRendererToggle_Private 
 #include "nsp/gtk/gtkcellrenderertoggle.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellRendererToggle inherits from NspGtkCellRenderer */ 
 
@@ -15185,7 +15226,7 @@ static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -15193,6 +15234,7 @@ static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCellView_Private 
 #include "nsp/gtk/gtkcellview.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCellView inherits from NspGtkWidget */ 
 
@@ -15420,7 +15462,7 @@ _wrap_gtkcellview_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 15424 "gtk.c"
+#line 15466 "gtk.c"
 
 
 static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rhs,int opt,int lhs)
@@ -15555,7 +15597,7 @@ static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -15563,6 +15605,7 @@ static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCheckButton_Private 
 #include "nsp/gtk/gtkcheckbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCheckButton inherits from NspGtkToggleButton */ 
 
@@ -15774,7 +15817,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15778 "gtk.c"
+#line 15821 "gtk.c"
 
 
 static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
@@ -15789,7 +15832,7 @@ static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -15797,6 +15840,7 @@ static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkCheckMenuItem_Private 
 #include "nsp/gtk/gtkcheckmenuitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCheckMenuItem inherits from NspGtkMenuItem */ 
 
@@ -16003,7 +16047,7 @@ _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 16007 "gtk.c"
+#line 16051 "gtk.c"
 
 
 static int _wrap_gtk_check_menu_item_set_active(NspGtkCheckMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -16130,7 +16174,7 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -16138,6 +16182,7 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 #define  GtkColorButton_Private 
 #include "nsp/gtk/gtkcolorbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkColorButton inherits from NspGtkButton */ 
 
@@ -16331,7 +16376,7 @@ static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -16339,6 +16384,7 @@ static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkColorSelection_Private 
 #include "nsp/gtk/gtkcolorselection.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkColorSelection inherits from NspGtkVBox */ 
 
@@ -16593,7 +16639,7 @@ _wrap_gtk_color_selection_set_current_color(NspGObject *self,Stack stack,int rhs
   return 0;
 }
 
-#line 16597 "gtk.c"
+#line 16643 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16624,7 +16670,7 @@ _wrap_gtk_color_selection_get_current_color(NspGObject *self,Stack stack,int rhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16628 "gtk.c"
+#line 16674 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16662,7 +16708,7 @@ _wrap_gtk_color_selection_set_previous_color(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 16666 "gtk.c"
+#line 16712 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16690,7 +16736,7 @@ _wrap_gtk_color_selection_get_previous_color(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16694 "gtk.c"
+#line 16740 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16779,7 +16825,7 @@ static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -16787,6 +16833,7 @@ static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkColorSelectionDialog_Private 
 #include "nsp/gtk/gtkcolorselectiondialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkColorSelectionDialog inherits from NspGtkDialog */ 
 
@@ -17041,7 +17088,7 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -17049,6 +17096,7 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 #define  GtkCombo_Private 
 #include "nsp/gtk/gtkcombo.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCombo inherits from NspGtkHBox */ 
 
@@ -17313,7 +17361,7 @@ _wrap_gtk_combo_set_popdown_strings(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(glist);
   return 0;
 }
-#line 17317 "gtk.c"
+#line 17365 "gtk.c"
 
 
 static int _wrap_gtk_combo_disable_activate(NspGtkCombo *self,Stack stack,int rhs,int opt,int lhs)
@@ -17358,7 +17406,7 @@ static AttrTab gtkcombo_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -17366,6 +17414,7 @@ static AttrTab gtkcombo_attrs[] = {
 #define  GtkComboBox_Private 
 #include "nsp/gtk/gtkcombobox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkComboBox inherits from NspGtkBin */ 
 
@@ -17588,7 +17637,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 17592 "gtk.c"
+#line 17641 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17661,7 +17710,7 @@ static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,
 }
 
 
-#line 17665 "gtk.c"
+#line 17714 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17895,7 +17944,7 @@ static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -17903,6 +17952,7 @@ static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkComboBoxEntry_Private 
 #include "nsp/gtk/gtkcomboboxentry.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkComboBoxEntry inherits from NspGtkComboBox */ 
 
@@ -18131,7 +18181,7 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 18135 "gtk.c"
+#line 18185 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_entry_set_text_column(NspGtkComboBoxEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -18171,7 +18221,7 @@ static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -18179,6 +18229,7 @@ static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkContainer_Private 
 #include "nsp/gtk/gtkcontainer.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkContainer inherits from NspGtkWidget */ 
 
@@ -18479,7 +18530,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   return 0;
 }
 
-#line 18483 "gtk.c"
+#line 18534 "gtk.c"
 
 
 #line 811 "gtk.override"
@@ -18492,7 +18543,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)), g_list_free);
 }
-#line 18496 "gtk.c"
+#line 18547 "gtk.c"
 
 
 #line 803 "gtk.override"
@@ -18502,7 +18553,7 @@ _wrap_gtk_container_children(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("Deprecated: use GtkContainer.get_children");
   return RET_BUG;
 }
-#line 18506 "gtk.c"
+#line 18557 "gtk.c"
 
 
 static int _wrap_gtk_container_propagate_expose(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18555,7 +18606,7 @@ _wrap_gtk_container_set_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(focusable_widgets);
   return 0;
 }
-#line 18559 "gtk.c"
+#line 18610 "gtk.c"
 
 
 #line 855 "gtk.override"
@@ -18567,7 +18618,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free); 
 }
-#line 18571 "gtk.c"
+#line 18622 "gtk.c"
 
 
 static int _wrap_gtk_container_unset_focus_chain(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18661,7 +18712,7 @@ static int _wrap_gtk_container_child_type(NspGtkContainer *self,Stack stack,int 
   return 1; 
 }
 
-#line 18665 "gtk.c"
+#line 18716 "gtk.c"
 
 
 #line 1077 "gtk.override"
@@ -18714,7 +18765,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   gtk_widget_thaw_child_notify(child);
   return 0;
 }
-#line 18718 "gtk.c"
+#line 18769 "gtk.c"
 
 
 #line 958 "gtk.override"
@@ -18771,7 +18822,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
     }
   return 0;
 }
-#line 18775 "gtk.c"
+#line 18826 "gtk.c"
 
 
 #line 1013 "gtk.override"
@@ -18837,7 +18888,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   }
 
 }
-#line 18841 "gtk.c"
+#line 18892 "gtk.c"
 
 
 #line 912 "gtk.override"
@@ -18885,7 +18936,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
   g_value_unset(&value);
   return 0;
 }
-#line 18889 "gtk.c"
+#line 18940 "gtk.c"
 
 
 #line 865 "gtk.override"
@@ -18934,7 +18985,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 18938 "gtk.c"
+#line 18989 "gtk.c"
 
 
 static NspMethods gtkcontainer_methods[] = {
@@ -19038,7 +19089,7 @@ static AttrTab gtkcontainer_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -19046,6 +19097,7 @@ static AttrTab gtkcontainer_attrs[] = {
 #define  GtkCurve_Private 
 #include "nsp/gtk/gtkcurve.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkCurve inherits from NspGtkDrawingArea */ 
 
@@ -19287,7 +19339,7 @@ _wrap_gtk_curve_get_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) ret);
   return 1;
 }
-#line 19291 "gtk.c"
+#line 19343 "gtk.c"
 
 
 #line 1473 "gtk.override"
@@ -19306,7 +19358,7 @@ _wrap_gtk_curve_set_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   v = Mat2double(v);
   return 0;
 }
-#line 19310 "gtk.c"
+#line 19362 "gtk.c"
 
 
 static int _wrap_gtk_curve_set_curve_type(NspGtkCurve *self,Stack stack,int rhs,int opt,int lhs)
@@ -19344,7 +19396,7 @@ static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -19352,6 +19404,7 @@ static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkDialog_Private 
 #include "nsp/gtk/gtkdialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkDialog inherits from NspGtkWindow */ 
 
@@ -19582,7 +19635,7 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 19586 "gtk.c"
+#line 19639 "gtk.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19685,7 +19738,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19689 "gtk.c"
+#line 19742 "gtk.c"
 
 
 static int _wrap_gtk_dialog_set_alternative_button_order_from_array(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19747,7 +19800,7 @@ static AttrTab gtkdialog_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -19755,6 +19808,7 @@ static AttrTab gtkdialog_attrs[] = {
 #define  GtkDrawingArea_Private 
 #include "nsp/gtk/gtkdrawingarea.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkDrawingArea inherits from NspGtkWidget */ 
 
@@ -19978,7 +20032,7 @@ static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -19986,6 +20040,7 @@ static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkEntry_Private 
 #include "nsp/gtk/gtkentry.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkEntry inherits from NspGtkWidget */ 
 
@@ -20347,7 +20402,7 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 20351 "gtk.c"
+#line 20406 "gtk.c"
 
 
 static int _wrap_gtk_entry_set_alignment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -20553,7 +20608,7 @@ static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -20561,6 +20616,7 @@ static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkEntryCompletion_Private 
 #include "nsp/gtk/gtkentrycompletion.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkEntryCompletion inherits from NspGObject */ 
 
@@ -20997,7 +21053,7 @@ static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -21005,6 +21061,7 @@ static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkEventBox_Private 
 #include "nsp/gtk/gtkeventbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkEventBox inherits from NspGtkBin */ 
 
@@ -21258,7 +21315,7 @@ static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -21266,6 +21323,7 @@ static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkExpander_Private 
 #include "nsp/gtk/gtkexpander.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkExpander inherits from NspGtkBin */ 
 
@@ -21624,7 +21682,7 @@ static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -21632,6 +21690,7 @@ static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFileChooserButton_Private 
 #include "nsp/gtk/gtkfilechooserbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFileChooserButton inherits from NspGtkHBox */ 
 
@@ -21893,7 +21952,7 @@ static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -21901,6 +21960,7 @@ static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFileChooserDialog_Private 
 #include "nsp/gtk/gtkfilechooserdialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFileChooserDialog inherits from NspGtkDialog */ 
 
@@ -22130,7 +22190,7 @@ _wrap_gtkfilechooserdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 22134 "gtk.c"
+#line 22194 "gtk.c"
 
 
 static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
@@ -22145,7 +22205,7 @@ static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -22153,6 +22213,7 @@ static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFileChooserWidget_Private 
 #include "nsp/gtk/gtkfilechooserwidget.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFileChooserWidget inherits from NspGtkVBox */ 
 
@@ -22367,7 +22428,7 @@ static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -22375,6 +22436,7 @@ static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFileFilter_Private 
 #include "nsp/gtk/gtkfilefilter.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFileFilter inherits from NspGtkObject */ 
 
@@ -22646,7 +22708,7 @@ static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -22654,6 +22716,7 @@ static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFileSelection_Private 
 #include "nsp/gtk/gtkfileselection.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFileSelection inherits from NspGtkDialog */ 
 
@@ -22910,7 +22973,7 @@ _wrap_gtk_file_selection_get_selections(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 22914 "gtk.c"
+#line 22977 "gtk.c"
 
 
 static int _wrap_gtk_file_selection_set_select_multiple(NspGtkFileSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -23140,7 +23203,7 @@ static AttrTab gtkfileselection_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -23148,6 +23211,7 @@ static AttrTab gtkfileselection_attrs[] = {
 #define  GtkFixed_Private 
 #include "nsp/gtk/gtkfixed.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFixed inherits from NspGtkContainer */ 
 
@@ -23404,7 +23468,7 @@ static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -23412,6 +23476,7 @@ static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFontButton_Private 
 #include "nsp/gtk/gtkfontbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFontButton inherits from NspGtkButton */ 
 
@@ -23751,7 +23816,7 @@ static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -23759,6 +23824,7 @@ static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFontSelection_Private 
 #include "nsp/gtk/gtkfontselection.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFontSelection inherits from NspGtkVBox */ 
 
@@ -24030,7 +24096,7 @@ static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -24038,6 +24104,7 @@ static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkFontSelectionDialog_Private 
 #include "nsp/gtk/gtkfontselectiondialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFontSelectionDialog inherits from NspGtkDialog */ 
 
@@ -24376,7 +24443,7 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -24384,6 +24451,7 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 #define  GtkFrame_Private 
 #include "nsp/gtk/gtkframe.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkFrame inherits from NspGtkBin */ 
 
@@ -24650,7 +24718,7 @@ _wrap_gtk_frame_get_label_align(NspGObject *self,Stack stack,int rhs,int opt,int
   return 1;
 
 }
-#line 24654 "gtk.c"
+#line 24722 "gtk.c"
 
 
 static int _wrap_gtk_frame_set_shadow_type(NspGtkFrame *self,Stack stack,int rhs,int opt,int lhs)
@@ -24699,7 +24767,7 @@ static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -24707,6 +24775,7 @@ static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkGammaCurve_Private 
 #include "nsp/gtk/gtkgammacurve.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkGammaCurve inherits from NspGtkVBox */ 
 
@@ -24968,7 +25037,7 @@ static AttrTab gtkgammacurve_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -24976,6 +25045,7 @@ static AttrTab gtkgammacurve_attrs[] = {
 #define  GtkHandleBox_Private 
 #include "nsp/gtk/gtkhandlebox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHandleBox inherits from NspGtkBin */ 
 
@@ -25259,7 +25329,7 @@ static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -25267,6 +25337,7 @@ static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHBox_Private 
 #include "nsp/gtk/gtkhbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHBox inherits from NspGtkBox */ 
 
@@ -25481,7 +25552,7 @@ static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -25489,6 +25560,7 @@ static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHButtonBox_Private 
 #include "nsp/gtk/gtkhbuttonbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHButtonBox inherits from NspGtkButtonBox */ 
 
@@ -25696,7 +25768,7 @@ static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -25704,6 +25776,7 @@ static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHPaned_Private 
 #include "nsp/gtk/gtkhpaned.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHPaned inherits from NspGtkPaned */ 
 
@@ -25911,7 +25984,7 @@ static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -25919,6 +25992,7 @@ static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHRuler_Private 
 #include "nsp/gtk/gtkhruler.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHRuler inherits from NspGtkRuler */ 
 
@@ -26126,7 +26200,7 @@ static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -26134,6 +26208,7 @@ static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHScale_Private 
 #include "nsp/gtk/gtkhscale.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHScale inherits from NspGtkScale */ 
 
@@ -26356,7 +26431,7 @@ static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -26364,6 +26439,7 @@ static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHScrollbar_Private 
 #include "nsp/gtk/gtkhscrollbar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHScrollbar inherits from NspGtkScrollbar */ 
 
@@ -26586,7 +26662,7 @@ static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -26594,6 +26670,7 @@ static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkHSeparator_Private 
 #include "nsp/gtk/gtkhseparator.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkHSeparator inherits from NspGtkSeparator */ 
 
@@ -26801,7 +26878,7 @@ static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -26809,6 +26886,7 @@ static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIconFactory_Private 
 #include "nsp/gtk/gtkiconfactory.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIconFactory inherits from NspGObject */ 
 
@@ -27070,7 +27148,7 @@ static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -27078,6 +27156,7 @@ static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIconTheme_Private 
 #include "nsp/gtk/gtkicontheme.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIconTheme inherits from NspGObject */ 
 
@@ -27441,7 +27520,7 @@ static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -27449,6 +27528,7 @@ static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIconView_Private 
 #include "nsp/gtk/gtkiconview.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIconView inherits from NspGtkContainer */ 
 
@@ -27688,7 +27768,7 @@ static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 27692 "gtk.c"
+#line 27772 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_set_text_column(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27985,7 +28065,7 @@ static int _wrap_gtk_icon_view_get_selected_items(NspGtkIconView *self,Stack sta
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 27989 "gtk.c"
+#line 28069 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_select_all(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -28097,7 +28177,7 @@ _wrap_gtk_icon_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 28101 "gtk.c"
+#line 28181 "gtk.c"
 
 
 #line 2688 "gtk.override"
@@ -28122,7 +28202,7 @@ _wrap_gtk_icon_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 28126 "gtk.c"
+#line 28206 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_unset_model_drag_source(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -28272,7 +28352,7 @@ static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -28280,6 +28360,7 @@ static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkImage_Private 
 #include "nsp/gtk/gtkimage.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkImage inherits from NspGtkMisc */ 
 
@@ -28463,7 +28544,7 @@ NspGtkImage *gtkimage_copy(NspGtkImage *self)
 
 #line 4144 "gtk.override"
 
-static char *image_table[] = {  "pixmap", "image", "file",  "pixbuf",  "stock",  "icon_set","animation",NULL};
+static const char *image_table[] = {  "pixmap", "image", "file",  "pixbuf",  "stock",  "icon_set","animation",NULL};
 typedef enum { FROM_pixmap, FROM_image, FROM_file,  FROM_pixbuf,  FROM_stock,  FROM_icon_set,FROM_animation} image_from;
 
 static int _wrap_gtk_image_new_from_pixmap(Stack stack, int rhs, int opt, int lhs)
@@ -28627,7 +28708,7 @@ _wrap_gtkimage_new(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;;
 }
 
-#line 28631 "gtk.c"
+#line 28712 "gtk.c"
 
 
 static int _wrap_gtk_image_clear(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -28877,7 +28958,7 @@ static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -28885,6 +28966,7 @@ static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkImageMenuItem_Private 
 #include "nsp/gtk/gtkimagemenuitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkImageMenuItem inherits from NspGtkMenuItem */ 
 
@@ -29107,7 +29189,7 @@ _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 29111 "gtk.c"
+#line 29193 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -29150,7 +29232,7 @@ static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -29158,6 +29240,7 @@ static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIMContext_Private 
 #include "nsp/gtk/gtkimcontext.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIMContext inherits from NspGtkObject */ 
 
@@ -29371,7 +29454,7 @@ _wrap_gtk_im_context_get_preedit_string(NspGObject *self,Stack stack,int rhs,int
   Scierror(" To be done gtk_im_context_get_preedit_string");
   return 0;
 }
-#line 29375 "gtk.c"
+#line 29458 "gtk.c"
 
 
 #line 6438 "gtk.override"
@@ -29395,7 +29478,7 @@ _wrap_gtk_im_context_filter_keypress(NspGObject *self,Stack stack,int rhs,int op
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 29399 "gtk.c"
+#line 29482 "gtk.c"
 
 
 static int _wrap_gtk_im_context_focus_in(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -29467,7 +29550,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   g_free(text);
   return rep;
 }
-#line 29471 "gtk.c"
+#line 29554 "gtk.c"
 
 
 static int _wrap_gtk_im_context_delete_surrounding(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -29508,7 +29591,7 @@ static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -29516,6 +29599,7 @@ static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIMContextSimple_Private 
 #include "nsp/gtk/gtkimcontextsimple.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIMContextSimple inherits from NspGtkIMContext */ 
 
@@ -29723,7 +29807,7 @@ static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -29731,6 +29815,7 @@ static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkIMMulticontext_Private 
 #include "nsp/gtk/gtkimmulticontext.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkIMMulticontext inherits from NspGtkIMContext */ 
 
@@ -29953,7 +30038,7 @@ static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -29961,6 +30046,7 @@ static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkInputDialog_Private 
 #include "nsp/gtk/gtkinputdialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkInputDialog inherits from NspGtkDialog */ 
 
@@ -30169,7 +30255,7 @@ static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -30177,6 +30263,7 @@ static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkInvisible_Private 
 #include "nsp/gtk/gtkinvisible.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkInvisible inherits from NspGtkWidget */ 
 
@@ -30413,7 +30500,7 @@ static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -30421,6 +30508,7 @@ static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkItem_Private 
 #include "nsp/gtk/gtkitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkItem inherits from NspGtkBin */ 
 
@@ -30639,7 +30727,7 @@ static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -30647,6 +30735,7 @@ static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkItemFactory_Private 
 #include "nsp/gtk/gtkitemfactory.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkItemFactory inherits from NspGtkObject */ 
 
@@ -30863,7 +30952,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30867 "gtk.c"
+#line 30956 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_construct(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30897,7 +30986,7 @@ static int _wrap_gtk_item_factory_get_item(NspGtkItemFactory *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30901 "gtk.c"
+#line 30990 "gtk.c"
 
 
 #line 3892 "gtk.override"
@@ -30914,7 +31003,7 @@ static int _wrap_gtk_item_factory_get_widget(NspGtkItemFactory *self,Stack stack
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30918 "gtk.c"
+#line 31007 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_get_widget_by_action(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -31076,7 +31165,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 0;
 }
-#line 31080 "gtk.c"
+#line 31169 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_delete_item(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -31096,7 +31185,7 @@ static int _wrap_gtk_item_factory_popup(NspGtkItemFactory *self,Stack stack,int 
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   int x, y, mouse_button;
-  gulong time = GDK_CURRENT_TIME;
+  time_t time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&x, &y, &mouse_button, opts, &time) == FAIL) return RET_BUG;
   gtk_item_factory_popup(GTK_ITEM_FACTORY(self->obj), x, y, mouse_button, time);
@@ -31127,7 +31216,7 @@ static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -31135,6 +31224,7 @@ static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkLabel_Private 
 #include "nsp/gtk/gtklabel.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkLabel inherits from NspGtkMisc */ 
 
@@ -31345,7 +31435,7 @@ _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 31349 "gtk.c"
+#line 31439 "gtk.c"
 
 
 static int _wrap_gtk_label_set_text(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31613,7 +31703,7 @@ _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int op
     }
   return 1; 
 }
-#line 31617 "gtk.c"
+#line 31707 "gtk.c"
 
 
 static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31638,7 +31728,7 @@ _wrap_gtk_label_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 31642 "gtk.c"
+#line 31732 "gtk.c"
 
 
 static int _wrap_gtk_label_set(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31667,7 +31757,7 @@ _wrap_gtk_label_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31671 "gtk.c"
+#line 31761 "gtk.c"
 
 
 static int _wrap_gtk_label_parse_uline(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -31813,7 +31903,7 @@ static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -31821,6 +31911,7 @@ static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkLayout_Private 
 #include "nsp/gtk/gtklayout.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkLayout inherits from NspGtkContainer */ 
 
@@ -32084,7 +32175,7 @@ _wrap_gtk_layout_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 1; 
 
 }
-#line 32088 "gtk.c"
+#line 32179 "gtk.c"
 
 
 static int _wrap_gtk_layout_get_hadjustment(NspGtkLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -32208,7 +32299,7 @@ static AttrTab gtklayout_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -32216,6 +32307,7 @@ static AttrTab gtklayout_attrs[] = {
 #define  GtkListStore_Private 
 #include "nsp/gtk/gtkliststore.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkListStore inherits from NspGObject */ 
 
@@ -32465,7 +32557,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 32469 "gtk.c"
+#line 32561 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_list_store(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32540,7 +32632,7 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 32544 "gtk.c"
+#line 32636 "gtk.c"
 
 
 static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32584,7 +32676,7 @@ _wrap_gtk_list_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32588 "gtk.c"
+#line 32680 "gtk.c"
 
 
 #line 1929 "gtk.override"
@@ -32611,7 +32703,7 @@ _wrap_gtk_list_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32615 "gtk.c"
+#line 32707 "gtk.c"
 
 
 #line 1954 "gtk.override"
@@ -32638,7 +32730,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32642 "gtk.c"
+#line 32734 "gtk.c"
 
 
 #line 1979 "gtk.override"
@@ -32663,7 +32755,7 @@ _wrap_gtk_list_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32667 "gtk.c"
+#line 32759 "gtk.c"
 
 
 #line 2002 "gtk.override"
@@ -32689,7 +32781,7 @@ _wrap_gtk_list_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 32693 "gtk.c"
+#line 32785 "gtk.c"
 
 
 static int _wrap_gtk_list_store_clear(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -32837,7 +32929,7 @@ static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -32845,6 +32937,7 @@ static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkMenu_Private 
 #include "nsp/gtk/gtkmenu.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMenu inherits from NspGtkMenuShell */ 
 
@@ -33105,7 +33198,7 @@ _wrap_gtk_menu_popup(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     gtk_menu_popup(GTK_MENU(self->obj), pms, pmi, NULL,NULL, button,time);
   return 0;
 }
-#line 33109 "gtk.c"
+#line 33202 "gtk.c"
 
 
 static int _wrap_gtk_menu_reposition(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -33239,7 +33332,7 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
 }
-#line 33243 "gtk.c"
+#line 33336 "gtk.c"
 
 
 static int _wrap_gtk_menu_detach(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -33387,7 +33480,7 @@ static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -33395,6 +33488,7 @@ static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkMenuBar_Private 
 #include "nsp/gtk/gtkmenubar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMenuBar inherits from NspGtkMenuShell */ 
 
@@ -33654,7 +33748,7 @@ static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -33662,6 +33756,7 @@ static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkMenuItem_Private 
 #include "nsp/gtk/gtkmenuitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMenuItem inherits from NspGtkItem */ 
 
@@ -33869,7 +33964,7 @@ _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 33873 "gtk.c"
+#line 33968 "gtk.c"
 
 
 static int _wrap_gtk_menu_item_set_submenu(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -34002,7 +34097,7 @@ static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -34010,6 +34105,7 @@ static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkMenuShell_Private 
 #include "nsp/gtk/gtkmenushell.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMenuShell inherits from NspGtkContainer */ 
 
@@ -34317,7 +34413,7 @@ static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -34325,6 +34421,7 @@ static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkMenuToolButton_Private 
 #include "nsp/gtk/gtkmenutoolbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMenuToolButton inherits from NspGtkToolButton */ 
 
@@ -34580,7 +34677,7 @@ static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -34588,6 +34685,7 @@ static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkMessageDialog_Private 
 #include "nsp/gtk/gtkmessagedialog.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMessageDialog inherits from NspGtkDialog */ 
 
@@ -34815,7 +34913,7 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 34819 "gtk.c"
+#line 34917 "gtk.c"
 
 
 static int _wrap_gtk_message_dialog_set_markup(NspGtkMessageDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -34868,7 +34966,7 @@ static AttrTab gtkmessagedialog_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -34876,6 +34974,7 @@ static AttrTab gtkmessagedialog_attrs[] = {
 #define  GtkMisc_Private 
 #include "nsp/gtk/gtkmisc.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkMisc inherits from NspGtkWidget */ 
 
@@ -35077,7 +35176,7 @@ _wrap_gtk_misc_get_alignment(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 35081 "gtk.c"
+#line 35180 "gtk.c"
 
 
 static int _wrap_gtk_misc_set_padding(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
@@ -35100,7 +35199,7 @@ _wrap_gtk_misc_get_padding(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) xpad,(double) ypad) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 35104 "gtk.c"
+#line 35203 "gtk.c"
 
 
 static NspMethods gtkmisc_methods[] = {
@@ -35123,7 +35222,7 @@ static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -35131,6 +35230,7 @@ static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkNotebook_Private 
 #include "nsp/gtk/gtknotebook.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkNotebook inherits from NspGtkContainer */ 
 
@@ -35713,7 +35813,7 @@ _wrap_gtk_notebook_query_tab_label_packing(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,3,(double) expand,(double) fill, (double) pack_type) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 35717 "gtk.c"
+#line 35817 "gtk.c"
 
 
 static int _wrap_gtk_notebook_set_tab_label_packing(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
@@ -35832,7 +35932,7 @@ static AttrTab gtknotebook_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -35840,6 +35940,7 @@ static AttrTab gtknotebook_attrs[] = {
 #define  GtkObject_Private 
 #include "nsp/gtk/gtkobject.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkObject inherits from NspGObject */ 
 
@@ -36076,7 +36177,7 @@ static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -36084,6 +36185,7 @@ static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkOldEditable_Private 
 #include "nsp/gtk/gtkoldeditable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkOldEditable inherits from NspGtkWidget */ 
 
@@ -36273,7 +36375,7 @@ static int _wrap_gtk_old_editable_claim_selection(NspGtkOldEditable *self,Stack 
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
   int claim;
-  gulong time = GDK_CURRENT_TIME;
+  time_t time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&claim, opts, &time) == FAIL) return RET_BUG;
   gtk_old_editable_claim_selection(GTK_OLD_EDITABLE(self->obj), claim, time);
@@ -36304,7 +36406,7 @@ static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -36312,6 +36414,7 @@ static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkOptionMenu_Private 
 #include "nsp/gtk/gtkoptionmenu.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkOptionMenu inherits from NspGtkButton */ 
 
@@ -36575,7 +36678,7 @@ static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -36583,6 +36686,7 @@ static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkPaned_Private 
 #include "nsp/gtk/gtkpaned.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkPaned inherits from NspGtkContainer */ 
 
@@ -36939,7 +37043,7 @@ static AttrTab gtkpaned_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -36947,6 +37051,7 @@ static AttrTab gtkpaned_attrs[] = {
 #define  GtkPlug_Private 
 #include "nsp/gtk/gtkplug.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkPlug inherits from NspGtkWindow */ 
 
@@ -37195,7 +37300,7 @@ static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -37203,6 +37308,7 @@ static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkPreview_Private 
 #include "nsp/gtk/gtkpreview.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkPreview inherits from NspGtkWidget */ 
 
@@ -37482,7 +37588,7 @@ static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -37490,6 +37596,7 @@ static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkProgress_Private 
 #include "nsp/gtk/gtkprogress.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkProgress inherits from NspGtkWidget */ 
 
@@ -37683,7 +37790,7 @@ static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -37691,6 +37798,7 @@ static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkProgressBar_Private 
 #include "nsp/gtk/gtkprogressbar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkProgressBar inherits from NspGtkProgress */ 
 
@@ -38059,7 +38167,7 @@ static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -38067,6 +38175,7 @@ static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRadioAction_Private 
 #include "nsp/gtk/gtkradioaction.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRadioAction inherits from NspGtkToggleAction */ 
 
@@ -38293,7 +38402,7 @@ static int _wrap_gtk_radio_action_set_group(NspGtkRadioAction *self,Stack stack,
   return 0;
 }
 
-#line 38297 "gtk.c"
+#line 38406 "gtk.c"
 
 
 #line 7085 "gtk.override"
@@ -38306,7 +38415,7 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
 }
 
-#line 38310 "gtk.c"
+#line 38419 "gtk.c"
 
 
 static int _wrap_gtk_radio_action_get_current_value(NspGtkRadioAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -38336,7 +38445,7 @@ static int _wrap_gtk_radio_action_set_current_value(NspGtkRadioAction *self,Stac
 
 }
 
-#line 38340 "gtk.c"
+#line 38449 "gtk.c"
 
 
 static NspMethods gtkradioaction_methods[] = {
@@ -38359,7 +38468,7 @@ static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -38367,6 +38476,7 @@ static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRadioButton_Private 
 #include "nsp/gtk/gtkradiobutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRadioButton inherits from NspGtkCheckButton */ 
 
@@ -38594,7 +38704,7 @@ _wrap_gtkradiobutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 38598 "gtk.c"
+#line 38708 "gtk.c"
 
 
 #line 4487 "gtk.override"
@@ -38606,7 +38716,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
-#line 38610 "gtk.c"
+#line 38720 "gtk.c"
 
 
 static NspMethods gtkradiobutton_methods[] = {
@@ -38626,7 +38736,7 @@ static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -38634,6 +38744,7 @@ static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRadioMenuItem_Private 
 #include "nsp/gtk/gtkradiomenuitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRadioMenuItem inherits from NspGtkCheckMenuItem */ 
 
@@ -38861,7 +38972,7 @@ _wrap_gtkradiomenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 38865 "gtk.c"
+#line 38976 "gtk.c"
 
 
 static int _wrap_gtk_radio_menu_item_new_from_widget(NspGtkRadioMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -38939,7 +39050,7 @@ static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -38947,6 +39058,7 @@ static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRadioToolButton_Private 
 #include "nsp/gtk/gtkradiotoolbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRadioToolButton inherits from NspGtkToggleToolButton */ 
 
@@ -39182,7 +39294,7 @@ _wrap_gtkradiotoolbutton_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 39186 "gtk.c"
+#line 39298 "gtk.c"
 
 
 static int _wrap_gtk_radio_tool_button_set_group(NspGtkRadioToolButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -39226,7 +39338,7 @@ static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -39234,6 +39346,7 @@ static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRange_Private 
 #include "nsp/gtk/gtkrange.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRange inherits from NspGtkWidget */ 
 
@@ -39543,7 +39656,7 @@ static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -39551,6 +39664,7 @@ static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRcStyle_Private 
 #include "nsp/gtk/gtkrcstyle.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRcStyle inherits from NspGObject */ 
 
@@ -39798,7 +39912,7 @@ static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -39806,6 +39920,7 @@ static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkRuler_Private 
 #include "nsp/gtk/gtkruler.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkRuler inherits from NspGtkWidget */ 
 
@@ -40042,7 +40157,7 @@ _wrap_gtk_ruler_get_range(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,4,(double) lower,(double) upper,(double) position,(double) max_size ) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 40046 "gtk.c"
+#line 40161 "gtk.c"
 
 
 static NspMethods gtkruler_methods[] = {
@@ -40067,7 +40182,7 @@ static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -40075,6 +40190,7 @@ static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkScale_Private 
 #include "nsp/gtk/gtkscale.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkScale inherits from NspGtkRange */ 
 
@@ -40362,7 +40478,7 @@ static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -40370,6 +40486,7 @@ static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkScrollbar_Private 
 #include "nsp/gtk/gtkscrollbar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkScrollbar inherits from NspGtkRange */ 
 
@@ -40563,7 +40680,7 @@ static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -40571,6 +40688,7 @@ static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkScrolledWindow_Private 
 #include "nsp/gtk/gtkscrolledwindow.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkScrolledWindow inherits from NspGtkBin */ 
 
@@ -40955,7 +41073,7 @@ static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -40963,6 +41081,7 @@ static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSeparator_Private 
 #include "nsp/gtk/gtkseparator.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSeparator inherits from NspGtkWidget */ 
 
@@ -41156,7 +41275,7 @@ static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -41164,6 +41283,7 @@ static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSeparatorMenuItem_Private 
 #include "nsp/gtk/gtkseparatormenuitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSeparatorMenuItem inherits from NspGtkMenuItem */ 
 
@@ -41371,7 +41491,7 @@ static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -41379,6 +41499,7 @@ static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSeparatorToolItem_Private 
 #include "nsp/gtk/gtkseparatortoolitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSeparatorToolItem inherits from NspGtkToolItem */ 
 
@@ -41611,7 +41732,7 @@ static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -41619,6 +41740,7 @@ static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSettings_Private 
 #include "nsp/gtk/gtksettings.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSettings inherits from NspGObject */ 
 
@@ -41851,7 +41973,7 @@ static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -41859,6 +41981,7 @@ static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSizeGroup_Private 
 #include "nsp/gtk/gtksizegroup.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSizeGroup inherits from NspGObject */ 
 
@@ -42143,7 +42266,7 @@ static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -42151,6 +42274,7 @@ static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSocket_Private 
 #include "nsp/gtk/gtksocket.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSocket inherits from NspGtkContainer */ 
 
@@ -42395,7 +42519,7 @@ static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -42403,6 +42527,7 @@ static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkSpinButton_Private 
 #include "nsp/gtk/gtkspinbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkSpinButton inherits from NspGtkEntry */ 
 
@@ -42707,7 +42832,7 @@ _wrap_gtk_spin_button_get_increments(NspGObject *self,Stack stack,int rhs,int op
   return 1; 
 
 }
-#line 42711 "gtk.c"
+#line 42836 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_set_range(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -42732,7 +42857,7 @@ _wrap_gtk_spin_button_get_range(NspGObject *self,Stack stack,int rhs,int opt,int
     return RET_BUG; 
   return 1; 
 }
-#line 42736 "gtk.c"
+#line 42861 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_get_value(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -42900,7 +43025,7 @@ static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -42908,6 +43033,7 @@ static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkStatusbar_Private 
 #include "nsp/gtk/gtkstatusbar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkStatusbar inherits from NspGtkHBox */ 
 
@@ -43188,7 +43314,7 @@ static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -43196,6 +43322,7 @@ static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkStyle_Private 
 #include "nsp/gtk/gtkstyle.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkStyle inherits from NspGObject */ 
 
@@ -43980,7 +44107,7 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 43984 "gtk.c"
+#line 44111 "gtk.c"
 
 
 static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
@@ -44830,7 +44957,7 @@ _wrap_gtk_style__get_fg(NspGObject *self, char *attr)
   Scierror("Use method .get_fg[pos]\n");
   return NULL;
 }
-#line 44834 "gtk.c"
+#line 44961 "gtk.c"
 #line 215 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
@@ -44838,7 +44965,7 @@ _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
   Scierror("Use method .get_bg[pos]\n");
   return NULL;
 }
-#line 44842 "gtk.c"
+#line 44969 "gtk.c"
 #line 223 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light(NspGObject *self, char *attr)
@@ -44846,7 +44973,7 @@ _wrap_gtk_style__get_light(NspGObject *self, char *attr)
   Scierror("Use method .get_light[pos]\n");
   return NULL;
 }
-#line 44850 "gtk.c"
+#line 44977 "gtk.c"
 #line 231 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
@@ -44854,7 +44981,7 @@ _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
   Scierror("Use method .get_dark[pos]\n");
   return NULL;
 }
-#line 44858 "gtk.c"
+#line 44985 "gtk.c"
 #line 239 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
@@ -44862,7 +44989,7 @@ _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
   Scierror("Use method .get_mid[pos]\n");
   return NULL;
 }
-#line 44866 "gtk.c"
+#line 44993 "gtk.c"
 #line 247 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text(NspGObject *self, char *attr)
@@ -44870,7 +44997,7 @@ _wrap_gtk_style__get_text(NspGObject *self, char *attr)
   Scierror("Use method .get_text[pos]\n");
   return NULL;
 }
-#line 44874 "gtk.c"
+#line 45001 "gtk.c"
 #line 255 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base(NspGObject *self, char *attr)
@@ -44878,7 +45005,7 @@ _wrap_gtk_style__get_base(NspGObject *self, char *attr)
   Scierror("Use method .get_base[pos]\n");
   return NULL;
 }
-#line 44882 "gtk.c"
+#line 45009 "gtk.c"
 #line 263 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
@@ -44886,7 +45013,7 @@ _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa[pos]\n");
   return NULL;
 }
-#line 44890 "gtk.c"
+#line 45017 "gtk.c"
 #line 271 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white(NspGObject *self, char *attr)
@@ -44905,7 +45032,7 @@ _wrap_gtk_style__set_white(NspGObject *self, char *attr, NspObject *value)
   style->white = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 44909 "gtk.c"
+#line 45036 "gtk.c"
 #line 290 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black(NspGObject *self, char *attr)
@@ -44924,7 +45051,7 @@ _wrap_gtk_style__set_black(NspGObject *self, char *attr, NspObject *value)
   style->black = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 44928 "gtk.c"
+#line 45055 "gtk.c"
 static NspObject *_wrap_gtk_style__get_font_desc(NspObject *self,char *attr)
 {
   PangoFontDescription *ret;
@@ -44957,7 +45084,7 @@ _wrap_gtk_style__get_fg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_fg_gc[pos]\n");
   return NULL;
 }
-#line 44961 "gtk.c"
+#line 45088 "gtk.c"
 #line 317 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
@@ -44965,7 +45092,7 @@ _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_gc[pos]\n");
   return NULL;
 }
-#line 44969 "gtk.c"
+#line 45096 "gtk.c"
 #line 325 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
@@ -44973,7 +45100,7 @@ _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_light_gc[pos]\n");
   return NULL;
 }
-#line 44977 "gtk.c"
+#line 45104 "gtk.c"
 #line 333 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
@@ -44981,7 +45108,7 @@ _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_dark_gc[pos]\n");
   return NULL;
 }
-#line 44985 "gtk.c"
+#line 45112 "gtk.c"
 #line 341 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
@@ -44989,7 +45116,7 @@ _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_mid_gc[pos]\n");
   return NULL;
 }
-#line 44993 "gtk.c"
+#line 45120 "gtk.c"
 #line 349 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
@@ -44997,7 +45124,7 @@ _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_gc[pos]\n");
   return NULL;
 }
-#line 45001 "gtk.c"
+#line 45128 "gtk.c"
 #line 357 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
@@ -45005,7 +45132,7 @@ _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_base_gc[pos]\n");
   return NULL;
 }
-#line 45009 "gtk.c"
+#line 45136 "gtk.c"
 #line 365 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
@@ -45013,7 +45140,7 @@ _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa_gc[pos]\n");
   return NULL;
 }
-#line 45017 "gtk.c"
+#line 45144 "gtk.c"
 #line 373 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white_gc(NspGObject *self, char *attr)
@@ -45032,7 +45159,7 @@ _wrap_gtk_style__set_white_gc(NspGObject *self, char *attr, NspObject *value)
   style->white_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 45036 "gtk.c"
+#line 45163 "gtk.c"
 #line 392 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black_gc(NspGObject *self, char *attr)
@@ -45051,7 +45178,7 @@ _wrap_gtk_style__set_black_gc(NspGObject *self, char *attr, NspObject *value)
   style->black_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 45055 "gtk.c"
+#line 45182 "gtk.c"
 #line 411 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
@@ -45059,7 +45186,7 @@ _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_pixmap[pos]\n");
   return NULL;
 }
-#line 45063 "gtk.c"
+#line 45190 "gtk.c"
 static AttrTab gtkstyle_attrs[] = {
   { "fg", (attr_get_function *)_wrap_gtk_style__get_fg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "bg", (attr_get_function *)_wrap_gtk_style__get_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -45094,7 +45221,7 @@ static AttrTab gtkstyle_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -45102,6 +45229,7 @@ static AttrTab gtkstyle_attrs[] = {
 #define  GtkTable_Private 
 #include "nsp/gtk/gtktable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTable inherits from NspGtkContainer */ 
 
@@ -45477,7 +45605,7 @@ static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -45485,6 +45613,7 @@ static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTearoffMenuItem_Private 
 #include "nsp/gtk/gtktearoffmenuitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTearoffMenuItem inherits from NspGtkMenuItem */ 
 
@@ -45692,7 +45821,7 @@ static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -45700,6 +45829,7 @@ static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTextBuffer_Private 
 #include "nsp/gtk/gtktextbuffer.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextBuffer inherits from NspGObject */ 
 
@@ -45950,7 +46080,7 @@ _wrap_gtk_text_buffer_set_text(NspGObject *self,Stack stack,int rhs,int opt,int 
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(self->obj), text, strlen(text));
   return 0;
 }
-#line 45954 "gtk.c"
+#line 46084 "gtk.c"
 
 
 #line 5867 "gtk.override"
@@ -45967,7 +46097,7 @@ _wrap_gtk_text_buffer_insert(NspGObject *self,Stack stack,int rhs,int opt,int lh
   gtk_text_buffer_insert(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text));
   return 0;
 }
-#line 45971 "gtk.c"
+#line 46101 "gtk.c"
 
 
 #line 5882 "gtk.override"
@@ -45981,7 +46111,7 @@ _wrap_gtk_text_buffer_insert_at_cursor(NspGObject *self,Stack stack,int rhs,int 
   gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(self->obj), text,strlen(text));
   return 0;
 }
-#line 45985 "gtk.c"
+#line 46115 "gtk.c"
 
 
 #line 5894 "gtk.override"
@@ -46001,7 +46131,7 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 46005 "gtk.c"
+#line 46135 "gtk.c"
 
 
 #line 5912 "gtk.override"
@@ -46016,7 +46146,7 @@ _wrap_gtk_text_buffer_insert_interactive_at_cursor(NspGObject *self,Stack stack,
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 46020 "gtk.c"
+#line 46150 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46111,7 +46241,7 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   return 0;
 }
-#line 46115 "gtk.c"
+#line 46245 "gtk.c"
 
 
 #line 5623 "gtk.override"
@@ -46146,7 +46276,7 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
     }
   return 0;
 }
-#line 46150 "gtk.c"
+#line 46280 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46649,7 +46779,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46653 "gtk.c"
+#line 46783 "gtk.c"
 
 
 #line 5710 "gtk.override"
@@ -46669,7 +46799,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_offset(NspGObject *self,Stack stack,int r
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46673 "gtk.c"
+#line 46803 "gtk.c"
 
 
 #line 5728 "gtk.override"
@@ -46689,7 +46819,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_index(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46693 "gtk.c"
+#line 46823 "gtk.c"
 
 
 #line 5746 "gtk.override"
@@ -46708,7 +46838,7 @@ _wrap_gtk_text_buffer_get_iter_at_offset(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46712 "gtk.c"
+#line 46842 "gtk.c"
 
 
 #line 5763 "gtk.override"
@@ -46726,7 +46856,7 @@ _wrap_gtk_text_buffer_get_iter_at_line(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46730 "gtk.c"
+#line 46860 "gtk.c"
 
 
 #line 5779 "gtk.override"
@@ -46740,7 +46870,7 @@ _wrap_gtk_text_buffer_get_start_iter(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46744 "gtk.c"
+#line 46874 "gtk.c"
 
 
 #line 5791 "gtk.override"
@@ -46754,7 +46884,7 @@ _wrap_gtk_text_buffer_get_end_iter(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46758 "gtk.c"
+#line 46888 "gtk.c"
 
 
 #line 5803 "gtk.override"
@@ -46774,7 +46904,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,2,ret2);
   return 2;
 }
-#line 46778 "gtk.c"
+#line 46908 "gtk.c"
 
 
 #line 5821 "gtk.override"
@@ -46792,7 +46922,7 @@ _wrap_gtk_text_buffer_get_iter_at_mark(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 46796 "gtk.c"
+#line 46926 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46850,7 +46980,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
   MoveObj(stack,1,ret2);
   return 2;
 }
-#line 46854 "gtk.c"
+#line 46984 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete_selection(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -46975,7 +47105,7 @@ static AttrTab gtktextbuffer_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -46983,6 +47113,7 @@ static AttrTab gtktextbuffer_attrs[] = {
 #define  GtkTextChildAnchor_Private 
 #include "nsp/gtk/gtktextchildanchor.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextChildAnchor inherits from NspGObject */ 
 
@@ -47187,7 +47318,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 }
-#line 47191 "gtk.c"
+#line 47322 "gtk.c"
 
 
 static int _wrap_gtk_text_child_anchor_get_deleted(NspGtkTextChildAnchor *self,Stack stack,int rhs,int opt,int lhs)
@@ -47217,7 +47348,7 @@ static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -47225,6 +47356,7 @@ static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTextMark_Private 
 #include "nsp/gtk/gtktextmark.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextMark inherits from NspGObject */ 
 
@@ -47486,7 +47618,7 @@ static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -47494,6 +47626,7 @@ static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTextTag_Private 
 #include "nsp/gtk/gtktexttag.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextTag inherits from NspGObject */ 
 
@@ -47760,7 +47893,7 @@ static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -47768,6 +47901,7 @@ static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTextTagTable_Private 
 #include "nsp/gtk/gtktexttagtable.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextTagTable inherits from NspGObject */ 
 
@@ -48027,7 +48161,7 @@ static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -48035,6 +48169,7 @@ static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTextView_Private 
 #include "nsp/gtk/gtktextview.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTextView inherits from NspGtkContainer */ 
 
@@ -48352,7 +48487,7 @@ _wrap_gtk_text_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48356 "gtk.c"
+#line 48491 "gtk.c"
 
 
 static int _wrap_gtk_text_view_set_cursor_visible(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -48393,7 +48528,7 @@ _wrap_gtk_text_view_get_iter_location(NspGObject *self,Stack stack,int rhs,int o
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48397 "gtk.c"
+#line 48532 "gtk.c"
 
 
 #line 6657 "gtk.override"
@@ -48412,7 +48547,7 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 48416 "gtk.c"
+#line 48551 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_iter_at_position(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -48451,7 +48586,7 @@ _wrap_gtk_text_view_get_line_yrange(NspGObject *self,Stack stack,int rhs,int opt
     return RET_BUG; 
   return 1; 
 }
-#line 48455 "gtk.c"
+#line 48590 "gtk.c"
 
 
 #line 6621 "gtk.override"
@@ -48470,7 +48605,7 @@ _wrap_gtk_text_view_get_line_at_y(NspGObject *self,Stack stack,int rhs,int opt,i
 		 (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter,TRUE, TRUE, NULL),
 		 line_top);
 }
-#line 48474 "gtk.c"
+#line 48609 "gtk.c"
 
 
 #line 5948 "gtk.override"
@@ -48492,7 +48627,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) window_x,(double) window_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 48496 "gtk.c"
+#line 48631 "gtk.c"
 
 
 #line 5968 "gtk.override"
@@ -48514,7 +48649,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) buffer_x,(double) buffer_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 48518 "gtk.c"
+#line 48653 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -49054,7 +49189,7 @@ static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -49062,6 +49197,7 @@ static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkToggleAction_Private 
 #include "nsp/gtk/gtktoggleaction.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkToggleAction inherits from NspGtkAction */ 
 
@@ -49325,7 +49461,7 @@ static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -49333,6 +49469,7 @@ static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkToggleButton_Private 
 #include "nsp/gtk/gtktogglebutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkToggleButton inherits from NspGtkButton */ 
 
@@ -49545,7 +49682,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 49549 "gtk.c"
+#line 49686 "gtk.c"
 
 
 static int _wrap_gtk_toggle_button_set_mode(NspGtkToggleButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -49660,7 +49797,7 @@ static AttrTab gtktogglebutton_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -49668,6 +49805,7 @@ static AttrTab gtktogglebutton_attrs[] = {
 #define  GtkToggleToolButton_Private 
 #include "nsp/gtk/gtktoggletoolbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkToggleToolButton inherits from NspGtkToolButton */ 
 
@@ -49900,7 +50038,7 @@ static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -49908,6 +50046,7 @@ static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkToolbar_Private 
 #include "nsp/gtk/gtktoolbar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkToolbar inherits from NspGtkContainer */ 
 
@@ -50292,7 +50431,7 @@ _wrap_gtk_toolbar_append_item(NspGObject *self,Stack stack,int rhs,int opt,int l
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_append_item);
 }
 
-#line 50296 "gtk.c"
+#line 50435 "gtk.c"
 
 
 #line 4821 "gtk.override"
@@ -50302,7 +50441,7 @@ _wrap_gtk_toolbar_prepend_item(NspGObject *self,Stack stack,int rhs,int opt,int 
 {
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_prepend_item);
 }
-#line 50306 "gtk.c"
+#line 50445 "gtk.c"
 
 
 #line 4829 "gtk.override"
@@ -50337,7 +50476,7 @@ _wrap_gtk_toolbar_insert_stock(NspGObject *self,Stack stack,int rhs,int opt,int 
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,TRUE,ret,callback,params);
 }
-#line 50341 "gtk.c"
+#line 50480 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_space(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -50417,7 +50556,7 @@ _wrap_gtk_toolbar_append_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 50421 "gtk.c"
+#line 50560 "gtk.c"
 
 
 #line 4908 "gtk.override"
@@ -50465,7 +50604,7 @@ _wrap_gtk_toolbar_prepend_element(NspGObject *self,Stack stack,int rhs,int opt,i
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 50469 "gtk.c"
+#line 50608 "gtk.c"
 
 
 #line 4954 "gtk.override"
@@ -50517,7 +50656,7 @@ _wrap_gtk_toolbar_insert_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 50521 "gtk.c"
+#line 50660 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_widget(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -50712,7 +50851,7 @@ static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -50720,6 +50859,7 @@ static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkToolButton_Private 
 #include "nsp/gtk/gtktoolbutton.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkToolButton inherits from NspGtkToolItem */ 
 
@@ -51113,7 +51253,7 @@ static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -51121,6 +51261,7 @@ static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkToolItem_Private 
 #include "nsp/gtk/gtktoolitem.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkToolItem inherits from NspGtkBin */ 
 
@@ -51574,7 +51715,7 @@ static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -51582,6 +51723,7 @@ static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTooltips_Private 
 #include "nsp/gtk/gtktooltips.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTooltips inherits from NspGtkObject */ 
 
@@ -51864,7 +52006,7 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
 					nspgobject_new(NVOID,(GObject *)data->widget),
 					data->tip_text, data->tip_private);
 }
-#line 51868 "gtk.c"
+#line 52010 "gtk.c"
 #line 6491 "gtk.override"
 static NspObject *
 _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
@@ -51894,7 +52036,7 @@ _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
   Scierror("XXXX To be done gtk_tooltips__get_tips_data_list");
   return 0;
 }
-#line 51898 "gtk.c"
+#line 52040 "gtk.c"
 static NspObject *_wrap_gtk_tooltips__get_delay(NspObject *self,char *attr)
 {
   int ret;
@@ -51945,7 +52087,7 @@ static AttrTab gtktooltips_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -51953,6 +52095,7 @@ static AttrTab gtktooltips_attrs[] = {
 #define  GtkTreeModelFilter_Private 
 #include "nsp/gtk/gtktreemodelfilter.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeModelFilter inherits from NspGObject */ 
 
@@ -52282,7 +52425,7 @@ static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -52290,6 +52433,7 @@ static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeModelSort_Private 
 #include "nsp/gtk/gtktreemodelsort.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeModelSort inherits from NspGObject */ 
 
@@ -52645,7 +52789,7 @@ static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -52653,6 +52797,7 @@ static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeSelection_Private 
 #include "nsp/gtk/gtktreeselection.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeSelection inherits from NspGtkObject */ 
 
@@ -52920,7 +53065,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 52924 "gtk.c"
+#line 53069 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -52976,7 +53121,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
 }
-#line 52980 "gtk.c"
+#line 53125 "gtk.c"
 
 
 #line 3416 "gtk.override"
@@ -52989,7 +53134,7 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 52993 "gtk.c"
+#line 53138 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_count_selected_rows(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -53063,7 +53208,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 53067 "gtk.c"
+#line 53212 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -53264,7 +53409,7 @@ static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -53272,6 +53417,7 @@ static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeStore_Private 
 #include "nsp/gtk/gtktreestore.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeStore inherits from NspGObject */ 
 
@@ -53522,7 +53668,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 53526 "gtk.c"
+#line 53672 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_tree_store(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -53598,7 +53744,7 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 53602 "gtk.c"
+#line 53748 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -53648,7 +53794,7 @@ _wrap_gtk_tree_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53652 "gtk.c"
+#line 53798 "gtk.c"
 
 
 #line 2181 "gtk.override"
@@ -53683,7 +53829,7 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53687 "gtk.c"
+#line 53833 "gtk.c"
 
 
 #line 2214 "gtk.override"
@@ -53718,7 +53864,7 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53722 "gtk.c"
+#line 53868 "gtk.c"
 
 
 #line 2247 "gtk.override"
@@ -53768,7 +53914,7 @@ _wrap_gtk_tree_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53772 "gtk.c"
+#line 53918 "gtk.c"
 
 
 #line 2295 "gtk.override"
@@ -53821,7 +53967,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 
 }
-#line 53825 "gtk.c"
+#line 53971 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -54023,7 +54169,7 @@ static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -54031,6 +54177,7 @@ static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeView_Private 
 #include "nsp/gtk/gtktreeview.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeView inherits from NspGtkContainer */ 
 
@@ -54243,7 +54390,7 @@ _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 54247 "gtk.c"
+#line 54394 "gtk.c"
 
 
 #line 2603 "gtk.override"
@@ -54267,7 +54414,7 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 54271 "gtk.c"
+#line 54418 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54498,7 +54645,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 54502 "gtk.c"
+#line 54649 "gtk.c"
 
 
 #line 2880 "gtk.override"
@@ -54550,7 +54697,7 @@ _wrap_gtk_tree_view_insert_column_with_data_func (NspGObject *self,Stack stack,i
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 54554 "gtk.c"
+#line 54701 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_column(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54579,7 +54726,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 54583 "gtk.c"
+#line 54730 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_move_column_after(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54879,7 +55026,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
 }
-#line 54883 "gtk.c"
+#line 55030 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -54922,7 +55069,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
-#line 54926 "gtk.c"
+#line 55073 "gtk.c"
 
 
 #line 3070 "gtk.override"
@@ -54952,7 +55099,7 @@ _wrap_gtk_tree_view_get_cell_area(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 54956 "gtk.c"
+#line 55103 "gtk.c"
 
 
 #line 3098 "gtk.override"
@@ -54981,7 +55128,7 @@ _wrap_gtk_tree_view_get_background_area(NspGObject *self,Stack stack,int rhs,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 54985 "gtk.c"
+#line 55132 "gtk.c"
 
 
 #line 3055 "gtk.override"
@@ -54998,7 +55145,7 @@ _wrap_gtk_tree_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 55002 "gtk.c"
+#line 55149 "gtk.c"
 
 
 #line 3125 "gtk.override"
@@ -55014,7 +55161,7 @@ _wrap_gtk_tree_view_widget_to_tree_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) tx,(double) ty) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 55018 "gtk.c"
+#line 55165 "gtk.c"
 
 
 #line 3139 "gtk.override"
@@ -55030,7 +55177,7 @@ _wrap_gtk_tree_view_tree_to_widget_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) wx,(double) wy) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 55034 "gtk.c"
+#line 55181 "gtk.c"
 
 
 #line 3192 "gtk.override"
@@ -55062,7 +55209,7 @@ _wrap_gtk_tree_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 55066 "gtk.c"
+#line 55213 "gtk.c"
 
 
 #line 3222 "gtk.override"
@@ -55088,7 +55235,7 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
 }
 
 
-#line 55092 "gtk.c"
+#line 55239 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_unset_rows_drag_source(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -55315,7 +55462,7 @@ static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -55323,6 +55470,7 @@ static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkTreeViewColumn_Private 
 #include "nsp/gtk/gtktreeviewcolumn.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkTreeViewColumn inherits from NspGtkObject */ 
 
@@ -55559,7 +55707,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 55563 "gtk.c"
+#line 55711 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_queue_resize(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -55606,7 +55754,7 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
   
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
 }
-#line 55610 "gtk.c"
+#line 55758 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_add_attribute(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -55655,7 +55803,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
     }
   return 0;
 }
-#line 55659 "gtk.c"
+#line 55807 "gtk.c"
 
 
 #line 2809 "gtk.override"
@@ -55728,7 +55876,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
 
   return 0;
 }
-#line 55732 "gtk.c"
+#line 55880 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_clear_attributes(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -56105,7 +56253,7 @@ _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,in
 					     &cell_area,TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle),
 		 x_offset, y_offset, width, height);
 }
-#line 56109 "gtk.c"
+#line 56257 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_cell_is_visible(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -56202,7 +56350,7 @@ static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -56210,6 +56358,7 @@ static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkUIManager_Private 
 #include "nsp/gtk/gtkuimanager.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkUIManager inherits from NspGObject */ 
 
@@ -56634,7 +56783,7 @@ static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -56642,6 +56791,7 @@ static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVBox_Private 
 #include "nsp/gtk/gtkvbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVBox inherits from NspGtkBox */ 
 
@@ -56856,7 +57006,7 @@ static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -56864,6 +57014,7 @@ static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVButtonBox_Private 
 #include "nsp/gtk/gtkvbuttonbox.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVButtonBox inherits from NspGtkButtonBox */ 
 
@@ -57071,7 +57222,7 @@ static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -57079,6 +57230,7 @@ static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkViewport_Private 
 #include "nsp/gtk/gtkviewport.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkViewport inherits from NspGtkBin */ 
 
@@ -57410,7 +57562,7 @@ static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -57418,6 +57570,7 @@ static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVPaned_Private 
 #include "nsp/gtk/gtkvpaned.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVPaned inherits from NspGtkPaned */ 
 
@@ -57625,7 +57778,7 @@ static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -57633,6 +57786,7 @@ static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVRuler_Private 
 #include "nsp/gtk/gtkvruler.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVRuler inherits from NspGtkRuler */ 
 
@@ -57840,7 +57994,7 @@ static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -57848,6 +58002,7 @@ static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVScale_Private 
 #include "nsp/gtk/gtkvscale.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVScale inherits from NspGtkScale */ 
 
@@ -58070,7 +58225,7 @@ static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -58078,6 +58233,7 @@ static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVScrollbar_Private 
 #include "nsp/gtk/gtkvscrollbar.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVScrollbar inherits from NspGtkScrollbar */ 
 
@@ -58300,7 +58456,7 @@ static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -58308,6 +58464,7 @@ static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkVSeparator_Private 
 #include "nsp/gtk/gtkvseparator.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkVSeparator inherits from NspGtkSeparator */ 
 
@@ -58515,7 +58672,7 @@ static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -58523,6 +58680,7 @@ static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
 #define  GtkWidget_Private 
 #include "nsp/gtk/gtkwidget.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkWidget inherits from NspGtkObject */ 
 
@@ -58712,7 +58870,7 @@ _wrap_gtkwidget_new(Stack stack, int rhs, int opt, int lhs)
   return int_gobj_create( stack, rhs, opt, lhs) ;
 }
 
-#line 58716 "gtk.c"
+#line 58874 "gtk.c"
 
 
 #line 675 "gtk.override"
@@ -58727,7 +58885,7 @@ _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 58731 "gtk.c"
+#line 58889 "gtk.c"
 
 
 static int _wrap_gtk_drag_check_threshold(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58747,10 +58905,10 @@ static int _wrap_gtk_drag_get_data(NspGtkWidget *self,Stack stack,int rhs,int op
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
+  time_t time = GDK_CURRENT_TIME;
   NspGObject *context;
   NspObject *nsp_target = NULL;
   GdkAtom target;
-  gulong time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdragcontext, &context, &nsp_target, opts, &time) == FAIL) return RET_BUG;
   if ( nsp_gdk_atom_from_object(nsp_target,&target)==FAIL) return RET_BUG;
@@ -58838,7 +58996,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 58842 "gtk.c"
+#line 59000 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_set_proxy(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58889,7 +59047,7 @@ _wrap_gtk_drag_dest_find_target(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 58893 "gtk.c"
+#line 59051 "gtk.c"
 
 
 #line 5232 "gtk.override"
@@ -58922,7 +59080,7 @@ _wrap_gtk_drag_dest_get_target_list(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 58926 "gtk.c"
+#line 59084 "gtk.c"
 
 
 #line 5263 "gtk.override"
@@ -58945,7 +59103,7 @@ _wrap_gtk_drag_dest_set_target_list(NspGObject *self,Stack stack,int rhs,int opt
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 58949 "gtk.c"
+#line 59107 "gtk.c"
 
 
 #line 5284 "gtk.override"
@@ -58972,7 +59130,7 @@ _wrap_gtk_drag_source_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 58976 "gtk.c"
+#line 59134 "gtk.c"
 
 
 static int _wrap_gtk_drag_source_unset(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59050,7 +59208,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 59054 "gtk.c"
+#line 59212 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_add_text_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59129,8 +59287,8 @@ static int _wrap_gtk_selection_owner_set(NspGtkWidget *self,Stack stack,int rhs,
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
+  time_t time = GDK_CURRENT_TIME;
   int ret;
-  gulong time = GDK_CURRENT_TIME;
   NspObject *nsp_selection = NULL;
   GdkAtom selection;
 
@@ -59174,7 +59332,7 @@ _wrap_gtk_selection_add_targets(NspGObject *self,Stack stack,int rhs,int opt,int
   g_free(targets);
   return 0;
 }
-#line 59178 "gtk.c"
+#line 59336 "gtk.c"
 
 
 static int _wrap_gtk_selection_clear_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59195,8 +59353,8 @@ static int _wrap_gtk_selection_convert(NspGtkWidget *self,Stack stack,int rhs,in
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
+  time_t time = GDK_CURRENT_TIME;
   int ret;
-  gulong time = GDK_CURRENT_TIME;
   NspObject *nsp_selection = NULL, *nsp_target = NULL;
   GdkAtom selection, target;
 
@@ -59369,7 +59527,7 @@ _wrap_gtk_widget_size_request(NspGObject *self,Stack stack,int rhs,int opt,int l
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 59373 "gtk.c"
+#line 59531 "gtk.c"
 
 
 static int _wrap_gtk_widget_size_allocate(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59395,7 +59553,7 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 59399 "gtk.c"
+#line 59557 "gtk.c"
 
 
 #line 622 "gtk.override"
@@ -59450,7 +59608,7 @@ static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stac
 
 
 
-#line 59454 "gtk.c"
+#line 59612 "gtk.c"
 
 
 static int _wrap_gtk_widget_remove_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59623,7 +59781,7 @@ _wrap_gtk_widget_intersect(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   else 
     return RET_BUG;
 }
-#line 59627 "gtk.c"
+#line 59785 "gtk.c"
 
 
 static int _wrap_gtk_widget_freeze_child_notify(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59798,7 +59956,7 @@ _wrap_gtk_widget_get_parent(NspGtkWidget *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 59802 "gtk.c"
+#line 59960 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_parent_window(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -59925,7 +60083,7 @@ static int _wrap_gtk_widget_get_toplevel(NspGtkWidget *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 59929 "gtk.c"
+#line 60087 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -60066,7 +60224,7 @@ _wrap_gtk_widget_get_pointer(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if (  nsp_move_doubles(stack,1,1,2,(double) x, (double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 60070 "gtk.c"
+#line 60228 "gtk.c"
 
 
 static int _wrap_gtk_widget_is_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -60111,7 +60269,7 @@ _wrap_gtk_widget_translate_coordinates(NspGObject *self,Stack stack,int rhs,int 
     }
   return 1;
 }
-#line 60115 "gtk.c"
+#line 60273 "gtk.c"
 
 
 static int _wrap_gtk_widget_hide_on_delete(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -60435,7 +60593,7 @@ _wrap_gtk_widget_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, result);
   return 1;
 }
-#line 60439 "gtk.c"
+#line 60597 "gtk.c"
 
 
 #line 770 "gtk.override"
@@ -60454,7 +60612,7 @@ _wrap_gtk_widget_class_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,result);
   return 1;
 }
-#line 60458 "gtk.c"
+#line 60616 "gtk.c"
 
 
 static int _wrap_gtk_widget_list_mnemonic_labels(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -60713,7 +60871,7 @@ static AttrTab gtkwidget_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -60721,6 +60879,7 @@ static AttrTab gtkwidget_attrs[] = {
 #define  GtkWindow_Private 
 #include "nsp/gtk/gtkwindow.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkWindow inherits from NspGtkBin */ 
 
@@ -61305,7 +61464,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				&geometry, geom_mask);
   return 0;
 }
-#line 61309 "gtk.c"
+#line 61468 "gtk.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -61425,7 +61584,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   return 0;
 }
 
-#line 61429 "gtk.c"
+#line 61588 "gtk.c"
 
 
 #line 7140 "gtk.override"
@@ -61438,7 +61597,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
-#line 61442 "gtk.c"
+#line 61601 "gtk.c"
 
 
 static int _wrap_gtk_window_set_icon(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -61605,7 +61764,7 @@ static int _wrap_gtk_window_present(NspGtkWindow *self,Stack stack,int rhs,int o
 static int _wrap_gtk_window_present_with_time(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {s_int,t_end};
-  gulong timestamp;
+  time_t timestamp;
 
   if ( GetArgs(stack,rhs,opt,T,&timestamp) == FAIL) return RET_BUG;
   gtk_window_present_with_time(GTK_WINDOW(self->obj), timestamp);
@@ -61664,8 +61823,8 @@ static int _wrap_gtk_window_begin_resize_drag(NspGtkWindow *self,Stack stack,int
 {
   int_types T[] = {obj, s_int, s_int, s_int, s_int,t_end};
   int button, root_x, root_y;
+  time_t timestamp;
   NspObject *nsp_edge = NULL;
-  gulong timestamp;
   GdkWindowEdge edge;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_edge, &button, &root_x, &root_y, &timestamp) == FAIL) return RET_BUG;
@@ -61679,7 +61838,7 @@ static int _wrap_gtk_window_begin_move_drag(NspGtkWindow *self,Stack stack,int r
 {
   int_types T[] = {s_int, s_int, s_int, s_int,t_end};
   int button, root_x, root_y;
-  gulong timestamp;
+  time_t timestamp;
 
   if ( GetArgs(stack,rhs,opt,T,&button, &root_x, &root_y, &timestamp) == FAIL) return RET_BUG;
   gtk_window_begin_move_drag(GTK_WINDOW(self->obj), button, root_x, root_y, timestamp);
@@ -61718,7 +61877,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 61722 "gtk.c"
+#line 61881 "gtk.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -61743,7 +61902,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG; 
   return 1; 
 }
-#line 61747 "gtk.c"
+#line 61906 "gtk.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -61767,7 +61926,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG; 
   return 1; 
 }
-#line 61771 "gtk.c"
+#line 61930 "gtk.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -62248,7 +62407,7 @@ static AttrTab gtkwindow_attrs[] = {
 
 /* -*- Mode: C -*- */
 /*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2007 )                          
+ * This Software is ( Copyright ENPC 1998-2012 )                          
  * Jean-Philippe Chancelier Enpc/Cermics 
  *-------------------------------------------------------------------*/
 
@@ -62256,6 +62415,7 @@ static AttrTab gtkwindow_attrs[] = {
 #define  GtkWindowGroup_Private 
 #include "nsp/gtk/gtkwindowgroup.h"
 #include "nsp/interf.h"
+#include "nsp/nspthreads.h"
 
 /* NspGtkWindowGroup inherits from NspGObject */ 
 
@@ -62529,7 +62689,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 62533 "gtk.c"
+#line 62693 "gtk.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs)
@@ -62873,7 +63033,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 62877 "gtk.c"
+#line 63037 "gtk.c"
 
 
 int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs)
@@ -62926,7 +63086,7 @@ int _wrap_gtk_drag_finish(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {obj_check, s_bool, s_bool, s_int,t_end};
   int success, del;
   NspGObject *context;
-  gulong time_;
+  time_t time_;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdragcontext, &context, &success, &del, &time_) == FAIL) return RET_BUG;
 gtk_drag_finish(GDK_DRAG_CONTEXT(context->obj), success, del, time_);
@@ -63205,7 +63365,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 63209 "gtk.c"
+#line 63369 "gtk.c"
 
 
 int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs)
@@ -63501,7 +63661,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 63505 "gtk.c"
+#line 63665 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs)
@@ -63532,7 +63692,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 63536 "gtk.c"
+#line 63696 "gtk.c"
 
 
 #line 3781 "gtk.override"
@@ -63548,7 +63708,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 63552 "gtk.c"
+#line 63712 "gtk.c"
 
 
 int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs)
@@ -63595,10 +63755,10 @@ gtk_idle_remove(idle_handler_id);
 
 int _wrap_gtk_get_current_event_time(Stack stack, int rhs, int opt, int lhs)
 {
-  gulong ret;
+  time_t ret;
 
 ret = gtk_get_current_event_time();
- if (  nsp_move_double(stack,1,(double) ret) == FAIL) return RET_BUG;
+  if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
 }
 
@@ -63735,7 +63895,7 @@ _wrap_gtk_rc_set_default_files(Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 63739 "gtk.c"
+#line 63899 "gtk.c"
 
 
 #line 6162 "gtk.override"
@@ -63748,7 +63908,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 63752 "gtk.c"
+#line 63912 "gtk.c"
 
 
 int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs)
@@ -63880,12 +64040,12 @@ int _wrap_gtk_selection_owner_set_for_display(Stack stack, int rhs, int opt, int
   nsp_option opts[] = {
 	{"time",s_int,NULLOBJ,-1}, 
 	{NULL,t_end,NULLOBJ,-1} };
+  time_t time = GDK_CURRENT_TIME;
   NspObject *nsp_selection = NULL;
   int ret;
   NspGObject *display, *nsp_widget;
   GdkAtom selection;
   GtkWidget *widget = NULL;
-  gulong time = GDK_CURRENT_TIME;
 
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gdkdisplay, &display, &nsp_widget, &nsp_selection, opts, &time) == FAIL) return RET_BUG;
   if ( IsGtkWidget((NspObject *)nsp_widget))
@@ -63958,7 +64118,7 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
   g_free(items);
   return RET_BUG;
 }
-#line 63962 "gtk.c"
+#line 64122 "gtk.c"
 
 
 #line 6338 "gtk.override"
@@ -63978,7 +64138,7 @@ _wrap_gtk_stock_lookup(Stack stack,int rhs,int opt,int lhs)
   else 
     return RetArgs(stack,lhs,ret_T2, FALSE);
 }
-#line 63982 "gtk.c"
+#line 64142 "gtk.c"
 
 
 #line 6324 "gtk.override"
@@ -63994,7 +64154,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
    * g_slist_free (list);  
    */
 }
-#line 63998 "gtk.c"
+#line 64158 "gtk.c"
 
 
 int _wrap_gtk_toggle_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs)
@@ -64302,7 +64462,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 64306 "gtk.c"
+#line 64466 "gtk.c"
 
 
 int _wrap_gtk_window_set_default_icon_name(Stack stack, int rhs, int opt, int lhs)
@@ -64574,7 +64734,12 @@ static OpTab gtk_func[]={
 
 int gtk_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,gtk_func[i].fonc,
+  					       &stack,rhs,opt,lhs);
+#else
   return (*(gtk_func[i].fonc))(stack,rhs,opt,lhs);
+#endif
 }
 
 /* used to walk through the interface table 
@@ -64735,7 +64900,7 @@ gtk_register_classes(NspObject *d)
 
 #line 70 "gtk.override"
 
-#line 64739 "gtk.c"
+#line 64904 "gtk.c"
   nspg_register_boxed(d, "Border", GTK_TYPE_BORDER, &PyGtkBorder_Type);
   nspg_register_boxed(d, "IconInfo", GTK_TYPE_ICON_INFO, &PyGtkIconInfo_Type);
   nspg_register_boxed(d, "IconSet", GTK_TYPE_ICON_SET, &PyGtkIconSet_Type);

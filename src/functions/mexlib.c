@@ -64,7 +64,7 @@ static jmp_buf MexEnv;
 static void nsp_initmex(const char *name,int *lfirst,int lhs,mxArray *plhs[], 
 			int rhs, mxArray *prhs[])
 {
-  Stack stack;
+  Stack *stack = nsp_get_stack();
   int k=0;
   if ( onlyone != 0) 
     {
@@ -75,13 +75,12 @@ static void nsp_initmex(const char *name,int *lfirst,int lhs,mxArray *plhs[],
     {
       onlyone = 1;
     }
-  stack = SciStack;
-  stack.first = *lfirst;
-  NspFname(stack) = name;
+  stack->first = *lfirst;
+  NspFnameH(stack) = name;
   for (k = 1; k <= rhs ; ++k) 
     {
       NspObject *Obj;
-      if (( Obj=nsp_get_object(stack,k)) == NULL) 
+      if (( Obj=nsp_get_object(*stack,k)) == NULL) 
 	{
 	  Scierror("Error: something corrupter in a nsp_initmex call\n");
 	  nsp_mex_errjump();      

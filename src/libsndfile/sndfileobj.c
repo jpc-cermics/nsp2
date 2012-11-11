@@ -803,7 +803,7 @@ static int nsp_sndfile_format(NspSMatrix *S)
       Scierror("Error: String matrix for format has wrong size\n");
       return 0;
     }
-  fm1 = is_string_in_struct(S->S[0],(void **)sndfile_major_formats,sizeof(snd_formats),0);
+  fm1 = is_string_in_struct(S->S[0],(const void **)sndfile_major_formats,sizeof(snd_formats),0);
   if ( fm1 <0 ) 
     {
       Scierror("Error: format %s is wrong\n",S->S[0]);
@@ -812,7 +812,7 @@ static int nsp_sndfile_format(NspSMatrix *S)
   format = sndfile_major_formats[fm1].val ;
   if ( S->mn >= 2) 
     {
-      fm2 = is_string_in_struct(S->S[1],(void **)sndfile_subtypes_formats,sizeof(snd_formats),0);
+      fm2 = is_string_in_struct(S->S[1],(const void **)sndfile_subtypes_formats,sizeof(snd_formats),0);
       if ( fm2 < 0 ) 
 	{
 	  Scierror("Error: subtype format %s is wrong\n",S->S[1]);
@@ -822,7 +822,7 @@ static int nsp_sndfile_format(NspSMatrix *S)
     }
   if ( S->mn >= 3 ) 
     {
-      fm3 = is_string_in_struct(S->S[2],(void **)sndfile_endian_formats,sizeof(snd_formats),0);
+      fm3 = is_string_in_struct(S->S[2],(const void **)sndfile_endian_formats,sizeof(snd_formats),0);
       if ( fm3 < 0 ) 
 	{
 	  Scierror("Error: endian format %s is wrong\n",S->S[2]);

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,86 +20,25 @@
  *
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include "nsp/graphics-new/Graphics.h"
-#include "nsp/menus.h" 
-#include "nsp/stack.h" 
-#include "nsp/interf.h" 
+#include <nsp/nsp.h>
+#include <nsp/graphics-new/Graphics.h>
+#include <nsp/menus.h>
+#include <nsp/stack.h>
+#include <nsp/interf.h> 
 #include <nsp/system.h>
-#include "nsp/gtksci.h"
+#include <nsp/gtksci.h>
+#include <nsp/smatrix.h>
+#include <nsp/nspthreads.h>
 
 /*
  * Now the interfaced function for basic menus 
  */
 
-/* get an utf8 string matrix 
- * an eventual copy is performed if the string is 
- * to be converted.
- */
-
-/* FIXME */
-extern int nsp_smatrix_to_utf8(NspSMatrix *A);
-extern int nsp_smatrix_utf8_validate(NspSMatrix *A);
-
-NspSMatrix *GetSMatUtf8(Stack stack,int pos)
-{
-  NspSMatrix *Sm;
-  if ((Sm = GetSMat(stack,pos)) == NULLSMAT) return NULLSMAT;
-  if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
-    {
-      /* need to copy first */
-      if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
-      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
-	{
-	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
-	  return NULLSMAT;
-	}
-    }
-  return Sm;
-}
-
-/* get an utf8 string 
- * an eventual copy is performed if the string is 
- * to be converted.
- */
-
-char *GetStringUtf8(Stack stack,int pos)
-{
-  NspSMatrix *Sm;
-  if ((Sm = GetSMatUtf8(stack,pos)) == NULLSMAT) return NULL;
-  if ( Sm->mn != 1 ) 
-    {
-      Scierror("%s: %s should be a string\n",NspFname(stack),ArgPosition(pos));
-      return NULL;
-    }
-  return Sm->S[0];
-}
-
-/* get a copy of a string matrix converted to utf8 
- */
-
-NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos)
-{
-  NspSMatrix *Sm;
-  if ((Sm = GetSMatCopy(stack,pos)) == NULLSMAT) return NULLSMAT;
-  if ( nsp_smatrix_utf8_validate(Sm) == FALSE )
-    {
-      if ( nsp_smatrix_to_utf8(Sm) == FAIL) 
-	{
-	  Scierror("%s: failed to convert %s to utf8\n",NspFname(stack),ArgPosition(pos));
-	  return NULLSMAT;
-	}
-    }
-  return Sm;
-}
-
 /*
  * interface for x_message 
  */
 
-int int_x_message(Stack stack, int rhs, int opt, int lhs)
+static int int_x_message(Stack stack, int rhs, int opt, int lhs)
 {
   menu_answer rep;
   int nrep;
@@ -136,7 +75,7 @@ int int_x_message(Stack stack, int rhs, int opt, int lhs)
  * interface for modeless message 
  */
 
-int int_x_message_modeless(Stack stack, int rhs, int opt, int lhs)
+static int int_x_message_modeless(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *Message;
   NspSMatrix *Buttons=NULLSMAT;
@@ -155,7 +94,7 @@ int int_x_message_modeless(Stack stack, int rhs, int opt, int lhs)
  * x_choose 
  */
 
-int int_x_choose(Stack stack, int rhs, int opt, int lhs)
+static int int_x_choose(Stack stack, int rhs, int opt, int lhs)
 {
   menu_answer rep;
   int nrep;
@@ -194,7 +133,7 @@ int int_x_choose(Stack stack, int rhs, int opt, int lhs)
  * x_dialog
  */
 
-int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
+static int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
 {
   menu_answer rep;
   NspObject *Obj;
@@ -228,7 +167,7 @@ int int_x_dialog(Stack stack, int rhs, int opt, int lhs)
  * x_mdialog
  */
 
-int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
+static int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
 {
   menu_answer rep;
   NspObject *O1;
@@ -331,7 +270,7 @@ int int_x_mdialog(Stack stack, int rhs, int opt, int lhs)
  * Return value: %RET_BUG or 1 
  **/
  
-int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
+static int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 {
   int action=FALSE,save=FALSE,open=FALSE,folder=FALSE,free_f=0;
   NspObject *Rep;
@@ -462,7 +401,7 @@ int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 
 static int nsp_check_choice_list(Stack stack,NspList *L);
 
-int int_x_choices(Stack stack, int rhs, int opt, int lhs)
+static int int_x_choices(Stack stack, int rhs, int opt, int lhs)
 {
   menu_answer rep;
   Cell *Loc;
@@ -726,7 +665,7 @@ static int int_nsp_choose_color(Stack stack, int rhs, int opt, int lhs)
 
 typedef void men_f(int win_num, const char *button_name, int ne);
 
-int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
+static int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
 {
   int gwin=-1,nsub=0,ierr=0;
   char *button;
@@ -762,12 +701,12 @@ int int_set_unset_menu(Stack stack, int rhs, int opt, int lhs, men_f *F)
   return 0;
 }
 
-int int_set_menu(Stack stack, int rhs, int opt, int lhs)
+static int int_set_menu(Stack stack, int rhs, int opt, int lhs)
 {
   return int_set_unset_menu(stack,rhs,opt,lhs, nsp_menus_set);
 }
 
-int int_unset_menu(Stack stack, int rhs, int opt, int lhs)
+static int int_unset_menu(Stack stack, int rhs, int opt, int lhs)
 {
   return int_set_unset_menu(stack, rhs, opt, lhs, nsp_menus_unset);
 
@@ -777,7 +716,7 @@ int int_unset_menu(Stack stack, int rhs, int opt, int lhs)
  * addmenu 
  */
 
-int int_add_menu(Stack stack, int rhs, int opt, int lhs)
+static int int_add_menu(Stack stack, int rhs, int opt, int lhs)
 {
   char *button=NULL,*mname=NULL;
   int zero=0,ierr=0, typ=0,gwin=-1;
@@ -873,7 +812,7 @@ int int_add_menu(Stack stack, int rhs, int opt, int lhs)
  * delmenu 
  */
 
-int int_delmenu(Stack stack, int rhs, int opt, int lhs)
+static int int_delmenu(Stack stack, int rhs, int opt, int lhs)
 {
   int gwin=-1;
   char *button;
@@ -920,11 +859,17 @@ static OpTab Menus_func[]={
 
 int Menus_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  return nsp_interface_executed_in_main_thread(i,Menus_func[i].fonc,
+					       &stack,rhs,opt,lhs);
+#else 
   return (*(Menus_func[i].fonc))(stack,rhs,opt,lhs);
+#endif 
 }
 
-/** used to walk through the interface table 
-    (for adding or removing functions) **/
+/* used to walk through the interface table 
+ *  (for adding or removing functions) 
+ */
 
 void Menus_Interf_Info(int i, char **fname, function (**f))
 {
