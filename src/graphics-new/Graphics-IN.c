@@ -2005,7 +2005,7 @@ extern BCG  ScilabGCPos, ScilabGCXfig;
 
 typedef enum { X11_driver, Win_driver, Gtk_driver,  Pos_driver , Fig_driver, Rec_driver } nsp_driver; 
 
-static char *drivers_name[]={ "Gtk", "Win", "X11", "Pos", "Fig", "Rec" , NULL };
+static const char *drivers_name[]={ "Gtk", "Win", "X11", "Pos", "Fig", "Rec" , NULL };
 static int drivers_id[]={ Gtk_driver, Win_driver, X11_driver,  Pos_driver , Fig_driver, Rec_driver};
 static int nsp_current_driver = 0;
 static BCG *nsp_current_bcg= NULL ; 
@@ -3237,7 +3237,7 @@ typedef enum {
   xget_white, xget_window, xget_wpdim, xget_wpos, xget_wresize, xget_fpf, xget_auto_clear
 } xget_enum;
 
-static char *xget_Table[] = {  
+static const char *xget_Table[] = {  
   "alufunction", "background", "clipoff",  "clipping",  "color",  "colormap",
   "dashes",    "font",   "font size",    "foreground",  "hidden3d",
   "lastpattern",  "line mode",   "line style",   "mark",   "mark size", "pattern",
@@ -3266,7 +3266,7 @@ static int int_xget_new(Stack stack, int rhs, int opt, int lhs)
     { 
       if ( rep == xget_color )
 	{
-	  char *Table[] = {"black","white","gray","blue","green","lightblue",
+	  const char *Table[] = {"black","white","gray","blue","green","lightblue",
 			   "red","purple","yellow",NULL};
 	  if ((color_arg= GetStringInArray(stack,2,Table,1)) == -1) 
 	    return RET_BUG; 
@@ -3513,7 +3513,7 @@ static int int_xinit(Stack stack, int rhs, int opt, int lhs)
   int v1=-1,opengl=FALSE,cairo=FALSE;
   NspMatrix *wdim=NULL,*wpdim=NULL,*viewport=NULL,*wpos=NULL;
   char *name=NULL, *file=NULL, *mode = NULL;
-  static char *Table[] = {"d", "l", "n", "p", "k", NULL};
+  const char *Table[] = {"d", "l", "n", "p", "k", NULL};
   /* just optionals arguments */
   int_types T[] = {new_opts, t_end} ;
 
@@ -4044,7 +4044,7 @@ typedef enum  {
 
 } xset_enum ;
 
-static char *xset_Table[] = { 
+static const char *xset_Table[] = { 
   "alufunction", "background", "clipoff", "clipping", "color", "colormap",
   "dashes",     "default",  "default_colormap",
   "font",   "font size",    "foreground",  "hidden3d",
@@ -4059,7 +4059,7 @@ static int int_xset_new(Stack stack, int rhs, int opt, int lhs)
   NspFigureData *Gc;
   NspFigure *F;
   BCG *Xgc = NULL;
-  static char *auto_clear_values[]= {"off","on",NULL};
+  const char *auto_clear_values[]= {"off","on",NULL};
   char *info;
   int rep,val,val1;
   NspMatrix *M,*Mc;
@@ -4359,7 +4359,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
 
   if ( posx != NULL) 
     {
-      static char *x_table[] = {"left","center", "right", NULL};
+      const char *x_table[] = {"left","center", "right", NULL};
       iposx  = is_string_in_array(posx, x_table,1);
       if ( iposx < 0 ) 
 	{
@@ -4370,7 +4370,7 @@ static int int_xstring_new(Stack stack, int rhs, int opt, int lhs)
   
   if ( posy != NULL) 
     {
-      static char *y_table[] = {"bottom","center", "baseline","up", NULL};
+      const char *y_table[] = {"bottom","center", "baseline","up", NULL};
       iposy = is_string_in_array(posy, y_table,1);
       if ( iposy  < 0 ) 
 	{
@@ -4809,7 +4809,7 @@ static int int_xtape(Stack stack, int rhs, int opt, int lhs)
   int num;
   double alpha = 35.0,theta = 45.0,  *rect = rect_def /* ,*ebox = ebox_def*/ ;
 
-  static char *xtape_Table[] = {"on","clear","replay","replaysc","replayna","off",  NULL };
+  const char *xtape_Table[] = {"on","clear","replay","replaysc","replayna","off",  NULL };
   CheckRhs(1,7);
 
   /* first argument is a string in xtape_table */
@@ -5390,12 +5390,12 @@ static int int_xdel_new(Stack stack, int rhs, int opt, int lhs)
  * used to print or export a graphic window 
  *-----------------------------------------------------------*/
 
-static int int_export_G(Stack stack, int rhs, int opt, int lhs,char *export_format)
+static int int_export_G(Stack stack, int rhs, int opt, int lhs,const char *export_format)
 {
   int win_id,rep=1,color=-1;
   int figure_background=TRUE; /* export with figure background drawing*/
   char *filename= NULL, *mode = NULL;
-  static char *Table[] = {"d", "l", "n", "p", "k", NULL};
+  const char *Table[] = {"d", "l", "n", "p", "k", NULL};
   int_types T[] = {s_int,string, new_opts, t_end} ;
   nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
 		      { "mode",string,NULLOBJ,-1},
@@ -5416,9 +5416,8 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,char *export_form
     {
       char *extension;
       int frep = 0;
-      static char *Etable[] = 
-	{".svg", ".pdf", ".eps", ".ps", ".fig", ".png", NULL};
-      static char *Ftable[] = 
+      const char *Etable[] = {".svg", ".pdf", ".eps", ".ps", ".fig", ".png", NULL};
+      const char *Ftable[] = 
 	{"cairo-svg", "cairo-pdf", "cairo-ps", "cairo-ps", "Fig", "cairo-png", NULL};
       extension = nsp_get_extension(filename);
       if ( extension == NULL) 
@@ -6953,8 +6952,8 @@ static const char * check_legend_3d(Stack stack,const char *fname,char *varname,
 
 static int check_legend_pos(Stack stack,const char *fname,const char *varnam,const char *l_pos)
 {
-  static char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
-  char **entry;
+  const char *Table[] = {"dl",  "dr",  "drm", "ul",  "ur", "urm",  NULL};
+  const nsp_const_string *entry;
   int rep ; 
   if ( l_pos == NULL ) return 4;
   rep = is_string_in_array(l_pos,Table,1);
