@@ -223,7 +223,7 @@ void  nsp_gr_old_erase(int win_num)
  * 
  **/
 
-void nsp_gr_old_export(char *fname, int winid, int color, char *driver,char option)
+void nsp_gr_old_export(char *fname, int winid, int color,const char *driver,char option)
 {
   BCG *Xgc;
   if ( (Xgc= window_list_search_old(winid)) == NULL) return;

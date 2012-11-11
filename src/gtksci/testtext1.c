@@ -1539,12 +1539,20 @@ static gboolean nsp_insert_idle_text(gpointer user_data)
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 static int  nsp_print_to_textview_thread(const char *fmt, va_list ap)
 {
-  char tbuf[1025];
-  int n= vsnprintf(tbuf,1024 , fmt, ap );
-  View *view= nsptv_get_view("nsp_print_to_textview_thread");
-  view->user_data= (gpointer) tbuf;
-  g_idle_add(nsp_insert_idle_text,(gpointer) view);
-  nsp_textview_wait_for_end_print_text(view);
+  int n;
+  if (  g_thread_self() == nsp_gtk_main_thread())
+    {
+      return nsp_print_to_textview(fmt,ap);
+    }
+  else
+    {
+      char tbuf[1025];
+      View *view= nsptv_get_view("nsp_print_to_textview_thread");
+      view->user_data= (gpointer) tbuf;
+      n= vsnprintf(tbuf,1024 , fmt, ap );
+      g_idle_add(nsp_insert_idle_text,(gpointer) view);
+      nsp_textview_wait_for_end_print_text(view);
+    }
   return n;
 }
 #endif 
@@ -1594,10 +1602,17 @@ static gboolean nsp_insert_idle_prompt(gpointer user_data)
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 static void nsp_insert_prompt_thread(View *view,const char *prompt)
 {
-  view->user_data= (gpointer) prompt;
-  g_idle_add(nsp_insert_idle_prompt,(gpointer) view);
-  nsp_textview_wait_for_end_print_text(view);
-} 
+  if (  g_thread_self() == nsp_gtk_main_thread())
+    {
+      nsp_insert_prompt(view,prompt);
+    }
+  else
+    {
+      view->user_data= (gpointer) prompt;
+      g_idle_add(nsp_insert_idle_prompt,(gpointer) view);
+      nsp_textview_wait_for_end_print_text(view);
+    } 
+}
 #endif 
 
 static View *views[2]={NULL,NULL};
@@ -1814,6 +1829,7 @@ static void readline_textview(Tokenizer *T,char *prompt, char *buffer, int *buf_
 void nsp_textview_destroy_internal(void)
 {
   View *view= nsptv_get_view("nsp_textview_destroy_internal");
+  printf("inside nsp_textview_destroy_internal\n");
   nsptv_clear_history(view);
   nsptv_buffer_unref (view->buffer);
   gtk_widget_destroy (view->window);
@@ -1826,6 +1842,7 @@ static gboolean nsptv_idle_destroy(gpointer user_data)
 {
   GAsyncQueue *queue=  user_data;
   int x=0;
+  printf("inside nsptv_idle_destroy\n");
   gdk_threads_enter();
   nsp_textview_destroy_internal();
   gdk_threads_leave();
@@ -1841,13 +1858,19 @@ void nsp_textview_destroy(void)
   View *view= nsptv_get_view("nsp_textview_destroy");
   if ( nsp_get_in_text_view() == FALSE ) return;
   if ( view == NULL ) return;
+  printf("inside nsp_textview_destroy\n");
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-  {
-    GAsyncQueue *queue= g_async_queue_new ();
-    g_idle_add(nsptv_idle_destroy,(gpointer) queue);
-    g_async_queue_pop(queue);
-    g_async_queue_unref(queue);
-  }
+  if ( g_thread_self() == thmain )
+    {
+      nsp_textview_destroy_internal();
+    }
+  else
+    {
+      GAsyncQueue *queue= g_async_queue_new ();
+      g_idle_add(nsptv_idle_destroy,(gpointer) queue);
+      g_async_queue_pop(queue);
+      g_async_queue_unref(queue);
+    }
 #else 
   nsp_textview_destroy_internal();
 #endif 

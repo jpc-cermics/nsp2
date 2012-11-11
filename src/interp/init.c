@@ -74,11 +74,19 @@ static void *nsp_top_level_loop_thread(void *args);
 GThread *thread1=NULL,*thread2= NULL,*thmain=NULL;
 #endif 
 
+typedef struct _nsp_thread_data nsp_thread_data;
+struct _nsp_thread_data {
+  int argc;
+  char **argv;
+};
+
+
 int nsp_init_and_loop(int argc, char **argv,int loop)
 {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   GError *error = NULL;
 #endif 
+  nsp_thread_data data={argc,argv};
   int use_stdlib = TRUE;
   char *initial_script = NULL;
   char *initial_code = NULL;
@@ -92,7 +100,12 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   /* Initialize reader */
   nsp_intialize_reader();
   /* Initialize evaluation stack **/
-  InitStack();
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  thmain = g_thread_self();
+  nsp_new_interp(thmain,argc,argv);
+#else 
+  nsp_new_interp(NULL,argc,argv);
+#endif 
   /* Initialize evaluation stack **/
   nsp_init_gtk_stack();
   /* initialize data types */
@@ -106,8 +119,6 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   /* MPI */
   /* MPI_Init(&argc,&argv); */
   /* MPI_Init(NULL,NULL); */
-  /* Initialize data frame */  
-  if ( nsp_init_frames(argc,argv) == FAIL ) return 1;
   /* provide a default SCI and HOME on win32  */
   set_nsp_env();
   /* reload history: take care that this must be 
@@ -191,15 +202,16 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 
   nsp_set_in_text_view(use_textview);
 
-#if defined(NSP_WITH_MAIN_GTK_THREAD) || defined(ACTIVATE_THREAD)
+#if (defined(NSP_WITH_MAIN_GTK_THREAD) || defined(ACTIVATE_THREAD))
   /* init threads but useless after version 2.32 
    * causes errors on win32 versions 
    */
-  if (!GLIB_CHECK_VERSION (2,32,0)) 
+#if !GLIB_CHECK_VERSION (2,32,0) 
     {
       g_thread_init(NULL);
       gdk_threads_init();
     }
+#endif 
 #endif 
 
   /* FIXME: should be moved here  */
@@ -309,17 +321,29 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
    */
   
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-  if (! (thread1= g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error)))
+#if GLIB_CHECK_VERSION (2,32,0) 
+  if (! (thread1= g_thread_try_new("thread1",nsp_top_level_loop_thread,&data, &error)))
     {
-      g_printerr ("Failed to create NO thread: %s\n", error->message);
+      g_printerr ("Failed to create thread: %s\n", error->message);
       return 1;
     }
-  if (!(thread2=g_thread_create(nsp_top_level_loop_thread,NULL, FALSE, &error)))
+  if (!(thread2=g_thread_try_new("thread2",nsp_top_level_loop_thread,&data, &error)))
     {
-      g_printerr ("Failed to create NO thread: %s\n", error->message);
+      g_printerr ("Failed to create thread: %s\n", error->message);
       return 1;
     }
-  thmain = g_thread_self();
+#else 
+  if (! (thread1= g_thread_create(nsp_top_level_loop_thread,&data, FALSE, &error)))
+    {
+      g_printerr ("Failed to create thread: %s\n", error->message);
+      return 1;
+    }
+  if (!(thread2=g_thread_create(nsp_top_level_loop_thread,&data, FALSE, &error)))
+    {
+      g_printerr ("Failed to create thread: %s\n", error->message);
+      return 1;
+    }
+#endif 
   /* enter the GTK main loop */
   gdk_threads_enter();
   gtk_main();
@@ -340,7 +364,9 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 static void *nsp_top_level_loop_thread(void *args)
 {
+  nsp_thread_data *data= args;
   int rep;
+  nsp_new_interp(g_thread_self(),data->argc,data->argv);
   while (1) 
     {
       /* FIXME : this is too much but we have to protect gtk_calls 
@@ -351,11 +377,8 @@ static void *nsp_top_level_loop_thread(void *args)
     }
   sci_clear_and_exit(0);
   return NULL;
-
 }
 #endif 
-
-
 
 /*
  * nsp is called from texmacs ? 

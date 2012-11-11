@@ -44,9 +44,8 @@
 #include <nsp/nsptcl.h>
 #include <nsp/frame.h> 
 #include <nsp/gtksci.h> 
-
-/* XXX */
-extern NspObject *Reserved;  /* used to fill stack with non empty object */
+#include <nsp/nspthreads.h> 
+#include <nsp/nspdatas.h> 
 
 static int EvalEqual (PList L1,Stack stack,int first);
 static int EvalOpt (PList L1,Stack stack,int first);
@@ -67,7 +66,7 @@ static int EvalRhsList (PList L,Stack, int first, int rhs,int lhs,int display);
 static int EvalRhsCall (PList L,Stack, int first, int rhs,int lhs);
 static int show_eval_bug(Stack s,int n, PList L) ;
 
-static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, int first);
+static int nsp_store_result_in_symb_table(int position, const char *str, Stack stack, int first);
 static void nsp_set_dollar(Stack *stack,NspObject *O, int j);
 
 #define SHOWBUG(stack,n,L) return show_eval_bug(stack,n,L)
@@ -1110,6 +1109,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
  
 int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display)
 {
+  nsp_datas *data = nsp_get_datas();
   int Int,Num,rep;
   if ( L == NULLPLIST ) 
     {
@@ -1144,13 +1144,13 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 
       if ( L->arity != -1 ) 
 	{
-	  if (  Datas == NULLLIST ) 
+	  if ( data->L == NULLLIST ) 
 	    {
 	      Scierror("Error: Can't find local variable in empty Data frame\n");
 	      return RET_BUG;
 	    }
 	  /* get current frame local variable table */
-	  stack->val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L->arity)];
+	  stack->val->S[first] = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L->arity)];
 	  if (stack->val->S[first]== NULL) 
 	    {
 	      /* maybe the local variable has a value in calling stacks */
@@ -1294,7 +1294,7 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       Sciprintf("command without arguments\n");
       return 0;
     case WHO:
-      if ( Datas == NULLLIST ) return RET_BUG;
+      if ( data->L == NULLLIST ) return RET_BUG;
       nsp_who(stack,"local",FALSE,TRUE,&rep);
       return 0;
     case NSP_EXIT:
@@ -1323,6 +1323,7 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 
 static int EvalFor(PList L1, Stack stack, int first)
 {
+  nsp_datas *data = nsp_get_datas();
   NspObject *Val;
   int iloop=0,nargs,rep;
   NspObject *O = NULLOBJ,*O_kp = NULLOBJ;
@@ -1402,8 +1403,8 @@ static int EvalFor(PList L1, Stack stack, int first)
 	  if ( L1->arity != -1 ) 
 	    {
 	      /* object is a local variable */
-	      O = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)];
-	      ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L1->arity)] = NULL;
+	      O = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L1->arity)];
+	      ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L1->arity)] = NULL;
 	      nsp_object_destroy(&O);
 	    }
 	  else
@@ -1472,6 +1473,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
   PList loc,loc1,loc2;
   int i,r_args,ipos;
   stack.first = first;
+  nsp_datas *data = nsp_get_datas();
   /* L1 starts at MLHS */
   /* Check Lhs It must be a MLHS */
   if ( L1->type != PLIST ) 
@@ -1501,7 +1503,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
 	  mlhs_name[i]= loc->O;
 	  mlhs_symb_tab[i]= loc->arity;
 	  mlhs[i] = ipos;
-	  stack.val->S[ipos++]= Reserved; 
+	  stack.val->S[ipos++]= data->Reserved; 
 	  r_args_1 += mlhs_r[i] = 1;
 	}
       else 
@@ -1603,7 +1605,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
     {
       /* rhs position */
       int rhs_pos = mlhs[r_args]+rhs_count;
-      if ( stack.val->S[mlhs[i]] == Reserved ) 
+      if ( stack.val->S[mlhs[i]] == data->Reserved ) 
 	{
 	  /* [...... <name>....] = f(...) 
 	   * name = stack.val->S[rhs_pos] is performed 
@@ -1638,7 +1640,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
 	  /* 
 	   */ 
 	  stack.val->S[first+i]=stack.val->S[rhs_pos];
-	  stack.val->S[rhs_pos]=Reserved;/* fill the cell with something */
+	  stack.val->S[rhs_pos]=data->Reserved;/* fill the cell with something */
 	  rhs_count++;
 	}
       else 
@@ -1660,13 +1662,13 @@ static int EvalEqual(PList L1, Stack stack, int first)
 	  for ( k=0 ; k < j ; k++ ) 
 	    {
 	      stack.val->S[freepos+k]= stack.val->S[mlhs[i]+k];
-	      stack.val->S[mlhs[i]+k]= Reserved;
+	      stack.val->S[mlhs[i]+k]= data->Reserved;
 	    }
 	  /*Associated rhs arguments **/
 	  for ( k=0 ; k < mlhs_r[i] ; k++)
 	    {
 	      stack.val->S[freepos+j+k]=stack.val->S[rhs_pos+k];
-	      stack.val->S[rhs_pos+k]= Reserved;
+	      stack.val->S[rhs_pos+k]= data->Reserved;
 	    }
 	  /* we have to check here cells deletion 
 	   * since cells can behave like list or matrix depending on operations 
@@ -2009,6 +2011,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
   char *name;
   int j,fargs,arity1;
   NspObject *O;
+  nsp_datas *data = nsp_get_datas();
   /*Object which is changed **/
   if ( L->type != NAME ) 
     {
@@ -2019,9 +2022,9 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
   
   /* Object L which is changed
    */
-  if (Datas != NULLLIST 
-      && ( ( L->arity != -1 && (O=((NspFrame *) Datas->first->O)->table->objs[VAR_ID(L->arity)]) != NULLOBJ)
-	   || (O= nsp_eframe_search_object((NspFrame *) Datas->first->O,name,FALSE)) != NULLOBJ))
+  if (data->L != NULLLIST 
+      && ( ( L->arity != -1 && (O=((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L->arity)]) != NULLOBJ)
+	   || (O= nsp_eframe_search_object((NspFrame *) data->L->first->O,name,FALSE)) != NULLOBJ))
     {
       /* Object is in the current frame or as a variable in the local table which has a value 
        * or as a frame variable. 
@@ -2102,7 +2105,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  SHOWBUG(stack,RET_BUG,L);
 	}
       */
-      stack.val->S[*ipos] = Reserved;
+      stack.val->S[*ipos] = data->Reserved;
     }
   /* duplicate */
   stack.val->S[*ipos+1]=stack.val->S[*ipos];
@@ -2117,7 +2120,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	  stack.val->S[*ipos] =  stack.val->S[*ipos+1] = NULLOBJ;
 	  SHOWBUG(stack,n,L);
 	}
-      if ( stack.val->S[*ipos+1] == Reserved )
+      if ( stack.val->S[*ipos+1] == data->Reserved )
 	{
 	  /* we must create missing object */
 	  /* 
@@ -2150,7 +2153,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
 	      nsp_void_seq_object_destroy(stack,*ipos+2,*ipos+2+n);
 	      SHOWBUG(stack,RET_BUG,L);
 	    }
-	  if ( stack.val->S[*ipos] == Reserved ) stack.val->S[*ipos]= stack.val->S[*ipos+1];
+	  if ( stack.val->S[*ipos] == data->Reserved ) stack.val->S[*ipos]= stack.val->S[*ipos+1];
 	}
       /* let's go for component extraction */
       if ( stack.val->S[*ipos+1]->type->path_extract == NULL ) 
@@ -2205,7 +2208,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
    */
   *mlhs_flag = L1->type; /*  == DOTARGS; */
 
-  if ( stack.val->S[*ipos] == Reserved )
+  if ( stack.val->S[*ipos] == data->Reserved )
     {
       /* first object does not exists we have to create it 
        */
@@ -2788,6 +2791,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
  
 int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 {
+  nsp_datas *data = nsp_get_datas();
   int count,k,n,opt,nret,i1,nargs;
   char *name;
   NspObject *O1;
@@ -2813,7 +2817,7 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
       else
 	{
 	  /* direct acces to object through table of local variables */
-	  stack.val->S[first] = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Lf->arity)];
+	  stack.val->S[first] = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(Lf->arity)];
 	  /* maybe the local variable has a value in calling stacks */
 	  if ( stack.val->S[first] == NULLOBJ ) 
 	    stack.val->S[first]=nsp_frames_search_local_in_calling(name,FALSE);
@@ -3171,19 +3175,20 @@ int nsp_store_object(NspObject *Ob)
  * Return value: 1 or %RET_BUG;
  **/
 
-static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, int first)
+static int nsp_store_result_in_symb_table(int position,const char *str, Stack stack, int first)
 {
+  nsp_datas *data = nsp_get_datas();
   /* if ( debug ) Sciprintf("=Storing=>%s\n",str); */
   if ( stack.val->S[first] != NULLOBJ ) 
     {
       NspObject *Ob = stack.val->S[first], *O1;
-      if (  Datas == NULLLIST ) 
+      if (  data->L == NULLLIST ) 
 	{
 	  Scierror("Error: Can't insert obj in empty Data frame\n");
 	  return RET_BUG; 
 	}
       /* get current frame local variable table */
-      O1 = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(position)];
+      O1 = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(position)];
       if ( Ocheckname(Ob,str) ) 
 	{
 	  /* Ob->name == str 
@@ -3228,7 +3233,7 @@ static int nsp_store_result_in_symb_table(int position, char *str, Stack stack, 
 	  else 
 	    {
 	      if ( O1 != NULL )  nsp_object_destroy(&O1);
-	      ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(position)]= Ob;
+	      ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(position)]= Ob;
 	    }
 	  /* note that the object which as at position first 
 	   * need not be destroyed since it is a named object 

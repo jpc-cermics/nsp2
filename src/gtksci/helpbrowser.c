@@ -761,7 +761,7 @@ open_browser_dialog (const gchar *help_path,
  * returns 0 on success and 1 if index.html not found 
  *------------------------------------------------------*/
 
-int nsp_help_topic(const char *topic,char *buf);
+static int nsp_help_topic(const char *topic,char *buf);
 
 int nsp_help_browser(char *mandir,char *locale,char *help_file) 
 {
@@ -907,7 +907,7 @@ static int nsp_help_fill_help_table(const char *index_file)
 }
 
 
-int nsp_help_topic(const char *topic, char *buf)
+static int nsp_help_topic(const char *topic, char *buf)
 {
   NspObject *Obj;
   if ( nsp_help_table == NULLHASH)

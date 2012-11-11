@@ -400,7 +400,8 @@ int  def_nsp_error_vprintf(const char *fmt, va_list ap)
   n=  vsnprintf(buf,size, fmt, ap );
   if ( n > -1 ) 
     {
-      nsp_row_smatrix_append_string((NspSMatrix *) SciStack.val->error_msg,buf);
+      Stack *stack = nsp_get_stack();
+      nsp_row_smatrix_append_string((NspSMatrix *) stack->val->error_msg,buf);
     }
   return 0;
 }
@@ -458,12 +459,13 @@ int Scierror(const char *fmt,...)
 
 void nsp_error_message_show(void)
 {
-  if ( ((NspSMatrix *)SciStack.val->error_msg)->mn != 0 ) 
+  Stack *stack = nsp_get_stack();
+  if ( ((NspSMatrix *) stack->val->error_msg)->mn != 0 ) 
     {
       int i;
-      for ( i = 0 ; i < ((NspSMatrix *)SciStack.val->error_msg)->mn; i++) 
-	Sciprintf("%s",((NspSMatrix *)SciStack.val->error_msg)->S[i]);
-      nsp_smatrix_resize((NspSMatrix *) SciStack.val->error_msg,0,0);
+      for ( i = 0 ; i < ((NspSMatrix *) stack->val->error_msg)->mn; i++) 
+	Sciprintf("%s",((NspSMatrix *) stack->val->error_msg)->S[i]);
+      nsp_smatrix_resize((NspSMatrix *) stack->val->error_msg,0,0);
     }
 }
 
@@ -476,9 +478,10 @@ void nsp_error_message_show(void)
 
 void nsp_error_message_clear(void)
 {
-  if ( ((NspSMatrix *)SciStack.val->error_msg)->mn != 0 ) 
+  Stack *stack = nsp_get_stack();
+  if ( ((NspSMatrix *)stack->val->error_msg)->mn != 0 ) 
     {
-      nsp_smatrix_resize((NspSMatrix *) SciStack.val->error_msg,0,0);
+      nsp_smatrix_resize((NspSMatrix *) stack->val->error_msg,0,0);
     }
 }
 
@@ -494,6 +497,7 @@ void nsp_error_message_clear(void)
 
 void nsp_error_message_to_lasterror(void)
 {
+  Stack *stack = nsp_get_stack();
   int i;
   if ( lasterror== NULLSMAT ) 
     {
@@ -505,9 +509,9 @@ void nsp_error_message_to_lasterror(void)
       /* nsp_smatrix_resize(lasterror,0,0); */
     }
   if ( lasterror != NULLSMAT ) 
-    for ( i = 0 ; i < ((NspSMatrix *)SciStack.val->error_msg)->mn; i++) 
-      nsp_row_smatrix_append_string(lasterror,((NspSMatrix *)SciStack.val->error_msg)->S[i]);
-  nsp_smatrix_resize((NspSMatrix *) SciStack.val->error_msg,0,0);
+    for ( i = 0 ; i < ((NspSMatrix *)stack->val->error_msg)->mn; i++) 
+      nsp_row_smatrix_append_string(lasterror,((NspSMatrix *)stack->val->error_msg)->S[i]);
+  nsp_smatrix_resize((NspSMatrix *) stack->val->error_msg,0,0);
 }
 
 

@@ -40,6 +40,7 @@
 #include <nsp/system.h> /* FSIZE */
 #include <nsp/seval.h>
 #include <nsp/frame.h>
+#include <nsp/nspdatas.h>
 
 #include <signal.h>
 #include <setjmp.h>
@@ -102,7 +103,8 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   Tokenizer T;
   int rep;
   int cur_echo= nsp_set_echo_input_line(echo);
-  char *file_name = NspFileName(SciStack);
+  Stack *stack = nsp_get_stack();
+  char *file_name = NspFileName1(stack);
   if ((input = fopen(Str,"r")) == NULL) 
     {
       /* Only when strerror exists XXXXXXX */
@@ -116,7 +118,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
   nsp_tokenizer_file(&T,input);
   /* reset the line counter */
   /* Calling the evaluator */
-  NspFileName(SciStack) =  Str;
+  if ( stack != NULL) stack->file_name =  Str;
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   if ( rep == RET_EOF || rep == RET_QUIT ) rep = 0;
   if ( rep == RET_CTRLC ) 
@@ -133,7 +135,7 @@ int nsp_parse_eval_file(char *Str, int display,int echo, int errcatch, int pause
     nsp_error_message_to_lasterror();
   /* restore current input function */
   nsp_set_echo_input_line(cur_echo);
-  NspFileName(SciStack) = file_name;
+  if ( stack != NULL) stack->file_name = file_name;
   fclose(input);
   return rep;
 }
@@ -167,8 +169,9 @@ int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatc
   nsp_tokenizer_init(&T);
   /* set tokenizer input */
   nsp_tokenizer_string(&T,Str);
-  file_name = NspFileName(SciStack);
-  NspFileName(SciStack) =  NULL;
+  Stack *stack = nsp_get_stack();
+  file_name = NspFileName1(stack);
+  if ( stack != NULL ) stack->file_name = NULL;
   /* Calling the evaluator */
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   if ( rep == RET_EOF ) 
@@ -188,7 +191,7 @@ int nsp_parse_eval_from_string(const char *Str,int display,int echo, int errcatc
   else 
     nsp_error_message_to_lasterror();
   /* restore current input function */
-  NspFileName(SciStack) = file_name;
+  if ( stack != NULL ) stack->file_name = file_name;
   nsp_set_echo_input_line(cur_echo);
   return rep ;
 }
@@ -222,8 +225,9 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
   int cur_echo= nsp_set_echo_input_line(echo);
   nsp_tokenizer_init(&T);
   nsp_tokenizer_strings(&T,M->S);
-  file_name = NspFileName(SciStack);
-  NspFileName(SciStack)= NULL;
+  Stack *stack = nsp_get_stack();
+  file_name = NspFileName1(stack);
+  if ( stack != NULL ) stack->file_name = NULL;
   /* Calling the evaluator */
   rep = ParseEvalLoop(&T,display,errcatch,pause);
   /* normal return  */
@@ -257,7 +261,7 @@ int nsp_parse_eval_from_smat(NspSMatrix *M,int display,int echo, int errcatch,in
       nsp_error_message_to_lasterror();
     }
   /* restore current input function */
-  NspFileName(SciStack) = file_name;
+  if ( stack != NULL ) stack->file_name = file_name;
   nsp_set_echo_input_line(cur_echo);
   return rep ;
 }
@@ -343,7 +347,8 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
   int rep=RET_OK;
   char F[FSIZE+1], F1[FSIZE+1], F2[FSIZE+1], dirname[FSIZE+1];
   FILE *f, *SciInput = NULL;
-  char *file_name = NspFileName(SciStack);
+  Stack *stack = nsp_get_stack();
+  char *file_name = NspFileName1(stack);
   /** Open the file Dir/Fname  **/
   nsp_path_expand(Dir,dirname,FSIZE);
   sprintf(F,"%s/%s",dirname,Fname);
@@ -386,7 +391,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
 	}
       Sciprintf("Processing file: %s\n",F1);
       /* set current file name  **/
-      NspFileName(SciStack) = F1;
+      if ( stack != NULL ) stack->file_name = F1;
       /* reset the line counter **/
       nsp_tokenizer_init(&T);
       nsp_tokenizer_file(&T,SciInput);
@@ -396,7 +401,7 @@ int nsp_parse_eval_dir(const char *Dir, char *Fname)
       rep= DirParseAndXdrSave(&T,dirname);
       fclose(SciInput);
       /* restore current input function **/
-      NspFileName(SciStack) = file_name;
+      if ( stack != NULL ) stack->file_name = file_name;
       if ( rep < 0 ) 
 	{
 	  Sciprintf("Error at line %d while processing file: %s\n",T.tokenv.Line,F1);
@@ -428,8 +433,8 @@ int nsp_parse_eval_dir_full(const char *Dir)
   int rep=RET_OK,flen;
   char F1[FSIZE+1], F2[FSIZE+1], dirname[FSIZE+1];
   FILE *SciInput = NULL;
-  char *file_name = NspFileName(SciStack);
-
+  Stack *stack = nsp_get_stack();
+  char *file_name = NspFileName1(stack);
   /** Open the file Dir/Fname  **/
   nsp_path_expand(Dir,dirname,FSIZE);
   GDir *dir =  g_dir_open(dirname,0,NULL);
@@ -476,7 +481,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 		}
 	      Sciprintf("Processing file: %s\n",F1);
 	      /* set current file name  */
-	      NspFileName(SciStack) = F1;
+	      if ( stack != NULL ) stack->file_name = F1;
 	      /* reset the line counter */
 	      nsp_tokenizer_init(&T);
 	      nsp_tokenizer_file(&T,SciInput);
@@ -485,7 +490,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 	      rep= DirParseAndXdrSave(&T,dirname);
 	      fclose(SciInput);
 	      /* restore current input function */
-	      NspFileName(SciStack) = file_name;
+	      if ( stack != NULL ) stack->file_name = file_name;
 	      if ( rep < 0 ) 
 		{
 		  Sciprintf("Error at line %d while processing file: %s\n",T.tokenv.Line,F1);
@@ -502,6 +507,7 @@ int nsp_parse_eval_dir_full(const char *Dir)
 
 static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
 {
+  nsp_datas *data = nsp_get_datas();
   int rep=OK;
   NspFile *F;
   Cell *C;
@@ -514,7 +520,7 @@ static int DirParseAndXdrSave(Tokenizer *T,const char *Dir)
     }
   rep = RET_OK;
   /* explore current frame and store objects in files */
-  L= (NspList *) ((NspFrame *) Datas->first->O)->vars;
+  L= (NspList *) ((NspFrame *) data->L->first->O)->vars;
   C= L->first;
   while ( C != NULLCELL)
     {
@@ -561,19 +567,20 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
   static int count = 0;
   int err,rep,  first =0;
   PList plist = NULLPLIST ;
-  int errcatch_cur = SciStack.val->errcatch;
-  int pause_cur = SciStack.val->pause;
+  Stack *stack = nsp_get_stack();
+  int errcatch_cur = stack->val->errcatch;
+  int pause_cur = stack->val->pause;
   count++;
   /* must be reset at the end */
-  SciStack.val->errcatch = errcatch; 
-  SciStack.val->pause = pause; 
+  stack->val->errcatch = errcatch; 
+  stack->val->pause = pause; 
   if ( count != 1 ) 
     {
       /* Preserve the already stored objects 
        * we assume here that the stack is properly filled
        */
       NspObject **O;
-      O = SciStack.val->S ;
+      O = stack->val->S ;
       while ( *O != NULLOBJ) { first++; O++;}
       if (debug) fprintf(stderr,"Recursive parse_eval: protect %d arguments \n",first);
     }
@@ -603,7 +610,7 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
 	      /*nsp_plist_print(plist,0);*/ /* fully parenthesized */
 	      if (debug)nsp_plist_pretty_print(plist,0);
 	      if (debug) Sciprintf("====Eval===\n");
-	      if ((err =nsp_eval(plist,SciStack,first,0,0,display)) < 0) 
+	      if ((err =nsp_eval(plist,*stack,first,0,0,display)) < 0) 
 		{
 		  /* evaluation error or quit ? */
 		  count--;
@@ -630,21 +637,21 @@ static int ParseEvalLoop(Tokenizer *T, int display,int errcatch,int pause)
    * object. Thus we just set them to NULL
    */
 #ifdef UPDATE_EXEC_DIR  
-  SciStack.val->current_exec_dir[0]='\0';
+  stack->val->current_exec_dir[0]='\0';
 #endif
-  SciStack.fname = NULL;
-  SciStack.file_name = NULL;
-  Ob = SciStack.val->S + first; 
+  stack->fname = NULL;
+  stack->file_name = NULL;
+  Ob = stack->val->S + first; 
   while ( *Ob != NULL ) 
     {
       *Ob = NULL;  Ob++;
     }
-  SciStack.val->errcatch= errcatch_cur; 
-  SciStack.val->pause= pause_cur;
+  stack->val->errcatch= errcatch_cur; 
+  stack->val->pause= pause_cur;
   return RET_CTRLC;
  ret_err:
-  SciStack.val->errcatch= errcatch_cur; 
-  SciStack.val->pause= pause_cur;
+  stack->val->errcatch= errcatch_cur; 
+  stack->val->pause= pause_cur;
   return err;
 }
 
@@ -666,7 +673,8 @@ PList nsp_parse_expr(NspSMatrix *M)
   int rep, cur_echo= nsp_set_echo_input_line(FALSE);
   nsp_tokenizer_init(&T);
   nsp_tokenizer_strings(&T,M->S);
-  file_name = NspFileName(SciStack);
+  Stack *stack = nsp_get_stack();
+  file_name = NspFileName1(stack);
   /* call the parser */
   if ((rep=nsp_parse(&T,NULLBHASH,&plist)) < 0 ) 
     {
@@ -676,7 +684,7 @@ PList nsp_parse_expr(NspSMatrix *M)
       plist = NULLPLIST;
     }
   /* restore current input function */
-  NspFileName(SciStack) = file_name;
+  if ( stack != NULL ) stack->file_name = file_name;
   nsp_set_echo_input_line(cur_echo);
   return plist;
 }
@@ -716,18 +724,19 @@ int nsp_parse(Tokenizer *T,NspBHash *symb_table,PList *plist)
 
 NspObject *nsp_eval_macro_code(NspPList *PL,NspObject **O,NspList *args,int *first) 
 {
+  Stack *stack = nsp_get_stack();
   int rhs = 0,lhs = 1,opt = 0,rep;
   NspObject **Ob,*Rep;
   if ( *first < 0 ) 
     {
       *first = 0;
       /* Preserve the already stored objects */ 
-      Ob = SciStack.val->S ;
+      Ob = stack->val->S ;
       while ( *Ob != NULLOBJ) { (*first)++; Ob++;}
     }
   else 
     {
-      Ob = SciStack.val->S + (*first);
+      Ob = stack->val->S + (*first);
     }
   while ( *O != NULLOBJ) 
     {
@@ -747,19 +756,19 @@ NspObject *nsp_eval_macro_code(NspPList *PL,NspObject **O,NspList *args,int *fir
 	  cell = cell->next;
 	}
     }
-  rep=nsp_eval_macro((NspObject *) PL,SciStack,*first,rhs,opt,lhs);
+  rep=nsp_eval_macro((NspObject *) PL,*stack,*first,rhs,opt,lhs);
   if ( rep > 1 ) 
     {
       int i ; 
       /* to many argument returned we ignore the last ones */
-      for ( i = 2 ; i <= rep ; i++)nsp_void_object_destroy(&SciStack.val->S[*first+i]);
+      for ( i = 2 ; i <= rep ; i++)nsp_void_object_destroy(&stack->val->S[*first+i]);
     }
   if ( rep <= 0 ) 
     return NULLOBJ ;
   else 
     {
-      Rep = SciStack.val->S[*first];
-      SciStack.val->S[*first] = NULLOBJ;
+      Rep = stack->val->S[*first];
+      stack->val->S[*first] = NULLOBJ;
     }
   return Rep;
 }
@@ -782,7 +791,8 @@ NspAst* nsp_parse_file(char *Str)
   NspAst *ast;
   FILE *input;
   Tokenizer T;
-  char *file_name = NspFileName(SciStack);
+  Stack *stack = nsp_get_stack();
+  char *file_name = NspFileName1(stack);
   if ((input = fopen(Str,"r")) == NULL) 
     {
       /* Only when strerror exists XXXXXXX */
@@ -795,13 +805,13 @@ NspAst* nsp_parse_file(char *Str)
   nsp_tokenizer_file(&T,input);
   /* reset the line counter */
   /* Calling the evaluator */
-  NspFileName(SciStack) =  Str;
+  if ( stack != NULL ) stack->file_name = Str;
   ast = nsp_parse_full(&T);
   if ( ast == NULL ) 
     {
       Scierror("Error: failed to parse at line %d of file %s\n",T.tokenv.Line,Str);
     }
-  NspFileName(SciStack) = file_name;
+  if ( stack != NULL ) stack->file_name = file_name;
   fclose(input);
   return ast;
 }
@@ -825,8 +835,9 @@ NspAst * nsp_parse_from_smat(NspSMatrix *M)
   Tokenizer T;
   nsp_tokenizer_init(&T);
   nsp_tokenizer_strings(&T,M->S);
-  file_name = NspFileName(SciStack);
-  NspFileName(SciStack)= NULL;
+  Stack *stack = nsp_get_stack();
+  file_name = NspFileName1(stack);
+  if ( stack != NULL ) stack->file_name = NULL;
   /* Calling the evaluator */
   ast = nsp_parse_full(&T);
   if ( ast == NULL ) 
@@ -843,7 +854,7 @@ NspAst * nsp_parse_from_smat(NspSMatrix *M)
 	}
     }
   /* restore current input function */
-  NspFileName(SciStack) = file_name;
+  if ( stack != NULL ) stack->file_name = file_name;
   return ast;
 }
 
@@ -858,7 +869,8 @@ NspAst * nsp_parse_from_smat(NspSMatrix *M)
 
 static NspAst *nsp_parse_full(Tokenizer *T)
 {
-  int errcatch = SciStack.val->errcatch;
+  Stack *stack = nsp_get_stack();
+  int errcatch = stack->val->errcatch;
   int rep; 
   NspAst *ast;
   PList plist = NULLPLIST ;

@@ -480,7 +480,7 @@ static int int_norm( Stack stack, int rhs, int opt, int lhs)
 {
   double norm, p=2.0;
   int id=1, is_vector;
-  char *norm_table[] =       {"1","2","inf","fro","Inf","Fro","M",NULL};
+  const char *norm_table[] =       {"1","2","inf","fro","Inf","Fro","M",NULL};
   char norm_lapack_table[] = {'1','2','I'  ,'F'  ,'I'  ,'F'  ,'M'};
   NspMatrix *A;
 
@@ -1405,7 +1405,7 @@ static int int_qz( Stack stack, int rhs, int opt, int lhs)
 static int int_solve( Stack stack, int rhs, int opt, int lhs)
 {
   char *mode=NULL;
-  char *types[]={ "std","sym", "lo", "up", "lsq", "\\", "sympos", "loT", "loH", "upT", "upH", NULL};
+  const char *types[]={ "std","sym", "lo", "up", "lsq", "\\", "sympos", "loT", "loH", "upT", "upH", NULL};
   NspMatrix *A,*B,*C=NULLMAT,*Ac=NULLMAT;
   double  tol_rcond,rcond;
   int rep=5,stat,info;

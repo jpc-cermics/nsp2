@@ -45,6 +45,7 @@
 #include <nsp/seval.h> 
 #include <nsp/libstab.h> 
 #include <nsp/funtab.h>
+#include <nsp/nspdatas.h>
 
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
 static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
@@ -621,6 +622,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
 
 static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs, int display)
 {
+  nsp_datas *data = nsp_get_datas();
   int count_ret, nargs,j,js=0,i,n,posi,nret,body_ret, varargin_case=0,option_case =0,
     less_args_case = 0 ;
   NspObject *O;
@@ -1032,8 +1034,8 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
       if ( Loc->arity != -1 ) 
 	{
 	  /* search return value in local variables */
-	  O = ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Loc->arity)];
-	  ((NspFrame *) Datas->first->O)->table->objs[VAR_ID(Loc->arity)]=  NULL;
+	  O = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(Loc->arity)];
+	  ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(Loc->arity)]=  NULL;
 	}
       else 
 	{

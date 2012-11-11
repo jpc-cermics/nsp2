@@ -1025,7 +1025,7 @@ int nsp_eval_expr(PList L1,NspFrame *Fr,double *val,const double *var_table)
 	    if ( Lf->arity == -1 ) 
 	      {
 		/* Sciprintf("Try to detect %s on first call\n",name); */
-		if ((n = is_string_in_struct(name,(void **) expr_functions ,sizeof(expr_func),1)) >=0)
+		if ((n = is_string_in_struct(name,(const void **) expr_functions ,sizeof(expr_func),1)) >=0)
 		  {
 		    Lf->arity = n;
 		  }
@@ -1186,7 +1186,7 @@ int nsp_bytecomp_expr(PList L1,NspFrame *Fr,int *code, int *pos,double *constv,i
 	    if ( Lf->arity == -1 ) 
 	      {
 		/* Sciprintf("Try to detect %s on first call\n",name); */
-		if ((n = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) >=0)
+		if ((n = is_string_in_struct(name,(const void **)expr_functions ,sizeof(expr_func),1)) >=0)
 		  {
 		    Lf->arity = n;
 		  }
@@ -1466,7 +1466,7 @@ static int nsp_expr_action(PList L1,void *context,int action )
 	    switch (action) 
 	      {
 	      case check_expr: 
-		if ((ans = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1)) < 0) 
+		if ((ans = is_string_in_struct(name,(const void **)expr_functions ,sizeof(expr_func),1)) < 0) 
 		  {
 		    Scierror("Error: unknown function %s\n",name);
 		    return FAIL;
@@ -1492,7 +1492,7 @@ static int nsp_expr_action(PList L1,void *context,int action )
 		  }
 		break;
 	      case count_logical :
-		ans = is_string_in_struct(name,(void **)expr_functions ,sizeof(expr_func),1);
+		ans = is_string_in_struct(name,(const void **)expr_functions ,sizeof(expr_func),1);
 		if ( ans >= 0 && expr_functions[ans].logical == TRUE ) 
 		  {
 		    int *count = context;

@@ -38,8 +38,6 @@
 
 #include "Plo3dObj.h"
 
-extern Stack SciStack; 
-
 #ifdef  WITH_GTKGLEXT 
 extern Gengine GL_gengine_old;
 #endif 
@@ -251,6 +249,7 @@ void **obj3d_from_list_old(Stack stack,NspList *L,int alloc_objs,int *err,int *n
 extern void nsp_draw_3d_obj_old( BCG *Xgc,void *Lo,double *theta,double *alpha,const char *legend,
 			     int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
+  Stack *stack = nsp_get_stack();
   NspList *Lobj = Lo;
   /* Stack stack;*/ /* just used for messages i.e NspFname(stack) */
   nsp_box_3d box;
@@ -284,7 +283,7 @@ extern void nsp_draw_3d_obj_old( BCG *Xgc,void *Lo,double *theta,double *alpha,c
    * The unchanged values are kept in Lobj
    */
 
-  Obj = (Obj3d *)obj3d_from_list_old(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
+  Obj = (Obj3d *)obj3d_from_list_old(*stack,Lobj,TRUE,&err,&nf,&nbObj) ;
 
   if ( Obj == NULL ) return;
 
@@ -361,6 +360,7 @@ extern void nsp_draw_3d_obj_old( BCG *Xgc,void *Lo,double *theta,double *alpha,c
 static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,const char *legend,
 				 int *flag,double *ebox,int with_mesh1,int with_box,int box_color,int box_style)
 {
+  Stack *stack = nsp_get_stack();
   NspList *Lobj = Lo;
   /* Stack stack;*/ /* just used for messages i.e NspFname(stack) */
   nsp_box_3d box;
@@ -380,7 +380,7 @@ static void nsp_draw_3d_obj_ogl( BCG *Xgc,void *Lo,double *theta,double *alpha,c
    * The unchanged values are kept in Lobj
    */
 
-  Obj = (Obj3d *)obj3d_from_list_old(SciStack,Lobj,TRUE,&err,&nf,&nbObj) ;
+  Obj = (Obj3d *)obj3d_from_list_old(*stack,Lobj,TRUE,&err,&nf,&nbObj) ;
 
   if ( Obj == NULL ) return;
 

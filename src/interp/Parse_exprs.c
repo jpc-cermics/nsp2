@@ -2481,6 +2481,7 @@ static int parse_expr_opt(Tokenizer *T,NspBHash *symb_table,PList *plist,char op
 
 static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
+  Stack *stack = nsp_get_stack();
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int colconcat = (stop == ']') ? COLCONCAT : CELLCOLCONCAT;
   PList plist1 = NULLPLIST ;
@@ -2489,14 +2490,14 @@ static int parse_rowmatrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char s
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning: ;] should not be used \n");
       if (  T->io == nsp_tok_file )
-	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName1(stack));
     }
   else if ( T->tokenv.id == SEMICOLON_OP )
     {
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning: ;; should not be used \n");
       if (  T->io == nsp_tok_file )
-	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName1(stack));
     }
   else
     {
@@ -2603,6 +2604,7 @@ static int parse_matrix(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop
 
 static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char stop)
 {
+  Stack *stack = nsp_get_stack();
   int emptymat = (stop == ']') ? EMPTYMAT : EMPTYCELL;
   int colconcat = (stop == ']') ? COLCONCAT : CELLCOLCONCAT;
   PList plist1 = NULLPLIST ;
@@ -2613,7 +2615,7 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning: ;] should not be used \n");
       if (  T->io == nsp_tok_file )
-	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName1(stack));
 
     }
   else if ( T->tokenv.id == SEMICOLON_OP )
@@ -2622,7 +2624,7 @@ static int parse_rowcells(Tokenizer *T,NspBHash *symb_table,PList *plist,char st
       if (nsp_parse_add(&plist1,emptymat,0,T->tokenv.Line) == FAIL) return(FAIL);
       Sciprintf("Warning: ;; should not be used \n");
       if (  T->io == nsp_tok_file )
-	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName(SciStack));
+	Sciprintf("\tat line %d of file %s\n",T->tokenv.Line,NspFileName1(stack));
 
     }
   else

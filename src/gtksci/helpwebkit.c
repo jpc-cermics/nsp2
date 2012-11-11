@@ -1,7 +1,7 @@
 /*
  * Copyright (C) 2006, 2007 Apple Inc.
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
- * Copyright (C) 2008-2011 Jean-Philippe Chancelier <jpc@cermics.enpc.fr>
+ * Copyright (C) 2008-2012 Jean-Philippe Chancelier <jpc@cermics.enpc.fr>
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -53,15 +53,11 @@
 
 #include <nsp/interf.h>
 #include <nsp/nsptcl.h>
-
-/* XXX*/
-extern GtkWidget *egg_find_bar_new (void);
-
-/*
- *
- */ 
+#include <nsp/nspthreads.h>
 
 static GtkWidget* main_window=NULL;
+static int nsp_help_topic(const char *topic,char *buf);
+static int nsp_help_browser_internal(char *mandir,char *locale,char *help_file);
 
 static void  window_find_search_changed_cb  (GObject         *object,
 					     GParamSpec      *arg1,
@@ -76,8 +72,52 @@ static void  window_find_next_cb            (GtkEntry        *entry,
 static void  window_findbar_close_cb        (GtkWidget       *widget,
 					     void        *window);
 
-static void
-activate_uri_entry_cb (GtkWidget* entry, gpointer data)
+typedef struct _nsp_webkit_data nsp_webkit_data;
+struct _nsp_webkit_data {GAsyncQueue *queue;int ans; char *mandir,*locale,*help_file;};
+
+/* utility function for nsp_help_browser  */
+
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+static gboolean nsp_help_browser_idle(gpointer user_data)
+{
+  nsp_webkit_data *data = user_data;
+  gdk_threads_enter();
+  data->ans= nsp_help_browser(data->mandir,data->locale,data->help_file);
+  gdk_threads_leave();
+  g_async_queue_push(data->queue,data);
+  return FALSE;
+}
+#endif 
+
+/* It is safe to call this function from 
+ * non gtk thread.
+ */
+
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+int nsp_help_browser(char *mandir,char *locale,char *help_file) 
+{
+  if (  g_thread_self() == nsp_gtk_main_thread())
+    {
+      return nsp_help_browser_internal(mandir,locale,help_file);
+    }
+  else
+    {
+      nsp_webkit_data data = {g_async_queue_new (),0,mandir,locale,help_file};
+      g_idle_add(nsp_help_browser_idle,(gpointer) &data);
+      g_async_queue_pop(data.queue);
+      g_async_queue_unref(data.queue);
+      return data.ans;
+    }
+  return 0;
+}
+#else 
+int nsp_help_browser(char *mandir,char *locale,char *help_file) 
+{
+  return nsp_help_browser_internal(mandir,locale,help_file);
+}
+#endif 
+
+static void activate_uri_entry_cb (GtkWidget* entry, gpointer data)
 {
   WebKitWebView* web_view= g_object_get_data(G_OBJECT (main_window),"help_web_view");
   const gchar* uri = gtk_entry_get_text (GTK_ENTRY (entry));
@@ -320,8 +360,6 @@ window_activate_copy (GtkAction *action,  void  *window)
     }
 }
 
-
-
 static void
 window_activate_find (GtkAction *action,void  *window)
 {
@@ -541,9 +579,9 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
  * returns 0 on success and 1 if index.html not found 
  */
 
-int nsp_help_topic(const char *topic,char *buf);
+static int nsp_help_topic(const char *topic,char *buf);
 
-int nsp_help_browser(char *mandir,char *locale,char *help_file) 
+static int nsp_help_browser_internal(char *mandir,char *locale,char *help_file) 
 {
   int free = FALSE;
   char buf[FSIZE+32];
@@ -692,7 +730,7 @@ static int nsp_help_fill_help_table(const char *index_file)
 }
 
 
-int nsp_help_topic(const char *topic, char *buf)
+static int nsp_help_topic(const char *topic, char *buf)
 {
   NspObject *Obj;
   if ( strcmp(topic, "nsp")==0 )
@@ -827,6 +865,3 @@ window_findbar_close_cb (GtkWidget *widget, void  *window)
   webkit_web_view_set_highlight_text_matches (web_view, FALSE);
 }
 
-
-/* menu actions 
- */
