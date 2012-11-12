@@ -99,14 +99,7 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 
   /* Initialize reader */
   nsp_intialize_reader();
-  /* Initialize evaluation stack **/
-#ifdef NSP_WITH_MAIN_GTK_THREAD
-  thmain = g_thread_self();
-  nsp_new_interp(thmain,argc,argv);
-#else 
-  nsp_new_interp(NULL,argc,argv);
-#endif 
-  /* Initialize evaluation stack **/
+  /* Initialize gtk evaluation stack */
   nsp_init_gtk_stack();
   /* initialize data types */
   primitive_types_register();
@@ -116,6 +109,13 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
   nsp_init_accelerated_tabs();
   /* Initialize macro hash table */
   nsp_init_macro_table();
+  /* Initialize evaluation stack */
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  thmain = g_thread_self();
+  nsp_new_interp(thmain,argc,argv);
+#else 
+  nsp_new_interp(NULL,argc,argv);
+#endif 
   /* MPI */
   /* MPI_Init(&argc,&argv); */
   /* MPI_Init(NULL,NULL); */
