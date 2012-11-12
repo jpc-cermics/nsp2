@@ -1,11 +1,11 @@
 function ast=ast_visit(ast,visitor,H)
 // generic function which can be used to walk on an ast
 //   
-  function rep= ast_visit_args(ast,start,last,visitor,H)
+  function rep= ast_visit_args(ast,visitor,H)
   //printf("-->arg_visit_args\n");
     L= ast.get_args[];
     rep=list();
-    for j = start:last
+    for j = 1:ast.get_arity[] 
       rep($+1) =ast_visit_internal(L(j),visitor,H);
     end
     //printf("<--arg_visit_args\n");

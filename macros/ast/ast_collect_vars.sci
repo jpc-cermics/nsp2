@@ -13,7 +13,7 @@ function rep=ast_collect_vars(ast)
 	H(ast.get_str[])=%t;
       end
     else
-      rep =  ast_visit_args(ast,1,ast.get_arity[],ast_vars_visit,H);
+      rep =  ast_visit_args(ast,ast_vars_visit,H);
       for i=1:length(rep) ;H.merge[rep(i)];  end
     end
   endfunction

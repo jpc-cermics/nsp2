@@ -20,7 +20,7 @@ function rep=ast_collect_mlhs_names(ast)
       end
       return;
     else
-      rep =  ast_visit_args(ast,1,ast.get_arity[],ast_mlhs_names_visit,H);
+      rep =  ast_visit_args(ast,ast_mlhs_names_visit,H);
       for i=1:length(rep) ;H.merge[rep(i)];  end
     end
   endfunction

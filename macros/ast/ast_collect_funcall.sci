@@ -5,7 +5,7 @@ function rep=ast_collect_funcall(ast,str)
   function rep=ast_collect_funcall_visit(ast,str)
   // a visitor 
     rep=list();
-    args = ast_visit_args(ast,1,ast.get_arity[],ast_collect_funcall_visit,str);
+    args = ast_visit_args(ast,ast_collect_funcall_visit,str);
     for i=1:length(args) ;rep.concat[args(i)];  end
     select ast.get_op[] 
      case %ast.CALLEVAL then

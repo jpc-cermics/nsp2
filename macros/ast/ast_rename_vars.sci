@@ -26,7 +26,7 @@ function ast=ast_rename_vars(ast,H)
 	end
       end
     else
-      newargs =  ast_visit_args(ast,1,ast.get_arity[],ast_renamer,H);
+      newargs =  ast_visit_args(ast,ast_renamer,H);
       ast.set_args[newargs];
     end
     //printf("<--arg_renamer\n");

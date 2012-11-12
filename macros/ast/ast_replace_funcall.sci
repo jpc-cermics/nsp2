@@ -6,7 +6,7 @@ function rep=ast_replace_funcall(ast,code,code_new)
       // found a proper ast 
       ast = H.code_new;
     else
-      args = ast_visit_args(ast,1,ast.get_arity[],ast_replace_funcall_visit,H);
+      args = ast_visit_args(ast,ast_replace_funcall_visit,H);
       ast.set_args[args];
     end
   endfunction

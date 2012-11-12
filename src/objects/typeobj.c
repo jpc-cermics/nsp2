@@ -96,6 +96,9 @@ extern void *new_type_surf(type_mode mode);
 extern void *new_type_vfield(type_mode mode);
 extern void *new_type_graphic(type_mode mode);
 /* extern void *new_type_astnode(type_mode mode); */
+extern void *new_type_ast(type_mode mode);
+extern void *new_type_astv(type_mode mode);
+extern void *new_type_frame(type_mode mode);
 
 /* 
  * NspType inherits from NspObject
@@ -567,7 +570,7 @@ static int nsp_last_static_id_ = 0;    /* static id's are <=  nsp_last_static_id
  *
  **/
 
-static void graphic_types_register(void);
+static void nsp_graphic_types_register(void);
 
 void primitive_types_register(void) 
 {
@@ -604,26 +607,28 @@ void primitive_types_register(void)
   new_type_spcolmatrix(T_BASE);
   new_type_bhash(T_BASE);
   new_type_imatrix(T_BASE);
-  /* graphics */
-  graphic_types_register();
+  /* graphics objects */
+  nsp_graphic_types_register();
+  /* more gtk types */
   nsp_init_gtk_types_added();
   new_type_mpmatrix(T_BASE);
   new_type_classaref(T_BASE);
   new_type_classbref(T_BASE);
   new_type_astnode(T_BASE);
   new_type_spmaxpcolmatrix(T_BASE);
-
+  /*
+    new_type_ast(T_BASE);
+    new_type_astv(T_BASE);
+    new_type_frame(T_BASE);
+  */
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */
   nsp_last_static_id_ = nsp_type_spmaxpcolmatrix_id;
 }
 
-
-#define  WITH_GRAPHIC_OBJECTS 
-static void graphic_types_register(void) 
+static void nsp_graphic_types_register(void) 
 {
-#ifdef  WITH_GRAPHIC_OBJECTS 
   new_type_arrows(T_BASE);
   new_type_axes(T_BASE);
   new_type_box3d(T_BASE);
@@ -653,7 +658,6 @@ static void graphic_types_register(void)
   new_type_string3d(T_BASE);
   new_type_surf(T_BASE);
   new_type_vfield(T_BASE);
-#endif 
 }
 
 

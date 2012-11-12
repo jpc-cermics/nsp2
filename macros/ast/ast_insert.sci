@@ -51,7 +51,7 @@ function rep=ast_insert(ast,f)
       for j = 1:length(L)
 	Lj = L(j);
 	[ok1,rep1]= ast_special_funcall(Lj,H);
-	pause yyy;
+	//pause yyy;
 	if ok1 then 
 	  rep($+1) = rep1;
 	else
@@ -79,7 +79,7 @@ function rep=ast_insert(ast,f)
       ast.set_args[rep];
       return; 
     else
-      newargs =  ast_visit_args(ast,1,ast.get_arity[],ast_inserter,H);
+      newargs =  ast_visit_args(ast,ast_inserter,H);
       ast.set_args[newargs];
     end
     //printf("<--arg_inserter\n");

@@ -11,7 +11,7 @@ function ast=ast_expand(ast,reset=%t)
     function [rep,newargs]=ast_expand_to_funcall(ast,fname)
     // ast= op args -> ast = (funcall fname (Args args))
       args = ast.get_args[];
-      [rep,newargs]= ast_expand_args(ast,1,ast.get_arity[],list(),list());
+      [rep,newargs]= ast_expand_args(ast,list(),list());
       ast_args=ast_create(%ast.ARGS,args=newargs);
       ast_f = ast_create(%ast.NAME,str=fname);
       astn=ast_create(%ast.CALLEVAL,args=list(ast_f,ast_args));
@@ -19,14 +19,14 @@ function ast=ast_expand(ast,reset=%t)
     endfunction
         
     function [rep,newargs]=ast_expand_default(ast)
-      [rep,newargs]= ast_expand_args(ast,1,ast.get_arity[],list(),list());
+      [rep,newargs]= ast_expand_args(ast,list(),list());
       ast.set_args[newargs];
       rep($+1)= ast;
     endfunction;
     
-    function [rep,newargs]=ast_expand_args(ast,start,last,rep,newargs)
+    function [rep,newargs]=ast_expand_args(ast,rep,newargs)
       L= ast.get_args[];
-      for j = start:last
+      for j = 1:ast.get_arity[]
 	[rep,newargs]=ast_expand_arg(L(j),rep,newargs)
       end
     endfunction 

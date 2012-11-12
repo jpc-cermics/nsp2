@@ -12,7 +12,7 @@ function rep=ast_check_callfun(ast,str)
       rep = ast.get_args[](1).get_str[] == str;
       return;
     else
-      args = ast_visit_args(ast,1,ast.get_arity[],ast_checker,str);
+      args = ast_visit_args(ast,ast_checker,str);
       rep = %f 
       for i=1:length(args)
 	if type(args(i),'short')== 'b' && args(i) == %t then 
