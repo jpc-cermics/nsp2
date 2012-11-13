@@ -48,9 +48,9 @@ static gboolean nsp_interface_idle_in_main_thread(gpointer user_data)
 {
   nsp_thread_interface *data = user_data;
   gdk_threads_enter();
-  printf("-->execution of method %d in the main gtk thread (through idle)\n",data->i);
+  printf("-->execution of interface %d in the main gtk thread (through idle)\n",data->i);
   data->ans = (*(data->fun))(*(data->stack), data->rhs, data->opt, data->lhs);
-  printf("<--execution of method %d in the main gtk thread (through idle)\n",data->i);
+  printf("<--execution of interface %d in the main gtk thread (through idle)\n",data->i);
   gdk_threads_leave();
   g_async_queue_push(data->queue,data);
   return FALSE;
