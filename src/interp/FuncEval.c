@@ -256,20 +256,7 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
   NspFname(stack) = str;
   /* XXX To be done: next step would be to accept soft coded methods: */
   HOBJ_GET_OBJECT(ob,RET_BUG);
-  
-#ifdef NSP_WITH_MAIN_GTK_THREAD
-  if ( IsGObject(ob) )
-    {
-      ret =  nsp_exec_method_util_gtk_thread(ob,ob->basetype,str,stack,rhs,opt,lhs);
-    }
-  else
-    {
-      ret =  nsp_exec_method_util(ob,ob->basetype,str,stack,rhs,opt,lhs);
-    }
-#else
   ret =  nsp_exec_method_util(ob,ob->basetype,str,stack,rhs,opt,lhs);
-#endif 
-  
   if ( ret == RET_BUG ) 
     {
       /* clean the stack before returning */

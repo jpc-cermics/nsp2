@@ -1270,40 +1270,13 @@ int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack sta
       if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
 	{
 	  /* execute the method */
-	  return  methods[item].meth(ob,stack,rhs,opt,lhs);
-	}
-      /* explore interfaces */
-      while ( interf != NULL) 
-	{
-	  methods = (interf->methods != NULL) ? interf->methods(): NULL;
-	  if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
-	    return  methods[item].meth(ob,stack,rhs,opt,lhs);
-	  interf = interf->interface;
-	} 
-      type = type->surtype;
-    }
-  Scierror("Warning: method %s does not exists for instance of %s\n",method, ob->type->s_type());
-  return RET_BUG;
-}
-
-/* forces the execution of the method in the gtk stack */
-
-int nsp_exec_method_util_gtk_thread(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs)
-{
-  NspMethods *methods;
-  int item;
-  while (type != NULL)
-    {
-      NspTypeBase *interf = type->interface;
-      /* explore methods */
-      methods = (type->methods != NULL) ? type->methods(): NULL;
-      if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
-	{
-	  /* execute the method */
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-	  return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
+	  if ( type->gtk_methods == TRUE ) 
+	    return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
+	  else
+	    return  methods[item].meth(ob,stack,rhs,opt,lhs);
 #else 
-	  return methods[item].meth(ob,stack,rhs,opt,lhs);
+	  return  methods[item].meth(ob,stack,rhs,opt,lhs);
 #endif 
 	}
       /* explore interfaces */
@@ -1313,20 +1286,21 @@ int nsp_exec_method_util_gtk_thread(NspObject *ob,NspTypeBase *type,char *method
 	  if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
 	    {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-	      return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
+	      if ( type->gtk_methods == TRUE ) 
+		return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
+	      else
+		return  methods[item].meth(ob,stack,rhs,opt,lhs);
 #else 
-	      return methods[item].meth(ob,stack,rhs,opt,lhs);
+	      return  methods[item].meth(ob,stack,rhs,opt,lhs);
 #endif 
 	    }
 	  interf = interf->interface;
-	} 
+	}
       type = type->surtype;
     }
   Scierror("Warning: method %s does not exists for instance of %s\n",method, ob->type->s_type());
   return RET_BUG;
 }
-
-
 
 /*---------------------------------------------------
  * set of interfaced functions 
