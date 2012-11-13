@@ -74,7 +74,7 @@ static int nsp_get_interp()
     {
       if ( self == nsp_data_interp[i].thread) 
 	{
-	  printf("Found interp %d\n",i);
+	  /* printf("Found interp %d\n",i); */
 	  return i;
 	}
     }

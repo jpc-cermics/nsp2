@@ -81,9 +81,7 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
     {
       int n;
       printf("-->direct call of interface since we are in main gtk thread\n");
-      gdk_threads_enter();  
       n= (*f)(*stack,rhs,opt,lhs);
-      gdk_threads_leave();  
       printf("<--quit the direct call\n");
       return n;
     }
@@ -151,9 +149,7 @@ int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,Stack *stack,
     {
       int n;
       printf("-->direct call of method since we are in main gtk thread\n");
-      gdk_threads_enter();  
       n= (*f)(Ob,*stack,rhs,opt,lhs);
-      gdk_threads_leave();  
       printf("<--quit the direct call\n");
       return n;
     }
