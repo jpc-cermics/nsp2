@@ -30,7 +30,7 @@ struct _nsp_thread_method {
 
 
 /* should be moved in config.h */
-#if 0
+#if 1
 #define NSP_WITH_MAIN_GTK_THREAD 
 #endif
 
