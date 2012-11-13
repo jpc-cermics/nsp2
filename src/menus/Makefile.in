@@ -17,5 +17,4 @@ include ../Make.lib
 
 #==============dependencies 
 
-$(OBJSC) : ../include/nsp/menus.h ../include/nsp/machine.h
-
+include  Makefile.deps

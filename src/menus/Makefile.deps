@@ -1,0 +1,310 @@
+gxmen_choice.o: gxmen_choice.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_choose.o: gxmen_choose.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_dialog.o: gxmen_dialog.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_getfile.o: gxmen_getfile.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_madial.o: gxmen_madial.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_mdial.o: gxmen_mdial.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_message.o: gxmen_message.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
+gxmen_print.o: gxmen_print.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/interf.h
+gxmen_utils.o: gxmen_utils.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      
+men-IN.o: men-IN.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/menus.h ../include/nsp/objects.h \
+ ../include/nsp/matrix.h ../include/nsp/complex.h \
+ ../include/nsp/matrix-inlined.h ../include/nsp/bmatrix.h \
+ ../include/nsp/smatrix.h ../include/nsp/imatrix.h \
+ ../include/nsp/ints.h ../include/nsp/matint.h \
+ ../include/nsp/list.h ../include/nsp/hobj.h \
+ ../include/nsp/hash.h ../include/nsp/type.h \
+ ../include/nsp/file.h ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/stack.h \
+ ../include/nsp/interf.h ../include/nsp/system.h \
+ ../include/nsp/gtksci.h ../include/nsp/nspthreads.h
+men_combo_color.o: men_combo_color.c ../include/nsp/menus.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/math.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+   ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/objects.h ../include/nsp/object.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h      ../include/nsp/gtksci.h
