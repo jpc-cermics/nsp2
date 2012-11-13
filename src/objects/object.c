@@ -1300,7 +1300,7 @@ int nsp_exec_method_util_gtk_thread(NspObject *ob,NspTypeBase *type,char *method
 	{
 	  /* execute the method */
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-	  return nsp_method_executed_in_main_thread(ob,methods[item].meth,stack,rhs,opt,lhs);
+	  return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
 #else 
 	  return methods[item].meth(ob,stack,rhs,opt,lhs);
 #endif 
@@ -1312,7 +1312,7 @@ int nsp_exec_method_util_gtk_thread(NspObject *ob,NspTypeBase *type,char *method
 	  if ( methods != NULL &&  (item=method_search(method,methods)) >=0 )
 	    {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-	      return nsp_method_executed_in_main_thread(ob,methods[item].meth,stack,rhs,opt,lhs);
+	      return nsp_method_executed_in_main_thread(ob,methods[item].meth,&stack,rhs,opt,lhs);
 #else 
 	      return methods[item].meth(ob,stack,rhs,opt,lhs);
 #endif 

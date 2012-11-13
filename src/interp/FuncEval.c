@@ -47,6 +47,7 @@
 #include <nsp/funtab.h>
 #include <nsp/nspdatas.h>
 #include <nsp/nspthreads.h>
+#include <nsp/gtk/gobject.h>
 
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
 static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
@@ -257,7 +258,7 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
   HOBJ_GET_OBJECT(ob,RET_BUG);
   
 #ifdef NSP_WITH_MAIN_GTK_THREAD
-  if ( IsGOobject(ob) )
+  if ( IsGObject(ob) )
     {
       ret =  nsp_exec_method_util_gtk_thread(ob,ob->basetype,str,stack,rhs,opt,lhs);
     }
