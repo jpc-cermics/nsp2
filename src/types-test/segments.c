@@ -67,6 +67,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = segments_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_segments;
 
 
@@ -99,9 +100,9 @@ NspTypeSegments *new_type_segments(type_mode mode)
   type->init = (init_func *) init_segments;
 
 #line 33 "codegen/segments.override"
-  /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_segments;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_segments ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_segments  ;
@@ -111,7 +112,7 @@ NspTypeSegments *new_type_segments(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 115 "segments.c"
+#line 116 "segments.c"
   /* 
    * NspSegments interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -690,7 +691,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 694 "segments.c"
+#line 695 "segments.c"
 
 
 #line 66 "codegen/segments.override"
@@ -703,7 +704,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 707 "segments.c"
+#line 708 "segments.c"
 
 
 /*----------------------------------------------------
@@ -846,4 +847,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 850 "segments.c"
+#line 851 "segments.c"

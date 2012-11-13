@@ -100,6 +100,7 @@ NspTypeObject *new_type_object(type_mode mode)
   type->surtype   = NULL;
   type->interface = NULL;
   type->methods = object_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_object;
   
   type->s_type =  (s_type_func *) object_type_as_string;    

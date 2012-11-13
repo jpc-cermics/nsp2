@@ -68,6 +68,7 @@ NspTypeHm *new_type_hm(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = hm_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_hm;
 
 
@@ -251,7 +252,7 @@ static NspHm  *nsp_hm_xdr_load(XDR *xdrs)
 #line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 255 "hm.c"
+#line 256 "hm.c"
   return H;
 }
 
@@ -264,7 +265,7 @@ void nsp_hm_destroy_partial(NspHm *H)
 #line 68 "codegen/hm.override"
   /* verbatim in destroy */
 
-#line 268 "hm.c"
+#line 269 "hm.c"
 }
 
 void nsp_hm_destroy(NspHm *H)
@@ -429,7 +430,7 @@ NspHm *nsp_hm_create(const char *name,void* htable,int hsize,int filled,int base
 #line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 433 "hm.c"
+#line 434 "hm.c"
   return H;
 }
 
@@ -487,7 +488,7 @@ NspHm *nsp_hm_full_copy(NspHm *self)
 #line 64 "codegen/hm.override"
   /* verbatim in create interface  */
 
-#line 491 "hm.c"
+#line 492 "hm.c"
   return H;
 }
 
@@ -522,7 +523,7 @@ int int_hm_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 526 "hm.c"
+#line 527 "hm.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -539,7 +540,7 @@ static int _wrap_nsp_hm_remove(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 543 "hm.c"
+#line 544 "hm.c"
 
 
 #line 113 "codegen/hm.override"
@@ -556,7 +557,7 @@ static int _wrap_nsp_hm_enter(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 560 "hm.c"
+#line 561 "hm.c"
 
 
 #line 128 "codegen/hm.override"
@@ -591,7 +592,7 @@ static int _wrap_nsp_hm_find(void *self,Stack stack, int rhs, int opt, int lhs)
     }
   return count;
 }
-#line 595 "hm.c"
+#line 596 "hm.c"
 
 
 #line 161 "codegen/hm.override"
@@ -617,7 +618,7 @@ static int _wrap_nsp_hm_iskey(void *self,Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(Res));
   return 1;
 }
-#line 621 "hm.c"
+#line 622 "hm.c"
 
 
 #line 199 "codegen/hm.override"
@@ -635,7 +636,7 @@ static int _wrap_nsp_hm_key2m(NspHm *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,NSP_OBJECT(ret));
   return 1;
 }
-#line 639 "hm.c"
+#line 640 "hm.c"
 
 
 #line 185 "codegen/hm.override"
@@ -651,7 +652,7 @@ static int _wrap_nsp_hm_m2key(void *self,Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 655 "hm.c"
+#line 656 "hm.c"
 
 
 static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int lhs)
@@ -678,7 +679,7 @@ static int _wrap_nsp_hm_get_keys(NspHm *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 }
 
-#line 682 "hm.c"
+#line 683 "hm.c"
 
 
 static NspMethods hm_methods[] = {
@@ -1645,4 +1646,4 @@ static int nsp_hm_check_slope(NspHm *H,NspMatrix *M)
 }
 
 
-#line 1649 "hm.c"
+#line 1650 "hm.c"

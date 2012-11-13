@@ -67,6 +67,7 @@ NspTypeGDate *new_type_gdate(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = gdate_get_methods; 
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gdate;
 
   

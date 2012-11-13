@@ -67,6 +67,7 @@ NspTypeClassBRef *new_type_classbref(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = classbref_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_classbref;
 
 
@@ -539,7 +540,7 @@ static int _wrap_classb_color_change(NspClassBRef *self,Stack stack,int rhs,int 
   self->obj->clb_color = color;
   return 0;
 }
-#line 543 "classbref.c"
+#line 544 "classbref.c"
 
 
 #line 29 "codegen/classbref.override"
@@ -550,7 +551,7 @@ static int _wrap_classb_color_show(NspClassBRef *self,Stack stack,int rhs,int op
 }
 
 
-#line 554 "classbref.c"
+#line 555 "classbref.c"
 
 
 static NspMethods classbref_methods[] = {
@@ -664,4 +665,4 @@ void ClassBRef_Interf_Info(int i, char **fname, function (**f))
   *f = ClassBRef_func[i].fonc;
 }
 
-#line 668 "classbref.c"
+#line 669 "classbref.c"

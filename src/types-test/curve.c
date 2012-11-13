@@ -72,6 +72,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = curve_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_curve;
 
 
@@ -105,6 +106,8 @@ NspTypeCurve *new_type_curve(type_mode mode)
 
 #line 36 "codegen/curve.override"
   /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_curve;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_curve ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_curve  ;
@@ -114,7 +117,7 @@ NspTypeCurve *new_type_curve(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 118 "curve.c"
+#line 121 "curve.c"
   /* 
    * NspCurve interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -658,7 +661,7 @@ static int _wrap_curve_set_color(void *self,const char *attr, NspObject *O)
   return OK;
 }
 
-#line 56 "codegen/curve.override"
+#line 58 "codegen/curve.override"
 /* override set alpha */
 static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
 {
@@ -672,7 +675,7 @@ static int _wrap_curve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 676 "curve.c"
+#line 679 "curve.c"
 static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -681,7 +684,7 @@ static NspObject *_wrap_curve_get_mode(void *self,const char *attr)
   return nsp_new_double_obj((double) ret);
 }
 
-#line 71 "codegen/curve.override"
+#line 73 "codegen/curve.override"
 
 /* overriden to check dimensions when changing values.
  */
@@ -710,7 +713,7 @@ static int _wrap_curve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 714 "curve.c"
+#line 717 "curve.c"
 static NspObject *_wrap_curve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -767,7 +770,7 @@ static AttrTab curve_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 101 "codegen/curve.override"
+#line 103 "codegen/curve.override"
 
 extern function int_nspgraphic_extract;
 
@@ -776,10 +779,10 @@ int _wrap_nsp_extractelts_curve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 780 "curve.c"
+#line 783 "curve.c"
 
 
-#line 111 "codegen/curve.override"
+#line 113 "codegen/curve.override"
 
 extern function int_graphic_set_attribute;
 
@@ -789,7 +792,7 @@ int _wrap_nsp_setrowscols_curve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 793 "curve.c"
+#line 796 "curve.c"
 
 
 /*----------------------------------------------------
@@ -820,7 +823,7 @@ void Curve_Interf_Info(int i, char **fname, function (**f))
   *f = Curve_func[i].fonc;
 }
 
-#line 122 "codegen/curve.override"
+#line 124 "codegen/curve.override"
 
 /* inserted verbatim at the end */
 /* 
@@ -1013,4 +1016,4 @@ static int nsp_getbounds_curve(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1017 "curve.c"
+#line 1020 "curve.c"

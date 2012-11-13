@@ -68,6 +68,7 @@ NspTypeSharedlib *new_type_sharedlib(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = sharedlib_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_sharedlib;
 
 
@@ -102,7 +103,7 @@ NspTypeSharedlib *new_type_sharedlib(type_mode mode)
 #line 33 "codegen/sharedlib.override"
   /* inserted verbatim in the type definition */
 
-#line 106 "sharedlib.c"
+#line 107 "sharedlib.c"
   /* 
    * NspSharedlib interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -642,4 +643,4 @@ int nsp_sharedlib_table_find_symbol(const char *name)
   return FAIL;
 }
 
-#line 646 "sharedlib.c"
+#line 647 "sharedlib.c"

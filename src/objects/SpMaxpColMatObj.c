@@ -70,6 +70,7 @@ NspTypeSpMaxpColMatrix *new_type_spmaxpcolmatrix(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = spmaxpcolmatrix_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_spmaxpcolmatrix;
 
   top = NSP_TYPE_OBJECT(type->surtype);

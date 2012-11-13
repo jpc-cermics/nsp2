@@ -64,6 +64,7 @@ NspTypeGRint *new_type_grint(type_mode mode)
   type->init = NULL;
   type->attrs = NULL;
   type->methods = NULL;
+  type->gtk_methods = FALSE;
   /* 
    * GRint interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();

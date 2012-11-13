@@ -72,6 +72,7 @@ NspTypeUmfpack *new_type_umfpack(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = umfpack_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_umfpack;
 
   

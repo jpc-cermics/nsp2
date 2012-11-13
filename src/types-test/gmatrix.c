@@ -76,6 +76,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = gmatrix_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_gmatrix;
 
 
@@ -109,7 +110,8 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
 
 #line 42 "codegen/gmatrix.override"
   /* inserted verbatim in the type definition */
-  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix;
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_gmatrix  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gmatrix  ;
@@ -118,7 +120,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 122 "gmatrix.c"
+#line 124 "gmatrix.c"
   /* 
    * NspGMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -772,7 +774,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 62 "codegen/gmatrix.override"
+#line 63 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -781,10 +783,10 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 785 "gmatrix.c"
+#line 787 "gmatrix.c"
 
 
-#line 72 "codegen/gmatrix.override"
+#line 73 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -793,7 +795,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 797 "gmatrix.c"
+#line 799 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -824,7 +826,7 @@ void GMatrix_Interf_Info(int i, char **fname, function (**f))
   *f = GMatrix_func[i].fonc;
 }
 
-#line 82 "codegen/gmatrix.override"
+#line 83 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -962,4 +964,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
 }
 
 
-#line 966 "gmatrix.c"
+#line 968 "gmatrix.c"

@@ -67,6 +67,7 @@ NspTypeDClass *new_type_dclass(type_mode mode)
   type->get_attrs = (attrs_func *) int_dclass_get_attribute; 
   type->set_attrs = (attrs_func *) int_dclass_set_attribute;
   type->methods = dclass_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_dclass;
 
   top = NSP_TYPE_OBJECT(type->surtype);

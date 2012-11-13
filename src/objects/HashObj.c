@@ -82,6 +82,7 @@ NspTypeHash *new_type_hash(type_mode mode)
   type->get_attrs = (attrs_func *) int_hash_get_attribute; 
   type->set_attrs = (attrs_func *) int_hash_set_attribute;
   type->methods = hash_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_hash;
 
   top = NSP_TYPE_OBJECT(type->surtype);

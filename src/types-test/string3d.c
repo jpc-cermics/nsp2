@@ -77,6 +77,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = string3d_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_string3d;
 
 
@@ -109,9 +110,9 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   type->init = (init_func *) init_string3d;
 
 #line 49 "codegen/string3d.override"
-  /* inserted verbatim in the type definition 
-   * here we override the method of its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_string3d;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_string3d ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_string3d  ;
@@ -122,7 +123,7 @@ NspTypeString3d *new_type_string3d(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
   ((NspTypeGraphic *) type->surtype)->zmean = nsp_string3d_zmean;
   ((NspTypeGraphic *) type->surtype)->n_faces = nsp_string3d_n_faces;
-#line 126 "string3d.c"
+#line 127 "string3d.c"
   /* 
    * NspString3d interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -292,7 +293,7 @@ static NspString3d  *nsp_string3d_xdr_load(XDR *xdrs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 296 "string3d.c"
+#line 297 "string3d.c"
   return H;
 }
 
@@ -310,7 +311,7 @@ void nsp_string3d_destroy_partial(NspString3d *H)
   /* verbatim in destroy */
   nsp_matrix_destroy(H->obj->Mcoord_l);
 
-#line 314 "string3d.c"
+#line 315 "string3d.c"
     if ( H->obj->Mcoord != NULL ) 
       nsp_matrix_destroy(H->obj->Mcoord);
   nsp_string_destroy(&(H->obj->str));
@@ -512,7 +513,7 @@ NspString3d *nsp_string3d_create(const char *name,NspMatrix* Mcoord,void* Mcoord
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 516 "string3d.c"
+#line 517 "string3d.c"
   return H;
 }
 
@@ -579,7 +580,7 @@ NspString3d *nsp_string3d_full_copy(NspString3d *self)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return NULL; 
 
-#line 583 "string3d.c"
+#line 584 "string3d.c"
   return H;
 }
 
@@ -603,7 +604,7 @@ int int_string3d_create(Stack stack, int rhs, int opt, int lhs)
   /* verbatim in create/load/copy interface  */
   if ( nsp_check_string3d(H)== FAIL) return RET_BUG; 
 
-#line 607 "string3d.c"
+#line 608 "string3d.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -721,7 +722,7 @@ int _wrap_nsp_extractelts_string3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 725 "string3d.c"
+#line 726 "string3d.c"
 
 
 #line 92 "codegen/string3d.override"
@@ -734,7 +735,7 @@ int _wrap_nsp_setrowscols_string3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 738 "string3d.c"
+#line 739 "string3d.c"
 
 
 /*----------------------------------------------------
@@ -991,4 +992,4 @@ static int nsp_string3d_n_faces(BCG *Xgc,NspGraphic *Obj)
 
 
 
-#line 995 "string3d.c"
+#line 996 "string3d.c"

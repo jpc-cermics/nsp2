@@ -56,6 +56,7 @@ NspTypeModule *new_type_module(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = module_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_module;
 
   top = NSP_TYPE_OBJECT(type->surtype);

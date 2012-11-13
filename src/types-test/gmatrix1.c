@@ -76,6 +76,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = gmatrix1_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_gmatrix1;
 
 
@@ -109,6 +110,8 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
 
 #line 51 "codegen/gmatrix1.override"
   /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix1;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix1 ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_gmatrix1  ;
@@ -118,7 +121,7 @@ NspTypeGMatrix1 *new_type_gmatrix1(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 122 "gmatrix1.c"
+#line 125 "gmatrix1.c"
   /* 
    * NspGMatrix1 interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -909,7 +912,7 @@ static AttrTab gmatrix1_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 72 "codegen/gmatrix1.override"
+#line 74 "codegen/gmatrix1.override"
 
 extern function int_nspgraphic_extract;
 
@@ -918,10 +921,10 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 922 "gmatrix1.c"
+#line 925 "gmatrix1.c"
 
 
-#line 82 "codegen/gmatrix1.override"
+#line 84 "codegen/gmatrix1.override"
 
 extern function int_graphic_set_attribute;
 
@@ -930,7 +933,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 934 "gmatrix1.c"
+#line 937 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -961,7 +964,7 @@ void GMatrix1_Interf_Info(int i, char **fname, function (**f))
   *f = GMatrix1_func[i].fonc;
 }
 
-#line 92 "codegen/gmatrix1.override"
+#line 94 "codegen/gmatrix1.override"
 
 /* inserted verbatim at the end */
 
@@ -1700,4 +1703,4 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
 }
 
 
-#line 1704 "gmatrix1.c"
+#line 1707 "gmatrix1.c"

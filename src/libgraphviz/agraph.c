@@ -68,6 +68,7 @@ NspTypeAgraph *new_type_agraph(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = agraph_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_agraph;
 
 
@@ -254,7 +255,7 @@ void nsp_agraph_destroy_partial(NspAgraph *H)
    /* verbatim in destroy */
    agclose(H->obj->graph);
    
-#line 258 "agraph.c"
+#line 259 "agraph.c"
     FREE(H->obj);
    }
 }
@@ -506,7 +507,7 @@ int int_agraph_create(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
-#line 510 "agraph.c"
+#line 511 "agraph.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -563,7 +564,7 @@ static int _wrap_nsp_gv_aginsert(NspAgraph *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 567 "agraph.c"
+#line 568 "agraph.c"
 
 
 #line 236 "../types-test/codegen/agraph.override"
@@ -575,7 +576,7 @@ static int _wrap_nsp_gv_agset_g(NspAgraph *self,Stack stack,int rhs,int opt,int 
 } 
 
 
-#line 579 "agraph.c"
+#line 580 "agraph.c"
 
 
 static int _wrap_nsp_gv_layout(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -651,7 +652,7 @@ static int _wrap_nsp_gv_gattr(NspAgraph *self,Stack stack,int rhs,int opt,int lh
 }
 
 
-#line 655 "agraph.c"
+#line 656 "agraph.c"
 
 
 static int _wrap_nsp_gv_graphattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -671,7 +672,7 @@ static int _wrap_nsp_gv_nattr(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agnodeattr,"node");
 }
 
-#line 675 "agraph.c"
+#line 676 "agraph.c"
 
 
 static int _wrap_nsp_gv_nodeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -691,7 +692,7 @@ static int _wrap_nsp_gv_eattr(NspAgraph *self,Stack stack,int rhs,int opt,int lh
   return _wrap_nsp_gv_gattr_gen(self,stack,rhs,opt,lhs,agedgeattr,"edge");
 }
 
-#line 695 "agraph.c"
+#line 696 "agraph.c"
 
 
 static int _wrap_nsp_gv_edgeattrs(NspAgraph *self,Stack stack,int rhs,int opt,int lhs)
@@ -962,6 +963,7 @@ NspTypeAgnode *new_type_agnode(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = agnode_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_agnode;
 
 
@@ -1386,7 +1388,7 @@ static int _wrap_nsp_gv_agget(NspAgnode *self,Stack stack,int rhs,int opt,int lh
   return 1;
 }
 
-#line 1390 "agraph.c"
+#line 1392 "agraph.c"
 
 
 #line 227 "../types-test/codegen/agraph.override"
@@ -1397,7 +1399,7 @@ static int _wrap_nsp_gv_agset_n(NspAgnode *self,Stack stack,int rhs,int opt,int 
   return _wrap_nsp_gv_agset_gen(self->obj->node,stack,rhs,opt,lhs);
 } 
 
-#line 1401 "agraph.c"
+#line 1403 "agraph.c"
 
 
 static NspMethods agnode_methods[] = {
@@ -1453,6 +1455,7 @@ NspTypeAgedge *new_type_agedge(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = agedge_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_agedge;
 
 
@@ -1911,6 +1914,7 @@ NspTypeAgsym *new_type_agsym(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = agsym_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_agsym;
 
 
@@ -2421,6 +2425,7 @@ NspTypeAgdisc *new_type_agdisc(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = agdisc_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_agdisc;
 
 
@@ -3423,4 +3428,4 @@ static int _wrap_nsp_gv_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs)
   return 0;
 } 
 
-#line 3427 "agraph.c"
+#line 3432 "agraph.c"

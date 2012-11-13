@@ -58,6 +58,7 @@ NspTypeBlock *new_type_block(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = block_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_block;
 
   top = NSP_TYPE_OBJECT(type->surtype);

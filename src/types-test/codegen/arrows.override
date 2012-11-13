@@ -32,9 +32,9 @@ Init portion
 
 %%
 override-type Arrows
-  /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_arrows;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_arrows ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_arrows  ;

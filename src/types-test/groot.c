@@ -70,6 +70,7 @@ NspTypeGRoot *new_type_groot(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = groot_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_groot;
 
 
@@ -571,4 +572,4 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 #line 19 "codegen/groot.override"
 
 
-#line 575 "groot.c"
+#line 576 "groot.c"

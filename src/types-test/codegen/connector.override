@@ -96,6 +96,8 @@ Init portion
 %%
 override-type Connector
   /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_connector;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_connector ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_connector  ;

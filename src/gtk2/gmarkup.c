@@ -72,6 +72,7 @@ NspTypeGMarkupNode *new_type_gmarkup_node(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = gmarkup_node_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_gmarkup_node;
 
   

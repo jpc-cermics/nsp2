@@ -77,6 +77,7 @@ NspTypeContour *new_type_contour(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = contour_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_contour;
 
 
@@ -110,6 +111,8 @@ NspTypeContour *new_type_contour(type_mode mode)
 
 #line 47 "codegen/contour.override"
   /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_contour;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_contour ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_contour  ;
@@ -119,7 +122,7 @@ NspTypeContour *new_type_contour(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 123 "contour.c"
+#line 126 "contour.c"
   /* 
    * NspContour interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -825,7 +828,7 @@ static AttrTab contour_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 68 "codegen/contour.override"
+#line 70 "codegen/contour.override"
 
 extern function int_nspgraphic_extract;
 
@@ -834,10 +837,10 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 838 "contour.c"
+#line 841 "contour.c"
 
 
-#line 78 "codegen/contour.override"
+#line 80 "codegen/contour.override"
 
 extern function int_graphic_set_attribute;
 
@@ -846,7 +849,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 850 "contour.c"
+#line 853 "contour.c"
 
 
 /*----------------------------------------------------
@@ -877,7 +880,7 @@ void Contour_Interf_Info(int i, char **fname, function (**f))
   *f = Contour_func[i].fonc;
 }
 
-#line 88 "codegen/contour.override"
+#line 90 "codegen/contour.override"
 
 static void nsp_draw_contour(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
@@ -956,4 +959,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 960 "contour.c"
+#line 963 "contour.c"

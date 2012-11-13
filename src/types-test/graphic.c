@@ -75,6 +75,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = graphic_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_graphic;
 
 
@@ -107,12 +108,12 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->init = (init_func *) init_graphic;
 
 #line 76 "codegen/graphic.override"
-
   /* inserted verbatim in the type definition 
    * here we define the default values for graphic methods 
    * these methods of class Graphic are to be re-defined by subclasses 
    * if necessary.
    */
+  type->gtk_methods = TRUE;
   type->draw = NULL;
   type->translate = NULL;
   type->rotate = NULL;
@@ -125,7 +126,7 @@ NspTypeGraphic *new_type_graphic(type_mode mode)
   type->n_faces = NULL;
   type->invalidate = nsp_graphic_invalidate;
 
-#line 129 "graphic.c"
+#line 130 "graphic.c"
   /* 
    * NspGraphic interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -542,7 +543,7 @@ static int _wrap_graphic_translate(NspGraphic *self,Stack stack,int rhs,int opt,
   return 0;
 }
 
-#line 546 "graphic.c"
+#line 547 "graphic.c"
 
 
 #line 111 "codegen/graphic.override"
@@ -557,7 +558,7 @@ static int _wrap_graphic_scale(NspGraphic *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 561 "graphic.c"
+#line 562 "graphic.c"
 
 
 #line 124 "codegen/graphic.override"
@@ -571,7 +572,7 @@ static int _wrap_graphic_rotate(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 575 "graphic.c"
+#line 576 "graphic.c"
 
 
 #line 146 "codegen/graphic.override"
@@ -583,7 +584,7 @@ static int _wrap_graphic_unlink(NspGraphic *self,Stack stack,int rhs,int opt,int
   return 0;
 }
 
-#line 587 "graphic.c"
+#line 588 "graphic.c"
 
 
 #line 136 "codegen/graphic.override"
@@ -595,7 +596,7 @@ static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt
   return 0;
 }
 
-#line 599 "graphic.c"
+#line 600 "graphic.c"
 
 
 static int _wrap_graphic_get_bounds(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
@@ -971,4 +972,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 975 "graphic.c"
+#line 976 "graphic.c"

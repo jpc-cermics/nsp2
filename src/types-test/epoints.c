@@ -68,6 +68,7 @@ NspTypeEpoints *new_type_epoints(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = epoints_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_epoints;
 
 
@@ -102,7 +103,7 @@ NspTypeEpoints *new_type_epoints(type_mode mode)
 #line 30 "codegen/epoints.override"
   /* inserted verbatim in the type definition */
 
-#line 106 "epoints.c"
+#line 107 "epoints.c"
   /* 
    * NspEpoints interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -615,4 +616,4 @@ void nsp_epoints_table_remove_entries(int shid)
 }
 
 
-#line 619 "epoints.c"
+#line 620 "epoints.c"

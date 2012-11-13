@@ -72,6 +72,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = grstring_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_grstring;
 
 
@@ -104,9 +105,9 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   type->init = (init_func *) init_grstring;
 
 #line 37 "codegen/grstring.override"
-  /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grstring;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grstring ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grstring  ;
@@ -116,7 +117,7 @@ NspTypeGrstring *new_type_grstring(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 120 "grstring.c"
+#line 121 "grstring.c"
   /* 
    * NspGrstring interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -864,7 +865,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 868 "grstring.c"
+#line 869 "grstring.c"
 
 
 #line 69 "codegen/grstring.override"
@@ -877,7 +878,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 881 "grstring.c"
+#line 882 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -1265,4 +1266,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1269 "grstring.c"
+#line 1270 "grstring.c"

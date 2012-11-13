@@ -84,6 +84,7 @@ NspTypeSciFile *new_type_file(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods =nsp_file_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *)nsp_new_file;
 
   top = NSP_TYPE_OBJECT(type->surtype);

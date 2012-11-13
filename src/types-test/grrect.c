@@ -71,6 +71,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = grrect_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_grrect;
 
 
@@ -103,9 +104,9 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   type->init = (init_func *) init_grrect;
 
 #line 38 "codegen/grrect.override"
-  /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grrect;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grrect ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grrect  ;
@@ -115,7 +116,7 @@ NspTypeGrRect *new_type_grrect(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 119 "grrect.c"
+#line 120 "grrect.c"
   /* 
    * NspGrRect interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -747,7 +748,7 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 751 "grrect.c"
+#line 752 "grrect.c"
 
 
 #line 71 "codegen/grrect.override"
@@ -760,7 +761,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 764 "grrect.c"
+#line 765 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -1015,4 +1016,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1019 "grrect.c"
+#line 1020 "grrect.c"

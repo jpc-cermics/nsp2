@@ -73,12 +73,12 @@ typedef void invalidate_func(NspGraphic *G);
 
 %%
 override-type Graphic
-
   /* inserted verbatim in the type definition 
    * here we define the default values for graphic methods 
    * these methods of class Graphic are to be re-defined by subclasses 
    * if necessary.
    */
+  type->gtk_methods = TRUE;
   type->draw = NULL;
   type->translate = NULL;
   type->rotate = NULL;

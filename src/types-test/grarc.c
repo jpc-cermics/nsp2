@@ -72,6 +72,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = grarc_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_grarc;
 
 
@@ -104,9 +105,9 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
   type->init = (init_func *) init_grarc;
 
 #line 39 "codegen/grarc.override"
-  /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_grarc;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_grarc ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_grarc  ;
@@ -116,7 +117,7 @@ NspTypeGrArc *new_type_grarc(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 120 "grarc.c"
+#line 121 "grarc.c"
   /* 
    * NspGrArc interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -804,7 +805,7 @@ int _wrap_nsp_extractelts_grarc(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 808 "grarc.c"
+#line 809 "grarc.c"
 
 
 #line 71 "codegen/grarc.override"
@@ -817,7 +818,7 @@ int _wrap_nsp_setrowscols_grarc(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 821 "grarc.c"
+#line 822 "grarc.c"
 
 
 /*----------------------------------------------------
@@ -1043,4 +1044,4 @@ static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P)
 }
 
 
-#line 1047 "grarc.c"
+#line 1048 "grarc.c"

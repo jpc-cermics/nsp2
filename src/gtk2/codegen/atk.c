@@ -63,6 +63,7 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkhyperlink_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkhyperlink;
 
   /* specific methods for atkhyperlink */
@@ -339,6 +340,7 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkobject_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkobject;
 
   /* specific methods for atkobject */
@@ -728,6 +730,7 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atknoopobject_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atknoopobject;
 
   /* specific methods for atknoopobject */
@@ -947,6 +950,7 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkobjectfactory_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkobjectfactory;
 
   /* specific methods for atkobjectfactory */
@@ -1176,6 +1180,7 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atknoopobjectfactory_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atknoopobjectfactory;
 
   /* specific methods for atknoopobjectfactory */
@@ -1392,6 +1397,7 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkregistry_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkregistry;
 
   /* specific methods for atkregistry */
@@ -1646,6 +1652,7 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkrelation_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkrelation;
 
   /* specific methods for atkrelation */
@@ -1845,7 +1852,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1849 "atk.c"
+#line 1856 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -1906,6 +1913,7 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkrelationset_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkrelationset;
 
   /* specific methods for atkrelationset */
@@ -2208,6 +2216,7 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkstateset_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkstateset;
 
   /* specific methods for atkstateset */
@@ -2527,6 +2536,7 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = atkutil_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkutil;
 
   /* specific methods for atkutil */
@@ -3081,7 +3091,7 @@ atk_register_classes(NspObject *d)
   }
 
 
-#line 3085 "atk.c"
+#line 3095 "atk.c"
   nspgobject_register_class(d, "AtkHyperlink", ATK_TYPE_HYPERLINK, &PyAtkHyperlink_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkObject", ATK_TYPE_OBJECT, &PyAtkObject_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkNoOpObject", ATK_TYPE_NO_OP_OBJECT, &PyAtkNoOpObject_Type, Py_BuildValue("(O)", &PyAtkObject_Type));

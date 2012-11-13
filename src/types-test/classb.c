@@ -67,6 +67,7 @@ NspTypeClassB *new_type_classb(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = classb_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_classb;
 
 
@@ -531,7 +532,7 @@ static int _wrap_classb_color_change(NspClassB *self,Stack stack,int rhs,int opt
   self->clb_color = color;
   return 0;
 }
-#line 535 "classb.c"
+#line 536 "classb.c"
 
 
 #line 29 "codegen/classb.override"
@@ -542,7 +543,7 @@ static int _wrap_classb_color_show(NspClassB *self,Stack stack,int rhs,int opt,i
 }
 
 
-#line 546 "classb.c"
+#line 547 "classb.c"
 
 
 static NspMethods classb_methods[] = {
@@ -656,4 +657,4 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *f = ClassB_func[i].fonc;
 }
 
-#line 660 "classb.c"
+#line 661 "classb.c"

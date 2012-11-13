@@ -94,6 +94,7 @@ class Wrapper:
               '  type->get_attrs = (attrs_func *) %(tp_getattr)s;\n'  \
               '  type->set_attrs = (attrs_func *) %(tp_setattr)s;\n'  \
               '  type->methods = %(typename_dc)s_get_methods;\n'  \
+              '  type->gtk_methods = FALSE;\n'  \
               '  type->new = (new_func *) new_%(typename_dc)s;\n'  \
               '\n'  \
               '\n'  \

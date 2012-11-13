@@ -58,6 +58,7 @@ NspTypeGPointer *new_type_gpointer(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = gpointer_get_methods; 
+  type->gtk_methods = TRUE;
   type->new = (new_func *) new_gpointer;
   
   top = NSP_TYPE_OBJECT(type->surtype);

@@ -71,6 +71,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = polyline_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_polyline;
 
 
@@ -103,9 +104,9 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   type->init = (init_func *) init_polyline;
 
 #line 34 "codegen/polyline.override"
-  /* inserted verbatim in the type definition 
-   * here we override the method og its father class i.e Graphic
-   */
+  /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_polyline;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_polyline ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_polyline  ;
@@ -115,7 +116,7 @@ NspTypePolyline *new_type_polyline(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 119 "polyline.c"
+#line 120 "polyline.c"
   /* 
    * NspPolyline interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -797,7 +798,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 801 "polyline.c"
+#line 802 "polyline.c"
 
 
 #line 66 "codegen/polyline.override"
@@ -810,7 +811,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 814 "polyline.c"
+#line 815 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -1004,4 +1005,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1008 "polyline.c"
+#line 1009 "polyline.c"

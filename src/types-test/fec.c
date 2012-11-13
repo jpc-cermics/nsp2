@@ -79,6 +79,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute;
   type->set_attrs = (attrs_func *) int_set_attribute;
   type->methods = fec_get_methods;
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_fec;
 
 
@@ -112,6 +113,8 @@ NspTypeFec *new_type_fec(type_mode mode)
 
 #line 55 "codegen/fec.override"
   /* inserted verbatim in the type definition */
+  type->gtk_methods = TRUE;
+  /* here we override the method or its father class i.e Graphic */
   ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_fec;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_fec ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_fec  ;
@@ -121,7 +124,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 125 "fec.c"
+#line 128 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -995,7 +998,7 @@ static AttrTab fec_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 75 "codegen/fec.override"
+#line 77 "codegen/fec.override"
 
 extern function int_nspgraphic_extract;
 
@@ -1004,10 +1007,10 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1008 "fec.c"
+#line 1011 "fec.c"
 
 
-#line 85 "codegen/fec.override"
+#line 87 "codegen/fec.override"
 
 extern function int_graphic_set_attribute;
 
@@ -1016,7 +1019,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1020 "fec.c"
+#line 1023 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1047,7 +1050,7 @@ void Fec_Interf_Info(int i, char **fname, function (**f))
   *f = Fec_func[i].fonc;
 }
 
-#line 95 "codegen/fec.override"
+#line 97 "codegen/fec.override"
 
 /* inserted verbatim at the end */
 
@@ -1581,4 +1584,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1585 "fec.c"
+#line 1588 "fec.c"

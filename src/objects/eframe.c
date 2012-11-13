@@ -71,6 +71,7 @@ NspTypeFrame *new_type_frame(type_mode mode)
   type->get_attrs = (attrs_func *) int_get_attribute; 
   type->set_attrs = (attrs_func *) int_set_attribute; 
   type->methods = frame_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_frame;
 
   top = NSP_TYPE_OBJECT(type->surtype);

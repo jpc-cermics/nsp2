@@ -78,6 +78,7 @@ NspTypeSwigVarLink *new_type_swigvarlink(type_mode mode)
   type->get_attrs = (attrs_func *) int_swigvarlink_get_attribute; 
   type->set_attrs = (attrs_func *) int_swigvarlink_set_attribute;
   type->methods = swigvarlink_get_methods; 
+  type->gtk_methods = FALSE;
   type->new = (new_func *) new_swigvarlink;
 
   

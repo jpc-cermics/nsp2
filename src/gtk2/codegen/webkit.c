@@ -87,6 +87,7 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = webkitwebview_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebview;
 
   /* specific methods for webkitwebview */
@@ -684,6 +685,7 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = webkitwebframe_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebframe;
 
   /* specific methods for webkitwebframe */
@@ -1004,6 +1006,7 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = webkitwebhistoryitem_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebhistoryitem;
 
   /* specific methods for webkitwebhistoryitem */
@@ -1285,6 +1288,7 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = webkitwebbackforwardlist_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebbackforwardlist;
 
   /* specific methods for webkitwebbackforwardlist */
@@ -1670,6 +1674,7 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = webkitwebsettings_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebsettings;
 
   /* specific methods for webkitwebsettings */
@@ -1903,6 +1908,7 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
   type->get_attrs = (attrs_func *)  int_get_attribute;
   type->set_attrs = (attrs_func *)  int_set_attribute;
   type->methods = webkitnetworkrequest_get_methods; 
+  type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitnetworkrequest;
 
   /* specific methods for webkitnetworkrequest */
@@ -2153,7 +2159,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2157 "webkit.c"
+#line 2163 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));
