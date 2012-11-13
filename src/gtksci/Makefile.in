@@ -64,4 +64,5 @@ threads.o :  ../include/nsp/nspthreads.h
 # generated with gcc -MMD 
 #--------------------------
 
+include Makefile.deps
 

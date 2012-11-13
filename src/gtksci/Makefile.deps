@@ -1,0 +1,117 @@
+about.o: about.c    ../include/nsp/config.h \
+ ../include/nsp/package_undef.h nsp-logo.xpm nsp-gw.xpm
+command.o: command.c ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/machine.h \
+ ../include/nsp/config.h ../include/nsp/package_undef.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/objectf.h ../include/nsp/object-inlined.h \
+ ../include/nsp/smatrix.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/list.h \
+ ../include/nsp/command.h
+edit.o: edit.c ../include/nsp/config.h \
+ ../include/nsp/package_undef.h gtksourceview.c \
+ ../include/nsp/object.h ../include/nsp/math.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/string.h ../include/nsp/index.h \
+ ../include/nsp/xdr.h ../include/nsp/intsf.h \
+ ../include/nsp/objectf.h ../include/nsp/object-inlined.h \
+ ../include/nsp/smatrix.h ../include/nsp/sciio.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/plist.h \
+ ../include/nsp/ints.h ../include/nsp/bhash.h \
+ ../include/nsp/parse.h ../include/nsp/eval.h \
+ ../include/nsp/nsptcl.h ../include/nsp/stack.h \
+ ../include/nsp/interf.h ../include/nsp/dstring.h \
+ ../include/nsp/system.h
+eggfindbar.o: eggfindbar.c    eggfindbar.h
+helpwebkit.o: helpwebkit.c    ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/gtksci.h \
+ ../include/nsp/system.h ../include/nsp/hash.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/file.h ../include/nsp/smatrix.h \
+ ../system/regexp.h ../include/nsp/dstring.h eggfindbar.h \
+ ../include/nsp/interf.h ../include/nsp/nsptcl.h \
+ ../include/nsp/stack.h ../include/nsp/nspthreads.h
+io.o: io.c  ../include/nsp/math.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/gtksci.h \
+ ../include/nsp/sciio.h ../include/nsp/objectf.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h
+menus.o: menus.c    ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/command.h \
+ ../include/nsp/graphics-new/periGtk.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/graphics-new/perigen.h \
+ ../include/nsp/graphics-new/scale.h \
+ ../include/nsp/graphics-new/actions.h \
+ ../include/nsp/graphics-new/driver.h \
+ ../include/nsp/graphics-new/gcscale.h \
+ ../include/nsp/menus.h \
+ ../include/nsp/graphics-new/Graphics.h \
+ ../include/nsp/objects.h ../include/nsp/matrix.h \
+ ../include/nsp/complex.h ../include/nsp/matrix-inlined.h \
+ ../include/nsp/bmatrix.h ../include/nsp/smatrix.h \
+ ../include/nsp/imatrix.h ../include/nsp/ints.h \
+ ../include/nsp/matint.h ../include/nsp/list.h \
+ ../include/nsp/hobj.h ../include/nsp/hash.h \
+ ../include/nsp/type.h ../include/nsp/file.h \
+ ../include/nsp/gtk/gtkcombobox.h \
+ ../include/nsp/gtk/gtkbin.h \
+ ../include/nsp/gtk/gtkcontainer.h \
+ ../include/nsp/gtk/gtkwidget.h \
+ ../include/nsp/gtk/gtkobject.h \
+ ../include/nsp/gtk/gobject.h ../include/nsp/system.h \
+ ../include/nsp/gtksci.h ../include/nsp/nsptcl.h \
+ ../include/nsp/stack.h ../include/nsp/interf.h \
+ ../include/nsp/dstring.h
+queue.o: queue.c  queue.h
+testtext1.o: testtext1.c ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/file.h \
+ ../include/nsp/sciio.h ../include/nsp/user-prefs.h \
+ ../include/nsp/tokenizer.h ../include/nsp/plisttoken.h \
+ ../include/nsp/smatrix.h ../include/nsp/gtksci.h \
+ ../include/nsp/command.h ../include/nsp/eval.h \
+ ../include/nsp/nspthreads.h    ../include/nsp/interf.h \
+ 
+threads.o: threads.c ../include/nsp/nspthreads.h \
+ ../include/nsp/nsp.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h ../include/nsp/object.h \
+ ../include/nsp/math.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/objectf.h \
+ ../include/nsp/object-inlined.h ../include/nsp/interf.h
+x_main.o: x_main.c ../include/nsp/version.h \
+ ../include/nsp/machine.h ../include/nsp/config.h \
+ ../include/nsp/package_undef.h \
+     ../include/nsp/sciio.h \
+ ../include/nsp/objectf.h ../include/nsp/math.h \
+ ../include/nsp/user-prefs.h ../include/nsp/tokenizer.h \
+ ../include/nsp/plisttoken.h ../include/nsp/system.h \
+ ../include/nsp/gtksci.h ../include/nsp/nsptcl.h \
+ ../include/nsp/stack.h ../include/nsp/interf.h \
+ ../include/nsp/object.h ../include/nsp/string.h \
+ ../include/nsp/index.h ../include/nsp/xdr.h \
+ ../include/nsp/intsf.h ../include/nsp/object-inlined.h \
+ ../include/nsp/dstring.h   
