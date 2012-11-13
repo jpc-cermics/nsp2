@@ -46,6 +46,7 @@
 #include <nsp/libstab.h> 
 #include <nsp/funtab.h>
 #include <nsp/nspdatas.h>
+#include <nsp/nspthreads.h>
 
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
 static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
@@ -252,9 +253,21 @@ int nsp_eval_method(char *str, Stack stack, int first, int rhs, int opt, int lhs
   stack.first = first+1; 
   rhs--;
   NspFname(stack) = str;
-  /* next step would be to accept soft coded methods: XXX */
+  /* XXX To be done: next step would be to accept soft coded methods: */
   HOBJ_GET_OBJECT(ob,RET_BUG);
+  
+#ifdef NSP_WITH_MAIN_GTK_THREAD
+  if ( IsGOobject(ob) )
+    {
+      ret =  nsp_exec_method_util_gtk_thread(ob,ob->basetype,str,stack,rhs,opt,lhs);
+    }
+  else
+    {
+      ret =  nsp_exec_method_util(ob,ob->basetype,str,stack,rhs,opt,lhs);
+    }
+#else
   ret =  nsp_exec_method_util(ob,ob->basetype,str,stack,rhs,opt,lhs);
+#endif 
   
   if ( ret == RET_BUG ) 
     {

@@ -14,7 +14,17 @@ typedef struct _nsp_thread_interface nsp_thread_interface;
 struct _nsp_thread_interface {
   Stack *stack;
   function *fun;
-  int i,rhs, opt, lhs, ans;
+  int i, rhs, opt, lhs, ans;
+  GAsyncQueue *queue;
+};
+
+typedef struct _nsp_thread_method nsp_thread_method;
+
+struct _nsp_thread_method {
+  Stack *stack;
+  NspObject *Obj;
+  nsp_method *fun;
+  int rhs, opt, lhs, ans;
   GAsyncQueue *queue;
 };
 
@@ -34,6 +44,8 @@ extern int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack,
 						 int rhs, int opt, int lhs);
 extern int nsp_new_interp(GThread *thread,int argc,char **argv);
 
+extern int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,
+					      Stack *stack, int rhs, int opt, int lhs);
 
 #endif 
 

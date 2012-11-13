@@ -297,7 +297,8 @@ struct _NspMethods {
 };
 
 extern int method_search(char *key, NspMethods *Table);
-int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs);
+extern int nsp_exec_method_util(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs);
+extern int nsp_exec_method_util_gtk_thread(NspObject *ob,NspTypeBase *type,char *method, Stack stack, int rhs, int opt, int lhs);
 
 /*
  * needed in object definitions 

@@ -48,9 +48,9 @@ static gboolean nsp_interface_idle_in_main_thread(gpointer user_data)
 {
   nsp_thread_interface *data = user_data;
   gdk_threads_enter();
-  printf("-->execution of interface %d in the main gtk thread (through idle)\n",data->i);
+  printf("-->execution of method %d in the main gtk thread (through idle)\n",data->i);
   data->ans = (*(data->fun))(*(data->stack), data->rhs, data->opt, data->lhs);
-  printf("<--execution of interface %d in the main gtk thread (through idle)\n",data->i);
+  printf("<--execution of method %d in the main gtk thread (through idle)\n",data->i);
   gdk_threads_leave();
   g_async_queue_push(data->queue,data);
   return FALSE;
@@ -101,6 +101,79 @@ int nsp_interface_executed_in_main_thread(int i, function f,Stack *stack, int rh
   printf("<--Quit the idle \n");
   return data.ans;
 }
+
+
+/**
+ * nsp_method_idle_in_main_thread:
+ * @user_data: a gpointer 
+ * 
+ * Utility function executed once by gtk main thread through 
+ * a idle_add.
+ *
+ * Returns: FALSE 
+ **/
+
+static gboolean nsp_method_idle_in_main_thread(gpointer user_data)
+{
+  nsp_thread_method *data = user_data;
+  gdk_threads_enter();
+  printf("-->execution of a method in the main gtk thread (through idle)\n");
+  data->ans = (*(data->fun))(data->Obj,*(data->stack), data->rhs, data->opt, data->lhs);
+  printf("<--execution of a method in the main gtk thread (through idle)\n");
+  gdk_threads_leave();
+  g_async_queue_push(data->queue,data);
+  return FALSE;
+}
+
+/**
+ * nsp_method_executed_in_main_thread:
+ * @i: integer 
+ * @f: method function 
+ * @stack: nsp execution stack
+ * @rhs: integer 
+ * @opt: integer 
+ * @lhs: integer 
+ * 
+ * call an nsp method but the call is executed through g_idle_add
+ * to force the execution in the main gtk thread. 
+ * TO BE DONE ? : only one thread should call this function.
+ *
+ * Returns: an integer 
+ **/
+
+int nsp_method_executed_in_main_thread(NspObject *Ob, nsp_method f,Stack *stack, 
+				       int rhs, int opt, int lhs)
+{
+  static GAsyncQueue *queue = NULL;
+  nsp_thread_method data = {stack,Ob,f,rhs,opt,lhs,0,queue};
+  /* checks if we are already in gtk thread */
+  if ( g_thread_self() == nsp_gtk_main_thread())
+    {
+      int n;
+      printf("-->direct call of method since we are in main gtk thread\n");
+      gdk_threads_enter();  
+      n= (*f)(Ob,*stack,rhs,opt,lhs);
+      gdk_threads_leave();  
+      printf("<--quit the direct call\n");
+      return n;
+    }
+  
+  if ( queue == NULL) 
+    {
+      queue= g_async_queue_new ();
+      data.queue = queue;
+    }
+  printf("-->Add a idle to execute stuff in main gtk thread\n");
+  g_idle_add( nsp_method_idle_in_main_thread,(gpointer) &data);
+  printf("-->Block until async queue pushed\n");
+  g_async_queue_pop(data.queue);
+  printf("<--Quit the async queue returning %d\n",data.ans);
+  printf("<--Quit the idle \n");
+  return data.ans;
+}
+
+
+
 
 /**
  * nsp_gtk_main_thread:
