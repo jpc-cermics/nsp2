@@ -112,6 +112,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   /* inserted verbatim in the type definition */
   type->gtk_methods = TRUE;
   /* here we override the method or its father class i.e Graphic */
+  ((NspTypeGraphic *) type->surtype)->draw = nsp_draw_gmatrix;
   ((NspTypeGraphic *) type->surtype)->translate =nsp_translate_gmatrix ;
   ((NspTypeGraphic *) type->surtype)->rotate =nsp_rotate_gmatrix  ;
   ((NspTypeGraphic *) type->surtype)->scale =nsp_scale_gmatrix  ;
@@ -120,7 +121,7 @@ NspTypeGMatrix *new_type_gmatrix(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 124 "gmatrix.c"
+#line 125 "gmatrix.c"
   /* 
    * NspGMatrix interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -774,7 +775,7 @@ static AttrTab gmatrix_attrs[] = {
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 63 "codegen/gmatrix.override"
+#line 64 "codegen/gmatrix.override"
 
 extern function int_nspgraphic_extract;
 
@@ -783,10 +784,10 @@ int _wrap_nsp_extractelts_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 787 "gmatrix.c"
+#line 788 "gmatrix.c"
 
 
-#line 73 "codegen/gmatrix.override"
+#line 74 "codegen/gmatrix.override"
 
 extern function int_graphic_set_attribute;
 
@@ -795,7 +796,7 @@ int _wrap_nsp_setrowscols_gmatrix(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 799 "gmatrix.c"
+#line 800 "gmatrix.c"
 
 
 /*----------------------------------------------------
@@ -826,7 +827,7 @@ void GMatrix_Interf_Info(int i, char **fname, function (**f))
   *f = GMatrix_func[i].fonc;
 }
 
-#line 83 "codegen/gmatrix.override"
+#line 84 "codegen/gmatrix.override"
 
 /* inserted verbatim at the end */
 
@@ -964,4 +965,4 @@ static int nsp_getbounds_gmatrix (NspGraphic *Obj,double *bounds)
 }
 
 
-#line 968 "gmatrix.c"
+#line 969 "gmatrix.c"
