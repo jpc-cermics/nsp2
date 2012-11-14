@@ -1,9 +1,7 @@
 /* -*- Mode: C; 
  *  test-widget.c
  *
- *  Copyright (C) 2001
- *  Mikael Hermansson<tyan@linux.se>
- *
+ *  Copyright (C) 2001 -  Mikael Hermansson<tyan@linux.se>
  *  Copyright (C) 2003 - Gustavo Giráldez <gustavo.giraldez@gmx.net>
  *
  *  This program is free software; you can redistribute it and/or modify
@@ -23,8 +21,7 @@
  *  This file is a modified version of the test-widget.c file of gtksourceview 
  *  with added functionality for nsp. Some of them inherited from testext.c demo file 
  *  from the gtk distribution (see gtktextview.c).
- *  Copyright (C) 2010-2011 Jean-Philippe Chancelier Enpc/Cermics
- *  
+ *  Copyright (C) 2010-2012 Jean-Philippe Chancelier Enpc/Cermics
  *  
  */
 
