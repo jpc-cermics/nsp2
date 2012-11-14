@@ -17,18 +17,14 @@
  * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
  * Boston, MA 02111-1307, USA.
  *
- * about
+ * activate the about widget
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <gtk/gtk.h>
 #define KEEP_PACKAGE
-#include <nsp/config.h>
+#include <nsp/nsp.h>
 #include "nsp-logo.xpm" 
-/* #include "nsp-gw.xpm"  */
 
 void create_nsp_about(void)
 {
