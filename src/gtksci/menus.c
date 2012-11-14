@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2001-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -791,42 +791,60 @@ static void * nsp_window_create_initial_menu(void)
   return m;
 }
 
-/**************************************************************
- * predefined actions for menus 
- **************************************************************/
 
-/*-----------------------------------------------------------------
- * To clear the graphic window and clear the recorded graphics 
- * w and client_data are unused 
- *-----------------------------------------------------------------*/
+
+
+/**
+ * nspg_menu_erase:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * clear the graphic window and clear the recorded graphics 
+ * 
+ **/
 
 static void nspg_menu_erase(BCG *Xgc, int winid) 
 {
   if ( Xgc != NULL )  Xgc->actions->erase(Xgc);
-
 }
 
-/*----------------------------------------------
- * To select the graphic window 
- -----------------------------------------------*/
+/**
+ * nspg_menu_select:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * selects the graphic window @Xgc 
+ * 
+ **/
 
 static void nspg_menu_select(BCG *Xgc, int winid)
 {
   if ( Xgc != NULL )  Xgc->actions->select(Xgc);
 }
 
-/*----------------------------------------------
- * To delete the graphic window 
- -----------------------------------------------*/
+/**
+ * nspg_menu_delete:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * delete a graphic window 
+ * 
+ * Returns: 
+ **/
 
 static void nspg_menu_delete(BCG *Xgc, int winid) 
 {
   if ( Xgc != NULL )  Xgc->actions->destroy(Xgc);
 }
 
-/*-----------------------------------------------------------------*
- * Replot in Postscript style and send to printer 
- *-----------------------------------------------------------------*/
+
+/**
+ * nspg_menu_print:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * 
+ **/
 
 /* for use inside menus */
 #if TEST_GTK_PRINT
@@ -857,17 +875,20 @@ static void nspg_menu_print(BCG *Xgc, int winid)
      system(bufname);
   */
 #endif 
-
 }
-
 
 void nspg_print(int winid) 
 {
   nspg_menu_print(NULL, winid);
 }
 
-/* activate a gtk dialog fro graphic export 
- */
+/**
+ * nspg_menu_export:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ *
+ * activate a gtk dialog fro graphic export 
+ **/
 
 static void nspg_menu_export(BCG *Xgc, int winid)
 {
@@ -914,9 +935,13 @@ static void nspg_menu_export(BCG *Xgc, int winid)
   nsp_string_destroy(&fname);
 }
 
-/*-----------------------------------------------------------------*
- * Binary File save 
- *-----------------------------------------------------------------*/
+/**
+ * nspg_menu_save:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * save a graphic window
+ **/
 
 static void nspg_menu_save(BCG *Xgc, int winid) 
 {
@@ -929,9 +954,12 @@ static void nspg_menu_save(BCG *Xgc, int winid)
     }
 }
 
-/*-----------------------------------------------------------------*
- * Binary File load 
- *-----------------------------------------------------------------*/
+/**
+ * nspg_menu_load:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ **/
 
 static void nspg_menu_load(BCG *Xgc, int winid) 
 {
@@ -946,6 +974,7 @@ static void nspg_menu_load(BCG *Xgc, int winid)
 
 /**
  * nsp_menu_file_exec:
+ * @void: 
  * 
  * run the exec nsp command on selected file.
  **/
@@ -966,6 +995,7 @@ static void nsp_menu_file_exec(void)
 
 /**
  * nsp_menu_file_load:
+ * @void: 
  * 
  * run the load nsp command on selected file.
  **/
@@ -986,6 +1016,7 @@ static void nsp_menu_file_load(void)
 
 /**
  * nsp_menu_chdir:
+ * @void: 
  * 
  * run the chdir nsp command on selected path.
  **/
@@ -1015,11 +1046,14 @@ static void nsp_menu_pwd(void)
   enqueue_nsp_command("pwd");
 }
 
-
-
-/*-----------------------------------------------------------------**
- * 2D Zoom calback 
- *-----------------------------------------------------------------*/
+/**
+ * nspg_menu_zoom:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * 2D zoom callback 
+ * 
+ **/
 
 static void nspg_menu_zoom(BCG *Xgc, int winid) 
 {
@@ -1037,10 +1071,14 @@ static void nspg_menu_zoom(BCG *Xgc, int winid)
   nsp_menus_set_unset(winid,"File",ne,TRUE);
 }
 
-
-/*-----------------------------------------------------------------
- * Unzoom Callback 
- *-----------------------------------------------------------------*/
+/**
+ * nspg_menu_unzoom:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * unzoom callback 
+ * 
+ **/
 
 static void nspg_menu_unzoom(BCG *Xgc, int winid) 
 {
@@ -1052,10 +1090,13 @@ static void nspg_menu_unzoom(BCG *Xgc, int winid)
   nsp_menus_set_unset(winid,"UnZoom",ne,TRUE);
 }
 
-
-/*-----------------------------------------------------------------
- * 3D Rotation callback 
- *-----------------------------------------------------------------*/
+/**
+ * nspg_menu_rot3d:
+ * @Xgc: a graphic context 
+ * @winid: an integer 
+ * 
+ * 3D rotation callback 
+ **/
 
 static void nspg_menu_rot3d(BCG *Xgc, int winid) 
 {
@@ -1073,31 +1114,38 @@ static void nspg_menu_rot3d(BCG *Xgc, int winid)
   nsp_menus_set_unset(winid,"File",ne,TRUE);
 }
 
-
-/*-----------------------------------------------------------------
- * kill scilab 
- *-----------------------------------------------------------------*/
+/**
+ * nsp_menu_kill:
+ * @void: 
+ * 
+ * kill application 
+ **/
 
 static void nsp_menu_kill(void)
 {
   sci_clear_and_exit(1);
 }
 
-/*-----------------------------------------------------------------
- * make a stop 
- *-----------------------------------------------------------------*/
+/**
+ * nsp_menu_stop:
+ * @void: 
+ * 
+ * stops execution.
+ **/
 
 static void nsp_menu_stop (void)
 {
   /* int j = SIGINT; */ 
-  Sciprintf("sci_menu_stop: to be done \n");
-  /* XXXXX C2F(sigbas)(&j);*/
+  /* Sciprintf("sci_menu_stop: to be done \n"); */
   /* if (get_is_reading()) nsp_input_feed(""); */
 }
 
-/* stop a portaudio function 
- *
- */
+/**
+ * nsp_menu_stop_audio:
+ * @void: 
+ * 
+ * stops a portaudio execution.
+ **/
 
 static void nsp_menu_stop_audio (void)
 {
@@ -1105,10 +1153,6 @@ static void nsp_menu_stop_audio (void)
   nsp_pa_stop();
 #endif 
 }
-
-/*-----------------------------------------------------------------
- * make a stop for scicos 
- *-----------------------------------------------------------------*/
 
 /**
  * set_stop_button_handler:
@@ -1135,57 +1179,76 @@ void reset_stop_menu_handler(void)
   nsp_stop_menu_handler=  nsp_stop_menu_handler_void;
 }
 
-/* extern void scicos_send_halt(void); */
+/**
+ * nsp_menu_scicos_stop:
+ * @void: 
+ * 
+ * stops a scicos execution.
+ **/
 
 static void nsp_menu_scicos_stop (void)
 {
   nsp_stop_menu_handler();
 }
 
-/*-----------------------------------------------------------------
- * run the help 
- *-----------------------------------------------------------------*/
-
+/**
+ * nsp_menu_help:
+ * @void: 
+ * 
+ * run the help browser
+ **/
 static void nsp_menu_help(void)
 {
   nsp_help_browser(NULL,NULL,NULL);
 }
 
-/* start text_view 
- *
- */
-
-#define USE_TEXT_VIEW_EDITOR
+/**
+ * nsp_edit:
+ * @filename: 
+ * @read_only: 
+ * @wait: 
+ * 
+ * start nsp editor
+ **/
 
 extern void nsp_edit(char *filename,int read_only,int wait);
 
 static void nsp_menu_start_editor(void)
 {
-#ifdef USE_TEXT_VIEW_EDITOR
   nsp_edit(NULL,FALSE,FALSE);
-#else 
-  /* we could start emacs here */
-  Sciprintf("no editor\n");
-#endif 
 }
 
-/*-----------------------------------------------------------------
- * run the demos 
- *-----------------------------------------------------------------*/
+/**
+ * nsp_menu_demos:
+ * @void: 
+ * 
+ * run the demo menu 
+ **/
 
 static void nsp_menu_demos(void)
 {
   enqueue_nsp_command( get_sci_data_strings(2));
 }
 
-/*-----------------------------------------------------------------
- * Callbacks for the Graphic Window main menu 
- *-----------------------------------------------------------------*/
+/**
+ * nsp_menu_gwplus:
+ * @void: 
+ * 
+ * increase the graphic window counter
+ **/
 
 static void nsp_menu_gwplus(void)
 {
   MenuFixCurrentWin(lab_count+1); 
 }
+
+/**
+ * nsp_menu_gwminus:
+ * @void: 
+ * 
+ * 
+ * decrease the graphic window counter
+ **/
 
 static void nsp_menu_gwminus(void)
 {
@@ -1197,19 +1260,41 @@ static void nsp_menu_gwcreate_or_select(void)
   set_graphic_window(Max(lab_count,0)) ;
 }
 
+/**
+ * nsp_menu_gwraise:
+ * @void: 
+ * 
+ * raise a graphic window.
+ **/
+
 static void nsp_menu_gwraise(void)
 {
   nsp_gr_raise(lab_count);
 }
+
+/**
+ * nsp_menu_gwdelete:
+ * @void: 
+ * 
+ * delete a graphic window.
+ **/
 
 static void nsp_menu_gwdelete(void)
 {
   nspg_menu_delete(NULL,lab_count);
 }
 
-/*-----------------------------------------------------------------
- * Execute predefined callbacks 
- *-----------------------------------------------------------------*/
+
+/**
+ * nsp_call_predefined_callbacks:
+ * @Xgc: 
+ * @name: 
+ * @winid: 
+ * 
+ * call predefined callbacks 
+ * 
+ * Returns: 0 or 1
+ **/
 
 int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
 {
