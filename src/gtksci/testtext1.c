@@ -111,8 +111,6 @@ static void    readline_textview(Tokenizer *T,char *prompt, char *buffer,
 				 int *buf_size, int *len_line, int *eof);
 static int     nsp_print_to_textview(const char *fmt, va_list ap);
 static int  nsp_print_to_textview_internal(View *view,const char *fmt, va_list ap);
-static void    nsp_textview_gtk_main(void);
-static void    nsp_textview_gtk_main_quit(void);
 static View *nsptv_get_view(const char *str);
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
@@ -121,6 +119,9 @@ static void nsp_textview_wait_for_text(View *view);
 static void nsp_textview_awake_for_text(View *view);
 static void nsp_textview_wait_for_end_print_text(View *view);
 static void nsp_textview_awake_for_end_print_text(View *view);
+#else
+static void    nsp_textview_gtk_main(void);
+static void    nsp_textview_gtk_main_quit(void);
 #endif 
 
 /**
@@ -1885,6 +1886,7 @@ void nsp_textview_destroy(void)
  * 
  **/
 
+#ifndef NSP_WITH_MAIN_GTK_THREAD
 static GMainLoop *nsp_textview_loop=NULL;
 
 static gint timeout_command (void *v);
@@ -1919,6 +1921,7 @@ static gint timeout_command (void *v)
     }
   return TRUE;
 }
+#endif 
 
 #ifdef NSP_WITH_MAIN_GTK_THREAD
 
