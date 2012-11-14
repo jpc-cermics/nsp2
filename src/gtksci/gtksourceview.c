@@ -33,7 +33,7 @@
 #include <errno.h>
 #include <stdlib.h>
 #include <string.h>
-#include <nsp/config.h>
+#include <nsp/nsp.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
 #include <gio/gio.h>
@@ -47,13 +47,12 @@
 #ifdef HAVE_GTKSOURCEVIEW_GUTTER
 #include <gtksourceview/gtksourcegutter.h> 
 #endif 
+
 #include <nsp/object.h>
 #include <nsp/smatrix.h> 
 #include <nsp/plist.h> 
-
 #include <nsp/parse.h>
 #include <nsp/nsptcl.h>
-
 #include <nsp/system.h> /* FSIZE */
 
 extern void nsp_eval_str_in_terminal(const gchar *str, int execute_silently);
