@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2001-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2001-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -20,20 +20,16 @@
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>			/* For the Syntax message */
-#include <signal.h>
-#include <string.h>
-#include <gtk/gtk.h>
-#include "nsp/machine.h"
-#include "nsp/command.h"
-#include "nsp/gtksci.h"
-#include "nsp/graphics-new/Graphics.h" 
+#include <nsp/nsp.h>
+#include <nsp/command.h>
+#include <nsp/gtksci.h>
+#include <nsp/graphics-new/Graphics.h>
 #include <nsp/object.h>
 #include <nsp/matrix.h>
 #include <nsp/eval.h>
 
 /**
- * scig_click_handler_none:
+ * scig_click_handler_none: 
  * @win: 
  * @x: 
  * @y: 
