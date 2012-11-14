@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2003-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2003-2012 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -19,16 +19,14 @@
  * jpc@cermics.enpc.fr 
  *--------------------------------------------------------------------------*/
 
-#include <stdio.h>
-#include <string.h>
-#include <nsp/object.h>
+#include <nsp/nsp.h>
 #include <nsp/smatrix.h>
 #include <nsp/list.h>
 #include <nsp/command.h>
 
 /*
- *  This function is used to store Scilab command in a queue 
- *  (implemented with a NspList XXXX)
+ *  This function is used to store commands in a queue 
+ *  (implemented with a NspList)
  *  The queue is filled by dynamic buttons and menus handlers. 
  *  The default behaviour is the following, the interpreter 
  *  checks for available commands when it is idle or during 
@@ -38,11 +36,13 @@
  *  evaluation behaviour. 
  *
  *  set_scig_command_handler(Scig_command_handler f) : 
- *           set a specific handler for command handling 
+ *           :set a specific handler for command handling 
  *  reset_scig_command_handler() : reset to default state 
  *           (the use of the previous function is recommended )
  *  int enqueue_nsp_command( char *command)
+ *           add command to the queue
  *  NspObject *dequeue_nsp_command() 
+ *           get last command
  */
 
 int scig_command_handler_none (char *command) {return 0;}
@@ -63,7 +63,6 @@ void reset_scig_command_handler(void)
 
 /*
  * try to execute a command or add it to the end of command queue 
- * XXXX global variable 
  */
 
 static int locked = FALSE;
