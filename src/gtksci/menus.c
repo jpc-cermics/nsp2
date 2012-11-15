@@ -44,7 +44,7 @@ extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
 static void *nsp_window_create_initial_menu(void) ;
 static void nsp_menu_delete_menuitem(menu_entry **m,const char *name) ;
-static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,
+static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries,
 			int ne,int action_type,char *fname);
 static void sci_menubar_add_menu_entry(BCG *Xgc,GtkWidget *menubar,menu_entry *m);
 static void sci_menubar_add_last_menu_entry(BCG *Xgc, GtkWidget *menubar,menu_entry *m);
@@ -133,7 +133,7 @@ void MenuFixCurrentWin(int ivalue)
   nsp_menus_delete_button(w, gwin_name);
   sprintf( gwin_name, "Graphic Window %d", (int) ivalue );
   lab_count = ivalue;
-  sci_menu_add(&main_menu_entries,-1,gwin_name,
+  nsp_menu_add(&main_menu_entries,-1,gwin_name,
 	       graphic_entries,5,0,"$graphic_window");
   sci_menubar_add_last_menu_entry(NULL,main_menu_menubar,main_menu_entries);
 }
@@ -194,49 +194,6 @@ int nsp_menus_delete_button(int win_num,const char *button_name)
 }
 
 /*---------------------------------------------------
- * Rename a menuitem name in a menubar 
- *---------------------------------------------------*/
-
-#if 0 
-static void nsp_menus_rename_button(int win_num,const char *button_name, const char *new_name)
-{
-  menu_entry *m;
-  static char btn[64];
-  char *p;
-  const char *but= button_name;
-  p = btn ; 
-  *(p++) = '/';
-  while ( *but != '\0' ) {
-    if ( *but == '/') break ; 
-    else if ( *but == '_') but++ ; 
-    else { *(p++)= *(but++);}
-  }
-  *p = '\0';
-  if ( win_num == -1 ) 
-    {
-      m = main_menu_entries; 
-    }
-  else 
-    {
-      BCG *dd = window_list_search(win_num);
-      if ( dd == NULL) return ;
-      m = dd->private->menu_entries;
-    }
-  while ( m != NULL) 
-    {
-      if ( is_menu_name(m->name,btn) ==0) 
-	{
-	  /* rename the label or accel_label contained 
-	   * inside 
-	   */ 
-	  return;
-	}
-      m = m->next;
-    }
-}
-#endif 
-
-/*---------------------------------------------------
  * Add a menu in  window  number wun_num or in Main window
  *  win_num     : graphic window number or -1 for main scilab window
  *  button_name : label of button
@@ -254,7 +211,7 @@ int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,in
     {
       /* Scilab main menu */ 
       if ( main_menu_menubar == NULL ) return OK;
-      if ( sci_menu_add(&main_menu_entries,win_num,button_name,entries,ne,typ,fname) == 1 ) 
+      if ( nsp_menu_add(&main_menu_entries,win_num,button_name,entries,ne,typ,fname) == 1 ) 
 	{
 	  return FAIL;
 	}
@@ -264,7 +221,7 @@ int nsp_menus_add(int win_num,const char * button_name,char ** entries,int ne,in
     {
       BCG *dd = window_list_search(win_num);
       if ( dd == NULL ) return OK;
-      if ( sci_menu_add(&dd->private->menu_entries,win_num,button_name,entries,
+      if ( nsp_menu_add(&dd->private->menu_entries,win_num,button_name,entries,
 			ne,typ,fname) == 1 ) 
 	{
 	  return FAIL;
@@ -498,7 +455,7 @@ static void nsp_menu_decode_name(const char *name,char **entry,char **accel,char
  *  fname;      : name of the action function  
  *----------------------------------------------------------------*/
 
-static int sci_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne, 
+static int nsp_menu_add(menu_entry **m,int winid,const char *name,char** entries,int ne, 
 			int action_type,char *fname)
 {  
   char *e_entry,*e_accel,*e_action,*e_stock_name,*action;
@@ -739,10 +696,10 @@ void * graphic_initial_menu(int winid)
 			   "S_ave|<control>S|$save|gtk-save",
 			   "L_oad|<control>L|$load|gtk-open",
 			   "C_lose||$close|gtk-close" };
-  sci_menu_add(&m,winid,"_File",file_entries,7,0,"$file");
-  sci_menu_add(&m,winid,"_Zoom",NULL,0,0,"$zoom");
-  sci_menu_add(&m,winid,"_UnZoom",NULL,0,0,"$unzoom");
-  sci_menu_add(&m,winid,"3D _Rot.",NULL,0,0,"$rot3d");
+  nsp_menu_add(&m,winid,"_File",file_entries,7,0,"$file");
+  nsp_menu_add(&m,winid,"_Zoom",NULL,0,0,"$zoom");
+  nsp_menu_add(&m,winid,"_UnZoom",NULL,0,0,"$unzoom");
+  nsp_menu_add(&m,winid,"3D _Rot.",NULL,0,0,"$rot3d");
   return m;
 }
 
@@ -783,11 +740,11 @@ static void * nsp_window_create_initial_menu(void)
   n_control_entries=4;
 #endif 
 
-  sci_menu_add(&m,winid,"_File",file_entries,8,0,"$file");
-  sci_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
-  sci_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
-  sci_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
-  sci_menu_add(&m,winid,"_Help",help_entries,2,0,"$help");
+  nsp_menu_add(&m,winid,"_File",file_entries,8,0,"$file");
+  nsp_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
+  nsp_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
+  nsp_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
+  nsp_menu_add(&m,winid,"_Help",help_entries,2,0,"$help");
   return m;
 }
 
