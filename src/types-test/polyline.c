@@ -216,6 +216,7 @@ static int nsp_polyline_eq(NspPolyline *A, NspObject *B)
   if ( A->obj->color != loc->obj->color) return FALSE;
   if ( A->obj->mark != loc->obj->mark) return FALSE;
   if ( A->obj->mark_size != loc->obj->mark_size) return FALSE;
+  if ( A->obj->mark_color != loc->obj->mark_color) return FALSE;
   if ( A->obj->fill_color != loc->obj->fill_color) return FALSE;
   if ( A->obj->thickness != loc->obj->thickness) return FALSE;
   return TRUE;
@@ -247,6 +248,7 @@ int nsp_polyline_xdr_save(XDR *xdrs, NspPolyline *M)
   if (nsp_xdr_save_i(xdrs, M->obj->color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->mark_size) == FAIL) return FAIL;
+  if (nsp_xdr_save_i(xdrs, M->obj->mark_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->fill_color) == FAIL) return FAIL;
   if (nsp_xdr_save_i(xdrs, M->obj->thickness) == FAIL) return FAIL;
   if ( nsp_graphic_xdr_save(xdrs, (NspGraphic *) M)== FAIL) return FAIL;
@@ -268,6 +270,7 @@ NspPolyline  *nsp_polyline_xdr_load_partial(XDR *xdrs, NspPolyline *M)
   if (nsp_xdr_load_i(xdrs, &M->obj->color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->mark_size) == FAIL) return NULL;
+  if (nsp_xdr_load_i(xdrs, &M->obj->mark_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->fill_color) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &M->obj->thickness) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
@@ -370,6 +373,7 @@ int nsp_polyline_print(NspPolyline *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
   Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
+  Sciprintf1(indent+2,"mark_color=%d\n",M->obj->mark_color);
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   nsp_graphic_print((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -398,6 +402,7 @@ int nsp_polyline_latex(NspPolyline *M, int indent,const char *name, int rec_leve
   Sciprintf1(indent+2,"color=%d\n",M->obj->color);
   Sciprintf1(indent+2,"mark=%d\n",M->obj->mark);
   Sciprintf1(indent+2,"mark_size=%d\n",M->obj->mark_size);
+  Sciprintf1(indent+2,"mark_color=%d\n",M->obj->mark_color);
   Sciprintf1(indent+2,"fill_color=%d\n",M->obj->fill_color);
   Sciprintf1(indent+2,"thickness=%d\n",M->obj->thickness);
   nsp_graphic_latex((NspGraphic *) M,indent+2,NULL,rec_level);
@@ -476,6 +481,7 @@ int nsp_polyline_create_partial(NspPolyline *H)
   H->obj->color = -1;
   H->obj->mark = -1;
   H->obj->mark_size = -1;
+  H->obj->mark_color = -1;
   H->obj->fill_color = -1;
   H->obj->thickness = 0;
   return OK;
@@ -499,7 +505,7 @@ int nsp_polyline_check_values(NspPolyline *H)
   return OK;
 }
 
-NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type)
+NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int mark_color,int fill_color,int thickness,NspTypeBase *type)
 {
   NspPolyline *H  = nsp_polyline_create_void(name,type);
   if ( H ==  NULLPOLYLINE) return NULLPOLYLINE;
@@ -510,6 +516,7 @@ NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboo
   H->obj->color=color;
   H->obj->mark=mark;
   H->obj->mark_size=mark_size;
+  H->obj->mark_color=mark_color;
   H->obj->fill_color=fill_color;
   H->obj->thickness=thickness;
   if ( nsp_polyline_check_values(H) == FAIL) return NULLPOLYLINE;
@@ -569,6 +576,7 @@ NspPolyline *nsp_polyline_full_copy_partial(NspPolyline *H,NspPolyline *self)
   H->obj->color=self->obj->color;
   H->obj->mark=self->obj->mark;
   H->obj->mark_size=self->obj->mark_size;
+  H->obj->mark_color=self->obj->mark_color;
   H->obj->fill_color=self->obj->fill_color;
   H->obj->thickness=self->obj->thickness;
   return H;
@@ -739,6 +747,23 @@ static int _wrap_polyline_set_mark_size(void *self,const char *attr, NspObject *
   return OK;
 }
 
+static NspObject *_wrap_polyline_get_mark_color(void *self,const char *attr)
+{
+  int ret;
+
+  ret = ((NspPolyline *) self)->obj->mark_color;
+  return nsp_new_double_obj((double) ret);
+}
+
+static int _wrap_polyline_set_mark_color(void *self,const char *attr, NspObject *O)
+{
+  int mark_color;
+
+  if ( IntScalar(O,&mark_color) == FAIL) return FAIL;
+  ((NspPolyline *) self)->obj->mark_color= mark_color;
+  return OK;
+}
+
 static NspObject *_wrap_polyline_get_fill_color(void *self,const char *attr)
 {
   int ret;
@@ -780,6 +805,7 @@ static AttrTab polyline_attrs[] = {
   { "color", (attr_get_function *)_wrap_polyline_get_color, (attr_set_function *)_wrap_polyline_set_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mark", (attr_get_function *)_wrap_polyline_get_mark, (attr_set_function *)_wrap_polyline_set_mark,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "mark_size", (attr_get_function *)_wrap_polyline_get_mark_size, (attr_set_function *)_wrap_polyline_set_mark_size,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
+  { "mark_color", (attr_get_function *)_wrap_polyline_get_mark_color, (attr_set_function *)_wrap_polyline_set_mark_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "fill_color", (attr_get_function *)_wrap_polyline_get_fill_color, (attr_set_function *)_wrap_polyline_set_fill_color,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { "thickness", (attr_get_function *)_wrap_polyline_get_thickness, (attr_set_function *)_wrap_polyline_set_thickness,(attr_get_object_function *)int_get_object_failed, (attr_set_object_function *)int_set_object_failed },
   { NULL,NULL,NULL,NULL,NULL },
@@ -798,7 +824,7 @@ int _wrap_nsp_extractelts_polyline(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 802 "polyline.c"
+#line 828 "polyline.c"
 
 
 #line 66 "codegen/polyline.override"
@@ -811,7 +837,7 @@ int _wrap_nsp_setrowscols_polyline(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 815 "polyline.c"
+#line 841 "polyline.c"
 
 
 /*----------------------------------------------------
@@ -850,7 +876,7 @@ void Polyline_Interf_Info(int i, char **fname, function (**f))
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int xmark[2];
-  int ccolor=-1,cmark=-1,cthick=-1;
+  int ccolor=-1,cmark=-1,cmarksize=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
   int *xm=NULL,*ym=NULL;
 
@@ -908,12 +934,19 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       if ( P->obj->mark != -1 ) 
 	{
 	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-	  cmark=xmark[0];
-	  Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
+	  cmark=xmark[0];cmarksize=xmark[1];
+	  Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->mark_size);
+	}
+      if ( P->obj->mark_color != -1 ) 
+	{
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
 	}
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
       if ( P->obj->mark != -1 ) 
-	Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);
+	Xgc->graphic_engine->xset_mark(Xgc,cmark,cmarksize);
+      if ( P->obj->mark_color != -1 )
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
 
   if (((NspGraphic *) P)->obj->hilited == TRUE )
@@ -1005,4 +1038,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1009 "polyline.c"
+#line 1042 "polyline.c"

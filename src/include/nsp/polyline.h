@@ -55,6 +55,7 @@ struct _nsp_polyline {
   int color;
   int mark;
   int mark_size;
+  int mark_color;
   int fill_color;
   int thickness;
   int ref_count;
@@ -86,7 +87,7 @@ NspPolyline *new_polyline();
 
 #define NULLPOLYLINE (NspPolyline*) 0
 
-extern NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int fill_color,int thickness,NspTypeBase *type);
+extern NspPolyline *nsp_polyline_create(const char *name,NspMatrix* x,NspMatrix* y,gboolean close,int color,int mark,int mark_size,int mark_color,int fill_color,int thickness,NspTypeBase *type);
 extern NspPolyline *nsp_polyline_create_default(const char *name);
 
 /* from NspPolylineObj.c */
@@ -114,7 +115,7 @@ extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 #line 9 "codegen/polyline.override"
 /* inserted at the end of public part of include file */
 
-#line 118 "./polyline.h"
+#line 119 "./polyline.h"
 #endif /* NSP_INC_NspPolyline */ 
 
 #ifdef NspPolyline_Private 
@@ -137,6 +138,6 @@ static void nsp_rotate_polyline(NspGraphic *o,double *R);
 static void nsp_scale_polyline(NspGraphic *o,double *alpha);
 static int nsp_getbounds_polyline(NspGraphic *o,double *bounds);
 
-#line 141 "./polyline.h"
+#line 142 "./polyline.h"
 #endif /* NspPolyline_Private */
 

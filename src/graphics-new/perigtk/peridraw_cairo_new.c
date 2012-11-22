@@ -26,13 +26,13 @@
  * Text and symbols with pango and cairo 
  */
 
-#define FONTNUMBER 7 
+#define FONTNUMBER 6
 #define FONTMAXSIZE 6
-#define SYMBOLNUMBER 12
+#define SYMBOLNUMBER 17
 
 /* Must be of size FONTMAXSIZE */
 
-static const int pango_size[] = { 8 ,10,12,14,18,24};
+static const int pango_size[] = {8,10,12,14,18,24};
 static char *pango_fonttab[] ={"Courier", "Standard Symbols L","Sans","Sans","Sans","Sans"};
 
 static const int symbols[] = 
@@ -51,7 +51,9 @@ static const int symbols[] =
     0x2660, /* black spade suit */
     0x2297, /* circled times */
     0x2022, /* bullet */
-    0x00B0  /* degree sign */
+    0x002B, /* degree sign */
+    0x25A0, /* black square */
+    0x25A1  /* white square */
   };
 
 /* clear a rectangle by drawing with the background color 

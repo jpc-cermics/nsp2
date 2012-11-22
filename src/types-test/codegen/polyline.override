@@ -81,7 +81,7 @@ last
 static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data)
 {
   int xmark[2];
-  int ccolor=-1,cmark=-1,cthick=-1;
+  int ccolor=-1,cmark=-1,cmarksize=-1,cthick=-1;
   NspPolyline *P = (NspPolyline *) Obj;
   int *xm=NULL,*ym=NULL;
 
@@ -139,12 +139,19 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
       if ( P->obj->mark != -1 ) 
 	{
 	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-	  cmark=xmark[0];
-	  Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
+	  cmark=xmark[0];cmarksize=xmark[1];
+	  Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->mark_size);
+	}
+      if ( P->obj->mark_color != -1 ) 
+	{
+	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
 	}
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
       if ( P->obj->mark != -1 ) 
-	Xgc->graphic_engine->xset_mark(Xgc,cmark,xmark[1]);
+	Xgc->graphic_engine->xset_mark(Xgc,cmark,cmarksize);
+      if ( P->obj->mark_color != -1 )
+	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
 
   if (((NspGraphic *) P)->obj->hilited == TRUE )

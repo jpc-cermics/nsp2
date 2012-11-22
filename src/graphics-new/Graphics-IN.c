@@ -3037,7 +3037,7 @@ static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe; 
-  int close=TRUE,color=-2,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
+  int close=TRUE,color=-2,mark=-2,mark_size=-1,mark_color=-1,fill_color=-1,thickness=-1;
   NspMatrix *x,*y;
 
   nsp_option opts[] ={
@@ -3054,7 +3054,7 @@ static int int_xfpoly_new(Stack stack, int rhs, int opt, int lhs)
   if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
-  if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+  if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
   /* insert the polyline */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, TRUE)== FAIL) 
@@ -3093,7 +3093,7 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
   int i;
   NspPolyline *pl= NULL;
   NspAxes *axe; 
-  int color=-2,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
+  int color=-2,mark=-2,mark_size=-1,mark_color=-1,fill_color=-1,thickness=-1;
   NspMatrix *x,*y;
   NspMatrix *l1=NULL,*l2=NULL,*l3=NULL;
   int v1 = 0;
@@ -3176,7 +3176,7 @@ static int int_xfpolys_new(Stack stack, int rhs, int opt, int lhs)
 	color=-1;
 	break;
       }
-      if ((pl = nsp_polyline_create("pl",x,y,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+      if ((pl = nsp_polyline_create("pl",x,y,TRUE,color,mark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
       /* insert the polyline */
       if ( compound == TRUE ) 
@@ -3761,7 +3761,7 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
 {
   NspPolyline *pl;
   NspAxes *axe; 
-  int close=0,color=-1,mark=-1,mark_size=-1,fill_color=-2,thickness=-1;
+  int close=0,color=-1,mark=-1,mark_size=-1,mark_color=-1,fill_color=-2,thickness=-1;
   char *type= "lines"; 
   NspMatrix *x,*y;
 
@@ -3794,7 +3794,7 @@ static int int_xpoly_new(Stack stack, int rhs, int opt, int lhs)
   if ((x = (NspMatrix *) nsp_object_copy_and_name("x",NSP_OBJECT(x)))== NULL) return RET_BUG;
   if ((y = (NspMatrix *) nsp_object_copy_and_name("y",NSP_OBJECT(y)))== NULL) return RET_BUG;
 
-  if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+  if ((pl = nsp_polyline_create("pl",x,y,close,color,mark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
     return RET_BUG;
   /* insert the object in the axe */
   if ( nsp_axes_insert_child(axe,(NspGraphic *) pl, TRUE)== FAIL) 
@@ -3885,7 +3885,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   int compound = TRUE;
   NspList *L;
   NspCompound *C = NULL;
-  int close=0,color=-1,mark=-2,mark_size=-1,fill_color=-2,thickness=-1,i;
+  int close=0,color=-1,mark=-2,mark_size=-1,mark_color=-1,fill_color=-2,thickness=-1,i;
   NspMatrix *x,*y,*style=NULL;
   NspPolyline *pl= NULL;
   NspAxes *axe; 
@@ -3932,7 +3932,7 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
       if ((yp= nsp_matrix_create_from_array("x",1,y->m,y->R + y->m*i,NULL))== NULL) return RET_BUG;
       lmark = ( style == NULL) ? mark: (( style->I[i] <= 0) ?  - style->I[i] : -2);
       lcolor= ( style == NULL) ? color: (( style->I[i] <= 0) ? -2 : style->I[i]);
-      if ((pl = nsp_polyline_create("pl",xp,yp,close,lcolor,lmark,mark_size,fill_color,thickness,NULL))== NULL)
+      if ((pl = nsp_polyline_create("pl",xp,yp,close,lcolor,lmark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
 	return RET_BUG;
       /* insert the polyline */
       if ( compound == TRUE ) 
@@ -6165,7 +6165,7 @@ static int int_draw_pixbuf_from_file( Stack stack, int rhs, int opt, int lhs)
 
 static int scicos_draw_3d_new(double r[],int color,double size3d)
 {
-  int mark=-2,mark_size=-2,thickness=1,fill_color=-2; /* color; */
+  int mark=-2,mark_size=-2,mark_color=-2,thickness=1,fill_color=-2; /* color; */
   NspPolyline *pl;
   NspMatrix *Mx,*My;
   NspObject *gobj;
@@ -6182,7 +6182,7 @@ static int scicos_draw_3d_new(double r[],int color,double size3d)
   if ((My = nsp_matrix_create("y",'r',6,1))== NULLMAT) return FAIL;
   memcpy(Mx->R,x,npt*sizeof(double));
   memcpy(My->R,y,npt*sizeof(double));
-  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
     return FAIL;
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL) return FAIL;
@@ -6224,7 +6224,7 @@ static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,sl
 {
   NspPolyline *pl;
   NspAxes *axe; 
-  int color=-1,mark=-2,mark_size=-1,fill_color=-1,thickness=-1;
+  int color=-1,mark=-2,mark_size=-1,mark_color=-1,fill_color=-1,thickness=-1;
   NspMatrix *Mx,*My;
   /* angle according to dir */
   /*  LD_NORTH=0, LD_SOUTH=1, LD_EAST=2, LD_WEST=3, LD_ANY=4 */
@@ -6291,7 +6291,7 @@ static int lock_draw_new(const double pt[2],double xf,double yf,slock_dir dir,sl
       /* draw only */
       fill_color=-2;
     }
-  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,fill_color,thickness,NULL))== NULL)
+  if ((pl = nsp_polyline_create("pl",Mx,My,TRUE,color,mark,mark_size,mark_color,fill_color,thickness,NULL))== NULL)
     return FAIL;
   /* insert the polyline */
   if ( nsp_list_end_insert( axe->obj->children,(NspObject *) pl )== FAIL)

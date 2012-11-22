@@ -654,7 +654,7 @@ static  void xset_test(BCG *Xgc)
 
 #define FONTNUMBER 6
 #define FONTMAXSIZE 6
-#define SYMBOLNUMBER 12
+#define SYMBOLNUMBER 17
 
 /* Must be of size FONTMAXSIZE */
 
@@ -788,14 +788,16 @@ static const int symbols[] =
     0x2666, /* black diamond suit */
     0x25CA, /* lozenge */
     0x0394, /* greek capital letter delta */
-    0x2207, /* nabla  */
+    0x2207, /* nabla */
     0x2663, /* black club suit */
     0x2295, /* circled plus */
     0x2665, /* black heart suit */
     0x2660, /* black spade suit */
     0x2297, /* circled times */
     0x2022, /* bullet */
-    0x00B0  /* degree sign */
+    0x00B0, /* degree sign */
+    0x25A0, /* black square */
+    0x25A1  /* white square */
   };
 
 
@@ -971,7 +973,7 @@ static void draw_mark(BCG *Xgc,int *x, int *y)
   PangoRectangle ink_rect;
   int code = symbols[Xgc->CurHardSymb]; 
   gchar symbol_code[4], *iter = symbol_code;
-  ;
+  
   g_unichar_to_utf8(code, iter);
   iter = g_utf8_next_char(iter);
   g_unichar_to_utf8(0x0, iter);
