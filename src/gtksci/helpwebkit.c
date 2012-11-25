@@ -489,11 +489,11 @@ static const gchar *view_ui_description =
 
 static int open_webkit_window (const gchar *help_path,const gchar *locale,const gchar *help_file)
 {
-  GtkWidget* find_bar;
-  GtkUIManager   *manager;
-  GtkAccelGroup   *accel_group;
-  GtkWidget* vbox, *menubar;
-  GError *error;
+  GtkWidget     *find_bar;
+  GtkUIManager  *manager;
+  GtkAccelGroup *accel_group;
+  GtkWidget     *vbox, *menubar;
+  GError        *error;
 
   start_sci_gtk(); /* in case gtk was not initialized */
 
@@ -560,6 +560,23 @@ static int open_webkit_window (const gchar *help_path,const gchar *locale,const 
 			G_CALLBACK (window_findbar_close_cb),
 			main_window);
       /* gtk_widget_grab_focus (GTK_WIDGET (web_view)); */
+      
+      /* set proxy uri if defined by environment variable http_proxy */
+#ifdef SOUP_TYPE_PROXY_RESOLVER_DEFAULT
+      soup_session_add_feature_by_type(webkit_get_default_session(),
+				       SOUP_TYPE_PROXY_RESOLVER_DEFAULT);
+#else
+      {
+	const char *httpProxy = g_getenv("http_proxy");
+	if (httpProxy) 
+	  {
+	    SoupURI *proxyUri = soup_uri_new(httpProxy);
+	    g_object_set(webkit_get_default_session(),
+			 SOUP_SESSION_PROXY_URI, proxyUri, NULL);
+	    soup_uri_free(proxyUri);
+	  }
+      }
+#endif
       gtk_widget_show_all (main_window);
     }
   else 
