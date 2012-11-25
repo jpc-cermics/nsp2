@@ -24,6 +24,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <ctype.h>
+#include <stdint.h>
 
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
@@ -6936,6 +6937,7 @@ NspMatrix *nsp_mat_hex2num(NspSMatrix *S,int swap)
     double dval;
   } num;
   NspMatrix *loc;
+  num.dval =0.0;
   int bswap =  swap ? (( is_little_endian() ) ? FALSE : TRUE) : FALSE; 
 
   if ( (loc = nsp_matrix_create(NVOID,'r',S->m,S->n)) == NULLMAT ) return NULLMAT;
