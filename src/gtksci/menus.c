@@ -710,6 +710,7 @@ static void * nsp_window_create_initial_menu(void)
   int winid = -1;
   char *file_entries[] = { "Exec File||$file_exec",
 			   "Load File||$file_load",
+			   "Load Toolbox||$toolbox_load",
 			   "Change directory||$chdir",
 			   "Print current directory||$pwd",
 			   "Clear history||$clear_history",
@@ -740,7 +741,7 @@ static void * nsp_window_create_initial_menu(void)
   n_control_entries=4;
 #endif 
 
-  nsp_menu_add(&m,winid,"_File",file_entries,8,0,"$file");
+  nsp_menu_add(&m,winid,"_File",file_entries,9,0,"$file");
   nsp_menu_add(&m,winid,"_Control",control_entries,n_control_entries,0,"$zoom");
   nsp_menu_add(&m,winid,"_Demos",NULL,0,0,"$demos");
   nsp_menu_add(&m,winid,"Graphic Window 0",graphic_entries,5,0,"$graphic_window");
@@ -969,6 +970,19 @@ static void nsp_menu_file_load(void)
   enqueue_nsp_command(loc);
   FREE(loc);
   FREE(file);
+}
+
+/**
+ * nsp_menu_toolbox_load:
+ * @void: 
+ * 
+ * run the load nsp command on selected toolbox.
+ **/
+
+static void nsp_menu_toolbox_load(void)
+{
+  nsp_string loc="load_toolbox();";
+  enqueue_nsp_command(loc);
 }
 
 /**
@@ -1272,6 +1286,7 @@ int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid)
   else if (strcmp(name,"$demos")== 0)  nsp_menu_demos();
   else if (strcmp(name,"$file_exec")== 0) nsp_menu_file_exec();
   else if (strcmp(name,"$file_load")== 0) nsp_menu_file_load();
+  else if (strcmp(name,"$toolbox_load")== 0) nsp_menu_toolbox_load();
   else if (strcmp(name,"$chdir")== 0) nsp_menu_chdir();
   else if (strcmp(name,"$pwd")== 0)    nsp_menu_pwd();
   else if (strcmp(name,"$gwselect")== 0) nsp_menu_gwcreate_or_select();

@@ -2043,7 +2043,7 @@ static int int_smxsubst(Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *HMat1,*Res1=NULL,*Res2=NULL,*Str,*Rep;
   int i;
-  CheckRhs(1,3);
+  CheckRhs(3,3);
   CheckLhs(1,1);
   if (( HMat1 = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if (( Str =  GetSMat(stack,2)) == NULLSMAT) return RET_BUG;
