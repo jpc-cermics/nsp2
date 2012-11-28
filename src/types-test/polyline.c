@@ -931,22 +931,36 @@ static void nsp_draw_polyline(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   if ( P->obj->mark != -2 ) 
     {
       /* we will draw marks */
-      if ( P->obj->mark != -1 ) 
-	{
-	  Xgc->graphic_engine->xget_mark(Xgc,xmark); 
-	  cmark=xmark[0];cmarksize=xmark[1];
-	  Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,P->obj->mark_size);
-	}
-      if ( P->obj->mark_color != -1 ) 
-	{
-	  ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
-	  Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
-	}
+    
+      /* save xgc current values for mark */
+      if (( P->obj->mark != -1 ) || ( P->obj->mark_size != -1 )) {
+        Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+        cmark=xmark[0];cmarksize=xmark[1];
+      }
+      
+      if ( P->obj->mark != -1 ) {
+        Xgc->graphic_engine->xset_mark(Xgc, P->obj->mark,xmark[1]);
+        Xgc->graphic_engine->xget_mark(Xgc,xmark); 
+      }
+      
+      if ( P->obj->mark_size != -1 )
+        Xgc->graphic_engine->xset_mark(Xgc, xmark[0],P->obj->mark_size);
+
+      if ( P->obj->mark_color != -1 ) {
+        ccolor = Xgc->graphic_engine->xget_pattern(Xgc); 
+        Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
+      }
+
       Xgc->graphic_engine->drawpolymark(Xgc,xm,ym,P->obj->x->mn);
-      if ( P->obj->mark != -1 ) 
-	Xgc->graphic_engine->xset_mark(Xgc,cmark,cmarksize);
+      
+      /* restore xgc current values for mark */
+      if (( P->obj->mark != -1 ) || ( P->obj->mark_size != -1 )) {
+        Xgc->graphic_engine->xset_mark(Xgc,cmark,cmarksize);
+      }
+      
+      /* restore xgc current value for color */
       if ( P->obj->mark_color != -1 )
-	Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
+        Xgc->graphic_engine->xset_pattern(Xgc,ccolor);
     }
 
   if (((NspGraphic *) P)->obj->hilited == TRUE )
@@ -1038,4 +1052,4 @@ static int nsp_getbounds_polyline(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1042 "polyline.c"
+#line 1056 "polyline.c"
