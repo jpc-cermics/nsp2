@@ -1074,4 +1074,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 1073 "compound.c"
+#line 1078 "compound.c"
