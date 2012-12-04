@@ -51,9 +51,9 @@ typedef struct _nsp_compound nsp_compound;
 struct _nsp_compound {
   NspMatrix* bounds;
   NspList* children;
-  int mark;
-  int mark_size;
-  int mark_color;
+  int hilite_type;
+  int hilite_size;
+  int hilite_color;
   int ref_count;
 };
 
@@ -83,7 +83,7 @@ NspCompound *new_compound();
 
 #define NULLCOMPOUND (NspCompound*) 0
 
-extern NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,int mark,int mark_size,int mark_color,NspTypeBase *type);
+extern NspCompound *nsp_compound_create(const char *name,NspMatrix* bounds,NspList* children,int hilite_type,int hilite_size,int hilite_color,NspTypeBase *type);
 extern NspCompound *nsp_compound_create_default(const char *name);
 
 /* from NspCompoundObj.c */
