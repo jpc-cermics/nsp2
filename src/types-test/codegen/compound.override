@@ -201,24 +201,29 @@ static void nsp_draw_compound(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect
   if ( G->obj->hilited == TRUE ) nsp_draw_default_mark_compound(Xgc,Obj);
 }
 
+/**
+ * nsp_draw_default_mark_compound:
+ * @Xgc: 
+ * @Obj: 
+ * 
+ * mark<0 no rectangle 
+ * mark>=0 rectangle 
+ * abs(mark)>=1 two squares 
+ * abs(mark)>=2 four squares 
+ * mark_size<0 lock_size for square 
+ * 
+ * mark_size=0 0 no square 
+ * mark_size>0 mark_size*2 for square/mark_size for rectangle *
+ * 
+ **/
+
 static void nsp_draw_default_mark_compound(BCG *Xgc,NspGraphic *Obj)
 {
   NspCompound *P = (NspCompound *) Obj;
   NspGraphic *G =  (NspGraphic *) Obj;
-  double bounds[4];
-  int color = Xgc->graphic_engine->xset_pattern(Xgc,P->obj->mark_color);
+  int color = Xgc->graphic_engine->xset_pattern(Xgc,P->obj->hilite_color);
   int x=lock_size,y=lock_size;
-  double xd,yd;
-  double xdd=0.,ydd=0.;
-  double rect[4];
-  
-  /* mark<0 no rectangle */
-  /* mark>=0 rectangle */
-  /* abs(mark)>=1 two squares */
-  /* abs(mark)>=2 four squares */
-  /* mark_size<0 lock_size for square */
-  /* mark_size=0 0 no square */
-  /* mark_size>0 mark_size*2 for square/mark_size for rectangle */
+  double xd,yd, xdd=0.0,ydd=0.0, rect[4], bounds[4];
   
   /* already take into accound the fact that object is 
    * hilited in its bounds 
@@ -228,10 +233,10 @@ static void nsp_draw_default_mark_compound(BCG *Xgc,NspGraphic *Obj)
   length_scale_i2f(Xgc->scales,&xd,&yd,&x,&y,1);
   
   /* square size */
-  if (P->obj->mark_size>=0) {
+  if (P->obj->hilite_size>=0) {
     int sz;
-    sz=P->obj->mark_size;
-    if (P->obj->mark>0) sz=sz*2;
+    sz=P->obj->hilite_size;
+    if (P->obj->hilite_type >0 ) sz=sz*2;
     length_scale_i2f(Xgc->scales,&xdd,&ydd,&sz,&sz,1);
   } else {
     xdd=xd; ydd=yd;
@@ -241,50 +246,48 @@ static void nsp_draw_default_mark_compound(BCG *Xgc,NspGraphic *Obj)
   rect[3]=ydd;
   
   /* draw squares */
-  switch(Abs(P->obj->mark))
+  switch(Abs(P->obj->hilite_type))
   {
-  /* four squares */
   case 2 :
+    /* four squares */
     rect[0]=bounds[2] - xd/2 - xdd/2;
     rect[1]=bounds[3] + ydd/2 - yd/2;
     Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-    
     rect[0]=bounds[0] - xdd/2 + xd/2;
     rect[1]=bounds[1] + yd/2 + ydd/2;
     Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-      
-  /* two squares */
+    /* use 1 for the next squares */
   case 1 :
+    /* two squares */
     rect[0]=bounds[0] - xdd/2 + xd/2;
     rect[1]=bounds[3] + ydd/2 - yd/2;
     Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-  
     rect[0]=bounds[2] - xd/2 - xdd/2;
     rect[1]=bounds[1] + yd/2 + ydd/2;
     Xgc->graphic_engine->scale->fillrectangle(Xgc,rect);
-    
+    break;
   default :
     break;
   }
-
   /* draw surrounding rectangle */
-  if (P->obj->mark>=0) {
-    int cwidth=Xgc->graphic_engine->xget_thickness(Xgc);
-    rect[0]=bounds[0] + xd/2.0; 
-    rect[1]=bounds[3] - yd/2.0;
-    rect[2]=bounds[2] - bounds[0] - xd;
-    rect[3]=bounds[3] - bounds[1] - yd;
-    /* rectangle thickness */
-    if (P->obj->mark_size>0) {
-      Xgc->graphic_engine->xset_thickness(Xgc,P->obj->mark_size);
+  if (P->obj->hilite_type >=0) 
+    {
+      int cwidth=Xgc->graphic_engine->xget_thickness(Xgc);
+      rect[0]=bounds[0] + xd/2.0; 
+      rect[1]=bounds[3] - yd/2.0;
+      rect[2]=bounds[2] - bounds[0] - xd;
+      rect[3]=bounds[3] - bounds[1] - yd;
+      /* rectangle thickness */
+      if (P->obj->hilite_size>0) {
+	Xgc->graphic_engine->xset_thickness(Xgc,P->obj->hilite_size);
+      }
+      Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
+      /* restore current thickness */
+      if (P->obj->hilite_size>0) 
+	{
+	  Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
+	}
     }
-    Xgc->graphic_engine->scale->drawrectangle(Xgc,rect);
-    /* restore current thickness */
-    if (P->obj->mark_size>0) {
-      Xgc->graphic_engine->xset_thickness(Xgc,cwidth);
-    }
-  }
-  
   /* restore current pattern */
   Xgc->graphic_engine->xset_pattern(Xgc,color);
 }
