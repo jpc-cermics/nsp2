@@ -113,7 +113,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   pyinterpstate = NspThreadState_Get()->interp;
   return 0;
 #else
-  Scierror("nspgtk threading disabled at compile time");
+  Scierror("nspgtk threading disabled at compile time \n");
   return 0;
 #endif
 }
@@ -129,7 +129,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   gdk_threads_enter();
   Nsp_END_ALLOW_THREADS;
   */
-  Scierror("To be done XXXXX ");
+  Scierror("Error: function _wrap_gdk_threads_enter unimplemented \n ");
   return RET_BUG;
 }
 %%
@@ -174,7 +174,7 @@ _wrap_gdk_draw_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if (GetArgs(stack,rhs,opt,T, &font, &nsp_type_gdkgc, &gc, &x, &y, &text ) == FAIL )
     return RET_BUG;
   if (!nspg_boxed_check(font, GDK_TYPE_FONT)) {
-    Scierror( "font must be a GdkFont");
+    Scierror("font must be a GdkFont\n");
     return RET_BUG;
   }
   gdk_draw_text(GDK_DRAWABLE(self->obj), nspg_boxed_get(font, GdkFont),
@@ -301,7 +301,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 			       x, y, width, height, dith, rgb_buf,
 			       rowstride, xdith, ydith);
   */
-  Scierror("To be done XXXXXXXXX");
+  Scierror("Error: function not implemented\n");
   return RET_BUG;
 }
 %%
@@ -344,7 +344,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
 				  x, y, width, height, dith, rgb_buf,
 				  rowstride, xdith, ydith);
   */
-  Scierror("To be done XXXXXX ");  
+  Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
 %%
@@ -386,7 +386,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 		      width, height, dith, buf, rowstride);
   return 0;
   */
-  Scierror("To be done XXXXXX ");
+  Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
 %%
@@ -627,10 +627,11 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
 	    pixmap = gdk_pixmap_colormap_create_from_xpm_d(drawable, colormap, &mask, trans_color, data->S);
 	}
     }
-  if (pixmap == NULL) {
-    Scierror("%s: can't create pixmap\n");
-    return RET_BUG;
-  }
+  if (pixmap == NULL) 
+    {
+      Scierror("%s: cannot create pixmap\n",NspFname(stack));
+      return RET_BUG;
+    }
   if ((ret = (NspObject *) nspgobject_new(NVOID,(GObject *)pixmap))== NULL) return RET_BUG; 
   MoveObj(stack,1,ret);
   if ( lhs == 2 ) 
@@ -678,19 +679,19 @@ _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
       if (GetArgs(stack,rhs,opt,T, &source, &mask, &fg, &bg, &x, &y) == FAIL )
 	return RET_BUG;
       if (!nspgobject_check(source, (NspTypeBase *) nsp_type_gdkpixmap)) {
-	Scierror( "source should be a GdkPixmap");
+	Scierror( "source should be a GdkPixmap\n");
 	return RET_BUG;
       }
       if (!nspgobject_check(mask, (NspTypeBase *) nsp_type_gdkpixmap)) {
-	Scierror( "mask should be a GdkPixmap");
+	Scierror( "mask should be a GdkPixmap\n");
 	return RET_BUG;
       }
       if (!nspg_boxed_check(fg, GDK_TYPE_COLOR)) {
-	Scierror( "fg should be a GdkColor");
+	Scierror( "fg should be a GdkColor\n");
 	return RET_BUG;
       }
       if (!nspg_boxed_check(bg, GDK_TYPE_COLOR)) {
-	Scierror( "bg should be a GdkColor");
+	Scierror( "bg should be a GdkColor\n");
 	return RET_BUG;
       }
       gb = gdk_cursor_new_from_pixmap(GDK_PIXMAP(source->obj),
@@ -701,7 +702,7 @@ _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
     }
   if ( gb == NULL) 
     {
-      Scierror("could not create GdkCursor object");
+      Scierror("Error: could not create a GdkCursor object\n");
       return RET_BUG;
     }
   nsp_ret = (NspObject *) gboxed_create(NVOID,GDK_TYPE_CURSOR,gb, TRUE, TRUE,/* XXXX */
@@ -1045,7 +1046,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
       static char *tab[] ={ "type", "window", "send_event",NULL};
       return  (NspObject *)nsp_smatrix_create_from_table(tab);
     }
-  Scierror("Event attributes not found \n");
+  Scierror("Error: Event attributes not found \n");
   return NULL;
 }
 %%
@@ -1136,7 +1137,7 @@ _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   int_types T[] = {obj ,t_end};
   if (GetArgs(stack,rhs,opt,T, &window) == FAIL )  return RET_BUG;
   if (!nspgobject_check(window,(NspTypeBase *) nsp_type_gdkwindow)) {
-    Scierror( "window should be a GdkWindow");
+    Scierror( "Error: window should be a GdkWindow\n");
     return RET_BUG;
   }
   if (( axes = nsp_matrix_create(NVOID,'r',1,device->num_axes)) == NULLMAT) return RET_BUG;
@@ -1167,7 +1168,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
 
   if (GetArgs(stack,rhs,opt,T, &window, &start, &stop) == FAIL ) return RET_BUG;
   if (!nspgobject_check(window,(NspTypeBase *) nsp_type_gdkwindow)) {
-    Scierror( "window should be a GdkWindow");
+    Scierror( "Error: window should be a GdkWindow\n");
     return RET_BUG;
   }
   gdk_device_get_history(device, GDK_WINDOW(window->obj), start, stop,
@@ -1186,7 +1187,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   gdk_device_free_history(events, n_events);
   return pyevents;
   */ 
-  Scierror("To be done XXXX ");
+  Scierror("Error: function _wrap_gdk_device_get_history not finished\n");  
   return RET_BUG;
 }
 %%
@@ -1234,7 +1235,7 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if (GetArgs(stack,rhs,opt,T, &drag_window, &x_root, &y_root) == FAIL )
     return RET_BUG;
   if (!nspgobject_check(drag_window,(NspTypeBase *) nsp_type_gdkwindow)) {
-    Scierror( "drag_window must be a GdkWindow");
+    Scierror("Error: drag_window must be a GdkWindow\n");
     return RET_BUG;
   }
   gdk_drag_find_window(GDK_DRAG_CONTEXT(self->obj),
@@ -1583,7 +1584,7 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     {
       dash_list[i]= list->R[i];
       if (dash_list[i] == 0) {
-	Scierror( "sequence member must not be 0");
+	Scierror( "sequence member must not be 0\n");
 	g_free(dash_list);
 	return RET_BUG;
       }
@@ -1975,7 +1976,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   height = gdk_pixbuf_get_height(pixbuf);
 
   if (pixels == NULL) {
-    Scierror("could not get pixel data");
+    Scierror("could not get pixel data\n");
     return RET_BUG;
   }
   if ((ret = nsp_new_string_obj(NVOID,(const char *) pixels, rowstride*height)) == NULL) return RET_BUG; 
@@ -2111,7 +2112,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 	  if (!gdk_colormap_alloc_color(GDK_COLORMAP(self->obj),
 					&colour, writeable, best_match))
 	    {
-	      Scierror("%s: couldn't allocate colour number %d",NspFname(stack),i);
+	      Scierror("%s: couldn't allocate colour number %d\n",NspFname(stack),i);
 	      return RET_BUG;
 	    }
 	}
@@ -2138,7 +2139,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
 	}
     }
   else {
-    Scierror("%s: first arhument must be a String or scalar matrix \n", NspFname(stack));
+    Scierror("Error: first argument of %s must be a string or a scalar matrix\n", NspFname(stack));
     return RET_BUG;
   }
   return 0;
@@ -2148,7 +2149,7 @@ override gdk_color_alloc kwargs
 static int
 _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 {
-  Scierror("use GdkColormap.alloc_color"); 
+  Scierror("Error: use GdkColormap.alloc_color\n"); 
   return RET_BUG;
 }
 %%
@@ -2291,7 +2292,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
 	}
       if ( ret == NULL) 
 	{
-	  Scierror("Unable to create visual \n");
+	  Scierror("Error: Unable to create visual \n");
 	  return RET_BUG;
 	}
       nsp_type_gdkvisual = new_type_gdkvisual(T_BASE);
@@ -2344,7 +2345,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   if (( data = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
   if (( pixbuf = gdk_pixbuf_new_from_xpm_data((const char**)data->S)) == NULL)
     {
-      Scierror("%s:can't load pixbuf",NspFname(stack));
+      Scierror("%s:can't load pixbuf\n",NspFname(stack));
       return RET_BUG;
     }
   
