@@ -7092,6 +7092,25 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
 }
 
 %%
+override gtk_action_new 
+
+static int
+_wrap_gtkaction_new(Stack stack, int rhs, int opt, int lhs)
+{
+  int_types T[] = {string, string, string, string,t_end};
+  char *name, *label, *tooltip, *stock_id;
+  GObject *ret; NspObject *nsp_ret;
+  if ( GetArgs(stack,rhs,opt,T,&name, &label, &tooltip, &stock_id) == FAIL) return RET_BUG;
+  if (strlen(label)==0) label=NULL;
+  if ((ret = (GObject *)gtk_action_new(name, label, tooltip, stock_id))== NULL) return RET_BUG;
+  nsp_type_gtkaction = new_type_gtkaction(T_BASE);
+  nsp_ret = (NspObject *) gobject_create(NVOID,ret,(NspTypeBase *) nsp_type_gtkaction );
+  if ( nsp_ret == NULL) return RET_BUG;
+  MoveObj(stack,1,nsp_ret);
+  return 1;
+}
+
+%%
 override gtk_action_group_get_action noargs
 
 static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
