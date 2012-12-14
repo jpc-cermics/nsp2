@@ -27,29 +27,29 @@
 extern int scicos_ftree2 (int *vec, int *nb, int *deput, int *outoin,
 			  int *outoinptr, int *ord, int *nord, int *ok);
 extern int scicos_ftree3(int *vec, int *nb, int *deput, int *typl, int *bexe,
-			  int *boptr, int *blnk, int *blptr, int *kk,
-			  int *ord, int *nord, int *ok);
+			 int *boptr, int *blnk, int *blptr, int *kk,
+			 int *ord, int *nord, int *ok);
 extern int scicos_ftree4(int *vec, int *nb, int *nd, int *nnd, int *typr,
-			  int *outoin, int *outoinptr, int *r1, int *r2,
-			  int *nr);
+			 int *outoin, int *outoinptr, int *r1, int *r2,
+			 int *nr);
 
 extern int scicos_sctree (int *nb, int *vec, int *in, int *depu, int *outptr, int *cmat,
 			  int *ord, int *nord, int *ok, int *kk);
 
-extern  int scicos_dset (int *, double *, double *, int *);
+extern int scicos_dset (int *, double *, double *, int *);
 extern void scicos_getouttb(int nsize,int *nvec, double *outtc);
-extern  int setscale2scicos_d (double *, double *, char *, long int);
-extern  int scicos_sciwin (void);
-extern  int scicos_isort (int *, int *, int *);
-extern  char *scicos_getlabel(int kf);
-extern  int scicos_dset (int *, double *, double *, int *);
-extern  int plot2scicos_d (double *, double *, int *, int *,
-			   int *, char *, char *, double *,
-			   int *, long int, long int);
+extern int setscale2scicos_d (double *, double *, char *, long int);
+extern int scicos_sciwin (void);
+extern int scicos_isort (int *, int *, int *);
+extern char *scicos_getlabel(int kf);
+extern int scicos_dset (int *, double *, double *, int *);
+extern int plot2scicos_d (double *, double *, int *, int *,
+			  int *, char *, char *, double *,
+			  int *, long int, long int);
 extern int scicos_scicosclip (int *);
-extern  int scicos_sxevents (void);
-extern  int scicos_unsfdcopy (int *, double *, int *, double *, int *);
-extern  int scicos_isort (int *, int *, int *);
+extern int scicos_sxevents (void);
+extern int scicos_unsfdcopy (int *, double *, int *, double *, int *);
+extern int scicos_isort (int *, int *, int *);
 extern int  scicos_getscicosvars(int what, double **v, int *nv, int *type);
 extern int scicos_getscilabel(int kfun,char **label);
 extern void *scicos_get_function(char * fname);
@@ -86,5 +86,13 @@ extern void Set_Jacobian_flag (int flag);
 extern double exp_(double x);
 extern double log_(double x);
 extern double pow_(double x, double y);
+
+/* utilities used in intcos */
+
+extern int scicos_getblock(NspObject *obj,double *pt,int *k);
+extern int scicos_getblocklink(NspObject *obj,double *pt,int *k, int *wh);
+extern void scicos_getobjs_in_rect(NspList *objs,double ox,double oy,double w,double h,
+				   int *nin,double *in,int *nout,double *out);
+extern int scicos_getobj(NspObject *obj,const double *pt,int *k, int *wh);
 
 #endif 
