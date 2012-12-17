@@ -32,7 +32,7 @@
 #include <nsp/interf.h> 
 #include <nsp/command.h> 
 #include <nsp/gtksci.h> 
-
+#include <nsp/system.h>
 #include <nsp/graphics-new/Graphics.h>
 #include <nsp/parse.h>
 #include <nsp/gsort-p.h>
@@ -62,6 +62,7 @@
 #include <nsp/grcommon.h> 
 #include <nsp/gmatrix.h> 
 #include <nsp/gmatrix1.h> 
+#include <nsp/grimage.h> 
 #include <nsp/fec.h>
 #include <nsp/contour.h> 
 #include <nsp/contour3d.h> 
@@ -70,7 +71,7 @@
 /* XXX */
 extern NspSMatrix *GetSMatUtf8(Stack stack,int pos); 
 extern NspSMatrix *GetSMatCopyUtf8(Stack stack,int pos); 
-extern char *nsp_get_extension(char *name);
+extern const char *nsp_get_extension(const char *name);
 extern BCG *nsp_check_graphic_context(void);
 extern int nsp_call_predefined_callbacks(BCG *Xgc, const char *name, int winid);
 
@@ -3974,6 +3975,54 @@ static int int_xpolys_new(Stack stack, int rhs, int opt, int lhs)
   return 0;
 }
 
+
+/* ximage 
+ *
+ */
+
+static int int_ximage_new(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *M1;
+  char *fname= NULL,*str=NULL;
+  char fname_expanded[FSIZE+1];
+  NspGrImage *image;
+  NspAxes *axe; 
+  double *rect=NULL;
+  int color=-1,thickness=-1,border=TRUE;
+  nsp_option opts[] ={{ "border",s_bool,NULLOBJ,-1},
+		      { "color",s_int,NULLOBJ,-1},
+		      { "thickness",s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(2,2);
+  if ((fname = GetString(stack,1)) == (char*)0) return RET_BUG;
+  nsp_expand_file_with_exec_dir(&stack,fname,fname_expanded);
+
+  if ((M1=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
+  CheckLength_(NspFname(stack),2,M1,4,RET_BUG);
+  rect = M1->R;
+  if ( get_optional_args(stack,rhs,opt,opts,&border,&color,&thickness) == FAIL) 
+    return RET_BUG;
+  if (( axe=  nsp_check_for_current_axes())== NULL) return RET_BUG;
+  /* create the object */
+  if ((str = nsp_string_copy(fname_expanded))== NULL) return RET_BUG;
+  if ((image = nsp_grimage_create("img",rect[0],rect[1],rect[2],rect[3],border,thickness,
+				  str,NULL,color,NULL))==NULL)
+    return RET_BUG;
+  /* insert the object in the axe */
+  if ( nsp_axes_insert_child(axe,(NspGraphic *) image, TRUE)== FAIL) 
+    {
+      Scierror("Error: failed to insert rectangle in Figure\n");
+      return RET_BUG;
+    }
+  if ( lhs == 1 ) 
+    {
+      MoveObj(stack,1,NSP_OBJECT(rect));
+      return 1;
+    }
+  return 0;
+} 
+
+
 /**
  * int_xselect:
  * @stack: 
@@ -5394,7 +5443,8 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,const char *expor
 {
   int win_id,rep=1,color=-1;
   int figure_background=TRUE; /* export with figure background drawing*/
-  char *filename= NULL, *mode = NULL;
+  const char *filename= NULL;
+  char *mode = NULL;
   const char *Table[] = {"d", "l", "n", "p", "k", NULL};
   int_types T[] = {s_int,string, new_opts, t_end} ;
   nsp_option opts[] ={{ "color",s_bool,NULLOBJ,-1},
@@ -5414,7 +5464,7 @@ static int int_export_G(Stack stack, int rhs, int opt, int lhs,const char *expor
     }
   if ( export_format == NULL )
     {
-      char *extension;
+      const char *extension;
       int frep = 0;
       const char *Etable[] = {".svg", ".pdf", ".eps", ".ps", ".fig", ".png", NULL};
       const char *Ftable[] = 
@@ -6525,6 +6575,8 @@ static int int_nsp_clear_queue(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+
+
 /*************************************************************
  * The Interface for graphic functions 
  *************************************************************/
@@ -6584,6 +6636,7 @@ static OpTab GraphicsUtil_func[]={
 #ifdef TEST_EVENT_BOX_THREAD
   {"gtk_test_loop", int_gtk_loop},
 #endif 
+  {"ximage", int_ximage_new},
   {(char *) 0, NULL}
 };
 
@@ -7181,3 +7234,6 @@ static int int_check2d(Stack stack,NspMatrix *Mstyle,NspMatrix **Mstyle_new,int 
   if ( axesflag != -1 )  (*strf)[2] = (char)(axesflag + 48); 
   return 0;
 }
+
+
+
