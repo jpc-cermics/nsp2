@@ -1021,15 +1021,14 @@ static void nsp_draw_block(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,vo
 	}
       else
 	{
-	  /* No icon available we used a default string 
-	   *
-	   */
+	  char str[]="No icon";
+	  /* No icon available we use a default string */
 	  Xgc->graphic_engine->xset_pattern(Xgc,8);
 	  Xgc->graphic_engine->scale->fillrectangle(Xgc,B->obj->r);
 	  /* drawing a string */
 	  Xgc->graphic_engine->xset_pattern(Xgc,0);
 	  loc[0] = B->obj->r[1] - B->obj->r[3];
-	  Xgc->graphic_engine->scale->xstringb(Xgc,"No icon",&fill,
+	  Xgc->graphic_engine->scale->xstringb(Xgc,str,&fill,
 					       B->obj->r,loc,B->obj->r+2,B->obj->r+3);
 	}
       break;
@@ -1941,4 +1940,4 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1945 "block.c"
+#line 1944 "block.c"
