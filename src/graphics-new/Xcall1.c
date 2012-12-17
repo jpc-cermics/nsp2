@@ -41,7 +41,7 @@
 #define PERI_SCALE_PRIVATE 
 #include "nsp/graphics-new/scale.h" 
 
-static void GSciString (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
+static void nsp_mstring (BCG *Xgc,int,int x,int y,char *StrMat,int *w,int *h);
 static void Myalloc1 (int **xm,int n,int *err);
 static void Myalloc (int **xm,int **ym, int n, int *err);
 static void xstringb (BCG *Xgc, char *string,int x, int y, int w, int h);
@@ -708,16 +708,16 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
 	{
 	  size--;
 	  Xgc->graphic_engine->xset_font(Xgc,fontid[0],size, FALSE);
-	  GSciString(Xgc,0,x,y,str,&w,&h);
+	  nsp_mstring(Xgc,0,x,y,str,&w,&h);
 	}
     }
   else 
     {
-      GSciString(Xgc,0,x,y,str,&w,&h);
+      nsp_mstring(Xgc,0,x,y,str,&w,&h);
     }
   x = x +  (wbox - w)/2.0;
   y = y -  (hbox - h)/2.0; 
-  GSciString(Xgc,1,x,y,str,&w,&h);
+  nsp_mstring(Xgc,1,x,y,str,&w,&h);
   Xgc->graphic_engine->xset_font(Xgc,fontid[0],fontid[1], FALSE);
 }
 
@@ -729,12 +729,13 @@ static void xstringb_1(BCG *Xgc,char *str,int *fflag, double *xd, double *yd, do
  * and the string is Drawn if Dflag  == 1 ;
  */
 
-static void GSciString(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
+static void nsp_mstring(BCG *Xgc,int Dflag, int x, int y, char *StrMat, int *w, int *h)
 {
   char *p = StrMat,*p1,*p2,*plast;
   int yi=y;
   int wc =0;
   p1 = plast = p+ strlen(p);
+
   while (1) 
     {
       int logrect[4];
