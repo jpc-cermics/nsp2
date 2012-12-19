@@ -3988,7 +3988,7 @@ static int int_ximage_new(Stack stack, int rhs, int opt, int lhs)
   NspGrImage *image;
   NspAxes *axe; 
   double *rect=NULL;
-  int color=-1,thickness=-1,border=TRUE;
+  int color=-1,thickness=-1,border=FALSE;
   nsp_option opts[] ={{ "border",s_bool,NULLOBJ,-1},
 		      { "color",s_int,NULLOBJ,-1},
 		      { "thickness",s_int,NULLOBJ,-1},
