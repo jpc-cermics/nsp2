@@ -546,6 +546,7 @@ extern void assignment (scicos_block *block,int flag);
 extern void whileiterator (scicos_block *block,int flag);
 extern void loopbreaker   (scicos_block *block,int flag) ;
 extern void scicos_sliderm_block(scicos_block * block, int flag);
+extern void scicos_vumeter_block(scicos_block * block, int flag);
 
 MULTI_DECLARATION(absolute_valuei)
 MULTI_DECLARATION(switch2)
@@ -1054,7 +1055,8 @@ scicos_block_table  tabsim[] ={
   {"zcross",(ScicosF) scicos_zcross_block} ,
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   /* {"zcross2",(ScicosF) zcross2}, */
-  {"sliderm",(ScicosF) scicos_sliderm_block},  
+  {"sliderm",(ScicosF) scicos_sliderm_block},    
+  {"vumeter",(ScicosF) scicos_vumeter_block},  
   MULTI_DECLARATION1(absolute_valuei),  
   MULTI_DECLARATION1(switch2), 
   {NULL , (ScicosF) 0}
