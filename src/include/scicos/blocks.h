@@ -1056,9 +1056,9 @@ scicos_block_table  tabsim[] ={
   {"zcross2",(ScicosF) scicos_zcross2_block},  
   /* {"zcross2",(ScicosF) zcross2}, */
   {"sliderm",(ScicosF) scicos_sliderm_block},    
-  {"vumeter",(ScicosF) scicos_vumeter_block},  
   MULTI_DECLARATION1(absolute_valuei),  
   MULTI_DECLARATION1(switch2), 
+  {"vumeter",(ScicosF) scicos_vumeter_block},  
   {NULL , (ScicosF) 0}
 };
 
