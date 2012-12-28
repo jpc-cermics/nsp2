@@ -246,6 +246,7 @@ extern void scicos_cfscope_block(scicos_block *block,int flag);
 extern void scicos_cscopxy_block(scicos_block *block,int flag);
 extern void scicos_canimxy_block (scicos_block *block,int flag);
 extern void scicos_cmscope_block(scicos_block *block,int flag);
+extern void scicos_dmscope_block(scicos_block *block,int flag);
 extern void scicos_scalar2vector_block(scicos_block *block,int flag);
 extern void scicos_evaluate_expr_block(scicos_block *block,int flag);
 extern void scicos_cstblk4_block(scicos_block *block,int flag);
@@ -261,6 +262,7 @@ extern void variable_delay (scicos_block *block,int flag);
 extern void time_delay (scicos_block *block,int flag);
 extern void cscope (scicos_block *block,int flag);
 extern void cmscope (scicos_block *block,int flag);
+extern void dmscope (scicos_block *block,int flag);
 extern void satur (scicos_block *block,int flag);
 extern void step_func (scicos_block *block,int flag);
 extern void integral_func (scicos_block *block,int flag);
@@ -657,6 +659,7 @@ scicos_block_table  tabsim[] ={
   /*  {"dlradp",(ScicosF) F2C(dlradp)}, */
   {"dlradp",(ScicosF) scicos_dlradp_block},
   /*  {"dollar",(ScicosF) F2C(dollar)}, */
+  {"dmscope",(ScicosF) scicos_dmscope_block},
   {"dollar",(ScicosF) scicos_dollar_block},
   {"dollar4",(ScicosF) dollar4},
   {"dollar4_m",(ScicosF) dollar4_m},
