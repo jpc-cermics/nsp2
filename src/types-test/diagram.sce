@@ -16,25 +16,16 @@ function C=draw_vanne()
     xset('window',30);
     xrect(0,0,10,10);
   end
-  
   F=get_current_figure();
   F.draw_latter[];
   F.start_compound[];
   // test function for block drawing 
   orig=[0,0]
   sz=[10,10];
-  // take car that for Opengl 
-  // polygone are to be convex when filled 
-  //xfpolys(orig(1)+[0;5;7;3;5;10;10;0;0]*sz(1)/10,...
-  //      orig(2)+[4;2;7;7;2;0;4;0;4]*sz(2)/10,15);
-  // thus we draw 3 polygons.
   xfpolys(orig(1)+[5,5,5;10,7,0;10,3,0]*sz(1)/10,...
 	  orig(2)+[2,2,2;4,7,0;0,7,4]*sz(2)/10,[15,15,15]);
-  
-  xfarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
-	 15)
-  xarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],...
-	1);
+  xfarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],15)
+  xarcs([orig(1)+3*sz(1)/10;orig(2)+sz(2);4*sz(1)/10;6*sz(2)/10;0;180*64],1);
   xset('font',2,6);
   xstringb(orig(1),orig(2),'String',sz(1),sz(2));
   C=F.end_compound[];
@@ -51,13 +42,11 @@ function C=draw_gmatrix()
     switch_graphics();
   end
   new_win=%t
-  
   if new_win then 
     win=xget('window');
     xset('window',30);
     xrect(0,0,10,10);
   end
-  
   F=get_current_figure();
   F.draw_latter[];
   F.start_compound[];
@@ -72,13 +61,10 @@ function C=draw_gmatrix()
 endfunction;
 
 function im=draw_tumbi()
-  if ~new_graphics() then 
-    switch_graphics();
+  if ~new_graphics() then switch_graphics();
   end
-  im = grimage_create(x=0,y=0,w=10,h=10,...
-		      fname='config/tumbi.svg');
+  im = grimage_create(x=0,y=0,w=10,h=10,fname='config/tumbi.svg');
 endfunction;
-
 
 function w=create_object_menu (win,x,y)
 // midle button menu construction 
