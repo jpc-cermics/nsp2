@@ -17,13 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
  
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
-#include "nsp/math.h"
-
+#include <nsp/nsp.h>
 #include <nsp/object.h> 
 #include <nsp/matrix.h> 
 #include <nsp/imatrix.h> 
@@ -44,10 +39,14 @@
 double *nsp_alloc_doubles(unsigned int n)
 {
   if ( n <= 0 ) 
-    return((double *) 0);
+    {
+      return((double *) 0);
+    }
   else
     {
-      if ( n <= 10 ) n = 10;  /* XXXXXX just to accelerate the realloc */
+      if ( n <= 10 ) n = 10;  /* just to accelerate the realloc */
+      if ( n > UINT_MAX/sizeof(double) ) 
+	return ((double *) 0);
       return((double*) MALLOC(n*sizeof(double)));
     }
 }
