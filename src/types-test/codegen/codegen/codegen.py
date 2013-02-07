@@ -139,7 +139,7 @@ class Wrapper:
               '   * ....\n' \
               '   */\n' 
 
-    type_tmpl_1_1 = \
+    type_tmpl_1_1_beg = \
               '  if ( nsp_type_%(typename_dc)s_id == 0 ) \n'  \
               '    {\n'  \
               '      /* \n'  \
@@ -191,7 +191,9 @@ class Wrapper:
               '\n'  \
               '/*----------------------------------------------\n'  \
               ' * Object method redefined for %(typename)s \n'  \
-              ' *-----------------------------------------------*/\n'  \
+              ' *-----------------------------------------------*/\n' 
+
+    type_tmpl_1_1_size = \
               '/*\n' \
               ' * size \n' \
               ' */\n' \
@@ -201,6 +203,8 @@ class Wrapper:
               '  return 1;\n' \
               '}\n' \
               '\n'  \
+
+    type_tmpl_1_1_last = \
               '/*\n'  \
               ' * type as string \n'  \
               ' */\n'  \
@@ -762,8 +766,21 @@ class Wrapper:
             # if we are a by ref object print the ref counter 
             substdict['ref_count']= '(nref=%d)'
             substdict['ref_count_ref']= ',M->obj->ref_count'
-        # insert the end of type defintion 
-        self.fp.write(self.type_tmpl_1_1 % substdict)
+        # insert the suite of type defintion 
+        self.fp.write(self.type_tmpl_1_1_beg % substdict)
+
+        # check if size was overriden
+        if self.overrides.part_size_is_overriden(typename_nn):
+            slot = '%s_size' % (typename_nn)
+            lineno, filename = self.overrides.getstartline(slot)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_size(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_1_1_size % substdict)
+
+        # insert the remaining part of type defintion 
+        self.fp.write(self.type_tmpl_1_1_last % substdict)
 
         # eq and not equal in type methods 
 
