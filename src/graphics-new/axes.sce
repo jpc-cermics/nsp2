@@ -37,6 +37,8 @@
   C.wrect=[2,1.5,3,2];
   // the scales that the axes establish for its children.
   C.frect=[-2,0,2,3]; 
+  C.rect = C.frect;
+  C.fixed=%t;
   P=polyline_create();
   C.children(1) = P;
   P=polyline_create(close=%t,color=9,thickness=2);
@@ -60,6 +62,32 @@
   str = grstring_create(text=['Nsp'],x=-0.5,y=0,size=-1);
   A.children($+1) = str;
   F.connect[]
+
+  
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
 function F=new_plot(x,y,varargopt)

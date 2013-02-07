@@ -190,6 +190,8 @@ extern sci_interface Agraph_Interf;extern interface_info Agraph_Interf_Info;
 
 extern  sci_interface  SpMaxpColMatrix_Interf  ;extern  interface_info  SpMaxpColMatrix_Interf_Info  ;
 
+extern  sci_interface  Bvar_Interf  ;extern  interface_info  Bvar_Interf_Info  ;
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -325,6 +327,7 @@ InterfTab Interfaces[]={
   {Agraph_Interf , Agraph_Interf_Info },
 #endif 
   {SpMaxpColMatrix_Interf , SpMaxpColMatrix_Interf_Info}, 
+  {Bvar_Interf, Bvar_Interf_Info},
   {NULL,NULL}
 }; 
 
