@@ -1,0 +1,68 @@
+;; -*- scheme -*-
+
+(include "bvar-types.defs")
+
+(define-method get_value
+  (of-object "Bvar")
+  (c-name "bvar_get_value")
+  (return-type "NspObject*")
+)
+
+(define-method set_value
+  (of-object "Bvar")
+  (parameters
+   '("NspObject*" "val")
+   )
+  (c-name "bvar_set_value")
+  (return-type "none")
+)
+
+(define-method get_varname
+  (of-object "Bvar")
+  (c-name "bvar_get_varname")
+  (return-type "NspObject*")
+)
+
+(define-method set_varname
+  (of-object "Bvar")
+  (c-name "bvar_set_varname")
+  (parameters
+   '("NspObject*" "args")
+   )
+  (return-type "none")
+)
+
+(define-method is_symbolic
+  (of-object "Bvar")
+  (c-name "bvar_is_symbolic")
+  (return-type "gboolean")
+)
+
+(define-method set_symbolic
+  (of-object "Bvar")
+  (c-name "bvar_set_symbolic")
+  (parameters
+   '("gboolean" "status")
+   )
+  (return-type "none")
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

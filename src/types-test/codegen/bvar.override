@@ -1,0 +1,223 @@
+/* -*- Mode: C -*- */
+%%
+include-start Bvar
+
+%%
+include-public Bvar
+
+/* inserted at the end of public part of class include file */
+extern NspBvar *nsp_bvar(NspObject *Obj,int flag);
+
+%%
+include-private Bvar
+
+/* inserted in the private part of include file
+ * of classa.h
+ */
+
+%%
+headers
+#include <nsp/objects.h>
+#include <nsp/plist.h> 
+#include <nsp/plistc.h> 
+#include <nsp/parse.h>
+
+%%
+init 
+
+/ * init code  * /
+
+%%
+modulename atk
+/* %%  import gobject.GObject as GObject */
+
+%%
+ignore-glob
+  *_get_type
+
+%%
+override-int-create-final Bvar
+/* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+%%
+override-destroy-prelim  Bvar
+/* verbatim in destroy */
+
+%%
+override Bvar.bvar_get_value kwargs
+/* override a method */
+static int _wrap_bvar_get_value(NspBvar *self, Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1); 
+  MoveObj(stack,1, self->value);
+  return Max(lhs,1);
+}
+
+%%
+override Bvar.bvar_set_value kwargs
+/* override a method */
+static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj;
+  CheckRhs(1,1);
+  CheckLhs(0,1); 
+  if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
+    return RET_BUG;
+  if ( self->value != NULL )
+    {
+      nsp_object_destroy(&self->value);
+    }
+  self->value = Obj;
+  return 0;
+}
+
+%%
+override Bvar.bvar_get_varname kwargs
+
+static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
+{
+  if ( nsp_move_string(stack,1,self->varname,-1) ==FAIL)   return RET_BUG;
+  return 1;
+}
+
+%%
+override Bvar.bvar_set_varname kwargs
+
+static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
+{
+  char *str;
+  if ((str = GetString(stack,1)) == (char*)0) return RET_BUG;
+  if ((str = nsp_string_copy(str)) ==NULL) return RET_BUG;
+  free(self->varname);
+  self->varname=str;
+  return 0;
+}
+
+%%
+override Bvar.bvar_is_symbolic kwargs
+
+static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
+{
+  if ( nsp_move_boolean(stack,1,(self->sym == TRUE))==FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override Bvar.bvar_set_symbolic kwargs
+
+static int _wrap_bvar_set_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_bool,t_end};
+  int status;
+  if ( GetArgs(stack,rhs,opt,T,&status) == FAIL) return RET_BUG;
+  self->sym = status;
+  return 0;
+}
+
+
+%%
+override-path-extract Bvar 
+top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
+
+%%
+override-info Bvar 
+/*
+ * info overriden 
+ */
+
+int nsp_bvar_info(NspBvar *M, int indent,const char *name, int rec_level)
+{
+  return nsp_bvar_print(M,indent,name,rec_level);
+}
+
+%%
+override-print Bvar 
+/*
+ * print overriden 
+ */
+
+int nsp_bvar_print(NspBvar *M, int indent,const char *name, int rec_level)
+{
+  const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
+  if (user_pref.pr_as_read_syntax)
+    {
+      if ( strcmp(pname,NVOID) != 0) 
+	{
+	  nsp_object_print(M->value,indent,"_val",rec_level);
+	  Sciprintf1(indent,"%s=bvar(sym=%s,varname=\"%s\",value=_val);",pname,
+		     (M->sym == TRUE) ? "%t" : "%f");
+	}
+      else 
+	{
+	  nsp_object_print(M->value,indent,"_val",rec_level);
+	  Sciprintf1(indent,"%s=bvar(sym=%s,varname=\"%s\",value=_val);",pname,
+		     (M->sym == TRUE) ? "%t" : "%f");
+	}
+    }
+  else 
+    {
+      Sciprintf1(indent,"%s\t= \"%s\",%s,%s\n",pname,M->varname, (M->sym == TRUE ) ? "%t" : "%f",
+		 nsp_object_type_as_string(M->value));
+    }
+  return TRUE;
+}
+
+
+%%
+override-equal Bvar
+
+/*
+ * A == B 
+ */
+
+static int nsp_bvar_eq(NspBvar *A, NspObject *B)
+{
+  NspBvar *loc = (NspBvar *) B;
+  if ( check_cast(B,nsp_type_bvar_id) == FALSE) return FALSE ;
+  if ( A->value == NULL && loc->value == NULL) return TRUE;
+  if ( A->value != NULL && loc->value != NULL) 
+    {
+      if ( NSP_OBJECT(A->value)->type->eq(A->value,loc->value) == FALSE ) return FALSE;
+    }
+  else
+    {
+      return FALSE;
+    }
+  return TRUE;
+}
+
+/*
+ * A != B 
+ */
+
+static int nsp_bvar_neq(NspBvar *A, NspObject *B)
+{
+  return ( nsp_bvar_eq(A,B) == TRUE ) ? FALSE : TRUE;
+}
+
+
+%%
+last 
+
+NspBvar *nsp_bvar(NspObject *Obj,int sym)
+{
+  NspObject *O1;
+  NspBvar *H;
+  /* want to be sure that type bvar is initialized */
+  nsp_type_bvar = new_type_bvar(T_BASE);
+  if(( H = nsp_bvar_create_void(NVOID,(NspTypeBase *) nsp_type_bvar)) == NULLBVAR) return NULL;
+  if ((O1 = nsp_object_copy_and_name("ud",Obj)) == NULLOBJ) 
+    {
+      nsp_bvar_destroy(H);
+      return NULL;
+    }
+  if ( H->value != NULL )
+    {
+      nsp_object_destroy(&H->value);
+    }
+  H->value = O1;
+  H->sym = sym;
+  return H;
+}
+
+

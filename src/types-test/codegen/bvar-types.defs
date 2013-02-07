@@ -1,0 +1,24 @@
+;; -*- scheme -*-
+;;
+;; variables to be used in conjunction with ast
+
+(define-object Bvar
+  (in-module "Bvar")
+  (parent "Object")
+  (c-name "NspBvar")
+  (fields
+   '("gboolean" "sym" "hidden" "FALSE"); /* symbolic ? */
+   '("NspObject*" "value" "hidden" "NULL" ); /* value as object */
+   '("char*" "varname" "hidden" ""); 
+   )
+  (gtype-id "Bvar")
+)
+
+
+
+
+
+
+
+
+
