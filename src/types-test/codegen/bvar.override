@@ -131,6 +131,22 @@ int nsp_bvar_info(NspBvar *M, int indent,const char *name, int rec_level)
 }
 
 %%
+override-size Bvar 
+
+/*
+ * size can be overriden here
+ */
+
+static int nsp_bvar_size(NspBvar *Mat, int flag)
+{
+  /* redirect the size value to Mat->value */
+  if ( Mat->value == NULL) 
+    return 0;
+  else
+    return nsp_object_get_size(Mat->value,flag);
+}
+
+%%
 override-print Bvar 
 /*
  * print overriden 

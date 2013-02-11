@@ -50,7 +50,7 @@
 static int EvalEqual (PList L1,Stack stack,int first);
 static int EvalOpt (PList L1,Stack stack,int first);
 static int EvalFor (PList L1,Stack stack,int first);
-static int EvalEqual1 (const char *name,Stack stack,int first,int fargs);
+static int EvalEqual1 (const char *name,Stack stack,int first,int fargs,int *flag);
 static int EvalEqual2 (const char *name,Stack stack,int first,int largs,int fargs,int dot_flag);
 
 typedef struct _obj_check_field obj_check_field ;
@@ -1701,10 +1701,11 @@ static int EvalEqual(PList L1, Stack stack, int first)
 	    }
 	  else
 	    {
+	      int flag = FALSE;
 	      /*x(exp)= rexp or x()()()()(exp)= rexp 
 	       *  when x or x()()()() is of <<matrix>> type 
 	       **/
-	      n=EvalEqual1(name,stack,freepos+1,j+mlhs_r[i]-3);
+	      n=EvalEqual1(name,stack,freepos+1,j+mlhs_r[i]-3,&flag);
 	      if ( n < 0 ) 
 		{ 
 		  /* now a general clean before returning */
@@ -1712,6 +1713,31 @@ static int EvalEqual(PList L1, Stack stack, int first)
 		  /* now a general clean before returning */
 		  nsp_void_seq_object_destroy(stack,first,freepos);
 		  return n;
+		}
+	      if ( flag == TRUE )
+		{
+		  /* We arrive here if EvalEqual1 used a macro instead 
+		   * of a standard interface in order to perform the 
+		   * computations. Since in EvalEqual1 the interface 
+		   * used are special in the sense that they change their 
+		   * given argument we have to mimic the same behaviour when 
+		   * operations are executed by a macro. In that case 
+		   * stack.val->S[freepos] is the old value 
+		   * stack.val->S[freepos+1] is the value that the variable 
+		   * should have after insertion.
+		   */
+		  stack.val->S[freepos]= stack.val->S[freepos+1];
+		  if ( Ocheckname(stack.val->S[freepos],NVOID) == FALSE)
+		    {
+		      if ( nsp_frame_replace_object(stack.val->S[freepos],-1)==FAIL) 
+			{
+			  /* now a general clean before returning */
+			  stack.val->S[freepos] = NULLOBJ;
+			  /* now a general clean before returning */
+			  nsp_void_seq_object_destroy(stack,first,freepos);
+			  return RET_BUG;
+			}
+		    }
 		}
 	      stack.val->S[freepos+1] = NULLOBJ;
 	    }
@@ -1755,6 +1781,7 @@ static int EvalEqual(PList L1, Stack stack, int first)
  * @stack: 
  * @first: 
  * @fargs: 
+ * @flag: 
  * 
  * Insertion or Deletion for objects similar to matrix 
  * we want to perform x(z....t) = w 
@@ -1765,10 +1792,10 @@ static int EvalEqual(PList L1, Stack stack, int first)
  * Return value: 
  **/
 
-int EvalEqual1(const char *name, Stack stack, int first, int fargs)
+int EvalEqual1(const char *name, Stack stack, int first, int fargs, int *flag)
 {
   NspObject *Obj;
-  int k;
+  int k,rep;
   stack.first = first;
   /* check if w=[] : Not perfect since list() will also return 0 
    * in fact deletion should be detected at Parsing XXXXX
@@ -1872,7 +1899,19 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs)
 #endif 
 	}
     }
-  return nsp_eval_maybe_accelerated_op("setrowscols",1, setrowscols_tab, stack, first,fargs+2,0,1);
+  Obj = stack.val->S[first]; /* object to be changed */
+  rep = nsp_eval_maybe_accelerated_op("setrowscols",1, setrowscols_tab, stack, first,fargs+2,0,1);
+  if ( rep >= 1 && Obj != stack.val->S[first])
+    {
+      /* we arrive here if setrowscols was not a primitive but a nsp function
+       * stack.val->S[first] in that case contains the new value of the 
+       * variable which was changed by setrowscols 
+       * XXX Attention: cela se produit pour la plupart des fonctions plus haut !
+       */
+      nsp_object_set_name(stack.val->S[first],nsp_object_get_name(Obj));
+      *flag = TRUE;
+    }
+  return rep;
 }
 
 /**

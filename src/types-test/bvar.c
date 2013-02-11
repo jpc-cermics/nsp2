@@ -166,15 +166,22 @@ NspBvar *new_bvar()
 /*----------------------------------------------
  * Object method redefined for NspBvar 
  *-----------------------------------------------*/
+#line 135 "codegen/bvar.override"
+
 /*
- * size 
+ * size can be overriden here
  */
 
 static int nsp_bvar_size(NspBvar *Mat, int flag)
 {
-  return 1;
+  /* redirect the size value to Mat->value */
+  if ( Mat->value == NULL) 
+    return 0;
+  else
+    return nsp_object_get_size(Mat->value,flag);
 }
 
+#line 185 "bvar.c"
 /*
  * type as string 
  */
@@ -192,7 +199,7 @@ static char *nsp_bvar_type_short_string(NspObject *v)
   return(bvar_short_type_name);
 }
 
-#line 168 "codegen/bvar.override"
+#line 184 "codegen/bvar.override"
 
 /*
  * A == B 
@@ -224,7 +231,7 @@ static int nsp_bvar_neq(NspBvar *A, NspObject *B)
 }
 
 
-#line 228 "bvar.c"
+#line 235 "bvar.c"
 int nsp_bvar_xdr_save(XDR *xdrs, NspBvar *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
@@ -255,7 +262,7 @@ static NspBvar  *nsp_bvar_xdr_load(XDR *xdrs)
   if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
 #line 40 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 259 "bvar.c"
+#line 266 "bvar.c"
   return H;
 }
 
@@ -268,7 +275,7 @@ void nsp_bvar_destroy_partial(NspBvar *H)
 #line 43 "codegen/bvar.override"
 /* verbatim in destroy */
 
-#line 272 "bvar.c"
+#line 279 "bvar.c"
   if ( H->value != NULL ) 
     nsp_object_destroy(&H->value);
   nsp_string_destroy(&(H->varname));
@@ -291,8 +298,8 @@ int nsp_bvar_info(NspBvar *M, int indent,const char *name, int rec_level)
   return nsp_bvar_print(M,indent,name,rec_level);
 }
 
-#line 295 "bvar.c"
-#line 135 "codegen/bvar.override"
+#line 302 "bvar.c"
+#line 151 "codegen/bvar.override"
 /*
  * print overriden 
  */
@@ -324,7 +331,7 @@ int nsp_bvar_print(NspBvar *M, int indent,const char *name, int rec_level)
 }
 
 
-#line 328 "bvar.c"
+#line 335 "bvar.c"
 /*
  * latex print 
  */
@@ -432,7 +439,7 @@ NspBvar *nsp_bvar_create(const char *name,gboolean sym,NspObject* value,char* va
   if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
 #line 40 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 436 "bvar.c"
+#line 443 "bvar.c"
   return H;
 }
 
@@ -495,7 +502,7 @@ NspBvar *nsp_bvar_full_copy(NspBvar *self)
 
 #line 40 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
-#line 499 "bvar.c"
+#line 506 "bvar.c"
   return H;
 }
 
@@ -516,7 +523,7 @@ int int_bvar_create(Stack stack, int rhs, int opt, int lhs)
  if ( nsp_bvar_check_values(H) == FAIL) return RET_BUG;
 #line 40 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
-#line 520 "bvar.c"
+#line 527 "bvar.c"
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
@@ -534,7 +541,7 @@ static int _wrap_bvar_get_value(NspBvar *self, Stack stack, int rhs, int opt, in
   return Max(lhs,1);
 }
 
-#line 538 "bvar.c"
+#line 545 "bvar.c"
 
 
 #line 58 "codegen/bvar.override"
@@ -554,7 +561,7 @@ static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, in
   return 0;
 }
 
-#line 558 "bvar.c"
+#line 565 "bvar.c"
 
 
 #line 76 "codegen/bvar.override"
@@ -565,7 +572,7 @@ static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 569 "bvar.c"
+#line 576 "bvar.c"
 
 
 #line 85 "codegen/bvar.override"
@@ -580,7 +587,7 @@ static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 584 "bvar.c"
+#line 591 "bvar.c"
 
 
 #line 98 "codegen/bvar.override"
@@ -591,7 +598,7 @@ static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 595 "bvar.c"
+#line 602 "bvar.c"
 
 
 #line 107 "codegen/bvar.override"
@@ -606,7 +613,7 @@ static int _wrap_bvar_set_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 610 "bvar.c"
+#line 617 "bvar.c"
 
 
 static NspMethods bvar_methods[] = {
@@ -655,7 +662,7 @@ void Bvar_Interf_Info(int i, char **fname, function (**f))
   *f = Bvar_func[i].fonc;
 }
 
-#line 201 "codegen/bvar.override"
+#line 217 "codegen/bvar.override"
 
 NspBvar *nsp_bvar(NspObject *Obj,int sym)
 {
@@ -680,4 +687,4 @@ NspBvar *nsp_bvar(NspObject *Obj,int sym)
 
 
 
-#line 684 "bvar.c"
+#line 691 "bvar.c"

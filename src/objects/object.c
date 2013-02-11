@@ -2318,17 +2318,17 @@ int int_object_le(Stack stack, int rhs, int opt, int lhs)
 
 int int_object_lt(Stack stack, int rhs, int opt, int lhs) 
 {
-  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+  return  int_object_log_gen(stack,rhs,opt,lhs,"lt");
 }
 
 int int_object_ge(Stack stack, int rhs, int opt, int lhs) 
 {
-  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+  return  int_object_log_gen(stack,rhs,opt,lhs,"ge");
 }
 
 int int_object_gt(Stack stack, int rhs, int opt, int lhs) 
 {
-  return  int_object_log_gen(stack,rhs,opt,lhs,"le");
+  return  int_object_log_gen(stack,rhs,opt,lhs,"gt");
 }
 
 /*
@@ -2351,8 +2351,8 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
   if ( NSP_OBJECT(O1)->type == NSP_OBJECT(O2)->type )
     {
       /* should never get there */
-      Scierror("Error: a specialized function eq_%s_%s is missing\n",
-	       NSP_OBJECT(O1)->type->s_type(),NSP_OBJECT(O1)->type->s_type());
+      Scierror("Error: a specialized function ne_%s_%s is missing\n",
+	       NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O1)->type->sh_type(O2));
       return RET_BUG;
     }
   else 
@@ -2365,7 +2365,6 @@ int int_object_neq(Stack stack, int rhs, int opt, int lhs)
       Sciprintf("Warning: mixed unimplemented comparison %s %s %s returning TRUE\n","<>",
 		NSP_OBJECT(O1)->type->sh_type(O1),NSP_OBJECT(O2)->type->sh_type(O2));
 #endif
-      
     }
   nsp_move_boolean(stack,1,TRUE); 
   return 1; 
