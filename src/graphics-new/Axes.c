@@ -36,7 +36,10 @@ static void aplotv2 (BCG *Xgc,char mode, int grid_color);
 static void nsp_draw_frame_rectangle(BCG *Xgc) ;
 static void nsp_draw_filled_rectangle(BCG *Xgc,int bg) ;
 static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
-		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color);
+		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag);
+static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny,
+                          int grid_color, char logflag, int seg_flag);
+
 
 /**
  * axis_draw:
@@ -62,9 +65,12 @@ void axis_draw(BCG *Xgc,char mode, char scale, int grid_color,int bg)
   fg = Xgc->graphic_engine->xget_foreground(Xgc);
   old_dash = Xgc->graphic_engine->xset_dash(Xgc,1);
   pat = Xgc->graphic_engine->xset_pattern(Xgc,fg);
+
+  /* draw background filled rectangle */
   if ( Xgc->figure_bg_draw == TRUE )
     nsp_draw_filled_rectangle(Xgc,bg);
-  switch ( c) 
+  
+  switch ( c ) 
     {
     case '0' :
       break ;
@@ -122,18 +128,26 @@ static void aplotv2(BCG *Xgc,char mode, int grid_color)
       x1 = x[0]; y1 = y[0];
       break;
     }
+
+  /* draw grid first */
+  if ( grid_color != -1 ) {
+     nsp_axis_grid(Xgc,'d','r', x,&nx, &y1, &ny, grid_color,Xgc->scales->logflag[0],seg);
+     nsp_axis_grid(Xgc,dir,'r', &x1,&nx, y, &ny, grid_color,Xgc->scales->logflag[1],seg);
+  }
+  
   /* x-axis */
   ny=1,nx=3;
-  Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg,grid_color);
+  Sci_Axis(Xgc,'d','r',x,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
+           NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
+  
   /* y-axis */
   ny=3,nx=1;
-  Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg,grid_color);
-  if ( c != '4' && c != '5' )  
-    {
-      /* frame rectangle */
-      nsp_draw_frame_rectangle(Xgc);
-    }
+  Sci_Axis(Xgc,dir,'r',&x1,&nx,y,&ny,NULL,Xgc->scales->Waaint1[2],
+           NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
 
+  /* frame rectangle */
+  if ( c != '4' && c != '5' )
+      nsp_draw_frame_rectangle(Xgc);
 }
 
 /* here we use frect to find the axes position 
@@ -171,19 +185,26 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
       y1= Xgc->scales->frect[1];
       break;
     }
-  if ( c != '4' && c != '5' )  
-    {
-      /* frame rectangle */
-      nsp_draw_frame_rectangle(Xgc);
-    }
+
+  /* draw grid first */
+  if ( grid_color != -1 ) {
+     nsp_axis_grid(Xgc,'d','i', Xgc->scales->xtics,&nx, &y1, &ny, grid_color,Xgc->scales->logflag[0],seg);
+     nsp_axis_grid(Xgc,dir,'i', &x1,&nx, Xgc->scales->ytics, &ny, grid_color,Xgc->scales->logflag[1],seg);
+  }
+  
   /* x-axis */
   ny=1,nx=4;
   Sci_Axis(Xgc,'d','i',Xgc->scales->xtics,&nx,&y1,&ny,NULL,Xgc->scales->Waaint1[0],
-	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg,grid_color);
+	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[0],seg);
+
   /* y-axis */
   ny=4,nx=1;
   Sci_Axis(Xgc,dir,'i',&x1,&nx,Xgc->scales->ytics,&ny,NULL,Xgc->scales->Waaint1[2],
-	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg,grid_color);
+	   NULL,fontsize,textcolor,ticscolor,Xgc->scales->logflag[1],seg);
+
+  /* frame rectangle */
+  if ( c != '4' && c != '5' )
+    nsp_draw_frame_rectangle(Xgc);
 }
 
 
@@ -222,15 +243,10 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
  *            XXXXX : to be done 
  *   seg_flag : 0 or 1, flag which control the drawing of the segment associated to the axis 
  *            if 1 the segment is drawn 
- *   grid_color: -1 or the color of an axis to be added.
  *-------------------------------------------------------------*/
 
-
-static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
-			  int grid_color, char logflag, int seg_flag, int Nx,int Ny);
-
 static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, char **str, int subtics, 
-		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag, int grid_color)
+		     char *format, int fontsize, int textcolor, int ticscolor, char logflag, int seg_flag)
 {
   int Nx=0,Ny=0;
   double angle=0.0,vxx,vxx1,xd,yd,d_barlength,str_offset;
@@ -547,24 +563,41 @@ static void Sci_Axis(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double
     {
       Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
     }
-  if ( grid_color != -1 ) 
-    nsp_axis_grid(Xgc,pos,xy_type, x,nx, y, ny, grid_color, logflag,seg_flag,Nx,Ny);
-  
 }
 
 /* draw a grid which follows the main ticks. 
  */
 
 static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, double *y, int *ny, 
-			  int grid_color, char logflag, int seg_flag, int Nx,int Ny)
+			  int grid_color, char logflag, int seg_flag)
 {
-
+  int Nx=0,Ny=0;
   double vxx,xd,yd,d_barlength;
   int vx[2],vy[2],i, ns=2,style=0,iflag=0, color_kp=0;
 
   if (*nx==3) if (x[2]==0.0) return;
   if (*ny==3) if (y[2]==0.0) return;
   
+  /* Real to Pixel values */
+  switch ( xy_type )
+    {
+    case 'v' : Nx= *nx; Ny= *ny; break;
+    case 'r' :
+      switch ( pos ) {
+      case 'u' : case 'd' : Nx = (int) x[2]+1; break;
+      case 'r' : case 'l' : Ny = (int) y[2]+1; break;
+      }
+      break;
+    case 'i' :
+      switch ( pos ) {
+      case 'u' : case 'd' : Nx = (int) x[3]+1; break;
+      case 'r' : case 'l' : Ny = (int) y[3]+1; break;
+      }
+      break;
+    default:
+      sciprint("nsp_axis_grid: wrong type argument xy_type\r\n");
+    }
+
   if ( grid_color != -1 ) 
     {
       color_kp = Xgc->graphic_engine->xget_pattern(Xgc);
@@ -632,8 +665,6 @@ static void nsp_axis_grid(BCG *Xgc,char pos, char xy_type, double *x, int *nx, d
       Xgc->graphic_engine->xset_pattern(Xgc,color_kp);
     }
 }
-
-
 
 /* from double to pixel */ 
 
