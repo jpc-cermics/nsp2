@@ -16,6 +16,8 @@ function B=string(A)
     B=string(b2m(A));
     B=strsubst(B,'1','T');
     B=strsubst(B,'0','F');
+  elseif type(A,'short')=='i' then 
+    B=m2s(i2m(A));
   else
     B=m2s(A);// used defaut format 
   end
