@@ -131,7 +131,9 @@ static void aplotv2(BCG *Xgc,char mode, int grid_color)
 
   /* draw grid first */
   if ( grid_color != -1 ) {
+     ny=1,nx=3;
      nsp_axis_grid(Xgc,'d','r', x,&nx, &y1, &ny, grid_color,Xgc->scales->logflag[0],seg);
+     ny=3,nx=1;
      nsp_axis_grid(Xgc,dir,'r', &x1,&nx, y, &ny, grid_color,Xgc->scales->logflag[1],seg);
   }
   
@@ -188,7 +190,9 @@ static void aplotv1_new(BCG *Xgc,char mode,int grid_color)
 
   /* draw grid first */
   if ( grid_color != -1 ) {
+     ny=1,nx=4;
      nsp_axis_grid(Xgc,'d','i', Xgc->scales->xtics,&nx, &y1, &ny, grid_color,Xgc->scales->logflag[0],seg);
+     ny=4,nx=1;
      nsp_axis_grid(Xgc,dir,'i', &x1,&nx, Xgc->scales->ytics, &ny, grid_color,Xgc->scales->logflag[1],seg);
   }
   
