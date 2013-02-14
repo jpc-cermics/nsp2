@@ -37,6 +37,7 @@ Source: "lib\*.*"; DestDir: "{app}\lib"; Flags: recursesubdirs
 Source: "etc\*.*"; DestDir: "{app}\etc"; Flags: recursesubdirs
 Source: "share\*.*"; DestDir: "{app}\share"; Flags: recursesubdirs
 Source: "man\html\generated\*.*"; DestDir: "{app}\man\html\generated"; Flags: recursesubdirs
+Source: "man\scicoslab.4dx"; DestDir: "{app}\man\";
 Source: "macros\*.*"; DestDir: "{app}\macros\"; Flags: recursesubdirs
 Source: "tests\*.*"; DestDir: "{app}\tests\"; Flags: recursesubdirs
 Source: "demos\*.*"; DestDir: "{app}\demos\"; Flags: recursesubdirs
