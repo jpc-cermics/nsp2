@@ -1815,13 +1815,17 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs, int *flag)
 	    {
 	      /* delete first+1,first+2 */
 	      nsp_void_seq_object_destroy(stack,first+1,first+3);
-	      return nsp_eval_maybe_accelerated_op("tozero", 1, tozero_tab, stack,first,1,0,1); 
+	      Obj = stack.val->S[first];
+	      rep= nsp_eval_maybe_accelerated_op("tozero", 1, tozero_tab, stack,first,1,0,1); 
+	      goto end ;
 	    }
 	  else	                                                  /* x(elts)=[] ==> removing elements */
 	    {
 	      nsp_void_object_destroy(&stack.val->S[first+2]);
 	      stack.val->S[first+2]=NULLOBJ;
-	      return nsp_eval_maybe_accelerated_op("deleteelts", 2, deleteelts_tab, stack,first,2,0,1); 
+	      Obj = stack.val->S[first];
+	      rep= nsp_eval_maybe_accelerated_op("deleteelts", 2, deleteelts_tab, stack,first,2,0,1); 
+	      goto end;
 	    }
 	  break;
 	case 2: 
@@ -1835,7 +1839,9 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs, int *flag)
 		{
 		  /* delete first+1,first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+1,first+4);
-		  return nsp_eval_maybe_accelerated_op("tozero",1, tozero_tab, stack,first,1,0,1); 
+		  Obj = stack.val->S[first];
+		  rep= nsp_eval_maybe_accelerated_op("tozero",1, tozero_tab, stack,first,1,0,1); 
+		  goto end;
 		}
 	      else                                                /* x(:,<expr>)=[] */
 		{
@@ -1845,7 +1851,9 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs, int *flag)
 		  nsp_void_object_destroy(&stack.val->S[first+3]);
 		  stack.val->S[first+3]=NULLOBJ;
 		  /* now we have [x,expr] on the stack */
-		  return nsp_eval_maybe_accelerated_op("deletecols",2, deletecols_tab, stack,first,2,0,1);
+		  Obj = stack.val->S[first];
+		  rep= nsp_eval_maybe_accelerated_op("deletecols",2, deletecols_tab, stack,first,2,0,1);
+		  goto end;
 		}
 	    }
 	  else 
@@ -1856,13 +1864,17 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs, int *flag)
 		{
 		  /* we have [x,expr] on the stack : delete first+2,first+3 */
 		  nsp_void_seq_object_destroy(stack,first+2,first+4);
-		  return nsp_eval_maybe_accelerated_op("deleterows",2, deleterows_tab,stack,first,2,0,1);
+		  Obj = stack.val->S[first];
+		  rep = nsp_eval_maybe_accelerated_op("deleterows",2, deleterows_tab,stack,first,2,0,1);
+		  goto end;
 		}
 	      else                                                /* x(<expr>,<expr>)=[] */
 		{
 		  nsp_void_object_destroy(&stack.val->S[first+3]);
 		  stack.val->S[first+3]=NULLOBJ;
-		  return nsp_eval_maybe_accelerated_op("deleteelts",2, deleteelts_tab, stack,first,3,0,1);
+		  Obj = stack.val->S[first];
+		  rep = nsp_eval_maybe_accelerated_op("deleteelts",2, deleteelts_tab, stack,first,3,0,1);
+		  goto end;
 		}
 	    }
 	  break;
@@ -1901,6 +1913,7 @@ int EvalEqual1(const char *name, Stack stack, int first, int fargs, int *flag)
     }
   Obj = stack.val->S[first]; /* object to be changed */
   rep = nsp_eval_maybe_accelerated_op("setrowscols",1, setrowscols_tab, stack, first,fargs+2,0,1);
+ end:
   if ( rep >= 1 && Obj != stack.val->S[first])
     {
       /* we arrive here if setrowscols was not a primitive but a nsp function
