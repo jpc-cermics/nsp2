@@ -238,8 +238,14 @@ function [P,Q] = cdf(dist, x, varargin)
 	end
 	P = zeros(size(x)); Q = ones(size(x));
 	ind = find(~(x < 1),ind_type="int")  // use ~(x < 1) to transmit %nan
-	Q(ind) = (1 - p).^floor(x(ind))
-	P(ind) = 1 - Q(ind);
+	if p >= 0.125
+	   Q(ind) = (1 - p).^floor(x(ind))
+	   P(ind) = 1 - Q(ind);
+	else
+	   logQ = floor(x(ind))*log1p(-p);
+	   Q(ind) = exp(logQ);
+	   P(ind) = - expm1(logQ);
+	end
 	
      case "cau" then
 	if numel(varargin) ~= 1 then
