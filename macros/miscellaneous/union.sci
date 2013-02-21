@@ -69,20 +69,20 @@ function [c,ka,kb] = union(a,b,ind_type="double",which="elements")
   num = is_string_in_array(which, ["elements","rows","columns"], names=["which","union"])
   if num == 1 then
      if type_a == "Mat" || type_a == "SMat" || type_a == "Cells" || type_a == "IMat" then
-	row_flag = size(a,1)==1 & size(b,1)==1
-	a.redim[-1,1]; b.redim[-1,1]
+	col_flag = size(a,2)==1 & size(b,2)==1
+	a.redim[1,-1]; b.redim[1,-1]
 	n = size(a,"*")
 	if ind_type.equal["int"] then, n = m2i(n); end
 	if nargout == 1 then
-	   c = unique([a;b]);
-	   if row_flag then, c.redim[1,-1]; end
+	   c = unique([a,b]);
+	   if col_flag then, c.redim[-1,1]; end
 	else
-	   [c,ka] = unique([a;b],ind_type=ind_type)	 
+	   [c,ka] = unique([a,b],ind_type=ind_type)	 
 	   ind = find(ka > n, ind_type="int")
 	   kb = ka(ind) - n
 	   ka(ind) = []
-	   if row_flag then
-	      c.redim[1,-1]; ka.redim[1,-1]; kb.redim[1,-1]
+	   if col_flag then
+	      c.redim[-1,1]; ka.redim[-1,1]; kb.redim[-1,1]
 	   end
 	end
      else
