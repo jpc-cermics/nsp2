@@ -79,6 +79,7 @@ TESTS= \
 	markup.dia \
 	polynoms.dia \
 	errcatch.dia \
+	execf.dia \
 	cdfxxx.dia \
 	spmf.dia \
 	linprog.dia \

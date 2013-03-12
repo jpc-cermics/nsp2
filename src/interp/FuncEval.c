@@ -1135,12 +1135,13 @@ static int extract_varargout(Stack stack,NspObject *O,int *j,int Lhs)
  * 
  * 
  * Return value: a number of argument stored on the calling stack or a negative 
- *   value in case of error.
+ * value in case of error. Note that a return in the macro body will return a 
+ * RET_RETURN which is negative (and not an error).
  **/
 
 int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt, int lhs,int display)
 {
-  int body_ret ;
+  /* int body_ret ; */
   PList P = ((NspPList *) OF)->D;
   /* PList Lhs  = (PList) ((PList) P->next->O)->next->O; */
   /* PList Feval= (PList) ((PList) P->next->O)->next->next->O; */
@@ -1148,9 +1149,12 @@ int nsp_eval_macro_body(NspObject *OF, Stack stack, int first, int rhs, int opt,
   /*Test on Lhs */
   /* int nret = Lhs->arity ; */
   stack.first = first;
-  body_ret =nsp_eval(Body,stack,first,0,0,display);
+  return nsp_eval(Body,stack,first,0,0,display);
+  /* 
+  body_ret= nsp_eval(Body,stack,first,0,0,display);
   if ( body_ret < 0 && body_ret != RET_RETURN ) return body_ret ;
   return 0 ;
+  */
 }
 
 

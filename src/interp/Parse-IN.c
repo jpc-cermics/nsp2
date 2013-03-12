@@ -499,7 +499,7 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
   NspPList *PL;
   NspObject *Ob;
   int errcatch_all, pausecatch_all;
-  int display=FALSE,echo =FALSE,errcatch=FALSE,pausecatch=FALSE,rep, ans = OK ;
+  int display=FALSE,echo =FALSE,errcatch=FALSE,pausecatch=FALSE,rep, rep1, ans = OK ;
   int_types T[] = {obj ,new_opts, t_end} ;
   nsp_option opts[] ={{ "display",s_bool,NULLOBJ,-1},
 		      { "echo",s_bool,NULLOBJ,-1},
@@ -534,15 +534,17 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
 	      return RET_BUG;
 	    }
 	}
-      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,errcatch_all,
+      rep = rep1 = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,errcatch_all,
 		      (pausecatch_all == TRUE) ? FALSE: TRUE);
+      if ( rep1 == RET_RETURN) rep = 0;
       if ( rep >= 0 && lhs == 2 ) H=nsp_current_frame_to_hash(); 
       nsp_frame_delete();
     }
   else 
     {
-      rep = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,errcatch_all,
+      rep = rep1 = nsp_execf(stack,rhs,opt, lhs, PL, echo,display,errcatch_all,
 		      (pausecatch_all == TRUE) ? FALSE: TRUE);
+      if ( rep1 == RET_RETURN) rep = 0;
     }
   
   if ( rep == RET_CTRLC ) 
@@ -550,6 +552,11 @@ static int int_execf(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error:\tExecution of function %s interupted\n",NSP_OBJECT(PL)->name);
       ans= FAIL;
     }	  
+  else if ( lhs <= 0 && errcatch == FALSE && ( rep1 == RET_RETURN || rep1 == RET_BREAK || rep1 == RET_CONTINUE ))
+    {
+      // Sciprintf("propagate a return,break,continue\n");
+      return rep1;
+    }
   else if ( rep < 0 ) 
     {
       Scierror("Error:\tBug detected during evaluation of function  %s\n",

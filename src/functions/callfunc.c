@@ -436,15 +436,9 @@ int nsp_interfaces(int i, int num, Stack stack, int rhs, int opt, int lhs)
       nsp_reorder_stack(stack,0);
       return ret;
     }
-
+  // take care that ret can be negative if we 
+  // propagate break,continue and return;
   ret = nsp_reorder_stack(stack,ret);
-  
-  if ( ret == RET_BUG ) 
-    {
-      /* XXXX */
-      return RET_BUG;
-    }
-
   return ret;
 }
 
@@ -479,15 +473,7 @@ int call_interf(function *f, Stack stack, int rhs, int opt, int lhs)
       nsp_reorder_stack(stack,0);
       return RET_BUG;
     }
-
   ret = nsp_reorder_stack(stack,ret);
-  
-  if ( ret == RET_BUG ) 
-    {
-      /* XXXX */
-      return RET_BUG;
-    }
-
   return ret;
 }
 
@@ -616,7 +602,7 @@ int  nsp_reorder_stack(Stack stack, int ret)
     }
 
   /* clean extra returned arguments */
-  if ( ret < count )
+  if ( ret >=0 &&  ret < count )
     for ( k = ret+1 ; k <= count ; k++ )
       {
 	nsp_void_object_destroy(&(obj[k]));
