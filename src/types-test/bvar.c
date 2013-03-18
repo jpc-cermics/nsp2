@@ -715,9 +715,13 @@ static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, i
     }
   else
     {
+      char *str1;
       NspObject *Res1;
       NspObject *Res= b->value->type->loop(str,O,b->value,i,rep);
       Res1 = (NspObject *) nsp_bvar(Res,FALSE);
+      if ((str1 = nsp_string_copy(str)) ==NULL) return NULLOBJ;
+      free(((NspBvar *) Res1)->varname);
+      ((NspBvar *) Res1)->varname=str1;
       if (nsp_object_set_name(Res1,str) == FAIL) return NULLOBJ;
       nsp_object_destroy(&Res);
       return Res1;
@@ -725,4 +729,4 @@ static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, i
 }
 
 
-#line 729 "bvar.c"
+#line 733 "bvar.c"
