@@ -39,6 +39,7 @@ class Overrides:
         self.override_print = {} # override the print function for a class 
         self.override_info = {} # override the info function for a class 
         self.override_path_extract = {} # override the path_extract field  for a class 
+        self.override_loop = {} # override the loop field  for a class 
         self.init = ''
         self.last = ''
         self.imports = []
@@ -172,6 +173,12 @@ class Overrides:
             # take care to use a different name as in type override 
             stn = 'path_extract_%s' % slot
             self.startlines[stn] = (startline + 1, filename)
+        elif words[0] == 'override-loop':
+            slot = words[1]
+            self.override_loop[slot] = rest
+            # take care to use a different name as in type override 
+            stn = 'loop_%s' % slot
+            self.startlines[stn] = (startline + 1, filename)
         elif words[0] == 'override-int-create-final':
             slot = words[1]
             self.override_int_create_final[slot] = rest
@@ -303,6 +310,10 @@ class Overrides:
         return self.override_path_extract.has_key(slot)
     def get_override_path_extract(self,slot):
         return self.override_path_extract[slot]
+    def part_loop_is_overriden(self, slot):
+        return self.override_loop.has_key(slot)
+    def get_override_loop(self,slot):
+        return self.override_loop[slot]
     def part_int_create_final_is_overriden(self, slot):
         return self.override_int_create_final.has_key(slot)
     def get_override_int_create_final(self,slot):

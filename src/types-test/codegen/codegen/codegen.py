@@ -110,7 +110,9 @@ class Wrapper:
               '  top->s_type =  (s_type_func *) nsp_%(typename_dc)s_type_as_string;\n' \
               '  top->sh_type = (sh_type_func *) nsp_%(typename_dc)s_type_short_string;\n' \
               '  top->info = (info_func *) nsp_%(typename_dc)s_info;\n' \
-              '  /* top->is_true = (is_true_func  *) nsp_%(typename_dc)s_is_true; */\n' \
+              '  /* top->is_true = (is_true_func  *) nsp_%(typename_dc)s_is_true; */\n'
+
+    type_tmpl_1_0_1_1_1 = \
               '  /* top->loop =(loop_func *) nsp_%(typename_dc)s_loop;*/\n' 
 
     type_tmpl_1_0_1_2 = \
@@ -686,6 +688,17 @@ class Wrapper:
             for interf in self.objinfo.implements:
                 self.fp.write('  NspType%s *t_%s;\n' % (interf,string.lower(interf)));
         self.fp.write(self.type_tmpl_1_0_1_1 % substdict)
+
+        # insert loop override code
+        if self.overrides.part_loop_is_overriden(typename_nn):
+            stn = 'path_extract_%s' % typename_nn
+            lineno, filename = self.overrides.getstartline(stn)
+            self.fp.setline(lineno,'codegen/'+ filename)
+            self.fp.write(self.overrides.get_override_loop(typename_nn))
+            self.fp.resetline()
+        else:
+            self.fp.write(self.type_tmpl_1_0_1_1_1 % substdict)
+
         # insert path extract override code
         if self.overrides.part_path_extract_is_overriden(typename_nn):
             stn = 'path_extract_%s' % typename_nn
