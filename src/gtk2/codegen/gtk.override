@@ -6882,6 +6882,30 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
 				    nspgtk_custom_destroy_notify);
   return 0;
 }
+
+%%
+override gtk_cell_renderer_get_alignment noargs
+static int
+_wrap_gtk_cell_renderer_get_alignment(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gfloat xalign, yalign;
+  
+  gtk_cell_renderer_get_alignment(GTK_CELL_RENDERER(self->obj), &xalign, &yalign);
+  if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
+  return 1;
+}
+%%
+override gtk_cell_renderer_get_padding noargs
+static int
+_wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
+{
+  gint xpad, ypad;
+
+  gtk_cell_renderer_get_padding(GTK_CELL_RENDERER(self->obj), &xpad, &ypad);
+  if ( nsp_move_doubles(stack,1,1,2,(double) xpad,(double) ypad) == FAIL) return RET_BUG; 
+  return 1;
+}
+
 %%
 ignore gtk_combo_box_new_with_model
 %%

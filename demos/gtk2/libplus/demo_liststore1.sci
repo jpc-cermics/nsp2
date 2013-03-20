@@ -74,9 +74,13 @@ function demo_liststore_from_smat ()
   sw.add[treeview]
 
   renderer = gtkcellrenderertext_new ();
+  // change the alignment (added March 2013)
+  renderer.set_alignment[0.5,0.5]; // center in cells 
   for i=1:size(M,'c') 
     col = gtktreeviewcolumn_new(title=sprintf("Col %d",i),renderer=renderer,attrs=hash(text=i-1));
     col.set_sort_column_id[i-1];
+    // sepcify the alignment of the title of the gtktreeviewcolumn
+    col.set_alignment[1.0]// 0: left  0.5: middle 1.0 :right 
     treeview.append_column[col];
   end 
   window.set_default_size[  280, 250]
