@@ -2,6 +2,7 @@
 %%
 include-start Bvar
 static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+static int nsp_bvar_is_true(void *Obj);
 
 %%
 include-public Bvar
@@ -33,6 +34,11 @@ modulename atk
 %%
 ignore-glob
   *_get_type
+
+%%
+override-type Bvar
+  /* inserted verbatim in the type definition */
+  top->is_true = (is_true_func  *) nsp_bvar_is_true; 
 
 %%
 override-int-create-final Bvar
@@ -278,4 +284,11 @@ static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, i
       return Res1;
     }
 }
+
+static int nsp_bvar_is_true(void *Obj)
+{
+  NspBvar *b = (NspBvar *) Obj;
+  return  NSP_OBJECT(b->value)->type->is_true(b->value);
+}
+
 
