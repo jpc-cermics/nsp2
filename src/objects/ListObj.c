@@ -651,6 +651,7 @@ static int int_lxreverse(void *self, Stack stack, int rhs, int opt, int lhs)
 /*
  * tests if the list has the object Obj 
  */
+
 static int int_lxhas(void *self, Stack stack, int rhs, int opt, int lhs)
 {
   NspList *L=self;
@@ -684,6 +685,37 @@ static int int_lxhas(void *self, Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
+/* returns the indices of defined elements */
+
+static int int_lxdefined(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  NspList *L=self;
+  Cell *C = L->first;
+  NspMatrix *Ind;
+  int n,count=0,i=0;
+  CheckRhs(0,1); 
+  CheckLhs(0,1);
+  n  = nsp_list_length(L);
+  if ( (Ind = nsp_matrix_create(NVOID,'r',1,n)) == NULLMAT )
+    return RET_BUG;
+  while ( C != NULLCELL) 
+    {
+      if ( C->O != NULLOBJ )
+	{
+	  Ind->R[i]= count+1;i++;
+	}
+      count++;
+      C = C->next;
+    }
+  if ( i != n ) 
+    {
+      if (nsp_matrix_resize(Ind, 1, i) == FAIL) 
+	return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(Ind));
+  return Max(lhs,1);
+}
+
 static NspMethods nsp_list_methods[] = {
   { "sublist", int_list_sublist },
   { "add_first", int_list_add_first },
@@ -699,6 +731,7 @@ static NspMethods nsp_list_methods[] = {
   { "concat", int_lxconcat },
   { "reverse", int_lxreverse },
   { "has", int_lxhas },
+  { "defined", int_lxdefined },
   { (char *) 0, NULL}
 };
 
