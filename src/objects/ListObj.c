@@ -41,6 +41,7 @@
 #include <nsp/cells.h> 
 #include <nsp/plist.h> 
 #include <nsp/frame.h> 
+#include <nsp/bvar.h> 
 #include <nsp/nspdatas.h> 
 
 #include "nsp/pr-output.h" 
@@ -986,6 +987,50 @@ static int int_lxextract_m(Stack stack, int rhs, int opt, int lhs)
   return nret;
 }
 
+static int int_lxextract_bvar(Stack stack, int rhs, int opt, int lhs)
+{
+  NspBvar *BElts;
+  NspMatrix  *Elts;
+  int i, nret, L_name;
+  NspObject *O;
+  
+  NspList *L;
+  CheckRhs (2,2);
+  if ((L    = GetList(stack,1)) == NULLLIST) return RET_BUG;
+  if ((BElts = GetBvar(stack,2)) == NULLBVAR) return RET_BUG;
+  if ((Elts = (NspMatrix *) BElts->value) == NULL) return RET_BUG;
+  if ( IsMat((NspObject *) Elts) == FALSE) 
+    {
+      Scierror("Error: bvar should contain a value of type Mat\n");
+      return RET_BUG;
+    }
+  
+  nret = Elts->mn;
+  L_name = Ocheckname(L,NVOID);
+
+  for ( i = 0 ; i < nret ; i++ )
+    {
+      if ( (O=nsp_list_get_element(L,((int) Elts->R[i]))) ==  NULLOBJ )
+	return RET_BUG;  /* error message done in nsp_list_get_element */
+
+      /* If NspList has no name or list element has no name we must copy */
+      if ( L_name || Ocheckname(O,NVOID) ) 
+	if ( (O=nsp_object_copy(O)) == NULLOBJ ) 
+	  return RET_BUG;
+      NthObj(rhs+i+1) = O;
+    }
+
+  nsp_void_object_destroy(&NthObj(1));
+  nsp_void_object_destroy(&NthObj(2));
+  for ( i = 0 ; i < nret ; i++) 
+    {
+      NthObj(i+1)= NthObj(i+rhs+1);
+      NSP_OBJECT(NthObj(i+1))->ret_pos = i+1;
+      NthObj(i+rhs+1)= NULLOBJ;
+    }
+  return nret;
+}
+
 
 /**
  * ListFollowExtract:
@@ -1197,6 +1242,10 @@ static int int_lxextract(Stack stack, int rhs, int opt, int lhs)
     {
       return int_lxextract_l(stack,rhs,opt,lhs);
     }
+  else if ( IsBvarObj(stack,2) )
+    {
+      return int_lxextract_bvar(stack,rhs,opt,lhs);
+    }
   else 
     {
       Scierror("Error: Wrong type for argument in list extraction int or list required\n");
@@ -1315,26 +1364,16 @@ static int int_lxsetrc(Stack stack, int rhs, int opt, int lhs)
   if (IsMatObj(stack,2)  ) 
     {
       if (( M=GetRealMat(stack,2)) == NULLMAT ) return RET_BUG;
-      if ( M->mn != rhs - 2) 
+    }
+  else if ( IsBvarObj(stack,2) )
+    {
+      NspBvar *BElts;
+      if ((BElts = GetBvar(stack,2)) == NULLBVAR) return RET_BUG;
+      if ((M = (NspMatrix *) BElts->value) == NULL) return RET_BUG;
+      if ( IsMat((NspObject *) M) == FALSE) 
 	{
-	  Scierror("Error:\tNot enought rhs (%d) for list insertion \n",rhs-2);
-	  Scierror("\texpecting %d rhs arguments\n",M->mn);
-	  ArgMessage(stack,1);
+	  Scierror("Error: bvar should contain a value of type Mat\n");
 	  return RET_BUG;
-	}
-      for ( i = 0 ; i < M->mn ; i++) 
-	{
-	  if (Ocheckname(NthObj(3+i),"%null"))
-	    {
-	      if ( nsp_list_delete_elt(L,(int) M->R[i]) == FAIL ) return RET_BUG;
-	    }
-	  else
-	    {
-	      if (MaybeObjCopy(&NthObj(3+i)) == NULL)  return RET_BUG;
-	      if (nsp_object_set_name(NthObj(3+i),"lel") == FAIL) return RET_BUG;
-	      if (nsp_list_insert(L,NthObj(3+i),(int) M->R[i]) == FAIL ) return RET_BUG;
-	      /* since NthObj(3) has a name it won't be cleaned up **/
-	    }
 	}
     }
   else 
@@ -1343,8 +1382,30 @@ static int int_lxsetrc(Stack stack, int rhs, int opt, int lhs)
       Scierror("\trequired\n");
       return RET_BUG;
     }
-  NSP_OBJECT(L)->ret_pos = 1;
-  return 1;
+
+ if ( M->mn != rhs - 2) 
+   {
+     Scierror("Error:\tNot enought rhs (%d) for list insertion \n",rhs-2);
+     Scierror("\texpecting %d rhs arguments\n",M->mn);
+     ArgMessage(stack,1);
+     return RET_BUG;
+   }
+ for ( i = 0 ; i < M->mn ; i++) 
+   {
+     if (Ocheckname(NthObj(3+i),"%null"))
+       {
+	 if ( nsp_list_delete_elt(L,(int) M->R[i]) == FAIL ) return RET_BUG;
+       }
+     else
+       {
+	 if (MaybeObjCopy(&NthObj(3+i)) == NULL)  return RET_BUG;
+	 if (nsp_object_set_name(NthObj(3+i),"lel") == FAIL) return RET_BUG;
+	 if (nsp_list_insert(L,NthObj(3+i),(int) M->R[i]) == FAIL ) return RET_BUG;
+	 /* since NthObj(3) has a name it won't be cleaned up **/
+       }
+   }
+ NSP_OBJECT(L)->ret_pos = 1;
+ return 1;
 }
 
 /*

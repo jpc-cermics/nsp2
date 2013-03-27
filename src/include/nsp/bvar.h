@@ -22,10 +22,9 @@
  */
 
 #line 4 "codegen/bvar.override"
-static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
-static int nsp_bvar_is_true(void *Obj);
+/* inserted at the start of include file of bvar class */
 
-#line 29 "./bvar.h"
+#line 28 "./bvar.h"
 /* NspBvar */
 
 #include <nsp/object.h>
@@ -37,14 +36,14 @@ static int nsp_bvar_is_true(void *Obj);
 typedef struct _NspBvar NspBvar ;
 typedef struct _NspTypeBvar NspTypeBvar ;
 
-#line 41 "./bvar.h"
+#line 40 "./bvar.h"
 
 struct _NspTypeBvar {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
  
-#line 48 "./bvar.h"
+#line 47 "./bvar.h"
 };
 
 struct _NspBvar {
@@ -100,12 +99,11 @@ extern int int_bvar_create(Stack stack, int rhs, int opt, int lhs);
 extern NspBvar *nsp_bvar_xdr_load_partial(XDR *xdrs, NspBvar *M);
 extern int nsp_bvar_xdr_save(XDR  *xdrs, NspBvar *M);
 
-#line 9 "codegen/bvar.override"
-
+#line 8 "codegen/bvar.override"
 /* inserted at the end of public part of class include file */
 extern NspBvar *nsp_bvar(NspObject *Obj,int flag);
 
-#line 109 "./bvar.h"
+#line 107 "./bvar.h"
 #endif /* NSP_INC_NspBvar */ 
 
 #ifdef NspBvar_Private 
@@ -120,10 +118,11 @@ static AttrTab bvar_attrs[];
 static NspMethods *bvar_get_methods(void);
 /* static int int_bvar_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspBvar *nsp_bvar_create_void(const char *name,NspTypeBase *type);
-#line 15 "codegen/bvar.override"
-
+#line 13 "codegen/bvar.override"
 /* inserted in the private part of include file of bvar class */
+static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
+static int nsp_bvar_is_true(void *Obj);
 
-#line 128 "./bvar.h"
+#line 127 "./bvar.h"
 #endif /* NspBvar_Private */
 

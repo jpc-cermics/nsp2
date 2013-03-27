@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2005-2011 Bruno Pinçon Esial/Iecn
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2005-2013 Bruno Pinçon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1533,8 +1533,7 @@ static NspMethods *matrix_get_methods(void) { return matrix_methods;};
  * The matrix is created with no initial value 
  */
 
-int
-int_mxcreate (Stack stack, int rhs, int opt, int lhs)
+int int_mxcreate (Stack stack, int rhs, int opt, int lhs)
 {
   double value = 0.0;
   int m1, n1;
@@ -1563,8 +1562,7 @@ int_mxcreate (Stack stack, int rhs, int opt, int lhs)
  * interface for operator : 
  */
 
-int
-int_mximpl (Stack stack, int rhs, int opt, int lhs)
+int int_mximpl (Stack stack, int rhs, int opt, int lhs)
 {
   double dfirst, step = 1.0, last;
   /*  int ifirst, istep, ilast; */
@@ -1641,8 +1639,7 @@ int_mximpl (Stack stack, int rhs, int opt, int lhs)
  * interface for operator linspace 
  */
 
-int
-int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
+static int int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *first, *last, *M;
   int n;
@@ -1668,8 +1665,7 @@ int_mxlinspace (Stack stack, int rhs, int opt, int lhs)
  * interface for operator logspace 
  */
 
-int
-int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
+static int int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *first, *last, *M;
   int n;
@@ -1696,8 +1692,7 @@ int_mxlogspace (Stack stack, int rhs, int opt, int lhs)
  *    name = 'magic','franck','franck^-1','hilbert'
  */
 
-int
-int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
+int int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
 {
   const char *Strings[] = { "magic", "franck", "franck^-1", "hilbert", "hilbert^-1", NULL };
   int ind, n1;
@@ -1739,8 +1734,7 @@ int_mxtestmatrix (Stack stack, int rhs, int opt, int lhs)
  * The imag part is not initialized 
  */
 
-int
-int_mxcomplexify (Stack stack, int rhs, int opt, int lhs)
+int int_mxcomplexify (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat;
   double d = 0.00;
@@ -1763,8 +1757,7 @@ int_mxcomplexify (Stack stack, int rhs, int opt, int lhs)
  * Returns: real(A) 
  */
 
-int
-int_mxrealpart (Stack stack, int rhs, int opt, int lhs)
+int int_mxrealpart (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -1786,8 +1779,7 @@ int_mxrealpart (Stack stack, int rhs, int opt, int lhs)
  * Returns: imag(A), the Imaginary part of Matrix A 
  */
 
-int
-int_mximagpart (Stack stack, int rhs, int opt, int lhs)
+int int_mximagpart (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -1826,8 +1818,7 @@ static int int_matrix_isreal (Stack stack, int rhs, int opt, int lhs)
  * Returns: a kroeneker product A.*.B 
  */
 
-int
-int_mxkron (Stack stack, int rhs, int opt, int lhs)
+int int_mxkron (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat1, *HMat2, *HMat3;
   CheckRhs (2, 2);
@@ -1977,8 +1968,7 @@ static int int_matrix_sort(Stack stack, int rhs, int opt, int lhs)
 
 typedef NspMatrix *(*SuPro) (NspMatrix * A, int dim);
 
-static int
-int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
+static int int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
 {
   int dim=0;
   NspMatrix *Res, *HMat;
@@ -2020,8 +2010,7 @@ int_mx_sum (Stack stack, int rhs, int opt, int lhs, SuPro F)
   return 1;
 }
 
-int
-int_mxsum (Stack stack, int rhs, int opt, int lhs)
+int int_mxsum (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_sum (stack, rhs, opt, lhs, nsp_mat_sum));
 }
@@ -2031,8 +2020,7 @@ int_mxsum (Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-int
-int_mxprod (Stack stack, int rhs, int opt, int lhs)
+int int_mxprod (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_sum (stack, rhs, opt, lhs, nsp_mat_prod));
 }
@@ -2042,8 +2030,7 @@ int_mxprod (Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-int
-int_mxcusum (Stack stack, int rhs, int opt, int lhs)
+int int_mxcusum (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_sum (stack, rhs, opt, lhs, nsp_mat_cum_sum));
 }
@@ -2053,8 +2040,7 @@ int_mxcusum (Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
-int
-int_mxcuprod (Stack stack, int rhs, int opt, int lhs)
+int int_mxcuprod (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_sum (stack, rhs, opt, lhs, nsp_mat_cum_prod));
 }
@@ -2064,8 +2050,7 @@ int_mxcuprod (Stack stack, int rhs, int opt, int lhs)
  * diff
  *
  */
-static int
-int_mxdiff (Stack stack, int rhs, int opt, int lhs)
+static int int_mxdiff (Stack stack, int rhs, int opt, int lhs)
 {
   int dim=0;
   int order=1;
@@ -2138,8 +2123,7 @@ typedef NspMatrix *(*MiMax) (NspMatrix * A, int dim, NspMatrix ** Imax,
 typedef int (*MiMax1) (NspMatrix * A, NspMatrix * B, NspMatrix * Ind,
 		       int j, int flag);
 
-static int
-int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
+static int int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 {
   int dim = 0;
   NspMatrix *A, *M, *Imax, *B;
@@ -2224,8 +2208,7 @@ int_mx_maxi (Stack stack, int rhs, int opt, int lhs, MiMax F, MiMax1 F1)
 }
 
 
-int
-int_mxmaxi (Stack stack, int rhs, int opt, int lhs)
+int int_mxmaxi (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_maxi (stack, rhs, opt, lhs, nsp_mat_maxi, nsp_mat_maxitt1));
 }
@@ -2237,8 +2220,7 @@ int_mxmaxi (Stack stack, int rhs, int opt, int lhs)
  * rs and ri are set to the result 
  */
 
-int
-int_mxmini (Stack stack, int rhs, int opt, int lhs)
+int int_mxmini (Stack stack, int rhs, int opt, int lhs)
 {
   return (int_mx_maxi (stack, rhs, opt, lhs, nsp_mat_mini, nsp_mat_minitt1));
 }
@@ -2249,8 +2231,7 @@ int_mxmini (Stack stack, int rhs, int opt, int lhs)
  *  with dir = 'c','r','F','*' or 0, 1, 2
  *  to compute min and max at same time
  */
-static int
-int_mxminmax(Stack stack, int rhs, int opt, int lhs)
+static int int_mxminmax(Stack stack, int rhs, int opt, int lhs)
 {
   int dim = 0;
   NspMatrix *A, *Amin, *Imin, *Amax, *Imax;
@@ -2305,8 +2286,7 @@ int_mxminmax(Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxtriu (Stack stack, int rhs, int opt, int lhs)
+ int int_mxtriu (Stack stack, int rhs, int opt, int lhs)
 {
   int k1 = 0;
   NspMatrix *HMat;
@@ -2329,8 +2309,7 @@ int_mxtriu (Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxtril (Stack stack, int rhs, int opt, int lhs)
+int int_mxtril (Stack stack, int rhs, int opt, int lhs)
 {
   int k1 = 0;
   NspMatrix *HMat;
@@ -2357,8 +2336,7 @@ typedef NspMatrix *(*Mfunc) (int m, int n);
 
 /* generic function for ones,rand,eyes */
 
-static int
-int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
+static int int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 {
   int m1, n1;
   NspMatrix *HMat;
@@ -2400,8 +2378,7 @@ int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
  *    See also EYE, ZEROS.
  */
 
-static int
-int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
+static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 {
   NspType *type = NULL;
   char *type_str = NULL;
@@ -2472,14 +2449,12 @@ int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 }
 
 
-int
-int_mxones_deprecated (Stack stack, int rhs, int opt, int lhs)
+static int int_mxones_deprecated (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_ones);
 }
 
-int
-int_mxones (Stack stack, int rhs, int opt, int lhs)
+int int_mxones (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen_new(stack, rhs, opt, lhs, nsp_mat_ones);
 }
@@ -2490,14 +2465,12 @@ int_mxones (Stack stack, int rhs, int opt, int lhs)
  * A is created  m,n no
  */
 
-int
-int_mxeye_deprecated (Stack stack, int rhs, int opt, int lhs)
+static int int_mxeye_deprecated (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_eye);
 }
 
-int
-int_mxeye (Stack stack, int rhs, int opt, int lhs)
+int int_mxeye (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_eye);
 }
@@ -2507,14 +2480,12 @@ int_mxeye (Stack stack, int rhs, int opt, int lhs)
  * A is created  m,n no
  */
 
-int
-int_mxzeros_deprecated (Stack stack, int rhs, int opt, int lhs)
+static int int_mxzeros_deprecated (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen (stack, rhs, opt, lhs, nsp_mat_zeros);
 }
 
-int
-int_mxzeros (Stack stack, int rhs, int opt, int lhs)
+int int_mxzeros (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_zeros);
 }
@@ -2524,8 +2495,7 @@ int_mxzeros (Stack stack, int rhs, int opt, int lhs)
  * setr(A,d) <=> real(A) = d, im(A) unchanged 
  */
 
-int
-int_mxsetr (Stack stack, int rhs, int opt, int lhs)
+int int_mxsetr (Stack stack, int rhs, int opt, int lhs)
 {
   double dval;
   NspMatrix *HMat;
@@ -2545,8 +2515,7 @@ int_mxsetr (Stack stack, int rhs, int opt, int lhs)
  * seti(A,d) <=> imag(A) = d, real(A) unchanged 
  */
 
-int
-int_mxseti (Stack stack, int rhs, int opt, int lhs)
+int int_mxseti (Stack stack, int rhs, int opt, int lhs)
 {
   double dval;
   NspMatrix *HMat;
@@ -2568,8 +2537,7 @@ int_mxseti (Stack stack, int rhs, int opt, int lhs)
  * A is changed : 
  */
 
-int
-int_mxclean (Stack stack, int rhs, int opt, int lhs)
+int int_mxclean (Stack stack, int rhs, int opt, int lhs)
 {
   double epsr=DBL_EPSILON;
   double epsa=DBL_EPSILON;
@@ -2650,8 +2618,7 @@ int int_mxge (Stack stack, int rhs, int opt, int lhs)
  * Same but returns a unique boolean 
  */
 
-static int
-int_mxf_gen (Stack stack, int rhs, int opt, int lhs, char *op)
+static int int_mxf_gen (Stack stack, int rhs, int opt, int lhs, char *op)
 {
   int rep, err;
   NspMatrix *A, *B;
@@ -2683,38 +2650,32 @@ int_mxf_gen (Stack stack, int rhs, int opt, int lhs, char *op)
   return 1;
 }
 
-int
-int_mxflt (Stack stack, int rhs, int opt, int lhs)
+int int_mxflt (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, "<");
 }
 
-int
-int_mxfle (Stack stack, int rhs, int opt, int lhs)
+int int_mxfle (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, "<=");
 }
 
-int
-int_mxfne (Stack stack, int rhs, int opt, int lhs)
+static int int_mxfne (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, "<>");
 }
 
-int
-int_mxfeq (Stack stack, int rhs, int opt, int lhs)
+int int_mxfeq (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, "==");
 }
 
-int
-int_mxfgt (Stack stack, int rhs, int opt, int lhs)
+int int_mxfgt (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, ">");
 }
 
-int
-int_mxfge (Stack stack, int rhs, int opt, int lhs)
+int int_mxfge (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mxf_gen (stack, rhs, opt, lhs, ">=");
 }
@@ -2727,8 +2688,7 @@ int_mxfge (Stack stack, int rhs, int opt, int lhs)
  * =======
  */
 
-int
-int_mxredim (Stack stack, int rhs, int opt, int lhs)
+int int_mxredim (Stack stack, int rhs, int opt, int lhs)
 {
   int m1, n1;
   NspMatrix *HMat;
@@ -2837,8 +2797,7 @@ int int_mxconcatd_mb (Stack stack, int rhs, int opt, int lhs)
  * A is changed 
  */
 
-int
-int_mxaddcols (Stack stack, int rhs, int opt, int lhs)
+int int_mxaddcols (Stack stack, int rhs, int opt, int lhs)
 {
   int n1;
   NspMatrix *HMat;
@@ -2862,8 +2821,7 @@ int_mxaddcols (Stack stack, int rhs, int opt, int lhs)
  * A and B are left unchanged 
  */
 
-int
-int_mxaddrows (Stack stack, int rhs, int opt, int lhs)
+int int_mxaddrows (Stack stack, int rhs, int opt, int lhs)
 {
   int m1;
   NspMatrix *HMat;
@@ -2883,8 +2841,7 @@ int_mxaddrows (Stack stack, int rhs, int opt, int lhs)
  * Scilab diag function 
  */
 
-int
-int_mxdiag (Stack stack, int rhs, int opt, int lhs)
+int int_mxdiag (Stack stack, int rhs, int opt, int lhs)
 {
   int k1 = 0;
   NspMatrix *A, *Res;
@@ -2913,8 +2870,7 @@ int_mxdiag (Stack stack, int rhs, int opt, int lhs)
  * Returns: the kthe diag of a Matrix 
  */
 
-int
-int_mxdiage (Stack stack, int rhs, int opt, int lhs)
+int int_mxdiage (Stack stack, int rhs, int opt, int lhs)
 {
   int k1 = 0;
   NspMatrix *A, *Res;
@@ -2939,8 +2895,7 @@ int_mxdiage (Stack stack, int rhs, int opt, int lhs)
  *  Creates a Matrix with kth diag set to Diag 
  */
 
-int
-int_mxdiagcre (Stack stack, int rhs, int opt, int lhs)
+int int_mxdiagcre (Stack stack, int rhs, int opt, int lhs)
 {
   int k1 = 0;
   NspMatrix *Diag, *Res;
@@ -2965,8 +2920,7 @@ int_mxdiagcre (Stack stack, int rhs, int opt, int lhs)
  * 
  */
 
-int
-int_mxresize (Stack stack, int rhs, int opt, int lhs)
+int int_mxresize (Stack stack, int rhs, int opt, int lhs)
 {
   int m1, n1;
   NspMatrix *HMat;
@@ -2988,8 +2942,7 @@ int_mxresize (Stack stack, int rhs, int opt, int lhs)
  * A'
  */
 
-int
-int_mxquote (Stack stack, int rhs, int opt, int lhs)
+int int_mxquote (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B;
   CheckRhs (1, 1);
@@ -3007,8 +2960,7 @@ int_mxquote (Stack stack, int rhs, int opt, int lhs)
  * A'
  */
 
-int
-int_mxdquote (Stack stack, int rhs, int opt, int lhs)
+int int_mxdquote (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B;
   CheckRhs (1, 1);
@@ -3027,8 +2979,7 @@ int_mxdquote (Stack stack, int rhs, int opt, int lhs)
  * nsp_matrix_latex_print: writes Mat Objet on fd in tex language
  */
 
-int
-int_mx2latexmat (Stack stack, int rhs, int opt, int lhs)
+int int_mx2latexmat (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -3043,8 +2994,7 @@ int_mx2latexmat (Stack stack, int rhs, int opt, int lhs)
  *  Mat2LaTeXTab: writes Mat Objet on fd in TeX language
  */
 
-int
-int_mx2latextab (Stack stack, int rhs, int opt, int lhs)
+int int_mx2latextab (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -3063,8 +3013,7 @@ typedef int (*M11) (NspMatrix * A);
 
 /* generic function for ones,rand,eyes */
 
-static int
-int_mx_gen11 (Stack stack, int rhs, int opt, int lhs, M11 F)
+static int int_mx_gen11 (Stack stack, int rhs, int opt, int lhs, M11 F)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -3086,8 +3035,7 @@ int_mx_gen11 (Stack stack, int rhs, int opt, int lhs, M11 F)
 
 typedef void (*VM11) (NspMatrix * A);
 
-static int
-int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F)
+static int int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -3111,8 +3059,7 @@ int_mx_genv11 (Stack stack, int rhs, int opt, int lhs, VM11 F)
  * A=Abs(A), absolue value or module of each element 
  */
 
-int
-int_mxabs (Stack stack, int rhs, int opt, int lhs)
+int int_mxabs (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_abs);
 }
@@ -3121,8 +3068,7 @@ int_mxabs (Stack stack, int rhs, int opt, int lhs)
  * A=Erf(A)
  */
 
-int
-int_mxerf (Stack stack, int rhs, int opt, int lhs)
+int int_mxerf (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_erf);
 }
@@ -3131,8 +3077,7 @@ int_mxerf (Stack stack, int rhs, int opt, int lhs)
  * A=Erfc(A),  * A is changed 
  */
 
-int
-int_mxerfc (Stack stack, int rhs, int opt, int lhs)
+int int_mxerfc (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_erfc);
 }
@@ -3141,8 +3086,7 @@ int_mxerfc (Stack stack, int rhs, int opt, int lhs)
  * A=gammaln(A),  * A is changed 
  */
 
-int
-int_mxgammaln (Stack stack, int rhs, int opt, int lhs)
+static int int_mxgammaln (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_lgamma);
 }
@@ -3154,8 +3098,7 @@ int_mxgammaln (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxcos (Stack stack, int rhs, int opt, int lhs)
+int int_mxcos (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_cos);
 }
@@ -3166,8 +3109,7 @@ int_mxcos (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxcosh (Stack stack, int rhs, int opt, int lhs)
+int int_mxcosh (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_cosh);
 }
@@ -3177,8 +3119,7 @@ int_mxcosh (Stack stack, int rhs, int opt, int lhs)
  * A is changed 
  */
 
-int
-int_mxexpel (Stack stack, int rhs, int opt, int lhs)
+int int_mxexpel (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_expel);
 }
@@ -3187,8 +3128,7 @@ int_mxexpel (Stack stack, int rhs, int opt, int lhs)
  * MatLog : A=LogEl(A) 
  */
 
-int
-int_mxlogel (Stack stack, int rhs, int opt, int lhs)
+int int_mxlogel (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_logel);
 }
@@ -3200,8 +3140,7 @@ int_mxlogel (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxsin (Stack stack, int rhs, int opt, int lhs)
+int int_mxsin (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_sin);
 }
@@ -3213,8 +3152,7 @@ int_mxsin (Stack stack, int rhs, int opt, int lhs)
  */
 
 
-int
-int_mxsinh (Stack stack, int rhs, int opt, int lhs)
+int int_mxsinh (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_sinh);
 }
@@ -3226,8 +3164,7 @@ int_mxsinh (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxsqrtel (Stack stack, int rhs, int opt, int lhs)
+int int_mxsqrtel (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_sqrtel);
 }
@@ -3238,8 +3175,7 @@ int_mxsqrtel (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxacos (Stack stack, int rhs, int opt, int lhs)
+int int_mxacos (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_acos);
 }
@@ -3250,8 +3186,7 @@ int_mxacos (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxacosh (Stack stack, int rhs, int opt, int lhs)
+int int_mxacosh (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_acosh);
 }
@@ -3262,8 +3197,7 @@ int_mxacosh (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxasin (Stack stack, int rhs, int opt, int lhs)
+int int_mxasin (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_asin);
 }
@@ -3275,8 +3209,7 @@ int_mxasin (Stack stack, int rhs, int opt, int lhs)
  */
 
 
-int
-int_mxasinh (Stack stack, int rhs, int opt, int lhs)
+int int_mxasinh (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_asinh);
 }
@@ -3287,8 +3220,7 @@ int_mxasinh (Stack stack, int rhs, int opt, int lhs)
  * returns 0 on failure 
  */
 
-int
-int_mxatan (Stack stack, int rhs, int opt, int lhs)
+int int_mxatan (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_atan);
 }
@@ -3300,8 +3232,7 @@ int_mxatan (Stack stack, int rhs, int opt, int lhs)
 
 #define SameDim(Mat1,Mat2) ( Mat1->m == Mat2->m && Mat1->n == Mat2->n  )
 
-int
-int_mxatan2 (Stack stack, int rhs, int opt, int lhs)
+int int_mxatan2 (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B, *C;
   CheckRhs (2, 2);
@@ -3324,8 +3255,7 @@ int_mxatan2 (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int
-int_mxangle (Stack stack, int rhs, int opt, int lhs)
+int int_mxangle (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Z, *A;
   CheckRhs (1, 1);
@@ -3342,8 +3272,7 @@ int_mxangle (Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-int
-int_mxcomplex (Stack stack, int rhs, int opt, int lhs)
+static int int_mxcomplex (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B, *C;
   CheckRhs (2, 2);
@@ -3376,8 +3305,7 @@ int_mxcomplex (Stack stack, int rhs, int opt, int lhs)
  * returns 0 on failure 
  */
 
-int
-int_mxatanh (Stack stack, int rhs, int opt, int lhs)
+int int_mxatanh (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_atanh);
 }
@@ -3387,8 +3315,7 @@ int_mxatanh (Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxceil (Stack stack, int rhs, int opt, int lhs)
+int int_mxceil (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_ceil);
 }
@@ -3398,8 +3325,7 @@ int_mxceil (Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxint (Stack stack, int rhs, int opt, int lhs)
+int int_mxint (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_int);
 }
@@ -3409,8 +3335,7 @@ int_mxint (Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxfloor (Stack stack, int rhs, int opt, int lhs)
+int int_mxfloor (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_floor);
 }
@@ -3420,8 +3345,7 @@ int_mxfloor (Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxround (Stack stack, int rhs, int opt, int lhs)
+int int_mxround (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_genv11 (stack, rhs, opt, lhs, nsp_mat_round);
 }
@@ -3432,8 +3356,7 @@ int_mxround (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxsign (Stack stack, int rhs, int opt, int lhs)
+int int_mxsign (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_sign);
 }
@@ -3444,8 +3367,7 @@ int_mxsign (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxtan (Stack stack, int rhs, int opt, int lhs)
+int int_mxtan (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_tan);
 }
@@ -3456,22 +3378,29 @@ int_mxtan (Stack stack, int rhs, int opt, int lhs)
  * return 0 if error 
  */
 
-int
-int_mxtanh (Stack stack, int rhs, int opt, int lhs)
+int int_mxtanh (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_tanh);
 }
 
-/*
- *nsp_mat_minus: A=-(A)
- * A is changed  
- * return 0 if error 
+/* This interface is called for A - B when B is not of type Mat
+ * or for - A. A is changed  
+ * return 0 if error. 
  */
 
-int
-int_mxminus (Stack stack, int rhs, int opt, int lhs)
+int int_mxminus (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_minus);
+  if ( rhs -opt == 2 ) 
+    {
+      Scierror("Error:\tUnknown function minus_%s_%s\n",
+	       nsp_object_type_short(NthObj (1)),
+	       nsp_object_type_short(NthObj (2)));
+      return RET_BUG;
+    }
+  else
+    {
+      return int_mx_gen11 (stack, rhs, opt, lhs, nsp_mat_minus);
+    }
 }
 
 
@@ -3480,8 +3409,7 @@ int_mxminus (Stack stack, int rhs, int opt, int lhs)
  * A=Polar(A,B),  * A is changed 
  */
 
-int
-int_mxpolar (Stack stack, int rhs, int opt, int lhs)
+int int_mxpolar (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B;
   CheckRhs (2, 2);
@@ -3513,8 +3441,7 @@ int_mxpolar (Stack stack, int rhs, int opt, int lhs)
  * A=iand(A,B)
  */
 
-int
-int_mxiand (Stack stack, int rhs, int opt, int lhs)
+int int_mxiand (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B;
   CheckRhs (1, 2);
@@ -3559,8 +3486,7 @@ int_mxiand (Stack stack, int rhs, int opt, int lhs)
  * A= ior(A,B)
  */
 
-int
-int_mxior (Stack stack, int rhs, int opt, int lhs)
+int int_mxior (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A, *B;
   CheckRhs (1, 2);
@@ -3642,8 +3568,7 @@ int int_mxishift (Stack stack, int rhs, int opt, int lhs)
  * A is changed  if imaginary not changed if real 
  */
 
-int
-int_mxconj (Stack stack, int rhs, int opt, int lhs)
+int int_mxconj (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *HMat;
   CheckRhs (1, 1);
@@ -3666,8 +3591,7 @@ int_mxconj (Stack stack, int rhs, int opt, int lhs)
 /*
  * nsp_mat_mod: z = mod(x,y) x or y is changed 
  */
-int
-int_mxmod(Stack stack, int rhs, int opt, int lhs)
+static int int_mxmod(Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x, *y;
   CheckRhs (2, 2);
@@ -3712,8 +3636,7 @@ int_mxmod(Stack stack, int rhs, int opt, int lhs)
  * A is changed  
  */
 
-int
-int_mxmodulo (Stack stack, int rhs, int opt, int lhs)
+int int_mxmodulo (Stack stack, int rhs, int opt, int lhs)
 {
   int n;
   NspMatrix *HMat;
@@ -3733,8 +3656,7 @@ int_mxmodulo (Stack stack, int rhs, int opt, int lhs)
  * A is changed   A(i)=A(i)/b 
  */
 
-int
-int_mxidiv (Stack stack, int rhs, int opt, int lhs)
+int int_mxidiv (Stack stack, int rhs, int opt, int lhs)
 {
   int n;
   NspMatrix *HMat;
@@ -3770,8 +3692,7 @@ MatNoOp (NspMatrix * A)
   return OK;
 }
 
-static int
-int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
+static int int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
 		MPM F3, M11 F4, int flag)
 {
   NspMatrix *HMat1, *HMat2;
@@ -3857,8 +3778,7 @@ int_mx_mopscal (Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2,
  */
 #ifdef MTLB_MODE
 
-static int
-int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
+static int int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM F3)
 {
   NspMatrix *HMat1, *HMat2, *HMat3;
   int HMat1_has_no_name, HMat2_has_no_name;
@@ -3960,8 +3880,7 @@ int_mx_mopscal_mtlb(Stack stack, int rhs, int opt, int lhs, MPM F1, MPM F2, MPM 
  * with special cases Mat + [] and Mat + scalar
  */
 
-int
-int_mxdadd (Stack stack, int rhs, int opt, int lhs)
+int int_mxdadd (Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef MTLB_MODE
   return int_mx_mopscal_mtlb(stack, rhs, opt, lhs,
@@ -3982,8 +3901,7 @@ int_mxdadd (Stack stack, int rhs, int opt, int lhs)
  *  XXXXX Attention le cas F3 est faux scalar - Mat --> Mat -scalar  
  */
 
-int
-int_mxdsub (Stack stack, int rhs, int opt, int lhs)
+int int_mxdsub (Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef MTLB_MODE
   return int_mx_mopscal_mtlb(stack, rhs, opt, lhs,
@@ -4001,8 +3919,7 @@ int_mxdsub (Stack stack, int rhs, int opt, int lhs)
  * A=nsp_mat_pow(A,B), A^ B 
  */
 
-int
-int_mxpow (Stack stack, int rhs, int opt, int lhs)
+static int int_mxpow (Stack stack, int rhs, int opt, int lhs)
 {
   return int_mx_mopscal (stack, rhs, opt, lhs,
 			 nsp_mat_pow_matscalar, nsp_mat_pow_matmat,
@@ -4013,8 +3930,7 @@ int_mxpow (Stack stack, int rhs, int opt, int lhs)
  * A=nsp_mat_pow_el(A,B), A.^ B 
  */
 
-int
-int_mxpowel (Stack stack, int rhs, int opt, int lhs)
+int int_mxpowel (Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef MTLB_MODE
   return int_mx_mopscal_mtlb (stack, rhs, opt, lhs,
@@ -4031,8 +3947,7 @@ int_mxpowel (Stack stack, int rhs, int opt, int lhs)
  * A=DivEl(A,B),  A ./ B 
  */
 
-int
-int_mxdivel (Stack stack, int rhs, int opt, int lhs)
+int int_mxdivel (Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef MTLB_MODE
   return int_mx_mopscal_mtlb (stack, rhs, opt, lhs,
@@ -4050,8 +3965,7 @@ int_mxdivel (Stack stack, int rhs, int opt, int lhs)
  * A=BackDivEl(A,B),  A .\ B 
  */
 
-int
-int_mxbackdivel (Stack stack, int rhs, int opt, int lhs)
+int int_mxbackdivel (Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef MTLB_MODE
   return int_mx_mopscal_mtlb (stack, rhs, opt, lhs,
@@ -4069,8 +3983,7 @@ int_mxbackdivel (Stack stack, int rhs, int opt, int lhs)
  * A=MultEl(A,B),  A .* B 
  */
 
-int
-int_mxmultel (Stack stack, int rhs, int opt, int lhs)
+int int_mxmultel (Stack stack, int rhs, int opt, int lhs)
 {
 #ifdef MTLB_MODE
   return int_mx_mopscal_mtlb(stack, rhs, opt, lhs,
@@ -4215,8 +4128,7 @@ int int_mxdiv (Stack stack, int rhs, int opt, int lhs)
  * returns in a Matrix the indices for which the Matrix is true 
  */
 
-int
-int_mxfind (Stack stack, int rhs, int opt, int lhs)
+int int_mxfind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A=NULLMAT, *val=NULLMAT;
   NspObject *Rc=NULLOBJ,*Rr=NULLOBJ;
@@ -4314,8 +4226,7 @@ int_mxfind (Stack stack, int rhs, int opt, int lhs)
  *    x is a real matrix, scj a real scalar
  */
 
-int
-int_mxmfind (Stack stack, int rhs, int opt, int lhs)
+static int int_mxmfind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *x;
   NspObject **ind = NULL;
@@ -4403,8 +4314,7 @@ int_mxmfind (Stack stack, int rhs, int opt, int lhs)
  *  dims must be a vector of length k
  */
 
-int
-int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
+static int int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Dims, **ndind = NULL;
   NspObject *ind;
@@ -4496,8 +4406,7 @@ int_ndind2ind (Stack stack, int rhs, int opt, int lhs)
  *  dims must be a vector of length k
  */
 
-int
-int_sub2ind (Stack stack, int rhs, int opt, int lhs)
+static int int_sub2ind (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Dims, **ndind = NULL;
   NspObject *ind;
@@ -4597,8 +4506,7 @@ int_sub2ind (Stack stack, int rhs, int opt, int lhs)
  *  dims must be a vector of length k
  */
 
-int
-int_ind2sub (Stack stack, int rhs, int opt, int lhs)
+static int int_ind2sub (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *Dims;
   NspObject **ndind = NULL;
@@ -4704,8 +4612,7 @@ int_ind2sub (Stack stack, int rhs, int opt, int lhs)
  * isinf 
  */
 
-int
-int_mx_isinf (Stack stack, int rhs, int opt, int lhs)
+int int_mx_isinf (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   NspBMatrix *B;
@@ -4723,8 +4630,7 @@ int_mx_isinf (Stack stack, int rhs, int opt, int lhs)
  * isnan 
  */
 
-int
-int_mx_isnan (Stack stack, int rhs, int opt, int lhs)
+int int_mx_isnan (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   NspBMatrix *B;
@@ -4742,8 +4648,7 @@ int_mx_isnan (Stack stack, int rhs, int opt, int lhs)
  * finite 
  */
 
-int
-int_mx_finite (Stack stack, int rhs, int opt, int lhs)
+int int_mx_finite (Stack stack, int rhs, int opt, int lhs)
 {
   NspMatrix *A;
   NspBMatrix *B;
@@ -4869,8 +4774,7 @@ int int_nearfloat(Stack stack, int rhs, int opt, int lhs)
 /*
  * [m,e] = frexp(x)  x is changed (in m) 
  */
-int
-int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
+static int int_mxfrexp (Stack stack, int rhs, int opt, int lhs)
 {
   int i, exposant, rep=0;
   NspMatrix *x, *e;
@@ -5239,8 +5143,7 @@ static int int_unique( Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-static int
-int_mat_cross (Stack stack, int rhs, int opt, int lhs)
+static int int_mat_cross (Stack stack, int rhs, int opt, int lhs)
 {
   int dim;
   NspMatrix *Res, *X, *Y;
@@ -5293,8 +5196,7 @@ int_mat_cross (Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int
-int_mat_dot (Stack stack, int rhs, int opt, int lhs)
+static int int_mat_dot (Stack stack, int rhs, int opt, int lhs)
 {
   int dim=0;
   NspMatrix *Res, *A, *B;
@@ -5342,8 +5244,7 @@ int_mat_dot (Stack stack, int rhs, int opt, int lhs)
 }
 
 
-static int
-int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
+static int int_mat_issorted (Stack stack, int rhs, int opt, int lhs)
 {
   char *flag=NULL;
   int rep = test_sort_g;

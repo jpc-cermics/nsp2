@@ -5,7 +5,7 @@ include $(TOP)/Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
-SUBDIRS =  graphics miscellaneous system statistics linalg calpol ast 
+SUBDIRS =  graphics miscellaneous system statistics linalg calpol ast bvar
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
