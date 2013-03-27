@@ -702,12 +702,15 @@ void nsp_update_exec_dir(const char *filename,char *exec_dir,char *filename_exec
 	}
       /* also update filename_exec to  exec_dir/dirname/tail */
       tail = nsp_tail(filename);
-      pargv[1]= tail;
-      nsp_join_path (pargc, pargv, &buffer);
-      strncpy(filename_exec,nsp_tcldstring_value (&buffer),Min(buffer.length+1,length));
-      nsp_tcldstring_free (&buffer);
-      nsp_string_destroy(&dirname);
-      nsp_string_destroy(&tail);
+      if ( tail != NULL )
+	{
+	  pargv[1]= tail;
+	  nsp_join_path (pargc, pargv, &buffer);
+	  strncpy(filename_exec,nsp_tcldstring_value (&buffer),Min(buffer.length+1,length));
+	  nsp_tcldstring_free (&buffer);
+	  nsp_string_destroy(&dirname);
+	  nsp_string_destroy(&tail);
+	}
     }
 }
 
