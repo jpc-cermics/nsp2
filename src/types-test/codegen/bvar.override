@@ -67,6 +67,16 @@ static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, in
   CheckLhs(0,1); 
   if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
     return RET_BUG;
+  if ( IsMat(Obj)) 
+    {
+      /* be sure that matrix are expanded to double stream */
+      NspMatrix *M = (NspMatrix *) Mat2double ((NspMatrix *) Obj);
+      if ( M == NULLMAT) 
+	{
+	  Scierror("Error: cannot convert a scalar matrix in double mode\n");
+	  return RET_BUG;
+	}
+    }
   if ( self->value != NULL )
     {
       nsp_object_destroy(&self->value);
@@ -234,6 +244,17 @@ NspBvar *nsp_bvar(NspObject *Obj,int sym)
     {
       nsp_bvar_destroy(H);
       return NULL;
+    }
+  if ( IsMat(O1)) 
+    {
+      /* be sure that matrix are expanded to double stream */
+      NspMatrix *M = (NspMatrix *) Mat2double ((NspMatrix *) O1);
+      if ( M == NULLMAT) 
+	{
+	  nsp_bvar_destroy(H);
+	  nsp_object_destroy(&O1);
+	  return NULL;
+	}
     }
   if ( H->value != NULL )
     {

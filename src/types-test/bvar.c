@@ -88,11 +88,11 @@ NspTypeBvar *new_type_bvar(type_mode mode)
   top->sh_type = (sh_type_func *) nsp_bvar_type_short_string;
   top->info = (info_func *) nsp_bvar_info;
   /* top->is_true = (is_true_func  *) nsp_bvar_is_true; */
-#line 124 "codegen/bvar.override"
+#line 134 "codegen/bvar.override"
 top->loop = (loop_func *) nsp_bvar_loop; /* loop with bvar type */
 
 #line 95 "bvar.c"
-#line 124 "codegen/bvar.override"
+#line 134 "codegen/bvar.override"
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
 #line 99 "bvar.c"
@@ -174,7 +174,7 @@ NspBvar *new_bvar()
 /*----------------------------------------------
  * Object method redefined for NspBvar 
  *-----------------------------------------------*/
-#line 143 "codegen/bvar.override"
+#line 153 "codegen/bvar.override"
 
 /*
  * size can be overriden here
@@ -207,7 +207,7 @@ static char *nsp_bvar_type_short_string(NspObject *v)
   return(bvar_short_type_name);
 }
 
-#line 192 "codegen/bvar.override"
+#line 202 "codegen/bvar.override"
 
 /*
  * A == B 
@@ -296,7 +296,7 @@ void nsp_bvar_destroy(NspBvar *H)
   FREE(H);
 }
 
-#line 132 "codegen/bvar.override"
+#line 142 "codegen/bvar.override"
 /*
  * info overriden 
  */
@@ -307,7 +307,7 @@ int nsp_bvar_info(NspBvar *M, int indent,const char *name, int rec_level)
 }
 
 #line 310 "bvar.c"
-#line 159 "codegen/bvar.override"
+#line 169 "codegen/bvar.override"
 /*
  * print overriden 
  */
@@ -561,6 +561,16 @@ static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, in
   CheckLhs(0,1); 
   if ((Obj = nsp_object_copy_and_name("ud",NthObj(1))) == NULLOBJ) 
     return RET_BUG;
+  if ( IsMat(Obj)) 
+    {
+      /* be sure that matrix are expanded to double stream */
+      NspMatrix *M = (NspMatrix *) Mat2double ((NspMatrix *) Obj);
+      if ( M == NULLMAT) 
+	{
+	  Scierror("Error: cannot convert a scalar matrix in double mode\n");
+	  return RET_BUG;
+	}
+    }
   if ( self->value != NULL )
     {
       nsp_object_destroy(&self->value);
@@ -569,10 +579,10 @@ static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, in
   return 0;
 }
 
-#line 573 "bvar.c"
+#line 583 "bvar.c"
 
 
-#line 80 "codegen/bvar.override"
+#line 90 "codegen/bvar.override"
 
 static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -580,10 +590,10 @@ static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 584 "bvar.c"
+#line 594 "bvar.c"
 
 
-#line 89 "codegen/bvar.override"
+#line 99 "codegen/bvar.override"
 
 static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -595,10 +605,10 @@ static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 0;
 }
 
-#line 599 "bvar.c"
+#line 609 "bvar.c"
 
 
-#line 102 "codegen/bvar.override"
+#line 112 "codegen/bvar.override"
 
 static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -606,10 +616,10 @@ static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int 
   return 1;
 }
 
-#line 610 "bvar.c"
+#line 620 "bvar.c"
 
 
-#line 111 "codegen/bvar.override"
+#line 121 "codegen/bvar.override"
 
 static int _wrap_bvar_set_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -621,7 +631,7 @@ static int _wrap_bvar_set_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 625 "bvar.c"
+#line 635 "bvar.c"
 
 
 static NspMethods bvar_methods[] = {
@@ -670,7 +680,7 @@ void Bvar_Interf_Info(int i, char **fname, function (**f))
   *f = Bvar_func[i].fonc;
 }
 
-#line 225 "codegen/bvar.override"
+#line 235 "codegen/bvar.override"
 
 NspBvar *nsp_bvar(NspObject *Obj,int sym)
 {
@@ -683,6 +693,17 @@ NspBvar *nsp_bvar(NspObject *Obj,int sym)
     {
       nsp_bvar_destroy(H);
       return NULL;
+    }
+  if ( IsMat(O1)) 
+    {
+      /* be sure that matrix are expanded to double stream */
+      NspMatrix *M = (NspMatrix *) Mat2double ((NspMatrix *) O1);
+      if ( M == NULLMAT) 
+	{
+	  nsp_bvar_destroy(H);
+	  nsp_object_destroy(&O1);
+	  return NULL;
+	}
     }
   if ( H->value != NULL )
     {
@@ -741,4 +762,4 @@ static int nsp_bvar_is_true(void *Obj)
 
 
 
-#line 745 "bvar.c"
+#line 766 "bvar.c"
