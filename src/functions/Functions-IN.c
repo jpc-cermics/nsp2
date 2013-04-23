@@ -462,6 +462,19 @@ static int int_call(Stack stack, int rhs, int opt, int lhs)
 		nsp_string_destroy(&(S->S[0] ));
 		  Data = (void *) S->S[0];
 		  break;
+                case 'r' :
+                case 'f' :
+                  if ((Loc = nsp_matrix_create(NVOID,'r',M->R[0],M->R[1]))==  NULLMAT)  return RET_BUG;
+                  if ((Loc = Mat2float(Loc)) == NULLMAT) return RET_BUG;
+                  NthObj(rhs+newout)= (NspObject *) Loc;
+                  Data = (void *) Loc->R;
+                  break;
+                case 'i' :
+                  if ((Loc = nsp_matrix_create(NVOID,'r',M->R[0],M->R[1]))==  NULLMAT)  return RET_BUG;
+                  if ((Loc = Mat2int(Loc)) == NULLMAT) return RET_BUG;
+                  NthObj(rhs+newout)= (NspObject *) Loc;
+                  Data = (void *) Loc->R;
+                  break;
 		default :
 		  if ((Loc = nsp_matrix_create(NVOID,'r',M->R[0],M->R[1]))==  NULLMAT)  return RET_BUG;
 		  NthObj(rhs+newout)= (NspObject *) Loc;
