@@ -17,7 +17,7 @@ function [libn,ok]=ilib_for_link(names,files,libs,flag,makename='Makelib',verbos
   // we call make
   if verbose then printf('   running the makefile\n');end
   if libname=="" then libname = names(1);end
-  [libn,ok]=ilib_compile('lib'+libname,makename,files);
+  [libn,ok]=ilib_compile('lib'+libname,makename,files,verbose=verbose);
 endfunction
 
 function ilib_link_gen_loader(names,flag,loadername='loader.sce',libs=[],libname="")

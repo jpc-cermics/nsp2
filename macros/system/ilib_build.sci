@@ -454,7 +454,7 @@ function ilib_gen_Make_lcc(name,tables,files,libs,Makename,with_gateway,ldflags,
 
 endfunction
 
-function [libn,ok]=ilib_compile(lib_name,makename,files)
+function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
 // Copyright ENPC
 // call make for target files or objects depending
 // on OS and compilers
@@ -486,17 +486,34 @@ function [libn,ok]=ilib_compile(lib_name,makename,files)
   for i=1:nf 
     str = [make_command,makename,files(i)];
     strc = catenate(str,sep=" ");
-    printf('   '+strc + '\n');
-    ok = ilib_spawn_sync(str);
-    if ~ok then break ; end 
+    if verbose then printf('   '+strc + '\n');end
+    //ok = ilib_spawn_sync(str);
+    [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
+    stdout = catenate(stdout,sep="   ");
+    if ~ok then
+      printf('   '+stdout + '\n');
+      stderr = catenate(stderr,sep="\n   ");
+      printf('   '+stderr + '\n');
+      break;
+    end
+    if verbose then printf('   '+stdout + '\n');end
   end
-  if ok then 
+  if ok then
     // then the shared library 
-    printf('   building shared library\n');
+    if verbose then printf('   building shared library\n');end
     str = [make_command, makename, lib_name];
     strc=  catenate(str,sep=" ");
-    printf('   '+strc + '\n');
-    ok = ilib_spawn_sync(str);
+    if verbose then printf('   '+strc + '\n');end
+    //ok = ilib_spawn_sync(str);
+    [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
+    stdout = catenate(stdout,sep="   ");
+    if ~ok then
+      printf('   '+stdout + '\n');
+      stderr = catenate(stderr,sep="\n   ");
+      printf('   '+stderr + '\n');
+    elseif verbose then
+      printf('   '+stdout + '\n');
+    end
   end
   chdir(oldpath); 
 endfunction
@@ -553,12 +570,13 @@ function [make_command,lib_name_make,lib_name,path,makename,files]=ilib_compile_
   end
 endfunction 
 
-function ok=ilib_spawn_sync(str)
+function [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
   ok=%t
   msok = msvc_configure();
   if ~msok then
     // for cross compilation prefer  w32mode=%f
-    ok=spawn_sync(str, w32mode=%f);
+    // ok=spawn_sync(str, w32mode=%f);
+    [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str, w32mode=%f);
     xpause(0,%t);
     return;
   end;
@@ -574,7 +592,8 @@ function ok=ilib_spawn_sync(str)
     // with io redirected to files. 
     // This is usefull on windows to prevent 
     // console popup and properly get nmake output.
-    ok= spawn_sync(str);
+    //ok=spawn_sync(str)
+    [ok,stdout,stderr,msgerr,exitst]=spawn_sync(str);
     xpause(0,%t);
   else
     // this should give the same behaviour as above 
