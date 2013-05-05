@@ -2542,31 +2542,45 @@ void nsp_print_string_as_read(const char *str)
     {
       switch (*str) 
 	{
-	case '\'' :
-	  Sciprintf("%s","''");break;
-	case '\"' : 
-	  Sciprintf("%s","\"\"");break;
-	case '\\' :
-	  Sciprintf("%s","\\\\");break;
-	case '\a' :
-	  Sciprintf("%s","\\a"); break;
-	case '\b' :
-	  Sciprintf("%s","\\b"); break;
-	case '\f' :
-	  Sciprintf("%s","\\f"); break;
-	case '\n' :
-	  Sciprintf("%s","\\n");break;
-	case '\r' :
-	  Sciprintf("%s","\\r"); break;
-	case '\t' :
-	  Sciprintf("%s","\\t"); break;
-	case '\v' :
-	  Sciprintf("%s","\\v"); break;
+	case '\'' :  Sciprintf("%s","''");break;
+	case '\"' :  Sciprintf("%s","\"\"");break;
+	case '\\' :  
+	  switch (*(str+1)) 
+	    {
+	    case 'a':
+	    case 'b' : 
+	    case 'f' :  
+	    case 'n' :  
+	    case 'r' :  
+	    case 't' :  
+	    case 'v' :  
+	    case '\a' :  
+	    case '\b' :  
+	    case '\f' :  
+	    case '\n' :  
+	    case '\r' :  
+	    case '\t' :  
+	    case '\v' : Sciprintf("%s","\\\\");break;
+	    default: Sciprintf("%s","\\");break;
+	    }
+	  break;
+	case '\a' :  Sciprintf("%s","\\a"); break;
+	case '\b' :  Sciprintf("%s","\\b"); break;
+	case '\f' :  Sciprintf("%s","\\f"); break;
+	case '\n' :  Sciprintf("%s","\\n");break;
+	case '\r' :  Sciprintf("%s","\\r"); break;
+	case '\t' :  Sciprintf("%s","\\t"); break;
+	case '\v' :  Sciprintf("%s","\\v"); break;
 	default: 
 	  if (isprint(*str)) 
-	    Sciprintf("%c",*str);
+	    {
+	      Sciprintf("%c",*str);
+	    }
 	  else 
-	    Sciprintf("\\%o",*str);
+	    {
+	      unsigned char c = *str;
+	      Sciprintf("\\%0.3o",c);
+	    }
 	}
       str++;
     }

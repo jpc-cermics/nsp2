@@ -2026,6 +2026,11 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 	      }
 	    }
 	  break;
+	case 'S': 
+	  /* added to print a string as read */
+	  
+
+
 	default:
 	  Scierror("Error: scanf: bad conversion\n");
 	  return FAIL;
@@ -2211,11 +2216,11 @@ int do_scanf (const char *command, FILE *fp, char *format, Stack stack,
 
 /*---------- types and defs for doing printf ------------*/
 
-typedef enum {PF_C,PF_S,PF_D, PF_LD,PF_F, PF_UD, PF_LUD} printf_cv;
+typedef enum {PF_C,PF_S,PF_D, PF_LD,PF_F, PF_UD, PF_LUD, PF_SS} printf_cv;
 
 /* for switch on number of '*' and type */
 
-#define  AST(num,type)  (7*(num)+(type))
+#define  AST(num,type)  (8*(num)+(type))
 
 /* Buffer for printf **/
 
@@ -2368,6 +2373,8 @@ static char * P_GetString(Stack stack,int first_arg,int n_args,int col,int line)
  * 
  * Returns: %OK or %FAIL 
  **/
+
+static int do_printf_string_as_read( FILE *fp,  PRINTER printer,  void *target, const char *str);
 
 int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int arg_cnt, int line, char **strv)
 {
@@ -2622,6 +2629,12 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  if ((sval = P_GetString(stack,first_arg,nargs,arg_cnt,line)) == NULL) return RET_BUG;
 	  pf_type = PF_S;
 	  break;
+	case 'S':
+	  if (l_flag + h_flag)
+	    Scierror("Warning: printf: bad conversion l or h flag mixed with S directive\n");
+	  if ((sval = P_GetString(stack,first_arg,nargs,arg_cnt,line)) == NULL) return RET_BUG;
+	  pf_type = PF_SS;
+	  break;
 	case 'c':
 	  if (l_flag + h_flag)
 	    Scierror("Warning: printf: bad conversion l or h flag mixed with c directive\n");
@@ -2719,6 +2732,23 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	  retval += (*printer) ( target, p, ast[0], ast[1], sval);
 	  break;
 
+	case AST (0, PF_SS):
+	  {
+	    int count = do_printf_string_as_read( fp, printer, target, sval);
+	    retval += count;
+	    if (! fp) target += count;
+	  }
+	  /* retval += (*printer) ( target, p, sval); */
+	  break;
+
+	case AST (1, PF_SS):
+	  retval += (*printer) ( target, p, ast[0], sval);
+	  break;
+
+	case AST (2, PF_SS):
+	  retval += (*printer) ( target, p, ast[0], ast[1], sval);
+	  break;
+
 	case AST (0, PF_D):
 	  retval += (*printer) ( target, p, (int) dval);
 	  break;
@@ -2785,6 +2815,61 @@ int do_printf (char *fname, FILE *fp, char *format, Stack stack, int nargs, int 
 	}
       *q = save;
     }
+}
+
+
+static int do_printf_string_as_read( FILE *fp,  PRINTER printer,  void *target, const char *str)
+{
+  int count=0;
+  count += (*printer)(target,"\""); if ( fp == NULL) target++;
+  while ( *str != '\0') 
+    {
+      switch (*str) 
+	{
+	case '\'' : count += (*printer)(target,"%s","''");if ( fp == NULL) target++;break;
+	case '\"' : count += (*printer)(target,"%s","\"\"");if ( fp == NULL) target++;break;
+	case '\\' :  
+	  switch (*(str+1)) 
+	    {
+	    case 'a':
+	    case 'b' : 
+	    case 'f' :  
+	    case 'n' :  
+	    case 'r' :  
+	    case 't' :  
+	    case 'v' :  
+	    case '\a' :  
+	    case '\b' :  
+	    case '\f' :  
+	    case '\n' :  
+	    case '\r' :  
+	    case '\t' :  
+	    case '\v' :count += (*printer)(target,"%s","\\\\");if ( fp == NULL) target++;break;
+	    default:count += (*printer)(target,"%s","\\");if ( fp == NULL) target++;break;
+	    }
+	  break;
+	case '\a' : count += (*printer)(target,"%s","\\a");if ( fp == NULL) target++; break;
+	case '\b' : count += (*printer)(target,"%s","\\b");if ( fp == NULL) target++; break;
+	case '\f' : count += (*printer)(target,"%s","\\f");if ( fp == NULL) target++; break;
+	case '\n' : count += (*printer)(target,"%s","\\n");if ( fp == NULL) target++;break;
+	case '\r' : count += (*printer)(target,"%s","\\r");if ( fp == NULL) target++; break;
+	case '\t' : count += (*printer)(target,"%s","\\t");if ( fp == NULL) target++; break;
+	case '\v' : count += (*printer)(target,"%s","\\v");if ( fp == NULL) target++; break;
+	default: 
+	  if (isprint(*str)) 
+	    {
+	      count += (*printer)(target,"%c",*str);if ( fp == NULL) target++;
+	    }
+	  else 
+	    {
+	      unsigned char c = *str;
+	      count += (*printer)(target,"\\%0.3o",c);if ( fp == NULL) target++;
+	    }
+	}
+      str++;
+    }
+  count +=  (*printer)(target,"\"");if ( fp == NULL) target++;
+  return count;
 }
 
 
