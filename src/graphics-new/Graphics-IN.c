@@ -2928,7 +2928,7 @@ static int int_xclick(Stack stack, int rhs, int opt, int lhs)
       int ixrep,iyrep;
       iw=-1;
       Xgc->graphic_engine->xclick_any(Xgc,buf,&button,&imask,&ixrep,&iyrep,&iw,iflag,motion,release,key,istr);
-      if (button>=0)
+      if (button>=-1)
 	{
 	  /* NspGraphic *G;  */
 	  BCG *Xgc_win =window_list_search_new(iw);
