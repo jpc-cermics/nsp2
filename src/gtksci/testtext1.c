@@ -303,6 +303,7 @@ static char *nsptv_history_up(view_history *data)
 static char *nsptv_history_down(view_history *data)
 {
   if ( data == NULL) return NULL;
+  if ( data->history_cur == NULL) return NULL;
   if ( data->dir == 0 ) return NULL;
   if ( data->history_cur->next != NULL) {
     data->dir = -1;
@@ -1352,7 +1353,7 @@ static View *nsptv_create_view (Buffer *buffer)
 
   view->text_view = gtk_text_view_new_with_buffer (buffer->buffer);
   gtk_text_view_set_wrap_mode (GTK_TEXT_VIEW (view->text_view),
-                               GTK_WRAP_NONE); /* GTK_WRAP_WORD */
+                               GTK_WRAP_CHAR); /* GTK_WRAP_WORD */
     
   PangoFontDescription* p = pango_font_description_from_string("Monospace");
   gtk_widget_modify_font (GTK_WIDGET (view->text_view),p);
