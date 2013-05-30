@@ -460,6 +460,9 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
   /*fprintf(stderr,"key pressed\n");*/
   switch ( event->keyval ) 
     {
+    case GDK_Page_Up:
+    case GDK_Page_Down:
+      return FALSE;
     case GDK_Tab :
       nsptv_insert_completions(view);
       return TRUE;
@@ -468,9 +471,15 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       nsptv_key_press_return(view,TRUE);
       return TRUE;
     case GDK_Up:
+      if ( event->state & GDK_SHIFT_MASK ) {
+        return FALSE;
+      }
       goto up; 
       break;
     case GDK_Down:
+      if ( event->state & GDK_SHIFT_MASK ) {
+        return FALSE;
+      }
       goto down;
       break;
     case 'p': 
@@ -502,6 +511,9 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       goto def;
       break;
     case GDK_Left :
+      if ( event->state & GDK_SHIFT_MASK ) {
+        return FALSE;
+      }
       cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
       gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,cursor_mark);
       gtk_text_iter_backward_char (&iter);
@@ -554,13 +566,38 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
       goto def; 
       break;
     case GDK_KP_Home: 
-    case GDK_Home: 
+    case GDK_Home:
+      if ( event->state & GDK_SHIFT_MASK ) {
+        gtk_text_buffer_get_selection_bounds(view->buffer->buffer,&start, &end);
+      }
       if (view->buffer->mark != NULL) {
         gtk_text_buffer_get_iter_at_mark (view->buffer->buffer, &iter,view->buffer->mark);
         gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
-        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
-				view->buffer->mark,
-				0, TRUE, 1.0, 1.0);
+        if ( event->state & GDK_SHIFT_MASK ) {
+          gtk_text_buffer_select_range(view->buffer->buffer,&iter,&end);
+        }
+        /*gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
+	*			view->buffer->mark,
+	*			0, TRUE, 1.0, 1.0);
+        */
+       }
+      return TRUE;
+    case GDK_KP_End:
+    case GDK_End:
+      if ( event->state & GDK_SHIFT_MASK ) {
+        gtk_text_buffer_get_selection_bounds(view->buffer->buffer,&start, &end);
+      }
+      if (view->buffer->mark != NULL) {
+        gtk_text_buffer_get_bounds (view->buffer->buffer, &end, &iter);
+        gtk_text_buffer_place_cursor (view->buffer->buffer,&iter);
+        if ( event->state & GDK_SHIFT_MASK ) {
+          gtk_text_buffer_select_range(view->buffer->buffer,&iter,&start);
+        }
+        cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
+        gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view),
+                                      cursor_mark,
+                                      0, TRUE, 1.0, 1.0);
+
        }
       return TRUE;
     case GDK_Control_L :
@@ -583,11 +620,11 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
     }
     gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+    gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
     cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
     gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
 				   cursor_mark,
 				   0, TRUE, 1.0, 1.0);
-    gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   }
   g_signal_stop_emission_by_name (widget, "key_press_event");
   return TRUE;
@@ -603,11 +640,11 @@ static gboolean nsptv_key_press_callback(GtkWidget *widget, GdkEventKey *event, 
     /* fprintf(stdout,"insert text\n"); */
     gtk_text_buffer_insert (view->buffer->buffer, &end, str, -1);
     gtk_text_buffer_get_bounds (view->buffer->buffer, &start, &end);
+    gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
     cursor_mark = gtk_text_buffer_get_insert (view->buffer->buffer);
     gtk_text_view_scroll_to_mark(GTK_TEXT_VIEW (view->text_view), 
 				   cursor_mark,
 				   0, TRUE, 1.0, 1.0);
-    gtk_text_buffer_place_cursor (view->buffer->buffer,&end);
   } else {
     if (view->buffer->mark != NULL) {
         gtk_text_view_scroll_to_mark (GTK_TEXT_VIEW (view->text_view), 
