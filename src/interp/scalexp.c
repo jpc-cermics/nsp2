@@ -888,6 +888,12 @@ static double dgamma(double x) {
   return cdf_gamma(&x);
 #endif 
 }
+/* XXX : attention int ici doit etre la partie entiere 
+ * ce rem equivaut au modulo scicoslab 
+ */
+
+static double rem(double x, double y) { return x - aint(x/y)*y;}
+
 
 expr_func expr_functions[] = 
   {
@@ -916,6 +922,9 @@ expr_func expr_functions[] =
     {"atan2",f_atan2,NULL,atan2,FALSE},
     {"log10",f_log10,log10,NULL,FALSE},
     {"gamma",f_gamma,dgamma,NULL,FALSE},
+    /* x - entiere(x/y)*y */
+    {"rem", f_rem , NULL, rem,FALSE},
+    {"sqrt", f_sqrt , sqrt, NULL,FALSE},
     {NULL,0}
   };
 
