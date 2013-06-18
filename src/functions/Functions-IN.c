@@ -200,6 +200,51 @@ static int int_c_link(Stack stack, int rhs, int opt, int lhs)
 
 
 /*
+ * returns the entry names linked from shared library shid 
+ * names = get_links(shid | sh-path )
+ */
+
+static int int_get_links(Stack stack, int rhs, int opt, int lhs)
+{
+  int shid;
+  NspSMatrix *S;
+  CheckRhs(1,1);
+  CheckLhs(0,1);
+  if ( IsMatObj(stack,1) ) 
+    {
+      if (GetScalarInt(stack,1,&shid) == FAIL) return RET_BUG; 
+      if ((S= nsp_epoints_find_by_shid(shid))== NULL) 
+	return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(S));
+      return 1;
+    }
+  else if ( IsSMatObj(stack,1) )
+    {
+      NspSharedlib *shlib;
+      const char *path;
+      if ((path = GetString(stack,1)) == (char*)0) return RET_BUG; 
+      shlib = nsp_sharedlib_table_find_by_path(path);
+      shid = ( shlib == NULL) ? -1 : shlib->obj->id;
+      /* shid = ZZ  */
+      if ((S=nsp_epoints_find_by_shid(shid))== NULL) 
+	return RET_BUG;
+      MoveObj(stack,1,NSP_OBJECT(S));
+      return 1;
+    }
+  else
+    {
+      Scierror ("Error:\tfirst argument of %s should be a string or an integer\n",
+		NspFname(stack));
+    }
+  return RET_BUG;
+}
+
+
+
+
+
+
+/*
  * addinter function 
  */
 
@@ -529,6 +574,7 @@ static OpTab Functions_func[]={
   {"link",int_link},
   {"ulink",int_ulink},
   {"c_link",int_c_link},
+  {"get_links",int_get_links},
   {"addinter",int_addinter},
   {"remove_interface",int_remove_interface},
   {"call",int_call},

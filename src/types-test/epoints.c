@@ -24,7 +24,7 @@
 
 
 
-#line 21 "codegen/epoints.override"
+#line 22 "codegen/epoints.override"
 /* headers in C-file */
 
 #line 31 "epoints.c"
@@ -100,7 +100,7 @@ NspTypeEpoints *new_type_epoints(type_mode mode)
 
   type->init = (init_func *) init_epoints;
 
-#line 30 "codegen/epoints.override"
+#line 31 "codegen/epoints.override"
   /* inserted verbatim in the type definition */
 
 #line 107 "epoints.c"
@@ -538,7 +538,7 @@ void Epoints_Interf_Info(int i, char **fname, function (**f))
   *f = Epoints_func[i].fonc;
 }
 
-#line 42 "codegen/epoints.override"
+#line 43 "codegen/epoints.override"
 /* inserted verbatim at the end */
 
 static NspHash *Epoints = NULL;
@@ -594,6 +594,16 @@ static void epoint_default()
 {
 }
 
+
+/**
+ * nsp_epoints_table_remove_entries:
+ * @shid: an integer 
+ * 
+ * Remove from Epoints all the entry points coming 
+ * from the shared library of if @shid.
+ * 
+ **/
+
 void nsp_epoints_table_remove_entries(int shid)
 {
   NspObject *Obj;
@@ -615,5 +625,53 @@ void nsp_epoints_table_remove_entries(int shid)
     }
 }
 
+/**
+ * nsp_epoints_find_by_shid:
+ * @shid: an integer 
+ * 
+ * Returns all the entry points coming from shared library 
+ * of id @shid.
+ * 
+ * Return value: a new #NspSMatrix or NULL
+ **/
 
-#line 620 "epoints.c"
+NspSMatrix *nsp_epoints_find_by_shid(int shid)
+{
+  NspSMatrix *Loc;
+  NspObject *Obj;
+  int i=0,count=0;
+  if ( Epoints == NULL || Epoints->filled == 0) 
+    {
+      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,0,0,-1) ) == NULLSMAT) 
+	return NULLSMAT;
+      return Loc;
+    }
+  else 
+    {
+      if ( ( Loc =nsp_smatrix_create_with_length(NVOID,Epoints->filled,1,-1) ) == NULLSMAT) 
+	return NULLSMAT;
+    }
+  while (1) 
+    {
+      int rep = nsp_hash_get_next_object(Epoints,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  NspEpoints *ep = (NspEpoints *) Obj;
+	  if ( ep->obj->shid == shid) 
+	    {
+	      if (( Loc->S[count++] =nsp_string_copy(NSP_OBJECT(Obj)->name)) == (nsp_string) 0)
+		return NULLSMAT;
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+  if ( count != Epoints->filled )
+    {
+      int i;
+      for ( i = count ; i < Epoints->filled ; i++) Loc->S[i]=NULL;
+      if ( nsp_smatrix_resize(Loc,count,1) == FAIL) return NULLSMAT;
+    }
+  return Loc;
+}
+
+#line 678 "epoints.c"

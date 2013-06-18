@@ -112,8 +112,9 @@ extern int  nsp_epoints_table_insert(const char *name,const char *ename, void *f
 extern NspEpoints *nsp_epoints_table_find(const char *name) ;
 extern void nsp_epoints_table_show();
 extern void nsp_epoints_table_remove_entries(int shid);
+extern NspSMatrix *nsp_epoints_find_by_shid(int shid);
 
-#line 117 "./epoints.h"
+#line 118 "./epoints.h"
 #endif /* NSP_INC_NspEpoints */ 
 
 #ifdef NspEpoints_Private 
@@ -128,9 +129,9 @@ static AttrTab epoints_attrs[];
 static NspMethods *epoints_get_methods(void);
 /* static int int_epoints_create(Stack stack, int rhs, int opt, int lhs);*/ 
 static NspEpoints *nsp_epoints_create_void(const char *name,NspTypeBase *type);
-#line 17 "codegen/epoints.override"
+#line 18 "codegen/epoints.override"
 /* inserted in the private part of include file */
 
-#line 135 "./epoints.h"
+#line 136 "./epoints.h"
 #endif /* NspEpoints_Private */
 
