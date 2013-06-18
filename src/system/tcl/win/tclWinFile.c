@@ -66,8 +66,8 @@ Tcl_FindExecutable(argv0)
      * create this process.
      */
 
-    nsp_tcldstring_set_length(&buffer, MAX_PATH+1);
-    length = GetModuleFileName(NULL, nsp_tcldstring_value(&buffer), MAX_PATH+1);
+    nsp_tcldstring_set_length(&buffer, MAXPATHLEN+1);
+    length = GetModuleFileName(NULL, nsp_tcldstring_value(&buffer), MAXPATHLEN+1);
     if (length > 0) {
 	tclExecutableName = (char *) ckalloc((unsigned) (length + 1));
 	strcpy(tclExecutableName, nsp_tcldstring_value(&buffer));
@@ -467,9 +467,9 @@ TclWinResolveShortcut(bufferPtr)
     IShellLink *psl; 
     IPersistFile *ppf; 
     WIN32_FIND_DATA wfd; 
-    WCHAR wpath[MAX_PATH];
+    WCHAR wpath[MAXPATHLEN];
     char *path, *ext;
-    char realFileName[MAX_PATH];
+    char realFileName[MAXPATHLEN];
 
     /*
      * Windows system calls do not automatically resolve
@@ -496,7 +496,7 @@ TclWinResolveShortcut(bufferPtr)
 		hres = psl->lpVtbl->Resolve(psl, NULL, 
 			SLR_ANY_MATCH | SLR_NO_UI); 
 		if (SUCCEEDED(hres)) { 
-		    hres = psl->lpVtbl->GetPath(psl, realFileName, MAX_PATH, 
+		    hres = psl->lpVtbl->GetPath(psl, realFileName, MAXPATHLEN, 
 			    &wfd, 0);
 		} 
 	    } 

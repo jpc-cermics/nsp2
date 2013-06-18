@@ -188,7 +188,7 @@ nsp_rename_file(
     if (errno == EACCES) {
 	decode:
 	if (srcAttr & FILE_ATTRIBUTE_DIRECTORY) {
-	    char srcPath[MAX_PATH], dstPath[MAX_PATH];
+	    char srcPath[MAXPATHLEN], dstPath[MAXPATHLEN];
 	    int srcArgc, dstArgc;
 	    char **srcArgv, **dstArgv;
 	    char *srcRest, *dstRest;
@@ -306,7 +306,7 @@ nsp_rename_file(
 		 *    put temp file back to old name.
 		 */
 
-		char tempName[MAX_PATH];
+		char tempName[MAXPATHLEN];
 		int result, size;
 		char *rest;
 		

@@ -342,16 +342,8 @@
 #endif /* !S_ISLNK */
 
 
-/*
- * Define MAXPATHLEN in terms of MAXPATH if available
- */
-
-#ifndef MAXPATH
-#define MAXPATH MAX_PATH
-#endif /* MAXPATH */
-
 #ifndef MAXPATHLEN
-#define MAXPATHLEN MAXPATH
+#define MAXPATHLEN 2048 
 #endif /* MAXPATHLEN */
 
 /*
