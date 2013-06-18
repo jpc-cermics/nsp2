@@ -721,3 +721,12 @@
   (caller-owns-return #f)
   (return-type "WebKitWebSettings*")
 )
+
+
+;; direct acces to a file (using libsoup)
+
+(define-function webkit_getfile()
+  (c-name "webkit_getfile")
+  (return-type "none")
+)
+

@@ -1,10 +1,11 @@
+/* -*- Mode: C -*- */
 %%
 headers
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 /* on windows TRUE and FALSE are undef by 
  * "nsp/object.h"
@@ -18,6 +19,7 @@ headers
 #endif 
 
 #include "nsp/interf.h"
+
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
@@ -50,3 +52,34 @@ ignore
   webkit_web_view_get_type
   webkit_network_request_get_type
 
+%%
+override webkit_getfile 
+
+extern 
+NspSMatrix *get_file(const char *url, const char *proxy, const char *ca_file,
+		     gboolean quiet, gboolean debug);
+
+static int
+_wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
+{
+  int debug=FALSE, quiet = TRUE;
+  char *proxy=NULL, *ca_file= NULL, *url;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  nsp_option opts[] ={{ "proxy", string,NULLOBJ,-1},
+		      { "ca_file", string,NULLOBJ,-1},
+		      { "quiet", s_bool,NULLOBJ,-1},
+		      { "debug", s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ((url=GetString(stack,1)) == NULL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&proxy,&ca_file,&quiet,&debug) == FAIL)
+    return RET_BUG;
+  if ((S=get_file(url, proxy,ca_file, quiet, debug)) == NULL) 
+    {
+      Scierror("Error: failed to get file \"%s\"\n",url);
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}

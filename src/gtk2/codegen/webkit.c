@@ -1,12 +1,12 @@
 /* -*- Mode: C -*- */
 
 
-#line 3 "webkit.override"
+#line 4 "webkit.override"
 #include <gdk/gdk.h>
 #include <gtk/gtk.h>
 #include <webkit/webkit.h>
 
-#include "nsp/object.h"
+#include <nsp/object.h>
 
 /* on windows TRUE and FALSE are undef by 
  * "nsp/object.h"
@@ -20,6 +20,7 @@
 #endif 
 
 #include "nsp/interf.h"
+
 #include <nsp/gtk/gboxed.h>
 #include <nsp/gtk/gobject.h>
 #include <nsp/gtk/gobject-util.h>
@@ -36,7 +37,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #endif 
 
 
-#line 40 "webkit.c"
+#line 41 "webkit.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -2119,6 +2120,40 @@ static AttrTab webkitnetworkrequest_attrs[]={{NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
+#line 57 "webkit.override"
+
+extern 
+NspSMatrix *get_file(const char *url, const char *proxy, const char *ca_file,
+		     gboolean quiet, gboolean debug);
+
+static int
+_wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
+{
+  NspSMatrix *S;
+  int debug=FALSE, quiet = TRUE;
+  char *proxy=NULL, *ca_file= NULL, *url;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  nsp_option opts[] ={{ "proxy", string,NULLOBJ,-1},
+		      { "ca_file", string,NULLOBJ,-1},
+		      { "quiet", s_bool,NULLOBJ,-1},
+		      { "debug", s_bool,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  if ((url=GetString(stack,1)) == NULL) return RET_BUG;
+  if ( get_optional_args(stack,rhs,opt,opts,&proxy,&ca_file,&quiet,&debug) == FAIL)
+    return RET_BUG;
+  if ((S=get_file(url, proxy,ca_file, quiet, debug)) == NULL) 
+    {
+      Scierror("Error: failed to get file \"%s\"\n",url);
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1;
+}
+#line 2154 "webkit.c"
+
+
 /*----------------------------------------------------
  * Interface 
  * i.e a set of function which are accessible at nsp level
@@ -2131,6 +2166,7 @@ static OpTab webkit_func[]={
   {"webkitwebbackforwardlist_new", _wrap_webkitwebbackforwardlist_new},
   {"webkitwebsettings_new", _wrap_webkitwebsettings_new},
   {"webkitnetworkrequest_new", _wrap_webkitnetworkrequest_new},
+  {"webkit_getfile", _wrap_webkit_getfile},
   { NULL, NULL}
 };
 
@@ -2159,7 +2195,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2163 "webkit.c"
+#line 2198 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));
