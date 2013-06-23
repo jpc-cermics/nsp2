@@ -46,6 +46,7 @@
 #include <nsp/sciio.h>
 #include <nsp/eval.h>
 #include <nsp/nspthreads.h>
+#include <nsp/system.h>
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
@@ -346,6 +347,7 @@ static void nsptv_delete_completion_infos(View *view)
 
 static void nsptv_insert_completions(View *view)
 {
+  char str_expanded[FSIZE+1];
   GtkTextIter start, end,iter;
   int i=1,ln;
   char **matches;
@@ -371,11 +373,13 @@ static void nsptv_insert_completions(View *view)
       char c = search_string[i];
       if ( c == '"' || c == '\'' || c == ' ' ) str = search_string + i+1;
     }
-  matches = rl_completion_matches (str, rl_filename_completion_function);
+  nsp_path_expand(str,str_expanded,FSIZE);
+  matches = rl_completion_matches (str_expanded, rl_filename_completion_function);
   if ( matches == NULL || matches[0] == NULL ) return ;
   /* we insert the proposed completion */
+  
   gtk_text_buffer_insert (view->buffer->buffer, &end, 
-			  matches[0] +strlen(str) ,-1);
+			  matches[0] +strlen(str_expanded) ,-1);
   if ( matches[1] != NULL ) 
     {
       int i=1;
