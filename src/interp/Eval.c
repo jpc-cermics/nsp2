@@ -1030,6 +1030,25 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  nsp_help_browser(NULL,NULL,(char *) L1->O);
 	  return 0;
 	  break;
+	case NSP_EXIT :
+	  /* 1-ary exit */
+	  {
+	    char *endptr;
+	    const char *str = (char *) L1->O;
+	    gint64 val=0;
+	    val = g_ascii_strtoll(str, &endptr, 10 );
+	    /* Check for various possible errors */
+	    if ((val == G_MAXINT64 || val == G_MININT64 )
+		|| (val == 0 && endptr == str)  /* no digits in input */
+		)
+	      {
+		Scierror("Error: exit called with wrong argument");
+		val = 1;
+	      }
+	    sci_clear_and_exit(val);
+	  }
+	  return 0;
+	  break;
 	case WHO :
 	  /* 1-ary who */
 	  nsp_who(&stack,(const char *) L1->O,FALSE,TRUE,&rep);
@@ -1278,6 +1297,7 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       nsp_global_frame_remove_all_objects(); 
       return 0;
     case HELP:
+      /* help without arguments */
       nsp_help_browser(NULL,NULL,NULL);
       return 0;
     case CD_COMMAND:
@@ -1298,7 +1318,8 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
       nsp_who(stack,"local",FALSE,TRUE,&rep);
       return 0;
     case NSP_EXIT:
-      Sciprintf("command without arguments\n");
+      /* Sciprintf("exit without arguments\n"); */
+      sci_clear_and_exit(0);
       return 0;
     case ABORT:
       return RET_ABORT;

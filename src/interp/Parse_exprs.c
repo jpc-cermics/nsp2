@@ -382,7 +382,6 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case ABORT :  /* a set of commands */
     case CONTINUE:
     case BREAK : 
-    case NSP_EXIT :  
     case QUIT :  
     case WHAT :  
     case PRETURN: 
@@ -427,6 +426,7 @@ static int parse_stmt(Tokenizer *T,NspBHash *symb_table,PList *plist)
     case CD_COMMAND:
     case LS_COMMAND:
     case PWD_COMMAND:
+    case NSP_EXIT:
       /* a set of commands with zero or one argument  */
       if ( T->tokenv.NextC == '(') 
 	{
