@@ -37,7 +37,7 @@ tcl/@SYST_FILES@/%.o:
 
 include ../../Makefile.incl
 
-CFLAGS = $(CC_OPTIONS)  -DSTANDALONE -MMD
+CFLAGS = $(CC_OPTIONS) 
 
 include ../Make.lib
 

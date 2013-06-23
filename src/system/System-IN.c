@@ -27,18 +27,19 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-
+#include <locale.h>
 #include <glib.h> /* for g_xx functions below */
 
-#include <nsp/object.h> 
+#include <nsp/nsp.h> 
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/smatrix.h> 
 #include <nsp/hash.h> 
 #include <nsp/interf.h> 
-
 #include <nsp/system.h>
-#include "nsp/nsptcl.h"
+#include <nsp/nsptcl.h>
+#include <nsp/gtksci.h> 
+
 #include "regexp.h"
 #include "files.h" /* FSIZE */
 
@@ -649,8 +650,6 @@ int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
 }
 #endif 
 
-#include <locale.h>
-
 static int int_setlocale(Stack stack,int rhs,int opt,int lhs)
 {
   char *locale = setlocale(LC_NUMERIC,NULL);
@@ -659,6 +658,16 @@ static int int_setlocale(Stack stack,int rhs,int opt,int lhs)
   if ( locale == NULL) locale = "unknown";
   nsp_move_string(stack,1,locale,-1);
   return 1;
+}
+
+static int int_exit(Stack stack,int rhs,int opt,int lhs)
+{
+  int exit_status;
+  CheckRhs(0,1);
+  CheckLhs(0,0);
+  if (GetScalarInt(stack,1,&exit_status) == FAIL) return RET_BUG;
+  sci_clear_and_exit(exit_status);
+  return 0;
 }
 
 static OpTab System_func[]={
@@ -694,7 +703,7 @@ static OpTab System_func[]={
 #if 0 
   {"mktemp", int_mktemp},
 #endif 
-
+  {"exit", int_exit},
   {(char *) 0, NULL}
 };
 
