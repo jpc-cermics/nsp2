@@ -1,0 +1,28 @@
+% -*- mode: latex -*-
+\mansection{exit}
+\begin{mandesc}
+  \short{exit}{nsp process termination} 
+\end{mandesc}
+
+\begin{calling_sequence}
+\begin{verbatim}
+ exit 
+ exit status
+ exit(status)
+ exit()
+\end{verbatim}
+\end{calling_sequence}
+\begin{parameters}
+  \begin{varlist}
+    \vname{status}: an integer.
+  \end{varlist}
+\end{parameters}
+\index{exit}\label{exit}
+\begin{mandescription}
+  Caling \verb+exit+ function causes normal process termination of 
+  nsp and a status value is returned to the parent process.
+\end{mandescription}
+%-- see also
+\begin{manseealso}
+  \manlink{quit}{quit} \manlink{abort}{abort} 
+\end{manseealso}
