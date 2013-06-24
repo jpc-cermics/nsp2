@@ -2275,6 +2275,7 @@ NspSMatrix *get_file(const char *url, const char *proxy, const char *ca_file,
 
 static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
 {
+  NspSMatrix *S;
   int debug=FALSE, quiet = TRUE;
   char *proxy=NULL, *ca_file= NULL, *url;
   CheckStdRhs(1,1);
@@ -2296,7 +2297,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2300 "webkit.c"
+#line 2301 "webkit.c"
 
 
 /*----------------------------------------------------
@@ -2340,7 +2341,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2344 "webkit.c"
+#line 2345 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));

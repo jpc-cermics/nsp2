@@ -208,6 +208,7 @@ NspSMatrix *get_file(const char *url, const char *proxy, const char *ca_file,
 
 static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
 {
+  NspSMatrix *S;
   int debug=FALSE, quiet = TRUE;
   char *proxy=NULL, *ca_file= NULL, *url;
   CheckStdRhs(1,1);
