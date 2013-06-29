@@ -67,7 +67,7 @@ extern NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A);
 extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M); 
 extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 
-extern NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int flag); 
+extern NspPMatrix *nsp_pmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag); 
 extern NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val);
 extern NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init);
 extern NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
@@ -145,7 +145,10 @@ extern doubleC nsp_hornercd(const doubleC *a,const int n, double x);
 extern doubleC nsp_hornerdc (const double *a,const int n, doubleC x);
 extern doubleC nsp_hornercc (const doubleC *a,const int n, doubleC x);
 
-
+extern NspPMatrix  *nsp_pmatrix_extract_diag(NspPMatrix *A, int k);
+extern int nsp_pmatrix_set_diag(NspPMatrix *A, NspPMatrix *Diag, int k);
+extern NspPMatrix  *nsp_pmatrix_create_diag(NspPMatrix *Diag, int k);
+extern NspPMatrix *nsp_cells_to_pmatrix(const char *name, NspCells *C);
 
 #endif 
 

@@ -1150,6 +1150,35 @@ static int int_smxextractcolforloop(Stack stack, int rhs, int opt, int lhs)
 }
 #endif 
 
+
+/*
+ *  diag function 
+ */
+
+static int int_smatrix_diag (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspSMatrix *A, *Res;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((A = GetSMat (stack, 1)) == NULLSMAT)
+    return RET_BUG;
+  if (A->m == 1 || A->n == 1)
+    Res = nsp_smatrix_create_diag (A, k1);
+  else
+    Res = nsp_smatrix_extract_diag (A, k1);
+      
+  if (Res == NULLSMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
 /*
  * Returns the kthe diag of a NspSMatrix 
  */
@@ -2532,6 +2561,8 @@ static OpTab SMatrix_func[]={
   {"issorted_s",int_smatrix_issorted},
   {"is_string_in_array_s",int_is_string_in_array},
   {"parse_dim_arg",int_parse_dim_arg},
+  {"diag_s", int_smatrix_diag},
+  {"diag_s_m", int_smatrix_diag},
   {"diagcre_s",int_smatrix_diagcre},
   {"diage_s",int_smatrix_diage},
   {"object2seq_s",int_smatrix_to_seq}, /* A{...} on rhs  */

@@ -389,6 +389,22 @@ static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
+ * build of polynomial matrix from its coefficients given 
+ * in a cell
+ */
+
+static int int_pmatrix_ce2p(Stack stack, int rhs, int opt, int lhs)
+{
+  NspPMatrix *P; NspCells *C;
+  CheckRhs(1,1);
+  CheckLhs(1,1);
+  if (( C=GetCells(stack,1)) == NULL) return RET_BUG;
+  if (( P=nsp_cells_to_pmatrix(NVOID,C))== NULLPMAT) return RET_BUG;
+  MoveObj(stack,1,(NspObject *) P);
+  return 1;
+}
+
+/*
  * Creation of a PMatrix 
  */
 
@@ -853,6 +869,73 @@ static int int_pmatrix_addrows(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+/*
+ *  diag function 
+ */
+
+static int int_pmatrix_diag (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspPMatrix *A, *Res;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((A = GetPMat (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  if (A->m == 1 || A->n == 1)
+    Res = nsp_pmatrix_create_diag (A, k1);
+  else
+    Res = nsp_pmatrix_extract_diag (A, k1);
+      
+  if (Res == NULLPMAT)
+    return RET_BUG;
+  MoveObj (stack, 1, (NspObject *) Res);
+  return 1;
+}
+
+
+/*
+ * Returns the kthe diag of a NspPMatrix 
+ */
+
+static int int_pmatrix_diage(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1;
+  NspPMatrix *A,*Res;
+  CheckRhs(2,2);
+  CheckLhs(1,1);
+  if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
+  if ((A = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
+  Res =nsp_pmatrix_extract_diag( A,k1);
+  if ( Res == NULLPMAT)  return RET_BUG;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
+
+
+/*
+ *  Creates a NspPMatrix with kth diag set to Diag 
+ */
+
+static int int_pmatrix_diagcre(Stack stack, int rhs, int opt, int lhs)
+{
+  int k1=0;
+  NspPMatrix *Diag,*Res;
+  CheckRhs(1,2);
+  CheckLhs(1,1);
+  if ((Diag = GetPMat(stack,1)) == NULLPMAT) return RET_BUG;
+  if ( rhs == 2 ) 
+    {
+      if ( GetScalarInt(stack,2,&k1) == FAIL) return RET_BUG;
+    }
+  if ( (Res =nsp_pmatrix_create_diag(Diag,k1)) == NULLPMAT ) return RET_BUG ;
+  MoveObj(stack,1,(NspObject *) Res);
+  return 1;
+}
 
 /*
  *nsp_pmatrix_resize: Changes NspPMatrix dimensions
@@ -1675,6 +1758,7 @@ static OpTab PMatrix_func[]={
   {"horner", int_pmatrix_horner},
   {"hornerm", int_pmatrix_hornerm},
   {"m2p", int_pmatrix_m2p},
+  {"ce2p", int_pmatrix_ce2p},
   {"norm_p",      int_pmatrix_norm},
   {"pdiv", int_pmatrix_pdiv_p_p},
   {"pmat_create",int_pmatrix_create},
@@ -1748,7 +1832,10 @@ static OpTab PMatrix_func[]={
   {"round_p",      int_pmatrix_round},
   {"setrowscols_p", int_matint_setrowscols},
   {"tozero_p", int_matint_tozero},
-
+  {"diag_p", int_pmatrix_diag},
+  {"diag_p_m", int_pmatrix_diag},
+  {"diagcre_p",int_pmatrix_diagcre},
+  {"diage_p",int_pmatrix_diage},
   {(char *) 0, NULL}
 };
 

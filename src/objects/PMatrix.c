@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -280,6 +280,47 @@ NspCells *nsp_pmatrix_to_cells(const char *name, NspPMatrix *M)
   return(loc);
 }
 
+/**
+ * nsp_cells_to_pmatrix:
+ * @C: a #NspCells of size mxn
+ * 
+ * returns a mxn #NspPMatrix. Each element of the 
+ * cell @C gives the coefficient of 
+ * the corresponding polynomial in the returned #NspPMatrix.
+ * 
+ * Returns: a #NspPMatrix object or %NULL
+ **/
+
+NspPMatrix *nsp_cells_to_pmatrix(const char *name, NspCells *C)
+{
+  int i,j;
+  NspPMatrix *loc;
+  if ((loc =nsp_pmatrix_create(name,C->m,C->n,NULL,-1))== NULLPMAT) return(NULLPMAT);
+  for ( i= 0 ; i < C->mn;i++)
+    {
+      if ( IsMat(C->objs[i]) )
+	{
+	  if ((loc->S[i] = nsp_polynom_copy_and_name("pe",(NspMatrix *)C->objs[i]))== NULLPOLY )
+	    goto bug;
+	}
+      else
+	{
+	  Scierror("Error: object stored at indice %d of a cell is not a Matrix \n",i);
+	  goto bug;
+
+	}
+    }
+  return(loc);
+ bug:
+  for ( j = 0 ; j < i; j++) 
+    {
+      nsp_polynom_destroy(&loc->S[j]);
+      loc->S[j]=NULL;
+    }
+  nsp_pmatrix_destroy(loc);
+  return NULLPMAT;
+}
+
 /*
  * PMatInfo : display Info on NspPMatrix PMat 
  */
@@ -343,14 +384,14 @@ int nsp_pmatrix_print(NspPMatrix *Mat, int indent,const char *name, int rec_leve
  * are initialized with %NULL. if @flag is null 
  * the elements are initilialized to zero. If flag 
  * is one or two, @cval is used for initialization 
- * (one for real values, two for complex values.
+ * (one for real values, two for complex values).
  * 
  * Returns:  a new #NspPMatrix or %NULL
  **/
 
 static const doubleC Czero={0.00,0.00};
 
-NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int flag)
+NspPMatrix *nsp_pmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag)
 {
   int i;
   NspPMatrix *Loc;
@@ -402,10 +443,6 @@ NspPMatrix *nsp_pmatrix_create(char *name, int m, int n,const doubleC *cval, int
 	{
 	  if ( (Loc->S[i] =nsp_basic_to_polynom(init,(flag==2)? 'c':'r')) == NULL) goto fail;
 	}
-    }
-  else
-    {
-      for ( i = 0 ; i < Loc->mn ; i++ ) Loc->S[i] = NULL;
     }
   return Loc;
  fail:
@@ -910,6 +947,114 @@ NspPMatrix*nsp_pmatrix_extract_rows(NspPMatrix *A, NspMatrix *Rows, int *err)
   return (NspPMatrix *) nsp_matint_extract_rows1(NSP_OBJECT(A),NSP_OBJECT(Rows));
 }
 
+/**
+ * nsp_pmatrix_extract_diag:
+ * @A: a #NspPMatrix
+ * @k: an integer 
+ *
+ * Extract the @k-th diagonal of matrix @A and returns 
+ * its value as a column vector. 
+ * 
+ * returns: a #NspPMatrix or %NULLSMAT 
+ */
+
+NspPMatrix  *nsp_pmatrix_extract_diag(NspPMatrix *A, int k) 
+{
+  NspPMatrix *Loc;
+  int j,i;
+  int imin,imax;
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  if ( imin > imax ) 
+    {
+      Loc =nsp_pmatrix_create(NVOID,(int) 0 , (int) 0,&Czero, A->rc_type == 'c' ? 2 : 1 );
+      return(Loc);
+    }
+  if (( Loc =nsp_pmatrix_create(NVOID,imax-imin,1,&Czero,A->rc_type == 'c' ? 2 : 1 )) == NULLPMAT)
+    return(NULLPMAT);
+  j=0; 
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      if ((Loc->S[j++] =nsp_polynom_copy_with_name(A->S[i+(i+k)*A->m])) == (nsp_polynom ) 0)
+	goto bug;
+    }
+  return(Loc);
+ bug: 
+  for ( i = 0 ; i < j; i++) 
+    {
+      nsp_polynom_destroy(&Loc->S[i]);
+      Loc->S[i]=NULL;
+    }
+  nsp_pmatrix_destroy(Loc);
+  return(NULLPMAT);
+}
+
+/**
+ * nsp_pmatrix_set_diag:
+ * @A: a #NspPMatrix
+ * @Diag: a #NspPMatrix
+ * @k: an integer 
+ *
+ * sets the @k-th diagonal of matrix @A with values from @Diag. 
+ * 
+ * returns: %OK or %FAIL.
+ */
+
+int nsp_pmatrix_set_diag(NspPMatrix *A, NspPMatrix *Diag, int k)
+{
+  int i,j;
+  int imin,imax,isize;
+  imin = Max(0,-k);
+  imax = Min(A->m,A->n -k );
+  isize = imax-imin ;
+  if ( isize > Diag->mn ) 
+    {
+      Scierror("Error:\tGiven vector is too small\n");
+      return(FAIL);
+    }
+  if ( isize < Diag->mn ) 
+    {
+      imax = Diag->mn +imin;
+      if (nsp_pmatrix_enlarge(A,imax,imax+k) == FAIL) return(FAIL);
+    }
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      nsp_polynom_destroy(&(A->S[i+(i+k)*A->m]));
+      if ((A->S[i+(i+k)*A->m] = nsp_polynom_copy_with_name(Diag->S[j++])) == (nsp_polynom) 0)
+	return FAIL;
+    }
+  return OK;
+}
+
+/**
+ * nsp_pmatrix_create_diag:
+ * @Diag: a #NspPMatrix
+ * @k: an integer 
+ *
+ * Creates a square marix with its @k-th diagonal filled with @Diag.
+ * 
+ * returns: a #NspSMatrix or %NULLSMAT 
+ */
+
+NspPMatrix  *nsp_pmatrix_create_diag(NspPMatrix *Diag, int k)
+{
+  int i,j;
+  int imin,imax;
+  NspPMatrix *Loc;
+  imin = Max(0,-k);
+  imax = Diag->mn +imin;
+  if (( Loc =nsp_pmatrix_create(NVOID,imax,imax+k,&Czero,Diag->rc_type == 'c' ? 2 : 1  )) == NULLPMAT) 
+    return(NULLPMAT);
+  j=0;
+  for ( i = imin ; i < imax ; i++ ) 
+    {
+      nsp_polynom_destroy(&Loc->S[i+(i+k)*Loc->m]);
+      if ((Loc->S[i+(i+k)*Loc->m] =nsp_polynom_copy_with_name( Diag->S[j++])) == (nsp_polynom) 0)
+	return(NULLPMAT);
+    }
+  return(Loc);
+}
 
 /**
  * nsp_pmatrix_transpose: 
