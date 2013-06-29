@@ -1,4 +1,4 @@
-function y=poly(x,y,name='x',roots=%t)
+function y=poly(x,varargin,varargopt)
 // Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
@@ -18,11 +18,16 @@ function y=poly(x,y,name='x',roots=%t)
 // emulation of the poly scilab function
 // the name is not use and should be in the future.
 //
+  opts=hash(name='x',roots=%t);
+  if length(varargin) >= 1 then opts.name=varargin(1);end
+  if length(varargin) >= 2 then opts.roots= varargin(2)== 'roots';end
+  opts.merge[varargopt];
+    
   if size(x,1) <> 1 && size(x,2) <> 1 then 
     y=det(eye(size(x))*m2p([0,1])-x*m2p([1]))
     return ;
   end
-  if roots then 
+  if opts.roots then 
     y=m2p(1);
     for i=1:size(x,'*')
       yp=m2p([0,1]);
