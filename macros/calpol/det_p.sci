@@ -1,5 +1,5 @@
-function res=det_p(P,k)
-// Copyright  2010-2011 Francois Delebecque Inria.
+function res=det_p(P,k=[])
+// Copyright  2010-2013 Francois Delebecque Inria.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -46,7 +46,7 @@ function res=det_p(P,k)
   end
   //upper bound of the determinant degree
   maj = n1*max(P.degree[])+1;
-  if nargin==1 then 
+  if isempty(k) then 
     // k= ceil(log(maj)/log(2));  k= 2^k;
     k = maj; // with fftw3 we do not need a power of 2 
   end
@@ -74,7 +74,7 @@ function res=det_p(P,k)
     for kk=1:k,fi=[fi,det(C{kk})];end 
     Temp1 = m2p(clean(real(ifft(fi)),epsa,epsr));
   end
-  if nargin==1 then
+  if isempty(k) then
     // k was estimated. we set to zero the coefficients
     // with degree above maj. 
     Temp2 = Temp1.coeffs{1};
