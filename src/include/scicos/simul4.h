@@ -173,6 +173,7 @@ struct _scicos_params {
   double Atol, rtol, ttol, deltat,hmax;
   int hot;
   int phase; 
+  int aborted; /* computation aborted by abort in a nsp bloc */
 };
 
 typedef struct _scicos_run scicos_run;
