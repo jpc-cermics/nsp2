@@ -80,10 +80,26 @@ NspHash *nsp_hcreate_from_list(char *name,unsigned int nel, NspList *L)
     {
       if ( C->O != NULLOBJ && strcmp(NSP_OBJECT(C->O)->name,NVOID) != 0)
 	{
-	  NspObject *Ob;
-	  if (( Ob =nsp_object_copy_with_name(C->O)) == NULLOBJ ) return NULLHASH;
-	  /* A copy of object is added in the hash table **/
-	  if (nsp_hash_enter(H,Ob) == FAIL) return NULLHASH;
+	  int ok= TRUE;
+	  NspObject *Obj = C->O;
+	  if (check_cast (Obj, nsp_type_hobj_id) == TRUE )
+	    {
+	      if (((NspHobj *)Obj)->htype != 'g' )
+		{
+		  Obj = ((NspHobj *) Obj)->O;	
+		}
+	      else
+		{ 
+		  /* do not accept global variables */
+		  ok = FALSE;
+		}
+	    }
+	  if ( ok == TRUE ) 
+	    {
+	      if (( Obj =nsp_object_copy_with_name(Obj)) == NULLOBJ ) return NULLHASH;
+	      /* A copy of object is added in the hash table **/
+	      if (nsp_hash_enter(H,Obj) == FAIL) return NULLHASH;
+	    }
 	}
       C = C->next ;
     }
