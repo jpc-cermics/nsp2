@@ -596,7 +596,20 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  while (1) 
 	    {
 	      int rep;
-	      if ((nargs=nsp_eval_arg(L1,&stack,first,1,1,display)) < 0) SHOWBUG(stack,nargs,L1);
+	      /* swallow potential comments */
+	      /* while (L1->type == COMMENT ) L1 = L1->next; */
+	      /* if (L1->type == COMMENT ) Scierror("L1 is a comment \n"); */
+	      nargs=nsp_eval_arg(L1,&stack,first,1,1,display);
+	      if ( nargs <= 0 ) 
+		{
+		  if ( nargs == 0 ) 
+		    {
+		      Scierror("while statement with a test which return no value\n");
+		      nargs = RET_BUG;
+		    }
+		  
+		  SHOWBUG(stack,nargs,L1);
+		}
 	      rep =nsp_object_is_true(stack.val->S[first]);
 	      nsp_void_object_destroy(&stack.val->S[first]);
 	      stack.val->S[first]= NULLOBJ;
@@ -650,6 +663,8 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	      else 
 		{ 
 		  int iftest;
+		  /* swallow potential comments */
+		  /* while (L1->type == COMMENT ) L1 = L1->next; */
 		  nargs=nsp_eval_arg(L1,&stack,first,0,1,display);
 		  if ( nargs != 1 ) 
 		    {
@@ -663,7 +678,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 			}
 		      else if ( nargs <= 0 ) 
 			{
-			  if ( nargs == 0 ) Scierror("if statement with a test which return no value\n");
+			  if ( nargs == 0 ) 
+			    {
+			      nargs = RET_BUG;
+			      Scierror("if statement with a test which return no value\n");
+			    }
 			  SHOWBUG(stack,nargs,L1);
 			}
 		    }
