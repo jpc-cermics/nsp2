@@ -785,6 +785,7 @@ int intzgetrf(NspMatrix *A,NspMatrix **pL,NspMatrix **pE, NspMatrix **pRcond)
 
 
 static int intdgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
+static int intdgesvd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 static int intzgesdd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,NspMatrix **Rank,double *tol);
 
 /**
@@ -839,6 +840,7 @@ int nsp_svd(NspMatrix *A,NspMatrix **S,NspMatrix **U,NspMatrix **V,char flag,Nsp
   if ( A->rc_type == 'r' ) 
     {
       if ( intdgesdd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL;
+/*       if ( intdgesvd(A,S,U,V,flag,Rank,tol) == FAIL) return FAIL; */
     } 
   else
     {
@@ -926,6 +928,84 @@ static int intdgesdd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, 
 
  err:
   FREE(iwork); FREE(dwork);  
+  nsp_matrix_destroy(v); 
+  nsp_matrix_destroy(vt);
+  nsp_matrix_destroy(u);
+  nsp_matrix_destroy(s);
+  return FAIL;
+} 
+
+static int intdgesvd(NspMatrix *A, NspMatrix **S, NspMatrix **U, NspMatrix **V, char flag,
+		     NspMatrix **Rank, double *tol)
+{
+  int m = A->m, n=A->n, lwork, info, Minmn = Min(m,n);
+  NspMatrix *u=NULLMAT, *s=NULLMAT, *vt=NULLMAT, *v=NULLMAT;
+  double *dwork=NULL, qwork[1]; 
+
+  if ( (s=nsp_matrix_create(NVOID,'r',Minmn,1)) == NULLMAT ) return FAIL;
+
+  lwork = -1;
+  if ( U == NULL ) /* just compute the singular values */  
+    {
+      int lwork1;
+      C2F(dgesvd)("N", "N", &m, &n, A->R, &m, s->R, NULL, &m, NULL, &n, qwork, &lwork, &info, 1L, 1L);
+      lwork = (int) qwork[0];
+      /* take the max between the query size (which can be false in some cases ?) 
+       * and the minimum size requested.
+       */
+      lwork1 = Max( 3*Minmn + Max(m,n), 5*Minmn );
+      lwork = Max(lwork, lwork1);
+      if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgesvd)("N", "N", &m, &n, A->R, &m, s->R, NULL, &m, NULL, &n, dwork, &lwork, &info, 1L, 1L);
+    } 
+  else             /* we also compute U and Vt */ 
+    {
+      int lwork1;
+      int nU  = ( flag == 'e') ? Minmn : m;
+      int mVt = ( flag == 'e') ? Minmn : n;
+      if ( (u=nsp_matrix_create(NVOID,'r',m,nU)) == NULLMAT ) goto err;
+      if ( (vt=nsp_matrix_create(NVOID,'r',mVt,n)) == NULLMAT ) goto err;
+      C2F(dgesvd)(flag=='e'?"S":"A", flag=='e'?"S":"A", &m, &n, A->R, &m, s->R, u->R, &m, vt->R, &mVt, qwork, &lwork, &info, 1L, 1L);
+      lwork = (int) qwork[0];
+      /* take the max between the query size (which can be false in some cases ?) 
+       * and the minimum size requested.
+       */
+      lwork1 = Max( 3*Minmn + Max(m,n), 5*Minmn );
+      lwork = Max(lwork, lwork1);
+      if ( (dwork=nsp_alloc_work_doubles(lwork)) == NULL ) goto err;
+      C2F(dgesvd)(flag=='e'?"S":"A", flag=='e'?"S":"A", &m, &n, A->R, &m, s->R, u->R, &m, vt->R, &mVt, dwork, &lwork, &info, 1L, 1L);
+      /* build V from its transpose matrix Vt */ 
+      if ( (v=nsp_matrix_transpose(vt)) == NULLMAT ) goto err;
+    }
+
+  if (info != 0) 
+    {
+      if (info > 0) Scierror("Error: convergence problem in svd\n");
+      goto err;   /* message for info < 0 is given by xerbla.c but this doesn't happen no ? */
+    } 
+
+  /* compute the rank if requested */ 
+  if ( Rank != NULL ) 
+    {
+      int i;
+      double eps = nsp_dlamch("eps");
+      double Tol = ( tol == NULL) ? Max(m,n) * eps * s->R[0] : *tol ; 
+      int irank =0 ; 
+      for (i = 0 ; i < Minmn; ++i)
+	if ( s->R[i] > Tol ) irank = i+1;
+	else  break;
+      
+      if ( (*Rank=nsp_matrix_create(NVOID,'r',1,1)) == NULLMAT ) goto err;
+      (*Rank)->R[0] = (double) irank ; 
+    }
+  
+  FREE(dwork);
+  *S = s;
+  if ( U != NULL) { nsp_matrix_destroy(vt) ; *V = v; *U = u; } 
+  return OK;
+
+ err:
+  FREE(dwork);  
   nsp_matrix_destroy(v); 
   nsp_matrix_destroy(vt);
   nsp_matrix_destroy(u);
@@ -2176,15 +2256,6 @@ static NspMatrix * intddet(NspMatrix *A,char mode);
 
 NspMatrix * nsp_det(NspMatrix *A,char mode)
 {
-  /*  A = [] return empty matrices */ 
-  if ( A->mn == 0 ) 
-    {
-      NspMatrix *det; 
-      if ( (det=nsp_matrix_create(NVOID,A->rc_type,A->m,A->n)) == NULLMAT ) 
-	return NULL;
-      return det ; 
-    }
-  
   if (A->m != A->n) 
     { 
       Scierror("Error: first argument for det should be square and it is (%dx%d)\n", 
