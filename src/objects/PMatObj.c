@@ -1850,28 +1850,71 @@ int int_pmatrix_prod (Stack stack, int rhs, int opt, int lhs)
  * a is unchanged 
  */
 
- /*
-int int_pmatrix_cusum (Stack stack, int rhs, int opt, int lhs)
-{
+/*
+  int int_pmatrix_cusum (Stack stack, int rhs, int opt, int lhs)
+  {
   return (int_pmatrix_sum_prod_gen (stack, rhs, opt, lhs, nsp_pmatrix_cum_sum));
-}
-
- */
-
+  }
+  
+*/
+ 
 /*
  * matcuprod : cumulative prod of all elements of a
  * a is unchanged 
  */
 
-  /*
-int int_pmatrix_cuprod (Stack stack, int rhs, int opt, int lhs)
-{
+/*
+  int int_pmatrix_cuprod (Stack stack, int rhs, int opt, int lhs)
+  {
   return (int_pmatrix_sum_prod_gen(stack, rhs, opt, lhs, nsp_pmatrix_cum_prod));
 }
 
-  */
+*/
 
+/*
+ * nsp_pmatrix_triu: A=triu(a)
+ */
+  
+int int_pmatrix_triu (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspPMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((HMat = GetPMatCopy (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  if ( nsp_pmatrix_triu (HMat, k1) == FAIL) return RET_BUG;
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
 
+/*
+ * nsp_pmatrix_tril: A=Tril(A)
+ * A is changed  
+ */
+
+int int_pmatrix_tril (Stack stack, int rhs, int opt, int lhs)
+{
+  int k1 = 0;
+  NspPMatrix *HMat;
+  CheckRhs (1, 2);
+  CheckLhs (1, 1);
+  if (rhs == 2)
+    {
+      if (GetScalarInt (stack, 2, &k1) == FAIL)
+	return RET_BUG;
+    }
+  if ((HMat = GetPMatCopy (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+  if ( nsp_pmatrix_tril (HMat, k1) == FAIL ) return RET_BUG;
+  NSP_OBJECT (HMat)->ret_pos = 1;
+  return 1;
+}
 
 /*
  * The Interface for basic matrices operation 
@@ -1975,7 +2018,8 @@ static OpTab PMatrix_func[]={
   {"cumprod_p_s", int_pmatrix_cuprod},
   {"cumprod_p", int_pmatrix_cuprod},
   */
-
+  {"tril_p", int_pmatrix_tril},
+  {"triu_p", int_pmatrix_triu},
   {(char *) 0, NULL}
 };
 

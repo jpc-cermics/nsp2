@@ -158,6 +158,9 @@ extern int nsp_pmatrix_same_varname(const NspPMatrix *P1,const NspPMatrix *P2);
 extern NspPMatrix *nsp_pmatrix_sum(NspPMatrix *A, int dim);
 extern NspPMatrix *nsp_pmatrix_prod(NspPMatrix *A, int dim);
 
+extern int nsp_pmatrix_triu(NspPMatrix *A, int k);
+extern int nsp_pmatrix_tril(NspPMatrix *A, int k);
+
 
 #endif 
 

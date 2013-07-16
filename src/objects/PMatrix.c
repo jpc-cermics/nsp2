@@ -2675,6 +2675,53 @@ NspMatrix *nsp_mat_cum_sum(NspMatrix *A, int dim)
 */
 
 
+/**
+ * nsp_pmatrix_triu:
+ * @A: a #NspPMatrix 
+ * @k: an integer 
+ * 
+ * A = triu(A,k). 
+ **/
+
+int nsp_pmatrix_triu(NspPMatrix *A, int k)
+{
+  const doubleC zeroC = {0.0,0.0};
+  nsp_polynom *Aj,loc;
+  int i,j;
+  for ( j = 0, Aj = A->S ; j < Min(A->m+k-1,A->n) ; j++, Aj += A->m )
+    for ( i = Max(0,j+1-k) ; i < A->m ; i++)
+      {
+	if ( (loc = nsp_basic_to_polynom(&zeroC, A->rc_type)) == NULL) 
+	  return FAIL;
+	Aj[i] = loc;
+      }
+  return OK;
+}
+
+/**
+ * nsp_pmatrix_tril:
+ * @A: a #NspPMatrix 
+ * @k:  an integer
+ * 
+ * A=Tril(A)
+ **/
+
+int nsp_pmatrix_tril(NspPMatrix *A, int k)
+{
+  const doubleC zeroC = {0.0,0.0};
+  int i,j;
+  nsp_polynom *Aj, loc;
+  int j0 = Max(0,k+1);
+  Aj= &A->S[j0*A->m];
+  for ( j = j0; j < A->n ; j++, Aj += A->m )
+    for ( i = 0 ; i < Min(A->m,j-k) ; i++)
+      {
+	if ( (loc = nsp_basic_to_polynom(&zeroC, A->rc_type)) == NULL) 
+	  return FAIL;
+	Aj[i] = loc;
+      }
+  return OK;
+}
 
 /**
  * nsp_polynom_mult_fft:
@@ -3655,6 +3702,10 @@ static void pr_poly_exp (NspMatrix *m, int fw, int length)
 }
 
 #endif 
+
+
+
+
 
 
 
