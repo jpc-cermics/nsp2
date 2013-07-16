@@ -1743,12 +1743,12 @@ int int_mxcomplexify (Stack stack, int rhs, int opt, int lhs)
   if ((HMat = GetMatCopy (stack, 1)) == NULLMAT)
     return RET_BUG;
   if (rhs == 2)
-    if (GetScalarDouble (stack, 2, &d) == FAIL)
-      return RET_BUG;
-  if (nsp_mat_complexify (HMat, d) != 0)
     {
-      return RET_BUG;
-    };
+      if (GetScalarDouble (stack, 2, &d) == FAIL)
+	return RET_BUG;
+    }
+  if (nsp_mat_complexify (HMat, d) == FAIL )
+    return RET_BUG;
   NSP_OBJECT (HMat)->ret_pos= 1;
   return 1;
 }

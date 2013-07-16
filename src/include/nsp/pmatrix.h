@@ -67,8 +67,8 @@ extern NspPMatrix *nsp_matrix_to_pmatrix(NspMatrix *A);
 extern NspPMatrix *nsp_matrix_to_polynom(NspMatrix *M); 
 extern NspPMatrix *nsp_pmatrix_concat_down(const NspPMatrix *A,const NspPMatrix *B); 
 extern NspPMatrix *nsp_pmatrix_copy(NspPMatrix *A); 
-extern NspPMatrix *nsp_pmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag); 
-extern NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val);
+extern NspPMatrix *nsp_pmatrix_create(const char *name, int m, int n,const doubleC *cval, int flag, const char *var_name); 
+extern NspPMatrix *nsp_pmatrix_create_m(char *name, int m, int n,NspMatrix *Val, const char *var_name);
 extern NspPMatrix *nsp_pmatrix_clone(char *name, NspPMatrix *A, int m, int n, int init);
 extern NspPMatrix *nsp_pmatrix_extract(NspPMatrix *A, NspMatrix *Rows, NspMatrix *Cols); 
 extern NspPMatrix *nsp_pmatrix_extract_columns(NspPMatrix *A, NspMatrix *Cols, int *err); 
@@ -119,6 +119,8 @@ extern NspBMatrix  *nsp_pmatrix_comp(NspPMatrix *A, NspPMatrix *B,const char *op
 extern int nsp_pmatrix_pdiv_tt(NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix **R);
 
 /* polynomials */
+
+
 extern int nsp_polynom_resize(nsp_polynom poly);
 extern nsp_polynom nsp_polynom_add(nsp_polynom P,nsp_polynom Q);
 extern nsp_polynom nsp_polynom_minus(nsp_polynom P,nsp_polynom Q);
@@ -127,7 +129,8 @@ extern nsp_polynom nsp_polynom_mult_std(nsp_polynom a,nsp_polynom b);
 extern nsp_polynom nsp_polynom_mult_fft(nsp_polynom a,nsp_polynom b);
 extern int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq, nsp_polynom *hr);
 
-
+extern int nsp_polynom_add_in_place(nsp_polynom P,nsp_polynom Q);
+extern nsp_polynom nsp_polynom_zero_create(int degree, char rc_type);
 extern int nsp_pset_polynom(int n, const doubleC *s1, nsp_polynom *s2); 
 extern nsp_polynom nsp_basic_to_polynom(const doubleC *d, char type); 
 extern nsp_polynom nsp_polynom_copy(nsp_polynom P); 
@@ -149,6 +152,12 @@ extern NspPMatrix  *nsp_pmatrix_extract_diag(NspPMatrix *A, int k);
 extern int nsp_pmatrix_set_diag(NspPMatrix *A, NspPMatrix *Diag, int k);
 extern NspPMatrix  *nsp_pmatrix_create_diag(NspPMatrix *Diag, int k);
 extern NspPMatrix *nsp_cells_to_pmatrix(const char *name, NspCells *C);
+
+extern int nsp_pmatrix_set_varname(NspPMatrix *p, const char *varname);
+extern int nsp_pmatrix_same_varname(const NspPMatrix *P1,const NspPMatrix *P2);
+extern NspPMatrix *nsp_pmatrix_sum(NspPMatrix *A, int dim);
+extern NspPMatrix *nsp_pmatrix_prod(NspPMatrix *A, int dim);
+
 
 #endif 
 

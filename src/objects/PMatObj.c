@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -201,6 +201,7 @@ static int nsp_pmatrix_full_comp(NspPMatrix * A,NspPMatrix * B,char *op,int *err
 {
   int i, rep;
   if ( A->m != B->m || A->n != B->n) return FALSE;
+  if ( ! nsp_pmatrix_same_varname(A,B))  return FALSE;
   for ( i = 0 ; i < A->mn ; i++ ) 
     {
       rep = nsp_mat_fullcomp (A->S[i],B->S[i],op, err);
@@ -268,7 +269,7 @@ static NspPMatrix *nsp_pmatrix_xdr_load(XDR *xdrs)
   if (nsp_xdr_load_i(xdrs, &m) == FAIL) return NULLPMAT;
   if (nsp_xdr_load_i(xdrs, &n) == FAIL) return NULLPMAT;
   if (nsp_xdr_load_c(xdrs, &c) == FAIL) return NULLPMAT;
-  if ((M =nsp_pmatrix_create(name,m,n,NULL,-1))== NULLPMAT)
+  if ((M =nsp_pmatrix_create(name,m,n,NULL,-1, NULL))== NULLPMAT)
     return NULLPMAT;
   for ( i = 0 ; i < M->mn ; i++ ) 
     {
@@ -379,11 +380,17 @@ nsp_polynom GetPolynom(Stack stack, int i)
 
 static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
 {
+  const char *var = NULL;
+  nsp_option opts[] ={{"var",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   NspPMatrix *P; NspMatrix *A;
-  CheckRhs(1,1);
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
   if (( A=GetMat(stack,1)) == NULLMAT) return RET_BUG;
+  if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
+    return RET_BUG;
   if (( P=nsp_matrix_to_polynom(A))== NULLPMAT) return RET_BUG;
+  if ( nsp_pmatrix_set_varname(P,var) ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
 }
@@ -395,33 +402,44 @@ static int int_pmatrix_m2p(Stack stack, int rhs, int opt, int lhs)
 
 static int int_pmatrix_ce2p(Stack stack, int rhs, int opt, int lhs)
 {
+  const char *var = NULL;
+  nsp_option opts[] ={{"var",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   NspPMatrix *P; NspCells *C;
-  CheckRhs(1,1);
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
   if (( C=GetCells(stack,1)) == NULL) return RET_BUG;
+  if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
+    return RET_BUG;
   if (( P=nsp_cells_to_pmatrix(NVOID,C))== NULLPMAT) return RET_BUG;
+  if ( nsp_pmatrix_set_varname(P,var) ) return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
 }
 
 /*
- * Creation of a PMatrix 
+ * Creation of a PMatrix from a Matrix 
  */
 
 static int int_pmatrix_create(Stack stack, int rhs, int opt, int lhs)
 {
+  const char *var = NULL;
+  nsp_option opts[] ={{"var",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   int m1,n1;
   NspMatrix *A=NULLMAT; 
   NspPMatrix *P; 
-  CheckRhs(2,3);
+  CheckStdRhs(2,3);
   CheckLhs(1,1);
   if (GetScalarInt(stack,1,&m1) == FAIL) return RET_BUG;
   if (GetScalarInt(stack,2,&n1) == FAIL) return RET_BUG;
-  if (rhs == 3) 
+  if (rhs - opt == 3) 
     {
       if ((A = GetMat(stack,3))== NULLMAT) return RET_BUG;
     }
-  if ( (P =nsp_pmatrix_create_m(NVOID,m1,n1,A)) == NULLPMAT)
+  if ( get_optional_args(stack, rhs, opt, opts, &var) == FAIL )
+    return RET_BUG;
+  if ( (P =nsp_pmatrix_create_m(NVOID,m1,n1,A, var)) == NULLPMAT)
     return RET_BUG;
   MoveObj(stack,1,(NspObject *) P);
   return 1;
@@ -454,6 +472,26 @@ static AttrTab pmatrix_attrs[] = {
 /*------------------------------------------------------
  * methods 
  *------------------------------------------------------*/
+
+int nsp_pmatrix_set_varname(NspPMatrix *p, const char *varname)
+{
+  if ( p->var != NULL) nsp_string_destroy(&(p->var));
+  if (varname == NULL)  return OK; /* p->var was set to NULL */
+  if (( p->var = nsp_new_string(varname,-1))==NULL )
+    {
+      return FAIL;
+    }
+  return OK;
+}
+
+static int int_meth_set_varname(void *self, Stack stack, int rhs, int opt, int lhs)
+{
+  const char *varname;
+  CheckStdRhs(1,1);
+  if ((varname = GetString(stack,1)) == NULL ) return RET_BUG;
+  if (nsp_pmatrix_set_varname(self,varname)== FAIL) return RET_BUG;
+  return 0;
+}
 
 static int int_meth_degree(void *self,Stack stack, int rhs, int opt, int lhs)
 {
@@ -583,7 +621,7 @@ static int int_meth_derivative(void *self,Stack stack, int rhs, int opt, int lhs
   NspPMatrix *P=self, *Res= NULL;
   CheckRhs(0,0);
   CheckLhs(0,1);
-  if ((Res =nsp_pmatrix_create(NVOID,P->m,P->n,NULL,-1))== NULLPMAT) return RET_BUG;
+  if ((Res =nsp_pmatrix_create(NVOID,P->m,P->n,NULL,-1, P->var))== NULLPMAT) return RET_BUG;
   for ( i = 0 ; i < P->mn ; i++) 
     {
       NspMatrix *A= P->S[i], *B;
@@ -629,6 +667,7 @@ static NspMethods pmatrix_methods[] = {
   { "shift", int_meth_shift},
   { "normalize", int_meth_normalize},
   { "derivative", int_meth_derivative},
+  { "set_var", int_meth_set_varname},
   { (char *) 0, NULL}
 };
 
@@ -1747,6 +1786,93 @@ static int int_pmatrix_pdiv_p_p(Stack stack, int rhs, int opt, int lhs)
 }
 
 
+typedef NspPMatrix *(*SuProPM) (NspPMatrix * A, int dim);
+
+static int int_pmatrix_sum_prod_gen (Stack stack, int rhs, int opt, int lhs, SuProPM F)
+{
+  int dim=0;
+  NspPMatrix *Res, *HMat;
+  CheckRhs(1, 2);
+  CheckOptRhs(0, 1)
+  CheckLhs(1, 1);
+
+  if ((HMat = GetPMat (stack, 1)) == NULLPMAT)
+    return RET_BUG;
+
+  if (rhs == 2)
+    {
+      if ( opt == 0 )
+	{
+	  if ( GetDimArg(stack, 2, &dim) == FAIL )
+	    return RET_BUG;
+	}
+      else /* opt == 1 */
+	{
+	  nsp_option opts[] ={{"dim",dim_arg,NULLOBJ,-1},
+			      { NULL,t_end,NULLOBJ,-1}};
+	  if ( get_optional_args(stack, rhs, opt, opts, &dim) == FAIL )
+	    return RET_BUG;
+ 	}
+ 
+     if ( dim == -1 )
+	{
+	  Scierror ("Error:\t dim flag equal to -1 or '.' not supported for function %s\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( dim == -2 )  /* matlab compatibility flag */
+	dim = GiveMatlabDimFlag(HMat);
+    }
+
+  if ((Res = (*F) (HMat, dim)) == NULLPMAT)
+    return RET_BUG;
+
+  MoveObj (stack, 1, NSP_OBJECT(Res));
+  return 1;
+}
+
+int int_pmatrix_sum (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_pmatrix_sum_prod_gen (stack, rhs, opt, lhs, nsp_pmatrix_sum));
+}
+
+/*
+ * matprod : product of all elements of a
+ * a is unchanged 
+ */
+
+int int_pmatrix_prod (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_pmatrix_sum_prod_gen (stack, rhs, opt, lhs, nsp_pmatrix_prod));
+}
+
+/*
+ * matcusum : cumulative sum of all elements of a
+ * a is unchanged 
+ */
+
+ /*
+int int_pmatrix_cusum (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_pmatrix_sum_prod_gen (stack, rhs, opt, lhs, nsp_pmatrix_cum_sum));
+}
+
+ */
+
+/*
+ * matcuprod : cumulative prod of all elements of a
+ * a is unchanged 
+ */
+
+  /*
+int int_pmatrix_cuprod (Stack stack, int rhs, int opt, int lhs)
+{
+  return (int_pmatrix_sum_prod_gen(stack, rhs, opt, lhs, nsp_pmatrix_cum_prod));
+}
+
+  */
+
+
+
 /*
  * The Interface for basic matrices operation 
  */
@@ -1836,6 +1962,20 @@ static OpTab PMatrix_func[]={
   {"diag_p_m", int_pmatrix_diag},
   {"diagcre_p",int_pmatrix_diagcre},
   {"diage_p",int_pmatrix_diage},
+
+  {"sum_p_s", int_pmatrix_sum},
+  {"sum_p", int_pmatrix_sum},
+  /* 
+  {"cumsum_p_s", int_pmatrix_cusum},
+  {"cumsum_p", int_pmatrix_cusum},
+  */
+  {"prod_p_s", int_pmatrix_prod},
+  {"prod_p", int_pmatrix_prod},
+  /*
+  {"cumprod_p_s", int_pmatrix_cuprod},
+  {"cumprod_p", int_pmatrix_cuprod},
+  */
+
   {(char *) 0, NULL}
 };
 

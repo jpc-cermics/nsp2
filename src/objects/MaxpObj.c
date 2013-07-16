@@ -723,7 +723,7 @@ static int int_mpcomplexify(Stack stack, int rhs, int opt, int lhs)
   if ((HMat=GetMpMatCopy(stack,1))== NULLMAXPMAT ) return RET_BUG;
   if ( rhs == 2 ) 
     if (GetScalarDouble(stack,2,&d) == FAIL) return RET_BUG;
-  if (nsp_mat_complexify((NspMatrix *) HMat,d) != 0 ) { return RET_BUG;};
+  if (nsp_mat_complexify((NspMatrix *) HMat,d) == FAIL ) { return RET_BUG;};
   return 1;  
 }
 

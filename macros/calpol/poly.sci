@@ -1,5 +1,5 @@
 function y=poly(x,varargin,varargopt)
-// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2013 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,25 +16,25 @@ function y=poly(x,varargin,varargopt)
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
 // emulation of the poly scilab function
-// the name is not use and should be in the future.
+// and extensions using
 //
-  opts=hash(name='x',roots=%t);
-  if length(varargin) >= 1 then opts.name=varargin(1);end
+  opts=hash( var='x',roots=%t);
+  if length(varargin) >= 1 then opts.var=varargin(1);end
   if length(varargin) >= 2 then opts.roots= varargin(2)== 'roots';end
   opts.merge[varargopt];
     
   if size(x,1) <> 1 && size(x,2) <> 1 then 
-    y=det(eye(size(x))*m2p([0,1])-x*m2p([1]))
+    y=det(eye(size(x))*m2p([0,1],var=opts.var)-x);
     return ;
   end
   if opts.roots then 
-    y=m2p(1);
+    y=m2p(1,var=opts.var);
     for i=1:size(x,'*')
-      yp=m2p([0,1]);
+      yp=m2p([0,1],var=opts.var);
       y = y*(yp-x(i));
     end
   else
-    y = m2p(x);
+    y = m2p(x,var=opts.var);
   end
 endfunction
 
