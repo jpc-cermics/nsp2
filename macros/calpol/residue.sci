@@ -1,5 +1,5 @@
 function [T_pa]=taylor(p,a)
-// Copyright  2010-2011 Francois Delebecque
+// Copyright  2010-2013 Francois Delebecque
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -41,15 +41,16 @@ if %f then
   endfunction;
   
   p= m2p(rand(1,5));  a=4;
-  check_taylor(p,a,taylor(p,a)); 
+  if ~check_taylor(p,a,taylor(p,a)) then pause;end 
   a=4+2*%i;
-  check_taylor(p,a,taylor(p,a)); 
+  if ~check_taylor(p,a,taylor(p,a)) then pause;end 
+  
   p= m2p(rand(1,5)+%i*rand(1,5));a=4;
-  check_taylor(p,a,taylor(p,a));
+  if ~check_taylor(p,a,taylor(p,a)) then pause;end 
 end
 
 function [T_pdivq]=rtaylor(p,q,a,n)
-// Copyright  2010-2011 Jean-Philippe Chancelier 
+// Copyright  2010-2013 Jean-Philippe Chancelier 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by

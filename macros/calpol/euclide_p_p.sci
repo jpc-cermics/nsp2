@@ -1,6 +1,5 @@
-
 function [r,q]=monodiv_p(a,alpha)
-// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2013 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -31,7 +30,7 @@ function [r,q]=monodiv_p(a,alpha)
 endfunction
 
 function [q,r]=pdiv_soft_p_p(a,b) 
-// Copyright  2010-2011 Jean-Philippe Chancelier Cermics/Enpc 
+// Copyright  2010-2013 Jean-Philippe Chancelier Cermics/Enpc 
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -75,13 +74,14 @@ function [q,r]=pdiv_soft_p_p(a,b)
   q=m2p(q);
 endfunction
 
-function [g,fact]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
+function [g,Rp]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
 // epsilon euclid method 
 // See Paola Boito Thesis Chap 3 or 
 // original paper of Hribernig and Stetter.
 // Detection and validation of clusters of 
 // Polynomial Zeros (J. Symbolic Computation (1997) 24 667-682.
-  
+// the default eps is set to 1.e-8 
+    
   da= a.degree[];
   db= b.degree[];
   if da >= db then
@@ -91,22 +91,24 @@ function [g,fact]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
   end
   M= [ m2p(1),m2p(0);
        m2p(0),m2p(1)];
-  v= [ f1;f2];
-  vp = [f1;f2];
-  vpp = [f1;f2];
-  // we have [f1;f2]= M*v 
-  // and it should be true during iterations
+  detM=1;
+  v= [f1;f2];
+  // we start with [f1;f2]= M*v 
+  // and along the iterations we will have 
+  // [f1;f2]= Mn*vn 
   while %t then 
-    // Compute the matrix such that 
-    // [f1,f2]' = M [fj, fjp1]' 
+    // update the matrix M
     // note that M is unimodular 
-    [q,r]=pdiv(v(1),v(2));
+    // and detM is the value of det(M)
+    [q,r]=pdiv_soft(v(1),v(2));
     M = [ q*M(1,1)+ M(1,2), M(1,1); 
 	  q*M(2,1)+ M(2,2), M(2,1)];
+    detM=-detM;
     v  = [ v(2); r];
+    // at this step we should have M*v == [f1;f2]
     // first way to stop 
-    [q1,r1]=pdiv(f1,v(1));
-    [q2,r2]=pdiv(f2,v(1));
+    [q1,r1]=pdiv_soft(f1,v(1));
+    [q2,r2]=pdiv_soft(f2,v(1));
     if norm(r1,1) < eps && norm(r2,1) < eps then 
       break;
     end
@@ -119,9 +121,18 @@ function [g,fact]=euclide_p_p(a,b,eps=10*%eps,monic=%f)
     end 
   end
   // when we break v(1) is the gcd and 
-  // [f1;f2]= M(:,1) *v(1) 
+  // [f1;f2]= M*v and v=[gcd;0] 
   g=v(1);
-  fact = M(ind,1);
+  M=M(ind,:);
+  // M*[g;0] -[a;b] should be small
+  // compute R = M^(-1) and Rp =R' 
+  // Rp is such that 
+  // [a,b]*Rp = [g,0]
+  Rp= [ M(2,2), -M(2,1); -M(1,2),M(1,1)]*detM;
+  // we have 
+  // f = [-Rp(2,2), Rp(1,2)];
+  // a = f(1)*g 
+  // b = f(2)*g 
 endfunction
 
 function gcd_euclide_test()
@@ -129,7 +140,7 @@ function gcd_euclide_test()
 // more tests 
   x= poly(0);
   p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
-  n=100 ; T= ones(1,n) > 0; N= zeros(1,n);
+  n=1000 ; T= ones(1,n) > 0; N= zeros(1,n);
   for i=1:n
     cp=grand(1,4,'uin',0,5);
     p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
@@ -142,9 +153,10 @@ function gcd_euclide_test()
     g.normalize[];
     N(i)= norm(g -gcpq1);
     if N(i) > 1.e-5 then 
-      T(i)=%f; 
+      T(i)=%f;
     end 
   end
+  I=find(N==0);N(I)=1.e-16;
   xclear();
   Nok = size(find(T),'*');
   plot2d(1:n,log(N)/log(10))
@@ -152,15 +164,19 @@ function gcd_euclide_test()
 endfunction 
 
 if %f then 
-  a=m2p([1,4,6,4,1]);//(1+x)^4
-  b=m2p([0,0,1,1]); // (1+x)*x^2
-
-  [xx,f]=euclide(a,b);
-  norm( f*xx -[a;b])
-  ablcm = f(1)*f(2)*xx
+  p=m2p([1,4,6,4,1]);//(1+x)^4
+  q=m2p([0,0,1,1]); // (1+x)*x^2
+  [g,Rp]=euclide(p,q);
+  if max(norm([p,q]*Rp -[g,0])) > 10*%eps then pause;end
+  // recover the factors from Rp 
+  f = [-Rp(2,2), Rp(1,2)];
+  if norm(p - f(1)*g) > 10*%eps then pause;end
+  if norm(q - f(2)*g) > 10*%eps then pause;end
+  // compute the lcm 
+  pqlcm = f(1)*f(2)*g;
   x=m2p([0,1]);
-  ablcm.normalize[];
-  norm(ablcm - (1+x)^4*x^2)
+  pqlcm.normalize[];
+  if norm(pqlcm - (1+x)^4*x^2)  > 10*%eps then pause;end
       
   x=poly(0);
   pp1= [ x*(1+x)^4;
@@ -175,7 +191,7 @@ if %f then
   for i=1:size(pp1,'*'); xx=euclide(xx,pp1(i),monic=%t);  end
   xx.normalize[];
   norm( xx - x*(1+x))
-    
+  
   qq = [m2p([-12,0,3]),m2p([-12,0,3]),m2p([0,-12,0,3])];
   qq = [3*(x^2-4);3*x*(x^2-4)];
   y = qq(1);
@@ -229,4 +245,20 @@ if %f then
     res(k)=Ts(8000);
   end
 end 
+
+function [gcd,U]=i_euclide(a,b)
+// euclide algorithm giving also the U 
+// matrix (like the bezout function in scicoslab).
+  ruv1 = [a, 1,0];
+  ruv2 = [b, 0,1];
+  while ruv2(1) <> 0 then 
+    q = int(ruv1(1)/ruv2(1));
+    rs = ruv1;
+    ruv1 = ruv2;
+    ruv2 = rs - q*ruv2;
+  end
+  gcd= ruv1(1);
+  U=[ruv1(2), -ruv2(2);
+     ruv1(3), -ruv2(3)];
+endfunction
 
