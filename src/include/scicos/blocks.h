@@ -88,25 +88,127 @@ struct _scicos_block_table  {
  */
 
 #define MULTI_DECLARATION(name)						\
+  extern void name##_SCSREAL_COP (scicos_block *block,int flag);	\
   extern void name##_SCSINT32_COP (scicos_block *block,int flag);	\
   extern void name##_SCSINT16_COP (scicos_block *block,int flag);	\
   extern void name##_SCSINT8_COP (scicos_block *block,int flag);	\
   extern void name##_SCSUINT32_COP (scicos_block *block,int flag);	\
   extern void name##_SCSUINT16_COP (scicos_block *block,int flag);	\
-  extern void name##_SCSUINT8_COP (scicos_block *block,int flag);	\
-  extern void name##_SCSREAL_COP (scicos_block *block,int flag);
+  extern void name##_SCSUINT8_COP (scicos_block *block,int flag);
 
 #define MD_NAME(name) #name
 
 #define MULTI_DECLARATION1(name)					\
+  { MD_NAME(name##_SCSREAL_COP), (ScicosF) name##_SCSREAL_COP},		\
   { MD_NAME(name##_SCSINT32_COP), (ScicosF) name##_SCSINT32_COP},	\
   { MD_NAME(name##_SCSINT16_COP), (ScicosF) name##_SCSINT16_COP},	\
   { MD_NAME(name##_SCSINT8_COP), (ScicosF) name##_SCSINT8_COP},		\
   { MD_NAME(name##_SCSUINT32_COP), (ScicosF) name##_SCSUINT32_COP},	\
   { MD_NAME(name##_SCSUINT16_COP), (ScicosF) name##_SCSUINT16_COP},	\
-  { MD_NAME(name##_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP},	\
-  { MD_NAME(name##_SCSREAL_COP), (ScicosF) name##_SCSREAL_COP}
+  { MD_NAME(name##_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP}	
 
+#define MULTI2_DECLARATION(name)						\
+  extern void name##_SCSREAL_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP_SCSUINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP_SCSUINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSREAL_COP_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSUINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSUINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT32_COP_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSUINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSUINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT16_COP_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSUINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSUINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSINT8_COP_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT32_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT32_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT32_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT32_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT32_COP_SCSUINT32_COP (scicos_block *block,int flag);\
+  extern void name##_SCSUINT32_COP_SCSUINT16_COP (scicos_block *block,int flag);\
+  extern void name##_SCSUINT32_COP_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT16_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT16_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT16_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT16_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT16_COP_SCSUINT32_COP (scicos_block *block,int flag);\
+  extern void name##_SCSUINT16_COP_SCSUINT16_COP (scicos_block *block,int flag);\
+  extern void name##_SCSUINT16_COP_SCSUINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSREAL_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSINT8_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSUINT32_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSUINT16_COP (scicos_block *block,int flag);	\
+  extern void name##_SCSUINT8_COP_SCSUINT8_COP (scicos_block *block,int flag);
+  
+#define MULTI2_DECLARATION1(name)							 	\
+  { MD_NAME(name##_SCSREAL_COP_SCSREAL_COP), (ScicosF) name##_SCSREAL_COP_SCSREAL_COP},	 	\
+  { MD_NAME(name##_SCSREAL_COP_SCSINT32_COP), (ScicosF) name##_SCSREAL_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSREAL_COP_SCSINT16_COP), (ScicosF) name##_SCSREAL_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSREAL_COP_SCSINT8_COP), (ScicosF) name##_SCSREAL_COP_SCSINT8_COP},	 	\
+  { MD_NAME(name##_SCSREAL_COP_SCSUINT32_COP), (ScicosF) name##_SCSREAL_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSREAL_COP_SCSUINT16_COP), (ScicosF) name##_SCSREAL_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSREAL_COP_SCSUINT8_COP), (ScicosF) name##_SCSREAL_COP_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSREAL_COP), (ScicosF) name##_SCSINT32_COP_SCSREAL_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSINT32_COP), (ScicosF) name##_SCSINT32_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSINT16_COP), (ScicosF) name##_SCSINT32_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSINT8_COP), (ScicosF) name##_SCSINT32_COP_SCSINT8_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSUINT32_COP), (ScicosF) name##_SCSINT32_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSUINT16_COP), (ScicosF) name##_SCSINT32_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSINT32_COP_SCSUINT8_COP), (ScicosF) name##_SCSINT32_COP_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSREAL_COP), (ScicosF) name##_SCSINT16_COP_SCSREAL_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSINT32_COP), (ScicosF) name##_SCSINT16_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSINT16_COP), (ScicosF) name##_SCSINT16_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSINT8_COP), (ScicosF) name##_SCSINT16_COP_SCSINT8_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSUINT32_COP), (ScicosF) name##_SCSINT16_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSUINT16_COP), (ScicosF) name##_SCSINT16_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSINT16_COP_SCSUINT8_COP), (ScicosF) name##_SCSINT16_COP_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSINT8_COP_SCSREAL_COP), (ScicosF) name##_SCSINT8_COP_SCSREAL_COP},		\
+  { MD_NAME(name##_SCSINT8_COP_SCSINT32_COP), (ScicosF) name##_SCSINT8_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSINT8_COP_SCSINT16_COP), (ScicosF) name##_SCSINT8_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSINT8_COP_SCSINT8_COP), (ScicosF) name##_SCSINT8_COP_SCSINT8_COP},		\
+  { MD_NAME(name##_SCSINT8_COP_SCSUINT32_COP), (ScicosF) name##_SCSINT8_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSINT8_COP_SCSUINT16_COP), (ScicosF) name##_SCSINT8_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSINT8_COP_SCSUINT8_COP), (ScicosF) name##_SCSINT8_COP_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSREAL_COP), (ScicosF) name##_SCSUINT32_COP_SCSREAL_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSINT32_COP), (ScicosF) name##_SCSUINT32_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSINT16_COP), (ScicosF) name##_SCSUINT32_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSINT8_COP), (ScicosF) name##_SCSUINT32_COP_SCSINT8_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSUINT32_COP), (ScicosF) name##_SCSUINT32_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSUINT16_COP), (ScicosF) name##_SCSUINT32_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSUINT32_COP_SCSUINT8_COP), (ScicosF) name##_SCSUINT32_COP_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSREAL_COP), (ScicosF) name##_SCSUINT16_COP_SCSREAL_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSINT32_COP), (ScicosF) name##_SCSUINT16_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSINT16_COP), (ScicosF) name##_SCSUINT16_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSINT8_COP), (ScicosF) name##_SCSUINT16_COP_SCSINT8_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSUINT32_COP), (ScicosF) name##_SCSUINT16_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSUINT16_COP), (ScicosF) name##_SCSUINT16_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSUINT16_COP_SCSUINT8_COP), (ScicosF) name##_SCSUINT16_COP_SCSUINT8_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSREAL_COP), (ScicosF) name##_SCSUINT8_COP_SCSREAL_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSINT32_COP), (ScicosF) name##_SCSUINT8_COP_SCSINT32_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSINT16_COP), (ScicosF) name##_SCSUINT8_COP_SCSINT16_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSINT8_COP), (ScicosF) name##_SCSUINT8_COP_SCSINT8_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSUINT32_COP), (ScicosF) name##_SCSUINT8_COP_SCSUINT32_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSUINT16_COP), (ScicosF) name##_SCSUINT8_COP_SCSUINT16_COP},	\
+  { MD_NAME(name##_SCSUINT8_COP_SCSUINT8_COP), (ScicosF) name##_SCSUINT8_COP_SCSUINT8_COP}
+  
 /* A set of old blocks */
 
 extern void scicos_affich_block(scicos_args_F0);
@@ -552,6 +654,7 @@ extern void scicos_vumeter_block(scicos_block * block, int flag);
 
 MULTI_DECLARATION(absolute_valuei)
 MULTI_DECLARATION(switch2)
+MULTI2_DECLARATION(logic2)
 
 
 #endif /* __SCICOS_BLOCKS__  */
@@ -1061,6 +1164,7 @@ scicos_block_table  tabsim[] ={
   {"sliderm",(ScicosF) scicos_sliderm_block},    
   MULTI_DECLARATION1(absolute_valuei),  
   MULTI_DECLARATION1(switch2), 
+  MULTI2_DECLARATION1(logic2), 
   {"vumeter",(ScicosF) scicos_vumeter_block},  
   {NULL , (ScicosF) 0}
 };
