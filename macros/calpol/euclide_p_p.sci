@@ -136,35 +136,9 @@ function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
   // b = f(2)*g 
 endfunction
 
-function gcd_euclide_test()
-// test gcd computations 
-// more tests 
-  x= poly(0);
-  p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
-  n=1000 ; T= ones(1,n) > 0; N= zeros(1,n);
-  for i=1:n
-    cp=grand(1,4,'uin',0,5);
-    p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
-    cq=grand(1,4,'uin',0,5);
-    q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
-    cpq = min(cq,cp);
-    gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
-    // [g,p,q,res] = gcd_jpc(p,q);
-    [g,b1]=euclide(p/norm(p,2),q/norm(q,2));
-    g.normalize[];
-    N(i)= norm(g -gcpq1);
-    if N(i) > 1.e-5 then 
-      T(i)=%f;
-    end 
-  end
-  I=find(N==0);N(I)=1.e-16;
-  xclear();
-  Nok = size(find(T),'*');
-  plot2d(1:n,log(N)/log(10))
-  xtitle(sprintf('Number of correct tests %d/%d',Nok,n));
-endfunction 
-
 if %f then 
+  // a few basic tests 
+  // test 
   p=m2p([1,4,6,4,1]);//(1+x)^4
   q=m2p([0,0,1,1]); // (1+x)*x^2
   [g,Rp,sgn]=euclide(p,q);
@@ -178,7 +152,8 @@ if %f then
   x=m2p([0,1]);
   pqlcm.normalize[];
   if norm(pqlcm - (1+x)^4*x^2)  > 100*%eps then pause;end
-      
+  
+  // test 
   x=poly(0);
   pp1= [ x*(1+x)^4;
 	 x^3*(1+x)^3;
@@ -187,65 +162,77 @@ if %f then
 	 x^4*(1+x)^2
 	 x^4*(1+x);
 	 x^3*(1+x)];
+  g = pp1(1);
+  for i=1:size(pp1,'*'); g=euclide(g,pp1(i),monic=%t);  end
+  g.normalize[];
+  if norm( g - x*(1+x)) > 100*%eps then pause;end
   
-  xx = pp1(1);
-  for i=1:size(pp1,'*'); xx=euclide(xx,pp1(i),monic=%t);  end
-  xx.normalize[];
-  norm( xx - x*(1+x))
-  
-  qq = [m2p([-12,0,3]),m2p([-12,0,3]),m2p([0,-12,0,3])];
+  // test 
+  x=poly(0);
   qq = [3*(x^2-4);3*x*(x^2-4)];
-  y = qq(1);
-  for i=1:size(qq,'*'); y=euclide(y,qq(i),monic=%t);  end
-    
-  // more tests 
-  x= poly(0);
-  p1=(1+x);
-  p2=(2+x);
-  p3=(3+x);
-  p4=(x);
-  T= ones(1,100) > 0;
-  for i=1:100
-    cp=grand(1,4,'uin',0,5);
-    p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
-    cq=grand(1,4,'uin',0,5);
-    q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
-    eps= 100*%eps;
-    [gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps=eps);
-    // [gcpq]=gcd_qr(p/norm(p,1),q/norm(q,1),eps=eps);
-    cpq = min(cq,cp);
-    gcpq.normalize[];
-    gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
-    if norm(gcpq1 -gcpq) > 1000*eps then 
-      T(i)=%f; 
-    end 
-  end
-  size(find(T),'*')
-
-  x= poly(0);
-  r= 1:10;
-  r= -5:4;
-  n= 10000;
-  veps= 10.^(-[0:14]);
-  for k=1:size(veps,'*')
-    T= ones(1,n);
-    for i=1:n 
-      cp=grand(1,10,'uin',0,1);
-      p = m2p(1); for j=1:10 ; p= p*(r(j)+x)^cp(j);end 
-      cq=grand(1,10,'uin',0,1);
-      q = m2p(1); for j=1:10 ; q= q*(r(j)+x)^cq(j);end 
-      eps = veps(k);
-      [gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps=eps);
-      cpq = min(cq,cp);
-      pq = m2p(1); for j=1:10 ; pq= pq*(r(j)+x)^cpq(j);end 
-      gcpq1 = pq;
-      gcpq.normalize[];
-      T(i)=norm(gcpq1 -gcpq,1);
-    end
-    Ts=sort(T,'g','i');
-    res(k)=Ts(8000);
-  end
+  g = qq(1);
+  for i=1:size(qq,'*'); g=euclide(g,qq(i),monic=%t);  end
+  g.normalize[];
+  if norm( g - (x^2-4)) > 100*%eps then pause;end
 end 
+
+
+if %f then 
+  // test the influence of eps 
+  function gcd_euclide1_test()
+  // test gcd computations 
+  // more tests 
+    x= poly(0);
+    p1=(1+x);  p2=(2+x);  p3=(3+x);  p4=(x);
+    n=1000 ; T= ones(1,n) > 0; N= zeros(1,n);
+    for i=1:n
+      cp=grand(1,4,'uin',0,5);
+      p= p1^cp(1)*p2^cp(2)*p3^cp(3)*p4^cp(4);
+      cq=grand(1,4,'uin',0,5);
+      q= p1^cq(1)*p2^cq(2)*p3^cq(3)*p4^cq(4);
+      cpq = min(cq,cp);
+      gcpq1 = p1^cpq(1)*p2^cpq(2)*p3^cpq(3)*p4^cpq(4);
+      // [g,p,q,res] = gcd_jpc(p,q);
+      [g,b1]=euclide(p/norm(p,2),q/norm(q,2));
+      g.normalize[];
+      N(i)= norm(g -gcpq1);
+      if N(i) > 1.e-5 then 
+	T(i)=%f;
+      end 
+    end
+    I=find(N==0);N(I)=1.e-16;
+    xclear();
+    Nok = size(find(T),'*');
+    plot2d(1:n,log(N)/log(10))
+    xtitle(sprintf('Number of correct tests %d/%d',Nok,n));
+  endfunction 
+
+  function gcd_euclide2_test()
+    x= poly(0);
+    r= -5:4;
+    n= 10000;
+    veps= 10.^(-[0:14]);
+    for k=1:size(veps,'*')
+      T= ones(1,n);
+      for i=1:n 
+	cp=grand(1,10,'uin',0,1);
+	p = m2p(1); for j=1:10 ; p= p*(r(j)+x)^cp(j);end 
+	cq=grand(1,10,'uin',0,1);
+	q = m2p(1); for j=1:10 ; q= q*(r(j)+x)^cq(j);end 
+	eps = veps(k);
+	[gcpq,b1]=euclide(p/norm(p,1),q/norm(q,1),eps=eps);
+	cpq = min(cq,cp);
+	pq = m2p(1); for j=1:10 ; pq= pq*(r(j)+x)^cpq(j);end 
+	gcpq1 = pq;
+	gcpq.normalize[];
+	T(i)=norm(gcpq1 -gcpq,1);
+      end
+      Ts=sort(T,'g','i');
+      res(k)=Ts(8000);
+    end
+  endfunction 
+end 
+
 
 function [gcd,U]=i_euclide(a,b)
 // euclide algorithm giving also the U 
