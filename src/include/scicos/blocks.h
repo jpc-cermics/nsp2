@@ -655,6 +655,7 @@ extern void scicos_vumeter_block(scicos_block * block, int flag);
 MULTI_DECLARATION(absolute_valuei)
 MULTI_DECLARATION(switch2)
 MULTI2_DECLARATION(logic2)
+MULTI2_DECLARATION(satur_dyn)
 
 
 #endif /* __SCICOS_BLOCKS__  */
@@ -1163,8 +1164,9 @@ scicos_block_table  tabsim[] ={
   /* {"zcross2",(ScicosF) zcross2}, */
   {"sliderm",(ScicosF) scicos_sliderm_block},    
   MULTI_DECLARATION1(absolute_valuei),  
-  MULTI_DECLARATION1(switch2), 
-  MULTI2_DECLARATION1(logic2), 
+  MULTI_DECLARATION1(switch2),
+  MULTI2_DECLARATION1(logic2),
+  MULTI2_DECLARATION1(satur_dyn), 
   {"vumeter",(ScicosF) scicos_vumeter_block},  
   {NULL , (ScicosF) 0}
 };
