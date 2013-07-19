@@ -74,14 +74,14 @@ function [q,r]=pdiv_soft_p_p(a,b)
   q=m2p(q);
 endfunction
 
-function [g,Rp]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
+function [g,Rp,sgn]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
 // epsilon euclid method 
 // See Paola Boito Thesis Chap 3 or 
 // original paper of Hribernig and Stetter.
 // Detection and validation of clusters of 
 // Polynomial Zeros (J. Symbolic Computation (1997) 24 667-682.
 // the default eps is set to 1.e-8 
-    
+//     
   da= a.degree[];
   db= b.degree[];
   if da >= db then
@@ -129,8 +129,9 @@ function [g,Rp]=euclide_p_p(a,b,eps=1.e-6,monic=%f)
   // Rp is such that 
   // [a,b]*Rp = [g,0]
   Rp= [ M(2,2), -M(2,1); -M(1,2),M(1,1)]*detM;
+  sgn= detM;
   // we have 
-  // f = [-Rp(2,2), Rp(1,2)];
+  // f = [ Rp(2,2), - Rp(1,2)]*detM;
   // a = f(1)*g 
   // b = f(2)*g 
 endfunction
@@ -166,17 +167,17 @@ endfunction
 if %f then 
   p=m2p([1,4,6,4,1]);//(1+x)^4
   q=m2p([0,0,1,1]); // (1+x)*x^2
-  [g,Rp]=euclide(p,q);
-  if max(norm([p,q]*Rp -[g,0])) > 10*%eps then pause;end
+  [g,Rp,sgn]=euclide(p,q);
+  if max(norm([p,q]*Rp -[g,0])) > 100*%eps then pause;end
   // recover the factors from Rp 
-  f = [-Rp(2,2), Rp(1,2)];
+  f = [ Rp(2,2), - Rp(1,2)]*sgn;
   if norm(p - f(1)*g) > 10*%eps then pause;end
   if norm(q - f(2)*g) > 10*%eps then pause;end
   // compute the lcm 
   pqlcm = f(1)*f(2)*g;
   x=m2p([0,1]);
   pqlcm.normalize[];
-  if norm(pqlcm - (1+x)^4*x^2)  > 10*%eps then pause;end
+  if norm(pqlcm - (1+x)^4*x^2)  > 100*%eps then pause;end
       
   x=poly(0);
   pp1= [ x*(1+x)^4;
