@@ -604,7 +604,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		{
 		  if ( nargs == 0 ) 
 		    {
-		      Scierror("while statement with a test which return no value\n");
+		      Scierror("while statement with a test which returns no value\n");
 		      nargs = RET_BUG;
 		    }
 		  
@@ -681,7 +681,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 			  if ( nargs == 0 ) 
 			    {
 			      nargs = RET_BUG;
-			      Scierror("if statement with a test which return no value\n");
+			      Scierror("if statement with a test which returns no value\n");
 			    }
 			  SHOWBUG(stack,nargs,L1);
 			}

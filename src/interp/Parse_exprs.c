@@ -920,6 +920,13 @@ static int parse_while(Tokenizer *T,NspBHash *symb_table,PList *plist)
       T->tokenv.FlagEqu = 0;
       return(FAIL);
     }
+#if XXX
+  if ( plist1->type == COMMENT ) 
+    {
+      T->ParseError(T,"Parse Error: a comment was found while expecting a condition for while\n");
+      return(FAIL);
+    }
+#endif 
   T->tokenv.FlagEqu = 0;
   if (debug) scidebug(debugI++,"[while-do>"); 
   /* Tokens for introducing the do Part */
