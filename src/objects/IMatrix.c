@@ -1398,34 +1398,7 @@ nsp_string nsp_num2hex(double x)
   return str;
 }
 
-/* euclide 
- * res=[ r, u, v] 
- * such that  r = pgcd(a, b) and r = a*u+b*v
- * if resp is non null then it is filled with 
- *     [r',u',v'] r'=0 and r'=a*u'+b*v';
- */
-
-void nsp_euclide_old(gint32 a, gint32 b, gint32 res[], gint32 resp[])
-{
-  gint32 ruv[3],rs[3];
-  res[0]=a;  res[1]=1;  res[2]=0;
-  ruv[0]=b;  ruv[1]=0;  ruv[2]=1;
-  while ( ruv[0] != 0 ) 
-    {
-      gint32 q = res[0]/ruv[0];
-      rs[0]=res[0];rs[1]=res[1];rs[2]=res[2];
-      res[0]=ruv[0];res[1]=ruv[1];res[2]=ruv[2];
-      ruv[0]=rs[0] - q * ruv[0];
-      ruv[1]=rs[1] - q * ruv[1];
-      ruv[2]=rs[2] - q * ruv[2];
-    }
-  if ( resp != NULL)
-    {
-      resp[0]=ruv[0];resp[1]=ruv[1];resp[2]=ruv[2];
-    }
-}
-
-/* multi integer version
+/* euclide algorithm for integers 
  *
  */
 
@@ -1454,6 +1427,50 @@ void nsp_euclide(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
 #undef  IMAT_EUCLIDE
 }
 
+/* extended euclide algorithm 
+ * g=gcd(a,b) and [a,b]*U=[gcd,0] 
+ */
+
+void nsp_ext_euclide(nsp_itype itype, void *a, void *b, void *g, void *U, void *det)
+{
+#define IMAT_EXT_EUCLIDE(name,type,arg)					\
+  { type *igcd = g, *iu= U, v[2], rs[2], *idet= det;			\
+    *idet=1;iu[0]= 1; iu[1]=0; iu[2]=0; iu[3]=1;			\
+    v[0]= *(type *) a;v[1]=*(type *) b;					\
+    while ( v[1] != 0 )							\
+      {									\
+	type q = v[0]/v[1], r = v[0]-q*v[1];				\
+	rs[0]=iu[0]; rs[1]=iu[1];					\
+	iu[0]= q*iu[0]+iu[2];iu[1]= q*iu[1]+iu[3];			\
+	iu[2]= rs[0]; iu[3]= rs[1];					\
+	v[0]=v[1];v[1]=r;						\
+	*idet = - (*idet);						\
+      }									\
+    /* when we break v(1) is the gcd and				\
+     * [a,b]= U*v and v=[gcd;0];					\
+     */									\
+    *igcd=v[0];								\
+    /* compute R = M^(-1) and Rp =R'					\
+     * Rp is such that							\
+     * [a,b]*Rp = [g,0]							\
+     * Rp= [ M(2,2), -M(2,1); -M(1,2),M(1,1)]*detM;			\
+     *  we have								\
+     * f = [ Rp(2,2), - Rp(1,2)]*detM;					\
+     * a = f(1)*g							\
+     * b = f(2)*g							\
+     */									\
+    rs[0]=iu[0];							\
+    iu[0]= iu[3]*(*idet);						\
+    rs[1]=iu[1];							\
+    iu[1]= -iu[2]*(*idet);						\
+    iu[2]= - rs[1]*(*idet);						\
+    iu[3]= rs[0]*(*idet);						\
+  } break;
+
+  NSP_ITYPE_SWITCH(itype,IMAT_EXT_EUCLIDE,"");
+  
+#undef  IMAT_EXT_EUCLIDE
+}
 
 
 /*

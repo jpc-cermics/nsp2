@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2009-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2009-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -29,6 +29,7 @@
 #include <nsp/imatrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/matint.h> 
+#include <nsp/cells.h> 
 #include <nsp/type.h> 
 #include <nsp/file.h> 
 #include <nsp/type.h> 
@@ -3152,117 +3153,7 @@ int int_base2dec(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-typedef void (*Feuclide)(gint32 x,gint32 y, gint32 *z, gint32 *zp);
-
-int int_euclide_gen_old(Stack stack, int rhs, int opt, int lhs,int nres,Feuclide fe )
-{
-  int i,j;
-  NspMatrix *A=NULL,*B=NULL;
-  NspIMatrix *IA=NULL,*IB=NULL;
-  CheckStdRhs(2,2);
-  CheckLhs(1,3);
-  if ( IsIMatObj(stack,1) )
-    {
-      if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
-      if ( IA->itype != nsp_gint32) 
-	{
-	  Scierror ("Error: integer matrix argument for %s should be of int32 subtype\n", NspFname(stack));
-	  return RET_BUG;
-	}
-    }
-  else 
-    {
-      if ((A = GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
-    }
-  if ( IsIMatObj(stack,2) )
-    {
-      if (( IB = GetIMat(stack,2))  == NULLIMAT) return RET_BUG;
-      if ( IB->itype != nsp_gint32) 
-	{
-	  Scierror ("Error: integer matrix argument for %s should be of int32 subtype\n", NspFname(stack));
-	  return RET_BUG;
-	}
-    }
-  else 
-    {
-      if ((B = GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
-    }
-  if ( (A != NULL && B== NULL) || 
-       (A == NULL && B!= NULL))
-    {
-      Scierror("Error: A and B should be both int32 or double matrices\n");
-      return RET_BUG;
-    }
-  
-  if ( A != NULL ) 
-    {
-      NspMatrix *Res[3]={NULL,NULL,NULL};
-      gint32 res[3];
-      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
-	{
-	  if ( ( Res[j] =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULL)
-	    return RET_BUG;
-	}
-      for ( i = 0 ; i < A->mn ; i++ )
-	{
-	  (*fe)(A->R[i],B->R[i], res, NULL);
-	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
-	    Res[j]->R[i]= res[j];
-	}
-      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
-	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
-    }
-  else
-    {
-      NspIMatrix *Res[3]={NULL,NULL,NULL};
-      gint32 res[3];
-      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
-	{
-	  if ( ( Res[j] =nsp_imatrix_create(NVOID,IA->m,IA->n,nsp_gint32)) == NULL)
-	    return RET_BUG;
-	}
-      for ( i = 0 ; i < IA->mn ; i++ )
-	{
-	  (*fe)(IA->Gint32[i],IB->Gint32[i], res, NULL);
-	  for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
-	    Res[j]->Gint32[i]= res[j];
-	}
-      for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
-	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
-    }
-  return Max(lhs,1);
-}
-
-int int_euclide_old(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_euclide_gen_old(stack,rhs,opt,lhs,3,nsp_euclide_old);
-}
-
-static void nsp_gcd_old(gint32 x,gint32 y, gint32 *res,gint32 *resp)
-{
-  gint32 z[3];
-  nsp_euclide_old(x,y,z,NULL);
-  *res = z[0];
-}
-
-int int_gcd_old(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_euclide_gen_old(stack,rhs,opt,lhs,3,nsp_gcd_old);
-}
-
-static void nsp_lcm_old(gint32 x,gint32 y, gint32 *res,gint32 *resp)
-{
-  gint32 z[3];
-  nsp_euclide_old(x,y,z,NULL);
-  *res = (x/z[0])*y;
-}
-
-int int_lcm_old(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_euclide_gen_old(stack,rhs,opt,lhs,3,nsp_lcm_old);
-}
-
-/*
+/* Interface for euclide, gcd and lcm 
  *
  */
 
@@ -3291,11 +3182,14 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Geuclide fe,
 	  Scierror ("Error: integer matrix argument for %s should be of same subtype\n", NspFname(stack));
 	  return RET_BUG;
 	}
+      CheckSameDims(NspFname(stack),1,2,IA,IB);
     }
   else 
     {
       if ((B = GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
+      CheckSameDims(NspFname(stack),1,2,A,B);
     }
+
   if ( (A != NULL && B== NULL) || 
        (A == NULL && B!= NULL))
     {
@@ -3335,7 +3229,7 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Geuclide fe,
 	  if ( ( Res[j] =nsp_imatrix_create(NVOID,IA->m,IA->n,IA->itype)) == NULL)
 	    return RET_BUG;
 	}
-#define IMAT_EUCLIDE1(name,type,arg) for ( i=0 ; i < IA->mn ; i++) {	\
+#define IMAT_EUCLIDE(name,type,arg) for ( i=0 ; i < IA->mn ; i++) {	\
 	type res[3];							\
 	(*fe)( IA->itype, &IA->name[i],&IB->name[i], res, NULL);	\
 	switch ( tag )	{						\
@@ -3347,7 +3241,8 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Geuclide fe,
 	  {								\
 	    Res[j]->name[i]= res[j];					\
 	  } } break;
-      NSP_ITYPE_SWITCH(IA->itype,IMAT_EUCLIDE1,"");
+      NSP_ITYPE_SWITCH(IA->itype,IMAT_EUCLIDE,"");
+#undef IMAT_EUCLIDE
       for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 
 	MoveObj(stack,j+1,NSP_OBJECT(Res[j]));
     }
@@ -3358,7 +3253,6 @@ int int_euclide(Stack stack, int rhs, int opt, int lhs)
 {
   return int_euclide_gen(stack,rhs,opt,lhs,3,nsp_euclide,0);
 }
-
 
 extern void nsp_gcd(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
 {
@@ -3378,6 +3272,116 @@ static void nsp_lcm(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
 int int_lcm(Stack stack, int rhs, int opt, int lhs)
 {
   return int_euclide_gen(stack,rhs,opt,lhs,1,nsp_lcm,2);
+}
+
+/* interface for the  nsp_ext_euclide function 
+ */
+
+int int_ext_euclide(Stack stack, int rhs, int opt, int lhs)
+{
+  int i,j;
+  NspMatrix *A=NULL,*B=NULL;
+  NspIMatrix *IA=NULL,*IB=NULL;
+  CheckStdRhs(2,2);
+  CheckLhs(1,3);
+  if ( IsIMatObj(stack,1) )
+    {
+      if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
+    }
+  else 
+    {
+      if ((A = GetRealMat(stack,1))  == NULLMAT) return RET_BUG;
+    }
+  if ( IsIMatObj(stack,2) )
+    {
+      if (( IB = GetIMat(stack,2))  == NULLIMAT) return RET_BUG;
+      if ( IA == NULL || IB->itype != IA->itype )
+	{
+	  Scierror ("Error: integer matrix argument for %s should be of same subtype\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      CheckSameDims(NspFname(stack),1,2,IA,IB);
+    }
+  else 
+    {
+      if ((B = GetRealMat(stack,2))  == NULLMAT) return RET_BUG;
+      CheckSameDims(NspFname(stack),1,2,A,B);
+    }
+
+  if ( (A != NULL && B== NULL) || 
+       (A == NULL && B!= NULL))
+    {
+      Scierror("Error: A and B should be both int matrices or double matrices\n");
+      return RET_BUG;
+    }
+  
+  if ( A != NULL ) 
+    {
+      NspCells *U;
+      NspMatrix *gcd=NULL, *det=NULL,*Ue=NULL;
+      if (( gcd =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULL)
+	return RET_BUG;
+      if (( det =nsp_matrix_create(NVOID,'r',A->m,A->n)) == NULL)
+	return RET_BUG;
+      if (( U= nsp_cells_create(NVOID, A->m,A->n)) == NULL)
+	return RET_BUG;
+      for ( i = 0 ; i < A->mn ; i++ )
+	{
+	  gint32 a=A->R[i],b=B->R[i],idet=1,igcd, iU[4];
+	  nsp_ext_euclide(nsp_gint32,&a,&b,&igcd,&iU,&idet);
+	  gcd->R[i]=igcd; det->R[i]=idet;
+	  if ((Ue= nsp_matrix_create(NVOID, 'r',2,2)) == NULL)
+	    return RET_BUG;
+	  for ( j=0; j < 4; j++) Ue->R[j]=iU[j];
+	  U->objs[i]= (NspObject *) Ue;
+	}
+      MoveObj(stack,1,NSP_OBJECT(gcd));
+      if ( lhs >= 2) 
+	MoveObj(stack,2,NSP_OBJECT(U));
+      else
+	nsp_cells_destroy(U);
+      if ( lhs >= 3) 
+	MoveObj(stack,3,NSP_OBJECT(det));
+      else
+	nsp_matrix_destroy(det);
+      return Max(lhs,1);
+    }
+  else
+    {
+      /* Integer matrix case */
+      NspCells *U;
+      NspIMatrix *gcd=NULL, *det=NULL,*Ue=NULL;
+      if (( gcd =nsp_imatrix_create(NVOID,IA->m,IA->n,IA->itype)) == NULL)
+	return RET_BUG;
+      if (( det =nsp_imatrix_create(NVOID,IA->m,IA->n,IA->itype)) == NULL)
+	return RET_BUG;
+      if (( U= nsp_cells_create(NVOID, IA->m,IA->n)) == NULL)
+	return RET_BUG;
+#define IMAT_EUCLIDE(name,type,arg)					\
+      for ( i = 0 ; i < IA->mn ; i++ )					\
+	{								\
+	  type idet=1,igcd, iU[4];					\
+	  nsp_ext_euclide( IA->itype, &IA->name[i],&IB->name[i],&igcd,&iU,&idet); \
+	  gcd->name[i]=igcd; det->name[i]=idet;				\
+	  if ((Ue= nsp_imatrix_create(NVOID, 2,2,IA->itype)) == NULL)	\
+	    return RET_BUG;						\
+	  for ( j=0; j < 4; j++) Ue->name[j]=iU[j];			\
+	  U->objs[i]= (NspObject *) Ue;					\
+	} break;
+      NSP_ITYPE_SWITCH(IA->itype,IMAT_EUCLIDE,"");
+#undef IMAT_EUCLIDE
+
+      MoveObj(stack,1,NSP_OBJECT(gcd));
+      if ( lhs >= 2) 
+	MoveObj(stack,2,NSP_OBJECT(U));
+      else
+	nsp_cells_destroy(U);
+      if ( lhs >= 3) 
+	MoveObj(stack,3,NSP_OBJECT(det));
+      else
+	nsp_imatrix_destroy(det);
+    }
+  return Max(lhs,1);
 }
 
 /* 
@@ -3497,6 +3501,7 @@ static int int_imatrix_nnz(Stack stack,int rhs,int opt,int lhs)
 
 static OpTab IMatrix_func[]={
   {"euclide", int_euclide},
+  {"ext_euclide", int_ext_euclide},
   {"gcd_i_i", int_gcd},
   {"gcd_m_m", int_gcd},
   {"lcm_i_i", int_lcm},
