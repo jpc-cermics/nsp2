@@ -3345,7 +3345,7 @@ int int_euclide_gen(Stack stack, int rhs, int opt, int lhs,int nres,Geuclide fe,
 	}								\
 	for ( j = 1 ; j < Min(Max(lhs,1),3); j++)			\
 	  {								\
-	  Res[j]->name[i]= res[j];					\
+	    Res[j]->name[i]= res[j];					\
 	  } } break;
       NSP_ITYPE_SWITCH(IA->itype,IMAT_EUCLIDE1,"");
       for ( j = 0 ; j < Min(Max(lhs,1),3); j++) 

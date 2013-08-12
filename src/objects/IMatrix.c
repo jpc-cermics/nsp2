@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 2009-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2009-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1432,7 +1432,7 @@ void nsp_euclide_old(gint32 a, gint32 b, gint32 res[], gint32 resp[])
 void nsp_euclide(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
 {
 #define IMAT_EUCLIDE(name,type,arg)					\
-  {type ruv[3],rs[3],*res=vres,*resp=vresp;				\
+  { type ruv[3],rs[3],*res=vres,*resp=vresp;				\
     res[0]=*(type *) a; res[1]=(type)1;res[2]=(type)0;			\
     ruv[0]=*(type *) b; ruv[1]=(type)0;ruv[2]=(type)1;			\
     while ( ruv[0] != 0 )						\
@@ -1448,8 +1448,10 @@ void nsp_euclide(nsp_itype itype, void *a, void *b, void *vres, void *vresp)
       {									\
 	resp[0]=ruv[0];resp[1]=ruv[1];resp[2]=ruv[2];			\
       }} break;
+
   NSP_ITYPE_SWITCH(itype,IMAT_EUCLIDE,"");
-#undef  IMAT_ISTRUE
+  
+#undef  IMAT_EUCLIDE
 }
 
 

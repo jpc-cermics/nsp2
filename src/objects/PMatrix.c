@@ -134,9 +134,20 @@ void nsp_polynom_destroy(nsp_polynom *P)
   *P=NULL;
 }
 
-/* 
- *
- */
+
+
+/**
+ * nsp_polynom_pdiv:
+ * @a: a #nsp_polynom 
+ * @b: a #nsp_polynom 
+ * @hq: a #nsp_polynom pointer 
+ * @hr: a #nsp_polynom pointer 
+ * 
+ * returns the quotient in @hq and the remainder @hr of the division of polynomial 
+ * @a by polynomial @b. 
+ * 
+ * Returns: %OK or %FAIL
+ **/
 
 int nsp_polynom_pdiv(nsp_polynom a,nsp_polynom b,nsp_polynom *hq,
 		     nsp_polynom *hr)
@@ -2300,7 +2311,7 @@ NspMatrix *nsp_pmatrix_horner(NspPMatrix *P,NspMatrix *V,int k)
 
 int nsp_pmatrix_pdiv_tt(NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix **R)
 {
-  int i, m= Max(A->m,B->m), n=Max(B->m,B->n) , mn=Max(A->mn,B->mn);
+  int i, m= Max(A->m,B->m), n=Max(A->n,B->n) , mn=Max(A->mn,B->mn);
   nsp_polynom q,r;
   NspPMatrix *Ql,*Rl;
 
@@ -2321,7 +2332,7 @@ int nsp_pmatrix_pdiv_tt(NspPMatrix *A, NspPMatrix *B, NspPMatrix **Q, NspPMatrix
     return FAIL;
   for (i=0; i < mn ; i++) 
     {
-      if (nsp_polynom_pdiv( A->S[Min(i,A->mn)], B->S[Min(i,B->mn)],&q,&r)== FAIL) 
+      if (nsp_polynom_pdiv( A->S[Min(i,A->mn-1)], B->S[Min(i,B->mn-1)],&q,&r)== FAIL) 
 	return FAIL;
       Ql->S[i]= q;
       Rl->S[i]= r;
