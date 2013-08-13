@@ -15,7 +15,7 @@ function [r,q]=monodiv_p(a,alpha)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 //
-// divide a by (x-alpha). faster than pdiv and 
+// divide polynomial a by (x-alpha). faster than pdiv and 
 // could be accelerated by the nsp band solver.
 //  
   ca = a.coeffs{1};
@@ -233,20 +233,4 @@ if %f then
   endfunction 
 end 
 
-
-function [gcd,U]=i_euclide(a,b)
-// euclide algorithm giving also the U 
-// matrix (like the bezout function in scicoslab).
-  ruv1 = [a, 1,0];
-  ruv2 = [b, 0,1];
-  while ruv2(1) <> 0 then 
-    q = int(ruv1(1)/ruv2(1));
-    rs = ruv1;
-    ruv1 = ruv2;
-    ruv2 = rs - q*ruv2;
-  end
-  gcd= ruv1(1);
-  U=[ruv1(2), -ruv2(2);
-     ruv1(3), -ruv2(3)];
-endfunction
 
