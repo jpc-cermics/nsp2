@@ -19,47 +19,49 @@ function [q,fact]=gcd(p)
   return;
 endfunction
 
-function [x]=gcd_i(p)
-// computes the gcd of an int vector 
-// and a unimodular matrix (with polynomial inverse) u, 
-// with minimal degree such that [p1 p2]*u=[0 ... 0 pgcd]
-// XXXX reste le calcul de u noter que dans euclide on n'a pas 
-// directement u.
-//
-// Copyright INRIA
-  mn=size(p,'*');
-  if mn == 0 then x=p;uu=p;end
-  one=m2i(ones(mn,mn),p(1).itype[]);
-  x=p(1);
+function [g,uu]=gcd_i(p)
+// g: the gcd of an int vector p
+// uu: a unimodular matrix such that 
+//     [p1 p2 ... pn ]*uu=[0 ... 0 g]
+// Copyright INRIA (CeCILL)
+  
+  
+  [m,n]=size(p);it=p.itype[];
+  mn=m*n;
+  p.redim[1,-1]; // resize to row vector
+  g=p(1);
+  if nargout <= 1 then 
+    for l=2:mn, [g]=euclide(g,p(l));end
+    return;
+  end
+
+  uu=m2i(1,it);
   for l=2:mn,
-    // [x,u]=bezout(x,p(l)),
-    [x,b,c]=euclide(x,p(l));
-    if nargout==2 then
-      // one=[one(:,1:l-2),one(:,l-1)*u(1,[2 1])];one(l,l-1:l)=u(2,[2 1]);
-    end
-  end,
+    [g,U]=euclide(g,p(l));u=U{1,1};
+    uu=[uu(:,1:l-2) uu(:,l-1)*u(1,[2 1])];uu(l,l-1:l)=u(2,[2 1]);
+  end
 endfunction
 
-
-function [x]=gcd_m(p)
-// the version with two arguments is hard coded.
-// computes the gcd of an int vector 
-// and a unimodular matrix (with polynomial inverse) u, 
-// with minimal degree such that [p1 p2]*u=[0 ... 0 pgcd]
-// XXXX reste le calcul de u noter que dans euclide on n'a pas 
-// directement u.
+function [g,uu]=gcd_m(p)
+// g:  the gcd of a vector p casted to int
+// uu: a unimodular matrix u 
+// such that [p1 p2 ... pn ]*uu=[0 ... 0, g]
 //
-// Copyright INRIA
-  mn=size(p,'*');
-  if mn == 0 then x=p;uu=p;end
-  one=1;
-  x=p(1);
+// Copyright INRIA (CeCILL)
+
+  [m,n]=size(p);
+  mn=m*n;
+  p.redim[1,-1]; // resize to row vector
+  g=p(1);
+  if nargout <= 1 then 
+    for l=2:mn, [g]=euclide(g,p(l));end
+    return;
+  end
+  uu=1;
   for l=2:mn,
-    // [x,u]=bezout(x,p(l)),
-    [x,b,c]=euclide(x,p(l));
-    if nargout==2 then
-      // one=[one(:,1:l-2),one(:,l-1)*u(1,[2 1])];one(l,l-1:l)=u(2,[2 1]);
-    end
-  end,
+    [g,U]=euclide(g,p(l));u=U{1,1};
+    uu=[uu(:,1:(l-2)),uu(:,l-1)*u(1,[2 1])];
+    uu(l,(l-1):l)=u(2,[2 1]);
+  end
 endfunction
 

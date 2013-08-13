@@ -18,7 +18,7 @@ end
 
 // case of double matrices 
 
-[g,U,idet]= ext_euclide(x,y);
+[g,U,idet]= euclide(x,y);
 // g is the gcd. we check that gcd is ok 
 if max(abs(gcds-g)) <> 0 then pause;end
 // checks that U matrix is ok 
@@ -38,7 +38,7 @@ end
 itypes=["int32", "uint32","int64", "uint64", "int", "long", "ulong"];
 for itype=itypes
   ix=m2i(x,itype);iy=m2i(y,itype);zero=m2i(0,itype);
-  [g,U,idet]= ext_euclide(ix,iy);
+  [g,U,idet]= euclide(ix,iy);
   if max(abs(m2i(gcds,itype)- g)) <> zero then pause;end
   // checks that U matrix is ok 
   for i=1:n 
@@ -53,21 +53,21 @@ for itype=itypes
   end
 end
 
+// test of lcm 
+// case of double matrices 
 
-// test euclide, gcd and lcm 
-
-if gcds <> gcd(x,y) then pause;end 
-if lcms <> lcm(x,y) then pause;end 
-
-// test the integer cases 
-// removing the types with size <= 8 
-
-itypes=[ "int32" "uint32","int64" , "uint64",...
-	 'int', 'uint',  'long', 'ulong'];
+[l]= lcm(x,y);
+// g is the gcd. we check that gcd is ok 
+if max(abs(lcms-l)) <> 0 then pause;end
+// case of int matrices 
+itypes=["int32", "uint32","int64", "uint64", "int", "long", "ulong"];
 for itype=itypes
-  if m2i(gcds,itype) <> gcd(m2i(x,itype),m2i(y,itype)) then pause;end 
-  if m2i(lcms,itype) <> lcm(m2i(x,itype),m2i(y,itype)) then pause;end 
+  ix=m2i(x,itype);iy=m2i(y,itype);zero=m2i(0,itype);
+  [l]= lcm(ix,iy);
+  if max(abs(m2i(lcms,itype)- l)) <> zero then pause;end
 end
+
+
 
 
 
