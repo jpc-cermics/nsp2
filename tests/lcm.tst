@@ -134,10 +134,7 @@ for k=1:10
     ix=m2i(x,itype);
     [l,F]=lcm(ix);
     if abs(m2i(l1,itype)-l)<>m2i(0,itype) then pause;end 
-    // dst_i_i to be done if abs(ix.*F -l )<>m2i(0,itype) then pause;end;
-    for i=1:n 
-      if  abs(ix(i)*F(i) -l )<>m2i(0,itype) then pause;end;
-    end
+    if abs(ix.*F -l )<>m2i(0,itype) then pause;end;
   end
 end
 

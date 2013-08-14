@@ -72,6 +72,7 @@ TESTS= \
 	find.dia \
 	global.dia \
 	matops.dia \
+	matops-int.dia \
 	min_max_minmax_int.dia \
 	statfuncs.dia \
 	smio.dia \
