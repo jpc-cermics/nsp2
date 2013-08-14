@@ -39,10 +39,10 @@ function [q,fact]=lcm_i(p)
 //
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
-  if nargin >=1 then 
-    error("lcm_m: mixed argument types is not allowed\n");
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307
+// USA
+  if nargin<>1 then
+    error("Error: lcm should be called with one argument");
     return;
   end
   if isempty(p) then q=p;fact=p;return;end 
@@ -76,9 +76,8 @@ function [q,fact]=lcm_m(p)
 // You should have received a copy of the GNU General Public License
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-  
-  if nargin >=1 then 
-    error("lcm_m: mixed argument types is not allowed\n");
+  if nargin<>1 then
+    error("Error: lcm should be called with one argument");
     return;
   end
   if isempty(p) then q=p;fact=p;return;end 

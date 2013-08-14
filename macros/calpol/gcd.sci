@@ -15,7 +15,7 @@ function [q,fact]=gcd(p)
 // along with this program; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-  error("gcd not implemented for "+type(p,'string')+'\n');
+  error("Error: gcd not implemented for "+type(p,'string'));
   return;
 endfunction
 
@@ -24,10 +24,11 @@ function [g,uu]=gcd_i(p)
 // uu: a unimodular matrix such that 
 //     [p1 p2 ... pn ]*uu=[0 ... 0 g]
 // Copyright INRIA (CeCILL)
-  
-  
-  [m,n]=size(p);it=p.itype[];
-  mn=m*n;
+  if nargin<>1 then
+    error("Error: gcd should be called with one argument");
+    return;
+  end
+  mn=size(p,'*');it=p.itype[];
   p.redim[1,-1]; // resize to row vector
   g=p(1);
   if nargout <= 1 then 
@@ -48,9 +49,11 @@ function [g,uu]=gcd_m(p)
 // such that [p1 p2 ... pn ]*uu=[0 ... 0, g]
 //
 // Copyright INRIA (CeCILL)
-
-  [m,n]=size(p);
-  mn=m*n;
+  if nargin<>1 then
+    error("Error: gcd should be called with one argument");
+    return;
+  end
+  mn=size(p,'*');
   p.redim[1,-1]; // resize to row vector
   g=p(1);
   if nargout <= 1 then 
