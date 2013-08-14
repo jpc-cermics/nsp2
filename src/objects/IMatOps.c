@@ -686,16 +686,6 @@ NspIMatrix *nsp_imatrix_sum(NspIMatrix *A, int dim)
 {
   NspIMatrix *Sum;
   int j,i;
-  if ( A->mn == 0)
-    {
-      if ( dim == 0 )
-	{
-	  Sum = nsp_imatrix_create(NVOID,1,1,A->itype);
-	  return Sum;
-	}
-      else
-	return  nsp_imatrix_create(NVOID,0,0,A->itype);
-    }
 
   switch (dim) 
     {
@@ -759,21 +749,7 @@ NspIMatrix *nsp_imatrix_prod(NspIMatrix *A, int dim)
   NspIMatrix *Prod;
   int i,j;
   /* int inc=1; */
-
-  if ( A->mn == 0) 
-    {
-      if ( dim == 0 )
-	{
-	  Prod = nsp_imatrix_create(NVOID,1,1,A->itype);
-#define IMAT_AC(name,type,arg) if ( Prod != NULLIMAT)  Prod->name[0]=1;break;
-	  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
-#undef IMAT_AC
-	  return Prod;
-	}
-      else 
-	return  nsp_imatrix_create(NVOID,0,0,A->itype);
-    }
-
+  
   switch (dim) 
     {
     default : 
@@ -1911,7 +1887,7 @@ int nsp_imatrix_div_el(NspIMatrix *A, NspIMatrix *B)
   if (SameDim(A,B))
     {
       int i;
-#define IMAT_DIVEL(name,type,arg)						\
+#define IMAT_DIVEL(name,type,arg)					\
       for ( i = 0 ; i < A->mn ; i++ ) A->name[i] /= B->name[i];		\
       break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_DIVEL,"");
@@ -2237,18 +2213,18 @@ void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y)
 /**
  * nsp_imatrix_idiv:
  * @A: a #NspIMatrix 
- * @n: an integer 
+ * @B: a #NspIMatrix of size 1x1
  * 
  * 
- * A is changed to A / n :  quotient in int division
+ * A is changed to A / B(1) : 
  **/
 
-void nsp_imatrix_idiv(NspIMatrix *A, int n)
+void nsp_imatrix_idiv(NspIMatrix *A, NspIMatrix *B)
 {
   int i ;
 #define IMAT_IDIV(name,type,arg)					\
   for ( i=0 ; i < A->mn ; i++)						\
-    A->name[i] /= n ;							\
+    A->name[i] /= B->name[0] ;						\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_IDIV,"");
 #undef IMAT_IDIV
@@ -2593,38 +2569,25 @@ int nsp_imatrix_minus(NspIMatrix *A)
  * before calling this function size (AmxBm,AnxBn)
  * The rule to compute PK is the following 
  * PK[ i + j*B->m + k*(B->m*A->m) + p*(B->m*A->m*B->n)] = a(j,p)*b(i,k)
- * The i-loop leads to dcopy calls 
  * 
  **/
 
 static void IKronecker(NspIMatrix *A, NspIMatrix *B, NspIMatrix *PK)
 {
-#if 0
-  static int c1 = 1;
-  double d0 = 0.00;
-  int p,k,j,k0,k1,k2,k3;
-  for ( p = 0 ; p < A->n ; p++)
-    {
-      k0 = p*(B->m*A->m*B->n);
-      k3 = p*A->m;
-      for ( k = 0 ; k < B->n ; k++) 
-	{
-	  k1= k*(B->m*A->m) + k0;
-	  k2= k*(B->m);
-	  for ( j = 0 ; j < A->m ; j++)
-	    {
-	      double *DR;
-	      doubleC *DI;
-	      DR= PK->R + j*B->m + k1;
-	      /* C2F(dcopy)(&B->m, &B->R[k2], &c1,DR, &c1); */
-	      memcpy(DR, &B->R[k2],B->m*sizeof(double));
-	      C2F(dscal)(&B->m, &A->R[j+k3],DR  , &c1);
-	    }
-	}
-    }
-#endif 
+  int iA, jA, jB, iB, k;
+#define IMAT_IK(name,type,arg)						\
+  {									\
+    type *colA, *colB;							\
+    for ( jA = 0, k = 0, colA = A->name ; jA < A->n ; jA++, colA += A->m )	\
+      for ( jB = 0, colB = B->name ; jB < B->n ; jB++, colB += B->m )	\
+	for ( iA = 0 ; iA < A->m ; iA++)				\
+	  for ( iB = 0 ; iB < B->m ; iB++, k++ )			\
+	    PK->name[k] = colA[iA] * colB[iB];				\
+  } break;
+  
+  NSP_ITYPE_SWITCH(A->itype,IMAT_IK,"");
+#undef IMAT_IK
 }
-
 
 
 /*

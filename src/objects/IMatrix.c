@@ -809,7 +809,7 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
   int j,i;
   int imin = Max(0,-k);
   int imax = Min(A->m,A->n -k );
-  if ( imin > imax ) 
+  if ( imin >= imax ) 
     {
       Loc =nsp_imatrix_create(NVOID,(int) 0 , (int) 0,A->itype);
       return(Loc);
@@ -821,7 +821,10 @@ NspIMatrix  *nsp_imatrix_extract_diag(NspIMatrix *A, int k)
    * for ( i = imin ; i < imax ; i++ ) 
    *   Loc->gint[j++] = A->gint[i+(i+k)*A->m];
    */
-#define IMAT_ED(name,type,arg)for ( i = imin ; i < imax ; i++ ) Loc->name[j++] = A->name[i+(i+k)*A->m];break;
+#define IMAT_ED(name,type,arg)						\
+  for ( i = imin ; i < imax ; i++ )					\
+    { Loc->name[j++] = A->name[i+(i+k)*A->m];}				\
+  break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_ED,"");
 #undef IMAT_ED
   return(Loc);

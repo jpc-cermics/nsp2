@@ -192,6 +192,9 @@ extern  sci_interface  SpMaxpColMatrix_Interf  ;extern  interface_info  SpMaxpCo
 
 extern  sci_interface  Bvar_Interf  ;extern  interface_info  Bvar_Interf_Info  ;
 
+/* for mixed int and scalar operations */
+extern  sci_interface  M2iMatrix_Interf; extern  interface_info M2iMatrix_Interf_Info;
+
 InterfTab Interfaces[]={
   {Matrix_Interf,Matrix_Interf_Info},
   {Hash_Interf,Hash_Interf_Info},
@@ -328,6 +331,7 @@ InterfTab Interfaces[]={
 #endif 
   {SpMaxpColMatrix_Interf , SpMaxpColMatrix_Interf_Info}, 
   {Bvar_Interf, Bvar_Interf_Info},
+  {M2iMatrix_Interf, M2iMatrix_Interf_Info},
   {NULL,NULL}
 }; 
 

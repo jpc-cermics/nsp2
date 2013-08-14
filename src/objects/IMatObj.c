@@ -1205,11 +1205,10 @@ static int int_imatrix_fneq(Stack stack, int rhs, int opt, int lhs)
  * Returns a kroeneker product A.*.B 
  */
 
-int
-int_imatrix_kron (Stack stack, int rhs, int opt, int lhs)
+int int_imatrix_kron (Stack stack, int rhs, int opt, int lhs)
 {
   NspIMatrix *HMat1, *HMat2, *HMat3;
-  CheckRhs (2, 2);
+  CheckStdRhs (2, 2);
   CheckLhs (1, 1);
   if ((HMat1 = GetIMat (stack, 1)) == NULLIMAT)
     return RET_BUG;
@@ -1220,7 +1219,6 @@ int_imatrix_kron (Stack stack, int rhs, int opt, int lhs)
   MoveObj (stack, 1, (NspObject *) HMat3);
   return 1;
 }
-
 
 /*
  * MatSort 
@@ -1881,6 +1879,9 @@ int_imatrix_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 	  n1 = m1;
 	}
     }
+  /* we do not use int and uint */
+  if ( itype == nsp_gint ) itype = nsp_gint32;
+  else if ( itype == nsp_guint ) itype = nsp_guint32;
   if ((HMat = (*F) (m1, n1,itype)) == NULLIMAT)
     return RET_BUG;
   MoveObj (stack, 1, (NspObject *) HMat);
@@ -2104,12 +2105,13 @@ int
 int_imatrix_modulo (Stack stack, int rhs, int opt, int lhs)
 {
   NspIMatrix *A,*B;
-  CheckRhs (2, 2);
+  CheckStdRhs (2, 2);
   CheckLhs (1, 1);
   if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)
     return RET_BUG;
   if ((B = GetIMat(stack, 2)) == NULLIMAT)
     return RET_BUG;
+
   if ( B->mn != A->mn || B->mn != 1) 
     {
       Scierror("Error: second argument of %s should be 1x1 or %dx%d\n",
@@ -2127,6 +2129,37 @@ int_imatrix_modulo (Stack stack, int rhs, int opt, int lhs)
   NSP_OBJECT (A)->ret_pos = 1;
   return 1;
 }
+
+/*
+ * Mat : A= Idiv(A,b) quotient in int division
+ * A is changed   A(i)=A(i)/b 
+ */
+
+int int_imatrix_idiv (Stack stack, int rhs, int opt, int lhs)
+{
+  NspIMatrix *A, *B;
+  CheckStdRhs (2, 2);
+  CheckLhs (1, 2);
+  if ((A = GetIMatCopy (stack, 1)) == NULLIMAT)   return RET_BUG;
+  if ((B = GetIMat (stack, 2)) == NULLIMAT)    return RET_BUG;
+
+  if ( B->mn != 1) 
+    {
+      Scierror("Error: second argument of %s should be 1x1\n",
+	       NspFname(stack));
+      return RET_BUG;
+    }
+  if ( A->itype != B->itype ) 
+    {
+      Scierror("Error: the two arguments of %s must have the same integer type\n",
+	       NspFname(stack));
+      return RET_BUG;
+    }
+  if ( A->mn != 0)  nsp_imatrix_idiv (A, B);
+  NSP_OBJECT (A)->ret_pos = 1;
+  return 1;
+}
+
 
 /*
  * A generic function fo  A op B with 
@@ -3416,10 +3449,9 @@ static int int_imatrix_scale_cols(Stack stack,int rhs,int opt,int lhs)
 static int int_imatrix_nnz(Stack stack,int rhs,int opt,int lhs)
 {
   NspIMatrix *A;
+  CheckStdRhs(1,1);
   CheckLhs(1,1);
-  CheckRhs(1,1);
   if ((A = GetIMat(stack, 1)) == NULLIMAT) return RET_BUG;
-
   if ( nsp_move_double(stack,1,nsp_imatrix_nnz(A)) == FAIL) return RET_BUG;
   return 1;
 }
@@ -3522,19 +3554,19 @@ static OpTab IMatrix_func[]={
   {"scale_rows_i_i", int_imatrix_scale_rows},
   {"scale_cols_i_i", int_imatrix_scale_cols},
   {"nnz_i", int_imatrix_nnz},
-#if 0
-  {"dst_i_i", int_imatrix_iultel}, 
-  {"dstd_i_i", int_imatrix_kron},	/* operator:  .*. */
+  {"dst_i_i", int_imatrix_multel}, 
+  {"dstd_i_i", int_imatrix_kron},
+  {"dbs_i_i", int_imatrix_backdivel},
+  {"sign_i", int_imatrix_sign},
   {"idiv_i_i", int_imatrix_idiv},
+
+#if 0
   {"bdiv_i_i", int_imatrix_bdiv},
   {"int_i", int_imatrix_int},
-  {"sign_i", int_imatrix_sign},
   {"hat_i_i", int_imatrix_pow},
   {"dh_i_i", int_imatrix_powel},
-  {"dbs_i_i", int_imatrix_backdivel},
   {"div_i_i", int_imatrix_div},
   {"mfind_i", int_imatrix_mfind},
-  {"nnz_i",  int_matrix_nnz},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
 #endif 
@@ -3558,85 +3590,90 @@ void IMatrix_Interf_Info(int i, char **fname, function (**f))
 }
 
 
-/* wrapper for functions  B=f(A)
- * call the matrix interface after a cast 
+/* wrapper for m2i conversions 
  */
 
-static int int_bm_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
+static int int_m2i_wrap(Stack stack, int rhs, int opt, int lhs,function *f)
 {
-  NspIMatrix *BM;
+  NspIMatrix *Res,*IM;
   NspMatrix *M;
   CheckRhs(1,2);
-  if ( IsIMatObj(stack,1) ) 
+  
+  if ( IsMatObj(stack,1) ) 
     {
-      if ((BM = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
-      if ((M =nsp_imatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
-      MoveObj(stack,1,(NspObject *) M);
+      if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;
+      if ( rhs - opt ==  1) 
+	{
+	  if ((Res= nsp_matrix_to_imatrix(M, nsp_guint32))==NULL)
+	    return RET_BUG;
+	}
+      else
+	{
+	  if ((IM = GetIMat(stack,2)) == NULLIMAT) return RET_BUG;
+	  if ((Res= nsp_matrix_to_imatrix(M, IM->itype))==NULL)
+	    return RET_BUG;
+	}
+      MoveObj(stack,1,(NspObject *) Res);
       /* we don't want M ret_pos to be set */
-      NSP_OBJECT(M)->ret_pos = -1;
+      NSP_OBJECT(Res)->ret_pos = -1;
     }
-  if (rhs == 2 &&  IsIMatObj(stack,2) )
+  if (rhs == 2 &&  IsMatObj(stack,2) )
     {
-      if ((BM = GetIMat(stack,2)) == NULLIMAT) return RET_BUG;
-      if ((M =nsp_imatrix_to_matrix(BM)) == NULLMAT ) return RET_BUG;
-      MoveObj(stack,2,(NspObject *) M);
+      if ((IM = GetIMat(stack,1)) == NULLIMAT) return RET_BUG;
+      if ((M = GetMat(stack,2)) == NULLMAT) return RET_BUG;
+      if ((Res= nsp_matrix_to_imatrix(M, IM->itype))==NULL)
+	return RET_BUG;
+      MoveObj(stack,2,(NspObject *) Res);
       /* we don't want M ret_pos to be set */
-      NSP_OBJECT(M)->ret_pos = -1;
+      NSP_OBJECT(Res)->ret_pos = -1;
     }
-  /* call same interface for matrix */
+  /* call same interface for Imatrix */
   return (*f)(stack,rhs,opt,lhs);
 }
 
 /*
- * Interface for Boolean/Matrix Operations 
- * which involves a conversion b2m + use of the matrix interface.
+ * Interface for IMatrix/Matrix Operations 
+ * which involves a conversion m2i + use of the imatrix interface.
+ * 
  */
 
 #include "nsp/matrix-in.h"
 
-static OpWrapTab B2mMatrix_func[]={
-  {"dst_m_i", int_mxmultel, int_bm_wrap},
-  {"dst_i_m", int_mxmultel, int_bm_wrap},
-  {"dst_i_i", int_mxmultel, int_bm_wrap},
-  {"dadd_i_i" ,   int_mxdadd , int_bm_wrap},
-  {"dadd_i_m" ,   int_mxdadd , int_bm_wrap},
-  {"dadd_m_i" ,   int_mxdadd , int_bm_wrap},
-  {"div_i_i" ,  int_mxdiv, int_bm_wrap},
-  {"div_i_m" ,  int_mxdiv, int_bm_wrap},
-  {"div_m_i" ,  int_mxdiv, int_bm_wrap},
-  {"dstd_i_i" ,  int_mxkron , int_bm_wrap}, /* operator:  .*. */
-  {"dstd_i_m" ,  int_mxkron , int_bm_wrap}, /* operator:  .*. */
-  {"dstd_m_i" ,  int_mxkron , int_bm_wrap}, /* operator:  .*. */
-  {"minus_i",int_mxminus,int_bm_wrap},
-  {"minus_i_i",   int_mxdsub, int_bm_wrap},
-  {"minus_i_m",   int_mxdsub, int_bm_wrap},
-  {"minus_m_i",   int_mxdsub, int_bm_wrap},
-  {"mult_i_i" ,  int_mxmult, int_bm_wrap},
-  {"mult_i_m" ,  int_mxmult, int_bm_wrap},
-  {"mult_m_i" ,  int_mxmult, int_bm_wrap},
-  {"plus_i_i",   int_mxdadd, int_bm_wrap},
-  {"plus_i_m",   int_mxdadd, int_bm_wrap},
-  {"plus_m_i",   int_mxdadd, int_bm_wrap},
-  {"prod_i" ,  int_mxprod , int_bm_wrap},
-  {"prod_i_s" ,  int_mxprod , int_bm_wrap},
-  {"sum_i" ,  int_mxsum , int_bm_wrap},
-  {"sum_i_s" ,  int_mxsum , int_bm_wrap},
+static OpWrapTab M2iMatrix_func[]={
+  {"dbs_i_m", int_imatrix_backdivel, int_m2i_wrap},
+  {"dbs_m_i", int_imatrix_backdivel, int_m2i_wrap},
+  {"dst_m_i", int_imatrix_multel, int_m2i_wrap},
+  {"dst_i_m", int_imatrix_multel, int_m2i_wrap},
+  {"dadd_i_m" ,   int_imatrix_dadd , int_m2i_wrap},
+  {"dadd_m_i" ,   int_imatrix_dadd , int_m2i_wrap},
+  {"div_i_m" ,  int_imatrix_div, int_m2i_wrap},
+  {"div_m_i" ,  int_imatrix_div, int_m2i_wrap},
+  {"dsl_m_i", int_imatrix_divel, int_m2i_wrap},
+  {"dsl_i_m", int_imatrix_divel, int_m2i_wrap},
+  {"dstd_i_m" ,  int_imatrix_kron , int_m2i_wrap},
+  {"dstd_m_i" ,  int_imatrix_kron , int_m2i_wrap},
+  {"minus_i_m",   int_imatrix_dsub, int_m2i_wrap},
+  {"minus_m_i",   int_imatrix_dsub, int_m2i_wrap},
+  {"mult_i_m" ,  int_imatrix_mult, int_m2i_wrap},
+  {"mult_m_i" ,  int_imatrix_mult, int_m2i_wrap},
+  {"plus_i_m",  int_imatrix_dadd , int_m2i_wrap},
+  {"plus_m_i",  int_imatrix_dadd , int_m2i_wrap},
   {(char *) 0, NULL,NULL},
 };
 
 
-int XXB2mMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int M2iMatrix_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(B2mMatrix_func[i].wrapper))(stack,rhs,opt,lhs,B2mMatrix_func[i].fonc);
+  return (*(M2iMatrix_func[i].wrapper))(stack,rhs,opt,lhs,M2iMatrix_func[i].fonc);
 }
 
 /* used to walk through the interface table 
    (for adding or removing functions) **/
 
-void XXB2mMatrix_Interf_Info(int i, char **fname, function (**f))
+void M2iMatrix_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = B2mMatrix_func[i].name;
-  *f = B2mMatrix_func[i].fonc;
+  *fname = M2iMatrix_func[i].name;
+  *f = M2iMatrix_func[i].fonc;
 }
 
 

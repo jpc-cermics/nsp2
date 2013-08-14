@@ -398,7 +398,7 @@ extern int nsp_imatrix_mult_tt(NspIMatrix *A, NspIMatrix *B);
 extern int nsp_imatrix_mult_el(NspIMatrix *A, NspIMatrix *B); 
 extern int nsp_imatrix_mult_scalar(NspIMatrix *Mat1, NspIMatrix *Mat2); 
 extern void nsp_imatrix_modulo(NspIMatrix *A,NspIMatrix *B); 
-extern void nsp_imatrix_idiv(NspIMatrix *A, int n); 
+extern void nsp_imatrix_idiv(NspIMatrix *A,NspIMatrix *B);
 extern void nsp_imatrix_mod(NspIMatrix *x, NspIMatrix *y);
 extern void nsp_imatrix_int(NspIMatrix *A); 
 extern int nsp_imatrix_sign(NspIMatrix *A); 
