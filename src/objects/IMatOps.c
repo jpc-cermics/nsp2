@@ -1673,11 +1673,11 @@ int nsp_imatrix_pow_scalarmat(NspIMatrix *B, NspIMatrix *A)
   return FAIL;
 }
 
+#endif 
+
 /*
  *  A Set of term to term function on Matrices (complex or real)
  */
-
-
 
 /**
  * nsp_imatrix_pow_tt:
@@ -1705,35 +1705,36 @@ int nsp_imatrix_pow_tt(NspIMatrix *A, NspIMatrix *B)
  * Return value: %OK or %FAIL
  **/
 
+#define IMAT_POWS(name,type,arg)					\
+  for ( i = 0 ; i < A->mn ; i++ )					\
+    {									\
+      nsp_int_union z,p,x;						\
+      z.name = 1;							\
+      p.name = B->name[arg];						\
+      x.name = A->name[i];						\
+      if (  B->name[arg] < 0 ) { goto err;}				\
+      else								\
+	while ( p.name > 1 )						\
+	  {								\
+	    if ( p.name % 2 == 1 )					\
+	      z.name *= x.name;						\
+	    x.name *= x.name;						\
+	    p.name = p.name/2;						\
+	  }								\
+      A->name[i]= z.name*x.name;					\
+    } break;
+
 int nsp_imatrix_pow_el(NspIMatrix *A, NspIMatrix *B)
 {
+  int i;
   if ( A->itype != B->itype ) 
     {
       Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
-
   if (SameDim(A,B))
     {
-      int i;
-      Boolean rflag = TRUE;
-      for ( i = 0 ; i < A->mn ; i++ ) 
-	{
-	  if ( rflag )
-	    if ( A->R[i] >= 0.0 )
-	      A->R[i] = pow(A->R[i],B->R[i]);
-	    else if ( floor(B->R[i]) == B->R[i] ) 
-	      /* exposant is integer => result is still real */
-	      A->R[i] = pow(A->R[i],B->R[i]);
-	    else
-	      {
-		if (nsp_imatrix_complexify(A,0.00) == FAIL ) return FAIL;
-		nsp_pow_cd(&A->C[i],B->R[i],&A->C[i]);
-		rflag = FALSE;
-	      }
-	  else
-	    nsp_pow_cd_or_ci(&A->C[i],B->R[i],&A->C[i]);
-	}
+      NSP_ITYPE_SWITCH(A->itype,IMAT_POWS,i);
       return OK;
     }
   else 
@@ -1741,6 +1742,9 @@ int nsp_imatrix_pow_el(NspIMatrix *A, NspIMatrix *B)
       Scierror("Error:\tArguments must have the same size\n");
       return FAIL;
     }
+ err: 
+  Scierror("Error: exponent must be positive for int matrices\n");
+  return FAIL;
 }
 
 /**
@@ -1756,48 +1760,19 @@ int nsp_imatrix_pow_el(NspIMatrix *A, NspIMatrix *B)
 int nsp_imatrix_pow_scalar(NspIMatrix *A, NspIMatrix *B)
 {
   int i;
-  if(A->rc_type == 'r' ) 
+  if ( A->itype != B->itype ) 
     {
-      if ( B->rc_type == 'r') 
-	{
-	  if ( B->R[0] == 2.0 )
-	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] *= A->R[i];
-	  else if ( B->R[0] == 3.0 )
-	    for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = A->R[i]*A->R[i]*A->R[i];
-	  else if ( B->R[0] == floor(B->R[0]) )  /* integer exponent */
-	    {
-	      if ( fabs(B->R[0]) <= 65536.0 ) 
-		/* use power algorithm (2^16 = 65536 so less than 16 multiplications, */
-		/* so the relative error is bounded by 16 epsm)                       */
-		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = nsp_pow_di(A->R[i], (int) B->R[0]);
-	      else
-		for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = pow(A->R[i], B->R[0]);
-	    }
-	  else   /* A.^p  with p real or p a too big integer */
-	    {
-	      Boolean rflag = TRUE;
-	      for ( i = 0 ; i < A->mn ; i++ ) 
-		{
-		  if ( rflag )
-		    if ( A->R[i] >= 0.0 )
-		      A->R[i] = pow(A->R[i],B->R[0]);
-		    else
-		      {
-			if (nsp_imatrix_complexify(A,0.00) == FAIL ) return FAIL;
-			nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
-			rflag = FALSE;
-		      }
-		  else
-		    nsp_pow_cd(&A->C[i],B->R[0],&A->C[i]);
-		}
-	    }
-	}
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
     }
+  NSP_ITYPE_SWITCH(A->itype,IMAT_POWS,0);
   return OK;
+ err: 
+  Scierror("Error: exponent must be positive for int matrices\n");
+  return FAIL;
 }
 
-#endif 
-
+#undef IMAT_POWS
 
 /**
  * nsp_imatrix_pow_scalarm:
@@ -1809,23 +1784,15 @@ int nsp_imatrix_pow_scalar(NspIMatrix *A, NspIMatrix *B)
  * Return value: %OK or %FAIL.
  **/
 
-int nsp_imatrix_pow_scalarm(NspIMatrix *A, NspIMatrix *B)
-{
-  int i, err=FALSE;
-  if ( A->itype != B->itype ) 
-    {
-      Scierror("Error: arguments must have the same integer type\n");
-      return FAIL;
-    }
 #define IMAT_POWS(name,type,arg)					\
-  {if (  B->name[0] < 0 ) { err=TRUE;}					\
-  else									\
-    for ( i = 0 ; i < A->mn ; i++ )					\
-      {									\
-	nsp_int_union z,p,x;						\
-	z.name = 1;							\
-	p.name = B->name[0];						\
-	x.name = A->name[i];						\
+  for ( i = 0 ; i < A->mn ; i++ )					\
+    {									\
+      nsp_int_union z,p,x;						\
+      z.name = 1;							\
+      p.name = A->name[i];						\
+      x.name = B->name[0];						\
+      if (  A->name[i] < 0 ) { goto err;}				\
+      else								\
 	while ( p.name > 1 )						\
 	  {								\
 	    if ( p.name % 2 == 1 )					\
@@ -1833,18 +1800,25 @@ int nsp_imatrix_pow_scalarm(NspIMatrix *A, NspIMatrix *B)
 	    x.name *= x.name;						\
 	    p.name = p.name/2;						\
 	  }								\
-	A->name[i]= z.name*x.name;					\
-      }									\
-  break;}
-  NSP_ITYPE_SWITCH(A->itype,IMAT_POWS,"");
-#undef IMAT_POWS
-  if (err == TRUE) 
+      A->name[i]= z.name*x.name;					\
+    } break;
+
+int nsp_imatrix_pow_scalarm(NspIMatrix *A, NspIMatrix *B)
+{
+  int i;
+  if ( A->itype != B->itype ) 
     {
-      Scierror("Error: exponent must be positive for int matrices\n");
+      Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
+  NSP_ITYPE_SWITCH(A->itype,IMAT_POWS,"");
   return OK;
+ err: 
+  Scierror("Error: exponent must be positive for int matrices\n");
+  return FAIL;
 }
+
+#undef IMAT_POWS
 
 
 

@@ -2398,7 +2398,7 @@ int_imatrix_dsub (Stack stack, int rhs, int opt, int lhs)
 /*
  * A=nsp_imatrix_pow_el(A,B), A.^ B 
  */
-#if 0
+
 int
 int_imatrix_powel (Stack stack, int rhs, int opt, int lhs)
 {
@@ -2406,7 +2406,7 @@ int_imatrix_powel (Stack stack, int rhs, int opt, int lhs)
 			      nsp_imatrix_pow_scalar, nsp_imatrix_pow_el,
 			      nsp_imatrix_pow_scalarm);
 }
-#endif 
+
 
 /*
  * A=DivEl(A,B),  A ./ B 
@@ -3536,7 +3536,6 @@ static OpTab IMatrix_func[]={
   {"iand_i", int_imatrix_iand},
   {"ior_i", int_imatrix_ior},
   {"ishift_i", int_imatrix_ishift},
-  /* XXX */
   {"ieye", int_imatrix_ieye},
   {"iones", int_imatrix_iones},
   {"izeros", int_imatrix_izeros},
@@ -3559,18 +3558,19 @@ static OpTab IMatrix_func[]={
   {"dbs_i_i", int_imatrix_backdivel},
   {"sign_i", int_imatrix_sign},
   {"idiv_i_i", int_imatrix_idiv},
+  {"dh_i_i", int_imatrix_powel},
+  {"issorted_i", int_imatrix_issorted},
+  {"div_i_i", int_imatrix_div},
 
 #if 0
   {"bdiv_i_i", int_imatrix_bdiv},
   {"int_i", int_imatrix_int},
   {"hat_i_i", int_imatrix_pow},
-  {"dh_i_i", int_imatrix_powel},
-  {"div_i_i", int_imatrix_div},
   {"mfind_i", int_imatrix_mfind},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
 #endif 
-  {"issorted_i", int_imatrix_issorted},
+
   {(char *) 0, NULL}
 };
 
