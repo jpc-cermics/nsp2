@@ -27,7 +27,7 @@
 #include <nsp/matrix.h> 
 #include <nsp/bmatrix.h> 
 #include <nsp/imatrix.h> 
-#include <nsp/matint.h> 
+/* #include <nsp/matint.h>  */
 
 #include "nsp/cnumeric.h"
 #include "nsp/matutil.h"
@@ -1483,9 +1483,8 @@ NspIMatrix *nsp_imatrix_zeros(int m, int n, nsp_itype itype)
  * This routine computes @A^@B where @B must be a scalar (this must
  * be verified by the calling routine (*)). The matrix @A is modified 
  * and hold the final result (if OK is returned).  @A must be
- * square (if not FAIL is returned). When @A is not a scalar
- * this routine works only if @B is an integer (and when @B is
- * a negative integer, @A must be numerically invertible).
+ * square (if not FAIL is returned). This routine works only if @B is a
+ * positive integer. 
  * 
  * (*) The operation A^B is done with the generic interface int_mx_mopscal
  *     which branches to one of the 3 routines:
@@ -1495,11 +1494,20 @@ NspIMatrix *nsp_imatrix_zeros(int m, int n, nsp_itype itype)
  *
  * Return value: %OK or %FAIL
  **/
-#if 0 
+
+static void nsp_imatrix_mult1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *C);
+static void nsp_imatrix_copy_contents(NspIMatrix *A, NspIMatrix *B);
+
 int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B) 
 {
-  int p, i, oddflag=0;
+  uint p, i, oddflag=0;
   int A_is_square = A->m==A->n;
+
+  if ( A->itype != B->itype ) 
+    {
+      Scierror("Error: arguments must have the same integer type\n");
+      return FAIL;
+    }
 
   if ( ! A_is_square )
     {
@@ -1507,74 +1515,105 @@ int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B)
       return FAIL;
     }
 
-  if ( A->m == 1 ) /* A is a scalar */
-    return nsp_imatrix_pow_scalar(A,B);
-
-  else if ( B->rc_type == 'c' || B->R[0] != floor(B->R[0]) )
+  if ( A->m == 1 )
     {
-      Scierror("Error:\t ^ operator is not currently implemented for non integer power\n");
-      return FAIL;
+      /* A is a scalar */
+      return nsp_imatrix_pow_scalar(A,B);
     }
-  
-  p = B->R[0];
+
+#define IMAT_I(name,type,arg) p= B->name[0]; break;
+  NSP_ITYPE_SWITCH(B->itype,IMAT_I,"");
+#undef IMAT_I
 
   if ( p == 0 )
     {
-      /* return identity matrix  
-       * FIXME : must we do something if A has Nan ? 
-       *(Matlab : nan^0 => nan but [nan nan;nan nan]^0 => Identity 
-       */
-      for ( i = 0 ; i < A->mn ; i++ ) A->R[i] = 0.0;
-      for ( i = 0 ; i < A->mn ; i+=A->m+1 ) A->R[i] = 1.0;
+      /* return identity matrix  */
+#define IMAT_I(name,type,arg)					\
+      for ( i = 0 ; i < A->mn ; i++ ) A->name[i] = 0.0;		\
+      for ( i = 0 ; i < A->mn ; i+=A->m+1 ) A->name[i] = 1.0;	\
+      break;
+      NSP_ITYPE_SWITCH(A->itype,IMAT_I,"");
+#undef IMAT_I
       return OK;
     }
 
-
   if ( p < 0 )
     {
-      if ( nsp_inv(A) == FAIL ) return FAIL;
-      p = -p;
+      Scierror("Error: exponent should be a positive integer\n");
+      return FAIL;
     }
 
   if ( p == 1 ) return OK;
-
+  
   /* now use the power algorithm */
   {
-    double alpha=1.0,beta=0.0;
-    double *temp = NULL, *oddmat = NULL;
-    if ( (temp = nsp_alloc_doubles(A->mn)) == NULL ) return FAIL;
+    NspIMatrix *temp, *oddmat;
+    if ( (temp = nsp_imatrix_create(NVOID,A->m,A->n,A->itype)) == NULLIMAT ) 
+      return FAIL;
     while ( p > 1 )
       {
 	if ( p % 2 == 1 )
 	  {
 	    if ( ! oddflag )
 	      {
-		if ( (oddmat = nsp_alloc_doubles(A->mn)) == NULL ) { FREE(temp); return FAIL; }
+		if ( (oddmat = nsp_imatrix_create(NVOID,A->m,A->n,A->itype)) == NULLIMAT ) 
+		  {
+		    nsp_imatrix_destroy(temp);return FAIL; 
+		  }
 		oddflag = 1;
-		memcpy(oddmat, A->R, A->mn*sizeof(double));
+		nsp_imatrix_copy_contents(A,oddmat);
 	      }
 	    else
 	      {
-		C2F(dgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->R,&A->m,oddmat,&A->m,
-			   &beta,temp,&A->m,1,1); 
-		memcpy(oddmat, temp, A->mn*sizeof(double));
+		/* temp = A*oddmat */
+		nsp_imatrix_mult1(A,oddmat,temp);
+		/* copy temp dans oddmat */
+		nsp_imatrix_copy_contents(temp,oddmat);
 	      }
 	  }
-	C2F(dgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->R,&A->m,A->R,&A->m,
-		   &beta,temp,&A->m,1,1); 
-	memcpy(A->R, temp, A->mn*sizeof(double));
+	/* temp = A*A */
+	nsp_imatrix_mult1(A,A,temp);
+	/* copy temp dans A */
+	nsp_imatrix_copy_contents(temp,A);
 	p = p/2;
       }
     if ( oddflag )
       {
-	C2F(dgemm)("N","N",&A->m,&A->m,&A->m,&alpha,A->R,&A->m,oddmat,&A->m,
-		   &beta,temp,&A->m,1,1); 
-	memcpy(A->R, temp, A->mn*sizeof(double));
-	FREE(oddmat);
+	/* temp = A*oddmat */
+	nsp_imatrix_mult1(A,oddmat,temp);
+	/* copy temp dans A */
+	nsp_imatrix_copy_contents(temp,A);
+	nsp_imatrix_destroy(oddmat);
       }
-    FREE(temp);
+    nsp_imatrix_destroy(temp);
   }
   return OK;
+}
+
+static void nsp_imatrix_copy_contents(NspIMatrix *A, NspIMatrix *B)
+{
+#define IMAT_CP(name,type,arg)  memcpy(B->name,A->name, A->mn*sizeof(type));break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_CP,"");
+#undef IMAT_CP
+}
+
+/* C = A*B */
+
+static void nsp_imatrix_mult1(NspIMatrix *A, NspIMatrix *B, NspIMatrix *C)
+{ 
+  int i,j,k;
+  /* A*B */
+#define IMAT_AC(name,type,arg)						\
+  for ( i=0 ; i < C->m ; i++)						\
+    for ( j=0 ; j < C->n ; j++)						\
+      {									\
+	C->name[i+(C->m)*j]=0;						\
+	for ( k=0 ; k < A->n ; k++)					\
+	  C->name[i+(C->m)*j] += A->name[i+k*A->m]*B->name[k+B->m*j];	\
+      }									\
+  break;
+  NSP_ITYPE_SWITCH(A->itype,IMAT_AC,"");
+#undef IMAT_AC
 }
 
 /**
@@ -1619,61 +1658,10 @@ int nsp_imatrix_pow_matmat(NspIMatrix *A, NspIMatrix *B)
 
 int nsp_imatrix_pow_scalarmat(NspIMatrix *B, NspIMatrix *A) 
 {
-  double a=0.0;
-  doubleC ac, acc;
-  char rc_flag;
-  int i;
-  NspIMatrix *C; /* used because A must not be modified : C will contain the scalar ln(a) */
-
-  if ( B->m != B->n )
-    {
-      Scierror("Error:\t in scalar^M, the exponent M must be a square matrix\n");
-      return FAIL;
-    }
-
-  if ( A->rc_type == 'r' )
-    { a = A->R[0]; rc_flag = 'r';}
-  else
-    { ac = A->C[0]; rc_flag = 'c';}
-
-  if ( (rc_flag == 'r' && a == 0.0) || (rc_flag == 'c' && ac.r == 0.0 && ac.i == 0.0) )  /* return nul matrix */
-    {
-      if ( B->rc_type == 'r' )
-	for ( i = 0 ; i < B->mn ; i++ ) B->R[i] = 0.0;
-      else
-	for ( i = 0 ; i < B->mn ; i++ ) { B->C[i].r = 0.0; B->C[i].i = 0.0; }  /* a voir */
-      return OK;
-    }
-
-  if ( rc_flag == 'r'  && a < 0.0 ) {ac.r = a; ac.i = 0.0; rc_flag = 'c';}
-
-  if ( (C = nsp_imatrix_create(NVOID,rc_flag,1,1)) == NULLIMAT ) return FAIL;
-
-  if ( rc_flag == 'c' )
-    {
-      acc = ac;
-      nsp_log_c(&acc, &ac);
-      C->C[0] = ac;
-    }
-  else
-    {
-      a = log(a);
-      C->R[0] = a;
-    }
-
-  if ( nsp_imatrix_mult_scalar(B, C) == FAIL ) goto err;
-
-  if ( nsp_expm(B) == FAIL ) goto err;
-
-  nsp_imatrix_destroy(C); 
-  return OK;
-
- err:
-  nsp_imatrix_destroy(C); 
+  Scierror("Error: scalar^A not implemented for int matrices\n");
   return FAIL;
 }
 
-#endif 
 
 /*
  *  A Set of term to term function on Matrices (complex or real)

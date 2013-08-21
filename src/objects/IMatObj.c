@@ -2393,7 +2393,16 @@ int_imatrix_dsub (Stack stack, int rhs, int opt, int lhs)
 
 }
 
+/*
+ * A=nsp_imatrix_pow(A,B), A^ B 
+ */
 
+static int int_imatrix_pow (Stack stack, int rhs, int opt, int lhs)
+{
+  return int_imatrix_mopscal(stack, rhs, opt, lhs,
+			     nsp_imatrix_pow_matscalar, nsp_imatrix_pow_matmat,
+			     nsp_imatrix_pow_scalarmat, IMatNoOp, 1);
+}
 
 /*
  * A=nsp_imatrix_pow_el(A,B), A.^ B 
@@ -2403,8 +2412,8 @@ int
 int_imatrix_powel (Stack stack, int rhs, int opt, int lhs)
 {
   return int_imatrix_mopscal_mtlb (stack, rhs, opt, lhs,
-			      nsp_imatrix_pow_scalar, nsp_imatrix_pow_el,
-			      nsp_imatrix_pow_scalarm);
+				   nsp_imatrix_pow_scalar, nsp_imatrix_pow_el,
+				   nsp_imatrix_pow_scalarm);
 }
 
 
@@ -2993,6 +3002,10 @@ nsp_string nsp_dec2base( guint64 n,const char *str_base )
   return str;
 }
 
+/* function dec2base 
+ * similar to octave but no padding with leading zeros 
+ */
+
 int int_dec2base(Stack stack, int rhs, int opt, int lhs)
 {
   nsp_string str=NULL;
@@ -3561,11 +3574,11 @@ static OpTab IMatrix_func[]={
   {"dh_i_i", int_imatrix_powel},
   {"issorted_i", int_imatrix_issorted},
   {"div_i_i", int_imatrix_div},
+  {"hat_i_i", int_imatrix_pow},
 
 #if 0
   {"bdiv_i_i", int_imatrix_bdiv},
   {"int_i", int_imatrix_int},
-  {"hat_i_i", int_imatrix_pow},
   {"mfind_i", int_imatrix_mfind},
   {"cross_i_i", int_imatrix_cross},
   {"dot_i_i", int_imatrix_dot},
