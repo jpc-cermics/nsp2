@@ -1500,7 +1500,8 @@ static void nsp_imatrix_copy_contents(NspIMatrix *A, NspIMatrix *B);
 
 int nsp_imatrix_pow_matscalar(NspIMatrix *A, NspIMatrix *B) 
 {
-  uint p, i, oddflag=0;
+  guint32 p=0;
+  int i, oddflag=0;
   int A_is_square = A->m==A->n;
 
   if ( A->itype != B->itype ) 
