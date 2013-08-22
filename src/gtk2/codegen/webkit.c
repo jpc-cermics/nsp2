@@ -2231,7 +2231,9 @@ NspSMatrix *get_file(const char *url, const char *proxy, const char *ca_file,
 			  SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_DECODER,
 			  SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_COOKIE_JAR,
 			  SOUP_SESSION_USER_AGENT, "get ",
+#ifdef SOUP_SESSION_ACCEPT_LANGUAGE_AUTO
 			  SOUP_SESSION_ACCEPT_LANGUAGE_AUTO, TRUE,
+#endif 
 			  /* SOUP_SESSION_USE_NTLM, ntlm, */
 			  NULL);
   if (proxy) 
@@ -2297,7 +2299,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2301 "webkit.c"
+#line 2303 "webkit.c"
 
 
 /*----------------------------------------------------
@@ -2341,7 +2343,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2345 "webkit.c"
+#line 2347 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));

@@ -164,7 +164,9 @@ NspSMatrix *get_file(const char *url, const char *proxy, const char *ca_file,
 			  SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_CONTENT_DECODER,
 			  SOUP_SESSION_ADD_FEATURE_BY_TYPE, SOUP_TYPE_COOKIE_JAR,
 			  SOUP_SESSION_USER_AGENT, "get ",
+#ifdef SOUP_SESSION_ACCEPT_LANGUAGE_AUTO
 			  SOUP_SESSION_ACCEPT_LANGUAGE_AUTO, TRUE,
+#endif 
 			  /* SOUP_SESSION_USE_NTLM, ntlm, */
 			  NULL);
   if (proxy) 
