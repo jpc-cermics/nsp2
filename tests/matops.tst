@@ -1,5 +1,5 @@
 // -*- Mode: scilab -*- 
-// Copyright (C) 2005-2009 J.P Chancelier Cermics/Enpc
+// Copyright (C) 2005-2013 J.P Chancelier Cermics/Enpc
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -345,7 +345,7 @@ for i=1:6, m=M(i);n=N(i);
   if testN(cumsum(A,1),McumsumG(A,1),1.e-8) then pause,end
 end 
 
-//----------test of cumprof 
+//----------test of cumprod
 
 //cumprod
 a=[1 2;-3 4;5,-6];

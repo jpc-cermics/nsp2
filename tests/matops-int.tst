@@ -260,4 +260,5 @@ end
 //tan et atan
 //expm
 //sqrt
+// issymmetric 
 

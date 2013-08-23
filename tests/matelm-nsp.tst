@@ -38,24 +38,25 @@ if size(a,'c')<>1 then pause,end
 if size(a+a,'c')<>1 then pause,end
 [m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
 
-//TOBEDONE a=[1 2;3 4]+%s;
-//TOBEDONE if or(size(a)<>[2 2]) then pause,end
-//TOBEDONE if or(size(a+0)<>[2 2]) then pause,end
-//TOBEDONE if size(a,'*')<>4 then pause,end
-//TOBEDONE if size(a+0,'*')<>4 then pause,end
-//TOBEDONE [m,n]=size(a);if or([m,n]<>[2 2]) then pause,end
-//TOBEDONE 
-//TOBEDONE a=[1;2]+%s;
-//TOBEDONE if size(a,1)<>2 then pause,end
-//TOBEDONE if size(a+0,1)<>2 then pause,end
-//TOBEDONE if size(a,'r')<>2 then pause,end
-//TOBEDONE if size(a+0,'r')<>2 then pause,end
-//TOBEDONE if size(a,2)<>1 then pause,end
-//TOBEDONE if size(a+0,2)<>1 then pause,end
-//TOBEDONE if size(a,'c')<>1 then pause,end
-//TOBEDONE if size(a+0,'c')<>1 then pause,end
-//TOBEDONE [m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
-//TOBEDONE 
+
+// polynomials 
+a=[1 2;3 4]+poly(0);
+if or(size(a)<>[2 2]) then pause,end
+if or(size(a+0)<>[2 2]) then pause,end
+if size(a,'*')<>4 then pause,end
+if size(a+0,'*')<>4 then pause,end
+[m,n]=size(a);if or([m,n]<>[2 2]) then pause,end
+ 
+a=[1;2]+ poly(0);
+if size(a,1)<>2 then pause,end
+if size(a+0,1)<>2 then pause,end
+if size(a,'r')<>2 then pause,end
+if size(a+0,'r')<>2 then pause,end
+if size(a,2)<>1 then pause,end
+if size(a+0,2)<>1 then pause,end
+if size(a,'c')<>1 then pause,end
+if size(a+0,'c')<>1 then pause,end
+[m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
 
 a=[1 2;3 4]==1;
 if or(size(a)<>[2 2]) then pause,end
@@ -76,19 +77,19 @@ if size(a|a,'c')<>1 then pause,end
 [m,n]=size(a);if or([m,n]<>[2 1]) then pause,end
 
 //eye
-if or(eye_new(2,2)<>[1 0;0 1]) then pause,end
-if or(eye_new(2,1)<>[1;0]) then pause,end
+if or(eye(2,2)<>[1 0;0 1]) then pause,end
+if or(eye(2,1)<>[1;0]) then pause,end
 n=2;
-if or(eye_new(n,2)<>[1 0;0 1]) then pause,end
-if or(eye_new(2,n)<>[1 0;0 1]) then pause,end
-if or(eye_new(n,n)<>[1 0;0 1]) then pause,end
-//TOBEDONE if or(size(eye(size()))<>[-1 -1]) then pause,end
+if or(eye(n,2)<>[1 0;0 1]) then pause,end
+if or(eye(2,n)<>[1 0;0 1]) then pause,end
+if or(eye(n,n)<>[1 0;0 1]) then pause,end
+
 a=[1 2;3 4];
 if or(eye(size(a))<>[1 0;0 1]) then pause,end
 if or(eye(size(a+0))<>[1 0;0 1]) then pause,end
-//TOBEDONE a=[1 2;3 4]+%s;
-//TOBEDONE if or(eye(size(a))<>[1 0;0 1]) then pause,end
-//TOBEDONE if or(eye(size(a+0))<>[1 0;0 1]) then pause,end
+a=[1 2;3 4]+poly(0);
+if or(eye(size(a))<>[1 0;0 1]) then pause,end
+if or(eye(size(a+0))<>[1 0;0 1]) then pause,end
 a=string([1 2;3 4]);
 if or(eye(size(a))<>[1 0;0 1]) then pause,end
 if or(eye(size(a+a))<>[1 0;0 1]) then pause,end
@@ -109,9 +110,9 @@ if ones(size([]))<>[] then pause,end
 a=[1 2;3 4];
 if or(ones(size(a))<>[1 1;1 1]) then pause,end
 if or(ones(size(a+0))<>[1 1;1 1]) then pause,end
-//TOBEDONE a=[1 2;3 4]+%s;
-//TOBEDONE if or(ones(size(a))<>[1 1;1 1]) then pause,end
-//TOBEDONE if or(ones(size(a+0))<>[1 1;1 1]) then pause,end
+a=[1 2;3 4]+poly(0);
+if or(ones(size(a))<>[1 1;1 1]) then pause,end
+if or(ones(size(a+0))<>[1 1;1 1]) then pause,end
 a=string([1 2;3 4]);
 if or(ones(size(a))<>[1 1;1 1]) then pause,end
 if or(ones(size(a+a))<>[1 1;1 1]) then pause,end
@@ -130,15 +131,17 @@ if rand([])<>[] then pause,end
 a=[1 2;3 4];
 if or(size(rand(a))<>size(a)) then pause,end
 if or(size(rand(a+0))<>size(a)) then pause,end
-//TOBEDONE a=[1 2;3 4]+%s;
-//TOBEDONE if or(size(rand(a))<>size(a)) then pause,end
-//TOBEDONE if or(size(rand(a+0))<>size(a)) then pause,end
-a=string([1 2;3 4]);
-//TOBEDONE if or(size(rand(a))<>size(a)) then pause,end
-//TOBEDONE if or(size(rand(a+a))<>size(a)) then pause,end
-a=[1 2;3 4]>1;
-//TOBEDONE if or(size(rand(a))<>size(a)) then pause,end
-//TOBEDONE if or(size(rand(a+a))<>size(a)) then pause,end
+
+// Not supported but could be !
+// a=[1 2;3 4]+poly(0);
+// if or(size(rand(a))<>size(a)) then pause,end
+// if or(size(rand(a+0))<>size(a)) then pause,end
+// a=string([1 2;3 4]);
+// if or(size(rand(a))<>size(a)) then pause,end
+// if or(size(rand(a+a))<>size(a)) then pause,end
+// a=[1 2;3 4]>1;
+// if or(size(rand(a))<>size(a)) then pause,end
+// if or(size(rand(a+a))<>size(a)) then pause,end
 
 //diag
 if or(diag([1 2 3])<>[1 0 0;0 2 0;0 0 3]) then pause,end
@@ -234,14 +237,15 @@ a=[1+%i 2;-3 4;5,-6];
 if or(abs(a)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]) then pause,end
 
-//TOBEDONE a=[1 2;-3 4;5, -6]+%s;
-//TOBEDONE if or(abs(a)<>[1 2;3 4;5 6]+%s) then pause,end
-//TOBEDONE if or(abs(a+0)<>[1 2;3 4;5 6]+%s) then pause,end
-//TOBEDONE a=[1+%i 2;-3 4;5 -6]+%s;
-//TOBEDONE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
-//TOBEDONE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+%s) then pause,end
+//TOBEDONE a=[1 2;-3 4;5, -6]+poly(0);
+//TOBEDONE if or(abs(a)<>[1 2;3 4;5 6]+poly(0)) then pause,end
+//TOBEDONE if or(abs(a+0)<>[1 2;3 4;5 6]+poly(0)) then pause,end
+//TOBEDONE a=[1+%i 2;-3 4;5 -6]+poly(0);
+//TOBEDONE if or(abs(a)<>[sqrt(2) 2;3 4;5 6]+poly(0)) then pause,end
+//TOBEDONE if or(abs(a+0)<>[sqrt(2) 2;3 4;5 6]+poly(0)) then pause,end
 
 //real
+
 a=[1 2;-3 4;5, -6];
 if or(real(a)<>a) then pause,end
 if or(real(a+0)<>a) then pause,end
@@ -251,12 +255,12 @@ a=[1+%i 2;-3 4;5, -6];
 if or(real(a)<>[1 2;-3 4;5 ,-6]) then pause,end
 if or(real(a+0)<>[1 2;-3 4;5, -6]) then pause,end
 
-//TOBEDONE a=[1 2;-3 4;5, -6]+%s;
-//TOBEDONE if or(real(a)<>a) then pause,end
-//TOBEDONE if or(real(a+0)<>a) then pause,end
-//TOBEDONE a=[1+%i 2;-3 4;5 ,-6]+%s;
-//TOBEDONE if or(real(a)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
-//TOBEDONE if or(real(a+0)<>[1 2;-3 4;5 ,-6]+%s) then pause,end
+a=[1 2;-3 4;5, -6]+poly(0);
+if or(real(a)<>a) then pause,end
+if or(real(a+0)<>a) then pause,end
+a=[1+%i 2;-3 4;5 ,-6]+poly(0);
+if or(real(a)<>[1 2;-3 4;5 ,-6]+poly(0)) then pause,end
+if or(real(a+0)<>[1 2;-3 4;5 ,-6]+poly(0)) then pause,end
 
 //imag
 a=[1 2;-3 4;5 ,-6];
@@ -268,12 +272,12 @@ a=[1+%i 2;-3 4;5 ,-6];
 if or(imag(a)<>[1 0;0 0;0 0]) then pause,end
 if or(imag(a+0)<>[1 0;0 0;0 0]) then pause,end
 
-//TOBEDONE a=[1 2;-3 4;5 ,-6]+%s;
-//TOBEDONE if or(imag(a)<>0*a) then pause,end
-//TOBEDONE if or(imag(a+0)<>0*a) then pause,end
-//TOBEDONE a=[1+%i 2;-3 4;5 ,-6]+%s;
-//TOBEDONE if or(imag(a)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
-//TOBEDONE if or(imag(a+0)<>[poly(1,'s','c') 0;0 0;0 0]) then pause,end
+a=[1 2;-3 4;5 ,-6]+poly(0);
+if or(imag(a)<>0*a) then pause,end
+if or(imag(a+0)<>0*a) then pause,end
+a=[1+%i 2;-3 4;5 ,-6]+poly(0);
+if or(imag(a)<>[poly(1,'x','c') 0;0 0;0 0]) then pause,end
+if or(imag(a+0)<>[poly(1,'x','c') 0;0 0;0 0]) then pause,end
 
 //conj
 a=[1 2;-3 4;5,-6];
@@ -285,12 +289,12 @@ a=[1+%i 2;-3 4;5,-6];
 if or(conj(a)<>[1-%i 2;-3 4;5,-6]) then pause,end
 if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]) then pause,end
 
-//TOBEDONE a=[1 2;-3 4;5,-6]+%s;
-//TOBEDONE if or(conj(a)<>a) then pause,end
-//TOBEDONE if or(conj(a+0)<>a) then pause,end
-//TOBEDONE a=[1+%i 2;-3 4;5,-6]+%s;
-//TOBEDONE if or(conj(a)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
-//TOBEDONE if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]+%s) then pause,end
+ a=[1 2;-3 4;5,-6]+poly(0);
+ if or(conj(a)<>a) then pause,end
+ if or(conj(a+0)<>a) then pause,end
+ a=[1+%i 2;-3 4;5,-6]+poly(0);
+ if or(conj(a)<>[1-%i 2;-3 4;5,-6]+poly(0)) then pause,end
+ if or(conj(a+0)<>[1-%i 2;-3 4;5,-6]+poly(0)) then pause,end
 
 //int
 a=[1.2 2.5;-3.4 4.5;5.8,-6.2];
@@ -300,12 +304,12 @@ a=[1.2+2.5*%i 2.5;-3.4 4.5;5.8,-6.2];
 if or(int(a)<>[1+2*%i 2;-3 4;5,-6]) then pause,end
 if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]) then pause,end
 
-//TOBEDONE a=[1.2 2.5;-3.4 4.5;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(int(a)<>[1 2;-3 4;5,-6]+%s) then pause,end
-//TOBEDONE if or(int(a+0)<>[1 2;-3 4;5,-6]+%s) then pause,end
-//TOBEDONE a=[1.2+2.5*%i 2.5;-3.4 4.5;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(int(a)<>[1+2*%i 2;-3 4;5,-6]+%s) then pause,end
-//TOBEDONE if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]+%s) then pause,end
+ a=[1.2 2.5;-3.4 4.5;5.8,-6.2]+1.1*poly(0);
+ if or(int(a)<>[1 2;-3 4;5,-6]+poly(0)) then pause,end
+ if or(int(a+0)<>[1 2;-3 4;5,-6]+poly(0)) then pause,end
+ a=[1.2+2.5*%i 2.5;-3.4 4.5;5.8,-6.2]+1.1*poly(0);
+ if or(int(a)<>[1+2*%i 2;-3 4;5,-6]+poly(0)) then pause,end
+ if or(int(a+0)<>[1+2*%i 2;-3 4;5,-6]+poly(0)) then pause,end
 
 if int([])<>[] then pause,end
 a=[];if int(a)<>[] then pause,end
@@ -318,12 +322,12 @@ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(round(a)<>[1+3*%i 3;-3 5;6,-6]) then pause,end
 if or(round(a+0)<>[1+3*%i 3;-3 5;6,-6]) then pause,end
 
-//TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(round(a)<>[1 3;-3 5;6,-6]+%s) then pause,end
-//TOBEDONE if or(round(a+0)<>[1 3;-3 5;6,-6]+%s) then pause,end
-//TOBEDONE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(round(a)<>[1+3*%i 3;-3 5;6,-6]+%s) then pause,end
-//TOBEDONE if or(round(a+0)<>[1+3*%i 3;-3 5;6,-6]+%s) then pause,end
+ a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*poly(0);
+ if or(round(a)<>[1 3;-3 5;6,-6]+poly(0)) then pause,end
+ if or(round(a+0)<>[1 3;-3 5;6,-6]+poly(0)) then pause,end
+ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*poly(0);
+ if or(round(a)<>[1+3*%i 3;-3 5;6,-6]+poly(0)) then pause,end
+ if or(round(a+0)<>[1+3*%i 3;-3 5;6,-6]+poly(0)) then pause,end
 
 if round([])<>[] then pause,end
 a=[];if round(a)<>[] then pause,end
@@ -336,12 +340,12 @@ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(ceil(a)<>[2+3*%i 3;-3 5;6,-6]) then pause,end
 if or(ceil(a+0)<>[2+3*%i 3;-3 5;6,-6]) then pause,end
 
-//TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(ceil(a)<>[2 3;-3 5;6,-6]+2*%s) then pause,end
-//TOBEDONE if or(ceil(a+0)<>[2 3;-3 5;6,-6]+2*%s) then pause,end
-//TOBEDONE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(ceil(a)<>[2+3*%i 3;-3 5;6,-6]+2*%s) then pause,end
-//TOBEDONE if or(ceil(a+0)<>[2+3*%i 3;-3 5;6,-6]+2*%s) then pause,end
+ a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*poly(0);
+ if or(ceil(a)<>[2 3;-3 5;6,-6]+2*poly(0)) then pause,end
+ if or(ceil(a+0)<>[2 3;-3 5;6,-6]+2*poly(0)) then pause,end
+ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*poly(0);
+ if or(ceil(a)<>[2+3*%i 3;-3 5;6,-6]+2*poly(0)) then pause,end
+ if or(ceil(a+0)<>[2+3*%i 3;-3 5;6,-6]+2*poly(0)) then pause,end
 
 if ceil([])<>[] then pause,end
 a=[];if ceil(a)<>[] then pause,end
@@ -354,20 +358,20 @@ if or(floor(a+0)<>[1 2;-4 4;5, -7]) then pause,end
 a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2];
 if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
 if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]) then pause,end
-//TOBEDONE a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(floor(a)<>[1 2;-4 4;5, -7]+%s) then pause,end
-//TOBEDONE if or(floor(a+0)<>[1 2;-4 4;5 ,-7]+%s) then pause,end
-//TOBEDONE a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*%s;
-//TOBEDONE if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]+%s) then pause,end
-//TOBEDONE if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]+%s) then pause,end
+ a=[1.2 2.51;-3.4 4.52;5.8,-6.2]+1.1*poly(0);
+ if or(floor(a)<>[1 2;-4 4;5, -7]+poly(0)) then pause,end
+ if or(floor(a+0)<>[1 2;-4 4;5 ,-7]+poly(0)) then pause,end
+ a=[1.2+2.51*%i 2.52;-3.4 4.52;5.8,-6.2]+1.1*poly(0);
+ if or(floor(a)<>[1+2*%i 2;-4 4;5, -7]+poly(0)) then pause,end
+ if or(floor(a+0)<>[1+2*%i 2;-4 4;5, -7]+poly(0)) then pause,end
 
 if floor([])<>[] then pause,end
 a=[];if floor(a)<>[] then pause,end
 //sign
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
 if or(sign(a)<>[1 1;-1 1;1, -1]) then pause,end
-//TOBEDONEa=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
-//TOBEDONE if norm(sign(a)-[sqrt(2)/2*(1+%i) 1;-1 1;1 -1])>10*eps then pause,end
+a=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
+if norm(sign(a)-[sqrt(2)/2*(1+%i) 1;-1 1;1 -1])>10*eps then pause,end
 if sign([])<>[] then pause,end
 a=[];if sign(a)<>[] then pause,end
 
@@ -419,12 +423,12 @@ a=[];if atan(a,a)<>[] then pause,end
 a=[];if atan([],a)<>[] then pause,end
 
 //expm
- a=[0 2;0 0];
- if norm(expm(a)-[1 2;0 1])>10*eps then pause,end
- a=[0 2*%i;0 0];
- if norm(expm(a)-[1 2*%i;0 1])>10*eps then pause,end
- if expm([])<>[] then pause,end
- a=[];if expm(a)<>[] then pause,end
+a=[0 2;0 0];
+if norm(expm(a)-[1 2;0 1])>10*eps then pause,end
+a=[0 2*%i;0 0];
+if norm(expm(a)-[1 2*%i;0 1])>10*eps then pause,end
+if expm([])<>[] then pause,end
+a=[];if expm(a)<>[] then pause,end
 
 //sqrt
 a=[1.2 2.51;-3.4 4.52;5.8,-6.2];
@@ -433,7 +437,6 @@ if norm(sqrt(a+0).^2-a)>100*eps then pause,end
 a=[1+%i 2.51;-3.4 4.52;5.8,-6.2];
 if norm(sqrt(a).^2-a)>100*eps then pause,end
 if norm(sqrt(a+0).^2-a)>100*eps then pause,end
-
 if sqrt([])<>[] then pause,end
 a=[];if sqrt(a)<>[] then pause,end
 
@@ -515,86 +518,74 @@ n='c';
 if ~isempty(sum(a,n)) then pause,end
 if ~isempty(sum([],n)) then pause,end
 
-// // sum -sparse 
-// a=sparse([1 2;-3 4;5,-6]);
-// // les comparaisons sur les sparses n'existent pas encore 
-// // A FINIR 
-// if full(sum(a))<>3 then pause,end
-// if full(sum(a+0))<>3 then pause,end
+//sum -sparse 
+// XXXX: rajouter les comparaisons sur les sparses
+a=sparse([1 2;-3 4;5,-6]);
+if full(sum(a))<>3 then pause,end
+if full(sum(a+sparse(0)))<>3 then pause,end
 
-// if or(full(sum(a,'r'))<>[3 0]) then pause,end
-// if or(full(sum(a+0,'r'))<>[3 0]) then pause,end
-// n='r';
-// if or(full(sum(a,n))<>[3 0]) then pause,end
-// if or(full(sum(a+0,n))<>[3 0]) then pause,end
-// if or(full(sum(a,'r'))<>[3 0]) then pause,end
-// if or(full(sum(a+0,'r'))<>[3 0]) then pause,end
-// n='r';
-// if or(full(sum(a,n))<>[3 0]) then pause,end
-// if or(full(sum(a+0,n))<>[3 0]) then pause,end
+if or(full(sum(a,'r'))<>[3 0]) then pause,end
+if or(full(sum(a+ sparse(0),'r'))<>[3 0]) then pause,end
+n='r';
+if or(full(sum(a,n))<>[3 0]) then pause,end
+if or(full(sum(a+ sparse(0),n))<>[3 0]) then pause,end
+if or(full(sum(a,'r'))<>[3 0]) then pause,end
+if or(full(sum(a+ sparse(0),'r'))<>[3 0]) then pause,end
+n='r';
+if or(full(sum(a,n))<>[3 0]) then pause,end
+if or(full(sum(a+ sparse(0),n))<>[3 0]) then pause,end
 
-// if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
-// if or(full(sum(a+0,'c'))<>[3;1;-1]) then pause,end
-// n='c';
-// if or(full(sum(a,n))<>[3;1;-1]) then pause,end
-// if or(full(sum(a+0,n))<>[3;1;-1]) then pause,end
-// if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
-// if or(full(sum(a+0,'c'))<>[3;1;-1]) then pause,end
-// n='c';
-// if or(full(sum(a,n))<>[3;1;-1]) then pause,end
-// if or(full(sum(a+0,n))<>[3;1;-1]) then pause,end
+if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
+if or(full(sum(a+ sparse(0),'c'))<>[3;1;-1]) then pause,end
+n='c';
+if or(full(sum(a,n))<>[3;1;-1]) then pause,end
+if or(full(sum(a+ sparse(0),n))<>[3;1;-1]) then pause,end
+if or(full(sum(a,'c'))<>[3;1;-1]) then pause,end
+if or(full(sum(a+ sparse(0),'c'))<>[3;1;-1]) then pause,end
+n='c';
+if or(full(sum(a,n))<>[3;1;-1]) then pause,end
+if or(full(sum(a+ sparse(0),n))<>[3;1;-1]) then pause,end
 
-// a=sparse([1 2;-3 4;5,-6]+0*%i);
-// if or(full(sum(a))<>3+0*%i) then pause,end
-// if or(full(sum(a+0))<>3+0*%i) then pause,end
-// if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
-// if or(full(sum(a+0,'r'))<>[3 0]+0*%i) then pause,end
-// n='r';
-// if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
-// if or(full(sum(a+0,n))<>[3 0]+0*%i) then pause,end
-// if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
-// if or(full(sum(a+0,'r'))<>[3 0]+0*%i) then pause,end
-// n='r';
-// if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
-// if or(full(sum(a+0,n))<>[3 0]+0*%i) then pause,end
+a=sparse([1 2;-3 4;5,-6]+ sparse(0)*%i);
+if or(full(sum(a))<>3+ 0*%i) then pause,end
+if or(full(sum(a+sparse(0)))<>3+0*%i) then pause,end
+if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),'r'))<>[3 0]+0*%i) then pause,end
+n='r';
+if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),n))<>[3 0]+0*%i) then pause,end
+if or(full(sum(a,'r'))<>[3 0]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),'r'))<>[3 0]+0*%i) then pause,end
+n='r';
+if or(full(sum(a,n))<>[3 0]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),n))<>[3 0]+0*%i) then pause,end
 
-// if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
-// if or(full(sum(a+0,'c'))<>[3;1;-1]+0*%i) then pause,end
-// n='c';
-// if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
-// if or(full(sum(a+0,n))<>[3;1;-1]+0*%i) then pause,end
-// if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
-// if or(full(sum(a+0,'c'))<>[3;1;-1]+0*%i) then pause,end
-// n='c';
-// if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
-// if or(full(sum(a+0,n))<>[3;1;-1]+0*%i) then pause,end
+if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),'c'))<>[3;1;-1]+0*%i) then pause,end
+n='c';
+if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),n))<>[3;1;-1]+0*%i) then pause,end
+if or(full(sum(a,'c'))<>[3;1;-1]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),'c'))<>[3;1;-1]+0*%i) then pause,end
+n='c';
+if or(full(sum(a,n))<>[3;1;-1]+0*%i) then pause,end
+if or(full(sum(a+sparse(0),n))<>[3;1;-1]+0*%i) then pause,end
 
-// TEST DE FIN A FINIR 
+a=sparse([]);
+if full(sum(a))<>0 then pause,end
+if full(sum(a,'r'))<>[] then pause,end
+n='r';
+if full(sum(a,n))<>[] then pause,end
+if full(sum(a,'r'))<>[] then pause,end
+n='r';
+if full(sum(a,n))<>[] then pause,end
 
-// a=sparse([])
-// if full(sum(a))<>0 then pause,end
-// if full(sum([]))<>0 then pause,end
-// if full(sum(a,'r'))<>[] then pause,end
-// if full(sum([],'r'))<>[] then pause,end
-// n='r';
-// if full(sum(a,n))<>[] then pause,end
-// if full(sum([],n))<>[] then pause,end
-// if full(sum(a,'r'))<>[] then pause,end
-// if full(sum([],'r'))<>[] then pause,end
-// n='r';
-// if full(sum(a,n))<>[] then pause,end
-// if full(sum([],n))<>[] then pause,end
-
-// if full(sum(a,'c'))<>[] then pause,end
-// if full(sum([],'c'))<>[] then pause,end
-// n='c';
-// if full(sum(a,n))<>[] then pause,end
-// if full(sum([],n))<>[] then pause,end
-// if full(sum(a,'c'))<>[] then pause,end
-// if full(sum([],'c'))<>[] then pause,end
-// n='c';
-// if full(sum(a,n))<>[] then pause,end
-// if full(sum([],n))<>[] then pause,end
+if full(sum(a,'c'))<>[] then pause,end
+n='c';
+if full(sum(a,n))<>[] then pause,end
+if full(sum(a,'c'))<>[] then pause,end
+n='c';
+if full(sum(a,n))<>[] then pause,end
 
 //prod
 a=[1 2;-3 4;5,-6];
@@ -647,7 +638,7 @@ n='c';
 if or(prod(a,n)<>[2;-12;-30]+0*%i) then pause,end
 if or(prod(a+0,n)<>[2;-12;-30]+0*%i) then pause,end
 
-a=[]
+a=[];
 if prod(a)<>1 then pause,end
 if prod([])<>1 then pause,end
 // the following tests depend upon mtlb_mode ...
@@ -675,7 +666,6 @@ if prod([])<>1 then pause,end
 
 // Prod sur les sparses ? 
 // TOBEDONE 
-
 
 //cumsum
 a=[1 2;-3 4;5,-6];
@@ -753,16 +743,12 @@ n='c';
 if cumsum(a,n)<>[] then pause,end
 if cumsum([],n)<>[] then pause,end
 
-
 a=sparse([1 2;-3 4;5,-6]);
 //if cumsum(a)<> [1,5;-2,9;3,3] then pause,end
 //if cumsum(a+0*a)<> [1,5;-2,9;3,3] then pause,end
 a=sparse([1 2;-3 4;5,-6]+0*%i);
 //if cumsum(a)<>3+0*%i then pause,end
 //if cumsum(a+0*a)<>3+0*%i then pause,end
-
-
-
 
 //cumprod
 a=[1 2;-3 4;5,-6];
@@ -840,7 +826,6 @@ n='c';
 if cumprod(a,n)<>[] then pause,end
 if cumprod([],n)<>[] then pause,end
 
-
 a=sparse([1 2;-3 4;5,-6]);
 //if cumprod(a)<> [1 -30;-3 -120;-15 720] then pause,end
 //if cumprod(a+0*a)<> [1 -30;-3 -120;-15 720] then pause,end
@@ -896,8 +881,7 @@ if max(a,n)<>[] then pause,end
 if max([],n)<>[] then pause,end
 
 a=sparse([1 2;-3 4;5,-6]);
-//if max(a)<>5 then pause,end
-//if max(a+0*a)<>5 then pause,end
+if ~max(a).equal[sparse(5)] then pause,end
 a=sparse([1 2;-3 4;5,-6]+0*%i);
 //if max(a)<>[1 -30;-3 -120;-15 720]+0*%i then pause,end
 //if max(a+0*a)<>[1 -30;-3 -120;-15 720]+0*%i then pause,end
@@ -950,8 +934,7 @@ if min(a,n)<>[] then pause,end
 if min([],n)<>[] then pause,end
 
 a=sparse([1 2;-3 4;5,-6]);
-//if min(a)<>-6 then pause,end
-//if min(a+0*a)<>-6 then pause,end
+if ~min(a).equal[sparse(-6)] then pause,end
 a=sparse([1 2;-3 4;5,-6]+0*%i);
 //if min(a)<>[1 -30;-3 -120;-15 720]+0*%i then pause,end
 //if min(a+0*a)<>[1 -30;-3 -120;-15 720]+0*%i then pause,end
@@ -968,14 +951,14 @@ if or(k<>[1 5 3 4 2]) then pause,end
 if or(s<>[5 4 3 2 1]) then pause,end
 
 a=string([5 1 3 2 4])
-//if or(sort(a)<>string(1:5)) then pause,end
-//if or(sort(string([5 1 3 2 4]))<>string(1:5)) then pause,end
-[s,k]=sort(a);
-//if or(k<>[2 4 3 5 1]) then pause,end
-//if or(s<>string(1:5)) then pause,end
-[s,k]=sort(string([5 1 3 2 4]));
-//if or(k<>[2 4 3 5 1]) then pause,end
-//if or(s<>string(1:5)) then pause,end
+if or(sort(a,'g','i')<>string(1:5)) then pause,end
+if or(sort(a)<>string(5:-1:1)) then pause,end
+[s,k]=sort(a,'g','i');
+if or(k<>[2 4 3 5 1]) then pause,end
+if or(s<>string(1:5)) then pause,end
+[s,k]=sort(string([5 1 3 2 4]),'g','i');
+if or(k<>[2 4 3 5 1]) then pause,end
+if or(s<>string(1:5)) then pause,end
 
 a=[]
 if sort(a)<>[] then pause,end
@@ -1069,47 +1052,47 @@ if or(matrix(a+a,n,2)<>b+b) then pause,end
 if or(matrix(a+a,3,m)<>b+b) then pause,end
 if or(matrix(a+a,n,m)<>b+b) then pause,end
 
-//TOBEDONE a=[1 2 3 4 5 6]+%s;
-//TOBEDONE n=1;m=6;
-//TOBEDONE if or(matrix(a,1,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a,n,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a,1,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a,n,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,1,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,n,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,1,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,n,m)<>a) then pause,end
+a=[1 2 3 4 5 6]+poly(0);
+n=1;m=6;
+if or(matrix(a,1,6)<>a) then pause,end
+if or(matrix(a,n,6)<>a) then pause,end
+if or(matrix(a,1,m)<>a) then pause,end
+if or(matrix(a,n,m)<>a) then pause,end
+if or(matrix(a+0,1,6)<>a) then pause,end
+if or(matrix(a+0,n,6)<>a) then pause,end
+if or(matrix(a+0,1,m)<>a) then pause,end
+if or(matrix(a+0,n,m)<>a) then pause,end
 
-//TOBEDONE n=3;m=2; b=[1 4;2 5;3 6]+%s;
-//TOBEDONE if or(matrix(a,3,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a,n,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a,3,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a,n,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,3,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,n,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,3,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,n,m)<>b) then pause,end
-//TOBEDONE 
-//TOBEDONE a=[1+%i 2 3 4 5 6]+%s;
-//TOBEDONE n=1;m=6;
-//TOBEDONE if or(matrix(a,1,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a,n,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a,1,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a,n,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,1,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,n,6)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,1,m)<>a) then pause,end
-//TOBEDONE if or(matrix(a+0,n,m)<>a) then pause,end
-//TOBEDONE 
-//TOBEDONE n=3;m=2; b=[1+%i 4;2 5;3 6]+%s;
-//TOBEDONE if or(matrix(a,3,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a,n,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a,3,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a,n,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,3,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,n,2)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,3,m)<>b) then pause,end
-//TOBEDONE if or(matrix(a+0,n,m)<>b) then pause,end
+n=3;m=2; b=[1 4;2 5;3 6]+poly(0);
+if or(matrix(a,3,2)<>b) then pause,end
+if or(matrix(a,n,2)<>b) then pause,end
+if or(matrix(a,3,m)<>b) then pause,end
+if or(matrix(a,n,m)<>b) then pause,end
+if or(matrix(a+0,3,2)<>b) then pause,end
+if or(matrix(a+0,n,2)<>b) then pause,end
+if or(matrix(a+0,3,m)<>b) then pause,end
+if or(matrix(a+0,n,m)<>b) then pause,end
+
+a=[1+%i 2 3 4 5 6]+poly(0);
+n=1;m=6;
+if or(matrix(a,1,6)<>a) then pause,end
+if or(matrix(a,n,6)<>a) then pause,end
+if or(matrix(a,1,m)<>a) then pause,end
+if or(matrix(a,n,m)<>a) then pause,end
+if or(matrix(a+0,1,6)<>a) then pause,end
+if or(matrix(a+0,n,6)<>a) then pause,end
+if or(matrix(a+0,1,m)<>a) then pause,end
+if or(matrix(a+0,n,m)<>a) then pause,end
+
+n=3;m=2; b=[1+%i 4;2 5;3 6]+poly(0);
+if or(matrix(a,3,2)<>b) then pause,end
+if or(matrix(a,n,2)<>b) then pause,end
+if or(matrix(a,3,m)<>b) then pause,end
+if or(matrix(a,n,m)<>b) then pause,end
+if or(matrix(a+0,3,2)<>b) then pause,end
+if or(matrix(a+0,n,2)<>b) then pause,end
+if or(matrix(a+0,3,m)<>b) then pause,end
+if or(matrix(a+0,n,m)<>b) then pause,end
 
 //clean
 a=[1 1.d-12 1.d-5 2d8];
