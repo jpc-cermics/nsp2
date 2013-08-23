@@ -1215,13 +1215,21 @@ NspPMatrix * nsp_pmatrix_add_m(NspPMatrix *A,NspMatrix *B)
   int i;
   NspPMatrix *loc;
 #define PM_ADDM(s1,s2,i1,i2)						\
-  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1, A->var))== NULLPMAT)\
+  if ((loc =nsp_pmatrix_create(NVOID,s1,s2,NULL,-1, A->var))== NULLPMAT) \
     return(NULLPMAT);							\
-  for (i=0; i < loc->mn ; i++)						\
-    {									\
-      if ((loc->S[i] = nsp_polynom_add_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
-	return NULL;							\
-    }								
+  if ( B->rc_type == 'r' )						\
+    for (i=0; i < loc->mn ; i++)					\
+      {									\
+	if ((loc->S[i] = nsp_polynom_add_m(A->S[i1],B->R+i2,B->rc_type)) == NULL) \
+	  return NULL;							\
+      }									\
+  else									\
+    for (i=0; i < loc->mn ; i++)					\
+      {									\
+	if ((loc->S[i] = nsp_polynom_add_m(A->S[i1],B->C+i2,B->rc_type)) == NULL) \
+	  return NULL;							\
+      }			
+  
   if ( SameDim(A,B) ) 
     {
       PM_ADDM(A->m,A->n,i,i);
