@@ -654,6 +654,8 @@ extern void scicos_vumeter_block(scicos_block * block, int flag);
 
 MULTI_DECLARATION(absolute_valuei)
 MULTI_DECLARATION(switch2)
+/*MULTI_DECLARATION(derivz)*/
+extern void derivz_SCSREAL_COP(scicos_block * block, int flag);
 MULTI2_DECLARATION(logic2)
 MULTI2_DECLARATION(satur_dyn)
 
@@ -1165,6 +1167,7 @@ scicos_block_table  tabsim[] ={
   {"sliderm",(ScicosF) scicos_sliderm_block},    
   MULTI_DECLARATION1(absolute_valuei),  
   MULTI_DECLARATION1(switch2),
+  {"derivz_SCSREAL_COP",(ScicosF) derivz_SCSREAL_COP},
   MULTI2_DECLARATION1(logic2),
   MULTI2_DECLARATION1(satur_dyn), 
   {"vumeter",(ScicosF) scicos_vumeter_block},  
