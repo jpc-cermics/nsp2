@@ -23004,6 +23004,12 @@
    )
   )
 
+(define-method get_visible
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_visible")
+  (return-type "gboolean")
+  )
+  
 (define-virtual dispatch_child_properties_changed
   (of-object "GtkWidget")
   (return-type "none")

@@ -14,7 +14,7 @@ function demo_timeout(_button)
   
   // function to be executed when timeout 
   function [y]=timeout_test(args)
-    y=1
+    y=%t
     count=args(1).get_data['timeout_count'];
     count = count + 1;
     args(1).set_data[timeout_count=count];

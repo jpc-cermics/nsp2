@@ -1111,6 +1111,7 @@ extern function int_pixbuf_get_channel;
 
 
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs);
+static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_quit_add(Stack stack,int rhs,int opt,int lhs);
 static int int_gtk_idle_add(Stack stack,int rhs,int opt,int lhs);
 
@@ -1171,6 +1172,7 @@ static OpTab NspGObject_func[]={
   {"gobject_create",int_gobj_create}, 
   {"setrowscols_gobj",int_set_attribute},
   {"gtk_timeout_add",int_gtk_timeout_add},
+  {"g_timeout_remove",int_gtk_timeout_remove},
   {"gtk_quit_add",int_gtk_quit_add},
   {"gtk_idle_add",int_gtk_idle_add},
   {"pixbuftocells",int_pixbuftocells},
@@ -3065,6 +3067,7 @@ nsp_gtk_invoke_idle_timeout (gpointer data)
   GClosure *closure = data;
   gint ret_val = TRUE;
   GValue ret = {0,};
+  g_value_init(&ret, G_TYPE_BOOLEAN);
   /* invoke nspg_closure_marshal */
   closure->marshal(closure,&ret,0,NULL,NULL,NULL);
   if (G_TYPE_FUNDAMENTAL(G_VALUE_TYPE(&ret))== G_TYPE_BOOLEAN) 
@@ -3077,7 +3080,7 @@ nsp_gtk_destroy_closure (gpointer data)
 {
   GClosure *closure = data;
   nspg_closure_invalidate(NULL,data);
-  g_free (closure);
+  /*g_free (closure);*/
 }
 
 static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
@@ -3103,6 +3106,16 @@ static int int_gtk_timeout_add(Stack stack,int rhs,int opt,int lhs)
   handlerid = nsp_gtk_timeout_add_full(interval,callback,extra_args,NULL);
   if ( nsp_move_double(stack,1,(double) handlerid) == FAIL) return RET_BUG; 
   return 1;
+}
+
+static int int_gtk_timeout_remove(Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {s_int,t_end};
+  int timeout_handler_id;
+
+  if ( GetArgs(stack,rhs,opt,T,&timeout_handler_id) == FAIL) return RET_BUG;
+  g_source_destroy(g_main_context_find_source_by_id(NULL,timeout_handler_id));
+  return 0;
 }
 
 /*
