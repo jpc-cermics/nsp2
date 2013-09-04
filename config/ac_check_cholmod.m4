@@ -86,9 +86,9 @@ AC_DEFUN([AC_CHECK_CHOLMOD],
  ac_umf_includedirs=" /usr/include/suitesparse /usr/include/umfpack /usr/include/ufsparse /usr/include /usr/local/include/umfpack /usr/local/include/ufsparse /usr/local/include /opt/local/include/ufsparse"
  AC_FIND_FILE("cholmod.h", $ac_umf_includedirs, cholmod_includedir)
  if test "x${cholmod_includedir}" != "x" -a "x${cholmod_includedir}" != "xNO"; then
-    if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then 
+#    if test "x${cholmod_includedir}" != "x${colamd_includedir}"; then 
       CPPFLAGS="-I${cholmod_includedir} ${CPPFLAGS}"
-    fi
+#    fi
  fi
  AC_MSG_RESULT([${cholmod_includedir}])  
  # check for cholmod 
