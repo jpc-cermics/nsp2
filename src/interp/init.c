@@ -85,8 +85,8 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 {
 #ifdef NSP_WITH_MAIN_GTK_THREAD
   GError *error = NULL;
-#endif 
   nsp_thread_data data={argc,argv};
+#endif 
   int use_stdlib = TRUE;
   char *initial_script = NULL;
   char *initial_code = NULL;

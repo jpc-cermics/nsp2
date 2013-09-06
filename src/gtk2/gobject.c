@@ -3078,7 +3078,7 @@ nsp_gtk_invoke_idle_timeout (gpointer data)
 static void
 nsp_gtk_destroy_closure (gpointer data)
 {
-  GClosure *closure = data;
+  /* GClosure *closure = data; */
   nspg_closure_invalidate(NULL,data);
   /*g_free (closure);*/
 }

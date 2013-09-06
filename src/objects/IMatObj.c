@@ -3301,7 +3301,7 @@ int int_ext_euclide_gen(Stack stack, int rhs, int opt, int lhs,euclide_type etyp
   else
     {
       /* Integer matrix case */
-      NspCells *U;
+      NspCells *U=NULL;
       NspIMatrix *res=NULL, *det=NULL,*Ue=NULL;
       if (( res =nsp_imatrix_create(NVOID,IA->m,IA->n,IA->itype)) == NULL)
 	return RET_BUG;
