@@ -17,13 +17,16 @@ S=svd(A,mode="e");
 if S<>[] then pause,end
 
 //Matrix with inf or nan
-if execstr('svd([%inf 1;2 3])',errcatch=%t)==%t then pause,end
-if execstr('svd([1 %nan;2 3])',errcatch=%t)==%t then pause,end
-
-if execstr('svd([%inf %i;2 3])',errcatch=%t)==%t then pause,end
-if execstr('svd([%i %i;%nan 3])',errcatch=%t)==%t then pause,end
-
-
+//test that %inf and %nan leads to error
+if execstr('svd([%inf 1;2 3])',errcatch=%t)==%t then pause
+else lasterror();end   
+if execstr('svd([1 %nan;2 3])',errcatch=%t)==%t then pause
+else lasterror();end 
+if execstr('svd([%inf %i;2 3])',errcatch=%t)==%t then pause
+else lasterror();end 
+if execstr('svd([%i %i;%nan 3])',errcatch=%t)==%t then pause
+else lasterror();end 
+  
 //Small dimension
 //---------------
 A=randn(3,5);Ac=A+%i*randn(A);
@@ -281,7 +284,7 @@ if Err(U'*U-eye(size(U'*U)))>1000*%eps  then pause,end
 
 [U1,S1,V1]=svd(A,mode="e");
 if Err(S-S1)>1000*%eps  then pause,end
-if Err(U-U1)>10*%eps  then pause,end
+if Err(U-U1)>100*%eps  then pause,end
 //if Err(U1*S1*V1'-A) >1000*%eps  then pause,end
 
 [U1,S1,V1,rk]=svd(A);

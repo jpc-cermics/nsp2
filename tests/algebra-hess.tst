@@ -11,11 +11,16 @@ if hess([])<>[] then pause,end
 [U,H]=hess([]);
 if U<>[]|H<>[] then pause,end
 
-if execstr('hess(randn(2,5))',errcatch=%t)==%t then pause,end
-if execstr('[U,H]=hess(randn(2,5))',errcatch=%t)==%t then pause,end
-if execstr('hess(randn(2,5)+%i)',errcatch=%t)==%t then pause,end
-if execstr('[U,H]=hess(randn(2,5)+%i)',errcatch=%t)==%t then pause,end
-
+// test that square dimensions are tested 
+if execstr('hess(randn(2,5))',errcatch=%t)==%t then pause
+else lasterror();end 
+if execstr('[U,H]=hess(randn(2,5))',errcatch=%t)==%t then pause
+else lasterror();end 
+if execstr('hess(randn(2,5)+%i)',errcatch=%t)==%t then pause
+else lasterror();end 
+if execstr('[U,H]=hess(randn(2,5)+%i)',errcatch=%t)==%t then pause
+else lasterror();end 
+  
 //Small dimension
 //Real case
 A=randn(5,5);
@@ -35,7 +40,7 @@ if Err(U'*A*U-H1)  >200*%eps then pause,end
 A=randn(20,20);
 H=hess(A);
 [U,H1]=hess(A);
-if Err(H-H1)>200*%eps then pause,end
+if Err(H-H1)> 2000*%eps then pause,end
 if Err(U'*U-eye(size(U'*U))) >1000*%eps then pause,end
 if Err(U'*A*U-H1)  >1000*%eps then pause,end
 //complex case
