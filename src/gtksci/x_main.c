@@ -163,6 +163,10 @@ void start_sci_gtk(void)
   nsp_gtk_gl_init (&argc, &argv);
   nsp_activate_gtk_events_check();
   nsp_set_emacs_key_theme();
+  /* locale for LC_NUMERIC must be english type 
+   * and starting gtk can change this.
+   */
+  setlocale(LC_NUMERIC,"C");
 }
 
 static void nsp_gtk_gl_init (int *argc,char ***argv)
