@@ -275,13 +275,14 @@ static int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
   int action=FALSE,save=FALSE,open=FALSE,folder=FALSE,free_f=0;
   NspObject *Rep;
   NspSMatrix *Masks=NULL;
-  char *dirname = NULL,dir_expanded[FSIZE+1];
+  char *dirname = NULL,*filename=NULL,dir_expanded[FSIZE+1];
   char *title = "Choose file name", *title_utf8=NULL;
   char *res = NULL;
   char def_res[] = "";
   int_types T[] = {new_opts, t_end} ;
 
   nsp_option opts[] ={{ "dir",string,NULLOBJ,-1},
+		      { "file",string,NULLOBJ,-1},
 		      { "masks",smat,NULLOBJ,-1},
 		      { "title",string,NULLOBJ,-1},
 		      { "action",s_bool,NULLOBJ,-1},
@@ -290,7 +291,7 @@ static int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 		      { "folder",s_bool,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
 
-  if ( GetArgs(stack,rhs,opt,T,&opts,&dirname,&Masks,&title,&action,&save,&open,&folder) == FAIL) 
+  if ( GetArgs(stack,rhs,opt,T,&opts,&dirname,&filename,&Masks,&title,&action,&save,&open,&folder) == FAIL) 
     return RET_BUG;
   if ( save == TRUE && open == TRUE ) 
     {
@@ -332,8 +333,17 @@ static int int_xgetfile(Stack stack, int rhs, int opt, int lhs)
 
   if ( save == TRUE ) 
     {
+      char **masks= NULL;
       /* specific dialog for saving */
-      if (( res= nsp_get_filename_save(title_utf8,dirname)) != NULL)
+      if ( Masks != NULL) 
+	{
+	  if ( Masks->mn %2 != 0) {
+	    Scierror("masks should be given as a 2xm sized matrix\n");
+	    return RET_BUG;
+	  }
+	  masks = Masks->S;
+	}
+      if (( res= nsp_get_filename_save(title_utf8,dirname,filename,masks)) != NULL)
 	  free_f= 1;
       else 
 	res = def_res;

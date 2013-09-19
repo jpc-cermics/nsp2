@@ -113,13 +113,14 @@ menu_answer nsp_get_file_window(const char *title,const char *dirname,int action
  * nsp_get_filename_save:
  * @title: 
  * @dirname: 
+ * @filename: 
  * 
  * returned value should be freed by g_free 
  * 
  * Return value: 
  **/
 
-char * nsp_get_filename_save(const char *title,const char *dirname)
+char * nsp_get_filename_save(const char *title,const char *dirname,const char *filename_in,char **filters)
 {
 #ifdef WIN32 
   int k;
@@ -133,7 +134,25 @@ char * nsp_get_filename_save(const char *title,const char *dirname)
 					GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
 					NULL);
   if ( dirname ) gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER (dialog),dirname);
+  
+  if ( filename_in ) gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER (dialog),filename_in);
 
+  if ( filters != NULL  ) 
+    {
+      GtkFileFilter* filter ;
+      while ( *filters != NULL) 
+	{
+	  filter = gtk_file_filter_new();
+	  gtk_file_filter_set_name (GTK_FILE_FILTER(filter),*filters);filters++;
+	  gtk_file_filter_add_pattern(filter,*filters);filters++;
+	  gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog),filter);
+	}
+      filter = gtk_file_filter_new();
+      gtk_file_filter_set_name (GTK_FILE_FILTER(filter),"all files");
+      gtk_file_filter_add_pattern(filter,"*");
+      gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog),filter);
+    }
+    
   if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
     {
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));

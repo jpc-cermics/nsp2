@@ -6715,7 +6715,7 @@ const char *title,const char *dirname,char **filters
 <FUNCTION>
 <NAME>nsp_get_filename_save</NAME>
 <RETURNS>char *</RETURNS>
-const char *title,const char *dirname
+const char *title,const char *dirname,const char *filename_in,char **filters
 </FUNCTION>
 <FUNCTION>
 <NAME>nsp_get_filename_folder</NAME>

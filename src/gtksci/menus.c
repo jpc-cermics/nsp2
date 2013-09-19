@@ -905,7 +905,7 @@ static void nspg_menu_save(BCG *Xgc, int winid)
 {
   char *filename;
   if ( Xgc == NULL ) return;
-  if ((filename = nsp_get_filename_save("Save Graphic File",NULL)) != NULL) 
+  if ((filename = nsp_get_filename_save("Save Graphic File",NULL,NULL,NULL)) != NULL) 
     {
       /* nsp_gr_savesg(filename,winid); */
       Xgc->actions->savesg(Xgc,filename);
