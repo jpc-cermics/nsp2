@@ -953,7 +953,7 @@ if test "$with_pvm" != no; then
   esac
 
   if test $PVMROOT == "$SCIDIR/pvm3"; then 
-    PVMLIBDIR=pvm3/lib/$ac_cv_PVM_arch
+    PVMLIBDIR='$(SCIDIR)/pvm3/lib/'$ac_cv_PVM_arch
   else 
     PVMLIBDIR=$PVMROOT/lib/$ac_cv_PVM_arch
   fi
