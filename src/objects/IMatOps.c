@@ -1851,7 +1851,11 @@ int nsp_imatrix_div_el(NspIMatrix *A, NspIMatrix *B)
     {
       int i;
 #define IMAT_DIVEL(name,type,arg)					\
-      for ( i = 0 ; i < A->mn ; i++ ) A->name[i] /= B->name[i];		\
+      for ( i = 0 ; i < A->mn ; i++ )					\
+	{								\
+	  if ( B->name[i]== (type) 0) goto err;				\
+	  A->name[i] /= B->name[i];					\
+	}								\
       break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_DIVEL,"");
 #undef IMAT_DIVEL
@@ -1862,6 +1866,9 @@ int nsp_imatrix_div_el(NspIMatrix *A, NspIMatrix *B)
       Scierror("Error:\tArguments must have the same size\n");
       return(FAIL);
     }
+ err:
+  Scierror("Error:\tDivision by zero in integer matrices\n");
+  return(FAIL);
 }
 
 /**
@@ -1878,7 +1885,12 @@ int nsp_imatrix_div_el(NspIMatrix *A, NspIMatrix *B)
 int nsp_imatrix_div_scalar(NspIMatrix *A, NspIMatrix *B)
 {
   int i;
-#define IMAT_DIVEL(name,type,arg)						\
+#define IMAT_DIVEL(name,type,arg)				\
+  if ( B->name[0]== (type) 0)					\
+    {								\
+      Scierror("Error:\tDivision by zero in integer matrices\n");	\
+      return(FAIL);							\
+    }									\
   for ( i = 0 ; i < A->mn ; i++ ) A->name[i] /= B->name[0];		\
   break;
   NSP_ITYPE_SWITCH(A->itype,IMAT_DIVEL,"");
@@ -1920,12 +1932,15 @@ int nsp_imatrix_bdiv_el(NspIMatrix *A, NspIMatrix *B)
       Scierror("Error: arguments must have the same integer type\n");
       return FAIL;
     }
-
   if (SameDim(A,B))
     {
       int i;
-#define IMAT_BDIVEL(name,type,arg)						\
-      for ( i = 0 ; i < A->mn ; i++ ) A->name[i] = B->name[i]/A->name[i] ; \
+#define IMAT_BDIVEL(name,type,arg)					\
+      for ( i = 0 ; i < A->mn ; i++ )					\
+	{								\
+	  if ( A->name[i]== (type) 0) goto err;				\
+	  A->name[i] = B->name[i]/A->name[i] ;				\
+	}								\
       break;
       NSP_ITYPE_SWITCH(A->itype,IMAT_BDIVEL,"");
 #undef IMAT_BDIVEL
@@ -1936,6 +1951,9 @@ int nsp_imatrix_bdiv_el(NspIMatrix *A, NspIMatrix *B)
       Scierror("Error:\tArguments must have the same size\n");
       return(FAIL);
     }
+ err:
+  Scierror("Error:\tArguments must have the same size\n");
+  return(FAIL);
 }
 
 /**
