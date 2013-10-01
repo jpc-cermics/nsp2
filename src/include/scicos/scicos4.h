@@ -123,6 +123,7 @@ typedef enum { PHASE_MESHPOINT=0, PHASE_DISCRETE=1, PHASE_TRY_MFX=2 } PHASE_SIMU
 #define StopSimulation(block,val)   (scicos_end_scicos_sim()) 
 #define what_is_hot                 scicos_what_is_hot
 #define IsHotReStart(block)         (scicos_what_is_hot())
+#define get_fcaller_id              scicos_get_fcaller_id
 
 #define isinTryPhase(block)         ( GetSimulationPhase(block)==PHASE_TRY_MFX  )
 #define areModesFixed(block)        ( GetSimulationPhase(block)==PHASE_TRY_MFX )
