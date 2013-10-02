@@ -1488,7 +1488,7 @@ static void nsp_int_print(const void *m, int i, int j)
 		 nsp_guint16, nsp_gint32, nsp_guint32, nsp_gint64, 
 		 nsp_guint64 } nsp_itype;
   */
-  char *(fmt)[]={"%*d","%*ud", "%*d", "%*u","%*d",	
+  char *(fmt)[]={"%*d","%*u", "%*d", "%*u","%*d",	
 		 "%*u", "%*d", "%*u", "%*d",        
 		 "%*d", "%*d", "%*u", "%*"G_GINT64_FORMAT,
 		 "%*"G_GUINT64_FORMAT,NULL};
