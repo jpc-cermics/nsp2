@@ -138,6 +138,9 @@ extern NspBMatrix  *nsp_mat_isinf(NspMatrix *A);
 extern NspBMatrix  *nsp_mat_isnan(NspMatrix *A);
 extern NspBMatrix  *nsp_mat_finite(NspMatrix *A);
 
+extern NspBMatrix *nsp_bmatrix_eye(int m, int n);
+extern NspBMatrix *nsp_bmatrix_ones(int m, int n);
+extern NspBMatrix *nsp_bmatrix_zeros(int m, int n);
 
 #endif 
 

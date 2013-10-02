@@ -73,7 +73,7 @@ NspBMatrix  *nsp_bmatrix_create(const char *name, int m, int n)
       nsp_bmatrix_destroy(Loc);
       return NULLBMAT;
     }
-
+  
   if ( (Loc->B = (Boolean *) MALLOC( Loc->mn* sizeof(Boolean))) == (Boolean *) 0 )
     {
       nsp_bmatrix_destroy(Loc);
@@ -1323,5 +1323,64 @@ static int nsp_bmatrix_print_internal (nsp_num_formats *fmt,NspBMatrix *cm, int 
 	}
     }
   return rep;
+}
+
+
+/**
+ * nsp_bmatrix_eye:
+ * @m: number of rows
+ * @n: number of columns
+ * @itype: a #nsp_itype
+ * 
+ * returns the identity boolean matrix of size @m x @n (eyes(m,n))
+ * 
+ * Return value: a new #NspIMatrix or %NULL.
+ **/
+
+NspBMatrix *nsp_bmatrix_eye(int m, int n)
+{
+  NspBMatrix *Loc;
+  int i;
+  if (( Loc= nsp_bmatrix_zeros(m,n)) == NULLBMAT) return(NULLBMAT);
+  for ( i=0 ; i < Min(m,n) ; i++) Loc->B[i+m*i]= TRUE;
+  return(Loc);
+}
+
+
+/**
+ * nsp_bmatrix_ones:
+ * @m: number of rows
+ * @n: number of columns
+ * @itype: a #nsp_itype
+ * 
+ * returns a  @m x @n matrix filled with TRUE
+ * 
+ * Return value: a new #NspBMatrix or %NULL.
+ **/
+
+NspBMatrix *nsp_bmatrix_ones(int m, int n)
+{
+  return nsp_bmatrix_create(NVOID,m,n);
+}
+
+/**
+ * nsp_bmatrix_zeros:
+ * @m: number of rows
+ * @n: number of columns
+ * @itype: a #nsp_itype
+ * 
+ * returns a  @m x @n matrix filled with FALSE
+ * 
+ * Return value: a new #NspBMatrix or %NULL.
+ **/
+
+NspBMatrix *nsp_bmatrix_zeros(int m, int n)
+{
+  int i;
+  NspBMatrix *Loc;
+  if ((Loc= nsp_bmatrix_create(NVOID,m,n)) == NULLBMAT) 
+    return(NULLBMAT);
+  for ( i=0 ; i < Loc->mn ; i++) Loc->B[i]= FALSE;
+  return(Loc);
 }
 

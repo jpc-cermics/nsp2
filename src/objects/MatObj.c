@@ -2333,6 +2333,8 @@ int int_mxtril (Stack stack, int rhs, int opt, int lhs)
  */
 
 typedef NspMatrix *(*Mfunc) (int m, int n);
+typedef NspIMatrix *(*IMfunc) (int m, int n,nsp_itype itype);
+typedef NspBMatrix *(*BMfunc) (int m, int n);
 
 /* generic function for ones,rand,eyes */
 
@@ -2378,28 +2380,63 @@ static int int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
  *    See also EYE, ZEROS.
  */
 
-static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
+static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F, IMfunc IF, BMfunc BF)
 {
-  NspType *type = NULL;
+  int type,itype;
+  nsp_option opts[] ={{"type",string,NULLOBJ,-1},
+		      {"like",obj,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   char *type_str = NULL;
-  int m1, n1, last=rhs;
-  NspMatrix *HMat;
-  CheckRhsMin(1);
+  NspObject *Like = NULLOBJ;
+  int m1, n1;
+  NspObject *Obj;
+  CheckStdRhsMin(1);
   CheckLhs (1, 1);
-  /* is last element a classname */
-  if ( IsTypeObj(stack,rhs) ) 
-   { 
-      if ((type = GetType(stack,rhs))== NULLTYPE) 
-	return RET_BUG; 
-      last = rhs-1;
-    }
-  else if ( IsSMatObj(stack,rhs) )
+  if ( get_optional_args(stack, rhs, opt, opts, &type_str,&Like ) == FAIL )
+    return RET_BUG;
+  if ( type_str != NULL && Like != NULL)
     {
-      if ((type_str = GetString(stack,rhs)) == (char*)0) return RET_BUG;
-      last = rhs-1;
+      Scierror("Error: in %s, like and type are both present as optional arguments\n",NspFname(stack));
+      return RET_BUG;
+    }
+  if ( type_str != NULL )
+    {
+      const char *names[]={"double","boolean",NULL};
+      NSP_ITYPE_NAMES(names1);
+      int rep;
+      if ((rep = is_string_in_array(type_str,names,0)) != -1 )
+	{
+	  type = rep;
+	}
+      else if ((rep = is_string_in_array(type_str,names1,0)) != -1 )
+	{
+	  itype = (nsp_itype) rep;
+	  type = 2;
+	}
+      else
+	{
+	  Scierror("Error: in %s, unkown type %s\n",NspFname(stack),type_str);
+	  return RET_BUG;
+	}
+    }
+  if ( Like != NULL ) 
+    {
+      if ( IsMat(Like) ) 
+	type = 0;
+      else if ( IsBMat(Like)) 
+	type = 1;
+      else if ( IsIMat(Like))
+	{
+	  type = 2; itype = ((NspIMatrix *) Like)->itype;
+	}
+      else 
+	{
+	  Scierror("Error: in %s, optional argument like has a wrong type\n");
+	  return RET_BUG;
+	}
     }
 
-  if (last == 1)
+  if ( rhs - opt == 1)
     {
       NspMatrix *M;
       if ((M = GetRealMat (stack, 1)) == NULLMAT)
@@ -2418,7 +2455,7 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
     }
   else 
     {
-      if ( last > 2 ) 
+      if (rhs - opt > 2 ) 
 	{
 	  Scierror("Error: in %s, n-arrays are not implemented, max dimensions is two\n",
 		   NspFname(stack));
@@ -2427,7 +2464,7 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
       if (GetScalarInt (stack, 1, &m1) == FAIL)
 	return RET_BUG;
       CheckNonNegative(NspFname(stack),m1,1);
-      if (last == 2 ) 
+      if ( rhs - opt == 2 ) 
 	{
 	  if (GetScalarInt (stack, 2, &n1) == FAIL)
 	    return RET_BUG;
@@ -2438,13 +2475,16 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 	  n1 = m1;
 	}
     }
-  if ( last != rhs ) 
+  if ( type_str == NULL && Like == NULL)  type =0;
+  
+  switch (type) 
     {
-      Sciprintf("Warning: in %s, type is ignored\n",NspFname(stack));
+    default:
+    case 0: Obj = (NspObject *) (*F) (m1, n1); break;
+    case 1: Obj = (NspObject *) (*BF)(m1, n1); break;
+    case 2: Obj = (NspObject *) (*IF)(m1, n1,itype);break;
     }
-  if ((HMat = (*F) (m1, n1)) == NULLMAT)
-    return RET_BUG;
-  MoveObj (stack, 1, (NspObject *) HMat);
+  MoveObj (stack, 1, Obj);
   return 1;
 }
 
@@ -2456,7 +2496,7 @@ static int int_mxones_deprecated (Stack stack, int rhs, int opt, int lhs)
 
 int int_mxones (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_gen_new(stack, rhs, opt, lhs, nsp_mat_ones);
+  return int_mx_gen_new(stack, rhs, opt, lhs, nsp_mat_ones, nsp_imatrix_ones,  nsp_bmatrix_ones);
 }
 
 
@@ -2472,7 +2512,7 @@ static int int_mxeye_deprecated (Stack stack, int rhs, int opt, int lhs)
 
 int int_mxeye (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_eye);
+  return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_eye, nsp_imatrix_eye, nsp_bmatrix_eye);
 }
 
 /*
@@ -2487,7 +2527,7 @@ static int int_mxzeros_deprecated (Stack stack, int rhs, int opt, int lhs)
 
 int int_mxzeros (Stack stack, int rhs, int opt, int lhs)
 {
-  return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_zeros);
+  return int_mx_gen_new (stack, rhs, opt, lhs, nsp_mat_zeros, nsp_imatrix_zeros, nsp_bmatrix_zeros);
 }
 
 
