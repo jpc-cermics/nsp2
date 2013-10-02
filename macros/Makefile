@@ -5,13 +5,13 @@ include $(TOP)/Makefile.incl
 
 CFLAGS = $(CC_OPTIONS) 
 
-SUBDIRS =  graphics miscellaneous system statistics linalg calpol ast bvar
+SUBDIRS =  graphics miscellaneous system statistics linalg calpol ast
 
 all clean distclean ::
 	@case '${MFLAGS}' in *[ik]*) set +e;; esac; \
 	for i in $(SUBDIRS) ;\
 	do \
-		(cd $$i && echo "making $@ in demos/$$i " && \
+		(cd $$i && echo "making $@ in macros/$$i " && \
 		$(MAKE) $(MFLAGS) -s $@ ); \
 	   	IER=$$? &&\
 	   	case $$IER in\
