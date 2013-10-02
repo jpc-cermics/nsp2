@@ -754,12 +754,23 @@ static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, i
     }
 }
 
+
 static int nsp_bvar_is_true(void *Obj)
 {
   NspBvar *b = (NspBvar *) Obj;
-  return  NSP_OBJECT(b->value)->type->is_true(b->value);
+  if ( b->sym == TRUE ) 
+    {
+      Scierror("Error: do not use symbolic variables in conditions (if, while,case) \n");
+      return FALSE;
+    }
+  else
+    {
+      return  NSP_OBJECT(b->value)->type->is_true(b->value);
+    }
 }
 
 
 
-#line 766 "bvar.c"
+
+
+#line 777 "bvar.c"

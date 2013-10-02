@@ -136,3 +136,14 @@ static void error(Stack *stack,char *fmt,...)
     }
 }
 
+/* counts number of lines in error messages 
+ *
+ */
+
+int nsp_error_count_lines(Stack *stack)
+{
+  if ( stack->val->error_msg == NULL) 
+    return 0;
+  else 
+    return ((NspSMatrix *) stack->val->error_msg)->m;
+}

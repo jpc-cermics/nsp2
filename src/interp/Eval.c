@@ -52,6 +52,8 @@ static int EvalOpt (PList L1,Stack stack,int first);
 static int EvalFor (PList L1,Stack stack,int first);
 static int EvalEqual1 (const char *name,Stack stack,int first,int fargs,int *flag);
 static int EvalEqual2 (const char *name,Stack stack,int first,int largs,int fargs,int dot_flag);
+static int nsp_eval_object_is_true(Stack *S, NspObject *O, int *err);
+
 
 typedef struct _obj_check_field obj_check_field ;
 struct _obj_check_field {
@@ -103,6 +105,7 @@ static void nsp_set_dollar(Stack *stack,NspObject *O, int j);
 
 int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 {
+  int err;
   int nargs=-1,n=0;
   PList L,loc;
   NspObject *O,*O1;
@@ -610,9 +613,10 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  
 		  SHOWBUG(stack,nargs,L1);
 		}
-	      rep =nsp_object_is_true(stack.val->S[first]);
+	      rep =nsp_eval_object_is_true(&stack,stack.val->S[first],&err);
 	      nsp_void_object_destroy(&stack.val->S[first]);
 	      stack.val->S[first]= NULLOBJ;
+	      if ( err == TRUE) SHOWBUG(stack,RET_BUG,(PList) L1->O); /* just print the condition */
 	      if ( rep == FALSE ) break;
 	      nargs=nsp_eval_arg(L1->next,&stack,first,1,1,display);
 	      if ( nargs < 0 ) 
@@ -686,9 +690,10 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 			  SHOWBUG(stack,nargs,L1);
 			}
 		    }
-		  iftest =nsp_object_is_true(stack.val->S[first]);
+		  iftest =nsp_eval_object_is_true(&stack,stack.val->S[first],&err);
 		  nsp_void_object_destroy(&stack.val->S[first]);
 		  stack.val->S[first]= NULLOBJ;
+		  if ( err == TRUE) SHOWBUG(stack,RET_BUG,(PList) L1->O); /* just print the condition */
 		  if ( iftest == TRUE )
 		    {
 		      if ((nargs=nsp_eval_arg(L1->next,&stack,first,1,1,display))  < 0) SHOWBUG(stack,nargs,L1);
@@ -823,10 +828,11 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 		  stack.val->S[first+1]=NULLOBJ;
 		  break;  
 		}
-	      rep = nsp_object_is_true(stack.val->S[first+1]); 
+	      rep = nsp_eval_object_is_true(&stack,stack.val->S[first+1],&err); 
 	      /* clean the select == case test */ 
 	      nsp_void_object_destroy(&stack.val->S[first+1]);
 	      stack.val->S[first+1]=NULLOBJ;
+	      if ( err == TRUE) SHOWBUG(stack,RET_BUG,(PList) L1->O); /* just print the condition */
 	      /* stop if case was true */
 	      if ( rep == TRUE ) break;
 	      /* go on */
@@ -3557,3 +3563,29 @@ int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode,
   return nsp_eval_func(O1, opname, 2, stack, first, rhs, opt, lhs);
 }
 
+
+
+/**
+ *nsp_eval_object_is_true:
+ * @O: a #NspObject pointer 
+ * 
+ * Check if object @O can be considered as a boolean a TRUE Object 
+ * in a logical statement. Try also to detect if this evaluation 
+ * raised an error.
+ * 
+ * Return value: %TRUE or %FALSE
+ **/
+
+/* XXXX : should be better to add a parameter to the is_true method 
+ * but this seams difficult for backward compatibility 
+ */
+
+static int nsp_eval_object_is_true(Stack *S, NspObject *O, int *err)
+{
+  int rep, n1,n2;
+  n1=nsp_error_count_lines(S);
+  rep = O->type->is_true(O);
+  n2=nsp_error_count_lines(S);
+  *err = (n2 > n1 ) ? TRUE : FALSE;
+  return rep;
+}

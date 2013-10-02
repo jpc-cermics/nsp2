@@ -30,6 +30,7 @@ extern void nsp_expand_file_with_exec_dir(Stack *stack,char *filename,char *file
 extern void nsp_expand_file_and_update_exec_dir(Stack *stack,char *old,char *filename,char *filename_exec);
 extern void nsp_reset_exec_dir(Stack *stack,char *old);
 extern void nsp_expand_dir_and_update_exec_dir(Stack *stack,char *old,char *dirname,char *dirname_exec);
+extern int nsp_error_count_lines(Stack *stack);
 
 #endif
 

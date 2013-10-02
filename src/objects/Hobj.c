@@ -223,10 +223,15 @@ static int nsp_hobj_neq(NspObject *A, NspObject *B)
 
 static int nsp_hobj_is_true(NspHobj *H)
 {
-  NspObject *O;
-  if ( H->htype != 'g' )  return(nsp_object_is_true(H->O));
-  if ((O= nsp_global_frame_search_object(NSP_OBJECT(H)->name)) == NULLOBJ) return FALSE;
-  return nsp_object_is_true(O);
+  NspObject *Obj;
+  if ( H->htype != 'g' )  
+    {
+      Obj = H->O;
+      return Obj->type->is_true(Obj);
+    }
+
+  Obj = nsp_global_frame_search_object(NSP_OBJECT(H)->name); 
+  return ( Obj == NULLOBJ) ? FALSE: Obj->type->is_true(Obj);
 }
 
 /*
