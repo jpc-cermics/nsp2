@@ -2382,7 +2382,7 @@ static int int_mx_gen (Stack stack, int rhs, int opt, int lhs, Mfunc F)
 
 static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F, IMfunc IF, BMfunc BF)
 {
-  int type,itype;
+  int type=0,itype=0;
   nsp_option opts[] ={{"type",string,NULLOBJ,-1},
 		      {"like",obj,NULLOBJ,-1},
 		      { NULL,t_end,NULLOBJ,-1}};
@@ -2401,16 +2401,20 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F, IMfu
     }
   if ( type_str != NULL )
     {
-      const char *names[]={"double","boolean",NULL};
+      const char *names[]={"double","boolean","m","b",NULL};
+      const int  inames[]={0,1,0,1,0};
       NSP_ITYPE_NAMES(names1);
       int rep;
-      if ((rep = is_string_in_array(type_str,names,0)) != -1 )
+      if ((rep = is_string_in_array(type_str,names,1)) >=0  )
 	{
-	  type = rep;
+	  type = inames[rep];
 	}
-      else if ((rep = is_string_in_array(type_str,names1,0)) != -1 )
+      else if ((rep = is_string_in_array(type_str,names1,1)) >= 0 )
 	{
 	  itype = (nsp_itype) rep;
+	  /* we do not use int and uint */
+	  if ( itype == nsp_gint ) itype = nsp_gint32;
+	  else if ( itype == nsp_guint ) itype = nsp_guint32;
 	  type = 2;
 	}
       else
