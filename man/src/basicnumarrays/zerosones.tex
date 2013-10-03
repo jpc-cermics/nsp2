@@ -6,12 +6,12 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-A = zeros(n)
-A = zeros(m,n)
-A = zeros(dims)
-A = ones(n)
-A = ones(m,n)
-A = ones(dims)
+A = zeros(n ,like=obj,type=string)
+A = zeros(m,n,like=obj,type=string)
+A = zeros(dims,like=obj,type=string)
+A = ones(n,like=obj,type=string)
+A = ones(m,n,like=obj,type=string)
+A = ones(dims,like=obj,type=string)
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -20,22 +20,32 @@ A = ones(dims)
     \vname{m,n}: integers
     \vname{dims}: vector of integers of length 1 or 2.
     \vname{A}: matrix of zeros or ones.
+    \vname{like}: optional parameter which value gives the type of the result.
+    \vname{type}: a string giving the type of the result. It can be \verb+"double"+ or \verb+"m"+ for 
+    scalar matrices, \verb+"boolean"+ or \verb+"b"+ for boolean matrices or it can be a string giving 
+    an integer type. (See \manlink{IMat}{IMat}).
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-\verb+zeros(n)+ is the same than \verb+zeros(n,n)+. If \verb+dims+ is a vector of length 2, 
+\verb+zeros(n)+ is the same as \verb+zeros(n,n)+. If \verb+dims+ is a vector of length 2, 
 with $dims_1 = m$ and $dims_2 = n$ then \verb+zeros(m,n)+ and  \verb+zeros(dims)+ are equivalent 
 and output a $m \times n$ matrix of zeros. The second form could be useful to get a matrix of 
-zeros of same size than another matrix $M$ using:
+zeros of same size as another matrix $M$ using:
 \begin{verbatim}
     A = zeros(size(M))
 \end{verbatim}
 
-The \verb+ones+ function works similarly but output a matrix of ones.
+The \verb+ones+ function works similarly but outputs a matrix of ones.
+
+An optional parameters can be given to specify the type of the result which can 
+be a scalar, or a boolean, or an integer matrix. For example, to get a matrix of 
+zeros of same size and type as matrix $M$ on can use:
+\begin{verbatim}
+    A = zeros(size(M),like=M);
+\end{verbatim}
 
 \end{mandescription}
-
 
 %--example 
 \begin{examples}
@@ -45,6 +55,8 @@ B = zeros(1,4)
 C = zeros(3,0)
 D = ones(0,2)
 C*D
+A = ones(2,3,like=%t);
+A = ones(2,3,type='int64');
 \end{Verbatim} 
 
 \end{examples}

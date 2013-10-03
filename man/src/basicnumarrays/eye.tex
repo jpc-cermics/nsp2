@@ -5,9 +5,9 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-I = eye(n)
-I = eye(m,n)
-I = eye(dims)
+I = eye(n,like=obj,type=string)
+I = eye(m,n,like=obj,type=string)
+I = eye(dims,like=obj,type=string)
 \end{verbatim}
 \end{calling_sequence}
 %-- Parameters
@@ -15,14 +15,18 @@ I = eye(dims)
   \begin{varlist}
     \vname{m,n}: integers
     \vname{dims}: vector of integers of length 1 or 2.
-    \vname{A}: resulting matrix.
+    \vname{I}: resulting matrix.
+    \vname{like}: optional parameter which value gives the type of the result.
+    \vname{type}: a string giving the type of the result. It can be \verb+"double"+ or \verb+"m"+ for 
+    scalar matrices, \verb+"boolean"+ or \verb+"b"+ for boolean matrices or it can be a string giving 
+    an integer type. (See \manlink{IMat}{IMat}).
   \end{varlist}
 \end{parameters}
 
 \begin{mandescription}
-\verb+eye(n)+ is the same than \verb+eye(n,n)+ and output the identity matrix of the $n$ dimensional
-vector space. More generally \verb+eye(m,n)+ output the matrix of the canonical application $J$ from
-the $n$ dimensional vector space $K^n$ to the  $m$ dimensional vector space $K^m$: 
+\verb+eye(n)+ is the same as \verb+eye(n,n)+ and outputs the identity matrix of the $n$ dimensional
+vector space. More generally, \verb+eye(m,n)+ outputs the matrix of the canonical application $J$ from
+the $n$ dimensional vector space $K^n$ to the $m$ dimensional vector space $K^m$: 
 $$
 x = \left[ x_1 ; x_2 ; \dots ; x_n \right]  \longmapsto  J x = 
 \left\{ 
@@ -42,13 +46,19 @@ such a matrix of same size than another matrix $M$ use:
    I = eye(size(M))
 \end{verbatim}
 
+An optional parameters can be given to specify the type of the result which can 
+be a scalar, or a boolean, or an integer matrix. For example, to get an identity matrix of 
+of the same size and type as matrix $M$ on can use:
+\begin{verbatim}
+   A = eye(size(M),like=M);
+\end{verbatim}
 \end{mandescription}
-
 
 %--example 
 \begin{examples}
 \begin{Verbatim}
 I = eye(2,3) 
+I = eye(2,3,type='int32');
 I = eye(0,3)
 \end{Verbatim} 
 
