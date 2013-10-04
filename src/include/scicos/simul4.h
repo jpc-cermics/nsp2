@@ -186,10 +186,10 @@ struct _scicos_run {
   scicos_params params;
 };
 
-
-extern scicos_run *Scicos;
 extern int scicos_fill_run(scicos_run *sr,NspHash *Sim,NspHash *State);
 extern void scicos_clear_run(scicos_run *sr);
+extern void scicos_set_scicos_run (scicos_run *);
+extern scicos_run * scicos_get_scicos_run (void);
 extern int scicos_main( scicos_run *sr, double *t0_in, double *tf_in, double *simpar, int *flag__, int *ierr_out);
 
 
