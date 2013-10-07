@@ -536,7 +536,11 @@ static int parse_nary_keyword(Tokenizer *T,NspBHash *symb_table,PList *plist,int
     {
       plist1=NULLPLIST;
       /* parse_name only here */
-      if (parse_name(T,symb_table,&plist1) == FAIL ) return (FAIL);
+      if (parse_name(T,symb_table,&plist1) == FAIL ) 
+	{
+	  T->ParseError(T,"Parse Error: waiting for a variable name\n");
+	  return (FAIL);
+	}
       /* if (parse_equal(T,symb_table,&plist1,0) == FAIL ) return (FAIL); */
       if (nsp_parse_add_list(plist,&plist1) == FAIL) return(FAIL);
       switch ( T->tokenv.id ) 
