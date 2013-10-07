@@ -706,6 +706,8 @@ int nsp_frame_move_up_object(NspObject *O)
 /** 
  *nsp_declare_global: 
  * @name: a name to be considered as a global variable name.
+ * @int: an integer giving the id of a variable in a local frame (can be set to -1).
+ * @value: an object to be used as value if the variable does not exists. It can be NULL.
  * 
  * Declares that variable @name is to be considered as a global variable.
  * If @name is already a global variable then a pointer to that variable 
@@ -725,7 +727,7 @@ int nsp_frame_move_up_object(NspObject *O)
  */
 
 
-int nsp_declare_global(char *name, int id) 
+int nsp_declare_global(char *name, int id, NspObject *value) 
 {
   nsp_datas *data;
   NspObject *O;
@@ -739,21 +741,16 @@ int nsp_declare_global(char *name, int id)
   O=nsp_global_frame_search_object(name);
   if ( O == NULLOBJ ) 
     {
-      NspObject *O1= NULLOBJ;
-      /* FIXME : if O1 is already a pointer to a global variable 
-       * we have nothing to do 
-       *  NspObject *O1= nsp_frame_search_object(name);
-       */ 
-      if ( O1 != NULLOBJ) 
-	{
-	  if ((O =nsp_object_copy(O1))== NULLOBJ) return FAIL;
-	}
-      else 
+      if ( value == NULL)
 	{
 	  /* create an empty matrix */
 	  if ((O =nsp_create_empty_matrix_object(name))== NULLOBJ) return FAIL;
 	}
-      if (nsp_object_set_name(O,name) == FAIL) return FAIL;
+      else
+	{
+	  if ((O = nsp_object_copy_and_name(name,value)) == NULLOBJ) return FAIL;
+	}
+      /* if (nsp_object_set_name(O,name) == FAIL) return FAIL; */
       /* store it in the global frame */
       if (nsp_global_frame_replace_object(O)  == FAIL ) return FAIL;
     }

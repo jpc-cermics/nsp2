@@ -1101,7 +1101,7 @@ int nsp_eval(PList L1, Stack stack, int first, int rhs, int lhs, int display)
 	  loc = L1;
 	  for ( j = 1 ; j <= L->arity ;  j++ )
 	    {
-	      if (nsp_declare_global((char *) loc->O,loc->arity)== FAIL) return RET_BUG;
+	      if (nsp_declare_global((char *) loc->O,loc->arity, NULLOBJ)== FAIL) return RET_BUG;
 	      loc = loc->next ;
 	    }
 	  return 0;
