@@ -1,0 +1,54 @@
+% -*- mode: latex -*-
+\mansection{global, clearglobal, isglobal}
+\begin{mandesc}
+  \short{global}{declare variables as global variables} \\ % 
+  \short{clearglobal}{undeclare variables as global variables} \\ % 
+  \short{isglobal}{replaced by the exists function} \\ % 
+\end{mandesc}
+%\index{global}\label{global}
+%-- Calling sequence section
+\begin{calling_sequence}
+\begin{verbatim}
+  global('name1',...,'namen',def=value);
+  global name1 ... namen
+  global name1, ..., namen
+\end{verbatim}
+\end{calling_sequence}
+%-- Parameters
+\begin{parameters}
+  \begin{varlist}
+    \vname{name1,..., namen}: valid ident names
+  \end{varlist}
+\end{parameters}
+\begin{mandescription}
+  The \verb!global! keyword or function is used to declare that some idents 
+  refers to variables in a global frame and not to the local frame.
+  If the variable referred by the ident name does not pre-exists 
+  it is created with an empty matrix as default value or with the value 
+  given by the optional argument \verb!def! if present. 
+  \verb!global! can be used anywhere in nsp code.
+
+  The \verb!clearglobal! keyword or function is used to remove a global 
+  declaration for an ident.
+
+  The \verb!isglobal! function does not exists in nsp. Similar result 
+  can be obtained with \verb!exists(identname,'global');!.
+  
+\end{mandescription}
+%--example 
+\begin{examples}
+  \begin{Verbatim}
+    global('a', def=1); 
+    function y=f(x); global a; y=x+a; endfunction
+    function g(x); global('a',def=2);a=x; endfunction
+    f(3)
+    g(3)
+    f(5)
+    exists('a','global');
+    clearglobal a;
+  \end{Verbatim}
+\end{examples}
+%-- see also
+\begin{manseealso}
+  \manlink{who}{who} \manlink{isglobal}{isglobal} \manlink{clearglobal}{clearglobal} 
+\end{manseealso}
