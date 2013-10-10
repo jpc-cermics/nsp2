@@ -1121,20 +1121,37 @@ static int int_imatrix_2latextab(Stack stack, int rhs, int opt, int lhs)
 
 static int int_imatrix_m2i(Stack stack, int rhs, int opt, int lhs)
 {
+  int rep_type=0;
+  char *mode=NULL;
+  const char *mode_options[] = { "overflow", "saturate", NULL };
+  nsp_option opts[] ={{"mode",string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
   nsp_itype itype = nsp_gint32;
   int rep;
   NSP_ITYPE_NAMES(names);
   NspIMatrix *BM;
   NspMatrix *M;
-  CheckRhs(1,2);
+  CheckStdRhs(1,2);
   CheckLhs(1,1);
   if ((M = GetMat(stack,1)) == NULLMAT) return RET_BUG;    
-  if ( rhs == 2 ) 
+  if ( rhs -opt == 2 ) 
     {
       if ((rep = GetStringInArray(stack, 2, names, 0)) == -1 ) return RET_BUG;
       itype = (nsp_itype) rep;
     }
-  if (1) 
+  if ( get_optional_args(stack, rhs, opt, opts, &mode) == FAIL )
+    return RET_BUG;
+
+  if ( mode != NULL ) 
+    {
+      if ( (rep_type= is_string_in_array(mode, mode_options,1)) == -1 )
+	{
+	  string_not_in_array(stack,mode, mode_options , "optional argument mode");
+	  return RET_BUG; 
+	}
+    }
+  
+  if (rep_type == 0 ) 
     {
       /* cast */
       if ((BM =nsp_matrix_to_imatrix(M,itype)) == NULLIMAT ) return RET_BUG;
