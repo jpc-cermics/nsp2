@@ -68,6 +68,7 @@ static int int_object_create(Stack stack, int rhs, int opt, int lhs);
 static void nsp_object_latex_def(NspObject * M, int indent,char *name, int rec_level);
 static int nsp_object_as_index_def(NspObject * M, index_vector *index);
 static NspObject *nsp_object_full_copy_def(NspObject * M);
+static NspObject *nsp_object_convert_def(NspObject * M,NspObject *T, void *args);
 
 /*
  * base object : NspObject 
@@ -121,6 +122,8 @@ NspTypeObject *new_type_object(type_mode mode)
   type->latex = (print_func *) nsp_object_latex_def;
   type->as_index  = (get_index_vector_func *) nsp_object_as_index_def;
   type->full_copy = (copy_func *) nsp_object_full_copy_def; 
+  type->convert = (convert_func *) nsp_object_convert_def;
+    
 
   if ( nsp_type_object_id == 0 ) 
     {
@@ -508,6 +511,21 @@ static int nsp_object_as_index_def(NspObject * M, index_vector *index)
 static NspObject *nsp_object_full_copy_def(NspObject * M)
 {
   Scierror("Error: full_copy not implemented for object of type %s\n",M->type->s_type());
+  return NULL;
+}
+
+
+/**
+ * nsp_object_convert_def:
+ * @M: an object 
+ * @T: an object 
+ * 
+ *
+ * Return value: %NULL
+ **/
+
+static NspObject *nsp_object_convert_def(NspObject * M,NspObject *T, void *args)
+{
   return NULL;
 }
 

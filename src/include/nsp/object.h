@@ -46,6 +46,7 @@ typedef void *(new_func) (void);
 typedef void *(attrs_func) (void);
 typedef void *(create_func) (void);
 typedef int (get_index_vector_func)(void *, index_vector *); 
+typedef void *(convert_func)(void *,void *,void *);
 
 typedef struct _NspTypeBase  NspTypeBase ;
 
@@ -109,6 +110,7 @@ struct _NspTypeObject {
   print_func *latex;                  /* print in latex syntax */
   get_index_vector_func *as_index;    /* check if object can be used as index vector */
   copy_func *full_copy ;              /* full_copy object */  
+  convert_func *convert;              /* convert to other type */
 };
 
 

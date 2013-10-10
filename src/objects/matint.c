@@ -1,6 +1,6 @@
 /* Nsp
- * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
- * Copyright (C) 2006-2012 Bruno Pincon Esial/Iecn
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 2006-2013 Bruno Pincon Esial/Iecn
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -43,7 +43,7 @@
  * Interface NspMatint 
  * FIXME: should contains methods which are to be implemented 
  *        by all Objects which behaves like matrices. 
- * the only method actually implemented is redim 
+ * the only methods actually implemented is redim 
  * Note that the interface is to be used at nsp level and 
  * internally.
  */
@@ -320,6 +320,37 @@ static int int_matint_meth_enlarge(NspObject *self, Stack stack, int rhs, int op
   return 1;
 }
 
+/* equivalent to a(i,j) = b or a(i)=b 
+ * XXX: when cols or row are : we obtain here an iv object with zeroes 
+ *      this is to be checked.
+ */
+
+static int int_matint_meth_set_values(NspObject *self, Stack stack, int rhs, int opt, int lhs) 
+{
+  CheckStdRhs (2,3);
+  CheckLhs (0,1);
+  if ( rhs -opt == 2) 
+    {
+      NspObject *Elts,*ObjB;
+      if ((Elts = nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+      if ((ObjB = nsp_get_object(stack, 2)) == NULL)   return RET_BUG;
+      if ( nsp_matint_set_elts1(self, Elts, ObjB) == FAIL)
+	return RET_BUG;
+    }
+  else if (  rhs -opt == 3) 
+    {
+      NspObject *Row,*Col,*ObjB;
+      if ((Row = nsp_get_object(stack, 1)) == NULL)   return RET_BUG;
+      if ((Col = nsp_get_object(stack, 2)) == NULL)   return RET_BUG;
+      if ((ObjB = nsp_get_object(stack, 3)) == NULL)   return RET_BUG;
+      if ( nsp_matint_set_submatrix1(self, Row, Col, ObjB) == FAIL) 
+	return RET_BUG;
+    }
+  MoveObj(stack,1,self);
+  return 1;
+}
+
+
 static NspMethods matint_methods[] = {
   {"redim",(nsp_method *) int_matint_meth_redim},
   {"concatr",(nsp_method *) int_matint_meth_concatr},
@@ -328,6 +359,7 @@ static NspMethods matint_methods[] = {
   {"to_cells",(nsp_method *) int_matint_to_cells},
   {"set_diag",(nsp_method *) int_matint_meth_set_diag},
   {"enlarge",(nsp_method *) int_matint_meth_enlarge},
+  /* {"set_values",(nsp_method *) int_matint_meth_set_values}, XXXX to be finished */
   { NULL, NULL}
 };
 
@@ -1445,11 +1477,12 @@ static int nsp_matint_special_set_elts(NspObject *ObjA,
  * 
  * Returns:  %OK or %FAIL.
  **/
+
 int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vector *index_c, NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
   char *to, *from;
-  int i, j, k, stride;
+  int i, j, k, stride, allocB = FALSE;
   NspTypeBase *typeA, *typeB; 
   unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
 
@@ -1458,8 +1491,17 @@ int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vecto
 
   if ( typeA != typeB )
     {
-      Scierror("Error: in A(i,j)=B, A and B must be of same type\n");
-      return FAIL;
+      /* check if B know how to become a A */
+      if ( (ObjB = ObjB->type->convert(B,ObjA,NULL)) != NULL )
+	{
+	  B =  (NspSMatrix *) ObjB;
+	  allocB= TRUE;
+	}
+      else
+	{
+	  Scierror("Error:\tA(...)= B, A and B must be of the same type\n");
+	  goto fail;
+	}
     }
 
   if ( B->mn != 1)
@@ -1467,20 +1509,20 @@ int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vecto
       if ( index_r->nval != B->m || index_c->nval  != B->n )
 	{
 	  Scierror("Error: in A(i,j)=B, incompatible dimensions (indices range versus B size)\n");
-	  return FAIL;
+	  goto fail;
 	}
     }
   else if ( index_r->nval == 0 || index_c->nval == 0 )
     {
       /* case: A(indr,indc) = scalar , with an empty range for indr x indc  */
       /* do nothing (this is the matlab behavior)                           */
-      return OK;
+      goto ok;
     }
 
   if ( index_r->min < 1 || index_c->min < 1 ) 
     {
       Scierror("Error: in A(i,j)=B, non positive indices are not allowed\n");
-      return FAIL;
+      goto fail;
     }
 
   MAT_INT(typeA)->canonic(ObjA);
@@ -1493,7 +1535,7 @@ int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vecto
   if ( index_r->max > A->m ||  index_c->max > A->n )
     {
       if ( MAT_INT(typeA)->enlarge(ObjA, index_r->max, index_c->max) == FAIL )
-	return FAIL;
+	goto fail;
     }
 
   if ( nsp_object_type (ObjA, nsp_type_matrix_id) || 
@@ -1513,7 +1555,7 @@ int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vecto
 	{
 	  /* FIXME: add a test to verify if typeA is NspMatrix or NspMaxpMatrix */
 	  NspMatrix *AA = (NspMatrix *) ObjA;
-	  if ( nsp_mat_complexify(AA,0.00) == FAIL ) return FAIL; 
+	  if ( nsp_mat_complexify(AA,0.00) == FAIL ) goto fail; 
 	  elt_size_A = elt_size_B;
 	}
     }
@@ -1587,13 +1629,16 @@ int nsp_matint_set_submatrix(NspObject *ObjA, index_vector *index_r, index_vecto
 	      MAT_INT(typeA)->free_elt( (void **) (tov + ij) ); 
 	      if ( fromv[k] != NULL )          /* just for cells which may have undefined elements */
 		{
-		  if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[k])) == NULL ) return FAIL;
+		  if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[k])) == NULL ) goto fail;
 		  tov[ij] = elt;
 		}
 	    }
 	}
     }
-  return OK;
+ ok:  return OK;
+ fail: 
+  if ( allocB == TRUE ) nsp_object_destroy(&ObjB);
+  return FAIL;
 }
 
 /**
@@ -1638,48 +1683,56 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
 {
   NspSMatrix *A = (NspSMatrix *) ObjA, *B = (NspSMatrix *) ObjB;
   char *to, *from;
-  int i, k;
+  int i, k, allocB=FALSE;
   NspTypeBase *typeA, *typeB; 
   unsigned int elt_size_A, elt_size_B; /* size in number of bytes */
-
 
   typeA = check_implements(ObjA, nsp_type_matint_id);
   typeB = check_implements(ObjB, nsp_type_matint_id);
 
   if ( typeA != typeB )
     {
-      Scierror("Error:\tA(...)= B, A and B must be of the same type\n");
-      return FAIL;
+      /* check if B know how to become a A */
+      if ( (ObjB = ObjB->type->convert(B,ObjA,NULL)) != NULL )
+	{
+	  B =  (NspSMatrix *) ObjB;
+	  allocB= TRUE;
+	}
+      else
+	{
+	  Scierror("Error:\tA(...)= B, A and B must be of the same type\n");
+	  return FAIL;
+	}
     }
-
+  
   if ( B->m != 1 && B->n != 1 ) 
     {
       Scierror("Error:\tA(ind)=B, B must be a vector");
-      return FAIL;
+      goto fail;
     }
 
   if ( index->nval == 0 && B->mn <= 1)
     {
       /* ignore the set elts */
-      return OK;
+      goto ok;
     }
 
   if ( index->min < 1 )
     {
       Scierror("Error:\tNon Positive indices are not allowed\n");
-      return FAIL;
+      goto fail;
     }
 
   if ( A->m == 1  &&  A->n > 1  &&  B->m != 1 )
     {
       Scierror("Error:\tA(ind)=B, B must be row when A is a row\n");
-      return FAIL;
+      goto fail;
     } 
   
   if ( A->n == 1 &&  A->m > 1  &&  B->n != 1 )
     {
       Scierror("Error:\tA(ind)=B, B must be column when A is a column\n");
-      return FAIL;
+      goto fail;
     }
 
   if ( B->mn != 1)
@@ -1687,7 +1740,7 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
       if ( index->nval  != B->mn )
 	{
 	  Scierror("Error:\tA(ind)=B, ind and B have incompatible sizes\n");
-	  return FAIL;
+	  goto fail;
 	}
     }
 
@@ -1703,11 +1756,11 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
 	{
 	  if  ( B->m == 1 )  /* ( B->n != 1) */
 	    { 
-	      if ( MAT_INT(typeA)->enlarge(ObjA, 1, index->max) == FAIL ) return FAIL;
+	      if ( MAT_INT(typeA)->enlarge(ObjA, 1, index->max) == FAIL ) goto fail;
 	    }
 	  else
 	    { 
-	      if ( MAT_INT(typeA)->enlarge(ObjA, index->max, 1) == FAIL ) return FAIL;
+	      if ( MAT_INT(typeA)->enlarge(ObjA, index->max, 1) == FAIL ) goto fail;
 	    }
 	}
       else if ( A->m == 1 )
@@ -1716,26 +1769,26 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
 	    {
 	      if ( B->m == 1 )   /* ( B->n > 1 ) */
 		{ 
-		  if ( MAT_INT(typeA)->enlarge(ObjA, 1, index->max) == FAIL ) return FAIL;
+		  if ( MAT_INT(typeA)->enlarge(ObjA, 1, index->max) == FAIL ) goto fail;
 		}
 	      else
 		{
-		  if ( MAT_INT(typeA)->enlarge(ObjA, index->max, 1) == FAIL ) return FAIL;
+		  if ( MAT_INT(typeA)->enlarge(ObjA, index->max, 1) == FAIL ) goto fail;
 		}
 	    }
 	  else
 	    {
-	      if ( MAT_INT(typeA)->enlarge(ObjA, 1, index->max) == FAIL ) return FAIL;
+	      if ( MAT_INT(typeA)->enlarge(ObjA, 1, index->max) == FAIL ) goto fail;
 	    }
 	}
       else if ( A->n == 1)
 	{
-	  if ( MAT_INT(typeA)->enlarge(ObjA, index->max, 1) == FAIL ) return FAIL;
+	  if ( MAT_INT(typeA)->enlarge(ObjA, index->max, 1) == FAIL ) goto fail;
 	}
       else
 	{
 	  Scierror("Error:\tA(ind)=B, ind must be inside A range when A is not a vector\n");
-	  return FAIL;
+	  goto fail;
 	}
     }
 
@@ -1755,7 +1808,7 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
 	{
 	  /* FIXME: add a test to verify if typeA is NspMatrix or NspMaxpMatrix */
 	  NspMatrix *AA = (NspMatrix *) ObjA;
-	  if ( nsp_mat_complexify(AA,0.00) == FAIL ) return FAIL; 
+	  if ( nsp_mat_complexify(AA,0.00) == FAIL ) goto fail; 
 	  elt_size_A = elt_size_B;
 	}
     }
@@ -1815,12 +1868,15 @@ int nsp_matint_set_elts(NspObject *ObjA, index_vector *index, 	NspObject *ObjB)
 	  MAT_INT(typeA)->free_elt( (void **) (tov + index->val[i]) ); 
 	  if ( fromv[k] != NULL )          /* just for cells which may have undefined elements */
 	    {
-	      if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[k])) == NULL ) return FAIL;
+	      if ( (elt = (char *) MAT_INT(typeA)->copy_elt(fromv[k])) == NULL ) goto fail;
 	      tov[index->val[i]] = elt;
 	    }
 	}
     }
-  return OK;
+ ok:  return OK;
+ fail:
+  if ( allocB == TRUE ) nsp_object_destroy(&ObjB);
+  return FAIL;
 }
 
 

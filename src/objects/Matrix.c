@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -379,6 +379,31 @@ NspMatrix *nsp_matrix_copy(const NspMatrix *A)
       Mat->convert=A->convert;
     }
   return(Mat);
+}
+
+
+
+/**
+ * nsp_matrix_convert:
+ * @A: a #NspMatrix 
+ * @B: a #NspObject 
+ *
+ * copies #NspMatrix @A and returns the copy or %NULLMAT.
+ * Returns: a #NspMatrix or %NULLMAT.
+ */
+
+NspObject *nsp_matrix_convert(const NspMatrix *A,const NspObject *B,void *args)
+{
+  if ( IsIMat(B) )
+    {
+      return (NspObject *) nsp_matrix_to_imatrix(A,((NspIMatrix *) B)->itype);
+    }
+  else 
+    {
+      Scierror("Error: Cannot convert a matrix to %s\n",B->type->s_type());
+      return NULL;
+    }
+  return NULL;
 }
 
 

@@ -938,7 +938,7 @@ NspIMatrix  *nsp_imatrix_transpose(NspIMatrix *A)
  * Return value: a #NspIMatrix or %NULLIMAT.
  */
 
-NspIMatrix  *nsp_matrix_to_imatrix(NspMatrix *M, nsp_itype itype)
+NspIMatrix  *nsp_matrix_to_imatrix(const NspMatrix *M, nsp_itype itype)
 {
   int i;
   NspIMatrix *Loc;
