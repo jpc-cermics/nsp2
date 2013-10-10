@@ -193,14 +193,16 @@ variable  \verb+col+ being equal to the ith column of \verb+A+ at the i-th itera
 
 \itemdesc{Some functions}
 \begin{itemize}
-   \item \verb+intmin(A)+ returns the min integer corresponding to the integer type of A.
-   \item \verb+intmax(A)+ returns the max integer corresponding to the integer type of A.
+   \item \verb+intmin(A)+ \index{intmin}\hypertarget{intmin}{} returns the min integer corresponding to the integer type of A.
+   \item \verb+intmax(A)+ \index{intmax}\hypertarget{intmax}{} returns the max integer corresponding to the integer type of A. 
    \item \verb+numel(A)+ or \verb+length(A)+ returns the number of entries in \verb+A+.
    \item \verb+size(A)+ returns in a \verb+1 x 2+ vector the dimensions (rows, columns)
 of \verb+A+. \verb+size(A,1)+ (resp. \verb+size(A,2)+) retuns the number of rows 
 (resp. columns) of \verb+A+.
-   \item \verb+i2m(A)+ returns a new \emph{Mat} matrix from the \emph{IMat} matrix A (this could be useful for
+   \item \verb+i2m(A)+    \index{i2m}\hypertarget{i2m}{} returns a new \emph{Mat} matrix from the \emph{IMat} matrix A (this could be useful for
     operations defined for floating point matrices and not for integer's ones).  
+   \item \verb+m2i(A,int_type_str,mode="overflow"|"saturate")+  \index{m2i}\hypertarget{m2i}{} 
+     returns a new \emph{IMat} matrix from the \emph{Mat} matrix A.
    \item all \hyperlink{arrays}{basic arrays functions or method} (which works on full arrays of any kind) 
      are naturally available for \emph{IMat} 
     \item Most sorting, searching, set functions are available for \emph{IMat} see \hyperlink{searchandsort}{searching
