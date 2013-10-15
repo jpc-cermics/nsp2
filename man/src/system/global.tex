@@ -9,7 +9,7 @@
 %-- Calling sequence section
 \begin{calling_sequence}
 \begin{verbatim}
-  global('name1',...,'namen',def=value);
+  global('name1',...,'namen',oname1=def1,...,onamen=defn);
   global name1 ... namen
   global name1, ..., namen
 \end{verbatim}
@@ -18,19 +18,20 @@
 \begin{parameters}
   \begin{varlist}
     \vname{name1,..., namen}: valid ident names
+    \vname{oname1,..., onamen}: valid ident names
   \end{varlist}
 \end{parameters}
 \begin{mandescription}
   The \verb!global! keyword or function is used to declare that some idents 
-  refers to variables in a global frame and not to the local frame.
+  refers to variables in a global frame and not to variables in the local frame.
   If the variable referred by the ident name does not pre-exists 
-  it is created with an empty matrix as default value or with the value 
-  given by the optional argument \verb!def! if present. 
+  it is created with an empty matrix as default value or with the given value 
+  if the ident is given as an optional argument \verb!name=value!. 
   \verb!global! can be used anywhere in nsp code.
-
+  
   The \verb!clearglobal! keyword or function is used to remove a global 
   declaration for an ident.
-
+  
   The \verb!isglobal! function does not exists in nsp. Similar result 
   can be obtained with \verb!exists(identname,'global');!.
   
@@ -40,7 +41,7 @@
   \begin{Verbatim}
     global('a', def=1); 
     function y=f(x); global a; y=x+a; endfunction
-    function g(x); global('a',def=2);a=x; endfunction
+    function g(x); global(a=2);a=x; endfunction
     f(3)
     g(3)
     f(5)
