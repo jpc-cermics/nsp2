@@ -33,6 +33,7 @@
 #include <nsp/matutil.h> /* icopy iset */
 
 static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int indent);
+static int nsp_imatrix_format_length(NspIMatrix *M);
 
 /**
  * nsp_imatrix_create:
@@ -328,7 +329,7 @@ void nsp_imatrix_destroy(NspIMatrix *IMat)
  * Return value: %TRUE or %FALSE
  */
 
-static void nsp_int_print(const void *m, int i, int j);
+static void nsp_int_print(const void *m, int i, int j,int length);
 
 int nsp_imatrix_info(NspIMatrix *IMat, int indent,const char *name, int rec_level)
 {
@@ -347,7 +348,7 @@ int nsp_imatrix_info(NspIMatrix *IMat, int indent,const char *name, int rec_leve
       if (IMat->mn != 0)
 	{
 	  Sciprintf1(indent,"%s\t= [ ",pname);
-	  nsp_int_print(IMat,0,0);
+	  nsp_int_print(IMat,0,0,5);
 	  Sciprintf("]\t\ti (%dx%d,%s)\n", IMat->m,IMat->n,st);
 	}
       else
@@ -449,10 +450,10 @@ int nsp_imatrix_latex_print(NspIMatrix *IMat)
     {
       for (j=0; j < IMat->n - 1; j++)
 	{ 
-	  nsp_int_print(IMat,i,j);
+	  nsp_int_print(IMat,i,j,5);
 	  Sciprintf("\t& ");
 	}
-      nsp_int_print(IMat,i,IMat->n-1);
+      nsp_int_print(IMat,i,IMat->n-1,5);
       Sciprintf("\t");
       if ( i != IMat->m -1 ) 
 	Sciprintf("\\\\\n");
@@ -492,11 +493,11 @@ int nsp_imatrix_latex_tab_print(NspIMatrix *IMat)
 	{ 
 
 	  Sciprintf("$");
-	  nsp_int_print(IMat,i,j);
+	  nsp_int_print(IMat,i,j,5);
 	  Sciprintf("$\t& ");
 	}
       Sciprintf("$");
-      nsp_int_print(IMat,i,IMat->n-1);
+      nsp_int_print(IMat,i,IMat->n-1,5);
       Sciprintf("$\t\\\\ \\hline\n");
     }
   Sciprintf("\\end{tabular}\n");
@@ -1480,7 +1481,7 @@ void nsp_ext_euclide(nsp_itype itype, void *a, void *b, void *g, void *U, void *
  * routines for output of integer matrices 
  */
 
-static void nsp_int_print(const void *m, int i, int j)
+static void nsp_int_print(const void *m, int i, int j,int length)
 {
   const NspIMatrix *M=m;
   /*  nsp_gint, nsp_guint, nsp_gshort, nsp_gushort, nsp_glong , 
@@ -1492,7 +1493,7 @@ static void nsp_int_print(const void *m, int i, int j)
 		 "%*u", "%*d", "%*u", "%*d",        
 		 "%*d", "%*d", "%*u", "%*"G_GINT64_FORMAT,
 		 "%*"G_GUINT64_FORMAT,NULL};
-#define IMAT_PRINT(name,type,arg) Sciprintf(fmt[M->itype],5,M->name[i+(M->m)*j]);break;
+#define IMAT_PRINT(name,type,arg) Sciprintf(fmt[M->itype],length,M->name[i+(M->m)*j]);break;
   NSP_ITYPE_SWITCH(M->itype,IMAT_PRINT,"");
 #undef IMAT_PRINT
 }
@@ -1509,13 +1510,55 @@ static void BMij_plus_format(const void *m, int i, int j)
 static void BMij_as_read(const nsp_num_formats *fmt,const void *m, int i, int j)
 {
   Sciprintf(" ");
-  nsp_int_print(m,i,j);
+  nsp_int_print(m,i,j,fmt->curr_real_fw);
 }
 
 static void BMij(const nsp_num_formats *fmt,const void *m, int i, int j)
 {
   Sciprintf(" ");
-  nsp_int_print(m,i,j);
+  nsp_int_print(m,i,j,fmt->curr_real_fw);
+}
+
+int nsp_imatrix_general(const nsp_num_formats *fmt,void *m, int nr, int nc, int inc, int total_width, int max_width, int winrows, int indent, Mijfloat F)
+{
+  int i,j;
+  int p_rows=0;
+  int col;
+  for ( col = 0; col < nc; col += inc)
+    {
+      int lim = col + inc < nc ? col + inc : nc;
+      if (total_width > max_width && user_pref.split_long_rows)
+	{
+	  int num_cols;
+	  if (col != 0)  Sciprintf("\n");
+	  nsp_pr_white(indent);
+	  num_cols = lim - col;
+	  if (num_cols == 1)
+	    Sciprintf(" Column %d :\n\n",col+1);
+	  else if (num_cols == 2)
+	    Sciprintf(" Columns %d and %d:\n\n",col+1,lim);
+	  else
+	    Sciprintf(" Columns %d through %d:\n\n",col+1,lim);
+	}
+      for ( i = 0; i < nr; i++)
+	{
+	  int imore;
+	  p_rows++;
+	  if ( p_rows >= winrows ) 
+	    {
+	      scimore(&imore);
+	      if ( imore == 1) return FALSE;
+	      p_rows=0;
+	    }
+	  nsp_pr_white(indent);Sciprintf(" |");
+	  for ( j = col; j < lim; j++)
+	    {
+	      (*F)(fmt,m,i,j);
+	    }
+	  Sciprintf(" |\n");
+	}
+    }
+  return TRUE;
 }
 
 static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int indent)
@@ -1523,16 +1566,20 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
   int rep = TRUE;
   int nr = cm->m;
   int nc = cm->n;
+  fmt->curr_real_fw = nsp_imatrix_format_length(cm);
+  /* Sciprintf("Using %d\n",  fmt->curr_real_fw ); */
   if (fmt->plus_format && ! user_pref.pr_as_read_syntax)
     {
       nsp_matrix_plus_format(cm,nr,nc,BMij_plus_format,indent);
     }
   else
     {
-      int column_width,total_width,inc  ;
+      int column_width,total_width,inc , offset;
       int max_width ,winrows ;
-      column_width = 2;
-      total_width = nc * column_width;
+      /* fmt->curr_real_fw=5; */
+      column_width = fmt->curr_real_fw + 2;
+      offset =  indent + 4; /* 4 = " |...| " */
+      total_width = nc * column_width + offset;
       sci_get_screen_size(&winrows,&max_width);
       if (user_pref.pr_as_read_syntax)	max_width -= 4;
       Sciprintf("\n");
@@ -1549,10 +1596,32 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
 	}
       else
 	{
-	  rep = nsp_matrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
+	  rep = nsp_imatrix_general(fmt,cm,nr,nc,inc,total_width,max_width,winrows,
 				   indent,BMij);
 	}
     }
   return rep;
 }
 
+
+static int nsp_imatrix_format_length(NspIMatrix *M)
+{
+  double dmin,dmax;
+  int i,sign,len;
+  nsp_int_union imin,imax;
+#define IMAT_MAX_MIN(name,type,arg)				\
+  imin.name = M->name[0];					\
+  imax.name = M->name[0];					\
+  for ( i = 0; i < M->mn ; i++ )				\
+    {								\
+      if  ( imin.name > M->name[i] ) imin.name = M->name[i];	\
+      if  ( imax.name < M->name[i] ) imax.name = M->name[i];	\
+    }								\
+  dmin = ( imin.name != 0) ? log((double) Abs(imin.name))/log(10) : 0;	\
+  sign = ( imin.name > 0)  ? 0 : 1 ;				\
+  dmax = ( imax.name != 0) ? log((double) Abs(imax.name))/log(10.0) : 0; \
+  break;
+  NSP_ITYPE_SWITCH(M->itype,IMAT_MAX_MIN,"");
+  len = Max(dmax+1,dmin + sign+1);
+  return len;
+}
