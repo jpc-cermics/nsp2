@@ -148,8 +148,8 @@ static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
  * global('A',def=rand(4,5)): set A as a global variable and set it's value 
  *     to rand(4,5) if A was not already a global variable.
  */
-
-static int int_global(Stack stack, int rhs, int opt, int lhs)
+#if 0
+static int int_global_old(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Def=NULL;
   nsp_option opts[] ={{"def",obj,NULLOBJ,-1},
@@ -167,6 +167,30 @@ static int int_global(Stack stack, int rhs, int opt, int lhs)
     }
   return 0;
 }
+#endif 
+
+
+/* global('x',...,z=val1,...z=valn); */
+
+int int_global(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Def=NULL;
+  char *str ;
+  int i;
+  for ( i = 1 ; i <= rhs - opt ; i++) 
+    {
+      if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
+      if (nsp_declare_global(str,-1, Def)== FAIL) return RET_BUG;
+    }
+  for ( i = rhs -opt+1 ; i <= rhs ; i++)
+    {
+      if (( Def = nsp_get_object(stack,i)) == NULLOBJ ) return RET_BUG;
+      if (nsp_declare_global(nsp_object_get_name(NthObj(i)),-1,Def) == FAIL) return RET_BUG;
+    }
+  return 0;
+} 
+
+
 
 
 static int int_clear(Stack stack, int rhs, int opt, int lhs)

@@ -727,7 +727,7 @@ int nsp_frame_move_up_object(NspObject *O)
  */
 
 
-int nsp_declare_global(char *name, int id, NspObject *value) 
+int nsp_declare_global(const char *name, int id, NspObject *value) 
 {
   nsp_datas *data;
   NspObject *O;
