@@ -489,6 +489,7 @@ function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
     if verbose then printf('   '+strc + '\n');end
     //ok = ilib_spawn_sync(str);
     [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
+    stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
     stdout = catenate(stdout,sep="   ");
     if ~ok then
       printf('   '+stdout + '\n');
@@ -506,6 +507,7 @@ function [libn,ok]=ilib_compile(lib_name,makename,files,verbose=%t)
     if verbose then printf('   '+strc + '\n');end
     //ok = ilib_spawn_sync(str);
     [ok,stdout,stderr,msgerr,exitst]=ilib_spawn_sync(str);
+    stderr=strsubst(stderr,'%','%%');stdout=strsubst(stdout,'%','%%');
     stdout = catenate(stdout,sep="   ");
     if ~ok then
       printf('   '+stdout + '\n');
