@@ -35,8 +35,8 @@ static char tmp_dir[FSIZE+1],buf[FSIZE+1],cur_dir[FSIZE+1];
 
 static char *dataStrings[] = {
   "$MANCHAPTERS",
-  "exec('SCI/scilab.star',-1);",         /* start_up instructions file   */
-  "exec('SCI/demos/alldems.dem');",	 /* demos instructions file      */
+  "~/.nsp/startup.sce",                  /* user start up               */
+  "exec('SCI/demos/alldems.dem');",	 /* demos instructions file     */
   "home/scilab.hist",			 /* history file                */
   "home/scilab.save",			 /* on crash save file          */
   "exec('SCI/scilab.quit',-1);quit;"	 /* exit instructions file      */
