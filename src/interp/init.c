@@ -237,12 +237,22 @@ int nsp_init_and_loop(int argc, char **argv,int loop)
 
   if ( no_startup == FALSE) 
     {
-      /* execute a startup */
+      char fname_expanded[FSIZE+1];
+      FILE *input;
+      /* try to execute a user startup */
       strcpy(startup,get_sci_data_strings(1));
-      strcat(startup,";quit");
-      /* FIXME C2F(scirun)(startup,strlen(startup)); */
+      nsp_path_expand(startup,fname_expanded,FSIZE);
+      if ((input = fopen(fname_expanded,"r")) != NULL) 
+	{
+	  int rep =nsp_parse_eval_file(fname_expanded,init_disp,init_echo,init_errcatch,TRUE,FALSE );
+	  if  ( rep < 0 ) 
+	    {
+	      Sciprintf("Warning: error during execution of the startup script %s\n",startup);
+	      nsp_error_message_show();
+	    }
+	}
     }
-
+  
   if ( initial_dir  == TRUE  ) 
     {
       /* -dir dirname filename 
