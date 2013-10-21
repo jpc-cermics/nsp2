@@ -107,6 +107,7 @@ RCVARS = -O coff
 #
 COMPILE= $(CC)  $(CFLAGS)
 FCOMPILE = $(FC)  $(FFLAGS)
+CXXCOMPILE= $(CXX) $(CXXFLAGS) 
 #
 
 .c.o:
@@ -116,5 +117,10 @@ FCOMPILE = $(FC)  $(FFLAGS)
 .f.o:
 	@echo "compiling $< @ENABLE_DEBUG@"
 	@$(FCOMPILE)  -c $<
+
+.cpp.o:
+	@echo "compiling $< @ENABLE_DEBUG@"
+	@$(CXXCOMPILE)  -c $<
+
 
 
