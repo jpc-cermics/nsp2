@@ -55,7 +55,6 @@ AC_ARG_WITH(pvm,
 AC_ARG_WITH(sndfile,
     [  --without-sndfile       do not compile with sndfile support ])
 
-
 AC_ARG_WITH(portaudio,
     [  --without-portaudio     do not compile with portaudio support ])
 
@@ -64,6 +63,9 @@ AC_ARG_WITH(gtkglext,
 
 AC_ARG_WITH(fftw3,
     [  --without-fftw3         do not use fftw3 for fft but fftpack])
+
+AC_ARG_WITH(clp,
+    [  --without-clp           do not use clp linear programming solvers])
 
 AC_ARG_WITH(gmp,
     [  --without-gmp           do not try to check for gmp])
@@ -106,14 +108,12 @@ fi
 NSP_VERSION=${PACKAGE_NAME}-${PACKAGE_VERSION}
 NSP_HOST_TYPE=$host
 
-
 ########################
 ## removing and cleaning
 ########################
 
 RM='rm -f'
 FILES_TO_CLEAN='*.CKP *.ln *.BAK *.bak core errs ,* *~ *.a .emacs_* tags TAGS make.log MakeOut .*~ *.trace so_locations *.orig *.cos *.obj' 
-
 
 #####################################################
 ## macports or fink ? 
@@ -874,6 +874,7 @@ fi
 builtin(include,config/glpk.m4)
 CHECK_GLPK()
 
+
 #################
 ## PVM
 #################
@@ -1005,6 +1006,38 @@ GZVT='gzvt2'
 NSP_SCRIPT=nsp-gtk.g
 MENUSOBJS=GOBJS
 PERICAIRO=
+
+#################
+## clp  
+#################
+
+
+AC_CHECK_LIB(stdc++,main,[LIB_STDCPP=-lstdc++],[LIB_STDCPP=])
+HAVE_CLP="no"
+
+if test "x$LIB_STDCPP" != "x"; then 
+ if test "$with_clp" != no; then                           
+   ## search for clp#
+   if test "x$PKG_CONFIG" != x; then # try first to use pkg-config	
+      ## If clp.pc is found, set CLP_CFLAGS and CLP_LIBS
+      PKG_CHECK_MODULES(clp, clp >= 1.14, HAVE_CLP="yes", HAVE_CLP="no")
+      ## In case of success I just want clp be added in GTK_PKGS_CFLAGS 
+      if test "$HAVE_CLP" = "yes"; then
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS clp"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS clp"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+	 CLP_CFLAGS=""
+	 CLP_LIBS=""
+	 STDCPP_LIBS="-lstdc++"
+      fi 
+   fi
+ fi
+fi
+
+if test "$HAVE_CLP" = "yes"; then
+  AC_DEFINE(WITH_CLP,[],[clp linear programming solvers])
+fi
 
 #--------------------
 # check for WebKit 
@@ -1358,6 +1391,9 @@ if test "xx$colamd_libs" != "xx" -a "x${colamd_includedir}" != "xNO" ; then
   fi	          
 fi
 
+if test "xx$umfpack_libs" != "xx" ; then HAVE_UMFPACK="yes"; else HAVE_UMFPACK="no"; fi
+if test "xx$cholmod_libs" != "xx" ; then HAVE_CHOLMOD="yes"; else HAVE_CHOLMOD="no"; fi
+
 #################
 ## fftw 
 #################
@@ -1639,6 +1675,22 @@ if test "$with_amoscephes" = yes; then
    AC_DEFINE(WITH_LIBAMOS,[],[cephes amos library])
 fi
 
+
+#########################
+## man vizualization 
+## webkit should be mandatory.
+#########################
+
+if test "x${have_webkit}" = "xyes" ; then 
+   MAN_VIZUALIZATION="webkit-gtk"
+else 
+   if test "$GTKHTML" = yes; then
+     echo MAN_VIZUALIZATION="gtkhtml2"
+   else
+     echo MAN_VIZUALIZATION="no man support"
+   fi
+fi
+
 #########################
 ## substituting variables
 #########################
@@ -1775,8 +1827,31 @@ AC_SUBST(DUMPEXTS)
 AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GTKSOURCEVIEW_OBJS)
 AC_SUBST(AMOS_CEPHES_LIB)
+AC_SUBST(STDCPP_LIBS)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl )
+# for summary file 
+
+AC_SUBST(HAVE_FFTW3)
+AC_SUBST(WITH_GL)
+AC_SUBST(HAVE_SNDFILE)
+AC_SUBST(HAVE_PORTAUDIO)
+AC_SUBST(HAVE_GRAPHVIZ)
+AC_SUBST(HAVE_ASOUND)
+AC_SUBST(HAVE_GLPK)
+AC_SUBST(HAVE_CLP)
+AC_SUBST(HAVE_CHOLMOD)
+AC_SUBST(HAVE_UMFPACK)
+AC_SUBST(have_gtksourceview)
+AC_SUBST(MAN_VIZUALIZATION)
+AC_SUBST(GTK_PKGS_CFLAGS)
+AC_SUBST(LAPACK_LIBS) AC_SUBST(BLAS_LIBS)
+AC_SUBST(CC)
+AC_SUBST(CC_OPTIONS)
+AC_SUBST(FC)
+AC_SUBST(FC_OPTIONS)
+
+
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt )
 
 echo
 echo
@@ -1791,29 +1866,12 @@ echo "Portaudio support......:" $HAVE_PORTAUDIO
 echo "Graphviz support.......:" $HAVE_GRAPHVIZ
 echo "Asound support.........:" $HAVE_ASOUND
 echo "Glpk support...........:" $HAVE_GLPK
-echo -n "Cholmod support........:" 
-if test "xx$cholmod_libs" != "xx" ; then echo " yes"; else echo " no"; fi
-echo -n "Umfpack support........:" 
-if test "xx$umfpack_libs" != "xx" ; then echo " yes"; else echo " no"; fi
-echo -n "GtkSourceView support..:" $have_gtksourceview
-
-echo 
-echo -n "man vizualization......:" 
-if test "x${have_webkit}" = "xyes" ; then 
-   echo " webkit-gtk"
-else 
-   if test "$GTKHTML" = yes; then
-     echo " gtkhtml2"
-   else
-     echo " no support"
-   fi
-fi
-
-#echo "WebKit support.........:" $have_webkit
-#echo "gtkhtml2 support.......:" $GTKHTML
-# --------
-
-echo 
+echo "Clp support............:" $HAVE_CLP
+echo "Cholmod support........:" $HAVE_CHOLMOD
+echo "Umfpack support........:" $HAVE_UMFPACK 
+echo "GtkSourceView support..:" $have_gtksourceview
+echo "man vizualization......:" $MAN_VIZUALIZATION
+echo ""
 echo "Managed by pkg-config..:" $GTK_PKGS_CFLAGS
 echo "Lapack and Blas........:" $LAPACK_LIBS $BLAS_LIBS
 if test "$HAVE_GMP" = "yes"; then
@@ -1863,5 +1921,10 @@ echo "C options..............:" $CC_OPTIONS
 echo "Fortran compiler.......:" $FC
 echo "Fortran options........:" $FC_OPTIONS 
 echo
+
+
+
+
+
 
 

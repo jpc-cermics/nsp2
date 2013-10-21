@@ -1,0 +1,24 @@
+*******************
+*     Summary     *
+*******************
+
+FFTW3 support..........:@HAVE_FFTW3@
+OpenGl support.........:@WITH_GL@
+Sndfile support........:@HAVE_SNDFILE@
+Portaudio support......:@HAVE_PORTAUDIO@
+Graphviz support.......:@HAVE_GRAPHVIZ@
+Asound support.........:@HAVE_ASOUND@
+Glpk support...........:@HAVE_GLPK@
+Clp support............:@HAVE_CLP@
+Cholmod support........:@HAVE_CHOLMOD@
+Umfpack support........:@HAVE_UMFPACK@
+GtkSourceView support..:@have_gtksourceview@
+man vizualization......:@MAN_VIZUALIZATION@
+
+Managed by pkg-config..:@GTK_PKGS_CFLAGS@
+Lapack and Blas........:@LAPACK_LIBS@ @BLAS_LIBS@
+C compiler.............:@CC@
+C options..............:@CC_OPTIONS@
+Fortran compiler.......:@FC@
+Fortran options........:@FC_OPTIONS@
+
