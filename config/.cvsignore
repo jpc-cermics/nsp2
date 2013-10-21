@@ -2,3 +2,4 @@ Makefile.ultrix Makefile.aix Makefile.linux Makemex Makeso.incl
 Version.incl
 libtool.m4
 ltmain.sh
+symmary.txt
