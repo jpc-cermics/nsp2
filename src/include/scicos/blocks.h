@@ -651,6 +651,7 @@ extern void whileiterator (scicos_block *block,int flag);
 extern void loopbreaker   (scicos_block *block,int flag) ;
 extern void scicos_sliderm_block(scicos_block * block, int flag);
 extern void scicos_vumeter_block(scicos_block * block, int flag);
+extern void scicos_assertion_block(scicos_block * block, int flag);
 
 MULTI_DECLARATION(absolute_valuei)
 MULTI_DECLARATION(switch2)
@@ -1171,6 +1172,7 @@ scicos_block_table  tabsim[] ={
   MULTI2_DECLARATION1(logic2),
   MULTI2_DECLARATION1(satur_dyn), 
   {"vumeter",(ScicosF) scicos_vumeter_block},  
+  {"assertion",(ScicosF) scicos_assertion_block},  
   {NULL , (ScicosF) 0}
 };
 
