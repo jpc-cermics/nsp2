@@ -87,9 +87,10 @@ $(LIBRARY_NAME).dia	: $(LIBRARY_NAME).la $(LIBRARY_NAME).tst
 	@echo "Compiling $<"
 	@$(CXXLTCOMPILE) -c $<
 
-.cpp.o:
-	@echo "compiling $<"
-	@$(CXXCOMPILE)  -c $<
+# defined in Makefile.incl 
+# .cpp.o:
+# 	@echo "compiling $<"
+# 	@$(CXXCOMPILE)  -c $<
 
 .cpp.lo :
 	@echo "Compiling $<"
