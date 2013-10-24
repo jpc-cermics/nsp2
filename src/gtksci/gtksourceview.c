@@ -563,7 +563,7 @@ static NspSMatrix *save_buffer_in_smatrix(GtkSourceBuffer *buffer)
   gtk_text_buffer_get_end_iter (GTK_TEXT_BUFFER (buffer), &end);
   chars1= chars = gtk_text_buffer_get_slice (GTK_TEXT_BUFFER (buffer), &start, &end, FALSE);
   gtk_text_buffer_set_modified (GTK_TEXT_BUFFER (buffer), FALSE);	  
-  if ((S = nsp_smatrix_create(NVOID,0,0,"",0))== NULLSMAT)
+  if ((S = nsp_smatrix_create(NVOID,1,1,"",-1))== NULLSMAT)
     return S;
   while ( *chars != '\0') 
     {
