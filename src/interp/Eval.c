@@ -2529,6 +2529,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 {
   const char *name=NULL;
   int j,n,arity,nargs,lhs1=1,opt, copy_tag;
+  int arg_is_macro = FALSE, arg_is_fun = FALSE;
   NspObject *O1;
   PList L2;
   stack.first = first;
@@ -2563,11 +2564,12 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	      /* check if name is a function **/
 	      if ((stack.val->S[first]= (NspObject *) function_create(NVOID,(char *) L->O,Int,Num,-1,NULL))==  NULLOBJ) 
 		return RET_BUG;
+	      arg_is_fun = TRUE;
 	    }
 	  else 
 	    {
 	      /* then search for macros */
-	      stack.val->S[first]=nsp_find_macro((char *) L->O);
+	      if ((stack.val->S[first]=nsp_find_macro((char *) L->O)) != NULLOBJ ) arg_is_macro = TRUE;
 	    }
 	}
     }
@@ -2748,6 +2750,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	  /*
 	   * here we evaluate A(...) or A{}
 	   * thus A must have resulted in just one object on the stack
+	   * Note that A can be a function or macro
 	   */
 	  int count,k;
 	  if ( nargs != 1 ) /* && j != arity-1)  */
@@ -2770,7 +2773,8 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	      HOBJ_GET_OBJECT(O1,RET_BUG);
 	      if ( O1->basetype == NSP_TYPE_BASE(nsp_type_plist))   stack.val->S[first] = O1;
 	    }
-	  if ( stack.val->S[first] != NULLOBJ && stack.val->S[first]->basetype != NSP_TYPE_BASE(nsp_type_plist))
+	  if ( stack.val->S[first] != NULLOBJ && stack.val->S[first]->basetype != NSP_TYPE_BASE(nsp_type_plist) 
+	       && arg_is_macro == FALSE &&  arg_is_fun == FALSE)
 	    { 
 	      /* Object is a variable, evaluate arguments and call extract
 	       */
@@ -2871,8 +2875,21 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	       * function or macro evaluation 
 	       */
 	      count = 0;
-	      /* evaluation of ARGS **/
-	      O1= stack.val->S[first];
+	      if ( arg_is_macro == TRUE || arg_is_fun == TRUE )
+		{
+		  /* because of name mangling: if the first argument was a function or 
+		   * macro we must forget it's name here 
+		   */
+		  O1= NULL;
+		  if (arg_is_fun == TRUE ) nsp_object_destroy(&stack.val->S[first]);
+		  /* forget this for further iterations */
+		  arg_is_macro =  arg_is_fun = FALSE;
+		}
+	      else
+		{
+		  O1 = stack.val->S[first];
+		}
+	      /* evaluation of ARGS */
 	      stack.val->S[first]=NULLOBJ;
 	      if ((n =nsp_eval_arg(L,&stack,first+count,1,1,0)) < 0)  
 		{
@@ -2882,6 +2899,7 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
 	      count += n;
 	      /*counting optional arguments **/
 	      opt=0; for ( k = 0 ; k < count ; k++ ) if ( IsHopt(stack.val->S[first+k]) ) opt++;
+	      /*function evaluation with name mangling */
 	      if ((nret=nsp_eval_func(O1,name,2,stack,first,count,opt,lhs1))<0) 
 		return nret;
 	      nargs = nret;

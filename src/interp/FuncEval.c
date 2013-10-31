@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -605,8 +605,10 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
   const char *name_def="datas",*name= NSP_OBJECT(OF)->name;
   int rep;
   /* new data frame for function evaluation */
+#ifdef NSP_PROFILING
   double cpu = nsp_cputime();
   ((NspPList *) OF)->counter++;
+#endif 
 #ifdef WITH_SYMB_TABLE
   if ( strcmp(name,NVOID)==0 ) name=name_def;
   nsp_new_frame_with_local_vars(name,((NspPList *) OF)->D->next->next->next->O);
@@ -621,7 +623,9 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
     }
   /*Closing the frame **/
   nsp_frame_delete();
+#ifdef NSP_PROFILING
   ((NspPList *) OF)->cpu +=  nsp_cputime() -cpu;
+#endif
   return rep;
 }
 
