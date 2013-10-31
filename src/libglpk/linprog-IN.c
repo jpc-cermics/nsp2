@@ -1221,9 +1221,20 @@ int int_readmpsfile(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;
 }
 
+#ifdef WITH_CLP
+extern function  int_clp_sparse;
+extern function  int_clp_sparse2;
+extern function  int_clp_solve;
+#endif 
+
 static OpTab liblinprog_func[] = {
   {"linprog", int_linprog},
   {"readmpsfile", int_readmpsfile},
+#ifdef WITH_CLP
+  {"clp_sparse", int_clp_sparse},
+  {"clp_sparse2", int_clp_sparse2},
+  {"clp_linprog", int_clp_solve},
+#endif 
   {(char *) 0, NULL},
 };
 
