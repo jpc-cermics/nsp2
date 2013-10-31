@@ -38,6 +38,9 @@
 static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val);
 #endif 
 
+static int nsp_eframe_setup_local_vars(NspFrame *H, NspCells *C);
+static void nsp_eframe_unsetup_local_vars(NspFrame *H);
+
 /* 
  * NspFrame inherits from NspObject
  */
@@ -137,7 +140,7 @@ static int init_frame(NspFrame *o,NspTypeFrame *type)
   o->type = type; 
   NSP_OBJECT(o)->basetype = (NspTypeBase *)type;
   o->local_vars = NULL;
-  o->table = NULL;
+  o->locals = NULL;
   o->vars = NULL;
   return OK;
 }
@@ -259,11 +262,8 @@ void nsp_frame_destroy(NspFrame *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
 #ifdef WITH_SYMB_TABLE 
-  /* this one is shared */
-  if ( H->table != NULL) H->table->objs[0]=NULL; 
+  nsp_eframe_unsetup_local_vars(H);
 #endif 
-  /* now free the cell object  */
-  nsp_cells_destroy(H->table);
 #ifdef FRAME_AS_LIST
   nsp_list_destroy(H->vars);
 #else 
@@ -346,7 +346,7 @@ NspFrame  *GetFrame(Stack stack, int i)
  * opportunity of checking an incorrect frame.
  *-----------------------------------------------------*/
 
-static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBase *type)
+static NspFrame *_nsp_frame_create(const char *name, NspCells *C,NspTypeBase *type)
 {
   NspFrame *H  = (type == NULL) ? new_frame() : type->new();
   if ( H ==  NULLFRAME)
@@ -363,20 +363,13 @@ static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBas
 #endif
   if ( C != NULL )
     {
-      /* C->objs[0] is the local variable table and it is shared */
-      NspObject *Obj=C->objs[0];
-      C->objs[0]=NULL;
-      /* do not copy the first cell element */
-      if ((H->table = nsp_cells_copy(C))==NULLCELLS) return NULLFRAME;
-      C->objs[0] =  H->table->objs[0]= Obj;
-      /* just a faster access */
-      H->local_vars = (NspBHash *) H->table->objs[0];
+      if ( nsp_eframe_setup_local_vars(H,C) == FAIL ) return NULLFRAME;
     }
   NSP_OBJECT(H)->ret_pos = -1 ;
   return H;
 }
 
-NspFrame *nsp_frame_create(const char *name,const NspCells *C)
+NspFrame *nsp_frame_create(const char *name, NspCells *C)
 {
   return _nsp_frame_create(name,C,NULL);
 }
@@ -387,7 +380,7 @@ NspFrame *nsp_frame_create(const char *name,const NspCells *C)
 
 NspFrame *nsp_frame_copy(const NspFrame *H)
 {
-  return _nsp_frame_create(NVOID,H->table,NULL);
+  return _nsp_frame_create(NVOID,H->locals,NULL);
 }
 
 /*-------------------------------------------------------------------
@@ -466,15 +459,16 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name,int tag )
    */
   if ( F->local_vars != NULL ) 
     {
-      int val; 
+      int val;
       /* Sciprintf("searching a local object %s with nsp_eframe_search_object\n",name); */
       if ( VARS_LOCAL(name) )
 	{
+	  int tag1 = VAR_IS_PERSISTENT(val) ? 2 : 1;
 	  val = VAR_ID(val);
-	  if ( F->table->objs[val] == NULLOBJ ) 
+	  if ( ((NspCells *)F->locals->objs[tag1])->objs[val] == NULLOBJ ) 
 	    {
 	      /* Sciprintf("local object %s found but has no value\n",name); */
-	      /* search un calling frames */
+	      /* search in calling frames */
 	      if ( tag == TRUE )
 		return nsp_frames_search_local_in_calling(name,FALSE);
 	      else 
@@ -483,7 +477,7 @@ NspObject *nsp_eframe_search_object(NspFrame *F,const char *name,int tag )
 	  else 
 	    {
 	      /* Sciprintf("\tobject %s found\n",name);*/
-	      return F->table->objs[val];
+	      return ((NspCells *)F->locals->objs[tag1])->objs[val];
 	    }
 	}
     }
@@ -510,10 +504,11 @@ int nsp_eframe_replace_object(NspFrame *F, NspObject *A)
       /* Sciprintf("Replace a local object %s with nsp_eframe_replace_object\n",nsp_object_get_name(A));*/
       if ( VARS_LOCAL(nsp_object_get_name(A))) 
 	{
+	  int tag = VAR_IS_PERSISTENT(val) ? 2 : 1;
 	  val = VAR_ID(val);
 	  /* object is a local variable */
-	  nsp_object_destroy(&F->table->objs[val]);
-	  F->table->objs[val]= A;
+	  nsp_object_destroy(&((NspCells *)F->locals->objs[tag])->objs[val]);
+	  ((NspCells *)F->locals->objs[tag])->objs[val] = A;
 	  /* Sciprintf("\t replacement done for %s \n",nsp_object_get_name(A)); */
 	  return OK;
 	}
@@ -549,9 +544,10 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
       if ( VARS_LOCAL(str)) 
 	{
 	  NspObject *O1;
+	  int tag = VAR_IS_PERSISTENT(val) ? 2 : 1;
 	  val = VAR_ID(val);
-	  O1 = F->table->objs[val];
-	  F->table->objs[val]= NULL;
+	  O1 = ((NspCells*) F->locals->objs[tag])->objs[val];
+	  ((NspCells*) F->locals->objs[tag])->objs[val] = NULL;
 	  /* Sciprintf("\tsearch and remove ok %s \n",str); */
 	  return O1;
 	}
@@ -581,7 +577,7 @@ NspObject *nsp_eframe_search_and_remove_object(NspFrame *F,nsp_const_string str)
 
 NspHash *nsp_eframe_to_hash(NspFrame *F)
 {
-  int i;
+  int j;
   NspHash  *Obj;
   NspObject *Elt;
 #ifdef FRAME_AS_LIST
@@ -591,19 +587,24 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
 #endif
   /* if we only have local variables this is wrong ? XXXXX */
   if ( Obj == NULLHASH) return Obj;
-  if ( F->table == NULL) return Obj;
-  for ( i = 1 ; i < F->table->mn ; i++) 
+  if ( F->locals == NULL) return Obj;
+  for ( j = 1 ; j < F->locals->mn ; j++) 
     {
-      Elt= F->table->objs[i];
-      if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+      int i;
+      NspCells *Table = (NspCells *) F->locals->objs[j];
+      for ( i = 0 ; i < Table->mn ; i++) 
 	{
-	  /* A copy of object is added in the hash table *
-	   * take care of Hobj pointers 
-	   */
-	  HOBJ_GET_OBJECT(Elt,NULLHASH);
-	  if (( Elt =nsp_object_copy_with_name(Elt)) == NULLOBJ )
-	    return NULLHASH;
-	  if (nsp_hash_enter( Obj,Elt) == FAIL) return NULLHASH;
+	  Elt= Table->objs[i];
+	  if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	    {
+	      /* A copy of object is added in the hash table *
+	       * take care of Hobj pointers 
+	       */
+	      HOBJ_GET_OBJECT(Elt,NULLHASH);
+	      if (( Elt =nsp_object_copy_with_name(Elt)) == NULLOBJ )
+		return NULLHASH;
+	      if (nsp_hash_enter( Obj,Elt) == FAIL) return NULLHASH;
+	    }
 	}
     }
   return Obj;
@@ -621,7 +622,7 @@ NspHash *nsp_eframe_to_hash(NspFrame *F)
 
 NspSMatrix *nsp_eframe_to_smat(NspFrame *F)
 {
-  int i;
+  int j;
   NspSMatrix  *Obj;
   NspObject *Elt;
   /* first insert the names in the list part of Frame */
@@ -652,15 +653,20 @@ NspSMatrix *nsp_eframe_to_smat(NspFrame *F)
   /* if we only have local variables this is wrong ? XXXXX */
   if ( Obj == NULLSMAT) return Obj;
   /* then insert the names from local variables */
-  if ( F->table == NULL) return Obj;
-  for ( i = 1 ; i < F->table->mn ; i++) 
+  if ( F->locals == NULL) return Obj;
+  for ( j = 1 ; j < F->locals->mn ; j++) 
     {
-      Elt= F->table->objs[i];
-      if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+      int i;
+      NspCells *Table = (NspCells *) F->locals->objs[j];
+      for ( i = 0 ; i < Table->mn ; i++) 
 	{
-	  const char *str = nsp_object_get_name(NSP_OBJECT(Elt));
-	  if ( nsp_row_smatrix_append_string(Obj,str) == FAIL) 
+	  Elt= Table->objs[i];
+	  if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	    {
+	      const char *str = nsp_object_get_name(NSP_OBJECT(Elt));
+	      if ( nsp_row_smatrix_append_string(Obj,str) == FAIL) 
 	    return NULLSMAT;
+	    }
 	}
     }
   return Obj;
@@ -678,7 +684,7 @@ NspSMatrix *nsp_eframe_to_smat(NspFrame *F)
 
 int nsp_eframe_to_save( NspFile *file,NspFrame *F)
 {
-  int i;
+  int j;
   NspObject *Elt;
   /* first insert the names in the list part of Frame */
 #ifdef FRAME_AS_LIST
@@ -704,13 +710,18 @@ int nsp_eframe_to_save( NspFile *file,NspFrame *F)
 #endif
   /* if we only have local variables this is wrong ? XXXXX */
   /* then insert the names from local variables */
-  if ( F->table == NULL) return OK;
-  for ( i = 1 ; i < F->table->mn ; i++) 
+  if ( F->locals == NULL) return OK;
+  for ( j = 1 ; j < F->locals->mn ; j++) 
     {
-      Elt= F->table->objs[i];
-      if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+      int i;
+      NspCells *Table = (NspCells *) F->locals->objs[j];
+      for ( i = 0 ; i < Table->mn ; i++) 
 	{
-	  if (nsp_object_xdr_save(file->obj->xdrs,Elt) == FAIL) return FAIL;
+	  Elt= Table->objs[i];
+	  if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+	    {
+	      if (nsp_object_xdr_save(file->obj->xdrs,Elt) == FAIL) return FAIL;
+	    }
 	}
     }
   return OK;
@@ -735,11 +746,12 @@ void nsp_eframe_remove_object(NspFrame *F,nsp_const_string str)
       if ( VARS_LOCAL(str)) 
 	{
 	  NspObject *O1;
+	  int tag = VAR_IS_PERSISTENT(val) ? 2 : 1;	  
 	  val = VAR_ID(val);
-	  O1 = F->table->objs[val];
+	  O1 = ((NspCells *) F->locals->objs[tag])->objs[val];
 	  if ( O1 != NULL &&  O1->flag == TRUE ) return;
 	  nsp_object_destroy(&O1);
-	  F->table->objs[val]= NULL;
+	  ((NspCells *) F->locals->objs[tag])->objs[val]= NULL;
 	  /* Sciprintf("\tsearch and remove ok %s \n",str); */
 	  return ;
 	}
@@ -765,17 +777,24 @@ void nsp_eframe_remove_all_objects(NspFrame *F)
   if ( F->local_vars != NULL ) 
     {
       /* first search in local variables */
-      int i; 
-      if ( F->table != NULL) 
-	for ( i = 1 ; i < F->table->mn ; i++) 
-	  {
-	    NspObject *Elt= F->table->objs[i];
-	    if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
-	      {
-		nsp_object_destroy(&Elt);
-		F->table->objs[i]= NULL;
-	      }
-	  }
+      if ( F->locals != NULL) 
+	{
+	  int j;
+	  for ( j = 1 ; j < F->locals->mn ; j++) 
+	    {
+	      int i;
+	      NspCells *Table = (NspCells *) F->locals->objs[j];
+	      for ( i = 0 ; i < Table->mn ; i++) 
+		{
+		  NspObject *Elt= Table->objs[i];
+		  if ( Elt != NULL && Ocheckname(Elt,NVOID)== FALSE)
+		    {
+		      nsp_object_destroy(&Elt);
+		      Table->objs[i]= NULL;
+		    }
+		}
+	    }
+	}
     }
 #ifdef FRAME_AS_LIST
   if ( F->vars != NULLLIST)
@@ -847,6 +866,75 @@ static int nsp_bsearch_string(NspSMatrix *S,const char *x,int *val)
 } 
 #endif 
 
+/**
+ * nsp_eframe_set_persistent_value:
+ * @F: 
+ * @Obj: 
+ * 
+ * set the value of a persistent variable to #Obj if the 
+ * persistent variable has no value. Taking care of copying object 
+ * should be performed by the caller.
+ *
+ * Return value: %OK or %FAIL
+ **/
+    
+int nsp_eframe_set_persistent_value(NspFrame *F,NspObject *Obj)
+{
+  const char *str =  nsp_object_get_name(Obj);
+  int val;
+  if ( F->local_vars != NULL && VARS_LOCAL(str) )
+    {
+      /* Only search in local variables */
+      NspObject *O1;
+      val = VAR_ID(val);
+      O1 = ((NspCells *) F->locals->objs[2])->objs[val];
+      if ( O1 != NULL ) return OK;
+      nsp_object_destroy(&O1);
+      ((NspCells *) F->locals->objs[2])->objs[val] = Obj;
+    }
+  else 
+    {
+      return FAIL;
+    }
+  return OK;
+}
+
+
+/* Copy a table of local variables in H->table 
+ * persistent variables are not copied 
+ */
+
+static int nsp_eframe_setup_local_vars(NspFrame *H, NspCells *C)
+{
+  NspCells *Cl;
+  if (( H->locals = nsp_cells_create(NVOID, 3,1)) == NULL) goto fail;
+  H->locals->objs[0] = C->objs[0];/* this one is always shared: it is the hash table of local variable names */
+  H->locals->objs[2] = C->objs[2];/* this one is always shared: it is the cell array for persistent variables  */
+  H->local_vars = (NspBHash *) C->objs[0]; /* faster access */
+  if ( C->objs[1] != NULL )
+    {
+      if (( Cl = nsp_cells_copy((NspCells *) C->objs[1]))  == NULL) goto fail;
+      H->locals->objs[1] = (NspObject *) Cl;
+    }
+  else
+    {
+      H->locals->objs[1] = NULL;
+    }
+  return OK;
+ fail:
+  H->locals = NULL;
+  H->local_vars = NULL;
+  return FAIL;
+}
+
+
+static void nsp_eframe_unsetup_local_vars(NspFrame *H)
+{
+  if ( H->locals == NULL) return ;
+  H->locals->objs[0] = NULL;
+  H->locals->objs[2] = NULL;
+  nsp_cells_destroy(H->locals);
+}
 
 /*----------------------------------------------------
  * Interface 

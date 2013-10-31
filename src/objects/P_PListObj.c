@@ -17,10 +17,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <math.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <nsp/nsp.h>
+#include <nsp/objects.h>
 
 #define PList_Private 
 #include <nsp/object.h> 
@@ -33,11 +31,15 @@
 #include <nsp/file.h> 
 #include <nsp/list.h> 
 #include <nsp/ast.h> 
-
+#include <nsp/cells.h> 
+#include <nsp/frame.h> 
 #include <nsp/system.h>
 #include "nsp/pr-output.h" 
 #include "nsp/interf.h"
 #include "nsp/matutil.h"
+#include "nsp/libstab.h"
+
+extern const char *nsp_get_libdir(int num);
 
 static NspMethods *nsp_macro_get_methods(void);
 /*
@@ -549,6 +551,85 @@ static int int_nsp_macro_to_list(NspPList *self,Stack stack, int rhs, int opt, i
   return 1;
 }
 
+static int int_nsp_macro_reset_persistents(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  
+  NspCells *T = (NspCells *) self->D->next->next->next->O;
+  NspBHash *H = (NspBHash *) T->objs[0];
+  int i=0,val;
+  CheckStdRhs(0,1);
+  CheckLhs(0,1);
+  if ( rhs - opt == 0) 
+    {
+      while (1) 
+	{
+	  char *str=NULL;
+	  int rep = nsp_bhash_get_next_object(H,&i,&str,&val);
+	  if ( str != NULL && VAR_IS_PERSISTENT(val))
+	    { 
+	      val = VAR_ID(val);
+	      if ( ((NspCells *) T->objs[2])->objs[val] != NULLOBJ )
+		{
+		  nsp_object_destroy(&((NspCells *) T->objs[2])->objs[val]);
+		  ((NspCells *) T->objs[2])->objs[val]=NULL;
+		}
+	    }
+	  if (rep == FAIL) break;
+	}
+    }
+  else
+    {
+      NspSMatrix *S; 
+      if  ((S = GetSMat(stack,1)) == NULLSMAT) return RET_BUG;
+      for ( i= 0 ; i < S->mn ; i++)
+	{
+	  if ( nsp_bhash_find(H, S->S[i],&val) == OK && VAR_IS_PERSISTENT(val) )
+	    {
+	      val = VAR_ID(val);
+	      if ( ((NspCells *) T->objs[2])->objs[val] != NULLOBJ )
+		{
+		  nsp_object_destroy(&((NspCells *) T->objs[2])->objs[val]);
+		  ((NspCells *) T->objs[2])->objs[val]=NULL;
+		}
+	    }
+	}
+    }
+  return 0;
+}
+
+static int int_nsp_macro_get_cpu(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  if ( nsp_move_double(stack,1,self->cpu) == FAIL ) 
+    return RET_BUG;
+  return 1;
+}
+
+static int int_nsp_macro_reset_cpu(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckStdRhs(0,0);
+  CheckLhs(0,0);
+  self->cpu=0;
+  return 0;
+}
+
+
+
+static int int_nsp_macro_clear_cache(NspPList *self,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  const char *dir= nsp_get_libdir(self->dir);
+  if ( dir != NULL )
+    {
+      /* if dir is non-null then the macros is from library */
+      if ( self->D != NULL) nsp_plist_destroy(&self->D);
+      self->D = NULL;
+    }
+  return 0;
+}
+
 static int int_nsp_macro_to_string(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
   NspSMatrix *S;
@@ -578,6 +659,10 @@ static NspMethods nsp_macro_methods[] = {
   {"get_path",(nsp_method *) int_nsp_macro_get_path },
   {"to_list",(nsp_method *) int_nsp_macro_to_list },
   {"to_string",(nsp_method *) int_nsp_macro_to_string },
+  {"reset_persistents",(nsp_method *) int_nsp_macro_reset_persistents },
+  {"clear_cache", (nsp_method *) int_nsp_macro_clear_cache},
+  {"get_cpu",(nsp_method *) int_nsp_macro_get_cpu },
+  {"reset_cpu",(nsp_method *) int_nsp_macro_reset_cpu },
   { NULL, NULL}
 };
 
@@ -659,6 +744,25 @@ static int int_plist_to_ast(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
+static int int_collect_cputime(Stack stack, int rhs, int opt, int lhs)
+{
+  NspHash *H;
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if (( H = nsp_collect_cpu())== NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+}
+
+static int int_init_cputime(Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,0);
+  nsp_init_cpu();
+  return 0;
+}
+
+
 /*
  * The Interface for parsed lists
  */
@@ -669,6 +773,8 @@ static OpTab NspPList_func[]={
   {"pl2ast", int_plist_to_ast},
   {"inout", int_inout},
   {"print_internal", int_print_internal},
+  {"collect_cputime", int_collect_cputime},
+  {"init_cputime", int_init_cputime},
   {(char *) 0, NULL}
 };
 

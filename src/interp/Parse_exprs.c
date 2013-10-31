@@ -613,7 +613,7 @@ static int parse_funcstop (Tokenizer *T,int token)
 static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 {
   int val;
-  NspObject *cell = NULLOBJ;
+  NspObject *cell = NULLOBJ, *cell1= NULLOBJ;
   NspBHash *symbols = NULLBHASH;
   PList plist1 = NULLPLIST ;
   PList plist2 = NULLPLIST ;
@@ -708,7 +708,7 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
       nsp_parse_symbols_table_reset_id(symbols,symb_names);
 #endif 
       /* nsp_hash_print(symbols,0); */
-      if ((cell= (NspObject *)nsp_cells_create("symbols",nsymb,1)) == NULLOBJ) goto fail;
+      if ((cell= (NspObject *)nsp_cells_create("symbols",3,1)) == NULLOBJ) goto fail;
       /* we keep the hash table in the cell 
        * Note that this could be dropped if refs in calling stacks are removed in nsp.
        */
@@ -717,9 +717,14 @@ static int parse_function(Tokenizer *T,NspBHash *symb_table,PList *plist)
 #else 
       ((NspCells *) cell)->objs[0]= (NspObject *) symbols;
 #endif 
+      if ((cell1= (NspObject *) nsp_cells_create("locals",nsymb,1)) == NULLOBJ) goto fail;
+      ((NspCells *) cell)->objs[1]= (NspObject *) cell1;
+      if ((cell1= (NspObject *) nsp_cells_create("persistents",nsymb,1)) == NULLOBJ) goto fail;
+      ((NspCells *) cell)->objs[2]= (NspObject *) cell1;
       if (nsp_parse_add_object(&plist1,NSP_OBJECT(cell)) == FAIL) goto fail;
       if (nsp_parse_add(&plist1,FUNCTION,3,T->tokenv.Line) == FAIL) goto fail;
       /* use symbol table to walk in plist and convert names to local id*/
+      nsp_plist_name_detect_persistent(plist1,symbols,0); 
       nsp_plist_name_to_local_id(plist1,symbols,0); 
 #ifdef  SMAT_SYMB_TABLE
       if (symbols != NULLBHASH)  nsp_bhash_destroy(symbols);

@@ -43,7 +43,7 @@ struct parse_cell {
   void *O;                  /* points to the stored object or can be used to store line number
 			       for operators */
   int   type;               /* type of object */
-  short int arity ;         /* used to store arity of operators */
+  int   arity ;             /* used to store arity of operators and tags */
 };
 
 /*
@@ -86,6 +86,9 @@ struct _NspPlist {
   char *file_name;  /* NULL or points to the function source file-name */
   PList D;          /* points to the parsed expression */
   int dir;          /* indice in directory array or -1 */
+  double cpu;       /* profiling */
+  int counter;      /* profiling */
+  int trace;        /* */
 };
 
 extern int nsp_type_plist_id;

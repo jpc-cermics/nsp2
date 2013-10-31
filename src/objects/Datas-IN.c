@@ -144,35 +144,12 @@ static int int_nsp_acquire(Stack stack, int rhs, int opt, int lhs)
 }
 
 /*
- * global('A','B',.....) : set a b etc... as global  variables 
- * global('A',def=rand(4,5)): set A as a global variable and set it's value 
+ * global('A','B',....,'Z',X=value,Y=value,....) : 
+ * global(A=rand(4,5)): set A as a global variable and set it's value 
  *     to rand(4,5) if A was not already a global variable.
  */
-#if 0
-static int int_global_old(Stack stack, int rhs, int opt, int lhs)
-{
-  NspObject *Def=NULL;
-  nsp_option opts[] ={{"def",obj,NULLOBJ,-1},
-		      { NULL,t_end,NULLOBJ,-1}};
-  int i;
-  char *str;
-  CheckStdRhs(1,1000);
-  CheckLhs(1,1);
-  if ( get_optional_args(stack, rhs, opt, opts, &Def) == FAIL )
-    return RET_BUG;
-  for ( i= 1; i <= rhs -opt ; i++)
-    {
-      if ((str = GetString(stack,i)) == (char*)0) return RET_BUG;
-      if (nsp_declare_global(str,-1, Def)== FAIL) return RET_BUG;
-    }
-  return 0;
-}
-#endif 
 
-
-/* global('x',...,z=val1,...z=valn); */
-
-int int_global(Stack stack, int rhs, int opt, int lhs)
+static int int_global(Stack stack, int rhs, int opt, int lhs)
 {
   NspObject *Def=NULL;
   char *str ;
@@ -190,8 +167,26 @@ int int_global(Stack stack, int rhs, int opt, int lhs)
   return 0;
 } 
 
-
-
+static int int_persistent(Stack stack, int rhs, int opt, int lhs)
+{
+  NspObject *Obj=NULL;
+  int i;
+  CheckStdRhs(0,0);
+  for ( i = rhs -opt+1 ; i <= rhs ; i++)
+    {
+      /* GetObj takes care of Hobj pointers */
+      if (( Obj =nsp_object_copy(nsp_get_object(stack,i))) == NULLOBJ ) return RET_BUG;
+      if (nsp_object_set_name(Obj,nsp_object_get_name(NthObj(i))) == FAIL) return RET_BUG;
+      if ( nsp_frame_set_persistent_value(Obj) == FAIL)
+	{
+	  const char *str =  nsp_object_get_name(Obj);
+	  Scierror("Error: failed to set persistent value for variable %s\n",str);
+	  nsp_object_destroy(&Obj); /* Obj was copied */
+	  return RET_BUG;
+	}
+    }
+  return 0;
+} 
 
 static int int_clear(Stack stack, int rhs, int opt, int lhs)
 {
@@ -527,6 +522,7 @@ static OpTab Datas_func[]={
   {"frames_inhibit_search",int_frames_flag},
   {"frame_to_hash",int_frame_to_hash},
   {"acquire", int_nsp_acquire}, 
+  {"persistent",int_persistent},
   {(char *) 0, NULL}
 };
 

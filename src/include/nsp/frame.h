@@ -48,7 +48,7 @@ struct _NspFrame {
   NspTypeFrame *type; 
   /*< public >*/
   NspBHash *local_vars; /* used to make the link between local variables and their value */
-  NspCells *table; /* table of local variables */
+  NspCells *locals; /* table of local variables */
 #ifdef FRAME_AS_LIST
   NspList  *vars; /* struct to store non local variables */
 #else 
@@ -62,9 +62,10 @@ struct _NspFrame {
 
 #define VAR_ID(val)  (val & 0xffff)
 #define VAR_TAG(val) (val >> 16 )
-
 #define VAR_GLOBAL   0x10000 
 #define VAR_PERSISTENT   0x20000 
+#define VAR_SET_PERSISTENT(val) (VAR_ID(val) + VAR_PERSISTENT) 
+#define VAR_IS_PERSISTENT(val) (VAR_TAG(val) == 2)
 
 extern const char nsp_frame_header[];
 
@@ -85,7 +86,7 @@ NspFrame *new_frame();
 
 #define NULLFRAME (NspFrame*) 0
 
-NspFrame *nsp_frame_create(const char *name,const NspCells *C);
+NspFrame *nsp_frame_create(const char *name, NspCells *C);
 NspFrame *nsp_frame_copy(const NspFrame *H);
 void nsp_frame_destroy(NspFrame *H);
 void nsp_frame_info(NspFrame *H, int indent,const char *name, int rec_level);
@@ -120,13 +121,14 @@ extern void nsp_eframe_remove_all_objects(NspFrame *F);
 extern NspHash *nsp_eframe_to_hash(NspFrame *F);
 extern NspSMatrix *nsp_eframe_to_smat(NspFrame *F);
 extern int nsp_eframe_to_save( NspFile *file,NspFrame *F);
+extern int nsp_eframe_set_persistent_value(NspFrame *F,NspObject *Obj);
 
 #endif 
 
 /* private part */
 
 #ifdef Frame_Private 
-static NspFrame *_nsp_frame_create(const char *name,const NspCells *C,NspTypeBase *type);
+static NspFrame *_nsp_frame_create(const char *name, NspCells *C,NspTypeBase *type);
 static int init_frame(NspFrame *o,NspTypeFrame *type);
 static int nsp_frame_size(NspFrame *Mat, int flag);
 static char *nsp_frame_type_as_string(void);

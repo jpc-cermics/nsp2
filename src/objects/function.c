@@ -192,11 +192,6 @@ static char *function_type_short_string(NspObject *v)
   return(function_short_type_name);
 }
 
-static int function_full_comp(NspFunction * A,NspFunction * B,char *op,int *err)
-{
-  Scierror("function_full_comp: to be implemented \n");
-  return FALSE;
-}
 
 /*
  * A == B 
@@ -204,11 +199,8 @@ static int function_full_comp(NspFunction * A,NspFunction * B,char *op,int *err)
 
 static int function_eq(NspFunction *A, NspObject *B)
 {
-  int err,rep;
   if ( check_cast(B,nsp_type_function_id) == FALSE) return FALSE ;
-  rep = function_full_comp(A,(NspFunction *) B,"==",&err);
-  if ( err == 1) return FALSE ; 
-  return rep;
+  return strcmp(A->fname, ( (NspFunction *) B)->fname) == 0;
 }
 
 /*
@@ -217,11 +209,8 @@ static int function_eq(NspFunction *A, NspObject *B)
 
 static int function_neq(NspFunction *A, NspObject *B)
 {
-  int err=0,rep;
   if ( check_cast(B,nsp_type_function_id) == FALSE) return TRUE;
-  rep = function_full_comp(A,(NspFunction *) B,"<>",&err);
-  if ( err == 1) return TRUE ; 
-  return rep;
+  return strcmp(A->fname,( (NspFunction *) B)->fname) != 0;
 }
 
 /*
@@ -401,8 +390,20 @@ NspFunction *function_copy(NspFunction *H)
  * methods 
  *------------------------------------------------------*/
 
-static NspMethods *function_get_methods(void) { return NULL;}
+static int int_nsp_function_get_fname(NspFunction *F,Stack stack, int rhs, int opt, int lhs)
+{
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ( nsp_move_string(stack,1,(F->fname==NULL) ? "" : F->fname,-1)== FAIL) return RET_BUG;
+  return 1;
+}
 
+static NspMethods nsp_function_methods[] = {
+  {"get_fname",(nsp_method *) int_nsp_function_get_fname },
+  { NULL, NULL}
+};
+
+static NspMethods *function_get_methods(void) {  return nsp_function_methods;}
 
 /*-------------------------------------------
  * function 
@@ -432,8 +433,39 @@ static int int_func_extractelts(Stack stack, int rhs, int opt, int lhs)
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
+
+/*
+ * Operation leading to Boolean result 
+ */
+
+static int _int_function_comp_gen (Stack stack, int rhs, int opt, int lhs, int op)
+{
+  int comp, rep;
+  NspFunction *A, *B;
+  CheckRhs (2, 2);
+  CheckLhs (1, 1);
+  if ((A = GetFunction (stack, 1)) == NULLFUNC)   return RET_BUG;
+  if ((B = GetFunction (stack, 2)) == NULLFUNC)   return RET_BUG;
+  comp = strcmp(A->fname, B->fname);
+  rep = ( op == 0 ) ? comp != 0 : comp == 0;
+  if ( nsp_move_boolean(stack,1,rep) == FAIL ) return RET_BUG;
+  return 1;
+}
+
+int int_function_neq (Stack stack, int rhs, int opt, int lhs)
+{
+  return _int_function_comp_gen(stack,rhs,opt,lhs,0);
+}
+
+int int_function_eq (Stack stack, int rhs, int opt, int lhs)
+{
+  return _int_function_comp_gen(stack,rhs,opt,lhs,1);
+}
+
 static OpTab Function_func[]={
   {"extractelts_f", int_func_extractelts},
+  {"eq_f_f", int_function_eq},
+  {"ne_f_f", int_function_neq},
   {(char *) 0, NULL}
 };
 

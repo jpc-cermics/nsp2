@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -1246,7 +1246,7 @@ static void SciFileReadLine(Tokenizer *T, char *prompt, char *buffer, int *buf_s
     {
       if ( s != NULL )
 	{
-	  Sciprintf("Warning:\t Missing newline at end of line %s\n",s);
+	  Sciprintf("Warning:\t Missing newline at end of the following line: %s\n",s);
 	}
       else 
 	{

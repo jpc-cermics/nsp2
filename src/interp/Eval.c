@@ -1188,13 +1188,14 @@ int nsp_eval_arg(PList L, Stack *stack, int first, int rhs, int lhs, int display
 
       if ( L->arity != -1 ) 
 	{
+	  int tag = VAR_IS_PERSISTENT(L->arity) ? 2 : 1;
 	  if ( data->L == NULLLIST ) 
 	    {
 	      Scierror("Error: Can't find local variable in empty Data frame\n");
 	      return RET_BUG;
 	    }
 	  /* get current frame local variable table */
-	  stack->val->S[first] = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L->arity)];
+	  stack->val->S[first] = ((NspCells*) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(L->arity)];
 	  if (stack->val->S[first]== NULL) 
 	    {
 	      /* maybe the local variable has a value in calling stacks */
@@ -1448,9 +1449,10 @@ static int EvalFor(PList L1, Stack stack, int first)
 	{
 	  if ( L1->arity != -1 ) 
 	    {
+	      int tag = VAR_IS_PERSISTENT(L1->arity) ? 2 : 1;
 	      /* object is a local variable */
-	      O = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L1->arity)];
-	      ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L1->arity)] = NULL;
+	      O = ((NspCells *) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(L1->arity)];
+	      ((NspCells *) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(L1->arity)] = NULL;
 	      nsp_object_destroy(&O);
 	    }
 	  else
@@ -1593,7 +1595,8 @@ static int EvalEqual(PList L1, Stack stack, int first)
       /* FIXME: maybe we should here consider to return a 
        * Scierror 
        */ 
-      Sciprintf("Warning : Expecting %d values and only %d returned\n", r_args_1, nargs);
+      Scierror("Error: Expecting %d value%s and only %d returned\n", r_args_1, (r_args_1 > 1) ? "s":"", nargs);
+      return RET_BUG;
     }
 
   /*
@@ -2104,7 +2107,7 @@ int EvalEqual2(const char *name, Stack stack, int first,int largs, int fargs, in
 
 static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1, int *mlhs_r, int *mlhs_flag, obj_check_field *objs, int *objs_count)
 {
-  int copy_tag ;
+  int copy_tag,tag ;
   PList L1;
   char *name;
   int j,fargs,arity1;
@@ -2117,11 +2120,11 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
       SHOWBUG(stack,RET_BUG,L);
     }
   name = L->O;
-  
+  tag = VAR_IS_PERSISTENT(L->arity) ? 2 : 1;
   /* Object L which is changed
    */
   if (data->L != NULLLIST 
-      && ( ( L->arity != -1 && (O=((NspFrame *) data->L->first->O)->table->objs[VAR_ID(L->arity)]) != NULLOBJ)
+      && ( ( L->arity != -1 && (O=((NspCells *) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(L->arity)]) != NULLOBJ)
 	   || (O= nsp_eframe_search_object((NspFrame *) data->L->first->O,name,FALSE)) != NULLOBJ))
     {
       /* Object is in the current frame or as a variable in the local table which has a value 
@@ -2529,13 +2532,13 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
   NspObject *O1;
   PList L2;
   stack.first = first;
-  /*list extraction when following a path first **/
+  /*list extraction when following a path first */
   arity = L->arity ;
-  /*Get first argument to fix $ value if necessary **/
-  /*O1 can be NULL **/
+  /* Get first argument to fix $ value if necessary */
   if ( L->next->type == PLIST ) 
     {
-      /* argument is a PLIST which is in fact a parenth */
+      /* first argument is given by a PLIST we need to evaluate to obtain its value 
+       */
       /* nsp_plist_print_internal(L->next->O); */
       if (( n=nsp_eval((PList) L->next->O,stack,first,0,1,display))< 0)
 	{
@@ -2546,10 +2549,27 @@ int EvalRhsList(PList L, Stack stack, int first, int rhs, int lhs, int display)
     }
   else 
     {
+      /* first argument is given by it's name: we first search in frames */
       name = (char *) L->next->O;
       /* */
       L= L->next;
       stack.val->S[first]=nsp_frames_search_object(name);
+      if (stack.val->S[first] == NULLOBJ ) 
+	{
+	  int Int,Num;
+	  /* then search in functions  */
+	  if ( nsp_find_function((char *) L->O,&Int,&Num) == OK) 
+	    {
+	      /* check if name is a function **/
+	      if ((stack.val->S[first]= (NspObject *) function_create(NVOID,(char *) L->O,Int,Num,-1,NULL))==  NULLOBJ) 
+		return RET_BUG;
+	    }
+	  else 
+	    {
+	      /* then search for macros */
+	      stack.val->S[first]=nsp_find_macro((char *) L->O);
+	    }
+	}
     }
   /*Following the evaluation  L(exp1)(exp2)...(expn) **/
   nargs=1;
@@ -2914,8 +2934,9 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	}
       else
 	{
+	  int tag = VAR_IS_PERSISTENT(Lf->arity) ? 2 : 1;
 	  /* direct acces to object through table of local variables */
-	  stack.val->S[first] = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(Lf->arity)];
+	  stack.val->S[first] = ((NspCells*) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(Lf->arity)];
 	  /* maybe the local variable has a value in calling stacks */
 	  if ( stack.val->S[first] == NULLOBJ ) 
 	    stack.val->S[first]=nsp_frames_search_local_in_calling(name,FALSE);
@@ -3017,12 +3038,13 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
       /*counting optional arguments **/
       opt=0; for ( k = 0 ; k < count ; k++ ) if ( IsHopt(stack.val->S[first+k]) ) opt++;
 
-      /* Note here that if a function name starts with __ 
-       * we use the fact that the interface to be called 
-       * can be computed and kept between calls in Lf->arity
-       */
       if ( name[0]== '_' && name[1] == '_' ) 
 	{
+	  /* Undocumented Feature: 
+	   * Note here that if a function name starts with __ 
+	   * we search the interface to be used without considering name mangling 
+	   * and store the interface to be called in arity field.
+	   */
 	  int Int,Num;
 	  stack.first = first;
 	  NspFname(stack) = name ;
@@ -3047,14 +3069,12 @@ int EvalRhsCall(PList L, Stack stack, int first, int rhs, int lhs)
 	    }
 	}
       else 
-	if ((nret=nsp_eval_func(O1,name,2,stack,first,count,opt,lhs))<0) 
-	  {
-	    return nret;
-	  }
+	{
+	  nret=nsp_eval_func(O1,name,2,stack,first,count,opt,lhs);
+	}
     }
   return nret;
 }
-
 
 
 /**
@@ -3279,6 +3299,7 @@ static int nsp_store_result_in_symb_table(int position,const char *str, Stack st
   /* if ( debug ) Sciprintf("=Storing=>%s\n",str); */
   if ( stack.val->S[first] != NULLOBJ ) 
     {
+      int tag;
       NspObject *Ob = stack.val->S[first], *O1;
       if (  data->L == NULLLIST ) 
 	{
@@ -3286,7 +3307,8 @@ static int nsp_store_result_in_symb_table(int position,const char *str, Stack st
 	  return RET_BUG; 
 	}
       /* get current frame local variable table */
-      O1 = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(position)];
+      tag = VAR_IS_PERSISTENT(position) ? 2 : 1;
+      O1 = ((NspCells *) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(position)];
       if ( Ocheckname(Ob,str) ) 
 	{
 	  /* Ob->name == str 
@@ -3330,8 +3352,9 @@ static int nsp_store_result_in_symb_table(int position,const char *str, Stack st
 	    }
 	  else 
 	    {
+	      tag = VAR_IS_PERSISTENT(position) ? 2 : 1;
 	      if ( O1 != NULL )  nsp_object_destroy(&O1);
-	      ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(position)]= Ob;
+	      ((NspCells *) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(position)]= Ob;
 	    }
 	  /* note that the object which as at position first 
 	   * need not be destroyed since it is a named object 
@@ -3572,13 +3595,12 @@ int nsp_eval_maybe_accelerated_binop(const char *opname, int opcode,
  * Check if object @O can be considered as a boolean a TRUE Object 
  * in a logical statement. Try also to detect if this evaluation 
  * raised an error.
+ * It should be better to add a parameter to the is_true method in 
+ * order to detect error raised by is_true method but we don't for 
+ * backward compatibility and thus try to detect errors differently.
  * 
  * Return value: %TRUE or %FALSE
  **/
-
-/* XXXX : should be better to add a parameter to the is_true method 
- * but this seams difficult for backward compatibility 
- */
 
 static int nsp_eval_object_is_true(Stack *S, NspObject *O, int *err)
 {

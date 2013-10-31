@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -18,13 +18,10 @@
  */
 
 #include <nsp/nsp.h>
-#include <nsp/type.h> 
-#include <nsp/hobj.h> 
+#include <nsp/objects.h>
 #include <nsp/plist.h> 
-#include <nsp/smatrix.h> 
-#include <nsp/interf.h> 
 #include <nsp/system.h>
-#include <nsp/nsptcl.h>
+#include <nsp/nsptcl.h> /* for nsp_tail */
 
 /* XXXX */
 extern const char *nsp_get_libdir(int num);
@@ -41,7 +38,7 @@ NspPList *NspPListCreate(const char *name, PList L,char *filename)
 
   if ( P_L == NULLP_PLIST ) 
     {
-      Scierror("No more space\n");
+      Scierror("Error: No more space\n");
       return(NULLP_PLIST);
     }
   if ( nsp_object_set_initial_name(NSP_OBJECT(P_L),name) == NULL)
@@ -94,7 +91,7 @@ NspPList *NspPListCopy_no_local_vars(NspPList *A)
 }
 
 /*
- * Delete the NspPList NspPList 
+ * Delete the NspPList
  */
 
 void NspPListDestroy(NspPList *P_L)

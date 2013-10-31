@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -39,6 +39,7 @@
 #include <nsp/ast.h> 
 #include <nsp/interf.h>
 #include <nsp/pr-output.h>
+#include <nsp/frame.h>
 
 /**
  * nsp_parse_add:
@@ -929,7 +930,7 @@ static void _nsp_plist_print_internal(PList L, int indent)
 	  Sciprintf("%s",((parse_int *) L->O)->str);
 	  break;
 	case NAME :
-	  Sciprintf("%s",(char *) L->O);
+	  Sciprintf("[%s:%d:%d]",(char *) L->O,VAR_ID(L->arity),VAR_TAG(L->arity));
 	  break;
 	case OPNAME :
 	  Sciprintf("'%s'",(char *) L->O);
@@ -2255,8 +2256,8 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H);
  * 
  * walk through a #PList and tags symbols with their ids found in 
  * the hash table @H. This function is used to tag local variables
- * of a function. Note that we should not walk inside the 
- * functions defined in the function. 
+ * of a function and have a faster access to their values. 
+ * Note that we should not walk inside the functions defined in the function. 
  **/
 
 void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec)
@@ -2466,6 +2467,11 @@ void nsp_plist_name_to_local_id(PList List,NspBHash *H,int rec)
     }
 }
 
+/* we store in the arity field of PList of type NAME 
+ * information about the id of associated variable.
+ * (If the variable is not local it's arity is -1).
+ */
+
 
 static void Arg_name_to_local_name(int rec,PList L,NspBHash *H)
 {
@@ -2482,7 +2488,7 @@ static void Arg_name_to_local_name(int rec,PList L,NspBHash *H)
       /* Sciprintf("Je cherche %s\n",(char *) L->O); */
       if ( nsp_bhash_find(H,(char *) L->O,&val) == OK) 
 	{
-	  /* Sciprintf("OK pour %s\n",(char *) L->O); */
+	  /* Sciprintf("found %s and set its arity value to %d\n",(char *) L->O,val); */
 	  L->arity = val ; /*  (int) ((NspMatrix *) obj)->R[0]; */
 	}
       break;
@@ -2616,4 +2622,238 @@ int nsp_plist_equal(PList L1,PList L2)
   if ( L2 != NULLPLIST ) return FALSE;
   return TRUE;
 } 
+
+/* detect which local variables are persistent in 
+ * a function définition.
+ */
+
+static void detect_arg_name(int rec,PList L,NspBHash *H);
+
+static int check_persistent_calleval(PList List,NspBHash *H);
+
+
+void nsp_plist_name_detect_persistent(PList List,NspBHash *H,int rec)
+{
+  PList L=List; /* ,L1; */
+  int j;
+  List = List->next;
+  if ( L->type > 0 )
+    {
+      /* operators */
+      switch ( L->arity ) 
+	{
+	case 0:
+	  break;
+	case 1:
+	  switch ( L->type ) 
+	    {
+	    case  COMMA_OP : 
+	    case  SEMICOLON_OP  :
+	      detect_arg_name(rec,List,H);
+	      break;
+	    case QUOTE_OP :
+	    case DOTPRIM: 
+	      detect_arg_name(rec,List,H);
+	      break;
+	    case RETURN_OP : 
+	      detect_arg_name(rec,List,H);
+	      break;
+	    case TILDE_OP : 
+	      detect_arg_name(rec,List,H);
+	      break;
+	    default:
+	      detect_arg_name(rec,List,H);
+	    }
+	  break;
+	case 2:
+	  detect_arg_name(rec,List,H);
+	  detect_arg_name(rec,List->next,H);
+	  break;
+	default :
+	  for ( j =  0 ; j < L->arity ; j++)
+	    {
+	      detect_arg_name(rec,List,H);
+	      List = List->next;
+	    }
+	  break;
+	}
+    }
+  else 
+    {
+      switch ( L->type ) 
+	{
+	case OPT:
+	case EQUAL_OP:
+	case MLHS  :
+	case ARGS :
+	case CELLARGS :
+	case METARGS :
+	case DOTARGS : break;
+	case CALLEVAL:
+	  if ( check_persistent_calleval(List,H) == OK ) 
+	    {
+	    }
+	  else
+	    {
+	      for ( j =  0 ; j < L->arity ; j++)
+		{
+		  detect_arg_name(rec,List,H);
+		  List = List->next;
+		}
+	    }
+	  break;
+	case LISTEVAL :
+	case FEVAL :
+	  for ( j =  0 ; j < L->arity ; j++)
+	    {
+	      detect_arg_name(rec,List,H);
+	      List = List->next;
+	    }
+	  break;
+	case PLIST :
+	  if (L->next == NULLPLIST )
+	    detect_arg_name(rec,L,H);/* XXXXXXX */
+	  break;
+	case COMMENT :
+	case NAME :
+	case OPNAME :
+	case NUMBER:
+	case STRING:
+	case INUMBER32 :
+	case INUMBER64 :
+	case UNUMBER32 :
+	case UNUMBER64 :
+	case OBJECT :
+	case EMPTYMAT:
+	case EMPTYCELL:
+	case P_MATRIX :
+	case P_CELL :
+	case ROWCONCAT:
+	case COLCONCAT:
+	case DIAGCONCAT:
+	case CELLROWCONCAT:
+	case CELLCOLCONCAT:
+	case CELLDIAGCONCAT:
+	  break;
+	case WHILE:
+	  detect_arg_name(rec,List,H);
+	  detect_arg_name(rec,List->next,H);
+	  break;
+	case FUNCTION:
+	  /* the function prototype (= (ret-args) (feval (args))) 
+	   * here we want to gather (ret-args) but also args 
+	   */
+	  /* this will gather ret-args */
+	  if ( rec == 0 ) 
+	    {
+	      detect_arg_name(rec+1,List,H);
+	      /* function call prototype */
+	      /* L1 = ((PList) List->O)->next->next; */
+	      /* the function body i.e statements */
+	      detect_arg_name(rec+1,List->next,H);
+	    }
+	  break;
+	case FOR:
+	  detect_arg_name(rec,List,H);
+	  detect_arg_name(rec,List->next,H);
+	  detect_arg_name(rec,List->next->next,H);
+	  break;
+	case IF :
+	  for ( j = 0 ; j < L->arity  ; j += 2 )
+	    {
+	      if ( j == L->arity-1 ) 
+		{
+		  detect_arg_name(rec,List,H);
+		}
+	      else 
+		{ 
+		  detect_arg_name(rec,List,H);
+		  List = List->next ;
+		  detect_arg_name(rec,List,H);
+		  List = List->next ;
+		}
+	    }
+	  break;
+	case TRYCATCH :
+	  detect_arg_name(rec,List,H);
+	  detect_arg_name(rec,List->next,H);
+	  if ( L->arity == 3 ) 
+	    {
+	      detect_arg_name(rec,List->next->next,H);
+	    }
+	  break;
+	case SELECT :
+	case STATEMENTS :
+	case STATEMENTS1 :
+	case PARENTH :
+	  for ( j = 0 ; j < L->arity ; j++)
+	    {
+	      detect_arg_name(rec,List,H);
+	      List = List->next;
+	    }
+	  break;
+	case CASE :
+	  detect_arg_name(rec,List,H);
+	  detect_arg_name(rec,List->next,H);
+	  break;
+	case LASTCASE :
+	  detect_arg_name(rec,List,H);
+	  break;
+	case GLOBAL:
+	case CLEAR:
+	case CLEARGLOBAL:
+	case PAUSE:
+	case HELP:
+	case WHO:
+	case EXEC:
+	case APROPOS:
+	case CD_COMMAND:
+	case LS_COMMAND:
+	case PWD_COMMAND:
+	  break;
+	default:
+	  {
+	    /* const char *s = nsp_astcode_to_name(L->type);*/
+	  }
+	}
+    }
+}
+
+static void detect_arg_name(int rec,PList L,NspBHash *H)
+{
+  if ( L == NULLPLIST || L->type != PLIST )  return;
+  nsp_plist_name_detect_persistent((PList) L->O,H,rec);
+}
+
+static int check_persistent_calleval(PList List,NspBHash *H)
+{
+  char *name;
+  PList L;
+  int arity, j;
+  if ( List == NULL || List->type != NAME || strcmp((char *) List->O,"persistent") != 0 )
+    return FAIL;
+  /* we are in persisten(....)*/
+  List = List->next;
+  if ( List == NULL || List->type != PLIST || ((PList) List->O)->type != ARGS )
+    return FAIL;
+  List = ((PList) List->O);
+  arity = List->arity;
+  for ( j =  0 ; j < arity ; j++)
+    {
+      int val;
+      List = List->next;
+      if ( List == NULL || List->type != PLIST || ((PList) List->O)->type != OPT )
+	return FAIL;
+      L= ((PList) List->O)->next;
+      if ( L== NULL || L->type != NAME ) return FAIL;
+      name = (char *) L->O;
+      if ( nsp_bhash_find(H,name,&val) == OK) 
+	{
+	  int new_val = VAR_SET_PERSISTENT(val);
+	  nsp_bhash_enter(H,name,new_val);
+	}
+    }
+  return OK;
+}
+
 

@@ -1,5 +1,5 @@
 /* Nsp
- * Copyright (C) 1998-2012 Jean-Philippe Chancelier Enpc/Cermics
+ * Copyright (C) 1998-2013 Jean-Philippe Chancelier Enpc/Cermics
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -17,8 +17,8 @@
  * Boston, MA 02111-1307, USA.
  *
  * 
- * Htable for macros 
- * FIXME: work in progress 
+ * Hash table for accessing macros or ptimitives. 
+ * This hash table is used as a cache for macros
  *********************************************************************/
 
 #include <string.h>
@@ -467,10 +467,39 @@ int nsp_find_function_by_id(char *key, int Int, int Num)
       int rep = nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
       if ( Obj != NULLOBJ )
 	{ 
-	  if (Int == ((NspFunction *)Obj)->iface && Num == ((NspFunction *)Obj)->pos) 
+	  if ( IsFunction(Obj)) 
 	    {
-	      strncpy(key,nsp_object_get_name(Obj),NAME_MAXL);
-	      return 1;
+	      /* function */
+	      if (Int == ((NspFunction *)Obj)->iface && Num == ((NspFunction *)Obj)->pos) 
+		{
+		  strncpy(key,nsp_object_get_name(Obj),NAME_MAXL);
+		  return 1;
+		}
+	    }
+	  else if (IsNspPList(Obj))
+	    {
+	      /* macro */
+	    }
+	  else if ( IsList(Obj) )
+	    {
+	      /* multiple definitions */
+	      NspList *L = (NspList *) Obj;
+	      NspObject *Elt;
+	      int l = nsp_list_length(L),i=1;
+	      while (1)
+		{
+		  if ( i > l ) break;
+		  Elt = nsp_list_get_element(L,i);
+		  if ( Elt != NULL &&  IsFunction(Elt) ) 
+		    {
+		      if (Int == ((NspFunction *) Elt)->iface && Num == ((NspFunction *) Elt)->pos) 
+			{
+			  strncpy(key,nsp_object_get_name(Obj),NAME_MAXL);
+			  return 1;
+			}
+		    }
+		  i++;
+		}
 	    }
 	}
       if ( rep == FAIL) break;
@@ -555,6 +584,7 @@ NspObject *nsp_find_macro_or_func(const char *str,int *type)
     }
   if ( IsList(Ob) ) 
     {
+      /* multiple definitions we return the first one */
       Ob = nsp_list_get_element((NspList *) Ob,1);
       if ( Ob == NULLOBJ ) return NULLOBJ;
     }
@@ -590,9 +620,12 @@ NspObject *nsp_find_macro_or_func(const char *str,int *type)
 	  M->file_name = ((NspPList *) Ob1)->file_name;
 	  ((NspPList *) Ob1)->D = NULL;
 	  ((NspPList *) Ob1)->file_name= NULL;
+	  /* we need to destroy Ob1 */
 	  nsp_object_destroy(&Ob1);
-	  /* we should here destroy Ob1 */
 	  /* Sciprintf("Macro %s found in %s/%s.bin\n",str,LibDirs->S[M->dir],str); */
+	  M->cpu = 0;
+	  M->trace = FALSE;
+	  M->counter = 0;
 	}
     }
   if (nsp_file_close_xdr_r(F) == FAIL) 
@@ -701,3 +734,81 @@ static void nsp_remove_macro_or_func(const char *name,int type)
     }
 }
 
+/*
+ */
+
+NspHash *nsp_collect_cpu()
+{
+  NspHash *H;
+  int i=0;
+  if(( H = nsp_hash_create(NVOID,1000)) == NULLHASH) return NULLHASH;
+  while (1) 
+    {
+      NspObject *Obj;
+      NspPList *P=NULL;
+      int rep = nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
+      if ( Obj != NULLOBJ && IsList(Obj) ) 
+	{
+	  /* multiple definitions we use the first one */
+	  Obj = nsp_list_get_element((NspList *) Obj,1);
+	}
+      if ( Obj != NULLOBJ )
+	{ 
+	  if ( IsFunction(Obj)) 
+	    {
+	      /* function */
+	      P= NULL;
+	    }
+	  else if (IsNspPList(Obj))
+	    {
+	      /* macro */
+	      P = (NspPList *) Obj;
+	    }
+	  if ( P != NULL && P->D != NULL )
+	    {
+	      const char *fname = ((PList) ((PList) P->D->next->O)->next->next->O)->next->O;
+	      NspMatrix *M;
+	      if (( M = nsp_matrix_create(fname,'r',1,2) ) == NULLMAT ) return NULLHASH;
+	      M->R[0] = P->cpu;
+	      M->R[1] = P->counter;
+	      if (nsp_hash_enter(H,(NspObject *) M) == FAIL) return NULLHASH;
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+  return H;
+}
+
+void nsp_init_cpu()
+{
+  int i=0;
+  while (1) 
+    {
+      NspObject *Obj;
+      NspPList *P=NULL;
+      int rep = nsp_hash_get_next_object(nsp_functions_table,&i,&Obj);
+      if ( Obj != NULLOBJ && IsList(Obj) ) 
+	{
+	  /* multiple definitions we use the first one */
+	  Obj = nsp_list_get_element((NspList *) Obj,1);
+	}
+      if ( Obj != NULLOBJ )
+	{ 
+	  if ( IsFunction(Obj)) 
+	    {
+	      P=NULL;
+	      /* function */
+	    }
+	  else if (IsNspPList(Obj))
+	    {
+	      /* macro */
+	      P = (NspPList *) Obj;
+	    }
+	  if ( P != NULL &&  P->D != NULL )
+	    {
+	      P->cpu = 0;
+	    }
+	}
+      if ( rep == FAIL) break;
+    }
+}

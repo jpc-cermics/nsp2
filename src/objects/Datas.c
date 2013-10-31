@@ -354,11 +354,11 @@ static int nsp_frame_replace_object1(nsp_datas *data, NspObject *A,int local_id)
       else 
 	{
 	  /* insert as a local variable */
-	  NspObject *O1;
+	  int tag = VAR_IS_PERSISTENT(local_id) ? 2 : 1;
+	  NspCells *C= (NspCells *) ((NspFrame *) data->L->first->O)->locals->objs[tag];
 	  local_id = VAR_ID(local_id);
-	  O1 = ((NspFrame *) data->L->first->O)->table->objs[local_id];
-	  if ( O1 != NULL )  nsp_object_destroy(&O1);
-	  ((NspFrame *) data->L->first->O)->table->objs[local_id]=A;
+	  if ( C->objs[local_id] != NULL )  nsp_object_destroy(&C->objs[local_id]);
+	  C->objs[local_id]=A;
 	  return OK;
 	}
     }
@@ -808,4 +808,23 @@ NspHash *nsp_current_frame_to_hash(void)
   data = nsp_get_datas();
   if ( data->L == NULLLIST ) return NULLHASH;
   return nsp_eframe_to_hash((NspFrame *) data->L->first->O);
+}
+
+
+/**
+ *nsp_frame_set_persistent_value:
+ * @Obj: nsp object 
+ * 
+ * set the value of persistent variable to the value of #Obj if the persistent 
+ * value has no value. The name of the persistent value to change is the 
+ * object name.
+ *
+ * Return value: %OK or %FAIL
+ **/
+
+int nsp_frame_set_persistent_value(NspObject *Obj)
+{
+  nsp_datas *data = nsp_get_datas();
+  if ( data->L == NULLLIST ) return FAIL;
+  return nsp_eframe_set_persistent_value((NspFrame *)data->L->first->O,Obj);
 }

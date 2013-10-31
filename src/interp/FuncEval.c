@@ -48,6 +48,7 @@
 #include <nsp/nspdatas.h>
 #include <nsp/nspthreads.h>
 #include <nsp/gtk/gobject.h>
+#include <nsp/system.h>
 
 static int nsp_check_named(PList Loc,int i,int j, Stack stack, int first, int nargs);
 static void FuncEvalErrorMess(const char *str,Stack *stack,int first,int msuffix);
@@ -75,7 +76,7 @@ static void nsp_build_funcname_tag(const char *str, Stack *stack, int first, int
  * 
  * Il y a un autre pb c'est si on appelle sin_m(5) directement 
  * on veut pas de name_mangling il faut donc trouver un prefixe 
- * qui annulle le name mangling. % comme ds Scilab ou un autre ? 
+ * qui annulle le name mangling: c'est pour l'instant __sin_m 
  * 
  */
 
@@ -604,6 +605,8 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
   const char *name_def="datas",*name= NSP_OBJECT(OF)->name;
   int rep;
   /* new data frame for function evaluation */
+  double cpu = nsp_cputime();
+  ((NspPList *) OF)->counter++;
 #ifdef WITH_SYMB_TABLE
   if ( strcmp(name,NVOID)==0 ) name=name_def;
   nsp_new_frame_with_local_vars(name,((NspPList *) OF)->D->next->next->next->O);
@@ -618,6 +621,7 @@ int nsp_eval_macro(NspObject *OF, Stack stack, int first, int rhs, int opt, int 
     }
   /*Closing the frame **/
   nsp_frame_delete();
+  ((NspPList *) OF)->cpu +=  nsp_cputime() -cpu;
   return rep;
 }
 
@@ -1034,9 +1038,10 @@ static int  MacroEval_Base(NspObject *OF, Stack stack, int first, int rhs, int o
        */
       if ( Loc->arity != -1 ) 
 	{
+	  int tag = VAR_IS_PERSISTENT(Loc->arity) ? 2 : 1;
 	  /* search return value in local variables */
-	  O = ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(Loc->arity)];
-	  ((NspFrame *) data->L->first->O)->table->objs[VAR_ID(Loc->arity)]=  NULL;
+	  O =((NspCells*) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(Loc->arity)];
+	  ((NspCells*) ((NspFrame *) data->L->first->O)->locals->objs[tag])->objs[VAR_ID(Loc->arity)]= NULL;
 	}
       else 
 	{

@@ -14,5 +14,7 @@ extern void nsp_init_function_table(void);
 extern int nsp_find_function_by_id(char *key, int Int, int Num);
 extern void nsp_print_function_table(void);
 extern void nsp_delete_interface_functions(int Int);
+extern NspHash *nsp_collect_cpu(void);
+extern void nsp_init_cpu();
 
 #endif
