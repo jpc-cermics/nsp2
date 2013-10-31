@@ -23,14 +23,10 @@ A{1}=8;
 A{1}(2,2)=5 ; // changer l'element 1 
 if or(A{1}<>diag([8,5])) then pause;end
 
-A{5} = 6; // Attention pas de Warning et il se passe rien 
-	  // doit-on considerer que la taille de la cell 
-	  // doit croitre ? 
-
+A{5} = 6; // the size of the cell increases.
 A{:}; // extrait tous les elements (utile dans f(A{:}) ? ) 
-A{:} = (4,5,6,7); // affectation 
-A{:} = (4,5,6,7,8); // affectation le 7 est oublié 
-A{:}=(4,6); // XXX pb detecté mais un print en trop ..
+A{:} = (4,5,6,7,8); // affectation 
+// A{:} = (4,6); this should raise an error 
 
 A={8,9;M,"nsp"}; // creation 
 A{1:2,1}=(56,67);
@@ -58,8 +54,9 @@ D{:}=8 // et D est vide c'est coherent avec D(:)=8
 function y=f(varargin);y=length(varargin);endfunction;
 
 A={8,9,M,"nsp"}; // creation 
-f(A{:}) // répond 3 les arguments sont mis sur la pile 
-
+nr=f(A{:}); // répond 4 les arguments sont mis sur la pile 
+if nr<>4 then pause;end 
+  
 // action qui redonnes des cells 
 A(1) // extraction d'une sous-cell de cell
 A([1:3]) // extraction d'une sous-cell de cell
@@ -179,7 +176,7 @@ if C{3,4}<>6 then pause;end
 
 A=randn(4,5);
 
-function y=myabs(x);y=abs(x);endfunction 
+function y=myabs(x);y=abs(x);endfunction;
   
 C=A.to_cells[];
 C1=map(C,myabs);
@@ -190,14 +187,14 @@ function R=mapce(C,f)
   for i=1:size(C,'*')
     R(i) = {f(C(i).get[])}
   end
-endfunction
+endfunction;
 
 function R=mapce1(C,f)
   R=C;
   for i=1:size(C,'*')
     R{i} = f(C{i});
   end
-endfunction
+endfunction;
 
 C2=mapce(C,myabs);
 if ~C1.equal[C2] then pause;end 
