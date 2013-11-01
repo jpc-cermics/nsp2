@@ -130,9 +130,11 @@ tests: all
 	@echo -n "testing $*: "
 	@../bin/nsp -nw -e "nsptest('$*.tst');quit" 
 
+#export G_DEBUG=gc-friendly;export G_SLICE=always-malloc;valgrind --suppressions=tests/valgrind.supp --leak-check=full  bin/scilex -nw 
+
 .tst.vl :
 	@echo -n "valgrind $*: "
-	@valgrind --leak-check=full  ../bin/scilex -nw -e "exec('$*.tst');quit" >& $*.vl
+	@setenv G_DEBUG gc-friendly; setenv G_SLICE always-malloc;valgrind --suppressions=valgrind.supp --leak-check=full  ../bin/scilex -nw -e "exec('$*.tst');quit" >& $*.vl
 	@echo  " $*.vl"
 
 distclean	:
@@ -141,5 +143,4 @@ distclean	:
 	@../bin/nsplibtool OBJS=addinter.o LIBRARY=libaddinter distclean
 
 clean:	distclean
-
 

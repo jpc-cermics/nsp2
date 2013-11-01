@@ -71,7 +71,7 @@ function varargout=f()
     for i=1:nargout 
       varargout(i)=i
     end
-endfunction
+endfunction;
 
 [a,b]=f();
 [a,b,c]=f();

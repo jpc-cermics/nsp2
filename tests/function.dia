@@ -61,17 +61,7 @@
 ==>    for i=1:nargout 
 ==>      varargout(i)=i
 ==>    end
-==>endfunction
-f	=		pl (file='function.tst')
-
-  [34mfunction[0m varargout=f()
-    varargout=list();
-
-    [34mfor[0m i=1:nargout 
-    [34mdo[0m
-      varargout(i)=i
-    [34mend[0m
-  [34mendfunction[0m
+==>endfunction;
 -nsp->[a,b]=f();
 -nsp->[a,b,c]=f();
 -nsp->if a <> 1 then pause;end 
