@@ -86,7 +86,8 @@ TESTS= \
 	linprog.dia \
 	scale_rc.dia \
 	percenta.dia \
-	ast.dia 
+	ast.dia \
+	persistent.dia 
 
 ALG=algebra-balanc.dia \
 	algebra-bdiag.dia \
