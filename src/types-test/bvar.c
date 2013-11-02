@@ -152,7 +152,7 @@ static int init_bvar(NspBvar *Obj,NspTypeBvar *type)
   /* specific */
   Obj->sym = FALSE;
   Obj->value = NULLOBJ;
-  Obj->varname = nsp_new_string("",-1);
+  Obj->varname = NULL;
   return OK;
 }
 

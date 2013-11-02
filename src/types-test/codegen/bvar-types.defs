@@ -9,7 +9,7 @@
   (fields
    '("gboolean" "sym" "hidden" "FALSE"); /* symbolic ? */
    '("NspObject*" "value" "hidden" "NULL" ); /* value as object */
-   '("char*" "varname" "hidden" ""); 
+   '("char*" "varname" "hidden" ); /* if a value is given here we will have memory leaks: XXXXX */
    )
   (gtype-id "Bvar")
 )
