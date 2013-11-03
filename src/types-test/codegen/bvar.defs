@@ -48,21 +48,28 @@
 )
 
 
+(define-function bvar_code_getvarname
+  (c-name "bvar_code_getvarname")
+  (return-type "NspObject*")
+  (parameters
+    '("NspObject*" "Obj")
+  )
+)
 
+(define-function bvar_code_countvarname
+  (c-name "bvar_code_countvarname")
+  (return-type "NspObject*")
+  (parameters
+    '("NspObject*" "Obj")
+  )
+)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+(define-function bvar_code_isvarname
+  (c-name "bvar_code_isvarname")
+  (return-type "NspObject*")
+  (parameters
+    '("NspObject*" "Obj")
+  )
+)
 
 

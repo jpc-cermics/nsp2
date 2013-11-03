@@ -13,6 +13,9 @@ include-private Bvar
 /* inserted in the private part of include file of bvar class */
 static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int nsp_bvar_is_true(void *Obj);
+static int bvar_code_getvarname(NspObject *Obj, NspHash *H);
+static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count);
+static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res);
 
 %%
 headers
@@ -229,6 +232,60 @@ static int nsp_bvar_neq(NspBvar *A, NspObject *B)
   return ( nsp_bvar_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
 
+%%
+override bvar_code_getvarname kwargs
+
+int _wrap_bvar_code_getvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_get_varname */
+{
+  NspHash *H;
+  int_types T[] = {obj, t_end};
+  NspObject *Obj;
+  if ( GetArgs(stack,rhs,opt,T,&Obj,&H) == FAIL) return RET_BUG;
+  if ((H = nsp_hash_create(NVOID,20)) == NULL)    return RET_BUG;
+  if ( bvar_code_getvarname(Obj, H) == FAIL) 
+    {
+      nsp_hash_destroy(H);
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(H));
+  return 1;
+}
+
+%%
+override bvar_code_countvarname kwargs
+
+int _wrap_bvar_code_countvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_get_varname */
+{
+  char *name = NULL;
+  int count=0;
+  int_types T[] = {obj, string, s_int ,t_end};
+  NspObject *Obj;
+  if ( GetArgs(stack,rhs,opt,T,&Obj,&name,&count) == FAIL) return RET_BUG;
+  if ( bvar_code_countvarname(Obj,name,&count) == FAIL) 
+    {
+      return RET_BUG;
+    }
+  if ( nsp_move_double(stack,1,(double) count)== FAIL) return RET_BUG;
+  return 1;
+}
+
+%%
+override bvar_code_isvarname kwargs
+
+int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
+{
+  int isvarname = FALSE;
+  char *name = NULL;
+  int_types T[] = {obj, string, t_end};
+  NspObject *Obj;
+  if ( GetArgs(stack,rhs,opt,T,&Obj,&name) == FAIL) return RET_BUG;
+  if ( bvar_code_isvarname(Obj,name,&isvarname) == FAIL) 
+    {
+      return RET_BUG;
+    }
+  if ( nsp_move_boolean(stack,1,isvarname)== FAIL) return RET_BUG;
+  return 1;
+}
 
 %%
 last 
@@ -320,6 +377,181 @@ static int nsp_bvar_is_true(void *Obj)
     }
 }
 
+static int bvar_code_is_op(NspObject *Obj)
+{
+  if ( IsHash(Obj) )
+    {
+      NspObject *O1;
+      NspHash *H = (NspHash *) Obj;
+      if (nsp_hash_find(H,"type",&O1) == FAIL ) 
+	{
+	  return FAIL;
+	}
+      else
+	{
+	  if ( IsSMat(O1) && ((NspSMatrix *) O1)->mn == 1 && strcmp(((NspSMatrix *) O1)->S[0],"op") == 0)
+	    return OK;
+	}
+    }
+  return FAIL;
+}
+
+/*
+  function count=countvarname(rhs,varname,count)
+  // increases the value of count if varname is the name of 
+  // rhs := 'bvar' | expression | list of rhs 
+    if type(rhs,'short')=="bvar" && rhs.get_varname[]==varname then 
+      count=count+1;
+    elseif type(rhs,'short') =="h" && rhs.type == "op" then
+      // loop on args 
+      count=countvarname(rhs.exp(2),varname,count);
+    elseif type(rhs,'short') == 'l' then 
+      // loop on elements. could possibly use a map.
+      for t=rhs; count=countvarname(t,varname,count);  end
+    end
+  endfunction
+*/
+
+static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count)
+{
+  /* a bvar */
+  if ( IsBvar(Obj))
+    {
+      NspBvar *B = (NspBvar *) Obj;
+      if ( strcmp(B->varname,name)== 0 ) (*count)++;
+      return OK;
+    }
+  /* a hash table with type="op" */
+  if ( bvar_code_is_op(Obj) == OK)
+    {
+      NspObject *Elt, *O1;
+      NspHash *H1= (NspHash *) Obj;
+      if (nsp_hash_find(H1,"exp",&O1) == FAIL )
+	return FAIL;
+      if ( ! IsList(O1) ) return FAIL;
+      if ( (Elt= nsp_list_get_element((NspList *) O1,2)) == NULL) 
+	return FAIL;
+      return bvar_code_countvarname(Elt,name,count);
+    }
+  /* a list */
+  if ( IsList(Obj) )
+    {
+      /* loop on elements */
+      NspList *L= (NspList *) Obj;
+      Cell *C = L->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ )
+	    {
+	      if ( bvar_code_countvarname(C->O,name,count) == FAIL) return FAIL;
+	    }
+	  C = C->next;
+	}
+    }
+  return OK;
+}
 
 
+static int bvar_code_getvarname(NspObject *Obj,NspHash *H)
+{
+  /* a bvar */
+  if ( IsBvar(Obj))
+    {
+      NspObject *Res;
+      NspBvar *B = (NspBvar *) Obj;
+      if ((Res=nsp_create_true_object(B->varname)) == NULL) return FAIL;
+      if (nsp_hash_enter( H,Res) == FAIL ) return FAIL;
+      return OK;
+    }
+  /* a hash table with type="op" */
+  if ( bvar_code_is_op(Obj) == OK)
+    {
+      NspObject *Elt, *O1;
+      NspHash *H1= (NspHash *) Obj;
+      if (nsp_hash_find(H1,"exp",&O1) == FAIL )
+	return FAIL;
+      if ( ! IsList(O1) ) return FAIL;
+      if ( (Elt= nsp_list_get_element((NspList *) O1,2)) == NULL) 
+	return FAIL;
+      return bvar_code_getvarname(Elt,H);
+    }
+  /* a list */
+  if ( IsList(Obj) )
+    {
+      /* loop on elements */
+      NspList *L= (NspList *) Obj;
+      Cell *C = L->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ )
+	    {
+	      if ( bvar_code_getvarname(C->O,H) == FAIL) return FAIL;
+	    }
+	  C = C->next;
+	}
+    }
+  return OK;
+}
 
+
+/*
+
+  function ok=isvarname(rhs,varname)
+  // checks if varname is in rhs 
+    if type(rhs,'short')=="bvar" then 
+      ok = (rhs.get_varname[]==varname); 
+    elseif  type(rhs,'short') =="h" && rhs.type == "op" then
+      ok=isvarname(rhs.exp(2),varname);
+    elseif type(rhs,'short')=='l' then 
+      ok = %f;
+      for e=rhs; 
+        ok=isvarname(e,varname);
+        if ok then return;end;
+      end
+    else
+      ok = %f
+    end
+  endfunction
+
+*/
+
+static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res)
+{
+  /* a bvar */
+  if ( IsBvar(Obj))
+    {
+      NspBvar *B = (NspBvar *) Obj;
+      *res = (strcmp(B->varname,name)==0) ? TRUE: FALSE;
+      return OK;
+    }
+  /* a hash table with type="op" */
+  if ( bvar_code_is_op(Obj) == OK)
+    {
+      NspObject *Elt, *O1;
+      NspHash *H1= (NspHash *) Obj;
+      if (nsp_hash_find(H1,"exp",&O1) == FAIL )
+	return FAIL;
+      if ( ! IsList(O1) ) return FAIL;
+      if ( (Elt= nsp_list_get_element((NspList *) O1,2)) == NULL) 
+	return FAIL;
+      return bvar_code_isvarname(Elt,name,res);
+    }
+  /* a list */
+  if ( IsList(Obj) )
+    {
+      *res = FALSE;
+      /* loop on elements */
+      NspList *L= (NspList *) Obj;
+      Cell *C = L->first;
+      while ( C != NULLCELL) 
+	{
+	  if ( C->O != NULLOBJ )
+	    {
+	      if ( bvar_code_isvarname(C->O,name,res) == FAIL) return FAIL;
+	      if ( *res == TRUE ) return OK;
+	    }
+	  C = C->next;
+	}
+    }
+  return OK;
+}
