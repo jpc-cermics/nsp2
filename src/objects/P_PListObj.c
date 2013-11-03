@@ -597,24 +597,30 @@ static int int_nsp_macro_reset_persistents(NspPList *self,Stack stack, int rhs, 
   return 0;
 }
 
+/* returns cpu and nb of calls */
+
 static int int_nsp_macro_get_cpu(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
+  NspMatrix *M;
   CheckStdRhs(0,0);
   CheckLhs(0,1);
-  if ( nsp_move_double(stack,1,self->cpu) == FAIL ) 
-    return RET_BUG;
+  if (( M = nsp_matrix_create(NVOID,'r',1,2) ) == NULLMAT ) return RET_BUG;
+  M->R[0] = self->cpu;
+  M->R[1] = self->counter;
+  MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
+
+/* reset cpu and nb of calls */
 
 static int int_nsp_macro_reset_cpu(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
   CheckStdRhs(0,0);
   CheckLhs(0,0);
   self->cpu=0;
+  self->counter=0;
   return 0;
 }
-
-
 
 static int int_nsp_macro_clear_cache(NspPList *self,Stack stack, int rhs, int opt, int lhs)
 {
