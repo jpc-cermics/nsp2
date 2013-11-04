@@ -122,7 +122,11 @@ static NspBvar *nsp_bvar_create_void(const char *name,NspTypeBase *type);
 /* inserted in the private part of include file of bvar class */
 static NspObject *nsp_bvar_loop(char *str, NspObject *O, NspObject *O1, int i, int *rep);
 static int nsp_bvar_is_true(void *Obj);
+static int bvar_code_getvarname(NspObject *Obj, NspHash *H);
+static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count);
+static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res);
+static int bvar_code_vars(NspList *L, NspHash *H);
 
-#line 127 "./bvar.h"
+#line 131 "./bvar.h"
 #endif /* NspBvar_Private */
 

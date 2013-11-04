@@ -87,7 +87,7 @@ struct _NspPlist {
   PList D;          /* points to the parsed expression */
   int dir;          /* indice in directory array or -1 */
   double cpu;       /* profiling */
-  int counter;      /* profiling */
+  int counter;      /* profiling: nb of call */
   int trace;        /* */
 };
 
