@@ -24,7 +24,7 @@
 
 
 
-#line 23 "codegen/bvar.override"
+#line 24 "codegen/bvar.override"
 #include <nsp/objects.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
@@ -88,11 +88,11 @@ NspTypeBvar *new_type_bvar(type_mode mode)
   top->sh_type = (sh_type_func *) nsp_bvar_type_short_string;
   top->info = (info_func *) nsp_bvar_info;
   /* top->is_true = (is_true_func  *) nsp_bvar_is_true; */
-#line 138 "codegen/bvar.override"
+#line 139 "codegen/bvar.override"
 top->loop = (loop_func *) nsp_bvar_loop; /* loop with bvar type */
 
 #line 95 "bvar.c"
-#line 138 "codegen/bvar.override"
+#line 139 "codegen/bvar.override"
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
 #line 99 "bvar.c"
@@ -109,7 +109,7 @@ top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
   type->init = (init_func *) init_bvar;
 
-#line 43 "codegen/bvar.override"
+#line 44 "codegen/bvar.override"
   /* inserted verbatim in the type definition */
   top->is_true = (is_true_func  *) nsp_bvar_is_true; 
 
@@ -174,7 +174,7 @@ NspBvar *new_bvar()
 /*----------------------------------------------
  * Object method redefined for NspBvar 
  *-----------------------------------------------*/
-#line 157 "codegen/bvar.override"
+#line 158 "codegen/bvar.override"
 
 /*
  * size can be overriden here
@@ -207,7 +207,7 @@ static char *nsp_bvar_type_short_string(NspObject *v)
   return(bvar_short_type_name);
 }
 
-#line 206 "codegen/bvar.override"
+#line 207 "codegen/bvar.override"
 
 /*
  * A == B 
@@ -267,7 +267,7 @@ static NspBvar  *nsp_bvar_xdr_load(XDR *xdrs)
   if ( nsp_bvar_create_partial(H) == FAIL) return NULLBVAR;
   if ((H  = nsp_bvar_xdr_load_partial(xdrs,H))== NULLBVAR) return H;
   if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
-#line 48 "codegen/bvar.override"
+#line 49 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 273 "bvar.c"
   return H;
@@ -279,7 +279,7 @@ static NspBvar  *nsp_bvar_xdr_load(XDR *xdrs)
 
 void nsp_bvar_destroy_partial(NspBvar *H)
 {
-#line 51 "codegen/bvar.override"
+#line 52 "codegen/bvar.override"
 /* verbatim in destroy */
 
 #line 286 "bvar.c"
@@ -295,7 +295,7 @@ void nsp_bvar_destroy(NspBvar *H)
   FREE(H);
 }
 
-#line 146 "codegen/bvar.override"
+#line 147 "codegen/bvar.override"
 /*
  * info overriden 
  */
@@ -306,7 +306,7 @@ int nsp_bvar_info(NspBvar *M, int indent,const char *name, int rec_level)
 }
 
 #line 309 "bvar.c"
-#line 173 "codegen/bvar.override"
+#line 174 "codegen/bvar.override"
 /*
  * print overriden 
  */
@@ -444,7 +444,7 @@ NspBvar *nsp_bvar_create(const char *name,gboolean sym,NspObject* value,char* va
   H->value= value;
   H->varname = varname;
   if ( nsp_bvar_check_values(H) == FAIL) return NULLBVAR;
-#line 48 "codegen/bvar.override"
+#line 49 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 450 "bvar.c"
   return H;
@@ -507,7 +507,7 @@ NspBvar *nsp_bvar_full_copy(NspBvar *self)
   if ( H ==  NULLBVAR) return NULLBVAR;
   if ( nsp_bvar_full_copy_partial(H,self)== NULL) return NULLBVAR;
 
-#line 48 "codegen/bvar.override"
+#line 49 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 #line 513 "bvar.c"
   return H;
@@ -528,7 +528,7 @@ int int_bvar_create(Stack stack, int rhs, int opt, int lhs)
   /* then we use optional arguments to fill attributes */
   if ( int_create_with_attributes((NspObject  *) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
  if ( nsp_bvar_check_values(H) == FAIL) return RET_BUG;
-#line 48 "codegen/bvar.override"
+#line 49 "codegen/bvar.override"
 /* verbatim in create/load/full_copy interface use RET_BUG for returned value */
 #line 534 "bvar.c"
   MoveObj(stack,1,(NspObject  *) H);
@@ -538,7 +538,7 @@ int int_bvar_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 55 "codegen/bvar.override"
+#line 56 "codegen/bvar.override"
 /* override a method */
 static int _wrap_bvar_get_value(NspBvar *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -551,7 +551,7 @@ static int _wrap_bvar_get_value(NspBvar *self, Stack stack, int rhs, int opt, in
 #line 552 "bvar.c"
 
 
-#line 66 "codegen/bvar.override"
+#line 67 "codegen/bvar.override"
 /* override a method */
 static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, int lhs)
 {
@@ -581,7 +581,7 @@ static int _wrap_bvar_set_value(NspBvar *self, Stack stack, int rhs, int opt, in
 #line 582 "bvar.c"
 
 
-#line 94 "codegen/bvar.override"
+#line 95 "codegen/bvar.override"
 
 static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -592,7 +592,7 @@ static int _wrap_bvar_get_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
 #line 593 "bvar.c"
 
 
-#line 103 "codegen/bvar.override"
+#line 104 "codegen/bvar.override"
 
 static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -607,7 +607,7 @@ static int _wrap_bvar_set_varname(NspBvar *self,Stack stack,int rhs,int opt,int 
 #line 608 "bvar.c"
 
 
-#line 116 "codegen/bvar.override"
+#line 117 "codegen/bvar.override"
 
 static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -618,7 +618,7 @@ static int _wrap_bvar_is_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int 
 #line 619 "bvar.c"
 
 
-#line 125 "codegen/bvar.override"
+#line 126 "codegen/bvar.override"
 
 static int _wrap_bvar_set_symbolic(NspBvar *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -653,13 +653,14 @@ static AttrTab bvar_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 238 "codegen/bvar.override"
+#line 239 "codegen/bvar.override"
 
 int _wrap_bvar_code_getvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_get_varname */
 {
   NspHash *H;
   int_types T[] = {obj, t_end};
   NspObject *Obj;
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&Obj,&H) == FAIL) return RET_BUG;
   if ((H = nsp_hash_create(NVOID,20)) == NULL)    return RET_BUG;
   if ( bvar_code_getvarname(Obj, H) == FAIL) 
@@ -671,10 +672,10 @@ int _wrap_bvar_code_getvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_g
   return 1;
 }
 
-#line 675 "bvar.c"
+#line 676 "bvar.c"
 
 
-#line 257 "codegen/bvar.override"
+#line 259 "codegen/bvar.override"
 
 int _wrap_bvar_code_countvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_get_varname */
 {
@@ -682,6 +683,7 @@ int _wrap_bvar_code_countvarname(Stack stack, int rhs, int opt, int lhs) /* bvar
   int count=0;
   int_types T[] = {obj, string, s_int ,t_end};
   NspObject *Obj;
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&Obj,&name,&count) == FAIL) return RET_BUG;
   if ( bvar_code_countvarname(Obj,name,&count) == FAIL) 
     {
@@ -691,10 +693,10 @@ int _wrap_bvar_code_countvarname(Stack stack, int rhs, int opt, int lhs) /* bvar
   return 1;
 }
 
-#line 695 "bvar.c"
+#line 697 "bvar.c"
 
 
-#line 275 "codegen/bvar.override"
+#line 278 "codegen/bvar.override"
 
 int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
 {
@@ -702,6 +704,7 @@ int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
   char *name = NULL;
   int_types T[] = {obj, string, t_end};
   NspObject *Obj;
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&Obj,&name) == FAIL) return RET_BUG;
   if ( bvar_code_isvarname(Obj,name,&isvarname) == FAIL) 
     {
@@ -711,10 +714,30 @@ int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 715 "bvar.c"
+#line 718 "bvar.c"
 
 
-#line 293 "codegen/bvar.override"
+#line 297 "codegen/bvar.override"
+
+int _wrap_bvar_code_replacevarname(Stack stack, int rhs, int opt, int lhs)
+{
+  int changed = FALSE;
+  char *name = NULL;
+  int_types T[] = {objcopy, string, obj, t_end};
+  NspObject *Obj,*expr,*Res;
+  CheckLhs(0,2);
+  if ( GetArgs(stack,rhs,opt,T,&Obj,&name,&expr) == FAIL) return RET_BUG;
+  Res = bvar_code_replacevarname(Obj,name,expr,&changed);
+  if ( Res == NULL ) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,changed)== FAIL) return RET_BUG;
+  if ( lhs >= 2 ) MoveObj(stack,2,Res);
+  return Max(lhs,1);
+}
+
+#line 738 "bvar.c"
+
+
+#line 315 "codegen/bvar.override"
 
 int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
 {
@@ -732,7 +755,7 @@ int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 736 "bvar.c"
+#line 759 "bvar.c"
 
 
 /*----------------------------------------------------
@@ -744,6 +767,7 @@ static OpTab Bvar_func[]={
   {"bvar_code_getvarname", _wrap_bvar_code_getvarname},
   {"bvar_code_countvarname", _wrap_bvar_code_countvarname},
   {"bvar_code_isvarname", _wrap_bvar_code_isvarname},
+  {"bvar_code_replacevarname", _wrap_bvar_code_replacevarname},
   {"bvar_code_vars", _wrap_bvar_code_vars},
   { "bvar_create", int_bvar_create},
   { NULL, NULL}
@@ -765,7 +789,7 @@ void Bvar_Interf_Info(int i, char **fname, function (**f))
   *f = Bvar_func[i].fonc;
 }
 
-#line 312 "codegen/bvar.override"
+#line 334 "codegen/bvar.override"
 
 NspBvar *nsp_bvar(NspObject *Obj,int sym)
 {
@@ -1002,6 +1026,67 @@ static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res)
   return OK;
 }
 
+/* */
+
+static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed)
+{
+  *changed = FALSE;
+  /* a bvar */
+  if ( IsBvar(Obj))
+    {
+      NspBvar *B = (NspBvar *) Obj;
+      if  (strcmp(B->varname,name)==0)
+	{
+	  *changed = TRUE;
+	  return nsp_object_copy_with_name(expr);
+	}
+      return Obj;
+    }
+  /* a hash table with type="op" */
+  if ( bvar_code_is_op(Obj) == OK)
+    {
+      NspObject *Elt,*Elt1, *O1;
+      NspHash *H1= (NspHash *) Obj;
+      if (nsp_hash_find(H1,"exp",&O1) == FAIL )	return NULL;
+      if ( ! IsList(O1) ) return NULL;
+      if ((Elt= nsp_list_get_element((NspList *) O1,2)) == NULL) return NULL;
+      if ((Elt1= bvar_code_replacevarname(Elt,name,expr,changed)) == NULL) return NULL;
+      if ( *changed == TRUE && Elt1 != Elt )
+	{
+	  if ( nsp_list_insert((NspList *) O1,Elt1,2)==FAIL) return NULL;
+	}
+      return Obj;
+    }
+  /* a list */
+  if ( IsList(Obj) )
+    {
+      int changed1 = FALSE;
+      /* loop on elements */
+      NspList *L= (NspList *) Obj;
+      Cell *C = L->first;
+      while ( C != NULLCELL) 
+	{
+	  changed1= FALSE;
+	  if ( C->O != NULLOBJ )
+	    {
+	      NspObject *Res; 
+	      if ((Res= bvar_code_replacevarname(C->O,name,expr,&changed1)) == NULL) return NULL;
+	      if ( changed1 == TRUE && Res != C->O) 
+		{
+		  *changed = TRUE;
+		  nsp_object_destroy(&C->O);
+		  C->O = Res;
+		}
+	    }
+	  C = C->next;
+	}
+      return Obj;
+    }
+  return Obj;
+}
+
+/* */
+
 static int bvar_code_vars(NspList *L, NspHash *H)
 {
   /* walk through the list */
@@ -1091,4 +1176,4 @@ static int bvar_code_vars(NspList *L, NspHash *H)
   return FAIL;
 }
 
-#line 1095 "bvar.c"
+#line 1180 "bvar.c"

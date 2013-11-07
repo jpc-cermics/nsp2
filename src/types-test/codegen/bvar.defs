@@ -72,6 +72,14 @@
   )
 )
 
+(define-function bvar_code_replacevarname
+  (c-name "bvar_code_replacevarname")
+  (return-type "NspObject*")
+  (parameters
+    '("NspObject*" "Obj")
+  )
+)
+
 (define-function bvar_code_vars
   (c-name "bvar_code_vars")
   (return-type "NspObject*")

@@ -126,7 +126,8 @@ static int bvar_code_getvarname(NspObject *Obj, NspHash *H);
 static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count);
 static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res);
 static int bvar_code_vars(NspList *L, NspHash *H);
+static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed);
 
-#line 131 "./bvar.h"
+#line 132 "./bvar.h"
 #endif /* NspBvar_Private */
 

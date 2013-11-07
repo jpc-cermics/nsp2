@@ -17,6 +17,7 @@ static int bvar_code_getvarname(NspObject *Obj, NspHash *H);
 static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count);
 static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res);
 static int bvar_code_vars(NspList *L, NspHash *H);
+static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed);
 
 %%
 headers
@@ -241,6 +242,7 @@ int _wrap_bvar_code_getvarname(Stack stack, int rhs, int opt, int lhs) /* bvar_g
   NspHash *H;
   int_types T[] = {obj, t_end};
   NspObject *Obj;
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&Obj,&H) == FAIL) return RET_BUG;
   if ((H = nsp_hash_create(NVOID,20)) == NULL)    return RET_BUG;
   if ( bvar_code_getvarname(Obj, H) == FAIL) 
@@ -261,6 +263,7 @@ int _wrap_bvar_code_countvarname(Stack stack, int rhs, int opt, int lhs) /* bvar
   int count=0;
   int_types T[] = {obj, string, s_int ,t_end};
   NspObject *Obj;
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&Obj,&name,&count) == FAIL) return RET_BUG;
   if ( bvar_code_countvarname(Obj,name,&count) == FAIL) 
     {
@@ -279,6 +282,7 @@ int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
   char *name = NULL;
   int_types T[] = {obj, string, t_end};
   NspObject *Obj;
+  CheckLhs(0,1);
   if ( GetArgs(stack,rhs,opt,T,&Obj,&name) == FAIL) return RET_BUG;
   if ( bvar_code_isvarname(Obj,name,&isvarname) == FAIL) 
     {
@@ -286,6 +290,24 @@ int _wrap_bvar_code_isvarname(Stack stack, int rhs, int opt, int lhs)
     }
   if ( nsp_move_boolean(stack,1,isvarname)== FAIL) return RET_BUG;
   return 1;
+}
+
+%%
+override bvar_code_replacevarname kwargs
+
+int _wrap_bvar_code_replacevarname(Stack stack, int rhs, int opt, int lhs)
+{
+  int changed = FALSE;
+  char *name = NULL;
+  int_types T[] = {objcopy, string, obj, t_end};
+  NspObject *Obj,*expr,*Res;
+  CheckLhs(0,2);
+  if ( GetArgs(stack,rhs,opt,T,&Obj,&name,&expr) == FAIL) return RET_BUG;
+  Res = bvar_code_replacevarname(Obj,name,expr,&changed);
+  if ( Res == NULL ) return RET_BUG;
+  if ( nsp_move_boolean(stack,1,changed)== FAIL) return RET_BUG;
+  if ( lhs >= 2 ) MoveObj(stack,2,Res);
+  return Max(lhs,1);
 }
 
 %%
@@ -544,6 +566,67 @@ static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res)
     }
   return OK;
 }
+
+/* */
+
+static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed)
+{
+  *changed = FALSE;
+  /* a bvar */
+  if ( IsBvar(Obj))
+    {
+      NspBvar *B = (NspBvar *) Obj;
+      if  (strcmp(B->varname,name)==0)
+	{
+	  *changed = TRUE;
+	  return nsp_object_copy_with_name(expr);
+	}
+      return Obj;
+    }
+  /* a hash table with type="op" */
+  if ( bvar_code_is_op(Obj) == OK)
+    {
+      NspObject *Elt,*Elt1, *O1;
+      NspHash *H1= (NspHash *) Obj;
+      if (nsp_hash_find(H1,"exp",&O1) == FAIL )	return NULL;
+      if ( ! IsList(O1) ) return NULL;
+      if ((Elt= nsp_list_get_element((NspList *) O1,2)) == NULL) return NULL;
+      if ((Elt1= bvar_code_replacevarname(Elt,name,expr,changed)) == NULL) return NULL;
+      if ( *changed == TRUE && Elt1 != Elt )
+	{
+	  if ( nsp_list_insert((NspList *) O1,Elt1,2)==FAIL) return NULL;
+	}
+      return Obj;
+    }
+  /* a list */
+  if ( IsList(Obj) )
+    {
+      int changed1 = FALSE;
+      /* loop on elements */
+      NspList *L= (NspList *) Obj;
+      Cell *C = L->first;
+      while ( C != NULLCELL) 
+	{
+	  changed1= FALSE;
+	  if ( C->O != NULLOBJ )
+	    {
+	      NspObject *Res; 
+	      if ((Res= bvar_code_replacevarname(C->O,name,expr,&changed1)) == NULL) return NULL;
+	      if ( changed1 == TRUE && Res != C->O) 
+		{
+		  *changed = TRUE;
+		  nsp_object_destroy(&C->O);
+		  C->O = Res;
+		}
+	    }
+	  C = C->next;
+	}
+      return Obj;
+    }
+  return Obj;
+}
+
+/* */
 
 static int bvar_code_vars(NspList *L, NspHash *H)
 {
