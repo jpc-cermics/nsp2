@@ -54,6 +54,9 @@ NspPList *NspPListCreate(const char *name, PList L,char *filename)
   NSP_OBJECT(P_L)->ret_pos = -1 ;
   P_L->D = L;
   P_L->dir = -1;
+  P_L->cpu = 0;
+  P_L->counter = 0;
+  P_L->trace = FALSE;
   return(P_L);
 }
 
