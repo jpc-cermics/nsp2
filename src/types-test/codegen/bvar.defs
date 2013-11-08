@@ -96,4 +96,12 @@
   )
 )
 
+(define-function bvar_code_varstatus
+  (c-name "bvar_code_varstatus")
+  (return-type "NspObject*")
+  (parameters
+    '("NspObject*" "Obj")
+  )
+)
+
 

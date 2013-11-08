@@ -744,6 +744,7 @@ int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
   NspHash *H;
   int_types T[] = { list ,  t_end};
   NspList *code;
+  CheckLhs(0,1); 
   if ( GetArgs(stack,rhs,opt,T,&code) == FAIL) return RET_BUG;
   if ((H = nsp_hash_create(NVOID,20)) == NULL)    return RET_BUG;
   if ( bvar_code_vars(code,H) == FAIL) 
@@ -755,10 +756,10 @@ int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 759 "bvar.c"
+#line 760 "bvar.c"
 
 
-#line 336 "codegen/bvar.override"
+#line 337 "codegen/bvar.override"
 
 int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
 {
@@ -767,6 +768,7 @@ int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Inds;
   int_types T[] = { list ,mat, string, obj, t_end};
   NspList *code;
+  CheckLhs(0,1); 
   if ( GetArgs(stack,rhs,opt,T,&code,&Inds,&name,&expr) == FAIL) return RET_BUG;
   if ( (code = nsp_list_copy(code)) == NULL) return RET_BUG;
   if ( bvar_code_replacevar(code,Inds,name,expr) == FAIL) 
@@ -778,7 +780,30 @@ int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 782 "bvar.c"
+#line 784 "bvar.c"
+
+
+#line 359 "codegen/bvar.override"
+
+int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
+{
+  NspMatrix *Idx_used, *Idx_modified;
+  char *name = NULL;
+  int_types T[] = { list , string, t_end};
+  NspList *code;
+  CheckLhs(0,2); 
+  if ( GetArgs(stack,rhs,opt,T,&code,&name) == FAIL) return RET_BUG;
+  if ( bvar_code_varstatus(code,&Idx_used,&Idx_modified,name) == FAIL) 
+    {
+      return RET_BUG;
+    }
+  MoveObj(stack,1,NSP_OBJECT(Idx_used));
+  if ( lhs == 2 ) 
+    MoveObj(stack,2,NSP_OBJECT(Idx_modified));
+  return Max(1,lhs);
+}
+
+#line 807 "bvar.c"
 
 
 /*----------------------------------------------------
@@ -793,6 +818,7 @@ static OpTab Bvar_func[]={
   {"bvar_code_replacevarname", _wrap_bvar_code_replacevarname},
   {"bvar_code_vars", _wrap_bvar_code_vars},
   {"bvar_code_replacevar", _wrap_bvar_code_replacevar},
+  {"bvar_code_varstatus", _wrap_bvar_code_varstatus},
   { "bvar_create", int_bvar_create},
   { NULL, NULL}
 };
@@ -813,7 +839,7 @@ void Bvar_Interf_Info(int i, char **fname, function (**f))
   *f = Bvar_func[i].fonc;
 }
 
-#line 357 "codegen/bvar.override"
+#line 380 "codegen/bvar.override"
 
 NspBvar *nsp_bvar(NspObject *Obj,int sym)
 {
@@ -1012,6 +1038,7 @@ static int bvar_code_getvarname(NspObject *Obj,NspHash *H)
 static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res)
 {
   /* a bvar */
+  *res = FALSE;
   if ( IsBvar(Obj))
     {
       NspBvar *B = (NspBvar *) Obj;
@@ -1325,4 +1352,139 @@ static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,Ns
   return FAIL;
 }
 
-#line 1329 "bvar.c"
+static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_modified, const char *vname)
+{
+  NspMatrix *Used,*Modified;
+  int count = 0;
+  /* walk through the list */
+  Cell *C = L->first;
+  if (( Used= nsp_matrix_create(NVOID,'r',1,0)) == NULLMAT) goto fail;
+  if (( Modified = nsp_matrix_create(NVOID,'r',1,0)) == NULLMAT) goto fail;
+  while ( C != NULLCELL) 
+    {
+      NspObject *Elt = C->O;
+      count++;
+      int ok_used=FALSE, ok_modified=FALSE;
+      if ( Elt != NULLOBJ )
+	{
+	  int i;
+	  const char *name;
+	  NspObject *elt1,*eltn;
+	  if (! IsList(Elt) ) goto fail;
+	  /* get first element */
+	  if ( (elt1= nsp_list_get_element((NspList *) Elt,1)) == NULL) goto fail;
+	  if ( ! ( IsSMat(elt1) && ((NspSMatrix *) elt1)->mn ==1 )) goto fail;
+	  name = ((NspSMatrix *) elt1)->S[0];
+	  if (strcmp(name,"nop" )==0) 
+	    {}
+	  else if (strcmp(name,"annotation")==0) 
+	    {}
+	  else if (strcmp(name,"set")==0) 
+	    {
+	      for ( i = 2 ; i <= 3 ; i++) 
+		{
+		  int ok;
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ( bvar_code_isvarname(eltn,vname,&ok)== FAIL ) goto fail;
+		  if ( i == 2 ) ok_modified = ok; else ok_used = ok;
+ 		}
+	    }
+	  else if (strcmp(name,"bi_insert")==0)
+	    {
+	      for ( i = 2 ; i <= 5 ; i++) 
+		{
+		  int ok;
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ( bvar_code_isvarname(eltn,vname,&ok)== FAIL ) goto fail;
+		  if ( i == 2 ) ok_modified = ok; else ok_used = ok;
+ 		}
+	    }
+	  else if (strcmp(name,"uni_insert")==0)
+	    {
+	      for ( i = 2 ; i <= 4 ; i++) 
+		{
+		  int ok;
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ( bvar_code_isvarname(eltn,vname,&ok)== FAIL ) goto fail;
+		  if ( i == 2 ) ok_modified = ok; else ok_used = ok;
+ 		}
+
+	    }
+	  else if (strcmp(name,"assign")==0)
+	    {
+	      for ( i = 2 ; i <= 3 ; i++) 
+		{
+		  int ok;
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ( bvar_code_isvarname(eltn,vname,&ok)== FAIL ) goto fail;
+		  if ( i == 2 ) ok_modified = ok; else ok_used = ok;
+ 		}
+
+	    }
+	  else if (strcmp(name,"mcopy")==0)
+	    {
+	      for ( i = 2 ; i <= 3 ; i++) 
+		{
+		  int ok;
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ( bvar_code_isvarname(eltn,vname,&ok)== FAIL ) goto fail;
+		  if ( i == 2 ) ok_modified = ok; else ok_used = ok;
+ 		}
+
+	    }
+	  else if (strcmp(name,"if_expr")==0)
+	    {
+	      for ( i = 2 ; i <= 4 ; i++) 
+		{
+		  int ok;
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ( bvar_code_isvarname(eltn,vname,&ok)== FAIL ) goto fail;
+		  ok_used = ok;
+		  if ( i != 2 ) ok_modified = ok;
+ 		}
+
+	    }
+	  else if (strcmp(name,"endfunction")==0)  
+	    {}
+	  else if (strcmp(name,"switch_expr")==0)  
+	    {}
+	  else if (strcmp(name,"callf")==0) 
+	    {
+	      NspHash *H;
+	      NspObject *O1,*O2,*out_list,*in_list;
+	      if ((eltn= nsp_list_get_element((NspList *) Elt,2)) == NULL) goto fail;
+	      /* now we need 
+	       * ins=elt(2).exp(2)(3); // in-list
+	       * ok_used=bvar_code_isvarname(ins,varname);
+	       * outs=elt(2).exp(2)(2);// out-list
+	       * ok_modified=bvar_code_isvarname(outs,varname);
+	       */
+	      H = (NspHash *) eltn;
+	      if (nsp_hash_find(H,"exp",&O1) == FAIL ) goto fail;
+	      if ( ! IsList(O1) ) goto fail;
+	      if ( (O2 = nsp_list_get_element((NspList *) O1,2)) == NULL) goto fail;
+	      if ( ! IsList(O2) ) goto fail;
+	      if ( (out_list= nsp_list_get_element((NspList *) O2,2)) == NULL) goto fail;
+	      if ( (in_list= nsp_list_get_element((NspList *) O2,3)) == NULL) goto fail;
+	      if ( bvar_code_countvarname(in_list,vname,&ok_used)== FAIL ) goto fail;
+	      if ( bvar_code_countvarname(out_list,vname,&ok_modified)== FAIL ) goto fail;
+	    }
+	  if ( ok_used == TRUE ) 
+	    {
+	      if ( nsp_matrix_add_columns(Used,1,count) == FAIL) goto fail;
+	    }
+	  if ( ok_modified == TRUE ) 
+	    {
+	      if ( nsp_matrix_add_columns(Modified,1,count) == FAIL) goto fail;
+	    }
+	}
+      C = C->next;
+    }
+  *Idx_used = Used;
+  *Idx_modified = Modified;
+  return OK;
+ fail: 
+  return FAIL;
+}
+
+#line 1491 "bvar.c"
