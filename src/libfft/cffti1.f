@@ -5,6 +5,7 @@
       NL = N
       NF = 0
       J = 0
+      NTRY = 1
   101 J = J+1
       IF (J-4) 102,102,103
   102 NTRY = NTRYH(J)
