@@ -27,7 +27,7 @@ y = fft_deprecated(x,-1);
 z = fft_deprecated(y,1);
 e=max(abs(x-z));
 //printf("\n test 1: z=fft_deprecated(fft_deprecated(x,-1),1), max(|x-z|) = %g",e)
-if e > 10*%eps then pause,end 
+if e > 20*%eps then pause,end 
 
 
 // test 2
@@ -38,7 +38,7 @@ y = fft_deprecated(x,-1,"row");
 z = fft_deprecated(y,1,"row");
 e=max(abs(x-z));
 //printf("\n test 2: z=fft_deprecated(fft_deprecated(x,-1,""row""),1,""row""), max(|x-z|) = %g",e)
-if e > 10*%eps then pause,end 
+if e > 20*%eps then pause,end 
 
 // test 3
 n = 209;
@@ -48,7 +48,7 @@ y = fft_deprecated(x,-1,"col");
 z = fft_deprecated(y,1,"col");
 e=max(abs(x-z));
 //printf("\n test 3: z=fft_deprecated(fft_deprecated(x,-1,""col""),1,""col""), max(|x-z|) = %g",e)
-if e > 10*%eps then pause,end 
+if e > 20*%eps then pause,end 
 
 // test 4
 n = 209;
@@ -58,7 +58,7 @@ y = fft_deprecated(x,-1,"*");
 z = fft_deprecated(y,1,"*");
 e=max(abs(x-z));
 //printf("\n test 4: z=fft_deprecated(fft_deprecated(x,-1,""*""),1,""*""), max(|x-z|) = %g",e)
-if e > 10*%eps then pause,end 
+if e > 20*%eps then pause,end 
 
 // test 5
 n = 209;
@@ -68,7 +68,7 @@ y = fft2_deprecated(x,-1);
 z = fft2_deprecated(y,1);
 e=max(abs(x-z));
 //printf("\n test 5: z=fft2_deprecated(fft2_deprecated(x,-1),1), max(|x-z|) = %g",e)
-if e > 10*%eps then pause,end 
+if e > 20*%eps then pause,end 
 
 // test 6
 if (fft2_deprecated([],-1) ~= []) then pause,end
