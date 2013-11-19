@@ -1,6 +1,6 @@
 /* 
  * Nsp interface for fft
- * Copyright (C) 2005-2011  Bruno Pincon
+ * Copyright (C) 2005-2013  Bruno Pincon
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -981,7 +981,7 @@ NspMatrix *nsp_fft(NspMatrix *x)
 }
 
 
-NspMatrix *int_nsp_ifft(NspMatrix *x)
+NspMatrix *nsp_ifft(NspMatrix *x)
 { 
   /*  using the fftpack lib  */
   NspMatrix *xx;
