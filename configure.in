@@ -40,6 +40,13 @@ AC_ARG_WITH(nsp-pvm,
 AC_ARG_WITH(tcltk,
     [  --with-tcltk            add tcl-tk detection ])
 
+
+AC_ARG_WITH(fink,
+    [  --with-fink             use /sw for searching packages instead of /opt/local (default=no) ])
+
+AC_ARG_WITH(openmp,
+    [  --with-openmp           use gcc openmp flags (default=no ])
+
 AC_ARG_WITH(addedf2c,
     [  --with-addedf2c         build a local f2c (src/f2c)])
 
@@ -48,6 +55,10 @@ AC_ARG_WITH(maxpluslib,
 
 AC_ARG_WITH(amoscephes,
     [  --with-amoscephes       add amoscephes lib ])
+
+#########################################
+## optional packages which can be omited 
+#########################################
 
 AC_ARG_WITH(pvm,
     [  --without-pvm           do not compile with PVM library ])
@@ -73,11 +84,8 @@ AC_ARG_WITH(gmp,
 AC_ARG_WITH(cairo,
     [  --without-cairo         do not compile with gtk/cairo as default driver ])
 
-AC_ARG_WITH(fink,
-    [  --with-fink             use /sw for searching packages instead of /opt/local (default=no) ])
-
-AC_ARG_WITH(openmp,
-    [  --with-openmp           use gcc openmp flags (default=no ])
+AC_ARG_WITH(graphviz,
+    [  --without-graphviz      do not compile with graphviz package  ])
 
 ###############################
 ## creating Path.incl if needed
