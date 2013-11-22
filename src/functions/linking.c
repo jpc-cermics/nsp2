@@ -265,7 +265,8 @@ void nsp_link_initialize(void)
  * entry was found  in case of success. The associated function is 
  * returned in @realop.
  * 
- * Returns: %OK or %FAIL.
+ * Returns: an integer (positive in case of success or equal to -1 
+ *  in case of failure)
  **/
 
 int  nsp_link_search(nsp_const_string op, int ilib, int (**realop) ())
