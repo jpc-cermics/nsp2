@@ -2200,7 +2200,7 @@ static int EvalLhsList(PList L, int arity, Stack stack, int *ipos, int *r_args_1
       /* 
       if ((stack.val->S[*ipos] =nsp_create_empty_matrix_object(name)) == NULLOBJ ) 
 	SHOWBUG(stack,RET_BUG,L);
-      if (nsp_frame_replace_object(stack.val->S[*ipos])==FAIL) 
+      if (nsp_frame_replace_object(stack.val->S[*ipos],-1)==FAIL) 
 	{
 	  nsp_object_destroy(&stack.val->S[*ipos]);
 	  SHOWBUG(stack,RET_BUG,L);
