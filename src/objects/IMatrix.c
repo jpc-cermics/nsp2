@@ -1606,8 +1606,8 @@ static int nsp_imatrix_print_internal (nsp_num_formats *fmt,NspIMatrix *cm, int 
 
 static int nsp_imatrix_format_length(NspIMatrix *M)
 {
-  double dmin,dmax;
-  int i,sign,len;
+  double dmin=0,dmax=0;
+  int i,sign=0,len;
   nsp_int_union imin,imax;
 #define IMAT_MAX_MIN(name,type,arg)				\
   imin.name = M->name[0];					\
