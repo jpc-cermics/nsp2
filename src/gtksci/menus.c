@@ -981,7 +981,7 @@ static void nsp_menu_file_load(void)
 
 static void nsp_menu_toolbox_load(void)
 {
-  nsp_string loc="exec(load_toolbox);";
+  nsp_string loc="load_toolbox();";
   enqueue_nsp_command(loc);
 }
 
