@@ -1,5 +1,7 @@
 /* opengl rendering in a gtk widget */
 
+#include <nsp/config.h> 
+
 #ifdef WITH_GTKGLEXT 
 /* rendering with gtkglext is not done if GTKGLEXT is not present */
 
