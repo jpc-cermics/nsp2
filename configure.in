@@ -87,6 +87,30 @@ AC_ARG_WITH(cairo,
 AC_ARG_WITH(graphviz,
     [  --without-graphviz      do not compile with graphviz package  ])
 
+AC_ARG_WITH(glpk,
+    [  --without-glpk          do not compile with glpk support ])
+
+AC_ARG_WITH(allt,
+    [  --without-modules       do not compile with optional modules ])
+
+
+if test xx"$with_allt" = xx; then	
+   with_allt=yes
+fi 
+
+if test $with_allt = no; then	
+    with_pvm=no
+    with_sndfile=no
+    with_portaudio=no
+    with_gtkglext=no
+    with_fftw3=no
+    with_clp=no
+    with_gmp=no
+#    with_cairo=no
+    with_graphviz=no
+    with_glpk=no
+fi
+
 ###############################
 ## creating Path.incl if needed
 ###############################

@@ -174,3 +174,11 @@ install-bin:
 
 cvsclean::
 
+# WIP 
+
+shared:
+	@echo "creation of shared library in bin"	
+	@$(CC) -shared -o bin/libnsp.so src/interp/lsci.o \
+		$(LIBS) -lgfortran $(EXTERNLIBS) $(FC_LDFLAGS) 
+
+

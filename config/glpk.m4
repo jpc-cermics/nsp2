@@ -2,8 +2,9 @@
 
 AC_DEFUN([CHECK_GLPK],
 [
-  AC_ARG_WITH(glpk,
-    [  --without-glpk          do not compile with glpk support ])
+  # these 2 lines are move in configure.in 
+  # AC_ARG_WITH(glpk,
+  #  [  --without-glpk          do not compile with glpk support ])
 
   AC_ARG_WITH([glpk-includedir],
     AS_HELP_STRING([--with-glpk-includedir=DIR], [search for GLPK headers in DIR]),
