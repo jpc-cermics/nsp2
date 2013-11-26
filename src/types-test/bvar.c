@@ -766,7 +766,7 @@ int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
   NspObject *expr;
   char *name = NULL;
   NspMatrix *Inds;
-  int_types T[] = { list ,mat, string, obj, t_end};
+  int_types T[] = { list , realmat, string, obj, t_end};
   NspList *code;
   CheckLhs(0,1); 
   if ( GetArgs(stack,rhs,opt,T,&code,&Inds,&name,&expr) == FAIL) return RET_BUG;
@@ -1237,6 +1237,7 @@ static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,Ns
   int changed=FALSE;
   /* walk through the list */
   Cell *C = L->first;
+  if ( Inds->mn == 0) return OK;  /* nothing to do */
   while ( C != NULLCELL) 
     {
       NspObject *Elt = C->O;
@@ -1334,7 +1335,7 @@ static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,Ns
 	    {}
 	  else if (strcmp(name,"callf")==0) 
 	    {
-	      for ( i = 2 ; i <= 3 ; i++) 
+	      for ( i = 2 ; i <= 2 ; i++) 
 		{
 		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
 		  if ( (Res = bvar_code_replacevarname(eltn,vname,expr,&changed)) == NULL) goto fail;
@@ -1487,4 +1488,4 @@ static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_m
   return FAIL;
 }
 
-#line 1491 "bvar.c"
+#line 1492 "bvar.c"
