@@ -758,9 +758,9 @@ struct _nsp_gengine1 {
 };
 
 #ifdef WITH_GTKGLEXT 
-void nsp_ogl_set_old_2dview(BCG *Xgc);
-void nsp_ogl_set_old_3dview(BCG *Xgc);
-void nsp_ogl_set_old_view(BCG *Xgc);
+extern void nsp_ogl_set_old_2dview(BCG *Xgc);
+extern void nsp_ogl_set_old_3dview(BCG *Xgc);
+extern void nsp_ogl_set_old_view(BCG *Xgc);
 #endif
 
 

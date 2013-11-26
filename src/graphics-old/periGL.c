@@ -1,6 +1,9 @@
 /* opengl rendering in a gtk widget */
-#define PERIGL 
 
+#ifdef WITH_GTKGLEXT 
+/* rendering with gtkglext is not done if GTKGLEXT is not present */
+
+#define PERIGL 
 #if 1
 /* render in gtk window */
 #include "periGtkstd.c" 
@@ -12,5 +15,6 @@
 #include "periGtkstd.c"
 #endif 
 
+#endif 
 
 
