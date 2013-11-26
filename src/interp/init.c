@@ -511,7 +511,7 @@ static void set_nsp_env (void)
 {
   int i;
   const char *p1;
-  char *nsp_abs_path=NULL; 
+  char *nsp_abs_path=NULL, *pname =ProgramName ; 
   /* TMPDIR */
   set_nsp_tmpdir();
   /* SCI  */
@@ -524,21 +524,28 @@ static void set_nsp_env (void)
    * with nsp_get_path_type
    * fprintf(stderr,"No SCI trying with %s\n",ProgramName);
    */
-  nsp_abs_path  = nsp_absolute_file_name(ProgramName);
+  /* fprintf(stderr,"No SCI trying with %s\n",pname); */
+  if ( pname[0]== '.' && pname[1] == '/') pname += 2;
+  nsp_abs_path  = nsp_absolute_file_name(pname);
   /* fprintf(stderr,"Expanded to %s\n",nsp_abs_path);  */
   if ( nsp_abs_path == NULL) return;
-  /* removing the trailing /bin/program-name  */
+  for ( i=0 ; i < strlen(nsp_abs_path) ;i++)
+    {
+      if ( nsp_abs_path[i]=='\\') nsp_abs_path[i] ='/';
+    }
+  /* going upward and try removing the trailing /bin/program-name  */
   for ( i = strlen(nsp_abs_path) ; i >= 0 ; i-- ) 
     {
-      if ( nsp_abs_path[i]== '/' || nsp_abs_path[i] == '\\' ) 
+      if ( nsp_abs_path[i]== '/'  ) 
 	{
-	  if ( i >= 4 ) nsp_abs_path[i-4]= '\0';
-	  else { free(nsp_abs_path) ; return ;}
-	  break;
+	  nsp_abs_path[i]= '\0';
+	  if (strcmp(nsp_abs_path+i+1,"bin")== 0 )
+	    {
+	      break;
+	    }
 	}
     }
-  for ( i=0 ; i < strlen(nsp_abs_path) ;i++)
-    if ( nsp_abs_path[i]=='\\') nsp_abs_path[i] ='/';
+  /* fprintf(stderr,"Changed to %s\n",nsp_abs_path);  */
   nsp_setenv("SCI",nsp_abs_path);
   nsp_setenv("NSP",nsp_abs_path);
   /* be sure that home exists */
