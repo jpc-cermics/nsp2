@@ -115,7 +115,7 @@ int nsp_enter_macros(const char *dir_name,int recursive,int compile)
   GDir *dir =  g_dir_open(dirname,0,NULL);
   if ( dir == NULL) 
     {
-      Scierror("Error:\t:Can't open directory %s\n",dirname);
+      Scierror("Error: Cannot open directory %s\n",dirname);
       return FAIL;
     }
 
@@ -222,7 +222,7 @@ int nsp_delete_macros(const char *dirname)
   dir =  g_dir_open(dirname,0,NULL);
   if ( dir == NULL) 
     {
-      Scierror("Error:\t:Can't open directory %s\n",dirname);
+      Scierror("Error: Cannot open directory %s\n",dirname);
       return FAIL;
     }
   strcpy(filename,dirname);
