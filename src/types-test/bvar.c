@@ -1334,17 +1334,7 @@ static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,Ns
 	  else if (strcmp(name,"switch_expr")==0)  
 	    {}
 	  else if (strcmp(name,"callf")==0) 
-	    {
-	      for ( i = 2 ; i <= 2 ; i++) 
-		{
-		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
-		  if ( (Res = bvar_code_replacevarname(eltn,vname,expr,&changed)) == NULL) goto fail;
-		  if ( changed == TRUE && Res != eltn )
-		    {
-		      if ( nsp_list_insert((NspList *) Elt,Res,i)==FAIL) goto fail;
-		    }
-		}
-	    }
+	    {}
 	}
       C = C->next;
     }
@@ -1488,4 +1478,4 @@ static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_m
   return FAIL;
 }
 
-#line 1492 "bvar.c"
+#line 1482 "bvar.c"
