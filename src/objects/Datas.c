@@ -22,6 +22,8 @@
 #include <nsp/hobj.h> 
 #include <nsp/list.h> 
 #include <nsp/smatrix.h> 
+#include <nsp/matrix.h> 
+#include <nsp/imatrix.h> 
 #include <nsp/hash.h> 
 #include <nsp/cells.h> 
 #include <nsp/interf.h>
@@ -828,3 +830,33 @@ int nsp_frame_set_persistent_value(NspObject *Obj)
   if ( data->L == NULLLIST ) return FAIL;
   return nsp_eframe_set_persistent_value((NspFrame *)data->L->first->O,Obj);
 }
+
+/* */
+
+int nsp_set_matrix(const char *name, char type, int m, int n, void *val)
+{
+  int i;
+  double *dval = val;
+  NspMatrix *M;
+  nsp_datas *data = nsp_get_datas();
+  if (( M = nsp_matrix_create(name,type,m,n)) == NULLMAT) return FAIL;
+  if ( type == 'r' ) 
+    for ( i= 0; i < M->mn; i++) M->R[i]= dval[i];
+  else    
+    for ( i= 0; i < M->mn; i++) { M->C[i].r = dval[i];M->C[i].i = dval[i+ M->mn];}
+  nsp_frame_replace_object1(data,(NspObject *) M,-1);
+  return OK;
+}
+
+/* */
+
+int nsp_set_imatrix(const char *name, int itype, int m, int n, void *val)
+{
+  NspIMatrix *M;
+  nsp_datas *data = nsp_get_datas();
+  if (( M = nsp_imatrix_create(name, m, n, itype)) == NULLIMAT) return FAIL;
+  memcpy(M->Iv,val,M->mn*sizeof(M->eltsize));
+  nsp_frame_replace_object1(data,(NspObject *) M,-1);
+  return OK;
+}
+
