@@ -590,6 +590,7 @@ static int int_serial_meth_to_base64(void *self,Stack stack, int rhs, int opt, i
       /* associated base64 string */
       if (( res1=nsp_serial_to_base64(a))== NULL) return RET_BUG;
       if ( nsp_move_string(stack,1,res1,-1) == FAIL) return RET_BUG; 
+      nsp_string_destroy(&res1);
     }
   return 1; 
 }
