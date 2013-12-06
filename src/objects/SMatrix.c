@@ -2156,7 +2156,12 @@ NspSMatrix* nsp_smatrix_split_nc(nsp_const_string str, int n)
   count=0;
   for ( i= 0 ; i < M->mn ; i++) 
     {
-      for ( j = 0 ; j < n ; j++) M->S[i][j] = str[count++];
+      for ( j = 0 ; j < n ; j++) 
+	{
+	  /* the last line will be shorter */
+	  M->S[i][j] = str[Min(count,len)];
+	  count++;
+	}
       M->S[i][n]='\0';
     }
   return M;
