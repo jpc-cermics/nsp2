@@ -693,10 +693,36 @@ int int_base64toserial(Stack stack, int rhs, int opt, int lhs)
   if ((S= nsp_serial_create(NVOID,NULL,len-strlen(nsp_serial_header)))== NULLSERIAL) 
     return RET_BUG;
   for (i=0 ; i < len ; i++) S->val[i]= res[i];
+  nsp_string_destroy(&res);
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1; 
 }
 
+/* store a nsp object in C-code throught serialization  */
+
+int int_testserialized(Stack stack, int rhs, int opt, int lhs)
+{
+  int len;
+  nsp_string res;
+  NspSerial *S = NULL;
+  /* string obtained through x=testmatrix('magic',6);A=serialize(x);str=A.tobase64[];   */
+  static const char serialized[]="QG5zcDAxAAB//wAAAARNYXQAAAAAAngAAAAAAAAGAAAABnIAAAAAAAAkP/AAAAAAAABAAAAAAAAAAEBAgAAAAAAA"
+    "QEEAAAAAAABAQYAAAAAAAEAYAAAAAAAAQD4AAAAAAABAIAAAAAAAAEA8AAAAAAAAQDsAAAAAAABAJgAAAAAAAEAcAAAAAAAAQDgAAAAAAABANwA"
+    "AAAAAAEAuAAAAAAAAQDAAAAAAAABALAAAAAAAAEAzAAAAAAAAQCoAAAAAAABANAAAAAAAAEA1AAAAAAAAQDYAAAAAAABAMQAAAAAAAEAyAAAAAA"
+    "AAQCgAAAAAAABAOgAAAAAAAEAkAAAAAAAAQCIAAAAAAABAPQAAAAAAAEA5AAAAAAAAQD8AAAAAAABAQAAAAAAAAEAQAAAAAAAAQAgAAAAAAABAF"
+    "AAAAAAAAEBCAAAAAAAA";
+  
+  CheckRhs(0,0);
+  CheckLhs(0,1);
+  if ((res = nsp_base64string_to_nsp_string(serialized,&len))== NULL) return RET_BUG; 
+  /* should create here a function to avoid the next memcpy */
+  if ((S= nsp_serial_create(NVOID,NULL,len-strlen(nsp_serial_header))) == NULLSERIAL) 
+    return RET_BUG;
+  memcpy(S->val,res,len*sizeof(char));
+  nsp_string_destroy(&res);
+  MoveObj(stack,1,NSP_OBJECT(S));
+  return 1; 
+}
 
 /* useful to creatre a buffer which can receive a serialized 
  * object as in pvm or mpi.
