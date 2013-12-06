@@ -364,7 +364,7 @@ nsp_string nsp_string_to_base64string(nsp_const_string str,unsigned int len)
  * Returns: an allocated and filled array of doubles.
  **/
 
-nsp_string nsp_base64string_to_nsp_string(nsp_string text, int *out_len) 
+nsp_string nsp_base64string_to_nsp_string(nsp_const_string text, int *out_len) 
 {
   gint input_length= strlen (text), state = 0;
   guint save = 0;

@@ -20,7 +20,7 @@ extern nsp_string nsp_string_to_latin1(nsp_string str);
 extern nsp_string nsp_new_string(nsp_const_string bytes,int length);
 extern nsp_string nsp_string_protect(nsp_const_string str);
 extern nsp_string nsp_string_to_base64string(nsp_const_string str,unsigned int len);
-extern nsp_string nsp_base64string_to_nsp_string(nsp_string text, int *out_len) ;
+extern nsp_string nsp_base64string_to_nsp_string(nsp_const_string text, int *out_len) ;
 
 #endif 
 
