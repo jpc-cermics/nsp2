@@ -769,6 +769,7 @@ int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
   NspMatrix *Inds;
   int_types T[] = { list , realmat, string, obj, t_end};
   NspList *code;
+  CheckRhs(4,4);
   CheckLhs(0,2); 
   if ( GetArgs(stack,rhs,opt,T,&code,&Inds,&name,&expr) == FAIL) return RET_BUG;
   if ( (code = nsp_list_copy(code)) == NULL) return RET_BUG;
@@ -785,10 +786,10 @@ int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,1);
 }
 
-#line 789 "bvar.c"
+#line 790 "bvar.c"
 
 
-#line 364 "codegen/bvar.override"
+#line 365 "codegen/bvar.override"
 
 int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
 {
@@ -808,7 +809,7 @@ int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
   return Max(1,lhs);
 }
 
-#line 812 "bvar.c"
+#line 813 "bvar.c"
 
 
 /*----------------------------------------------------
@@ -844,7 +845,7 @@ void Bvar_Interf_Info(int i, char **fname, function (**f))
   *f = Bvar_func[i].fonc;
 }
 
-#line 385 "codegen/bvar.override"
+#line 386 "codegen/bvar.override"
 
 NspBvar *nsp_bvar(NspObject *Obj,int sym)
 {
@@ -1082,7 +1083,9 @@ static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res)
   return OK;
 }
 
-/* */
+/* replaces name by exp 
+ * changed is set to TRUE if a replacement was done 
+ */
 
 static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed)
 {
@@ -1127,9 +1130,9 @@ static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspOb
 	    {
 	      NspObject *Res; 
 	      if ((Res= bvar_code_replacevarname(C->O,name,expr,&changed1)) == NULL) return NULL;
-	      if ( changed1 == TRUE && Res != C->O) 
+	      if ( changed1 == TRUE )   *changed = TRUE;
+	      if  (Res != C->O) 
 		{
-		  *changed = TRUE;
 		  nsp_object_destroy(&C->O);
 		  C->O = Res;
 		}
@@ -1345,10 +1348,11 @@ static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,Ns
 		{
 		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
 		  if ((Res = bvar_code_replacevarname(eltn,vname,expr,&changed)) == NULL) goto fail;
-		  if ( changed == TRUE && Res != eltn )
+		  if ( changed == TRUE )
 		    {
 		      *callf = TRUE;
-		      if ( nsp_list_insert((NspList *) Elt,Res,i)==FAIL) goto fail;
+		      if ( Res != eltn ) 
+			if ( nsp_list_insert((NspList *) Elt,Res,i)==FAIL) goto fail;
 		    }
 		}
 
@@ -1496,4 +1500,4 @@ static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_m
   return FAIL;
 }
 
-#line 1500 "bvar.c"
+#line 1504 "bvar.c"
