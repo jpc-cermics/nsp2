@@ -127,7 +127,7 @@ static int bvar_code_countvarname(NspObject *Obj,const char *name, int *count);
 static int bvar_code_isvarname(NspObject *Obj,const char *name,int *res);
 static int bvar_code_vars(NspList *L, NspHash *H);
 static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspObject *expr,int *changed);
-static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *name,NspObject *expr) ;
+static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,NspObject *expr, int *callf) ;
 static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_modified, const char *vname);
 
 #line 134 "./bvar.h"

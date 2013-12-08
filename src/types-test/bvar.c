@@ -763,27 +763,32 @@ int _wrap_bvar_code_vars(Stack stack, int rhs, int opt, int lhs)
 
 int _wrap_bvar_code_replacevar(Stack stack, int rhs, int opt, int lhs)
 {
+  int callf = FALSE;
   NspObject *expr;
   char *name = NULL;
   NspMatrix *Inds;
   int_types T[] = { list , realmat, string, obj, t_end};
   NspList *code;
-  CheckLhs(0,1); 
+  CheckLhs(0,2); 
   if ( GetArgs(stack,rhs,opt,T,&code,&Inds,&name,&expr) == FAIL) return RET_BUG;
   if ( (code = nsp_list_copy(code)) == NULL) return RET_BUG;
-  if ( bvar_code_replacevar(code,Inds,name,expr) == FAIL) 
+  if ( bvar_code_replacevar(code,Inds,name,expr,&callf) == FAIL) 
     {
       nsp_list_destroy(code);
       return RET_BUG;
     }
   MoveObj(stack,1,NSP_OBJECT(code));
-  return 1;
+  if ( lhs == 2 ) 
+    {
+      if ( nsp_move_boolean(stack,2,callf) == FAIL) return RET_BUG;
+    }
+  return Max(lhs,1);
 }
 
-#line 784 "bvar.c"
+#line 789 "bvar.c"
 
 
-#line 359 "codegen/bvar.override"
+#line 364 "codegen/bvar.override"
 
 int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
 {
@@ -803,7 +808,7 @@ int _wrap_bvar_code_varstatus(Stack stack, int rhs, int opt, int lhs)
   return Max(1,lhs);
 }
 
-#line 807 "bvar.c"
+#line 812 "bvar.c"
 
 
 /*----------------------------------------------------
@@ -839,7 +844,7 @@ void Bvar_Interf_Info(int i, char **fname, function (**f))
   *f = Bvar_func[i].fonc;
 }
 
-#line 380 "codegen/bvar.override"
+#line 385 "codegen/bvar.override"
 
 NspBvar *nsp_bvar(NspObject *Obj,int sym)
 {
@@ -1230,13 +1235,14 @@ static int bvar_code_vars(NspList *L, NspHash *H)
 
 /* L is changed, expr is copied each time it is inserted */
 
-static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,NspObject *expr) 
+static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,NspObject *expr, int *callf) 
 {
   int count = 0, inds_i=0;
   NspObject *Res;
   int changed=FALSE;
   /* walk through the list */
   Cell *C = L->first;
+  *callf = FALSE;
   if ( Inds->mn == 0) return OK;  /* nothing to do */
   while ( C != NULLCELL) 
     {
@@ -1334,7 +1340,19 @@ static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,Ns
 	  else if (strcmp(name,"switch_expr")==0)  
 	    {}
 	  else if (strcmp(name,"callf")==0) 
-	    {}
+	    {
+	      for ( i = 2 ; i <= 2 ; i++) 
+		{
+		  if ((eltn= nsp_list_get_element((NspList *) Elt,i)) == NULL) goto fail;
+		  if ((Res = bvar_code_replacevarname(eltn,vname,expr,&changed)) == NULL) goto fail;
+		  if ( changed == TRUE && Res != eltn )
+		    {
+		      *callf = TRUE;
+		      if ( nsp_list_insert((NspList *) Elt,Res,i)==FAIL) goto fail;
+		    }
+		}
+
+	    }
 	}
       C = C->next;
     }
@@ -1478,4 +1496,4 @@ static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_m
   return FAIL;
 }
 
-#line 1482 "bvar.c"
+#line 1500 "bvar.c"
