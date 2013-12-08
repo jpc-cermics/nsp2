@@ -22,6 +22,7 @@
  */
 
 #define  Type_Private 
+#include <nsp/nsp.h> 
 #include <nsp/object.h> 
 #include <nsp/type.h> 
 #include <nsp/hobj.h> 
@@ -55,8 +56,9 @@
 #include <nsp/classaref.h> 
 #include <nsp/classbref.h> 
 #include <nsp/astnode.h> 
+#include <nsp/bvar.h> 
 
-#include "nsp/interf.h"
+#include <nsp/interf.h>
 
 /* FIXME */
 extern void nsp_init_gtk_types(void);
@@ -617,6 +619,7 @@ void primitive_types_register(void)
   new_type_classbref(T_BASE);
   new_type_astnode(T_BASE);
   new_type_spmaxpcolmatrix(T_BASE);
+  new_type_bvar(T_BASE);
   /*
     new_type_ast(T_BASE);
     new_type_astv(T_BASE);
@@ -625,7 +628,7 @@ void primitive_types_register(void)
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */
-  nsp_last_static_id_ = nsp_type_spmaxpcolmatrix_id;
+  nsp_last_static_id_ = nsp_type_bvar_id;
 }
 
 static void nsp_graphic_types_register(void) 
