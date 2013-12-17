@@ -40,9 +40,9 @@ AC_DEFUN([CHECK_GLPK],
         #endif
         int main(int argc, char** argv)
         {
-          LPX *lp;
-          lp = lpx_create_prob();
-          lpx_delete_prob(lp);
+          glp_prob *lp;
+          lp = glp_create_prob();
+          glp_delete_prob(lp);
           return 0;
         }'
     AC_LANG_PUSH(C)
