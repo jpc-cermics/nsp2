@@ -630,22 +630,21 @@ static void xml_passthrough (GMarkupParseContext *context, const gchar *text,
 
 NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name,int *err)
 {
+  gchar *text = NULL;
+  gsize length = -1;
+  GMarkupParser markup_parser;
   GMarkupParseContext *markup_parse_context = NULL;
   GMarkupDomContext context = {node_name,NULL, NULL, NULL, FALSE};
   GError *lerror = NULL;
   g_return_val_if_fail (filename != NULL, context.root);
 
-  {
-    GMarkupParser markup_parser;
-
-    markup_parser.start_element = xml_start_element;
-    markup_parser.end_element = xml_end_element;
-    markup_parser.text = xml_text;
-    markup_parser.passthrough = xml_passthrough ;
-    markup_parser.error = NULL;
-    /* G_MARKUP_TREAT_CDATA_AS_TEXT, */
-    markup_parse_context = g_markup_parse_context_new (&markup_parser,0,&context, NULL);
-  }
+  markup_parser.start_element = xml_start_element;
+  markup_parser.end_element = xml_end_element;
+  markup_parser.text = xml_text;
+  markup_parser.passthrough = xml_passthrough ;
+  markup_parser.error = NULL;
+  /* G_MARKUP_TREAT_CDATA_AS_TEXT, */
+  markup_parse_context = g_markup_parse_context_new (&markup_parser,0,&context, NULL);
   
   if ( node_name != NULL)
     {
@@ -655,31 +654,25 @@ NspGMarkupNode *g_markup_dom_new (const gchar *filename,const gchar *node_name,i
       node->children= nsp_list_create("children");
       context.root = node;
     }
-  
-  {
-    gchar *text = NULL;
-    gsize length = -1;
-
-    g_file_get_contents (filename, &text, &length, &lerror);
-    if (text != NULL)
-      {
-	int tag=g_markup_parse_context_parse (markup_parse_context, text, length, &lerror);
-	if ( tag == FALSE ) 
-	  {
-	    Scierror("Error: failed to parse markup file %s\n",filename);
-	    Scierror("\t%s\n",lerror->message);
-	    g_error_free(lerror);
-	    *err=TRUE;
-	  }
-	else
-	  {
-	    *err=FALSE;
-	  }
-	g_free (text), text = NULL;
-      }
-    g_markup_parse_context_free (markup_parse_context);
-    markup_parse_context = NULL;
-  }
+  g_file_get_contents (filename, &text, &length, &lerror);
+  if (text != NULL)
+    {
+      int tag=g_markup_parse_context_parse (markup_parse_context, text, length, &lerror);
+      if ( tag == FALSE ) 
+	{
+	  Scierror("Error: failed to parse markup file %s\n",filename);
+	  Scierror("\t%s\n",lerror->message);
+	  g_error_free(lerror);
+	  *err=TRUE;
+	}
+      else
+	{
+	  *err=FALSE;
+	}
+      g_free (text), text = NULL;
+    }
+  g_markup_parse_context_free (markup_parse_context);
+  markup_parse_context = NULL;
   return context.root;
 }
 
