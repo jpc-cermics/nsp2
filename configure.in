@@ -1426,6 +1426,40 @@ fi
 if test "xx$umfpack_libs" != "xx" ; then HAVE_UMFPACK="yes"; else HAVE_UMFPACK="no"; fi
 if test "xx$cholmod_libs" != "xx" ; then HAVE_CHOLMOD="yes"; else HAVE_CHOLMOD="no"; fi
 
+# try a link of both libraries and suitesparseconfig 
+
+builtin(include,config/ac_check_suitesparse.m4)
+
+if test "xx$umfpack_libs" == "xx" ; then 
+  AC_CHECK_SUITESPARSE()
+  if test "xx$umfpack_libs" != "xx" ; then 
+    HAVE_UMFPACK="yes"
+    HAVE_CHOLMOD="yes"
+    AC_DEFINE(WITH_UMFPACK,[],[umfpack library])
+    AC_DEFINE(WITH_CHOLMOD,[],[cholmod library])
+    AC_MSG_RESULT([using "$umfpack_libs" for umfpack libraries])
+    AC_MSG_RESULT([using "$cholmod_libs" for cholmod libraries])
+    UMFPACK_LIBS=$umfpack_libs
+    UFSPARSE_LIB=libumfpack
+    CHOLMOD_LIBS=$cholmod_libs
+    if test "x${umfpack_includedir}" != "x${amd_includedir}"; then 
+     AC_MSG_RESULT([using "-I${umfpack_includedir} -I${amd_includedir}" for umfpack includes])
+     CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir} -I${amd_includedir}"
+    else 
+     AC_MSG_RESULT([using "-I${umfpack_includedir}" for umfpack includes])
+     CC_OPTIONS="${CC_OPTIONS} -I${umfpack_includedir}"
+    fi
+  else 
+    HAVE_UMFPACK="no";
+    HAVE_CHOLMOD="no" 
+  fi
+fi
+
+
+
+
+
+
 #################
 ## fftw 
 #################
