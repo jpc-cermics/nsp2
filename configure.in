@@ -1277,29 +1277,37 @@ if test "$with_gtkglext" != no; then
     fi
 fi
 
-# check that we have glut if gtkglext-1.0 is used 
-# this is not used (ZZZyes) we do not need glut for the moment
 
-if test "$WITH_GL" == ZZZyes; then 
-     AC_CHECK_HEADERS(
-        [GL/glut.h],
-        AC_CHECK_LIB(
-           [glut],
-           [glutStrokeCharacter],
-           GLUT_LIBS="-lglut"
-           [HAVE_GLUT="yes"],
-           [HAVE_GLUT="no"]),
-        [HAVE_GLUT="no"])
-     if test "$HAVE_GLUT" == no; then 
-	AC_MSG_WARN([Could not find the glut library.],)
-	AC_MSG_WARN([WARNING OpenGL driver will not be build .],)
-	WITH_GL="no"
-	GTK_PKGS_CFLAGS=`echo $GTK_PKGS_CFLAGS | sed -e 's+gtkglext-1.0++g' `
-	GTK_PKGS_LIBS=`echo $GTK_PKGS_LIBS | sed -e 's+gtkglext-1.0++g' `
-	GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
-	GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
-     fi
-fi 
+# check if -LGLU is added in pkg-config gtkglext-1.0 --libs or explicitely add it 
+
+  AC_MSG_CHECKING([if pkg-config gtkglext-1.0 provides -LGLU]) 
+  ac_save_LIBS="$LIBS"
+  LIBS=`$PKG_CONFIG gtkglext-1.0 --cflags --libs`
+  AC_TRY_LINK(,[ gluLookAt();], glu_in_gtkglext=yes, glu_in_gtkglext=no)
+  LIBS=$ac_save_LIBS
+
+  if test X"$glu_in_gtkglext" == Xno; then 
+   AC_MSG_RESULT([no])
+  else 
+   AC_MSG_RESULT([yes])
+  fi 
+
+GLU_LIBS=
+  if test X"$glu_in_gtkglext" == Xno; then 
+# need to search for GLU and add it explicitely 
+   AC_MSG_CHECKING([if GLU exists]) 
+   ac_save_LIBS="$LIBS"
+   LIBS="-lGLU"
+   AC_CHECK_LIB(GLU, gluLookAt, libglu_ok=yes, :) 
+   LIBS=$ac_save_LIBS
+   if test X"$libglu_ok" == Xyes; then 
+      AC_MSG_RESULT([yes])
+      GLU_LIBS="-lGLU"
+   else 
+      AC_MSG_RESULT([no])
+      AC_MSG_ERROR([ library GLU is missing ])
+   fi
+  fi
 
 #################
 ## tcl/tk detection
@@ -1791,6 +1799,7 @@ AC_SUBST(DLD_SUBDIR)
 AC_SUBST(XMULIB)
 AC_SUBST(GTKCFLAGS)
 AC_SUBST(GTKLIBS)
+AC_SUBST(GLU_LIBS)
 AC_SUBST(TERMCAPLIB)
 AC_SUBST(MAIN)
 AC_SUBST(MAKEFILE_TARGET)
