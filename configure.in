@@ -1280,6 +1280,7 @@ fi
 
 # check if -LGLU is added in pkg-config gtkglext-1.0 --libs or explicitely add it 
 
+if test "$with_gtkglext" != no; then
   AC_MSG_CHECKING([if pkg-config gtkglext-1.0 provides -LGLU]) 
   ac_save_LIBS="$LIBS"
   LIBS=`$PKG_CONFIG gtkglext-1.0 --cflags --libs`
@@ -1292,9 +1293,9 @@ fi
    AC_MSG_RESULT([yes])
   fi 
 
-GLU_LIBS=
+  GLU_LIBS=
   if test X"$glu_in_gtkglext" == Xno; then 
-# need to search for GLU and add it explicitely 
+  # need to search for GLU and add it explicitely 
    AC_MSG_CHECKING([if GLU exists]) 
    ac_save_LIBS="$LIBS"
    LIBS="-lGLU"
@@ -1308,6 +1309,7 @@ GLU_LIBS=
       AC_MSG_ERROR([ library GLU is missing ])
    fi
   fi
+fi 
 
 #################
 ## tcl/tk detection
