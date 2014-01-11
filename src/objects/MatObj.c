@@ -2436,7 +2436,7 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F, IMfu
 	}
       else 
 	{
-	  Scierror("Error: in %s, optional argument like has a wrong type\n");
+	  Scierror("Error: in %s, optional argument like has a wrong type\n",NspFname(stack));
 	  return RET_BUG;
 	}
     }
