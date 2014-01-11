@@ -2489,6 +2489,7 @@ static int int_mx_gen_new (Stack stack, int rhs, int opt, int lhs, Mfunc F, IMfu
     case 1: Obj = (NspObject *) (*BF)(m1, n1); break;
     case 2: Obj = (NspObject *) (*IF)(m1, n1,itype);break;
     }
+  if ( Obj == NULL) return RET_BUG;
   MoveObj (stack, 1, Obj);
   return 1;
 }
