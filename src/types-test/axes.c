@@ -1483,7 +1483,7 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
   int lw, font[2];
   GdkRectangle clip, clip_axe , r2, rect_a;
   char xf[]="onn";
-  double *wrect1, inside_bounds[4];
+  double wrect1[4], inside_bounds[4];
   int aaint[4]={10,2,10,2};
   Cell *cloc;
   NspList *L;
@@ -1531,12 +1531,12 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
        * enclosing graphic window. 
        */
       set_scale(Xgc->scales,NULL,P->obj->wrect->R,NULL,NULL,NULL,P->obj->arect->R);
-      wrect1= P->obj->wrect->R;
+      memcpy(wrect1,P->obj->wrect->R,4*sizeof(double));
     }
   else 
     {
       nsp_axes *A = ((NspGraphic *) P)->obj->Axe;
-      double *ARect = A->arect->R, *FRect = A->frect->R, WRect1[4];
+      double *ARect = A->arect->R, *FRect = A->frect->R;
       /* This is not a top level axes, we draw its enclosing rectangle 
        * if alpha is non nul we should draw a rotated rectangle
        */
@@ -1544,11 +1544,10 @@ static void nsp_draw_axes(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,voi
       /* wrect->R is [left,up,w,h] 
        * we need to compute wrect->R in term on window/proportions 
        */
-      WRect1[0]= ARect[0]+(1-ARect[0]-ARect[2])*(P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
-      WRect1[1]= ARect[1]+(1-ARect[1]-ARect[3])*(1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]));
-      WRect1[2]= (1-ARect[0]-ARect[2])*(P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
-      WRect1[3]= (1-ARect[1]-ARect[3])*(P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
-      wrect1 = WRect1;
+      wrect1[0]= ARect[0]+(1-ARect[0]-ARect[2])*(P->obj->wrect->R[0]-FRect[0])/(FRect[2]-FRect[0]);
+      wrect1[1]= ARect[1]+(1-ARect[1]-ARect[3])*(1- (P->obj->wrect->R[1]-FRect[1])/(FRect[3]-FRect[1]));
+      wrect1[2]= (1-ARect[0]-ARect[2])*(P->obj->wrect->R[2])/(FRect[2]-FRect[0]);
+      wrect1[3]= (1-ARect[1]-ARect[3])*(P->obj->wrect->R[3])/(FRect[3]-FRect[1]);
       Xgc->scales->cosa= cos( P->obj->rho);
       Xgc->scales->sina= sin( P->obj->rho);
     }
@@ -2412,4 +2411,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2416 "axes.c"
+#line 2415 "axes.c"
