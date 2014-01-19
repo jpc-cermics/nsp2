@@ -69,6 +69,9 @@ AC_ARG_WITH(sndfile,
 AC_ARG_WITH(portaudio,
     [  --without-portaudio     do not compile with portaudio support ])
 
+AC_ARG_WITH(mongodb,
+    [  --without-mongodb       do not compile with mongodb support ])
+
 AC_ARG_WITH(gtkglext,
     [  --without-gtkglext      do not use Gtkglext widget for graphics ])
 
@@ -102,6 +105,7 @@ if test $with_allt = no; then
     with_pvm=no
     with_sndfile=no
     with_portaudio=no
+    with_mongodb=no
     with_gtkglext=no
     with_fftw3=no
     with_clp=no
@@ -1738,6 +1742,37 @@ if test "$HAVE_GRAPHVIZ" = "yes"; then
   GRAPHVIZ_LIB=libgraphviz 
 fi
 
+
+#################
+## mongodb C api 
+#################
+
+
+HAVE_MONGODB_C=no
+MONGODB_C_FILE=
+
+if test "$with_mongodb" != "no"; then                           
+ if test "x$PKG_CONFIG" != x ; then 
+      ## try first to use pkg-config	
+      ## If sndfile.pc is found, set GMP_CFLAGS and GMP_LIBS
+      ## this is not supposed to work since sndfile.pc does not exists
+      PKG_CHECK_MODULES(MONGODB_C, libmongoc-1.0 >= 0.90.1 , HAVE_MONGODB_C="yes", HAVE_MONGODB_C="no")
+      ## In case of success I just want portaudio be added in GTK_PKGS_CFLAGS 
+      if test "$HAVE_MONGODB_C" = "yes"; then
+      	 # we also need gthread-2.0 for our portaudio files.
+	 GTK_PKGS_CFLAGS="$GTK_PKGS_CFLAGS libmongoc-1.0"
+	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libmongoc-1.0"
+         GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
+         GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
+	 MONGODB_C_FILE=bson.c
+      fi 
+ fi
+fi 
+
+if test "$HAVE_MONGODB_C" = "yes"; then
+  AC_DEFINE(WITH_MONGODB_C,[],[mongodb library])
+fi
+
 #########################
 ## libscipy 
 ## use the library if repository is present
@@ -1905,6 +1940,7 @@ AC_SUBST(ZLIB_LIBS)
 AC_SUBST(GTKSOURCEVIEW_OBJS)
 AC_SUBST(AMOS_CEPHES_LIB)
 AC_SUBST(STDCPP_LIBS)
+AC_SUBST(MONGODB_C_FILE)
 
 # for summary file 
 
@@ -1912,6 +1948,7 @@ AC_SUBST(HAVE_FFTW3)
 AC_SUBST(WITH_GL)
 AC_SUBST(HAVE_SNDFILE)
 AC_SUBST(HAVE_PORTAUDIO)
+AC_SUBST(HAVE_MONGODB_C)
 AC_SUBST(HAVE_GRAPHVIZ)
 AC_SUBST(HAVE_ASOUND)
 AC_SUBST(HAVE_GLPK)
@@ -1928,7 +1965,7 @@ AC_SUBST(FC)
 AC_SUBST(FC_OPTIONS)
 
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt )
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile)
 
 echo
 echo
@@ -1940,6 +1977,7 @@ echo "FFTW3 support..........:" $HAVE_FFTW3
 echo "OpenGl support.........:" $WITH_GL
 echo "Sndfile support........:" $HAVE_SNDFILE
 echo "Portaudio support......:" $HAVE_PORTAUDIO
+echo "Mongodb support........:" $HAVE_MONGODB_C
 echo "Graphviz support.......:" $HAVE_GRAPHVIZ
 echo "Asound support.........:" $HAVE_ASOUND
 echo "Glpk support...........:" $HAVE_GLPK
