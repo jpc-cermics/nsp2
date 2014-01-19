@@ -1,0 +1,50 @@
+;; -*- scheme -*-
+;;
+;; variables to be used in conjunction with ast
+
+
+(define-objectref Bson
+  (in-module "Bson")
+  (parent "Object")
+  (c-name "NspBson")
+  (fields
+    '("void*" "b" "hidden" "NULL")
+    )
+  (gtype-id "Bson")
+)
+
+(define-objectref Mclient
+  (in-module "Mclient")
+  (parent "Object")
+  (c-name "NspMclient")
+  (fields
+    '("void*" "cl" "hidden" "NULL")
+    )
+  (gtype-id "Mclient")
+)
+
+(define-objectref Mcollection
+  (in-module "Mcollection")
+  (parent "Object")
+  (c-name "NspMcollection")
+  (fields
+    '("void*" "co" "hidden" "NULL")
+    )
+  (gtype-id "Mcollection")
+)
+
+(define-objectref Mcursor
+  (in-module "Mcursor")
+  (parent "Object")
+  (c-name "NspMcursor")
+  (fields
+    '("void*" "cu" "hidden" "NULL")
+    )
+  (gtype-id "Mcursor")
+)
+
+
+
+
+
+

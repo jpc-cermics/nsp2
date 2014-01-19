@@ -1,0 +1,47 @@
+;; -*- scheme -*-
+
+(define-object Stochdec
+  (in-module "Stochdec")
+  (parent "Object")
+  (c-name "NspStochdec")
+  (fields
+   '("int"  "xdim" ) 
+   )
+  (gtype-id "Stochdec")
+)
+
+(define-object ValueFn
+  (in-module "Stochdec")
+  (parent "Object")
+  (c-name "NspValueFn")
+  (fields
+   '("int"  "xdim" ) 
+   '("NspMatrix*" "xmin" "hidden" )
+   '("NspMatrix*" "xmax" "hidden" )
+   )
+  (gtype-id "ValueFn")
+)
+
+(define-object GridValueFn
+  (in-module "Stochdec")
+  (parent "ValueFn")
+  (c-name "NspGridValueFn")
+  (fields
+   '("NspMatrix*" "nx" "hidden" )
+   '("NspMatrix*" "pasx" "hidden" )
+   '("NspMatrix*" "values" "hidden" )
+   )
+  (gtype-id "GridValueFn")
+)
+
+(define-object CutsValueFn
+  (in-module "Stochdec")
+  (parent "ValueFn")
+  (c-name "NspCutsValueFn")
+  (fields
+   '("NspMatrix*" "heights" "hidden" ) 
+   '("NspMatrix*" "slopes" "hidden" ) 
+   )
+  (gtype-id "CutsValueFn")
+)
+

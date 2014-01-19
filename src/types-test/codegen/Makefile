@@ -24,7 +24,8 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../spolyhedron.c ../string3d.c  ../compound.c ../gmatrix1.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
 	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
-	../hm.c ../../libgraphviz/agraph.c ../ast.c ../astv.c ../bvar.c 
+	../hm.c ../../libgraphviz/agraph.c ../ast.c ../astv.c ../bvar.c \
+	../stochdec.c ../bson.c 
 
 all:: $(ALL)
 	cd ../; make all
@@ -322,5 +323,14 @@ xxall:: ../../liblowdisc/ldfaure.c
 	    --prefix Bvar bvar.defs) > $*.c \
 	&& mv bvar.h ../../include/nsp 
 
+../stochdec.c : stochdec.defs stochdec-types.defs stochdec.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override stochdec.override \
+	    --prefix Stochdec stochdec.defs) > $*.c \
+	&& mv stochdec.h *valuefn.h ../../include/nsp 
 
-
+../bson.c : bson.defs bson-types.defs bson.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override bson.override \
+	    --prefix Bson bson.defs) > $*.c \
+	&& mv bson.h mclient.h  mcollection.h  mcursor.h ../../include/nsp 

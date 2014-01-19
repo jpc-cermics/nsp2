@@ -1,0 +1,104 @@
+;; -*- scheme -*-
+; object definitions ...
+
+(include "stochdec-types.defs")
+
+;;-----------------------------------
+;; GridValueFn: functions and methods 
+;;-----------------------------------
+
+(define-function gridfn
+  (c-name "nsp_gridfn") 
+  (return-type "NspGridValueFn*")
+  (parameters
+    '("NspMatrix*" "nx")
+    '("NspMatrix*" "xmin")
+    '("NspMatrix*" "xmax")
+    )
+)
+
+(define-method i2p
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_ind_to_point")
+  (return-type "NspMatrix*")
+  (parameters
+    '("int" "ind")
+  )
+)
+
+(define-method p2i
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_point_to_ind")
+  (return-type "NspMatrix*")
+  (parameters
+    '("NspMatrix*" "pts")
+  )
+)
+
+(define-method i_set_value
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_set_i_value")
+  (parameters
+    '("int" "ind")
+    '("double" "val")
+  )
+)
+
+(define-method pt_set_value
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_set_pt_value")
+  (parameters
+    '("NspMatrix*" "pt")
+    '("double" "val")
+    )
+  )
+
+(define-method i_get_value
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_get_i_value")
+  (return-type "double")
+  (parameters
+    '("int" "ind")
+    )
+  )
+
+(define-method pt_get_value
+  (of-object "GridValueFn")
+  (c-name "nsp_gvf_get_pt_value")
+  (return-type "double")
+  (parameters
+    '("NspMatrix*" "pt")
+    )
+  )
+
+;;-----------------------------------
+;; CutsValueFn: functions and methods 
+;;-----------------------------------
+
+
+(define-function cutsfn
+  (c-name "nsp_cutsfn") 
+  (return-type "NspCutsValueFn*")
+  (parameters
+    '("NspMatrix*" "heights")
+    '("NspMatrix*" "slopes")
+    )
+  )
+
+(define-method add_slopes
+  (of-object "CutsValueFn")
+  (c-name "nsp_cvf_add_slopes")
+  (parameters
+   '("NspMatrix*" "heights")
+    '("NspMatrix*" "slopes")
+    )
+  )
+
+(define-method get_value
+  (of-object "CutsValueFn")
+  (c-name "nsp_cvf_get_value")
+  (return-type "NspMatrix*")
+  (parameters
+    '("NspMatrix*" "pts")
+  )
+)
