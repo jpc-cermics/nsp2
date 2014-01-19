@@ -1564,43 +1564,27 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
 				   NULL,  /* Fields, NULL for all. */
 				   NULL); /* Read Prefs, NULL for default */
 
-   while (!mongoc_cursor_error (cursor, &error) &&
-          mongoc_cursor_more (cursor)) 
-     {
-       const bson_t *doc;
-       Sciprintf("while\n");
-       if (mongoc_cursor_next (cursor, &doc)) 
-	 {
-	   char *str;
-	   Sciprintf("XXXXXXXXXXX\n");
-	   str = bson_as_json (doc, NULL);
-	   Sciprintf("%s\n", str);
-	   bson_free (str);
-	 }
-     }
-   
-   if (mongoc_cursor_error (cursor, &error)) 
-     {
-       Scierror("Error: cursor failure\n");
-       return RET_BUG;
-     }
-   bson_destroy (&query); /* can we kill the query here ? */
-   nsp_type_mcursor = new_type_mcursor(T_BASE);
-   if(( M = nsp_mcursor_create(NVOID,(void *) cursor,(NspTypeBase *) nsp_type_mcursor)) == NULL)
-     {
-       Scierror("Error: failed to create a NspMcursor\n");
-       return RET_BUG;
+  if (mongoc_cursor_error (cursor, &error)) 
+    {
+      Scierror("Error: %s\n", error.message);
+      return RET_BUG;
     }
-
+  bson_destroy (&query); /* can we kill the query here ? */
+  nsp_type_mcursor = new_type_mcursor(T_BASE);
+  if(( M = nsp_mcursor_create(NVOID,(void *) cursor,NULL,(NspTypeBase *) nsp_type_mcursor)) == NULL)
+    {
+      Scierror("Error: failed to create a NspMcursor\n");
+      return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject  *) M);
   return 1;
 }
 
 
-#line 1601 "bson.c"
+#line 1585 "bson.c"
 
 
-#line 324 "codegen/bson.override"
+#line 308 "codegen/bson.override"
 
 static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1627,7 +1611,7 @@ static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int r
 }
 
 
-#line 1631 "bson.c"
+#line 1615 "bson.c"
 
 
 static NspMethods mcollection_methods[] = {
@@ -1809,6 +1793,7 @@ static int nsp_mcursor_eq(NspMcursor *A, NspObject *B)
   if ( check_cast(B,nsp_type_mcursor_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->cu != loc->obj->cu) return FALSE;
+  if ( A->obj->doc != loc->obj->doc) return FALSE;
   return TRUE;
 }
 
@@ -1866,11 +1851,12 @@ void nsp_mcursor_destroy_partial(NspMcursor *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 361 "codegen/bson.override"
+#line 345 "codegen/bson.override"
   /* verbatim in destroy */
   mongoc_cursor_destroy(H->obj->cu);
+  if (H->obj->doc != NULL) bson_destroy(H->obj->doc);
 
-#line 1874 "bson.c"
+#line 1860 "bson.c"
     FREE(H->obj);
    }
 }
@@ -1926,6 +1912,7 @@ int nsp_mcursor_print(NspMcursor *M, int indent,const char *name, int rec_level)
       Sciprintf1(indent,"%s\t=\t\t%s (nref=%d)\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"cu=0x%x\n",M->obj->cu);
+  Sciprintf1(indent+2,"doc=0x%x\n",M->obj->doc);
       Sciprintf1(indent+1,"}\n");
     }
   return TRUE;
@@ -1942,6 +1929,7 @@ int nsp_mcursor_latex(NspMcursor *M, int indent,const char *name, int rec_level)
   Sciprintf1(indent,"%s\t=\t\t%s\n",pname, nsp_mcursor_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"cu=0x%x\n",M->obj->cu);
+  Sciprintf1(indent+2,"doc=0x%x\n",M->obj->doc);
   Sciprintf1(indent+1,"}\n");
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\\]\005");
   return TRUE;
@@ -2011,6 +1999,7 @@ int nsp_mcursor_create_partial(NspMcursor *H)
   if((H->obj = calloc(1,sizeof(nsp_mcursor)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->cu = NULL;
+  H->obj->doc = NULL;
   return OK;
 }
 
@@ -2019,12 +2008,13 @@ int nsp_mcursor_check_values(NspMcursor *H)
   return OK;
 }
 
-NspMcursor *nsp_mcursor_create(const char *name,void* cu,NspTypeBase *type)
+NspMcursor *nsp_mcursor_create(const char *name,void* cu,void* doc,NspTypeBase *type)
 {
   NspMcursor *H  = nsp_mcursor_create_void(name,type);
   if ( H ==  NULLMCURSOR) return NULLMCURSOR;
   if ( nsp_mcursor_create_partial(H) == FAIL) return NULLMCURSOR;
   H->obj->cu = cu;
+  H->obj->doc = doc;
   if ( nsp_mcursor_check_values(H) == FAIL) return NULLMCURSOR;
   return H;
 }
@@ -2066,6 +2056,7 @@ NspMcursor *nsp_mcursor_full_copy_partial(NspMcursor *H,NspMcursor *self)
   if ((H->obj = calloc(1,sizeof(nsp_mcursor))) == NULL) return NULLMCURSOR;
   H->obj->ref_count=1;
   H->obj->cu = self->obj->cu;
+  H->obj->doc = self->obj->doc;
   return H;
 }
 
@@ -2100,7 +2091,91 @@ int int_mcursor_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-static NspMethods *mcursor_get_methods(void) { return NULL;};
+#line 351 "codegen/bson.override"
+
+static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  bson_bool_t r;
+  bson_error_t error;
+  mongoc_cursor_t *cursor = self->obj->cu;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  r= mongoc_cursor_error (cursor, &error);
+  if ( r == TRUE && lhs == 0 ) 
+    {
+      Scierror("Error: %s\n", error.message);
+      return RET_BUG;
+    }
+  if ( lhs == 1) 
+    {
+      if ( nsp_move_boolean(stack,1,r)==FAIL) return RET_BUG;
+      return 1;
+    }
+  else
+    return 0;
+}
+
+#line 2119 "bson.c"
+
+
+#line 376 "codegen/bson.override"
+
+static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  NspBson *B;
+  const bson_t *doc= self->obj->doc;
+  bson_bool_t r;
+  mongoc_cursor_t *cursor = self->obj->cu;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  r= mongoc_cursor_next(cursor, &doc);
+  if ( r == TRUE ) 
+    {
+      const bson_t *doc1= bson_copy(doc);
+      if(( B = nsp_bson_create(NVOID,(void *) doc1,
+			       (NspTypeBase *) nsp_type_bson)) == NULL)
+	{
+	  Scierror("Error: failed to create a bson object\n");
+	  ret = RET_BUG;
+	}
+      MoveObj(stack,1,(NspObject  *) B);
+      ret =1;
+    }
+  else
+    {
+      if ( nsp_move_boolean(stack,1,FALSE)==FAIL) return RET_BUG;
+      ret=1;
+    }
+  return ret;
+}
+
+#line 2154 "bson.c"
+
+
+#line 409 "codegen/bson.override"
+
+static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = mongoc_cursor_more(self->obj->cu);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
+
+#line 2169 "bson.c"
+
+
+static NspMethods mcursor_methods[] = {
+  {"error",(nsp_method *) _wrap_mongoc_cursor_error},
+  {"next",(nsp_method *) _wrap_mongoc_cursor_next},
+  {"more",(nsp_method *) _wrap_mongoc_cursor_more},
+  { NULL, NULL}
+};
+
+static NspMethods *mcursor_get_methods(void) { return mcursor_methods;};
 /*-------------------------------------------
  * Attributes
  *-------------------------------------------*/
@@ -2117,7 +2192,7 @@ static int _wrap_mclient_create(Stack stack,int rhs,int opt,int lhs)
   return int_mclient_create(stack,rhs,opt,lhs);
 }
 
-#line 2121 "bson.c"
+#line 2196 "bson.c"
 
 
 /*----------------------------------------------------
@@ -2147,7 +2222,7 @@ void Bson_Interf_Info(int i, char **fname, function (**f))
   *f = Bson_func[i].fonc;
 }
 
-#line 373 "codegen/bson.override"
+#line 429 "codegen/bson.override"
 
 /* loop extraction for bson variable 
  * @str: name to give to created object 
@@ -2411,4 +2486,4 @@ static NspHash *bson_to_hash(void *self)
 }
 
 
-#line 2415 "bson.c"
+#line 2490 "bson.c"

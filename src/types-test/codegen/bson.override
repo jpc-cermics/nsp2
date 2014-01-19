@@ -286,34 +286,18 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
 				   NULL,  /* Fields, NULL for all. */
 				   NULL); /* Read Prefs, NULL for default */
 
-   while (!mongoc_cursor_error (cursor, &error) &&
-          mongoc_cursor_more (cursor)) 
-     {
-       const bson_t *doc;
-       Sciprintf("while\n");
-       if (mongoc_cursor_next (cursor, &doc)) 
-	 {
-	   char *str;
-	   Sciprintf("XXXXXXXXXXX\n");
-	   str = bson_as_json (doc, NULL);
-	   Sciprintf("%s\n", str);
-	   bson_free (str);
-	 }
-     }
-   
-   if (mongoc_cursor_error (cursor, &error)) 
-     {
-       Scierror("Error: cursor failure\n");
-       return RET_BUG;
-     }
-   bson_destroy (&query); /* can we kill the query here ? */
-   nsp_type_mcursor = new_type_mcursor(T_BASE);
-   if(( M = nsp_mcursor_create(NVOID,(void *) cursor,(NspTypeBase *) nsp_type_mcursor)) == NULL)
-     {
-       Scierror("Error: failed to create a NspMcursor\n");
-       return RET_BUG;
+  if (mongoc_cursor_error (cursor, &error)) 
+    {
+      Scierror("Error: %s\n", error.message);
+      return RET_BUG;
     }
-
+  bson_destroy (&query); /* can we kill the query here ? */
+  nsp_type_mcursor = new_type_mcursor(T_BASE);
+  if(( M = nsp_mcursor_create(NVOID,(void *) cursor,NULL,(NspTypeBase *) nsp_type_mcursor)) == NULL)
+    {
+      Scierror("Error: failed to create a NspMcursor\n");
+      return RET_BUG;
+    }
   MoveObj(stack,1,(NspObject  *) M);
   return 1;
 }
@@ -360,6 +344,78 @@ ignore
 override-destroy-prelim  Mcursor
   /* verbatim in destroy */
   mongoc_cursor_destroy(H->obj->cu);
+  if (H->obj->doc != NULL) bson_destroy(H->obj->doc);
+
+%%
+override Mcursor.mongoc_cursor_error kwargs
+
+static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  bson_bool_t r;
+  bson_error_t error;
+  mongoc_cursor_t *cursor = self->obj->cu;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  r= mongoc_cursor_error (cursor, &error);
+  if ( r == TRUE && lhs == 0 ) 
+    {
+      Scierror("Error: %s\n", error.message);
+      return RET_BUG;
+    }
+  if ( lhs == 1) 
+    {
+      if ( nsp_move_boolean(stack,1,r)==FAIL) return RET_BUG;
+      return 1;
+    }
+  else
+    return 0;
+}
+
+%%
+override Mcursor.mongoc_cursor_next kwargs
+
+static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+  NspBson *B;
+  const bson_t *doc= self->obj->doc;
+  bson_bool_t r;
+  mongoc_cursor_t *cursor = self->obj->cu;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  r= mongoc_cursor_next(cursor, &doc);
+  if ( r == TRUE ) 
+    {
+      const bson_t *doc1= bson_copy(doc);
+      if(( B = nsp_bson_create(NVOID,(void *) doc1,
+			       (NspTypeBase *) nsp_type_bson)) == NULL)
+	{
+	  Scierror("Error: failed to create a bson object\n");
+	  ret = RET_BUG;
+	}
+      MoveObj(stack,1,(NspObject  *) B);
+      ret =1;
+    }
+  else
+    {
+      if ( nsp_move_boolean(stack,1,FALSE)==FAIL) return RET_BUG;
+      ret=1;
+    }
+  return ret;
+}
+
+%%
+override Mcursor.mongoc_cursor_more kwargs
+
+static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int ret;
+
+  ret = mongoc_cursor_more(self->obj->cu);
+  if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
+  return 1;
+}
+
 
 %%
 ignore

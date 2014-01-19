@@ -45,6 +45,7 @@ struct _NspTypeMcursor {
 typedef struct _nsp_mcursor nsp_mcursor;
 struct _nsp_mcursor {
   void* cu;
+  void* doc;
   int ref_count;
 };
 
@@ -74,7 +75,7 @@ NspMcursor *new_mcursor();
 
 #define NULLMCURSOR (NspMcursor*) 0
 
-extern NspMcursor *nsp_mcursor_create(const char *name,void* cu,NspTypeBase *type);
+extern NspMcursor *nsp_mcursor_create(const char *name,void* cu,void* doc,NspTypeBase *type);
 extern NspMcursor *nsp_mcursor_create_default(const char *name);
 
 /* from NspMcursorObj.c */

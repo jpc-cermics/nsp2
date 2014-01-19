@@ -39,6 +39,7 @@
   (c-name "NspMcursor")
   (fields
     '("void*" "cu" "hidden" "NULL")
+    '("void*" "doc" "hidden" "NULL")
     )
   (gtype-id "Mcursor")
 )

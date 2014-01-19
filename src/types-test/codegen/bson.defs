@@ -42,3 +42,24 @@
   (c-name "mongoc_collection_insert")
   (return-type "int")
 )
+
+;; overriden in bson.override 
+
+(define-method error
+  (of-object "Mcursor")
+  (c-name "mongoc_cursor_error")
+  (return-type "int")
+)
+
+(define-method next
+  (of-object "Mcursor")
+  (c-name "mongoc_cursor_next")
+  (return-type "int")
+)
+
+(define-method more
+  (of-object "Mcursor")
+  (c-name "mongoc_cursor_more")
+  (return-type "boolean")
+)
+
