@@ -1764,7 +1764,7 @@ if test "$with_mongodb" != "no"; then
 	 GTK_PKGS_LIBS="$GTK_PKGS_LIBS libmongoc-1.0"
          GTKCFLAGS="\`$PKG_CONFIG $GTK_PKGS_CFLAGS --cflags\`"
          GTKLIBS="\`$PKG_CONFIG $GTK_PKGS_LIBS --libs\`"
-	 MONGODB_C_FILE=bson.c
+	 MONGODB_C_FILE=bson.o
       fi 
  fi
 fi 
