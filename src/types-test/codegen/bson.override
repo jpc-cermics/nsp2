@@ -302,6 +302,37 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   return 1;
 }
 
+%%
+override Mcollection.mongoc_collection_delete kwargs
+
+static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
+{
+  bson_bool_t r;
+  bson_error_t error;
+  bson_t b;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  bson_init (&b);
+  r = mongoc_collection_delete (self->obj->co,
+				MONGOC_DELETE_NONE,
+				&b,
+				NULL,
+				&error);
+  bson_destroy(&b);
+  if (!r && lhs != 1) 
+    {
+      Scierror("Error: %s\n", error.message);
+      return RET_BUG;
+    }
+
+  if ( lhs == 1) 
+    {
+      if ( nsp_move_boolean(stack,1,r)==FAIL) return RET_BUG;
+      return 1;
+    }
+  else
+    return 0;
+}
 
 %%
 override Mcollection.mongoc_collection_insert kwargs

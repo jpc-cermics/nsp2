@@ -43,6 +43,13 @@
   (return-type "int")
 )
 
+(define-method delete
+  (of-object "Mcollection")
+  (c-name "mongoc_collection_delete")
+  (return-type "int")
+)
+
+
 ;; overriden in bson.override 
 
 (define-method error
