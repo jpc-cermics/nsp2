@@ -644,13 +644,16 @@ esac
 # i686-pc-mingw32 is for a 32 bits target 
 # x86_64-w64-mingw32 is for a 64 bits target 
 # NSPISS is inserted in the package name built for windows 
+# TARGET_MACHINE is the machine option transmited to msvc linker
 
 NSP_ISS=w32
+TARGET_MACHINE=ix86
 
 case "$host" in
   x86_64-w64-mingw32 )
     AC_DEFINE(TARGET_W64,[],[Defined if target is 64bits windows])
-    NSP_ISS=w64				   
+    NSP_ISS=w64	
+    TARGET_MACHINE=x64
     ;;
 esac
 
@@ -1980,7 +1983,7 @@ AC_SUBST(FC)
 AC_SUBST(FC_OPTIONS)
 AC_SUBST(NSP_ISS)
 
-AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile)
+AC_OUTPUT(Makefile.incl Makefile nsp.iss scripts/Makefile src/Makefile src/graphics-old/Makefile  src/graphics-new/Makefile src/menus/Makefile config/Makemex config/Makeso.incl config/Makefile.aix config/Makefile.ultrix scripts/nsp.g scripts/nsp-gtk.g src/include/nsp/version.h src/gtksci/Makefile pvm3/Makefile pvm3/Makefile.aimk pvm3/hoster/Makefile.aimk src/gzvt2/Makefile src/interp/Makefile config/Makefile.linux src/liblapack/Makefile src/libfft/Makefile src/include/nsp/shext.h src/system/Makefile config/Version.incl config/summary.txt src/types-test/Makefile config/Makefile.incl.mak)
 
 echo
 echo
