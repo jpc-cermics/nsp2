@@ -22,6 +22,7 @@ function ok = msvc_configure()
   end
   ok = %f;
   [name,path,is64] = msvc_get_compiler() 
+
   if name == "unknown" then return;end
   
   // remove trailing slash
@@ -31,6 +32,15 @@ function ok = msvc_configure()
   sdk_path = msvc_get_sdk();
   // select according to version
   select name
+
+   case  'msvc120pro' then // Microsoft Visual 2013 Studio Professional
+    ok = msvc_setenv_vc120(name,path,sdk_path, is64);
+   case  'msvc120express' then // Microsoft Visual 2013 Express
+    ok = msvc_setenv_vc120(name,path,sdk_path, is64);
+   case  'msvc110pro' then // Microsoft Visual 2012 Studio Professional
+    ok = msvc_setenv_vc110(name,path,sdk_path, is64);
+   case  'msvc110express' then // Microsoft Visual 2012 Express
+    ok = msvc_setenv_vc110(name,path,sdk_path, is64);
    case  'msvc100pro' then // Microsoft Visual 2010 Studio Professional
     ok = msvc_setenv_vc10(name,path,sdk_path, is64);
    case  'msvc100express' then // Microsoft Visual 2010 Express
@@ -96,6 +106,7 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
 		 sdk_path + '\\bin'];
       end
       newPATH = [ path + '\\VC\\BIN\\amd64'
+      	          path + '\\VC\\BIN\\x86_amd64'
 		  path + '\\VC\\VCPackages'
 		  path + '\\Common7\\IDE'
 		  path + '\\Common7\\Tools'
@@ -160,10 +171,15 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
     if getenv('INCLUDE','ndef') <> newINCLUDE then return;end
     ok=%t;
   endfunction
-
+  
   if sdk_path <> "" then
     setenv('WindowsSdkDir', sdk_path);
   end
+  // remove VC from path 
+  np=length(path); vcp=part(path,np-2:np);
+  if vcp == '\\VC' then 
+    path= part(path,1:np-3);
+  end 
   setenv('VSINSTALLDIR', path );
   DevEnvDir = path + '\\Common7\\IDE';
   setenv('DevEnvDir', DevEnvDir);
@@ -173,6 +189,20 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
   ok=ok && setNewINCLUDE(path, sdk_path, IsExpress, is64);
   ok=ok && setNewLIBPATH(path, sdk_path, IsExpress, is64);
 
+endfunction
+
+function ok = msvc_setenv_vc120(msvc,path,sdk_path, is64)
+// set up for vc 2013
+  IsExpress = (msvc == 'msvc120express');
+  setenv('VS120COMNTOOLS',path + '\\Common7\\Tools\')
+  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64);
+endfunction
+
+function ok = msvc_setenv_vc110(msvc,path,sdk_path, is64)
+// set up for vc 2012
+  IsExpress = (msvc == 'msvc110express');
+  setenv('VS110COMNTOOLS',path + '\\Common7\\Tools\')
+  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64);
 endfunction
 
 function ok = msvc_setenv_vc10(msvc,path,sdk_path, is64)
