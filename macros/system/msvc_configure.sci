@@ -1,12 +1,15 @@
 function ok = msvc_configure() 
 
-  function path = msvc_get_sdk()
+  function [path,v8] = msvc_get_sdk()
     path = "";
-    entries = ["Software\Microsoft\Microsoft SDKs\Windows" "CurrentInstallFolder" ; // Vista & Seven SDK
-	       "Software\Microsoft\MicrosoftSDK\InstalledSDKs\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1" "Install Dir" ; // Windows 2003 R2 SDK
-	       "Software\Microsoft\MicrosoftSDK\InstalledSDKs\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3" "Install Dir"]; // Windows 2003 SDK
+    entries = ["Software\\Wow6432Node\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8" ; // Windows 8 SDK (2012 express)
+               "Software\\Microsoft\\Microsoft SDKs\\Windows\\v8.0", "InstallationFolder","v8" ; // Windows 8 SDK (2012 express)
+    	       "Software\\Microsoft\\Microsoft SDKs\\Windows", "CurrentInstallFolder", "" ; // Vista & Seven SDK    
+	       "Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\D2FF9F89-8AA2-4373-8A31-C838BF4DBBE1", "Install Dir","" ; // Windows 2003 R2 SDK
+	       "Software\\Microsoft\\MicrosoftSDK\\InstalledSDKs\\8F9E5EF3-A9A5-491B-A889-C58EFFECE8B3", "Install Dir",""]; // Windows 2003 SDK
     for i = 1:size(entries,'r')
       ok = execstr("path =registry(''HKEY_LOCAL_MACHINE'', entries(i,1), entries(i,2))",errcatch=%t);
+      v8 = entries(i,3)=="v8";
       if ok && file('exists',path') then break;end 
     end
     // remove trailing slash
@@ -29,28 +32,28 @@ function ok = msvc_configure()
   if part(path,length(path))== '\\' then 
     path = part(path,1:(length(path)-1));
   end
-  sdk_path = msvc_get_sdk();
+  [sdk_path,v8] = msvc_get_sdk();
   // select according to version
   select name
 
    case  'msvc120pro' then // Microsoft Visual 2013 Studio Professional
-    ok = msvc_setenv_vc120(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc120(name,path,sdk_path, is64, v8 );
    case  'msvc120express' then // Microsoft Visual 2013 Express
-    ok = msvc_setenv_vc120(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc120(name,path,sdk_path, is64, v8);
    case  'msvc110pro' then // Microsoft Visual 2012 Studio Professional
-    ok = msvc_setenv_vc110(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc110(name,path,sdk_path, is64, v8);
    case  'msvc110express' then // Microsoft Visual 2012 Express
-    ok = msvc_setenv_vc110(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc110(name,path,sdk_path, is64, v8);
    case  'msvc100pro' then // Microsoft Visual 2010 Studio Professional
-    ok = msvc_setenv_vc10(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc10(name,path,sdk_path, is64, v8);
    case  'msvc100express' then // Microsoft Visual 2010 Express
-    ok = msvc_setenv_vc10(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc10(name,path,sdk_path, is64, v8);
    case  'msvc90pro' then // Microsoft Visual 2008 Studio Professional
-    ok = msvc_setenv_vc90(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc90(name,path,sdk_path, is64, v8);
    case  'msvc90std' then     // Microsoft Visual 2008 Studio Standard
-    ok = msvc_setenv_vc90(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc90(name,path,sdk_path, is64, v8);
    case  'msvc90express' then    // Microsoft Visual 2008 Express
-    ok = msvc_setenv_vc90(name,path,sdk_path, is64);
+    ok = msvc_setenv_vc90(name,path,sdk_path, is64, v8);
    case  'msvc80pro' then    // Microsoft Visual 2005 Studio Professional
     ok = msvc_setenv_vc80(name,path,sdk_path, is64);
    case  'msvc80std' then    // Microsoft Visual 2005 Studio Standard
@@ -67,14 +70,26 @@ function ok = msvc_configure()
   end
 endfunction
 
-function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
+function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64, v8)
   
-  function  ok=setNewLIB( path, sdk_path, bIsExpress, is64)
+  function  ok=setNewLIB( path, sdk_path, bIsExpress, is64, v8)
     ok=%f;
     LIB = getenv('LIB', '');
     if is64 then 
       str = m2s([]);
-      if sdk_path <> "" then str = sdk_path + '\\lib\\x64';end
+      if sdk_path <> "" then 
+         // avant 
+	 if v8 then 
+	   if is64 then 
+	     str = [ sdk_path + '\\lib\\win8\\um\\x64']
+	   else 
+	     str = [ sdk_path + '\\lib\\win8\\um\\x86']
+	   end 
+	 else
+	   str = sdk_path + '\\lib\\x64';
+	 end
+	 // si windows 8    	 
+      end
       newLIB = [path + '\\VC\\ATLMFC\\LIB\\amd64';
 		path + '\\VC\\LIB\\amd64'
 		str 
@@ -94,7 +109,7 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
     ok=%t;
   endfunction
 
-  function ok=setNewPATH( path, sdk_path, bIsExpress, is64)
+  function ok=setNewPATH( path, sdk_path, bIsExpress, is64, v8)
     ok=%f;
     // PATH = getenv('PATH', '');
     PATH= m2s([]);
@@ -107,6 +122,7 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
       end
       newPATH = [ path + '\\VC\\BIN\\amd64'
       	          path + '\\VC\\BIN\\x86_amd64'
+      	          path + '\\VC\\BIN'
 		  path + '\\VC\\VCPackages'
 		  path + '\\Common7\\IDE'
 		  path + '\\Common7\\Tools'
@@ -114,8 +130,8 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
 		  str 
 		  PATH];
     else
-       str = m2s([]);
-       if sdk_path <> "" then str = sdk_path + '\\bin';end
+      str = m2s([]);
+      if sdk_path <> "" then str = sdk_path + '\\bin'; end
       newPATH = [path + '\\Common7\\IDE\\'
 		 path + '\\VC\\bin'
 		 path + '\\Common7\\Tools'
@@ -129,7 +145,7 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
     ok=%t;
   endfunction
 
-  function ok=setNewLIBPATH( path, sdk_path, bIsExpress,  is64)
+  function ok=setNewLIBPATH( path, sdk_path, bIsExpress,  is64, v8)
     ok=%f;
     LIBPATH = getenv('LIBPATH', '');
     if is64 then 
@@ -148,11 +164,20 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
     ok=%t;
   endfunction
 
-  function ok=setNewINCLUDE( path, sdk_path, bIsExpress,  is64)
+  function ok=setNewINCLUDE( path, sdk_path, bIsExpress,  is64, v8)
     ok=%f;
     INCLUDE = getenv('INCLUDE', '');
     str = m2s([]);
-    if sdk_path <> "" then str = sdk_path + '\\include';end
+    if sdk_path <> "" then 
+      if v8 then 
+	str = [ sdk_path + '\\include';
+		sdk_path + '\\include\\um';
+		sdk_path + '\\include\\shared';
+		sdk_path + '\\include\\winrt'];
+      else
+	str = [ sdk_path + '\\include'];
+      end
+    end
     if is64 then 
       newINCLUDE = [ path + '\\VC\\INCLUDE'
 		     path + '\\VC\\ATLMFC\\INCLUDE'
@@ -191,33 +216,33 @@ function ok = msvc_setenv_vc10_vc90(path, sdk_path, IsExpress, is64)
 
 endfunction
 
-function ok = msvc_setenv_vc120(msvc,path,sdk_path, is64)
+function ok = msvc_setenv_vc120(msvc,path,sdk_path, is64, v8)
 // set up for vc 2013
   IsExpress = (msvc == 'msvc120express');
   setenv('VS120COMNTOOLS',path + '\\Common7\\Tools\')
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64);
+  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
 endfunction
 
-function ok = msvc_setenv_vc110(msvc,path,sdk_path, is64)
+function ok = msvc_setenv_vc110(msvc,path,sdk_path, is64, v8)
 // set up for vc 2012
   IsExpress = (msvc == 'msvc110express');
   setenv('VS110COMNTOOLS',path + '\\Common7\\Tools\')
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64);
+  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
 endfunction
 
-function ok = msvc_setenv_vc10(msvc,path,sdk_path, is64)
+function ok = msvc_setenv_vc10(msvc,path,sdk_path, is64, v8)
 // set up for vc 2010
   IsExpress = (msvc == 'msvc100express');
   setenv('VS100COMNTOOLS',path + '\\Common7\\Tools\')
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64);
+  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
 endfunction
 
-function ok=msvc_setenv_vc90(msvc,path,sdk_path, is64)
+function ok=msvc_setenv_vc90(msvc,path,sdk_path, is64, v8)
 // set up for vc 90 
   IsExpress = (msvc == 'msvc90express');
   str = path + '\\Common7\\Tools\\';
   setenv('VS90COMNTOOLS', str);
-  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64);
+  ok= msvc_setenv_vc10_vc90(path,sdk_path, IsExpress, is64, v8);
 endfunction
 
 
