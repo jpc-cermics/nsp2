@@ -183,13 +183,25 @@ static int nsp_constant_frame(nsp_datas *data,int argc, char **argv)
   if ((O =nsp_create_false_object("%cholmod"))==NULLOBJ) return FAIL;
 #endif 
   nsp_frame_replace_object1(data,O,-1);
-  /* are we a win32 version */
+  /* are we a windows version */
 #ifdef WIN32 
   if ((O =nsp_create_true_object("%win32"))==NULLOBJ) return FAIL;
 #else 
   if ((O =nsp_create_false_object("%win32"))==NULLOBJ) return FAIL;
 #endif
   nsp_frame_replace_object1(data,O,-1);
+  /* are we a windows version which is a 64 bits version ? */
+#ifdef WIN32 
+#ifdef TARGET_W64
+  if ((O =nsp_create_true_object("%win64"))==NULLOBJ) return FAIL;
+#else 
+  if ((O =nsp_create_false_object("%win64"))==NULLOBJ) return FAIL;
+#endif 
+#else 
+  if ((O =nsp_create_false_object("%win64"))==NULLOBJ) return FAIL;
+#endif
+  nsp_frame_replace_object1(data,O,-1);
+
   /* which nsp version */
   if ((O= nsp_create_object_from_str("%nsp_version",NSP_VERSION))==NULLOBJ) 
     return FAIL;
