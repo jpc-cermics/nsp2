@@ -19,6 +19,9 @@ function load_toolbox(name)
   [names,tbxes]=toolboxes()
   if nargin <= 0 then 
     tb=get_toolbox(names,tbxes);
+    if size(tb,'*')==0 then
+      return
+    end
   else
     tb= find(strstr(names,name)<>0);
     tb= tbxes(tb);
