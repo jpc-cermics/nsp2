@@ -106,8 +106,8 @@ static GtkActionEntry buffer_action_entries[] = {
   { "Save", GTK_STOCK_SAVE, "Save", NULL,NULL, G_CALLBACK(save_cb)},
   { "SaveAs", GTK_STOCK_SAVE_AS, "Save _As...", NULL,NULL, G_CALLBACK(save_as_cb)},
   { "Close", GTK_STOCK_CLOSE, "_Close", NULL, "Close edit window", G_CALLBACK (close_cb) },
-  {"Execute",NULL, "_Execute...", NULL,NULL, G_CALLBACK (execute_cb)},
-  {"ExecuteSelection",NULL, "Execute Selection", NULL,NULL, G_CALLBACK (execute_selection_cb)},
+  {"Execute",NULL, "_Execute...", "<control>l" ,NULL, G_CALLBACK (execute_cb)},
+  {"ExecuteSelection",NULL, "Execute Selection","<control>y" ,NULL, G_CALLBACK (execute_selection_cb)},
 };
 
 static GtkActionEntry view_action_entries[] = {
