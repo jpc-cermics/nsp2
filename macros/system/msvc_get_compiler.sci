@@ -46,22 +46,27 @@ function [name,path,is64] = msvc_get_compiler()
 
     table = [ "msvc120pro" "Software\\Wow6432Node\\Microsoft\\VisualStudio\\12.0\\Setup\\VC"
 	      "msvc120express" "Software\\Wow6432Node\\Microsoft\\VCExpress\\12.0\\Setup\\VC"
-	      "msvc110pro" "Software\\Wow6432Node\\Microsoft\\VisualStudio\\11.0\\Setup\\VC"
-	      "msvc110express" "Software\\Wow6432Node\\Microsoft\\VCExpress\\11.0\\Setup\\VC"
-	      
               "msvc120pro" "Software\\Microsoft\\VisualStudio\\12.0\\Setup\\VC"
 	      "msvc120express" "Software\\Microsoft\\VCExpress\\12.0\\Setup\\VC"
+	      
+	      "msvc110pro" "Software\\Wow6432Node\\Microsoft\\VisualStudio\\11.0\\Setup\\VC"
+	      "msvc110express" "Software\\Wow6432Node\\Microsoft\\VCExpress\\11.0\\Setup\\VC"
 	      "msvc110pro" "Software\\Microsoft\\VisualStudio\\11.0\\Setup\\VC"
 	      "msvc110express" "Software\\Microsoft\\VCExpress\\11.0\\Setup\\VC"
-	      
+
+	      "msvc100pro", "Software\\Wow6432Node\\Microsoft\\VisualStudio\\10.0\\Setup\\VS" 
 	      "msvc100pro", "Software\\Microsoft\\VisualStudio\\10.0\\Setup\\VS" 
+	      "msvc100express", "Software\\Wow6432Node\\Microsoft\\VCExpress\\10.0\\Setup\\VS" 
 	      "msvc100express", "Software\\Microsoft\\VCExpress\\10.0\\Setup\\VS" 
+
 	      "msvc90pro", "Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Pro" 
 	      "msvc90std", "Software\\Microsoft\\VisualStudio\\9.0\\Setup\\VS\\Std"
 	      "msvc90express", "Software\\Microsoft\\VCExpress\\9.0\\Setup\\VS" 
+
 	      "msvc80pro", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Pro" 
 	      "msvc80std", "Software\\Microsoft\\VisualStudio\\8.0\\Setup\\VS\\Std"
 	      "msvc80express", "Software\\Microsoft\\VCExpress\\8.0\\Setup\\VS" 
+	      
 	      "msvc71", "SOFTWARE\\Microsoft\\VisualStudio\\7.1\\Setup\\VC"
 	      "msvc70","SOFTWARE\\Microsoft\\VisualStudio\\7.0\\Setup\\VC"  ]
 
