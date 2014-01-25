@@ -894,7 +894,7 @@ static int _wrap_g_date_time_to_unix(NspGDateTime *self,Stack stack,int rhs,int 
 {
   NspIMatrix *Im;
   gint64 t;
-  CheckStdRhs(1,1);
+  CheckStdRhs(0,0);
   CheckLhs(0,1);
   t = g_date_time_to_unix(self->gdate);
   if (( Im =nsp_imatrix_create(NVOID,1,1,nsp_gint64)) == NULLIMAT) 
@@ -908,7 +908,7 @@ static int _wrap_g_date_time_to_local(NspGDateTime *self,Stack stack,int rhs,int
 {
   NspGDateTime *M = NULL;
   GDateTime *g;
-  CheckStdRhs(1,1);
+  CheckStdRhs(0,0);
   CheckLhs(0,1);
   g = g_date_time_to_local(self->gdate);
   if ( g == NULL) 
@@ -925,7 +925,7 @@ static int _wrap_g_date_time_to_utc(NspGDateTime *self,Stack stack,int rhs,int o
 {
   NspGDateTime *M = NULL;
   GDateTime *g;
-  CheckStdRhs(1,1);
+  CheckStdRhs(0,0);
   CheckLhs(0,1);
   g = g_date_time_to_utc(self->gdate);
   if ( g == NULL) 
@@ -989,15 +989,36 @@ static int _wrap_g_date_time_format(NspGDateTime *self,Stack stack,int rhs,int o
   return 1;
 }
 
-/* 
+static int _wrap_g_date_time_get_timezone_abbreviation(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  const char *str;
+  int rep;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  str = g_date_time_get_timezone_abbreviation(self->gdate);
+  if ( str == NULL) 
+    {
+      Scierror("Error: method get_timezone_abbreviation failed\n");
+      return RET_BUG;
+    }
+  rep = nsp_move_string(stack,1, str ,-1);
+  if ( rep == FAIL ) return RET_BUG;
+  return 1;
+}
 
-const gchar *       g_date_time_get_timezone_abbreviation
-                                                        (GDateTime *datetime);
-gboolean            g_date_time_is_daylight_savings     (GDateTime *datetime);
-gchar *             g_date_time_format                  (GDateTime *datetime,
-                       const gchar *format);
-*/
 
+static int _wrap_g_date_time_get_utc_offset(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  GTimeSpan ts= g_date_time_get_utc_offset(self->gdate);
+  NspIMatrix *Im;
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+  if (( Im =nsp_imatrix_create(NVOID,1,1,nsp_gint64)) == NULLIMAT) 
+    return RET_BUG;
+  Im->Gint64[0] = ts;
+  MoveObj(stack,1,NSP_OBJECT(Im));
+  return 1;
+}
 
 static NspMethods gdate_time_methods[] = {
   {"get_month",(nsp_method *) _wrap_g_date_time_get_month},
@@ -1019,10 +1040,12 @@ static NspMethods gdate_time_methods[] = {
   {"add_minutes",(nsp_method *)_wrap_g_date_time_add_minutes},
   {"add_full",(nsp_method *)_wrap_g_date_time_add_full},
   {"to_unix",(nsp_method *) _wrap_g_date_time_to_unix},
-  {"to_utc",(nsp_method *) _wrap_g_date_time_to_local},
-  {"to_local",(nsp_method *) _wrap_g_date_time_to_utc},
+  {"to_utc",(nsp_method *) _wrap_g_date_time_to_utc},
+  {"to_local",(nsp_method *) _wrap_g_date_time_to_local},
   {"to_timezone", (nsp_method *) _wrap_g_date_time_to_timezone}, 
   {"format", (nsp_method *) _wrap_g_date_time_format}, 
+  {"get_timezone_abbreviation", (nsp_method *) _wrap_g_date_time_get_timezone_abbreviation},
+  {"get_utc_offset",  (nsp_method *) _wrap_g_date_time_get_utc_offset},
   { NULL, NULL}
 };
 
