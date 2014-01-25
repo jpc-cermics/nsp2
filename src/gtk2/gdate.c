@@ -1186,6 +1186,7 @@ int _wrap_g_date_get_sunday_weeks_in_year(Stack stack, int rhs, int opt, int lhs
   return 1;
 }
 
+extern function  int_gdate_time_create;
 
 /*----------------------------------------------------
  * Interface 
@@ -1205,6 +1206,10 @@ static OpTab gdate_func[]={
   {"g_date_get_days_in_month", _wrap_g_date_get_days_in_month},
   {"g_date_get_monday_weeks_in_year", _wrap_g_date_get_monday_weeks_in_year},
   {"g_date_get_sunday_weeks_in_year", _wrap_g_date_get_sunday_weeks_in_year},
+  
+  /* the gdate_time inteface */
+  {"gdate_time_new", int_gdate_time_create},
+  {"gdate_time_create", int_gdate_time_create},
   { NULL, NULL}
 };
 

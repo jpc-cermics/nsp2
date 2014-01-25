@@ -231,7 +231,7 @@ static NspGDateTime  *nsp_gdate_time_xdr_load(XDR *xdrs)
   NspGDateTime *M = NULL;
   static char name[NAME_MAXL];
   if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLGDATETIME;
-  if ((M  = gdate_time_create_void(name,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
+  if ((M  = nsp_gdate_time_create_void(name,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
     return M;
   if (nsp_xdr_load_array_ixx(xdrs,&gdt,nsp_gint64,1) == FAIL) return  NULLGDATETIME;
   M->gdate = g_date_time_new_from_unix_utc(gdt);
@@ -372,12 +372,11 @@ NspGDateTime  *GetGDateTime(Stack stack, int i)
 }
 
 /*-----------------------------------------------------
-  * constructor 
- * if type is non NULL it is a subtype which can be used to 
- * create a NspClassB instance 
+ * constructor for NspGDateTime instance or instances 
+ * of subtypes depending on the value of type.
  *-----------------------------------------------------*/
 
-static NspGDateTime *gdate_time_create_void(char *name,NspTypeBase *type)
+static NspGDateTime *nsp_gdate_time_create_void(const char *name,NspTypeBase *type)
 {
  NspGDateTime *H  = (type == NULL) ? new_gdate_time() : type->new();
  if ( H ==  NULLGDATETIME)
@@ -391,23 +390,19 @@ static NspGDateTime *gdate_time_create_void(char *name,NspTypeBase *type)
  return H;
 }
 
-NspGDateTime *gdate_time_create_full(char *name,gint year,gint month,gint day,
-				     gint hour, gint minute, gint second,
-				     NspTypeBase *type)
-{
-  NspGDateTime *H; 
-  H = gdate_time_create_void(name,type);
-  if ( H ==  NULLGDATETIME) return NULLGDATETIME;
-  H->gdate = g_date_time_new_local (year, month, day, hour, minute,second);
-  if ( H->gdate == NULL) 
-    {
-      Scierror("Error: [%d,%d,%d,%d,%d,%d] is not a valid local time\n",day,month,year,
-	       hour, minute,second);
-      return NULL;
-    }
-  return H;
-}
+/* create a NspGDateTime from a GDateTime @gdt */
 
+static NspGDateTime *nsp_gdate_time_create(const char *name, GDateTime *gdt)
+{
+  NspGDateTime *Gdt;
+  /* want to be sure that type gdate is initialized */
+  nsp_type_gdate_time = new_type_gdate_time(T_BASE);
+  if ((Gdt  = nsp_gdate_time_create_void(name,(NspTypeBase *) nsp_type_gdate_time)) 
+      == NULLGDATETIME) 
+    return NULLGDATETIME;
+  Gdt->gdate = gdt; 
+  return Gdt;
+}
 
 /*
  * copy for gobject derived class  
@@ -421,7 +416,7 @@ NspGDateTime *nsp_gdate_time_copy(NspGDateTime *self)
   gint hour=g_date_time_get_hour(self->gdate);
   gint minute=g_date_time_get_minute(self->gdate);
   gint second=g_date_time_get_second(self->gdate);
-  NspGDateTime *H  =gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time);
+  NspGDateTime *H  = nsp_gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time);
   if ( H ==  NULLGDATETIME) return NULLGDATETIME;
   if (( H->gdate = g_date_time_new_local (year, month, day, hour, minute,second)) == NULL) 
     {
@@ -437,47 +432,223 @@ NspGDateTime *nsp_gdate_time_copy(NspGDateTime *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-/* create a gdate from 
- * gdate_time_new(): current date 
- * gdate_time_new(d,m,y)
- * gdate_time_new(str)
- * gdate_time_new(julian) 
+/* Creates a NspGDateTime corresponding to this exact instant in the given time zone */
+
+static NspGDateTime *nsp_gdate_time_new_now(const gchar *name,const gchar *timezone)
+{
+  GDateTime *gdt;
+  GTimeZone *Tz = g_time_zone_new(timezone);
+  gdt = g_date_time_new_now (Tz);
+  g_time_zone_unref(Tz);
+  if ( gdt == NULL ) return NULL;
+  return nsp_gdate_time_create(name,gdt);
+}
+
+/* Creates a GDateTime corresponding to this exact instant in the local time zone. */
+
+static NspGDateTime *nsp_gdate_time_new_now_local(const gchar *name)
+{
+  GDateTime *gdt = g_date_time_new_now_local();
+  if ( gdt == NULL ) return NULL;
+  return nsp_gdate_time_create(name,gdt);
+}
+
+/* Creates a GDateTime corresponding to this exact instant in UTC. */
+
+static NspGDateTime *nsp_gdate_time_new_now_utc(const gchar *name)
+{
+  GDateTime *gdt = g_date_time_new_now_utc();
+  if ( gdt == NULL ) return NULL;
+  return nsp_gdate_time_create(name,gdt);
+}
+
+/* Creates a GDateTime corresponding to the given Unix time t in the local time zone.
+ * Unix time is the number of seconds that have elapsed since 1970-01-01 00:00:00 UTC, 
+ *  regardless of the local time offset.
+ */
+
+static NspGDateTime *nsp_gdate_time_new_from_unix_local(const char *name,gint64 t)
+{
+  GDateTime *gdt = g_date_time_new_from_unix_local(t);
+  if ( gdt == NULL ) return NULL;
+  return nsp_gdate_time_create(name,gdt);
+}
+
+
+/* Creates a GDateTime corresponding to the given Unix time t in UTC.
+ * Unix time is the number of seconds that have elapsed since 1970-01-01 00:00:00 UTC.
+ */
+
+static NspGDateTime *nsp_gdate_time_new_from_unix_utc(const char *name,gint64 t)
+{
+  GDateTime *gdt = g_date_time_new_from_unix_utc(t);
+  if ( gdt == NULL ) return NULL;
+  return nsp_gdate_time_create(name,gdt);
+}
+
+/* 
+   g_date_time_new_from_timeval_local ()
+   GDateTime *g_date_time_new_from_timeval_local  (const GTimeVal *tv);
+   Creates a GDateTime corresponding to the given GTimeVal tv in the local time zone.
+   The time contained in a GTimeVal is always stored in the form of seconds elapsed 
+   since 1970-01-01 00:00:00 UTC, regardless of the local time offset.
+*/
+
+/* 
+   g_date_time_new_from_timeval_utc ()
+   GDateTime *g_date_time_new_from_timeval_utc    (const GTimeVal *tv);
+   Creates a GDateTime corresponding to the given GTimeVal tv in UTC.
+   The time contained in a GTimeVal is always stored in the form of 
+   seconds elapsed since 1970-01-01 00:00:00 UTC.
+*/
+
+/*  Creates a new GDateTime corresponding to the given date and time in the time zone tz.
+ *  The year must be between 1 and 9999, 
+ *  month between 1 and 12 and day between 1 and 28, 29, 30 or 31 depending on the month and the year.
+ *  hour must be between 0 and 23 and minute must be between 0 and 59.
+ *  seconds must be at least 0.0 and must be strictly less than 60.0. 
+ *  It will be rounded down to the nearest microsecond.
  * 
  */
 
-static int int_gdate_time_create(Stack stack, int rhs, int opt, int lhs)
+static NspGDateTime *nsp_gdate_time_new(const char *name,gint year,gint month,gint day,
+					gint hour, gint minute, gint second,
+					const char *timezone)
 {
-  double d_day,d_month,d_year;
-  NspGDateTime *H;
-  CheckStdRhs(0,6);
-  /* want to be sure that type gdate is initialized */
-  nsp_type_gdate_time = new_type_gdate_time(T_BASE);
-  if ( rhs == 6 )
+  GTimeZone *Tz = g_time_zone_new(timezone);
+  GDateTime *gdt; 
+  if ( Tz == NULL) 
     {
-      double d_hour, d_minute, d_second;
+      Scierror("Error: invalid time zone %s \n",timezone);
+      return NULL;
+    }
+  gdt = g_date_time_new(Tz,year, month, day, hour, minute,second);
+  g_time_zone_unref(Tz);
+  if ( gdt == NULL) 
+    {
+      Scierror("Error: [%d,%d,%d,%d,%d,%d] is not a valid %s time\n",day,month,year,
+	       hour, minute,second,timezone);
+      return NULL;
+    }
+  return nsp_gdate_time_create(name,gdt);
+}
+
+static NspGDateTime *nsp_gdate_time_new_local(const char *name,gint year,gint month,gint day,
+					      gint hour, gint minute, gint second)
+{
+  GDateTime *gdt = g_date_time_new_local(year, month, day, hour, minute,second);
+  if ( gdt == NULL) 
+    {
+      Scierror("Error: [%d,%d,%d,%d,%d,%d] is not a valid local time\n",day,month,year,
+	       hour, minute,second);
+      return NULL;
+    }
+  return nsp_gdate_time_create(name,gdt);
+}
+
+static NspGDateTime *nsp_gdate_time_new_utc(const char *name,gint year,gint month,gint day,
+					    gint hour, gint minute, gint second)
+{
+  GDateTime *gdt = g_date_time_new_local(year, month, day, hour, minute,second);
+  if ( gdt == NULL) 
+    {
+      Scierror("Error: [%d,%d,%d,%d,%d,%d] is not a valid utc time\n",day,month,year,
+	       hour, minute,second);
+      return NULL;
+    }
+  return nsp_gdate_time_create(name,gdt);
+}
+
+/* interface to create a NspGDateTime object */
+
+int int_gdate_time_create(Stack stack, int rhs, int opt, int lhs)
+{
+  char *tz = NULL;
+  double d_day,d_month,d_year, d_hour, d_minute, d_second;
+  NspGDateTime *H;
+  Boolean utc= FALSE; /* default is local */
+  nsp_option opts[] ={{ "utc", s_bool,NULLOBJ,-1},
+		      { "tz", string,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+  CheckStdRhs(0,6);
+  if ( get_optional_args(stack, rhs, opt, opts, &utc,&tz) == FAIL )
+    return RET_BUG;
+  
+  if ( rhs - opt == 0 )
+    {
+      if ( tz != NULL) 
+	{
+	  H = nsp_gdate_time_new_now(NVOID,tz);
+	}
+      else if ( utc == TRUE )
+	{
+	  H = nsp_gdate_time_new_now_utc(NVOID);
+	}
+      else
+	{
+	  H = nsp_gdate_time_new_now_local(NVOID);
+	}
+    }
+  else if ( rhs -opt  == 1 )
+    {
+      NspIMatrix  *IA=NULL;
+      gint64 t;
+      if (( IA = GetIMat(stack,1))  == NULLIMAT) return RET_BUG;
+      if ( IA->itype != nsp_gint64) 
+	{
+	  Scierror ("Error: in %s, integer should be of int64 subtype\n", NspFname(stack));
+	  return RET_BUG;
+	}
+      if ( IA->mn != 1 )
+	{
+	  Scierror ("Error: in %s, argument sould be a 1x1 int64 \n", NspFname(stack));
+	  return RET_BUG;
+	}
+      t = IA->Gint64[0];
+      if ( tz != NULL) 
+	{
+	  Scierror("Error: a time zone cannot be given when datetime is given with unix time\n");
+	  return RET_BUG;
+	}
+      else if ( utc == TRUE )
+	{
+	  H = nsp_gdate_time_new_from_unix_utc(NVOID,t);
+	}
+      else
+	{
+	  H = nsp_gdate_time_new_from_unix_local(NVOID,t);
+	}
+    }
+  else if ( rhs -opt  == 6 )
+    {
       if (GetScalarDouble (stack,1, &d_year) == FAIL) return RET_BUG;
       if (GetScalarDouble (stack,2, &d_month) == FAIL) return RET_BUG;
       if (GetScalarDouble (stack,3, &d_day) == FAIL) return RET_BUG;  
       if (GetScalarDouble (stack,4, &d_hour) == FAIL) return RET_BUG;
       if (GetScalarDouble (stack,5, &d_minute) == FAIL) return RET_BUG;
       if (GetScalarDouble (stack,6, &d_second) == FAIL) return RET_BUG;  
-      if(( H = gdate_time_create_full(NVOID,d_year, d_month, d_day, d_hour, d_minute, d_second,
-				      (NspTypeBase *) nsp_type_gdate_time)) == NULLGDATETIME)
-	return RET_BUG;
+      if ( tz != NULL )
+	{
+	  H = nsp_gdate_time_new(NVOID,d_year, d_month, d_day, d_hour, d_minute, d_second,tz);
+	}
+      else if ( utc == TRUE ) 
+	{
+	  H = nsp_gdate_time_new_utc(NVOID,d_year, d_month, d_day, d_hour, d_minute, d_second);
+	}
+      else
+	{
+	  H = nsp_gdate_time_new_local(NVOID,d_year, d_month, d_day, d_hour, d_minute, d_second);
+	}
     }
   else 
-    {
-      Scierror("Error: rhs should be one or three\n");
+    { 
+      Scierror("Error: rhs should be 0 or one or 6 followed by optionals utc=%%t | %%f and tz=string\n");
       return RET_BUG;
     }
-  MoveObj(stack,1,(NspObject  *) H);
+  if ( H == NULL) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(H));
   return 1;
 } 
-
-static int _wrap_gdate_time_new(Stack stack, int rhs, int opt, int lhs)
-{
-  return int_gdate_time_create(stack,rhs,opt,lhs);
-}
 
 static int _wrap_g_date_time_get_day_of_week(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -511,11 +682,11 @@ static int _wrap_g_date_time_get_ymd(NspGDateTime *self,Stack stack,int rhs,int 
   if ( nsp_move_double(stack,1,(double) y)==FAIL) return RET_BUG;
   if ( lhs >= 2 ) 
     {
-      if ( nsp_move_double(stack,1,(double) m)==FAIL) return RET_BUG;
+      if ( nsp_move_double(stack,2,(double) m)==FAIL) return RET_BUG;
     }
   if ( lhs >= 3 ) 
     {
-      if ( nsp_move_double(stack,1,(double) d)==FAIL) return RET_BUG;
+      if ( nsp_move_double(stack,3,(double) d)==FAIL) return RET_BUG;
     }
   return Max(lhs,1);
 }
@@ -561,7 +732,6 @@ static int _wrap_g_date_time_get_year(NspGDateTime *self,Stack stack,int rhs,int
   return 1;
 }
 
-
 static int _wrap_g_date_time_is_daylight_savings(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret= g_date_time_is_daylight_savings(self->gdate);
@@ -580,12 +750,10 @@ static int _wrap_g_date_time_add_years(NspGDateTime *self,Stack stack,int rhs,in
   g= g_date_time_add_years(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_years failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -601,12 +769,10 @@ static int _wrap_g_date_time_add_months(NspGDateTime *self,Stack stack,int rhs,i
   g=g_date_time_add_months(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_months failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -622,12 +788,10 @@ static int _wrap_g_date_time_add_weeks(NspGDateTime *self,Stack stack,int rhs,in
   g=g_date_time_add_weeks(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_weeks failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -643,12 +807,10 @@ static int _wrap_g_date_time_add_days(NspGDateTime *self,Stack stack,int rhs,int
   g=g_date_time_add_days(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_days failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -664,12 +826,10 @@ static int _wrap_g_date_time_add_hours(NspGDateTime *self,Stack stack,int rhs,in
   g=g_date_time_add_hours(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_hours failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -684,12 +844,10 @@ static int _wrap_g_date_time_add_seconds(NspGDateTime *self,Stack stack,int rhs,
   g=g_date_time_add_seconds(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_seconds failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -705,12 +863,10 @@ static int _wrap_g_date_time_add_minutes(NspGDateTime *self,Stack stack,int rhs,
   g=g_date_time_add_minutes(self->gdate, n);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_minutes failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
@@ -726,15 +882,121 @@ static int _wrap_g_date_time_add_full(NspGDateTime *self,Stack stack,int rhs,int
   g= g_date_time_add_full(self->gdate,y,m,d,h,mi,s);
   if ( g == NULL) 
     {
-      Scierror("Error: g_date_time_add_full failed\n");
+      Scierror("Error: method add_full failed\n");
       return RET_BUG;
     }
-  if ((M  = gdate_time_create_void(NVOID,(NspTypeBase *) nsp_type_gdate_time))== NULLGDATETIME) 
-    return RET_BUG;
-  M->gdate = g ;
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(M));
   return 1;
 }
+
+static int _wrap_g_date_time_to_unix(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspIMatrix *Im;
+  gint64 t;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  t = g_date_time_to_unix(self->gdate);
+  if (( Im =nsp_imatrix_create(NVOID,1,1,nsp_gint64)) == NULLIMAT) 
+    return RET_BUG;
+  Im->Gint64[0] = t;
+  MoveObj(stack,1,NSP_OBJECT(Im));
+  return 1;
+}
+
+static int _wrap_g_date_time_to_local(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGDateTime *M = NULL;
+  GDateTime *g;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  g = g_date_time_to_local(self->gdate);
+  if ( g == NULL) 
+    {
+      Scierror("Error: method to_local failed\n");
+      return RET_BUG;
+    }
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+
+static int _wrap_g_date_time_to_utc(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGDateTime *M = NULL;
+  GDateTime *g;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  g = g_date_time_to_utc(self->gdate);
+  if ( g == NULL) 
+    {
+      Scierror("Error: method to_utc failed\n");
+      return RET_BUG;
+    }
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+
+static int _wrap_g_date_time_to_timezone(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  NspGDateTime *M = NULL;
+  GTimeZone *Tz; 
+  GDateTime *g;
+  char *timezone;
+
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+
+  if ((timezone = GetString(stack,1))== NULL) 
+    return RET_BUG;
+
+  if ((Tz = g_time_zone_new(timezone)) == NULL) 
+    {
+      Scierror("Error: invalid time zone %s \n",timezone);
+      return RET_BUG;
+    }
+  g = g_date_time_to_timezone(self->gdate,Tz);
+  g_time_zone_unref(Tz);
+  if ( g == NULL) 
+    {
+      Scierror("Error: method to_utc failed\n");
+      return RET_BUG;
+    }
+  if ((M = nsp_gdate_time_create(NVOID,g)) == NULLGDATETIME) return RET_BUG;
+  MoveObj(stack,1,NSP_OBJECT(M));
+  return 1;
+}
+
+static int _wrap_g_date_time_format(NspGDateTime *self,Stack stack,int rhs,int opt,int lhs)
+{
+  char *format,*str;
+  int rep;
+  CheckStdRhs(1,1);
+  CheckLhs(0,1);
+  
+  if ((format = GetString(stack,1))== NULL) 
+    return RET_BUG;
+  str = g_date_time_format(self->gdate,format);
+  if ( str == NULL) 
+    {
+      Scierror("Error: method format failed\n");
+      return RET_BUG;
+    }
+  rep = nsp_move_string(stack,1, str ,-1);
+  g_free(str);
+  if ( rep == FAIL ) return RET_BUG;
+  return 1;
+}
+
+/* 
+
+const gchar *       g_date_time_get_timezone_abbreviation
+                                                        (GDateTime *datetime);
+gboolean            g_date_time_is_daylight_savings     (GDateTime *datetime);
+gchar *             g_date_time_format                  (GDateTime *datetime,
+                       const gchar *format);
+*/
 
 
 static NspMethods gdate_time_methods[] = {
@@ -756,6 +1018,11 @@ static NspMethods gdate_time_methods[] = {
   {"add_seconds",(nsp_method *)_wrap_g_date_time_add_seconds},
   {"add_minutes",(nsp_method *)_wrap_g_date_time_add_minutes},
   {"add_full",(nsp_method *)_wrap_g_date_time_add_full},
+  {"to_unix",(nsp_method *) _wrap_g_date_time_to_unix},
+  {"to_utc",(nsp_method *) _wrap_g_date_time_to_local},
+  {"to_local",(nsp_method *) _wrap_g_date_time_to_utc},
+  {"to_timezone", (nsp_method *) _wrap_g_date_time_to_timezone}, 
+  {"format", (nsp_method *) _wrap_g_date_time_format}, 
   { NULL, NULL}
 };
 
@@ -788,7 +1055,6 @@ static AttrTab gdate_time_attrs[] = {
   { NULL,NULL,NULL,NULL },
 };
 
-
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
@@ -799,7 +1065,7 @@ static AttrTab gdate_time_attrs[] = {
  *----------------------------------------------------*/
 
 static OpTab gdate_time_func[]={
-  {"gdate_time_new", _wrap_gdate_time_new},
+  {"gdate_time_new", int_gdate_time_create},
   {"gdate_time_create", int_gdate_time_create},
   { NULL, NULL}
 };
@@ -819,66 +1085,4 @@ void gdate_time_Interf_Info(int i, char **fname, function (**f))
   *fname = gdate_time_func[i].name;
   *f = gdate_time_func[i].fonc;
 }
-
-/* ----------- enums and flags ----------- */
-
-/* unused 
- *
- */
-
-void
-gdate_time_add_constants(NspObject *module, const gchar *strip_prefix)
-{
-  nsp_enum_add_constants((NspHash *) module, G_TYPE_DATE_WEEKDAY, strip_prefix);
-  nsp_enum_add_constants((NspHash *) module, G_TYPE_DATE_MONTH, strip_prefix);
-}
-
-#if  GTK_CHECK_VERSION(2,8,0)
-
-static GType g_date_month_get_type(void)
-{
-  static GType etype = 0;
-  if (etype == 0) {
-    static const GEnumValue values[] = {
-      { G_DATE_BAD_MONTH, "G_DATE_BAD_MONTH", "bad-month" },
-      { G_DATE_JANUARY, "G_DATE_JANUARY", "january" },
-      { G_DATE_FEBRUARY, "G_DATE_FEBRUARY", "february" },
-      { G_DATE_MARCH, "G_DATE_MARCH", "march" },
-      { G_DATE_APRIL, "G_DATE_APRIL", "april" },
-      { G_DATE_MAY, "G_DATE_MAY", "may" },
-      { G_DATE_JUNE, "G_DATE_JUNE", "june" },
-      { G_DATE_JULY, "G_DATE_JULY", "july" },
-      { G_DATE_AUGUST, "G_DATE_AUGUST", "august" },
-      { G_DATE_SEPTEMBER, "G_DATE_SEPTEMBER", "september" },
-      { G_DATE_OCTOBER, "G_DATE_OCTOBER", "october" },
-      { G_DATE_NOVEMBER, "G_DATE_NOVEMBER", "november" },
-      { G_DATE_DECEMBER, "G_DATE_DECEMBER", "december" },
-      { 0, NULL, NULL }
-    };
-    etype = g_enum_register_static (g_intern_static_string ("GDateTimeMonth"), values);
-  }
-  return etype;
-}
-
-static GType g_date_weekday_get_type(void)
-{
-  static GType etype = 0;
-  if (etype == 0) {
-    static const GEnumValue values[] = {
-      { G_DATE_BAD_WEEKDAY, "G_DATE_BAD_WEEKDAY", "bad-weekday" },
-      { G_DATE_MONDAY, "G_DATE_MONDAY", "monday" },
-      { G_DATE_TUESDAY, "G_DATE_TUESDAY", "tuesday" },
-      { G_DATE_WEDNESDAY, "G_DATE_WEDNESDAY", "wednesday" },
-      { G_DATE_THURSDAY, "G_DATE_THURSDAY", "thursday" },
-      { G_DATE_FRIDAY, "G_DATE_FRIDAY", "friday" },
-      { G_DATE_SATURDAY, "G_DATE_SATURDAY", "saturday" },
-      { G_DATE_SUNDAY, "G_DATE_SUNDAY", "sunday" },
-      { 0, NULL, NULL }
-    };
-    etype = g_enum_register_static (g_intern_static_string ("GDateTimeMonth"), values);
-  }
-  return etype;
-}
-
-#endif 
 

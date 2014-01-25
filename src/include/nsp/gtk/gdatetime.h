@@ -50,9 +50,6 @@ NspGDateTime *new_gdate_time();
 
 #define NULLGDATETIME (NspGDateTime*) 0
 
-extern NspGDateTime *gdate_time_create(char *name,GDateTime *gdate ,NspTypeBase *type);
-
-
 /* from GDateTimeObj.c */
 
 extern NspGDateTime *nsp_gdate_time_copy(NspGDateTime *H);
@@ -65,6 +62,7 @@ extern int IsGDateTimeObj (Stack stack, int i);
 extern int IsGDateTime(NspObject *O);
 extern NspGDateTime *GetGDateTimeCopy (Stack stack, int i); 
 extern NspGDateTime *GetGDateTime (Stack stack, int i); 
+extern int int_gdate_time_create(Stack stack, int rhs, int opt, int lhs);
 
 #endif /* NSP_INC_GDateTime */ 
 
@@ -79,17 +77,7 @@ static int nsp_gdate_time_xdr_save(XDR  *xdrs, NspGDateTime *M);
 static NspGDateTime *nsp_gdate_time_xdr_load(XDR *xdrs);
 static AttrTab gdate_time_attrs[];
 static NspMethods *gdate_time_get_methods(void);
-static int int_gdate_time_create(Stack stack, int rhs, int opt, int lhs);
-static NspGDateTime *gdate_time_create_void(char *name,NspTypeBase *type);
-#if  GTK_CHECK_VERSION(2,8,0)
-#define G_TYPE_DATE_MONTH (g_date_month_get_type())
-static GType g_date_month_get_type(void);
-#define G_TYPE_DATE_WEEKDAY (g_date_weekday_get_type())
-static GType g_date_weekday_get_type(void);
-#else 
-#define G_TYPE_DATE_MONTH G_TYPE_NONE
-#define G_TYPE_DATE_WEEKDAY G_TYPE_NONE
-#endif 
-
+static NspGDateTime *nsp_gdate_time_create_void(const char *name,NspTypeBase *type);
+static NspGDateTime *nsp_gdate_time_create(const char *name,GDateTime *gdate);
 #endif /* GDateTime_Private */
 
