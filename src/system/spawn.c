@@ -1008,7 +1008,7 @@ static int nsp_win32_system(const char *working_dir, const char *command,BOOL Wa
   char *CmdLine=NULL;
   PROCESS_INFORMATION piProcInfo; 
   STARTUPINFO siStartInfo;
-  SECURITY_ATTRIBUTES saAttr; 
+  /* SECURITY_ATTRIBUTES saAttr;  */
   DWORD ExitCode=0;
   char *dirname=nsp_get_cwd();
   char *dirname_native = NULL;
@@ -1029,10 +1029,11 @@ static int nsp_win32_system(const char *working_dir, const char *command,BOOL Wa
       Scierror("Failed to convert to native name %s\n",nsp_get_cwd());
       return FAIL;
     }
+  /* 
   saAttr.nLength = sizeof(SECURITY_ATTRIBUTES); 
   saAttr.bInheritHandle = TRUE; 
   saAttr.lpSecurityDescriptor = NULL; 
-
+  */
   ZeroMemory( &piProcInfo, sizeof(PROCESS_INFORMATION) );
   ZeroMemory( &siStartInfo, sizeof(STARTUPINFO) );
 
