@@ -24,7 +24,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <winsock2.h>
 #include <windows.h>
+#include <tchar.h>
+
 /* interface conflicts with nsp objects.h */
 #ifdef interface 
 #undef interface 
@@ -378,3 +381,43 @@ static void nsp_registry_delete_key(char *key,char *subkey)
   RegDeleteKey(hkey, subkey);
 }
 
+
+
+/**
+ * nsp_registry_delete_key:
+ * @key: 
+ * @subkey: 
+ * 
+ * Returns: 
+ **/
+
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+LPFN_ISWOW64PROCESS fnIsWow64Process;
+
+static BOOL IsWow64(void)
+{
+  BOOL bIsWow64 = FALSE;
+  /* IsWow64Process is not available on all supported versions of Windows.
+   * Use GetModuleHandle to get a handle to the DLL that contains the function
+   * and GetProcAddress to get a pointer to the function if available.
+   */
+  fnIsWow64Process = (LPFN_ISWOW64PROCESS) 
+    GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+
+  if(NULL != fnIsWow64Process)
+    {
+      if (!fnIsWow64Process(GetCurrentProcess(),&bIsWow64))
+        {
+	  //handle error
+        }
+    }
+  return bIsWow64;
+}
+
+int int_nsp_iswow64(Stack stack,int rhs,int opt,int lhs)
+{
+  CheckStdRhs(0,0);
+  CheckLhs(0,0);
+  if ( nsp_move_boolean(stack,1,IsWow64()) ==FAIL) return RET_BUG;
+  return 1;
+}

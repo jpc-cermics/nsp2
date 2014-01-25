@@ -641,6 +641,7 @@ static int int_get_current_exec_file(Stack stack,int rhs,int opt,int lhs)
 
 #ifdef WIN32 
 extern function  int_nsp_query_registry;
+extern function  int_nsp_iswow64;
 #else 
 
 int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
@@ -648,6 +649,15 @@ int int_nsp_query_registry(Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: %s is only implemented on windows platforms\n",NspFname(stack));
   return RET_BUG;
 }
+
+int int_nsp_iswow64(Stack stack,int rhs,int opt,int lhs)
+{
+  CheckStdRhs(0,0);
+  CheckLhs(0,0);
+  if ( nsp_move_boolean(stack,1,FALSE) ==FAIL) return RET_BUG;
+  return 1;
+}
+
 #endif 
 
 static int int_setlocale(Stack stack,int rhs,int opt,int lhs)
@@ -672,6 +682,7 @@ static int int_exit(Stack stack,int rhs,int opt,int lhs)
 
 static OpTab System_func[]={
   {"registry", int_nsp_query_registry },
+  {"iswow64", int_nsp_iswow64 },
   {"localtime", int_localtime},
   {"chdir", int_syscd},
   {"getcwd", int_pwd},
