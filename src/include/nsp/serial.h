@@ -65,6 +65,9 @@ NspSerial *new_serial();
 #define NULLSERIAL (NspSerial*) 0
 
 extern NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes);
+extern NspSerial *nsp_serial_create_from_data_with_header(const char *name,const char *buf,int nbytes);
+extern int nsp_serial_data_check_header( const char *val,   int nbytes);
+
 extern NspSerial *nsp_serial_copy(const NspSerial *H);
 extern void nsp_serial_destroy(NspSerial *H);
 extern int nsp_serial_info(NspSerial *H, int indent,const char *name, int rec_level);

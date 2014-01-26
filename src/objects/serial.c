@@ -407,9 +407,66 @@ static NspSerial *_nsp_serial_create(const char *name,const char *buf,int nbytes
   return H;
 }
 
+
+
+
 NspSerial *nsp_serial_create(const char *name,const char *buf,int nbytes)
 {
   return _nsp_serial_create(name,buf,nbytes,NULL,FALSE);
+}
+
+/* creates a serialized object from a buffer which already contains 
+ * a header 
+ */
+
+NspSerial *nsp_serial_create_from_data_with_header(const char *name,const char *buf,int nbytes)
+{
+  NspSerial *H;
+
+  if ( nsp_serial_data_check_header(buf, nbytes) == FAIL ) 
+    {
+      Scierror("Error: data does not contain nsp serialized data\n");
+      return NULL;
+    }
+
+  if ( ( H  = new_serial())== NULLSERIAL)
+    {
+      Scierror("No more memory\n");
+      return NULLSERIAL;
+    }
+  H->nbytes = nbytes;
+  if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULL)
+    {
+      return(NULLSERIAL);
+    }
+  NSP_OBJECT(H)->ret_pos = -1 ;
+  if ((H->val = malloc((H->nbytes)*sizeof(char)))== NULL) 
+    {
+      Sciprintf("No more memory\n");
+      return NULLSERIAL;
+    }
+  if ( buf != NULL) 
+    {
+      memcpy(H->val,buf,H->nbytes);
+    }
+  return H;
+}
+
+/* checks that val contains proper headers */
+
+int nsp_serial_data_check_header( const char *val,   int nbytes)
+{
+  if ( nbytes > strlen(nsp_zserial_header) 
+       && strncmp(val,nsp_zserial_header,strlen(nsp_zserial_header)) == 0)
+    {
+      return OK ;
+    }
+  else if ( nbytes > strlen(nsp_serial_header)
+	    && strncmp(val,nsp_serial_header, strlen(nsp_serial_header) ) == 0)
+    {
+      return OK;
+    }
+  return FAIL;
 }
 
 /*
