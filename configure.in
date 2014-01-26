@@ -648,12 +648,17 @@ esac
 
 NSP_ISS=w32
 TARGET_MACHINE=ix86
+CROSS=no
 
 case "$host" in
   x86_64-w64-mingw32 )
     AC_DEFINE(TARGET_W64,[],[Defined if target is 64bits windows])
     NSP_ISS=w64	
     TARGET_MACHINE=x64
+    CROSS=yes
+    ;;
+  i686-pc-mingw32 )
+    CROSS=yes
     ;;
 esac
 
@@ -1302,6 +1307,7 @@ fi
 
 # check if -LGLU is added in pkg-config gtkglext-1.0 --libs or explicitely add it 
 
+if test "$CROSS" != yes; then 
 if test "$with_gtkglext" != no; then
   AC_MSG_CHECKING([if pkg-config gtkglext-1.0 provides -LGLU]) 
   ac_save_LIBS="$LIBS"
@@ -1327,10 +1333,10 @@ if test "$with_gtkglext" != no; then
       AC_MSG_RESULT([yes])
       GLU_LIBS="-lGLU"
    else 
-      AC_MSG_RESULT([no])
       AC_MSG_ERROR([ library GLU is missing ])
    fi
   fi
+fi 
 fi 
 
 #################
