@@ -24,16 +24,18 @@
 
 
 
-#line 22 "codegen/bson.override"
+#line 23 "codegen/bson.override"
 #include <nsp/objects.h>
+#include <nsp/gtk/gdatetime.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/parse.h>
 #include <mongoc.h>
 #include <nsp/mcollection.h>
 #include <nsp/mcursor.h>
-
-#line 37 "bson.c"
+#include <nsp/serial.h>
+#include <nsp/cells.h>
+#line 39 "bson.c"
 
 /* ----------- NspBson ----------- */
 
@@ -91,14 +93,14 @@ NspTypeBson *new_type_bson(type_mode mode)
   top->sh_type = (sh_type_func *) nsp_bson_type_short_string;
   top->info = (info_func *) nsp_bson_info;
   /* top->is_true = (is_true_func  *) nsp_bson_is_true; */
-#line 133 "codegen/bson.override"
+#line 136 "codegen/bson.override"
 top->loop = (loop_func *) nsp_bson_loop; /* loop with bson type */
 
-#line 98 "bson.c"
-#line 133 "codegen/bson.override"
+#line 100 "bson.c"
+#line 136 "codegen/bson.override"
 top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
-#line 102 "bson.c"
+#line 104 "bson.c"
   top->get_from_obj = (get_from_obj_func *) nsp_bson_object;
   top->eq  = (eq_func *) nsp_bson_eq;
   top->neq  = (eq_func *) nsp_bson_neq;
@@ -112,11 +114,11 @@ top->path_extract = (path_func *) NULL; /* path extract as for matrix type */
 
   type->init = (init_func *) init_bson;
 
-#line 45 "codegen/bson.override"
+#line 48 "codegen/bson.override"
   /* inserted verbatim in the type definition */
   top->is_true = (is_true_func  *) nsp_bson_is_true; 
 
-#line 120 "bson.c"
+#line 122 "bson.c"
   /* 
    * NspBson interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -175,7 +177,7 @@ NspBson *new_bson()
 /*----------------------------------------------
  * Object method redefined for NspBson 
  *-----------------------------------------------*/
-#line 152 "codegen/bson.override"
+#line 155 "codegen/bson.override"
 
 /*
  * size can be overriden here
@@ -187,7 +189,7 @@ static int nsp_bson_size(NspBson *Mat, int flag)
   return 0;
 }
 
-#line 191 "bson.c"
+#line 193 "bson.c"
 /*
  * type as string 
  */
@@ -260,10 +262,10 @@ static NspBson  *nsp_bson_xdr_load(XDR *xdrs)
   if ( nsp_bson_create_partial(H) == FAIL) return NULLBSON;
   if ((H  = nsp_bson_xdr_load_partial(xdrs,H))== NULLBSON) return H;
   if ( nsp_bson_check_values(H) == FAIL) return NULLBSON;
-#line 97 "codegen/bson.override"
+#line 100 "codegen/bson.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 
-#line 267 "bson.c"
+#line 269 "bson.c"
   return H;
 }
 
@@ -276,11 +278,11 @@ void nsp_bson_destroy_partial(NspBson *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 101 "codegen/bson.override"
+#line 104 "codegen/bson.override"
   /* verbatim in destroy */
   bson_free(H->obj->b);
 
-#line 284 "bson.c"
+#line 286 "bson.c"
     FREE(H->obj);
    }
 }
@@ -292,7 +294,7 @@ void nsp_bson_destroy(NspBson *H)
   FREE(H);
 }
 
-#line 141 "codegen/bson.override"
+#line 144 "codegen/bson.override"
 /*
  * info overriden 
  */
@@ -302,7 +304,7 @@ int nsp_bson_info(NspBson *M, int indent,const char *name, int rec_level)
   return nsp_bson_print(M,indent,name,rec_level);
 }
 
-#line 306 "bson.c"
+#line 308 "bson.c"
 /*
  * print 
  */
@@ -429,10 +431,10 @@ NspBson *nsp_bson_create(const char *name,void* b,NspTypeBase *type)
   if ( nsp_bson_create_partial(H) == FAIL) return NULLBSON;
   H->obj->b = b;
   if ( nsp_bson_check_values(H) == FAIL) return NULLBSON;
-#line 97 "codegen/bson.override"
+#line 100 "codegen/bson.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 
-#line 436 "bson.c"
+#line 438 "bson.c"
   return H;
 }
 
@@ -481,10 +483,10 @@ NspBson *nsp_bson_full_copy(NspBson *self)
   NspBson *H  =nsp_bson_create_void(NVOID,(NspTypeBase *) nsp_type_bson);
   if ( H ==  NULLBSON) return NULLBSON;
   if ( nsp_bson_full_copy_partial(H,self)== NULL) return NULLBSON;
-#line 97 "codegen/bson.override"
+#line 100 "codegen/bson.override"
 /* verbatim in create/load/full_copy interface use NULL for returned value */
 
-#line 488 "bson.c"
+#line 490 "bson.c"
   return H;
 }
 
@@ -493,7 +495,7 @@ NspBson *nsp_bson_full_copy(NspBson *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 50 "codegen/bson.override"
+#line 53 "codegen/bson.override"
 
 /* override the default int_create */
 
@@ -539,7 +541,7 @@ int int_bson_create(Stack stack, int rhs, int opt, int lhs)
 } 
 
 
-#line 543 "bson.c"
+#line 545 "bson.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -549,19 +551,19 @@ static int _wrap_bson_show(NspBson *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 106 "codegen/bson.override"
+#line 109 "codegen/bson.override"
 
 static int _wrap_bson_to_hash(NspBson *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspHash *H;
   CheckLhs(0,1);
   CheckRhs(0,0);
-  if ( ( H = bson_to_hash(self)) == NULL) return RET_BUG;
+  if ( ( H = nsp_bson_to_hash(NVOID,self->obj->b)) == NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(H));
   return 1;
 }
 
-#line 565 "bson.c"
+#line 567 "bson.c"
 
 
 static NspMethods bson_methods[] = {
@@ -800,11 +802,11 @@ void nsp_mclient_destroy_partial(NspMclient *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 223 "codegen/bson.override"
+#line 226 "codegen/bson.override"
   /* verbatim in destroy */
   mongoc_client_destroy(H->obj->cl);
 
-#line 808 "bson.c"
+#line 810 "bson.c"
     FREE(H->obj);
    }
 }
@@ -1016,7 +1018,7 @@ NspMclient *nsp_mclient_full_copy(NspMclient *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-#line 197 "codegen/bson.override"
+#line 200 "codegen/bson.override"
 
 int int_mclient_create(Stack stack, int rhs, int opt, int lhs)
 {
@@ -1041,11 +1043,11 @@ int int_mclient_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 1045 "bson.c"
+#line 1047 "bson.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 228 "codegen/bson.override"
+#line 231 "codegen/bson.override"
 
 static int _wrap_mongoc_client_get_collection(NspMclient *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1072,7 +1074,7 @@ static int _wrap_mongoc_client_get_collection(NspMclient *self,Stack stack,int r
   return 1;
 }
 
-#line 1076 "bson.c"
+#line 1078 "bson.c"
 
 
 static NspMethods mclient_methods[] = {
@@ -1310,11 +1312,11 @@ void nsp_mcollection_destroy_partial(NspMcollection *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 265 "codegen/bson.override"
+#line 268 "codegen/bson.override"
   /* verbatim in destroy */
   mongoc_collection_destroy(H->obj->co);
 
-#line 1318 "bson.c"
+#line 1320 "bson.c"
     FREE(H->obj);
    }
 }
@@ -1544,7 +1546,7 @@ int int_mcollection_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 270 "codegen/bson.override"
+#line 273 "codegen/bson.override"
 
 static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1580,10 +1582,10 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   return 1;
 }
 
-#line 1584 "bson.c"
+#line 1586 "bson.c"
 
 
-#line 339 "codegen/bson.override"
+#line 342 "codegen/bson.override"
 
 static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1610,10 +1612,10 @@ static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int r
 }
 
 
-#line 1614 "bson.c"
+#line 1616 "bson.c"
 
 
-#line 307 "codegen/bson.override"
+#line 310 "codegen/bson.override"
 
 static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1644,7 +1646,7 @@ static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int r
     return 0;
 }
 
-#line 1648 "bson.c"
+#line 1650 "bson.c"
 
 
 static NspMethods mcollection_methods[] = {
@@ -1885,12 +1887,12 @@ void nsp_mcursor_destroy_partial(NspMcursor *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 376 "codegen/bson.override"
+#line 379 "codegen/bson.override"
   /* verbatim in destroy */
   mongoc_cursor_destroy(H->obj->cu);
   if (H->obj->doc != NULL) bson_destroy(H->obj->doc);
 
-#line 1894 "bson.c"
+#line 1896 "bson.c"
     FREE(H->obj);
    }
 }
@@ -2125,7 +2127,7 @@ int int_mcursor_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 382 "codegen/bson.override"
+#line 385 "codegen/bson.override"
 
 static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2149,10 +2151,10 @@ static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int op
     return 0;
 }
 
-#line 2153 "bson.c"
+#line 2155 "bson.c"
 
 
-#line 407 "codegen/bson.override"
+#line 410 "codegen/bson.override"
 
 static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2184,10 +2186,10 @@ static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt
   return ret;
 }
 
-#line 2188 "bson.c"
+#line 2190 "bson.c"
 
 
-#line 440 "codegen/bson.override"
+#line 443 "codegen/bson.override"
 
 static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2199,7 +2201,7 @@ static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt
 }
 
 
-#line 2203 "bson.c"
+#line 2205 "bson.c"
 
 
 static NspMethods mcursor_methods[] = {
@@ -2219,14 +2221,14 @@ static AttrTab mcursor_attrs[] = {{NULL,NULL,NULL,NULL,NULL}} ;
 /*-------------------------------------------
  * functions 
  *-------------------------------------------*/
-#line 182 "codegen/bson.override"
+#line 185 "codegen/bson.override"
 
 static int _wrap_mclient_create(Stack stack,int rhs,int opt,int lhs)
 {
   return int_mclient_create(stack,rhs,opt,lhs);
 }
 
-#line 2230 "bson.c"
+#line 2232 "bson.c"
 
 
 /*----------------------------------------------------
@@ -2256,7 +2258,33 @@ void Bson_Interf_Info(int i, char **fname, function (**f))
   *f = Bson_func[i].fonc;
 }
 
-#line 460 "codegen/bson.override"
+#line 463 "codegen/bson.override"
+
+static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H)
+{
+  int i;
+  bson_t* b;
+  if (( b = bson_malloc(sizeof(bson_t))) == NULL) 
+    {
+      Scierror("Error: bson_malloc failed to create a bson object\n");
+      return NULL;
+    }
+  bson_init(b);
+  i=0;
+  while (1) 
+    {
+      NspObject *Obj;
+      int rep =nsp_hash_get_next_object(H,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  const char *name = nsp_object_get_name(Obj);
+	  nsp_bson_insert(b,name, Obj);
+	}
+      if ( rep == FAIL) break;
+    }
+  return b;
+} 
+
 
 /* loop extraction for bson variable 
  * @str: name to give to created object 
@@ -2366,158 +2394,221 @@ static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj)
 	  
 	}
     }
-  return FAIL;
+  else if ( IsGDateTime(Obj)) 
+    {
+      NspGDateTime *G = (NspGDateTime *) Obj ;
+      GDateTime *Dt;
+      gint64 gdt;
+      Dt = g_date_time_to_utc(G->gdate);
+      gdt= g_date_time_to_unix(Dt);
+      bson_append_date_time(b, name, -1, gdt);
+    }
+  else if ( IsSerial(Obj)) 
+    {
+      NspSerial *S =  (NspSerial *) Obj;
+      bson_append_binary(b, name , -1, BSON_SUBTYPE_BINARY, (bson_uint8_t*) S->val, S->nbytes); 
+    }
+  else if ( IsCells(Obj)) 
+    {
+      /*  an other way 
+      bson_t b, child, b2, child2;
+      bson_init(&b);
+      assert(bson_append_array_begin(&b, "foo", -1, &child));
+      assert(bson_append_utf8(&child, "0", -1, "baz", -1));
+      assert(bson_append_array_end(&b, &child));
+      */ 
+      int i;
+      bson_t* bsub = bson_new();
+      int count = 0;
+      char str[32];
+      NspCells *C = (NspCells *) Obj;
+      for ( i = 0 ; i < C->mn ; i++ )
+	{
+	  if ( C->objs[i] != NULLOBJ) 
+	    {
+	      sprintf(str, "%d", i);
+	      count++;
+	      if ( nsp_bson_insert(bsub, str , C->objs[i]) == FALSE ) 
+		return FALSE;
+	    }
+	}
+      bson_append_array(b, name , -1, bsub);
+      bson_destroy(bsub);
+    }
+  else if ( IsHash(Obj))
+    {
+      bson_t *child = nsp_bson_create_from_hash(name,(NspHash *) Obj);
+      if ( child != NULL) 
+	{
+	  bson_append_document (b, name , -1, child);
+	  bson_destroy(child);
+	}
+    }
+  return TRUE;
 }
-
 
 static void bson_show(void *self)
 {
-  const char *key;
   NspBson *B= self;
   bson_t * b = B->obj->b;
-  bson_iter_t iter;
-  bson_iter_init(&iter, b);
-  while (1) 
-    {
-      if ( bson_iter_next(&iter) == FALSE ) return ;
-      key =bson_iter_key(&iter);
-       switch (bson_iter_type_unsafe (&iter)) {
-       case BSON_TYPE_EOD: 
-	 break;
-       case BSON_TYPE_DOUBLE:
-	 Sciprintf("Key %s=%f\n",key, bson_iter_double(&iter));
-	 break;
-       case BSON_TYPE_UTF8:
-	 {
-	   bson_uint32_t len = 0;
-	   Sciprintf("Key %s=%s\n",key, bson_iter_utf8(&iter,&len));
-	 }
-	 break;
-       case BSON_TYPE_DOCUMENT:
-	 break;
-       case BSON_TYPE_ARRAY:
-	 break;
-       case BSON_TYPE_BINARY:
-	 break;
-       case BSON_TYPE_UNDEFINED:
-	 break;
-       case BSON_TYPE_OID:
-	 break;
-       case BSON_TYPE_BOOL:
-	 Sciprintf("Key %s=%d\n",key, bson_iter_bool(&iter));
-	 break;
-       case BSON_TYPE_DATE_TIME:
-	 break;
-       case BSON_TYPE_NULL:
-	 break;
-       case BSON_TYPE_REGEX:
-	 break;
-       case BSON_TYPE_DBPOINTER:
-	 break;
-       case BSON_TYPE_CODE:
-	 break;
-       case BSON_TYPE_SYMBOL:
-	 break;
-       case BSON_TYPE_CODEWSCOPE:
-	 break;
-       case BSON_TYPE_INT32:
-	 break;
-       case BSON_TYPE_TIMESTAMP:
-	 break;
-       case BSON_TYPE_INT64:
-	 break;
-       case BSON_TYPE_MAXKEY:
-	 break;
-       case BSON_TYPE_MINKEY:
-	 break;
-       default:
-	 break;
-       }
-    }
+  char *str;
+  str = bson_as_json (b, NULL);
+  Sciprintf("%s\n",str);
+  bson_free (str);
 }
 
-static NspHash *bson_to_hash(void *self)
+/* utilities for back conversion from a bson_t to  nsp 
+ * objects 
+ */
+
+static NspObject *nsp_bson_iter_to_nspmatrix(const char *name, bson_iter_t *iter)
 {
-  const char *key;
-  NspBson *B= self;
-  bson_t * b = B->obj->b;
+  return nsp_create_object_from_double(name,bson_iter_double(iter));
+}
+
+static NspObject *nsp_bson_iter_to_nspbmatrix(const char *name, bson_iter_t *iter)
+{
+  return nsp_create_boolean_object(name, bson_iter_bool(iter));
+}
+
+static NspObject *nsp_bson_iter_to_nspsmatrix(const char *name, bson_iter_t *iter)
+{
+  bson_uint32_t len = 0;
+  NspSMatrix *Loc;
+  if ( ( Loc =nsp_smatrix_create_with_length(name,1,1,-1) ) == NULLSMAT) 
+    return NULL;
+  if ((Loc->S[0] =nsp_string_copy( bson_iter_utf8(iter,&len))) == (nsp_string) 0) 
+    return NULL;
+  return (NspObject *) Loc;
+}
+
+static NspObject *nsp_bson_iter_to_nspserial(const char *name, bson_iter_t *iter)
+{
+  bson_subtype_t subtype;
+  bson_uint32_t binary_len;
+  const bson_uint8_t *binary;
+  /* since we use binary to store serialized nsp objects 
+   * we try here to get back a nsp object from binary data 
+   */
+  bson_iter_binary (iter, &subtype , &binary_len, &binary);
+  return (NspObject *) nsp_serial_create_from_data_with_header(name,(const char *) binary,binary_len);
+}
+
+
+static NspObject *nsp_bson_iter_to_nspdatetime(const char *name, bson_iter_t *iter)
+{
+  gint64 gdt = bson_iter_date_time (iter);
+  return (NspObject *) nsp_gdate_time_new_from_unix_utc(name,gdt);
+}
+
+static NspObject *nsp_bson_to_cells(const char *name,bson_t * b,bson_uint32_t len );
+static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter);
+
+static NspObject *nsp_bson_iter_to_cells(const char *name, bson_iter_t *iter)
+{
+  NspObject *Obj=NULL;
+  bson_uint32_t len;
+  const bson_uint8_t *buf=NULL;
+  bson_t doc;
+  bson_iter_array (iter, &len, &buf);
+  if (bson_init_static (&doc, buf, len))
+    {
+      Obj = (NspObject *) nsp_bson_to_cells(name, &doc,len);
+      bson_destroy (&doc);
+    }
+  return Obj;
+}
+
+static NspObject *nsp_bson_to_cells(const char *name,bson_t * b,bson_uint32_t len )
+{
+  int count=0;
   bson_iter_t iter;
-  NspHash *H;
-  NspObject *O;
-  if(( H = nsp_hash_create(NVOID,10)) == NULLHASH) return NULLHASH;
+  NspObject *Obj;
+  NspCells *C = nsp_cells_create(name, 1, len);
+  if ( C == NULL ) return NULL;
   bson_iter_init(&iter, b);
   while (1) 
     {
       if ( bson_iter_next(&iter) == FALSE ) break;
-
-      key =bson_iter_key(&iter);
-      switch (bson_iter_type_unsafe (&iter)) 
+      if ( (Obj = nsp_bson_iter_to_nspobject(&iter)) != NULL)
 	{
-	case BSON_TYPE_EOD: 
-	  break;
-	case BSON_TYPE_DOUBLE:
-	  if (( O =  (NspObject *) nsp_create_object_from_double(key,bson_iter_double(&iter))) == NULLOBJ ) 
-	    return  NULLHASH;
-	  if (nsp_hash_enter(H,O) == FAIL) return NULLHASH;
-	  break;
-	case BSON_TYPE_UTF8:
-	  {
-	    bson_uint32_t len = 0;
-	    NspSMatrix *Loc;
-	    if ( ( Loc =nsp_smatrix_create_with_length(key,1,1,-1) ) == NULLSMAT) 
-	      return NULLHASH;
-	    if ((Loc->S[0] =nsp_string_copy( bson_iter_utf8(&iter,&len))) == (nsp_string) 0) 
-	      return NULLHASH;
-	    if (nsp_hash_enter(H,NSP_OBJECT(Loc)) == FAIL)
-	      return NULLHASH;
-	  }
-	  break;
-	case BSON_TYPE_DOCUMENT:
-	  break;
-	case BSON_TYPE_ARRAY:
-	  break;
-	case BSON_TYPE_BINARY:
-	  break;
-	case BSON_TYPE_UNDEFINED:
-	  break;
-	case BSON_TYPE_OID:
-	  break;
-	case BSON_TYPE_BOOL:
-	  if (( O =  (NspObject *) nsp_create_boolean_object(key, bson_iter_bool(&iter))) == NULLOBJ ) 
-	    return  NULLHASH;
-	  if (nsp_hash_enter(H,O) == FAIL) return NULLHASH;
-	  break;
-	  break;
-	case BSON_TYPE_DATE_TIME:
-	  break;
-	case BSON_TYPE_NULL:
-	  break;
-	case BSON_TYPE_REGEX:
-	  break;
-	case BSON_TYPE_DBPOINTER:
-	  break;
-	case BSON_TYPE_CODE:
-	  break;
-	case BSON_TYPE_SYMBOL:
-	  break;
-	case BSON_TYPE_CODEWSCOPE:
-	  break;
-	case BSON_TYPE_INT32:
-	  break;
-	case BSON_TYPE_TIMESTAMP:
-	  break;
-	case BSON_TYPE_INT64:
-	  break;
-	case BSON_TYPE_MAXKEY:
-	  break;
-	case BSON_TYPE_MINKEY:
-	  break;
-	default:
-	  break;
+	  C->objs[count++] = Obj;
+	}
+      else
+	{
+	  C->objs[count++] = NULL;
+	}
+    }
+  return (NspObject *) C;
+}
+
+/* used when iter is BSON_TYPE_DOCUMENT */
+
+static NspObject *nsp_bson_iter_to_hash(const char *name, bson_iter_t *iter)
+{
+  NspObject *Obj;
+  const bson_uint8_t *child = NULL;
+  bson_uint32_t child_len = -1;
+  bson_iter_document(iter, &child_len, &child);
+  bson_t doc;
+  if (bson_init_static (&doc, child, child_len))
+    {
+      Obj = (NspObject *) nsp_bson_to_hash(name, &doc);
+      bson_destroy (&doc);
+    }
+  return Obj;
+}
+
+static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter)
+{
+  NspObject *Obj = NULL;
+  const char *key =bson_iter_key(iter);
+  switch (bson_iter_type_unsafe (iter)) 
+    {
+    case BSON_TYPE_EOD:       Obj = NULL;break;
+    case BSON_TYPE_DOUBLE:    Obj = nsp_bson_iter_to_nspmatrix(key,iter);break;
+    case BSON_TYPE_UTF8:      Obj = nsp_bson_iter_to_nspsmatrix(key,iter);break;
+    case BSON_TYPE_DOCUMENT:  Obj = nsp_bson_iter_to_hash(key,iter);break;
+    case BSON_TYPE_ARRAY:     Obj = nsp_bson_iter_to_cells(key,iter);break;
+    case BSON_TYPE_BINARY:    Obj = nsp_bson_iter_to_nspserial(key,iter);break;
+    case BSON_TYPE_UNDEFINED: Obj = NULL;break;
+    case BSON_TYPE_OID:	      Obj = NULL;break;
+    case BSON_TYPE_BOOL:      Obj = nsp_bson_iter_to_nspbmatrix(key,iter);break;
+    case BSON_TYPE_DATE_TIME: Obj = nsp_bson_iter_to_nspdatetime(key,iter);break;
+    case BSON_TYPE_NULL:      Obj = NULL;break;
+    case BSON_TYPE_REGEX:     Obj = NULL;break;
+    case BSON_TYPE_DBPOINTER: Obj = NULL;break;
+    case BSON_TYPE_CODE:      Obj = NULL;break;
+    case BSON_TYPE_SYMBOL:    Obj = NULL;break;
+    case BSON_TYPE_CODEWSCOPE:Obj = NULL;break;
+    case BSON_TYPE_INT32:     Obj = NULL;break;
+    case BSON_TYPE_TIMESTAMP: Obj = NULL;break;
+    case BSON_TYPE_INT64:     Obj = NULL;break;
+    case BSON_TYPE_MAXKEY:    Obj = NULL;break;
+    case BSON_TYPE_MINKEY:    Obj = NULL;break;
+    default:
+      break;
+    }
+  return Obj;
+}
+
+static NspHash *nsp_bson_to_hash(const char *name,bson_t * b)
+{
+  bson_iter_t iter;
+  NspHash *H;
+  NspObject *Obj;
+  if(( H = nsp_hash_create(name,10)) == NULLHASH) return NULLHASH;
+  bson_iter_init(&iter, b);
+  while (1) 
+    {
+      if ( bson_iter_next(&iter) == FALSE ) break;
+      if ( (Obj = nsp_bson_iter_to_nspobject(&iter)) != NULL)
+	{
+	  if (nsp_hash_enter(H,Obj) == FAIL) return NULLHASH;      
 	}
     }
   return H;
 }
 
 
-#line 2524 "bson.c"
+#line 2615 "bson.c"

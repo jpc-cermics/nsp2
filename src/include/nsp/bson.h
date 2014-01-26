@@ -128,8 +128,9 @@ static NspObject *nsp_bson_loop(char *str, NspObject *O, NspObject *O1, int i, i
 static int nsp_bson_is_true(void *Obj);
 static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj);
 static void bson_show(void *self);
-static NspHash *bson_to_hash(void *self);
+static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
+static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
 
-#line 134 "./bson.h"
+#line 135 "./bson.h"
 #endif /* NspBson_Private */
 

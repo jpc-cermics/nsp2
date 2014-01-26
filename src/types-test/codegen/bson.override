@@ -15,18 +15,21 @@ static NspObject *nsp_bson_loop(char *str, NspObject *O, NspObject *O1, int i, i
 static int nsp_bson_is_true(void *Obj);
 static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj);
 static void bson_show(void *self);
-static NspHash *bson_to_hash(void *self);
+static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
+static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
 
 %%
 headers
 #include <nsp/objects.h>
+#include <nsp/gtk/gdatetime.h>
 #include <nsp/plist.h> 
 #include <nsp/plistc.h> 
 #include <nsp/parse.h>
 #include <mongoc.h>
 #include <nsp/mcollection.h>
 #include <nsp/mcursor.h>
-
+#include <nsp/serial.h>
+#include <nsp/cells.h>
 %%
 init 
 
@@ -109,7 +112,7 @@ static int _wrap_bson_to_hash(NspBson *self,Stack stack,int rhs,int opt,int lhs)
   NspHash *H;
   CheckLhs(0,1);
   CheckRhs(0,0);
-  if ( ( H = bson_to_hash(self)) == NULL) return RET_BUG;
+  if ( ( H = nsp_bson_to_hash(NVOID,self->obj->b)) == NULL) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(H));
   return 1;
 }
@@ -458,6 +461,32 @@ ignore
 %%
 last
 
+static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H)
+{
+  int i;
+  bson_t* b;
+  if (( b = bson_malloc(sizeof(bson_t))) == NULL) 
+    {
+      Scierror("Error: bson_malloc failed to create a bson object\n");
+      return NULL;
+    }
+  bson_init(b);
+  i=0;
+  while (1) 
+    {
+      NspObject *Obj;
+      int rep =nsp_hash_get_next_object(H,&i,&Obj);
+      if ( Obj != NULLOBJ )
+	{ 
+	  const char *name = nsp_object_get_name(Obj);
+	  nsp_bson_insert(b,name, Obj);
+	}
+      if ( rep == FAIL) break;
+    }
+  return b;
+} 
+
+
 /* loop extraction for bson variable 
  * @str: name to give to created object 
  * @O: a #NspObject pointer to use to store extracted column or a NULL pointer 
@@ -566,154 +595,217 @@ static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj)
 	  
 	}
     }
-  return FAIL;
+  else if ( IsGDateTime(Obj)) 
+    {
+      NspGDateTime *G = (NspGDateTime *) Obj ;
+      GDateTime *Dt;
+      gint64 gdt;
+      Dt = g_date_time_to_utc(G->gdate);
+      gdt= g_date_time_to_unix(Dt);
+      bson_append_date_time(b, name, -1, gdt);
+    }
+  else if ( IsSerial(Obj)) 
+    {
+      NspSerial *S =  (NspSerial *) Obj;
+      bson_append_binary(b, name , -1, BSON_SUBTYPE_BINARY, (bson_uint8_t*) S->val, S->nbytes); 
+    }
+  else if ( IsCells(Obj)) 
+    {
+      /*  an other way 
+      bson_t b, child, b2, child2;
+      bson_init(&b);
+      assert(bson_append_array_begin(&b, "foo", -1, &child));
+      assert(bson_append_utf8(&child, "0", -1, "baz", -1));
+      assert(bson_append_array_end(&b, &child));
+      */ 
+      int i;
+      bson_t* bsub = bson_new();
+      int count = 0;
+      char str[32];
+      NspCells *C = (NspCells *) Obj;
+      for ( i = 0 ; i < C->mn ; i++ )
+	{
+	  if ( C->objs[i] != NULLOBJ) 
+	    {
+	      sprintf(str, "%d", i);
+	      count++;
+	      if ( nsp_bson_insert(bsub, str , C->objs[i]) == FALSE ) 
+		return FALSE;
+	    }
+	}
+      bson_append_array(b, name , -1, bsub);
+      bson_destroy(bsub);
+    }
+  else if ( IsHash(Obj))
+    {
+      bson_t *child = nsp_bson_create_from_hash(name,(NspHash *) Obj);
+      if ( child != NULL) 
+	{
+	  bson_append_document (b, name , -1, child);
+	  bson_destroy(child);
+	}
+    }
+  return TRUE;
 }
-
 
 static void bson_show(void *self)
 {
-  const char *key;
   NspBson *B= self;
   bson_t * b = B->obj->b;
-  bson_iter_t iter;
-  bson_iter_init(&iter, b);
-  while (1) 
-    {
-      if ( bson_iter_next(&iter) == FALSE ) return ;
-      key =bson_iter_key(&iter);
-       switch (bson_iter_type_unsafe (&iter)) {
-       case BSON_TYPE_EOD: 
-	 break;
-       case BSON_TYPE_DOUBLE:
-	 Sciprintf("Key %s=%f\n",key, bson_iter_double(&iter));
-	 break;
-       case BSON_TYPE_UTF8:
-	 {
-	   bson_uint32_t len = 0;
-	   Sciprintf("Key %s=%s\n",key, bson_iter_utf8(&iter,&len));
-	 }
-	 break;
-       case BSON_TYPE_DOCUMENT:
-	 break;
-       case BSON_TYPE_ARRAY:
-	 break;
-       case BSON_TYPE_BINARY:
-	 break;
-       case BSON_TYPE_UNDEFINED:
-	 break;
-       case BSON_TYPE_OID:
-	 break;
-       case BSON_TYPE_BOOL:
-	 Sciprintf("Key %s=%d\n",key, bson_iter_bool(&iter));
-	 break;
-       case BSON_TYPE_DATE_TIME:
-	 break;
-       case BSON_TYPE_NULL:
-	 break;
-       case BSON_TYPE_REGEX:
-	 break;
-       case BSON_TYPE_DBPOINTER:
-	 break;
-       case BSON_TYPE_CODE:
-	 break;
-       case BSON_TYPE_SYMBOL:
-	 break;
-       case BSON_TYPE_CODEWSCOPE:
-	 break;
-       case BSON_TYPE_INT32:
-	 break;
-       case BSON_TYPE_TIMESTAMP:
-	 break;
-       case BSON_TYPE_INT64:
-	 break;
-       case BSON_TYPE_MAXKEY:
-	 break;
-       case BSON_TYPE_MINKEY:
-	 break;
-       default:
-	 break;
-       }
-    }
+  char *str;
+  str = bson_as_json (b, NULL);
+  Sciprintf("%s\n",str);
+  bson_free (str);
 }
 
-static NspHash *bson_to_hash(void *self)
+/* utilities for back conversion from a bson_t to  nsp 
+ * objects 
+ */
+
+static NspObject *nsp_bson_iter_to_nspmatrix(const char *name, bson_iter_t *iter)
 {
-  const char *key;
-  NspBson *B= self;
-  bson_t * b = B->obj->b;
+  return nsp_create_object_from_double(name,bson_iter_double(iter));
+}
+
+static NspObject *nsp_bson_iter_to_nspbmatrix(const char *name, bson_iter_t *iter)
+{
+  return nsp_create_boolean_object(name, bson_iter_bool(iter));
+}
+
+static NspObject *nsp_bson_iter_to_nspsmatrix(const char *name, bson_iter_t *iter)
+{
+  bson_uint32_t len = 0;
+  NspSMatrix *Loc;
+  if ( ( Loc =nsp_smatrix_create_with_length(name,1,1,-1) ) == NULLSMAT) 
+    return NULL;
+  if ((Loc->S[0] =nsp_string_copy( bson_iter_utf8(iter,&len))) == (nsp_string) 0) 
+    return NULL;
+  return (NspObject *) Loc;
+}
+
+static NspObject *nsp_bson_iter_to_nspserial(const char *name, bson_iter_t *iter)
+{
+  bson_subtype_t subtype;
+  bson_uint32_t binary_len;
+  const bson_uint8_t *binary;
+  /* since we use binary to store serialized nsp objects 
+   * we try here to get back a nsp object from binary data 
+   */
+  bson_iter_binary (iter, &subtype , &binary_len, &binary);
+  return (NspObject *) nsp_serial_create_from_data_with_header(name,(const char *) binary,binary_len);
+}
+
+
+static NspObject *nsp_bson_iter_to_nspdatetime(const char *name, bson_iter_t *iter)
+{
+  gint64 gdt = bson_iter_date_time (iter);
+  return (NspObject *) nsp_gdate_time_new_from_unix_utc(name,gdt);
+}
+
+static NspObject *nsp_bson_to_cells(const char *name,bson_t * b,bson_uint32_t len );
+static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter);
+
+static NspObject *nsp_bson_iter_to_cells(const char *name, bson_iter_t *iter)
+{
+  NspObject *Obj=NULL;
+  bson_uint32_t len;
+  const bson_uint8_t *buf=NULL;
+  bson_t doc;
+  bson_iter_array (iter, &len, &buf);
+  if (bson_init_static (&doc, buf, len))
+    {
+      Obj = (NspObject *) nsp_bson_to_cells(name, &doc,len);
+      bson_destroy (&doc);
+    }
+  return Obj;
+}
+
+static NspObject *nsp_bson_to_cells(const char *name,bson_t * b,bson_uint32_t len )
+{
+  int count=0;
   bson_iter_t iter;
-  NspHash *H;
-  NspObject *O;
-  if(( H = nsp_hash_create(NVOID,10)) == NULLHASH) return NULLHASH;
+  NspObject *Obj;
+  NspCells *C = nsp_cells_create(name, 1, len);
+  if ( C == NULL ) return NULL;
   bson_iter_init(&iter, b);
   while (1) 
     {
       if ( bson_iter_next(&iter) == FALSE ) break;
-
-      key =bson_iter_key(&iter);
-      switch (bson_iter_type_unsafe (&iter)) 
+      if ( (Obj = nsp_bson_iter_to_nspobject(&iter)) != NULL)
 	{
-	case BSON_TYPE_EOD: 
-	  break;
-	case BSON_TYPE_DOUBLE:
-	  if (( O =  (NspObject *) nsp_create_object_from_double(key,bson_iter_double(&iter))) == NULLOBJ ) 
-	    return  NULLHASH;
-	  if (nsp_hash_enter(H,O) == FAIL) return NULLHASH;
-	  break;
-	case BSON_TYPE_UTF8:
-	  {
-	    bson_uint32_t len = 0;
-	    NspSMatrix *Loc;
-	    if ( ( Loc =nsp_smatrix_create_with_length(key,1,1,-1) ) == NULLSMAT) 
-	      return NULLHASH;
-	    if ((Loc->S[0] =nsp_string_copy( bson_iter_utf8(&iter,&len))) == (nsp_string) 0) 
-	      return NULLHASH;
-	    if (nsp_hash_enter(H,NSP_OBJECT(Loc)) == FAIL)
-	      return NULLHASH;
-	  }
-	  break;
-	case BSON_TYPE_DOCUMENT:
-	  break;
-	case BSON_TYPE_ARRAY:
-	  break;
-	case BSON_TYPE_BINARY:
-	  break;
-	case BSON_TYPE_UNDEFINED:
-	  break;
-	case BSON_TYPE_OID:
-	  break;
-	case BSON_TYPE_BOOL:
-	  if (( O =  (NspObject *) nsp_create_boolean_object(key, bson_iter_bool(&iter))) == NULLOBJ ) 
-	    return  NULLHASH;
-	  if (nsp_hash_enter(H,O) == FAIL) return NULLHASH;
-	  break;
-	  break;
-	case BSON_TYPE_DATE_TIME:
-	  break;
-	case BSON_TYPE_NULL:
-	  break;
-	case BSON_TYPE_REGEX:
-	  break;
-	case BSON_TYPE_DBPOINTER:
-	  break;
-	case BSON_TYPE_CODE:
-	  break;
-	case BSON_TYPE_SYMBOL:
-	  break;
-	case BSON_TYPE_CODEWSCOPE:
-	  break;
-	case BSON_TYPE_INT32:
-	  break;
-	case BSON_TYPE_TIMESTAMP:
-	  break;
-	case BSON_TYPE_INT64:
-	  break;
-	case BSON_TYPE_MAXKEY:
-	  break;
-	case BSON_TYPE_MINKEY:
-	  break;
-	default:
-	  break;
+	  C->objs[count++] = Obj;
+	}
+      else
+	{
+	  C->objs[count++] = NULL;
+	}
+    }
+  return (NspObject *) C;
+}
+
+/* used when iter is BSON_TYPE_DOCUMENT */
+
+static NspObject *nsp_bson_iter_to_hash(const char *name, bson_iter_t *iter)
+{
+  NspObject *Obj;
+  const bson_uint8_t *child = NULL;
+  bson_uint32_t child_len = -1;
+  bson_iter_document(iter, &child_len, &child);
+  bson_t doc;
+  if (bson_init_static (&doc, child, child_len))
+    {
+      Obj = (NspObject *) nsp_bson_to_hash(name, &doc);
+      bson_destroy (&doc);
+    }
+  return Obj;
+}
+
+static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter)
+{
+  NspObject *Obj = NULL;
+  const char *key =bson_iter_key(iter);
+  switch (bson_iter_type_unsafe (iter)) 
+    {
+    case BSON_TYPE_EOD:       Obj = NULL;break;
+    case BSON_TYPE_DOUBLE:    Obj = nsp_bson_iter_to_nspmatrix(key,iter);break;
+    case BSON_TYPE_UTF8:      Obj = nsp_bson_iter_to_nspsmatrix(key,iter);break;
+    case BSON_TYPE_DOCUMENT:  Obj = nsp_bson_iter_to_hash(key,iter);break;
+    case BSON_TYPE_ARRAY:     Obj = nsp_bson_iter_to_cells(key,iter);break;
+    case BSON_TYPE_BINARY:    Obj = nsp_bson_iter_to_nspserial(key,iter);break;
+    case BSON_TYPE_UNDEFINED: Obj = NULL;break;
+    case BSON_TYPE_OID:	      Obj = NULL;break;
+    case BSON_TYPE_BOOL:      Obj = nsp_bson_iter_to_nspbmatrix(key,iter);break;
+    case BSON_TYPE_DATE_TIME: Obj = nsp_bson_iter_to_nspdatetime(key,iter);break;
+    case BSON_TYPE_NULL:      Obj = NULL;break;
+    case BSON_TYPE_REGEX:     Obj = NULL;break;
+    case BSON_TYPE_DBPOINTER: Obj = NULL;break;
+    case BSON_TYPE_CODE:      Obj = NULL;break;
+    case BSON_TYPE_SYMBOL:    Obj = NULL;break;
+    case BSON_TYPE_CODEWSCOPE:Obj = NULL;break;
+    case BSON_TYPE_INT32:     Obj = NULL;break;
+    case BSON_TYPE_TIMESTAMP: Obj = NULL;break;
+    case BSON_TYPE_INT64:     Obj = NULL;break;
+    case BSON_TYPE_MAXKEY:    Obj = NULL;break;
+    case BSON_TYPE_MINKEY:    Obj = NULL;break;
+    default:
+      break;
+    }
+  return Obj;
+}
+
+static NspHash *nsp_bson_to_hash(const char *name,bson_t * b)
+{
+  bson_iter_t iter;
+  NspHash *H;
+  NspObject *Obj;
+  if(( H = nsp_hash_create(name,10)) == NULLHASH) return NULLHASH;
+  bson_iter_init(&iter, b);
+  while (1) 
+    {
+      if ( bson_iter_next(&iter) == FALSE ) break;
+      if ( (Obj = nsp_bson_iter_to_nspobject(&iter)) != NULL)
+	{
+	  if (nsp_hash_enter(H,Obj) == FAIL) return NULLHASH;      
 	}
     }
   return H;
