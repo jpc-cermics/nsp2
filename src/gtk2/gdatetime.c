@@ -434,7 +434,7 @@ NspGDateTime *nsp_gdate_time_copy(NspGDateTime *self)
 
 /* Creates a NspGDateTime corresponding to this exact instant in the given time zone */
 
-static NspGDateTime *nsp_gdate_time_new_now(const gchar *name,const gchar *timezone)
+NspGDateTime *nsp_gdate_time_new_now(const gchar *name,const gchar *timezone)
 {
   GDateTime *gdt;
   GTimeZone *Tz = g_time_zone_new(timezone);
@@ -446,7 +446,7 @@ static NspGDateTime *nsp_gdate_time_new_now(const gchar *name,const gchar *timez
 
 /* Creates a GDateTime corresponding to this exact instant in the local time zone. */
 
-static NspGDateTime *nsp_gdate_time_new_now_local(const gchar *name)
+NspGDateTime *nsp_gdate_time_new_now_local(const gchar *name)
 {
   GDateTime *gdt = g_date_time_new_now_local();
   if ( gdt == NULL ) return NULL;
@@ -455,7 +455,7 @@ static NspGDateTime *nsp_gdate_time_new_now_local(const gchar *name)
 
 /* Creates a GDateTime corresponding to this exact instant in UTC. */
 
-static NspGDateTime *nsp_gdate_time_new_now_utc(const gchar *name)
+NspGDateTime *nsp_gdate_time_new_now_utc(const gchar *name)
 {
   GDateTime *gdt = g_date_time_new_now_utc();
   if ( gdt == NULL ) return NULL;
@@ -467,7 +467,7 @@ static NspGDateTime *nsp_gdate_time_new_now_utc(const gchar *name)
  *  regardless of the local time offset.
  */
 
-static NspGDateTime *nsp_gdate_time_new_from_unix_local(const char *name,gint64 t)
+NspGDateTime *nsp_gdate_time_new_from_unix_local(const char *name,gint64 t)
 {
   GDateTime *gdt = g_date_time_new_from_unix_local(t);
   if ( gdt == NULL ) return NULL;
@@ -479,7 +479,7 @@ static NspGDateTime *nsp_gdate_time_new_from_unix_local(const char *name,gint64 
  * Unix time is the number of seconds that have elapsed since 1970-01-01 00:00:00 UTC.
  */
 
-static NspGDateTime *nsp_gdate_time_new_from_unix_utc(const char *name,gint64 t)
+NspGDateTime *nsp_gdate_time_new_from_unix_utc(const char *name,gint64 t)
 {
   GDateTime *gdt = g_date_time_new_from_unix_utc(t);
   if ( gdt == NULL ) return NULL;
@@ -511,9 +511,9 @@ static NspGDateTime *nsp_gdate_time_new_from_unix_utc(const char *name,gint64 t)
  * 
  */
 
-static NspGDateTime *nsp_gdate_time_new(const char *name,gint year,gint month,gint day,
-					gint hour, gint minute, gint second,
-					const char *timezone)
+NspGDateTime *nsp_gdate_time_new(const char *name,gint year,gint month,gint day,
+				 gint hour, gint minute, gint second,
+				 const char *timezone)
 {
   GTimeZone *Tz = g_time_zone_new(timezone);
   GDateTime *gdt; 
@@ -533,7 +533,7 @@ static NspGDateTime *nsp_gdate_time_new(const char *name,gint year,gint month,gi
   return nsp_gdate_time_create(name,gdt);
 }
 
-static NspGDateTime *nsp_gdate_time_new_local(const char *name,gint year,gint month,gint day,
+NspGDateTime *nsp_gdate_time_new_local(const char *name,gint year,gint month,gint day,
 					      gint hour, gint minute, gint second)
 {
   GDateTime *gdt = g_date_time_new_local(year, month, day, hour, minute,second);
@@ -546,7 +546,7 @@ static NspGDateTime *nsp_gdate_time_new_local(const char *name,gint year,gint mo
   return nsp_gdate_time_create(name,gdt);
 }
 
-static NspGDateTime *nsp_gdate_time_new_utc(const char *name,gint year,gint month,gint day,
+NspGDateTime *nsp_gdate_time_new_utc(const char *name,gint year,gint month,gint day,
 					    gint hour, gint minute, gint second)
 {
   GDateTime *gdt = g_date_time_new_local(year, month, day, hour, minute,second);

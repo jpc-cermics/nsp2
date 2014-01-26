@@ -63,6 +63,19 @@ extern int IsGDateTime(NspObject *O);
 extern NspGDateTime *GetGDateTimeCopy (Stack stack, int i); 
 extern NspGDateTime *GetGDateTime (Stack stack, int i); 
 extern int int_gdate_time_create(Stack stack, int rhs, int opt, int lhs);
+extern NspGDateTime *nsp_gdate_time_new_now(const gchar *name,const gchar *timezone);
+extern NspGDateTime *nsp_gdate_time_new_now_local(const gchar *name);
+extern NspGDateTime *nsp_gdate_time_new_now_utc(const gchar *name);
+extern NspGDateTime *nsp_gdate_time_new_from_unix_local(const char *name,gint64 t);
+extern NspGDateTime *nsp_gdate_time_new_from_unix_utc(const char *name,gint64 t);
+extern NspGDateTime *nsp_gdate_time_new_local(const char *name,gint year,gint month,gint day,
+					      gint hour, gint minute, gint second);
+extern NspGDateTime *nsp_gdate_time_new_utc(const char *name,gint year,gint month,gint day,
+					    gint hour, gint minute, gint second);
+
+extern NspGDateTime *nsp_gdate_time_new(const char *name,gint year,gint month,gint day,
+					gint hour, gint minute, gint second,
+					const char *timezone);
 
 #endif /* NSP_INC_GDateTime */ 
 
