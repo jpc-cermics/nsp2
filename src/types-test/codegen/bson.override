@@ -118,6 +118,36 @@ static int _wrap_bson_to_hash(NspBson *self,Stack stack,int rhs,int opt,int lhs)
 }
 
 %%
+override Bson.bson_insert kwargs
+
+static int _wrap_bson_insert(NspBson *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int i;
+  if ( rhs - opt != 0 ) 
+    {
+      Scierror("Error: function %s expects only optional named arguments\n",
+	       NspFname(stack));
+      return RET_BUG;
+    }
+  for ( i = 1 ; i <= rhs ; i++) 
+    {
+      NspObject *Obj = NthObj(i);
+      const char *name;
+      if ( Ocheckname(Obj,NVOID) ) 
+	{
+	  Scierror("Error: Cannot insert unamed variable in a bson object\n");
+	  Scierror("\t%s of function %s\n",ArgPosition(rhs),NspFname(stack));
+	  return RET_BUG;
+	}
+      name = nsp_object_get_name(Obj);
+      Obj = nsp_get_object(stack,i); /* used to follow pointers */
+      nsp_bson_insert(self->obj->b,name, Obj);
+    }
+  MoveObj(stack,1,(NspObject *) self);
+  return 1;
+} 
+
+%%
 override Bson.bson_get_value kwargs
 /* override a method */
 

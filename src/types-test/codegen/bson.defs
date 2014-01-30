@@ -2,9 +2,18 @@
 
 (include "bson-types.defs")
 
+;; methods for Bson Objects 
+
+
 (define-method show
   (of-object "Bson")
   (c-name "bson_show")
+  (return-type "none")
+)
+
+(define-method insert
+  (of-object "Bson")
+  (c-name "bson_insert")
   (return-type "none")
 )
 
@@ -14,14 +23,13 @@
   (return-type "int")
 )
 
-;; overriden in bson.override 
+
+;; methods and functions for Mclient
 
 (define-function mclient_create
   (c-name "mclient_create")
   (return-type "int")
 )
-
-;; overriden in bson.override 
 
 (define-method get_collection
   (of-object "Mclient")
@@ -29,7 +37,7 @@
   (return-type "int")
 )
 
-;; overriden in bson.override 
+;; methods and functions for Mcollection
 
 (define-method find
   (of-object "Mcollection")
@@ -50,7 +58,7 @@
 )
 
 
-;; overriden in bson.override 
+;; methods and functions for Mcursor
 
 (define-method error
   (of-object "Mcursor")
