@@ -20,6 +20,7 @@ class Overrides:
         self.noargs = {}
         self.startlines = {}
         self.override_attrs = {}
+        self.override_field_void_pointer_copy = {} # call a specific function for copying a void *field
         self.override_slots = {}
         self.headers = ''
         self.override_include_start = {}
@@ -98,6 +99,10 @@ class Overrides:
         elif words[0] == 'override-attr':
             attr = words[1]
             self.override_attrs[attr] = rest
+            self.startlines[attr] = (startline + 1, filename)
+        elif words[0] == 'override-field-void-pointer-copy':
+            attr = words[1]
+            self.override_field_void_pointer_copy[attr] = rest
             self.startlines[attr] = (startline + 1, filename)
         elif words[0] == 'override-slot':
             slot = words[1]
@@ -179,6 +184,12 @@ class Overrides:
             # take care to use a different name as in type override 
             stn = 'loop_%s' % slot
             self.startlines[stn] = (startline + 1, filename)
+        elif words[0] == 'override-loop':
+            slot = words[1]
+            self.override_loop[slot] = rest
+            # take care to use a different name as in type override 
+            stn = 'loop_%s' % slot
+            self.startlines[stn] = (startline + 1, filename)
         elif words[0] == 'override-int-create-final':
             slot = words[1]
             self.override_int_create_final[slot] = rest
@@ -246,6 +257,10 @@ class Overrides:
         return self.override_attrs.has_key(attr)
     def attr_override(self, attr):
         return self.override_attrs[attr]
+    def field_void_pointer_copy_is_overriden(self, attr):
+        return self.override_field_void_pointer_copy.has_key(attr)
+    def field_void_pointer_copy_override(self, attr):
+        return self.override_field_void_pointer_copy[attr]
     def slot_is_overriden(self, slot):
         return self.override_slots.has_key(slot)
     def slot_override(self, slot):

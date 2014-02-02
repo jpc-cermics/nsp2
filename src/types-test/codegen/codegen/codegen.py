@@ -1282,7 +1282,7 @@ class Wrapper:
             return str
         for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
             handler = argtypes.matcher.get(ftype)
-            str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,f_copy_name,self.byref, pdef , psize, pcheck)
+            str = str + handler.attr_write_copy(self,ftype,fname,left_varname,right_varname,f_copy_name,self.byref, pdef , psize, pcheck)
         return str
     
     
@@ -1330,7 +1330,7 @@ class Wrapper:
         if self.objinfo.fields:
             for ftype, fname, opt , pdef, psize, pcheck in self.objinfo.fields:
                 handler = argtypes.matcher.get(ftype)
-                str = str + handler.attr_write_copy(ftype,fname,left_varname,right_varname,f_copy_name,self.byref,pdef,psize,pcheck)
+                str = str + handler.attr_write_copy(self,ftype,fname,left_varname,right_varname,f_copy_name,self.byref,pdef,psize,pcheck)
         str = str + '  return H;\n' \
             '}\n\n'  
         return str

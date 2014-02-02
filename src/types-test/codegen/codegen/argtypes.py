@@ -132,7 +132,7 @@ class ArgType:
         return '  XXXXX attr_write_return not implemented for %s\n' % self.__class__.__name__
         #raise RuntimeError, "write_return not implemented for %s" % self.__class__.__name__
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         return '  XXXXX attr_write_copy not implemented for %s' % self.__class__.__name__
 	#raise RuntimeError, "write_copy not implemented for %s" % self.__class__.__name__
@@ -258,7 +258,7 @@ class StringArg(ArgType):
 	"""used when a field is to be reloaded """
         return '  if (nsp_xdr_load_new_string(xdrs,&(%s->%s)) == FAIL) return NULL;\n'  % (varname,pname)
     
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -422,7 +422,7 @@ class IntArg(ArgType):
         info.varlist.add('int', 'ret')
         info.attrcodeafter.append('  return nsp_new_double_obj((double) ret);')
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  '+ left_varname + '->'+ pname +'='+ right_varname +'->'+ pname +';\n'
         else:
@@ -469,7 +469,7 @@ class IntArg(ArgType):
 
 class Int64PointerArg(ArgType):
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -591,7 +591,7 @@ class Int64PointerArg(ArgType):
                               '  return 1;')
 class IntPointerArg(ArgType):
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -714,7 +714,7 @@ class IntPointerArg(ArgType):
 
 class DoublePointerArg(ArgType):
     
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -830,7 +830,7 @@ class DoublePointerArg(ArgType):
 
 class BoolPointerArg(ArgType):
     
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -1103,7 +1103,7 @@ class Int64Arg(ArgType):
 	"""used to give a default value  """
         return ''
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  '+ left_varname + '->'+ pname +'='+ right_varname +'->'+ pname +';\n'
         else:
@@ -1174,7 +1174,7 @@ class DoubleArg(ArgType):
 	"""used to give a default value  """
         return ''
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  '+ left_varname + '->'+ pname +'='+ right_varname +'->'+ pname +';\n'
         else:
@@ -1482,7 +1482,7 @@ class ObjectArg(ArgType):
             % (varname,pname,string.lower(self.name),pname)
         return str
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -1704,7 +1704,7 @@ class PointerArg(ArgType):
 	"""used when a field is to be reloaded """
         return '  %s->%s = NULL;\n'  % (varname,pname)
     
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
@@ -1829,7 +1829,7 @@ class StructArg(ArgType):
         else:
             return '  if ( nsp_load_%s(xdrs,&M->%s,M) == FAIL ) return NULL;\n' % (ptype,pname)
         
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # used in copy functions 
@@ -2165,7 +2165,7 @@ class NspObjectArg(ArgType):
         str = ind + ('  if ( %s->%s != NULL ) \n' % (varname,pname))
         return str + ind + ('    nsp_%s_destroy(&%s->%s);\n' % (string.lower(self.name),varname,pname))
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -2244,7 +2244,7 @@ class NspGenericArg(ArgType):
 	"""used when a field is to be reloaded """
         return '  if ((%s->%s =(%s *) nsp_object_xdr_load(xdrs))== NULL%s) return NULL;\n' % (varname,pname,self.fullname,self.shortname_uc)
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
         if right_varname:
             # this part is used in copy or full_copy 
@@ -2471,7 +2471,7 @@ class NspDoubleArrayArg(NspMatArg):
     def attr_free_fields(self,ptype,pname, varname,byref):
         return  ''
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(double));\n'
         else:
@@ -2575,7 +2575,7 @@ class NspComplexArrayArg(NspMatArg):
     def attr_free_fields(self,ptype,pname, varname,byref):
         return  ''
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(doubleC));\n'
         else:
@@ -2678,7 +2678,7 @@ class NspBoolArrayArg(NspMatArg):
     def attr_free_fields(self,ptype,pname, varname,byref):
         return  ''
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(int));\n'
         else:
@@ -2782,7 +2782,7 @@ class NspIntArrayArg(NspMatArg):
     def attr_free_fields(self,ptype,pname, varname,byref):
         return  ''
 
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
         if right_varname:
             return '  memcpy('+ left_varname + '->'+ pname +','+right_varname +'->'+ pname +','+ psize+ '*sizeof(int));\n'
         else:
@@ -2876,13 +2876,23 @@ class VoidPointerArg(ArgType):
 	"""used when a field is to be reloaded """
         return '  %s->%s = NULL;\n'  % (varname,pname)
     
-    def attr_write_copy(self,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
+    def attr_write_copy(self,cl,ptype,pname, left_varname,right_varname,f_copy_name,byref, pdef , psize, pcheck):
 	"""used when a variable is to be copied """
-        if right_varname:
-            return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
+        slotname = '%s.%s' % (cl.objinfo.name, pname )
+        cname = cl.get_lower_name();
+        if cl.overrides.field_void_pointer_copy_is_overriden(slotname):
+            # user will have to provide a copy field function 
+            copy_fun = 'nsp_%s_%s_copy' % (cname, pname) 
+            if right_varname:
+                return '  %s->%s = %s( %s->%s );\n' % (left_varname,pname,copy_fun,right_varname,pname)
+            else:
+                return '  %s->%s = %s(%s);\n' % (left_varname,pname,copy_fun,pname)
         else:
-            return '  %s->%s = %s;\n' % (left_varname,pname,pname)
-
+            if right_varname:
+                return '  %s->%s = %s->%s;\n' % (left_varname,pname,right_varname,pname)
+            else:
+                return '  %s->%s = %s;\n' % (left_varname,pname,pname)
+            
     def attr_write_info(self,ptype,pname, varname,byref):
 	"""used when a field is to be reloaded """
         return  '  Sciprintf1(indent+2,"%s=0x%%x\\n",%s->%s);\n' % (pname,varname,pname)
