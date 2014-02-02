@@ -17,6 +17,7 @@ static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj);
 static void bson_show(void *self);
 static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
 static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
+static bson_t *nsp_bson_b_copy(const bson_t *b);
 
 %%
 headers
@@ -47,6 +48,71 @@ ignore-glob
 override-type Bson
   /* inserted verbatim in the type definition */
   top->is_true = (is_true_func  *) nsp_bson_is_true; 
+
+%%
+override-save-load Bson
+
+
+/* code used to override the save/load functions */
+
+/*
+ * save 
+ */
+
+int nsp_bson_xdr_save(XDR *xdrs, NspBson *M)
+{
+  int n_bytes;
+  const bson_uint8_t *buf;
+  /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
+  /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
+  if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_bson)) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
+  /* save the contents of the bson object */
+  buf = bson_get_data( M->obj->b);
+  n_bytes = ((bson_t *) M->obj->b)->len;
+  Sciprintf("Taille %d \n", n_bytes);
+  if (nsp_xdr_save_i(xdrs, n_bytes) == FAIL) return FAIL;
+  if (nsp_xdr_save_array_ixx(xdrs,buf,nsp_guint8, n_bytes) == FAIL) return FAIL;
+  return OK;
+}
+
+/*
+ * load 
+ */
+
+static NspBson  *nsp_bson_xdr_load(XDR *xdrs)
+{
+  bson_reader_t *reader;
+  const bson_t *b;
+  bson_t *br;
+  bson_bool_t eof = FALSE;
+  bson_uint8_t *buffer;
+  int n_bytes;
+  NspBson *H = NULL;
+  char name[NAME_MAXL];
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLBSON;
+  if ((H  = nsp_bson_create_void(name,(NspTypeBase *) nsp_type_bson))== NULLBSON) return H;
+  if ( nsp_bson_create_partial(H) == FAIL) return NULLBSON;
+  if (nsp_xdr_load_i(xdrs,&n_bytes) == FAIL) return NULLBSON;
+  if ((buffer = bson_malloc0(n_bytes)) == NULL) return NULLBSON;
+  if (nsp_xdr_load_array_ixx(xdrs,buffer,nsp_guint8,n_bytes) == FAIL) return NULLBSON;
+  if ((reader = bson_reader_new_from_data(buffer, n_bytes))== NULL) return NULL;
+  b = bson_reader_read(reader, &eof);
+  br =bson_copy(b);
+  bson_free(buffer);
+  bson_reader_destroy(reader);
+  H->obj->b = br;
+  H->obj->ref_count=1;
+  return H;
+}
+
+
+%%
+override-field-void-pointer-copy Bson.b
+  /* the way to copy a field b of Bson object is 
+   * to be implemented by a function given by the user 
+   */
 
 %%
 override-intcreate Bson
@@ -97,12 +163,17 @@ int int_bson_create(Stack stack, int rhs, int opt, int lhs)
 
 %%
 override-int-create-final Bson
-/* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+  /* verbatim in create/load/full_copy interface use %(ret)s for returned value */
+  if (H != NULL && H->obj->b == NULL) 
+    {
+      nsp_bson_destroy(H);
+      H = NULL;
+    }
 
 %%
 override-destroy-prelim  Bson
   /* verbatim in destroy */
-  bson_free(H->obj->b);
+  if (H->obj->b != NULL) bson_free(H->obj->b);
 
 %%
 override Bson.bson_to_hash kwargs
@@ -839,5 +910,15 @@ static NspHash *nsp_bson_to_hash(const char *name,bson_t * b)
 	}
     }
   return H;
+}
+
+static bson_t *nsp_bson_b_copy(const bson_t *b)
+{
+  bson_t *loc= NULL;
+  if ((loc = bson_copy (b)) == NULL)
+    {
+      Scierror("Error: failed to copy a bson object\n");
+    }
+  return loc;
 }
 

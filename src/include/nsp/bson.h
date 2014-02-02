@@ -130,7 +130,8 @@ static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj);
 static void bson_show(void *self);
 static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
 static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
+static bson_t *nsp_bson_b_copy(const bson_t *b);
 
-#line 135 "./bson.h"
+#line 136 "./bson.h"
 #endif /* NspBson_Private */
 
