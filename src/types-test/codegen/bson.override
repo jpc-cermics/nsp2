@@ -71,7 +71,6 @@ int nsp_bson_xdr_save(XDR *xdrs, NspBson *M)
   /* save the contents of the bson object */
   buf = bson_get_data( M->obj->b);
   n_bytes = ((bson_t *) M->obj->b)->len;
-  Sciprintf("Taille %d \n", n_bytes);
   if (nsp_xdr_save_i(xdrs, n_bytes) == FAIL) return FAIL;
   if (nsp_xdr_save_array_ixx(xdrs,buf,nsp_guint8, n_bytes) == FAIL) return FAIL;
   return OK;
