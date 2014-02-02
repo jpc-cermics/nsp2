@@ -155,6 +155,7 @@ int int_bson_create(Stack stack, int rhs, int opt, int lhs)
       Scierror("Error: failed to create a bson object\n");
       return RET_BUG;
     }
+  bson_free(b); /* b was copied by nsp_bson_create */
   MoveObj(stack,1,(NspObject  *) B);
   return 1;
 } 
@@ -520,8 +521,8 @@ static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt
   r= mongoc_cursor_next(cursor, &doc);
   if ( r == TRUE ) 
     {
-      const bson_t *doc1= bson_copy(doc);
-      if(( B = nsp_bson_create(NVOID,(void *) doc1,
+      /* nsp_bson_create will copy doc */
+      if(( B = nsp_bson_create(NVOID,(void *) doc,
 			       (NspTypeBase *) nsp_type_bson)) == NULL)
 	{
 	  Scierror("Error: failed to create a bson object\n");
