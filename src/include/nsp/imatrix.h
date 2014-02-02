@@ -336,7 +336,7 @@ extern NspBMatrix *nsp_imatrix_comp(const NspIMatrix *A, const NspIMatrix *B,con
 extern int nsp_imatrix_fullcomp(const NspIMatrix *A,const  NspIMatrix *B, const char *op, int *err); 
 extern int nsp_imatrix_change_itype(NspIMatrix *A,nsp_itype itype);
 
-extern int nsp_xdr_save_array_ixx(XDR *xdrs, void *nx,nsp_itype itye, int l);
+extern int nsp_xdr_save_array_ixx(XDR *xdrs, const void *nx,nsp_itype itye, int l);
 extern int nsp_xdr_load_array_ixx(XDR *xdrs, void *nx,nsp_itype itype, int l);
 
 /* from IMatOps */

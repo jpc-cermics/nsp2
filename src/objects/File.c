@@ -652,7 +652,7 @@ int nsp_xdr_load_new_string(XDR *xdrs, char **str)
  * Return value: %OK or %FAIL
  **/
 
-int nsp_xdr_save_array_ixx(XDR *xdrs,void *nx,nsp_itype itype, int l)
+int nsp_xdr_save_array_ixx(XDR *xdrs,const void *nx,nsp_itype itype, int l)
 { 
   count = (int) l;
   assertW( xdr_vector(xdrs,(char *) &count,(u_int)1,
