@@ -1616,6 +1616,8 @@ int int_mcollection_create(Stack stack, int rhs, int opt, int lhs)
 
 static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
+  NspObject *Query=NULL,*Fields=NULL;
+  bson_uint32_t skip=0,limit=0,batch_size=0;
   NspMcursor *M;
   bson_error_t error;
   bson_t query;
@@ -1623,15 +1625,30 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   CheckStdRhs(0,0);
   CheckLhs(0,1);
   bson_init (&query);
+
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+
+  nsp_option opts[] ={{"query",obj_check,NULLOBJ,-1},
+		      {"fields",obj_check,NULLOBJ,-1},
+		      {"skip", s_int,NULLOBJ,-1},
+		      {"limit", s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  nsp_type_bson = new_type_bson(T_BASE);
+  if ( get_optional_args(stack, rhs, opt, opts, &nsp_type_bson,&Query,&nsp_type_bson,&Fields, &skip, &limit) == FAIL )
+    return RET_BUG;
+  
   cursor = mongoc_collection_find (self->obj->co,
 				   MONGOC_QUERY_NONE,
-				   0,
-				   0,
-				   0,
-				   &query,
-				   NULL,  /* Fields, NULL for all. */
+				   skip,
+				   limit,
+				   batch_size,
+				   (Query == NULL) ? &query : ((NspBson *)Query)->obj->b,
+				   /* Fields, NULL for all. */
+				   (Fields == NULL) ? NULL : ((NspBson *)Fields)->obj->b,
 				   NULL); /* Read Prefs, NULL for default */
-
+  
   if (mongoc_cursor_error (cursor, &error)) 
     {
       Scierror("Error: %s\n", error.message);
@@ -1648,10 +1665,10 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   return 1;
 }
 
-#line 1652 "bson.c"
+#line 1669 "bson.c"
 
 
-#line 443 "codegen/bson.override"
+#line 460 "codegen/bson.override"
 
 static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1678,10 +1695,10 @@ static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int r
 }
 
 
-#line 1682 "bson.c"
+#line 1699 "bson.c"
 
 
-#line 411 "codegen/bson.override"
+#line 428 "codegen/bson.override"
 
 static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -1712,7 +1729,7 @@ static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int r
     return 0;
 }
 
-#line 1716 "bson.c"
+#line 1733 "bson.c"
 
 
 static NspMethods mcollection_methods[] = {
@@ -1953,12 +1970,12 @@ void nsp_mcursor_destroy_partial(NspMcursor *H)
   H->obj->ref_count--;
   if ( H->obj->ref_count == 0 )
    {
-#line 480 "codegen/bson.override"
+#line 497 "codegen/bson.override"
   /* verbatim in destroy */
   mongoc_cursor_destroy(H->obj->cu);
   if (H->obj->doc != NULL) bson_destroy(H->obj->doc);
 
-#line 1962 "bson.c"
+#line 1979 "bson.c"
     FREE(H->obj);
    }
 }
@@ -2193,7 +2210,7 @@ int int_mcursor_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
-#line 486 "codegen/bson.override"
+#line 503 "codegen/bson.override"
 
 static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2217,10 +2234,10 @@ static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int op
     return 0;
 }
 
-#line 2221 "bson.c"
+#line 2238 "bson.c"
 
 
-#line 511 "codegen/bson.override"
+#line 528 "codegen/bson.override"
 
 static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2252,10 +2269,10 @@ static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt
   return ret;
 }
 
-#line 2256 "bson.c"
+#line 2273 "bson.c"
 
 
-#line 544 "codegen/bson.override"
+#line 561 "codegen/bson.override"
 
 static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt,int lhs)
 {
@@ -2267,7 +2284,7 @@ static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt
 }
 
 
-#line 2271 "bson.c"
+#line 2288 "bson.c"
 
 
 static NspMethods mcursor_methods[] = {
@@ -2294,7 +2311,7 @@ static int _wrap_mclient_create(Stack stack,int rhs,int opt,int lhs)
   return int_mclient_create(stack,rhs,opt,lhs);
 }
 
-#line 2298 "bson.c"
+#line 2315 "bson.c"
 
 
 /*----------------------------------------------------
@@ -2324,7 +2341,7 @@ void Bson_Interf_Info(int i, char **fname, function (**f))
   *f = Bson_func[i].fonc;
 }
 
-#line 564 "codegen/bson.override"
+#line 581 "codegen/bson.override"
 
 static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H)
 {
@@ -2687,4 +2704,4 @@ static bson_t *nsp_bson_b_copy(const bson_t *b)
 }
 
 
-#line 2691 "bson.c"
+#line 2708 "bson.c"

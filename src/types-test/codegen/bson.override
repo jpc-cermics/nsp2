@@ -374,6 +374,8 @@ override Mcollection.mongoc_collection_find kwargs
 
 static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs,int opt,int lhs)
 {
+  NspObject *Query=NULL,*Fields=NULL;
+  bson_uint32_t skip=0,limit=0,batch_size=0;
   NspMcursor *M;
   bson_error_t error;
   bson_t query;
@@ -381,15 +383,30 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   CheckStdRhs(0,0);
   CheckLhs(0,1);
   bson_init (&query);
+
+  CheckStdRhs(0,0);
+  CheckLhs(0,1);
+
+  nsp_option opts[] ={{"query",obj_check,NULLOBJ,-1},
+		      {"fields",obj_check,NULLOBJ,-1},
+		      {"skip", s_int,NULLOBJ,-1},
+		      {"limit", s_int,NULLOBJ,-1},
+		      { NULL,t_end,NULLOBJ,-1}};
+
+  nsp_type_bson = new_type_bson(T_BASE);
+  if ( get_optional_args(stack, rhs, opt, opts, &nsp_type_bson,&Query,&nsp_type_bson,&Fields, &skip, &limit) == FAIL )
+    return RET_BUG;
+  
   cursor = mongoc_collection_find (self->obj->co,
 				   MONGOC_QUERY_NONE,
-				   0,
-				   0,
-				   0,
-				   &query,
-				   NULL,  /* Fields, NULL for all. */
+				   skip,
+				   limit,
+				   batch_size,
+				   (Query == NULL) ? &query : ((NspBson *)Query)->obj->b,
+				   /* Fields, NULL for all. */
+				   (Fields == NULL) ? NULL : ((NspBson *)Fields)->obj->b,
 				   NULL); /* Read Prefs, NULL for default */
-
+  
   if (mongoc_cursor_error (cursor, &error)) 
     {
       Scierror("Error: %s\n", error.message);
