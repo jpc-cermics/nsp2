@@ -57,8 +57,14 @@
 #include <nsp/classbref.h> 
 #include <nsp/astnode.h> 
 #include <nsp/bvar.h> 
-
 #include <nsp/interf.h>
+
+#ifdef WITH_MONGODB_C 
+#include <nsp/bson.h> 
+#include <nsp/mclient.h> 
+#include <nsp/mcursor.h> 
+#include <nsp/mcollection.h> 
+#endif 
 
 /* FIXME */
 extern void nsp_init_gtk_types(void);
@@ -620,15 +626,20 @@ void primitive_types_register(void)
   new_type_astnode(T_BASE);
   new_type_spmaxpcolmatrix(T_BASE);
   new_type_bvar(T_BASE);
-  /*
-    new_type_ast(T_BASE);
-    new_type_astv(T_BASE);
-    new_type_frame(T_BASE);
-  */
+#ifdef WITH_MONGODB_C 
+  /* mongodb types */
+  new_type_bson(T_BASE);
+  new_type_mclient(T_BASE);
+  new_type_mcollection(T_BASE);
+  new_type_mcursor(T_BASE);
+  nsp_last_static_id_ = nsp_type_mcursor_id;
+#else
   /* take care here that the last declared class id 
    * must be copied in nsp_last_static_id_
    */
   nsp_last_static_id_ = nsp_type_bvar_id;
+#endif 
+
 }
 
 static void nsp_graphic_types_register(void) 
