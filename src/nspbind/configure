@@ -53,13 +53,5 @@ case $# in
  *) usage; exit 1;;
 esac
 
-OCAML_XML_SRC_DIR=$SLX_PARSING_DIR/ocaml-xml
+(cd config && ./configure ${PREFIX_INSTALL_DIR})
 
-if test -d $OCAML_XML_SRC_DIR; then :; else
-     ocamlxmlnotfound;
-     exit 2
-fi
-
-(cd config && ./configure ${PREFIX_INSTALL_DIR}) &&
-(cd $OCAML_XML_SRC_DIR && ./configure ../../../internal_libs &&\
-  $MAKE && $MAKE install)

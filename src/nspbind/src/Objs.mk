@@ -355,7 +355,8 @@ CONFIG_SCRIPTS_TO_BANNERIZE=\
 
 # List of .mlin .mliin, etc. to enter in the list of files to bannerize
 CAML_GENERATING_FILES=\
-$(CONFIGURATION_DIR)/configuration.mlin\
+
+#$(CONFIGURATION_DIR)/configuration.mlin\
 
 LOCAL_FILES_TO_BANNERIZE=\
  $(CONFIG_FILES_TO_BANNERIZE)\
