@@ -1,0 +1,187 @@
+./src/basics/lib_print.cmi: ./src/configuration/format_printer.cmi
+./src/basics/unatural_types.cmi:
+./src/basics/unatural.cmi: ./src/basics/unatural_types.cmi
+./src/basics/location.cmi:
+./src/basics/location_print.cmi: ./src/basics/location.cmi
+./src/basics/ident.cmi:
+./src/basics/hash_table.cmi: ./src/basics/unatural_types.cmi
+./src/basics/hash_table_print.cmi: ./src/basics/hash_table.cmi
+./src/basics/path.cmi:
+./src/basics/ulist1.cmi:
+./src/basics/binding.cmi: ./src/basics/ident.cmi ./src/basics/hash_table.cmi
+./src/basics/umarshal.cmi: ./src/basics/path.cmi
+./src/basics/lib_print.cmo: ./src/basics/lib_print.cmi
+./src/basics/lib_print.cmx: ./src/basics/lib_print.cmi
+./src/basics/unatural_types.cmo: ./src/basics/unatural_types.cmi
+./src/basics/unatural_types.cmx: ./src/basics/unatural_types.cmi
+./src/basics/unatural.cmo: ./src/basics/unatural_types.cmi \
+    ./src/basics/unatural.cmi
+./src/basics/unatural.cmx: ./src/basics/unatural_types.cmx \
+    ./src/basics/unatural.cmi
+./src/basics/location.cmo: ./src/basics/location.cmi
+./src/basics/location.cmx: ./src/basics/location.cmi
+./src/basics/location_print.cmo: ./src/basics/location.cmi \
+    ./src/basics/location_print.cmi
+./src/basics/location_print.cmx: ./src/basics/location.cmx \
+    ./src/basics/location_print.cmi
+./src/basics/hash_table.cmo: ./src/basics/unatural_types.cmi \
+    ./src/basics/hash_table.cmi
+./src/basics/hash_table.cmx: ./src/basics/unatural_types.cmx \
+    ./src/basics/hash_table.cmi
+./src/basics/hash_table_print.cmo: ./src/basics/hash_table.cmi \
+    ./src/basics/hash_table_print.cmi
+./src/basics/hash_table_print.cmx: ./src/basics/hash_table.cmx \
+    ./src/basics/hash_table_print.cmi
+./src/basics/path.cmo: ./src/basics/path.cmi
+./src/basics/path.cmx: ./src/basics/path.cmi
+./src/basics/ulist1.cmo: ./src/basics/ulist1.cmi
+./src/basics/ulist1.cmx: ./src/basics/ulist1.cmi
+./src/basics/umarshal.cmo: ./src/basics/path.cmi ./src/basics/umarshal.cmi
+./src/basics/umarshal.cmx: ./src/basics/path.cmx ./src/basics/umarshal.cmi
+./src/basics/unatural_types_print.cmo: ./src/basics/unatural_types.cmi \
+    ./src/basics/lib_print.cmi
+./src/basics/unatural_types_print.cmx: ./src/basics/unatural_types.cmx \
+    ./src/basics/lib_print.cmx
+./src/basics/unatural_print.cmo: ./src/basics/unatural_types_print.cmo
+./src/basics/unatural_print.cmx: ./src/basics/unatural_types_print.cmx
+./src/basics/ident_print.cmo: ./src/basics/lib_print.cmi \
+    ./src/basics/ident.cmi
+./src/basics/ident_print.cmx: ./src/basics/lib_print.cmx \
+    ./src/basics/ident.cmi
+./src/basics/path_print.cmo: ./src/basics/path.cmi ./src/basics/lib_print.cmi
+./src/basics/path_print.cmx: ./src/basics/path.cmx ./src/basics/lib_print.cmx
+./src/basics/ulist1_print.cmo: ./src/basics/lib_print.cmi
+./src/basics/ulist1_print.cmx: ./src/basics/lib_print.cmx
+./src/basics/binding_print.cmo: ./src/basics/lib_print.cmi \
+    ./src/basics/ident_print.cmo ./src/basics/hash_table_print.cmi \
+    ./src/basics/binding.cmi
+./src/basics/binding_print.cmx: ./src/basics/lib_print.cmx \
+    ./src/basics/ident_print.cmx ./src/basics/hash_table_print.cmx \
+    ./src/basics/binding.cmi
+./src/configuration/format_printer.cmi:
+./src/configuration/configuration.cmi: \
+    ./src/configuration/simport_configuration.cmi ./src/basics/path.cmi \
+    ./src/basics/ident.cmi
+./src/configuration/simport_configuration.cmi: ./src/basics/unatural.cmi \
+    ./src/basics/path.cmi ./src/basics/ident.cmi
+./src/configuration/say.cmi:
+./src/configuration/arguments.cmi: ./src/basics/path.cmi
+./src/configuration/configuration.cmo: ./src/basics/unatural_types.cmi \
+    ./src/basics/unatural.cmi ./src/configuration/simport_configuration.cmi \
+    ./src/basics/path.cmi ./src/configuration/configuration.cmi
+./src/configuration/configuration.cmx: ./src/basics/unatural_types.cmx \
+    ./src/basics/unatural.cmx ./src/configuration/simport_configuration.cmi \
+    ./src/basics/path.cmx ./src/configuration/configuration.cmi
+./src/configuration/simport_configuration_print.cmo: \
+    ./src/basics/unatural_print.cmo \
+    ./src/configuration/simport_configuration.cmi ./src/basics/path_print.cmo \
+    ./src/basics/lib_print.cmi ./src/basics/ident_print.cmo
+./src/configuration/simport_configuration_print.cmx: \
+    ./src/basics/unatural_print.cmx \
+    ./src/configuration/simport_configuration.cmi ./src/basics/path_print.cmx \
+    ./src/basics/lib_print.cmx ./src/basics/ident_print.cmx
+./src/configuration/say.cmo: ./src/configuration/configuration.cmi \
+    ./src/configuration/say.cmi
+./src/configuration/say.cmx: ./src/configuration/configuration.cmx \
+    ./src/configuration/say.cmi
+./src/configuration/arguments.cmo: ./src/basics/path.cmi \
+    ./src/configuration/configuration.cmi ./src/configuration/arguments.cmi
+./src/configuration/arguments.cmx: ./src/basics/path.cmx \
+    ./src/configuration/configuration.cmx ./src/configuration/arguments.cmi
+./src/matlab/parsing/mtlb_location.cmi: ./src/basics/path.cmi
+./src/matlab/parsing/mtlb_location.cmo: ./src/basics/location.cmi \
+    ./src/matlab/parsing/mtlb_location.cmi
+./src/matlab/parsing/mtlb_location.cmx: ./src/basics/location.cmx \
+    ./src/matlab/parsing/mtlb_location.cmi
+./src/matlab/parsing/mtlb_lexer.cmo: ./src/matlab/parsing/mtlb_parser.cmi \
+    ./src/matlab/parsing/mtlb_location.cmi ./src/matlab/parsing/mtlb_ast.cmi
+./src/matlab/parsing/mtlb_lexer.cmx: ./src/matlab/parsing/mtlb_parser.cmx \
+    ./src/matlab/parsing/mtlb_location.cmx ./src/matlab/parsing/mtlb_ast.cmi
+./src/matlab/parsing/ast_node.cmi: ./src/matlab/parsing/mtlb_location.cmi
+./src/matlab/parsing/ast_node_utils.cmi: \
+    ./src/matlab/parsing/mtlb_location.cmi ./src/matlab/parsing/ast_node.cmi
+./src/matlab/parsing/mtlb_ast.cmi: ./src/matlab/parsing/ast_node.cmi
+./src/matlab/parsing/mtlb_syntaxerr.cmi: \
+    ./src/matlab/parsing/mtlb_location.cmi
+./src/matlab/parsing/mtlb_parser.cmi: ./src/matlab/parsing/mtlb_ast.cmi
+./src/matlab/parsing/mtlb_to_ast.cmi: ./src/basics/path.cmi \
+    ./src/matlab/parsing/mtlb_ast.cmi
+./src/matlab/parsing/ast_node_utils.cmo: \
+    ./src/matlab/parsing/mtlb_location.cmi ./src/matlab/parsing/ast_node.cmi \
+    ./src/matlab/parsing/ast_node_utils.cmi
+./src/matlab/parsing/ast_node_utils.cmx: \
+    ./src/matlab/parsing/mtlb_location.cmx ./src/matlab/parsing/ast_node.cmi \
+    ./src/matlab/parsing/ast_node_utils.cmi
+./src/matlab/parsing/mtlb_syntaxerr.cmo: \
+    ./src/matlab/parsing/mtlb_location.cmi \
+    ./src/matlab/parsing/mtlb_syntaxerr.cmi
+./src/matlab/parsing/mtlb_syntaxerr.cmx: \
+    ./src/matlab/parsing/mtlb_location.cmx \
+    ./src/matlab/parsing/mtlb_syntaxerr.cmi
+./src/matlab/parsing/mtlb_ast_funs.cmo: ./src/matlab/parsing/mtlb_ast.cmi \
+    ./src/matlab/parsing/ast_node_utils.cmi
+./src/matlab/parsing/mtlb_ast_funs.cmx: ./src/matlab/parsing/mtlb_ast.cmi \
+    ./src/matlab/parsing/ast_node_utils.cmx
+./src/matlab/parsing/lexing_print.cmo: ./src/basics/lib_print.cmi
+./src/matlab/parsing/lexing_print.cmx: ./src/basics/lib_print.cmx
+./src/matlab/parsing/mtlb_location_print.cmo: \
+    ./src/matlab/parsing/mtlb_location.cmi \
+    ./src/matlab/parsing/lexing_print.cmo
+./src/matlab/parsing/mtlb_location_print.cmx: \
+    ./src/matlab/parsing/mtlb_location.cmx \
+    ./src/matlab/parsing/lexing_print.cmx
+./src/matlab/parsing/ast_node_print.cmo: \
+    ./src/matlab/parsing/mtlb_location_print.cmo \
+    ./src/matlab/parsing/ast_node.cmi
+./src/matlab/parsing/ast_node_print.cmx: \
+    ./src/matlab/parsing/mtlb_location_print.cmx \
+    ./src/matlab/parsing/ast_node.cmi
+./src/matlab/parsing/mtlb_ast_print.cmo: ./src/matlab/parsing/mtlb_ast.cmi \
+    ./src/basics/lib_print.cmi ./src/matlab/parsing/ast_node_print.cmo
+./src/matlab/parsing/mtlb_ast_print.cmx: ./src/matlab/parsing/mtlb_ast.cmi \
+    ./src/basics/lib_print.cmx ./src/matlab/parsing/ast_node_print.cmx
+./src/matlab/parsing/mtlb_parser.cmo: ./src/matlab/parsing/mtlb_ast_funs.cmo \
+    ./src/matlab/parsing/mtlb_ast.cmi ./src/matlab/parsing/mtlb_parser.cmi
+./src/matlab/parsing/mtlb_parser.cmx: ./src/matlab/parsing/mtlb_ast_funs.cmx \
+    ./src/matlab/parsing/mtlb_ast.cmi ./src/matlab/parsing/mtlb_parser.cmi
+./src/matlab/parsing/mtlb_to_ast.cmo: ./src/basics/path.cmi \
+    ./src/matlab/parsing/mtlb_syntaxerr.cmi \
+    ./src/matlab/parsing/mtlb_parser.cmi \
+    ./src/matlab/parsing/mtlb_location.cmi \
+    ./src/matlab/parsing/mtlb_lexer.cmo ./src/matlab/parsing/mtlb_to_ast.cmi
+./src/matlab/parsing/mtlb_to_ast.cmx: ./src/basics/path.cmx \
+    ./src/matlab/parsing/mtlb_syntaxerr.cmx \
+    ./src/matlab/parsing/mtlb_parser.cmx \
+    ./src/matlab/parsing/mtlb_location.cmx \
+    ./src/matlab/parsing/mtlb_lexer.cmx ./src/matlab/parsing/mtlb_to_ast.cmi
+./src/matlab/printing/mtlb_ppf.cmi: ./src/configuration/format_printer.cmi
+./src/matlab/printing/override_print.cmo: \
+    ./src/matlab/parsing/mtlb_to_ast.cmi ./src/matlab/printing/mtlb_ppf.cmi \
+    ./src/matlab/parsing/mtlb_ast.cmi ./src/matlab/parsing/ast_node.cmi
+./src/matlab/printing/override_print.cmx: \
+    ./src/matlab/parsing/mtlb_to_ast.cmx ./src/matlab/printing/mtlb_ppf.cmx \
+    ./src/matlab/parsing/mtlb_ast.cmi ./src/matlab/parsing/ast_node.cmi
+./src/matlab/printing/mtlb_ppf.cmo: ./src/matlab/printing/mtlb_ppf.cmi
+./src/matlab/printing/mtlb_ppf.cmx: ./src/matlab/printing/mtlb_ppf.cmi
+./src/compiler/main_gen.cmi:
+./src/compiler/mdl_compile.cmi: ./src/basics/path.cmi
+./src/compiler/main_gen.cmo: ./src/matlab/parsing/mtlb_syntaxerr.cmi \
+    ./src/matlab/parsing/mtlb_location.cmi \
+    ./src/matlab/parsing/mtlb_lexer.cmo ./src/configuration/configuration.cmi \
+    ./src/compiler/main_gen.cmi
+./src/compiler/main_gen.cmx: ./src/matlab/parsing/mtlb_syntaxerr.cmx \
+    ./src/matlab/parsing/mtlb_location.cmx \
+    ./src/matlab/parsing/mtlb_lexer.cmx ./src/configuration/configuration.cmx \
+    ./src/compiler/main_gen.cmi
+./src/compiler/mdl_compile.cmo: ./src/basics/umarshal.cmi \
+    ./src/configuration/say.cmi ./src/basics/path.cmi \
+    ./src/matlab/printing/override_print.cmo \
+    ./src/configuration/configuration.cmi ./src/compiler/mdl_compile.cmi
+./src/compiler/mdl_compile.cmx: ./src/basics/umarshal.cmx \
+    ./src/configuration/say.cmx ./src/basics/path.cmx \
+    ./src/matlab/printing/override_print.cmx \
+    ./src/configuration/configuration.cmx ./src/compiler/mdl_compile.cmi
+./src/driver/driver.cmo: ./src/compiler/mdl_compile.cmi \
+    ./src/compiler/main_gen.cmi ./src/configuration/arguments.cmi
+./src/driver/driver.cmx: ./src/compiler/mdl_compile.cmx \
+    ./src/compiler/main_gen.cmx ./src/configuration/arguments.cmx

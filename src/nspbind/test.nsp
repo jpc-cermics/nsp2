@@ -1,0 +1,47 @@
+int w=67
+int x
+double z
+int w=67
+int x
+double z
+---------------[start]-------------
+/* ignore */
+
+
+int w=67
+int x
+double z
+int w=67
+int x
+double z
+---------------[code-un][arg1]------------
+ arg2 
+
+UN 
+
+
+int w=67
+int x
+double z
+int w=67
+int x
+double z
+---------------[code-deux][arg1][arg2]-------------
+ 
+
+DEUX 
+
+
+int w=67
+int x
+double z
+int w=67
+int x
+double z
+---------------[code-trois]-------------
+ 
+
+FIN
+
+
+

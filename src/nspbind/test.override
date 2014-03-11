@@ -1,0 +1,18 @@
+/* ignore */
+
+%%
+code-un arg1 arg2 
+
+UN 
+
+%%
+code-deux arg1.arg2 
+
+DEUX 
+
+%%
+code-trois 
+
+FIN
+
+
