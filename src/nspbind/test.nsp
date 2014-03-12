@@ -1,43 +1,119 @@
+
+#define  poo_Private 
+#include <nsp/objects.h>
+#include <nsp/zoo.h>
+#include <nsp/interf.h>
+
 int w=67
 int x
 double z
 int w=67
 int x
 double z
+--------------- variables ----------------
+char *pname = "pdflt"
+--------------- end variables ----------------
+--------------- codebefore ----------------
+--------------- end codebefore ----------------
+--------------- codeafter ----------------
+--------------- end codeafter ----------------
+--------------- attrcodebefore ----------------
+  if ((pname = nsp_string_object(O))==NULL) return FAIL;
+  nsp_string_destroy(&(( *) _self)->obj->pname);
+--------------- end attrcodebefore ----------------
+--------------- attrcodeafter ----------------
+--------------- end attrcodeafter ----------------
 ---------------[start]-------------
 /* ignore */
 
 
+
+#define  poo_Private 
+#include <nsp/objects.h>
+#include <nsp/zoo.h>
+#include <nsp/interf.h>
+
 int w=67
 int x
 double z
 int w=67
 int x
 double z
+--------------- variables ----------------
+char *pname = "pdflt"
+--------------- end variables ----------------
+--------------- codebefore ----------------
+--------------- end codebefore ----------------
+--------------- codeafter ----------------
+--------------- end codeafter ----------------
+--------------- attrcodebefore ----------------
+  if ((pname = nsp_string_object(O))==NULL) return FAIL;
+  nsp_string_destroy(&(( *) _self)->obj->pname);
+--------------- end attrcodebefore ----------------
+--------------- attrcodeafter ----------------
+--------------- end attrcodeafter ----------------
 ---------------[code-un][arg1]------------
  arg2 
 
 UN 
 
 
+
+#define  poo_Private 
+#include <nsp/objects.h>
+#include <nsp/zoo.h>
+#include <nsp/interf.h>
+
 int w=67
 int x
 double z
 int w=67
 int x
 double z
+--------------- variables ----------------
+char *pname = "pdflt"
+--------------- end variables ----------------
+--------------- codebefore ----------------
+--------------- end codebefore ----------------
+--------------- codeafter ----------------
+--------------- end codeafter ----------------
+--------------- attrcodebefore ----------------
+  if ((pname = nsp_string_object(O))==NULL) return FAIL;
+  nsp_string_destroy(&(( *) _self)->obj->pname);
+--------------- end attrcodebefore ----------------
+--------------- attrcodeafter ----------------
+--------------- end attrcodeafter ----------------
 ---------------[code-deux][arg1][arg2]-------------
  
 
 DEUX 
 
 
+
+#define  poo_Private 
+#include <nsp/objects.h>
+#include <nsp/zoo.h>
+#include <nsp/interf.h>
+
 int w=67
 int x
 double z
 int w=67
 int x
 double z
+--------------- variables ----------------
+char *pname = "pdflt"
+--------------- end variables ----------------
+--------------- codebefore ----------------
+--------------- end codebefore ----------------
+--------------- codeafter ----------------
+--------------- end codeafter ----------------
+--------------- attrcodebefore ----------------
+  if ((pname = nsp_string_object(O))==NULL) return FAIL;
+  nsp_string_destroy(&(( *) _self)->obj->pname);
+--------------- end attrcodebefore ----------------
+--------------- attrcodeafter ----------------
+--------------- end attrcodeafter ----------------
 ---------------[code-trois]-------------
  
 

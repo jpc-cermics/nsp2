@@ -68,7 +68,7 @@ SIMPORT_PRO_CAML_INCLUDES=\
 # External libraries
 
 # EXTERNAL_LIBRARIES=unix
-SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS=unix.cma
+SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS=str.cma unix.cma
 SIMPORT_EXTERNAL_LIBRARIES_BIN_OBJS=$(SIMPORT_EXTERNAL_LIBRARIES_BYT_OBJS:.cma=.cmxa)
 
 # Internal libraries
@@ -240,8 +240,8 @@ $(MATLAB_PARSING_DIR)/mtlb_ast_print.ml: $(MATLAB_PARSING_DIR)/mtlb_ast.mli
 
 MATLAB_PRINTING_BYT_OBJS=\
  $(MATLAB_PRINTING_DIR)/mtlb_ppf.cmo\
- $(MATLAB_PRINTING_DIR)/override_print.cmo\
  $(MATLAB_PRINTING_DIR)/stringarg.cmo\
+ $(MATLAB_PRINTING_DIR)/override_print.cmo\
 
 # $(MATLAB_PRINTING_DIR)/codegen.cmo\
 #

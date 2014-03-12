@@ -1,4 +1,4 @@
-(* Beginning of OCamlGen, 3.3+dev4 generated code *)
+(* Beginning of ocamlprintc-3.3+dev4 generated code *)
 
 let print_translator ppf = function
   | Simport_configuration.T_simulink -> Format.fprintf ppf "%s" "T_simulink"
@@ -257,4 +257,4 @@ let print_configuration ppf = function
     Format.fprintf ppf "%,@,}@]"
 ;;
 
-(* End of OCamlGen, 3.3+dev4 generated code *)
+(* End of ocamlprintc-3.3+dev4 generated code *)
