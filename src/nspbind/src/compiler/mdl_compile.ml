@@ -70,10 +70,12 @@ let compile_simulink_implementation _src_efname =
 ;;
 
 let write_companion_translated_source_file dst_efname src_efname =
-  Path.with_explicit_out_file dst_efname (fun oc ->
-    let ppf = Format.formatter_of_out_channel oc in
-    Format.fprintf ppf "%a@."
-      Override_print.translate_file src_efname)
+  Path.with_explicit_out_file dst_efname 
+    (fun oc ->
+      let ppf = Format.formatter_of_out_channel oc in
+      Format.fprintf ppf "%a@."
+	Override_print.translate_file src_efname);
+
 ;;
 
 let translate_matlab_source_file src_efname =

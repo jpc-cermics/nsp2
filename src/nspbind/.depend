@@ -166,11 +166,11 @@
     ./src/matlab/printing/build.cmo
 ./src/matlab/printing/codegen.cmx: ./src/matlab/printing/stringarg.cmx \
     ./src/matlab/printing/build.cmx
-./src/matlab/printing/override_print.cmo: ./src/matlab/printing/stringarg.cmi \
+./src/matlab/printing/override_print.cmo: \
     ./src/matlab/parsing/mtlb_to_ast.cmi ./src/matlab/printing/mtlb_ppf.cmi \
     ./src/matlab/parsing/mtlb_ast.cmi ./src/matlab/printing/codegen.cmo \
     ./src/matlab/parsing/ast_node.cmi
-./src/matlab/printing/override_print.cmx: ./src/matlab/printing/stringarg.cmx \
+./src/matlab/printing/override_print.cmx: \
     ./src/matlab/parsing/mtlb_to_ast.cmx ./src/matlab/printing/mtlb_ppf.cmx \
     ./src/matlab/parsing/mtlb_ast.cmi ./src/matlab/printing/codegen.cmx \
     ./src/matlab/parsing/ast_node.cmi
