@@ -22,6 +22,8 @@
 
 #include <gtk/gtk.h>
 
+#if GLIB_CHECK_VERSION(2, 26, 0) 
+
 #define  GDateTime_Private 
 #include <nsp/object.h>
 #include <nsp/smatrix.h>
@@ -1109,3 +1111,7 @@ void gdate_time_Interf_Info(int i, char **fname, function (**f))
   *f = gdate_time_func[i].fonc;
 }
 
+#else 
+
+
+#endif 
