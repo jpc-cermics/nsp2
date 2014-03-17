@@ -2477,6 +2477,7 @@ static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj)
 	  
 	}
     }
+#if ( GLIB_CHECK_VERSION (2, 26, 0))
   else if ( IsGDateTime(Obj)) 
     {
       NspGDateTime *G = (NspGDateTime *) Obj ;
@@ -2486,6 +2487,7 @@ static int nsp_bson_insert(bson_t *b,const char *name, NspObject* Obj)
       gdt= g_date_time_to_unix(Dt);
       bson_append_date_time(b, name, -1, gdt);
     }
+#endif
   else if ( IsSerial(Obj)) 
     {
       NspSerial *S =  (NspSerial *) Obj;
@@ -2577,11 +2579,15 @@ static NspObject *nsp_bson_iter_to_nspserial(const char *name, bson_iter_t *iter
   return (NspObject *) nsp_serial_create_from_data_with_header(name,(const char *) binary,binary_len);
 }
 
-
 static NspObject *nsp_bson_iter_to_nspdatetime(const char *name, bson_iter_t *iter)
 {
   gint64 gdt = bson_iter_date_time (iter);
+#if ( GLIB_CHECK_VERSION (2, 26, 0))
   return (NspObject *) nsp_gdate_time_new_from_unix_utc(name,gdt);
+#else 
+  Scierror("Error: no GDateTime in your nsp version (glib is too old)\n");
+  return NULL
+#endif 
 }
 
 static NspObject *nsp_bson_to_cells(const char *name,bson_t * b,bson_uint32_t len );
@@ -2704,4 +2710,4 @@ static bson_t *nsp_bson_b_copy(const bson_t *b)
 }
 
 
-#line 2708 "bson.c"
+#line 2714 "bson.c"

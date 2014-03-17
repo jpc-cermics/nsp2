@@ -20,12 +20,9 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#include <nsp/nsp.h>
-#include <nsp/stochdec.h>
-#include <nsp/interf.h>
-#include <nsp/valuefn.h>
-#include <nsp/gridvaluefn.h>
-#include <nsp/cutsvaluefn.h>
+
+
+
 
 #line 33 "codegen/stochdec.override"
 /* headers */
