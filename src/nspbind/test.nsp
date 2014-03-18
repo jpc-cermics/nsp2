@@ -262,14 +262,11 @@ int nsp_o_name:pipo_xdr_save(XDR *xdrs, o_c_name:pipo *M)
 
 o_c_name:pipo  *nsp_o_name:pipo_xdr_load_partial(XDR *xdrs, o_c_name:pipo *M)
 {
-M->obj  if (nsp_xdr_load_d(xdrs, &  int fid;
+  int fid;
   char name[NAME_MAXL];
   M->obj->ref_count=1;
-->pipo2) == FAIL) return NULL;
-  if (nsp_xdr_load_new_string(xdrs,&(  int fid;
-  char name[NAME_MAXL];
-  M->obj->ref_count=1;
-->pipo2)) == FAIL) return NULL;
+  if (nsp_xdr_load_d(xdrs, &M->obj->pipo2) == FAIL) return NULL;
+  if (nsp_xdr_load_new_string(xdrs,&(M->obj->pipo2)) == FAIL) return NULL;varname={M->obj}
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
