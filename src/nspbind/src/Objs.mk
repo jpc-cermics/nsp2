@@ -240,6 +240,7 @@ $(MATLAB_PARSING_DIR)/mtlb_ast_print.ml: $(MATLAB_PARSING_DIR)/mtlb_ast.mli
 
 MATLAB_PRINTING_BYT_OBJS=\
  $(MATLAB_PRINTING_DIR)/mtlb_ppf.cmo\
+ $(MATLAB_PRINTING_DIR)/overrides.cmo\
  $(MATLAB_PRINTING_DIR)/stringarg.cmo\
  $(MATLAB_PRINTING_DIR)/build.cmo\
  $(MATLAB_PRINTING_DIR)/codegen.cmo\

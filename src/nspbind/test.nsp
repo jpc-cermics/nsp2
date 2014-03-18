@@ -266,7 +266,7 @@ o_c_name:pipo  *nsp_o_name:pipo_xdr_load_partial(XDR *xdrs, o_c_name:pipo *M)
   char name[NAME_MAXL];
   M->obj->ref_count=1;
   if (nsp_xdr_load_d(xdrs, &M->obj->pipo2) == FAIL) return NULL;
-  if (nsp_xdr_load_new_string(xdrs,&(M->obj->pipo2)) == FAIL) return NULL;varname={M->obj}
+  if (nsp_xdr_load_new_string(xdrs,&(M->obj->pipo2)) == FAIL) return NULL;
   if (nsp_xdr_load_i(xdrs, &fid) == FAIL) return NULL;
   if ( fid == nsp_dynamic_id)
     {
