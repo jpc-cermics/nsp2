@@ -543,6 +543,120 @@ int int_o_name:pipo_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
+/* -*- Mode: C -*- */
+#ifndef NSP_INC_o_c_name:pipo
+#define NSP_INC_o_c_name:pipo
+
+/*
+ * Copyright (C) 1998-2011 Jean-Philippe Chancelier Enpc/Cermics
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* o_c_name:pipo */
+
+#include <nsp/parent:poo.h>
+
+/*
+ * o_c_name:pipo inherits from parent:poo
+ */
+
+typedef struct _o_c_name:pipo o_c_name:pipo ;
+typedef struct _NspTypeo_name:pipo NspTypeo_name:pipo ;
+
+
+struct _NspTypeo_name:pipo {
+  /*< private >*/
+  NSP_TYPE_OBJECT__
+  /*< public >*/
+ 
+};
+
+  double pipo2;
+  string pipo2;
+  int ref_count;
+};
+
+struct _o_c_name:pipo {
+  /*< private >*/
+  Nspparent:poo father;
+  NspTypeo_name:pipo*type;
+  /*< public >*/
+  nsp_o_name:pipo *obj;
+};
+
+extern int nsp_type_o_name:pipo_id;
+extern NspTypeo_name:pipo *nsp_type_o_name:pipo;
+
+/* type instances for parent:poo */
+
+NspTypeo_name:pipo *new_type_o_name:pipo(type_mode mode);
+
+/* instance for o_c_name:pipo */
+
+o_c_name:pipo *new_o_name:pipo();
+
+/*
+ * Object methods redefined for o_name:pipo 
+ */
+
+
+#define NULLO_NAME:PIPO (o_c_name:pipo*) 0
+
+extern o_c_name:pipo *nsp_o_name:pipo_create(const char *name,double pipo2string pipo2,NspTypeBase *type);
+extern o_c_name:pipo *nsp_o_name:pipo_create_default(const char *name);
+
+/* from o_c_name:pipoObj.c */
+
+extern o_c_name:pipo *nsp_o_name:pipo_copy(o_c_name:pipo *H);
+extern void nsp_o_name:pipo_destroy(o_c_name:pipo *H);
+extern int nsp_o_name:pipo_info(o_c_name:pipo *H, int indent,const char *name, int rec_level);
+extern int nsp_o_name:pipo_print(o_c_name:pipo *H, int indent,const char *name, int rec_level);
+extern int nsp_o_name:pipo_latex(o_c_name:pipo *H, int indent,const char *name, int rec_level);
+extern o_c_name:pipo *nsp_o_name:pipo_object (NspObject *O);
+extern int Iso_name:pipoObj (Stack stack, int i);
+extern int Iso_name:pipo(NspObject *O);
+extern o_c_name:pipo *Geto_name:pipoCopy (Stack stack, int i);
+extern o_c_name:pipo *Geto_name:pipo (Stack stack, int i);
+extern int nsp_o_name:pipo_create_partial(o_c_name:pipo *H);
+extern void nsp_o_name:pipo_destroy_partial(o_c_name:pipo *H);
+extern o_c_name:pipo * nsp_o_name:pipo_copy_partial(o_c_name:pipo *H,o_c_name:pipo *self);
+extern o_c_name:pipo * nsp_o_name:pipo_full_copy_partial(o_c_name:pipo *H,o_c_name:pipo *self);
+extern o_c_name:pipo * nsp_o_name:pipo_full_copy(o_c_name:pipo *self);
+extern int nsp_o_name:pipo_check_values(o_c_name:pipo *H);
+extern int int_o_name:pipo_create(Stack stack, int rhs, int opt, int lhs);
+extern o_c_name:pipo *nsp_o_name:pipo_xdr_load_partial(XDR *xdrs, o_c_name:pipo *M);
+extern int nsp_o_name:pipo_xdr_save(XDR  *xdrs, o_c_name:pipo *M);
+
+#endif /* NSP_INC_o_c_name:pipo */ 
+
+#ifdef o_c_name:pipo_Private 
+static int init_o_name:pipo(o_c_name:pipo *o,NspTypeo_name:pipo *type);
+static int nsp_o_name:pipo_size(o_c_name:pipo *Mat, int flag);
+static char *nsp_o_name:pipo_type_as_string(void);
+static char *nsp_o_name:pipo_type_short_string(NspObject *v);
+static int nsp_o_name:pipo_eq(o_c_name:pipo *A, NspObject *B);
+static int nsp_o_name:pipo_neq(o_c_name:pipo *A, NspObject *B);
+static o_c_name:pipo *nsp_o_name:pipo_xdr_load(XDR *xdrs);
+static AttrTab o_name:pipo_attrs[];
+static NspMethods *o_name:pipo_get_methods(void);
+/* static int int_o_name:pipo_create(Stack stack, int rhs, int opt, int lhs);*/ 
+static o_c_name:pipo *nsp_o_name:pipo_create_void(const char *name,NspTypeBase *type);
+#endif /* o_c_name:pipo_Private */
+
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
