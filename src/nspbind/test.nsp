@@ -46,9 +46,7 @@ FIN
 
 #include "y.h"
 #include "t.h"
-
-
-headers_zz/* DEBUG: generation of interfaces */
+/* DEBUG: generation of interfaces */
 /* DEBUG: generation of objects */
 
 /* -----------o_c_name:pipo ----------- */
