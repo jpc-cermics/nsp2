@@ -165,9 +165,11 @@
 ./src/matlab/printing/build.cmo: ./src/matlab/printing/stringarg.cmi
 ./src/matlab/printing/build.cmx: ./src/matlab/printing/stringarg.cmx
 ./src/matlab/printing/genheaders.cmo: ./src/matlab/printing/stringarg.cmi \
-    ./src/basics/path.cmi ./src/matlab/printing/overrides.cmo
+    ./src/basics/path.cmi ./src/matlab/printing/overrides.cmo \
+    ./src/basics/hash_table.cmi
 ./src/matlab/printing/genheaders.cmx: ./src/matlab/printing/stringarg.cmx \
-    ./src/basics/path.cmx ./src/matlab/printing/overrides.cmx
+    ./src/basics/path.cmx ./src/matlab/printing/overrides.cmx \
+    ./src/basics/hash_table.cmx
 ./src/matlab/printing/codegen.cmo: ./src/matlab/printing/stringarg.cmi \
     ./src/matlab/printing/overrides.cmo ./src/matlab/printing/genheaders.cmo \
     ./src/matlab/printing/build.cmo
