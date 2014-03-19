@@ -1,17 +1,27 @@
 /* ignore */
 
 %%
-code-un arg1 arg2 
+include-start o_name
 
-UN 
-
-%%
-code-deux arg1.arg2 
-
-DEUX 
+/* include start */
 
 %%
-code-trois 
+include-public o_name
+
+/* include public */
+%%
+include-private o_name
+
+/* include private */
+
+%%
+override-attr Object.children
+
+/* override an attribute for Object
+
+
+%%
+last 
 
 FIN
 

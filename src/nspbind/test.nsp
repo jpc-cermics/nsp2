@@ -2,25 +2,37 @@
 /* ignore */
 
 
----------------[code-un][arg1]------------
- arg2 
-
-UN 
+---------------[include-start][o_name]------------
 
 
----------------[code-deux][arg1][arg2]-------------
- 
-
-DEUX 
+/* include start */
 
 
----------------[code-trois]-------------
+---------------[include-public][o_name]------------
+
+
+/* include public */
+
+---------------[include-private][o_name]------------
+
+
+/* include private */
+
+
+---------------[override-attr][Object][children]-------------
+
+
+/* override an attribute for Object
+
+
+
+---------------[last]-------------
  
 
 FIN
 
 
-/* appel a write_source */
+/* ZZ appel a write_source */
 /* -*- Mode: C -*- */
 
 /* This file is generated, please do not edit */
@@ -54,7 +66,7 @@ FIN
 
 #define  o_c_name:pipo_Private 
 #include <nsp/objects.h>
-#include <nsp/o_name:pipo.h>
+#include <nsp/o_name.h>
 #include <nsp/interf.h>
 
 /* 
@@ -62,66 +74,66 @@ FIN
  * and implements foo goo
  */
 
-int nsp_type_o_name:pipo_id=0;
-NspTypeo_name:pipo *nsp_type_o_name:pipo=NULL;
+int nsp_type_o_name_id=0;
+NspTypeo_name *nsp_type_o_name=NULL;
 
 /*
  * Type object for o_c_name:pipo 
- * all the instance of NspTypeo_name:pipo share the same id. 
- * nsp_type_o_name:pipo: is an instance of NspTypeo_name:pipo 
- *    used for objects of o_c_name:pipo type (i.e built with new_o_name:pipo) 
+ * all the instance of NspTypeo_name share the same id. 
+ * nsp_type_o_name: is an instance of NspTypeo_name 
+ *    used for objects of o_c_name:pipo type (i.e built with new_o_name) 
  * other instances are used for derived classes 
  */
-NspTypeo_name:pipo *new_type_o_name:pipo(type_mode mode)
+NspTypeo_name *new_type_o_name(type_mode mode)
 {
   NspTypefoo *t_foo;
   NspTypegoo *t_goo;
-  NspTypeo_name:pipo *type= NULL;
+  NspTypeo_name *type= NULL;
   NspTypeObject *top;
-  if (  nsp_type_o_name:pipo != 0 && mode == T_BASE )
+  if (  nsp_type_o_name != 0 && mode == T_BASE )
     {
       /* initialization performed and T_BASE requested */
-      return nsp_type_o_name:pipo;
+      return nsp_type_o_name;
     }
-  if (( type =  malloc(sizeof(NspTypeo_name:pipo))) == NULL) return NULL;
+  if (( type =  malloc(sizeof(NspTypeo_name))) == NULL) return NULL;
   type->interface = NULL;
   type->surtype = (NspTypeBase *) new_type_parent:poo(T_DERIVED);
   if ( type->surtype == NULL) return NULL;
-  type->attrs = o_name:pipo_attrs;
+  type->attrs = o_name_attrs;
   type->get_attrs = (attrs_func *) %(tp_getattr)s;
   type->set_attrs = (attrs_func *) %(tp_setattr)s;
-  type->methods = o_name:pipo_get_methods;
+  type->methods = o_name_get_methods;
   type->gtk_methods = FALSE;
-  type->new = (new_func *) new_o_name:pipo;
+  type->new = (new_func *) new_o_name;
 
 
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
 
-  /* object methods redefined for o_name:pipo */ 
+  /* object methods redefined for o_name */ 
 
-  top->pr = (print_func *) nsp_o_name:pipo_print;
-  top->dealloc = (dealloc_func *) nsp_o_name:pipo_destroy;
-  top->copy  =  (copy_func *) nsp_o_name:pipo_copy;
-  top->size  = (size_func *) nsp_o_name:pipo_size;
-  top->s_type =  (s_type_func *) nsp_o_name:pipo_type_as_string;
-  top->sh_type = (sh_type_func *) nsp_o_name:pipo_type_short_string;
-  top->info = (info_func *) nsp_o_name:pipo_info;
-  /* top->is_true = (is_true_func  *) nsp_o_name:pipo_is_true; */
-  /* top->loop =(loop_func *) nsp_o_name:pipo_loop;*/
+  top->pr = (print_func *) nsp_o_name_print;
+  top->dealloc = (dealloc_func *) nsp_o_name_destroy;
+  top->copy  =  (copy_func *) nsp_o_name_copy;
+  top->size  = (size_func *) nsp_o_name_size;
+  top->s_type =  (s_type_func *) nsp_o_name_type_as_string;
+  top->sh_type = (sh_type_func *) nsp_o_name_type_short_string;
+  top->info = (info_func *) nsp_o_name_info;
+  /* top->is_true = (is_true_func  *) nsp_o_name_is_true; */
+  /* top->loop =(loop_func *) nsp_o_name_loop;*/
   top->path_extract = (path_func *)  object_path_extract;
-  top->get_from_obj = (get_from_obj_func *) nsp_o_name:pipo_object;
-  top->eq  = (eq_func *) nsp_o_name:pipo_eq;
-  top->neq  = (eq_func *) nsp_o_name:pipo_neq;
-  top->save  = (save_func *) nsp_o_name:pipo_xdr_save;
-  top->load  = (load_func *) nsp_o_name:pipo_xdr_load;
-  top->create = (create_func*) int_o_name:pipo_create;
-  top->latex = (print_func *) nsp_o_name:pipo_latex;
-  top->full_copy = (copy_func *) nsp_o_name:pipo_full_copy;
+  top->get_from_obj = (get_from_obj_func *) nsp_o_name_object;
+  top->eq  = (eq_func *) nsp_o_name_eq;
+  top->neq  = (eq_func *) nsp_o_name_neq;
+  top->save  = (save_func *) nsp_o_name_xdr_save;
+  top->load  = (load_func *) nsp_o_name_xdr_load;
+  top->create = (create_func*) int_o_name_create;
+  top->latex = (print_func *) nsp_o_name_latex;
+  top->full_copy = (copy_func *) nsp_o_name_full_copy;
 
-  /* specific methods for o_name:pipo */
+  /* specific methods for o_name */
 
-  type->init = (init_func *) init_o_name:pipo;
+  type->init = (init_func *) init_o_name;
 
   /* 
    * o_c_name:pipo interfaces can be added here 
@@ -135,20 +147,20 @@ NspTypeo_name:pipo *new_type_o_name:pipo(type_mode mode)
   type->interface->interface = (NspTypeBase * ) t_foo;
 /* DEBUG: ZZ */
 /* DEBUG: ZZ2 */
-  if ( nsp_type_o_name:pipo_id == 0 ) 
+  if ( nsp_type_o_name_id == 0 ) 
     {
       /* 
        * the first time we get here we initialize the type id and
-       * an instance of NspTypeo_name:pipo called nsp_type_o_name:pipo
+       * an instance of NspTypeo_name called nsp_type_o_name
        */
-      type->id =  nsp_type_o_name:pipo_id = nsp_new_type_id();
-      nsp_type_o_name:pipo = type;
-      if ( nsp_register_type(nsp_type_o_name:pipo) == FALSE) return NULL;
-      return ( mode == T_BASE ) ? type : new_type_o_name:pipo(mode);
+      type->id =  nsp_type_o_name_id = nsp_new_type_id();
+      nsp_type_o_name = type;
+      if ( nsp_register_type(nsp_type_o_name) == FALSE) return NULL;
+      return ( mode == T_BASE ) ? type : new_type_o_name(mode);
     }
   else 
     {
-      type->id = nsp_type_o_name:pipo_id;
+      type->id = nsp_type_o_name_id;
       return type;
     }
 }
@@ -158,7 +170,7 @@ NspTypeo_name:pipo *new_type_o_name:pipo(type_mode mode)
  * locally and by calling initializer on parent class 
  */
 
-static int init_o_name:pipo(o_c_name:pipo *Obj,NspTypeo_name:pipo *type)
+static int init_o_name(o_c_name:pipo *Obj,NspTypeo_name *type)
 {
   /* initialize the surtype */ 
   if ( type->surtype->init(&Obj->father,type->surtype) == FAIL) return FAIL;
@@ -174,14 +186,14 @@ static int init_o_name:pipo(o_c_name:pipo *Obj,NspTypeo_name:pipo *type)
  * new instance of o_c_name:pipo 
  */
 
-o_c_name:pipo *new_o_name:pipo() 
+o_c_name:pipo *new_o_name() 
 {
   o_c_name:pipo *loc;
   /* type must exists */
-  nsp_type_o_name:pipo = new_type_o_name:pipo(T_BASE);
-  if ( (loc = malloc(sizeof(o_c_name:pipo)))== NULLO_NAME:PIPO) return loc;
+  nsp_type_o_name = new_type_o_name(T_BASE);
+  if ( (loc = malloc(sizeof(o_c_name:pipo)))== NULLO_NAME) return loc;
   /* initialize object */
-  if ( init_o_name:pipo(loc,nsp_type_o_name:pipo) == FAIL) return NULLO_NAME:PIPO;
+  if ( init_o_name(loc,nsp_type_o_name) == FAIL) return NULLO_NAME;
   return loc;
 }
 
@@ -192,7 +204,7 @@ o_c_name:pipo *new_o_name:pipo()
  * size 
  */
 
-static int nsp_o_name:pipo_size(o_c_name:pipo *Mat, int flag)
+static int nsp_o_name_size(o_c_name:pipo *Mat, int flag)
 {
   return 1;
 }
@@ -201,27 +213,27 @@ static int nsp_o_name:pipo_size(o_c_name:pipo *Mat, int flag)
  * type as string 
  */
 
-static char o_name:pipo_type_name[]="o_name:pipo";
-static char o_name:pipo_short_type_name[]="o_name:pipo";
+static char o_name_type_name[]="o_name";
+static char o_name_short_type_name[]="o_name";
 
-static char *nsp_o_name:pipo_type_as_string(void)
+static char *nsp_o_name_type_as_string(void)
 {
-  return(o_name:pipo_type_name);
+  return(o_name_type_name);
 }
 
-static char *nsp_o_name:pipo_type_short_string(NspObject *v)
+static char *nsp_o_name_type_short_string(NspObject *v)
 {
-  return(o_name:pipo_short_type_name);
+  return(o_name_short_type_name);
 }
 
 /*
  * A == B 
  */
 
-static int nsp_o_name:pipo_eq(o_c_name:pipo *A, NspObject *B)
+static int nsp_o_name_eq(o_c_name:pipo *A, NspObject *B)
 {
   o_c_name:pipo *loc = (o_c_name:pipo *) B;
-  if ( check_cast(B,nsp_type_o_name:pipo_id) == FALSE) return FALSE ;
+  if ( check_cast(B,nsp_type_o_name_id) == FALSE) return FALSE ;
   if ( A->obj == loc->obj ) return TRUE;
   if ( A->obj->pipo2 != loc->obj->pipo2) return FALSE;
   if ( strcmp(A->obj->pipo2,loc->obj->pipo2) != 0) return FALSE;
@@ -232,21 +244,21 @@ static int nsp_o_name:pipo_eq(o_c_name:pipo *A, NspObject *B)
  * A != B 
  */
 
-static int nsp_o_name:pipo_neq(o_c_name:pipo *A, NspObject *B)
+static int nsp_o_name_neq(o_c_name:pipo *A, NspObject *B)
 {
-  return ( nsp_o_name:pipo_eq(A,B) == TRUE ) ? FALSE : TRUE;
+  return ( nsp_o_name_eq(A,B) == TRUE ) ? FALSE : TRUE;
 }
 
 /*
  * save 
  */
 
-int nsp_o_name:pipo_xdr_save(XDR *xdrs, o_c_name:pipo *M)
+int nsp_o_name_xdr_save(XDR *xdrs, o_c_name:pipo *M)
 {
   /* if (nsp_xdr_save_id(xdrs,NSP_OBJECT(M)) == FAIL) return FAIL;*/
   /* if (nsp_xdr_save_i(xdrs,M->type->id) == FAIL) return FAIL; */ 
   if (nsp_xdr_save_i(xdrs,nsp_dynamic_id) == FAIL) return FAIL;
-  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_o_name:pipo)) == FAIL) return FAIL;
+  if (nsp_xdr_save_string(xdrs,type_get_name(nsp_type_o_name)) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs, NSP_OBJECT(M)->name) == FAIL) return FAIL;
   if (nsp_xdr_save_d(xdrs, M->obj->pipo2) == FAIL) return FAIL;
   if (nsp_xdr_save_string(xdrs,M->obj->pipo2) == FAIL) return FAIL;
@@ -258,7 +270,7 @@ int nsp_o_name:pipo_xdr_save(XDR *xdrs, o_c_name:pipo *M)
  * load 
  */
 
-o_c_name:pipo  *nsp_o_name:pipo_xdr_load_partial(XDR *xdrs, o_c_name:pipo *M)
+o_c_name:pipo  *nsp_o_name_xdr_load_partial(XDR *xdrs, o_c_name:pipo *M)
 {
   int fid;
   char name[NAME_MAXL];
@@ -275,15 +287,15 @@ o_c_name:pipo  *nsp_o_name:pipo_xdr_load_partial(XDR *xdrs, o_c_name:pipo *M)
  return M;
 }
 
-static o_c_name:pipo  *nsp_o_name:pipo_xdr_load(XDR *xdrs)
+static o_c_name:pipo  *nsp_o_name_xdr_load(XDR *xdrs)
 {
   o_c_name:pipo *H = NULL;
   char name[NAME_MAXL];
-  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLO_NAME:PIPO;
-  if ((H  = nsp_o_name:pipo_create_void(name,(NspTypeBase *) nsp_type_o_name:pipo))== NULLO_NAME:PIPO) return H;
-  if ( nsp_o_name:pipo_create_partial(H) == FAIL) return NULLO_NAME:PIPO;
-  if ((H  = nsp_o_name:pipo_xdr_load_partial(xdrs,H))== NULLO_NAME:PIPO) return H;
-  if ( nsp_o_name:pipo_check_values(H) == FAIL) return NULLO_NAME:PIPO;
+  if (nsp_xdr_load_string(xdrs,name,NAME_MAXL) == FAIL) return NULLO_NAME;
+  if ((H  = nsp_o_name_create_void(name,(NspTypeBase *) nsp_type_o_name))== NULLO_NAME) return H;
+  if ( nsp_o_name_create_partial(H) == FAIL) return NULLO_NAME;
+  if ((H  = nsp_o_name_xdr_load_partial(xdrs,H))== NULLO_NAME) return H;
+  if ( nsp_o_name_check_values(H) == FAIL) return NULLO_NAME;
   return H;
 }
 
@@ -291,7 +303,7 @@ static o_c_name:pipo  *nsp_o_name:pipo_xdr_load(XDR *xdrs)
  * delete 
  */
 
-void nsp_o_name:pipo_destroy_partial(o_c_name:pipo *H)
+void nsp_o_name_destroy_partial(o_c_name:pipo *H)
 {
   nsp_parent:poo_destroy_partial((Nspparent:poo * ) H);
    H->obj->ref_count--;
@@ -302,10 +314,10 @@ void nsp_o_name:pipo_destroy_partial(o_c_name:pipo *H)
    }
 }
 
-void nsp_o_name:pipo_destroy(o_c_name:pipo *H)
+void nsp_o_name_destroy(o_c_name:pipo *H)
 {
   nsp_object_destroy_name(NSP_OBJECT(H));
-  nsp_o_name:pipo_destroy_partial(H);
+  nsp_o_name_destroy_partial(H);
   FREE(H);
 }
 
@@ -313,17 +325,17 @@ void nsp_o_name:pipo_destroy(o_c_name:pipo *H)
  * info 
  */
 
-int nsp_o_name:pipo_info(o_c_name:pipo *M,int indent,const char *name,int rec_level)
+int nsp_o_name_info(o_c_name:pipo *M,int indent,const char *name,int rec_level)
 {
   const char *pname;
-  if ( M == NULLO_NAME:PIPO) 
+  if ( M == NULLO_NAME) 
     {
       Sciprintf("Null Pointer o_c_name:pipo \n");
       return TRUE;
     }
   pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   Sciprintf1(indent,"%%s\t=\t\t%%s\n", (pname==NULL) ? "" : pname,
-             nsp_o_name:pipo_type_short_string(NSP_OBJECT(M)));
+             nsp_o_name_type_short_string(NSP_OBJECT(M)));
   return TRUE;
 }
 
@@ -331,10 +343,10 @@ int nsp_o_name:pipo_info(o_c_name:pipo *M,int indent,const char *name,int rec_le
  * print 
  */
 
-int nsp_o_name:pipo_print(o_c_name:pipo *M, int indent,const char *name, int rec_level)
+int nsp_o_name_print(o_c_name:pipo *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
-  if ( M == NULLO_NAME:PIPO) 
+  if ( M == NULLO_NAME) 
     {
       Sciprintf("Null Pointer o_c_name:pipo \n");
       return TRUE;
@@ -347,10 +359,10 @@ int nsp_o_name:pipo_print(o_c_name:pipo *M, int indent,const char *name, int rec
     { 
       if ( user_pref.pr_depth  <= rec_level -1 ) 
         {
-          nsp_o_name:pipo_info(M,indent,pname,rec_level);
+          nsp_o_name_info(M,indent,pname,rec_level);
           return TRUE;
         }
-      Sciprintf1(indent,"%%s\t=\t\t%%s (nref=%d)\n",pname, nsp_o_name:pipo_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
+      Sciprintf1(indent,"%%s\t=\t\t%%s (nref=%d)\n",pname, nsp_o_name_type_short_string(NSP_OBJECT(M)) ,M->obj->ref_count);
       Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"pipo2=%f\n" M->obj->pipo2);
   Sciprintf1(indent+2,"pipo2=%s\n",M->obj->pipo2);
@@ -364,11 +376,11 @@ int nsp_o_name:pipo_print(o_c_name:pipo *M, int indent,const char *name, int rec
  * latex print 
  */
 
-int nsp_o_name:pipo_latex(o_c_name:pipo *M, int indent,const char *name, int rec_level)
+int nsp_o_name_latex(o_c_name:pipo *M, int indent,const char *name, int rec_level)
 {
   const char *pname = (name != NULL) ? name : NSP_OBJECT(M)->name;
   if ( nsp_from_texmacs() == TRUE ) Sciprintf("\002latex:\\[");
-  Sciprintf1(indent,"%%s\t=\t\t%%s\n",pname, nsp_o_name:pipo_type_short_string(NSP_OBJECT(M)));
+  Sciprintf1(indent,"%%s\t=\t\t%%s\n",pname, nsp_o_name_type_short_string(NSP_OBJECT(M)));
   Sciprintf1(indent+1,"{\n");
   Sciprintf1(indent+2,"pipo2=%f\n" M->obj->pipo2);
   Sciprintf1(indent+2,"pipo2=%s\n",M->obj->pipo2);
@@ -383,37 +395,37 @@ int nsp_o_name:pipo_latex(o_c_name:pipo *M, int indent,const char *name, int rec
  * Note that some of these functions could become MACROS
  *-----------------------------------------------------*/
 
-o_c_name:pipo   *nsp_o_name:pipo_object(NspObject *O)
+o_c_name:pipo   *nsp_o_name_object(NspObject *O)
 {
   /* Follow pointer */
   if ( check_cast(O,nsp_type_hobj_id) == TRUE)  O = ((NspHobj *) O)->O ;
   /* Check type */
-  if ( check_cast (O,nsp_type_o_name:pipo_id) == TRUE ) return ((o_c_name:pipo *) O);
+  if ( check_cast (O,nsp_type_o_name_id) == TRUE ) return ((o_c_name:pipo *) O);
   else 
-    Scierror("Error:	Argument should be a %%s\n",type_get_name(nsp_type_o_name:pipo));
+    Scierror("Error:	Argument should be a %%s\n",type_get_name(nsp_type_o_name));
   return NULL;
 }
 
-int Iso_name:pipoObj(Stack stack, int i)
+int Iso_nameObj(Stack stack, int i)
 {
-  return nsp_object_type(NthObj(i),nsp_type_o_name:pipo_id);
+  return nsp_object_type(NthObj(i),nsp_type_o_name_id);
 }
 
-int Iso_name:pipo(NspObject *O)
+int Iso_name(NspObject *O)
 {
-  return nsp_object_type(O,nsp_type_o_name:pipo_id);
+  return nsp_object_type(O,nsp_type_o_name_id);
 }
 
-o_c_name:pipo  *Geto_name:pipoCopy(Stack stack, int i)
+o_c_name:pipo  *Geto_nameCopy(Stack stack, int i)
 {
-  if (  Geto_name:pipo(stack,i) == NULL ) return NULL;
+  if (  Geto_name(stack,i) == NULL ) return NULL;
   return MaybeObjCopy(&NthObj(i));
 }
 
-o_c_name:pipo  *Geto_name:pipo(Stack stack, int i)
+o_c_name:pipo  *Geto_name(Stack stack, int i)
 {
   o_c_name:pipo *M;
-  if (( M = nsp_o_name:pipo_object(NthObj(i))) == NULLO_NAME:PIPO)
+  if (( M = nsp_o_name_object(NthObj(i))) == NULLO_NAME)
      ArgMessage(stack,i);
   return M;
 }
@@ -424,30 +436,30 @@ o_c_name:pipo  *Geto_name:pipo(Stack stack, int i)
  * create a o_c_name:pipo instance 
  *-----------------------------------------------------*/
 
-static o_c_name:pipo *nsp_o_name:pipo_create_void(const char *name,NspTypeBase *type)
+static o_c_name:pipo *nsp_o_name_create_void(const char *name,NspTypeBase *type)
 {
- o_c_name:pipo *H  = (type == NULL) ? new_o_name:pipo() : type->new();
- if ( H ==  NULLO_NAME:PIPO)
+ o_c_name:pipo *H  = (type == NULL) ? new_o_name() : type->new();
+ if ( H ==  NULLO_NAME)
   {
    Sciprintf("No more memory\n");
-   return NULLO_NAME:PIPO;
+   return NULLO_NAME;
   }
- if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLO_NAME:PIPO;
+ if ( nsp_object_set_initial_name(NSP_OBJECT(H),name) == NULLSTRING) return NULLO_NAME;
  NSP_OBJECT(H)->ret_pos = -1 ;
  return H;
 }
 
-int nsp_o_name:pipo_create_partial(o_c_name:pipo *H)
+int nsp_o_name_create_partial(o_c_name:pipo *H)
 {
   if ( nsp_parent:poo_create_partial((Nspparent:poo * ) H)== FAIL) return FAIL;
-  if((H->obj = calloc(1,sizeof(nsp_o_name:pipo)))== NULL ) return FAIL;
+  if((H->obj = calloc(1,sizeof(nsp_o_name)))== NULL ) return FAIL;
   H->obj->ref_count=1;
   H->obj->pipo2 = pipo4;
   H->obj->pipo2 = nsp_new_string("pipo4",-1);
   return OK;
 }
 
-int nsp_o_name:pipo_check_values(o_c_name:pipo *H)
+int nsp_o_name_check_values(o_c_name:pipo *H)
 {
   if ( H->obj->pipo2 == NULL) 
     {
@@ -458,23 +470,23 @@ int nsp_o_name:pipo_check_values(o_c_name:pipo *H)
   return OK;
 }
 
-o_c_name:pipo *nsp_o_name:pipo_create(const char *name,double pipo2string pipo2,NspTypeBase *type)
+o_c_name:pipo *nsp_o_name_create(const char *name,double pipo2string pipo2,NspTypeBase *type)
 {
-  o_c_name:pipo *H  = nsp_o_name:pipo_create_void(name,type);
-  if ( H ==  NULLO_NAME:PIPO) return NULLO_NAME:PIPO;
+  o_c_name:pipo *H  = nsp_o_name_create_void(name,type);
+  if ( H ==  NULLO_NAME) return NULLO_NAME;
   H->pipo2=->pipo2;
   if ((H->pipo2 = nsp_string_copy(->pipo2)) == NULL) return NULL;
-  if ( nsp_o_name:pipo_check_values(H) == FAIL) return NULLO_NAME:PIPO;
+  if ( nsp_o_name_check_values(H) == FAIL) return NULLO_NAME;
   return H;
 }
 
 
-o_c_name:pipo *nsp_o_name:pipo_create_default(const char *name)
+o_c_name:pipo *nsp_o_name_create_default(const char *name)
 {
- o_c_name:pipo *H  = nsp_o_name:pipo_create_void(name,NULL);
- if ( H ==  NULLO_NAME:PIPO) return NULLO_NAME:PIPO;
-  if ( nsp_o_name:pipo_create_partial(H) == FAIL) return NULLO_NAME:PIPO;
- if ( nsp_o_name:pipo_check_values(H) == FAIL) return NULLO_NAME:PIPO;
+ o_c_name:pipo *H  = nsp_o_name_create_void(name,NULL);
+ if ( H ==  NULLO_NAME) return NULLO_NAME;
+  if ( nsp_o_name_create_partial(H) == FAIL) return NULLO_NAME;
+ if ( nsp_o_name_check_values(H) == FAIL) return NULLO_NAME;
  return H;
 }
 
@@ -482,17 +494,17 @@ o_c_name:pipo *nsp_o_name:pipo_create_default(const char *name)
  * copy for gobject derived class  
  */
 
-o_c_name:pipo *nsp_o_name:pipo_copy_partial(o_c_name:pipo *H,o_c_name:pipo *self)
+o_c_name:pipo *nsp_o_name_copy_partial(o_c_name:pipo *H,o_c_name:pipo *self)
 {
   H->obj = self->obj; self->obj->ref_count++;
   return H;
 }
 
-o_c_name:pipo *nsp_o_name:pipo_copy(o_c_name:pipo *self)
+o_c_name:pipo *nsp_o_name_copy(o_c_name:pipo *self)
 {
-  o_c_name:pipo *H  =nsp_o_name:pipo_create_void(NVOID,(NspTypeBase *) nsp_type_o_name:pipo);
-  if ( H ==  NULLO_NAME:PIPO) return NULLO_NAME:PIPO;
-  if ( nsp_o_name:pipo_copy_partial(H,self)== NULL) return NULLO_NAME:PIPO;
+  o_c_name:pipo *H  =nsp_o_name_create_void(NVOID,(NspTypeBase *) nsp_type_o_name);
+  if ( H ==  NULLO_NAME) return NULLO_NAME;
+  if ( nsp_o_name_copy_partial(H,self)== NULL) return NULLO_NAME;
 
   return H;
 }
@@ -500,21 +512,21 @@ o_c_name:pipo *nsp_o_name:pipo_copy(o_c_name:pipo *self)
  * full copy for gobject derived class
  */
 
-o_c_name:pipo *nsp_o_name:pipo_full_copy_partial(o_c_name:pipo *H,o_c_name:pipo *self)
+o_c_name:pipo *nsp_o_name_full_copy_partial(o_c_name:pipo *H,o_c_name:pipo *self)
 {
-  if ((H->obj = calloc(1,sizeof(nsp_o_name:pipo))) == NULL) return NULLO_NAME:PIPO;
+  if ((H->obj = calloc(1,sizeof(nsp_o_name))) == NULL) return NULLO_NAME;
   H->obj->ref_count=1;
   H->pipo2=self->obj->pipo2;
   if ((H->pipo2 = nsp_string_copy(self->obj->pipo2)) == NULL) return NULL;
   return H;
 }
 
-o_c_name:pipo *nsp_o_name:pipo_full_copy(o_c_name:pipo *self)
+o_c_name:pipo *nsp_o_name_full_copy(o_c_name:pipo *self)
 {
-  o_c_name:pipo *H  =nsp_o_name:pipo_create_void(NVOID,(NspTypeBase *) nsp_type_o_name:pipo);
-  if ( H ==  NULLO_NAME:PIPO) return NULLO_NAME:PIPO;
-  if ( nsp_parent:poo_full_copy_partial((Nspparent:poo *) H,(Nspparent:poo *) self ) == NULL) return NULLO_NAME:PIPO;
-  if ( nsp_o_name:pipo_full_copy_partial(H,self)== NULL) return NULLO_NAME:PIPO;
+  o_c_name:pipo *H  =nsp_o_name_create_void(NVOID,(NspTypeBase *) nsp_type_o_name);
+  if ( H ==  NULLO_NAME) return NULLO_NAME;
+  if ( nsp_parent:poo_full_copy_partial((Nspparent:poo *) H,(Nspparent:poo *) self ) == NULL) return NULLO_NAME;
+  if ( nsp_o_name_full_copy_partial(H,self)== NULL) return NULLO_NAME;
   return H;
 }
 
@@ -523,17 +535,17 @@ o_c_name:pipo *nsp_o_name:pipo_full_copy(o_c_name:pipo *self)
  * i.e functions at Nsp level 
  *-------------------------------------------------------------------*/
 
-int int_o_name:pipo_create(Stack stack, int rhs, int opt, int lhs)
+int int_o_name_create(Stack stack, int rhs, int opt, int lhs)
 {
   o_c_name:pipo *H;
   CheckStdRhs(0,0);
-  /* want to be sure that type o_name:pipo is initialized */
-  nsp_type_o_name:pipo = new_type_o_name:pipo(T_BASE);
-  if(( H = nsp_o_name:pipo_create_void(NVOID,(NspTypeBase *) nsp_type_o_name:pipo)) == NULLO_NAME:PIPO) return RET_BUG;
+  /* want to be sure that type o_name is initialized */
+  nsp_type_o_name = new_type_o_name(T_BASE);
+  if(( H = nsp_o_name_create_void(NVOID,(NspTypeBase *) nsp_type_o_name)) == NULLO_NAME) return RET_BUG;
   /* then we use optional arguments to fill attributes */
-  if ( nsp_o_name:pipo_create_partial(H) == FAIL) return RET_BUG;
+  if ( nsp_o_name_create_partial(H) == FAIL) return RET_BUG;
   if ( int_create_with_attributes((NspObject  * ) H,stack,rhs,opt,lhs) == RET_BUG)  return RET_BUG;
- if ( nsp_o_name:pipo_check_values(H) == FAIL) return RET_BUG;
+ if ( nsp_o_name_check_values(H) == FAIL) return RET_BUG;
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 } 
