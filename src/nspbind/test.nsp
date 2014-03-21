@@ -553,6 +553,30 @@ int int_o_name_create(Stack stack, int rhs, int opt, int lhs)
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
+METHODS: start
+in write_function_wrapper
+in write_function_wrapper 2
+in write_function_wrapper 3
+in write_function_wrapper 4
+static int _wrap_f_c_name_is_pipo(%(typename)s *self,Stack stack,int rhs,int opt,int lhs)
+{
+  int_types T[] = {string,s_double, t_end};
+  double pname_arg2 = pdflt_arg2;
+  char *pname_arg1 = "pdflt_arg1";
+  const gchar *ret;
+  if ( GetArgs(stack,rhs,opt,T,&pname_arg1,&pname_arg2) == FAIL) return RET_BUG;
+  ret =f_c_name_is_pipo(selfpname_arg1,pname_arg2);
+  if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
+  return 1;
+}
+
+static NspMethods o_name_methods[] = {
+  { NULL, NULL}
+  {"f_name_is_zoe",(nsp_method *) _wrap_f_c_name_is_pipo},
+};
+
+static NspMethods *o_name_get_methods(void) { return o_name_methods;};
+METHODS: end 
 
 /* DEBUG: generation of functions *//*-------------------------------------------
  * functions 
