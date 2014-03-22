@@ -253,6 +253,7 @@ MATLAB_PRINTING_BYT_OBJS=\
  $(MATLAB_PRINTING_DIR)/mtlb_ppf.cmo\
  $(MATLAB_PRINTING_DIR)/overrides.cmo\
  $(MATLAB_PRINTING_DIR)/stringarg.cmo\
+ $(MATLAB_PRINTING_DIR)/definitions.cmo\
  $(MATLAB_PRINTING_DIR)/build.cmo\
  $(MATLAB_PRINTING_DIR)/genheaders.cmo\
  $(MATLAB_PRINTING_DIR)/genfunctions.cmo\
