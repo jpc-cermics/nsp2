@@ -210,6 +210,7 @@ MATLAB_PARSE_BYT_OBJS=\
  $(MATLAB_PARSING_DIR)/mtlb_parser.cmo\
  $(MATLAB_PARSING_DIR)/lisp_parser.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_to_ast.cmo\
+ $(MATLAB_PARSING_DIR)/lisp_to_ast.cmo\
 
 MATLAB_PARSE_CAML_FILES=\
  $(MATLAB_PARSING_DIR)/ast_node.mli\
@@ -221,6 +222,7 @@ MATLAB_PARSE_CAML_FILES=\
  $(MATLAB_PARSING_DIR)/lisp_parser.mly\
  $(MATLAB_PARSING_DIR)/lisp_parser.mli\
  $(MATLAB_PARSING_DIR)/mtlb_to_ast.mli\
+ $(MATLAB_PARSING_DIR)/lisp_to_ast.mli\
  $(MATLAB_PARSE_BYT_OBJS:.cmo=.ml)\
 
 MATLAB_PARSE_CAML_GENERATED_FILES=\
