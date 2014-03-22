@@ -186,16 +186,20 @@ $(CONFIGURATION_DIR)/simport_configuration_print.ml:\
 MATLAB_LEX_BYT_OBJS=\
  $(MATLAB_PARSING_DIR)/mtlb_location.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_lexer.cmo\
+ $(MATLAB_PARSING_DIR)/lisp_lexer.cmo\
 
 MATLAB_LEX_CAML_FILES=\
  $(MATLAB_PARSING_DIR)/mtlb_location.mli\
  $(MATLAB_PARSING_DIR)/mtlb_lexer.mll\
+ $(MATLAB_PARSING_DIR)/lisp_lexer.mll\
  $(MATLAB_LEX_BYT_OBJS:.cmo=.ml)\
 
 MATLAB_LEX_CAML_GENERATED_FILES=\
  $(MATLAB_PARSING_DIR)/mtlb_lexer.ml\
+ $(MATLAB_PARSING_DIR)/lisp_lexer.ml\
 
 MATLAB_PARSE_BYT_OBJS=\
+ $(MATLAB_PARSING_DIR)/lisp_ast.cmo\
  $(MATLAB_PARSING_DIR)/ast_node_utils.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_syntaxerr.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_ast_funs.cmo\
@@ -204,6 +208,7 @@ MATLAB_PARSE_BYT_OBJS=\
  $(MATLAB_PARSING_DIR)/ast_node_print.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_ast_print.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_parser.cmo\
+ $(MATLAB_PARSING_DIR)/lisp_parser.cmo\
  $(MATLAB_PARSING_DIR)/mtlb_to_ast.cmo\
 
 MATLAB_PARSE_CAML_FILES=\
@@ -213,6 +218,8 @@ MATLAB_PARSE_CAML_FILES=\
  $(MATLAB_PARSING_DIR)/mtlb_syntaxerr.mli\
  $(MATLAB_PARSING_DIR)/mtlb_parser.mly\
  $(MATLAB_PARSING_DIR)/mtlb_parser.mli\
+ $(MATLAB_PARSING_DIR)/lisp_parser.mly\
+ $(MATLAB_PARSING_DIR)/lisp_parser.mli\
  $(MATLAB_PARSING_DIR)/mtlb_to_ast.mli\
  $(MATLAB_PARSE_BYT_OBJS:.cmo=.ml)\
 
@@ -222,6 +229,8 @@ MATLAB_PARSE_CAML_GENERATED_FILES=\
  $(MATLAB_PARSING_DIR)/mtlb_ast_print.ml\
  $(MATLAB_PARSING_DIR)/mtlb_parser.mli\
  $(MATLAB_PARSING_DIR)/mtlb_parser.ml\
+ $(MATLAB_PARSING_DIR)/lisp_parser.mli\
+ $(MATLAB_PARSING_DIR)/lisp_parser.ml\
 
 # Refrain from using $< in this rule: this is a non portable gnu-ism.
 $(MATLAB_PARSING_DIR)/mtlb_location_print.ml:\
