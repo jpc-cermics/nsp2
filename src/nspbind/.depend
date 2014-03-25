@@ -175,13 +175,15 @@
     ./src/matlab/parsing/lisp_to_ast.cmi
 ./src/matlab/printing/genheaders.cmi:
 ./src/matlab/printing/mtlb_ppf.cmi: ./src/configuration/format_printer.cmi
-./src/matlab/printing/stringarg.cmi:
+./src/matlab/printing/stringarg.cmi: ./src/basics/hash_table.cmi
 ./src/matlab/printing/mtlb_ppf.cmo: ./src/matlab/printing/mtlb_ppf.cmi
 ./src/matlab/printing/mtlb_ppf.cmx: ./src/matlab/printing/mtlb_ppf.cmi
 ./src/matlab/printing/overrides.cmo: ./src/basics/hash_table.cmi
 ./src/matlab/printing/overrides.cmx: ./src/basics/hash_table.cmx
-./src/matlab/printing/stringarg.cmo: ./src/matlab/printing/stringarg.cmi
-./src/matlab/printing/stringarg.cmx: ./src/matlab/printing/stringarg.cmi
+./src/matlab/printing/stringarg.cmo: ./src/basics/hash_table.cmi \
+    ./src/matlab/printing/stringarg.cmi
+./src/matlab/printing/stringarg.cmx: ./src/basics/hash_table.cmx \
+    ./src/matlab/printing/stringarg.cmi
 ./src/matlab/printing/definitions.cmo: ./src/matlab/printing/stringarg.cmi \
     ./src/matlab/parsing/lisp_ast.cmo
 ./src/matlab/printing/definitions.cmx: ./src/matlab/printing/stringarg.cmx \
@@ -210,14 +212,14 @@
     ./src/matlab/printing/overrides.cmx ./src/matlab/printing/genmethods.cmx \
     ./src/matlab/printing/genheaders.cmx \
     ./src/matlab/printing/genfunctions.cmx ./src/matlab/printing/build.cmx
-./src/matlab/printing/override_print.cmo: ./src/matlab/printing/overrides.cmo \
-    ./src/matlab/parsing/mtlb_to_ast.cmi \
+./src/matlab/printing/override_print.cmo: ./src/matlab/printing/stringarg.cmi \
+    ./src/matlab/printing/overrides.cmo ./src/matlab/parsing/mtlb_to_ast.cmi \
     ./src/matlab/parsing/mtlb_location.cmi ./src/matlab/parsing/mtlb_ast.cmi \
     ./src/matlab/parsing/lisp_to_ast.cmi \
     ./src/matlab/printing/definitions.cmo ./src/matlab/printing/codegen.cmo \
     ./src/matlab/parsing/ast_node.cmi
-./src/matlab/printing/override_print.cmx: ./src/matlab/printing/overrides.cmx \
-    ./src/matlab/parsing/mtlb_to_ast.cmx \
+./src/matlab/printing/override_print.cmx: ./src/matlab/printing/stringarg.cmx \
+    ./src/matlab/printing/overrides.cmx ./src/matlab/parsing/mtlb_to_ast.cmx \
     ./src/matlab/parsing/mtlb_location.cmx ./src/matlab/parsing/mtlb_ast.cmi \
     ./src/matlab/parsing/lisp_to_ast.cmx \
     ./src/matlab/printing/definitions.cmx ./src/matlab/printing/codegen.cmx \
