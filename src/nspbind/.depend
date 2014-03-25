@@ -180,10 +180,10 @@
 ./src/matlab/printing/mtlb_ppf.cmx: ./src/matlab/printing/mtlb_ppf.cmi
 ./src/matlab/printing/overrides.cmo: ./src/basics/hash_table.cmi
 ./src/matlab/printing/overrides.cmx: ./src/basics/hash_table.cmx
-./src/matlab/printing/stringarg.cmo: ./src/basics/hash_table.cmi \
-    ./src/matlab/printing/stringarg.cmi
-./src/matlab/printing/stringarg.cmx: ./src/basics/hash_table.cmx \
-    ./src/matlab/printing/stringarg.cmi
+./src/matlab/printing/stringarg.cmo: ./src/matlab/printing/overrides.cmo \
+    ./src/basics/hash_table.cmi ./src/matlab/printing/stringarg.cmi
+./src/matlab/printing/stringarg.cmx: ./src/matlab/printing/overrides.cmx \
+    ./src/basics/hash_table.cmx ./src/matlab/printing/stringarg.cmi
 ./src/matlab/printing/definitions.cmo: ./src/matlab/printing/stringarg.cmi \
     ./src/matlab/parsing/lisp_ast.cmo
 ./src/matlab/printing/definitions.cmx: ./src/matlab/printing/stringarg.cmx \
