@@ -20,6 +20,8 @@ class ObjectDef(Definition):
 	self.parent = None
 	self.c_name = None
         self.typecode = None
+        self.byref = None
+        self.is_interface = None
 	self.fields = []
         self.implements = []
 	for arg in args:
@@ -63,6 +65,84 @@ class ObjectDef(Definition):
             fp.write('  )\n')
 	fp.write(')\n\n')
 
+
+class ObjectRefDef(ObjectDef):
+    def __init__(self, name, *args):
+	self.name = name
+	self.module = None
+	self.parent = None
+	self.c_name = None
+        self.typecode = None
+        self.byref = 't'
+        self.is_interface = None
+	self.fields = []
+        self.implements = []
+	for arg in args:
+	    if type(arg) != type(()) or len(arg) < 2:
+		continue
+	    if arg[0] == 'in-module':
+		self.module = arg[1]
+	    elif arg[0] == 'parent':
+                self.parent = arg[1]
+	    elif arg[0] == 'c-name':
+		self.c_name = arg[1]
+	    elif arg[0] == 'gtype-id':
+		self.typecode = arg[1]
+	    elif arg[0] == 'fields':
+                for parg in arg[1:]:
+                    # we can add an optional field at the end if set to hidden 
+                    # then the field is not setable 
+                    # parg_hidden : variable is not added to set/get method 
+                    parg_hidden= 'ok'
+                    # code used verbatim to set default value 
+                    parg_default= 'no'
+                    # size for a fixed array
+                    parg_size= ''
+                    # code used to check variable 
+                    parg_check= 'no'
+                    if len(parg) == 1: 
+                        fp=sys.stderr
+                        fp.write('field ' + parg[1] + ' has no name\n')
+                    if len(parg) >= 3:
+                        if parg[2] == 'hidden': 
+                            parg_hidden = parg[2]
+                        elif parg[2] == 'std': 
+                            parg_hidden = 'ok'
+                        else: 
+                            fp=sys.stderr
+                            fp.write('option ' + parg[2] + 'for field ' + parg[1] +'is not know and ignored\n')
+                    if len(parg) >= 4:
+                        parg_default=parg[3]
+                    if len(parg) >= 5: 
+                        parg_size =parg[4]
+                    if len(parg) >= 6: 
+                        parg_check =parg[5]
+                        
+                    #
+                    self.fields.append((parg[0], parg[1],parg_hidden,parg_default,parg_size, parg_check ))
+            elif arg[0] == 'implements':
+                self.implements.append(arg[1])
+
+    def write_defs(self, fp=sys.stdout):
+	fp.write('(define-objectref ' + self.name + '\n')
+	if self.module:
+	    fp.write('  (in-module "' + self.module + '")\n')
+	if self.parent != (None, None):	
+	    fp.write('  (parent "' + self.parent + '")\n')
+        for interface in self.implements:
+            fp.write('  (implements "' + interface + '")\n')
+	if self.c_name:
+	    fp.write('  (c-name "' + self.c_name + '")\n')
+	if self.typecode:
+	    fp.write('  (gtype-id "' + self.typecode + '")\n')
+        if self.fields:
+            fp.write('  (fields\n')
+            for (ftype, fname) in self.fields:
+                fp.write('    \'("' + ftype + '" "' + fname + '")\n')
+            fp.write('  )\n')
+	fp.write(')\n\n')
+
+
 class InterfaceDef(Definition):
     def __init__(self, name, *args):
 	self.name = name
@@ -71,6 +151,8 @@ class InterfaceDef(Definition):
         # en attendant que les interfaces soient propres 
         self.parent = 'GObject'
         self.typecode = None
+        self.byref = None
+        self.is_interface = 't'
 	self.fields = []
         self.implements = []
 	for arg in args:
@@ -213,6 +295,77 @@ class PointerDef(Definition):
 	self.fields = old.fields
     def write_defs(self, fp=sys.stdout):
 	fp.write('(define-pointer ' + self.name + '\n')
+	if self.module:
+	    fp.write('  (in-module "' + self.module + '")\n')
+	if self.c_name:
+	    fp.write('  (c-name "' + self.c_name + '")\n')
+	if self.typecode:
+	    fp.write('  (gtype-id "' + self.typecode + '")\n')
+        if self.fields:
+            fp.write('  (fields\n')
+            for (ftype, fname) in self.fields:
+                fp.write('    \'("' + ftype + '" "' + fname + '")\n')
+            fp.write('  )\n')
+	fp.write(')\n\n')
+
+
+class StructDef(Definition):
+    def __init__(self, name, *args):
+	self.name = name
+	self.module = None
+	self.c_name = None
+        self.parent = 'GPointer'
+        self.typecode = None
+	self.fields = []
+        self.implements = []
+	for arg in args:
+	    if type(arg) != type(()) or len(arg) < 2:
+		continue
+	    if arg[0] == 'in-module':
+		self.module = arg[1]
+	    elif arg[0] == 'c-name':
+		self.c_name = arg[1]
+	    elif arg[0] == 'gtype-id':
+		self.typecode = arg[1]
+	    elif arg[0] == 'fields':
+                for parg in arg[1:]:
+                    # we can add an optional field at the end if set to hidden 
+                    # then the field is not setable 
+                    # parg_hidden : variable is not added to set/get method 
+                    parg_hidden= 'ok'
+                    # code used verbatim to set default value 
+                    parg_default= 'no'
+                    # size for a fixed array
+                    parg_size= ''
+                    # code used to check variable 
+                    parg_check= 'no'
+                    if len(parg) == 1: 
+                        fp=sys.stderr
+                        fp.write('field ' + parg[1] + ' has no name\n')
+                    if len(parg) >= 3:
+                        if parg[2] == 'hidden': 
+                            parg_hidden = parg[2]
+                        elif parg[2] == 'std': 
+                            parg_hidden = 'ok'
+                        else: 
+                            fp=sys.stderr
+                            fp.write('option ' + parg[2] + 'for field ' + parg[1] +'is not know and ignored\n')
+                    if len(parg) >= 4:
+                        parg_default=parg[3]
+                    if len(parg) >= 5: 
+                        parg_size =parg[4]
+                    if len(parg) >= 6: 
+                        parg_check =parg[5]
+                        
+                    #
+                    self.fields.append((parg[0], parg[1],parg_hidden,parg_default,parg_size, parg_check ))
+    def merge(self, old):
+	# currently the .h parser doesn't try to work out what fields of
+	# an object structure should be public, so we just copy the list
+	# from the old version ...
+	self.fields = old.fields
+    def write_defs(self, fp=sys.stdout):
+	fp.write('(define-struct ' + self.name + '\n')
 	if self.module:
 	    fp.write('  (in-module "' + self.module + '")\n')
 	if self.c_name:
