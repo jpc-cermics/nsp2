@@ -61,6 +61,9 @@ val set_source_file_basename  : Path.file_name -> unit;;
 val set_overrides_source_file : Path.file_name -> unit;;
 val set_target_file : Path.file_name -> unit;;
 
+val set_prefix : string -> unit;;
+val get_prefix : unit -> string;;
+
 val get_source_file_basename  : unit -> Path.file_name;;
 
 (*

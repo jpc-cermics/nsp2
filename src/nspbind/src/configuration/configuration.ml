@@ -53,6 +53,7 @@ let conf = {
   source_file_basename = None;
 
   target_file = None;
+  prefix = None;
 }
 ;;
 
@@ -168,6 +169,22 @@ let set_target_file fname =
     conf.target_file <- Some fname;
 ;;
 
+let set_prefix str = 
+  conf.prefix <- Some str;
+;;
+
+let get_prefix () = 
+  let str = 
+    match conf.prefix with 
+    | Some str -> str 
+    | None -> 
+	(
+	 match conf.source_file_basename with 
+	 | Some fname -> fname
+	 | _ -> failwith "undefined prefix" 
+	) in 
+  String.capitalize str
+;;
 
 let is_definitions_source_file_name fname =
   Path.check_extension fname definitions_source_file_extension

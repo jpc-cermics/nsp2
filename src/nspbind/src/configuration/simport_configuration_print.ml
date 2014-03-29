@@ -27,6 +27,7 @@ let print_configuration ppf = function
       Simport_configuration.definitions_source_file = p_f_o0;
       Simport_configuration.overrides_source_file = p_f_o1;
       Simport_configuration.target_file = p_f_o2;
+      Simport_configuration.prefix = s_o;
     } ->
     Format.fprintf ppf "%,@[<1>{@,";
     Format.fprintf ppf "%,@[<1>software_name =@ ";
@@ -48,6 +49,8 @@ let print_configuration ppf = function
     Format.fprintf ppf "%,;@]@ ";
     Format.fprintf ppf "%,@[<1>target_file =@ ";
     Lib_print.print_Option Path_print.print_file_name ppf p_f_o2;
+    Format.fprintf ppf "%,;@]@ "; Format.fprintf ppf "%,@[<1>prefix =@ ";
+    Lib_print.print_Option Lib_print.print_quoted_string ppf s_o;
     Format.fprintf ppf "%,;@]@ "; Format.fprintf ppf "%,@,}@]"
 ;;
 

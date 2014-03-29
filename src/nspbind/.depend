@@ -123,12 +123,10 @@
 ./src/matlab/parsing/mtlb_syntaxerr.cmx: \
     ./src/matlab/parsing/mtlb_location.cmx \
     ./src/matlab/parsing/mtlb_syntaxerr.cmi
-./src/matlab/parsing/mtlb_ast_funs.cmo: \
-    ./src/matlab/parsing/mtlb_location.cmi ./src/matlab/parsing/mtlb_ast.cmi \
-    ./src/matlab/parsing/ast_node_utils.cmi ./src/matlab/parsing/ast_node.cmi
-./src/matlab/parsing/mtlb_ast_funs.cmx: \
-    ./src/matlab/parsing/mtlb_location.cmx ./src/matlab/parsing/mtlb_ast.cmi \
-    ./src/matlab/parsing/ast_node_utils.cmx ./src/matlab/parsing/ast_node.cmi
+./src/matlab/parsing/mtlb_ast_funs.cmo: ./src/matlab/parsing/mtlb_ast.cmi \
+    ./src/matlab/parsing/ast_node_utils.cmi
+./src/matlab/parsing/mtlb_ast_funs.cmx: ./src/matlab/parsing/mtlb_ast.cmi \
+    ./src/matlab/parsing/ast_node_utils.cmx
 ./src/matlab/parsing/lexing_print.cmo: ./src/basics/lib_print.cmi
 ./src/matlab/parsing/lexing_print.cmx: ./src/basics/lib_print.cmx
 ./src/matlab/parsing/mtlb_location_print.cmo: \
@@ -232,14 +230,16 @@
 ./src/matlab/printing/override_print.cmo: ./src/matlab/printing/stringarg.cmi \
     ./src/matlab/printing/overrides.cmo ./src/matlab/parsing/mtlb_to_ast.cmi \
     ./src/matlab/parsing/mtlb_location.cmi ./src/matlab/parsing/mtlb_ast.cmi \
-    ./src/matlab/parsing/lisp_to_ast.cmi \
-    ./src/matlab/printing/definitions.cmo ./src/matlab/printing/codegen.cmo \
+    ./src/matlab/parsing/lisp_to_ast.cmi ./src/matlab/printing/file.cmi \
+    ./src/matlab/printing/definitions.cmo \
+    ./src/configuration/configuration.cmi ./src/matlab/printing/codegen.cmo \
     ./src/matlab/parsing/ast_node.cmi
 ./src/matlab/printing/override_print.cmx: ./src/matlab/printing/stringarg.cmx \
     ./src/matlab/printing/overrides.cmx ./src/matlab/parsing/mtlb_to_ast.cmx \
     ./src/matlab/parsing/mtlb_location.cmx ./src/matlab/parsing/mtlb_ast.cmi \
-    ./src/matlab/parsing/lisp_to_ast.cmx \
-    ./src/matlab/printing/definitions.cmx ./src/matlab/printing/codegen.cmx \
+    ./src/matlab/parsing/lisp_to_ast.cmx ./src/matlab/printing/file.cmx \
+    ./src/matlab/printing/definitions.cmx \
+    ./src/configuration/configuration.cmx ./src/matlab/printing/codegen.cmx \
     ./src/matlab/parsing/ast_node.cmi
 ./src/compiler/main_gen.cmi:
 ./src/compiler/mdl_compile.cmi: ./src/basics/path.cmi

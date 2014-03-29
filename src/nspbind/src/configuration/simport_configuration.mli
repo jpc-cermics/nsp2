@@ -37,7 +37,8 @@ type configuration = {
   mutable definitions_source_file : Path.file_name option;
   mutable overrides_source_file : Path.file_name option; 
   mutable target_file : Path.file_name option; 
-    
+
+  mutable prefix : string option;
 }
 ;;
 

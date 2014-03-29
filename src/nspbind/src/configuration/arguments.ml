@@ -73,6 +73,8 @@ let parse_args () =
      ": set the no warnings mode");
     ("-no-warnings", Arg.Unit Configuration.set_no_warnings,
      ": set the no warnings mode");
+    ("-p", Arg.String Configuration.set_prefix,
+     ": set prefix");
     ("-version", Arg.Unit print_version,
      ": print the version of simport");
     ("-where", Arg.Unit print_where,
