@@ -23,7 +23,7 @@ let compile _src_fname =
   Path.with_out_file dst_efname 
     (fun oc ->
       let ppf = Format.formatter_of_out_channel oc in
-      Format.fprintf ppf "%a@."
+      Format.fprintf ppf "%a" (* XXX on devrait ici fermer la boite @. *)
 	Override_print.translate_file dst_efname)
 ;;
 
