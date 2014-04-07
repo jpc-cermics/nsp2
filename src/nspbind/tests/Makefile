@@ -13,20 +13,24 @@ ALL=  classa.c classb.c classaref.c classbref.c \
 	hm.c agraph.c ast.c astv.c bvar.c \
 	stochdec.c bson.c 
 
+DIFF=$(patsubst %.c,%.diff,$(ALL))
+
 PROG=../bin/simport 
 SRC=/usr/local/src/nsp2-ref/src/types-test/
 
 all:	$(ALL)
 
+%.diff: %.c	
+	@echo "-------- diff $*.c -------------------"
+	@diff -riw $*.c $(SRC); $$status 
+
+%.c: %.defs
+	$(PROG) -o $*.c $*
+
+diff: $(DIFF)
+
 clean:
 	rm -f *.c *.h
-
-.defs.diff:
-	touch $*.defs; make $*.c
-	diff -riw $(SRC)$*.c $*.c 
-
-.defs.c:
-	$(PROG) -o $*.c $*
 
 classa.c : classa-types.defs classa.defs classa.override 
 
@@ -115,5 +119,27 @@ bvar.c : bvar.defs bvar-types.defs bvar.override
 stochdec.c : stochdec.defs stochdec-types.defs stochdec.override 
 
 bson.c : bson.defs bson-types.defs bson.override 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
