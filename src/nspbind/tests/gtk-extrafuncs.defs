@@ -1,0 +1,208 @@
+; -*- scheme -*-
+
+(define-method flags
+  (of-object "GtkObject")
+  (c-name "GTK_OBJECT_FLAGS")
+  (return-type "guint")
+)
+
+(define-method set_flags
+  (of-object "GtkObject")
+  (c-name "GTK_OBJECT_SET_FLAGS")
+  (return-type "none")
+  (parameters
+    '("guint" "flags")
+  )
+)
+
+(define-method unset_flags
+  (of-object "GtkObject")
+  (c-name "GTK_OBJECT_UNSET_FLAGS")
+  (return-type "none")
+  (parameters
+    '("guint" "flags")
+  )
+)
+
+(define-method get_allocation
+  (of-object "GtkWidget")
+  (c-name "gtk_widget_get_allocation")
+  (return-type "GtkAllocation")
+)
+
+(define-method get_selection
+  (of-object "GtkList")
+  (c-name "gtk_list_get_selection")
+  (return-type "GList*")
+)
+
+(define-method set_all
+  (of-object "GtkAdjustment")
+  (c-name "gtk_adjustment_set_all")
+  (return-type "none")
+  (parameters
+    '("gfloat" "value")
+    '("gfloat" "lower")
+    '("gfloat" "upper")
+    '("gfloat" "step_increment")
+    '("gfloat" "page_increment")
+    '("gfloat" "page_size")
+  )
+  (deprecated "use individual setters")
+)
+
+
+;; jpc extra function to access style array 
+
+(define-method get_fg
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_fg")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_bg
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_bg")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_light
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_light")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_dark
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_dark")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_mid
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_mid")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_text
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_text")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_base
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_base")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_text_aa
+  (of-object "GtkStyle")
+  (c-name "nsp_style_color_array_get_text_aa")
+  (return-type "GdkColor*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_fg_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_fg_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_bg_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_bg_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_light_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_light_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_dark_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_dark_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_mid_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_mid_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_text_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_text_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_base_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_base_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_text_aa_gc
+  (of-object "GtkStyle")
+  (c-name "nsp_style_gc_array_get_text_aa_gc")
+  (return-type "GdkGC*")
+  (parameters
+   '("gint" "pos"))
+)
+
+(define-method get_bg_pixmap
+  (of-object "GtkStyle")
+  (c-name "nsp_style_pixmap_array_get_bg_pixmap")
+  (return-type "GdkPixmap*")
+  (parameters
+   '("gint" "pos"))
+)
+
+;; extra function to attach a nsp graphic window in a 
+;; gtk hierarchy 
+
+(define-function nsp_graphic_new
+  (c-name "nsp_graphic_new")
+  (return-type "none")
+  (parameters
+    '("GtkWidget" "window")
+    '("GtkWidget" "vbox")
+    '("int" "winnum" (default "-1"))
+    '("int*" "wdim" (default "NULL"))
+    '("int*" "wpdim" (default "NULL"))
+    '("int*" "viewport" (default "NULL"))
+    '("int*" "wpos" (default "NULL"))
+    )
+)
