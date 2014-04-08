@@ -18,7 +18,9 @@ let compile _src_fname =
   let dst_efname = Configuration.get_target_file () in 
   let src_overrides_efname = Path.find (Configuration.get_overrides_source_file ()) in 
   let src_definitions_efname = Path.find (Configuration.get_definitions_source_file ()) in 
+  Printf.printf "Debug: Enter overrides_init \n%!";
   Override_print.overrides_init src_overrides_efname;
+  Printf.printf "Debug: Enter definitions_init \n%!";
   Override_print.definitions_init src_definitions_efname;
   Path.with_out_file dst_efname 
     (fun oc ->

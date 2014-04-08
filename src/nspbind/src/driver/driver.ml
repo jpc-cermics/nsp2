@@ -18,7 +18,9 @@ let treat_file _ppf src_fname =
   Mdl_compile.compile src_fname
 ;;
 
-let do_compile = Main_gen.do_phase "compil" treat_file;;
+let do_compile = 
+  Printf.printf "Debug: Enter main\n%!";
+  Main_gen.do_phase "compil" treat_file;;
 
 let main ppf = Arguments.main do_compile ppf;;
 
