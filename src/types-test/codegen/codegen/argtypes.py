@@ -23,7 +23,7 @@ class VarList:
 	    ret.append(string.join(self.vars[type], ', '))
 	    ret.append(';\n')
 	if ret:
-            ret.append('\n')
+            # ret.append('\n')
             return string.join(ret, '')
 	return ''
 
@@ -1436,7 +1436,7 @@ class ObjectArg(ArgType):
         #pos gives the position of the argument
         if psize:
             info.codebefore.append('/*  %s << size %s*/\n' % (pname,psize) )
-        info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
+        # info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
         info.attrcodebefore.append('  %s= %s;\n' % (pset_name,pname))
 
     def write_return(self, ptype, ownsreturn, info):
@@ -2109,7 +2109,7 @@ class NspObjectArg(ArgType):
         #pos gives the position of the argument
         if psize:
             info.codebefore.append('/*  %s << size %s*/\n' % (pname,psize) )
-        info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
+        # info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
 
 
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
@@ -2217,7 +2217,7 @@ class NspGenericArg(ArgType):
         #pos gives the position of the argument
         if psize:
             info.codebefore.append('/*  %s << size %s*/\n' % (pname,psize) )
-        info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
+        # info.codebefore.append('/* %s << %d */\n' % (pname,pos) )
 
     def attr_write_set(self,upinfo, ptype, pname, pdflt, pnull, psize, info, pos, byref):
         if byref == 't' :
@@ -2371,7 +2371,7 @@ class NspMatArg(ArgType):
         #pos gives the position of the argument
         if psize:
             info.codebefore.append('/* %s << size %s*/\n' % (pname,psize) )
-        info.codebefore.append(' /* %s << %d*/\n' % (pname,pos) )
+        # info.codebefore.append(' /* %s << %d*/\n' % (pname,pos) )
     def write_param(self, upinfo,ptype, pname, pdflt, pnull, psize,info, pos, byref):
         self.write_param_gen( ptype, pname, pdflt, pnull, psize,info,pos, 'mat',byref)
 

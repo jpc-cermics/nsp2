@@ -1657,9 +1657,9 @@ class Wrapper:
             flags = 'METH_VARARGS|METH_KEYWORDS'
 
             # prepend the keyword list to the variable list
-            substdict['varlist'] = info.get_tylist() + info.get_kwlist() + substdict['varlist']
+            substdict['varlist'] = info.get_tylist() + info.get_kwlist() + substdict['varlist']             
         else:
-            substdict['varlist'] = info.get_tylist() + substdict['varlist']
+            substdict['varlist'] = info.get_tylist() +  substdict['varlist']
             substdict['parseargs'] = '  CheckRhs(0,0);\n'
             substdict['extraparams'] = ''
             flags = 'METH_NOARGS'
@@ -2210,7 +2210,7 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
         fp.write( tag) 
     else:
         fp.write( tag) 
-        fp.resetline()
+        # fp.resetline()
 
     type_tmpl_copyright = \
         ' *\n' \

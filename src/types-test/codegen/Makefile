@@ -25,7 +25,7 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
 	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
 	../hm.c ../../libgraphviz/agraph.c ../ast.c ../astv.c ../bvar.c \
-	../stochdec.c ../bson.c 
+	../stochdec.c ../bson.c test.c
 
 all:: $(ALL)
 	cd ../; make all
@@ -334,3 +334,9 @@ xxall:: ../../liblowdisc/ldfaure.c
 	    --override bson.override \
 	    --prefix Bson bson.defs) > $*.c \
 	&& mv bson.h mclient.h  mcollection.h  mcursor.h ../../include/nsp 
+
+test.c : test.defs test.override codegen/*.py
+	($(PYTHON) codegen/codegen.py \
+	    --override test.override \
+	    --prefix test test.defs) > $*.c 
+

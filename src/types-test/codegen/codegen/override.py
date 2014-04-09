@@ -114,6 +114,7 @@ class Overrides:
         elif words[0] == 'copyright':
             self.copyright = '#line %d "codegen/%s"\n%s' % \
                            ( startline + 1, filename, rest)
+            self.copyright = '%s' % rest 
         elif words[0] == 'override-type':
             slot = words[1]
             self.override_type[slot] = rest
