@@ -867,7 +867,6 @@ static NspMethods *axes_get_methods(void) { return NULL;};
 static NspObject *_wrap_axes_get_wrect(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspAxes *) self)->obj->wrect;
   return (NspObject *) ret;
 }
@@ -875,7 +874,6 @@ static NspObject *_wrap_axes_get_wrect(void *self,const char *attr)
 static NspObject *_wrap_axes_get_obj_wrect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspAxes *) self)->obj->wrect);
   return (NspObject *) ret;
@@ -884,7 +882,6 @@ static NspObject *_wrap_axes_get_obj_wrect(void *self,const char *attr, int *cop
 static int _wrap_axes_set_wrect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *wrect;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((wrect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->wrect != NULL ) 
@@ -908,12 +905,11 @@ static int _wrap_axes_set_rho(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 912 "axes.c"
+#line 909 "axes.c"
 static NspObject *_wrap_axes_get_rho(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->rho;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -923,7 +919,6 @@ static NspObject *_wrap_axes_get_top(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->top;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -932,7 +927,6 @@ static NspObject *_wrap_axes_get_top(void *self,const char *attr)
 static int _wrap_axes_set_top(void *self,const char *attr, NspObject *O)
 {
   int top;
-
   if ( BoolScalar(O,&top) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->top= top;
   return OK;
@@ -941,7 +935,6 @@ static int _wrap_axes_set_top(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_arect(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspAxes *) self)->obj->arect;
   return (NspObject *) ret;
 }
@@ -949,7 +942,6 @@ static NspObject *_wrap_axes_get_arect(void *self,const char *attr)
 static NspObject *_wrap_axes_get_obj_arect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspAxes *) self)->obj->arect);
   return (NspObject *) ret;
@@ -958,7 +950,6 @@ static NspObject *_wrap_axes_get_obj_arect(void *self,const char *attr, int *cop
 static int _wrap_axes_set_arect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *arect;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((arect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->arect != NULL ) 
@@ -970,7 +961,6 @@ static int _wrap_axes_set_arect(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_frect(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspAxes *) self)->obj->frect;
   return (NspObject *) ret;
 }
@@ -978,7 +968,6 @@ static NspObject *_wrap_axes_get_frect(void *self,const char *attr)
 static NspObject *_wrap_axes_get_obj_frect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspAxes *) self)->obj->frect);
   return (NspObject *) ret;
@@ -987,7 +976,6 @@ static NspObject *_wrap_axes_get_obj_frect(void *self,const char *attr, int *cop
 static int _wrap_axes_set_frect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *frect;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((frect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->frect != NULL ) 
@@ -1000,7 +988,6 @@ static NspObject *_wrap_axes_get_title(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->title;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -1009,7 +996,6 @@ static NspObject *_wrap_axes_get_title(void *self,const char *attr)
 static int _wrap_axes_set_title(void *self,const char *attr, NspObject *O)
 {
   char *title;
-
   if ((title = nsp_string_object(O))==NULL) return FAIL;
   if ((title = nsp_string_copy(title)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspAxes *) self)->obj->title);
@@ -1021,7 +1007,6 @@ static NspObject *_wrap_axes_get_x(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->x;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -1030,7 +1015,6 @@ static NspObject *_wrap_axes_get_x(void *self,const char *attr)
 static int _wrap_axes_set_x(void *self,const char *attr, NspObject *O)
 {
   char *x;
-
   if ((x = nsp_string_object(O))==NULL) return FAIL;
   if ((x = nsp_string_copy(x)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspAxes *) self)->obj->x);
@@ -1042,7 +1026,6 @@ static NspObject *_wrap_axes_get_y(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->y;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -1051,7 +1034,6 @@ static NspObject *_wrap_axes_get_y(void *self,const char *attr)
 static int _wrap_axes_set_y(void *self,const char *attr, NspObject *O)
 {
   char *y;
-
   if ((y = nsp_string_object(O))==NULL) return FAIL;
   if ((y = nsp_string_copy(y)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspAxes *) self)->obj->y);
@@ -1115,11 +1097,10 @@ static int _wrap_axes_set_children(void *self, char *attr, NspObject *O)
 }
 
 
-#line 1119 "axes.c"
+#line 1101 "axes.c"
 static NspObject *_wrap_axes_get_children(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspAxes *) self)->obj->children;
   return (NspObject *) ret;
 }
@@ -1128,7 +1109,6 @@ static NspObject *_wrap_axes_get_fixed(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->fixed;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1137,7 +1117,6 @@ static NspObject *_wrap_axes_get_fixed(void *self,const char *attr)
 static int _wrap_axes_set_fixed(void *self,const char *attr, NspObject *O)
 {
   int fixed;
-
   if ( BoolScalar(O,&fixed) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->fixed= fixed;
   return OK;
@@ -1147,7 +1126,6 @@ static NspObject *_wrap_axes_get_iso(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->iso;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1156,7 +1134,6 @@ static NspObject *_wrap_axes_get_iso(void *self,const char *attr)
 static int _wrap_axes_set_iso(void *self,const char *attr, NspObject *O)
 {
   int iso;
-
   if ( BoolScalar(O,&iso) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->iso= iso;
   return OK;
@@ -1166,7 +1143,6 @@ static NspObject *_wrap_axes_get_auto_axis(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->auto_axis;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1175,7 +1151,6 @@ static NspObject *_wrap_axes_get_auto_axis(void *self,const char *attr)
 static int _wrap_axes_set_auto_axis(void *self,const char *attr, NspObject *O)
 {
   int auto_axis;
-
   if ( BoolScalar(O,&auto_axis) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->auto_axis= auto_axis;
   return OK;
@@ -1184,7 +1159,6 @@ static int _wrap_axes_set_auto_axis(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_grid(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspAxes *) self)->obj->grid;
   return nsp_new_double_obj((double) ret);
 }
@@ -1192,7 +1166,6 @@ static NspObject *_wrap_axes_get_grid(void *self,const char *attr)
 static int _wrap_axes_set_grid(void *self,const char *attr, NspObject *O)
 {
   int grid;
-
   if ( IntScalar(O,&grid) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->grid= grid;
   return OK;
@@ -1201,7 +1174,6 @@ static int _wrap_axes_set_grid(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_axes(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspAxes *) self)->obj->axes;
   return nsp_new_double_obj((double) ret);
 }
@@ -1209,7 +1181,6 @@ static NspObject *_wrap_axes_get_axes(void *self,const char *attr)
 static int _wrap_axes_set_axes(void *self,const char *attr, NspObject *O)
 {
   int axes;
-
   if ( IntScalar(O,&axes) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->axes= axes;
   return OK;
@@ -1219,7 +1190,6 @@ static NspObject *_wrap_axes_get_xlog(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->xlog;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1228,7 +1198,6 @@ static NspObject *_wrap_axes_get_xlog(void *self,const char *attr)
 static int _wrap_axes_set_xlog(void *self,const char *attr, NspObject *O)
 {
   int xlog;
-
   if ( BoolScalar(O,&xlog) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->xlog= xlog;
   return OK;
@@ -1238,7 +1207,6 @@ static NspObject *_wrap_axes_get_ylog(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->ylog;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1247,7 +1215,6 @@ static NspObject *_wrap_axes_get_ylog(void *self,const char *attr)
 static int _wrap_axes_set_ylog(void *self,const char *attr, NspObject *O)
 {
   int ylog;
-
   if ( BoolScalar(O,&ylog) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->ylog= ylog;
   return OK;
@@ -1256,7 +1223,6 @@ static int _wrap_axes_set_ylog(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_lpos(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspAxes *) self)->obj->lpos;
   return nsp_new_double_obj((double) ret);
 }
@@ -1264,7 +1230,6 @@ static NspObject *_wrap_axes_get_lpos(void *self,const char *attr)
 static int _wrap_axes_set_lpos(void *self,const char *attr, NspObject *O)
 {
   int lpos;
-
   if ( IntScalar(O,&lpos) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->lpos= lpos;
   return OK;
@@ -1273,7 +1238,6 @@ static int _wrap_axes_set_lpos(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_rect(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspAxes *) self)->obj->rect;
   return (NspObject *) ret;
 }
@@ -1281,7 +1245,6 @@ static NspObject *_wrap_axes_get_rect(void *self,const char *attr)
 static NspObject *_wrap_axes_get_obj_rect(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspAxes *) self)->obj->rect);
   return (NspObject *) ret;
@@ -1290,7 +1253,6 @@ static NspObject *_wrap_axes_get_obj_rect(void *self,const char *attr, int *copy
 static int _wrap_axes_set_rect(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *rect;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((rect = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspAxes *) self)->obj->rect != NULL ) 
@@ -1303,7 +1265,6 @@ static NspObject *_wrap_axes_get_zoom(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->zoom;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1312,7 +1273,6 @@ static NspObject *_wrap_axes_get_zoom(void *self,const char *attr)
 static int _wrap_axes_set_zoom(void *self,const char *attr, NspObject *O)
 {
   int zoom;
-
   if ( BoolScalar(O,&zoom) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->zoom= zoom;
   return OK;
@@ -1322,7 +1282,6 @@ static NspObject *_wrap_axes_get_clip(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspAxes *) self)->obj->clip;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1331,7 +1290,6 @@ static NspObject *_wrap_axes_get_clip(void *self,const char *attr)
 static int _wrap_axes_set_clip(void *self,const char *attr, NspObject *O)
 {
   int clip;
-
   if ( BoolScalar(O,&clip) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->clip= clip;
   return OK;
@@ -1340,7 +1298,6 @@ static int _wrap_axes_set_clip(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_line_width(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspAxes *) self)->obj->line_width;
   return nsp_new_double_obj((double) ret);
 }
@@ -1348,7 +1305,6 @@ static NspObject *_wrap_axes_get_line_width(void *self,const char *attr)
 static int _wrap_axes_set_line_width(void *self,const char *attr, NspObject *O)
 {
   int line_width;
-
   if ( IntScalar(O,&line_width) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->line_width= line_width;
   return OK;
@@ -1357,7 +1313,6 @@ static int _wrap_axes_set_line_width(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_font_size(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspAxes *) self)->obj->font_size;
   return nsp_new_double_obj((double) ret);
 }
@@ -1365,7 +1320,6 @@ static NspObject *_wrap_axes_get_font_size(void *self,const char *attr)
 static int _wrap_axes_set_font_size(void *self,const char *attr, NspObject *O)
 {
   int font_size;
-
   if ( IntScalar(O,&font_size) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->font_size= font_size;
   return OK;
@@ -1374,7 +1328,6 @@ static int _wrap_axes_set_font_size(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_axes_get_background(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspAxes *) self)->obj->background;
   return nsp_new_double_obj((double) ret);
 }
@@ -1382,7 +1335,6 @@ static NspObject *_wrap_axes_get_background(void *self,const char *attr)
 static int _wrap_axes_set_background(void *self,const char *attr, NspObject *O)
 {
   int background;
-
   if ( IntScalar(O,&background) == FAIL) return FAIL;
   ((NspAxes *) self)->obj->background= background;
   return OK;
@@ -1428,7 +1380,7 @@ int _wrap_nsp_extractelts_axes(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1432 "axes.c"
+#line 1384 "axes.c"
 
 
 #line 190 "codegen/axes.override"
@@ -1441,7 +1393,7 @@ int _wrap_nsp_setrowscols_axes(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 1445 "axes.c"
+#line 1397 "axes.c"
 
 
 /*----------------------------------------------------
@@ -2411,4 +2363,4 @@ static int getticks(double xmin,double xmax,double *grads,int *start)
 }
 
 
-#line 2415 "axes.c"
+#line 2367 "axes.c"

@@ -1261,7 +1261,6 @@ static int _wrap_diagram_set_children(void *self, char *attr, NspObject *O)
 static NspObject *_wrap_diagram_get_children(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspDiagram *) self)->obj->children;
   return (NspObject *) ret;
 }
@@ -1284,7 +1283,7 @@ int _wrap_nsp_extractelts_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1288 "diagram.c"
+#line 1287 "diagram.c"
 
 
 #line 218 "codegen/diagram.override"
@@ -1296,7 +1295,7 @@ int _wrap_nsp_setrowscols_diagram(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1300 "diagram.c"
+#line 1299 "diagram.c"
 
 
 /*----------------------------------------------------
@@ -2919,4 +2918,4 @@ static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only)
 
 
 
-#line 2923 "diagram.c"
+#line 2922 "diagram.c"

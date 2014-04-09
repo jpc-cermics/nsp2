@@ -612,7 +612,6 @@ static NspMethods *box3d_get_methods(void) { return NULL;};
 static NspObject *_wrap_box3d_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspBox3d *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -620,7 +619,6 @@ static NspObject *_wrap_box3d_get_x(void *self,const char *attr)
 static NspObject *_wrap_box3d_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspBox3d *) self)->obj->x);
   return (NspObject *) ret;
@@ -629,7 +627,6 @@ static NspObject *_wrap_box3d_get_obj_x(void *self,const char *attr, int *copy)
 static int _wrap_box3d_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspBox3d *) self)->obj->x != NULL ) 
@@ -641,7 +638,6 @@ static int _wrap_box3d_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_box3d_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspBox3d *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -649,7 +645,6 @@ static NspObject *_wrap_box3d_get_y(void *self,const char *attr)
 static NspObject *_wrap_box3d_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspBox3d *) self)->obj->y);
   return (NspObject *) ret;
@@ -658,7 +653,6 @@ static NspObject *_wrap_box3d_get_obj_y(void *self,const char *attr, int *copy)
 static int _wrap_box3d_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspBox3d *) self)->obj->y != NULL ) 
@@ -670,7 +664,6 @@ static int _wrap_box3d_set_y(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_box3d_get_z(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspBox3d *) self)->obj->z;
   return (NspObject *) ret;
 }
@@ -678,7 +671,6 @@ static NspObject *_wrap_box3d_get_z(void *self,const char *attr)
 static NspObject *_wrap_box3d_get_obj_z(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspBox3d *) self)->obj->z);
   return (NspObject *) ret;
@@ -687,7 +679,6 @@ static NspObject *_wrap_box3d_get_obj_z(void *self,const char *attr, int *copy)
 static int _wrap_box3d_set_z(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *z;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((z = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspBox3d *) self)->obj->z != NULL ) 
@@ -700,7 +691,6 @@ static NspObject *_wrap_box3d_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspBox3d *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -709,7 +699,6 @@ static NspObject *_wrap_box3d_get_mesh(void *self,const char *attr)
 static int _wrap_box3d_set_mesh(void *self,const char *attr, NspObject *O)
 {
   int mesh;
-
   if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
   ((NspBox3d *) self)->obj->mesh= mesh;
   return OK;
@@ -718,7 +707,6 @@ static int _wrap_box3d_set_mesh(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_box3d_get_mesh_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspBox3d *) self)->obj->mesh_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -726,7 +714,6 @@ static NspObject *_wrap_box3d_get_mesh_color(void *self,const char *attr)
 static int _wrap_box3d_set_mesh_color(void *self,const char *attr, NspObject *O)
 {
   int mesh_color;
-
   if ( IntScalar(O,&mesh_color) == FAIL) return FAIL;
   ((NspBox3d *) self)->obj->mesh_color= mesh_color;
   return OK;
@@ -735,7 +722,6 @@ static int _wrap_box3d_set_mesh_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_box3d_get_face_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspBox3d *) self)->obj->face_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -743,7 +729,6 @@ static NspObject *_wrap_box3d_get_face_color(void *self,const char *attr)
 static int _wrap_box3d_set_face_color(void *self,const char *attr, NspObject *O)
 {
   int face_color;
-
   if ( IntScalar(O,&face_color) == FAIL) return FAIL;
   ((NspBox3d *) self)->obj->face_color= face_color;
   return OK;
@@ -772,7 +757,7 @@ int _wrap_nsp_extractelts_box3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 776 "box3d.c"
+#line 761 "box3d.c"
 
 
 #line 64 "codegen/box3d.override"
@@ -785,7 +770,7 @@ int _wrap_nsp_setrowscols_box3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 789 "box3d.c"
+#line 774 "box3d.c"
 
 
 /*----------------------------------------------------
@@ -873,4 +858,4 @@ static int nsp_getbounds_box3d(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 877 "box3d.c"
+#line 862 "box3d.c"

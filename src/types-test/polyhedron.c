@@ -674,7 +674,6 @@ static NspMethods *polyhedron_get_methods(void) { return NULL;};
 static NspObject *_wrap_polyhedron_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPolyhedron *) self)->obj->Mcoord;
   return (NspObject *) ret;
 }
@@ -682,7 +681,6 @@ static NspObject *_wrap_polyhedron_get_Mcoord(void *self,const char *attr)
 static NspObject *_wrap_polyhedron_get_obj_Mcoord(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPolyhedron *) self)->obj->Mcoord);
   return (NspObject *) ret;
@@ -691,7 +689,6 @@ static NspObject *_wrap_polyhedron_get_obj_Mcoord(void *self,const char *attr, i
 static int _wrap_polyhedron_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcoord;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyhedron *) self)->obj->Mcoord != NULL ) 
@@ -703,7 +700,6 @@ static int _wrap_polyhedron_set_Mcoord(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_polyhedron_get_Mface(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPolyhedron *) self)->obj->Mface;
   return (NspObject *) ret;
 }
@@ -711,7 +707,6 @@ static NspObject *_wrap_polyhedron_get_Mface(void *self,const char *attr)
 static NspObject *_wrap_polyhedron_get_obj_Mface(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPolyhedron *) self)->obj->Mface);
   return (NspObject *) ret;
@@ -720,7 +715,6 @@ static NspObject *_wrap_polyhedron_get_obj_Mface(void *self,const char *attr, in
 static int _wrap_polyhedron_set_Mface(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mface;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mface = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyhedron *) self)->obj->Mface != NULL ) 
@@ -732,7 +726,6 @@ static int _wrap_polyhedron_set_Mface(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_polyhedron_get_Mcolor(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPolyhedron *) self)->obj->Mcolor;
   return (NspObject *) ret;
 }
@@ -740,7 +733,6 @@ static NspObject *_wrap_polyhedron_get_Mcolor(void *self,const char *attr)
 static NspObject *_wrap_polyhedron_get_obj_Mcolor(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPolyhedron *) self)->obj->Mcolor);
   return (NspObject *) ret;
@@ -749,7 +741,6 @@ static NspObject *_wrap_polyhedron_get_obj_Mcolor(void *self,const char *attr, i
 static int _wrap_polyhedron_set_Mcolor(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcolor;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mcolor = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyhedron *) self)->obj->Mcolor != NULL ) 
@@ -761,7 +752,6 @@ static int _wrap_polyhedron_set_Mcolor(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_polyhedron_get_Mback_color(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPolyhedron *) self)->obj->Mback_color;
   return (NspObject *) ret;
 }
@@ -769,7 +759,6 @@ static NspObject *_wrap_polyhedron_get_Mback_color(void *self,const char *attr)
 static NspObject *_wrap_polyhedron_get_obj_Mback_color(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPolyhedron *) self)->obj->Mback_color);
   return (NspObject *) ret;
@@ -778,7 +767,6 @@ static NspObject *_wrap_polyhedron_get_obj_Mback_color(void *self,const char *at
 static int _wrap_polyhedron_set_Mback_color(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mback_color;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mback_color = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyhedron *) self)->obj->Mback_color != NULL ) 
@@ -791,7 +779,6 @@ static NspObject *_wrap_polyhedron_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspPolyhedron *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -800,7 +787,6 @@ static NspObject *_wrap_polyhedron_get_mesh(void *self,const char *attr)
 static int _wrap_polyhedron_set_mesh(void *self,const char *attr, NspObject *O)
 {
   int mesh;
-
   if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
   ((NspPolyhedron *) self)->obj->mesh= mesh;
   return OK;
@@ -828,7 +814,7 @@ int _wrap_nsp_extractelts_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 832 "polyhedron.c"
+#line 818 "polyhedron.c"
 
 
 #line 95 "codegen/polyhedron.override"
@@ -840,7 +826,7 @@ int _wrap_nsp_setrowscols_polyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 844 "polyhedron.c"
+#line 830 "polyhedron.c"
 
 
 #line 105 "codegen/polyhedron.override"
@@ -858,7 +844,7 @@ int _wrap_nsp_surf_to_coords(Stack stack, int rhs, int opt, int lhs) /* surf_to_
   return 1;
 }
 
-#line 862 "polyhedron.c"
+#line 848 "polyhedron.c"
 
 
 #line 121 "codegen/polyhedron.override"
@@ -874,7 +860,7 @@ int _wrap_nsp_surf_to_faces(Stack stack, int rhs, int opt, int lhs) /* surf_to_f
   return 1;
 }
 
-#line 878 "polyhedron.c"
+#line 864 "polyhedron.c"
 
 
 #line 135 "codegen/polyhedron.override"
@@ -915,7 +901,7 @@ int _wrap_nsp_facets_to_faces(Stack stack, int rhs, int opt, int lhs)
   return Max(lhs,0);
 }
 
-#line 919 "polyhedron.c"
+#line 905 "polyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1609,4 +1595,4 @@ int nsp_obj3d_orientation(int x[], int y[], int n)
     return ( -1 );
 }
 
-#line 1613 "polyhedron.c"
+#line 1599 "polyhedron.c"

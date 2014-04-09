@@ -599,9 +599,7 @@ static int _wrap_nsp_qcurve_addPts(NspQcurve *self,Stack stack,int rhs,int opt,i
 {
   int_types T[] = {mat,t_end};
   NspMatrix *pts;
-
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
-/* pts << 1 */
   nsp_qcurve_addPts(self, pts);
   return 0;
 }
@@ -610,7 +608,6 @@ static int _wrap_nsp_qcurve_enlarge(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   int_types T[] = {s_int,t_end};
   int pts, ret;
-
   if ( GetArgs(stack,rhs,opt,T,&pts) == FAIL) return RET_BUG;
   ret = nsp_qcurve_enlarge(self, pts);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -627,7 +624,6 @@ static int _wrap_nsp_qcurve_clear(NspQcurve *self,Stack stack,int rhs,int opt,in
 static int _wrap_nsp_qcurve_get_pts(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *ret;
-
   CheckRhs(0,0);
   ret = nsp_qcurve_get_pts(self);
   if ( ret == NULLMAT) return RET_BUG;
@@ -638,7 +634,6 @@ static int _wrap_nsp_qcurve_get_pts(NspQcurve *self,Stack stack,int rhs,int opt,
 static int _wrap_nsp_qcurve_get_len(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   CheckRhs(0,0);
   ret = nsp_qcurve_get_len(self);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -662,7 +657,6 @@ static NspMethods *qcurve_get_methods(void) { return qcurve_methods;};
 static NspObject *_wrap_qcurve_get_mark(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspQcurve *) self)->obj->mark;
   return nsp_new_double_obj((double) ret);
 }
@@ -670,7 +664,6 @@ static NspObject *_wrap_qcurve_get_mark(void *self,const char *attr)
 static int _wrap_qcurve_set_mark(void *self,const char *attr, NspObject *O)
 {
   int mark;
-
   if ( IntScalar(O,&mark) == FAIL) return FAIL;
   ((NspQcurve *) self)->obj->mark= mark;
   return OK;
@@ -679,7 +672,6 @@ static int _wrap_qcurve_set_mark(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_qcurve_get_width(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspQcurve *) self)->obj->width;
   return nsp_new_double_obj((double) ret);
 }
@@ -687,7 +679,6 @@ static NspObject *_wrap_qcurve_get_width(void *self,const char *attr)
 static int _wrap_qcurve_set_width(void *self,const char *attr, NspObject *O)
 {
   int width;
-
   if ( IntScalar(O,&width) == FAIL) return FAIL;
   ((NspQcurve *) self)->obj->width= width;
   return OK;
@@ -696,7 +687,6 @@ static int _wrap_qcurve_set_width(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_qcurve_get_style(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspQcurve *) self)->obj->style;
   return nsp_new_double_obj((double) ret);
 }
@@ -704,7 +694,6 @@ static NspObject *_wrap_qcurve_get_style(void *self,const char *attr)
 static int _wrap_qcurve_set_style(void *self,const char *attr, NspObject *O)
 {
   int style;
-
   if ( IntScalar(O,&style) == FAIL) return FAIL;
   ((NspQcurve *) self)->obj->style= style;
   return OK;
@@ -713,7 +702,6 @@ static int _wrap_qcurve_set_style(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_qcurve_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspQcurve *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -721,7 +709,6 @@ static NspObject *_wrap_qcurve_get_color(void *self,const char *attr)
 static int _wrap_qcurve_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspQcurve *) self)->obj->color= color;
   return OK;
@@ -741,11 +728,10 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 745 "qcurve.c"
+#line 732 "qcurve.c"
 static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspQcurve *) self)->obj->mode;
   return nsp_new_double_obj((double) ret);
 }
@@ -779,11 +765,10 @@ static int _wrap_qcurve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 783 "qcurve.c"
+#line 769 "qcurve.c"
 static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspQcurve *) self)->obj->Pts;
   return (NspObject *) ret;
 }
@@ -791,7 +776,6 @@ static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 static int _wrap_qcurve_set_Pts(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Pts;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Pts = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspQcurve *) self)->obj->Pts != NULL ) 
@@ -804,7 +788,6 @@ static NspObject *_wrap_qcurve_get_legend(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspQcurve *) self)->obj->legend;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -813,7 +796,6 @@ static NspObject *_wrap_qcurve_get_legend(void *self,const char *attr)
 static int _wrap_qcurve_set_legend(void *self,const char *attr, NspObject *O)
 {
   char *legend;
-
   if ((legend = nsp_string_object(O))==NULL) return FAIL;
   if ((legend = nsp_string_copy(legend)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspQcurve *) self)->obj->legend);
@@ -845,7 +827,7 @@ int _wrap_nsp_extractelts_qcurve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 849 "qcurve.c"
+#line 831 "qcurve.c"
 
 
 #line 118 "codegen/qcurve.override"
@@ -858,7 +840,7 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 862 "qcurve.c"
+#line 844 "qcurve.c"
 
 
 /*----------------------------------------------------
@@ -1271,4 +1253,4 @@ NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
 }
 
 
-#line 1275 "qcurve.c"
+#line 1257 "qcurve.c"

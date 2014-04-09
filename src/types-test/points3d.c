@@ -624,7 +624,6 @@ static NspMethods *points3d_get_methods(void) { return NULL;};
 static NspObject *_wrap_points3d_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPoints3d *) self)->obj->Mcoord;
   return (NspObject *) ret;
 }
@@ -632,7 +631,6 @@ static NspObject *_wrap_points3d_get_Mcoord(void *self,const char *attr)
 static NspObject *_wrap_points3d_get_obj_Mcoord(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPoints3d *) self)->obj->Mcoord);
   return (NspObject *) ret;
@@ -641,7 +639,6 @@ static NspObject *_wrap_points3d_get_obj_Mcoord(void *self,const char *attr, int
 static int _wrap_points3d_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcoord;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPoints3d *) self)->obj->Mcoord != NULL ) 
@@ -653,7 +650,6 @@ static int _wrap_points3d_set_Mcoord(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_points3d_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspPoints3d *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -661,7 +657,6 @@ static NspObject *_wrap_points3d_get_color(void *self,const char *attr)
 static int _wrap_points3d_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspPoints3d *) self)->obj->color= color;
   return OK;
@@ -670,7 +665,6 @@ static int _wrap_points3d_set_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_points3d_get_mark_type(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspPoints3d *) self)->obj->mark_type;
   return nsp_new_double_obj((double) ret);
 }
@@ -678,7 +672,6 @@ static NspObject *_wrap_points3d_get_mark_type(void *self,const char *attr)
 static int _wrap_points3d_set_mark_type(void *self,const char *attr, NspObject *O)
 {
   int mark_type;
-
   if ( IntScalar(O,&mark_type) == FAIL) return FAIL;
   ((NspPoints3d *) self)->obj->mark_type= mark_type;
   return OK;
@@ -687,7 +680,6 @@ static int _wrap_points3d_set_mark_type(void *self,const char *attr, NspObject *
 static NspObject *_wrap_points3d_get_mark_size(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspPoints3d *) self)->obj->mark_size;
   return nsp_new_double_obj((double) ret);
 }
@@ -695,7 +687,6 @@ static NspObject *_wrap_points3d_get_mark_size(void *self,const char *attr)
 static int _wrap_points3d_set_mark_size(void *self,const char *attr, NspObject *O)
 {
   int mark_size;
-
   if ( IntScalar(O,&mark_size) == FAIL) return FAIL;
   ((NspPoints3d *) self)->obj->mark_size= mark_size;
   return OK;
@@ -722,7 +713,7 @@ int _wrap_nsp_extractelts_points3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 726 "points3d.c"
+#line 717 "points3d.c"
 
 
 #line 101 "codegen/points3d.override"
@@ -735,7 +726,7 @@ int _wrap_nsp_setrowscols_points3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 739 "points3d.c"
+#line 730 "points3d.c"
 
 
 /*----------------------------------------------------
@@ -1041,4 +1032,4 @@ extern int nsp_points3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1045 "points3d.c"
+#line 1036 "points3d.c"

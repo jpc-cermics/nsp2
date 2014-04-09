@@ -581,7 +581,6 @@ static NspObject *_wrap_grrect_get_x(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrRect *) self)->obj->x;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -590,7 +589,6 @@ static NspObject *_wrap_grrect_get_x(void *self,const char *attr)
 static int _wrap_grrect_set_x(void *self,const char *attr, NspObject *O)
 {
   double x;
-
   if ( DoubleScalar(O,&x) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->x= x;
   return OK;
@@ -600,7 +598,6 @@ static NspObject *_wrap_grrect_get_y(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrRect *) self)->obj->y;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -609,7 +606,6 @@ static NspObject *_wrap_grrect_get_y(void *self,const char *attr)
 static int _wrap_grrect_set_y(void *self,const char *attr, NspObject *O)
 {
   double y;
-
   if ( DoubleScalar(O,&y) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->y= y;
   return OK;
@@ -619,7 +615,6 @@ static NspObject *_wrap_grrect_get_w(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrRect *) self)->obj->w;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -628,7 +623,6 @@ static NspObject *_wrap_grrect_get_w(void *self,const char *attr)
 static int _wrap_grrect_set_w(void *self,const char *attr, NspObject *O)
 {
   double w;
-
   if ( DoubleScalar(O,&w) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->w= w;
   return OK;
@@ -638,7 +632,6 @@ static NspObject *_wrap_grrect_get_h(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrRect *) self)->obj->h;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -647,7 +640,6 @@ static NspObject *_wrap_grrect_get_h(void *self,const char *attr)
 static int _wrap_grrect_set_h(void *self,const char *attr, NspObject *O)
 {
   double h;
-
   if ( DoubleScalar(O,&h) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->h= h;
   return OK;
@@ -656,7 +648,6 @@ static int _wrap_grrect_set_h(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grrect_get_fill_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrRect *) self)->obj->fill_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -664,7 +655,6 @@ static NspObject *_wrap_grrect_get_fill_color(void *self,const char *attr)
 static int _wrap_grrect_set_fill_color(void *self,const char *attr, NspObject *O)
 {
   int fill_color;
-
   if ( IntScalar(O,&fill_color) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->fill_color= fill_color;
   return OK;
@@ -673,7 +663,6 @@ static int _wrap_grrect_set_fill_color(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_grrect_get_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrRect *) self)->obj->thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -681,7 +670,6 @@ static NspObject *_wrap_grrect_get_thickness(void *self,const char *attr)
 static int _wrap_grrect_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-
   if ( IntScalar(O,&thickness) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->thickness= thickness;
   return OK;
@@ -690,7 +678,6 @@ static int _wrap_grrect_set_thickness(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grrect_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrRect *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -698,7 +685,6 @@ static NspObject *_wrap_grrect_get_color(void *self,const char *attr)
 static int _wrap_grrect_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->color= color;
   return OK;
@@ -708,7 +694,6 @@ static NspObject *_wrap_grrect_get_angle(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrRect *) self)->obj->angle;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -717,7 +702,6 @@ static NspObject *_wrap_grrect_get_angle(void *self,const char *attr)
 static int _wrap_grrect_set_angle(void *self,const char *attr, NspObject *O)
 {
   double angle;
-
   if ( DoubleScalar(O,&angle) == FAIL) return FAIL;
   ((NspGrRect *) self)->obj->angle= angle;
   return OK;
@@ -748,7 +732,7 @@ int _wrap_nsp_extractelts_grrect(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 752 "grrect.c"
+#line 736 "grrect.c"
 
 
 #line 71 "codegen/grrect.override"
@@ -761,7 +745,7 @@ int _wrap_nsp_setrowscols_grrect(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 765 "grrect.c"
+#line 749 "grrect.c"
 
 
 /*----------------------------------------------------
@@ -1016,4 +1000,4 @@ static int nsp_getbounds_grrect(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1020 "grrect.c"
+#line 1004 "grrect.c"

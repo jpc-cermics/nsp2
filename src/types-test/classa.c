@@ -622,7 +622,6 @@ static NspMethods *classa_get_methods(void) { return classa_methods;};
 static NspObject *_wrap_classa_get_cla_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspClassA *) self)->cla_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -630,7 +629,6 @@ static NspObject *_wrap_classa_get_cla_color(void *self,const char *attr)
 static int _wrap_classa_set_cla_color(void *self,const char *attr, NspObject *O)
 {
   int cla_color;
-
   if ( IntScalar(O,&cla_color) == FAIL) return FAIL;
   ((NspClassA *) self)->cla_color= cla_color;
   return OK;
@@ -639,7 +637,6 @@ static int _wrap_classa_set_cla_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_classa_get_cla_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspClassA *) self)->cla_thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -647,7 +644,6 @@ static NspObject *_wrap_classa_get_cla_thickness(void *self,const char *attr)
 static int _wrap_classa_set_cla_thickness(void *self,const char *attr, NspObject *O)
 {
   int cla_thickness;
-
   if ( IntScalar(O,&cla_thickness) == FAIL) return FAIL;
   ((NspClassA *) self)->cla_thickness= cla_thickness;
   return OK;
@@ -656,7 +652,6 @@ static int _wrap_classa_set_cla_thickness(void *self,const char *attr, NspObject
 static NspObject *_wrap_classa_get_cla_val(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspClassA *) self)->cla_val;
   return (NspObject *) ret;
 }
@@ -664,7 +659,6 @@ static NspObject *_wrap_classa_get_cla_val(void *self,const char *attr)
 static NspObject *_wrap_classa_get_obj_cla_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassA *) self)->cla_val);
   return (NspObject *) ret;
@@ -673,7 +667,6 @@ static NspObject *_wrap_classa_get_obj_cla_val(void *self,const char *attr, int 
 static int _wrap_classa_set_cla_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *cla_val;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((cla_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassA *) self)->cla_val != NULL ) 
@@ -685,7 +678,6 @@ static int _wrap_classa_set_cla_val(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_classa_get_cla_bval(void *self,const char *attr)
 {
   NspBMatrix *ret;
-
   ret = ((NspClassA *) self)->cla_bval;
   return (NspObject *) ret;
 }
@@ -693,7 +685,6 @@ static NspObject *_wrap_classa_get_cla_bval(void *self,const char *attr)
 static NspObject *_wrap_classa_get_obj_cla_bval(void *self,const char *attr, int *copy)
 {
   NspBMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspBMatrix*) ((NspClassA *) self)->cla_bval);
   return (NspObject *) ret;
@@ -702,7 +693,6 @@ static NspObject *_wrap_classa_get_obj_cla_bval(void *self,const char *attr, int
 static int _wrap_classa_set_cla_bval(void *self,const char *attr, NspObject *O)
 {
   NspBMatrix *cla_bval;
-
   if ( ! IsBMat(O) ) return FAIL;
   if ((cla_bval = (NspBMatrix *) nsp_object_copy_and_name(attr,O)) == NULLBMAT) return FAIL;
   if (((NspClassA *) self)->cla_bval != NULL ) 
@@ -739,11 +729,10 @@ static int _wrap_classa_set_obj_cla_lval(void *self,NspObject *val)
 }
 
 
-#line 743 "classa.c"
+#line 733 "classa.c"
 static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspClassA *) self)->cla_lval;
   return (NspObject *) ret;
 }
@@ -751,7 +740,6 @@ static NspObject *_wrap_classa_get_cla_lval(void *self,const char *attr)
 static int _wrap_classa_set_cla_lval(void *self,const char *attr, NspObject *O)
 {
   NspList *cla_lval;
-
   if ( ! IsList(O) ) return FAIL;
   if ((cla_lval = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspClassA *) self)->cla_lval != NULL ) 
@@ -792,7 +780,7 @@ static int _wrap_clatest(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 796 "classa.c"
+#line 784 "classa.c"
 
 
 #line 71 "codegen/classa.override"
@@ -800,7 +788,7 @@ static int _wrap_setrowscols_classa(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 804 "classa.c"
+#line 792 "classa.c"
 
 
 /*----------------------------------------------------
@@ -831,4 +819,4 @@ void ClassA_Interf_Info(int i, char **fname, function (**f))
   *f = ClassA_func[i].fonc;
 }
 
-#line 835 "classa.c"
+#line 823 "classa.c"

@@ -639,7 +639,6 @@ static int _wrap_compound_set_children(void *self, char *attr, NspObject *O)
 static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspCompound *) self)->obj->children;
   return (NspObject *) ret;
 }
@@ -647,7 +646,6 @@ static NspObject *_wrap_compound_get_children(void *self,const char *attr)
 static NspObject *_wrap_compound_get_hilite_type(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspCompound *) self)->obj->hilite_type;
   return nsp_new_double_obj((double) ret);
 }
@@ -655,7 +653,6 @@ static NspObject *_wrap_compound_get_hilite_type(void *self,const char *attr)
 static int _wrap_compound_set_hilite_type(void *self,const char *attr, NspObject *O)
 {
   int hilite_type;
-
   if ( IntScalar(O,&hilite_type) == FAIL) return FAIL;
   ((NspCompound *) self)->obj->hilite_type= hilite_type;
   return OK;
@@ -664,7 +661,6 @@ static int _wrap_compound_set_hilite_type(void *self,const char *attr, NspObject
 static NspObject *_wrap_compound_get_hilite_size(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspCompound *) self)->obj->hilite_size;
   return nsp_new_double_obj((double) ret);
 }
@@ -672,7 +668,6 @@ static NspObject *_wrap_compound_get_hilite_size(void *self,const char *attr)
 static int _wrap_compound_set_hilite_size(void *self,const char *attr, NspObject *O)
 {
   int hilite_size;
-
   if ( IntScalar(O,&hilite_size) == FAIL) return FAIL;
   ((NspCompound *) self)->obj->hilite_size= hilite_size;
   return OK;
@@ -681,7 +676,6 @@ static int _wrap_compound_set_hilite_size(void *self,const char *attr, NspObject
 static NspObject *_wrap_compound_get_hilite_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspCompound *) self)->obj->hilite_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -689,7 +683,6 @@ static NspObject *_wrap_compound_get_hilite_color(void *self,const char *attr)
 static int _wrap_compound_set_hilite_color(void *self,const char *attr, NspObject *O)
 {
   int hilite_color;
-
   if ( IntScalar(O,&hilite_color) == FAIL) return FAIL;
   ((NspCompound *) self)->obj->hilite_color= hilite_color;
   return OK;
@@ -716,7 +709,7 @@ int _wrap_nsp_extractelts_compound(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 720 "compound.c"
+#line 713 "compound.c"
 
 
 #line 156 "codegen/compound.override"
@@ -729,7 +722,7 @@ int _wrap_nsp_setrowscols_compound(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 733 "compound.c"
+#line 726 "compound.c"
 
 
 /*----------------------------------------------------
@@ -1077,4 +1070,4 @@ static NspList *nsp_compound_children(NspGraphic *Obj)
 
 
 
-#line 1081 "compound.c"
+#line 1074 "compound.c"

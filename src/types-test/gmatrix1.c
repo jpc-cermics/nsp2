@@ -687,7 +687,6 @@ static NspMethods *gmatrix1_get_methods(void) { return NULL;};
 static NspObject *_wrap_gmatrix1_get_data(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspGMatrix1 *) self)->obj->data;
   return (NspObject *) ret;
 }
@@ -695,7 +694,6 @@ static NspObject *_wrap_gmatrix1_get_data(void *self,const char *attr)
 static NspObject *_wrap_gmatrix1_get_obj_data(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->data);
   return (NspObject *) ret;
@@ -704,7 +702,6 @@ static NspObject *_wrap_gmatrix1_get_obj_data(void *self,const char *attr, int *
 static int _wrap_gmatrix1_set_data(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *data;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((data = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix1 *) self)->obj->data != NULL ) 
@@ -717,7 +714,6 @@ static NspObject *_wrap_gmatrix1_get_remap(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspGMatrix1 *) self)->obj->remap;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -726,7 +722,6 @@ static NspObject *_wrap_gmatrix1_get_remap(void *self,const char *attr)
 static int _wrap_gmatrix1_set_remap(void *self,const char *attr, NspObject *O)
 {
   int remap;
-
   if ( BoolScalar(O,&remap) == FAIL) return FAIL;
   ((NspGMatrix1 *) self)->obj->remap= remap;
   return OK;
@@ -736,7 +731,6 @@ static NspObject *_wrap_gmatrix1_get_shade(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspGMatrix1 *) self)->obj->shade;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -745,7 +739,6 @@ static NspObject *_wrap_gmatrix1_get_shade(void *self,const char *attr)
 static int _wrap_gmatrix1_set_shade(void *self,const char *attr, NspObject *O)
 {
   int shade;
-
   if ( BoolScalar(O,&shade) == FAIL) return FAIL;
   ((NspGMatrix1 *) self)->obj->shade= shade;
   return OK;
@@ -754,7 +747,6 @@ static int _wrap_gmatrix1_set_shade(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_gmatrix1_get_colminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspGMatrix1 *) self)->obj->colminmax;
   return (NspObject *) ret;
 }
@@ -762,7 +754,6 @@ static NspObject *_wrap_gmatrix1_get_colminmax(void *self,const char *attr)
 static NspObject *_wrap_gmatrix1_get_obj_colminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->colminmax);
   return (NspObject *) ret;
@@ -771,7 +762,6 @@ static NspObject *_wrap_gmatrix1_get_obj_colminmax(void *self,const char *attr, 
 static int _wrap_gmatrix1_set_colminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colminmax;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((colminmax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix1 *) self)->obj->colminmax != NULL ) 
@@ -783,7 +773,6 @@ static int _wrap_gmatrix1_set_colminmax(void *self,const char *attr, NspObject *
 static NspObject *_wrap_gmatrix1_get_zminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspGMatrix1 *) self)->obj->zminmax;
   return (NspObject *) ret;
 }
@@ -791,7 +780,6 @@ static NspObject *_wrap_gmatrix1_get_zminmax(void *self,const char *attr)
 static NspObject *_wrap_gmatrix1_get_obj_zminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->zminmax);
   return (NspObject *) ret;
@@ -800,7 +788,6 @@ static NspObject *_wrap_gmatrix1_get_obj_zminmax(void *self,const char *attr, in
 static int _wrap_gmatrix1_set_zminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *zminmax;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((zminmax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix1 *) self)->obj->zminmax != NULL ) 
@@ -812,7 +799,6 @@ static int _wrap_gmatrix1_set_zminmax(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_gmatrix1_get_colout(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspGMatrix1 *) self)->obj->colout;
   return (NspObject *) ret;
 }
@@ -820,7 +806,6 @@ static NspObject *_wrap_gmatrix1_get_colout(void *self,const char *attr)
 static NspObject *_wrap_gmatrix1_get_obj_colout(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->colout);
   return (NspObject *) ret;
@@ -829,7 +814,6 @@ static NspObject *_wrap_gmatrix1_get_obj_colout(void *self,const char *attr, int
 static int _wrap_gmatrix1_set_colout(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colout;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((colout = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix1 *) self)->obj->colout != NULL ) 
@@ -841,7 +825,6 @@ static int _wrap_gmatrix1_set_colout(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_gmatrix1_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspGMatrix1 *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -849,7 +832,6 @@ static NspObject *_wrap_gmatrix1_get_x(void *self,const char *attr)
 static NspObject *_wrap_gmatrix1_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->x);
   return (NspObject *) ret;
@@ -858,7 +840,6 @@ static NspObject *_wrap_gmatrix1_get_obj_x(void *self,const char *attr, int *cop
 static int _wrap_gmatrix1_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix1 *) self)->obj->x != NULL ) 
@@ -870,7 +851,6 @@ static int _wrap_gmatrix1_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_gmatrix1_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspGMatrix1 *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -878,7 +858,6 @@ static NspObject *_wrap_gmatrix1_get_y(void *self,const char *attr)
 static NspObject *_wrap_gmatrix1_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspGMatrix1 *) self)->obj->y);
   return (NspObject *) ret;
@@ -887,7 +866,6 @@ static NspObject *_wrap_gmatrix1_get_obj_y(void *self,const char *attr, int *cop
 static int _wrap_gmatrix1_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspGMatrix1 *) self)->obj->y != NULL ) 
@@ -921,7 +899,7 @@ int _wrap_nsp_extractelts_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 925 "gmatrix1.c"
+#line 903 "gmatrix1.c"
 
 
 #line 84 "codegen/gmatrix1.override"
@@ -933,7 +911,7 @@ int _wrap_nsp_setrowscols_gmatrix1(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 937 "gmatrix1.c"
+#line 915 "gmatrix1.c"
 
 
 /*----------------------------------------------------
@@ -1703,4 +1681,4 @@ void DrawTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy
 }
 
 
-#line 1707 "gmatrix1.c"
+#line 1685 "gmatrix1.c"

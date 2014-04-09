@@ -480,7 +480,6 @@ static NspMethods *stochdec_get_methods(void) { return NULL;};
 static NspObject *_wrap_stochdec_get_xdim(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspStochdec *) self)->xdim;
   return nsp_new_double_obj((double) ret);
 }
@@ -488,7 +487,6 @@ static NspObject *_wrap_stochdec_get_xdim(void *self,const char *attr)
 static int _wrap_stochdec_set_xdim(void *self,const char *attr, NspObject *O)
 {
   int xdim;
-
   if ( IntScalar(O,&xdim) == FAIL) return FAIL;
   ((NspStochdec *) self)->xdim= xdim;
   return OK;
@@ -1006,7 +1004,6 @@ static NspMethods *valuefn_get_methods(void) { return NULL;};
 static NspObject *_wrap_valuefn_get_xdim(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspValueFn *) self)->xdim;
   return nsp_new_double_obj((double) ret);
 }
@@ -1014,7 +1011,6 @@ static NspObject *_wrap_valuefn_get_xdim(void *self,const char *attr)
 static int _wrap_valuefn_set_xdim(void *self,const char *attr, NspObject *O)
 {
   int xdim;
-
   if ( IntScalar(O,&xdim) == FAIL) return FAIL;
   ((NspValueFn *) self)->xdim= xdim;
   return OK;
@@ -1582,7 +1578,7 @@ static int _wrap_nsp_gvf_ind_to_point(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1586 "stochdec.c"
+#line 1582 "stochdec.c"
 
 
 #line 128 "codegen/stochdec.override"
@@ -1609,7 +1605,7 @@ static int _wrap_nsp_gvf_point_to_ind(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1613 "stochdec.c"
+#line 1609 "stochdec.c"
 
 
 #line 182 "codegen/stochdec.override"
@@ -1625,7 +1621,7 @@ static int _wrap_nsp_gvf_set_i_value(NspGridValueFn *self,Stack stack,int rhs,in
     nsp_gvf_set_i_value(self, ind->R[i], val->R[i]);
   return 0;
 }
-#line 1629 "stochdec.c"
+#line 1625 "stochdec.c"
 
 
 #line 153 "codegen/stochdec.override"
@@ -1656,7 +1652,7 @@ static int _wrap_nsp_gvf_set_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 1660 "stochdec.c"
+#line 1656 "stochdec.c"
 
 
 #line 220 "codegen/stochdec.override"
@@ -1675,7 +1671,7 @@ static int _wrap_nsp_gvf_get_i_value(NspGridValueFn *self,Stack stack,int rhs,in
   MoveObj(stack,1, NSP_OBJECT(ret));
   return 1;
 }
-#line 1679 "stochdec.c"
+#line 1675 "stochdec.c"
 
 
 #line 196 "codegen/stochdec.override"
@@ -1701,7 +1697,7 @@ static int _wrap_nsp_gvf_get_pt_value(NspGridValueFn *self,Stack stack,int rhs,i
   return 1;
 }
 
-#line 1705 "stochdec.c"
+#line 1701 "stochdec.c"
 
 
 static NspMethods gridvaluefn_methods[] = {
@@ -2248,7 +2244,7 @@ static int _wrap_nsp_cvf_add_slopes(NspCutsValueFn *self,Stack stack,int rhs,int
   return 0;
 }
 
-#line 2252 "stochdec.c"
+#line 2248 "stochdec.c"
 
 
 #line 288 "codegen/stochdec.override"
@@ -2274,7 +2270,7 @@ static int _wrap_nsp_cvf_get_value(NspCutsValueFn *self,Stack stack,int rhs,int 
   return 1;
 }
 
-#line 2278 "stochdec.c"
+#line 2274 "stochdec.c"
 
 
 static NspMethods cutsvaluefn_methods[] = {
@@ -2339,7 +2335,7 @@ int _wrap_nsp_gridfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2343 "stochdec.c"
+#line 2339 "stochdec.c"
 
 
 #line 237 "codegen/stochdec.override"
@@ -2369,7 +2365,7 @@ int _wrap_nsp_cutsfn(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 2373 "stochdec.c"
+#line 2369 "stochdec.c"
 
 
 /*----------------------------------------------------
@@ -2574,4 +2570,4 @@ int nsp_cvf_add_slopes(NspCutsValueFn *Cvf,NspMatrix *height,NspMatrix *slopes)
 }
 
 
-#line 2578 "stochdec.c"
+#line 2574 "stochdec.c"

@@ -602,7 +602,6 @@ static int _wrap_graphic_invalidate(NspGraphic *self,Stack stack,int rhs,int opt
 static int _wrap_graphic_get_bounds(NspGraphic *self,Stack stack,int rhs,int opt,int lhs)
 {
   NspMatrix *ret;
-
   CheckRhs(0,0);
   ret = graphic_get_bounds(self);
   if ( ret == NULLMAT) return RET_BUG;
@@ -629,7 +628,6 @@ static NspObject *_wrap_graphic_get_hilited(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspGraphic *) self)->obj->hilited;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -638,7 +636,6 @@ static NspObject *_wrap_graphic_get_hilited(void *self,const char *attr)
 static int _wrap_graphic_set_hilited(void *self,const char *attr, NspObject *O)
 {
   int hilited;
-
   if ( BoolScalar(O,&hilited) == FAIL) return FAIL;
   ((NspGraphic *) self)->obj->hilited= hilited;
   return OK;
@@ -648,7 +645,6 @@ static NspObject *_wrap_graphic_get_show(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspGraphic *) self)->obj->show;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -657,7 +653,6 @@ static NspObject *_wrap_graphic_get_show(void *self,const char *attr)
 static int _wrap_graphic_set_show(void *self,const char *attr, NspObject *O)
 {
   int show;
-
   if ( BoolScalar(O,&show) == FAIL) return FAIL;
   ((NspGraphic *) self)->obj->show= show;
   return OK;
@@ -973,4 +968,4 @@ static NspMatrix *graphic_get_bounds(NspGraphic *G)
   return M;
 }
 
-#line 977 "graphic.c"
+#line 972 "graphic.c"

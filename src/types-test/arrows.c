@@ -597,7 +597,6 @@ static NspMethods *arrows_get_methods(void) { return NULL;};
 static NspObject *_wrap_arrows_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspArrows *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -605,7 +604,6 @@ static NspObject *_wrap_arrows_get_x(void *self,const char *attr)
 static NspObject *_wrap_arrows_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspArrows *) self)->obj->x);
   return (NspObject *) ret;
@@ -614,7 +612,6 @@ static NspObject *_wrap_arrows_get_obj_x(void *self,const char *attr, int *copy)
 static int _wrap_arrows_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspArrows *) self)->obj->x != NULL ) 
@@ -626,7 +623,6 @@ static int _wrap_arrows_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_arrows_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspArrows *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -634,7 +630,6 @@ static NspObject *_wrap_arrows_get_y(void *self,const char *attr)
 static NspObject *_wrap_arrows_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspArrows *) self)->obj->y);
   return (NspObject *) ret;
@@ -643,7 +638,6 @@ static NspObject *_wrap_arrows_get_obj_y(void *self,const char *attr, int *copy)
 static int _wrap_arrows_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspArrows *) self)->obj->y != NULL ) 
@@ -655,7 +649,6 @@ static int _wrap_arrows_set_y(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_arrows_get_color(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspArrows *) self)->obj->color;
   return (NspObject *) ret;
 }
@@ -663,7 +656,6 @@ static NspObject *_wrap_arrows_get_color(void *self,const char *attr)
 static NspObject *_wrap_arrows_get_obj_color(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspArrows *) self)->obj->color);
   return (NspObject *) ret;
@@ -672,7 +664,6 @@ static NspObject *_wrap_arrows_get_obj_color(void *self,const char *attr, int *c
 static int _wrap_arrows_set_color(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *color;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((color = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspArrows *) self)->obj->color != NULL ) 
@@ -685,7 +676,6 @@ static NspObject *_wrap_arrows_get_arsize(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspArrows *) self)->obj->arsize;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -694,7 +684,6 @@ static NspObject *_wrap_arrows_get_arsize(void *self,const char *attr)
 static int _wrap_arrows_set_arsize(void *self,const char *attr, NspObject *O)
 {
   double arsize;
-
   if ( DoubleScalar(O,&arsize) == FAIL) return FAIL;
   ((NspArrows *) self)->obj->arsize= arsize;
   return OK;
@@ -721,7 +710,7 @@ int _wrap_nsp_extractelts_arrows(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 725 "arrows.c"
+#line 714 "arrows.c"
 
 
 #line 67 "codegen/arrows.override"
@@ -734,7 +723,7 @@ int _wrap_nsp_setrowscols_arrows(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 738 "arrows.c"
+#line 727 "arrows.c"
 
 
 /*----------------------------------------------------
@@ -880,4 +869,4 @@ static int nsp_getbounds_arrows(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 884 "arrows.c"
+#line 873 "arrows.c"

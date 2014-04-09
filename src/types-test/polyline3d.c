@@ -621,7 +621,6 @@ static NspMethods *polyline3d_get_methods(void) { return NULL;};
 static NspObject *_wrap_polyline3d_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPolyline3d *) self)->obj->Mcoord;
   return (NspObject *) ret;
 }
@@ -629,7 +628,6 @@ static NspObject *_wrap_polyline3d_get_Mcoord(void *self,const char *attr)
 static NspObject *_wrap_polyline3d_get_obj_Mcoord(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPolyline3d *) self)->obj->Mcoord);
   return (NspObject *) ret;
@@ -638,7 +636,6 @@ static NspObject *_wrap_polyline3d_get_obj_Mcoord(void *self,const char *attr, i
 static int _wrap_polyline3d_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcoord;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyline3d *) self)->obj->Mcoord != NULL ) 
@@ -650,7 +647,6 @@ static int _wrap_polyline3d_set_Mcoord(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_polyline3d_get_Mcolor(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspPolyline3d *) self)->obj->Mcolor;
   return (NspObject *) ret;
 }
@@ -658,7 +654,6 @@ static NspObject *_wrap_polyline3d_get_Mcolor(void *self,const char *attr)
 static NspObject *_wrap_polyline3d_get_obj_Mcolor(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspPolyline3d *) self)->obj->Mcolor);
   return (NspObject *) ret;
@@ -667,7 +662,6 @@ static NspObject *_wrap_polyline3d_get_obj_Mcolor(void *self,const char *attr, i
 static int _wrap_polyline3d_set_Mcolor(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcolor;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mcolor = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspPolyline3d *) self)->obj->Mcolor != NULL ) 
@@ -695,7 +689,7 @@ int _wrap_nsp_extractelts_polyline3d(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 699 "polyline3d.c"
+#line 693 "polyline3d.c"
 
 
 #line 95 "codegen/polyline3d.override"
@@ -708,7 +702,7 @@ int _wrap_nsp_setrowscols_polyline3d(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 712 "polyline3d.c"
+#line 706 "polyline3d.c"
 
 
 /*----------------------------------------------------
@@ -1004,4 +998,4 @@ extern int nsp_polyline3d_add_pts(NspGraphic *P,int k)
   return OK;
 }
 
-#line 1008 "polyline3d.c"
+#line 1002 "polyline3d.c"

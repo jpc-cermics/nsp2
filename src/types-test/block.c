@@ -837,7 +837,6 @@ static NspMethods *block_get_methods(void) { return block_methods;};
 static NspObject *_wrap_block_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspBlock *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -845,7 +844,6 @@ static NspObject *_wrap_block_get_color(void *self,const char *attr)
 static int _wrap_block_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspBlock *) self)->obj->color= color;
   return OK;
@@ -854,7 +852,6 @@ static int _wrap_block_set_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_block_get_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspBlock *) self)->obj->thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -862,7 +859,6 @@ static NspObject *_wrap_block_get_thickness(void *self,const char *attr)
 static int _wrap_block_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-
   if ( IntScalar(O,&thickness) == FAIL) return FAIL;
   ((NspBlock *) self)->obj->thickness= thickness;
   return OK;
@@ -871,7 +867,6 @@ static int _wrap_block_set_thickness(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_block_get_background(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspBlock *) self)->obj->background;
   return nsp_new_double_obj((double) ret);
 }
@@ -879,7 +874,6 @@ static NspObject *_wrap_block_get_background(void *self,const char *attr)
 static int _wrap_block_set_background(void *self,const char *attr, NspObject *O)
 {
   int background;
-
   if ( IntScalar(O,&background) == FAIL) return FAIL;
   ((NspBlock *) self)->obj->background= background;
   return OK;
@@ -888,7 +882,6 @@ static int _wrap_block_set_background(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_block_get_icon(void *self,const char *attr)
 {
   NspGraphic *ret;
-
   ret = ((NspBlock *) self)->obj->icon;
   return NSP_OBJECT(ret);
 }
@@ -896,7 +889,6 @@ static NspObject *_wrap_block_get_icon(void *self,const char *attr)
 static int _wrap_block_set_icon(void *self,const char *attr, NspObject *O)
 {
   NspGraphic *icon;
-
   if ( ! IsGraphic(O) ) return FAIL;
   if ((icon = (NspGraphic *) nsp_object_copy_and_name(attr,O)) == NULLGRAPHIC) return FAIL;
   if (((NspBlock *) self)->obj->icon != NULL ) 
@@ -926,7 +918,7 @@ int _wrap_nsp_extractelts_block(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 930 "block.c"
+#line 922 "block.c"
 
 
 #line 426 "codegen/block.override"
@@ -939,7 +931,7 @@ int _wrap_nsp_setrowscols_block(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 943 "block.c"
+#line 935 "block.c"
 
 
 /*----------------------------------------------------
@@ -1940,4 +1932,4 @@ static void nsp_block_unlink_figure(NspGraphic *G, void *F)
   if ( Icon != NULL)  nsp_graphic_unlink_figure(Icon, F);
 }
 
-#line 1944 "block.c"
+#line 1936 "block.c"

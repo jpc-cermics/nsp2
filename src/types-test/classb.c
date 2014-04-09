@@ -560,7 +560,6 @@ static NspMethods *classb_get_methods(void) { return classb_methods;};
 static NspObject *_wrap_classb_get_clb_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspClassB *) self)->clb_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -568,7 +567,6 @@ static NspObject *_wrap_classb_get_clb_color(void *self,const char *attr)
 static int _wrap_classb_set_clb_color(void *self,const char *attr, NspObject *O)
 {
   int clb_color;
-
   if ( IntScalar(O,&clb_color) == FAIL) return FAIL;
   ((NspClassB *) self)->clb_color= clb_color;
   return OK;
@@ -577,7 +575,6 @@ static int _wrap_classb_set_clb_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_classb_get_clb_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspClassB *) self)->clb_thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -585,7 +582,6 @@ static NspObject *_wrap_classb_get_clb_thickness(void *self,const char *attr)
 static int _wrap_classb_set_clb_thickness(void *self,const char *attr, NspObject *O)
 {
   int clb_thickness;
-
   if ( IntScalar(O,&clb_thickness) == FAIL) return FAIL;
   ((NspClassB *) self)->clb_thickness= clb_thickness;
   return OK;
@@ -594,7 +590,6 @@ static int _wrap_classb_set_clb_thickness(void *self,const char *attr, NspObject
 static NspObject *_wrap_classb_get_clb_val(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspClassB *) self)->clb_val;
   return (NspObject *) ret;
 }
@@ -602,7 +597,6 @@ static NspObject *_wrap_classb_get_clb_val(void *self,const char *attr)
 static NspObject *_wrap_classb_get_obj_clb_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassB *) self)->clb_val);
   return (NspObject *) ret;
@@ -611,7 +605,6 @@ static NspObject *_wrap_classb_get_obj_clb_val(void *self,const char *attr, int 
 static int _wrap_classb_set_clb_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *clb_val;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((clb_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassB *) self)->clb_val != NULL ) 
@@ -657,4 +650,4 @@ void ClassB_Interf_Info(int i, char **fname, function (**f))
   *f = ClassB_func[i].fonc;
 }
 
-#line 661 "classb.c"
+#line 654 "classb.c"

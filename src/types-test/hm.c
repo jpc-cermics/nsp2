@@ -660,9 +660,7 @@ static int _wrap_nsp_hm_check_slope(NspHm *self,Stack stack,int rhs,int opt,int 
   int_types T[] = {mat,t_end};
   int ret;
   NspMatrix *M;
-
   if ( GetArgs(stack,rhs,opt,T,&M) == FAIL) return RET_BUG;
-/* M << 1 */
   ret = nsp_hm_check_slope(self, M);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -679,7 +677,7 @@ static int _wrap_nsp_hm_get_keys(NspHm *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 }
 
-#line 683 "hm.c"
+#line 681 "hm.c"
 
 
 static NspMethods hm_methods[] = {
@@ -702,7 +700,6 @@ static NspMethods *hm_get_methods(void) { return hm_methods;};
 static NspObject *_wrap_hm_get_base(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspHm *) self)->base;
   return nsp_new_double_obj((double) ret);
 }
@@ -710,7 +707,6 @@ static NspObject *_wrap_hm_get_base(void *self,const char *attr)
 static int _wrap_hm_set_base(void *self,const char *attr, NspObject *O)
 {
   int base;
-
   if ( IntScalar(O,&base) == FAIL) return FAIL;
   ((NspHm *) self)->base= base;
   return OK;
@@ -719,7 +715,6 @@ static int _wrap_hm_set_base(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_hm_get_keysize(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspHm *) self)->keysize;
   return nsp_new_double_obj((double) ret);
 }
@@ -727,7 +722,6 @@ static NspObject *_wrap_hm_get_keysize(void *self,const char *attr)
 static int _wrap_hm_set_keysize(void *self,const char *attr, NspObject *O)
 {
   int keysize;
-
   if ( IntScalar(O,&keysize) == FAIL) return FAIL;
   ((NspHm *) self)->keysize= keysize;
   return OK;
@@ -1646,4 +1640,4 @@ static int nsp_hm_check_slope(NspHm *H,NspMatrix *M)
 }
 
 
-#line 1650 "hm.c"
+#line 1644 "hm.c"

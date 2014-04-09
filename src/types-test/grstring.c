@@ -628,7 +628,6 @@ static NspObject *_wrap_grstring_get_x(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrstring *) self)->obj->x;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -637,7 +636,6 @@ static NspObject *_wrap_grstring_get_x(void *self,const char *attr)
 static int _wrap_grstring_set_x(void *self,const char *attr, NspObject *O)
 {
   double x;
-
   if ( DoubleScalar(O,&x) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->x= x;
   return OK;
@@ -647,7 +645,6 @@ static NspObject *_wrap_grstring_get_y(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrstring *) self)->obj->y;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -656,7 +653,6 @@ static NspObject *_wrap_grstring_get_y(void *self,const char *attr)
 static int _wrap_grstring_set_y(void *self,const char *attr, NspObject *O)
 {
   double y;
-
   if ( DoubleScalar(O,&y) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->y= y;
   return OK;
@@ -666,7 +662,6 @@ static NspObject *_wrap_grstring_get_font(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrstring *) self)->obj->font;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -675,7 +670,6 @@ static NspObject *_wrap_grstring_get_font(void *self,const char *attr)
 static int _wrap_grstring_set_font(void *self,const char *attr, NspObject *O)
 {
   char *font;
-
   if ((font = nsp_string_object(O))==NULL) return FAIL;
   if ((font = nsp_string_copy(font)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspGrstring *) self)->obj->font);
@@ -686,7 +680,6 @@ static int _wrap_grstring_set_font(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grstring_get_text(void *self,const char *attr)
 {
   NspSMatrix *ret;
-
   ret = ((NspGrstring *) self)->obj->text;
   return (NspObject *) ret;
 }
@@ -694,7 +687,6 @@ static NspObject *_wrap_grstring_get_text(void *self,const char *attr)
 static NspObject *_wrap_grstring_get_obj_text(void *self,const char *attr, int *copy)
 {
   NspSMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspSMatrix*) ((NspGrstring *) self)->obj->text);
   return (NspObject *) ret;
@@ -703,7 +695,6 @@ static NspObject *_wrap_grstring_get_obj_text(void *self,const char *attr, int *
 static int _wrap_grstring_set_text(void *self,const char *attr, NspObject *O)
 {
   NspSMatrix *text;
-
   if ( ! IsSMat(O) ) return FAIL;
   if ((text = (NspSMatrix *) nsp_object_copy_and_name(attr,O)) == NULLSMAT) return FAIL;
   if (((NspGrstring *) self)->obj->text != NULL ) 
@@ -716,7 +707,6 @@ static NspObject *_wrap_grstring_get_angle(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrstring *) self)->obj->angle;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -725,7 +715,6 @@ static NspObject *_wrap_grstring_get_angle(void *self,const char *attr)
 static int _wrap_grstring_set_angle(void *self,const char *attr, NspObject *O)
 {
   double angle;
-
   if ( DoubleScalar(O,&angle) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->angle= angle;
   return OK;
@@ -735,7 +724,6 @@ static NspObject *_wrap_grstring_get_w(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrstring *) self)->obj->w;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -744,7 +732,6 @@ static NspObject *_wrap_grstring_get_w(void *self,const char *attr)
 static int _wrap_grstring_set_w(void *self,const char *attr, NspObject *O)
 {
   double w;
-
   if ( DoubleScalar(O,&w) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->w= w;
   return OK;
@@ -754,7 +741,6 @@ static NspObject *_wrap_grstring_get_h(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrstring *) self)->obj->h;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -763,7 +749,6 @@ static NspObject *_wrap_grstring_get_h(void *self,const char *attr)
 static int _wrap_grstring_set_h(void *self,const char *attr, NspObject *O)
 {
   double h;
-
   if ( DoubleScalar(O,&h) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->h= h;
   return OK;
@@ -772,7 +757,6 @@ static int _wrap_grstring_set_h(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grstring_get_fill(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrstring *) self)->obj->fill;
   return nsp_new_double_obj((double) ret);
 }
@@ -780,7 +764,6 @@ static NspObject *_wrap_grstring_get_fill(void *self,const char *attr)
 static int _wrap_grstring_set_fill(void *self,const char *attr, NspObject *O)
 {
   int fill;
-
   if ( IntScalar(O,&fill) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->fill= fill;
   return OK;
@@ -789,7 +772,6 @@ static int _wrap_grstring_set_fill(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grstring_get_posx(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrstring *) self)->obj->posx;
   return nsp_new_double_obj((double) ret);
 }
@@ -797,7 +779,6 @@ static NspObject *_wrap_grstring_get_posx(void *self,const char *attr)
 static int _wrap_grstring_set_posx(void *self,const char *attr, NspObject *O)
 {
   int posx;
-
   if ( IntScalar(O,&posx) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->posx= posx;
   return OK;
@@ -806,7 +787,6 @@ static int _wrap_grstring_set_posx(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grstring_get_posy(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrstring *) self)->obj->posy;
   return nsp_new_double_obj((double) ret);
 }
@@ -814,7 +794,6 @@ static NspObject *_wrap_grstring_get_posy(void *self,const char *attr)
 static int _wrap_grstring_set_posy(void *self,const char *attr, NspObject *O)
 {
   int posy;
-
   if ( IntScalar(O,&posy) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->posy= posy;
   return OK;
@@ -823,7 +802,6 @@ static int _wrap_grstring_set_posy(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grstring_get_size(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrstring *) self)->obj->size;
   return nsp_new_double_obj((double) ret);
 }
@@ -831,7 +809,6 @@ static NspObject *_wrap_grstring_get_size(void *self,const char *attr)
 static int _wrap_grstring_set_size(void *self,const char *attr, NspObject *O)
 {
   int size;
-
   if ( IntScalar(O,&size) == FAIL) return FAIL;
   ((NspGrstring *) self)->obj->size= size;
   return OK;
@@ -865,7 +842,7 @@ int _wrap_nsp_extractelts_grstring(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 869 "grstring.c"
+#line 846 "grstring.c"
 
 
 #line 69 "codegen/grstring.override"
@@ -878,7 +855,7 @@ int _wrap_nsp_setrowscols_grstring(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 882 "grstring.c"
+#line 859 "grstring.c"
 
 
 /*----------------------------------------------------
@@ -1266,4 +1243,4 @@ static int nsp_getbounds_grstring(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 1270 "grstring.c"
+#line 1247 "grstring.c"

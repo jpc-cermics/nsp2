@@ -612,7 +612,6 @@ static NspMethods *classaref_get_methods(void) { return classaref_methods;};
 static NspObject *_wrap_classaref_get_cla_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspClassARef *) self)->obj->cla_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -620,7 +619,6 @@ static NspObject *_wrap_classaref_get_cla_color(void *self,const char *attr)
 static int _wrap_classaref_set_cla_color(void *self,const char *attr, NspObject *O)
 {
   int cla_color;
-
   if ( IntScalar(O,&cla_color) == FAIL) return FAIL;
   ((NspClassARef *) self)->obj->cla_color= cla_color;
   return OK;
@@ -629,7 +627,6 @@ static int _wrap_classaref_set_cla_color(void *self,const char *attr, NspObject 
 static NspObject *_wrap_classaref_get_cla_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspClassARef *) self)->obj->cla_thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -637,7 +634,6 @@ static NspObject *_wrap_classaref_get_cla_thickness(void *self,const char *attr)
 static int _wrap_classaref_set_cla_thickness(void *self,const char *attr, NspObject *O)
 {
   int cla_thickness;
-
   if ( IntScalar(O,&cla_thickness) == FAIL) return FAIL;
   ((NspClassARef *) self)->obj->cla_thickness= cla_thickness;
   return OK;
@@ -646,7 +642,6 @@ static int _wrap_classaref_set_cla_thickness(void *self,const char *attr, NspObj
 static NspObject *_wrap_classaref_get_cla_val(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspClassARef *) self)->obj->cla_val;
   return (NspObject *) ret;
 }
@@ -654,7 +649,6 @@ static NspObject *_wrap_classaref_get_cla_val(void *self,const char *attr)
 static NspObject *_wrap_classaref_get_obj_cla_val(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspClassARef *) self)->obj->cla_val);
   return (NspObject *) ret;
@@ -663,7 +657,6 @@ static NspObject *_wrap_classaref_get_obj_cla_val(void *self,const char *attr, i
 static int _wrap_classaref_set_cla_val(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *cla_val;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((cla_val = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspClassARef *) self)->obj->cla_val != NULL ) 
@@ -675,7 +668,6 @@ static int _wrap_classaref_set_cla_val(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_classaref_get_cla_bval(void *self,const char *attr)
 {
   NspBMatrix *ret;
-
   ret = ((NspClassARef *) self)->obj->cla_bval;
   return (NspObject *) ret;
 }
@@ -683,7 +675,6 @@ static NspObject *_wrap_classaref_get_cla_bval(void *self,const char *attr)
 static NspObject *_wrap_classaref_get_obj_cla_bval(void *self,const char *attr, int *copy)
 {
   NspBMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspBMatrix*) ((NspClassARef *) self)->obj->cla_bval);
   return (NspObject *) ret;
@@ -692,7 +683,6 @@ static NspObject *_wrap_classaref_get_obj_cla_bval(void *self,const char *attr, 
 static int _wrap_classaref_set_cla_bval(void *self,const char *attr, NspObject *O)
 {
   NspBMatrix *cla_bval;
-
   if ( ! IsBMat(O) ) return FAIL;
   if ((cla_bval = (NspBMatrix *) nsp_object_copy_and_name(attr,O)) == NULLBMAT) return FAIL;
   if (((NspClassARef *) self)->obj->cla_bval != NULL ) 
@@ -704,7 +694,6 @@ static int _wrap_classaref_set_cla_bval(void *self,const char *attr, NspObject *
 static NspObject *_wrap_classaref_get_cla_lval(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspClassARef *) self)->obj->cla_lval;
   return (NspObject *) ret;
 }
@@ -712,7 +701,6 @@ static NspObject *_wrap_classaref_get_cla_lval(void *self,const char *attr)
 static NspObject *_wrap_classaref_get_obj_cla_lval(void *self,const char *attr, int *copy)
 {
   NspList *ret;
-
   *copy = FALSE;
   ret = ((NspList*) ((NspClassARef *) self)->obj->cla_lval);
   return (NspObject *) ret;
@@ -721,7 +709,6 @@ static NspObject *_wrap_classaref_get_obj_cla_lval(void *self,const char *attr, 
 static int _wrap_classaref_set_cla_lval(void *self,const char *attr, NspObject *O)
 {
   NspList *cla_lval;
-
   if ( ! IsList(O) ) return FAIL;
   if ((cla_lval = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspClassARef *) self)->obj->cla_lval != NULL ) 
@@ -761,7 +748,7 @@ static int _wrap_clareftest(Stack stack, int rhs, int opt, int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
 }
-#line 765 "classaref.c"
+#line 752 "classaref.c"
 
 
 #line 43 "codegen/classaref.override"
@@ -769,7 +756,7 @@ static int _wrap_setrowscols_classaref(Stack stack,int rhs,int opt,int lhs)
 {
   return int_set_attribute(stack,rhs,opt,lhs);
 }
-#line 773 "classaref.c"
+#line 760 "classaref.c"
 
 
 /*----------------------------------------------------
@@ -800,4 +787,4 @@ void ClassARef_Interf_Info(int i, char **fname, function (**f))
   *f = ClassARef_func[i].fonc;
 }
 
-#line 804 "classaref.c"
+#line 791 "classaref.c"

@@ -620,7 +620,6 @@ static NspMethods *vfield_get_methods(void) { return NULL;};
 static NspObject *_wrap_vfield_get_fx(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspVField *) self)->obj->fx;
   return (NspObject *) ret;
 }
@@ -628,7 +627,6 @@ static NspObject *_wrap_vfield_get_fx(void *self,const char *attr)
 static NspObject *_wrap_vfield_get_obj_fx(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspVField *) self)->obj->fx);
   return (NspObject *) ret;
@@ -637,7 +635,6 @@ static NspObject *_wrap_vfield_get_obj_fx(void *self,const char *attr, int *copy
 static int _wrap_vfield_set_fx(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *fx;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((fx = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspVField *) self)->obj->fx != NULL ) 
@@ -649,7 +646,6 @@ static int _wrap_vfield_set_fx(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_vfield_get_fy(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspVField *) self)->obj->fy;
   return (NspObject *) ret;
 }
@@ -657,7 +653,6 @@ static NspObject *_wrap_vfield_get_fy(void *self,const char *attr)
 static NspObject *_wrap_vfield_get_obj_fy(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspVField *) self)->obj->fy);
   return (NspObject *) ret;
@@ -666,7 +661,6 @@ static NspObject *_wrap_vfield_get_obj_fy(void *self,const char *attr, int *copy
 static int _wrap_vfield_set_fy(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *fy;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((fy = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspVField *) self)->obj->fy != NULL ) 
@@ -678,7 +672,6 @@ static int _wrap_vfield_set_fy(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_vfield_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspVField *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -686,7 +679,6 @@ static NspObject *_wrap_vfield_get_x(void *self,const char *attr)
 static NspObject *_wrap_vfield_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspVField *) self)->obj->x);
   return (NspObject *) ret;
@@ -695,7 +687,6 @@ static NspObject *_wrap_vfield_get_obj_x(void *self,const char *attr, int *copy)
 static int _wrap_vfield_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspVField *) self)->obj->x != NULL ) 
@@ -707,7 +698,6 @@ static int _wrap_vfield_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_vfield_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspVField *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -715,7 +705,6 @@ static NspObject *_wrap_vfield_get_y(void *self,const char *attr)
 static NspObject *_wrap_vfield_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspVField *) self)->obj->y);
   return (NspObject *) ret;
@@ -724,7 +713,6 @@ static NspObject *_wrap_vfield_get_obj_y(void *self,const char *attr, int *copy)
 static int _wrap_vfield_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspVField *) self)->obj->y != NULL ) 
@@ -737,7 +725,6 @@ static NspObject *_wrap_vfield_get_colored(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspVField *) self)->obj->colored;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -746,7 +733,6 @@ static NspObject *_wrap_vfield_get_colored(void *self,const char *attr)
 static int _wrap_vfield_set_colored(void *self,const char *attr, NspObject *O)
 {
   int colored;
-
   if ( BoolScalar(O,&colored) == FAIL) return FAIL;
   ((NspVField *) self)->obj->colored= colored;
   return OK;
@@ -774,7 +760,7 @@ int _wrap_nsp_extractelts_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 778 "vfield.c"
+#line 764 "vfield.c"
 
 
 #line 68 "codegen/vfield.override"
@@ -786,7 +772,7 @@ int _wrap_nsp_setrowscols_vfield(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 790 "vfield.c"
+#line 776 "vfield.c"
 
 
 /*----------------------------------------------------
@@ -1074,4 +1060,4 @@ static double min_of_doubles(const double *x, int n)
 
 
 
-#line 1078 "vfield.c"
+#line 1064 "vfield.c"

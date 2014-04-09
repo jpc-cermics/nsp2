@@ -2,10 +2,8 @@
 
 /* This file is generated, please do not edit */
 /* Nsp
-#line 4 "codegen/fec.override"
  * Copyright (C) 1998-2010 Jean-Philippe Chancelier Enpc/Cermics
  * Copyright (C) 2001-2010 Bruno Pinçon Enpc/Cermics
-#line 9 "fec.c"
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public
@@ -38,7 +36,7 @@
 extern Gengine GL_gengine;
 #endif 
 
-#line 42 "fec.c"
+#line 40 "fec.c"
 
 /* ----------- NspFec ----------- */
 
@@ -124,7 +122,7 @@ NspTypeFec *new_type_fec(type_mode mode)
   /* ((NspTypeGraphic *) type->surtype)->link_figure = nsp_graphic_link_figure; */ 
   /* ((NspTypeGraphic *) type->surtype)->unlink_figure = nsp_graphic_unlink_figure; */ 
 
-#line 128 "fec.c"
+#line 126 "fec.c"
   /* 
    * NspFec interfaces can be added here 
    * type->interface = (NspTypeBase *) new_type_b();
@@ -723,7 +721,6 @@ static NspMethods *fec_get_methods(void) { return NULL;};
 static NspObject *_wrap_fec_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -731,7 +728,6 @@ static NspObject *_wrap_fec_get_x(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->x);
   return (NspObject *) ret;
@@ -740,7 +736,6 @@ static NspObject *_wrap_fec_get_obj_x(void *self,const char *attr, int *copy)
 static int _wrap_fec_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->x != NULL ) 
@@ -752,7 +747,6 @@ static int _wrap_fec_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_fec_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -760,7 +754,6 @@ static NspObject *_wrap_fec_get_y(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->y);
   return (NspObject *) ret;
@@ -769,7 +762,6 @@ static NspObject *_wrap_fec_get_obj_y(void *self,const char *attr, int *copy)
 static int _wrap_fec_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->y != NULL ) 
@@ -781,7 +773,6 @@ static int _wrap_fec_set_y(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_fec_get_triangles(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->triangles;
   return (NspObject *) ret;
 }
@@ -789,7 +780,6 @@ static NspObject *_wrap_fec_get_triangles(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_triangles(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->triangles);
   return (NspObject *) ret;
@@ -798,7 +788,6 @@ static NspObject *_wrap_fec_get_obj_triangles(void *self,const char *attr, int *
 static int _wrap_fec_set_triangles(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *triangles;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((triangles = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->triangles != NULL ) 
@@ -810,7 +799,6 @@ static int _wrap_fec_set_triangles(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_fec_get_func(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->func;
   return (NspObject *) ret;
 }
@@ -818,7 +806,6 @@ static NspObject *_wrap_fec_get_func(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_func(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->func);
   return (NspObject *) ret;
@@ -827,7 +814,6 @@ static NspObject *_wrap_fec_get_obj_func(void *self,const char *attr, int *copy)
 static int _wrap_fec_set_func(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *func;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((func = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->func != NULL ) 
@@ -839,7 +825,6 @@ static int _wrap_fec_set_func(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_fec_get_colminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->colminmax;
   return (NspObject *) ret;
 }
@@ -847,7 +832,6 @@ static NspObject *_wrap_fec_get_colminmax(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_colminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->colminmax);
   return (NspObject *) ret;
@@ -856,7 +840,6 @@ static NspObject *_wrap_fec_get_obj_colminmax(void *self,const char *attr, int *
 static int _wrap_fec_set_colminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colminmax;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((colminmax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->colminmax != NULL ) 
@@ -868,7 +851,6 @@ static int _wrap_fec_set_colminmax(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_fec_get_zminmax(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->zminmax;
   return (NspObject *) ret;
 }
@@ -876,7 +858,6 @@ static NspObject *_wrap_fec_get_zminmax(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_zminmax(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->zminmax);
   return (NspObject *) ret;
@@ -885,7 +866,6 @@ static NspObject *_wrap_fec_get_obj_zminmax(void *self,const char *attr, int *co
 static int _wrap_fec_set_zminmax(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *zminmax;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((zminmax = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->zminmax != NULL ) 
@@ -898,7 +878,6 @@ static NspObject *_wrap_fec_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspFec *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -907,7 +886,6 @@ static NspObject *_wrap_fec_get_mesh(void *self,const char *attr)
 static int _wrap_fec_set_mesh(void *self,const char *attr, NspObject *O)
 {
   int mesh;
-
   if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
   ((NspFec *) self)->obj->mesh= mesh;
   return OK;
@@ -917,7 +895,6 @@ static NspObject *_wrap_fec_get_paint(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspFec *) self)->obj->paint;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -926,7 +903,6 @@ static NspObject *_wrap_fec_get_paint(void *self,const char *attr)
 static int _wrap_fec_set_paint(void *self,const char *attr, NspObject *O)
 {
   int paint;
-
   if ( BoolScalar(O,&paint) == FAIL) return FAIL;
   ((NspFec *) self)->obj->paint= paint;
   return OK;
@@ -935,7 +911,6 @@ static int _wrap_fec_set_paint(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_fec_get_colout(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFec *) self)->obj->colout;
   return (NspObject *) ret;
 }
@@ -943,7 +918,6 @@ static NspObject *_wrap_fec_get_colout(void *self,const char *attr)
 static NspObject *_wrap_fec_get_obj_colout(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFec *) self)->obj->colout);
   return (NspObject *) ret;
@@ -952,7 +926,6 @@ static NspObject *_wrap_fec_get_obj_colout(void *self,const char *attr, int *cop
 static int _wrap_fec_set_colout(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *colout;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((colout = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFec *) self)->obj->colout != NULL ) 
@@ -965,7 +938,6 @@ static NspObject *_wrap_fec_get_colorbar(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspFec *) self)->obj->colorbar;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -974,7 +946,6 @@ static NspObject *_wrap_fec_get_colorbar(void *self,const char *attr)
 static int _wrap_fec_set_colorbar(void *self,const char *attr, NspObject *O)
 {
   int colorbar;
-
   if ( BoolScalar(O,&colorbar) == FAIL) return FAIL;
   ((NspFec *) self)->obj->colorbar= colorbar;
   return OK;
@@ -1007,7 +978,7 @@ int _wrap_nsp_extractelts_fec(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1011 "fec.c"
+#line 982 "fec.c"
 
 
 #line 87 "codegen/fec.override"
@@ -1019,7 +990,7 @@ int _wrap_nsp_setrowscols_fec(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1023 "fec.c"
+#line 994 "fec.c"
 
 
 /*----------------------------------------------------
@@ -1584,4 +1555,4 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy)
   Xgc->graphic_engine->drawpolyline(Xgc,resx,resy,nr,1);
 }
 
-#line 1588 "fec.c"
+#line 1559 "fec.c"

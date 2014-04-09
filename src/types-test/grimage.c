@@ -593,7 +593,6 @@ static NspObject *_wrap_grimage_get_x(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrImage *) self)->obj->x;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -602,7 +601,6 @@ static NspObject *_wrap_grimage_get_x(void *self,const char *attr)
 static int _wrap_grimage_set_x(void *self,const char *attr, NspObject *O)
 {
   double x;
-
   if ( DoubleScalar(O,&x) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->x= x;
   return OK;
@@ -612,7 +610,6 @@ static NspObject *_wrap_grimage_get_y(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrImage *) self)->obj->y;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -621,7 +618,6 @@ static NspObject *_wrap_grimage_get_y(void *self,const char *attr)
 static int _wrap_grimage_set_y(void *self,const char *attr, NspObject *O)
 {
   double y;
-
   if ( DoubleScalar(O,&y) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->y= y;
   return OK;
@@ -631,7 +627,6 @@ static NspObject *_wrap_grimage_get_w(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrImage *) self)->obj->w;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -640,7 +635,6 @@ static NspObject *_wrap_grimage_get_w(void *self,const char *attr)
 static int _wrap_grimage_set_w(void *self,const char *attr, NspObject *O)
 {
   double w;
-
   if ( DoubleScalar(O,&w) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->w= w;
   return OK;
@@ -650,7 +644,6 @@ static NspObject *_wrap_grimage_get_h(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrImage *) self)->obj->h;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -659,7 +652,6 @@ static NspObject *_wrap_grimage_get_h(void *self,const char *attr)
 static int _wrap_grimage_set_h(void *self,const char *attr, NspObject *O)
 {
   double h;
-
   if ( DoubleScalar(O,&h) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->h= h;
   return OK;
@@ -669,7 +661,6 @@ static NspObject *_wrap_grimage_get_border(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrImage *) self)->obj->border;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -678,7 +669,6 @@ static NspObject *_wrap_grimage_get_border(void *self,const char *attr)
 static int _wrap_grimage_set_border(void *self,const char *attr, NspObject *O)
 {
   int border;
-
   if ( BoolScalar(O,&border) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->border= border;
   return OK;
@@ -687,7 +677,6 @@ static int _wrap_grimage_set_border(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grimage_get_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrImage *) self)->obj->thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -695,7 +684,6 @@ static NspObject *_wrap_grimage_get_thickness(void *self,const char *attr)
 static int _wrap_grimage_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-
   if ( IntScalar(O,&thickness) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->thickness= thickness;
   return OK;
@@ -705,7 +693,6 @@ static NspObject *_wrap_grimage_get_fname(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspGrImage *) self)->obj->fname;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -714,7 +701,6 @@ static NspObject *_wrap_grimage_get_fname(void *self,const char *attr)
 static int _wrap_grimage_set_fname(void *self,const char *attr, NspObject *O)
 {
   char *fname;
-
   if ((fname = nsp_string_object(O))==NULL) return FAIL;
   if ((fname = nsp_string_copy(fname)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspGrImage *) self)->obj->fname);
@@ -725,7 +711,6 @@ static int _wrap_grimage_set_fname(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_grimage_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspGrImage *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -733,7 +718,6 @@ static NspObject *_wrap_grimage_get_color(void *self,const char *attr)
 static int _wrap_grimage_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspGrImage *) self)->obj->color= color;
   return OK;
@@ -764,7 +748,7 @@ int _wrap_nsp_extractelts_grimage(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 768 "grimage.c"
+#line 752 "grimage.c"
 
 
 #line 70 "codegen/grimage.override"
@@ -777,7 +761,7 @@ int _wrap_nsp_setrowscols_grimage(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 781 "grimage.c"
+#line 765 "grimage.c"
 
 
 /*----------------------------------------------------
@@ -920,4 +904,4 @@ static int nsp_getbounds_grimage(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 924 "grimage.c"
+#line 908 "grimage.c"

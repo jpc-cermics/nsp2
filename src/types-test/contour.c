@@ -655,7 +655,6 @@ static NspMethods *contour_get_methods(void) { return NULL;};
 static NspObject *_wrap_contour_get_z(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspContour *) self)->obj->z;
   return (NspObject *) ret;
 }
@@ -663,7 +662,6 @@ static NspObject *_wrap_contour_get_z(void *self,const char *attr)
 static NspObject *_wrap_contour_get_obj_z(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspContour *) self)->obj->z);
   return (NspObject *) ret;
@@ -672,7 +670,6 @@ static NspObject *_wrap_contour_get_obj_z(void *self,const char *attr, int *copy
 static int _wrap_contour_set_z(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *z;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((z = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspContour *) self)->obj->z != NULL ) 
@@ -684,7 +681,6 @@ static int _wrap_contour_set_z(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_contour_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspContour *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -692,7 +688,6 @@ static NspObject *_wrap_contour_get_x(void *self,const char *attr)
 static NspObject *_wrap_contour_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspContour *) self)->obj->x);
   return (NspObject *) ret;
@@ -701,7 +696,6 @@ static NspObject *_wrap_contour_get_obj_x(void *self,const char *attr, int *copy
 static int _wrap_contour_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspContour *) self)->obj->x != NULL ) 
@@ -713,7 +707,6 @@ static int _wrap_contour_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_contour_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspContour *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -721,7 +714,6 @@ static NspObject *_wrap_contour_get_y(void *self,const char *attr)
 static NspObject *_wrap_contour_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspContour *) self)->obj->y);
   return (NspObject *) ret;
@@ -730,7 +722,6 @@ static NspObject *_wrap_contour_get_obj_y(void *self,const char *attr, int *copy
 static int _wrap_contour_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspContour *) self)->obj->y != NULL ) 
@@ -742,7 +733,6 @@ static int _wrap_contour_set_y(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_contour_get_levels(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspContour *) self)->obj->levels;
   return (NspObject *) ret;
 }
@@ -750,7 +740,6 @@ static NspObject *_wrap_contour_get_levels(void *self,const char *attr)
 static NspObject *_wrap_contour_get_obj_levels(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspContour *) self)->obj->levels);
   return (NspObject *) ret;
@@ -759,7 +748,6 @@ static NspObject *_wrap_contour_get_obj_levels(void *self,const char *attr, int 
 static int _wrap_contour_set_levels(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *levels;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((levels = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspContour *) self)->obj->levels != NULL ) 
@@ -771,7 +759,6 @@ static int _wrap_contour_set_levels(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_contour_get_nlevels(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspContour *) self)->obj->nlevels;
   return nsp_new_double_obj((double) ret);
 }
@@ -779,7 +766,6 @@ static NspObject *_wrap_contour_get_nlevels(void *self,const char *attr)
 static int _wrap_contour_set_nlevels(void *self,const char *attr, NspObject *O)
 {
   int nlevels;
-
   if ( IntScalar(O,&nlevels) == FAIL) return FAIL;
   ((NspContour *) self)->obj->nlevels= nlevels;
   return OK;
@@ -788,7 +774,6 @@ static int _wrap_contour_set_nlevels(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_contour_get_style(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspContour *) self)->obj->style;
   return (NspObject *) ret;
 }
@@ -796,7 +781,6 @@ static NspObject *_wrap_contour_get_style(void *self,const char *attr)
 static NspObject *_wrap_contour_get_obj_style(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspContour *) self)->obj->style);
   return (NspObject *) ret;
@@ -805,7 +789,6 @@ static NspObject *_wrap_contour_get_obj_style(void *self,const char *attr, int *
 static int _wrap_contour_set_style(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *style;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((style = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspContour *) self)->obj->style != NULL ) 
@@ -837,7 +820,7 @@ int _wrap_nsp_extractelts_contour(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 841 "contour.c"
+#line 824 "contour.c"
 
 
 #line 80 "codegen/contour.override"
@@ -849,7 +832,7 @@ int _wrap_nsp_setrowscols_contour(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 853 "contour.c"
+#line 836 "contour.c"
 
 
 /*----------------------------------------------------
@@ -959,4 +942,4 @@ static int nsp_getbounds_contour (NspGraphic *Obj,double *bounds)
 
 
 
-#line 963 "contour.c"
+#line 946 "contour.c"

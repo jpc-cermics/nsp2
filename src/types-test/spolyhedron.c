@@ -747,7 +747,6 @@ static NspMethods *spolyhedron_get_methods(void) { return NULL;};
 static NspObject *_wrap_spolyhedron_get_Mcoord(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspSPolyhedron *) self)->obj->Mcoord;
   return (NspObject *) ret;
 }
@@ -755,7 +754,6 @@ static NspObject *_wrap_spolyhedron_get_Mcoord(void *self,const char *attr)
 static NspObject *_wrap_spolyhedron_get_obj_Mcoord(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspSPolyhedron *) self)->obj->Mcoord);
   return (NspObject *) ret;
@@ -764,7 +762,6 @@ static NspObject *_wrap_spolyhedron_get_obj_Mcoord(void *self,const char *attr, 
 static int _wrap_spolyhedron_set_Mcoord(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mcoord;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mcoord = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspSPolyhedron *) self)->obj->Mcoord != NULL ) 
@@ -776,7 +773,6 @@ static int _wrap_spolyhedron_set_Mcoord(void *self,const char *attr, NspObject *
 static NspObject *_wrap_spolyhedron_get_Mface(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspSPolyhedron *) self)->obj->Mface;
   return (NspObject *) ret;
 }
@@ -784,7 +780,6 @@ static NspObject *_wrap_spolyhedron_get_Mface(void *self,const char *attr)
 static NspObject *_wrap_spolyhedron_get_obj_Mface(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspSPolyhedron *) self)->obj->Mface);
   return (NspObject *) ret;
@@ -793,7 +788,6 @@ static NspObject *_wrap_spolyhedron_get_obj_Mface(void *self,const char *attr, i
 static int _wrap_spolyhedron_set_Mface(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mface;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mface = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspSPolyhedron *) self)->obj->Mface != NULL ) 
@@ -805,7 +799,6 @@ static int _wrap_spolyhedron_set_Mface(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_spolyhedron_get_Mval(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspSPolyhedron *) self)->obj->Mval;
   return (NspObject *) ret;
 }
@@ -813,7 +806,6 @@ static NspObject *_wrap_spolyhedron_get_Mval(void *self,const char *attr)
 static NspObject *_wrap_spolyhedron_get_obj_Mval(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspSPolyhedron *) self)->obj->Mval);
   return (NspObject *) ret;
@@ -822,7 +814,6 @@ static NspObject *_wrap_spolyhedron_get_obj_Mval(void *self,const char *attr, in
 static int _wrap_spolyhedron_set_Mval(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *Mval;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((Mval = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspSPolyhedron *) self)->obj->Mval != NULL ) 
@@ -835,7 +826,6 @@ static NspObject *_wrap_spolyhedron_get_vmin(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspSPolyhedron *) self)->obj->vmin;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -844,7 +834,6 @@ static NspObject *_wrap_spolyhedron_get_vmin(void *self,const char *attr)
 static int _wrap_spolyhedron_set_vmin(void *self,const char *attr, NspObject *O)
 {
   double vmin;
-
   if ( DoubleScalar(O,&vmin) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->vmin= vmin;
   return OK;
@@ -854,7 +843,6 @@ static NspObject *_wrap_spolyhedron_get_vmax(void *self,const char *attr)
 {
   double ret;
   NspObject *nsp_ret;
-
   ret = ((NspSPolyhedron *) self)->obj->vmax;
   nsp_ret=nsp_create_object_from_double(NVOID,(double) ret);
   return nsp_ret;
@@ -863,7 +851,6 @@ static NspObject *_wrap_spolyhedron_get_vmax(void *self,const char *attr)
 static int _wrap_spolyhedron_set_vmax(void *self,const char *attr, NspObject *O)
 {
   double vmax;
-
   if ( DoubleScalar(O,&vmax) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->vmax= vmax;
   return OK;
@@ -872,7 +859,6 @@ static int _wrap_spolyhedron_set_vmax(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_spolyhedron_get_colmin(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspSPolyhedron *) self)->obj->colmin;
   return nsp_new_double_obj((double) ret);
 }
@@ -880,7 +866,6 @@ static NspObject *_wrap_spolyhedron_get_colmin(void *self,const char *attr)
 static int _wrap_spolyhedron_set_colmin(void *self,const char *attr, NspObject *O)
 {
   int colmin;
-
   if ( IntScalar(O,&colmin) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->colmin= colmin;
   return OK;
@@ -889,7 +874,6 @@ static int _wrap_spolyhedron_set_colmin(void *self,const char *attr, NspObject *
 static NspObject *_wrap_spolyhedron_get_colmax(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspSPolyhedron *) self)->obj->colmax;
   return nsp_new_double_obj((double) ret);
 }
@@ -897,7 +881,6 @@ static NspObject *_wrap_spolyhedron_get_colmax(void *self,const char *attr)
 static int _wrap_spolyhedron_set_colmax(void *self,const char *attr, NspObject *O)
 {
   int colmax;
-
   if ( IntScalar(O,&colmax) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->colmax= colmax;
   return OK;
@@ -906,7 +889,6 @@ static int _wrap_spolyhedron_set_colmax(void *self,const char *attr, NspObject *
 static NspObject *_wrap_spolyhedron_get_coloutmin(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspSPolyhedron *) self)->obj->coloutmin;
   return nsp_new_double_obj((double) ret);
 }
@@ -914,7 +896,6 @@ static NspObject *_wrap_spolyhedron_get_coloutmin(void *self,const char *attr)
 static int _wrap_spolyhedron_set_coloutmin(void *self,const char *attr, NspObject *O)
 {
   int coloutmin;
-
   if ( IntScalar(O,&coloutmin) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->coloutmin= coloutmin;
   return OK;
@@ -923,7 +904,6 @@ static int _wrap_spolyhedron_set_coloutmin(void *self,const char *attr, NspObjec
 static NspObject *_wrap_spolyhedron_get_coloutmax(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspSPolyhedron *) self)->obj->coloutmax;
   return nsp_new_double_obj((double) ret);
 }
@@ -931,7 +911,6 @@ static NspObject *_wrap_spolyhedron_get_coloutmax(void *self,const char *attr)
 static int _wrap_spolyhedron_set_coloutmax(void *self,const char *attr, NspObject *O)
 {
   int coloutmax;
-
   if ( IntScalar(O,&coloutmax) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->coloutmax= coloutmax;
   return OK;
@@ -941,7 +920,6 @@ static NspObject *_wrap_spolyhedron_get_mesh(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspSPolyhedron *) self)->obj->mesh;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -950,7 +928,6 @@ static NspObject *_wrap_spolyhedron_get_mesh(void *self,const char *attr)
 static int _wrap_spolyhedron_set_mesh(void *self,const char *attr, NspObject *O)
 {
   int mesh;
-
   if ( BoolScalar(O,&mesh) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->mesh= mesh;
   return OK;
@@ -960,7 +937,6 @@ static NspObject *_wrap_spolyhedron_get_mesh_only(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspSPolyhedron *) self)->obj->mesh_only;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -969,7 +945,6 @@ static NspObject *_wrap_spolyhedron_get_mesh_only(void *self,const char *attr)
 static int _wrap_spolyhedron_set_mesh_only(void *self,const char *attr, NspObject *O)
 {
   int mesh_only;
-
   if ( BoolScalar(O,&mesh_only) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->mesh_only= mesh_only;
   return OK;
@@ -978,7 +953,6 @@ static int _wrap_spolyhedron_set_mesh_only(void *self,const char *attr, NspObjec
 static NspObject *_wrap_spolyhedron_get_back_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspSPolyhedron *) self)->obj->back_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -986,7 +960,6 @@ static NspObject *_wrap_spolyhedron_get_back_color(void *self,const char *attr)
 static int _wrap_spolyhedron_set_back_color(void *self,const char *attr, NspObject *O)
 {
   int back_color;
-
   if ( IntScalar(O,&back_color) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->back_color= back_color;
   return OK;
@@ -996,7 +969,6 @@ static NspObject *_wrap_spolyhedron_get_shade(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspSPolyhedron *) self)->obj->shade;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -1005,7 +977,6 @@ static NspObject *_wrap_spolyhedron_get_shade(void *self,const char *attr)
 static int _wrap_spolyhedron_set_shade(void *self,const char *attr, NspObject *O)
 {
   int shade;
-
   if ( BoolScalar(O,&shade) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->shade= shade;
   return OK;
@@ -1014,7 +985,6 @@ static int _wrap_spolyhedron_set_shade(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_spolyhedron_get_coldef(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspSPolyhedron *) self)->obj->coldef;
   return nsp_new_double_obj((double) ret);
 }
@@ -1022,7 +992,6 @@ static NspObject *_wrap_spolyhedron_get_coldef(void *self,const char *attr)
 static int _wrap_spolyhedron_set_coldef(void *self,const char *attr, NspObject *O)
 {
   int coldef;
-
   if ( IntScalar(O,&coldef) == FAIL) return FAIL;
   ((NspSPolyhedron *) self)->obj->coldef= coldef;
   return OK;
@@ -1059,7 +1028,7 @@ int _wrap_nsp_extractelts_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 1063 "spolyhedron.c"
+#line 1032 "spolyhedron.c"
 
 
 #line 93 "codegen/spolyhedron.override"
@@ -1071,7 +1040,7 @@ int _wrap_nsp_setrowscols_spolyhedron(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 1075 "spolyhedron.c"
+#line 1044 "spolyhedron.c"
 
 
 /*----------------------------------------------------
@@ -1916,4 +1885,4 @@ NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double 
 }
 
 
-#line 1920 "spolyhedron.c"
+#line 1889 "spolyhedron.c"

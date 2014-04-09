@@ -717,7 +717,6 @@ static NspMethods *connector_get_methods(void) { return connector_methods;};
 static NspObject *_wrap_connector_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspConnector *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -725,7 +724,6 @@ static NspObject *_wrap_connector_get_color(void *self,const char *attr)
 static int _wrap_connector_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspConnector *) self)->obj->color= color;
   return OK;
@@ -734,7 +732,6 @@ static int _wrap_connector_set_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_connector_get_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspConnector *) self)->obj->thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -742,7 +739,6 @@ static NspObject *_wrap_connector_get_thickness(void *self,const char *attr)
 static int _wrap_connector_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-
   if ( IntScalar(O,&thickness) == FAIL) return FAIL;
   ((NspConnector *) self)->obj->thickness= thickness;
   return OK;
@@ -751,7 +747,6 @@ static int _wrap_connector_set_thickness(void *self,const char *attr, NspObject 
 static NspObject *_wrap_connector_get_background(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspConnector *) self)->obj->background;
   return nsp_new_double_obj((double) ret);
 }
@@ -759,7 +754,6 @@ static NspObject *_wrap_connector_get_background(void *self,const char *attr)
 static int _wrap_connector_set_background(void *self,const char *attr, NspObject *O)
 {
   int background;
-
   if ( IntScalar(O,&background) == FAIL) return FAIL;
   ((NspConnector *) self)->obj->background= background;
   return OK;
@@ -1526,4 +1520,4 @@ static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M
   return OK;
 }
 
-#line 1530 "connector.c"
+#line 1524 "connector.c"

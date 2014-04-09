@@ -740,7 +740,6 @@ static int _wrap_nsp_figure_draw_now(NspFigure *self,Stack stack,int rhs,int opt
 static int _wrap_nsp_figure_draw_status(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   CheckRhs(0,0);
   ret = nsp_figure_draw_status(self);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -771,7 +770,7 @@ static int _wrap_nsp_figure_extract(NspFigure *self,Stack stack,int rhs,int opt,
   return 1;
 }
 
-#line 775 "figure.c"
+#line 774 "figure.c"
 
 
 #line 197 "codegen/figure.override"
@@ -783,7 +782,7 @@ static int _wrap_nsp_figure_start_compound(NspFigure *self,Stack stack,int rhs,i
 }
 
 
-#line 787 "figure.c"
+#line 786 "figure.c"
 
 
 #line 207 "codegen/figure.override"
@@ -797,14 +796,13 @@ static int _wrap_nsp_figure_end_compound(NspFigure *self,Stack stack,int rhs,int
 }
 
 
-#line 801 "figure.c"
+#line 800 "figure.c"
 
 
 static int _wrap_nsp_figure_remove_element(NspFigure *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
   NspObject *g;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_graphic, &g) == FAIL) return RET_BUG;
   nsp_figure_remove_element(self, ((NspGraphic *) g));
   return 0;
@@ -834,7 +832,6 @@ static NspObject *_wrap_figure_get_fname(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspFigure *) self)->obj->fname;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -843,7 +840,6 @@ static NspObject *_wrap_figure_get_fname(void *self,const char *attr)
 static int _wrap_figure_set_fname(void *self,const char *attr, NspObject *O)
 {
   char *fname;
-
   if ((fname = nsp_string_object(O))==NULL) return FAIL;
   if ((fname = nsp_string_copy(fname)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspFigure *) self)->obj->fname);
@@ -855,7 +851,6 @@ static NspObject *_wrap_figure_get_driver(void *self,const char *attr)
 {
   const gchar *ret;
   NspObject *nsp_ret;
-
   ret = ((NspFigure *) self)->obj->driver;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -864,7 +859,6 @@ static NspObject *_wrap_figure_get_driver(void *self,const char *attr)
 static int _wrap_figure_set_driver(void *self,const char *attr, NspObject *O)
 {
   char *driver;
-
   if ((driver = nsp_string_object(O))==NULL) return FAIL;
   if ((driver = nsp_string_copy(driver)) ==NULL) return FAIL;
   nsp_string_destroy(&((NspFigure *) self)->obj->driver);
@@ -875,7 +869,6 @@ static int _wrap_figure_set_driver(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figure_get_id(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigure *) self)->obj->id;
   return nsp_new_double_obj((double) ret);
 }
@@ -883,7 +876,6 @@ static NspObject *_wrap_figure_get_id(void *self,const char *attr)
 static int _wrap_figure_set_id(void *self,const char *attr, NspObject *O)
 {
   int id;
-
   if ( IntScalar(O,&id) == FAIL) return FAIL;
   ((NspFigure *) self)->obj->id= id;
   return OK;
@@ -892,7 +884,6 @@ static int _wrap_figure_set_id(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figure_get_dims(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFigure *) self)->obj->dims;
   return (NspObject *) ret;
 }
@@ -900,7 +891,6 @@ static NspObject *_wrap_figure_get_dims(void *self,const char *attr)
 static NspObject *_wrap_figure_get_obj_dims(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFigure *) self)->obj->dims);
   return (NspObject *) ret;
@@ -909,7 +899,6 @@ static NspObject *_wrap_figure_get_obj_dims(void *self,const char *attr, int *co
 static int _wrap_figure_set_dims(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *dims;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((dims = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFigure *) self)->obj->dims != NULL ) 
@@ -921,7 +910,6 @@ static int _wrap_figure_set_dims(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figure_get_viewport_dims(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFigure *) self)->obj->viewport_dims;
   return (NspObject *) ret;
 }
@@ -929,7 +917,6 @@ static NspObject *_wrap_figure_get_viewport_dims(void *self,const char *attr)
 static NspObject *_wrap_figure_get_obj_viewport_dims(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFigure *) self)->obj->viewport_dims);
   return (NspObject *) ret;
@@ -938,7 +925,6 @@ static NspObject *_wrap_figure_get_obj_viewport_dims(void *self,const char *attr
 static int _wrap_figure_set_viewport_dims(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *viewport_dims;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((viewport_dims = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFigure *) self)->obj->viewport_dims != NULL ) 
@@ -951,7 +937,6 @@ static NspObject *_wrap_figure_get_wresize(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspFigure *) self)->obj->wresize;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -960,7 +945,6 @@ static NspObject *_wrap_figure_get_wresize(void *self,const char *attr)
 static int _wrap_figure_set_wresize(void *self,const char *attr, NspObject *O)
 {
   int wresize;
-
   if ( BoolScalar(O,&wresize) == FAIL) return FAIL;
   ((NspFigure *) self)->obj->wresize= wresize;
   return OK;
@@ -969,7 +953,6 @@ static int _wrap_figure_set_wresize(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figure_get_position(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspFigure *) self)->obj->position;
   return (NspObject *) ret;
 }
@@ -977,7 +960,6 @@ static NspObject *_wrap_figure_get_position(void *self,const char *attr)
 static NspObject *_wrap_figure_get_obj_position(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspFigure *) self)->obj->position);
   return (NspObject *) ret;
@@ -986,7 +968,6 @@ static NspObject *_wrap_figure_get_obj_position(void *self,const char *attr, int
 static int _wrap_figure_set_position(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *position;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((position = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspFigure *) self)->obj->position != NULL ) 
@@ -1038,11 +1019,10 @@ static int _wrap_figure_set_obj_children(void *self,NspObject *val)
   return OK;
 }
 
-#line 1042 "figure.c"
+#line 1023 "figure.c"
 static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspFigure *) self)->obj->children;
   return (NspObject *) ret;
 }
@@ -1050,7 +1030,6 @@ static NspObject *_wrap_figure_get_children(void *self,const char *attr)
 static NspObject *_wrap_figure_get_gc(void *self,const char *attr)
 {
   NspFigureData *ret;
-
   ret = ((NspFigure *) self)->obj->gc;
   return NSP_OBJECT(ret);
 }
@@ -1058,7 +1037,6 @@ static NspObject *_wrap_figure_get_gc(void *self,const char *attr)
 static int _wrap_figure_set_gc(void *self,const char *attr, NspObject *O)
 {
   NspFigureData *gc;
-
   if ( ! IsFigureData(O) ) return FAIL;
   if ((gc = (NspFigureData *) nsp_object_copy_and_name(attr,O)) == NULLFIGUREDATA) return FAIL;
   if (((NspFigure *) self)->obj->gc != NULL ) 
@@ -1695,7 +1673,6 @@ static NspMethods *figuredata_get_methods(void) { return NULL;};
 static NspObject *_wrap_figuredata_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -1703,7 +1680,6 @@ static NspObject *_wrap_figuredata_get_color(void *self,const char *attr)
 static int _wrap_figuredata_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspFigureData *) self)->color= color;
   return OK;
@@ -1712,7 +1688,6 @@ static int _wrap_figuredata_set_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figuredata_get_background(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->background;
   return nsp_new_double_obj((double) ret);
 }
@@ -1720,7 +1695,6 @@ static NspObject *_wrap_figuredata_get_background(void *self,const char *attr)
 static int _wrap_figuredata_set_background(void *self,const char *attr, NspObject *O)
 {
   int background;
-
   if ( IntScalar(O,&background) == FAIL) return FAIL;
   ((NspFigureData *) self)->background= background;
   return OK;
@@ -1777,11 +1751,10 @@ static int _wrap_figuredata_set_colormap(void *self,const char *attr, NspObject 
 }
 
 
-#line 1781 "figure.c"
+#line 1755 "figure.c"
 static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->dashes;
   return nsp_new_double_obj((double) ret);
 }
@@ -1789,7 +1762,6 @@ static NspObject *_wrap_figuredata_get_dashes(void *self,const char *attr)
 static int _wrap_figuredata_set_dashes(void *self,const char *attr, NspObject *O)
 {
   int dashes;
-
   if ( IntScalar(O,&dashes) == FAIL) return FAIL;
   ((NspFigureData *) self)->dashes= dashes;
   return OK;
@@ -1798,7 +1770,6 @@ static int _wrap_figuredata_set_dashes(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_figuredata_get_font(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->font;
   return nsp_new_double_obj((double) ret);
 }
@@ -1806,7 +1777,6 @@ static NspObject *_wrap_figuredata_get_font(void *self,const char *attr)
 static int _wrap_figuredata_set_font(void *self,const char *attr, NspObject *O)
 {
   int font;
-
   if ( IntScalar(O,&font) == FAIL) return FAIL;
   ((NspFigureData *) self)->font= font;
   return OK;
@@ -1815,7 +1785,6 @@ static int _wrap_figuredata_set_font(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figuredata_get_font_size(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->font_size;
   return nsp_new_double_obj((double) ret);
 }
@@ -1823,7 +1792,6 @@ static NspObject *_wrap_figuredata_get_font_size(void *self,const char *attr)
 static int _wrap_figuredata_set_font_size(void *self,const char *attr, NspObject *O)
 {
   int font_size;
-
   if ( IntScalar(O,&font_size) == FAIL) return FAIL;
   ((NspFigureData *) self)->font_size= font_size;
   return OK;
@@ -1832,7 +1800,6 @@ static int _wrap_figuredata_set_font_size(void *self,const char *attr, NspObject
 static NspObject *_wrap_figuredata_get_foreground(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->foreground;
   return nsp_new_double_obj((double) ret);
 }
@@ -1840,7 +1807,6 @@ static NspObject *_wrap_figuredata_get_foreground(void *self,const char *attr)
 static int _wrap_figuredata_set_foreground(void *self,const char *attr, NspObject *O)
 {
   int foreground;
-
   if ( IntScalar(O,&foreground) == FAIL) return FAIL;
   ((NspFigureData *) self)->foreground= foreground;
   return OK;
@@ -1849,7 +1815,6 @@ static int _wrap_figuredata_set_foreground(void *self,const char *attr, NspObjec
 static NspObject *_wrap_figuredata_get_hidden3d(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->hidden3d;
   return nsp_new_double_obj((double) ret);
 }
@@ -1857,7 +1822,6 @@ static NspObject *_wrap_figuredata_get_hidden3d(void *self,const char *attr)
 static int _wrap_figuredata_set_hidden3d(void *self,const char *attr, NspObject *O)
 {
   int hidden3d;
-
   if ( IntScalar(O,&hidden3d) == FAIL) return FAIL;
   ((NspFigureData *) self)->hidden3d= hidden3d;
   return OK;
@@ -1866,7 +1830,6 @@ static int _wrap_figuredata_set_hidden3d(void *self,const char *attr, NspObject 
 static NspObject *_wrap_figuredata_get_line_mode(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->line_mode;
   return nsp_new_double_obj((double) ret);
 }
@@ -1874,7 +1837,6 @@ static NspObject *_wrap_figuredata_get_line_mode(void *self,const char *attr)
 static int _wrap_figuredata_set_line_mode(void *self,const char *attr, NspObject *O)
 {
   int line_mode;
-
   if ( IntScalar(O,&line_mode) == FAIL) return FAIL;
   ((NspFigureData *) self)->line_mode= line_mode;
   return OK;
@@ -1883,7 +1845,6 @@ static int _wrap_figuredata_set_line_mode(void *self,const char *attr, NspObject
 static NspObject *_wrap_figuredata_get_line_style(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->line_style;
   return nsp_new_double_obj((double) ret);
 }
@@ -1891,7 +1852,6 @@ static NspObject *_wrap_figuredata_get_line_style(void *self,const char *attr)
 static int _wrap_figuredata_set_line_style(void *self,const char *attr, NspObject *O)
 {
   int line_style;
-
   if ( IntScalar(O,&line_style) == FAIL) return FAIL;
   ((NspFigureData *) self)->line_style= line_style;
   return OK;
@@ -1900,7 +1860,6 @@ static int _wrap_figuredata_set_line_style(void *self,const char *attr, NspObjec
 static NspObject *_wrap_figuredata_get_mark(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->mark;
   return nsp_new_double_obj((double) ret);
 }
@@ -1908,7 +1867,6 @@ static NspObject *_wrap_figuredata_get_mark(void *self,const char *attr)
 static int _wrap_figuredata_set_mark(void *self,const char *attr, NspObject *O)
 {
   int mark;
-
   if ( IntScalar(O,&mark) == FAIL) return FAIL;
   ((NspFigureData *) self)->mark= mark;
   return OK;
@@ -1917,7 +1875,6 @@ static int _wrap_figuredata_set_mark(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_figuredata_get_mark_size(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->mark_size;
   return nsp_new_double_obj((double) ret);
 }
@@ -1925,7 +1882,6 @@ static NspObject *_wrap_figuredata_get_mark_size(void *self,const char *attr)
 static int _wrap_figuredata_set_mark_size(void *self,const char *attr, NspObject *O)
 {
   int mark_size;
-
   if ( IntScalar(O,&mark_size) == FAIL) return FAIL;
   ((NspFigureData *) self)->mark_size= mark_size;
   return OK;
@@ -1934,7 +1890,6 @@ static int _wrap_figuredata_set_mark_size(void *self,const char *attr, NspObject
 static NspObject *_wrap_figuredata_get_pattern(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->pattern;
   return nsp_new_double_obj((double) ret);
 }
@@ -1942,7 +1897,6 @@ static NspObject *_wrap_figuredata_get_pattern(void *self,const char *attr)
 static int _wrap_figuredata_set_pattern(void *self,const char *attr, NspObject *O)
 {
   int pattern;
-
   if ( IntScalar(O,&pattern) == FAIL) return FAIL;
   ((NspFigureData *) self)->pattern= pattern;
   return OK;
@@ -1951,7 +1905,6 @@ static int _wrap_figuredata_set_pattern(void *self,const char *attr, NspObject *
 static NspObject *_wrap_figuredata_get_pixmap(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->pixmap;
   return nsp_new_double_obj((double) ret);
 }
@@ -1959,7 +1912,6 @@ static NspObject *_wrap_figuredata_get_pixmap(void *self,const char *attr)
 static int _wrap_figuredata_set_pixmap(void *self,const char *attr, NspObject *O)
 {
   int pixmap;
-
   if ( IntScalar(O,&pixmap) == FAIL) return FAIL;
   ((NspFigureData *) self)->pixmap= pixmap;
   return OK;
@@ -1968,7 +1920,6 @@ static int _wrap_figuredata_set_pixmap(void *self,const char *attr, NspObject *O
 static NspObject *_wrap_figuredata_get_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -1976,7 +1927,6 @@ static NspObject *_wrap_figuredata_get_thickness(void *self,const char *attr)
 static int _wrap_figuredata_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-
   if ( IntScalar(O,&thickness) == FAIL) return FAIL;
   ((NspFigureData *) self)->thickness= thickness;
   return OK;
@@ -1985,7 +1935,6 @@ static int _wrap_figuredata_set_thickness(void *self,const char *attr, NspObject
 static NspObject *_wrap_figuredata_get_use_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspFigureData *) self)->use_color;
   return nsp_new_double_obj((double) ret);
 }
@@ -1993,7 +1942,6 @@ static NspObject *_wrap_figuredata_get_use_color(void *self,const char *attr)
 static int _wrap_figuredata_set_use_color(void *self,const char *attr, NspObject *O)
 {
   int use_color;
-
   if ( IntScalar(O,&use_color) == FAIL) return FAIL;
   ((NspFigureData *) self)->use_color= use_color;
   return OK;
@@ -2003,7 +1951,6 @@ static NspObject *_wrap_figuredata_get_auto_clear(void *self,const char *attr)
 {
   int ret;
   NspObject *nsp_ret;
-
   ret = ((NspFigureData *) self)->auto_clear;
   nsp_ret= (ret == TRUE) ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
   return nsp_ret;
@@ -2012,7 +1959,6 @@ static NspObject *_wrap_figuredata_get_auto_clear(void *self,const char *attr)
 static int _wrap_figuredata_set_auto_clear(void *self,const char *attr, NspObject *O)
 {
   int auto_clear;
-
   if ( BoolScalar(O,&auto_clear) == FAIL) return FAIL;
   ((NspFigureData *) self)->auto_clear= auto_clear;
   return OK;
@@ -2046,7 +1992,6 @@ static AttrTab figuredata_attrs[] = {
 int _wrap_nsp_check_for_current_figure(Stack stack, int rhs, int opt, int lhs) /* get_current_figure */
 {
   NspFigure *ret;
-
   CheckRhs(0,0);
     ret = nsp_check_for_current_figure();
   if (ret == NULL ) return RET_BUG;
@@ -2059,7 +2004,6 @@ int _wrap_nsp_get_wid_figure(Stack stack, int rhs, int opt, int lhs) /* get_figu
   int_types T[] = {s_int,t_end};
   int wid;
   NspObject *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&wid) == FAIL) return RET_BUG;
     ret = nsp_get_wid_figure(wid);
   if (ret == NULLOBJ ) return RET_BUG;
@@ -2070,7 +2014,6 @@ int _wrap_nsp_get_wid_figure(Stack stack, int rhs, int opt, int lhs) /* get_figu
 int _wrap_nsp_get_current_axes(Stack stack, int rhs, int opt, int lhs) /* get_current_axes */
 {
   NspAxes *ret;
-
   CheckRhs(0,0);
     ret = nsp_get_current_axes();
   if (ret == NULL ) return RET_BUG;
@@ -2087,7 +2030,7 @@ int _wrap_nsp_extractelts_figure(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 2091 "figure.c"
+#line 2034 "figure.c"
 
 
 #line 176 "codegen/figure.override"
@@ -2099,7 +2042,7 @@ int _wrap_nsp_setrowscols_figure(Stack stack, int rhs, int opt, int lhs)
   return int_graphic_set_attribute(stack,rhs,opt,lhs);
 }
 
-#line 2103 "figure.c"
+#line 2046 "figure.c"
 
 
 /*----------------------------------------------------
@@ -3802,4 +3745,4 @@ NspObject *nsp_get_wid_figure(int wid)
   return (NspObject *) nsp_matrix_create(NVOID,'r',0,0);
 }
 
-#line 3806 "figure.c"
+#line 3749 "figure.c"

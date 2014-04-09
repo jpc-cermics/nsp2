@@ -508,7 +508,6 @@ static NspMethods *groot_get_methods(void) { return NULL;};
 static NspObject *_wrap_groot_get_figures(void *self,const char *attr)
 {
   NspList *ret;
-
   ret = ((NspGRoot *) self)->obj->figures;
   return (NspObject *) ret;
 }
@@ -516,7 +515,6 @@ static NspObject *_wrap_groot_get_figures(void *self,const char *attr)
 static NspObject *_wrap_groot_get_obj_figures(void *self,const char *attr, int *copy)
 {
   NspList *ret;
-
   *copy = FALSE;
   ret = ((NspList*) ((NspGRoot *) self)->obj->figures);
   return (NspObject *) ret;
@@ -525,7 +523,6 @@ static NspObject *_wrap_groot_get_obj_figures(void *self,const char *attr, int *
 static int _wrap_groot_set_figures(void *self,const char *attr, NspObject *O)
 {
   NspList *figures;
-
   if ( ! IsList(O) ) return FAIL;
   if ((figures = (NspList *) nsp_object_copy_and_name(attr,O)) == NULLLIST) return FAIL;
   if (((NspGRoot *) self)->obj->figures != NULL ) 
@@ -572,4 +569,4 @@ void GRoot_Interf_Info(int i, char **fname, function (**f))
 #line 19 "codegen/groot.override"
 
 
-#line 576 "groot.c"
+#line 573 "groot.c"

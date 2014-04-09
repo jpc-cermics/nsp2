@@ -587,7 +587,6 @@ static NspMethods *segments_get_methods(void) { return NULL;};
 static NspObject *_wrap_segments_get_x(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspSegments *) self)->obj->x;
   return (NspObject *) ret;
 }
@@ -595,7 +594,6 @@ static NspObject *_wrap_segments_get_x(void *self,const char *attr)
 static NspObject *_wrap_segments_get_obj_x(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspSegments *) self)->obj->x);
   return (NspObject *) ret;
@@ -604,7 +602,6 @@ static NspObject *_wrap_segments_get_obj_x(void *self,const char *attr, int *cop
 static int _wrap_segments_set_x(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *x;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((x = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspSegments *) self)->obj->x != NULL ) 
@@ -616,7 +613,6 @@ static int _wrap_segments_set_x(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_segments_get_y(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspSegments *) self)->obj->y;
   return (NspObject *) ret;
 }
@@ -624,7 +620,6 @@ static NspObject *_wrap_segments_get_y(void *self,const char *attr)
 static NspObject *_wrap_segments_get_obj_y(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspSegments *) self)->obj->y);
   return (NspObject *) ret;
@@ -633,7 +628,6 @@ static NspObject *_wrap_segments_get_obj_y(void *self,const char *attr, int *cop
 static int _wrap_segments_set_y(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *y;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((y = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspSegments *) self)->obj->y != NULL ) 
@@ -645,7 +639,6 @@ static int _wrap_segments_set_y(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_segments_get_color(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspSegments *) self)->obj->color;
   return (NspObject *) ret;
 }
@@ -653,7 +646,6 @@ static NspObject *_wrap_segments_get_color(void *self,const char *attr)
 static NspObject *_wrap_segments_get_obj_color(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspSegments *) self)->obj->color);
   return (NspObject *) ret;
@@ -662,7 +654,6 @@ static NspObject *_wrap_segments_get_obj_color(void *self,const char *attr, int 
 static int _wrap_segments_set_color(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *color;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((color = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspSegments *) self)->obj->color != NULL ) 
@@ -691,7 +682,7 @@ int _wrap_nsp_extractelts_segments(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 695 "segments.c"
+#line 686 "segments.c"
 
 
 #line 66 "codegen/segments.override"
@@ -704,7 +695,7 @@ int _wrap_nsp_setrowscols_segments(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 708 "segments.c"
+#line 699 "segments.c"
 
 
 /*----------------------------------------------------
@@ -847,4 +838,4 @@ static int nsp_getbounds_segments(NspGraphic *Obj,double *bounds)
 }
 
 
-#line 851 "segments.c"
+#line 842 "segments.c"

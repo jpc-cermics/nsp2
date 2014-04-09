@@ -743,7 +743,6 @@ static NspMethods *link_get_methods(void) { return link_methods;};
 static NspObject *_wrap_link_get_color(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspLink *) self)->obj->color;
   return nsp_new_double_obj((double) ret);
 }
@@ -751,7 +750,6 @@ static NspObject *_wrap_link_get_color(void *self,const char *attr)
 static int _wrap_link_set_color(void *self,const char *attr, NspObject *O)
 {
   int color;
-
   if ( IntScalar(O,&color) == FAIL) return FAIL;
   ((NspLink *) self)->obj->color= color;
   return OK;
@@ -760,7 +758,6 @@ static int _wrap_link_set_color(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_link_get_thickness(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspLink *) self)->obj->thickness;
   return nsp_new_double_obj((double) ret);
 }
@@ -768,7 +765,6 @@ static NspObject *_wrap_link_get_thickness(void *self,const char *attr)
 static int _wrap_link_set_thickness(void *self,const char *attr, NspObject *O)
 {
   int thickness;
-
   if ( IntScalar(O,&thickness) == FAIL) return FAIL;
   ((NspLink *) self)->obj->thickness= thickness;
   return OK;
@@ -777,7 +773,6 @@ static int _wrap_link_set_thickness(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_link_get_background(void *self,const char *attr)
 {
   int ret;
-
   ret = ((NspLink *) self)->obj->background;
   return nsp_new_double_obj((double) ret);
 }
@@ -785,7 +780,6 @@ static NspObject *_wrap_link_get_background(void *self,const char *attr)
 static int _wrap_link_set_background(void *self,const char *attr, NspObject *O)
 {
   int background;
-
   if ( IntScalar(O,&background) == FAIL) return FAIL;
   ((NspLink *) self)->obj->background= background;
   return OK;
@@ -794,7 +788,6 @@ static int _wrap_link_set_background(void *self,const char *attr, NspObject *O)
 static NspObject *_wrap_link_get_poly(void *self,const char *attr)
 {
   NspMatrix *ret;
-
   ret = ((NspLink *) self)->obj->poly;
   return (NspObject *) ret;
 }
@@ -802,7 +795,6 @@ static NspObject *_wrap_link_get_poly(void *self,const char *attr)
 static NspObject *_wrap_link_get_obj_poly(void *self,const char *attr, int *copy)
 {
   NspMatrix *ret;
-
   *copy = FALSE;
   ret = ((NspMatrix*) ((NspLink *) self)->obj->poly);
   return (NspObject *) ret;
@@ -811,7 +803,6 @@ static NspObject *_wrap_link_get_obj_poly(void *self,const char *attr, int *copy
 static int _wrap_link_set_poly(void *self,const char *attr, NspObject *O)
 {
   NspMatrix *poly;
-
   if ( ! IsMat(O) ) return FAIL;
   if ((poly = (NspMatrix *) nsp_object_copy_and_name(attr,O)) == NULLMAT) return FAIL;
   if (((NspLink *) self)->obj->poly != NULL ) 
@@ -1913,4 +1904,4 @@ static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L)
   return OK;
 }
 
-#line 1917 "link.c"
+#line 1908 "link.c"
