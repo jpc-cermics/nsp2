@@ -619,6 +619,7 @@ static int _wrap_nsp_qcurve_enlarge(NspQcurve *self,Stack stack,int rhs,int opt,
 
 static int _wrap_nsp_qcurve_clear(NspQcurve *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   nsp_qcurve_clear(self);
   return 0;
 }
@@ -627,6 +628,7 @@ static int _wrap_nsp_qcurve_get_pts(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   NspMatrix *ret;
 
+  CheckRhs(0,0);
   ret = nsp_qcurve_get_pts(self);
   if ( ret == NULLMAT) return RET_BUG;
   MoveObj(stack,1,NSP_OBJECT(ret));
@@ -637,6 +639,7 @@ static int _wrap_nsp_qcurve_get_len(NspQcurve *self,Stack stack,int rhs,int opt,
 {
   int ret;
 
+  CheckRhs(0,0);
   ret = nsp_qcurve_get_len(self);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -738,7 +741,7 @@ static int _wrap_qcurve_set_mode(void *self, char *attr, NspObject *O)
   return OK;
 }
 
-#line 742 "qcurve.c"
+#line 745 "qcurve.c"
 static NspObject *_wrap_qcurve_get_mode(void *self,const char *attr)
 {
   int ret;
@@ -776,7 +779,7 @@ static int _wrap_qcurve_set_obj_Pts(void *self,NspObject *val)
   return OK;
 }
 
-#line 780 "qcurve.c"
+#line 783 "qcurve.c"
 static NspObject *_wrap_qcurve_get_Pts(void *self,const char *attr)
 {
   NspMatrix *ret;
@@ -842,7 +845,7 @@ int _wrap_nsp_extractelts_qcurve(Stack stack, int rhs, int opt, int lhs)
   return int_nspgraphic_extract(stack,rhs,opt,lhs);
 }
 
-#line 846 "qcurve.c"
+#line 849 "qcurve.c"
 
 
 #line 118 "codegen/qcurve.override"
@@ -855,7 +858,7 @@ int _wrap_nsp_setrowscols_qcurve(Stack stack, int rhs, int opt, int lhs)
 }
 
 
-#line 859 "qcurve.c"
+#line 862 "qcurve.c"
 
 
 /*----------------------------------------------------
@@ -1268,4 +1271,4 @@ NspMatrix *nsp_qcurve_get_pts(NspQcurve *C)
 }
 
 
-#line 1272 "qcurve.c"
+#line 1275 "qcurve.c"

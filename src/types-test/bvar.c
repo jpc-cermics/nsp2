@@ -88,7 +88,7 @@ NspTypeBvar *new_type_bvar(type_mode mode)
   top->sh_type = (sh_type_func *) nsp_bvar_type_short_string;
   top->info = (info_func *) nsp_bvar_info;
   /* top->is_true = (is_true_func  *) nsp_bvar_is_true; */
-#line 141 "codegen/bvar.override"
+#line 145 "codegen/bvar.override"
 top->loop = (loop_func *) nsp_bvar_loop; /* loop with bvar type */
 
 #line 95 "bvar.c"

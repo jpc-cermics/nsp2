@@ -184,12 +184,6 @@ class Overrides:
             # take care to use a different name as in type override 
             stn = 'loop_%s' % slot
             self.startlines[stn] = (startline + 1, filename)
-        elif words[0] == 'override-loop':
-            slot = words[1]
-            self.override_loop[slot] = rest
-            # take care to use a different name as in type override 
-            stn = 'loop_%s' % slot
-            self.startlines[stn] = (startline + 1, filename)
         elif words[0] == 'override-int-create-final':
             slot = words[1]
             self.override_int_create_final[slot] = rest

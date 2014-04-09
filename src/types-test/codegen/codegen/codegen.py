@@ -691,7 +691,7 @@ class Wrapper:
 
         # insert loop override code
         if self.overrides.part_loop_is_overriden(typename_nn):
-            stn = 'path_extract_%s' % typename_nn
+            stn = 'loop_%s' % typename_nn
             lineno, filename = self.overrides.getstartline(stn)
             self.fp.setline(lineno,'codegen/'+ filename)
             self.fp.write(self.overrides.get_override_loop(typename_nn))
@@ -1652,7 +1652,7 @@ class Wrapper:
             if info.get_parselist() == '': 
                 substdict['parseargs'] = '  CheckRhs(0,0);\n'
             else:
-                substdict['parseargs'] = self.parse_tmpl % substdict
+                substdict['parseargs'] = (self.parse_tmpl % substdict)
             substdict['extraparams'] = ', NspObject *args, NspObject *kwargs'
             flags = 'METH_VARARGS|METH_KEYWORDS'
 
@@ -1660,7 +1660,7 @@ class Wrapper:
             substdict['varlist'] = info.get_tylist() + info.get_kwlist() + substdict['varlist']
         else:
             substdict['varlist'] = info.get_tylist() + substdict['varlist']
-            substdict['parseargs'] = ''
+            substdict['parseargs'] = '  CheckRhs(0,0);\n'
             substdict['extraparams'] = ''
             flags = 'METH_NOARGS'
             

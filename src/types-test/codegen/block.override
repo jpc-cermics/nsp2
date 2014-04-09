@@ -346,7 +346,7 @@ NspBlock *nsp_block_create_default(const char *name)
 }
 
 %%
-zz-override-destroy-prelim Block
+ignore zz-override-destroy-prelim Block
     /* verbatim in destroy */
     nsp_destroy_grb_lock(H->obj->locks,H);FREE(H->obj->locks);
 %%

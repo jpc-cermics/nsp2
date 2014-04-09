@@ -2932,6 +2932,7 @@ class ArgMatcher:
             typecode = "G_TYPE_NONE"
 	self.register(ptype, FlagsArg(ptype, typecode))
     def register_object(self, ptype, name, parent, typecode):
+        # print( "Registering %s\n" % (ptype) )
         oa = ObjectArg(ptype,name, parent, typecode)
         self.register(ptype, oa)  # in case I forget the * in the .defs
 	self.register(ptype+'*', oa)

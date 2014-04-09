@@ -93,7 +93,7 @@ NspTypeBson *new_type_bson(type_mode mode)
   top->sh_type = (sh_type_func *) nsp_bson_type_short_string;
   top->info = (info_func *) nsp_bson_info;
   /* top->is_true = (is_true_func  *) nsp_bson_is_true; */
-#line 237 "codegen/bson.override"
+#line 241 "codegen/bson.override"
 top->loop = (loop_func *) nsp_bson_loop; /* loop with bson type */
 
 #line 100 "bson.c"
@@ -580,6 +580,7 @@ int int_bson_create(Stack stack, int rhs, int opt, int lhs)
  *-------------------------------------------*/
 static int _wrap_bson_show(NspBson *self,Stack stack,int rhs,int opt,int lhs)
 {
+  CheckRhs(0,0);
   bson_show(self);
   return 0;
 }
@@ -613,7 +614,7 @@ static int _wrap_bson_insert(NspBson *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 } 
 
-#line 617 "bson.c"
+#line 618 "bson.c"
 
 
 #line 180 "codegen/bson.override"
@@ -628,7 +629,7 @@ static int _wrap_bson_to_hash(NspBson *self,Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 632 "bson.c"
+#line 633 "bson.c"
 
 
 static NspMethods bson_methods[] = {
@@ -872,7 +873,7 @@ void nsp_mclient_destroy_partial(NspMclient *H)
   /* verbatim in destroy */
   mongoc_client_destroy(H->obj->cl);
 
-#line 876 "bson.c"
+#line 877 "bson.c"
     FREE(H->obj);
    }
 }
@@ -1109,7 +1110,7 @@ int int_mclient_create(Stack stack, int rhs, int opt, int lhs)
   return 1;
 } 
 
-#line 1113 "bson.c"
+#line 1114 "bson.c"
 /*-------------------------------------------
  * Methods
  *-------------------------------------------*/
@@ -1140,7 +1141,7 @@ static int _wrap_mongoc_client_get_collection(NspMclient *self,Stack stack,int r
   return 1;
 }
 
-#line 1144 "bson.c"
+#line 1145 "bson.c"
 
 
 static NspMethods mclient_methods[] = {
@@ -1382,7 +1383,7 @@ void nsp_mcollection_destroy_partial(NspMcollection *H)
   /* verbatim in destroy */
   mongoc_collection_destroy(H->obj->co);
 
-#line 1386 "bson.c"
+#line 1387 "bson.c"
     FREE(H->obj);
    }
 }
@@ -1665,7 +1666,7 @@ static int _wrap_mongoc_collection_find(NspMcollection *self,Stack stack,int rhs
   return 1;
 }
 
-#line 1669 "bson.c"
+#line 1670 "bson.c"
 
 
 #line 460 "codegen/bson.override"
@@ -1695,7 +1696,7 @@ static int _wrap_mongoc_collection_insert(NspMcollection *self,Stack stack,int r
 }
 
 
-#line 1699 "bson.c"
+#line 1700 "bson.c"
 
 
 #line 428 "codegen/bson.override"
@@ -1729,7 +1730,7 @@ static int _wrap_mongoc_collection_delete(NspMcollection *self,Stack stack,int r
     return 0;
 }
 
-#line 1733 "bson.c"
+#line 1734 "bson.c"
 
 
 static NspMethods mcollection_methods[] = {
@@ -1975,7 +1976,7 @@ void nsp_mcursor_destroy_partial(NspMcursor *H)
   mongoc_cursor_destroy(H->obj->cu);
   if (H->obj->doc != NULL) bson_destroy(H->obj->doc);
 
-#line 1979 "bson.c"
+#line 1980 "bson.c"
     FREE(H->obj);
    }
 }
@@ -2234,7 +2235,7 @@ static int _wrap_mongoc_cursor_error(NspMcursor *self,Stack stack,int rhs,int op
     return 0;
 }
 
-#line 2238 "bson.c"
+#line 2239 "bson.c"
 
 
 #line 528 "codegen/bson.override"
@@ -2269,7 +2270,7 @@ static int _wrap_mongoc_cursor_next(NspMcursor *self,Stack stack,int rhs,int opt
   return ret;
 }
 
-#line 2273 "bson.c"
+#line 2274 "bson.c"
 
 
 #line 561 "codegen/bson.override"
@@ -2284,7 +2285,7 @@ static int _wrap_mongoc_cursor_more(NspMcursor *self,Stack stack,int rhs,int opt
 }
 
 
-#line 2288 "bson.c"
+#line 2289 "bson.c"
 
 
 static NspMethods mcursor_methods[] = {
@@ -2311,7 +2312,7 @@ static int _wrap_mclient_create(Stack stack,int rhs,int opt,int lhs)
   return int_mclient_create(stack,rhs,opt,lhs);
 }
 
-#line 2315 "bson.c"
+#line 2316 "bson.c"
 
 
 /*----------------------------------------------------
@@ -2710,4 +2711,4 @@ static bson_t *nsp_bson_b_copy(const bson_t *b)
 }
 
 
-#line 2714 "bson.c"
+#line 2715 "bson.c"
