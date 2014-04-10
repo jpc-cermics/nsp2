@@ -830,8 +830,8 @@ static NspMethods *figure_get_methods(void) { return figure_methods;};
 
 static NspObject *_wrap_figure_get_fname(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspFigure *) self)->obj->fname;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -849,8 +849,8 @@ static int _wrap_figure_set_fname(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_figure_get_driver(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspFigure *) self)->obj->driver;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;

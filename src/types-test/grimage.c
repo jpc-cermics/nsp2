@@ -691,8 +691,8 @@ static int _wrap_grimage_set_thickness(void *self,const char *attr, NspObject *O
 
 static NspObject *_wrap_grimage_get_fname(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspGrImage *) self)->obj->fname;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;

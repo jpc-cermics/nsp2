@@ -900,8 +900,8 @@ static int _wrap_objs3d_set_frect(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_objs3d_get_title(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspObjs3d *) self)->obj->title;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;

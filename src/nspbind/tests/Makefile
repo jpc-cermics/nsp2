@@ -20,6 +20,11 @@ SRC=/usr/local/src/nsp2-ref/src/types-test/
 
 all:	$(ALL)
 
+
+agraph.diff : agraph.c 
+	@echo "-------- diff $*.c -------------------"
+	@diff -riw $*.c $(SRC)/../libgraphviz/; $$status 
+
 %.diff: %.c	
 	@echo "-------- diff $*.c -------------------"
 	@diff -riw $*.c $(SRC); $$status 

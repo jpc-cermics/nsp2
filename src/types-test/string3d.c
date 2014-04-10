@@ -645,8 +645,8 @@ static int _wrap_string3d_set_Mcoord(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_string3d_get_str(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspString3d *) self)->obj->str;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;

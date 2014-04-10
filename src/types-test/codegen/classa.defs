@@ -34,3 +34,35 @@
   (c-name "setrowscols_classa")
   (return-type "none")
 )
+
+
+;; (define-function testzzz
+;;   (c-name "Ctestzzz")
+;;   (return-type "int")
+;;   (parameters
+;;     '("double" "zz")
+;;     '("int" "xx1")
+;;     '("NspMatrix*" "A1")
+;;     '("int" "xx2")
+;;     '("NspMatrix*" "A2")
+;;     '("int" "xx3")
+;;     '("NspMatrix*" "A3")
+;;     '("NspBMatrix*" "z") 
+;;   )
+;; )
+
+;; (define-function testxxx
+;;   (c-name "Ctestxxx")
+;;   (return-type "int")
+;;   (parameters
+;;    '("double" "zz1")
+;;    '("double" "zz2")
+;;    '("NspMatrix*" "A1")
+;;    '("double" "zz3")
+;;    '("NspMatrix*" "A2")
+;;    '("NspMatrix*" "A3")
+;;    '("NspBMatrix*" "z") 
+;;    '("NspCells*" "tz") 
+;;   )
+;; )
+

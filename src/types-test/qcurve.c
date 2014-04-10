@@ -786,8 +786,8 @@ static int _wrap_qcurve_set_Pts(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_qcurve_get_legend(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspQcurve *) self)->obj->legend;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;

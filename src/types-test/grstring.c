@@ -660,8 +660,8 @@ static int _wrap_grstring_set_y(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_grstring_get_font(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspGrstring *) self)->obj->font;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;

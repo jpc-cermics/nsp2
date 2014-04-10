@@ -986,8 +986,8 @@ static int _wrap_axes_set_frect(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_axes_get_title(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspAxes *) self)->obj->title;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -1005,8 +1005,8 @@ static int _wrap_axes_set_title(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_axes_get_x(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspAxes *) self)->obj->x;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
@@ -1024,8 +1024,8 @@ static int _wrap_axes_set_x(void *self,const char *attr, NspObject *O)
 
 static NspObject *_wrap_axes_get_y(void *self,const char *attr)
 {
-  const gchar *ret;
   NspObject *nsp_ret;
+  const gchar *ret;
   ret = ((NspAxes *) self)->obj->y;
   nsp_ret = nsp_new_string_obj(NVOID,ret,-1);
   return nsp_ret;
