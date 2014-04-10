@@ -20,6 +20,11 @@ SRC=/usr/local/src/nsp2-ref/src/types-test/
 
 all:	$(ALL)
 
+agraph.c: agraph.defs 
+	$(PROG) -o /tmp/$*.c $* 
+	@sed -e "s+codegen/+../types-test/codegen/+g" \
+	    -e "s+/tmp/agraph.c+agraph.c+g" /tmp/$*.c > $*.c
+	@rm -f /tmp/$*.c
 
 agraph.diff : agraph.c 
 	@echo "-------- diff $*.c -------------------"
