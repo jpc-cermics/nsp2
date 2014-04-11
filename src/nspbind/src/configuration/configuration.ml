@@ -173,17 +173,27 @@ let set_prefix str =
   conf.prefix <- Some str;
 ;;
 
+let default_prefix () = 
+  match conf.source_file_basename with 
+  | Some fname -> Some (String.capitalize fname)
+  | None -> None 
+;;
+
 let get_prefix () = 
-  let str = 
-    match conf.prefix with 
-    | Some str -> str 
-    | None -> 
-	(
-	 match conf.source_file_basename with 
-	 | Some fname -> fname
-	 | _ -> failwith "undefined prefix" 
-	) in 
-  String.capitalize str
+  match conf.prefix with 
+  | Some str -> str 
+  | None -> 
+      match default_prefix () with 
+      | Some fname -> fname
+      | _ -> failwith "undefined prefix" 
+;;
+
+let set_prefix_from_object str = 
+  match conf.prefix with 
+  | Some _fname -> 
+      ()
+  | None -> 
+      set_prefix str
 ;;
 
 let is_definitions_source_file_name fname =
@@ -191,7 +201,6 @@ let is_definitions_source_file_name fname =
 and is_overrides_source_file_name fname =
   Path.check_extension fname overrides_source_file_extension
 ;;
-
 
 let report_error ppf = function
   | Fatal_error s ->
