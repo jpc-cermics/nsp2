@@ -742,25 +742,25 @@ static AttrTab hm_attrs[] = {
  * i.e a set of function which are accessible at nsp level
  *----------------------------------------------------*/
 
-static OpTab hm_func[]={
+static OpTab Hm_func[]={
   { "hm_create", int_hm_create},
   { NULL, NULL}
 };
 
-/* call ith function in the hm interface */
+/* call ith function in the Hm interface */
 
-int hm_Interf(int i, Stack stack, int rhs, int opt, int lhs)
+int Hm_Interf(int i, Stack stack, int rhs, int opt, int lhs)
 {
-  return (*(hm_func[i].fonc))(stack,rhs,opt,lhs);
+  return (*(Hm_func[i].fonc))(stack,rhs,opt,lhs);
 }
 
 /* used to walk through the interface table 
     (for adding or removing functions) */
 
-void hm_Interf_Info(int i, char **fname, function (**f))
+void Hm_Interf_Info(int i, char **fname, function (**f))
 {
-  *fname = hm_func[i].name;
-  *f = hm_func[i].fonc;
+  *fname = Hm_func[i].name;
+  *f = Hm_func[i].fonc;
 }
 
 #line 227 "codegen/hm.override"

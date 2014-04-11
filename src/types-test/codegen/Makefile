@@ -295,7 +295,7 @@ xxall:: ../../liblowdisc/ldfaure.c
 ../hm.c : hm.defs hm-types.defs hm.override codegen/*.py
 	($(PYTHON) codegen/codegen.py \
 	    --override hm.override \
-	    --prefix hm hm.defs) > $*.c \
+	    --prefix Hm hm.defs) > $*.c \
 	&& mv hm.h ../../include/nsp 
 
 
