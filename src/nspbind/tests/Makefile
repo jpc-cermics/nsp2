@@ -28,11 +28,11 @@ agraph.c: agraph.defs
 
 agraph.diff : agraph.c 
 	@echo "-------- diff $*.c -------------------"
-	@diff -riw $*.c $(SRC)/../libgraphviz/; $$status 
+	@diff -rw $*.c $(SRC)/../libgraphviz/; $$status 
 
 %.diff: %.c	
 	@echo "-------- diff $*.c -------------------"
-	@diff -riw $*.c $(SRC); $$status 
+	@diff -rw $*.c $(SRC); $$status 
 
 %.c: %.defs
 	$(PROG) -o $*.c $*
