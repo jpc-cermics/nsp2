@@ -25,7 +25,8 @@ ALL=  ../classa.c ../classb.c ../classaref.c ../classbref.c \
 	../fec.c  ../contour3d.c ../block.c ../link.c ../connector.c \
 	../diagram.c ../grimage.c ../epoints.c ../sharedlib.c \
 	../hm.c ../../libgraphviz/agraph.c ../ast.c ../astv.c ../bvar.c \
-	../stochdec.c ../bson.c test.c
+	../stochdec.c ../bson.c 
+
 
 all:: $(ALL)
 	cd ../; make all
