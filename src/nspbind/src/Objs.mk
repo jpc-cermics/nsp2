@@ -259,6 +259,7 @@ MATLAB_PRINTING_BYT_OBJS=\
  $(MATLAB_PRINTING_DIR)/genheaders.cmo\
  $(MATLAB_PRINTING_DIR)/genfunctions.cmo\
  $(MATLAB_PRINTING_DIR)/genmethods.cmo\
+ $(MATLAB_PRINTING_DIR)/gengetset.cmo\
  $(MATLAB_PRINTING_DIR)/codegen.cmo\
  $(MATLAB_PRINTING_DIR)/override_print.cmo\
 
