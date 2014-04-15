@@ -54,11 +54,6 @@ class FileOutput:
 class Wrapper:
 
     type_tmpl_1 = \
-              '/* -*- Mode: C -*- */\n' \
-              '/*-------------------------------------------------------------------\n'  \
-              ' * This Software is ( Copyright ENPC 1998-2012 )                          \n'  \
-              ' * Jean-Philippe Chancelier Enpc/Cermics \n'  \
-              ' *-------------------------------------------------------------------*/\n'  \
               '\n'  \
               '#include "nsp/object.h"\n'  \
               '#define  %(typename)s_Private \n'  \
@@ -1092,7 +1087,39 @@ def write_enums(parser, prefix, fp=sys.stdout):
     fp.write('}\n\n')
 
 def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
+
     fp.write('/* -*- Mode: C -*- */\n\n')
+    fp.write('/* This file is generated, please do not edit */\n')
+
+    fp.write('/* Nsp\n') 
+    tag = '' # overrides.get_copyright()
+    if tag == '' :
+        tag = ' * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics\n'
+        fp.write( tag) 
+    else:
+        fp.write( tag) 
+        # fp.resetline()
+
+    type_tmpl_copyright = \
+        ' *\n' \
+        ' * This library is free software; you can redistribute it and/or\n' \
+        ' * modify it under the terms of the GNU General Public\n' \
+        ' * License as published by the Free Software Foundation; either\n' \
+        ' * version 2 of the License, or (at your option) any later version.\n' \
+        ' *\n' \
+        ' * This library is distributed in the hope that it will be useful,\n' \
+        ' * but WITHOUT ANY WARRANTY; without even the implied warranty of\n' \
+        ' * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU\n' \
+        ' * General Public License for more details.\n' \
+        ' *\n' \
+        ' * You should have received a copy of the GNU General Public\n' \
+        ' * License along with this library; if not, write to the\n' \
+        ' * Free Software Foundation, Inc., 59 Temple Place - Suite 330,\n' \
+        ' * Boston, MA 02111-1307, USA.\n' \
+        ' */\n' 
+    fp.write( type_tmpl_copyright) 
+    fp.write('\n\n')
+
     fp.write(overrides.get_headers())
     fp.resetline()
     fp.write('\n\n')

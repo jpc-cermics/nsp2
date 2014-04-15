@@ -1,5 +1,26 @@
 /* -*- Mode: C -*- */
 
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+
 
 #line 4 "webkit.override"
 #include <gdk/gdk.h>
@@ -37,7 +58,7 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #endif 
 
 
-#line 41 "webkit.c"
+#line 62 "webkit.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -54,11 +75,6 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 
 /* ----------- WebKitWebView ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  WebKitWebView_Private 
@@ -265,7 +281,6 @@ static int _wrap_webkit_web_view_set_maintains_back_forward_list(NspWebKitWebVie
 {
   int_types T[] = {s_bool,t_end};
   int flag;
-
   if ( GetArgs(stack,rhs,opt,T,&flag) == FAIL) return RET_BUG;
   webkit_web_view_set_maintains_back_forward_list(WEBKIT_WEB_VIEW(self->obj), flag);
   return 0;
@@ -273,9 +288,8 @@ static int _wrap_webkit_web_view_set_maintains_back_forward_list(NspWebKitWebVie
 
 static int _wrap_webkit_web_view_get_back_forward_list(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebBackForwardList *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_view_get_back_forward_list(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebbackforwardlist = new_type_webkitwebbackforwardlist(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebbackforwardlist))== NULL) return RET_BUG;
@@ -286,9 +300,8 @@ static int _wrap_webkit_web_view_get_back_forward_list(NspWebKitWebView *self,St
 static int _wrap_webkit_web_view_go_to_back_forward_item(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
-  int ret;
   NspGObject *item;
-
+  int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebhistoryitem, &item) == FAIL) return RET_BUG;
   ret = webkit_web_view_go_to_back_forward_item(WEBKIT_WEB_VIEW(self->obj), WEBKIT_WEB_HISTORY_ITEM(item->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -298,7 +311,6 @@ static int _wrap_webkit_web_view_go_to_back_forward_item(NspWebKitWebView *self,
 static int _wrap_webkit_web_view_can_go_back(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_view_can_go_back(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -307,7 +319,6 @@ static int _wrap_webkit_web_view_can_go_back(NspWebKitWebView *self,Stack stack,
 static int _wrap_webkit_web_view_can_go_forward(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_view_can_go_forward(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -329,7 +340,6 @@ static int _wrap_webkit_web_view_go_back_or_forward(NspWebKitWebView *self,Stack
 {
   int_types T[] = {s_int,t_end};
   int steps;
-
   if ( GetArgs(stack,rhs,opt,T,&steps) == FAIL) return RET_BUG;
   webkit_web_view_go_back_or_forward(WEBKIT_WEB_VIEW(self->obj), steps);
   return 0;
@@ -345,7 +355,6 @@ static int _wrap_webkit_web_view_open(NspWebKitWebView *self,Stack stack,int rhs
 {
   int_types T[] = {string,t_end};
   char *uri;
-
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
   webkit_web_view_open(WEBKIT_WEB_VIEW(self->obj), uri);
   return 0;
@@ -361,7 +370,6 @@ static int _wrap_webkit_web_view_load_html_string(NspWebKitWebView *self,Stack s
 {
   int_types T[] = {string, string,t_end};
   char *content, *base_uri;
-
   if ( GetArgs(stack,rhs,opt,T,&content, &base_uri) == FAIL) return RET_BUG;
   webkit_web_view_load_html_string(WEBKIT_WEB_VIEW(self->obj), content, base_uri);
   return 0;
@@ -371,7 +379,6 @@ static int _wrap_webkit_web_view_load_string(NspWebKitWebView *self,Stack stack,
 {
   int_types T[] = {string, string, string, string,t_end};
   char *content, *content_mimetype, *content_encoding, *base_uri;
-
   if ( GetArgs(stack,rhs,opt,T,&content, &content_mimetype, &content_encoding, &base_uri) == FAIL) return RET_BUG;
   webkit_web_view_load_string(WEBKIT_WEB_VIEW(self->obj), content, content_mimetype, content_encoding, base_uri);
   return 0;
@@ -379,9 +386,8 @@ static int _wrap_webkit_web_view_load_string(NspWebKitWebView *self,Stack stack,
 
 static int _wrap_webkit_web_view_get_main_frame(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebFrame *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_view_get_main_frame(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
@@ -391,9 +397,8 @@ static int _wrap_webkit_web_view_get_main_frame(NspWebKitWebView *self,Stack sta
 
 static int _wrap_webkit_web_view_get_focused_frame(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebFrame *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_view_get_focused_frame(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
@@ -405,7 +410,6 @@ static int _wrap_webkit_web_view_execute_script(NspWebKitWebView *self,Stack sta
 {
   int_types T[] = {string,t_end};
   char *script;
-
   if ( GetArgs(stack,rhs,opt,T,&script) == FAIL) return RET_BUG;
   webkit_web_view_execute_script(WEBKIT_WEB_VIEW(self->obj), script);
   return 0;
@@ -414,7 +418,6 @@ static int _wrap_webkit_web_view_execute_script(NspWebKitWebView *self,Stack sta
 static int _wrap_webkit_web_view_get_editable(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_view_get_editable(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -424,7 +427,6 @@ static int _wrap_webkit_web_view_set_editable(NspWebKitWebView *self,Stack stack
 {
   int_types T[] = {s_bool,t_end};
   int flag;
-
   if ( GetArgs(stack,rhs,opt,T,&flag) == FAIL) return RET_BUG;
   webkit_web_view_set_editable(WEBKIT_WEB_VIEW(self->obj), flag);
   return 0;
@@ -435,7 +437,6 @@ static int _wrap_webkit_web_view_search_text(NspWebKitWebView *self,Stack stack,
   int_types T[] = {string, s_bool, s_bool, s_bool,t_end};
   char *string;
   int case_sensitive, forward, wrap, ret;
-
   if ( GetArgs(stack,rhs,opt,T,&string, &case_sensitive, &forward, &wrap) == FAIL) return RET_BUG;
   ret = webkit_web_view_search_text(WEBKIT_WEB_VIEW(self->obj), string, case_sensitive, forward, wrap);
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -447,7 +448,6 @@ static int _wrap_webkit_web_view_mark_text_matches(NspWebKitWebView *self,Stack 
   int_types T[] = {string, s_bool, s_int,t_end};
   char *string;
   int case_sensitive, limit, ret;
-
   if ( GetArgs(stack,rhs,opt,T,&string, &case_sensitive, &limit) == FAIL) return RET_BUG;
   ret = webkit_web_view_mark_text_matches(WEBKIT_WEB_VIEW(self->obj), string, case_sensitive, limit);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -458,7 +458,6 @@ static int _wrap_webkit_web_view_set_highlight_text_matches(NspWebKitWebView *se
 {
   int_types T[] = {s_bool,t_end};
   int highlight;
-
   if ( GetArgs(stack,rhs,opt,T,&highlight) == FAIL) return RET_BUG;
   webkit_web_view_set_highlight_text_matches(WEBKIT_WEB_VIEW(self->obj), highlight);
   return 0;
@@ -497,7 +496,6 @@ static int _wrap_webkit_web_view_delete_selection(NspWebKitWebView *self,Stack s
 static int _wrap_webkit_web_view_has_selection(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_view_has_selection(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -513,7 +511,6 @@ static int _wrap_webkit_web_view_set_settings(NspWebKitWebView *self,Stack stack
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *settings;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebsettings, &settings) == FAIL) return RET_BUG;
   webkit_web_view_set_settings(WEBKIT_WEB_VIEW(self->obj), WEBKIT_WEB_SETTINGS(settings->obj));
   return 0;
@@ -523,7 +520,6 @@ static int _wrap_webkit_web_view_get_settings(NspWebKitWebView *self,Stack stack
 {
   WebKitWebSettings *ret;
   NspObject *nsp_ret;
-
   ret = webkit_web_view_get_settings(WEBKIT_WEB_VIEW(self->obj));
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebsettings))== NULL) return RET_BUG;
@@ -534,7 +530,6 @@ static int _wrap_webkit_web_view_get_settings(NspWebKitWebView *self,Stack stack
 static int _wrap_webkit_web_view_get_transparent(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_view_get_transparent(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -544,7 +539,6 @@ static int _wrap_webkit_web_view_set_transparent(NspWebKitWebView *self,Stack st
 {
   int_types T[] = {s_bool,t_end};
   int flag;
-
   if ( GetArgs(stack,rhs,opt,T,&flag) == FAIL) return RET_BUG;
   webkit_web_view_set_transparent(WEBKIT_WEB_VIEW(self->obj), flag);
   return 0;
@@ -553,7 +547,6 @@ static int _wrap_webkit_web_view_set_transparent(NspWebKitWebView *self,Stack st
 static int _wrap_webkit_web_view_get_zoom_level(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   double ret;
-
   ret = webkit_web_view_get_zoom_level(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -563,7 +556,6 @@ static int _wrap_webkit_web_view_set_zoom_level(NspWebKitWebView *self,Stack sta
 {
   int_types T[] = {s_double,t_end};
   double zoom_level;
-
   if ( GetArgs(stack,rhs,opt,T,&zoom_level) == FAIL) return RET_BUG;
   webkit_web_view_set_zoom_level(WEBKIT_WEB_VIEW(self->obj), zoom_level);
   return 0;
@@ -584,7 +576,6 @@ static int _wrap_webkit_web_view_zoom_out(NspWebKitWebView *self,Stack stack,int
 static int _wrap_webkit_web_view_get_full_content_zoom(NspWebKitWebView *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_view_get_full_content_zoom(WEBKIT_WEB_VIEW(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -594,7 +585,6 @@ static int _wrap_webkit_web_view_set_full_content_zoom(NspWebKitWebView *self,St
 {
   int_types T[] = {s_bool,t_end};
   int full_content_zoom;
-
   if ( GetArgs(stack,rhs,opt,T,&full_content_zoom) == FAIL) return RET_BUG;
   webkit_web_view_set_full_content_zoom(WEBKIT_WEB_VIEW(self->obj), full_content_zoom);
   return 0;
@@ -652,11 +642,6 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- WebKitWebFrame ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  WebKitWebFrame_Private 
@@ -850,7 +835,6 @@ _wrap_webkitwebframe_new(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *view;
-
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebview, &view) == FAIL) return RET_BUG;
   if ((ret = (GObject *)webkit_web_frame_new(WEBKIT_WEB_VIEW(view->obj)))== NULL) return RET_BUG;
@@ -866,7 +850,6 @@ static int _wrap_webkit_web_frame_get_web_view(NspWebKitWebFrame *self,Stack sta
 {
   WebKitWebView *ret;
   NspObject *nsp_ret;
-
   ret = webkit_web_frame_get_web_view(WEBKIT_WEB_FRAME(self->obj));
   nsp_type_webkitwebview = new_type_webkitwebview(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebview))== NULL) return RET_BUG;
@@ -877,7 +860,6 @@ static int _wrap_webkit_web_frame_get_web_view(NspWebKitWebFrame *self,Stack sta
 static int _wrap_webkit_web_frame_get_name(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_frame_get_name(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -886,7 +868,6 @@ static int _wrap_webkit_web_frame_get_name(NspWebKitWebFrame *self,Stack stack,i
 static int _wrap_webkit_web_frame_get_title(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_frame_get_title(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -895,7 +876,6 @@ static int _wrap_webkit_web_frame_get_title(NspWebKitWebFrame *self,Stack stack,
 static int _wrap_webkit_web_frame_get_uri(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_frame_get_uri(WEBKIT_WEB_FRAME(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -903,9 +883,8 @@ static int _wrap_webkit_web_frame_get_uri(NspWebKitWebFrame *self,Stack stack,in
 
 static int _wrap_webkit_web_frame_get_parent(NspWebKitWebFrame *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebFrame *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_frame_get_parent(WEBKIT_WEB_FRAME(self->obj));
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebframe))== NULL) return RET_BUG;
@@ -917,7 +896,6 @@ static int _wrap_webkit_web_frame_load_request(NspWebKitWebFrame *self,Stack sta
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *request;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitnetworkrequest, &request) == FAIL) return RET_BUG;
   webkit_web_frame_load_request(WEBKIT_WEB_FRAME(self->obj), WEBKIT_NETWORK_REQUEST(request->obj));
   return 0;
@@ -939,9 +917,8 @@ static int _wrap_webkit_web_frame_find_frame(NspWebKitWebFrame *self,Stack stack
 {
   int_types T[] = {string,t_end};
   char *name;
-  NspObject *nsp_ret;
   WebKitWebFrame *ret;
-
+  NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
   ret = webkit_web_frame_find_frame(WEBKIT_WEB_FRAME(self->obj), name);
   nsp_type_webkitwebframe = new_type_webkitwebframe(T_BASE);
@@ -973,11 +950,6 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- WebKitWebHistoryItem ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  WebKitWebHistoryItem_Private 
@@ -1183,7 +1155,6 @@ _wrap_webkitwebhistoryitem_new(Stack stack, int rhs, int opt, int lhs)
 static int _wrap_webkit_web_history_item_get_title(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_history_item_get_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1192,7 +1163,6 @@ static int _wrap_webkit_web_history_item_get_title(NspWebKitWebHistoryItem *self
 static int _wrap_webkit_web_history_item_get_alternate_title(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_history_item_get_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1202,7 +1172,6 @@ static int _wrap_webkit_web_history_item_set_alternate_title(NspWebKitWebHistory
 {
   int_types T[] = {string,t_end};
   char *title;
-
   if ( GetArgs(stack,rhs,opt,T,&title) == FAIL) return RET_BUG;
   webkit_web_history_item_set_alternate_title(WEBKIT_WEB_HISTORY_ITEM(self->obj), title);
   return 0;
@@ -1211,7 +1180,6 @@ static int _wrap_webkit_web_history_item_set_alternate_title(NspWebKitWebHistory
 static int _wrap_webkit_web_history_item_get_uri(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_history_item_get_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1220,7 +1188,6 @@ static int _wrap_webkit_web_history_item_get_uri(NspWebKitWebHistoryItem *self,S
 static int _wrap_webkit_web_history_item_get_original_uri(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_web_history_item_get_original_uri(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -1229,7 +1196,6 @@ static int _wrap_webkit_web_history_item_get_original_uri(NspWebKitWebHistoryIte
 static int _wrap_webkit_web_history_item_get_last_visited_time(NspWebKitWebHistoryItem *self,Stack stack,int rhs,int opt,int lhs)
 {
   double ret;
-
   ret = webkit_web_history_item_get_last_visited_time(WEBKIT_WEB_HISTORY_ITEM(self->obj));
   if ( nsp_move_double(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -1255,11 +1221,6 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- WebKitWebBackForwardList ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  WebKitWebBackForwardList_Private 
@@ -1453,7 +1414,6 @@ _wrap_webkitwebbackforwardlist_new(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *view;
-
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebview, &view) == FAIL) return RET_BUG;
   if ((ret = (GObject *)webkit_web_back_forward_list_new_with_web_view(WEBKIT_WEB_VIEW(view->obj)))== NULL) return RET_BUG;
@@ -1480,9 +1440,8 @@ static int _wrap_webkit_web_back_forward_list_go_back(NspWebKitWebBackForwardLis
 static int _wrap_webkit_web_back_forward_list_contains_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj_check,t_end};
-  int ret;
   NspGObject *history_item;
-
+  int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebhistoryitem, &history_item) == FAIL) return RET_BUG;
   ret = webkit_web_back_forward_list_contains_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), WEBKIT_WEB_HISTORY_ITEM(history_item->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
@@ -1493,7 +1452,6 @@ static int _wrap_webkit_web_back_forward_list_go_to_item(NspWebKitWebBackForward
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *history_item;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_webkitwebhistoryitem, &history_item) == FAIL) return RET_BUG;
   webkit_web_back_forward_list_go_to_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), WEBKIT_WEB_HISTORY_ITEM(history_item->obj));
   return 0;
@@ -1503,9 +1461,8 @@ static int _wrap_webkit_web_back_forward_list_get_forward_list_with_limit(NspWeb
 {
   int_types T[] = {s_int,t_end};
   int limit;
-  NspList *nsp_list;
   GList *ret, *tmp;
-
+  NspList *nsp_list;
   if ( GetArgs(stack,rhs,opt,T,&limit) == FAIL) return RET_BUG;
   ret = webkit_web_back_forward_list_get_forward_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), limit);
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -1516,9 +1473,8 @@ static int _wrap_webkit_web_back_forward_list_get_back_list_with_limit(NspWebKit
 {
   int_types T[] = {s_int,t_end};
   int limit;
-  NspList *nsp_list;
   GList *ret, *tmp;
-
+  NspList *nsp_list;
   if ( GetArgs(stack,rhs,opt,T,&limit) == FAIL) return RET_BUG;
   ret = webkit_web_back_forward_list_get_back_list_with_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), limit);
   NSP_LIST_FROM_GLIST(ret,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
@@ -1527,9 +1483,8 @@ static int _wrap_webkit_web_back_forward_list_get_back_list_with_limit(NspWebKit
 
 static int _wrap_webkit_web_back_forward_list_get_back_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebHistoryItem *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_back_forward_list_get_back_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
@@ -1539,9 +1494,8 @@ static int _wrap_webkit_web_back_forward_list_get_back_item(NspWebKitWebBackForw
 
 static int _wrap_webkit_web_back_forward_list_get_current_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebHistoryItem *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_back_forward_list_get_current_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
@@ -1551,9 +1505,8 @@ static int _wrap_webkit_web_back_forward_list_get_current_item(NspWebKitWebBackF
 
 static int _wrap_webkit_web_back_forward_list_get_forward_item(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   WebKitWebHistoryItem *ret;
-
+  NspObject *nsp_ret;
   ret = webkit_web_back_forward_list_get_forward_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebhistoryitem))== NULL) return RET_BUG;
@@ -1565,9 +1518,8 @@ static int _wrap_webkit_web_back_forward_list_get_nth_item(NspWebKitWebBackForwa
 {
   int_types T[] = {s_int,t_end};
   int index;
-  NspObject *nsp_ret;
   WebKitWebHistoryItem *ret;
-
+  NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&index) == FAIL) return RET_BUG;
   ret = webkit_web_back_forward_list_get_nth_item(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), index);
   nsp_type_webkitwebhistoryitem = new_type_webkitwebhistoryitem(T_BASE);
@@ -1579,7 +1531,6 @@ static int _wrap_webkit_web_back_forward_list_get_nth_item(NspWebKitWebBackForwa
 static int _wrap_webkit_web_back_forward_list_get_back_length(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_back_forward_list_get_back_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1588,7 +1539,6 @@ static int _wrap_webkit_web_back_forward_list_get_back_length(NspWebKitWebBackFo
 static int _wrap_webkit_web_back_forward_list_get_forward_length(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_back_forward_list_get_forward_length(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1597,7 +1547,6 @@ static int _wrap_webkit_web_back_forward_list_get_forward_length(NspWebKitWebBac
 static int _wrap_webkit_web_back_forward_list_get_limit(NspWebKitWebBackForwardList *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = webkit_web_back_forward_list_get_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1607,7 +1556,6 @@ static int _wrap_webkit_web_back_forward_list_set_limit(NspWebKitWebBackForwardL
 {
   int_types T[] = {s_int,t_end};
   int limit;
-
   if ( GetArgs(stack,rhs,opt,T,&limit) == FAIL) return RET_BUG;
   webkit_web_back_forward_list_set_limit(WEBKIT_WEB_BACK_FORWARD_LIST(self->obj), limit);
   return 0;
@@ -1641,11 +1589,6 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- WebKitWebSettings ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  WebKitWebSettings_Private 
@@ -1852,7 +1795,6 @@ static int _wrap_webkit_web_settings_copy(NspWebKitWebSettings *self,Stack stack
 {
   WebKitWebSettings *ret;
   NspObject *nsp_ret;
-
   ret = webkit_web_settings_copy(WEBKIT_WEB_SETTINGS(self->obj));
   nsp_type_webkitwebsettings = new_type_webkitwebsettings(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_webkitwebsettings))== NULL) return RET_BUG;
@@ -1875,11 +1817,6 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- WebKitNetworkRequest ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  WebKitNetworkRequest_Private 
@@ -2073,7 +2010,6 @@ _wrap_webkitnetworkrequest_new(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {string,t_end};
   char *uri;
-
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
   if ((ret = (GObject *)webkit_network_request_new(uri))== NULL) return RET_BUG;
@@ -2089,7 +2025,6 @@ static int _wrap_webkit_network_request_set_uri(NspWebKitNetworkRequest *self,St
 {
   int_types T[] = {string,t_end};
   char *uri;
-
   if ( GetArgs(stack,rhs,opt,T,&uri) == FAIL) return RET_BUG;
   webkit_network_request_set_uri(WEBKIT_NETWORK_REQUEST(self->obj), uri);
   return 0;
@@ -2098,7 +2033,6 @@ static int _wrap_webkit_network_request_set_uri(NspWebKitNetworkRequest *self,St
 static int _wrap_webkit_network_request_get_uri(NspWebKitNetworkRequest *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = webkit_network_request_get_uri(WEBKIT_NETWORK_REQUEST(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -2299,7 +2233,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2303 "webkit.c"
+#line 2237 "webkit.c"
 
 
 /*----------------------------------------------------
@@ -2343,7 +2277,7 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
 webkit_register_classes(NspObject *d)
 {
 
-#line 2347 "webkit.c"
+#line 2281 "webkit.c"
   nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
   nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));

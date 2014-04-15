@@ -8,21 +8,24 @@ class VarList:
     """Nicely format a C variable list"""
     def __init__(self):
 	self.vars = {}
+        self.vars_list =[] 
     def add(self, ctype, name):
 	if self.vars.has_key(ctype):
 	    self.vars[ctype] = self.vars[ctype] + (name,)
 	else:
+            self.vars_list.append(ctype)
 	    self.vars[ctype] = (name,)
     def __str__(self):
 	ret = []
-	for type in self.vars.keys():
+        for type in self.vars_list[:]:
+            # for type in self.vars.keys():
 	    ret.append('  ')
 	    ret.append(type)
 	    ret.append(' ')
 	    ret.append(string.join(self.vars[type], ', '))
 	    ret.append(';\n')
 	if ret:
-            ret.append('\n')
+            # ret.append('\n')
             return string.join(ret, '')
 	return ''
 

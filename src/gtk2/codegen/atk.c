@@ -1,5 +1,26 @@
 /* -*- Mode: C -*- */
 
+/* This file is generated, please do not edit */
+/* Nsp
+ * Copyright (C) 1998-2014 Jean-Philippe Chancelier Enpc/Cermics
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+
 
 #line 4 "atk.override"
 
@@ -7,7 +28,7 @@
 #include <atk/atk.h>
 #include <atk/atknoopobjectfactory.h>
 #include <atk/atknoopobject.h>
-#line 11 "atk.c"
+#line 32 "atk.c"
 
 
 /* ---------- types from other modules ---------- */
@@ -29,11 +50,6 @@
 
 /* ----------- AtkHyperlink ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkHyperlink_Private 
@@ -227,7 +243,6 @@ static int _wrap_atk_hyperlink_get_uri(NspAtkHyperlink *self,Stack stack,int rhs
   int_types T[] = {s_int,t_end};
   int i;
   gchar *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
   ret = atk_hyperlink_get_uri(ATK_HYPERLINK(self->obj), i);
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
@@ -241,7 +256,6 @@ static int _wrap_atk_hyperlink_get_object(NspAtkHyperlink *self,Stack stack,int 
   int i;
   AtkObject *ret;
   NspObject *nsp_ret;
-
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
   ret = atk_hyperlink_get_object(ATK_HYPERLINK(self->obj), i);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
@@ -253,7 +267,6 @@ static int _wrap_atk_hyperlink_get_object(NspAtkHyperlink *self,Stack stack,int 
 static int _wrap_atk_hyperlink_get_end_index(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_hyperlink_get_end_index(ATK_HYPERLINK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -262,7 +275,6 @@ static int _wrap_atk_hyperlink_get_end_index(NspAtkHyperlink *self,Stack stack,i
 static int _wrap_atk_hyperlink_get_start_index(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_hyperlink_get_start_index(ATK_HYPERLINK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -271,7 +283,6 @@ static int _wrap_atk_hyperlink_get_start_index(NspAtkHyperlink *self,Stack stack
 static int _wrap_atk_hyperlink_is_valid(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_hyperlink_is_valid(ATK_HYPERLINK(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -280,7 +291,6 @@ static int _wrap_atk_hyperlink_is_valid(NspAtkHyperlink *self,Stack stack,int rh
 static int _wrap_atk_hyperlink_get_n_anchors(NspAtkHyperlink *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_hyperlink_get_n_anchors(ATK_HYPERLINK(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -306,11 +316,6 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkObject ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkObject_Private 
@@ -502,7 +507,6 @@ NspAtkObject *atkobject_copy(NspAtkObject *self)
 static int _wrap_atk_object_get_name(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = atk_object_get_name(ATK_OBJECT(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -511,7 +515,6 @@ static int _wrap_atk_object_get_name(NspAtkObject *self,Stack stack,int rhs,int 
 static int _wrap_atk_object_get_description(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   const gchar *ret;
-
   ret = atk_object_get_description(ATK_OBJECT(self->obj));
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -521,7 +524,6 @@ static int _wrap_atk_object_get_parent(NspAtkObject *self,Stack stack,int rhs,in
 {
   AtkObject *ret;
   NspObject *nsp_ret;
-
   ret = atk_object_get_parent(ATK_OBJECT(self->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
@@ -532,7 +534,6 @@ static int _wrap_atk_object_get_parent(NspAtkObject *self,Stack stack,int rhs,in
 static int _wrap_atk_object_get_n_accessible_children(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_object_get_n_accessible_children(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -544,7 +545,6 @@ static int _wrap_atk_object_ref_accessible_child(NspAtkObject *self,Stack stack,
   int i;
   AtkObject *ret;
   NspObject *nsp_ret;
-
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
   ret = atk_object_ref_accessible_child(ATK_OBJECT(self->obj), i);
   nsp_type_atkobject = new_type_atkobject(T_BASE);
@@ -557,7 +557,6 @@ static int _wrap_atk_object_ref_relation_set(NspAtkObject *self,Stack stack,int 
 {
   AtkRelationSet *ret;
   NspObject *nsp_ret;
-
   ret = atk_object_ref_relation_set(ATK_OBJECT(self->obj));
   nsp_type_atkrelationset = new_type_atkrelationset(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkrelationset))== NULL) return RET_BUG;
@@ -568,7 +567,6 @@ static int _wrap_atk_object_ref_relation_set(NspAtkObject *self,Stack stack,int 
 static int _wrap_atk_object_get_role(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
-
   ret = atk_object_get_role(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -577,7 +575,6 @@ static int _wrap_atk_object_get_role(NspAtkObject *self,Stack stack,int rhs,int 
 static int _wrap_atk_object_get_layer(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
-
   ret = atk_object_get_layer(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -586,7 +583,6 @@ static int _wrap_atk_object_get_layer(NspAtkObject *self,Stack stack,int rhs,int
 static int _wrap_atk_object_get_mdi_zorder(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_object_get_mdi_zorder(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -594,9 +590,8 @@ static int _wrap_atk_object_get_mdi_zorder(NspAtkObject *self,Stack stack,int rh
 
 static int _wrap_atk_object_ref_state_set(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
-  NspObject *nsp_ret;
   AtkStateSet *ret;
-
+  NspObject *nsp_ret;
   ret = atk_object_ref_state_set(ATK_OBJECT(self->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkstateset))== NULL) return RET_BUG;
@@ -607,7 +602,6 @@ static int _wrap_atk_object_ref_state_set(NspAtkObject *self,Stack stack,int rhs
 static int _wrap_atk_object_get_index_in_parent(NspAtkObject *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_object_get_index_in_parent(ATK_OBJECT(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -617,7 +611,6 @@ static int _wrap_atk_object_set_name(NspAtkObject *self,Stack stack,int rhs,int 
 {
   int_types T[] = {string,t_end};
   char *name;
-
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
   atk_object_set_name(ATK_OBJECT(self->obj), name);
   return 0;
@@ -627,7 +620,6 @@ static int _wrap_atk_object_set_description(NspAtkObject *self,Stack stack,int r
 {
   int_types T[] = {string,t_end};
   char *description;
-
   if ( GetArgs(stack,rhs,opt,T,&description) == FAIL) return RET_BUG;
   atk_object_set_description(ATK_OBJECT(self->obj), description);
   return 0;
@@ -637,7 +629,6 @@ static int _wrap_atk_object_set_parent(NspAtkObject *self,Stack stack,int rhs,in
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *parent;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkobject, &parent) == FAIL) return RET_BUG;
   atk_object_set_parent(ATK_OBJECT(self->obj), ATK_OBJECT(parent->obj));
   return 0;
@@ -648,7 +639,6 @@ static int _wrap_atk_object_set_role(NspAtkObject *self,Stack stack,int rhs,int 
   int_types T[] = {obj,t_end};
   AtkRole role;
   NspObject *nsp_role = NULL;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_role) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_role, &role)== FAIL)
       return RET_BUG;
@@ -660,7 +650,6 @@ static int _wrap_atk_object_remove_property_change_handler(NspAtkObject *self,St
 {
   int_types T[] = {s_int,t_end};
   int handler_id;
-
   if ( GetArgs(stack,rhs,opt,T,&handler_id) == FAIL) return RET_BUG;
   atk_object_remove_property_change_handler(ATK_OBJECT(self->obj), handler_id);
   return 0;
@@ -696,11 +685,6 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkNoOpObject ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkNoOpObject_Private 
@@ -894,7 +878,6 @@ _wrap_atknoopobject_new(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *obj;
-
   GObject *ret; NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;
   if ((ret = (GObject *)atk_no_op_object_new(G_OBJECT(obj->obj)))== NULL) return RET_BUG;
@@ -916,11 +899,6 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkObjectFactory ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkObjectFactory_Private 
@@ -1115,7 +1093,6 @@ static int _wrap_atk_object_factory_create_accessible(NspAtkObjectFactory *self,
   NspGObject *obj;
   AtkObject *ret;
   NspObject *nsp_ret;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_gobject, &obj) == FAIL) return RET_BUG;
   ret = atk_object_factory_create_accessible(ATK_OBJECT_FACTORY(self->obj), G_OBJECT(obj->obj));
   nsp_type_atkobject = new_type_atkobject(T_BASE);
@@ -1146,11 +1123,6 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkNoOpObjectFactory ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkNoOpObjectFactory_Private 
@@ -1363,11 +1335,6 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkRegistry ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkRegistry_Private 
@@ -1561,7 +1528,6 @@ static int _wrap_atk_registry_set_factory_type(NspAtkRegistry *self,Stack stack,
   int_types T[] = {obj, obj,t_end};
   GType type, factory_type;
   NspObject *nsp_type = NULL, *nsp_factory_type = NULL;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type, &nsp_factory_type) == FAIL) return RET_BUG;
   if ((type = nspg_type_from_object(nsp_type)) == FAIL)
       return RET_BUG;
@@ -1576,7 +1542,6 @@ static int _wrap_atk_registry_get_factory_type(NspAtkRegistry *self,Stack stack,
   int_types T[] = {obj,t_end};
   GType type, ret;
   NspObject *nsp_type = NULL;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if ((type = nspg_type_from_object(nsp_type)) == FAIL)
       return RET_BUG;
@@ -1587,10 +1552,9 @@ static int _wrap_atk_registry_get_factory_type(NspAtkRegistry *self,Stack stack,
 static int _wrap_atk_registry_get_factory(NspAtkRegistry *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
-  AtkObjectFactory *ret;
   GType type;
   NspObject *nsp_type = NULL, *nsp_ret;
-
+  AtkObjectFactory *ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if ((type = nspg_type_from_object(nsp_type)) == FAIL)
       return RET_BUG;
@@ -1618,11 +1582,6 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkRelation ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkRelation_Private 
@@ -1852,13 +1811,12 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1856 "atk.c"
+#line 1815 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
 {
   gint ret;
-
   ret = atk_relation_get_relation_type(ATK_RELATION(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -1879,11 +1837,6 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkRelationSet ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkRelationSet_Private 
@@ -2089,10 +2042,9 @@ _wrap_atkrelationset_new(Stack stack, int rhs, int opt, int lhs)
 static int _wrap_atk_relation_set_contains(NspAtkRelationSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
-  int ret;
   AtkRelationType relationship;
   NspObject *nsp_relationship = NULL;
-
+  int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_relationship) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_relationship, &relationship)== FAIL)
       return RET_BUG;
@@ -2105,7 +2057,6 @@ static int _wrap_atk_relation_set_remove(NspAtkRelationSet *self,Stack stack,int
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *relation;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkrelation, &relation) == FAIL) return RET_BUG;
   atk_relation_set_remove(ATK_RELATION_SET(self->obj), ATK_RELATION(relation->obj));
   return 0;
@@ -2115,7 +2066,6 @@ static int _wrap_atk_relation_set_add(NspAtkRelationSet *self,Stack stack,int rh
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *relation;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkrelation, &relation) == FAIL) return RET_BUG;
   atk_relation_set_add(ATK_RELATION_SET(self->obj), ATK_RELATION(relation->obj));
   return 0;
@@ -2124,7 +2074,6 @@ static int _wrap_atk_relation_set_add(NspAtkRelationSet *self,Stack stack,int rh
 static int _wrap_atk_relation_set_get_n_relations(NspAtkRelationSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_relation_set_get_n_relations(ATK_RELATION_SET(self->obj));
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
   return 1;
@@ -2134,9 +2083,8 @@ static int _wrap_atk_relation_set_get_relation(NspAtkRelationSet *self,Stack sta
 {
   int_types T[] = {s_int,t_end};
   int i;
-  NspObject *nsp_ret;
   AtkRelation *ret;
-
+  NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&i) == FAIL) return RET_BUG;
   ret = atk_relation_set_get_relation(ATK_RELATION_SET(self->obj), i);
   nsp_type_atkrelation = new_type_atkrelation(T_BASE);
@@ -2151,7 +2099,6 @@ static int _wrap_atk_relation_set_get_relation_by_type(NspAtkRelationSet *self,S
   AtkRelationType relationship;
   NspObject *nsp_relationship = NULL, *nsp_ret;
   AtkRelation *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_relationship) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_relationship, &relationship)== FAIL)
       return RET_BUG;
@@ -2182,11 +2129,6 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkStateSet ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkStateSet_Private 
@@ -2378,7 +2320,6 @@ NspAtkStateSet *atkstateset_copy(NspAtkStateSet *self)
 static int _wrap_atk_state_set_is_empty(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int ret;
-
   ret = atk_state_set_is_empty(ATK_STATE_SET(self->obj));
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG;
   return 1;
@@ -2387,10 +2328,9 @@ static int _wrap_atk_state_set_is_empty(NspAtkStateSet *self,Stack stack,int rhs
 static int _wrap_atk_state_set_add_state(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
-  int ret;
   AtkStateType type;
   NspObject *nsp_type = NULL;
-
+  int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
       return RET_BUG;
@@ -2408,10 +2348,9 @@ static int _wrap_atk_state_set_clear_states(NspAtkStateSet *self,Stack stack,int
 static int _wrap_atk_state_set_contains_state(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
-  int ret;
   AtkStateType type;
   NspObject *nsp_type = NULL;
-
+  int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
       return RET_BUG;
@@ -2423,10 +2362,9 @@ static int _wrap_atk_state_set_contains_state(NspAtkStateSet *self,Stack stack,i
 static int _wrap_atk_state_set_remove_state(NspAtkStateSet *self,Stack stack,int rhs,int opt,int lhs)
 {
   int_types T[] = {obj,t_end};
-  int ret;
   AtkStateType type;
   NspObject *nsp_type = NULL;
-
+  int ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_type, &type)== FAIL)
       return RET_BUG;
@@ -2439,9 +2377,8 @@ static int _wrap_atk_state_set_and_sets(NspAtkStateSet *self,Stack stack,int rhs
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *compare_set;
-  NspObject *nsp_ret;
   AtkStateSet *ret;
-
+  NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkstateset, &compare_set) == FAIL) return RET_BUG;
   ret = atk_state_set_and_sets(ATK_STATE_SET(self->obj), ATK_STATE_SET(compare_set->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
@@ -2454,9 +2391,8 @@ static int _wrap_atk_state_set_or_sets(NspAtkStateSet *self,Stack stack,int rhs,
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *compare_set;
-  NspObject *nsp_ret;
   AtkStateSet *ret;
-
+  NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkstateset, &compare_set) == FAIL) return RET_BUG;
   ret = atk_state_set_or_sets(ATK_STATE_SET(self->obj), ATK_STATE_SET(compare_set->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
@@ -2469,9 +2405,8 @@ static int _wrap_atk_state_set_xor_sets(NspAtkStateSet *self,Stack stack,int rhs
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *compare_set;
-  NspObject *nsp_ret;
   AtkStateSet *ret;
-
+  NspObject *nsp_ret;
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkstateset, &compare_set) == FAIL) return RET_BUG;
   ret = atk_state_set_xor_sets(ATK_STATE_SET(self->obj), ATK_STATE_SET(compare_set->obj));
   nsp_type_atkstateset = new_type_atkstateset(T_BASE);
@@ -2502,11 +2437,6 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 
 /* ----------- AtkUtil ----------- */
 
-/* -*- Mode: C -*- */
-/*-------------------------------------------------------------------
- * This Software is ( Copyright ENPC 1998-2012 )                          
- * Jean-Philippe Chancelier Enpc/Cermics 
- *-------------------------------------------------------------------*/
 
 #include "nsp/object.h"
 #define  AtkUtil_Private 
@@ -2709,7 +2639,6 @@ int _wrap_atk_get_default_registry(Stack stack, int rhs, int opt, int lhs)
 {
   AtkRegistry *ret;
   NspObject *nsp_ret;
-
 ret = atk_get_default_registry();
   nsp_type_atkregistry = new_type_atkregistry(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkregistry))== NULL) return RET_BUG;
@@ -2722,7 +2651,6 @@ int _wrap_atk_relation_type_register(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,t_end};
   char *name;
   gint ret;
-
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
 ret = atk_relation_type_register(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -2734,7 +2662,6 @@ int _wrap_atk_relation_type_for_name(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,t_end};
   char *name;
   gint ret;
-
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
 ret = atk_relation_type_for_name(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -2746,7 +2673,6 @@ int _wrap_atk_state_type_for_name(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,t_end};
   char *name;
   gint ret;
-
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
 ret = atk_state_type_for_name(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -2759,7 +2685,6 @@ int _wrap_atk_text_attribute_get_name(Stack stack, int rhs, int opt, int lhs)
   AtkTextAttribute attr;
   NspObject *nsp_attr = NULL;
   const gchar *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_attr) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, &attr)== FAIL)
       return RET_BUG;
@@ -2771,11 +2696,10 @@ ret = atk_text_attribute_get_name(attr);
 int _wrap_atk_text_attribute_get_value(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj, s_int,t_end};
-  int index;
   AtkTextAttribute attr;
   NspObject *nsp_attr = NULL;
+  int index;
   const gchar *ret;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_attr, &index) == FAIL) return RET_BUG;
   if (nspg_enum_get_value(G_TYPE_NONE, nsp_attr, &attr)== FAIL)
       return RET_BUG;
@@ -2788,7 +2712,6 @@ int _wrap_atk_remove_focus_tracker(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {s_int,t_end};
   int tracker_id;
-
   if ( GetArgs(stack,rhs,opt,T,&tracker_id) == FAIL) return RET_BUG;
 atk_remove_focus_tracker(tracker_id);
   return 0;
@@ -2798,7 +2721,6 @@ int _wrap_atk_focus_tracker_notify(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {obj_check,t_end};
   NspGObject *object;
-
   if ( GetArgs(stack,rhs,opt,T,&nsp_type_atkobject, &object) == FAIL) return RET_BUG;
 atk_focus_tracker_notify(ATK_OBJECT(object->obj));
   return 0;
@@ -2808,7 +2730,6 @@ int _wrap_atk_remove_global_event_listener(Stack stack, int rhs, int opt, int lh
 {
   int_types T[] = {s_int,t_end};
   int listener_id;
-
   if ( GetArgs(stack,rhs,opt,T,&listener_id) == FAIL) return RET_BUG;
 atk_remove_global_event_listener(listener_id);
   return 0;
@@ -2818,7 +2739,6 @@ int _wrap_atk_remove_key_event_listener(Stack stack, int rhs, int opt, int lhs)
 {
   int_types T[] = {s_int,t_end};
   int listener_id;
-
   if ( GetArgs(stack,rhs,opt,T,&listener_id) == FAIL) return RET_BUG;
 atk_remove_key_event_listener(listener_id);
   return 0;
@@ -2828,7 +2748,6 @@ int _wrap_atk_get_root(Stack stack, int rhs, int opt, int lhs)
 {
   AtkObject *ret;
   NspObject *nsp_ret;
-
 ret = atk_get_root();
   nsp_type_atkobject = new_type_atkobject(T_BASE);
   if ((nsp_ret = (NspObject *) gobject_create(NVOID,(GObject *)ret,(NspTypeBase *) nsp_type_atkobject))== NULL) return RET_BUG;
@@ -2839,7 +2758,6 @@ ret = atk_get_root();
 int _wrap_atk_get_toolkit_name(Stack stack, int rhs, int opt, int lhs)
 {
   const gchar *ret;
-
 ret = atk_get_toolkit_name();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -2848,7 +2766,6 @@ ret = atk_get_toolkit_name();
 int _wrap_atk_get_toolkit_version(Stack stack, int rhs, int opt, int lhs)
 {
   const gchar *ret;
-
 ret = atk_get_toolkit_version();
   if ( nsp_move_string(stack,1,(ret) ? ret: "",-1)== FAIL) return RET_BUG;
   return 1;
@@ -2859,7 +2776,6 @@ int _wrap_atk_role_for_name(Stack stack, int rhs, int opt, int lhs)
   int_types T[] = {string,t_end};
   char *name;
   gint ret;
-
   if ( GetArgs(stack,rhs,opt,T,&name) == FAIL) return RET_BUG;
 ret = atk_role_for_name(name);
   if ( nsp_move_double(stack,1,(double) ret)==FAIL) return RET_BUG;
@@ -3091,7 +3007,7 @@ atk_register_classes(NspObject *d)
   }
 
 
-#line 3095 "atk.c"
+#line 3011 "atk.c"
   nspgobject_register_class(d, "AtkHyperlink", ATK_TYPE_HYPERLINK, &PyAtkHyperlink_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkObject", ATK_TYPE_OBJECT, &PyAtkObject_Type, Py_BuildValue("(O)", &PyGObject_Type));
   nspgobject_register_class(d, "AtkNoOpObject", ATK_TYPE_NO_OP_OBJECT, &PyAtkNoOpObject_Type, Py_BuildValue("(O)", &PyAtkObject_Type));
