@@ -1,4 +1,4 @@
-.SUFFIXES: .defs .diff .c $(SUFFIXES)
+.SUFFIXES: .defs .diff *.idiff .c $(SUFFIXES)
 SHELL = /bin/sh
 
 ALL=  classa.c classb.c classaref.c classbref.c \
@@ -14,9 +14,11 @@ ALL=  classa.c classb.c classaref.c classbref.c \
 	stochdec.c bson.c 
 
 DIFF=$(patsubst %.c,%.diff,$(ALL))
+IDIFF=$(patsubst %.c,%.idiff,$(ALL))
 
 PROG=../bin/simport 
 SRC=/usr/local/src/nsp2-ref/src/types-test/
+ISRC=/usr/local/src/nsp2-ref/src/include/nsp/
 
 all:	$(ALL)
 
@@ -34,10 +36,16 @@ agraph.diff : agraph.c
 	@echo "-------- diff $*.c -------------------"
 	@diff -rw $*.c $(SRC); $$status 
 
+%.idiff: %.c	
+	@echo "-------- diff $*.h -------------------"
+	@diff -rw $*.h $(ISRC); $$status 
+
 %.c: %.defs
 	$(PROG) -o $*.c $*
 
 diff: $(DIFF)
+
+idiff: $(IDIFF)
 
 clean:
 	rm -f *.c *.h
