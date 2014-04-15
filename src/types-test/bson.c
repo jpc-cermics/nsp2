@@ -2677,7 +2677,7 @@ static NspObject *nsp_bson_iter_to_nspobject(bson_iter_t *iter)
     case BSON_TYPE_MAXKEY:    Obj = NULL;break;
     case BSON_TYPE_MINKEY:    Obj = NULL;break;
     default:
-      break;
+       break;
     }
   return Obj;
 }

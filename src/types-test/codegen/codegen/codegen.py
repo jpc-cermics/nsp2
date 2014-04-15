@@ -455,8 +455,8 @@ class Wrapper:
         ' */\n' \
         '\n' \
         'typedef struct _%(typename)s %(typename)s ;\n' \
-        'typedef struct _NspType%(typename_nn)s NspType%(typename_nn)s ;\n' \
-        '\n' 
+        'typedef struct _NspType%(typename_nn)s NspType%(typename_nn)s ;\n'
+
     type_header_2 = \
         '\n' \
         'struct _NspType%(typename_nn)s {\n' \
@@ -910,11 +910,16 @@ class Wrapper:
             self.fhp.resetline()
         # 
         self.fhp.write(self.type_header_1 %substdict)
-        self.fhp.write('%(internal_methods_proto)s' %substdict)
-        self.fhp.resetline()
+        imp = '%(internal_methods_proto)s' % substdict 
+        if imp != "" :
+            self.fhp.write(imp)
+            self.fhp.resetline()
+        
         self.fhp.write(self.type_header_2 %substdict)
-        self.fhp.write(' %(internal_methods)s\n' %substdict)
-        self.fhp.resetline()
+        im = '%(internal_methods)s' % substdict 
+        if im != "" :
+            self.fhp.write(im)
+            self.fhp.resetline()
         self.fhp.write(self.type_header_3 %substdict)
         # insert part from .override 
         hname = self.objinfo.name+'.include_public'
@@ -2238,14 +2243,6 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write('\n\n')
     fp.write(overrides.get_headers())
     fp.resetline()
-    #     fp.write('/* ---------- forward type declarations ---------- */\n')
-    #     for obj in parser.boxes:
-    #         fp.write('#define %s_Private\n#include "nsp/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
-    #     for obj in parser.objects:
-    #         fp.write('#define %s_Private\n#include "nsp/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
-    #     for interface in parser.interfaces:
-    #         fp.write('#define %s_Private\n#include "nsp/%s.h"\n' % (obj.c_name, string.lower(obj.c_name)))
-    #     fp.write('\n')
 
     # used to collect constructors 
     functions =[]
