@@ -1470,7 +1470,7 @@ class Wrapper:
             str = str +  handler.attr_write_defval(ftype,fname,varname,self.byref, pdef , psize, pcheck)
         if father != 'Object':
             str = str + '  nsp_%s_check_values((%s *) H);\n'  % (string.lower(father),'Nsp'+father)
-        return str
+        return str 
     
     def build_fields_free1(self,varname):
         lower_name = self.get_lower_c_name()
@@ -2241,8 +2241,13 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     for module, pyname, cname in overrides.get_imports():
         fp.write('#include "%s.h"\n' % string.lower(cname))
     fp.write('\n\n')
-    fp.write(overrides.get_headers())
-    fp.resetline()
+
+    hd = overrides.get_headers()
+    if hd <> "":
+        fp.write(hd)
+        fp.resetline()
+    else:
+        fp.write('\n')
 
     # used to collect constructors 
     functions =[]
