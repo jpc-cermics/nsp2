@@ -28,6 +28,12 @@ agraph.c: agraph.defs
 	    -e "s+/tmp/agraph.c+agraph.c+g" /tmp/$*.c > $*.c
 	@rm -f /tmp/$*.c
 
+test.c: test.defs
+	$(PROG) -p $* -o $*.c $* 
+
+test1.c: test1.defs
+	$(PROG) -p $* -o $*.c $* 
+
 agraph.diff : agraph.c 
 	@echo "-------- diff $*.c -------------------"
 	@diff -rw $*.c $(SRC)/../libgraphviz/; $$status 
