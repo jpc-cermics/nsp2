@@ -39,14 +39,10 @@
 typedef struct _NspFigure NspFigure ;
 typedef struct _NspTypeFigure NspTypeFigure ;
 
-#line 43 "./figure.h"
-
 struct _NspTypeFigure {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 50 "./figure.h"
 };
 
 typedef struct _nsp_figure nsp_figure;
@@ -149,7 +145,7 @@ extern void nsp_figure_data_reset(NspFigure *F);
 /* compute the bounds of graphic objects stored in L */
 extern int nsp_grlist_compute_inside_bounds(NspList *L,double *bounds);
 
-#line 153 "./figure.h"
+#line 149 "./figure.h"
 #endif /* NSP_INC_NspFigure */ 
 
 #ifdef NspFigure_Private 
@@ -187,6 +183,6 @@ static void nsp_figure_set_gc_values(NspFigure *F);
 static void nsp_figure_initialize_gc(NspFigure *F);
 static void nsp_figure_process_updates(NspFigure *F);
 
-#line 191 "./figure.h"
+#line 187 "./figure.h"
 #endif /* NspFigure_Private */
 

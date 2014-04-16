@@ -32,14 +32,10 @@
 typedef struct _NspAgdisc NspAgdisc ;
 typedef struct _NspTypeAgdisc NspTypeAgdisc ;
 
-#line 36 "./agdisc.h"
-
 struct _NspTypeAgdisc {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./agdisc.h"
 };
 
 typedef struct _nsp_agdisc nsp_agdisc;

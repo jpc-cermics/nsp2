@@ -37,14 +37,10 @@
 typedef struct _NspCurve NspCurve ;
 typedef struct _NspTypeCurve NspTypeCurve ;
 
-#line 41 "./curve.h"
-
 struct _NspTypeCurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./curve.h"
 };
 
 typedef struct _nsp_curve nsp_curve;
@@ -113,7 +109,7 @@ extern int nsp_curve_xdr_save(XDR  *xdrs, NspCurve *M);
 #line 9 "codegen/curve.override"
 /* inserted at the end of public part of include file */
 
-#line 117 "./curve.h"
+#line 113 "./curve.h"
 #endif /* NSP_INC_NspCurve */ 
 
 #ifdef NspCurve_Private 
@@ -137,6 +133,6 @@ static void nsp_rotate_curve(NspGraphic *o,double *R);
 static void nsp_scale_curve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_curve(NspGraphic *o,double *bounds);
 
-#line 141 "./curve.h"
+#line 137 "./curve.h"
 #endif /* NspCurve_Private */
 

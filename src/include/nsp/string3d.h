@@ -37,14 +37,10 @@
 typedef struct _NspString3d NspString3d ;
 typedef struct _NspTypeString3d NspTypeString3d ;
 
-#line 41 "./string3d.h"
-
 struct _NspTypeString3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./string3d.h"
 };
 
 typedef struct _nsp_string3d nsp_string3d;
@@ -115,7 +111,7 @@ extern int nsp_string3d_xdr_save(XDR  *xdrs, NspString3d *M);
 /* inserted at the end of public part of include file */
 extern BCG *nsp_check_graphic_context(void);
 
-#line 119 "./string3d.h"
+#line 115 "./string3d.h"
 #endif /* NSP_INC_NspString3d */ 
 
 #ifdef NspString3d_Private 
@@ -144,6 +140,6 @@ static void draw_string3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 148 "./string3d.h"
+#line 144 "./string3d.h"
 #endif /* NspString3d_Private */
 

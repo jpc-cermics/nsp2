@@ -36,14 +36,10 @@
 typedef struct _NspEpoints NspEpoints ;
 typedef struct _NspTypeEpoints NspTypeEpoints ;
 
-#line 40 "./epoints.h"
-
 struct _NspTypeEpoints {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 47 "./epoints.h"
 };
 
 typedef struct _nsp_epoints nsp_epoints;
@@ -114,7 +110,7 @@ extern void nsp_epoints_table_show();
 extern void nsp_epoints_table_remove_entries(int shid);
 extern NspSMatrix *nsp_epoints_find_by_shid(int shid);
 
-#line 118 "./epoints.h"
+#line 114 "./epoints.h"
 #endif /* NSP_INC_NspEpoints */ 
 
 #ifdef NspEpoints_Private 
@@ -132,6 +128,6 @@ static NspEpoints *nsp_epoints_create_void(const char *name,NspTypeBase *type);
 #line 18 "codegen/epoints.override"
 /* inserted in the private part of include file */
 
-#line 136 "./epoints.h"
+#line 132 "./epoints.h"
 #endif /* NspEpoints_Private */
 

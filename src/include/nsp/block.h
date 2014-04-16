@@ -86,14 +86,10 @@ struct b_lock {
 typedef struct _NspBlock NspBlock ;
 typedef struct _NspTypeBlock NspTypeBlock ;
 
-#line 90 "./block.h"
-
 struct _NspTypeBlock {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 97 "./block.h"
 };
 
 typedef struct _nsp_block nsp_block;
@@ -165,7 +161,7 @@ extern int nsp_block_xdr_save(XDR  *xdrs, NspBlock *M);
 
 /* inserted at the end of public part of include file */
 
-#line 169 "./block.h"
+#line 165 "./block.h"
 #endif /* NSP_INC_NspBlock */ 
 
 #ifdef NspBlock_Private 
@@ -239,6 +235,6 @@ static int nsp_grb_lock_full_copy(NspBlock *C,grb_lock *locks,NspBlock *M);
 /* local */
 static void lock_draw(BCG *Xgc,const double pt[2],lock_dir dir,lock_type typ,int locked);
 
-#line 243 "./block.h"
+#line 239 "./block.h"
 #endif /* NspBlock_Private */
 

@@ -38,14 +38,10 @@
 typedef struct _NspGMatrix1 NspGMatrix1 ;
 typedef struct _NspTypeGMatrix1 NspTypeGMatrix1 ;
 
-#line 42 "./gmatrix1.h"
-
 struct _NspTypeGMatrix1 {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 49 "./gmatrix1.h"
 };
 
 typedef struct _nsp_gmatrix1 nsp_gmatrix1;
@@ -120,7 +116,7 @@ extern void PermutOfSort (const int *tab, int *perm);
 extern void PaintTriangle (BCG *Xgc,const double *sx,const double *sy,const  double *fxy, 
 			   const int *zxy, const double *zlevel,const int *fill);
 
-#line 124 "./gmatrix1.h"
+#line 120 "./gmatrix1.h"
 #endif /* NSP_INC_NspGMatrix1 */ 
 
 #ifdef NspGMatrix1_Private 
@@ -149,6 +145,6 @@ static void nsp_draw_matrix_shade(BCG *Xgc,NspGraphic *Obj, void *data);
 static void FindIntersection(const double *sx,const double *sy,const double *fxy,
 			     double z,int inda, int indb,  int *xint, int *yint);
 
-#line 153 "./gmatrix1.h"
+#line 149 "./gmatrix1.h"
 #endif /* NspGMatrix1_Private */
 

@@ -35,14 +35,10 @@
 typedef struct _NspAst NspAst ;
 typedef struct _NspTypeAst NspTypeAst ;
 
-#line 39 "./ast.h"
-
 struct _NspTypeAst {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 46 "./ast.h"
 };
 
 struct _NspAst {
@@ -110,7 +106,7 @@ extern NspAst * nsp_parse_from_smat(NspSMatrix *M);
 extern int nsp_ast_set_str(NspAst *ast,const char *str);
 extern int nsp_ast_check_args(NspList *L);
 
-#line 114 "./ast.h"
+#line 110 "./ast.h"
 #endif /* NSP_INC_NspAst */ 
 
 #ifdef NspAst_Private 
@@ -138,6 +134,6 @@ static int nsp_ast_obj_equal(NspAst *ast1,NspAst *ast2);
 static void nsp_ast_print_node(NspAst *ast);
 static void nsp_ast_info_tree(NspAst *ast, int indent,const char *name,int rec_level);
 
-#line 142 "./ast.h"
+#line 138 "./ast.h"
 #endif /* NspAst_Private */
 

@@ -36,14 +36,10 @@
 typedef struct _NspBson NspBson ;
 typedef struct _NspTypeBson NspTypeBson ;
 
-#line 40 "./bson.h"
-
 struct _NspTypeBson {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 47 "./bson.h"
 };
 
 typedef struct _nsp_bson nsp_bson;
@@ -107,7 +103,7 @@ extern int nsp_bson_xdr_save(XDR  *xdrs, NspBson *M);
 /* inserted at the end of public part of class include file */
 extern NspBson *nsp_bson_zz(NspObject *Obj,int flag);
 
-#line 111 "./bson.h"
+#line 107 "./bson.h"
 #endif /* NSP_INC_NspBson */ 
 
 #ifdef NspBson_Private 
@@ -132,6 +128,6 @@ static NspHash *nsp_bson_to_hash(const char *name, bson_t *doc);
 static bson_t *nsp_bson_create_from_hash(const char *name, NspHash *H);
 static bson_t *nsp_bson_b_copy(const bson_t *b);
 
-#line 136 "./bson.h"
+#line 132 "./bson.h"
 #endif /* NspBson_Private */
 

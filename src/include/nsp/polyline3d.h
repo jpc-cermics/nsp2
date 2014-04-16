@@ -37,14 +37,10 @@
 typedef struct _NspPolyline3d NspPolyline3d ;
 typedef struct _NspTypePolyline3d NspTypePolyline3d ;
 
-#line 41 "./polyline3d.h"
-
 struct _NspTypePolyline3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./polyline3d.h"
 };
 
 typedef struct _nsp_polyline3d nsp_polyline3d;
@@ -114,7 +110,7 @@ extern int nsp_polyline3d_xdr_save(XDR  *xdrs, NspPolyline3d *M);
 extern void drawsegments3D(BCG *Xgc,double *x,double *y,double *z, int n, int *style, int iflag);
 extern int nsp_polyline3d_add_pts(NspGraphic *P,int k);
 
-#line 118 "./polyline3d.h"
+#line 114 "./polyline3d.h"
 #endif /* NSP_INC_NspPolyline3d */ 
 
 #ifdef NspPolyline3d_Private 
@@ -146,6 +142,6 @@ static int nsp_check_polyline3d(NspPolyline3d *P);
 static void draw_polyline3d_ogl(BCG *Xgc,void *Ob);
 static void draw_polyline3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 150 "./polyline3d.h"
+#line 146 "./polyline3d.h"
 #endif /* NspPolyline3d_Private */
 

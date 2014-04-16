@@ -42,14 +42,10 @@
 typedef struct _NspObjs3d NspObjs3d ;
 typedef struct _NspTypeObjs3d NspTypeObjs3d ;
 
-#line 46 "./objs3d.h"
-
 struct _NspTypeObjs3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 53 "./objs3d.h"
 };
 
 typedef struct _nsp_objs3d nsp_objs3d;
@@ -143,7 +139,7 @@ extern void apply_transforms_new1(BCG *Xgc,double Coord[],const double *M, Visio
 				  const double lim[], int ncoord);
 
 
-#line 147 "./objs3d.h"
+#line 143 "./objs3d.h"
 #endif /* NSP_INC_NspObjs3d */ 
 
 #ifdef NspObjs3d_Private 
@@ -194,6 +190,6 @@ static int nsp_nsp_gcscale_full_copy(NspObjs3d *C,nsp_gcscale *locks,NspObjs3d *
 static int nsp_eq_nsp_gcscale(nsp_gcscale *scale1, nsp_gcscale *scale2);
 static void nsp_init_nsp_gcscale(nsp_gcscale *scale);
 
-#line 198 "./objs3d.h"
+#line 194 "./objs3d.h"
 #endif /* NspObjs3d_Private */
 

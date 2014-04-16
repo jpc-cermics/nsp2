@@ -35,14 +35,10 @@
 typedef struct _NspAstv NspAstv ;
 typedef struct _NspTypeAstv NspTypeAstv ;
 
-#line 39 "./astv.h"
-
 struct _NspTypeAstv {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 46 "./astv.h"
 };
 
 struct _NspAstv {
@@ -110,7 +106,7 @@ extern int nsp_astv_xdr_save(XDR  *xdrs, NspAstv *M);
 /* inserted at the end of public part of class include file */
 extern NspAstv *nsp_astv(NspObject *Obj,int flag);
 
-#line 114 "./astv.h"
+#line 110 "./astv.h"
 #endif /* NSP_INC_NspAstv */ 
 
 #ifdef NspAstv_Private 
@@ -131,6 +127,6 @@ static NspAstv *nsp_astv_create_void(const char *name,NspTypeBase *type);
  * of classa.h
  */
 
-#line 135 "./astv.h"
+#line 131 "./astv.h"
 #endif /* NspAstv_Private */
 

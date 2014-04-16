@@ -32,14 +32,10 @@
 typedef struct _NspPolyhedron NspPolyhedron ;
 typedef struct _NspTypePolyhedron NspTypePolyhedron ;
 
-#line 36 "./polyhedron.h"
-
 struct _NspTypePolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./polyhedron.h"
 };
 
 typedef struct _nsp_polyhedron nsp_polyhedron;
@@ -116,7 +112,7 @@ extern int nsp_facets_to_faces(double *x,double *y,double *z,int *colors,int nco
 			       NspMatrix **Cr,NspMatrix **Fr,NspMatrix **Colr);
 extern int nsp_obj3d_orientation(int x[], int y[], int n);
 
-#line 120 "./polyhedron.h"
+#line 116 "./polyhedron.h"
 #endif /* NSP_INC_NspPolyhedron */ 
 
 #ifdef NspPolyhedron_Private 
@@ -144,6 +140,6 @@ static int nsp_check_polyhedron(NspPolyhedron *P);
 static void draw_polyhedron_ogl(BCG *Xgc,void *Ob);
 static void draw_polyhedron_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 148 "./polyhedron.h"
+#line 144 "./polyhedron.h"
 #endif /* NspPolyhedron_Private */
 

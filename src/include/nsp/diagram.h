@@ -37,14 +37,10 @@
 typedef struct _NspDiagram NspDiagram ;
 typedef struct _NspTypeDiagram NspTypeDiagram ;
 
-#line 41 "./diagram.h"
-
 struct _NspTypeDiagram {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./diagram.h"
 };
 
 typedef struct _nsp_diagram nsp_diagram;
@@ -152,7 +148,7 @@ extern void link_check(NspDiagram *F,NspLink *L);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 extern int link_split(NspDiagram *F,NspLink *L,NspLink **L1,const double pt[2]);
 
-#line 156 "./diagram.h"
+#line 152 "./diagram.h"
 #endif /* NSP_INC_NspDiagram */ 
 
 #ifdef NspDiagram_Private 
@@ -196,6 +192,6 @@ static AttrTab nsp_diagram_attrs[];
 static void *nspdiagram_get_adress(NspList *L,void *old );
 static NspList * nsp_diagram_list_full_copy(NspList *L,int hilited_only);
 
-#line 200 "./diagram.h"
+#line 196 "./diagram.h"
 #endif /* NspDiagram_Private */
 

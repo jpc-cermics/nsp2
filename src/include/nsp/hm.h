@@ -35,14 +35,10 @@
 typedef struct _NspHm NspHm ;
 typedef struct _NspTypeHm NspTypeHm ;
 
-#line 39 "./hm.h"
-
 struct _NspTypeHm {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 46 "./hm.h"
 };
 
 struct _NspHm {
@@ -105,7 +101,7 @@ extern int nsp_hm_xdr_save(XDR  *xdrs, NspHm *M);
  * of classa.h
  */
 
-#line 109 "./hm.h"
+#line 105 "./hm.h"
 #endif /* NSP_INC_NspHm */ 
 
 #ifdef NspHm_Private 
@@ -153,6 +149,6 @@ static int nsp_hm_check_slope(NspHm *H,NspMatrix *M);
 static NspIMatrix *nsp_hm_get_keys(const char *name,NspHm *Hv);
 const int no_key=-1;
 
-#line 157 "./hm.h"
+#line 153 "./hm.h"
 #endif /* NspHm_Private */
 

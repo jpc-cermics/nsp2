@@ -32,14 +32,10 @@
 typedef struct _NspAgnode NspAgnode ;
 typedef struct _NspTypeAgnode NspTypeAgnode ;
 
-#line 36 "./agnode.h"
-
 struct _NspTypeAgnode {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./agnode.h"
 };
 
 typedef struct _nsp_agnode nsp_agnode;

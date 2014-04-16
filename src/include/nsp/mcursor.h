@@ -32,14 +32,10 @@
 typedef struct _NspMcursor NspMcursor ;
 typedef struct _NspTypeMcursor NspTypeMcursor ;
 
-#line 36 "./mcursor.h"
-
 struct _NspTypeMcursor {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./mcursor.h"
 };
 
 typedef struct _nsp_mcursor nsp_mcursor;

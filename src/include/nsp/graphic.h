@@ -37,7 +37,6 @@
 typedef struct _NspGraphic NspGraphic ;
 typedef struct _NspTypeGraphic NspTypeGraphic ;
 
-
 #line 61 "codegen/graphic.override"
 
 typedef void draw_func(BCG *Xgc,NspGraphic *Obj,const GdkRectangle *rect, void *data);
@@ -52,13 +51,13 @@ typedef void zmean_func(BCG *Xgc,NspGraphic *Obj, double *z, void *HF, int *n, i
 typedef int n_faces_func(BCG *Xgc,NspGraphic *Obj);
 typedef void invalidate_func(NspGraphic *G);
 
-#line 56 "./graphic.h"
+#line 55 "./graphic.h"
 
 struct _NspTypeGraphic {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
+
 #line 46 "codegen/graphic.override"
 
   draw_func *draw; 
@@ -73,8 +72,7 @@ struct _NspTypeGraphic {
   n_faces_func *n_faces;
   invalidate_func *invalidate;
 
-
-#line 78 "./graphic.h"
+#line 76 "./graphic.h"
 };
 
 typedef struct _nsp_graphic nsp_graphic;
@@ -143,7 +141,7 @@ extern int nsp_graphic_xdr_save(XDR  *xdrs, NspGraphic *M);
 extern void nsp_graphic_invalidate(NspGraphic *G);
 extern int nsp_graphic_intersect_rectangle(NspGraphic *G,const GdkRectangle *rect);
 
-#line 147 "./graphic.h"
+#line 145 "./graphic.h"
 #endif /* NSP_INC_NspGraphic */ 
 
 #ifdef NspGraphic_Private 
@@ -163,6 +161,6 @@ static NspGraphic *nsp_graphic_create_void(const char *name,NspTypeBase *type);
 /* inserted in the private part of include file */
 static NspMatrix *graphic_get_bounds(NspGraphic *G);
 
-#line 167 "./graphic.h"
+#line 165 "./graphic.h"
 #endif /* NspGraphic_Private */
 

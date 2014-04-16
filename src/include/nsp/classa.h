@@ -41,14 +41,10 @@ struct _hfoo {
 typedef struct _NspClassA NspClassA ;
 typedef struct _NspTypeClassA NspTypeClassA ;
 
-#line 45 "./classa.h"
-
 struct _NspTypeClassA {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 52 "./classa.h"
 };
 
 struct _NspClassA {
@@ -112,7 +108,7 @@ extern int nsp_classa_xdr_save(XDR  *xdrs, NspClassA *M);
  * of classa.h
  */
 
-#line 116 "./classa.h"
+#line 112 "./classa.h"
 #endif /* NSP_INC_NspClassA */ 
 
 #ifdef NspClassA_Private 
@@ -133,6 +129,6 @@ static NspClassA *nsp_classa_create_void(const char *name,NspTypeBase *type);
  * of classa.h
  */
 
-#line 137 "./classa.h"
+#line 133 "./classa.h"
 #endif /* NspClassA_Private */
 

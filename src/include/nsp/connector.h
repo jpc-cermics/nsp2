@@ -61,14 +61,10 @@ struct _gr_lock {
 typedef struct _NspConnector NspConnector ;
 typedef struct _NspTypeConnector NspTypeConnector ;
 
-#line 65 "./connector.h"
-
 struct _NspTypeConnector {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 72 "./connector.h"
 };
 
 typedef struct _nsp_connector nsp_connector;
@@ -137,7 +133,7 @@ extern int nsp_connector_xdr_save(XDR  *xdrs, NspConnector *M);
 
 /* inserted at the end of public part of include file */
 
-#line 141 "./connector.h"
+#line 137 "./connector.h"
 #endif /* NSP_INC_NspConnector */ 
 
 #ifdef NspConnector_Private 
@@ -203,6 +199,6 @@ static int nsp_eq_gr_lock(gr_lock *lock1,gr_lock *lock2);
 static void nsp_init_gr_lock(gr_lock *locks);
 static int nsp_gr_lock_full_copy(NspConnector *C,gr_lock *lock_c,NspConnector *M);
 
-#line 207 "./connector.h"
+#line 203 "./connector.h"
 #endif /* NspConnector_Private */
 

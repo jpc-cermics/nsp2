@@ -38,14 +38,10 @@
 typedef struct _NspGrImage NspGrImage ;
 typedef struct _NspTypeGrImage NspTypeGrImage ;
 
-#line 42 "./grimage.h"
-
 struct _NspTypeGrImage {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 49 "./grimage.h"
 };
 
 typedef struct _nsp_grimage nsp_grimage;
@@ -117,7 +113,7 @@ extern int nsp_grimage_xdr_save(XDR  *xdrs, NspGrImage *M);
 
 /* inserted at the end of public part of include file */
 
-#line 121 "./grimage.h"
+#line 117 "./grimage.h"
 #endif /* NSP_INC_NspGrImage */ 
 
 #ifdef NspGrImage_Private 
@@ -141,6 +137,6 @@ static void nsp_rotate_grimage(NspGraphic *o,double *R);
 static void nsp_scale_grimage(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grimage(NspGraphic *o,double *bounds);
 
-#line 145 "./grimage.h"
+#line 141 "./grimage.h"
 #endif /* NspGrImage_Private */
 

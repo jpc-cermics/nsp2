@@ -37,14 +37,10 @@
 typedef struct _NspGrstring NspGrstring ;
 typedef struct _NspTypeGrstring NspTypeGrstring ;
 
-#line 41 "./grstring.h"
-
 struct _NspTypeGrstring {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./grstring.h"
 };
 
 typedef struct _nsp_grstring nsp_grstring;
@@ -118,7 +114,7 @@ extern int nsp_grstring_xdr_save(XDR  *xdrs, NspGrstring *M);
 
 /* inserted at the end of public part of include file */
 
-#line 122 "./grstring.h"
+#line 118 "./grstring.h"
 #endif /* NSP_INC_NspGrstring */ 
 
 #ifdef NspGrstring_Private 
@@ -142,6 +138,6 @@ static void nsp_rotate_grstring(NspGraphic *o,double *R);
 static void nsp_scale_grstring(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grstring(NspGraphic *o,double *bounds);
 
-#line 146 "./grstring.h"
+#line 142 "./grstring.h"
 #endif /* NspGrstring_Private */
 

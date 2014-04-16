@@ -32,14 +32,10 @@
 typedef struct _NspFec NspFec ;
 typedef struct _NspTypeFec NspTypeFec ;
 
-#line 36 "./fec.h"
-
 struct _NspTypeFec {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./fec.h"
 };
 
 typedef struct _nsp_fec nsp_fec;
@@ -123,7 +119,7 @@ extern void fillpolyline2D_shade(BCG *Xgc,int *vx, int *vy, int *colors, int n,i
 
 /* inserted at the end of public part of include file */
 
-#line 127 "./fec.h"
+#line 123 "./fec.h"
 #endif /* NSP_INC_NspFec */ 
 
 #ifdef NspFec_Private 
@@ -151,6 +147,6 @@ static void draw_triangle(BCG *Xgc,const double *sx,const double *sy);
 static void PermutOfSort_d(const double *tab, int *perm);
 static void nsp_draw_fec_levels(BCG *Xgc,NspGraphic *Obj, const GdkRectangle *rect,void *data);
 
-#line 155 "./fec.h"
+#line 151 "./fec.h"
 #endif /* NspFec_Private */
 

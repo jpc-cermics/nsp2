@@ -32,14 +32,10 @@
 typedef struct _NspMclient NspMclient ;
 typedef struct _NspTypeMclient NspTypeMclient ;
 
-#line 36 "./mclient.h"
-
 struct _NspTypeMclient {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./mclient.h"
 };
 
 typedef struct _nsp_mclient nsp_mclient;

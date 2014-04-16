@@ -36,14 +36,10 @@
 typedef struct _NspBvar NspBvar ;
 typedef struct _NspTypeBvar NspTypeBvar ;
 
-#line 40 "./bvar.h"
-
 struct _NspTypeBvar {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 47 "./bvar.h"
 };
 
 struct _NspBvar {
@@ -103,7 +99,7 @@ extern int nsp_bvar_xdr_save(XDR  *xdrs, NspBvar *M);
 /* inserted at the end of public part of class include file */
 extern NspBvar *nsp_bvar(NspObject *Obj,int flag);
 
-#line 107 "./bvar.h"
+#line 103 "./bvar.h"
 #endif /* NSP_INC_NspBvar */ 
 
 #ifdef NspBvar_Private 
@@ -130,6 +126,6 @@ static NspObject *bvar_code_replacevarname(NspObject *Obj,const char *name,NspOb
 static int bvar_code_replacevar(NspList *L,NspMatrix *Inds, const char *vname,NspObject *expr, int *callf) ;
 static int bvar_code_varstatus(NspList *L,NspMatrix **Idx_used,NspMatrix **Idx_modified, const char *vname);
 
-#line 134 "./bvar.h"
+#line 130 "./bvar.h"
 #endif /* NspBvar_Private */
 

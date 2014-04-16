@@ -37,14 +37,10 @@
 typedef struct _NspGrArc NspGrArc ;
 typedef struct _NspTypeGrArc NspTypeGrArc ;
 
-#line 41 "./grarc.h"
-
 struct _NspTypeGrArc {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./grarc.h"
 };
 
 typedef struct _nsp_grarc nsp_grarc;
@@ -117,7 +113,7 @@ extern int nsp_grarc_xdr_save(XDR  *xdrs, NspGrArc *M);
 
 /* inserted at the end of public part of include file */
 
-#line 121 "./grarc.h"
+#line 117 "./grarc.h"
 #endif /* NSP_INC_NspGrArc */ 
 
 #ifdef NspGrArc_Private 
@@ -143,6 +139,6 @@ static void nsp_scale_grarc(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grarc(NspGraphic *o,double *bounds);
 static void nsp_draw_polyline_grarc(BCG *Xgc,NspGrArc *P);
 static void nsp_fill_polyline_grarc( BCG *Xgc,NspGrArc *P);
-#line 147 "./grarc.h"
+#line 143 "./grarc.h"
 #endif /* NspGrArc_Private */
 

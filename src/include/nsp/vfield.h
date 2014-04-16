@@ -37,14 +37,10 @@
 typedef struct _NspVField NspVField ;
 typedef struct _NspTypeVField NspTypeVField ;
 
-#line 41 "./vfield.h"
-
 struct _NspTypeVField {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./vfield.h"
 };
 
 typedef struct _nsp_vfield nsp_vfield;
@@ -111,7 +107,7 @@ extern int nsp_vfield_xdr_save(XDR  *xdrs, NspVField *M);
 #line 9 "codegen/vfield.override"
 /* inserted at the end of public part of include file */
 
-#line 115 "./vfield.h"
+#line 111 "./vfield.h"
 #endif /* NSP_INC_NspVField */ 
 
 #ifdef NspVField_Private 
@@ -139,6 +135,6 @@ static void nsp_draw_vfield_(BCG *Xgc,char *name, int colored, double *x, double
 			     double *brect, double *arfact);
 static double min_of_doubles (const double *x,int n);
 
-#line 143 "./vfield.h"
+#line 139 "./vfield.h"
 #endif /* NspVField_Private */
 

@@ -37,14 +37,10 @@
 typedef struct _NspSegments NspSegments ;
 typedef struct _NspTypeSegments NspTypeSegments ;
 
-#line 41 "./segments.h"
-
 struct _NspTypeSegments {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./segments.h"
 };
 
 typedef struct _nsp_segments nsp_segments;
@@ -110,7 +106,7 @@ extern int nsp_segments_xdr_save(XDR  *xdrs, NspSegments *M);
 
 /* inserted at the end of public part of include file */
 
-#line 114 "./segments.h"
+#line 110 "./segments.h"
 #endif /* NSP_INC_NspSegments */ 
 
 #ifdef NspSegments_Private 
@@ -135,6 +131,6 @@ static void nsp_rotate_segments(NspGraphic *o,double *R);
 static void nsp_scale_segments(NspGraphic *o,double *alpha);
 static int nsp_getbounds_segments(NspGraphic *o,double *bounds);
 
-#line 139 "./segments.h"
+#line 135 "./segments.h"
 #endif /* NspSegments_Private */
 

@@ -38,14 +38,10 @@
 typedef struct _NspContour NspContour ;
 typedef struct _NspTypeContour NspTypeContour ;
 
-#line 42 "./contour.h"
-
 struct _NspTypeContour {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 49 "./contour.h"
 };
 
 typedef struct _nsp_contour nsp_contour;
@@ -117,7 +113,7 @@ extern int nsp_contour2_obj(BCG *Xgc,double *x, double *y, double *z, int *n1, i
 
 /* inserted at the end of public part of include file */
 
-#line 121 "./contour.h"
+#line 117 "./contour.h"
 #endif /* NSP_INC_NspContour */ 
 
 #ifdef NspContour_Private 
@@ -142,6 +138,6 @@ static void nsp_rotate_contour(NspGraphic *o,double *R);
 static void nsp_scale_contour(NspGraphic *o,double *alpha);
 static int nsp_getbounds_contour(NspGraphic *o,double *bounds);
 
-#line 146 "./contour.h"
+#line 142 "./contour.h"
 #endif /* NspContour_Private */
 

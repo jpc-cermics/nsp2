@@ -82,14 +82,10 @@ struct _grl_lock {
 typedef struct _NspLink NspLink ;
 typedef struct _NspTypeLink NspTypeLink ;
 
-#line 86 "./link.h"
-
 struct _NspTypeLink {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 93 "./link.h"
 };
 
 typedef struct _nsp_link nsp_link;
@@ -162,7 +158,7 @@ extern int link_add_control(NspLink *L,const double pt[2]);
 extern int link_remove_control(NspLink *L,const double pt[2]);
 extern NspLink *link_create_n(const char *name,int n,int color,int thickness);
 
-#line 166 "./link.h"
+#line 162 "./link.h"
 #endif /* NSP_INC_NspLink */ 
 
 #ifdef NspLink_Private 
@@ -228,6 +224,6 @@ static int nsp_eq_grl_lock(grl_lock *lock1,grl_lock *lock2);
 static void nsp_init_grl_lock(grl_lock *locks);
 static int  nsp_grl_lock_full_copy(NspLink *C,grl_lock *Cl,NspLink *L);
 
-#line 232 "./link.h"
+#line 228 "./link.h"
 #endif /* NspLink_Private */
 

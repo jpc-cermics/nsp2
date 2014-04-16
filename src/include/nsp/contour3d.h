@@ -38,14 +38,10 @@
 typedef struct _NspContour3d NspContour3d ;
 typedef struct _NspTypeContour3d NspTypeContour3d ;
 
-#line 42 "./contour3d.h"
-
 struct _NspTypeContour3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 49 "./contour3d.h"
 };
 
 typedef struct _nsp_contour3d nsp_contour3d;
@@ -114,7 +110,7 @@ extern int nsp_contour3d_xdr_save(XDR  *xdrs, NspContour3d *M);
 
 /* inserted at the end of public part of include file */
 
-#line 118 "./contour3d.h"
+#line 114 "./contour3d.h"
 #endif /* NSP_INC_NspContour3d */ 
 
 #ifdef NspContour3d_Private 
@@ -144,6 +140,6 @@ static int nsp_check_contour3d(NspContour3d *P);
 static void draw_contour3d_ogl(BCG *Xgc,void *Ob);
 static void draw_contour3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
-#line 148 "./contour3d.h"
+#line 144 "./contour3d.h"
 #endif /* NspContour3d_Private */
 

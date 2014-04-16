@@ -37,14 +37,10 @@
 typedef struct _NspPolyline NspPolyline ;
 typedef struct _NspTypePolyline NspTypePolyline ;
 
-#line 41 "./polyline.h"
-
 struct _NspTypePolyline {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./polyline.h"
 };
 
 typedef struct _nsp_polyline nsp_polyline;
@@ -115,7 +111,7 @@ extern int nsp_polyline_xdr_save(XDR  *xdrs, NspPolyline *M);
 #line 9 "codegen/polyline.override"
 /* inserted at the end of public part of include file */
 
-#line 119 "./polyline.h"
+#line 115 "./polyline.h"
 #endif /* NSP_INC_NspPolyline */ 
 
 #ifdef NspPolyline_Private 
@@ -138,6 +134,6 @@ static void nsp_rotate_polyline(NspGraphic *o,double *R);
 static void nsp_scale_polyline(NspGraphic *o,double *alpha);
 static int nsp_getbounds_polyline(NspGraphic *o,double *bounds);
 
-#line 142 "./polyline.h"
+#line 138 "./polyline.h"
 #endif /* NspPolyline_Private */
 

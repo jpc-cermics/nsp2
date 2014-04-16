@@ -32,14 +32,10 @@
 typedef struct _NspClassARef NspClassARef ;
 typedef struct _NspTypeClassARef NspTypeClassARef ;
 
-#line 36 "./classaref.h"
-
 struct _NspTypeClassARef {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./classaref.h"
 };
 
 typedef struct _nsp_classaref nsp_classaref;

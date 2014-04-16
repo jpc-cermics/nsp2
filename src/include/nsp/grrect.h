@@ -38,14 +38,10 @@
 typedef struct _NspGrRect NspGrRect ;
 typedef struct _NspTypeGrRect NspTypeGrRect ;
 
-#line 42 "./grrect.h"
-
 struct _NspTypeGrRect {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 49 "./grrect.h"
 };
 
 typedef struct _nsp_grrect nsp_grrect;
@@ -116,7 +112,7 @@ extern int nsp_grrect_xdr_save(XDR  *xdrs, NspGrRect *M);
 
 /* inserted at the end of public part of include file */
 
-#line 120 "./grrect.h"
+#line 116 "./grrect.h"
 #endif /* NSP_INC_NspGrRect */ 
 
 #ifdef NspGrRect_Private 
@@ -141,6 +137,6 @@ static void nsp_scale_grrect(NspGraphic *o,double *alpha);
 static int nsp_getbounds_grrect(NspGraphic *o,double *bounds);
 static void nsp_draw_grrect_rotate(BCG *Xgc,NspGrRect *R);
 
-#line 145 "./grrect.h"
+#line 141 "./grrect.h"
 #endif /* NspGrRect_Private */
 

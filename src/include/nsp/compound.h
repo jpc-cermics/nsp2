@@ -37,14 +37,10 @@
 typedef struct _NspCompound NspCompound ;
 typedef struct _NspTypeCompound NspTypeCompound ;
 
-#line 41 "./compound.h"
-
 struct _NspTypeCompound {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./compound.h"
 };
 
 typedef struct _nsp_compound nsp_compound;
@@ -113,7 +109,7 @@ extern int nsp_compound_xdr_save(XDR  *xdrs, NspCompound *M);
 /* inserted at the end of public part of include file */
 extern NspCompound *nsp_figure_get_axe_elts_as_compound(char *name,NspFigure *F);
 
-#line 117 "./compound.h"
+#line 113 "./compound.h"
 #endif /* NSP_INC_NspCompound */ 
 
 #ifdef NspCompound_Private 
@@ -143,6 +139,6 @@ static void nsp_compound_link_figure(NspGraphic *G, void *F, void *A);
 static void nsp_compound_unlink_figure(NspGraphic *G, void *F);
 static NspList *nsp_compound_children(NspGraphic *Obj);
 
-#line 147 "./compound.h"
+#line 143 "./compound.h"
 #endif /* NspCompound_Private */
 

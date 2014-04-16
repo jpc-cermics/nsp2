@@ -32,14 +32,10 @@
 typedef struct _NspAgedge NspAgedge ;
 typedef struct _NspTypeAgedge NspTypeAgedge ;
 
-#line 36 "./agedge.h"
-
 struct _NspTypeAgedge {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./agedge.h"
 };
 
 typedef struct _nsp_agedge nsp_agedge;

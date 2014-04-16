@@ -32,14 +32,10 @@
 typedef struct _NspClassB NspClassB ;
 typedef struct _NspTypeClassB NspTypeClassB ;
 
-#line 36 "./classb.h"
-
 struct _NspTypeClassB {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./classb.h"
 };
 
 struct _NspClassB {

@@ -32,14 +32,10 @@
 typedef struct _NspMcollection NspMcollection ;
 typedef struct _NspTypeMcollection NspTypeMcollection ;
 
-#line 36 "./mcollection.h"
-
 struct _NspTypeMcollection {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./mcollection.h"
 };
 
 typedef struct _nsp_mcollection nsp_mcollection;

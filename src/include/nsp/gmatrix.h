@@ -38,14 +38,10 @@
 typedef struct _NspGMatrix NspGMatrix ;
 typedef struct _NspTypeGMatrix NspTypeGMatrix ;
 
-#line 42 "./gmatrix.h"
-
 struct _NspTypeGMatrix {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 49 "./gmatrix.h"
 };
 
 typedef struct _nsp_gmatrix nsp_gmatrix;
@@ -113,7 +109,7 @@ extern int nsp_gmatrix_xdr_save(XDR  *xdrs, NspGMatrix *M);
 
 /* inserted at the end of public part of include file */
 
-#line 117 "./gmatrix.h"
+#line 113 "./gmatrix.h"
 #endif /* NSP_INC_NspGMatrix */ 
 
 #ifdef NspGMatrix_Private 
@@ -137,6 +133,6 @@ static void nsp_rotate_gmatrix(NspGraphic *o,double *R);
 static void nsp_scale_gmatrix(NspGraphic *o,double *alpha);
 static int nsp_getbounds_gmatrix(NspGraphic *o,double *bounds);
 
-#line 141 "./gmatrix.h"
+#line 137 "./gmatrix.h"
 #endif /* NspGMatrix_Private */
 

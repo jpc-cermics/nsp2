@@ -35,14 +35,10 @@
 typedef struct _NspAgraph NspAgraph ;
 typedef struct _NspTypeAgraph NspTypeAgraph ;
 
-#line 39 "./agraph.h"
-
 struct _NspTypeAgraph {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 46 "./agraph.h"
 };
 
 typedef struct _nsp_agraph nsp_agraph;
@@ -109,7 +105,7 @@ extern int nsp_agraph_xdr_save(XDR  *xdrs, NspAgraph *M);
 #include <gvc.h> 
 #include <nsp/agraph-nsp.h>
 
-#line 113 "./agraph.h"
+#line 109 "./agraph.h"
 #endif /* NSP_INC_NspAgraph */ 
 
 #ifdef NspAgraph_Private 
@@ -153,6 +149,6 @@ static NspAgedge *nsp_gv_agnxtedge(NspAgraph * g, NspAgedge *e, NspAgnode *n);
 static int _wrap_nsp_gv_agset_gen(void *obj,Stack stack,int rhs,int opt,int lhs);
 static NspAgraph *nsp_gv_agsubg(NspAgraph * g, char *name);
 
-#line 157 "./agraph.h"
+#line 153 "./agraph.h"
 #endif /* NspAgraph_Private */
 

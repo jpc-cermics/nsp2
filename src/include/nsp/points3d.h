@@ -37,14 +37,10 @@
 typedef struct _NspPoints3d NspPoints3d ;
 typedef struct _NspTypePoints3d NspTypePoints3d ;
 
-#line 41 "./points3d.h"
-
 struct _NspTypePoints3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./points3d.h"
 };
 
 typedef struct _nsp_points3d nsp_points3d;
@@ -119,7 +115,7 @@ extern BCG *nsp_check_graphic_context(void);
 extern void apply_transforms(BCG *Xgc,double Coord[],const double *M, VisionPos pos[],const double lim[], int ncoord);
 extern int nsp_points3d_add_pts(NspGraphic *P,int k);
 
-#line 123 "./points3d.h"
+#line 119 "./points3d.h"
 #endif /* NSP_INC_NspPoints3d */ 
 
 #ifdef NspPoints3d_Private 
@@ -150,6 +146,6 @@ static void draw_points3d_face(BCG *Xgc,NspGraphic *Ob, int j);
 
 /* inserted in the private part of include file */
 
-#line 154 "./points3d.h"
+#line 150 "./points3d.h"
 #endif /* NspPoints3d_Private */
 

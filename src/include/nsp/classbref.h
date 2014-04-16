@@ -32,14 +32,10 @@
 typedef struct _NspClassBRef NspClassBRef ;
 typedef struct _NspTypeClassBRef NspTypeClassBRef ;
 
-#line 36 "./classbref.h"
-
 struct _NspTypeClassBRef {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./classbref.h"
 };
 
 typedef struct _nsp_classbref nsp_classbref;

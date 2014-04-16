@@ -32,14 +32,10 @@
 typedef struct _NspAgsym NspAgsym ;
 typedef struct _NspTypeAgsym NspTypeAgsym ;
 
-#line 36 "./agsym.h"
-
 struct _NspTypeAgsym {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./agsym.h"
 };
 
 typedef struct _nsp_agsym nsp_agsym;

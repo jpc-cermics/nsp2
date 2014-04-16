@@ -32,14 +32,10 @@
 typedef struct _NspFigureData NspFigureData ;
 typedef struct _NspTypeFigureData NspTypeFigureData ;
 
-#line 36 "./figuredata.h"
-
 struct _NspTypeFigureData {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 43 "./figuredata.h"
 };
 
 struct _NspFigureData {

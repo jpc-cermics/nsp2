@@ -37,14 +37,10 @@
 typedef struct _NspBox3d NspBox3d ;
 typedef struct _NspTypeBox3d NspTypeBox3d ;
 
-#line 41 "./box3d.h"
-
 struct _NspTypeBox3d {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./box3d.h"
 };
 
 typedef struct _nsp_box3d nsp_box3d;
@@ -112,7 +108,7 @@ extern int nsp_box3d_xdr_save(XDR  *xdrs, NspBox3d *M);
 #line 9 "codegen/box3d.override"
 /* inserted at the end of public part of include file */
 
-#line 116 "./box3d.h"
+#line 112 "./box3d.h"
 #endif /* NSP_INC_NspBox3d */ 
 
 #ifdef NspBox3d_Private 
@@ -136,6 +132,6 @@ static void nsp_rotate_box3d(NspGraphic *o,double *R);
 static void nsp_scale_box3d(NspGraphic *o,double *alpha);
 static int nsp_getbounds_box3d(NspGraphic *o,double *bounds);
 
-#line 140 "./box3d.h"
+#line 136 "./box3d.h"
 #endif /* NspBox3d_Private */
 

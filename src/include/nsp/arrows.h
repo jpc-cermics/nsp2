@@ -37,14 +37,10 @@
 typedef struct _NspArrows NspArrows ;
 typedef struct _NspTypeArrows NspTypeArrows ;
 
-#line 41 "./arrows.h"
-
 struct _NspTypeArrows {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./arrows.h"
 };
 
 typedef struct _nsp_arrows nsp_arrows;
@@ -111,7 +107,7 @@ extern int nsp_arrows_xdr_save(XDR  *xdrs, NspArrows *M);
 
 /* inserted at the end of public part of include file */
 
-#line 115 "./arrows.h"
+#line 111 "./arrows.h"
 #endif /* NSP_INC_NspArrows */ 
 
 #ifdef NspArrows_Private 
@@ -136,6 +132,6 @@ static void nsp_rotate_arrows(NspGraphic *o,double *R);
 static void nsp_scale_arrows(NspGraphic *o,double *alpha);
 static int nsp_getbounds_arrows(NspGraphic *o,double *bounds);
 
-#line 140 "./arrows.h"
+#line 136 "./arrows.h"
 #endif /* NspArrows_Private */
 

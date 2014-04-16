@@ -37,14 +37,10 @@
 typedef struct _NspSurf NspSurf ;
 typedef struct _NspTypeSurf NspTypeSurf ;
 
-#line 41 "./surf.h"
-
 struct _NspTypeSurf {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./surf.h"
 };
 
 typedef struct _nsp_surf nsp_surf;
@@ -115,7 +111,7 @@ extern int nsp_surf_xdr_save(XDR  *xdrs, NspSurf *M);
 
 /* inserted at the end of public part of include file */
 
-#line 119 "./surf.h"
+#line 115 "./surf.h"
 #endif /* NSP_INC_NspSurf */ 
 
 #ifdef NspSurf_Private 
@@ -139,6 +135,6 @@ static void nsp_rotate_surf(NspGraphic *o,double *R);
 static void nsp_scale_surf(NspGraphic *o,double *alpha);
 static int nsp_getbounds_surf(NspGraphic *o,double *bounds);
 
-#line 143 "./surf.h"
+#line 139 "./surf.h"
 #endif /* NspSurf_Private */
 

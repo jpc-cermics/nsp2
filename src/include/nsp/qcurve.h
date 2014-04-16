@@ -37,14 +37,10 @@
 typedef struct _NspQcurve NspQcurve ;
 typedef struct _NspTypeQcurve NspTypeQcurve ;
 
-#line 41 "./qcurve.h"
-
 struct _NspTypeQcurve {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./qcurve.h"
 };
 
 typedef struct _nsp_qcurve nsp_qcurve;
@@ -124,7 +120,7 @@ extern void nsp_qcurve_get_xy_stem(NspQcurve *C,double *cx,double *cy);
 extern int nsp_qcurve_enlarge(NspQcurve *C,int npts);
 extern NspMatrix *nsp_qcurve_get_pts(NspQcurve *C);
 typedef enum { qcurve_std, qcurve_stairs, qcurve_stem , qcurve_arrow} nsp_qcurve_mode ; 
-#line 128 "./qcurve.h"
+#line 124 "./qcurve.h"
 #endif /* NSP_INC_NspQcurve */ 
 
 #ifdef NspQcurve_Private 
@@ -149,6 +145,6 @@ static void nsp_scale_qcurve(NspGraphic *o,double *alpha);
 static int nsp_getbounds_qcurve(NspGraphic *o,double *bounds);
 
 
-#line 153 "./qcurve.h"
+#line 149 "./qcurve.h"
 #endif /* NspQcurve_Private */
 

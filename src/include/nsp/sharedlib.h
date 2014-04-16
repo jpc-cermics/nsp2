@@ -36,14 +36,10 @@
 typedef struct _NspSharedlib NspSharedlib ;
 typedef struct _NspTypeSharedlib NspTypeSharedlib ;
 
-#line 40 "./sharedlib.h"
-
 struct _NspTypeSharedlib {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 47 "./sharedlib.h"
 };
 
 typedef struct _nsp_sharedlib nsp_sharedlib;
@@ -116,7 +112,7 @@ extern void nsp_sharedlib_table_show();
 extern int nsp_check_dlsym(NspSharedlib *sh, nsp_const_string ename);
 extern int nsp_sharedlib_table_find_symbol(const char *name);
 
-#line 120 "./sharedlib.h"
+#line 116 "./sharedlib.h"
 #endif /* NSP_INC_NspSharedlib */ 
 
 #ifdef NspSharedlib_Private 
@@ -134,6 +130,6 @@ static NspSharedlib *nsp_sharedlib_create_void(const char *name,NspTypeBase *typ
 #line 20 "codegen/sharedlib.override"
 /* inserted in the private part of include file */
 
-#line 138 "./sharedlib.h"
+#line 134 "./sharedlib.h"
 #endif /* NspSharedlib_Private */
 

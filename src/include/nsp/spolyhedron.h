@@ -37,14 +37,10 @@
 typedef struct _NspSPolyhedron NspSPolyhedron ;
 typedef struct _NspTypeSPolyhedron NspTypeSPolyhedron ;
 
-#line 41 "./spolyhedron.h"
-
 struct _NspTypeSPolyhedron {
   /*< private >*/
   NSP_TYPE_OBJECT__
   /*< public >*/
- 
-#line 48 "./spolyhedron.h"
 };
 
 typedef struct _nsp_spolyhedron nsp_spolyhedron;
@@ -127,7 +123,7 @@ extern int nsp_spolyhedron_xdr_save(XDR  *xdrs, NspSPolyhedron *M);
 extern NspSPolyhedron *nsp_spolyhedron_create_from_facets(char *name,double *xx,double *yy,double *zz,int m,int n,int *colors, int ncol ,int cmap_ncol );
 extern NspSPolyhedron *nsp_spolyhedron_create_from_triplet(char *name,double *x,double *y,double *z,int m,int n, double *col,int ncol);
 
-#line 131 "./spolyhedron.h"
+#line 127 "./spolyhedron.h"
 #endif /* NSP_INC_NspSPolyhedron */ 
 
 #ifdef NspSPolyhedron_Private 
@@ -161,6 +157,6 @@ static void permut_of_sort(int *tab, int *perm);
 static void find_intersection(int *sx, int *sy, double *fxy, double z, 
 			      int inda, int indb, int *xint, int *yint);
 
-#line 165 "./spolyhedron.h"
+#line 161 "./spolyhedron.h"
 #endif /* NspSPolyhedron_Private */
 
