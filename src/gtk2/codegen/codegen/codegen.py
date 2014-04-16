@@ -1120,8 +1120,13 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
     fp.write( type_tmpl_copyright) 
     fp.write('\n\n')
 
-    fp.write(overrides.get_headers())
-    fp.resetline()
+    hd = overrides.get_headers()
+    if hd <> "":
+        fp.write(hd)
+        fp.resetline()
+    else:
+        fp.write('\n')
+
     fp.write('\n\n')
     fp.write('/* ---------- types from other modules ---------- */\n')
     for module, pyname, cname in overrides.get_imports():
@@ -1180,7 +1185,8 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
 
     write_enums(parser, prefix, fp)
 
-    fp.write('/* intialise stuff extension classes */\n')
+def write_source_unused(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
+    fp.write('/* initialize stuff extension classes */\n')
     fp.write('/* void\n' + prefix + '_register_classes(NspObject *d)\n{\n')
     imports = overrides.get_imports()[:]
     if imports:
@@ -1238,6 +1244,8 @@ def write_source(parser, overrides, prefix, fp=FileOutput(sys.stdout)):
                      '", ' + obj.typecode + ', &Py' + obj.c_name +
                      '_Type, NULL);\n')
     fp.write('}\n*/\n')
+
+
 
 def register_types(parser):
     for obj in parser.interfaces:

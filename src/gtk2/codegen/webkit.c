@@ -2272,17 +2272,3 @@ void webkit_Interf_Info(int i, char **fname, function (**f))
   *fname = webkit_func[i].name;
   *f = webkit_func[i].fonc;
 }
-/* intialise stuff extension classes */
-/* void
-webkit_register_classes(NspObject *d)
-{
-
-#line 2281 "webkit.c"
-  nspgobject_register_class(d, "WebKitWebView", WEBKIT_TYPE_WEB_VIEW, &PyWebKitWebView_Type, Py_BuildValue("(O)", &PyGtkContainer_Type));
-  nspgobject_register_class(d, "WebKitWebFrame", WEBKIT_TYPE_WEB_FRAME, &PyWebKitWebFrame_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "WebKitWebHistoryItem", WEBKIT_TYPE_WEB_HISTORY_ITEM, &PyWebKitWebHistoryItem_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "WebKitWebBackForwardList", WEBKIT_TYPE_WEB_BACK_FORWARD_LIST, &PyWebKitWebBackForwardList_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "WebKitWebSettings", WEBKIT_TYPE_WEB_SETTINGS, &PyWebKitWebSettings_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "WebKitNetworkRequest", WEBKIT_TYPE_NETWORK_REQUEST, &PyWebKitNetworkRequest_Type, Py_BuildValue("(O)", &PyGObject_Type));
-}
-*/

@@ -2991,32 +2991,3 @@ atk_add_constants(NspObject *module, const gchar *strip_prefix)
 /*  PyModule_AddIntConstant(module, nspg_constant_strip_prefix("ATK_XY_WINDOW", strip_prefix), ATK_XY_WINDOW);*/
 }
 
-/* intialise stuff extension classes */
-/* void
-atk_register_classes(NspObject *d)
-{
-  NspObject *module;
-
-  if ((module = PyImport_ImportModule("gobject")) != NULL) {
-      NspObject *moddict = PyModule_GetDict(module);
-
-      _GObject = (PyTypeObject *)PyDict_GetItemString(moddict, "GObject");
-  } else {
-      Py_FatalError("could not import gobject");
-      return;
-  }
-
-
-#line 3011 "atk.c"
-  nspgobject_register_class(d, "AtkHyperlink", ATK_TYPE_HYPERLINK, &PyAtkHyperlink_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkObject", ATK_TYPE_OBJECT, &PyAtkObject_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkNoOpObject", ATK_TYPE_NO_OP_OBJECT, &PyAtkNoOpObject_Type, Py_BuildValue("(O)", &PyAtkObject_Type));
-  nspgobject_register_class(d, "AtkObjectFactory", ATK_TYPE_OBJECT_FACTORY, &PyAtkObjectFactory_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkNoOpObjectFactory", ATK_TYPE_NO_OP_OBJECT_FACTORY, &PyAtkNoOpObjectFactory_Type, Py_BuildValue("(O)", &PyAtkObjectFactory_Type));
-  nspgobject_register_class(d, "AtkRegistry", ATK_TYPE_REGISTRY, &PyAtkRegistry_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkRelation", ATK_TYPE_RELATION, &PyAtkRelation_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkRelationSet", ATK_TYPE_RELATION_SET, &PyAtkRelationSet_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkStateSet", ATK_TYPE_STATE_SET, &PyAtkStateSet_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "AtkUtil", ATK_TYPE_UTIL, &PyAtkUtil_Type, Py_BuildValue("(O)", &PyGObject_Type));
-}
-*/

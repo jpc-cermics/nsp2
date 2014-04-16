@@ -5005,39 +5005,3 @@ pango_add_constants(NspObject *module, const gchar *strip_prefix)
   nsp_enum_add_constants((NspHash *) module, PANGO_TYPE_DIRECTION, strip_prefix);
 }
 
-/* intialise stuff extension classes */
-/* void
-pango_register_classes(NspObject *d)
-{
-  NspObject *module;
-
-  if ((module = PyImport_ImportModule("gobject")) != NULL) {
-      NspObject *moddict = PyModule_GetDict(module);
-
-      _GObject = (PyTypeObject *)PyDict_GetItemString(moddict, "GObject");
-  } else {
-      Py_FatalError("could not import gobject");
-      return;
-  }
-
-
-#line 15 "pango.override"
-
-
-#line 5028 "pango.c"
-  nspg_register_boxed(d, "AttrList", PANGO_TYPE_ATTR_LIST, &PyPangoAttrList_Type);
-  nspg_register_boxed(d, "Color", PANGO_TYPE_COLOR, &PyPangoColor_Type);
-  nspg_register_boxed(d, "FontDescription", PANGO_TYPE_FONT_DESCRIPTION, &PyPangoFontDescription_Type);
-  nspg_register_boxed(d, "FontMetrics", PANGO_TYPE_FONT_METRICS, &PyPangoFontMetrics_Type);
-  nspg_register_boxed(d, "GlyphString", PANGO_TYPE_GLYPH_STRING, &PyPangoGlyphString_Type);
-  nspg_register_boxed(d, "Language", PANGO_TYPE_LANGUAGE, &PyPangoLanguage_Type);
-  nspg_register_boxed(d, "TabArray", PANGO_TYPE_TAB_ARRAY, &PyPangoTabArray_Type);
-  nspgobject_register_class(d, "PangoContext", PANGO_TYPE_CONTEXT, &PyPangoContext_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "PangoFont", PANGO_TYPE_FONT, &PyPangoFont_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "PangoFontFace", PANGO_TYPE_FONT_FACE, &PyPangoFontFace_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "PangoFontFamily", PANGO_TYPE_FONT_FAMILY, &PyPangoFontFamily_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "PangoFontMap", PANGO_TYPE_FONT_MAP, &PyPangoFontMap_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "PangoFontset", PANGO_TYPE_FONTSET, &PyPangoFontset_Type, Py_BuildValue("(O)", &PyGObject_Type));
-  nspgobject_register_class(d, "PangoLayout", PANGO_TYPE_LAYOUT, &PyPangoLayout_Type, Py_BuildValue("(O)", &PyGObject_Type));
-}
-*/
