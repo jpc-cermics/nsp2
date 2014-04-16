@@ -81,12 +81,20 @@ void webkit_web_view_set_full_content_zoom(WebKitWebView *web_view,
 #include "nsp/gtk/webkitwebview.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspWebKitWebView inherits from NspGtkContainer */ 
+/* 
+ * WebKitWebView inherits from GtkContainer 
+ */
 
 int nsp_type_webkitwebview_id=0;
 NspTypeWebKitWebView *nsp_type_webkitwebview=NULL;
 
+/*
+ * Type object for WebKitWebView 
+ * all the instance of NspTypeWebKitWebView share the same id. 
+ * nsp_type_webkitwebview: is an instance of NspTypeWebKitWebView 
+ *    used for objects of WebKitWebView type (i.e built with new_webkitwebview) 
+ * other instances are used for derived classes 
+ */
 NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
 {
   NspTypeWebKitWebView *type= NULL;
@@ -648,12 +656,20 @@ static AttrTab webkitwebview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/webkitwebframe.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspWebKitWebFrame inherits from NspGObject */ 
+/* 
+ * WebKitWebFrame inherits from GObject 
+ */
 
 int nsp_type_webkitwebframe_id=0;
 NspTypeWebKitWebFrame *nsp_type_webkitwebframe=NULL;
 
+/*
+ * Type object for WebKitWebFrame 
+ * all the instance of NspTypeWebKitWebFrame share the same id. 
+ * nsp_type_webkitwebframe: is an instance of NspTypeWebKitWebFrame 
+ *    used for objects of WebKitWebFrame type (i.e built with new_webkitwebframe) 
+ * other instances are used for derived classes 
+ */
 NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
 {
   NspTypeWebKitWebFrame *type= NULL;
@@ -956,12 +972,20 @@ static AttrTab webkitwebframe_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/webkitwebhistoryitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspWebKitWebHistoryItem inherits from NspGObject */ 
+/* 
+ * WebKitWebHistoryItem inherits from GObject 
+ */
 
 int nsp_type_webkitwebhistoryitem_id=0;
 NspTypeWebKitWebHistoryItem *nsp_type_webkitwebhistoryitem=NULL;
 
+/*
+ * Type object for WebKitWebHistoryItem 
+ * all the instance of NspTypeWebKitWebHistoryItem share the same id. 
+ * nsp_type_webkitwebhistoryitem: is an instance of NspTypeWebKitWebHistoryItem 
+ *    used for objects of WebKitWebHistoryItem type (i.e built with new_webkitwebhistoryitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
 {
   NspTypeWebKitWebHistoryItem *type= NULL;
@@ -1227,12 +1251,20 @@ static AttrTab webkitwebhistoryitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/webkitwebbackforwardlist.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspWebKitWebBackForwardList inherits from NspGObject */ 
+/* 
+ * WebKitWebBackForwardList inherits from GObject 
+ */
 
 int nsp_type_webkitwebbackforwardlist_id=0;
 NspTypeWebKitWebBackForwardList *nsp_type_webkitwebbackforwardlist=NULL;
 
+/*
+ * Type object for WebKitWebBackForwardList 
+ * all the instance of NspTypeWebKitWebBackForwardList share the same id. 
+ * nsp_type_webkitwebbackforwardlist: is an instance of NspTypeWebKitWebBackForwardList 
+ *    used for objects of WebKitWebBackForwardList type (i.e built with new_webkitwebbackforwardlist) 
+ * other instances are used for derived classes 
+ */
 NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mode)
 {
   NspTypeWebKitWebBackForwardList *type= NULL;
@@ -1595,12 +1627,20 @@ static AttrTab webkitwebbackforwardlist_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/webkitwebsettings.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspWebKitWebSettings inherits from NspGObject */ 
+/* 
+ * WebKitWebSettings inherits from GObject 
+ */
 
 int nsp_type_webkitwebsettings_id=0;
 NspTypeWebKitWebSettings *nsp_type_webkitwebsettings=NULL;
 
+/*
+ * Type object for WebKitWebSettings 
+ * all the instance of NspTypeWebKitWebSettings share the same id. 
+ * nsp_type_webkitwebsettings: is an instance of NspTypeWebKitWebSettings 
+ *    used for objects of WebKitWebSettings type (i.e built with new_webkitwebsettings) 
+ * other instances are used for derived classes 
+ */
 NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
 {
   NspTypeWebKitWebSettings *type= NULL;
@@ -1823,12 +1863,20 @@ static AttrTab webkitwebsettings_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/webkitnetworkrequest.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspWebKitNetworkRequest inherits from NspGObject */ 
+/* 
+ * WebKitNetworkRequest inherits from GObject 
+ */
 
 int nsp_type_webkitnetworkrequest_id=0;
 NspTypeWebKitNetworkRequest *nsp_type_webkitnetworkrequest=NULL;
 
+/*
+ * Type object for WebKitNetworkRequest 
+ * all the instance of NspTypeWebKitNetworkRequest share the same id. 
+ * nsp_type_webkitnetworkrequest: is an instance of NspTypeWebKitNetworkRequest 
+ *    used for objects of WebKitNetworkRequest type (i.e built with new_webkitnetworkrequest) 
+ * other instances are used for derived classes 
+ */
 NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
 {
   NspTypeWebKitNetworkRequest *type= NULL;
@@ -2233,7 +2281,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2237 "webkit.c"
+#line 2285 "webkit.c"
 
 
 /*----------------------------------------------------

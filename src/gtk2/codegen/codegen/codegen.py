@@ -60,12 +60,20 @@ class Wrapper:
               '#include "nsp/gtk/%(typename_dc)s.h"\n'  \
               '#include "nsp/interf.h"\n'  \
               '#include "nsp/nspthreads.h"\n'  \
-              '\n'  \
-              '/* Nsp%(typename)s inherits from Nsp%(parent)s */ \n'  \
-              '\n'  \
+              '/* \n' \
+              ' * %(typename)s inherits from %(parent)s \n%(implements)s' \
+              ' */\n' \
+              '\n' \
               'int nsp_type_%(typename_dc)s_id=0;\n'  \
               'NspType%(typename)s *nsp_type_%(typename_dc)s=NULL;\n'  \
               '\n'  \
+              '/*\n' \
+              ' * Type object for %(typename)s \n' \
+              ' * all the instance of NspType%(typename)s share the same id. \n' \
+              ' * nsp_type_%(typename_dc)s: is an instance of NspType%(typename)s \n' \
+              ' *    used for objects of %(typename)s type (i.e built with new_%(typename_dc)s) \n' \
+              ' * other instances are used for derived classes \n' \
+              ' */\n' \
               'NspType%(typename)s *new_type_%(typename_dc)s(type_mode mode)\n'  \
               '{\n'  \
               '  NspType%(typename)s *type= NULL;\n'  \
@@ -403,6 +411,17 @@ class Wrapper:
                     substdict[slot] = substdict[slot+'_def']
                 else:
                     substdict[slot] = '0'
+
+        # insert the comment for implements in dictionary 
+        str = ''
+        substdict['implements'] = ''
+        if len(self.objinfo.implements) != 0 :
+            str = ' * and implements '
+            for interf in self.objinfo.implements:
+                str = '%s %s' % (str, interf )
+            str = str + '\n'
+            substdict['implements'] = str 
+
         # insert the type defintion 
         self.fp.write(self.type_tmpl_1 % substdict)
         # insert the implemented interfaces

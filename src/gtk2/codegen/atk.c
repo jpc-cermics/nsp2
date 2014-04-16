@@ -56,12 +56,20 @@
 #include "nsp/gtk/atkhyperlink.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkHyperlink inherits from NspGObject */ 
+/* 
+ * AtkHyperlink inherits from GObject 
+ */
 
 int nsp_type_atkhyperlink_id=0;
 NspTypeAtkHyperlink *nsp_type_atkhyperlink=NULL;
 
+/*
+ * Type object for AtkHyperlink 
+ * all the instance of NspTypeAtkHyperlink share the same id. 
+ * nsp_type_atkhyperlink: is an instance of NspTypeAtkHyperlink 
+ *    used for objects of AtkHyperlink type (i.e built with new_atkhyperlink) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
 {
   NspTypeAtkHyperlink *type= NULL;
@@ -322,12 +330,20 @@ static AttrTab atkhyperlink_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkobject.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkObject inherits from NspGObject */ 
+/* 
+ * AtkObject inherits from GObject 
+ */
 
 int nsp_type_atkobject_id=0;
 NspTypeAtkObject *nsp_type_atkobject=NULL;
 
+/*
+ * Type object for AtkObject 
+ * all the instance of NspTypeAtkObject share the same id. 
+ * nsp_type_atkobject: is an instance of NspTypeAtkObject 
+ *    used for objects of AtkObject type (i.e built with new_atkobject) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkObject *new_type_atkobject(type_mode mode)
 {
   NspTypeAtkObject *type= NULL;
@@ -691,12 +707,20 @@ static AttrTab atkobject_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atknoopobject.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkNoOpObject inherits from NspAtkObject */ 
+/* 
+ * AtkNoOpObject inherits from AtkObject 
+ */
 
 int nsp_type_atknoopobject_id=0;
 NspTypeAtkNoOpObject *nsp_type_atknoopobject=NULL;
 
+/*
+ * Type object for AtkNoOpObject 
+ * all the instance of NspTypeAtkNoOpObject share the same id. 
+ * nsp_type_atknoopobject: is an instance of NspTypeAtkNoOpObject 
+ *    used for objects of AtkNoOpObject type (i.e built with new_atknoopobject) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
 {
   NspTypeAtkNoOpObject *type= NULL;
@@ -905,12 +929,20 @@ static AttrTab atknoopobject_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkobjectfactory.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkObjectFactory inherits from NspGObject */ 
+/* 
+ * AtkObjectFactory inherits from GObject 
+ */
 
 int nsp_type_atkobjectfactory_id=0;
 NspTypeAtkObjectFactory *nsp_type_atkobjectfactory=NULL;
 
+/*
+ * Type object for AtkObjectFactory 
+ * all the instance of NspTypeAtkObjectFactory share the same id. 
+ * nsp_type_atkobjectfactory: is an instance of NspTypeAtkObjectFactory 
+ *    used for objects of AtkObjectFactory type (i.e built with new_atkobjectfactory) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
 {
   NspTypeAtkObjectFactory *type= NULL;
@@ -1129,12 +1161,20 @@ static AttrTab atkobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atknoopobjectfactory.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkNoOpObjectFactory inherits from NspAtkObjectFactory */ 
+/* 
+ * AtkNoOpObjectFactory inherits from AtkObjectFactory 
+ */
 
 int nsp_type_atknoopobjectfactory_id=0;
 NspTypeAtkNoOpObjectFactory *nsp_type_atknoopobjectfactory=NULL;
 
+/*
+ * Type object for AtkNoOpObjectFactory 
+ * all the instance of NspTypeAtkNoOpObjectFactory share the same id. 
+ * nsp_type_atknoopobjectfactory: is an instance of NspTypeAtkNoOpObjectFactory 
+ *    used for objects of AtkNoOpObjectFactory type (i.e built with new_atknoopobjectfactory) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
 {
   NspTypeAtkNoOpObjectFactory *type= NULL;
@@ -1341,12 +1381,20 @@ static AttrTab atknoopobjectfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkregistry.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkRegistry inherits from NspGObject */ 
+/* 
+ * AtkRegistry inherits from GObject 
+ */
 
 int nsp_type_atkregistry_id=0;
 NspTypeAtkRegistry *nsp_type_atkregistry=NULL;
 
+/*
+ * Type object for AtkRegistry 
+ * all the instance of NspTypeAtkRegistry share the same id. 
+ * nsp_type_atkregistry: is an instance of NspTypeAtkRegistry 
+ *    used for objects of AtkRegistry type (i.e built with new_atkregistry) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
 {
   NspTypeAtkRegistry *type= NULL;
@@ -1588,12 +1636,20 @@ static AttrTab atkregistry_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkrelation.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkRelation inherits from NspGObject */ 
+/* 
+ * AtkRelation inherits from GObject 
+ */
 
 int nsp_type_atkrelation_id=0;
 NspTypeAtkRelation *nsp_type_atkrelation=NULL;
 
+/*
+ * Type object for AtkRelation 
+ * all the instance of NspTypeAtkRelation share the same id. 
+ * nsp_type_atkrelation: is an instance of NspTypeAtkRelation 
+ *    used for objects of AtkRelation type (i.e built with new_atkrelation) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
 {
   NspTypeAtkRelation *type= NULL;
@@ -1811,7 +1867,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1815 "atk.c"
+#line 1871 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -1843,12 +1899,20 @@ static AttrTab atkrelation_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkrelationset.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkRelationSet inherits from NspGObject */ 
+/* 
+ * AtkRelationSet inherits from GObject 
+ */
 
 int nsp_type_atkrelationset_id=0;
 NspTypeAtkRelationSet *nsp_type_atkrelationset=NULL;
 
+/*
+ * Type object for AtkRelationSet 
+ * all the instance of NspTypeAtkRelationSet share the same id. 
+ * nsp_type_atkrelationset: is an instance of NspTypeAtkRelationSet 
+ *    used for objects of AtkRelationSet type (i.e built with new_atkrelationset) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
 {
   NspTypeAtkRelationSet *type= NULL;
@@ -2135,12 +2199,20 @@ static AttrTab atkrelationset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkstateset.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkStateSet inherits from NspGObject */ 
+/* 
+ * AtkStateSet inherits from GObject 
+ */
 
 int nsp_type_atkstateset_id=0;
 NspTypeAtkStateSet *nsp_type_atkstateset=NULL;
 
+/*
+ * Type object for AtkStateSet 
+ * all the instance of NspTypeAtkStateSet share the same id. 
+ * nsp_type_atkstateset: is an instance of NspTypeAtkStateSet 
+ *    used for objects of AtkStateSet type (i.e built with new_atkstateset) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
 {
   NspTypeAtkStateSet *type= NULL;
@@ -2443,12 +2515,20 @@ static AttrTab atkstateset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/atkutil.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspAtkUtil inherits from NspGObject */ 
+/* 
+ * AtkUtil inherits from GObject 
+ */
 
 int nsp_type_atkutil_id=0;
 NspTypeAtkUtil *nsp_type_atkutil=NULL;
 
+/*
+ * Type object for AtkUtil 
+ * all the instance of NspTypeAtkUtil share the same id. 
+ * nsp_type_atkutil: is an instance of NspTypeAtkUtil 
+ *    used for objects of AtkUtil type (i.e built with new_atkutil) 
+ * other instances are used for derived classes 
+ */
 NspTypeAtkUtil *new_type_atkutil(type_mode mode)
 {
   NspTypeAtkUtil *type= NULL;

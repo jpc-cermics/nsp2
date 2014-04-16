@@ -80,12 +80,20 @@ static int _wrap_gdk_event_tp_getattr(Stack stack, int rhs, int opt, int lhs);
 #include "nsp/gtk/gdkevent.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkEvent inherits from NspGBoxed */ 
+/* 
+ * GdkEvent inherits from GBoxed 
+ */
 
 int nsp_type_gdkevent_id=0;
 NspTypeGdkEvent *nsp_type_gdkevent=NULL;
 
+/*
+ * Type object for GdkEvent 
+ * all the instance of NspTypeGdkEvent share the same id. 
+ * nsp_type_gdkevent: is an instance of NspTypeGdkEvent 
+ *    used for objects of GdkEvent type (i.e built with new_gdkevent) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkEvent *new_type_gdkevent(type_mode mode)
 {
   NspTypeGdkEvent *type= NULL;
@@ -322,7 +330,7 @@ _wrap_gdk_event_get_coords(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;      
 }
-#line 326 "gdk.c"
+#line 334 "gdk.c"
 
 
 #line 1082 "gdk.override"
@@ -336,7 +344,7 @@ _wrap_gdk_event_get_root_coords(NspGObject *self, Stack stack,int rhs,int opt,in
   if ( nsp_move_doubles(stack,1,1,n,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 340 "gdk.c"
+#line 348 "gdk.c"
 
 
 #line 1054 "gdk.override"
@@ -354,7 +362,7 @@ _wrap_gdk_event_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,n,(double) value) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 358 "gdk.c"
+#line 366 "gdk.c"
 
 
 static NspMethods gdkevent_methods[] = {
@@ -713,7 +721,7 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
   Scierror("Error: Event attributes not found \n");
   return NULL;
 }
-#line 717 "gdk.c"
+#line 725 "gdk.c"
 
 
 
@@ -726,12 +734,20 @@ _wrap_gdk_event_tp_getattr1(NspObject *self, char *attr)
 #include "nsp/gtk/gdkfont.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkFont inherits from NspGBoxed */ 
+/* 
+ * GdkFont inherits from GBoxed 
+ */
 
 int nsp_type_gdkfont_id=0;
 NspTypeGdkFont *nsp_type_gdkfont=NULL;
 
+/*
+ * Type object for GdkFont 
+ * all the instance of NspTypeGdkFont share the same id. 
+ * nsp_type_gdkfont: is an instance of NspTypeGdkFont 
+ *    used for objects of GdkFont type (i.e built with new_gdkfont) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkFont *new_type_gdkfont(type_mode mode)
 {
   NspTypeGdkFont *type= NULL;
@@ -971,7 +987,7 @@ static int _wrap_gdk_char_width(NspGdkFont *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 975 "gdk.c"
+#line 991 "gdk.c"
 
 
 static int _wrap_gdk_string_measure(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1013,7 +1029,7 @@ static int _wrap_gdk_char_measure(NspGdkFont *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,(NspObject * ) ret);
   return 1; 
 }
-#line 1017 "gdk.c"
+#line 1033 "gdk.c"
 
 
 static int _wrap_gdk_string_height(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1056,7 +1072,7 @@ static int _wrap_gdk_char_height(NspGdkFont *self,Stack stack,int rhs,int opt,in
   return 1; 
 }
 
-#line 1060 "gdk.c"
+#line 1076 "gdk.c"
 
 
 #line 529 "gdk.override"
@@ -1079,7 +1095,7 @@ _wrap_gdk_text_extents(NspObject *self, Stack stack,int rhs,int opt,int lhs)
 			(double) ascent, (double) descent) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 1083 "gdk.c"
+#line 1099 "gdk.c"
 
 
 static int _wrap_gdk_string_extents(NspGdkFont *self,Stack stack,int rhs,int opt,int lhs)
@@ -1152,12 +1168,20 @@ static int _wrap_gdk_color_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #include "nsp/gtk/gdkcolor.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkColor inherits from NspGBoxed */ 
+/* 
+ * GdkColor inherits from GBoxed 
+ */
 
 int nsp_type_gdkcolor_id=0;
 NspTypeGdkColor *nsp_type_gdkcolor=NULL;
 
+/*
+ * Type object for GdkColor 
+ * all the instance of NspTypeGdkColor share the same id. 
+ * nsp_type_gdkcolor: is an instance of NspTypeGdkColor 
+ *    used for objects of GdkColor type (i.e built with new_gdkcolor) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkColor *new_type_gdkcolor(type_mode mode)
 {
   NspTypeGdkColor *type= NULL;
@@ -1351,7 +1375,7 @@ _wrap_gdkcolor_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1355 "gdk.c"
+#line 1379 "gdk.c"
 
 
 static NspMethods *gdkcolor_get_methods(void) { return NULL;};
@@ -1428,7 +1452,7 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
   return OK;
 }
 
-#line 1432 "gdk.c"
+#line 1456 "gdk.c"
 
 
 
@@ -1441,12 +1465,20 @@ _wrap_gdk_color_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #include "nsp/gtk/gdkcursor.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkCursor inherits from NspGBoxed */ 
+/* 
+ * GdkCursor inherits from GBoxed 
+ */
 
 int nsp_type_gdkcursor_id=0;
 NspTypeGdkCursor *nsp_type_gdkcursor=NULL;
 
+/*
+ * Type object for GdkCursor 
+ * all the instance of NspTypeGdkCursor share the same id. 
+ * nsp_type_gdkcursor: is an instance of NspTypeGdkCursor 
+ *    used for objects of GdkCursor type (i.e built with new_gdkcursor) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkCursor *new_type_gdkcursor(type_mode mode)
 {
   NspTypeGdkCursor *type= NULL;
@@ -1684,7 +1716,7 @@ _wrap_gdkcursor_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) nsp_ret);
   return 1;
 }
-#line 1688 "gdk.c"
+#line 1720 "gdk.c"
 
 
 static NspMethods *gdkcursor_get_methods(void) { return NULL;};
@@ -1714,12 +1746,20 @@ static AttrTab gdkcursor_attrs[] = {
 #include "nsp/gtk/gdkrectangle.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkRectangle inherits from NspGBoxed */ 
+/* 
+ * GdkRectangle inherits from GBoxed 
+ */
 
 int nsp_type_gdkrectangle_id=0;
 NspTypeGdkRectangle *nsp_type_gdkrectangle=NULL;
 
+/*
+ * Type object for GdkRectangle 
+ * all the instance of NspTypeGdkRectangle share the same id. 
+ * nsp_type_gdkrectangle: is an instance of NspTypeGdkRectangle 
+ *    used for objects of GdkRectangle type (i.e built with new_gdkrectangle) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkRectangle *new_type_gdkrectangle(type_mode mode)
 {
   NspTypeGdkRectangle *type= NULL;
@@ -1935,7 +1975,7 @@ _wrap_gdkrectangle_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject  *) H);
   return 1;
 }
-#line 1939 "gdk.c"
+#line 1979 "gdk.c"
 
 
 #line 2199 "gdk.override"
@@ -1952,7 +1992,7 @@ _wrap_gdk_rectangle_intersect(NspGObject *self, Stack stack,int rhs,int opt,int 
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1956 "gdk.c"
+#line 1996 "gdk.c"
 
 
 #line 2214 "gdk.override"
@@ -1969,7 +2009,7 @@ _wrap_gdk_rectangle_union(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   NthObj(1)->ret_pos = 1;
   return 1;
 }
-#line 1973 "gdk.c"
+#line 2013 "gdk.c"
 
 
 static NspMethods gdkrectangle_methods[] = {
@@ -2029,12 +2069,20 @@ static AttrTab gdkrectangle_attrs[] = {
 #include "nsp/gtk/gdkcolormap.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkColormap inherits from NspGObject */ 
+/* 
+ * GdkColormap inherits from GObject 
+ */
 
 int nsp_type_gdkcolormap_id=0;
 NspTypeGdkColormap *nsp_type_gdkcolormap=NULL;
 
+/*
+ * Type object for GdkColormap 
+ * all the instance of NspTypeGdkColormap share the same id. 
+ * nsp_type_gdkcolormap: is an instance of NspTypeGdkColormap 
+ *    used for objects of GdkColormap type (i.e built with new_gdkcolormap) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkColormap *new_type_gdkcolormap(type_mode mode)
 {
   NspTypeGdkColormap *type= NULL;
@@ -2292,7 +2340,7 @@ _wrap_gdk_colormap_alloc_color(NspGObject *self, Stack stack,int rhs,int opt,int
   }
   return 0;
 }
-#line 2296 "gdk.c"
+#line 2344 "gdk.c"
 
 
 static int _wrap_gdk_colormap_get_visual(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2349,7 +2397,7 @@ _wrap_gdk_color_alloc(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: use GdkColormap.alloc_color\n"); 
   return RET_BUG;
 }
-#line 2353 "gdk.c"
+#line 2401 "gdk.c"
 
 
 static int _wrap_gdk_color_change(NspGdkColormap *self,Stack stack,int rhs,int opt,int lhs)
@@ -2396,12 +2444,20 @@ static AttrTab gdkcolormap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkdevice.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkDevice inherits from NspGObject */ 
+/* 
+ * GdkDevice inherits from GObject 
+ */
 
 int nsp_type_gdkdevice_id=0;
 NspTypeGdkDevice *nsp_type_gdkdevice=NULL;
 
+/*
+ * Type object for GdkDevice 
+ * all the instance of NspTypeGdkDevice share the same id. 
+ * nsp_type_gdkdevice: is an instance of NspTypeGdkDevice 
+ *    used for objects of GdkDevice type (i.e built with new_gdkdevice) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkDevice *new_type_gdkdevice(type_mode mode)
 {
   NspTypeGdkDevice *type= NULL;
@@ -2652,7 +2708,7 @@ _wrap_gdk_device_get_state(NspGObject *self, Stack stack,int rhs,int opt,int lhs
     if (( nsp_move_double(stack,2,(double) mask))==FAIL) return RET_BUG;
   return 2;
 }
-#line 2656 "gdk.c"
+#line 2712 "gdk.c"
 
 
 #line 1154 "gdk.override"
@@ -2695,7 +2751,7 @@ _wrap_gdk_device_get_history(NspGObject *self, Stack stack,int rhs,int opt,int l
   Scierror("Error: function _wrap_gdk_device_get_history not finished\n");  
   return RET_BUG;
 }
-#line 2699 "gdk.c"
+#line 2755 "gdk.c"
 
 
 #line 1195 "gdk.override"
@@ -2725,7 +2781,7 @@ _wrap_gdk_device_get_axis(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     }
   return 1;
 }
-#line 2729 "gdk.c"
+#line 2785 "gdk.c"
 
 
 static NspMethods gdkdevice_methods[] = {
@@ -2800,7 +2856,7 @@ _wrap_gdk_device__get_axes(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2804 "gdk.c"
+#line 2860 "gdk.c"
 static NspObject *_wrap_gdk_device__get_num_keys(NspObject *self,char *attr)
 {
   int ret;
@@ -2824,7 +2880,7 @@ _wrap_gdk_device__get_keys(NspGObject *self, char *attr)
     }
   return (NspObject *) ret;
 }
-#line 2828 "gdk.c"
+#line 2884 "gdk.c"
 static AttrTab gdkdevice_attrs[] = {
   { "name", (attr_get_function *)_wrap_gdk_device__get_name, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "source", (attr_get_function *)_wrap_gdk_device__get_source, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2847,12 +2903,20 @@ static AttrTab gdkdevice_attrs[] = {
 #include "nsp/gtk/gdkdisplay.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkDisplay inherits from NspGObject */ 
+/* 
+ * GdkDisplay inherits from GObject 
+ */
 
 int nsp_type_gdkdisplay_id=0;
 NspTypeGdkDisplay *nsp_type_gdkdisplay=NULL;
 
+/*
+ * Type object for GdkDisplay 
+ * all the instance of NspTypeGdkDisplay share the same id. 
+ * nsp_type_gdkdisplay: is an instance of NspTypeGdkDisplay 
+ *    used for objects of GdkDisplay type (i.e built with new_gdkdisplay) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkDisplay *new_type_gdkdisplay(type_mode mode)
 {
   NspTypeGdkDisplay *type= NULL;
@@ -3234,12 +3298,20 @@ static AttrTab gdkdisplay_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkdisplaymanager.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkDisplayManager inherits from NspGObject */ 
+/* 
+ * GdkDisplayManager inherits from GObject 
+ */
 
 int nsp_type_gdkdisplaymanager_id=0;
 NspTypeGdkDisplayManager *nsp_type_gdkdisplaymanager=NULL;
 
+/*
+ * Type object for GdkDisplayManager 
+ * all the instance of NspTypeGdkDisplayManager share the same id. 
+ * nsp_type_gdkdisplaymanager: is an instance of NspTypeGdkDisplayManager 
+ *    used for objects of GdkDisplayManager type (i.e built with new_gdkdisplaymanager) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkDisplayManager *new_type_gdkdisplaymanager(type_mode mode)
 {
   NspTypeGdkDisplayManager *type= NULL;
@@ -3432,12 +3504,20 @@ static AttrTab gdkdisplaymanager_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkdragcontext.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkDragContext inherits from NspGObject */ 
+/* 
+ * GdkDragContext inherits from GObject 
+ */
 
 int nsp_type_gdkdragcontext_id=0;
 NspTypeGdkDragContext *nsp_type_gdkdragcontext=NULL;
 
+/*
+ * Type object for GdkDragContext 
+ * all the instance of NspTypeGdkDragContext share the same id. 
+ * nsp_type_gdkdragcontext: is an instance of NspTypeGdkDragContext 
+ *    used for objects of GdkDragContext type (i.e built with new_gdkdragcontext) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkDragContext *new_type_gdkdragcontext(type_mode mode)
 {
   NspTypeGdkDragContext *type= NULL;
@@ -3708,7 +3788,7 @@ _wrap_gdk_drag_find_window(NspGObject *self, Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_double(stack,2,(double) protocol)== FAIL) return RET_BUG;
   return 2;
 }
-#line 3712 "gdk.c"
+#line 3792 "gdk.c"
 
 
 static int _wrap_gdk_drag_motion(NspGdkDragContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -3885,7 +3965,7 @@ _wrap_gdk_drag_context__get_targets(NspGObject *self, char *attr)
       return NULL;
     }
 }
-#line 3889 "gdk.c"
+#line 3969 "gdk.c"
 static NspObject *_wrap_gdk_drag_context__get_actions(NspObject *self,char *attr)
 {
   guint ret;
@@ -3939,12 +4019,20 @@ static AttrTab gdkdragcontext_attrs[] = {
 #include "nsp/gtk/gdkdrawable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkDrawable inherits from NspGObject */ 
+/* 
+ * GdkDrawable inherits from GObject 
+ */
 
 int nsp_type_gdkdrawable_id=0;
 NspTypeGdkDrawable *nsp_type_gdkdrawable=NULL;
 
+/*
+ * Type object for GdkDrawable 
+ * all the instance of NspTypeGdkDrawable share the same id. 
+ * nsp_type_gdkdrawable: is an instance of NspTypeGdkDrawable 
+ *    used for objects of GdkDrawable type (i.e built with new_gdkdrawable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkDrawable *new_type_gdkdrawable(type_mode mode)
 {
   NspTypeGdkDrawable *type= NULL;
@@ -4132,7 +4220,7 @@ _wrap_gdk_drawable_get_size(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) width, (double) height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 4136 "gdk.c"
+#line 4224 "gdk.c"
 
 
 static int _wrap_gdk_drawable_set_colormap(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4240,7 +4328,7 @@ _wrap_gdk_draw_polygon(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4244 "gdk.c"
+#line 4332 "gdk.c"
 
 
 static int _wrap_gdk_draw_string(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4283,7 +4371,7 @@ _wrap_gdk_draw_text(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
 		GDK_GC(gc->obj), x, y, text, strlen(text));
   return 0;
 }
-#line 4287 "gdk.c"
+#line 4375 "gdk.c"
 
 
 static int _wrap_gdk_draw_drawable(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4333,7 +4421,7 @@ _wrap_gdk_draw_points(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4337 "gdk.c"
+#line 4425 "gdk.c"
 
 
 #line 214 "gdk.override"
@@ -4365,7 +4453,7 @@ _wrap_gdk_draw_segments(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(segs);
   return 0;
 }
-#line 4369 "gdk.c"
+#line 4457 "gdk.c"
 
 
 #line 244 "gdk.override"
@@ -4391,7 +4479,7 @@ _wrap_gdk_draw_lines(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 4395 "gdk.c"
+#line 4483 "gdk.c"
 
 
 static int _wrap_gdk_draw_glyphs(NspGdkDrawable *self,Stack stack,int rhs,int opt,int lhs)
@@ -4491,7 +4579,7 @@ _wrap_gdk_draw_rgb_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function not implemented\n");
   return RET_BUG;
 }
-#line 4495 "gdk.c"
+#line 4583 "gdk.c"
 
 
 #line 311 "gdk.override"
@@ -4534,7 +4622,7 @@ _wrap_gdk_draw_rgb_32_image(NspGObject *self, Stack stack,int rhs,int opt,int lh
   Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
-#line 4538 "gdk.c"
+#line 4626 "gdk.c"
 
 
 #line 354 "gdk.override"
@@ -4576,7 +4664,7 @@ _wrap_gdk_draw_gray_image(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function not implemented\n");  
   return RET_BUG;
 }
-#line 4580 "gdk.c"
+#line 4668 "gdk.c"
 
 
 static NspMethods gdkdrawable_methods[] = {
@@ -4623,12 +4711,20 @@ static AttrTab gdkdrawable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkwindow.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkWindow inherits from NspGdkDrawable */ 
+/* 
+ * GdkWindow inherits from GdkDrawable 
+ */
 
 int nsp_type_gdkwindow_id=0;
 NspTypeGdkWindow *nsp_type_gdkwindow=NULL;
 
+/*
+ * Type object for GdkWindow 
+ * all the instance of NspTypeGdkWindow share the same id. 
+ * nsp_type_gdkwindow: is an instance of NspTypeGdkWindow 
+ *    used for objects of GdkWindow type (i.e built with new_gdkwindow) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkWindow *new_type_gdkwindow(type_mode mode)
 {
   NspTypeGdkWindow *type= NULL;
@@ -4828,7 +4924,7 @@ _wrap_gdk_drag_begin(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, nsp_context);
   return 1;
 }
-#line 4832 "gdk.c"
+#line 4928 "gdk.c"
 
 
 static int _wrap_gdk_input_set_extension_events(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -4905,7 +5001,7 @@ _wrap_gdk_property_get(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
     return RET_BUG;
   }
 }
-#line 4909 "gdk.c"
+#line 5005 "gdk.c"
 
 
 #line 1696 "gdk.override"
@@ -5011,7 +5107,7 @@ _wrap_gdk_property_change(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   Scierror("To be done XXXXXX ");
   return RET_BUG;
 }
-#line 5015 "gdk.c"
+#line 5111 "gdk.c"
 
 
 static int _wrap_gdk_property_delete(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5375,7 +5471,7 @@ _wrap_gdk_window_get_geometry(NspGObject *self, Stack stack,int rhs,int opt,int 
 			(double) width,(double) height,(double) depth) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5379 "gdk.c"
+#line 5475 "gdk.c"
 
 
 #line 1812 "gdk.override"
@@ -5388,7 +5484,7 @@ _wrap_gdk_window_get_position(NspGObject *self, Stack stack,int rhs,int opt,int 
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5392 "gdk.c"
+#line 5488 "gdk.c"
 
 
 #line 1823 "gdk.override"
@@ -5401,7 +5497,7 @@ _wrap_gdk_window_get_origin(NspGObject *self, Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5405 "gdk.c"
+#line 5501 "gdk.c"
 
 
 #line 1834 "gdk.override"
@@ -5414,7 +5510,7 @@ _wrap_gdk_window_get_deskrelative_origin(NspGObject *self, Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5418 "gdk.c"
+#line 5514 "gdk.c"
 
 
 #line 1845 "gdk.override"
@@ -5427,7 +5523,7 @@ _wrap_gdk_window_get_root_origin(NspGObject *self, Stack stack,int rhs,int opt,i
   if ( nsp_move_doubles(stack,1,1,2,(double) x,(double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5431 "gdk.c"
+#line 5527 "gdk.c"
 
 
 static int _wrap_gdk_window_get_frame_extents(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5453,7 +5549,7 @@ _wrap_gdk_window_get_pointer(NspGObject *self, Stack stack,int rhs,int opt,int l
   if ( nsp_move_doubles(stack,1,1,3,(double) x,(double) y, (double) mask) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5457 "gdk.c"
+#line 5553 "gdk.c"
 
 
 static int _wrap_gdk_window_get_parent(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5503,7 +5599,7 @@ _wrap_gdk_window_get_children(NspGObject *self, Stack stack,int rhs,int opt,int 
       return RET_BUG;
     }
 }
-#line 5507 "gdk.c"
+#line 5603 "gdk.c"
 
 
 static int _wrap_gdk_window_peek_children(NspGdkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -5799,12 +5895,20 @@ static AttrTab gdkwindow_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkpixmap.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkPixmap inherits from NspGdkDrawable */ 
+/* 
+ * GdkPixmap inherits from GdkDrawable 
+ */
 
 int nsp_type_gdkpixmap_id=0;
 NspTypeGdkPixmap *nsp_type_gdkpixmap=NULL;
 
+/*
+ * Type object for GdkPixmap 
+ * all the instance of NspTypeGdkPixmap share the same id. 
+ * nsp_type_gdkpixmap: is an instance of NspTypeGdkPixmap 
+ *    used for objects of GdkPixmap type (i.e built with new_gdkpixmap) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkPixmap *new_type_gdkpixmap(type_mode mode)
 {
   NspTypeGdkPixmap *type= NULL;
@@ -6029,12 +6133,20 @@ static AttrTab gdkpixmap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkbitmap.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkBitmap inherits from NspGdkDrawable */ 
+/* 
+ * GdkBitmap inherits from GdkDrawable 
+ */
 
 int nsp_type_gdkbitmap_id=0;
 NspTypeGdkBitmap *nsp_type_gdkbitmap=NULL;
 
+/*
+ * Type object for GdkBitmap 
+ * all the instance of NspTypeGdkBitmap share the same id. 
+ * nsp_type_gdkbitmap: is an instance of NspTypeGdkBitmap 
+ *    used for objects of GdkBitmap type (i.e built with new_gdkbitmap) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkBitmap *new_type_gdkbitmap(type_mode mode)
 {
   NspTypeGdkBitmap *type= NULL;
@@ -6229,12 +6341,20 @@ static int _wrap_gdk_gc_tp_setattr(Stack stack, int rhs, int opt, int lhs);
 #include "nsp/gtk/gdkgc.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkGC inherits from NspGObject */ 
+/* 
+ * GdkGC inherits from GObject 
+ */
 
 int nsp_type_gdkgc_id=0;
 NspTypeGdkGC *nsp_type_gdkgc=NULL;
 
+/*
+ * Type object for GdkGC 
+ * all the instance of NspTypeGdkGC share the same id. 
+ * nsp_type_gdkgc: is an instance of NspTypeGdkGC 
+ *    used for objects of GdkGC type (i.e built with new_gdkgc) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkGC *new_type_gdkgc(type_mode mode)
 {
   NspTypeGdkGC *type= NULL;
@@ -6551,7 +6671,7 @@ _wrap_gdkgc_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 6555 "gdk.c"
+#line 6675 "gdk.c"
 
 
 static int _wrap_gdk_gc_set_foreground(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6747,7 +6867,7 @@ _wrap_gdk_gc_set_dashes(NspGObject *self, Stack stack,int rhs,int opt,int lhs)
   g_free(dash_list);
   return 0;
 }
-#line 6751 "gdk.c"
+#line 6871 "gdk.c"
 
 
 static int _wrap_gdk_gc_offset(NspGdkGC *self,Stack stack,int rhs,int opt,int lhs)
@@ -6910,7 +7030,7 @@ static NspObject *_wrap_gdk_gc_tp_getattr1(NspObject *self, char *attr)
   }
   return NULL;
 }
-#line 6914 "gdk.c"
+#line 7034 "gdk.c"
 
 
 #line 1475 "gdk.override"
@@ -7010,7 +7130,7 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
     }
   return 0;
 }
-#line 7014 "gdk.c"
+#line 7134 "gdk.c"
 
 
 
@@ -7023,12 +7143,20 @@ _wrap_gdk_gc_tp_setattr1(NspObject *self, char *attr, NspObject *value)
 #include "nsp/gtk/gdkimage.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkImage inherits from NspGObject */ 
+/* 
+ * GdkImage inherits from GObject 
+ */
 
 int nsp_type_gdkimage_id=0;
 NspTypeGdkImage *nsp_type_gdkimage=NULL;
 
+/*
+ * Type object for GdkImage 
+ * all the instance of NspTypeGdkImage share the same id. 
+ * nsp_type_gdkimage: is an instance of NspTypeGdkImage 
+ *    used for objects of GdkImage type (i.e built with new_gdkimage) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkImage *new_type_gdkimage(type_mode mode)
 {
   NspTypeGdkImage *type= NULL;
@@ -7291,12 +7419,20 @@ static AttrTab gdkimage_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkkeymap.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkKeymap inherits from NspGObject */ 
+/* 
+ * GdkKeymap inherits from GObject 
+ */
 
 int nsp_type_gdkkeymap_id=0;
 NspTypeGdkKeymap *nsp_type_gdkkeymap=NULL;
 
+/*
+ * Type object for GdkKeymap 
+ * all the instance of NspTypeGdkKeymap share the same id. 
+ * nsp_type_gdkkeymap: is an instance of NspTypeGdkKeymap 
+ *    used for objects of GdkKeymap type (i.e built with new_gdkkeymap) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkKeymap *new_type_gdkkeymap(type_mode mode)
 {
   NspTypeGdkKeymap *type= NULL;
@@ -7502,12 +7638,20 @@ static AttrTab gdkkeymap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkpixbuf.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkPixbuf inherits from NspGObject */ 
+/* 
+ * GdkPixbuf inherits from GObject 
+ */
 
 int nsp_type_gdkpixbuf_id=0;
 NspTypeGdkPixbuf *nsp_type_gdkpixbuf=NULL;
 
+/*
+ * Type object for GdkPixbuf 
+ * all the instance of NspTypeGdkPixbuf share the same id. 
+ * nsp_type_gdkpixbuf: is an instance of NspTypeGdkPixbuf 
+ *    used for objects of GdkPixbuf type (i.e built with new_gdkpixbuf) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkPixbuf *new_type_gdkpixbuf(type_mode mode)
 {
   NspTypeGdkPixbuf *type= NULL;
@@ -7765,7 +7909,7 @@ _wrap_gdk_pixbuf_render_pixmap_and_mask(NspGObject *self, Stack stack,int rhs,in
       return 1;
     }
 }
-#line 7769 "gdk.c"
+#line 7913 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_from_drawable(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -7844,7 +7988,7 @@ _wrap_gdk_pixbuf_get_pixels(NspGObject *self, Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7848 "gdk.c"
+#line 7992 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_get_width(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -7998,7 +8142,7 @@ static NspSMatrix *writable_formats()
   return S;
 }
 
-#line 8002 "gdk.c"
+#line 8146 "gdk.c"
 
 
 static int _wrap_gdk_pixbuf_add_alpha(NspGdkPixbuf *self,Stack stack,int rhs,int opt,int lhs)
@@ -8172,7 +8316,7 @@ _wrap_gdk_pixbuf__get_pixel_array(NspGObject *self, char *attr)
   /* array->strides[0] = gdk_pixbuf_get_rowstride(pixbuf);*/
   return (NspObject *)array;
 }
-#line 8176 "gdk.c"
+#line 8320 "gdk.c"
 static AttrTab gdkpixbuf_attrs[] = {
   { "pixel_array", (attr_get_function *)_wrap_gdk_pixbuf__get_pixel_array, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { NULL,NULL,NULL,NULL },
@@ -8188,12 +8332,20 @@ static AttrTab gdkpixbuf_attrs[] = {
 #include "nsp/gtk/gdkpixbufanimation.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkPixbufAnimation inherits from NspGObject */ 
+/* 
+ * GdkPixbufAnimation inherits from GObject 
+ */
 
 int nsp_type_gdkpixbufanimation_id=0;
 NspTypeGdkPixbufAnimation *nsp_type_gdkpixbufanimation=NULL;
 
+/*
+ * Type object for GdkPixbufAnimation 
+ * all the instance of NspTypeGdkPixbufAnimation share the same id. 
+ * nsp_type_gdkpixbufanimation: is an instance of NspTypeGdkPixbufAnimation 
+ *    used for objects of GdkPixbufAnimation type (i.e built with new_gdkpixbufanimation) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkPixbufAnimation *new_type_gdkpixbufanimation(type_mode mode)
 {
   NspTypeGdkPixbufAnimation *type= NULL;
@@ -8450,12 +8602,20 @@ static AttrTab gdkpixbufanimation_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkpixbufanimationiter.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkPixbufAnimationIter inherits from NspGObject */ 
+/* 
+ * GdkPixbufAnimationIter inherits from GObject 
+ */
 
 int nsp_type_gdkpixbufanimationiter_id=0;
 NspTypeGdkPixbufAnimationIter *nsp_type_gdkpixbufanimationiter=NULL;
 
+/*
+ * Type object for GdkPixbufAnimationIter 
+ * all the instance of NspTypeGdkPixbufAnimationIter share the same id. 
+ * nsp_type_gdkpixbufanimationiter: is an instance of NspTypeGdkPixbufAnimationIter 
+ *    used for objects of GdkPixbufAnimationIter type (i.e built with new_gdkpixbufanimationiter) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkPixbufAnimationIter *new_type_gdkpixbufanimationiter(type_mode mode)
 {
   NspTypeGdkPixbufAnimationIter *type= NULL;
@@ -8682,12 +8842,20 @@ static AttrTab gdkpixbufanimationiter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkpixbufloader.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkPixbufLoader inherits from NspGObject */ 
+/* 
+ * GdkPixbufLoader inherits from GObject 
+ */
 
 int nsp_type_gdkpixbufloader_id=0;
 NspTypeGdkPixbufLoader *nsp_type_gdkpixbufloader=NULL;
 
+/*
+ * Type object for GdkPixbufLoader 
+ * all the instance of NspTypeGdkPixbufLoader share the same id. 
+ * nsp_type_gdkpixbufloader: is an instance of NspTypeGdkPixbufLoader 
+ *    used for objects of GdkPixbufLoader type (i.e built with new_gdkpixbufloader) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkPixbufLoader *new_type_gdkpixbufloader(type_mode mode)
 {
   NspTypeGdkPixbufLoader *type= NULL;
@@ -8960,12 +9128,20 @@ static AttrTab gdkpixbufloader_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkscreen.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkScreen inherits from NspGObject */ 
+/* 
+ * GdkScreen inherits from GObject 
+ */
 
 int nsp_type_gdkscreen_id=0;
 NspTypeGdkScreen *nsp_type_gdkscreen=NULL;
 
+/*
+ * Type object for GdkScreen 
+ * all the instance of NspTypeGdkScreen share the same id. 
+ * nsp_type_gdkscreen: is an instance of NspTypeGdkScreen 
+ *    used for objects of GdkScreen type (i.e built with new_gdkscreen) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkScreen *new_type_gdkscreen(type_mode mode)
 {
   NspTypeGdkScreen *type= NULL;
@@ -9394,12 +9570,20 @@ static AttrTab gdkscreen_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gdkvisual.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGdkVisual inherits from NspGObject */ 
+/* 
+ * GdkVisual inherits from GObject 
+ */
 
 int nsp_type_gdkvisual_id=0;
 NspTypeGdkVisual *nsp_type_gdkvisual=NULL;
 
+/*
+ * Type object for GdkVisual 
+ * all the instance of NspTypeGdkVisual share the same id. 
+ * nsp_type_gdkvisual: is an instance of NspTypeGdkVisual 
+ *    used for objects of GdkVisual type (i.e built with new_gdkvisual) 
+ * other instances are used for derived classes 
+ */
 NspTypeGdkVisual *new_type_gdkvisual(type_mode mode)
 {
   NspTypeGdkVisual *type= NULL;
@@ -9655,7 +9839,7 @@ _wrap_gdkvisual_new(Stack stack, int rhs, int opt, int lhs)
     }
   return RET_BUG;
 }
-#line 9659 "gdk.c"
+#line 9843 "gdk.c"
 
 
 static NspMethods *gdkvisual_get_methods(void) { return NULL;};
@@ -9974,7 +10158,7 @@ _wrap_gdk_threads_enter(Stack stack,int rhs,int opt,int lhs)
   Scierror("Error: function _wrap_gdk_threads_enter unimplemented \n ");
   return RET_BUG;
 }
-#line 9978 "gdk.c"
+#line 10162 "gdk.c"
 
 
 int _wrap_gdk_threads_leave(Stack stack, int rhs, int opt, int lhs)
@@ -10063,7 +10247,7 @@ _wrap_gdk_threads_init(Stack stack,int rhs,int opt,int lhs)
   return 0;
 #endif
 }
-#line 10067 "gdk.c"
+#line 10251 "gdk.c"
 
 
 int _wrap_gdk_pre_parse_libgtk_only(Stack stack, int rhs, int opt, int lhs)
@@ -10186,7 +10370,7 @@ _wrap_gdk_color_parse(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 10190 "gdk.c"
+#line 10374 "gdk.c"
 
 
 int _wrap_gdk_draw_layout_with_colors(Stack stack, int rhs, int opt, int lhs)
@@ -10293,7 +10477,7 @@ _wrap_gdk_fontset_load( Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10297 "gdk.c"
+#line 10481 "gdk.c"
 
 
 int _wrap_gdk_font_from_description(Stack stack, int rhs, int opt, int lhs)
@@ -10560,7 +10744,7 @@ _wrap_gdk_pixmap_create_from_xpm( Stack stack,int rhs,int opt,int lhs)
     gdk_bitmap_unref(mask);
   */
 }
-#line 10564 "gdk.c"
+#line 10748 "gdk.c"
 
 
 int _wrap_gdk_bitmap_create_from_data(Stack stack, int rhs, int opt, int lhs)
@@ -10893,7 +11077,7 @@ _wrap_gdk_pixbuf_new_from_xpm_data(Stack stack,int rhs,int opt,int lhs)
   return 1;
 }
 
-#line 10897 "gdk.c"
+#line 11081 "gdk.c"
 
 
 int _wrap_gdk_pixbuf_new_from_inline(Stack stack, int rhs, int opt, int lhs)
@@ -10962,7 +11146,7 @@ int _wrap_gdk_display_open(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 10966 "gdk.c"
+#line 11150 "gdk.c"
 
 
 int _wrap_gdk_display_get_default(Stack stack, int rhs, int opt, int lhs)

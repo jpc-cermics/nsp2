@@ -288,12 +288,20 @@ nspgtk_cell_data_func_marshal (GtkTreeViewColumn *tree_column,
 #include "nsp/gtk/gtkborder.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkBorder inherits from NspGBoxed */ 
+/* 
+ * GtkBorder inherits from GBoxed 
+ */
 
 int nsp_type_gtkborder_id=0;
 NspTypeGtkBorder *nsp_type_gtkborder=NULL;
 
+/*
+ * Type object for GtkBorder 
+ * all the instance of NspTypeGtkBorder share the same id. 
+ * nsp_type_gtkborder: is an instance of NspTypeGtkBorder 
+ *    used for objects of GtkBorder type (i.e built with new_gtkborder) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkBorder *new_type_gtkborder(type_mode mode)
 {
   NspTypeGtkBorder *type= NULL;
@@ -510,12 +518,20 @@ static AttrTab gtkborder_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkiconinfo.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIconInfo inherits from NspGBoxed */ 
+/* 
+ * GtkIconInfo inherits from GBoxed 
+ */
 
 int nsp_type_gtkiconinfo_id=0;
 NspTypeGtkIconInfo *nsp_type_gtkiconinfo=NULL;
 
+/*
+ * Type object for GtkIconInfo 
+ * all the instance of NspTypeGtkIconInfo share the same id. 
+ * nsp_type_gtkiconinfo: is an instance of NspTypeGtkIconInfo 
+ *    used for objects of GtkIconInfo type (i.e built with new_gtkiconinfo) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIconInfo *new_type_gtkiconinfo(type_mode mode)
 {
   NspTypeGtkIconInfo *type= NULL;
@@ -813,12 +829,20 @@ static AttrTab gtkiconinfo_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkiconset.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIconSet inherits from NspGBoxed */ 
+/* 
+ * GtkIconSet inherits from GBoxed 
+ */
 
 int nsp_type_gtkiconset_id=0;
 NspTypeGtkIconSet *nsp_type_gtkiconset=NULL;
 
+/*
+ * Type object for GtkIconSet 
+ * all the instance of NspTypeGtkIconSet share the same id. 
+ * nsp_type_gtkiconset: is an instance of NspTypeGtkIconSet 
+ *    used for objects of GtkIconSet type (i.e built with new_gtkiconset) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIconSet *new_type_gtkiconset(type_mode mode)
 {
   NspTypeGtkIconSet *type= NULL;
@@ -1035,7 +1059,7 @@ _wrap_gtkiconset_new(Stack stack,int rhs,int opt,int lhs)
 {
   return _wrap_gtk_icon_set_new_from_pixbuf(stack,rhs,opt,lhs);
 }
-#line 1039 "gtk.c"
+#line 1063 "gtk.c"
 
 
 static int _wrap_gtk_icon_set_copy(NspGtkIconSet *self,Stack stack,int rhs,int opt,int lhs)
@@ -1104,7 +1128,7 @@ _wrap_gtk_icon_set_get_sizes(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,(NspObject *) ret) ; 
   return 1;
 }
-#line 1108 "gtk.c"
+#line 1132 "gtk.c"
 
 
 static NspMethods gtkiconset_methods[] = {
@@ -1131,12 +1155,20 @@ static AttrTab gtkiconset_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkiconsource.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIconSource inherits from NspGBoxed */ 
+/* 
+ * GtkIconSource inherits from GBoxed 
+ */
 
 int nsp_type_gtkiconsource_id=0;
 NspTypeGtkIconSource *nsp_type_gtkiconsource=NULL;
 
+/*
+ * Type object for GtkIconSource 
+ * all the instance of NspTypeGtkIconSource share the same id. 
+ * nsp_type_gtkiconsource: is an instance of NspTypeGtkIconSource 
+ *    used for objects of GtkIconSource type (i.e built with new_gtkiconsource) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIconSource *new_type_gtkiconsource(type_mode mode)
 {
   NspTypeGtkIconSource *type= NULL;
@@ -1553,12 +1585,20 @@ static AttrTab gtkiconsource_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkrequisition.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRequisition inherits from NspGBoxed */ 
+/* 
+ * GtkRequisition inherits from GBoxed 
+ */
 
 int nsp_type_gtkrequisition_id=0;
 NspTypeGtkRequisition *nsp_type_gtkrequisition=NULL;
 
+/*
+ * Type object for GtkRequisition 
+ * all the instance of NspTypeGtkRequisition share the same id. 
+ * nsp_type_gtkrequisition: is an instance of NspTypeGtkRequisition 
+ *    used for objects of GtkRequisition type (i.e built with new_gtkrequisition) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRequisition *new_type_gtkrequisition(type_mode mode)
 {
   NspTypeGtkRequisition *type= NULL;
@@ -1773,7 +1813,7 @@ _wrap_gtk_requisition__set_width(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->width = val;
   return OK;
 }
-#line 1777 "gtk.c"
+#line 1817 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_width(NspObject *self,char *attr)
 {
   int ret;
@@ -1790,7 +1830,7 @@ _wrap_gtk_requisition__set_height(NspGBoxed *self, char *attr, NspObject *value)
   nspg_boxed_get(self, GtkRequisition)->height = val;
   return 0;
 }
-#line 1794 "gtk.c"
+#line 1834 "gtk.c"
 static NspObject *_wrap_gtk_requisition__get_height(NspObject *self,char *attr)
 {
   int ret;
@@ -1814,12 +1854,20 @@ static AttrTab gtkrequisition_attrs[] = {
 #include "nsp/gtk/gtkselectiondata.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSelectionData inherits from NspGBoxed */ 
+/* 
+ * GtkSelectionData inherits from GBoxed 
+ */
 
 int nsp_type_gtkselectiondata_id=0;
 NspTypeGtkSelectionData *nsp_type_gtkselectiondata=NULL;
 
+/*
+ * Type object for GtkSelectionData 
+ * all the instance of NspTypeGtkSelectionData share the same id. 
+ * nsp_type_gtkselectiondata: is an instance of NspTypeGtkSelectionData 
+ *    used for objects of GtkSelectionData type (i.e built with new_gtkselectiondata) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSelectionData *new_type_gtkselectiondata(type_mode mode)
 {
   NspTypeGtkSelectionData *type= NULL;
@@ -2014,7 +2062,7 @@ _wrap_gtk_selection_data_set(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
 			 type, format,(const guchar *) data, length);
   return 0;
 }
-#line 2018 "gtk.c"
+#line 2066 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_set_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2044,7 +2092,7 @@ _wrap_gtk_selection_data_get_text(NspObject *self,Stack stack,int rhs,int opt,in
   Scierror("To be done XXXXX gtk_selection_data_get_text");
   return 0;
 }
-#line 2048 "gtk.c"
+#line 2096 "gtk.c"
 
 
 #line 516 "gtk.override"
@@ -2065,7 +2113,7 @@ _wrap_gtk_selection_data_get_targets(NspObject *self,Stack stack,int rhs,int opt
   return 1; 
   NSP_LIST_CLEAN; 
 }
-#line 2069 "gtk.c"
+#line 2117 "gtk.c"
 
 
 static int _wrap_gtk_selection_data_targets_include_text(NspGtkSelectionData *self,Stack stack,int rhs,int opt,int lhs)
@@ -2149,7 +2197,7 @@ _wrap_gtk_tree_get_row_drag_data(NspObject *self,Stack stack,int rhs,int opt,int
     }
   return RetArgs(stack,lhs,T,nsp_model,nsp_path);  
 }
-#line 2153 "gtk.c"
+#line 2201 "gtk.c"
 
 
 static NspMethods gtkselectiondata_methods[] = {
@@ -2211,7 +2259,7 @@ _wrap_gtk_selection_data__get_data(NspGObject *self, char *attr)
     return nsp_new_string_obj(NVOID,NULL,0);
   }
 }
-#line 2215 "gtk.c"
+#line 2263 "gtk.c"
 static AttrTab gtkselectiondata_attrs[] = {
   { "selection", (attr_get_function *)_wrap_gtk_selection_data__get_selection, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "target", (attr_get_function *)_wrap_gtk_selection_data__get_target, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -2231,12 +2279,20 @@ static AttrTab gtkselectiondata_attrs[] = {
 #include "nsp/gtk/gtktextattributes.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextAttributes inherits from NspGBoxed */ 
+/* 
+ * GtkTextAttributes inherits from GBoxed 
+ */
 
 int nsp_type_gtktextattributes_id=0;
 NspTypeGtkTextAttributes *nsp_type_gtktextattributes=NULL;
 
+/*
+ * Type object for GtkTextAttributes 
+ * all the instance of NspTypeGtkTextAttributes share the same id. 
+ * nsp_type_gtktextattributes: is an instance of NspTypeGtkTextAttributes 
+ *    used for objects of GtkTextAttributes type (i.e built with new_gtktextattributes) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextAttributes *new_type_gtktextattributes(type_mode mode)
 {
   NspTypeGtkTextAttributes *type= NULL;
@@ -2474,7 +2530,7 @@ _wrap_gtk_text_attributes__get_bg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.bg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2478 "gtk.c"
+#line 2534 "gtk.c"
 #line 6715 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
@@ -2483,7 +2539,7 @@ _wrap_gtk_text_attributes__get_fg_color(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.fg_color;
   return (NspObject *)gboxed_create(NVOID,GDK_TYPE_COLOR, &ret, TRUE, TRUE,(NspTypeBase *) nsp_type_gdkcolor);
 }
-#line 2487 "gtk.c"
+#line 2543 "gtk.c"
 #line 6724 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
@@ -2493,7 +2549,7 @@ _wrap_gtk_text_attributes__get_bg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2497 "gtk.c"
+#line 2553 "gtk.c"
 #line 6734 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
@@ -2504,7 +2560,7 @@ _wrap_gtk_text_attributes__get_fg_stipple(NspObject *self, char *attr)
   /* nspgobject_new handles NULL checking */
   return (NspObject *) nspgobject_new(NVOID,(GObject *)ret);
 }
-#line 2508 "gtk.c"
+#line 2564 "gtk.c"
 #line 6745 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
@@ -2513,7 +2569,7 @@ _wrap_gtk_text_attributes__get_rise(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.rise;
   return nsp_new_double_obj((double) ret);
 }
-#line 2517 "gtk.c"
+#line 2573 "gtk.c"
 #line 6754 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
@@ -2522,7 +2578,7 @@ _wrap_gtk_text_attributes__get_underline(NspObject *self, char *attr)
   ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.underline;
   return nsp_new_double_obj((double) ret);
 }
-#line 2526 "gtk.c"
+#line 2582 "gtk.c"
 #line 6763 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
@@ -2530,7 +2586,7 @@ _wrap_gtk_text_attributes__get_strikethrough(NspObject *self, char *attr)
   int ret = nspg_boxed_get(self, GtkTextAttributes)->appearance.strikethrough;
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
-#line 2534 "gtk.c"
+#line 2590 "gtk.c"
 #line 6771 "gtk.override"
 static NspObject *
 _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
@@ -2539,7 +2595,7 @@ _wrap_gtk_text_attributes__get_draw_bg(NspObject *self, char *attr)
   return (ret)  ? nsp_create_true_object(NVOID) : nsp_create_false_object(NVOID);
 }
 
-#line 2543 "gtk.c"
+#line 2599 "gtk.c"
 static NspObject *_wrap_gtk_text_attributes__get_justification(NspObject *self,char *attr)
 {
   gint ret;
@@ -2735,12 +2791,20 @@ static AttrTab gtktextattributes_attrs[] = {
 #include "nsp/gtk/gtktextiter.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextIter inherits from NspGBoxed */ 
+/* 
+ * GtkTextIter inherits from GBoxed 
+ */
 
 int nsp_type_gtktextiter_id=0;
 NspTypeGtkTextIter *nsp_type_gtktextiter=NULL;
 
+/*
+ * Type object for GtkTextIter 
+ * all the instance of NspTypeGtkTextIter share the same id. 
+ * nsp_type_gtktextiter: is an instance of NspTypeGtkTextIter 
+ *    used for objects of GtkTextIter type (i.e built with new_gtktextiter) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextIter *new_type_gtktextiter(type_mode mode)
 {
   NspTypeGtkTextIter *type= NULL;
@@ -2934,7 +2998,7 @@ _wrap_gtk_text_iter_copy(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs)
 {
   return (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, nspg_boxed_get(self, GtkTextIter), TRUE, TRUE,NULL);
 }
-#line 2938 "gtk.c"
+#line 3002 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_offset(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3019,7 +3083,7 @@ _wrap_gtk_text_iter_get_slice(NspGBoxed *self,Stack stack,int rhs,int opt,int lh
   Scierror("XXXX To be done gtk_text_iter_get_slice");
   return 0;
 }
-#line 3023 "gtk.c"
+#line 3087 "gtk.c"
 
 
 #line 5399 "gtk.override"
@@ -3048,7 +3112,7 @@ _wrap_gtk_text_iter_get_text(NspGBoxed *self,Stack stack,int rhs,int opt,int lhs
   Scierror("To be done gtk_text_iter_get_text");
   return 0;
 }
-#line 3052 "gtk.c"
+#line 3116 "gtk.c"
 
 
 #line 5426 "gtk.override"
@@ -3078,7 +3142,7 @@ _wrap_gtk_text_iter_get_visible_slice(NspGBoxed *self,Stack stack,int rhs,int op
   Scierror("To be done gtk_text_iter_get_visible_slice");
   return 0;
 }
-#line 3082 "gtk.c"
+#line 3146 "gtk.c"
 
 
 #line 5454 "gtk.override"
@@ -3108,7 +3172,7 @@ _wrap_gtk_text_iter_get_visible_text(NspGBoxed *self,Stack stack,int rhs,int opt
   Scierror("To be done gtk_text_iter_get_visible_text");
   return 0;
 }
-#line 3112 "gtk.c"
+#line 3176 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_pixbuf(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3131,7 +3195,7 @@ _wrap_gtk_text_iter_get_marks(NspGBoxed *self)
   list = gtk_text_iter_get_marks(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3135 "gtk.c"
+#line 3199 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_get_child_anchor(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3160,7 +3224,7 @@ _wrap_gtk_text_iter_get_toggled_tags(NspGBoxed *self,Stack stack,int rhs,int opt
     
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3164 "gtk.c"
+#line 3228 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_begins_tag(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3252,7 +3316,7 @@ _wrap_gtk_text_iter_get_tags(NspGBoxed *self)
   list = gtk_text_iter_get_tags(nspg_boxed_get(self, GtkTextIter));
   NSP_OBJ_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_slist_free);
 }
-#line 3256 "gtk.c"
+#line 3320 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_editable(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -3846,7 +3910,7 @@ _wrap_gtk_text_iter_forward_search(NspGBoxed *self,Stack stack,int rhs,int opt,i
     }
   return 0;
 }
-#line 3850 "gtk.c"
+#line 3914 "gtk.c"
 
 
 #line 5554 "gtk.override"
@@ -3884,7 +3948,7 @@ _wrap_gtk_text_iter_backward_search(NspGBoxed *self,Stack stack,int rhs,int opt,
     }
   return 0;
 }
-#line 3888 "gtk.c"
+#line 3952 "gtk.c"
 
 
 static int _wrap_gtk_text_iter_equal(NspGtkTextIter *self,Stack stack,int rhs,int opt,int lhs)
@@ -4070,12 +4134,20 @@ static AttrTab gtktextiter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreeiter.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeIter inherits from NspGBoxed */ 
+/* 
+ * GtkTreeIter inherits from GBoxed 
+ */
 
 int nsp_type_gtktreeiter_id=0;
 NspTypeGtkTreeIter *nsp_type_gtktreeiter=NULL;
 
+/*
+ * Type object for GtkTreeIter 
+ * all the instance of NspTypeGtkTreeIter share the same id. 
+ * nsp_type_gtktreeiter: is an instance of NspTypeGtkTreeIter 
+ *    used for objects of GtkTreeIter type (i.e built with new_gtktreeiter) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeIter *new_type_gtktreeiter(type_mode mode)
 {
   NspTypeGtkTreeIter *type= NULL;
@@ -4292,12 +4364,20 @@ static AttrTab gtktreeiter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreerowreference.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeRowReference inherits from NspGBoxed */ 
+/* 
+ * GtkTreeRowReference inherits from GBoxed 
+ */
 
 int nsp_type_gtktreerowreference_id=0;
 NspTypeGtkTreeRowReference *nsp_type_gtktreerowreference=NULL;
 
+/*
+ * Type object for GtkTreeRowReference 
+ * all the instance of NspTypeGtkTreeRowReference share the same id. 
+ * nsp_type_gtktreerowreference: is an instance of NspTypeGtkTreeRowReference 
+ *    used for objects of GtkTreeRowReference type (i.e built with new_gtktreerowreference) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeRowReference *new_type_gtktreerowreference(type_mode mode)
 {
   NspTypeGtkTreeRowReference *type= NULL;
@@ -4559,12 +4639,20 @@ static AttrTab gtktreerowreference_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreepath.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreePath inherits from NspGBoxed */ 
+/* 
+ * GtkTreePath inherits from GBoxed 
+ */
 
 int nsp_type_gtktreepath_id=0;
 NspTypeGtkTreePath *nsp_type_gtktreepath=NULL;
 
+/*
+ * Type object for GtkTreePath 
+ * all the instance of NspTypeGtkTreePath share the same id. 
+ * nsp_type_gtktreepath: is an instance of NspTypeGtkTreePath 
+ *    used for objects of GtkTreePath type (i.e built with new_gtktreepath) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreePath *new_type_gtktreepath(type_mode mode)
 {
   NspTypeGtkTreePath *type= NULL;
@@ -4798,7 +4886,7 @@ GtkTreePath *nsp_gtk_tree_path_from_nspobject(NspObject *object)
     }
   return NULL;
 }
-#line 4802 "gtk.c"
+#line 4890 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_to_string(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -4846,7 +4934,7 @@ _wrap_gtk_tree_path_get_indices(NspGtkTreePath *self,Stack stack,int rhs,int opt
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 4850 "gtk.c"
+#line 4938 "gtk.c"
 
 
 #line 180 "gtk.override"
@@ -4875,7 +4963,7 @@ _wrap_gtk_tree_path_get_list_indices(NspGtkTreePath *self,Stack stack,int rhs,in
   nsp_list_destroy(L);
   return RET_BUG;
 }
-#line 4879 "gtk.c"
+#line 4967 "gtk.c"
 
 
 static int _wrap_gtk_tree_path_compare(NspGtkTreePath *self,Stack stack,int rhs,int opt,int lhs)
@@ -4993,12 +5081,20 @@ static AttrTab gtktreepath_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcelleditable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellEditable inherits from NspGObject */ 
+/* 
+ * GtkCellEditable inherits from GObject 
+ */
 
 int nsp_type_gtkcelleditable_id=0;
 NspTypeGtkCellEditable *nsp_type_gtkcelleditable=NULL;
 
+/*
+ * Type object for GtkCellEditable 
+ * all the instance of NspTypeGtkCellEditable share the same id. 
+ * nsp_type_gtkcelleditable: is an instance of NspTypeGtkCellEditable 
+ *    used for objects of GtkCellEditable type (i.e built with new_gtkcelleditable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellEditable *new_type_gtkcelleditable(type_mode mode)
 {
   NspTypeGtkCellEditable *type= NULL;
@@ -5222,12 +5318,20 @@ static AttrTab gtkcelleditable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcelllayout.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellLayout inherits from NspGObject */ 
+/* 
+ * GtkCellLayout inherits from GObject 
+ */
 
 int nsp_type_gtkcelllayout_id=0;
 NspTypeGtkCellLayout *nsp_type_gtkcelllayout=NULL;
 
+/*
+ * Type object for GtkCellLayout 
+ * all the instance of NspTypeGtkCellLayout share the same id. 
+ * nsp_type_gtkcelllayout: is an instance of NspTypeGtkCellLayout 
+ *    used for objects of GtkCellLayout type (i.e built with new_gtkcelllayout) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellLayout *new_type_gtkcelllayout(type_mode mode)
 {
   NspTypeGtkCellLayout *type= NULL;
@@ -5471,7 +5575,7 @@ _wrap_gtk_cell_layout_set_attributes(NspGObject *self,Stack stack,int rhs,int op
   return 0;
 }
 
-#line 5475 "gtk.c"
+#line 5579 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_add_attribute(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5556,7 +5660,7 @@ _wrap_gtk_cell_layout_set_cell_data_func (NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 5560 "gtk.c"
+#line 5664 "gtk.c"
 
 
 static int _wrap_gtk_cell_layout_clear_attributes(NspGtkCellLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -5602,12 +5706,20 @@ static AttrTab gtkcelllayout_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkeditable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkEditable inherits from NspGObject */ 
+/* 
+ * GtkEditable inherits from GObject 
+ */
 
 int nsp_type_gtkeditable_id=0;
 NspTypeGtkEditable *nsp_type_gtkeditable=NULL;
 
+/*
+ * Type object for GtkEditable 
+ * all the instance of NspTypeGtkEditable share the same id. 
+ * nsp_type_gtkeditable: is an instance of NspTypeGtkEditable 
+ *    used for objects of GtkEditable type (i.e built with new_gtkeditable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkEditable *new_type_gtkeditable(type_mode mode)
 {
   NspTypeGtkEditable *type= NULL;
@@ -5802,7 +5914,7 @@ _wrap_gtk_editable_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int
   if ( nsp_move_doubles(stack,1,1,2,(double) start,(double) end) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5806 "gtk.c"
+#line 5918 "gtk.c"
 
 
 #line 3798 "gtk.override"
@@ -5823,7 +5935,7 @@ static int _wrap_gtk_editable_insert_text(NspGtkEditable *self,Stack stack,int r
   if ( nsp_move_double(stack,1,(double)position) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 5827 "gtk.c"
+#line 5939 "gtk.c"
 
 
 static int _wrap_gtk_editable_delete_text(NspGtkEditable *self,Stack stack,int rhs,int opt,int lhs)
@@ -5934,12 +6046,20 @@ static AttrTab gtkeditable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfilechooser.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFileChooser inherits from NspGObject */ 
+/* 
+ * GtkFileChooser inherits from GObject 
+ */
 
 int nsp_type_gtkfilechooser_id=0;
 NspTypeGtkFileChooser *nsp_type_gtkfilechooser=NULL;
 
+/*
+ * Type object for GtkFileChooser 
+ * all the instance of NspTypeGtkFileChooser share the same id. 
+ * nsp_type_gtkfilechooser: is an instance of NspTypeGtkFileChooser 
+ *    used for objects of GtkFileChooser type (i.e built with new_gtkfilechooser) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFileChooser *new_type_gtkfilechooser(type_mode mode)
 {
   NspTypeGtkFileChooser *type= NULL;
@@ -6648,12 +6768,20 @@ static AttrTab gtkfilechooser_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreedragdest.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeDragDest inherits from NspGObject */ 
+/* 
+ * GtkTreeDragDest inherits from GObject 
+ */
 
 int nsp_type_gtktreedragdest_id=0;
 NspTypeGtkTreeDragDest *nsp_type_gtktreedragdest=NULL;
 
+/*
+ * Type object for GtkTreeDragDest 
+ * all the instance of NspTypeGtkTreeDragDest share the same id. 
+ * nsp_type_gtktreedragdest: is an instance of NspTypeGtkTreeDragDest 
+ *    used for objects of GtkTreeDragDest type (i.e built with new_gtktreedragdest) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeDragDest *new_type_gtktreedragdest(type_mode mode)
 {
   NspTypeGtkTreeDragDest *type= NULL;
@@ -6898,12 +7026,20 @@ static AttrTab gtktreedragdest_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreedragsource.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeDragSource inherits from NspGObject */ 
+/* 
+ * GtkTreeDragSource inherits from GObject 
+ */
 
 int nsp_type_gtktreedragsource_id=0;
 NspTypeGtkTreeDragSource *nsp_type_gtktreedragsource=NULL;
 
+/*
+ * Type object for GtkTreeDragSource 
+ * all the instance of NspTypeGtkTreeDragSource share the same id. 
+ * nsp_type_gtktreedragsource: is an instance of NspTypeGtkTreeDragSource 
+ *    used for objects of GtkTreeDragSource type (i.e built with new_gtktreedragsource) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeDragSource *new_type_gtktreedragsource(type_mode mode)
 {
   NspTypeGtkTreeDragSource *type= NULL;
@@ -7160,12 +7296,20 @@ static AttrTab gtktreedragsource_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreemodel.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeModel inherits from NspGObject */ 
+/* 
+ * GtkTreeModel inherits from GObject 
+ */
 
 int nsp_type_gtktreemodel_id=0;
 NspTypeGtkTreeModel *nsp_type_gtktreemodel=NULL;
 
+/*
+ * Type object for GtkTreeModel 
+ * all the instance of NspTypeGtkTreeModel share the same id. 
+ * nsp_type_gtktreemodel: is an instance of NspTypeGtkTreeModel 
+ *    used for objects of GtkTreeModel type (i.e built with new_gtktreemodel) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeModel *new_type_gtktreemodel(type_mode mode)
 {
   NspTypeGtkTreeModel *type= NULL;
@@ -7376,7 +7520,7 @@ static int _wrap_gtk_tree_model_get_column_type(NspGtkTreeModel *self,Stack stac
   return 1; 
 }
 
-#line 7380 "gtk.c"
+#line 7524 "gtk.c"
 
 
 #line 1509 "gtk.override"
@@ -7409,7 +7553,7 @@ _wrap_gtk_tree_model_get_iter(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG;
   }
 }
-#line 7413 "gtk.c"
+#line 7557 "gtk.c"
 
 
 #line 1540 "gtk.override"
@@ -7434,7 +7578,7 @@ _wrap_gtk_tree_model_get_iter_from_string(NspGObject *self,Stack stack,int rhs,i
     return RET_BUG;
   }
 }
-#line 7438 "gtk.c"
+#line 7582 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_string_from_iter(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7476,7 +7620,7 @@ _wrap_gtk_tree_model_get_iter_first(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 1;
 }
-#line 7480 "gtk.c"
+#line 7624 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_get_path(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7529,7 +7673,7 @@ _wrap_gtk_tree_model_get_value(NspGObject *self,Stack stack,int rhs,int opt,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 7533 "gtk.c"
+#line 7677 "gtk.c"
 
 
 #line 2367 "gtk.override"
@@ -7551,7 +7695,7 @@ _wrap_gtk_tree_model_iter_next(NspGObject *self,Stack stack,int rhs,int opt,int 
   if ( nsp_move_boolean(stack,1,rep)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 7555 "gtk.c"
+#line 7699 "gtk.c"
 
 
 #line 2387 "gtk.override"
@@ -7583,7 +7727,7 @@ _wrap_gtk_tree_model_iter_children(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG;
   }
 }
-#line 7587 "gtk.c"
+#line 7731 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_iter_has_child(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7657,7 +7801,7 @@ _wrap_gtk_tree_model_iter_nth_child(NspGObject *self,Stack stack,int rhs,int opt
   else 
     return RET_BUG;
 }
-#line 7661 "gtk.c"
+#line 7805 "gtk.c"
 
 
 #line 2448 "gtk.override"
@@ -7690,7 +7834,7 @@ _wrap_gtk_tree_model_iter_parent(NspGObject *self,Stack stack,int rhs,int opt,in
     return RET_BUG;
   }
 }
-#line 7694 "gtk.c"
+#line 7838 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_ref_node(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7785,7 +7929,7 @@ _wrap_gtk_tree_model_foreach(NspGObject *self,Stack stack,int rhs,int opt,int lh
   /* XXXX detecter les erreurs ? */
   return 0;
 }
-#line 7789 "gtk.c"
+#line 7933 "gtk.c"
 
 
 static int _wrap_gtk_tree_model_row_changed(NspGtkTreeModel *self,Stack stack,int rhs,int opt,int lhs)
@@ -7925,7 +8069,7 @@ static int _wrap_gtk_tree_model_filter_new(NspGtkTreeModel *self,Stack stack,int
   return 1;
 }
 
-#line 7929 "gtk.c"
+#line 8073 "gtk.c"
 
 
 static NspMethods gtktreemodel_methods[] = {
@@ -7969,12 +8113,20 @@ static AttrTab gtktreemodel_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreesortable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeSortable inherits from NspGObject */ 
+/* 
+ * GtkTreeSortable inherits from GObject 
+ */
 
 int nsp_type_gtktreesortable_id=0;
 NspTypeGtkTreeSortable *nsp_type_gtktreesortable=NULL;
 
+/*
+ * Type object for GtkTreeSortable 
+ * all the instance of NspTypeGtkTreeSortable share the same id. 
+ * nsp_type_gtktreesortable: is an instance of NspTypeGtkTreeSortable 
+ *    used for objects of GtkTreeSortable type (i.e built with new_gtktreesortable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeSortable *new_type_gtktreesortable(type_mode mode)
 {
   NspTypeGtkTreeSortable *type= NULL;
@@ -8171,7 +8323,7 @@ _wrap_gtk_tree_sortable_get_sort_column_id(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,n,(double) sort_column_id,(double) order) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 8175 "gtk.c"
+#line 8327 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_set_sort_column_id(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8247,7 +8399,7 @@ _wrap_gtk_tree_sortable_set_sort_func(NspGObject *self,Stack stack,int rhs,int o
   return 0;
 }
 
-#line 8251 "gtk.c"
+#line 8403 "gtk.c"
 
 
 #line 1755 "gtk.override"
@@ -8274,7 +8426,7 @@ _wrap_gtk_tree_sortable_set_default_sort_func(NspGObject *self,Stack stack,int r
 					  nspgtk_custom_destroy_notify);
   return 0;
 }
-#line 8278 "gtk.c"
+#line 8430 "gtk.c"
 
 
 static int _wrap_gtk_tree_sortable_has_default_sort_func(NspGtkTreeSortable *self,Stack stack,int rhs,int opt,int lhs)
@@ -8307,12 +8459,20 @@ static AttrTab gtktreesortable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaboutdialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAboutDialog inherits from NspGtkDialog */ 
+/* 
+ * GtkAboutDialog inherits from GtkDialog 
+ */
 
 int nsp_type_gtkaboutdialog_id=0;
 NspTypeGtkAboutDialog *nsp_type_gtkaboutdialog=NULL;
 
+/*
+ * Type object for GtkAboutDialog 
+ * all the instance of NspTypeGtkAboutDialog share the same id. 
+ * nsp_type_gtkaboutdialog: is an instance of NspTypeGtkAboutDialog 
+ *    used for objects of GtkAboutDialog type (i.e built with new_gtkaboutdialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAboutDialog *new_type_gtkaboutdialog(type_mode mode)
 {
   NspTypeGtkAboutDialog *type= NULL;
@@ -8775,12 +8935,20 @@ static AttrTab gtkaboutdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaccelgroup.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAccelGroup inherits from NspGObject */ 
+/* 
+ * GtkAccelGroup inherits from GObject 
+ */
 
 int nsp_type_gtkaccelgroup_id=0;
 NspTypeGtkAccelGroup *nsp_type_gtkaccelgroup=NULL;
 
+/*
+ * Type object for GtkAccelGroup 
+ * all the instance of NspTypeGtkAccelGroup share the same id. 
+ * nsp_type_gtkaccelgroup: is an instance of NspTypeGtkAccelGroup 
+ *    used for objects of GtkAccelGroup type (i.e built with new_gtkaccelgroup) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAccelGroup *new_type_gtkaccelgroup(type_mode mode)
 {
   NspTypeGtkAccelGroup *type= NULL;
@@ -9020,12 +9188,20 @@ static AttrTab gtkaccelgroup_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaccellabel.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAccelLabel inherits from NspGtkLabel */ 
+/* 
+ * GtkAccelLabel inherits from GtkLabel 
+ */
 
 int nsp_type_gtkaccellabel_id=0;
 NspTypeGtkAccelLabel *nsp_type_gtkaccellabel=NULL;
 
+/*
+ * Type object for GtkAccelLabel 
+ * all the instance of NspTypeGtkAccelLabel share the same id. 
+ * nsp_type_gtkaccellabel: is an instance of NspTypeGtkAccelLabel 
+ *    used for objects of GtkAccelLabel type (i.e built with new_gtkaccellabel) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAccelLabel *new_type_gtkaccellabel(type_mode mode)
 {
   NspTypeGtkAccelLabel *type= NULL;
@@ -9288,12 +9464,20 @@ static AttrTab gtkaccellabel_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaccelmap.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAccelMap inherits from NspGObject */ 
+/* 
+ * GtkAccelMap inherits from GObject 
+ */
 
 int nsp_type_gtkaccelmap_id=0;
 NspTypeGtkAccelMap *nsp_type_gtkaccelmap=NULL;
 
+/*
+ * Type object for GtkAccelMap 
+ * all the instance of NspTypeGtkAccelMap share the same id. 
+ * nsp_type_gtkaccelmap: is an instance of NspTypeGtkAccelMap 
+ *    used for objects of GtkAccelMap type (i.e built with new_gtkaccelmap) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAccelMap *new_type_gtkaccelmap(type_mode mode)
 {
   NspTypeGtkAccelMap *type= NULL;
@@ -9486,12 +9670,20 @@ static AttrTab gtkaccelmap_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaccessible.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAccessible inherits from NspAtkObject */ 
+/* 
+ * GtkAccessible inherits from AtkObject 
+ */
 
 int nsp_type_gtkaccessible_id=0;
 NspTypeGtkAccessible *nsp_type_gtkaccessible=NULL;
 
+/*
+ * Type object for GtkAccessible 
+ * all the instance of NspTypeGtkAccessible share the same id. 
+ * nsp_type_gtkaccessible: is an instance of NspTypeGtkAccessible 
+ *    used for objects of GtkAccessible type (i.e built with new_gtkaccessible) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAccessible *new_type_gtkaccessible(type_mode mode)
 {
   NspTypeGtkAccessible *type= NULL;
@@ -9695,12 +9887,20 @@ static AttrTab gtkaccessible_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaction.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAction inherits from NspGObject */ 
+/* 
+ * GtkAction inherits from GObject 
+ */
 
 int nsp_type_gtkaction_id=0;
 NspTypeGtkAction *nsp_type_gtkaction=NULL;
 
+/*
+ * Type object for GtkAction 
+ * all the instance of NspTypeGtkAction share the same id. 
+ * nsp_type_gtkaction: is an instance of NspTypeGtkAction 
+ *    used for objects of GtkAction type (i.e built with new_gtkaction) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAction *new_type_gtkaction(type_mode mode)
 {
   NspTypeGtkAction *type= NULL;
@@ -9895,7 +10095,7 @@ _wrap_gtkaction_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 9899 "gtk.c"
+#line 10099 "gtk.c"
 
 
 static int _wrap_gtk_action_get_name(NspGtkAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -10124,12 +10324,20 @@ static AttrTab gtkaction_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkactiongroup.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkActionGroup inherits from NspGObject */ 
+/* 
+ * GtkActionGroup inherits from GObject 
+ */
 
 int nsp_type_gtkactiongroup_id=0;
 NspTypeGtkActionGroup *nsp_type_gtkactiongroup=NULL;
 
+/*
+ * Type object for GtkActionGroup 
+ * all the instance of NspTypeGtkActionGroup share the same id. 
+ * nsp_type_gtkactiongroup: is an instance of NspTypeGtkActionGroup 
+ *    used for objects of GtkActionGroup type (i.e built with new_gtkactiongroup) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkActionGroup *new_type_gtkactiongroup(type_mode mode)
 {
   NspTypeGtkActionGroup *type= NULL;
@@ -10390,7 +10598,7 @@ static int _wrap_gtk_action_group_get_action(NspGtkActionGroup *self,Stack stack
 }
 
 
-#line 10394 "gtk.c"
+#line 10602 "gtk.c"
 
 
 #line 7166 "gtk.override"
@@ -10409,7 +10617,7 @@ static int _wrap_gtk_action_group_list_actions(NspGtkActionGroup *self,Stack sta
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gtkaction), g_list_free);
 }
 
-#line 10413 "gtk.c"
+#line 10621 "gtk.c"
 
 
 static int _wrap_gtk_action_group_add_action(NspGtkActionGroup *self,Stack stack,int rhs,int opt,int lhs)
@@ -10495,12 +10703,20 @@ static AttrTab gtkactiongroup_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkadjustment.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAdjustment inherits from NspGtkObject */ 
+/* 
+ * GtkAdjustment inherits from GtkObject 
+ */
 
 int nsp_type_gtkadjustment_id=0;
 NspTypeGtkAdjustment *nsp_type_gtkadjustment=NULL;
 
+/*
+ * Type object for GtkAdjustment 
+ * all the instance of NspTypeGtkAdjustment share the same id. 
+ * nsp_type_gtkadjustment: is an instance of NspTypeGtkAdjustment 
+ *    used for objects of GtkAdjustment type (i.e built with new_gtkadjustment) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAdjustment *new_type_gtkadjustment(type_mode mode)
 {
   NspTypeGtkAdjustment *type= NULL;
@@ -10708,7 +10924,7 @@ _wrap_gtk_adjustment_set_all(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("deprecated: use individual setters");
   return RET_BUG;
 }
-#line 10712 "gtk.c"
+#line 10928 "gtk.c"
 
 
 static int _wrap_gtk_adjustment_changed(NspGtkAdjustment *self,Stack stack,int rhs,int opt,int lhs)
@@ -10775,7 +10991,7 @@ _wrap_gtk_adjustment__set_value(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_value_changed(adjustment);
   return 0;
 }
-#line 10779 "gtk.c"
+#line 10995 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_value(NspObject *self,char *attr)
 {
   double ret;
@@ -10796,7 +11012,7 @@ _wrap_gtk_adjustment__set_lower(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10800 "gtk.c"
+#line 11016 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_lower(NspObject *self,char *attr)
 {
   double ret;
@@ -10817,7 +11033,7 @@ _wrap_gtk_adjustment__set_upper(NspGObject *self, char *attr, NspObject *value)
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10821 "gtk.c"
+#line 11037 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_upper(NspObject *self,char *attr)
 {
   double ret;
@@ -10838,7 +11054,7 @@ _wrap_gtk_adjustment__set_step_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10842 "gtk.c"
+#line 11058 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_step_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -10859,7 +11075,7 @@ _wrap_gtk_adjustment__set_page_increment(NspGObject *self, char *attr, NspObject
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10863 "gtk.c"
+#line 11079 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_increment(NspObject *self,char *attr)
 {
   double ret;
@@ -10880,7 +11096,7 @@ _wrap_gtk_adjustment__set_page_size(NspGObject *self, char *attr, NspObject *val
   gtk_adjustment_changed(adjustment);
   return 0;
 }
-#line 10884 "gtk.c"
+#line 11100 "gtk.c"
 static NspObject *_wrap_gtk_adjustment__get_page_size(NspObject *self,char *attr)
 {
   double ret;
@@ -10910,12 +11126,20 @@ static AttrTab gtkadjustment_attrs[] = {
 #include "nsp/gtk/gtkalignment.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAlignment inherits from NspGtkBin */ 
+/* 
+ * GtkAlignment inherits from GtkBin 
+ */
 
 int nsp_type_gtkalignment_id=0;
 NspTypeGtkAlignment *nsp_type_gtkalignment=NULL;
 
+/*
+ * Type object for GtkAlignment 
+ * all the instance of NspTypeGtkAlignment share the same id. 
+ * nsp_type_gtkalignment: is an instance of NspTypeGtkAlignment 
+ *    used for objects of GtkAlignment type (i.e built with new_gtkalignment) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAlignment *new_type_gtkalignment(type_mode mode)
 {
   NspTypeGtkAlignment *type= NULL;
@@ -11154,12 +11378,20 @@ static AttrTab gtkalignment_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkarrow.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkArrow inherits from NspGtkMisc */ 
+/* 
+ * GtkArrow inherits from GtkMisc 
+ */
 
 int nsp_type_gtkarrow_id=0;
 NspTypeGtkArrow *nsp_type_gtkarrow=NULL;
 
+/*
+ * Type object for GtkArrow 
+ * all the instance of NspTypeGtkArrow share the same id. 
+ * nsp_type_gtkarrow: is an instance of NspTypeGtkArrow 
+ *    used for objects of GtkArrow type (i.e built with new_gtkarrow) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkArrow *new_type_gtkarrow(type_mode mode)
 {
   NspTypeGtkArrow *type= NULL;
@@ -11394,12 +11626,20 @@ static AttrTab gtkarrow_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkaspectframe.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkAspectFrame inherits from NspGtkFrame */ 
+/* 
+ * GtkAspectFrame inherits from GtkFrame 
+ */
 
 int nsp_type_gtkaspectframe_id=0;
 NspTypeGtkAspectFrame *nsp_type_gtkaspectframe=NULL;
 
+/*
+ * Type object for GtkAspectFrame 
+ * all the instance of NspTypeGtkAspectFrame share the same id. 
+ * nsp_type_gtkaspectframe: is an instance of NspTypeGtkAspectFrame 
+ *    used for objects of GtkAspectFrame type (i.e built with new_gtkaspectframe) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkAspectFrame *new_type_gtkaspectframe(type_mode mode)
 {
   NspTypeGtkAspectFrame *type= NULL;
@@ -11638,12 +11878,20 @@ static AttrTab gtkaspectframe_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkbin.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkBin inherits from NspGtkContainer */ 
+/* 
+ * GtkBin inherits from GtkContainer 
+ */
 
 int nsp_type_gtkbin_id=0;
 NspTypeGtkBin *nsp_type_gtkbin=NULL;
 
+/*
+ * Type object for GtkBin 
+ * all the instance of NspTypeGtkBin share the same id. 
+ * nsp_type_gtkbin: is an instance of NspTypeGtkBin 
+ *    used for objects of GtkBin type (i.e built with new_gtkbin) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkBin *new_type_gtkbin(type_mode mode)
 {
   NspTypeGtkBin *type= NULL;
@@ -11864,12 +12112,20 @@ static AttrTab gtkbin_attrs[] = {
 #include "nsp/gtk/gtkbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkBox inherits from NspGtkContainer */ 
+/* 
+ * GtkBox inherits from GtkContainer 
+ */
 
 int nsp_type_gtkbox_id=0;
 NspTypeGtkBox *nsp_type_gtkbox=NULL;
 
+/*
+ * Type object for GtkBox 
+ * all the instance of NspTypeGtkBox share the same id. 
+ * nsp_type_gtkbox: is an instance of NspTypeGtkBox 
+ *    used for objects of GtkBox type (i.e built with new_gtkbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkBox *new_type_gtkbox(type_mode mode)
 {
   NspTypeGtkBox *type= NULL;
@@ -12167,7 +12423,7 @@ _wrap_gtk_box_query_child_packing(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 12171 "gtk.c"
+#line 12427 "gtk.c"
 
 
 static int _wrap_gtk_box_set_child_packing(NspGtkBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -12215,12 +12471,20 @@ static AttrTab gtkbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkButton inherits from NspGtkBin */ 
+/* 
+ * GtkButton inherits from GtkBin 
+ */
 
 int nsp_type_gtkbutton_id=0;
 NspTypeGtkButton *nsp_type_gtkbutton=NULL;
 
+/*
+ * Type object for GtkButton 
+ * all the instance of NspTypeGtkButton share the same id. 
+ * nsp_type_gtkbutton: is an instance of NspTypeGtkButton 
+ *    used for objects of GtkButton type (i.e built with new_gtkbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkButton *new_type_gtkbutton(type_mode mode)
 {
   NspTypeGtkButton *type= NULL;
@@ -12431,7 +12695,7 @@ _wrap_gtkbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 12435 "gtk.c"
+#line 12699 "gtk.c"
 
 
 static int _wrap_gtk_button_pressed(NspGtkButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -12619,12 +12883,20 @@ static AttrTab gtkbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkbuttonbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkButtonBox inherits from NspGtkBox */ 
+/* 
+ * GtkButtonBox inherits from GtkBox 
+ */
 
 int nsp_type_gtkbuttonbox_id=0;
 NspTypeGtkButtonBox *nsp_type_gtkbuttonbox=NULL;
 
+/*
+ * Type object for GtkButtonBox 
+ * all the instance of NspTypeGtkButtonBox share the same id. 
+ * nsp_type_gtkbuttonbox: is an instance of NspTypeGtkButtonBox 
+ *    used for objects of GtkButtonBox type (i.e built with new_gtkbuttonbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkButtonBox *new_type_gtkbuttonbox(type_mode mode)
 {
   NspTypeGtkButtonBox *type= NULL;
@@ -12872,7 +13144,7 @@ _wrap_gtk_button_box_get_child_size(NspGObject *self,Stack stack,int rhs,int opt
   if ( nsp_move_doubles(stack,1,1,2,(double) min_width, (double) min_height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 12876 "gtk.c"
+#line 13148 "gtk.c"
 
 
 #line 4359 "gtk.override"
@@ -12886,7 +13158,7 @@ _wrap_gtk_button_box_get_child_ipadding(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 12890 "gtk.c"
+#line 13162 "gtk.c"
 
 
 static NspMethods gtkbuttonbox_methods[] = {
@@ -12917,12 +13189,20 @@ static AttrTab gtkbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcalendar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCalendar inherits from NspGtkWidget */ 
+/* 
+ * GtkCalendar inherits from GtkWidget 
+ */
 
 int nsp_type_gtkcalendar_id=0;
 NspTypeGtkCalendar *nsp_type_gtkcalendar=NULL;
 
+/*
+ * Type object for GtkCalendar 
+ * all the instance of NspTypeGtkCalendar share the same id. 
+ * nsp_type_gtkcalendar: is an instance of NspTypeGtkCalendar 
+ *    used for objects of GtkCalendar type (i.e built with new_gtkcalendar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCalendar *new_type_gtkcalendar(type_mode mode)
 {
   NspTypeGtkCalendar *type= NULL;
@@ -13169,7 +13449,7 @@ static int _wrap_gtk_calendar_is_marked_day(NspGtkCalendar *self,Stack stack,int
 }
 
 
-#line 13173 "gtk.c"
+#line 13453 "gtk.c"
 
 
 static int _wrap_gtk_calendar_clear_marks(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13208,7 +13488,7 @@ _wrap_gtk_calendar_get_date(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   if ( nsp_move_doubles(stack,1,1,3,(double) year,(double) month,(double) day) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13212 "gtk.c"
+#line 13492 "gtk.c"
 
 
 static int _wrap_gtk_calendar_freeze(NspGtkCalendar *self,Stack stack,int rhs,int opt,int lhs)
@@ -13254,12 +13534,20 @@ static AttrTab gtkcalendar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellrenderer.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellRenderer inherits from NspGtkObject */ 
+/* 
+ * GtkCellRenderer inherits from GtkObject 
+ */
 
 int nsp_type_gtkcellrenderer_id=0;
 NspTypeGtkCellRenderer *nsp_type_gtkcellrenderer=NULL;
 
+/*
+ * Type object for GtkCellRenderer 
+ * all the instance of NspTypeGtkCellRenderer share the same id. 
+ * nsp_type_gtkcellrenderer: is an instance of NspTypeGtkCellRenderer 
+ *    used for objects of GtkCellRenderer type (i.e built with new_gtkcellrenderer) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellRenderer *new_type_gtkcellrenderer(type_mode mode)
 {
   NspTypeGtkCellRenderer *type= NULL;
@@ -13469,7 +13757,7 @@ _wrap_gtk_cell_renderer_get_size(NspGObject *self,Stack stack,int rhs,int opt,in
   if (  nsp_move_doubles(stack,1,1,4,(double)  x_offset,(double) y_offset, (double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 13473 "gtk.c"
+#line 13761 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_render(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13572,7 +13860,7 @@ _wrap_gtk_cell_renderer_get_fixed_size(NspGObject *self,Stack stack,int rhs,int 
     return RET_BUG; 
   return 1; 
 }
-#line 13576 "gtk.c"
+#line 13864 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_get_visible(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13628,7 +13916,7 @@ _wrap_gtk_cell_renderer_get_alignment(NspGObject *self,Stack stack,int rhs,int o
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 13632 "gtk.c"
+#line 13920 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_set_padding(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13651,7 +13939,7 @@ _wrap_gtk_cell_renderer_get_padding(NspGObject *self,Stack stack,int rhs,int opt
   return 1;
 }
 
-#line 13655 "gtk.c"
+#line 13943 "gtk.c"
 
 
 static int _wrap_gtk_cell_renderer_editing_canceled(NspGtkCellRenderer *self,Stack stack,int rhs,int opt,int lhs)
@@ -13705,12 +13993,20 @@ static AttrTab gtkcellrenderer_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellrenderercombo.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellRendererCombo inherits from NspGtkCellRendererText */ 
+/* 
+ * GtkCellRendererCombo inherits from GtkCellRendererText 
+ */
 
 int nsp_type_gtkcellrenderercombo_id=0;
 NspTypeGtkCellRendererCombo *nsp_type_gtkcellrenderercombo=NULL;
 
+/*
+ * Type object for GtkCellRendererCombo 
+ * all the instance of NspTypeGtkCellRendererCombo share the same id. 
+ * nsp_type_gtkcellrenderercombo: is an instance of NspTypeGtkCellRendererCombo 
+ *    used for objects of GtkCellRendererCombo type (i.e built with new_gtkcellrenderercombo) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellRendererCombo *new_type_gtkcellrenderercombo(type_mode mode)
 {
   NspTypeGtkCellRendererCombo *type= NULL;
@@ -13917,12 +14213,20 @@ static AttrTab gtkcellrenderercombo_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellrendererpixbuf.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellRendererPixbuf inherits from NspGtkCellRenderer */ 
+/* 
+ * GtkCellRendererPixbuf inherits from GtkCellRenderer 
+ */
 
 int nsp_type_gtkcellrendererpixbuf_id=0;
 NspTypeGtkCellRendererPixbuf *nsp_type_gtkcellrendererpixbuf=NULL;
 
+/*
+ * Type object for GtkCellRendererPixbuf 
+ * all the instance of NspTypeGtkCellRendererPixbuf share the same id. 
+ * nsp_type_gtkcellrendererpixbuf: is an instance of NspTypeGtkCellRendererPixbuf 
+ *    used for objects of GtkCellRendererPixbuf type (i.e built with new_gtkcellrendererpixbuf) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellRendererPixbuf *new_type_gtkcellrendererpixbuf(type_mode mode)
 {
   NspTypeGtkCellRendererPixbuf *type= NULL;
@@ -14129,12 +14433,20 @@ static AttrTab gtkcellrendererpixbuf_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellrendererprogress.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellRendererProgress inherits from NspGtkCellRenderer */ 
+/* 
+ * GtkCellRendererProgress inherits from GtkCellRenderer 
+ */
 
 int nsp_type_gtkcellrendererprogress_id=0;
 NspTypeGtkCellRendererProgress *nsp_type_gtkcellrendererprogress=NULL;
 
+/*
+ * Type object for GtkCellRendererProgress 
+ * all the instance of NspTypeGtkCellRendererProgress share the same id. 
+ * nsp_type_gtkcellrendererprogress: is an instance of NspTypeGtkCellRendererProgress 
+ *    used for objects of GtkCellRendererProgress type (i.e built with new_gtkcellrendererprogress) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellRendererProgress *new_type_gtkcellrendererprogress(type_mode mode)
 {
   NspTypeGtkCellRendererProgress *type= NULL;
@@ -14341,12 +14653,20 @@ static AttrTab gtkcellrendererprogress_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellrenderertext.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellRendererText inherits from NspGtkCellRenderer */ 
+/* 
+ * GtkCellRendererText inherits from GtkCellRenderer 
+ */
 
 int nsp_type_gtkcellrenderertext_id=0;
 NspTypeGtkCellRendererText *nsp_type_gtkcellrenderertext=NULL;
 
+/*
+ * Type object for GtkCellRendererText 
+ * all the instance of NspTypeGtkCellRendererText share the same id. 
+ * nsp_type_gtkcellrenderertext: is an instance of NspTypeGtkCellRendererText 
+ *    used for objects of GtkCellRendererText type (i.e built with new_gtkcellrenderertext) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellRendererText *new_type_gtkcellrenderertext(type_mode mode)
 {
   NspTypeGtkCellRendererText *type= NULL;
@@ -14567,12 +14887,20 @@ static AttrTab gtkcellrenderertext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellrenderertoggle.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellRendererToggle inherits from NspGtkCellRenderer */ 
+/* 
+ * GtkCellRendererToggle inherits from GtkCellRenderer 
+ */
 
 int nsp_type_gtkcellrenderertoggle_id=0;
 NspTypeGtkCellRendererToggle *nsp_type_gtkcellrenderertoggle=NULL;
 
+/*
+ * Type object for GtkCellRendererToggle 
+ * all the instance of NspTypeGtkCellRendererToggle share the same id. 
+ * nsp_type_gtkcellrenderertoggle: is an instance of NspTypeGtkCellRendererToggle 
+ *    used for objects of GtkCellRendererToggle type (i.e built with new_gtkcellrenderertoggle) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellRendererToggle *new_type_gtkcellrenderertoggle(type_mode mode)
 {
   NspTypeGtkCellRendererToggle *type= NULL;
@@ -14821,12 +15149,21 @@ static AttrTab gtkcellrenderertoggle_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcellview.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCellView inherits from NspGtkWidget */ 
+/* 
+ * GtkCellView inherits from GtkWidget 
+ * and implements  GtkCellLayout
+ */
 
 int nsp_type_gtkcellview_id=0;
 NspTypeGtkCellView *nsp_type_gtkcellview=NULL;
 
+/*
+ * Type object for GtkCellView 
+ * all the instance of NspTypeGtkCellView share the same id. 
+ * nsp_type_gtkcellview: is an instance of NspTypeGtkCellView 
+ *    used for objects of GtkCellView type (i.e built with new_gtkcellview) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCellView *new_type_gtkcellview(type_mode mode)
 {
   NspTypeGtkCellView *type= NULL;
@@ -15049,7 +15386,7 @@ _wrap_gtkcellview_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 15053 "gtk.c"
+#line 15390 "gtk.c"
 
 
 static int _wrap_gtk_cell_view_set_model(NspGtkCellView *self,Stack stack,int rhs,int opt,int lhs)
@@ -15182,12 +15519,20 @@ static AttrTab gtkcellview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcheckbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCheckButton inherits from NspGtkToggleButton */ 
+/* 
+ * GtkCheckButton inherits from GtkToggleButton 
+ */
 
 int nsp_type_gtkcheckbutton_id=0;
 NspTypeGtkCheckButton *nsp_type_gtkcheckbutton=NULL;
 
+/*
+ * Type object for GtkCheckButton 
+ * all the instance of NspTypeGtkCheckButton share the same id. 
+ * nsp_type_gtkcheckbutton: is an instance of NspTypeGtkCheckButton 
+ *    used for objects of GtkCheckButton type (i.e built with new_gtkcheckbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCheckButton *new_type_gtkcheckbutton(type_mode mode)
 {
   NspTypeGtkCheckButton *type= NULL;
@@ -15394,7 +15739,7 @@ _wrap_gtkcheckbutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15398 "gtk.c"
+#line 15743 "gtk.c"
 
 
 static NspMethods *gtkcheckbutton_get_methods(void) { return NULL;};
@@ -15413,12 +15758,20 @@ static AttrTab gtkcheckbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcheckmenuitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCheckMenuItem inherits from NspGtkMenuItem */ 
+/* 
+ * GtkCheckMenuItem inherits from GtkMenuItem 
+ */
 
 int nsp_type_gtkcheckmenuitem_id=0;
 NspTypeGtkCheckMenuItem *nsp_type_gtkcheckmenuitem=NULL;
 
+/*
+ * Type object for GtkCheckMenuItem 
+ * all the instance of NspTypeGtkCheckMenuItem share the same id. 
+ * nsp_type_gtkcheckmenuitem: is an instance of NspTypeGtkCheckMenuItem 
+ *    used for objects of GtkCheckMenuItem type (i.e built with new_gtkcheckmenuitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCheckMenuItem *new_type_gtkcheckmenuitem(type_mode mode)
 {
   NspTypeGtkCheckMenuItem *type= NULL;
@@ -15620,7 +15973,7 @@ _wrap_gtkcheckmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 15624 "gtk.c"
+#line 15977 "gtk.c"
 
 
 static int _wrap_gtk_check_menu_item_set_active(NspGtkCheckMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -15742,12 +16095,20 @@ static AttrTab gtkcheckmenuitem_attrs[] = {
 #include "nsp/gtk/gtkcolorbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkColorButton inherits from NspGtkButton */ 
+/* 
+ * GtkColorButton inherits from GtkButton 
+ */
 
 int nsp_type_gtkcolorbutton_id=0;
 NspTypeGtkColorButton *nsp_type_gtkcolorbutton=NULL;
 
+/*
+ * Type object for GtkColorButton 
+ * all the instance of NspTypeGtkColorButton share the same id. 
+ * nsp_type_gtkcolorbutton: is an instance of NspTypeGtkColorButton 
+ *    used for objects of GtkColorButton type (i.e built with new_gtkcolorbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkColorButton *new_type_gtkcolorbutton(type_mode mode)
 {
   NspTypeGtkColorButton *type= NULL;
@@ -15940,12 +16301,20 @@ static AttrTab gtkcolorbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcolorselection.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkColorSelection inherits from NspGtkVBox */ 
+/* 
+ * GtkColorSelection inherits from GtkVBox 
+ */
 
 int nsp_type_gtkcolorselection_id=0;
 NspTypeGtkColorSelection *nsp_type_gtkcolorselection=NULL;
 
+/*
+ * Type object for GtkColorSelection 
+ * all the instance of NspTypeGtkColorSelection share the same id. 
+ * nsp_type_gtkcolorselection: is an instance of NspTypeGtkColorSelection 
+ *    used for objects of GtkColorSelection type (i.e built with new_gtkcolorselection) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkColorSelection *new_type_gtkcolorselection(type_mode mode)
 {
   NspTypeGtkColorSelection *type= NULL;
@@ -16191,7 +16560,7 @@ _wrap_gtk_color_selection_set_current_color(NspGObject *self,Stack stack,int rhs
   return 0;
 }
 
-#line 16195 "gtk.c"
+#line 16564 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16221,7 +16590,7 @@ _wrap_gtk_color_selection_get_current_color(NspGObject *self,Stack stack,int rhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16225 "gtk.c"
+#line 16594 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_current_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16258,7 +16627,7 @@ _wrap_gtk_color_selection_set_previous_color(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 16262 "gtk.c"
+#line 16631 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_set_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16285,7 +16654,7 @@ _wrap_gtk_color_selection_get_previous_color(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 16289 "gtk.c"
+#line 16658 "gtk.c"
 
 
 static int _wrap_gtk_color_selection_get_previous_alpha(NspGtkColorSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -16373,12 +16742,20 @@ static AttrTab gtkcolorselection_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcolorselectiondialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkColorSelectionDialog inherits from NspGtkDialog */ 
+/* 
+ * GtkColorSelectionDialog inherits from GtkDialog 
+ */
 
 int nsp_type_gtkcolorselectiondialog_id=0;
 NspTypeGtkColorSelectionDialog *nsp_type_gtkcolorselectiondialog=NULL;
 
+/*
+ * Type object for GtkColorSelectionDialog 
+ * all the instance of NspTypeGtkColorSelectionDialog share the same id. 
+ * nsp_type_gtkcolorselectiondialog: is an instance of NspTypeGtkColorSelectionDialog 
+ *    used for objects of GtkColorSelectionDialog type (i.e built with new_gtkcolorselectiondialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkColorSelectionDialog *new_type_gtkcolorselectiondialog(type_mode mode)
 {
   NspTypeGtkColorSelectionDialog *type= NULL;
@@ -16627,12 +17004,20 @@ static AttrTab gtkcolorselectiondialog_attrs[] = {
 #include "nsp/gtk/gtkcombo.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCombo inherits from NspGtkHBox */ 
+/* 
+ * GtkCombo inherits from GtkHBox 
+ */
 
 int nsp_type_gtkcombo_id=0;
 NspTypeGtkCombo *nsp_type_gtkcombo=NULL;
 
+/*
+ * Type object for GtkCombo 
+ * all the instance of NspTypeGtkCombo share the same id. 
+ * nsp_type_gtkcombo: is an instance of NspTypeGtkCombo 
+ *    used for objects of GtkCombo type (i.e built with new_gtkcombo) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCombo *new_type_gtkcombo(type_mode mode)
 {
   NspTypeGtkCombo *type= NULL;
@@ -16887,7 +17272,7 @@ _wrap_gtk_combo_set_popdown_strings(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(glist);
   return 0;
 }
-#line 16891 "gtk.c"
+#line 17276 "gtk.c"
 
 
 static int _wrap_gtk_combo_disable_activate(NspGtkCombo *self,Stack stack,int rhs,int opt,int lhs)
@@ -16935,12 +17320,21 @@ static AttrTab gtkcombo_attrs[] = {
 #include "nsp/gtk/gtkcombobox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkComboBox inherits from NspGtkBin */ 
+/* 
+ * GtkComboBox inherits from GtkBin 
+ * and implements  GtkCellLayout
+ */
 
 int nsp_type_gtkcombobox_id=0;
 NspTypeGtkComboBox *nsp_type_gtkcombobox=NULL;
 
+/*
+ * Type object for GtkComboBox 
+ * all the instance of NspTypeGtkComboBox share the same id. 
+ * nsp_type_gtkcombobox: is an instance of NspTypeGtkComboBox 
+ *    used for objects of GtkComboBox type (i.e built with new_gtkcombobox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkComboBox *new_type_gtkcombobox(type_mode mode)
 {
   NspTypeGtkComboBox *type= NULL;
@@ -17158,7 +17552,7 @@ _wrap_gtkcombobox_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 17162 "gtk.c"
+#line 17556 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_wrap_width(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17226,7 +17620,7 @@ static int _wrap_gtk_combo_box_get_active_iter(NspGtkComboBox *self,Stack stack,
 }
 
 
-#line 17230 "gtk.c"
+#line 17624 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_set_active_iter(NspGtkComboBox *self,Stack stack,int rhs,int opt,int lhs)
@@ -17448,12 +17842,21 @@ static AttrTab gtkcombobox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcomboboxentry.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkComboBoxEntry inherits from NspGtkComboBox */ 
+/* 
+ * GtkComboBoxEntry inherits from GtkComboBox 
+ * and implements  GtkCellLayout
+ */
 
 int nsp_type_gtkcomboboxentry_id=0;
 NspTypeGtkComboBoxEntry *nsp_type_gtkcomboboxentry=NULL;
 
+/*
+ * Type object for GtkComboBoxEntry 
+ * all the instance of NspTypeGtkComboBoxEntry share the same id. 
+ * nsp_type_gtkcomboboxentry: is an instance of NspTypeGtkComboBoxEntry 
+ *    used for objects of GtkComboBoxEntry type (i.e built with new_gtkcomboboxentry) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkComboBoxEntry *new_type_gtkcomboboxentry(type_mode mode)
 {
   NspTypeGtkComboBoxEntry *type= NULL;
@@ -17677,7 +18080,7 @@ _wrap_gtkcomboboxentry_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 17681 "gtk.c"
+#line 18084 "gtk.c"
 
 
 static int _wrap_gtk_combo_box_entry_set_text_column(NspGtkComboBoxEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -17719,12 +18122,20 @@ static AttrTab gtkcomboboxentry_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkcontainer.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkContainer inherits from NspGtkWidget */ 
+/* 
+ * GtkContainer inherits from GtkWidget 
+ */
 
 int nsp_type_gtkcontainer_id=0;
 NspTypeGtkContainer *nsp_type_gtkcontainer=NULL;
 
+/*
+ * Type object for GtkContainer 
+ * all the instance of NspTypeGtkContainer share the same id. 
+ * nsp_type_gtkcontainer: is an instance of NspTypeGtkContainer 
+ *    used for objects of GtkContainer type (i.e built with new_gtkcontainer) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkContainer *new_type_gtkcontainer(type_mode mode)
 {
   NspTypeGtkContainer *type= NULL;
@@ -18014,7 +18425,7 @@ _wrap_gtk_container_foreach(NspGtkContainer *self,Stack stack,int rhs,int opt,in
   return 0;
 }
 
-#line 18018 "gtk.c"
+#line 18429 "gtk.c"
 
 
 #line 811 "gtk.override"
@@ -18027,7 +18438,7 @@ _wrap_gtk_container_get_children(NspGtkContainer *self,Stack stack,int rhs,int o
   list = gtk_container_get_children(GTK_CONTAINER(self->obj));
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)), g_list_free);
 }
-#line 18031 "gtk.c"
+#line 18442 "gtk.c"
 
 
 #line 803 "gtk.override"
@@ -18037,7 +18448,7 @@ _wrap_gtk_container_children(NspGObject *self,Stack stack,int rhs,int opt,int lh
   Scierror("Deprecated: use GtkContainer.get_children");
   return RET_BUG;
 }
-#line 18041 "gtk.c"
+#line 18452 "gtk.c"
 
 
 static int _wrap_gtk_container_propagate_expose(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18089,7 +18500,7 @@ _wrap_gtk_container_set_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   g_list_free(focusable_widgets);
   return 0;
 }
-#line 18093 "gtk.c"
+#line 18504 "gtk.c"
 
 
 #line 855 "gtk.override"
@@ -18101,7 +18512,7 @@ _wrap_gtk_container_get_focus_chain(NspGObject *self,Stack stack,int rhs,int opt
   if (! gtk_container_get_focus_chain(GTK_CONTAINER(self->obj), &list)) return 0;
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free); 
 }
-#line 18105 "gtk.c"
+#line 18516 "gtk.c"
 
 
 static int _wrap_gtk_container_unset_focus_chain(NspGtkContainer *self,Stack stack,int rhs,int opt,int lhs)
@@ -18189,7 +18600,7 @@ static int _wrap_gtk_container_child_type(NspGtkContainer *self,Stack stack,int 
   return 1; 
 }
 
-#line 18193 "gtk.c"
+#line 18604 "gtk.c"
 
 
 #line 1077 "gtk.override"
@@ -18242,7 +18653,7 @@ _wrap_gtk_container_add_with_properties(NspGObject *self,Stack stack,int rhs,int
   gtk_widget_thaw_child_notify(child);
   return 0;
 }
-#line 18246 "gtk.c"
+#line 18657 "gtk.c"
 
 
 #line 958 "gtk.override"
@@ -18299,7 +18710,7 @@ _wrap_gtk_container_child_set(NspGObject *self,Stack stack,int rhs,int opt,int l
     }
   return 0;
 }
-#line 18303 "gtk.c"
+#line 18714 "gtk.c"
 
 
 #line 1013 "gtk.override"
@@ -18365,7 +18776,7 @@ _wrap_gtk_container_child_get(NspGObject *self,Stack stack,int rhs,int opt,int l
   }
 
 }
-#line 18369 "gtk.c"
+#line 18780 "gtk.c"
 
 
 #line 912 "gtk.override"
@@ -18413,7 +18824,7 @@ _wrap_gtk_container_child_set_property(NspGObject *self,Stack stack,int rhs,int 
   g_value_unset(&value);
   return 0;
 }
-#line 18417 "gtk.c"
+#line 18828 "gtk.c"
 
 
 #line 865 "gtk.override"
@@ -18462,7 +18873,7 @@ _wrap_gtk_container_child_get_property(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 18466 "gtk.c"
+#line 18877 "gtk.c"
 
 
 static NspMethods gtkcontainer_methods[] = {
@@ -18564,12 +18975,20 @@ static AttrTab gtkcontainer_attrs[] = {
 #include "nsp/gtk/gtkcurve.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkCurve inherits from NspGtkDrawingArea */ 
+/* 
+ * GtkCurve inherits from GtkDrawingArea 
+ */
 
 int nsp_type_gtkcurve_id=0;
 NspTypeGtkCurve *nsp_type_gtkcurve=NULL;
 
+/*
+ * Type object for GtkCurve 
+ * all the instance of NspTypeGtkCurve share the same id. 
+ * nsp_type_gtkcurve: is an instance of NspTypeGtkCurve 
+ *    used for objects of GtkCurve type (i.e built with new_gtkcurve) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkCurve *new_type_gtkcurve(type_mode mode)
 {
   NspTypeGtkCurve *type= NULL;
@@ -18804,7 +19223,7 @@ _wrap_gtk_curve_get_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,(NspObject *) ret);
   return 1;
 }
-#line 18808 "gtk.c"
+#line 19227 "gtk.c"
 
 
 #line 1473 "gtk.override"
@@ -18823,7 +19242,7 @@ _wrap_gtk_curve_set_vector(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   v = Mat2double(v);
   return 0;
 }
-#line 18827 "gtk.c"
+#line 19246 "gtk.c"
 
 
 static int _wrap_gtk_curve_set_curve_type(NspGtkCurve *self,Stack stack,int rhs,int opt,int lhs)
@@ -18864,12 +19283,20 @@ static AttrTab gtkcurve_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkdialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkDialog inherits from NspGtkWindow */ 
+/* 
+ * GtkDialog inherits from GtkWindow 
+ */
 
 int nsp_type_gtkdialog_id=0;
 NspTypeGtkDialog *nsp_type_gtkdialog=NULL;
 
+/*
+ * Type object for GtkDialog 
+ * all the instance of NspTypeGtkDialog share the same id. 
+ * nsp_type_gtkdialog: is an instance of NspTypeGtkDialog 
+ *    used for objects of GtkDialog type (i.e built with new_gtkdialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkDialog *new_type_gtkdialog(type_mode mode)
 {
   NspTypeGtkDialog *type= NULL;
@@ -19095,7 +19522,7 @@ _wrap_gtkdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 19099 "gtk.c"
+#line 19526 "gtk.c"
 
 
 static int _wrap_gtk_dialog_add_action_widget(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19190,7 +19617,7 @@ _wrap_gtk_dialog_run(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 19194 "gtk.c"
+#line 19621 "gtk.c"
 
 
 static int _wrap_gtk_dialog_set_alternative_button_order_from_array(NspGtkDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -19253,12 +19680,20 @@ static AttrTab gtkdialog_attrs[] = {
 #include "nsp/gtk/gtkdrawingarea.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkDrawingArea inherits from NspGtkWidget */ 
+/* 
+ * GtkDrawingArea inherits from GtkWidget 
+ */
 
 int nsp_type_gtkdrawingarea_id=0;
 NspTypeGtkDrawingArea *nsp_type_gtkdrawingarea=NULL;
 
+/*
+ * Type object for GtkDrawingArea 
+ * all the instance of NspTypeGtkDrawingArea share the same id. 
+ * nsp_type_gtkdrawingarea: is an instance of NspTypeGtkDrawingArea 
+ *    used for objects of GtkDrawingArea type (i.e built with new_gtkdrawingarea) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkDrawingArea *new_type_gtkdrawingarea(type_mode mode)
 {
   NspTypeGtkDrawingArea *type= NULL;
@@ -19480,12 +19915,21 @@ static AttrTab gtkdrawingarea_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkentry.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkEntry inherits from NspGtkWidget */ 
+/* 
+ * GtkEntry inherits from GtkWidget 
+ * and implements  GtkEditable GtkCellEditable
+ */
 
 int nsp_type_gtkentry_id=0;
 NspTypeGtkEntry *nsp_type_gtkentry=NULL;
 
+/*
+ * Type object for GtkEntry 
+ * all the instance of NspTypeGtkEntry share the same id. 
+ * nsp_type_gtkentry: is an instance of NspTypeGtkEntry 
+ *    used for objects of GtkEntry type (i.e built with new_gtkentry) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkEntry *new_type_gtkentry(type_mode mode)
 {
   NspTypeGtkEntry *type= NULL;
@@ -19826,7 +20270,7 @@ _wrap_gtk_entry_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 19830 "gtk.c"
+#line 20274 "gtk.c"
 
 
 static int _wrap_gtk_entry_set_alignment(NspGtkEntry *self,Stack stack,int rhs,int opt,int lhs)
@@ -20022,12 +20466,21 @@ static AttrTab gtkentry_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkentrycompletion.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkEntryCompletion inherits from NspGObject */ 
+/* 
+ * GtkEntryCompletion inherits from GObject 
+ * and implements  GtkCellLayout
+ */
 
 int nsp_type_gtkentrycompletion_id=0;
 NspTypeGtkEntryCompletion *nsp_type_gtkentrycompletion=NULL;
 
+/*
+ * Type object for GtkEntryCompletion 
+ * all the instance of NspTypeGtkEntryCompletion share the same id. 
+ * nsp_type_gtkentrycompletion: is an instance of NspTypeGtkEntryCompletion 
+ *    used for objects of GtkEntryCompletion type (i.e built with new_gtkentrycompletion) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkEntryCompletion *new_type_gtkentrycompletion(type_mode mode)
 {
   NspTypeGtkEntryCompletion *type= NULL;
@@ -20445,12 +20898,20 @@ static AttrTab gtkentrycompletion_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkeventbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkEventBox inherits from NspGtkBin */ 
+/* 
+ * GtkEventBox inherits from GtkBin 
+ */
 
 int nsp_type_gtkeventbox_id=0;
 NspTypeGtkEventBox *nsp_type_gtkeventbox=NULL;
 
+/*
+ * Type object for GtkEventBox 
+ * all the instance of NspTypeGtkEventBox share the same id. 
+ * nsp_type_gtkeventbox: is an instance of NspTypeGtkEventBox 
+ *    used for objects of GtkEventBox type (i.e built with new_gtkeventbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkEventBox *new_type_gtkeventbox(type_mode mode)
 {
   NspTypeGtkEventBox *type= NULL;
@@ -20699,12 +21160,20 @@ static AttrTab gtkeventbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkexpander.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkExpander inherits from NspGtkBin */ 
+/* 
+ * GtkExpander inherits from GtkBin 
+ */
 
 int nsp_type_gtkexpander_id=0;
 NspTypeGtkExpander *nsp_type_gtkexpander=NULL;
 
+/*
+ * Type object for GtkExpander 
+ * all the instance of NspTypeGtkExpander share the same id. 
+ * nsp_type_gtkexpander: is an instance of NspTypeGtkExpander 
+ *    used for objects of GtkExpander type (i.e built with new_gtkexpander) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkExpander *new_type_gtkexpander(type_mode mode)
 {
   NspTypeGtkExpander *type= NULL;
@@ -21049,12 +21518,21 @@ static AttrTab gtkexpander_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfilechooserbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFileChooserButton inherits from NspGtkHBox */ 
+/* 
+ * GtkFileChooserButton inherits from GtkHBox 
+ * and implements  GtkFileChooser
+ */
 
 int nsp_type_gtkfilechooserbutton_id=0;
 NspTypeGtkFileChooserButton *nsp_type_gtkfilechooserbutton=NULL;
 
+/*
+ * Type object for GtkFileChooserButton 
+ * all the instance of NspTypeGtkFileChooserButton share the same id. 
+ * nsp_type_gtkfilechooserbutton: is an instance of NspTypeGtkFileChooserButton 
+ *    used for objects of GtkFileChooserButton type (i.e built with new_gtkfilechooserbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFileChooserButton *new_type_gtkfilechooserbutton(type_mode mode)
 {
   NspTypeGtkFileChooserButton *type= NULL;
@@ -21310,12 +21788,21 @@ static AttrTab gtkfilechooserbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfilechooserdialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFileChooserDialog inherits from NspGtkDialog */ 
+/* 
+ * GtkFileChooserDialog inherits from GtkDialog 
+ * and implements  GtkFileChooser
+ */
 
 int nsp_type_gtkfilechooserdialog_id=0;
 NspTypeGtkFileChooserDialog *nsp_type_gtkfilechooserdialog=NULL;
 
+/*
+ * Type object for GtkFileChooserDialog 
+ * all the instance of NspTypeGtkFileChooserDialog share the same id. 
+ * nsp_type_gtkfilechooserdialog: is an instance of NspTypeGtkFileChooserDialog 
+ *    used for objects of GtkFileChooserDialog type (i.e built with new_gtkfilechooserdialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFileChooserDialog *new_type_gtkfilechooserdialog(type_mode mode)
 {
   NspTypeGtkFileChooserDialog *type= NULL;
@@ -21540,7 +22027,7 @@ _wrap_gtkfilechooserdialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 21544 "gtk.c"
+#line 22031 "gtk.c"
 
 
 static NspMethods *gtkfilechooserdialog_get_methods(void) { return NULL;};
@@ -21559,12 +22046,21 @@ static AttrTab gtkfilechooserdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfilechooserwidget.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFileChooserWidget inherits from NspGtkVBox */ 
+/* 
+ * GtkFileChooserWidget inherits from GtkVBox 
+ * and implements  GtkFileChooser
+ */
 
 int nsp_type_gtkfilechooserwidget_id=0;
 NspTypeGtkFileChooserWidget *nsp_type_gtkfilechooserwidget=NULL;
 
+/*
+ * Type object for GtkFileChooserWidget 
+ * all the instance of NspTypeGtkFileChooserWidget share the same id. 
+ * nsp_type_gtkfilechooserwidget: is an instance of NspTypeGtkFileChooserWidget 
+ *    used for objects of GtkFileChooserWidget type (i.e built with new_gtkfilechooserwidget) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFileChooserWidget *new_type_gtkfilechooserwidget(type_mode mode)
 {
   NspTypeGtkFileChooserWidget *type= NULL;
@@ -21777,12 +22273,20 @@ static AttrTab gtkfilechooserwidget_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfilefilter.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFileFilter inherits from NspGtkObject */ 
+/* 
+ * GtkFileFilter inherits from GtkObject 
+ */
 
 int nsp_type_gtkfilefilter_id=0;
 NspTypeGtkFileFilter *nsp_type_gtkfilefilter=NULL;
 
+/*
+ * Type object for GtkFileFilter 
+ * all the instance of NspTypeGtkFileFilter share the same id. 
+ * nsp_type_gtkfilefilter: is an instance of NspTypeGtkFileFilter 
+ *    used for objects of GtkFileFilter type (i.e built with new_gtkfilefilter) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFileFilter *new_type_gtkfilefilter(type_mode mode)
 {
   NspTypeGtkFileFilter *type= NULL;
@@ -22048,12 +22552,20 @@ static AttrTab gtkfilefilter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfileselection.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFileSelection inherits from NspGtkDialog */ 
+/* 
+ * GtkFileSelection inherits from GtkDialog 
+ */
 
 int nsp_type_gtkfileselection_id=0;
 NspTypeGtkFileSelection *nsp_type_gtkfileselection=NULL;
 
+/*
+ * Type object for GtkFileSelection 
+ * all the instance of NspTypeGtkFileSelection share the same id. 
+ * nsp_type_gtkfileselection: is an instance of NspTypeGtkFileSelection 
+ *    used for objects of GtkFileSelection type (i.e built with new_gtkfileselection) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFileSelection *new_type_gtkfileselection(type_mode mode)
 {
   NspTypeGtkFileSelection *type= NULL;
@@ -22301,7 +22813,7 @@ _wrap_gtk_file_selection_get_selections(NspGObject *self,Stack stack,int rhs,int
   return 1;
 
 }
-#line 22305 "gtk.c"
+#line 22817 "gtk.c"
 
 
 static int _wrap_gtk_file_selection_set_select_multiple(NspGtkFileSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -22515,12 +23027,20 @@ static AttrTab gtkfileselection_attrs[] = {
 #include "nsp/gtk/gtkfixed.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFixed inherits from NspGtkContainer */ 
+/* 
+ * GtkFixed inherits from GtkContainer 
+ */
 
 int nsp_type_gtkfixed_id=0;
 NspTypeGtkFixed *nsp_type_gtkfixed=NULL;
 
+/*
+ * Type object for GtkFixed 
+ * all the instance of NspTypeGtkFixed share the same id. 
+ * nsp_type_gtkfixed: is an instance of NspTypeGtkFixed 
+ *    used for objects of GtkFixed type (i.e built with new_gtkfixed) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFixed *new_type_gtkfixed(type_mode mode)
 {
   NspTypeGtkFixed *type= NULL;
@@ -22772,12 +23292,20 @@ static AttrTab gtkfixed_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfontbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFontButton inherits from NspGtkButton */ 
+/* 
+ * GtkFontButton inherits from GtkButton 
+ */
 
 int nsp_type_gtkfontbutton_id=0;
 NspTypeGtkFontButton *nsp_type_gtkfontbutton=NULL;
 
+/*
+ * Type object for GtkFontButton 
+ * all the instance of NspTypeGtkFontButton share the same id. 
+ * nsp_type_gtkfontbutton: is an instance of NspTypeGtkFontButton 
+ *    used for objects of GtkFontButton type (i.e built with new_gtkfontbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFontButton *new_type_gtkfontbutton(type_mode mode)
 {
   NspTypeGtkFontButton *type= NULL;
@@ -23104,12 +23632,20 @@ static AttrTab gtkfontbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfontselection.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFontSelection inherits from NspGtkVBox */ 
+/* 
+ * GtkFontSelection inherits from GtkVBox 
+ */
 
 int nsp_type_gtkfontselection_id=0;
 NspTypeGtkFontSelection *nsp_type_gtkfontselection=NULL;
 
+/*
+ * Type object for GtkFontSelection 
+ * all the instance of NspTypeGtkFontSelection share the same id. 
+ * nsp_type_gtkfontselection: is an instance of NspTypeGtkFontSelection 
+ *    used for objects of GtkFontSelection type (i.e built with new_gtkfontselection) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFontSelection *new_type_gtkfontselection(type_mode mode)
 {
   NspTypeGtkFontSelection *type= NULL;
@@ -23375,12 +23911,20 @@ static AttrTab gtkfontselection_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkfontselectiondialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFontSelectionDialog inherits from NspGtkDialog */ 
+/* 
+ * GtkFontSelectionDialog inherits from GtkDialog 
+ */
 
 int nsp_type_gtkfontselectiondialog_id=0;
 NspTypeGtkFontSelectionDialog *nsp_type_gtkfontselectiondialog=NULL;
 
+/*
+ * Type object for GtkFontSelectionDialog 
+ * all the instance of NspTypeGtkFontSelectionDialog share the same id. 
+ * nsp_type_gtkfontselectiondialog: is an instance of NspTypeGtkFontSelectionDialog 
+ *    used for objects of GtkFontSelectionDialog type (i.e built with new_gtkfontselectiondialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFontSelectionDialog *new_type_gtkfontselectiondialog(type_mode mode)
 {
   NspTypeGtkFontSelectionDialog *type= NULL;
@@ -23706,12 +24250,20 @@ static AttrTab gtkfontselectiondialog_attrs[] = {
 #include "nsp/gtk/gtkframe.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkFrame inherits from NspGtkBin */ 
+/* 
+ * GtkFrame inherits from GtkBin 
+ */
 
 int nsp_type_gtkframe_id=0;
 NspTypeGtkFrame *nsp_type_gtkframe=NULL;
 
+/*
+ * Type object for GtkFrame 
+ * all the instance of NspTypeGtkFrame share the same id. 
+ * nsp_type_gtkframe: is an instance of NspTypeGtkFrame 
+ *    used for objects of GtkFrame type (i.e built with new_gtkframe) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkFrame *new_type_gtkframe(type_mode mode)
 {
   NspTypeGtkFrame *type= NULL;
@@ -23967,7 +24519,7 @@ _wrap_gtk_frame_get_label_align(NspGObject *self,Stack stack,int rhs,int opt,int
   return 1;
 
 }
-#line 23971 "gtk.c"
+#line 24523 "gtk.c"
 
 
 static int _wrap_gtk_frame_set_shadow_type(NspGtkFrame *self,Stack stack,int rhs,int opt,int lhs)
@@ -24018,12 +24570,20 @@ static AttrTab gtkframe_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkgammacurve.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkGammaCurve inherits from NspGtkVBox */ 
+/* 
+ * GtkGammaCurve inherits from GtkVBox 
+ */
 
 int nsp_type_gtkgammacurve_id=0;
 NspTypeGtkGammaCurve *nsp_type_gtkgammacurve=NULL;
 
+/*
+ * Type object for GtkGammaCurve 
+ * all the instance of NspTypeGtkGammaCurve share the same id. 
+ * nsp_type_gtkgammacurve: is an instance of NspTypeGtkGammaCurve 
+ *    used for objects of GtkGammaCurve type (i.e built with new_gtkgammacurve) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkGammaCurve *new_type_gtkgammacurve(type_mode mode)
 {
   NspTypeGtkGammaCurve *type= NULL;
@@ -24279,12 +24839,20 @@ static AttrTab gtkgammacurve_attrs[] = {
 #include "nsp/gtk/gtkhandlebox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHandleBox inherits from NspGtkBin */ 
+/* 
+ * GtkHandleBox inherits from GtkBin 
+ */
 
 int nsp_type_gtkhandlebox_id=0;
 NspTypeGtkHandleBox *nsp_type_gtkhandlebox=NULL;
 
+/*
+ * Type object for GtkHandleBox 
+ * all the instance of NspTypeGtkHandleBox share the same id. 
+ * nsp_type_gtkhandlebox: is an instance of NspTypeGtkHandleBox 
+ *    used for objects of GtkHandleBox type (i.e built with new_gtkhandlebox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHandleBox *new_type_gtkhandlebox(type_mode mode)
 {
   NspTypeGtkHandleBox *type= NULL;
@@ -24561,12 +25129,20 @@ static AttrTab gtkhandlebox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHBox inherits from NspGtkBox */ 
+/* 
+ * GtkHBox inherits from GtkBox 
+ */
 
 int nsp_type_gtkhbox_id=0;
 NspTypeGtkHBox *nsp_type_gtkhbox=NULL;
 
+/*
+ * Type object for GtkHBox 
+ * all the instance of NspTypeGtkHBox share the same id. 
+ * nsp_type_gtkhbox: is an instance of NspTypeGtkHBox 
+ *    used for objects of GtkHBox type (i.e built with new_gtkhbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHBox *new_type_gtkhbox(type_mode mode)
 {
   NspTypeGtkHBox *type= NULL;
@@ -24779,12 +25355,20 @@ static AttrTab gtkhbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhbuttonbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHButtonBox inherits from NspGtkButtonBox */ 
+/* 
+ * GtkHButtonBox inherits from GtkButtonBox 
+ */
 
 int nsp_type_gtkhbuttonbox_id=0;
 NspTypeGtkHButtonBox *nsp_type_gtkhbuttonbox=NULL;
 
+/*
+ * Type object for GtkHButtonBox 
+ * all the instance of NspTypeGtkHButtonBox share the same id. 
+ * nsp_type_gtkhbuttonbox: is an instance of NspTypeGtkHButtonBox 
+ *    used for objects of GtkHButtonBox type (i.e built with new_gtkhbuttonbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHButtonBox *new_type_gtkhbuttonbox(type_mode mode)
 {
   NspTypeGtkHButtonBox *type= NULL;
@@ -24991,12 +25575,20 @@ static AttrTab gtkhbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhpaned.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHPaned inherits from NspGtkPaned */ 
+/* 
+ * GtkHPaned inherits from GtkPaned 
+ */
 
 int nsp_type_gtkhpaned_id=0;
 NspTypeGtkHPaned *nsp_type_gtkhpaned=NULL;
 
+/*
+ * Type object for GtkHPaned 
+ * all the instance of NspTypeGtkHPaned share the same id. 
+ * nsp_type_gtkhpaned: is an instance of NspTypeGtkHPaned 
+ *    used for objects of GtkHPaned type (i.e built with new_gtkhpaned) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHPaned *new_type_gtkhpaned(type_mode mode)
 {
   NspTypeGtkHPaned *type= NULL;
@@ -25203,12 +25795,20 @@ static AttrTab gtkhpaned_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhruler.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHRuler inherits from NspGtkRuler */ 
+/* 
+ * GtkHRuler inherits from GtkRuler 
+ */
 
 int nsp_type_gtkhruler_id=0;
 NspTypeGtkHRuler *nsp_type_gtkhruler=NULL;
 
+/*
+ * Type object for GtkHRuler 
+ * all the instance of NspTypeGtkHRuler share the same id. 
+ * nsp_type_gtkhruler: is an instance of NspTypeGtkHRuler 
+ *    used for objects of GtkHRuler type (i.e built with new_gtkhruler) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHRuler *new_type_gtkhruler(type_mode mode)
 {
   NspTypeGtkHRuler *type= NULL;
@@ -25415,12 +26015,20 @@ static AttrTab gtkhruler_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhscale.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHScale inherits from NspGtkScale */ 
+/* 
+ * GtkHScale inherits from GtkScale 
+ */
 
 int nsp_type_gtkhscale_id=0;
 NspTypeGtkHScale *nsp_type_gtkhscale=NULL;
 
+/*
+ * Type object for GtkHScale 
+ * all the instance of NspTypeGtkHScale share the same id. 
+ * nsp_type_gtkhscale: is an instance of NspTypeGtkHScale 
+ *    used for objects of GtkHScale type (i.e built with new_gtkhscale) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHScale *new_type_gtkhscale(type_mode mode)
 {
   NspTypeGtkHScale *type= NULL;
@@ -25641,12 +26249,20 @@ static AttrTab gtkhscale_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhscrollbar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHScrollbar inherits from NspGtkScrollbar */ 
+/* 
+ * GtkHScrollbar inherits from GtkScrollbar 
+ */
 
 int nsp_type_gtkhscrollbar_id=0;
 NspTypeGtkHScrollbar *nsp_type_gtkhscrollbar=NULL;
 
+/*
+ * Type object for GtkHScrollbar 
+ * all the instance of NspTypeGtkHScrollbar share the same id. 
+ * nsp_type_gtkhscrollbar: is an instance of NspTypeGtkHScrollbar 
+ *    used for objects of GtkHScrollbar type (i.e built with new_gtkhscrollbar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHScrollbar *new_type_gtkhscrollbar(type_mode mode)
 {
   NspTypeGtkHScrollbar *type= NULL;
@@ -25867,12 +26483,20 @@ static AttrTab gtkhscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkhseparator.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkHSeparator inherits from NspGtkSeparator */ 
+/* 
+ * GtkHSeparator inherits from GtkSeparator 
+ */
 
 int nsp_type_gtkhseparator_id=0;
 NspTypeGtkHSeparator *nsp_type_gtkhseparator=NULL;
 
+/*
+ * Type object for GtkHSeparator 
+ * all the instance of NspTypeGtkHSeparator share the same id. 
+ * nsp_type_gtkhseparator: is an instance of NspTypeGtkHSeparator 
+ *    used for objects of GtkHSeparator type (i.e built with new_gtkhseparator) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkHSeparator *new_type_gtkhseparator(type_mode mode)
 {
   NspTypeGtkHSeparator *type= NULL;
@@ -26079,12 +26703,20 @@ static AttrTab gtkhseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkiconfactory.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIconFactory inherits from NspGObject */ 
+/* 
+ * GtkIconFactory inherits from GObject 
+ */
 
 int nsp_type_gtkiconfactory_id=0;
 NspTypeGtkIconFactory *nsp_type_gtkiconfactory=NULL;
 
+/*
+ * Type object for GtkIconFactory 
+ * all the instance of NspTypeGtkIconFactory share the same id. 
+ * nsp_type_gtkiconfactory: is an instance of NspTypeGtkIconFactory 
+ *    used for objects of GtkIconFactory type (i.e built with new_gtkiconfactory) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIconFactory *new_type_gtkiconfactory(type_mode mode)
 {
   NspTypeGtkIconFactory *type= NULL;
@@ -26343,12 +26975,20 @@ static AttrTab gtkiconfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkicontheme.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIconTheme inherits from NspGObject */ 
+/* 
+ * GtkIconTheme inherits from GObject 
+ */
 
 int nsp_type_gtkicontheme_id=0;
 NspTypeGtkIconTheme *nsp_type_gtkicontheme=NULL;
 
+/*
+ * Type object for GtkIconTheme 
+ * all the instance of NspTypeGtkIconTheme share the same id. 
+ * nsp_type_gtkicontheme: is an instance of NspTypeGtkIconTheme 
+ *    used for objects of GtkIconTheme type (i.e built with new_gtkicontheme) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIconTheme *new_type_gtkicontheme(type_mode mode)
 {
   NspTypeGtkIconTheme *type= NULL;
@@ -26700,12 +27340,21 @@ static AttrTab gtkicontheme_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkiconview.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIconView inherits from NspGtkContainer */ 
+/* 
+ * GtkIconView inherits from GtkContainer 
+ * and implements  GtkCellLayout
+ */
 
 int nsp_type_gtkiconview_id=0;
 NspTypeGtkIconView *nsp_type_gtkiconview=NULL;
 
+/*
+ * Type object for GtkIconView 
+ * all the instance of NspTypeGtkIconView share the same id. 
+ * nsp_type_gtkiconview: is an instance of NspTypeGtkIconView 
+ *    used for objects of GtkIconView type (i.e built with new_gtkiconview) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIconView *new_type_gtkiconview(type_mode mode)
 {
   NspTypeGtkIconView *type= NULL;
@@ -26939,7 +27588,7 @@ static int _wrap_gtk_icon_view_get_model(NspGtkIconView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 26943 "gtk.c"
+#line 27592 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_set_text_column(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27210,7 +27859,7 @@ static int _wrap_gtk_icon_view_get_selected_items(NspGtkIconView *self,Stack sta
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 27214 "gtk.c"
+#line 27863 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_select_all(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27319,7 +27968,7 @@ _wrap_gtk_icon_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 27323 "gtk.c"
+#line 27972 "gtk.c"
 
 
 #line 2688 "gtk.override"
@@ -27344,7 +27993,7 @@ _wrap_gtk_icon_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
   return 0;
 }
 
-#line 27348 "gtk.c"
+#line 27997 "gtk.c"
 
 
 static int _wrap_gtk_icon_view_unset_model_drag_source(NspGtkIconView *self,Stack stack,int rhs,int opt,int lhs)
@@ -27502,12 +28151,20 @@ static AttrTab gtkiconview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkimage.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkImage inherits from NspGtkMisc */ 
+/* 
+ * GtkImage inherits from GtkMisc 
+ */
 
 int nsp_type_gtkimage_id=0;
 NspTypeGtkImage *nsp_type_gtkimage=NULL;
 
+/*
+ * Type object for GtkImage 
+ * all the instance of NspTypeGtkImage share the same id. 
+ * nsp_type_gtkimage: is an instance of NspTypeGtkImage 
+ *    used for objects of GtkImage type (i.e built with new_gtkimage) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkImage *new_type_gtkimage(type_mode mode)
 {
   NspTypeGtkImage *type= NULL;
@@ -27850,7 +28507,7 @@ _wrap_gtkimage_new(Stack stack, int rhs, int opt, int lhs)
   return RET_BUG;;
 }
 
-#line 27854 "gtk.c"
+#line 28511 "gtk.c"
 
 
 static int _wrap_gtk_image_clear(NspGtkImage *self,Stack stack,int rhs,int opt,int lhs)
@@ -28090,12 +28747,20 @@ static AttrTab gtkimage_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkimagemenuitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkImageMenuItem inherits from NspGtkMenuItem */ 
+/* 
+ * GtkImageMenuItem inherits from GtkMenuItem 
+ */
 
 int nsp_type_gtkimagemenuitem_id=0;
 NspTypeGtkImageMenuItem *nsp_type_gtkimagemenuitem=NULL;
 
+/*
+ * Type object for GtkImageMenuItem 
+ * all the instance of NspTypeGtkImageMenuItem share the same id. 
+ * nsp_type_gtkimagemenuitem: is an instance of NspTypeGtkImageMenuItem 
+ *    used for objects of GtkImageMenuItem type (i.e built with new_gtkimagemenuitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkImageMenuItem *new_type_gtkimagemenuitem(type_mode mode)
 {
   NspTypeGtkImageMenuItem *type= NULL;
@@ -28313,7 +28978,7 @@ _wrap_gtkimagemenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 28317 "gtk.c"
+#line 28982 "gtk.c"
 
 
 static int _wrap_gtk_image_menu_item_set_image(NspGtkImageMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -28358,12 +29023,20 @@ static AttrTab gtkimagemenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkimcontext.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIMContext inherits from NspGtkObject */ 
+/* 
+ * GtkIMContext inherits from GtkObject 
+ */
 
 int nsp_type_gtkimcontext_id=0;
 NspTypeGtkIMContext *nsp_type_gtkimcontext=NULL;
 
+/*
+ * Type object for GtkIMContext 
+ * all the instance of NspTypeGtkIMContext share the same id. 
+ * nsp_type_gtkimcontext: is an instance of NspTypeGtkIMContext 
+ *    used for objects of GtkIMContext type (i.e built with new_gtkimcontext) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIMContext *new_type_gtkimcontext(type_mode mode)
 {
   NspTypeGtkIMContext *type= NULL;
@@ -28571,7 +29244,7 @@ _wrap_gtk_im_context_get_preedit_string(NspGObject *self,Stack stack,int rhs,int
   Scierror(" To be done gtk_im_context_get_preedit_string");
   return 0;
 }
-#line 28575 "gtk.c"
+#line 29248 "gtk.c"
 
 
 #line 6438 "gtk.override"
@@ -28595,7 +29268,7 @@ _wrap_gtk_im_context_filter_keypress(NspGObject *self,Stack stack,int rhs,int op
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 28599 "gtk.c"
+#line 29272 "gtk.c"
 
 
 static int _wrap_gtk_im_context_focus_in(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -28664,7 +29337,7 @@ _wrap_gtk_im_context_get_surrounding(NspGObject *self,Stack stack,int rhs,int op
   g_free(text);
   return rep;
 }
-#line 28668 "gtk.c"
+#line 29341 "gtk.c"
 
 
 static int _wrap_gtk_im_context_delete_surrounding(NspGtkIMContext *self,Stack stack,int rhs,int opt,int lhs)
@@ -28708,12 +29381,20 @@ static AttrTab gtkimcontext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkimcontextsimple.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIMContextSimple inherits from NspGtkIMContext */ 
+/* 
+ * GtkIMContextSimple inherits from GtkIMContext 
+ */
 
 int nsp_type_gtkimcontextsimple_id=0;
 NspTypeGtkIMContextSimple *nsp_type_gtkimcontextsimple=NULL;
 
+/*
+ * Type object for GtkIMContextSimple 
+ * all the instance of NspTypeGtkIMContextSimple share the same id. 
+ * nsp_type_gtkimcontextsimple: is an instance of NspTypeGtkIMContextSimple 
+ *    used for objects of GtkIMContextSimple type (i.e built with new_gtkimcontextsimple) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIMContextSimple *new_type_gtkimcontextsimple(type_mode mode)
 {
   NspTypeGtkIMContextSimple *type= NULL;
@@ -28920,12 +29601,20 @@ static AttrTab gtkimcontextsimple_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkimmulticontext.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkIMMulticontext inherits from NspGtkIMContext */ 
+/* 
+ * GtkIMMulticontext inherits from GtkIMContext 
+ */
 
 int nsp_type_gtkimmulticontext_id=0;
 NspTypeGtkIMMulticontext *nsp_type_gtkimmulticontext=NULL;
 
+/*
+ * Type object for GtkIMMulticontext 
+ * all the instance of NspTypeGtkIMMulticontext share the same id. 
+ * nsp_type_gtkimmulticontext: is an instance of NspTypeGtkIMMulticontext 
+ *    used for objects of GtkIMMulticontext type (i.e built with new_gtkimmulticontext) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkIMMulticontext *new_type_gtkimmulticontext(type_mode mode)
 {
   NspTypeGtkIMMulticontext *type= NULL;
@@ -29146,12 +29835,20 @@ static AttrTab gtkimmulticontext_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkinputdialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkInputDialog inherits from NspGtkDialog */ 
+/* 
+ * GtkInputDialog inherits from GtkDialog 
+ */
 
 int nsp_type_gtkinputdialog_id=0;
 NspTypeGtkInputDialog *nsp_type_gtkinputdialog=NULL;
 
+/*
+ * Type object for GtkInputDialog 
+ * all the instance of NspTypeGtkInputDialog share the same id. 
+ * nsp_type_gtkinputdialog: is an instance of NspTypeGtkInputDialog 
+ *    used for objects of GtkInputDialog type (i.e built with new_gtkinputdialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkInputDialog *new_type_gtkinputdialog(type_mode mode)
 {
   NspTypeGtkInputDialog *type= NULL;
@@ -29359,12 +30056,20 @@ static AttrTab gtkinputdialog_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkinvisible.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkInvisible inherits from NspGtkWidget */ 
+/* 
+ * GtkInvisible inherits from GtkWidget 
+ */
 
 int nsp_type_gtkinvisible_id=0;
 NspTypeGtkInvisible *nsp_type_gtkinvisible=NULL;
 
+/*
+ * Type object for GtkInvisible 
+ * all the instance of NspTypeGtkInvisible share the same id. 
+ * nsp_type_gtkinvisible: is an instance of NspTypeGtkInvisible 
+ *    used for objects of GtkInvisible type (i.e built with new_gtkinvisible) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkInvisible *new_type_gtkinvisible(type_mode mode)
 {
   NspTypeGtkInvisible *type= NULL;
@@ -29598,12 +30303,20 @@ static AttrTab gtkinvisible_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkItem inherits from NspGtkBin */ 
+/* 
+ * GtkItem inherits from GtkBin 
+ */
 
 int nsp_type_gtkitem_id=0;
 NspTypeGtkItem *nsp_type_gtkitem=NULL;
 
+/*
+ * Type object for GtkItem 
+ * all the instance of NspTypeGtkItem share the same id. 
+ * nsp_type_gtkitem: is an instance of NspTypeGtkItem 
+ *    used for objects of GtkItem type (i.e built with new_gtkitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkItem *new_type_gtkitem(type_mode mode)
 {
   NspTypeGtkItem *type= NULL;
@@ -29821,12 +30534,20 @@ static AttrTab gtkitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkitemfactory.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkItemFactory inherits from NspGtkObject */ 
+/* 
+ * GtkItemFactory inherits from GtkObject 
+ */
 
 int nsp_type_gtkitemfactory_id=0;
 NspTypeGtkItemFactory *nsp_type_gtkitemfactory=NULL;
 
+/*
+ * Type object for GtkItemFactory 
+ * all the instance of NspTypeGtkItemFactory share the same id. 
+ * nsp_type_gtkitemfactory: is an instance of NspTypeGtkItemFactory 
+ *    used for objects of GtkItemFactory type (i.e built with new_gtkitemfactory) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkItemFactory *new_type_gtkitemfactory(type_mode mode)
 {
   NspTypeGtkItemFactory *type= NULL;
@@ -30038,7 +30759,7 @@ _wrap_gtkitemfactory_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30042 "gtk.c"
+#line 30763 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_construct(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30071,7 +30792,7 @@ static int _wrap_gtk_item_factory_get_item(NspGtkItemFactory *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30075 "gtk.c"
+#line 30796 "gtk.c"
 
 
 #line 3892 "gtk.override"
@@ -30088,7 +30809,7 @@ static int _wrap_gtk_item_factory_get_widget(NspGtkItemFactory *self,Stack stack
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 30092 "gtk.c"
+#line 30813 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_get_widget_by_action(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30248,7 +30969,7 @@ _wrap_gtk_item_factory_create_items(NspGObject *self,Stack stack,int rhs,int opt
     }
   return 0;
 }
-#line 30252 "gtk.c"
+#line 30973 "gtk.c"
 
 
 static int _wrap_gtk_item_factory_delete_item(NspGtkItemFactory *self,Stack stack,int rhs,int opt,int lhs)
@@ -30301,12 +31022,20 @@ static AttrTab gtkitemfactory_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtklabel.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkLabel inherits from NspGtkMisc */ 
+/* 
+ * GtkLabel inherits from GtkMisc 
+ */
 
 int nsp_type_gtklabel_id=0;
 NspTypeGtkLabel *nsp_type_gtklabel=NULL;
 
+/*
+ * Type object for GtkLabel 
+ * all the instance of NspTypeGtkLabel share the same id. 
+ * nsp_type_gtklabel: is an instance of NspTypeGtkLabel 
+ *    used for objects of GtkLabel type (i.e built with new_gtklabel) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkLabel *new_type_gtklabel(type_mode mode)
 {
   NspTypeGtkLabel *type= NULL;
@@ -30512,7 +31241,7 @@ _wrap_gtklabel_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 30516 "gtk.c"
+#line 31245 "gtk.c"
 
 
 static int _wrap_gtk_label_set_text(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -30756,7 +31485,7 @@ _wrap_gtk_label_get_selection_bounds(NspGObject *self,Stack stack,int rhs,int op
     }
   return 1; 
 }
-#line 30760 "gtk.c"
+#line 31489 "gtk.c"
 
 
 static int _wrap_gtk_label_get_layout(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -30780,7 +31509,7 @@ _wrap_gtk_label_get_layout_offsets(NspGObject *self,Stack stack,int rhs,int opt,
     return RET_BUG; 
   return 1; 
 }
-#line 30784 "gtk.c"
+#line 31513 "gtk.c"
 
 
 static int _wrap_gtk_label_set(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -30808,7 +31537,7 @@ _wrap_gtk_label_get(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 30812 "gtk.c"
+#line 31541 "gtk.c"
 
 
 static int _wrap_gtk_label_parse_uline(NspGtkLabel *self,Stack stack,int rhs,int opt,int lhs)
@@ -30949,12 +31678,20 @@ static AttrTab gtklabel_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtklayout.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkLayout inherits from NspGtkContainer */ 
+/* 
+ * GtkLayout inherits from GtkContainer 
+ */
 
 int nsp_type_gtklayout_id=0;
 NspTypeGtkLayout *nsp_type_gtklayout=NULL;
 
+/*
+ * Type object for GtkLayout 
+ * all the instance of NspTypeGtkLayout share the same id. 
+ * nsp_type_gtklayout: is an instance of NspTypeGtkLayout 
+ *    used for objects of GtkLayout type (i.e built with new_gtklayout) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkLayout *new_type_gtklayout(type_mode mode)
 {
   NspTypeGtkLayout *type= NULL;
@@ -31209,7 +31946,7 @@ _wrap_gtk_layout_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 1; 
 
 }
-#line 31213 "gtk.c"
+#line 31950 "gtk.c"
 
 
 static int _wrap_gtk_layout_get_hadjustment(NspGtkLayout *self,Stack stack,int rhs,int opt,int lhs)
@@ -31332,12 +32069,21 @@ static AttrTab gtklayout_attrs[] = {
 #include "nsp/gtk/gtkliststore.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkListStore inherits from NspGObject */ 
+/* 
+ * GtkListStore inherits from GObject 
+ * and implements  GtkTreeModel GtkTreeDragSource GtkTreeDragDest GtkTreeSortable
+ */
 
 int nsp_type_gtkliststore_id=0;
 NspTypeGtkListStore *nsp_type_gtkliststore=NULL;
 
+/*
+ * Type object for GtkListStore 
+ * all the instance of NspTypeGtkListStore share the same id. 
+ * nsp_type_gtkliststore: is an instance of NspTypeGtkListStore 
+ *    used for objects of GtkListStore type (i.e built with new_gtkliststore) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkListStore *new_type_gtkliststore(type_mode mode)
 {
   NspTypeGtkListStore *type= NULL;
@@ -31582,7 +32328,7 @@ _wrap_gtkliststore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 31586 "gtk.c"
+#line 32332 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_list_store(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -31655,7 +32401,7 @@ _wrap_gtk_list_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 31659 "gtk.c"
+#line 32405 "gtk.c"
 
 
 static int _wrap_gtk_list_store_remove(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -31698,7 +32444,7 @@ _wrap_gtk_list_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31702 "gtk.c"
+#line 32448 "gtk.c"
 
 
 #line 1929 "gtk.override"
@@ -31725,7 +32471,7 @@ _wrap_gtk_list_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31729 "gtk.c"
+#line 32475 "gtk.c"
 
 
 #line 1954 "gtk.override"
@@ -31752,7 +32498,7 @@ _wrap_gtk_list_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31756 "gtk.c"
+#line 32502 "gtk.c"
 
 
 #line 1979 "gtk.override"
@@ -31777,7 +32523,7 @@ _wrap_gtk_list_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31781 "gtk.c"
+#line 32527 "gtk.c"
 
 
 #line 2002 "gtk.override"
@@ -31803,7 +32549,7 @@ _wrap_gtk_list_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 31807 "gtk.c"
+#line 32553 "gtk.c"
 
 
 static int _wrap_gtk_list_store_clear(NspGtkListStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -31950,12 +32696,20 @@ static AttrTab gtkliststore_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkmenu.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMenu inherits from NspGtkMenuShell */ 
+/* 
+ * GtkMenu inherits from GtkMenuShell 
+ */
 
 int nsp_type_gtkmenu_id=0;
 NspTypeGtkMenu *nsp_type_gtkmenu=NULL;
 
+/*
+ * Type object for GtkMenu 
+ * all the instance of NspTypeGtkMenu share the same id. 
+ * nsp_type_gtkmenu: is an instance of NspTypeGtkMenu 
+ *    used for objects of GtkMenu type (i.e built with new_gtkmenu) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMenu *new_type_gtkmenu(type_mode mode)
 {
   NspTypeGtkMenu *type= NULL;
@@ -32211,7 +32965,7 @@ _wrap_gtk_menu_popup(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     gtk_menu_popup(GTK_MENU(self->obj), pms, pmi, NULL,NULL, button,time);
   return 0;
 }
-#line 32215 "gtk.c"
+#line 32969 "gtk.c"
 
 
 static int _wrap_gtk_menu_reposition(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -32340,7 +33094,7 @@ _wrap_gtk_menu_attach_to_widget (NspGObject *self,Stack stack,int rhs,int opt,in
 			     (GtkMenuDetachFunc) nspgtk_menu_detach);
   return 0;
 }
-#line 32344 "gtk.c"
+#line 33098 "gtk.c"
 
 
 static int _wrap_gtk_menu_detach(NspGtkMenu *self,Stack stack,int rhs,int opt,int lhs)
@@ -32483,12 +33237,20 @@ static AttrTab gtkmenu_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkmenubar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMenuBar inherits from NspGtkMenuShell */ 
+/* 
+ * GtkMenuBar inherits from GtkMenuShell 
+ */
 
 int nsp_type_gtkmenubar_id=0;
 NspTypeGtkMenuBar *nsp_type_gtkmenubar=NULL;
 
+/*
+ * Type object for GtkMenuBar 
+ * all the instance of NspTypeGtkMenuBar share the same id. 
+ * nsp_type_gtkmenubar: is an instance of NspTypeGtkMenuBar 
+ *    used for objects of GtkMenuBar type (i.e built with new_gtkmenubar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMenuBar *new_type_gtkmenubar(type_mode mode)
 {
   NspTypeGtkMenuBar *type= NULL;
@@ -32743,12 +33505,20 @@ static AttrTab gtkmenubar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkmenuitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMenuItem inherits from NspGtkItem */ 
+/* 
+ * GtkMenuItem inherits from GtkItem 
+ */
 
 int nsp_type_gtkmenuitem_id=0;
 NspTypeGtkMenuItem *nsp_type_gtkmenuitem=NULL;
 
+/*
+ * Type object for GtkMenuItem 
+ * all the instance of NspTypeGtkMenuItem share the same id. 
+ * nsp_type_gtkmenuitem: is an instance of NspTypeGtkMenuItem 
+ *    used for objects of GtkMenuItem type (i.e built with new_gtkmenuitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMenuItem *new_type_gtkmenuitem(type_mode mode)
 {
   NspTypeGtkMenuItem *type= NULL;
@@ -32951,7 +33721,7 @@ _wrap_gtkmenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 32955 "gtk.c"
+#line 33725 "gtk.c"
 
 
 static int _wrap_gtk_menu_item_set_submenu(NspGtkMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -33081,12 +33851,20 @@ static AttrTab gtkmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkmenushell.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMenuShell inherits from NspGtkContainer */ 
+/* 
+ * GtkMenuShell inherits from GtkContainer 
+ */
 
 int nsp_type_gtkmenushell_id=0;
 NspTypeGtkMenuShell *nsp_type_gtkmenushell=NULL;
 
+/*
+ * Type object for GtkMenuShell 
+ * all the instance of NspTypeGtkMenuShell share the same id. 
+ * nsp_type_gtkmenushell: is an instance of NspTypeGtkMenuShell 
+ *    used for objects of GtkMenuShell type (i.e built with new_gtkmenushell) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMenuShell *new_type_gtkmenushell(type_mode mode)
 {
   NspTypeGtkMenuShell *type= NULL;
@@ -33385,12 +34163,20 @@ static AttrTab gtkmenushell_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkmenutoolbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMenuToolButton inherits from NspGtkToolButton */ 
+/* 
+ * GtkMenuToolButton inherits from GtkToolButton 
+ */
 
 int nsp_type_gtkmenutoolbutton_id=0;
 NspTypeGtkMenuToolButton *nsp_type_gtkmenutoolbutton=NULL;
 
+/*
+ * Type object for GtkMenuToolButton 
+ * all the instance of NspTypeGtkMenuToolButton share the same id. 
+ * nsp_type_gtkmenutoolbutton: is an instance of NspTypeGtkMenuToolButton 
+ *    used for objects of GtkMenuToolButton type (i.e built with new_gtkmenutoolbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMenuToolButton *new_type_gtkmenutoolbutton(type_mode mode)
 {
   NspTypeGtkMenuToolButton *type= NULL;
@@ -33641,12 +34427,20 @@ static AttrTab gtkmenutoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkmessagedialog.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMessageDialog inherits from NspGtkDialog */ 
+/* 
+ * GtkMessageDialog inherits from GtkDialog 
+ */
 
 int nsp_type_gtkmessagedialog_id=0;
 NspTypeGtkMessageDialog *nsp_type_gtkmessagedialog=NULL;
 
+/*
+ * Type object for GtkMessageDialog 
+ * all the instance of NspTypeGtkMessageDialog share the same id. 
+ * nsp_type_gtkmessagedialog: is an instance of NspTypeGtkMessageDialog 
+ *    used for objects of GtkMessageDialog type (i.e built with new_gtkmessagedialog) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMessageDialog *new_type_gtkmessagedialog(type_mode mode)
 {
   NspTypeGtkMessageDialog *type= NULL;
@@ -33869,7 +34663,7 @@ _wrap_gtkmessagedialog_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 33873 "gtk.c"
+#line 34667 "gtk.c"
 
 
 static int _wrap_gtk_message_dialog_set_markup(NspGtkMessageDialog *self,Stack stack,int rhs,int opt,int lhs)
@@ -33923,12 +34717,20 @@ static AttrTab gtkmessagedialog_attrs[] = {
 #include "nsp/gtk/gtkmisc.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkMisc inherits from NspGtkWidget */ 
+/* 
+ * GtkMisc inherits from GtkWidget 
+ */
 
 int nsp_type_gtkmisc_id=0;
 NspTypeGtkMisc *nsp_type_gtkmisc=NULL;
 
+/*
+ * Type object for GtkMisc 
+ * all the instance of NspTypeGtkMisc share the same id. 
+ * nsp_type_gtkmisc: is an instance of NspTypeGtkMisc 
+ *    used for objects of GtkMisc type (i.e built with new_gtkmisc) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkMisc *new_type_gtkmisc(type_mode mode)
 {
   NspTypeGtkMisc *type= NULL;
@@ -34124,7 +34926,7 @@ _wrap_gtk_misc_get_alignment(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if ( nsp_move_doubles(stack,1,1,2,(double) xalign,(double) yalign) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34128 "gtk.c"
+#line 34930 "gtk.c"
 
 
 static int _wrap_gtk_misc_set_padding(NspGtkMisc *self,Stack stack,int rhs,int opt,int lhs)
@@ -34146,7 +34948,7 @@ _wrap_gtk_misc_get_padding(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) xpad,(double) ypad) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34150 "gtk.c"
+#line 34952 "gtk.c"
 
 
 static NspMethods gtkmisc_methods[] = {
@@ -34173,12 +34975,20 @@ static AttrTab gtkmisc_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtknotebook.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkNotebook inherits from NspGtkContainer */ 
+/* 
+ * GtkNotebook inherits from GtkContainer 
+ */
 
 int nsp_type_gtknotebook_id=0;
 NspTypeGtkNotebook *nsp_type_gtknotebook=NULL;
 
+/*
+ * Type object for GtkNotebook 
+ * all the instance of NspTypeGtkNotebook share the same id. 
+ * nsp_type_gtknotebook: is an instance of NspTypeGtkNotebook 
+ *    used for objects of GtkNotebook type (i.e built with new_gtknotebook) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkNotebook *new_type_gtknotebook(type_mode mode)
 {
   NspTypeGtkNotebook *type= NULL;
@@ -34724,7 +35534,7 @@ _wrap_gtk_notebook_query_tab_label_packing(NspGObject *self,Stack stack,int rhs,
   if ( nsp_move_doubles(stack,1,1,3,(double) expand,(double) fill, (double) pack_type) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 34728 "gtk.c"
+#line 35538 "gtk.c"
 
 
 static int _wrap_gtk_notebook_set_tab_label_packing(NspGtkNotebook *self,Stack stack,int rhs,int opt,int lhs)
@@ -34842,12 +35652,20 @@ static AttrTab gtknotebook_attrs[] = {
 #include "nsp/gtk/gtkobject.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkObject inherits from NspGObject */ 
+/* 
+ * GtkObject inherits from GObject 
+ */
 
 int nsp_type_gtkobject_id=0;
 NspTypeGtkObject *nsp_type_gtkobject=NULL;
 
+/*
+ * Type object for GtkObject 
+ * all the instance of NspTypeGtkObject share the same id. 
+ * nsp_type_gtkobject: is an instance of NspTypeGtkObject 
+ *    used for objects of GtkObject type (i.e built with new_gtkobject) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkObject *new_type_gtkobject(type_mode mode)
 {
   NspTypeGtkObject *type= NULL;
@@ -35080,12 +35898,21 @@ static AttrTab gtkobject_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkoldeditable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkOldEditable inherits from NspGtkWidget */ 
+/* 
+ * GtkOldEditable inherits from GtkWidget 
+ * and implements  GtkEditable
+ */
 
 int nsp_type_gtkoldeditable_id=0;
 NspTypeGtkOldEditable *nsp_type_gtkoldeditable=NULL;
 
+/*
+ * Type object for GtkOldEditable 
+ * all the instance of NspTypeGtkOldEditable share the same id. 
+ * nsp_type_gtkoldeditable: is an instance of NspTypeGtkOldEditable 
+ *    used for objects of GtkOldEditable type (i.e built with new_gtkoldeditable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkOldEditable *new_type_gtkoldeditable(type_mode mode)
 {
   NspTypeGtkOldEditable *type= NULL;
@@ -35304,12 +36131,20 @@ static AttrTab gtkoldeditable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkoptionmenu.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkOptionMenu inherits from NspGtkButton */ 
+/* 
+ * GtkOptionMenu inherits from GtkButton 
+ */
 
 int nsp_type_gtkoptionmenu_id=0;
 NspTypeGtkOptionMenu *nsp_type_gtkoptionmenu=NULL;
 
+/*
+ * Type object for GtkOptionMenu 
+ * all the instance of NspTypeGtkOptionMenu share the same id. 
+ * nsp_type_gtkoptionmenu: is an instance of NspTypeGtkOptionMenu 
+ *    used for objects of GtkOptionMenu type (i.e built with new_gtkoptionmenu) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkOptionMenu *new_type_gtkoptionmenu(type_mode mode)
 {
   NspTypeGtkOptionMenu *type= NULL;
@@ -35568,12 +36403,20 @@ static AttrTab gtkoptionmenu_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkpaned.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkPaned inherits from NspGtkContainer */ 
+/* 
+ * GtkPaned inherits from GtkContainer 
+ */
 
 int nsp_type_gtkpaned_id=0;
 NspTypeGtkPaned *nsp_type_gtkpaned=NULL;
 
+/*
+ * Type object for GtkPaned 
+ * all the instance of NspTypeGtkPaned share the same id. 
+ * nsp_type_gtkpaned: is an instance of NspTypeGtkPaned 
+ *    used for objects of GtkPaned type (i.e built with new_gtkpaned) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkPaned *new_type_gtkpaned(type_mode mode)
 {
   NspTypeGtkPaned *type= NULL;
@@ -35916,12 +36759,20 @@ static AttrTab gtkpaned_attrs[] = {
 #include "nsp/gtk/gtkplug.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkPlug inherits from NspGtkWindow */ 
+/* 
+ * GtkPlug inherits from GtkWindow 
+ */
 
 int nsp_type_gtkplug_id=0;
 NspTypeGtkPlug *nsp_type_gtkplug=NULL;
 
+/*
+ * Type object for GtkPlug 
+ * all the instance of NspTypeGtkPlug share the same id. 
+ * nsp_type_gtkplug: is an instance of NspTypeGtkPlug 
+ *    used for objects of GtkPlug type (i.e built with new_gtkplug) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkPlug *new_type_gtkplug(type_mode mode)
 {
   NspTypeGtkPlug *type= NULL;
@@ -36165,12 +37016,20 @@ static AttrTab gtkplug_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkpreview.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkPreview inherits from NspGtkWidget */ 
+/* 
+ * GtkPreview inherits from GtkWidget 
+ */
 
 int nsp_type_gtkpreview_id=0;
 NspTypeGtkPreview *nsp_type_gtkpreview=NULL;
 
+/*
+ * Type object for GtkPreview 
+ * all the instance of NspTypeGtkPreview share the same id. 
+ * nsp_type_gtkpreview: is an instance of NspTypeGtkPreview 
+ *    used for objects of GtkPreview type (i.e built with new_gtkpreview) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkPreview *new_type_gtkpreview(type_mode mode)
 {
   NspTypeGtkPreview *type= NULL;
@@ -36443,12 +37302,20 @@ static AttrTab gtkpreview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkprogress.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkProgress inherits from NspGtkWidget */ 
+/* 
+ * GtkProgress inherits from GtkWidget 
+ */
 
 int nsp_type_gtkprogress_id=0;
 NspTypeGtkProgress *nsp_type_gtkprogress=NULL;
 
+/*
+ * Type object for GtkProgress 
+ * all the instance of NspTypeGtkProgress share the same id. 
+ * nsp_type_gtkprogress: is an instance of NspTypeGtkProgress 
+ *    used for objects of GtkProgress type (i.e built with new_gtkprogress) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkProgress *new_type_gtkprogress(type_mode mode)
 {
   NspTypeGtkProgress *type= NULL;
@@ -36641,12 +37508,20 @@ static AttrTab gtkprogress_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkprogressbar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkProgressBar inherits from NspGtkProgress */ 
+/* 
+ * GtkProgressBar inherits from GtkProgress 
+ */
 
 int nsp_type_gtkprogressbar_id=0;
 NspTypeGtkProgressBar *nsp_type_gtkprogressbar=NULL;
 
+/*
+ * Type object for GtkProgressBar 
+ * all the instance of NspTypeGtkProgressBar share the same id. 
+ * nsp_type_gtkprogressbar: is an instance of NspTypeGtkProgressBar 
+ *    used for objects of GtkProgressBar type (i.e built with new_gtkprogressbar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkProgressBar *new_type_gtkprogressbar(type_mode mode)
 {
   NspTypeGtkProgressBar *type= NULL;
@@ -37001,12 +37876,20 @@ static AttrTab gtkprogressbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkradioaction.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRadioAction inherits from NspGtkToggleAction */ 
+/* 
+ * GtkRadioAction inherits from GtkToggleAction 
+ */
 
 int nsp_type_gtkradioaction_id=0;
 NspTypeGtkRadioAction *nsp_type_gtkradioaction=NULL;
 
+/*
+ * Type object for GtkRadioAction 
+ * all the instance of NspTypeGtkRadioAction share the same id. 
+ * nsp_type_gtkradioaction: is an instance of NspTypeGtkRadioAction 
+ *    used for objects of GtkRadioAction type (i.e built with new_gtkradioaction) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRadioAction *new_type_gtkradioaction(type_mode mode)
 {
   NspTypeGtkRadioAction *type= NULL;
@@ -37227,7 +38110,7 @@ static int _wrap_gtk_radio_action_set_group(NspGtkRadioAction *self,Stack stack,
   return 0;
 }
 
-#line 37231 "gtk.c"
+#line 38114 "gtk.c"
 
 
 #line 7109 "gtk.override"
@@ -37240,7 +38123,7 @@ static int _wrap_gtk_radio_action_get_group(NspGtkActionGroup *self,Stack stack,
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data), g_slist_free);
 }
 
-#line 37244 "gtk.c"
+#line 38127 "gtk.c"
 
 
 static int _wrap_gtk_radio_action_get_current_value(NspGtkRadioAction *self,Stack stack,int rhs,int opt,int lhs)
@@ -37269,7 +38152,7 @@ static int _wrap_gtk_radio_action_set_current_value(NspGtkRadioAction *self,Stac
 
 }
 
-#line 37273 "gtk.c"
+#line 38156 "gtk.c"
 
 
 static NspMethods gtkradioaction_methods[] = {
@@ -37296,12 +38179,20 @@ static AttrTab gtkradioaction_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkradiobutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRadioButton inherits from NspGtkCheckButton */ 
+/* 
+ * GtkRadioButton inherits from GtkCheckButton 
+ */
 
 int nsp_type_gtkradiobutton_id=0;
 NspTypeGtkRadioButton *nsp_type_gtkradiobutton=NULL;
 
+/*
+ * Type object for GtkRadioButton 
+ * all the instance of NspTypeGtkRadioButton share the same id. 
+ * nsp_type_gtkradiobutton: is an instance of NspTypeGtkRadioButton 
+ *    used for objects of GtkRadioButton type (i.e built with new_gtkradiobutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRadioButton *new_type_gtkradiobutton(type_mode mode)
 {
   NspTypeGtkRadioButton *type= NULL;
@@ -37524,7 +38415,7 @@ _wrap_gtkradiobutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 37528 "gtk.c"
+#line 38419 "gtk.c"
 
 
 #line 4487 "gtk.override"
@@ -37536,7 +38427,7 @@ _wrap_gtk_radio_button_get_group(NspGObject *self,Stack stack,int rhs,int opt,in
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_slist_free);
 }
 
-#line 37540 "gtk.c"
+#line 38431 "gtk.c"
 
 
 static NspMethods gtkradiobutton_methods[] = {
@@ -37560,12 +38451,20 @@ static AttrTab gtkradiobutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkradiomenuitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRadioMenuItem inherits from NspGtkCheckMenuItem */ 
+/* 
+ * GtkRadioMenuItem inherits from GtkCheckMenuItem 
+ */
 
 int nsp_type_gtkradiomenuitem_id=0;
 NspTypeGtkRadioMenuItem *nsp_type_gtkradiomenuitem=NULL;
 
+/*
+ * Type object for GtkRadioMenuItem 
+ * all the instance of NspTypeGtkRadioMenuItem share the same id. 
+ * nsp_type_gtkradiomenuitem: is an instance of NspTypeGtkRadioMenuItem 
+ *    used for objects of GtkRadioMenuItem type (i.e built with new_gtkradiomenuitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRadioMenuItem *new_type_gtkradiomenuitem(type_mode mode)
 {
   NspTypeGtkRadioMenuItem *type= NULL;
@@ -37788,7 +38687,7 @@ _wrap_gtkradiomenuitem_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 37792 "gtk.c"
+#line 38691 "gtk.c"
 
 
 static int _wrap_gtk_radio_menu_item_new_from_widget(NspGtkRadioMenuItem *self,Stack stack,int rhs,int opt,int lhs)
@@ -37866,12 +38765,20 @@ static AttrTab gtkradiomenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkradiotoolbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRadioToolButton inherits from NspGtkToggleToolButton */ 
+/* 
+ * GtkRadioToolButton inherits from GtkToggleToolButton 
+ */
 
 int nsp_type_gtkradiotoolbutton_id=0;
 NspTypeGtkRadioToolButton *nsp_type_gtkradiotoolbutton=NULL;
 
+/*
+ * Type object for GtkRadioToolButton 
+ * all the instance of NspTypeGtkRadioToolButton share the same id. 
+ * nsp_type_gtkradiotoolbutton: is an instance of NspTypeGtkRadioToolButton 
+ *    used for objects of GtkRadioToolButton type (i.e built with new_gtkradiotoolbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRadioToolButton *new_type_gtkradiotoolbutton(type_mode mode)
 {
   NspTypeGtkRadioToolButton *type= NULL;
@@ -38102,7 +39009,7 @@ _wrap_gtkradiotoolbutton_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 38106 "gtk.c"
+#line 39013 "gtk.c"
 
 
 static int _wrap_gtk_radio_tool_button_set_group(NspGtkRadioToolButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -38148,12 +39055,20 @@ static AttrTab gtkradiotoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkrange.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRange inherits from NspGtkWidget */ 
+/* 
+ * GtkRange inherits from GtkWidget 
+ */
 
 int nsp_type_gtkrange_id=0;
 NspTypeGtkRange *nsp_type_gtkrange=NULL;
 
+/*
+ * Type object for GtkRange 
+ * all the instance of NspTypeGtkRange share the same id. 
+ * nsp_type_gtkrange: is an instance of NspTypeGtkRange 
+ *    used for objects of GtkRange type (i.e built with new_gtkrange) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRange *new_type_gtkrange(type_mode mode)
 {
   NspTypeGtkRange *type= NULL;
@@ -38452,12 +39367,20 @@ static AttrTab gtkrange_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkrcstyle.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRcStyle inherits from NspGObject */ 
+/* 
+ * GtkRcStyle inherits from GObject 
+ */
 
 int nsp_type_gtkrcstyle_id=0;
 NspTypeGtkRcStyle *nsp_type_gtkrcstyle=NULL;
 
+/*
+ * Type object for GtkRcStyle 
+ * all the instance of NspTypeGtkRcStyle share the same id. 
+ * nsp_type_gtkrcstyle: is an instance of NspTypeGtkRcStyle 
+ *    used for objects of GtkRcStyle type (i.e built with new_gtkrcstyle) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRcStyle *new_type_gtkrcstyle(type_mode mode)
 {
   NspTypeGtkRcStyle *type= NULL;
@@ -38700,12 +39623,20 @@ static AttrTab gtkrcstyle_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkruler.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkRuler inherits from NspGtkWidget */ 
+/* 
+ * GtkRuler inherits from GtkWidget 
+ */
 
 int nsp_type_gtkruler_id=0;
 NspTypeGtkRuler *nsp_type_gtkruler=NULL;
 
+/*
+ * Type object for GtkRuler 
+ * all the instance of NspTypeGtkRuler share the same id. 
+ * nsp_type_gtkruler: is an instance of NspTypeGtkRuler 
+ *    used for objects of GtkRuler type (i.e built with new_gtkruler) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkRuler *new_type_gtkruler(type_mode mode)
 {
   NspTypeGtkRuler *type= NULL;
@@ -38934,7 +39865,7 @@ _wrap_gtk_ruler_get_range(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,4,(double) lower,(double) upper,(double) position,(double) max_size ) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 38938 "gtk.c"
+#line 39869 "gtk.c"
 
 
 static NspMethods gtkruler_methods[] = {
@@ -38963,12 +39894,20 @@ static AttrTab gtkruler_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkscale.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkScale inherits from NspGtkRange */ 
+/* 
+ * GtkScale inherits from GtkRange 
+ */
 
 int nsp_type_gtkscale_id=0;
 NspTypeGtkScale *nsp_type_gtkscale=NULL;
 
+/*
+ * Type object for GtkScale 
+ * all the instance of NspTypeGtkScale share the same id. 
+ * nsp_type_gtkscale: is an instance of NspTypeGtkScale 
+ *    used for objects of GtkScale type (i.e built with new_gtkscale) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkScale *new_type_gtkscale(type_mode mode)
 {
   NspTypeGtkScale *type= NULL;
@@ -39247,12 +40186,20 @@ static AttrTab gtkscale_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkscrollbar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkScrollbar inherits from NspGtkRange */ 
+/* 
+ * GtkScrollbar inherits from GtkRange 
+ */
 
 int nsp_type_gtkscrollbar_id=0;
 NspTypeGtkScrollbar *nsp_type_gtkscrollbar=NULL;
 
+/*
+ * Type object for GtkScrollbar 
+ * all the instance of NspTypeGtkScrollbar share the same id. 
+ * nsp_type_gtkscrollbar: is an instance of NspTypeGtkScrollbar 
+ *    used for objects of GtkScrollbar type (i.e built with new_gtkscrollbar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkScrollbar *new_type_gtkscrollbar(type_mode mode)
 {
   NspTypeGtkScrollbar *type= NULL;
@@ -39445,12 +40392,20 @@ static AttrTab gtkscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkscrolledwindow.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkScrolledWindow inherits from NspGtkBin */ 
+/* 
+ * GtkScrolledWindow inherits from GtkBin 
+ */
 
 int nsp_type_gtkscrolledwindow_id=0;
 NspTypeGtkScrolledWindow *nsp_type_gtkscrolledwindow=NULL;
 
+/*
+ * Type object for GtkScrolledWindow 
+ * all the instance of NspTypeGtkScrolledWindow share the same id. 
+ * nsp_type_gtkscrolledwindow: is an instance of NspTypeGtkScrolledWindow 
+ *    used for objects of GtkScrolledWindow type (i.e built with new_gtkscrolledwindow) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkScrolledWindow *new_type_gtkscrolledwindow(type_mode mode)
 {
   NspTypeGtkScrolledWindow *type= NULL;
@@ -39821,12 +40776,20 @@ static AttrTab gtkscrolledwindow_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkseparator.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSeparator inherits from NspGtkWidget */ 
+/* 
+ * GtkSeparator inherits from GtkWidget 
+ */
 
 int nsp_type_gtkseparator_id=0;
 NspTypeGtkSeparator *nsp_type_gtkseparator=NULL;
 
+/*
+ * Type object for GtkSeparator 
+ * all the instance of NspTypeGtkSeparator share the same id. 
+ * nsp_type_gtkseparator: is an instance of NspTypeGtkSeparator 
+ *    used for objects of GtkSeparator type (i.e built with new_gtkseparator) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSeparator *new_type_gtkseparator(type_mode mode)
 {
   NspTypeGtkSeparator *type= NULL;
@@ -40019,12 +40982,20 @@ static AttrTab gtkseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkseparatormenuitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSeparatorMenuItem inherits from NspGtkMenuItem */ 
+/* 
+ * GtkSeparatorMenuItem inherits from GtkMenuItem 
+ */
 
 int nsp_type_gtkseparatormenuitem_id=0;
 NspTypeGtkSeparatorMenuItem *nsp_type_gtkseparatormenuitem=NULL;
 
+/*
+ * Type object for GtkSeparatorMenuItem 
+ * all the instance of NspTypeGtkSeparatorMenuItem share the same id. 
+ * nsp_type_gtkseparatormenuitem: is an instance of NspTypeGtkSeparatorMenuItem 
+ *    used for objects of GtkSeparatorMenuItem type (i.e built with new_gtkseparatormenuitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSeparatorMenuItem *new_type_gtkseparatormenuitem(type_mode mode)
 {
   NspTypeGtkSeparatorMenuItem *type= NULL;
@@ -40231,12 +41202,20 @@ static AttrTab gtkseparatormenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkseparatortoolitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSeparatorToolItem inherits from NspGtkToolItem */ 
+/* 
+ * GtkSeparatorToolItem inherits from GtkToolItem 
+ */
 
 int nsp_type_gtkseparatortoolitem_id=0;
 NspTypeGtkSeparatorToolItem *nsp_type_gtkseparatortoolitem=NULL;
 
+/*
+ * Type object for GtkSeparatorToolItem 
+ * all the instance of NspTypeGtkSeparatorToolItem share the same id. 
+ * nsp_type_gtkseparatortoolitem: is an instance of NspTypeGtkSeparatorToolItem 
+ *    used for objects of GtkSeparatorToolItem type (i.e built with new_gtkseparatortoolitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSeparatorToolItem *new_type_gtkseparatortoolitem(type_mode mode)
 {
   NspTypeGtkSeparatorToolItem *type= NULL;
@@ -40466,12 +41445,20 @@ static AttrTab gtkseparatortoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtksettings.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSettings inherits from NspGObject */ 
+/* 
+ * GtkSettings inherits from GObject 
+ */
 
 int nsp_type_gtksettings_id=0;
 NspTypeGtkSettings *nsp_type_gtksettings=NULL;
 
+/*
+ * Type object for GtkSettings 
+ * all the instance of NspTypeGtkSettings share the same id. 
+ * nsp_type_gtksettings: is an instance of NspTypeGtkSettings 
+ *    used for objects of GtkSettings type (i.e built with new_gtksettings) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSettings *new_type_gtksettings(type_mode mode)
 {
   NspTypeGtkSettings *type= NULL;
@@ -40700,12 +41687,20 @@ static AttrTab gtksettings_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtksizegroup.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSizeGroup inherits from NspGObject */ 
+/* 
+ * GtkSizeGroup inherits from GObject 
+ */
 
 int nsp_type_gtksizegroup_id=0;
 NspTypeGtkSizeGroup *nsp_type_gtksizegroup=NULL;
 
+/*
+ * Type object for GtkSizeGroup 
+ * all the instance of NspTypeGtkSizeGroup share the same id. 
+ * nsp_type_gtksizegroup: is an instance of NspTypeGtkSizeGroup 
+ *    used for objects of GtkSizeGroup type (i.e built with new_gtksizegroup) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSizeGroup *new_type_gtksizegroup(type_mode mode)
 {
   NspTypeGtkSizeGroup *type= NULL;
@@ -40982,12 +41977,20 @@ static AttrTab gtksizegroup_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtksocket.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSocket inherits from NspGtkContainer */ 
+/* 
+ * GtkSocket inherits from GtkContainer 
+ */
 
 int nsp_type_gtksocket_id=0;
 NspTypeGtkSocket *nsp_type_gtksocket=NULL;
 
+/*
+ * Type object for GtkSocket 
+ * all the instance of NspTypeGtkSocket share the same id. 
+ * nsp_type_gtksocket: is an instance of NspTypeGtkSocket 
+ *    used for objects of GtkSocket type (i.e built with new_gtksocket) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSocket *new_type_gtksocket(type_mode mode)
 {
   NspTypeGtkSocket *type= NULL;
@@ -41228,12 +42231,20 @@ static AttrTab gtksocket_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkspinbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkSpinButton inherits from NspGtkEntry */ 
+/* 
+ * GtkSpinButton inherits from GtkEntry 
+ */
 
 int nsp_type_gtkspinbutton_id=0;
 NspTypeGtkSpinButton *nsp_type_gtkspinbutton=NULL;
 
+/*
+ * Type object for GtkSpinButton 
+ * all the instance of NspTypeGtkSpinButton share the same id. 
+ * nsp_type_gtkspinbutton: is an instance of NspTypeGtkSpinButton 
+ *    used for objects of GtkSpinButton type (i.e built with new_gtkspinbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkSpinButton *new_type_gtkspinbutton(type_mode mode)
 {
   NspTypeGtkSpinButton *type= NULL;
@@ -41526,7 +42537,7 @@ _wrap_gtk_spin_button_get_increments(NspGObject *self,Stack stack,int rhs,int op
   return 1; 
 
 }
-#line 41530 "gtk.c"
+#line 42541 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_set_range(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -41550,7 +42561,7 @@ _wrap_gtk_spin_button_get_range(NspGObject *self,Stack stack,int rhs,int opt,int
     return RET_BUG; 
   return 1; 
 }
-#line 41554 "gtk.c"
+#line 42565 "gtk.c"
 
 
 static int _wrap_gtk_spin_button_get_value(NspGtkSpinButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -41710,12 +42721,20 @@ static AttrTab gtkspinbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkstatusbar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkStatusbar inherits from NspGtkHBox */ 
+/* 
+ * GtkStatusbar inherits from GtkHBox 
+ */
 
 int nsp_type_gtkstatusbar_id=0;
 NspTypeGtkStatusbar *nsp_type_gtkstatusbar=NULL;
 
+/*
+ * Type object for GtkStatusbar 
+ * all the instance of NspTypeGtkStatusbar share the same id. 
+ * nsp_type_gtkstatusbar: is an instance of NspTypeGtkStatusbar 
+ *    used for objects of GtkStatusbar type (i.e built with new_gtkstatusbar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkStatusbar *new_type_gtkstatusbar(type_mode mode)
 {
   NspTypeGtkStatusbar *type= NULL;
@@ -41989,12 +43008,20 @@ static AttrTab gtkstatusbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkstyle.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkStyle inherits from NspGObject */ 
+/* 
+ * GtkStyle inherits from GObject 
+ */
 
 int nsp_type_gtkstyle_id=0;
 NspTypeGtkStyle *nsp_type_gtkstyle=NULL;
 
+/*
+ * Type object for GtkStyle 
+ * all the instance of NspTypeGtkStyle share the same id. 
+ * nsp_type_gtkstyle: is an instance of NspTypeGtkStyle 
+ *    used for objects of GtkStyle type (i.e built with new_gtkstyle) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkStyle *new_type_gtkstyle(type_mode mode)
 {
   NspTypeGtkStyle *type= NULL;
@@ -42746,7 +43773,7 @@ _wrap_gtk_paint_polygon(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(points);
   return 0;
 }
-#line 42750 "gtk.c"
+#line 43777 "gtk.c"
 
 
 static int _wrap_gtk_paint_arrow(NspGtkStyle *self,Stack stack,int rhs,int opt,int lhs)
@@ -43578,7 +44605,7 @@ _wrap_gtk_style__get_fg(NspGObject *self, char *attr)
   Scierror("Use method .get_fg[pos]\n");
   return NULL;
 }
-#line 43582 "gtk.c"
+#line 44609 "gtk.c"
 #line 215 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
@@ -43586,7 +44613,7 @@ _wrap_gtk_style__get_bg(NspGObject *self, char *attr)
   Scierror("Use method .get_bg[pos]\n");
   return NULL;
 }
-#line 43590 "gtk.c"
+#line 44617 "gtk.c"
 #line 223 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light(NspGObject *self, char *attr)
@@ -43594,7 +44621,7 @@ _wrap_gtk_style__get_light(NspGObject *self, char *attr)
   Scierror("Use method .get_light[pos]\n");
   return NULL;
 }
-#line 43598 "gtk.c"
+#line 44625 "gtk.c"
 #line 231 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
@@ -43602,7 +44629,7 @@ _wrap_gtk_style__get_dark(NspGObject *self, char *attr)
   Scierror("Use method .get_dark[pos]\n");
   return NULL;
 }
-#line 43606 "gtk.c"
+#line 44633 "gtk.c"
 #line 239 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
@@ -43610,7 +44637,7 @@ _wrap_gtk_style__get_mid(NspGObject *self, char *attr)
   Scierror("Use method .get_mid[pos]\n");
   return NULL;
 }
-#line 43614 "gtk.c"
+#line 44641 "gtk.c"
 #line 247 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text(NspGObject *self, char *attr)
@@ -43618,7 +44645,7 @@ _wrap_gtk_style__get_text(NspGObject *self, char *attr)
   Scierror("Use method .get_text[pos]\n");
   return NULL;
 }
-#line 43622 "gtk.c"
+#line 44649 "gtk.c"
 #line 255 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base(NspGObject *self, char *attr)
@@ -43626,7 +44653,7 @@ _wrap_gtk_style__get_base(NspGObject *self, char *attr)
   Scierror("Use method .get_base[pos]\n");
   return NULL;
 }
-#line 43630 "gtk.c"
+#line 44657 "gtk.c"
 #line 263 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
@@ -43634,7 +44661,7 @@ _wrap_gtk_style__get_text_aa(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa[pos]\n");
   return NULL;
 }
-#line 43638 "gtk.c"
+#line 44665 "gtk.c"
 #line 271 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white(NspGObject *self, char *attr)
@@ -43653,7 +44680,7 @@ _wrap_gtk_style__set_white(NspGObject *self, char *attr, NspObject *value)
   style->white = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 43657 "gtk.c"
+#line 44684 "gtk.c"
 #line 290 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black(NspGObject *self, char *attr)
@@ -43672,7 +44699,7 @@ _wrap_gtk_style__set_black(NspGObject *self, char *attr, NspObject *value)
   style->black = *nspg_boxed_get(value, GdkColor);
   return 0;
 }
-#line 43676 "gtk.c"
+#line 44703 "gtk.c"
 static NspObject *_wrap_gtk_style__get_font_desc(NspObject *self,char *attr)
 {
   PangoFontDescription *ret;
@@ -43702,7 +44729,7 @@ _wrap_gtk_style__get_fg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_fg_gc[pos]\n");
   return NULL;
 }
-#line 43706 "gtk.c"
+#line 44733 "gtk.c"
 #line 317 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
@@ -43710,7 +44737,7 @@ _wrap_gtk_style__get_bg_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_gc[pos]\n");
   return NULL;
 }
-#line 43714 "gtk.c"
+#line 44741 "gtk.c"
 #line 325 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
@@ -43718,7 +44745,7 @@ _wrap_gtk_style__get_light_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_light_gc[pos]\n");
   return NULL;
 }
-#line 43722 "gtk.c"
+#line 44749 "gtk.c"
 #line 333 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
@@ -43726,7 +44753,7 @@ _wrap_gtk_style__get_dark_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_dark_gc[pos]\n");
   return NULL;
 }
-#line 43730 "gtk.c"
+#line 44757 "gtk.c"
 #line 341 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
@@ -43734,7 +44761,7 @@ _wrap_gtk_style__get_mid_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_mid_gc[pos]\n");
   return NULL;
 }
-#line 43738 "gtk.c"
+#line 44765 "gtk.c"
 #line 349 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
@@ -43742,7 +44769,7 @@ _wrap_gtk_style__get_text_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_gc[pos]\n");
   return NULL;
 }
-#line 43746 "gtk.c"
+#line 44773 "gtk.c"
 #line 357 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
@@ -43750,7 +44777,7 @@ _wrap_gtk_style__get_base_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_base_gc[pos]\n");
   return NULL;
 }
-#line 43754 "gtk.c"
+#line 44781 "gtk.c"
 #line 365 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
@@ -43758,7 +44785,7 @@ _wrap_gtk_style__get_text_aa_gc(NspGObject *self, char *attr)
   Scierror("Use method .get_text_aa_gc[pos]\n");
   return NULL;
 }
-#line 43762 "gtk.c"
+#line 44789 "gtk.c"
 #line 373 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_white_gc(NspGObject *self, char *attr)
@@ -43777,7 +44804,7 @@ _wrap_gtk_style__set_white_gc(NspGObject *self, char *attr, NspObject *value)
   style->white_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 43781 "gtk.c"
+#line 44808 "gtk.c"
 #line 392 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_black_gc(NspGObject *self, char *attr)
@@ -43796,7 +44823,7 @@ _wrap_gtk_style__set_black_gc(NspGObject *self, char *attr, NspObject *value)
   style->black_gc = GDK_GC(nspgobject_get(value));
   return 0;
 }
-#line 43800 "gtk.c"
+#line 44827 "gtk.c"
 #line 411 "gtk.override"
 static NspObject *
 _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
@@ -43804,7 +44831,7 @@ _wrap_gtk_style__get_bg_pixmap(NspGObject *self, char *attr)
   Scierror("Use method .get_bg_pixmap[pos]\n");
   return NULL;
 }
-#line 43808 "gtk.c"
+#line 44835 "gtk.c"
 static AttrTab gtkstyle_attrs[] = {
   { "fg", (attr_get_function *)_wrap_gtk_style__get_fg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
   { "bg", (attr_get_function *)_wrap_gtk_style__get_bg, (attr_set_function *)int_set_failed,(attr_get_object_function *)int_get_object_failed },
@@ -43843,12 +44870,20 @@ static AttrTab gtkstyle_attrs[] = {
 #include "nsp/gtk/gtktable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTable inherits from NspGtkContainer */ 
+/* 
+ * GtkTable inherits from GtkContainer 
+ */
 
 int nsp_type_gtktable_id=0;
 NspTypeGtkTable *nsp_type_gtktable=NULL;
 
+/*
+ * Type object for GtkTable 
+ * all the instance of NspTypeGtkTable share the same id. 
+ * nsp_type_gtktable: is an instance of NspTypeGtkTable 
+ *    used for objects of GtkTable type (i.e built with new_gtktable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTable *new_type_gtktable(type_mode mode)
 {
   NspTypeGtkTable *type= NULL;
@@ -44209,12 +45244,20 @@ static AttrTab gtktable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktearoffmenuitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTearoffMenuItem inherits from NspGtkMenuItem */ 
+/* 
+ * GtkTearoffMenuItem inherits from GtkMenuItem 
+ */
 
 int nsp_type_gtktearoffmenuitem_id=0;
 NspTypeGtkTearoffMenuItem *nsp_type_gtktearoffmenuitem=NULL;
 
+/*
+ * Type object for GtkTearoffMenuItem 
+ * all the instance of NspTypeGtkTearoffMenuItem share the same id. 
+ * nsp_type_gtktearoffmenuitem: is an instance of NspTypeGtkTearoffMenuItem 
+ *    used for objects of GtkTearoffMenuItem type (i.e built with new_gtktearoffmenuitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTearoffMenuItem *new_type_gtktearoffmenuitem(type_mode mode)
 {
   NspTypeGtkTearoffMenuItem *type= NULL;
@@ -44421,12 +45464,20 @@ static AttrTab gtktearoffmenuitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktextbuffer.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextBuffer inherits from NspGObject */ 
+/* 
+ * GtkTextBuffer inherits from GObject 
+ */
 
 int nsp_type_gtktextbuffer_id=0;
 NspTypeGtkTextBuffer *nsp_type_gtktextbuffer=NULL;
 
+/*
+ * Type object for GtkTextBuffer 
+ * all the instance of NspTypeGtkTextBuffer share the same id. 
+ * nsp_type_gtktextbuffer: is an instance of NspTypeGtkTextBuffer 
+ *    used for objects of GtkTextBuffer type (i.e built with new_gtktextbuffer) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextBuffer *new_type_gtktextbuffer(type_mode mode)
 {
   NspTypeGtkTextBuffer *type= NULL;
@@ -44668,7 +45719,7 @@ _wrap_gtk_text_buffer_set_text(NspGObject *self,Stack stack,int rhs,int opt,int 
   gtk_text_buffer_set_text(GTK_TEXT_BUFFER(self->obj), text, strlen(text));
   return 0;
 }
-#line 44672 "gtk.c"
+#line 45723 "gtk.c"
 
 
 #line 5867 "gtk.override"
@@ -44685,7 +45736,7 @@ _wrap_gtk_text_buffer_insert(NspGObject *self,Stack stack,int rhs,int opt,int lh
   gtk_text_buffer_insert(GTK_TEXT_BUFFER(self->obj), iter, text,strlen(text));
   return 0;
 }
-#line 44689 "gtk.c"
+#line 45740 "gtk.c"
 
 
 #line 5882 "gtk.override"
@@ -44699,7 +45750,7 @@ _wrap_gtk_text_buffer_insert_at_cursor(NspGObject *self,Stack stack,int rhs,int 
   gtk_text_buffer_insert_at_cursor(GTK_TEXT_BUFFER(self->obj), text,strlen(text));
   return 0;
 }
-#line 44703 "gtk.c"
+#line 45754 "gtk.c"
 
 
 #line 5894 "gtk.override"
@@ -44719,7 +45770,7 @@ _wrap_gtk_text_buffer_insert_interactive(NspGObject *self,Stack stack,int rhs,in
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 44723 "gtk.c"
+#line 45774 "gtk.c"
 
 
 #line 5912 "gtk.override"
@@ -44734,7 +45785,7 @@ _wrap_gtk_text_buffer_insert_interactive_at_cursor(NspGObject *self,Stack stack,
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 44738 "gtk.c"
+#line 45789 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_insert_range(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -44827,7 +45878,7 @@ _wrap_gtk_text_buffer_insert_with_tags(NspGObject *self,Stack stack,int rhs,int 
     }
   return 0;
 }
-#line 44831 "gtk.c"
+#line 45882 "gtk.c"
 
 
 #line 5623 "gtk.override"
@@ -44862,7 +45913,7 @@ _wrap_gtk_text_buffer_insert_with_tags_by_name(NspGObject *self,Stack stack,int 
     }
   return 0;
 }
-#line 44866 "gtk.c"
+#line 45917 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45343,7 +46394,7 @@ _wrap_gtk_text_buffer_create_tag(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45347 "gtk.c"
+#line 46398 "gtk.c"
 
 
 #line 5710 "gtk.override"
@@ -45363,7 +46414,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_offset(NspGObject *self,Stack stack,int r
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45367 "gtk.c"
+#line 46418 "gtk.c"
 
 
 #line 5728 "gtk.override"
@@ -45383,7 +46434,7 @@ _wrap_gtk_text_buffer_get_iter_at_line_index(NspGObject *self,Stack stack,int rh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45387 "gtk.c"
+#line 46438 "gtk.c"
 
 
 #line 5746 "gtk.override"
@@ -45402,7 +46453,7 @@ _wrap_gtk_text_buffer_get_iter_at_offset(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45406 "gtk.c"
+#line 46457 "gtk.c"
 
 
 #line 5763 "gtk.override"
@@ -45420,7 +46471,7 @@ _wrap_gtk_text_buffer_get_iter_at_line(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45424 "gtk.c"
+#line 46475 "gtk.c"
 
 
 #line 5779 "gtk.override"
@@ -45434,7 +46485,7 @@ _wrap_gtk_text_buffer_get_start_iter(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45438 "gtk.c"
+#line 46489 "gtk.c"
 
 
 #line 5791 "gtk.override"
@@ -45448,7 +46499,7 @@ _wrap_gtk_text_buffer_get_end_iter(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45452 "gtk.c"
+#line 46503 "gtk.c"
 
 
 #line 5803 "gtk.override"
@@ -45468,7 +46519,7 @@ _wrap_gtk_text_buffer_get_bounds(NspGObject *self,Stack stack,int rhs,int opt,in
   MoveObj(stack,2,ret2);
   return 2;
 }
-#line 45472 "gtk.c"
+#line 46523 "gtk.c"
 
 
 #line 5821 "gtk.override"
@@ -45486,7 +46537,7 @@ _wrap_gtk_text_buffer_get_iter_at_mark(NspGObject *self,Stack stack,int rhs,int 
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 45490 "gtk.c"
+#line 46541 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_get_iter_at_child_anchor(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45541,7 +46592,7 @@ _wrap_gtk_text_buffer_get_selection_bounds(NspGObject *self,Stack stack,int rhs,
   MoveObj(stack,1,ret2);
   return 2;
 }
-#line 45545 "gtk.c"
+#line 46596 "gtk.c"
 
 
 static int _wrap_gtk_text_buffer_delete_selection(NspGtkTextBuffer *self,Stack stack,int rhs,int opt,int lhs)
@@ -45667,12 +46718,20 @@ static AttrTab gtktextbuffer_attrs[] = {
 #include "nsp/gtk/gtktextchildanchor.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextChildAnchor inherits from NspGObject */ 
+/* 
+ * GtkTextChildAnchor inherits from GObject 
+ */
 
 int nsp_type_gtktextchildanchor_id=0;
 NspTypeGtkTextChildAnchor *nsp_type_gtktextchildanchor=NULL;
 
+/*
+ * Type object for GtkTextChildAnchor 
+ * all the instance of NspTypeGtkTextChildAnchor share the same id. 
+ * nsp_type_gtktextchildanchor: is an instance of NspTypeGtkTextChildAnchor 
+ *    used for objects of GtkTextChildAnchor type (i.e built with new_gtktextchildanchor) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextChildAnchor *new_type_gtktextchildanchor(type_mode mode)
 {
   NspTypeGtkTextChildAnchor *type= NULL;
@@ -45872,7 +46931,7 @@ _wrap_gtk_text_child_anchor_get_widgets(NspGObject *self,Stack stack,int rhs,int
   list = gtk_text_child_anchor_get_widgets(GTK_TEXT_CHILD_ANCHOR(self->obj));
   NSP_LIST_FROM_GLIST(list,nspgobject_new("lel",(GObject *)tmp->data),g_list_free);
 }
-#line 45876 "gtk.c"
+#line 46935 "gtk.c"
 
 
 static int _wrap_gtk_text_child_anchor_get_deleted(NspGtkTextChildAnchor *self,Stack stack,int rhs,int opt,int lhs)
@@ -45905,12 +46964,20 @@ static AttrTab gtktextchildanchor_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktextmark.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextMark inherits from NspGObject */ 
+/* 
+ * GtkTextMark inherits from GObject 
+ */
 
 int nsp_type_gtktextmark_id=0;
 NspTypeGtkTextMark *nsp_type_gtktextmark=NULL;
 
+/*
+ * Type object for GtkTextMark 
+ * all the instance of NspTypeGtkTextMark share the same id. 
+ * nsp_type_gtktextmark: is an instance of NspTypeGtkTextMark 
+ *    used for objects of GtkTextMark type (i.e built with new_gtktextmark) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextMark *new_type_gtktextmark(type_mode mode)
 {
   NspTypeGtkTextMark *type= NULL;
@@ -46165,12 +47232,20 @@ static AttrTab gtktextmark_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktexttag.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextTag inherits from NspGObject */ 
+/* 
+ * GtkTextTag inherits from GObject 
+ */
 
 int nsp_type_gtktexttag_id=0;
 NspTypeGtkTextTag *nsp_type_gtktexttag=NULL;
 
+/*
+ * Type object for GtkTextTag 
+ * all the instance of NspTypeGtkTextTag share the same id. 
+ * nsp_type_gtktexttag: is an instance of NspTypeGtkTextTag 
+ *    used for objects of GtkTextTag type (i.e built with new_gtktexttag) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextTag *new_type_gtktexttag(type_mode mode)
 {
   NspTypeGtkTextTag *type= NULL;
@@ -46432,12 +47507,20 @@ static AttrTab gtktexttag_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktexttagtable.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextTagTable inherits from NspGObject */ 
+/* 
+ * GtkTextTagTable inherits from GObject 
+ */
 
 int nsp_type_gtktexttagtable_id=0;
 NspTypeGtkTextTagTable *nsp_type_gtktexttagtable=NULL;
 
+/*
+ * Type object for GtkTextTagTable 
+ * all the instance of NspTypeGtkTextTagTable share the same id. 
+ * nsp_type_gtktexttagtable: is an instance of NspTypeGtkTextTagTable 
+ *    used for objects of GtkTextTagTable type (i.e built with new_gtktexttagtable) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextTagTable *new_type_gtktexttagtable(type_mode mode)
 {
   NspTypeGtkTextTagTable *type= NULL;
@@ -46692,12 +47775,20 @@ static AttrTab gtktexttagtable_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktextview.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTextView inherits from NspGtkContainer */ 
+/* 
+ * GtkTextView inherits from GtkContainer 
+ */
 
 int nsp_type_gtktextview_id=0;
 NspTypeGtkTextView *nsp_type_gtktextview=NULL;
 
+/*
+ * Type object for GtkTextView 
+ * all the instance of NspTypeGtkTextView share the same id. 
+ * nsp_type_gtktextview: is an instance of NspTypeGtkTextView 
+ *    used for objects of GtkTextView type (i.e built with new_gtktextview) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTextView *new_type_gtktextview(type_mode mode)
 {
   NspTypeGtkTextView *type= NULL;
@@ -47002,7 +48093,7 @@ _wrap_gtk_text_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47006 "gtk.c"
+#line 48097 "gtk.c"
 
 
 static int _wrap_gtk_text_view_set_cursor_visible(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47041,7 +48132,7 @@ _wrap_gtk_text_view_get_iter_location(NspGObject *self,Stack stack,int rhs,int o
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47045 "gtk.c"
+#line 48136 "gtk.c"
 
 
 #line 6657 "gtk.override"
@@ -47060,7 +48151,7 @@ _wrap_gtk_text_view_get_iter_at_location(NspGObject *self,Stack stack,int rhs,in
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 47064 "gtk.c"
+#line 48155 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_iter_at_position(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47098,7 +48189,7 @@ _wrap_gtk_text_view_get_line_yrange(NspGObject *self,Stack stack,int rhs,int opt
     return RET_BUG; 
   return 1; 
 }
-#line 47102 "gtk.c"
+#line 48193 "gtk.c"
 
 
 #line 6621 "gtk.override"
@@ -47117,7 +48208,7 @@ _wrap_gtk_text_view_get_line_at_y(NspGObject *self,Stack stack,int rhs,int opt,i
 		 (NspObject *) gboxed_create(NVOID,GTK_TYPE_TEXT_ITER, &iter,TRUE, TRUE, NULL),
 		 line_top);
 }
-#line 47121 "gtk.c"
+#line 48212 "gtk.c"
 
 
 #line 5948 "gtk.override"
@@ -47139,7 +48230,7 @@ _wrap_gtk_text_view_buffer_to_window_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) window_x,(double) window_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47143 "gtk.c"
+#line 48234 "gtk.c"
 
 
 #line 5968 "gtk.override"
@@ -47161,7 +48252,7 @@ _wrap_gtk_text_view_window_to_buffer_coords(NspGObject *self,Stack stack,int rhs
   if ( nsp_move_doubles(stack,1,1,2,(double) buffer_x,(double) buffer_y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 47165 "gtk.c"
+#line 48256 "gtk.c"
 
 
 static int _wrap_gtk_text_view_get_window(NspGtkTextView *self,Stack stack,int rhs,int opt,int lhs)
@@ -47667,12 +48758,20 @@ static AttrTab gtktextview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktoggleaction.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkToggleAction inherits from NspGtkAction */ 
+/* 
+ * GtkToggleAction inherits from GtkAction 
+ */
 
 int nsp_type_gtktoggleaction_id=0;
 NspTypeGtkToggleAction *nsp_type_gtktoggleaction=NULL;
 
+/*
+ * Type object for GtkToggleAction 
+ * all the instance of NspTypeGtkToggleAction share the same id. 
+ * nsp_type_gtktoggleaction: is an instance of NspTypeGtkToggleAction 
+ *    used for objects of GtkToggleAction type (i.e built with new_gtktoggleaction) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkToggleAction *new_type_gtktoggleaction(type_mode mode)
 {
   NspTypeGtkToggleAction *type= NULL;
@@ -47930,12 +49029,20 @@ static AttrTab gtktoggleaction_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktogglebutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkToggleButton inherits from NspGtkButton */ 
+/* 
+ * GtkToggleButton inherits from GtkButton 
+ */
 
 int nsp_type_gtktogglebutton_id=0;
 NspTypeGtkToggleButton *nsp_type_gtktogglebutton=NULL;
 
+/*
+ * Type object for GtkToggleButton 
+ * all the instance of NspTypeGtkToggleButton share the same id. 
+ * nsp_type_gtktogglebutton: is an instance of NspTypeGtkToggleButton 
+ *    used for objects of GtkToggleButton type (i.e built with new_gtktogglebutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkToggleButton *new_type_gtktogglebutton(type_mode mode)
 {
   NspTypeGtkToggleButton *type= NULL;
@@ -48143,7 +49250,7 @@ _wrap_gtktogglebutton_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 48147 "gtk.c"
+#line 49254 "gtk.c"
 
 
 static int _wrap_gtk_toggle_button_set_mode(NspGtkToggleButton *self,Stack stack,int rhs,int opt,int lhs)
@@ -48254,12 +49361,20 @@ static AttrTab gtktogglebutton_attrs[] = {
 #include "nsp/gtk/gtktoggletoolbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkToggleToolButton inherits from NspGtkToolButton */ 
+/* 
+ * GtkToggleToolButton inherits from GtkToolButton 
+ */
 
 int nsp_type_gtktoggletoolbutton_id=0;
 NspTypeGtkToggleToolButton *nsp_type_gtktoggletoolbutton=NULL;
 
+/*
+ * Type object for GtkToggleToolButton 
+ * all the instance of NspTypeGtkToggleToolButton share the same id. 
+ * nsp_type_gtktoggletoolbutton: is an instance of NspTypeGtkToggleToolButton 
+ *    used for objects of GtkToggleToolButton type (i.e built with new_gtktoggletoolbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkToggleToolButton *new_type_gtktoggletoolbutton(type_mode mode)
 {
   NspTypeGtkToggleToolButton *type= NULL;
@@ -48489,12 +49604,20 @@ static AttrTab gtktoggletoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktoolbar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkToolbar inherits from NspGtkContainer */ 
+/* 
+ * GtkToolbar inherits from GtkContainer 
+ */
 
 int nsp_type_gtktoolbar_id=0;
 NspTypeGtkToolbar *nsp_type_gtktoolbar=NULL;
 
+/*
+ * Type object for GtkToolbar 
+ * all the instance of NspTypeGtkToolbar share the same id. 
+ * nsp_type_gtktoolbar: is an instance of NspTypeGtkToolbar 
+ *    used for objects of GtkToolbar type (i.e built with new_gtktoolbar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkToolbar *new_type_gtktoolbar(type_mode mode)
 {
   NspTypeGtkToolbar *type= NULL;
@@ -48865,7 +49988,7 @@ _wrap_gtk_toolbar_append_item(NspGObject *self,Stack stack,int rhs,int opt,int l
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_append_item);
 }
 
-#line 48869 "gtk.c"
+#line 49992 "gtk.c"
 
 
 #line 4821 "gtk.override"
@@ -48875,7 +49998,7 @@ _wrap_gtk_toolbar_prepend_item(NspGObject *self,Stack stack,int rhs,int opt,int 
 {
   return _wrap_gtk_toolbar_prepend_or_append_item(self,stack,rhs,opt,lhs,gtk_toolbar_prepend_item);
 }
-#line 48879 "gtk.c"
+#line 50002 "gtk.c"
 
 
 #line 4829 "gtk.override"
@@ -48910,7 +50033,7 @@ _wrap_gtk_toolbar_insert_stock(NspGObject *self,Stack stack,int rhs,int opt,int 
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,TRUE,ret,callback,params);
 }
-#line 48914 "gtk.c"
+#line 50037 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_space(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -48988,7 +50111,7 @@ _wrap_gtk_toolbar_append_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 48992 "gtk.c"
+#line 50115 "gtk.c"
 
 
 #line 4908 "gtk.override"
@@ -49036,7 +50159,7 @@ _wrap_gtk_toolbar_prepend_element(NspGObject *self,Stack stack,int rhs,int opt,i
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49040 "gtk.c"
+#line 50163 "gtk.c"
 
 
 #line 4954 "gtk.override"
@@ -49088,7 +50211,7 @@ _wrap_gtk_toolbar_insert_element(NspGObject *self,Stack stack,int rhs,int opt,in
 
   return nsp_gtk_toolbar_item_add_callback_and_return(stack,flag,ret,callback,params);
 }
-#line 49092 "gtk.c"
+#line 50215 "gtk.c"
 
 
 static int _wrap_gtk_toolbar_append_widget(NspGtkToolbar *self,Stack stack,int rhs,int opt,int lhs)
@@ -49276,12 +50399,20 @@ static AttrTab gtktoolbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktoolbutton.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkToolButton inherits from NspGtkToolItem */ 
+/* 
+ * GtkToolButton inherits from GtkToolItem 
+ */
 
 int nsp_type_gtktoolbutton_id=0;
 NspTypeGtkToolButton *nsp_type_gtktoolbutton=NULL;
 
+/*
+ * Type object for GtkToolButton 
+ * all the instance of NspTypeGtkToolButton share the same id. 
+ * nsp_type_gtktoolbutton: is an instance of NspTypeGtkToolButton 
+ *    used for objects of GtkToolButton type (i.e built with new_gtktoolbutton) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkToolButton *new_type_gtktoolbutton(type_mode mode)
 {
   NspTypeGtkToolButton *type= NULL;
@@ -49661,12 +50792,20 @@ static AttrTab gtktoolbutton_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktoolitem.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkToolItem inherits from NspGtkBin */ 
+/* 
+ * GtkToolItem inherits from GtkBin 
+ */
 
 int nsp_type_gtktoolitem_id=0;
 NspTypeGtkToolItem *nsp_type_gtktoolitem=NULL;
 
+/*
+ * Type object for GtkToolItem 
+ * all the instance of NspTypeGtkToolItem share the same id. 
+ * nsp_type_gtktoolitem: is an instance of NspTypeGtkToolItem 
+ *    used for objects of GtkToolItem type (i.e built with new_gtktoolitem) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkToolItem *new_type_gtktoolitem(type_mode mode)
 {
   NspTypeGtkToolItem *type= NULL;
@@ -50099,12 +51238,20 @@ static AttrTab gtktoolitem_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktooltips.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTooltips inherits from NspGtkObject */ 
+/* 
+ * GtkTooltips inherits from GtkObject 
+ */
 
 int nsp_type_gtktooltips_id=0;
 NspTypeGtkTooltips *nsp_type_gtktooltips=NULL;
 
+/*
+ * Type object for GtkTooltips 
+ * all the instance of NspTypeGtkTooltips share the same id. 
+ * nsp_type_gtktooltips: is an instance of NspTypeGtkTooltips 
+ *    used for objects of GtkTooltips type (i.e built with new_gtktooltips) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTooltips *new_type_gtktooltips(type_mode mode)
 {
   NspTypeGtkTooltips *type= NULL;
@@ -50378,7 +51525,7 @@ _wrap_gtk_tooltips__get_active_tips_data(NspGObject *self, char *attr)
 					nspgobject_new(NVOID,(GObject *)data->widget),
 					data->tip_text, data->tip_private);
 }
-#line 50382 "gtk.c"
+#line 51529 "gtk.c"
 #line 6491 "gtk.override"
 static NspObject *
 _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
@@ -50408,7 +51555,7 @@ _wrap_gtk_tooltips__get_tips_data_list(NspGObject *self, char *attr)
   Scierror("XXXX To be done gtk_tooltips__get_tips_data_list");
   return 0;
 }
-#line 50412 "gtk.c"
+#line 51559 "gtk.c"
 static NspObject *_wrap_gtk_tooltips__get_delay(NspObject *self,char *attr)
 {
   int ret;
@@ -50459,12 +51606,21 @@ static AttrTab gtktooltips_attrs[] = {
 #include "nsp/gtk/gtktreemodelfilter.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeModelFilter inherits from NspGObject */ 
+/* 
+ * GtkTreeModelFilter inherits from GObject 
+ * and implements  GtkTreeModel GtkTreeDragSource
+ */
 
 int nsp_type_gtktreemodelfilter_id=0;
 NspTypeGtkTreeModelFilter *nsp_type_gtktreemodelfilter=NULL;
 
+/*
+ * Type object for GtkTreeModelFilter 
+ * all the instance of NspTypeGtkTreeModelFilter share the same id. 
+ * nsp_type_gtktreemodelfilter: is an instance of NspTypeGtkTreeModelFilter 
+ *    used for objects of GtkTreeModelFilter type (i.e built with new_gtktreemodelfilter) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeModelFilter *new_type_gtktreemodelfilter(type_mode mode)
 {
   NspTypeGtkTreeModelFilter *type= NULL;
@@ -50787,12 +51943,21 @@ static AttrTab gtktreemodelfilter_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreemodelsort.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeModelSort inherits from NspGObject */ 
+/* 
+ * GtkTreeModelSort inherits from GObject 
+ * and implements  GtkTreeModel GtkTreeSortable
+ */
 
 int nsp_type_gtktreemodelsort_id=0;
 NspTypeGtkTreeModelSort *nsp_type_gtktreemodelsort=NULL;
 
+/*
+ * Type object for GtkTreeModelSort 
+ * all the instance of NspTypeGtkTreeModelSort share the same id. 
+ * nsp_type_gtktreemodelsort: is an instance of NspTypeGtkTreeModelSort 
+ *    used for objects of GtkTreeModelSort type (i.e built with new_gtktreemodelsort) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeModelSort *new_type_gtktreemodelsort(type_mode mode)
 {
   NspTypeGtkTreeModelSort *type= NULL;
@@ -51140,12 +52305,20 @@ static AttrTab gtktreemodelsort_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreeselection.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeSelection inherits from NspGtkObject */ 
+/* 
+ * GtkTreeSelection inherits from GtkObject 
+ */
 
 int nsp_type_gtktreeselection_id=0;
 NspTypeGtkTreeSelection *nsp_type_gtktreeselection=NULL;
 
+/*
+ * Type object for GtkTreeSelection 
+ * all the instance of NspTypeGtkTreeSelection share the same id. 
+ * nsp_type_gtktreeselection: is an instance of NspTypeGtkTreeSelection 
+ *    used for objects of GtkTreeSelection type (i.e built with new_gtktreeselection) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeSelection *new_type_gtktreeselection(type_mode mode)
 {
   NspTypeGtkTreeSelection *type= NULL;
@@ -51406,7 +52579,7 @@ _wrap_gtk_tree_selection_set_select_function(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 51410 "gtk.c"
+#line 52583 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_get_tree_view(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -51461,7 +52634,7 @@ _wrap_gtk_tree_selection_get_selected(NspGObject *self,Stack stack,int rhs,int o
   if ( lhs == 2 ) MoveObj(stack,2,nsp_ret2);
   return Max(lhs,1);
 }
-#line 51465 "gtk.c"
+#line 52638 "gtk.c"
 
 
 #line 3416 "gtk.override"
@@ -51474,7 +52647,7 @@ static int _wrap_gtk_tree_selection_get_selected_rows(NspGtkIconView *self,Stack
   NSP_LIST_FROM_GLIST(ret,((NspObject *)gboxed_create("lel",GTK_TYPE_TREE_PATH,tmp->data,TRUE, TRUE, (NspTypeBase *) nsp_type_gtktreepath)),g_list_free);
 }
 
-#line 51478 "gtk.c"
+#line 52651 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_count_selected_rows(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -51547,7 +52720,7 @@ _wrap_gtk_tree_selection_selected_foreach(NspGObject *self,Stack stack,int rhs,i
   return 0;
 }
 
-#line 51551 "gtk.c"
+#line 52724 "gtk.c"
 
 
 static int _wrap_gtk_tree_selection_select_path(NspGtkTreeSelection *self,Stack stack,int rhs,int opt,int lhs)
@@ -51744,12 +52917,21 @@ static AttrTab gtktreeselection_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreestore.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeStore inherits from NspGObject */ 
+/* 
+ * GtkTreeStore inherits from GObject 
+ * and implements  GtkTreeModel GtkTreeDragSource GtkTreeDragDest GtkTreeSortable
+ */
 
 int nsp_type_gtktreestore_id=0;
 NspTypeGtkTreeStore *nsp_type_gtktreestore=NULL;
 
+/*
+ * Type object for GtkTreeStore 
+ * all the instance of NspTypeGtkTreeStore share the same id. 
+ * nsp_type_gtktreestore: is an instance of NspTypeGtkTreeStore 
+ *    used for objects of GtkTreeStore type (i.e built with new_gtktreestore) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeStore *new_type_gtktreestore(type_mode mode)
 {
   NspTypeGtkTreeStore *type= NULL;
@@ -51995,7 +53177,7 @@ _wrap_gtktreestore_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1; 
 }
-#line 51999 "gtk.c"
+#line 53181 "gtk.c"
 
 
 static int _wrap_nsp_get_matrix_from_tree_store(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52069,7 +53251,7 @@ _wrap_gtk_tree_store_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 52073 "gtk.c"
+#line 53255 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_remove(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52118,7 +53300,7 @@ _wrap_gtk_tree_store_insert(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52122 "gtk.c"
+#line 53304 "gtk.c"
 
 
 #line 2181 "gtk.override"
@@ -52153,7 +53335,7 @@ _wrap_gtk_tree_store_insert_before(NspGObject *self,Stack stack,int rhs,int opt,
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52157 "gtk.c"
+#line 53339 "gtk.c"
 
 
 #line 2214 "gtk.override"
@@ -52188,7 +53370,7 @@ _wrap_gtk_tree_store_insert_after(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52192 "gtk.c"
+#line 53374 "gtk.c"
 
 
 #line 2247 "gtk.override"
@@ -52238,7 +53420,7 @@ _wrap_gtk_tree_store_prepend(NspGObject *self,Stack stack,int rhs,int opt,int lh
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 52242 "gtk.c"
+#line 53424 "gtk.c"
 
 
 #line 2295 "gtk.override"
@@ -52291,7 +53473,7 @@ _wrap_gtk_tree_store_append(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   return 1;
 
 }
-#line 52295 "gtk.c"
+#line 53477 "gtk.c"
 
 
 static int _wrap_gtk_tree_store_is_ancestor(NspGtkTreeStore *self,Stack stack,int rhs,int opt,int lhs)
@@ -52490,12 +53672,20 @@ static AttrTab gtktreestore_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreeview.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeView inherits from NspGtkContainer */ 
+/* 
+ * GtkTreeView inherits from GtkContainer 
+ */
 
 int nsp_type_gtktreeview_id=0;
 NspTypeGtkTreeView *nsp_type_gtktreeview=NULL;
 
+/*
+ * Type object for GtkTreeView 
+ * all the instance of NspTypeGtkTreeView share the same id. 
+ * nsp_type_gtktreeview: is an instance of NspTypeGtkTreeView 
+ *    used for objects of GtkTreeView type (i.e built with new_gtktreeview) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeView *new_type_gtktreeview(type_mode mode)
 {
   NspTypeGtkTreeView *type= NULL;
@@ -52703,7 +53893,7 @@ _wrap_gtktreeview_new(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 52707 "gtk.c"
+#line 53897 "gtk.c"
 
 
 #line 2603 "gtk.override"
@@ -52727,7 +53917,7 @@ static int _wrap_gtk_tree_view_get_model(NspGtkTreeView *self,Stack stack,int rh
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 52731 "gtk.c"
+#line 53921 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_set_model(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -52944,7 +54134,7 @@ _wrap_gtk_tree_view_insert_column_with_attributes(NspGObject *self,Stack stack,i
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 52948 "gtk.c"
+#line 54138 "gtk.c"
 
 
 #line 2880 "gtk.override"
@@ -52996,7 +54186,7 @@ _wrap_gtk_tree_view_insert_column_with_data_func (NspGObject *self,Stack stack,i
   if ( nsp_move_double(stack,1,(double)retval) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53000 "gtk.c"
+#line 54190 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_column(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53024,7 +54214,7 @@ _wrap_gtk_tree_view_get_columns(NspGObject *self,Stack stack,int rhs,int opt,int
 }
 
 
-#line 53028 "gtk.c"
+#line 54218 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_move_column_after(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53310,7 +54500,7 @@ _wrap_gtk_tree_view_get_cursor(NspGObject *self,Stack stack,int rhs,int opt,int 
   
   return RetArgs(stack,lhs,T,nsp_path,nsp_column);
 }
-#line 53314 "gtk.c"
+#line 54504 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_get_bin_window(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53352,7 +54542,7 @@ _wrap_gtk_tree_view_get_path_at_pos(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("%s: failed to get path\n",NspFname(stack));
   return RET_BUG ;
 }
-#line 53356 "gtk.c"
+#line 54546 "gtk.c"
 
 
 #line 3070 "gtk.override"
@@ -53382,7 +54572,7 @@ _wrap_gtk_tree_view_get_cell_area(NspGObject *self,Stack stack,int rhs,int opt,i
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53386 "gtk.c"
+#line 54576 "gtk.c"
 
 
 #line 3098 "gtk.override"
@@ -53411,7 +54601,7 @@ _wrap_gtk_tree_view_get_background_area(NspGObject *self,Stack stack,int rhs,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53415 "gtk.c"
+#line 54605 "gtk.c"
 
 
 #line 3055 "gtk.override"
@@ -53428,7 +54618,7 @@ _wrap_gtk_tree_view_get_visible_rect(NspGObject *self,Stack stack,int rhs,int op
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 53432 "gtk.c"
+#line 54622 "gtk.c"
 
 
 #line 3125 "gtk.override"
@@ -53444,7 +54634,7 @@ _wrap_gtk_tree_view_widget_to_tree_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) tx,(double) ty) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53448 "gtk.c"
+#line 54638 "gtk.c"
 
 
 #line 3139 "gtk.override"
@@ -53460,7 +54650,7 @@ _wrap_gtk_tree_view_tree_to_widget_coords(NspGObject *self,Stack stack,int rhs,i
   if ( nsp_move_doubles(stack,1,1,2,(double) wx,(double) wy) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 53464 "gtk.c"
+#line 54654 "gtk.c"
 
 
 #line 3192 "gtk.override"
@@ -53492,7 +54682,7 @@ _wrap_gtk_tree_view_enable_model_drag_source(NspGObject *self,Stack stack,int rh
   return 0;
 }
 
-#line 53496 "gtk.c"
+#line 54686 "gtk.c"
 
 
 #line 3222 "gtk.override"
@@ -53518,7 +54708,7 @@ _wrap_gtk_tree_view_enable_model_drag_dest(NspGObject *self,Stack stack,int rhs,
 }
 
 
-#line 53522 "gtk.c"
+#line 54712 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_unset_rows_drag_source(NspGtkTreeView *self,Stack stack,int rhs,int opt,int lhs)
@@ -53756,12 +54946,20 @@ static AttrTab gtktreeview_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtktreeviewcolumn.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkTreeViewColumn inherits from NspGtkObject */ 
+/* 
+ * GtkTreeViewColumn inherits from GtkObject 
+ */
 
 int nsp_type_gtktreeviewcolumn_id=0;
 NspTypeGtkTreeViewColumn *nsp_type_gtktreeviewcolumn=NULL;
 
+/*
+ * Type object for GtkTreeViewColumn 
+ * all the instance of NspTypeGtkTreeViewColumn share the same id. 
+ * nsp_type_gtktreeviewcolumn: is an instance of NspTypeGtkTreeViewColumn 
+ *    used for objects of GtkTreeViewColumn type (i.e built with new_gtktreeviewcolumn) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkTreeViewColumn *new_type_gtktreeviewcolumn(type_mode mode)
 {
   NspTypeGtkTreeViewColumn *type= NULL;
@@ -53993,7 +55191,7 @@ _wrap_gtktreeviewcolumn_new(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 53997 "gtk.c"
+#line 55195 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_queue_resize(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54038,7 +55236,7 @@ _wrap_gtk_tree_view_column_get_cell_renderers(NspGObject *self,Stack stack,int r
   
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",(GObject *) tmp->data),g_list_free); /* XXXX */
 }
-#line 54042 "gtk.c"
+#line 55240 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_add_attribute(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54086,7 +55284,7 @@ _wrap_gtk_tree_view_column_set_attributes(NspGObject *self,Stack stack,int rhs,i
     }
   return 0;
 }
-#line 54090 "gtk.c"
+#line 55288 "gtk.c"
 
 
 #line 2809 "gtk.override"
@@ -54159,7 +55357,7 @@ _wrap_gtk_tree_view_column_set_cell_data_func (NspGObject *self,Stack stack,int 
 
   return 0;
 }
-#line 54163 "gtk.c"
+#line 55361 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_clear_attributes(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54501,7 +55699,7 @@ _wrap_gtk_tree_view_column_cell_get_size(NspGObject *self,Stack stack,int rhs,in
 					     &cell_area,TRUE, TRUE,(NspTypeBase *) nsp_type_gdkrectangle),
 		 x_offset, y_offset, width, height);
 }
-#line 54505 "gtk.c"
+#line 55703 "gtk.c"
 
 
 static int _wrap_gtk_tree_view_column_cell_is_visible(NspGtkTreeViewColumn *self,Stack stack,int rhs,int opt,int lhs)
@@ -54599,12 +55797,20 @@ static AttrTab gtktreeviewcolumn_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkuimanager.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkUIManager inherits from NspGObject */ 
+/* 
+ * GtkUIManager inherits from GObject 
+ */
 
 int nsp_type_gtkuimanager_id=0;
 NspTypeGtkUIManager *nsp_type_gtkuimanager=NULL;
 
+/*
+ * Type object for GtkUIManager 
+ * all the instance of NspTypeGtkUIManager share the same id. 
+ * nsp_type_gtkuimanager: is an instance of NspTypeGtkUIManager 
+ *    used for objects of GtkUIManager type (i.e built with new_gtkuimanager) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkUIManager *new_type_gtkuimanager(type_mode mode)
 {
   NspTypeGtkUIManager *type= NULL;
@@ -55013,12 +56219,20 @@ static AttrTab gtkuimanager_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVBox inherits from NspGtkBox */ 
+/* 
+ * GtkVBox inherits from GtkBox 
+ */
 
 int nsp_type_gtkvbox_id=0;
 NspTypeGtkVBox *nsp_type_gtkvbox=NULL;
 
+/*
+ * Type object for GtkVBox 
+ * all the instance of NspTypeGtkVBox share the same id. 
+ * nsp_type_gtkvbox: is an instance of NspTypeGtkVBox 
+ *    used for objects of GtkVBox type (i.e built with new_gtkvbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVBox *new_type_gtkvbox(type_mode mode)
 {
   NspTypeGtkVBox *type= NULL;
@@ -55231,12 +56445,20 @@ static AttrTab gtkvbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvbuttonbox.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVButtonBox inherits from NspGtkButtonBox */ 
+/* 
+ * GtkVButtonBox inherits from GtkButtonBox 
+ */
 
 int nsp_type_gtkvbuttonbox_id=0;
 NspTypeGtkVButtonBox *nsp_type_gtkvbuttonbox=NULL;
 
+/*
+ * Type object for GtkVButtonBox 
+ * all the instance of NspTypeGtkVButtonBox share the same id. 
+ * nsp_type_gtkvbuttonbox: is an instance of NspTypeGtkVButtonBox 
+ *    used for objects of GtkVButtonBox type (i.e built with new_gtkvbuttonbox) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVButtonBox *new_type_gtkvbuttonbox(type_mode mode)
 {
   NspTypeGtkVButtonBox *type= NULL;
@@ -55443,12 +56665,20 @@ static AttrTab gtkvbuttonbox_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkviewport.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkViewport inherits from NspGtkBin */ 
+/* 
+ * GtkViewport inherits from GtkBin 
+ */
 
 int nsp_type_gtkviewport_id=0;
 NspTypeGtkViewport *nsp_type_gtkviewport=NULL;
 
+/*
+ * Type object for GtkViewport 
+ * all the instance of NspTypeGtkViewport share the same id. 
+ * nsp_type_gtkviewport: is an instance of NspTypeGtkViewport 
+ *    used for objects of GtkViewport type (i.e built with new_gtkviewport) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkViewport *new_type_gtkviewport(type_mode mode)
 {
   NspTypeGtkViewport *type= NULL;
@@ -55772,12 +57002,20 @@ static AttrTab gtkviewport_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvpaned.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVPaned inherits from NspGtkPaned */ 
+/* 
+ * GtkVPaned inherits from GtkPaned 
+ */
 
 int nsp_type_gtkvpaned_id=0;
 NspTypeGtkVPaned *nsp_type_gtkvpaned=NULL;
 
+/*
+ * Type object for GtkVPaned 
+ * all the instance of NspTypeGtkVPaned share the same id. 
+ * nsp_type_gtkvpaned: is an instance of NspTypeGtkVPaned 
+ *    used for objects of GtkVPaned type (i.e built with new_gtkvpaned) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVPaned *new_type_gtkvpaned(type_mode mode)
 {
   NspTypeGtkVPaned *type= NULL;
@@ -55984,12 +57222,20 @@ static AttrTab gtkvpaned_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvruler.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVRuler inherits from NspGtkRuler */ 
+/* 
+ * GtkVRuler inherits from GtkRuler 
+ */
 
 int nsp_type_gtkvruler_id=0;
 NspTypeGtkVRuler *nsp_type_gtkvruler=NULL;
 
+/*
+ * Type object for GtkVRuler 
+ * all the instance of NspTypeGtkVRuler share the same id. 
+ * nsp_type_gtkvruler: is an instance of NspTypeGtkVRuler 
+ *    used for objects of GtkVRuler type (i.e built with new_gtkvruler) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVRuler *new_type_gtkvruler(type_mode mode)
 {
   NspTypeGtkVRuler *type= NULL;
@@ -56196,12 +57442,20 @@ static AttrTab gtkvruler_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvscale.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVScale inherits from NspGtkScale */ 
+/* 
+ * GtkVScale inherits from GtkScale 
+ */
 
 int nsp_type_gtkvscale_id=0;
 NspTypeGtkVScale *nsp_type_gtkvscale=NULL;
 
+/*
+ * Type object for GtkVScale 
+ * all the instance of NspTypeGtkVScale share the same id. 
+ * nsp_type_gtkvscale: is an instance of NspTypeGtkVScale 
+ *    used for objects of GtkVScale type (i.e built with new_gtkvscale) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVScale *new_type_gtkvscale(type_mode mode)
 {
   NspTypeGtkVScale *type= NULL;
@@ -56422,12 +57676,20 @@ static AttrTab gtkvscale_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvscrollbar.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVScrollbar inherits from NspGtkScrollbar */ 
+/* 
+ * GtkVScrollbar inherits from GtkScrollbar 
+ */
 
 int nsp_type_gtkvscrollbar_id=0;
 NspTypeGtkVScrollbar *nsp_type_gtkvscrollbar=NULL;
 
+/*
+ * Type object for GtkVScrollbar 
+ * all the instance of NspTypeGtkVScrollbar share the same id. 
+ * nsp_type_gtkvscrollbar: is an instance of NspTypeGtkVScrollbar 
+ *    used for objects of GtkVScrollbar type (i.e built with new_gtkvscrollbar) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVScrollbar *new_type_gtkvscrollbar(type_mode mode)
 {
   NspTypeGtkVScrollbar *type= NULL;
@@ -56648,12 +57910,20 @@ static AttrTab gtkvscrollbar_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkvseparator.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkVSeparator inherits from NspGtkSeparator */ 
+/* 
+ * GtkVSeparator inherits from GtkSeparator 
+ */
 
 int nsp_type_gtkvseparator_id=0;
 NspTypeGtkVSeparator *nsp_type_gtkvseparator=NULL;
 
+/*
+ * Type object for GtkVSeparator 
+ * all the instance of NspTypeGtkVSeparator share the same id. 
+ * nsp_type_gtkvseparator: is an instance of NspTypeGtkVSeparator 
+ *    used for objects of GtkVSeparator type (i.e built with new_gtkvseparator) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkVSeparator *new_type_gtkvseparator(type_mode mode)
 {
   NspTypeGtkVSeparator *type= NULL;
@@ -56860,12 +58130,20 @@ static AttrTab gtkvseparator_attrs[]={{NULL,NULL,NULL}} ;
 #include "nsp/gtk/gtkwidget.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkWidget inherits from NspGtkObject */ 
+/* 
+ * GtkWidget inherits from GtkObject 
+ */
 
 int nsp_type_gtkwidget_id=0;
 NspTypeGtkWidget *nsp_type_gtkwidget=NULL;
 
+/*
+ * Type object for GtkWidget 
+ * all the instance of NspTypeGtkWidget share the same id. 
+ * nsp_type_gtkwidget: is an instance of NspTypeGtkWidget 
+ *    used for objects of GtkWidget type (i.e built with new_gtkwidget) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkWidget *new_type_gtkwidget(type_mode mode)
 {
   NspTypeGtkWidget *type= NULL;
@@ -57050,7 +58328,7 @@ _wrap_gtkwidget_new(Stack stack, int rhs, int opt, int lhs)
   return int_gobj_create( stack, rhs, opt, lhs) ;
 }
 
-#line 57054 "gtk.c"
+#line 58332 "gtk.c"
 
 
 #line 675 "gtk.override"
@@ -57065,7 +58343,7 @@ _wrap_gtk_widget_get_allocation(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 57069 "gtk.c"
+#line 58347 "gtk.c"
 
 
 static int _wrap_gtk_drag_check_threshold(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57174,7 +58452,7 @@ _wrap_gtk_drag_dest_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   g_free(targets);
   return 0;
 }
-#line 57178 "gtk.c"
+#line 58456 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_set_proxy(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57224,7 +58502,7 @@ _wrap_gtk_drag_dest_find_target(NspGObject *self,Stack stack,int rhs,int opt,int
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 57228 "gtk.c"
+#line 58506 "gtk.c"
 
 
 #line 5232 "gtk.override"
@@ -57257,7 +58535,7 @@ _wrap_gtk_drag_dest_get_target_list(NspGObject *self,Stack stack,int rhs,int opt
   Scierror("XXXX To be done gtk_drag_dest_get_target_list");
   return 0;
 }
-#line 57261 "gtk.c"
+#line 58539 "gtk.c"
 
 
 #line 5263 "gtk.override"
@@ -57280,7 +58558,7 @@ _wrap_gtk_drag_dest_set_target_list(NspGObject *self,Stack stack,int rhs,int opt
   gtk_target_list_unref(target_list);
   return 0;
 }
-#line 57284 "gtk.c"
+#line 58562 "gtk.c"
 
 
 #line 5284 "gtk.override"
@@ -57307,7 +58585,7 @@ _wrap_gtk_drag_source_set(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   return 0;
 }
 
-#line 57311 "gtk.c"
+#line 58589 "gtk.c"
 
 
 static int _wrap_gtk_drag_source_unset(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57382,7 +58660,7 @@ _wrap_gtk_drag_begin(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 57386 "gtk.c"
+#line 58664 "gtk.c"
 
 
 static int _wrap_gtk_drag_dest_add_text_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57502,7 +58780,7 @@ _wrap_gtk_selection_add_targets(NspGObject *self,Stack stack,int rhs,int opt,int
   g_free(targets);
   return 0;
 }
-#line 57506 "gtk.c"
+#line 58784 "gtk.c"
 
 
 static int _wrap_gtk_selection_clear_targets(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57690,7 +58968,7 @@ _wrap_gtk_widget_size_request(NspGObject *self,Stack stack,int rhs,int opt,int l
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 57694 "gtk.c"
+#line 58972 "gtk.c"
 
 
 static int _wrap_gtk_widget_size_allocate(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57715,7 +58993,7 @@ _wrap_gtk_widget_get_child_requisition(NspGObject *self,Stack stack,int rhs,int 
 			 (double) requisition.height) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 57719 "gtk.c"
+#line 58997 "gtk.c"
 
 
 #line 622 "gtk.override"
@@ -57770,7 +59048,7 @@ static int _wrap_gtk_widget_add_string_accelerator(NspGtkWidget *self,Stack stac
 
 
 
-#line 57774 "gtk.c"
+#line 59052 "gtk.c"
 
 
 static int _wrap_gtk_widget_remove_accelerator(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -57933,7 +59211,7 @@ _wrap_gtk_widget_intersect(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   else 
     return RET_BUG;
 }
-#line 57937 "gtk.c"
+#line 59215 "gtk.c"
 
 
 static int _wrap_gtk_widget_freeze_child_notify(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58095,7 +59373,7 @@ _wrap_gtk_widget_get_parent(NspGtkWidget *self,Stack stack,int rhs,int opt,int l
   return 1;
 }
 
-#line 58099 "gtk.c"
+#line 59377 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_parent_window(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58212,7 +59490,7 @@ static int _wrap_gtk_widget_get_toplevel(NspGtkWidget *self,Stack stack,int rhs,
   return 1;
 }
 
-#line 58216 "gtk.c"
+#line 59494 "gtk.c"
 
 
 static int _wrap_gtk_widget_get_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58342,7 +59620,7 @@ _wrap_gtk_widget_get_pointer(NspGObject *self,Stack stack,int rhs,int opt,int lh
   if (  nsp_move_doubles(stack,1,1,2,(double) x, (double) y) == FAIL) return RET_BUG; 
   return 1;
 }
-#line 58346 "gtk.c"
+#line 59624 "gtk.c"
 
 
 static int _wrap_gtk_widget_is_ancestor(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58386,7 +59664,7 @@ _wrap_gtk_widget_translate_coordinates(NspGObject *self,Stack stack,int rhs,int 
     }
   return 1;
 }
-#line 58390 "gtk.c"
+#line 59668 "gtk.c"
 
 
 static int _wrap_gtk_widget_hide_on_delete(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58690,7 +59968,7 @@ _wrap_gtk_widget_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1, result);
   return 1;
 }
-#line 58694 "gtk.c"
+#line 59972 "gtk.c"
 
 
 #line 770 "gtk.override"
@@ -58709,7 +59987,7 @@ _wrap_gtk_widget_class_path(NspGObject *self,Stack stack,int rhs,int opt,int lhs
   MoveObj(stack,1,result);
   return 1;
 }
-#line 58713 "gtk.c"
+#line 59991 "gtk.c"
 
 
 static int _wrap_gtk_widget_list_mnemonic_labels(NspGtkWidget *self,Stack stack,int rhs,int opt,int lhs)
@@ -58971,12 +60249,20 @@ static AttrTab gtkwidget_attrs[] = {
 #include "nsp/gtk/gtkwindow.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkWindow inherits from NspGtkBin */ 
+/* 
+ * GtkWindow inherits from GtkBin 
+ */
 
 int nsp_type_gtkwindow_id=0;
 NspTypeGtkWindow *nsp_type_gtkwindow=NULL;
 
+/*
+ * Type object for GtkWindow 
+ * all the instance of NspTypeGtkWindow share the same id. 
+ * nsp_type_gtkwindow: is an instance of NspTypeGtkWindow 
+ *    used for objects of GtkWindow type (i.e built with new_gtkwindow) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkWindow *new_type_gtkwindow(type_mode mode)
 {
   NspTypeGtkWindow *type= NULL;
@@ -59524,7 +60810,7 @@ _wrap_gtk_window_set_geometry_hints(NspGObject *self,Stack stack,int rhs,int opt
 				&geometry, geom_mask);
   return 0;
 }
-#line 59528 "gtk.c"
+#line 60814 "gtk.c"
 
 
 static int _wrap_gtk_window_set_screen(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -59634,7 +60920,7 @@ static int _wrap_gtk_window_set_icon_list(NspGtkWindow *self,Stack stack,int rhs
   return 0;
 }
 
-#line 59638 "gtk.c"
+#line 60924 "gtk.c"
 
 
 #line 7183 "gtk.override"
@@ -59647,7 +60933,7 @@ static int _wrap_gtk_window_get_icon_list(NspGtkWindow *self,Stack stack,int rhs
   nsp_type_gdkpixbuf = new_type_gdkpixbuf(T_BASE);
   NSP_LIST_FROM_GLIST(list,gobject_create("lel",(GObject *)tmp->data,(NspTypeBase *) nsp_type_gdkpixbuf), g_list_free);}
 
-#line 59651 "gtk.c"
+#line 60937 "gtk.c"
 
 
 static int _wrap_gtk_window_set_icon(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -59910,7 +61196,7 @@ _wrap_gtk_window_get_default_size(NspGObject *self,Stack stack,int rhs,int opt,i
     return RET_BUG; 
   return 1; 
 }
-#line 59914 "gtk.c"
+#line 61200 "gtk.c"
 
 
 static int _wrap_gtk_window_resize(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -59934,7 +61220,7 @@ _wrap_gtk_window_get_size(NspGObject *self,Stack stack,int rhs,int opt,int lhs)
     return RET_BUG; 
   return 1; 
 }
-#line 59938 "gtk.c"
+#line 61224 "gtk.c"
 
 
 static int _wrap_gtk_window_move(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -59957,7 +61243,7 @@ _wrap_gtk_window_get_position(NspGObject *self,Stack stack,int rhs,int opt,int l
     return RET_BUG; 
   return 1; 
 }
-#line 59961 "gtk.c"
+#line 61247 "gtk.c"
 
 
 static int _wrap_gtk_window_parse_geometry(NspGtkWindow *self,Stack stack,int rhs,int opt,int lhs)
@@ -60403,12 +61689,20 @@ static AttrTab gtkwindow_attrs[] = {
 #include "nsp/gtk/gtkwindowgroup.h"
 #include "nsp/interf.h"
 #include "nsp/nspthreads.h"
-
-/* NspGtkWindowGroup inherits from NspGObject */ 
+/* 
+ * GtkWindowGroup inherits from GObject 
+ */
 
 int nsp_type_gtkwindowgroup_id=0;
 NspTypeGtkWindowGroup *nsp_type_gtkwindowgroup=NULL;
 
+/*
+ * Type object for GtkWindowGroup 
+ * all the instance of NspTypeGtkWindowGroup share the same id. 
+ * nsp_type_gtkwindowgroup: is an instance of NspTypeGtkWindowGroup 
+ *    used for objects of GtkWindowGroup type (i.e built with new_gtkwindowgroup) 
+ * other instances are used for derived classes 
+ */
 NspTypeGtkWindowGroup *new_type_gtkwindowgroup(type_mode mode)
 {
   NspTypeGtkWindowGroup *type= NULL;
@@ -60675,7 +61969,7 @@ int _wrap_nsp_graphic_new(Stack stack, int rhs, int opt, int lhs)
   return 1;
 }
 
-#line 60679 "gtk.c"
+#line 61973 "gtk.c"
 
 
 int _wrap_gtk_accelerator_valid(Stack stack, int rhs, int opt, int lhs)
@@ -61003,7 +62297,7 @@ _wrap_gtk_binding_entry_add_signal(Stack stack,int rhs,int opt,int lhs)
 }
 
 /* -------------- haven't updated stuff below this line -------------- */
-#line 61007 "gtk.c"
+#line 62301 "gtk.c"
 
 
 int _wrap_gtk_color_selection_palette_to_string(Stack stack, int rhs, int opt, int lhs)
@@ -61313,7 +62607,7 @@ _wrap_gtk_icon_size_lookup(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_doubles(stack,1,1,2,(double) width,(double) height) == FAIL) return RET_BUG; 
   return 1; 
 }
-#line 61317 "gtk.c"
+#line 62611 "gtk.c"
 
 
 int _wrap_gtk_icon_size_lookup_for_settings(Stack stack, int rhs, int opt, int lhs)
@@ -61589,7 +62883,7 @@ _wrap_gtk_main(Stack stack,int rhs,int opt,int lhs)
   nspg_block_threads();
   return 0;
 }
-#line 61593 "gtk.c"
+#line 62887 "gtk.c"
 
 
 int _wrap_gtk_main_level(Stack stack, int rhs, int opt, int lhs)
@@ -61619,7 +62913,7 @@ _wrap_gtk_main_iteration(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 61623 "gtk.c"
+#line 62917 "gtk.c"
 
 
 #line 3781 "gtk.override"
@@ -61635,7 +62929,7 @@ _wrap_gtk_main_iteration_do(Stack stack,int rhs,int opt,int lhs)
   if ( nsp_move_boolean(stack,1,ret)==FAIL) return RET_BUG; 
   return 1;
 }
-#line 61639 "gtk.c"
+#line 62933 "gtk.c"
 
 
 int _wrap_gtk_grab_get_current(Stack stack, int rhs, int opt, int lhs)
@@ -61808,7 +63102,7 @@ _wrap_gtk_rc_set_default_files(Stack stack,int rhs,int opt,int lhs)
     }
   return 0;
 }
-#line 61812 "gtk.c"
+#line 63106 "gtk.c"
 
 
 #line 6162 "gtk.override"
@@ -61821,7 +63115,7 @@ _wrap_gtk_rc_get_default_files(Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,ret);
   return 1;
 }
-#line 61825 "gtk.c"
+#line 63119 "gtk.c"
 
 
 int _wrap_gtk_rc_get_style_by_paths(Stack stack, int rhs, int opt, int lhs)
@@ -62018,7 +63312,7 @@ _wrap_gtk_stock_add(Stack stack,int rhs,int opt,int lhs)
   g_free(items);
   return RET_BUG;
 }
-#line 62022 "gtk.c"
+#line 63316 "gtk.c"
 
 
 #line 6338 "gtk.override"
@@ -62038,7 +63332,7 @@ _wrap_gtk_stock_lookup(Stack stack,int rhs,int opt,int lhs)
   else 
     return RetArgs(stack,lhs,ret_T2, FALSE);
 }
-#line 62042 "gtk.c"
+#line 63336 "gtk.c"
 
 
 #line 6324 "gtk.override"
@@ -62054,7 +63348,7 @@ _wrap_gtk_stock_list_ids(Stack stack,int rhs,int opt,int lhs)
    * g_slist_free (list);  
    */
 }
-#line 62058 "gtk.c"
+#line 63352 "gtk.c"
 
 
 int _wrap_gtk_toggle_tool_button_new_from_stock(Stack stack, int rhs, int opt, int lhs)
@@ -62341,7 +63635,7 @@ _wrap_gtk_window_list_toplevels(Stack stack,int rhs,int opt,int lhs)
   list = gtk_window_list_toplevels();
   NSP_LIST_FROM_GLIST(list, nspgobject_new("lel",G_OBJECT(tmp->data)),g_list_free);
 }
-#line 62345 "gtk.c"
+#line 63639 "gtk.c"
 
 
 int _wrap_gtk_window_set_default_icon_name(Stack stack, int rhs, int opt, int lhs)
