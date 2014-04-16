@@ -89,10 +89,7 @@ NspTypeAtkHyperlink *new_type_atkhyperlink(type_mode mode)
   type->methods = atkhyperlink_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkhyperlink;
-
-  /* specific methods for atkhyperlink */
-      
-  type->init = (init_func *) init_atkhyperlink;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -363,10 +360,7 @@ NspTypeAtkObject *new_type_atkobject(type_mode mode)
   type->methods = atkobject_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkobject;
-
-  /* specific methods for atkobject */
-      
-  type->init = (init_func *) init_atkobject;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -740,10 +734,7 @@ NspTypeAtkNoOpObject *new_type_atknoopobject(type_mode mode)
   type->methods = atknoopobject_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atknoopobject;
-
-  /* specific methods for atknoopobject */
-      
-  type->init = (init_func *) init_atknoopobject;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -962,10 +953,7 @@ NspTypeAtkObjectFactory *new_type_atkobjectfactory(type_mode mode)
   type->methods = atkobjectfactory_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkobjectfactory;
-
-  /* specific methods for atkobjectfactory */
-      
-  type->init = (init_func *) init_atkobjectfactory;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1194,10 +1182,7 @@ NspTypeAtkNoOpObjectFactory *new_type_atknoopobjectfactory(type_mode mode)
   type->methods = atknoopobjectfactory_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atknoopobjectfactory;
-
-  /* specific methods for atknoopobjectfactory */
-      
-  type->init = (init_func *) init_atknoopobjectfactory;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1414,10 +1399,7 @@ NspTypeAtkRegistry *new_type_atkregistry(type_mode mode)
   type->methods = atkregistry_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkregistry;
-
-  /* specific methods for atkregistry */
-      
-  type->init = (init_func *) init_atkregistry;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1669,10 +1651,7 @@ NspTypeAtkRelation *new_type_atkrelation(type_mode mode)
   type->methods = atkrelation_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkrelation;
-
-  /* specific methods for atkrelation */
-      
-  type->init = (init_func *) init_atkrelation;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1867,7 +1846,7 @@ _wrap_atkrelation_new (Stack stack,int rhs,int opt,int lhs)
   MoveObj(stack,1,nsp_ret);
   return 1;
 }
-#line 1871 "atk.c"
+#line 1850 "atk.c"
 
 
 static int _wrap_atk_relation_get_relation_type(NspAtkRelation *self,Stack stack,int rhs,int opt,int lhs)
@@ -1932,10 +1911,7 @@ NspTypeAtkRelationSet *new_type_atkrelationset(type_mode mode)
   type->methods = atkrelationset_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkrelationset;
-
-  /* specific methods for atkrelationset */
-      
-  type->init = (init_func *) init_atkrelationset;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -2232,10 +2208,7 @@ NspTypeAtkStateSet *new_type_atkstateset(type_mode mode)
   type->methods = atkstateset_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkstateset;
-
-  /* specific methods for atkstateset */
-      
-  type->init = (init_func *) init_atkstateset;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -2548,10 +2521,7 @@ NspTypeAtkUtil *new_type_atkutil(type_mode mode)
   type->methods = atkutil_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_atkutil;
-
-  /* specific methods for atkutil */
-      
-  type->init = (init_func *) init_atkutil;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);

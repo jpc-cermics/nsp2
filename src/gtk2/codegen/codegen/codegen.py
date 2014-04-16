@@ -93,10 +93,7 @@ class Wrapper:
               '  type->methods = %(typename_dc)s_get_methods; \n'  \
               '  type->gtk_methods = TRUE; \n'  \
               '  type->new = (new_func *) new_%(typename_dc)s;\n'  \
-              '\n'  \
-              '  /* specific methods for %(typename_dc)s */\n'  \
-              '      \n'  \
-              '  type->init = (init_func *) init_%(typename_dc)s;\n'  \
+              '  \n'  \
               '  \n'  \
               '  top = NSP_TYPE_OBJECT(type->surtype);\n'  \
               '  while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);\n'  \

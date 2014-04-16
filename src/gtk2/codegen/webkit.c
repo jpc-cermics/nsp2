@@ -114,10 +114,7 @@ NspTypeWebKitWebView *new_type_webkitwebview(type_mode mode)
   type->methods = webkitwebview_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebview;
-
-  /* specific methods for webkitwebview */
-      
-  type->init = (init_func *) init_webkitwebview;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -689,10 +686,7 @@ NspTypeWebKitWebFrame *new_type_webkitwebframe(type_mode mode)
   type->methods = webkitwebframe_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebframe;
-
-  /* specific methods for webkitwebframe */
-      
-  type->init = (init_func *) init_webkitwebframe;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1005,10 +999,7 @@ NspTypeWebKitWebHistoryItem *new_type_webkitwebhistoryitem(type_mode mode)
   type->methods = webkitwebhistoryitem_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebhistoryitem;
-
-  /* specific methods for webkitwebhistoryitem */
-      
-  type->init = (init_func *) init_webkitwebhistoryitem;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1284,10 +1275,7 @@ NspTypeWebKitWebBackForwardList *new_type_webkitwebbackforwardlist(type_mode mod
   type->methods = webkitwebbackforwardlist_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebbackforwardlist;
-
-  /* specific methods for webkitwebbackforwardlist */
-      
-  type->init = (init_func *) init_webkitwebbackforwardlist;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1660,10 +1648,7 @@ NspTypeWebKitWebSettings *new_type_webkitwebsettings(type_mode mode)
   type->methods = webkitwebsettings_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitwebsettings;
-
-  /* specific methods for webkitwebsettings */
-      
-  type->init = (init_func *) init_webkitwebsettings;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -1896,10 +1881,7 @@ NspTypeWebKitNetworkRequest *new_type_webkitnetworkrequest(type_mode mode)
   type->methods = webkitnetworkrequest_get_methods; 
   type->gtk_methods = TRUE; 
   type->new = (new_func *) new_webkitnetworkrequest;
-
-  /* specific methods for webkitnetworkrequest */
-      
-  type->init = (init_func *) init_webkitnetworkrequest;
+  
   
   top = NSP_TYPE_OBJECT(type->surtype);
   while ( top->surtype != NULL ) top= NSP_TYPE_OBJECT(top->surtype);
@@ -2281,7 +2263,7 @@ static int _wrap_webkit_getfile(Stack stack, int rhs, int opt, int lhs)
   MoveObj(stack,1,NSP_OBJECT(S));
   return 1;
 }
-#line 2285 "webkit.c"
+#line 2267 "webkit.c"
 
 
 /*----------------------------------------------------
